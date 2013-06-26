@@ -1,0 +1,2 @@
+superdesk-client
+================
