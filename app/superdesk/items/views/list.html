@@ -1,0 +1,146 @@
+  <div class="subnav subnav-fixed">
+    <input type="text" name="searchbar" class="searchbar-container" style="width:500px;">
+    <a class="btn btn-medium btn-info pull-right" href="#"><span class="medium-icon-add"></span> Add New Article</a>
+  </div>
+
+   <div class="subnav subnav-level2 subnav-fixed">
+      <div class="btn-toolbar">
+        <div class="btn-group">
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+              Multiple actions
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu sf-dropdown">
+              <li><i class="icon-pencil"></i> Edit</li>
+              <li><i class="icon-trash"></i> Delete</li>
+              <li><i class="icon-ban-circle"></i> Unpublish</li>
+              <li><i class="icon-eye-open"></i> Preview</li>
+            </ul>
+        </div>
+
+       
+
+       
+        
+        <div class="btn-group pull-right" style="margin-left:20px;">
+          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-settings"></i> <span class="caret"></span></a>
+
+            <ul class="dropdown-menu sf-dropdown sf-dropdown-right">
+                
+                <li><a href="#"><i class="icon-eye-open"></i> View/Hide details</a></li>
+                <li class="divider"></li>
+                <li><a href="#"><i class="icon-th-large"></i> 25 items per page</a></li>
+                <li><a href="#"><i class="icon-th-large"></i> 50 items per page</a></li>
+                <li class="divider"></li>
+                <li><a id="grid_view" href="#"><i class="icon-th"></i> Grid view</a></li>
+                <li><a id="list_view" href="#"><i class="icon-th-list"></i> List view</a></li>
+              </ul>
+        </div>
+
+         <div class="btn-group pull-right" style="margin-left:20px;">
+            <a class="btn"><i class="icon-chevron-left"></i></a>
+            <a class="btn"><i class="icon-chevron-right"></i></a>
+        </div>
+
+        <div class="page-info pull-right">
+            Page <input type="text" value="1"/> of 103
+        </div>
+
+
+      </div>
+
+   </div>
+
+   <div class="main-content-container">
+      <table class="sf_table">
+        <thead>
+          <tr>
+            <th class="chckbx_col"><input type="checkbox" class="sf-checkbox" name="all"></th>
+            <th class="title_col">Title</th>
+            <th>Author</th>
+            <th>Publish date</th>
+            <th>Status</th>
+            <th class="action_col">
+
+
+              <div class="dropdown" style="text-align:right;" >
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-switches"></i> <span class="caret"></span></a>
+                <ul class="dropdown-menu sf-dropdown-simple pull-right" id="columns-switches">
+                  <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col1"> Title</li>
+                  <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col2"> Author</li>
+                  <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col3"> Publish Date</li>
+                  <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col4"> Status</li>
+                  <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col5"> Read count</li>
+                  <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col6"> Importance</li>
+                  <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col7"> Collaborators</li>
+                  <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col8"> Action</li>
+                </ul>
+              </div>
+
+
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <tr>
+            <td class="chckbx_col"><input type="checkbox" class="sf-checkbox" set-bg="2"  name="article_1"></td>
+            <td class="title_col"><a href="#">Liveblog-Test Baselland</a></td>
+            <td>David Bauer</td>
+            <td>2013-03-10 13:32:20</td>
+            <td>Published</td>
+            <td class="action_col">
+              <div class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Action <b class="caret"></b></a>
+                <ul class="dropdown-menu sf-dropdown-simple pull-right">
+                  <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                  <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                  <li><a href="#"><i class="icon-ban-circle"></i> Unpublish</a></li>
+                  <li><a href="#"><i class="icon-eye-open"></i> Preview</a></li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="chckbx_col"><input type="checkbox" class="sf-checkbox" set-bg="2"  name="article_2"></td>
+            <td class="title_col"><a href="#">Die Sucht sitzt in jedem von uns</a></td>
+            <td>David Bauer</td>
+            <td>2013-03-10 10:24:30</td>
+            <td>Unpublished</td>
+            <td class="action_col">
+              <div class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Action <b class="caret"></b></a>
+                <ul class="dropdown-menu sf-dropdown-simple pull-right">
+                  <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                  <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                  <li><a href="#"><i class="icon-ban-circle"></i> Unpublish</a></li>
+                  <li><a href="#"><i class="icon-eye-open"></i> Preview</a></li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="chckbx_col"><input type="checkbox" class="sf-checkbox" set-bg="2"  name="article_2"></td>
+            <td class="title_col"><a href="#">Das Vorbild von damals ist träge geworden</a></td>
+            <td>Christoph Aebersold</td>
+            <td>2013-03-09 16:03:55</td>
+            <td>Published</td>
+            <td class="action_col">
+              <div class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Action <b class="caret"></b></a>
+                <ul class="dropdown-menu sf-dropdown-simple pull-right">
+                  <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                  <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                  <li><a href="#"><i class="icon-ban-circle"></i> Unpublish</a></li>
+                  <li><a href="#"><i class="icon-eye-open"></i> Preview</a></li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+
+
+        </tbody>
+      </table>
+   </div>
