@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+SUMMARY: 
+- Structure: NML2 SNI Text 
+- Based On: NML2 v2.10
+
+AUTHOR: thomsonreuters.com
+-->
+<!-- ========================================================= -->
+<newsMessage xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rtr="http://www.reuters.com/ns/2003/08/content" xmlns:x="http://www.w3.org/1999/xhtml">
+  <header>
+    <sent>2013-03-01T15:09:04.000Z</sent>
+    <sender>reuters.com</sender>
+    <transmitId>tag:reuters.com,0000:newsml_L4N0BT5PJ:263518268</transmitId>
+    <priority>3</priority>
+    <destination>RBN</destination>
+    <destination>AFA</destination>
+    <destination>CSA</destination>
+    <destination>LBY</destination>
+    <destination>REULB</destination>
+    <destination>RSP</destination>
+    <destination>RWSA</destination>
+    <destination>UKI</destination>
+    <destination>RNP</destination>
+    <destination>DNP</destination>
+    <destination>PSP</destination>
+    <channel>TXT</channel>
+  </header>
+  <itemSet>
+    <newsItem guid="tag:reuters.com,0000:newsml_L4N0BT5PJ" version="263518268" standard="NewsML-G2" standardversion="2.10" conformance="power" xml:lang="en">
+      <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml" />
+      <rightsInfo>
+        <copyrightHolder literal="Thomson Reuters" />
+        <copyrightNotice xml:lang="en">(c) Copyright Thomson Reuters 2013. Click For Restrictions - http://about.reuters.com/fulllegal.asp</copyrightNotice>
+      </rightsInfo>
+      <itemMeta>
+        <itemClass qcode="icls:text" rtr:msgType="S" />
+        <provider literal="reuters.com" />
+        <versionCreated>2013-03-01T15:09:04.000Z</versionCreated>
+        <firstCreated>2013-03-01T15:09:04.000Z</firstCreated>
+        <pubStatus qcode="stat:usable" />
+        <role qcode="itemRole:N" />
+        <fileName>2013-03-01T150904Z_263518268_L4N0BT5PJ_RTRMADT_0_SOCCER-ENGLAND-CHELSEA-BENITEZ.XML</fileName>
+        <generator versioninfo="00.00.01">G3:IIM:FH</generator>
+        <profile versioninfo="00.00.01">SNI-Text</profile>
+        <service qcode="svc:RTR_TNS" />
+        <signal qcode="edStat:N" />
+        <signal qcode="prodId:TXT" />
+        <signal qcode="pmt:text" />
+        <rtr:versionedId guid="tag:reuters.com,0000:newsml_L4N0BT5PJ:263518268" />
+      </itemMeta>
+      <contentMeta>
+        <urgency>3</urgency>
+        <infoSource role="cRole:origProv" literal="Reuters" />
+        <creator literal="Reuters" />
+        <altId type="idType:USN" rtr:isOriginal="1">L4N0BT5PJ</altId>
+        <altId type="idType:OTR">L4N0BT5PJ</altId>
+        <language tag="en" />
+        <subject qcode="MCC:SPO" />
+        <subject qcode="N2:ES" />
+        <subject qcode="N2:GB" />
+        <subject qcode="N2:SOCC" />
+        <subject qcode="N2:SPO" />
+        <subject qcode="N2:WEU" />
+        <subject qcode="N2:EUROP" />
+        <subject qcode="N2:EZC" />
+        <subject qcode="subj:15054000" />
+        <subject qcode="subj:15000000" />
+        <subject qcode="a1312cat:s" />
+        <subject qcode="MCCL:SPO" />
+        <slugline separator="-">SOCCER-ENGLAND/CHELSEA-BENITEZ</slugline>
+        <headline>Soccer-Smiling Benitez pleads for support after midweek outburst</headline>
+        <creditline>Reuters</creditline>
+        <description role="descRole:caption">SOCCER-ENGLAND/CHELSEA-BENITEZ:Soccer-Smiling Benitez pleads for support after midweek outburst</description>
+      </contentMeta>
+      <contentSet>
+        <inlineXML contenttype="application/xhtml+html" wordcount="569">
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <head>
+              <title />
+            </head>
+            <body>
+              <p>By Toby Davis</p>
+              <p>LONDON, March 1 (Reuters) - Chelsea manager Rafael Benitez sought to build bridges and ease tensions on Friday, days after castigating hostile fans and aiming a swipe at club officials for his 'interim' job title.</p>
+              <p>The Spaniard, routinely jeered by a section of Chelsea's support ever since he replaced the sacked Roberto Di Matteo in November, unleashed a passionate invective after Wednesday's FA Cup victory over Middlesbrough, saying he would leave when his short-term deal ran out at the end of the season.</p>
+              <p>At a news conference on Friday before Saturday's home game with West Bromwich Albion, a smiling and relaxed Benitez said he was only trying to get fans to rally round the cause of helping Chelsea finish in the top four.</p>
+              <p>"I think that if you analyse carefully was that I was trying to explain we have 11 games to play, 33 points, if we stick together it will easy for us to get points," Benitez told reporters.</p>
+              <p>"The fans are really important for the team.</p>
+              <p>"We need the atmosphere of Arsenal and Napoli. The message is clear - I have no problem with the board, Michael Emenalo, Roman Abramovich or the players. I will do the best for the club. I have 26 years of principles, respect and education to achieve what I have."</p>
+              <p>Last season Chelsea produced a superb comeback, recovering from a 3-1 first leg deficit against Italy's Napoli to win the home leg 4-1 and reach the Champions League quarter-finals before going on to win the trophy for the first time.</p>
+              <p>Benitez repeated the phrase "if we stick together it will be easier for us" on numerous occasions as he sought to dampen the almost inevitable hostility he is likely to face from the terraces during Saturday's Premier League clash.</p>
+              <p>At a packed press room in Chelsea's Cobham training ground, Benitez said he had enjoyed amicable discussions with Chelsea's powerbrokers in the wake of his comments.</p>
+              <p>"The title (of interim manager) is three months ago and just a point that was put across. I think it is not a problem because we have a lot of games," he said.</p>
+              <p>"Yesterday I was talking with Ron (Gourlay, chief executive) we were joking and talking, a normal conversation about football."</p>
+              <p>He refused, however, to divulge the nature of any contact he might have had with owner Abramovich. "This is my business," he said curtly.</p>
+              <p>Chelsea find themselves in a difficult situation.</p>
+              <p>They are fourth in the Premier League, 19 points behind leaders Manchester United and facing a battle to finish in the top four and earn a Champions League spot next season.</p>
+              <p>Despite progress in the FA Cup and Europa League, Chelsea have taken only four points from their last four games and need to find form quickly.</p>
+              <p>Benitez will know failure to finish in the top four would have implications for his own reputation and future job offers.</p>
+              <p>He said he did not regret taking on the Chelsea job, but felt he had to let the fans know he would definitely not be sticking around next season.</p>
+              <p>"When I took the job it was because I had ambition to win trophies, and this is a massive club," he added.</p>
+              <p>"I finish my contract and I don't want to be a distraction and if we concentrate on supporting the team, everything will be better."   (Reporting by Toby Davis; editing by Justin Palmer)</p>
+            </body>
+          </html>
+        </inlineXML>
+      </contentSet>
+    </newsItem>
+  </itemSet>
+</newsMessage>
+
