@@ -19,6 +19,7 @@ def before_request():
     connect_db()
 
 api = restful.Api(app)
+api.add_resource(resources.Auth, '/auth')
 api.add_resource(resources.Items, '/items/')
 
 if __name__ == '__main__':

@@ -1,5 +1,7 @@
+from flask import request
 from types import Resource
-from models import Item
+from users import get_token
+import models
 
 def get_date(date):
     return date.isoformat()
@@ -19,6 +21,21 @@ class Items(Resource):
     '''Items resource.'''
 
     def get(self):
-        query = Item.objects.order_by('-firstCreated').limit(25)
+        query = models.Item.objects.order_by('-firstCreated').limit(25)
         return [get_list_item(item) for item in query]
 
+class Auth(Resource):
+    """Auth resource."""
+
+    def post(self):
+        try:
+            user = models.User.objects.get(username=request.form.get('username'))
+        except models.User.DoesNotExist:
+            return {'username': 'does not exist'}, 401
+
+        if user.test_password(request.form.get('password')):
+            return {
+                'auth_token': get_token(user).token
+            }, 201
+        else:
+            return {'password': 'not valid'}, 401

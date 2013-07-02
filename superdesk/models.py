@@ -3,6 +3,26 @@ from __future__ import unicode_literals
 from collections import deque
 from mongoengine import *
 
+class User(Document):
+    """User"""
+    username = StringField(max_length=50, required=True, unique=True)
+    password = StringField(max_length=80)
+
+    def set_password(self, password):
+        self.password = password
+
+    def test_password(self, password):
+        return self.password == password
+
+class AuthToken(Document):
+    """Auth Token"""
+    token = StringField(max_length=50, required=True)
+    created_at = DateTimeField()
+    user = ReferenceField(User)
+
+    def is_valid(self):
+        return True
+
 class Ref(EmbeddedDocument):
     idRef = StringField()
     itemClass = StringField()
