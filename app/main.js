@@ -34,11 +34,6 @@ define([
         'superdesk.session',
         'superdesk.items'
     ]);
-    /*
-    application.run(function(authService){
-        
-    });
-    */
 
     angular.bootstrap(document, ['superdesk']);
 });
