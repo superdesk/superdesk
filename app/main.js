@@ -10,6 +10,9 @@ require.config({
             deps: ['jquery'],
             exports: 'angular'
         },
+        ngCookies: {
+            deps: ['angular']
+        },
         'bootstrap/bootstrap-dropdown': {
             deps: ['jquery']
         },
