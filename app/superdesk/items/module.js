@@ -4,12 +4,12 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.items', []).
-        config(function($routeProvider) {
-            $routeProvider.
-                when('/', {
-                    controller: require('superdesk/items/controllers/list'),
-                    templateUrl: 'superdesk/items/views/list.html'
-                });
-        });
+    var items = angular.module('superdesk.items', []);
+    items.config(function($routeProvider) {
+        $routeProvider.
+            when('/', {
+                controller: require('superdesk/items/controllers/list'),
+                templateUrl: 'superdesk/items/views/list.html'
+            });
+    });
 });
