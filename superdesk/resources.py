@@ -1,6 +1,8 @@
 from flask import request
 from types import Resource
 from users import get_token
+from auth.decorators import auth_required
+
 import models
 
 def get_date(date):
@@ -19,6 +21,8 @@ def get_list_item(item):
 
 class Items(Resource):
     '''Items resource.'''
+
+    method_decorators = [auth_required]
 
     def get(self):
         query = models.Item.objects.order_by('-firstCreated').limit(25)

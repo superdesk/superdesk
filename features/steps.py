@@ -12,6 +12,10 @@ def set_app():
     connect_db()
     world.app = app.test_client()
 
+@before.each_scenario
+def reset_headers(scenario):
+    world.headers = []
+
 @after.each_scenario
 def drop_users(scenario):
     models.User.drop_collection()
@@ -64,3 +68,18 @@ def get_valid_auth_token(step):
     data = json.loads(world.response.get_data())
     assert users.is_valid_token(data.get('auth_token')), \
         "Got %s" % data.get('auth_token')
+
+@step('I have no token')
+def have_no_token(step):
+    world.headers = []
+
+@step('I have token')
+def get_token(step):
+    user = users.create_user('test', 'test')
+    token = users.get_token(user).token
+    world.headers = []
+    world.headers.append(('Authorization', 'token %s' % token))
+
+@step('I get "([-a-z0-9_/]+)"')
+def get_url(step, url):
+    world.response = world.app.get(url, headers=world.headers)

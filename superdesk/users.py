@@ -14,6 +14,9 @@ def get_token(user):
     return token
 
 def is_valid_token(auth_token):
-    token = AuthToken.objects.get(token=auth_token)
-    return token.is_valid()
+    try:
+        token = AuthToken.objects.get(token=auth_token)
+        return token.is_valid()
+    except AuthToken.DoesNotExist:
+        return False
 

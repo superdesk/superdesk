@@ -25,3 +25,13 @@ Feature: Authentication
         When I send auth request
         Then I get response with code 401
         And I get "password" in data
+
+    Scenario: Get items without token
+        Given I have no token
+        When I get "/items/"
+        Then I get response with code 401
+
+    Scenario: Get items with token
+        Given I have token
+        When I get "/items/"
+        Then I get response with code 200
