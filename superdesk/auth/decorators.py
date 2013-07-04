@@ -14,5 +14,5 @@ def auth_required(f):
         if is_authenticated(request):
             return f(*args, **kwargs)
 
-        restful.abort(401)
+        restful.abort(403)
     return wrapper

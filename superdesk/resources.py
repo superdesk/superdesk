@@ -35,11 +35,11 @@ class Auth(Resource):
         try:
             user = models.User.objects.get(username=request.form.get('username'))
         except models.User.DoesNotExist:
-            return {'username': 'does not exist'}, 401
+            return {'username': 'does not exist'}, 400
 
         if user.test_password(request.form.get('password')):
             return {
                 'auth_token': get_token(user).token
             }, 201
         else:
-            return {'password': 'not valid'}, 401
+            return {'password': 'not valid'}, 400
