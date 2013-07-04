@@ -3,6 +3,7 @@ Superdesk server app
 """
 
 import flask
+from flask import json
 from flask.ext import restful
 import mongoengine
 
@@ -20,7 +21,8 @@ def before_request():
 
 api = restful.Api(app)
 api.add_resource(resources.Auth, '/auth')
-api.add_resource(resources.Items, '/items/')
+api.add_resource(resources.ItemList, '/items/')
+api.add_resource(resources.Item, '/items/<string:id>', endpoint='item')
 
 if __name__ == '__main__':
     app.run(debug=True)

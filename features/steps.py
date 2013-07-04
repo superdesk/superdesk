@@ -7,6 +7,7 @@ from superdesk import users
 
 @before.all
 def set_app():
+    app.config['DEBUG'] = True
     app.config['TESTING'] = True
     app.config['DB_NAME'] = 'superdesk_lettuce'
     connect_db()
@@ -19,6 +20,7 @@ def reset_headers(scenario):
 @after.each_scenario
 def drop_users(scenario):
     models.User.drop_collection()
+    models.Item.drop_collection()
 
 @step('I have no credentials')
 def have_no_credentials(step):
@@ -51,7 +53,7 @@ def have_bad_password(step):
 def send_auth_request(step):
     world.response = world.app.post('/auth', data=world.credentials)
 
-@step('I get response with code (\d+)')
+@step('I get status code (\d+)')
 def get_response_with_code(step, expected_code):
     expected_code = int(expected_code)
     assert world.response.status_code == expected_code, \
@@ -73,7 +75,7 @@ def get_valid_auth_token(step):
 def have_no_token(step):
     world.headers = []
 
-@step('I have token')
+@step('I have auth token')
 def get_token(step):
     user = users.create_user('test', 'test')
     token = users.get_token(user).token
@@ -83,3 +85,18 @@ def get_token(step):
 @step('I get "([-a-z0-9_/]+)"')
 def get_url(step, url):
     world.response = world.app.get(url, headers=world.headers)
+
+@step('I get empty list')
+def get_empty_list(step):
+    data = json.loads(world.response.get_data())
+    assert len(data) == 0, \
+        "Got %s" % world.response.get_data()
+
+@step('I post item')
+def post_item(step):
+    item = {
+        'guid': 'test',
+        'headline': 'test',
+    }
+    world.response = world.app.post('/items/', headers=world.headers, data=item)
+

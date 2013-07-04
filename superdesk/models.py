@@ -59,7 +59,7 @@ class Item(Document):
     CLASS_PACKAGE = 'icls:composite'
 
     guid = StringField(unique=True)
-    version = IntField(required=True)
+    version = StringField()
     itemClass = StringField()
     urgency = StringField()
     headline = StringField()

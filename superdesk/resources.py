@@ -1,15 +1,18 @@
-from flask import request
-from types import Resource
-from users import get_token
-from auth.decorators import auth_required
+from datetime import datetime
 
-import models
+from flask import request, url_for
+
+from superdesk.types import Resource
+from superdesk.users import get_token
+from superdesk.auth.decorators import auth_required
+from superdesk import models
 
 def get_date(date):
     return date.isoformat()
 
 def get_list_item(item):
     return {
+        'self_url': url_for('item', id=item.guid),
         'guid': item.guid,
         'version': item.version,
         'urgency': item.urgency,
@@ -19,8 +22,8 @@ def get_list_item(item):
         'version_created': get_date(item.versionCreated),
     }
 
-class Items(Resource):
-    '''Items resource.'''
+class ItemList(Resource):
+    """Item List Resource"""
 
     method_decorators = [auth_required]
 
@@ -28,8 +31,22 @@ class Items(Resource):
         query = models.Item.objects.order_by('-firstCreated').limit(25)
         return [get_list_item(item) for item in query]
 
+    def post(self):
+        data = request.form.to_dict()
+        item = models.Item(**data)
+        item.firstCreated = datetime.utcnow()
+        item.versionCreated = datetime.utcnow()
+        item.save()
+        return get_list_item(item), 201
+
+class Item(Resource):
+    """Item Resource"""
+
+    def get(self, id):
+        pass
+
 class Auth(Resource):
-    """Auth resource."""
+    """Auth Resource"""
 
     def post(self):
         try:
