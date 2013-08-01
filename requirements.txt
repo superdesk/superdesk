@@ -5,3 +5,4 @@ mongoengine==0.8.2
 requests==1.1.0
 lettuce==0.2.18
 cloudinary==1.0.8
+eve
