@@ -5,6 +5,7 @@ DEBUG = False
 MONGO_DBNAME = os.environ.get('MONGOHQ_URL', 'superdesk')
 
 SERVER_NAME = 'localhost:5000'
+MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'static')
 
 DATE_CREATED = 'firstCreated'
 LAST_UPDATED = 'versionCreated'

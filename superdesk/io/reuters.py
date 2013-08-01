@@ -5,10 +5,9 @@ import requests
 import xml.etree.ElementTree as etree
 import traceback
 import datetime
-import cloudinary.uploader
+import urllib
 
 import superdesk.io.newsml as newsml
-import superdesk.models as models
 
 class Service(object):
     """Update Service"""
@@ -20,36 +19,38 @@ class Service(object):
         self.parser = newsml.Parser()
         self.token = get_token()
 
-    def update(self):
+    def update(self, db, config):
         """Service update call."""
 
         updated = datetime.datetime.utcnow()
-        last_updated = models.get_last_update()
+        last_updated = None
         if not last_updated or last_updated < updated + datetime.timedelta(days=-7):
-            last_updated = updated + datetime.timedelta(days=-1) # last 24h
+            last_updated = updated + datetime.timedelta(hours=-1) # last 1h
 
         for channel in self.get_channels():
             for guid in self.get_ids(channel, last_updated, updated):
                 items = self.get_items(guid)
                 items.reverse()
                 for item in items:
-                    old = models.Item.objects(guid=item.guid).first()
-                    if old and old.version < item.version:
-                        old.delete()
+                    old = db.items.find_one({'guid': item['guid']})
+                    if old and old['version'] < item['version']:
+                        db.items.remove(old)
                     elif old:
                         continue
-                    self.fetch_assets(item)
-                    item.save()
+                    self.fetch_assets(item, config)
+                    db.items.save(item)
 
-    def fetch_assets(self, item):
+    def fetch_assets(self, item, config):
         """Fetch remote assets for given item."""
 
-        for content in item.contents:
-            if content.residRef and content.rendition in ['rend:viewImage']:
-                url = "%s?token=%s" % (content.href, self.token)
-                status = cloudinary.uploader.upload(url,
-                        public_id=content.residRef)
-                content.storage = status['url']
+        if not 'contents' in item:
+            return
+
+        for content in item['contents']:
+            if 'residRef' in content and content['rendition'] in ['rend:viewImage']:
+                url = "%s?token=%s" % (content['href'], self.token)
+                filename, headers = urllib.urlretrieve(url, os.path.join(config.MEDIA_ROOT, content['residRef']))
+                content['storage'] = os.path.basename(filename)
 
     def get_items(self, guid):
         """Parse item message and return given items."""
