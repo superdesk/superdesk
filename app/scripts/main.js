@@ -1,17 +1,13 @@
 require.config({
     paths: {
-        angular: 'components/angular/angular',
-        ngCookies: 'components/angular-cookies/angular-cookies',
-        jquery: 'components/jquery/jquery',
-        bootstrap: 'components/bootstrap/js'
+        angular: 'bower_components/angular/angular',
+        jquery: 'bower_components/jquery/jquery',
+        bootstrap: 'bower_components/bootstrap/js',
     },
     shim: {
         angular: {
             deps: ['jquery'],
             exports: 'angular'
-        },
-        ngCookies: {
-            deps: ['angular']
         },
         'bootstrap/bootstrap-dropdown': {
             deps: ['jquery']

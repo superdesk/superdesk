@@ -21,13 +21,13 @@
     </script>
   </head>
   <body class="article-list">
-    <div class="navbar navbar-inverse navbar-fixed-top" ng-include="'superdesk/views/nav.html'"></div>
+    <div class="navbar navbar-inverse navbar-fixed-top" ng-include="'scripts/superdesk/views/nav.html'"></div>
 
     <div class="main-background-container" ng-view></div>
 
-    <div id="loginModal" ng-controller="LoginController" ng-include="'superdesk/session/views/login.html'" 
+    <div id="loginModal" ng-controller="LoginController" ng-include="'scripts/superdesk/session/views/login.html'" 
         class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="loginModal" aria-hidden="true"></div>
 
-    <script data-main="main" src="components/requirejs/require.js"></script>
+    <script data-main="scripts/main" src="scripts/bower_components/requirejs/require.js"></script>
   </body>
 </html>

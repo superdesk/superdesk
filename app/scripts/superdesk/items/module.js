@@ -9,7 +9,7 @@ define([
         $routeProvider.
             when('/', {
                 controller: require('superdesk/items/controllers/list'),
-                templateUrl: 'superdesk/items/views/list.html'
+                templateUrl: 'scripts/superdesk/items/views/list.html'
             });
     });
 });
