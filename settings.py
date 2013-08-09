@@ -1,4 +1,5 @@
 import os
+import resources
 
 DEBUG = False
 
@@ -13,41 +14,6 @@ DATE_CREATED = 'firstCreated'
 LAST_UPDATED = 'versionCreated'
 
 DOMAIN = {
-    'items': {
-        'schema': {
-            'guid': {
-                'type': 'string',
-                'unique': True,
-            },
-            'headline': {
-                'type': 'string',
-                'required': True,
-            },
-            'slugline': {
-                'type': 'string',
-            },
-            'creditline': {
-                'type': 'string',
-            },
-            'copyrightHolder': {
-                'type': 'string',
-            },
-            'firstCreated': {
-                'type': 'datetime',
-            },
-            'versionCreated': {
-                'type': 'datetime',
-            },
-            'version': {
-                'type': 'integer',
-            },
-            'itemClass': {
-                'type': 'string',
-            },
-            'contents': {
-                'type': 'list',
-            },
-        },
-        'resource_methods': ['GET', 'POST'],
-    },
+    'items': resources.items,
+    'users': resources.users,
 }
