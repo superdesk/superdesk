@@ -18,7 +18,7 @@ def update_ingest():
 @manager.command
 def create_user(username, password):
     """Create new user."""
-    user = users.create_user(username, password)
+    app.data.driver.db.users.insert({'username': username, 'password': password})
 
 if __name__ == '__main__':
     manager.run()

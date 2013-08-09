@@ -1,8 +1,11 @@
 import os
 
+from flask import request, jsonify
 from eve import Eve
 from eve.utils import config
 from eve.auth import TokenAuth
+
+from superdesk import utils
 
 
 def items_get(resource, documents):
@@ -17,11 +20,28 @@ def items_get(resource, documents):
 
 class Auth(TokenAuth):
     def check_auth(self, token, allowed_roles, resource):
-        return token == 'secret'
+        auth_token = app.data.driver.db.auth_tokens.find_one({'token': token})
+        return auth_token
 
 
 app = Eve(auth=Auth)
 app.on_getting += items_get
+
+@app.route('/auth', methods=['POST'])
+def auth():
+    user = app.data.driver.db.users.find_one({'username': request.form.get('username')})
+    if not user:
+        return ('username not found', 400)
+
+    if user.get('password') == request.form.get('password'):
+        auth_token = {
+            'user': user,
+            'token': utils.get_random_string(40)
+        }
+        app.data.driver.db.auth_tokens.insert(auth_token)
+        return jsonify({'token': auth_token.get('token')})
+    else:
+        return ('password is not valid', 400)
 
 if __name__ == '__main__':
     app.run(debug=True)
