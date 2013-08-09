@@ -2,11 +2,8 @@
     Superdesk Manager
 """
 
-from eve import Eve
-from eve.utils import config
+from app import app
 from flask.ext import script
-
-app = Eve()
 
 from superdesk import users
 from superdesk.io import reuters
@@ -16,7 +13,7 @@ manager = script.Manager(app)
 @manager.command
 def update_ingest():
     """Runs an ingest update."""
-    reuters.Service().update(app.data.driver.db, config)
+    reuters.Service().update(app.data.driver.db, app.config)
 
 @manager.command
 def create_user(username, password):

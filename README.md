@@ -11,7 +11,7 @@ after creating and activating virtualenv, run:
 
 with active virtualenv, run:
 
-    python runserver.py
+    python app.py
 
 ### run tasks
 
