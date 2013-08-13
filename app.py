@@ -1,11 +1,11 @@
 import os
 
-from flask import request, jsonify
-from eve import Eve
-from eve.utils import config
-from eve.auth import TokenAuth
+import flask
+import eve
 
+import settings
 from superdesk import utils
+from decorators import crossdomain
 
 
 def items_get(resource, documents):
@@ -14,34 +14,48 @@ def items_get(resource, documents):
         if 'contents' in doc:
             for content in doc['contents']:
                 try:
-                    content['url'] = config.MEDIA_URL + content['storage']
+                    content['url'] = settings.MEDIA_URL + content['storage']
                 except KeyError:
                     pass
 
-class Auth(TokenAuth):
+class Auth(eve.auth.TokenAuth):
     def check_auth(self, token, allowed_roles, resource):
         auth_token = app.data.driver.db.auth_tokens.find_one({'token': token})
         return auth_token
 
+class AuthException(Exception):
+    pass
 
-app = Eve(auth=Auth)
+
+app = eve.Eve(auth=Auth)
 app.on_getting += items_get
 
-@app.route('/auth', methods=['POST'])
+@app.route('/auth', methods=['POST', 'OPTIONS'])
+@crossdomain('*', headers=['X-Requested-With', 'Content-Type'])
 def auth():
-    user = app.data.driver.db.users.find_one({'username': request.form.get('username')})
-    if not user:
-        return ('username not found', 400)
+    try:
+        data = flask.request.get_json()
+        user = app.data.driver.db.users.find_one({'username': data.get('username')})
+        if not user:
+            raise AuthException(400, "username not found")
 
-    if user.get('password') == request.form.get('password'):
+        if user.get('password') != data.get('password'):
+            raise AuthException(400, "invalid password")
+
+        user.pop('_id', None)
+        user.pop('password', None)
+
         auth_token = {
             'user': user,
             'token': utils.get_random_string(40)
         }
         app.data.driver.db.auth_tokens.insert(auth_token)
-        return jsonify({'token': auth_token.get('token')})
-    else:
-        return ('password is not valid', 400)
+
+        auth_token.pop('_id', None)
+        return flask.jsonify(auth_token)
+    except AuthException as err:
+        return (flask.jsonify({'message': err.args[1]}), err.args[0])
+
 
 if __name__ == '__main__':
     app.run(debug=True)

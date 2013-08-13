@@ -1,8 +1,7 @@
 from lettuce import *
 from flask import json
 
-from superdesk import app, connect_db
-from superdesk import models
+from run import app
 from superdesk import users
 
 @before.all
@@ -10,8 +9,8 @@ def set_app():
     app.config['DEBUG'] = True
     app.config['TESTING'] = True
     app.config['DB_NAME'] = 'superdesk_lettuce'
-    connect_db()
     world.app = app.test_client()
+    world.app.data = app.data
 
 @before.each_scenario
 def reset_headers(scenario):
@@ -19,8 +18,7 @@ def reset_headers(scenario):
 
 @after.each_scenario
 def drop_users(scenario):
-    models.User.drop_collection()
-    models.Item.drop_collection()
+    world.app.data.driver.db.users.drop()
 
 @step('I have no credentials')
 def have_no_credentials(step):

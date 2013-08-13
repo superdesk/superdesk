@@ -17,3 +17,6 @@ DOMAIN = {
     'items': resources.items,
     'users': resources.users,
 }
+
+X_DOMAINS = ['*']
+X_HEADERS = ['X-Requested-With', 'Authorization']
