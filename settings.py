@@ -1,7 +1,9 @@
 import os
 import resources
 
-DEBUG = False
+DEBUG = True
+TESTING = True
+TEST = True
 
 MONGO_DBNAME = os.environ.get('MONGOHQ_URL', 'superdesk')
 

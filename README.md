@@ -11,10 +11,16 @@ after creating and activating virtualenv, run:
 
 with active virtualenv, run:
 
-    python app.py
+    fab server
 
 ### run tasks
 
 with active virtualenv, run:
 
     python manage.py
+
+### run test
+
+with active virtualenv, run:
+
+    fab test

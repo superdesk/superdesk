@@ -3,6 +3,7 @@ items = {
         'guid': {
             'type': 'string',
             'unique': True,
+            'required': True,
         },
         'headline': {
             'type': 'string',

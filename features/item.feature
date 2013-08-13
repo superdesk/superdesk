@@ -8,4 +8,5 @@ Feature: Item resource
     Scenario: Save item
         Given I have auth token
         When I post item
-        Then I get status code 201
+        Then I get status code 200
+        And I get "OK" in data

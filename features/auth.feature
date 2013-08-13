@@ -29,7 +29,7 @@ Feature: Authentication
     Scenario: Get items without token
         Given I have no token
         When I get "/items/"
-        Then I get status code 403
+        Then I get status code 401
 
     Scenario: Get items with token
         Given I have auth token
