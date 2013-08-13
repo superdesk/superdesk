@@ -1,6 +1,7 @@
 require.config({
     paths: {
         angular: 'bower_components/angular/angular',
+        'angular-resource': 'bower_components/angular-resource/angular-resource',
         jquery: 'bower_components/jquery/jquery',
         bootstrap: 'bower_components/bootstrap/js',
     },
@@ -8,6 +9,9 @@ require.config({
         angular: {
             deps: ['jquery'],
             exports: 'angular'
+        },
+        'angular-resource': {
+            deps: ['angular']
         },
         'bootstrap/bootstrap-dropdown': {
             deps: ['jquery']
@@ -22,15 +26,13 @@ define([
     'angular',
     'bootstrap/bootstrap-modal',
     'bootstrap/bootstrap-dropdown',
-    'superdesk/services/module',
-    'superdesk/session/module',
+    'superdesk/auth/module',
     'superdesk/items/module'
 ], function(angular) {
     'use strict';
 
     var application = angular.module('superdesk', [
-        'superdesk.services',
-        'superdesk.session',
+        'superdesk.auth',
         'superdesk.items'
     ]);
 

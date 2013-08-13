@@ -16,7 +16,7 @@
     <!-- endbuild -->
     <script>
         config = {
-            api_url: 'http://localhost:5000/'
+            api_url: 'http://localhost:5000'
         };
     </script>
   </head>
@@ -25,8 +25,7 @@
 
     <div class="main-background-container" ng-view></div>
 
-    <div id="loginModal" ng-controller="LoginController" ng-include="'scripts/superdesk/session/views/login.html'" 
-        class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="loginModal" aria-hidden="true"></div>
+    <div sd-login-modal></div>
 
     <script data-main="scripts/main" src="scripts/bower_components/requirejs/require.js"></script>
   </body>

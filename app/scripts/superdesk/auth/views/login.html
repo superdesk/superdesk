@@ -1,0 +1,23 @@
+<div class="login-popup modal hide fade">
+    <div class="modal-header">
+        <h3>Login required</h3>
+    </div>
+    <div class="modal-body">
+        <form name="login" class="form-horizontal" ng-submit="doLogin()">
+            <p class="alert alert-error" ng-show="loginError">Login failed!</p>
+            <p class="alert alert-warning" data-is="expired-warn" ng-show="">Login session expired!</p>
+            <p class="alert alert-info" style="margin-bottom:0" ng-show=""></p>
+
+            <fieldset>
+                <input type="text" id="username" ng-model="username" placeholder="Username" class="fullwidth-input" />
+                <input type="password" id="password" ng-model="password" placeholder="Password" class="fullwidth-input login-pass" />
+          
+                <input type="checkbox" value="1" id="login-remember-me" ng-model="rememberMe">
+                <label for="login-remember-me" class="checkbox" style="margin-top:10px">Remember login</label>
+            </fieldset>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="" class="btn btn-primary" ng-click="doLogin()">Login</a>
+    </div>
+</div>

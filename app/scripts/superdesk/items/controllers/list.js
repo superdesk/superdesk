@@ -1,9 +1,7 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    var ItemListController = function($scope) {
-        
+    return function($scope, ItemsLoader) {
+        $scope.items = ItemsLoader();
     };
-
-    return ItemListController;
 });

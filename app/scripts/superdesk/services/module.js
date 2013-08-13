@@ -1,10 +1,7 @@
 define([
-    'angular',
-    'superdesk/services/auth'
+    'angular'
 ], function(angular) {
     'use strict';
 
-    var services = angular.module('superdesk.services', [
-        'superdesk.services.auth'
-    ]);
+    var services = angular.module('superdesk.services', []);
 });
