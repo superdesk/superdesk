@@ -1,26 +1,22 @@
-superdesk-server
-================
+Superdesk REST API Server
+=========================
 
-### install
+Superdesk REST API Server is python app on top of mongodb.
 
-after creating and activating virtualenv, run:
+## Instalation
 
-    pip install -r requirements.txt
+```sh
+$ pip install -r requirements.txt
+```
 
-### run server
+## Testing
 
-with active virtualenv, run:
+```sh
+$ fab test
+```
 
-    fab server
+## Running Dev Server
 
-### run tasks
-
-with active virtualenv, run:
-
-    python manage.py
-
-### run test
-
-with active virtualenv, run:
-
-    fab test
+```sh
+$ fab server
+```

@@ -5,7 +5,6 @@
 from app import app
 from flask.ext import script
 
-from superdesk import users
 from superdesk.io import reuters
 
 manager = script.Manager(app)
