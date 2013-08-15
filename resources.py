@@ -35,6 +35,7 @@ items = {
         },
     },
     'resource_methods': ['GET', 'POST'],
+    'item_methods': ['GET', 'PATCH'],
 }
 
 users = {
