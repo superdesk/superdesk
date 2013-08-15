@@ -84,7 +84,7 @@
         <tbody>
           <tr ng-repeat="item in items">
             <td class="chckbx_col"><input type="checkbox" class="sf-checkbox" set-bg="2"  name="_{{ item._id }}"></td>
-            <td class="title_col"><a ng-href="/items/{{ item.guid }}">{{ item.headline }}</a></td>
+            <td class="title_col"><a href="#/items/{{ item._id }}">{{ item.headline }}</a></td>
             <td>{{ item.creditline }}</td>
             <td>{{ item.firstCreated }}</td>
             <td>Published</td>

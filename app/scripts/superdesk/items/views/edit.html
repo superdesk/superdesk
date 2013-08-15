@@ -1,0 +1,859 @@
+<div class="subnav subnav-fixed">
+        <h1 class="main-article-title" id="article-title-fixed">{{ item.headline }}</h1>
+
+        <a class="btn btn-medium btn-info pull-right" href="#">Save</a>
+        <a class="btn btn-medium pull-right" href="#/" >Close</a>
+        
+        <div class="btn-group pull-right" style="margin:0 20px 0 30px;">
+            <button class="btn btn-medium dropdown-toggle" data-toggle="dropdown"><i class="icon-settings"></i> <span class="caret"></span></button>
+            <ul class="dropdown-menu tabconfig-dropdown sf-dropdown sf-dropdown-right">
+                <h5 class="dropdown-title">Sidetab view configuration</h5>
+                <li class="tabconfig" target-tab="ingest">
+                    <input type="checkbox" class="sf-checkbox" name="show_tab1" checked="checked"><i class="small-icon-ingest"></i>Ingest feed
+                    <input type="checkbox" class="sf-toggle" >
+                </li>
+                <li class="tabconfig" target-tab="chat">
+                   <input type="checkbox" class="sf-checkbox" name="show_tab2" checked="checked"><i class="small-icon-chat"></i>Chat
+                    <input type="checkbox" class="sf-toggle" checked="checked">
+                </li>
+                <li class="tabconfig" target-tab="editorial-comments">
+                    <input type="checkbox" class="sf-checkbox" name="show_tab3" checked="checked"><i class="small-icon-editorial"></i>Editorial comments
+                    <input type="checkbox" class="sf-toggle" checked="checked">
+                </li>
+                <li class="tabconfig" target-tab="media">
+                    <input type="checkbox" class="sf-checkbox" name="show_tab4" checked="checked"><i class="small-icon-media"></i>Media
+                    <input type="checkbox" class="sf-toggle" checked="checked">
+                </li>
+                <li class="tabconfig" target-tab="switches">
+                    <input type="checkbox" class="sf-checkbox" name="show_tab5" checked="checked"><i class="small-icon-switches"></i>Switches
+                    <input type="checkbox" class="sf-toggle" checked="checked">
+                </li>
+                <li class="tabconfig" target-tab="geolocation">
+                    <input type="checkbox" class="sf-checkbox" name="show_tab6" checked="checked"><i class="small-icon-geolocation"></i>Geolocation
+                    <input type="checkbox" class="sf-toggle" checked="checked">
+                </li>
+                <li class="tabconfig" target-tab="comments">
+                    <input type="checkbox" class="sf-checkbox" name="show_tab7" checked="checked"><i class="small-icon-comments"></i>Comments
+                    <input type="checkbox" class="sf-toggle" checked="checked">
+                </li>
+                <li class="tabconfig" target-tab="followup">
+                    <input type="checkbox" class="sf-checkbox" name="show_tab8" checked="checked"><i class="small-icon-followup"></i>Followup
+                    <input type="checkbox" class="sf-toggle" checked="checked">
+                </li>
+                <li class="tabconfig" target-tab="archive">
+                    <input type="checkbox" class="sf-checkbox" name="show_tab9" checked="checked"><i class="small-icon-archive"></i>Archive
+                    <input type="checkbox" class="sf-toggle">
+                </li>
+                
+            </ul>
+        </div>
+        <a class="btn btn-medium pull-right mobile-hide" href="#" id="zen-mode" >Zen mode</a>
+        <a class="btn btn-medium pull-right mobile-hide" href="#" id="live-edit" >Live edit</a>
+  
+
+    </div>
+
+    <div class="editor-toolbar-placeholder">
+            
+    </div>
+
+    <div class="zen-buttons">
+        <a class="btn pull-right zen-close" href="#" id="zen-close" title="turn off zen"><i class="icon-remove"></i></a>
+        <a class="btn pull-right btn-info" href="#" >Save</a>
+    </div>
+
+    <div id="tooltip" class="sf-tooltip">
+
+    </div>
+
+        <div class="tablist left-tablist" tabcontent-area="left-tabpane">
+            <ul class="navigation-tabs">
+                
+                <li tabname="ingest"><a href="#ingest-tab" draggable="true" control="tab" rel="tooltip" data-placement="right" data-original-title="Sources"><i class="big-icon-sources"></i><span class="badge badge-inverse hide notifications"></span><span class="badge badge-info hide config-notif">!</span></a></li>
+
+                <li tabname="archive"><a href="#archive-tab" draggable="true" control="tab" rel="tooltip" data-placement="right" data-original-title="Archive"><i class="big-icon-archive"></i><span class="badge badge-inverse hide notifications"></span><span class="badge badge-info hide config-notif">!</span></a></li>
+                
+            </ul>
+
+        </div>
+        <div class="tabpane left-tabpane">
+            <section class="tabcontent" id="ingest-tab">
+                <header class="ingest-header shadow-target" shadow-id="1">
+                    <div class="sf-searchbox">
+                        <input type="text" placeholder="Search" >
+                        <a href="#"><i class="icon-remove"></i></a>
+                    </div>
+                    <div class="tabpane-header-nav">
+                        <span class="tabpane-header-label">Feeds: </span>
+                        <div class="dropdown dropdown-simple" style="display:inline-block;">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">All <b class="caret"></b></a>
+                            <ul class="dropdown-menu sf-dropdown-simple bottom-up sf-dropdown-left">
+                                <li><a href="#">All</a></li>
+                                <li><a href="#">Agence France-Presse</a></li>
+                                <li><a href="#">BBC</a></li>
+                                <li><a href="#">Reuters</a></li>
+                                <li><a href="#">Local</a></li>
+                                <li><a href="#">Other sources</a></li>
+                            </ul>
+                        </div>
+
+                        <span class="tabpane-header-label" style="margin-left:20px;">Status: </span>
+                        <div class="dropdown dropdown-simple" style="display:inline-block;">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">All <b class="caret"></b></a>
+                            <ul class="dropdown-menu bottom-up sf-dropdown-simple sf-dropdown-left" style="min-width:auto;">
+                                <li><a href="#">Confirmed</a></li>
+                                <li><a href="#">Unconfirmed</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </header>
+                <ul class="ingest-feed shadow-source" shadow-id="1">
+
+                    <li class="source-bbc">
+                        <h5><a href="#">Title of the ingest feed</a></h5>
+                        <div class="feed-text">
+                            Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit cras sapien odio, dictum non fermentum ac.
+                        </div>
+                        <div class="feed-info">
+                            <i class="feed-icon"></i>
+                            <span class="feed-source">BBC</span>
+                            <time>01.03.2012 at 22:15:06</time>
+                        </div>
+                    </li>
+
+
+                    <li class="source-reuters">
+                        <h5><a href="#">Title of the ingest feed</a></h5>
+                        <div class="feed-text">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Nunc orci risus adipiscing elit dictum non fermentum 
+                        </div>
+                        <div class="feed-info">
+                            <i class="feed-icon"></i>
+                            <span class="feed-source">Reuters</span>
+                            <time>01.03.2012 at 22:13:29</time>
+                        </div>
+                    </li>
+
+
+                    <li class="source-local unconfirmed">
+                        <h5><a href="#">Title of the ingest feed</a></h5>
+                        <div class="feed-text">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sapien odio, dictum non fermentum ac 
+                        </div>
+                        <div class="feed-info">
+                            <i class="feed-icon"></i>
+                            <span class="feed-source">Local</span>
+                            <time>01.03.2012 at 22:02:50</time>
+                        </div>
+                    </li>
+                    <li class="source-local confirmed">
+                        <h5><a href="#">Title of the ingest feed</a></h5>
+                        <div class="feed-text">
+                            Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit cras sapien odio, dictum non fermentum ac.
+                        </div>
+                        <div class="feed-info">
+                            <i class="feed-icon"></i>
+                            <span class="feed-source">Local</span>
+                            <time>01.03.2012 at 21:58:18</time>
+                        </div>
+                    </li>
+                    <li  class="source-afp">
+                        <h5><a href="#">Title of the ingest feed</a></h5>
+                        <div class="feed-text">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Nunc orci risus adipiscing elit dictum non fermentum 
+                        </div>
+                        <div class="feed-info">
+                            <i class="feed-icon"></i>
+                            <span class="feed-source">AFP</span>
+                            <time>01.03.2012 at 21:58:18</time>
+                        </div>
+                    </li>
+                    <li class="source-local confirmed">
+                        <h5><a href="#">Title of the ingest feed</a></h5>
+                        <div class="feed-text">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sapien odio, dictum non fermentum ac 
+                        </div>
+                        <div class="feed-info">
+                            <i class="feed-icon"></i>
+                            <span class="feed-source">Local</span>
+                            <time>01.03.2012 at 21:58:18</time>
+                        </div>
+                    </li>
+                    <li class="source-local unconfirmed">
+                        <h5><a href="#">Title of the ingest feed</a></h5>
+                        <div class="feed-text">
+                            Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit cras sapien odio, dictum non fermentum ac.
+                        </div>
+                        <div class="feed-info">
+                            <i class="feed-icon"></i>
+                            <span class="feed-source">Local</span>
+                            <time>01.03.2012 at 21:58:18</time>
+                        </div>
+                    </li>
+                    <li class="source-local confirmed">
+                        <h5><a href="#">Title of the ingest feed</a></h5>
+                        <div class="feed-text">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Nunc orci risus adipiscing elit dictum non fermentum 
+                        </div>
+                        <div class="feed-info">
+                            <i class="feed-icon"></i>
+                            <span class="feed-source">Local</span>
+                            <time>01.03.2012 at 21:58:18</time>
+                        </div>
+                    </li>
+                    <li class="source-reuters">
+                        <h5><a href="#">Title of the ingest feed</a></h5>
+                        <div class="feed-text">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sapien odio, dictum non fermentum ac 
+                        </div>
+                        <div class="feed-info">
+                            <i class="feed-icon"></i>
+                            <span class="feed-source">Reuters</span>
+                            <time>01.03.2012 at 21:58:18</time>
+                        </div>
+                    </li>
+                    <li class="source-reuters">
+                        <h5><a href="#">Title of the ingest feed</a></h5>
+                        <div class="feed-text">
+                            Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit cras sapien odio, dictum non fermentum ac.
+                        </div>
+                        <div class="feed-info">
+                            <i class="feed-icon"></i>
+                            <span class="feed-source">Reuters</span>
+                            <time>01.03.2012 at 21:58:18</time>
+                        </div>
+                    </li>
+                    <li class="source-local unconfirmed"> 
+                        <h5><a href="#">Title of the ingest feed</a></h5>
+                        <div class="feed-text">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Nunc orci risus adipiscing elit dictum non fermentum 
+                        </div>
+                        <div class="feed-info">
+                            <i class="feed-icon"></i>
+                            <span class="feed-source">Local</span>
+                            <time>01.03.2012 at 21:58:18</time>
+                        </div>
+                    </li>
+                    <li class="source-bbc">
+                        <h5><a href="#">Title of the ingest feed</a></h5>
+                        <div class="feed-text">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras sapien odio, dictum non fermentum ac 
+                        </div>
+                        <div class="feed-info">
+                            <i class="feed-icon"></i>
+                            <span class="feed-source">BBC</span>
+                            <time>01.03.2012 at 21:58:18</time>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+            <section class="tabcontent" id="archive-tab">
+                <div class="tabslide archive-list-view">
+                    <header class="article-archive-header shadow-target" shadow-id="2">
+                        <div class="sf-searchbox">
+                            <input type="text" placeholder="Search" >
+                            <a href="#"><i class="icon-remove"></i></a>
+                        </div>
+                        <div class="tabpane-header-nav">
+                            <div class="sf-datepicker pull-left">
+                                <i class="icon-calendar"></i>
+                                <input type="text" class="datepicker" placeholder="from - to">
+                            </div>
+
+                            
+                            <div class="dropdown dropdown-simple pull-right" style="display:inline-block;">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
+                                <ul class="dropdown-menu bottom-up sf-dropdown-simple " style="min-width:auto;">
+                                    <li><a href="#">By title</a></li>
+                                    <li><a href="#">By date</a></li>
+                                    <li><a href="#">By author</a></li>
+                                </ul>
+                            </div>
+                            <span class="tabpane-header-label pull-right">Sort: </span>
+
+                        </div>
+                    </header>
+                    <ul class="article-archive shadow-source" shadow-id="2">
+                        <li article-id="111">
+                            <div class="feed-info">
+                                <time>01.03.2012 at 22:15:06</time>
+                            </div>
+                            <div class="dropdown dropdown-simple pull-right">
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+                              <ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
+                                <li><a href="#" class="pin-article"><i class="icon-pin"></i> Pin</a></li>
+                                <li><a href="#"><i class="icon-plus-sign"></i> Add to Scratchpad</a></li>
+                              </ul>
+                            </div>
+                            <h5><a href="#">Temporibus autem quibusdam officiis</a></h5>
+                            <div class="feed-text">
+                                Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit cras sapien odio, dictum non fermentum ac.
+                            </div>
+                        </li>
+                        <li article-id="112">
+                            <div class="feed-info">
+                                <time>01.03.2012 at 22:15:06</time>
+                            </div>
+                            <div class="dropdown dropdown-simple pull-right">
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+                              <ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
+                                <li><a href="#" class="pin-article"><i class="icon-pin"></i> Pin</a></li>
+                                <li><a href="#"><i class="icon-plus-sign"></i> Add to Scratchpad</a></li>
+                              </ul>
+                            </div>
+                            <h5><a href="#">Title of the article</a></h5>
+                            <div class="feed-text">
+                                Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit cras sapien odio, dictum non fermentum ac.
+                            </div>
+                        </li>
+                        <li article-id="113">
+                            <div class="feed-info">
+                                <time>01.03.2012 at 22:15:06</time>
+                            </div>
+                            <div class="dropdown dropdown-simple pull-right">
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+                              <ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
+                                <li><a href="#" class="pin-article"><i class="icon-pin"></i> Pin</a></li>
+                                <li><a href="#"><i class="icon-plus-sign"></i> Add to Scratchpad</a></li>
+                              </ul>
+                            </div>
+                            <h5><a href="#">Temporibus autem quibusdam officiis</a></h5>
+                            <div class="feed-text">
+                                Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit cras sapien odio, dictum non fermentum ac.
+                            </div>
+                        </li>
+                        <li article-id="114">
+                            <div class="feed-info">
+                                <time>01.03.2012 at 22:15:06</time>
+                            </div>
+                            <div class="dropdown dropdown-simple pull-right">
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+                              <ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
+                                <li><a href="#" class="pin-article"><i class="icon-pin"></i> Pin</a></li>
+                                <li><a href="#"><i class="icon-plus-sign"></i> Add to Scratchpad</a></li>
+                              </ul>
+                            </div>
+                            <h5><a href="#">Title of the article</a></h5>
+                            <div class="feed-text">
+                                Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit cras sapien odio, dictum non fermentum ac.
+                            </div>
+                        </li>
+                        <li article-id="115">
+                            <div class="feed-info">
+                                <time>01.03.2012 at 22:15:06</time>
+                            </div>
+                            <div class="dropdown dropdown-simple pull-right">
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+                              <ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
+                                <li><a href="#" class="pin-article"><i class="icon-pin"></i> Pin</a></li>
+                                <li><a href="#"><i class="icon-plus-sign"></i> Add to Scratchpad</a></li>
+                              </ul>
+                            </div>
+                            <h5><a href="#">Temporibus autem quibusdam officiis</a></h5>
+                            <div class="feed-text">
+                                Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit cras sapien odio, dictum non fermentum ac.
+                            </div>
+                        </li>
+                        <li article-id="116">
+                            <div class="feed-info">
+                                <time>01.03.2012 at 22:15:06</time>
+                            </div>
+                            <div class="dropdown dropdown-simple pull-right">
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+                              <ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
+                                <li><a href="#" class="pin-article"><i class="icon-pin"></i> Pin</a></li>
+                               <li><a href="#"><i class="icon-plus-sign"></i> Add to Scratchpad</a></li>
+                              </ul>
+                            </div>
+                            <h5><a href="#">Title of the article</a></h5>
+                            <div class="feed-text">
+                                Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit cras sapien odio, dictum non fermentum ac.
+                            </div>
+                        </li>
+                        <li article-id="117">
+                            <div class="feed-info">
+                                <time>01.03.2012 at 22:15:06</time>
+                            </div>
+                            <div class="dropdown dropdown-simple pull-right">
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+                              <ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
+                                <li><a href="#" class="pin-article"><i class="icon-pin"></i> Pin</a></li>
+                                <li><a href="#"><i class="icon-plus-sign"></i> Add to Scratchpad</a></li>
+                              </ul>
+                            </div>
+                            <h5><a href="#">Temporibus autem quibusdam officiis</a></h5>
+                            <div class="feed-text">
+                                Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit cras sapien odio, dictum non fermentum ac.
+                            </div>
+                        </li>
+                        <li article-id="118">
+                            <div class="feed-info">
+                                <time>01.03.2012 at 22:15:06</time>
+                            </div>
+                            <div class="dropdown dropdown-simple pull-right">
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+                              <ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
+                                <li><a href="#" class="pin-article"><i class="icon-pin"></i> Pin</a></li>
+                                <li><a href="#"><i class="icon-plus-sign"></i> Add to Scratchpad</a></li>
+                              </ul>
+                            </div>
+                            <h5><a href="#">Title of the article</a></h5>
+                            <div class="feed-text">
+                                Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit cras sapien odio, dictum non fermentum ac.
+                            </div>
+                        </li>
+                        <li article-id="119">
+                            <div class="feed-info">
+                                <time>01.03.2012 at 22:15:06</time>
+                            </div>
+                            <div class="dropdown dropdown-simple pull-right">
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+                              <ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
+                                <li><a href="#" class="pin-article"><i class="icon-pin"></i> Pin</a></li>
+                                <li><a href="#"><i class="icon-plus-sign"></i> Add to Scratchpad</a></li>
+                              </ul>
+                            </div>
+                            <h5><a href="#">Temporibus autem quibusdam officiis</a></h5>
+                            <div class="feed-text">
+                                Cras sapien odio, dictum non fermentum ac, tristique nec nisi. Curabitur in placerat nibh. Maecenas pretium sem nunc. Lorem ipsum dolor sit amet, consectetur adipiscing elit cras sapien odio, dictum non fermentum ac.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tabslide archive-single-view">
+                    <header class="shadow-target" shadow-id="3">
+                        <a class="btn" id="back-to-archive-list"><i class="icon-chevron-left"></i> Back to list</a>
+                        <a class="btn pull-right" ><i class="icon-expand"></i></a>
+                    </header>
+                    <article class="shadow-source" shadow-id="3">
+                        <div class="archive-article-info">
+                            <time>01.03.2013.</time>
+                            <span class="author">by John Doe<span>
+                        </div>
+                        <h2>Die Schweizer haben Lust auf mehr</h2>
+                        <h6>Die sieben Siege haben heute, wenn das Schweizer Nationalteam heute im WM-Viertelfinal in Stockholm auf Tschechien trifft, keine Bedeutung mehr (14.45 Uhr, SRF 2). Aber die Schweizer treten voller Selbstbewusstsein an. Von SI</h6>
+                        <p>Mit teilweise souveränen Auftritten begeisterte die Schweizer Eishockey-Nationalmannschaft bisher an dieser Weltmeisterschaft. Der Schwung der Siege in den ersten beiden Spielen gegen Gastgeber Schweden (3:2) und Olympiasieger Kanada (3:2 n.P.) trug die Schweizerl zu einer verblüffenden Erfolgsserie. Im ersten WM-Viertelfinal seit drei Jahren (und dem 0:1 gegen Deutschland) könnte der Höhenflug allerdings abrupt beendet werden. Der Schweiz gegen den zwölfmaligen Weltmeister Tschechien die Favoritenrolle zuzuschieben, wäre vermessen.</p>
+                        <p>Doch die erfolgreichen ersten zwölf WM-Tage lassen die Schweizer mit Zuversicht und Selbstbewusstsein in das Duell mit den Tschechen steigen. Zwar fängt das Turnier mit dem Beginn der K.o.-Phase quasi neu an und haben sich die Tschechen seit dem 2:5 gegen die Schweiz massiv gesteigert. Dennoch spricht einiges dafür, dass die Schweiz zum dritten Mal nach 1992 und 1998 die WM-Halbfinals erreicht.</p>
+                        <p><b>Von acht Viertelfinals hat die Schweiz bloss einen gewonnen</b></p>
+                        <p>Die Zahlen dieser WM sprechen für die Schweizer – obwohl sie von ihren bisher acht WM-Viertelfinals nur einen (1992/3:1 gegen Deutschland) gewinnen konnten. Sie haben mit einer Effizienz von 36 Prozent das beste Powerplay und mit einer Abwehrquote von 94,32 Prozent die besten Goalies des Turniers. Kein anderes Team hat bisher mehr Tore erzielt (29), und nur der Titelverteidiger Russland weist die bessere Schusseffizienz als die Schweizer (12,83 Prozent) aus.</p>
+                        <p>Coach Sean Simpson erwähnte noch einen anderen Pluspunkt: «Alle Spieler haben viel Eiszeit erhalten. Das macht uns unberechenbar und heisst auch, dass kräftemässig alle noch topfit sind.</p>
+                    </article>
+                </div>
+            </section>
+        </div>
+        
+        <div class="hidden-tab-container">
+
+        </div>
+        <div class="switch-article-view hide" id="switch_article_view">
+            <ul class="switch-view-tabs">
+                <li target-view="desktop" class="active-view"></li>
+                <li target-view="tablet"></li>
+                <li target-view="mobile"></li>
+                <li target-view="print"></li>
+            </ul>
+        </div>
+        
+        <article class="main-article-container" id="main-article" article-view="desktop">
+            
+            <section class="article-section">
+                <header>
+                    <span class="edit-label">Spitzmarke</span>
+                </header>
+                <div id="article-section">
+                    <p>{{ item.slugline }}</p>
+                </div>
+            </section>
+
+            <section class="article-date">
+                <p>{{ item.firstCreated }}</p>
+            </section>
+
+            <section class="article-title">
+                <header>
+                    <span class="edit-label">Kurztitel</span>
+                    <span class="edit-words-info">30 von 30 Zeichen</span>  
+                </header>
+                <div id="article-title">
+                    <p>{{ item.headline }}</p>
+                </div>
+            </section>
+
+            <section ng-repeat="content in item.contents">
+                <header>
+                    <span class="edit-label">Lead</span>
+                    <span class="edit-words-info">92 Zeichen / 15 Worter</span> 
+                </header>
+                <div ng-bind-html-unsafe="content.content|body"></div>
+            </section>
+        </article>
+
+        <div class="tablist right-tablist" tabcontent-area="right-tabpane">
+            <ul class="navigation-tabs">
+                                
+                <li tabname="chat"><a href="#chat-tab" draggable="true" control="tab" rel="tooltip" data-placement="left" data-original-title="Chat"><i class="big-icon-chat"></i><span class="badge badge-inverse hide notifications"></span><span class="badge badge-info hide config-notif">!</span></a></li>
+
+                <li tabname="editorial-comments"><a href="#editorial-tab" draggable="true" control="tab" rel="tooltip" data-placement="left" data-original-title="Editorial comments"><i class="big-icon-editorial"></i><span class="badge badge-inverse hide notifications"></span><span class="badge badge-info hide config-notif">!</span></a></li>
+
+                <li tabname="media"><a href="#media-tab" draggable="true" control="tab" rel="tooltip" data-placement="left" data-original-title="Media"><i class="big-icon-media"></i><span class="badge badge-inverse hide notifications"></span><span class="badge badge-info hide config-notif">!</span></a></li>
+
+                <li tabname="switches"><a href="#switches-tab" draggable="true" control="tab" rel="tooltip" data-placement="left" data-original-title="Switches"><i class="big-icon-switches"></i><span class="badge badge-inverse hide notifications"></span><span class="badge badge-info hide config-notif">!</span></a></li>
+
+                <li tabname="geolocation"><a href="#geolocation-tab" draggable="true" control="tab" rel="tooltip" data-placement="left" data-original-title="Geolocation"><i class="big-icon-geolocation"></i><span class="badge badge-inverse hide notifications"></span><span class="badge badge-info hide config-notif">!</span></a></li>
+
+                <li tabname="comments"><a href="#comments-tab" draggable="true" control="tab" rel="tooltip" data-placement="left" data-original-title="Comments"><i class="big-icon-comments"></i><span class="badge badge-inverse hide notifications"></span><span class="badge badge-info hide config-notif">!</span></a></li>
+
+                <li tabname="followup"><a href="#followup-tab" draggable="true" control="tab" rel="tooltip" data-placement="left" data-original-title="Followup"><i class="big-icon-followup"></i><span class="badge badge-inverse hide notifications"></span><span class="badge badge-info hide config-notif">!</span></a></li>
+
+            </ul>
+        </div>
+        <div class="tabpane right-tabpane" >
+            <section class="tabcontent notification-tab" id="chat-tab">
+                <div class="notification-list-box">
+                    <ul class="notification-list  shadow-target shadow-source" shadow-id="5">
+                        <li >
+                            <figure class="notification-avatar"></figure>
+                            <div class="notification-content">
+                                <p class="notification-text"><b>Michael White</b> sent article <i>“Two Nigels don't 
+make a right on Europe”</i> to review</p>
+                                <span class="notification-info">Today at 12:45</span>
+                            </div>
+                        </li>
+                        <li>
+                            <figure class="notification-avatar"></figure>
+                            <div class="notification-content">
+                                <p class="notification-text"><b>John Doe</b> finished article <i>“Europe car sales 
+break losing streak”</i></p>
+                                <span class="notification-info">Today at 12:39</span>
+                            </div>
+                        </li>
+                        <li class="important">
+                            <figure class="notification-avatar"></figure>
+                            <div class="notification-content">
+                                <p class="notification-text"><b>Editor:</b> guys, we have to get this out before 
+14:00 </p>
+                                <span class="notification-info">Today at 13:05</span>
+                            </div>
+                        </li>
+                        <li class="personal">
+                            <figure class="notification-avatar"></figure>
+                            <div class="notification-content">
+                                <p class="notification-text"><b>Editor:</b> OK, good news. We just got another 
+hour, so 15:00 at latest</p>
+                                <span class="notification-info">Today at 13:15</span>
+                            </div>
+                        </li>
+                        <li>
+                            <figure class="notification-avatar"></figure>
+                            <div class="notification-content">
+                                <p class="notification-text"><b>David Bauer</b> aproved images for article <i>“Ganz besonders, 
+diese Elsässer”</i></p>
+                                <span class="notification-info">Today at 13:19</span>
+                            </div>
+                        </li>
+                        <li>
+                            <figure class="notification-avatar"></figure>
+                            <div class="notification-content">
+                                <p class="notification-text"><b>David Bauer</b> aproved article <i>“Ganz besonders, 
+diese Elsässer”</i></p>
+                                <span class="notification-info">Today at 13:42</span>
+                            </div>
+                        </li>
+
+                        
+                    </ul>
+                </div>
+                <div class="notification-write-box">
+                    <textarea class="notification-writer" placeholder="Post a notification"></textarea>
+                    <div class="notification-important">
+                        <i class="icon-info-sign"></i>
+                    </div>
+                    <div class="button-area clearfix">
+                        <div class="btn-group dropup pull-left">
+                            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                              Culture desk
+                              <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu sf-dropdown">
+                              <li><a href="index.html">All desks</a></li>
+                              <li><a href="#">Politics desk</a></li>
+                              <li><a href="#">Sport desk</a></li>
+                              <li><a href="#">Scheduling desk</a></li>
+                            </ul>
+                        </div>
+                        <a class="btn btn-info pull-right send-notif">Send</a>
+                        <a class="btn pull-right cancel-notif">Cancel</a>
+                    </div>
+                </div>
+            </section>
+            <section class="tabcontent temptabcont" id="editorial-tab">
+                <h3>Editorial Comments Tab</h3>
+                <p>Inline editorial comments. Comments will be pegged to particular lines of text</p>
+            </section>
+            <section class="tabcontent" id="media-tab">
+                
+                <a class="btn pull-right attach-media" id="add-media" data-toggle="modal" role="button" href="#AddImage"><i class="icon-plus-sign"></i> Attach media</a>
+                <div class="media-tab">
+                    <ul class="media-items media-images" id="media-images">
+                        <li class="media-image">
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
+                                <ul class="dropdown-menu sf-dropdown-simple pull-right">
+                                  <li><a href="#"><i class="icon-eye-open"></i> View metadata</a></li>
+                                  <li><a href="#"><i class="icon-ok"></i> Place image</a></li>
+                                  <li><a href="#"><i class="icon-ban-circle"></i> Forbid</a></li>
+                                  <li><a href="#"><i class="icon-download-alt"></i> Download</a></li>
+                                  <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                                </ul>
+                            </div>
+
+                            <figure>
+                                <img src="pictures/media1.jpg" />
+                            </figure>
+
+                            
+
+                            <div class="media-description approved">
+                                Das Kleinbasel: auf der Sonnenseite des Lebens und der Stadt.
+                                <span class="size-info">2000 x 1500</span>
+                            </div>
+
+                        </li>
+
+
+                        <li class="media-image">
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
+                                <ul class="dropdown-menu sf-dropdown-simple pull-right">
+                                  <li><a href="#"><i class="icon-eye-open"></i> View metadata</a></li>
+                                  <li><a href="#"><i class="icon-ok"></i> Place image</a></li>
+                                  <li><a href="#"><i class="icon-ban-circle"></i> Forbid</a></li>
+                                  <li><a href="#"><i class="icon-download-alt"></i> Download</a></li>
+                                  <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                                </ul>
+                            </div>
+
+                            <figure>
+                                <img src="pictures/media2.jpg" />
+                            </figure>
+
+                            
+
+                            <div class="media-description approved">
+                                Das Kleinbasel: auf der Sonnenseite des Lebens und der Stadt.
+                                <span class="size-info">2000 x 1500</span>
+                            </div>
+
+                        </li>
+
+                    </ul>
+
+                    <ul class="media-items media-videos" id="media-videos">
+                        <li class="media-video">
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
+                                <ul class="dropdown-menu sf-dropdown-simple pull-right">
+                                  <li><a href="#"><i class="icon-eye-open"></i> View metadata</a></li>
+                                  <li><a href="#"><i class="icon-ok"></i> Place video</a></li>
+                                  <li><a href="#"><i class="icon-ban-circle"></i> Forbid</a></li>
+                                  <li><a href="#"><i class="icon-download-alt"></i> Download</a></li>
+                                  <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                                </ul>
+                            </div>
+
+                            <figure>
+                                <img src="pictures/video1.jpg" />
+                            </figure>
+
+                            <div class="media-description approved">
+                                The Last Bison - Switzerland Real Switzerland Summer!
+                            </div>
+
+                        </li>
+
+                    </ul>
+
+                    <ul class="media-items media-sounds" id="media-sounds">
+                        <li class="media-sound">
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
+                                <ul class="dropdown-menu sf-dropdown-simple pull-right">
+                                  <li><a href="#"><i class="icon-eye-open"></i> View metadata</a></li>
+                                  <li><a href="#"><i class="icon-ok"></i> Place sound</a></li>
+                                  <li><a href="#"><i class="icon-ban-circle"></i> Forbid</a></li>
+                                  <li><a href="#"><i class="icon-download-alt"></i> Download</a></li>
+                                  <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                                </ul>
+                            </div>
+                            <div class="media-description">
+                                Lorem pid ultricies dapibus facilisis, auctor etiam proin turpis diam
+                            </div>
+                        </li>
+                        <li class="media-sound">
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
+                                <ul class="dropdown-menu sf-dropdown-simple pull-right">
+                                  <li><a href="#"><i class="icon-eye-open"></i> View metadata</a></li>
+                                  <li><a href="#"><i class="icon-ok"></i> Place sound</a></li>
+                                  <li><a href="#"><i class="icon-ban-circle"></i> Forbid</a></li>
+                                  <li><a href="#"><i class="icon-download-alt"></i> Download</a></li>
+                                  <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                                </ul>
+                            </div>
+                            <div class="media-description">
+                                Vel et adipiscing vut! Massa et dis et arcu purus penatibus augue
+                            </div>
+                        </li>
+
+                    </ul>
+
+                    <ul class="media-items media-files" id="media-files">
+                        <li class="media-file">
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
+                                <ul class="dropdown-menu sf-dropdown-simple pull-right">
+                                  <li><a href="#"><i class="icon-eye-open"></i> View metadata</a></li>
+                                  <li><a href="#"><i class="icon-ok"></i> Place sound</a></li>
+                                  <li><a href="#"><i class="icon-ban-circle"></i> Forbid</a></li>
+                                  <li><a href="#"><i class="icon-download-alt"></i> Download</a></li>
+                                  <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                                </ul>
+                            </div>
+                            <div class="media-description">
+                                Lorem pid ultricies dapibus (PDF, 500kb)
+                            </div>
+                        </li>
+
+                        <li class="media-file">
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
+                                <ul class="dropdown-menu sf-dropdown-simple pull-right">
+                                  <li><a href="#"><i class="icon-eye-open"></i> View metadata</a></li>
+                                  <li><a href="#"><i class="icon-ok"></i> Place sound</a></li>
+                                  <li><a href="#"><i class="icon-ban-circle"></i> Forbid</a></li>
+                                  <li><a href="#"><i class="icon-download-alt"></i> Download</a></li>
+                                  <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                                </ul>
+                            </div>
+                            <div class="media-description">
+                                Elementum, mattis dapibus (PDF, 340kb)
+                            </div>
+                        </li>
+                        
+
+                    </ul>
+
+
+
+
+                </div>
+            </section>
+            <section class="tabcontent" id="switches-tab">
+                <div class="switches-tab">
+                    <div class="tabmodule tabmodule-open">
+                        <div class="tabmodule-header">
+                            <i class="icon-chevron-down toggle-module-close"></i>
+                            <i class="icon-chevron-right toggle-module-open"></i>
+                            <span class="tabmodule-title">Target outputs</span>
+                        </div>
+                        <div class="tabmodule-content">
+                            <ul class="selectionlist">
+                                <li > Web <input type="checkbox" class="sf-toggle on-off" ></li>
+                                <li > Tablet <input type="checkbox" class="sf-toggle on-off" checked="checked"></li>
+                                <li > Mobile <input type="checkbox" class="sf-toggle on-off" ></li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tabmodule  tabmodule-open">
+                        <div class="tabmodule-header">
+                            <i class="icon-chevron-down toggle-module-close"></i>
+                            <i class="icon-chevron-right toggle-module-open"></i>
+                            <span class="tabmodule-title">Switches</span>
+                        </div>
+                        <div class="tabmodule-content">
+                            <ul class="checklist-selection">
+                                <li><input type="checkbox" class="sf-checkbox" checked="checked"> Artikel des Tages </li>
+                                <li><input type="checkbox" class="sf-checkbox"> Teaser mit Karte auf Startseite </li>
+                                <li><input type="checkbox" class="sf-checkbox"> Print </li>
+                                <li><input type="checkbox" class="sf-checkbox" checked="checked"> Artikelbild ausblenden</li>
+                                <li><input type="checkbox" class="sf-checkbox"> full_width_element </li>
+                                <li><input type="checkbox" class="sf-checkbox"> iPad - prominent </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="tabcontent temptabcont" id="geolocation-tab">
+                <h3>Geolocation Tab</h3>
+                <p>Geolocation interface</p>
+            </section>
+            <section class="tabcontent temptabcont" id="comments-tab">
+                <h3>Comments Tab</h3>
+                <p>Displays reader’s comments/feedback, if available</p>
+            </section>
+            <section class="tabcontent temptabcont" id="followup-tab">
+                <h3>Follow Up Tab</h3>
+                <p>Add article follow up to the Forward Planning calendar</p>
+            </section>
+        </div>
+
+
+        <div class="scratchpad mobile-hide">
+            <div class="header opened">
+                <div class="title">SCRATCHPAD</div>
+                <div class="info"><span class="badge">3</span>files</div>
+                <a class="scratchpad-openclose pull-right" href="#"></a>   
+                <div class="btn-group dropup pull-right">
+                  <button class="btn">Options</button>
+                  <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                  <ul class="dropdown-menu pull-right">
+                    <li><a href="#">Save as Collection</a></li>
+                    <li><a href="#">Save as Playlist</a></li>
+                    <li><a href="#">Create Slideshow</a></li>
+                    <li><a id="clear-scratchpad-content" href="#">Clear all</a></li>
+                  </ul>
+                </div>
+            </div>
+            <div class="content" style="display:none;">
+
+                <div class="image media-box-scratchpad" boxid="177">
+                    <figure>
+                        <img src="pictures/scratch1.jpg">
+                        <div class="media-box-button top right"><a href="#"><i class="icon-close-small"></i></a></div>
+                     </figure>
+                    <div class="media-info">
+                        <h5>Austria</h5>
+                        <dl>
+                            <dt>Source</dt><dd>AFP</dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="image media-box-scratchpad" boxid="177">
+                    <figure>
+                        <img src="pictures/scratch2.jpg">
+                        <div class="media-box-button top right"><a href="#"><i class="icon-close-small"></i></a></div>
+                    </figure>
+                    <div class="media-info">
+                        <h5>Beautifull landscapes</h5>
+                        <dl>
+                            <dt>Source</dt><dd>Reuters</dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="image media-box-scratchpad" boxid="177">
+                    <figure>
+                        <img src="pictures/scratch3.jpg">
+                        <div class="media-box-button top right"><a href="#"><i class="icon-close-small"></i></a></div>
+                    </figure>
+                    <div class="media-info">
+                        <h5>Lakes in Austria</h5>
+                        <dl>
+                            <dt>Source</dt><dd>AFP</dd>
+                        </dl>
+                    </div>
+                </div>
+        
+            </div>
+        </div>
