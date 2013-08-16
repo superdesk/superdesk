@@ -7,6 +7,9 @@ def test():
     with shell_env(MONGOHQ_URL=TEST_DB):
         local('lettuce')
 
+def upgrade():
+    local('pip install -r requirements.txt --upgrade')
+
 def manage():
     local('python manage.py')
 
