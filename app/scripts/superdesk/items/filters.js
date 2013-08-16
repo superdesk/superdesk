@@ -1,4 +1,7 @@
-define(['jquery', 'angular'], function($, angular) {
+define([
+    'jquery',
+    'angular'
+], function($, angular) {
     angular.module('superdesk.items.filters', []).
         filter('body', function() {
             return function(content) {

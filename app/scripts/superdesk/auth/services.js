@@ -1,4 +1,7 @@
-define(['angular'], function(angular) {
+define([
+    'angular',
+    'superdesk/api'
+], function(angular) {
     'use strict';
 
     function prefixKey(key) {
@@ -28,11 +31,9 @@ define(['angular'], function(angular) {
         }
     }
 
-    angular.module('superdesk.auth.services', []).
-        factory('Auth', function($http) {
-            return function(data) {
-                return $http.post(config.api_url + '/auth', data);
-            };
+    angular.module('superdesk.auth.services', ['superdesk.api']).
+        factory('Auth', function(resource) {
+            return resource('/auth');
         }).
         service('authService', function($rootScope, $http, $q, Auth) {
             /**
@@ -51,11 +52,12 @@ define(['angular'], function(angular) {
                 }
 
                 var self = this;
-                Auth({username: username, password: password}).
-                    then(function(response) {
-                        self.setSessionData(response.data, rememberMe);
+                Auth.save(
+                    {username: username, password: password},
+                    function(response) {
+                        self.setSessionData(response, rememberMe);
                         $rootScope.$broadcast('auth.login');
-                        delay.resolve(response.data);
+                        delay.resolve(response);
                     }, function(response) {
                         delay.reject(response);
                     });

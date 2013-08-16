@@ -1,9 +1,9 @@
 define([
-    'angular',
     'jquery',
-    'bootstrap/bootstrap-modal',
-    'superdesk/auth/services'
-], function(angular, $) {
+    'angular',
+    'superdesk/auth/services',
+    'bootstrap/bootstrap-modal'
+], function($, angular) {
     'use strict';
 
     angular.module('superdesk.auth.directives', ['superdesk.auth.services']).

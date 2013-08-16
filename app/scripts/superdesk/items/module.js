@@ -1,13 +1,14 @@
 define([
     'angular',
+    'angular-route',
     './controllers/list',
     './controllers/edit',
     './resources',
-    './filters'
+    './directives'
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.items', ['superdesk.items.resources', 'superdesk.items.filters']).
+    angular.module('superdesk.items', ['ngRoute', 'superdesk.items.resources', 'superdesk.items.directives']).
         config(function($routeProvider) {
             $routeProvider.
                 when('/items/:guid', {

@@ -1,32 +1,42 @@
-define(['angular'], function(angular) {
+define([
+    'angular',
+    'superdesk/api'
+], function(angular) {
     'use strict';
 
-    function apiUrl() {
-        var args = Array.prototype.slice.call(arguments);
-        return config.api_url + args.join('/') + '/';
-    }
-
-    angular.module('superdesk.items.resources', ['superdesk.auth.services']).
-        factory('ItemsLoader', function($q, $http) {
-            return function() {
+    angular.module('superdesk.items.resources', ['superdesk.api', 'superdesk.auth.services']).
+        factory('ItemResource', function(resource) {
+            return resource('/items', null, {
+                query: {method: 'GET', isArray: false},
+                get: {method: 'GET', url: '/items/:guid'}
+            });
+        }).
+        factory('ItemListLoader', function($q, ItemResource) {
+            return function(params) {
                 var delay = $q.defer();
-                $http.get(apiUrl('items'), {params: {sort: '[("firstCreated", -1)]'}}).
-                    then(function(response) {
-                        delay.resolve(response.data._items);
+                ItemResource.query(params,
+                    function(response) {
+                        delay.resolve(response._items);
+                    },
+                    function(response) {
+                        delay.reject(response);
                     });
                 return delay.promise;
             };
         }).
-        factory('ItemLoader', function($q, $http, $route) {
+        factory('ItemLoader', function($q, $route, ItemResource) {
             return function(guid) {
                 if (typeof guid === 'undefined' && 'guid' in $route.current.params) {
                     guid = $route.current.params.guid;
                 }
 
                 var delay = $q.defer();
-                $http.get(apiUrl('items', guid)).
-                    then(function(response) {
-                        delay.resolve(response.data);
+                ItemResource.get({guid: guid},
+                    function(response) {
+                        delay.resolve(response);
+                    },
+                    function(response) {
+                        delay.reject(response);
                     });
                 return delay.promise;
             };
