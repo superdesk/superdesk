@@ -28,7 +28,7 @@ class AuthException(Exception):
 app = eve.Eve(auth=Auth, settings=os.path.join(os.path.dirname(__file__), 'settings.py'))
 app.on_getting += items_get
 
-@app.route('/auth', methods=['POST', 'OPTIONS'])
+@app.route('/auth/', methods=['POST', 'OPTIONS'])
 @crossdomain('*', headers=['X-Requested-With', 'Content-Type'])
 def auth():
     try:
