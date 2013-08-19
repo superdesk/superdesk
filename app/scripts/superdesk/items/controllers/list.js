@@ -7,7 +7,7 @@ define(['angular'], function(angular) {
         $scope.params = {
             sort: '[("firstCreated", -1)]',
             where: {itemClass: TEXT_CLASS},
-            page: 1
+            page: 0
         };
 
         $scope.fetch = function(options) {
@@ -19,12 +19,12 @@ define(['angular'], function(angular) {
         	if (query) {
         		$scope.fetch({
         			where: {headline: /query/, itemClass: TEXT_CLASS},
-        			page: 1
+        			page: 0
         		});
         	} else {
         		$scope.fetch({
         			where: {itemClass: TEXT_CLASS},
-        			page: 1
+        			page: 0
         		});
         	}
         };
