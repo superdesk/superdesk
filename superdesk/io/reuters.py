@@ -45,11 +45,9 @@ class Service(object):
                 items = self.get_items(guid)
                 items.reverse()
                 for item in items:
-                    old = db.items.find_one({'guid': item['guid']})
-                    if old and old['version'] < item['version']:
-                        db.items.remove(old)
-                    elif old:
-                        continue
+                    old = db.items.find_one({'guid': item['guid']}, fields=["_id"])
+                    if old:
+                        item['_id'] = old.get('_id')
                     self.fetch_assets(item, config)
                     db.items.save(item)
 
