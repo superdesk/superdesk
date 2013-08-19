@@ -9,6 +9,19 @@ import urllib
 
 import superdesk.io.newsml as newsml
 
+def get_last_updated(items):
+    item = items.find_one(fields=['versionCreated'], sort=[('versionCreated', -1)])
+    if item:
+        return item.get('versionCreated')
+
+class UTCZone(datetime.tzinfo):
+
+    def utcoffset(self, dt):
+        return datetime.timedelta(0)
+
+    def dst(self, dt):
+        return datetime.timedelta(0)
+
 class Service(object):
     """Update Service"""
 
@@ -22,8 +35,8 @@ class Service(object):
     def update(self, db, config):
         """Service update call."""
 
-        updated = datetime.datetime.utcnow()
-        last_updated = None
+        updated = datetime.datetime.now(tz=UTCZone())
+        last_updated = get_last_updated(db.items)
         if not last_updated or last_updated < updated + datetime.timedelta(days=-7):
             last_updated = updated + datetime.timedelta(hours=-1) # last 1h
 
