@@ -1,11 +1,11 @@
   <div class="subnav subnav-fixed">
-    <input type="text" name="searchbar" class="searchbar-container" style="width:500px;">
+    <input type="text" name="searchbar" class="searchbar-container" style="width:500px;" ng-model="query" ng-change="search(query)">
     <a class="btn btn-medium btn-info pull-right" href="#"><span class="medium-icon-add"></span> Add New Article</a>
   </div>
 
    <div class="subnav subnav-level2 subnav-fixed">
       <div class="btn-toolbar">
-        <div class="btn-group">
+        <div class="btn-group" ng-show>
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
               Multiple actions
               <span class="caret"></span>
@@ -22,7 +22,7 @@
 
        
         
-        <div class="btn-group pull-right" style="margin-left:20px;">
+        <div class="btn-group pull-right" style="margin-left:20px;" ng-show>
           <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-settings"></i> <span class="caret"></span></a>
 
             <ul class="dropdown-menu sf-dropdown sf-dropdown-right">
@@ -38,11 +38,11 @@
         </div>
 
          <div class="btn-group pull-right" style="margin-left:20px;">
-            <a class="btn"><i class="icon-chevron-left"></i></a>
-            <a class="btn"><i class="icon-chevron-right"></i></a>
+            <button class="btn" ng-disabled="!items.links.prev" ng-click="fetch({page: params.page - 1})"><i class="icon-chevron-left"></i></button>
+            <button class="btn" ng-disabled="!items.links.next" ng-click="fetch({page: params.page + 1})"><i class="icon-chevron-right"></i></button>
         </div>
 
-        <div class="page-info pull-right">
+        <div class="page-info pull-right" ng-show>
             Page <input type="text" value="1"/> of 103
         </div>
 

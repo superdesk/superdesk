@@ -16,7 +16,9 @@ define([
                 var delay = $q.defer();
                 ItemResource.query(params,
                     function(response) {
-                        delay.resolve(response._items);
+                        var items = response._items;
+                        items.links = response._links;
+                        delay.resolve(items);
                     },
                     function(response) {
                         delay.reject(response);
