@@ -13,7 +13,7 @@ def create_user(data):
         return world.user
 
 def get_auth_token():
-    response = world.app.post('/auth', data=json.dumps(world.user), headers=[('Content-Type', 'application/json')])
+    response = world.app.post('/auth/', data=json.dumps(world.user), headers=[('Content-Type', 'application/json')])
     data = json.loads(response.get_data())
     return data.get('token')
 
@@ -64,7 +64,7 @@ def have_bad_password(step):
 @step('I send auth request')
 def send_auth_request(step):
     world.credentials.pop('_id', None)
-    world.response = world.app.post('/auth', data=json.dumps(world.credentials), headers=[('Content-Type', 'application/json')])
+    world.response = world.app.post('/auth/', data=json.dumps(world.credentials), headers=[('Content-Type', 'application/json')])
 
 @step('I get status code (\d+)')
 def get_response_with_code(step, expected_code):

@@ -1,6 +1,6 @@
-Eve
 Flask
 Flask-Script
 requests
 lettuce
 fabric
+Eve
