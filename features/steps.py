@@ -4,12 +4,12 @@ from lettuce import *
 from flask import json
 
 from app import app
+import superdesk.users
 
 def create_user(data):
     with app.test_request_context():
         world.user = data
-        app.data.driver.db.users.insert(data)
-        world.user.pop('_id', None)
+        superdesk.users.create_user(**data)
         return world.user
 
 def get_auth_token():

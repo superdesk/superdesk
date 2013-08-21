@@ -3,7 +3,6 @@ import os
 import flask
 import eve
 
-import settings
 from superdesk import utils
 from decorators import crossdomain
 
@@ -13,7 +12,7 @@ def items_get(resource, documents):
         if 'contents' in doc:
             for content in doc['contents']:
                 try:
-                    content['url'] = settings.MEDIA_URL + content['storage']
+                    content['url'] = app.config.get('MEDIA_URL') + content['storage']
                 except KeyError:
                     pass
 

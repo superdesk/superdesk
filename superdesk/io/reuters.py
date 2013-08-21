@@ -7,7 +7,7 @@ import traceback
 import datetime
 import urllib
 
-import superdesk.io.newsml as newsml
+import newsml
 
 def get_last_updated(items):
     item = items.find_one(fields=['versionCreated'], sort=[('versionCreated', -1)])
@@ -60,7 +60,7 @@ class Service(object):
         for content in item['contents']:
             if 'residRef' in content and content['rendition'] in ['rend:viewImage']:
                 url = "%s?token=%s" % (content['href'], self.token)
-                filename, headers = urllib.urlretrieve(url, os.path.join(config.MEDIA_ROOT, content['residRef']))
+                filename, headers = urllib.urlretrieve(url, os.path.join(config.get('MEDIA_ROOT'), content['residRef']))
                 content['storage'] = os.path.basename(filename)
 
     def get_items(self, guid):
