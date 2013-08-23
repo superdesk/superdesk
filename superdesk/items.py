@@ -22,14 +22,23 @@ class ItemListResource(api.Resource):
 
     @auth_required
     def post(self):
-        pass
+        data = request.get_json()
+        mongo.db.items.save(data)
+        return data, 201
 
 class ItemResource(api.Resource):
 
+    def _get_item(self, guid):
+        return mongo.db.items.find_one_or_404({'guid': guid})
+
     @auth_required
     def get(self, guid):
-        item = mongo.db.items.find_one({'guid': guid})
-        if item:
-            return format_item(item)
-        else:
-            return {'message': "item not found", 'code': 404}, 404
+        item = self._get_item(guid)
+        return format_item(item)
+
+    @auth_required
+    def put(self, guid):
+        data = request.get_json()
+        data.pop('_id', None)
+        mongo.db.items.update({'guid': guid}, {'$set': data})
+        return self.get(guid)

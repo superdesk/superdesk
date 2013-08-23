@@ -109,11 +109,31 @@ def get_empty_list(step):
 @step('I post item')
 def post_item(step):
     data = {
-        'item': {
-            'guid': 'test',
-            'headline': 'test',
-        },
+        'guid': 'abc',
+        'headline': 'test',
     }
     world.headers.append(('Content-Type', 'application/json'))
     world.response = world.app.post('/items', headers=world.headers, data=json.dumps(data))
+
+@step('I get item guid')
+def get_item_guid(step):
+    data = world.response.get_data()
+    assert 'guid' in data, data
+
+@step('I have an item')
+def have_an_item(step):
+    post_item(step)
+    world.item = json.loads(world.response.get_data())
+
+@step('I update item')
+def update_an_item(step):
+    world.item['headline'] = 'another test'
+    world.item['slugline'] = 'TEST'
+    world.response = world.app.put('/items/' + world.item.get('guid'), headers=world.headers, data=json.dumps(world.item))
+
+@step('I get updated item')
+def get_updated_item(step):
+    assert world.response.status_code == 200, world.response.status_code
+    item = json.loads(world.response.get_data())
+    assert item == world.item, item
 
