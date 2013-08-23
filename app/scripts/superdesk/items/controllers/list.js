@@ -2,6 +2,8 @@ define(['angular'], function(angular) {
     'use strict';
 
     var TEXT_CLASS = 'icls:text';
+    var STORAGE_KEY = 'items.list';
+    var storage = sessionStorage;
 
     return function($scope, ItemListLoader) {
         $scope.params = {
@@ -13,6 +15,7 @@ define(['angular'], function(angular) {
 
         $scope.fetch = function(options) {
         	angular.extend($scope.params, options);
+            storage.setItem(STORAGE_KEY, angular.toJson($scope.params));
         	$scope.items = ItemListLoader($scope.params);
         };
 
@@ -43,6 +46,11 @@ define(['angular'], function(angular) {
         	}
         };
 
-        $scope.fetch();
+        if (storage.hasOwnProperty(STORAGE_KEY)) {
+            var options = angular.fromJson(storage.getItem(STORAGE_KEY));
+            $scope.fetch(options);
+        } else {
+            $scope.fetch();
+        }
     };
 });
