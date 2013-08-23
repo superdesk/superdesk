@@ -3,7 +3,8 @@ import base64
 from lettuce import *
 from flask import json
 
-from app import app
+from superdesk import app, mongo
+
 import superdesk.users
 
 def create_user(data):
@@ -13,13 +14,14 @@ def create_user(data):
         return world.user
 
 def get_auth_token():
-    response = world.app.post('/auth/', data=json.dumps(world.user), headers=[('Content-Type', 'application/json')])
+    response = world.app.post('/auth', data=json.dumps(world.user), headers=[('Content-Type', 'application/json')])
     data = json.loads(response.get_data())
     return data.get('token')
 
 @before.all
 def setup_all():
     app.config['TESTING'] = True
+    app.config['DEBUG'] = True
     world.app = app.test_client()
 
 @before.each_scenario
@@ -29,8 +31,8 @@ def setup(scenario):
 @after.each_scenario
 def teardown(scenario):
     with app.test_request_context():
-        app.data.driver.db.users.drop()
-        app.data.driver.db.items.drop()
+        mongo.db.users.drop()
+        mongo.db.items.drop()
 
 @step('I have no credentials')
 def have_no_credentials(step):
@@ -64,7 +66,7 @@ def have_bad_password(step):
 @step('I send auth request')
 def send_auth_request(step):
     world.credentials.pop('_id', None)
-    world.response = world.app.post('/auth/', data=json.dumps(world.credentials), headers=[('Content-Type', 'application/json')])
+    world.response = world.app.post('/auth', data=json.dumps(world.credentials), headers=[('Content-Type', 'application/json')])
 
 @step('I get status code (\d+)')
 def get_response_with_code(step, expected_code):
@@ -101,7 +103,7 @@ def get_url(step, url):
 @step('I get empty list')
 def get_empty_list(step):
     data = json.loads(world.response.get_data())
-    assert len(data.get('_items')) == 0, \
+    assert len(data.get('items')) == 0, \
         "Got %s" % world.response.get_data()
 
 @step('I post item')
@@ -113,5 +115,5 @@ def post_item(step):
         },
     }
     world.headers.append(('Content-Type', 'application/json'))
-    world.response = world.app.post('/items/', headers=world.headers, data=json.dumps(data))
+    world.response = world.app.post('/items', headers=world.headers, data=json.dumps(data))
 

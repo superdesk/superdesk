@@ -102,7 +102,13 @@ class Parser():
         etree.register_namespace('', 'http://www.w3.org/1999/xhtml')
         content = {}
         content['contenttype'] = tree.attrib['contenttype']
-        content['content'] = etree.tostring(html).decode('utf-8')
+
+        body = html[1]
+        elements = []
+        for element in body:
+            if element.text:
+                elements.append('<p>' + element.text.decode('utf-8') + '</p>')
+        content['content'] = "\n".join(elements)
         return content
 
     def parse_remote_content(self, tree):

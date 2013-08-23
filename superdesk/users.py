@@ -1,6 +1,6 @@
 """Superdesk Users"""
 
-from app import app
+from superdesk import mongo
 
 class EmptyUsernameException(Exception):
     def __str__(self):
@@ -15,10 +15,10 @@ def create_user(username, password=None):
     if not username:
         raise EmptyUsernameException()
 
-    if app.data.driver.db.users.find_one({'username': username}):
+    if mongo.db.users.find_one({'username': username}):
         raise ConflictUsernameException()
 
-    return app.data.driver.db.users.insert({'username': username, 'password': password})
+    return mongo.db.users.insert({'username': username, 'password': password})
 
 def get_token(user):
     token = AuthToken(token=utils.get_random_string(40), user=user)

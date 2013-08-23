@@ -5,8 +5,7 @@ import xml.etree.ElementTree as etree
 
 import unittest
 
-import superdesk.models as models
-import superdesk.io.newsml as newsml
+import newsml
 
 class ItemTest(unittest.TestCase):
 
@@ -22,72 +21,75 @@ class TextParserTest(ItemTest):
         self.setUpFixture('text.xml')
 
     def test_instance(self):
-        self.assertTrue(isinstance(self.item, models.Item))
+        self.assertTrue(self.item)
 
     def test_parse_id(self):
-        self.assertEquals("tag:reuters.com,0000:newsml_L4N0BT5PJ", self.item.guid)
-        self.assertEquals(263518268, self.item.version)
+        self.assertEquals("tag:reuters.com,0000:newsml_L4N0BT5PJ", self.item.get('guid'))
+        self.assertEquals(263518268, self.item.get('version'))
 
     def test_parse_item_meta(self):
-        self.assertEquals("icls:text", self.item.itemClass)
-        self.assertEquals("reuters.com", self.item.provider)
-        self.assertEquals("2013-03-01T15:09:04", self.item.versionCreated.isoformat())
-        self.assertEquals("2013-03-01T15:09:04", self.item.firstCreated.isoformat())
+        self.assertEquals("icls:text", self.item.get('itemClass'))
+        self.assertEquals("reuters.com", self.item.get('provider'))
+        self.assertEquals("2013-03-01T15:09:04", self.item.get('versionCreated').isoformat())
+        self.assertEquals("2013-03-01T15:09:04", self.item.get('firstCreated').isoformat())
 
     def test_parse_content_meta(self):
-        self.assertEquals("3", self.item.urgency)
+        self.assertEquals("3", self.item.get('urgency'))
         self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ", self.item["slugline"])
         self.assertEquals("Soccer-Smiling Benitez pleads for support after midweek outburst", self.item["headline"])
         self.assertEquals("Reuters", self.item["creditline"])
-        self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ:Soccer-Smiling Benitez pleads for support after midweek outburst", self.item.description)
+        self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ:Soccer-Smiling Benitez pleads for support after midweek outburst", self.item.get('description'))
 
     def test_parse_rights_info(self):
-        self.assertEquals("Thomson Reuters", self.item.copyrightHolder)
-        self.assertEquals("(c) Copyright Thomson Reuters 2013. Click For Restrictions - http://about.reuters.com/fulllegal.asp", self.item.copyrightNotice)
+        self.assertEquals("Thomson Reuters", self.item.get('copyrightHolder'))
+        self.assertEquals("(c) Copyright Thomson Reuters 2013. Click For Restrictions - http://about.reuters.com/fulllegal.asp", self.item.get('copyrightNotice'))
 
     def test_content_set(self):
         content = self.item['contents'][0]
-        self.assertTrue(isinstance(content, models.Content))
-        self.assertEquals("application/xhtml+html", content.contenttype)
-        self.assertIn("<p>By Toby Davis</p>", content.content)
+        self.assertTrue(content)
+        self.assertEquals("application/xhtml+html", content.get('contenttype'))
+        self.assertEquals("<p>By Toby Davis</p>", content.get('content'))
 
 class PictureParserTest(ItemTest):
     def setUp(self):
         self.setUpFixture('picture.xml')
 
     def test_content_set(self):
-        self.assertEquals(3, len(self.item.contents))
+        self.assertEquals(3, len(self.item.get('contents')))
 
-        remote = self.item.contents[0]
-        self.assertTrue(isinstance(remote, models.Content))
-        self.assertEquals("tag:reuters.com,0000:binary_GM1E9341HD701-BASEIMAGE", remote.residRef)
-        self.assertEquals(772617, remote.size)
-        self.assertEquals("rend:baseImage", remote.rendition)
-        self.assertEquals("image/jpeg", remote.contenttype)
-        self.assertEquals("http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1E9341HD701:360624134/tag:reuters.com,0000:binary_GM1E9341HD701-BASEIMAGE", remote.href)
+        remote = self.item.get('contents')[0]
+        self.assertTrue(remote)
+        self.assertEquals("tag:reuters.com,0000:binary_GM1E9341HD701-BASEIMAGE", remote.get('residRef'))
+        self.assertEquals(772617, remote.get('size'))
+        self.assertEquals("rend:baseImage", remote.get('rendition'))
+        self.assertEquals("image/jpeg", remote.get('contenttype'))
+        self.assertEquals("http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1E9341HD701:360624134/tag:reuters.com,0000:binary_GM1E9341HD701-BASEIMAGE", remote.get('href'))
 
 class SNEPParserTest(ItemTest):
     def setUp(self):
         self.setUpFixture('snep.xml')
 
     def test_content_set(self):
-        self.assertEquals(2, len(self.item.groups))
+        self.assertEquals(2, len(self.item.get('groups')))
 
-        group = self.item.groups[0]
-        self.assertTrue(isinstance(group, models.Group))
-        self.assertEquals("root", group.id)
-        self.assertEquals("grpRole:SNEP", group.role)
-        self.assertEquals(1, len(group.refs))
-        self.assertEquals("main", group.refs[0].idRef)
+        group = self.item.get('groups')[0]
+        self.assertTrue(group)
+        self.assertEquals("root", group.get('id'))
+        self.assertEquals("grpRole:SNEP", group.get('role'))
+        self.assertEquals(1, len(group.get('refs')))
+        self.assertEquals("main", group.get('refs')[0].get('idRef'))
 
-        group = self.item.groups[1]
-        self.assertEquals(10, len(group.refs))
-        self.assertEquals("main", group.id)
+        group = self.item.get('groups')[1]
+        self.assertEquals(10, len(group.get('refs')))
+        self.assertEquals("main", group.get('id'))
 
-        ref = group.refs[0]
-        self.assertTrue(isinstance(ref, models.Ref))
-        self.assertEquals("tag:reuters.com,0000:newsml_BRE9220HA", ref.residRef)
-        self.assertEquals("application/vnd.iptc.g2.packageitem+xml", ref.contentType)
-        self.assertEquals("icls:composite", ref.itemClass)
-        self.assertEquals("reuters.com", ref.provider)
-        self.assertEquals("At least 15 killed on Kenya coast on election day", ref.headline)
+        ref = group.get('refs')[0]
+        self.assertTrue(ref)
+        self.assertEquals("tag:reuters.com,0000:newsml_BRE9220HA", ref.get('residRef'))
+        self.assertEquals("application/vnd.iptc.g2.packageitem+xml", ref.get('contentType'))
+        self.assertEquals("icls:composite", ref.get('itemClass'))
+        self.assertEquals("reuters.com", ref.get('provider'))
+        self.assertEquals("At least 15 killed on Kenya coast on election day", ref.get('headline'))
+
+if __name__ == '__main__':
+    unittest.main()

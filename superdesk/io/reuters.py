@@ -103,13 +103,11 @@ class Service(object):
             response = requests.get(url, params=payload, timeout=5.0)
         except Exception as error:
             traceback.print_exc()
-            print(url, payload)
             raise error
 
         try:
             return etree.fromstring(response.text.encode('utf-8'))
         except UnicodeEncodeError as error:
-            print(response.text.encode('utf-8'))
             traceback.print_exc()
             raise error
 

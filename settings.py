@@ -21,4 +21,4 @@ DOMAIN = {
 }
 
 X_DOMAINS = ['*']
-X_HEADERS = ['X-Requested-With', 'Authorization']
+X_HEADERS = ['X-Requested-With', 'Authorization', 'Content-Type', 'If-Match', 'X-HTTP-Method-Override']
