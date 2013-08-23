@@ -6,9 +6,10 @@ define([
 
     angular.module('superdesk.items.resources', ['superdesk.api', 'superdesk.auth.services']).
         factory('ItemResource', function(resource) {
-            return resource('/items', {guid: '@_id'}, {
+            return resource('/items/:guid', {guid: '@guid'}, {
                 query: {method: 'GET', isArray: false},
-                get: {method: 'GET', url: '/items/:guid'}
+                get: {method: 'GET'},
+                update: {method: 'PUT'}
             });
         }).
         factory('ItemListLoader', function($q, ItemResource) {
@@ -44,15 +45,10 @@ define([
                 return delay.promise;
             };
         }).
-        service('ItemService', function($http) {
+        service('ItemService', function(ItemResource) {
             return {
                 update: function(item) {
-                    return $http({
-                        method: 'PATCH',
-                        url: 'http://' + item._links.self.href,
-                        data: item,
-                        headers: {'If-Match': item.etag}
-                    });
+                    ItemResource.update(item);
                 }
             };
         })
