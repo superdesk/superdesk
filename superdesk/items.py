@@ -1,6 +1,7 @@
 
-from flask import request
+from datetime import datetime
 import api
+from flask import request
 from auth.decorators import auth_required
 from superdesk import mongo
 
@@ -40,5 +41,7 @@ class ItemResource(api.Resource):
     def put(self, guid):
         data = request.get_json()
         data.pop('_id', None)
+        data.pop('firstCreated', None)
+        data['versionCreated'] = datetime.utcnow()
         mongo.db.items.update({'guid': guid}, {'$set': data})
         return self.get(guid)
