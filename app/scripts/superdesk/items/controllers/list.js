@@ -7,7 +7,8 @@ define(['angular'], function(angular) {
         $scope.params = {
             sort: '[("firstCreated", -1)]',
             where: {itemClass: TEXT_CLASS},
-            page: null
+            skip: 0,
+            limit: 25
         };
 
         $scope.fetch = function(options) {
@@ -16,25 +17,28 @@ define(['angular'], function(angular) {
         };
 
         $scope.prev = function() {
-            var prev = $scope.params.page <= 2 ? null : $scope.params.page - 1;
-            $scope.fetch({page: prev});
+            var skip = $scope.params.skip - $scope.params.limit;
+            if (skip < 0) {
+                skip = 0;
+            }
+            $scope.fetch({skip: skip});
         };
 
         $scope.next = function() {
-            var next = $scope.params.page < 2 ? 2 : $scope.params.page + 1;
-            $scope.fetch({page: next});
+            var skip = $scope.params.skip + $scope.params.limit;
+            $scope.fetch({skip: skip});
         }
 
         $scope.search = function(query) {
         	if (query) {
         		$scope.fetch({
         			where: {headline: query, itemClass: TEXT_CLASS},
-        			page: null
+        			skip: 0
         		});
         	} else {
         		$scope.fetch({
         			where: {itemClass: TEXT_CLASS},
-        			page: null
+        			skip: 0
         		});
         	}
         };

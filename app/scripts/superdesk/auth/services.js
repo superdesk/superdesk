@@ -33,7 +33,9 @@ define([
 
     angular.module('superdesk.auth.services', ['superdesk.api']).
         factory('Auth', function(resource) {
-            return resource('/auth');
+            return resource('/auth', {}, {
+                save: {method: 'POST'}
+            });
         }).
         service('authService', function($rootScope, $http, $q, Auth) {
             /**
@@ -55,10 +57,12 @@ define([
                 Auth.save(
                     {username: username, password: password},
                     function(response) {
+                        console.log('ok', response);
                         self.setSessionData(response, rememberMe);
                         $rootScope.$broadcast('auth.login');
                         delay.resolve(response);
                     }, function(response) {
+                        console.log('err', response);
                         delay.reject(response);
                     });
 
@@ -106,7 +110,7 @@ define([
                 if (!$rootScope.currentUser) {
                     $rootScope.currentUser = {
                         username: 'Anonymous',
-                        isAnonymous: true,
+                        isAnonymous: true
                     }
                 }
             }

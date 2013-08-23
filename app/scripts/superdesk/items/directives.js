@@ -25,5 +25,23 @@ define([
                     };
                 }
             };
+        }).
+        directive('sdContenteditable', function() {
+            return {
+                require: 'ngModel',
+                link: function($scope, element, attrs, ngModel) {
+                    element.attr('contenteditable', 'true');
+
+                    $(element).keyup(function(e) {
+                        $scope.$apply(function() {
+                            ngModel.$setViewValue(element.html());
+                        });
+                    });
+
+                    ngModel.$render = function() {
+                        element.html(ngModel.$viewValue);
+                    }
+                }
+            };
         });
 });

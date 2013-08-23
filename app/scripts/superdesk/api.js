@@ -8,11 +8,10 @@ define([
         value('api_url', config.api_url).
         factory('apiUrl', function(api_url) {
             return function(url) {
-                return api_url + url + '\\/';
+                return api_url + url;
             };
         }).
         factory('resource', function($resource, apiUrl) {
-
             function setDefaultActions(actions) {
                 var defaultActions = {
                     query: {method: 'GET', isArray: false}

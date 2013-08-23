@@ -1,7 +1,7 @@
 <div class="subnav subnav-fixed">
         <h1 class="main-article-title" id="article-title-fixed">{{ item.headline }}</h1>
 
-        <a class="btn btn-medium btn-info pull-right" href="#">Save</a>
+        <a class="btn btn-medium btn-info pull-right" href="" ng-click="save(item)">Save</a>
         <a class="btn btn-medium pull-right" href="#/" >Close</a>
         
         <div class="btn-group pull-right" style="margin:0 20px 0 30px;">
@@ -462,7 +462,7 @@
                     <span class="edit-label">Spitzmarke</span>
                 </header>
                 <div id="article-section">
-                    <p>{{ item.slugline }}</p>
+                    <p sd-contenteditable ng-model="item.slugline"></p>
                 </div>
             </section>
 
@@ -476,7 +476,7 @@
                     <span class="edit-words-info">30 von 30 Zeichen</span>  
                 </header>
                 <div id="article-title">
-                    <p>{{ item.headline }}</p>
+                    <p sd-contenteditable ng-model="item.headline"></p>
                 </div>
             </section>
 
@@ -485,7 +485,7 @@
                     <span class="edit-label">Lead</span>
                     <span class="edit-words-info">92 Zeichen / 15 Worter</span> 
                 </header>
-                <div sd-content ng-model="content"></div>
+                <div sd-contenteditable ng-model="content.content"></div>
             </section>
         </article>
 
