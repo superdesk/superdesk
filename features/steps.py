@@ -135,5 +135,6 @@ def update_an_item(step):
 def get_updated_item(step):
     assert world.response.status_code == 200, world.response.status_code
     item = json.loads(world.response.get_data())
-    assert item == world.item, item
+    assert item.get('headline') == 'another test'
+    assert item.get('slugline') == 'TEST'
 

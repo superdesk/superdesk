@@ -15,6 +15,9 @@ class ItemListResource(api.Resource):
         query = {}
         query.setdefault('itemClass', 'icls:text')
 
+        if request.args.get('q'):
+            query['headline'] = {'$regex': request.args.get('q'), '$options': 'i'}
+
         skip = int(request.args.get('skip', 0))
         limit = int(request.args.get('limit', 25))
 
