@@ -1,8 +1,6 @@
-"""
-    Superdesk Manager
-"""
+"""Superdesk Manager"""
 
-from app import app
+from superdesk import app
 from flask.ext import script
 
 import superdesk.io

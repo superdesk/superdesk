@@ -1,7 +1,7 @@
 """Superdesk IO"""
 
 from reuters import Service
-from app import app
+from superdesk import app, mongo
 
 def update_ingest():
-    Service().update(app.data.driver.db, app.config)
+    Service().update(mongo.db, app.config)
