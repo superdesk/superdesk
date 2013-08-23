@@ -48,7 +48,9 @@ define([
         service('ItemService', function(ItemResource) {
             return {
                 update: function(item) {
-                    ItemResource.update(item);
+                    ItemResource.update(item, function(response) {
+                        angular.extend(item, response);
+                    });
                 }
             };
         })

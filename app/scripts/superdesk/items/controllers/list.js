@@ -30,14 +30,14 @@ define(['angular'], function(angular) {
         }
 
         $scope.search = function(query) {
-        	if (query) {
+        	if (query && query.length > 2) {
         		$scope.fetch({
-        			where: {headline: query, itemClass: TEXT_CLASS},
+                    q: query,
         			skip: 0
         		});
-        	} else {
+        	} else if (query.length === 0) {
         		$scope.fetch({
-        			where: {itemClass: TEXT_CLASS},
+                    q: null,
         			skip: 0
         		});
         	}
