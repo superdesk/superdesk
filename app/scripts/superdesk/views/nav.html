@@ -53,22 +53,22 @@
         </ul>
         
         
-        <ul class="nav pull-right">
+        <ul class="nav pull-right" ng-controller="UserController">
             <li class="divider-vertical"></li>
 
             <li class="dropdown ipad-show">
-                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="padding:8px 10px 9px;"> <span href="#" class="user-profile">Vladimir Stefanovic </span> <b class="caret"></b></a>
+                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="padding:8px 10px 9px;"><span href="#" class="user-profile">{{ currentUser.username }}</span> <b class="caret"></b></a>
               <ul class="dropdown-menu ">
-                <li><a href="#">Logout</a></li>
+                <li><a href="" ng-click="logout()">Logout</a></li>
                 <li><a href="#">Help</a></li>
               </ul>
             </li>
     
             <li class="ipad-hide">
-              <a href="#" class="user-profile">Vladimir Stefanovic </a>       
+              <a href="" class="user-profile">{{ currentUser.username }}</a>
             </li>
             <li class="divider-vertical ipad-hide"></li>
-            <li><a href="#" class="blink ipad-hide">Logout</a></li>
+            <li><a href="" ng-click="logout()" class="blink ipad-hide">Logout</a></li>
             <li class="divider-vertical ipad-hide"></li>
             <li><a href="#" class="ipad-hide">Help</a></li>
        
