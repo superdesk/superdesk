@@ -6,7 +6,7 @@ Feature: Authentication
     Scenario: Authenticate non existing user
         Given I have no credentials
         When I send auth request
-        Then I get status code 400
+        Then I get status code 401
 
     Scenario: Authenticate existing user
         Given I have valid credentials
@@ -17,13 +17,13 @@ Feature: Authentication
     Scenario: Authenticate with bad credentials
         Given I have bad username
         When I send auth request
-        Then I get status code 400
+        Then I get status code 401
         And I get "username" in data
 
     Scenario: Authenticate with bad password
         Given I have bad password
         When I send auth request
-        Then I get status code 400
+        Then I get status code 401
         And I get "password" in data
 
     Scenario: Get items without token
