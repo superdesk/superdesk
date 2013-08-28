@@ -13,7 +13,7 @@ class ItemListResource(api.Resource):
     @auth_required
     def get(self):
         query = {}
-        query.setdefault('itemClass', 'icls:text')
+        query.setdefault('itemClass', 'icls:composite')
 
         if request.args.get('q'):
             query['headline'] = {'$regex': request.args.get('q'), '$options': 'i'}

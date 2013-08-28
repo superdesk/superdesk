@@ -107,7 +107,7 @@ class Parser():
         elements = []
         for element in body:
             if element.text:
-                elements.append('<p>' + element.text.decode('utf-8') + '</p>')
+                elements.append('<p>' + element.text + '</p>')
         content['content'] = "\n".join(elements)
         return content
 
