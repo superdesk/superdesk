@@ -5,3 +5,4 @@ Flask-Script
 requests
 lettuce
 fabric
+redis
