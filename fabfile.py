@@ -1,6 +1,8 @@
 from fabric.api import local
 from fabric.context_managers import shell_env, prefix
 
+import settings
+
 TEST_DB = '_superdesk_test'
 
 def test():
@@ -15,6 +17,10 @@ def manage():
 
 def server():
     local('python app.py')
+
+def servemedia():
+    with prefix('cd %s' % settings.MEDIA_ROOT):
+        local('python -m SimpleHTTPServer')
 
 def run():
     server()
