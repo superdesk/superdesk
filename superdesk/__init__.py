@@ -7,7 +7,7 @@ import flask.ext.pymongo
 import flask.ext.restful
 from redis import StrictRedis
 
-from superdesk.api import JSONEncoder
+from .rest import JSONEncoder
 
 app = flask.Flask(__name__)
 app.config.from_object('settings')
@@ -18,8 +18,8 @@ redis = StrictRedis()
 
 api = flask.ext.restful.Api(app)
 
-import items
-import auth
+from . import items
+from . import auth
 
 api.add_resource(items.ItemListResource, '/items')
 api.add_resource(items.ItemResource, '/items/<string:guid>')

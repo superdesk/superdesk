@@ -1,9 +1,5 @@
-import os
-import resources
 
-DEBUG = True
-TESTING = True
-TEST = True
+import os
 
 MONGO_DBNAME = os.environ.get('MONGOHQ_URL', 'superdesk')
 
@@ -11,14 +7,3 @@ SERVER_NAME = 'localhost:5000'
 
 MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'media')
 MEDIA_URL = 'http://localhost:8000/'
-
-DATE_CREATED = 'firstCreated'
-LAST_UPDATED = 'versionCreated'
-
-DOMAIN = {
-    'items': resources.items,
-    'users': resources.users,
-}
-
-X_DOMAINS = ['*']
-X_HEADERS = ['X-Requested-With', 'Authorization', 'Content-Type', 'If-Match', 'X-HTTP-Method-Override']

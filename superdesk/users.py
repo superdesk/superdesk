@@ -18,7 +18,9 @@ def create_user(username, password=None):
     if mongo.db.users.find_one({'username': username}):
         raise ConflictUsernameException()
 
-    return mongo.db.users.insert({'username': username, 'password': password})
+    user = {'username': username, 'password': password}
+    mongo.db.users.insert(user)
+    return user
 
 def get_token(user):
     token = AuthToken(token=utils.get_random_string(40), user=user)

@@ -1,14 +1,15 @@
 
 from datetime import datetime
-import api
 from flask import request
-from auth.decorators import auth_required
-from superdesk import mongo
+
+from .auth.decorators import auth_required
+from . import mongo
+from . import rest
 
 def format_item(item):
     return item
 
-class ItemListResource(api.Resource):
+class ItemListResource(rest.Resource):
 
     @auth_required
     def get(self):
@@ -30,7 +31,7 @@ class ItemListResource(api.Resource):
         mongo.db.items.save(data)
         return data, 201
 
-class ItemResource(api.Resource):
+class ItemResource(rest.Resource):
 
     def _get_item(self, guid):
         return mongo.db.items.find_one_or_404({'guid': guid})

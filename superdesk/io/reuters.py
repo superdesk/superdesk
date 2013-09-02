@@ -5,9 +5,9 @@ import requests
 import xml.etree.ElementTree as etree
 import traceback
 import datetime
-import urllib
 
-import newsml
+from . import newsml
+from superdesk.storage import fetch_url
 
 def get_last_updated(items):
     item = items.find_one(fields=['versionCreated'], sort=[('versionCreated', -1)])
@@ -58,10 +58,9 @@ class Service(object):
             return
 
         for content in item['contents']:
-            if 'residRef' in content and content['rendition'] in ['rend:viewImage']:
+            if 'residRef' in content:
                 url = "%s?token=%s" % (content['href'], self.token)
-                filename, headers = urllib.urlretrieve(url, os.path.join(config.get('MEDIA_ROOT'), content['residRef']))
-                content['storage'] = os.path.basename(filename)
+                content['storage'] = fetch_url(url, os.path.join(config.get('MEDIA_ROOT'), content['residRef']))
 
     def get_items(self, guid):
         """Parse item message and return given items."""

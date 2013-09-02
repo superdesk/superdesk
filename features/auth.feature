@@ -1,12 +1,9 @@
 Feature: Authentication
-    In order to authenticate users
-    As a user
-    I want to get the auth_token
 
-    Scenario: Authenticate non existing user
-        Given I have no credentials
-        When I send auth request
-        Then I get status code 401
+    Scenario: Authenticate existing user
+        Given a user
+        When we authenticate
+        Then we get auth token
 
     Scenario: Authenticate existing user
         Given I have valid credentials

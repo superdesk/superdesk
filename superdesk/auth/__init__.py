@@ -2,7 +2,7 @@
 from flask import request
 
 from superdesk.decorators import crossdomain
-from superdesk.api import Resource
+from superdesk.rest import Resource
 from superdesk import mongo, redis, utils
 
 class AuthException(Exception):

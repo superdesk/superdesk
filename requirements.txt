@@ -3,6 +3,6 @@ Flask-PyMongo
 Flask-RESTful
 Flask-Script
 requests
-lettuce
 fabric
 redis
+behave
