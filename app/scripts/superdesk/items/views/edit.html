@@ -485,8 +485,20 @@
                     <span class="edit-label">Lead</span>
                     <span class="edit-words-info">92 Zeichen / 15 Worter</span> 
                 </header>
-                <div sd-contenteditable ng-model="content.content"></div>
+                <div sd-contenteditable ng-model="content"></div>
             </section>
+
+            <div ng-repeat="group in item.groups">
+                <section ng-repeat="ref in group.refs" ng-controller="RefController">
+                    <header>
+                        <span class="edit-label"></span>
+                        <span class="edit-words-info">{{ item.itemClass }}</span>
+                    </header>
+
+                    <div ng-repeat="content in item.contents" sd-contenteditable ng-model="content">
+                    </div>
+                </section>
+            </div>
         </article>
 
         <div class="tablist right-tablist" tabcontent-area="right-tabpane">

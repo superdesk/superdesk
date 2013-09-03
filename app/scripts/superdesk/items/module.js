@@ -3,6 +3,7 @@ define([
     'angular-route',
     './controllers/list',
     './controllers/edit',
+    './controllers/ref',
     './resources',
     './directives'
 ], function(angular) {
@@ -25,5 +26,6 @@ define([
                     templateUrl: 'scripts/superdesk/items/views/list.html'
                 });
 
-        });
+        }).
+        controller('RefController', require('superdesk/items/controllers/ref'));
 });

@@ -39,7 +39,46 @@ define([
                     });
 
                     ngModel.$render = function() {
-                        element.html(ngModel.$viewValue);
+                        var model = ngModel.$viewValue;
+                        if (angular.isString(model)) {
+                            element.html(model);
+                        } else {
+                            switch (model.contenttype) {
+                                case 'application/xhtml+html':
+                                case 'application/xhtml+xml':
+                                    element.html(model.content);
+                                    break;
+
+                                case 'image/jpeg':
+                                    if (model.rendition !== 'rend:viewImage') {
+                                        break;
+                                    }
+
+                                    $('<img />').
+                                        attr('src', model.href).
+                                        appendTo(element);
+                                    break;
+
+                                case 'audio/mpeg':
+                                    $('<audio controls>').
+                                        attr('src', model.href).
+                                        appendTo(element);
+                                    break;
+
+                                case 'video/mpeg':
+                                    if (model.rendition !== 'rend:stream:700:16x9:mp4') {
+                                        break;
+                                    }
+
+                                    $('<video controls>').
+                                        attr('src', model.href).
+                                        appendTo(element);
+                                    break;
+
+                                default:
+                                    console.log(model);
+                            }
+                        }
                     }
                 }
             };

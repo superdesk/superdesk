@@ -1,14 +1,14 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    var TEXT_CLASS = 'icls:text';
+    var LIST_CLASS = 'icls:package';
     var STORAGE_KEY = 'items.list';
     var storage = sessionStorage;
 
     return function($scope, ItemListLoader) {
         $scope.params = {
             sort: '[("firstCreated", -1)]',
-            where: {itemClass: TEXT_CLASS},
+            where: {itemClass: LIST_CLASS},
             skip: 0,
             limit: 25
         };
