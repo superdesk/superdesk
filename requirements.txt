@@ -4,5 +4,4 @@ Flask-RESTful
 Flask-Script
 requests
 fabric
-redis
 behave

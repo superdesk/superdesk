@@ -12,7 +12,7 @@ manager = script.Manager(app)
 @manager.option('--password', '-p', dest='password')
 def create_user(username, password):
     """Create new user"""
-    return superdesk.users.create_user(username, password)
+    return superdesk.users.create_user({'username': username, 'password': password})
 
 @manager.command
 def update_ingest():

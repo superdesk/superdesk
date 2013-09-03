@@ -10,17 +10,15 @@ class ConflictUsernameException(Exception):
     def __str__(self):
         return """Username exists already"""
 
-def create_user(username, password=None):
+def create_user(userdata):
     """Create a new user"""
-    if not username:
+    if not userdata.get('username'):
         raise EmptyUsernameException()
 
-    if mongo.db.users.find_one({'username': username}):
+    if mongo.db.users.find_one({'username': userdata.get('username')}):
         raise ConflictUsernameException()
 
-    user = {'username': username, 'password': password}
-    mongo.db.users.insert(user)
-    return user
+    return mongo.db.users.insert(userdata)
 
 def get_token(user):
     token = AuthToken(token=utils.get_random_string(40), user=user)

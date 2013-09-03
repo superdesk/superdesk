@@ -5,30 +5,26 @@ Feature: Authentication
         When we authenticate
         Then we get auth token
 
-    Scenario: Authenticate existing user
-        Given I have valid credentials
-        When I send auth request
-        Then I get status code 201
-        And I get valid auth_token
+    Scenario: Authenticate with wrong password returns error
+        Given a user
+        When we authenticate with wrong password
+        Then we get status code "401"
+        And we get "invalid credentials" in response
 
-    Scenario: Authenticate with bad credentials
-        Given I have bad username
-        When I send auth request
-        Then I get status code 401
-        And I get "username" in data
+    Scenario: Authenticate with non existing username
+        Given a user
+        When we authenticate with wrong username
+        Then we get status code "401"
+        And we get "username not found" in response
 
-    Scenario: Authenticate with bad password
-        Given I have bad password
-        When I send auth request
-        Then I get status code 401
-        And I get "password" in data
+    Scenario: Get auth info without token
+        Given a user
+        When we get auth info
+        Then we get status code "401"
 
-    Scenario: Get items without token
-        Given I have no token
-        When I get "/items"
-        Then I get status code 401
-
-    Scenario: Get items with token
-        Given I have auth token
-        When I get "/items"
-        Then I get status code 200
+    Scenario: Get auth info with auth token
+        Given a user
+        When we authenticate
+        And we get auth info
+        Then we get status code "200"
+        And we get "user" in response

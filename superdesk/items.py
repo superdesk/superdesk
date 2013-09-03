@@ -2,7 +2,7 @@
 from datetime import datetime
 from flask import request
 
-from .auth.decorators import auth_required
+from .auth import auth_required
 from . import mongo
 from . import rest
 

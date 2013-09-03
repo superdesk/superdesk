@@ -5,7 +5,6 @@ Superdesk server app
 import flask
 import flask.ext.pymongo
 import flask.ext.restful
-from redis import StrictRedis
 
 from .rest import JSONEncoder
 
@@ -14,7 +13,6 @@ app.config.from_object('settings')
 app.json_encoder = JSONEncoder
 
 mongo = flask.ext.pymongo.PyMongo(app)
-redis = StrictRedis()
 
 api = flask.ext.restful.Api(app)
 
