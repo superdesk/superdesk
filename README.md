@@ -6,7 +6,7 @@ Superdesk REST API Server is python app on top of mongodb.
 ## Dependencies
 
 Application requires mongodb running on standard port.
-Python version supported is 2.7.5+, support for 3.3 coming soon.
+Python version supported are 2.7.5+ and 3.3+.
 Using virtualenv is recommended for installing python dependencies.
 
 ## Instalation
@@ -18,11 +18,11 @@ $ pip install -r requirements.txt
 ## Testing
 
 ```sh
-$ fab test
+$ behave
 ```
 
 ## Running Dev Server
 
 ```sh
-$ fab server
+$ python app.py
 ```
