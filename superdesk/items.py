@@ -2,11 +2,15 @@
 from datetime import datetime
 from flask import request
 
-from .auth import auth_required
 from . import mongo
 from . import rest
+from .auth import auth_required
+from .io.reuters import get_token
 
 def format_item(item):
+    for content in item.get('contents', []):
+        if content.get('href'):
+            content['href'] = '%s?auth_token=%s' % (content.get('href'), get_token())
     return item
 
 class ItemListResource(rest.Resource):

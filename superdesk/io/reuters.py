@@ -8,6 +8,7 @@ import datetime
 
 from . import newsml
 from superdesk.storage import fetch_url
+from superdesk import app
 
 def get_last_updated(items):
     item = items.find_one(fields=['versionCreated'], sort=[('versionCreated', -1)])
@@ -53,14 +54,11 @@ class Service(object):
 
     def fetch_assets(self, item, config):
         """Fetch remote assets for given item."""
-
-        if not 'contents' in item:
-            return
-
+        return
         for content in item['contents']:
-            if 'residRef' in content:
+            if 'residref' in content and 'baseimage' not in content.get('residref'):
                 url = "%s?token=%s" % (content['href'], self.token)
-                content['storage'] = fetch_url(url, os.path.join(config.get('MEDIA_ROOT'), content['residRef']))
+                content['storage'] = fetch_url(url, os.path.join(config.get('media_root'), content['residref']))
 
     def get_items(self, guid):
         """Parse item message and return given items."""
@@ -121,18 +119,22 @@ class Service(object):
 def get_token():
     """Get access token."""
 
+    if app.config.get('token'):
+        return app.config.get('token')
+
     session = requests.Session()
     session.mount('https://', SSLAdapter())
 
     url = 'https://commerce.reuters.com/rmd/rest/xml/login'
     payload = {
-            'username': os.environ.get('REUTERS_USERNAME', ''),
-            'password': os.environ.get('REUTERS_PASSWORD', ''),
-            }
+        'username': os.environ.get('REUTERS_USERNAME', ''),
+        'password': os.environ.get('REUTERS_PASSWORD', ''),
+    }
 
     response = session.get(url, params=payload)
     tree = etree.fromstring(response.text)
-    return tree.text
+    app.config['token'] = tree.text
+    return app.config['token']
 
 # workaround for ssl version error
 class SSLAdapter(requests.adapters.HTTPAdapter):
