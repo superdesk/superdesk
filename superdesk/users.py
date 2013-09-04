@@ -8,7 +8,7 @@ class EmptyUsernameException(Exception):
 
 class ConflictUsernameException(Exception):
     def __str__(self):
-        return """Username exists already"""
+        return "Username '%s' exists already" % self.args[0]
 
 def create_user(userdata):
     """Create a new user"""
@@ -16,7 +16,7 @@ def create_user(userdata):
         raise EmptyUsernameException()
 
     if mongo.db.users.find_one({'username': userdata.get('username')}):
-        raise ConflictUsernameException()
+        raise ConflictUsernameException(userdata.get('username'))
 
     return mongo.db.users.insert(userdata)
 

@@ -18,7 +18,7 @@ def create_user(userdata):
         return userdata
 
 def send_auth(userdata, context):
-    return context.app.post('/auth', data=json.dumps(userdata), headers=JSON_HEADERS, follow_redirects=True)
+    return context.app.post('/auth', data=json.dumps(userdata), headers=context.headers, follow_redirects=True)
 
 @given('a user')
 def step_impl(context):

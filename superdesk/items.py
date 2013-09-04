@@ -6,12 +6,27 @@ from . import mongo
 from . import rest
 from .auth import auth_required
 from .io.reuters import get_token
+from .utils import get_random_string
 
 def format_item(item):
     for content in item.get('contents', []):
         if content.get('href'):
             content['href'] = '%s?auth_token=%s' % (content.get('href'), get_token())
     return item
+
+def save_item(data):
+    now = datetime.utcnow()
+    data.setdefault('guid', generate_guid())
+    data.setdefault('firstCreated', now)
+    data.setdefault('versionCreated', now)
+    mongo.db.items.save(data)
+    return data
+
+def generate_guid():
+    guid = get_random_string()
+    while mongo.db.items.find_one({'guid': guid}):
+        guid = get_random_string()
+    return guid
 
 class ItemListResource(rest.Resource):
 
@@ -31,9 +46,8 @@ class ItemListResource(rest.Resource):
 
     @auth_required
     def post(self):
-        data = request.get_json()
-        mongo.db.items.save(data)
-        return data, 201
+        item = save_item(request.get_json())
+        return item, 201
 
 class ItemResource(rest.Resource):
 
