@@ -27,5 +27,10 @@ define([
                 });
 
         }).
+        run(function($rootScope) {
+            $rootScope.mode = {
+                zen: false
+            };
+        }).
         controller('RefController', require('superdesk/items/controllers/ref'));
 });
