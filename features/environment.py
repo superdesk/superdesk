@@ -3,11 +3,10 @@ import os
 from base64 import b64encode
 from flask import json
 
-from steps.auth import create_user, send_auth
-
 os.environ['MONGOHQ_URL'] = '_test_superdesk'
 
 from superdesk import app, mongo
+from steps.auth import create_user, send_auth
 
 def drop_db():
     with app.test_request_context():
