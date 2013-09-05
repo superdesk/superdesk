@@ -86,7 +86,7 @@
             <td class="chckbx_col"><input type="checkbox" class="sf-checkbox" set-bg="2"  name="_{{ item.guid }}"></td>
             <td class="title_col"><a href="#/items/{{ item.guid }}">{{ item.headline }}</a></td>
             <td>{{ item.creditline }}</td>
-            <td>{{ item.firstCreated }}</td>
+            <td>{{ item.firstCreated|date:'medium' }}</td>
             <td>Published</td>
             <td class="action_col">
               <div class="dropdown">
