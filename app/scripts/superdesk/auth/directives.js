@@ -14,12 +14,17 @@ define([
                 scope: {},
                 templateUrl: 'scripts/superdesk/auth/views/login.html',
                 link: function($scope, element, attrs) {
+                    function doLogin() {
+                        $(element).modal('show');
+                        $(element).find('#username').focus();
+                    }
+
                     $(element).modal({
                         keyboard: false,
-                        show: !authService.hasIdentity()
+                        show: false
                     });
 
-                    $scope.doLogin = function() {
+                    $scope.submit = function() {
                         authService.login($scope.username, $scope.password, $scope.rememberMe).
                             then(function() {
                                 $scope.password = null;
@@ -31,9 +36,10 @@ define([
                             });
                     };
 
-                    $rootScope.$on('auth.doLogin', function(event) {
-                        $(element).modal('show');
-                    });
+                    $rootScope.$on('auth.doLogin', doLogin);
+                    if (!authService.hasIdentity()) {
+                        doLogin();
+                    }
                 }
             };
         });
