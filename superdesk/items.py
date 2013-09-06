@@ -1,6 +1,6 @@
 
 from datetime import datetime
-from flask import request
+from flask import request, url_for
 
 from . import mongo
 from . import rest
@@ -14,6 +14,7 @@ class ItemConflictException(Exception):
     pass
 
 def format_item(item):
+    item.setdefault('self_url', url_for('item', guid=item.get('guid')))
     for content in item.get('contents', []):
         if content.get('href'):
             content['href'] = '%s?auth_token=%s' % (content.get('href'), tokenProvider.get_token())

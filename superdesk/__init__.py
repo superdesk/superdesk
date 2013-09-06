@@ -20,5 +20,5 @@ from . import items
 from . import auth
 
 api.add_resource(items.ItemListResource, '/items')
-api.add_resource(items.ItemResource, '/items/<string:guid>')
+api.add_resource(items.ItemResource, '/items/<string:guid>', endpoint='item')
 api.add_resource(auth.AuthResource, '/auth')
