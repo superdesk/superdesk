@@ -1,8 +1,14 @@
 define([
     'jquery',
-    'angular'
-], function($, angular) {
+    'angular',
+    'moment'
+], function($, angular, moment) {
     angular.module('superdesk.items.directives', []).
+        filter('reldate', function() {
+            return function(date) {
+                return moment(date).fromNow();
+            };
+        }).
         directive('sdContent', function() {
             function getText(content) {
                 var lines = $(content);

@@ -9,7 +9,8 @@
     "es5-shim": "~2.0.8",
     "angular": "1.2.0-rc.2",
     "angular-resource": "1.2.0-rc.2",
-    "angular-route": "1.2.0-rc.2"
+    "angular-route": "1.2.0-rc.2",
+    "momentjs": "~2.1.0"
   },
   "resolutions": {
     "angular": "1.2.0-rc.2"

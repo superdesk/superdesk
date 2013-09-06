@@ -57,8 +57,9 @@
           <tr>
             <th class="chckbx_col"><input type="checkbox" class="sf-checkbox" name="all"></th>
             <th class="title_col">{{ _("Title") }}</th>
-            <th>{{ _("Author") }}</th>
-            <th>{{ _("Publish date") }}</th>
+            <th>{{ _("Provider") }}</th>
+            <th>{{ _("Published") }}</th>
+            <th>{{ _("Updated") }}</th>
             <th>{{ _("Status") }}</th>
             <th class="action_col">
 
@@ -85,8 +86,9 @@
           <tr ng-repeat="item in items">
             <td class="chckbx_col"><input type="checkbox" class="sf-checkbox" set-bg="2"  name="_{{ item.guid }}"></td>
             <td class="title_col"><a href="#/items/{{ item.guid }}">{{ item.headline }}</a></td>
-            <td>{{ item.creditline }}</td>
-            <td>{{ item.firstCreated|date:'medium' }}</td>
+            <td>{{ item.provider }}</td>
+            <td><time datetime="{{ item.firstCreated }}" title="{{ item.firstCreated|date:'medium' }}">{{ item.firstCreated|reldate }}</time></td>
+            <td><time datetime="{{ item.versionCreated }}" title="{{ item.versionCreated|date:'medium' }}">{{ item.versionCreated|reldate }}</time></td>
             <td>{{ _("Published") }}</td>
             <td class="action_col">
               <div class="dropdown">
