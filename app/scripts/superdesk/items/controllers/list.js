@@ -5,7 +5,7 @@ define(['angular'], function(angular) {
     var STORAGE_KEY = 'items.list';
     var storage = sessionStorage;
 
-    return function($scope, ItemListLoader) {
+    return ['$scope', 'ItemListLoader', function($scope, ItemListLoader) {
         $scope.params = {
             sort: '[("firstCreated", -1)]',
             where: {itemClass: LIST_CLASS},
@@ -52,5 +52,5 @@ define(['angular'], function(angular) {
         } else {
             $scope.fetch();
         }
-    };
+    }];
 });

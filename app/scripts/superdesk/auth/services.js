@@ -57,12 +57,10 @@ define([
                 Auth.save(
                     {username: username, password: password},
                     function(response) {
-                        console.log('ok', response);
                         self.setSessionData(response, rememberMe);
                         $rootScope.$broadcast('auth.login');
                         delay.resolve(response);
                     }, function(response) {
-                        console.log('err', response);
                         delay.reject(response);
                     });
 

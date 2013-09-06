@@ -1,6 +1,7 @@
 define([
     'angular',
     'angular-route',
+    'bootstrap/dropdown',
     './controllers/list',
     './controllers/edit',
     './controllers/ref',

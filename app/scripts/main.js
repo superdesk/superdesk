@@ -31,12 +31,14 @@ require.config({
 
 define([
     'angular',
+    'superdesk/l10n/module',
     'superdesk/auth/module',
     'superdesk/items/module'
 ], function(angular) {
     'use strict';
 
     var modules = [
+        'superdesk.l10n',
         'superdesk.auth',
         'superdesk.items'
     ];

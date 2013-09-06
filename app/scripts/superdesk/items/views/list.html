@@ -1,6 +1,6 @@
   <div class="subnav subnav-fixed">
     <input type="text" name="searchbar" class="searchbar-container" style="width:500px;" ng-model="query" ng-change="search(query)">
-    <a class="btn btn-medium btn-info pull-right" href="#"><span class="medium-icon-add"></span> Add New Article</a>
+    <a class="btn btn-medium btn-info pull-right" href="#"><span class="medium-icon-add"></span> {{ _("Add New Article") }}</a>
   </div>
 
    <div class="subnav subnav-level2 subnav-fixed">
@@ -56,10 +56,10 @@
         <thead>
           <tr>
             <th class="chckbx_col"><input type="checkbox" class="sf-checkbox" name="all"></th>
-            <th class="title_col">Title</th>
-            <th>Author</th>
-            <th>Publish date</th>
-            <th>Status</th>
+            <th class="title_col">{{ _("Title") }}</th>
+            <th>{{ _("Author") }}</th>
+            <th>{{ _("Publish date") }}</th>
+            <th>{{ _("Status") }}</th>
             <th class="action_col">
 
 
@@ -87,15 +87,15 @@
             <td class="title_col"><a href="#/items/{{ item.guid }}">{{ item.headline }}</a></td>
             <td>{{ item.creditline }}</td>
             <td>{{ item.firstCreated|date:'medium' }}</td>
-            <td>Published</td>
+            <td>{{ _("Published") }}</td>
             <td class="action_col">
               <div class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Action <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ _("Action") }} <b class="caret"></b></a>
                 <ul class="dropdown-menu sf-dropdown-simple pull-right">
-                  <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
-                  <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
-                  <li><a href="#"><i class="icon-ban-circle"></i> Unpublish</a></li>
-                  <li><a href="#"><i class="icon-eye-open"></i> Preview</a></li>
+                  <li><a href="#/items/{{ item.guid }}"><i class="icon-pencil"></i> {{ _("Edit") }}</a></li>
+                  <li><a href=""><i class="icon-trash"></i> {{ _("Delete") }}</a></li>
+                  <!--<li><a href="#"><i class="icon-ban-circle"></i> Unpublish</a></li>-->
+                  <!--<li><a href="#"><i class="icon-eye-open"></i> Preview</a></li>-->
                 </ul>
               </div>
             </td>

@@ -11,7 +11,6 @@ define([
             return {
                 restrict: 'A',
                 replace: true,
-                scope: {},
                 templateUrl: 'scripts/superdesk/auth/views/login.html',
                 link: function($scope, element, attrs) {
                     function doLogin() {
@@ -24,7 +23,7 @@ define([
                         show: false
                     });
 
-                    $scope.submit = function() {
+                    $scope.authenticate = function() {
                         authService.login($scope.username, $scope.password, $scope.rememberMe).
                             then(function() {
                                 $scope.password = null;
