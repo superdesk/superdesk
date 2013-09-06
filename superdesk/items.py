@@ -10,6 +10,9 @@ from .io.reuters_token import ReutersTokenProvider
 
 tokenProvider = ReutersTokenProvider()
 
+class ItemConflictException(Exception):
+    pass
+
 def format_item(item):
     for content in item.get('contents', []):
         if content.get('href'):
@@ -21,6 +24,13 @@ def save_item(data):
     data.setdefault('guid', generate_guid())
     data.setdefault('firstCreated', now)
     data.setdefault('versionCreated', now)
+
+    item = mongo.db.items.find_one({'guid': data.get('guid')})
+    if item and item.get('versionCreated').time() >= data.get('versionCreated').time():
+        raise ItemConflictException()
+    elif item:
+        data['_id'] = item.get('_id')
+
     mongo.db.items.save(data)
     return data
 
@@ -48,7 +58,7 @@ class ItemListResource(rest.Resource):
     @auth_required
     def get(self):
         query = {}
-        query.setdefault('itemClass', 'icls:picture')
+        query.setdefault('itemClass', 'icls:composite')
 
         if request.args.get('q'):
             query['headline'] = {'$regex': request.args.get('q'), '$options': 'i'}

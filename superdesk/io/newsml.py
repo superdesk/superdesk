@@ -16,9 +16,10 @@ class Parser():
     def parse_message(self, tree):
         """Parse NewsMessage."""
         items = []
-        for item_tree in tree.find(self.qname('itemSet')):
-            item = self.parse_item(item_tree)
-            items.append(item)
+        for item_set in tree.iter(self.qname('itemSet')):
+            for item_tree in item_set:
+                item = self.parse_item(item_tree)
+                items.append(item)
         return items
 
     def parse_item(self, tree):

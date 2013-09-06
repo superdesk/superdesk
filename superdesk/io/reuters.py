@@ -5,7 +5,7 @@ import xml.etree.ElementTree as etree
 import traceback
 import datetime
 
-from superdesk.items import save_item, get_last_updated
+from superdesk.items import save_item, get_last_updated, ItemConflictException
 
 class UTCZone(datetime.tzinfo):
 
@@ -39,17 +39,24 @@ class ReutersService(object):
         for channel in self.get_channels():
             for guid in self.get_ids(channel, last_updated, updated):
                 items = self.get_items(guid)
-                items.reverse()
-                for item in items:
-                    self.fetch_assets(item)
-                    save_item(item)
+                self.save_items(items)
+
+    def save_items(self, items):
+        items.reverse()
+        for item in items:
+            self.fetch_assets(item)
+            try:
+                save_item(item)
+            except ItemConflictException:
+                pass
 
     def fetch_assets(self, item):
         """Fetch remote assets for given item."""
         for group in item.get('groups', []):
             for ref in group.get('refs', []):
                 if 'residRef' in ref:
-                    self.get_items(ref.get('residRef'))
+                    items = self.get_items(ref.get('residRef'))
+                    self.save_items(items)
 
     def get_items(self, guid):
         """Parse item message and return given items."""
