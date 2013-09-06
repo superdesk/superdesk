@@ -20,10 +20,10 @@ require.config({
         'angular-route': {
             deps: ['angular']
         },
-        'bootstrap/bootstrap-dropdown': {
+        'bootstrap/dropdown': {
             deps: ['jquery']
         },
-        'bootstrap/bootstrap-modal': {
+        'bootstrap/modal': {
             deps: ['jquery']
         }
     }

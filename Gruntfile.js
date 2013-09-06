@@ -231,7 +231,6 @@ module.exports = function (grunt) {
     'jshint',
     'test',
     'useminPrepare',
-    'imagemin',
     'cssmin',
     'htmlmin',
     'concat',

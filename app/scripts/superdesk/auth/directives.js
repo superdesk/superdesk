@@ -2,7 +2,7 @@ define([
     'jquery',
     'angular',
     'superdesk/auth/services',
-    'bootstrap/bootstrap-modal'
+    'bootstrap/modal'
 ], function($, angular) {
     'use strict';
 

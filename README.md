@@ -5,7 +5,7 @@ superdesk-client
 
 with node.js and git installed, you can install the base tools globally:
 
-    npm install -g yo grunt-cli bower
+    npm install -g grunt-cli bower
 
 ### install dependencies
 
