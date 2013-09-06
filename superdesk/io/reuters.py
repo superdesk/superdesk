@@ -5,12 +5,7 @@ import xml.etree.ElementTree as etree
 import traceback
 import datetime
 
-from superdesk import app, mongo
-
-def get_last_updated(items):
-    item = items.find_one(fields=['versionCreated'], sort=[('versionCreated', -1)])
-    if item:
-        return item.get('versionCreated')
+from superdesk.items import save_item, get_last_updated
 
 class UTCZone(datetime.tzinfo):
 
@@ -37,7 +32,7 @@ class ReutersService(object):
         """Service update call."""
 
         updated = datetime.datetime.now(tz=UTCZone())
-        last_updated = get_last_updated(mongo.db.items)
+        last_updated = get_last_updated()
         if not last_updated or last_updated < updated + datetime.timedelta(days=-7):
             last_updated = updated + datetime.timedelta(hours=-1) # last 1h
 
@@ -46,11 +41,8 @@ class ReutersService(object):
                 items = self.get_items(guid)
                 items.reverse()
                 for item in items:
-                    old = mongo.db.items.find_one({'guid': item['guid']}, fields=["_id"])
-                    if old:
-                        item['_id'] = old.get('_id')
                     self.fetch_assets(item)
-                    mongo.db.items.save(item)
+                    save_item(item)
 
     def fetch_assets(self, item):
         """Fetch remote assets for given item."""

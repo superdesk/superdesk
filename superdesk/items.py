@@ -5,8 +5,8 @@ from flask import request
 from . import mongo
 from . import rest
 from .auth import auth_required
-from .io.reuters_token import ReutersTokenProvider
 from .utils import get_random_string
+from .io.reuters_token import ReutersTokenProvider
 
 tokenProvider = ReutersTokenProvider()
 
@@ -24,11 +24,24 @@ def save_item(data):
     mongo.db.items.save(data)
     return data
 
+def update_item(data, guid):
+    data.pop('_id', None)
+    data.setdefault('versionCreated', datetime.utcnow())
+    item = mongo.db.items.find_one({'guid': guid})
+    item.update(data)
+    mongo.db.items.save(item)
+    return item
+
 def generate_guid():
     guid = get_random_string()
     while mongo.db.items.find_one({'guid': guid}):
         guid = get_random_string()
     return guid
+
+def get_last_updated():
+    item = mongo.db.items.find_one(fields=['versionCreated'], sort=[('versionCreated', -1)])
+    if item:
+        return item.get('versionCreated')
 
 class ItemListResource(rest.Resource):
 
@@ -64,8 +77,5 @@ class ItemResource(rest.Resource):
     @auth_required
     def put(self, guid):
         data = request.get_json()
-        data.pop('_id', None)
-        data.pop('firstCreated', None)
-        data['versionCreated'] = datetime.utcnow()
-        mongo.db.items.update({'guid': guid}, {'$set': data})
-        return self.get(guid)
+        item = update_item(data, guid)
+        return format_item(item)
