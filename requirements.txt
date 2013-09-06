@@ -3,5 +3,5 @@ Flask-PyMongo
 Flask-RESTful
 Flask-Script
 requests
-fabric
 behave
+nose

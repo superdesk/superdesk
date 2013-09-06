@@ -1,11 +1,8 @@
-from __future__ import unicode_literals
-
 import os
 import xml.etree.ElementTree as etree
-
 import unittest
 
-import newsml
+from . import newsml
 
 class ItemTest(unittest.TestCase):
 
