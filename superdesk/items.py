@@ -5,13 +5,15 @@ from flask import request
 from . import mongo
 from . import rest
 from .auth import auth_required
-from .io.reuters import get_token
+from .io.reuters_token import ReutersTokenProvider
 from .utils import get_random_string
+
+tokenProvider = ReutersTokenProvider()
 
 def format_item(item):
     for content in item.get('contents', []):
         if content.get('href'):
-            content['href'] = '%s?auth_token=%s' % (content.get('href'), get_token())
+            content['href'] = '%s?auth_token=%s' % (content.get('href'), tokenProvider.get_token())
     return item
 
 def save_item(data):
@@ -33,7 +35,7 @@ class ItemListResource(rest.Resource):
     @auth_required
     def get(self):
         query = {}
-        query.setdefault('itemClass', 'icls:composite')
+        query.setdefault('itemClass', 'icls:picture')
 
         if request.args.get('q'):
             query['headline'] = {'$regex': request.args.get('q'), '$options': 'i'}

@@ -1,7 +1,8 @@
 """Superdesk IO"""
 
-from superdesk import app, mongo
-from .reuters import Service
+from .newsml import Parser
+from .reuters import ReutersService
+from .reuters_token import ReutersTokenProvider
 
 def update_ingest():
-    Service().update(mongo.db, app.config)
+    ReutersService(Parser(), ReutersTokenProvider()).update()

@@ -1,14 +1,11 @@
 """Reuters io service."""
 
-import os
 import requests
 import xml.etree.ElementTree as etree
 import traceback
 import datetime
 
-from . import newsml
-from superdesk.storage import fetch_url
-from superdesk import app
+from superdesk import app, mongo
 
 def get_last_updated(items):
     item = items.find_one(fields=['versionCreated'], sort=[('versionCreated', -1)])
@@ -23,21 +20,24 @@ class UTCZone(datetime.tzinfo):
     def dst(self, dt):
         return datetime.timedelta(0)
 
-class Service(object):
+class ReutersService(object):
     """Update Service"""
 
     URL = 'http://rmb.reuters.com/rmd/rest/xml'
     DATE_FORMAT = '%Y.%m.%d.%H.%M'
 
-    def __init__(self):
-        self.parser = newsml.Parser()
-        self.token = get_token()
+    def __init__(self, parser, tokenProvider):
+        self.parser = parser
+        self.tokenProvider = tokenProvider
 
-    def update(self, db, config):
+    def get_token(self):
+        return self.tokenProvider.get_token()
+
+    def update(self):
         """Service update call."""
 
         updated = datetime.datetime.now(tz=UTCZone())
-        last_updated = get_last_updated(db.items)
+        last_updated = get_last_updated(mongo.db.items)
         if not last_updated or last_updated < updated + datetime.timedelta(days=-7):
             last_updated = updated + datetime.timedelta(hours=-1) # last 1h
 
@@ -46,19 +46,18 @@ class Service(object):
                 items = self.get_items(guid)
                 items.reverse()
                 for item in items:
-                    old = db.items.find_one({'guid': item['guid']}, fields=["_id"])
+                    old = mongo.db.items.find_one({'guid': item['guid']}, fields=["_id"])
                     if old:
                         item['_id'] = old.get('_id')
-                    self.fetch_assets(item, config)
-                    db.items.save(item)
+                    self.fetch_assets(item)
+                    mongo.db.items.save(item)
 
-    def fetch_assets(self, item, config):
+    def fetch_assets(self, item):
         """Fetch remote assets for given item."""
-        return
-        for content in item['contents']:
-            if 'residref' in content and 'baseimage' not in content.get('residref'):
-                url = "%s?token=%s" % (content['href'], self.token)
-                content['storage'] = fetch_url(url, os.path.join(config.get('media_root'), content['residref']))
+        for group in item.get('groups', []):
+            for ref in group.get('refs', []):
+                if 'residRef' in ref:
+                    self.get_items(ref.get('residRef'))
 
     def get_items(self, guid):
         """Parse item message and return given items."""
@@ -93,7 +92,7 @@ class Service(object):
 
         if payload is None:
             payload = {}
-        payload['token'] = self.token
+        payload['token'] = self.get_token()
         url = self.get_url(endpoint)
 
         try:
@@ -116,39 +115,3 @@ class Service(object):
         """Format date for API usage."""
         return date.strftime(self.DATE_FORMAT)
 
-def get_token():
-    """Get access token."""
-
-    if app.config.get('token'):
-        return app.config.get('token')
-
-    session = requests.Session()
-    session.mount('https://', SSLAdapter())
-
-    url = 'https://commerce.reuters.com/rmd/rest/xml/login'
-    payload = {
-        'username': os.environ.get('REUTERS_USERNAME', ''),
-        'password': os.environ.get('REUTERS_PASSWORD', ''),
-    }
-
-    response = session.get(url, params=payload)
-    tree = etree.fromstring(response.text)
-    app.config['token'] = tree.text
-    return app.config['token']
-
-# workaround for ssl version error
-class SSLAdapter(requests.adapters.HTTPAdapter):
-    """SSL Adapter set for ssl tls v1."""
-
-    def init_poolmanager(self, connections, maxsize, **kwargs):
-        """Init poolmanager to use ssl version v1."""
-
-        import ssl
-        from requests.packages.urllib3.poolmanager import PoolManager
-
-        self.poolmanager = PoolManager(
-                num_pools=connections,
-                maxsize=maxsize,
-                ssl_version=ssl.PROTOCOL_TLSv1,
-                **kwargs
-                )
