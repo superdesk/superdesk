@@ -14,6 +14,7 @@ class ItemConflictException(Exception):
     pass
 
 def format_item(item):
+    item.pop('_id', None)
     item.setdefault('self_url', url_for('item', guid=item.get('guid')))
     for content in item.get('contents', []):
         if content.get('href'):
@@ -36,7 +37,6 @@ def save_item(data):
     return data
 
 def update_item(data, guid):
-    data.pop('_id', None)
     data['versionCreated'] = datetime.utcnow()
     item = mongo.db.items.find_one({'guid': guid})
     item.update(data)
@@ -70,7 +70,7 @@ class ItemListResource(rest.Resource):
         skip = int(request.args.get('skip', 0))
         limit = int(request.args.get('limit', 25))
         query = self.get_query()
-        raw_items = mongo.db.items.find(query).sort('versionCreated', -1).skip(skip).limit(limit + 1)
+        raw_items = mongo.db.items.find(query).sort('firstCreated', -1).skip(skip).limit(limit + 1)
         items = [format_item(item) for item in raw_items]
         return {'items': items[:limit], 'has_next': len(items) > limit, 'has_prev': skip > 0}
 
