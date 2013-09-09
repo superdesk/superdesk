@@ -5,7 +5,6 @@ define([
     './controllers/list',
     './controllers/edit',
     './controllers/ref',
-    './controllers/archive',
     './resources',
     './directives'
 ], function(angular) {
@@ -13,6 +12,18 @@ define([
 
     angular.module('superdesk.items', ['ngRoute', 'superdesk.items.resources', 'superdesk.items.directives']).
         config(function($routeProvider) {
+
+            function getItemLoader(defaultParams) {
+                return function($route, ItemListLoader) {
+                    var params = angular.extend({
+                        sort: '[("firstCreated", -1)]',
+                        skip: 0,
+                        limit: 25
+                    }, defaultParams, $route.current.params);
+                    return ItemListLoader(params);
+                };
+            }
+
             $routeProvider.
                 when('/packages/:guid', {
                     templateUrl: 'scripts/superdesk/items/views/edit.html',
@@ -25,7 +36,12 @@ define([
                 }).
                 when('/items/', {
                     templateUrl: 'scripts/superdesk/items/views/archive.html',
-                    controller: require('superdesk/items/controllers/archive'),
+                    controller: require('superdesk/items/controllers/list'),
+                    resolve: {
+                        items: ['ItemListLoader', function(ItemListLoader) {
+                            return ItemListLoader({itemClass: 'icls:picture,icls:text'});
+                        }]
+                    },
                     menu: {
                         parent: 'content',
                         label: 'Archive',
@@ -35,6 +51,11 @@ define([
                 when('/', {
                     controller: require('superdesk/items/controllers/list'),
                     templateUrl: 'scripts/superdesk/items/views/list.html',
+                    resolve: {
+                        items: ['ItemListLoader', function(ItemListLoader) {
+                            return ItemListLoader({itemClass: 'icls:composite'});
+                        }]
+                    },
                     menu: {
                         parent: 'content',
                         label: 'Packages',

@@ -12,10 +12,17 @@ define([
                 update: {method: 'PUT'}
             });
         }).
-        factory('ItemListLoader', function($q, ItemResource) {
+        factory('ItemListLoader', function($q, $route, ItemResource) {
+            var defaultParams = {
+                sort: '[("firstCreated", -1)]',
+                skip: 0,
+                limit: 25
+            };
+
             return function(params) {
                 var delay = $q.defer();
-                ItemResource.query(params,
+                ItemResource.query(
+                    angular.extend({}, defaultParams, params, $route.current.params),
                     function(response) {
                         var items = response.items;
                         items.has_next = response.has_next;

@@ -16,10 +16,7 @@
       </ul>
     </div>
 
-    <input type="text" name="searchbar" class="searchbar-container" id="test45">
-     
- 
-
+    <input type="text" name="searchbar" class="searchbar-container" ng-model="query" id="test45" ng-change="search(query)" autofocus="autofocus">
 </div>  
 
 <section class="main-section">
@@ -160,15 +157,22 @@
            <div class="media-box" ng-class="{image: item.itemClass == 'icls:picture'}" ng-repeat="item in items" ng-click="edit(item)">
             <figure ng-repeat="content in item.contents | filter:'rend:thumbnail'">
               <img ng-src="{{ content.href }}" alt="" title="{{ item.description }}" />
+              <figcaption>{{ item.creditline }}</figcaption>
             </figure>
             <figure ng-show="item.itemClass == 'icls:text'">
-              <p title="{{ item.description }}">{{ item.description }}</p>
+              <small title="{{ item.description }}">{{ item.description }}</small>
             </figure>
             <div class="media-info">
                 <h5>{{ item.slugline }}</h5>
                 <dl>
-                    <dt>Source</dt><dd>{{ item.provider }}</dd>
-                    <dt>{{ _("Urgency") }}</dt><dd>{{ item.urgency }}</dd>
+                    <dt>Source</dt>
+                    <dd>{{ item.provider }}</dd>
+
+                    <dt>{{ _("Urgency") }}</dt>
+                    <dd>{{ item.urgency }}</dd>
+
+                    <dt>{{ _("Created") }}</dt>
+                    <dd><time datetime="{{ item.firstCreated }}" title="{{ item.firstCreated|date:'medium' }}">{{ item.firstCreated|reldate }}</time></dd>
                 </dl>
             </div>
           </div>
@@ -201,16 +205,17 @@
 </div>
 
 
-      <div style="width: 820px; margin-left: -410px;" class="modal in" id="editDetailsModal" ng-show="editItem">
-        <div class="modal-header">
+      <div style="width: 820px; margin-left: -410px;" class="modal in" id="editDetailsModal" ng-show="editItem.itemClass == 'icls:text'">
+        <div class="modal-header" style="overflow: hidden">
             <button type="button" class="close" data-dismiss="modal" ng-click="closeEdit()">×</button>
-            <h3>{{ editItem.slugline }}</h3>
+            <h3 style="line-height: 2em" title="{{ editItem.headline }}">{{ editItem.headline }}</h3>
         </div>
         <div class="modal-body">
             <div class="row-fluid">
                 <div class="span6">
                     <figure ng-repeat="content in editItem.contents | filter:'rend:viewImage'">
                       <img ng-src="{{ content.href }}" alt="" title="{{ editItem.description }}" />
+                      <figcaption>&copy; {{ editItem.creditline }}</figcaption>
                     </figure>
 
                     <blockquote ng-repeat="content in editItem.contents | filter:'html'" sd-html ng-model="content.content">
@@ -273,29 +278,28 @@
 
 
 
-<div class="modal hide lightbox-preview" id="viewDetailsModal">
+<div class="modal lightbox-preview" id="viewDetailsModal" ng-show="editItem.itemClass == 'icls:picture'">
     <section class="lightbox-top">
-        <a class="btn btn-dark" href="#" ><i class="icon-pencil icon-white"></i> Edit</a>
-        <a class="btn btn-dark" href="#" ><i class="icon-download-alt icon-white"></i> Download</a>
-        <a class="btn btn-dark" href="#" ><i class="icon-trash icon-white"></i> Delete</a>
-        <a href="#" class="lightbox-close" data-dismiss="modal"></a>
+        <a class="btn btn-dark" href="" ><i class="icon-pencil icon-white"></i> Edit</a>
+        <a class="btn btn-dark" href="" ><i class="icon-download-alt icon-white"></i> Download</a>
+        <a class="btn btn-dark" href="" ><i class="icon-trash icon-white"></i> Delete</a>
+        <a href="" class="lightbox-close" data-dismiss="modal" ng-click="closeEdit()"></a>
     </section>
     <section class="lightbox-left">
-        <figure class="lightbox-large-preview">
-            <img src="pictures/dog1.jpg">
+        <figure class="lightbox-large-preview" ng-repeat="content in editItem.contents | filter:'rend:viewImage'">
+            <img ng-src="{{ content.href }}" alt="" title="{{ editItem.description }}" />
+            <figcaption>&copy; {{ editItem.creditline }}</figcaption>
         </figure>
-        <div class="lightbox-caption">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo</div>
+        <div class="lightbox-caption">{{ editItem.headline }}</div>
     </section>
     <section class="lightbox-right">
         <header>
-            <h5 class="lightbox-title">Lorem ipsum dolor sit amet</h5>
-            <span class="lightbox-modified-info">Modified: 18.05.2013, 14:18</span>
+            <h5 class="lightbox-title">{{ editItem.slugline }}</h5>
+            <span class="lightbox-modified-info">Modified: {{ editItem.versionCreated|date:'medium' }}</span>
             <span class="lightbox-media-type filetype-icon-photo"></span>
         </header>
         <div class="lightbox-media-data" >
-            <div class="lightbox-descritpion">
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo
-            </div>
+            <div class="lightbox-descritpion">{{ editItem.description }}</div>
             <div class="tabmodule">
                 <div class="tabmodule-header">
                     <i class="icon-chevron-down toggle-module-close"></i>

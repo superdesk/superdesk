@@ -1,33 +1,27 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', '$routeParams', 'ItemListLoader', function($scope, $routeParams, ItemListLoader) {
-        $scope.params = angular.extend({
-            itemClass: 'icls:composite',
-            sort: '[("firstCreated", -1)]',
-            skip: 0,
-            limit: 25
-        }, $routeParams);
+    return ['$scope', '$location', '$routeParams', 'items',
+    function($scope, $location, $routeParams, items) {
+        $scope.items = items;
 
-        $scope.fetch = function(options) {
-        	angular.extend($scope.params, options);
-        	$scope.items = ItemListLoader($scope.params);
-        };
-        
+        $scope.query = 'q' in $routeParams ? $routeParams.q : null;
         $scope.search = function(query) {
         	if (query && query.length > 2) {
-        		$scope.fetch({
-                    q: query,
-        			skip: 0
-        		});
+                $location.search('q', query);
+                $location.search('skip', null);
         	} else if (query.length === 0) {
-        		$scope.fetch({
-                    q: null,
-        			skip: 0
-        		});
+        		$location.search('q', null);
+                $location.search('skip', null);
         	}
         };
 
-        $scope.fetch();
+        $scope.edit = function(item) {
+            $scope.editItem = item;
+        };
+
+        $scope.closeEdit = function() {
+            $scope.editItem = null;
+        };
     }];
 });

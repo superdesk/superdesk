@@ -35,7 +35,7 @@ define([
                     element.addClass('btn-group').addClass('pull-right');
 
                     $scope.links = {};
-                    $scope.limit = 'limit' in attrs ? parseInt(attrs.limit) : 25;
+                    $scope.limit = 25;
 
                     $scope.prev = function() {
                         $location.search('skip', getPrevSkip($scope));
