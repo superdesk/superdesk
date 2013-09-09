@@ -1,5 +1,5 @@
   <div class="subnav subnav-fixed">
-    <input type="text" name="searchbar" class="searchbar-container" style="width:500px;" ng-model="query" ng-change="search(query)" autofocus="autofocus">
+    <input type="text" sd-searchbar style="width:500px;" />
     <a class="btn btn-medium btn-info pull-right" href="createItem()" ng-show><span class="medium-icon-add"></span> {{ _("Add New Article") }}</a>
   </div>
 
@@ -73,7 +73,7 @@
         <tbody>
           <tr ng-repeat="item in items">
             <td class="chckbx_col"><input type="checkbox" class="sf-checkbox" set-bg="2"  name="_{{ item.guid }}"></td>
-            <td class="title_col"><a href="#/packages/{{ item.guid }}?skip={{ params.skip }}">{{ item.headline }}</a></td>
+            <td class="title_col"><a href="" ng-click="open('/packages/{{ item.guid }}')">{{ item.headline }}</a></td>
             <td>{{ item.slugline }}</td>
             <td>{{ item.provider }}</td>
             <td><time datetime="{{ item.firstCreated }}" title="{{ item.firstCreated|date:'medium' }}">{{ item.firstCreated|reldate }}</time></td>
@@ -82,7 +82,7 @@
               <div class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ _("Action") }} <b class="caret"></b></a>
                 <ul class="dropdown-menu sf-dropdown-simple pull-right">
-                  <li><a href="#{{ item.self_url }}?skip={{ params.skip }}"><i class="icon-pencil"></i> {{ _("Edit") }}</a></li>
+                  <li><a href="" ng-click="open('/packages/{{ item.guid }}')"><i class="icon-pencil"></i> {{ _("Edit") }}</a></li>
                   <li><a href=""><i class="icon-trash"></i> {{ _("Delete") }}</a></li>
                   <!--<li><a href="#"><i class="icon-ban-circle"></i> Unpublish</a></li>-->
                   <!--<li><a href="#"><i class="icon-eye-open"></i> Preview</a></li>-->

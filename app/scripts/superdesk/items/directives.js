@@ -3,12 +3,41 @@ define([
     'angular',
     'moment'
 ], function($, angular, moment) {
+    'use strict';
+
     angular.module('superdesk.items.directives', []).
         filter('reldate', function() {
             return function(date) {
                 return moment(date).fromNow();
             };
         }).
+        directive('sdSearchbar', function($location, $routeParams) {
+            return {
+                link: function($scope, element, attrs) {
+                    element.attr('name', 'searchbar');
+                    element.attr('autofocus', 'autofocus');
+                    element.addClass('searchbar-container');
+
+                    if ('q' in $routeParams) {
+                        element.val($routeParams.q);
+                    }
+
+                    $(element).keyup(function() {
+                        $scope.$apply(function() {
+                            var query = element.val();
+                            if (query && query.length > 2) {
+                                $location.search('q', query);
+                                $location.search('skip', null);
+                            } else if (query.length === 0) {
+                                $location.search('q', null);
+                                $location.search('skip', null);
+                            }
+                        });
+                    });
+                }
+            };
+        }).
+        
         directive('sdPagination', function($location, $routeParams) {
             function getCurrentSkip() {
                 return 'skip' in $routeParams ? parseInt($routeParams.skip) : 0;
@@ -46,7 +75,7 @@ define([
                     };
 
                     ngModel.$render = function() {
-                        items = ngModel.$viewValue;
+                        var items = ngModel.$viewValue;
                         if (items) {
                             $scope.links.hasPrev = items.has_prev;
                             $scope.links.hasNext = items.has_next;
