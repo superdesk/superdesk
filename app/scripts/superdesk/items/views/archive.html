@@ -150,8 +150,10 @@
                         <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
                     </ul>
             </div>
+
         </div>
         <div class="main-content-subnav">
+            <div sd-pagination ng-model="items" data-limit="{{ params.limit }}" style="min-width:80px"></div>
        
         </div>
         <div class="main-content-inner grid-view scroller">
@@ -166,8 +168,8 @@
                 <h5>{{ item.slugline }}</h5>
                 <dl>
                     <dt>Source</dt><dd>{{ item.provider }}</dd>
+                    <dt>{{ _("Urgency") }}</dt><dd>{{ item.urgency }}</dd>
                 </dl>
-                
             </div>
           </div>
         </div>

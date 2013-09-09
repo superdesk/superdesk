@@ -33,13 +33,7 @@
               </ul>
         </div>
 
-         <div class="btn-group pull-right" style="margin-left:20px;">
-            <a ng-href="#/{{ links.prev_link }}" class="btn" ng-show="items.has_prev"><i class="icon-chevron-left"></i></a>
-            <span class="btn disabled" ng-show="!items.has_prev"><i class="icon-chevron-left"></i></span>
-
-            <a ng-href="#/{{ links.next_link }}" class="btn" ng-show="items.has_next"><i class="icon-chevron-right"></i></a>
-            <span class="btn disabled" ng-show="!items.has_next"><i class="icon-chevron-right"></i></span>
-        </div>
+        <div sd-pagination ng-model="items" style="min-width:80px"></div>
 
         <div class="page-info pull-right" ng-show>
             Page <input type="text" value="1"/> of 103

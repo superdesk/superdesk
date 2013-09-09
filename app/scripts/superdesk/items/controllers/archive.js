@@ -1,10 +1,18 @@
 define([
-], function() {
+    'angular',
+], function(angular) {
     return [
         '$scope',
+        '$routeParams',
         'ItemListLoader',
-        function($scope, ItemListLoader) {
-            $scope.items = ItemListLoader({itemClass: 'icls:picture,icls:text', limit: 50});
+        function($scope, $routeParams, ItemListLoader) {
+            $scope.params = angular.extend({
+                itemClass: 'icls:picture,icls:text',
+                skip: 0,
+                limit: 50
+            }, $routeParams);
+
+            $scope.items = ItemListLoader($scope.params);
 
             $scope.edit = function(item) {
                 $scope.editItem = item;
