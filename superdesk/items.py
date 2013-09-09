@@ -37,7 +37,7 @@ def save_item(data):
 
 def update_item(data, guid):
     data.pop('_id', None)
-    data.setdefault('versionCreated', datetime.utcnow())
+    data['versionCreated'] = datetime.utcnow()
     item = mongo.db.items.find_one({'guid': guid})
     item.update(data)
     mongo.db.items.save(item)
@@ -56,18 +56,22 @@ def get_last_updated():
 
 class ItemListResource(rest.Resource):
 
-    @auth_required
-    def get(self):
+    def get_query(self):
         query = {}
         query.setdefault('itemClass', 'icls:composite')
-
         if request.args.get('q'):
             query['headline'] = {'$regex': request.args.get('q'), '$options': 'i'}
+        if request.args.get('itemClass'):
+            query['itemClass'] = {'$in': request.args.get('itemClass').split(",")}
+        return query
 
+    @auth_required
+    def get(self):
         skip = int(request.args.get('skip', 0))
         limit = int(request.args.get('limit', 25))
-
-        items = [format_item(item) for item in mongo.db.items.find(query).sort('firstCreated', -1).skip(skip).limit(limit + 1)]
+        query = self.get_query()
+        raw_items = mongo.db.items.find(query).sort('versionCreated', -1).skip(skip).limit(limit + 1)
+        items = [format_item(item) for item in raw_items]
         return {'items': items[:limit], 'has_next': len(items) > limit, 'has_prev': skip > 0}
 
     @auth_required
