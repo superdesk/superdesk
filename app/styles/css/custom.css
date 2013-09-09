@@ -1735,3 +1735,12 @@ a.collaborator-name-large  {
 	font-size: 16px;
 }
 /* end of login popup style override */
+
+.grid-view .media-box figure {
+	max-width: 130px;
+	overflow: hidden;
+}
+
+blockquote > p {
+	margin-bottom: 0.8em;
+}

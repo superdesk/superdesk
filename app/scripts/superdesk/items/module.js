@@ -5,6 +5,7 @@ define([
     './controllers/list',
     './controllers/edit',
     './controllers/ref',
+    './controllers/archive',
     './resources',
     './directives'
 ], function(angular) {
@@ -13,7 +14,7 @@ define([
     angular.module('superdesk.items', ['ngRoute', 'superdesk.items.resources', 'superdesk.items.directives']).
         config(function($routeProvider) {
             $routeProvider.
-                when('/items/:guid', {
+                when('/packages/:guid', {
                     templateUrl: 'scripts/superdesk/items/views/edit.html',
                     controller: require('superdesk/items/controllers/edit'),
                     resolve: {
@@ -22,13 +23,22 @@ define([
                         }
                     }
                 }).
+                when('/items/', {
+                    templateUrl: 'scripts/superdesk/items/views/archive.html',
+                    controller: require('superdesk/items/controllers/archive'),
+                    menu: {
+                        parent: 'content',
+                        label: 'Archive',
+                        priority: -2
+                    }
+                }).
                 when('/', {
                     controller: require('superdesk/items/controllers/list'),
                     templateUrl: 'scripts/superdesk/items/views/list.html',
                     menu: {
                         parent: 'content',
                         label: 'Packages',
-                        order: -1,
+                        priority: -1
                     }
                 });
         }).

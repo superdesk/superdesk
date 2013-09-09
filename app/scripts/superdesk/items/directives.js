@@ -9,6 +9,16 @@ define([
                 return moment(date).fromNow();
             };
         }).
+        directive('sdHtml', function($sce) {
+            return {
+                require: '?ngModel',
+                link: function($scope, element, attrs, ngModel) {
+                    ngModel.$render = function() {
+                        element.prepend(ngModel.$viewValue);
+                    };
+                }
+            };
+        }).
         directive('sdContent', function() {
             function getText(content) {
                 var lines = $(content);

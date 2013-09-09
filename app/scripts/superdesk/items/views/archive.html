@@ -1,0 +1,327 @@
+<div class="subnav subnav-fixed">
+
+    <a class="btn btn-medium btn-info pull-right" href="#"  id="addmedia"><span class="medium-icon-add"></span> Add Media</a>
+
+    <div class="btn-group source-select">
+      <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+        Sources
+        <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu sf-dropdown">
+            <li><input type="checkbox" class="sf-checkbox" set-bg="1" ><i class="dropdown-icon-local"></i>Local Archive</li>
+            <li><input type="checkbox" class="sf-checkbox" set-bg="1" ><i class="dropdown-icon-flickr"></i>Flickr</li>
+            <li><input type="checkbox" class="sf-checkbox" set-bg="1" ><i class="dropdown-icon-instagram"></i>Instagram</li>
+            <li><input type="checkbox" class="sf-checkbox" set-bg="1" ><i class="dropdown-icon-googleimg"></i>Google Images</li>
+            <li><input type="checkbox" class="sf-checkbox" set-bg="1"><i class="dropdown-icon-reuters"></i>Reuters</li>
+      </ul>
+    </div>
+
+    <input type="text" name="searchbar" class="searchbar-container" id="test45">
+     
+ 
+
+</div>  
+
+<section class="main-section">
+    <div id="sidebar" class="main-sidebar-left scroller" ng-show>
+
+        <div class="module">
+            <h3 class="header"><i class="icon-chevron-down"></i>Filters</h3>
+            <div class="module-row">
+                <div class="btn-group" data-toggle="buttons-radio" id="filter-modifiers">
+                  <a type="button" class="btn btn-mini active" modifier="is">Include</a>
+                  <a type="button" class="btn btn-mini" modifier="or">Expand</a>
+                  <a type="button" class="btn btn-mini" modifier="not">Exclude</a>
+                </div>
+            </div>
+            <div class="module-row">
+                
+                <input type="text" id="MAFilter" name="MAFilter" value="" placeholder="Filter type"/>
+                <div class="open-filter-button" id="open-filter"></div>
+                <input type="text" id="MAFilterValue" name="MAFilterValue" value="" class="filter classic" style="display:none"/>
+                <input type="text" id="MAFilterValue1" name="MAFilterValue1" value="" placeholder="from" class="range filter" style="display:none" />
+                <input type="text" id="MAFilterValue2" name="MAFilterValue2" value="" placeholder="to" class="range filter" style="display:none"/>
+                <ul id="MAFilterResults">
+
+                </ul>
+                <ul class="tag-container clearfix" id="tag-container">
+
+                </ul>
+            </div>
+
+            <script type="text/javascript" src="js/MAfilter.js"></script>
+        </div>
+
+        <div class="module">
+            <h3 class="header"><i class="icon-chevron-down"></i>File Types</h3>
+            <div class="module-row">
+                <ul id="treemenu1" class="treeview">
+                    <li icon="photo"><i>Images</i><input type="checkbox" class="check"></li>
+                    <li icon="video"><i>Video</i> <input type="checkbox" class="check"> </li>
+                    <li icon="slideshow"><i>Slideshow</i><input type="checkbox" class="check"></li>
+                    <li icon="audio">
+                        <div class="parent">
+                            <span class="tree-entry"></span>
+                            <i>Audio</i>
+                            <input type="checkbox" class="check"> 
+                        </div>
+                        <ul>
+                            <li><div class="child-content">Audio 1<input type="checkbox" class="check"></div></li>
+                            <li><div class="child-content">Audio 2<input type="checkbox"  class="check"></div></li>
+                        </ul>
+                    </li>
+                    <li icon="file"><i>Files</i><input type="checkbox" class="check"></li>
+                    <li icon="maps"><i>Maps</i><input type="checkbox" class="check"></li>
+                    <li icon="calendar"><i>Calendar</i><input type="checkbox" class="check"></li>
+                </ul>
+            </div>
+        </div>
+        <div class="module">
+            <h3 class="header"><i class="icon-chevron-down"></i>Date</h3>
+            <div class="module-row">
+                <select name="date">
+                  <option>list1</option>
+                  <option>list2</option>
+                </select>
+            </div>
+            <div class="module-row">
+                
+                <label for="date_from" class="half">from
+                    <input type="text" class="date" id="date_from" />
+                </label>
+                
+                <label for="date_to" class="half">to
+                    <input type="text" class="date" id="date_to"/>
+                </label>
+            </div>
+            
+        </div>
+        <div class="module">
+            <h3 class="header"><i class="icon-chevron-down"></i>Licence type</h3>
+              <div class="module-row">
+                <select name="licence_type">
+                  <option>Managed rights</option>
+                  <option>list1</option>
+                  <option>list2</option>
+                </select>    
+              </div>
+              <div class="module-row">
+              <label for="licennce_duration">Licence duration
+                 <select name="licence_duration" id="licence_duration">
+                  <option>Up to 1 year</option>
+                  <option>Between 1 and 2 years</option>
+                  <option>Over 2 years</option>
+                </select>
+             </label>
+                           
+              </div>
+            
+        </div>
+    </div>
+    <div class="fake-sidebar" ></div>
+    <div id="main-content" class="main-content">
+        <div class="main-content-topnav">
+            <a href="#" class="toggle-sidebar-button" ></a>
+            <span class="title">Search results</span>
+            <span class="info">(104.503)</span>
+            
+        
+            <div class="btn-group pull-right">
+                <a class="btn" href="#"><i class="icon-settings"></i></a>
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        
+                        <li><a href="#"><i class="icon-eye-open"></i> View/Hide details</a></li>
+                         <li class="divider"></li>
+                        <li><a href="#"><i class="icon-th-large"></i> 25 items per page</a></li>
+                        <li><a href="#"><i class="icon-th-large"></i> 50 items per page</a></li>
+                         <li class="divider"></li>
+                        <li><a id="grid_view" href="#"><i class="icon-th"></i> Grid view</a></li>
+                        <li><a id="list_view"  href="#"><i class="icon-th-list"></i> List view</a></li>
+                    </ul>
+            </div>
+            
+            <div class="btn-group pull-right" style="margin-right:10px;">
+                <a class="btn btn-info" href="#">Action</a>
+                <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a id="add-to-scratchpad-many" href="#"><i class="icon-scratchpad"></i> Add to scratchpad</a></li>
+                        <li><a href="#"><i class="icon-download-alt"></i> Download</a></li>
+                        <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                    </ul>
+            </div>
+        </div>
+        <div class="main-content-subnav">
+       
+        </div>
+        <div class="main-content-inner grid-view scroller">
+           <div class="media-box" ng-class="{image: item.itemClass == 'icls:picture'}" ng-repeat="item in items" ng-click="edit(item)">
+            <figure ng-repeat="content in item.contents | filter:'rend:thumbnail'">
+              <img ng-src="{{ content.href }}" alt="" title="{{ item.description }}" />
+            </figure>
+            <figure ng-show="item.itemClass == 'icls:text'">
+              <p title="{{ item.description }}">{{ item.description }}</p>
+            </figure>
+            <div class="media-info">
+                <h5>{{ item.slugline }}</h5>
+                <dl>
+                    <dt>Source</dt><dd>{{ item.provider }}</dd>
+                </dl>
+                
+            </div>
+          </div>
+        </div>
+    </div>
+    
+</section>
+<div class="scratchpad" ng-show>
+    <div class="header">
+        <div class="title">SCRATCHPAD</div>
+        <div class="info"><span class="badge">1</span>files</div>
+        <a class="scratchpad-openclose pull-right" href="#"></a>   
+        <div class="btn-group dropup pull-right">
+          <button class="btn">Options</button>
+          <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+          <ul class="dropdown-menu pull-right">
+            <li><a href="#">Save as Collection</a></li>
+            <li><a href="#">Save as Playlist</a></li>
+            <li><a href="#">Create Slideshow</a></li>
+            <li><a id="clear-scratchpad-content" href="#">Clear all</a></li>
+          </ul>
+        </div>
+    </div>
+    <div class="content">
+        <div class="scratchpad-slider horizontal-slider">
+          <div class="slider-content" style="width:0px" >
+          </div>
+        </div>
+    </div>
+</div>
+
+
+      <div style="width: 820px; margin-left: -410px;" class="modal in" id="editDetailsModal" ng-show="editItem">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" ng-click="closeEdit()">×</button>
+            <h3>{{ editItem.slugline }}</h3>
+        </div>
+        <div class="modal-body">
+            <div class="row-fluid">
+                <div class="span6">
+                    <figure ng-repeat="content in editItem.contents | filter:'rend:viewImage'">
+                      <img ng-src="{{ content.href }}" alt="" title="{{ editItem.description }}" />
+                    </figure>
+
+                    <blockquote ng-repeat="content in editItem.contents | filter:'html'" sd-html ng-model="content.content">
+                      <small ng-show="editItem.creditline">{{ editItem.creditline }}</small>
+                    </blockquote>
+
+                    <dl class="line-borders clearfix" ng-show>
+                        <dt>File name</dt>
+                        <dd>andromeda și câți alții.jpg</dd>
+                        <dt>File size</dt>
+                        <dd>163.44 KB</dd>
+                    </dl>
+                </div>
+                
+
+                <div class="span6" ng-show>
+                    <form class="form-horizontal row-fluid metalanguage-selection">
+                    <fieldset>
+                    <div class="metadata-language shadow-target" shadow-id="5" id="language-shadow" >
+                        <select class="span2 edit-metadata-select" name="Language">
+                            <option value="1" selected="selected">English</option>
+                            <option value="2">Romanian</option>
+                        </select>
+                    </div>
+                    <dl class="metadata-details clearfix shadow-source"  shadow-id="5" id="data-shadow" >
+                        <dt>Conformance</dt><dd><input value="" type="text" /></dd>
+                        <dt>Rights info</dt><dd><input value="" type="text" /></dd>
+                        <dt>Provider</dt><dd><input value="" type="text" /></dd>
+                        <dt>Title</dt><dd><input value="" type="text" /></dd>
+                        <dt>Creator</dt><dd><input value="John N. Doe" name="creator" type="text" /></dd>
+                        <dt>Contributor</dt><dd><input value="" type="text" /></dd>
+                        <dt>Creditline</dt><dd><input value="" type="text" /></dd>
+                        <dt>Subject</dt><dd><input value="French elections" name="subject" type="text" /></dd>
+                        <dt>City</dt><dd><input value="" type="text" /></dd>
+                        <dt>Country</dt><dd><input value="" type="text" /></dd>
+                        <dt>Date created</dt><dd><input value="" type="text" /></dd>
+                        <dt>Time created</dt><dd><input value="" type="text" /></dd>
+                        <dt>Keywords</dt><dd><input value="" type="text" /></dd>
+                        <dt>Headline</dt><dd><input value="" type="text" /></dd>
+                        <dt>Description</dt><dd><textarea class="meta-description-text" value=""></textarea></dd>
+                        <dt>Caption</dt><dd><input value="" type="text" /></dd>
+                    </dl>
+                    </fieldset>
+                </div>
+
+
+
+
+
+
+            </div>
+        </div>
+        <div class="modal-footer">
+                <button href="#" class="btn btn-primary pull-right" >Save</button>
+                <button href="#" data-dismiss="modal" class="btn pull-right" ng-click="closeEdit()">Cancel</button>
+        </div>
+          </div>
+    </div>
+
+
+
+
+<div class="modal hide lightbox-preview" id="viewDetailsModal">
+    <section class="lightbox-top">
+        <a class="btn btn-dark" href="#" ><i class="icon-pencil icon-white"></i> Edit</a>
+        <a class="btn btn-dark" href="#" ><i class="icon-download-alt icon-white"></i> Download</a>
+        <a class="btn btn-dark" href="#" ><i class="icon-trash icon-white"></i> Delete</a>
+        <a href="#" class="lightbox-close" data-dismiss="modal"></a>
+    </section>
+    <section class="lightbox-left">
+        <figure class="lightbox-large-preview">
+            <img src="pictures/dog1.jpg">
+        </figure>
+        <div class="lightbox-caption">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo</div>
+    </section>
+    <section class="lightbox-right">
+        <header>
+            <h5 class="lightbox-title">Lorem ipsum dolor sit amet</h5>
+            <span class="lightbox-modified-info">Modified: 18.05.2013, 14:18</span>
+            <span class="lightbox-media-type filetype-icon-photo"></span>
+        </header>
+        <div class="lightbox-media-data" >
+            <div class="lightbox-descritpion">
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo
+            </div>
+            <div class="tabmodule">
+                <div class="tabmodule-header">
+                    <i class="icon-chevron-down toggle-module-close"></i>
+                    <i class="icon-chevron-right toggle-module-open"></i>
+                    <span class="tabmodule-title">Details</span>
+                </div>
+                <div class="tabmodule-content">
+                    <dl class="metadata-details-new clearfix">
+                        <dt>Conformance</dt><dd>Power</dd>
+                        <dt>Rights info</dt><dd>AP</dd>
+                        <dt>Provider</dt><dd>AP</dd>
+                        <dt>Title</dt><dd>Sarcozy</dd>
+                        <dt>Creator</dt><dd>John N. Doe</dd>
+                        <dt>Contributor</dt><dd>John N. Doe, Jane F. Doe</dd>
+                        <dt>Creditline</dt><dd>Aliquet massa nunc</dd>
+                        <dt>Subject</dt><dd>French elections</dd>
+                        <dt>City</dt><dd>Paris</dd>
+                        <dt>Country</dt><dd>France</dd>
+                        <dt>Date created</dt><dd>23.01.2011</dd>
+                        <dt>Time created</dt><dd>06:30</dd>
+                        <dt>Keywords</dt><dd>Sarcozy, france, french elections, elections</dd>
+                        <dt>Headline</dt><dd>Lorem Ipsum dossier</dd>
+                        <dt>Description</dt><dd>Habitasse porta sociis pottitor magnis natoque ac et, magna mus lacus</dd>
+                        <dt>Caption</dt><dd>Pulvinar vel enim tristique</dd>
+                    </dl>
+                </div>
+            </div>
+            <a class="btn" href="#"><i class="icon-list-alt"></i> Edit metadata</a>
+        </div>
+    </section>
+</div>

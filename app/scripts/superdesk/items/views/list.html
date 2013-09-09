@@ -79,7 +79,7 @@
         <tbody>
           <tr ng-repeat="item in items">
             <td class="chckbx_col"><input type="checkbox" class="sf-checkbox" set-bg="2"  name="_{{ item.guid }}"></td>
-            <td class="title_col"><a href="#{{ item.self_url }}?skip={{ params.skip }}">{{ item.headline }}</a></td>
+            <td class="title_col"><a href="#/packages/{{ item.guid }}?skip={{ params.skip }}">{{ item.headline }}</a></td>
             <td>{{ item.slugline }}</td>
             <td>{{ item.provider }}</td>
             <td><time datetime="{{ item.firstCreated }}" title="{{ item.firstCreated|date:'medium' }}">{{ item.firstCreated|reldate }}</time></td>
