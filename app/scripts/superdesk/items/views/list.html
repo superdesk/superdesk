@@ -50,14 +50,12 @@
           <tr>
             <th class="chckbx_col"><input type="checkbox" class="sf-checkbox" name="all"></th>
             <th class="title_col">{{ _("Title") }}</th>
+            <th>{{ _("Slug") }}</th>
             <th>{{ _("Provider") }}</th>
-            <th>{{ _("Published") }}</th>
+            <th>{{ _("Created") }}</th>
             <th>{{ _("Updated") }}</th>
-            <th>{{ _("Status") }}</th>
             <th class="action_col">
-
-
-              <div class="dropdown" style="text-align:right;" >
+              <div class="dropdown" style="text-align:right;" ng-show="">
               <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-switches"></i> <span class="caret"></span></a>
                 <ul class="dropdown-menu sf-dropdown-simple pull-right" id="columns-switches">
                   <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col1"> Title</li>
@@ -79,10 +77,10 @@
           <tr ng-repeat="item in items">
             <td class="chckbx_col"><input type="checkbox" class="sf-checkbox" set-bg="2"  name="_{{ item.guid }}"></td>
             <td class="title_col"><a href="#{{ item.self_url }}?skip={{ params.skip }}">{{ item.headline }}</a></td>
+            <td>{{ item.slugline }}</td>
             <td>{{ item.provider }}</td>
             <td><time datetime="{{ item.firstCreated }}" title="{{ item.firstCreated|date:'medium' }}">{{ item.firstCreated|reldate }}</time></td>
             <td><time datetime="{{ item.versionCreated }}" title="{{ item.versionCreated|date:'medium' }}">{{ item.versionCreated|reldate }}</time></td>
-            <td>{{ _("Published") }}</td>
             <td class="action_col">
               <div class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ _("Action") }} <b class="caret"></b></a>
