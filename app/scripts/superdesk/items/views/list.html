@@ -1,6 +1,6 @@
   <div class="subnav subnav-fixed">
     <input type="text" name="searchbar" class="searchbar-container" style="width:500px;" ng-model="query" ng-change="search(query)">
-    <a class="btn btn-medium btn-info pull-right" href="#"><span class="medium-icon-add"></span> {{ _("Add New Article") }}</a>
+    <a class="btn btn-medium btn-info pull-right" href="createItem()" ng-show><span class="medium-icon-add"></span> {{ _("Add New Article") }}</a>
   </div>
 
    <div class="subnav subnav-level2 subnav-fixed">
@@ -18,7 +18,7 @@
             </ul>
         </div>
         
-        <div class="btn-group pull-right" style="margin-left:20px;" ng-show>
+        <div class="btn-group pull-right" style="margin-left:20px;">
           <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-settings"></i> <span class="caret"></span></a>
 
             <ul class="dropdown-menu sf-dropdown sf-dropdown-right">
@@ -34,8 +34,11 @@
         </div>
 
          <div class="btn-group pull-right" style="margin-left:20px;">
-            <a ng-href="#/{{ links.prev_link }}" class="btn" ng-class="{disabled: !items.has_prev}"><i class="icon-chevron-left"></i></a>
-            <a ng-href="#/{{ links.next_link }}" class="btn" ng-class="{disabled: !items.has_next}"><i class="icon-chevron-right"></i></a>
+            <a ng-href="#/{{ links.prev_link }}" class="btn" ng-show="items.has_prev"><i class="icon-chevron-left"></i></a>
+            <span class="btn disabled" ng-show="!items.has_prev"><i class="icon-chevron-left"></i></span>
+
+            <a ng-href="#/{{ links.next_link }}" class="btn" ng-show="items.has_next"><i class="icon-chevron-right"></i></a>
+            <span class="btn disabled" ng-show="!items.has_next"><i class="icon-chevron-right"></i></span>
         </div>
 
         <div class="page-info pull-right" ng-show>

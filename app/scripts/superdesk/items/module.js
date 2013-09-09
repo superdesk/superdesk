@@ -24,9 +24,13 @@ define([
                 }).
                 when('/', {
                     controller: require('superdesk/items/controllers/list'),
-                    templateUrl: 'scripts/superdesk/items/views/list.html'
+                    templateUrl: 'scripts/superdesk/items/views/list.html',
+                    menu: {
+                        parent: 'content',
+                        label: 'Packages',
+                        order: -1,
+                    }
                 });
-
         }).
         run(function($rootScope) {
             $rootScope.mode = {
