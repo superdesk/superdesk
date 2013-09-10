@@ -1,8 +1,10 @@
 Flask
-Flask-PyMongo
-Flask-RESTful
-Flask-Script
 requests
 blinker
 behave
 nose
+
+Flask-PyMongo
+Flask-RESTful
+Flask-Script
+http://github.com/kazoup/flask-elasticsearch/tarball/master

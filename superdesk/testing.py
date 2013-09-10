@@ -3,6 +3,7 @@ import os
 
 # this one must go before any superdesk import
 os.environ['MONGOHQ_URL'] = '_test_superdesk'
+os.environ['ELASTIC_INDEX'] = 'tests'
 
 from superdesk import app, mongo, api
 

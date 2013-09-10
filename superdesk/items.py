@@ -14,9 +14,17 @@ tokenProvider = ReutersTokenProvider()
 class ItemConflictException(Exception):
     pass
 
+def format_date(date):
+    if isinstance(date, datetime):
+        return date
+    else:
+        return date + 'Z'
+
 def format_item(item):
     item.pop('_id', None)
     item.setdefault('self_url', url_for('item', guid=item.get('guid')))
+    item['versionCreated'] = format_date(item['versionCreated'])
+    item['firstCreated'] = format_date(item['firstCreated'])
     for content in item.get('contents', []):
         if content.get('href'):
             content['href'] = '%s?auth_token=%s' % (content.get('href'), tokenProvider.get_token())
@@ -35,6 +43,7 @@ def save_item(data):
         data['_id'] = item.get('_id')
 
     mongo.db.items.save(data)
+    data['_id'] = str(data['_id'])
     blinker.signal('item:save').send(data)
     return data
 
