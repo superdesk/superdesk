@@ -1,6 +1,7 @@
 
 from datetime import datetime
 from flask import request, url_for
+import blinker
 
 from . import mongo
 from . import rest
@@ -34,6 +35,7 @@ def save_item(data):
         data['_id'] = item.get('_id')
 
     mongo.db.items.save(data)
+    blinker.signal('item:save').send(data)
     return data
 
 def update_item(data, guid):

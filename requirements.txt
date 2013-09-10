@@ -3,5 +3,6 @@ Flask-PyMongo
 Flask-RESTful
 Flask-Script
 requests
+blinker
 behave
 nose
