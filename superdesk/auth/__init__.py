@@ -4,7 +4,7 @@ from base64 import b64decode
 from flask import request, make_response
 from flask.ext import restful
 
-from superdesk import mongo, utils
+from superdesk import api, mongo, utils
 from superdesk.rest import Resource
 
 def auth_required(f):
@@ -61,3 +61,5 @@ class AuthResource(Resource):
             return token, 201
         except AuthException as err:
             return {'message': err.args[0], 'code': 401}, 401
+
+api.add_resource(AuthResource, '/auth')

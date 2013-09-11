@@ -2,6 +2,8 @@
 Superdesk server app
 """
 
+import importlib
+
 import flask
 import flask.ext.pymongo
 import flask.ext.restful
@@ -13,15 +15,9 @@ app = flask.Flask(__name__)
 app.config.from_object('settings')
 app.json_encoder = JSONEncoder
 
-mongo = flask.ext.pymongo.PyMongo(app)
 api = flask.ext.restful.Api(app)
+mongo = flask.ext.pymongo.PyMongo(app)
 search = flask.ext.elasticsearch.ElasticSearch(app)
 
-from . import items
-from . import auth
-from . import elastic
-
-api.add_resource(elastic.ItemListResource, '/items')
-#api.add_resource(items.ItemListResource, '/items')
-api.add_resource(items.ItemResource, '/items/<string:guid>', endpoint='item')
-api.add_resource(auth.AuthResource, '/auth')
+for app_name in app.config.get('INSTALLED_APPS', []):
+    importlib.import_module(app_name)

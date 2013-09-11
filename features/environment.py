@@ -2,7 +2,7 @@
 from base64 import b64encode
 from flask import json
 
-from superdesk.testing import setup, drop_db
+from tests import setup, drop_db
 from steps.auth import create_user, send_auth
 
 def before_all(context):

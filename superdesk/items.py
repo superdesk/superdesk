@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import request, url_for
 import blinker
 
-from . import mongo
+from . import api, mongo
 from . import rest
 from .auth import auth_required
 from .utils import get_random_string
@@ -105,3 +105,6 @@ class ItemResource(rest.Resource):
         data = request.get_json()
         item = update_item(data, guid)
         return format_item(item)
+
+api.add_resource(ItemResource, '/items/<string:guid>', endpoint='item')
+#api.add_resource(items.ItemListResource, '/items')

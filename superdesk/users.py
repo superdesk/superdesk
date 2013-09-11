@@ -15,7 +15,9 @@ def create_user(userdata):
     if not userdata.get('username'):
         raise EmptyUsernameException()
 
-    if mongo.db.users.find_one({'username': userdata.get('username')}):
+    conflict_user = mongo.db.users.find_one({'username': userdata.get('username')})
+    if conflict_user:
+        print(conflict_user)
         raise ConflictUsernameException(userdata.get('username'))
 
     return mongo.db.users.insert(userdata)

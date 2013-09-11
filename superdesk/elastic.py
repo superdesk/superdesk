@@ -4,6 +4,7 @@ from pyelasticsearch import ElasticHttpNotFoundError
 from flask import request
 
 from . import app
+from . import api
 from . import search
 from . import items
 from . import rest
@@ -50,3 +51,5 @@ class ItemListResource(items.ItemListResource):
             }
         except ElasticHttpNotFoundError:
             return {'items': [], 'has_prev': False, 'has_next': False}
+
+api.add_resource(ItemListResource, '/items')

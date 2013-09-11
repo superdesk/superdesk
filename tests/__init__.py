@@ -1,20 +1,18 @@
 
 import os
 
-# this one must go before any superdesk import
-os.environ['MONGOHQ_URL'] = '_test_superdesk'
-os.environ['ELASTIC_INDEX'] = 'tests'
+os.environ['MONGO_DBNAME'] = 'superdesk_tests'
+os.environ['ELASTIC_INDEX'] = 'superdesk_tests'
 
 from superdesk import app, mongo, api
 
 def drop_db():
     with app.test_request_context():
-        mongo.cx.drop_database(app.config['MONGO_DBNAME'])
+        mongo.cx.drop_database(app.config.get('MONGO_DBNAME'))
 
 def setup(context = None):
     app.config['DEBUG'] = True
     app.config['TESTING'] = True
-    drop_db()
 
     if context:
         context.app = app.test_client()

@@ -2,7 +2,7 @@
 import blinker
 import unittest
 
-from superdesk.testing import setup
+from . import setup
 
 class Logger(object):
     def __init__(self):
