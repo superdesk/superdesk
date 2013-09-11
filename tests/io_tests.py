@@ -1,8 +1,10 @@
 import os
-import xml.etree.ElementTree as etree
 import unittest
+import xml.etree.ElementTree as etree
 
-from . import newsml
+from . import setup
+
+from superdesk.io import newsml
 
 class ItemTest(unittest.TestCase):
 

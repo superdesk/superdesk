@@ -2,11 +2,11 @@
 from behave import *
 from flask import json
 
-from superdesk import app
+from tests import app
 from superdesk.items import save_item
 
 def send_auth(userdata, context):
-    return context.app.post('/auth', data=json.dumps(userdata), headers=JSON_HEADERS, follow_redirects=True)
+    return context.client.post('/auth', data=json.dumps(userdata), headers=JSON_HEADERS, follow_redirects=True)
 
 @given('no items')
 def step_impl(context):
@@ -19,16 +19,16 @@ def step_impl(context):
 
 @when('we get items')
 def step_impl(context):
-    context.response = context.app.get('/items', headers=context.headers, follow_redirects=True)
+    context.response = context.client.get('/items', headers=context.headers, follow_redirects=True)
 
 @when('we post new item')
 def step_impl(context):
     data = {'headline': 'test'}
-    context.response = context.app.post('/items', data=json.dumps(data), headers=context.headers, follow_redirects=True)
+    context.response = context.client.post('/items', data=json.dumps(data), headers=context.headers, follow_redirects=True)
 
 @when('we update item')
 def step_impl(context):
-    context.response = context.app.put('/items/%s' % context.item.get('guid'), data=json.dumps({'headline': 'updated item'}), headers=context.headers, follow_redirects=True)
+    context.response = context.client.put('/items/%s' % context.item.get('guid'), data=json.dumps({'headline': 'updated item'}), headers=context.headers, follow_redirects=True)
 
 @then('we get empty list')
 def step_impl(context):

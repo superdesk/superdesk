@@ -1,8 +1,9 @@
 
-import blinker
 import unittest
 
 from . import setup
+
+from superdesk import signals
 
 class Logger(object):
     def __init__(self):
@@ -16,12 +17,11 @@ class Logger(object):
 class ItemsTestCase(unittest.TestCase):
 
     def setUp(self):
-        setup(self)
+        setup()
 
     def test_signals(self):
         logger = Logger()
-        save_item_signal = blinker.signal('item:save')
-        save_item_signal.connect(logger.callme)
+        signals.connect('item:save', logger.callme)
 
         from superdesk import items, app
         with app.test_request_context():

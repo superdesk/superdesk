@@ -2,11 +2,12 @@
 from base64 import b64encode
 from flask import json
 
-from tests import setup, drop_db
+import tests
+
 from steps.auth import create_user, send_auth
 
 def before_all(context):
-    setup(context)
+    tests.setup(context)
 
 def before_scenario(context, scenario):
     context.headers = [('Content-Type', 'application/json')]
@@ -18,4 +19,4 @@ def before_scenario(context, scenario):
         context.headers.append(('Authorization', b'Basic ' + b64encode(token)))
 
 def after_scenario(context, scenario):
-    drop_db()
+    tests.drop_db()

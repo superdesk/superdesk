@@ -4,7 +4,7 @@ from base64 import b64encode
 from behave import *
 from flask import json
 
-from superdesk import app
+from tests import app
 import superdesk.users
 
 JSON_HEADERS = [('Content-Type', 'application/json')]
@@ -18,7 +18,7 @@ def create_user(userdata):
         return userdata
 
 def send_auth(userdata, context):
-    return context.app.post('/auth', data=json.dumps(userdata), headers=context.headers, follow_redirects=True)
+    return context.client.post('/auth', data=json.dumps(userdata), headers=context.headers, follow_redirects=True)
 
 @given('a user')
 def step_impl(context):
@@ -40,7 +40,7 @@ def step_impl(context):
 @when('we get auth info')
 def step_impl(context):
     headers = [('Authorization', b'Basic ' + b64encode(context.token))] if 'token' in context else []
-    context.response = context.app.get('/auth', headers=headers, follow_redirects=True)
+    context.response = context.client.get('/auth', headers=headers, follow_redirects=True)
 
 @then('we get auth token')
 def step_impl(context):

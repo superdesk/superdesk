@@ -1,13 +1,13 @@
 
 from datetime import datetime
 from flask import request, url_for
-import blinker
 
 from . import api, mongo
 from . import rest
 from .auth import auth_required
 from .utils import get_random_string
 from .io.reuters_token import ReutersTokenProvider
+from . import signals 
 
 tokenProvider = ReutersTokenProvider()
 
@@ -44,7 +44,7 @@ def save_item(data):
 
     mongo.db.items.save(data)
     data['_id'] = str(data['_id'])
-    blinker.signal('item:save').send(data)
+    signals.send('item:save', data)
     return data
 
 def update_item(data, guid):

@@ -1,5 +1,4 @@
 
-import blinker
 from pyelasticsearch import ElasticHttpNotFoundError
 from flask import request
 
@@ -9,6 +8,7 @@ from . import search
 from . import items
 from . import rest
 from . import manager
+from . import signals
 from .auth import auth_required
 
 def get_index():
@@ -18,8 +18,6 @@ def save_item(data):
     id = data.pop('_id', None)
     search.index(get_index(), 'items', data, id=data.get('guid'))
     data.setdefault('_id', id)
-
-blinker.signal('item:save').connect(save_item)
 
 class ItemListResource(items.ItemListResource):
 
@@ -58,6 +56,7 @@ class ItemListResource(items.ItemListResource):
         except ElasticHttpNotFoundError:
             return {'items': [], 'has_prev': False, 'has_next': False}
 
+signals.connect('item:save', save_item)
 api.add_resource(ItemListResource, '/items')
 
 @manager.command
