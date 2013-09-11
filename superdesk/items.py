@@ -6,10 +6,8 @@ from . import api, mongo
 from . import rest
 from .auth import auth_required
 from .utils import get_random_string
-from .io.reuters_token import ReutersTokenProvider
+from .io.reuters_token import tokenProvider
 from . import signals 
-
-tokenProvider = ReutersTokenProvider()
 
 class ItemConflictException(Exception):
     pass

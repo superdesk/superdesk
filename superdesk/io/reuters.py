@@ -5,15 +5,8 @@ import xml.etree.ElementTree as etree
 import traceback
 import datetime
 
+from superdesk.datetime import utcnow
 from superdesk.items import save_item, get_last_updated, ItemConflictException
-
-class UTCZone(datetime.tzinfo):
-
-    def utcoffset(self, dt):
-        return datetime.timedelta(0)
-
-    def dst(self, dt):
-        return datetime.timedelta(0)
 
 class ReutersService(object):
     """Update Service"""
@@ -31,10 +24,10 @@ class ReutersService(object):
     def update(self):
         """Service update call."""
 
-        updated = datetime.datetime.now(tz=UTCZone())
+        updated = utcnow()
         last_updated = get_last_updated()
         if not last_updated or last_updated < updated + datetime.timedelta(days=-7):
-            last_updated = updated + datetime.timedelta(hours=-1) # last 1h
+            last_updated = updated + datetime.timedelta(hours=-12) # last 12h
 
         for channel in self.get_channels():
             for guid in self.get_ids(channel, last_updated, updated):

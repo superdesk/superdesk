@@ -6,7 +6,6 @@ from . import app
 from . import api
 from . import search
 from . import items
-from . import rest
 from . import manager
 from . import signals
 from .auth import auth_required

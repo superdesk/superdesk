@@ -3,32 +3,53 @@
 import os
 import ssl
 import requests
-from requests.packages.urllib3.poolmanager import PoolManager
 import xml.etree.ElementTree as etree
+from requests.packages.urllib3.poolmanager import PoolManager
+from datetime import datetime, timedelta
+
+from superdesk import mongo
+from superdesk.datetime import utcnow
 
 class ReutersTokenProvider(object):
+    """Provides auth token for reuters api"""
 
-    token = None
+    PROVIDER = 'reuters'
 
     def get_token(self):
         """Get access token."""
 
-        if self.token:
-            return self.token
+        token = mongo.db.tokens.find_one({'provider': self.PROVIDER})
+        if token and self.is_valid(token):
+            return token.get('token')
+        elif token:
+            mongo.db.tokens.remove(token)
 
-        session = requests.Session()
-        session.mount('https://', SSLAdapter())
-
-        url = 'https://commerce.reuters.com/rmd/rest/xml/login'
-        payload = {
-            'username': os.environ.get('REUTERS_USERNAME', ''),
-            'password': os.environ.get('REUTERS_PASSWORD', ''),
+        token = {
+            'provider': self.PROVIDER,
+            'created': datetime.utcnow(),
+            'token': fetch_token_from_api(),
         }
 
-        response = session.get(url, params=payload)
-        tree = etree.fromstring(response.text)
-        self.token = tree.text
-        return self.token
+        mongo.db.tokens.save(token)
+        return token.get('token')
+
+    def is_valid(self, token):
+        ttl = timedelta(hours=12)
+        return token.get('created') + ttl >= utcnow()
+
+def fetch_token_from_api():
+    session = requests.Session()
+    session.mount('https://', SSLAdapter())
+
+    url = 'https://commerce.reuters.com/rmd/rest/xml/login'
+    payload = {
+        'username': os.environ.get('REUTERS_USERNAME', ''),
+        'password': os.environ.get('REUTERS_PASSWORD', ''),
+    }
+
+    response = session.get(url, params=payload)
+    tree = etree.fromstring(response.text)
+    return tree.text
 
 # workaround for ssl version error
 class SSLAdapter(requests.adapters.HTTPAdapter):
@@ -43,3 +64,5 @@ class SSLAdapter(requests.adapters.HTTPAdapter):
             ssl_version=ssl.PROTOCOL_TLSv1,
             **kwargs
         )
+
+tokenProvider = ReutersTokenProvider()
