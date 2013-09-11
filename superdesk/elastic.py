@@ -24,7 +24,6 @@ class ItemListResource(items.ItemListResource):
                 'filtered': {
                     'query': {
                         'query_string': {
-                            'default_field': 'headline',
                             'query': request.args.get('q', '*')
                         }
                     },
@@ -48,6 +47,7 @@ class ItemListResource(items.ItemListResource):
                 'items': items_formated,
                 'has_next': result['hits']['total'] > query['from'] + query['size'],
                 'has_prev': query['from'] > 0,
+                'total': result['hits']['total']
             }
         except ElasticHttpNotFoundError:
             return {'items': [], 'has_prev': False, 'has_next': False}
