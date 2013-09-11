@@ -8,10 +8,16 @@ from . import api
 from . import search
 from . import items
 from . import rest
+from . import manager
 from .auth import auth_required
 
+def get_index():
+    return app.config.get('ELASTIC_INDEX')
+
 def save_item(data):
-    search.index(app.config.get('ELASTIC_INDEX'), 'items', data, id=data.get('_id'))
+    id = data.pop('_id', None)
+    search.index(get_index(), 'items', data, id=data.get('guid'))
+    data.setdefault('_id', id)
 
 blinker.signal('item:save').connect(save_item)
 
@@ -41,7 +47,7 @@ class ItemListResource(items.ItemListResource):
     def get(self):
         try:
             query = self.get_query()
-            result = search.search(query, index=app.config.get('ELASTIC_INDEX'))
+            result = search.search(query, index=get_index())
             items_formated = [items.format_item(res['_source']) for res in result['hits']['hits']]
             return {
                 'items': items_formated,
@@ -53,3 +59,8 @@ class ItemListResource(items.ItemListResource):
             return {'items': [], 'has_prev': False, 'has_next': False}
 
 api.add_resource(ItemListResource, '/items')
+
+@manager.command
+def delete_index():
+    """Delete search index"""
+    return search.delete_index(get_index())

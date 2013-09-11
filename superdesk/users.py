@@ -1,6 +1,6 @@
 """Superdesk Users"""
 
-from superdesk import mongo
+from superdesk import mongo, manager
 
 class EmptyUsernameException(Exception):
     def __str__(self):
@@ -10,14 +10,21 @@ class ConflictUsernameException(Exception):
     def __str__(self):
         return "Username '%s' exists already" % self.args[0]
 
-def create_user(userdata):
+@manager.option('--username', '-u', dest='username')
+@manager.option('--password', '-p', dest='password')
+def create_user(userdata = None, **kwargs):
     """Create a new user"""
+
+    if not userdata:
+        userdata = {}
+
+    userdata.update(kwargs)
+
     if not userdata.get('username'):
         raise EmptyUsernameException()
 
     conflict_user = mongo.db.users.find_one({'username': userdata.get('username')})
     if conflict_user:
-        print(conflict_user)
         raise ConflictUsernameException(userdata.get('username'))
 
     return mongo.db.users.insert(userdata)

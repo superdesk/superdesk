@@ -7,6 +7,8 @@ ELASTIC_INDEX = os.environ.get('ELASTIC_INDEX', 'superdesk')
 
 INSTALLED_APPS = (
     'superdesk.auth',
+    'superdesk.users',
+    'superdesk.io',
     'superdesk.items',
     'superdesk.elastic',
 )
