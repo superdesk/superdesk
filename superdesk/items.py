@@ -14,17 +14,17 @@ tokenProvider = ReutersTokenProvider()
 class ItemConflictException(Exception):
     pass
 
-def format_date(date):
+def parse_date(date):
     if isinstance(date, datetime):
         return date
     else:
-        return date + 'Z'
+        return datetime.strptime(date + '+0000', '%Y-%m-%dT%H:%M:%S%z')
 
 def format_item(item):
     item.pop('_id', None)
     item.setdefault('self_url', url_for('item', guid=item.get('guid')))
-    item['versionCreated'] = format_date(item['versionCreated'])
-    item['firstCreated'] = format_date(item['firstCreated'])
+    item['versionCreated'] = parse_date(item['versionCreated'])
+    item['firstCreated'] = parse_date(item['firstCreated'])
     for content in item.get('contents', []):
         if content.get('href'):
             content['href'] = '%s?auth_token=%s' % (content.get('href'), tokenProvider.get_token())
