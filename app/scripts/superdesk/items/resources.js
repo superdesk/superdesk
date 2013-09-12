@@ -27,6 +27,7 @@ define([
                         var items = response.items;
                         items.has_next = response.has_next;
                         items.has_prev = response.has_prev;
+                        items.total_length = 'total' in response ? response.total : null;
                         delay.resolve(items);
                     },
                     function(response) {

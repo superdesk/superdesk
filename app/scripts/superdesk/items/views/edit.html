@@ -459,7 +459,7 @@
             
             <section class="article-section">
                 <header>
-                    <span class="edit-label">Spitzmarke</span>
+                    <span class="edit-label">{{ _('Slugline') }}</span>
                 </header>
                 <div id="article-section">
                     <p sd-contenteditable ng-model="item.slugline"></p>
@@ -467,13 +467,12 @@
             </section>
 
             <section class="article-date">
-                <p>{{ item.firstCreated|date:'medium' }}</p>
+                <time datetime="{{ item.firstCreated }}" title="{{ item.firstCreated|date:'medium' }}">{{ item.firstCreated|reldate }}</time>
             </section>
 
             <section class="article-title">
                 <header>
-                    <span class="edit-label">Kurztitel</span>
-                    <span class="edit-words-info">30 von 30 Zeichen</span>  
+                    <span class="edit-label">{{ _('Headline') }}</span>
                 </header>
                 <div id="article-title">
                     <p sd-contenteditable ng-model="item.headline"></p>
@@ -488,10 +487,10 @@
                 <div sd-contenteditable ng-model="content"></div>
             </section>
 
-            <div ng-repeat="group in item.groups">
+            <div ng-repeat="group in item.groups | filter:{'id': '!root'}">
                 <section ng-repeat="ref in group.refs" ng-controller="RefController">
                     <header>
-                        <span class="edit-label"></span>
+                        <span class="edit-label">{{ group.id }}</span>
                         <span class="edit-words-info">{{ item.itemClass }}</span>
                     </header>
 

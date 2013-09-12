@@ -22,7 +22,7 @@ define([
                         element.val($routeParams.q);
                     }
 
-                    $(element).keyup(function() {
+                    $(element).change(function() {
                         $scope.$apply(function() {
                             var query = element.val();
                             if (query && query.length > 2) {
@@ -37,10 +37,9 @@ define([
                 }
             };
         }).
-        
         directive('sdPagination', function($location, $routeParams) {
             function getCurrentSkip() {
-                return 'skip' in $routeParams ? parseInt($routeParams.skip) : 0;
+                return 'skip' in $routeParams ? parseInt($routeParams.skip, 10) : 0;
             }
 
             function getPrevSkip($scope) {

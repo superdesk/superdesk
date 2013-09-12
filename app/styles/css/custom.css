@@ -1744,3 +1744,5 @@ a.collaborator-name-large  {
 blockquote > p {
 	margin-bottom: 0.8em;
 }
+
+.main-article-container section:hover > header { visibility: visible; }
