@@ -14,6 +14,7 @@ files = [
   REQUIRE_ADAPTER,
 
   {pattern: 'app/**/*.js', included: false},
+  {pattern: 'test/**/*Spec.js', included: false},
   'test/test-main.js'
 ];
 
