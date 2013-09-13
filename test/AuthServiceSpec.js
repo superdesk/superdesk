@@ -18,20 +18,54 @@ define([
     });
 
     describe('AuthService', function() {
-        var service, rootScope;
+        var service, rootScope, auth, authData;
 
         beforeEach(inject(function($injector, $rootScope, $http, $q) {
+            sessionStorage.clear();
             rootScope = $rootScope.$new();
             service = {};
+
+            authData = {
+                'token': 'abc',
+                'user': {'username': 'foo'}
+            };
+
+            auth = {
+                save: function(data, success, error) {
+                    if (data.username == 'foo') {
+                        success(authData);
+                    } else {
+                        error(data);
+                    }
+                }
+            };
+
             $injector.invoke(authService, service, {
                 '$rootScope': rootScope,
                 '$http': $http,
                 '$q': $q,
-                'Auth': null
+                'Auth': auth
             });
         }));
 
-        it('hasIdentity', function() {
+        it('can login and logout', function() {
+            expect(service.hasIdentity()).toBe(false);
+            expect(rootScope.currentUser.isAnonymous).toBe(true);
+
+            service.login('foo', 'bar');
+
+            expect(service.hasIdentity()).toBe(true);
+            expect(rootScope.currentUser.isAnonymous).toBe(false);
+            expect(rootScope.currentUser.username).toBe(authData.user.username);
+
+            service.logout();
+
+            expect(service.hasIdentity()).toBe(false);
+        });
+
+        it('fails on false login', function() {
+            service.login('fake', 'bar');
+            
             expect(service.hasIdentity()).toBe(false);
         });
     });
