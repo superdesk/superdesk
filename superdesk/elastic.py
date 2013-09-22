@@ -11,7 +11,7 @@ from . import signals
 from .auth import auth_required
 
 def get_index():
-    return app.config.get('ELASTIC_INDEX')
+    return app.config.get('ELASTICSEARCH_INDEX')
 
 def save_item(data):
     id = data.pop('_id', None)
