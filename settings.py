@@ -1,7 +1,8 @@
 
 import os
 
-MONGO_URI = os.environ.get('MONGOLAB_URI', None)
+if os.environ.get('MONGOLAB_URI'):
+    MONGO_URI = os.environ.get('MONGOLAB_URI')
 MONGO_DBNAME = os.environ.get('MONGO_DBNAME', 'superdesk')
 
 ELASTICSEARCH_URL = os.environ.get('BONSAI_URL', 'http://localhost:9200/')
