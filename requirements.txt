@@ -1,10 +1,12 @@
 Flask
-requests
-blinker
-behave
-nose
-
 Flask-PyMongo
 Flask-RESTful
 Flask-Script
+
+requests
+blinker==1.2
+behave
+nose
+gunicorn
+
 http://github.com/kazoup/flask-elasticsearch/tarball/master
