@@ -56,7 +56,7 @@ class ItemListResource(items.ItemListResource):
             return {'items': [], 'has_prev': False, 'has_next': False}
 
 signals.connect('item:save', save_item)
-#api.add_resource(ItemListResource, '/items')
+api.add_resource(ItemListResource, '/items')
 
 @manager.command
 def delete_index():
