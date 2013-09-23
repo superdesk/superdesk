@@ -1,5 +1,6 @@
-superdesk-client
-================
+# Superdesk Client
+
+Superdesk Client is ui for Superdesk REST API server.
 
 ### install tools
 
