@@ -2,26 +2,27 @@ define(['angular'], function(angular) {
     'use strict';
 
     angular.module('superdesk.storage', []).
-        factory('storage', function() {
+        service('storage', function() {
 
             var sessionStorage = window.sessionStorage || {};
             var localStorage = window.localStorage || {};
 
-            return function(ns) {
-
-                function prefixKey(key) {
-                    return ns + key;
-                }
-
+            return new function() {
                 this.getItem = function(key) {
-                    return angular.fromJson(sessionStorage.getItem(prefixKey(key)));
+                    return angular.fromJson(sessionStorage.getItem(key));
                 };
 
-                this.setItem = function(key, data) {
-                    return sessionStorage.setItem(prefixKey(key), angular.toJson(data));
+                this.setItem = function(key, data, remember) {
+                    return sessionStorage.setItem(key, angular.toJson(data));
+                };
+
+                this.removeItem = function(key) {
+                    localStorage.removeItem(key);
+                    sessionStorage.removeItem(key);
                 };
 
                 this.clear = function() {
+                    localStorage.clear();
                     sessionStorage.clear();
                 };
             };

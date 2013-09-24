@@ -1,27 +1,21 @@
 define([
     'superdesk/auth/authService',
+    'superdesk/storage',
     'angular-mocks'
 ], function(authService) {
     'use strict';
 
-    describe('Injector', function() {
-        var injector;
-
-        beforeEach(inject(function($injector) {
-            injector = $injector;
-        }));
-
-        it('is injector', function() {
-            expect(typeof injector).toBe('object');
-            expect(typeof injector.invoke).toBe('function');
-        });
+    beforeEach(function() {
+        module('superdesk.storage');
     });
 
     describe('AuthService', function() {
-        var service, rootScope, auth, authData;
+        var service, rootScope, auth, authData, storage;
 
-        beforeEach(inject(function($injector, $rootScope, $http, $q) {
-            sessionStorage.clear();
+        beforeEach(inject(function($injector, $rootScope, $http, $q, _storage_) {
+            storage = _storage_;
+            storage.clear();
+
             rootScope = $rootScope.$new();
             service = {};
 
@@ -44,7 +38,8 @@ define([
                 '$rootScope': rootScope,
                 '$http': $http,
                 '$q': $q,
-                'Auth': auth
+                'Auth': auth,
+                'storage': storage
             });
         }));
 

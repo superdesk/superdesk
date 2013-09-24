@@ -6,13 +6,12 @@ define([
     'use strict';
 
     describe('Storage', function() {
-        var storage, storageFactory;
+        var storage;
 
         beforeEach(function() {
             module('superdesk.storage');
             inject(function(_storage_) {
-                storage = new _storage_;
-                storageFactory = _storage_;
+                storage = _storage_;
             });
 
             storage.clear();
@@ -43,11 +42,10 @@ define([
             expect(storage.getItem('false')).toBe(false);
         });
 
-        it('can define namespaces', function() {
-            var storage2 = new storageFactory('x');
-            storage2.clear();
-            storage.setItem('test', 'test');
-            expect(storage2.getItem('test')).toBe(null);
+        it('can remove item', function() {
+            storage.setItem('true', true);
+            storage.removeItem('true');
+            expect(storage.getItem('true')).toBe(null);
         });
     });
 });
