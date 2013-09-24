@@ -14,17 +14,25 @@
     "grunt-contrib-htmlmin": "~0.1.1",
     "grunt-contrib-imagemin": "~0.1.2",
     "grunt-contrib-livereload": "~0.1.2",
-    "grunt-bower-requirejs": "~0.4.1",
     "grunt-usemin": "~0.1.10",
     "grunt-regarde": "~0.1.1",
     "grunt-rev": "~0.1.0",
-    "grunt-karma": "~0.3.0",
+    "grunt-karma": "~0.7.1",
     "grunt-open": "~0.2.0",
-    "matchdep": "~0.1.1",
-    "grunt-google-cdn": "~0.1.1",
-    "grunt-ngmin": "~0.0.2"
+    "grunt-ngmin": "~0.0.2",
+    "bower": "~1.2",
+    "karma": "~0.10",
+    "karma-jasmine": "~0.1",
+    "karma-requirejs": "~0.1",
+    "karma-phantomjs-launcher": "~0.1",
+    "karma-firefox-launcher": "~0.1",
+    "karma-chrome-launcher": "~0.1",
+    "matchdep": "~0.1.1"
   },
   "engines": {
     "node": ">=0.8.0"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS --reporters dots"
   }
 }
