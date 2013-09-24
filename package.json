@@ -33,6 +33,6 @@
     "node": ">=0.8.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
+    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS --reporters dots"
   }
 }
