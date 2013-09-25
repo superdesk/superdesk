@@ -2,8 +2,7 @@ define([
     'angular',
     'angular-route',
     'bootstrap/dropdown',
-    './controllers/main',
-    './controllers/ref',
+    './controllers/main'
 ], function(angular) {
     'use strict';
 
@@ -18,6 +17,5 @@ define([
         }).
         run(function($rootScope) {
 
-        }).
-        controller('RefController', require('superdesk/dashboard/controllers/ref'));
+        });
 });
