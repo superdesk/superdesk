@@ -35,6 +35,7 @@ define([
     'superdesk/l10n/module',
     'superdesk/auth/module',
     'superdesk/menu/module',
+    'superdesk/dashboard/module',
     'superdesk/items/module'
 ], function(angular) {
     'use strict';
@@ -43,6 +44,7 @@ define([
         'superdesk.l10n',
         'superdesk.auth',
         'superdesk.menu',
+        'superdesk.dashboard',
         'superdesk.items'
     ];
 
