@@ -13,12 +13,7 @@ define([
             $routeProvider.
                 when('/', {
                     controller: require('superdesk/dashboard/controllers/main'),
-                    templateUrl: 'scripts/superdesk/dashboard/views/main.html',
-                    menu: {
-                        parent: 'dashboard',
-                        label: 'xx',
-                        priority: -1
-                    }
+                    templateUrl: 'scripts/superdesk/dashboard/views/main.html'
                 });
         }).
         run(function($rootScope) {
