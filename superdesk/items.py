@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import request, url_for
 
 from . import api, mongo
-from . import rest
+from .api import Resource
 from .auth import auth_required
 from .utils import get_random_string
 from .io.reuters_token import tokenProvider
@@ -63,7 +63,7 @@ def get_last_updated():
     if item:
         return item.get('versionCreated')
 
-class ItemListResource(rest.Resource):
+class ItemListResource(Resource):
 
     def get_query(self):
         query = {}
@@ -88,7 +88,7 @@ class ItemListResource(rest.Resource):
         item = save_item(request.get_json())
         return item, 201
 
-class ItemResource(rest.Resource):
+class ItemResource(Resource):
 
     def _get_item(self, guid):
         return mongo.db.items.find_one_or_404({'guid': guid})

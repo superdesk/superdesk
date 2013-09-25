@@ -10,7 +10,7 @@ import flask.ext.restful
 import flask.ext.elasticsearch
 import flask.ext.script
 
-from superdesk.rest import JSONEncoder
+from superdesk.api import JSONEncoder
 
 app = flask.Flask(__name__)
 app.config.from_object('settings')

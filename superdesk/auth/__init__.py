@@ -5,7 +5,7 @@ from flask import request, make_response
 from flask.ext import restful
 
 from superdesk import api, mongo, utils
-from superdesk.rest import Resource
+from superdesk.api import Resource
 
 def auth_required(f):
     @wraps(f)
