@@ -6,7 +6,7 @@ define([
     angular.module('superdesk.menu', []).
         directive('sdMenu', function($route) {
             return {
-                templateUrl: '/scripts/superdesk/menu/menu.html',
+                templateUrl: 'scripts/superdesk/menu/menu.html',
                 replace: true,
                 priority: -1,
                 link: function(scope, element, attrs) {

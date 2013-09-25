@@ -1,12 +1,11 @@
 define([
     'angular',
-    '/config.js',
     'angular-resource'
-], function(angular, config) {
+], function(angular) {
     'use strict';
 
     angular.module('superdesk.api', ['ngResource']).
-        value('api_url', config.server_url).
+        value('api_url', ServerConfig.url).
         factory('apiUrl', function(api_url) {
             return function(url) {
                 return api_url + url;

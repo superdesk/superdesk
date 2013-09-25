@@ -56,7 +56,7 @@ define([
             }
 
             return {
-                templateUrl: '/scripts/superdesk/items/views/pagination.html',
+                templateUrl: 'scripts/superdesk/items/views/pagination.html',
                 require: '?ngModel',
                 scope: false,
                 link: function($scope, element, attrs, ngModel) {
