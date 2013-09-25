@@ -1,35 +1,10 @@
-define(['angular'], function(angular) {
+define([
+    'angular'
+], function(angular) {
     'use strict';
 
-    function prefixKey(key) {
-        return 'superdesk.auth.' + key;
-    }
-
-    function getItem(key) {
-        var escaped = sessionStorage.getItem(prefixKey(key));
-        switch(escaped) {
-            case 'undefined':
-                return undefined;
-
-            case 'null':
-                return null;
-
-            default:
-                return escaped;
-        }
-    }
-
-    function setItem(key, val, remember) {
-        sessionStorage.setItem(prefixKey(key), val);
-        if (remember) {
-            localStorage.setItem(prefixKey(key), val);
-        } else {
-            localStorage.removeItem(prefixKey(key));
-        }
-    }
-
-    return ['$rootScope', '$http', '$q', 'Auth', function($rootScope, $http, $q, Auth) {
-
+    return ['$rootScope', '$http', '$q', 'Auth', 'storage',
+    function($rootScope, $http, $q, Auth, storage) {
         initScope();
 
         /**
@@ -65,10 +40,9 @@ define(['angular'], function(angular) {
          * Logout
          */
         this.logout = function() {
-            var keys = ['token', 'user'];
+            var keys = ['auth:token', 'auth:user'];
             angular.forEach(keys, function(key) {
-                localStorage.removeItem(prefixKey(key));
-                sessionStorage.removeItem(prefixKey(key));
+                storage.removeItem(key);
             });
 
             initScope();
@@ -85,8 +59,8 @@ define(['angular'], function(angular) {
 
         function setSessionData(data, useLocalStorage) {
             data.user.isAnonymous = false;
-            setItem('token', data.token, useLocalStorage);
-            setItem('user', angular.toJson(data.user), useLocalStorage);
+            storage.setItem('auth:token', data.token, useLocalStorage);
+            storage.setItem('auth:user', data.user, useLocalStorage);
             initScope();
         }
 
@@ -97,8 +71,8 @@ define(['angular'], function(angular) {
         }
 
         function initScope() {
-            setAuthenticationHeader(getItem('token'));
-            $rootScope.currentUser = angular.fromJson(getItem('user'));
+            setAuthenticationHeader(storage.getItem('auth:token'));
+            $rootScope.currentUser = storage.getItem('auth:user');
             if (!$rootScope.currentUser) {
                 $rootScope.currentUser = {
                     username: 'Anonymous',
