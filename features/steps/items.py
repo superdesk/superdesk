@@ -5,9 +5,6 @@ from flask import json
 from tests import app
 from superdesk.items import save_item
 
-def send_auth(userdata, context):
-    return context.client.post('/auth', data=json.dumps(userdata), headers=JSON_HEADERS, follow_redirects=True)
-
 @given('no items')
 def step_impl(context):
     pass

@@ -1,6 +1,9 @@
 """Superdesk Users"""
 
-from superdesk import mongo, manager
+from flask import request
+
+import superdesk
+from .api import Resource
 
 class EmptyUsernameException(Exception):
     def __str__(self):
@@ -10,9 +13,9 @@ class ConflictUsernameException(Exception):
     def __str__(self):
         return "Username '%s' exists already" % self.args[0]
 
-@manager.option('--username', '-u', dest='username')
-@manager.option('--password', '-p', dest='password')
-def create_user(userdata = None, **kwargs):
+@superdesk.manager.option('--username', '-u', dest='username')
+@superdesk.manager.option('--password', '-p', dest='password')
+def create_user(userdata=None, db=superdesk.db, **kwargs):
     """Create a new user"""
 
     if not userdata:
@@ -23,11 +26,22 @@ def create_user(userdata = None, **kwargs):
     if not userdata.get('username'):
         raise EmptyUsernameException()
 
-    conflict_user = mongo.db.users.find_one({'username': userdata.get('username')})
+    conflict_user = db.users.find_one({'username': userdata.get('username')})
     if conflict_user:
         raise ConflictUsernameException(userdata.get('username'))
 
-    return mongo.db.users.insert(userdata)
+    db.users.insert(userdata)
+    return userdata
+
+def drop_users(db=superdesk.db):
+    db.users.remove()
+
+def format_user(user):
+    user.pop('_id')
+    return user
+
+def find_users(db=superdesk.db):
+    return db.users.find()
 
 def get_token(user):
     token = AuthToken(token=utils.get_random_string(40), user=user)

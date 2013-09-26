@@ -10,6 +10,7 @@ def before_all(context):
     tests.setup(context)
 
 def before_scenario(context, scenario):
+    tests.drop_db()
     context.headers = [('Content-Type', 'application/json')]
     if 'auth' in scenario.tags:
         user = {'username': 'tmpuser', 'password': 'tmppassword'}
@@ -17,6 +18,3 @@ def before_scenario(context, scenario):
         response = send_auth(user, context)
         token = json.loads(response.get_data()).get('token').encode('ascii')
         context.headers.append(('Authorization', b'Basic ' + b64encode(token)))
-
-def after_scenario(context, scenario):
-    tests.drop_db()

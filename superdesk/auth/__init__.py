@@ -4,7 +4,8 @@ from base64 import b64decode
 from flask import request, make_response
 from flask.ext import restful
 
-from superdesk import api, mongo, utils
+import superdesk
+from superdesk import api, utils
 from superdesk.api import Resource
 
 def auth_required(f):
@@ -15,7 +16,7 @@ def auth_required(f):
         restful.abort(401)
     return wrapper
 
-def create_token(user):
+def create_token(user, db=superdesk.db):
     token_id = utils.get_random_string(40)
     token = {
         'token': token_id,
@@ -24,19 +25,19 @@ def create_token(user):
         }
     }
 
-    mongo.db.tokens.save(token)
+    db.tokens.save(token)
     return token
 
-def get_auth_token():
+def get_auth_token(db=superdesk.db):
     """Get token data for token in Authorization header"""
     token = b64decode(request.headers.get('Authorization', '').replace('Basic ', ''))[:40]
-    return mongo.db.tokens.find_one({'token': token.decode('ascii')})
+    return db.tokens.find_one({'token': token.decode('ascii')})
 
-def authenticate(**kwargs):
+def authenticate(db=superdesk.db, **kwargs):
     if 'username' not in kwargs:
         raise AuthException("invalid credentials")
 
-    user = mongo.db.users.find_one({'username': kwargs.get('username')})
+    user = db.users.find_one({'username': kwargs.get('username')})
     if not user:
         raise AuthException("username not found")
 

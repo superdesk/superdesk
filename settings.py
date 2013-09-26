@@ -9,6 +9,7 @@ ELASTICSEARCH_URL = os.environ.get('BONSAI_URL', 'http://localhost:9200/')
 ELASTICSEARCH_INDEX = os.environ.get('ELASTIC_INDEX', 'superdesk')
 
 INSTALLED_APPS = (
+    'superdesk.mongo',
     'superdesk.auth',
     'superdesk.users',
     'superdesk.io',
