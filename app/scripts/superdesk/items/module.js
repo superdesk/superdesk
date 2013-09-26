@@ -34,7 +34,7 @@ define([
                         }
                     }
                 }).
-                when('/items/', {
+                when('/archive/', {
                     templateUrl: 'scripts/superdesk/items/views/archive.html',
                     controller: require('superdesk/items/controllers/list'),
                     resolve: {
@@ -48,7 +48,7 @@ define([
                         priority: -2
                     }
                 }).
-                when('/', {
+                when('/items/', {
                     controller: require('superdesk/items/controllers/list'),
                     templateUrl: 'scripts/superdesk/items/views/list.html',
                     resolve: {
