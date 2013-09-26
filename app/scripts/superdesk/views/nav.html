@@ -17,10 +17,12 @@
             <li class="divider-vertical"></li>
 
             <li class="dropdown ipad-show">
-                 <a href="" class="dropdown-toggle" data-toggle="dropdown"><span href="#" class="user-profile">{{ currentUser.username }}</span> <b class="caret"></b></a>
+                <a class="dropdown-toggle">
+                  <span class="user-profile">{{ currentUser.username }}</span> <b class="caret"></b>
+                </a>
               <ul class="dropdown-menu ">
-                <li><a href="" ng-click="logout()">{{ _("Logout") }}</a></li>
-                <li><a href="#">{{ _("Help") }}</a></li>
+                <li><a ng-click="logout()">{{ _("Logout") }}</a></li>
+                <li><a>{{ _("Help") }}</a></li>
               </ul>
             </li>
     
