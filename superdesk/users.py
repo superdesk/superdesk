@@ -54,3 +54,15 @@ def is_valid_token(auth_token):
         return token.is_valid()
     except AuthToken.DoesNotExist:
         return False
+
+class UserListResource(Resource):
+
+    def get(self):
+        users = [format_user(user) for user in find_users()]
+        return {'data': users, '_list': {'total_count': len(users)}}
+
+    def post(self):
+        user = create_user(request.get_json())
+        return user, 201
+
+superdesk.api.add_resource(UserListResource, '/users')
