@@ -1,23 +1,27 @@
-<div class="login-popup modal fade"><div class="modal-dialog"><div class="modal-content">
-    <form name="login" class="form-horizontal" ng-submit="authenticate()">
-    <div class="modal-header">
-        <h3>{{ _("Please authenticate to continue") }}</h3>
-    </div>
-    <div class="modal-body">
+<div class="login-popup modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form name="login" class="form-horizontal" ng-submit="authenticate()">
+            <div class="modal-header">
+                <h3>{{ _("Please authenticate to continue") }}</h3>
+            </div>
+            <div class="modal-body">
 
-            <p class="alert alert-error" ng-show="loginError">{{ _("Login failed!") }}</p>
-            <p class="alert alert-warning" data-is="expired-warn" ng-show="">{{ _("Login session expired!") }}</p>
-            <p class="alert alert-info" style="margin-bottom:0" ng-show=""></p>
+                    <p class="alert alert-error" ng-show="loginError">{{ _("Login failed!") }}</p>
+                    <p class="alert alert-warning" data-is="expired-warn" ng-show="">{{ _("Login session expired!") }}</p>
+                    <p class="alert alert-info" style="margin-bottom:0" ng-show=""></p>
 
-            <fieldset>
-                <input type="text" id="username" ng-model="username" placeholder="{{ _('Username') }}" class="fullwidth-input" />
-                <input type="password" id="password" ng-model="password" placeholder="{{ _('Password') }}" class="fullwidth-input login-pass" />
-          
-                <label for="login-remember-me" class="checkbox remember-me"><input type="checkbox" value="1" id="login-remember-me" ng-model="rememberMe"> {{ _('Remember login') }}</label>
-            </fieldset>
+                    <fieldset>
+                        <input type="text" id="username" ng-model="username" placeholder="{{ _('Username') }}" class="fullwidth-input" />
+                        <input type="password" id="password" ng-model="password" placeholder="{{ _('Password') }}" class="fullwidth-input login-pass" />
+                  
+                        <label for="login-remember-me" class="checkbox remember-me"><input type="checkbox" value="1" id="login-remember-me" ng-model="rememberMe"> {{ _('Remember login') }}</label>
+                    </fieldset>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">{{ _("Submit") }}</button>
+            </div>
+            </form>
+        </div>
     </div>
-    <div class="modal-footer">
-        <button type="submit" class="btn btn-primary">{{ _("Submit") }}</button>
-    </div>
-    </form>
-</div></div></div>
+</div>

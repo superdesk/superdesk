@@ -1,7 +1,7 @@
 define([
     'angular',
     'angular-route',
-    'bootstrap/dropdown',
+    'bootstrap_ui',
     './controllers/list',
     './controllers/edit',
     './controllers/ref',
@@ -10,7 +10,7 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.items', ['ngRoute', 'superdesk.items.resources', 'superdesk.items.directives']).
+    angular.module('superdesk.items', ['ngRoute', 'superdesk.items.resources', 'superdesk.items.directives','ui.bootstrap.dropdownToggle']).
         config(function($routeProvider) {
 
             function getItemLoader(defaultParams) {
