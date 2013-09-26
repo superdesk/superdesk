@@ -1,0 +1,388 @@
+// BUTTON STYLES
+// -------------
+/* new button colors */
+
+/* default button */
+@btnDefaultColor : #ddd;
+@btnDefaultColorDark : #919191;
+@btnDefaultBackground1 : #f6f6f6;
+@btnDefaultBackground2 : #e5e5e5;
+@btnDefaultHoverBackground1 : #f9f9f9;
+@btnDefaultHoverBackground2 : #dddddd;
+@btnDefaultBorder : #cecece;
+@btnDefaultBorderDark : #7d7d7d;
+@btnDefaultInsetShadowColor : rgba(255,255,255,1);
+
+
+/* btn-info */
+@btnInfoColor : #3da4ce;
+@btnInfoBackground1 : #62b0d0;
+@btnInfoBackground2 : #0481b4;
+@btnInfoHoverBackground1 : #6bc0e3;
+@btnInfoHoverBackground2 : #0582b5;
+@btnInfoBorder : #007fb3;
+@btnInfoInsetShadowColor : rgba(160,215,237,1);
+
+@btnSuccessColor : #7db757;
+@btnSuccessBackground1 : #7ac15e;
+@btnSuccessBackground2 : #5ba23c;
+@btnSuccessHoverBackground1 : #99c86d;
+@btnSuccessHoverBackground2 : #5ca33d;
+@btnSuccessBorder : #559f34;
+@btnSuccessInsetShadowColor : #bedca1;
+
+@btnDangerColor : #dc5540;
+@btnDangerBackground1 : #db4937;
+@btnDangerBackground2 : #c83929;
+@btnDangerHoverBackground1 : #e8684f;
+@btnDangerHoverBackground2 : #c93a2a;
+@btnDangerBorder : #bc2718;
+@btnDangerInsetShadowColor : #e8897d;
+
+@btnInverseColor : #464646;
+@btnInverseBackground1 : #2a2929;
+@btnInverseBackground2 : #141414;
+@btnInverseHoverBackground1 : #4a4a4a;
+@btnInverseHoverBackground2 : #282828;
+@btnInverseBorder : #020202;
+@btnInverseInsetShadowColor : #707070;
+
+@btnLightColor : #f4f4f4;
+@btnLightBackground1 : #fcfcfc;
+@btnLightBackground2 : #f7f7f7;
+@btnLightHoverBackground1 : #fff;
+@btnLightHoverBackground2 : #f2f2f2;
+@btnLightBorder : #f0f0f0;
+@btnLightInsetShadowColor : #fff;
+
+
+// Base styles
+// --------------------------------------------------
+
+// Core
+.btn {
+  display: inline-block;
+  .ie7-inline-block();
+  padding: 4px 12px 4px;
+  margin-bottom: 0; // For input.btn
+  font-size: 12px;
+  line-height: @baseLineHeight;
+  color: @grayDark;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255,255,255,.85);
+  vertical-align: middle;
+  .buttonBackground(@btnDefaultBackground1, @btnDefaultBackground2);
+  border: 1px solid @btnDefaultBorder;
+  border-bottom-color: darken(@btnDefaultBorder, 10%);
+  .border-radius(3px);
+  @shadow: inset 0 1px 0 @btnDefaultInsetShadowColor, 0 1px 0 0 rgba(255,255,255,1);
+  .box-shadow(@shadow);
+  cursor: pointer;
+
+  // Give IE7 some love
+  .ie7-restore-left-whitespace();
+}
+
+// Hover state
+.btn:hover {
+  color: @grayDark;
+  text-decoration: none;
+  //background-color: darken(@white, 10%);
+  //background-position: 0 -15px;
+  .buttonBackground(@btnDefaultHoverBackground1, @btnDefaultHoverBackground2);
+  @shadow: inset 0 1px 0 @btnDefaultInsetShadowColor, 0 2px 4px -4px rgba(0,0,0,.8);
+  .box-shadow(@shadow);
+  // transition is only when going to hover, otherwise the background
+  // behind the gradient (there for IE<=9 fallback) gets mismatched
+  .transition(background-position .1s linear);
+}
+
+// Focus state for keyboard and accessibility
+.btn:focus {
+  .tab-focus();
+}
+
+
+.btn.no-shadow {
+     @shadow: inset 0 1px 0 @btnDefaultInsetShadowColor;
+    .box-shadow(@shadow) !important;
+}
+
+
+// Disabled state
+.btn.disabled,
+.btn[disabled] {
+  cursor: default;
+  background-image: none;
+  background-color: darken(@white, 10%);
+  .opacity(65);
+  .box-shadow(none);
+}
+
+
+// Button Sizes
+// --------------------------------------------------
+
+// Large
+.btn-large {
+  padding: 9px 14px;
+  font-size: @baseFontSize + 2px;
+  line-height: normal;
+  .border-radius(5px);
+}
+.btn-large [class^="icon-"] {
+  margin-top: 1px;
+}
+
+// Small
+.btn-small {
+  padding: 5px 9px;
+  font-size: @baseFontSize - 2px;
+  line-height: @baseLineHeight - 2px;
+}
+.btn-small [class^="icon-"] {
+  margin-top: -1px;
+}
+
+// Mini
+.btn-mini {
+  padding: 2px 6px;
+  font-size: @baseFontSize - 2px;
+  line-height: @baseLineHeight - 4px;
+}
+
+
+// Alternate buttons
+// --------------------------------------------------
+
+// Set text color
+// -------------------------
+.btn-primary,
+.btn-primary:hover,
+.btn-warning,
+.btn-warning:hover,
+.btn-danger,
+.btn-danger:hover,
+.btn-success,
+.btn-success:hover,
+.btn-info,
+.btn-info:hover,
+.btn-inverse,
+.btn-inverse:hover,
+.btn-light,
+.btn-light:hover {
+  text-shadow: 0 -1px 0 rgba(0,0,0,.5);
+  color: @white;
+}
+// Provide *some* extra contrast for those who can get it
+.btn-primary.active,
+.btn-warning.active,
+.btn-danger.active,
+.btn-success.active,
+.btn-info.active,
+.btn-inverse.active,
+.btn-light.active {
+  color: rgba(255,255,255,.75);
+}
+
+// Set the backgrounds
+// -------------------------
+.btn-primary {
+  //.buttonBackground(@btnPrimaryBackground, @btnPrimaryBackgroundHighlight);
+  border: 1px solid @btnInfoBorder;
+  border-bottom-color: darken(@btnInfoBorder, 10%);
+  .buttonBackground(@btnInfoBackground1, @btnInfoBackground2);
+  @shadow: inset 0 1px 0 @btnInfoInsetShadowColor, 0 1px 0 0 rgba(255,255,255,1);
+  .box-shadow(@shadow);
+  &:hover {
+    .buttonBackground(@btnInfoHoverBackground1, @btnInfoHoverBackground2);
+     @shadow: inset 0 1px 0 @btnInfoInsetShadowColor, 0 2px 6px -4px rgba(0,0,0,.5);
+    .box-shadow(@shadow);
+  }
+  &:active {
+    background-color: @btnInfoColor !important;
+    background-color: @btnInfoColor e("\9") !important;
+    border-bottom-color: @btnInfoBorder !important;
+  }
+  &.no-shadow {
+     @shadow: inset 0 1px 0 @btnInfoInsetShadowColor;
+    .box-shadow(@shadow) !important;
+  }
+}
+// Warning appears are orange
+.btn-warning {
+  .buttonBackground(@btnWarningBackground, @btnWarningBackgroundHighlight);
+}
+// Danger and error appear as red
+.btn-danger {
+  border: 1px solid @btnDangerBorder;
+  border-bottom-color: darken(@btnDangerBorder, 10%);
+  .buttonBackground(@btnDangerBackground1, @btnDangerBackground2);
+  @shadow: inset 0 1px 0 @btnDangerInsetShadowColor, 0 1px 0 0 rgba(255,255,255,1);
+  .box-shadow(@shadow);
+  &:hover {
+    .buttonBackground(@btnDangerHoverBackground1, @btnDangerHoverBackground2);
+     @shadow: inset 0 1px 0 @btnDangerInsetShadowColor, 0 2px 6px -4px rgba(0,0,0,.5);
+    .box-shadow(@shadow);
+  }
+  &:active {
+    background-color: @btnDangerColor !important;
+    background-color: @btnDangerColor e("\9") !important;
+    border-bottom-color: @btnDangerBorder !important;
+  }
+  &.no-shadow {
+     @shadow: inset 0 1px 0 @btnDangerInsetShadowColor;
+    .box-shadow(@shadow) !important;
+  }
+}
+// Success appears as green
+.btn-success {
+  border: 1px solid @btnSuccessBorder;
+  border-bottom-color: darken(@btnSuccessBorder, 10%);
+  .buttonBackground(@btnSuccessBackground1, @btnSuccessBackground2);
+  @shadow: inset 0 1px 0 @btnSuccessInsetShadowColor, 0 1px 0 0 rgba(255,255,255,1);
+  .box-shadow(@shadow);
+  &:hover {
+    .buttonBackground(@btnSuccessHoverBackground1, @btnSuccessHoverBackground2);
+     @shadow: inset 0 1px 0 @btnSuccessInsetShadowColor,  0 2px 6px -4px rgba(0,0,0,.5);
+    .box-shadow(@shadow);
+  }
+  &:active {
+    background-color: @btnSuccessColor !important;
+    background-color: @btnSuccessColor e("\9") !important;
+    border-bottom-color: @btnSuccessBorder !important;
+  }
+  &.no-shadow {
+     @shadow: inset 0 1px 0 @btnSuccessInsetShadowColor;
+    .box-shadow(@shadow) !important;
+  }
+}
+// Info appears as a neutral blue
+.btn-info {
+  border: 1px solid @btnInfoBorder;
+  border-bottom-color: darken(@btnInfoBorder, 10%);
+  .buttonBackground(@btnInfoBackground1, @btnInfoBackground2);
+  @shadow: inset 0 1px 0 @btnInfoInsetShadowColor, 0 1px 0 0 rgba(255,255,255,1);
+  .box-shadow(@shadow);
+  &:hover {
+    .buttonBackground(@btnInfoHoverBackground1, @btnInfoHoverBackground2);
+     @shadow: inset 0 1px 0 @btnInfoInsetShadowColor,  0 2px 6px -4px rgba(0,0,0,.5);
+    .box-shadow(@shadow);
+  }
+  &:active {
+    background-color: @btnInfoColor !important;
+    background-color: @btnInfoColor e("\9") !important;
+    border-bottom-color: @btnInfoBorder !important;
+  }
+  &.no-shadow {
+     @shadow: inset 0 1px 0 @btnInfoInsetShadowColor;
+    .box-shadow(@shadow) !important;
+  }
+}
+
+// Inverse appears as dark gray
+.btn-inverse {
+  border: 1px solid @btnInverseBorder;
+  border-bottom-color: darken(@btnInverseBorder, 10%);
+  .buttonBackground(@btnInverseBackground1, @btnInverseBackground2);
+  @shadow: inset 0 1px 0 @btnInverseInsetShadowColor, 0 1px 0 0 rgba(255,255,255,1);
+  .box-shadow(@shadow);
+  &:hover {
+    .buttonBackground(@btnInverseHoverBackground1, @btnInverseHoverBackground2);
+     @shadow: inset 0 1px 0 @btnInverseInsetShadowColor,  0 2px 6px -4px rgba(0,0,0,.5);
+    .box-shadow(@shadow);
+  }
+  &:active {
+    background-color: @btnInverseColor !important;
+    background-color: @btnInverseColor e("\9") !important;
+    border-bottom-color: @btnInverseBorder !important;
+  }
+  &.no-shadow {
+     @shadow: inset 0 1px 0 @btnInverseInsetShadowColor;
+    .box-shadow(@shadow) !important;
+  }
+}
+
+.btn-light {
+  border: 1px solid @btnLightBorder;
+  border-bottom-color: darken(@btnLightBorder, 5%);
+  .buttonBackground(@btnLightBackground1, @btnLightBackground2);
+  @shadow: inset 0 1px 0 @btnLightInsetShadowColor, 0 1px 0 0 rgba(255,255,255,1);
+  .box-shadow(@shadow);
+  color: #4ba5bf;
+  text-shadow: 0 1px #fff;
+  &:hover {
+    .buttonBackground(@btnLightHoverBackground1, @btnLightHoverBackground2);
+     @shadow: inset 0 1px 0 @btnLightInsetShadowColor,  0 2px 6px -4px rgba(0,0,0,.5);
+    .box-shadow(@shadow);
+    color: #4ba5bf;
+    text-shadow: 0 -1px #fff;
+  }
+  &:active {
+    background-color: @btnLightColor !important;
+    background-color: @btnLightColor e("\9") !important;
+    border-bottom-color: @btnLightBorder !important;
+  }
+  &.no-shadow {
+     @shadow: inset 0 1px 0 @btnLightInsetShadowColor;
+    .box-shadow(@shadow) !important;
+  }
+}
+
+
+// Active state
+.btn.active,
+.btn:active {
+  background-image: none;
+  @shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 0 rgba(255,255,255,1);
+  .box-shadow(@shadow);
+  background-color: @btnDefaultColor;
+  background-color: @btnDefaultColor e("\9");
+  border-bottom-color: @btnDefaultBorder;
+  outline: 0;
+}
+
+.btn.active {
+  background-color: @btnDefaultColorDark;
+  background-color: @btnDefaultColorDark e("\9");
+  border-color: @btnDefaultBorderDark;
+  outline: 0;
+  color: #fff;
+  text-shadow:0 -1px #575757;
+  &:active, &:hover {
+    background-color: @btnDefaultColorDark !important;
+    background-color: @btnDefaultColorDark e("\9") !important;
+    border-color: @btnDefaultBorderDark !important;
+    color: #fff !important;
+    text-shadow:0 -1px #575757 !important;
+  }
+}
+
+// Cross-browser Jank
+// --------------------------------------------------
+
+button.btn,
+input[type="submit"].btn {
+
+  // Firefox 3.6 only I believe
+  &::-moz-focus-inner {
+    padding: 0;
+    border: 0;
+  }
+
+  // IE7 has some default padding on button controls
+  *padding-top: 2px;
+  *padding-bottom: 2px;
+  &.btn-large {
+    *padding-top: 7px;
+    *padding-bottom: 7px;
+  }
+  &.btn-small {
+    *padding-top: 3px;
+    *padding-bottom: 3px;
+  }
+  &.btn-mini {
+    *padding-top: 1px;
+    *padding-bottom: 1px;
+  }
+}

@@ -133,13 +133,27 @@ module.exports = function (grunt) {
         options: {archive: 'dist/<%= pkg.name %>.zip', mode: 'zip'},
         src: ['**'], cwd: '<%= yeoman.dist %>', expand: true, dot: true, dest: '<%= pkg.name %>/'
       }
+    },
+    
+    less: {
+      development: {
+        options: {
+          paths: ["app/styles/less"],
+          yuicompress: true
+        },
+        files: {
+          "app/styles/css/bootstrap.css": "app/styles/less/test.less"
+        }
+      }
     }
+
   });
 
   grunt.registerTask('server', [
     'clean:server',
     'livereload-start',
     'write:config',
+    'less',
     'connect:livereload',
     'open',
     'watch'
