@@ -22,6 +22,7 @@ define([
                                     if (scope.items[i].label === route.menu.parent) {
                                         found = true;
                                         scope.items[i].items.push(item);
+                                        break;
                                     }
                                 }
                                 if (found === false) {
