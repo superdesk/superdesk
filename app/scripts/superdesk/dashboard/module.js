@@ -14,8 +14,5 @@ define([
                     controller: require('superdesk/dashboard/controllers/main'),
                     templateUrl: 'scripts/superdesk/dashboard/views/main.html'
                 });
-        }).
-        run(function($rootScope) {
-
         });
 });
