@@ -18,7 +18,7 @@ define([
                                 scope.items.push(item);
                             } else {
                                 var found = false;
-                                for (var i = 0; i < scope.items.length; i = i + 1) {
+                                for (var i = 0; i < scope.items.length; i++) {
                                     if (scope.items[i].label === route.menu.parent) {
                                         found = true;
                                         if (scope.items[i].items === undefined) {
@@ -29,7 +29,7 @@ define([
                                 }
                                 if (found === false) {
                                     var maxPriority = 0;
-                                    for (var i = 0; i < scope.items.length; i = i + 1) {
+                                    for (var i = 0; i < scope.items.length; i++) {
                                         if (scope.items.priority > maxPriority) {
                                             maxPriority = scope.items.priority;
                                         }
