@@ -37,8 +37,8 @@ define([
                 getMaxPriority: function(items) {
                     var maxPriority = 0;
                     for (var i = 0; i < items.length; i++) {
-                        if (items.priority > maxPriority) {
-                            maxPriority = items.priority;
+                        if (items[i].priority > maxPriority) {
+                            maxPriority = items[i].priority;
                         }
                     }
                     return maxPriority;
