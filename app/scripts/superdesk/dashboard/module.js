@@ -12,7 +12,11 @@ define([
             $routeProvider.
                 when('/', {
                     controller: require('superdesk/dashboard/controllers/main'),
-                    templateUrl: 'scripts/superdesk/dashboard/views/main.html'
+                    templateUrl: 'scripts/superdesk/dashboard/views/main.html',
+                    menu: {
+                        label: 'Dashboard',
+                        priority: 0
+                    }
                 });
         });
 });

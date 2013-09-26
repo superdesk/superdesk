@@ -7,18 +7,37 @@ define([
         directive('sdMenu', function($route) {
             return {
                 templateUrl: 'scripts/superdesk/menu/menu.html',
-                replace: true,
+                replace: false,
                 priority: -1,
                 link: function(scope, element, attrs) {
-                    scope.title = attrs.title;
-                    element.before('<li class="divider-vertical"></li>');
                     scope.items = [];
                     angular.forEach($route.routes, function(route) {
-                        if ('menu' in route && route.menu.parent === attrs.sdMenu) {
-                            scope.items.push(angular.extend({
-                                path: route.originalPath,
-                                priority: 0
-                            }, route.menu));
+                        if ('menu' in route) {
+                            var item = {label: route.menu.label, priority: route.menu.priority, href: route.originalPath};
+                            if (route.menu.parent === undefined) {
+                                scope.items.push(item);
+                            } else {
+                                var found = false;
+                                for (var i = 0; i < scope.items.length; i = i + 1) {
+                                    if (scope.items[i].label === route.menu.parent) {
+                                        found = true;
+                                        if (scope.items[i].tree === undefined) {
+                                            scope.items[i].tree = [];
+                                        }
+                                        scope.items[i].tree.push(item);
+                                    }
+                                }
+                                if (found === false) {
+                                    var maxPriority = 0;
+                                    for (var i = 0; i < scope.items.length; i = i + 1) {
+                                        if (scope.items.priority > maxPriority) {
+                                            maxPriority = scope.items.priority;
+                                        }
+                                    }
+                                    var parent = {label: route.menu.parent, priority: maxPriority + 1, tree: [item]};
+                                    scope.items.push(parent);
+                                }
+                            }
                         }
                     });
                 }
