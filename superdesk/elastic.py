@@ -11,7 +11,7 @@ from . import signals
 from .auth import auth_required
 
 def get_index():
-    return app.config.get('ELASTIC_INDEX')
+    return app.config.get('ELASTICSEARCH_INDEX')
 
 def save_item(data):
     id = data.pop('_id', None)
@@ -56,7 +56,7 @@ class ItemListResource(items.ItemListResource):
             return {'items': [], 'has_prev': False, 'has_next': False}
 
 signals.connect('item:save', save_item)
-api.add_resource(ItemListResource, '/items')
+#api.add_resource(ItemListResource, '/items')
 
 @manager.command
 def delete_index():

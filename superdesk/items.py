@@ -105,4 +105,4 @@ class ItemResource(Resource):
         return format_item(item)
 
 api.add_resource(ItemResource, '/items/<string:guid>', endpoint='item')
-#api.add_resource(items.ItemListResource, '/items')
+api.add_resource(ItemListResource, '/items')
