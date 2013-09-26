@@ -5,7 +5,7 @@ define([
 
     angular.module('superdesk.menu', []).
         directive('sdMenu', function($route) {
-            return {
+            var sdMenu = {
                 templateUrl: 'scripts/superdesk/menu/menu.html',
                 replace: false,
                 priority: -1,
@@ -26,19 +26,25 @@ define([
                                     }
                                 }
                                 if (found === false) {
-                                    var maxPriority = 0;
-                                    for (var i = 0; i < scope.items.length; i++) {
-                                        if (scope.items.priority > maxPriority) {
-                                            maxPriority = scope.items.priority;
-                                        }
-                                    }
+                                    var maxPriority = sdMenu.getMaxPriority(scope.items);
                                     var parent = {label: route.menu.parent, priority: maxPriority + 1, items: [item]};
                                     scope.items.push(parent);
                                 }
                             }
                         }
                     });
+                },
+                getMaxPriority: function(items) {
+                    var maxPriority = 0;
+                    for (var i = 0; i < items.length; i++) {
+                        if (items.priority > maxPriority) {
+                            maxPriority = items.priority;
+                        }
+                    }
+                    return maxPriority;
                 }
             };
+            
+            return sdMenu;
         });
 });
