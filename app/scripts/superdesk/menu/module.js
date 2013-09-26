@@ -21,9 +21,6 @@ define([
                                 for (var i = 0; i < scope.items.length; i++) {
                                     if (scope.items[i].label === route.menu.parent) {
                                         found = true;
-                                        if (scope.items[i].items === undefined) {
-                                            scope.items[i].items = [];
-                                        }
                                         scope.items[i].items.push(item);
                                     }
                                 }
