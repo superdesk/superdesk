@@ -21,10 +21,10 @@ define([
                                 for (var i = 0; i < scope.items.length; i = i + 1) {
                                     if (scope.items[i].label === route.menu.parent) {
                                         found = true;
-                                        if (scope.items[i].tree === undefined) {
-                                            scope.items[i].tree = [];
+                                        if (scope.items[i].items === undefined) {
+                                            scope.items[i].items = [];
                                         }
-                                        scope.items[i].tree.push(item);
+                                        scope.items[i].items.push(item);
                                     }
                                 }
                                 if (found === false) {
@@ -34,7 +34,7 @@ define([
                                             maxPriority = scope.items.priority;
                                         }
                                     }
-                                    var parent = {label: route.menu.parent, priority: maxPriority + 1, tree: [item]};
+                                    var parent = {label: route.menu.parent, priority: maxPriority + 1, items: [item]};
                                     scope.items.push(parent);
                                 }
                             }
