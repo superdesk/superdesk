@@ -49,7 +49,7 @@ module.exports = function (grunt) {
         },
         files: [
           '<%= yeoman.app %>/{,*/}*.html',
-          '{.tmp,<%= yeoman.app %>}/styles/{,*/}custom.css',
+          '{.tmp,<%= yeoman.app %>}/styles/css/custom.css',
           '{.tmp,<%= yeoman.app %>}/styles/{,*/}*.less',
           '{.tmp,<%= yeoman.app %>}/{,*/}*.js',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
@@ -130,10 +130,10 @@ module.exports = function (grunt) {
           cwd: '<%= yeoman.app %>',
           dest: '<%= yeoman.dist %>',
           src: [
-            '*.{ico,txt}',
+            '*.{ico,txt,html}',
             '.htaccess',
             'images/**/*',
-            'styles/**/*',
+            'styles/{,*/}*.css',
             'scripts/**/*',
             'config.js'
           ]
@@ -176,6 +176,7 @@ module.exports = function (grunt) {
     'clean:dist',
     'write:config',
     'jshint',
+    'less',
     'test',
     'copy'
   ]);
