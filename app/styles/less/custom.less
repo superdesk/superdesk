@@ -1,0 +1,167 @@
+/* THIS IS NOT COMPILED INTO custom.css! it's added to bootstrap.css */
+
+@iconSpritePath:          "../../images/glyphicons-halflings.png";
+@iconWhiteSpritePath:     "../../images/glyphicons-halflings-white.png";
+
+#area-content article header
+{
+	.clearfix()
+}
+#area-content article header h3
+{
+	padding: @gridGutterWidth/2;
+	padding-left: @gridGutterWidth;
+}
+.box
+{
+	background-color: #FEFBF3;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    padding: @gridGutterWidth / 2 @gridGutterWidth;
+    border-radius: 5px;
+}
+.box .label
+{
+	margin: 0 @gridGutterWidth / 2;
+}
+
+#request-list li.hilite
+{
+	text-decoration: underline;
+}
+
+.datatable th input
+{
+	width: auto; 
+	margin: 0;
+}
+.datatable th input:focus
+{
+	@shadow: inset 1px 1px 3px rgba(82,168,236,.6);
+  	.box-shadow(@shadow);
+}
+
+.datatable th label
+{
+	font-weight: bold;
+	margin: 0;
+	color: @textColor;
+	display: inline-block;
+}
+
+.datatable th .sort-ctrl
+{
+	float: right;
+	.opacity(50);
+}
+.datatable th.desc .sort-ctrl
+{
+	.icon-chevron-down;
+	.opacity(100);
+}
+
+.datatable th.asc .sort-ctrl
+{
+	.icon-chevron-up;
+	.opacity(100);
+}
+
+.datatable th .filter-hide-ctrl
+{
+	display: inline-block;
+	float: none;
+	margin: 3px 5px;
+}
+
+table thead tr th.asc {
+	background: url("../../images/sort-asc.png") no-repeat 90% center;	
+}
+table thead tr th.desc {
+	background: url("../../images/sort-desc.png") no-repeat 90% center;	
+}
+
+.table-sort thead tr th {
+	cursor:pointer;
+}
+
+.datatable th.filtering
+{
+	padding: 3px;
+}
+
+.datatable th.filtering .sort-ctrl
+{
+	margin: 5px 5px 0 0;
+}
+
+.datatable tfoot li
+{
+	float: left;
+	margin:0 5px;
+}
+
+.table-sort thead tr {
+	.asc {
+		background: url("../../images/sort-asc.png") no-repeat 90% center;
+	}
+	.desc {
+		background: url("../../images/sort-desc.png") no-repeat 90% center;
+	}
+}
+
+
+#gradient 
+{
+	.horizontal-three-colors(@startColor: #00b3ee, @midColor: #7a43b6, @colorStop: 50%, @endColor: #c3325f) 
+	{
+	    background-color: mix(@midColor, @endColor, 80%);
+	    background-image: -webkit-gradient(linear, 0% 100%, 100% 100%, from(@startColor), color-stop(@colorStop, @midColor), to(@endColor));
+	    background-image: -moz-linear-gradient(left, @startColor, @midColor @colorStop, @endColor);
+	    background-image: -ms-linear-gradient(@startColor, @midColor @colorStop, @endColor);
+	    background-image: -o-linear-gradient(@startColor, @midColor @colorStop, @endColor);
+	    background-image: linear-gradient(@startColor, @midColor @colorStop, @endColor);
+	    background-repeat: no-repeat;
+	    filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",@startColor,@endColor)); // IE9 and down, gets no color-stop at all for proper fallback
+	}
+}
+
+.main-section header 
+{
+	padding: 7px 20px 7px;
+	margin: -10px -20px 20px -20px;
+	background-color:#fafafa;
+	border-bottom: 1px solid #ddd;
+}
+
+.tabs-left .nav-tabs > li, .tabs-right .nav-tabs > li
+{
+	position: relative;
+}
+.tabs-left .nav-tabs > li .badge, .tabs-right .nav-tabs > li .badge
+{
+	position:absolute; top: 30px; right: 5px; 
+}
+.tabs-left .nav-tabs > li.active .badge.config-notif, .tabs-right .nav-tabs > li.active .badge.config-notif
+{
+	display: block;
+}
+
+.tabs-left .nav-tabs > li.edit .config-notif
+{
+	display: none !important;
+}
+
+
+.superdesk-alert
+{
+	width:300px;position:fixed;left:50%;top:40px;margin-left:-150px;z-index:9000;box-shadow:1px 1px 4px rgba(0,0,0, 0.3);
+	.close{ background: none; border: none; }
+}
+
+
+.searchbox {
+	padding-left: 30px;
+	background: #fff url("../../images/search-icon.png") no-repeat 5px center;
+}
+
+

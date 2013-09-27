@@ -27,16 +27,34 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('./package.json'),
+    
     yeoman: yeomanConfig,
+    
+    less: {
+      development: {
+        options: {
+          paths: ["app/styles/less"],
+          yuicompress: true
+        },
+        files: {
+          "app/styles/css/bootstrap.css": "app/styles/less/bootstrap.less"
+        }
+      }
+    },
+
     watch: {
       livereload: {
+        options: {
+          livereload: true
+        },
         files: [
           '<%= yeoman.app %>/{,*/}*.html',
-          '{.tmp,<%= yeoman.app %>}/styles/{,*/}*.css',
+          '{.tmp,<%= yeoman.app %>}/styles/{,*/}custom.css',
+          '{.tmp,<%= yeoman.app %>}/styles/{,*/}*.less',
           '{.tmp,<%= yeoman.app %>}/{,*/}*.js',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ],
-        tasks: ['livereload']
+        tasks: ['less']
       }
     },
     connect: {
@@ -134,12 +152,15 @@ module.exports = function (grunt) {
         src: ['**'], cwd: '<%= yeoman.dist %>', expand: true, dot: true, dest: '<%= pkg.name %>/'
       }
     }
+    
+    
+
   });
 
   grunt.registerTask('server', [
     'clean:server',
-    'livereload-start',
     'write:config',
+    'less',
     'connect:livereload',
     'open',
     'watch'

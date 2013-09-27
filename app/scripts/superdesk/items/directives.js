@@ -66,10 +66,16 @@ define([
                     $scope.limit = 25;
 
                     $scope.prev = function() {
+                        if (!$scope.links.hasPrev) {
+                            return false;
+                        }
                         $location.search('skip', getPrevSkip($scope));
                     };
 
                     $scope.next = function() {
+                        if (!$scope.links.hasNext) {
+                            return false;
+                        }
                         $location.search('skip', getNextSkip($scope));
                     };
 

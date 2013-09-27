@@ -1,0 +1,77 @@
+/* LESS Styles for General Settings Page */
+.settingsPage {
+	position: absolute;
+	top: 93px;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 30px 20px;
+	background: #fff;
+	.tabbable {
+		height: 100%;
+		.nav-tabs {
+			width: 130px;
+			position: absolute;
+			bottom: 30px; top:65px;
+			left:20px;
+			margin: 0;
+			&.nav-stacked>li {
+				>a {
+					border: 0;
+					border: 1px solid #f4f4f4;
+					border-width: 1px 0;
+					color: #3097b5;
+					&:hover {
+						cursor: pointer;
+						background: #f8f8f8;
+					}
+				}
+
+				&.active>a {
+					border-color:#ddd;
+					position: relative;
+					z-index: 2;
+					border-radius: 0 !important;
+					color: #484848;
+					&:hover {
+						background: #fff;
+					}
+				}
+			}
+		}
+		.tab-content {
+			position: absolute;
+			bottom: 30px; top:30px;
+			left:149px;right: 0;
+			display: block;
+			width: auto;
+			.tab-pane {
+				position: absolute;
+				bottom: 0; top:0;
+				left:0;right: 0;
+				width: auto;
+				h4 {
+					height: 35px;
+					border-bottom: 1px solid #ddd;
+					line-height: 30px;
+					padding: 0; margin: 0 0 0 30px;
+					font-size: 20px;
+					color: #4d4d4d;
+					font-weight: normal;
+					max-width: 600px;
+				}
+				.settings-tab-content {
+					padding: 20px 30px;
+					border-left: 1px solid #ddd;
+					min-height: 300px;
+					box-shadow: -3px 0 3px -3px #d8d8d8;
+					max-width: 600px;
+					position: absolute;
+					bottom: 0;
+					top: 35px;
+					overflow: auto;
+				}
+			}
+		}
+	}
+}

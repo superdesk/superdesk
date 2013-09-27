@@ -320,6 +320,7 @@ section.main-section {
 	margin-left: 5px;
 	margin-bottom: 0;
 }
+/*
 .login_box {
 	margin:0 auto;
 	width:380px;
@@ -342,6 +343,7 @@ section.main-section {
 	.login_box .btn.btn-primary-gv {
 		width:100%;
 	}
+	*/
 
 .splitt-content {
 	position:absolute;
@@ -1693,15 +1695,16 @@ a.collaborator-name-large  {
 
 
 /* login popup style override */
-.sf-jquery-dialog {
-	width: 450px !important;
-}
 
 .login-popup {
-	padding: 0 30px !important;
+	width: 400px;
+	margin-left: -200px;
+}
+.login-popup .modal-body {
+	padding: 0 20px;
 }
 .login-popup .fullwidth-input {
-	margin-bottom: 10px;
+	margin-bottom: 15px;
 	height: 33px;
 	font-size: 14px;
 	color: #333;
@@ -1717,7 +1720,7 @@ a.collaborator-name-large  {
 }
 
 .login-popup .alert {
-	margin: 0 -30px 5px -30px;
+	margin: 0 -20px 5px -20px;
 	border-width: 1px 0;
 	border-radius: 0;
 	-moz-border-radius:0px;
@@ -1726,14 +1729,13 @@ a.collaborator-name-large  {
 	-o-border-radius:0px;
 }
 
-.ui-dialog-titlebar .ui-state-hover .ui-icon {
-	background: #fff !important;
+.login-popup .remember-me {
+	margin: 10px 0 15px 0;
+}
+.login-popup .modal-footer {
+	padding: 10px 20px;
 }
 
-.ui-dialog .ui-dialog-titlebar-close:before {
-	content: 'x';
-	font-size: 16px;
-}
 /* end of login popup style override */
 
 .grid-view .media-box figure {
