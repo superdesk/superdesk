@@ -6,13 +6,14 @@ Feature: User Resource
         Given no user
         When we post to "/users"
             """
-            {"username": "foo"}
+            {"username": "foo", "password": "bar"}
             """
 
         Then we get new resource
             """
             {"username": "foo"}
             """
+        And we get no "password"
 
     @auth
     Scenario: List users

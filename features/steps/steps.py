@@ -35,3 +35,8 @@ def step_impl(context):
 def step_impl(context, total_count):
     response_list = json.loads(context.response.get_data())
     assert response_list['_list']['total_count'] == int(total_count), response_list
+
+@then('we get no "{field}"')
+def step_impl(context, field):
+    response_data = json.loads(context.response.get_data())
+    assert field not in response_data, response_data

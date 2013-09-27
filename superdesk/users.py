@@ -37,7 +37,7 @@ def drop_users(db=superdesk.db):
     db.users.remove()
 
 def format_user(user):
-    user.pop('_id')
+    user.pop('password', None)
     return user
 
 def find_users(db=superdesk.db):
@@ -63,6 +63,6 @@ class UserListResource(Resource):
 
     def post(self):
         user = create_user(request.get_json())
-        return user, 201
+        return format_user(user), 201
 
 superdesk.api.add_resource(UserListResource, '/users')
