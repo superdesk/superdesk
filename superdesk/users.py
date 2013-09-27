@@ -1,6 +1,7 @@
 """Superdesk Users"""
 
-from flask import request
+from flask import request, url_for
+from datetime import datetime
 
 import superdesk
 from .api import Resource
@@ -22,6 +23,8 @@ def create_user(userdata=None, db=superdesk.db, **kwargs):
         userdata = {}
 
     userdata.update(kwargs)
+    userdata.setdefault('created', datetime.utcnow())
+    userdata.setdefault('updated', userdata.get('created'))
 
     if not userdata.get('username'):
         raise EmptyUsernameException()
@@ -38,10 +41,25 @@ def drop_users(db=superdesk.db):
 
 def format_user(user):
     user.pop('password', None)
+    user.setdefault('_links', {
+        'self': {'href': url_for('user', username=user.get('username'))}
+    })
     return user
+
+def find_one(username, db=superdesk.db):
+    return db.users.find_one({'username': username})
 
 def find_users(db=superdesk.db):
     return db.users.find()
+
+def remove_user(username, db=superdesk.db):
+    return db.users.remove({'username': username})
+
+def patch_user(user, data, db=superdesk.db):
+    user.update(data)
+    user.update({'updated': datetime.utcnow()})
+    db.users.save(user)
+    return user
 
 def get_token(user):
     token = AuthToken(token=utils.get_random_string(40), user=user)
@@ -65,4 +83,19 @@ class UserListResource(Resource):
         user = create_user(request.get_json())
         return format_user(user), 201
 
+class UserResource(Resource):
+
+    def get(self, username):
+        user = find_one(username=username)
+        return format_user(user)
+
+    def patch(self, username):
+        user = find_one(username=username)
+        patch_user(user, request.get_json())
+        return format_user(user)
+
+    def delete(self, username):
+        return remove_user(username)
+
+superdesk.api.add_resource(UserResource, '/users/<string:username>', endpoint='user')
 superdesk.api.add_resource(UserListResource, '/users')

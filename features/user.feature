@@ -11,7 +11,7 @@ Feature: User Resource
 
         Then we get new resource
             """
-            {"username": "foo"}
+            {"username": "foo", "_links": {"self": {"href": "/users/foo"}}}
             """
         And we get no "password"
 
@@ -24,3 +24,43 @@ Feature: User Resource
 
         When we get "/users"
         Then we get list with 2 items
+
+    @auth
+    Scenario: Fetch single user
+        Given users
+            """
+            {"username": "foo"}
+            """
+
+        When we get "/users/foo"
+        Then we get existing resource
+            """
+            {"username": "foo"}
+            """
+
+    @auth
+    Scenario: Delete user
+        Given users
+            """
+            {"username": "foo"}
+            """
+
+        When we delete "/users/foo"
+        Then we get OK response
+
+    @auth
+    Scenario: Update user
+        Given users
+            """
+            {"username": "foo"}
+            """
+
+        When we patch "/users/foo"
+            """
+            {"first_name": "Foo"}
+            """
+
+        Then we get existing resource
+            """
+            {"first_name": "Foo", "username": "foo"}
+            """
