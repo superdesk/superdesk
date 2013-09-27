@@ -7,7 +7,7 @@ import xml.etree.ElementTree as etree
 from requests.packages.urllib3.poolmanager import PoolManager
 from datetime import datetime, timedelta
 
-from superdesk import mongo
+import superdesk
 from superdesk.datetime import utcnow
 
 class ReutersTokenProvider(object):
@@ -15,14 +15,17 @@ class ReutersTokenProvider(object):
 
     PROVIDER = 'reuters'
 
+    def __init__(self, db=superdesk.db):
+        self.db = db
+
     def get_token(self):
         """Get access token."""
 
-        token = mongo.db.tokens.find_one({'provider': self.PROVIDER})
+        token = self.db.tokens.find_one({'provider': self.PROVIDER})
         if token and self.is_valid(token):
             return token.get('token')
         elif token:
-            mongo.db.tokens.remove(token)
+            self.db.tokens.remove(token)
 
         token = {
             'provider': self.PROVIDER,
@@ -30,7 +33,7 @@ class ReutersTokenProvider(object):
             'token': fetch_token_from_api(),
         }
 
-        mongo.db.tokens.save(token)
+        self.db.tokens.save(token)
         return token.get('token')
 
     def is_valid(self, token):
