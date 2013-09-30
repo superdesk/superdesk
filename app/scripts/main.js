@@ -40,7 +40,8 @@ define([
     'superdesk/auth/module',
     'superdesk/menu/module',
     'superdesk/dashboard/module',
-    'superdesk/items/module'
+    'superdesk/items/module',
+    'superdesk/users/module'
 ], function(angular) {
     'use strict';
 
@@ -49,7 +50,8 @@ define([
         'superdesk.auth',
         'superdesk.menu',
         'superdesk.dashboard',
-        'superdesk.items'
+        'superdesk.items',
+        'superdesk.users'
     ];
 
     angular.module('superdesk', modules);
