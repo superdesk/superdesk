@@ -1,18 +1,18 @@
 
 import unittest
 
-from . import setup
+from . import setup, app
 
-from superdesk import signals
+import superdesk
 
 class Logger(object):
     def __init__(self):
         self.called = False
         self.args = []
 
-    def callme(self, *args):
+    def callme(self, *sender, **kwargs):
         self.called = True
-        self.args = args
+        self.args = kwargs
 
 class ItemsTestCase(unittest.TestCase):
 
@@ -21,10 +21,10 @@ class ItemsTestCase(unittest.TestCase):
 
     def test_signals(self):
         logger = Logger()
-        signals.connect('item:save', logger.callme)
+        superdesk.connect('insert', logger.callme)
 
         with app.test_request_context():
-            items.save_item({})
+            app.data.insert('items', {})
 
         assert logger.called, "Logger was not called"
-        assert logger.args[0].get('guid'), "Event arg has no guid"
+        assert logger.args.get('resource') == 'items', logger.args
