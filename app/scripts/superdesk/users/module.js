@@ -2,12 +2,13 @@ define([
     'angular',
     'angular-route',
     'bootstrap/dropdown',
+    'superdesk/storage',
     './controllers/list',
     './resources'
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.users', ['ngRoute', 'superdesk.users.resources']).
+    angular.module('superdesk.users', ['ngRoute', 'superdesk.users.resources', 'superdesk.storage']).
         config(function($routeProvider) {
 
             $routeProvider.

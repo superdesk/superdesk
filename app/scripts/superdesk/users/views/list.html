@@ -21,30 +21,49 @@
                     <thead>
                         <tr>
                             <th class="chckbx_col"><input type="checkbox" name="all"></th>
-                            <th class="avatar_col"></th>
-                            <th class="name_col">Name</th>
-                            <th class="username_col">Username</th>
-                            <th class="email_col resp-hide">Email</th>
-                            <th class="resp-hide">User group</th>
-                            <th class="small_col resp-hide">Contributor</th>
-                            <th class="small_col resp-hide">Member since</th>
+                            <th class="avatar_col" ng-show="settings.fields.avatar"></th>
+                            <th class="name_col" ng-show="settings.fields.display_name">Name</th>
+                            <th class="username_col" ng-show="settings.fields.username">Username</th>
+                            <th class="email_col resp-hide" ng-show="settings.fields.email">Email</th>
+                            <th class="small_col resp-hide" ng-show="settings.fields._created">Member since</th>
                             <th class="action_col">
                                 <div class="dropdown" style="text-align:right;" >
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-switches"></i> <span class="caret"></span></a>
-                                    <ul class="dropdown-menu sf-dropdown-simple pull-right" id="columns-switches">
-                                        <li><input type="checkbox" class="sf-checkbox" set-bg="1" checked="checked"> Avatar</li>
-                                        <li><input type="checkbox" class="sf-checkbox" set-bg="1"> Name</li>
-                                        <li><input type="checkbox" class="sf-checkbox" set-bg="1"> Username</li>
-                                        <li><input type="checkbox" class="sf-checkbox" set-bg="1"> Email</li>
-                                        <li><input type="checkbox" class="sf-checkbox" set-bg="1"> User Group</li>
-                                        <li><input type="checkbox" class="sf-checkbox" set-bg="1"> Contributor</li>
-                                        <li><input type="checkbox" class="sf-checkbox" set-bg="1"> Member Since</li>
-                                        <li><input type="checkbox" class="sf-checkbox" set-bg="1"> Permissions</li>
+                                    <ul class="dropdown-menu sf-dropdown-simple pull-right">
+                                        <li><input type="checkbox" ng-click="saveSettings()" ng-model="settings.fields.avatar"> Avatar</li>
+                                        <li><input type="checkbox" ng-click="saveSettings()" ng-model="settings.fields.display_name"> Name</li>
+                                        <li><input type="checkbox" ng-click="saveSettings()" ng-model="settings.fields.username"> Username</li>
+                                        <li><input type="checkbox" ng-click="saveSettings()" ng-model="settings.fields.email"> Email</li>
+                                        <li><input type="checkbox" ng-click="saveSettings()" ng-model="settings.fields._created"> Member Since</li>
                                     </ul>
                                 </div>
                             </th>
                         </tr>
                     </thead>
+
+                    <tbody>
+
+                        <tr ng-repeat="user in users._items">
+                            <td><input type="checkbox"></td>
+                            <td><figure class="avatar" ng-show="settings.fields.avatar"><img src=""></figure></td>
+                            <td class="name_col" ng-show="settings.fields.display_name"><a href="">{{ user.display_name }}</a></td>
+                            <td ng-show="settings.fields.username">{{ user.username }}</td>
+                            <td class="email_col resp-hide" ng-show="settings.fields.email"><a href="">{{ user.email }}</a></td>
+                            <td class="resp-hide" ng-show="settings.fields._created">{{ user._created }}</td>
+                            <td class="action_col">
+                                <div class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
+                                    <ul class="dropdown-menu sf-dropdown-simple pull-right">
+                                        <li><a href="#"><i class="icon-eye-open"></i> View details</a></li>
+                                        <li><a href="#"><i class="icon-pencil"></i> Edit details</a></li>
+                                        <li><a href="#"><i class="icon-ban-circle"></i> Permissions</a></li>
+                                        <li><a href="#"><i class="icon-trash"></i> Delete</a></li>                      
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
                 </table>
             </div>
         </div>
