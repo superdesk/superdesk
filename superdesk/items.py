@@ -63,63 +63,18 @@ def get_last_updated(db=superdesk.db):
     if item:
         return item.get('versionCreated')
 
-class ItemListResource(Resource):
-
-    def __init__(self, db=superdesk.db):
-        self.db = db
-
-    def get_query(self):
-        query = {}
-        query.setdefault('itemClass', 'icls:composite')
-        if request.args.get('q'):
-            query['headline'] = {'$regex': request.args.get('q'), '$options': 'i'}
-        if request.args.get('itemClass'):
-            query['itemClass'] = {'$in': request.args.get('itemClass').split(",")}
-        return query
-
-    @auth_required
-    def get(self):
-        skip = int(request.args.get('skip', 0))
-        limit = int(request.args.get('limit', 25))
-        query = self.get_query()
-        raw_items = self.db.items.find(query).sort('firstCreated', -1).skip(skip).limit(limit + 1)
-        items = [format_item(item) for item in raw_items]
-        return {'items': items[:limit], 'has_next': len(items) > limit, 'has_prev': skip > 0}
-
-    @auth_required
-    def post(self):
-        item = save_item(request.get_json())
-        return item, 201
-
-class ItemResource(Resource):
-
-    def __init__(self, db=superdesk.db):
-        self.db = db
-
-    def _get_item(self, guid):
-        return self.db.items.find_one_or_404({'guid': guid})
-
-    @auth_required
-    def get(self, guid):
-        item = self._get_item(guid)
-        return format_item(item)
-
-    @auth_required
-    def put(self, guid):
-        data = request.get_json()
-        item = update_item(data, guid)
-        return format_item(item)
-
 superdesk.DOMAIN.update({
     'items': {
         'item_title': 'newsItem',
-        'resource_methods': ['GET'],
-        'last_updated': 'versionCreated',
-        'date_created': 'firstCreated',
+        'resource_methods': ['GET', 'POST'],
+        'additional_lookup': {
+            'url': '[\w]+',
+            'field': 'guid'
+        },
         'schema': {
             'guid': {
-                'type': 'string'
-
+                'type': 'string',
+                'unique': True
             },
             'headline': {
                 'type': 'string'

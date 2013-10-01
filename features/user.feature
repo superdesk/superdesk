@@ -3,7 +3,7 @@ Feature: User Resource
 
     @auth
     Scenario: Create a user
-        Given no user
+        Given empty "users"
         When we post to "/users"
             """
             {"username": "foo", "password": "bar"}
@@ -17,9 +17,9 @@ Feature: User Resource
 
     @auth
     Scenario: List users
-        Given users
+        Given "users"
             """
-            {"username": "foo"}, {"username": "bar"}
+            [{"username": "foo"}, {"username": "bar"}]
             """
 
         When we get "/users"
@@ -27,7 +27,7 @@ Feature: User Resource
 
     @auth
     Scenario: Fetch single user
-        Given users
+        Given "users"
             """
             {"username": "foo"}
             """
@@ -40,7 +40,7 @@ Feature: User Resource
 
     @auth
     Scenario: Delete user
-        Given users
+        Given "users"
             """
             {"username": "foo"}
             """
@@ -50,7 +50,7 @@ Feature: User Resource
 
     @auth
     Scenario: Update user
-        Given users
+        Given "users"
             """
             {"username": "foo"}
             """

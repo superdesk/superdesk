@@ -17,16 +17,17 @@ def get_self_href(resource):
 def get_res(url, context):
     return json.loads(context.client.get(url, follow_redirects=True).get_data())
 
-@given('no user')
-def step_impl(context):
-    pass
-
-@given('users')
-def step_impl(context):
+@given('empty "{resource}"')
+def step_impl(context, resource):
     with app.test_request_context():
-        app.data.remove('users')
-        users = [json.loads(user) for user in context.text.split(',')]
-        app.data.insert('users', users)
+        app.data.remove(resource)
+
+@given('"{resource}"')
+def step_impl(context, resource):
+    with app.test_request_context():
+        app.data.remove(resource)
+        items = json.loads(context.text)
+        app.data.insert(resource, items)
 
 @when('we post to "{url}"')
 def step_impl(context, url):
@@ -53,6 +54,7 @@ def step_impl(context, url):
 
 @then('we get new resource')
 def step_impl(context):
+    assert context.response.status_code == 200, context.response.get_data()
     data = json.loads(context.response.get_data())
     assert data['data']['status'] == 'OK', data['data']
     assert data['data']['_links']['self'], data['data']

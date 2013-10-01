@@ -1,23 +1,35 @@
+@wip
 Feature: Item resource
 
     @auth
     Scenario: List empty items
-        Given no items
-        When we get items
-        Then we get empty list
+        Given empty "items"
+        When we get "/items"
+        Then we get list with 0 items
 
     @auth
     Scenario: Create item
-        Given no items
-        When we post new item
-        Then we get status code "201"
-        And we get "headline" in item
-        And we get "guid" in item
-        And we get "versionCreated" in item
-        And we get "firstCreated" in item
+        Given empty "items"
+        When we post to "/items"
+            """
+            {"headline": "test"}
+            """
+
+        Then we get new resource
+            """
+            {"headline": "text"}
+            """
 
     @auth
     Scenario: Update item
-        Given an item
-        When we update item
-        Then we get updated item
+        Given "items"
+            """
+            {"guid": "testid", "headline": "test"}
+            """
+
+        When we patch "/items/testid"
+            """
+            {"slugline": "TEST"}
+            """
+
+        Then we get updated response
