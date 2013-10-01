@@ -1,12 +1,14 @@
 define([
     'angular',
     'angular-route',
-    'bootstrap/dropdown',
-    './controllers/main'
+    'bootstrap_ui',
+    './controllers/main',
+    './resources',
+    './directives'
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.dashboard', ['ngRoute']).
+    angular.module('superdesk.dashboard', ['ngRoute','superdesk.dashboard.resources','superdesk.dashboard.directives']).
         config(function($routeProvider) {
 
             $routeProvider.

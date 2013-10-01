@@ -1,8 +1,8 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope',
-    function($scope) {
-        
+    return ['$scope', 'worldclock',
+    	function($scope, worldclock) {
+        	$scope.wclock = worldclock;
     }];
 });
