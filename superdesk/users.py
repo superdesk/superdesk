@@ -14,8 +14,6 @@ class ConflictUsernameException(Exception):
     def __str__(self):
         return "Username '%s' exists already" % self.args[0]
 
-@superdesk.manager.option('--username', '-u', dest='username')
-@superdesk.manager.option('--password', '-p', dest='password')
 def create_user(userdata=None, db=superdesk.db, **kwargs):
     """Create a new user"""
 
@@ -73,29 +71,41 @@ def is_valid_token(auth_token):
     except AuthToken.DoesNotExist:
         return False
 
-class UserListResource(Resource):
-
-    def get(self):
-        users = [format_user(user) for user in find_users()]
-        return {'data': users, '_list': {'total_count': len(users)}}
-
-    def post(self):
-        user = create_user(request.get_json())
-        return format_user(user), 201
-
-class UserResource(Resource):
-
-    def get(self, username):
-        user = find_one(username=username)
-        return format_user(user)
-
-    def patch(self, username):
-        user = find_one(username=username)
-        patch_user(user, request.get_json())
-        return format_user(user)
-
-    def delete(self, username):
-        return remove_user(username)
-
-superdesk.api.add_resource(UserResource, '/users/<string:username>', endpoint='user')
-superdesk.api.add_resource(UserListResource, '/users')
+superdesk.DOMAIN.update({
+    'users': {
+        'additional_lookup': {
+            'url': '[\w]+',
+            'field': 'username'
+        },
+        'schema': {
+            'username': {
+                'type': 'string',
+                'unique': True,
+            },
+            'password': {
+                'type': 'string',
+            },
+            'first_name': {
+                'type': 'string',
+            },
+            'last_name': {
+                'type': 'string',
+            },
+            'display_name': {
+                'type': 'string',
+            },
+            'user_info': {
+                'type': 'dict'
+            }
+        },
+        'datasource': {
+            'projection': {
+                'username': 1,
+                'first_name': 1,
+                'last_name': 1,
+                'display_name': 1,
+                'user_info': 1,
+            }
+        }
+    }
+})

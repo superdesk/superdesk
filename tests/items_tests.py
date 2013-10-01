@@ -23,7 +23,6 @@ class ItemsTestCase(unittest.TestCase):
         logger = Logger()
         signals.connect('item:save', logger.callme)
 
-        from superdesk import items, app
         with app.test_request_context():
             items.save_item({})
 

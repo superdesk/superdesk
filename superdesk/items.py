@@ -110,5 +110,35 @@ class ItemResource(Resource):
         item = update_item(data, guid)
         return format_item(item)
 
-superdesk.api.add_resource(ItemResource, '/items/<string:guid>', endpoint='item')
-superdesk.api.add_resource(ItemListResource, '/items')
+superdesk.DOMAIN.update({
+    'items': {
+        'item_title': 'newsItem',
+        'resource_methods': ['GET'],
+        'last_updated': 'versionCreated',
+        'date_created': 'firstCreated',
+        'schema': {
+            'guid': {
+                'type': 'string'
+
+            },
+            'headline': {
+                'type': 'string'
+            },
+            'slugline': {
+                'type': 'string'
+            },
+            'firstCreated': {
+                'type': 'datetime'
+            },
+            'versionCreated': {
+                'type': 'datetime'
+            },
+            'itemClass': {
+                'type': 'string'
+            },
+            'provider': {
+                'type': 'string'
+            },
+        },
+    }
+})

@@ -25,88 +25,8 @@ INSTALLED_APPS = (
     'superdesk.users',
     'superdesk.io',
     'superdesk.items',
-    'superdesk.elastic',
 )
 
 PUBLIC_METHODS = ['GET']
 RESOURCE_METHODS = ['GET', 'POST']
 ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
-
-LAST_UPDATED = '_updated'
-DATE_CREATED = '_created'
-
-DOMAIN = {
-    'auth': {
-        'schema': {
-            'username': {
-                'type': 'string'
-            },
-            'password': {
-                'type': 'string'
-            }
-        },
-        'item_methods': []
-    },
-    'users': {
-        'schema': {
-            'username': {
-                'type': 'string',
-                'unique': True,
-            },
-            'password': {
-                'type': 'string',
-            },
-            'first_name': {
-                'type': 'string',
-            },
-            'last_name': {
-                'type': 'string',
-            },
-            'display_name': {
-                'type': 'string',
-            },
-            'user_info': {
-                'type': 'dict'
-            }
-        },
-        'datasource': {
-            'projection': {
-                'username': 1,
-                'first_name': 1,
-                'last_name': 1,
-                'display_name': 1,
-                'user_info': 1,
-            }
-        }
-    },
-    'items': {
-        'item_title': 'newsItem',
-        'resource_methods': ['GET'],
-        'last_updated': 'versionCreated',
-        'date_created': 'firstCreated',
-        'schema': {
-            'guid': {
-                'type': 'string'
-
-            },
-            'headline': {
-                'type': 'string'
-            },
-            'slugline': {
-                'type': 'string'
-            },
-            'firstCreated': {
-                'type': 'datetime'
-            },
-            'versionCreated': {
-                'type': 'datetime'
-            },
-            'itemClass': {
-                'type': 'string'
-            },
-            'provider': {
-                'type': 'string'
-            },
-        },
-    }
-}

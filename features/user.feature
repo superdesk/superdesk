@@ -60,7 +60,4 @@ Feature: User Resource
             {"first_name": "Foo"}
             """
 
-        Then we get existing resource
-            """
-            {"first_name": "Foo", "username": "foo"}
-            """
+        Then we get updated response

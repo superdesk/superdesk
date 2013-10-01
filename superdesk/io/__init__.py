@@ -2,7 +2,6 @@
 
 from superdesk import manager
 
-@manager.command
 def update_ingest():
     """Update ingest"""
     from .newsml import Parser

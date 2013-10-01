@@ -1,12 +1,9 @@
+
 from functools import wraps
 from base64 import b64decode
-
 from flask import request, make_response
-from flask.ext import restful
 
 import superdesk
-from superdesk import api, utils
-from superdesk.api import Resource
 
 def auth_required(f):
     @wraps(f)
@@ -49,7 +46,7 @@ def authenticate(db=superdesk.db, **kwargs):
 class AuthException(Exception):
     pass
 
-class AuthResource(Resource):
+class AuthResource(object):
 
     @auth_required
     def get(self):
@@ -63,4 +60,16 @@ class AuthResource(Resource):
         except AuthException as err:
             return {'message': err.args[0], 'code': 401}, 401
 
-api.add_resource(AuthResource, '/auth')
+superdesk.DOMAIN.update({
+    'auth': {
+        'schema': {
+            'username': {
+                'type': 'string'
+            },
+            'password': {
+                'type': 'string'
+            }
+        },
+        'item_methods': []
+    }
+})

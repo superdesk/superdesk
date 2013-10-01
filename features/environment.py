@@ -4,14 +4,13 @@ from flask import json
 
 import tests
 
-from steps.auth import create_user, send_auth
-
 def before_all(context):
     tests.setup(context)
 
 def before_scenario(context, scenario):
     tests.drop_db()
     context.headers = [('Content-Type', 'application/json')]
+    return
     if 'auth' in scenario.tags:
         user = {'username': 'tmpuser', 'password': 'tmppassword'}
         create_user(user)
