@@ -24,12 +24,13 @@ define([
 
             var self = this;
             Auth.save(
-                {username: username, password: password},
+                {auth: {username: username, password: password}},
                 function(response) {
-                    setSessionData(response, rememberMe);
+                    setSessionData(response.auth, rememberMe);
                     $rootScope.$broadcast('auth.login');
-                    delay.resolve(response);
+                    delay.resolve(response.auth);
                 }, function(response) {
+                    self.logout();
                     delay.reject(response);
                 });
 
@@ -40,11 +41,7 @@ define([
          * Logout
          */
         this.logout = function() {
-            var keys = ['auth:token', 'auth:user'];
-            angular.forEach(keys, function(key) {
-                storage.removeItem(key);
-            });
-
+            storage.removeItem('auth');
             initScope();
         };
 
@@ -58,9 +55,8 @@ define([
         };
 
         function setSessionData(data, useLocalStorage) {
-            data.user.isAnonymous = false;
-            storage.setItem('auth:token', data.token, useLocalStorage);
-            storage.setItem('auth:user', data.user, useLocalStorage);
+            data.isAnonymous = false;
+            storage.setItem('auth', data, useLocalStorage);
             initScope();
         }
 
@@ -71,9 +67,13 @@ define([
         }
 
         function initScope() {
-            setAuthenticationHeader(storage.getItem('auth:token'));
-            $rootScope.currentUser = storage.getItem('auth:user');
-            if (!$rootScope.currentUser) {
+            var authData = storage.getItem('auth');
+            if (authData) {
+                setAuthenticationHeader(authData.token);
+                $rootScope.currentUser = angular.extend(authData, {
+                    isAnonymous: false
+                });
+            } else {
                 $rootScope.currentUser = {
                     username: 'Anonymous',
                     isAnonymous: true
