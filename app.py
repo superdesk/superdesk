@@ -1,8 +1,8 @@
 
-import os
+import eve
+from superdesk import Superdesk
 
-from superdesk import app as application
+application = eve.Eve(data=Superdesk, settings='settings.py')
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    application.run(debug=True, port=port, host='0.0.0.0')
+    application.run(debug=application.config.get('DEBUG'))
