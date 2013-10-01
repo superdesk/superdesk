@@ -24,7 +24,7 @@ define([
                 ItemResource.query(
                     angular.extend({}, defaultParams, params, $route.current.params),
                     function(response) {
-                        var items = response.items;
+                        var items = response._items;
                         items.has_next = response.has_next;
                         items.has_prev = response.has_prev;
                         items.total_length = 'total' in response ? response.total : null;

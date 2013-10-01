@@ -20,13 +20,15 @@ define([
             service = {};
 
             authData = {
-                'token': 'abc',
-                'user': {'username': 'foo'}
+                'auth': {
+                    'token': 'abc',
+                    'username': 'foo'
+                }
             };
 
             auth = {
                 save: function(data, success, error) {
-                    if (data.username == 'foo') {
+                    if (data.auth.username == 'foo') {
                         success(authData);
                     } else {
                         error(data);
@@ -51,7 +53,7 @@ define([
 
             expect(service.hasIdentity()).toBe(true);
             expect(rootScope.currentUser.isAnonymous).toBe(false);
-            expect(rootScope.currentUser.username).toBe(authData.user.username);
+            expect(rootScope.currentUser.username).toBe(authData.auth.username);
 
             service.logout();
 
@@ -59,6 +61,8 @@ define([
         });
 
         it('fails on false login', function() {
+            expect(service.hasIdentity()).toBe(false);
+            
             service.login('fake', 'bar');
             
             expect(service.hasIdentity()).toBe(false);
