@@ -10,23 +10,13 @@ define([
     angular.module('superdesk.users', ['ngRoute', 'superdesk.users.resources']).
         config(function($routeProvider) {
 
-            function getUserLoader(defaultParams) {
-                return function($route, UserListLoader) {
-                    var params = angular.extend({
-                        skip: 0,
-                        limit: 25
-                    }, defaultParams, $route.current.params);
-                    return UserListLoader(params);
-                };
-            }
-
             $routeProvider.
                 when('/users/', {
                     controller: require('superdesk/users/controllers/list'),
                     templateUrl: 'scripts/superdesk/users/views/list.html',
                     resolve: {
                         users: ['UserListLoader', function(UserListLoader) {
-                            return UserListLoader({itemClass: 'icls:composite'});
+                            return UserListLoader();
                         }]
                     },
                     menu: {

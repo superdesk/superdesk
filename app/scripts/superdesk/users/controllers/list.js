@@ -1,10 +1,12 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', '$location', 'items',
-    function($scope, $location, items) {
-        $scope.items = items;
+    return ['$scope', '$location', 'users',
+    function($scope, $location, users) {
+        $scope.users = users;
+        console.log(users);
 
+        /*
         $scope.open = function(path) {
             $location.path(path);
         };
@@ -16,5 +18,6 @@ define(['angular'], function(angular) {
         $scope.closeEdit = function() {
             $scope.editItem = null;
         };
+        */
     }];
 });

@@ -21,14 +21,10 @@ define([
 
             return function(params) {
                 var delay = $q.defer();
-                ItemResource.query(
+                UserResource.query(
                     angular.extend({}, defaultParams, params, $route.current.params),
                     function(response) {
-                        var items = response.items;
-                        items.has_next = response.has_next;
-                        items.has_prev = response.has_prev;
-                        items.total_length = 'total' in response ? response.total : null;
-                        delay.resolve(items);
+                        delay.resolve(response);
                     },
                     function(response) {
                         delay.reject(response);
@@ -37,13 +33,13 @@ define([
             };
         }).
         factory('UserLoader', function($q, $route, UserResource) {
-            return function(guid) {
-                if (typeof guid === 'undefined' && 'guid' in $route.current.params) {
-                    guid = $route.current.params.guid;
+            return function(id) {
+                if (typeof id === 'undefined' && 'guid' in $route.current.params) {
+                    id = $route.current.params.id;
                 }
 
                 var delay = $q.defer();
-                ItemResource.get({guid: guid},
+                UserResource.get({id: id},
                     function(response) {
                         delay.resolve(response);
                     },
@@ -56,8 +52,8 @@ define([
         service('UserService', function(UserResource) {
             return {
                 update: function(item) {
-                    UserResource.update(item, function(response) {
-                        angular.extend(item, response);
+                    UserResource.update(user, function(response) {
+                        angular.extend(user, response);
                     });
                 }
             };
