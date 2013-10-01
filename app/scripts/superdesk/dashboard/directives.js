@@ -1,7 +1,8 @@
 define([
     'jquery',
     'angular',
-    'moment'
+    'moment',
+    'bootstrap_ui'
 ], function($, angular, moment) {
     'use strict';
 

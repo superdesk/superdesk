@@ -1,7 +1,6 @@
 define([
     'angular',
     'angular-route',
-    'bootstrap_ui',
     './controllers/main',
     './resources',
     './directives'

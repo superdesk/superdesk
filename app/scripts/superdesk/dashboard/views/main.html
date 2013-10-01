@@ -26,8 +26,14 @@
                     </ul>
                 </div>
 			</div>
-			<div class="widget-content clearfix">
+			<div class="widget-content clearfix" style="width:{{ wclock.length * 106}}px">
 				<sd-clock ng-repeat="clock in wclock"  wtime="clock"></sd-clock>				
+			</div>
+			<div class="widget-footer">
+				<div class="slider">
+					<span class="arrow left"></span>
+					<span class="arrow right"></span>
+				</div>
 			</div>
 		</div>
 

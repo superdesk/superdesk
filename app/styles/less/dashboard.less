@@ -71,6 +71,27 @@ Main dashboard styles
 	.widget-content {
 		
 	}
+	.widget-footer {
+		border-top: 1px solid #e7e7e7;
+		height: 31px;
+	}
+	.slider {
+		.arrow {
+			width: 8px;
+			height: 12px;
+			background: url(../../images/widget-slider.png) no-repeat 0 0;
+			margin-top: 9px;
+			&.left {
+				float: left;
+				margin-left: 9px;
+			}
+			&.right {
+				background-position: -10px 0px;
+				margin-right: 9px;
+				float: right;
+			}
+		}
+	}
 }
 
 /*
@@ -84,12 +105,14 @@ Widgets styles
 
 .world-clock {
 	.widget-content {
+		height: 185px;
+		overflow: hidden;
 		.clock-box {
 			min-height: 185px;
 			.box-sizing(border-box);
 			border-right:1px solid #e7e7e7;
 			width: 106px;
-			&:nth-child(3) {
+			&:nth-child(3n) {
 				border-right: 0;
 			}
 			text-align: center;
