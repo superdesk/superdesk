@@ -72,24 +72,6 @@ def is_valid_token(auth_token):
         return False
 
 superdesk.DOMAIN.update({
-    'auth_users': {
-        'datasource': {
-            'source': 'users'
-        },
-        'schema': {
-            'username': {
-                'type': 'string',
-            },
-            'password': {
-                'type': 'string',
-            }
-        },
-        'item_methods': [],
-        'resource_methods': []
-    }
-})
-
-superdesk.DOMAIN.update({
     'users': {
         'additional_lookup': {
             'url': '[\w]+',
