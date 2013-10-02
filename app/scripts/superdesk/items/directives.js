@@ -79,12 +79,13 @@ define([
                         $location.search('skip', getNextSkip($scope));
                     };
 
+                    $scope.go = function(link) {
+                        console.log('go', link);
+                    };
+
                     ngModel.$render = function() {
                         var items = ngModel.$viewValue;
-                        if (items) {
-                            $scope.links.hasPrev = items.has_prev;
-                            $scope.links.hasNext = items.has_next;
-                        }
+                        $scope.links = items.links;
                     };
                 }
             };

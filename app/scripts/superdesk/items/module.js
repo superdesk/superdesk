@@ -13,19 +13,8 @@ define([
     angular.module('superdesk.items', ['ngRoute', 'superdesk.items.resources', 'superdesk.items.directives','ui.bootstrap.dropdownToggle']).
         config(function($routeProvider) {
 
-            function getItemLoader(defaultParams) {
-                return function($route, ItemListLoader) {
-                    var params = angular.extend({
-                        sort: '[("firstCreated", -1)]',
-                        skip: 0,
-                        limit: 25
-                    }, defaultParams, $route.current.params);
-                    return ItemListLoader(params);
-                };
-            }
-
             $routeProvider.
-                when('/packages/:guid', {
+                when('/packages/:id', {
                     templateUrl: 'scripts/superdesk/items/views/edit.html',
                     controller: require('superdesk/items/controllers/edit'),
                     resolve: {
@@ -39,7 +28,7 @@ define([
                     controller: require('superdesk/items/controllers/list'),
                     resolve: {
                         items: ['ItemListLoader', function(ItemListLoader) {
-                            return ItemListLoader({itemClass: 'icls:picture,icls:text'});
+                            return ItemListLoader({itemClass: 'icls:picture'});
                         }]
                     },
                     menu: {

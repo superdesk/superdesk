@@ -14,20 +14,16 @@ define([
         }).
         factory('ItemListLoader', function($q, $route, ItemResource) {
             var defaultParams = {
-                sort: '[("firstCreated", -1)]',
-                skip: 0,
-                limit: 25
+                sort: '[("firstCreated", -1)]'
             };
 
             return function(params) {
                 var delay = $q.defer();
                 ItemResource.query(
-                    angular.extend({}, defaultParams, params, $route.current.params),
+                    angular.extend({where: params}, defaultParams, $route.current.params),
                     function(response) {
                         var items = response._items;
-                        items.has_next = response.has_next;
-                        items.has_prev = response.has_prev;
-                        items.total_length = 'total' in response ? response.total : null;
+                        items.links = response._links;
                         delay.resolve(items);
                     },
                     function(response) {
