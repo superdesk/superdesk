@@ -6,26 +6,27 @@ import traceback
 import datetime
 
 from superdesk.datetime import utcnow
-from superdesk.items import save_item, get_last_updated, ItemConflictException
 
 class ReutersService(object):
     """Update Service"""
 
+    PROVIDER = 'reuters'
     URL = 'http://rmb.reuters.com/rmd/rest/xml'
     DATE_FORMAT = '%Y.%m.%d.%H.%M'
 
-    def __init__(self, parser, tokenProvider):
+    def __init__(self, parser, token, db):
         self.parser = parser
-        self.tokenProvider = tokenProvider
+        self.token = token
+        self.db = db
 
     def get_token(self):
-        return self.tokenProvider.get_token()
+        return self.token
 
     def update(self):
         """Service update call."""
 
         updated = utcnow()
-        last_updated = get_last_updated()
+        last_updated = self.get_last_updated()
         if not last_updated or last_updated < updated + datetime.timedelta(days=-7):
             last_updated = updated + datetime.timedelta(hours=-12) # last 12h
 
@@ -34,14 +35,13 @@ class ReutersService(object):
                 items = self.get_items(guid)
                 self.save_items(items)
 
+        self.set_last_updated(updated)
+
     def save_items(self, items):
         items.reverse()
         for item in items:
             self.fetch_assets(item)
-            try:
-                save_item(item)
-            except ItemConflictException:
-                pass
+            self.db.insert('items', [item])
 
     def fetch_assets(self, item):
         """Fetch remote assets for given item."""
@@ -106,4 +106,24 @@ class ReutersService(object):
     def format_date(self, date):
         """Format date for API usage."""
         return date.strftime(self.DATE_FORMAT)
+
+    def get_provider(self):
+        """Get stored provider entity."""
+        provider = self.db.find_one('feeds', provider=self.PROVIDER)
+        if not provider:
+            provider = {'provider': self.PROVIDER}
+            self.db.insert('feeds', provider)
+        return provider
+
+    def get_last_updated(self):
+        """Get provider last updated timestamp."""
+        provider = self.get_provider()
+        return provider.get('updated')
+
+    def set_last_updated(self, updated):
+        """Set provider last updated timestamp."""
+        provider = self.get_provider()
+        self.db.update('feeds', provider.get('_id'), {
+            'updated': updated
+        })
 

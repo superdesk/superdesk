@@ -7,6 +7,9 @@ import importlib
 import eve.io.mongo
 import settings
 from flask import abort
+from flask.ext.script import Command
+
+VERSION = (0, 0, 1)
 
 def get_sender(sender):
     return sender[0] if sender else None
@@ -35,12 +38,14 @@ class SuperdeskData(eve.io.mongo.Mongo):
 
     def insert(self, resource, docs):
         """Insert documents into resource storage."""
-        send('insert', self, resource=resource, docs=docs)
-        send('insert:%s' % resource, self, docs=docs)
+        send('create', self, resource=resource, docs=docs)
+        send('create:%s' % resource, self, docs=docs)
         return super(SuperdeskData, self).insert(resource, docs)
 
 db = None
+app = None
 DOMAIN = {}
+COMMANDS = {}
 
 for app_name in settings.INSTALLED_APPS:
     importlib.import_module(app_name)

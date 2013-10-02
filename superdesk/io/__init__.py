@@ -1,10 +1,27 @@
 """Superdesk IO"""
 
-from superdesk import manager
+import superdesk
+from superdesk.tokens import get_token
+from .newsml import Parser
+from .reuters import ReutersService
 
-def update_ingest():
-    """Update ingest"""
-    from .newsml import Parser
-    from .reuters import ReutersService
-    from .reuters_token import tokenProvider
-    ReutersService(Parser(), tokenProvider).update()
+class UpdateIngest(superdesk.Command):
+    """Update ingest feeds."""
+
+    def run(self):
+        db = superdesk.app.data
+        ReutersService(Parser(), get_token(db), db).update()
+
+superdesk.COMMANDS.update({
+    'ingest:update': UpdateIngest()
+})
+
+superdesk.DOMAIN.update({
+    'feeds': {
+        'schema': {
+            'provider': {
+                'type': 'string'
+            }
+        }
+    }
+})

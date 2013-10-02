@@ -23,7 +23,7 @@ Feature: Item resource
     Scenario: Update item
         Given "items"
             """
-            {"guid": "testid", "headline": "test"}
+            [{"guid": "testid", "headline": "test"}]
             """
 
         When we patch "/items/testid"

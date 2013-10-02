@@ -1,5 +1,6 @@
 
 import superdesk
+import superdesk.utils as utils
 
 class AuthException(Exception):
     """Base Auth Exception"""
@@ -26,19 +27,19 @@ def authenticate(credentials, db):
 
     return user
 
-def on_insert_auth(db, docs):
+def on_create_auth(db, docs):
     for doc in docs:
         try:
             user = authenticate(doc, db)
             doc['user'] = user.get('_id')
-            doc['token'] = superdesk.utils.get_random_string(40)
+            doc['token'] = utils.get_random_string(40)
         except NotFoundAuthException:
             superdesk.abort(404)
         except CredentialsAuthException:
             superdesk.abort(403)
 
 
-superdesk.connect('insert:auth', on_insert_auth)
+superdesk.connect('create:auth', on_create_auth)
 
 superdesk.DOMAIN.update({
     'auth_users': {

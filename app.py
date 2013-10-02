@@ -26,5 +26,7 @@ application = SuperdeskEve(data=superdesk.SuperdeskData, auth=SuperdeskTokenAuth
 application.on_fetch_resource = superdesk.proxy_resource_signal('read', application)
 application.on_fetch_item = superdesk.proxy_item_signal('read', application)
 
+superdesk.app = application
+
 if __name__ == '__main__':
     application.run(debug=True)
