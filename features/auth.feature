@@ -1,30 +1,50 @@
 Feature: Authentication
 
     Scenario: Authenticate existing user
-        Given a user
-        When we authenticate
-        Then we get auth token
+        Given "users"
+            """
+            {"username": "foo", "password": "bar"}
+            """
+
+        When we post to "/auth"
+            """
+            {"username": "foo", "password": "bar"}
+            """
+
+        Then we get "token"
+        And we get "username"
 
     Scenario: Authenticate with wrong password returns error
-        Given a user
-        When we authenticate with wrong password
-        Then we get status code "401"
-        And we get "invalid credentials" in response
+        Given "users"
+            """
+            {"username": "foo", "password": "bar"}
+            """
+
+        When we post to "/auth"
+            """
+            {"username": "foo", "password": "xyz"}
+            """
+
+        Then we get response code 403
 
     Scenario: Authenticate with non existing username
-        Given a user
-        When we authenticate with wrong username
-        Then we get status code "401"
-        And we get "username not found" in response
+        Given "users"
+            """
+            {"username": "foo", "password": "bar"}
+            """
 
-    Scenario: Get auth info without token
-        Given a user
-        When we get auth info
-        Then we get status code "401"
+        When we post to "/auth"
+            """
+            {"username": "x", "password": "y"}
+            """
 
+        Then we get response code 404
+
+    Scenario: Fetch resources without auth token
+        When we get "/"
+        Then we get response code 401
+
+    @auth
     Scenario: Get auth info with auth token
-        Given a user
-        When we authenticate
-        And we get auth info
-        Then we get status code "200"
-        And we get "user" in response
+        When we get "/"
+        Then we get response code 200

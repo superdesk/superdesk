@@ -1,4 +1,3 @@
-@wip
 Feature: Item resource
 
     @auth

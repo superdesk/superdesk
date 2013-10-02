@@ -1,4 +1,3 @@
-@wip
 Feature: User Resource
 
     @auth

@@ -15,7 +15,7 @@ def get_self_href(resource):
     return href.replace(app.config.get('SERVER_NAME'), '')
 
 def get_res(url, context):
-    return json.loads(context.client.get(url, follow_redirects=True).get_data())
+    return json.loads(context.client.get(url, follow_redirects=True, headers=context.headers).get_data())
 
 @given('empty "{resource}"')
 def step_impl(context, resource):
@@ -36,12 +36,13 @@ def step_impl(context, url):
 
 @when('we get "{url}"')
 def step_impl(context, url):
-    context.response = context.client.get(url, follow_redirects=True)
+    context.response = context.client.get(url, headers=context.headers, follow_redirects=True)
 
 @when('we delete "{url}"')
 def step_impl(context, url):
     res = get_res(url, context)
     headers = [('If-Match', res['etag'])]
+    headers += context.headers
     context.response = context.client.delete(get_self_href(res), headers=headers, follow_redirects=True)
 
 @when('we patch "{url}"')
@@ -78,6 +79,16 @@ def step_impl(context):
 def step_impl(context):
     assert context.response.status_code == 200, context.response.get_data()
 
+@then('we get response code {code}')
+def step_impl(context, code):
+    assert context.response.status_code == int(code), context.response.status_code
+
 @then('we get updated response')
 def step_impl(context):
     assert context.response.status_code == 200, context.response.status_code
+
+@then('we get "{key}"')
+def step_impl(context, key):
+    assert context.response.status_code == 200, context.response.status_code
+    data = json.loads(context.response.get_data())
+    assert data['data'].get(key), data

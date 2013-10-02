@@ -24,6 +24,5 @@ INSTALLED_APPS = (
     'superdesk.items',
 )
 
-PUBLIC_METHODS = ['GET']
 RESOURCE_METHODS = ['GET', 'POST']
 ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']

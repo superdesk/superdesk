@@ -4,7 +4,6 @@ from flask import request, url_for
 
 import superdesk
 from .api import Resource
-from .auth import auth_required
 from .utils import get_random_string
 from .io.reuters_token import tokenProvider
 from . import signals 

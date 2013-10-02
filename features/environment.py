@@ -10,10 +10,12 @@ def before_all(context):
 def before_scenario(context, scenario):
     tests.drop_db()
     context.headers = [('Content-Type', 'application/json')]
-    return
+
     if 'auth' in scenario.tags:
         user = {'username': 'tmpuser', 'password': 'tmppassword'}
-        create_user(user)
-        response = send_auth(user, context)
-        token = json.loads(response.get_data()).get('token').encode('ascii')
-        context.headers.append(('Authorization', b'Basic ' + b64encode(token)))
+        with tests.app.test_request_context():
+            tests.app.data.insert('users', [user])
+        auth_data = '{"data": %s}' % json.dumps({'username': user['username'], 'password': user['password']})
+        auth_response = context.client.post("/auth", data=auth_data, headers=context.headers, follow_redirects=True)
+        token = json.loads(auth_response.get_data()).get('data').get('token').encode('ascii')
+        context.headers.append(('Authorization', b'basic ' + b64encode(token + b':')))
