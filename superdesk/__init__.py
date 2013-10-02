@@ -8,14 +8,27 @@ import eve.io.mongo
 import settings
 from flask import abort
 
+def get_sender(sender):
+    return sender[0] if sender else None
+
 def connect(signal, subscriber):
     """Connect to signal."""
     blinker.signal(signal).connect(subscriber)
 
 def send(signal, *sender, **kwargs):
     """Send signal."""
-    send_sender = sender[0] if sender else None
-    blinker.signal(signal).send(send_sender, **kwargs)
+    blinker.signal(signal).send(get_sender(sender), **kwargs)
+
+def proxy_resource_signal(action, app):
+    def handle_signal(resource, documents):
+        send(action, app.data, docs=documents)
+        send('%s:%s' % (action, resource), app.data, docs=documents)
+    return handle_signal
+
+def proxy_item_signal(action, app):
+    def handle_signal(resource, id, document):
+        send('%s:%s' % (action, resource), app.data, docs=[document])
+    return handle_signal
 
 class SuperdeskData(eve.io.mongo.Mongo):
     """Superdesk Data Layer"""

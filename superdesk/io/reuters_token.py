@@ -10,35 +10,27 @@ from datetime import datetime, timedelta
 import superdesk
 from superdesk.datetime import utcnow
 
-class ReutersTokenProvider(object):
-    """Provides auth token for reuters api"""
+PROVIDER = 'reuters'
 
-    PROVIDER = 'reuters'
+def is_valid_token(token):
+    ttl = timedelta(hours=12)
+    return token.get('created') + ttl >= utcnow()
 
-    def __init__(self, db=superdesk.db):
-        self.db = db
-
-    def get_token(self):
-        """Get access token."""
-
-        token = self.db.tokens.find_one({'provider': self.PROVIDER})
-        if token and self.is_valid(token):
-            return token.get('token')
-        elif token:
-            self.db.tokens.remove(token)
-
-        token = {
-            'provider': self.PROVIDER,
-            'created': datetime.utcnow(),
-            'token': fetch_token_from_api(),
-        }
-
-        self.db.tokens.save(token)
+def get_token(db):
+    token = db.find_one('tokens', provider=PROVIDER)
+    if token and is_valid_token(token):
         return token.get('token')
+    elif token:
+        db.remove('tokens', token.get('_id'))
 
-    def is_valid(self, token):
-        ttl = timedelta(hours=12)
-        return token.get('created') + ttl >= utcnow()
+    token = {
+        'provider': PROVIDER,
+        'token': fetch_token_from_api(),
+        'created': datetime.utcnow(),
+    }
+
+    db.insert('tokens', token)
+    return token.get('token')
 
 def fetch_token_from_api():
     session = requests.Session()
@@ -67,5 +59,3 @@ class SSLAdapter(requests.adapters.HTTPAdapter):
             ssl_version=ssl.PROTOCOL_TLSv1,
             **kwargs
         )
-
-tokenProvider = ReutersTokenProvider()

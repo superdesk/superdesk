@@ -10,21 +10,23 @@ class Logger(object):
         self.called = False
         self.args = []
 
-    def callme(self, *sender, **kwargs):
+    def callme(self, sender, **kwargs):
         self.called = True
-        self.args = kwargs
+        self.sender = sender
+        self.kwargs = kwargs
 
-class ItemsTestCase(unittest.TestCase):
+class SignalsTestCase(unittest.TestCase):
 
     def setUp(self):
         setup()
 
     def test_signals(self):
         logger = Logger()
-        superdesk.connect('insert', logger.callme)
+        superdesk.connect('read:items', logger.callme)
 
         with app.test_request_context():
-            app.data.insert('items', {})
+            getattr(app, 'on_fetch_resource')('items', ({}, ))
 
         assert logger.called, "Logger was not called"
-        assert logger.args.get('resource') == 'items', logger.args
+        assert isinstance(logger.sender, superdesk.SuperdeskData), logger.sender
+        assert logger.kwargs.get('docs'), logger.kwargs

@@ -1,6 +1,8 @@
 
 import os
 
+DEBUG = True
+
 SERVER_NAME = 'localhost:5000'
 
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S%z'

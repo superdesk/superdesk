@@ -3,29 +3,13 @@ from datetime import datetime
 from flask import request, url_for
 
 import superdesk
-from .api import Resource
+import superdesk.tokens
+
 from .utils import get_random_string
-from .io.reuters_token import tokenProvider
 from . import signals 
 
 class ItemConflictException(Exception):
     pass
-
-def parse_date(date):
-    if isinstance(date, datetime):
-        return date
-    else:
-        return datetime.strptime(date + '+0000', '%Y-%m-%dT%H:%M:%S%z')
-
-def format_item(item):
-    item.pop('_id', None)
-    item.setdefault('self_url', url_for('item', guid=item.get('guid')))
-    item['versionCreated'] = parse_date(item['versionCreated'])
-    item['firstCreated'] = parse_date(item['firstCreated'])
-    for content in item.get('contents', []):
-        if content.get('href'):
-            content['href'] = '%s?auth_token=%s' % (content.get('href'), tokenProvider.get_token())
-    return item
 
 def save_item(data, db=superdesk.db):
     now = datetime.utcnow()
@@ -62,37 +46,66 @@ def get_last_updated(db=superdesk.db):
     if item:
         return item.get('versionCreated')
 
+def on_read_items(db, docs):
+    for doc in docs:
+        for content in doc.get('contents', []):
+            if content.get('href'):
+                content['href'] = '%s?auth_token=%s' % (content.get('href'), superdesk.tokens.get_token(db))
+
+superdesk.connect('read:items', on_read_items)
+
+schema = {
+    'guid': {
+        'type': 'string'
+    },
+    'version': {
+        'type': 'string'
+    },
+    'headline': {
+        'type': 'string'
+    },
+    'slugline': {
+        'type': 'string'
+    },
+    'creditline': {
+        'type': 'string'
+    },
+    'copyrightHolder': {
+        'type': 'string'
+    },
+    'description': {
+        'type': 'string'
+    },
+    'firstCreated': {
+        'type': 'datetime'
+    },
+    'versionCreated': {
+        'type': 'datetime'
+    },
+    'itemClass': {
+        'type': 'string'
+    },
+    'provider': {
+        'type': 'string'
+    },
+    'urgency': {
+        'type': 'int'
+    },
+    'contents': {
+        'type': 'list'
+    },
+    'groups': {
+        'type': 'list'
+    }
+}
+
 superdesk.DOMAIN.update({
     'items': {
         'item_title': 'newsItem',
-        'resource_methods': ['GET', 'POST'],
         'additional_lookup': {
-            'url': '[\w]+',
+            'url': '[a-zA-Z0-9,.:-]+',
             'field': 'guid'
         },
-        'schema': {
-            'guid': {
-                'type': 'string',
-                'unique': True
-            },
-            'headline': {
-                'type': 'string'
-            },
-            'slugline': {
-                'type': 'string'
-            },
-            'firstCreated': {
-                'type': 'datetime'
-            },
-            'versionCreated': {
-                'type': 'datetime'
-            },
-            'itemClass': {
-                'type': 'string'
-            },
-            'provider': {
-                'type': 'string'
-            },
-        },
+        'schema': schema
     }
 })
