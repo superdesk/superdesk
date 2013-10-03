@@ -1,0 +1,227 @@
+/*
+---------------------------------------------
+Main dashboard styles
+---------------------------------------------
+*/
+
+
+
+.dashboard-container {
+	position: absolute;
+	left: 0; 
+	right: 0; 
+	bottom: 0;
+	top: @topspace + @subnav-height + @subnav-level2;
+	.content {
+		padding: 20px;
+	}
+}	
+
+.d-widget {
+	background: #fff;
+	border: 1px solid #e0e0e0;
+	border-top:0;
+	.border-radius(3px);
+	width: 320px;
+	margin: 0 30px 30px 0;
+	float: left;
+
+	.widget-line {
+		.border-radius(3px 3px 0 0);
+		height: 3px;
+		background: #858585;
+	}
+	.widget-header {
+		height: 29px;
+		border-bottom: 1px solid #e7e7e7;
+		line-height: 29px;
+		position: relative;
+		.widget-icon {
+			background: #f8f8f8;
+			border-right:1px solid #e7e7e7;
+			width:29px; height: 29px;
+			text-align: center;
+			display: inline-block;
+			i {
+				vertical-align: middle;
+				.opacity(60);
+			}
+		}
+		.widget-title {
+			line-height: 29px;
+			color: #626262;
+			position: absolute;
+			left: 40px;
+			right: 40px;
+			top:0;
+			bottom: 0;
+		}
+		
+	}
+	.widget-content {
+		position: relative;
+		.widget-settings {
+			position: absolute;
+			top : -30px;
+			right: 0;
+			line-height: 14px;
+			width: 29px;
+			height: 29px;
+			text-align: center;
+			.dropdown-toggle {
+				margin-top: 4px;
+				i {
+					.opacity(70);
+				}
+			}
+			.dropdown-menu {
+				margin-top: -7px;
+				margin-right: 4px;
+			}
+		}
+	}
+	.widget-footer {
+		border-top: 1px solid #e7e7e7;
+		height: 31px;
+	}
+	.slider {
+		.arrow {
+			width: 8px;
+			height: 12px;
+			background: url(../../images/widget-slider.png) no-repeat 0 0;
+			margin-top: 9px;
+			.opacity(85);
+			&.left {
+				float: left;
+				margin-left: 9px;
+			}
+			&.right {
+				background-position: -10px 0px;
+				margin-right: 9px;
+				float: right;
+			}
+			&:hover {
+				cursor: pointer;
+				.opacity(100);
+			}
+			&.disable {
+				.opacity(40);
+			}
+		}
+	}
+}
+
+/*
+---------------------------------------------
+Widgets styles
+---------------------------------------------
+*/
+
+//default-widget 
+.d-widget {
+	&.default {
+		.widget-content {
+			padding: 20px;
+		}
+	}
+}
+
+
+
+//world clock widget
+
+.world-clock {
+	.widget-content {
+		.clock-contianer {
+			height: 185px;
+		}
+		.clock-box {
+			min-height: 185px;
+			.box-sizing(border-box);
+			border-right:1px solid #e7e7e7;
+			width: 106px;
+			&:nth-child(3n) {
+				border-right: 0;
+			}
+			text-align: center;
+			float: left;
+			header {
+				color: #686868;
+				font-size: 12px;
+				text-transform: uppercase;
+				padding: 10px 0px;
+			}
+			.wclock {
+				width: 100%;
+				height: 87px;
+				text-align: center;
+				.clock-circle {
+					width: 87px;
+					height: 87px;
+					background: url(../../images/world-clock-bg.png) no-repeat 0px 0px;
+					display: inline-block;
+				}
+				.clock-hands {
+					width: 100%;
+					height: 100%;
+					position: relative;
+					.hour {
+						width: 0;
+						height: 0;
+						position: absolute;
+						top: 50%;
+						left: 50%;
+						margin: -3px 0 -4px -22%;
+						padding: 0px 0 4px 22%;
+						background: #fff;
+						-webkit-transform-origin: 100% 50%;
+						-moz-transform-origin: 100% 50%;
+						-ms-transform-origin: 100% 50%;
+						transform-origin: 100% 50%;
+						border-radius: 1px 0 0 1px;
+					}
+					.minute {
+						width: 0;
+						height: 0;
+						position: absolute;
+						top: 50%;
+						left: 50%;
+						margin: -31% -1px 0;
+						padding: 30% 2px 0 1px;
+						background: #fff;
+						-webkit-transform-origin: 50% 100%;
+						-moz-transform-origin: 50% 100%;
+						-ms-transform-origin: 50% 100%;
+						transform-origin: 50% 100%;
+						border-radius: 2px 2px 0 0;
+					}
+					.second {
+						width: 0;
+						height: 0;
+						position: absolute;
+						top: 50%;
+						left: 50%;
+						margin: -35% 0 0 -1px;
+						padding: 37% 1px 0;
+						background: #f00;
+						-webkit-transform-origin: 50% 100%;
+						-moz-transform-origin: 50% 100%;
+						-ms-transform-origin: 50% 100%;
+						transform-origin: 50% 100%;
+					}
+				}
+			}
+			time {
+				display: block;
+				font-size: 12px;
+				color: #555;
+				margin-top: 10px;
+			}
+			.date {
+				display: block;
+				color: #a8a8a8;
+				font-size: 11px;
+			}
+		}
+	}
+}
