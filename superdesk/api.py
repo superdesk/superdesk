@@ -3,12 +3,11 @@
 Providers base Resource with CORS support and own jsonencoder.
 """
 
-from datetime import datetime
+from utc import datetime
 
 from bson.objectid import ObjectId
 from flask import current_app as app
 import flask.json
-import flask.ext.restful
 
 def to_json(data, code, headers=None):
     dump = flask.json.dumps(data) if data else ''
@@ -20,7 +19,7 @@ def to_json(data, code, headers=None):
 
     return resp
 
-class Resource(flask.ext.restful.Resource):
+class Resource(object):
 
     representations = {'application/json': to_json}
     headers = ['content-type', 'authorization']

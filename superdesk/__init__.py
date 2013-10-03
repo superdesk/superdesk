@@ -53,5 +53,5 @@ class SuperdeskData(eve.io.mongo.Mongo):
         send('create:%s' % resource, self, docs=docs)
         return super(SuperdeskData, self).insert(resource, docs)
 
-for app_name in settings.INSTALLED_APPS:
+for app_name in getattr(settings, 'INSTALLED_APPS'):
     importlib.import_module(app_name)

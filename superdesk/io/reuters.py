@@ -5,7 +5,7 @@ import xml.etree.ElementTree as etree
 import traceback
 import datetime
 
-from superdesk.datetime import utcnow
+from superdesk.utc import utcnow
 
 class ReutersService(object):
     """Update Service"""

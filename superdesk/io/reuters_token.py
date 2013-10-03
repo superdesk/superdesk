@@ -8,7 +8,7 @@ from requests.packages.urllib3.poolmanager import PoolManager
 from datetime import datetime, timedelta
 
 import superdesk
-from superdesk.datetime import utcnow
+from superdesk.utc import utcnow
 
 PROVIDER = 'reuters'
 

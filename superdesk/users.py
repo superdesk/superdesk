@@ -1,10 +1,9 @@
 """Superdesk Users"""
 
 from flask import request, url_for
-from datetime import datetime
 
 import superdesk
-from .api import Resource
+from .utc import utcnow
 
 class EmptyUsernameException(Exception):
     def __str__(self):
@@ -21,7 +20,7 @@ def create_user(userdata=None, db=None, **kwargs):
         userdata = {}
 
     userdata.update(kwargs)
-    userdata.setdefault('created', datetime.utcnow())
+    userdata.setdefault('created', utcnow())
     userdata.setdefault('updated', userdata.get('created'))
 
     if not userdata.get('username'):
@@ -52,7 +51,7 @@ def remove_user(username, db=None):
 
 def patch_user(user, data, db=None):
     user.update(data)
-    user.update({'updated': datetime.utcnow()})
+    user.update({'updated': utcnow()})
     db.users.save(user)
     return user
 
@@ -70,7 +69,7 @@ def is_valid_token(auth_token):
 
 def on_create_users(db, docs):
     for doc in docs:
-        now = datetime.utcnow()
+        now = utcnow()
         doc.setdefault('created', now)
         doc.setdefault('updated', now)
 

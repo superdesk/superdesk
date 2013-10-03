@@ -1,6 +1,9 @@
+
 import datetime
 
-class UTC(datetime.tzinfo):
+tzinfo = getattr(datetime, 'tzinfo', object)
+
+class UTC(tzinfo):
     """UTC tz"""
 
     def utcoffset(self, dt):
@@ -11,4 +14,8 @@ class UTC(datetime.tzinfo):
 
 def utcnow():
     """Get tz aware datetime object"""
-    return datetime.datetime.now(tz=UTC())
+
+    if hasattr(datetime.datetime, 'now'):
+        return datetime.datetime.now(tz=UTC())
+    else:
+        return datetime.datetime.utcnow()
