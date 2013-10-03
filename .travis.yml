@@ -1,0 +1,8 @@
+language: python
+python:
+    - "2.7"
+    - "3.3"
+
+install: "pip install -r requirements.txt --user-mirrors"
+
+script: nosetests && behave
