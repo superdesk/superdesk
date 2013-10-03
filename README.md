@@ -1,5 +1,4 @@
-Superdesk REST API Server
-=========================
+# Superdesk REST API Server [![Build Status](https://travis-ci.org/petrjasek/superdesk-server.png?branch=travis-setup)](https://travis-ci.org/petrjasek/superdesk-server)
 
 Superdesk REST API Server is python app on top of mongodb.
 
