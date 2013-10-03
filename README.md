@@ -26,3 +26,18 @@ $ behave
 ```sh
 $ python app.py
 ```
+
+## Running cli commands
+
+```sh
+$ python manage.py
+```
+
+### Creating admin user
+
+This command will create an administrator user.
+
+```sh
+$ python manage.py users:create -u <username> -p <password>
+```
+

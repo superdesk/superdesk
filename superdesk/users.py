@@ -68,6 +68,33 @@ def is_valid_token(auth_token):
     except AuthToken.DoesNotExist:
         return False
 
+def on_create_users(db, docs):
+    for doc in docs:
+        now = datetime.utcnow()
+        doc.setdefault('created', now)
+        doc.setdefault('updated', now)
+
+class CreateUserCommand(superdesk.Command):
+
+    option_list = (
+        superdesk.Option('--username', '-u', dest='username'),
+        superdesk.Option('--password', '-p', dest='password'),
+    )
+
+    def run(self, username, password):
+        if username and password:
+            user = {
+                'username': username,
+                'password': password,
+            }
+
+            superdesk.app.data.insert('users', [user])
+            return user
+
+superdesk.connect('create:users', on_create_users)
+
+superdesk.command('users:create', CreateUserCommand())
+
 superdesk.domain('users', {
     'additional_lookup': {
         'url': '[\w]+',

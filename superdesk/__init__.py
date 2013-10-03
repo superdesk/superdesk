@@ -7,7 +7,7 @@ import importlib
 import eve.io.mongo
 import settings
 from flask import abort, app
-from flask.ext.script import Command
+from flask.ext.script import Command, Option
 
 VERSION = (0, 0, 1)
 DOMAIN = {}
