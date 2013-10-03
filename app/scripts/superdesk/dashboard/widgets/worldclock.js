@@ -1,12 +1,31 @@
 define([
     'angular',
-    'moment',
+    'moment'
 ], function(angular, moment) {
     'use strict';
 
-    angular.module('superdesk.dashboard.controllers', ['superdesk.dashboard.resources']).
-        controller('WorldClockController', function ($scope, worldclock, $timeout){
-        
+    angular.module('superdesk.dashboard.widgets.worldclock', ['ngResource']).
+        factory('worldclock', function( $resource) {
+            return $resource('scripts/superdesk/dashboard/static-resources/clock.json');
+        }).
+        directive('sdWorldclock', function() {
+            return {
+                templateUrl : 'scripts/superdesk/dashboard/views/worldClock.html',
+                replace: true,
+                restrict: 'E',
+                controller : 'WorldClockController'
+            };
+        }).
+        directive('sdClock', function() {
+            return {
+                templateUrl: 'scripts/superdesk/dashboard/views/worldClockBox.html',
+                scope: {wtime: '=wtime'},
+                replace: true,
+                transclude: true,
+                restrict: 'E'
+            };
+        }).
+        controller('WorldClockController', function ($scope, worldclock, $timeout) {
                 var limit = 3;
                 var skip = 0;
 
@@ -27,18 +46,22 @@ define([
                         $scope.showArrows();
                         $scope.WCtick();    
                     }
-                }
+                };
+
                 $scope.showArrows = function() {
                     if ((skip+limit) >= city.length) {
                         $scope.showright = false;
+                    } else {
+                        $scope.showright = true;
                     }
-                    else $scope.showright = true;
+
                     if (skip <= 0) {
                         skip = 0;
                         $scope.showleft = false;
+                    } else {
+                        $scope.showleft = true;
                     }
-                    else $scope.showleft = true;
-                }
+                };
 
                 $scope.skipPrev = function () {
                     if ($scope.showleft) {
@@ -46,7 +69,7 @@ define([
                         $scope.showArrows();
                         $scope.WCtick();
                     }
-                }
+                };
 
                 $scope.WCtick = function() {
                     $scope.wclock = [];
@@ -59,12 +82,10 @@ define([
                                 'hrs'  : full.format("HH"),
                                 'min'  : full.format("mm"),
                                 'sec'  : full.format("ss")
-                            }   
+                            };
                         }
                     }
                     $timeout($scope.WCtick, 1000);
-                }
-        })
-        
-        
+                };
+        });
 });

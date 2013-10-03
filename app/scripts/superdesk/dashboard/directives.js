@@ -14,33 +14,7 @@ define([
                 restrict: 'E',
                 scope: {
                     widget: '=widget'
-                },
-                link: function(scope, element, attrs, controllers) {
                 }
             };
-        }).
-        directive('sdWorldclock', function() {
-            return {
-                templateUrl : 'scripts/superdesk/dashboard/views/worldClock.html',
-                replace: true,
-                restrict: 'E',
-                controller : 'WorldClockController', 
-                link: function(scope, element, attrs, controllers) {
-                    
-                }
-            };
-        }).
-        directive('sdClock', function() {
-            return {
-                templateUrl : 'scripts/superdesk/dashboard/views/worldClockBox.html',
-                scope: { wtime: '=wtime' },
-                replace: true,
-                transclude: true,
-                restrict: 'E',
-                link: function(scope, element, attrs, controllers) {
-                }
-            };
-        })
-        
-        
+        });
 });
