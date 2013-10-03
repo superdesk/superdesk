@@ -38,46 +38,41 @@ def on_create_auth(db, docs):
         except CredentialsAuthException:
             superdesk.abort(403)
 
-
 superdesk.connect('create:auth', on_create_auth)
 
-superdesk.DOMAIN.update({
-    'auth_users': {
-        'datasource': {
-            'source': 'users'
+superdesk.domain('auth_users', {
+    'datasource': {
+        'source': 'users'
+    },
+    'schema': {
+        'username': {
+            'type': 'string',
         },
-        'schema': {
-            'username': {
-                'type': 'string',
-            },
-            'password': {
-                'type': 'string',
-            }
-        },
-        'item_methods': [],
-        'resource_methods': []
-    }
+        'password': {
+            'type': 'string',
+        }
+    },
+    'item_methods': [],
+    'resource_methods': []
 })
 
-superdesk.DOMAIN.update({
-    'auth': {
-        'schema': {
-            'username': {
-                'type': 'string'
-            },
-            'password': {
-                'type': 'string'
-            },
-            'token': {
-                'type': 'string'
-            },
-            'user': {
-                'type': 'objectid'
-            }
+superdesk.domain('auth', {
+    'schema': {
+        'username': {
+            'type': 'string'
         },
-        'resource_methods': ['POST'],
-        'item_methods': ['GET'],
-        'public_methods': ['POST'],
-        'extra_response_fields': ['username', 'token']
-    }
+        'password': {
+            'type': 'string'
+        },
+        'token': {
+            'type': 'string'
+        },
+        'user': {
+            'type': 'objectid'
+        }
+    },
+    'resource_methods': ['POST'],
+    'item_methods': ['GET'],
+    'public_methods': ['POST'],
+    'extra_response_fields': ['username', 'token']
 })

@@ -12,16 +12,12 @@ class UpdateIngest(superdesk.Command):
         db = superdesk.app.data
         ReutersService(Parser(), get_token(db), db).update()
 
-superdesk.COMMANDS.update({
-    'ingest:update': UpdateIngest()
-})
+superdesk.command('ingest:update', UpdateIngest())
 
-superdesk.DOMAIN.update({
-    'feeds': {
-        'schema': {
-            'provider': {
-                'type': 'string'
-            }
+superdesk.domain('feeds', {
+    'schema': {
+        'provider': {
+            'type': 'string'
         }
     }
 })

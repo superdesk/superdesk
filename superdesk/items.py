@@ -69,13 +69,11 @@ schema = {
     }
 }
 
-superdesk.DOMAIN.update({
-    'items': {
-        'item_title': 'newsItem',
-        'additional_lookup': {
-            'url': '[a-zA-Z0-9,.:-]+',
-            'field': 'guid'
-        },
-        'schema': schema
-    }
+superdesk.domain('items', {
+    'item_title': 'newsItem',
+    'additional_lookup': {
+        'url': '[a-zA-Z0-9,.:-]+',
+        'field': 'guid'
+    },
+    'schema': schema
 })

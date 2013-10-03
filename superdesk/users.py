@@ -14,7 +14,7 @@ class ConflictUsernameException(Exception):
     def __str__(self):
         return "Username '%s' exists already" % self.args[0]
 
-def create_user(userdata=None, db=superdesk.db, **kwargs):
+def create_user(userdata=None, db=None, **kwargs):
     """Create a new user"""
 
     if not userdata:
@@ -34,9 +34,6 @@ def create_user(userdata=None, db=superdesk.db, **kwargs):
     db.users.insert(userdata)
     return userdata
 
-def drop_users(db=superdesk.db):
-    db.users.remove()
-
 def format_user(user):
     user.pop('password', None)
     user.setdefault('_links', {
@@ -44,16 +41,16 @@ def format_user(user):
     })
     return user
 
-def find_one(username, db=superdesk.db):
+def find_one(username, db=None):
     return db.users.find_one({'username': username})
 
-def find_users(db=superdesk.db):
+def find_users(db=None):
     return db.users.find()
 
-def remove_user(username, db=superdesk.db):
+def remove_user(username, db=None):
     return db.users.remove({'username': username})
 
-def patch_user(user, data, db=superdesk.db):
+def patch_user(user, data, db=None):
     user.update(data)
     user.update({'updated': datetime.utcnow()})
     db.users.save(user)
@@ -71,41 +68,39 @@ def is_valid_token(auth_token):
     except AuthToken.DoesNotExist:
         return False
 
-superdesk.DOMAIN.update({
-    'users': {
-        'additional_lookup': {
-            'url': '[\w]+',
-            'field': 'username'
+superdesk.domain('users', {
+    'additional_lookup': {
+        'url': '[\w]+',
+        'field': 'username'
+    },
+    'schema': {
+        'username': {
+            'type': 'string',
+            'unique': True,
         },
-        'schema': {
-            'username': {
-                'type': 'string',
-                'unique': True,
-            },
-            'password': {
-                'type': 'string',
-            },
-            'first_name': {
-                'type': 'string',
-            },
-            'last_name': {
-                'type': 'string',
-            },
-            'display_name': {
-                'type': 'string',
-            },
-            'user_info': {
-                'type': 'dict'
-            }
+        'password': {
+            'type': 'string',
         },
-        'datasource': {
-            'projection': {
-                'username': 1,
-                'first_name': 1,
-                'last_name': 1,
-                'display_name': 1,
-                'user_info': 1,
-            }
+        'first_name': {
+            'type': 'string',
+        },
+        'last_name': {
+            'type': 'string',
+        },
+        'display_name': {
+            'type': 'string',
+        },
+        'user_info': {
+            'type': 'dict'
+        }
+    },
+    'datasource': {
+        'projection': {
+            'username': 1,
+            'first_name': 1,
+            'last_name': 1,
+            'display_name': 1,
+            'user_info': 1,
         }
     }
 })
