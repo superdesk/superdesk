@@ -28,7 +28,7 @@ Feature: User Resource
     Scenario: Fetch single user
         Given "users"
             """
-            {"username": "foo"}
+            [{"username": "foo"}]
             """
 
         When we get "/users/foo"
@@ -41,7 +41,7 @@ Feature: User Resource
     Scenario: Delete user
         Given "users"
             """
-            {"username": "foo"}
+            [{"username": "foo"}]
             """
 
         When we delete "/users/foo"
@@ -51,7 +51,7 @@ Feature: User Resource
     Scenario: Update user
         Given "users"
             """
-            {"username": "foo"}
+            [{"username": "foo"}]
             """
 
         When we patch "/users/foo"

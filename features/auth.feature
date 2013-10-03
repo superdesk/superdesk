@@ -3,7 +3,7 @@ Feature: Authentication
     Scenario: Authenticate existing user
         Given "users"
             """
-            {"username": "foo", "password": "bar"}
+            [{"username": "foo", "password": "bar"}]
             """
 
         When we post to "/auth"
@@ -17,7 +17,7 @@ Feature: Authentication
     Scenario: Authenticate with wrong password returns error
         Given "users"
             """
-            {"username": "foo", "password": "bar"}
+            [{"username": "foo", "password": "bar"}]
             """
 
         When we post to "/auth"
@@ -30,7 +30,7 @@ Feature: Authentication
     Scenario: Authenticate with non existing username
         Given "users"
             """
-            {"username": "foo", "password": "bar"}
+            [{"username": "foo", "password": "bar"}]
             """
 
         When we post to "/auth"
