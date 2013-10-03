@@ -23,6 +23,8 @@ Main dashboard styles
 	border-top:0;
 	.border-radius(3px);
 	width: 320px;
+	margin: 0 30px 30px 0;
+	float: left;
 
 	.widget-line {
 		.border-radius(3px 3px 0 0);
@@ -54,22 +56,29 @@ Main dashboard styles
 			top:0;
 			bottom: 0;
 		}
+		
+	}
+	.widget-content {
+		position: relative;
 		.widget-settings {
-			float: right;
+			position: absolute;
+			top : -30px;
+			right: 0;
 			line-height: 14px;
 			width: 29px;
 			height: 29px;
 			text-align: center;
-			margin-top: 4px;
+			.dropdown-toggle {
+				margin-top: 4px;
+				i {
+					.opacity(70);
+				}
+			}
 			.dropdown-menu {
-				margin-top: -11px;
+				margin-top: -7px;
 				margin-right: 4px;
 			}
 		}
-		
-	}
-	.widget-content {
-		
 	}
 	.widget-footer {
 		border-top: 1px solid #e7e7e7;
@@ -81,6 +90,7 @@ Main dashboard styles
 			height: 12px;
 			background: url(../../images/widget-slider.png) no-repeat 0 0;
 			margin-top: 9px;
+			.opacity(85);
 			&.left {
 				float: left;
 				margin-left: 9px;
@@ -89,6 +99,13 @@ Main dashboard styles
 				background-position: -10px 0px;
 				margin-right: 9px;
 				float: right;
+			}
+			&:hover {
+				cursor: pointer;
+				.opacity(100);
+			}
+			&.disable {
+				.opacity(40);
 			}
 		}
 	}
@@ -100,13 +117,24 @@ Widgets styles
 ---------------------------------------------
 */
 
+//default-widget 
+.d-widget {
+	&.default {
+		.widget-content {
+			padding: 20px;
+		}
+	}
+}
+
+
 
 //world clock widget
 
 .world-clock {
 	.widget-content {
-		height: 185px;
-		overflow: hidden;
+		.clock-contianer {
+			height: 185px;
+		}
 		.clock-box {
 			min-height: 185px;
 			.box-sizing(border-box);

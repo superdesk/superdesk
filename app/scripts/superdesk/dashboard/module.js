@@ -2,12 +2,18 @@ define([
     'angular',
     'angular-route',
     './controllers/main',
+    './controllers/worldclock',
     './resources',
     './directives'
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.dashboard', ['ngRoute','superdesk.dashboard.resources','superdesk.dashboard.directives']).
+    angular.module('superdesk.dashboard', [
+        'ngRoute',
+        'superdesk.dashboard.resources',
+        'superdesk.dashboard.directives',
+        'superdesk.dashboard.controllers'
+        ]).
         config(function($routeProvider) {
 
             $routeProvider.
