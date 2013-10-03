@@ -27,6 +27,14 @@ $ behave
 $ python app.py
 ```
 
+### API Documentation
+
+You can also run server with documentation on ```/docs``` url.
+
+```sh
+$ python docs.py
+```
+
 ## Running cli commands
 
 ```sh

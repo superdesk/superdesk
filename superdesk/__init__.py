@@ -9,6 +9,7 @@ import settings
 from flask import abort, app
 from flask.ext.script import Command, Option
 
+API_NAME = 'Superdesk API'
 VERSION = (0, 0, 1)
 DOMAIN = {}
 COMMANDS = {}

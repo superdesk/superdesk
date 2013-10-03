@@ -3,8 +3,8 @@ Cerberus==0.4.0
 Events==0.2.0
 Flask==0.10.1
 Flask-PyMongo==0.3.0
-Flask-RESTful==0.2.5
 Flask-Script==0.6.2
+Flask-Bootstrap==3.0.0.1
 Jinja2==2.7.1
 MarkupSafe==0.18
 Werkzeug==0.9.4
@@ -20,3 +20,4 @@ requests==2.0.0
 simplejson==3.3.0
 six==1.4.1
 git+git://github.com/petrjasek/flask-elasticsearch@master#egg=Flask-ElasticSearch
+git+git://github.com/petrjasek/eve-docs@master#egg=eve_docs

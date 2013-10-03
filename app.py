@@ -1,8 +1,8 @@
 
 import os
 import eve
-from flask import request
 import superdesk
+from flask import request
 
 class SuperdeskTokenAuth(eve.auth.TokenAuth):
     """Superdesk Token Auth"""
@@ -12,7 +12,7 @@ class SuperdeskTokenAuth(eve.auth.TokenAuth):
         return application.data.find_one('auth', token=token)
 
 class SuperdeskEve(eve.Eve):
-    """Eve Wrapper"""
+    """Superdesk API"""
 
     def load_config(self):
         """Let us override settings withing plugins"""
