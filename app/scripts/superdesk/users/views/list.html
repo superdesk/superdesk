@@ -1,19 +1,24 @@
 <div class="subnav subnav-fixed">
-    <input type="text" name="searchbar" class="searchbar-container" style="width:500px;" placeholder="Search">
-    <a class="btn btn-medium btn-info pull-right" href="#"><span class="medium-icon-add"></span> Add New User</a>
+    <form ng-submit="search()"><input type="text" name="searchbar" class="searchbar-container" style="width:500px;" placeholder="Search" ng-model="keyword"></form>
+    <!--<a class="btn btn-medium btn-info pull-right" href="#"><span class="medium-icon-add"></span> Add New User</a>-->
 </div>
 
 <div class="tab-background-container" style="top: 50px;">
     <div class="tab-content user-tabs">
         <div class="tab-pane active" id="active_users">
             <div class="tab-submenu">
-                <div class="btn-group pull-right" style="margin-left:20px;">
-                    <a class="btn"><i class="icon-chevron-left"></i></a>
-                    <a class="btn"><i class="icon-chevron-right"></i></a>
+                <div class="btn-group pull-right" style="width: 200px; margin-left: 20px;">
+                    <button class="btn" ng-disabled="routeParams.page === 1" ng-click="routeParams.page = 1"><i class="icon-fast-backward"></i></button>
+                    <button class="btn" ng-disabled="users.links.prev === undefined" ng-click="routeParams.page = routeParams.page - 1"><i class="icon-chevron-left"></i></button>
+                    <button class="btn" ng-disabled="true">{{ routeParams.page }}</button>
+                    <button class="btn" ng-disabled="users.links.next === undefined" ng-click="routeParams.page = routeParams.page + 1"><i class="icon-chevron-right"></i></button>
+                    <button class="btn" ng-disabled="users.links.last === undefined"><i class="icon-fast-forward"></i></button>
                 </div>
+                <!--
                 <div class="page-info pull-right">
-                    Page <input type="text" value="1"> of 103
-                </div>          
+                    
+                </div>
+                -->
             </div>
 
             <div class="tab-table">
@@ -22,10 +27,34 @@
                         <tr>
                             <th class="chckbx_col"><input type="checkbox" name="all"></th>
                             <th class="avatar_col" ng-show="settings.fields.avatar"></th>
-                            <th class="name_col" ng-show="settings.fields.display_name">Name</th>
-                            <th class="username_col" ng-show="settings.fields.username">Username</th>
-                            <th class="email_col resp-hide" ng-show="settings.fields.email">Email</th>
-                            <th class="small_col resp-hide" ng-show="settings.fields._created">Member since</th>
+                            <th class="name_col" ng-show="settings.fields.display_name">
+                                <a href="" ng-click="sort('display_name')">
+                                    Name
+                                    <i class="icon-chevron-down" ng-show="routeParams.sortField === 'display_name' && routeParams.sortDirection === 'asc'"></i>
+                                    <i class="icon-chevron-up" ng-show="routeParams.sortField === 'display_name' && routeParams.sortDirection === 'desc'"></i>
+                                </a>
+                            </th>
+                            <th class="username_col" ng-show="settings.fields.username">
+                                <a href="" ng-click="sort('username')">
+                                    Username
+                                    <i class="icon-chevron-down" ng-show="routeParams.sortField === 'username' && routeParams.sortDirection === 'asc'"></i>
+                                    <i class="icon-chevron-up" ng-show="routeParams.sortField === 'username' && routeParams.sortDirection === 'desc'"></i>
+                                </a>
+                            </th>
+                            <th class="email_col resp-hide" ng-show="settings.fields.email">
+                                <a href="" ng-click="sort('email')">
+                                    Email
+                                    <i class="icon-chevron-down" ng-show="routeParams.sortField === 'email' && routeParams.sortDirection === 'asc'"></i>
+                                    <i class="icon-chevron-up" ng-show="routeParams.sortField === 'email' && routeParams.sortDirection === 'desc'"></i>
+                                </a>
+                            </th>
+                            <th class="small_col resp-hide" ng-show="settings.fields._created">
+                                <a href="" ng-click="sort('_created')">
+                                    Created
+                                    <i class="icon-chevron-down" ng-show="routeParams.sortField === '_created' && routeParams.sortDirection === 'asc'"></i>
+                                    <i class="icon-chevron-up" ng-show="routeParams.sortField === '_created' && routeParams.sortDirection === 'desc'"></i>
+                                </a>
+                            </th>
                             <th class="action_col">
                                 <div class="dropdown" style="text-align:right;" >
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-switches"></i> <span class="caret"></span></a>
@@ -43,13 +72,13 @@
 
                     <tbody>
 
-                        <tr ng-repeat="user in users._items">
+                        <tr ng-repeat="user in users.items">
                             <td><input type="checkbox"></td>
                             <td><figure class="avatar" ng-show="settings.fields.avatar"><img src=""></figure></td>
                             <td class="name_col" ng-show="settings.fields.display_name"><a href="">{{ user.display_name }}</a></td>
                             <td ng-show="settings.fields.username">{{ user.username }}</td>
                             <td class="email_col resp-hide" ng-show="settings.fields.email"><a href="">{{ user.email }}</a></td>
-                            <td class="resp-hide" ng-show="settings.fields._created">{{ user._created }}</td>
+                            <td class="resp-hide" ng-show="settings.fields._created">{{ user.created }}</td>
                             <td class="action_col">
                                 <div class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
