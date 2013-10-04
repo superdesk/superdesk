@@ -11,12 +11,12 @@ Feature: Item resource
         Given empty "items"
         When we post to "/items"
             """
-            {"headline": "test"}
+            {"headline": "htext"}
             """
 
         Then we get new resource
             """
-            {"headline": "text"}
+            {"headline": "htext"}
             """
 
     @auth
