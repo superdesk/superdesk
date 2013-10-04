@@ -10,7 +10,7 @@ Feature: User Resource
 
         Then we get new resource
             """
-            {"username": "foo", "_links": {"self": {"href": "/users/foo"}}}
+            {"username": "foo", "display_name": "foo"}
             """
         And we get no "password"
 
@@ -28,13 +28,13 @@ Feature: User Resource
     Scenario: Fetch single user
         Given "users"
             """
-            [{"username": "foo"}]
+            [{"username": "foo", "first_name": "Foo", "last_name": "Bar"}]
             """
 
         When we get "/users/foo"
         Then we get existing resource
             """
-            {"username": "foo"}
+            {"username": "foo", "first_name": "Foo", "last_name": "Bar", "display_name": "Foo Bar", "created": "", "updated": "", "_id": ""}
             """
 
     @auth

@@ -75,5 +75,6 @@ superdesk.domain('items', {
         'url': '[a-zA-Z0-9,.:-]+',
         'field': 'guid'
     },
-    'schema': schema
+    'schema': schema,
+    'extra_response_fields': ['headline', 'guid']
 })

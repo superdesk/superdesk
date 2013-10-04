@@ -6,9 +6,13 @@ from tests import app
 
 def test_json(context):
     response_data = json.loads(context.response.get_data())
+    if 'data' in response_data:
+        response_data = response_data.get('data')
     context_data = json.loads(context.text)
     for key in context_data:
-        assert key in response_data and response_data[key] == context_data[key], key
+        assert key in response_data, key
+        if context_data[key]:
+            assert response_data[key] == context_data[key], response_data[key]
 
 def get_self_href(resource):
     href = resource['_links']['self']['href']
@@ -59,6 +63,7 @@ def step_impl(context):
     data = json.loads(context.response.get_data())
     assert data['data']['status'] == 'OK', data['data']
     assert data['data']['_links']['self'], data['data']
+    test_json(context)
 
 @then('we get list with {total_count} items')
 def step_impl(context, total_count):
@@ -74,6 +79,7 @@ def step_impl(context, field):
 def step_impl(context):
     resp = json.loads(context.response.get_data())
     assert context.response.status_code == 200, context.response.status_code
+    test_json(context)
 
 @then('we get OK response')
 def step_impl(context):

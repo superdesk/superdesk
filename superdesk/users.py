@@ -33,45 +33,23 @@ def create_user(userdata=None, db=None, **kwargs):
     db.users.insert(userdata)
     return userdata
 
-def format_user(user):
-    user.pop('password', None)
-    user.setdefault('_links', {
-        'self': {'href': url_for('user', username=user.get('username'))}
-    })
-    return user
+def get_display_name(user):
+    if user.get('display_name'):
+        return user.get('display_name')
 
-def find_one(username, db=None):
-    return db.users.find_one({'username': username})
-
-def find_users(db=None):
-    return db.users.find()
-
-def remove_user(username, db=None):
-    return db.users.remove({'username': username})
-
-def patch_user(user, data, db=None):
-    user.update(data)
-    user.update({'updated': utcnow()})
-    db.users.save(user)
-    return user
-
-def get_token(user):
-    token = AuthToken(token=utils.get_random_string(40), user=user)
-    token.save()
-    return token
-
-def is_valid_token(auth_token):
-    try:
-        token = AuthToken.objects.get(token=auth_token)
-        return token.is_valid()
-    except AuthToken.DoesNotExist:
-        return False
+    if user.get('first_name') or user.get('last_name'):
+        display_name = '%s %s' % (user.get('first_name'), user.get('last_name'))
+        return display_name.strip()
+    else:
+        return user.get('username')
 
 def on_create_users(db, docs):
+    """Set default fields for users"""
     for doc in docs:
         now = utcnow()
         doc.setdefault('created', now)
         doc.setdefault('updated', now)
+        doc.setdefault('display_name', get_display_name(doc))
 
 class CreateUserCommand(superdesk.Command):
 
@@ -91,7 +69,6 @@ class CreateUserCommand(superdesk.Command):
             return user
 
 superdesk.connect('create:users', on_create_users)
-
 superdesk.command('users:create', CreateUserCommand())
 
 superdesk.domain('users', {
@@ -103,6 +80,7 @@ superdesk.domain('users', {
         'username': {
             'type': 'string',
             'unique': True,
+            'required': True
         },
         'password': {
             'type': 'string',
@@ -116,17 +94,22 @@ superdesk.domain('users', {
         'display_name': {
             'type': 'string',
         },
+        'email': {
+            'type': 'string',
+        },
         'user_info': {
             'type': 'dict'
         }
     },
+    'extra_response_fields': ['username', 'first_name', 'last_name', 'display_name', 'email', 'user_info'],
     'datasource': {
         'projection': {
             'username': 1,
             'first_name': 1,
             'last_name': 1,
             'display_name': 1,
-            'user_info': 1,
+            'email': 1,
+            'user_info': 1
         }
     }
 })
