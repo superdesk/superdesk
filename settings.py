@@ -5,7 +5,7 @@ DEBUG = True
 
 SERVER_NAME = 'localhost:5000'
 
-DATE_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
+DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 X_DOMAINS = '*'
 X_HEADERS = ['Content-Type', 'Authorization']
