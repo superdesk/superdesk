@@ -6,7 +6,7 @@ define([
     'superdesk/server',
     './controllers/list',
     './services'
-], function(angular) {
+], function(angular, _) {
     'use strict';
 
     angular.module('superdesk.users', ['ngRoute', 'superdesk.settings', 'superdesk.server', 'superdesk.users.services']).
