@@ -78,7 +78,7 @@
                             <td class="name_col" ng-show="settings.fields.display_name"><a href="">{{ user.display_name }}</a></td>
                             <td ng-show="settings.fields.username">{{ user.username }}</td>
                             <td class="email_col resp-hide" ng-show="settings.fields.email"><a href="">{{ user.email }}</a></td>
-                            <td class="resp-hide" ng-show="settings.fields._created">{{ user.created }}</td>
+                            <td class="resp-hide" ng-show="settings.fields._created">{{ user.created | reldate}}</td>
                             <td class="action_col">
                                 <div class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>

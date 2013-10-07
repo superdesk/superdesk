@@ -16,7 +16,8 @@ define(['angular'], function(angular) {
                     }
                     result.sort = '[("' + params.sortField + '", ' + sortDirection + ')]';
                     if (params.search !== '') {
-                        //result.where = angular.toJson({display_name: params.search});
+                        // TODO (ozan): display_name should be used, after server starts to provide it.
+                        // result.where = angular.toJson({display_name: params.search});
                         result.where = angular.toJson({username: params.search});
                     }
                     return result;
