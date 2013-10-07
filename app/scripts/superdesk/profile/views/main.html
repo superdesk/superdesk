@@ -1,0 +1,167 @@
+<div class="subnav subnav-fixed">
+
+  <h3 class="page-nav-title">Profile : <span>{{ user.name }}</span></h3>
+
+</div>
+
+<div class="my-profile-container user-details-pane">
+	<div class="content">
+		<div class="profile">
+			<div class="profile-pic">
+				<figure>
+					<img src="images/sample/profileimg.jpg">
+				</figure>
+				<a class="change-photo">Change Photo</a>
+			</div>
+
+			<div class="profile-info user-profile-edit">
+				<div class="header-info">
+					<button class="btn btn-info pull-right">Save</button>
+					<h2>{{ user.name }}</h2>
+					<h5>{{ user.username }}</h5>
+					<ul class="user-roles">
+						<li ng-repeat="role in user.role">{{role}}</li>
+					</ul>
+	            </div>
+				<div class="details-info">
+	              <div class="details-section">
+	                <div class="details-section-header">
+	                  General
+	                </div>
+	                <div class="details-section-menu">
+	                  <div class="dropdown">
+	                    <a class="dropdown-toggle"><i class="icon-cog"></i> <span class="caret"></span></a>
+	                    <ul class="dropdown-menu sf-dropdown-simple pull-right">
+	                      <li><sdcheck check="showrow.birthdate"></sdcheck> Date of birth</li>
+	                      <li><sdcheck check="showrow.birthplace"></sdcheck> Place of birth</li>
+	                    </ul>
+	                  </div>
+	                </div>
+
+	                <div class="info-item">
+	                  <span class="info-label">name</span>
+	                  <input type="text" class="info-value info-editable" ng-model="user.name">
+	                  <sdcheck check="privacy.name" privacy="true"></sdcheck>
+	                </div>
+
+	                <div class="info-item">
+	                  <span class="info-label">username</span>
+	                  <input type="text" class="info-value info-editable" ng-model="user.username">
+	                  <sdcheck check="privacy.username" privacy="true"></sdcheck>
+	                </div>
+	                <div class="info-item password">
+	                  <span class="info-label">password</span>
+	                  <input type="password" class="info-value info-editable" ng-model="user.password">
+	                </div>
+	                <div class="info-item">
+	                  <span class="info-label">member since</span>
+	                  <span class="info-value">{{user.membersince}}</span>
+	                  <sdcheck check="privacy.membersince" privacy="true"></sdcheck>
+	                </div>
+	                <div class="info-item" ng-show="showrow.birthdate">
+	                  <span class="info-label">date of birth</span>
+	                  <input type="text" class="info-value info-editable" ng-model="user.birthdate">
+	                  <sdcheck check="privacy.birthdate" privacy="true"></sdcheck>
+	                </div>
+
+	                <div class="info-item" ng-show="showrow.birthplace">
+	                  <span class="info-label">place of birth</span>
+	                  <input type="text" class="info-value info-editable" ng-model="user.birthplace">
+	                  <sdcheck check="privacy.birthplace" privacy="true"></sdcheck>
+	                </div>
+
+	                <div class="info-item">
+	                  <span class="info-label">company</span>
+	                  <input type="text" class="info-value info-editable" ng-model="user.company">
+	                  <sdcheck check="privacy.company" privacy="true"></sdcheck>
+	                </div>
+	                <div class="info-item">
+	                  <span class="info-label">user type</span>
+	                  
+	                  <div class="dropdown" style="display:inline">
+	                    <a class="dropdown-toggle">{{ user.role.join(', '); }} <span class="caret"></span></a>
+	                    <ul class="dropdown-menu sf-dropdown-simple pull-right" >
+	                      <li ng-repeat="role in userroles"><sdcheck-w check="user.role.indexOf(role) != -1" clickevent="selectrole(role)"></sdcheck-w> {{ role }}</li>
+	                    </ul>
+	                  </div>
+
+	                  <sdcheck check="privacy.role" privacy="true"></sdcheck>
+	                </div>
+	              </div>
+	              <div class="details-section">
+	                <div class="details-section-header">
+	                  Contact Information
+	                </div>
+	                <div class="details-section-menu">
+	                  
+	                </div>
+	                <div class="info-item" ng-show="showrow.email">
+	                  <span class="info-label">email</span>
+	                  <input type="text" class="info-value info-editable" ng-model="user.email">
+	                  <sdcheck check="privacy.email" privacy="true"></sdcheck>
+	                </div>
+	                <div class="info-item" ng-show="showrow.skype">
+	                  <span class="info-label">skype</span>
+	                  <input type="text" class="info-value info-editable" ng-model="user.skype">
+	                  <sdcheck check="privacy.skype" privacy="true"></sdcheck>
+	                </div>
+	                <div class="info-item" ng-show="showrow.phone">
+	                  <span class="info-label">phone</span>
+	                  <input type="text" class="info-value info-editable" ng-model="user.phone">
+	                  <sdcheck check="privacy.phone" privacy="true"></sdcheck>
+	                </div>
+	                <div class="info-item" ng-show="showrow.web">
+	                  <span class="info-label">web</span>
+	                  <input type="text" class="info-value info-editable" ng-model="user.web">
+	                  <sdcheck check="privacy.web" privacy="true"></sdcheck>
+	                </div>
+	              </div>
+
+	              <div class="details-section">
+	                <div class="details-section-header">
+	                  Social
+	                </div>
+	                <div class="details-section-menu">
+	                  <div class="dropdown">
+	                    <a class="dropdown-toggle"><i class="icon-cog"></i> <span class="caret"></span></a>
+	                    <ul class="dropdown-menu sf-dropdown-simple pull-right">
+	                      <li><sdcheck check="showrow.facebook"></sdcheck> facebook</li>
+	                      <li><sdcheck check="showrow.twitter"></sdcheck> twitter</li>
+	                      <li><sdcheck check="showrow.google"></sdcheck> google+</li>
+	                    </ul>
+	                  </div>
+	                </div>
+	                <div class="info-item" ng-show="showrow.facebook">
+	                  <span class="info-label">facebook</span>
+	                  <input type="text" class="info-value info-editable" ng-model="user.facebook">
+	                  <sdcheck check="privacy.facebook" privacy="true"></sdcheck>
+	                </div>
+	                <div class="info-item" ng-show="showrow.twitter">
+	                  <span class="info-label">twitter</span>
+	                  <input type="text" class="info-value info-editable" ng-model="user.twitter">
+	                  <sdcheck check="privacy.twitter" privacy="true"></sdcheck>
+	                </div>
+	                <div class="info-item" ng-show="showrow.google">
+	                  <span class="info-label">google+</span>
+	                  <input type="text" class="info-value info-editable" ng-model="user.google">
+	                  <sdcheck check="privacy.google" privacy="true"></sdcheck>
+	                </div>
+	              </div>
+	              
+	              <div class="details-section">
+	                <div class="details-section-header">
+	                  Details
+	                </div>
+	                <div class="info-item">
+	                  <textarea class="info-editable" ng-model="user.details"></textarea>
+	                </div>
+	              </div>
+	          </div>
+			</div>
+		</div>
+
+		<div class="profile-activity-container">
+			<activity-feed feedsource="activityfeed"></activity-feed>
+		</div>
+	</div>
+</div>

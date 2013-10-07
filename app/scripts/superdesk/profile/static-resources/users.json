@@ -1,0 +1,58 @@
+{
+    "basicinfo" : {
+        "name" :  "David Bauer", 
+        "username" : "davidbauer", 
+        "password" : "12345", 
+        "membersince" : "24.10.2013.", 
+        "birthdate" : "08.05.1975.", 
+        "birthplace" : "Basel, Switzerland", 
+        "company" : "TagesWoche", 
+        "role" : ["administrator"],
+
+        "email" : "david.bauer@tageswoche.ch", 
+        "skype" : "davidbauer75", 
+        "phone" : "065 789 254 55",
+        "web" : "www.davidbauer.ch", 
+
+        "facebook" : "http://www.facebook.com/dbauer", 
+        "twitter" : "@dbauer", 
+        "google" : "david.bauer", 
+
+        "details" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. nim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure lor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+    },
+    "privacy" : {
+        "name" : true , 
+        "username" : true, 
+        "membersince" : false, 
+        "birthdate" : false, 
+        "birthplace" : false, 
+        "company" : true, 
+        "role" : false, 
+
+        "email" : false, 
+        "skype" : true, 
+        "phone" : false,
+        "web" : true, 
+
+        "facebook" : true, 
+        "twitter" : true, 
+        "google" : true
+    },
+    "showrow" : {
+
+        "birthdate" : true,
+        "birthplace" : true,
+
+        "email" : true,
+        "skype" : true,
+        "phone" : true,
+        "web" : true,
+
+        "facebook" : true,
+        "twitter" :true,
+        "google" : true
+    }
+
+
+}
+    
