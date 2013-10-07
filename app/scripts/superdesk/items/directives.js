@@ -81,10 +81,7 @@ define([
 
                     ngModel.$render = function() {
                         var items = ngModel.$viewValue;
-                        if (items) {
-                            $scope.links.hasPrev = items.has_prev;
-                            $scope.links.hasNext = items.has_next;
-                        }
+                        $scope.links = items.links;
                     };
                 }
             };
@@ -110,8 +107,8 @@ define([
                     }
                 }
 
-                return texts.join("\n");
-            };
+                return texts.join('\n');
+            }
 
             return {
                 require: '?ngModel',
@@ -140,42 +137,42 @@ define([
                             element.html(model);
                         } else {
                             switch (model.contenttype) {
-                                case 'application/xhtml+html':
-                                case 'application/xhtml+xml':
-                                    element.html(model.content);
+                            case 'application/xhtml+html':
+                            case 'application/xhtml+xml':
+                                element.html(model.content);
+                                break;
+
+                            case 'image/jpeg':
+                                if (model.rendition !== 'rend:viewImage') {
                                     break;
+                                }
 
-                                case 'image/jpeg':
-                                    if (model.rendition !== 'rend:viewImage') {
-                                        break;
-                                    }
+                                $('<img />').
+                                    attr('src', model.href).
+                                    appendTo(element);
+                                break;
 
-                                    $('<img />').
-                                        attr('src', model.href).
-                                        appendTo(element);
+                            case 'audio/mpeg':
+                                $('<audio controls>').
+                                    attr('src', model.href).
+                                    appendTo(element);
+                                break;
+
+                            case 'video/mpeg':
+                                if (model.rendition !== 'rend:stream:700:16x9:mp4') {
                                     break;
+                                }
 
-                                case 'audio/mpeg':
-                                    $('<audio controls>').
-                                        attr('src', model.href).
-                                        appendTo(element);
-                                    break;
+                                $('<video controls>').
+                                    attr('src', model.href).
+                                    appendTo(element);
+                                break;
 
-                                case 'video/mpeg':
-                                    if (model.rendition !== 'rend:stream:700:16x9:mp4') {
-                                        break;
-                                    }
-
-                                    $('<video controls>').
-                                        attr('src', model.href).
-                                        appendTo(element);
-                                    break;
-
-                                default:
-                                    console.log(model);
+                            default:
+                                console.log(model);
                             }
                         }
-                    }
+                    };
                 }
             };
         });
