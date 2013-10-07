@@ -79,6 +79,10 @@ define([
                         $location.search('skip', getNextSkip($scope));
                     };
 
+                    $scope.go = function(link) {
+                        console.log('go', link);
+                    };
+
                     ngModel.$render = function() {
                         var items = ngModel.$viewValue;
                         $scope.links = items.links;
