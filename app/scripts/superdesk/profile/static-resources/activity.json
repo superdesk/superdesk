@@ -9,19 +9,19 @@
             "type" : "activity",
             "timestamp" : "Today at 13:45", 
             "useravatar" : "images/sample/profileimg.jpg", 
-            "content": "<p><strong>David Bauer</strong> sent article <i>“Two Nigels don\\'t make a right on Europe”</i> to review</p>"
+            "content": "<p><strong>Kevin Maldonado</strong> sent article <i>“Two Nigels don\\'t make a right on Europe”</i> to review</p>"
         },
         {   
             "type" : "activity",
             "timestamp" : "Today at 13:39", 
             "useravatar" : "images/sample/profileimg.jpg", 
-            "content": "<p><strong>David Bauer</strong> finished article <i>“Two Nigels don\\'t make a right on Europe”</i></p>"
+            "content": "<p><strong>Kevin Maldonado</strong> finished article <i>“Two Nigels don\\'t make a right on Europe”</i></p>"
         },
         {   
             "type" : "activity",
             "timestamp" : "Today at 12:26", 
             "useravatar" : "images/sample/profileimg.jpg", 
-            "content": "<p><strong>David Bauer</strong> finished article <i>“Two Nigels dont\\' make a right on Europe”</i></p><p><img src=\"images/sample/activity1.jpg\"><img src=\"images/sample/activity2.jpg\"></p>"
+            "content": "<p><strong>Kevin Maldonado</strong> finished article <i>“Two Nigels dont\\' make a right on Europe”</i></p><p><img src=\"images/sample/activity1.jpg\"><img src=\"images/sample/activity2.jpg\"></p>"
         },
         {   
             "type" : "date",
@@ -33,19 +33,19 @@
             "type" : "activity",
             "timestamp" : "Today at 12:12", 
             "useravatar" : "images/sample/profileimg.jpg", 
-            "content": "<p><strong>David Bauer</strong> aproved article <i>“Ganz besonders, diese Elsässer”</i></p>"
+            "content": "<p><strong>Kevin Maldonado</strong> aproved article <i>“Ganz besonders, diese Elsässer”</i></p>"
         },
         {   
             "type" : "activity",
             "timestamp" : "Wednesday, 02. October at 16:42", 
             "useravatar" : "images/sample/profileimg.jpg", 
-            "content": "<p><strong>David Bauer</strong> sent article <i>“Europe car sales break losing streak”</i> to review</p>"
+            "content": "<p><strong>Kevin Maldonado</strong> sent article <i>“Europe car sales break losing streak”</i> to review</p>"
         },
         {   
             "type" : "activity",
             "timestamp" : "Wednesday, 02. October at 16:28", 
             "useravatar" : "images/sample/profileimg.jpg", 
-            "content": "<p><strong>David Bauer</strong> finished article <i>“Europe car sales break losing streak”</i></p>"
+            "content": "<p><strongKevin Maldonado</strong> finished article <i>“Europe car sales break losing streak”</i></p>"
         }
     ] 
 }
