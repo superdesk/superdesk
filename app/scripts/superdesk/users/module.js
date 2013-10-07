@@ -23,7 +23,7 @@ define([
                 display_name: true,
                 username: false,
                 email: false,
-                _created: true
+                created: true
             }
         }).
         config(function($routeProvider) {

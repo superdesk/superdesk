@@ -48,11 +48,11 @@
                                     <i class="icon-chevron-up" ng-show="routeParams.sortField === 'email' && routeParams.sortDirection === 'desc'"></i>
                                 </a>
                             </th>
-                            <th class="small_col resp-hide" ng-show="settings.fields._created">
-                                <a href="" ng-click="sort('_created')">
+                            <th class="small_col resp-hide" ng-show="settings.fields.created">
+                                <a href="" ng-click="sort('created')">
                                     Created
-                                    <i class="icon-chevron-down" ng-show="routeParams.sortField === '_created' && routeParams.sortDirection === 'asc'"></i>
-                                    <i class="icon-chevron-up" ng-show="routeParams.sortField === '_created' && routeParams.sortDirection === 'desc'"></i>
+                                    <i class="icon-chevron-down" ng-show="routeParams.sortField === 'created' && routeParams.sortDirection === 'asc'"></i>
+                                    <i class="icon-chevron-up" ng-show="routeParams.sortField === 'created' && routeParams.sortDirection === 'desc'"></i>
                                 </a>
                             </th>
                             <th class="action_col">
@@ -63,7 +63,7 @@
                                         <li><input type="checkbox" ng-click="settings.save()" ng-model="settings.fields.display_name"> Name</li>
                                         <li><input type="checkbox" ng-click="settings.save()" ng-model="settings.fields.username"> Username</li>
                                         <li><input type="checkbox" ng-click="settings.save()" ng-model="settings.fields.email"> Email</li>
-                                        <li><input type="checkbox" ng-click="settings.save()" ng-model="settings.fields._created"> Member Since</li>
+                                        <li><input type="checkbox" ng-click="settings.save()" ng-model="settings.fields.created"> Member Since</li>
                                     </ul>
                                 </div>
                             </th>
@@ -78,7 +78,7 @@
                             <td class="name_col" ng-show="settings.fields.display_name"><a href="">{{ user.display_name }}</a></td>
                             <td ng-show="settings.fields.username">{{ user.username }}</td>
                             <td class="email_col resp-hide" ng-show="settings.fields.email"><a href="">{{ user.email }}</a></td>
-                            <td class="resp-hide" ng-show="settings.fields._created">{{ user.created | reldate}}</td>
+                            <td class="resp-hide" ng-show="settings.fields.created">{{ user.created | reldate}}</td>
                             <td class="action_col">
                                 <div class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
