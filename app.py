@@ -29,4 +29,14 @@ application.on_fetch_item = superdesk.proxy_item_signal('read', application)
 superdesk.app = application
 
 if __name__ == '__main__':
-    application.run(debug=True)
+
+    if 'PORT' in os.environ:
+        port = int(os.environ.get('PORT'))
+        host = '0.0.0.0'
+        debug = False
+    else:
+        port = 5000
+        host = '127.0.0.1'
+        debug = True
+
+    application.run(host=host, port=port, debug=debug)
