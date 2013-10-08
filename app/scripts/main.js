@@ -8,7 +8,7 @@ require.config({
         'angular-route': 'bower_components/angular-route/angular-route',
         'moment': 'bower_components/momentjs/moment',
         'restangular': 'bower_components/restangular/dist/restangular',
-        '_': 'bower_components/lodash/dist/lodash'
+        'lodash': 'bower_components/lodash/dist/lodash'
     },
     shim: {
         jquery: {
@@ -34,7 +34,7 @@ require.config({
             deps: ['angular']
         },
         'restangular': {
-            deps: ['_']
+            deps: ['lodash']
         }
     }
 });
@@ -47,7 +47,7 @@ define([
     'superdesk/dashboard/module',
     'superdesk/items/module',
     'superdesk/users/module'
-], function(angular) {
+], function(angular, restangular) {
     'use strict';
 
     var modules = [

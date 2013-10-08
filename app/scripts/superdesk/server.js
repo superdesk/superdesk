@@ -52,13 +52,14 @@ define([
     //
 
     angular.module('superdesk.server', ['restangular']).
-        service('server', function($q, Restangular) {
-
+        run(function(Restangular) {
             Restangular.setBaseUrl(ServerConfig.url);
             Restangular.setRestangularFields({
                 id: '_id'
             });
-            
+        }).
+        service('server', function($q, Restangular) {
+
             return new function() {
                 this.readList = function(resourceName, parameters) {
                     var delay = $q.defer();
