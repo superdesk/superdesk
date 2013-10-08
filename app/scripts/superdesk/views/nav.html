@@ -19,8 +19,8 @@
                   <span class="user-profile">{{ currentUser.username }}</span> <b class="caret"></b>
                 </a>
               <ul class="dropdown-menu ">
-                <li><a ng-click="logout()">{{ _("Logout") }}</a></li>
-                <li><a>{{ _("Help") }}</a></li>
+                <li><a ng-click="logout()" translate>Logout</a></li>
+                <li><a href="" translate>Help</a></li>
               </ul>
             </li>
     
@@ -28,9 +28,9 @@
               <a href="#/my-profile" class="user-profile">{{ currentUser.username }}</a>
             </li>
             <li class="divider-vertical ipad-hide"></li>
-            <li><a href="" ng-click="logout()" class="blink ipad-hide">{{ _("Logout") }}</a></li>
+            <li><a href="" ng-click="logout()" class="blink ipad-hide" translate>Logout</a></li>
             <li class="divider-vertical ipad-hide"></li>
-            <li><a href="#" class="ipad-hide">{{ _("Help") }}</a></li>
+            <li><a href="" class="ipad-hide" translate>Help</a></li>
        
         </ul>
 

@@ -33,7 +33,7 @@ define([
                     },
                     menu: {
                         parent: 'content',
-                        label: 'Archive',
+                        label: gettext('Archive'),
                         priority: -2
                     }
                 }).
@@ -47,7 +47,7 @@ define([
                     },
                     menu: {
                         parent: 'content',
-                        label: 'Packages',
+                        label: gettext('Packages'),
                         priority: -1
                     }
                 });

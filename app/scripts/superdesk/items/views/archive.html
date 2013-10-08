@@ -1,6 +1,6 @@
 <div class="subnav subnav-fixed">
 
-    <a class="btn btn-medium btn-info pull-right" href="#"  id="addmedia"><span class="medium-icon-add"></span> Add Media</a>
+    <a class="btn btn-medium btn-info pull-right" href="#"  id="addmedia"><span class="medium-icon-add"></span> {{ 'Add Media'|translate }}</a>
 
     <div class="btn-group source-select">
       <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
@@ -118,33 +118,33 @@
     <div class="fake-sidebar" ></div>
     <div id="main-content" class="main-content">
         <div class="main-content-topnav">
-            <a href="#" class="toggle-sidebar-button" ></a>
-            <span class="title">Search results</span>
+            <a href="" class="toggle-sidebar-button" ></a>
+            <span class="title" translate>Search results</span>
             <span class="info" ng-show="items.total_length">({{ items.total_length|number }})</span>
             
         
             <div class="btn-group pull-right">
-                <a class="btn" href="#"><i class="icon-settings"></i></a>
-                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                <a class="btn" href=""><i class="icon-settings"></i></a>
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href=""><span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         
-                        <li><a href="#"><i class="icon-eye-open"></i> View/Hide details</a></li>
+                        <li><a href="#"><i class="icon-eye-open"></i> {{ 'View/Hide details'|translate }}</a></li>
                          <li class="divider"></li>
-                        <li><a href="#"><i class="icon-th-large"></i> 25 items per page</a></li>
-                        <li><a href="#"><i class="icon-th-large"></i> 50 items per page</a></li>
+                        <li><a href="#"><i class="icon-th-large"></i> {{ '25 items per page'|translate }}</a></li>
+                        <li><a href="#"><i class="icon-th-large"></i> {{ '50 items per page'|translate }}</a></li>
                          <li class="divider"></li>
-                        <li><a id="grid_view" href="#"><i class="icon-th"></i> Grid view</a></li>
-                        <li><a id="list_view"  href="#"><i class="icon-th-list"></i> List view</a></li>
+                        <li><a id="grid_view" href="#"><i class="icon-th"></i> {{ 'Grid view'|translate }}</a></li>
+                        <li><a id="list_view"  href="#"><i class="icon-th-list"></i> {{ 'List view'|translate }}</a></li>
                     </ul>
             </div>
             
             <div class="btn-group pull-right" style="margin-right:10px;">
-                <a class="btn btn-info" href="#">Action</a>
-                <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+                <a class="btn btn-info" href="" translate>Action</a>
+                <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href=""><span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a id="add-to-scratchpad-many" href="#"><i class="icon-scratchpad"></i> Add to scratchpad</a></li>
-                        <li><a href="#"><i class="icon-download-alt"></i> Download</a></li>
-                        <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
+                        <li><a id="add-to-scratchpad-many" href="#"><i class="icon-scratchpad"></i> {{ 'Add to scratchpad'|translate }}</a></li>
+                        <li><a href="#"><i class="icon-download-alt"></i> {{ 'Download'|translate }}</a></li>
+                        <li><a href="#"><i class="icon-trash"></i> {{ 'Delete'|translate }}</a></li>
                     </ul>
             </div>
 
@@ -165,18 +165,18 @@
             <div class="media-info">
                 <h5>{{ item.slugline }}</h5>
                 <dl>
-                    <dt>Source</dt>
+                    <dt translate>Source</dt>
                     <dd>{{ item.provider }}</dd>
 
-                    <dt>{{ _("Urgency") }}</dt>
+                    <dt translate>Urgency</dt>
                     <dd>{{ item.urgency }}</dd>
 
-                    <dt>{{ _("Created") }}</dt>
+                    <dt translate>Created</dt>
                     <dd><time datetime="{{ item.firstCreated }}" title="{{ item.firstCreated|date:'medium' }}">{{ item.firstCreated|reldate }}</time></dd>
                 </dl>
             </div>
           </div>
-          <div class="alert alert-info" ng-show="!items.length">{{ _("No results found.") }}</div>
+          <div class="alert alert-info" ng-show="!items.length" translate>No results found.</div>
         </div>
     </div>
     
@@ -270,8 +270,8 @@
             </div>
         </div>
         <div class="modal-footer">
-                <button href="#" class="btn btn-primary pull-right" >Save</button>
-                <button href="#" data-dismiss="modal" class="btn pull-right" ng-click="closeEdit()">Cancel</button>
+                <button href="#" class="btn btn-primary pull-right" translate>Save</button>
+                <button href="#" data-dismiss="modal" class="btn pull-right" ng-click="closeEdit()" translate>Cancel</button>
         </div>
           </div>
     </div>
@@ -281,9 +281,9 @@
 
 <div class="modal lightbox-preview" id="viewDetailsModal" ng-show="editItem.itemClass == 'icls:picture'">
     <section class="lightbox-top">
-        <a class="btn btn-dark" href="" ><i class="icon-pencil icon-white"></i> Edit</a>
-        <a class="btn btn-dark" href="" ><i class="icon-download-alt icon-white"></i> Download</a>
-        <a class="btn btn-dark" href="" ><i class="icon-trash icon-white"></i> Delete</a>
+        <a class="btn btn-dark" href="" ><i class="icon-pencil icon-white"></i> {{ 'Edit'|translate }}</a>
+        <a class="btn btn-dark" href="" ><i class="icon-download-alt icon-white"></i> {{ 'Download'|translate }}</a>
+        <a class="btn btn-dark" href="" ><i class="icon-trash icon-white"></i> {{ 'Delete'|translate }}</a>
         <a href="" class="lightbox-close" data-dismiss="modal" ng-click="closeEdit()"></a>
     </section>
     <section class="lightbox-left">
@@ -296,7 +296,7 @@
     <section class="lightbox-right">
         <header>
             <h5 class="lightbox-title">{{ editItem.slugline }}</h5>
-            <span class="lightbox-modified-info">Modified: {{ editItem.versionCreated|date:'medium' }}</span>
+            <span class="lightbox-modified-info">{{ 'Modified:'|translate }} {{ editItem.versionCreated|date:'medium' }}</span>
             <span class="lightbox-media-type filetype-icon-photo"></span>
         </header>
         <div class="lightbox-media-data" >
@@ -305,7 +305,7 @@
                 <div class="tabmodule-header">
                     <i class="icon-chevron-down toggle-module-close"></i>
                     <i class="icon-chevron-right toggle-module-open"></i>
-                    <span class="tabmodule-title">Details</span>
+                    <span class="tabmodule-title" translate>Details</span>
                 </div>
                 <div class="tabmodule-content">
                     <dl class="metadata-details-new clearfix">
@@ -328,7 +328,7 @@
                     </dl>
                 </div>
             </div>
-            <a class="btn" href="#"><i class="icon-list-alt"></i> Edit metadata</a>
+            <a class="btn" href=""><i class="icon-list-alt"></i> {{ 'Edit metadata'|translate }}</a>
         </div>
     </section>
 </div>

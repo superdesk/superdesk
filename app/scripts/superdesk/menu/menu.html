@@ -1,8 +1,8 @@
 <li ng-class="{dropdown: item.items}" ng-repeat="item in items | orderBy:priority">
-    <a href="#{{ item.href }}" ng-show="item.href">{{ _(item.label) }}</a>
+    <a href="#{{ item.href }}" ng-show="item.href">{{ item.label|translate }}</a>
 
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown" ng-show="item.items">{{ _(item.label) }} <b class="caret"></b></a>
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown" ng-show="item.items">{{ item.label|translate }} <b class="caret"></b></a>
     <ul class="dropdown-menu" ng-show="item.items">
-        <li ng-repeat="item2 in item.items | orderBy:priority"><a href="#{{ item2.href }}">{{ _(item2.label) }}</a></li>
+        <li ng-repeat="item2 in item.items | orderBy:priority"><a href="#{{ item2.href }}">{{ item2.label|translate }}</a></li>
     </ul>
 </li>

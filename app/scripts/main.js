@@ -46,9 +46,19 @@ require.config({
     }
 });
 
+/**
+ * Noop for registering string for translation in js files.
+ *
+ * @param {string} input
+ * @return {string} unmodified input
+ */
+function gettext(input) {
+    return input;
+}
+
 define([
     'angular',
-    'superdesk/l10n/module',
+    'superdesk/services/translate',
     'superdesk/auth/module',
     'superdesk/menu/module',
     'superdesk/dashboard/module',
@@ -59,7 +69,7 @@ define([
     'use strict';
 
     var modules = [
-        'superdesk.l10n',
+        'superdesk.services.translate',
         'superdesk.auth',
         'superdesk.menu',
         'superdesk.dashboard',

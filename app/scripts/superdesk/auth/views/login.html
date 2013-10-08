@@ -15,7 +15,7 @@
                         <input type="text" id="username" ng-model="username" placeholder="{{ 'Username'|translate }}" class="fullwidth-input" />
                         <input type="password" id="password" ng-model="password" placeholder="{{ 'Password'|translate }}" class="fullwidth-input login-pass" />
                   
-                        <input type="checkbox" value="1" id="login-remember-me" ng-model="rememberMe"> <label for="login-remember-me" class="checkbox remember-me" translate>Remember login</label>
+                        <label for="login-remember-me" class="checkbox remember-me"><input type="checkbox" value="1" id="login-remember-me" ng-model="rememberMe"> {{ 'Remember login'|translate }}</label>
                     </fieldset>
             </div>
             <div class="modal-footer">

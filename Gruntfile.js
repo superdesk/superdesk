@@ -155,7 +155,7 @@ module.exports = function (grunt) {
     nggettext_extract: {
       pot: {
         files: {
-          'po/views.pot': '<%= yeoman.app %>/scripts/superdesk/**/*.html'
+          'po/superdesk.pot': '<%= yeoman.app %>/scripts/superdesk/**/*.{html,js}'
         }
       }
     },
