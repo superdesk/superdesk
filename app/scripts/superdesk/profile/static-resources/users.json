@@ -1,0 +1,58 @@
+{
+    "basicinfo" : {
+        "name" :  "Kevin M. Maldonado", 
+        "username" : "hinfore", 
+        "password" : "cheL0kaL8", 
+        "membersince" : "24.10.2013.", 
+        "birthdate" : "26.11.1965.", 
+        "birthplace" : "Greensboro, United States", 
+        "company" : "Listen Up", 
+        "role" : ["administrator"],
+
+        "email" : "KevinMMaldonado@dayrrep.com", 
+        "skype" : "kevin65maldd", 
+        "phone" : "336-931-9898",
+        "web" : "kevvinls.com", 
+
+        "facebook" : "http://www.facebook.com/kevvinls", 
+        "twitter" : "@kevvinls", 
+        "google" : "maldonadodo.kev", 
+
+        "details" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. nim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure lor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+    },
+    "privacy" : {
+        "name" : true , 
+        "username" : true, 
+        "membersince" : false, 
+        "birthdate" : false, 
+        "birthplace" : false, 
+        "company" : true, 
+        "role" : false, 
+
+        "email" : false, 
+        "skype" : true, 
+        "phone" : false,
+        "web" : true, 
+
+        "facebook" : true, 
+        "twitter" : true, 
+        "google" : true
+    },
+    "showrow" : {
+
+        "birthdate" : true,
+        "birthplace" : true,
+
+        "email" : true,
+        "skype" : true,
+        "phone" : true,
+        "web" : true,
+
+        "facebook" : true,
+        "twitter" :true,
+        "google" : true
+    }
+
+
+}
+    

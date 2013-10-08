@@ -323,7 +323,7 @@
       margin: 0;
     }
     .info-editable {
-      &:hover {
+      /*&:hover {
         border-bottom: 1px dotted #3097b5;
         margin-bottom: -1px;
       }
@@ -348,7 +348,23 @@
          &:hover {
           margin-bottom: 9px;
          }
+      }*/
+      width: 280px;
+      border: 0;
+      font-size: 13px;
+      text-overflow: ellipsis;
+      margin-left: -6px; 
+      &:focus {
+        .box-shadow(0 0 0 0 #000) !important;
+        text-decoration: underline;
       }
+    }
+    textarea.info-editable {
+      height: 150px;
+      width: 100%;
+      max-width: 100%;
+      line-height: 18px;
+      margin-left: 0; 
     }
     .privacy-switch-checkbox {
       display: none;
@@ -908,3 +924,180 @@
   }
 }
 */
+
+
+/*
+==============================================
+Profile page styles
+==============================================
+*/
+.my-profile-container{
+  position: absolute;
+  left: 0; 
+  right: 0; 
+  bottom: 0;
+  top: @topspace + @subnav-height;
+  border: 0;
+  width: auto;
+}
+
+
+.profile {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 740px;
+  bottom: 0;
+  background: #fff;
+  padding: 30px 20px 0 30px;
+  .box-shadow(2px 0 3px 0 #f0f0f0);
+  
+  .profile-pic {
+    width: 200px;
+    float: left;
+    overflow: hidden;
+    .border-radius(3px);
+    figure {
+      width: 200px;
+      min-height: 200px;
+      background: #f0f0f0;
+      text-align: center;
+        img {
+          max-width: 200px;
+          height: auto;
+        }
+    }
+    .change-photo {
+      display: block;
+      background-color: rgba(55,152,180,0.6);
+      color: #fff;
+      height: 27px;
+      line-height: 27px;
+      margin-top: -27px;
+      text-transform: uppercase;
+      font-size: 11px;
+      text-decoration: none;
+      text-align: center;
+      position: relative;
+      &:hover {
+        cursor:pointer;
+        background-color: rgba(55,152,180,0.8);
+      }
+    }
+  }
+
+  .profile-info {
+    margin-left: 230px; 
+    .header-info {
+      height: auto;
+      margin: 0;
+    }
+    .details-info { //overriding styles from users tab above
+      left:260px;
+      top:140px;
+    }
+  }
+
+}
+
+.profile-activity-container {
+  position: absolute;
+  left: 790px;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  padding: 30px 40px 0;
+  background-color: #f8f8f8;
+
+  .profile-activity {
+    height: 100%;
+    .box-sizing(border-box);
+    overflow: auto;
+    max-width: 500px; 
+    .activity-header {
+      height: 40px;
+      border-bottom: 1px solid #ddd;
+      h6 {
+        line-height: 40px;
+        font-weight: normal;
+        font-size: 20px;
+        color: #444;
+        text-transform: none;
+      }
+    }
+    .load-more {
+      width: 100%;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 8px;
+      margin: 20px 0;
+    }
+  }
+  ::-webkit-scrollbar {
+    border-left: 9px solid #f8f8f8;
+    border-right: 1px solid #f8f8f8;
+    width: 13px;
+    background: #f8f8f8;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-left: 8px solid #f8f8f8;
+  }
+}
+
+.activity-log {
+  margin-top: 10px;
+  ul {
+    margin:0;
+    padding: 0;
+    list-style-type: none;
+    li {
+      &.activity {
+        padding: 10px;
+        background: #fff;
+        border-bottom: 1px solid #dfdfdf;
+        .border-radius(2px);
+        margin-bottom: 5px;
+
+        figure {
+          width: 42px;
+          height: 42px;
+          background-color: #f0f0f0;
+          .border-radius(2px);
+          overflow: hidden;
+          float: left;
+          img {
+            width: 42px;
+            max-width: 42px;
+          }
+        }
+
+        .activity-content {
+          padding-left: 60px;
+          margin-top: -3px;
+          padding-right: 20px; 
+          color: #555;
+        }
+        .activity-date {
+          padding-left: 60px;
+          font-size: 11px;
+          color: #949494;
+          margin-top: -5px; 
+        }
+      }
+
+      &.date {
+        border-top:1px solid #ebebeb;
+        margin:25px 0; 
+        span {
+          font-size: 12px;
+          color: #949494; 
+          margin-top: -10px;
+          display: block;
+          float: left;
+          background: #f8f8f8;
+          padding-right: 5px;
+        }
+      }
+    }
+  }
+}
