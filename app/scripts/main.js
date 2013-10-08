@@ -47,7 +47,7 @@ define([
     'superdesk/dashboard/module',
     'superdesk/items/module',
     'superdesk/users/module'
-], function(angular, restangular) {
+], function(angular) {
     'use strict';
 
     var modules = [
