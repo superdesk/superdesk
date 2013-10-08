@@ -1,6 +1,6 @@
 define([
     'angular',
-    'angular-resource'
+    'restangular'
 ], function(angular) {
     'use strict';
 
@@ -9,7 +9,9 @@ define([
     };
     ResourceBase.prototype.setLinks = function(links) {
         for (var i in links) {
-            this.links[i] = links[i].href;
+            if (links[i] !== null && links[i].href !== undefined) {
+                this.links[i] = links[i].href;
+            }
         }
     };
 
@@ -49,32 +51,27 @@ define([
 
     //
 
-    angular.module('superdesk.server', ['ngResource']).
-        service('server', function($q, $resource) {
-            
-            return new function() {
-                this._createResource = function(resourceName) {
-                    var url = ServerConfig.url + '/' + resourceName + '/';
-                    var parameters = {};
-                    var actions = {
-                        'query': {method: 'GET', isArray: false}
-                    };
-                    
-                    return $resource(url, parameters, actions);
-                };
+    angular.module('superdesk.server', ['restangular']).
+        run(function(Restangular) {
+            Restangular.setBaseUrl(ServerConfig.url);
+            Restangular.setRestangularFields({
+                id: '_id'
+            });
+        }).
+        service('server', function($q, Restangular) {
 
+            return new function() {
                 this.readList = function(resourceName, parameters) {
                     var delay = $q.defer();
-                    var resource = this._createResource(resourceName);
-                    var list = resource.query(parameters,
-                        function(response) {
-                            var resourceList = new ResourceList(response);
-                            delay.resolve(resourceList);
-                        },
-                        function(response) {
-                            delay.reject(response);
-                        }
-                    );
+
+                    Restangular.all(resourceName).getList(parameters).
+                    then(function(response) {
+                        var resourceList = new ResourceList(response);
+                        delay.resolve(resourceList);
+                    }, function(response) {
+                        delay.reject(response);
+                    });
+                    
                     return delay.promise;
                 };
 
