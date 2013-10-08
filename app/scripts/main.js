@@ -8,7 +8,8 @@ require.config({
         'angular-route': 'bower_components/angular-route/angular-route',
         'moment': 'bower_components/momentjs/moment',
         'restangular': 'bower_components/restangular/dist/restangular',
-        'lodash': 'bower_components/lodash/dist/lodash'
+        'lodash': 'bower_components/lodash/dist/lodash',
+        'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext'
     },
     shim: {
         jquery: {
@@ -23,6 +24,12 @@ require.config({
         },
         'angular-route': {
             deps: ['angular']
+        },
+        'angular-gettext': {
+            deps: ['angular']
+        },
+        'translations': {
+            deps: ['angular-gettext']
         },
         'bootstrap/dropdown': {
             deps: ['jquery']

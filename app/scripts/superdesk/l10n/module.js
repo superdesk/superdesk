@@ -1,38 +1,16 @@
-define(['angular'], function(angular) {
+define([
+    'angular',
+    'angular-gettext',
+    'translations'
+], function(angular) {
     'use strict';
 
-    angular.module('superdesk.l10n', []).
-        service('translate', [function() {
-            var translations = null;
-
-            /**
-             * Load translations
-             */
-            function loadTranslations() {
-                if (translations === null) {
-                    translations = {};
-                }
+    angular.module('superdesk.l10n', ['gettext']).
+        run(function(gettextCatalog, $location) {
+            var params = $location.search();
+            if ('lang' in params) {
+                gettextCatalog.currentLanguage = params.lang;
+                gettextCatalog.debug = true;
             }
-
-            return {
-                /**
-                 * Provides a wrapper for translations
-                 */
-                _: function(args) {
-                    loadTranslations();
-
-                    if (!arguments.length) {
-                        return;
-                    }
-
-                    var key = arguments[0];
-                    return key in translations ? translations[key] : key;
-                }
-            };
-        }]).
-        run(['$rootScope', 'translate', function($rootScope, translate) {
-            $rootScope._ = function() {
-                return translate._.apply(translate, arguments);
-            };
-        }]);
+        });
 });

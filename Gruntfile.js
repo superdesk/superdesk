@@ -151,10 +151,21 @@ module.exports = function (grunt) {
         options: {archive: 'dist/<%= pkg.name %>.zip', mode: 'zip'},
         src: ['**'], cwd: '<%= yeoman.dist %>', expand: true, dot: true, dest: '<%= pkg.name %>/'
       }
+    },
+    nggettext_extract: {
+      pot: {
+        files: {
+          'po/views.pot': '<%= yeoman.app %>/scripts/superdesk/**/*.html'
+        }
+      }
+    },
+    nggettext_compile: {
+      all: {
+        files: {
+          '<%= yeoman.app %>/scripts/translations.js': 'po/*.po'
+        }
+      }
     }
-    
-    
-
   });
 
   grunt.registerTask('server', [
