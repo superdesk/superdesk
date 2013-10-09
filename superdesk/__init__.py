@@ -2,6 +2,7 @@
 Superdesk server app
 """
 
+import logging
 import blinker
 import importlib
 import eve.io.mongo
@@ -13,6 +14,9 @@ API_NAME = 'Superdesk API'
 VERSION = (0, 0, 1)
 DOMAIN = {}
 COMMANDS = {}
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 def get_sender(sender):
     return sender[0] if sender else None

@@ -98,3 +98,9 @@ def step_impl(context, key):
     assert context.response.status_code == 200, context.response.status_code
     data = json.loads(context.response.get_data())
     assert data['data'].get(key), data
+
+@then('we get action in user activity')
+def step_impl(context):
+    response = context.client.get('/activity', headers=context.headers, follow_redirects=True)
+    data = json.loads(response.get_data())
+    assert len(data['_items']), data
