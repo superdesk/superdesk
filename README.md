@@ -26,6 +26,25 @@ with node.js and git installed, you can install the base tools globally:
 
 ## Info for contributors
 
+### Creating new directives
+
+- Define attribute directives, not element or css based.
+- Use sd as a namespace for every directive.
+
+```html
+<!-- RIGHT -->
+<div sd-datepicker ...></div>
+
+<!-- WRONG: element directive -->
+<sd-datepicker></sd-datepicker>
+
+<!-- WRONG: css directive -->
+<div class="sd-datepicker"></div>
+
+<!-- WRONG: missing namespace prefix -->
+<div datepicker></div>
+```
+
 ### Localization
 
 All string has to be translated, so make sure to [annotate](http://angular-gettext.rocketeer.be/dev-guide/annotate/) all string in html.
