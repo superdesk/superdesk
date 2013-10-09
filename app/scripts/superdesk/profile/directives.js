@@ -85,8 +85,7 @@ define([
                 require: '?ngModel',
                 link: function(scope, element, attrs, ngModel) {
                     ngModel.$render = function() {
-                        scope.user = ngModel.$viewValue;
-                        scope.activity_list = profileService.getUserActivity(scope.user);
+                        scope.activity_list = profileService.getUserActivity(ngModel.$viewValue);
                     };
                 }
             };

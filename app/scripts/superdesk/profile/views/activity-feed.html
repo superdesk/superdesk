@@ -9,7 +9,7 @@
                     <figure>
                         <img ng-src="{{ user.picture_url }}" ng-show="user.picture_url">
                     </figure>
-                    <div class="activity-content"><p><b>{{ user.display_name || user.username }}</b>: {{ activity.action }}</div>
+                    <div class="activity-content"><p><b>{{ activity.user.display_name || activity.user.username }}</b>: {{ activity.action }}</div>
                     <div class="activity-date">{{ activity.created|reldate }}</div>
                 </div>
             </li>

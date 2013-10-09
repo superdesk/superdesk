@@ -31,7 +31,8 @@ define([
                 getUserActivity: function(user) {
                     return server.readList('activity', {
                         where: {user: user._id},
-                        sort: '[("created", -1)]'
+                        sort: '[("created", -1)]',
+                        embedded: {user: 1}
                     });
                 }
             };
