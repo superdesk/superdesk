@@ -8,7 +8,8 @@ require.config({
         'angular-route': 'bower_components/angular-route/angular-route',
         'moment': 'bower_components/momentjs/moment',
         'restangular': 'bower_components/restangular/dist/restangular',
-        'lodash': 'bower_components/lodash/dist/lodash'
+        'lodash': 'bower_components/lodash/dist/lodash',
+        'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext'
     },
     shim: {
         jquery: {
@@ -23,6 +24,12 @@ require.config({
         },
         'angular-route': {
             deps: ['angular']
+        },
+        'angular-gettext': {
+            deps: ['angular']
+        },
+        'translations': {
+            deps: ['angular-gettext']
         },
         'bootstrap/dropdown': {
             deps: ['jquery']
@@ -39,9 +46,19 @@ require.config({
     }
 });
 
+/**
+ * Noop for registering string for translation in js files.
+ *
+ * @param {string} input
+ * @return {string} unmodified input
+ */
+function gettext(input) {
+    return input;
+}
+
 define([
     'angular',
-    'superdesk/l10n/module',
+    'superdesk/services/translate',
     'superdesk/auth/module',
     'superdesk/menu/module',
     'superdesk/dashboard/module',
@@ -52,7 +69,7 @@ define([
     'use strict';
 
     var modules = [
-        'superdesk.l10n',
+        'superdesk.services.translate',
         'superdesk.auth',
         'superdesk.menu',
         'superdesk.dashboard',

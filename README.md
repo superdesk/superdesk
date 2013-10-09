@@ -23,3 +23,30 @@ with node.js and git installed, you can install the base tools globally:
 ### run tests
 
     npm test
+
+## Info for contributors
+
+### Localization
+
+All string has to be translated, so make sure to [annotate](http://angular-gettext.rocketeer.be/dev-guide/annotate/) all string in html.
+
+#### Menu label translations
+
+For translating menu items (and in general anything in angular config phase), use global gettext function:
+
+```js
+{menu: {label: gettext('Users')}}
+```
+
+This will only register the string, so make sure to annotate this data for translations later.
+
+#### Translating strings in controllers/services
+
+Use ```superdesk.services.translate``` module as dependency, which provides ```gettext``` service.
+
+```js
+angular.module('mymod', ['superdesk.services.translate']).
+    .controller('myController', function($scope, gettext) {
+         $scope.msg = gettext("Translate this message");
+    });
+```

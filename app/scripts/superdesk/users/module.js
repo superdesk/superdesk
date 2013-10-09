@@ -4,6 +4,7 @@ define([
     'bootstrap/dropdown',
     'superdesk/settings',
     'superdesk/server',
+    'superdesk/services/translate',
     './controllers/list',
     './services'
 ], function(angular) {
@@ -40,7 +41,7 @@ define([
                         }]
                     },
                     menu: {
-                        label: 'Users',
+                        label: gettext('Users'),
                         priority: -1
                     }
                 });
