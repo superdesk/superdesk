@@ -1,6 +1,10 @@
 
+import logging
 import superdesk
 import superdesk.utils as utils
+from flask import json
+
+logger = logging.getLogger(__name__)
 
 class AuthException(Exception):
     """Base Auth Exception"""
@@ -23,7 +27,10 @@ def authenticate(credentials, db):
         raise NotFoundAuthException()
 
     if not credentials.get('password') or user.get('password') != credentials.get('password'):
+        logger.warning("Login failure: %s" % json.dumps(credentials))
         raise CredentialsAuthException()
+
+    logger.info("User logged in", extra={'user': user})
 
     return user
 
