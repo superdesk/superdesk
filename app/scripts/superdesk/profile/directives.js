@@ -1,10 +1,12 @@
 define([
     'jquery',
-    'angular'
-], function($, angular) {
+    'angular',
+    'moment',
+    './resources'
+], function($, angular, moment) {
     'use strict';
 
-    angular.module('superdesk.profile.directives', []).
+    angular.module('superdesk.profile.directives', ['superdesk.profile.resources']).
         directive('sdcheck', function() {
             return {
                 restrict: 'E',
@@ -66,31 +68,53 @@ define([
                 }
             };
         }).
-        directive('activity', function($compile) {
+        /**
+         * sdActivityFeed is a widget rendering last activity for given user
+         *
+         * Usage:
+         * <div sd-activity-feed ng-model="user"></div>
+         *
+         * Params:
+         * @param {object} ngModel
+         */
+        directive('sdActivityFeed', function($rootScope, profileService) {
             return {
-                restrict: 'E',
+                restrict: 'A',
                 replace: true,
-                translude : true,
-                templateUrl : 'scripts/superdesk/profile/views/single-activity.html',
-                scope: {
-                    feed : "=",
-                },
-                link: function(scope, element, attrs, controller) {
-                    scope.$watch('feed.content', function(newContent) {
-                      element.find('.activity-content').html($compile(newContent)(scope));
-                    });
+                templateUrl : 'scripts/superdesk/profile/views/activity-feed.html',
+                require: '?ngModel',
+                link: function(scope, element, attrs, ngModel) {
+                    ngModel.$render = function() {
+                        scope.user = ngModel.$viewValue;
+                        scope.activity_list = profileService.getUserActivity(scope.user);
+                    };
                 }
             };
         }).
-        directive('activityFeed', function() {
+        /**
+         * sdGroupDates directive will group list items by a date provided as a param.
+         *
+         * Usage:
+         * <li ng-repeat="item in items" ng-model="item" sd-group-dates="updated">
+         *
+         * Params:
+         * @param {object} ngModel
+         * @param {string} sdGroupDates - model field to group by
+         */
+        directive('sdGroupDates', function() {
+            var lastDate = null;
+            var format = 'dddd';
             return {
-                restrict: 'E',
-                replace: true,
-                templateUrl : 'scripts/superdesk/profile/views/activity-feed.html',
-                scope: {
-                    feedsource : "=",
+                require: '?ngModel',
+                link: function(scope, element, attrs, ngModel) {
+                    ngModel.$render = function() {
+                        var date = moment(ngModel.$viewValue[attrs.sdGroupDates]);
+                        if (!lastDate || lastDate.format(format) != date.format(format)) {
+                            element.before('<li class="date"><span>' + date.format('d MMMM') + '</span></li>');
+                            lastDate = date;
+                        }
+                    };
                 }
-            };
-        })
-
+            }
+        });
 });

@@ -1,10 +1,18 @@
-<div class="profile-activity" >
+<div class="profile-activity">
 	<div class="activity-header">
 		<h6 translate>Activity Log</h6>
 	</div>
 	<div class="activity-log">
 		<ul>
-			<activity ng-repeat="feed in feedsource" feed="feed"></activity>
+			<li ng-repeat="activity in activity_list.items" class="activity" ng-model="activity" sd-group-dates="created">
+                <div>
+                    <figure>
+                        <img ng-src="{{ user.picture_url }}" ng-show="user.picture_url">
+                    </figure>
+                    <div class="activity-content"><p><b>{{ user.display_name || user.username }}</b>: {{ activity.action }}</div>
+                    <div class="activity-date">{{ activity.created|reldate }}</div>
+                </div>
+            </li>
 		</ul>
 	</div>
 	<button class="btn load-more" translate>Load more</button>

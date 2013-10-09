@@ -1,13 +1,13 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', 'usersResource', 'activityResource',
-    	function($scope, usersResource, activityResource) {
+    return ['$scope', 'user', 'usersResource', 'activityResource',
+        function($scope, user, usersResource, activityResource) {
+
             $scope.userroles = ["administrator","journalist","photographer","editor"];
-            $scope.user = {};
+            $scope.user = angular.extend(user, {role: []});
 
             usersResource.get(function(data){
-                $scope.user = data.basicinfo;
                 $scope.privacy = data.privacy;  
                 $scope.showrow = data.showrow;            
             });

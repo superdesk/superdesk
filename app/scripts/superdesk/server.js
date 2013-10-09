@@ -59,7 +59,6 @@ define([
             });
         }).
         service('server', function($q, Restangular) {
-
             return new function() {
                 this.readList = function(resourceName, parameters) {
                     var delay = $q.defer();
@@ -76,7 +75,7 @@ define([
                 };
 
                 this.readItem = function(resource, id) {
-
+                    return Restangular.one(resource, id).get();
                 };
             };
         });
