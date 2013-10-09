@@ -99,6 +99,10 @@ superdesk.domain('users', {
         },
         'user_info': {
             'type': 'dict'
+        },
+        'picture_url': {
+            'type': 'string',
+            'readonly': True
         }
     },
     'extra_response_fields': ['username', 'first_name', 'last_name', 'display_name', 'email', 'user_info'],

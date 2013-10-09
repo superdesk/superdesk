@@ -20,4 +20,4 @@ simplejson==3.3.1
 six==1.4.1
 git+git://github.com/petrjasek/flask-elasticsearch@master#egg=Flask-ElasticSearch
 git+git://github.com/petrjasek/eve-docs@master#egg=eve_docs
-git+git://github.com/petrjasek/eve@519ca1e95d229367179d9b35c58e016f9445707b
+git+git://github.com/petrjasek/eve@develop#egg=Eve==0.1.2

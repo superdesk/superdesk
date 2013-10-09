@@ -3,7 +3,7 @@ import logging
 import superdesk
 from superdesk.utc import utcnow
 
-class MongoDBHandler(logging.Handler):
+class ActivityLogHandler(logging.Handler):
     """Logging handler storing data into mongodb."""
 
     level = logging.INFO
@@ -17,7 +17,7 @@ class MongoDBHandler(logging.Handler):
         data['user'] = getattr(record, 'user', {}).get('_id')
         superdesk.app.data.insert('activity', [data])
 
-superdesk.logger.addHandler(MongoDBHandler())
+superdesk.logger.addHandler(ActivityLogHandler())
 
 superdesk.domain('activity', {
     'resource_methods': ['GET'],
