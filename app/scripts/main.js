@@ -68,16 +68,20 @@ define([
 ], function(angular) {
     'use strict';
 
-    var modules = [
-        'superdesk.services.translate',
-        'superdesk.auth',
-        'superdesk.menu',
-        'superdesk.dashboard',
-        'superdesk.items',
-        'superdesk.users',
-        'superdesk.profile'
-    ];
 
-    angular.module('superdesk', modules);
-    angular.bootstrap(document, ['superdesk']);
+    angular.module('superdesk.directives', []);
+
+    require(['superdesk/directives/all'], function() {
+        var modules = [
+            'superdesk.directives',
+            'superdesk.services.translate',
+            'superdesk.auth',
+            'superdesk.menu',
+            'superdesk.dashboard',
+            'superdesk.items',
+            'superdesk.users'
+        ];
+
+        angular.bootstrap(document, modules);
+    });
 });

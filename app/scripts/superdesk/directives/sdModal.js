@@ -6,7 +6,7 @@ define([
 ], function($, angular) {
     'use strict';
 
-    angular.module('superdesk.directives', [])
+    angular.module('superdesk.directives')
         .directive('sdModal', function() {
             return {
                 link: function(scope, element, attrs) {
