@@ -35,6 +35,10 @@ define([
     * @param {number} interval
     * @param {object} ngModel
     */
+    angular.module('superdesk.directives')
+        .directive('sdDebounce', function() {
+            return wrapper('debounce');
+        });
 
     /**
     * sdThrottle throttles model update.
@@ -47,9 +51,6 @@ define([
     * @param {object} ngModel
     */
     angular.module('superdesk.directives')
-        .directive('sdDebounce', function() {
-            return wrapper('debounce');
-        })
         .directive('sdThrottle', function() {
             return wrapper('throttle');
         });
