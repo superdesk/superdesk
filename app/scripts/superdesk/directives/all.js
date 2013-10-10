@@ -3,5 +3,6 @@ define([
     './sdAutofocus',
     './sdDebounceThrottle',
     './sdReldate',
-    './sdGroupDates'
+    './sdGroupDates',
+    './sdPagination'
 ], function() {});
