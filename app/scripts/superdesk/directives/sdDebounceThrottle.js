@@ -25,32 +25,31 @@ define([
     };
 
     
-    /**
-    * sdDebounce debounces model update.
-    *
-    * Usage:
-    * <input sd-debounce data-interval="1500" ng-model="keyword">
-    *
-    * Params:
-    * @param {number} interval
-    * @param {object} ngModel
-    */
     angular.module('superdesk.directives')
+        /**
+         * sdDebounce debounces model update.
+         *
+         * Usage:
+         * <input sd-debounce data-interval="1500" ng-model="keyword">
+         *
+         * Params:
+         * @param {number} interval
+         * @param {object} ngModel
+         */
         .directive('sdDebounce', function() {
             return wrapper('debounce');
-        });
+        }).
 
-    /**
-    * sdThrottle throttles model update.
-    *
-    * Usage:
-    * <input sd-throttle data-interval="1500" ng-model="keyword">
-    *
-    * Params:
-    * @param {number} interval
-    * @param {object} ngModel
-    */
-    angular.module('superdesk.directives')
+        /**
+         * sdThrottle throttles model update.
+         *
+         * Usage:
+         * <input sd-throttle data-interval="1500" ng-model="keyword">
+         *
+         * Params:
+         * @param {number} interval
+         * @param {object} ngModel
+         */
         .directive('sdThrottle', function() {
             return wrapper('throttle');
         });
