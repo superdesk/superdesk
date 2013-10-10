@@ -55,7 +55,8 @@ require.config({
  * @param {string} input
  * @return {string} unmodified input
  */
-function gettext(input) {
+function gettext(input)
+{
     return input;
 }
 
@@ -71,7 +72,6 @@ define([
 ], function(angular) {
     'use strict';
 
-
     angular.module('superdesk.directives', []);
 
     require(['superdesk/directives/all'], function() {
@@ -82,9 +82,12 @@ define([
             'superdesk.menu',
             'superdesk.dashboard',
             'superdesk.items',
-            'superdesk.users'
+            'superdesk.users',
+            'superdesk.profile'
         ];
 
-        angular.bootstrap(document, modules);
+        angular.element(document).ready(function() {
+            angular.bootstrap(document, modules);
+        });
     });
 });

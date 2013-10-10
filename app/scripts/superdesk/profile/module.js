@@ -1,13 +1,12 @@
 define([
     'angular',
-    'angular-route',
     './controllers/main',
     './directives',
     './resources',
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.profile', ['ngRoute', 'superdesk.profile.directives', 'superdesk.profile.resources']).
+    angular.module('superdesk.profile', ['superdesk.profile.directives', 'superdesk.profile.resources']).
         config(function($routeProvider) {
             $routeProvider.
                 when('/my-profile', {

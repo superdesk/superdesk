@@ -26,19 +26,19 @@ define([
                  * Get user activity feed for given user
                  *
                  * @param {object} user
-                 * @param {int} per_page
+                 * @param {int} maxResults
                  * @param {int} page
                  * @return {object} activity
                  */
-                getUserActivity: function(user, per_page, page) {
+                getUserActivity: function(user, maxResults, page) {
                     var params = {
                         where: {user: user._id},
                         sort: '[("created", -1)]',
                         embedded: {user: 1},
                     };
 
-                    if (per_page) {
-                        params.max_results = per_page;
+                    if (maxResults) {
+                        params['max_results'] = maxResults;
                     }
 
                     if (page > 1) {

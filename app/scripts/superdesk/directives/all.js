@@ -1,5 +1,7 @@
 define([
     './sdModal',
     './sdAutofocus',
-    './sdDebounceThrottle'
+    './sdDebounceThrottle',
+    './sdReldate',
+    './sdGroupDates'
 ], function() {});
