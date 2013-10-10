@@ -84,9 +84,22 @@ define([
                 templateUrl : 'scripts/superdesk/profile/views/activity-feed.html',
                 require: '?ngModel',
                 link: function(scope, element, attrs, ngModel) {
+                    var per_page = 2;
+                    var page = 1;
+
                     ngModel.$render = function() {
-                        scope.activity_list = profileService.getUserActivity(ngModel.$viewValue);
+                        profileService.getUserActivity(ngModel.$viewValue, per_page).then(function(list) {
+                            scope.activity_list = list;
+                        })
                     };
+
+                    scope.loadMore = function() {
+                        page++;
+                        profileService.getUserActivity(ngModel.$viewValue, per_page, page).then(function(next) {
+                            Array.prototype.push.apply(scope.activity_list.items, next.items);
+                            scope.activity_list.links = next.links;
+                        });
+                    }
                 }
             };
         }).
@@ -102,18 +115,46 @@ define([
          */
         directive('sdGroupDates', function() {
             var lastDate = null;
-            var format = 'dddd';
+            var COMPARE_FORMAT = 'YYYY-M-D';
+            var DISPLAY_FORMAT = 'D. MMMM';
             return {
                 require: '?ngModel',
                 link: function(scope, element, attrs, ngModel) {
                     ngModel.$render = function() {
-                        var date = moment(ngModel.$viewValue[attrs.sdGroupDates]);
-                        if (!lastDate || lastDate.format(format) != date.format(format)) {
-                            element.before('<li class="date"><span>' + date.format('d MMMM') + '</span></li>');
+                        var date = moment.utc(ngModel.$viewValue[attrs.sdGroupDates]);
+                        if (scope.$first || lastDate.format(COMPARE_FORMAT) != date.format(COMPARE_FORMAT)) {
+                            element.prepend('<div class="date"><span>' + date.format(DISPLAY_FORMAT) + '</span></div>');
+                            element.addClass('activity-date');
                             lastDate = date;
                         }
                     };
                 }
-            }
+            };
+        }).
+        /**
+         * Display relative date in <time> element
+         *
+         * Usage:
+         * <span sd-reldate ng-model="user.created"></span>
+         *
+         * Params:
+         * @param {object} ngModel - datetime string in utc
+         */
+        directive('sdReldate', function() {
+            return {
+                require: 'ngModel',
+                template: '<time datetime="{{ datetime }}" title="{{ title }}">{{ reldate }}</time>',
+                replate: true,
+                link: function(scope, element, attrs, ngModel) {
+                    ngModel.$render = function() {
+                        var date = moment.utc(ngModel.$viewValue);
+                        scope.datetime = date.toISOString();
+
+                        date.local(); // switch to local time zone
+                        scope.title = date.format('LLLL');
+                        scope.reldate = date.fromNow();
+                    }
+                }
+            };
         });
 });

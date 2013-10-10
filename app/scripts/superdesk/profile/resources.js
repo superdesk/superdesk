@@ -1,5 +1,5 @@
 define([
-    'angular',
+    'angular'
 ], function(angular) {
     'use strict';
 
@@ -26,14 +26,26 @@ define([
                  * Get user activity feed for given user
                  *
                  * @param {object} user
+                 * @param {int} per_page
+                 * @param {int} page
                  * @return {object} activity
                  */
-                getUserActivity: function(user) {
-                    return server.readList('activity', {
+                getUserActivity: function(user, per_page, page) {
+                    var params = {
                         where: {user: user._id},
                         sort: '[("created", -1)]',
-                        embedded: {user: 1}
-                    });
+                        embedded: {user: 1},
+                    };
+
+                    if (per_page) {
+                        params.max_results = per_page;
+                    }
+
+                    if (page) {
+                        params.page = page;
+                    }
+
+                    return server.readList('activity', params);
                 }
             };
         });

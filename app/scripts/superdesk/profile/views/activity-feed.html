@@ -10,10 +10,10 @@
                         <img ng-src="{{ user.picture_url }}" ng-show="user.picture_url">
                     </figure>
                     <div class="activity-content"><p><b>{{ activity.user.display_name || activity.user.username }}</b>: {{ activity.action }}</div>
-                    <div class="activity-date">{{ activity.created|reldate }}</div>
+                    <div class="activity-date" sd-reldate ng-model="activity.created"></div>
                 </div>
             </li>
 		</ul>
 	</div>
-	<button class="btn load-more" translate>Load more</button>
+	<button class="btn load-more" translate ng-click="loadMore()" ng-show="activity_list.links.next">Load more</button>
 </div>

@@ -49,6 +49,9 @@ require.config({
 /**
  * Noop for registering string for translation in js files.
  *
+ * This is supposed to be used in angular config phase,
+ * where we can't use the translate service.
+ *
  * @param {string} input
  * @return {string} unmodified input
  */
