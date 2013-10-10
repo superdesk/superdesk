@@ -26,6 +26,27 @@ with node.js and git installed, you can install the base tools globally:
 
 ## Info for contributors
 
+### Commit messages
+
+Every commit has to have a meaningful commit message in form:
+
+```
+Title
+<empty line>
+Description
+<empty line>
+JIRA ref
+```
+
+Where [JIRA ref](https://confluence.atlassian.com/display/FISHEYE/Using+smart+commits) is at least Issue code eg. ```SDUX-13```.
+
+For trivial changes you can ommit JIRA ref or Description or both:
+
+```
+Fix typo in superdesk.translate docs.
+```
+
+
 ### Creating new directives
 
 - Define attribute directives, not element or css based.
