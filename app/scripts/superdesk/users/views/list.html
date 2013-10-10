@@ -1,5 +1,5 @@
 <div class="subnav subnav-fixed">
-    <form ng-submit="search()"><input type="text" name="searchbar" class="searchbar-container" style="width:500px;" placeholder="Search" ng-model="keyword"></form>
+    <input type="text" name="searchbar" class="searchbar-container" placeholder="{{ 'Search'|translate }}" ng-model="routeParams.search" sd-debounce sd-auto-focus>
     <!--<a class="btn btn-medium btn-info pull-right" href="#"><span class="medium-icon-add"></span> Add New User</a>-->
 </div>
 
@@ -29,28 +29,28 @@
                             <th class="avatar_col" ng-show="settings.fields.avatar"></th>
                             <th class="name_col" ng-show="settings.fields.display_name">
                                 <a href="" ng-click="sort('display_name')">
-                                    Name
+                                    {{ 'Name'|translate }}
                                     <i class="icon-chevron-down" ng-show="routeParams.sortField === 'display_name' && routeParams.sortDirection === 'asc'"></i>
                                     <i class="icon-chevron-up" ng-show="routeParams.sortField === 'display_name' && routeParams.sortDirection === 'desc'"></i>
                                 </a>
                             </th>
                             <th class="username_col" ng-show="settings.fields.username">
                                 <a href="" ng-click="sort('username')">
-                                    Username
+                                    {{ 'Username'|translate }}
                                     <i class="icon-chevron-down" ng-show="routeParams.sortField === 'username' && routeParams.sortDirection === 'asc'"></i>
                                     <i class="icon-chevron-up" ng-show="routeParams.sortField === 'username' && routeParams.sortDirection === 'desc'"></i>
                                 </a>
                             </th>
                             <th class="email_col resp-hide" ng-show="settings.fields.email">
                                 <a href="" ng-click="sort('email')">
-                                    Email
+                                    {{ 'Email'|translate }}
                                     <i class="icon-chevron-down" ng-show="routeParams.sortField === 'email' && routeParams.sortDirection === 'asc'"></i>
                                     <i class="icon-chevron-up" ng-show="routeParams.sortField === 'email' && routeParams.sortDirection === 'desc'"></i>
                                 </a>
                             </th>
                             <th class="small_col resp-hide" ng-show="settings.fields.created">
                                 <a href="" ng-click="sort('created')">
-                                    Created
+                                    {{ 'Created'|translate }}
                                     <i class="icon-chevron-down" ng-show="routeParams.sortField === 'created' && routeParams.sortDirection === 'asc'"></i>
                                     <i class="icon-chevron-up" ng-show="routeParams.sortField === 'created' && routeParams.sortDirection === 'desc'"></i>
                                 </a>
@@ -83,10 +83,10 @@
                                 <div class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
                                     <ul class="dropdown-menu sf-dropdown-simple pull-right">
-                                        <li><a href="#"><i class="icon-eye-open"></i> View details</a></li>
-                                        <li><a href="#"><i class="icon-pencil"></i> Edit details</a></li>
-                                        <li><a href="#"><i class="icon-ban-circle"></i> Permissions</a></li>
-                                        <li><a href="#"><i class="icon-trash"></i> Delete</a></li>                      
+                                        <li><a href="#"><i class="icon-eye-open"></i> {{ 'View details'|translate }}</a></li>
+                                        <li><a href="#"><i class="icon-pencil"></i> {{ 'Edit details'|translate }}</a></li>
+                                        <li><a href="#"><i class="icon-ban-circle"></i> {{ 'Permissions'|translate }}</a></li>
+                                        <li><a href="#"><i class="icon-trash"></i> {{ 'Permissions'|translate }}</a></li>
                                     </ul>
                                 </div>
                             </td>
