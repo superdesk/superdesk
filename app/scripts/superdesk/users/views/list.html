@@ -7,13 +7,7 @@
     <div class="tab-content user-tabs">
         <div class="tab-pane active" id="active_users">
             <div class="tab-submenu">
-                <div class="btn-group pull-right" style="width: 200px; margin-left: 20px;">
-                    <button class="btn" ng-disabled="routeParams.page === 1" ng-click="routeParams.page = 1"><i class="icon-fast-backward"></i></button>
-                    <button class="btn" ng-disabled="users.links.prev === undefined" ng-click="routeParams.page = routeParams.page - 1"><i class="icon-chevron-left"></i></button>
-                    <button class="btn" ng-disabled="true">{{ routeParams.page }}</button>
-                    <button class="btn" ng-disabled="users.links.next === undefined" ng-click="routeParams.page = routeParams.page + 1"><i class="icon-chevron-right"></i></button>
-                    <button class="btn" ng-disabled="users.links.last === undefined"><i class="icon-fast-forward"></i></button>
-                </div>
+                <div sd-pagination sd-data-model="users" sd-page-model="routeParams.page"></div>
                 <!--
                 <div class="page-info pull-right">
                     
