@@ -124,7 +124,7 @@ define([
                         var date = moment.utc(ngModel.$viewValue[attrs.sdGroupDates]);
                         if (scope.$first || lastDate.format(COMPARE_FORMAT) != date.format(COMPARE_FORMAT)) {
                             element.prepend('<div class="date"><span>' + date.format(DISPLAY_FORMAT) + '</span></div>');
-                            element.addClass('activity-date');
+                            element.addClass('with-date');
                             lastDate = date;
                         }
                     };

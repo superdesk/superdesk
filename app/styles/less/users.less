@@ -1057,6 +1057,7 @@ Profile page styles
         border-bottom: 1px solid #dfdfdf;
         .border-radius(2px);
         margin-bottom: 5px;
+        position: relative;
 
         figure {
           width: 42px;
@@ -1083,20 +1084,29 @@ Profile page styles
           color: #949494;
           margin-top: -5px; 
         }
-      }
 
-      &.date {
-        border-top:1px solid #ebebeb;
-        margin:25px 0; 
-        span {
-          font-size: 12px;
-          color: #949494; 
-          margin-top: -10px;
-          display: block;
-          float: left;
-          background: #f8f8f8;
-          padding-right: 5px;
+        &.with-date {
+          margin-top: 35px;
+
+          .date {
+            border-top:1px solid #ebebeb;
+            top: -17px;
+            position:  absolute;
+            right: 0;
+            left: 0;
+            span {  
+              font-size: 12px;
+              color: #949494; 
+              margin-top: -10px;
+              display: block;
+              float: left;
+              background: #f8f8f8;
+              padding-right: 5px;
+            }
+          }
+          
         }
+
       }
     }
   }
