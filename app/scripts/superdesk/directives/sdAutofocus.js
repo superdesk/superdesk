@@ -4,8 +4,14 @@ define([
 ], function($, angular) {
     'use strict';
 
+    /**
+    * sdAutoFocus automatically focuses on an element on page render.
+    *
+    * Usage:
+    * <input sd-auto-focus>
+    */
     angular.module('superdesk.directives')
-        .directive('sdAutofocus', function() {
+        .directive('sdAutoFocus', function() {
             return {
                 link: function($scope, element, attrs) {
                     element.focus();

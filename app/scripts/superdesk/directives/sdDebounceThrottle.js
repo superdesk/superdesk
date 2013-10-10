@@ -4,16 +4,15 @@ define([
 ], function($, angular) {
     'use strict';
 
-    var wrapper = function(method) {
+    var wrapper = function(methodName) {
         var interval = 1000;
-        var attribute = 'sd' + method.charAt(0).toUpperCase() + method.slice(1);
-        var func = _[method];
+        var func = _[methodName];
 
         return {
             require: ['ngModel'],
             link: function($scope, element, attrs, ctrl) {
-                if (attrs[attribute] !== '') {
-                    interval = attrs[attribute];
+                if (attrs.interval !== '') {
+                    interval = attrs.interval;
                 }
                 element.unbind('input').unbind('keydown').unbind('change');
                 element.bind('input', func(function() {
@@ -25,6 +24,28 @@ define([
         };
     };
 
+    
+    /**
+    * sdDebounce debounces model update.
+    *
+    * Usage:
+    * <input sd-debounce data-interval="1500" ng-model="keyword">
+    *
+    * Params:
+    * @param {number} interval
+    * @param {object} ngModel
+    */
+
+    /**
+    * sdThrottle throttles model update.
+    *
+    * Usage:
+    * <input sd-throttle data-interval="1500" ng-model="keyword">
+    *
+    * Params:
+    * @param {number} interval
+    * @param {object} ngModel
+    */
     angular.module('superdesk.directives')
         .directive('sdDebounce', function() {
             return wrapper('debounce');
