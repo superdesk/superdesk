@@ -11,7 +11,7 @@ define([
         return {
             require: ['ngModel'],
             link: function($scope, element, attrs, ctrl) {
-                if (attrs.interval !== '') {
+                if (attrs.interval !== '' && attrs.interval !== undefined) {
                     interval = attrs.interval;
                 }
                 element.unbind('input').unbind('keydown').unbind('change');
