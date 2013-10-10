@@ -41,7 +41,7 @@ define([
                         params.max_results = per_page;
                     }
 
-                    if (page) {
+                    if (page > 1) {
                         params.page = page;
                     }
 

@@ -82,15 +82,15 @@ define([
                 restrict: 'A',
                 replace: true,
                 templateUrl : 'scripts/superdesk/profile/views/activity-feed.html',
-                require: '?ngModel',
+                require: 'ngModel',
                 link: function(scope, element, attrs, ngModel) {
-                    var per_page = 2;
+                    var per_page = 5;
                     var page = 1;
 
                     ngModel.$render = function() {
                         profileService.getUserActivity(ngModel.$viewValue, per_page).then(function(list) {
                             scope.activity_list = list;
-                        })
+                        });
                     };
 
                     scope.loadMore = function() {
@@ -118,7 +118,7 @@ define([
             var COMPARE_FORMAT = 'YYYY-M-D';
             var DISPLAY_FORMAT = 'D. MMMM';
             return {
-                require: '?ngModel',
+                require: 'ngModel',
                 link: function(scope, element, attrs, ngModel) {
                     ngModel.$render = function() {
                         var date = moment.utc(ngModel.$viewValue[attrs.sdGroupDates]);
