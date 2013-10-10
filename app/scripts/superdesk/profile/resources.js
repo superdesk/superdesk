@@ -26,8 +26,8 @@ define([
                  * Get user activity feed for given user
                  *
                  * @param {object} user
-                 * @param {int} maxResults
-                 * @param {int} page
+                 * @param {number} maxResults
+                 * @param {number} page
                  * @return {object} activity
                  */
                 getUserActivity: function(user, maxResults, page) {
