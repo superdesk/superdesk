@@ -5,8 +5,8 @@ define([
     'use strict';
 
     var render = function(element, value) {
-        element.toggleClass('sf-checked', value);
-        element.attr('checked', value);
+        element.toggleClass('sf-checked', !!value);
+        element.attr('checked', !!value);
     };
 
     angular.module('superdesk.directives')
@@ -14,14 +14,13 @@ define([
          * sdCheck creates a custom-styled checkbox.
          *
          * Usage:
-         * <input sd-check ng-model="check" data-check-group="users">
+         * <input sd-check ng-model="user._checked">
          * 
          * Params:
          * @param {boolean} ngModel - model for checkbox value
-         * @param {string} checkGroup - group name to be used in "select all"
          *
          */
-        .directive('sdCheck', function($timeout) {
+        .directive('sdCheck', function() {
             return {
                 require: 'ngModel',
                 replace: true,
@@ -31,10 +30,13 @@ define([
                         render(element, ngModel.$viewValue);
                     };
 
+                    $scope.$watch(attrs.ngModel, function() {
+                        render(element, ngModel.$viewValue);
+                    });
+
                     element.on('click', function(){
                         $scope.$apply(function() {
                             ngModel.$setViewValue(!ngModel.$viewValue);
-                            render(element, ngModel.$viewValue);
                         });
                     });
                 }
@@ -44,52 +46,51 @@ define([
          * sdCheckAll creates a custom-styled checkbox managing other checkboxes in the same group.
          *
          * Usage:
-         * <input sd-check-all data-check-group="users">
+         * <input sd-check-all ng-model="users" data-check-attribute="_checked">
          * 
          * Params:
-         * @param {string} checkGroup - group name to manage
+         * @param {array} ngModel - array of objects managed by checkboxes
+         * @param {string} checkAttribute - name of attribute to set in model elements
          *
          */
-        .directive('sdCheckAll', function($timeout) {
+        .directive('sdCheckAll', function() {
+            var checkAttribute = '_checked';
+
             return {
+                require: 'ngModel',
                 replace: true,
                 template: '<span class="sf-checkbox-custom"></span>',
-                link: function($scope, element, attrs) {
+                link: function($scope, element, attrs, ngModel) {
                     var checked = false;
-                    var elements = $('[data-check-group="' + attrs.checkGroup + '"]:not([sd-check-all])');
+                    if (attrs.checkAttribute !== undefined) {
+                        checkAttribute = attrs.checkAttribute;
+                    }
 
-                    var process = function() {
-                        var numChecked = 0;
-                        for (var i = 0; i < elements.length; i++) {
-                            var el = elements[i];
-                            if (el.getAttribute('checked') !== null) {
-                                numChecked = numChecked + 1;
+                    $scope.$watch(attrs.ngModel, function() {
+                        var status = true;
+                        for (var i = 0; i < ngModel.$viewValue.length; i++) {
+                            if (ngModel.$viewValue[i][checkAttribute] !== true) {
+                                status = false;
+                                break;
                             }
                         }
-                        if (numChecked === elements.length) {
-                            checked = true;
-                        } else {
-                            checked = false;
-                        }
-                    };
-                    
-                    elements.on('click', function() {
-                        $timeout(function() {
-                            process();
-                            render(element, checked);
-                        });
-                    });
-
-                    element.on('click', function() {
-                        checked = !checked;
+                        checked = status;
+                        
                         render(element, checked);
-                        for (var i = 0; i < elements.length; i++) {
-                            var el = elements[i];
-                            if ((checked === true && el.getAttribute('checked') === null)
-                             || (checked === false && el.getAttribute('checked') !== null)) {
-                                el.click();
-                            }
+                    }, true);
+
+                    element.on('click', function(){
+                        checked = !checked;
+                        
+                        var model = ngModel.$viewValue;
+                        for (var i = 0; i < model.length; i++) {
+                            model[i][checkAttribute] = checked;
                         }
+                        $scope.$apply(function() {
+                            ngModel.$setViewValue(model);
+                        });
+
+                        render(element, checked);
                     });
                 }
             };
