@@ -9,7 +9,21 @@ require.config({
         'moment': 'bower_components/momentjs/moment',
         'restangular': 'bower_components/restangular/dist/restangular',
         'lodash': 'bower_components/lodash/dist/lodash',
-        'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext'
+        'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext',
+
+        'jquery.ui.widget' : 'bower_components/blueimp-file-upload/js/vendor/jquery.ui.widget',
+        'fileupload-image' : 'bower_components/blueimp-file-upload/js/jquery.fileupload-image',
+        'fileupload-audio' : 'bower_components/blueimp-file-upload/js/jquery.fileupload-video',
+        'fileupload-video' : 'bower_components/blueimp-file-upload/js/jquery.fileupload-audio',
+        'fileupload-validate' : 'bower_components/blueimp-file-upload/js/jquery.fileupload-validate',
+        'load-image' : 'bower_components/blueimp-load-image/js/load-image',
+        'load-image-meta' : 'bower_components/blueimp-load-image/js/load-image-meta',
+        'load-image-exif' : 'bower_components/blueimp-load-image/js/load-image-exif',
+        'load-image-ios' : 'bower_components/blueimp-load-image/js/load-image-ios',
+        'canvas-to-blob' : 'bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
+        'fileupload-process' : 'bower_components/blueimp-file-upload/js/jquery.fileupload-process',
+        'uploader' : 'bower_components/blueimp-file-upload/js/jquery.fileupload',
+        'uploader-angular' : 'bower_components/blueimp-file-upload/js/jquery.fileupload-angular'
     },
     shim: {
         jquery: {
@@ -42,6 +56,10 @@ require.config({
         },
         'restangular': {
             deps: ['lodash']
+        },
+
+        'uploader-angular' : {
+            deps: ['jquery','jquery.ui.widget']
         }
     }
 });

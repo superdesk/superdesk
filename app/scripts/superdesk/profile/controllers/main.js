@@ -1,8 +1,14 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', 'usersResource', 'activityResource',
-    	function($scope, usersResource, activityResource) {
+    return ['$scope', '$rootScope', 'usersResource', 'activityResource',
+    	function($scope, $rootScope, usersResource, activityResource) {
+
+             $scope.openUpload = function() {
+                $scope.$emit('upload.show');
+            }
+                
+
             $scope.userroles = ["administrator","journalist","photographer","editor"];
             $scope.user = {};
 
@@ -12,7 +18,8 @@ define(['angular'], function(angular) {
                 $scope.showrow = data.showrow;            
             });
     		
-                		
+
+           		
             activityResource.get(function(data){
                 $scope.activityfeed = data.activityfeed;
             });
