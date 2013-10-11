@@ -1,10 +1,11 @@
 define([
     'jquery',
-    'angular'
+    'angular',
+    './resources'
 ], function($, angular) {
     'use strict';
 
-    angular.module('superdesk.profile.directives', []).
+    angular.module('superdesk.profile.directives', ['superdesk.profile.resources']).
         directive('sdcheck', function() {
             return {
                 restrict: 'E',
@@ -15,7 +16,7 @@ define([
                     clickevent : "&", 
                     privacy : "="
                 },
-                link: function(scope, element, attrs, controller) {
+                link: function(scope, element, attrs) {
                     element.bind('click', function() {
                         scope.$apply(function(){
                             scope.check = !scope.check;
@@ -34,7 +35,7 @@ define([
                     check : "=",
                     clickevent : "&", 
                 },
-                link: function(scope, element, attrs, controller) {
+                link: function(scope, element, attrs) {
                     element.bind('click', function() {
                         scope.clickevent();
                     });
@@ -52,7 +53,7 @@ define([
                     clickevent : "&",
                     onoff : "="
                 },
-                link: function(scope, element, attrs, controller) {
+                link: function(scope, element, attrs) {
                     var scopeCaller = false;
                     element.bind('click', function() {
                         scope.$apply(function(){
@@ -60,37 +61,55 @@ define([
                             scopeCaller=true;
                         });
                     });
-                    scope.$watch('check', function(value) {
+                    scope.$watch('check', function() {
                         scopeCaller ? (scopeCaller = false, scope.clickevent()) : '';
                     });
                 }
             };
-        }).
-        directive('activity', function($compile) {
+        })
+        /**
+         * sdActivityFeed is a widget rendering last activity for given user
+         *
+         * Usage:
+         * <div sd-activity-feed ng-model="user"></div>
+         *
+         * Params:
+         * @param {object} ngModel
+         */
+        .directive('sdActivityFeed', function($rootScope, profileService) {
             return {
-                restrict: 'E',
-                replace: true,
-                translude : true,
-                templateUrl : 'scripts/superdesk/profile/views/single-activity.html',
-                scope: {
-                    feed : "=",
-                },
-                link: function(scope, element, attrs, controller) {
-                    scope.$watch('feed.content', function(newContent) {
-                      element.find('.activity-content').html($compile(newContent)(scope));
-                    });
-                }
-            };
-        }).
-        directive('activityFeed', function() {
-            return {
-                restrict: 'E',
+                restrict: 'A',
                 replace: true,
                 templateUrl : 'scripts/superdesk/profile/views/activity-feed.html',
-                scope: {
-                    feedsource : "=",
+                require: 'ngModel',
+                link: function(scope, element, attrs, ngModel) {
+                    var maxResults = 5;
+                    var page = 1;
+
+                    ngModel.$render = function() {
+                        profileService.getUserActivity(ngModel.$viewValue, maxResults).then(function(list) {
+                            scope.activityFeed = list;
+                        });
+                    };
+
+                    scope.loadMore = function() {
+                        page++;
+                        profileService.getUserActivity(ngModel.$viewValue, maxResults, page).then(function(next) {
+                            Array.prototype.push.apply(scope.activityFeed.items, next.items);
+                            scope.activityFeed.links = next.links;
+                        });
+                    };
                 }
             };
         })
-
+        .directive('sdInfoItem', function() {
+            return {
+                link: function(scope, element) {
+                    element.addClass('info-item');
+                    element.find('label').addClass('info-label');
+                    element.find('input').addClass('info-value');
+                    element.find('input').addClass('info-editable');
+                }
+            };
+        });
 });

@@ -67,10 +67,14 @@ require.config({
 /**
  * Noop for registering string for translation in js files.
  *
+ * This is supposed to be used in angular config phase,
+ * where we can't use the translate service.
+ *
  * @param {string} input
  * @return {string} unmodified input
  */
-function gettext(input) {
+function gettext(input)
+{
     return input;
 }
 
@@ -86,16 +90,22 @@ define([
 ], function(angular) {
     'use strict';
 
-    var modules = [
-        'superdesk.services.translate',
-        'superdesk.auth',
-        'superdesk.menu',
-        'superdesk.dashboard',
-        'superdesk.items',
-        'superdesk.users',
-        'superdesk.profile'
-    ];
+    angular.module('superdesk.directives', []);
 
-    angular.module('superdesk', modules);
-    angular.bootstrap(document, ['superdesk']);
+    require(['superdesk/directives/all'], function() {
+        var modules = [
+            'superdesk.directives',
+            'superdesk.services.translate',
+            'superdesk.auth',
+            'superdesk.menu',
+            'superdesk.dashboard',
+            'superdesk.items',
+            'superdesk.users',
+            'superdesk.profile'
+        ];
+
+        angular.element(document).ready(function() {
+            angular.bootstrap(document, modules);
+        });
+    });
 });

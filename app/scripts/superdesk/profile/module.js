@@ -1,6 +1,5 @@
 define([
     'angular',
-    'angular-route',
     'uploader-angular',
     './controllers/main',
     './controllers/upload-avatar',
@@ -9,12 +8,17 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.profile', ['ngRoute', 'blueimp.fileupload', 'superdesk.profile.directives', 'superdesk.profile.resources', 'superdesk.profile.directives.uploadavatar']).
+    angular.module('superdesk.profile', ['blueimp.fileupload', 'superdesk.profile.directives', 'superdesk.profile.resources', 'superdesk.profile.directives.uploadavatar']).
         config(function($routeProvider) {
             $routeProvider.
                 when('/my-profile', {
                     controller: require('superdesk/profile/controllers/main'),
                     templateUrl: 'scripts/superdesk/profile/views/main.html',
+                    resolve: {
+                        user: function($rootScope, server) {
+                            return server.readItem('users', $rootScope.currentUser.username);
+                        }
+                    }
                 });
         });
 });

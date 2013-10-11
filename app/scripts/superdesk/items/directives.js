@@ -37,55 +37,6 @@ define([
                 }
             };
         }).
-        directive('sdPagination', function($location, $routeParams) {
-            function getCurrentSkip() {
-                return 'skip' in $routeParams ? parseInt($routeParams.skip, 10) : 0;
-            }
-
-            function getPrevSkip($scope) {
-                var skip = getCurrentSkip() - $scope.limit;
-                if (skip < 0) {
-                    skip = 0;
-                }
-
-                return skip === 0 ? null : skip;
-            }
-
-            function getNextSkip($scope) {
-                return getCurrentSkip() + $scope.limit;
-            }
-
-            return {
-                templateUrl: 'scripts/superdesk/items/views/pagination.html',
-                require: '?ngModel',
-                scope: false,
-                link: function($scope, element, attrs, ngModel) {
-                    element.addClass('btn-group').addClass('pull-right');
-
-                    $scope.links = {};
-                    $scope.limit = 25;
-
-                    $scope.prev = function() {
-                        if (!$scope.links.hasPrev) {
-                            return false;
-                        }
-                        $location.search('skip', getPrevSkip($scope));
-                    };
-
-                    $scope.next = function() {
-                        if (!$scope.links.hasNext) {
-                            return false;
-                        }
-                        $location.search('skip', getNextSkip($scope));
-                    };
-
-                    ngModel.$render = function() {
-                        var items = ngModel.$viewValue;
-                        $scope.links = items.links;
-                    };
-                }
-            };
-        }).
         directive('sdHtml', function($sce) {
             return {
                 require: '?ngModel',

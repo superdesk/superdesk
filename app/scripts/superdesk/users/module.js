@@ -1,7 +1,5 @@
 define([
     'angular',
-    'angular-route',
-    'bootstrap/dropdown',
     'superdesk/settings',
     'superdesk/server',
     'superdesk/services/translate',

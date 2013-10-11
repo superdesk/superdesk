@@ -51,33 +51,94 @@ define([
 
     //
 
-    angular.module('superdesk.server', ['restangular']).
-        run(function(Restangular) {
+    angular.module('superdesk.server', ['restangular'])
+        // restanuglar config
+        .run(function(Restangular, $http) {
             Restangular.setBaseUrl(ServerConfig.url);
-            Restangular.setRestangularFields({
-                id: '_id'
-            });
-        }).
-        service('server', function($q, Restangular) {
+            Restangular.setDefaultHeaders($http.defaults.headers.common);
+            Restangular.setRestangularFields({id: '_id'});
+            Restangular.setRequestInterceptor(function(element, operation, route, url) {
+                switch(operation) {
+                    case 'patch':
+                    case 'put':
+                        // remove extra fields
+                        delete element._id;
+                        delete element._links;
+                        delete element.etag;
+                        delete element.updated;
+                        delete element.created;
+                        // wrap content for eve
+                        return {data: element};
+                }
 
-            return new function() {
-                this.readList = function(resourceName, parameters) {
+                return element;
+            });
+        })
+        .service('server', function($q, Restangular) {
+            /**
+             * Restangular adapter
+             */
+            function ServerService() {
+
+                /**
+                 * Fetch resource list
+                 *
+                 * @param {string} resource
+                 * @param {Object} parameters
+                 * @return {Object} promise
+                 */
+                this.readList = function(resource, parameters) {
                     var delay = $q.defer();
 
-                    Restangular.all(resourceName).getList(parameters).
-                    then(function(response) {
+                    Restangular.all(resource)
+                    .getList(parameters)
+                    .then(function(response) {
                         var resourceList = new ResourceList(response);
                         delay.resolve(resourceList);
                     }, function(response) {
                         delay.reject(response);
                     });
-                    
+
                     return delay.promise;
                 };
 
+                /**
+                 * Fetch item with given id
+                 *
+                 * @param {string} resource
+                 * @param {string} id
+                 * @return {Object} promise
+                 */
                 this.readItem = function(resource, id) {
-
+                    return Restangular.one(resource, id).get();
                 };
-            };
+
+                /**
+                 * Update given item
+                 *
+                 * @param {Object} item
+                 * @return {Object} promise
+                 */
+                this.update = function(item) {
+                    var etag = item.etag;
+                    var delay = $q.defer();
+
+                    item.patch(item, {}, {
+                        'If-Match': etag
+                    }).then(function(response) {
+                        item._id = response.data._id;
+                        item._links = response.data._links;
+                        item.etag = response.data.etag;
+                        item.updated = response.data.updated;
+                        delay.resolve(item);
+                    }, function(response) {
+                        delay.reject(response);
+                    });
+
+                    return delay.promise;
+                };
+            }
+
+            return new ServerService();
         });
 });
