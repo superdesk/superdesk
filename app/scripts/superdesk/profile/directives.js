@@ -66,7 +66,7 @@ define([
                     });
                 }
             };
-        }).
+        })
         /**
          * sdActivityFeed is a widget rendering last activity for given user
          *
@@ -76,7 +76,7 @@ define([
          * Params:
          * @param {object} ngModel
          */
-        directive('sdActivityFeed', function($rootScope, profileService) {
+        .directive('sdActivityFeed', function($rootScope, profileService) {
             return {
                 restrict: 'A',
                 replace: true,
@@ -99,6 +99,16 @@ define([
                             scope.activityFeed.links = next.links;
                         });
                     };
+                }
+            };
+        })
+        .directive('sdInfoItem', function() {
+            return {
+                link: function(scope, element) {
+                    element.addClass('info-item');
+                    element.find('label').addClass('info-label');
+                    element.find('input').addClass('info-value');
+                    element.find('input').addClass('info-editable');
                 }
             };
         });
