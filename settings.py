@@ -8,7 +8,7 @@ SERVER_NAME = 'localhost:5000'
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S'
 
 X_DOMAINS = '*'
-X_HEADERS = ['Content-Type', 'Authorization']
+X_HEADERS = ['Content-Type', 'Authorization', 'If-Match']
 
 MONGO_DBNAME = os.environ.get('MONGO_DBNAME', 'superdesk')
 if os.environ.get('MONGOLAB_URI'):
