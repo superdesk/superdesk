@@ -4,5 +4,6 @@ define([
     './sdDebounceThrottle',
     './sdReldate',
     './sdGroupDates',
-    './sdPagination'
+    './sdPagination',
+    './sdSort'
 ], function() {});

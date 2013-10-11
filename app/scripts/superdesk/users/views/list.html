@@ -8,11 +8,7 @@
         <div class="tab-pane active" id="active_users">
             <div class="tab-submenu">
                 <div sd-pagination sd-data-model="users" sd-page-model="routeParams.page"></div>
-                <!--
-                <div class="page-info pull-right">
-                    
-                </div>
-                -->
+                <!--<div class="page-info pull-right"></div>-->
             </div>
 
             <div class="tab-table">
@@ -22,32 +18,40 @@
                             <th class="chckbx_col"><input type="checkbox" name="all"></th>
                             <th class="avatar_col" ng-show="settings.fields.avatar"></th>
                             <th class="name_col" ng-show="settings.fields.display_name">
-                                <a href="" ng-click="sort('display_name')">
-                                    {{ 'Name'|translate }}
-                                    <i class="icon-chevron-down" ng-show="routeParams.sortField === 'display_name' && routeParams.sortDirection === 'asc'"></i>
-                                    <i class="icon-chevron-up" ng-show="routeParams.sortField === 'display_name' && routeParams.sortDirection === 'desc'"></i>
-                                </a>
+                                <a href=""
+                                    sd-sort
+                                    data-sort-field-text="{{ 'Name'|translate }}"
+                                    data-sort-field-name="display_name"
+                                    sd-sort-field-model="routeParams.sortField"
+                                    sd-sort-direction-model="routeParams.sortDirection"
+                                ></a>
                             </th>
                             <th class="username_col" ng-show="settings.fields.username">
-                                <a href="" ng-click="sort('username')">
-                                    {{ 'Username'|translate }}
-                                    <i class="icon-chevron-down" ng-show="routeParams.sortField === 'username' && routeParams.sortDirection === 'asc'"></i>
-                                    <i class="icon-chevron-up" ng-show="routeParams.sortField === 'username' && routeParams.sortDirection === 'desc'"></i>
-                                </a>
+                                <a href=""
+                                    sd-sort
+                                    data-sort-field-text="{{ 'Username'|translate }}"
+                                    data-sort-field-name="username"
+                                    sd-sort-field-model="routeParams.sortField"
+                                    sd-sort-direction-model="routeParams.sortDirection"
+                                ></a>
                             </th>
                             <th class="email_col resp-hide" ng-show="settings.fields.email">
-                                <a href="" ng-click="sort('email')">
-                                    {{ 'Email'|translate }}
-                                    <i class="icon-chevron-down" ng-show="routeParams.sortField === 'email' && routeParams.sortDirection === 'asc'"></i>
-                                    <i class="icon-chevron-up" ng-show="routeParams.sortField === 'email' && routeParams.sortDirection === 'desc'"></i>
-                                </a>
+                                <a href=""
+                                    sd-sort
+                                    data-sort-field-text="{{ 'Email'|translate }}"
+                                    data-sort-field-name="email"
+                                    sd-sort-field-model="routeParams.sortField"
+                                    sd-sort-direction-model="routeParams.sortDirection"
+                                ></a>
                             </th>
                             <th class="small_col resp-hide" ng-show="settings.fields.created">
-                                <a href="" ng-click="sort('created')">
-                                    {{ 'Created'|translate }}
-                                    <i class="icon-chevron-down" ng-show="routeParams.sortField === 'created' && routeParams.sortDirection === 'asc'"></i>
-                                    <i class="icon-chevron-up" ng-show="routeParams.sortField === 'created' && routeParams.sortDirection === 'desc'"></i>
-                                </a>
+                                <a href=""
+                                    sd-sort
+                                    data-sort-field-text="{{ 'Created'|translate }}"
+                                    data-sort-field-name="created"
+                                    sd-sort-field-model="routeParams.sortField"
+                                    sd-sort-direction-model="routeParams.sortDirection"
+                                ></a>
                             </th>
                             <th class="action_col">
                                 <div class="dropdown" style="text-align:right;" >
