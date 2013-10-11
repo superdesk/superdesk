@@ -27,9 +27,9 @@ define([
                 replace: true,
                 template: '<span class="sf-checkbox-custom"></span>',
                 link: function($scope, element, attrs, ngModel) {
-                    $timeout(function() {
+                    ngModel.$render = function() {
                         render(element, ngModel.$viewValue);
-                    });
+                    };
 
                     element.on('click', function(){
                         $scope.$apply(function() {
