@@ -1,6 +1,6 @@
 define([
     'angular',
-    'uploader-angular',
+    'file-upload/jquery.fileupload-angular',
     './controllers/main',
     './controllers/upload-avatar',
     './directives',
