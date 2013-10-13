@@ -68,8 +68,8 @@ define([
 
                     $scope.$watch(attrs.ngModel, function() {
                         var status = true;
-                        for (var i = 0; i < ngModel.$viewValue.length; i++) {
-                            if (ngModel.$viewValue[i][checkAttribute] !== true) {
+                        for (var i = 0; i < $scope[attrs.ngModel].items.length; i++) {
+                            if ($scope[attrs.ngModel].items[i][checkAttribute] !== true) {
                                 status = false;
                                 break;
                             }
@@ -83,8 +83,8 @@ define([
                         checked = !checked;
                         
                         var model = ngModel.$viewValue;
-                        for (var i = 0; i < model.length; i++) {
-                            model[i][checkAttribute] = checked;
+                        for (var i = 0; i < model.items.length; i++) {
+                            model.items[i][checkAttribute] = checked;
                         }
                         $scope.$apply(function() {
                             ngModel.$setViewValue(model);
