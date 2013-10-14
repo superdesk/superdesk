@@ -68,8 +68,8 @@ define([
 
                     $scope.$watch(attrs.ngModel, function() {
                         var status = true;
-                        for (var i = 0; i < $scope[attrs.ngModel].length; i++) {
-                            if ($scope[attrs.ngModel][i][checkAttribute] !== true) {
+                        for (var i = 0; i < $scope.$eval(attrs.ngModel).length; i++) {
+                            if ($scope.$eval(attrs.ngModel)[i][checkAttribute] !== true) {
                                 status = false;
                                 break;
                             }
