@@ -321,10 +321,6 @@ body {
 }
 
 
-
-
-
-
 input[type="text"], 
 input[type="password"],
 textarea, select {
@@ -466,4 +462,35 @@ textarea, select {
 	text-shadow: 0 -1px #070707;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#434343', endColorstr='#252525', GradientType=0);
 	filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
+}
+
+
+/*
+=========================================
+Notifications
+=========================================
+*/
+
+@notif-holder-w : 300px;
+.notification-holder {
+	position: fixed;
+	z-index: 2001;
+	width: @notif-holder-w;
+	top: @topspace;
+	left: 50%;
+	margin-left: -@notif-holder-w/2;
+	overflow: hidden;
+	background: rgba(245,245,245,1);
+    border-color: #d5d5d5;
+
+    padding: 0 10px 10px;
+    .box-shadow-both(inset 0 5px 3px -3px #d5d5d5,0 1px 5px -3px rgba(0,0,0,.1));
+	.alert {
+		height: @subnav-height - 20 - 1;
+		line-height: @subnav-height - 20 - 1;
+		.box-sizing(border-box);
+		.border-radius(0);
+		padding: 0 15px;
+		margin: 10px 0 0;
+	}
 }
