@@ -101,11 +101,10 @@ superdesk.domain('users', {
             'type': 'dict'
         },
         'picture_url': {
-            'type': 'string',
-            'readonly': True
+            'type': 'string'
         }
     },
-    'extra_response_fields': ['username', 'first_name', 'last_name', 'display_name', 'email', 'user_info'],
+    'extra_response_fields': ['username', 'first_name', 'last_name', 'display_name', 'email', 'user_info', 'picture_url'],
     'datasource': {
         'projection': {
             'username': 1,
@@ -113,7 +112,8 @@ superdesk.domain('users', {
             'last_name': 1,
             'display_name': 1,
             'email': 1,
-            'user_info': 1
+            'user_info': 1,
+            'picture_url': 1
         }
     }
 })
