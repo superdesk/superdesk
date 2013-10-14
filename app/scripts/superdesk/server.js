@@ -4,53 +4,6 @@ define([
 ], function(angular) {
     'use strict';
 
-    var ResourceBase = function() {
-        this.links = {};
-    };
-    ResourceBase.prototype.setLinks = function(links) {
-        for (var i in links) {
-            if (links[i] !== null && links[i].href !== undefined) {
-                this.links[i] = links[i].href;
-            }
-        }
-    };
-
-    var ResourceList = function(response) {
-        ResourceBase.call(this);
-
-        this.items = [];
-
-        if (response !== undefined) {
-            this.items = response._items;
-
-            for (var i = 0; i < response._items.length; i++) {
-                this.items[i] = new ResourceItem(response._items[i]);
-            }
-
-            this.setLinks(response._links);
-        }
-    };
-    ResourceList.prototype = new ResourceBase();
-    ResourceList.prototype.constructor = ResourceList;
-
-    var ResourceItem = function(response) {
-        ResourceBase.call(this);
-
-        if (response !== undefined) {
-            for (var i in response) {
-                if (i !== '_links') {
-                    this[i] = response[i];
-                }
-            }
-            
-            this.setLinks(response._links);
-        }
-    };
-    ResourceItem.prototype = new ResourceBase();
-    ResourceItem.prototype.constructor = ResourceItem;
-
-    //
-
     angular.module('superdesk.server', ['restangular'])
         // restanuglar config
         .run(function(Restangular, $http) {
@@ -87,14 +40,13 @@ define([
                  * @param {Object} parameters
                  * @return {Object} promise
                  */
-                this.readList = function(resource, parameters) {
+                this.list = function(resource, parameters) {
                     var delay = $q.defer();
 
                     Restangular.all(resource)
                     .getList(parameters)
                     .then(function(response) {
-                        var resourceList = new ResourceList(response);
-                        delay.resolve(resourceList);
+                        delay.resolve(response);
                     }, function(response) {
                         delay.reject(response);
                     });
@@ -109,7 +61,7 @@ define([
                  * @param {string} id
                  * @return {Object} promise
                  */
-                this.readItem = function(resource, id) {
+                this.read = function(resource, id) {
                     return Restangular.one(resource, id).get();
                 };
 
@@ -133,6 +85,54 @@ define([
                         delay.resolve(item);
                     }, function(response) {
                         delay.reject(response);
+                    });
+
+                    return delay.promise;
+                };
+
+                this._delete = function(resource, id) {
+                    var delay = $q.defer();
+
+                    Restangular.one(resource, id).get().then(
+                        function(response) {
+                            var item = response;
+                            item.remove({}, {
+                                'If-Match': item.etag
+                            }).then(function(response) {
+                                delay.resolve(item);
+                            }, function(response) {
+                                delay.reject(response);
+                            });
+                        },
+                        function(response) {
+                            delay.reject(response);
+                        }
+                    );
+
+                    return delay.promise;
+                };
+
+                /**
+                 * Delete given item
+                 *
+                 * @param {string} resource
+                 * @param {array} ids
+                 * @return {Object} promise
+                 */
+                this.delete = function(resource, ids) {
+                    var self = this;
+                    var delay = $q.defer();
+                    if (!_.isArray(ids)) {
+                        ids = [ids];
+                    }
+                    
+                    var promises = [];
+                    _.forEach(ids, function(id) {
+                        promises.push(self._delete(resource, id));
+                    });
+                    
+                    $q.all(promises).then(function(response) {
+                        delay.resolve(response);
                     });
 
                     return delay.promise;

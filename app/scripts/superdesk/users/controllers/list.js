@@ -3,7 +3,7 @@ define(['angular'], function(angular) {
 
     return ['$scope', '$location', 'settings', 'state', 'server', 'users',
     function($scope, $location, settings, state, server, users) {
-        
+
         $scope.users = users;
         $scope.settings = settings;
         $scope.state = state;

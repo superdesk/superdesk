@@ -18,7 +18,7 @@ define([
         .directive('sdPagination', function() {
             var getParameters = function(url) {
                 var parameters = {};
-                var parts = url.split('?');
+                var parts = url.href.split('?');
                 parts = parts[1].split('&');
                 _.forEach(parts, function(part) {
                     var item = part.split('=');
@@ -35,8 +35,8 @@ define([
                 templateUrl: 'scripts/superdesk/views/sdPagination.html',
                 link: function($scope, element, attrs) {
                     $scope.pageTotal = $scope.page;
-                    if ($scope.data.links.last !== undefined) {
-                        $scope.pageTotal = getParameters($scope.data.links.last).page;
+                    if ($scope.data._links.last !== undefined) {
+                        $scope.pageTotal = getParameters($scope.data._links.last).page;
                     }
                 }
             };

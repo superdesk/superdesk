@@ -7,6 +7,10 @@
     <div class="tab-content user-tabs">
         <div class="tab-pane active" id="active_users">
             <div class="tab-submenu">
+                <div class="page-info pull-left">
+                    {{ 'With selected'|translate }}: 
+                    <button class="btn" ng-click="delete();"><i class="icon-trash"></i> {{ 'Delete'|translate }}</button>
+                </div>
                 <div sd-pagination sd-data-model="users" sd-state-handler="state"></div>
                 <!--<div class="page-info pull-right"></div>-->
             </div>
@@ -15,7 +19,7 @@
                 <table class="sf_table user-table">
                     <thead>
                         <tr>
-                            <th class="chckbx_col"><input sd-check-all ng-model="users.items"></th>
+                            <th class="chckbx_col"><input sd-check-all ng-model="users._items"></th>
                             <th class="avatar_col" ng-show="settings.fields.avatar"></th>
                             <th class="name_col" ng-show="settings.fields.display_name">
                                 <a href=""
@@ -66,7 +70,7 @@
 
                     <tbody>
 
-                        <tr ng-repeat="user in users.items">
+                        <tr ng-repeat="user in users._items">
                             <td><input sd-check ng-model="user._checked"></td>
                             <td><figure class="avatar" ng-show="settings.fields.avatar"><img src=""></figure></td>
                             <td class="name_col" ng-show="settings.fields.display_name"><a href="">{{ user.display_name }}</a></td>
@@ -80,7 +84,7 @@
                                         <li><a href="#"><i class="icon-eye-open"></i> {{ 'View details'|translate }}</a></li>
                                         <li><a href="#"><i class="icon-pencil"></i> {{ 'Edit details'|translate }}</a></li>
                                         <li><a href="#"><i class="icon-ban-circle"></i> {{ 'Permissions'|translate }}</a></li>
-                                        <li><a href="#"><i class="icon-trash"></i> {{ 'Permissions'|translate }}</a></li>
+                                        <li><a href="" ng-click="delete(user._id)"><i class="icon-trash"></i> {{ 'Delete'|translate }}</a></li>
                                     </ul>
                                 </div>
                             </td>

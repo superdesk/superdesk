@@ -82,10 +82,15 @@ define([
     'use strict';
 
     angular.module('superdesk.directives', []);
+    angular.module('superdesk.filters', []);
 
-    require(['superdesk/directives/all'], function() {
+    require([
+        'superdesk/directives/all',
+        'superdesk/filters/all'
+    ], function() {
         var modules = [
             'superdesk.directives',
+            'superdesk.filters',
             'superdesk.services.translate',
             'superdesk.auth',
             'superdesk.menu',
