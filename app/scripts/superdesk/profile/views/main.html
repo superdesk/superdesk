@@ -5,23 +5,23 @@
 	<p class="alert alert-info" ng-show="msg=='info'" translate>Saving...</p>
 </div>
 
-<div sd-upload-popup ></div>
-
+<div sd-upload-popup></div>
 
 <div class="my-profile-container user-details-pane">
 	<div class="content">
 		<div class="profile">
 			<div class="profile-pic">
 				<figure>
-					<img src="images/sample/profileimg.jpg">
+					<img ng-src="{{ user.picture_url }}" alt="user.display_name">
 				</figure>
-				<a class="change-photo" translate>Change Photo</a>
+				<a class="change-photo" ng-click="openUpload()" translate>Change Photo</a>
+				<input type="hidden" ng-model="user.picture_url" />
 			</div>
 
 			<div class="profile-info user-profile-edit">
 				<div class="header-info">
 
-					<button class="btn btn-info pull-right" ng-click="save.status = save()">Save</button>
+					<button class="btn btn-info pull-right" ng-click="saveProfile()">Save</button>
 
 					<h2>{{ user.display_name || user.username }}</h2>
 					<ul class="user-roles">

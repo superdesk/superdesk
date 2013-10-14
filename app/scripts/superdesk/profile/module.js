@@ -1,6 +1,5 @@
 define([
     'angular',
-    'file-upload/jquery.fileupload-angular',
     './controllers/main',
     './controllers/upload-avatar',
     './directives',
@@ -8,8 +7,8 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.profile', ['blueimp.fileupload', 'superdesk.profile.directives', 'superdesk.profile.resources', 'superdesk.profile.directives.uploadavatar']).
-        config(function($routeProvider) {
+    angular.module('superdesk.profile', ['superdesk.profile.directives', 'superdesk.profile.resources', 'superdesk.services.upload']).
+        config(['$routeProvider', function($routeProvider) {
             $routeProvider.
                 when('/my-profile', {
                     controller: require('superdesk/profile/controllers/main'),
@@ -20,5 +19,5 @@ define([
                         }
                     }
                 });
-        });
+        }]);
 });
