@@ -9,15 +9,15 @@ define([
         var func = _[methodName];
 
         return {
-            require: ['ngModel'],
-            link: function($scope, element, attrs, ctrl) {
+            require: 'ngModel',
+            link: function($scope, element, attrs, ngModel) {
                 if (attrs.interval !== '' && attrs.interval !== undefined) {
                     interval = attrs.interval;
                 }
-                element.unbind('input').unbind('keydown').unbind('change');
-                element.bind('input', func(function() {
+                element.off('input').off('keydown').off('change');
+                element.on('input', func(function() {
                     $scope.$apply(function() {
-                        ctrl[0].$setViewValue(element.val());
+                        ngModel.$setViewValue(element.val());
                     });
                 }, interval));
             }
