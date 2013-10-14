@@ -76,7 +76,7 @@ define([
                         
                         var model = ngModel.$viewValue;
                         _.forEach(model, function(item) {
-                            item[checkAttribute] = checked
+                            item[checkAttribute] = checked;
                         });
                         $scope.$apply(function() {
                             ngModel.$setViewValue(model);
