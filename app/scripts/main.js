@@ -9,7 +9,15 @@ require.config({
         'moment': 'bower_components/momentjs/moment',
         'restangular': 'bower_components/restangular/dist/restangular',
         'lodash': 'bower_components/lodash/dist/lodash',
-        'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext'
+        'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext',
+
+        'file-upload' : 'bower_components/blueimp-file-upload/js/',
+        'canvas-to-blob' : 'bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
+        'load-image': 'bower_components/blueimp-load-image/js/load-image',
+        'load-image-meta': 'bower_components/blueimp-load-image/js/load-image-meta',
+        'load-image-exif': 'bower_components/blueimp-load-image/js/load-image-exif',
+        'load-image-ios': 'bower_components/blueimp-load-image/js/load-image-ios',
+        'jquery.ui.widget': 'bower_components/blueimp-file-upload/js/vendor/jquery.ui.widget'
     },
     shim: {
         jquery: {

@@ -1,0 +1,22 @@
+<div class="uploader" ng-class="{'preview': preview}">
+    
+    <div class="uploader-area" ng-show="!preview">
+        <p>Drag your photo here</p>
+        <form file-upload>
+
+            <span class="btn fileinput-button">
+                <i class="icon-upload"></i>
+                <input type="file" name="file" ng-disabled="disabled">
+                <span>or upload from computer</span>
+            </span>          
+            
+        </form>                        
+    </div>
+
+    <div class="preview-area" ng-show="preview"></div>
+
+    <div class="progress" ng-show="!uploaded">
+        <div class="bar" style="width: {{progress}}%;"></div>
+    </div>
+
+</div>
