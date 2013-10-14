@@ -1,4 +1,5 @@
 
+import os
 from behave import *
 from flask import json
 
@@ -13,6 +14,10 @@ def test_json(context):
         assert key in response_data, key
         if context_data[key]:
             assert response_data[key] == context_data[key], response_data[key]
+
+def get_fixture_path(fixture):
+    abspath = os.path.abspath(os.path.dirname(__file__))
+    return os.path.join(abspath, 'fixtures', fixture)
 
 def get_self_href(resource):
     href = resource['_links']['self']['href']
@@ -56,6 +61,14 @@ def step_impl(context, url):
     headers += context.headers
     data = '{"data": %s}' % context.text
     context.response = context.client.patch(get_self_href(res), data=data, headers=headers, follow_redirects=True)
+
+@when('we upload a binary file')
+def step_impl(context):
+    with open(get_fixture_path('flower.jpg'), 'rb') as f:
+        data = {'file': f}
+        headers = [('Content-Type', 'multipart/form-data')]
+        headers.append(context.headers[1])
+        context.response = context.client.post('/upload', data=data, headers=headers, follow_redirects=True)
 
 @then('we get new resource')
 def step_impl(context):
@@ -104,3 +117,12 @@ def step_impl(context):
     response = context.client.get('/activity', headers=context.headers, follow_redirects=True)
     data = json.loads(response.get_data())
     assert len(data['_items']), data
+
+@then('we get a file reference')
+def step_impl(context):
+    assert context.response.status_code == 200, context.response.get_data()
+    data = json.loads(context.response.get_data())
+    assert 'self' in data['_links'], data['_links']
+    response = context.client.get(data['_links']['self']['href'], headers=context.headers, follow_redirects=True)
+    assert response.status_code == 200, response.status_code
+    assert len(response.get_data()), response

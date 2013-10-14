@@ -7,13 +7,14 @@ import blinker
 import importlib
 import eve.io.mongo
 import settings
-from flask import abort, app
+from flask import abort, app, Blueprint
 from flask.ext.script import Command, Option
 
 API_NAME = 'Superdesk API'
 VERSION = (0, 0, 1)
 DOMAIN = {}
 COMMANDS = {}
+BLUEPRINTS = []
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -22,20 +23,25 @@ def get_sender(sender):
     return sender[0] if sender else None
 
 def connect(signal, subscriber):
-    """Connect to signal."""
+    """Connect to signal"""
     blinker.signal(signal).connect(subscriber)
 
 def send(signal, *sender, **kwargs):
-    """Send signal."""
+    """Send signal"""
     blinker.signal(signal).send(get_sender(sender), **kwargs)
 
 def domain(resource, config):
-    """Add resource to register"""
+    """Register domain resource"""
     DOMAIN[resource] = config
 
 def command(name, command):
-    """Add command to register"""
+    """Register command"""
     COMMANDS[name] = command
+
+def blueprint(blueprint, **kwargs):
+    """Register blueprint"""
+    blueprint.kwargs = kwargs
+    BLUEPRINTS.append(blueprint)
 
 def proxy_resource_signal(action, app):
     def handle_signal(resource, documents):

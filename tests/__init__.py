@@ -6,8 +6,8 @@ os.environ['ELASTIC_INDEX'] = 'superdesk_tests'
 
 import superdesk
 
-superdesk.DEBUG = True
-superdesk.TESTING = True
+superdesk.app.DEBUG = True
+superdesk.app.TESTING = True
 
 from app import application
 app = application

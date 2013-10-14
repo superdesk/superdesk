@@ -8,7 +8,7 @@ class SuperdeskTokenAuth(eve.auth.TokenAuth):
     """Superdesk Token Auth"""
 
     def check_auth(self, token, allowed_roles, resource, method):
-        """Check if given token is valid."""
+        """Check if given token is valid"""
         return application.data.find_one('auth', token=token)
 
 class SuperdeskEve(eve.Eve):
@@ -22,11 +22,13 @@ class SuperdeskEve(eve.Eve):
 
 abspath = os.path.abspath(os.path.dirname(__file__))
 application = SuperdeskEve(data=superdesk.SuperdeskData, auth=SuperdeskTokenAuth, settings=os.path.join(abspath, 'settings.py'))
+superdesk.app = application
 
 application.on_fetch_resource = superdesk.proxy_resource_signal('read', application)
 application.on_fetch_item = superdesk.proxy_item_signal('read', application)
 
-superdesk.app = application
+for blueprint in superdesk.BLUEPRINTS:
+    application.register_blueprint(blueprint, **blueprint.kwargs)
 
 if __name__ == '__main__':
 
