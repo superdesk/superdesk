@@ -126,3 +126,4 @@ def step_impl(context):
     response = context.client.get(data['_links']['self']['href'], headers=context.headers, follow_redirects=True)
     assert response.status_code == 200, response.status_code
     assert len(response.get_data()), response
+    assert response.mimetype == 'image/jpeg', response.mimetype

@@ -1,5 +1,6 @@
 """Storage module"""
 
+import os.path
 from flask import request, jsonify, url_for
 import superdesk
 from .utils import get_random_string
@@ -8,7 +9,7 @@ bp = superdesk.Blueprint('storage', __name__)
 
 @bp.route('/upload', methods=['POST'])
 def save_upload():
-    filename = get_random_string(8)
+    filename = get_random_string(8) + os.path.splitext(request.files['file'].filename)[1]
     data = superdesk.app.data.driver.save_file(filename, request.files['file'])
     return jsonify({
         'filename': filename,
