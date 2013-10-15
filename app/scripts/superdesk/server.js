@@ -4,141 +4,139 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.server', ['restangular'])
-        // restanuglar config
-        .run(function(Restangular, $http) {
-            Restangular.setBaseUrl(ServerConfig.url);
-            Restangular.setDefaultHeaders($http.defaults.headers.common);
-            Restangular.setRestangularFields({id: '_id'});
-            Restangular.setRequestInterceptor(function(element, operation, route, url) {
-                switch(operation) {
-                    case 'patch':
-                    case 'put':
-                        // remove extra fields
-                        delete element._id;
-                        delete element._links;
-                        delete element.etag;
-                        delete element.updated;
-                        delete element.created;
-                        // wrap content for eve
-                        return {data: element};
+    angular.module('superdesk.server', [])
+    .service('server', function($q, $http) {
+
+        var server = {
+            _makeUrl: function(resource) {
+                return ServerConfig.url + '/' + resource;
+            },
+            _wrapUrl: function(url) {
+                if (ServerConfig.url.indexOf('https') === 0) {
+                    return 'https://' + url;
+                } else {
+                    return 'http://' + url;
+                }
+            },
+            _clean: function(item) {
+                var data = _.cloneDeep(item);
+                var fields = ['_id', '_links', 'etag', 'updated', 'created'];
+                _.forEach(fields, function(field) {
+                    delete data[field];
+                });
+                return data;
+            },
+            _all: function(functionName, items, datas) {
+                var self = this;
+                var delay = $q.defer();
+
+                // to make it usable with createAll
+                if (datas !== undefined) {
+                    var resource = items;
+                    var items = datas;
                 }
 
-                return element;
-            });
-        })
-        .service('server', function($q, Restangular) {
-            /**
-             * Restangular adapter
-             */
-            function ServerService() {
-
-                /**
-                 * Fetch resource list
-                 *
-                 * @param {string} resource
-                 * @param {Object} parameters
-                 * @return {Object} promise
-                 */
-                this.list = function(resource, parameters) {
-                    var delay = $q.defer();
-
-                    Restangular.all(resource)
-                    .getList(parameters)
-                    .then(function(response) {
-                        delay.resolve(response);
-                    }, function(response) {
-                        delay.reject(response);
-                    });
-
-                    return delay.promise;
-                };
-
-                /**
-                 * Fetch item with given id
-                 *
-                 * @param {string} resource
-                 * @param {string} id
-                 * @return {Object} promise
-                 */
-                this.read = function(resource, id) {
-                    return Restangular.one(resource, id).get();
-                };
-
-                /**
-                 * Update given item
-                 *
-                 * @param {Object} item
-                 * @return {Object} promise
-                 */
-                this.update = function(item) {
-                    var etag = item.etag;
-                    var delay = $q.defer();
-
-                    item.patch(item, {}, {
-                        'If-Match': etag
-                    }).then(function(response) {
-                        item._id = response.data._id;
-                        item._links = response.data._links;
-                        item.etag = response.data.etag;
-                        item.updated = response.data.updated;
-                        delay.resolve(item);
-                    }, function(response) {
-                        delay.reject(response);
-                    });
-
-                    return delay.promise;
-                };
-
-                this._delete = function(resource, id) {
-                    var delay = $q.defer();
-
-                    Restangular.one(resource, id).get().then(
-                        function(response) {
-                            var item = response;
-                            item.remove({}, {
-                                'If-Match': item.etag
-                            }).then(function(response) {
-                                delay.resolve(item);
-                            }, function(response) {
-                                delay.reject(response);
-                            });
-                        },
-                        function(response) {
-                            delay.reject(response);
-                        }
-                    );
-
-                    return delay.promise;
-                };
-
-                /**
-                 * Delete given item
-                 *
-                 * @param {string} resource
-                 * @param {array} ids
-                 * @return {Object} promise
-                 */
-                this.delete = function(resource, ids) {
-                    var self = this;
-                    var delay = $q.defer();
-                    if (!_.isArray(ids)) {
-                        ids = [ids];
+                var promises = [];
+                _.forEach(items, function(item) {
+                    if (resource !== undefined) {
+                        promises.push(self[functionName](resource, item));
+                    } else {
+                        promises.push(self[functionName](item));
                     }
-                    
-                    var promises = [];
-                    _.forEach(ids, function(id) {
-                        promises.push(self._delete(resource, id));
-                    });
-                    
-                    $q.all(promises).then(function(response) {
-                        delay.resolve(response);
-                    });
+                });
 
-                    return delay.promise;
-                };
+                $q.all(promises).then(function(response) {
+                    console.log(response);
+                    delay.resolve(response);
+                });
+
+                return delay.promise;
+            },
+            create: function(resource, data) {},
+            createAll: function(resource, datas) {},
+            list: function(resource, params) {
+                var delay = $q.defer();
+
+                $http({
+                    method: 'GET',
+                    url: this._makeUrl(resource),
+                    params: params,
+                    cache: true
+                })
+                .success(function(data, status, headers, config) {
+                    delay.resolve(data);
+                })
+                .error(function(data, status, headers, config) {
+                    delay.reject(data);
+                });
+
+                return delay.promise;
+            },
+            read: function(item) {
+                var delay = $q.defer();
+
+                $http({
+                    method: 'GET',
+                    url: this._wrapUrl(item._links.self.href),
+                    cache: true
+                })
+                .success(function(data, status, headers, config) {
+                    delay.resolve(data);
+                })
+                .error(function(data, status, headers, config) {
+                    delay.reject(data);
+                });
+
+                return delay.promise;
+            },
+            readAll: function(items) {
+                return this._all('read', items);
+            },
+            update: function(item) {
+                var delay = $q.defer();
+
+                $http({
+                    method: 'PATCH',
+                    url: this._wrapUrl(item._links.self.href),
+                    data: this._clean(item),
+                    headers: {'If-Match': item.etag},
+                    cache: true
+                })
+                .success(function(data, status, headers, config) {
+                    delay.resolve(data);
+                })
+                .error(function(data, status, headers, config) {
+                    delay.reject(data);
+                });
+
+                return delay.promise;
+            },
+            updateAll: function(items) {
+                return this._all('update', items);
+            },
+            delete: function(item) {
+                var delay = $q.defer();
+
+                $http({
+                    method: 'DELETE',
+                    url: this._wrapUrl(item._links.self.href),
+                    headers: {'If-Match': item.etag},
+                    cache: true
+                })
+                .success(function(data, status, headers, config) {
+                    delay.resolve(data);
+                })
+                .error(function(data, status, headers, config) {
+                    delay.reject(data);
+                });
+
+                return delay.promise;
+            },
+            deleteAll: function(items) {
+                return this._all('delete', items);
             }
+        };
 
-            return new ServerService();
-        });
+        return server;
+    });
 });
