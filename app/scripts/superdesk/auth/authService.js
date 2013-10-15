@@ -1,10 +1,11 @@
 define([
-    'angular'
+    'angular',
+    'superdesk/server',
 ], function(angular) {
     'use strict';
 
-    return ['$rootScope', '$http', '$q', 'Auth', 'storage',
-    function($rootScope, $http, $q, Auth, storage) {
+    return ['$rootScope', '$http', '$q', 'storage', 'server',
+    function($rootScope, $http, $q, storage, server) {
         initScope();
 
         /**
@@ -23,16 +24,17 @@ define([
             }
 
             var self = this;
-            Auth.save(
-                {auth: {username: username, password: password}},
-                function(response) {
-                    setSessionData(response.auth, rememberMe);
-                    $rootScope.$broadcast('auth.login');
-                    delay.resolve(response.auth);
-                }, function(response) {
-                    self.logout();
-                    delay.reject(response);
-                });
+
+            server.create('auth', {
+                username: username, password: password
+            }).then(function(response) {
+                setSessionData(response, rememberMe);
+                $rootScope.$broadcast('auth.login');
+                delay.resolve(response);
+            }, function(response) {
+                self.logout();
+                delay.reject(response);
+            });
 
             return delay.promise;
         };
