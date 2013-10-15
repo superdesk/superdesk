@@ -19,16 +19,25 @@ BLUEPRINTS = []
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-def get_sender(sender):
-    return sender[0] if sender else None
-
 def connect(signal, subscriber):
     """Connect to signal"""
     blinker.signal(signal).connect(subscriber)
 
-def send(signal, *sender, **kwargs):
+def send(signal, sender, **kwargs):
     """Send signal"""
-    blinker.signal(signal).send(get_sender(sender), **kwargs)
+    blinker.signal(signal).send(sender, **kwargs)
+
+def proxy_resource_signal(action, app):
+    def handle(resource, documents):
+        send(action, app.data, docs=documents)
+        send('%s:%s' % (action, resource), app.data, docs=documents)
+    return handle
+
+def proxy_item_signal(action, app):
+    def handle(resource, id, document):
+        send(action, app.data, resource=resource, docs=[document])
+        send('%s:%s' % (action, resource), app.data, docs=[document])
+    return handle
 
 def domain(resource, config):
     """Register domain resource"""
@@ -43,24 +52,16 @@ def blueprint(blueprint, **kwargs):
     blueprint.kwargs = kwargs
     BLUEPRINTS.append(blueprint)
 
-def proxy_resource_signal(action, app):
-    def handle_signal(resource, documents):
-        send(action, app.data, docs=documents)
-        send('%s:%s' % (action, resource), app.data, docs=documents)
-    return handle_signal
-
-def proxy_item_signal(action, app):
-    def handle_signal(resource, id, document):
-        send('%s:%s' % (action, resource), app.data, docs=[document])
-    return handle_signal
-
 class SuperdeskData(eve.io.mongo.Mongo):
     """Superdesk Data Layer"""
 
+    def _send(self, signal, resource, docs):
+        send(signal, self, resource=resource, docs=docs)
+        send('%s:%s' % (signal, resource), self, docs=docs)
+
     def insert(self, resource, docs):
         """Insert documents into resource storage."""
-        send('create', self, resource=resource, docs=docs)
-        send('create:%s' % resource, self, docs=docs)
+        self._send('create', resource, docs)
         return super(SuperdeskData, self).insert(resource, docs)
 
 for app_name in getattr(settings, 'INSTALLED_APPS'):

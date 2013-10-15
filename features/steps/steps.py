@@ -127,3 +127,8 @@ def step_impl(context):
     assert response.status_code == 200, response.status_code
     assert len(response.get_data()), response
     assert response.mimetype == 'image/jpeg', response.mimetype
+
+@then('we get a picture url')
+def step_impl(context):
+    data = json.loads(context.response.get_data())
+    assert 'picture_url' in data, data

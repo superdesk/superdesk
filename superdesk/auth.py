@@ -34,10 +34,10 @@ def authenticate(credentials, db):
 
     return user
 
-def on_create_auth(db, docs):
+def on_create_auth(data, docs):
     for doc in docs:
         try:
-            user = authenticate(doc, db)
+            user = authenticate(doc, data)
             doc['user'] = user.get('_id')
             doc['token'] = utils.get_random_string(40)
         except NotFoundAuthException:

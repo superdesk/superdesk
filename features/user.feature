@@ -60,3 +60,13 @@ Feature: User Resource
             """
 
         Then we get updated response
+
+    @auth
+    Scenario: User should get a picture for his profile
+        Given "users"
+            """
+            [{"username": "foo", "email": "info@example.com"}]
+            """
+
+        When we get "/users/foo"
+        Then we get a picture url
