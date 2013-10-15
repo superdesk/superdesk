@@ -43,7 +43,7 @@ define(['angular'], function(angular) {
                 }
             };
 
-            return new function(pluginName, defaultSettings) {
+            return new function() {
                 this.initialize = function(pluginName, defaultSettings) {
                     var instance = new SettingsContainer(pluginName, defaultSettings);
                     instance.load();
