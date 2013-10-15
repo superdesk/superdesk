@@ -9,7 +9,7 @@
             <div class="tab-submenu">
                 <div class="page-info pull-left">
                     {{ 'With selected'|translate }}: 
-                    <button class="btn" ng-click="delete();"><i class="icon-trash"></i> {{ 'Delete'|translate }}</button>
+                    <button class="btn" ng-click="deleteChecked();"><i class="icon-trash"></i> {{ 'Delete'|translate }}</button>
                 </div>
                 <div sd-pagination sd-data-model="users" sd-state-handler="state"></div>
                 <!--<div class="page-info pull-right"></div>-->
@@ -84,7 +84,7 @@
                                         <li><a href="#"><i class="icon-eye-open"></i> {{ 'View details'|translate }}</a></li>
                                         <li><a href="#"><i class="icon-pencil"></i> {{ 'Edit details'|translate }}</a></li>
                                         <li><a href="#"><i class="icon-ban-circle"></i> {{ 'Permissions'|translate }}</a></li>
-                                        <li><a href="" ng-click="delete(user._id)"><i class="icon-trash"></i> {{ 'Delete'|translate }}</a></li>
+                                        <li><a href="" ng-click="delete(user)"><i class="icon-trash"></i> {{ 'Delete'|translate }}</a></li>
                                     </ul>
                                 </div>
                             </td>

@@ -58,7 +58,7 @@ define([
                     method: method,
                     url: url,
                     params: params,
-                    cache: true
+                    cache: false
                 };
 
                 if (method === 'patch') {
