@@ -20,10 +20,10 @@ define([
                 var parameters = {};
                 var parts = url.split('?');
                 parts = parts[1].split('&');
-                for (var i = 0; i < parts.length; i++) {
-                    var item = parts[i].split('=');
+                _.forEach(parts, function(part) {
+                    var item = part.split('=');
                     parameters[item[0]] = item[1];
-                }
+                });
                 return parameters;
             };
 
