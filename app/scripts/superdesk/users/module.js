@@ -1,6 +1,7 @@
 define([
     'angular',
     'superdesk/settings',
+    'superdesk/state',
     'superdesk/server',
     'superdesk/services/translate',
     './controllers/list',
@@ -8,7 +9,7 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.users', ['ngRoute', 'superdesk.settings', 'superdesk.server', 'superdesk.users.services']).
+    angular.module('superdesk.users', ['ngRoute', 'superdesk.settings', 'superdesk.state', 'superdesk.server', 'superdesk.users.services']).
         value('defaultListParams', {
             search: '',
             sortField: 'display_name',
@@ -41,6 +42,10 @@ define([
                         settings: ['settings', 'defaultListSettings',
                         function(settings, defaultListSettings) {
                             return settings.initialize('users:list', defaultListSettings);
+                        }],
+                        state: ['state', 'defaultListParams', '$route',
+                        function(state, defaultListParams, $route) {
+                            return state.initialize(defaultListParams, $route.current.params);
                         }]
                     },
                     menu: {

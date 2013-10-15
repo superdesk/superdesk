@@ -9,11 +9,11 @@ define([
          * sdPagination inserts pagination controls for a given data set.
          *
          * Usage:
-         * <div sd-pagination sd-data-model="list" sd-page-model="page"></div>
+         * <div sd-pagination sd-data-model="list" sd-state-handler="state"></div>
          * 
          * Params:
-         * @param {ResourceList} sdDataModel - model for data
-         * @param {number} sdPageModel - model for current page
+         * @param {Array} sdDataModel - model for data
+         * @param {Object} sdStateHandler - handler for application state
          */
         .directive('sdPagination', function() {
             var getParameters = function(url) {
@@ -30,7 +30,7 @@ define([
             return {
                 scope: {
                     data: '=sdDataModel',
-                    page: '=sdPageModel'
+                    state: '=sdStateHandler'
                 },
                 templateUrl: 'scripts/superdesk/views/sdPagination.html',
                 link: function($scope, element, attrs) {
