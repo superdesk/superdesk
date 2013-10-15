@@ -1,6 +1,5 @@
 define([
-    'angular',
-    'restangular'
+    'angular'
 ], function(angular) {
     'use strict';
 
@@ -18,7 +17,7 @@ define([
                     return 'http://' + url;
                 }
             },
-            _clean: function(item) {
+            _cleanData: function(item) {
                 var data = _.cloneDeep(item);
                 var fields = ['_id', '_links', 'etag', 'updated', 'created'];
                 _.forEach(fields, function(field) {
@@ -33,7 +32,7 @@ define([
                 // to make it usable with createAll
                 if (datas !== undefined) {
                     var resource = items;
-                    var items = datas;
+                    items = datas;
                 }
 
                 var promises = [];
@@ -46,14 +45,82 @@ define([
                 });
 
                 $q.all(promises).then(function(response) {
-                    console.log(response);
                     delay.resolve(response);
                 });
 
                 return delay.promise;
             },
-            create: function(resource, data) {},
-            createAll: function(resource, datas) {},
+            /**
+             * Create multiple items
+             *
+             * @param {string} resource
+             * @param {Array} datas
+             * @return {Array} promise
+             */
+            createAll: function(resource, datas) {
+                return this._all('create', resource, datas);
+            },
+            /**
+             * Read multiple items
+             *
+             * @param {Array} items
+             * @return {Array} promise
+             */
+            readAll: function(items) {
+                return this._all('read', items);
+            },
+            /**
+             * Update multiple items
+             *
+             * @param {Array} items
+             * @return {Array} promise
+             */
+            updateAll: function(items) {
+                return this._all('update', items);
+            },
+            /**
+             * Delete multiple items
+             *
+             * @param {Array} items
+             * @return {Array} promise
+             */
+            deleteAll: function(items) {
+                return this._all('delete', items);
+            },
+            /**
+             * Create single item
+             *
+             * @param {string} resource
+             * @param {Object} data
+             * @return {Object} promise
+             */
+            create: function(resource, data) {
+                var delay = $q.defer();
+
+                var data = this._cleanData(data);
+
+                $http({
+                    method: 'POST',
+                    url: this._makeUrl(resource),
+                    data: {data: data},
+                    cache: true
+                })
+                .success(function(data, status, headers, config) {
+                    delay.resolve(data.data);
+                })
+                .error(function(data, status, headers, config) {
+                    delay.reject(data);
+                });
+
+                return delay.promise;
+            },
+            /**
+             * List items
+             *
+             * @param {string} resource
+             * @param {Object} params
+             * @return {Object} promise
+             */
             list: function(resource, params) {
                 var delay = $q.defer();
 
@@ -72,6 +139,12 @@ define([
 
                 return delay.promise;
             },
+            /**
+             * Read single item
+             *
+             * @param {Object} item
+             * @return {Object} promise
+             */
             read: function(item) {
                 var delay = $q.defer();
 
@@ -89,21 +162,32 @@ define([
 
                 return delay.promise;
             },
-            readAll: function(items) {
-                return this._all('read', items);
-            },
+            /**
+             * Update single item
+             *
+             * @param {Object} item
+             * @return {Object} promise
+             */
             update: function(item) {
                 var delay = $q.defer();
+
+                var created = item.created;
+                var data = this._cleanData(item);
 
                 $http({
                     method: 'PATCH',
                     url: this._wrapUrl(item._links.self.href),
-                    data: this._clean(item),
+                    data: {data: data},
                     headers: {'If-Match': item.etag},
                     cache: true
                 })
                 .success(function(data, status, headers, config) {
-                    delay.resolve(data);
+                    var fields = ['_id', '_links', 'etag', 'updated'];
+                    _.forEach(fields, function(field) {
+                        item[field] = data.data[field];
+                    });
+                    item.created = created;
+                    delay.resolve(item);
                 })
                 .error(function(data, status, headers, config) {
                     delay.reject(data);
@@ -111,9 +195,12 @@ define([
 
                 return delay.promise;
             },
-            updateAll: function(items) {
-                return this._all('update', items);
-            },
+            /**
+             * Delete single item
+             *
+             * @param {Object} item
+             * @return {Object} promise
+             */
             delete: function(item) {
                 var delay = $q.defer();
 
@@ -131,9 +218,6 @@ define([
                 });
 
                 return delay.promise;
-            },
-            deleteAll: function(items) {
-                return this._all('delete', items);
             }
         };
 
