@@ -1,8 +1,8 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', '$location', '$routeParams', 'settings', 'server', 'users', 'defaultListParams', 'defaultSettings',
-    function($scope, $location, $routeParams, settings, server, users, defaultListParams, defaultSettings) {
+    return ['$scope', '$location', '$routeParams', 'settings', 'server', 'users', 'defaultListParams',
+    function($scope, $location, $routeParams, settings, server, users, defaultListParams) {
         
         $scope.$watch('routeParams', function() {
             var routeParams = {};
@@ -17,9 +17,7 @@ define(['angular'], function(angular) {
         //
 
         $scope.users = users;
-
-        $scope.settings = settings.initialize('users', defaultSettings);
-        $scope.settings.load();
+        $scope.settings = settings;
 
         $routeParams = angular.extend({}, defaultListParams, $routeParams);
         $scope.routeParams = $routeParams;
