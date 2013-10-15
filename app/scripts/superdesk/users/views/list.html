@@ -72,7 +72,7 @@
 
                         <tr ng-repeat="user in users.items">
                             <td><input type="checkbox"></td>
-                            <td><figure class="avatar" ng-show="settings.fields.avatar"><img src=""></figure></td>
+                            <td><figure class="avatar" ng-show="settings.fields.avatar"><img ng-src="{{ user.picture_url }}" width="22" height="22"></figure></td>
                             <td class="name_col" ng-show="settings.fields.display_name"><a href="">{{ user.display_name }}</a></td>
                             <td ng-show="settings.fields.username">{{ user.username }}</td>
                             <td class="email_col resp-hide" ng-show="settings.fields.email"><a href="">{{ user.email }}</a></td>
