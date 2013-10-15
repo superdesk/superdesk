@@ -11,15 +11,15 @@ define([
         }).
         directive('sdWorldclock', function() {
             return {
-                templateUrl : 'scripts/superdesk/dashboard/views/worldClock.html',
+                templateUrl : 'scripts/superdesk/dashboard/views/widgets/worldclock/worldClock.html',
                 replace: true,
-                restrict: 'E',
+                restrict: 'A',
                 controller : 'WorldClockController'
             };
         }).
         directive('sdClock', function() {
             return {
-                templateUrl: 'scripts/superdesk/dashboard/views/worldClockBox.html',
+                templateUrl: 'scripts/superdesk/dashboard/views/widgets/worldclock/worldClockBox.html',
                 scope: {wtime: '=wtime'},
                 replace: true,
                 transclude: true,

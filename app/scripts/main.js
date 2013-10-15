@@ -17,7 +17,9 @@ require.config({
         'load-image-meta': 'bower_components/blueimp-load-image/js/load-image-meta',
         'load-image-exif': 'bower_components/blueimp-load-image/js/load-image-exif',
         'load-image-ios': 'bower_components/blueimp-load-image/js/load-image-ios',
-        'jquery.ui.widget': 'bower_components/blueimp-file-upload/js/vendor/jquery.ui.widget'
+        'jquery.ui.widget': 'bower_components/blueimp-file-upload/js/vendor/jquery.ui.widget',
+
+        'gridster': 'bower_components/gridster/dist/jquery.gridster'
     },
     shim: {
         jquery: {
@@ -50,6 +52,9 @@ require.config({
         },
         'restangular': {
             deps: ['lodash']
+        },
+        'gridster': {
+            deps: ['angular']
         }
     }
 });

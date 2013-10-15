@@ -1,6 +1,7 @@
 define([
     'angular',
     'angular-route',
+    'gridster',
     './controllers/main',
     './directives',
     './widgets/worldclock'
