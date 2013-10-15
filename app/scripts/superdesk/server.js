@@ -50,6 +50,48 @@ define([
 
                 return delay.promise;
             },
+            _http: function(method, url, params, data) {
+                var delay = $q.defer();
+
+                method = method.toLowerCase();
+                var options = {
+                    method: method,
+                    url: url,
+                    params: params,
+                    cache: true
+                };
+
+                if (method === 'patch') {
+                    var created = data.created;
+                }
+                if (method === 'delete' || method === 'patch') {
+                    options.headers = {'If-Match': data.etag};
+                }
+                if (method === 'post' || method === 'patch') {
+                    options.data = {data: this._cleanData(data)};
+                }
+
+                $http(options)
+                .success(function(responseData) {
+                    if (method === 'post') {
+                        delay.resolve(responseData.data);
+                    } else if (method === 'patch') {
+                        var fields = ['_id', '_links', 'etag', 'updated'];
+                        _.forEach(fields, function(field) {
+                            data[field] = responseData.data[field];
+                        });
+                        data.created = created;
+                        delay.resolve(data);
+                    } else {
+                        delay.resolve(responseData);
+                    }
+                })
+                .error(function(responseData) {
+                    delay.reject(responseData);
+                });
+
+                return delay.promise;
+            },
             /**
              * Create multiple items
              *
@@ -95,24 +137,11 @@ define([
              * @return {Object} promise
              */
             create: function(resource, data) {
-                var delay = $q.defer();
-
-                var data = this._cleanData(data);
-
-                $http({
-                    method: 'POST',
-                    url: this._makeUrl(resource),
-                    data: {data: data},
-                    cache: true
-                })
-                .success(function(data, status, headers, config) {
-                    delay.resolve(data.data);
-                })
-                .error(function(data, status, headers, config) {
-                    delay.reject(data);
-                });
-
-                return delay.promise;
+                return this._http('post',
+                    this._makeUrl(resource),
+                    {},
+                    data
+                );
             },
             /**
              * List items
@@ -122,22 +151,10 @@ define([
              * @return {Object} promise
              */
             list: function(resource, params) {
-                var delay = $q.defer();
-
-                $http({
-                    method: 'GET',
-                    url: this._makeUrl(resource),
-                    params: params,
-                    cache: true
-                })
-                .success(function(data, status, headers, config) {
-                    delay.resolve(data);
-                })
-                .error(function(data, status, headers, config) {
-                    delay.reject(data);
-                });
-
-                return delay.promise;
+                return this._http('get',
+                    this._makeUrl(resource),
+                    params
+                );
             },
             /**
              * Read single item
@@ -146,21 +163,9 @@ define([
              * @return {Object} promise
              */
             read: function(item) {
-                var delay = $q.defer();
-
-                $http({
-                    method: 'GET',
-                    url: this._wrapUrl(item._links.self.href),
-                    cache: true
-                })
-                .success(function(data, status, headers, config) {
-                    delay.resolve(data);
-                })
-                .error(function(data, status, headers, config) {
-                    delay.reject(data);
-                });
-
-                return delay.promise;
+                return this._http('get',
+                    this._wrapUrl(item._links.self.href)
+                );
             },
             /**
              * Update single item
@@ -169,31 +174,11 @@ define([
              * @return {Object} promise
              */
             update: function(item) {
-                var delay = $q.defer();
-
-                var created = item.created;
-                var data = this._cleanData(item);
-
-                $http({
-                    method: 'PATCH',
-                    url: this._wrapUrl(item._links.self.href),
-                    data: {data: data},
-                    headers: {'If-Match': item.etag},
-                    cache: true
-                })
-                .success(function(data, status, headers, config) {
-                    var fields = ['_id', '_links', 'etag', 'updated'];
-                    _.forEach(fields, function(field) {
-                        item[field] = data.data[field];
-                    });
-                    item.created = created;
-                    delay.resolve(item);
-                })
-                .error(function(data, status, headers, config) {
-                    delay.reject(data);
-                });
-
-                return delay.promise;
+                return this._http('patch',
+                    this._wrapUrl(item._links.self.href),
+                    {},
+                    item
+                );
             },
             /**
              * Delete single item
@@ -202,22 +187,11 @@ define([
              * @return {Object} promise
              */
             delete: function(item) {
-                var delay = $q.defer();
-
-                $http({
-                    method: 'DELETE',
-                    url: this._wrapUrl(item._links.self.href),
-                    headers: {'If-Match': item.etag},
-                    cache: true
-                })
-                .success(function(data, status, headers, config) {
-                    delay.resolve(data);
-                })
-                .error(function(data, status, headers, config) {
-                    delay.reject(data);
-                });
-
-                return delay.promise;
+                return this._http('delete',
+                    this._wrapUrl(item._links.self.href),
+                    {},
+                    item
+                );
             }
         };
 
