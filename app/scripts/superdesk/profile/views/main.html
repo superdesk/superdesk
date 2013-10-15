@@ -1,6 +1,8 @@
 <div class="subnav subnav-fixed">
 	<h3 class="page-nav-title">{{ 'Profile:'|translate }} <span>{{ user.display_name || user.username }}</span></h3>
+</div>
 
+<div class="notification-holder">
 	<p class="alert alert-success" ng-show="msg=='success'"  translate>Saved.</p>
 	<p class="alert alert-info" ng-show="msg=='info'" translate>Saving...</p>
 </div>
