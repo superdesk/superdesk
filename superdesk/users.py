@@ -1,11 +1,11 @@
 """Superdesk Users"""
 
-import urllib.parse
 import hashlib
 from flask import request, url_for
 
 import superdesk
 from .utc import utcnow
+from .url import urlencode
 
 class EmptyUsernameException(Exception):
     def __str__(self):
@@ -48,7 +48,7 @@ def get_display_name(user):
 def get_gravatar(user, size=128, d=404):
     email = user.get('email', 'contact@sourcefabric.org')
     gravatar_url = 'http://www.gravatar.com/avatar/%s?' % hashlib.md5(email.lower().encode('ascii')).hexdigest()
-    gravatar_url += urllib.parse.urlencode({'s': str(size), 'd': str(d)})
+    gravatar_url += urlencode({'s': str(size), 'd': str(d)})
     return gravatar_url
 
 def on_create_users(data, docs):
