@@ -70,7 +70,7 @@ define([
             var authData = storage.getItem('auth');
             if (authData) {
                 setAuthenticationHeader(authData.token);
-                $rootScope.currentUser = angular.extend(authData, {
+                $rootScope.currentUser = angular.extend(authData.user, {
                     isAnonymous: false
                 });
             } else {

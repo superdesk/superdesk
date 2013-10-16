@@ -41,7 +41,7 @@ define([
 
             httpBackend
                 .expectPOST('http://localhost/auth', {data: {username: 'foo', password: 'bar'}})
-                .respond(200, {data: {token: 'x', username: 'foo'}});
+                .respond(200, {data: {token: 'x', user: {username:'foo'}}});
             service.login('foo', 'bar');
             httpBackend.flush();
 

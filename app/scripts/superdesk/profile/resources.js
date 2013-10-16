@@ -4,12 +4,6 @@ define([
     'use strict';
 
     angular.module('superdesk.profile.resources', ['superdesk.server']).
-        factory('usersResource', function( $resource) {
-            return $resource('scripts/superdesk/profile/static-resources/users.json');
-        }).
-        factory('activityResource', function( $resource) {
-            return $resource('scripts/superdesk/profile/static-resources/activity.json');
-        }).
         service('profileService', function(server) {
             return {
                 /**
@@ -45,7 +39,7 @@ define([
                         params.page = page;
                     }
 
-                    return server.readList('activity', params);
+                    return server.list('activity', params);
                 }
             };
         });

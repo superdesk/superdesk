@@ -85,6 +85,7 @@ define([
                 replace: true,
                 templateUrl : 'scripts/superdesk/profile/views/activity-feed.html',
                 require: 'ngModel',
+                priority: 2000,
                 link: function(scope, element, attrs, ngModel) {
                     var maxResults = 5;
                     var page = 1;
@@ -98,8 +99,8 @@ define([
                     scope.loadMore = function() {
                         page++;
                         profileService.getUserActivity(ngModel.$viewValue, maxResults, page).then(function(next) {
-                            Array.prototype.push.apply(scope.activityFeed.items, next.items);
-                            scope.activityFeed.links = next.links;
+                            Array.prototype.push.apply(scope.activityFeed._items, next._items);
+                            scope.activityFeed._links = next._links;
                         });
                     };
                 }

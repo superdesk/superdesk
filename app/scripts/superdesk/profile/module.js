@@ -15,7 +15,7 @@ define([
                     templateUrl: 'scripts/superdesk/profile/views/main.html',
                     resolve: {
                         user: function($rootScope, server) {
-                            return server.readItem('users', $rootScope.currentUser.username);
+                            return server.read($rootScope.currentUser);
                         }
                     }
                 });
