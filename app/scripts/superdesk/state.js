@@ -13,7 +13,7 @@ define(['angular'], function(angular) {
          * @param {Object} defaultParams - default parameters
          * @param {Object} currentParams - current parameters
          */
-        factory('state', ['$location', function($location) {
+        factory('state', ['$location', '$route', function($location, $route) {
             var StateContainer = function(defaultParams, params) {
                 this.defaultParams = defaultParams;
                 this.params = _.extend({}, defaultParams, params);
@@ -31,6 +31,9 @@ define(['angular'], function(angular) {
             };
             StateContainer.prototype.getAll = function() {
                 return this.params;
+            };
+            StateContainer.prototype.reload = function() {
+                $route.reload();
             };
             StateContainer.prototype._update = function() {
                 var self = this;

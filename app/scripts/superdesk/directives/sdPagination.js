@@ -16,15 +16,19 @@ define([
          * @param {Object} sdStateHandler - handler for application state
          */
         .directive('sdPagination', function() {
-            var getParameters = function(url) {
-                var parameters = {};
-                var parts = url.href.split('?');
-                parts = parts[1].split('&');
-                _.forEach(parts, function(part) {
-                    var item = part.split('=');
-                    parameters[item[0]] = item[1];
-                });
-                return parameters;
+            var getTotalPages = function(data) {
+                if (data._links.last !== undefined) {
+                    var parts = data._links.last.href.split('?')[1].split('&');
+                    var parameters = {};
+                    _.forEach(parts, function(part) {
+                        var item = part.split('=');
+                        parameters[item[0]] = item[1];
+                    });
+                    if (parameters.page !== undefined) {
+                        return parameters.page;
+                    }
+                }
+                return 1;
             };
 
             return {
@@ -34,10 +38,8 @@ define([
                 },
                 templateUrl: 'scripts/superdesk/views/sdPagination.html',
                 link: function($scope, element, attrs) {
-                    $scope.pageTotal = $scope.page;
-                    if ($scope.data._links.last !== undefined) {
-                        $scope.pageTotal = getParameters($scope.data._links.last).page;
-                    }
+                    $scope.currentPage = $scope.state.get('page');
+                    $scope.totalPages = _.max([getTotalPages($scope.data), $scope.currentPage]);
                 }
             };
         });
