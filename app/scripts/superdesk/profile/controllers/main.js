@@ -8,6 +8,7 @@ define(['angular'], function(angular) {
             $scope.openUpload = function() {
                 upload.upload('users').then(function(data) {
                     $scope.user.picture_url = data._links.self.href;
+                    server.update($scope.user);
                 });
             };
 
