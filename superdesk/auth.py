@@ -38,7 +38,9 @@ def on_create_auth(data, docs):
     for doc in docs:
         try:
             user = authenticate(doc, data)
-            doc['user'] = user.get('_id')
+            user.pop('password', None)
+            doc['user'] = user
+            doc['user']['_links'] = {'self': superdesk.document_link('users', user.get('_id'))}
             doc['token'] = utils.get_random_string(40)
         except NotFoundAuthException:
             superdesk.abort(404)
@@ -75,11 +77,16 @@ superdesk.domain('auth', {
             'type': 'string'
         },
         'user': {
-            'type': 'objectid'
+            'type': 'objectid',
+            'data_relation': {
+                'collection': 'users',
+                'field': '_id',
+                'embeddable': True
+            }
         }
     },
     'resource_methods': ['POST'],
     'item_methods': ['GET'],
     'public_methods': ['POST'],
-    'extra_response_fields': ['username', 'token']
+    'extra_response_fields': ['user', 'token']
 })

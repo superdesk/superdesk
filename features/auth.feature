@@ -12,7 +12,7 @@ Feature: Authentication
             """
 
         Then we get "token"
-        And we get "username"
+        And we get "user"
 
     Scenario: Authenticate with wrong password returns error
         Given "users"
