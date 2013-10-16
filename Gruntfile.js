@@ -165,6 +165,16 @@ module.exports = function (grunt) {
           '<%= yeoman.app %>/scripts/translations.js': 'po/*.po'
         }
       }
+    },
+    requirejs: {
+      compile: {
+        options: {
+          baseUrl: '<%= yeoman.app %>/scripts',
+          mainConfigFile: '<%= yeoman.app %>/scripts/main.js',
+          out: '<%= yeoman.dist %>/scripts/main.js',
+          name: 'main'
+        }
+      }
     }
   });
 
