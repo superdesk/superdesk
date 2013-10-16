@@ -7,7 +7,7 @@ define(['angular'], function(angular) {
          * items per page or displayed fields.
          *
          * Usage:
-         * var listSettings = settings.initialize('users:list', default);
+         * var listSettings = settings('users:list', default);
          * listSettings.test = 5;
          * listSettings.save();
          *
@@ -15,7 +15,7 @@ define(['angular'], function(angular) {
          * @param {string} key - main key for accessing plugin/controller settings
          * @param {Object} defaultSettings - default settings
          */
-        service('settings', ['storage', function(storage) {
+        factory('settings', ['storage', function(storage) {
             var SettingsContainer = function(key, defaultSettings) {
                 this._key = key + ':settings';
                 var settings = _.extend({}, defaultSettings);
@@ -43,12 +43,10 @@ define(['angular'], function(angular) {
                 }
             };
 
-            return new function() {
-                this.initialize = function(pluginName, defaultSettings) {
-                    var instance = new SettingsContainer(pluginName, defaultSettings);
-                    instance.load();
-                    return instance;
-                }
+            return function(pluginName, defaultSettings) {
+                var instance = new SettingsContainer(pluginName, defaultSettings);
+                instance.load();
+                return instance;
             };
 
         }]);
