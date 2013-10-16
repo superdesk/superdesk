@@ -6,6 +6,7 @@ define([
     'superdesk/services/translate',
     'superdesk/entity',
     './controllers/list',
+    './controllers/detail',
     './services'
 ], function(angular) {
     'use strict';
@@ -25,10 +26,10 @@ define([
                 email: false,
                 created: true
             }
-        }).
-        config(function($routeProvider) {
-            $routeProvider.
-                when('/users/', {
+        })
+        .config(function($routeProvider) {
+            $routeProvider
+                .when('/users/:id?', {
                     controller: require('superdesk/users/controllers/list'),
                     templateUrl: 'scripts/superdesk/users/views/list.html',
                     resolve: {
@@ -36,6 +37,21 @@ define([
                         function(locationParams, em, defaultListParams) {
                             var criteria = locationParams.reset(defaultListParams);
                             return em.getRepository('users').matching(criteria);
+                        }],
+                        user: ['server', '$route',
+                        function(server, $route) {
+                            if ($route.current.params.id !== undefined) {
+                                //return server.readById('users', $route.current.params.id);
+                                return {
+                                    _id: 'x',
+                                    username: 'x',
+                                    first_name: 'x',
+                                    last_name: 'x',
+                                    email: 'x',
+                                }
+                            } else {
+                                return undefined;
+                            }
                         }],
                         settings: ['settings', 'defaultListSettings',
                         function(settings, defaultListSettings) {
