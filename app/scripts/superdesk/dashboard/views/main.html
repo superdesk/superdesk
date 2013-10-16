@@ -1,15 +1,24 @@
 <div class="subnav subnav-fixed">
 
-  <h3 class="page-nav-title" translate>Dashboard</h3>
+	<h3 class="page-nav-title" translate>Dashboard</h3>
+	<button class="btn btn-info btn-medium pull-right" ng-click="addWidget()"><i class="icon-plus-sign icon-white"></i> Add Widget</button>
+	<div class="dropdown pull-right">
+	    <button class="btn btn-medium dropdown-toggle pull-right" ><i class="icon-cog"></i> <b class="caret"></b></button>
+	    <ul class="dropdown-menu sf-dropdown sf-dropdown-right pull-right">
+	    	<li translate> Configure position</li>
+	    	<li translate> Add new clock</li>
+	    	<li translate> Remove widget</li>
+	    </ul>
+	</div>
+	<button class="btn btn-medium pull-right" ng-click="enableDragging()" ng-show="!editmode"><i class="icon-move"></i> Rearrange widgets</button>
+	<button class="btn btn-medium btn-info pull-right" ng-click="disableDragging()" ng-show="editmode">Save</button>
 
 </div>
-
-<div class="subnav subnav-level2 subnav-fixed"></div>
 
 <div class="dashboard-container">
 	<div class="content clearfix">
 
-		<div gridster class="gridster" ng-model="widgets">
+		<div dashboard-manager class="gridster" ng-class="{'editmode': editmode}" ng-model="widgets">
 			
 		</div>
 

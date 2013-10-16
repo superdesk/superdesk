@@ -11,9 +11,9 @@ Main dashboard styles
 	left: 0; 
 	right: 0; 
 	bottom: 0;
-	top: @topspace + @subnav-height + @subnav-level2;
+	top: @topspace + @subnav-height;
 	.content {
-		padding: 20px;
+		padding: 0 20px 20px 0;
 	}
 }	
 
@@ -24,7 +24,6 @@ Main dashboard styles
 	.border-radius(3px);
 	width: 100%;
 	height: 100%;
-
 
 	.widget-line {
 		.border-radius(3px 3px 0 0);
@@ -110,6 +109,7 @@ Main dashboard styles
 		}
 	}
 }
+
 
 /*
 ---------------------------------------------
@@ -247,9 +247,9 @@ Gridster library
     transition: height .4s;
 }
 
-.gridster .gs_w{
+.gridster .gs_w {
     z-index: 2;
-    position: absolute;
+    position: absolute;    
 }
 
 .ready .gs_w:not(.preview-holder) {
@@ -269,9 +269,9 @@ Gridster library
 .gridster .preview-holder {
     z-index: 1;
     position: absolute;
-    background-color: #fff;
-    border-color: #fff;
-    opacity: 0.3;
+    background-color: #f0f0f0;
+    border: 1px dashed #c8c8c8;
+    .border-radius(3px);
 }
 
 .gridster .player-revert {
@@ -284,23 +284,98 @@ Gridster library
 
 .gridster .dragging {
     z-index: 10!important;
-    -webkit-transition: all 0s !important;
-    -moz-transition: all 0s !important;
-    -o-transition: all 0s !important;
-    transition: all 0s !important;
+   .transition(all 0s)!important;
+    .opacity(80);
+    cursor: move;
 }
 
-/* Uncomment this if you set helper : "clone" in draggable options */
-/*.gridster .player {
-  opacity:0;
-}*/
-
 .gridster {
-	ul {
+	.dash-grid {
 		list-style-type: none;
 		li {
+			.widget-close {
+				position: absolute;
+				width: 30px;
+				height: 30px;
+				background: url("../../images/round-close.png") no-repeat 0 0;
+				z-index: 100;
+				right: -15px;
+				top: -15px;
+				cursor: pointer;
+			}
+			
+
+			.widget-resize-width , .widget-resize-height {
+				cursor: pointer;
+				position: absolute;
+				.opacity(0);
+				.transition(all 0.3s linear);
+			}
+
+
+			.widget-resize-width {
+				width: 50px;
+				height: 43px;
+				z-index: 100;
+				right: -25px;
+				top: 50%;
+				margin-top: -22px;
+				.resize-left, .resize-right {
+					width : 25px;
+					height: 43px;
+					float: left;
+					background: url("../../images/resize-left.png") no-repeat 0 0;
+				}
+				.resize-right {
+					background: url("../../images/resize-right.png") no-repeat 0 0;
+				}
+			}
+			.widget-resize-height {
+				width: 43px;
+				height: 50px;
+				z-index: 100;
+				left: 50%;
+				bottom: -24px;
+				margin-left: -22px;
+				
+				.resize-up, .resize-down {
+					width : 43px;
+					height: 25px;
+					background: url("../../images/resize-up.png") no-repeat 0 0;
+				}
+				.resize-down {
+					background: url("../../images/resize-down.png") no-repeat 0 0;
+				}
+			}
+
 
 		}
+	}
+	&.editmode {
+		.dash-grid li {
+			&:hover {
+				.widget-resize-width , .widget-resize-height {
+					.opacity(50);
+					.transition(all 0.3s linear);
+					&:hover {
+						.opacity(100);
+						.transition(all 0.3s linear);
+					}
+				}
+			}
+			&.dragging {
+				.widget-resize-width , .widget-resize-height {
+					.opacity(10);
+				}
+			}
+		}
+		.d-widget {
+			border-color: #999;
+			.box-shadow(0 0 4px 1px #b8b8b8 );
+			.transition(all 0.3s linear);
+		}
+
+		
 	}
 	
 }
