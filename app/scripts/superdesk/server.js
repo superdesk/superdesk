@@ -57,18 +57,18 @@ define([
             Restangular.setBaseUrl(ServerConfig.url);
             Restangular.setDefaultHeaders($http.defaults.headers.common);
             Restangular.setRestangularFields({id: '_id'});
-            Restangular.setRequestInterceptor(function(element, operation, route, url) {
+            Restangular.setRequestInterceptor(function(element, operation) {
                 switch(operation) {
-                    case 'patch':
-                    case 'put':
-                        // remove extra fields
-                        delete element._id;
-                        delete element._links;
-                        delete element.etag;
-                        delete element.updated;
-                        delete element.created;
-                        // wrap content for eve
-                        return {data: element};
+                case 'patch':
+                case 'put':
+                // remove extra fields
+                    delete element._id;
+                    delete element._links;
+                    delete element.etag;
+                    delete element.updated;
+                    delete element.created;
+                    // wrap content for eve
+                    return {data: element};
                 }
 
                 return element;

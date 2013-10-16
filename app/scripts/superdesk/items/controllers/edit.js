@@ -1,4 +1,6 @@
 define(['angular'], function(angular) {
+    'use strict';
+
     return ['$scope', '$location', 'item', 'ItemService',
     function($scope, $location, item, ItemService) {
         $scope.item = item;

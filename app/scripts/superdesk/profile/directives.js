@@ -12,9 +12,9 @@ define([
                 replace: true,
                 template : '<span class="sf-checkbox-custom" ng-class="{\'sf-checked\':check, \'privacy-switch-checkbox\' : privacy }" ></span>',
                 scope: {
-                    check : "=",
-                    clickevent : "&", 
-                    privacy : "="
+                    check : '=',
+                    clickevent : '&',
+                    privacy : '='
                 },
                 link: function(scope, element, attrs) {
                     element.bind('click', function() {
@@ -32,8 +32,8 @@ define([
                 replace: true,
                 template : '<span class="sf-checkbox-custom" ng-class="{\'sf-checked\':check, \'privacy-switch-checkbox\' : privacy }" ></span>',
                 scope: {
-                    check : "=",
-                    clickevent : "&", 
+                    check : '=',
+                    clickevent : '&',
                 },
                 link: function(scope, element, attrs) {
                     element.bind('click', function() {
@@ -49,9 +49,9 @@ define([
                 replace: true,
                 template : '<div class="sf-toggle-custom" ng-class="{\'sf-checked\':check, \'on-off-toggle\' : onoff}"><div class="sf-toggle-custom-inner"></div></div>',
                 scope: {
-                    check : "=",
-                    clickevent : "&",
-                    onoff : "="
+                    check : '=',
+                    clickevent : '&',
+                    onoff : '='
                 },
                 link: function(scope, element, attrs) {
                     var scopeCaller = false;
@@ -62,7 +62,10 @@ define([
                         });
                     });
                     scope.$watch('check', function() {
-                        scopeCaller ? (scopeCaller = false, scope.clickevent()) : '';
+                        if (scopeCaller) {
+                            scopeCaller = false;
+                            scope.clickevent();
+                        }
                     });
                 }
             };

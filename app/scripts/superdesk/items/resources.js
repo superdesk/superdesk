@@ -12,7 +12,7 @@ define([
                 update: {method: 'PUT'}
             });
         }).
-        factory('ItemListLoader', function($q, $route, ItemResource) {
+        factory('itemListLoader', function($q, $route, ItemResource) {
             var defaultParams = {
                 sort: '[("firstCreated", -1)]'
             };
@@ -32,7 +32,7 @@ define([
                 return delay.promise;
             };
         }).
-        factory('ItemLoader', function($q, $route, ItemResource) {
+        factory('itemLoader', function($q, $route, ItemResource) {
             return function(guid) {
                 if (typeof guid === 'undefined' && 'guid' in $route.current.params) {
                     guid = $route.current.params.guid;
@@ -57,5 +57,5 @@ define([
                     });
                 }
             };
-        })
+        });
 });

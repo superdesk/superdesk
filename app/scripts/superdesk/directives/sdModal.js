@@ -12,7 +12,7 @@ define([
                 link: function(scope, element, attrs) {
                     var show = false;
                     if ('ngShow' in attrs) {
-                        var show = !!scope.$eval(attrs.ngShow);
+                        show = !!scope.$eval(attrs.ngShow);
                     }
 
                     $(element).addClass('modal fade');

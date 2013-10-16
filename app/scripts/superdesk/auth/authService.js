@@ -5,8 +5,6 @@ define([
 
     return ['$rootScope', '$http', '$q', 'Auth', 'storage',
     function($rootScope, $http, $q, Auth, storage) {
-        initScope();
-
         /**
          * Login
          *
@@ -77,8 +75,10 @@ define([
                 $rootScope.currentUser = {
                     username: 'Anonymous',
                     isAnonymous: true
-                }
+                };
             }
         }
+
+        initScope();
     }];
 });

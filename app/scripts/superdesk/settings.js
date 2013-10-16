@@ -3,7 +3,7 @@ define(['angular'], function(angular) {
 
     angular.module('superdesk.settings', []).
         service('settings', ['storage', function(storage) {
-            return new function() {
+            function SettingsService() {
                 this.initialize = function(pluginName, defaultSettings) {
                     var self = this;
                     var instance = angular.extend({}, defaultSettings);
@@ -31,6 +31,8 @@ define(['angular'], function(angular) {
                     }
                     return values;
                 };
-            };
+            }
+
+            return new SettingsService();
         }]);
 });

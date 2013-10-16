@@ -1,7 +1,7 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', 'ItemLoader', function($scope, ItemLoader) {
-        $scope.item = ItemLoader($scope.ref.residRef);
+    return ['$scope', 'itemLoader', function($scope, itemLoader) {
+        $scope.item = itemLoader($scope.ref.residRef);
     }];
 });

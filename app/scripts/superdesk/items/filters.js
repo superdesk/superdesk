@@ -2,6 +2,8 @@ define([
     'jquery',
     'angular'
 ], function($, angular) {
+    'use strict';
+
     angular.module('superdesk.items.filters', []).
         filter('body', function() {
             return function(content) {
@@ -14,7 +16,7 @@ define([
                     }
                 }
 
-                return texts.join("\n");
+                return texts.join('\n');
             };
         });
 });

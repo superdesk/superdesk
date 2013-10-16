@@ -3,10 +3,10 @@ define(['angular'], function(angular) {
 
     angular.module('superdesk.storage', []).
         service('storage', function() {
-            return new function() {
+            function StorageService() {
                 this.getItem = function(key) {
                     var storage = localStorage.hasOwnProperty(key) ? localStorage : sessionStorage;
-                    return angular.fromJson(storage.getItem(key))
+                    return angular.fromJson(storage.getItem(key));
                 };
 
                 this.setItem = function(key, data, remember) {
@@ -23,6 +23,8 @@ define(['angular'], function(angular) {
                     localStorage.clear();
                     sessionStorage.clear();
                 };
-            };
+            }
+
+            return new StorageService();
         });
 });

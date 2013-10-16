@@ -3,5 +3,5 @@ define([
 ], function(angular) {
     'use strict';
 
-    var services = angular.module('superdesk.services', []);
+    angular.module('superdesk.services', []);
 });
