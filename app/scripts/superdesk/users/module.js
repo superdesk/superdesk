@@ -16,7 +16,7 @@ define([
             page: 1,
             perPage: 20
         }).
-        value('defaultSettings', {
+        value('defaultListSettings', {
             fields: {
                 avatar: true,
                 display_name: true,
@@ -31,11 +31,16 @@ define([
                     controller: require('superdesk/users/controllers/list'),
                     templateUrl: 'scripts/superdesk/users/views/list.html',
                     resolve: {
-                        users: ['server', '$route', 'defaultListParams', 'converter', function(server, $route, defaultListParams, converter) {
+                        users: ['server', '$route', 'defaultListParams', 'converter',
+                        function(server, $route, defaultListParams, converter) {
                             return server.readList(
                                 'users',
                                 converter.convert($route.current.params)
                             );
+                        }],
+                        settings: ['settings', 'defaultListSettings',
+                        function(settings, defaultListSettings) {
+                            return settings.initialize('users:list', defaultListSettings);
                         }]
                     },
                     menu: {
