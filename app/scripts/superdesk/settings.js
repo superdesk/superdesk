@@ -7,7 +7,7 @@ define(['angular'], function(angular) {
          * items per page or displayed fields.
          *
          * Usage:
-         * var listSettings = settings.initialize('users:list', default);
+         * var listSettings = settings('users:list', default);
          * listSettings.test = 5;
          * listSettings.save();
          *

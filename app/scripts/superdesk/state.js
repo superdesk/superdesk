@@ -6,7 +6,7 @@ define(['angular'], function(angular) {
          * State service to handle application state
          *
          * Usage:
-         * var currentState = state.initialize(defaultParams, currentParams);
+         * var currentState = state(defaultParams, currentParams);
          * currentState.set('page', 2);
          *
          * Params:
