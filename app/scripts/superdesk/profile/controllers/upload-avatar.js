@@ -62,7 +62,7 @@ define([
 
                     $scope.$on('fileuploadsubmit', function(e, data){
                         $scope.preview = true;
-                        element.find('.preview-area').append(data.files[0].preview);
+                        element.find('.preview-area').empty().append(data.files[0].preview);
                     });
 
                     $scope.$on('upload:show', function() {
