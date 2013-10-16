@@ -70,6 +70,7 @@ function gettext(input)
 
 define([
     'angular',
+    'lodash',
     'superdesk/services/translate',
     'superdesk/auth/module',
     'superdesk/menu/module',
@@ -77,7 +78,7 @@ define([
     'superdesk/items/module',
     'superdesk/users/module',
     'superdesk/profile/module'
-], function(angular) {
+], function(angular, _) {
     'use strict';
 
     angular.module('superdesk.directives', []);
