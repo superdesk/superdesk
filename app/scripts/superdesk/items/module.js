@@ -18,17 +18,17 @@ define([
                     templateUrl: 'scripts/superdesk/items/views/edit.html',
                     controller: require('superdesk/items/controllers/edit'),
                     resolve: {
-                        item: function(ItemLoader) {
-                            return ItemLoader();
-                        }
+                        item: ['itemLoader', function(itemLoader) {
+                            return itemLoader();
+                        }]
                     }
                 }).
                 when('/archive/', {
                     templateUrl: 'scripts/superdesk/items/views/archive.html',
                     controller: require('superdesk/items/controllers/list'),
                     resolve: {
-                        items: ['ItemListLoader', function(ItemListLoader) {
-                            return ItemListLoader({itemClass: 'icls:picture'});
+                        items: ['itemListLoader', function(itemListLoader) {
+                            return itemListLoader({itemClass: 'icls:picture'});
                         }]
                     },
                     menu: {
@@ -41,8 +41,8 @@ define([
                     controller: require('superdesk/items/controllers/list'),
                     templateUrl: 'scripts/superdesk/items/views/list.html',
                     resolve: {
-                        items: ['ItemListLoader', function(ItemListLoader) {
-                            return ItemListLoader({itemClass: 'icls:composite'});
+                        items: ['itemListLoader', function(itemListLoader) {
+                            return itemListLoader({itemClass: 'icls:composite'});
                         }]
                     },
                     menu: {

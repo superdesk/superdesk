@@ -38,7 +38,7 @@ define([
                     };
 
                     if (maxResults) {
-                        params['max_results'] = maxResults;
+                        params.max_results = maxResults;
                     }
 
                     if (page > 1) {

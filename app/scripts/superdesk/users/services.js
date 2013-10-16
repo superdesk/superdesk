@@ -3,7 +3,7 @@ define(['angular'], function(angular) {
 
     angular.module('superdesk.users.services', []).
         service('converter', ['defaultListParams', function(defaultListParams) {
-            return new function() {
+            function ConvertService() {
                 this.convert = function(params) {
                     params = angular.extend({}, defaultListParams, params);
                     var result = {
@@ -22,6 +22,8 @@ define(['angular'], function(angular) {
                     }
                     return result;
                 };
-            };
+            }
+
+            return new ConvertService();
         }]);
 });

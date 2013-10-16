@@ -54,6 +54,7 @@ require.config({
     }
 });
 
+/*jshint -W098 */
 /**
  * Noop for registering string for translation in js files.
  *
@@ -62,9 +63,11 @@ require.config({
  *
  * @param {string} input
  * @return {string} unmodified input
+ *
  */
 function gettext(input)
 {
+    'use strict';
     return input;
 }
 

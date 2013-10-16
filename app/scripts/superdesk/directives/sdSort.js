@@ -50,13 +50,13 @@ define([
                         $scope.$apply(function() {
                             if ($scope.state.get(sortFieldKey) === $scope.sortFieldName) {
                                 if ($scope.state.get(sortDirectionKey) === 'asc') {
-                                    $scope.state.set(sortDirectionKey, 'desc')
+                                    $scope.state.set(sortDirectionKey, 'desc');
                                 } else {
-                                    $scope.state.set(sortDirectionKey, 'asc')
+                                    $scope.state.set(sortDirectionKey, 'asc');
                                 }
                             } else {
                                 $scope.state.set(sortFieldKey, $scope.sortFieldName);
-                                $scope.state.set(sortDirectionKey, 'asc')
+                                $scope.state.set(sortDirectionKey, 'asc');
                             }
                         });
                     });

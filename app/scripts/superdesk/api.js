@@ -26,7 +26,7 @@ define([
                         if ('url' in action) {
                             action.url = apiUrl(action.url);
                         }
-                    })
+                    });
                 }
             }
 
@@ -34,6 +34,6 @@ define([
                 setDefaultActions(actions);
                 fixMethodUrls(actions);
                 return $resource(apiUrl(url), paramDefaults, actions);
-            }
+            };
         });
 });

@@ -48,6 +48,5 @@ define(['angular'], function(angular) {
                 instance.load();
                 return instance;
             };
-
         }]);
 });

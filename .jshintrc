@@ -4,7 +4,7 @@
   "es5": false,
   "esnext": true,
   "bitwise": true,
-  "camelcase": true,
+  "camelcase": false,
   "curly": true,
   "eqeqeq": true,
   "immed": true,
@@ -15,13 +15,16 @@
   "quotmark": "single",
   "regexp": true,
   "undef": true,
-  "unused": true,
+  "unused": "vars",
   "strict": true,
   "trailing": true,
   "smarttabs": true,
   "globals": {
     "angular": false,
-    "define": false
+    "define": false,
+    "gettext": false,
+    "ServerConfig": false,
+    "_": false
   },
   "white": false
 }

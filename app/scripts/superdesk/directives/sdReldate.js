@@ -25,7 +25,7 @@ define(['angular', 'moment'], function(angular, moment) {
                         date.local(); // switch to local time zone
                         scope.title = date.format('LLLL');
                         scope.reldate = date.fromNow();
-                    }
+                    };
                 }
             };
         });

@@ -40,12 +40,12 @@ define([
 
                     $scope.close = function() {
                         $(element).modal('hide');
-                    }
+                    };
 
                     $scope.save = function() {
                         $scope.close();
                         upload.delay.resolve(result);
-                    }
+                    };
 
                     $scope.$on('fileuploadadd', function(e,data) {
                         $scope.progress = 0;
