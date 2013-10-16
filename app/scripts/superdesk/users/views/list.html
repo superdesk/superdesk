@@ -6,8 +6,8 @@
 <div class="tab-background-container" style="top: 50px;">
     <div class="tab-content user-tabs">
         <div class="tab-pane active" id="active_users">
-            <div class="tab-submenu">
-                <div class="page-info pull-left">
+            <div class="tab-submenu"><i ng-show="users._items|any:'_checked'"></i>
+                <div class="page-info pull-left" ng-show="users._items|any:'_checked'">
                     {{ 'With selected'|translate }}: 
                     <button class="btn" ng-click="deleteChecked();"><i class="icon-trash"></i> {{ 'Delete'|translate }}</button>
                 </div>

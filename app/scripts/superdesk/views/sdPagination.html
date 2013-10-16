@@ -8,14 +8,14 @@
     </button>
 
     <button class="btn" ng-disabled="true">
-    	<input style="width: 20px;" ng-model="currentPage" ng-change="state.set('page', currentPage)"> / {{ totalPages }}
+    	<input style="width: 20px;" sd-debounce ng-model="currentPage" ng-change="state.set('page', currentPage)"> / {{ totalPages }}
     </button>
 
     <button class="btn" ng-disabled="data._links.next === undefined" ng-click="state.set('page', state.get('page') + 1);">
     	<i class="icon-chevron-right"></i>
     </button>
     
-    <button class="btn" ng-disabled="data._links.last === undefined" ng-click="state.set('page', pageTotal);">
+    <button class="btn" ng-disabled="data._links.last === undefined" ng-click="state.set('page', totalPages);">
     	<i class="icon-fast-forward"></i>
     </button>
 </div>
