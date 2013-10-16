@@ -8,7 +8,6 @@ for (var file in window.__karma__.files) {
 }
 
 requirejs.config({
-
     baseUrl: '/base/app/scripts',
 
     deps: tests,
@@ -22,7 +21,8 @@ requirejs.config({
         'angular-resource': 'bower_components/angular-resource/angular-resource',
         'angular-route': 'bower_components/angular-route/angular-route',
         'angular-mocks': 'bower_components/angular-mocks/angular-mocks',
-        'moment': 'bower_components/momentjs/moment'
+        'moment': 'bower_components/momentjs/moment',
+        'lodash': 'bower_components/lodash/dist/lodash'
     },
     shim: {
         jquery: {
@@ -50,4 +50,4 @@ requirejs.config({
     }
 });
 
-config = {api_url: 'test'};
+ServerConfig = {url: 'http://localhost'};

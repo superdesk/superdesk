@@ -34,7 +34,7 @@ define([
                     resolve: {
                         users: ['server', '$route', 'defaultListParams', 'converter',
                         function(server, $route, defaultListParams, converter) {
-                            return server.readList(
+                            return server.list(
                                 'users',
                                 converter.convert($route.current.params)
                             );

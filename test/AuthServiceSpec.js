@@ -1,46 +1,36 @@
 define([
     'superdesk/auth/authService',
     'superdesk/storage',
+    'superdesk/server',
     'angular-mocks'
 ], function(authService) {
     'use strict';
 
     beforeEach(function() {
         module('superdesk.storage');
+        module('superdesk.server');
+        module('ngMock');
     });
 
     describe('AuthService', function() {
-        var service, rootScope, auth, authData, storage;
+        var service, rootScope, storage, server, httpBackend;
 
-        beforeEach(inject(function($injector, $rootScope, $http, $q, _storage_) {
+        beforeEach(inject(function($injector, $rootScope, $http, $q, $httpBackend, _storage_, _server_) {
             storage = _storage_;
             storage.clear();
+
+            server = _server_;
 
             rootScope = $rootScope.$new();
             service = {};
 
-            authData = {
-                'auth': {
-                    'token': 'abc',
-                    'username': 'foo'
-                }
-            };
-
-            auth = {
-                save: function(data, success, error) {
-                    if (data.auth.username == 'foo') {
-                        success(authData);
-                    } else {
-                        error(data);
-                    }
-                }
-            };
+            httpBackend = $httpBackend;
 
             $injector.invoke(authService, service, {
                 '$rootScope': rootScope,
                 '$http': $http,
                 '$q': $q,
-                'Auth': auth,
+                'server': server,
                 'storage': storage
             });
         }));
@@ -49,11 +39,15 @@ define([
             expect(service.hasIdentity()).toBe(false);
             expect(rootScope.currentUser.isAnonymous).toBe(true);
 
+            httpBackend
+                .expectPOST('http://localhost/auth', {data: {username: 'foo', password: 'bar'}})
+                .respond(200, {data: {token: 'x', username: 'foo'}});
             service.login('foo', 'bar');
+            httpBackend.flush();
 
             expect(service.hasIdentity()).toBe(true);
             expect(rootScope.currentUser.isAnonymous).toBe(false);
-            expect(rootScope.currentUser.username).toBe(authData.auth.username);
+            expect(rootScope.currentUser.username).toBe('foo');
 
             service.logout();
 
@@ -62,8 +56,12 @@ define([
 
         it('fails on false login', function() {
             expect(service.hasIdentity()).toBe(false);
-            
+
+            httpBackend
+                .expectPOST('http://localhost/auth', {data: {username: 'fake', password: 'bar'}})
+                .respond(400);
             service.login('fake', 'bar');
+            httpBackend.flush();
             
             expect(service.hasIdentity()).toBe(false);
         });
