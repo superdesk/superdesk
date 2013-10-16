@@ -41,11 +41,11 @@ define([
                         }],
                         settings: ['settings', 'defaultListSettings',
                         function(settings, defaultListSettings) {
-                            return settings.initialize('users:list', defaultListSettings);
+                            return settings('users:list', defaultListSettings);
                         }],
                         state: ['state', 'defaultListParams', '$route',
                         function(state, defaultListParams, $route) {
-                            return state.initialize(defaultListParams, $route.current.params);
+                            return state(defaultListParams, $route.current.params);
                         }]
                     },
                     menu: {

@@ -13,7 +13,7 @@ define(['angular'], function(angular) {
          * @param {Object} defaultParams - default parameters
          * @param {Object} currentParams - current parameters
          */
-        service('state', ['$location', function($location) {
+        factory('state', ['$location', function($location) {
             var StateContainer = function(defaultParams, params) {
                 this.defaultParams = defaultParams;
                 this.params = _.extend({}, defaultParams, params);
@@ -22,8 +22,15 @@ define(['angular'], function(angular) {
                 this.params[key] = value;
                 this._update();
             };
+            StateContainer.prototype.setAll = function(params) {
+                this.params = _.extend({}, params);
+                this._update();
+            };
             StateContainer.prototype.get = function(key) {
                 return this.params[key];
+            };
+            StateContainer.prototype.getAll = function() {
+                return this.params;
             };
             StateContainer.prototype._update = function() {
                 var self = this;
@@ -36,11 +43,9 @@ define(['angular'], function(angular) {
                 $location.search(params);
             };
 
-            return new function() {
-                this.initialize = function(defaultParams, params) {
-                    var instance = new StateContainer(defaultParams, params);
-                    return instance;
-                };
+            return function(defaultParams, params) {
+                var instance = new StateContainer(defaultParams, params);
+                return instance;
             };
 
         }]);
