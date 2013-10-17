@@ -1,9 +1,9 @@
 <div class="btn-group pull-right">
-	<button class="btn" ng-disabled="state.page === 1" ng-click="set('page', 1);">
+	<button class="btn" ng-disabled="currentPage === 1" ng-click="set('page', 1)">
 		<i class="icon-fast-backward"></i>
 	</button>
 
-    <button class="btn" ng-disabled="links.prev === undefined" ng-click="set('page', get('page') - 1);">
+    <button class="btn" ng-disabled="links.prev === undefined" ng-click="set('page', get('page') - 1)">
     	<i class="icon-chevron-left"></i>
     </button>
 
@@ -11,11 +11,11 @@
         <input style="width: 20px;" sd-debounce ng-model="currentPage" ng-change="set('page', currentPage)"> / {{ totalPages }}
     </button>
 
-    <button class="btn" ng-disabled="links.next === undefined" ng-click="set('page', get('page') + 1);">
+    <button class="btn" ng-disabled="links.next === undefined" ng-click="set('page', get('page') + 1)">
     	<i class="icon-chevron-right"></i>
     </button>
     
-    <button class="btn" ng-disabled="links.last === undefined" ng-click="set('page', totalPages);">
+    <button class="btn" ng-disabled="links.last === undefined" ng-click="set('page', totalPages)">
     	<i class="icon-fast-forward"></i>
     </button>
 </div>

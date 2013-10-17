@@ -1,7 +1,6 @@
 define([
-    'jquery',
     'angular'
-], function($, angular) {
+], function(angular) {
     'use strict';
 
     angular.module('superdesk.directives')
@@ -15,7 +14,7 @@ define([
          * @param {Array} sdDataModel - model for data
          * @param {Object} sdStateHandler - handler for application state
          */
-        .directive('sdPagination', function($location) {
+        .directive('sdPagination', ['locationParams', function(locationParams) {
 
             function getTotalPages(data) {
                 if (data._links.last !== undefined) {
@@ -37,21 +36,20 @@ define([
                 require: 'ngModel',
                 templateUrl: 'scripts/superdesk/views/sdPagination.html',
                 link: function($scope, element, attrs, ngModel) {
-                    ngModel.$render = function() {
-                        $scope.currentPage = ngModel.$viewValue._criteria.page || 1;
-                        $scope.totalPages = _.max([getTotalPages(ngModel.$viewValue), $scope.currentPage]);
-                        $scope.links = ngModel.$viewValue._links;
-                        $scope.state = ngModel.$viewValue._criteria;
-                    };
-
                     $scope.get = function(key) {
-                        return $scope.state[key];
+                        return locationParams.get(key);
                     };
 
                     $scope.set = function(key, val) {
-                        $location.search(key, $scope.state.set(key, val));
+                        return locationParams.set(key, val);
+                    };
+
+                    ngModel.$render = function() {
+                        $scope.currentPage = locationParams.get('page');
+                        $scope.totalPages = _.max([getTotalPages(ngModel.$viewValue), $scope.currentPage]);
+                        $scope.links = ngModel.$viewValue._links;
                     };
                 }
             };
-        });
+        }]);
 });

@@ -27,12 +27,12 @@ define([
                     templateUrl: 'scripts/superdesk/items/views/archive.html',
                     controller: require('superdesk/items/controllers/list'),
                     resolve: {
-                        items: ['$route', 'Criteria', 'em', function($route, Criteria, em) {
-                            var criteria = new Criteria({
+                        items: ['locationParams', 'em', function(locationParams, em) {
+                            var criteria = locationParams.reset({
                                 itemClass: 'icls:composite',
                                 sort: '[("firstCreated", -1)]',
                                 max_results: 25
-                            }, $route.current.params);
+                            });
                             return em.getRepository('items').matching(criteria);
                         }]
                     },
@@ -46,12 +46,12 @@ define([
                     controller: require('superdesk/items/controllers/list'),
                     templateUrl: 'scripts/superdesk/items/views/list.html',
                     resolve: {
-                        items: ['$route', 'Criteria', 'em', function($route, Criteria, em) {
-                            var criteria = new Criteria({
+                        items: ['locationParams', 'em', function(locationParams, em) {
+                            var criteria = locationParams.reset({
                                 itemClass: 'icls:text',
                                 sort: '[("versionCreated", -1)]',
                                 max_results: 25
-                            }, $route.current.params);
+                            });
                             return em.getRepository('items').matching(criteria);
                         }]
                     },

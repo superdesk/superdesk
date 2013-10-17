@@ -2,34 +2,34 @@ define(['angular', 'lodash', './server'], function(angular, _) {
     'use strict';
 
     angular.module('superdesk.entity', ['superdesk.server'])
-        .factory('Criteria', function() {
-            function Criteria(defaultParams, currentParams) {
-                _.extend(defaultParams, {page: 1});
-                _.assign(this, defaultParams);
-                _.assign(this, currentParams);
+        .service('locationParams', ['$location', '$route', function($location, $route) {
+            return {
+                defaults: {},
 
-                this.set = function(key, val) {
-                    this[key] = val;
-                    return (key in defaultParams && defaultParams[key] === val) ? null : val;
+                reset: function(defaults) {
+                    this.defaults = _.extend(defaults, {page: 1});
+                    this.params = _.extend({}, this.defaults, $route.current.params);
+                    return this.params;
+                },
+
+                get: function(key) {
+                    return key in this.params ? this.params[key] : null;
+                },
+
+                set: function(key, val) {
+                    this.params[key] = val;
+                    var locVar = (key in this.defaults && this.defaults[key] === val) ? null : val;
+                    $location.search(key, locVar);
+                }
+            };
+        }])
+        .service('em', function(server) {
+            function Repository(entity) {
+                this.matching = function(criteria) {
+                    return server.list(entity, criteria);
                 };
             }
 
-            return Criteria;
-        })
-        .factory('Repository', function(server) {
-            return function(entity) {
-                this.matching = function(criteria) {
-                    var criteriaValObj = _.omit(criteria, _.functions(criteria));
-                    var promise = server.list(entity, criteriaValObj);
-                    promise.then(function(result) {
-                        result._criteria = criteria;
-                    });
-
-                    return promise;
-                };
-            };
-        })
-        .service('em', function(Repository) {
             return {
                 getRepository: function(entity) {
                     return new Repository(entity);
