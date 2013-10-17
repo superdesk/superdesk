@@ -8,9 +8,15 @@ define([
     .value('config', window.ServerConfig || {url: 'http://localahost'})
     .service('server', function($q, $http, config) {
         return {
-            _makeUrl: function(resource) {
-                return config.url + '/' + resource;
+            _makeUrl: function() {
+                var url = config.url;
+                for (var i = 0; i < arguments.length; i++) {
+                    url += '/' + arguments[i];
+                }
+
+                return url;
             },
+
             _wrapUrl: function(url) {
                 if (config.url.indexOf('https') === 0) {
                     return 'https://' + url;
@@ -168,6 +174,20 @@ define([
                     this._wrapUrl(item._links.self.href)
                 );
             },
+
+            /**
+             * Read single item by given id
+             *
+             * @param {string} resource
+             * @param {string} id
+             * @return {Object} promise
+             */
+            readById: function(resource, id) {
+                return this._http('get',
+                    this._makeUrl(resource, id)
+                );
+            },
+
             /**
              * Update single item
              *
