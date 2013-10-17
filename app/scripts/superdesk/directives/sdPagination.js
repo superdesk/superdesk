@@ -15,8 +15,9 @@ define([
          * @param {Array} sdDataModel - model for data
          * @param {Object} sdStateHandler - handler for application state
          */
-        .directive('sdPagination', function() {
-            var getTotalPages = function(data) {
+        .directive('sdPagination', function($location) {
+
+            function getTotalPages(data) {
                 if (data._links.last !== undefined) {
                     var parts = data._links.last.href.split('?')[1].split('&');
                     var parameters = {};
@@ -29,17 +30,27 @@ define([
                     }
                 }
                 return 1;
-            };
+            }
 
             return {
-                scope: {
-                    data: '=sdDataModel',
-                    state: '=sdStateHandler'
-                },
+                priority: 2000,
+                require: 'ngModel',
                 templateUrl: 'scripts/superdesk/views/sdPagination.html',
-                link: function($scope, element, attrs) {
-                    $scope.currentPage = $scope.state.get('page');
-                    $scope.totalPages = _.max([getTotalPages($scope.data), $scope.currentPage]);
+                link: function($scope, element, attrs, ngModel) {
+                    ngModel.$render = function() {
+                        $scope.currentPage = ngModel.$viewValue._criteria.page || 1;
+                        $scope.totalPages = _.max([getTotalPages(ngModel.$viewValue), $scope.currentPage]);
+                        $scope.links = ngModel.$viewValue._links;
+                        $scope.state = ngModel.$viewValue._criteria;
+                    };
+
+                    $scope.get = function(key) {
+                        return $scope.state[key];
+                    };
+
+                    $scope.set = function(key, val) {
+                        $location.search(key, $scope.state.set(key, val));
+                    };
                 }
             };
         });

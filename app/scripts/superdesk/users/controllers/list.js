@@ -1,14 +1,12 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', 'converter', 'settings', 'state', 'server', 'users',
-    function($scope, converter, settings, state, server, users) {
-        
-        $scope.initialize = function() {
-            $scope.users = users;
-            $scope.settings = settings;
-            $scope.state = state;
-        };
+    return ['$scope', 'settings', 'state', 'server', 'users',
+    function($scope, settings, state, server, users) {
+
+        $scope.users = users;
+        $scope.settings = settings;
+        $scope.state = state;
 
         $scope.delete = function(user) {
             server.delete(user).then(function() {
@@ -22,7 +20,5 @@ define(['angular'], function(angular) {
                 state.reload();
             });
         };
-
-        $scope.initialize();
     }];
 });

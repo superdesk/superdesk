@@ -150,11 +150,10 @@
 
         </div>
         <div class="main-content-subnav">
-            <div sd-pagination ng-model="items" data-limit="{{ params.limit }}" style="min-width:80px"></div>
-       
+            <div sd-pagination ng-model="items" style="min-width:80px"></div>
         </div>
         <div class="main-content-inner grid-view scroller">
-           <div class="media-box" ng-class="{image: item.itemClass == 'icls:picture'}" ng-repeat="item in items" ng-click="edit(item)">
+           <div class="media-box" ng-class="{image: item.itemClass == 'icls:picture'}" ng-repeat="item in items._items" ng-click="edit(item)">
             <figure ng-repeat="content in item.contents | filter:'rend:thumbnail'">
               <img ng-src="{{ content.href }}" alt="" title="{{ item.description }}" />
               <figcaption>{{ item.creditline }}</figcaption>
@@ -176,7 +175,7 @@
                 </dl>
             </div>
           </div>
-          <div class="alert alert-info" ng-show="!items.length" translate>No results found.</div>
+          <div class="alert alert-info" ng-show="!items._items.length" translate>No results found.</div>
         </div>
     </div>
     

@@ -70,7 +70,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="item in items">
+          <tr ng-repeat="item in items._items">
             <td class="chckbx_col"><input type="checkbox" class="sf-checkbox" set-bg="2"  name="_{{ item.guid }}"></td>
             <td class="title_col"><a href="" ng-click="open('/packages/{{ item.guid }}')">{{ item.headline }}</a></td>
             <td>{{ item.slugline }}</td>
@@ -88,7 +88,7 @@
               </div>
             </td>
           </tr>
-          <tr ng-show="!items.length"><td class="alert alert-info" colspan="6" translate>No results found.</td></tr>
+          <tr ng-show="!items._items.length"><td class="alert alert-info" colspan="6" translate>No results found.</td></tr>
         </tbody>
       </table>
    </div>

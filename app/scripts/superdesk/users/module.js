@@ -15,7 +15,7 @@ define([
             sortField: 'display_name',
             sortDirection: 'asc',
             page: 1,
-            perPage: 20
+            perPage: 25
         }).
         value('defaultListSettings', {
             fields: {
