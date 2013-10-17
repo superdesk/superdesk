@@ -1,11 +1,12 @@
 define([
     'angular',
-    'moment'
+    'moment',
+    'angular-resource'
 ], function(angular, moment) {
     'use strict';
 
     angular.module('superdesk.dashboard.widgets.worldclock', ['ngResource']).
-        factory('worldclock', function( $resource) {
+        factory('worldclock', function($resource) {
             return $resource('scripts/superdesk/dashboard/static-resources/clock.json');
         }).
         directive('sdWorldclock', function() {
