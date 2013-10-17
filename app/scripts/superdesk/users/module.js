@@ -27,6 +27,8 @@ define([
                 created: true
             }
         })
+        .controller('UserListController', require('superdesk/users/controllers/list'))
+        .controller('UserDetailController', require('superdesk/users/controllers/detail'))
         .config(function($routeProvider) {
             $routeProvider
                 .when('/users/:id?', {
@@ -41,14 +43,7 @@ define([
                         user: ['server', '$route',
                         function(server, $route) {
                             if ($route.current.params.id !== undefined) {
-                                //return server.readById('users', $route.current.params.id);
-                                return {
-                                    _id: 'x',
-                                    username: 'x',
-                                    first_name: 'x',
-                                    last_name: 'x',
-                                    email: 'x',
-                                }
+                                return server.readById('users', $route.current.params.id);
                             } else {
                                 return undefined;
                             }
@@ -59,6 +54,7 @@ define([
                         }],
                         state: ['state', 'defaultListParams', '$route',
                         function(state, defaultListParams, $route) {
+                            defaultListParams.id = $route.current.params.id;
                             return state(defaultListParams, $route.current.params);
                         }]
                     },

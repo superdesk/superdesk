@@ -1,11 +1,25 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', 'settings', 'state', 'server', 'user',
-    function UserDetailController($scope, settings, state, server, user) {
+    return ['$scope', '$location', 'server',
+    function UserDetailController($scope, $location, server) {
         
         $scope.initialize = function() {
-            console.log(123);
+            
+        };
+
+        $scope.save = function() {
+            if ($scope.user._id !== undefined) {
+                server.update($scope.user).then(function() {
+                    $location.path('/users/');
+                    $scope.state.reload();
+                });
+            } else {
+                server.create('users', $scope.user).then(function() {
+                    $location.path('/users/');
+                    $scope.state.reload();
+                });
+            }
         };
 
         $scope.initialize();
