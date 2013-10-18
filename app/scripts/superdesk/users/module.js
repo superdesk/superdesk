@@ -42,7 +42,9 @@ define([
                         }],
                         user: ['server', '$route',
                         function(server, $route) {
-                            if ($route.current.params.id !== undefined) {
+                            if ($route.current.params.id === 'new') {
+                                return {}
+                            } else if (_.isString($route.current.params.id)) {
                                 return server.readById('users', $route.current.params.id);
                             } else {
                                 return undefined;

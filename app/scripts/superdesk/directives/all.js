@@ -7,5 +7,5 @@ define([
     './sdPagination',
     './sdSort',
     './sdCheck',
-    './sdSearch'
+    './sdWithParams'
 ], function() {});

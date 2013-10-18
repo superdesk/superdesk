@@ -1,11 +1,15 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', '$route', 'settings', 'server', 'users',
-    function($scope, $route, settings, server, users) {
-
-        $scope.users = users;
-        $scope.settings = settings;
+    return ['$scope', 'settings', 'server', 'locationParams', 'users', 'user',
+    function UserListController($scope, settings, server, locationParams, users, user) {
+        
+        $scope.initialize = function() {
+            $scope.users = users;
+            $scope.user = user;
+            $scope.settings = settings;
+            $scope.locationParams = locationParams;
+        };
 
         $scope.delete = function(user) {
             server.delete(user).then(function() {
@@ -19,5 +23,7 @@ define(['angular'], function(angular) {
                 $route.reload();
             });
         };
+
+        $scope.initialize();
     }];
 });

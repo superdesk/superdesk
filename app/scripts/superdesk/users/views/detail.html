@@ -1,4 +1,6 @@
-<a href="#/users/" class="close"><i class="icon-remove"></i></a>
+<div class="user-details-pane open" style="top: 50px" ng-if="user">
+
+<a href="#/users/" class="close" sd-with-params><i class="icon-remove"></i></a>
 <div class="user-details-header"></div>
 
 <div class="user-details-content tab-content">
@@ -13,7 +15,7 @@
           <div class="details-info">
               <div class="details-section">
                 <div class="details-section-header">{{'General'|translate}}</div>
-                <div class="info-item">
+                <div class="info-item"> 
                   <span class="info-label">{{'User Name'|translate}}</span>
                   <span class="info-value info-editable"><input ng-model="user.username"></span>
                 </div>
@@ -42,4 +44,6 @@
           </div>
 
         </div>
+</div>
+
 </div>
