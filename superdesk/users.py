@@ -65,6 +65,9 @@ def on_read_users(data, docs):
         doc.setdefault('picture_url', get_gravatar(doc))
 
 class CreateUserCommand(superdesk.Command):
+    """Create a user with given username and password.
+    If user with given username exists, reset password.
+    """
 
     option_list = (
         superdesk.Option('--username', '-u', dest='username'),
@@ -73,13 +76,18 @@ class CreateUserCommand(superdesk.Command):
 
     def run(self, username, password):
         if username and password:
-            user = {
+            userdata = {
                 'username': username,
                 'password': password,
             }
 
-            superdesk.app.data.insert('users', [user])
-            return user
+            user = superdesk.app.data.find_one('users', username=userdata.get('username'))
+            if user:
+                superdesk.app.data.update('users', user.get('_id'), userdata)
+                return user
+            else:
+                superdesk.app.data.insert('users', [userdata])
+                return userdata
 
 superdesk.connect('create:users', on_create_users)
 superdesk.connect('read:users', on_read_users)
