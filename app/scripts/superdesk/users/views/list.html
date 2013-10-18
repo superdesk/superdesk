@@ -1,5 +1,5 @@
 <div class="subnav subnav-fixed">
-    <input type="text" name="searchbar" class="searchbar-container" placeholder="{{ 'Search'|translate }}" ng-init="search = state.get('search')" ng-model="search" ng-change="state.set('search', search)" sd-debounce sd-auto-focus>
+    <input type="text" name="searchbar" class="searchbar-container" placeholder="{{ 'Search'|translate }}" ng-init="search = locationParams.get('search')" ng-model="search" ng-change="locationParams.set('search', search)" sd-debounce sd-auto-focus>
     <a class="btn btn-medium btn-info pull-right" href="#/users/new" sd-with-params"><span class="medium-icon-add"></span> {{ 'Add new user'|translate }}</a>
 </div>
 

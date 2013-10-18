@@ -13,14 +13,14 @@ define(['angular'], function(angular) {
 
         $scope.delete = function(user) {
             server.delete(user).then(function() {
-                $route.reload();
+            locationParams.reload();
             });
         };
 
         $scope.deleteChecked = function() {
             var users = _.where($scope.users._items, {'_checked': true});
             server.deleteAll(users).then(function() {
-                $route.reload();
+                locationParams.reload();
             });
         };
 

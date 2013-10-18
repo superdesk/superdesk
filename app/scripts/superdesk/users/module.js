@@ -1,7 +1,6 @@
 define([
     'angular',
     'superdesk/settings',
-    'superdesk/state',
     'superdesk/server',
     'superdesk/services/translate',
     'superdesk/entity',
@@ -11,14 +10,14 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.settings', 'superdesk.state', 'superdesk.server', 'superdesk.users.services']).
-        value('defaultListParams', {
+    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.settings', 'superdesk.server', 'superdesk.users.services'])
+        .value('defaultListParams', {
             search: '',
             sort: ['display_name', 'asc'],
             page: 1,
             perPage: 25
-        }).
-        value('defaultListSettings', {
+        })
+        .value('defaultListSettings', {
             fields: {
                 avatar: true,
                 display_name: true,
@@ -54,10 +53,11 @@ define([
                         function(settings, defaultListSettings) {
                             return settings('users:list', defaultListSettings);
                         }],
-                        state: ['state', 'defaultListParams', '$route',
-                        function(state, defaultListParams, $route) {
+                        locationParams: ['locationParams', 'defaultListParams', '$route',
+                        function(locationParams, defaultListParams, $route) {
                             defaultListParams.id = $route.current.params.id;
-                            return state(defaultListParams, $route.current.params);
+                            locationParams.reset(defaultListParams);
+                            return locationParams;
                         }]
                     },
                     menu: {
