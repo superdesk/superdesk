@@ -13,6 +13,7 @@ define([
     angular.module('superdesk.users', ['superdesk.entity', 'superdesk.settings', 'superdesk.server', 'superdesk.users.services'])
         .value('defaultListParams', {
             search: '',
+            searchField: 'username',
             sort: ['display_name', 'asc'],
             page: 1,
             perPage: 25
@@ -59,7 +60,10 @@ define([
                             locationParams.reset(defaultListParams);
                             return locationParams;
                         }]
-                    },
+                    }
+                })
+                // temporary fake route, just to have menu fixed
+                .when('/users', {
                     menu: {
                         label: gettext('Users'),
                         priority: -1
