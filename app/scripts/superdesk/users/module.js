@@ -4,16 +4,16 @@ define([
     'superdesk/state',
     'superdesk/server',
     'superdesk/services/translate',
+    'superdesk/entity',
     './controllers/list',
     './services'
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.users', ['ngRoute', 'superdesk.settings', 'superdesk.state', 'superdesk.server', 'superdesk.users.services']).
+    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.settings', 'superdesk.state', 'superdesk.server', 'superdesk.users.services']).
         value('defaultListParams', {
             search: '',
-            sortField: 'display_name',
-            sortDirection: 'asc',
+            sort: ['display_name', 'asc'],
             page: 1,
             perPage: 25
         }).
@@ -32,12 +32,10 @@ define([
                     controller: require('superdesk/users/controllers/list'),
                     templateUrl: 'scripts/superdesk/users/views/list.html',
                     resolve: {
-                        users: ['server', '$route', 'defaultListParams', 'converter',
-                        function(server, $route, defaultListParams, converter) {
-                            return server.list(
-                                'users',
-                                converter.convert($route.current.params)
-                            );
+                        users: ['locationParams', 'em', 'defaultListParams',
+                        function(locationParams, em, defaultListParams) {
+                            var criteria = locationParams.reset(defaultListParams);
+                            return em.getRepository('users').matching(criteria);
                         }],
                         settings: ['settings', 'defaultListSettings',
                         function(settings, defaultListSettings) {

@@ -8,11 +8,10 @@ define([
          * sdPagination inserts pagination controls for a given data set.
          *
          * Usage:
-         * <div sd-pagination sd-data-model="list" sd-state-handler="state"></div>
+         * <div sd-pagination data-model="list"></div>
          * 
          * Params:
-         * @param {Array} sdDataModel - model for data
-         * @param {Object} sdStateHandler - handler for application state
+         * @param {Object} dataModel - model for data
          */
         .directive('sdPagination', ['locationParams', function(locationParams) {
 
@@ -32,10 +31,9 @@ define([
             }
 
             return {
-                priority: 2000,
-                scope: {ngModel: '='},
+                scope: {model: '='},
                 templateUrl: 'scripts/superdesk/views/sdPagination.html',
-                link: function(scope, element) {
+                link: function(scope, element, attrs) {
                     scope.get = function(key) {
                         return locationParams.get(key);
                     };
@@ -44,9 +42,11 @@ define([
                         return locationParams.set(key, val);
                     };
 
-                    scope.currentPage = locationParams.get('page');
-                    scope.totalPages = _.max([getTotalPages(scope.ngModel), scope.currentPage]);
-                    scope.links = scope.ngModel._links;
+                    scope.$watch('model', function(model) {
+                        scope.currentPage = locationParams.get('page');
+                        scope.totalPages = _.max([getTotalPages(scope.model), scope.currentPage]);
+                        scope.links = model._links;
+                    });
                 }
             };
         }]);

@@ -150,7 +150,7 @@
 
         </div>
         <div class="main-content-subnav">
-            <div sd-pagination ng-model="items" style="min-width:80px"></div>
+            <div sd-pagination data-model="items" style="min-width:80px"></div>
         </div>
         <div class="main-content-inner grid-view scroller">
            <div class="media-box" ng-class="{image: item.itemClass == 'icls:picture'}" ng-repeat="item in items._items" ng-click="edit(item)">
