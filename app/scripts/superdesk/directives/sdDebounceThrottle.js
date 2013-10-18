@@ -4,20 +4,19 @@ define([
 ], function($, angular) {
     'use strict';
 
-    var wrapper = function(methodName) {
-        var interval = 1000;
+    var wrapper = function(methodName, paramName) {
         var func = _[methodName];
-
         return {
-            require: 'ngModel',
-            link: function($scope, element, attrs, ngModel) {
-                if (attrs.interval !== '' && attrs.interval !== undefined) {
-                    interval = attrs.interval;
-                }
+            scope: {
+                bounce: '&' + paramName,
+                value: '@'
+            },
+            link: function(scope, element, attrs, ngModel) {
+                var interval = attrs.interval || 1000;
                 element.off('input').off('keydown').off('change');
                 element.on('input', func(function() {
-                    $scope.$apply(function() {
-                        ngModel.$setViewValue(element.val());
+                    scope.$apply(function() {
+                        scope.bounce({val: element.val()});
                     });
                 }, interval));
             }
@@ -37,7 +36,7 @@ define([
          * @param {object} ngModel
          */
         .directive('sdDebounce', function() {
-            return wrapper('debounce');
+            return wrapper('debounce', 'sdDebounce');
         })
 
         /**
@@ -51,6 +50,6 @@ define([
          * @param {object} ngModel
          */
         .directive('sdThrottle', function() {
-            return wrapper('throttle');
+            return wrapper('throttle', 'sdThrottle');
         });
 });

@@ -43,8 +43,7 @@ define([
                     };
 
                     scope.$watch('model', function(model) {
-                        scope.currentPage = locationParams.get('page');
-                        scope.totalPages = _.max([getTotalPages(scope.model), scope.currentPage]);
+                        scope.totalPages = getTotalPages(scope.model);
                         scope.links = model._links;
                     });
                 }

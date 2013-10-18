@@ -176,6 +176,12 @@ define([
                     serverParams.max_results = params.perPage;
                 }
 
+                if ('search' in params) {
+                    var search = params.search.split(':');
+                    serverParams.where = {};
+                    serverParams.where[search[0]] = search[1];
+                }
+
                 return serverParams;
             },
 

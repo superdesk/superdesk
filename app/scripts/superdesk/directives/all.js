@@ -6,5 +6,6 @@ define([
     './sdGroupDates',
     './sdPagination',
     './sdSort',
-    './sdCheck'
+    './sdCheck',
+    './sdSearch'
 ], function() {});
