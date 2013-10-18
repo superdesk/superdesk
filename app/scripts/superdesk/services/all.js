@@ -7,7 +7,7 @@ define([
     '../userSettings',
     '../entity',
     '../server'
-], function() {
+], function(angular) {
     'use strict';
 
     angular.module('superdesk.services', [

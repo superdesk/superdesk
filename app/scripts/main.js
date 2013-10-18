@@ -77,38 +77,45 @@ function gettext(input)
 
 define([
     'angular',
-    'lodash',
-    'superdesk/auth/module',
-    'superdesk/menu/module',
-    'superdesk/dashboard/module',
-    'superdesk/items/module',
-    'superdesk/users/module',
-    'superdesk/settings/module',
+    'lodash'
 ], function(angular, _) {
     'use strict';
 
     angular.module('superdesk.directives', []);
     angular.module('superdesk.filters', []);
 
+    // load core components
     require([
         'superdesk/directives/all',
-        'superdesk/filters/all',
-        'superdesk/services/all'
+        'superdesk/services/all',
+        'superdesk/filters/all'
     ], function() {
         var modules = [
             'superdesk.directives',
-            'superdesk.filters',
             'superdesk.services',
-            'superdesk.auth',
-            'superdesk.menu',
-            'superdesk.dashboard',
-            'superdesk.items',
-            'superdesk.users',
-            'superdesk.settings'
+            'superdesk.filters',
         ];
 
-        angular.element(document).ready(function() {
-            angular.bootstrap(document, modules);
+        var apps = [
+            'auth',
+            'menu',
+            'items',
+            'users',
+            'settings',
+            'dashboard'
+        ];
+
+        var deps = [];
+        angular.forEach(apps, function(app) {
+            deps.push('superdesk-' + app);
+            modules.push('superdesk.' + app);
+        });
+
+        // load apps
+        require(deps, function() {
+            angular.element(document).ready(function() {
+                angular.bootstrap(document, modules);
+            });
         });
     });
 });
