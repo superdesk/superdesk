@@ -11,11 +11,8 @@ define([
          * Usage:
          * <a href=""
                 sd-sort
-                data-sort-field-text="{{ 'Name'|translate }}"
-                data-sort-field-name="display_name"
-                data-sort-field-key="sortField"
-                data-sort-direction-key="sortDirection"
-                sd-state-handler="state"
+                data-label="{{ 'Name'|translate }}"
+                data-field="display_name"
             ></a>
          * 
          * Params:
@@ -25,38 +22,21 @@ define([
          * @param {string} sdSortDirectionKey - state key for sort direction
          * @param {Object} sdStateHandler - handler for application state
          */
-        .directive('sdSort', function() {
-            var sortFieldKey = 'sortField';
-            var sortDirectionKey = 'sortDirection';
-
+        .directive('sdSort', function(locationParams) {
             return {
                 scope: {
-                    state: '=sdStateHandler'
+                    label: '@',
+                    field: '@'
                 },
                 templateUrl: 'scripts/superdesk/views/sdSort.html',
-                link: function($scope, element, attrs) {
-                    $scope.sortFieldText = attrs.sortFieldText;
-                    $scope.sortFieldName = attrs.sortFieldName;
-                    if (attrs.sortFieldKey !== '' && attrs.sortFieldKey !== undefined) {
-                        sortFieldKey = attrs.sortFieldKey;
-                    }
-                    if (attrs.sortDirectionKey !== '' && attrs.sortDirectionKey !== undefined) {
-                        sortDirectionKey = attrs.sortDirectionKey;
-                    }
-                    $scope.sortFieldKey = sortFieldKey;
-                    $scope.sortDirectionKey = sortDirectionKey;
-
-                    element.on('click', function() {
-                        $scope.$apply(function() {
-                            if ($scope.state.get(sortFieldKey) === $scope.sortFieldName) {
-                                if ($scope.state.get(sortDirectionKey) === 'asc') {
-                                    $scope.state.set(sortDirectionKey, 'desc');
-                                } else {
-                                    $scope.state.set(sortDirectionKey, 'asc');
-                                }
+                link: function(scope, element, attrs) {
+                    scope.sort = locationParams.get('sort');
+                    element.click(function() {
+                        scope.$apply(function() {
+                            if (scope.field === scope.sort[0]) {
+                                locationParams.set('sort', [scope.field, scope.sort[1] === 'asc' ? 'desc' : 'asc']);
                             } else {
-                                $scope.state.set(sortFieldKey, $scope.sortFieldName);
-                                $scope.state.set(sortDirectionKey, 'asc');
+                                locationParams.set('sort', [scope.field, 'asc']);
                             }
                         });
                     });

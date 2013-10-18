@@ -17,8 +17,7 @@ define(['angular', 'lodash', './server'], function(angular, _) {
                 },
 
                 set: function(key, val) {
-                    this.params[key] = val;
-                    var locVar = (key in this.defaults && this.defaults[key] === val) ? null : val;
+                    var locVar = (key in this.defaults && angular.equals(this.defaults[key], val)) ? null : val;
                     $location.search(key, locVar);
                 }
             };

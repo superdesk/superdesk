@@ -160,9 +160,25 @@ define([
             list: function(resource, params) {
                 return this._http('get',
                     this._makeUrl(resource),
-                    params
+                    this._convertParams(params)
                 );
             },
+
+            // transfer url params to server params
+            _convertParams: function(params) {
+                var serverParams = _.extend({}, _.pick(params, ['max_results', 'where', 'page']));
+
+                if ('sort' in params) {
+                    serverParams.sort = '[(' + angular.toJson(params.sort[0]) + ',' + (params.sort[1] === 'asc' ? 1 : -1) + ')]';
+                }
+
+                if ('perPage' in params) {
+                    serverParams.max_results = params.perPage;
+                }
+
+                return serverParams;
+            },
+
             /**
              * Read single item
              *

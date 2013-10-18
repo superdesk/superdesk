@@ -33,22 +33,20 @@ define([
 
             return {
                 priority: 2000,
-                require: 'ngModel',
+                scope: {ngModel: '='},
                 templateUrl: 'scripts/superdesk/views/sdPagination.html',
-                link: function($scope, element, attrs, ngModel) {
-                    $scope.get = function(key) {
+                link: function(scope, element) {
+                    scope.get = function(key) {
                         return locationParams.get(key);
                     };
 
-                    $scope.set = function(key, val) {
+                    scope.set = function(key, val) {
                         return locationParams.set(key, val);
                     };
 
-                    ngModel.$render = function() {
-                        $scope.currentPage = locationParams.get('page');
-                        $scope.totalPages = _.max([getTotalPages(ngModel.$viewValue), $scope.currentPage]);
-                        $scope.links = ngModel.$viewValue._links;
-                    };
+                    scope.currentPage = locationParams.get('page');
+                    scope.totalPages = _.max([getTotalPages(scope.ngModel), scope.currentPage]);
+                    scope.links = scope.ngModel._links;
                 }
             };
         }]);

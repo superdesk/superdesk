@@ -30,7 +30,7 @@ define([
                         items: ['locationParams', 'em', function(locationParams, em) {
                             var criteria = locationParams.reset({
                                 itemClass: 'icls:composite',
-                                sort: '[("firstCreated", -1)]',
+                                sort: ['firstCreated', 'desc'],
                                 max_results: 25
                             });
                             return em.getRepository('items').matching(criteria);
@@ -49,7 +49,7 @@ define([
                         items: ['locationParams', 'em', function(locationParams, em) {
                             var criteria = locationParams.reset({
                                 itemClass: 'icls:text',
-                                sort: '[("versionCreated", -1)]',
+                                sort: ['firstCreated', 'desc'],
                                 max_results: 25
                             });
                             return em.getRepository('items').matching(criteria);
