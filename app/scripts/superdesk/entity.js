@@ -61,6 +61,23 @@ define(['angular', 'lodash', './server'], function(angular, _) {
              * Entity repository
              */
             function Repository(entity) {
+
+                /**
+                 * Find entity by given id
+                 *
+                 * @param {string} id
+                 * @return {Object}
+                 */
+                this.find = function(id) {
+                    return server.readById(entity, id);
+                };
+
+                /**
+                 * Find entities matching given criteria
+                 *
+                 * @param {Object} criteria
+                 * @return {Object}
+                 */
                 this.matching = function(criteria) {
                     return server.list(entity, criteria);
                 };
@@ -71,6 +88,8 @@ define(['angular', 'lodash', './server'], function(angular, _) {
              */
             function EntityManager() {
 
+                this._repositories = {};
+
                 /**
                  * Get repository for given entity
                  *
@@ -78,7 +97,41 @@ define(['angular', 'lodash', './server'], function(angular, _) {
                  * @return {Repository)
                  */
                 this.getRepository = function(entity) {
-                    return new Repository(entity);
+                    if (!(entity in this._repositories)) {
+                        this._repositories[entity] = new Repository(entity);
+                    }
+
+                    return this._repositories[entity];
+                };
+
+                /**
+                 * Remove given item
+                 *
+                 * @param {Object} item
+                 * @return {Object}
+                 */
+                this.remove = function(item) {
+                    return this.server.delete(item);
+                };
+
+                /**
+                 * Update given item
+                 *
+                 * @param {Object} item
+                 * @return {Object}
+                 */
+                this.update = function(item) {
+                    return this.server.update(item);
+                };
+
+                /**
+                 * Persist given item
+                 *
+                 * @param {Object} item
+                 * @return {Object}
+                 */
+                this.persist = function(item, entity) {
+                    return this.server.create(entity, item);
                 };
             }
 
