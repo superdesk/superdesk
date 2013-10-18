@@ -229,9 +229,9 @@ Widgets styles
 
 
 /*
----------------------------------------------
+=============================================
 Gridster library
----------------------------------------------
+=============================================
 */
 
 .gridster {
@@ -308,31 +308,32 @@ Gridster library
 			.widget-resize-width , .widget-resize-height {
 				cursor: pointer;
 				position: absolute;
-				.opacity(0);
-				.transition(all 0.3s linear);
 			}
 
 
 			.widget-resize-width {
-				width: 50px;
+				width: 47px;
 				height: 43px;
 				z-index: 100;
 				right: -25px;
 				top: 50%;
 				margin-top: -22px;
 				.resize-left, .resize-right {
-					width : 25px;
+					width : 23px;
 					height: 43px;
 					float: left;
 					background: url("../../images/resize-left.png") no-repeat 0 0;
+					.opacity(0);
+					.transition(all 0.3s linear);
 				}
 				.resize-right {
 					background: url("../../images/resize-right.png") no-repeat 0 0;
+					float: right;
 				}
 			}
 			.widget-resize-height {
 				width: 43px;
-				height: 50px;
+				height: 47px;
 				z-index: 100;
 				left: 50%;
 				bottom: -24px;
@@ -340,11 +341,14 @@ Gridster library
 				
 				.resize-up, .resize-down {
 					width : 43px;
-					height: 25px;
+					height: 23px;
 					background: url("../../images/resize-up.png") no-repeat 0 0;
+					.opacity(0);
+					.transition(all 0.3s linear);
 				}
 				.resize-down {
 					background: url("../../images/resize-down.png") no-repeat 0 0;
+					margin-top: 1px;
 				}
 			}
 
@@ -354,7 +358,7 @@ Gridster library
 	&.editmode {
 		.dash-grid li {
 			&:hover {
-				.widget-resize-width , .widget-resize-height {
+				.resize-left, .resize-right, .resize-up, .resize-down  {
 					.opacity(50);
 					.transition(all 0.3s linear);
 					&:hover {
@@ -365,7 +369,7 @@ Gridster library
 			}
 			&.dragging {
 				.widget-resize-width , .widget-resize-height {
-					.opacity(10);
+					.opacity(30);
 				}
 			}
 		}
@@ -378,4 +382,45 @@ Gridster library
 		
 	}
 	
+}
+
+
+/*
+=============================================
+Add new widget modal
+=============================================
+*/
+
+.widget-select {
+	width: 860px;
+	margin-left: -430px;
+	margin-top: -280px;
+	.modal-body {
+		height: 442px;
+	}
+}
+
+.widget-list {
+	list-style-type: none;
+	margin: 0;
+	padding: 20px 30px;
+	li {
+		float: left;
+		margin: 0 30px 30px 0;
+		.thumbnail {
+			width: 140px;
+			height: 110px;
+			border: 1px solid #d8d8d8;
+			.border-radius(0px);
+		}
+		.title {	
+			text-align: center;
+			font-size: 14px;
+			color: #000;
+			padding: 5px 0;
+		}
+		&:hover {
+			cursor:pointer;
+		}
+	}
 }

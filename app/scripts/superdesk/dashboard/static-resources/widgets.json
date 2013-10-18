@@ -1,0 +1,99 @@
+{
+	"allWidgets" : [
+		{
+            "wcode" : "weather",
+            "name":"Weather",
+            "row":1,
+            "col":2,
+            "sizex":1,
+            "sizey":2,
+            "max_sizex" : 2,
+            "max_sizey" : 2,
+            "icon": "leaf",
+            "template": "scripts/superdesk/dashboard/views/widgets/widget-default.html",
+            "thumbnail" : "images/sample/widgets/weather.png"
+        },
+        {
+            "wcode" : "worldclock",
+            "name":"World Clock",
+            "row":1,
+            "col":1,
+            "sizex":1,
+            "sizey":1,
+            "max_sizex" : 2,
+            "max_sizey" : 2,
+            "icon": "time",
+            "template" : "scripts/superdesk/dashboard/views/widgets/widget-worldclock.html",
+            "class" : "world-clock",
+            "thumbnail" : "images/sample/widgets/worldclock.png"
+        },
+        {
+            "wcode" : "deafultwidget",
+            "name":"Default Widget",
+            "row":2,
+            "col":1,
+            "sizex":1,
+            "sizey":1,
+            "max_sizex" : 2,
+            "max_sizey" : 2,
+            "icon": "leaf",
+            "template": "scripts/superdesk/dashboard/views/widgets/widget-default.html",
+            "class" : "default",
+            "thumbnail" : "images/sample/widgets/default.png"
+        },
+        {
+            "wcode" : "widgetcool",
+            "name":"Widget Cool",
+            "row":1,
+            "col":3,
+            "sizex":2,
+            "sizey":1,
+            "max_sizex" : 2,
+            "max_sizey" : 2,
+            "icon": "leaf",
+            "template": "scripts/superdesk/dashboard/views/widgets/widget-default.html",
+            "class" : "default"
+        },
+        {
+            "wcode" : "dashdash",
+            "name":"DashDash",
+            "row":2,
+            "col":3,
+            "sizex":1,
+            "sizey":1,
+            "max_sizex" : 2,
+            "max_sizey" : 2,
+            "icon": "leaf",
+            "template": "scripts/superdesk/dashboard/views/widgets/widget-default.html",
+            "class" : "default"
+        }
+    ],
+    "userWidgets" : [
+        {
+            "wcode" : "widgetcool",
+            "name":"Widget Cool",
+            "row":1,
+            "col":1,
+            "sizex":2,
+            "sizey":1,
+            "max_sizex" : 2,
+            "max_sizey" : 2,
+            "icon": "leaf",
+            "template": "scripts/superdesk/dashboard/views/widgets/widget-default.html",
+            "class" : "default"
+        },
+        {
+            "wcode" : "dashdash",
+            "name":"DashDash",
+            "row":2,
+            "col":1,
+            "sizex":1,
+            "sizey":1,
+            "max_sizex" : 2,
+            "max_sizey" : 2,
+            "icon": "leaf",
+            "template": "scripts/superdesk/dashboard/views/widgets/widget-default.html",
+            "class" : "default"
+        }
+    ]
+}

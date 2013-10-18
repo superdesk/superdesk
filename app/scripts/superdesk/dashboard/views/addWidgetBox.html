@@ -1,0 +1,52 @@
+<div ng-show="showWidgetBox">
+	<div class="backdrop"></div>
+	<div class="widget-select modal">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <a class="close" ng-click="showWidgetBox=!showWidgetBox">x</a>
+	                <h3 translate>Add new widget</h3>
+	            </div>
+				<div ng-show="widgetBoxList">
+					<div class="modal-body">
+						<div class="">
+							
+						</div>
+						<ul class="widget-list">
+							<li ng-repeat="w in allWidgets | isWcode:availableWidgets" ng-click="viewDetail($index)">
+								<div class="thumbnail">
+									<img ng-src="{{w.thumbnail}}">
+								</div>
+								<div class="title">
+									{{w.name}}
+								</div>
+							</li>
+						</ul>
+		            </div>
+
+		            <div class="modal-footer">
+		                <button class="btn pull-left" translate ng-click="goPrev()"><i class="icon-chevron-left"></i> Previous</button>
+		                <button class="btn" translate ng-click="goNext()">Next <i class="icon-chevron-right"></i></button>
+		            </div>
+				</div>
+
+				<div ng-show="!widgetBoxList">
+					<div class="modal-body">
+						<div>
+							<img ng-src="{{detailsView.thumbnail}}">
+						</div>
+						<div class="title">
+							{{detailsView.name}}
+						</div>
+		            </div>
+
+		            <div class="modal-footer">
+		                <button class="btn pull-left" translate ng-click="goBack()">Back to list</button>
+		                <button class="btn btn-primary" translate ng-click="selectWidget()">Add Widget</button>
+		            </div>
+				</div>
+	            
+	        </div>
+	    </div>
+	</div>
+</div>

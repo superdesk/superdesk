@@ -469,6 +469,25 @@ textarea, select {
 
 /*
 =========================================
+Angular extensions
+=========================================
+*/
+
+//botstrap modal backdrop
+.backdrop {
+	position: fixed;
+	z-index: 1040;
+	background: #000;
+	opacity: 0.7;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+}
+
+
+/*
+=========================================
 Notifications
 =========================================
 */
@@ -476,7 +495,7 @@ Notifications
 @notif-holder-w : 300px;
 .notification-holder {
 	position: fixed;
-	z-index: 2001;
+	z-index: 1000;
 	width: @notif-holder-w;
 	top: @topspace;
 	left: 50%;

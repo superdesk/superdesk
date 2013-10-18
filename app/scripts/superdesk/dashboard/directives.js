@@ -5,19 +5,35 @@ define([
     'use strict';
 
     angular.module('superdesk.dashboard.directives', []).
+        factory('widgetList', function( $resource) {
+            return $resource('scripts/superdesk/dashboard/static-resources/widgets.json');
+        }).
         directive('sdWidget', function() {
             return {
                 templateUrl : 'scripts/superdesk/dashboard/views/widget.html',
+                restrict: 'A',
                 replace: true,
-                transclude: true,
-                restrict: 'A'
+                scope: {
+                    widget : "="
+                }
             };
+        }).
+        filter('isWcode', function() {
+          return function(input, values) {
+            var out = [];
+              for (var i = 0; i < input.length; i++){
+                for (var j=0; j < values.length; j++)
+                  if(input[i].wcode == values[j])
+                      out.push(input[i]);
+              }      
+            return out;
+          };
         }).
         directive('dashboardManager', function($timeout) {
             return {
                 restrict: 'A',
-                template: '<ul class="dash-grid"><div sd-grid-widget ng-repeat="widget in widgets" ng-model="widget"></div></ul>',
-                controller : function($scope, $element) {
+                templateUrl: 'scripts/superdesk/dashboard/views/grid.html',
+                link : function($scope, $element) {
                    
                     var ul = $element.find('ul');
 
@@ -27,6 +43,12 @@ define([
                     };
 
                     $timeout(function() {
+
+                        angular.forEach($scope.widgets, function(value, key){
+                          value.responsive = responsiveClass(value.sizex, value.sizey);
+                        });
+                        
+
                         $scope.gridster = ul.gridster(defaultOptions).data('gridster');
                     
                         $scope.gridster.options.draggable.stop = function() {
@@ -44,7 +66,9 @@ define([
                         
                     });
 
-
+                    var responsiveClass = function(x,y) {
+                        return 'r'+x+y;
+                    }
                     
 
                     var addWidgetToGridster = function() {
@@ -68,45 +92,57 @@ define([
                     $scope.resizeWidget = function(index, direction) {
                         var $w = ul.find('> li').eq(index);
                         var widget = $scope.widgets[index];
+
                         switch(direction) {
                             case "left" : 
                                 widget.sizex == 1 ?  '' : widget.sizex--;
                                 break;
                             case "right" :
-                                widget.sizex == 4 ? '' : widget.sizex++;
+                                (widget.sizex == widget.max_sizex) ? '' : widget.sizex++;
                                 break;
                             case "up" : 
                                 widget.sizey == 1 ?  '' : widget.sizey--;
                                 break;
                             case "down" :
-                                widget.sizey++;
+                                (widget.sizey == widget.max_sizey) ? '' : widget.sizey++;
                                 break;
                         }
-                       
+
+                        widget.responsive = responsiveClass(widget.sizex,widget.sizey);
+
                         $scope.gridster.resize_widget($w, widget.sizex, widget.sizey )
                     };
                 }
             };
         }).
-        
-        directive('sdGridWidget', function() {
+        directive('sdAddWidgetBox', function(widgetList, $timeout) {
             return {
+                templateUrl : 'scripts/superdesk/dashboard/views/addWidgetBox.html',
                 restrict: 'A',
                 replace: true,
-                template:
-                    '<li data-col="{{widget.col}}" data-row="{{widget.row}}" data-sizex="{{widget.sizex}}" data-sizey="{{widget.sizey}}">'+
-                        '<div class="widget-resize-width" ng-show="editmode">'+
-                            '<div class="resize-left" ng-click="resizeWidget($index,\'left\')" ></div>'+
-                            '<div class="resize-right" ng-click="resizeWidget($index,\'right\')" ></div>'+
-                        '</div>'+
-                        '<div class="widget-resize-height" ng-show="editmode">'+
-                            '<div class="resize-up" ng-click="resizeWidget($index,\'up\')" ></div>'+
-                            '<div class="resize-down" ng-click="resizeWidget($index,\'down\')" ></div>'+
-                        '</div>'+
-                        '<div class="widget-close" ng-click="removeWidget($index)" ng-show="editmode"></div>'+
-                        '<div sd-widget></div>'+
-                    '</li>',
-            };
+                link : function($scope, $element, $attrs) {
+
+                    $scope.widgetBoxList = true;
+                    $scope.detailsView = null;
+
+
+
+
+                    $scope.viewDetail = function(index) {
+                         $scope.widgetBoxList = false;
+                         $scope.detailsView = $scope.allWidgets[index];
+                    }
+
+                    $scope.goBack = function() {
+                         $scope.widgetBoxList = true;
+                    }
+
+                    $scope.selectWidget  = function() {
+                        $scope.addWidget($scope.detailsView);
+                        $scope.goBack();
+                    }
+                                    }
+            }
         });
         
 });
