@@ -9,6 +9,7 @@ define(['angular'], function(angular) {
             $scope.user = user;
             $scope.settings = settings;
             $scope.locationParams = locationParams;
+            $scope.search = locationParams.get('search');
         };
 
         $scope.delete = function(user) {

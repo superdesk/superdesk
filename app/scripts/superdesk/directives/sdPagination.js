@@ -38,9 +38,11 @@ define([
                         return locationParams.get(key);
                     };
 
-                    scope.set = function(key, val) {
-                        return locationParams.set(key, val);
-                    };
+                    scope.page = locationParams.get('page');
+
+                    scope.$watch('page', function(page) {
+                        locationParams.set('page', page);
+                    });
 
                     scope.$watch('model', function(model) {
                         scope.totalPages = getTotalPages(scope.model);
