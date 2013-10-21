@@ -10,17 +10,14 @@ define([
          *
          * Usage:
          * <a href=""
-                sd-sort
-                data-label="{{ 'Name'|translate }}"
-                data-field="display_name"
-            ></a>
+         *      sd-sort
+         *      data-label="{{ 'Name'|translate }}"
+         *      data-field="display_name"
+         * ></a>
          * 
          * Params:
-         * @param {string} sortFieldText - user friendly text for sort field
-         * @param {string} sortFieldName - field name for sort field
-         * @param {string} sdSortFieldKey - state key for sort field
-         * @param {string} sdSortDirectionKey - state key for sort direction
-         * @param {Object} sdStateHandler - handler for application state
+         * @param {string} label - user friendly text for sort field
+         * @param {string} field - field name for sort field
          */
         .directive('sdSort', function(locationParams) {
             return {

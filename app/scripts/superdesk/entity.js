@@ -49,6 +49,49 @@ define(['angular', 'lodash', './server'], function(angular, _) {
                     var locVar = (key in this.defaults && angular.equals(this.defaults[key], val)) ? null : val;
                     $location.search(key, locVar);
                     return this;
+                },
+
+                /**
+                 * Returns query string compiled from current params
+                 *
+                 * if parameter value is same as default one it will remove it from query
+                 *
+                 * @return {string}
+                 */
+                getQuery: function() {
+                    var parts = [];
+                    _.forEach(this.params, function(val, key) {
+                        if (!angular.equals(this.defaults[key], val)) {
+                            if (_.isArray(val) === false) {
+                                val = [val];
+                            }
+                            _.forEach(val, function(item) {
+                                parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(item));
+                            });
+                        }
+                    }, this);
+                    var query = (parts.length === 0) ? '' : '?' + parts.join('&');
+                    return query;
+                },
+
+                /**
+                 * Updates url with given path, keeping parameters
+                 *
+                 * if parameter value is same as default one it will remove it from query
+                 *
+                 * @param {string} path
+                 */
+                path: function(path) {
+                    $location.path(path);
+                },
+
+                /**
+                 * Activates controller based on current url. Does not refresh the page.
+                 *
+                 *
+                 */
+                reload: function() {
+                    $route.reload();
                 }
             };
         }])

@@ -176,10 +176,10 @@ define([
                     serverParams.max_results = params.perPage;
                 }
 
-                if ('search' in params) {
-                    var search = params.search.split(':');
-                    serverParams.where = {};
-                    serverParams.where[search[0]] = search[1];
+                if (params.search !== '') {
+                    var search = {};
+                    search[params.searchField] = params.search;
+                    serverParams.where = angular.toJson(search);
                 }
 
                 return serverParams;
