@@ -1,13 +1,13 @@
 define([
     'angular',
     './controllers/main',
-    './controllers/upload-avatar',
     './directives',
     './resources',
+    '../users/module'
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.profile', ['superdesk.profile.directives', 'superdesk.profile.resources', 'superdesk.services.upload']).
+    angular.module('superdesk.profile', ['superdesk.profile.directives', 'superdesk.profile.resources', 'superdesk.users']).
         config(['$routeProvider', function($routeProvider) {
             $routeProvider.
                 when('/my-profile', {

@@ -2,22 +2,22 @@
 	<h3 class="page-nav-title">{{ 'Profile:'|translate }} <span>{{ user.display_name || user.username }}</span></h3>
 </div>
 
-<div class="notification-holder">
-	<p class="alert alert-success" ng-show="msg=='success'"  translate>Saved.</p>
-	<p class="alert alert-info" ng-show="msg=='info'" translate>Saving...</p>
-</div>
-
 <div sd-upload-popup></div>
 
-<div class="my-profile-container user-details-pane">
+<div class="my-profile-container user-details-pane" ng-controller="UserDetailController">
+
+	<div class="notification-holder">
+		<p class="alert alert-success" ng-show="msg=='success'"  translate>Saved.</p>
+		<p class="alert alert-info" ng-show="msg=='info'" translate>Saving...</p>
+	</div>
+
 	<div class="content">
 		<div class="profile">
 			<div class="profile-pic">
 				<figure>
-					<img ng-src="{{ user.picture_url }}" alt="user.display_name">
+					<img sd-user-picture data-src="user.picture_url" alt="user.display_name" width="200" height="200">
 				</figure>
-				<a class="change-photo" ng-click="openUpload()" translate>Change Photo</a>
-				<input type="hidden" ng-model="user.picture_url" />
+				<a class="change-photo" href="" ng-click="editPicture()" translate>Change Photo</a>
 			</div>
 
 			<div class="profile-info user-profile-edit">

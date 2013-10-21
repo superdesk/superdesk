@@ -2,15 +2,17 @@ define([
     'angular',
     'superdesk/settings',
     'superdesk/server',
-    'superdesk/services/translate',
     'superdesk/entity',
+    'superdesk/services/translate',
+    'superdesk/services/upload',
     './controllers/list',
     './controllers/detail',
-    './services'
+    './services',
+    './directives/sdUserPicture'
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.settings', 'superdesk.server', 'superdesk.users.services'])
+    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.settings', 'superdesk.server', 'superdesk.services.upload', 'superdesk.users.services'])
         .value('defaultListParams', {
             search: '',
             searchField: 'username',
@@ -29,6 +31,7 @@ define([
         })
         .controller('UserListController', require('superdesk/users/controllers/list'))
         .controller('UserDetailController', require('superdesk/users/controllers/detail'))
+        .directive('sdUserPicture', require('superdesk/users/directives/sdUserPicture'))
         .config(function($routeProvider) {
             $routeProvider
                 .when('/users/:id?', {

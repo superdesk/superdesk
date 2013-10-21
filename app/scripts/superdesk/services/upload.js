@@ -3,7 +3,7 @@ define([
     'angular',
     'bootstrap/modal',
     'file-upload/jquery.fileupload-angular',
-], function($,angular) {
+], function($, angular) {
     'use strict';
 
     angular.module('superdesk.services.upload', ['blueimp.fileupload'])

@@ -3,6 +3,8 @@
     <a class="btn btn-medium btn-info pull-right" href="#/users/new" sd-with-params><span class="medium-icon-add"></span> {{ 'Add new user'|translate }}</a>
 </div>
 
+<div sd-upload-popup></div>
+
 <div class="tab-background-container" style="top: 50px;">
     <div class="tab-content user-tabs">
         <div class="tab-pane active" id="active_users">
@@ -66,9 +68,9 @@
 
                     <tbody>
 
-                        <tr ng-repeat="user in users._items">
+                        <tr ng-repeat="user in users._items" ng-click="edit(user)">
                             <td><input sd-check ng-model="user._checked"></td>
-                            <td><figure class="avatar" ng-show="settings.fields.avatar"><img src=""></figure></td>
+                            <td><figure class="avatar" ng-show="settings.fields.avatar"><img sd-user-picture data-src="user.picture_url" width="22" height="22"></figure></td>
                             <td class="name_col" ng-show="settings.fields.display_name"><a href="#/users/{{ user._id }}" sd-with-params>{{ user.display_name }}</a></td>
                             <td ng-show="settings.fields.username">{{ user.username }}</td>
                             <td class="email_col resp-hide" ng-show="settings.fields.email"><a href="">{{ user.email }}</a></td>
@@ -103,7 +105,8 @@
         <div class="tab-pane user-profile user-profile-edit clearfix active" id="userd-profile-edit">
                   <header>
                         <figure class="small-user-avatar">
-                          <img ng-src="{{user.picture_url}}">
+                            <a href="" ng-click="editPicture()" translate>Change Photo</a>
+                            <img sd-user-picture data-src="user.picture_url">
                         </figure>
                         <button class="btn btn-info pull-right" ng-click="save()">{{ 'Save'|translate }}</button>
                   </header>
