@@ -94,7 +94,7 @@ define([
                     $timeout(function() {
 
                         angular.forEach($scope.widgets, function(value){
-                          value.responsive = responsiveClass(value.sizex, value.sizey);
+                            value.responsive = responsiveClass(value.sizex, value.sizey);
                         });
                         
 
@@ -155,16 +155,24 @@ define([
 
                         switch(direction) {
                         case 'left' :
-                            widget.sizex === 1 ?  '' : widget.sizex--;
+                            if (widget.sizex !== 1) {
+                                widget.sizex--;
+                            }
                             break;
                         case 'right' :
-                            (widget.sizex === widget.max_sizex) ? '' : widget.sizex++;
+                            if (widget.sizex !== widget.max_sizex) {
+                                widget.sizex++;
+                            }
                             break;
                         case 'up' :
-                            widget.sizey === 1 ?  '' : widget.sizey--;
+                            if (widget.sizey !== 1) {
+                                widget.sizey--;
+                            }
                             break;
                         case 'down' :
-                            (widget.sizey === widget.max_sizey) ? '' : widget.sizey++;
+                            if (widget.sizey !== widget.max_sizey) {
+                                widget.sizey++;
+                            }
                             break;
                         }
 
