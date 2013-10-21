@@ -14,7 +14,7 @@ define(['angular'], function(angular) {
 
         $scope.delete = function(user) {
             server.delete(user).then(function() {
-            locationParams.reload();
+                locationParams.reload();
             });
         };
 

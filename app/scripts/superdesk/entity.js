@@ -59,7 +59,6 @@ define(['angular', 'lodash', './server'], function(angular, _) {
                  * @return {string}
                  */
                 getQuery: function() {
-                    var self = this;
                     var parts = [];
                     _.forEach(this.params, function(val, key) {
                         if (!angular.equals(this.defaults[key], val)) {
