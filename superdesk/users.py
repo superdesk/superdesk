@@ -1,11 +1,7 @@
 """Superdesk Users"""
 
-import hashlib
-from flask import request, url_for
-
 import superdesk
 from .utc import utcnow
-from .url import urlencode
 
 class EmptyUsernameException(Exception):
     def __str__(self):
@@ -45,12 +41,6 @@ def get_display_name(user):
     else:
         return user.get('username')
 
-def get_gravatar(user, size=128, d=404):
-    email = user.get('email', 'contact@sourcefabric.org')
-    gravatar_url = 'http://www.gravatar.com/avatar/%s?' % hashlib.md5(email.lower().encode('ascii')).hexdigest()
-    gravatar_url += urlencode({'s': str(size), 'd': str(d)})
-    return gravatar_url
-
 def on_create_users(data, docs):
     """Set default fields for users"""
     for doc in docs:
@@ -58,11 +48,6 @@ def on_create_users(data, docs):
         doc.setdefault('created', now)
         doc.setdefault('updated', now)
         doc.setdefault('display_name', get_display_name(doc))
-
-def on_read_users(data, docs):
-    """Provides default data."""
-    for doc in docs:
-        doc.setdefault('picture_url', get_gravatar(doc))
 
 class CreateUserCommand(superdesk.Command):
     """Create a user with given username and password.
@@ -90,7 +75,6 @@ class CreateUserCommand(superdesk.Command):
                 return userdata
 
 superdesk.connect('create:users', on_create_users)
-superdesk.connect('read:users', on_read_users)
 
 superdesk.command('users:create', CreateUserCommand())
 
