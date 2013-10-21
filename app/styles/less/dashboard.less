@@ -15,6 +15,16 @@ Main dashboard styles
 	.content {
 		padding: 0 20px 20px 0;
 	}
+	.empty-dahsboard {
+		position: absolute;
+		left: 50%;
+		top: 40%;
+		font-size: 22px;
+		font-weight: bold;
+		color: #aaa;
+		width: 300px;
+		margin-left: -150px;
+	}
 }	
 
 .d-widget {
@@ -391,12 +401,37 @@ Add new widget modal
 =============================================
 */
 
+
+
 .widget-select {
 	width: 860px;
 	margin-left: -430px;
 	margin-top: -280px;
 	.modal-body {
 		height: 442px;
+		.popup-subnav {
+			padding-left: 30px;
+			label {
+				display: inline-block;
+				color: #989898;
+			}
+			.dropdown-simple {
+				display: inline-block;
+			}
+		}
+		.backlink {
+			background: url('../../images/back-arrow.png') no-repeat 5px 2px;
+			padding-left: 25px;
+			text-decoration: none;
+			color: #444;
+		 	margin-top: 5px;
+		 	display: inline-block;
+		 	.transition(all ease 0.2s);
+		 	&:hover {
+		 		background-position: 0 2px;
+		 		color: #222;
+		 	}
+		}
 	}
 }
 
@@ -406,7 +441,7 @@ Add new widget modal
 	padding: 20px 30px;
 	li {
 		float: left;
-		margin: 0 30px 30px 0;
+		margin: 0 30px 15px 0;
 		.thumbnail {
 			width: 140px;
 			height: 110px;
@@ -422,5 +457,23 @@ Add new widget modal
 		&:hover {
 			cursor:pointer;
 		}
+	}
+}
+
+.widget-detail {
+	
+	.thumbnail-box {
+		width: 350px;
+		float: left;
+		padding: 20px;
+	}
+	.title {
+		font-size: 18px;
+		font-weight: bold;
+		padding: 20px 0 30px;
+	}
+	.description {
+		width: 340px;
+		margin-left: 390px;
 	}
 }

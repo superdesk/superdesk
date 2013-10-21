@@ -5,9 +5,15 @@ define([
     'use strict';
 
     angular.module('superdesk.dashboard.directives', []).
-        factory('widgetList', function( $resource) {
-            return $resource('scripts/superdesk/dashboard/static-resources/widgets.json');
-        }).
+        /**
+         * sdWidget give appropriate template to data assgined to it
+         *
+         * Usage:
+         * <div sd-widget widget="someWidget"></div>
+         * 
+         * Params:
+         * @param {object} widget - object with predefined structure fileds
+         */
         directive('sdWidget', function() {
             return {
                 templateUrl : 'scripts/superdesk/dashboard/views/widget.html',
@@ -18,18 +24,60 @@ define([
                 }
             };
         }).
-        filter('isWcode', function() {
-          return function(input, values) {
-            var out = [];
-              for (var i = 0; i < input.length; i++){
-                for (var j=0; j < values.length; j++)
-                  if(input[i].wcode == values[j])
-                      out.push(input[i]);
-              }      
-            return out;
-          };
+        /**
+         * sdWAddWidgetBox is modal window for adding new widget to dashboard
+         *
+         * Usage:
+         * <div sd-add-widget-box></div>
+         * 
+         */
+        directive('sdAddWidgetBox', function($timeout) {
+            return {
+                templateUrl : 'scripts/superdesk/dashboard/views/addWidgetBox.html',
+                restrict: 'A',
+                replace: true,
+                link : function($scope, $element, $attrs) {
+
+                    $scope.widgetBoxList = true;
+                    $scope.detailsView = null;                    
+
+                    $scope.showWidgetBox = false;
+                    $scope.widgetBoxList = true;
+
+                    $scope.openWidgetBox = function() {
+                        $scope.showWidgetBox = true;
+                        $scope.widgetBoxList = true;
+                    }
+                    $scope.closeWidgetBox = function() {
+                        $scope.showWidgetBox = !$scope.showWidgetBox;
+                    }
+
+                    $scope.viewDetail = function(widget) {
+                         $scope.widgetBoxList = false;
+                         $scope.detailsView = widget;
+                    }
+
+                    $scope.goBack = function() {
+                         $scope.widgetBoxList = true;
+                    }
+
+                    $scope.selectWidget  = function() {
+                        $scope.addWidget($scope.detailsView);
+                        $scope.goBack();
+                    }
+                }
+            }
         }).
-        directive('dashboardManager', function($timeout) {
+        /**
+         * sdDashboard manager is directive which add functionality of dashboard. It is possible
+         * to add, remove, move, edit, resize widgets within dashboard. It is working with gridster.js
+         * library to enable all of this.
+         *
+         * Usage:
+         * <div sd-dashboard-manager class="gridster" ng-class="{'editmode': editmode}">
+         * 
+         */
+        directive('sdDashboardManager', function($timeout) {
             return {
                 restrict: 'A',
                 templateUrl: 'scripts/superdesk/dashboard/views/grid.html',
@@ -70,7 +118,6 @@ define([
                         return 'r'+x+y;
                     }
                     
-
                     var addWidgetToGridster = function() {
                         var li = ul.find('> li').eq($scope.widgets.length-1);
                         var $w = li.addClass('gs_w').appendTo($scope.gridster.$el);
@@ -82,6 +129,18 @@ define([
                         if (newValue !== oldValue+1) { return; }
                         $timeout(function() { addWidgetToGridster(); });
                     });
+
+                    $scope.editmode = false;
+
+                    $scope.disableDragging = function() {
+                        $scope.gridster.disable();
+                        $scope.editmode = false;
+                    };
+
+                    $scope.enableDragging = function() {
+                        $scope.gridster.enable();
+                        $scope.editmode = true;
+                    };
 
                     $scope.removeWidget = function(elindex) {
                         var $w = ul.find('> li').eq(elindex);
@@ -114,35 +173,6 @@ define([
                     };
                 }
             };
-        }).
-        directive('sdAddWidgetBox', function(widgetList, $timeout) {
-            return {
-                templateUrl : 'scripts/superdesk/dashboard/views/addWidgetBox.html',
-                restrict: 'A',
-                replace: true,
-                link : function($scope, $element, $attrs) {
-
-                    $scope.widgetBoxList = true;
-                    $scope.detailsView = null;
-
-
-
-
-                    $scope.viewDetail = function(index) {
-                         $scope.widgetBoxList = false;
-                         $scope.detailsView = $scope.allWidgets[index];
-                    }
-
-                    $scope.goBack = function() {
-                         $scope.widgetBoxList = true;
-                    }
-
-                    $scope.selectWidget  = function() {
-                        $scope.addWidget($scope.detailsView);
-                        $scope.goBack();
-                    }
-                                    }
-            }
         });
         
 });

@@ -4,6 +4,8 @@ define([
     'gridster',
     './controllers/main',
     './directives',
+    './filters',
+    './resources',
     './widgets/worldclock'
 ], function(angular) {
     'use strict';
@@ -11,6 +13,8 @@ define([
     angular.module('superdesk.dashboard', [
         'ngRoute',
         'superdesk.dashboard.directives',
+        'superdesk.dashboard.filters',
+        'superdesk.dashboard.resources',
         'superdesk.dashboard.widgets.worldclock'
     ])
     .config(function($routeProvider) {
