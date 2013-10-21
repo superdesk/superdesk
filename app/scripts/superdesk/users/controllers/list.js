@@ -26,5 +26,6 @@ define(['angular'], function(angular) {
         };
 
         $scope.initialize();
+
     }];
 });
