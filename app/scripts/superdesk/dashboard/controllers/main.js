@@ -1,8 +1,8 @@
 define(['angular'], function(){
     'use strict';
 
-    return ['$scope', 'widgetList', '$timeout',
-        function($scope, widgetList, $timeout){ 
+    return ['$scope', 'widgetList',
+        function($scope, widgetList){
 
             $scope.allWidgets = [];
             $scope.widgets = [];
@@ -16,12 +16,10 @@ define(['angular'], function(){
                 widget.row = 1;
                 widget.col = 1;
                 $scope.widgets.push(widget);
-                if (!$scope.editmode) $scope.enableDragging();
+                if (!$scope.editmode)  {
+                    $scope.enableDragging();
+                }
             };
-
-
-            
-
 
         }];
 });

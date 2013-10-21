@@ -20,7 +20,7 @@ define([
                 restrict: 'A',
                 replace: true,
                 scope: {
-                    widget : "="
+                    widget : '='
                 }
             };
         }).
@@ -31,15 +31,15 @@ define([
          * <div sd-add-widget-box></div>
          * 
          */
-        directive('sdAddWidgetBox', function($timeout) {
+        directive('sdAddWidgetBox', function() {
             return {
                 templateUrl : 'scripts/superdesk/dashboard/views/addWidgetBox.html',
                 restrict: 'A',
                 replace: true,
-                link : function($scope, $element, $attrs) {
+                link : function($scope) {
 
                     $scope.widgetBoxList = true;
-                    $scope.detailsView = null;                    
+                    $scope.detailsView = null;
 
                     $scope.showWidgetBox = false;
                     $scope.widgetBoxList = true;
@@ -47,26 +47,27 @@ define([
                     $scope.openWidgetBox = function() {
                         $scope.showWidgetBox = true;
                         $scope.widgetBoxList = true;
-                    }
+                    };
+
                     $scope.closeWidgetBox = function() {
                         $scope.showWidgetBox = !$scope.showWidgetBox;
-                    }
+                    };
 
                     $scope.viewDetail = function(widget) {
-                         $scope.widgetBoxList = false;
-                         $scope.detailsView = widget;
-                    }
+                        $scope.widgetBoxList = false;
+                        $scope.detailsView = widget;
+                    };
 
                     $scope.goBack = function() {
-                         $scope.widgetBoxList = true;
-                    }
+                        $scope.widgetBoxList = true;
+                    };
 
                     $scope.selectWidget  = function() {
                         $scope.addWidget($scope.detailsView);
                         $scope.goBack();
-                    }
+                    };
                 }
-            }
+            };
         }).
         /**
          * sdDashboard manager is directive which add functionality of dashboard. It is possible
@@ -92,7 +93,7 @@ define([
 
                     $timeout(function() {
 
-                        angular.forEach($scope.widgets, function(value, key){
+                        angular.forEach($scope.widgets, function(value){
                           value.responsive = responsiveClass(value.sizex, value.sizey);
                         });
                         
@@ -116,7 +117,7 @@ define([
 
                     var responsiveClass = function(x,y) {
                         return 'r'+x+y;
-                    }
+                    };
                     
                     var addWidgetToGridster = function() {
                         var li = ul.find('> li').eq($scope.widgets.length-1);
@@ -153,23 +154,23 @@ define([
                         var widget = $scope.widgets[index];
 
                         switch(direction) {
-                            case "left" : 
-                                widget.sizex == 1 ?  '' : widget.sizex--;
-                                break;
-                            case "right" :
-                                (widget.sizex == widget.max_sizex) ? '' : widget.sizex++;
-                                break;
-                            case "up" : 
-                                widget.sizey == 1 ?  '' : widget.sizey--;
-                                break;
-                            case "down" :
-                                (widget.sizey == widget.max_sizey) ? '' : widget.sizey++;
-                                break;
+                        case 'left' :
+                            widget.sizex === 1 ?  '' : widget.sizex--;
+                            break;
+                        case 'right' :
+                            (widget.sizex === widget.max_sizex) ? '' : widget.sizex++;
+                            break;
+                        case 'up' :
+                            widget.sizey === 1 ?  '' : widget.sizey--;
+                            break;
+                        case 'down' :
+                            (widget.sizey === widget.max_sizey) ? '' : widget.sizey++;
+                            break;
                         }
 
                         widget.responsive = responsiveClass(widget.sizex,widget.sizey);
 
-                        $scope.gridster.resize_widget($w, widget.sizex, widget.sizey )
+                        $scope.gridster.resize_widget($w, widget.sizex, widget.sizey );
                     };
                 }
             };
