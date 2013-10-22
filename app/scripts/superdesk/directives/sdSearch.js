@@ -10,6 +10,7 @@ define(['angular'], function(angular) {
      */
     .directive('sdSearch', function(locationParams) {
         return {
+            scope: true,
             priority: 10,
             link: function(scope, element, attrs) {
                 var query = locationParams.get('search') || '';

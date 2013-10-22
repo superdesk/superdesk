@@ -14,6 +14,7 @@ define(['angular', 'moment'], function(angular, moment) {
          */
         directive('sdReldate', function() {
             return {
+                scope: true,
                 require: 'ngModel',
                 template: '<time datetime="{{ datetime }}" title="{{ title }}">{{ reldate }}</time>',
                 replate: true,

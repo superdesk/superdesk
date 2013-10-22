@@ -14,6 +14,7 @@ define([
         .directive('sdWithParams', ['locationParams', function(locationParams) {
 
             return {
+                scope: true,
                 compile: function(element, attrs, transclude) {
                     attrs.$set('href', attrs.href.trim() + locationParams.getQuery());
                 }
