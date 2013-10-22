@@ -47,8 +47,12 @@ define([
                     };
 
                     scope.save = function() {
-                        scope.close();
-                        upload.delay.resolve(result);
+                        $(element).modal('hide');
+                        if (result) {
+                            upload.delay.resolve(result);
+                        } else {
+                            upload.delay.reject();
+                        }
                     };
 
                     scope.$on('fileuploadadd', function(e,data) {
