@@ -13,6 +13,7 @@ define([
         }).
         directive('sdSearchbar', function($location, $routeParams) {
             return {
+                scope: true,
                 link: function($scope, element, attrs) {
                     element.attr('name', 'searchbar');
                     element.attr('autofocus', 'autofocus');
@@ -39,6 +40,7 @@ define([
         }).
         directive('sdHtml', function($sce) {
             return {
+                scope: true,
                 require: '?ngModel',
                 link: function($scope, element, attrs, ngModel) {
                     ngModel.$render = function() {
@@ -62,6 +64,7 @@ define([
             }
 
             return {
+                scope: true,
                 require: '?ngModel',
                 link: function($scope, element, attrs, ngModel) {
                     ngModel.$render = function() {
@@ -72,6 +75,7 @@ define([
         }).
         directive('sdContenteditable', function() {
             return {
+                scope: true,
                 require: 'ngModel',
                 link: function($scope, element, attrs, ngModel) {
                     element.attr('contenteditable', 'true');
