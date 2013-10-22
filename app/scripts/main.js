@@ -79,13 +79,11 @@ function gettext(input)
 define([
     'angular',
     'lodash',
-    'superdesk/services/translate',
     'superdesk/auth/module',
     'superdesk/menu/module',
     'superdesk/dashboard/module',
     'superdesk/items/module',
-    'superdesk/users/module',
-    'superdesk/profile/module'
+    'superdesk/users/module'
 ], function(angular, _) {
     'use strict';
 
@@ -94,18 +92,18 @@ define([
 
     require([
         'superdesk/directives/all',
-        'superdesk/filters/all'
+        'superdesk/filters/all',
+        'superdesk/services/all'
     ], function() {
         var modules = [
             'superdesk.directives',
             'superdesk.filters',
-            'superdesk.services.translate',
+            'superdesk.services',
             'superdesk.auth',
             'superdesk.menu',
             'superdesk.dashboard',
             'superdesk.items',
-            'superdesk.users',
-            'superdesk.profile'
+            'superdesk.users'
         ];
 
         angular.element(document).ready(function() {

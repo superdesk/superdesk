@@ -7,7 +7,7 @@
 			<li ng-repeat="activity in activityFeed._items" class="activity" ng-model="activity" sd-group-dates="created">
                 <div>
                     <figure>
-                        <img ng-src="{{ user.picture_url }}" ng-show="user.picture_url">
+                        <img sd-user-picture data-src="user.picture_url" width="42" height="42">
                     </figure>
                     <div class="activity-content"><p><b>{{ activity.user.display_name || activity.user.username }}</b>: {{ activity.action }}</div>
                     <div class="activity-date" sd-reldate ng-model="activity.created"></div>

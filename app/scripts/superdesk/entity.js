@@ -97,9 +97,9 @@ define(['angular', 'lodash', './server'], function(angular, _) {
                 /**
                  * Replace history
                  */
-                 replace: function() {
+                replace: function() {
                     $location.replace();
-                 }
+                }
             };
         }])
 
