@@ -179,6 +179,7 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('server', [
+    'clean:dist',
     'clean:server',
     'write:config',
     'less',
