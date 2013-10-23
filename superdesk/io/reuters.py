@@ -5,51 +5,51 @@ import xml.etree.ElementTree as etree
 import traceback
 import datetime
 
+import superdesk
+from superdesk.io import register_provider
 from superdesk.utc import utcnow
+from .newsml import Parser
+from .reuters_token import get_token
 
-class ReutersService(object):
+PROVIDER = 'reuters'
+
+class ReutersUpdateService(object):
     """Update Service"""
 
-    PROVIDER = 'reuters'
-    URL = 'http://rmb.reuters.com/rmd/rest/xml'
     DATE_FORMAT = '%Y.%m.%d.%H.%M'
+    URL = 'http://rmb.reuters.com/rmd/rest/xml'
 
-    def __init__(self, parser, token, db):
-        self.parser = parser
-        self.token = token
-        self.db = db
+    def __init__(self):
+        self.parser = Parser()
 
     def get_token(self):
-        return self.token
+        return get_token(self.provider)
 
-    def update(self):
+    def update(self, provider):
         """Service update call."""
 
+        self.provider = provider
         updated = utcnow()
-        last_updated = self.get_last_updated()
+
+        last_updated = provider.get('updated')
         if not last_updated or last_updated < updated + datetime.timedelta(days=-7):
             last_updated = updated + datetime.timedelta(hours=-12) # last 12h
 
         for channel in self.get_channels():
             for guid in self.get_ids(channel, last_updated, updated):
                 items = self.get_items(guid)
-                self.save_items(items)
-
-        self.set_last_updated(updated)
-
-    def save_items(self, items):
-        items.reverse()
-        for item in items:
-            self.fetch_assets(item)
-            self.db.insert('items', [item])
+                while items:
+                    item = items.pop()
+                    items.extend(self.fetch_assets(item))
+                    yield item
 
     def fetch_assets(self, item):
         """Fetch remote assets for given item."""
         for group in item.get('groups', []):
             for ref in group.get('refs', []):
                 if 'residRef' in ref:
-                    items = self.get_items(ref.get('residRef'))
-                    self.save_items(items)
+                    return self.get_items(ref.get('residRef'))
+        return []
 
     def get_items(self, guid):
         """Parse item message and return given items."""
@@ -107,23 +107,14 @@ class ReutersService(object):
         """Format date for API usage."""
         return date.strftime(self.DATE_FORMAT)
 
-    def get_provider(self):
-        """Get stored provider entity."""
-        provider = self.db.find_one('feeds', provider=self.PROVIDER)
-        if not provider:
-            provider = {'provider': self.PROVIDER}
-            self.db.insert('feeds', provider)
-        return provider
+def on_read_items(data, docs):
+    db = superdesk.get_db()
+    provider = db['ingest_providers'].find_one({'type': PROVIDER})
+    for doc in docs:
+        if doc.get('ingest_provider') and provider:
+            for content in doc.get('contents', []):
+                if content.get('href'):
+                    content['href'] = '%s?auth_token=%s' % (content.get('href'), get_token(provider))
 
-    def get_last_updated(self):
-        """Get provider last updated timestamp."""
-        provider = self.get_provider()
-        return provider.get('updated')
-
-    def set_last_updated(self, updated):
-        """Set provider last updated timestamp."""
-        provider = self.get_provider()
-        self.db.update('feeds', provider.get('_id'), {
-            'updated': updated
-        })
-
+superdesk.connect('read:items', on_read_items)
+register_provider(PROVIDER, ReutersUpdateService())

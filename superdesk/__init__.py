@@ -53,6 +53,10 @@ def blueprint(blueprint, **kwargs):
     blueprint.kwargs = kwargs
     BLUEPRINTS.append(blueprint)
 
+def get_db():
+    """Get db"""
+    return app.data.driver.db
+
 class SuperdeskData(eve.io.mongo.Mongo):
     """Superdesk Data Layer"""
 

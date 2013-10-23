@@ -1,6 +1,5 @@
 """Reuters Token Provider"""
 
-import os
 import ssl
 import requests
 import xml.etree.ElementTree as etree
@@ -10,36 +9,34 @@ from datetime import datetime, timedelta
 import superdesk
 from superdesk.utc import utcnow
 
-PROVIDER = 'reuters'
-
 def is_valid_token(token):
     ttl = timedelta(hours=12)
     return token.get('created') + ttl >= utcnow()
 
-def get_token(db):
-    token = db.find_one('tokens', provider=PROVIDER)
+def get_token(provider):
+    token = provider.get('token')
     if token and is_valid_token(token):
         return token.get('token')
-    elif token:
-        db.remove('tokens', token.get('_id'))
 
     token = {
-        'provider': PROVIDER,
-        'token': fetch_token_from_api(),
-        'created': datetime.utcnow(),
+        'token': fetch_token_from_api(provider),
+        'created': utcnow(),
     }
 
-    db.insert('tokens', token)
+    provider['token'] = token
+
+    db = superdesk.get_db()
+    db['ingest_providers'].save(provider)
     return token.get('token')
 
-def fetch_token_from_api():
+def fetch_token_from_api(provider):
     session = requests.Session()
     session.mount('https://', SSLAdapter())
 
     url = 'https://commerce.reuters.com/rmd/rest/xml/login'
     payload = {
-        'username': os.environ.get('REUTERS_USERNAME', ''),
-        'password': os.environ.get('REUTERS_PASSWORD', ''),
+        'username': provider.get('config', {}).get('username', ''),
+        'password': provider.get('config', {}).get('password', ''),
     }
 
     response = session.get(url, params=payload)
