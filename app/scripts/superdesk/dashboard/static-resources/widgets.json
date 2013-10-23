@@ -1,70 +1,67 @@
-{
-	"allWidgets" : [
-		{
-            "wcode" : "weather",
-            "name":"Weather",
-            "sizex":1,
-            "sizey":2,
-            "max_sizex" : 2,
-            "max_sizey" : 2,
-            "icon": "leaf",
-            "template": "scripts/superdesk/dashboard/views/widgets/widget-default.html",
-            "class" : "default",
-            "thumbnail" : "images/sample/widgets/weather.png",
-            "description" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
-        },
-        {
-            "wcode" : "worldclock",
-            "name":"World Clock",
-            "sizex":1,
-            "sizey":1,
-            "max_sizex" : 2,
-            "max_sizey" : 1,
-            "icon": "time",
-            "template" : "scripts/superdesk/dashboard/views/widgets/widget-worldclock.html",
-            "class" : "world-clock",
-            "thumbnail" : "images/sample/widgets/worldclock.png",
-            "description" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
-        },
-        {
-            "wcode" : "deafultwidget",
-            "name":"Default Widget",
-            "sizex":1,
-            "sizey":1,
-            "max_sizex" : 2,
-            "max_sizey" : 2,
-            "icon": "leaf",
-            "template": "scripts/superdesk/dashboard/views/widgets/widget-default.html",
-            "class" : "default",
-            "thumbnail" : "images/sample/widgets/default.png",
-            "description" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
-        },
-        {
-            "wcode" : "widgetcool",
-            "name":"Widget Cool",
-            "sizex":2,
-            "sizey":1,
-            "max_sizex" : 2,
-            "max_sizey" : 2,
-            "icon": "leaf",
-            "template": "scripts/superdesk/dashboard/views/widgets/widget-default.html",
-            "class" : "default",
-            "thumbnail" : "images/sample/widgets/default.png",
-            "description" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
-        },
-        {
-            "wcode" : "dashdash",
-            "name":"DashDash",
-            "sizex":1,
-            "sizey":1,
-            "max_sizex" : 2,
-            "max_sizey" : 2,
-            "icon": "leaf",
-            "template": "scripts/superdesk/dashboard/views/widgets/widget-default.html",
-            "class" : "default",
-            "thumbnail" : "images/sample/widgets/default.png",
-            "description" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
-        }
-    ],
-    "userWidgets" : []
-}
+[
+	{
+        "wcode" : "weather",
+        "name":"Weather",
+        "sizex":1,
+        "sizey":2,
+        "max_sizex" : 2,
+        "max_sizey" : 2,
+        "icon": "leaf",
+        "template": "scripts/superdesk/dashboard/views/widgets/widget-default.html",
+        "class" : "default",
+        "thumbnail" : "images/sample/widgets/weather.png",
+        "description" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+    },
+    {
+        "wcode" : "worldclock",
+        "name":"World Clock",
+        "sizex":1,
+        "sizey":1,
+        "max_sizex" : 2,
+        "max_sizey" : 1,
+        "icon": "time",
+        "template" : "scripts/superdesk/dashboard/views/widgets/widget-worldclock.html",
+        "class" : "world-clock",
+        "thumbnail" : "images/sample/widgets/worldclock.png",
+        "description" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+    },
+    {
+        "wcode" : "deafultwidget",
+        "name":"Default Widget",
+        "sizex":1,
+        "sizey":1,
+        "max_sizex" : 2,
+        "max_sizey" : 2,
+        "icon": "leaf",
+        "template": "scripts/superdesk/dashboard/views/widgets/widget-default.html",
+        "class" : "default",
+        "thumbnail" : "images/sample/widgets/default.png",
+        "description" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+    },
+    {
+        "wcode" : "widgetcool",
+        "name":"Widget Cool",
+        "sizex":2,
+        "sizey":1,
+        "max_sizex" : 2,
+        "max_sizey" : 2,
+        "icon": "leaf",
+        "template": "scripts/superdesk/dashboard/views/widgets/widget-default.html",
+        "class" : "default",
+        "thumbnail" : "images/sample/widgets/default.png",
+        "description" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+    },
+    {
+        "wcode" : "dashdash",
+        "name":"DashDash",
+        "sizex":1,
+        "sizey":1,
+        "max_sizex" : 2,
+        "max_sizey" : 2,
+        "icon": "leaf",
+        "template": "scripts/superdesk/dashboard/views/widgets/widget-default.html",
+        "class" : "default",
+        "thumbnail" : "images/sample/widgets/default.png",
+        "description" : "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
+    }
+]

@@ -7,18 +7,15 @@ define([
     angular.module('superdesk.dashboard.filters', []).
         filter('wcodeFilter', function() {
             return function(input, values) {
-                var out = [];
-                for (var i = 0; i < input.length; i++){
-                    var flag = false;
-                    for (var j=0; j < values.length; j++) {
-                        if(input[i].wcode === values[j].wcode) {
-                            flag = true;
-                            break;
-                        }
+                return _.filter(input, function(item) {
+                    if (_.indexOf(
+                        _.difference(
+                            _.pluck(input, 'wcode'),
+                            _.pluck(values, 'wcode')
+                        ), item.wcode) !== -1) {
+                        return true;
                     }
-                    if (!flag) { out.push(input[i]); }
-                }
-                return out;
+                });
             };
         });
 });

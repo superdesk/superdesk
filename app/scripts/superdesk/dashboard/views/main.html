@@ -1,7 +1,7 @@
 <div class="subnav subnav-fixed">
 
 	<h3 class="page-nav-title" translate>Dashboard</h3>
-	<button class="btn btn-info btn-medium pull-right" ng-click="openWidgetBox()"><i class="icon-plus-sign icon-white"></i> <span translate>Add Widget</span></button>
+	<button class="btn btn-info btn-medium pull-right" ng-click="widgetBoxStatus = true;"><i class="icon-plus-sign icon-white"></i> <span translate>Add Widget</span></button>
 	<div class="dropdown pull-right">
 	    <button class="btn btn-medium dropdown-toggle pull-right" ><i class="icon-cog"></i> <b class="caret"></b></button>
 	    <ul class="dropdown-menu sf-dropdown sf-dropdown-right pull-right">
@@ -10,19 +10,16 @@
 	    	<li translate> Configure devices</li>
 	    </ul>
 	</div>
-	<button class="btn btn-medium pull-right" ng-click="enableDragging()" ng-show="!editmode && widgets.length"><i class="icon-move"></i> <span translate>Rearrange widgets</span></button>
-	<button class="btn btn-medium btn-info pull-right" ng-click="disableDragging()" ng-show="editmode && widgets.length" translate>Save</button>
-	
+	<button class="btn btn-medium pull-right" ng-click="editMode = true;" ng-show="!editMode && widgets.length"><i class="icon-move"></i> <span translate>Rearrange widgets</span></button>
+	<button class="btn btn-medium btn-info pull-right" ng-click="saveWidgets()" ng-show="editMode" translate>Save</button>
 </div>
 
-<div sd-add-widget-box></div>
+<div sd-add-widget-box sd-status="widgetBoxStatus" data-model="widgets"></div>
 
 <div class="dashboard-container">
 	<div class="content clearfix">
 
-		<div sd-dashboard-manager class="gridster" ng-class="{'editmode': editmode}">
-			
-		</div>
+		<div sd-dashboard-manager sd-status="editMode" data-model="widgets"></div>
 
 		<div class="empty-dahsboard" ng-show="!widgets.length" translate>Your dashboard is empty.</div>
 

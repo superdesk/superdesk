@@ -1,13 +1,13 @@
-<div ng-show="showWidgetBox">
+<div ng-show="status">
 	<div class="backdrop"></div>
 	<div class="widget-select modal">
 	    <div class="modal-dialog">
 	        <div class="modal-content">
 	            <div class="modal-header">
-	                <a class="close" ng-click="closeWidgetBox()">x</a>
+	            	<a class="close" ng-click="status = false;">x</a>
 	                <h3 translate>Add new widget</h3>
 	            </div>
-				<div ng-show="widgetBoxList">
+				<div ng-show="!selectedWidget">
 					<div class="modal-body">
 						<div class="popup-subnav subnav">
 							<label translate>Category: </label>
@@ -24,7 +24,7 @@
 	                    	</div>
 						</div>
 						<ul class="widget-list">
-							<li ng-repeat="w in allWidgets | wcodeFilter:widgets" ng-click="viewDetail(w)">
+							<li ng-repeat="w in widgetList | wcodeFilter:model" ng-click="$parent.selectedWidget = w">
 								<div class="thumbnail">
 									<img ng-src="{{w.thumbnail}}">
 								</div>
@@ -41,25 +41,25 @@
 		            </div>
 				</div>
 
-				<div class="widget-detail" ng-show="!widgetBoxList" >
+				<div class="widget-detail" ng-show="selectedWidget">
 					<div class="modal-body">
 						<div class="popup-subnav subnav">
-							<a href="" class="backlink" ng-click="goBack()" translate>Back to overview</a>
+							<a href="" class="backlink" ng-click="selectedWidget = null" translate>Back to overview</a>
 						</div>
 						<div class="thumbnail-box">
-							<img ng-src="{{detailsView.thumbnail}}">
+							<img ng-src="{{ selectedWidget.thumbnail }}">
 						</div>
 						<div class="title">
-							{{detailsView.name}}
+							{{ selectedWidget.name }}
 						</div>
 						<div class="description">
-							{{detailsView.description}}
+							{{ selectedWidget.description }}
 						</div>
 		            </div>
 
 		            <div class="modal-footer">
-		                <button class="btn" ng-click="closeWidgetBox()" translate>Cancel</button>
-		                <button class="btn btn-primary" ng-click="selectWidget()" translate>Add Widget</button>
+		                <button class="btn" ng-click="status = false;" translate>Cancel</button>
+		                <button class="btn btn-primary" ng-click="addWidget(selectedWidget); selectedWidget = null" translate>Add Widget</button>
 		            </div>
 				</div>
 	            
