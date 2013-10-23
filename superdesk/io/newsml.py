@@ -126,4 +126,3 @@ class Parser():
 
     def datetime(self, string):
         return datetime.datetime.strptime(string, '%Y-%m-%dT%H:%M:%S.000Z')
-

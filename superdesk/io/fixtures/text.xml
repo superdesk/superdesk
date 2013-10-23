@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-SUMMARY: 
-- Structure: NML2 SNI Text 
+<!--
+SUMMARY:
+- Structure: NML2 SNI Text
 - Based On: NML2 v2.10
 
 AUTHOR: thomsonreuters.com
@@ -88,4 +88,3 @@ AUTHOR: thomsonreuters.com
     </newsItem>
   </itemSet>
 </newsMessage>
-

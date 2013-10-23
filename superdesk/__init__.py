@@ -7,7 +7,7 @@ import blinker
 import importlib
 import eve.io.mongo
 import settings
-from flask import abort, app, Blueprint
+from flask import abort, app, Blueprint, json
 from flask.ext.script import Command, Option
 from eve.utils import document_link
 

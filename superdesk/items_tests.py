@@ -1,7 +1,7 @@
 
 import unittest
 
-from . import setup, app
+from test import setup, app
 
 import superdesk
 

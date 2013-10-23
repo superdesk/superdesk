@@ -8,6 +8,8 @@ providers = {}
 def register_provider(type, provider):
     providers[type] = provider
 
+superdesk.provider = register_provider
+
 def update_provider(provider, db):
     """Update given provider."""
 
@@ -29,14 +31,37 @@ def update_provider(provider, db):
         db['ingest_providers'].save(provider)
 
 class UpdateIngest(superdesk.Command):
-    """Update ingest feeds."""
+    """Update ingest providers."""
 
-    def run(self):
+    option_list = (
+        superdesk.Option('--provider', '-p', dest='provider_type'),
+    )
+
+    def run(self, provider_type=None):
         db = superdesk.get_db()
         for provider in db['ingest_providers'].find():
-            update_provider(provider, db)
+            if not provider_type or provider_type == provider.get('type'):
+                update_provider(provider, db)
+
+class AddProvider(superdesk.Command):
+    """Add ingest provider."""
+
+    option_list = {
+        superdesk.Option('--provider', '-p', dest='provider'),
+    }
+
+    def run(self, provider=None):
+        if provider:
+            data = superdesk.json.loads(provider)
+            data.setdefault('created', utcnow())
+            data.setdefault('updated', utcnow())
+            data.setdefault('name', data['type'])
+            db = superdesk.get_db()
+            db['ingest_providers'].save(data)
+            return data
 
 superdesk.command('ingest:update', UpdateIngest())
+superdesk.command('ingest:provider', AddProvider())
 
 superdesk.domain('feeds', {
     'schema': {
@@ -48,6 +73,7 @@ superdesk.domain('feeds', {
 
 # load providers now to have available types for the schema
 import superdesk.io.reuters
+import superdesk.io.aap
 
 schema = {
     'name': {

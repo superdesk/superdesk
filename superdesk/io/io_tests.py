@@ -2,7 +2,7 @@ import os
 import unittest
 import xml.etree.ElementTree as etree
 
-from . import setup
+from test import setup
 
 from superdesk.io import newsml
 

@@ -117,4 +117,4 @@ def on_read_items(data, docs):
                     content['href'] = '%s?auth_token=%s' % (content.get('href'), get_token(provider))
 
 superdesk.connect('read:items', on_read_items)
-register_provider(PROVIDER, ReutersUpdateService())
+superdesk.provider(PROVIDER, ReutersUpdateService())
