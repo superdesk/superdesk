@@ -9,7 +9,6 @@ define([
         var func = _[methodName];
 
         return {
-            scope: true,
             require: 'ngModel',
             link: function($scope, element, attrs, ngModel) {
                 if (attrs.interval !== '' && attrs.interval !== undefined) {

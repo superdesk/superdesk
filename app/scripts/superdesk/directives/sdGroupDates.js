@@ -18,7 +18,6 @@ define(['angular', 'moment'], function(angular, moment) {
             var COMPARE_FORMAT = 'YYYY-M-D';
             var DISPLAY_FORMAT = 'D. MMMM';
             return {
-                scope: true,
                 require: 'ngModel',
                 link: function(scope, element, attrs, ngModel) {
                     ngModel.$render = function() {
