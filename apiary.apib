@@ -44,6 +44,38 @@ Item model is returned when fetching specific item, eg. ```GET /users/1```.
     }
     ```
 
+# Authentication
+
+To get authentication token for your credentials, use ```/auth``` endpoint.
+Once you will get the token, use it as ```username``` for Basic authentication.
+
+# POST /auth
+
++ Request (application/json)
+
+    ```js
+    {"auth": {"username": "foo", "password": "bar"}}
+    ```
+
++ Response 200 (application/json)
+
+    ```js
+    {"auth": {
+        "token": "6AHFMksxPsPpOHXm1UixfuNPUhhMOHJPbzuLq4Kw",
+        "username": "admin",
+        "updated": "2013-10-08T10:53:42",
+        "etag": "063f555c8c32c653947f7d26ca3322a947b9a0b2",
+        "_id": "5253e4368163e4000228806b",
+        "status": "OK",
+        "_links": {
+            "self": {
+                "title": "Auth",
+                "href": "superdesk-api.herokuapp.com/auth/5253e4368163e4000228806b"
+            }
+        }
+    }}
+    ```
+
 # Group users
 
 ## GET /users{/_id}
