@@ -23,13 +23,13 @@ schema = {
     'description': {
         'type': 'string'
     },
-    'firstCreated': {
+    'firstcreated': {
         'type': 'datetime'
     },
-    'versionCreated': {
+    'versioncreated': {
         'type': 'datetime'
     },
-    'itemClass': {
+    'type': {
         'type': 'string'
     },
     'provider': {
@@ -55,8 +55,14 @@ schema = {
     'keywords': {
         'type': 'list'
     },
-    'subjects': {
+    'subject': {
         'type': 'list'
+    },
+    'body_html': {
+        'type': 'string'
+    },
+    'renditions': {
+        'type': 'dict'
     }
 }
 

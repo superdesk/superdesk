@@ -1,13 +1,30 @@
 
 import os
-import xml.etree.ElementTree as etree
+from datetime import datetime, timedelta
 
 import superdesk
 from .nitf import parse
+from ..utc import utc, utcnow, timezone
 
 PROVIDER = 'aap'
 
+def is_ready(last_updated, provider_last_updated=None):
+    """Parse file only if is older than 5s
+    and not older than provider last update -5m"""
+
+    if not provider_last_updated:
+        provider_last_updated = utcnow() - timedelta(days=7)
+
+    return provider_last_updated - timedelta(minutes=5) < last_updated < utcnow() - timedelta(seconds=5)
+
+def normalize_date(naive, tz):
+    return utc.normalize(tz.localize(naive))
+
 class AAPIngestService(object):
+    """AAP Ingest Service"""
+
+    def __init__(self):
+        self.tz = timezone('Australia/Sydney')
 
     def update(self, provider):
         path = provider.get('config', {}).get('path', None)
@@ -15,9 +32,17 @@ class AAPIngestService(object):
             return []
 
         for filename in os.listdir(path):
-            with open(os.path.join(path, filename), 'r') as f:
-                item = parse(f.read())
-                item.setdefault('provider', provider.get('name', provider['type']))
-                yield item
+            filepath = os.path.join(path, filename)
+            stat = os.lstat(filepath)
+            last_updated = datetime.fromtimestamp(stat.st_mtime, tz=utc)
+            if is_ready(last_updated, provider.get('updated')):
+                with open(os.path.join(path, filename), 'r') as f:
+                    item = parse(f.read())
+                    item['firstcreated'] = normalize_date(item.get('firstcreated'), self.tz)
+                    item['versioncreated'] = normalize_date(item.get('versioncreated'), self.tz)
+                    item['created'] = item['firstcreated']
+                    item['updated'] = item['versioncreated']
+                    item.setdefault('provider', provider.get('name', provider['type']))
+                    yield item
 
 superdesk.provider(PROVIDER, AAPIngestService())

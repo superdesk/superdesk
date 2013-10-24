@@ -1,24 +1,20 @@
 """Simple NITF parser"""
 
-import datetime
+from datetime import datetime
 import xml.etree.ElementTree as etree
 
 from .iptc import subject_codes
 
-ITEM_CLASS = 'icls:text'
+ITEM_CLASS = 'text'
 
 def get_norm_datetime(tree):
-    return datetime.datetime.strptime(tree.attrib['norm'], '%Y%m%dT%H%M%S')
+    return datetime.strptime(tree.attrib['norm'], '%Y%m%dT%H%M%S')
 
-def get_contents(tree):
-    content = {}
-    content['contenttype'] = 'application/xhtml+html'
-
+def get_content(tree):
     elements = []
     for elem in tree.find('body/body.content'):
         elements.append(etree.tostring(elem, encoding='UTF-8').decode('utf-8'))
-    content['content'] = ''.join(elements)
-    return [content]
+    return ''.join(elements)
 
 def get_keywords(tree):
     keywords = []
@@ -56,15 +52,15 @@ def parse(text):
     tree = etree.fromstring(text.encode('utf-8'))
     docdata = tree.find('head/docdata')
 
-    item['itemClass'] = ITEM_CLASS
+    item['type'] = ITEM_CLASS
     item['headline'] = tree.find('head/title').text
     item['guid'] = docdata.find('doc-id').get('id-string')
     item['urgency'] = int(docdata.find('urgency').get('ed-urg', 5))
-    item['firstCreated'] = get_norm_datetime(docdata.find('date.issue'))
-    item['versionCreated'] = get_norm_datetime(docdata.find('date.issue'))
-    item['contents'] = get_contents(tree)
+    item['firstcreated'] = get_norm_datetime(docdata.find('date.issue'))
+    item['versioncreated'] = get_norm_datetime(docdata.find('date.issue'))
     item['keywords'] = get_keywords(tree)
-    item['subjects'] = get_subjects(tree)
+    item['subject'] = get_subjects(tree)
+    item['body_html'] = get_content(tree)
 
     try:
         item['copyrightHolder'] = docdata.find('doc.copyright').get('holder')

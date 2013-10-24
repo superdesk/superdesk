@@ -2,10 +2,10 @@ from __future__ import unicode_literals
 import xml.etree.ElementTree as etree
 import datetime
 
-CLASS_PACKAGE = 'icls:composite'
+CLASS_PACKAGE = 'composite'
 
 def is_package(item):
-    return item['itemClass'] == CLASS_PACKAGE
+    return item['type'] == CLASS_PACKAGE
 
 class Parser():
     """NewsMl xml parser"""
@@ -43,10 +43,10 @@ class Parser():
     def parse_item_meta(self, tree, item):
         """Parse itemMeta tag"""
         meta = tree.find(self.qname('itemMeta'))
-        item['itemClass'] = meta.find(self.qname('itemClass')).attrib['qcode']
+        item['type'] = meta.find(self.qname('itemClass')).attrib['qcode'].split(':')[1]
         item['provider'] = meta.find(self.qname('provider')).attrib['literal']
-        item['versionCreated'] = self.datetime(meta.find(self.qname('versionCreated')).text)
-        item['firstCreated'] = self.datetime(meta.find(self.qname('firstCreated')).text)
+        item['versioncreated'] = self.datetime(meta.find(self.qname('versionCreated')).text)
+        item['firstcreated'] = self.datetime(meta.find(self.qname('firstCreated')).text)
 
     def parse_content_meta(self, tree, item):
         """Parse contentMeta tag"""
@@ -60,8 +60,8 @@ class Parser():
     def parse_rights_info(self, tree, item):
         """Parse Rights Info tag"""
         info = tree.find(self.qname('rightsInfo'))
-        item['copyrightHolder'] = info.find(self.qname('copyrightHolder')).attrib['literal']
-        item['copyrightNotice'] = info.find(self.qname('copyrightNotice')).text
+        item['copyrightholder'] = info.find(self.qname('copyrightHolder')).attrib['literal']
+        item['copyrightnotice'] = info.find(self.qname('copyrightNotice')).text
 
     def parse_group_set(self, tree, item):
         item['groups'] = []
@@ -92,11 +92,14 @@ class Parser():
 
     def parse_content_set(self, tree, item):
         item['contents'] = []
+        item['renditions'] = {}
         for content in tree.find(self.qname('contentSet')):
             if content.tag == self.qname('inlineXML'):
-                item['contents'].append(self.parse_inline_content(content))
+                content = self.parse_inline_content(content)
+                item['body_html'] = content.get('content')
             else:
-                item['contents'].append(self.parse_remote_content(content))
+                rendition = self.parse_remote_content(content)
+                item['renditions'][rendition['rendition']] = rendition
 
     def parse_inline_content(self, tree):
         html = tree.find('{http://www.w3.org/1999/xhtml}html')
@@ -115,9 +118,9 @@ class Parser():
     def parse_remote_content(self, tree):
         content = {}
         content['residRef'] = tree.attrib['residref']
-        content['size'] = int(tree.attrib['size'])
-        content['rendition'] = tree.attrib['rendition']
-        content['contenttype'] = tree.attrib['contenttype']
+        content['sizeinbytes'] = int(tree.attrib['size'])
+        content['rendition'] = tree.attrib['rendition'].split(':')[1]
+        content['mimetype'] = tree.attrib['contenttype']
         content['href'] = tree.attrib['href']
         return content
 

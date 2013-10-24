@@ -10,6 +10,7 @@ from superdesk.io import register_provider
 from superdesk.utc import utcnow
 from .newsml import Parser
 from .reuters_token import get_token
+from ..utc import utc
 
 PROVIDER = 'reuters'
 
@@ -40,6 +41,8 @@ class ReutersUpdateService(object):
                 items = self.get_items(guid)
                 while items:
                     item = items.pop()
+                    item['created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
+                    item['updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
                     items.extend(self.fetch_assets(item))
                     yield item
 
@@ -112,9 +115,9 @@ def on_read_items(data, docs):
     provider = db['ingest_providers'].find_one({'type': PROVIDER})
     for doc in docs:
         if doc.get('ingest_provider') and provider:
-            for content in doc.get('contents', []):
-                if content.get('href'):
-                    content['href'] = '%s?auth_token=%s' % (content.get('href'), get_token(provider))
+            for i, rendition in doc.get('renditions', {}).items():
+                if rendition.get('href'):
+                    rendition['href'] = '%s?auth_token=%s' % (rendition.get('href'), get_token(provider))
 
 superdesk.connect('read:items', on_read_items)
 superdesk.provider(PROVIDER, ReutersUpdateService())

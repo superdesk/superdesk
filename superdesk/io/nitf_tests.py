@@ -21,15 +21,15 @@ class TestCase(unittest.TestCase):
         self.assertEquals(self.item.get('keywords'), ['Monitor 1900 ABC News'])
 
     def test_subjects(self):
-        self.assertEquals(len(self.item.get('subjects')), 2)
-        self.assertIn({'qcode': '02000000', 'name': 'crime, law and justice'}, self.item.get('subjects'))
-        self.assertIn({'qcode': '02003000', 'name': 'police'}, self.item.get('subjects'))
+        self.assertEquals(len(self.item.get('subject')), 2)
+        self.assertIn({'qcode': '02000000', 'name': 'crime, law and justice'}, self.item.get('subject'))
+        self.assertIn({'qcode': '02003000', 'name': 'police'}, self.item.get('subject'))
 
     def test_guid(self):
         self.assertEquals(self.item.get('guid'), 'AAP.115314987.5417374')
 
-    def test_item_class(self):
-        self.assertEquals(self.item.get('itemClass'), 'icls:text')
+    def test_type(self):
+        self.assertEquals(self.item.get('type'), 'text')
 
     def test_urgency(self):
         self.assertEquals(self.item.get('urgency'), 5)
@@ -38,15 +38,12 @@ class TestCase(unittest.TestCase):
         self.assertEquals(self.item.get('copyrightHolder'), 'Australian Associated Press')
 
     def test_dates(self):
-        self.assertEquals(self.item.get('firstCreated').isoformat(), '2013-10-20T19:27:51')
-        self.assertEquals(self.item.get('versionCreated').isoformat(), '2013-10-20T19:27:51')
+        self.assertEquals(self.item.get('firstcreated').isoformat(), '2013-10-20T19:27:51')
+        self.assertEquals(self.item.get('versioncreated').isoformat(), '2013-10-20T19:27:51')
 
     def test_content(self):
-        self.assertEquals(len(self.item.get('contents')), 1)
-        content = self.item.get('contents')[0]
-        self.assertEquals(content.get('contenttype'), 'application/xhtml+html')
         text = "<p>   1A) More extreme weather forecast over the next few days the <br />fire situation is likely"
-        self.assertIn(text, content.get('content'))
+        self.assertIn(text, self.item.get('body_html'))
 
     def test_rights_info(self):
         self.assertTrue(self.item.get('rightsInfo'))

@@ -27,10 +27,10 @@ class TextParserTest(ItemTest):
         self.assertEquals(263518268, self.item.get('version'))
 
     def test_parse_item_meta(self):
-        self.assertEquals("icls:text", self.item.get('itemClass'))
+        self.assertEquals("text", self.item.get('type'))
         self.assertEquals("reuters.com", self.item.get('provider'))
-        self.assertEquals("2013-03-01T15:09:04", self.item.get('versionCreated').isoformat())
-        self.assertEquals("2013-03-01T15:09:04", self.item.get('firstCreated').isoformat())
+        self.assertEquals("2013-03-01T15:09:04", self.item.get('versioncreated').isoformat())
+        self.assertEquals("2013-03-01T15:09:04", self.item.get('firstcreated').isoformat())
 
     def test_parse_content_meta(self):
         self.assertEquals("3", self.item.get('urgency'))
@@ -40,28 +40,24 @@ class TextParserTest(ItemTest):
         self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ:Soccer-Smiling Benitez pleads for support after midweek outburst", self.item.get('description'))
 
     def test_parse_rights_info(self):
-        self.assertEquals("Thomson Reuters", self.item.get('copyrightHolder'))
-        self.assertEquals("(c) Copyright Thomson Reuters 2013. Click For Restrictions - http://about.reuters.com/fulllegal.asp", self.item.get('copyrightNotice'))
+        self.assertEquals("Thomson Reuters", self.item.get('copyrightholder'))
+        self.assertEquals("(c) Copyright Thomson Reuters 2013. Click For Restrictions - http://about.reuters.com/fulllegal.asp", self.item.get('copyrightnotice'))
 
     def test_content_set(self):
-        content = self.item['contents'][0]
-        self.assertTrue(content)
-        self.assertEquals("application/xhtml+html", content.get('contenttype'))
-        self.assertEquals("<p>By Toby Davis</p>", content.get('content'))
+        self.assertEquals("<p>By Toby Davis</p>", self.item.get('body_html'))
 
 class PictureParserTest(ItemTest):
     def setUp(self):
         self.setUpFixture('picture.xml')
 
     def test_content_set(self):
-        self.assertEquals(3, len(self.item.get('contents')))
+        self.assertEquals(3, len(self.item.get('renditions')))
 
-        remote = self.item.get('contents')[0]
+        remote = self.item.get('renditions').get('baseImage')
         self.assertTrue(remote)
         self.assertEquals("tag:reuters.com,0000:binary_GM1E9341HD701-BASEIMAGE", remote.get('residRef'))
-        self.assertEquals(772617, remote.get('size'))
-        self.assertEquals("rend:baseImage", remote.get('rendition'))
-        self.assertEquals("image/jpeg", remote.get('contenttype'))
+        self.assertEquals(772617, remote.get('sizeinbytes'))
+        self.assertEquals("image/jpeg", remote.get('mimetype'))
         self.assertEquals("http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1E9341HD701:360624134/tag:reuters.com,0000:binary_GM1E9341HD701-BASEIMAGE", remote.get('href'))
 
 class SNEPParserTest(ItemTest):

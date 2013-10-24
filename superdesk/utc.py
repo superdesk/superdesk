@@ -1,21 +1,13 @@
 
 import datetime
+from pytz import utc, timezone
 
 tzinfo = getattr(datetime, 'tzinfo', object)
-
-class UTC(tzinfo):
-    """UTC tz"""
-
-    def utcoffset(self, dt):
-        return datetime.timedelta(0)
-
-    def dst(self, dt):
-        return datetime.timedelta(0)
 
 def utcnow():
     """Get tz aware datetime object"""
 
     if hasattr(datetime.datetime, 'now'):
-        return datetime.datetime.now(tz=UTC())
+        return datetime.datetime.now(tz=utc)
     else:
         return datetime.datetime.utcnow()
