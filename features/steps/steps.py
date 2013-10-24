@@ -3,7 +3,7 @@ import os
 from behave import *
 from flask import json
 
-from tests import app
+from test import app
 
 def test_json(context):
     response_data = json.loads(context.response.get_data())

@@ -51,6 +51,12 @@ schema = {
     },
     'groups': {
         'type': 'list'
+    },
+    'keywords': {
+        'type': 'list'
+    },
+    'subjects': {
+        'type': 'list'
     }
 }
 

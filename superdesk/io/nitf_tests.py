@@ -17,6 +17,14 @@ class TestCase(unittest.TestCase):
     def test_headline(self):
         self.assertEquals(self.item.get('headline'), "The main stories on today's 1900 ABC TV news")
 
+    def test_keywords(self):
+        self.assertEquals(self.item.get('keywords'), ['Monitor 1900 ABC News'])
+
+    def test_subjects(self):
+        self.assertEquals(len(self.item.get('subjects')), 2)
+        self.assertIn({'qcode': '02000000', 'name': 'crime, law and justice'}, self.item.get('subjects'))
+        self.assertIn({'qcode': '02003000', 'name': 'police'}, self.item.get('subjects'))
+
     def test_guid(self):
         self.assertEquals(self.item.get('guid'), 'AAP.115314987.5417374')
 
@@ -39,6 +47,9 @@ class TestCase(unittest.TestCase):
         self.assertEquals(content.get('contenttype'), 'application/xhtml+html')
         text = "<p>   1A) More extreme weather forecast over the next few days the <br />fire situation is likely"
         self.assertIn(text, content.get('content'))
+
+    def test_rights_info(self):
+        self.assertTrue(self.item.get('rightsInfo'))
 
 if __name__ == '__main__':
     unittest.main()
