@@ -49,7 +49,7 @@
             <th class="title_col"><a href="" sd-sort data-field="headline" data-label="{{ 'Headline'|translate }}"></a></th>
             <th><a href="" sd-sort data-field="slugline" data-label="{{ 'Slug'|translate }}"></a></th>
             <th><a href="" sd-sort data-field="provider" data-label="{{ 'Provider'|translate }}"></a></th>
-            <th><a href="" sd-sort data-field="firstCreated" data-label="{{ 'Created'|translate }}"></a></th>
+            <th><a href="" sd-sort data-field="firstcreated" data-label="{{ 'Created'|translate }}"></a></th>
             <th class="action_col">
               <div class="dropdown" style="text-align:right;" ng-show="">
               <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-switches"></i> <span class="caret"></span></a>
@@ -72,10 +72,10 @@
         <tbody>
           <tr ng-repeat="item in items._items">
             <td class="chckbx_col"><input type="checkbox" class="sf-checkbox" set-bg="2"  name="_{{ item.guid }}"></td>
-            <td class="title_col"><a href="" ng-click="open('/packages/{{ item.guid }}')">{{ item.headline }}</a></td>
-            <td>{{ item.slugline }}</td>
+            <td class="title_col"><a href="" ng-click="open('/packages/{{ item._id }}')">{{ item.headline }}</a></td>
+            <td>{{ item.slugline || item.keywords.join(', ') }}</td>
             <td>{{ item.provider }}</td>
-            <td><time datetime="{{ item.firstCreated }}" title="{{ item.firstCreated|date:'medium' }}">{{ item.firstCreated|reldate }}</time></td>
+            <td><time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time></td>
             <td class="action_col">
               <div class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ "Action"|translate }} <b class="caret"></b></a>
