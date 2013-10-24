@@ -1,4 +1,5 @@
 define([
+    'jquery',
     'angular',
     'superdesk/server',
     'superdesk/entity',
@@ -8,7 +9,7 @@ define([
     './controllers/edit',
     './controllers/ref',
     './directives'
-], function(angular) {
+], function($, angular) {
     'use strict';
 
     angular.module('superdesk.items', ['superdesk.entity', 'superdesk.items.resources', 'superdesk.items.directives', 'ui.bootstrap.dropdownToggle'])
@@ -71,7 +72,7 @@ define([
         .filter('characterCount', function() {
             return function(input) {
                 return $(input).text().length;
-            }
+            };
         })
         .filter('wordCount', function() {
             var nonchar = /[^\w]/g;
@@ -79,6 +80,6 @@ define([
             return function(input) {
                 var text = $(input).text();
                 return text.replace(nonchar, ' ').split(whitesp).length;
-            }
+            };
         });
 });
