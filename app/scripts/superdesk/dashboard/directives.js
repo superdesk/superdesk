@@ -3,94 +3,116 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.dashboard.directives', []).
+    angular.module('superdesk.dashboard.directives', [])
         /**
          * sdWidget give appropriate template to data assgined to it
          *
          * Usage:
-         * <div sd-widget widget="someWidget"></div>
+         * <div sd-widget wcode="someWidget" sd-widget-list="widgetList"></div>
          * 
          * Params:
-         * @param {object} widget - object with predefined structure fileds
+         * @param {string} wcode - wcode of widget
+         * @param {Object} widgetList - widgetList
          */
-        directive('sdWidget', function() {
+        .directive('sdWidget', [function() {
             return {
                 templateUrl : 'scripts/superdesk/dashboard/views/widget.html',
                 restrict: 'A',
-                replace: true,
                 scope: {
-                    widget : '='
-                }
-            };
-        }).
-        /**
-         * sdWAddWidgetBox is modal window for adding new widget to dashboard
-         *
-         * Usage:
-         * <div sd-add-widget-box sd-status="widgetBoxStatus" data-model="widgets"></div>
-         * 
-         * Params:
-         * @param {Boolean} status - on/off switch for widget
-         * @param {Object} dataModel - model for data
-         */
-        directive('sdAddWidgetBox', ['widgetService', function(widgetService) {
-            return {
-                templateUrl: 'scripts/superdesk/dashboard/views/addWidgetBox.html',
-                scope: {
-                    status: '=sdStatus',
-                    model: '=model'
+                    wcode: '=sdWcode',
+                    widgetList: '=sdWidgetList'
                 },
                 replace: true,
                 link: function(scope, element, attrs) {
-                    scope.addWidget = function(widget) {
-                        widget.row = 1;
-                        widget.col = 1;
-                        
-                        scope.model.push(widget);
-                        widgetService.saveWidgets(scope.model);
-
-                        //if (!$scope.editmode)  {$scope.enableDragging();}
-                    };
-
-                    scope.widgetList = widgetService.getWidgetList();
+                    
                 }
             };
-        }]).
+        }])
         /**
-         * sdDashboard manager is directive which add functionality of dashboard. It is possible
+         * sdGridster is directive which add functionality of dashboard. It is possible
          * to add, remove, move, edit, resize widgets within dashboard. It is working with gridster.js
          * library to enable all of this.
          *
          * Usage:
-         * <div sd-dashboard-manager
+         * <div sd-gridster
          *  class="gridster"
          *  ng-class="{'editmode': editmode}"
          *  sd-status="widgetBoxStatus"
          *  data-model="widgets"></div>
+         *  sd-widget-list="widgetList"></div>
          * 
          * Params:
          * @param {Boolean} status - on/off switch for widget
          * @param {Object} dataModel - model for data
+         * @param {Object} widgetList - widgetList
          */
-        directive('sdDashboardManager', ['$timeout', 'widgetService', function($timeout, widgetService) {
+        .directive('sdGridster', ['$timeout', function($timeout) {
+            
             var defaultOptions = {
                 widget_margins: [20, 20],
-                widget_base_dimensions: [320, 250]
-            };
-
-            var responsiveClass = function(x, y) {
-                return 'r' + x + y;
+                widget_base_dimensions: [320, 250],
+                min_rows: 3
             };
 
             return {
-                restrict: 'A',
                 scope: {
                     status: '=sdStatus',
+                    widgetList: '=sdWidgetList',
                     model: '=model'
                 },
+                replace: true,
                 templateUrl: 'scripts/superdesk/dashboard/views/grid.html',
-                link : function(scope, element, attrs) {
-                    var ul = element.find('ul');
+                link: function(scope, element, attrs) {
+                    scope.resizeWidget = function(wcode, direction) {
+                        var widget = scope.model[wcode];
+                        switch(direction) {
+                        case 'left':
+                            if (widget.sizex !== 1) {
+                                widget.sizex--;
+                            }
+                            break;
+                        case 'right':
+                            if (widget.sizex !== scope.widgetList[wcode].max_sizex) {
+                                widget.sizex++;
+                            }
+                            break;
+                        case 'up':
+                            if (widget.sizey !== 1) {
+                                widget.sizey--;
+                            }
+                            break;
+                        case 'down':
+                            if (widget.sizey !== scope.widgetList[wcode].max_sizey) {
+                                widget.sizey++;
+                            }
+                            break;
+                        }
+                    };
+                    scope.removeWidget = function(wcode) {
+                        delete scope.model[wcode];
+                    };
+                    scope.update = function() {
+                        $timeout(function() {
+                            _.forEach(root.find('> li'), function(item, index) {
+                                var li = angular.element(item);
+                                if (li.attr('class') === 'preview-holder') { return; }
+                                var wcode = li.data('widget');
+                                var widget = scope.model[wcode];
+                                console.log(widget.col + '->' + parseInt(li.attr('data-col'), 10));
+                                widget.row = parseInt(li.attr('data-row'), 10) || 1;
+                                widget.col = parseInt(li.attr('data-col'), 10) || 1;
+                                scope.gridster.register_widget($(li));
+                                scope.gridster.resize_widget($(li), widget.sizex, widget.sizey);
+                            });
+                            scope.gridster.generate_grid_and_stylesheet();
+                        });
+                    };
+
+                    //
+                    var root = element.find('ul');
+
+                    scope.gridster = root.gridster(defaultOptions)
+                        .data('gridster');
 
                     scope.$watch('status', function(status) {
                         if (scope.gridster) {
@@ -101,76 +123,10 @@ define([
                             }
                         }
                     });
-
-                    $timeout(function() {
-                        angular.forEach(scope.model, function(value){
-                            value.responsive = responsiveClass(value.sizex, value.sizey);
-                        });
-                        scope.gridster = ul.gridster(defaultOptions).data('gridster');
-                        scope.gridster.disable();
-                        scope.gridster.options.draggable.stop = function() {
-                            angular.forEach(ul.find('> li'), function(item, index) {
-                                var li = angular.element(item);
-                                if (li.attr('class') === 'preview-holder') { return; }
-                                var widget = scope.model[index];
-                                widget.row = li.attr('data-row');
-                                widget.col = li.attr('data-col');
-                            });
-                            scope.$apply();
-                        };
-                    });
-
-                    scope.$watch('model.length', function(newValue, oldValue) {
-                        if (newValue !== oldValue+1) { return; }
-                        $timeout(function() { addWidgetToGridster(); });
-                    });
-                    
-                    var addWidgetToGridster = function() {
-                        var li = ul.find('> li').eq(scope.model.length-1);
-                        var w = li.addClass('gs_w').appendTo(scope.gridster.$el);
-                        scope.gridster.$widgets = scope.gridster.$widgets.add(w);
-                        scope.gridster.register_widget(w).add_faux_rows(1).set_dom_grid_height();
-                    };
-
-                    scope.removeWidget = function(elindex) {
-                        var w = ul.find('> li').eq(elindex);
-                        scope.model.splice(elindex,1);
-                        scope.gridster.remove_widget(w);
-                    };
-
-                    scope.resizeWidget = function(index, direction) {
-                        var w = ul.find('> li').eq(index);
-                        var widget = scope.model[index];
-
-                        switch(direction) {
-                        case 'left' :
-                            if (widget.sizex !== 1) {
-                                widget.sizex--;
-                            }
-                            break;
-                        case 'right' :
-                            if (widget.sizex !== widget.max_sizex) {
-                                widget.sizex++;
-                            }
-                            break;
-                        case 'up' :
-                            if (widget.sizey !== 1) {
-                                widget.sizey--;
-                            }
-                            break;
-                        case 'down' :
-                            if (widget.sizey !== widget.max_sizey) {
-                                widget.sizey++;
-                            }
-                            break;
-                        }
-
-                        widget.responsive = responsiveClass(widget.sizex,widget.sizey);
-
-                        scope.gridster.resize_widget(w, widget.sizex, widget.sizey );
-                    };
+                    scope.$watch('model', function(model, oldModel) {
+                        scope.update();
+                    }, true);
                 }
             };
-        }]);
-        
+        }])
 });

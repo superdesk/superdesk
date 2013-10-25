@@ -1,35 +1,20 @@
-define(['angular'], function(angular, widgetList) {
+define(['angular'], function(angular) {
     'use strict';
 
-    angular.module('superdesk.dashboard.services', []).
-        service('widgetService', ['$q', 'storage', 'widgetResource', function($q, storage, widgetResource) {
+    angular.module('superdesk.dashboard.services', ['superdesk.dashboard.providers'])
+        .service('widgetService', ['$q', 'storage', function($q, storage) {
             var storageKey = 'dashboard:widgets';
-            
+
             var widgetService = {
-                widgetList: [],
-                fetchWidgetList: function() {
-                    var self = this;
-                    var delay = $q.defer();
-
-                    widgetResource.get(function(data) {
-                        self.widgetList = data;
-                        delay.resolve(data);
-                    });
-
-                    return delay.promise;
-                },
-                getWidgetList: function() {
-                    return this.widgetList;
-                },
-                loadWidgets: function() {
+                load: function() {
                     var widgets = storage.getItem(storageKey);
                     if (widgets === null) {
-                        widgets = [];
-                        this.saveWidgets(widgets);
+                        widgets = {};
+                        this.save(widgets);
                     }
                     return widgets;
                 },
-                saveWidgets: function(widgets) {
+                save: function(widgets) {
                     storage.setItem(storageKey, widgets, true);
                 }
             };
