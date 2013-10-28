@@ -1,8 +1,11 @@
-<li ng-class="{dropdown: item.items}" ng-repeat="item in items | orderBy:priority">
-    <a href="#{{ item.href }}" ng-show="item.href">{{ item.label|translate }}</a>
+<li ng-repeat="item in items | orderBy:priority">
+	
+	<a href="#{{ item.href }}" ng-show="item.href" ng-click="followLink()">{{ item.label|translate }}</a>
 
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown" ng-show="item.items">{{ item.label|translate }} <b class="caret"></b></a>
-    <ul class="dropdown-menu" ng-show="item.items">
-        <li ng-repeat="item2 in item.items | orderBy:priority"><a href="#{{ item2.href }}">{{ item2.label|translate }}</a></li>
-    </ul>
+	<a ng-show="!item.href" ng-show="item.items" sd-toggle-item >{{ item.label|translate }}<i class="icon-chevron-right icon-white"></i></a>
+
+	<ul ng-show="item.items">
+	  <li ng-repeat="item2 in item.items | orderBy:priority"><a href="#{{ item2.href }}" ng-click="followLink()">{{ item2.label|translate }}</a></li>
+	</ul>
+
 </li>

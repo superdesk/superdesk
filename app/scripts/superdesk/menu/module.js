@@ -4,6 +4,26 @@ define([
     'use strict';
 
     angular.module('superdesk.menu', []).
+        directive('sdMenuWrapper',function(){
+            return {
+                templateUrl: 'scripts/superdesk/views/sidebar-nav.html',
+                replace : true,
+                restrict: 'A',
+                link : function(scope, element, attrs) {
+                    scope.displayMenu = false;
+
+                    scope.toggleSideNav = function() {
+                        scope.displayMenu = !scope.displayMenu;
+                    }
+
+                    scope.followLink = function() {
+                        scope.displayMenu = false;
+                        element.find('.open').removeClass('open');
+                    }
+                }
+            }
+            
+        }).
         directive('sdMenu', function($route) {
             var sdMenu = {
                 templateUrl: 'scripts/superdesk/menu/menu.html',
@@ -46,5 +66,14 @@ define([
             };
             
             return sdMenu;
+        }).
+        directive('sdToggleItem',function(){
+            return {
+                link: function(scope, element, attrs) {
+                    element.on('click',function() {
+                        element.parent().toggleClass('open');
+                    });
+                }
+            }
         });
 });

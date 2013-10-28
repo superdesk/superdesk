@@ -18,9 +18,12 @@
     <!-- endbuild -->
   </head>
   <body class="article-list" ng-class="{'zen-mode': mode.zen}">
-    <div class="navbar navbar-inverse navbar-fixed-top" ng-include="'scripts/superdesk/views/nav.html'"></div>
 
-    <div class="main-background-container" ng-view></div>
+
+   
+    <div sd-menu-wrapper></div>
+
+    <div class="main-background-container" ng-class="{'sf-menu-open': displayMenu}" ng-view></div>
 
     <div sd-login-modal></div>
     <div sd-upload-modal></div>
