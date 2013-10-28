@@ -4,14 +4,14 @@ define([
     'use strict';
 
     angular.module('superdesk.menu', []).
-        directive('sdMenuWrapper',function(){
+        directive('sdMenuWrapper',function($route){
             return {
                 templateUrl: 'scripts/superdesk/views/sidebar-nav.html',
                 replace : true,
                 restrict: 'A',
                 link : function(scope, element, attrs) {
                     scope.displayMenu = false;
-
+                    scope.currentLink = '';
                     scope.toggleSideNav = function() {
                         scope.displayMenu = !scope.displayMenu;
                     };
@@ -20,6 +20,15 @@ define([
                         scope.displayMenu = false;
                         element.find('.open').removeClass('open');
                     };
+
+                    scope.$on('$routeChangeSuccess', function(){
+                        if ($route.current.menu !== undefined) {
+                            scope.currentLink = $route.current.menu;
+                        }
+                        else {
+                            scope.currentLink = '';
+                        }
+                    });
                 }
             };
             
