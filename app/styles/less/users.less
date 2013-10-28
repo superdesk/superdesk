@@ -354,6 +354,7 @@
       font-size: 13px;
       text-overflow: ellipsis;
       margin-left: -6px; 
+      background: none;
       &:focus {
         .box-shadow(0 0 0 0 #000) !important;
         text-decoration: underline;
@@ -477,6 +478,46 @@
       right: 0;
     }
   }
+
+  &.open .profile-pic {
+    width: 82px;
+    height: 82px;
+    float: left;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    position: relative;
+    figure {
+      float: left;
+      width: 82px;
+      height: 82px;
+      -webkit-border-radius: 3px;
+      -moz-border-radius: 3px;
+      border-radius: 3px;
+      overflow: hidden;
+      max-height: 82px;
+      max-width: 82px;
+      img {
+        width: 82px;
+        min-width: 82px;
+        max-width: 82px;
+        height: auto;
+      }
+    }
+    a {
+      display: block;
+      background-color: rgba(55,152,180,0.6);
+      color: #fff;
+      text-transform: uppercase;
+      font-size: 9px;
+      text-decoration: none;
+      text-align: center;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+  }
+
 }
 
 /* tabs inside user detail pane */
@@ -583,7 +624,7 @@
 .user-profile-edit, .author-profile-edit {
    .details-info {
     position: absolute;
-    top:120px;
+    top:140px;
     bottom: 20px;
     overflow: auto;
     right: 20px;
