@@ -14,14 +14,14 @@ define([
 
                     scope.toggleSideNav = function() {
                         scope.displayMenu = !scope.displayMenu;
-                    }
+                    };
 
                     scope.followLink = function() {
                         scope.displayMenu = false;
                         element.find('.open').removeClass('open');
-                    }
+                    };
                 }
-            }
+            };
             
         }).
         directive('sdMenu', function($route) {
@@ -74,6 +74,6 @@ define([
                         element.parent().toggleClass('open');
                     });
                 }
-            }
+            };
         });
 });
