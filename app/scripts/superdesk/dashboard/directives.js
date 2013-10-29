@@ -98,7 +98,6 @@ define([
                                 if (li.attr('class') === 'preview-holder') { return; }
                                 var wcode = li.data('widget');
                                 var widget = scope.model[wcode];
-                                console.log(widget.col + '->' + parseInt(li.attr('data-col'), 10));
                                 widget.row = parseInt(li.attr('data-row'), 10) || 1;
                                 widget.col = parseInt(li.attr('data-col'), 10) || 1;
                                 scope.gridster.register_widget($(li));

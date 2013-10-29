@@ -23,6 +23,7 @@ define(['angular'], function(){
                 };
                 $scope.widgets[wcode] = widget;
                 widgetService.save($scope.widgets);
+                $scope.numWidgets = _.keys($scope.widgets).length;
             };
 
             $scope.saveWidgets = function() {
