@@ -35,23 +35,17 @@
         <button class="btn btn-info pull-right" ng-click="addNewSource()"><i class="icon-plus-sign icon-white"></i> <span translate>Add New Source</span></button>
         <h4 translate>Ingest Feed</h4>
         <div class="settings-tab-content">
-            
-            
-            <div ng-repeat="source in sources" sd-settings-module title="source.name" sd-source-info source="source">
-
+            <div ng-repeat="source in sources" sd-settings-module>
                 <div class="dropdown dropdown-simple pull-right">
                     <a href="#" class="dropdown-toggle"><i class="icon-cog"></i> <b class="caret"></b></a>
                     <ul class="dropdown-menu pull-right sf-dropdown-simple">
                         <li><a href=""><i class="icon-trash"></i> <span translate>Delete source</span></a></li>
                     </ul>
                 </div>
-                 
                 <ul class="selection-list">
                     <li ng-repeat="feed in source.feeds" ng-class="{'selected' : feed.selected}"><span sd-check ng-model="feed.selected"></span> <span translate>{{feed.name}}</span></li>
                 </ul>
-
             </div>
-
         </div>
     </tab>
     <tab heading="System">

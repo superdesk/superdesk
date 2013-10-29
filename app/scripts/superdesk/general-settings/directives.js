@@ -20,40 +20,12 @@ define([
             restrict : 'A',
             replace : true,
             transclude: true,
-            scope : {
-                title : '='
-            },
             link : function(scope,element,attrs) {
-
                 scope.visible = true;
-
                 scope.toggle= function() {
                     scope.visible = !scope.visible;
                 };
             }
         };
-    })
-    /**
-     * sdSourceInfo displays  info about source (last update time)
-     *
-     * Usage:
-     * <div sd-source-info title="someTitle">
-     * 
-     * Params:
-     * @param {Object} source - object representing source
-     *
-     */
-    .directive('sdSourceInfo', function($compile){
-        return {
-            restrict : 'A',
-            scope : {
-                source : '='
-            },
-            link : function(scope,element,attrs) {
-                var el = $compile('<div class="last-updated"><span trnaslate>Last updated</span>{{source.lastUpdated}}</div>')(scope);
-                element.find('> header').append(el);
-            }
-        };
     });
-        
 });

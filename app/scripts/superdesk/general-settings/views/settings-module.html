@@ -2,9 +2,10 @@
     <header>
         <h6 ng-click="toggle()">
         	<i ng-class="{'icon-chevron-right': !visible, 'icon-chevron-down': visible}"></i>
-        	<span translate>{{title}}</span>
+            <span translate>{{ source.name }}</span>
         </h6>
         <!--<div class="count-selected"><span>{{numOfSelected}}/{{totalNumber}}</span></div>-->
+        <div class="last-updated"><span translate>Last updated</span> {{ source.lastUpdated }}</div>
     </header>
     <div class="content" ng-show="visible" ng-transclude>
         
