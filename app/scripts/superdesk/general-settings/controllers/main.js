@@ -13,11 +13,11 @@ define(['angular'], function(angular){
             };
 
             $scope.addNewSource = function () {
-		    var addSourceModal = $modal.open({
+		        $modal.open({
                     templateUrl : 'scripts/superdesk/general-settings/views/addSourceModal.html',
                     controller : 'AddSourceModalCtrl',
                     windowClass : 'addSource'
-		    });
-		};
-      }];
-});         
+		        });
+		    };
+        }];
+});

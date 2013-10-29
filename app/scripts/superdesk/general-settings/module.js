@@ -13,7 +13,8 @@ define([
         'superdesk.generalSettings.controllers',
         'superdesk.generalSettings.resources',
         'superdesk.directives',
-        'ui.bootstrap'])
+        'ui.bootstrap'
+    ])
         .config(function($routeProvider) {
             $routeProvider.
                 when('/settings/', {
