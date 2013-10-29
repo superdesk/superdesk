@@ -83,7 +83,8 @@ define([
     'superdesk/menu/module',
     'superdesk/dashboard/module',
     'superdesk/items/module',
-    'superdesk/users/module'
+    'superdesk/users/module',
+    'superdesk/general-settings/module',
 ], function(angular, _) {
     'use strict';
 
@@ -103,7 +104,8 @@ define([
             'superdesk.menu',
             'superdesk.dashboard',
             'superdesk.items',
-            'superdesk.users'
+            'superdesk.users',
+            'superdesk.generalSettings'
         ];
 
         angular.element(document).ready(function() {
