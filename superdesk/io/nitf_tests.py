@@ -27,6 +27,7 @@ class TestCase(unittest.TestCase):
 
     def test_guid(self):
         self.assertEquals(self.item.get('guid'), 'AAP.115314987.5417374')
+        self.assertEquals(self.item.get('guid'), self.item.get('uri'))
 
     def test_type(self):
         self.assertEquals(self.item.get('type'), 'text')

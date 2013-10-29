@@ -2,6 +2,8 @@ from __future__ import unicode_literals
 import xml.etree.ElementTree as etree
 import datetime
 
+from .nitf import subject_codes
+
 CLASS_PACKAGE = 'composite'
 
 def is_package(item):
@@ -26,7 +28,7 @@ class Parser():
         """Parse given xml"""
 
         item = {}
-        item['guid'] = tree.attrib['guid']
+        item['guid'] = item['uri'] = tree.attrib['guid']
         item['version'] = int(tree.attrib['version'])
 
         self.parse_item_meta(tree, item)
@@ -51,11 +53,33 @@ class Parser():
     def parse_content_meta(self, tree, item):
         """Parse contentMeta tag"""
         meta = tree.find(self.qname('contentMeta'))
-        keys = ['urgency', 'slugline', 'headline', 'creditline', 'description']
+        keys = ['urgency', 'slugline', 'headline', 'creditline']
         for key in keys:
             elem = meta.find(self.qname(key))
             if elem is not None:
                 item[key] = elem.text
+
+        try:
+            item['description_text'] = meta.find(self.qname('description')).text
+        except AttributeError:
+            pass
+
+        item['language'] = meta.find(self.qname('language')).get('tag')
+
+        self.parse_content_subject(meta, item)
+
+    def parse_content_subject(self, tree, item):
+        item['subject'] = []
+        for subject in tree.findall(self.qname('subject')):
+            qcode_parts = subject.get('qcode', '').split(':')
+            if len(qcode_parts) == 2 and qcode_parts[0] == 'subj':
+                try:
+                    item['subject'].append({
+                        'qcode': qcode_parts[1],
+                        'name': subject_codes[qcode_parts[1]]
+                    })
+                except KeyError:
+                    print("Subject code '%s' not found" % qcode_parts[1])
 
     def parse_rights_info(self, tree, item):
         """Parse Rights Info tag"""

@@ -25,6 +25,7 @@ class TextParserTest(ItemTest):
     def test_parse_id(self):
         self.assertEquals("tag:reuters.com,0000:newsml_L4N0BT5PJ", self.item.get('guid'))
         self.assertEquals(263518268, self.item.get('version'))
+        self.assertEquals(self.item.get('guid'), self.item.get('uri'))
 
     def test_parse_item_meta(self):
         self.assertEquals("text", self.item.get('type'))
@@ -37,7 +38,7 @@ class TextParserTest(ItemTest):
         self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ", self.item["slugline"])
         self.assertEquals("Soccer-Smiling Benitez pleads for support after midweek outburst", self.item["headline"])
         self.assertEquals("Reuters", self.item["creditline"])
-        self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ:Soccer-Smiling Benitez pleads for support after midweek outburst", self.item.get('description'))
+        self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ:Soccer-Smiling Benitez pleads for support after midweek outburst", self.item.get('description_text'))
 
     def test_parse_rights_info(self):
         self.assertEquals("Thomson Reuters", self.item.get('copyrightholder'))
@@ -45,6 +46,13 @@ class TextParserTest(ItemTest):
 
     def test_content_set(self):
         self.assertEquals("<p>By Toby Davis</p>", self.item.get('body_html'))
+
+    def test_language(self):
+        self.assertEquals('en', self.item.get('language'))
+
+    def test_subject(self):
+        self.assertEquals(2, len(self.item.get('subject')))
+        self.assertIn({'qcode': '15054000', 'name': 'soccer'}, self.item.get('subject'))
 
 class PictureParserTest(ItemTest):
     def setUp(self):

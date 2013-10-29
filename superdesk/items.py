@@ -5,6 +5,9 @@ schema = {
     'guid': {
         'type': 'string'
     },
+    'uri': {
+        'type': 'string'
+    },
     'version': {
         'type': 'string'
     },
@@ -20,7 +23,7 @@ schema = {
     'copyrightHolder': {
         'type': 'string'
     },
-    'description': {
+    'description_text': {
         'type': 'string'
     },
     'firstcreated': {

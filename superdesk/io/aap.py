@@ -9,13 +9,12 @@ from ..utc import utc, utcnow, timezone
 PROVIDER = 'aap'
 
 def is_ready(last_updated, provider_last_updated=None):
-    """Parse file only if is older than 5s
-    and not older than provider last update -5m"""
+    """Parse file only if it's not older than provider last update -10m"""
 
     if not provider_last_updated:
         provider_last_updated = utcnow() - timedelta(days=7)
 
-    return provider_last_updated - timedelta(minutes=5) < last_updated < utcnow() - timedelta(seconds=5)
+    return provider_last_updated - timedelta(minutes=10) < last_updated
 
 def normalize_date(naive, tz):
     return utc.normalize(tz.localize(naive))
