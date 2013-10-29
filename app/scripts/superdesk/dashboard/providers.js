@@ -11,6 +11,7 @@ define(['angular'], function(angular) {
                 },
                 widget: function(id, data) {
                     widgetList[id] = data;
+                    return this;
                 }
             };
 

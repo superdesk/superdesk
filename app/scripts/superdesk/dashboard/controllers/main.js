@@ -7,7 +7,7 @@ define(['angular'], function(){
             $scope.initialize = function() {
                 $scope.widgetList = widgets;
                 $scope.widgets = widgetService.load();
-                $scope.numWidgets = _.keys($scope.widgets).length;
+                $scope.hasWidgets = _.keys($scope.widgets).length;
 
                 $scope.editStatus = false;
                 $scope.widgetBoxStatus = false;
@@ -23,7 +23,7 @@ define(['angular'], function(){
                 };
                 $scope.widgets[wcode] = widget;
                 widgetService.save($scope.widgets);
-                $scope.numWidgets = _.keys($scope.widgets).length;
+                $scope.hasWidgets = _.keys($scope.widgets).length;
             };
 
             $scope.saveWidgets = function() {

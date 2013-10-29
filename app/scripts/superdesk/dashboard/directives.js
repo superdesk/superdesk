@@ -1,6 +1,7 @@
 define([
-    'angular',
-], function(angular) {
+    'jquery',
+    'angular'
+], function($, angular) {
     'use strict';
 
     angular.module('superdesk.dashboard.directives', [])
@@ -127,5 +128,5 @@ define([
                     }, true);
                 }
             };
-        }])
+        }]);
 });

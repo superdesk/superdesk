@@ -10,7 +10,7 @@
 	    	<li translate> Configure devices</li>
 	    </ul>
 	</div>
-	<button class="btn btn-medium pull-right" ng-click="editStatus = true;" ng-show="numWidgets > 0 && !editStatus"><i class="icon-move"></i> <span translate>Rearrange widgets</span></button>
+	<button class="btn btn-medium pull-right" ng-click="editStatus = true;" ng-show="hasWidgets && !editStatus"><i class="icon-move"></i> <span translate>Rearrange widgets</span></button>
 	<button class="btn btn-medium btn-info pull-right" ng-click="saveWidgets()" ng-show="editStatus" translate>Save</button>
 </div>
 
@@ -90,11 +90,7 @@
 
 <div class="dashboard-container">
 	<div class="content clearfix">
-
 		<div sd-gridster sd-status="editStatus" sd-widget-list="widgetList" data-model="widgets"></div>
-
-		<div class="empty-dahsboard" ng-show="numWidgets === 0" translate>Your dashboard is empty.</div>
-
+		<div class="empty-dashboard" ng-hide="hasWidgets" translate>Your dashboard is empty.</div>
 	</div>
-
 </div>

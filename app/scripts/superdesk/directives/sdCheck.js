@@ -59,7 +59,6 @@ define([
             var checkAttribute = '_checked';
 
             return {
-                scope: true,
                 require: 'ngModel',
                 replace: true,
                 template: '<span class="sf-checkbox-custom"></span>',
