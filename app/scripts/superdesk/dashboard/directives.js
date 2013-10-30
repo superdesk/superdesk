@@ -9,7 +9,7 @@ define([
          * sdWidget give appropriate template to data assgined to it
          *
          * Usage:
-         * <div sd-widget sd-options="widget" sd-definition="widgetDefinition"></div>
+         * <div sd-widget data-options="widget" data-definition="widgetDefinition"></div>
          * 
          * Params:
          * @param {Object} options - options for current widget instance
@@ -20,8 +20,8 @@ define([
                 templateUrl : 'scripts/superdesk/dashboard/views/widget.html',
                 restrict: 'A',
                 scope: {
-                    options: '=sdOptions',
-                    definition: '=sdDefinition'
+                    options: '=options',
+                    definition: '=definition'
                 },
                 replace: true,
                 link: function(scope, element, attrs) {
@@ -38,9 +38,9 @@ define([
          * <div sd-gridster
          *  class="gridster"
          *  ng-class="{'editmode': editmode}"
-         *  sd-status="widgetBoxStatus"
+         *  data-status="widgetBoxStatus"
          *  data-model="widgets"></div>
-         *  sd-widget-list="widgetList"></div>
+         *  data-widget-list="widgetList"></div>
          * 
          * Params:
          * @param {Boolean} status - on/off switch for widget
@@ -57,8 +57,8 @@ define([
 
             return {
                 scope: {
-                    status: '=sdStatus',
-                    widgetList: '=sdWidgetList',
+                    status: '=status',
+                    widgetList: '=widgetList',
                     model: '=model'
                 },
                 replace: true,
