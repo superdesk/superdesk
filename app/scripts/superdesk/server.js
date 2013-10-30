@@ -166,7 +166,7 @@ define([
 
             // transfer url params to server params
             _convertParams: function(params) {
-                var serverParams = _.extend({}, _.pick(params, ['max_results', 'where', 'page']));
+                var serverParams = _.extend({}, _.pick(params, ['max_results', 'where', 'page', 'embedded']));
 
                 if ('sort' in params) {
                     serverParams.sort = '[(' + angular.toJson(params.sort[0]) + ',' + (params.sort[1] === 'asc' ? 1 : -1) + ')]';
@@ -214,9 +214,17 @@ define([
              * Update single item
              *
              * @param {Object} item
+             * @param {Object} data to be updated, if not provided will send item data
              * @return {Object} promise
              */
-            update: function(item) {
+            update: function(item, data) {
+                if (data) {
+                    data._id = item._id;
+                    data.created = item.created;
+                    data.updated = item.updated;
+                    data.etag = item.etag;
+                }
+
                 return this._http('patch',
                     this._wrapUrl(item._links.self.href),
                     {},

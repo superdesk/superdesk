@@ -1,8 +1,8 @@
 <div class="subnav subnav-fixed">
-        <h1 class="main-article-title" id="article-title-fixed">{{ item.headline }}</h1>
+        <h1 class="main-article-title" id="article-title-fixed">{{ item.headline|limitTo:80 }}</h1>
 
         <a class="btn btn-medium btn-info pull-right" href="" ng-click="save(item)">Save</a>
-        <a class="btn btn-medium pull-right" href="" ng-click="close()" >Close</a>
+        <a class="btn btn-medium pull-right" href="#/items/" sd-with-params translate>Close</a>
         
         <div class="btn-group pull-right" style="margin:0 20px 0 30px;">
             <button class="btn btn-medium dropdown-toggle" data-toggle="dropdown"><i class="icon-settings"></i> <span class="caret"></span></button>
@@ -479,25 +479,13 @@
                 </div>
             </section>
 
-            <section ng-repeat="content in item.contents">
+            <section ng-if="item.body_html">
                 <header>
-                    <span class="edit-label">Lead</span>
-                    <span class="edit-words-info">92 Zeichen / 15 Worter</span> 
+                    <span class="edit-label" translate>Body</span>
+                    <span class="edit-words-info">{{ item.body_html|characterCount }} Characters / {{ item.body_html|wordCount }} Words</span> 
                 </header>
-                <div sd-contenteditable ng-model="content"></div>
+                <div sd-contenteditable ng-model="item.body_html"></div>
             </section>
-
-            <div ng-repeat="group in item.groups | filter:{'id': '!root'}">
-                <section ng-repeat="ref in group.refs" ng-controller="RefController">
-                    <header>
-                        <span class="edit-label">{{ group.id }}</span>
-                        <span class="edit-words-info">{{ item.itemClass }}</span>
-                    </header>
-
-                    <div ng-repeat="content in item.contents" sd-contenteditable ng-model="content">
-                    </div>
-                </section>
-            </div>
         </article>
 
         <div class="tablist right-tablist" tabcontent-area="right-tabpane">

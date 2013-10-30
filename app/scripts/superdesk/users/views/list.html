@@ -4,6 +4,7 @@
 </div>
 
 <div class="tab-background-container" style="top: 50px;">
+
     <div class="tab-content user-tabs">
         <div class="tab-pane active" id="active_users">
             <div class="tab-submenu"><i ng-show="users._items|any:'_checked'"></i>
@@ -66,9 +67,9 @@
 
                     <tbody>
 
-                        <tr ng-repeat="user in users._items">
+                        <tr ng-repeat="user in users._items" ng-click="edit(user)">
                             <td><input sd-check ng-model="user._checked"></td>
-                            <td><figure class="avatar" ng-show="settings.fields.avatar"><img src=""></figure></td>
+                            <td><figure class="avatar" ng-show="settings.fields.avatar"><img sd-user-picture data-src="user.picture_url" width="22" height="22"></figure></td>
                             <td class="name_col" ng-show="settings.fields.display_name"><a href="#/users/{{ user._id }}" sd-with-params>{{ user.display_name }}</a></td>
                             <td ng-show="settings.fields.username">{{ user.username }}</td>
                             <td class="email_col resp-hide" ng-show="settings.fields.email"><a href="">{{ user.email }}</a></td>
@@ -93,55 +94,13 @@
     </div>
     
     <!-- detail.html -->
-    <div class="user-details-pane open" style="top: 50px" ng-if="user" ng-controller="UserDetailController">
-
+    <div class="user-details-pane open" style="top: 50px" ng-if="user">
         <a href="#/users/" class="close" sd-with-params><i class="icon-remove"></i></a>
         <div class="user-details-header"></div>
-
         <div class="user-details-content tab-content">
-            
-        <div class="tab-pane user-profile user-profile-edit clearfix active" id="userd-profile-edit">
-                  <header>
-                        <figure class="small-user-avatar">
-                          <img ng-src="{{user.picture_url}}">
-                        </figure>
-                        <button class="btn btn-info pull-right" ng-click="save()">{{ 'Save'|translate }}</button>
-                  </header>
-                  <div class="details-info">
-                      <div class="details-section">
-                        <div class="details-section-header">{{'General'|translate}}</div>
-                        <div class="info-item"> 
-                          <span class="info-label">{{'User Name'|translate}}</span>
-                          <span class="info-value info-editable"><input ng-model="user.username"></span>
-                        </div>
-                        <div class="info-item">
-                          <span class="info-label">{{'First Name'|translate}}</span>
-                          <span class="info-value info-editable"><input ng-model="user.first_name"></span>
-                        </div>
-                        <div class="info-item">
-                          <span class="info-label">{{'Last Name'|translate}}</span>
-                          <span class="info-value info-editable"><input ng-model="user.last_name"></span>
-                        </div>
-                        <div class="info-item" ng-if="!user._id">
-                          <span class="info-label">{{'Password'|translate}}</span>
-                          <span class="info-value info-editable"><input type="password" ng-model="user.password"></span>
-                        </div>
-                      </div>
-                      <div class="details-section">
-                        <div class="details-section-header">
-                          {{ 'Contact Information'|translate }}
-                        </div>
-                        <div class="info-item">
-                          <span class="info-label">{{'Email'|translate}}</span>
-                          <span class="info-value info-editable"><input ng-model="user.email"></span>
-                        </div>
-                      </div>
-                  </div>
-
-                </div>
+            <div class="tab-pane clearfix active" id="user-profile-edit" sd-user-edit data-user="user"></div>
         </div>
-
-        </div>
+    </div>
     <!-- /detail.html -->
 
 </div>

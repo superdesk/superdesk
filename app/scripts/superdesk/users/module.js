@@ -1,16 +1,23 @@
 define([
     'angular',
-    'superdesk/settings',
-    'superdesk/server',
-    'superdesk/services/translate',
-    'superdesk/entity',
     './controllers/list',
     './controllers/detail',
-    './services'
+    './controllers/profile',
+    './directives/sdUserPicture',
+    './directives/sdUserActivity',
+    './directives/sdInfoItem',
+    './directives/sdUserEdit',
+    './services/profile'
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.settings', 'superdesk.server', 'superdesk.users.services'])
+    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.settings', 'superdesk.server'])
+        .service('profileService', require('superdesk/users/services/profile'))
+        .controller('UserDetailCtrl', require('superdesk/users/controllers/detail'))
+        .directive('sdUserPicture', require('superdesk/users/directives/sdUserPicture'))
+        .directive('sdUserActivity', require('superdesk/users/directives/sdUserActivity'))
+        .directive('sdInfoItem', require('superdesk/users/directives/sdInfoItem'))
+        .directive('sdUserEdit', require('superdesk/users/directives/sdUserEdit'))
         .value('defaultListParams', {
             search: '',
             searchField: 'username',
@@ -27,8 +34,6 @@ define([
                 created: true
             }
         })
-        .controller('UserListController', require('superdesk/users/controllers/list'))
-        .controller('UserDetailController', require('superdesk/users/controllers/detail'))
         .config(function($routeProvider) {
             $routeProvider
                 .when('/users/:id?', {
@@ -36,30 +41,30 @@ define([
                     templateUrl: 'scripts/superdesk/users/views/list.html',
                     resolve: {
                         users: ['locationParams', 'em', 'defaultListParams',
-                        function(locationParams, em, defaultListParams) {
-                            var criteria = locationParams.reset(defaultListParams);
-                            return em.getRepository('users').matching(criteria);
-                        }],
+                            function(locationParams, em, defaultListParams) {
+                                var criteria = locationParams.reset(defaultListParams);
+                                return em.getRepository('users').matching(criteria);
+                            }],
                         user: ['server', '$route',
-                        function(server, $route) {
-                            if ($route.current.params.id === 'new') {
-                                return {};
-                            } else if (_.isString($route.current.params.id)) {
-                                return server.readById('users', $route.current.params.id);
-                            } else {
-                                return undefined;
-                            }
-                        }],
+                            function(server, $route) {
+                                if ($route.current.params.id === 'new') {
+                                    return {};
+                                } else if (_.isString($route.current.params.id)) {
+                                    return server.readById('users', $route.current.params.id);
+                                } else {
+                                    return undefined;
+                                }
+                            }],
                         settings: ['settings', 'defaultListSettings',
-                        function(settings, defaultListSettings) {
-                            return settings('users:list', defaultListSettings);
-                        }],
+                            function(settings, defaultListSettings) {
+                                return settings('users:list', defaultListSettings);
+                            }],
                         locationParams: ['locationParams', 'defaultListParams', '$route',
-                        function(locationParams, defaultListParams, $route) {
-                            defaultListParams.id = $route.current.params.id;
-                            locationParams.reset(defaultListParams);
-                            return locationParams;
-                        }]
+                            function(locationParams, defaultListParams, $route) {
+                                defaultListParams.id = $route.current.params.id;
+                                locationParams.reset(defaultListParams);
+                                return locationParams;
+                            }]
                     }
                 })
                 // temporary fake route, just to have menu fixed
@@ -67,6 +72,15 @@ define([
                     menu: {
                         label: gettext('Users'),
                         priority: -1
+                    }
+                })
+                .when('/profile', {
+                    controller: require('superdesk/users/controllers/profile'),
+                    templateUrl: 'scripts/superdesk/users/views/profile.html',
+                    resolve: {
+                        user: function($rootScope, em) {
+                            return em.getRepository('users').find($rootScope.currentUser._id);
+                        }
                     }
                 });
         });

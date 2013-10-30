@@ -92,6 +92,13 @@ define(['angular', 'lodash', './server'], function(angular, _) {
                  */
                 reload: function() {
                     $route.reload();
+                },
+
+                /**
+                 * Replace history
+                 */
+                replace: function() {
+                    $location.replace();
                 }
             };
         }])

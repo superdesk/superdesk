@@ -1,4 +1,5 @@
 define([
+    'jquery',
     'angular',
     'superdesk/server',
     'superdesk/entity',
@@ -8,7 +9,7 @@ define([
     './controllers/edit',
     './controllers/ref',
     './directives'
-], function(angular) {
+], function($, angular) {
     'use strict';
 
     angular.module('superdesk.items', ['superdesk.entity', 'superdesk.items.resources', 'superdesk.items.directives', 'ui.bootstrap.dropdownToggle'])
@@ -29,8 +30,8 @@ define([
                     resolve: {
                         items: ['locationParams', 'em', function(locationParams, em) {
                             var criteria = locationParams.reset({
-                                itemClass: 'icls:composite',
-                                sort: ['firstCreated', 'desc'],
+                                where: {type: 'text'},
+                                sort: ['firstcreated', 'desc'],
                                 max_results: 25
                             });
                             return em.getRepository('items').matching(criteria);
@@ -48,8 +49,7 @@ define([
                     resolve: {
                         items: ['locationParams', 'em', function(locationParams, em) {
                             var criteria = locationParams.reset({
-                                itemClass: 'icls:text',
-                                sort: ['firstCreated', 'desc'],
+                                sort: ['firstcreated', 'desc'],
                                 max_results: 25
                             });
                             return em.getRepository('items').matching(criteria);
@@ -68,6 +68,18 @@ define([
                 zen: false
             };
         })
-        .controller('RefController', require('superdesk/items/controllers/ref'));
-
+        .controller('RefController', require('superdesk/items/controllers/ref'))
+        .filter('characterCount', function() {
+            return function(input) {
+                return $(input).text().length;
+            };
+        })
+        .filter('wordCount', function() {
+            var nonchar = /[^\w]/g;
+            var whitesp = /\s+/;
+            return function(input) {
+                var text = $(input).text();
+                return text.replace(nonchar, ' ').split(whitesp).length;
+            };
+        });
 });

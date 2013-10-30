@@ -1,0 +1,144 @@
+FORMAT: X-1A
+
+# Superdesk API
+
+```in progress```
+
+## Base Resource Model
+
+Resource model is returned when listing any resource, eg. ```GET /users```.
+
++ Model (application/json)
+
+    ```js
+    {
+        "_items": [],
+        "_links": {
+            "self": {"href": "self_url"},
+            "next": {"href": "next_url"},
+            "previous": {"href": "prev_url"},
+            "last": {"href": "last_url"}
+        }
+    }
+    ```
+
+Where ```next```, ```previous``` and ```last``` links are only provided when appropriate.
+
+## Base Item Model
+
+Item model is returned when fetching specific item, eg. ```GET /users/1```.
+
++ Model (application/json)
+
+    ```js
+    {
+        "_id": "item_id",
+        "etag": "5a92ccc2c1c5ee0cce0f66c14cc38d912423896f",
+        "created": "2013-10-03T09:45:02",
+        "updated": "2013-10-03T09:45:02",
+        "_links": {
+            "self": {
+                "href": "item_url"
+            }
+        }
+    }
+    ```
+
+# Authentication
+
+To get authentication token for your credentials, use ```/auth``` endpoint.
+Once you will get the token, use it as ```username``` for Basic authentication.
+
+# POST /auth
+
++ Request (application/json)
+
+    ```js
+    {"auth": {"username": "foo", "password": "bar"}}
+    ```
+
++ Response 200 (application/json)
+
+    ```js
+    {"auth": {
+        "token": "6AHFMksxPsPpOHXm1UixfuNPUhhMOHJPbzuLq4Kw",
+        "username": "admin",
+        "updated": "2013-10-08T10:53:42",
+        "etag": "063f555c8c32c653947f7d26ca3322a947b9a0b2",
+        "_id": "5253e4368163e4000228806b",
+        "status": "OK",
+        "_links": {
+            "self": {
+                "title": "Auth",
+                "href": "superdesk-api.herokuapp.com/auth/5253e4368163e4000228806b"
+            }
+        }
+    }}
+    ```
+
+# Group users
+
+## GET /users{/_id}
+
+Returns a specific user by id.
+
++ Parameters
+        + _id (required, string, `ab1`)
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "is_active": true,
+        "first_name": "karel",
+        "last_name": "badlik",
+        "display_name": "karel balik",
+        "username": "kbadlik",
+        "email": "kbadlik@gmail.com",
+        "user_info": {
+            "skype": "karel.badlik",
+            "phone": "+4207777777",
+        },
+        "created": "2013-09-23T12:20:21",
+        "updated": "2013-09-23T12:20:21",
+        ...
+    }
+    ```
+
+## GET /users
+
+Returns a list of users.
+
++ Parameters
+        + page `1` (optional, number, `10`)
+
++ Response 200 (application/json)
+
+    [Base Resource Model]
+
+# Group items
+
+## GET /items{/_id}
+
++ Parameters
+        + _id (required, string, `a1`)
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "guid": "urn:example.com:xyz",
+        "provider": "example.com",
+        "version": 2,
+        "urgency": 4,
+        "firstCreated": "2013-09-23T12:20:21",
+        "versionCreated": "2013-09-23T12:30:05",
+        "slugline" :"ITEM-SLUG",
+        "headline": "News Item",
+        "description": "News item info",
+        "creditline": "EXAMPLE Images",
+        "itemClass": "icls:text",
+        "copyrightHolder": "EXAMPLE",
+        ...
+    }
+    ```

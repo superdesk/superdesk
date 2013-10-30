@@ -35,10 +35,12 @@ define([
                         render(element, ngModel.$viewValue);
                     });
 
-                    element.on('click', function(){
+                    element.on('click', function(e) {
                         $scope.$apply(function() {
                             ngModel.$setViewValue(!ngModel.$viewValue);
                         });
+
+                        return false;
                     });
                 }
             };

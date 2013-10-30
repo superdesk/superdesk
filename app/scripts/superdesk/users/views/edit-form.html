@@ -1,0 +1,69 @@
+<div class="user-profile user-profile-edit">
+  <div ng-controller="UserDetailCtrl">
+    <button class="btn btn-info pull-right" ng-click="save()">Save</button>
+
+    <div class="profile-pic">
+        <figure>
+            <img sd-user-picture data-src="user.picture_url" alt="user.display_name">
+        </figure>
+
+        <a class="change-photo" href="" ng-click="editPicture()" translate>Change Photo</a>
+    </div>
+
+    <div class="profile-info user-profile-edit">
+        <div class="header-info">
+            <h2>{{ user.display_name || user.username }}</h2>
+            <ul class="user-roles">
+                <li ng-repeat="role in user.role">{{role}}</li>
+            </ul>
+        </div>
+        <div class="details-info">
+            <div class="details-section">
+
+                <div class="details-section-header" translate>General</div>
+
+                <div sd-info-item>
+                  <label for="display-name" translate>display name</label>
+                  <input type="text" id="display-name" ng-model="user.display_name">
+                </div>
+
+                <div sd-info-item>
+                  <label for="first-name" translate>first name</label>
+                  <input type="text" id="first-name" ng-model="user.first_name">
+                </div>
+
+                <div sd-info-item>
+                  <label for="last-name" translate>last name</label>
+                  <input type="text" id="last-name" ng-model="user.last_name">
+                </div>
+
+                <div sd-info-item>
+                  <label for="username" translate>username</label>
+                  <input type="text" id="username" class="info-value info-editable" ng-model="user.username" readonly="readonly">
+                </div>
+
+                <div sd-info-item>
+                  <label for="email">email</label>
+                  <input type="text" id="email" ng-model="user.email">
+                </div>
+
+                <div sd-info-item class="password">
+                  <label for="password" translate>password</label>
+                  <input type="password" id="password" ng-model="user.password">
+                </div>
+
+                <div sd-info-item>
+                  <label for="created" translate>member since</label>
+                  <span class="info-value" sd-reldate ng-model="user.created"></span>
+                </div>
+
+                <div sd-info-item>
+                  <label for="company">company</label>
+                  <input type="text" id="company" ng-model="user.user_info.company">
+                </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
+</div>

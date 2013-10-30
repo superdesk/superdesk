@@ -312,7 +312,7 @@ body {
 	}
 }
 
-.article-list .main-content-container {
+.main-content-container {
 	padding: @main-content-padding;
 	padding-top: @subnav-height + @subnav-level2 + @main-content-padding;
 }
@@ -505,7 +505,7 @@ Notifications
     border-color: #d5d5d5;
 
     padding: 0 10px 10px;
-    .box-shadow-both(inset 0 5px 3px -3px #d5d5d5,0 1px 5px -3px rgba(0,0,0,.1));
+    //.box-shadow-both(inset 0 5px 3px -3px #d5d5d5,0 1px 5px -3px rgba(0,0,0,.1));
 	.alert {
 		height: @subnav-height - 20 - 1;
 		line-height: @subnav-height - 20 - 1;
@@ -514,4 +514,63 @@ Notifications
 		padding: 0 15px;
 		margin: 10px 0 0;
 	}
+}
+.zen-mode {
+	.notification-holder {
+		background:none;
+	}
+}
+
+
+/*RESPONSIVE*/
+
+.ipad-hide {
+  display:block !important;  
+}
+.ipad-show {
+  display:none !important;
+}
+
+
+.mobile-hide {
+  display:block !important;
+}
+
+@media (max-width: 1024px) {
+
+  .ipad-show {
+    display:block !important;
+    .dropdown-toggle {
+      padding: 9px 20px !important;
+    }
+  }
+  .ipad-hide {
+    display:none !important;
+  }
+  .navbar .nav.main > li > a {
+    font-size:11px !important;
+  }
+
+  .navbar .nav.pull-right li .user-profile {
+    padding-left: 31px;
+    background: url(../../images/avatar_small.png) no-repeat 0 0;
+    font-weight: bold;
+    line-height: 23px;
+    display: inline-block;
+  }
+
+}
+
+@media (max-width: 480px) {
+  
+  .mobile-hide {
+    display:none !important;
+  }
+  
+  .main-background-container .subnav {
+    padding:5px !important;
+    height:@subnav-mobile-height !important;
+  }
+
+
 }

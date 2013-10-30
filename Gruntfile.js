@@ -134,7 +134,7 @@ module.exports = function (grunt) {
             '.htaccess',
             'images/**/*',
             'styles/{,*/}*.css',
-            'scripts/**/*',
+            'scripts/**/*.{html,js,css,jpg,jpeg,png,gif,json}',
             'config.js'
           ]
         }]
@@ -179,6 +179,7 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('server', [
+    'clean:dist',
     'clean:server',
     'write:config',
     'less',

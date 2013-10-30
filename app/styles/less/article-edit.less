@@ -30,6 +30,10 @@ html, body.article-edit {
     color: #0088CC;
     font-size: 26px;
     float: left;
+    max-width: 700px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 }
 
@@ -1290,37 +1294,8 @@ button:focus {
 
 /*RESPONSIVE*/
 
-.ipad-hide {
-  display:block !important;  
-}
-.ipad-show {
-  display:none !important;
-}
-
-
-.mobile-hide {
-  display:block !important;
-}
-
 @media (max-width: 1024px) {
 
-  .ipad-show {
-    display:block !important;
-  }
-  .ipad-hide {
-    display:none !important;
-  }
-  .navbar .nav.main > li > a {
-    font-size:11px !important;
-  }
-
-  .navbar .nav.pull-right li .user-profile {
-    padding-left: 31px;
-    background: url(../../images/avatar_small.png) no-repeat 0 0;
-    font-weight: bold;
-    line-height: 23px;
-    display: inline-block;
-  }
 
   .main-article-container {
     padding-left:20px;
@@ -1355,10 +1330,7 @@ button:focus {
 }
 
 @media (max-width: 480px) {
-  .mobile-hide {
-    display:none !important;
-  }
-
+  
   .main-article-title {
     display:none;
   }
@@ -1371,11 +1343,6 @@ button:focus {
   }
   .main-article-container {
     padding-top: 60px;
-  }
-
-  .main-background-container .subnav {
-    padding:5px !important;
-    height:@subnav-mobile-height !important;
   }
 
   .editor-toolbar {

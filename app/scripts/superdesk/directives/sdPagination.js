@@ -27,7 +27,7 @@ define([
                         return parameters.page;
                     }
                 }
-                return 1;
+                return undefined;
             }
 
             return {
@@ -45,7 +45,7 @@ define([
                     });
 
                     scope.$watch('model', function(model) {
-                        scope.totalPages = getTotalPages(scope.model);
+                        scope.totalPages = getTotalPages(scope.model) || scope.page;
                         scope.links = model._links;
                     });
                 }

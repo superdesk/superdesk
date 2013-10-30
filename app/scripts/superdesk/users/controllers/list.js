@@ -3,14 +3,11 @@ define(['angular'], function(angular) {
 
     return ['$scope', 'settings', 'server', 'locationParams', 'users', 'user',
     function UserListController($scope, settings, server, locationParams, users, user) {
-        
-        $scope.initialize = function() {
-            $scope.users = users;
-            $scope.user = user;
-            $scope.settings = settings;
-            $scope.locationParams = locationParams;
-            $scope.search = locationParams.get('search');
-        };
+        $scope.user = user;
+        $scope.users = users;
+        $scope.settings = settings;
+        $scope.locationParams = locationParams;
+        $scope.search = locationParams.get('search');
 
         $scope.delete = function(user) {
             server.delete(user).then(function() {
@@ -25,6 +22,8 @@ define(['angular'], function(angular) {
             });
         };
 
-        $scope.initialize();
+        $scope.edit = function(user) {
+            locationParams.path('/users/' + user._id);
+        };
     }];
 });

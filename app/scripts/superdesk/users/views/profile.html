@@ -1,0 +1,10 @@
+<div class="subnav subnav-fixed">
+	<h3 class="page-nav-title">{{ 'Profile:'|translate }} <span>{{ user.display_name || user.username }}</span></h3>
+</div>
+
+<div class="my-profile-container user-details-pane">
+	<div class="content">
+		<div class="profile" sd-user-edit data-user="user"></div>
+		<div class="profile-activity-container" sd-user-activity data-user="user"></div>
+	</div>
+</div>
