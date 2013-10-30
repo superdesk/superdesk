@@ -8,12 +8,20 @@ define([
     './controllers/list',
     './controllers/edit',
     './controllers/ref',
+    './controllers/generalSettingsMain',
+    './controllers/generalSettingsAddSource',
     './directives'
 ], function($, angular) {
     'use strict';
 
-    angular.module('superdesk.items', ['superdesk.entity', 'superdesk.items.resources', 'superdesk.items.directives', 'ui.bootstrap.dropdownToggle'])
-        .config(function($routeProvider) {
+    angular.module('superdesk.items', ['superdesk.entity', 'superdesk.items.resources', 'superdesk.items.directives', 'ui.bootstrap.dropdownToggle', 'superdesk.providers'])
+        .config(function($routeProvider, generalSettingsProvider) {
+            generalSettingsProvider.register('ingest-feed', {
+                label: gettext('Ingest Feed'),
+                controller: require('superdesk/items/controllers/generalSettingsMain'),
+                templateUrl: 'scripts/superdesk/items/views/generalSettingsMain.html'
+            });
+
             $routeProvider.
                 when('/packages/:id', {
                     templateUrl: 'scripts/superdesk/items/views/edit.html',

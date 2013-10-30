@@ -8,5 +8,8 @@ define(['angular'], function(angular) {
                     server.update(item);
                 }
             };
+        })
+        .factory('feedSources', function($resource) {
+            return $resource('scripts/superdesk/items/static-resources/sources.json');
         });
 });

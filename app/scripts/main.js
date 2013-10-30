@@ -94,12 +94,14 @@ define([
     require([
         'superdesk/directives/all',
         'superdesk/filters/all',
-        'superdesk/services/all'
+        'superdesk/services/all',
+        'superdesk/providers/all'
     ], function() {
         var modules = [
             'superdesk.directives',
             'superdesk.filters',
             'superdesk.services',
+            'superdesk.providers',
             'superdesk.auth',
             'superdesk.menu',
             'superdesk.dashboard',

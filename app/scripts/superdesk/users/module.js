@@ -7,11 +7,11 @@ define([
     './directives/sdUserActivity',
     './directives/sdInfoItem',
     './directives/sdUserEdit',
-    './services/profile'
+    './services/profile',
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.settings', 'superdesk.server'])
+    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.settings', 'superdesk.server', 'superdesk.providers'])
         .service('profileService', require('superdesk/users/services/profile'))
         .controller('UserDetailCtrl', require('superdesk/users/controllers/detail'))
         .directive('sdUserPicture', require('superdesk/users/directives/sdUserPicture'))
@@ -34,7 +34,7 @@ define([
                 created: true
             }
         })
-        .config(function($routeProvider) {
+        .config(function($routeProvider, generalSettingsProvider) {
             $routeProvider
                 .when('/users/:id?', {
                     controller: require('superdesk/users/controllers/list'),
