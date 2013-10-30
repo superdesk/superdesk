@@ -16,5 +16,8 @@ define(['angular'], function(angular) {
         $scope.closeEdit = function() {
             $scope.editItem = null;
         };
+
+        $scope.gridview = false;
+
     }];
 });

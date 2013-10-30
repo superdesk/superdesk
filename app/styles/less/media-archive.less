@@ -260,7 +260,7 @@ input{
 	width:auto;
 	height:auto;
 	background-color:#f8f8f8;
-	left:275px;
+	left: 0px;
 	.box-shadow(-1px 0px 6px 0px rgba(0,0,0,.1));
 	border-left: 1px solid #bbb;
 	&.wide {
@@ -284,7 +284,7 @@ input{
 		display:block;
 		position:relative;
 		float:left;
-		margin:3px 20px 0 0;
+		margin:3px 10px 0 0;
 		background-color:#dadada;
 		border-top-right-radius: 5px;
 		border-bottom-right-radius: 5px;
@@ -305,6 +305,7 @@ input{
 		font-size:18px;	
 		vertical-align:middle;
 		line-height:26px;
+		margin-left: 20px;
 	}
 	.info {
 		color:#999;
@@ -316,7 +317,7 @@ input{
 
 .main-content-subnav {
 	background-color:#f8f8f8;
-	height:36px;
+	height:28px;
 	top: 40px;
     left: 0;
     right: 0;
@@ -330,12 +331,12 @@ input{
 
 .main-content-inner {
 	height:auto;
-	top: 99px !important;
+	top: 91px !important;
     left: 0;
     right: 0;
 	position:absolute;
 	width:auto;
-	padding: 20px 20px 0 20px;
+	padding: 20px;
 }
 
 .fake-sidebar {
@@ -588,7 +589,7 @@ input{
 		.media-box-generic;
 	}
 }
-
+/* old listview
 .list-view {
 	padding-right:40px;
 	.media-box {
@@ -658,7 +659,106 @@ input{
 		}
 	}
 }
+*/
+@rightfield-width:222px;
 
+.list-view {
+	.media-box {
+		background: #fff;
+		border-bottom: 1px solid #ebebeb;
+		height: 40px;
+		overflow: hidden;
+		&:first-child {
+			border-top: 3px solid #ebebeb;
+		}
+		&:hover {
+			background: #eff7fa;
+			border-bottom-color: #e0e0e0;
+			cursor: pointer;
+			.list-field {
+				border-color:#ebebeb; 
+			}
+		}
+		&.selected {
+			background: #eefce5;
+		}
+		.list-field {
+			border-left: 1px solid #f4f4f4;
+			float: left;
+			height: 16px;
+			padding: 12px 11px;
+			.sf-checkbox-custom {
+				margin:0; 
+			}
+		}
+		.type-icon {
+			.opacity(60);
+			i {
+				width: 24px;
+				padding-left: 0;
+				margin-left: -2px;
+				margin-top: -3px;
+			}
+		}
+		.media-info {
+			.item-provider {
+				font-size: 14px;
+				color: #787878;
+				margin-right: 15px;
+			}
+			h5 {
+				font-size: 14px;
+				color: #333;
+				font-weight: normal;
+				position: absolute;
+				left: 101px;
+				right: @rightfield-width+44px;
+				overflow: hidden;
+				text-overflow:ellipsis;
+				white-space: nowrap;
+			}			
+		}
+		.item-right {
+			border-left: 0;
+			width: @rightfield-width;
+			position: absolute;
+			right: 22px;
+			text-align: right;
+			overflow: hidden;
+			.item-functions {
+				background: #eff7fa;
+				position: absolute;
+				right: -@rightfield-width;
+				top:0px;
+				bottom: 0;
+				width: @rightfield-width;
+				.list-field {
+					&:hover {
+						background: #e4f0f5;
+					}
+				}
+				
+			}
+		}
+		
+		&.selected {
+			.item-functions {
+				background: #eefce5;
+				.list-field {
+					&:hover {
+						background: #e0f1d5;
+					}
+				}
+			}
+		}
+		&:hover {
+			.item-functions {
+				right: 0;
+			}
+		}
+
+	}
+}
 .media-box-button-generic {
 			width:16px;
 			height:16px;
@@ -792,7 +892,7 @@ input{
 
 }
 
-
+/*
 .media-box-hover-list {
 	.list-view.media-box;
 	&.selected {
@@ -852,6 +952,7 @@ input{
 	
 	
 }
+*/
 
 /********************************
 	LIGHTBOX PREVIEW
