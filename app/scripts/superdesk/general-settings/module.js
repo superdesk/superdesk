@@ -13,14 +13,10 @@ define([
         'ui.bootstrap'
     ])
         .config(function($routeProvider) {
-            $routeProvider.
-                when('/settings/:tab?', {
+            $routeProvider
+                .when('/settings/:tab?', {
                     controller: require('superdesk/general-settings/controllers/main'),
                     templateUrl: 'scripts/superdesk/general-settings/views/main.html',
-                    menu: {
-                        label: gettext('Settings'),
-                        priority: 0
-                    },
                     resolve: {
                         tab: ['$route', function($route) {
                             if ($route.current.params.tab) {
@@ -29,6 +25,13 @@ define([
                                 return undefined;
                             }
                         }]
+                    }
+                })
+                // temporary fake route, just to have menu fixed
+                .when('/settings', {
+                    menu: {
+                        label: gettext('Settings'),
+                        priority: 0
                     }
                 });
         });
