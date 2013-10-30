@@ -66,26 +66,26 @@ define([
                 link: function(scope, element, attrs) {
                     scope.resizeWidget = function(widget, direction) {
                         switch(direction) {
-                            case 'left':
-                                if (widget.sizex !== 1) {
-                                    widget.sizex--;
-                                }
-                                break;
-                            case 'right':
-                                if (widget.sizex !== scope.widgetList[widget.wcode].max_sizex) {
-                                    widget.sizex++;
-                                }
-                                break;
-                            case 'up':
-                                if (widget.sizey !== 1) {
-                                    widget.sizey--;
-                                }
-                                break;
-                            case 'down':
-                                if (widget.sizey !== scope.widgetList[widget.wcode].max_sizey) {
-                                    widget.sizey++;
-                                }
-                                break;
+                        case 'left':
+                            if (widget.sizex !== 1) {
+                                widget.sizex--;
+                            }
+                            break;
+                        case 'right':
+                            if (widget.sizex !== scope.widgetList[widget.wcode].max_sizex) {
+                                widget.sizex++;
+                            }
+                            break;
+                        case 'up':
+                            if (widget.sizey !== 1) {
+                                widget.sizey--;
+                            }
+                            break;
+                        case 'down':
+                            if (widget.sizey !== scope.widgetList[widget.wcode].max_sizey) {
+                                widget.sizey++;
+                            }
+                            break;
                         }
                     };
                     scope.removeWidget = function(widget) {
