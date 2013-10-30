@@ -9,7 +9,6 @@ define([
     angular.module('superdesk.directives')
         .directive('sdModal', function() {
             return {
-                scope: true,
                 link: function(scope, element, attrs) {
                     var show = false;
                     if ('ngShow' in attrs) {

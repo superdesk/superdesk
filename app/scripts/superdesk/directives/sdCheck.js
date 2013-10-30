@@ -22,7 +22,6 @@ define([
          */
         .directive('sdCheck', function() {
             return {
-                scope: true,
                 require: 'ngModel',
                 replace: true,
                 template: '<span class="sf-checkbox-custom"></span>',
