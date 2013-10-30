@@ -1,22 +1,30 @@
-<div class="modal-header"> <a class="close" ng-click="closeModal()">×</a>
-	<h3 translate>Add New Source</h3>
+<div class="modal-header"> <a class="close" ng-click="$dismiss()">×</a>
+	<h3 translate ng-hide="provider._id">Add New Provider</h3>
+	<h3 translate ng-show="provider._id">Edit Provider</h3>
 </div>
 
 <div class="modal-body">
 	<div class="control-group">
-		<input type="text" class="large-text-input blue-text" placeholder="Feed Source Name">
+		<label for="provider" translate>Provider Type</label>
+		<select id="provider" ng-model="provider.type" ng-options="type for type in types"></select>
 	</div>
 	<div class="control-group">
-		<input type="text" placeholder="Feed Source Url">
+		<input type="text" class="large-text-input blue-text" placeholder="{{ 'Name'|translate }}" ng-model="provider.name">
 	</div>
 	<div class="control-group credentials">
-		<label trnaslate>Credentials</label>
-		<input type="text" class="first" placeholder="Username">
-		<input type="text" placeholder="Password">
+		<div ng-if="provider.type == 'reuters'">
+			<label translate>Credentials</label>
+			<input type="text" class="first" placeholder="{{ 'Username'|translate }}" ng-model="provider.config.username">
+			<input type="text" placeholder="{{ 'Password'|translate }}" ng-model="provider.config.password">
+		</div>
+		<div ng-if="provider.type == 'aap'">
+			<label translate>Config</label>
+			<input type="text" placeholder="{{ 'Path to folder'|translate }}" ng-model="provider.config.path">
+		</div>
 	</div>
 </div>
 
 <div class="modal-footer"> 
-	<a class="btn" ng-click="closeModal()" translate>Cancel</a> 
-	<a class="btn btn-primary" translate>Add Source</a>
+	<button class="btn" ng-click="$dismiss()" translate>Cancel</button>
+	<button class="btn btn-primary" ng-click="save()" translate>Save</button>
 </div>

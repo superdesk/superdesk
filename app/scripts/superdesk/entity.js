@@ -129,62 +129,74 @@ define(['angular', 'lodash', './server'], function(angular, _) {
                  * @return {Object}
                  */
                 this.matching = function(criteria) {
+                    if (!criteria) {
+                        criteria = {};
+                    }
+
                     return server.list(entity, criteria);
                 };
             }
 
+            var repos = {};
+
             /**
-             * Entity Manager
+             * Get repository for given entity
+             *
+             * @param {string} entity
+             * @return {Repository)
              */
-            function EntityManager() {
+            this.getRepository = function(entity) {
+                if (!(entity in repos)) {
+                    repos[entity] = new Repository(entity);
+                }
 
-                this._repositories = {};
+                return repos[entity];
+            };
 
-                /**
-                 * Get repository for given entity
-                 *
-                 * @param {string} entity
-                 * @return {Repository)
-                 */
-                this.getRepository = function(entity) {
-                    if (!(entity in this._repositories)) {
-                        this._repositories[entity] = new Repository(entity);
-                    }
+            /**
+             * Remove given item
+             *
+             * @param {Object} item
+             * @return {Object}
+             */
+            this.remove = function(item) {
+                return server.delete(item);
+            };
 
-                    return this._repositories[entity];
-                };
+            /**
+             * Update given item
+             *
+             * @param {Object} item
+             * @return {Object}
+             */
+            this.update = function(item) {
+                return server.update(item);
+            };
 
-                /**
-                 * Remove given item
-                 *
-                 * @param {Object} item
-                 * @return {Object}
-                 */
-                this.remove = function(item) {
-                    return this.server.delete(item);
-                };
+            /**
+             * Persist given item
+             *
+             * @param {string} resource
+             * @param {Object} item
+             * @return {Object}
+             */
+            this.create = function(resource, item) {
+                return server.create(resource, item);
+            };
 
-                /**
-                 * Update given item
-                 *
-                 * @param {Object} item
-                 * @return {Object}
-                 */
-                this.update = function(item) {
-                    return this.server.update(item);
-                };
-
-                /**
-                 * Persist given item
-                 *
-                 * @param {Object} item
-                 * @return {Object}
-                 */
-                this.persist = function(item, entity) {
-                    return this.server.create(entity, item);
-                };
-            }
-
-            return new EntityManager();
+            /**
+             * Save item
+             *
+             * @param {string} resource
+             * @param {Object} item
+             * @return {Object}
+             */
+            this.save = function(resource, item) {
+                if ('etag' in item) {
+                    return this.update(item);
+                } else {
+                    return this.create(resource, item);
+                }
+            };
         });
 });
