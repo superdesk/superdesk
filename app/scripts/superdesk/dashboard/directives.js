@@ -9,19 +9,19 @@ define([
          * sdWidget give appropriate template to data assgined to it
          *
          * Usage:
-         * <div sd-widget wcode="someWidget" sd-widget-list="widgetList"></div>
+         * <div sd-widget sd-options="widget" sd-definition="widgetDefinition"></div>
          * 
          * Params:
-         * @param {string} wcode - wcode of widget
-         * @param {Object} widgetList - widgetList
+         * @param {Object} options - options for current widget instance
+         * @param {Object} definition - definition of widget
          */
         .directive('sdWidget', [function() {
             return {
                 templateUrl : 'scripts/superdesk/dashboard/views/widget.html',
                 restrict: 'A',
                 scope: {
-                    wcode: '=sdWcode',
-                    widgetList: '=sdWidgetList'
+                    options: '=sdOptions',
+                    definition: '=sdDefinition'
                 },
                 replace: true,
                 link: function(scope, element, attrs) {
@@ -64,33 +64,36 @@ define([
                 replace: true,
                 templateUrl: 'scripts/superdesk/dashboard/views/grid.html',
                 link: function(scope, element, attrs) {
-                    scope.resizeWidget = function(wcode, direction) {
-                        var widget = scope.model[wcode];
+                    scope.resizeWidget = function(widget, direction) {
                         switch(direction) {
-                        case 'left':
-                            if (widget.sizex !== 1) {
-                                widget.sizex--;
-                            }
-                            break;
-                        case 'right':
-                            if (widget.sizex !== scope.widgetList[wcode].max_sizex) {
-                                widget.sizex++;
-                            }
-                            break;
-                        case 'up':
-                            if (widget.sizey !== 1) {
-                                widget.sizey--;
-                            }
-                            break;
-                        case 'down':
-                            if (widget.sizey !== scope.widgetList[wcode].max_sizey) {
-                                widget.sizey++;
-                            }
-                            break;
+                            case 'left':
+                                if (widget.sizex !== 1) {
+                                    widget.sizex--;
+                                }
+                                break;
+                            case 'right':
+                                if (widget.sizex !== scope.widgetList[widget.wcode].max_sizex) {
+                                    widget.sizex++;
+                                }
+                                break;
+                            case 'up':
+                                if (widget.sizey !== 1) {
+                                    widget.sizey--;
+                                }
+                                break;
+                            case 'down':
+                                if (widget.sizey !== scope.widgetList[widget.wcode].max_sizey) {
+                                    widget.sizey++;
+                                }
+                                break;
                         }
                     };
-                    scope.removeWidget = function(wcode) {
-                        delete scope.model[wcode];
+                    scope.removeWidget = function(widget) {
+                        _.forEach(scope.widgets, function(item, index) {
+                            if (item.wcode === widget.wcode) {
+                                scope.widgets.splice(index, 1);
+                            }
+                        });
                     };
                     scope.update = function() {
                         $timeout(function() {
@@ -111,8 +114,11 @@ define([
                     //
                     var root = element.find('ul');
 
-                    scope.gridster = root.gridster(defaultOptions)
-                        .data('gridster');
+                    scope.gridster = root.gridster(defaultOptions).data('gridster');
+
+                    scope.gridster.options.draggable.stop = function(event, ui) {
+                        scope.update();
+                    };
 
                     scope.$watch('status', function(status) {
                         if (scope.gridster) {
@@ -123,8 +129,28 @@ define([
                             }
                         }
                     });
+
                     scope.$watch('model', function(model, oldModel) {
+                        var widgets = [];
+                        _.forEach(scope.model, function(data, wcode) {
+                            widgets.push(_.extend({}, data, {wcode: wcode}));
+                        });
+                        scope.widgets = widgets;
+
                         scope.update();
+                    }, true);
+
+                    scope.$watch('widgets', function(widgets, oldWidgets) {
+                        var model = {};
+                        _.forEach(widgets, function(data) {
+                            model[data.wcode] = {
+                                sizex: data.sizex,
+                                sizey: data.sizey,
+                                row: data.row,
+                                col: data.col
+                            };
+                        });
+                        scope.model = model;
                     }, true);
                 }
             };

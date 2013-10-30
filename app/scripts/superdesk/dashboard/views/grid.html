@@ -1,20 +1,20 @@
 <div class="gridster" ng-class="{'editmode': status}">
 <ul class="dash-grid">
-	<li ng-repeat="(wcode, data) in model" data-col="{{data.col}}" data-row="{{data.row}}" data-sizex="{{data.sizex}}" data-sizey="{{data.sizey}}" data-widget="{{ wcode }}" class="gs_w">
+	<li ng-repeat="widget in widgets" data-col="{{widget.col}}" data-row="{{widget.row}}" data-sizex="{{widget.sizex}}" data-sizey="{{widget.sizey}}" data-widget="{{ widget.wcode }}" class="gs_w">
 
         <div class="widget-resize-width" ng-show="status">
-            <div class="resize-left" ng-click="resizeWidget(wcode, 'left')"></div>
-            <div class="resize-right" ng-click="resizeWidget(wcode, 'right')" ></div>
+            <div class="resize-left" ng-click="resizeWidget(widget, 'left')"></div>
+            <div class="resize-right" ng-click="resizeWidget(widget, 'right')" ></div>
         </div>
 
         <div class="widget-resize-height" ng-show="status">
-            <div class="resize-up" ng-click="resizeWidget(wcode, 'up')" ></div>
-            <div class="resize-down" ng-click="resizeWidget(wcode, 'down')" ></div>
+            <div class="resize-up" ng-click="resizeWidget(widget, 'up')" ></div>
+            <div class="resize-down" ng-click="resizeWidget(widget, 'down')" ></div>
         </div>
         
-        <div class="widget-close" ng-click="removeWidget(wcode)" ng-show="status"></div>
+        <div class="widget-close" ng-click="removeWidget(widget)" ng-show="status"></div>
 
-        <div sd-widget class="r{{data.sizex}}{{data.sizey}}" sd-wcode="wcode" sd-widget-list="widgetList"></div>
+        <div sd-widget class="r{{widget.sizex}}{{widget.sizey}}" sd-options="widget" sd-definition="widgetList[widget.wcode]"></div>
     </li>
 </ul>
 </div>
