@@ -3,7 +3,7 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.generalSettings.directives', [])
+    angular.module('superdesk.settings.directives', [])
      /**
      * sdSettingsModule creates a toggle settings box
      *
@@ -16,7 +16,7 @@ define([
      */
     .directive('sdSettingsModule', function(){
         return {
-            templateUrl : 'scripts/superdesk/general-settings/views/settings-module.html',
+            templateUrl : 'scripts/superdesk/settings/views/settings-module.html',
             restrict : 'A',
             replace : true,
             transclude: true,

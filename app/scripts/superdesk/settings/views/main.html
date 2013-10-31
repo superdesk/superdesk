@@ -5,7 +5,7 @@
 
 <div class="settingsPage">
     <ul class="settings-tab-list">
-        <li ng-repeat="(id, item) in generalSettings" ng-class="{active: tab === id}"><a href="#/settings/{{ id }}">{{ item.label }}</a></li>
+        <li ng-repeat="(id, item) in settings" ng-class="{active: tab === id}"><a href="#/settings/{{ id }}">{{ item.label }}</a></li>
     </ul>
 
     <div ng-if="selected">

@@ -6,16 +6,16 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.generalSettings', [
-        'superdesk.generalSettings.directives',
+    angular.module('superdesk.settings', [
+        'superdesk.settings.directives',
         'superdesk.directives',
         'ui.bootstrap'
     ])
         .config(function($routeProvider) {
             $routeProvider
                 .when('/settings/:tab?', {
-                    controller: require('superdesk/general-settings/controllers/main'),
-                    templateUrl: 'scripts/superdesk/general-settings/views/main.html',
+                    controller: require('superdesk/settings/controllers/main'),
+                    templateUrl: 'scripts/superdesk/settings/views/main.html',
                     resolve: {
                         tab: ['$route', function($route) {
                             if ($route.current.params.tab) {

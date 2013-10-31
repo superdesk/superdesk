@@ -64,8 +64,8 @@ define([
                     }
                 });
         })
-        .config(function(generalSettingsProvider) {
-            generalSettingsProvider.register('ingest-feed', {
+        .config(function(settingsProvider) {
+            settingsProvider.register('ingest-feed', {
                 label: gettext('Ingest Feed'),
                 controller: require('superdesk/items/controllers/generalSettingsMain'),
                 templateUrl: 'scripts/superdesk/items/views/generalSettingsMain.html'

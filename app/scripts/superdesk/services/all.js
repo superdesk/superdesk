@@ -3,7 +3,7 @@ define([
     './translate',
     './upload',
     './notify',
-    './general-settings',
+    './settings',
     '../userSettings',
     '../entity',
     '../server'
@@ -14,7 +14,7 @@ define([
         'superdesk.services.translate',
         'superdesk.services.upload',
         'superdesk.services.notify',
-        'superdesk.services.generalSettings',
+        'superdesk.services.settings',
         'superdesk.userSettings',
         'superdesk.entity',
         'superdesk.server'
