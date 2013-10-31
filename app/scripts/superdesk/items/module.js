@@ -15,13 +15,7 @@ define([
     'use strict';
 
     angular.module('superdesk.items', ['superdesk.entity', 'superdesk.items.resources', 'superdesk.items.directives', 'ui.bootstrap.dropdownToggle', 'superdesk.providers'])
-        .config(function($routeProvider, generalSettingsProvider) {
-            generalSettingsProvider.register('ingest-feed', {
-                label: gettext('Ingest Feed'),
-                controller: require('superdesk/items/controllers/generalSettingsMain'),
-                templateUrl: 'scripts/superdesk/items/views/generalSettingsMain.html'
-            });
-
+        .config(function($routeProvider) {
             $routeProvider.
                 when('/packages/:id', {
                     templateUrl: 'scripts/superdesk/items/views/edit.html',
@@ -69,6 +63,13 @@ define([
                         priority: -1
                     }
                 });
+        })
+        .config(function(generalSettingsProvider) {
+            generalSettingsProvider.register('ingest-feed', {
+                label: gettext('Ingest Feed'),
+                controller: require('superdesk/items/controllers/generalSettingsMain'),
+                templateUrl: 'scripts/superdesk/items/views/generalSettingsMain.html'
+            })
         })
         .run(function($rootScope) {
             // todo(petr) - remove from root scope, directive maybe?
