@@ -69,7 +69,7 @@ define([
                 label: gettext('Ingest Feed'),
                 controller: require('superdesk/items/controllers/generalSettingsMain'),
                 templateUrl: 'scripts/superdesk/items/views/generalSettingsMain.html'
-            })
+            });
         })
         .run(function($rootScope) {
             // todo(petr) - remove from root scope, directive maybe?
