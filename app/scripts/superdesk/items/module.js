@@ -12,7 +12,7 @@ define([
 ], function($, angular) {
     'use strict';
 
-    angular.module('superdesk.items', ['superdesk.entity', 'superdesk.items.resources', 'superdesk.items.directives', 'ui.bootstrap.dropdownToggle'])
+    angular.module('superdesk.items', ['superdesk.entity', 'superdesk.items.resources', 'superdesk.items.directives', 'ui.bootstrap'])
         .config(function($routeProvider) {
             $routeProvider.
                 when('/archive/', {

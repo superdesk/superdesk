@@ -1,0 +1,28 @@
+<div class="media-box media-{{item.type}}" 
+     ng-class="{ selected : item.selected}">
+
+    <div class="list-field">
+        <div sd-check ng-model="item.selected" ng-show="!gridview"></div>
+    </div>
+
+    <div class="media-info" >
+        <span class="list-field type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
+        <h5 class="list-field"  ng-click="edit(item)"><span class="item-provider">{{ item.provider }}</span>{{ item.headline }}
+        </h5>
+
+        <div class="item-right list-field">
+            <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>
+            <div class="item-functions">
+                <a class="list-field" ng-click="open('/archive/{{ item._id }}')"><i class="icon-pencil"></i></a>
+                <a class="list-field"><i class="icon-assign"></i></a>
+                <a class="list-field"><i class="icon-list-alt"></i></a>
+                <a class="list-field"><i class="icon-eye-open"></i></a>
+                <a class="list-field"><i class="icon-expand-thin"></i></a>
+                <a class="list-field"><i class="icon-dots"></i></a>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>

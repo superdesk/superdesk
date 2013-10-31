@@ -39,58 +39,22 @@
             <div sd-pagination data-model="items"></div>
         </div>
         <div class="main-content-inner scroller" ng-class="{'grid-view':gridview, 'list-view': !gridview }">
-           
-           <div class="media-box" ng-class="{image: item.type == 'picture', selected : item.selected}" ng-repeat="item in items._items">
             
-            <div class="list-field">
-                <div sd-check ng-model="item.selected" ng-show="!gridview"></div>
+            <!-- grid view -->
+            <div ng-if="gridview">
+                <div sd-media-box class="media-box" ng-repeat="item in items._items" ></div>
             </div>
+
+            <!-- list view -->
+            <div ng-if="!gridview">
+                <div sd-media-box-list class="media-box" ng-repeat="item in items._items" ></div>
+            </div>
+
+            <!-- floating box mask -->
+            <div sd-media-box-static ng-model="selectedItem"></div>
             
 
-            <figure ng-if="item.renditions.thumbnail && gridview">
-                <img ng-src="{{ item.renditions.thumbnail.href }}" alt="" title="{{ item.description }}" />
-                <figcaption>{{ item.creditline }}</figcaption>
-            </figure>
-            <figure ng-show="item.type == 'text' && gridview">
-                <small title="{{ item.headline }}">{{ item.headline }}</small>
-            </figure>
-
-            <div class="media-info" ng-if="gridview">
-                <h5>{{ item.slugline }}</h5>
-                <dl>
-                    <dt translate>Source</dt>
-                    <dd>{{ item.provider }}</dd>
-
-                    <dt translate>Urgency</dt>
-                    <dd>{{ item.urgency }}</dd>
-
-                    <dt translate>Created</dt>
-                    <dd><time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time></dd>
-                </dl>
-            </div>
-
-            <div class="media-info"  ng-if="!gridview">
-                <span class="list-field type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
-                <h5 class="list-field"  ng-click="edit(item)"><span class="item-provider">{{ item.provider }}</span>{{ item.headline }}
-                </h5>
-
-                <div class="item-right list-field">
-                    <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>
-                    <div class="item-functions">
-                        <a class="list-field" ng-click="open('/archive/{{ item._id }}')"><i class="icon-pencil"></i></a>
-                        <a class="list-field"><i class="icon-assign"></i></a>
-                        <a class="list-field"><i class="icon-list-alt"></i></a>
-                        <a class="list-field"><i class="icon-eye-open"></i></a>
-                        <a class="list-field"><i class="icon-expand-thin"></i></a>
-                        <a class="list-field"><i class="icon-dots"></i></a>
-
-                    </div>
-                </div>
-
-
-            </div>
-          </div>
-          <div class="alert alert-info" ng-show="!items._items.length" translate>No results found.</div>
+            <div class="alert alert-info" ng-show="!items._items.length" translate>No results found.</div>
         </div>
     </div>
     

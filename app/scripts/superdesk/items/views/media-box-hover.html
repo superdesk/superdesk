@@ -1,0 +1,49 @@
+<div class="media-box media-box-hover media-{{selectedItem.item.type}}" 
+    ng-class="{
+        selected : selectedItem.item.selected
+    }" 
+    ng-style="selectedItem.position" 
+    ng-show="selectedItem.show"
+    ng-mouseleave="selectedItem.show = false"
+   
+>
+    <div class="media-select">
+        <div sd-check ng-model="selectedItem.item.selected"></div>
+    </div>
+    
+    <div class="drag-fake"></div>
+    
+    <figure class="media" ng-if="selectedItem.item.renditions.thumbnail" ng-click="edit(selectedItem.item)" >
+        <img ng-src="{{ selectedItem.item.renditions.thumbnail.href }}" alt="" title="{{ selectedItem.item.description }}" />
+        <figcaption class="caption">{{ selectedItem.item.creditline }}</figcaption>
+    </figure>
+    <div class="media" ng-show="selectedItem.item.type == 'text'" ng-click="edit(selectedItem.item)" >
+        <small title="{{ selectedItem.item.headline }}">{{ selectedItem.item.headline }}</small>
+    </div>
+
+    <div class="media-info" ng-if="gridview" ng-click="edit(selectedItem.item)">
+        <h5>{{ selectedItem.item.slugline }}</h5>
+        <dl class="clearfix">
+            <dt translate>Source</dt>
+            <dd>{{ selectedItem.item.provider }}</dd>
+
+            <dt translate>Urgency</dt>
+            <dd>{{ selectedItem.item.urgency }}</dd>
+
+            <dt translate>Created</dt>
+            <dd><time datetime="{{ selectedItem.item.firstcreated }}" title="{{ selectedItem.item.firstcreated|date:'medium' }}">{{ selectedItem.item.firstcreated|reldate }}</time></dd>
+        </dl>
+    </div>
+
+    
+    <div class="item-functions">
+        <a class="thumb-field" ng-click="open('/archive/{{ selectedItem.item._id }}')"><i class="icon-pencil"></i></a>
+        <a class="thumb-field"><i class="icon-assign"></i></a>
+        <a class="thumb-field"><i class="icon-list-alt"></i></a>
+        <a class="thumb-field"><i class="icon-expand-thin"></i></a>
+        <a class="thumb-field"><i class="icon-dots"></i></a>
+    </div>
+
+    <span class="type-icon"><i class="filetype-icon-{{selectedItem.item.type}}"></i></span>
+   
+</div>
