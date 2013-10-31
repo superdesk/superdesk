@@ -15,7 +15,7 @@
     "angular-bootstrap": "~0.6",
     "angular-gettext": "~0.1.4",
     "blueimp-file-upload": "~8.9.0",
-    "gridster" : "~0.2.1"
+    "gridster" : "0.1.0"
   },
   "devDependencies": {
     "angular-mocks": "~1.2.0-rc.3"
