@@ -11,7 +11,7 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.settings', 'superdesk.server'])
+    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.userSettings', 'superdesk.server'])
         .service('profileService', require('superdesk/users/services/profile'))
         .controller('UserDetailCtrl', require('superdesk/users/controllers/detail'))
         .directive('sdUserPicture', require('superdesk/users/directives/sdUserPicture'))
@@ -55,9 +55,9 @@ define([
                                     return undefined;
                                 }
                             }],
-                        settings: ['settings', 'defaultListSettings',
-                            function(settings, defaultListSettings) {
-                                return settings('users:list', defaultListSettings);
+                        userSettings: ['userSettings', 'defaultListSettings',
+                            function(userSettings, defaultListSettings) {
+                                return userSettings('users:list', defaultListSettings);
                             }],
                         locationParams: ['locationParams', 'defaultListParams', '$route',
                             function(locationParams, defaultListParams, $route) {

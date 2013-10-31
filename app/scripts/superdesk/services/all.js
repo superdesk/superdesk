@@ -4,7 +4,7 @@ define([
     './upload',
     './notify',
     './general-settings',
-    '../settings',
+    '../userSettings',
     '../entity',
     '../server'
 ], function() {
@@ -15,7 +15,7 @@ define([
         'superdesk.services.upload',
         'superdesk.services.notify',
         'superdesk.services.generalSettings',
-        'superdesk.settings',
+        'superdesk.userSettings',
         'superdesk.entity',
         'superdesk.server'
     ]);
