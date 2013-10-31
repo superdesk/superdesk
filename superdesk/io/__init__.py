@@ -24,9 +24,10 @@ def update_provider(provider, db):
             old_item = db['items'].find_one({'guid': item['guid']}, [])
             if old_item:
                 item['_id'] = old_item['_id']
+            else:
+                provider['ingested_count'] = provider.get('ingested_count', 0) + 1
             db['items'].save(item)
 
-            provider['ingested_count'] = provider.get('ingested_count', 0) + 1
         provider['updated'] = start
         db['ingest_providers'].save(provider)
 
