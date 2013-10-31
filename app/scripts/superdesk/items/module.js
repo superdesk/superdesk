@@ -8,6 +8,8 @@ define([
     './controllers/list',
     './controllers/edit',
     './controllers/ref',
+    './controllers/generalSettingsMain',
+    './controllers/generalSettingsAddSource',
     './directives'
 ], function($, angular) {
     'use strict';
@@ -61,6 +63,13 @@ define([
                         priority: -1
                     }
                 });
+        })
+        .config(function(settingsProvider) {
+            settingsProvider.register('ingest-feed', {
+                label: gettext('Ingest Feed'),
+                controller: require('superdesk/items/controllers/generalSettingsMain'),
+                templateUrl: 'scripts/superdesk/items/views/generalSettingsMain.html'
+            });
         })
         .run(function($rootScope) {
             // todo(petr) - remove from root scope, directive maybe?

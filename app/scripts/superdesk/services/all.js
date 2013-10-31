@@ -3,7 +3,8 @@ define([
     './translate',
     './upload',
     './notify',
-    '../settings',
+    './settings',
+    '../userSettings',
     '../entity',
     '../server'
 ], function() {
@@ -13,7 +14,8 @@ define([
         'superdesk.services.translate',
         'superdesk.services.upload',
         'superdesk.services.notify',
-        'superdesk.settings',
+        'superdesk.services.settings',
+        'superdesk.userSettings',
         'superdesk.entity',
         'superdesk.server'
     ]);

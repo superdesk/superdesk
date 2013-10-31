@@ -1,0 +1,16 @@
+<div class="subnav subnav-fixed">
+
+    <h3 class="page-nav-title" translate>Settings</h3>
+</div>
+
+<div class="settingsPage">
+    <ul class="settings-tab-list">
+        <li ng-repeat="(id, item) in settings" ng-class="{active: tab === id}"><a href="#/settings/{{ id }}">{{ item.label }}</a></li>
+    </ul>
+
+    <div ng-if="selected">
+        <div ng-controller="selected.controller">
+            <div class="settings-tab-content" ng-include="selected.templateUrl"></div>
+        </div>
+    </div>
+</div>
