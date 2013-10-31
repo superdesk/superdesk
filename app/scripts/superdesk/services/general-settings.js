@@ -1,7 +1,7 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    angular.module('superdesk.providers.generalSettings', [])
+    angular.module('superdesk.services.generalSettings', [])
         .provider('generalSettings', [function() {
             var settings = {};
             

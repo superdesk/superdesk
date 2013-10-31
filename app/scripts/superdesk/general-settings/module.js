@@ -9,7 +9,6 @@ define([
     angular.module('superdesk.generalSettings', [
         'superdesk.generalSettings.directives',
         'superdesk.directives',
-        'superdesk.providers',
         'ui.bootstrap'
     ])
         .config(function($routeProvider) {

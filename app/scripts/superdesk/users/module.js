@@ -11,7 +11,7 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.settings', 'superdesk.server', 'superdesk.providers'])
+    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.settings', 'superdesk.server'])
         .service('profileService', require('superdesk/users/services/profile'))
         .controller('UserDetailCtrl', require('superdesk/users/controllers/detail'))
         .directive('sdUserPicture', require('superdesk/users/directives/sdUserPicture'))
@@ -34,7 +34,7 @@ define([
                 created: true
             }
         })
-        .config(function($routeProvider, generalSettingsProvider) {
+        .config(function($routeProvider) {
             $routeProvider
                 .when('/users/:id?', {
                     controller: require('superdesk/users/controllers/list'),
