@@ -2,7 +2,6 @@ require.config({
     paths: {
         jquery: 'bower_components/jquery/jquery',
         bootstrap: 'bower_components/bootstrap/js',
-        bootstrap_ui: 'bower_components/angular-bootstrap/ui-bootstrap',
         angular: 'bower_components/angular/angular',
         'angular-resource': 'bower_components/angular-resource/angular-resource',
         'angular-route': 'bower_components/angular-route/angular-route',

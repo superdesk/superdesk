@@ -3,7 +3,6 @@ define([
     'angular',
     'superdesk/server',
     'superdesk/entity',
-    'bootstrap_ui',
     './resources',
     './controllers/list',
     './controllers/edit',
@@ -16,8 +15,7 @@ define([
     angular.module('superdesk.items', [
         'superdesk.entity',
         'superdesk.items.resources',
-        'superdesk.items.directives',
-        'ui.bootstrap'
+        'superdesk.items.directives'
     ])
         .controller('SettingsCtrl', require('superdesk/items/controllers/settings'))
         .controller('RefController', require('superdesk/items/controllers/ref'))
