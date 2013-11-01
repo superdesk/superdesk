@@ -1,7 +1,7 @@
 <div class="subnav subnav-fixed">
 
 	<h3 class="page-nav-title" translate>Dashboard</h3>
-	<button class="btn btn-info btn-medium pull-right" ng-click="widgetBoxStatus = true;"><i class="icon-plus-sign icon-white"></i> <span translate>Add Widget</span></button>
+	<button class="btn btn-info btn-medium pull-right" ng-disabled="editStatus" ng-click="widgetBoxStatus = true;"><i class="icon-plus-sign icon-white"></i> <span translate>Add Widget</span></button>
 	<div class="dropdown pull-right">
 	    <button class="btn btn-medium dropdown-toggle pull-right" ><i class="icon-cog"></i> <b class="caret"></b></button>
 	    <ul class="dropdown-menu sf-dropdown sf-dropdown-right pull-right">
@@ -42,12 +42,12 @@
 	                            </div>
 	                        </div>
 	                        <ul class="widget-list">
-	                            <li ng-repeat="(wcode, data) in widgetList | wcodeFilter:widgets" ng-click="$parent.selectedWidget = wcode">
+	                            <li ng-repeat="widget in availableWidgets" ng-click="$parent.selectedWidget = widget">
 	                                <div class="thumbnail">
-	                                    <img ng-src="{{data.thumbnail}}">
+	                                    <img ng-src="{{ widget.thumbnail }}">
 	                                </div>
 	                                <div class="title">
-	                                    {{data.name}}
+	                                    {{ widget.name }}
 	                                </div>
 	                            </li>
 	                        </ul>
@@ -65,13 +65,13 @@
 	                            <a href="" class="backlink" ng-click="selectedWidget = null" translate>Back to overview</a>
 	                        </div>
 	                        <div class="thumbnail-box">
-	                            <img ng-src="{{ widgetList[selectedWidget].thumbnail }}">
+	                            <img ng-src="{{ selectedWidget.thumbnail }}">
 	                        </div>
 	                        <div class="title">
-	                            {{ widgetList[selectedWidget].name }}
+	                            {{ selectedWidget.name }}
 	                        </div>
 	                        <div class="description">
-	                            {{ widgetList[selectedWidget].description }}
+	                            {{ selectedWidget.description }}
 	                        </div>
 	                    </div>
 
@@ -90,7 +90,7 @@
 
 <div class="dashboard-container">
 	<div class="content clearfix">
-		<div sd-gridster data-status="editStatus" data-widget-list="widgetList" data-model="widgets"></div>
-		<div class="empty-dashboard" ng-hide="hasWidgets" translate>Your dashboard is empty.</div>
+		<div sd-gridster data-status="editStatus" data-widgets="userWidgets"></div>
+		<div class="empty-dashboard" ng-hide="userWidgets" translate>Your dashboard is empty.</div>
 	</div>
 </div>

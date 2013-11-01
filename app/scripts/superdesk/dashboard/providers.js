@@ -10,11 +10,10 @@ define(['angular'], function(angular) {
                     return widgetList;
                 },
                 widget: function(id, data) {
+                    angular.extend(data, {wcode: id});
                     widgetList[id] = data;
                     return this;
                 }
             };
-
         }]);
-
 });

@@ -19,7 +19,7 @@ require.config({
         'load-image-ios': 'bower_components/blueimp-load-image/js/load-image-ios',
         'jquery.ui.widget': 'bower_components/blueimp-file-upload/js/vendor/jquery.ui.widget',
 
-        'gridster': 'bower_components/gridster/dist/jquery.gridster'
+        'gridster': 'bower_components/gridster/dist/jquery.gridster.with-extras'
     },
     shim: {
         jquery: {

@@ -4,34 +4,33 @@ define(['angular'], function(){
     return ['$scope', 'widgets', 'widgetService',
         function($scope, widgets, widgetService){
 
-            $scope.initialize = function() {
-                $scope.widgetList = widgets;
-                $scope.widgets = widgetService.load();
-                $scope.hasWidgets = _.keys($scope.widgets).length;
+            $scope.userWidgets = widgetService.load();
+            $scope.editStatus = false;
+            $scope.widgetBoxStatus = false;
+            $scope.selectedWidget = null;
 
-                $scope.editStatus = false;
-                $scope.widgetBoxStatus = false;
-                $scope.selectedWidget = null;
-            };
+            function updateAvailable() {
+                var keys = _.keys($scope.userWidgets);
+                $scope.hasWidgets = keys.length;
+                $scope.availableWidgets = _.omit(widgets, keys);
+            }
 
-            $scope.addWidget = function(wcode) {
-                var widget = {
-                    sizex: $scope.widgetList[wcode].sizex,
-                    sizey: $scope.widgetList[wcode].sizey,
-                    row: 1,
-                    col: 1
-                };
-                $scope.widgets[wcode] = widget;
-                widgetService.save($scope.widgets);
-                $scope.hasWidgets = _.keys($scope.widgets).length;
+            function save() {
+                widgetService.save($scope.userWidgets);
+                updateAvailable();
+            }
+
+            $scope.addWidget = function(widget) {
+                angular.extend(widget, {row: 1, col: 1});
+                $scope.userWidgets[widget.wcode] = widget;
+                save();
             };
 
             $scope.saveWidgets = function() {
-                widgetService.save($scope.widgets);
                 $scope.editStatus = false;
+                save();
             };
 
-            $scope.initialize();
-
+            updateAvailable();
         }];
 });
