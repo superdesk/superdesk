@@ -1,16 +1,10 @@
 define([
     'angular',
-    'bootstrap_ui',
-    './directives',
     './controllers/main'
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.settings', [
-        'superdesk.settings.directives',
-        'superdesk.directives',
-        'ui.bootstrap'
-    ])
+    angular.module('superdesk.settings', [])
         .config(function($routeProvider) {
             $routeProvider
                 .when('/settings/:tab?', {
@@ -18,11 +12,7 @@ define([
                     templateUrl: 'scripts/superdesk/settings/views/main.html',
                     resolve: {
                         tab: ['$route', function($route) {
-                            if ($route.current.params.tab) {
-                                return $route.current.params.tab;
-                            } else {
-                                return undefined;
-                            }
+                            return $route.current.params.tab || null;
                         }]
                     }
                 })

@@ -2,7 +2,7 @@ define(['angular'], function(angular){
     'use strict';
 
     return ['$scope', 'settings', 'locationParams', 'tab',
-    function($scope, settings, locationParams, tab){
+    function($scope, settings, locationParams, tab) {
         $scope.selected = null;
         $scope.settings = settings;
         

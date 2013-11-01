@@ -1,5 +1,4 @@
 <div class="subnav subnav-fixed">
-
     <h3 class="page-nav-title" translate>Settings</h3>
 </div>
 
@@ -9,8 +8,6 @@
     </ul>
 
     <div ng-if="selected">
-        <div ng-controller="selected.controller">
-            <div class="settings-tab-content" ng-include="selected.templateUrl"></div>
-        </div>
+        <div class="settings-tab-content" ng-include="selected.templateUrl"></div>
     </div>
 </div>

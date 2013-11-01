@@ -8,13 +8,32 @@ define([
     './controllers/list',
     './controllers/edit',
     './controllers/ref',
-    './controllers/generalSettingsMain',
-    './controllers/generalSettingsAddSource',
+    './controllers/settings',
     './directives'
 ], function($, angular) {
     'use strict';
 
-    angular.module('superdesk.items', ['superdesk.entity', 'superdesk.items.resources', 'superdesk.items.directives', 'ui.bootstrap.dropdownToggle'])
+    angular.module('superdesk.items', [
+        'superdesk.entity',
+        'superdesk.items.resources',
+        'superdesk.items.directives',
+        'ui.bootstrap.dropdownToggle'
+    ])
+        .controller('SettingsCtrl', require('superdesk/items/controllers/settings'))
+        .factory('providerRepository', ['em', function(em) {
+            var repository = em.getRepository('ingest_providers');
+            return repository;
+        }])
+        .value('providerTypes', {
+            aap: {
+                label: 'AAP',
+                templateUrl: 'scripts/superdesk/items/views/aapConfig.html'
+            },
+            reuters: {
+                label: 'Reuters',
+                templateUrl: 'scripts/superdesk/items/views/reutersConfig.html'
+            }
+        })
         .config(function($routeProvider) {
             $routeProvider.
                 when('/packages/:id', {
@@ -67,8 +86,7 @@ define([
         .config(function(settingsProvider) {
             settingsProvider.register('ingest-feed', {
                 label: gettext('Ingest Feed'),
-                controller: require('superdesk/items/controllers/generalSettingsMain'),
-                templateUrl: 'scripts/superdesk/items/views/generalSettingsMain.html'
+                templateUrl: 'scripts/superdesk/items/views/settings.html'
             });
         })
         .run(function($rootScope) {

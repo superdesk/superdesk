@@ -8,5 +8,7 @@ define([
     './sdSort',
     './sdCheck',
     './sdWithParams',
-    './sdSearch'
+    './sdSearch',
+    './sdModal',
+    './sdConfirm'
 ], function() {});

@@ -40,14 +40,15 @@ define([
                 scope: {},
                 link: function(scope, element, attrs) {
                     var result;
+                    scope.open = false;
 
                     scope.close = function() {
-                        $(element).modal('hide');
                         upload.delay.reject();
+                        scope.open = false;
                     };
 
                     scope.save = function() {
-                        $(element).modal('hide');
+                        scope.open = false;
                         if (result) {
                             upload.delay.resolve(result);
                         } else {
@@ -78,7 +79,7 @@ define([
                         scope.progress = 0;
                         scope.preview = false;
                         scope.uploaded = false;
-                        $(element).modal('show');
+                        scope.open = true;
                     });
                 }
             };
