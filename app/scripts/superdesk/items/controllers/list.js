@@ -13,6 +13,8 @@ define(['angular'], function(angular) {
             },
             show : false
         };
+        
+        $scope.gridview = true;
 
         $scope.open = function(path) {
             $location.path(path);
@@ -26,7 +28,7 @@ define(['angular'], function(angular) {
             $scope.editItem = null;
         };
 
-        $scope.gridview = true;
+        
 
         
     }];
