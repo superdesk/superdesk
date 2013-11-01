@@ -17,9 +17,10 @@ define([
         'superdesk.entity',
         'superdesk.items.resources',
         'superdesk.items.directives',
-        'ui.bootstrap.dropdownToggle'
+        'ui.bootstrap'
     ])
         .controller('SettingsCtrl', require('superdesk/items/controllers/settings'))
+        .controller('RefController', require('superdesk/items/controllers/ref'))
         .factory('providerRepository', ['em', function(em) {
             var repository = em.getRepository('ingest_providers');
             return repository;
@@ -36,15 +37,6 @@ define([
         })
         .config(function($routeProvider) {
             $routeProvider.
-                when('/packages/:id', {
-                    templateUrl: 'scripts/superdesk/items/views/edit.html',
-                    controller: require('superdesk/items/controllers/edit'),
-                    resolve: {
-                        item: ['$route', 'server', function($route, server) {
-                            return server.readById('items', $route.current.params.id);
-                        }]
-                    }
-                }).
                 when('/archive/', {
                     templateUrl: 'scripts/superdesk/items/views/archive.html',
                     controller: require('superdesk/items/controllers/list'),
@@ -59,27 +51,17 @@ define([
                         }]
                     },
                     menu: {
-                        parent: 'content',
                         label: gettext('Archive'),
                         priority: -2
                     }
                 }).
-                when('/items/', {
-                    controller: require('superdesk/items/controllers/list'),
-                    templateUrl: 'scripts/superdesk/items/views/list.html',
+                when('/archive/:id', {
+                    templateUrl: 'scripts/superdesk/items/views/edit.html',
+                    controller: require('superdesk/items/controllers/edit'),
                     resolve: {
-                        items: ['locationParams', 'em', function(locationParams, em) {
-                            var criteria = locationParams.reset({
-                                sort: ['firstcreated', 'desc'],
-                                max_results: 25
-                            });
-                            return em.getRepository('items').matching(criteria);
+                        item: ['$route', 'server', function($route, server) {
+                            return server.readById('items', $route.current.params.id);
                         }]
-                    },
-                    menu: {
-                        parent: 'content',
-                        label: gettext('Packages'),
-                        priority: -1
                     }
                 });
         })
@@ -95,7 +77,6 @@ define([
                 zen: false
             };
         })
-        .controller('RefController', require('superdesk/items/controllers/ref'))
         .filter('characterCount', function() {
             return function(input) {
                 return $(input).text().length;

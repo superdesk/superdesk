@@ -39,6 +39,7 @@ html, body.article-edit {
 
 
 .tablist {
+  .transition( all 0.3s ease);
   width:@tablist-width;
   position:fixed;
   top:@subnav-height + @topspace + @editor-toolbar;
@@ -85,11 +86,7 @@ html, body.article-edit {
               -khtml-user-drag: element;
               -webkit-user-drag: element;
                 &:hover {
-                /*
-                  background:@background-main;
-                  border: 1px solid #7c7c7c;
-                  border-width: 1px 0 !important;
-                  */
+                
                   &.tab-li-hov {
                     background:@background-main;
                     border: 1px solid #7c7c7c;
@@ -106,19 +103,14 @@ html, body.article-edit {
             &.active {
               a {
                 background: @tabpane-background;
-                /*
-                  &:hover {
-                    background: @tabpane-background;
-                    border: 1px solid #7c7c7c;
-                    border-width: 1px 0 !important;
-                  }
-                  */
               }
             }
         }
     }
 }
-
+.sf-menu-open {
+  
+}
 .tabpane {
   position:fixed;
   width:@tabpane-width;
@@ -569,7 +561,7 @@ button:focus {
       .subnav-fixed {
         display:none;
       }
-      .editor-toolbar {
+      .editor-toolbar-placeholder {
         top:0;
         .navbar-fixed-top {
           display: block;

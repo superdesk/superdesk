@@ -126,5 +126,40 @@ define([
                     };
                 }
             };
+        }).
+        directive('sdMediaBox', function($position){
+            return {
+                restrict : 'A',
+                templateUrl : 'scripts/superdesk/items/views/media-box.html',
+                replace : true,
+                link: function($scope, element, attrs) {
+                    $scope.hoverItem = function(item) {
+                        var pos = $position.position(element);
+                        $scope.selectedItem.item = item;
+                        $scope.selectedItem.position = { left : pos.left - 9, top : pos.top-15};
+                        $scope.selectedItem.show = true;
+                    };
+                }
+            };
+        }).
+        directive('sdMediaBoxStatic', function($position){
+            return {
+                restrict : 'A',
+                templateUrl : 'scripts/superdesk/items/views/media-box-hover.html',
+                replace : true,
+                link: function($scope, element, attrs) {
+
+                }
+            };
+        }).
+        directive('sdMediaBoxList', function($position){
+            return {
+                restrict : 'A',
+                templateUrl : 'scripts/superdesk/items/views/media-box-list.html',
+                replace : true,
+                link: function($scope, element, attrs) {
+
+                }
+            };
         });
 });
