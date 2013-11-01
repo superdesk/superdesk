@@ -1,187 +1,158 @@
 define([
     'jquery',
-    'angular',
+    'angular'
 ], function($, angular) {
     'use strict';
 
-    angular.module('superdesk.dashboard.directives', []).
+    angular.module('superdesk.dashboard.directives', [])
         /**
          * sdWidget give appropriate template to data assgined to it
          *
          * Usage:
-         * <div sd-widget widget="someWidget"></div>
+         * <div sd-widget data-options="widget" data-definition="widgetDefinition"></div>
          * 
          * Params:
-         * @param {object} widget - object with predefined structure fileds
+         * @param {Object} options - options for current widget instance
+         * @param {Object} definition - definition of widget
          */
-        directive('sdWidget', function() {
+        .directive('sdWidget', [function() {
             return {
                 templateUrl : 'scripts/superdesk/dashboard/views/widget.html',
                 restrict: 'A',
-                replace: true,
                 scope: {
-                    widget : '='
-                }
-            };
-        }).
-        /**
-         * sdWAddWidgetBox is modal window for adding new widget to dashboard
-         *
-         * Usage:
-         * <div sd-add-widget-box></div>
-         * 
-         */
-        directive('sdAddWidgetBox', function() {
-            return {
-                templateUrl : 'scripts/superdesk/dashboard/views/addWidgetBox.html',
-                restrict: 'A',
+                    options: '=options',
+                    definition: '=definition'
+                },
                 replace: true,
-                link : function($scope) {
-
-                    $scope.widgetBoxList = true;
-                    $scope.detailsView = null;
-
-                    $scope.showWidgetBox = false;
-                    $scope.widgetBoxList = true;
-
-                    $scope.openWidgetBox = function() {
-                        $scope.showWidgetBox = true;
-                        $scope.widgetBoxList = true;
-                    };
-
-                    $scope.closeWidgetBox = function() {
-                        $scope.showWidgetBox = !$scope.showWidgetBox;
-                    };
-
-                    $scope.viewDetail = function(widget) {
-                        $scope.widgetBoxList = false;
-                        $scope.detailsView = widget;
-                    };
-
-                    $scope.goBack = function() {
-                        $scope.widgetBoxList = true;
-                    };
-
-                    $scope.selectWidget  = function() {
-                        $scope.addWidget($scope.detailsView);
-                        $scope.goBack();
-                    };
+                link: function(scope, element, attrs) {
+                    
                 }
             };
-        }).
+        }])
         /**
-         * sdDashboard manager is directive which add functionality of dashboard. It is possible
+         * sdGridster is directive which add functionality of dashboard. It is possible
          * to add, remove, move, edit, resize widgets within dashboard. It is working with gridster.js
          * library to enable all of this.
          *
          * Usage:
-         * <div sd-dashboard-manager class="gridster" ng-class="{'editmode': editmode}">
+         * <div sd-gridster
+         *  class="gridster"
+         *  ng-class="{'editmode': editmode}"
+         *  data-status="widgetBoxStatus"
+         *  data-model="widgets"></div>
+         *  data-widget-list="widgetList"></div>
          * 
+         * Params:
+         * @param {Boolean} status - on/off switch for widget
+         * @param {Object} dataModel - model for data
+         * @param {Object} widgetList - widgetList
          */
-        directive('sdDashboardManager', function($timeout) {
+        .directive('sdGridster', ['$timeout', function($timeout) {
+            
+            var defaultOptions = {
+                widget_margins: [20, 20],
+                widget_base_dimensions: [320, 250],
+                min_rows: 3
+            };
+
             return {
-                restrict: 'A',
+                scope: {
+                    status: '=status',
+                    widgetList: '=widgetList',
+                    model: '=model'
+                },
+                replace: true,
                 templateUrl: 'scripts/superdesk/dashboard/views/grid.html',
-                link : function($scope, $element) {
-                   
-                    var ul = $element.find('ul');
-
-                    var defaultOptions = {
-                        widget_margins: [20, 20],
-                        widget_base_dimensions: [320, 250]
-                    };
-
-                    $timeout(function() {
-
-                        angular.forEach($scope.widgets, function(value){
-                            value.responsive = responsiveClass(value.sizex, value.sizey);
-                        });
-                        
-
-                        $scope.gridster = ul.gridster(defaultOptions).data('gridster');
-                    
-                        $scope.gridster.options.draggable.stop = function() {
-                            angular.forEach(ul.find('> li'), function(item, index) {
-                                var li = angular.element(item);
-                                if (li.attr('class') === 'preview-holder') { return; }
-                                var widget = $scope.widgets[index];
-                                widget.row = li.attr('data-row');
-                                widget.col = li.attr('data-col');
-                            });
-                            $scope.$apply();
-                        };
-
-                        $scope.gridster.disable();
-                        
-                    });
-
-                    var responsiveClass = function(x,y) {
-                        return 'r'+x+y;
-                    };
-                    
-                    var addWidgetToGridster = function() {
-                        var li = ul.find('> li').eq($scope.widgets.length-1);
-                        var $w = li.addClass('gs_w').appendTo($scope.gridster.$el);
-                        $scope.gridster.$widgets = $scope.gridster.$widgets.add($w);
-                        $scope.gridster.register_widget($w).add_faux_rows(1).set_dom_grid_height();
-                    };
-
-                    $scope.$watch('widgets.length', function(newValue, oldValue) {
-                        if (newValue !== oldValue+1) { return; }
-                        $timeout(function() { addWidgetToGridster(); });
-                    });
-
-                    $scope.editmode = false;
-
-                    $scope.disableDragging = function() {
-                        $scope.gridster.disable();
-                        $scope.editmode = false;
-                    };
-
-                    $scope.enableDragging = function() {
-                        $scope.gridster.enable();
-                        $scope.editmode = true;
-                    };
-
-                    $scope.removeWidget = function(elindex) {
-                        var $w = ul.find('> li').eq(elindex);
-                        $scope.widgets.splice(elindex,1);
-                        $scope.gridster.remove_widget($w);
-                    };
-
-                    $scope.resizeWidget = function(index, direction) {
-                        var $w = ul.find('> li').eq(index);
-                        var widget = $scope.widgets[index];
-
+                link: function(scope, element, attrs) {
+                    scope.resizeWidget = function(widget, direction) {
                         switch(direction) {
-                        case 'left' :
+                        case 'left':
                             if (widget.sizex !== 1) {
                                 widget.sizex--;
                             }
                             break;
-                        case 'right' :
-                            if (widget.sizex !== widget.max_sizex) {
+                        case 'right':
+                            if (widget.sizex !== scope.widgetList[widget.wcode].max_sizex) {
                                 widget.sizex++;
                             }
                             break;
-                        case 'up' :
+                        case 'up':
                             if (widget.sizey !== 1) {
                                 widget.sizey--;
                             }
                             break;
-                        case 'down' :
-                            if (widget.sizey !== widget.max_sizey) {
+                        case 'down':
+                            if (widget.sizey !== scope.widgetList[widget.wcode].max_sizey) {
                                 widget.sizey++;
                             }
                             break;
                         }
-
-                        widget.responsive = responsiveClass(widget.sizex,widget.sizey);
-
-                        $scope.gridster.resize_widget($w, widget.sizex, widget.sizey );
                     };
+                    scope.removeWidget = function(widget) {
+                        _.forEach(scope.widgets, function(item, index) {
+                            if (item.wcode === widget.wcode) {
+                                scope.widgets.splice(index, 1);
+                            }
+                        });
+                    };
+                    scope.update = function() {
+                        $timeout(function() {
+                            _.forEach(root.find('> li'), function(item, index) {
+                                var li = angular.element(item);
+                                if (li.attr('class') === 'preview-holder') { return; }
+                                var wcode = li.data('widget');
+                                var widget = scope.model[wcode];
+                                widget.row = parseInt(li.attr('data-row'), 10) || 1;
+                                widget.col = parseInt(li.attr('data-col'), 10) || 1;
+                                scope.gridster.register_widget($(li));
+                                scope.gridster.resize_widget($(li), widget.sizex, widget.sizey);
+                            });
+                            scope.gridster.generate_grid_and_stylesheet();
+                        });
+                    };
+
+                    //
+                    var root = element.find('ul');
+
+                    scope.gridster = root.gridster(defaultOptions).data('gridster');
+
+                    scope.gridster.options.draggable.stop = function(event, ui) {
+                        scope.update();
+                    };
+
+                    scope.$watch('status', function(status) {
+                        if (scope.gridster) {
+                            if (status === true) {
+                                scope.gridster.enable();
+                            } else {
+                                scope.gridster.disable();
+                            }
+                        }
+                    });
+
+                    scope.$watch('model', function(model, oldModel) {
+                        var widgets = [];
+                        _.forEach(scope.model, function(data, wcode) {
+                            widgets.push(_.extend({}, data, {wcode: wcode}));
+                        });
+                        scope.widgets = widgets;
+
+                        scope.update();
+                    }, true);
+
+                    scope.$watch('widgets', function(widgets, oldWidgets) {
+                        var model = {};
+                        _.forEach(widgets, function(data) {
+                            model[data.wcode] = {
+                                sizex: data.sizex,
+                                sizey: data.sizey,
+                                row: data.row,
+                                col: data.col
+                            };
+                        });
+                        scope.model = model;
+                    }, true);
                 }
             };
-        });
-        
+        }]);
 });

@@ -1,11 +1,10 @@
-<div class="d-widget {{ widget.class}}">
+<div class="d-widget {{ definition.class }}">
 	<div class="widget-line"></div>
 	<div class="widget-header">
-		<span class="widget-icon"><i class="icon-{{ widget.icon }}"></i></span>
+		<span class="widget-icon"><i class="icon-{{ definition.icon }}"></i></span>
 		<div class="widget-title">
-			{{ widget.name }}
+			{{ definition.name }}
 		</div>
 	</div>
-	<div class="widget-content clearfix" ng-include="widget.template">
-	</div>
+	<div class="widget-content clearfix" ng-include="definition.template"></div>
 </div>

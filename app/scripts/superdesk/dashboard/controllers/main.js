@@ -1,25 +1,37 @@
 define(['angular'], function(){
     'use strict';
 
-    return ['$scope', 'widgetList',
-        function($scope, widgetList){
+    return ['$scope', 'widgets', 'widgetService',
+        function($scope, widgets, widgetService){
 
-            $scope.allWidgets = [];
-            $scope.widgets = [];
+            $scope.initialize = function() {
+                $scope.widgetList = widgets;
+                $scope.widgets = widgetService.load();
+                $scope.hasWidgets = _.keys($scope.widgets).length;
 
-            widgetList.get(function(data){
-                $scope.allWidgets = data.allWidgets;
-                $scope.widgets = data.userWidgets;
-            });
-
-            $scope.addWidget = function(widget) {
-                widget.row = 1;
-                widget.col = 1;
-                $scope.widgets.push(widget);
-                if (!$scope.editmode)  {
-                    $scope.enableDragging();
-                }
+                $scope.editStatus = false;
+                $scope.widgetBoxStatus = false;
+                $scope.selectedWidget = null;
             };
+
+            $scope.addWidget = function(wcode) {
+                var widget = {
+                    sizex: $scope.widgetList[wcode].sizex,
+                    sizey: $scope.widgetList[wcode].sizey,
+                    row: 1,
+                    col: 1
+                };
+                $scope.widgets[wcode] = widget;
+                widgetService.save($scope.widgets);
+                $scope.hasWidgets = _.keys($scope.widgets).length;
+            };
+
+            $scope.saveWidgets = function() {
+                widgetService.save($scope.widgets);
+                $scope.editStatus = false;
+            };
+
+            $scope.initialize();
 
         }];
 });
