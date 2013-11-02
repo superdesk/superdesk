@@ -1,7 +1,7 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    angular.module('superdesk.storage', []).
+    angular.module('superdesk.services.storage', []).
         service('storage', function() {
             function StorageService() {
                 this.getItem = function(key) {

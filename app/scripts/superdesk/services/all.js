@@ -4,6 +4,7 @@ define([
     './upload',
     './notify',
     './settings',
+    './storage',
     '../userSettings',
     '../entity',
     '../server'
@@ -15,6 +16,7 @@ define([
         'superdesk.services.upload',
         'superdesk.services.notify',
         'superdesk.services.settings',
+        'superdesk.services.storage',
         'superdesk.userSettings',
         'superdesk.entity',
         'superdesk.server'

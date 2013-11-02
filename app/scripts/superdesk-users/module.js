@@ -12,12 +12,12 @@ define([
     'use strict';
 
     angular.module('superdesk.users', ['superdesk.entity', 'superdesk.userSettings', 'superdesk.server'])
-        .service('profileService', require('superdesk/users/services/profile'))
-        .controller('UserDetailCtrl', require('superdesk/users/controllers/detail'))
-        .directive('sdUserPicture', require('superdesk/users/directives/sdUserPicture'))
-        .directive('sdUserActivity', require('superdesk/users/directives/sdUserActivity'))
-        .directive('sdInfoItem', require('superdesk/users/directives/sdInfoItem'))
-        .directive('sdUserEdit', require('superdesk/users/directives/sdUserEdit'))
+        .service('profileService', require('superdesk-users/services/profile'))
+        .controller('UserDetailCtrl', require('superdesk-users/controllers/detail'))
+        .directive('sdUserPicture', require('superdesk-users/directives/sdUserPicture'))
+        .directive('sdUserActivity', require('superdesk-users/directives/sdUserActivity'))
+        .directive('sdInfoItem', require('superdesk-users/directives/sdInfoItem'))
+        .directive('sdUserEdit', require('superdesk-users/directives/sdUserEdit'))
         .value('defaultListParams', {
             search: '',
             searchField: 'username',
@@ -37,8 +37,8 @@ define([
         .config(function($routeProvider) {
             $routeProvider
                 .when('/users/:id?', {
-                    controller: require('superdesk/users/controllers/list'),
-                    templateUrl: 'scripts/superdesk/users/views/list.html',
+                    controller: require('superdesk-users/controllers/list'),
+                    templateUrl: 'scripts/superdesk-users/views/list.html',
                     resolve: {
                         users: ['locationParams', 'em', 'defaultListParams',
                             function(locationParams, em, defaultListParams) {
@@ -75,8 +75,8 @@ define([
                     }
                 })
                 .when('/profile', {
-                    controller: require('superdesk/users/controllers/profile'),
-                    templateUrl: 'scripts/superdesk/users/views/profile.html',
+                    controller: require('superdesk-users/controllers/profile'),
+                    templateUrl: 'scripts/superdesk-users/views/profile.html',
                     resolve: {
                         user: function($rootScope, em) {
                             return em.getRepository('users').find($rootScope.currentUser._id);

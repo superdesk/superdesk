@@ -7,11 +7,11 @@ define([
 
     angular.module('superdesk.dashboard.widgets.worldclock', ['ngResource']).
         factory('worldclock', function($resource) {
-            return $resource('scripts/superdesk/dashboard/static-resources/clock.json');
+            return $resource('scripts/superdesk-dashboard/static-resources/clock.json');
         }).
         directive('sdWorldclock', function() {
             return {
-                templateUrl : 'scripts/superdesk/dashboard/views/widgets/worldclock/worldClock.html',
+                templateUrl : 'scripts/superdesk-dashboard/views/widgets/worldclock/worldClock.html',
                 replace: true,
                 restrict: 'A',
                 controller : 'WorldClockController'
@@ -19,7 +19,7 @@ define([
         }).
         directive('sdClock', function() {
             return {
-                templateUrl: 'scripts/superdesk/dashboard/views/widgets/worldclock/worldClockBox.html',
+                templateUrl: 'scripts/superdesk-dashboard/views/widgets/worldclock/worldClockBox.html',
                 scope: {wtime: '=wtime'},
                 replace: true,
                 transclude: true,

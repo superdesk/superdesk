@@ -107,7 +107,7 @@ define([
 
         var deps = [];
         angular.forEach(apps, function(app) {
-            deps.push('superdesk-' + app);
+            deps.push('superdesk-' + app + '/module');
             modules.push('superdesk.' + app);
         });
 

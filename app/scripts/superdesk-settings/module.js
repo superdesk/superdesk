@@ -8,8 +8,8 @@ define([
         .config(function($routeProvider) {
             $routeProvider
                 .when('/settings/:tab?', {
-                    controller: require('superdesk/settings/controllers/main'),
-                    templateUrl: 'scripts/superdesk/settings/views/main.html',
+                    controller: require('superdesk-settings/controllers/main'),
+                    templateUrl: 'scripts/superdesk-settings/views/main.html',
                     resolve: {
                         tab: ['$route', function($route) {
                             return $route.current.params.tab || null;

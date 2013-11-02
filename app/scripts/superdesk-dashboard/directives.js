@@ -17,7 +17,7 @@ define([
          */
         .directive('sdWidget', [function() {
             return {
-                templateUrl: 'scripts/superdesk/dashboard/views/widget.html',
+                templateUrl: 'scripts/superdesk-dashboard/views/widget.html',
                 restrict: 'A',
                 replace: true,
                 scope: {
@@ -48,7 +48,7 @@ define([
                     widgets: '='
                 },
                 replace: true,
-                templateUrl: 'scripts/superdesk/dashboard/views/grid.html',
+                templateUrl: 'scripts/superdesk-dashboard/views/grid.html',
                 link: function(scope, element, attrs) {
 
                     scope.syncWidgets = function() {
@@ -93,7 +93,7 @@ define([
         .directive('sdGridItem', function() {
             return {
                 transclude: true,
-                templateUrl: 'scripts/superdesk/dashboard/views/grid-item.html',
+                templateUrl: 'scripts/superdesk-dashboard/views/grid-item.html',
                 link: function(scope, element, attrs) {
                     scope.widget.el = scope.gridster.add_widget(
                         $(element),
