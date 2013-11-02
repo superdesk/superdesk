@@ -26,12 +26,12 @@ define([
             };
         }])
         /**
-         * sdGridster is directive which add functionality of dashboard. It is possible
+         * sdGrid is directive which add functionality of dashboard. It is possible
          * to add, remove, move, edit, resize widgets within dashboard. It is working with gridster.js
          * library to enable all of this.
          *
          * Usage:
-         * <div sd-gridster
+         * <div sd-grid
          *  class="gridster"
          *  ng-class="{'editmode': editmode}"
          *  data-status="widgetBoxStatus"
@@ -41,7 +41,7 @@ define([
          * @param {Boolean} status - on/off switch for widget
          * @param {Object} widgets
          */
-        .directive('sdGridster', ['$timeout', function() {
+        .directive('sdGrid', function() {
             return {
                 scope: {
                     status: '=',
@@ -51,6 +51,18 @@ define([
                 templateUrl: 'scripts/superdesk/dashboard/views/grid.html',
                 link: function(scope, element, attrs) {
 
+                    scope.syncWidgets = function() {
+                        angular.forEach(scope.widgets, function(widget) {
+                            var sizes = scope.gridster.serialize($(widget.el));
+                            angular.extend(widget, {
+                                row: sizes[0].row,
+                                col: sizes[0].col,
+                                sizex: sizes[0].size_x,
+                                sizey: sizes[0].size_y
+                            });
+                        });
+                    };
+
                     var root = element.find('ul');
                     scope.gridster = root.gridster({
                         widget_margins: [20, 20],
@@ -58,15 +70,7 @@ define([
                         min_rows: 3,
                         draggable: {
                             stop: function(e, ui, $widget) {
-                                angular.forEach(scope.widgets, function(widget) {
-                                    var sizes = scope.gridster.serialize($(widget.el));
-                                    angular.extend(widget, {
-                                        row: sizes[0].row,
-                                        col: sizes[0].col,
-                                        sizex: sizes[0].size_x,
-                                        sizey: sizes[0].size_y
-                                    });
-                                });
+                                scope.syncWidgets();
                             }
                         }
                     }).data('gridster');
@@ -82,9 +86,14 @@ define([
                     });
                 }
             };
-        }])
+        })
+        /**
+         * sdGridItem is a widget wrapper. Adds resize/remove buttons.
+         */
         .directive('sdGridItem', function() {
             return {
+                transclude: true,
+                templateUrl: 'scripts/superdesk/dashboard/views/grid-item.html',
                 link: function(scope, element, attrs) {
                     scope.widget.el = scope.gridster.add_widget(
                         $(element),
@@ -124,6 +133,7 @@ define([
                         }
 
                         scope.gridster.resize_widget($(element), widget.sizex, widget.sizey);
+                        scope.syncWidgets();
                     };
                 }
             };
