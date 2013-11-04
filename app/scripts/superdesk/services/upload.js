@@ -1,7 +1,6 @@
 define([
     'jquery',
     'angular',
-    'bootstrap/modal',
     'file-upload/jquery.fileupload-angular',
 ], function($, angular) {
     'use strict';

@@ -5,7 +5,7 @@ define([
 ], function($, angular, moment) {
     'use strict';
 
-    angular.module('superdesk.items.directives', []).
+    angular.module('superdesk.items.directives', ['ui.bootstrap']).
         filter('reldate', function() {
             return function(date) {
                 return moment(date).fromNow();
@@ -72,7 +72,7 @@ define([
         }).
         directive('sdContenteditable', function() {
             return {
-                require: 'ngModel',
+                require: '?ngModel',
                 link: function($scope, element, attrs, ngModel) {
                     element.attr('contenteditable', 'true');
 
@@ -130,7 +130,7 @@ define([
         directive('sdMediaBox', function($position){
             return {
                 restrict : 'A',
-                templateUrl : 'scripts/superdesk/items/views/media-box.html',
+                templateUrl : 'scripts/superdesk-items/views/media-box.html',
                 replace : true,
                 link: function($scope, element, attrs) {
                     $scope.hoverItem = function(item) {
@@ -145,7 +145,7 @@ define([
         directive('sdMediaBoxStatic', function($position){
             return {
                 restrict : 'A',
-                templateUrl : 'scripts/superdesk/items/views/media-box-hover.html',
+                templateUrl : 'scripts/superdesk-items/views/media-box-hover.html',
                 replace : true,
                 link: function($scope, element, attrs) {
 
@@ -155,7 +155,7 @@ define([
         directive('sdMediaBoxList', function($position){
             return {
                 restrict : 'A',
-                templateUrl : 'scripts/superdesk/items/views/media-box-list.html',
+                templateUrl : 'scripts/superdesk-items/views/media-box-list.html',
                 replace : true,
                 link: function($scope, element, attrs) {
 

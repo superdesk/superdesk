@@ -1,8 +1,9 @@
 require.config({
     paths: {
         jquery: 'bower_components/jquery/jquery',
-        bootstrap: 'bower_components/bootstrap/js',
+        bootstrap: 'bower_components/bootstrap/dist/js/bootstrap',
         angular: 'bower_components/angular/angular',
+        'angular-ui': 'bower_components/angular-bootstrap/ui-bootstrap',
         'angular-resource': 'bower_components/angular-resource/angular-resource',
         'angular-route': 'bower_components/angular-route/angular-route',
         'moment': 'bower_components/momentjs/moment',
@@ -24,9 +25,15 @@ require.config({
         jquery: {
             exports: 'jQuery'
         },
+        bootstrap: {
+            deps: ['jquery']
+        },
         angular: {
             deps: ['jquery'],
             exports: 'angular'
+        },
+        'angular-ui': {
+            deps: ['angular', 'bootstrap']
         },
         'angular-resource': {
             deps: ['angular']
@@ -76,9 +83,11 @@ function gettext(input)
 }
 
 define([
+    'jquery',
+    'lodash',
     'angular',
-    'lodash'
-], function(angular, _) {
+    'angular-ui'
+], function($, _, angular) {
     'use strict';
 
     angular.module('superdesk.directives', []);

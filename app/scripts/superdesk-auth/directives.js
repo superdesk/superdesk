@@ -1,7 +1,6 @@
 define([
     'jquery',
     'angular',
-    'bootstrap/modal',
     './services'
 ], function($, angular) {
     'use strict';
