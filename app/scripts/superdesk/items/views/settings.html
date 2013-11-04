@@ -4,30 +4,27 @@
     </button>
 
     <h2 translate>Providers</h4>
+    <div class="settings-tab-content ">
+        <ul class="selection-list provider-list">
 
-    <ul class="settings-tab-content">
-        <li ng-repeat="provider in providers._items">
-            <header>
-                <h6>
-                    {{ provider.name }}
-                    <span class="label" ng-class="provider.ingested_count ? 'label-info' : 'label-warning'" title="{{ 'Ingested items count'|translate }}">{{ provider.ingested_count || 0 }}</span>
-                </h6>
-                <dl ng-show="provider.ingested_count">
-                    <dt translate>Last Updated</dt>
-                    <dd><time title="{{ provider.updated }}">{{ provider.updated|reldate }}</time></dd>
-                </dl>
-            </header>
-            <div class="content">
+            <li ng-repeat="provider in providers._items" class="clearfix">
+
+                <h6>{{ provider.name }}</h6>
+                <span class="label ingest-count " ng-class="provider.ingested_count ? 'label-info' : 'label-warning'" title="{{ 'Ingested items count'|translate }}">{{ provider.ingested_count || 0 }}</span>
+                <div class="last-updated" ng-show="provider.ingested_count"><span translate>Last updated</span> {{ provider.updated|reldate }}</div>
+
+           
                 <div class="dropdown dropdown-simple pull-right">
-                    <a href="#" class="dropdown-toggle"><i class="icon-cog"></i> <b class="caret"></b></a>
+                    <a href="" class="dropdown-toggle"><i class="icon-cog"></i> <b class="caret"></b></a>
                     <ul class="dropdown-menu pull-right sf-dropdown-simple">
                         <li><a href="" ng-click="edit(provider)"><i class="icon-cog"></i> <span translate>Edit provider</span></a></li>
                         <li><a href="" ng-click="remove(provider)" sd-confirm="{{ 'Please confirm you want to remove provider.'|translate }}"><i class="icon-trash"></i> <span translate>Delete provider</span></a></li>
                     </ul>
                 </div>
-            </div>
-        </li>
-    </ul>
+
+            </li>
+        </ul>
+    </div>
 
     <div sd-modal-view data-model="provider">
         <div class="modal-header"> <a href="" class="close" ng-click="cancel()">&times;</a>
