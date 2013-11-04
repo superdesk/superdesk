@@ -8,10 +8,9 @@ define(['angular', 'lodash'], function(angular, _) {
             $scope.provider = null;
             $scope.types = providerTypes;
 
-            providerRepository.matching({sort: ['created', 'desc'], max_results: 50})
-                .then(function(providers) {
-                    $scope.providers = providers;
-                });
+            providerRepository.findAll().then(function(providers) {
+                $scope.providers = providers;
+            });
 
             $scope.remove = function(provider) {
                 em.remove(provider).then(function() {

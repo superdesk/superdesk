@@ -179,7 +179,12 @@ define([
                 if (params.search !== '') {
                     var search = {};
                     search[params.searchField] = params.search;
-                    serverParams.where = angular.toJson(search);
+                    serverParams.where = serverParams.where || {};
+                    angular.extend(serverParams.where, search);
+                }
+
+                if (serverParams.where) {
+                    serverParams.where = angular.toJson(serverParams.where);
                 }
 
                 return serverParams;

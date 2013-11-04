@@ -1,10 +1,18 @@
-define(['angular'], function(angular) {
+define(['lodash', 'angular'], function(_, angular) {
     'use strict';
 
-    return ['$scope', '$location', 'items',
-    function($scope, $location, items) {
+    return ['$scope', '$routeParams', 'items', 'providerRepository',
+    function($scope, $routeParams, items, providerRepository) {
 
         $scope.items = items;
+
+        providerRepository.findAll().then(function(providers) {
+            $scope.providers = providers;
+            if ('provider' in $routeParams) {
+                $scope.activeProvider = _.find(providers._items, {_id: $routeParams.provider});
+            }
+        });
+
         $scope.selectedItem = {
             item : items._items[0] ,
             position : {
@@ -16,10 +24,6 @@ define(['angular'], function(angular) {
         
         $scope.gridview = true;
 
-        $scope.open = function(path) {
-            $location.path(path);
-        };
-
         $scope.edit = function(item) {
             $scope.editItem = item;
         };
@@ -27,9 +31,5 @@ define(['angular'], function(angular) {
         $scope.closeEdit = function() {
             $scope.editItem = null;
         };
-
-        
-
-        
     }];
 });

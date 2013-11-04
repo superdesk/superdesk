@@ -19,10 +19,6 @@ define([
     ])
         .controller('SettingsCtrl', require('superdesk-items/controllers/settings'))
         .controller('RefController', require('superdesk-items/controllers/ref'))
-        .factory('providerRepository', ['em', function(em) {
-            var repository = em.getRepository('ingest_providers');
-            return repository;
-        }])
         .value('providerTypes', {
             aap: {
                 label: 'AAP',
@@ -48,18 +44,25 @@ define([
                     templateUrl: 'scripts/superdesk-items/views/archive.html',
                     controller: require('superdesk-items/controllers/list'),
                     resolve: {
-                        items: ['locationParams', 'em', function(locationParams, em) {
+                        items: ['locationParams', 'em', '$route', function(locationParams, em, $route) {
+                            var where = {};
+                            if ('provider' in $route.current.params) {
+                                where.ingest_provider = $route.current.params.provider;
+                            }
+
                             var criteria = locationParams.reset({
-                                where: {type: 'text'},
+                                where: where,
                                 sort: ['firstcreated', 'desc'],
-                                max_results: 25
+                                max_results: 25,
+                                searchField: 'headline'
                             });
+
                             return em.getRepository('items').matching(criteria);
                         }]
                     },
                     menu: {
-                        label: gettext('Archive'),
-                        priority: -2
+                        label: gettext('Ingest'),
+                        priority: -200
                     }
                 }).
                 when('/archive/:id', {

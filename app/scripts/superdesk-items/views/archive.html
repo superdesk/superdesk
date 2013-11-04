@@ -1,23 +1,20 @@
 <div class="subnav subnav-fixed">
-
-    <a class="btn btn-medium btn-info pull-right"><span class="medium-icon-add"></span> {{ 'Add Media'|translate }}</a>
-
     <div class="btn-group source-select">
-      <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-        Sources
-        <span class="caret"></span>
-      </a>
-      <ul class="dropdown-menu sf-dropdown">
-            <li><input type="checkbox" class="sf-checkbox" set-bg="1" ><i class="dropdown-icon-local"></i>Local Archive</li>
-            <li><input type="checkbox" class="sf-checkbox" set-bg="1" ><i class="dropdown-icon-flickr"></i>Flickr</li>
-            <li><input type="checkbox" class="sf-checkbox" set-bg="1" ><i class="dropdown-icon-instagram"></i>Instagram</li>
-            <li><input type="checkbox" class="sf-checkbox" set-bg="1" ><i class="dropdown-icon-googleimg"></i>Google Images</li>
-            <li><input type="checkbox" class="sf-checkbox" set-bg="1"><i class="dropdown-icon-reuters"></i>Reuters</li>
-      </ul>
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="">{{ 'Provider'|translate }} {{ activeProvider.name }} <span class="caret"></span></a>
+        <ul class="dropdown-menu sf-dropdown">
+            <li ng-repeat="provider in providers._items">
+                <a ng-href="#/archive/?provider={{ provider._id }}" ng-hide="provider===activeProvider">{{ provider.name }}</a>
+                <strong ng-show="provider===activeProvider">{{ provider.name }}</strong>
+            </li>
+            <li class="divider" ng-if="activeProvider"></li>
+            <li ng-show="activeProvider">
+                <a href="#/archive/" translate>Show All</a>
+            </li>
+        </ul>
     </div>
 
     <input type="text" sd-searchbar />
-</div>  
+</div>
 
 <section class="main-section">
     <div class="main-content">
