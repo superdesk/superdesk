@@ -49,6 +49,11 @@ define([
                 },
                 replace: true,
                 templateUrl: 'scripts/superdesk/dashboard/views/grid.html',
+                controller: function($scope) {
+                    this.getGridster = function() {
+                        return $scope.gridster;
+                    };
+                },
                 link: function(scope, element, attrs) {
 
                     scope.syncWidgets = function() {
@@ -92,9 +97,12 @@ define([
          */
         .directive('sdGridItem', function() {
             return {
+                require: '^sdGrid',
                 transclude: true,
                 templateUrl: 'scripts/superdesk/dashboard/views/grid-item.html',
-                link: function(scope, element, attrs) {
+                link: function(scope, element, attrs, sdGrid) {
+                    scope.gridster = sdGrid.getGridster();
+                    
                     scope.widget.el = scope.gridster.add_widget(
                         $(element),
                         scope.widget.sizex,
