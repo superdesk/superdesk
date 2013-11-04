@@ -50,8 +50,16 @@ define([
                 replace: true,
                 templateUrl: 'scripts/superdesk/dashboard/views/grid.html',
                 controller: function($scope) {
-                    this.getGridster = function() {
-                        return $scope.gridster;
+                    this.addWidget = function(element, sizex, sizey, col, row) {
+                        return $scope.gridster.add_widget(element, sizex, sizey, col, row);
+                    };
+                    this.removeWidget = function(widget) {
+                        $scope.gridster.remove_widget(widget.el);
+                        delete scope.widgets[widget.wcode];
+                    };
+                    this.resizeWidget = function(element, sizex, sizey) {
+                        $scope.gridster.resize_widget(element, sizex, sizey);
+                        $scope.syncWidgets();
                     };
                 },
                 link: function(scope, element, attrs) {
@@ -101,9 +109,7 @@ define([
                 transclude: true,
                 templateUrl: 'scripts/superdesk/dashboard/views/grid-item.html',
                 link: function(scope, element, attrs, sdGrid) {
-                    scope.gridster = sdGrid.getGridster();
-                    
-                    scope.widget.el = scope.gridster.add_widget(
+                    scope.widget.el = sdGrid.addWidget(
                         $(element),
                         scope.widget.sizex,
                         scope.widget.sizey,
@@ -112,8 +118,7 @@ define([
                     );
 
                     scope.removeWidget = function(widget) {
-                        scope.gridster.remove_widget(widget.el);
-                        delete scope.widgets[widget.wcode];
+                        sdGrid.removeWidget(widget);
                     };
 
                     scope.resizeWidget = function(widget, direction) {
@@ -140,8 +145,7 @@ define([
                             break;
                         }
 
-                        scope.gridster.resize_widget($(element), widget.sizex, widget.sizey);
-                        scope.syncWidgets();
+                        sdGrid.resizeWidget($(element), widget.sizex, widget.sizey);
                     };
                 }
             };
