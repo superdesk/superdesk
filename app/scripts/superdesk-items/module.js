@@ -17,8 +17,8 @@ define([
         'superdesk.items.resources',
         'superdesk.items.directives'
     ])
-        .controller('SettingsCtrl', require('superdesk/items/controllers/settings'))
-        .controller('RefController', require('superdesk/items/controllers/ref'))
+        .controller('SettingsCtrl', require('superdesk-items/controllers/settings'))
+        .controller('RefController', require('superdesk-items/controllers/ref'))
         .factory('providerRepository', ['em', function(em) {
             var repository = em.getRepository('ingest_providers');
             return repository;
@@ -26,18 +26,27 @@ define([
         .value('providerTypes', {
             aap: {
                 label: 'AAP',
-                templateUrl: 'scripts/superdesk/items/views/aapConfig.html'
+                templateUrl: 'scripts/superdesk-items/views/aapConfig.html'
             },
             reuters: {
                 label: 'Reuters',
-                templateUrl: 'scripts/superdesk/items/views/reutersConfig.html'
+                templateUrl: 'scripts/superdesk-items/views/reutersConfig.html'
             }
         })
         .config(function($routeProvider) {
             $routeProvider.
+                when('/packages/:id', {
+                    templateUrl: 'scripts/superdesk-items/views/edit.html',
+                    controller: require('superdesk-items/controllers/edit'),
+                    resolve: {
+                        item: ['$route', 'server', function($route, server) {
+                            return server.readById('items', $route.current.params.id);
+                        }]
+                    }
+                }).
                 when('/archive/', {
-                    templateUrl: 'scripts/superdesk/items/views/archive.html',
-                    controller: require('superdesk/items/controllers/list'),
+                    templateUrl: 'scripts/superdesk-items/views/archive.html',
+                    controller: require('superdesk-items/controllers/list'),
                     resolve: {
                         items: ['locationParams', 'em', function(locationParams, em) {
                             var criteria = locationParams.reset({
@@ -54,8 +63,8 @@ define([
                     }
                 }).
                 when('/archive/:id', {
-                    templateUrl: 'scripts/superdesk/items/views/edit.html',
-                    controller: require('superdesk/items/controllers/edit'),
+                    templateUrl: 'scripts/superdesk-items/views/edit.html',
+                    controller: require('superdesk-items/controllers/edit'),
                     resolve: {
                         item: ['$route', 'server', function($route, server) {
                             return server.readById('items', $route.current.params.id);
@@ -66,7 +75,7 @@ define([
         .config(function(settingsProvider) {
             settingsProvider.register('ingest-feed', {
                 label: gettext('Ingest Feed'),
-                templateUrl: 'scripts/superdesk/items/views/settings.html'
+                templateUrl: 'scripts/superdesk-items/views/settings.html'
             });
         })
         .run(function($rootScope) {

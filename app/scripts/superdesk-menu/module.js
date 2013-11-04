@@ -35,7 +35,7 @@ define([
         }).
         directive('sdMenu', function($route) {
             var sdMenu = {
-                templateUrl: 'scripts/superdesk/menu/menu.html',
+                templateUrl: 'scripts/superdesk-menu/menu.html',
                 replace: false,
                 priority: -1,
                 link: function(scope, element, attrs) {

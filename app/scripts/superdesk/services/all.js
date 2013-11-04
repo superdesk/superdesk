@@ -4,10 +4,11 @@ define([
     './upload',
     './notify',
     './settings',
+    './storage',
     '../userSettings',
     '../entity',
     '../server'
-], function() {
+], function(angular) {
     'use strict';
 
     angular.module('superdesk.services', [
@@ -15,6 +16,7 @@ define([
         'superdesk.services.upload',
         'superdesk.services.notify',
         'superdesk.services.settings',
+        'superdesk.services.storage',
         'superdesk.userSettings',
         'superdesk.entity',
         'superdesk.server'

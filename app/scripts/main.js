@@ -1,8 +1,9 @@
 require.config({
     paths: {
         jquery: 'bower_components/jquery/jquery',
-        bootstrap: 'bower_components/bootstrap/js',
+        bootstrap: 'bower_components/bootstrap/dist/js/bootstrap',
         angular: 'bower_components/angular/angular',
+        'angular-ui': 'bower_components/angular-bootstrap/ui-bootstrap',
         'angular-resource': 'bower_components/angular-resource/angular-resource',
         'angular-route': 'bower_components/angular-route/angular-route',
         'moment': 'bower_components/momentjs/moment',
@@ -24,9 +25,15 @@ require.config({
         jquery: {
             exports: 'jQuery'
         },
+        bootstrap: {
+            deps: ['jquery']
+        },
         angular: {
             deps: ['jquery'],
             exports: 'angular'
+        },
+        'angular-ui': {
+            deps: ['angular', 'bootstrap']
         },
         'angular-resource': {
             deps: ['angular']
@@ -76,39 +83,48 @@ function gettext(input)
 }
 
 define([
-    'angular',
+    'jquery',
     'lodash',
-    'superdesk/auth/module',
-    'superdesk/menu/module',
-    'superdesk/dashboard/module',
-    'superdesk/items/module',
-    'superdesk/users/module',
-    'superdesk/settings/module',
-], function(angular, _) {
+    'angular',
+    'angular-ui'
+], function($, _, angular) {
     'use strict';
 
     angular.module('superdesk.directives', []);
     angular.module('superdesk.filters', []);
 
+    // load core components
     require([
         'superdesk/directives/all',
-        'superdesk/filters/all',
-        'superdesk/services/all'
+        'superdesk/services/all',
+        'superdesk/filters/all'
     ], function() {
         var modules = [
             'superdesk.directives',
-            'superdesk.filters',
             'superdesk.services',
-            'superdesk.auth',
-            'superdesk.menu',
-            'superdesk.dashboard',
-            'superdesk.items',
-            'superdesk.users',
-            'superdesk.settings'
+            'superdesk.filters',
         ];
 
-        angular.element(document).ready(function() {
-            angular.bootstrap(document, modules);
+        var apps = [
+            'auth',
+            'menu',
+            'items',
+            'users',
+            'settings',
+            'dashboard'
+        ];
+
+        var deps = [];
+        angular.forEach(apps, function(app) {
+            deps.push('superdesk-' + app + '/module');
+            modules.push('superdesk.' + app);
+        });
+
+        // load apps
+        require(deps, function() {
+            angular.element(document).ready(function() {
+                angular.bootstrap(document, modules);
+            });
         });
     });
 });

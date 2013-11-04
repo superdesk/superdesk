@@ -3,7 +3,7 @@ define(function() {
 
     return [function() {
         return {
-            templateUrl: 'scripts/superdesk/users/views/edit-form.html',
+            templateUrl: 'scripts/superdesk-users/views/edit-form.html',
             replace: true,
             scope: {
                 user: '='

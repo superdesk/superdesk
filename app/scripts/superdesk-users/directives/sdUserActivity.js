@@ -14,7 +14,7 @@ define(function() {
         return {
             restrict: 'A',
             replace: true,
-            templateUrl : 'scripts/superdesk/users/views/activity-feed.html',
+            templateUrl : 'scripts/superdesk-users/views/activity-feed.html',
             scope: {
                 user: '='
             },

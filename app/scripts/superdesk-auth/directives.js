@@ -1,8 +1,7 @@
 define([
     'jquery',
     'angular',
-    'superdesk/auth/services',
-    'bootstrap/modal'
+    './services'
 ], function($, angular) {
     'use strict';
 
@@ -11,7 +10,7 @@ define([
             return {
                 restrict: 'A',
                 replace: true,
-                templateUrl: 'scripts/superdesk/auth/views/login.html',
+                templateUrl: 'scripts/superdesk-auth/views/login.html',
                 link: function($scope, element, attrs) {
                     function doLogin() {
                         $(element).modal('show');

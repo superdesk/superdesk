@@ -1,0 +1,94 @@
+  <div class="subnav subnav-fixed">
+    <input type="text" sd-searchbar style="width:500px;" />
+    <a class="btn btn-medium btn-info pull-right" href="createItem()" ng-show><span class="medium-icon-add"></span> {{ 'Add New Article'|translate }}</a>
+  </div>
+
+   <div class="subnav subnav-level2 subnav-fixed">
+      <div class="btn-toolbar">
+        <div class="btn-group" ng-show>
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="">
+              {{ 'Multiple actions'|translate }}
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu sf-dropdown">
+              <li><i class="icon-pencil"></i> {{ 'Edit'|translate }}</li>
+              <li><i class="icon-trash"></i> {{ 'Delete'|translate }}</li>
+              <li><i class="icon-ban-circle"></i> {{ 'Unpublish'|translate }}</li>
+              <li><i class="icon-eye-open"></i> {{ 'Preview'|translate }}</li>
+            </ul>
+        </div>
+        
+        <div class="btn-group pull-right" style="margin-left:20px;">
+          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-settings"></i> <span class="caret"></span></a>
+
+            <ul class="dropdown-menu sf-dropdown sf-dropdown-right">
+                
+                <li><a href="#"><i class="icon-eye-open"></i> {{ 'View/Hide details'|translate }}</a></li>
+                <li class="divider"></li>
+                <li><a href="#"><i class="icon-th-large"></i> {{ '25 items per page'|translate }}</a></li>
+                <li><a href="#"><i class="icon-th-large"></i> {{ '50 items per page'|translate }}</a></li>
+                <li class="divider"></li>
+                <li><a id="grid_view" href="#"><i class="icon-th"></i> {{ 'Grid view'|translate }}</a></li>
+                <li><a id="list_view" href="#"><i class="icon-th-list"></i> {{ 'List view'|translate }}</a></li>
+              </ul>
+        </div>
+
+        <div sd-pagination data-model="items" style="min-width:80px"></div>
+
+        <div class="page-info pull-right" ng-show>
+            {{ 'Page'|translate }} <input type="text" value="1"/> of 103
+        </div>
+      </div>
+   </div>
+
+   <div class="main-content-container">
+      <table class="sf_table">
+        <thead>
+          <tr>
+            <th class="chckbx_col"><input type="checkbox" class="sf-checkbox" name="all"></th>
+            <th class="title_col"><a href="" sd-sort data-field="headline" data-label="{{ 'Headline'|translate }}"></a></th>
+            <th><a href="" sd-sort data-field="slugline" data-label="{{ 'Slug'|translate }}"></a></th>
+            <th><a href="" sd-sort data-field="provider" data-label="{{ 'Provider'|translate }}"></a></th>
+            <th><a href="" sd-sort data-field="firstcreated" data-label="{{ 'Created'|translate }}"></a></th>
+            <th class="action_col">
+              <div class="dropdown" style="text-align:right;" ng-show="">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-switches"></i> <span class="caret"></span></a>
+                <ul class="dropdown-menu sf-dropdown-simple pull-right" id="columns-switches">
+                  <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col1"> Title</li>
+                  <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col2"> Author</li>
+                  <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col3"> Publish Date</li>
+                  <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col4"> Status</li>
+                  <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col5"> Read count</li>
+                  <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col6"> Importance</li>
+                  <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col7"> Collaborators</li>
+                  <li><input type="checkbox" class="sf-checkbox" set-bg="1" name="show_col8"> Action</li>
+                </ul>
+              </div>
+
+
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in items._items">
+            <td class="chckbx_col"><input type="checkbox" class="sf-checkbox" set-bg="2"  name="_{{ item.guid }}"></td>
+            <td class="title_col"><a href="" ng-click="open('/packages/{{ item._id }}')">{{ item.headline }}</a></td>
+            <td>{{ item.slugline || item.keywords.join(', ') }}</td>
+            <td>{{ item.provider }}</td>
+            <td><time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time></td>
+            <td class="action_col">
+              <div class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ "Action"|translate }} <b class="caret"></b></a>
+                <ul class="dropdown-menu sf-dropdown-simple pull-right">
+                  <li><a href="" ng-click="open('/packages/{{ item.guid }}')"><i class="icon-pencil"></i> {{ "Edit"|translate }}</a></li>
+                  <li><a href=""><i class="icon-trash"></i> {{ "Delete"|translate }}</a></li>
+                  <!--<li><a href="#"><i class="icon-ban-circle"></i> Unpublish</a></li>-->
+                  <!--<li><a href="#"><i class="icon-eye-open"></i> Preview</a></li>-->
+                </ul>
+              </div>
+            </td>
+          </tr>
+          <tr ng-show="!items._items.length"><td class="alert alert-info" colspan="6" translate>No results found.</td></tr>
+        </tbody>
+      </table>
+   </div>
