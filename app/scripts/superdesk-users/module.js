@@ -65,7 +65,8 @@ define([
                                 locationParams.reset(defaultListParams);
                                 return locationParams;
                             }]
-                    }
+                    },
+                    label: gettext('Users')
                 })
                 // temporary fake route, just to have menu fixed
                 .when('/users', {
@@ -81,7 +82,8 @@ define([
                         user: function($rootScope, em) {
                             return em.getRepository('users').find($rootScope.currentUser._id);
                         }
-                    }
+                    },
+                    label: gettext('My Profile')
                 });
         });
 });

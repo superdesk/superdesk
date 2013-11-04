@@ -14,7 +14,8 @@ define([
                         tab: ['$route', function($route) {
                             return $route.current.params.tab || null;
                         }]
-                    }
+                    },
+                    label: gettext('Settings')
                 })
                 // temporary fake route, just to have menu fixed
                 .when('/settings', {

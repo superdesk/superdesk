@@ -78,7 +78,7 @@ define([
                 resolve: {},
                 menu: {
                     label: 'Dashboard',
-                    priority: 0
+                    priority: -1000
                 }
             });
     }]);

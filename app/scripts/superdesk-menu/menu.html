@@ -1,4 +1,4 @@
-<li ng-repeat="item in items | orderBy:priority">
+<li ng-repeat="item in items | orderBy:'priority'">
 	
 	<a href="#{{ item.href }}" ng-show="item.href" ng-click="followLink()">{{ item.label|translate }}</a>
 

@@ -3,13 +3,13 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.menu', []).
-        directive('sdMenuWrapper',function($route){
+    angular.module('superdesk.menu', [])
+        .directive('sdMenuWrapper', function($route){
             return {
                 templateUrl: 'scripts/superdesk/views/sidebar-nav.html',
-                replace : true,
+                replace: true,
                 restrict: 'A',
-                link : function(scope, element, attrs) {
+                link: function(scope, element, attrs) {
                     scope.displayMenu = false;
                     scope.currentLink = '';
                     scope.toggleSideNav = function() {
@@ -21,19 +21,14 @@ define([
                         element.find('.open').removeClass('open');
                     };
 
-                    scope.$on('$routeChangeSuccess', function(){
-                        if ($route.current.menu !== undefined) {
-                            scope.currentLink = $route.current.menu;
-                        }
-                        else {
-                            scope.currentLink = '';
-                        }
+                    scope.$on('$routeChangeSuccess', function() {
+                        scope.currentLink = $route.current.menu || $route.current;
                     });
                 }
             };
             
-        }).
-        directive('sdMenu', function($route) {
+        })
+        .directive('sdMenu', function($route) {
             var sdMenu = {
                 templateUrl: 'scripts/superdesk-menu/menu.html',
                 replace: false,
@@ -75,8 +70,8 @@ define([
             };
             
             return sdMenu;
-        }).
-        directive('sdToggleItem',function(){
+        })
+        .directive('sdToggleItem',function(){
             return {
                 link: function(scope, element, attrs) {
                     element.on('click',function() {
