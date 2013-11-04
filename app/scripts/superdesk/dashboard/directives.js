@@ -55,7 +55,7 @@ define([
                     };
                     this.removeWidget = function(widget) {
                         $scope.gridster.remove_widget(widget.el);
-                        delete scope.widgets[widget.wcode];
+                        delete $scope.widgets[widget.wcode];
                     };
                     this.resizeWidget = function(element, sizex, sizey) {
                         $scope.gridster.resize_widget(element, sizex, sizey);
