@@ -1,8 +1,8 @@
 define(['lodash', 'angular'], function(_, angular) {
     'use strict';
 
-    return ['$scope', '$routeParams', 'items', 'providerRepository',
-    function($scope, $routeParams, items, providerRepository) {
+    return ['$scope', '$routeParams', 'items', 'providerRepository', 'storage',
+    function($scope, $routeParams, items, providerRepository, storage) {
 
         $scope.items = items;
 
@@ -22,7 +22,14 @@ define(['lodash', 'angular'], function(_, angular) {
             show : false
         };
         
-        $scope.gridview = true;
+
+        var userView = storage.getItem('archive-view');
+        $scope.gridview = (userView === null) ? true : userView;
+        
+        $scope.toggleView = function(val) {
+            $scope.gridview = val;
+            storage.setItem('archive-view', val, true);
+        };
 
         $scope.edit = function(item) {
             $scope.editItem = item;
