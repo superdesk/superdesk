@@ -61,66 +61,38 @@
 
 
 
-<div style="width: 820px; margin-left: -410px;" class="modal in" id="editDetailsModal" ng-show="editItem.type == 'text'">
-    <div class="modal-header" style="overflow: hidden">
-        <button type="button" class="close" data-dismiss="modal" ng-click="closeEdit()">×</button>
-        <h3 style="line-height: 2em" title="{{ editItem.headline }}">{{ editItem.headline }}</h3>
-    </div>
-    <div class="modal-body">
-        <div class="row-fluid">
-            <div class="span6">
-                <figure ng-if="editItem.renditions.viewImage">
-                  <img ng-src="{{ editItem.renditions.viewImage.href }}" alt="" title="{{ editItem.description }}" />
-                  <figcaption>&copy; {{ editItem.creditline }}</figcaption>
-                </figure>
-
-                <blockquote ng-if="editItem.body_html" sd-html ng-model="editItem.body_html">
-                  <small ng-show="editItem.creditline">{{ editItem.creditline }}</small>
-                </blockquote>
-
-                <dl class="line-borders clearfix" ng-show>
-                    <dt>File name</dt>
-                    <dd>andromeda și câți alții.jpg</dd>
-                    <dt>File size</dt>
-                    <dd>163.44 KB</dd>
-                </dl>
-            </div>
-            
-
-            <div class="span6" ng-show>
-                <fieldset>
-                    <div class="metadata-language shadow-target" shadow-id="5" id="language-shadow" >
-                        <select class="span2 edit-metadata-select" name="Language">
-                            <option value="1" selected="selected">English</option>
-                            <option value="2">Romanian</option>
-                        </select>
-                    </div>
-                </fieldset>
-            </div>
-
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button class="btn pull-right" ng-click="closeEdit()" translate>Cancel</button>
-    </div>
-</div>
-
-
-
-
-<div class="modal lightbox-preview" id="viewDetailsModal" ng-show="editItem.type == 'picture'">
+<div class="modal lightbox-preview" id="viewDetailsModal" ng-show="editItem.type != null">
     <section class="lightbox-top">
         <a class="btn btn-dark" href="" ><i class="icon-pencil icon-white"></i> {{ 'Edit'|translate }}</a>
         <a class="btn btn-dark" href="" ><i class="icon-download-alt icon-white"></i> {{ 'Download'|translate }}</a>
         <a class="btn btn-dark" href="" ><i class="icon-trash icon-white"></i> {{ 'Delete'|translate }}</a>
         <a href="" class="lightbox-close" data-dismiss="modal" ng-click="closeEdit()"></a>
     </section>
-    <section class="lightbox-left">
-        <figure class="lightbox-large-preview">
+    <section class="lightbox-left"  ng-show="editItem.type == 'picture'">
+        <figure class="lightbox-large-preview" >
             <img ng-src="{{ editItem.renditions.viewImage.href }}" alt="" title="{{ editItem.description }}" />
             <figcaption>&copy; {{ editItem.creditline }}</figcaption>
         </figure>
         <div class="lightbox-caption">{{ editItem.headline }}</div>
+        <div class="">
+
+        </div>
+    </section>
+    <section class="lightbox-left" ng-show="editItem.type == 'text'">        
+        <div class="lightbox-paper">
+            <div class="lightbox-text">
+                <div class="lightbox-title">{{ editItem.headline }}</div>
+                <figure ng-if="editItem.renditions.viewImage">
+                    <img ng-src="{{ editItem.renditions.viewImage.href }}" alt="" title="{{ editItem.description }}" />
+                    <figcaption>&copy; {{ editItem.creditline }}</figcaption>
+                </figure>
+                <div class="lightbox-fulltext">
+                    <small ng-show="editItem.slugline">{{ editItem.slugline }}</small>
+                    <div ng-show="editItem.body_html" sd-html ng-model="editItem.body_html" class="lightbox-fullcontent"></div>
+                    <small ng-show="editItem.creditline">{{ editItem.creditline }}</small>
+                </div>
+            </div>
+        </div>
     </section>
     <section class="lightbox-right">
         <header>

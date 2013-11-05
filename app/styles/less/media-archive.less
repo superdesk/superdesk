@@ -963,6 +963,47 @@ input{
 			line-height: 20px;
 			.box-sizing(border-box);
 		}
+		.lightbox-paper {
+			position: absolute;
+			top: 50px; left: 50px; right: 50px; bottom: 50px;
+			.lightbox-text {
+				background: #fff;
+				max-width: 800px;
+				margin: 0px auto;
+				height: 100%;
+				position: relative;
+				.border-radius(5px);
+				.lightbox-title {
+					position: absolute;
+					top: 20px;
+					left: 20px;
+					right: 20px;
+					height: 55px;
+					font-size: 18px;
+					line-height: 24px;
+					border-bottom: 5px solid #e0e0e0;
+				}
+				.lightbox-fulltext {
+					position: absolute;
+					top: 110px;
+					left: 30px;
+					right: 30px;
+					bottom: 20px;
+					overflow: auto;
+					small {
+						color: #777;
+					}
+					.lightbox-fullcontent {
+						margin: 20px 0;
+					}
+					p {
+						font-size: 14px;
+						line-height: 19px;
+						margin-bottom: 15px;
+					}
+				}
+			}
+		}
 	}
 	.lightbox-top {
 		position: absolute;
