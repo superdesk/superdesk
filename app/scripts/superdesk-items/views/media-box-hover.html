@@ -29,6 +29,12 @@
 
             <dt translate>Created</dt>
             <dd><time datetime="{{ selectedItem.item.firstcreated }}" title="{{ selectedItem.item.firstcreated|date:'medium' }}">{{ selectedItem.item.firstcreated|reldate }}</time></dd>
+
+            <dt translate>Subject</dt>
+            <dd style="max-width:100px;height:14px;overflow:hidden" popover="{{ selectedItem.item.subject | mergeWords }}" popover-placement="right" popover-trigger="mouseenter">
+                {{ selectedItem.item.subject | mergeWords }}
+            </dd>
+
         </dl>
     </div>
 

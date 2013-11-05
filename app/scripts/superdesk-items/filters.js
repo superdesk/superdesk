@@ -18,5 +18,15 @@ define([
 
                 return texts.join('\n');
             };
+        }).
+        filter('mergeWords', function() {
+            return function(array) {
+                var subjectMerged = [];
+                _.forEach(array, function(item) {
+                    subjectMerged.push(item.name);
+                });
+
+                return subjectMerged.join(',');
+            };
         });
 });
