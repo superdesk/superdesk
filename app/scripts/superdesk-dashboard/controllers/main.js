@@ -1,10 +1,11 @@
 define(['angular'], function(){
     'use strict';
 
-    return ['$scope', 'widgets', 'widgetService',
-        function($scope, widgets, widgetService){
+    return ['$scope', 'widgets', 'widgetService', 'userSettings',
+        function($scope, widgets, widgetService, userSettings){
 
             $scope.userWidgets = widgetService.load();
+            $scope.userSettings = userSettings;
             $scope.editStatus = false;
             $scope.widgetBoxStatus = false;
             $scope.selectedWidget = null;

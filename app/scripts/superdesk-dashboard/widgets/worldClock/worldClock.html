@@ -1,0 +1,12 @@
+<div>
+	<div class="clocks-container clearfix">
+	    <sd-clock ng-repeat="clock in wclock" wtime="clock"></sd-clock>
+	</div>
+
+	<div class="widget-footer">
+	    <div class="slider">
+	        <span class="arrow left" ng-click="skipPrev()" ng-class="{'disable': !showleft}"></span>
+	        <span class="arrow right" ng-click="skipNext()" ng-class="{'disable': !showright}"></span>
+	    </div>
+	</div>
+</div>

@@ -6,26 +6,26 @@ define([
     'use strict';
 
     angular.module('superdesk.dashboard.widgets.worldclock', ['ngResource']).
-        factory('worldclock', function($resource) {
-            return $resource('scripts/superdesk-dashboard/static-resources/clock.json');
-        }).
-        directive('sdWorldclock', function() {
+        factory('worldclock', ['$resource', 'widgetsPath', function($resource, widgetsPath) {
+            return $resource(widgetsPath + 'worldClock/clock.json');
+        }]).
+        directive('sdWorldclock', ['widgetsPath', function(widgetsPath) {
             return {
-                templateUrl : 'scripts/superdesk-dashboard/views/widgets/worldclock/worldClock.html',
+                templateUrl : widgetsPath + 'worldClock/worldClock.html',
                 replace: true,
                 restrict: 'A',
                 controller : 'WorldClockController'
             };
-        }).
-        directive('sdClock', function() {
+        }]).
+        directive('sdClock', ['widgetsPath', function(widgetsPath) {
             return {
-                templateUrl: 'scripts/superdesk-dashboard/views/widgets/worldclock/worldClockBox.html',
+                templateUrl: widgetsPath + 'worldClock/worldClockBox.html',
                 scope: {wtime: '=wtime'},
                 replace: true,
                 transclude: true,
                 restrict: 'E'
             };
-        }).
+        }]).
         controller('WorldClockController', function ($scope, worldclock, $timeout) {
                 var limit = 3;
                 var skip = 0;

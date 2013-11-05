@@ -7,18 +7,20 @@ define([
     './services',
     './directives',
     './filters',
-    './widgets/worldclock'
+    './widgets/worldClock/worldClock'
 ], function(angular) {
     'use strict';
 
     angular.module('superdesk.dashboard', [
         'ngRoute',
+        'superdesk.userSettings',
         'superdesk.dashboard.providers',
         'superdesk.dashboard.services',
         'superdesk.dashboard.directives',
         'superdesk.dashboard.filters',
         'superdesk.dashboard.widgets.worldclock'
     ])
+    .value('widgetsPath', 'scripts/superdesk-dashboard/widgets/')
     .config(['widgetsProvider', function(widgetsProvider) {
         widgetsProvider
             .widget('weather', {
@@ -42,7 +44,7 @@ define([
                 sizex: 1,
                 sizey: 1,
                 thumbnail: 'images/sample/widgets/worldclock.png',
-                template: 'scripts/superdesk-dashboard/views/widgets/widget-worldclock.html',
+                template: 'scripts/superdesk-dashboard/widgets/worldClock/widget-worldclock.html',
                 description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
             })
             .widget('widgetCool', {
@@ -75,7 +77,12 @@ define([
             .when('/', {
                 controller: require('superdesk-dashboard/controllers/main'),
                 templateUrl: 'scripts/superdesk-dashboard/views/main.html',
-                resolve: {},
+                resolve: {
+                    userSettings: ['userSettings',
+                        function(userSettings) {
+                            return userSettings('dashboard:widgets', {});
+                        }]
+                },
                 menu: {
                     label: 'Dashboard',
                     priority: -1000

@@ -9,11 +9,11 @@ define([
          * sdWidget give appropriate template to data assgined to it
          *
          * Usage:
-         * <div sd-widget data-options="widget" data-definition="widgetDefinition"></div>
+         * <div sd-widget data-widget="widget" data-configuration="configuration"></div>
          * 
          * Params:
-         * @param {Object} options - options for current widget instance
-         * @param {Object} definition - definition of widget
+         * @param {Object} widget
+         * @param {Object} configuration
          */
         .directive('sdWidget', [function() {
             return {
@@ -22,6 +22,7 @@ define([
                 replace: true,
                 scope: {
                     widget: '=',
+                    configuration: '='
                 }
             };
         }])
@@ -35,17 +36,20 @@ define([
          *  class="gridster"
          *  ng-class="{'editmode': editmode}"
          *  data-status="widgetBoxStatus"
-         *  data-widgets="widgets"></div>
+         *  data-widgets="widgets"
+         *  data-configuration="userSettings"></div>
          * 
          * Params:
          * @param {Boolean} status - on/off switch for widget
          * @param {Object} widgets
+         * @param {Object} configuration
          */
         .directive('sdGrid', function() {
             return {
                 scope: {
                     status: '=',
-                    widgets: '='
+                    widgets: '=',
+                    configuration: '='
                 },
                 replace: true,
                 templateUrl: 'scripts/superdesk-dashboard/views/grid.html',
@@ -63,7 +67,6 @@ define([
                     };
                 },
                 link: function(scope, element, attrs) {
-
                     scope.syncWidgets = function() {
                         angular.forEach(scope.widgets, function(widget) {
                             var sizes = scope.gridster.serialize($(widget.el));
