@@ -27,13 +27,15 @@
             <div class="btn-group pull-right">
                 <a class="btn" ng-click="toggleView(true)"><i class="icon-th"></i></a>
                 <a class="btn" ng-click="toggleView(false)"><i class="icon-th-list"></i></a>
-            </div>
-            
+            </div>           
             
 
         </div>
         <div class="main-content-subnav">
             <div sd-pagination data-model="items"></div>
+            <div class="btn-group pull-left" ng-show="!gridview">
+                <a class="btn" ng-class="{'active':compactList}" ng-click="toggleCompact()">Compact view</a>
+            </div>
         </div>
         <div class="main-content-inner scroller" ng-class="{'grid-view':gridview, 'list-view': !gridview }">
             

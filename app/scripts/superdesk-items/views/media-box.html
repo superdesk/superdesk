@@ -13,8 +13,8 @@
     <div class="media-info" >
         <h5>{{ item.slugline }}</h5>
         <dl class="clearfix">
-            <dt class="blank-after"><span class="urgency-label">{{ item.urgency }}</span></dt>
-            <dd>{{ item.provider }}</dd>
+            <dt class="source"></dt>
+            <dd class="provider">{{ item.provider }}</dd>
 
             <dt translate>Created</dt>
             <dd><time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time></dd>
@@ -26,7 +26,7 @@
     </div>
 
     <span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
-    
+    <span class="urgency-label">{{ item.urgency }}</span>
 
     <span class="urgency-line"></span>
 </div>
