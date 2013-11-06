@@ -15,7 +15,7 @@ def before_scenario(context, scenario):
         user = {'username': 'tmpuser', 'password': 'tmppassword'}
         with test.app.test_request_context():
             test.app.data.insert('users', [user])
-        auth_data = '{"data": %s}' % json.dumps({'username': user['username'], 'password': user['password']})
-        auth_response = context.client.post("/auth", data=auth_data, headers=context.headers, follow_redirects=True)
-        token = json.loads(auth_response.get_data()).get('data').get('token').encode('ascii')
+        auth_data = json.dumps({'username': user['username'], 'password': user['password']})
+        auth_response = context.client.post('/auth', data=auth_data, headers=context.headers, follow_redirects=True)
+        token = json.loads(auth_response.get_data()).get('token').encode('ascii')
         context.headers.append(('Authorization', b'basic ' + b64encode(token + b':')))

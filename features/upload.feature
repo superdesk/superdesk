@@ -1,5 +1,6 @@
 Feature: Upload
 
+    @wip
     @auth
     Scenario: Upload a binary file
         When we upload a binary file

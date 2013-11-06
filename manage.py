@@ -2,9 +2,9 @@
 
 import superdesk
 from flask.ext.script import Manager
-from app import application
+from app import app
 
-manager = Manager(application)
+manager = Manager(app)
 
 if __name__ == '__main__':
     manager.run(superdesk.COMMANDS)

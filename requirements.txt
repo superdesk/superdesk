@@ -13,7 +13,7 @@ gunicorn==18.0
 itsdangerous==0.23
 nose==1.3.0
 parse==1.6.3
-pyelasticsearch==0.6
+pyelasticsearch==0.6.1
 pymongo==2.6.3
 pytz==2013.7
 requests==2.0.1
@@ -21,4 +21,4 @@ simplejson==3.3.1
 six==1.4.1
 git+git://github.com/petrjasek/flask-elasticsearch@master#egg=Flask-ElasticSearch
 git+git://github.com/petrjasek/eve-docs@master#egg=eve_docs
-git+git://github.com/petrjasek/eve@develop#egg=Eve==0.1.2
+git+git://github.com/petrjasek/eve@elastic#egg=Eve==0.1.2

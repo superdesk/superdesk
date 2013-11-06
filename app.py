@@ -9,7 +9,7 @@ class SuperdeskTokenAuth(eve.auth.TokenAuth):
 
     def check_auth(self, token, allowed_roles, resource, method):
         """Check if given token is valid"""
-        return application.data.find_one('auth', token=token)
+        return app.data.find_one('auth', token=token)
 
 class SuperdeskEve(eve.Eve):
     """Superdesk API"""
@@ -21,24 +21,23 @@ class SuperdeskEve(eve.Eve):
         self.config.from_object(superdesk)
 
 abspath = os.path.abspath(os.path.dirname(__file__))
-application = SuperdeskEve(data=superdesk.SuperdeskData, auth=SuperdeskTokenAuth, settings=os.path.join(abspath, 'settings.py'))
-superdesk.app = application
-
-application.on_fetch_resource = superdesk.proxy_resource_signal('read', application)
-application.on_fetch_item = superdesk.proxy_item_signal('read', application)
+app = SuperdeskEve(data=superdesk.SuperdeskDataLayer, auth=SuperdeskTokenAuth, settings=os.path.join(abspath, 'settings.py'))
+app.on_fetch_resource = superdesk.proxy_resource_signal('read', app)
+app.on_fetch_item = superdesk.proxy_item_signal('read', app)
+superdesk.app = app
 
 for blueprint in superdesk.BLUEPRINTS:
-    application.register_blueprint(blueprint, **blueprint.kwargs)
+    app.register_blueprint(blueprint, **blueprint.kwargs)
 
 if __name__ == '__main__':
 
     if 'PORT' in os.environ:
         port = int(os.environ.get('PORT'))
         host = '0.0.0.0'
-        debug = False
+        app.debug = False
     else:
         port = 5000
         host = '127.0.0.1'
-        debug = True
+        app.debug = True
 
-    application.run(host=host, port=port, debug=debug)
+    app.run(host=host, port=port)

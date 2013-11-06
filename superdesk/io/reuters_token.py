@@ -24,9 +24,7 @@ def get_token(provider):
     }
 
     provider['token'] = token
-
-    db = superdesk.get_db()
-    db['ingest_providers'].save(provider)
+    superdesk.app.data.update('ingest_providers', provider.get('_id'), {'token': token})
     return token.get('token')
 
 def fetch_token_from_api(provider):

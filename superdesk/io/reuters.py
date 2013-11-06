@@ -111,8 +111,7 @@ class ReutersUpdateService(object):
         return date.strftime(self.DATE_FORMAT)
 
 def on_read_items(data, docs):
-    db = superdesk.get_db()
-    provider = db['ingest_providers'].find_one({'type': PROVIDER})
+    provider = data.find_one('ingest_providers', type=PROVIDER)
     for doc in docs:
         if doc.get('ingest_provider') and provider:
             for i, rendition in doc.get('renditions', {}).items():

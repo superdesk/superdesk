@@ -29,7 +29,7 @@ superdesk.domain('activity', {
         'user': {
             'type': 'objectid',
             'data_relation': {
-                'collection': 'users',
+                'resource': 'users',
                 'field': '_id',
                 'embeddable': True
             }

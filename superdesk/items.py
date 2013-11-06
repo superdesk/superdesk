@@ -41,7 +41,7 @@ schema = {
     'ingest_provider': {
         'type': 'objectid',
         'data_relation': {
-            'collection': 'ingest_providers',
+            'resource': 'ingest_providers',
             'field': '_id',
             'embeddable': True
         }
@@ -70,11 +70,10 @@ schema = {
 }
 
 superdesk.domain('items', {
-    'item_title': 'newsItem',
-    'additional_lookup': {
-        'url': '[a-zA-Z0-9,.:-]+',
-        'field': 'guid'
-    },
     'schema': schema,
-    'extra_response_fields': ['headline', 'guid']
+    'extra_response_fields': ['headline', 'guid'],
+    'item_url': '[-_a-zA-Z0-9]{1,32}',
+    'datasource': {
+        'backend': 'elastic'
+    }
 })

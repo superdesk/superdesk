@@ -79,7 +79,7 @@ superdesk.domain('auth', {
         'user': {
             'type': 'objectid',
             'data_relation': {
-                'collection': 'users',
+                'resource': 'users',
                 'field': '_id',
                 'embeddable': True
             }

@@ -5,11 +5,13 @@ Superdesk server app
 import logging
 import blinker
 import importlib
-import eve.io.mongo
 import settings
+import eve.io
+import eve.io.elastic
+import eve.io.mongo
 from flask import abort, app, Blueprint, json
 from flask.ext.script import Command, Option
-from eve.utils import document_link
+from eve.utils import document_link, config, ParsedRequest
 
 API_NAME = 'Superdesk API'
 VERSION = (0, 0, 1)
@@ -53,21 +55,52 @@ def blueprint(blueprint, **kwargs):
     blueprint.kwargs = kwargs
     BLUEPRINTS.append(blueprint)
 
-def get_db():
-    """Get db"""
-    return app.data.driver.db
-
-class SuperdeskData(eve.io.mongo.Mongo):
+class SuperdeskDataLayer(eve.io.DataLayer):
     """Superdesk Data Layer"""
 
-    def _send(self, signal, resource, docs):
-        send(signal, self, resource=resource, docs=docs)
-        send('%s:%s' % (signal, resource), self, docs=docs)
+    def init_app(self, app):
+        self.elastic = eve.io.elastic.Elastic(app)
+        self.mongo = eve.io.mongo.Mongo(app)
+        self.storage = self.mongo.driver
+
+    def find(self, resource, req):
+        return self._backend(resource).find(resource, req)
+
+    def find_all(self, resource, max_results=1000):
+        req = ParsedRequest()
+        req.max_results = max_results
+        return self._backend(resource).find(resource, req)
+
+    def find_one(self, resource, **lookup):
+        return self._backend(resource).find_one(resource, **lookup)
+
+    def find_list_of_ids(self, resource, ids, client_projection=None):
+        return self._backend(resource).find_list_of_ids(resource, ids, client_projection)
 
     def insert(self, resource, docs):
-        """Insert documents into resource storage."""
-        self._send('create', resource, docs)
-        return super(SuperdeskData, self).insert(resource, docs)
+        self._send('create', resource, docs=docs)
+        return self._backend(resource).insert(resource, docs)
+
+    def update(self, resource, id_, updates):
+        self._send('update', resource, id=id_, updates=updates)
+        return self._backend(resource).update(resource, id_, updates)
+
+    def replace(self, resource, id_, document):
+        self._send('update', resource, id=id_, updates=document)
+        return self._backend(resource).replace(resource, id_, document)
+
+    def remove(self, resource, id_=None):
+        self._send('delete', resource, id_=id_)
+        return self._backend(resource).remove(resource, id_)
+
+    def _backend(self, resource):
+        datasource, filter_, _ = self._datasource(resource)
+        backend = config.SOURCES[datasource].get('backend', 'mongo')
+        return getattr(self, backend)
+
+    def _send(self, signal, resource, **kwargs):
+        send(signal, self, resource=resource, **kwargs)
+        send('%s:%s' % (signal, resource), self, **kwargs)
 
 for app_name in getattr(settings, 'INSTALLED_APPS'):
     importlib.import_module(app_name)

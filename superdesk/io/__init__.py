@@ -10,26 +10,28 @@ def register_provider(type, provider):
 
 superdesk.provider = register_provider
 
-def update_provider(provider, db):
+def update_provider(provider):
     """Update given provider."""
 
     if provider.get('type') in providers:
         start = utcnow()
-        ingested_count = 0
+        ingested_count = provider.get('ingested_count', 0)
         for item in providers[provider.get('type')].update(provider):
             item.setdefault('created', utcnow())
             item.setdefault('updated', utcnow())
-            item['ingest_provider'] = provider['_id']
+            item['ingest_provider'] = str(provider['_id'])
 
-            old_item = db['items'].find_one({'guid': item['guid']}, [])
+            old_item = superdesk.app.data.find_one('items', guid=item['guid'])
             if old_item:
-                item['_id'] = old_item['_id']
+                superdesk.app.data.update('items', str(old_item.get('_id')), item)
             else:
-                provider['ingested_count'] = provider.get('ingested_count', 0) + 1
-            db['items'].save(item)
+                ingested_count += 1
+                superdesk.app.data.insert('items', [item])
 
-        provider['updated'] = start
-        db['ingest_providers'].save(provider)
+        superdesk.app.data.update('ingest_providers', str(provider.get('_id')), {
+            'updated': start,
+            'ingested_count': ingested_count
+        })
 
 class UpdateIngest(superdesk.Command):
     """Update ingest providers."""
@@ -39,10 +41,9 @@ class UpdateIngest(superdesk.Command):
     )
 
     def run(self, provider_type=None):
-        db = superdesk.get_db()
-        for provider in db['ingest_providers'].find():
+        for provider in superdesk.app.data.find_all('ingest_providers'):
             if not provider_type or provider_type == provider.get('type'):
-                update_provider(provider, db)
+                update_provider(provider)
 
 class AddProvider(superdesk.Command):
     """Add ingest provider."""

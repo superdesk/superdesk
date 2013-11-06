@@ -7,6 +7,8 @@ import superdesk
 from .utils import get_random_string
 from .cors import crossdomain
 
+return
+
 bp = superdesk.Blueprint('storage', __name__)
 
 @bp.route('/upload', methods=['POST', 'OPTIONS'])

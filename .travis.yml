@@ -4,6 +4,7 @@ python:
 
 services:
     - mongodb
+    - elasticsearch
 
 install: "pip install -r requirements.txt --use-mirrors"
 

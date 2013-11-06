@@ -28,5 +28,5 @@ class SignalsTestCase(unittest.TestCase):
             getattr(app, 'on_fetch_resource')('items', ({}, ))
 
         assert logger.called, "Logger was not called"
-        assert isinstance(logger.sender, superdesk.SuperdeskData), logger.sender
+        assert isinstance(logger.sender, superdesk.SuperdeskDataLayer), logger.sender
         assert logger.kwargs.get('docs'), logger.kwargs
