@@ -121,42 +121,6 @@ section.main-section {
 	padding-bottom:62px !important; /* because of footer*/
 }
 
-
-
-.popover-inner {
-	padding: 3px;
-	width: 280px;
-	overflow: hidden;
-	background: #000000;
-	background: rgba(0, 0, 0, 0.8);
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-	-webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-	-moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-	box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-}
-.popover-title {
-	padding: 9px 15px;
-	line-height: 1;
-	background-color: #333333;
-	color:#fff;
-	border-bottom: 1px solid #eee;
-	-webkit-border-radius: 2px 2px 0 0;
-	-moz-border-radius: 2px 2px 0 0;
-	border-radius: 2px 2px 0 0;
-	font-size:14px;
-}
-.popover-content {
-	padding: 14px;
-	background-color: #ffffff;
-	-webkit-border-radius: 0 0 2px 2px;
-	-moz-border-radius: 0 0 2px 2px;
-	border-radius: 0 0 2px 2px;
-	-webkit-background-clip: padding-box;
-	-moz-background-clip: padding-box;
-	background-clip: padding-box;
-}
 .tooltip-inner {
 	max-width: 200px;
 	padding: 4px 8px;
@@ -320,30 +284,7 @@ section.main-section {
 	margin-left: 5px;
 	margin-bottom: 0;
 }
-/*
-.login_box {
-	margin:0 auto;
-	width:380px;
-	}
-	.login_box input[type="text"], .login_box input[type="password"] {
-		width:97.5%;
-		}
-	.login_box select {
-		width:100%;
-		}
-	.login_box form {
-		margin-bottom:5px;
-		}	
-	.login_box .form-actions {
-		padding: 12px 0 0 0;
-		margin: 0;
-		background-color: transparent;
-		border-top:none;
-		}
-	.login_box .btn.btn-primary-gv {
-		width:100%;
-	}
-	*/
+
 
 .splitt-content {
 	position:absolute;

@@ -528,6 +528,46 @@ Notifications
 }
 
 
+/*
+=========================================
+Popover override
+=========================================
+*/
+.popover {
+	&.right .arrow {
+		border-right-color: #7e7e7e;
+	}
+	.popover-inner {
+		padding: 3px;
+		width: 280px;
+		overflow: hidden;
+		background: #7e7e7e;
+		.border-radius(3px);
+		.box-shadow(0 3px 7px rgba(50, 50, 50, 0.3))
+	}
+	.popover-title {
+		padding: 9px 15px;
+		line-height: 1;
+		background-color: #333333;
+		color:#fff;
+		border-bottom: 1px solid #eee;
+		font-size:14px;
+		.border-radius(2px 2px 0 0 );
+	}
+	.popover-content {
+		padding: 14px;
+		background-color: #ffffff !important;
+		.border-radius(0 0 2px 2px);
+		.background-clip(padding-box);
+	}
+}
+
+
+
+
+
+
+
 /*RESPONSIVE*/
 
 .ipad-hide {

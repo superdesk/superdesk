@@ -26,7 +26,7 @@ define([
                     subjectMerged.push(item.name);
                 });
 
-                return subjectMerged.join(',');
+                return subjectMerged.join(', ');
             };
         });
 });
