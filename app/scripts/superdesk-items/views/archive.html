@@ -61,7 +61,7 @@
 
 
 
-<div class="modal lightbox-preview" id="viewDetailsModal" ng-show="editItem.type != null">
+<div class="modal lightbox-preview urgency-{{ editItem.urgency }}" ng-show="editItem.type != null">
     <section class="lightbox-top">
         <a class="btn btn-dark" href="" ><i class="icon-pencil icon-white"></i> {{ 'Edit'|translate }}</a>
         <a class="btn btn-dark" href="" ><i class="icon-download-alt icon-white"></i> {{ 'Download'|translate }}</a>
@@ -70,26 +70,21 @@
     </section>
     <section class="lightbox-left"  ng-show="editItem.type == 'picture'">
         <figure class="lightbox-large-preview" >
-            <img ng-src="{{ editItem.renditions.viewImage.href }}" alt="" title="{{ editItem.description }}" />
-            <figcaption>&copy; {{ editItem.creditline }}</figcaption>
+            <img ng-src="{{ editItem.renditions.baseImage.href }}" />
         </figure>
         <div class="lightbox-caption">{{ editItem.headline }}</div>
-        <div class="">
-
-        </div>
+        
     </section>
     <section class="lightbox-left" ng-show="editItem.type == 'text'">        
         <div class="lightbox-paper">
             <div class="lightbox-text">
                 <div class="lightbox-title">{{ editItem.headline }}</div>
                 <figure ng-if="editItem.renditions.viewImage">
-                    <img ng-src="{{ editItem.renditions.viewImage.href }}" alt="" title="{{ editItem.description }}" />
-                    <figcaption>&copy; {{ editItem.creditline }}</figcaption>
+                    <img ng-src="{{ editItem.renditions.viewImage.href }}" title="{{ editItem.description }}" />
                 </figure>
                 <div class="lightbox-fulltext">
                     <small ng-show="editItem.slugline">{{ editItem.slugline }}</small>
                     <div ng-show="editItem.body_html" sd-html ng-model="editItem.body_html" class="lightbox-fullcontent"></div>
-                    <small ng-show="editItem.creditline">{{ editItem.creditline }}</small>
                 </div>
             </div>
         </div>
@@ -98,34 +93,29 @@
         <header>
             <h5 class="lightbox-title">{{ editItem.slugline }}</h5>
             <span class="lightbox-modified-info">{{ 'Modified:'|translate }} {{ editItem.versioncreated|date:'medium' }}</span>
-            <span class="lightbox-media-type filetype-icon-photo"></span>
+            <span class="urgency-label">{{ editItem.urgency }}</span>
+            <span class="lightbox-media-type filetype-icon-{{editItem.type}}"></span>
         </header>
         <div class="lightbox-media-data" >
-            <div class="lightbox-descritpion">{{ editItem.description }}</div>
-            <div class="tabmodule">
-                <div class="tabmodule-header">
+            <div class="lightbox-descritpion">
+            </div>
+            <div class="tabmodule" ng-class="{'tabmodule-open':toggleDetails}">
+                <div class="tabmodule-header" ng-click="toggleDetails=!toggleDetails">
                     <i class="icon-chevron-down toggle-module-close"></i>
                     <i class="icon-chevron-right toggle-module-open"></i>
                     <span class="tabmodule-title" translate>Details</span>
                 </div>
                 <div class="tabmodule-content">
                     <dl class="metadata-details-new clearfix">
-                        <dt>Conformance</dt><dd>Power</dd>
-                        <dt>Rights info</dt><dd>AP</dd>
-                        <dt>Provider</dt><dd>AP</dd>
-                        <dt>Title</dt><dd>Sarcozy</dd>
-                        <dt>Creator</dt><dd>John N. Doe</dd>
-                        <dt>Contributor</dt><dd>John N. Doe, Jane F. Doe</dd>
-                        <dt>Creditline</dt><dd>Aliquet massa nunc</dd>
-                        <dt>Subject</dt><dd>French elections</dd>
-                        <dt>City</dt><dd>Paris</dd>
-                        <dt>Country</dt><dd>France</dd>
-                        <dt>Date created</dt><dd>23.01.2011</dd>
-                        <dt>Time created</dt><dd>06:30</dd>
-                        <dt>Keywords</dt><dd>Sarcozy, france, french elections, elections</dd>
-                        <dt>Headline</dt><dd>Lorem Ipsum dossier</dd>
-                        <dt>Description</dt><dd>Habitasse porta sociis pottitor magnis natoque ac et, magna mus lacus</dd>
-                        <dt>Caption</dt><dd>Pulvinar vel enim tristique</dd>
+                        <dt translate>Provider</dt><dd>{{ editItem.provider }}</dd>
+                        <dt translate>Creditline</dt><dd>&copy;{{ editItem.creditline }}</dd>
+                        <dt translate>Urgency</dt><dd>{{ editItem.urgency }}</dd>
+                        <dt translate>Item type</dt><dd>{{ editItem.type }}</dd>
+                        <dt translate>Subject</dt><dd>{{ editItem.subject | mergeWords }}</dd>
+                        <dt translate>First created</dt><dd>{{ editItem.firstcreated }}</dd>
+                        <dt translate>Updated</dt><dd>{{ editItem.updated }}</dd>
+                        <dt translate>Version created</dt><dd>{{ editItem.versioncreated }}</dd>
+                        <dt translate>Version</dt><dd>{{ editItem.version }}</dd>
                     </dl>
                 </div>
             </div>

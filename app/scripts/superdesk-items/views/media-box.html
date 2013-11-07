@@ -19,7 +19,7 @@
             <dt translate>created</dt>
             <dd><time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time></dd>
             <dt translate>subject</dt>
-            <dd style="max-width:90px;height:14px;overflow:hidden">
+            <dd class="subject-line">
                 {{ item.subject | mergeWords}}
             </dd>
         </dl>
