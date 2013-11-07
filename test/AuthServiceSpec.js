@@ -40,8 +40,8 @@ define([
             expect(rootScope.currentUser.isAnonymous).toBe(true);
 
             httpBackend
-                .expectPOST('http://localhost/auth', {data: {username: 'foo', password: 'bar'}})
-                .respond(200, {data: {token: 'x', user: {username:'foo'}}});
+                .expectPOST('http://localhost/auth', {username: 'foo', password: 'bar'})
+                .respond(200, {token: 'x', user: {username:'foo'}});
             service.login('foo', 'bar');
             httpBackend.flush();
 
@@ -58,7 +58,7 @@ define([
             expect(service.hasIdentity()).toBe(false);
 
             httpBackend
-                .expectPOST('http://localhost/auth', {data: {username: 'fake', password: 'bar'}})
+                .expectPOST('http://localhost/auth', {username: 'fake', password: 'bar'})
                 .respond(400);
             service.login('fake', 'bar');
             httpBackend.flush();

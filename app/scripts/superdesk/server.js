@@ -75,17 +75,17 @@ define([
                     options.headers = {'If-Match': data.etag};
                 }
                 if (method === 'post' || method === 'patch') {
-                    options.data = {data: this._cleanData(data)};
+                    options.data = this._cleanData(data);
                 }
 
                 $http(options)
                 .success(function(responseData) {
                     if (method === 'post') {
-                        delay.resolve(responseData.data);
+                        delay.resolve(responseData);
                     } else if (method === 'patch') {
                         var fields = ['_id', '_links', 'etag', 'updated'];
                         _.forEach(fields, function(field) {
-                            data[field] = responseData.data[field];
+                            data[field] = responseData[field];
                         });
                         data.created = created;
                         delay.resolve(data);
@@ -166,7 +166,7 @@ define([
 
             // transfer url params to server params
             _convertParams: function(params) {
-                var serverParams = _.extend({}, _.pick(params, ['max_results', 'where', 'page', 'embedded']));
+                var serverParams = _.extend({}, _.pick(params, ['max_results', 'page', 'embedded', 'where', 'q', 'df']));
 
                 if ('sort' in params) {
                     serverParams.sort = '[(' + angular.toJson(params.sort[0]) + ',' + (params.sort[1] === 'asc' ? 1 : -1) + ')]';
@@ -176,15 +176,10 @@ define([
                     serverParams.max_results = params.perPage;
                 }
 
-                if (params.search !== '') {
+                if (params.search) {
                     var search = {};
                     search[params.searchField] = params.search;
-                    serverParams.where = serverParams.where || {};
                     angular.extend(serverParams.where, search);
-                }
-
-                if (serverParams.where) {
-                    serverParams.where = angular.toJson(serverParams.where);
                 }
 
                 return serverParams;

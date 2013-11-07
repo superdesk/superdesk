@@ -5,7 +5,7 @@ define(['angular'], function(angular) {
     function ($scope, upload, locationParams, server, notify, gettext) {
         $scope.editPicture = function() {
             upload.upload('users').then(function(data) {
-                $scope.user.picture_url = data._links.self.href;
+                $scope.user.picture_url = data.url;
                 server.update($scope.user, {picture_url: $scope.user.picture_url});
             });
         };
