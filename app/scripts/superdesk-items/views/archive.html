@@ -1,14 +1,14 @@
 <div class="subnav subnav-fixed">
-    <div class="btn-group source-select">
+    <div class="btn-group source-select" sd-provider-filter ng-controller="ProviderFilterCtrl">
         <a class="btn dropdown-toggle" data-toggle="dropdown" href="">{{ 'Provider'|translate }} {{ activeProvider.name }} <span class="caret"></span></a>
         <ul class="dropdown-menu sf-dropdown">
             <li ng-repeat="provider in providers._items">
-                <a ng-href="#/archive/?provider={{ provider._id }}" ng-hide="provider===activeProvider">{{ provider.name }}</a>
+                <a href="" ng-click="set_provider(provider._id)" ng-hide="provider===activeProvider">{{ provider.name }}</a>
                 <strong ng-show="provider===activeProvider">{{ provider.name }}</strong>
             </li>
             <li class="divider" ng-if="activeProvider"></li>
             <li ng-show="activeProvider">
-                <a href="#/archive/" translate>Show All</a>
+                <a href="" ng-click="set_provider()" translate>Show All</a>
             </li>
         </ul>
     </div>
@@ -19,47 +19,37 @@
 <section class="main-section">
     <div class="main-content">
         <div class="main-content-topnav">
-
-            <span class="title" translate>All sources</span>
-            <span class="info" ng-show="items.total_length">({{ items.total_length|number }})</span>
-            
-        
             <div class="btn-group pull-right">
-                <a class="btn" ng-click="toggleView(true)"><i class="icon-th"></i></a>
-                <a class="btn" ng-click="toggleView(false)"><i class="icon-th-list"></i></a>
-            </div>           
-            
-
-        </div>
-        <div class="main-content-subnav">
-            <div sd-pagination data-model="items"></div>
-            <div class="btn-group pull-left" ng-show="!gridview">
-                <a class="btn" ng-class="{'active':compactList}" ng-click="toggleCompact()">Compact view</a>
+                <a href="" class="btn" ng-click="setGridView(true)" ng-class="{'active': ui.grid}"><i class="icon-th"></i></a>
+                <a href="" class="btn" ng-click="setGridView(false)" ng-class="{'active': !ui.grid}"><i class="icon-th-list"></i></a>
             </div>
         </div>
-        <div class="main-content-inner scroller" ng-class="{'grid-view':gridview, 'list-view': !gridview }">
-            
+
+        <div class="main-content-subnav">
+            <div sd-pagination data-model="items"></div>
+            <div class="btn-group pull-left" ng-show="!ui.grid">
+                <a class="btn" ng-class="{'active': ui.compact}" ng-click="toggleCompact()" translate>Compact view</a>
+            </div>
+        </div>
+
+        <div class="main-content-inner scroller" ng-class="{'grid-view': ui.grid, 'list-view': !ui.grid}">
             <!-- grid view -->
-            <div ng-if="gridview">
+            <div ng-if="ui.grid">
                 <div sd-media-box class="media-box" ng-repeat="item in items._items" ></div>
             </div>
 
             <!-- list view -->
-            <div ng-if="!gridview">
+            <div ng-if="!ui.grid">
                 <div sd-media-box-list class="media-box" ng-repeat="item in items._items" ></div>
             </div>
 
             <!-- floating box mask -->
             <div sd-media-box-static></div>
             
-
             <div class="alert alert-info" ng-show="!items._items.length" translate>No results found.</div>
         </div>
     </div>
-    
 </section>
-
-
 
 <div class="modal lightbox-preview urgency-{{ editItem.urgency }}" ng-show="editItem.type != null">
     <section class="lightbox-top">
@@ -68,13 +58,14 @@
         <a class="btn btn-dark" href="" ><i class="icon-trash icon-white"></i> {{ 'Delete'|translate }}</a>
         <a href="" class="lightbox-close" data-dismiss="modal" ng-click="closeEdit()"></a>
     </section>
+
     <section class="lightbox-left"  ng-show="editItem.type == 'picture'">
         <figure class="lightbox-large-preview" >
-            <img ng-src="{{ editItem.renditions.baseImage.href }}" />
+            <img ng-src="{{ editItem.renditions.viewImage.href }}" />
         </figure>
         <div class="lightbox-caption">{{ editItem.headline }}</div>
-        
     </section>
+
     <section class="lightbox-left" ng-show="editItem.type == 'text'">        
         <div class="lightbox-paper">
             <div class="lightbox-text">
@@ -89,6 +80,7 @@
             </div>
         </div>
     </section>
+
     <section class="lightbox-right">
         <header>
             <h5 class="lightbox-title" ng-show="editItem.slugline != null">{{ editItem.slugline }}</h5>
@@ -101,7 +93,7 @@
         <div class="lightbox-media-data" >
             <div class="lightbox-descritpion">
             </div>
-            <div class="tabmodule" ng-class="{'tabmodule-open':toggleDetails}">
+            <div class="tabmodule" ng-class="{'tabmodule-open':toggleDetails}" ng-init="toggleDetails=true">
                 <div class="tabmodule-header" ng-click="toggleDetails=!toggleDetails">
                     <i class="icon-chevron-down toggle-module-close"></i>
                     <i class="icon-chevron-right toggle-module-open"></i>
@@ -110,14 +102,13 @@
                 <div class="tabmodule-content">
                     <dl class="metadata-details-new clearfix">
                         <dt translate>Provider</dt><dd>{{ editItem.provider }}</dd>
-                        <dt translate>Creditline</dt><dd>&copy;{{ editItem.creditline }}</dd>
-                        <dt translate>Urgency</dt><dd>{{ editItem.urgency }}</dd>
+                        <dt translate>GUID</dt><dd>{{ editItem.guid }}</dd>
                         <dt translate>Item type</dt><dd>{{ editItem.type }}</dd>
-                        <dt translate>Subject</dt><dd>{{ editItem.subject | mergeWords }}</dd>
-                        <dt translate>First created</dt><dd>{{ editItem.firstcreated }}</dd>
-                        <dt translate>Updated</dt><dd>{{ editItem.updated }}</dd>
-                        <dt translate>Version created</dt><dd>{{ editItem.versioncreated }}</dd>
+                        <dt translate>First created</dt><dd>{{ editItem.firstcreated|reldate }}</dd>
+                        <dt translate>Version created</dt><dd>{{ editItem.versioncreated|reldate }}</dd>
                         <dt translate>Version</dt><dd>{{ editItem.version }}</dd>
+                        <dt translate>Creditline</dt><dd>&copy;{{ editItem.creditline }}</dd>
+                        <dt translate>Subject</dt><dd>{{ editItem.subject | mergeWords }}</dd>
                     </dl>
                 </div>
             </div>

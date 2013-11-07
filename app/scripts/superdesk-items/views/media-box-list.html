@@ -1,5 +1,5 @@
 <div class="media-box media-{{item.type}} urgency-{{ item.urgency }}" 
-     ng-class="{ selected : item.selected , 'compact-item' : compactList}">
+     ng-class="{ selected : item.selected , 'compact-item': ui.compact}">
 
     <div class="list-field">
         <div sd-check ng-model="item.selected" ng-show="!gridview"></div>
@@ -8,15 +8,15 @@
     <div class="media-info" >
         <div class="list-field type-icon">
             <i class="filetype-icon-{{item.type}}"></i>
-            <span class="urgency-label" ng-show="!compactList">{{ item.urgency }}</span>
+            <span class="urgency-label" ng-show="!ui.compact">{{ item.urgency }}</span>
         </div>
-        <div class="list-field" ng-show="compactList"><span class="urgency-label">{{ item.urgency }}</span></div>
-        <h5 class="list-field"  ng-click="edit(item)">
-            <div class="item-provider"  ng-show="compactList">{{ item.provider }}</div>
-            <div class="main-title">{{ item.headline }}</div>
-            <div class="meta-data-field" ng-show="!compactList"><div class="item-provider">{{ item.provider }}</div>// {{ item.subject | mergeWords}}</div>
-        </h5>
+        <div class="list-field" ng-show="ui.compact"><span class="urgency-label">{{ item.urgency }}</span></div>
 
+        <h5 class="list-field"  ng-click="edit(item)">
+            <div class="item-provider"  ng-show="ui.compact">{{ item.provider }}</div>
+            <div class="main-title">{{ item.headline }}</div>
+            <div class="meta-data-field" ng-show="!ui.compact"><div class="item-provider">{{ item.provider }}</div>// {{ item.subject | mergeWords}}</div>
+        </h5>
 
         <div class="item-right list-field">
             <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>
@@ -25,11 +25,9 @@
                 <a class="list-field"><i class="icon-assign"></i></a>
                 <a class="list-field"><i class="icon-list-alt"></i></a>
                 <a class="list-field" ng-click="edit(item)"><i class="icon-eye-open"></i></a>
-                <a class="list-field"><i class="icon-expand-thin"></i></a>
+                <a class="list-field" ng-click="archive(item)"><i class="icon-expand-thin"></i></a>
                 <a class="list-field"><i class="icon-dots"></i></a>
             </div>
         </div>
-
-
     </div>
 </div>

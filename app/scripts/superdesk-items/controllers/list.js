@@ -1,41 +1,38 @@
 define(['lodash', 'angular'], function(_, angular) {
     'use strict';
 
-    return ['$scope', '$routeParams', 'items', 'providerRepository', 'storage',
-    function($scope, $routeParams, items, providerRepository, storage) {
+    return ['$scope', '$routeParams', 'items', 'storage', 'em', 'notify', 'gettext',
+    function($scope, $routeParams, items, storage, em, notify, gettext) {
+
+        function getSetting(key, def) {
+            var val = storage.getItem(key);
+            return (val === null) ? def : val;
+        }
 
         $scope.items = items;
 
-        providerRepository.findAll().then(function(providers) {
-            $scope.providers = providers;
-            if ('provider' in $routeParams) {
-                $scope.activeProvider = _.find(providers._items, {_id: $routeParams.provider});
-            }
-        });
-
         $scope.selectedItem = {
-            item : items._items[0] ,
-            position : {
-                left:0,
-                top:0
+            item: items._items[0],
+            position: {
+                left: 0,
+                top: 0
             },
-            show : false
+            show: false
         };
 
-        var userCompact = storage.getItem('archive-compact');
-        $scope.compactList = (userCompact === null) ? false : userCompact;
-        
+        $scope.ui = {
+            compact: getSetting('archive:compact', false),
+            grid: getSetting('archive:grid', true)
+        };
+
         $scope.toggleCompact = function() {
-            $scope.compactList = ! $scope.compactList;
-            storage.setItem('archive-compact', $scope.compactList, true);
+            $scope.ui.compact = !$scope.ui.compact;
+            storage.setItem('archive:compact', $scope.ui.compact, true);
         };
 
-        var userView = storage.getItem('archive-view');
-        $scope.gridview = (userView === null) ? true : userView;
-        
-        $scope.toggleView = function(val) {
-            $scope.gridview = val;
-            storage.setItem('archive-view', val, true);
+        $scope.setGridView = function(val) {
+            $scope.ui.grid = !!val;
+            storage.setItem('archive:grid', $scope.ui.grid, true);
         };
 
         $scope.edit = function(item) {
@@ -44,6 +41,14 @@ define(['lodash', 'angular'], function(_, angular) {
 
         $scope.closeEdit = function() {
             $scope.editItem = null;
+        };
+
+        $scope.archive = function(item) {
+            notify.info(gettext('Saving item..'));
+            em.create('archive', item).then(function() {
+                notify.pop();
+                notify.success(gettext('Item archived!'), 3000);
+            });
         };
     }];
 });

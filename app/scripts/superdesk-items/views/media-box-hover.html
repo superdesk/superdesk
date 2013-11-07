@@ -21,7 +21,7 @@
         <small title="{{ selectedItem.item.headline }}">{{ selectedItem.item.headline }}</small>
     </div>
 
-    <div class="media-info" ng-if="gridview" ng-click="edit(selectedItem.item)">
+    <div class="media-info" ng-if="ui.grid" ng-click="edit(selectedItem.item)">
         <h5>{{ selectedItem.item.slugline }}</h5>
         <dl class="clearfix">
             <dt class="source"></dt>
@@ -43,7 +43,7 @@
         <a class="thumb-field" ng-click="open('/archive/{{ selectedItem.item._id }}')"><i class="icon-pencil"></i></a>
         <a class="thumb-field"><i class="icon-assign"></i></a>
         <a class="thumb-field"><i class="icon-list-alt"></i></a>
-        <a class="thumb-field"><i class="icon-expand-thin"></i></a>
+        <a class="thumb-field" ng-click="archive(selectedItem.item)"><i class="icon-expand-thin"></i></a>
         <a class="thumb-field"><i class="icon-dots"></i></a>
     </div>
 

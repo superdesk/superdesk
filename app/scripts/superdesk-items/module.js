@@ -9,6 +9,7 @@ define([
     './controllers/edit',
     './controllers/ref',
     './controllers/settings',
+    './controllers/providerFilter',
     './directives',
     './filters'
 ], function($, angular) {
@@ -23,6 +24,7 @@ define([
     ])
         .controller('SettingsCtrl', require('superdesk-items/controllers/settings'))
         .controller('RefController', require('superdesk-items/controllers/ref'))
+        .controller('ProviderFilterCtrl', require('superdesk-items/controllers/providerFilter'))
         .value('providerTypes', {
             aap: {
                 label: 'AAP',
@@ -34,44 +36,49 @@ define([
             }
         })
         .config(function($routeProvider) {
-            $routeProvider.
-                when('/packages/:id', {
-                    templateUrl: 'scripts/superdesk-items/views/edit.html',
-                    controller: require('superdesk-items/controllers/edit'),
-                    resolve: {
-                        item: ['$route', 'server', function($route, server) {
-                            return server.readById('items', $route.current.params.id);
-                        }]
-                    }
-                }).
-                when('/archive/', {
+
+            function resolve(resource) {
+                return {
+                    items: ['locationParams', 'em', '$route', function(locationParams, em, $route) {
+                        var where;
+
+                        if ('provider' in $route.current.params) {
+                            where = {
+                                ingest_provider: $route.current.params.provider,
+                            };
+                        }
+
+                        var criteria = locationParams.reset({
+                            where: where,
+                            sort: ['firstcreated', 'desc'],
+                            max_results: 25
+                        });
+
+                        return em.getRepository(resource).matching(criteria);
+                    }]
+                };
+            }
+
+            $routeProvider
+                .when('/ingest/', {
                     templateUrl: 'scripts/superdesk-items/views/archive.html',
                     controller: require('superdesk-items/controllers/list'),
-                    resolve: {
-                        items: ['locationParams', 'em', '$route', function(locationParams, em, $route) {
-                            var where;
-
-                            if ('provider' in $route.current.params) {
-                                where = {
-                                    ingest_provider: $route.current.params.provider,
-                                };
-                            }
-
-                            var criteria = locationParams.reset({
-                                where: where,
-                                sort: ['firstcreated', 'desc'],
-                                max_results: 25
-                            });
-
-                            return em.getRepository('items').matching(criteria);
-                        }]
-                    },
+                    resolve: resolve('ingest'),
                     menu: {
                         label: gettext('Ingest'),
+                        priority: -300
+                    }
+                })
+                .when('/archive/', {
+                    templateUrl: 'scripts/superdesk-items/views/archive.html',
+                    controller: require('superdesk-items/controllers/list'),
+                    resolve: resolve('archive'),
+                    menu: {
+                        label: gettext('Archive'),
                         priority: -200
                     }
-                }).
-                when('/archive/:id', {
+                })
+                .when('/archive/:id', {
                     templateUrl: 'scripts/superdesk-items/views/edit.html',
                     controller: require('superdesk-items/controllers/edit'),
                     resolve: {
