@@ -33,7 +33,7 @@ class TestCase(unittest.TestCase):
         self.assertEquals(self.item.get('type'), 'text')
 
     def test_urgency(self):
-        self.assertEquals(self.item.get('urgency'), 5)
+        self.assertEquals(self.item.get('urgency'), '5')
 
     def test_copyright(self):
         self.assertEquals(self.item.get('copyrightHolder'), 'Australian Associated Press')

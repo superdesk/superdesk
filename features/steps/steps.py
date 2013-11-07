@@ -22,7 +22,7 @@ def get_self_href(resource):
     return href.replace(app.config.get('SERVER_NAME'), '')
 
 def get_res(url, context):
-    response = context.client.get(url, follow_redirects=True, headers=context.headers)
+    response = context.client.get(url, headers=context.headers)
     assert response.status_code == 200, response.get_data()
     return json.loads(response.get_data())
 
@@ -42,18 +42,23 @@ def step_impl(context, resource):
 @when('we post to "{url}"')
 def step_impl(context, url):
     data = context.text
-    context.response = context.client.post(url, data=data, headers=context.headers, follow_redirects=True)
+    context.response = context.client.post(url, data=data, headers=context.headers)
+
+@when('we put to "{url}"')
+def step_impl(context, url):
+    data =context.text
+    context.response = context.client.put(url, data=data, headers=context.headers)
 
 @when('we get "{url}"')
 def step_impl(context, url):
-    context.response = context.client.get(url, headers=context.headers, follow_redirects=True)
+    context.response = context.client.get(url, headers=context.headers)
 
 @when('we delete "{url}"')
 def step_impl(context, url):
     res = get_res(url, context)
     headers = [('If-Match', res['etag'])]
     headers += context.headers
-    context.response = context.client.delete(get_self_href(res), headers=headers, follow_redirects=True)
+    context.response = context.client.delete(get_self_href(res), headers=headers)
 
 @when('we patch "{url}"')
 def step_impl(context, url):
@@ -61,7 +66,7 @@ def step_impl(context, url):
     headers = [('If-Match', res['etag'])]
     headers += context.headers
     data = context.text
-    context.response = context.client.patch(get_self_href(res), data=data, headers=headers, follow_redirects=True)
+    context.response = context.client.patch(get_self_href(res), data=data, headers=headers)
 
 @when('we upload a binary file')
 def step_impl(context):
@@ -69,7 +74,7 @@ def step_impl(context):
         data = {'file': f}
         headers = [('Content-Type', 'multipart/form-data')]
         headers.append(context.headers[1])
-        context.response = context.client.post('/upload', data=data, headers=headers, follow_redirects=True)
+        context.response = context.client.post('/upload', data=data, headers=headers)
 
 @then('we get new resource')
 def step_impl(context):
@@ -91,8 +96,8 @@ def step_impl(context, field):
 
 @then('we get existing resource')
 def step_impl(context):
-    resp = json.loads(context.response.get_data())
     assert context.response.status_code == 200, context.response.status_code
+    resp = json.loads(context.response.get_data())
     test_json(context)
 
 @then('we get OK response')
@@ -115,7 +120,7 @@ def step_impl(context, key):
 
 @then('we get action in user activity')
 def step_impl(context):
-    response = context.client.get('/activity', headers=context.headers, follow_redirects=True)
+    response = context.client.get('/activity', headers=context.headers)
     data = json.loads(response.get_data())
     assert len(data['_items']), data
 
@@ -124,7 +129,7 @@ def step_impl(context):
     assert context.response.status_code == 200, context.response.get_data()
     data = json.loads(context.response.get_data())
     assert 'url' in data
-    response = context.client.get(data['url'], headers=context.headers, follow_redirects=True)
+    response = context.client.get(data['url'], headers=context.headers)
     assert response.status_code == 200, response.status_code
     assert len(response.get_data()), response
     assert response.mimetype == 'image/jpeg', response.mimetype

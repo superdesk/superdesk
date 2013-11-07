@@ -55,7 +55,7 @@ def parse(text):
     item['type'] = ITEM_CLASS
     item['headline'] = tree.find('head/title').text
     item['guid'] = item['uri'] = docdata.find('doc-id').get('id-string')
-    item['urgency'] = int(docdata.find('urgency').get('ed-urg', 5))
+    item['urgency'] = docdata.find('urgency').get('ed-urg', '5')
     item['firstcreated'] = get_norm_datetime(docdata.find('date.issue'))
     item['versioncreated'] = get_norm_datetime(docdata.find('date.issue'))
     item['keywords'] = get_keywords(tree)

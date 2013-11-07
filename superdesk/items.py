@@ -1,6 +1,14 @@
 
 import superdesk
 
+def on_create_item(data, docs):
+    for doc in docs:
+        if 'guid' in doc:
+            doc.setdefault('_id', doc['guid'])
+
+superdesk.connect('create:ingest', on_create_item)
+superdesk.connect('create:archive', on_create_item)
+
 schema = {
     'guid': {
         'type': 'string'
@@ -9,7 +17,7 @@ schema = {
         'type': 'string'
     },
     'version': {
-        'type': 'string'
+        'type': 'integer'
     },
     'headline': {
         'type': 'string'
@@ -39,15 +47,10 @@ schema = {
         'type': 'string'
     },
     'ingest_provider': {
-        'type': 'objectid',
-        'data_relation': {
-            'resource': 'ingest_providers',
-            'field': '_id',
-            'embeddable': True
-        }
+        'type': 'string'
     },
     'urgency': {
-        'type': 'int'
+        'type': 'integer'
     },
     'contents': {
         'type': 'list'
@@ -69,10 +72,22 @@ schema = {
     }
 }
 
-superdesk.domain('items', {
+item_url = '[\w][\w,.:-]+'
+extra_response_fields = ['guid', 'headline', 'firstcreated', 'versioncreated']
+
+superdesk.domain('ingest', {
     'schema': schema,
-    'extra_response_fields': ['headline', 'guid'],
-    'item_url': '[-_a-zA-Z0-9]{1,32}',
+    'extra_response_fields': extra_response_fields,
+    'item_url': item_url,
+    'datasource': {
+        'backend': 'elastic'
+    }
+})
+
+superdesk.domain('archive', {
+    'schema': schema,
+    'extra_response_fields': extra_response_fields,
+    'item_url': item_url,
     'datasource': {
         'backend': 'elastic'
     }

@@ -12,6 +12,8 @@ import eve.io.mongo
 from flask import abort, app, Blueprint, json
 from flask.ext.script import Command, Option
 from eve.utils import document_link, config, ParsedRequest
+from .utils import str_to_date
+from pyelasticsearch.exceptions import IndexAlreadyExistsError
 
 API_NAME = 'Superdesk API'
 VERSION = (0, 0, 1)
@@ -58,10 +60,35 @@ def blueprint(blueprint, **kwargs):
 class SuperdeskDataLayer(eve.io.DataLayer):
     """Superdesk Data Layer"""
 
+    serializers = {
+        'integer': int,
+        'datetime': str_to_date
+    }
+
     def init_app(self, app):
         self.elastic = eve.io.elastic.Elastic(app)
         self.mongo = eve.io.mongo.Mongo(app)
         self.storage = self.mongo.driver
+        self._init_elastic()
+
+    def _init_elastic(self):
+        try:
+            self.elastic.es.create_index(self.elastic.index)
+        except IndexAlreadyExistsError:
+            pass
+
+        # todo(petr): create a command to set mapping and use domain for mapping
+        for typename in ('archive', 'ingest'):
+            mapping = {}
+            mapping[typename] = {'properties': {
+                'uri': {'type': 'string', 'index': 'not_analyzed'},
+                'guid': {'type': 'string', 'index': 'not_analyzed'},
+                'firstcreated': {'type': 'date'},
+                'versioncreated': {'type': 'date'},
+            }}
+
+            self.elastic.es.put_mapping(self.elastic.index, typename, mapping)
+
 
     def find(self, resource, req):
         return self._backend(resource).find(resource, req)
@@ -77,15 +104,16 @@ class SuperdeskDataLayer(eve.io.DataLayer):
     def find_list_of_ids(self, resource, ids, client_projection=None):
         return self._backend(resource).find_list_of_ids(resource, ids, client_projection)
 
-    def insert(self, resource, docs):
+    def insert(self, resource, docs, **kwargs):
         self._send('create', resource, docs=docs)
-        return self._backend(resource).insert(resource, docs)
+        return self._backend(resource).insert(resource, docs, **kwargs)
 
     def update(self, resource, id_, updates):
         self._send('update', resource, id=id_, updates=updates)
         return self._backend(resource).update(resource, id_, updates)
 
     def replace(self, resource, id_, document):
+        print('replace', id_)
         self._send('update', resource, id=id_, updates=document)
         return self._backend(resource).replace(resource, id_, document)
 

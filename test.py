@@ -1,8 +1,19 @@
 
 import os
+import pymongo
+import pyelasticsearch
+import settings
+from pyelasticsearch.exceptions import ElasticHttpNotFoundError
 
 os.environ['MONGO_DBNAME'] = 'superdesk_tests'
 os.environ['ELASTIC_INDEX'] = 'superdesk_tests'
+
+try:
+    # drop elastic test index
+    es = pyelasticsearch.ElasticSearch(settings.ELASTICSEARCH_URL)
+    es.delete_index(os.environ['ELASTIC_INDEX'])
+except ElasticHttpNotFoundError:
+    pass
 
 import superdesk
 
@@ -15,16 +26,11 @@ app = application
 def drop_db():
     with application.test_request_context():
         try:
-            application.data.driver.cx.drop_database(app.config.get('MONGO_DBNAME'))
+            application.data.mongo.driver.cx.drop_database(app.config.get('MONGO_DBNAME'))
         except AttributeError:
-            pass
-
-        try:
-            application.data.es.delete_all_indexes()
-            application.data.es.refresh()
-        except:
             pass
 
 def setup(context = None):
     if context:
         context.client = application.test_client()
+

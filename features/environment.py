@@ -6,9 +6,9 @@ import test
 
 def before_all(context):
     test.setup(context)
+    test.drop_db()
 
 def before_scenario(context, scenario):
-    test.drop_db()
     context.headers = [('Content-Type', 'application/json')]
 
     if 'auth' in scenario.tags:

@@ -4,7 +4,9 @@ import requests
 import xml.etree.ElementTree as etree
 import traceback
 import datetime
+from urllib.request import urlopen
 
+from flask import url_for
 import superdesk
 from superdesk.io import register_provider
 from superdesk.utc import utcnow
@@ -34,7 +36,7 @@ class ReutersUpdateService(object):
 
         last_updated = provider.get('updated')
         if not last_updated or last_updated < updated + datetime.timedelta(days=-7):
-            last_updated = updated + datetime.timedelta(hours=-12) # last 12h
+            last_updated = updated + datetime.timedelta(hours=-24)
 
         for channel in self.get_channels():
             for guid in self.get_ids(channel, last_updated, updated):
@@ -110,13 +112,30 @@ class ReutersUpdateService(object):
         """Format date for API usage."""
         return date.strftime(self.DATE_FORMAT)
 
-def on_read_items(data, docs):
+def on_read_ingest(data, docs):
     provider = data.find_one('ingest_providers', type=PROVIDER)
-    for doc in docs:
-        if doc.get('ingest_provider') and provider:
-            for i, rendition in doc.get('renditions', {}).items():
-                if rendition.get('href'):
-                    rendition['href'] = '%s?auth_token=%s' % (rendition.get('href'), get_token(provider))
+    if not provider:
+        return
 
-superdesk.connect('read:items', on_read_items)
+    for doc in docs:
+        if doc.get('ingest_provider') and str(doc['ingest_provider']) == str(provider['_id']):
+            for i, rendition in doc.get('renditions', {}).items():
+                rendition['href'] = '%s?auth_token=%s' % (rendition.get('href'), get_token(provider))
+
+def on_create_archive(data, docs):
+    provider = data.find_one('ingest_providers', type=PROVIDER)
+    if not provider:
+        return
+
+    for doc in docs:
+        if doc.get('ingest_provider') and str(doc['ingest_provider']) == str(provider['_id']):
+            for i, rendition in doc.get('renditions', {}).items():
+                asset_url = '%s?auth_token=%s' % (rendition.get('href'), get_token(provider))
+                with urlopen(asset_url) as in_stream:
+                    data.storage.save_file(rendition['residRef'], in_stream, content_type=rendition['mimetype'])
+                    rendition['href'] = url_for('upload.get_upload', filename=rendition['residRef'], _external=True)
+
+superdesk.connect('read:ingest', on_read_ingest)
+superdesk.connect('create:archive', on_create_archive)
+
 superdesk.provider(PROVIDER, ReutersUpdateService())

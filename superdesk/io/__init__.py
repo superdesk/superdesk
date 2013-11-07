@@ -21,12 +21,12 @@ def update_provider(provider):
             item.setdefault('updated', utcnow())
             item['ingest_provider'] = str(provider['_id'])
 
-            old_item = superdesk.app.data.find_one('items', guid=item['guid'])
+            old_item = superdesk.app.data.find_one('ingest', guid=item['guid'])
             if old_item:
-                superdesk.app.data.update('items', str(old_item.get('_id')), item)
+                superdesk.app.data.update('ingest', str(old_item.get('_id')), item)
             else:
                 ingested_count += 1
-                superdesk.app.data.insert('items', [item])
+                superdesk.app.data.insert('ingest', [item], ttl='7d')
 
         superdesk.app.data.update('ingest_providers', str(provider.get('_id')), {
             'updated': start,
