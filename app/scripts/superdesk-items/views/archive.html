@@ -91,7 +91,9 @@
     </section>
     <section class="lightbox-right">
         <header>
-            <h5 class="lightbox-title">{{ editItem.slugline }}</h5>
+            <h5 class="lightbox-title" ng-show="editItem.slugline != null">{{ editItem.slugline }}</h5>
+            <h5 class="lightbox-title" ng-show="editItem.slugline == null">{{ editItem.headline }}</h5>
+
             <span class="lightbox-modified-info">{{ 'Modified:'|translate }} {{ editItem.versioncreated|date:'medium' }}</span>
             <span class="urgency-label">{{ editItem.urgency }}</span>
             <span class="lightbox-media-type filetype-icon-{{editItem.type}}"></span>
