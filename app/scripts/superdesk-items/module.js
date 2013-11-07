@@ -49,16 +49,18 @@ define([
                     controller: require('superdesk-items/controllers/list'),
                     resolve: {
                         items: ['locationParams', 'em', '$route', function(locationParams, em, $route) {
-                            var where = {};
+                            var where;
+
                             if ('provider' in $route.current.params) {
-                                where.ingest_provider = $route.current.params.provider;
+                                where = {
+                                    ingest_provider: $route.current.params.provider,
+                                };
                             }
 
                             var criteria = locationParams.reset({
                                 where: where,
                                 sort: ['firstcreated', 'desc'],
-                                max_results: 25,
-                                searchField: 'headline'
+                                max_results: 25
                             });
 
                             return em.getRepository('items').matching(criteria);

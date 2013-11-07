@@ -21,7 +21,6 @@ define(['lodash', 'angular'], function(_, angular) {
             },
             show : false
         };
-        
 
         var userCompact = storage.getItem('archive-compact');
         $scope.compactList = (userCompact === null) ? false : userCompact;
@@ -31,7 +30,6 @@ define(['lodash', 'angular'], function(_, angular) {
             storage.setItem('archive-compact', $scope.compactList, true);
         };
 
-
         var userView = storage.getItem('archive-view');
         $scope.gridview = (userView === null) ? true : userView;
         
@@ -39,8 +37,6 @@ define(['lodash', 'angular'], function(_, angular) {
             $scope.gridview = val;
             storage.setItem('archive-view', val, true);
         };
-
-        
 
         $scope.edit = function(item) {
             $scope.editItem = item;

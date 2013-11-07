@@ -13,24 +13,26 @@ define([
         }).
         directive('sdSearchbar', function($location, $routeParams) {
             return {
-                link: function($scope, element, attrs) {
+                scope: {
+                    df: '@'
+                },
+                link: function(scope, element, attrs) {
                     element.attr('name', 'searchbar');
                     element.attr('autofocus', 'autofocus');
                     element.addClass('searchbar-container');
+                    element.val($routeParams.q || '');
 
-                    if ('search' in $routeParams) {
-                        element.val($routeParams.q);
-                    }
-
-                    $(element).change(function() {
-                        $scope.$apply(function() {
+                    element.change(function() {
+                        scope.$apply(function() {
                             var query = element.val();
                             if (query && query.length > 2) {
-                                $location.search('search', query);
-                                $location.search('skip', null);
+                                $location.search('q', query);
+                                $location.search('page', null);
+                                $location.search('df', scope.df);
                             } else if (query.length === 0) {
                                 $location.search('q', null);
-                                $location.search('skip', null);
+                                $location.search('page', null);
+                                $location.search('df', null);
                             }
                         });
                     });
