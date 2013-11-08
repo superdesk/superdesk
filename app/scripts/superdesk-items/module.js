@@ -7,9 +7,9 @@ define([
     './resources',
     './controllers/ingest',
     './controllers/archive',
+    './controllers/settings',
     './controllers/edit',
     './controllers/ref',
-    './controllers/settings',
     './directives',
     './filters'
 ], function($, angular) {
