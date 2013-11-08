@@ -37,7 +37,7 @@ def expand_qcode(qcode):
     for key, val in subject_codes.items():
         if is_matching_qcode(key, qcode):
             yield {'qcode': key, 'name': val}
-    return []
+    return
 
 def get_subjects(tree):
     subjects = []

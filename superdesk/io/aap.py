@@ -28,7 +28,7 @@ class AAPIngestService(object):
     def update(self, provider):
         path = provider.get('config', {}).get('path', None)
         if not path:
-            return []
+            return
 
         for filename in os.listdir(path):
             filepath = os.path.join(path, filename)
