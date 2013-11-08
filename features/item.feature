@@ -1,4 +1,3 @@
-@wip
 Feature: News Items Archive
 
     @auth

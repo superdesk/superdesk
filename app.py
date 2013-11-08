@@ -2,14 +2,17 @@
 import os
 import eve
 import superdesk
-from flask import request
+import flask
 
 class SuperdeskTokenAuth(eve.auth.TokenAuth):
     """Superdesk Token Auth"""
 
     def check_auth(self, token, allowed_roles, resource, method):
         """Check if given token is valid"""
-        return app.data.find_one('auth', token=token)
+        auth_token = app.data.find_one('auth', token=token)
+        if auth_token:
+            flask.g.user = app.data.find_one('users', _id=(str(auth_token['user']['_id'])))
+        return auth_token
 
 class SuperdeskEve(eve.Eve):
     """Superdesk API"""

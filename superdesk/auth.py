@@ -30,8 +30,6 @@ def authenticate(credentials, db):
         logger.warning("Login failure: %s" % json.dumps(credentials))
         raise CredentialsAuthException()
 
-    logger.info("User logged in", extra={'user': user})
-
     return user
 
 def on_create_auth(data, docs):

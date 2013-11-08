@@ -9,7 +9,7 @@ import settings
 import eve.io
 import eve.io.elastic
 import eve.io.mongo
-from flask import abort, app, Blueprint, json
+from flask import abort, app, json, Blueprint
 from flask.ext.script import Command, Option
 from eve.utils import document_link, config, ParsedRequest
 from .utils import str_to_date

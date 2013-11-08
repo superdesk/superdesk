@@ -1,3 +1,4 @@
+@wip
 Feature: Authentication
 
     Scenario: Authenticate existing user
@@ -48,4 +49,3 @@ Feature: Authentication
     Scenario: Get auth info with auth token
         When we get "/"
         Then we get response code 200
-        And we get action in user activity
