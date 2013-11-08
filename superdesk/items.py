@@ -90,5 +90,6 @@ superdesk.domain('archive', {
     'item_url': item_url,
     'datasource': {
         'backend': 'elastic'
-    }
+    },
+    'public_methods': ['GET']
 })
