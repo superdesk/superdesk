@@ -1,8 +1,9 @@
 define([
+    'lodash',
     'jquery',
     'angular',
     'moment'
-], function($, angular, moment) {
+], function(_, $, angular, moment) {
     'use strict';
 
     angular.module('superdesk.items.directives', ['ui.bootstrap']).
@@ -71,96 +72,111 @@ define([
                     };
                 }
             };
-        }).
-        directive('sdContenteditable', function() {
-            return {
-                require: '?ngModel',
-                link: function($scope, element, attrs, ngModel) {
-                    element.attr('contenteditable', 'true');
-
-                    $(element).keyup(function(e) {
-                        $scope.$apply(function() {
-                            ngModel.$setViewValue(element.html());
-                        });
-                    });
-
-                    ngModel.$render = function() {
-                        var model = ngModel.$viewValue;
-                        if (angular.isString(model)) {
-                            element.html(model);
-                        } else {
-                            switch (model.contenttype) {
-                            case 'application/xhtml+html':
-                            case 'application/xhtml+xml':
-                                element.html(model.content);
-                                break;
-
-                            case 'image/jpeg':
-                                if (model.rendition !== 'rend:viewImage') {
-                                    break;
-                                }
-
-                                $('<img />').
-                                    attr('src', model.href).
-                                    appendTo(element);
-                                break;
-
-                            case 'audio/mpeg':
-                                $('<audio controls>').
-                                    attr('src', model.href).
-                                    appendTo(element);
-                                break;
-
-                            case 'video/mpeg':
-                                if (model.rendition !== 'rend:stream:700:16x9:mp4') {
-                                    break;
-                                }
-
-                                $('<video controls>').
-                                    attr('src', model.href).
-                                    appendTo(element);
-                                break;
-
-                            default:
-                                console.log(model);
-                            }
-                        }
-                    };
-                }
-            };
-        }).
-        directive('sdMediaBox', function($position){
+        })
+        .directive('sdMediaBox', function($position){
             return {
                 restrict : 'A',
-                templateUrl : 'scripts/superdesk-items/views/media-box.html',
-                replace : true,
-                link: function($scope, element, attrs) {
-                    $scope.hoverItem = function(item) {
-                        var pos = $position.position(element);
-                        $scope.selectedItem.item = item;
-                        $scope.selectedItem.position = { left : pos.left - 9, top : pos.top-15};
-                        $scope.selectedItem.show = true;
+                template: '<div ng-include="itemTemplate"></div>',
+                link: function(scope, element, attrs) {
+
+                    scope.$watch('ui.grid', function(isGrid) {
+                        if (isGrid) {
+                            scope.itemTemplate = 'scripts/superdesk-items/views/media-box-grid.html';
+                        } else {
+                            scope.itemTemplate = 'scripts/superdesk-items/views/media-box-list.html';
+                        }
+                    });
+
+                    scope.hoverItem = function(item) {
+                        var pos = $position.position(element.find('.media-box'));
+                        scope.selectedItem.item = item;
+                        scope.selectedItem.position = {left: pos.left - 9, top: pos.top - 15};
+                        scope.selectedItem.show = true;
                     };
                 }
             };
-        }).
-        directive('sdMediaBoxStatic', function($position){
+        })
+        .directive('sdMediaBoxHover', function($position){
             return {
                 restrict : 'A',
                 templateUrl : 'scripts/superdesk-items/views/media-box-hover.html',
                 replace : true,
-                link: function($scope, element, attrs) {
-
+                link: function(scope, element, attrs) {
                 }
             };
-        }).
-        directive('sdMediaBoxList', function($position){
+        })
+        .directive('sdItemList', function(storage) {
             return {
-                restrict : 'A',
-                templateUrl : 'scripts/superdesk-items/views/media-box-list.html',
-                replace : true,
-                link: function($scope, element, attrs) {
+                templateUrl: 'scripts/superdesk-items/views/item-list.html',
+                link: function(scope, element, attrs) {
+                    function getSetting(key, def) {
+                        var val = storage.getItem(key);
+                        return (val === null) ? def : val;
+                    }
 
+                    scope.selectedItem = {
+                        item: null,
+                        position: {
+                            left: 0,
+                            top: 0
+                        },
+                        show: false
+                    };
+
+                    scope.ui = {
+                        compact: getSetting('archive:compact', false),
+                        grid: getSetting('archive:grid', true)
+                    };
+
+                    var actions = attrs.actions.split(',');
+                    scope.actions = _.zipObject(actions, _.range(1, actions.length + 1, 0));
+
+                    scope.toggleCompact = function() {
+                        scope.ui.compact = !scope.ui.compact;
+                        storage.setItem('archive:compact', scope.ui.compact, true);
+                    };
+
+                    scope.setGridView = function(val) {
+                        scope.ui.grid = !!val;
+                        storage.setItem('archive:grid', scope.ui.grid, true);
+                    };
+
+                    scope.preview = function(item) {
+                        scope.editItem = item;
+                    };
+                }
+            };
+        })
+        .directive('sdItemPreview', function() {
+            return {
+                templateUrl: 'scripts/superdesk-items/views/item-preview.html',
+                replace: true,
+                scope: {
+                    item: '='
+                },
+                link: function(scope, element, attrs) {
+                    scope.closeEdit = function() {
+                        scope.item = null;
+                    };
+                }
+            };
+        })
+        .directive('sdProviderFilter', function($routeParams, $location, providerRepository) {
+            return {
+                scope: {},
+                templateUrl: 'scripts/superdesk-items/views/provider-filter.html',
+                link: function(scope, element, attrs) {
+                    providerRepository.findAll().then(function(providers) {
+                        scope.providers = providers;
+
+                        if ('provider' in $routeParams) {
+                            scope.activeProvider = _.find(providers._items, {_id: $routeParams.provider});
+                        }
+
+                        scope.set_provider = function(provider_id) {
+                            $location.search('provider', provider_id);
+                        };
+                    });
                 }
             };
         });

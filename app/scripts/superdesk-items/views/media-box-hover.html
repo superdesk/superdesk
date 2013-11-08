@@ -1,29 +1,27 @@
-<div class="media-box media-box-hover media-{{selectedItem.item.type}} urgency-{{ selectedItem.item.urgency }}" 
-    ng-class="{
-        selected : selectedItem.item.selected
-    }" 
-    ng-style="selectedItem.position" 
-    ng-show="selectedItem.show"
-    ng-mouseleave="selectedItem.show = false"
-   
->
+<div class="media-box media-box-hover media-{{selectedItem.item.type}} urgency-{{ selectedItem.item.urgency }}"
+    ng-class="{selected: selectedItem.item.selected}"
+    ng-style="selectedItem.position"
+    ng-show="selectedItem.item"
+    ng-mouseleave="selectedItem.item = null" >
+
     <div class="media-select">
         <div sd-check ng-model="selectedItem.item.selected"></div>
     </div>
     
     <div class="drag-fake"></div>
     
-    <figure class="media" ng-if="selectedItem.item.renditions.thumbnail" ng-click="edit(selectedItem.item)" >
+    <figure class="media" ng-if="selectedItem.item.renditions.thumbnail" ng-click="preview(selectedItem.item)" >
         <img ng-src="{{ selectedItem.item.renditions.thumbnail.href }}" alt="" title="{{ selectedItem.item.description }}" />
         <figcaption class="caption">{{ selectedItem.item.creditline }}</figcaption>
     </figure>
-    <div class="media" ng-show="selectedItem.item.type == 'text'" ng-click="edit(selectedItem.item)" >
+    <div class="media" ng-show="selectedItem.item.type == 'text'" ng-click="preview(selectedItem.item)" >
         <small title="{{ selectedItem.item.headline }}">{{ selectedItem.item.headline }}</small>
     </div>
 
-    <div class="media-info" ng-if="ui.grid" ng-click="edit(selectedItem.item)">
+    <div class="media-info" ng-if="ui.grid" ng-click="preview(selectedItem.item)">
         <h5>{{ selectedItem.item.slugline }}</h5>
         <dl class="clearfix">
+
             <dt class="source"></dt>
             <dd class="provider">{{ selectedItem.item.provider }}</dd>
 
@@ -34,20 +32,15 @@
             <dd class="subject-line" popover="{{ selectedItem.item.subject | mergeWords }}" popover-placement="right" popover-trigger="mouseenter">
                 {{ selectedItem.item.subject | mergeWords }}
             </dd>
-
         </dl>
     </div>
 
-    
     <div class="item-functions">
-        <a class="thumb-field" ng-click="open('/archive/{{ selectedItem.item._id }}')"><i class="icon-pencil"></i></a>
-        <a class="thumb-field"><i class="icon-assign"></i></a>
-        <a class="thumb-field"><i class="icon-list-alt"></i></a>
-        <a class="thumb-field" ng-click="archive(selectedItem.item)"><i class="icon-expand-thin"></i></a>
+        <a class="thumb-field" ng-click="preview(selectedItem.item)" ng-show="actions.preview"><i class="icon-eye-open"></i></a>
+        <a class="thumb-field" ng-click="archive(selectedItem.item)" ng-show="actions.archive"><i class="icon-expand-thin"></i></a>
         <a class="thumb-field"><i class="icon-dots"></i></a>
     </div>
 
     <span class="type-icon"><i class="filetype-icon-{{selectedItem.item.type}}"></i></span>
     <span class="urgency-label">{{ selectedItem.item.urgency }}</span>
-   
 </div>

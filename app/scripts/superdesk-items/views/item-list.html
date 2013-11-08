@@ -1,0 +1,24 @@
+<div class="main-content">
+    <div class="main-content-topnav">
+        <div class="btn-group pull-right">
+            <a href="" class="btn" ng-click="setGridView(true)" ng-class="{'active': ui.grid}"><i class="icon-th"></i></a>
+            <a href="" class="btn" ng-click="setGridView(false)" ng-class="{'active': !ui.grid}"><i class="icon-th-list"></i></a>
+        </div>
+    </div>
+
+    <div class="main-content-subnav">
+        <div sd-pagination data-model="items"></div>
+        <div class="btn-group pull-left" ng-show="!ui.grid">
+            <a class="btn" ng-class="{'active': ui.compact}" ng-click="toggleCompact()" translate>Compact view</a>
+        </div>
+    </div>
+
+    <div class="main-content-inner scroller" ng-class="{'grid-view': ui.grid, 'list-view': !ui.grid}">
+        <div ng-repeat="item in items._items" sd-media-box></div>
+
+        <!-- floating box mask -->
+        <div sd-media-box-hover sd-item="selectedItem.item"></div>
+
+        <div class="alert alert-info" ng-show="!items._items.length" translate>No results found.</div>
+    </div>
+</div>

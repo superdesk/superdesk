@@ -1,11 +1,12 @@
-<div class="media-box media-{{item.type}} urgency-{{ item.urgency }}" 
-     ng-class="{ selected : item.selected}"  
-     ng-mouseenter="hoverItem(item)">
-            
+<div class="media-box media-{{item.type}} urgency-{{ item.urgency }}"
+     ng-class="{ selected : item.selected}"
+     ng-mouseenter="hoverItem(item)" >
+
     <figure class="media" ng-if="item.renditions.thumbnail">
         <img ng-src="{{ item.renditions.thumbnail.href }}" alt="" title="{{ item.description }}" />
         <figcaption class="caption">{{ item.creditline }}</figcaption>
     </figure>
+
     <div class="media"  ng-show="item.type == 'text'">
         <small title="{{ item.headline }}">{{ item.headline }}</small>
     </div>
@@ -27,6 +28,5 @@
 
     <span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
     <span class="urgency-label">{{ item.urgency }}</span>
-
     <span class="urgency-line"></span>
 </div>

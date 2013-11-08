@@ -5,11 +5,11 @@ define([
     'superdesk/server',
     'superdesk/entity',
     './resources',
-    './controllers/list',
+    './controllers/ingest',
+    './controllers/archive',
     './controllers/edit',
     './controllers/ref',
     './controllers/settings',
-    './controllers/providerFilter',
     './directives',
     './filters'
 ], function($, angular) {
@@ -24,7 +24,6 @@ define([
     ])
         .controller('SettingsCtrl', require('superdesk-items/controllers/settings'))
         .controller('RefController', require('superdesk-items/controllers/ref'))
-        .controller('ProviderFilterCtrl', require('superdesk-items/controllers/providerFilter'))
         .value('providerTypes', {
             aap: {
                 label: 'AAP',
@@ -37,6 +36,9 @@ define([
         })
         .config(function($routeProvider) {
 
+            /**
+             * Resolve ingest/archive list
+             */
             function resolve(resource) {
                 return {
                     items: ['locationParams', 'em', '$route', function(locationParams, em, $route) {
@@ -61,8 +63,8 @@ define([
 
             $routeProvider
                 .when('/ingest/', {
-                    templateUrl: 'scripts/superdesk-items/views/archive.html',
-                    controller: require('superdesk-items/controllers/list'),
+                    templateUrl: 'scripts/superdesk-items/views/ingest.html',
+                    controller: require('superdesk-items/controllers/ingest'),
                     resolve: resolve('ingest'),
                     menu: {
                         label: gettext('Ingest'),
@@ -71,7 +73,7 @@ define([
                 })
                 .when('/archive/', {
                     templateUrl: 'scripts/superdesk-items/views/archive.html',
-                    controller: require('superdesk-items/controllers/list'),
+                    controller: require('superdesk-items/controllers/archive'),
                     resolve: resolve('archive'),
                     menu: {
                         label: gettext('Archive'),
@@ -93,12 +95,6 @@ define([
                 label: gettext('Ingest Feed'),
                 templateUrl: 'scripts/superdesk-items/views/settings.html'
             });
-        })
-        .run(function($rootScope) {
-            // todo(petr) - remove from root scope, directive maybe?
-            $rootScope.mode = {
-                zen: false
-            };
         })
         .filter('characterCount', function() {
             return function(input) {
