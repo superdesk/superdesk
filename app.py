@@ -34,7 +34,7 @@ if __name__ == '__main__':
     if 'PORT' in os.environ:
         port = int(os.environ.get('PORT'))
         host = '0.0.0.0'
-        app.debug = False
+        app.debug = 'SUPERDESK_DEBUG' in os.environ
     else:
         port = 5000
         host = '127.0.0.1'

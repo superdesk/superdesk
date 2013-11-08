@@ -74,7 +74,7 @@ class SuperdeskDataLayer(eve.io.DataLayer):
     def _init_elastic(self):
         try:
             self.elastic.es.create_index(self.elastic.index)
-        except IndexAlreadyExistsError:
+        except:
             pass
 
         # todo(petr): create a command to set mapping and use domain for mapping
@@ -88,7 +88,6 @@ class SuperdeskDataLayer(eve.io.DataLayer):
             }}
 
             self.elastic.es.put_mapping(self.elastic.index, typename, mapping)
-
 
     def find(self, resource, req):
         return self._backend(resource).find(resource, req)

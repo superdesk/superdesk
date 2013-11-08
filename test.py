@@ -6,12 +6,12 @@ import settings
 from pyelasticsearch.exceptions import ElasticHttpNotFoundError
 
 os.environ['MONGO_DBNAME'] = 'superdesk_tests'
-os.environ['ELASTIC_INDEX'] = 'superdesk_tests'
+os.environ['ELASTICSEARCH_INDEX'] = 'superdesk_tests'
 
 try:
     # drop elastic test index
     es = pyelasticsearch.ElasticSearch(settings.ELASTICSEARCH_URL)
-    es.delete_index(os.environ['ELASTIC_INDEX'])
+    es.delete_index(os.environ['ELASTICSEARCH_INDEX'])
 except ElasticHttpNotFoundError:
     pass
 
