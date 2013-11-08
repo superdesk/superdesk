@@ -9,7 +9,9 @@
                     <figure>
                         <img sd-user-picture data-src="user.picture_url" width="42" height="42">
                     </figure>
-                    <div class="activity-content"><p><b>{{ activity.user.display_name || activity.user.username }}</b>: {{ activity.action }}</div>
+                    <div class="activity-content">
+                        <p><b>{{ activity.user.display_name || activity.user.username }}</b>: {{ activity.action }} {{ activity.extra.headline || activity.extra.slugline || activity.resource }}</p>
+                    </div>
                     <div class="activity-date" sd-reldate ng-model="activity.created"></div>
                 </div>
             </li>
