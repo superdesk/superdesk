@@ -1,6 +1,7 @@
 define([
     'jquery',
     'angular',
+    'angular-ui',
     'superdesk/server',
     'superdesk/entity',
     './resources',
@@ -8,14 +9,17 @@ define([
     './controllers/edit',
     './controllers/ref',
     './controllers/settings',
-    './directives'
+    './directives',
+    './filters'
 ], function($, angular) {
     'use strict';
 
     angular.module('superdesk.items', [
         'superdesk.entity',
         'superdesk.items.resources',
-        'superdesk.items.directives'
+        'superdesk.items.directives',
+        'superdesk.items.filters',
+        'ui.bootstrap'
     ])
         .controller('SettingsCtrl', require('superdesk-items/controllers/settings'))
         .controller('RefController', require('superdesk-items/controllers/ref'))

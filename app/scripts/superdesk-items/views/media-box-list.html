@@ -1,15 +1,22 @@
 <div class="media-box media-{{item.type}} urgency-{{ item.urgency }}" 
-     ng-class="{ selected : item.selected}">
+     ng-class="{ selected : item.selected , 'compact-item' : compactList}">
 
     <div class="list-field">
         <div sd-check ng-model="item.selected" ng-show="!gridview"></div>
     </div>
 
     <div class="media-info" >
-        <div class="list-field type-icon"><i class="filetype-icon-{{item.type}}"></i></div>
-        <div class="list-field"><span class="urgency-label">{{ item.urgency }}</span></div>
-        <h5 class="list-field"  ng-click="edit(item)"><span class="item-provider">{{ item.provider }}</span>{{ item.headline }}
+        <div class="list-field type-icon">
+            <i class="filetype-icon-{{item.type}}"></i>
+            <span class="urgency-label" ng-show="!compactList">{{ item.urgency }}</span>
+        </div>
+        <div class="list-field" ng-show="compactList"><span class="urgency-label">{{ item.urgency }}</span></div>
+        <h5 class="list-field"  ng-click="edit(item)">
+            <div class="item-provider"  ng-show="compactList">{{ item.provider }}</div>
+            <div class="main-title">{{ item.headline }}</div>
+            <div class="meta-data-field" ng-show="!compactList"><div class="item-provider">{{ item.provider }}</div>// {{ item.subject | mergeWords}}</div>
         </h5>
+
 
         <div class="item-right list-field">
             <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>

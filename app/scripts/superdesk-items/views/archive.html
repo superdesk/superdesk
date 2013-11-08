@@ -25,15 +25,17 @@
             
         
             <div class="btn-group pull-right">
-                <a class="btn" ng-click="gridview=true"><i class="icon-th"></i></a>
-                <a class="btn" ng-click="gridview=false"><i class="icon-th-list"></i></a>
-            </div>
-            
+                <a class="btn" ng-click="toggleView(true)"><i class="icon-th"></i></a>
+                <a class="btn" ng-click="toggleView(false)"><i class="icon-th-list"></i></a>
+            </div>           
             
 
         </div>
         <div class="main-content-subnav">
             <div sd-pagination data-model="items"></div>
+            <div class="btn-group pull-left" ng-show="!gridview">
+                <a class="btn" ng-class="{'active':compactList}" ng-click="toggleCompact()">Compact view</a>
+            </div>
         </div>
         <div class="main-content-inner scroller" ng-class="{'grid-view':gridview, 'list-view': !gridview }">
             
@@ -59,99 +61,63 @@
 
 
 
-<div style="width: 820px; margin-left: -410px;" class="modal in" id="editDetailsModal" ng-show="editItem.type == 'text'">
-    <div class="modal-header" style="overflow: hidden">
-        <button type="button" class="close" data-dismiss="modal" ng-click="closeEdit()">×</button>
-        <h3 style="line-height: 2em" title="{{ editItem.headline }}">{{ editItem.headline }}</h3>
-    </div>
-    <div class="modal-body">
-        <div class="row-fluid">
-            <div class="span6">
-                <figure ng-if="editItem.renditions.viewImage">
-                  <img ng-src="{{ editItem.renditions.viewImage.href }}" alt="" title="{{ editItem.description }}" />
-                  <figcaption>&copy; {{ editItem.creditline }}</figcaption>
-                </figure>
-
-                <blockquote ng-if="editItem.body_html" sd-html ng-model="editItem.body_html">
-                  <small ng-show="editItem.creditline">{{ editItem.creditline }}</small>
-                </blockquote>
-
-                <dl class="line-borders clearfix" ng-show>
-                    <dt>File name</dt>
-                    <dd>andromeda și câți alții.jpg</dd>
-                    <dt>File size</dt>
-                    <dd>163.44 KB</dd>
-                </dl>
-            </div>
-            
-
-            <div class="span6" ng-show>
-                <fieldset>
-                    <div class="metadata-language shadow-target" shadow-id="5" id="language-shadow" >
-                        <select class="span2 edit-metadata-select" name="Language">
-                            <option value="1" selected="selected">English</option>
-                            <option value="2">Romanian</option>
-                        </select>
-                    </div>
-                </fieldset>
-            </div>
-
-        </div>
-    </div>
-    <div class="modal-footer">
-        <button class="btn pull-right" ng-click="closeEdit()" translate>Cancel</button>
-    </div>
-</div>
-
-
-
-
-<div class="modal lightbox-preview" id="viewDetailsModal" ng-show="editItem.type == 'picture'">
+<div class="modal lightbox-preview urgency-{{ editItem.urgency }}" ng-show="editItem.type != null">
     <section class="lightbox-top">
         <a class="btn btn-dark" href="" ><i class="icon-pencil icon-white"></i> {{ 'Edit'|translate }}</a>
         <a class="btn btn-dark" href="" ><i class="icon-download-alt icon-white"></i> {{ 'Download'|translate }}</a>
         <a class="btn btn-dark" href="" ><i class="icon-trash icon-white"></i> {{ 'Delete'|translate }}</a>
         <a href="" class="lightbox-close" data-dismiss="modal" ng-click="closeEdit()"></a>
     </section>
-    <section class="lightbox-left">
-        <figure class="lightbox-large-preview">
-            <img ng-src="{{ editItem.renditions.viewImage.href }}" alt="" title="{{ editItem.description }}" />
-            <figcaption>&copy; {{ editItem.creditline }}</figcaption>
+    <section class="lightbox-left"  ng-show="editItem.type == 'picture'">
+        <figure class="lightbox-large-preview" >
+            <img ng-src="{{ editItem.renditions.baseImage.href }}" />
         </figure>
         <div class="lightbox-caption">{{ editItem.headline }}</div>
+        
+    </section>
+    <section class="lightbox-left" ng-show="editItem.type == 'text'">        
+        <div class="lightbox-paper">
+            <div class="lightbox-text">
+                <div class="lightbox-title">{{ editItem.headline }}</div>
+                <figure ng-if="editItem.renditions.viewImage">
+                    <img ng-src="{{ editItem.renditions.viewImage.href }}" title="{{ editItem.description }}" />
+                </figure>
+                <div class="lightbox-fulltext">
+                    <small ng-show="editItem.slugline">{{ editItem.slugline }}</small>
+                    <div ng-show="editItem.body_html" sd-html ng-model="editItem.body_html" class="lightbox-fullcontent"></div>
+                </div>
+            </div>
+        </div>
     </section>
     <section class="lightbox-right">
         <header>
-            <h5 class="lightbox-title">{{ editItem.slugline }}</h5>
+            <h5 class="lightbox-title" ng-show="editItem.slugline != null">{{ editItem.slugline }}</h5>
+            <h5 class="lightbox-title" ng-show="editItem.slugline == null">{{ editItem.headline }}</h5>
+
             <span class="lightbox-modified-info">{{ 'Modified:'|translate }} {{ editItem.versioncreated|date:'medium' }}</span>
-            <span class="lightbox-media-type filetype-icon-photo"></span>
+            <span class="urgency-label">{{ editItem.urgency }}</span>
+            <span class="lightbox-media-type filetype-icon-{{editItem.type}}"></span>
         </header>
         <div class="lightbox-media-data" >
-            <div class="lightbox-descritpion">{{ editItem.description }}</div>
-            <div class="tabmodule">
-                <div class="tabmodule-header">
+            <div class="lightbox-descritpion">
+            </div>
+            <div class="tabmodule" ng-class="{'tabmodule-open':toggleDetails}">
+                <div class="tabmodule-header" ng-click="toggleDetails=!toggleDetails">
                     <i class="icon-chevron-down toggle-module-close"></i>
                     <i class="icon-chevron-right toggle-module-open"></i>
                     <span class="tabmodule-title" translate>Details</span>
                 </div>
                 <div class="tabmodule-content">
                     <dl class="metadata-details-new clearfix">
-                        <dt>Conformance</dt><dd>Power</dd>
-                        <dt>Rights info</dt><dd>AP</dd>
-                        <dt>Provider</dt><dd>AP</dd>
-                        <dt>Title</dt><dd>Sarcozy</dd>
-                        <dt>Creator</dt><dd>John N. Doe</dd>
-                        <dt>Contributor</dt><dd>John N. Doe, Jane F. Doe</dd>
-                        <dt>Creditline</dt><dd>Aliquet massa nunc</dd>
-                        <dt>Subject</dt><dd>French elections</dd>
-                        <dt>City</dt><dd>Paris</dd>
-                        <dt>Country</dt><dd>France</dd>
-                        <dt>Date created</dt><dd>23.01.2011</dd>
-                        <dt>Time created</dt><dd>06:30</dd>
-                        <dt>Keywords</dt><dd>Sarcozy, france, french elections, elections</dd>
-                        <dt>Headline</dt><dd>Lorem Ipsum dossier</dd>
-                        <dt>Description</dt><dd>Habitasse porta sociis pottitor magnis natoque ac et, magna mus lacus</dd>
-                        <dt>Caption</dt><dd>Pulvinar vel enim tristique</dd>
+                        <dt translate>Provider</dt><dd>{{ editItem.provider }}</dd>
+                        <dt translate>Creditline</dt><dd>&copy;{{ editItem.creditline }}</dd>
+                        <dt translate>Urgency</dt><dd>{{ editItem.urgency }}</dd>
+                        <dt translate>Item type</dt><dd>{{ editItem.type }}</dd>
+                        <dt translate>Subject</dt><dd>{{ editItem.subject | mergeWords }}</dd>
+                        <dt translate>First created</dt><dd>{{ editItem.firstcreated }}</dd>
+                        <dt translate>Updated</dt><dd>{{ editItem.updated }}</dd>
+                        <dt translate>Version created</dt><dd>{{ editItem.versioncreated }}</dd>
+                        <dt translate>Version</dt><dd>{{ editItem.version }}</dd>
                     </dl>
                 </div>
             </div>
