@@ -25,10 +25,10 @@ define([
                 transclude: true,
             };
         }]).
-        controller('WorldClockController', function ($scope, $timeout, worldclock, widgetService) {
+        controller('WorldClockController', function ($scope, $timeout, worldclock, widgetService, widgets) {
                 var configuration = widgetService.loadConfiguration('worldClock');
                 if (configuration === null) {
-                    configuration = defaultConfiguration;
+                    configuration = widgets.worldClock.defaultConfiguration;
                     widgetService.saveConfiguration('worldClock', configuration);
                 }
 
