@@ -32,6 +32,22 @@ define([
                     widgetService.saveConfiguration('worldClock', configuration);
                 }
 
+                $scope.update = function() {
+                    $scope.wclock = [];
+                    _.forEach($scope.cities, function(city) {
+                        var full = moment().zone(-cityList[city].zone-cityList[city].daylight);
+                        $scope.wclock.push({
+                            'city' : city,
+                            'full' : full.format('HH:mm'),
+                            'hrs'  : full.format('HH'),
+                            'min'  : full.format('mm'),
+                            'sec'  : full.format('ss')
+                        });
+                    });
+
+                    $timeout($scope.update, 1000);
+                };
+
                 var cityList = {};
                 worldclock.get(function(data){
                     cityList = data;
@@ -41,22 +57,6 @@ define([
                     $scope.maxPage = Math.ceil(configuration.cities.length / $scope.perPage);
 
                     $scope.cities = [];
-
-                    $scope.update = function() {
-                        $scope.wclock = [];
-                        _.forEach($scope.cities, function(city) {
-                            var full = moment().zone(-cityList[city].zone-cityList[city].daylight);
-                            $scope.wclock.push({
-                                'city' : city,
-                                'full' : full.format('HH:mm'),
-                                'hrs'  : full.format('HH'),
-                                'min'  : full.format('mm'),
-                                'sec'  : full.format('ss')
-                            });
-                        });
-
-                        $timeout($scope.update, 1000);
-                    };
 
                     $scope.$watch('page', function(page) {
                         var index = ($scope.page - 1) * $scope.perPage;

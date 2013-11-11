@@ -7,8 +7,12 @@ define(['angular'], function(angular){
             $scope.cities = data;
         });
 
-        $scope.update = function() {
-            console.log($scope.configuration);
+        $scope.check = function(city) {
+            if (_.indexOf($scope.configuration.cities, city) === -1) {
+                return false;
+            } else {
+                return true;
+            }
         };
 
         $scope.add = function() {
@@ -20,7 +24,9 @@ define(['angular'], function(angular){
                     }
                 }
             });
-            $scope.configuration.cities.push(_.keys($scope.cities)[newIndex]);
+            if ($scope.cities[_.keys($scope.cities)[newIndex]].zone) {
+                $scope.configuration.cities.push(_.keys($scope.cities)[newIndex]);
+            }
         };
 
         $scope.remove = function(index) {
