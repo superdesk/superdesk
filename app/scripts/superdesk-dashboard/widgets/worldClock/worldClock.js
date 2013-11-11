@@ -42,10 +42,7 @@ define([
 
                     $scope.cities = [];
 
-                    $scope.$watch('page', function(page) {
-                        var index = ($scope.page - 1) * $scope.perPage;
-                        $scope.cities = configuration.cities.slice(index, index + $scope.perPage);
-
+                    $scope.update = function() {
                         $scope.wclock = [];
                         _.forEach($scope.cities, function(city) {
                             var full = moment().zone(-cityList[city].zone-cityList[city].daylight);
@@ -58,7 +55,13 @@ define([
                             });
                         });
 
-                        console.log($scope.wclock);
+                        $timeout($scope.update, 1000);
+                    };
+
+                    $scope.$watch('page', function(page) {
+                        var index = ($scope.page - 1) * $scope.perPage;
+                        $scope.cities = configuration.cities.slice(index, index + $scope.perPage);
+                        $scope.update();
                     });
                 });
             });
