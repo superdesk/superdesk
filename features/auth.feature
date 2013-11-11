@@ -1,4 +1,3 @@
-@wip
 Feature: Authentication
 
     Scenario: Authenticate existing user

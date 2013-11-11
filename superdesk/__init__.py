@@ -12,7 +12,6 @@ import eve.io.mongo
 from flask import abort, app, json, Blueprint
 from flask.ext.script import Command, Option
 from eve.utils import document_link, config, ParsedRequest
-from .utils import str_to_date
 from pyelasticsearch.exceptions import IndexAlreadyExistsError
 
 API_NAME = 'Superdesk API'
@@ -60,10 +59,10 @@ def blueprint(blueprint, **kwargs):
 class SuperdeskDataLayer(eve.io.DataLayer):
     """Superdesk Data Layer"""
 
-    serializers = {
-        'integer': int,
-        'datetime': str_to_date
-    }
+    serializers = dict(
+        list(eve.io.mongo.Mongo.serializers.items()) + \
+        list(eve.io.elastic.Elastic.serializers.items())
+        )
 
     def init_app(self, app):
         self.elastic = eve.io.elastic.Elastic(app)
@@ -85,6 +84,11 @@ class SuperdeskDataLayer(eve.io.DataLayer):
                 'guid': {'type': 'string', 'index': 'not_analyzed'},
                 'firstcreated': {'type': 'date'},
                 'versioncreated': {'type': 'date'},
+                'subject': {
+                    'properties': {
+                        'name': {'type': 'string', 'index': 'not_analyzed'}
+                    }
+                }
             }}
 
             self.elastic.es.put_mapping(self.elastic.index, typename, mapping)

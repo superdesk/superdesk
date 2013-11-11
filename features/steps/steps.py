@@ -26,6 +26,12 @@ def get_res(url, context):
     assert response.status_code == 200, response.get_data()
     return json.loads(response.get_data())
 
+def assert_200(response):
+    assert response.status_code == 200, '%d: %s' % (response.status_code, response.get_data())
+
+def get_json_data(response):
+    return json.loads(response.get_data())
+
 @given('empty "{resource}"')
 def step_impl(context, resource):
     with app.test_request_context():
@@ -78,7 +84,7 @@ def step_impl(context):
 
 @then('we get new resource')
 def step_impl(context):
-    assert context.response.status_code == 200, context.response.get_data()
+    assert_200(context.response)
     data = json.loads(context.response.get_data())
     assert data['status'] == 'OK', data
     assert data['_links']['self'], data
@@ -96,13 +102,13 @@ def step_impl(context, field):
 
 @then('we get existing resource')
 def step_impl(context):
-    assert context.response.status_code == 200, context.response.status_code
-    resp = json.loads(context.response.get_data())
+    assert_200(context.response)
+    resp = get_json_data(context.response)
     test_json(context)
 
 @then('we get OK response')
 def step_impl(context):
-    assert context.response.status_code == 200, context.response.get_data()
+    assert_200(context.response)
 
 @then('we get response code {code}')
 def step_impl(context, code):
@@ -110,31 +116,39 @@ def step_impl(context, code):
 
 @then('we get updated response')
 def step_impl(context):
-    assert context.response.status_code == 200, context.response.status_code
+    assert_200(context.response)
 
 @then('we get "{key}"')
 def step_impl(context, key):
-    assert context.response.status_code == 200, context.response.status_code
-    data = json.loads(context.response.get_data())
+    assert_200(context.response)
+    data = get_json_data(context.response)
     assert data.get(key), data
 
 @then('we get action in user activity')
 def step_impl(context):
     response = context.client.get('/activity', headers=context.headers)
-    data = json.loads(response.get_data())
+    data = get_json_data(response)
     assert len(data['_items']), data
 
 @then('we get a file reference')
 def step_impl(context):
-    assert context.response.status_code == 200, context.response.get_data()
-    data = json.loads(context.response.get_data())
+    assert_200(context.response)
+    data = get_json_data(context.response)
     assert 'url' in data
     response = context.client.get(data['url'], headers=context.headers)
-    assert response.status_code == 200, response.status_code
+    assert_200(response)
     assert len(response.get_data()), response
     assert response.mimetype == 'image/jpeg', response.mimetype
 
 @then('we get a picture url')
 def step_impl(context):
-    data = json.loads(context.response.get_data())
+    data = get_json_data(context.response)
     assert 'picture_url' in data, data
+
+@then('we get facets "{keys}"')
+def step_impls(context, keys):
+    data = get_json_data(context.response)
+    assert '_facets' in data, data.keys()
+    facets = data['_facets']
+    for key in keys.split(','):
+        assert key in facets, '%s not in [%s]' % (key, ', '.join(facets.keys()))
