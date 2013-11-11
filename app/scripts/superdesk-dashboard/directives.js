@@ -9,20 +9,51 @@ define([
          * sdWidget give appropriate template to data assgined to it
          *
          * Usage:
-         * <div sd-widget data-widget="widget" data-configuration="configuration"></div>
+         * <div sd-widget data-widget="widget"></div>
          * 
          * Params:
          * @param {Object} widget
-         * @param {Object} configuration
          */
-        .directive('sdWidget', [function() {
+        .directive('sdWidget', ['$modal', 'widgetsPath', function($modal, widgetsPath) {
             return {
                 templateUrl: 'scripts/superdesk-dashboard/views/widget.html',
                 restrict: 'A',
                 replace: true,
                 scope: {
-                    widget: '=',
-                    configuration: '='
+                    widget: '='
+                },
+                link: function(scope, element, attrs) {
+                    scope.openConfiguration = function() {
+                        // TODO temporary require with callback usage, should be fixed.
+                        require([
+                            'superdesk-dashboard/controllers/configuration',
+                            'superdesk-dashboard/widgets/' + scope.widget.wcode + '/configuration',
+                        ], function() {
+                            $modal.open({
+                                templateUrl: 'scripts/superdesk-dashboard/views/configuration.html',
+                                controller: require('superdesk-dashboard/controllers/configuration'),
+                                resolve: {
+                                    widget: function() {
+                                        return scope.widget;
+                                    },
+                                    controller: function() {
+                                        return require('superdesk-dashboard/widgets/' + scope.widget.wcode + '/configuration');
+                                    },
+                                    template: function() {
+                                        return 'scripts/superdesk-dashboard/widgets/' + scope.widget.wcode + '/configuration.html';
+                                    },
+                                    configuration: ['widgetService', function(widgetService) {
+                                        var configuration = widgetService.loadConfiguration(scope.widget.wcode);
+                                        if (configuration === null) {
+                                            configuration = scope.widget.defaultConfiguration;
+                                            widgetService.saveConfiguration(scope.widget.wcode, configuration);
+                                        }
+                                        return configuration;
+                                    }]
+                                }
+                            });
+                        });
+                    };
                 }
             };
         }])
@@ -36,20 +67,17 @@ define([
          *  class="gridster"
          *  ng-class="{'editmode': editmode}"
          *  data-status="widgetBoxStatus"
-         *  data-widgets="widgets"
-         *  data-configuration="userSettings"></div>
+         *  data-widgets="widgets"></div>
          * 
          * Params:
          * @param {Boolean} status - on/off switch for widget
          * @param {Object} widgets
-         * @param {Object} configuration
          */
         .directive('sdGrid', function() {
             return {
                 scope: {
                     status: '=',
-                    widgets: '=',
-                    configuration: '='
+                    widgets: '='
                 },
                 replace: true,
                 templateUrl: 'scripts/superdesk-dashboard/views/grid.html',

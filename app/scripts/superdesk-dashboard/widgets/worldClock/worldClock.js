@@ -23,70 +23,43 @@ define([
                 scope: {wtime: '=wtime'},
                 replace: true,
                 transclude: true,
-                restrict: 'E'
             };
         }]).
-        controller('WorldClockController', function ($scope, worldclock, $timeout) {
-                var limit = 3;
-                var skip = 0;
+        controller('WorldClockController', function ($scope, $timeout, worldclock, widgetService) {
+                var configuration = widgetService.loadConfiguration('worldClock');
+                if (configuration === null) {
+                    configuration = defaultConfiguration;
+                    widgetService.saveConfiguration('worldClock', configuration);
+                }
 
-                $scope.showleft = false;
-                $scope.showright = true;
-
-                var city = [];
+                var cityList = {};
                 worldclock.get(function(data){
-                    city = data.city;
-                    $scope.WCtick();
-                });
+                    cityList = data;
 
-                $scope.wclock = [];
+                    $scope.perPage = 3;
+                    $scope.page = 1;
+                    $scope.maxPage = Math.ceil(configuration.cities.length / $scope.perPage);
 
-                $scope.skipNext = function () {
-                    if ($scope.showright) {
-                        skip += limit;
-                        $scope.showArrows();
-                        $scope.WCtick();
-                    }
-                };
+                    $scope.cities = [];
 
-                $scope.showArrows = function() {
-                    if ((skip+limit) >= city.length) {
-                        $scope.showright = false;
-                    } else {
-                        $scope.showright = true;
-                    }
+                    $scope.$watch('page', function(page) {
+                        var index = ($scope.page - 1) * $scope.perPage;
+                        $scope.cities = configuration.cities.slice(index, index + $scope.perPage);
 
-                    if (skip <= 0) {
-                        skip = 0;
-                        $scope.showleft = false;
-                    } else {
-                        $scope.showleft = true;
-                    }
-                };
-
-                $scope.skipPrev = function () {
-                    if ($scope.showleft) {
-                        skip -= limit;
-                        $scope.showArrows();
-                        $scope.WCtick();
-                    }
-                };
-
-                $scope.WCtick = function() {
-                    $scope.wclock = [];
-                    for (var i = skip; i < (skip + limit); i++) {
-                        if (city[i] !== undefined ) {
-                            var full = moment().zone(-city[i].zone-city[i].daylight);
-                            $scope.wclock[i-skip] = {
-                                'city' : city[i].name,
+                        $scope.wclock = [];
+                        _.forEach($scope.cities, function(city) {
+                            var full = moment().zone(-cityList[city].zone-cityList[city].daylight);
+                            $scope.wclock.push({
+                                'city' : city,
                                 'full' : full.format('HH:mm'),
                                 'hrs'  : full.format('HH'),
                                 'min'  : full.format('mm'),
                                 'sec'  : full.format('ss')
-                            };
-                        }
-                    }
-                    $timeout($scope.WCtick, 1000);
-                };
+                            });
+                        });
+
+                        console.log($scope.wclock);
+                    });
+                });
             });
 });

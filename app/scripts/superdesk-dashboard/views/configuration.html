@@ -1,0 +1,16 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <a class="close" ng-click="closeModal()">x</a>
+            <h3>{{widget.name}} {{'Configuration'|translate}}</h3>
+        </div>
+        <div>
+            <div class="modal-body" ng-controller="controller">
+                <div ng-include="template"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn" ng-click="save();closeModal()"><span translate>Save</span></button>
+        </div>
+    </div>
+</div>

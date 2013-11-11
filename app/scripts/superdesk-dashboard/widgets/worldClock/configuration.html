@@ -1,0 +1,10 @@
+<ul>
+    <li ng-repeat="city in configuration.cities">
+        <select ng-model="configuration.cities[$index]" ng-change="update()">
+            <option ng-repeat="(cityName, cityData) in cities" ng-selected="city === cityName" value="{{cityName}}">
+                {{cityName}}
+            </option>
+        </select><a href="" ng-click="$parent.remove($index)">{{'Delete'|translate}}</a>
+    </li>
+    <input type="button" ng-click="add()" value="{{'Add new clock'|translate}}">
+</ul>
