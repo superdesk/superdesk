@@ -10,6 +10,7 @@ define(['angular', 'lodash'], function(angular, lodash) {
                 var userWidgets = storage.getItem(widgetKey) || {};
                 angular.forEach(userWidgets, function(userWidget, wcode) {
                     userWidgets[wcode] = angular.extend(widgets[wcode], userWidget);
+                    userWidgets[wcode].configuration = angular.extend(userWidgets[wcode].configuration, storage.getItem(configurationKey)[wcode]);
                 });
 
                 return userWidgets;
@@ -25,10 +26,10 @@ define(['angular', 'lodash'], function(angular, lodash) {
 
             this.loadConfiguration = function(wcode) {
                 var configuration = storage.getItem(configurationKey);
-                if (configuration && configuration[wcode]) {
-                    return configuration[wcode];
+                if (!configuration || !configuration[wcode]) {
+                    return widgets[wcode].configuration;
                 } else {
-                    return null;
+                    return configuration[wcode];
                 }
             };
 

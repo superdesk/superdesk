@@ -26,43 +26,26 @@ define([
             };
         }]).
         controller('WorldClockController', function ($scope, $timeout, worldclock, widgetService, widgets) {
-                var configuration = widgetService.loadConfiguration('worldClock');
-                if (configuration === null) {
-                    configuration = widgets.worldClock.defaultConfiguration;
-                    widgetService.saveConfiguration('worldClock', configuration);
-                }
+            var cityList = {};
+            worldclock.get(function(data){
+                cityList = data;
+                $scope.update();
+            });
 
-                $scope.update = function() {
-                    $scope.wclock = [];
-                    _.forEach($scope.cities, function(city) {
-                        var full = moment().zone(-cityList[city].zone-cityList[city].daylight);
-                        $scope.wclock.push({
-                            'city' : city,
-                            'full' : full.format('HH:mm'),
-                            'hrs'  : full.format('HH'),
-                            'min'  : full.format('mm'),
-                            'sec'  : full.format('ss')
-                        });
-                    });
-
-                    $timeout($scope.update, 1000);
-                };
-
-                var cityList = {};
-                worldclock.get(function(data){
-                    cityList = data;
-
-                    $scope.perPage = 3;
-                    $scope.page = 1;
-                    $scope.maxPage = Math.ceil(configuration.cities.length / $scope.perPage);
-
-                    $scope.cities = [];
-
-                    $scope.$watch('page', function(page) {
-                        var index = ($scope.page - 1) * $scope.perPage;
-                        $scope.cities = configuration.cities.slice(index, index + $scope.perPage);
-                        $scope.update();
+            $scope.update = function() {
+                $scope.wclock = [];
+                _.forEach($scope.widget.configuration.cities, function(city) {
+                    var full = moment().zone(-cityList[city].zone-cityList[city].daylight);
+                    $scope.wclock.push({
+                        'city' : city,
+                        'full' : full.format('HH:mm'),
+                        'hrs'  : full.format('HH'),
+                        'min'  : full.format('mm'),
+                        'sec'  : full.format('ss')
                     });
                 });
-            });
+
+                $timeout($scope.update, 1000);
+            };
+        });
 });

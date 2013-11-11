@@ -14,7 +14,7 @@ define([
          * Params:
          * @param {Object} widget
          */
-        .directive('sdWidget', ['$modal', 'widgetsPath', function($modal, widgetsPath) {
+        .directive('sdWidget', ['$modal', 'widgetsPath', 'widgetService', function($modal, widgetsPath, widgetService) {
             return {
                 templateUrl: 'scripts/superdesk-dashboard/views/widget.html',
                 restrict: 'A',
@@ -29,7 +29,7 @@ define([
                             'superdesk-dashboard/controllers/configuration',
                             'superdesk-dashboard/widgets/' + scope.widget.wcode + '/configuration',
                         ], function() {
-                            $modal.open({
+                            var modalInstance = $modal.open({
                                 templateUrl: 'scripts/superdesk-dashboard/views/configuration.html',
                                 controller: require('superdesk-dashboard/controllers/configuration'),
                                 resolve: {
@@ -41,15 +41,7 @@ define([
                                     },
                                     template: function() {
                                         return 'scripts/superdesk-dashboard/widgets/' + scope.widget.wcode + '/configuration.html';
-                                    },
-                                    configuration: ['widgetService', function(widgetService) {
-                                        var configuration = widgetService.loadConfiguration(scope.widget.wcode);
-                                        if (configuration === null) {
-                                            configuration = scope.widget.defaultConfiguration;
-                                            widgetService.saveConfiguration(scope.widget.wcode, configuration);
-                                        }
-                                        return configuration;
-                                    }]
+                                    }
                                 }
                             });
                         });
