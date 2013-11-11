@@ -76,25 +76,28 @@ item_url = '[\w][\w,.:-]+'
 
 extra_response_fields = ['guid', 'headline', 'firstcreated', 'versioncreated']
 
-datasource = {
-    'backend': 'elastic',
-    'facets': {
-        'provider': {'terms': {'field': 'provider'}},
-        'urgency': {'terms': {'field': 'urgency'}},
-        'subject': {'terms': {'field': 'subject.name'}},
-    }
+facets = {
+    'provider': {'terms': {'field': 'provider'}},
+    'urgency': {'terms': {'field': 'urgency'}},
+    'subject': {'terms': {'field': 'subject.name'}},
 }
 
 superdesk.domain('ingest', {
     'schema': schema,
     'extra_response_fields': extra_response_fields,
     'item_url': item_url,
-    'datasource': datasource,
+    'datasource': {
+        'backend': 'elastic',
+        'facets': facets
+    }
 })
 
 superdesk.domain('archive', {
     'schema': schema,
     'extra_response_fields': extra_response_fields,
     'item_url': item_url,
-    'datasource': datasource,
+    'datasource': {
+        'backend': 'elastic',
+        'facets': facets
+    }
 })

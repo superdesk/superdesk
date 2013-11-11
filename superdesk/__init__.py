@@ -116,7 +116,6 @@ class SuperdeskDataLayer(eve.io.DataLayer):
         return self._backend(resource).update(resource, id_, updates)
 
     def replace(self, resource, id_, document):
-        print('replace', id_)
         self._send('update', resource, id=id_, updates=document)
         return self._backend(resource).replace(resource, id_, document)
 
