@@ -10,15 +10,16 @@
     
     <div class="drag-fake"></div>
     
-    <figure class="media" ng-if="selectedItem.item.renditions.thumbnail" ng-click="preview(selectedItem.item)" >
+    <figure class="media" ng-show="selectedItem.item.renditions.thumbnail" ng-click="preview(selectedItem.item)" >
         <img ng-src="{{ selectedItem.item.renditions.thumbnail.href }}" alt="" title="{{ selectedItem.item.description }}" />
         <figcaption class="caption">{{ selectedItem.item.creditline }}</figcaption>
     </figure>
+
     <div class="media" ng-show="selectedItem.item.type == 'text'" ng-click="preview(selectedItem.item)" >
         <small title="{{ selectedItem.item.headline }}">{{ selectedItem.item.headline }}</small>
     </div>
 
-    <div class="media-info" ng-if="ui.grid" ng-click="preview(selectedItem.item)">
+    <div class="media-info" ng-click="preview(selectedItem.item)">
         <h5>{{ selectedItem.item.slugline }}</h5>
         <dl class="clearfix">
 

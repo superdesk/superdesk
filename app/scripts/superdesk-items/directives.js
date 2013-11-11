@@ -2,8 +2,9 @@ define([
     'lodash',
     'jquery',
     'angular',
-    'moment'
-], function(_, $, angular, moment) {
+    'moment',
+    'd3'
+], function(_, $, angular, moment, d3) {
     'use strict';
 
     angular.module('superdesk.items.directives', ['ui.bootstrap']).
@@ -79,11 +80,13 @@ define([
                 template: '<div ng-include="itemTemplate"></div>',
                 link: function(scope, element, attrs) {
 
-                    scope.$watch('ui.grid', function(isGrid) {
-                        if (isGrid) {
-                            scope.itemTemplate = 'scripts/superdesk-items/views/media-box-grid.html';
-                        } else {
+                    scope.$watch('ui.view', function(view) {
+                        switch(view) {
+                        case 'list':
                             scope.itemTemplate = 'scripts/superdesk-items/views/media-box-list.html';
+                            break;
+                        default:
+                            scope.itemTemplate = 'scripts/superdesk-items/views/media-box-grid.html';
                         }
                     });
 
@@ -105,7 +108,7 @@ define([
                 }
             };
         })
-        .directive('sdItemList', function(storage) {
+        .directive('sdItemList', function($routeParams, $location, storage) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/item-list.html',
                 link: function(scope, element, attrs) {
@@ -125,7 +128,7 @@ define([
 
                     scope.ui = {
                         compact: getSetting('archive:compact', false),
-                        grid: getSetting('archive:grid', true)
+                        view: $routeParams.view || 'grid'
                     };
 
                     var actions = attrs.actions.split(',');
@@ -136,9 +139,9 @@ define([
                         storage.setItem('archive:compact', scope.ui.compact, true);
                     };
 
-                    scope.setGridView = function(val) {
-                        scope.ui.grid = !!val;
-                        storage.setItem('archive:grid', scope.ui.grid, true);
+                    scope.setView = function(val) {
+                        scope.view = val;
+                        $location.search('view', val !== 'grid' ? val : null);
                     };
 
                     scope.preview = function(item) {
@@ -167,15 +170,68 @@ define([
                 templateUrl: 'scripts/superdesk-items/views/provider-filter.html',
                 link: function(scope, element, attrs) {
                     providerRepository.findAll().then(function(providers) {
-                        scope.providers = providers;
+                        scope.providers = providers._items;
 
                         if ('provider' in $routeParams) {
-                            scope.activeProvider = _.find(providers._items, {_id: $routeParams.provider});
+                            scope.activeProvider = _.find(scope.providers, {_id: $routeParams.provider});
                         }
 
-                        scope.set_provider = function(provider_id) {
-                            $location.search('provider', provider_id);
+                        scope.set_provider = function(provider) {
+                            $location.search('provider', provider ? provider._id : null);
                         };
+                    });
+                }
+            };
+        })
+        .directive('sdPieChart', function() {
+            return {
+                scope: {
+                    terms: '='
+                },
+                link: function(scope, element, attrs) {
+
+                    // todo define chart css
+                    element
+                        .css('background-color', '#fff')
+                        .css('float', 'left')
+                        .css('margin', '10px 0 0 10px');
+
+                    var width = 320 * (attrs.x ? parseInt(attrs.x, 10) : 1),
+                        height = 250 * (attrs.y ? parseInt(attrs.y, 10) : 1),
+                        radius = Math.min(width, height) / 2;
+
+                    var color = d3.scale.category10();
+
+                    var arc = d3.svg.arc()
+                        .outerRadius(radius - 10)
+                        .innerRadius(radius * 8 / 13 / 2);
+
+                    var sort = attrs.sort || null;
+                    var pie = d3.layout.pie()
+                        .value(function(d) { return d.count; })
+                        .sort(sort ? function(a, b) { return d3.ascending(a[sort], b[sort]); } : null);
+
+                    var svg = d3.select(element[0]).append('svg')
+                        .attr('width', width)
+                        .attr('height', height)
+                        .append('g')
+                        .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+
+                    scope.$watch('terms', function(terms) {
+                        var g = svg.selectAll('.arc')
+                            .data(pie(terms))
+                            .enter().append('g')
+                            .attr('class', 'arc');
+
+                        g.append('path')
+                            .attr('d', arc)
+                            .style('fill', function(d) { return color(d.data.term); });
+
+                        g.append('text')
+                            .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
+                            .attr('dy', '.35em')
+                            .style('text-anchor', 'middle')
+                            .text(function(d) { return d.data.term; });
                     });
                 }
             };

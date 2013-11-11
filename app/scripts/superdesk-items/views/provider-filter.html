@@ -1,7 +1,7 @@
 <a class="btn dropdown-toggle" data-toggle="dropdown" href="">{{ 'Provider'|translate }} {{ activeProvider.name }} <span class="caret"></span></a>
 <ul class="dropdown-menu sf-dropdown">
-    <li ng-repeat="provider in providers._items">
-        <a href="" ng-click="set_provider(provider._id)" ng-hide="provider===activeProvider">{{ provider.name }}</a>
+    <li ng-repeat="provider in providers">
+        <a href="" ng-click="set_provider(provider)" ng-hide="provider===activeProvider">{{ provider.name }}</a>
         <strong ng-show="provider===activeProvider">{{ provider.name }}</strong>
     </li>
     <li class="divider" ng-if="activeProvider"></li>

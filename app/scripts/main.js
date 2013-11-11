@@ -19,7 +19,8 @@ require.config({
         'load-image-ios': 'bower_components/blueimp-load-image/js/load-image-ios',
         'jquery.ui.widget': 'bower_components/blueimp-file-upload/js/vendor/jquery.ui.widget',
 
-        'gridster': 'bower_components/gridster/dist/jquery.gridster.with-extras'
+        'gridster': 'bower_components/gridster/dist/jquery.gridster.with-extras',
+        'd3': 'bower_components/d3/d3'
     },
     shim: {
         jquery: {
@@ -61,6 +62,9 @@ require.config({
         },
         'gridster': {
             deps: ['angular']
+        },
+        d3: {
+            exports: 'd3'
         }
     }
 });
