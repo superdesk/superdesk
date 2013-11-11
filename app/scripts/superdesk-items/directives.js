@@ -326,5 +326,58 @@ define([
                     });
                 }
             };
+        })
+        .directive('sdPieChart', function() {
+            return {
+                scope: {
+                    terms: '='
+                },
+                link: function(scope, element, attrs) {
+
+                    // todo define chart css
+                    element
+                        .css('background-color', '#fff')
+                        .css('float', 'left')
+                        .css('margin', '10px 0 0 10px');
+
+                    var width = 320 * (attrs.x ? parseInt(attrs.x, 10) : 1),
+                        height = 250 * (attrs.y ? parseInt(attrs.y, 10) : 1),
+                        radius = Math.min(width, height) / 2;
+
+                    var color = d3.scale.category10();
+
+                    var arc = d3.svg.arc()
+                        .outerRadius(radius - 10)
+                        .innerRadius(radius * 8 / 13 / 2);
+
+                    var sort = attrs.sort || null;
+                    var pie = d3.layout.pie()
+                        .value(function(d) { return d.count; })
+                        .sort(sort ? function(a, b) { return d3.ascending(a[sort], b[sort]); } : null);
+
+                    var svg = d3.select(element[0]).append('svg')
+                        .attr('width', width)
+                        .attr('height', height)
+                        .append('g')
+                        .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+
+                    scope.$watch('terms', function(terms) {
+                        var g = svg.selectAll('.arc')
+                            .data(pie(terms))
+                            .enter().append('g')
+                            .attr('class', 'arc');
+
+                        g.append('path')
+                            .attr('d', arc)
+                            .style('fill', function(d) { return color(d.data.term); });
+
+                        g.append('text')
+                            .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
+                            .attr('dy', '.35em')
+                            .style('text-anchor', 'middle')
+                            .text(function(d) { return d.data.term; });
+                    });
+                }
+            };
         });
 });
