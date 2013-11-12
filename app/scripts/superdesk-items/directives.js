@@ -249,7 +249,6 @@ define([
                         .css('margin', '10px 0 0 10px');
 
                     var width = 320 * (attrs.x ? parseInt(attrs.x, 10) : 1),
-                        height = 250 * (attrs.y ? parseInt(attrs.y, 10) : 1),
                         barHeight = 30,
                         x = d3.scale.linear().range([0, width - 10]);
 
