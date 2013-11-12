@@ -7,6 +7,8 @@ from .iptc import subject_codes
 
 ITEM_CLASS = 'text'
 
+subject_fields = ('tobject.subject.type', 'tobject.subject.matter', 'tobject.subject.detail')
+
 def get_norm_datetime(tree):
     return datetime.strptime(tree.attrib['norm'], '%Y%m%dT%H%M%S')
 
@@ -23,28 +25,19 @@ def get_keywords(tree):
             keywords.append(elem.get('content'))
     return keywords
 
-def is_matching_qcode(x, y):
-    """Test if x matches y qcode.
-
-    x: 02000000 matches y: 02003000 but x: 02001000 doesn't match 02003000
-    """
-    for i, xi in enumerate(x):
-        if xi != '0' and xi != y[i]:
-            return False
-    return True
-
-def expand_qcode(qcode):
-    for key, val in subject_codes.items():
-        if is_matching_qcode(key, qcode):
-            yield {'qcode': key, 'name': val}
-    return
-
 def get_subjects(tree):
     subjects = []
     for elem in tree.findall('head/tobject/tobject.subject'):
         qcode = elem.get('tobject.subject.refnum')
-        for subject in expand_qcode(qcode):
-            subjects.append(subject)
+        for field in subject_fields:
+            if elem.get(field):
+                subjects.append({
+                    'name': elem.get(field)
+                })
+
+        if len(subjects):
+            subjects[-1]['code'] = qcode
+
     return subjects
 
 def parse(text):

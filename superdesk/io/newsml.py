@@ -75,7 +75,7 @@ class Parser():
             if len(qcode_parts) == 2 and qcode_parts[0] == 'subj':
                 try:
                     item['subject'].append({
-                        'qcode': qcode_parts[1],
+                        'code': qcode_parts[1],
                         'name': subject_codes[qcode_parts[1]]
                     })
                 except KeyError:

@@ -52,11 +52,14 @@ class TextParserTest(ItemTest):
 
     def test_subject(self):
         self.assertEquals(2, len(self.item.get('subject')))
-        self.assertIn({'qcode': '15054000', 'name': 'soccer'}, self.item.get('subject'))
+        self.assertIn({'code': '15054000', 'name': 'soccer'}, self.item.get('subject'))
 
 class PictureParserTest(ItemTest):
     def setUp(self):
         self.setUpFixture('picture.xml')
+
+    def test_type(self):
+        self.assertEquals('picture', self.item.get('type'))
 
     def test_content_set(self):
         self.assertEquals(3, len(self.item.get('renditions')))

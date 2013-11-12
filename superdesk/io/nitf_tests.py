@@ -22,8 +22,8 @@ class TestCase(unittest.TestCase):
 
     def test_subjects(self):
         self.assertEquals(len(self.item.get('subject')), 2)
-        self.assertIn({'qcode': '02000000', 'name': 'crime, law and justice'}, self.item.get('subject'))
-        self.assertIn({'qcode': '02003000', 'name': 'police'}, self.item.get('subject'))
+        self.assertIn({'name': 'Justice'}, self.item.get('subject'))
+        self.assertIn({'code': '02003000', 'name': 'Police'}, self.item.get('subject'))
 
     def test_guid(self):
         self.assertEquals(self.item.get('guid'), 'AAP.115314987.5417374')
