@@ -235,5 +235,53 @@ define([
                     });
                 }
             };
+        })
+        .directive('sdHistogram', function() {
+            return {
+                scope: {
+                    entries: '='
+                },
+                link: function(scope, element, attrs) {
+                    // todo define chart css
+                    element
+                        .css('background-color', '#fff')
+                        .css('float', 'left')
+                        .css('margin', '10px 0 0 10px');
+
+                    var width = 320 * (attrs.x ? parseInt(attrs.x, 10) : 1),
+                        height = 250 * (attrs.y ? parseInt(attrs.y, 10) : 1),
+                        barHeight = 30,
+                        x = d3.scale.linear().range([0, width - 10]);
+
+                    var color = d3.scale.category10();
+
+                    var svg = d3.select(element[0]).append('svg')
+                        .attr('width', width);
+
+                    scope.$watch('entries', function(entries) {
+                        var data = _.last(entries, 24);
+                        data.reverse();
+                        x.domain([0, d3.max(data, function(d) { return d.count; })]);
+                        svg.attr('height', barHeight * data.length + 5);
+
+                        var bar = svg.selectAll('.bar')
+                            .data(data)
+                            .enter().append('g')
+                            .attr('class', 'bar')
+                            .attr('transform', function(d, i) { return 'translate(5,' + (5 + i * barHeight) + ')'; });
+
+                        bar.append('rect')
+                            .attr('width', function(d) { return x(d.count); })
+                            .attr('height', barHeight - 1)
+                            .style('fill', function(d) { return color(d.time); });
+
+                        bar.append('text')
+                            .attr('x', 3)
+                            .attr('y', barHeight / 2)
+                            .attr('dy', '.35em')
+                            .text(function(d) { return d.count + ' / ' + moment.unix(d.time / 1000).format('HH:mm') + '+'; });
+                    });
+                }
+            };
         });
 });

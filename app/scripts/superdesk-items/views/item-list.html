@@ -26,6 +26,7 @@
     </div>
 
     <div class="main-content-inner scroller clearfix" ng-if="ui.view === 'stats'">
+        <div sd-histogram data-entries="items._facets.versioncreated.entries"></div>
         <div sd-pie-chart data-terms="items._facets.provider.terms"></div>
         <div sd-pie-chart data-terms="items._facets.urgency.terms" data-sort="term"></div>
         <div sd-pie-chart data-terms="items._facets.subject.terms" data-x="2" data-y="2"></div>
