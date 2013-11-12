@@ -33,4 +33,3 @@ def drop_db():
 def setup(context = None):
     if context:
         context.client = application.test_client()
-

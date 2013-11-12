@@ -11,7 +11,12 @@ Feature: Ingest
     Scenario: List ingest with items
         Given "ingest"
             """
-            [{"guid": "tag:example.com,0000:newsml_BRE9A605", "urgency": "1", "provider": "example.com"}]
+            [{
+                "guid": "tag:example.com,0000:newsml_BRE9A605",
+                "urgency": "1",
+                "provider": "example.com",
+                "versioncreated": "2013-11-11T11:11:11+00:00"
+            }]
             """
 
         When we get "/ingest"

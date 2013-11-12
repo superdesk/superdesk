@@ -71,11 +71,7 @@ class SuperdeskDataLayer(eve.io.DataLayer):
         self._init_elastic()
 
     def _init_elastic(self):
-        try:
-            self.elastic.es.create_index(self.elastic.index)
-        except:
-            pass
-
+        """Put elasticsearch mapping."""
         # todo(petr): create a command to set mapping and use domain for mapping
         for typename in ('archive', 'ingest'):
             mapping = {}
