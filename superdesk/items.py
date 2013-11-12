@@ -80,6 +80,7 @@ facets = {
     'provider': {'terms': {'field': 'provider'}},
     'urgency': {'terms': {'field': 'urgency'}},
     'subject': {'terms': {'field': 'subject.name'}},
+    'versioncreated': {'date_histogram': {'field': 'versioncreated', 'interval': 'hour'}},
 }
 
 superdesk.domain('ingest', {
