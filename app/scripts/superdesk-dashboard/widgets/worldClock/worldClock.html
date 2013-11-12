@@ -1,17 +1,21 @@
 <div>
 	<div class="clocks-container clearfix">
-	    <div sd-clock ng-repeat="clock in wclock" wtime="clock"></div>
+	    <div ng-repeat="clock in wclock">
+            <div class="clock-box">
+                <header>{{ clock.city }}</header>
+                <div class="wclock">
+                    <div class="clock-circle">
+                        <div class="clock-hands">
+                            <div class="hour" style="-webkit-transform: rotate({{ ((clock.hrs-9)%12) * 30 +  clock.min/2 }}deg);"></div>
+                            <div class="minute" style="-webkit-transform: rotate({{ clock.min * 6 }}deg);"></div>
+                            <div class="second" style="-webkit-transform: rotate({{ clock.sec * 6 }}deg);"></div>
+                       </div>
+                    </div>
+                </div>
+                <time>{{ clock.full }}</time>
+            </div>
+        </div>
 	</div>
 
-	<div class="widget-footer">
-	    <div class="slider">
-	        <span class="arrow left" ng-click="page = page - 1" ng-hide="page === 1"></span>
-            
-            <span class="arrow left" ng-show="page === 1" class="disable"></span>
-	        
-            <span class="arrow right" ng-click="page = page + 1" ng-hide="page === maxPage"></span>
-
-            <span class="arrow right" ng-show="page === maxPage" class="disable"></span>
-	    </div>
-	</div>
+	<div class="widget-footer"></div>
 </div>

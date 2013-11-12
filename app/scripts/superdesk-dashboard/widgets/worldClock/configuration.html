@@ -1,10 +1,11 @@
-<ul>
-    <li ng-repeat="city in configuration.cities">
-        <select ng-model="configuration.cities[$index]">
-            <option ng-repeat="(cityName, cityData) in cities" ng-selected="city === cityName" value="{{cityName}}" ng-disabled="check(cityName)">
-                {{cityName}}
-            </option>
-        </select><a href="" ng-click="$parent.remove($index)">{{'Delete'|translate}}</a>
-    </li>
-    <input type="button" ng-click="add()" value="{{'Add new clock'|translate}}">
-</ul>
+total selected: {{selectedCount}}<br>
+<a href="" ng-click="clear();">clear all</a><br>
+<tabset>
+    <tab ng-repeat="(region, zones) in availableZones" heading="{{region}}">
+        <ul>
+            <li ng-repeat="zone in zones">
+                <input sd-check ng-model="selected[region + '/' + zone]">{{zone}}
+            </li>
+        </ul>
+    </tab>
+</tabset>

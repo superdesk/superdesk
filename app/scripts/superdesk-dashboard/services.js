@@ -1,16 +1,18 @@
-define(['angular', 'lodash'], function(angular, lodash) {
+define(['angular', 'angular-resource'], function(angular) {
     'use strict';
 
     angular.module('superdesk.dashboard.services', ['superdesk.dashboard.providers'])
-        .service('widgetService', ['$q', 'storage', 'widgets', function($q, storage, widgets) {
+        .service('widgetService', ['$q', '$resource', 'storage', 'widgets', 'widgetsPath', function($q, $resource, storage, widgets, widgetsPath) {
             var widgetKey = 'dashboard:widgets';
             var configurationKey = 'dashboard:widgets:configuration';
+            var timezoneData = {};
 
             this.load = function() {
                 var userWidgets = storage.getItem(widgetKey) || {};
+                var configuration = storage.getItem(configurationKey) || {};
                 angular.forEach(userWidgets, function(userWidget, wcode) {
                     userWidgets[wcode] = angular.extend(widgets[wcode], userWidget);
-                    userWidgets[wcode].configuration = angular.extend(userWidgets[wcode].configuration, storage.getItem(configurationKey)[wcode]);
+                    userWidgets[wcode].configuration = angular.extend(userWidgets[wcode].configuration, configuration[wcode]);
                 });
 
                 return userWidgets;
@@ -37,6 +39,22 @@ define(['angular', 'lodash'], function(angular, lodash) {
                 var config = storage.getItem(configurationKey) || {};
                 config[wcode] = configuration;
                 storage.setItem(configurationKey, config, true);
+            };
+
+            this.getTimezoneData = function(region) {
+                var delay = $q.defer();
+
+                if (timezoneData[region]) {
+                    delay.resolve(timezoneData[region]);
+                } else {
+                    var filename = widgetsPath + 'worldClock/timezones-' + region + '.json';
+                    $resource(filename).get(function(data) {
+                        timezoneData[region] = data;
+                        delay.resolve(data);
+                    });
+                }
+
+                return delay.promise;
             };
 
         }]);

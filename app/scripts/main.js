@@ -7,6 +7,7 @@ require.config({
         'angular-resource': 'bower_components/angular-resource/angular-resource',
         'angular-route': 'bower_components/angular-route/angular-route',
         'moment': 'bower_components/momentjs/moment',
+        'moment-timezone': 'bower_components/moment-timezone/moment-timezone',
         'restangular': 'bower_components/restangular/dist/restangular',
         'lodash': 'bower_components/lodash/dist/lodash',
         'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext',
