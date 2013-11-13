@@ -1,9 +1,10 @@
 total selected: {{selectedCount}}<br>
-<a href="" ng-click="clear();">clear all</a><br>
+<a href="" ng-click="clear();">clear all selected</a><br>
+search: <input ng-model="search"><br>
 <tabset>
-    <tab ng-repeat="(region, zones) in availableZones" heading="{{region}}">
+    <tab ng-repeat="(region, zones) in availableZones" heading="{{region}} ({{zones.length}})">
         <ul>
-            <li ng-repeat="zone in zones">
+            <li ng-repeat="zone in zones|filter:search">
                 <input sd-check ng-model="selected[region + '/' + zone]">{{zone}}
             </li>
         </ul>

@@ -2196,39 +2196,6 @@
             "10 Aus EST 1971 10",
             "10 AN EST"
         ],
-        "CET": [
-            "1 C-Eur CE%sT"
-        ],
-        "CST6CDT": [
-            "-6 US C%sT"
-        ],
-        "EET": [
-            "2 EU EE%sT"
-        ],
-        "EST": [
-            "-5 - EST"
-        ],
-        "EST5EDT": [
-            "-5 US E%sT"
-        ],
-        "HST": [
-            "-10 - HST"
-        ],
-        "MET": [
-            "1 C-Eur ME%sT"
-        ],
-        "MST": [
-            "-7 - MST"
-        ],
-        "MST7MDT": [
-            "-7 US M%sT"
-        ],
-        "PST8PDT": [
-            "-8 US P%sT"
-        ],
-        "WET": [
-            "0 EU WE%sT"
-        ],
         "Europe/Amsterdam": [
             "0:19:32 - LMT 1835 0:19:32",
             "0:19:32 Neth %s 1937_6_1 1:19:32",

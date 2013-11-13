@@ -2,10 +2,9 @@ define(['angular', 'angular-resource'], function(angular) {
     'use strict';
 
     angular.module('superdesk.dashboard.services', ['superdesk.dashboard.providers'])
-        .service('widgetService', ['$q', '$resource', 'storage', 'widgets', 'widgetsPath', function($q, $resource, storage, widgets, widgetsPath) {
+        .service('widgetService', ['storage', 'widgets', function(storage, widgets) {
             var widgetKey = 'dashboard:widgets';
             var configurationKey = 'dashboard:widgets:configuration';
-            var timezoneData = {};
 
             this.load = function() {
                 var userWidgets = storage.getItem(widgetKey) || {};
@@ -39,22 +38,6 @@ define(['angular', 'angular-resource'], function(angular) {
                 var config = storage.getItem(configurationKey) || {};
                 config[wcode] = configuration;
                 storage.setItem(configurationKey, config, true);
-            };
-
-            this.getTimezoneData = function(region) {
-                var delay = $q.defer();
-
-                if (timezoneData[region]) {
-                    delay.resolve(timezoneData[region]);
-                } else {
-                    var filename = widgetsPath + 'worldClock/timezones-' + region + '.json';
-                    $resource(filename).get(function(data) {
-                        timezoneData[region] = data;
-                        delay.resolve(data);
-                    });
-                }
-
-                return delay.promise;
             };
 
         }]);
