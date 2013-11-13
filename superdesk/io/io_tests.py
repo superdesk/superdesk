@@ -54,6 +54,9 @@ class TextParserTest(ItemTest):
         self.assertEquals(2, len(self.item.get('subject')))
         self.assertIn({'code': '15054000', 'name': 'soccer'}, self.item.get('subject'))
 
+    def test_pubstatus(self):
+        self.assertEquals('usable', self.item.get('pubstatus'))
+
 class PictureParserTest(ItemTest):
     def setUp(self):
         self.setUpFixture('picture.xml')

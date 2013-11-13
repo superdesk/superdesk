@@ -49,6 +49,7 @@ class Parser():
         item['provider'] = meta.find(self.qname('provider')).attrib['literal']
         item['versioncreated'] = self.datetime(meta.find(self.qname('versionCreated')).text)
         item['firstcreated'] = self.datetime(meta.find(self.qname('firstCreated')).text)
+        item['pubstatus'] = meta.find(self.qname('pubStatus')).attrib['qcode'].split(':')[1]
 
     def parse_content_meta(self, tree, item):
         """Parse contentMeta tag"""

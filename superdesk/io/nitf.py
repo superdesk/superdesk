@@ -54,6 +54,7 @@ def parse(text):
     item['keywords'] = get_keywords(tree)
     item['subject'] = get_subjects(tree)
     item['body_html'] = get_content(tree)
+    item['pubstatus'] = docdata.attrib.get('management-status', 'usable')
 
     try:
         item['copyrightHolder'] = docdata.find('doc.copyright').get('holder')

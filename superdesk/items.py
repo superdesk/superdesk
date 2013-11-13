@@ -69,6 +69,9 @@ schema = {
     },
     'renditions': {
         'type': 'dict'
+    },
+    'pubstatus': {
+        'type': 'string'
     }
 }
 

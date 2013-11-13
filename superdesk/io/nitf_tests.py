@@ -49,5 +49,8 @@ class TestCase(unittest.TestCase):
     def test_rights_info(self):
         self.assertTrue(self.item.get('rightsInfo'))
 
+    def test_pubstatus(self):
+        self.assertEquals('usable', self.item.get('pubstatus'))
+
 if __name__ == '__main__':
     unittest.main()
