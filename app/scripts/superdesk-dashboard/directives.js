@@ -1,6 +1,7 @@
 define([
     'jquery',
-    'angular'
+    'angular',
+    'superdesk-dashboard/controllers/configuration'
 ], function($, angular) {
     'use strict';
 
@@ -24,19 +25,14 @@ define([
                 },
                 link: function(scope, element, attrs) {
                     scope.openConfiguration = function() {
-                        // TODO temporary require with callback usage, should be fixed.
-                        require([
-                            'superdesk-dashboard/controllers/configuration'
-                        ], function() {
-                            $modal.open({
-                                templateUrl: 'scripts/superdesk-dashboard/views/configuration.html',
-                                controller: require('superdesk-dashboard/controllers/configuration'),
-                                resolve: {
-                                    widget: function() {
-                                        return scope.widget;
-                                    }
+                        $modal.open({
+                            templateUrl: 'scripts/superdesk-dashboard/views/configuration.html',
+                            controller: require('superdesk-dashboard/controllers/configuration'),
+                            resolve: {
+                                widget: function() {
+                                    return scope.widget;
                                 }
-                            });
+                            }
                         });
                     };
                 }
