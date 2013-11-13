@@ -29,7 +29,7 @@ define([
                             'superdesk-dashboard/controllers/configuration',
                             'superdesk-dashboard/widgets/' + scope.widget.wcode + '/configuration',
                         ], function() {
-                            var modalInstance = $modal.open({
+                            $modal.open({
                                 templateUrl: 'scripts/superdesk-dashboard/views/configuration.html',
                                 controller: require('superdesk-dashboard/controllers/configuration'),
                                 resolve: {
