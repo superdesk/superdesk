@@ -6,6 +6,7 @@
         <a href="" class="lightbox-close" data-dismiss="modal" ng-click="closeEdit()"></a>
     </section>
 
+    <!-- picture preview -->
     <section class="lightbox-left" ng-show="item.type == 'picture'">
         <figure class="lightbox-large-preview" >
             <img ng-src="{{ item.renditions.baseImage.href }}" />
@@ -13,6 +14,7 @@
         <div class="lightbox-caption">{{ item.headline }}</div>
     </section>
 
+    <!-- text preview -->
     <section class="lightbox-left" ng-show="item.type == 'text'">
         <div class="lightbox-paper">
             <div class="lightbox-text">
@@ -27,6 +29,51 @@
             </div>
         </div>
     </section>
+
+    <!-- composite(package) preview -->
+    <div ng-show="item.type == 'composite'">
+        <div class="lightbox-composite">
+            <ul>
+
+                <li ng-repeat="ref in item.packageRefs" sd-ref class="{{refItem.type}}" ng-click="treepreview(refItem)">
+
+                        <!-- text item -->
+                        <div ng-if="refItem.type == 'text'">
+                            {{ item.headline }}
+                        </div>
+
+                        <!-- picture item -->
+                        <figure ng-if="refItem.type == 'picture'">
+                            <img ng-src="{{ refItem.renditions.thumbnail.href }}"/>
+                        </figure>
+
+                </li>
+            </ul>
+        </div>
+        <div class="lightbox-composite-preview">
+            <section class="lightbox-left" ng-show="item.type == 'composite'">
+                
+                <div class="lightbox-paper" ng-show="treepreviewItem.type == 'text'">
+                    <div class="lightbox-text">
+                        <div class="lightbox-title">{{ treepreviewItem.headline }}</div>
+                        <div class="lightbox-fulltext">
+                            <small ng-show="treepreviewItem.slugline">{{ treepreviewItem.slugline || treepreviewItem.headline }}</small>
+                            <div ng-show="treepreviewItem.body_html" sd-html ng-model="treepreviewItem.body_html" class="lightbox-fullcontent"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <figure class="lightbox-large-preview" ng-show="treepreviewItem.type == 'picture'">
+                    <img ng-src="{{ treepreviewItem.renditions.baseImage.href }}" />
+                </figure>
+                <div class="lightbox-caption" ng-show="treepreviewItem.type == 'picture'">{{ treepreviewItem.headline }}</div>
+
+            </section>
+        </div>
+    </div>
+    
+
+
 
     <section class="lightbox-right">
         <header>

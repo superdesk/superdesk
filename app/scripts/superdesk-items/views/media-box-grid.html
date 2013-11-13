@@ -7,7 +7,7 @@
         <figcaption class="caption">{{ item.creditline }}</figcaption>
     </figure>
 
-    <div class="media"  ng-show="item.type == 'text'">
+    <div class="media"  ng-show="item.type == 'text' || item.type == 'composite'">
         <small title="{{ item.headline }}">{{ item.headline }}</small>
     </div>
 

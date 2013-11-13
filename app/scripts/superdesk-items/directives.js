@@ -146,7 +146,11 @@ define([
 
                     scope.preview = function(item) {
                         scope.editItem = item;
+                        if (item.type === 'composite') {
+                            scope.editItem.packageRefs = item.groups[_.findKey(item.groups,{id:"main"})].refs;
+                        }
                     };
+
                 }
             };
         })
@@ -160,7 +164,23 @@ define([
                 link: function(scope, element, attrs) {
                     scope.closeEdit = function() {
                         scope.item = null;
+                        scope.treepreviewItem = null;
                     };
+                    scope.treepreview = function(item) {
+                        scope.treepreviewItem = item;
+                    };
+                }
+            };
+        })
+        .directive('sdRef',function(em){
+            return {
+                link: function(scope, element, attrs) {
+                    scope.$watch('ref', function(ref) {
+                        em.getRepository('ingest').find(ref.residRef).then(function(item) {
+                            scope.refItem = item;          
+                        });
+                    });
+
                 }
             };
         })
