@@ -25,15 +25,6 @@ define(['angular', 'angular-resource'], function(angular) {
                 storage.setItem(widgetKey, config, true);
             };
 
-            this.loadConfiguration = function(wcode) {
-                var configuration = storage.getItem(configurationKey);
-                if (!configuration || !configuration[wcode]) {
-                    return widgets[wcode].configuration;
-                } else {
-                    return configuration[wcode];
-                }
-            };
-
             this.saveConfiguration = function(wcode, configuration) {
                 var config = storage.getItem(configurationKey) || {};
                 config[wcode] = configuration;

@@ -1,6 +1,6 @@
-total selected: {{selectedCount}}<br>
-<a href="" ng-click="clear();">clear all selected</a><br>
-search: <input ng-model="search"><br>
+total selected: {{selectedCount|translate}}<br>
+<a href="" ng-click="clear();">{{'clear all selected'|translate}}</a><br>
+{{'Search'|translate}}: <input ng-model="search"><br>
 <tabset>
     <tab ng-repeat="(region, zones) in availableZones" heading="{{region}} ({{zones.length}})">
         <ul>
