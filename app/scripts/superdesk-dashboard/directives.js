@@ -26,8 +26,7 @@ define([
                     scope.openConfiguration = function() {
                         // TODO temporary require with callback usage, should be fixed.
                         require([
-                            'superdesk-dashboard/controllers/configuration',
-                            'superdesk-dashboard/widgets/' + scope.widget.wcode + '/configuration',
+                            'superdesk-dashboard/controllers/configuration'
                         ], function() {
                             $modal.open({
                                 templateUrl: 'scripts/superdesk-dashboard/views/configuration.html',

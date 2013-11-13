@@ -112,6 +112,8 @@ define([
         }])
         .controller('WorldClockController', ['$scope', '$timeout', 'widgetService', 'widgets', 'timezoneDataService',
         function ($scope, $timeout, widgetService, widgets, timezoneDataService) {
+            /*
+            // for selective timezone data file loading
             var regions = [];
             _.forEach($scope.widget.configuration.zones, function(zone) {
                 var parts = zone.split('/');
@@ -119,6 +121,13 @@ define([
             });
             regions = _.uniq(regions);
             timezoneDataService.get(regions).then(function(timezoneData) {
+                moment.tz.add(timezoneData);
+                $scope.update();
+            });
+            */
+            
+            // temporary, loading all timezone data files
+            timezoneDataService.get('all').then(function(timezoneData) {
                 moment.tz.add(timezoneData);
                 $scope.update();
             });
