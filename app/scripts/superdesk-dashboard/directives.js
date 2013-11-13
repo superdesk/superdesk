@@ -1,6 +1,7 @@
 define([
     'jquery',
-    'angular'
+    'angular',
+    'superdesk-dashboard/controllers/configuration'
 ], function($, angular) {
     'use strict';
 
@@ -9,19 +10,31 @@ define([
          * sdWidget give appropriate template to data assgined to it
          *
          * Usage:
-         * <div sd-widget data-options="widget" data-definition="widgetDefinition"></div>
+         * <div sd-widget data-widget="widget"></div>
          * 
          * Params:
-         * @param {Object} options - options for current widget instance
-         * @param {Object} definition - definition of widget
+         * @param {Object} widget
          */
-        .directive('sdWidget', [function() {
+        .directive('sdWidget', ['$modal', 'widgetsPath', 'widgetService', function($modal, widgetsPath, widgetService) {
             return {
                 templateUrl: 'scripts/superdesk-dashboard/views/widget.html',
                 restrict: 'A',
                 replace: true,
                 scope: {
-                    widget: '=',
+                    widget: '='
+                },
+                link: function(scope, element, attrs) {
+                    scope.openConfiguration = function() {
+                        $modal.open({
+                            templateUrl: 'scripts/superdesk-dashboard/views/configuration.html',
+                            controller: require('superdesk-dashboard/controllers/configuration'),
+                            resolve: {
+                                widget: function() {
+                                    return scope.widget;
+                                }
+                            }
+                        });
+                    };
                 }
             };
         }])
@@ -63,7 +76,6 @@ define([
                     };
                 },
                 link: function(scope, element, attrs) {
-
                     scope.syncWidgets = function() {
                         angular.forEach(scope.widgets, function(widget) {
                             var sizes = scope.gridster.serialize($(widget.el));

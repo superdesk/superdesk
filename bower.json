@@ -9,6 +9,7 @@
     "json3": "~3.2.4",
     "es5-shim": "~2.1.0",
     "momentjs": "~2.4.0",
+    "moment-timezone": "~0.0.3",
     "angular": "1.2.0-rc.3",
     "angular-resource": "1.2.0-rc.3",
     "angular-route": "1.2.0-rc.3",

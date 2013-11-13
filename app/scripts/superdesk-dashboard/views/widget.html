@@ -4,5 +4,13 @@
 		<span class="widget-icon"><i class="icon-{{ widget.icon }}"></i></span>
 		<div class="widget-title">{{ widget.name }}</div>
 	</div>
-	<div class="widget-content clearfix" ng-include="widget.template"></div>
+	<div class="widget-content clearfix">
+        <div>
+            <div class="widget-content clearfix" ng-include="widget.template"></div>
+
+            <div class="widget-settings" style="margin-top: 6px;">
+                <a href="" ng-click="openConfiguration()"><i class="icon-cog"></i></a>
+            </div>
+        </div>
+    </div>
 </div>

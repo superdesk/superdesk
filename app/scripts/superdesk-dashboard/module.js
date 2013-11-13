@@ -7,18 +7,20 @@ define([
     './services',
     './directives',
     './filters',
-    './widgets/worldclock'
+    './widgets/worldClock/worldClock'
 ], function(angular) {
     'use strict';
 
     angular.module('superdesk.dashboard', [
         'ngRoute',
+        'superdesk.userSettings',
         'superdesk.dashboard.providers',
         'superdesk.dashboard.services',
         'superdesk.dashboard.directives',
         'superdesk.dashboard.filters',
         'superdesk.dashboard.widgets.worldclock'
     ])
+    .constant('widgetsPath', 'scripts/superdesk-dashboard/widgets/')
     .config(['widgetsProvider', function(widgetsProvider) {
         widgetsProvider
             .widget('weather', {
@@ -31,6 +33,7 @@ define([
                 sizey: 2,
                 thumbnail: 'images/sample/widgets/weather.png',
                 template: 'scripts/superdesk-dashboard/views/widgets/widget-default.html',
+                configuration: {},
                 description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
             })
             .widget('worldClock', {
@@ -42,7 +45,9 @@ define([
                 sizex: 1,
                 sizey: 1,
                 thumbnail: 'images/sample/widgets/worldclock.png',
-                template: 'scripts/superdesk-dashboard/views/widgets/widget-worldclock.html',
+                template: 'scripts/superdesk-dashboard/widgets/worldClock/widget-worldclock.html',
+                configurationTemplate: 'scripts/superdesk-dashboard/widgets/worldClock/configuration.html',
+                configuration: {zones: ['Europe/London', 'Asia/Tokyo', 'Europe/Moscow']},
                 description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
             })
             .widget('widgetCool', {
@@ -55,6 +60,7 @@ define([
                 sizey: 1,
                 thumbnail: 'images/sample/widgets/default.png',
                 template: 'scripts/superdesk-dashboard/views/widgets/widget-default.html',
+                configuration: {},
                 description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
             })
             .widget('dashDash', {
@@ -67,6 +73,7 @@ define([
                 sizey: 1,
                 thumbnail: 'images/sample/widgets/default.png',
                 template: 'scripts/superdesk-dashboard/views/widgets/widget-default.html',
+                configuration: {},
                 description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
             });
     }])

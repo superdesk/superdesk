@@ -1,0 +1,10 @@
+<div ng-controller="WorldClockConfigurationController">
+{{'Total selected'|translate}}: {{selectedCount}}<br>
+<a href="" ng-click="clear();">{{'clear all selected'|translate}}</a><br>
+{{'Search'|translate}}: <input ng-model="search"><br>
+<ul>
+    <li ng-repeat="zone in availableZones|filter:search">
+        <input sd-check ng-model="selected[zone]">{{zone}}
+    </li>
+</ul>
+</div>
