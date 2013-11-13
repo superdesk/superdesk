@@ -34,7 +34,7 @@ class TextParserTest(ItemTest):
         self.assertEquals("2013-03-01T15:09:04", self.item.get('firstcreated').isoformat())
 
     def test_parse_content_meta(self):
-        self.assertEquals("3", self.item.get('urgency'))
+        self.assertEquals('3', self.item.get('urgency'))
         self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ", self.item["slugline"])
         self.assertEquals("Soccer-Smiling Benitez pleads for support after midweek outburst", self.item["headline"])
         self.assertEquals("Reuters", self.item["creditline"])
@@ -73,6 +73,14 @@ class PictureParserTest(ItemTest):
         self.assertEquals(772617, remote.get('sizeinbytes'))
         self.assertEquals("image/jpeg", remote.get('mimetype'))
         self.assertEquals("http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1E9341HD701:360624134/tag:reuters.com,0000:binary_GM1E9341HD701-BASEIMAGE", remote.get('href'))
+
+    def test_byline(self):
+        self.assertEquals('MARKO DJURICA', self.item.get('byline'))
+
+    def test_place(self):
+        self.assertEquals(2, len(self.item.get('place')))
+        self.assertIn({'name': 'NAIROBI'}, self.item['place'])
+        self.assertIn({'name': 'Kenya'}, self.item['place'])
 
 class SNEPParserTest(ItemTest):
     def setUp(self):

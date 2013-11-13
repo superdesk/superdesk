@@ -46,7 +46,6 @@ def parse(text):
     docdata = tree.find('head/docdata')
 
     item['type'] = ITEM_CLASS
-    item['headline'] = tree.find('head/title').text
     item['guid'] = item['uri'] = docdata.find('doc-id').get('id-string')
     item['urgency'] = docdata.find('urgency').get('ed-urg', '5')
     item['firstcreated'] = get_norm_datetime(docdata.find('date.issue'))
@@ -56,13 +55,10 @@ def parse(text):
     item['body_html'] = get_content(tree)
     item['pubstatus'] = docdata.attrib.get('management-status', 'usable')
 
-    try:
-        item['copyrightHolder'] = docdata.find('doc.copyright').get('holder')
-    except AttributeError:
-        pass
+    item['headline'] = tree.find('body/body.head/hedline/hl1').text
 
     try:
-        item['rightsInfo'] = docdata.find('doc.rights').attrib
+        item['copyrightholder'] = docdata.find('doc.copyright').get('holder')
     except AttributeError:
         pass
 

@@ -54,11 +54,19 @@ class Parser():
     def parse_content_meta(self, tree, item):
         """Parse contentMeta tag"""
         meta = tree.find(self.qname('contentMeta'))
-        keys = ['urgency', 'slugline', 'headline', 'creditline']
-        for key in keys:
+
+        def parse_meta_item_text(key, dest=None):
+            if dest is None:
+                dest = key
             elem = meta.find(self.qname(key))
             if elem is not None:
-                item[key] = elem.text
+                item[dest] = elem.text
+
+        parse_meta_item_text('urgency')
+        parse_meta_item_text('slugline')
+        parse_meta_item_text('headline')
+        parse_meta_item_text('creditline')
+        parse_meta_item_text('by', 'byline')
 
         try:
             item['description_text'] = meta.find(self.qname('description')).text
@@ -68,6 +76,7 @@ class Parser():
         item['language'] = meta.find(self.qname('language')).get('tag')
 
         self.parse_content_subject(meta, item)
+        self.parse_content_place(meta, item)
 
     def parse_content_subject(self, tree, item):
         item['subject'] = []
@@ -81,6 +90,16 @@ class Parser():
                     })
                 except KeyError:
                     print("Subject code '%s' not found" % qcode_parts[1])
+
+    def parse_content_place(self, tree, item):
+        """Parse subject with type="cptType:5" into place list."""
+        item['place'] = []
+        for subject in tree.findall(self.qname('subject')):
+            if subject.get('type', '') == 'cptType:5':
+                item['place'].append({'name': subject.get('literal')})
+                broader = subject.find(self.qname('broader'))
+                if broader:
+                    item['place'].append({'name': broader.find(self.qname('name')).text})
 
     def parse_rights_info(self, tree, item):
         """Parse Rights Info tag"""

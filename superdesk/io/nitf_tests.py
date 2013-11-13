@@ -36,7 +36,7 @@ class TestCase(unittest.TestCase):
         self.assertEquals(self.item.get('urgency'), '5')
 
     def test_copyright(self):
-        self.assertEquals(self.item.get('copyrightHolder'), 'Australian Associated Press')
+        self.assertEquals(self.item.get('copyrightholder'), 'Australian Associated Press')
 
     def test_dates(self):
         self.assertEquals(self.item.get('firstcreated').isoformat(), '2013-10-20T19:27:51')
@@ -45,9 +45,6 @@ class TestCase(unittest.TestCase):
     def test_content(self):
         text = "<p>   1A) More extreme weather forecast over the next few days the <br />fire situation is likely"
         self.assertIn(text, self.item.get('body_html'))
-
-    def test_rights_info(self):
-        self.assertTrue(self.item.get('rightsInfo'))
 
     def test_pubstatus(self):
         self.assertEquals('usable', self.item.get('pubstatus'))

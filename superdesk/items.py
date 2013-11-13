@@ -10,25 +10,55 @@ superdesk.connect('create:ingest', on_create_item)
 superdesk.connect('create:archive', on_create_item)
 
 schema = {
-    'guid': {
-        'type': 'string'
-    },
     'uri': {
         'type': 'string'
     },
+    'provider': {
+        'type': 'string'
+    },
+    'guid': {
+        'type': 'string'
+    },
+    'type': {
+        'type': 'string'
+    },
     'version': {
-        'type': 'integer'
+        'type': 'string'
+    },
+    'versioncreated': {
+        'type': 'datetime'
+    },
+    'pubstatus': {
+        'type': 'string'
+    },
+    'copyrightholder': {
+        'type': 'string'
+    },
+    'language': {
+        'type': 'string'
+    },
+    'place': {
+        'type': 'list'
+    },
+    'subject': {
+        'type': 'list'
+    },
+    'byline': {
+        'type': 'string'
     },
     'headline': {
         'type': 'string'
+    },
+    'located': {
+        'type': 'string'
+    },
+    'renditions': {
+        'type': 'dict'
     },
     'slugline': {
         'type': 'string'
     },
     'creditline': {
-        'type': 'string'
-    },
-    'copyrightHolder': {
         'type': 'string'
     },
     'description_text': {
@@ -37,23 +67,11 @@ schema = {
     'firstcreated': {
         'type': 'datetime'
     },
-    'versioncreated': {
-        'type': 'datetime'
-    },
-    'type': {
-        'type': 'string'
-    },
-    'provider': {
-        'type': 'string'
-    },
     'ingest_provider': {
         'type': 'string'
     },
     'urgency': {
         'type': 'integer'
-    },
-    'contents': {
-        'type': 'list'
     },
     'groups': {
         'type': 'list'
@@ -61,18 +79,9 @@ schema = {
     'keywords': {
         'type': 'list'
     },
-    'subject': {
-        'type': 'list'
-    },
     'body_html': {
         'type': 'string'
     },
-    'renditions': {
-        'type': 'dict'
-    },
-    'pubstatus': {
-        'type': 'string'
-    }
 }
 
 item_url = '[\w][\w,.:-]+'
