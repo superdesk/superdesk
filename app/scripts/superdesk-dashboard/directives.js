@@ -35,12 +35,6 @@ define([
                                 resolve: {
                                     widget: function() {
                                         return scope.widget;
-                                    },
-                                    controller: function() {
-                                        return require('superdesk-dashboard/widgets/' + scope.widget.wcode + '/configuration');
-                                    },
-                                    template: function() {
-                                        return 'scripts/superdesk-dashboard/widgets/' + scope.widget.wcode + '/configuration.html';
                                     }
                                 }
                             });

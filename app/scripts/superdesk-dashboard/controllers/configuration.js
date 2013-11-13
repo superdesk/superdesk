@@ -1,10 +1,8 @@
 define(['angular'], function(angular){
     'use strict';
 
-    return ['$scope','$modalInstance', 'widgetService', 'widget', 'controller', 'template',
-    function ($scope, $modalInstance, widgetService, widget, controller, template) {
-        $scope.controller = controller;
-        $scope.template = template;
+    return ['$scope','$modalInstance', 'widgetService', 'widget',
+    function ($scope, $modalInstance, widgetService, widget) {
         $scope.widget = widget;
         $scope.configuration = _.cloneDeep($scope.widget.configuration);
 

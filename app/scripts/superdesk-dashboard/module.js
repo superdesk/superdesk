@@ -46,6 +46,7 @@ define([
                 sizey: 1,
                 thumbnail: 'images/sample/widgets/worldclock.png',
                 template: 'scripts/superdesk-dashboard/widgets/worldClock/widget-worldclock.html',
+                configurationTemplate: 'scripts/superdesk-dashboard/widgets/worldClock/configuration.html',
                 configuration: {zones: ['Europe/London', 'Asia/Tokyo', 'Europe/Moscow']},
                 description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
             })
