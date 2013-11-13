@@ -1,21 +1,33 @@
 <div>
-	<div class="clocks-container clearfix">
-	    <div ng-repeat="clock in wclock">
+    <div class="clocks-container clearfix">
+        <div ng-repeat="clock in wclock">
             <div class="clock-box">
                 <header>{{ clock.city }}</header>
                 <div class="wclock">
                     <div class="clock-circle">
                         <div class="clock-hands">
-                            <div class="hour" style="-webkit-transform: rotate({{ ((clock.hrs-9)%12) * 30 +  clock.min/2 }}deg);"></div>
-                            <div class="minute" style="-webkit-transform: rotate({{ clock.min * 6 }}deg);"></div>
-                            <div class="second" style="-webkit-transform: rotate({{ clock.sec * 6 }}deg);"></div>
+                            <div class="hour" style="
+                                transform: rotate({{ ((clock.hrs-9)%12) * 30 +  clock.min/2 }}deg);
+                                -webkit-transform: rotate({{ ((clock.hrs-9)%12) * 30 +  clock.min/2 }}deg);
+                                -ms-transform: rotate({{ ((clock.hrs-9)%12) * 30 +  clock.min/2 }}deg);
+                                "></div>
+                            <div class="minute" style="
+                                transform: rotate({{ clock.min * 6 }}deg);
+                                -ms-transform: rotate({{ clock.min * 6 }}deg);
+                                -webkit-transform: rotate({{ clock.min * 6 }}deg);
+                            "></div>
+                            <div class="second" style="
+                                transform: rotate({{ clock.sec * 6 }}deg);
+                                -ms-transform: rotate({{ clock.sec * 6 }}deg);
+                                -webkit-transform: rotate({{ clock.sec * 6 }}deg);
+                            "></div>
                        </div>
                     </div>
                 </div>
                 <time>{{ clock.full }}</time>
             </div>
         </div>
-	</div>
+    </div>
 
-	<div class="widget-footer"></div>
+    <div class="widget-footer"></div>
 </div>
