@@ -46,7 +46,7 @@ define([
 
                         if ('provider' in $route.current.params) {
                             where = {
-                                ingest_provider: $route.current.params.provider,
+                                provider: $route.current.params.provider,
                             };
                         }
 

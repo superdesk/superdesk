@@ -166,20 +166,13 @@ define([
         })
         .directive('sdProviderFilter', function($routeParams, $location, providerRepository) {
             return {
-                scope: {},
+                scope: {items: '='},
                 templateUrl: 'scripts/superdesk-items/views/provider-filter.html',
                 link: function(scope, element, attrs) {
-                    providerRepository.findAll().then(function(providers) {
-                        scope.providers = providers._items;
-
-                        if ('provider' in $routeParams) {
-                            scope.activeProvider = _.find(scope.providers, {_id: $routeParams.provider});
-                        }
-
-                        scope.set_provider = function(provider) {
-                            $location.search('provider', provider ? provider._id : null);
-                        };
-                    });
+                    scope.activeProvider = $routeParams.provider || null;
+                    scope.setProvider = function(provider) {
+                        $location.search('provider', provider);
+                    };
                 }
             };
         })
