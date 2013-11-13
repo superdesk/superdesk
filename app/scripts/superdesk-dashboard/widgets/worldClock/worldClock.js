@@ -46,42 +46,28 @@ define([
         function ($scope, $resource, widgetsPath, timezoneDataService) {
             var rawTimezoneData = {};
             $scope.selected = {};
-            $scope.availableZones = {};
+            $scope.availableZones = [];
             $scope.selectedCount = 0;
             $scope.search = '';
 
             timezoneDataService.get('all').then(function(timezoneData) {
                 rawTimezoneData = timezoneData;
-                moment.tz.add(timezoneData);
                 _.forEach(timezoneData.zones, function(zoneData, zoneName) {
-                    var parts = [
-                        zoneName.slice(0, zoneName.indexOf('/')),
-                        zoneName.slice(zoneName.indexOf('/') + 1)
-                    ];
-                    if ($scope.availableZones[parts[0]] === undefined) {
-                        $scope.availableZones[parts[0]] = [];
-                    }
-                    $scope.availableZones[parts[0]].push(parts[1]);
+                    $scope.availableZones.push(zoneName);
                     $scope.selected[zoneName] = false;
                 });
                 _.forEach(timezoneData.links, function(target, source) {
-                    var parts = source.split('/');
-                    if ($scope.availableZones[parts[0]] === undefined) {
-                        $scope.availableZones[parts[0]] = [];
-                    }
-                    $scope.availableZones[parts[0]].push(parts[1]);
+                    $scope.availableZones.push(source);
                     $scope.selected[source] = false;
                 });
-                _.forEach($scope.availableZones, function(value, key) {
-                    value.sort(function(a, b) {
-                        if (a > b) {
-                            return 1;
-                        } else if (a < b) {
-                            return -1;
-                        } else {
-                            return 0;
-                        }
-                    });
+                $scope.availableZones.sort(function(a, b) {
+                    if (a > b) {
+                        return 1;
+                    } else if (a < b) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
                 });
                 $scope.rawSelected = _.cloneDeep($scope.selected);
                 _.forEach($scope.configuration.zones, function(item) {
@@ -136,8 +122,9 @@ define([
                 $scope.wclock = [];
                 _.forEach($scope.widget.configuration.zones, function(zone) {
                     var full = moment().tz(zone);
+                    var city = zone.replace(zone.split('/')[0] + '/', '');
                     $scope.wclock.push({
-                        'city' : zone,
+                        'city' : city,
                         'full' : full.format('HH:mm'),
                         'hrs'  : full.format('HH'),
                         'min'  : full.format('mm'),

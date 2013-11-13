@@ -2,13 +2,9 @@
 {{'Total selected'|translate}}: {{selectedCount}}<br>
 <a href="" ng-click="clear();">{{'clear all selected'|translate}}</a><br>
 {{'Search'|translate}}: <input ng-model="search"><br>
-<tabset>
-    <tab ng-repeat="(region, zones) in availableZones" heading="{{region}} ({{zones.length}})">
-        <ul>
-            <li ng-repeat="zone in zones|filter:search">
-                <input sd-check ng-model="selected[region + '/' + zone]">{{zone}}
-            </li>
-        </ul>
-    </tab>
-</tabset>
+<ul>
+    <li ng-repeat="zone in availableZones|filter:search">
+        <input sd-check ng-model="selected[zone]">{{zone}}
+    </li>
+</ul>
 </div>
