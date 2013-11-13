@@ -90,7 +90,13 @@ class SuperdeskDataLayer(eve.io.DataLayer):
             self.elastic.es.put_mapping(self.elastic.index, typename, mapping)
 
     def find(self, resource, req):
-        return self._backend(resource).find(resource, req)
+        cursor = self._backend(resource).find(resource, req)
+        if not cursor.count():
+            return cursor # return 304 if not modified
+        else:
+            # but fetch without filter if there is a change
+            req.if_modified_since = None
+            return self._backend(resource).find(resource, req)
 
     def find_all(self, resource, max_results=1000):
         req = ParsedRequest()
