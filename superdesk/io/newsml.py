@@ -29,7 +29,7 @@ class Parser():
 
         item = {}
         item['guid'] = item['uri'] = tree.attrib['guid']
-        item['version'] = int(tree.attrib['version'])
+        item['version'] = tree.attrib['version']
 
         self.parse_item_meta(tree, item)
         self.parse_content_meta(tree, item)
@@ -79,6 +79,7 @@ class Parser():
         self.parse_content_place(meta, item)
 
     def parse_content_subject(self, tree, item):
+        """Parse subj type subjects into subject list."""
         item['subject'] = []
         for subject in tree.findall(self.qname('subject')):
             qcode_parts = subject.get('qcode', '').split(':')

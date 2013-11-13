@@ -1,13 +1,31 @@
 
+import flask
 import superdesk
+from .utc import utcnow
 
 def on_create_item(data, docs):
     for doc in docs:
         if 'guid' in doc:
             doc.setdefault('_id', doc['guid'])
 
+def on_create_archive(data, docs):
+    print('create archive', docs)
+    for doc in docs:
+        if doc.get('guid'):
+            # set archived on ingest item
+            doc['archived'] = utcnow()
+            ingest_doc = data.find_one('ingest', _id=doc.get('guid'))
+            if ingest_doc:
+                data.update('ingest', ingest_doc.get('_id'), {
+                    'archived': doc['archived']
+                })
+
+        # set who created the item
+        doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
+
 superdesk.connect('create:ingest', on_create_item)
 superdesk.connect('create:archive', on_create_item)
+superdesk.connect('create:archive', on_create_archive)
 
 schema = {
     'uri': {
@@ -81,6 +99,17 @@ schema = {
     },
     'body_html': {
         'type': 'string'
+    },
+    'archived': {
+        'type': 'datetime'
+    },
+    'user': {
+        'type': 'objectid',
+        'data_relation': {
+            'resource': 'users',
+            'field': '_id',
+            'embeddable': True
+        }
     },
 }
 

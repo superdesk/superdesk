@@ -118,6 +118,13 @@ def step_impl(context, code):
 def step_impl(context):
     assert_200(context.response)
 
+@then('we get "{key}" in "{url}"')
+def step_impl(context, key, url):
+    res = context.client.get(url, headers=context.headers)
+    assert_200(res)
+    data = get_json_data(res)
+    assert data.get(key), data
+
 @then('we get "{key}"')
 def step_impl(context, key):
     assert_200(context.response)

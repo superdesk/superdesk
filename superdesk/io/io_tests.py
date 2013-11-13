@@ -24,7 +24,7 @@ class TextParserTest(ItemTest):
 
     def test_parse_id(self):
         self.assertEquals("tag:reuters.com,0000:newsml_L4N0BT5PJ", self.item.get('guid'))
-        self.assertEquals(263518268, self.item.get('version'))
+        self.assertEquals('263518268', self.item.get('version'))
         self.assertEquals(self.item.get('guid'), self.item.get('uri'))
 
     def test_parse_item_meta(self):
