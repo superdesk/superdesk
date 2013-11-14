@@ -1,4 +1,6 @@
-# Superdesk Client [![Build Status](https://travis-ci.org/superdesk/superdesk-client.png?branch=master)](https://travis-ci.org/superdesk/superdesk-client)
+# Superdesk Client 
+[![Build Status](https://travis-ci.org/superdesk/superdesk-client.png?branch=master)](https://travis-ci.org/superdesk/superdesk-client)
+[![Dependency Status](https://david-dm.org/superdesk/superdesk-client.png)](https://david-dm.org/superdesk/superdesk-client)
 
 Superdesk Client is ui for Superdesk REST API server.
 
