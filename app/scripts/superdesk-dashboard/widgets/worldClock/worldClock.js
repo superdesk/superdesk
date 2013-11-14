@@ -58,7 +58,7 @@ define([
                     m: d3.scale.linear().domain([0, 59 + 59/60]).range([0, 2 * pi]),
                     h: d3.scale.linear().domain([0, 11 + 59/60]).range([0, 2 * pi])
                 };
-
+            
             return {
                 scope: {
                     'utc': '=',
@@ -90,7 +90,6 @@ define([
                     clock.append('circle')
                         .attr('r', 1.5)
                         .attr('class', 'clock-inner');
-
                     // format data for given time
                     function getData(timeStr) {
                         var time = timeStr.split(':');
