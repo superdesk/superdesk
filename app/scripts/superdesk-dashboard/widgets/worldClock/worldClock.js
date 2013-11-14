@@ -21,8 +21,8 @@ define([
                 controller : 'WorldClockController'
             };
         }])
-        .controller('WorldClockConfigController', ['$scope', '$resource', 'widgetsPath', 'tzdata',
-        function ($scope, $resource, widgetsPath, tzdata) {
+        .controller('WorldClockConfigController', ['$scope', '$resource', 'tzdata',
+        function ($scope, $resource, tzdata) {
             tzdata.get(function(data) {
                 $scope.availableZones = _.union(
                     _.keys(data.zones),

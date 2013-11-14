@@ -5,6 +5,7 @@
                 <header>{{ zone.split('/')[1].replace('_', ' ') }}</header>
                 <div class="wclock" sd-clock data-utc="utc" data-tz="{{ zone }}"></div>
                 <time>{{ utc.tz(zone).format('HH:mm') }}</time>
+                <div class="date">{{ utc.tz(zone).format('dddd') }}</div>
             </div>
         </div>
     </div>
