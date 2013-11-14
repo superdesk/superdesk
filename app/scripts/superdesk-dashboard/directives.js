@@ -21,7 +21,8 @@ define([
                 restrict: 'A',
                 replace: true,
                 scope: {
-                    widget: '='
+                    widget: '=',
+                    id: '='
                 },
                 link: function(scope, element, attrs) {
                     scope.openConfiguration = function() {
@@ -31,6 +32,9 @@ define([
                             resolve: {
                                 widget: function() {
                                     return scope.widget;
+                                },
+                                id: function() {
+                                    return scope.id;
                                 }
                             }
                         });

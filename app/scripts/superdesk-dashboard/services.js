@@ -9,10 +9,18 @@ define(['angular', 'angular-resource'], function(angular) {
             this.load = function() {
                 var userWidgets = storage.getItem(widgetKey) || {};
                 var configuration = storage.getItem(configurationKey) || {};
+                
+                angular.forEach(userWidgets, function(userWidget, id) {
+                    userWidgets[id] = angular.extend({}, widgets[userWidget.wcode], userWidget);
+                    userWidgets[id].configuration = angular.extend({}, userWidgets[id].configuration, configuration[id]);
+                });
+
+                /*
                 angular.forEach(userWidgets, function(userWidget, wcode) {
                     userWidgets[wcode] = angular.extend(widgets[wcode], userWidget);
                     userWidgets[wcode].configuration = angular.extend(userWidgets[wcode].configuration, configuration[wcode]);
                 });
+                */
 
                 return userWidgets;
             };
@@ -25,9 +33,9 @@ define(['angular', 'angular-resource'], function(angular) {
                 storage.setItem(widgetKey, config, true);
             };
 
-            this.saveConfiguration = function(wcode, configuration) {
+            this.saveConfiguration = function(id, configuration) {
                 var config = storage.getItem(configurationKey) || {};
-                config[wcode] = configuration;
+                config[id] = configuration;
                 storage.setItem(configurationKey, config, true);
             };
 

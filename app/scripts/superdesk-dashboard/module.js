@@ -25,6 +25,7 @@ define([
         widgetsProvider
             .widget('weather', {
                 name: 'Weather',
+                multiple: true,
                 class: 'default',
                 icon: 'leaf',
                 max_sizex: 2,
@@ -38,6 +39,7 @@ define([
             })
             .widget('worldClock', {
                 name: 'World Clock',
+                multiple: true,
                 class: 'world-clock',
                 icon: 'time',
                 max_sizex: 2,
@@ -52,6 +54,7 @@ define([
             })
             .widget('widgetCool', {
                 name: 'Widget Cool',
+                multiple: true,
                 class: 'default',
                 icon: 'leaf',
                 max_sizex: 2,
@@ -65,6 +68,7 @@ define([
             })
             .widget('dashDash', {
                 name: 'DashDash',
+                multiple: true,
                 class: 'default',
                 icon: 'leaf',
                 max_sizex: 2,

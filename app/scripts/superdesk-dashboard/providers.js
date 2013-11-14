@@ -9,9 +9,9 @@ define(['angular'], function(angular) {
                 $get: function() {
                     return widgetList;
                 },
-                widget: function(id, data) {
-                    angular.extend(data, {wcode: id});
-                    widgetList[id] = data;
+                widget: function(wcode, data) {
+                    angular.extend(data, {wcode: wcode});
+                    widgetList[wcode] = data;
                     return this;
                 }
             };

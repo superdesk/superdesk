@@ -10,9 +10,19 @@ define(['angular'], function(){
             $scope.selectedWidget = null;
 
             function updateAvailable() {
+                var wcodeList = _.uniq(_.pluck($scope.userWidgets, 'wcode'));
+
                 var keys = _.keys($scope.userWidgets);
                 $scope.hasWidgets = keys.length;
-                $scope.availableWidgets = _.omit(widgets, keys);
+
+                var omitList = [];
+                _.forEach(widgets, function(widget) {
+                    if (!widget.multiple && _.indexOf(wcodeList, widget.wcode) > -1) {
+                        omitList.push(widget.wcode);
+                    }
+                });
+
+                $scope.availableWidgets = _.omit(widgets, omitList);
             }
 
             function save() {
@@ -21,8 +31,15 @@ define(['angular'], function(){
             }
 
             $scope.addWidget = function(widget) {
-                angular.extend(widget, {row: 1, col: 1});
-                $scope.userWidgets[widget.wcode] = widget;
+                var newWidget = angular.extend({}, widget, {row: 1, col: 1});
+                var lastId = 0;
+                _.forEach($scope.userWidgets, function(newWidget, id) {
+                    id = parseInt(id, 10);
+                    if (id > lastId) {
+                        lastId = id;
+                    }
+                });
+                $scope.userWidgets[lastId + 1] = newWidget;
                 save();
             };
 
