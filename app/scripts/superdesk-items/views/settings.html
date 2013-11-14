@@ -12,7 +12,7 @@
                 <h6>{{ provider.name }}</h6>
                 <span class="label ingest-count " ng-class="provider.ingested_count ? 'label-info' : 'label-warning'" title="{{ 'Ingested items count'|translate }}">{{ provider.ingested_count || 0 }}</span>
                 <div class="last-updated" ng-show="provider.ingested_count">
-                    <span translate>Last updated</span> {{ provider.updated|reldate }} | <a ng-href="#/archive/?provider={{ provider._id }}" translate>Go to Items</a>
+                    <span translate>Last updated</span> {{ provider.updated|reldate }} | <a ng-href="#/ingest/?provider={{ provider.type === 'reuters' ? 'reuters.com' : provider.type }}" translate>Go to Items</a>
                 </div>
            
                 <div class="dropdown dropdown-simple pull-right">
