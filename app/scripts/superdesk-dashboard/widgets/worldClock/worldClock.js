@@ -152,7 +152,7 @@ define([
                     function getData(timeStr) {
                         var time = timeStr.split(':');
                         return [
-                            {unit: 'h', val: parseInt(time[0], 10), width: 2.1, r: 0.5},
+                            {unit: 'h', val: parseInt(time[0], 10) + (parseInt(time[1], 10) / 60), width: 2.1, r: 0.5},
                             {unit: 'm', val: parseInt(time[1], 10), width: 1.3, r: 0.7},
                             {unit: 's', val: parseInt(time[2], 10), width: 0.8, r: 0.8}
                         ];
