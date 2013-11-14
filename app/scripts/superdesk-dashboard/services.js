@@ -1,7 +1,31 @@
-define(['angular', 'angular-resource'], function(angular) {
+define(['lodash', 'angular'], function(_, angular) {
     'use strict';
 
-    angular.module('superdesk.dashboard.services', ['superdesk.dashboard.providers'])
+    angular.module('superdesk.dashboard.services', [])
+        /**
+         * Widgets registry
+         */
+        .provider('widgets', [function() {
+            var widgets = {};
+
+            return {
+                $get: function() {
+                    return widgets;
+                },
+
+                /**
+                 * Register a widget with given id
+                 *
+                 * @param {string} id
+                 * @param {Object} widget
+                 */
+                widget: function(id, widget) {
+                    angular.extend(widget, {wcode: id});
+                    widgets[id] = widget;
+                    return this;
+                }
+            };
+        }])
         .service('widgetService', ['storage', 'widgets', function(storage, widgets) {
             var widgetKey = 'dashboard:widgets';
             var configurationKey = 'dashboard:widgets:configuration';

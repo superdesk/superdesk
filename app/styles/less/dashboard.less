@@ -27,7 +27,7 @@ Main dashboard styles
 	}
 }	
 
-.d-widget {
+.sd-widget {
 	background: #fff;
 	border: 1px solid #e0e0e0;
 	border-top:0;
@@ -144,6 +144,7 @@ Widgets styles
 	.widget-content {
 		.clock-container {
 			height: 185px;
+			overflow: hidden;
 		}
 		.clock-box {
 			min-height: 185px;
@@ -165,61 +166,6 @@ Widgets styles
 				width: 100%;
 				height: 87px;
 				text-align: center;
-				.clock-circle {
-					width: 87px;
-					height: 87px;
-					background: url(../../images/world-clock-bg.png) no-repeat 0px 0px;
-					display: inline-block;
-				}
-				.clock-hands {
-					width: 100%;
-					height: 100%;
-					position: relative;
-					.hour {
-						width: 0;
-						height: 0;
-						position: absolute;
-						top: 50%;
-						left: 50%;
-						margin: -3px 0 -4px -22%;
-						padding: 0px 0 4px 22%;
-						background: #fff;
-						-webkit-transform-origin: 100% 50%;
-						-moz-transform-origin: 100% 50%;
-						-ms-transform-origin: 100% 50%;
-						transform-origin: 100% 50%;
-						border-radius: 1px 0 0 1px;
-					}
-					.minute {
-						width: 0;
-						height: 0;
-						position: absolute;
-						top: 50%;
-						left: 50%;
-						margin: -31% -1px 0;
-						padding: 30% 2px 0 1px;
-						background: #fff;
-						-webkit-transform-origin: 50% 100%;
-						-moz-transform-origin: 50% 100%;
-						-ms-transform-origin: 50% 100%;
-						transform-origin: 50% 100%;
-						border-radius: 2px 2px 0 0;
-					}
-					.second {
-						width: 0;
-						height: 0;
-						position: absolute;
-						top: 50%;
-						left: 50%;
-						margin: -35% 0 0 -1px;
-						padding: 37% 1px 0;
-						background: #f00;
-						-webkit-transform-origin: 50% 100%;
-						-moz-transform-origin: 50% 100%;
-						-ms-transform-origin: 50% 100%;
-						transform-origin: 50% 100%;
-					}
-				}
 			}
 			time {
 				display: block;

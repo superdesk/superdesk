@@ -1,38 +1,17 @@
 define([
     'angular',
     'moment',
+    'd3',
     'moment-timezone',
-    'angular-resource'
-], function(angular, moment) {
+    'angular-resource',
+    '../../services'
+], function(angular, moment, d3) {
     'use strict';
 
-    angular.module('superdesk.dashboard.widgets.worldclock', ['ngResource'])
-        .service('timezoneDataService', ['$q', '$resource', 'widgetsPath', function($q, $resource, widgetsPath) {
-            this.get = function(regions) {
-                if (typeof regions === 'string') {
-                    regions = [regions];
-                }
-
-                var delay = $q.defer();
-
-                var promises = [];
-                _.forEach(regions, function(region) {
-                    var filename = widgetsPath + 'worldClock/timezones-' + region + '.json';
-                    promises.push($resource(filename).get().$promise);
-                });
-
-                $q.all(promises).then(function(data) {
-                    var timezoneData = {links: {}, rules: {}, zones: {}};
-                    _.forEach(data, function(item) {
-                        timezoneData.links = _.extend(timezoneData.links, item.links);
-                        timezoneData.rules = _.extend(timezoneData.rules, item.rules);
-                        timezoneData.zones = _.extend(timezoneData.zones, item.zones);
-                    });
-                    delay.resolve(timezoneData);
-                });
-
-                return delay.promise;
-            };
+    angular.module('superdesk.widgets.worldClock', ['ngResource', 'superdesk.dashboard.services'])
+        .factory('tzdata', ['$resource', 'widgetsPath', function($resource, widgetsPath) {
+            var filename = widgetsPath + 'worldClock/timezones-all.json';
+            return $resource(filename);
         }])
         .directive('sdWorldclock', ['widgetsPath', function(widgetsPath) {
             return {
@@ -42,15 +21,15 @@ define([
                 controller : 'WorldClockController'
             };
         }])
-        .controller('WorldClockConfigurationController', ['$scope', '$resource', 'widgetsPath', 'timezoneDataService',
-        function ($scope, $resource, widgetsPath, timezoneDataService) {
+        .controller('WorldClockConfigurationController', ['$scope', '$resource', 'widgetsPath', 'tzdata',
+        function ($scope, $resource, widgetsPath, tzdata) {
             var rawTimezoneData = {};
             $scope.selected = {};
             $scope.availableZones = [];
             $scope.selectedCount = 0;
             $scope.search = '';
 
-            timezoneDataService.get('all').then(function(timezoneData) {
+            tzdata.get(function(timezoneData) {
                 rawTimezoneData = timezoneData;
                 _.forEach(timezoneData.zones, function(zoneData, zoneName) {
                     $scope.availableZones.push(zoneName);
@@ -96,43 +75,129 @@ define([
                 $scope.selected = _.cloneDeep($scope.rawSelected);
             };
         }])
-        .controller('WorldClockController', ['$scope', '$timeout', 'widgetService', 'widgets', 'timezoneDataService',
-        function ($scope, $timeout, widgetService, widgets, timezoneDataService) {
-            /*
-            // for selective timezone data file loading
-            var regions = [];
-            _.forEach($scope.widget.configuration.zones, function(zone) {
-                var parts = zone.split('/');
-                regions.push(parts[0].toLowerCase());
-            });
-            regions = _.uniq(regions);
-            timezoneDataService.get(regions).then(function(timezoneData) {
-                moment.tz.add(timezoneData);
-                $scope.update();
-            });
-            */
-            
-            // temporary, loading all timezone data files
-            timezoneDataService.get('all').then(function(timezoneData) {
-                moment.tz.add(timezoneData);
-                $scope.update();
-            });
+        .controller('WorldClockController', ['$scope', '$timeout', 'tzdata',
+        function ($scope, $timeout, tzdata) {
+            function updateUTC() {
+                $scope.utc = moment();
+                $timeout(updateUTC, 500);
+            }
 
-            $scope.update = function() {
-                $scope.wclock = [];
-                _.forEach($scope.widget.configuration.zones, function(zone) {
-                    var full = moment().tz(zone);
-                    var city = zone.replace(zone.split('/')[0] + '/', '');
-                    $scope.wclock.push({
-                        'city' : city,
-                        'full' : full.format('HH:mm'),
-                        'hrs'  : full.format('HH'),
-                        'min'  : full.format('mm'),
-                        'sec'  : full.format('ss')
+            tzdata.get(function(data) {
+                moment.tz.add(data);
+                updateUTC();
+            });
+        }])
+        /**
+         * sdClock analog clock
+         */
+        .directive('sdClock', function() {
+            var pi = Math.PI,
+                scales = {
+                    s: d3.scale.linear().domain([0, 59 + 999/1000]).range([0, 2 * pi]),
+                    m: d3.scale.linear().domain([0, 59 + 59/60]).range([0, 2 * pi]),
+                    h: d3.scale.linear().domain([0, 11 + 59/60]).range([0, 2 * pi])
+                };
+
+            return {
+                scope: {
+                    'utc': '=',
+                    'tz': '@'
+                },
+                link: function(scope, element, attrs) {
+                    var width = 105,
+                        height = 100,
+                        r = Math.min(width, height) * 0.8 * 0.5;
+
+                    var svg = d3.select(element[0])
+                        .append('svg')
+                            .attr('widgth', width)
+                            .attr('height', height);
+
+                    var clock = svg.append('g')
+                        .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+
+                    // background circle
+                    clock.append('circle')
+                        .attr('r', r)
+                        .attr('class', 'clock outer')
+                        .style('stroke', 'black')
+                        .style('stroke-width', 1.3)
+                        .style('fill', '#313134');
+
+                    // inner dot
+                    clock.append('circle')
+                        .attr('r', 2)
+                        .attr('class', 'clock inner')
+                        .style('fill', '#fff');
+
+                    // add markers
+                    clock.selectAll('.mark')
+                        .data(_.range(0, 60, 5))
+                        .enter()
+                        .append('path')
+                        .attr('d', function(d) {
+                            var angle = scales.m(d);
+                            var arc = d3.svg.arc()
+                                .innerRadius(r * 0.68)
+                                .outerRadius(r * 0.9)
+                                .startAngle(angle)
+                                .endAngle(angle);
+                            return arc();
+                        })
+                        .attr('class', 'mark')
+                        .style('stroke-width', 2.1)
+                        .style('stroke', '#828282');
+
+                    // format data for given time
+                    function getData(timeStr) {
+                        var time = timeStr.split(':');
+                        return [
+                            {unit: 'h', val: parseInt(time[0], 10), width: 2.1, r: 0.5},
+                            {unit: 'm', val: parseInt(time[1], 10), width: 1.3, r: 0.7},
+                            {unit: 's', val: parseInt(time[2], 10), width: 0.8, r: 0.8}
+                        ];
+                    }
+
+                    scope.$watch('utc', function(utc) {
+                        var time = utc ? utc.tz(scope.tz).format('HH:mm:ss') : '00:00:00';
+                        var data = getData(time);
+                        clock.selectAll('.clockhand').remove();
+                        clock.selectAll('.clockhand')
+                            .data(data)
+                            .enter()
+                            .append('path')
+                            .attr('d', function(d) {
+                                var angle = scales[d.unit](d.val);
+                                var arc = d3.svg.arc()
+                                    .innerRadius(0)
+                                    .outerRadius(r * d.r)
+                                    .startAngle(angle)
+                                    .endAngle(angle);
+                                return arc();
+                            })
+                            .attr('class', 'clockhand')
+                            .style('stroke-width', function(d) { return d.width; })
+                            .style('stroke', function(d) { return d.unit === 's' ? '#f00' : '#fff'; })
+                            .style('fill', 'none');
                     });
-                });
-                $timeout($scope.update, 1000);
+                }
             };
-
+        })
+        .config(['widgetsProvider', function(widgetsProvider) {
+            widgetsProvider
+                .widget('worldClock', {
+                    name: 'World Clock',
+                    class: 'world-clock',
+                    icon: 'time',
+                    max_sizex: 2,
+                    max_sizey: 1,
+                    sizex: 1,
+                    sizey: 1,
+                    thumbnail: 'images/sample/widgets/worldclock.png',
+                    template: 'scripts/superdesk-dashboard/widgets/worldClock/widget-worldclock.html',
+                    configurationTemplate: 'scripts/superdesk-dashboard/widgets/worldClock/configuration.html',
+                    configuration: {zones: ['Europe/London', 'Asia/Tokyo', 'Europe/Moscow']},
+                    description: 'World clock widget'
+                });
         }]);
 });
