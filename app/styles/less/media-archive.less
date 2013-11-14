@@ -498,6 +498,22 @@ input{
 		&.selected {
 			background: #eefce5;
 		}
+		.loading-status { 
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			z-index: 2;
+			background: rgba(255,255,255,0.85) url('../../images/loading-large.gif') no-repeat 50% 50%;
+		}
+		&.archived {
+			background: #f2f2f2;
+			h5 {
+				background: url('../../images/checkmark-big-full.png') no-repeat right 50%;
+				background-size: 51px;
+			}
+		}
 		.type-icon {
 			
 			i {
@@ -548,8 +564,8 @@ input{
 				min-height: 16px;
 				height: auto;
 				margin-left: 85px;
-				margin-right: @rightfield-width;
-				padding: 12px 11px;
+				margin-right: @rightfield-width+5px;
+				padding: 12px 25px 12px 11px;
 				
 				.main-title {
 					font-style: normal;
@@ -599,6 +615,15 @@ input{
 				.list-field {
 					&:hover {
 						background: #e4f0f5;
+					}
+					&:last-child {
+						float: right;
+					}
+					&.disabled {
+						cursor: default;
+						i {
+							.opacity(30);
+						}
 					}
 				}
 				
@@ -859,6 +884,12 @@ input{
 					&:hover{
 						background: #f0f0f0;
 						border-color: #e0e0e0;
+					}
+					&.disabled {
+						cursor: default;
+						i {
+							.opacity(50);
+						}
 					}
 				}
 				

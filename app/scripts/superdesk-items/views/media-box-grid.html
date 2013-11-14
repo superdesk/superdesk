@@ -1,5 +1,5 @@
 <div class="media-box media-{{item.type}} urgency-{{ item.urgency }}"
-     ng-class="{ selected : item.selected, archived : item.archived!=null}"
+     ng-class="{ selected : item.selected, archived : item.archived!=null&&actions.archive}"
      ng-mouseenter="hoverItem(item)" >
 
     <div class="loading-status" ng-show="!item.archived && item.archiving"></div>

@@ -1,5 +1,5 @@
 <div class="media-box media-box-hover media-{{selectedItem.item.type}} urgency-{{ selectedItem.item.urgency }}"
-    ng-class="{selected: selectedItem.item.selected, archived : selectedItem.item.archived!=null}"
+    ng-class="{selected: selectedItem.item.selected, archived : (selectedItem.item.archived!=null&&actions.archive)}"
     ng-style="selectedItem.position"
     ng-show="selectedItem.item"
     ng-mouseleave="selectedItem.item = null" >
@@ -48,8 +48,10 @@
     
 
     <div class="item-functions">
-        <a class="thumb-field" ng-click="preview(selectedItem.item)" ng-show="actions.preview"><i class="icon-eye-open"></i></a>
-        <a class="thumb-field" ng-click="archive(selectedItem.item)" ng-show="actions.archive"><i class="icon-expand-thin"></i></a>
+        <a class="thumb-field" ng-click="preview(selectedItem.item)" ng-show="actions.preview" tooltip-placement="bottom" tooltip="preview" tooltip-append-to-body="true"><i class="icon-eye-open"></i></a>
+        <a class="thumb-field" ng-click="archive(selectedItem.item)" ng-show="actions.archive && !selectedItem.item.archived" tooltip-placement="bottom" tooltip="archive" tooltip-append-to-body="true"><i class="icon-archive"></i></a>
+        <a class="thumb-field disabled" ng-show="actions.archive && selectedItem.item.archived" tooltip-placement="bottom" tooltip="already in Archive" tooltip-append-to-body="true"><i class="icon-archive"></i></a>
+
         <a class="thumb-field"><i class="icon-dots"></i></a>
     </div>
 

@@ -1,5 +1,7 @@
 <div class="media-box media-{{item.type}} urgency-{{ item.urgency }}" 
-     ng-class="{selected : item.selected, 'compact-item': ui.compact}" >
+     ng-class="{selected : item.selected, 'compact-item': ui.compact, archived : item.archived!=null&&actions.archive}" >
+
+    <div class="loading-status" ng-show="!item.archived && item.archiving"></div>
 
     <div class="list-field">
         <div sd-check ng-model="item.selected"></div>
@@ -21,8 +23,9 @@
         <div class="item-right list-field">
             <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>
             <div class="item-functions">
-                <a class="list-field" ng-click="preview(item)" ng-show="actions.preview"><i class="icon-eye-open"></i></a>
-                <a class="list-field" ng-click="archive(item)" ng-show="actions.archive"><i class="icon-expand-thin"></i></a>
+                <a class="list-field" ng-click="preview(item)" ng-show="actions.preview"  ng-show="actions.preview" tooltip-placement="bottom" tooltip="preview" tooltip-append-to-body="true"><i class="icon-eye-open"></i></a>
+                <a class="list-field" ng-click="archive(item)" ng-show="actions.archive && !item.archived" tooltip-placement="bottom" tooltip="archive" tooltip-append-to-body="true"><i class="icon-archive"></i></a>
+                <a class="list-field disabled" ng-click="archive(item)" ng-show="actions.archive && item.archived" tooltip-placement="bottom" tooltip="already in Archive" tooltip-append-to-body="true"><i class="icon-archive"></i></a>
                 <a class="list-field"><i class="icon-dots"></i></a>
             </div>
         </div>
