@@ -1,14 +1,20 @@
 <div class="media-box media-{{item.type}} urgency-{{ item.urgency }}"
-     ng-class="{ selected : item.selected}"
+     ng-class="{ selected : item.selected, archived : item.archived!=null}"
      ng-mouseenter="hoverItem(item)" >
+
+    <div class="loading-status" ng-show="!item.archived && item.archiving"></div>
 
     <figure class="media" ng-if="item.renditions.thumbnail">
         <img ng-src="{{ item.renditions.thumbnail.href }}" alt="" title="{{ item.description }}" />
         <figcaption class="caption">{{ item.creditline }}</figcaption>
     </figure>
 
-    <div class="media"  ng-show="item.type == 'text' || item.type == 'composite'">
+    <div class="media"  ng-show="item.type == 'text'">
         <small title="{{ item.headline }}">{{ item.headline }}</small>
+    </div>
+
+    <div class="media"  ng-show="item.type == 'composite'">
+        <i class="filetype-icon-large-composite"></i>
     </div>
 
     <div class="media-info" >

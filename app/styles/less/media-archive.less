@@ -319,6 +319,18 @@ input{
 			opacity: 0.5;
 			filter: alpha(opacity=50);
 		}
+		&.archived {
+			background: #f2f2f2 url(../../images/checkmark-big.png) no-repeat bottom right;
+		}
+		.loading-status { 
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			z-index: 2;
+			background: rgba(255,255,255,0.85) url('../../images/loading-large.gif') no-repeat 50% 50%;
+		}
 
 		.media {
 			.box-sizing(border-box);
@@ -351,15 +363,17 @@ input{
 
 		&.media-composite {
 			.media {
+				width: 140px;
 				max-width: 140px;
-				font-size: 12px;
-				font-style: italic;
-			}
-			small {
-				display: block;
-				padding: 2px 5px;
+				text-align: center;
+				i {
+					margin-top: 17px;
+					.opacity(35);
+				}
 			}
 		}
+
+		
 
 		h5 {
 			position: absolute;
@@ -642,6 +656,7 @@ input{
 	}
 	
 }
+/*
 .media-box-button-generic {
 			width:16px;
 			height:16px;
@@ -709,11 +724,14 @@ input{
 				}
 			}
 		}
+		*/
 
 .media-library-main-content-inner { position: absolute; }
+
 .grid-view {
 	.media-box {
 		&.media-box-hover {
+
 			.media-box-generic;
 			position: absolute;
 			min-height: @sfbox_minHeight + 65;
@@ -722,7 +740,7 @@ input{
 			margin: 0px;
 			position:absolute;
 			.box-shadow(0px 0px 6px 0px #777777);
-
+			z-index: 2;
 
 			.media-select {
 				padding: 1px 2px 1px 1px;
@@ -752,13 +770,12 @@ input{
 					height: 100px;
 				}
 			
-				/*this is not part of media-box*/
+				/*this is not part of media-box
 				.media-box-button {
 					.media-box-button-generic;
 				}
-				
+				*/
 			}
-
 			&.media-picture {
 				
 			}
@@ -770,24 +787,55 @@ input{
 			}
 			&.media-composite {
 				.media {
+					width: 161px;
 					max-width: 161px;
-					padding: 0 5px;
-				}
-			}
-
-			h5 {
-				left: 5px; right: 5px;
-			}
-			dl {
-				margin: 2px 5px;
-				dd {
-					&.subject-line {
-						width: 90px;
+					i {
+						margin-top: 22px;
 					}
 				}
 			}
 
+			&.archived {
+				background: #f2f2f2;
+				.media-box-content {
+					background:  url(../../images/checkmark-big.png) no-repeat bottom right;
+				}
+			}
+			
+
+			.media-box-content {
+				position: absolute;
+				bottom: 33px;
+				top: 117px;
+				left: 0;
+				right: 0;
+
+				h5 {
+					left: 5px; right: 5px;
+				}
+				dl {
+					margin: 2px 5px;
+					dd {
+						&.subject-line {
+							width: 90px;
+						}
+					}
+				}
+
+				.type-icon {
+					bottom: 5px;
+				}
+				.urgency-label {
+					bottom: 7px;
+				}
+			}
+
+			
+			
+
+			/* control buttons on the bottom */
 			.item-functions {
+				background: #fff;
 				position: absolute;
 				height: 32px;
 				border-top: 1px solid #ccc;
@@ -815,12 +863,7 @@ input{
 				}
 				
 			}
-			.type-icon {
-				bottom: 38px;
-			}
-			.urgency-label {
-				bottom: 40px;
-			}
+			
 
 			&.selected {
 				
@@ -1312,7 +1355,7 @@ input{
 	.box-shadow(0px 0px 6px 0px #000);
 	border:1px solid #414141;
 	.media-box-button {
-		.media-box-button-generic;
+		//.media-box-button-generic;
 		
 		&.right {
 				right:0px;

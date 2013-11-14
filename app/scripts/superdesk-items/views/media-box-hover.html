@@ -1,40 +1,51 @@
 <div class="media-box media-box-hover media-{{selectedItem.item.type}} urgency-{{ selectedItem.item.urgency }}"
-    ng-class="{selected: selectedItem.item.selected}"
+    ng-class="{selected: selectedItem.item.selected, archived : selectedItem.item.archived!=null}"
     ng-style="selectedItem.position"
     ng-show="selectedItem.item"
     ng-mouseleave="selectedItem.item = null" >
 
+    <div class="loading-status" ng-show="!selectedItem.item.archived && selectedItem.item.archiving"></div>
+    
     <div class="media-select">
         <div sd-check ng-model="selectedItem.item.selected"></div>
     </div>
-    
+
     <div class="drag-fake"></div>
-    
+
     <figure class="media" ng-show="selectedItem.item.renditions.thumbnail" ng-click="preview(selectedItem.item)" >
         <img ng-src="{{ selectedItem.item.renditions.thumbnail.href }}" alt="" title="{{ selectedItem.item.description }}" />
         <figcaption class="caption">{{ selectedItem.item.creditline }}</figcaption>
     </figure>
 
-    <div class="media" ng-show="selectedItem.item.type == 'text' || selectedItem.item.type == 'composite'" ng-click="preview(selectedItem.item)" >
+    <div class="media" ng-show="selectedItem.item.type == 'text'"  ng-click="preview(selectedItem.item)">
         <small title="{{ selectedItem.item.headline }}">{{ selectedItem.item.headline }}</small>
     </div>
 
-    <div class="media-info" ng-click="preview(selectedItem.item)">
-        <h5>{{ selectedItem.item.slugline }}</h5>
-        <dl class="clearfix">
-
-            <dt class="source"></dt>
-            <dd class="provider">{{ selectedItem.item.provider }}</dd>
-
-            <dt translate>created</dt>
-            <dd><time datetime="{{ selectedItem.item.firstcreated }}" title="{{ selectedItem.item.firstcreated|date:'medium' }}">{{ selectedItem.item.firstcreated|reldate }}</time></dd>
-
-            <dt translate>subject</dt>
-            <dd class="subject-line" popover="{{ selectedItem.item.subject | mergeWords }}" popover-placement="right" popover-trigger="mouseenter">
-                {{ selectedItem.item.subject | mergeWords }}
-            </dd>
-        </dl>
+    <div class="media"  ng-show="selectedItem.item.type == 'composite'" ng-click="preview(selectedItem.item)">
+        <i class="filetype-icon-large-composite"></i>
     </div>
+
+    <div class="media-box-content">
+        <div class="media-info" ng-click="preview(selectedItem.item)">
+            <h5>{{ selectedItem.item.slugline }}</h5>
+            <dl class="clearfix">
+
+                <dt class="source"></dt>
+                <dd class="provider">{{ selectedItem.item.provider }}</dd>
+
+                <dt translate>created</dt>
+                <dd><time datetime="{{ selectedItem.item.firstcreated }}" title="{{ selectedItem.item.firstcreated|date:'medium' }}">{{ selectedItem.item.firstcreated|reldate }}</time></dd>
+
+                <dt translate>subject</dt>
+                <dd class="subject-line" popover="{{ selectedItem.item.subject | mergeWords }}" popover-placement="right" popover-trigger="mouseenter">
+                    {{ selectedItem.item.subject | mergeWords }}
+                </dd>
+            </dl>
+        </div>
+        <span class="type-icon"><i class="filetype-icon-{{selectedItem.item.type}}"></i></span>
+        <span class="urgency-label">{{ selectedItem.item.urgency }}</span>
+    </div>    
+    
 
     <div class="item-functions">
         <a class="thumb-field" ng-click="preview(selectedItem.item)" ng-show="actions.preview"><i class="icon-eye-open"></i></a>
@@ -42,6 +53,5 @@
         <a class="thumb-field"><i class="icon-dots"></i></a>
     </div>
 
-    <span class="type-icon"><i class="filetype-icon-{{selectedItem.item.type}}"></i></span>
-    <span class="urgency-label">{{ selectedItem.item.urgency }}</span>
+    
 </div>
