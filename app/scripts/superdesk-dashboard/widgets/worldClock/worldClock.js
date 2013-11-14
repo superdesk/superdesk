@@ -40,7 +40,7 @@ define([
         function ($scope, $timeout, tzdata) {
             function updateUTC() {
                 $scope.utc = moment();
-                $timeout(updateUTC, 500);
+                $timeout(updateUTC, 1000);
             }
 
             tzdata.get(function(data) {
@@ -67,7 +67,9 @@ define([
                 link: function(scope, element, attrs) {
                     var width = 105,
                         height = 100,
-                        r = Math.min(width, height) * 0.8 * 0.5;
+                        r = Math.min(width, height) * 0.8 * 0.5,
+                        white = '#fff',
+                        black = '#333';
 
                     var svg = d3.select(element[0])
                         .append('svg')
@@ -81,41 +83,22 @@ define([
                     clock.append('circle')
                         .attr('r', r)
                         .attr('class', 'clock outer')
-                        .style('stroke', 'black')
-                        .style('stroke-width', 1.3)
-                        .style('fill', '#313134');
+                        .style('fill', black)
+                        .style('stroke-width', 1.5)
+                        .style('stroke', black);
 
                     // inner dot
                     clock.append('circle')
-                        .attr('r', 2)
+                        .attr('r', 1.5)
                         .attr('class', 'clock inner')
-                        .style('fill', '#fff');
-
-                    // add markers
-                    clock.selectAll('.mark')
-                        .data(_.range(0, 60, 5))
-                        .enter()
-                        .append('path')
-                        .attr('d', function(d) {
-                            var angle = scales.m(d);
-                            var arc = d3.svg.arc()
-                                .innerRadius(r * 0.68)
-                                .outerRadius(r * 0.9)
-                                .startAngle(angle)
-                                .endAngle(angle);
-                            return arc();
-                        })
-                        .attr('class', 'mark')
-                        .style('stroke-width', 2.1)
-                        .style('stroke', '#828282');
+                        .style('fill', white);
 
                     // format data for given time
                     function getData(timeStr) {
                         var time = timeStr.split(':');
                         return [
-                            {unit: 'h', val: parseInt(time[0], 10) + (parseInt(time[1], 10) / 60), width: 2.1, r: 0.5},
-                            {unit: 'm', val: parseInt(time[1], 10), width: 1.3, r: 0.7},
-                            {unit: 's', val: parseInt(time[2], 10), width: 0.8, r: 0.8}
+                            {unit: 'h', val: parseInt(time[0], 10) + (parseInt(time[1], 10) / 60), r: 0.5},
+                            {unit: 'm', val: parseInt(time[1], 10), r: 0.8},
                         ];
                     }
 
@@ -130,16 +113,15 @@ define([
                             .attr('d', function(d) {
                                 var angle = scales[d.unit](d.val);
                                 var arc = d3.svg.arc()
-                                    .innerRadius(0)
+                                    .innerRadius(r * 0)
                                     .outerRadius(r * d.r)
                                     .startAngle(angle)
                                     .endAngle(angle);
                                 return arc();
                             })
                             .attr('class', 'clockhand')
-                            .style('stroke-width', function(d) { return d.width; })
-                            .style('stroke', function(d) { return d.unit === 's' ? '#f00' : '#fff'; })
-                            .style('fill', 'none');
+                            .style('stroke-width', 1.5)
+                            .style('stroke', white);
                     });
                 }
             };
