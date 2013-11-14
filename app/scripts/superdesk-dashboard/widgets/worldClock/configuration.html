@@ -1,4 +1,10 @@
 <div ng-controller="WorldClockConfigController">
+
+    <div class="btn-group">
+        <button type="button" class="btn btn-default" ng-class="{active: !configuration.digital}" ng-click="configuration.digital=false">Analog</button>
+        <button type="button" class="btn btn-default" ng-class="{active: configuration.digital}" ng-click="configuration.digital=true">Digital</button>
+    </div>
+
     <div class="page-header">
         <h1>{{ 'Your clock'|translate }} <small translate>Click to remove</small></h1>
     </div>
