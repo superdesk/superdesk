@@ -32,13 +32,13 @@ define(['angular'], function(){
 
             $scope.addWidget = function(widget) {
                 var newWidget = angular.extend({}, widget, {row: 1, col: 1});
-                var lastId = 0;
-                _.forEach($scope.userWidgets, function(newWidget, id) {
-                    id = parseInt(id, 10);
-                    if (id > lastId) {
-                        lastId = id;
-                    }
-                });
+                
+                var ids = _.keys($scope.userWidgets);
+                var lastId = _.max(ids);
+                if (lastId < 0) {
+                    lastId = 0;
+                }
+                lastId = parseInt(lastId, 10);
                 $scope.userWidgets[lastId + 1] = newWidget;
                 save();
             };
