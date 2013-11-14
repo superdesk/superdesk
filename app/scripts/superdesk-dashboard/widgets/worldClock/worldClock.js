@@ -21,58 +21,19 @@ define([
                 controller : 'WorldClockController'
             };
         }])
-        .controller('WorldClockConfigurationController', ['$scope', '$resource', 'widgetsPath', 'tzdata',
+        .controller('WorldClockConfigController', ['$scope', '$resource', 'widgetsPath', 'tzdata',
         function ($scope, $resource, widgetsPath, tzdata) {
-            var rawTimezoneData = {};
-            $scope.selected = {};
-            $scope.availableZones = [];
-            $scope.selectedCount = 0;
-            $scope.search = '';
-
-            tzdata.get(function(timezoneData) {
-                rawTimezoneData = timezoneData;
-                _.forEach(timezoneData.zones, function(zoneData, zoneName) {
-                    $scope.availableZones.push(zoneName);
-                    $scope.selected[zoneName] = false;
-                });
-                _.forEach(timezoneData.links, function(target, source) {
-                    $scope.availableZones.push(source);
-                    $scope.selected[source] = false;
-                });
-                $scope.availableZones.sort(function(a, b) {
-                    if (a > b) {
-                        return 1;
-                    } else if (a < b) {
-                        return -1;
-                    } else {
-                        return 0;
-                    }
-                });
-                $scope.rawSelected = _.cloneDeep($scope.selected);
-                _.forEach($scope.configuration.zones, function(item) {
-                    if ($scope.selected[item] !== undefined) {
-                        $scope.selected[item] = true;
-                    }
-                });
+            tzdata.get(function(data) {
+                $scope.availableZones = _.union(
+                    _.keys(data.zones),
+                    _.keys(data.links)
+                );
             });
-            
-            $scope.$watch('selected', function(selected) {
-                if (!_.isEmpty(selected)) {
-                    $scope.selectedCount = 0;
-                    _.forEach(selected, function(value, key) {
-                        if (value === true) {
-                            $scope.selectedCount = $scope.selectedCount + 1;
-                            $scope.configuration.zones.push(key);
-                        } else {
-                            $scope.configuration.zones = _.without($scope.configuration.zones, key);
-                        }
-                    });
-                    $scope.configuration.zones = _.uniq($scope.configuration.zones);
-                }
-            }, true);
 
-            $scope.clear = function() {
-                $scope.selected = _.cloneDeep($scope.rawSelected);
+            $scope.notIn = function(haystack) {
+                return function(needle) {
+                    return haystack.indexOf(needle) === -1;
+                };
             };
         }])
         .controller('WorldClockController', ['$scope', '$timeout', 'tzdata',

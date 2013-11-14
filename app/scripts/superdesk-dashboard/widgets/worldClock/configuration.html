@@ -1,10 +1,26 @@
-<div ng-controller="WorldClockConfigurationController">
-{{'Total selected'|translate}}: {{selectedCount}}<br>
-<a href="" ng-click="clear();">{{'clear all selected'|translate}}</a><br>
-{{'Search'|translate}}: <input ng-model="search"><br>
-<ul>
-    <li ng-repeat="zone in availableZones|filter:search">
-        <input sd-check ng-model="selected[zone]">{{zone}}
-    </li>
-</ul>
+<div ng-controller="WorldClockConfigController">
+    <div class="page-header">
+        <h1>{{ 'Your clock'|translate }} <small translate>Click to remove</small></h1>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item" ng-repeat="zone in configuration.zones">
+            <a href="" ng-click="configuration.zones.splice($index, 1)">{{ zone.replace('_', ' ') }}</a>
+        </li>
+        <li class="alert alert-info" ng-hide="configuration.zones.length" translate>No clock here!</li>
+    </ul>
+
+    <div class="page-header">
+        <h2>{{ 'Available clock'|translate }} <small translate>Click to add</small></h2>
+    </div>
+
+    <div class="input-append pull-right">
+        <input type="text" class="form-control span2" ng-model="search" placeholder="{{ 'Search'|translate }}">
+        <button class="btn btn-default" type="button" ng-show="search" ng-click="search=''" translate>Clear</button>
+    </div>
+
+    <ul>
+        <li ng-repeat="zone in availableZones|filter:notIn(configuration.zones)|filter:search">
+            <a href="" ng-click="configuration.zones.push(zone)">{{ zone.replace('_', ' ') }}</a>
+        </li>
+    </ul>
 </div>
