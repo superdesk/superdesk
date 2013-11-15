@@ -4,7 +4,11 @@ import requests
 import xml.etree.ElementTree as etree
 import traceback
 import datetime
-from urllib.request import urlopen
+
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib2 import urlopen
 
 from flask import url_for
 import superdesk

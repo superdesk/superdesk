@@ -9,7 +9,6 @@ def on_create_item(data, docs):
             doc.setdefault('_id', doc['guid'])
 
 def on_create_archive(data, docs):
-    print('create archive', docs)
     for doc in docs:
         if doc.get('guid'):
             # set archived on ingest item

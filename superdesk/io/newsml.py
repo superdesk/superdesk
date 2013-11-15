@@ -99,7 +99,7 @@ class Parser():
             if subject.get('type', '') == 'cptType:5':
                 item['place'].append({'name': subject.get('literal')})
                 broader = subject.find(self.qname('broader'))
-                if broader:
+                if broader is not None:
                     item['place'].append({'name': broader.find(self.qname('name')).text})
 
     def parse_rights_info(self, tree, item):

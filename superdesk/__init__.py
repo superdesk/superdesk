@@ -59,10 +59,8 @@ def blueprint(blueprint, **kwargs):
 class SuperdeskDataLayer(eve.io.DataLayer):
     """Superdesk Data Layer"""
 
-    serializers = dict(
-        list(eve.io.mongo.Mongo.serializers.items()) + \
-        list(eve.io.elastic.Elastic.serializers.items())
-        )
+    serializers = eve.io.mongo.Mongo.serializers
+    serializers.update(eve.io.elastic.Elastic.serializers)
 
     def init_app(self, app):
         self.elastic = eve.io.elastic.Elastic(app)
