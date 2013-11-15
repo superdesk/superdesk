@@ -116,7 +116,7 @@
                         <dt translate ng-show="item.archived">Archived</dt><dd ng-show="item.archived">{{ item.archived|reldate }}</dd>
                         <dt translate ng-show="item.version">Version</dt><dd ng-show="item.version">{{ item.version }}</dd>
                         <dt translate ng-show="item.place">Place</dt><dd ng-show="item.place">{{ item.place | mergeWords }}</dd>
-                        <dt translate>Subject</dt><dd>{{ item.subject | mergeWords }}</dd>
+                        <dt translate ng-show="item.subject">Subject</dt><dd ng-show="item.subject">{{ item.subject | mergeWords }}</dd>
                     </dl>
                 </div>
             </div>

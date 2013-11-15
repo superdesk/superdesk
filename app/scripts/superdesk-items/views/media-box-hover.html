@@ -21,13 +21,18 @@
         <small title="{{ selectedItem.item.headline }}">{{ selectedItem.item.headline }}</small>
     </div>
 
-    <div class="media"  ng-show="selectedItem.item.type == 'composite'" ng-click="preview(selectedItem.item)">
-        <i class="filetype-icon-large-composite"></i>
+    <div class="media"  
+         ng-click="preview(selectedItem.item)"
+         ng-show="selectedItem.item.type == 'composite' || 
+                  selectedItem.item.type == 'audio' || 
+                  selectedItem.item.type == 'video'">
+        <i class="filetype-icon-large-{{ selectedItem.item.type}}"></i>
     </div>
 
     <div class="media-box-content" ng-click="preview(selectedItem.item)">
         <div class="media-info" >
-            <h5>{{ selectedItem.item.slugline }}</h5>
+            <h5 ng-show="selectedItem.item.slugline">{{ selectedItem.item.slugline }}</h5>
+            <h5 ng-show="!selectedItem.item.slugline">{{ selectedItem.item.type }}</h5>
             <dl class="clearfix">
 
                 <dt class="source"></dt>
@@ -36,8 +41,8 @@
                 <dt translate>created</dt>
                 <dd><time datetime="{{ selectedItem.item.firstcreated }}" title="{{ selectedItem.item.firstcreated|date:'medium' }}">{{ selectedItem.item.firstcreated|reldate }}</time></dd>
 
-                <dt translate>subject</dt>
-                <dd class="subject-line" popover="{{ selectedItem.item.subject | mergeWords }}" popover-placement="right" popover-trigger="mouseenter">
+                <dt translate ng-show="selectedItem.item.subject">subject</dt>
+                <dd ng-show="selectedItem.item.subject" class="subject-line" popover="{{ selectedItem.item.subject | mergeWords }}" popover-placement="right" popover-trigger="mouseenter">
                     {{ selectedItem.item.subject | mergeWords }}
                 </dd>
             </dl>

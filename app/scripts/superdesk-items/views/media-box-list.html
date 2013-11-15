@@ -22,9 +22,10 @@
                      ng-show="item.pubstatus && item.pubstatus!='usable'">
                      {{ item.pubstatus | translate }}
                 </div>
-                {{ item.headline }}
+                <div ng-show="item.headline">{{ item.headline }}</div>
+                <div ng-show="!item.headline">{{ item.type }}</div>
             </div>
-            <div class="meta-data-field" ng-show="!ui.compact"><div class="item-provider">{{ item.provider }}</div>// {{ item.subject | mergeWords}}</div>
+            <div class="meta-data-field" ng-show="!ui.compact"><div class="item-provider">{{ item.provider }}</div><span ng-show="item.subject">//</span> {{ item.subject | mergeWords}}</div>
         </h5>
 
         <div class="item-right list-field">

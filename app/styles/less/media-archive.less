@@ -385,7 +385,7 @@ input{
 			}
 		}
 
-		&.media-composite {
+		&.media-composite, &.media-audio, &.media-video {
 			.media {
 				width: 140px;
 				max-width: 140px;
@@ -410,6 +410,7 @@ input{
 			height:18px;
 			font-size:11px;
 			color:#444;
+			text-transform: uppercase;
 		}
 		dl {
 			font-size:11px;
@@ -868,7 +869,7 @@ input{
 					padding: 0 5px;
 				}
 			}
-			&.media-composite {
+			&.media-composite, &.media-video, &.media-audio {
 				.media {
 					width: 161px;
 					max-width: 161px;
