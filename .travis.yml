@@ -12,4 +12,4 @@ install: "pip install -r requirements.txt --use-mirrors"
 script:
     - nosetests
     - behave
-    - flake8 superdesk features *.py
+    - flake8 superdesk *.py
