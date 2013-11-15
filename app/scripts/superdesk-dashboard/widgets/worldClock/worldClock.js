@@ -82,29 +82,37 @@ define([
                     // background circle
                     clock.append('circle')
                         .attr('r', r)
-                        .attr('class', 'clock outer')
-                        .style('fill', black)
+                        .attr('class', 'clock-outer')
                         .style('stroke-width', 1.5)
                         .style('stroke', black);
 
                     // inner dot
                     clock.append('circle')
                         .attr('r', 1.5)
-                        .attr('class', 'clock inner')
-                        .style('fill', white);
+                        .attr('class', 'clock-inner');
 
                     // format data for given time
                     function getData(timeStr) {
                         var time = timeStr.split(':');
                         return [
                             {unit: 'h', val: parseInt(time[0], 10) + (parseInt(time[1], 10) / 60), r: 0.5},
-                            {unit: 'm', val: parseInt(time[1], 10), r: 0.8},
+                            {unit: 'm', val: parseInt(time[1], 10), r: 0.8}
                         ];
                     }
 
                     scope.$watch('utc', function(utc) {
                         var time = utc ? utc.tz(scope.tz).format('HH:mm:ss') : '00:00:00';
                         var data = getData(time);
+                        var isDay = data[0].val >= 8 && data[0].val < 20;
+
+                        if (isDay) {
+                            clock.selectAll('.clock-outer').style('fill', white);
+                            clock.selectAll('.clock-inner').style('fill', black);
+                        } else {
+                            clock.selectAll('.clock-outer').style('fill', black);
+                            clock.selectAll('.clock-inner').style('fill', white);
+                        }
+
                         clock.selectAll('.clockhand').remove();
                         clock.selectAll('.clockhand')
                             .data(data)
@@ -121,7 +129,7 @@ define([
                             })
                             .attr('class', 'clockhand')
                             .style('stroke-width', 1.5)
-                            .style('stroke', white);
+                            .style('stroke', isDay ? black : white);
                     });
                 }
             };
