@@ -145,9 +145,12 @@ define([
                     };
 
                     scope.preview = function(item) {
-                        scope.editItem = item;
+                        scope.previewItem = item;
+                        scope.previewSingle = item;
+
                         if (item.type === 'composite') {
-                            scope.editItem.packageRefs = item.groups[_.findKey(item.groups,{id:"main"})].refs;
+                            scope.previewSingle = null;
+                            scope.previewItem.packageRefs = item.groups[_.findKey(item.groups,{id:'main'})].refs;
                         }
                     };
 
@@ -159,15 +162,16 @@ define([
                 templateUrl: 'scripts/superdesk-items/views/item-preview.html',
                 replace: true,
                 scope: {
-                    item: '='
+                    item: '=',
+                    previewSingle : '=previewitem'
                 },
                 link: function(scope, element, attrs) {
                     scope.closeEdit = function() {
                         scope.item = null;
-                        scope.treepreviewItem = null;
+                        scope.previewSingle = null;
                     };
                     scope.treepreview = function(item) {
-                        scope.treepreviewItem = item;
+                        scope.previewSingle = item;
                     };
                     scope.archive = function(item) {
                         em.create('archive', item).then(function() {
@@ -182,7 +186,7 @@ define([
                 link: function(scope, element, attrs) {
                     scope.$watch('ref', function(ref) {
                         em.getRepository('ingest').find(ref.residRef).then(function(item) {
-                            scope.refItem = item;          
+                            scope.refItem = item;
                         });
                     });
 

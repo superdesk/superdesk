@@ -6,33 +6,13 @@
         <a href="" class="lightbox-close" data-dismiss="modal" ng-click="closeEdit()"></a>
     </section>
 
-    <!-- picture preview -->
-    <section class="lightbox-left" ng-show="item.type == 'picture'">
-        <figure class="lightbox-large-preview" >
-            <img ng-src="{{ item.renditions.baseImage.href }}" />
-        </figure>
-        <div class="lightbox-caption">{{ item.headline }}</div>
-    </section>
 
-    <!-- text preview -->
-    <section class="lightbox-left" ng-show="item.type == 'text'">
-        <div class="lightbox-paper">
-            <div class="lightbox-text">
-                <div class="lightbox-title">{{ item.headline }}</div>
-                <figure ng-if="item.renditions.viewImage">
-                    <img ng-src="{{ item.renditions.viewImage.href }}" title="{{ item.description }}" />
-                </figure>
-                <div class="lightbox-fulltext">
-                    <small ng-show="item.slugline">{{ item.slugline || item.headline }}</small>
-                    <div ng-show="item.body_html" sd-html ng-model="item.body_html" class="lightbox-fullcontent"></div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- preview pane -->
 
-    <!-- composite(package) preview -->
-    <div ng-show="item.type == 'composite'">
-        <div class="lightbox-composite">
+
+        <!-- composite(package) preview -->
+
+        <div class="lightbox-composite" ng-show="item.type == 'composite'">
             <ul>
 
                 <li ng-repeat="ref in item.packageRefs" sd-ref class="{{refItem.type}}" ng-click="treepreview(refItem)">
@@ -50,27 +30,40 @@
                 </li>
             </ul>
         </div>
-        <div class="lightbox-composite-preview">
-            <section class="lightbox-left" ng-show="item.type == 'composite'">
-                
-                <div class="lightbox-paper" ng-show="treepreviewItem.type == 'text'">
+
+
+        <div ng-class="{'lightbox-composite-preview' : item.type == 'composite'}">
+
+            <!-- picture preview -->
+            <section class="lightbox-left" ng-show="previewSingle.type == 'picture'">
+                <figure class="lightbox-large-preview" >
+                    <img ng-src="{{ previewSingle.renditions.baseImage.href }}" />
+                </figure>
+                <div class="lightbox-caption">{{ previewSingle.headline }}</div>
+            </section>
+
+            <!-- text preview -->
+            <section class="lightbox-left" ng-show="previewSingle.type == 'text'">
+                <div class="lightbox-paper">
                     <div class="lightbox-text">
-                        <div class="lightbox-title">{{ treepreviewItem.headline }}</div>
+                        <div class="lightbox-title">{{ previewSingle.headline }}</div>
+                        <figure ng-if="previewSingle.renditions.viewImage">
+                            <img ng-src="{{ previewSingle.renditions.viewImage.href }}" title="{{ previewSingle.description }}" />
+                        </figure>
                         <div class="lightbox-fulltext">
-                            <small ng-show="treepreviewItem.slugline">{{ treepreviewItem.slugline || treepreviewItem.headline }}</small>
-                            <div ng-show="treepreviewItem.body_html" sd-html ng-model="treepreviewItem.body_html" class="lightbox-fullcontent"></div>
+                            <small ng-show="previewSingle.slugline">{{ previewSingle.slugline || previewSingle.headline }}</small>
+                            <div ng-show="previewSingle.body_html" sd-html ng-model="previewSingle.body_html" class="lightbox-fullcontent"></div>
                         </div>
                     </div>
                 </div>
-
-                <figure class="lightbox-large-preview" ng-show="treepreviewItem.type == 'picture'">
-                    <img ng-src="{{ treepreviewItem.renditions.baseImage.href }}" />
-                </figure>
-                <div class="lightbox-caption" ng-show="treepreviewItem.type == 'picture'">{{ treepreviewItem.headline }}</div>
-
             </section>
+
         </div>
-    </div>
+    <!-- end of prevoew pane -->
+
+    
+        
+
     
 
 
