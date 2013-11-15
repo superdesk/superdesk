@@ -19,7 +19,7 @@
             <div class="main-title">
                 <div class="status-label" 
                      ng-class="{'label-canceled' : item.pubstatus=='canceled'}"
-                     ng-show="item.pubstatus">
+                     ng-show="item.pubstatus && item.pubstatus!='usable'">
                      {{ item.pubstatus | translate }}
                 </div>
                 {{ item.headline }}

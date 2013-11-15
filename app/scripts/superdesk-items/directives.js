@@ -93,7 +93,6 @@ define([
                     scope.hoverItem = function(item) {
                         var pos = $position.position(element.find('.media-box'));
                         scope.selectedItem.item = item;
-                        console.log(item);
                         scope.selectedItem.position = {left: pos.left - 9, top: pos.top - 15};
                         scope.selectedItem.show = true;
                     };
@@ -155,7 +154,7 @@ define([
                 }
             };
         })
-        .directive('sdItemPreview', function() {
+        .directive('sdItemPreview', function(em) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/item-preview.html',
                 replace: true,
@@ -169,6 +168,11 @@ define([
                     };
                     scope.treepreview = function(item) {
                         scope.treepreviewItem = item;
+                    };
+                    scope.archive = function(item) {
+                        em.create('archive', item).then(function() {
+                            item.archived = true;
+                        });
                     };
                 }
             };
