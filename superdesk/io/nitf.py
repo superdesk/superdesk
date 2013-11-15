@@ -3,14 +3,14 @@
 from datetime import datetime
 import xml.etree.ElementTree as etree
 
-from .iptc import subject_codes
-
 ITEM_CLASS = 'text'
 
 subject_fields = ('tobject.subject.type', 'tobject.subject.matter', 'tobject.subject.detail')
 
+
 def get_norm_datetime(tree):
     return datetime.strptime(tree.attrib['norm'], '%Y%m%dT%H%M%S')
+
 
 def get_content(tree):
     elements = []
@@ -18,12 +18,14 @@ def get_content(tree):
         elements.append(etree.tostring(elem, encoding='UTF-8').decode('utf-8'))
     return ''.join(elements)
 
+
 def get_keywords(tree):
     keywords = []
     for elem in tree.findall('head/meta'):
         if elem.get('name') == 'anpa-keyword':
             keywords.append(elem.get('content'))
     return keywords
+
 
 def get_subjects(tree):
     subjects = []
@@ -39,6 +41,7 @@ def get_subjects(tree):
             subjects[-1]['code'] = qcode
 
     return subjects
+
 
 def parse(text):
     item = {}

@@ -5,20 +5,20 @@ import xml.etree.ElementTree as etree
 import traceback
 import datetime
 
-try:
-    from urllib.request import urlopen
-except ImportError:
-    from urllib2 import urlopen
-
 from flask import url_for
 import superdesk
-from superdesk.io import register_provider
 from superdesk.utc import utcnow
 from .newsml import Parser
 from .reuters_token import get_token
 from ..utc import utc
 
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib2 import urlopen
+
 PROVIDER = 'reuters'
+
 
 class ReutersUpdateService(object):
     """Update Service"""
@@ -72,8 +72,7 @@ class ReutersUpdateService(object):
 
         ids = []
         payload = {'channel': channel, 'fieldsRef': 'id'}
-        payload['dateRange'] = "%s-%s" % (self.format_date(last_updated),
-                self.format_date(updated))
+        payload['dateRange'] = "%s-%s" % (self.format_date(last_updated), self.format_date(updated))
         tree = self.get_tree('items', payload)
         for result in tree.findall('result'):
             ids.append(result.find('guid').text)
@@ -116,6 +115,7 @@ class ReutersUpdateService(object):
         """Format date for API usage."""
         return date.strftime(self.DATE_FORMAT)
 
+
 def on_read_ingest(data, docs):
     provider = data.find_one('ingest_providers', type=PROVIDER)
     if not provider:
@@ -125,6 +125,7 @@ def on_read_ingest(data, docs):
         if doc.get('ingest_provider') and str(doc['ingest_provider']) == str(provider['_id']):
             for i, rendition in doc.get('renditions', {}).items():
                 rendition['href'] = '%s?auth_token=%s' % (rendition.get('href'), get_token(provider))
+
 
 def on_create_archive(data, docs):
     provider = data.find_one('ingest_providers', type=PROVIDER)

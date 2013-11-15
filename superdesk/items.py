@@ -3,10 +3,12 @@ import flask
 import superdesk
 from .utc import utcnow
 
+
 def on_create_item(data, docs):
     for doc in docs:
         if 'guid' in doc:
             doc.setdefault('_id', doc['guid'])
+
 
 def on_create_archive(data, docs):
     for doc in docs:

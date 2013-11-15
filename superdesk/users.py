@@ -3,13 +3,16 @@
 import superdesk
 from .utc import utcnow
 
+
 class EmptyUsernameException(Exception):
     def __str__(self):
         return """Username is empty"""
 
+
 class ConflictUsernameException(Exception):
     def __str__(self):
         return "Username '%s' exists already" % self.args[0]
+
 
 def create_user(userdata=None, db=None, **kwargs):
     """Create a new user"""
@@ -31,6 +34,7 @@ def create_user(userdata=None, db=None, **kwargs):
     db.users.insert(userdata)
     return userdata
 
+
 def get_display_name(user):
     if user.get('display_name'):
         return user.get('display_name')
@@ -41,6 +45,7 @@ def get_display_name(user):
     else:
         return user.get('username')
 
+
 def on_create_users(data, docs):
     """Set default fields for users"""
     for doc in docs:
@@ -48,6 +53,7 @@ def on_create_users(data, docs):
         doc.setdefault('created', now)
         doc.setdefault('updated', now)
         doc.setdefault('display_name', get_display_name(doc))
+
 
 class CreateUserCommand(superdesk.Command):
     """Create a user with given username and password.
@@ -111,7 +117,13 @@ superdesk.domain('users', {
             'type': 'string'
         }
     },
-    'extra_response_fields': ['username', 'first_name', 'last_name', 'display_name', 'email', 'user_info', 'picture_url'],
+    'extra_response_fields': [
+        'display_name',
+        'username',
+        'email',
+        'user_info',
+        'picture_url',
+    ],
     'datasource': {
         'projection': {
             'username': 1,

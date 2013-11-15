@@ -8,4 +8,3 @@ application.register_blueprint(eve_docs, url_prefix='/docs')
 
 if __name__ == '__main__':
     application.run(debug=True)
-

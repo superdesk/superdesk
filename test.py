@@ -1,6 +1,5 @@
 
 import os
-import pymongo
 import pyelasticsearch
 import settings
 from pyelasticsearch.exceptions import ElasticHttpNotFoundError
@@ -23,6 +22,7 @@ superdesk.app.TESTING = True
 from app import app as application
 app = application
 
+
 def drop_db():
     with application.test_request_context():
         try:
@@ -30,6 +30,7 @@ def drop_db():
         except AttributeError:
             pass
 
-def setup(context = None):
+
+def setup(context=None):
     if context:
         context.client = application.test_client()

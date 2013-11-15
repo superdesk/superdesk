@@ -5,6 +5,7 @@ import superdesk
 import flask
 from eve.io.mongo import MongoJSONEncoder
 
+
 class SuperdeskTokenAuth(eve.auth.TokenAuth):
     """Superdesk Token Auth"""
 
@@ -14,6 +15,7 @@ class SuperdeskTokenAuth(eve.auth.TokenAuth):
         if auth_token:
             flask.g.user = app.data.find_one('users', _id=(str(auth_token['user']['_id'])))
         return auth_token
+
 
 class SuperdeskEve(eve.Eve):
     """Superdesk API"""

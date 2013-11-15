@@ -2,12 +2,14 @@ from __future__ import unicode_literals
 import xml.etree.ElementTree as etree
 import datetime
 
-from .nitf import subject_codes
+from .iptc import subject_codes
 
 CLASS_PACKAGE = 'composite'
 
+
 def is_package(item):
     return item['type'] == CLASS_PACKAGE
+
 
 class Parser():
     """NewsMl xml parser"""

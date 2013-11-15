@@ -1,10 +1,10 @@
 import os
 import unittest
 import xml.etree.ElementTree as etree
-
-from test import setup
+import test
 
 from superdesk.io import newsml
+
 
 class ItemTest(unittest.TestCase):
 
@@ -14,6 +14,7 @@ class ItemTest(unittest.TestCase):
         xml = etree.parse(fixture)
         parser = newsml.Parser()
         self.item = parser.parse_message(xml)[0]
+
 
 class TextParserTest(ItemTest):
     def setUp(self):
@@ -109,4 +110,5 @@ class SNEPParserTest(ItemTest):
         self.assertEquals("At least 15 killed on Kenya coast on election day", ref.get('headline'))
 
 if __name__ == '__main__':
+    test.drop_db()
     unittest.main()

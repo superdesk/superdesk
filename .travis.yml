@@ -9,4 +9,7 @@ services:
 
 install: "pip install -r requirements.txt --use-mirrors"
 
-script: nosetests && behave
+script:
+    - nosetests
+    - behave
+    - flake8 superdesk features *.py
