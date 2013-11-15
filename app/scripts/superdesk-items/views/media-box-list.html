@@ -23,9 +23,24 @@
         <div class="item-right list-field">
             <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>
             <div class="item-functions">
-                <a class="list-field" ng-click="preview(item)" ng-show="actions.preview"  ng-show="actions.preview" tooltip-placement="bottom" tooltip="preview" tooltip-append-to-body="true"><i class="icon-eye-open"></i></a>
-                <a class="list-field" ng-click="archive(item)" ng-show="actions.archive && !item.archived" tooltip-placement="bottom" tooltip="archive" tooltip-append-to-body="true"><i class="icon-archive"></i></a>
-                <a class="list-field disabled" ng-click="archive(item)" ng-show="actions.archive && item.archived" tooltip-placement="bottom" tooltip="already in Archive" tooltip-append-to-body="true"><i class="icon-archive"></i></a>
+                <a class="list-field" 
+                    ng-click="preview(item)" 
+                    ng-show="actions.preview" 
+                    tooltip-placement="bottom" tooltip="{{ 'preview' | translate }}" tooltip-append-to-body="true">
+                        <i class="icon-eye-open"></i>
+                </a>
+                <a class="list-field" 
+                    ng-click="archive(item)" 
+                    ng-show="actions.archive && !item.archived" 
+                    tooltip-placement="bottom" tooltip="{{ 'archive' | translate }}" tooltip-append-to-body="true">
+                        <i class="icon-archive"></i>
+                </a>
+                <a class="list-field disabled" 
+                    ng-click="archive(item)" 
+                    ng-show="actions.archive && item.archived" 
+                    tooltip-placement="bottom" tooltip="{{ 'already in Archive' | translate }}" tooltip-append-to-body="true">
+                        <i class="icon-archive"></i>
+                </a>
                 <a class="list-field"><i class="icon-dots"></i></a>
             </div>
         </div>

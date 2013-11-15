@@ -25,8 +25,8 @@
         <i class="filetype-icon-large-composite"></i>
     </div>
 
-    <div class="media-box-content">
-        <div class="media-info" ng-click="preview(selectedItem.item)">
+    <div class="media-box-content" ng-click="preview(selectedItem.item)">
+        <div class="media-info" >
             <h5>{{ selectedItem.item.slugline }}</h5>
             <dl class="clearfix">
 
@@ -48,9 +48,9 @@
     
 
     <div class="item-functions">
-        <a class="thumb-field" ng-click="preview(selectedItem.item)" ng-show="actions.preview" tooltip-placement="bottom" tooltip="preview" tooltip-append-to-body="true"><i class="icon-eye-open"></i></a>
-        <a class="thumb-field" ng-click="archive(selectedItem.item)" ng-show="actions.archive && !selectedItem.item.archived" tooltip-placement="bottom" tooltip="archive" tooltip-append-to-body="true"><i class="icon-archive"></i></a>
-        <a class="thumb-field disabled" ng-show="actions.archive && selectedItem.item.archived" tooltip-placement="bottom" tooltip="already in Archive" tooltip-append-to-body="true"><i class="icon-archive"></i></a>
+        <a class="thumb-field" ng-click="preview(selectedItem.item)" ng-show="actions.preview" tooltip-placement="bottom" tooltip="{{ 'preview' | translate }}" ><i class="icon-eye-open"></i></a>
+        <a class="thumb-field" ng-click="archive(selectedItem.item)" ng-show="actions.archive && !selectedItem.item.archived" tooltip-placement="bottom" tooltip="{{ 'archive' | translate }}"><i class="icon-archive"></i></a>
+        <a class="thumb-field disabled" ng-show="actions.archive && selectedItem.item.archived" tooltip-placement="bottom" tooltip="{{ 'already in Archive' | translate }}"><i class="icon-archive"></i></a>
 
         <a class="thumb-field"><i class="icon-dots"></i></a>
     </div>

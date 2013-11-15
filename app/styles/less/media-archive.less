@@ -211,9 +211,11 @@ input{
 	top: 91px !important;
     left: 0;
     right: 0;
+    bottom:0;
 	position:absolute;
-	width:auto;
 	padding: 20px;
+	overflow: auto;
+	overflow-x: hidden;
 }
 
 .fake-sidebar {
@@ -248,9 +250,9 @@ input{
 
 
 
-/* ===========================
-   item(news) urgency colors   
-*/
+/* ====================================== */
+   // item(news) urgency colors and labels  
+
 	@urgencyColor0 : #c8c8c8;
 	@urgencyColor1 : #be0000;
 	@urgencyColor2 : #da9a68;
@@ -258,28 +260,30 @@ input{
 	@urgencyColor4 : #aeb7a0;
 	@urgencyColor5 : #b6c7ce;
 
-/* =========================== 
-*/
 
-.urgency-label-generic() {
-	width: 16px;
-	height: 16px;
-	.border-radius(8px);
-	display: inline-block;
-	text-align: center;
-	color:#fff;
-	font-size: 10px;
-	.box-sizing(border-box);
-	line-height: 16px;
-	vertical-align: top;
-}
-.urgency-0 .urgency-label { background: @urgencyColor0; }
-.urgency-1 .urgency-label { background: @urgencyColor1; }
-.urgency-2 .urgency-label { background: @urgencyColor2; }
-.urgency-3 .urgency-label { background: @urgencyColor3; }
-.urgency-4 .urgency-label { background: @urgencyColor4; }
-.urgency-5 .urgency-label { background: @urgencyColor5; }
+	.urgency-label-generic() {
+		width: 16px;
+		height: 16px;
+		.border-radius(8px);
+		display: inline-block;
+		text-align: center;
+		color:#fff;
+		font-size: 10px;
+		.box-sizing(border-box);
+		line-height: 16px;
+		vertical-align: top;
+	}
+	.urgency-0 .urgency-label { background: @urgencyColor0; }
+	.urgency-1 .urgency-label { background: @urgencyColor1; }
+	.urgency-2 .urgency-label { background: @urgencyColor2; }
+	.urgency-3 .urgency-label { background: @urgencyColor3; }
+	.urgency-4 .urgency-label { background: @urgencyColor4; }
+	.urgency-5 .urgency-label { background: @urgencyColor5; }
 
+
+
+/* ====================================== */
+  // media-box styling
 
 @sfbox_mediaHeight : 82px;
 @sfbox_sidepadding : 5px;
@@ -315,12 +319,9 @@ input{
 				}
 			}
 		}
-		&.disabled {
-			opacity: 0.5;
-			filter: alpha(opacity=50);
-		}
 		&.archived {
 			background: #f2f2f2 url(../../images/checkmark-big.png) no-repeat bottom right;
+			.box-shadow-both(inset 0 2px 0 0 #e9e9e9, 0 0 0 2px #fff);
 		}
 		.loading-status { 
 			position: absolute;
@@ -466,13 +467,16 @@ input{
 
 
 .grid-view {
-	padding-bottom: 40px;
+	padding-bottom: 80px;
 	.media-box {
 		.media-box-generic;
 	}
 }
 
-@rightfield-width:222px;
+/* ====================================== */
+  // media box list view 
+
+@rightfield-width:200px;
 
 .list-view {
 	> div:first-child {
@@ -488,7 +492,7 @@ input{
 		overflow: hidden;
 		border-left: 3px solid #aaa;
 		&:hover {
-			background: #eff7fa;
+			background: #eff7fa !important;
 			border-bottom-color: #e0e0e0;
 			cursor: pointer;
 			.list-field {
@@ -496,7 +500,7 @@ input{
 			}
 		}
 		&.selected {
-			background: #eefce5;
+			background: #eefce5 !important;
 		}
 		.loading-status { 
 			position: absolute;
@@ -624,9 +628,20 @@ input{
 						i {
 							.opacity(30);
 						}
+						&:hover {
+							background: #eff7fa;
+						}
 					}
 				}
 				
+			}
+		}
+
+		&.archived {
+			background: #f2f2f2;
+			h5 {
+				background: url('../../images/checkmark-big-full.png') no-repeat right 50%;
+				background-size: 36px;
 			}
 		}
 		
@@ -636,6 +651,11 @@ input{
 				.list-field {
 					&:hover {
 						background: #e0f1d5;
+					}
+					&.disabled {
+						&:hover {
+							background: #eefce5;
+						}
 					}
 				}
 			}
@@ -666,6 +686,9 @@ input{
 		}
 
 		&.compact-item {
+			.loading-status {
+				background-size: 28px;
+			}
 			.list-field {
 				padding: 12px 11px;
 			}
@@ -751,6 +774,10 @@ input{
 		}
 		*/
 
+
+/* ====================================== */
+  // media box HOVER grid view 
+
 .media-library-main-content-inner { position: absolute; }
 
 .grid-view {
@@ -822,6 +849,7 @@ input{
 
 			&.archived {
 				background: #f2f2f2;
+				.box-shadow(0px 0px 6px 0px #777777);
 				.media-box-content {
 					background:  url(../../images/checkmark-big.png) no-repeat bottom right;
 				}
@@ -890,6 +918,9 @@ input{
 						i {
 							.opacity(50);
 						}
+						&:hover {
+							background: #fff;
+						}
 					}
 				}
 				
@@ -932,7 +963,7 @@ input{
 
 			.popover {
 				.popover-inner {
-					width: 170px;
+					width: 200px;
 					.popover-content {
 						color: #333;
 					}
@@ -949,9 +980,9 @@ input{
 
 
 
-/********************************
-	LIGHTBOX PREVIEW
-*********************************/
+/* ====================================== */
+  // LIGHTBOX PREVIEW
+
 @lightbox-bg : #000;
 @lightbox-sidepane : 380px ;
 @lightbox-toppane : 45px;
@@ -1228,25 +1259,12 @@ input{
 		line-height:16px;
 		margin-bottom:7px;
 		vertical-align:middle;
+		word-break: break-word;
 	}
 }
 
 /* END OF LIGHTBOX PREVIEW */
 
-
-/* override bootstrap*/
-/*
-.popover-title {
-	display:none;
-}
-*/
-.popover-inner {
-	width:290px;
-}
-
-.popover-content {
-	background:#d2d2d2 !important;
-}
 
 
 
