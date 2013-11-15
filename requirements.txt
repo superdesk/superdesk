@@ -18,6 +18,8 @@ pytz==2013.8
 requests==2.0.1
 simplejson==3.3.1
 six==1.4.1
+arrow==0.4.2
+python-dateutil==2.2
 git+git://github.com/petrjasek/flask-elasticsearch@master#egg=Flask-ElasticSearch
 git+git://github.com/petrjasek/eve-docs@master#egg=eve_docs
 git+git://github.com/petrjasek/eve@elastic#egg=Eve==0.2.0

@@ -112,7 +112,7 @@ schema = {
     },
 }
 
-item_url = '[\w][\w,.:-]+'
+item_url = 'regex("[\w][\w,.:-]+")'
 
 extra_response_fields = ['guid', 'headline', 'firstcreated', 'versioncreated']
 

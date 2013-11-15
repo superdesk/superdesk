@@ -124,7 +124,7 @@ class SuperdeskDataLayer(eve.io.DataLayer):
         return self._backend(resource).remove(resource, id_)
 
     def _backend(self, resource):
-        datasource, filter_, _ = self._datasource(resource)
+        datasource, filter_, projection_, sort_ = self._datasource(resource)
         backend = config.SOURCES[datasource].get('backend', 'mongo')
         return getattr(self, backend)
 

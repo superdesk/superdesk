@@ -80,7 +80,7 @@ superdesk.command('users:create', CreateUserCommand())
 
 superdesk.domain('users', {
     'additional_lookup': {
-        'url': '[\w]+',
+        'url': 'regex("[_a-zA-Z0-9-]{3,20}")',
         'field': 'username'
     },
     'schema': {
