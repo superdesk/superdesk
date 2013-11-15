@@ -283,6 +283,29 @@ input{
 
 
 /* ====================================== */
+  // item(news) status labels  
+
+	.status-label {
+		.box-sizing(border-box);
+		height: 15px;
+		padding: 4px 7px;
+		background: #1f6681;
+		.border-radius(2px);
+		display: inline-block;
+		font-size: 10px;
+		color: #fff;
+		line-height: 7px;
+		margin: 5px 10px 0 2px;
+		text-transform: uppercase;
+		&.label-canceled {
+			background:#1c1c1c;
+			color: #ff5353;
+		}
+	}
+
+
+
+/* ====================================== */
   // media-box styling
 
 @sfbox_mediaHeight : 82px;
@@ -579,6 +602,11 @@ input{
 					text-overflow:ellipsis;
 					white-space: nowrap;
 				}
+				.status-label {
+					margin-top: 0;
+					display: block;
+					float: left;
+				}
 			}
 			.urgency-label {
 				.urgency-label-generic;
@@ -697,6 +725,9 @@ input{
 			}
 			h5 {
 				margin-left: 126px;
+				.status-label {
+					margin-top: 1px;
+				}
 			}
 
 		}
@@ -880,6 +911,9 @@ input{
 				}
 				.urgency-label {
 					bottom: 7px;
+				}
+				.status-label {
+					margin-left: 5px;
 				}
 			}
 

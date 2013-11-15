@@ -93,6 +93,7 @@ define([
                     scope.hoverItem = function(item) {
                         var pos = $position.position(element.find('.media-box'));
                         scope.selectedItem.item = item;
+                        console.log(item);
                         scope.selectedItem.position = {left: pos.left - 9, top: pos.top - 15};
                         scope.selectedItem.show = true;
                     };

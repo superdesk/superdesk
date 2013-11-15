@@ -30,6 +30,12 @@
                 {{ item.subject | mergeWords}}
             </dd>
         </dl>
+        <div class="status-label" 
+             ng-class="{'label-canceled' : item.pubstatus=='canceled'}"
+             ng-show="item.pubstatus  && item.pubstatus!='usable'">
+             {{ item.pubstatus | translate }}
+        </div>
+
     </div>
 
     <span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>

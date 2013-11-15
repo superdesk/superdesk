@@ -42,8 +42,16 @@
                 </dd>
             </dl>
         </div>
+
+        <div class="status-label" 
+             ng-class="{'label-canceled' : selectedItem.item.pubstatus=='canceled'}"
+             ng-show="selectedItem.item.pubstatus  && selectedItem.item.pubstatus!='usable'">
+             {{ selectedItem.item.pubstatus | translate }}
+        </div>
+
         <span class="type-icon"><i class="filetype-icon-{{selectedItem.item.type}}"></i></span>
         <span class="urgency-label">{{ selectedItem.item.urgency }}</span>
+
     </div>    
     
 

@@ -16,7 +16,14 @@
 
         <h5 class="list-field"  ng-click="preview(item)">
             <div class="item-provider"  ng-show="ui.compact">{{ item.provider }}</div>
-            <div class="main-title">{{ item.headline }}</div>
+            <div class="main-title">
+                <div class="status-label" 
+                     ng-class="{'label-canceled' : item.pubstatus=='canceled'}"
+                     ng-show="item.pubstatus">
+                     {{ item.pubstatus | translate }}
+                </div>
+                {{ item.headline }}
+            </div>
             <div class="meta-data-field" ng-show="!ui.compact"><div class="item-provider">{{ item.provider }}</div>// {{ item.subject | mergeWords}}</div>
         </h5>
 
