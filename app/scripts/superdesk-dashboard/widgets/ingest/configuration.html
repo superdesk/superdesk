@@ -1,0 +1,34 @@
+<div ng-controller="IngestConfigController">
+
+    <div class="page-header">
+        <h2>{{ 'General settings'|translate }}</h2>
+    </div>
+
+    <div>
+        {{'Number of items'|translate}}: <input ng-model="configuration.maxItems" style="width: 30px;">
+    </div>
+    <div>
+        {{'Search term'|translate}}: <input ng-model="configuration.search" class="form-control span2">
+    </div>
+
+    <div class="page-header">
+        <h2>{{ 'Selected providers'|translate }} <small translate>Click to remove</small></h2>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item" ng-repeat="provider in configuration.providers">
+            <a href="" ng-click="configuration.providers.splice($index, 1)">{{ provider }}</a>
+        </li>
+        <li class="alert alert-info" ng-hide="configuration.providers.length" translate>No providers selected!</li>
+    </ul>
+
+    <div class="page-header">
+        <h2>{{ 'Available providers'|translate }} <small translate>Click to add</small></h2>
+    </div>
+
+    <ul>
+        <li ng-repeat="provider in availableProviders|filter:notIn(configuration.providers)">
+            <a href="" ng-click="configuration.providers.push(provider)">{{ provider }}</a>
+        </li>
+    </ul>
+
+</div>
