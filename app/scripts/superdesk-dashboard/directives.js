@@ -70,9 +70,9 @@ define([
                     this.addWidget = function(element, sizex, sizey, col, row) {
                         return $scope.gridster.add_widget(element, sizex, sizey, col, row);
                     };
-                    this.removeWidget = function(widget) {
-                        $scope.gridster.remove_widget(widget.el);
-                        delete $scope.widgets[widget.wcode];
+                    this.removeWidget = function(id) {
+                        $scope.gridster.remove_widget($scope.widgets[id].el);
+                        delete $scope.widgets[id];
                     };
                     this.resizeWidget = function(element, sizex, sizey) {
                         $scope.gridster.resize_widget(element, sizex, sizey);
