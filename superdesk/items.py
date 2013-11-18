@@ -30,13 +30,15 @@ superdesk.connect('create:archive', on_create_archive)
 
 schema = {
     'uri': {
-        'type': 'string'
+        'type': 'string',
+        'required': True
     },
     'provider': {
         'type': 'string'
     },
     'guid': {
-        'type': 'string'
+        'type': 'string',
+        'required': True
     },
     'type': {
         'type': 'string'
@@ -51,6 +53,9 @@ schema = {
         'type': 'string'
     },
     'copyrightholder': {
+        'type': 'string'
+    },
+    'copyrightnotice': {
         'type': 'string'
     },
     'language': {
@@ -112,11 +117,14 @@ schema = {
             'embeddable': True
         }
     },
+    'contents': {
+        'type': 'list'
+    },
 }
 
 item_url = 'regex("[\w][\w,.:-]+")'
 
-extra_response_fields = ['guid', 'headline', 'firstcreated', 'versioncreated']
+extra_response_fields = ['guid', 'headline', 'firstcreated', 'versioncreated', 'archived']
 
 facets = {
     'provider': {'terms': {'field': 'provider'}},
