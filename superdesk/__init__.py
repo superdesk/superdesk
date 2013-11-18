@@ -85,6 +85,7 @@ class SuperdeskDataLayer(eve.io.DataLayer):
                 'guid': {'type': 'string', 'index': 'not_analyzed'},
                 'firstcreated': {'type': 'date'},
                 'versioncreated': {'type': 'date'},
+                'version': {'type': 'string'},
                 'subject': {
                     'properties': {
                         'name': {'type': 'string', 'index': 'not_analyzed'}

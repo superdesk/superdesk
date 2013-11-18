@@ -17,6 +17,7 @@ Feature: News Items Archive
         When we post to "/archive"
             """
             {
+                "uri": "tag:xyz-abc-123",
                 "guid": "tag:xyz-abc-123",
                 "headline": "htext",
                 "urgency": "3",

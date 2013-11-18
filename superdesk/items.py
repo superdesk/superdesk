@@ -4,13 +4,24 @@ import superdesk
 from .utc import utcnow
 
 
+def archive_assets(data, doc):
+    """Archive all related assets for given doc."""
+    for group in doc.get('groups', []):
+        for ref in group.get('refs', []):
+            if 'residRef' in ref:
+                item = data.find_one('ingest', _id=ref['residRef'])
+                if item:
+                    data.insert('archive', [item])
+
 def on_create_item(data, docs):
+    """Set guid as doc _id."""
     for doc in docs:
         if 'guid' in doc:
             doc.setdefault('_id', doc['guid'])
 
 
 def on_create_archive(data, docs):
+    """Set user and archived properties."""
     for doc in docs:
         if doc.get('guid'):
             # set archived on ingest item
@@ -20,6 +31,8 @@ def on_create_archive(data, docs):
                 data.update('ingest', ingest_doc.get('_id'), {
                     'archived': doc['archived']
                 })
+
+            archive_assets(data, doc)
 
         # set who created the item
         doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
