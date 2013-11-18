@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    <div class="main-content-inner scroller {{ ui.view }}-view" ng-if="ui.view !== 'stats'">
+    <div class="main-content-inner {{ ui.view }}-view" ng-if="ui.view !== 'stats'">
         <div ng-repeat="item in items._items" sd-media-box></div>
 
         <!-- floating box mask -->
@@ -25,7 +25,7 @@
         <div class="alert alert-info" ng-show="!items._items.length" translate>No results found.</div>
     </div>
 
-    <div class="main-content-inner scroller clearfix" ng-if="ui.view === 'stats'">
+    <div class="main-content-inner clearfix" ng-if="ui.view === 'stats'">
         <div sd-histogram data-entries="items._facets.versioncreated.entries"></div>
         <div sd-pie-chart data-terms="items._facets.provider.terms"></div>
         <div sd-pie-chart data-terms="items._facets.urgency.terms" data-sort="term"></div>

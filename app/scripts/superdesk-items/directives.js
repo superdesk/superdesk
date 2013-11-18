@@ -145,22 +145,51 @@ define([
                     };
 
                     scope.preview = function(item) {
-                        scope.editItem = item;
+                        scope.previewItem = item;
+                        scope.previewSingle = item;
+
+                        if (item.type === 'composite') {
+                            scope.previewSingle = null;
+                            scope.previewItem.packageRefs = item.groups[_.findKey(item.groups,{id:'main'})].refs;
+                        }
                     };
+
                 }
             };
         })
-        .directive('sdItemPreview', function() {
+        .directive('sdItemPreview', function(em) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/item-preview.html',
                 replace: true,
                 scope: {
-                    item: '='
+                    item: '=',
+                    previewSingle : '=previewitem'
                 },
                 link: function(scope, element, attrs) {
                     scope.closeEdit = function() {
                         scope.item = null;
+                        scope.previewSingle = null;
                     };
+                    scope.treepreview = function(item) {
+                        scope.previewSingle = item;
+                    };
+                    scope.archive = function(item) {
+                        em.create('archive', item).then(function() {
+                            item.archived = true;
+                        });
+                    };
+                }
+            };
+        })
+        .directive('sdRef',function(em){
+            return {
+                link: function(scope, element, attrs) {
+                    scope.$watch('ref', function(ref) {
+                        em.getRepository('ingest').find(ref.residRef).then(function(item) {
+                            scope.refItem = item;
+                        });
+                    });
+
                 }
             };
         })

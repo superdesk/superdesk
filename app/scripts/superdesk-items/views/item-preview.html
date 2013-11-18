@@ -6,34 +6,87 @@
         <a href="" class="lightbox-close" data-dismiss="modal" ng-click="closeEdit()"></a>
     </section>
 
-    <section class="lightbox-left" ng-show="item.type == 'picture'">
-        <figure class="lightbox-large-preview" >
-            <img ng-src="{{ item.renditions.baseImage.href }}" />
-        </figure>
-        <div class="lightbox-caption">{{ item.headline }}</div>
-    </section>
 
-    <section class="lightbox-left" ng-show="item.type == 'text'">
-        <div class="lightbox-paper">
-            <div class="lightbox-text">
-                <div class="lightbox-title">{{ item.headline }}</div>
-                <figure ng-if="item.renditions.viewImage">
-                    <img ng-src="{{ item.renditions.viewImage.href }}" title="{{ item.description }}" />
-                </figure>
-                <div class="lightbox-fulltext">
-                    <small ng-show="item.slugline">{{ item.slugline || item.headline }}</small>
-                    <div ng-show="item.body_html" sd-html ng-model="item.body_html" class="lightbox-fullcontent"></div>
-                </div>
-            </div>
+    <!-- preview pane -->
+
+
+        <!-- composite(package) preview -->
+
+        <div class="lightbox-composite" ng-show="item.type == 'composite'">
+            <ul>
+
+                <li ng-repeat="ref in item.packageRefs" sd-ref class="{{refItem.type}}" ng-click="treepreview(refItem)">
+
+                        <!-- text item -->
+                        <div ng-if="refItem.type == 'text'">
+                            {{ item.headline }}
+                        </div>
+
+                        <!-- picture item -->
+                        <figure ng-if="refItem.type == 'picture'">
+                            <img ng-src="{{ refItem.renditions.thumbnail.href }}"/>
+                        </figure>
+
+                </li>
+            </ul>
         </div>
-    </section>
+
+
+        <div ng-class="{'lightbox-composite-preview' : item.type == 'composite'}">
+
+            <!-- picture preview -->
+            <section class="lightbox-left" ng-show="previewSingle.type == 'picture'">
+                <figure class="lightbox-large-preview" >
+                    <img ng-src="{{ previewSingle.renditions.baseImage.href }}" />
+                </figure>
+                <div class="lightbox-caption">{{ previewSingle.headline }}</div>
+            </section>
+
+            <!-- text preview -->
+            <section class="lightbox-left" ng-show="previewSingle.type == 'text'">
+                <div class="lightbox-paper">
+                    <div class="lightbox-text">
+                        <div class="lightbox-title">{{ previewSingle.headline }}</div>
+                        <figure ng-if="previewSingle.renditions.viewImage">
+                            <img ng-src="{{ previewSingle.renditions.viewImage.href }}" title="{{ previewSingle.description }}" />
+                        </figure>
+                        <div class="lightbox-fulltext">
+                            <small ng-show="previewSingle.slugline">{{ previewSingle.slugline || previewSingle.headline }}</small>
+                            <div ng-show="previewSingle.body_html" sd-html ng-model="previewSingle.body_html" class="lightbox-fullcontent"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    <!-- end of prevoew pane -->
+
+    
+        
+
+    
+
+
 
     <section class="lightbox-right">
         <header>
             <h5 class="lightbox-title">{{ item.slugline || item.headline }}</h5>
             <span class="lightbox-modified-info">{{ 'Modified:'|translate }} {{ item.versioncreated|date:'medium' }}</span>
+            
+            <div class="status-label" 
+                 ng-class="{'label-canceled' : item.pubstatus=='canceled'}"
+                 ng-show="item.pubstatus  && item.pubstatus!='usable'">
+                 {{ item.pubstatus | translate }}
+            </div>
             <span class="urgency-label">{{ item.urgency }}</span>
             <span class="lightbox-media-type filetype-icon-{{item.type}}"></span>
+
+            <div class="btn-group lightbox-actions">
+              <button class="btn" ng-if="!item.archived" ng-click="$parent.archive(item)"><i class="icon-archive"></i> {{ 'Archive'|translate }}</button>
+              <button class="btn disabled" ng-if="item.archived"><i class="icon-archive"></i> {{ 'Archive'|translate }}</button>
+              <button class="btn"><i class="icon-list-alt"></i> {{ 'Edit metadata'|translate }}</a>
+            </div>
+            
         </header>
         <div class="lightbox-media-data" >
             <div class="lightbox-descritpion">
@@ -47,17 +100,19 @@
                 <div class="tabmodule-content">
                     <dl class="metadata-details-new clearfix">
                         <dt translate>Provider</dt><dd>{{ item.provider }}</dd>
-                        <dt translate>GUID</dt><dd>{{ item.guid }}</dd>
+                        <dt translate ng-show="item.creditline">Creditline</dt><dd ng-show="item.creditline">&copy;{{ item.creditline }}</dd>
+                        <dt translate ng-show="item.byline">By</dt><dd ng-show="item.byline">{{ item.byline }}</dd>
                         <dt translate>Item type</dt><dd>{{ item.type }}</dd>
+                        <dt translate>GUID</dt><dd>{{ item.guid }}</dd>
                         <dt translate>First created</dt><dd>{{ item.firstcreated|reldate }}</dd>
                         <dt translate>Version created</dt><dd>{{ item.versioncreated|reldate }}</dd>
-                        <dt translate>Version</dt><dd>{{ item.version }}</dd>
-                        <dt translate>Creditline</dt><dd>&copy;{{ item.creditline }}</dd>
-                        <dt translate>Subject</dt><dd>{{ item.subject | mergeWords }}</dd>
+                        <dt translate ng-show="item.archived">Archived</dt><dd ng-show="item.archived">{{ item.archived|reldate }}</dd>
+                        <dt translate ng-show="item.version">Version</dt><dd ng-show="item.version">{{ item.version }}</dd>
+                        <dt translate ng-show="item.place">Place</dt><dd ng-show="item.place">{{ item.place | mergeWords }}</dd>
+                        <dt translate ng-show="item.subject">Subject</dt><dd ng-show="item.subject">{{ item.subject | mergeWords }}</dd>
                     </dl>
                 </div>
             </div>
-            <a class="btn" href=""><i class="icon-list-alt"></i> {{ 'Edit metadata'|translate }}</a>
         </div>
     </section>
 </div>
