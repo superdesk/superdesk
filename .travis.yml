@@ -1,5 +1,6 @@
 language: python
 python:
+    - "2.7"
     - "3.3"
 
 services:
@@ -8,4 +9,7 @@ services:
 
 install: "pip install -r requirements.txt --use-mirrors"
 
-script: nosetests && behave
+script:
+    - nosetests
+    - behave
+    - flake8 superdesk *.py

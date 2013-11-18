@@ -4,14 +4,16 @@ import ssl
 import requests
 import xml.etree.ElementTree as etree
 from requests.packages.urllib3.poolmanager import PoolManager
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import superdesk
 from superdesk.utc import utcnow
 
+
 def is_valid_token(token):
     ttl = timedelta(hours=12)
     return token.get('created') + ttl >= utcnow()
+
 
 def get_token(provider):
     token = provider.get('token')
@@ -27,6 +29,7 @@ def get_token(provider):
     superdesk.app.data.update('ingest_providers', provider.get('_id'), {'token': token})
     return token.get('token')
 
+
 def fetch_token_from_api(provider):
     session = requests.Session()
     session.mount('https://', SSLAdapter())
@@ -40,6 +43,7 @@ def fetch_token_from_api(provider):
     response = session.get(url, params=payload)
     tree = etree.fromstring(response.text)
     return tree.text
+
 
 # workaround for ssl version error
 class SSLAdapter(requests.adapters.HTTPAdapter):

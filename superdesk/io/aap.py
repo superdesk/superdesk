@@ -8,6 +8,7 @@ from ..utc import utc, utcnow, timezone
 
 PROVIDER = 'aap'
 
+
 def is_ready(last_updated, provider_last_updated=None):
     """Parse file only if it's not older than provider last update -10m"""
 
@@ -16,8 +17,10 @@ def is_ready(last_updated, provider_last_updated=None):
 
     return provider_last_updated - timedelta(minutes=10) < last_updated
 
+
 def normalize_date(naive, tz):
     return utc.normalize(tz.localize(naive))
+
 
 class AAPIngestService(object):
     """AAP Ingest Service"""

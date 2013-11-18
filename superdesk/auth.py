@@ -6,17 +6,21 @@ from flask import json
 
 logger = logging.getLogger(__name__)
 
+
 class AuthException(Exception):
     """Base Auth Exception"""
     pass
+
 
 class NotFoundAuthException(AuthException):
     """Username Not Found Auth Exception"""
     pass
 
+
 class CredentialsAuthException(AuthException):
     """Credentials Not Match Auth Exception"""
     pass
+
 
 def authenticate(credentials, db):
     if 'username' not in credentials:
@@ -31,6 +35,7 @@ def authenticate(credentials, db):
         raise CredentialsAuthException()
 
     return user
+
 
 def on_create_auth(data, docs):
     for doc in docs:

@@ -5,10 +5,12 @@ from superdesk.utc import utcnow
 
 providers = {}
 
+
 def register_provider(type, provider):
     providers[type] = provider
 
 superdesk.provider = register_provider
+
 
 def update_provider(provider):
     """Update given provider."""
@@ -33,6 +35,7 @@ def update_provider(provider):
             'ingested_count': ingested_count
         })
 
+
 class UpdateIngest(superdesk.Command):
     """Update ingest providers."""
 
@@ -44,6 +47,7 @@ class UpdateIngest(superdesk.Command):
         for provider in superdesk.app.data.find_all('ingest_providers'):
             if not provider_type or provider_type == provider.get('type'):
                 update_provider(provider)
+
 
 class AddProvider(superdesk.Command):
     """Add ingest provider."""

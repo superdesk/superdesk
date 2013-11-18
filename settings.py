@@ -19,10 +19,9 @@ ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL', 'http://localhost:9200')
 ELASTICSEARCH_INDEX = os.environ.get('ELASTICSEARCH_INDEX', 'superdesk')
 
 INSTALLED_APPS = (
-    'superdesk.mongo',
+    'superdesk.io',
     'superdesk.auth',
     'superdesk.users',
-    'superdesk.io',
     'superdesk.items',
     'superdesk.activity',
     'superdesk.upload',

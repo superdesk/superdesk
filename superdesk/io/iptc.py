@@ -3,6 +3,7 @@
 import os
 from superdesk import json
 
+
 def load_codes():
     dirname = os.path.dirname(os.path.realpath(__file__))
     filename = os.path.join(dirname, 'data', 'subject_codes.json')

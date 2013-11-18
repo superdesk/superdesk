@@ -2,12 +2,14 @@ from __future__ import unicode_literals
 import xml.etree.ElementTree as etree
 import datetime
 
-from .nitf import subject_codes
+from .iptc import subject_codes
 
 CLASS_PACKAGE = 'composite'
 
+
 def is_package(item):
     return item['type'] == CLASS_PACKAGE
+
 
 class Parser():
     """NewsMl xml parser"""
@@ -99,7 +101,7 @@ class Parser():
             if subject.get('type', '') == 'cptType:5':
                 item['place'].append({'name': subject.get('literal')})
                 broader = subject.find(self.qname('broader'))
-                if broader:
+                if broader is not None:
                     item['place'].append({'name': broader.find(self.qname('name')).text})
 
     def parse_rights_info(self, tree, item):

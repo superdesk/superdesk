@@ -2,6 +2,7 @@
 import os
 from behave import *
 from flask import json
+from eve.methods.common import parse
 
 from test import app
 
@@ -41,7 +42,7 @@ def step_impl(context, resource):
 def step_impl(context, resource):
     with app.test_request_context():
         app.data.remove(resource)
-        items = json.loads(context.text)
+        items = [parse(item, resource) for item in json.loads(context.text)]
         app.data.insert(resource, items)
         context.data = items
 

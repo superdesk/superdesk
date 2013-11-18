@@ -4,6 +4,7 @@ import superdesk
 from superdesk.utc import utcnow
 import flask
 
+
 def on_create(data, resource, docs):
     if resource == 'activity':
         return
@@ -20,6 +21,7 @@ def on_create(data, resource, docs):
     data.insert('activity', [activity])
 
 superdesk.connect('create', on_create)
+
 
 class ActivityLogHandler(logging.Handler):
     """Logging handler storing data into mongodb."""

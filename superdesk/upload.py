@@ -7,9 +7,11 @@ from .utils import get_random_string
 
 bp = superdesk.Blueprint('upload', __name__)
 
+
 @bp.route('/upload/<path:filename>', methods=['GET'])
 def get_upload(filename):
     return superdesk.app.data.storage.send_file(filename)
+
 
 def on_create_upload(data, docs):
     filename = get_random_string(12) + os.path.splitext(request.files['file'].filename)[1]

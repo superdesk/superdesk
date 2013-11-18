@@ -9,10 +9,9 @@ import settings
 import eve.io
 import eve.io.elastic
 import eve.io.mongo
-from flask import abort, app, json, Blueprint
-from flask.ext.script import Command, Option
-from eve.utils import document_link, config, ParsedRequest
-from pyelasticsearch.exceptions import IndexAlreadyExistsError
+from flask import abort, app, json, Blueprint  # noqa
+from flask.ext.script import Command, Option  # noqa
+from eve.utils import document_link, config, ParsedRequest  # noqa
 
 API_NAME = 'Superdesk API'
 VERSION = (0, 0, 1)
@@ -23,13 +22,16 @@ BLUEPRINTS = []
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
 def connect(signal, subscriber):
     """Connect to signal"""
     blinker.signal(signal).connect(subscriber)
 
+
 def send(signal, sender, **kwargs):
     """Send signal"""
     blinker.signal(signal).send(sender, **kwargs)
+
 
 def proxy_resource_signal(action, app):
     def handle(resource, documents):
@@ -37,32 +39,35 @@ def proxy_resource_signal(action, app):
         send('%s:%s' % (action, resource), app.data, docs=documents)
     return handle
 
+
 def proxy_item_signal(action, app):
     def handle(resource, id, document):
         send(action, app.data, resource=resource, docs=[document])
         send('%s:%s' % (action, resource), app.data, docs=[document])
     return handle
 
+
 def domain(resource, config):
     """Register domain resource"""
     DOMAIN[resource] = config
 
+
 def command(name, command):
     """Register command"""
     COMMANDS[name] = command
+
 
 def blueprint(blueprint, **kwargs):
     """Register blueprint"""
     blueprint.kwargs = kwargs
     BLUEPRINTS.append(blueprint)
 
+
 class SuperdeskDataLayer(eve.io.DataLayer):
     """Superdesk Data Layer"""
 
-    serializers = dict(
-        list(eve.io.mongo.Mongo.serializers.items()) + \
-        list(eve.io.elastic.Elastic.serializers.items())
-        )
+    serializers = eve.io.mongo.Mongo.serializers
+    serializers.update(eve.io.elastic.Elastic.serializers)
 
     def init_app(self, app):
         self.elastic = eve.io.elastic.Elastic(app)
@@ -92,7 +97,7 @@ class SuperdeskDataLayer(eve.io.DataLayer):
     def find(self, resource, req):
         cursor = self._backend(resource).find(resource, req)
         if not cursor.count():
-            return cursor # return 304 if not modified
+            return cursor  # return 304 if not modified
         else:
             # but fetch without filter if there is a change
             req.if_modified_since = None
@@ -126,7 +131,7 @@ class SuperdeskDataLayer(eve.io.DataLayer):
         return self._backend(resource).remove(resource, id_)
 
     def _backend(self, resource):
-        datasource, filter_, _ = self._datasource(resource)
+        datasource, filter_, projection_, sort_ = self._datasource(resource)
         backend = config.SOURCES[datasource].get('backend', 'mongo')
         return getattr(self, backend)
 

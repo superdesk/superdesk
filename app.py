@@ -3,6 +3,8 @@ import os
 import eve
 import superdesk
 import flask
+from eve.io.mongo import MongoJSONEncoder
+
 
 class SuperdeskTokenAuth(eve.auth.TokenAuth):
     """Superdesk Token Auth"""
@@ -14,6 +16,7 @@ class SuperdeskTokenAuth(eve.auth.TokenAuth):
             flask.g.user = app.data.find_one('users', _id=(str(auth_token['user']['_id'])))
         return auth_token
 
+
 class SuperdeskEve(eve.Eve):
     """Superdesk API"""
 
@@ -24,7 +27,11 @@ class SuperdeskEve(eve.Eve):
         self.config.from_object(superdesk)
 
 abspath = os.path.abspath(os.path.dirname(__file__))
-app = SuperdeskEve(data=superdesk.SuperdeskDataLayer, auth=SuperdeskTokenAuth, settings=os.path.join(abspath, 'settings.py'))
+app = SuperdeskEve(
+    data=superdesk.SuperdeskDataLayer,
+    auth=SuperdeskTokenAuth,
+    settings=os.path.join(abspath, 'settings.py'),
+    json_encoder=MongoJSONEncoder)
 app.on_fetch_resource = superdesk.proxy_resource_signal('read', app)
 app.on_fetch_item = superdesk.proxy_item_signal('read', app)
 superdesk.app = app
