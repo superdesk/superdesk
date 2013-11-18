@@ -1170,6 +1170,12 @@ input{
 				}
 			}
 		}
+		.lightbox-audio, .lightbox-video {
+			background: #101010;
+			margin: 50px;
+			padding : 50px 0 ;
+			text-align: center;
+		}
 	}
 	
 	.lightbox-composite {
@@ -1205,13 +1211,13 @@ input{
 				.box-sizing(border-box);
 				width: 192px;
 				border: 1px solid #101010;
+				.border-radius(2px);
 				&:hover {
 					cursor: pointer;
 				}
 				&.text {
 					background: #f0f0f0;
 					border-color:#f0f0f0;
-					.border-radius(2px);
 					padding: 5px 10px;
 					&:hover {
 						background: #fff;
@@ -1228,6 +1234,31 @@ input{
 					&:hover {
 						background: #101010;
 						border-color:#333;
+					}
+				}
+				&.audio, &.video {
+					border-color:#1b1b1b;
+					background: #000;
+					padding: 15px 5px;
+					text-align: center;
+					.media {
+						width: 48px;
+						height: 48px;
+						display: inline-block;
+						background: url(../../images/file-types-icons-large-white.png) no-repeat 0 -144px;
+						.opacity(40);
+					}
+					&:hover {
+						background: #101010;
+						border-color:#333;
+						.media {
+							.opacity(60);
+						}
+					}
+				}
+				&.video {
+					.media {
+						background-position: 0 -96px;
 					}
 				}
 			}
@@ -1267,7 +1298,7 @@ input{
 			position: absolute;
 			right: 16px;
 			top:16px;
-			background: url("../../images/gray_delete.png") no-repeat 0 0 ;
+			
 			.opacity(70);
 			&:hover {
 				.opacity(100);
@@ -1684,7 +1715,7 @@ input{
 .open {
 	border-color: #b2b2b2;
 }
-
+/*
 .tag-container {
 	margin: 10px 0 0;
 	padding: 0;
@@ -1746,7 +1777,7 @@ input{
 	width: 115px !important;
 	margin-right: 0px !important;
 }
-
+*/
 .open-filter-button {
 	position: absolute;
 	top: 3px;

@@ -3,7 +3,9 @@
         <a class="btn btn-dark" href="" ><i class="icon-pencil icon-white"></i> {{ 'Edit'|translate }}</a>
         <a class="btn btn-dark" href="" ><i class="icon-download-alt icon-white"></i> {{ 'Download'|translate }}</a>
         <a class="btn btn-dark" href="" ><i class="icon-trash icon-white"></i> {{ 'Delete'|translate }}</a>
-        <a href="" class="lightbox-close" data-dismiss="modal" ng-click="closeEdit()"></a>
+        <a href="" class="lightbox-close" data-dismiss="modal" ng-click="closeEdit()">
+            <i class="icon-remove icon-white"></i>
+        </a>
     </section>
 
 
@@ -18,14 +20,20 @@
                 <li ng-repeat="ref in item.packageRefs" sd-ref class="{{refItem.type}}" ng-click="treepreview(refItem)">
 
                         <!-- text item -->
-                        <div ng-if="refItem.type == 'text'">
+                        <div class="media" ng-if="refItem.type == 'text'">
                             {{ item.headline }}
                         </div>
 
                         <!-- picture item -->
-                        <figure ng-if="refItem.type == 'picture'">
+                        <figure class="media" ng-if="refItem.type == 'picture'">
                             <img ng-src="{{ refItem.renditions.thumbnail.href }}"/>
                         </figure>
+
+                        <!-- audio item -->
+                        <div class="media" ng-if="refItem.type == 'audio'"></div>
+
+                        <!-- video item -->
+                        <div class="media" ng-if="refItem.type == 'video'"></div>
 
                 </li>
             </ul>
@@ -34,17 +42,16 @@
 
         <div ng-class="{'lightbox-composite-preview' : item.type == 'composite'}">
 
-            <!-- picture preview -->
-            <section class="lightbox-left" ng-show="previewSingle.type == 'picture'">
-                <figure class="lightbox-large-preview" >
+            <section class="lightbox-left">
+                
+                <!-- picture preview -->
+                <figure class="lightbox-large-preview" ng-show="previewSingle.type == 'picture'">
                     <img ng-src="{{ previewSingle.renditions.baseImage.href }}" />
                 </figure>
-                <div class="lightbox-caption">{{ previewSingle.headline }}</div>
-            </section>
-
-            <!-- text preview -->
-            <section class="lightbox-left" ng-show="previewSingle.type == 'text'">
-                <div class="lightbox-paper">
+                <div class="lightbox-caption" ng-show="previewSingle.type == 'picture'">{{ previewSingle.headline }}</div>
+                
+                <!-- text preview -->
+                <div class="lightbox-paper" ng-show="previewSingle.type == 'text'">
                     <div class="lightbox-text">
                         <div class="lightbox-title">{{ previewSingle.headline }}</div>
                         <figure ng-if="previewSingle.renditions.viewImage">
@@ -56,15 +63,28 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- audio preview -->
+                <div class="lightbox-audio" ng-show="previewSingle.type == 'audio'">
+                    <audio controls>
+                      <source ng-src="{{ previewSingle.renditions.stream.href | trusted }}" type="{{previewSingle.renditions.stream.mimetype}}">
+                    </audio>
+                </div>
+
+                <!-- video preview -->
+                <div class="lightbox-video" ng-show="previewSingle.type == 'video'">
+                    <video preload controls>
+                      <source ng-src="{{ previewSingle.renditions.stream.href | trusted }}" type="{{previewSingle.renditions.stream.mimetype}}" />
+                    </video>
+                </div>
+
+
+
             </section>
 
         </div>
-    <!-- end of prevoew pane -->
+    <!-- end of preview pane -->
 
-    
-        
-
-    
 
 
 
