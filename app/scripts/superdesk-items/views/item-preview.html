@@ -66,16 +66,12 @@
 
                 <!-- audio preview -->
                 <div class="lightbox-audio" ng-show="previewSingle.type == 'audio'">
-                    <audio controls>
-                      <source ng-src="{{ previewSingle.renditions.stream.href | trusted }}" type="{{previewSingle.renditions.stream.mimetype}}">
-                    </audio>
+                    <audio controls sd-source="previewSingle.renditions.stream"></audio>
                 </div>
 
                 <!-- video preview -->
                 <div class="lightbox-video" ng-show="previewSingle.type == 'video'">
-                    <video preload controls>
-                      <source ng-src="{{ previewSingle.renditions.stream.href | trusted }}" type="{{previewSingle.renditions.stream.mimetype}}" />
-                    </video>
+                    <video controls sd-source="previewSingle.renditions.stream"></video>
                 </div>
 
 
