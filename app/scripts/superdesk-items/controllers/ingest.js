@@ -7,12 +7,11 @@ define(['angular'], function(angular) {
         $scope.items = items;
 
         $scope.archive = function(item) {
-            em.create('archive', item).then(function() {
-                item.archived = true;
-                item.archiving = false;
+            em.create('archive', item).then(function(data) {
+                delete item.archiving;
+                item.archived = data.archived;
             });
             item.archiving = true;
         };
-
     }];
 });
