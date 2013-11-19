@@ -13,11 +13,11 @@ define([
                     max_sizex: 2,
                     max_sizey: 2,
                     sizex: 1,
-                    sizey: 1,
+                    sizey: 2,
                     thumbnail: 'images/sample/widgets/worldclock.png',
                     template: 'scripts/superdesk-dashboard/widgets/ingest/widget-ingest.html',
                     configurationTemplate: 'scripts/superdesk-dashboard/widgets/ingest/configuration.html',
-                    configuration: {maxItems: 10, provider: '', search: '', updateInterval: 5},
+                    configuration: {maxItems: 10, provider: 'all', search: '', updateInterval: 5},
                     description: 'Ingest widget'
                 });
         }])
@@ -35,7 +35,7 @@ define([
                 q: $scope.widget.configuration.search !== '' ? $scope.widget.configuration.search : undefined
             };
 
-            if ($scope.widget.configuration.provider !== '') {
+            if ($scope.widget.configuration.provider !== 'all') {
                 criteria.where = {
                     provider: $scope.widget.configuration.provider
                 };
@@ -59,7 +59,7 @@ define([
         .controller('IngestConfigController', ['$scope', 'em',
         function ($scope, em) {
             em.getRepository('ingest').matching({max_results: 0}).then(function(items) {
-                $scope.availableProviders = _.pluck(items._facets.provider.terms, 'term');
+                $scope.availableProviders = ['all'].concat(_.pluck(items._facets.provider.terms, 'term'));
             });
 
             $scope.notIn = function(haystack) {
