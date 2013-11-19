@@ -10,25 +10,16 @@
     <div>
         {{'Search term'|translate}}: <input ng-model="configuration.search" class="form-control span2">
     </div>
-
-    <div class="page-header">
-        <h2>{{ 'Selected providers'|translate }} <small translate>Click to remove</small></h2>
-    </div>
-    <ul class="list-group">
-        <li class="list-group-item" ng-repeat="provider in configuration.providers">
-            <a href="" ng-click="configuration.providers.splice($index, 1)">{{ provider }}</a>
-        </li>
-        <li class="alert alert-info" ng-hide="configuration.providers.length" translate>No providers selected!</li>
-    </ul>
-
-    <div class="page-header">
-        <h2>{{ 'Available providers'|translate }} <small translate>Click to add</small></h2>
+    <div>
+        {{'Update interval (minutes)'|translate}}: <input ng-model="configuration.updateInterval" class="form-control span2">
     </div>
 
-    <ul>
-        <li ng-repeat="provider in availableProviders|filter:notIn(configuration.providers)">
-            <a href="" ng-click="configuration.providers.push(provider)">{{ provider }}</a>
-        </li>
-    </ul>
+    <div class="pull-left">
+        <span class="btn-group pull-left">{{'Provider'|translate}}</span>
+        <span class="btn-group pull-right">
+            <button type="button" class="btn btn-default" ng-class="{'active': configuration.provider === ''}" ng-click="configuration.provider = '';">{{'all'|translate}}</button>
+            <button ng-repeat="provider in availableProviders" type="button" class="btn btn-default" ng-class="{'active': configuration.provider === provider}" ng-click="configuration.provider = provider;">{{provider}}</button>
+        </span>
+    </div>
 
 </div>

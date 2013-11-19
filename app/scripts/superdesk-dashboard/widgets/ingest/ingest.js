@@ -11,43 +11,55 @@ define([
                     class: 'ingest',
                     icon: 'time',
                     max_sizex: 2,
-                    max_sizey: 1,
+                    max_sizey: 2,
                     sizex: 1,
                     sizey: 1,
                     thumbnail: 'images/sample/widgets/worldclock.png',
                     template: 'scripts/superdesk-dashboard/widgets/ingest/widget-ingest.html',
                     configurationTemplate: 'scripts/superdesk-dashboard/widgets/ingest/configuration.html',
-                    configuration: {maxItems: 10, providers: [], search: ''},
+                    configuration: {maxItems: 10, provider: '', search: '', updateInterval: 5},
                     description: 'Ingest widget'
                 });
         }])
-        .controller('IngestController', ['$scope', 'em',
-        function ($scope, em) {
-            $scope.sizey = $scope.widget.sizey;
-
-            var criteria = {
-                sort: ['firstcreated', 'desc'],
-                max_results: $scope.widget.configuration.maxItems,
-                page: 1,
-                q: $scope.widget.configuration.search !== '' ? $scope.widget.configuration.search : undefined,
-                where: {
-                    provider: $scope.widget.configuration.providers.length ? $scope.widget.configuration.providers : undefined
-                }
+        .controller('IngestController', ['$scope', '$timeout', 'em',
+        function ($scope, $timeout, em) {
+            $scope.size = {
+                x: $scope.widget.sizex,
+                y: $scope.widget.sizey
             };
 
-            em.getRepository('ingest').matching(criteria).then(function(items) {
-                $scope.items = items;
-            });
+            var criteria = {
+                sort: ['versioncreated', 'desc'],
+                max_results: $scope.widget.configuration.maxItems,
+                page: 1,
+                q: $scope.widget.configuration.search !== '' ? $scope.widget.configuration.search : undefined
+            };
 
+            if ($scope.widget.configuration.provider !== '') {
+                criteria.where = {
+                    provider: $scope.widget.configuration.provider
+                };
+            }
 
+            var update = function() {
+                em.getRepository('ingest').matching(criteria).then(function(items) {
+                    $scope.items = items;
+                });
+                $timeout(function() {
+                    update();
+                }, $scope.widget.configuration.updateInterval * 1000 * 60);
+            };
+
+            $scope.compileSubjects = function(subjects) {
+                return _.pluck(subjects, 'name').join(', ');
+            };
+
+            update();
         }])
         .controller('IngestConfigController', ['$scope', 'em',
         function ($scope, em) {
             em.getRepository('ingest').matching({max_results: 0}).then(function(items) {
                 $scope.availableProviders = _.pluck(items._facets.provider.terms, 'term');
-                if ($scope.configuration.providers.length === 0) {
-                    $scope.configuration.providers = angular.extend([], $scope.availableProviders);
-                }
             });
 
             $scope.notIn = function(haystack) {
