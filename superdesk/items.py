@@ -99,7 +99,8 @@ schema = {
         'type': 'string'
     },
     'description_text': {
-        'type': 'string'
+        'type': 'string',
+        'nullable': True
     },
     'firstcreated': {
         'type': 'datetime'
