@@ -1,25 +1,40 @@
 <div ng-controller="IngestConfigController">
+    <form class="form-horizontal">
+        <fieldset>
+            <legend>{{ 'General settings'|translate }}</legend>
+            <div class="control-group">
+                <label class="control-label">{{'Number of items'|translate}}</label>
+                <div class="controls">
+                    <input ng-model="configuration.maxItems" type="text" class="input-mini">
+                </div>
+            </div>
 
-    <div class="page-header">
-        <h2>{{ 'General settings'|translate }}</h2>
-    </div>
+            <div class="control-group">
+                <label class="control-label">{{'Search term'|translate}}</label>
+                <div class="controls">
+                    <input ng-model="configuration.search"  type="text" class="input-large">
+                </div>
+            </div>
 
-    <div>
-        {{'Number of items'|translate}}: <input ng-model="configuration.maxItems" style="width: 30px;">
-    </div>
-    <div>
-        {{'Search term'|translate}}: <input ng-model="configuration.search" class="form-control span2">
-    </div>
-    <div>
-        {{'Update interval (minutes)'|translate}}: <input ng-model="configuration.updateInterval" class="form-control span2">
-    </div>
+            <div class="control-group">
+                <label class="control-label">{{'Update interval (minutes)'|translate}}</label>
+                <div class="controls">
+                    <input ng-model="configuration.updateInterval"  type="text" class="input-mini">
+                </div>
+            </div>
 
-    <div class="pull-left">
-        <span class="btn-group pull-left">{{'Provider'|translate}}</span>
-        <span class="btn-group pull-right">
-            <button type="button" class="btn btn-default" ng-class="{'active': configuration.provider === ''}" ng-click="configuration.provider = '';">{{'all'|translate}}</button>
-            <button ng-repeat="provider in availableProviders" type="button" class="btn btn-default" ng-class="{'active': configuration.provider === provider}" ng-click="configuration.provider = provider;">{{provider}}</button>
-        </span>
-    </div>
+            <div class="control-group">
+                <label class="control-label">{{'Provider'|translate}}</label>
+                <div class="controls">
+                    <span class="btn-group">
+                        <button type="button" class="btn btn-default" ng-class="{'active': configuration.provider === ''}" ng-click="configuration.provider = '';">{{'all'|translate}}</button>
+                        <button ng-repeat="provider in availableProviders" type="button" class="btn btn-default" ng-class="{'active': configuration.provider === provider}" ng-click="configuration.provider = provider;">{{provider}}</button>
+                    </span>
+                </div>
+            </div>
+
+        </fieldset>
+        
+    </form>
 
 </div>

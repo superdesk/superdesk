@@ -1,52 +1,24 @@
 <div>
-    <div class="list-view" ng-controller="IngestController">
+    <ul class="ingest-list" ng-controller="IngestController">
         
-        <div  ng-repeat="item in items._items" class="media-box media-{{item.type}} urgency-{{ item.urgency }}"
-         ng-class="{ selected : item.selected, archived : item.archived!=null&&actions.archive}">
+        <li ng-repeat="item in items._items" class="urgency-{{ item.urgency}}">
 
-            <div class="loading-status" ng-show="!item.archived && item.archiving"></div>
+            <ul class="top-line clearfix">
+                <li><span class="type-icon filetype-icon-{{item.type}}"></span><span class="urgency-label">{{ item.urgency }}</span></li>
+                <li>{{ item.firstcreated | reldate }}</li>
+                <li ng-show="item.byline"><em translate>by</em>{{ item.byline }}</li>
+                <li ng-show="item.provider"><em translate>provider</em>{{ item.provider }}</li>
+            </ul>
 
-            <figure class="media" ng-if="item.renditions.thumbnail">
-                <img ng-src="{{ item.renditions.thumbnail.href }}" alt="" title="{{ item.description }}" />
-                <figcaption class="caption">{{ item.creditline }}</figcaption>
-            </figure>
-
-            <div class="media"  ng-show="item.type == 'text'">
-                <small title="{{ item.headline }}">{{ item.headline }}</small>
+            <div class="main-line clearfix">
+                <figure class="media" ng-if="item.renditions.thumbnail">
+                    <img ng-src="{{ item.renditions.thumbnail.href }}" title="{{ item.description }}" />
+                </figure>
+                <h5 title="{{ item.headline }}">{{ item.headline }}</h5>
             </div>
 
-            <div class="media"  ng-show="item.type == 'composite' || item.type == 'audio' || item.type == 'video'">
-                <i class="filetype-icon-large-{{ item.type}}"></i>
-            </div>
-
-            <div class="media-info" >
-                <h5 ng-show="item.slugline">{{ item.slugline }}</h5>
-                <h5 ng-show="!item.slugline">{{ item.type | translate }}</h5>
-                <dl class="clearfix">
-                    <dt class="source"></dt>
-                    <dd class="provider">{{ item.provider }}</dd>
-
-                    <dt translate>created</dt>
-                    <dd><time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time></dd>
-                    <dt translate ng-show="item.subject">subject</dt>
-                    <dd ng-show="item.subject" class="subject-line">
-                        {{ item.subject | mergeWords}}
-                    </dd>
-                </dl>
-                <div class="status-label" 
-                     ng-class="{'label-canceled' : item.pubstatus=='canceled'}"
-                     ng-show="item.pubstatus  && item.pubstatus!='usable'">
-                     {{ item.pubstatus | translate }}
-                </div>
-
-            </div>
-
-            <span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
-            <span class="urgency-label">{{ item.urgency }}</span>
-            <span class="urgency-line"></span>
-        </div>
-
-    </div>
+        </li>
+    </ul>
 
     <div class="widget-footer"></div>
 </div>
