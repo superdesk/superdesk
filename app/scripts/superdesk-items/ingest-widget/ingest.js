@@ -1,9 +1,10 @@
 define([
-    'angular'
+    'angular',
+    'superdesk-dashboard/services'
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.widgets.ingest', [])
+    angular.module('superdesk.widgets.ingest', ['superdesk.dashboard.services'])
         .config(['widgetsProvider', function(widgetsProvider) {
             widgetsProvider
                 .widget('ingest', {
@@ -15,9 +16,9 @@ define([
                     max_sizey: 2,
                     sizex: 1,
                     sizey: 2,
-                    thumbnail: 'scripts/superdesk-dashboard/widgets/ingest/thumbnail.png',
-                    template: 'scripts/superdesk-dashboard/widgets/ingest/widget-ingest.html',
-                    configurationTemplate: 'scripts/superdesk-dashboard/widgets/ingest/configuration.html',
+                    thumbnail: 'scripts/superdesk-items/ingest-widget/thumbnail.png',
+                    template: 'scripts/superdesk-items/ingest-widget/widget-ingest.html',
+                    configurationTemplate: 'scripts/superdesk-items/ingest-widget/configuration.html',
                     configuration: {maxItems: 10, provider: 'all', search: '', updateInterval: 5},
                     description: 'Ingest widget'
                 });

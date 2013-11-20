@@ -148,8 +148,7 @@ define([
                     template: 'scripts/superdesk-dashboard/widgets/worldClock/widget-worldclock.html',
                     configurationTemplate: 'scripts/superdesk-dashboard/widgets/worldClock/configuration.html',
                     configuration: {zones: ['Europe/London', 'Asia/Tokyo', 'Europe/Moscow']},
-                    description: 'World clock widget',
-                    multiple: true
+                    description: 'World clock widget'
                 });
         }]);
 });

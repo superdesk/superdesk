@@ -6,8 +6,7 @@ define([
     './services',
     './directives',
     './filters',
-    './widgets/worldClock/worldClock',
-    './widgets/ingest/ingest'
+    './widgets/worldClock/worldClock'
 ], function(angular) {
     'use strict';
 
@@ -17,8 +16,7 @@ define([
         'superdesk.dashboard.services',
         'superdesk.dashboard.directives',
         'superdesk.dashboard.filters',
-        'superdesk.widgets.worldClock',
-        'superdesk.widgets.ingest'
+        'superdesk.widgets.worldClock'
     ])
     .constant('widgetsPath', 'scripts/superdesk-dashboard/widgets/')
     .config(['$routeProvider', function($routeProvider) {
