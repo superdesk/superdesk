@@ -1,7 +1,7 @@
 <div class="gridster" ng-class="{'editmode': status}">
     <ul class="dash-grid">
-	    <li ng-repeat="(wcode, widget) in widgets" sd-grid-item class="gs_w">
-            <div sd-widget data-widget="widget"></div>
+	    <li ng-repeat="(id, widget) in widgets" sd-grid-item class="gs_w">
+            <div sd-widget data-widget="widget" data-id="id"></div>
         </li>
     </ul>
 </div>

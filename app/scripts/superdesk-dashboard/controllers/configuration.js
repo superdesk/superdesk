@@ -1,9 +1,10 @@
 define(['angular'], function(angular){
     'use strict';
 
-    return ['$scope','$modalInstance', 'widgetService', 'widget',
-    function ($scope, $modalInstance, widgetService, widget) {
+    return ['$scope','$modalInstance', 'widgetService', 'widget', 'id',
+    function ($scope, $modalInstance, widgetService, widget, id) {
         $scope.widget = widget;
+        $scope.id = id;
         $scope.configuration = _.cloneDeep($scope.widget.configuration);
 
         $scope.closeModal = function() {
@@ -11,7 +12,7 @@ define(['angular'], function(angular){
         };
 
         $scope.save = function() {
-            widgetService.saveConfiguration(widget.wcode, $scope.configuration);
+            widgetService.saveConfiguration($scope.id, $scope.configuration);
             $scope.widget.configuration = $scope.configuration;
         };
     }];
