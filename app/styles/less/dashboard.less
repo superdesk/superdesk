@@ -68,30 +68,45 @@ Main dashboard styles
 		
 	}
 	.widget-content {
-		position: relative;
-		.widget-settings {
-			position: absolute;
-			top : -30px;
-			right: 0;
-			line-height: 14px;
-			width: 29px;
-			height: 29px;
-			text-align: center;
-			.dropdown-toggle {
-				margin-top: 4px;
-				i {
-					.opacity(70);
-				}
-			}
-			.dropdown-menu {
-				margin-top: -7px;
-				margin-right: 4px;
-			}
-		}
-	}
+		position: absolute;
+		left:0; right: 0; bottom: 0; top:33px;
+		overflow-y: auto;
+	}		
 	.widget-footer {
 		border-top: 1px solid #e7e7e7;
 		height: 31px;
+	}
+	.widget-settings {
+		position: absolute;
+		top : 3px;
+		right: 0;
+		line-height: 14px;
+		width: 29px;
+		height: 29px;
+		text-align: center;
+		.single-btn {
+			width: 21px;
+			height: 21px;
+			display: block;
+			margin-top: 4px;
+			.border-radius(2px);
+			&:hover {
+				background: #aaa;
+			}
+			i {
+				margin-top: 4px;
+			}
+		}
+		.dropdown-toggle {
+			margin-top: 4px;
+			i {
+				.opacity(70);
+			}
+		}
+		.dropdown-menu {
+			margin-top: -7px;
+			margin-right: 4px;
+		}
 	}
 	.slider {
 		.arrow {
@@ -197,6 +212,71 @@ Widgets styles
 				}
 			}
 		}
+	}
+}
+
+
+
+//ingest widget
+
+.sd-widget {
+	&.ingest {
+		.ingest-list {
+			margin:0;
+			list-style-type: none;
+			padding: 0;
+			> li {
+				border-bottom: 1px solid #e5e5e5;
+				padding: 10px;
+				.top-line {
+					margin:0;
+					list-style-type: none;
+					padding: 0;
+					margin-bottom: 5px;
+					> li {
+						float: left;
+						padding-right: 7px;
+						margin-right: 7px;
+						border-right: 1px solid #e7e7e7;
+						font-size: 11px;
+						color: #626262;
+						em {
+							color: #aaa;
+							margin-right: 4px;
+						}
+						.type-icon {
+							.opacity(50);
+						}
+						.urgency-label {
+							margin-top: 2px;
+						}
+						&:last-child {
+							border: 0;
+						}
+					}
+				}
+				.main-line {
+					figure {
+						float: left;
+						margin-right: 10px;
+						border: 1px solid #f0f0f0;
+						padding: 2px;
+						margin-top: 3px;
+						img {
+							height: 55px;
+						}
+					}
+					h5 {
+						font-family:@altFontFamily;
+						font-size: 16px;
+						color: #0088d5;
+						.text-normal();
+						line-height: 22px;
+					}
+				}
+			}
+		}
+
 	}
 }
 

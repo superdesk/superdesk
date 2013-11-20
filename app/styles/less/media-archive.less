@@ -273,6 +273,9 @@ input{
 		line-height: 16px;
 		vertical-align: top;
 	}
+	.urgency-label {
+		.urgency-label-generic;
+	}
 	.urgency-0 .urgency-label { background: @urgencyColor0; }
 	.urgency-1 .urgency-label { background: @urgencyColor1; }
 	.urgency-2 .urgency-label { background: @urgencyColor2; }
@@ -396,8 +399,6 @@ input{
 				}
 			}
 		}
-
-		
 
 		h5 {
 			position: absolute;
@@ -1259,6 +1260,74 @@ input{
 				&.video {
 					.media {
 						background-position: 0 -96px;
+					}
+				}
+			}
+		}
+
+	}
+	.lightbox-composite-preview {
+		.lightbox-left {
+			left: @lightbox-composite-width;
+		}
+	}
+	
+	.lightbox-composite {
+		width: @lightbox-composite-width;
+		.box-sizing(border-box);
+		padding: 20px;
+		background: #101010;
+		position: absolute;
+		.box-shadow(2px 0 3px 0 #000);
+		top: @lightbox-toppane;
+		bottom: 0;
+		left: 0;
+		overflow: auto;
+		z-index: 2;
+		&::-webkit-scrollbar {
+			width:16px;
+			border-left:1px solid #282828;
+		}
+		&::-webkit-scrollbar-thumb {
+			border-right: 3px solid #101010;
+			border-left: 1px solid #282828;
+			background: #383838;
+			box-shadow: inset 2px 0 0 0 #101010;
+			
+		}
+
+		ul {
+			list-style-type: none;
+			margin:0; padding: 0;
+			> li {		
+				margin-bottom: 20px;
+				float: left;
+				.box-sizing(border-box);
+				width: 192px;
+				border: 1px solid #101010;
+				&:hover {
+					cursor: pointer;
+				}
+				&.text {
+					background: #f0f0f0;
+					border-color:#f0f0f0;
+					.border-radius(2px);
+					padding: 5px 10px;
+					&:hover {
+						background: #fff;
+						border-color:#fff;
+					}
+				}
+				&.picture {
+					padding: 5px;
+					border-color:#1b1b1b;
+					background: #000;
+					figure img {
+						width: 180px;
+					}
+					&:hover {
+						background: #101010;
+						border-color:#333;
 					}
 				}
 			}

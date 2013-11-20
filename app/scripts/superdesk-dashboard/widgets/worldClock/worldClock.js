@@ -58,7 +58,7 @@ define([
                     m: d3.scale.linear().domain([0, 59 + 59/60]).range([0, 2 * pi]),
                     h: d3.scale.linear().domain([0, 11 + 59/60]).range([0, 2 * pi])
                 };
-
+            
             return {
                 scope: {
                     'utc': '=',
@@ -90,7 +90,6 @@ define([
                     clock.append('circle')
                         .attr('r', 1.5)
                         .attr('class', 'clock-inner');
-
                     // format data for given time
                     function getData(timeStr) {
                         var time = timeStr.split(':');
@@ -138,18 +137,18 @@ define([
             widgetsProvider
                 .widget('worldClock', {
                     name: 'World Clock',
+                    multiple: true,
                     class: 'world-clock',
                     icon: 'time',
                     max_sizex: 2,
                     max_sizey: 1,
                     sizex: 1,
                     sizey: 1,
-                    thumbnail: 'images/sample/widgets/worldclock.png',
+                    thumbnail: 'scripts/superdesk-dashboard/widgets/worldClock/thumbnail.png',
                     template: 'scripts/superdesk-dashboard/widgets/worldClock/widget-worldclock.html',
                     configurationTemplate: 'scripts/superdesk-dashboard/widgets/worldClock/configuration.html',
                     configuration: {zones: ['Europe/London', 'Asia/Tokyo', 'Europe/Moscow']},
-                    description: 'World clock widget',
-                    multiple: true
+                    description: 'World clock widget'
                 });
         }]);
 });
