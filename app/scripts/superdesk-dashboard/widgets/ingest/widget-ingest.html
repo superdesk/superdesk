@@ -7,7 +7,7 @@
                 <li><span class="type-icon filetype-icon-{{item.type}}"></span><span class="urgency-label">{{ item.urgency }}</span></li>
                 <li>{{ item.versioncreated | reldate }}</li>
                 <li ng-show="item.byline"><em translate>by</em>{{ item.byline }}</li>
-                <li ng-show="item.provider && size.x > 1"><em translate>provider</em>{{ item.provider }}</li>
+                <li ng-show="item.provider && widget.sizex > 1"><em translate>provider</em>{{ item.provider }}</li>
             </ul>
 
             <div class="main-line clearfix">
