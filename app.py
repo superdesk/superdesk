@@ -4,6 +4,7 @@ import eve
 import superdesk
 import flask
 from eve.io.mongo import MongoJSONEncoder
+from superdesk import signals
 
 
 class SuperdeskTokenAuth(eve.auth.TokenAuth):
@@ -32,8 +33,8 @@ app = SuperdeskEve(
     auth=SuperdeskTokenAuth,
     settings=os.path.join(abspath, 'settings.py'),
     json_encoder=MongoJSONEncoder)
-app.on_fetch_resource = superdesk.proxy_resource_signal('read', app)
-app.on_fetch_item = superdesk.proxy_item_signal('read', app)
+app.on_fetch_resource = signals.proxy_resource_signal('read', app)
+app.on_fetch_item = signals.proxy_item_signal('read', app)
 superdesk.app = app
 
 for blueprint in superdesk.BLUEPRINTS:

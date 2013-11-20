@@ -13,6 +13,7 @@ def archive_assets(data, doc):
                 if item:
                     data.insert('archive', [item])
 
+
 def on_create_item(data, docs):
     """Set guid as doc _id."""
     for doc in docs:
