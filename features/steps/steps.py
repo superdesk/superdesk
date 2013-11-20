@@ -3,8 +3,7 @@ import os
 from behave import *
 from flask import json
 from eve.methods.common import parse
-
-from test import app
+from superdesk.tests import app
 
 def test_json(context):
     response_data = json.loads(context.response.get_data())
