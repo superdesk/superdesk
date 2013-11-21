@@ -1,9 +1,9 @@
-from __future__ import unicode_literals
-import xml.etree.ElementTree as etree
-import datetime
 
+import datetime
+from ..etree import etree
 from .iptc import subject_codes
 
+XMLNS = 'http://iptc.org/std/nar/2006-10-01/'
 CLASS_PACKAGE = 'composite'
 
 
@@ -14,13 +14,11 @@ def is_package(item):
 class Parser():
     """NewsMl xml parser"""
 
-    XMLNS = 'http://iptc.org/std/nar/2006-10-01/'
-    NSMAP = {'iptc': XMLNS}
-
     def parse_message(self, tree):
         """Parse NewsMessage."""
         items = []
-        for item_set in tree.iter(self.qname('itemSet')):
+        self.root = tree.getroot()
+        for item_set in tree.findall(self.qname('itemSet')):
             for item_tree in item_set:
                 item = self.parse_item(item_tree)
                 items.append(item)
@@ -96,13 +94,13 @@ class Parser():
 
     def parse_content_place(self, tree, item):
         """Parse subject with type="cptType:5" into place list."""
-        item['place'] = []
         for subject in tree.findall(self.qname('subject')):
             if subject.get('type', '') == 'cptType:5':
-                item['place'].append({'name': subject.get('literal')})
+                item['place'] = []
+                item['place'].append({'name': self.get_literal_name(subject)})
                 broader = subject.find(self.qname('broader'))
                 if broader is not None:
-                    item['place'].append({'name': broader.find(self.qname('name')).text})
+                    item['place'].append({'name': self.get_literal_name(broader)})
 
     def parse_rights_info(self, tree, item):
         """Parse Rights Info tag"""
@@ -138,7 +136,6 @@ class Parser():
         return refs
 
     def parse_content_set(self, tree, item):
-        item['contents'] = []
         item['renditions'] = {}
         for content in tree.find(self.qname('contentSet')):
             if content.tag == self.qname('inlineXML'):
@@ -149,16 +146,17 @@ class Parser():
                 item['renditions'][rendition['rendition']] = rendition
 
     def parse_inline_content(self, tree):
-        html = tree.find('{http://www.w3.org/1999/xhtml}html')
-        etree.register_namespace('', 'http://www.w3.org/1999/xhtml')
-        content = {}
-        content['contenttype'] = tree.attrib['contenttype']
-
+        XHTML = 'http://www.w3.org/1999/xhtml'
+        html = tree.find(self.qname('html', XHTML))
         body = html[1]
         elements = []
-        for element in body:
-            if element.text:
-                elements.append('<p>' + element.text + '</p>')
+        for elem in body:
+            if elem.text:
+                tag = etree.QName(elem.tag).localname
+                elements.append('<%s>%s</%s>' % (tag, elem.text, tag))
+
+        content = {}
+        content['contenttype'] = tree.attrib['contenttype']
         content['content'] = "\n".join(elements)
         return content
 
@@ -171,8 +169,15 @@ class Parser():
         content['href'] = tree.attrib['href']
         return content
 
-    def qname(self, tag):
-        return str(etree.QName(self.XMLNS, tag))
+    def qname(self, tag, ns=None):
+        if ns is None:
+            ns = self.root
+        return str(etree.QName(ns, tag))
 
     def datetime(self, string):
         return datetime.datetime.strptime(string, '%Y-%m-%dT%H:%M:%S.000Z')
+
+    def get_literal_name(self, item):
+        """Get name for item with fallback to literal attribute if name is not provided."""
+        name = item.find(self.qname('name'))
+        return name.text if name is not None else item.attrib.get('literal')

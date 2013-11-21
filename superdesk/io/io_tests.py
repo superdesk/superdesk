@@ -1,6 +1,6 @@
 import os
 import unittest
-import xml.etree.ElementTree as etree
+from ..etree import etree
 import test
 
 from superdesk.io import newsml

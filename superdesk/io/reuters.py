@@ -1,12 +1,12 @@
 """Reuters io service."""
 
 import requests
-import xml.etree.ElementTree as etree
 import traceback
 import datetime
-
-from flask import url_for
 import superdesk
+
+from lxml import etree
+from flask import url_for
 from superdesk.utc import utcnow
 from .newsml import Parser
 from .reuters_token import get_token
