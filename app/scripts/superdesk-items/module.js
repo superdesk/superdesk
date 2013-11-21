@@ -85,12 +85,6 @@ define([
                     controller: require('superdesk-items/controllers/ingest'),
                     resolve: resolve('ingest'),
                     label: gettext('Ingest')
-                    /*
-                    menu: {
-                        label: gettext('Ingest'),
-                        priority: -300
-                    }
-                    */
                 })
                 .when('/archive/', {
                     templateUrl: 'scripts/superdesk-items/views/archive.html',
