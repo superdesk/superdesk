@@ -3,11 +3,12 @@
 import logging
 import settings
 import importlib
-from flask import abort, app, json, Blueprint  # noqa
+from flask import abort, json, Blueprint  # noqa
 from flask.ext.script import Command, Option  # noqa
 from eve.utils import document_link  # noqa
 from .datalayer import SuperdeskDataLayer  # noqa
 from .signals import connect, send  # noqa
+from flask import current_app as app  # noqa
 
 
 API_NAME = 'Superdesk API'

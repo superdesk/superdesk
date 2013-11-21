@@ -2,7 +2,7 @@
 
 import os
 import superdesk
-from flask import request, url_for
+from flask import request, url_for, current_app as app
 from .utils import get_random_string
 
 bp = superdesk.Blueprint('upload', __name__)
@@ -10,12 +10,12 @@ bp = superdesk.Blueprint('upload', __name__)
 
 @bp.route('/upload/<path:filename>', methods=['GET'])
 def get_upload(filename):
-    return superdesk.app.data.storage.send_file(filename)
+    return app.data.storage.send_file(filename)
 
 
 def on_create_upload(data, docs):
     filename = get_random_string(12) + os.path.splitext(request.files['file'].filename)[1]
-    superdesk.app.data.storage.save_file(filename, request.files['file'])
+    app.data.storage.save_file(filename, request.files['file'])
     docs[0]['filename'] = filename
     docs[0]['url'] = url_for('upload.get_upload', filename=filename, _external=True)
     docs[0]['files'] = [{

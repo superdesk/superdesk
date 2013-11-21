@@ -39,11 +39,11 @@ class TextParserTest(ItemTest):
         self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ", self.item["slugline"])
         self.assertEquals("Soccer-Smiling Benitez pleads for support after midweek outburst", self.item["headline"])
         self.assertEquals("Reuters", self.item["creditline"])
-        self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ:Soccer-Smiling Benitez pleads for support after midweek outburst", self.item.get('description_text'))
+        self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ:Soccer-Smiling Benitez pleads for support after midweek outburst", self.item.get('description_text'))  # noqa
 
     def test_parse_rights_info(self):
         self.assertEquals("Thomson Reuters", self.item.get('copyrightholder'))
-        self.assertEquals("(c) Copyright Thomson Reuters 2013. Click For Restrictions - http://about.reuters.com/fulllegal.asp", self.item.get('copyrightnotice'))
+        self.assertEquals("(c) Copyright Thomson Reuters 2013. Click For Restrictions - http://about.reuters.com/fulllegal.asp", self.item.get('copyrightnotice'))  # noqa
 
     def test_content_set(self):
         self.assertEquals("<p>By Toby Davis</p>", self.item.get('body_html'))
@@ -57,6 +57,7 @@ class TextParserTest(ItemTest):
 
     def test_pubstatus(self):
         self.assertEquals('usable', self.item.get('pubstatus'))
+
 
 class PictureParserTest(ItemTest):
     def setUp(self):
@@ -73,7 +74,7 @@ class PictureParserTest(ItemTest):
         self.assertEquals("tag:reuters.com,0000:binary_GM1E9341HD701-BASEIMAGE", remote.get('residRef'))
         self.assertEquals(772617, remote.get('sizeinbytes'))
         self.assertEquals("image/jpeg", remote.get('mimetype'))
-        self.assertEquals("http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1E9341HD701:360624134/tag:reuters.com,0000:binary_GM1E9341HD701-BASEIMAGE", remote.get('href'))
+        self.assertEquals("http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1E9341HD701:360624134/tag:reuters.com,0000:binary_GM1E9341HD701-BASEIMAGE", remote.get('href'))  # noqa
 
     def test_byline(self):
         self.assertEquals('MARKO DJURICA', self.item.get('byline'))
@@ -82,6 +83,7 @@ class PictureParserTest(ItemTest):
         self.assertEquals(2, len(self.item.get('place')))
         self.assertIn({'name': 'NAIROBI'}, self.item['place'])
         self.assertIn({'name': 'Kenya'}, self.item['place'])
+
 
 class SNEPParserTest(ItemTest):
     def setUp(self):

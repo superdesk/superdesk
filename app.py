@@ -2,20 +2,10 @@
 import os
 import eve
 import superdesk
-import flask
-from eve.io.mongo import MongoJSONEncoder
+import settings
 from superdesk import signals
-
-
-class SuperdeskTokenAuth(eve.auth.TokenAuth):
-    """Superdesk Token Auth"""
-
-    def check_auth(self, token, allowed_roles, resource, method):
-        """Check if given token is valid"""
-        auth_token = app.data.find_one('auth', token=token)
-        if auth_token:
-            flask.g.user = app.data.find_one('users', _id=(str(auth_token['user']['_id'])))
-        return auth_token
+from eve.io.mongo import MongoJSONEncoder
+from superdesk.auth import SuperdeskTokenAuth
 
 
 class SuperdeskEve(eve.Eve):
@@ -23,32 +13,45 @@ class SuperdeskEve(eve.Eve):
 
     def load_config(self):
         """Let us override settings withing plugins"""
-
         super(SuperdeskEve, self).load_config()
         self.config.from_object(superdesk)
 
-abspath = os.path.abspath(os.path.dirname(__file__))
-app = SuperdeskEve(
-    data=superdesk.SuperdeskDataLayer,
-    auth=SuperdeskTokenAuth,
-    settings=os.path.join(abspath, 'settings.py'),
-    json_encoder=MongoJSONEncoder)
-app.on_fetch_resource = signals.proxy_resource_signal('read', app)
-app.on_fetch_item = signals.proxy_item_signal('read', app)
-superdesk.app = app
 
-for blueprint in superdesk.BLUEPRINTS:
-    app.register_blueprint(blueprint, **blueprint.kwargs)
+def get_app(config=None):
+    """App factory."""
+
+    if config is None:
+        config = {}
+
+    for key in dir(settings):
+        if key.isupper():
+            config.setdefault(key, getattr(settings, key))
+
+    app = SuperdeskEve(
+        data=superdesk.SuperdeskDataLayer,
+        auth=SuperdeskTokenAuth,
+        settings=config,
+        json_encoder=MongoJSONEncoder)
+
+    app.on_fetch_resource = signals.proxy_resource_signal('read', app)
+    app.on_fetch_item = signals.proxy_item_signal('read', app)
+
+    for blueprint in superdesk.BLUEPRINTS:
+        app.register_blueprint(blueprint, **blueprint.kwargs)
+
+    return app
+
 
 if __name__ == '__main__':
 
     if 'PORT' in os.environ:
         port = int(os.environ.get('PORT'))
         host = '0.0.0.0'
-        app.debug = 'SUPERDESK_DEBUG' in os.environ
+        debug = 'SUPERDESK_DEBUG' in os.environ
     else:
         port = 5000
         host = '127.0.0.1'
-        app.debug = True
+        debug = True
 
-    app.run(host=host, port=port)
+    app = get_app()
+    app.run(host=host, port=port, debug=debug)

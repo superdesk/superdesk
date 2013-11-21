@@ -1,4 +1,11 @@
 *.pyc
-env*/
 static/*
 media/*
+upload/*
+
+# env
+*.egg*
+bin/
+lib/
+man/
+include/

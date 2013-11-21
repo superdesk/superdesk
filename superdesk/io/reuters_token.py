@@ -5,8 +5,7 @@ import requests
 import xml.etree.ElementTree as etree
 from requests.packages.urllib3.poolmanager import PoolManager
 from datetime import timedelta
-
-import superdesk
+from flask import current_app as app
 from superdesk.utc import utcnow
 
 
@@ -26,7 +25,7 @@ def get_token(provider):
     }
 
     provider['token'] = token
-    superdesk.app.data.update('ingest_providers', provider.get('_id'), {'token': token})
+    app.data.update('ingest_providers', provider.get('_id'), {'token': token})
     return token.get('token')
 
 

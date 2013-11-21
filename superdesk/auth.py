@@ -1,10 +1,24 @@
 
+import flask
 import logging
 import superdesk
 import superdesk.utils as utils
 from flask import json
+from eve.auth import TokenAuth
 
 logger = logging.getLogger(__name__)
+
+
+class SuperdeskTokenAuth(TokenAuth):
+    """Superdesk Token Auth"""
+
+    def check_auth(self, token, allowed_roles, resource, method):
+        """Check if given token is valid"""
+        auth_token = flask.current_app.data.find_one('auth', token=token)
+        if auth_token:
+            user_id = str(auth_token['user']['_id'])
+            flask.g.user = flask.current_app.data.find_one('users', _id=user_id)
+        return auth_token
 
 
 class AuthException(Exception):

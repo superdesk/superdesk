@@ -1,11 +1,10 @@
 
-import unittest
-
-from .tests import setup, app
-
 import superdesk
+from .tests import TestCase
+
 
 class Logger(object):
+
     def __init__(self):
         self.called = False
         self.args = []
@@ -15,18 +14,15 @@ class Logger(object):
         self.sender = sender
         self.kwargs = kwargs
 
-class SignalsTestCase(unittest.TestCase):
 
-    def setUp(self):
-        setup()
+class SignalsTestCase(TestCase):
 
     def test_signals(self):
         logger = Logger()
         superdesk.connect('read:items', logger.callme)
 
-        with app.test_request_context():
-            getattr(app, 'on_fetch_resource')('items', ({}, ))
+        with self.app.test_request_context():
+            getattr(self.app, 'on_fetch_resource')('items', ({}, ))
 
-        assert logger.called, "Logger was not called"
-        assert isinstance(logger.sender, superdesk.SuperdeskDataLayer), logger.sender
-        assert logger.kwargs.get('docs'), logger.kwargs
+        self.assertTrue(logger.called)
+        self.assertIn('docs', logger.kwargs)

@@ -2,6 +2,7 @@
 
 import superdesk
 from superdesk.utc import utcnow
+from flask import current_app as app
 
 providers = {}
 
@@ -23,14 +24,14 @@ def update_provider(provider):
             item.setdefault('updated', utcnow())
             item['ingest_provider'] = str(provider['_id'])
 
-            old_item = superdesk.app.data.find_one('ingest', guid=item['guid'])
+            old_item = app.data.find_one('ingest', guid=item['guid'])
             if old_item:
-                superdesk.app.data.update('ingest', str(old_item.get('_id')), item)
+                app.data.update('ingest', str(old_item.get('_id')), item)
             else:
                 ingested_count += 1
-                superdesk.app.data.insert('ingest', [item], ttl='7d')
+                app.data.insert('ingest', [item], ttl='7d')
 
-        superdesk.app.data.update('ingest_providers', str(provider.get('_id')), {
+        app.data.update('ingest_providers', str(provider.get('_id')), {
             'updated': start,
             'ingested_count': ingested_count
         })
@@ -44,7 +45,7 @@ class UpdateIngest(superdesk.Command):
     )
 
     def run(self, provider_type=None):
-        for provider in superdesk.app.data.find_all('ingest_providers'):
+        for provider in app.data.find_all('ingest_providers'):
             if not provider_type or provider_type == provider.get('type'):
                 update_provider(provider)
 

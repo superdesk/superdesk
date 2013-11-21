@@ -4,6 +4,7 @@ from eve.io.mongo import Mongo
 from eve.utils import config, ParsedRequest
 from eve_elastic import Elastic
 from .signals import send
+from .utils import import_by_path
 
 
 class SuperdeskDataLayer(DataLayer):
@@ -15,7 +16,13 @@ class SuperdeskDataLayer(DataLayer):
     def init_app(self, app):
         self.elastic = Elastic(app)
         self.mongo = Mongo(app)
-        self.storage = self.mongo.driver
+
+        if 'DEFAULT_FILE_STORAGE' in app.config:
+            self.storage = import_by_path(app.config['DEFAULT_FILE_STORAGE'])()
+            self.storage.init_app(app)
+        else:
+            self.storage = self.mongo.driver
+
         self._init_elastic()
 
     def _init_elastic(self):
@@ -36,7 +43,7 @@ class SuperdeskDataLayer(DataLayer):
                 }
             }}
 
-            self.elastic.es.put_mapping(self.elastic.index, typename, mapping)
+            self.elastic.es.put_mapping(self.elastic.index, typename, mapping, ignore_conflicts=True)
 
     def find(self, resource, req):
         cursor = self._backend(resource).find(resource, req)
