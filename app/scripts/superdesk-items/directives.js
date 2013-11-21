@@ -7,7 +7,7 @@ define([
 ], function(_, $, angular, moment, d3) {
     'use strict';
 
-    angular.module('superdesk.items.directives', ['ui.bootstrap']).
+    angular.module('superdesk.items.directives', ['ui.bootstrap','superdesk.items.resources']).
         filter('reldate', function() {
             return function(date) {
                 return moment(date).fromNow();
@@ -205,102 +205,162 @@ define([
                 }
             };
         })
-        .directive('sdPieChart', function() {
+        .directive('sdPieChart',function(colorSchemes) {
             return {
+                templateUrl: 'scripts/superdesk-items/views/chartBox.html',
+                replace: true,
                 scope: {
-                    terms: '='
+                    terms: '=',
+                    head: '@',
+                    theme: '@'
                 },
                 link: function(scope, element, attrs) {
+                    
+                
+                    var appendTarget = element[0].getElementsByClassName('block')[0];
 
-                    // todo define chart css
-                    element
-                        .css('background-color', '#fff')
-                        .css('float', 'left')
-                        .css('margin', '10px 0 0 10px');
+                    var horizBlocks = attrs.x ? parseInt(attrs.x, 10) : 1;
+                    var vertBlocks  = attrs.y ? parseInt(attrs.y, 10) : 1;
 
-                    var width = 320 * (attrs.x ? parseInt(attrs.x, 10) : 1),
-                        height = 250 * (attrs.y ? parseInt(attrs.y, 10) : 1),
+
+                    var width = 320 * horizBlocks + (30 + 2 + 20)*(horizBlocks-1),
+                        height = 250 * vertBlocks + (30 + 2 + 47 + 20)*(vertBlocks-1),
                         radius = Math.min(width, height) / 2;
 
-                    var color = d3.scale.category10();
+                    colorSchemes.get(function(colorsData){
+                        
+                        var colorScheme = colorsData.navy;
 
-                    var arc = d3.svg.arc()
-                        .outerRadius(radius - 10)
-                        .innerRadius(radius * 8 / 13 / 2);
+                        if (attrs.colors && _.has(colorsData,attrs.colors)) {
+                            colorScheme = _.values(_.pick(colorsData,attrs.colors))[0];
+                        }
 
-                    var sort = attrs.sort || null;
-                    var pie = d3.layout.pie()
-                        .value(function(d) { return d.count; })
-                        .sort(sort ? function(a, b) { return d3.ascending(a[sort], b[sort]); } : null);
+                        var colorScale = d3.scale.ordinal()
+                                        .range(colorScheme.charts);
 
-                    var svg = d3.select(element[0]).append('svg')
-                        .attr('width', width)
-                        .attr('height', height)
-                        .append('g')
-                        .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+                        var arc = d3.svg.arc()
+                            .outerRadius(radius - 10)
+                            .innerRadius(radius * 8 / 13 / 2);
 
-                    scope.$watch('terms', function(terms) {
-                        var g = svg.selectAll('.arc')
-                            .data(pie(terms))
-                            .enter().append('g')
-                            .attr('class', 'arc');
+                        var sort = attrs.sort || null;
+                        var pie = d3.layout.pie()
+                            .value(function(d) { return d.count; })
+                            .sort(sort ? function(a, b) { return d3.ascending(a[sort], b[sort]); } : null);
 
-                        g.append('path')
-                            .attr('d', arc)
-                            .style('fill', function(d) { return color(d.data.term); });
 
-                        g.append('text')
-                            .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
-                            .attr('dy', '.35em')
-                            .style('text-anchor', 'middle')
-                            .text(function(d) { return d.data.term; });
+                        var svg = d3.select(appendTarget).append('svg')
+                            .attr('width', width)
+                            .attr('height', height)
+                            .append('g')
+                            .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+
+                        scope.$watch('terms', function(terms) {
+                            var g = svg.selectAll('.arc')
+                                .data(pie(terms))
+                                .enter().append('g')
+                                .attr('class', 'arc');
+
+                            g.append('path')
+                                .attr('d', arc)
+                                .style('fill', function(d) { return colorScale(d.data.term); });
+
+                            g.append('text')
+                                .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
+                                .style('text-anchor', 'middle')
+                                .style('fill', colorScheme.text)
+                                .text(function(d) { return d.data.term; });
+                        });
                     });
                 }
             };
         })
-        .directive('sdHistogram', function() {
+        .directive('sdHistogram', function(colorSchemes) {
             return {
+                templateUrl: 'scripts/superdesk-items/views/chartBox.html',
+                replace: true,
                 scope: {
-                    entries: '='
+                    entries: '=',
+                    head: '@',
+                    theme: '@'
                 },
                 link: function(scope, element, attrs) {
-                    // todo define chart css
-                    element
-                        .css('background-color', '#fff')
-                        .css('float', 'left')
-                        .css('margin', '10px 0 0 10px');
 
-                    var width = 320 * (attrs.x ? parseInt(attrs.x, 10) : 1),
-                        barHeight = 30,
-                        x = d3.scale.linear().range([0, width - 10]);
+                    var horizontal = attrs.horizontal === 'true' ? true : false;
+                    var showText = attrs.text === 'false'  ? false : true;
+                    
+                    var horizBlocks = attrs.x ? parseInt(attrs.x, 10) : 1;
+                    var vertBlocks  = attrs.y ? parseInt(attrs.y, 10) : 1;
 
-                    var color = d3.scale.category10();
 
-                    var svg = d3.select(element[0]).append('svg')
-                        .attr('width', width);
+                    var appendTarget = element[0].getElementsByClassName('block')[0];
+                    var width = 320 * horizBlocks + (30 + 2 +20)*(horizBlocks-1),
+                        height = 250 * vertBlocks + (30 + 2 + 47 + 20)*(vertBlocks-1),
+                        dimension = horizontal ? width : height,
+                        oDimension = horizontal ? height : width,
+                        x = d3.scale.linear().range([0, oDimension]);
 
-                    scope.$watch('entries', function(entries) {
-                        var data = _.last(entries, 24);
-                        data.reverse();
-                        x.domain([0, d3.max(data, function(d) { return d.count; })]);
-                        svg.attr('height', barHeight * data.length + 5);
 
-                        var bar = svg.selectAll('.bar')
-                            .data(data)
-                            .enter().append('g')
-                            .attr('class', 'bar')
-                            .attr('transform', function(d, i) { return 'translate(5,' + (5 + i * barHeight) + ')'; });
+                    colorSchemes.get(function(colorsData) {
 
-                        bar.append('rect')
-                            .attr('width', function(d) { return x(d.count); })
-                            .attr('height', barHeight - 1)
-                            .style('fill', function(d) { return color(d.time); });
+                        var colorScheme = colorsData.navy;
 
-                        bar.append('text')
-                            .attr('x', 3)
-                            .attr('y', barHeight / 2)
-                            .attr('dy', '.35em')
-                            .text(function(d) { return d.count + ' / ' + moment.unix(d.time / 1000).format('HH:mm') + '+'; });
+                        if (attrs.colors && _.has(colorsData,attrs.colors)) {
+                            colorScheme = _.values(_.pick(colorsData,attrs.colors))[0];
+                        }
+
+                        var colorScale = d3.scale.ordinal()
+                                        .range(colorScheme.charts);
+
+                        var svg = d3.select(appendTarget).append('svg')
+                            .attr('width', width)
+                            .attr('height', height);
+
+                        scope.$watch('entries', function(entries) {
+                            var data = _.last(entries, 24);
+                            data.reverse();
+                            x.domain([0, d3.max(data, function(d) { return d.count; })]);
+
+                            var barOuter = Math.floor(dimension/data.length);
+                            var barSpace = Math.floor(barOuter*0.2);
+                            var barInner = barOuter-barSpace;
+
+                            var bar = svg.selectAll('.bar')
+                                .data(data)
+                                .enter()
+                                .append('g').attr('class', 'bar')
+                                .style('fill', function(d) { return colorScale(d.time); });
+
+                            if (horizontal) {
+                                bar.attr('transform', function(d, i) { return 'translate('+ (i*barOuter) +',0)'; })
+                                    .append('rect')
+                                        .attr('height', function(d) { return x(d.count); })
+                                        .attr('width', barInner)
+                                        .attr('y', function(d) { return (height - x(d.count)); });
+                                if (showText) {
+                                    bar.append('text')
+                                    .style('fill',colorScheme.text)
+                                    .text(function(d) { return d.count + ' / ' + moment.unix(d.time / 1000).format('HH:mm') + '+'; })
+                                    .attr('transform', function(d, i) { return 'translate('+(2*barInner/3)+','+(height-5)+')rotate(270)'; });
+                                }
+                                
+                            } else {
+                                bar.attr('transform', function(d, i) { return 'translate(0,' + (i*barOuter) + ')'; })
+                                    .append('rect')
+                                        .attr('width', function(d) { return x(d.count); })
+                                        .attr('height', barInner);
+
+                                if (showText) {
+                                    bar.append('text')
+                                        .attr('x', 5)
+                                        .attr('y', barOuter/2)
+                                        .style('fill',colorScheme.text)
+                                        .text(function(d) { return d.count + ' / ' + moment.unix(d.time / 1000).format('HH:mm') + '+'; });
+                                }
+                            }
+
+                            
+                        });
+
                     });
                 }
             };

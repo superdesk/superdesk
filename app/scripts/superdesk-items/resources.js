@@ -9,8 +9,8 @@ define(['angular'], function(angular) {
                 }
             };
         })
-        .factory('feedSources', function($resource) {
-            return $resource('scripts/superdesk/items/static-resources/sources.json');
+        .factory('colorSchemes', function($resource) {
+            return $resource('scripts/superdesk-items/static-resources/color-schemes.json');
         })
         .factory('providerRepository', ['em', function(em) {
             var repository = em.getRepository('ingest_providers');

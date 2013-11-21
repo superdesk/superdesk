@@ -521,3 +521,56 @@ Add new widget modal
 		margin-left: 390px;
 	}
 }
+
+
+
+
+
+
+/*
+=============================================
+Statistics
+=============================================
+*/
+
+
+.statistics {
+	.stats-container {
+		float: left;
+		&.size1 {
+			width:372px;
+		}
+		&.size2 {
+			width:744px;
+		}
+	}
+	.stats-block {
+		float: left;
+		border: 1px solid #ccc;
+		margin-right: 30px;
+		margin-bottom: 30px;
+		.gradientBar(#fff,#e0e0e0);
+		.border-radius(3px);
+		.title {
+			text-align: center;
+			margin-bottom: 5px;
+			margin-top: 10px;
+			padding-bottom: 10px;
+			border-bottom: 1px solid #f0f0f0;
+			font-size: 18px;
+			color: #666;
+			letter-spacing: 1px;
+		}
+		.block {
+			padding: 10px;
+		}
+		&.theme-dark {
+			background: #212121;
+			border-color: #000;
+			.title {
+				color: #a8a8a8;
+				border-color:#313131;
+			}
+		}
+	}
+}
