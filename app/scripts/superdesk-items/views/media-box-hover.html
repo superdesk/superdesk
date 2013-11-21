@@ -16,14 +16,13 @@
         <figcaption class="caption">{{ selectedItem.item.creditline }}</figcaption>
     </figure>
 
-    <div class="media" ng-show="selectedItem.item.type == 'text'"  ng-click="preview(selectedItem.item)">
+    <div class="media" ng-show="selectedItem.item.type == 'text' || selectedItem.item.type == 'composite'"  ng-click="preview(selectedItem.item)">
         <small title="{{ selectedItem.item.headline }}">{{ selectedItem.item.headline }}</small>
     </div>
 
     <div class="media"  
          ng-click="preview(selectedItem.item)"
-         ng-show="selectedItem.item.type == 'composite' || 
-                  selectedItem.item.type == 'audio' || 
+         ng-show="selectedItem.item.type == 'audio' || 
                   selectedItem.item.type == 'video'">
         <i class="filetype-icon-large-{{ selectedItem.item.type}}"></i>
     </div>
