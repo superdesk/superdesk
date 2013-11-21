@@ -9,12 +9,14 @@ define(['angular'], function(angular) {
      * 
      * Usage:
      * 
-     * Registering a url menu item:
+     * Registering a menu item:
      *
      * menuProvider.register({
+     *     id: 'dashboard'
      *     label: gettext('Dashboard'),
      *     href: '/',
-     *     priority: 0
+     *     priority: 0,
+     *     parentId: null
      * });
      */
     angular.module('superdesk.services.menu', [])
