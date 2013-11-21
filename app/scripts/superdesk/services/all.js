@@ -5,6 +5,7 @@ define([
     './notify',
     './settings',
     './storage',
+    './menu',
     '../userSettings',
     '../entity',
     '../server'
@@ -17,6 +18,7 @@ define([
         'superdesk.services.notify',
         'superdesk.services.settings',
         'superdesk.services.storage',
+        'superdesk.services.menu',
         'superdesk.userSettings',
         'superdesk.entity',
         'superdesk.server'

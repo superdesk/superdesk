@@ -1,11 +1,1 @@
-<li ng-repeat="item in items | orderBy:'priority'">
-	
-	<a href="#{{ item.href }}" ng-show="item.href" ng-click="followLink()">{{ item.label|translate }}</a>
-
-	<a ng-show="!item.href" ng-show="item.items" sd-toggle-item >{{ item.label|translate }}<i class="icon-chevron-right icon-white"></i></a>
-
-	<ul ng-show="item.items">
-	  <li ng-repeat="item2 in item.items | orderBy:priority"><a href="#{{ item2.href }}" ng-click="followLink()">{{ item2.label|translate }}</a></li>
-	</ul>
-
-</li>
+<li ng-repeat="item in itemsArray | orderBy:'priority'" sd-menu-item data-item="item"></li>

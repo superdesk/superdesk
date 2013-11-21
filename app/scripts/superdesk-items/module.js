@@ -36,6 +36,22 @@ define([
                 templateUrl: 'scripts/superdesk-items/views/reutersConfig.html'
             }
         })
+        .config(function(menuProvider) {
+            menuProvider.register({
+                id: 'ingest',
+                label: gettext('Ingest'),
+                href: '/ingest/',
+                priority: -300,
+                parentId: null
+            });
+            menuProvider.register({
+                id: 'archive',
+                label: gettext('Archive'),
+                href: '/archive/',
+                priority: -200,
+                parentId: null
+            });
+        })
         .config(function($routeProvider) {
 
             /**
@@ -68,19 +84,19 @@ define([
                     templateUrl: 'scripts/superdesk-items/views/ingest.html',
                     controller: require('superdesk-items/controllers/ingest'),
                     resolve: resolve('ingest'),
+                    label: gettext('Ingest')
+                    /*
                     menu: {
                         label: gettext('Ingest'),
                         priority: -300
                     }
+                    */
                 })
                 .when('/archive/', {
                     templateUrl: 'scripts/superdesk-items/views/archive.html',
                     controller: require('superdesk-items/controllers/archive'),
                     resolve: resolve('archive'),
-                    menu: {
-                        label: gettext('Archive'),
-                        priority: -200
-                    }
+                    label: gettext('Archive')
                 })
                 .when('/archive/:id', {
                     templateUrl: 'scripts/superdesk-items/views/edit.html',
@@ -89,7 +105,8 @@ define([
                         item: ['$route', 'server', function($route, server) {
                             return server.readById('items', $route.current.params.id);
                         }]
-                    }
+                    },
+                    label: gettext('Archive')
                 });
         })
         .config(function(settingsProvider) {

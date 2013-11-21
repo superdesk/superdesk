@@ -5,6 +5,15 @@ define([
     'use strict';
 
     angular.module('superdesk.settings', [])
+        .config(function(menuProvider) {
+            menuProvider.register({
+                id: 'settings',
+                label: gettext('Settings'),
+                href: '/settings',
+                priority: 0,
+                parentId: null
+            });
+        })
         .config(function($routeProvider) {
             $routeProvider
                 .when('/settings/:tab?', {
@@ -16,13 +25,6 @@ define([
                         }]
                     },
                     label: gettext('Settings')
-                })
-                // temporary fake route, just to have menu fixed
-                .when('/settings', {
-                    menu: {
-                        label: gettext('Settings'),
-                        priority: 0
-                    }
                 });
         });
 

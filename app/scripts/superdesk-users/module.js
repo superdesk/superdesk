@@ -34,6 +34,15 @@ define([
                 created: true
             }
         })
+        .config(function(menuProvider) {
+            menuProvider.register({
+                id: 'users',
+                label: gettext('Users'),
+                href: '/users',
+                priority: -1,
+                parentId: null
+            });
+        })
         .config(function($routeProvider) {
             $routeProvider
                 .when('/users/:id?', {
@@ -67,13 +76,6 @@ define([
                             }]
                     },
                     label: gettext('Users')
-                })
-                // temporary fake route, just to have menu fixed
-                .when('/users', {
-                    menu: {
-                        label: gettext('Users'),
-                        priority: -1
-                    }
                 })
                 .when('/profile', {
                     controller: require('superdesk-users/controllers/profile'),
