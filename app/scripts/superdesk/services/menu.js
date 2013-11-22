@@ -16,7 +16,7 @@ define(['angular'], function(angular) {
      *     label: gettext('Dashboard'),
      *     href: '/',
      *     priority: 0,
-     *     parentId: null
+     *     parent: null
      * });
      */
     angular.module('superdesk.services.menu', [])
@@ -50,9 +50,9 @@ define(['angular'], function(angular) {
                 $get: function() {
                     return menu;
                 },
-                register: function(item) {
-                    var parent = getContainer(item.parentId);
-                    parent[item.id] = {
+                menu: function(id, item) {
+                    var parent = getContainer(item.parent);
+                    parent[id] = {
                         label: item.label,
                         href: item.href,
                         priority: item.priority

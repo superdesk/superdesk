@@ -37,19 +37,15 @@ define([
             }
         })
         .config(function(menuProvider) {
-            menuProvider.register({
-                id: 'ingest',
+            menuProvider.menu('ingest', {
                 label: gettext('Ingest'),
                 href: '/ingest/',
-                priority: -300,
-                parentId: null
+                priority: -300
             });
-            menuProvider.register({
-                id: 'archive',
+            menuProvider.menu('archive', {
                 label: gettext('Archive'),
                 href: '/archive/',
-                priority: -200,
-                parentId: null
+                priority: -200
             });
         })
         .config(function($routeProvider) {

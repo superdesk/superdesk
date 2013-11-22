@@ -35,12 +35,10 @@ define([
             }
         })
         .config(function(menuProvider) {
-            menuProvider.register({
-                id: 'users',
+            menuProvider.menu('users', {
                 label: gettext('Users'),
                 href: '/users',
-                priority: -1,
-                parentId: null
+                priority: -1
             });
         })
         .config(function($routeProvider) {

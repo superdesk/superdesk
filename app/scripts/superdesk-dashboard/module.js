@@ -20,12 +20,10 @@ define([
     ])
     .constant('widgetsPath', 'scripts/superdesk-dashboard/widgets/')
     .config(function(menuProvider) {
-        menuProvider.register({
-            id: 'dashboard',
+        menuProvider.menu('dashboard', {
             label: gettext('Dashboard'),
             href: '/',
-            priority: -1000,
-            parentId: null
+            priority: -1000
         });
     })
     .config(['$routeProvider', function($routeProvider) {

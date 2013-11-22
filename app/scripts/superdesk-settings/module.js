@@ -6,12 +6,10 @@ define([
 
     angular.module('superdesk.settings', [])
         .config(function(menuProvider) {
-            menuProvider.register({
-                id: 'settings',
+            menuProvider.menu('settings', {
                 label: gettext('Settings'),
                 href: '/settings',
-                priority: 0,
-                parentId: null
+                priority: 0
             });
         })
         .config(function($routeProvider) {
