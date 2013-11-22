@@ -3,9 +3,9 @@
 
     <div class="main-content-topnav">
         <div class="btn-group pull-right">
-            <a href="" class="btn" ng-click="setView('grid')" ng-class="{active: ui.view === 'grid'}"><i class="icon-th"></i></a>
-            <a href="" class="btn" ng-click="setView('list')" ng-class="{active: ui.view === 'list'}"><i class="icon-th-list"></i></a>
-            <a href="" class="btn" ng-click="setView('stats')" ng-class="{active: ui.view === 'stats'}"><i class=""></i> stats</a>
+            <a href="" class="btn" ng-click="setView('grid')" ng-class="{active: ui.view === 'grid'}" tooltip="{{ 'grid view' | translate}}" tooltip-append-to-body="true"><i class="icon-th"></i></a>
+            <a href="" class="btn" ng-click="setView('list')" ng-class="{active: ui.view === 'list'}" tooltip="{{ 'list view' | translate}}" tooltip-append-to-body="true"><i class="icon-th-list"></i></a>
+            <a href="" class="btn" ng-click="setView('stats')" ng-class="{active: ui.view === 'stats'}" tooltip="{{ 'statistics' | translate}}" tooltip-append-to-body="true"><i class="icon-signal"></i></a>
         </div>
     </div>
 
@@ -25,10 +25,22 @@
         <div class="alert alert-info" ng-show="!items._items.length" translate>No results found.</div>
     </div>
 
-    <div class="main-content-inner clearfix" ng-if="ui.view === 'stats'">
-        <div sd-histogram data-entries="items._facets.versioncreated.entries"></div>
-        <div sd-pie-chart data-terms="items._facets.provider.terms"></div>
-        <div sd-pie-chart data-terms="items._facets.urgency.terms" data-sort="term"></div>
-        <div sd-pie-chart data-terms="items._facets.subject.terms" data-x="2" data-y="2"></div>
+    <div class="main-content-inner clearfix statistics" ng-if="ui.view === 'stats'">
+
+        <div class="stats-container size2">
+            <div sd-pie-chart data-terms="items._facets.provider.terms" data-colors="superdesk" data-head="{{ 'Providers'| translate }}"></div>
+            <div sd-pie-chart data-terms="items._facets.urgency.terms" data-sort="term" data-head="{{ 'Urgency'| translate }}" data-colors="superdesk"></div>
+            <div sd-histogram data-entries="items._facets.versioncreated.entries" data-head="{{ 'Version created'| translate }}"  data-theme="dark" data-colors="monogreen" data-horizontal="true"  data-x="2" data-y="1"></div>
+        </div>
+
+        <div class="stats-container size2">
+            <div sd-pie-chart data-terms="items._facets.subject.terms" data-head="{{ 'Subject phrases'| translate }}" data-colors="superdesk" data-x="2" data-y="2"></div>
+        </div>
+        
+        
+
+        
+        
+
     </div>
 </div>
