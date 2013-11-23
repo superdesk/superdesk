@@ -36,20 +36,7 @@ define([
                 templateUrl: 'scripts/superdesk-items/views/reutersConfig.html'
             }
         })
-        .config(function(menuProvider) {
-            menuProvider.menu('ingest', {
-                label: gettext('Ingest'),
-                href: '/ingest/',
-                priority: -300
-            });
-            menuProvider.menu('archive', {
-                label: gettext('Archive'),
-                href: '/archive/',
-                priority: -200
-            });
-        })
-        .config(function($routeProvider) {
-
+        .config(function(xProvider) {
             /**
              * Resolve ingest/archive list
              */
@@ -75,28 +62,33 @@ define([
                 };
             }
 
-            $routeProvider
-                .when('/ingest/', {
+            xProvider
+                .x('ingest', {
+                    href: '/ingest/',
+                    label: gettext('Ingest'),
                     templateUrl: 'scripts/superdesk-items/views/ingest.html',
                     controller: require('superdesk-items/controllers/ingest'),
                     resolve: resolve('ingest'),
-                    label: gettext('Ingest')
+                    priority: -300
                 })
-                .when('/archive/', {
+                .x('archive', {
+                    href: '/archive/',
+                    label: gettext('Archive'),
+                    priority: -200,
                     templateUrl: 'scripts/superdesk-items/views/archive.html',
                     controller: require('superdesk-items/controllers/archive'),
                     resolve: resolve('archive'),
-                    label: gettext('Archive')
                 })
-                .when('/archive/:id', {
+                .x({
+                    href: '/archive/:id',
+                    label: gettext('Archive'),
                     templateUrl: 'scripts/superdesk-items/views/edit.html',
                     controller: require('superdesk-items/controllers/edit'),
                     resolve: {
                         item: ['$route', 'server', function($route, server) {
                             return server.readById('items', $route.current.params.id);
                         }]
-                    },
-                    label: gettext('Archive')
+                    }
                 });
         })
         .config(function(settingsProvider) {

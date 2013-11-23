@@ -34,16 +34,12 @@ define([
                 created: true
             }
         })
-        .config(function(menuProvider) {
-            menuProvider.menu('users', {
-                label: gettext('Users'),
-                href: '/users',
-                priority: -1
-            });
-        })
-        .config(function($routeProvider) {
-            $routeProvider
-                .when('/users/:id?', {
+        .config(function(xProvider) {
+            xProvider
+                .x('users', {
+                    href: '/users/',
+                    label: gettext('Users'),
+                    priority: -1,
                     controller: require('superdesk-users/controllers/list'),
                     templateUrl: 'scripts/superdesk-users/views/list.html',
                     resolve: {
@@ -72,18 +68,18 @@ define([
                                 locationParams.reset(defaultListParams);
                                 return locationParams;
                             }]
-                    },
-                    label: gettext('Users')
+                    }
                 })
-                .when('/profile', {
+                .x({
+                    href: '/profile/',
+                    label: gettext('My Profile'),
                     controller: require('superdesk-users/controllers/profile'),
                     templateUrl: 'scripts/superdesk-users/views/profile.html',
                     resolve: {
-                        user: function($rootScope, em) {
+                        user: ['$rootScope', 'em', function($rootScope, em) {
                             return em.getRepository('users').find($rootScope.currentUser._id);
-                        }
-                    },
-                    label: gettext('My Profile')
+                        }]
+                    }
                 });
         });
 });
