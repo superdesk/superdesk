@@ -12,7 +12,8 @@ define([
     './controllers/ref',
     './directives',
     './filters',
-    './ingest-widget/ingest'
+    './ingest-widget/ingest',
+    './stats-widget/stats'
 ], function($, angular) {
     'use strict';
 
@@ -22,7 +23,8 @@ define([
         'superdesk.items.directives',
         'superdesk.items.filters',
         'ui.bootstrap',
-        'superdesk.widgets.ingest'
+        'superdesk.widgets.ingest',
+        'superdesk.widgets.ingeststats'
     ])
         .controller('SettingsCtrl', require('superdesk-items/controllers/settings'))
         .controller('RefController', require('superdesk-items/controllers/ref'))

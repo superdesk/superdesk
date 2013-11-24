@@ -216,23 +216,29 @@ define([
                 },
                 link: function(scope, element, attrs) {
                     
-                
+                    
                     var appendTarget = element[0].getElementsByClassName('block')[0];
 
                     var horizBlocks = attrs.x ? parseInt(attrs.x, 10) : 1;
                     var vertBlocks  = attrs.y ? parseInt(attrs.y, 10) : 1;
 
+                    var graphSettings = {       //thightly depends on CSS
+                        blockWidth : 320,
+                        blockHeight : 250,
+                        mergeSpaceLeft : 52,     //30 + 2 + 20
+                        mergeSpaceBottom : 99,   //30 + 2 + 20 + 47
+                    };
 
-                    var width = 320 * horizBlocks + (30 + 2 + 20)*(horizBlocks-1),
-                        height = 250 * vertBlocks + (30 + 2 + 47 + 20)*(vertBlocks-1),
+                    var width = graphSettings.blockWidth * horizBlocks + graphSettings.mergeSpaceLeft*(horizBlocks-1),
+                        height = graphSettings.blockHeight * vertBlocks + graphSettings.mergeSpaceBottom*(vertBlocks-1),
                         radius = Math.min(width, height) / 2;
 
                     colorSchemes.get(function(colorsData){
                         
-                        var colorScheme = colorsData.navy;
+                        var colorScheme = colorsData.schemes[0];
 
-                        if (attrs.colors && _.has(colorsData,attrs.colors)) {
-                            colorScheme = _.values(_.pick(colorsData,attrs.colors))[0];
+                        if (attrs.colors !== null) {
+                            colorScheme = colorsData.schemes[_.findKey(colorsData.schemes,{ 'name' : attrs.colors})];
                         }
 
                         var colorScale = d3.scale.ordinal()
@@ -255,20 +261,105 @@ define([
                             .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
                         scope.$watch('terms', function(terms) {
-                            var g = svg.selectAll('.arc')
-                                .data(pie(terms))
-                                .enter().append('g')
-                                .attr('class', 'arc');
+                            
+                            if (terms!== undefined) {
+                                var g = svg.selectAll('.arc')
+                                    .data(pie(terms))
+                                    .enter().append('g')
+                                    .attr('class', 'arc');
+                                g.append('path')
+                                    .attr('d', arc)
+                                    .style('fill', function(d) { return colorScale(d.data.term); });
+                                g.append('text')
+                                    .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
+                                    .style('text-anchor', 'middle')
+                                    .style('fill', colorScheme.text)
+                                    .text(function(d) { return d.data.term; });
+                            }
 
-                            g.append('path')
-                                .attr('d', arc)
-                                .style('fill', function(d) { return colorScale(d.data.term); });
+                        });
+                    });
+                }
+            };
+        })
+        .directive('sdPieChartDashboard',function(colorSchemes) {
+            return {
+                replace: true,
+                scope: {
+                    terms: '=',
+                    theme: '@',
+                    colors: '='
+                },
+                link: function(scope, element, attrs) {
+                    
+                    
+                    var appendTarget = element[0];
 
-                            g.append('text')
-                                .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
-                                .style('text-anchor', 'middle')
-                                .style('fill', colorScheme.text)
-                                .text(function(d) { return d.data.term; });
+                    var horizBlocks = attrs.x ? parseInt(attrs.x, 10) : 1;
+                    var vertBlocks  = attrs.y ? parseInt(attrs.y, 10) : 1;
+
+                    var graphSettings = {       //thightly depends on CSS
+                        blockWidth : 300,
+                        blockHeight : 197,
+                        mergeSpaceLeft : 60,     //30 + 2 + 20
+                        mergeSpaceBottom : 99    //30 + 2 + 20 + 47
+                    };
+
+                    var width = graphSettings.blockWidth * horizBlocks + graphSettings.mergeSpaceLeft*(horizBlocks-1),
+                        height = graphSettings.blockHeight * vertBlocks + graphSettings.mergeSpaceBottom*(vertBlocks-1),
+                        radius = Math.min(width, height) / 2;
+
+                    colorSchemes.get(function(colorsData){
+                        
+                        var colorScheme = colorsData.schemes[0];
+
+                        var arc = d3.svg.arc()
+                            .outerRadius(radius)
+                            .innerRadius(radius * 8 / 13 / 2);
+
+                        var sort = attrs.sort || null;
+                        var pie = d3.layout.pie()
+                            .value(function(d) { return d.count; })
+                            .sort(sort ? function(a, b) { return d3.ascending(a[sort], b[sort]); } : null);
+
+
+                        var svg = d3.select(appendTarget).append('svg')
+                            .attr('width', width)
+                            .attr('height', height)
+                            .append('g')
+                            .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+
+                        scope.$watchCollection('[ terms, colors]', function(newData) {
+
+                            if (newData[0] !== undefined) {
+                                
+                                if (newData[1] !== null) {
+                                    colorScheme = colorsData.schemes[_.findKey(colorsData.schemes,{ 'name' : newData[1]})];
+                                }
+                                
+                                var colorScale = d3.scale.ordinal()
+                                        .range(colorScheme.charts);
+
+                                svg.selectAll('.arc').remove();
+
+                                var g = svg.selectAll('.arc')
+                                    .data(pie(newData[0]))
+                                    .enter().append('g')
+                                    .attr('class', 'arc');
+
+                                g.append('path')
+                                    .attr('d', arc)
+                                    .style('fill', function(d) { return colorScale(d.data.term); });
+
+                                
+                                g.append('text')
+                                    .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
+                                    .style('text-anchor', 'middle')
+                                    .style('fill', colorScheme.text)
+                                    .text(function(d) { return d.data.term; });
+                                    
+                            }
+
                         });
                     });
                 }
@@ -285,27 +376,35 @@ define([
                 },
                 link: function(scope, element, attrs) {
 
-                    var horizontal = attrs.horizontal === 'true' ? true : false;
-                    var showText = attrs.text === 'false'  ? false : true;
                     
                     var horizBlocks = attrs.x ? parseInt(attrs.x, 10) : 1;
                     var vertBlocks  = attrs.y ? parseInt(attrs.y, 10) : 1;
 
-
                     var appendTarget = element[0].getElementsByClassName('block')[0];
-                    var width = 320 * horizBlocks + (30 + 2 +20)*(horizBlocks-1),
-                        height = 250 * vertBlocks + (30 + 2 + 47 + 20)*(vertBlocks-1),
-                        dimension = horizontal ? width : height,
-                        oDimension = horizontal ? height : width,
+                    
+
+                    var graphSettings = {       //thightly depends on CSS
+                        blockWidth : 320,
+                        blockHeight : 250,
+                        mergeSpaceLeft : 52,     //30 + 2 + 20
+                        mergeSpaceBottom : 99,   //30 + 2 + 20 + 47
+                        horizontal : attrs.horizontal === 'true' ? true : false,
+                        showText : attrs.text === 'false'  ? false : true
+                    };
+
+                    var width = graphSettings.blockWidth * horizBlocks + graphSettings.mergeSpaceLeft*(horizBlocks-1),
+                        height = graphSettings.blockHeight * vertBlocks + graphSettings.mergeSpaceBottom*(vertBlocks-1),
+                        dimension = graphSettings.horizontal ? width : height,
+                        oDimension = graphSettings.horizontal ? height : width,
                         x = d3.scale.linear().range([0, oDimension]);
 
 
                     colorSchemes.get(function(colorsData) {
 
-                        var colorScheme = colorsData.navy;
+                        var colorScheme = colorsData.schemes[0];
 
-                        if (attrs.colors && _.has(colorsData,attrs.colors)) {
-                            colorScheme = _.values(_.pick(colorsData,attrs.colors))[0];
+                        if (attrs.colors !== null) {
+                            colorScheme = colorsData.schemes[_.findKey(colorsData.schemes,{ 'name' : attrs.colors})];
                         }
 
                         var colorScale = d3.scale.ordinal()
@@ -316,6 +415,7 @@ define([
                             .attr('height', height);
 
                         scope.$watch('entries', function(entries) {
+
                             var data = _.last(entries, 24);
                             data.reverse();
                             x.domain([0, d3.max(data, function(d) { return d.count; })]);
@@ -330,13 +430,13 @@ define([
                                 .append('g').attr('class', 'bar')
                                 .style('fill', function(d) { return colorScale(d.time); });
 
-                            if (horizontal) {
+                            if (graphSettings.horizontal) {
                                 bar.attr('transform', function(d, i) { return 'translate('+ (i*barOuter) +',0)'; })
                                     .append('rect')
                                         .attr('height', function(d) { return x(d.count); })
                                         .attr('width', barInner)
                                         .attr('y', function(d) { return (height - x(d.count)); });
-                                if (showText) {
+                                if (graphSettings.showText) {
                                     bar.append('text')
                                     .style('fill',colorScheme.text)
                                     .text(function(d) { return d.count + ' / ' + moment.unix(d.time / 1000).format('HH:mm') + '+'; })
@@ -349,7 +449,7 @@ define([
                                         .attr('width', function(d) { return x(d.count); })
                                         .attr('height', barInner);
 
-                                if (showText) {
+                                if (graphSettings.showText) {
                                     bar.append('text')
                                         .attr('x', 5)
                                         .attr('y', barOuter/2)

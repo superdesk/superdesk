@@ -11,7 +11,7 @@ define([
                     name: 'Ingest',
                     multiple: true,
                     class: 'ingest',
-                    icon: 'time',
+                    icon: 'ingest',
                     max_sizex: 2,
                     max_sizey: 2,
                     sizex: 1,
