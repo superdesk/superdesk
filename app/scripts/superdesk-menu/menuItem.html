@@ -1,0 +1,5 @@
+<a ng-show="item.href && !item.children" href="#{{ item.href }}" ng-click="followLink()">{{ item.label }}</a>
+
+<a ng-show="!item.href && item.children" sd-toggle-item >{{ item.label|translate }}<i class="icon-chevron-right icon-white"></i></a>
+
+<a ng-show="item.href && item.children" href="#{{ item.href }}" ng-click="followLink()" sd-toggle-item >{{ item.label|translate }}<i class="icon-chevron-right icon-white"></i></a>

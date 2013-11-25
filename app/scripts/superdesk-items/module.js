@@ -36,8 +36,7 @@ define([
                 templateUrl: 'scripts/superdesk-items/views/reutersConfig.html'
             }
         })
-        .config(function($routeProvider) {
-
+        .config(function(activityProvider) {
             /**
              * Resolve ingest/archive list
              */
@@ -63,26 +62,26 @@ define([
                 };
             }
 
-            $routeProvider
-                .when('/ingest/', {
+            activityProvider
+                .activity('ingest', {
+                    href: '/ingest/',
+                    label: gettext('Ingest'),
                     templateUrl: 'scripts/superdesk-items/views/ingest.html',
                     controller: require('superdesk-items/controllers/ingest'),
                     resolve: resolve('ingest'),
-                    menu: {
-                        label: gettext('Ingest'),
-                        priority: -300
-                    }
+                    priority: -300
                 })
-                .when('/archive/', {
+                .activity('archive', {
+                    href: '/archive/',
+                    label: gettext('Archive'),
+                    priority: -200,
                     templateUrl: 'scripts/superdesk-items/views/archive.html',
                     controller: require('superdesk-items/controllers/archive'),
                     resolve: resolve('archive'),
-                    menu: {
-                        label: gettext('Archive'),
-                        priority: -200
-                    }
                 })
-                .when('/archive/:id', {
+                .activity({
+                    href: '/archive/:id',
+                    label: gettext('Archive'),
                     templateUrl: 'scripts/superdesk-items/views/edit.html',
                     controller: require('superdesk-items/controllers/edit'),
                     resolve: {

@@ -36,9 +36,13 @@ define([
                 created: true
             }
         })
-        .config(function($routeProvider) {
-            $routeProvider
-                .when('/users/:id?', {
+        .config(function(activityProvider) {
+            activityProvider
+                .activity('users', {
+                    href: '/users/:id?',
+                    menuHref: '/users/',
+                    label: gettext('Users'),
+                    priority: -1,
                     controller: require('superdesk-users/controllers/list'),
                     templateUrl: 'scripts/superdesk-users/views/list.html',
                     resolve: {
@@ -67,25 +71,18 @@ define([
                                 locationParams.reset(defaultListParams);
                                 return locationParams;
                             }]
-                    },
-                    label: gettext('Users')
-                })
-                // temporary fake route, just to have menu fixed
-                .when('/users', {
-                    menu: {
-                        label: gettext('Users'),
-                        priority: -1
                     }
                 })
-                .when('/profile', {
+                .activity({
+                    href: '/profile/',
+                    label: gettext('My Profile'),
                     controller: require('superdesk-users/controllers/profile'),
                     templateUrl: 'scripts/superdesk-users/views/profile.html',
                     resolve: {
-                        user: function($rootScope, em) {
+                        user: ['$rootScope', 'em', function($rootScope, em) {
                             return em.getRepository('users').find($rootScope.currentUser._id);
-                        }
-                    },
-                    label: gettext('My Profile')
+                        }]
+                    }
                 });
         });
 });

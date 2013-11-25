@@ -4,14 +4,15 @@ define([
     'use strict';
 
     angular.module('superdesk.menu', [])
-        .directive('sdMenuWrapper', function($route){
+        .directive('sdMenuWrapper', ['$route', 'menu', function($route, menu){
             return {
                 templateUrl: 'scripts/superdesk/views/sidebar-nav.html',
                 replace: true,
                 restrict: 'A',
                 link: function(scope, element, attrs) {
+                    scope.menu = menu;
                     scope.displayMenu = false;
-                    scope.currentLink = '';
+                    scope.activeLabel = '';
                     scope.toggleSideNav = function() {
                         scope.displayMenu = !scope.displayMenu;
                     };
@@ -22,56 +23,38 @@ define([
                     };
 
                     scope.$on('$routeChangeSuccess', function() {
-                        scope.currentLink = $route.current.menu || $route.current;
+                        scope.displayMenu = false;
+                        if ($route.current) {
+                            scope.activeLabel = $route.current.label;
+                        }
                     });
                 }
             };
-            
-        })
-        .directive('sdMenu', function($route) {
-            var sdMenu = {
+        }])
+        .directive('sdMenu', ['$route', function($route) {
+            return {
                 templateUrl: 'scripts/superdesk-menu/menu.html',
                 replace: false,
+                scope: {items: '=', activeLabel: '='},
                 priority: -1,
                 link: function(scope, element, attrs) {
-                    scope.items = [];
-                    angular.forEach($route.routes, function(route) {
-                        if ('menu' in route) {
-                            var item = {label: route.menu.label, priority: route.menu.priority, href: route.originalPath};
-                            if (route.menu.parent === undefined) {
-                                scope.items.push(item);
-                            } else {
-                                var found = false;
-                                for (var i = 0; i < scope.items.length; i++) {
-                                    if (scope.items[i].label === route.menu.parent) {
-                                        found = true;
-                                        scope.items[i].items.push(item);
-                                        break;
-                                    }
-                                }
-                                if (found === false) {
-                                    var maxPriority = sdMenu.getMaxPriority(scope.items);
-                                    var parent = {label: route.menu.parent, priority: maxPriority + 1, items: [item]};
-                                    scope.items.push(parent);
-                                }
-                            }
-                        }
-                    });
-                },
-                getMaxPriority: function(items) {
-                    var maxPriority = 0;
-                    for (var i = 0; i < items.length; i++) {
-                        if (items[i].priority > maxPriority) {
-                            maxPriority = items[i].priority;
-                        }
-                    }
-                    return maxPriority;
+                    scope.itemsArray = _.values(scope.items);
                 }
             };
-            
-            return sdMenu;
-        })
-        .directive('sdToggleItem',function(){
+        }])
+        .directive('sdMenuItem', ['$compile', function($compile) {
+            return {
+                templateUrl: 'scripts/superdesk-menu/menuItem.html',
+                replace: false,
+                scope: {item: '='},
+                priority: -1,
+                link: function(scope, element, attrs) {
+                    var subMenu = $compile('<ul sd-menu data-items="item.children">')(scope);
+                    element.append(subMenu);
+                }
+            };
+        }])
+        .directive('sdToggleItem', [function(){
             return {
                 link: function(scope, element, attrs) {
                     element.on('click',function() {
@@ -79,5 +62,5 @@ define([
                     });
                 }
             };
-        });
+        }]);
 });

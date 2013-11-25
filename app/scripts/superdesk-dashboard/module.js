@@ -19,16 +19,15 @@ define([
         'superdesk.widgets.worldClock'
     ])
     .constant('widgetsPath', 'scripts/superdesk-dashboard/widgets/')
-    .config(['$routeProvider', function($routeProvider) {
-        $routeProvider
-            .when('/', {
-                controller: require('superdesk-dashboard/controllers/main'),
-                templateUrl: 'scripts/superdesk-dashboard/views/main.html',
-                resolve: {},
-                menu: {
-                    label: 'Dashboard',
-                    priority: -1000
-                }
-            });
-    }]);
+    .config(function(activityProvider) {
+        activityProvider.activity('dashboard', {
+            href: '/',
+            label: '',
+            menuLabel: gettext('Dashboard'),
+            controller: require('superdesk-dashboard/controllers/main'),
+            templateUrl: 'scripts/superdesk-dashboard/views/main.html',
+            resolve: {},
+            priority: -1000
+        });
+    });
 });
