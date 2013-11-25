@@ -36,9 +36,7 @@ define([
                 scope: {items: '=', activeLabel: '='},
                 priority: -1,
                 link: function(scope, element, attrs) {
-                    scope.itemsArray = _.sortBy(scope.items, function(item) {
-                        return item.priority;
-                    });
+                    scope.itemsArray = _.values(scope.items);
                 }
             };
         }])
