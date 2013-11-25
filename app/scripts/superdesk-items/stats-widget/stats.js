@@ -32,7 +32,6 @@ define([
             var updateData = function() {
                 em.getRepository('ingest').matching().then(function(items) {
                     $scope.items = items;
-                    updateSource();
 
                     $timeout(function() {
                         updateData();
@@ -40,26 +39,7 @@ define([
                 });
             };
 
-            var updateColor = function() {
-                $scope.chartColor = $scope.widget.configuration.colorScheme;
-            };
-
-            var updateSource = function() {
-                if ($scope.items !== undefined) {
-                    $scope.chartSource = $scope.items._facets[$scope.widget.configuration.source].terms;
-                }
-            };
-           
-            $scope.$watch('widget.configuration.source', function() {
-                updateSource();
-            }, true);
-
-            $scope.$watch('widget.configuration.colorScheme', function() {
-                updateColor();
-            }, true);
-
             updateData();
-            updateColor();
         }])
         .controller('IngestStatsConfigController', ['$scope', 'colorSchemes',
         function ($scope, colorSchemes) {
