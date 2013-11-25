@@ -6,23 +6,23 @@
     "jquery": "~2.0.3",
     "lodash": "~2.3.0",
     "bootstrap": "~3.0.1",
-    "json3": "~3.2.4",
+    "json3": "~3.2.5",
     "es5-shim": "~2.1.0",
     "momentjs": "~2.4.0",
     "moment-timezone": "~0.0.3",
-    "angular": "~1.2.1",
-    "angular-resource": "~1.2.1",
-    "angular-route": "~1.2.1",
+    "angular": "~1.2.2",
+    "angular-resource": "~1.2.2",
+    "angular-route": "~1.2.2",
     "angular-gettext": "~0.2.0",
-    "angular-bootstrap": "~0.6",
+    "angular-bootstrap": "~0.7",
     "blueimp-file-upload": "~9.0.1",
     "gridster": "~0.2.1",
-    "d3": "~3.3.9"
+    "d3": "~3.3.10"
   },
   "devDependencies": {
-    "angular-mocks": "~1.2.1"
+    "angular-mocks": "~1.2.2"
   },
   "resolutions": {
-    "angular": "~1.2.1"
+    "angular": "~1.2.2"
   }
 }
