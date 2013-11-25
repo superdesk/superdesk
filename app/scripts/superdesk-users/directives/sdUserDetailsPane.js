@@ -1,4 +1,6 @@
-define([], function () {
+define([
+    'jquery'
+], function ($) {
     'use strict';
 
     return ['$timeout', function($timeout) {
@@ -14,7 +16,7 @@ define([], function () {
                 });
 
                 scope.closePane = function() {
-                   $('.user-details-pane').removeClass('open');
+                    $('.user-details-pane').removeClass('open');
                 };
             }
         };
