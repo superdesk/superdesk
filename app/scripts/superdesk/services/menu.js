@@ -56,7 +56,7 @@ define(['angular'], function(angular) {
                         label: item.label,
                         href: item.href,
                         priority: item.priority
-                    }
+                    };
                 }
             };
 

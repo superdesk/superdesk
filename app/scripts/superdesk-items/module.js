@@ -62,7 +62,7 @@ define([
                 };
             }
 
-           activityProvider
+            activityProvider
                 .activity('ingest', {
                     href: '/ingest/',
                     label: gettext('Ingest'),
