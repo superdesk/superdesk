@@ -20,7 +20,7 @@ define([
                     template: 'scripts/superdesk-items/stats-widget/widget-ingeststats.html',
                     configurationTemplate: 'scripts/superdesk-items/stats-widget/configuration.html',
                     configuration: {
-                        sourceno : 1,
+                        source : 'provider',
                         colorScheme : 'superdesk',
                         updateInterval : 5
                     },
@@ -29,36 +29,37 @@ define([
         }])
         .controller('IngestStatsController', ['$scope', '$timeout', 'em',
         function ($scope, $timeout, em) {
-            var update = function() {
+            var updateData = function() {
                 em.getRepository('ingest').matching().then(function(items) {
-                    
-                    switch(parseInt($scope.widget.configuration.sourceno,10)) {
-                    case 1 :
-                        $scope.chartSource = items._facets.provider.terms;
-                        break;
-                    case 2 :
-                        $scope.chartSource = items._facets.urgency.terms;
-                        break;
-                    case 3 :
-                        $scope.chartSource = items._facets.subject.terms;
-                        break;
-                    }
+                    $scope.items = items;
+                    updateSource();
 
                     $timeout(function() {
-                        update();
+                        updateData();
                     }, $scope.widget.configuration.updateInterval * 1000 * 60);
                 });
-                
+            };
+
+            var updateColor = function() {
                 $scope.chartColor = $scope.widget.configuration.colorScheme;
             };
 
+            var updateSource = function() {
+                if ($scope.items !== undefined) {
+                    $scope.chartSource = $scope.items._facets[$scope.widget.configuration.source].terms;
+                }
+            };
            
-            $scope.$watch('widget.configuration', function() {
-                update();
+            $scope.$watch('widget.configuration.source', function() {
+                updateSource();
             }, true);
 
-            update();
+            $scope.$watch('widget.configuration.colorScheme', function() {
+                updateColor();
+            }, true);
 
+            updateData();
+            updateColor();
         }])
         .controller('IngestStatsConfigController', ['$scope', 'colorSchemes',
         function ($scope, colorSchemes) {
