@@ -24,7 +24,9 @@ define([
 
                     scope.$on('$routeChangeSuccess', function() {
                         scope.displayMenu = false;
-                        scope.activeLabel = $route.current.label;
+                        if ($route.current) {
+                            scope.activeLabel = $route.current.label;
+                        }
                     });
                 }
             };

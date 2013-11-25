@@ -37,7 +37,8 @@ define([
         .config(function(activityProvider) {
             activityProvider
                 .activity('users', {
-                    href: '/users/',
+                    href: '/users/:id?',
+                    menuHref: '/users/',
                     label: gettext('Users'),
                     priority: -1,
                     controller: require('superdesk-users/controllers/list'),

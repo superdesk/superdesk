@@ -22,7 +22,8 @@ define([
     .config(function(activityProvider) {
         activityProvider.activity('dashboard', {
             href: '/',
-            label: gettext('Dashboard'),
+            label: '',
+            menuLabel: gettext('Dashboard'),
             controller: require('superdesk-dashboard/controllers/main'),
             templateUrl: 'scripts/superdesk-dashboard/views/main.html',
             resolve: {},
