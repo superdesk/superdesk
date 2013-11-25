@@ -1,11 +1,12 @@
 define([
+    'lodash',
     'angular',
     'moment',
     'd3',
     'moment-timezone',
     'angular-resource',
     '../../services'
-], function(angular, moment, d3) {
+], function(_, angular, moment, d3) {
     'use strict';
 
     angular.module('superdesk.widgets.worldClock', ['ngResource', 'superdesk.dashboard.services'])
@@ -95,18 +96,22 @@ define([
                         .attr('r', 1.5)
                         .attr('class', 'clock-inner');
 
-                    //numbers
-                    for (var i=1;i<=12;i++) {
-                        var angle = -Math.PI/2 + (Math.PI/6)*i;
-                        clock.append('path')
-                        .attr('d',  d3.svg.arc()
+                    // numbers
+                    clock.selectAll('.number-lines')
+                        .data(_.range(0, 59, 5))
+                        .enter()
+                        .append('path')
+                            .attr('d', function(d) {
+                                var angle = scales.m(d);
+                                var arc = d3.svg.arc()
                                     .innerRadius(r * 0.7)
                                     .outerRadius(r * 0.9)
                                     .startAngle(angle)
-                                    .endAngle(angle))
+                                    .endAngle(angle);
+                                return arc();
+                            })
                         .attr('class','number-lines')
                         .style('stroke-width', 1.5);
-                    }
                     
                     // format data for given time
                     function getData(timeStr) {
