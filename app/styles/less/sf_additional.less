@@ -957,6 +957,33 @@
   }
 }
 
+/* list group */
+.list-group {
+	.box-sizing(border-box);
+	width: 300px;
+	.list-group-item {
+		padding: 10px 15px;
+		border: 1px solid #ddd;
+		border-width: 0 1px 1px 1px;
+		background-color: #fff;
+		&:first-child {
+			border-width: 1px;
+			.border-radius(5px 5px 0 0);
+		}
+		&:last-child {
+			.border-bottom-right-radius(5px);
+			.border-bottom-left-radius(5px);
+		}
+		&:hover {
+			background-color: #f4f4f4;
+			cursor: pointer;
+		}
+		a {
+			text-decoration: none;
+			color:#444;
+		}
+	}
+}
 
 
 

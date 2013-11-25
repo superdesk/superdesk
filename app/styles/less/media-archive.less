@@ -376,7 +376,7 @@ input{
 		&.media-picture {
 			
 		}
-		&.media-text {
+		&.media-text,&.media-composite {
 			.media {
 				max-width: 140px;
 				font-size: 12px;
@@ -388,7 +388,7 @@ input{
 			}
 		}
 
-		&.media-composite, &.media-audio, &.media-video {
+		&.media-audio, &.media-video {
 			.media {
 				width: 140px;
 				max-width: 140px;
@@ -864,13 +864,13 @@ input{
 			&.media-picture {
 				
 			}
-			&.media-text {
+			&.media-text,&.media-composite, {
 				.media {
 					max-width: 161px;
 					padding: 0 5px;
 				}
 			}
-			&.media-composite, &.media-video, &.media-audio {
+			&.media-video, &.media-audio {
 				.media {
 					width: 161px;
 					max-width: 161px;

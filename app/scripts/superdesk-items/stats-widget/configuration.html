@@ -1,0 +1,28 @@
+<div ng-controller="IngestStatsConfigController" class="widget-config">
+    <form class="form-horizontal">
+        <fieldset>
+
+            <div class="control-group">
+                <label class="control-label">{{'Select source'|translate}}</label>
+                <div class="controls">
+                    <select ng-model="configuration.source" class="input-medium">
+                        <option value="provider" translate>Providers stats</option>
+                        <option value="urgency" translate>Urgency stats</option>
+                        <option value="subject" translate>Subject phrases stats</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="control-group">
+                <label class="control-label">{{'Select color'|translate}}</label>
+                <div class="controls">
+                    <select class="input-medium" ng-model="configuration.colorScheme" ng-options="scheme.name as scheme.name for scheme in schemes"></select>
+                </div>
+            </div>
+
+        </fieldset>
+        
+    </form>
+
+</div>

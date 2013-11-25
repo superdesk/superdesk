@@ -68,8 +68,13 @@ define([
                     var width = 105,
                         height = 100,
                         r = Math.min(width, height) * 0.8 * 0.5,
-                        white = '#fff',
-                        black = '#333';
+                        dayBg = '#d8d8d8',
+                        dayClockhands = '#313131',
+                        dayNumbers = '#a0a0a0',
+                        nightBg = '#313131',
+                        nightClockhands = 'e0e0e0',
+                        nightNumbers = '#848484';
+
 
                     var svg = d3.select(element[0])
                         .append('svg')
@@ -83,13 +88,26 @@ define([
                     clock.append('circle')
                         .attr('r', r)
                         .attr('class', 'clock-outer')
-                        .style('stroke-width', 1.5)
-                        .style('stroke', black);
+                        .style('stroke-width', 1.5);
 
                     // inner dot
                     clock.append('circle')
                         .attr('r', 1.5)
                         .attr('class', 'clock-inner');
+
+                    //numbers
+                    for (var i=1;i<=12;i++) {
+                        var angle = -Math.PI/2 + (Math.PI/6)*i;
+                        clock.append('path')
+                        .attr('d',  d3.svg.arc()
+                                    .innerRadius(r * 0.7)
+                                    .outerRadius(r * 0.9)
+                                    .startAngle(angle)
+                                    .endAngle(angle))
+                        .attr('class','number-lines')
+                        .style('stroke-width', 1.5);
+                    }
+                    
                     // format data for given time
                     function getData(timeStr) {
                         var time = timeStr.split(':');
@@ -105,11 +123,13 @@ define([
                         var isDay = data[0].val >= 8 && data[0].val < 20;
 
                         if (isDay) {
-                            clock.selectAll('.clock-outer').style('fill', white);
-                            clock.selectAll('.clock-inner').style('fill', black);
+                            clock.selectAll('.clock-outer').style('fill', dayBg);
+                            clock.selectAll('.clock-inner').style('fill', dayBg);
+                            clock.selectAll('.number-lines').style('stroke', dayNumbers);
                         } else {
-                            clock.selectAll('.clock-outer').style('fill', black);
-                            clock.selectAll('.clock-inner').style('fill', white);
+                            clock.selectAll('.clock-outer').style('fill', nightBg);
+                            clock.selectAll('.clock-inner').style('fill', nightBg);
+                            clock.selectAll('.number-lines').style('stroke', nightNumbers);
                         }
 
                         clock.selectAll('.clockhand').remove();
@@ -127,8 +147,8 @@ define([
                                 return arc();
                             })
                             .attr('class', 'clockhand')
-                            .style('stroke-width', 1.5)
-                            .style('stroke', isDay ? black : white);
+                            .style('stroke-width', 2)
+                            .style('stroke', isDay ? dayClockhands : nightClockhands);
                     });
                 }
             };
