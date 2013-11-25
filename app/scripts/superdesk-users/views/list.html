@@ -92,15 +92,7 @@
             </div>
         </div>
     </div>
-    
-    <!-- detail.html -->
-    <div class="user-details-pane open" style="top: 50px" ng-if="user">
-        <a href="#/users/" class="close" sd-with-params><i class="icon-remove"></i></a>
-        <div class="user-details-header"></div>
-        <div class="user-details-content tab-content">
-            <div class="tab-pane clearfix active" id="user-profile-edit" sd-user-edit data-user="user"></div>
-        </div>
-    </div>
-    <!-- /detail.html -->
+
+    <div sd-user-details-pane data-user="user"></div>
 
 </div>
