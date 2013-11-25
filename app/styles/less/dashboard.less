@@ -133,6 +133,19 @@ Main dashboard styles
 			}
 		}
 	}
+	.widget-config {
+		.form-horizontal {
+			margin-top: 15px !important;
+			.control-group {
+				.control-label {
+					width: 140px;
+				}
+				.controls {
+					margin-left: 140px;
+				}
+			}
+		}
+	}
 }
 
 
@@ -160,16 +173,16 @@ Widgets styles
 		.clock-container {
 			height: 185px;
 			overflow: hidden;
+			> div:first-child .clock-box:first-child {
+				border-left: 0 !important;
+			}
 		}
 		.clock-box {
 			min-height: 185px;
 			.box-sizing(border-box);
-			border-right:1px solid #e7e7e7;
+			border-left:1px solid #e7e7e7;
 			width: 106px;
 
-			&:nth-child(3n) {
-				border-right: 0;
-			}
 			text-align: center;
 			float: left;
 			header {
@@ -198,7 +211,6 @@ Widgets styles
 			&.digital {
 				background-color: #313134;
 				color: #fff;
-				border: 1px solid #fff;
 
 				header { color: #fff; }
 
@@ -210,6 +222,23 @@ Widgets styles
 					vertical-align: middle;
 					color: #69e005;
 				}
+			}
+		}
+	}
+	&.widget-config {
+		.list-group {
+			max-height: 280px;
+			overflow: auto;
+			&::-webkit-scrollbar {
+				width:10px;
+				border-left:3px solid #fff;
+			}
+			&::-webkit-scrollbar-thumb {
+				.border-radius(2px);
+				border-left: 3px solid #fff;
+				background: #aaa;
+				
+				
 			}
 		}
 	}

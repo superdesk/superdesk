@@ -512,28 +512,6 @@ section.main-section {
   Form
 ====================================================
 */
-
-.form-horizontal .controls {
-    margin-left: 200px;
-	}
-	.form-horizontal .control-label {
-		width: 180px;
-		}
-		.form-horizontal .form-actions {
-			padding-left: 200px;
-			background: none;
-			}
-		.form-horizontal .middle-block {
-			margin-bottom: 9px;
-			}
-			
-		.form-actions.bottom-fixed {
-			padding-left: 200px;
-			position:fixed;
-			bottom:0;
-			left:0;
-			right:0;
-			}
 					
 legend {
 	display: block;
@@ -546,12 +524,6 @@ legend {
 	border: 0;
 	border-bottom: 1px solid #EEE;
 }
-.form-large {
-	margin-top:2px;
-	}
-	.form-large legend {
-		margin-bottom:4px;
-		}
 
 
 	

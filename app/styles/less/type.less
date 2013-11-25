@@ -92,10 +92,6 @@ h6 {
 // -----
 
 // Unordered and Ordered lists
-ul, ol {
-  padding: 0;
-  margin: 0 0 @baseLineHeight / 2 25px;
-}
 ul ul,
 ul ol,
 ol ol,
@@ -103,7 +99,9 @@ ol ul {
   margin-bottom: 0;
 }
 ul {
-  list-style: disc;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
 ol {
   list-style: decimal;
