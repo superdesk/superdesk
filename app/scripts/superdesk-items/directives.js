@@ -144,16 +144,6 @@ define([
                         $location.search('view', val !== 'grid' ? val : null);
                     };
 
-                    scope.preview = function(item) {
-                        scope.previewItem = item;
-                        scope.previewSingle = item;
-
-                        if (item.type === 'composite') {
-                            scope.previewSingle = null;
-                            scope.previewItem.packageRefs = item.groups[_.findKey(item.groups,{id:'main'})].refs;
-                        }
-                    };
-
                 }
             };
         })
@@ -166,10 +156,6 @@ define([
                     previewSingle : '=previewitem'
                 },
                 link: function(scope, element, attrs) {
-                    scope.closeEdit = function() {
-                        scope.item = null;
-                        scope.previewSingle = null;
-                    };
                     scope.treepreview = function(item) {
                         scope.previewSingle = item;
                     };
