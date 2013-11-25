@@ -7,6 +7,7 @@ define([
     './directives/sdUserActivity',
     './directives/sdInfoItem',
     './directives/sdUserEdit',
+    './directives/sdUserDetailsPane',
     './services/profile',
 ], function(angular) {
     'use strict';
@@ -18,6 +19,7 @@ define([
         .directive('sdUserActivity', require('superdesk-users/directives/sdUserActivity'))
         .directive('sdInfoItem', require('superdesk-users/directives/sdInfoItem'))
         .directive('sdUserEdit', require('superdesk-users/directives/sdUserEdit'))
+        .directive('sdUserDetailsPane', require('superdesk-users/directives/sdUserDetailsPane'))
         .value('defaultListParams', {
             search: '',
             searchField: 'username',
