@@ -1049,6 +1049,21 @@ Profile page styles
   bottom: 0;
   padding: 30px 40px 0;
   background-color: #f8f8f8;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+      width:10px;
+      border-left:0
+    }
+  &::-webkit-scrollbar-thumb {
+    border-right: 2px solid #f8f8f8;
+    border-left: 0;
+  }
+
+  > .btn {
+    margin: 10px 0 20px;
+  }
 
   .profile-activity {
     height: 100%;
