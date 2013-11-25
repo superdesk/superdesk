@@ -19,8 +19,8 @@ define([
         'superdesk.widgets.worldClock'
     ])
     .constant('widgetsPath', 'scripts/superdesk-dashboard/widgets/')
-    .config(function(xProvider) {
-        xProvider.x('dashboard', {
+    .config(function(activityProvider) {
+        activityProvider.activity('dashboard', {
             href: '/',
             label: gettext('Dashboard'),
             controller: require('superdesk-dashboard/controllers/main'),

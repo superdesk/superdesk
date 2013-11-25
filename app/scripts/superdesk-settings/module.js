@@ -5,8 +5,8 @@ define([
     'use strict';
 
     angular.module('superdesk.settings', [])
-        .config(function(xProvider) {
-            xProvider.x('settings', {
+        .config(function(activityProvider) {
+            activityProvider.activity('settings', {
                 href: '/settings/:tab?',
                 menuHref: '/settings/',
                 label: gettext('Settings'),

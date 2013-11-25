@@ -34,9 +34,9 @@ define([
                 created: true
             }
         })
-        .config(function(xProvider) {
-            xProvider
-                .x('users', {
+        .config(function(activityProvider) {
+            activityProvider
+                .activity('users', {
                     href: '/users/',
                     label: gettext('Users'),
                     priority: -1,
@@ -70,7 +70,7 @@ define([
                             }]
                     }
                 })
-                .x({
+                .activity({
                     href: '/profile/',
                     label: gettext('My Profile'),
                     controller: require('superdesk-users/controllers/profile'),

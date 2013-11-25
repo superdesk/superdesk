@@ -36,7 +36,7 @@ define([
                 templateUrl: 'scripts/superdesk-items/views/reutersConfig.html'
             }
         })
-        .config(function(xProvider) {
+        .config(function(activityProvider) {
             /**
              * Resolve ingest/archive list
              */
@@ -62,8 +62,8 @@ define([
                 };
             }
 
-            xProvider
-                .x('ingest', {
+           activityProvider
+                .activity('ingest', {
                     href: '/ingest/',
                     label: gettext('Ingest'),
                     templateUrl: 'scripts/superdesk-items/views/ingest.html',
@@ -71,7 +71,7 @@ define([
                     resolve: resolve('ingest'),
                     priority: -300
                 })
-                .x('archive', {
+                .activity('archive', {
                     href: '/archive/',
                     label: gettext('Archive'),
                     priority: -200,
@@ -79,7 +79,7 @@ define([
                     controller: require('superdesk-items/controllers/archive'),
                     resolve: resolve('archive'),
                 })
-                .x({
+                .activity({
                     href: '/archive/:id',
                     label: gettext('Archive'),
                     templateUrl: 'scripts/superdesk-items/views/edit.html',

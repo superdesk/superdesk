@@ -4,13 +4,13 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.services.x', ['ngRoute'])
-        .provider('x', ['menuProvider', '$routeProvider', function(menuProvider, $routeProvider) {
+    angular.module('superdesk.services.activity', ['ngRoute'])
+        .provider('activity', ['menuProvider', '$routeProvider', function(menuProvider, $routeProvider) {
             return {
                 $get: function() {
                     
                 },
-                x: function(id, item) {
+                activity: function(id, item) {
                     if (typeof id === 'object' && item === undefined) {
                         item = id;
                         id = '';

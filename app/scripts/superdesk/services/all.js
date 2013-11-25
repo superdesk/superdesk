@@ -6,7 +6,7 @@ define([
     './settings',
     './storage',
     './menu',
-    './x',
+    './activity',
     '../userSettings',
     '../entity',
     '../server'
@@ -20,7 +20,7 @@ define([
         'superdesk.services.settings',
         'superdesk.services.storage',
         'superdesk.services.menu',
-        'superdesk.services.x',
+        'superdesk.services.activity',
         'superdesk.userSettings',
         'superdesk.entity',
         'superdesk.server'
