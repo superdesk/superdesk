@@ -3,19 +3,21 @@
         
         <li ng-repeat="item in items._items" class="urgency-{{ item.urgency}}">
 
-            <ul class="top-line clearfix">
-                <li><span class="type-icon filetype-icon-{{item.type}}"></span><span class="urgency-label">{{ item.urgency }}</span></li>
-                <li>{{ item.versioncreated | reldate }}</li>
-                <li ng-show="item.byline"><em translate>by</em>{{ item.byline }}</li>
-                <li ng-show="item.provider && widget.sizex > 1"><em translate>provider</em>{{ item.provider }}</li>
-            </ul>
+            <a href="#/ingest/{{ item._id }}">
+                <ul class="top-line clearfix">
+                    <li><span class="type-icon filetype-icon-{{item.type}}"></span><span class="urgency-label">{{ item.urgency }}</span></li>
+                    <li>{{ item.versioncreated | reldate }}</li>
+                    <li ng-show="item.byline"><em translate>by</em>{{ item.byline }}</li>
+                    <li ng-show="item.provider && widget.sizex > 1"><em translate>provider</em>{{ item.provider }}</li>
+                </ul>
 
-            <div class="main-line clearfix">
-                <figure class="media" ng-if="item.renditions.thumbnail">
-                    <img ng-src="{{ item.renditions.thumbnail.href }}" title="{{ item.description }}" />
-                </figure>
-                <h5 title="{{ item.headline }}">{{ item.headline }}</h5>
-            </div>
+                <div class="main-line clearfix">
+                    <figure class="media" ng-if="item.renditions.thumbnail">
+                        <img ng-src="{{ item.renditions.thumbnail.href }}" title="{{ item.description }}" />
+                    </figure>
+                    <h5 title="{{ item.headline }}">{{ item.headline }}</h5>
+                </div>
+            </a>
 
         </li>
     </ul>

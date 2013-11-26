@@ -66,7 +66,8 @@ define([
 
             activityProvider
                 .activity('ingest', {
-                    href: '/ingest/',
+                    href: '/ingest/:id?',
+                    menuHref: '/ingest/',
                     label: gettext('Ingest'),
                     templateUrl: 'scripts/superdesk-items/views/ingest.html',
                     controller: require('superdesk-items/controllers/ingest'),
