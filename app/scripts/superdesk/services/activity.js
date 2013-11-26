@@ -18,9 +18,7 @@ define([
      *
      * Params:
      *
-     * @param {string} id - activity id. Currently only passed to menuProvider
-     * for managing relationships between menu items. If not provided, activity
-     * is not listed in the menu.
+     * @param {string} id - activity id.
      *
      * @param {object} options - options for activity. Additionally, any option that
      * needs to be passed to $routeProvider (controller, templateUrl) can be added
