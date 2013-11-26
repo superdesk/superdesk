@@ -73,9 +73,10 @@ define([
                             }]
                     }
                 })
-                .activity({
+                .activity('profile', {
                     href: '/profile/',
                     label: gettext('My Profile'),
+                    menu: false,
                     controller: require('superdesk-users/controllers/profile'),
                     templateUrl: 'scripts/superdesk-users/views/profile.html',
                     resolve: {

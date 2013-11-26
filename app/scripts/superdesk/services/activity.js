@@ -16,10 +16,6 @@ define([
      *
      * activityProvider.activity(id, options);
      *
-     * or (if no menu item is needed)
-     *
-     * activityProvider.activity(options);
-     *
      * Params:
      *
      * @param {string} id - activity id. Currently only passed to menuProvider
@@ -39,6 +35,9 @@ define([
      *
      * priority: (optional) Used for sorting menu items.
      *
+     * menu: (optional) Used to determine if activity will be displayed in navigation
+     * menu or not. Default is true.
+     *
      * menuLabel: (optional) If menu label needs to be different than route, this
      * is used to override label for menuProvider.
      *
@@ -55,10 +54,7 @@ define([
                     
                 },
                 activity: function(id, item) {
-                    if (typeof id === 'object' && item === undefined) {
-                        item = id;
-                        id = '';
-                    } else {
+                    if (item.menu !== false) {
                         menuProvider.menu(id, {
                             label: item.menuLabel || item.label,
                             href: item.menuHref || item.href,

@@ -82,9 +82,10 @@ define([
                     controller: require('superdesk-items/controllers/archive'),
                     resolve: resolve('archive'),
                 })
-                .activity({
+                .activity('archive-detail', {
                     href: '/archive/:id',
                     label: gettext('Archive'),
+                    menu: false,
                     templateUrl: 'scripts/superdesk-items/views/edit.html',
                     controller: require('superdesk-items/controllers/edit'),
                     resolve: {
