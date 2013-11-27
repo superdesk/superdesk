@@ -4,8 +4,6 @@ define(['angular'], function(){
     return ['$scope', 'widgets', 'widgetService', 'permissions',
         function($scope, widgets, widgetService, permissions){
 
-            console.log(permissions);
-
             $scope.userWidgets = widgetService.load();
             $scope.editStatus = false;
             $scope.widgetBoxStatus = false;
