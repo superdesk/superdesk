@@ -46,7 +46,8 @@ define([
      *
      */
     angular.module('superdesk.services.activity', ['ngRoute'])
-        .provider('activity', ['menuProvider', '$routeProvider', function(menuProvider, $routeProvider) {
+        .provider('activity', ['menuProvider', '$routeProvider', 'permissionsProvider',
+        function(menuProvider, $routeProvider, permissionsProvider) {
             var activities = {};
 
             return {
@@ -56,6 +57,10 @@ define([
                 activity: function(id, item) {
                     activities[id] = item;
 
+                    if (item.permissions !== undefined) {
+                        permissionsProvider.permission(id, item.permissions);
+                    }
+
                     if (item.menu !== false) {
                         menuProvider.menu(id, {
                             label: item.menuLabel || item.label,
@@ -64,7 +69,7 @@ define([
                             parent: item.parent
                         });
                     }
-                    var route = _.omit(_.extend({}, item), ['priority', 'href', 'menuLabel', 'menuHref']);
+                    var route = _.omit(_.extend({}, item), ['priority', 'href', 'menuLabel', 'menuHref', 'permissions']);
                     $routeProvider.when(item.href, route);
 
                     return this;
