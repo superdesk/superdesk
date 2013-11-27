@@ -66,7 +66,10 @@ define([
 
             activityProvider
                 .activity('ingest', {
-                    permissions: {items: ['read']},
+                    permissions: {
+                        label: 'Read ingest',
+                        items: ['read']
+                    },
                     href: '/ingest/:id?',
                     menuHref: '/ingest/',
                     label: gettext('Ingest'),
@@ -76,7 +79,10 @@ define([
                     priority: -300
                 })
                 .activity('archive', {
-                    permissions: {archive: ['read']},
+                    permissions: {
+                        label: 'Read archive',
+                        archive: ['read']
+                    },
                     href: '/archive/',
                     label: gettext('Archive'),
                     priority: -200,
@@ -85,7 +91,10 @@ define([
                     resolve: resolve('archive'),
                 })
                 .activity('archive-detail', {
-                    permissions: {archive: ['read']},
+                    permissions: {
+                        label: 'Read archive details',
+                        archive: ['read']
+                    },
                     href: '/archive/:id',
                     label: gettext('Archive'),
                     menu: false,
