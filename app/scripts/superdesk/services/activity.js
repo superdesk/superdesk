@@ -51,11 +51,11 @@ define([
 
             return {
                 $get: function() {
-                    
+                    return activities;
                 },
                 activity: function(id, item) {
                     activities[id] = item;
-                    
+
                     if (item.menu !== false) {
                         menuProvider.menu(id, {
                             label: item.menuLabel || item.label,
