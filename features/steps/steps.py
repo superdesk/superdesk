@@ -69,7 +69,8 @@ def step_impl(context, url):
 @when('we put to "{url}"')
 def step_impl(context, url):
     data = context.text
-    context.response = context.client.put(url, data=data, headers=context.headers)
+    href = get_self_href(url)
+    context.response = context.client.put(href, data=data, headers=context.headers)
 
 
 @when('we get "{url}"')
@@ -114,8 +115,18 @@ def step_impl(context):
 
 @then('we get list with {total_count} items')
 def step_impl(context, total_count):
+    assert_200(context.response)
     response_list = json.loads(context.response.get_data())
     assert len(response_list['_items']) == int(total_count), response_list
+    if total_count == 0 or not context.text:
+        return
+
+    schema = json.loads(context.text)
+    item = response_list['_items'][0]
+    for key in schema:
+        assert key in item, '%s not in %s' % (key, item)
+        for keykey in schema[key]:
+            assert keykey in item[key], '%s not in %s' % (keykey, item[key])
 
 
 @then('we get no "{field}"')

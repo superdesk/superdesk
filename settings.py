@@ -23,6 +23,7 @@ INSTALLED_APPS = (
     'superdesk.items',
     'superdesk.activity',
     'superdesk.upload',
+    'superdesk.sessions',
 )
 
 RESOURCE_METHODS = ['GET', 'POST']

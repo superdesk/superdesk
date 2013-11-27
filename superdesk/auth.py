@@ -16,7 +16,7 @@ class SuperdeskTokenAuth(TokenAuth):
         """Check if given token is valid"""
         auth_token = flask.current_app.data.find_one('auth', token=token)
         if auth_token:
-            user_id = str(auth_token['user']['_id'])
+            user_id = str(auth_token['user'])
             flask.g.user = flask.current_app.data.find_one('users', _id=user_id)
         return auth_token
 
@@ -55,9 +55,7 @@ def on_create_auth(data, docs):
     for doc in docs:
         try:
             user = authenticate(doc, data)
-            user.pop('password', None)
-            doc['user'] = user
-            doc['user']['_links'] = {'self': superdesk.document_link('users', user.get('_id'))}
+            doc['user'] = user['_id']
             doc['token'] = utils.get_random_string(40)
         except NotFoundAuthException:
             superdesk.abort(404)
@@ -105,5 +103,5 @@ superdesk.domain('auth', {
     'resource_methods': ['POST'],
     'item_methods': ['GET'],
     'public_methods': ['POST'],
-    'extra_response_fields': ['user', 'token']
+    'extra_response_fields': ['user', 'token', 'username']
 })
