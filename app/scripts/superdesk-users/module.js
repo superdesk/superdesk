@@ -38,7 +38,20 @@ define([
         })
         .config(function(activityProvider) {
             activityProvider
-                .activity('users', {
+                .activity('users-create', {
+                    permissions: {users: ['create']}
+                })
+                .activity('users-read', {
+                    permissions: {users: ['read']}
+                })
+                .activity('users-update', {
+                    permissions: {users: ['update']}
+                })
+                .activity('users-delete', {
+                    permissions: {users: ['delete']}
+                })
+                .activity('users-list', {
+                    permissions: {users: ['read']},
                     href: '/users/:id?',
                     menuHref: '/users/',
                     label: gettext('Users'),
@@ -73,7 +86,7 @@ define([
                             }]
                     }
                 })
-                .activity('profile', {
+                .activity('users-profile', {
                     href: '/profile/',
                     label: gettext('My Profile'),
                     menu: false,

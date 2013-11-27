@@ -47,11 +47,15 @@ define([
      */
     angular.module('superdesk.services.activity', ['ngRoute'])
         .provider('activity', ['menuProvider', '$routeProvider', function(menuProvider, $routeProvider) {
+            var activities = {};
+
             return {
                 $get: function() {
                     
                 },
                 activity: function(id, item) {
+                    activities[id] = item;
+                    
                     if (item.menu !== false) {
                         menuProvider.menu(id, {
                             label: item.menuLabel || item.label,
