@@ -1,0 +1,35 @@
+<div ng-controller="RolesSettingsCtrl">
+    <button class="btn btn-info pull-right" ng-click="save()" translate>Save</button>
+    <button class="btn btn-info pull-right" ng-click="addRole()">
+        <i class="icon-plus-sign icon-white"></i> <span translate>Add New Role</span>
+    </button>
+    
+
+    <h2 translate>User Roles</h4>
+    <div class="settings-tab-content user-roles">
+        <div class="splitter">
+            <div class="column-left">
+                <ul class="user-roles-list">
+                    <li ng-repeat="role in userRoles" ng-click="editRole(role)" ng-class="{ 'active': selectedRole == role}">{{ role.name }}</li>
+                </ul>
+            </div>
+            <div class="column-right">
+                <div class="preview-box" ng-show="selectedRole">
+                    <div class="preview-header">
+                        <input type="text" ng-model="selectedRole.name">
+                        <i class="close-preview pull-right icon-close-small" ng-click="closeEdit()"></i>
+                    </div>
+                    <div class="preview-body">
+                        <div class="permission-list">
+                            <ul>
+                                <li ng-repeat="p in selectedRole.permissions"><input sd-check ng-model="test"> {{ p.label }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>

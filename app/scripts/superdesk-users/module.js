@@ -3,6 +3,7 @@ define([
     './controllers/list',
     './controllers/detail',
     './controllers/profile',
+    './controllers/settings',
     './directives/sdUserPicture',
     './directives/sdUserActivity',
     './directives/sdInfoItem',
@@ -14,6 +15,7 @@ define([
 
     angular.module('superdesk.users', ['superdesk.entity', 'superdesk.userSettings', 'superdesk.auth'])
         .service('profileService', require('superdesk-users/services/profile'))
+        .controller('RolesSettingsCtrl', require('superdesk-users/controllers/settings'))
         .controller('UserDetailCtrl', require('superdesk-users/controllers/detail'))
         .directive('sdUserPicture', require('superdesk-users/directives/sdUserPicture'))
         .directive('sdUserActivity', require('superdesk-users/directives/sdUserActivity'))
@@ -113,5 +115,11 @@ define([
                         }]
                     }
                 });
-        });
+        })
+        .config(function(settingsProvider) {
+            settingsProvider.register('user-roles', {
+                label: gettext('User Roles'),
+                templateUrl: 'scripts/superdesk-users/views/settings.html'
+            });
+        })
 });
