@@ -154,6 +154,11 @@ define(['angular', 'lodash', './server'], function(angular, _) {
             };
 
             /**
+             * Shortcut for getRepository
+             */
+            this.repository = this.getRepository;
+
+            /**
              * Remove given item
              *
              * @param {Object} item
@@ -197,6 +202,17 @@ define(['angular', 'lodash', './server'], function(angular, _) {
                 } else {
                     return this.create(resource, item);
                 }
+            };
+
+            /**
+             * Shortcut for em.repository(resource).find(id)
+             *
+             * @param {string} resource
+             * @param {string} id
+             * @return {Object}
+             */
+            this.find = function(resource, id) {
+                return this.repository(resource).find(id);
             };
         });
 });

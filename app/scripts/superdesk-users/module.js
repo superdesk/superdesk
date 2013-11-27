@@ -12,7 +12,7 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.userSettings', 'superdesk.server'])
+    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.userSettings', 'superdesk.auth'])
         .service('profileService', require('superdesk-users/services/profile'))
         .controller('UserDetailCtrl', require('superdesk-users/controllers/detail'))
         .directive('sdUserPicture', require('superdesk-users/directives/sdUserPicture'))
@@ -51,12 +51,12 @@ define([
                                 var criteria = locationParams.reset(defaultListParams);
                                 return em.getRepository('users').matching(criteria);
                             }],
-                        user: ['server', '$route',
-                            function(server, $route) {
+                        user: ['em', '$route',
+                            function(em, $route) {
                                 if ($route.current.params.id === 'new') {
                                     return {};
                                 } else if (_.isString($route.current.params.id)) {
-                                    return server.readById('users', $route.current.params.id);
+                                    return em.find('users', $route.current.params.id);
                                 } else {
                                     return undefined;
                                 }
@@ -79,8 +79,8 @@ define([
                     controller: require('superdesk-users/controllers/profile'),
                     templateUrl: 'scripts/superdesk-users/views/profile.html',
                     resolve: {
-                        user: ['$rootScope', 'em', function($rootScope, em) {
-                            return em.getRepository('users').find($rootScope.currentUser._id);
+                        user: ['authService', 'em', function(authService, em) {
+                            return em.find('users', authService.getIdentity());
                         }]
                     }
                 });

@@ -1,11 +1,10 @@
 define([
-    'angular',
-    'superdesk/server',
+    'angular'
 ], function(angular) {
     'use strict';
 
-    return ['$rootScope', '$http', '$q', 'storage', 'server',
-    function($rootScope, $http, $q, storage, server) {
+    return ['$rootScope', '$http', '$q', 'storage', 'em',
+    function($rootScope, $http, $q, storage, em) {
         /**
          * Login
          *
@@ -22,7 +21,7 @@ define([
             }
 
             var self = this;
-            server.create('auth', {
+            em.create('auth', {
                 username: username,
                 password: password
             }).then(function(response) {
@@ -51,7 +50,16 @@ define([
          * @return {boolean}
          */
         this.hasIdentity = function() {
-            return !$rootScope.currentUser.isAnonymous;
+            return !!this.getIdentity();
+        };
+
+        /**
+         * Get current user identity
+         *
+         * @return {string}
+         */
+        this.getIdentity = function() {
+            return storage.getItem('auth') ? storage.getItem('auth').user : false;
         };
 
         function setSessionData(data, useLocalStorage) {
@@ -70,8 +78,10 @@ define([
             var authData = storage.getItem('auth');
             if (authData) {
                 setAuthenticationHeader(authData.token);
-                $rootScope.currentUser = angular.extend(authData.user, {
-                    isAnonymous: false
+                em.find('users', authData.user).then(function(user) {
+                    $rootScope.currentUser = angular.extend(user, {
+                        isAnonymous: false
+                    });
                 });
             } else {
                 $rootScope.currentUser = {

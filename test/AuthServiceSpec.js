@@ -1,25 +1,23 @@
 define([
     'superdesk-auth/authService',
     'superdesk/services/storage',
-    'superdesk/server',
+    'superdesk/entity',
     'angular-mocks'
 ], function(authService) {
     'use strict';
 
     beforeEach(function() {
         module('superdesk.services.storage');
-        module('superdesk.server');
+        module('superdesk.entity');
         module('ngMock');
     });
 
     describe('AuthService', function() {
-        var service, rootScope, storage, server, httpBackend;
+        var service, rootScope, storage, httpBackend;
 
-        beforeEach(inject(function($injector, $rootScope, $http, $q, $httpBackend, _storage_, _server_) {
+        beforeEach(inject(function($injector, $rootScope, $http, $q, $httpBackend, _storage_, em) {
             storage = _storage_;
             storage.clear();
-
-            server = _server_;
 
             rootScope = $rootScope.$new();
             service = {};
@@ -30,7 +28,7 @@ define([
                 '$rootScope': rootScope,
                 '$http': $http,
                 '$q': $q,
-                'server': server,
+                'em': em,
                 'storage': storage
             });
         }));
@@ -41,11 +39,15 @@ define([
 
             httpBackend
                 .expectPOST('http://localhost/auth', {username: 'foo', password: 'bar'})
-                .respond(200, {token: 'x', user: {username:'foo'}});
+                .respond(200, {token: 'x', user: '123abc'});
+            httpBackend
+                .expectGET('http://localhost/users/123abc')
+                .respond(200, {_id: '123abc', username: 'foo'});
             service.login('foo', 'bar');
             httpBackend.flush();
 
             expect(service.hasIdentity()).toBe(true);
+            expect(service.getIdentity()).toBe('123abc');
             expect(rootScope.currentUser.isAnonymous).toBe(false);
             expect(rootScope.currentUser.username).toBe('foo');
 

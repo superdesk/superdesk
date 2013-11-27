@@ -17,7 +17,7 @@
               <li class="divider-vertical"></li>
               <li class="dropdown ipad-show">
                   <a class="dropdown-toggle">
-                    <span class="user-profile">{{ currentUser.username }}</span> <b class="caret"></b>
+                    <span class="user-profile">{{ currentUser.display_name || currentUser.username || '..' }}</span> <b class="caret"></b>
                   </a>
                 <ul class="dropdown-menu ">
                   <li><a ng-click="logout()" translate>Logout</a></li>
@@ -25,7 +25,7 @@
                 </ul>
               </li>
               <li class="ipad-hide">
-                <a href="#/profile" class="user-profile">{{ currentUser.username }}</a>
+                <a href="#/profile" class="user-profile">{{ currentUser.display_name || currentUser.username || '..' }}</a>
               </li>
               <li class="divider-vertical ipad-hide"></li>
               <li><a href="" ng-click="logout()" class="blink ipad-hide" translate>Logout</a></li>
