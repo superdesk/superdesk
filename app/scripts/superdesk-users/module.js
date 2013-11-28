@@ -123,5 +123,5 @@ define([
                 label: gettext('User Roles'),
                 templateUrl: 'scripts/superdesk-users/views/settings.html'
             });
-        })
+        });
 });

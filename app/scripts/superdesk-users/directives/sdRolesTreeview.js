@@ -8,7 +8,7 @@ define(function() {
             scope: { val: '='},
             link: function(scope, element, attrs) {
                 var template = '';
-                
+
                 if (angular.isArray(scope.val.items)) {
                     template += '<div class="leaf">'+
                                     '<span class="collapse" ng-click="collapsed = !collapsed">'+

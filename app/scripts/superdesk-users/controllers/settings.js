@@ -5,7 +5,7 @@ define(['angular', 'lodash'], function(angular, _) {
         function($scope,permissions) {
 
             $scope.userRoles = [
-                { 
+                {
                     'name' : 'administrator',
                     'permissions' : permissions,
                     'items' : [
@@ -23,11 +23,11 @@ define(['angular', 'lodash'], function(angular, _) {
                         }
                     ]
                 },
-                { 
+                {
                     'name' : 'superadmin',
                     'permissions' : permissions
                 },
-                { 
+                {
                     'name' : 'editor',
                     'permissions' : permissions,
                     'items' : [
@@ -52,7 +52,7 @@ define(['angular', 'lodash'], function(angular, _) {
                         }
                     ]
                 },
-                { 
+                {
                     'name' : 'journalist',
                     'permissions' : permissions
                 },
@@ -60,15 +60,15 @@ define(['angular', 'lodash'], function(angular, _) {
                     'name' : 'data analyst',
                     'permissions' : permissions
                 },
-                { 
+                {
                     'name' : 'seo expert',
                     'permissions' : permissions
                 },
-                { 
+                {
                     'name' : 'chief editor',
                     'permissions' : permissions
                 },
-                { 
+                {
                     'name' : 'desk manager',
                     'permissions' : permissions
                 }
@@ -78,21 +78,21 @@ define(['angular', 'lodash'], function(angular, _) {
 
             $scope.editRole = function(role) {
                 $scope.selectedRole = role;
-            }
+            };
 
             $scope.closeEdit = function() {
                 $scope.selectedRole = null;
-            }
+            };
 
             $scope.addRole = function() {
-                var newRole = {'name' : 'sample name', 'permissions' : permissions}
-                $scope.userRoles.unshift(newRole)
+                var newRole = {'name' : 'sample name', 'permissions' : permissions};
+                $scope.userRoles.unshift(newRole);
                 $scope.selectedRole = newRole;
-            }
+            };
 
             $scope.save = function() {
                 //do save
-            }
+            };
 
         }];
 });
