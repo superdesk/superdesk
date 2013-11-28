@@ -3,22 +3,10 @@ import flask
 import logging
 import superdesk
 import superdesk.utils as utils
-from flask import json
+from flask import json, current_app as app
 from eve.auth import TokenAuth
 
 logger = logging.getLogger(__name__)
-
-
-class SuperdeskTokenAuth(TokenAuth):
-    """Superdesk Token Auth"""
-
-    def check_auth(self, token, allowed_roles, resource, method):
-        """Check if given token is valid"""
-        auth_token = flask.current_app.data.find_one('auth', token=token)
-        if auth_token:
-            user_id = str(auth_token['user'])
-            flask.g.user = flask.current_app.data.find_one('users', _id=user_id)
-        return auth_token
 
 
 class AuthException(Exception):
@@ -34,6 +22,29 @@ class NotFoundAuthException(AuthException):
 class CredentialsAuthException(AuthException):
     """Credentials Not Match Auth Exception"""
     pass
+
+
+class SuperdeskTokenAuth(TokenAuth):
+    """Superdesk Token Auth"""
+
+    def check_permissions(self, resource, method, user):
+        if user and user.get('user_role'):
+            role_id = str(user['user_role'])
+            role = app.data.find_one('user_roles', _id=role_id)
+            for permission in role.get('permissions', []):
+                if permission['resource'] == resource:
+                    if permission['method'].upper() == method:
+                        return True
+            return False  # has role but not permissions
+        return True  # has no role
+
+    def check_auth(self, token, allowed_roles, resource, method):
+        """Check if given token is valid"""
+        auth_token = app.data.find_one('auth', token=token)
+        if auth_token:
+            user_id = str(auth_token['user'])
+            flask.g.user = app.data.find_one('users', _id=user_id)
+            return self.check_permissions(resource, method, flask.g.user)
 
 
 def authenticate(credentials, db):

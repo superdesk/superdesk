@@ -115,6 +115,14 @@ superdesk.domain('users', {
         },
         'picture_url': {
             'type': 'string'
+        },
+        'user_role': {
+            'type': 'objectid',
+            'data_relation': {
+                'resource': 'user_roles',
+                'field': '_id',
+                'embeddable': True
+            }
         }
     },
     'extra_response_fields': [
@@ -132,7 +140,8 @@ superdesk.domain('users', {
             'display_name': 1,
             'email': 1,
             'user_info': 1,
-            'picture_url': 1
+            'picture_url': 1,
+            'user_role': 1
         }
     }
 })

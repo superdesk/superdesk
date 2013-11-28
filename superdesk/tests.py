@@ -54,6 +54,7 @@ def setup_auth_user(context):
     auth_response = context.client.post('/auth', data=auth_data, headers=context.headers)
     token = json.loads(auth_response.get_data()).get('token').encode('ascii')
     context.headers.append(('Authorization', b'basic ' + b64encode(token + b':')))
+    context.user = test_user
 
 
 class TestCase(unittest.TestCase):

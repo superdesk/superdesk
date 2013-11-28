@@ -47,6 +47,27 @@ def get_json_data(response):
     return json.loads(response.get_data())
 
 
+def get_it(context):
+    it = context.data[0]
+    res = get_res('/%s/%s' % (context.resource, it['_id']), context)
+    return get_self_href(res, context), res['etag']
+
+
+def if_match(context, etag):
+    headers = [('If-Match', etag)]
+    headers += context.headers
+    return headers
+
+
+def patch_current_user(context, data):
+    response = context.client.get('/users/%s' % context.user['_id'], headers=context.headers)
+    user = json.loads(response.get_data())
+    headers = if_match(context, user['etag'])
+    response = context.client.patch('/users/%s' % context.user['_id'], data=data, headers=headers)
+    assert_ok(response)
+    return response
+
+
 @given('empty "{resource}"')
 def step_impl(context, resource):
     with context.app.test_request_context():
@@ -67,6 +88,15 @@ def step_impl(context, resource):
 def step_impl(context):
     tests.setup(context, json.loads(context.text))
     tests.setup_auth_user(context)
+
+
+@given('we have "{role_name}" role')
+def step_impl(context, role_name):
+    with context.app.test_request_context():
+        role = context.app.data.find_one('user_roles', name=role_name)
+        data = json.dumps({'user_role': str(role['_id'])})
+    response = patch_current_user(context, data)
+    assert_ok(response)
 
 
 @when('we post to auth')
@@ -114,22 +144,10 @@ def step_impl(context, url):
     assert_ok(context.response)
 
 
-def get_it(context):
-    it = context.data[0]
-    res = get_res('/%s/%s' % (context.resource, it['_id']), context)
-    return get_self_href(res, context), res['etag']
-
-
-def if_match(etag, context):
-    headers = [('If-Match', etag)]
-    headers += context.headers
-    return headers
-
-
 @when('we patch it')
 def step_impl(context):
     href, etag = get_it(context)
-    headers = if_match(etag, context)
+    headers = if_match(context, etag)
     context.response = context.client.patch(href, data=context.text, headers=headers)
     assert_ok(context.response)
 

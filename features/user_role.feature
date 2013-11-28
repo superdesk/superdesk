@@ -39,3 +39,26 @@ Feature: User Role Resource
 
         And we get it
         Then we get "permissions"
+
+    @auth
+    Scenario: Check permissions on read with role
+        Given "user_roles"
+            """
+            [{"name": "User"}]
+            """
+
+        And we have "User" role
+        When we get "/ingest"
+        Then we get response code 401
+
+    @auth
+    Scenario: Check permissions on read with role and permissions
+        Given "user_roles"
+            """
+            [{"name": "Editor", "permissions": [
+                {"resource": "ingest", "method": "get"}
+            ]}]
+            """
+        And we have "Editor" role
+        When we get "/ingest"
+        Then we get response code 200
