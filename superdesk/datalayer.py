@@ -82,8 +82,8 @@ class SuperdeskDataLayer(DataLayer):
         return self._backend(resource).remove(resource, id_)
 
     def _backend(self, resource):
-        datasource, filter_, projection_, sort_ = self._datasource(resource)
-        backend = config.SOURCES[datasource].get('backend', 'mongo')
+        datasource = self._datasource(resource)
+        backend = config.SOURCES[datasource[0]].get('backend', 'mongo')
         return getattr(self, backend)
 
     def _send(self, signal, resource, **kwargs):

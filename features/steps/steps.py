@@ -32,7 +32,15 @@ def get_res(url, context):
 
 
 def assert_200(response):
+    """Assert we get status code 200."""
     assert response.status_code == 200, '%d\n%s' % (response.status_code, response.get_data().decode('utf-8'))
+
+
+def assert_ok(response):
+    """Assert we get ok status within api response."""
+    assert_200(response)
+    data = json.loads(response.get_data())
+    assert data['status'] == 'OK', data
 
 
 def get_json_data(response):
@@ -52,6 +60,7 @@ def step_impl(context, resource):
         items = [parse(item, resource) for item in json.loads(context.text)]
         context.app.data.insert(resource, items)
         context.data = items
+        context.resource = resource
 
 
 @given('config')
@@ -60,10 +69,17 @@ def step_impl(context):
     tests.setup_auth_user(context)
 
 
+@when('we post to auth')
+def step_impl(context):
+    data = context.text
+    context.response = context.client.post('/auth', data=data, headers=context.headers)
+
+
 @when('we post to "{url}"')
 def step_impl(context, url):
     data = context.text
     context.response = context.client.post(url, data=data, headers=context.headers)
+    assert_ok(context.response)
 
 
 @when('we put to "{url}"')
@@ -71,6 +87,7 @@ def step_impl(context, url):
     data = context.text
     href = get_self_href(url)
     context.response = context.client.put(href, data=data, headers=context.headers)
+    assert_ok(context.response)
 
 
 @when('we get "{url}"')
@@ -81,18 +98,46 @@ def step_impl(context, url):
 @when('we delete "{url}"')
 def step_impl(context, url):
     res = get_res(url, context)
+    href = get_self_href(res, context)
     headers = [('If-Match', res['etag'])]
     headers += context.headers
-    context.response = context.client.delete(get_self_href(res, context), headers=headers)
+    context.response = context.client.delete(href, headers=headers)
 
 
 @when('we patch "{url}"')
 def step_impl(context, url):
     res = get_res(url, context)
+    href = get_self_href(res, context)
     headers = [('If-Match', res['etag'])]
     headers += context.headers
-    data = context.text
-    context.response = context.client.patch(get_self_href(res, context), data=data, headers=headers)
+    context.response = context.client.patch(href, data=context.text, headers=headers)
+    assert_ok(context.response)
+
+
+def get_it(context):
+    it = context.data[0]
+    res = get_res('/%s/%s' % (context.resource, it['_id']), context)
+    return get_self_href(res, context), res['etag']
+
+
+def if_match(etag, context):
+    headers = [('If-Match', etag)]
+    headers += context.headers
+    return headers
+
+
+@when('we patch it')
+def step_impl(context):
+    href, etag = get_it(context)
+    headers = if_match(etag, context)
+    context.response = context.client.patch(href, data=context.text, headers=headers)
+    assert_ok(context.response)
+
+
+@when('we get it')
+def step_impl(context):
+    href, etag = get_it(context)
+    context.response = context.client.get(href, headers=context.headers)
 
 
 @when('we upload a binary file')

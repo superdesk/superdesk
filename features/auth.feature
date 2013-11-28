@@ -6,7 +6,7 @@ Feature: Authentication
             [{"username": "foo", "password": "bar"}]
             """
 
-        When we post to "/auth"
+        When we post to auth
             """
             {"username": "foo", "password": "bar"}
             """
@@ -20,7 +20,7 @@ Feature: Authentication
             [{"username": "foo", "password": "bar"}]
             """
 
-        When we post to "/auth"
+        When we post to auth
             """
             {"username": "foo", "password": "xyz"}
             """
@@ -33,7 +33,7 @@ Feature: Authentication
             [{"username": "foo", "password": "bar"}]
             """
 
-        When we post to "/auth"
+        When we post to auth
             """
             {"username": "x", "password": "y"}
             """
