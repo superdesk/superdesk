@@ -6,8 +6,22 @@ define(['angular', 'lodash'], function(angular, _) {
 
             $scope.userRoles = [
                 { 
-                    'name' : 'admnistrator',
-                    'permissions' : permissions
+                    'name' : 'administrator',
+                    'permissions' : permissions,
+                    'items' : [
+                        {
+                            'name' : 'editor',
+                            'permissions' : permissions
+                        },
+                        {
+                            'name' : 'journalist',
+                            'permissions' : permissions
+                        },
+                        {
+                            'name' : 'desk manager',
+                            'permissions' : permissions
+                        }
+                    ]
                 },
                 { 
                     'name' : 'superadmin',
@@ -15,7 +29,28 @@ define(['angular', 'lodash'], function(angular, _) {
                 },
                 { 
                     'name' : 'editor',
-                    'permissions' : permissions
+                    'permissions' : permissions,
+                    'items' : [
+                        {
+                            'name' : 'journalist',
+                            'permissions' : permissions,
+                            'items' : [
+                                {
+                                    'name' : 'writer',
+                                    'permissions' : permissions
+                                },
+                                {
+                                    'name' : 'staff guy',
+                                    'permissions' : permissions
+                                }
+                            ]
+                        
+                        },
+                        {
+                            'name' : 'desk manager',
+                            'permissions' : permissions
+                        }
+                    ]
                 },
                 { 
                     'name' : 'journalist',

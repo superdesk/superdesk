@@ -317,7 +317,7 @@
 		bottom: 20px;
 		overflow: hidden;
 		.column-left, .column-right {
-			width: 40%;
+			width: 45%;
 			position: absolute;
 			top: 0;
 			bottom: 0;
@@ -325,20 +325,21 @@
 			overflow: auto;
 		}
 		.column-right {
-			width: 60%;
+			width: 50%;
 			right: 0;
 			left: auto;
 		}
 	}
 	.user-roles-list {
-		li {
+		margin-right: 10px;
+		.leaf {
 			background: #f4f4f4;
 			padding: 5px 10px;
 			font-size: 13px;
 			margin-bottom: 5px;
-			margin-right: 20px;
 			.border-radius(2px);
 			min-height: 18px;
+			list-style-type: none;
 			&:hover {
 				background: #e8e8e8;
 				cursor:pointer;
@@ -347,6 +348,15 @@
 				background: #e8e8e8;
 			}
 		}
+		ul {
+			margin-left: 20px;
+			.leaf {
+				margin-right: 0;
+			}
+		}
+
+		
+
 	}
 	.preview-box {
 		position: absolute;

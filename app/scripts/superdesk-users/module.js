@@ -6,6 +6,7 @@ define([
     './controllers/settings',
     './directives/sdUserPicture',
     './directives/sdUserActivity',
+    './directives/sdRolesTreeview',
     './directives/sdInfoItem',
     './directives/sdUserEdit',
     './directives/sdUserDetailsPane',
@@ -22,6 +23,7 @@ define([
         .directive('sdInfoItem', require('superdesk-users/directives/sdInfoItem'))
         .directive('sdUserEdit', require('superdesk-users/directives/sdUserEdit'))
         .directive('sdUserDetailsPane', require('superdesk-users/directives/sdUserDetailsPane'))
+        .directive('sdRolesTreeview', require('superdesk-users/directives/sdRolesTreeview'))
         .value('defaultListParams', {
             search: '',
             searchField: 'username',

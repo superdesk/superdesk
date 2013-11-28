@@ -10,7 +10,9 @@
         <div class="splitter">
             <div class="column-left">
                 <ul class="user-roles-list">
-                    <li ng-repeat="role in userRoles" ng-click="editRole(role)" ng-class="{ 'active': selectedRole == role}">{{ role.name }}</li>
+                    <li ng-repeat="role in userRoles" ng-click="editRole(role)" ng-class="{ 'active': selectedRole == role}">
+                        <div sd-roles-treeview val="role"></div>
+                    </li>
                 </ul>
             </div>
             <div class="column-right">
