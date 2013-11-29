@@ -73,12 +73,13 @@ define(['angular', 'lodash'], function(angular, _) {
                 'name' : '',
                 '_childOf' : {}
             };
-            $scope.newUser.permissions = _.merge($scope.permissions,$scope.newUser._childOf.permissions),
+            $scope.newUser.permissions = _.merge($scope.permissions,$scope.newUser._childOf.permissions);
 
 
             $scope.cancelAddModal = function() {
                 $scope.addModal = null;
             };
+
             $scope.openAddModal = function() {
                 $scope.addModal = true;
             };
