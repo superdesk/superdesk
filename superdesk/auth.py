@@ -31,11 +31,8 @@ class SuperdeskTokenAuth(TokenAuth):
         if user and user.get('user_role'):
             role_id = str(user['user_role'])
             role = app.data.find_one('user_roles', _id=role_id)
-            for permission in role.get('permissions', []):
-                if permission['resource'] == resource:
-                    if permission['method'].upper() == method:
-                        return True
-            return False  # has role but not permissions
+            permissions = role.get('permissions', {})
+            return method.lower() in permissions.get(resource, {})
         return True  # has no role
 
     def check_auth(self, token, allowed_roles, resource, method):

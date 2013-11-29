@@ -31,10 +31,10 @@ Feature: User Role Resource
 
         When we patch it
             """
-            {"permissions": [
-                {"resource": "ingest", "method": "get"},
-                {"resource": "archive", "method": "get"}
-            ]}
+            {"permissions": {
+                "ingest": {"get": 1},
+                "archive": {"post": 1}
+            }}
             """
 
         And we get it
@@ -55,9 +55,9 @@ Feature: User Role Resource
     Scenario: Check permissions on read with role and permissions
         Given "user_roles"
             """
-            [{"name": "Editor", "permissions": [
-                {"resource": "ingest", "method": "get"}
-            ]}]
+            [{"name": "Editor", "permissions": {
+                "ingest": {"get": 1}
+            }}]
             """
         And we have "Editor" role
         When we get "/ingest"

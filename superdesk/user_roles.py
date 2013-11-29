@@ -12,7 +12,10 @@ superdesk.domain('user_roles', {
             'type': 'objectid'
         },
         'permissions': {
-            'type': 'list'
+            'type': 'dict'
         }
+    },
+    'datasource': {
+        'default_sort': [('created', -1)]
     }
 })
