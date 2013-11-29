@@ -226,7 +226,7 @@
 		}
 	}
 }
-
+/* providers */
 .provider-list {
 	margin-top: 20px;
 	> li {
@@ -266,7 +266,6 @@
 		}
 
 	}
-	
 }
 
 .addSource.modal {
@@ -303,5 +302,136 @@
 				margin-right: 2%;
 			}
 		}
+	}
+}
+
+
+/*  user roles */
+.user-roles {
+	padding-right: 0 !important;
+	.splitter {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 20px;
+		bottom: 20px;
+		overflow: hidden;
+		.column-left, .column-right {
+			width: 45%;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			overflow: auto;
+		}
+		.column-right {
+			width: 50%;
+			right: 0;
+			left: auto;
+		}
+	}
+	.user-roles-list {
+		margin-right: 10px;
+		.leaf {
+			background: #f4f4f4;
+			padding: 5px 10px;
+			font-size: 13px;
+			margin-bottom: 5px;
+			.border-radius(2px);
+			min-height: 18px;
+			list-style-type: none;
+			&:hover {
+				background: #e8e8e8;
+				cursor:pointer;
+			}
+			&.active {
+				background: #e8e8e8;
+			}
+		}
+		.collapse {
+			width: 14px;
+			height: 14px;
+			margin: 0 5px 0 -5px;
+			vertical-align: middle;
+			.opacity(50);
+		}
+		.active {
+			.leaf {
+				background: #e8e8e8;
+			}
+		}
+		ul {
+			margin-left: 15px;
+			.leaf {
+				margin-right: 0;
+				margin-left: 10px;
+			}
+			border-left: 1px dotted #ccc;
+		}
+
+		
+
+	}
+	.preview-box {
+		position: absolute;
+		left: 0;right: 0;top: 0;bottom: 0;
+		overflow: hidden;
+		.preview-header {
+			position: absolute;
+			top: 0;
+			left:0 ;right: 0;
+			border: 1px solid #e8e8e8;
+			height: 39px;
+			.close-preview {
+				margin-top: 11px;
+				margin-right: 10px;
+				.opacity(40);
+				&:hover {
+					.opacity(60);
+					cursor: pointer;
+				}
+			}
+			input {
+				width: 250px;
+				margin: 6px 0 0 20px;  
+				border: 0;
+				font-size: 13px;
+				.text-semibold();
+				.box-shadow(0 0 0 0 #000);
+				&:focus {
+					.box-shadow(0 0 0 0 #000) !important;
+				}
+				text-decoration: underline;
+			}
+		}
+		.preview-body {
+			position: absolute;
+			top: 40px;
+			left:0 ;right: 0;
+			bottom: 0;
+			overflow-y: auto; overflow-x:hidden;
+		}
+	}
+}
+.permission-list {
+	padding: 20px;
+	background: #f4f4f4;
+	border:1px solid #e8e8e8;
+	ul {
+		li {
+			font-size: 13px;
+			margin-bottom: 10px;
+		}
+	}
+}
+
+.permissions-box {
+	border: 1px solid #d0d0d0;
+	height: 230px;
+	.box-sizing(border-box);
+	overflow-y: auto;
+	.permission-list {
+		background:#fff;
+		border: 0;
 	}
 }

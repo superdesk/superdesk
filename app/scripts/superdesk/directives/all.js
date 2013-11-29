@@ -10,5 +10,6 @@ define([
     './sdWithParams',
     './sdSearch',
     './sdModal',
-    './sdConfirm'
+    './sdConfirm',
+    './sdSelect'
 ], function() {});

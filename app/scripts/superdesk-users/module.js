@@ -3,8 +3,10 @@ define([
     './controllers/list',
     './controllers/detail',
     './controllers/profile',
+    './controllers/settings',
     './directives/sdUserPicture',
     './directives/sdUserActivity',
+    './directives/sdRolesTreeview',
     './directives/sdInfoItem',
     './directives/sdUserEdit',
     './directives/sdUserDetailsPane',
@@ -14,12 +16,14 @@ define([
 
     angular.module('superdesk.users', ['superdesk.entity', 'superdesk.userSettings', 'superdesk.auth'])
         .service('profileService', require('superdesk-users/services/profile'))
+        .controller('RolesSettingsCtrl', require('superdesk-users/controllers/settings'))
         .controller('UserDetailCtrl', require('superdesk-users/controllers/detail'))
         .directive('sdUserPicture', require('superdesk-users/directives/sdUserPicture'))
         .directive('sdUserActivity', require('superdesk-users/directives/sdUserActivity'))
         .directive('sdInfoItem', require('superdesk-users/directives/sdInfoItem'))
         .directive('sdUserEdit', require('superdesk-users/directives/sdUserEdit'))
         .directive('sdUserDetailsPane', require('superdesk-users/directives/sdUserDetailsPane'))
+        .directive('sdRolesTreeview', require('superdesk-users/directives/sdRolesTreeview'))
         .value('defaultListParams', {
             search: '',
             searchField: 'username',
@@ -113,5 +117,11 @@ define([
                         }]
                     }
                 });
+        })
+        .config(function(settingsProvider) {
+            settingsProvider.register('user-roles', {
+                label: gettext('User Roles'),
+                templateUrl: 'scripts/superdesk-users/views/settings.html'
+            });
         });
 });

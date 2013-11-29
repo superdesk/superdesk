@@ -1,0 +1,26 @@
+<div class="sdselect" ng-class="{'open': open}">
+    <a class="sdselect-btn" ng-click="toggleSelect()" ng-disabled="disabled" ng-class="{'error': !valid()}">
+        <span class="pull-left">{{header}}</span>
+        <span class="caret pull-right"></span>
+    </a>
+
+    <div class="sdselect-menu" ng-show="open">
+        <div >
+          <div class="sdselect-filter" ng-show="showfilter">
+            <input class="input-block-level" type="text" ng-model="searchText.label" autofocus="autofocus" placeholder="{{ 'Filter' | translate }}" />
+          </div>
+          <div class="sdselect-all" ng-show="multiple">
+            <a ng-click="checkAll()" translate>Check all</a>
+            <a ng-click="uncheckAll()" translate>Uncheck all</a>
+          </div>
+        </div>
+        <div class="list-holder">
+          <ul>
+              <li ng-repeat="i in items | filter:searchText">
+                  <a ng-click="select(i); focus()">
+                  <i ng-class="{'icon-ok': i.checked, 'icon-empty': !i.checked}"></i>{{i.label}}</a>
+              </li>
+          </ul>
+        </div>
+    </div>
+</div>
