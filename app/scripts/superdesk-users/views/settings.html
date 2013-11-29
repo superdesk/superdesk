@@ -1,30 +1,31 @@
 <div ng-controller="RolesSettingsCtrl">
-    <button class="btn btn-info pull-right" ng-click="save()" translate>Save</button>
-    <button class="btn btn-info pull-right" ng-click="openAddModal()">
+    <a href="" class="btn btn-info pull-right" ng-click="openAddModal()">
         <i class="icon-plus-sign icon-white"></i> <span translate>Add New Role</span>
-    </button>
-    
+    </a>
 
     <h2 translate>User Roles</h4>
     <div class="settings-tab-content user-roles">
         <div class="splitter">
             <div class="column-left">
-                <ul class="user-roles-list">
-                    <li ng-repeat="role in userRoles" ng-click="editRole(role)" ng-class="{ 'active': selectedRole == role}">
-                        <div sd-roles-treeview val="role"></div>
+                <ul class="user-roles-list" sd-user-roles sd-roles="roles">
+                    <li ng-repeat="role in roles._items | filter:{child_of: undefined}" ng-click="edit(role)" ng-class="{active: selectedRole == role}">
+                        <div sd-roles-treeview data-role="role"></div>
                     </li>
+                    <li ng-show="!roles._items.length" class="alert alert-info" translate>No roles created yet.</li>
                 </ul>
             </div>
             <div class="column-right">
                 <div class="preview-box" ng-show="selectedRole">
                     <div class="preview-header">
                         <input type="text" ng-model="selectedRole.name">
-                        <i class="close-preview pull-right icon-close-small" ng-click="closeEdit()"></i>
+                        <i class="close-preview pull-right icon-close-small" ng-click="edit()"></i>
                     </div>
                     <div class="preview-body">
                         <div class="permission-list">
                             <ul>
-                                <li ng-repeat="p in selectedRole.permissions"><input sd-check ng-model="test"> {{ p.label }}</li>
+                                <li ng-repeat="p in permissions">
+                                    <input type="checkbox" ng-checked="isAllowed(selectedRole, p)" ng-model="test"> {{ p.label }}
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -33,44 +34,42 @@
         </div>
     </div>
 
-    <div sd-modal-view data-model="addModal">
+    <div sd-modal-view data-model="editRole">
         <div class="modal-header"> <a href="" class="close" ng-click="cancelAddModal()">&times;</a>
             <h3 translate>Add New Role</h3>
         </div>
 
         <div class="modal-body modal-body-min">
-            <form>
-
+            <form name="roleForm">
                 <div class="control-group">
                     <label translate>Name</label>
-                    <input type="text" class="input-large" placeholder="{{ 'enter Role name'|translate }}" ng-model="newUser.name">
+                    <input type="text" class="input-large" placeholder="{{ 'Enter Role Name'|translate }}" ng-model="editRole.name" required>
+                </div>
+
+                <div class="control-group" ng-show="roles._items.length">
+                    <label translate>Parent Role</label>
+                    <select ng-model="editRole.child_of">
+                    </select>
                 </div>
 
                 <div class="control-group">
-                    <label translate>Inherits from</label>
-                    <div sd-select ng-model="newUser._childOf" options="c.name for c in userRoles"></div>
-                </div>
-
-                <div class="control-group">
-                    <label translate>Manage Permissions and Constrains</label>
+                    <label translate>Add Permissions</label>
                     <div class="permissions-box">
                         <div class="permission-list">
                             <ul>
-                                <li ng-repeat="p in newUser.permissions"><input sd-check ng-model="test"> {{ p.label }}</li>
+                                <li ng-repeat="p in editPermissions">
+                                    <label for="p{{ $index }}"><input type="checkbox" id="p{{ $index }}" ng-model="p.selected"> {{ p.label }}</label>
+                                </li>
                             </ul>
                         </div>
                     </div>
                 </div>
-
-                
-
             </form>
         </div>
 
         <div class="modal-footer">
             <button class="btn btn-default" ng-click="cancelAddModal()" translate>Cancel</button>
-            <button class="btn btn-primary" ng-click="save()" translate>Save</button>
+            <button class="btn btn-primary" ng-click="save()" ng-disabled="!roleForm.$valid" translate>Save</button>
         </div>
     </div>
-
 </div>

@@ -1,93 +1,63 @@
 define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
-    return ['$scope', 'permissions',
-        function($scope,permissions) {
+    return ['$scope', 'em', 'permissions', function ($scope, em, permissions) {
 
-            $scope.userRoles = [
-                {
-                    'name' : 'administrator',
-                    'permissions' : permissions,
-                    '_childOf' : {
-                        'name' : 'editor',
-                        'permissions' : permissions
-                    }
-                },
-                {
-                    'name' : 'superadmin',
-                    'permissions' : permissions
-                },
-                {
-                    'name' : 'editor',
-                    'permissions' : permissions,
-                    '_childOf' : {
-                        'name' : 'journalist',
-                        'permissions' : permissions,
-                        '_childOf' : {
-                            'name' : 'writer',
-                            'permissions' : permissions
-                        },
-                    },
-                },
-                {
-                    'name' : 'journalist',
-                    'permissions' : permissions
-                },
-                {
-                    'name' : 'data analyst',
-                    'permissions' : permissions
-                },
-                {
-                    'name' : 'seo expert',
-                    'permissions' : permissions
-                },
-                {
-                    'name' : 'chief editor',
-                    'permissions' : permissions
-                },
-                {
-                    'name' : 'desk manager',
-                    'permissions' : permissions
-                }
-            ];
+        $scope.permissions = permissions;
 
-            $scope.permissions = permissions;
-            $scope.selectedRole = null;
+        em.repository('user_roles').matching().then(function(roles) {
+            $scope.roles = roles;
+        });
 
-            $scope.editRole = function(role) {
+        $scope.edit = function (role) {
+            $scope.selectedRole = role;
+        };
+
+        $scope.addRole = function() {
+            var newRole = {'name' : 'sample name', 'permissions' : permissions};
+            $scope.userRoles.unshift(newRole);
+            $scope.selectedRole = newRole;
+        };
+
+        $scope.cancelAddModal = function() {
+            $scope.editRole = null;
+        };
+
+        $scope.openAddModal = function() {
+            $scope.addModal = true;
+            $scope.editRole = {};
+            $scope.editPermissions = permissions;
+        };
+
+        $scope.save = function() {
+            $scope.editRole.permissions = {};
+
+            var selectedPermissions = _.where($scope.editPermissions, 'selected');
+            _.each(selectedPermissions, function(permission) {
+                _.merge($scope.editRole.permissions, permission.requires);
+            });
+
+            em.create('user_roles', $scope.editRole).then(function(role) {
+                _.extend(role, $scope.editRole);
+                $scope.roles._items.unshift(role);
                 $scope.selectedRole = role;
-            };
+                $scope.editRole = null;
+            });
+        };
 
-            $scope.closeEdit = function() {
-                $scope.selectedRole = null;
-            };
+        $scope.isAllowed = function (role, permission) {
+            if (!role) {
+                return false;
+            }
 
-            $scope.addRole = function() {
-                var newRole = {'name' : 'sample name', 'permissions' : permissions};
-                $scope.userRoles.unshift(newRole);
-                $scope.selectedRole = newRole;
-            };
+            var allowed = true;
+            _.each(permission.requires, function(methods, resource) {
+                _.each(methods, function(val, method) {
+                    allowed = allowed && role.permissions[resource][method];
+                });
+            });
 
-            $scope.addModal = null;
-            $scope.newUser = {
-                'name' : '',
-                '_childOf' : {}
-            };
-            $scope.newUser.permissions = _.merge($scope.permissions,$scope.newUser._childOf.permissions);
-
-
-            $scope.cancelAddModal = function() {
-                $scope.addModal = null;
-            };
-
-            $scope.openAddModal = function() {
-                $scope.addModal = true;
-            };
-
-            $scope.save = function() {
-                //do save
-                $scope.addModal = null;
-            };
-
-        }];
+            return allowed;
+        };
+    }];
 });

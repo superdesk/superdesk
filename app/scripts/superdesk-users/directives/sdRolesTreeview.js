@@ -5,26 +5,26 @@ define(function() {
         return {
             restrict: 'A',
             terminal : true,
-            scope: { val: '='},
+            scope: {role: '='},
             link: function(scope, element, attrs) {
                 var template = '';
 
-                if (scope.val._childOf !== undefined ) {
+                if (scope.role.child_of !== undefined ) {
                     template += '<div class="leaf">'+
                                     '<span class="collapse" ng-click="collapsed = !collapsed">'+
                                         '<i class="icon-chevron-down" ng-show="collapsed"></i>'+
                                         '<i class="icon-chevron-right" ng-show="!collapsed"></i>'+
                                     '</span>'+
-                                    '{{val.name}}'+
+                                    '{{role.name}}'+
                                 '</div>';
                     template += '<ul class="indent" ng-show="collapsed">'+
                                     '<li>'+
-                                        '<div sd-roles-treeview val="val._childOf"></div>'+
+                                        '<div sd-roles-treeview data-role="role.child_of"></div>'+
                                     '</li>'+
                                 '</ul>';
                 }
                 else {
-                    template += '<div class="leaf">{{val.name}}</div>';
+                    template += '<div class="leaf">{{role.name}}</div>';
                 }
                 var newElement = angular.element(template);
                 $compile(newElement)(scope);

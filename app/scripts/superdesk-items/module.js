@@ -68,7 +68,9 @@ define([
                 .activity('ingest', {
                     permissions: {
                         label: 'Read ingest',
-                        items: ['read']
+                        requires: {
+                            items: {get: 1}
+                        }
                     },
                     href: '/ingest/:id?',
                     menuHref: '/ingest/',
@@ -81,7 +83,9 @@ define([
                 .activity('archive', {
                     permissions: {
                         label: 'Read archive',
-                        archive: ['read']
+                        requires: {
+                            archive: {get: 1}
+                        }
                     },
                     href: '/archive/',
                     label: gettext('Archive'),
@@ -90,10 +94,20 @@ define([
                     controller: require('superdesk-items/controllers/archive'),
                     resolve: resolve('archive'),
                 })
+                .activity('ingest-archive', {
+                    permissions: {
+                        label: gettext('Archive item'),
+                        requires: {
+                            archive: {post: 1}
+                        }
+                    }
+                })
                 .activity('archive-detail', {
                     permissions: {
                         label: 'Read archive details',
-                        archive: ['read']
+                        requires: {
+                            archive: {get: 1}
+                        }
                     },
                     href: '/archive/:id',
                     label: gettext('Archive'),
