@@ -16,15 +16,9 @@ define([
      *
      * activityProvider.activity(id, options);
      *
-     * or (if no menu item is needed)
-     *
-     * activityProvider.activity(options);
-     *
      * Params:
      *
-     * @param {string} id - activity id. Currently only passed to menuProvider
-     * for managing relationships between menu items. If not provided, activity
-     * is not listed in the menu.
+     * @param {string} id - activity id.
      *
      * @param {object} options - options for activity. Additionally, any option that
      * needs to be passed to $routeProvider (controller, templateUrl) can be added
@@ -39,6 +33,9 @@ define([
      *
      * priority: (optional) Used for sorting menu items.
      *
+     * menu: (optional) Used to determine if activity will be displayed in navigation
+     * menu or not. Default is true.
+     *
      * menuLabel: (optional) If menu label needs to be different than route, this
      * is used to override label for menuProvider.
      *
@@ -49,16 +46,22 @@ define([
      *
      */
     angular.module('superdesk.services.activity', ['ngRoute'])
-        .provider('activity', ['menuProvider', '$routeProvider', function(menuProvider, $routeProvider) {
+        .provider('activity', ['menuProvider', '$routeProvider', 'permissionsProvider',
+        function(menuProvider, $routeProvider, permissionsProvider) {
+            var activities = {};
+
             return {
                 $get: function() {
-                    
+                    return activities;
                 },
                 activity: function(id, item) {
-                    if (typeof id === 'object' && item === undefined) {
-                        item = id;
-                        id = '';
-                    } else {
+                    activities[id] = item;
+
+                    if (item.permissions !== undefined) {
+                        permissionsProvider.permission(id, item.permissions);
+                    }
+
+                    if (item.menu !== false) {
                         menuProvider.menu(id, {
                             label: item.menuLabel || item.label,
                             href: item.menuHref || item.href,
@@ -66,7 +69,7 @@ define([
                             parent: item.parent
                         });
                     }
-                    var route = _.omit(_.extend({}, item), ['priority', 'href', 'menuLabel', 'menuHref']);
+                    var route = _.omit(_.extend({}, item), ['priority', 'href', 'menuLabel', 'menuHref', 'permissions']);
                     $routeProvider.when(item.href, route);
 
                     return this;

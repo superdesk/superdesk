@@ -1,8 +1,8 @@
 define(['angular'], function(){
     'use strict';
 
-    return ['$scope', 'widgets', 'widgetService',
-        function($scope, widgets, widgetService){
+    return ['$scope', 'widgets', 'widgetService', 'permissions',
+        function($scope, widgets, widgetService, permissions){
 
             $scope.userWidgets = widgetService.load();
             $scope.editStatus = false;

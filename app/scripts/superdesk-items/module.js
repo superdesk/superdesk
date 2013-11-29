@@ -66,6 +66,10 @@ define([
 
             activityProvider
                 .activity('ingest', {
+                    permissions: {
+                        label: 'Read ingest',
+                        items: ['read']
+                    },
                     href: '/ingest/:id?',
                     menuHref: '/ingest/',
                     label: gettext('Ingest'),
@@ -75,6 +79,10 @@ define([
                     priority: -300
                 })
                 .activity('archive', {
+                    permissions: {
+                        label: 'Read archive',
+                        archive: ['read']
+                    },
                     href: '/archive/',
                     label: gettext('Archive'),
                     priority: -200,
@@ -82,9 +90,14 @@ define([
                     controller: require('superdesk-items/controllers/archive'),
                     resolve: resolve('archive'),
                 })
-                .activity({
+                .activity('archive-detail', {
+                    permissions: {
+                        label: 'Read archive details',
+                        archive: ['read']
+                    },
                     href: '/archive/:id',
                     label: gettext('Archive'),
+                    menu: false,
                     templateUrl: 'scripts/superdesk-items/views/edit.html',
                     controller: require('superdesk-items/controllers/edit'),
                     resolve: {
