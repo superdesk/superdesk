@@ -5,12 +5,12 @@ import traceback
 import datetime
 import superdesk
 
-from lxml import etree
 from flask import url_for
 from superdesk.utc import utcnow
 from .newsml import Parser
 from .reuters_token import get_token
 from ..utc import utc
+from ..etree import etree
 
 try:
     from urllib.request import urlopen

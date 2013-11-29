@@ -17,7 +17,7 @@ class Parser():
     def parse_message(self, tree):
         """Parse NewsMessage."""
         items = []
-        self.root = tree.getroot()
+        self.root = tree.getroottree().getroot()
         for item_set in tree.findall(self.qname('itemSet')):
             for item_tree in item_set:
                 item = self.parse_item(item_tree)

@@ -11,9 +11,10 @@ class ItemTest(unittest.TestCase):
     def setUpFixture(self, filename):
         dirname = os.path.dirname(os.path.realpath(__file__))
         fixture = os.path.join(dirname, 'fixtures', filename)
-        xml = etree.parse(fixture)
+        with open(fixture) as f:
+            self.tree = etree.fromstring(f.read().encode('utf-8'))
         parser = newsml.Parser()
-        self.item = parser.parse_message(xml)[0]
+        self.item = parser.parse_message(self.tree)[0]
 
 
 class TextParserTest(ItemTest):
