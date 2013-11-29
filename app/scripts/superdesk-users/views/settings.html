@@ -1,6 +1,6 @@
 <div ng-controller="RolesSettingsCtrl">
     <button class="btn btn-info pull-right" ng-click="save()" translate>Save</button>
-    <button class="btn btn-info pull-right" ng-click="addRole()">
+    <button class="btn btn-info pull-right" ng-click="openAddModal()">
         <i class="icon-plus-sign icon-white"></i> <span translate>Add New Role</span>
     </button>
     
@@ -33,5 +33,44 @@
         </div>
     </div>
 
+    <div sd-modal-view data-model="addModal">
+        <div class="modal-header"> <a href="" class="close" ng-click="cancelAddModal()">&times;</a>
+            <h3 translate>Add New Role</h3>
+        </div>
+
+        <div class="modal-body modal-body-min">
+            <form>
+
+                <div class="control-group">
+                    <label translate>Name</label>
+                    <input type="text" class="input-large" placeholder="{{ 'enter Role name'|translate }}" ng-model="newUser.name">
+                </div>
+
+                <div class="control-group">
+                    <label translate>Inherits from</label>
+                    <div sd-select ng-model="newUser._childOf" options="c.name for c in userRoles"></div>
+                </div>
+
+                <div class="control-group">
+                    <label translate>Manage Permissions and Constrains</label>
+                    <div class="permissions-box">
+                        <div class="permission-list">
+                            <ul>
+                                <li ng-repeat="p in newUser.permissions"><input sd-check ng-model="test"> {{ p.label }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+            </form>
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-default" ng-click="cancelAddModal()" translate>Cancel</button>
+            <button class="btn btn-primary" ng-click="save()" translate>Save</button>
+        </div>
+    </div>
 
 </div>

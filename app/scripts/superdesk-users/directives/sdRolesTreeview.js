@@ -9,7 +9,7 @@ define(function() {
             link: function(scope, element, attrs) {
                 var template = '';
 
-                if (angular.isArray(scope.val.items)) {
+                if (scope.val._childOf !== undefined ) {
                     template += '<div class="leaf">'+
                                     '<span class="collapse" ng-click="collapsed = !collapsed">'+
                                         '<i class="icon-chevron-down" ng-show="collapsed"></i>'+
@@ -18,8 +18,8 @@ define(function() {
                                     '{{val.name}}'+
                                 '</div>';
                     template += '<ul class="indent" ng-show="collapsed">'+
-                                    '<li ng-repeat="item in val.items">'+
-                                        '<div sd-roles-treeview val="item"></div>'+
+                                    '<li>'+
+                                        '<div sd-roles-treeview val="val._childOf"></div>'+
                                     '</li>'+
                                 '</ul>';
                 }

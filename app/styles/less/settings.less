@@ -355,6 +355,11 @@
 			vertical-align: middle;
 			.opacity(50);
 		}
+		.active {
+			.leaf {
+				background: #e8e8e8;
+			}
+		}
 		ul {
 			margin-left: 15px;
 			.leaf {
@@ -387,7 +392,7 @@
 				}
 			}
 			input {
-				width: 260px;
+				width: 250px;
 				margin: 6px 0 0 20px;  
 				border: 0;
 				font-size: 13px;
@@ -405,17 +410,28 @@
 			left:0 ;right: 0;
 			bottom: 0;
 			overflow-y: auto; overflow-x:hidden;
-			.permission-list {
-				padding: 20px;
-				background: #f4f4f4;
-				border:1px solid #e8e8e8;
-				ul {
-					li {
-						font-size: 13px;
-						margin-bottom: 10px;
-					}
-				}
-			}
 		}
+	}
+}
+.permission-list {
+	padding: 20px;
+	background: #f4f4f4;
+	border:1px solid #e8e8e8;
+	ul {
+		li {
+			font-size: 13px;
+			margin-bottom: 10px;
+		}
+	}
+}
+
+.permissions-box {
+	border: 1px solid #d0d0d0;
+	height: 230px;
+	.box-sizing(border-box);
+	overflow-y: auto;
+	.permission-list {
+		background:#fff;
+		border: 0;
 	}
 }

@@ -8,20 +8,10 @@ define(['angular', 'lodash'], function(angular, _) {
                 {
                     'name' : 'administrator',
                     'permissions' : permissions,
-                    'items' : [
-                        {
-                            'name' : 'editor',
-                            'permissions' : permissions
-                        },
-                        {
-                            'name' : 'journalist',
-                            'permissions' : permissions
-                        },
-                        {
-                            'name' : 'desk manager',
-                            'permissions' : permissions
-                        }
-                    ]
+                    '_childOf' : {
+                        'name' : 'editor',
+                        'permissions' : permissions
+                    }
                 },
                 {
                     'name' : 'superadmin',
@@ -30,27 +20,14 @@ define(['angular', 'lodash'], function(angular, _) {
                 {
                     'name' : 'editor',
                     'permissions' : permissions,
-                    'items' : [
-                        {
-                            'name' : 'journalist',
-                            'permissions' : permissions,
-                            'items' : [
-                                {
-                                    'name' : 'writer',
-                                    'permissions' : permissions
-                                },
-                                {
-                                    'name' : 'staff guy',
-                                    'permissions' : permissions
-                                }
-                            ]
-                        
-                        },
-                        {
-                            'name' : 'desk manager',
+                    '_childOf' : {
+                        'name' : 'journalist',
+                        'permissions' : permissions,
+                        '_childOf' : {
+                            'name' : 'writer',
                             'permissions' : permissions
-                        }
-                    ]
+                        },
+                    },
                 },
                 {
                     'name' : 'journalist',
@@ -74,6 +51,7 @@ define(['angular', 'lodash'], function(angular, _) {
                 }
             ];
 
+            $scope.permissions = permissions;
             $scope.selectedRole = null;
 
             $scope.editRole = function(role) {
@@ -90,8 +68,24 @@ define(['angular', 'lodash'], function(angular, _) {
                 $scope.selectedRole = newRole;
             };
 
+            $scope.addModal = null;
+            $scope.newUser = {
+                'name' : '',
+                '_childOf' : {}
+            };
+            $scope.newUser.permissions = _.merge($scope.permissions,$scope.newUser._childOf.permissions),
+
+
+            $scope.cancelAddModal = function() {
+                $scope.addModal = null;
+            };
+            $scope.openAddModal = function() {
+                $scope.addModal = true;
+            };
+
             $scope.save = function() {
                 //do save
+                $scope.addModal = null;
             };
 
         }];
