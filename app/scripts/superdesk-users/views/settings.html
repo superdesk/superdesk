@@ -8,8 +8,9 @@
         <div class="splitter">
             <div class="column-left">
                 <ul class="user-roles-list" sd-user-roles sd-roles="roles">
-                    <li ng-repeat="role in roles._items | filter:{child_of: undefined}" ng-click="edit(role)" ng-class="{active: selectedRole == role}">
-                        <div sd-roles-treeview data-role="role"></div>
+                    <li ng-repeat="role in roles._items | filter:{child_of: undefined}" ng-click="preview(role)" ng-class="{active: selectedRole == role}">
+                        <div sd-roles-treeview data-role="role" data-roles="roles._items"></div>
+                        <a class="edit-btn" ng-click="edit(role)"><i class="icon-pencil"></i></a>
                     </li>
                     <li ng-show="!roles._items.length" class="alert alert-info" translate>No roles created yet.</li>
                 </ul>
@@ -17,14 +18,14 @@
             <div class="column-right">
                 <div class="preview-box" ng-show="selectedRole">
                     <div class="preview-header">
-                        <input type="text" ng-model="selectedRole.name">
-                        <i class="close-preview pull-right icon-close-small" ng-click="edit()"></i>
+                        <div class="title">{{ selectedRole.name }}</div>
+                        <i class="close-preview pull-right icon-close-small" ng-click="preview()"></i>
                     </div>
                     <div class="preview-body">
                         <div class="permission-list">
                             <ul>
                                 <li ng-repeat="p in permissions">
-                                    <input type="checkbox" ng-checked="isAllowed(selectedRole, p)" ng-model="test"> {{ p.label }}
+                                    <i class="icon-ok" ng-show="isAllowed(selectedRole, p)"></i>{{ p.label }}
                                 </li>
                             </ul>
                         </div>
@@ -48,8 +49,7 @@
 
                 <div class="control-group" ng-show="roles._items.length">
                     <label translate>Parent Role</label>
-                    <select ng-model="editRole.child_of">
-                    </select>
+                    <select ng-model="editRole.child_of" ng-options="r._id as r.name for r in roles._items"></select>
                 </div>
 
                 <div class="control-group">
@@ -58,7 +58,7 @@
                         <div class="permission-list">
                             <ul>
                                 <li ng-repeat="p in editPermissions">
-                                    <label for="p{{ $index }}"><input type="checkbox" id="p{{ $index }}" ng-model="p.selected"> {{ p.label }}</label>
+                                    <input type="checkbox" ng-model="p.selected"> {{ p.label }}
                                 </li>
                             </ul>
                         </div>

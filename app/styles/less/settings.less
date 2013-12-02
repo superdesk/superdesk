@@ -331,6 +331,32 @@
 		}
 	}
 	.user-roles-list {
+		> li {
+			position: relative;
+			&:hover {
+				.edit-btn {
+					display: block !important;
+				}
+			}
+		}
+		.edit-btn {
+			display: none;
+			height: 28px;
+			width: 28px;
+			position: absolute;
+			top: 0px;
+			right: 0;
+			background: #ddd;
+			.border-radius(3px);
+			text-align: center;
+			i {
+				margin-top: 7px;
+			}
+			&:hover {
+				cursor: pointer;
+				background: #ccc;
+			}
+		}
 		margin-right: 10px;
 		.leaf {
 			background: #f4f4f4;
@@ -391,17 +417,13 @@
 					cursor: pointer;
 				}
 			}
-			input {
+			.title {
+				display: inline-block;
 				width: 250px;
-				margin: 6px 0 0 20px;  
+				margin: 10px 0 0 20px;  
 				border: 0;
-				font-size: 13px;
+				font-size: 14px;
 				.text-semibold();
-				.box-shadow(0 0 0 0 #000);
-				&:focus {
-					.box-shadow(0 0 0 0 #000) !important;
-				}
-				text-decoration: underline;
 			}
 		}
 		.preview-body {
