@@ -62,3 +62,13 @@ Feature: User Role Resource
         And we have "Editor" role
         When we get "/ingest"
         Then we get response code 200
+
+    @auth
+    Scenario: User has always permissions to edit himself
+        Given "user_roles"
+            """
+            [{"name": "Subscriber"}]
+            """
+        And we have "Subscriber" role
+        When we get user profile
+        Then we get response code 200

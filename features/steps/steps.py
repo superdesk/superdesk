@@ -166,6 +166,12 @@ def step_impl(context):
         context.response = context.client.post('/upload', data=data, headers=headers)
 
 
+@when('we get user profile')
+def step_impl(context):
+    profile_url = '/%s/%s' % ('users', context.user['_id'])
+    context.response = context.client.get(profile_url, headers=context.headers)
+
+
 @then('we get new resource')
 def step_impl(context):
     assert_200(context.response)
