@@ -35,6 +35,7 @@ define([
             fields: {
                 avatar: true,
                 display_name: true,
+                user_role: true,
                 username: false,
                 email: false,
                 created: true

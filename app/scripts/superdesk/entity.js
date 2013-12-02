@@ -135,6 +135,15 @@ define(['angular', 'lodash', './server'], function(angular, _) {
 
                     return server.list(entity, criteria);
                 };
+
+                /**
+                 * Find all entities
+                 *
+                 * @return {Object}
+                 */
+                this.all = function() {
+                    return this.matching();
+                };
             }
 
             var repos = {};
@@ -172,10 +181,11 @@ define(['angular', 'lodash', './server'], function(angular, _) {
              * Update given item
              *
              * @param {Object} item
+             * @param {Object} updates
              * @return {Object}
              */
-            this.update = function(item) {
-                return server.update(item);
+            this.update = function(item, updates) {
+                return server.update(item, updates);
             };
 
             /**

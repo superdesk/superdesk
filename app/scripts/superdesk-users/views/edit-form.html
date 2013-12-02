@@ -15,8 +15,8 @@
     <div class="profile-info user-profile-edit">
         <div class="header-info">
             <h2>{{ user.display_name || user.username }}</h2>
-            <ul class="user-roles">
-                <li ng-repeat="role in user.role">{{role}}</li>
+            <ul class="user-roles" ng-show="user.role">
+                <li>{{ user.role }}</li>
             </ul>
         </div>
         <div class="details-info">
@@ -45,7 +45,7 @@
                 </div>
 
                 <div sd-info-item>
-                  <label for="email">email</label>
+                  <label for="email" translate>email</label>
                   <input type="text" id="email" ng-model="user.email">
                 </div>
 
@@ -60,10 +60,14 @@
                 </div>
 
                 <div sd-info-item>
-                  <label for="company">company</label>
+                  <label for="company" translate>company</label>
                   <input type="text" id="company" ng-model="user.user_info.company">
                 </div>
 
+                <div sd-info-item>
+                  <label for="user_role" translate>user role</label>
+                  <select ng-model="user.role" ng-options="role.name as role.name for role in userRoles"></select>
+                </div>
             </div>
         </div>
     </div>
