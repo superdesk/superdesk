@@ -93,8 +93,7 @@ def step_impl(context):
 @given('we have "{role_name}" role')
 def step_impl(context, role_name):
     with context.app.test_request_context():
-        role = context.app.data.find_one('user_roles', name=role_name)
-        data = json.dumps({'user_role': str(role['_id'])})
+        data = json.dumps({'role': role_name})
     response = patch_current_user(context, data)
     assert_ok(response)
 
