@@ -32,8 +32,8 @@ Feature: User Role Resource
         When we patch it
             """
             {"permissions": {
-                "ingest": {"get": 1},
-                "archive": {"post": 1}
+                "ingest": {"read": 1},
+                "archive": {"write": 1}
             }}
             """
 
@@ -56,7 +56,7 @@ Feature: User Role Resource
         Given "user_roles"
             """
             [{"name": "Editor", "permissions": {
-                "ingest": {"get": 1}
+                "ingest": {"read": 1}
             }}]
             """
         And we have "Editor" role

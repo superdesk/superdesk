@@ -27,12 +27,20 @@ class CredentialsAuthException(AuthException):
 class SuperdeskTokenAuth(TokenAuth):
     """Superdesk Token Auth"""
 
+    method_map = {
+        'get': 'read',
+        'put': 'write',
+        'patch': 'write',
+        'post': 'write',
+        'delete': 'write',
+    }
+
     def check_permissions(self, resource, method, user):
-        if user and user.get('user_role'):
-            role_id = str(user['user_role'])
-            role = app.data.find_one('user_roles', _id=role_id)
+        if user and user.get('role'):
+            role = app.data.find_one('user_roles', name=user['role'])
             permissions = role.get('permissions', {})
-            return method.lower() in permissions.get(resource, {})
+            perm_method = self.method_map[method.lower()]
+            return permissions.get(resource, {}).get(perm_method, False)
         return True  # has no role
 
     def check_auth(self, token, allowed_roles, resource, method):
