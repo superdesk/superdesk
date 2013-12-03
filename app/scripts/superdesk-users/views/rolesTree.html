@@ -1,0 +1,12 @@
+<div class="leaf">
+    <span class="collapse" ng-click="collapsed = !collapsed">
+        <i class="icon-chevron-down" ng-show="collapsed"></i>
+        <i class="icon-chevron-right" ng-show="!collapsed"></i>
+    </span>
+    {{role.name}}
+</div>
+<ul class="indent" ng-show="collapsed">
+    <li>
+        <div sd-roles-treeview data-role="childrole" data-roles="roles"></div>
+    </li>
+</ul>

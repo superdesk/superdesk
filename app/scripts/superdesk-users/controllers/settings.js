@@ -9,23 +9,31 @@ define(['angular', 'lodash'], function(angular, _) {
             $scope.roles = roles;
         });
 
-        $scope.edit = function (role) {
+        $scope.preview = function (role) {
             $scope.selectedRole = role;
         };
 
-        $scope.addRole = function() {
-            var newRole = {'name' : 'sample name', 'permissions' : permissions};
-            $scope.userRoles.unshift(newRole);
-            $scope.selectedRole = newRole;
+        var newRole = false;
+
+        $scope.edit = function (role) {
+            $scope.editRole = role;
+            $scope.newRole = false;
+            $scope.editPermissions = permissions;
+            _.each($scope.editPermissions,function(p,key){
+                if ($scope.isAllowed($scope.editRole, p)) {
+                    p.selected = true;
+                }
+            });
         };
 
         $scope.cancelAddModal = function() {
             $scope.editRole = null;
+            $scope.editPermissions = null;
         };
 
         $scope.openAddModal = function() {
-            $scope.addModal = true;
             $scope.editRole = {};
+            newRole = true;
             $scope.editPermissions = permissions;
         };
 
@@ -37,12 +45,24 @@ define(['angular', 'lodash'], function(angular, _) {
                 _.merge($scope.editRole.permissions, permission.requires);
             });
 
-            em.create('user_roles', $scope.editRole).then(function(role) {
-                _.extend(role, $scope.editRole);
-                $scope.roles._items.unshift(role);
-                $scope.selectedRole = role;
-                $scope.editRole = null;
-            });
+
+            if (newRole) {
+                em.create('user_roles', $scope.editRole).then(function(role) {
+                    _.extend(role, $scope.editRole);
+                    $scope.roles._items.unshift(role);
+                    $scope.selectedRole = role;
+                    $scope.editRole = null;
+                    $scope.editPermissions = null;
+                });
+            }
+            else {
+                em.update($scope.editRole, $scope.editRole).then(function(role) {
+                    $scope.selectedRole = role;
+                    $scope.editRole = null;
+                    $scope.editPermissions = null;
+                });
+            }
+
         };
 
         $scope.isAllowed = function (role, permission) {
@@ -51,9 +71,15 @@ define(['angular', 'lodash'], function(angular, _) {
             }
 
             var allowed = true;
+
             _.each(permission.requires, function(methods, resource) {
-                _.each(methods, function(val, method) {
-                    allowed = allowed && role.permissions[resource][method];
+                _.each(methods, function(val,method) {
+                    if (role.permissions[resource] !== undefined) {
+                        allowed = allowed && role.permissions[resource][method];
+                    }
+                    else {
+                        allowed = false;
+                    }
                 });
             });
 
