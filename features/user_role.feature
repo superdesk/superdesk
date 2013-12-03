@@ -72,3 +72,19 @@ Feature: User Role Resource
         And we have "Subscriber" role
         When we get user profile
         Then we get response code 200
+
+    @auth
+    Scenario: When renaming user role update relations
+        Given "user_roles"
+            """
+            [{"name": "Subscriber", "permissions": {"user_roles": {"read": 1, "write": 1}}}]
+            """
+
+        And we have "Subscriber" role
+        When we patch it
+            """
+            {"name": "Editor"}
+            """
+
+        And we get user profile
+        Then we get role "Editor"
