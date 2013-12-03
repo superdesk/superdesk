@@ -1,11 +1,16 @@
 define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
-    return ['$scope', 'em', 'permissions', function ($scope, em, permissions) {
+    return ['$scope', 'em', 'permissions', 'userPermissions', function ($scope, em, permissions, userPermissions) {
 
         $scope.permissions = permissions;
 
         em.repository('user_roles').matching().then(function(roles) {
+            /*
+            _.forEach(roles._items, function(item) {
+                em.remove(item);
+            });
+            //*/
             $scope.roles = roles;
         });
 
@@ -42,7 +47,7 @@ define(['angular', 'lodash'], function(angular, _) {
 
             var selectedPermissions = _.where($scope.editPermissions, 'selected');
             _.each(selectedPermissions, function(permission) {
-                _.merge($scope.editRole.permissions, permission.requires);
+                _.merge($scope.editRole.permissions, permission.permissions);
             });
 
 
@@ -66,24 +71,7 @@ define(['angular', 'lodash'], function(angular, _) {
         };
 
         $scope.isAllowed = function (role, permission) {
-            if (!role) {
-                return false;
-            }
-
-            var allowed = true;
-
-            _.each(permission.requires, function(methods, resource) {
-                _.each(methods, function(val,method) {
-                    if (role.permissions[resource] !== undefined) {
-                        allowed = allowed && role.permissions[resource][method];
-                    }
-                    else {
-                        allowed = false;
-                    }
-                });
-            });
-
-            return allowed;
+            return userPermissions.isRoleAllowed(permission.permissions, role);
         };
     }];
 });

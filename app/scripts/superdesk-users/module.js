@@ -42,37 +42,19 @@ define([
                 created: true
             }
         })
+        .config(function(permissionsProvider) {
+            permissionsProvider.permission('users-manage', {
+                label: 'Manage users',
+                permissions: {users: ['write']}
+            });
+            permissionsProvider.permission('users-read', {
+                label: 'Read users',
+                permissions: {users: ['read']}
+            });
+        })
         .config(function(activityProvider) {
             activityProvider
-                .activity('users-create', {
-                    permission: {
-                        label: 'Create users',
-                        users: ['create']
-                    }
-                })
-                .activity('users-read', {
-                    permission: {
-                        label: 'Read user details',
-                        users: ['read']
-                    }
-                })
-                .activity('users-update', {
-                    permission: {
-                        label: 'Update users',
-                        users: ['update']
-                    }
-                })
-                .activity('users-delete', {
-                    permission: {
-                        label: 'Delete users',
-                        users: ['delete']
-                    }
-                })
                 .activity('users-list', {
-                    permission: {
-                        label: 'List users',
-                        users: ['read']
-                    },
                     href: '/users/:id?',
                     menuHref: '/users/',
                     label: gettext('Users'),
