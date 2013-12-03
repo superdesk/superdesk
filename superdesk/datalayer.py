@@ -73,6 +73,12 @@ class SuperdeskDataLayer(DataLayer):
         self._send('update', resource, id=id_, updates=updates)
         return self._backend(resource).update(resource, id_, updates)
 
+    def update_all(self, resource, query, updates):
+        datasource = self._datasource(resource)
+        driver = self._backend(resource).driver
+        collection = driver.db[datasource[0]]
+        return collection.update(query, {'$set': updates}, multi=True)
+
     def replace(self, resource, id_, document):
         self._send('update', resource, id=id_, updates=document)
         return self._backend(resource).replace(resource, id_, document)

@@ -278,3 +278,9 @@ def step_impl(context, keys):
 def step_impl(context):
     folder = context.app.config['UPLOAD_FOLDER']
     assert os.path.exists(os.path.join(folder, context.filename))
+
+
+@then('we get role "{role_name}"')
+def step_impl(context, role_name):
+    data = get_json_data(context.response)
+    assert role_name == data['role'], data
