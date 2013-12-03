@@ -59,9 +59,22 @@ define(['angular', 'lodash', './server'], function(angular, _) {
                  * @return {string}
                  */
                 getQuery: function() {
+                    return this.makeQuery(this.params, this.defaults);
+                },
+
+                /**
+                 * Returns query string compiled from given params
+                 *
+                 * if parameter value is same as default one it will remove it from query
+                 *
+                 * @return {string}
+                 */
+                makeQuery: function(params, defaults) {
+                    defaults = defaults || {};
+
                     var parts = [];
-                    _.forEach(this.params, function(val, key) {
-                        if (!angular.equals(this.defaults[key], val)) {
+                    _.forEach(params, function(val, key) {
+                        if (!angular.equals(defaults[key], val)) {
                             if (_.isArray(val) === false) {
                                 val = [val];
                             }
