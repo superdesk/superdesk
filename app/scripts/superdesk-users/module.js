@@ -45,11 +45,19 @@ define([
         .config(function(permissionsProvider) {
             permissionsProvider.permission('users-manage', {
                 label: 'Manage users',
-                permissions: {users: ['write']}
+                permissions: {users: {write: true}}
             });
             permissionsProvider.permission('users-read', {
                 label: 'Read users',
-                permissions: {users: ['read']}
+                permissions: {users: {read: true}}
+            });
+            permissionsProvider.permission('user-roles-manage', {
+                label: 'Manage user roles',
+                permissions: {'user-roles': {write: true}}
+            });
+            permissionsProvider.permission('user-roles-read', {
+                label: 'Read user roles',
+                permissions: {'user-roles': {read: true}}
             });
         })
         .config(function(activityProvider) {

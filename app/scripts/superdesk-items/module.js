@@ -41,19 +41,19 @@ define([
         .config(function(permissionsProvider) {
             permissionsProvider.permission('items-manage', {
                 label: 'Manage ingest items',
-                permissions: {items: ['write']}
+                permissions: {items: {write: true}}
             });
             permissionsProvider.permission('items-read', {
                 label: 'Read ingest items',
-                permissions: {items: ['read']}
+                permissions: {items: {read: true}}
             });
             permissionsProvider.permission('archive-manage', {
                 label: 'Manage archive',
-                permissions: {archive: ['write']}
+                permissions: {archive: {write: true}}
             });
             permissionsProvider.permission('archive-read', {
                 label: 'Read archive',
-                permissions: {archive: ['read']}
+                permissions: {archive: {read: true}}
             });
         })
         .config(function(activityProvider) {

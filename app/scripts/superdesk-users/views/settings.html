@@ -1,5 +1,4 @@
 <div ng-controller="RolesSettingsCtrl">
-
     <a href="" class="btn btn-info pull-right" ng-click="openAddModal()">
         <i class="icon-plus-sign icon-white"></i> <span translate>Add New Role</span>
     </a>
@@ -25,13 +24,8 @@
                     <div class="preview-body">
                         <div class="permission-list">
                             <ul>
-<<<<<<< HEAD
-                                <li ng-repeat="p in permissions">
-                                    <i class="icon-ok" ng-show="isAllowed(selectedRole, p)"></i>{{ p.label }}
-=======
                                 <li ng-repeat="(id, permission) in permissions">
-                                    <input type="checkbox" ng-checked="isAllowed(selectedRole, permission)" ng-model="test"> {{ permission.label }}
->>>>>>> Changed how permissions are registered (not via activity provider anymore).
+                                    <input type="checkbox" ng-checked="isAllowed(selectedRole, permission.permissions)"> {{ permission.label }}
                                 </li>
                             </ul>
                         </div>
@@ -63,13 +57,8 @@
                     <div class="permissions-box">
                         <div class="permission-list">
                             <ul>
-<<<<<<< HEAD
-                                <li ng-repeat="p in editPermissions">
-                                    <input type="checkbox" ng-model="p.selected"> {{ p.label }}
-=======
                                 <li ng-repeat="(id, permission) in editPermissions">
                                     <label for="p_{{id}}"><input type="checkbox" id="p_{{id}}" ng-model="permission.selected"> {{ permission.label }}</label>
->>>>>>> Changed how permissions are registered (not via activity provider anymore).
                                 </li>
                             </ul>
                         </div>

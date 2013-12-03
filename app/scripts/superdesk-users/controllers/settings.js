@@ -6,11 +6,6 @@ define(['angular', 'lodash'], function(angular, _) {
         $scope.permissions = permissions;
 
         em.repository('user_roles').matching().then(function(roles) {
-            /*
-            _.forEach(roles._items, function(item) {
-                em.remove(item);
-            });
-            //*/
             $scope.roles = roles;
         });
 
@@ -70,8 +65,8 @@ define(['angular', 'lodash'], function(angular, _) {
 
         };
 
-        $scope.isAllowed = function (role, permission) {
-            return userPermissions.isRoleAllowed(permission.permissions, role);
+        $scope.isAllowed = function (role, permissions) {
+            return userPermissions.isRoleAllowed(permissions, role);
         };
     }];
 });
