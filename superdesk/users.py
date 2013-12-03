@@ -117,10 +117,11 @@ superdesk.domain('users', {
             'type': 'string'
         },
         'role': {
-            'type': 'string',
+            'type': 'objectid',
             'data_relation': {
                 'resource': 'user_roles',
-                'field': 'name'
+                'field': '_id',
+                'embeddable': True
             }
         }
     },

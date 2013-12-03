@@ -93,7 +93,8 @@ def step_impl(context):
 @given('we have "{role_name}" role')
 def step_impl(context, role_name):
     with context.app.test_request_context():
-        data = json.dumps({'role': role_name})
+        role = context.app.data.find_one('user_roles', name=role_name)
+        data = json.dumps({'role': str(role['_id'])})
     response = patch_current_user(context, data)
     assert_ok(response)
 
@@ -278,9 +279,3 @@ def step_impl(context, keys):
 def step_impl(context):
     folder = context.app.config['UPLOAD_FOLDER']
     assert os.path.exists(os.path.join(folder, context.filename))
-
-
-@then('we get role "{role_name}"')
-def step_impl(context, role_name):
-    data = get_json_data(context.response)
-    assert role_name == data['role'], data

@@ -43,7 +43,7 @@ class SuperdeskTokenAuth(TokenAuth):
             return True
 
         if user.get('role'):
-            role = app.data.find_one('user_roles', name=user['role'])
+            role = app.data.find_one('user_roles', _id=user['role'])
             permissions = role.get('permissions', {})
             perm_method = self.method_map[method.lower()]
             return permissions.get(resource, {}).get(perm_method, False)

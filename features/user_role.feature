@@ -31,10 +31,7 @@ Feature: User Role Resource
 
         When we patch it
             """
-            {"permissions": {
-                "ingest": {"read": 1},
-                "archive": {"write": 1}
-            }}
+            {"permissions": {"ingest": {"read": 1}, "archive": {"write": 1}}}
             """
 
         And we get it
@@ -55,9 +52,7 @@ Feature: User Role Resource
     Scenario: Check permissions on read with role and permissions
         Given "user_roles"
             """
-            [{"name": "Editor", "permissions": {
-                "ingest": {"read": 1}
-            }}]
+            [{"name": "Editor", "permissions": {"ingest": {"read": 1}}}]
             """
         And we have "Editor" role
         When we get "/ingest"
@@ -72,19 +67,3 @@ Feature: User Role Resource
         And we have "Subscriber" role
         When we get user profile
         Then we get response code 200
-
-    @auth
-    Scenario: When renaming user role update relations
-        Given "user_roles"
-            """
-            [{"name": "Subscriber", "permissions": {"user_roles": {"read": 1, "write": 1}}}]
-            """
-
-        And we have "Subscriber" role
-        When we patch it
-            """
-            {"name": "Editor"}
-            """
-
-        And we get user profile
-        Then we get role "Editor"
