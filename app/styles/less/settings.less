@@ -424,6 +424,17 @@
 				border: 0;
 				font-size: 14px;
 				.text-semibold();
+				.inherit-info {
+					margin-left: 10px;
+					font-size: 11px;
+					color: #666;
+					.text-normal();
+					i {
+						color: #787878;
+						font-style: normal;
+						margin-right: 5px;
+					}
+				}
 			}
 		}
 		.preview-body {
@@ -443,6 +454,25 @@
 		li {
 			font-size: 13px;
 			margin-bottom: 10px;
+			margin-left: 7px;
+			i {
+				.opacity(70);
+				vertical-align: middle;
+				margin-top: -3px;
+				margin-left: -19px;
+				margin-right: 5px;
+			}
+			span {
+				color: #787878;
+				font-size: 11px;
+				vertical-align: top;
+				margin-left: 5px;
+			}
+			&.disable {
+				i {
+					.opacity(30);
+				}
+			}
 		}
 	}
 }
