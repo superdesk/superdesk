@@ -99,7 +99,7 @@
                             <td><figure class="avatar" ng-show="userSettings.fields.avatar"><img sd-user-picture data-src="user.picture_url" width="22" height="22"></figure></td>
                             <td class="name_col" ng-show="userSettings.fields.display_name"><a href="#/users/{{ user._id }}" sd-with-params>{{ user.display_name }}</a></td>
                             <td ng-show="userSettings.fields.username">{{ user.username }}</td>
-                            <td ng-show="userSettings.fields.user_role">{{ user.role }}</td>
+                            <td ng-show="userSettings.fields.user_role">{{ roles[user.role].name }}</td>
                             <td class="email_col resp-hide" ng-show="userSettings.fields.email"><a href="">{{ user.email }}</a></td>
                             <td class="resp-hide" ng-show="userSettings.fields.created">{{ user.created | reldate}}</td>
                             <td class="action_col">

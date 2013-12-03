@@ -1,10 +1,12 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', 'userSettings', 'server', 'locationParams', 'users', 'user',
-    function UserListController($scope, userSettings, server, locationParams, users, user) {
+    return ['$scope', 'userSettings', 'server', 'locationParams', 'users', 'roles', 'user',
+    function UserListController($scope, userSettings, server, locationParams, users, roles, user) {
         $scope.user = user;
         $scope.users = users;
+        $scope.roles = roles;
+
         $scope.userSettings = userSettings;
         $scope.locationParams = locationParams;
         $scope.search = locationParams.get('search');

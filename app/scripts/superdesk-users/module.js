@@ -1,5 +1,6 @@
 define([
     'angular',
+    './providers',
     './controllers/list',
     './controllers/detail',
     './controllers/profile',
@@ -14,7 +15,7 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.userSettings', 'superdesk.auth'])
+    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.userSettings', 'superdesk.auth', 'superdesk.users.providers'])
         .service('profileService', require('superdesk-users/services/profile'))
         .controller('RolesSettingsCtrl', require('superdesk-users/controllers/settings'))
         .controller('UserDetailCtrl', require('superdesk-users/controllers/detail'))
@@ -103,7 +104,10 @@ define([
                                 defaultListParams.id = $route.current.params.id;
                                 locationParams.reset(defaultListParams);
                                 return locationParams;
-                            }]
+                            }],
+                        roles: ['rolesLoader', function(rolesLoader) {
+                            return rolesLoader;
+                        }]
                     }
                 })
                 .activity('users-profile', {

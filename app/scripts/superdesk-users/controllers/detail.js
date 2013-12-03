@@ -1,11 +1,10 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', 'upload', 'locationParams', 'em', 'notify', 'gettext',
-    function ($scope, upload, locationParams, em, notify, gettext) {
-
-        em.repository('user_roles').all().then(function(roles) {
-            $scope.userRoles = roles._items;
+    return ['$scope', '$q', 'upload', 'locationParams', 'em', 'notify', 'gettext', 'rolesLoader',
+    function ($scope, $q, upload, locationParams, em, notify, gettext, rolesLoader) {
+        rolesLoader.then(function(roles) {
+            $scope.roles = roles;
         });
 
         $scope.editPicture = function() {
