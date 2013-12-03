@@ -1,5 +1,5 @@
 <div ng-controller="RolesSettingsCtrl">
-    <a href="" class="btn btn-info pull-right" ng-click="add()">
+    <a href="" class="btn btn-info pull-right" ng-click="edit()">
         <i class="icon-plus-sign icon-white"></i> <span translate>Add New Role</span>
     </a>
 
@@ -61,7 +61,8 @@
                         <div class="permission-list">
                             <ul>
                                 <li ng-repeat="p in editPermissions">
-                                    <input type="checkbox" ng-model="p.selected"> {{ p.label }}
+                                    <input type="checkbox" ng-model="p.selected" ng-disabled="p.disable" ng-show="!p.disable">
+                                    <i class="icon-ok" ng-show="p.disable"></i> {{ p.label }} <span ng-show="p.disable">inherited</span>
                                 </li>
                             </ul>
                         </div>

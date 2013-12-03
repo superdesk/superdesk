@@ -12,28 +12,64 @@ define(['angular', 'lodash'], function(angular, _) {
         $scope.preview = function (role) {
             $scope.selectedRole = role;
             $scope.selectedRoleParent = null;
-            if (role.child_of) {
+            if (role && role.child_of) {
                 $scope.selectedRoleParent = $scope.roles._items[_.findKey($scope.roles._items, {_id:role.child_of})];
             }
         };
 
-        //flag for add/editng
         var newRole = false;
 
-        $scope.edit = function (role) {
-            
-            $scope.editRole =  role;
-            $scope.newRole = false;
-            
-            //reset editPermission object
+        var getPermissions = function() {
+
             $scope.editPermissions = _.extend({},permissions);
 
-            //set checked elements
-            _.each($scope.editPermissions,function(p,key){
-                if ($scope.isAllowed($scope.editRole, p)) {
-                    p.selected = true;
-                }
-            });
+            var isRole = $scope.editRole !== null && $scope.editRole!==undefined && !_.isEmpty($scope.editRole);
+
+            if (isRole && $scope.editRole.child_of) {
+                //if we have parent, check what fields are set (and unchangeable)
+                var parent = $scope.roles._items[_.findKey($scope.roles._items, {_id:$scope.editRole.child_of})];
+                _.each($scope.editPermissions,function(p,key){
+                    if ($scope.isAllowed(parent, p)) {
+                        p.disable = true;
+                    }
+                    else {
+                        p.disable = false;
+                    }
+                });
+            } else {
+                _.each($scope.editPermissions,function(p,key){
+                    p.disable = false;
+                });
+            }
+
+            //check what fields we have checked (set by role itself)
+            if (isRole && $scope.editRole.permissions) {
+                _.each($scope.editPermissions,function(p,key){
+                    if ($scope.isAllowed($scope.editRole, p)) {
+                        p.selected = true;
+                    }
+                    else {
+                        p.selected = false;
+                    }
+                });
+            }
+        };
+
+        $scope.$watch('editRole.child_of',function(oldVal,newVal){
+            getPermissions();
+        });
+
+        $scope.edit = function(role) {
+
+            if (role === undefined && role === null) { //new one
+                $scope.editRole = {};
+                newRole = true;
+            }
+            else { //editing
+                $scope.editRole = role;
+                $scope.newRole = false;
+            }
+
         };
 
         $scope.cancel = function() {
@@ -41,11 +77,6 @@ define(['angular', 'lodash'], function(angular, _) {
             $scope.editPermissions = null;
         };
 
-        $scope.add = function() {
-            $scope.editRole = {};
-            newRole = true;
-            $scope.editPermissions = _.extend({},permissions);
-        };
 
         $scope.save = function() {
 
@@ -61,14 +92,12 @@ define(['angular', 'lodash'], function(angular, _) {
                 em.create('user_roles', $scope.editRole).then(function(role) {
                     _.extend(role, $scope.editRole);
                     $scope.roles._items.unshift(role);
-                    
                     $scope.preview(role);
                     $scope.cancel();
                 });
             }
             else {
-                em.update($scope.editRole, $scope.editRole).then(function(role) {//?
-
+                em.update($scope.editRole, $scope.editRole).then(function(role) {
                     $scope.preview(role);
                     $scope.cancel();
                 });
@@ -83,19 +112,24 @@ define(['angular', 'lodash'], function(angular, _) {
             }
 
             var allowed = true;
-
-            _.each(permission.requires, function(methods, resource) {
-                _.each(methods, function(val,method) {
-                    if (role.permissions[resource] !== undefined) {
-                        allowed = allowed && role.permissions[resource][method];
-                    }
-                    else {
-                        allowed = false;
-                    }
+            if (permission) {
+                _.each(permission.requires, function(methods, resource) {
+                    _.each(methods, function(val,method) {
+                        if (role.permissions[resource] !== undefined) {
+                            allowed = allowed && role.permissions[resource][method];
+                        }
+                        else {
+                            allowed = false;
+                        }
+                    });
                 });
-            });
-
-            return allowed;
+                return allowed;
+            }
+            else {
+                return false;
+            }
+            
+            
         };
     }];
 });
