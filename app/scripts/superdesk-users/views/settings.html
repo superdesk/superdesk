@@ -61,7 +61,7 @@
                         <div class="permission-list">
                             <ul>
                                 <li ng-repeat="p in editPermissions">
-                                    <input type="checkbox" ng-model="p.selected" ng-disabled="p.disable" ng-show="!p.disable">
+                                    <div sd-check ng-model="p.selected" ng-show="!p.disable"></div>
                                     <i class="icon-ok" ng-show="p.disable"></i> {{ p.label }} <span ng-show="p.disable">inherited</span>
                                 </li>
                             </ul>

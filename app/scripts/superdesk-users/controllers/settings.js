@@ -9,19 +9,13 @@ define(['angular', 'lodash'], function(angular, _) {
             $scope.roles = roles;
         });
 
-        $scope.preview = function (role) {
-            $scope.selectedRole = role;
-            $scope.selectedRoleParent = null;
-            if (role && role.child_of) {
-                $scope.selectedRoleParent = $scope.roles._items[_.findKey($scope.roles._items, {_id:role.child_of})];
-            }
-        };
-
-        var newRole = false;
 
         var getPermissions = function() {
 
             $scope.editPermissions = _.extend({},permissions);
+            _.each($scope.editPermissions,function(p,key){
+                p.selected  = false;
+            });
 
             var isRole = $scope.editRole !== null && $scope.editRole!==undefined && !_.isEmpty($scope.editRole);
 
@@ -41,15 +35,12 @@ define(['angular', 'lodash'], function(angular, _) {
                     p.disable = false;
                 });
             }
-
+            
             //check what fields we have checked (set by role itself)
             if (isRole && $scope.editRole.permissions) {
                 _.each($scope.editPermissions,function(p,key){
                     if ($scope.isAllowed($scope.editRole, p)) {
                         p.selected = true;
-                    }
-                    else {
-                        p.selected = false;
                     }
                 });
             }
@@ -59,15 +50,26 @@ define(['angular', 'lodash'], function(angular, _) {
             getPermissions();
         });
 
-        $scope.edit = function(role) {
+        $scope.preview = function (role) {
+            $scope.selectedRole = role;
+            $scope.selectedRoleParent = null;
+            if (role && role.child_of) {
+                $scope.selectedRoleParent = $scope.roles._items[_.findKey($scope.roles._items, {_id:role.child_of})];
+            }
+        };
 
-            if (role === undefined && role === null) { //new one
+        var newRole = false;
+        $scope.editRole = null;
+
+        $scope.edit = function(role) {
+            
+            if (role === undefined || role === null) { //new one
                 $scope.editRole = {};
                 newRole = true;
             }
             else { //editing
                 $scope.editRole = role;
-                $scope.newRole = false;
+                newRole = false;
             }
 
         };
@@ -97,7 +99,7 @@ define(['angular', 'lodash'], function(angular, _) {
                 });
             }
             else {
-                em.update($scope.editRole, $scope.editRole).then(function(role) {
+                em.update($scope.editRole).then(function(role) {
                     $scope.preview(role);
                     $scope.cancel();
                 });
