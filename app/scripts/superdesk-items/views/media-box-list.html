@@ -14,19 +14,21 @@
         </div>
         <div class="list-field" ng-show="ui.compact"><span class="urgency-label">{{ item.urgency }}</span></div>
 
-        <h5 class="list-field"  ng-click="preview(item)">
-            <div class="item-provider"  ng-show="ui.compact">{{ item.provider }}</div>
-            <div class="main-title">
-                <div class="status-label" 
-                     ng-class="{'label-canceled' : item.pubstatus=='canceled'}"
-                     ng-show="item.pubstatus && item.pubstatus!='usable'">
-                     {{ item.pubstatus | translate }}
+        <a href="#/ingest/{{ item._id }}" sd-with-params>
+            <h5 class="list-field">
+                <div class="item-provider"  ng-show="ui.compact">{{ item.provider }}</div>
+                <div class="main-title">
+                    <div class="status-label" 
+                         ng-class="{'label-canceled' : item.pubstatus=='canceled'}"
+                         ng-show="item.pubstatus && item.pubstatus!='usable'">
+                         {{ item.pubstatus | translate }}
+                    </div>
+                    <div ng-show="item.headline">{{ item.headline }}</div>
+                    <div ng-show="!item.headline">{{ item.type }}</div>
                 </div>
-                <div ng-show="item.headline">{{ item.headline }}</div>
-                <div ng-show="!item.headline">{{ item.type }}</div>
-            </div>
-            <div class="meta-data-field" ng-show="!ui.compact"><div class="item-provider">{{ item.provider }}</div><span ng-show="item.subject">//</span> {{ item.subject | mergeWords}}</div>
-        </h5>
+                <div class="meta-data-field" ng-show="!ui.compact"><div class="item-provider">{{ item.provider }}</div><span ng-show="item.subject">//</span> {{ item.subject | mergeWords}}</div>
+            </h5>
+        </a>
 
         <div class="item-right list-field">
             <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>
