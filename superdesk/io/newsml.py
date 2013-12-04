@@ -17,7 +17,7 @@ class Parser():
     def parse_message(self, tree):
         """Parse NewsMessage."""
         items = []
-        self.root = tree.getroottree().getroot()
+        self.root = tree
         for item_set in tree.findall(self.qname('itemSet')):
             for item_tree in item_set:
                 item = self.parse_item(item_tree)
@@ -152,7 +152,7 @@ class Parser():
         elements = []
         for elem in body:
             if elem.text:
-                tag = etree.QName(elem.tag).localname
+                tag = elem.tag.rsplit('}')[1]
                 elements.append('<%s>%s</%s>' % (tag, elem.text, tag))
 
         content = {}
@@ -171,7 +171,7 @@ class Parser():
 
     def qname(self, tag, ns=None):
         if ns is None:
-            ns = self.root
+            ns = self.root.tag.rsplit('}')[0].lstrip('{')
         return str(etree.QName(ns, tag))
 
     def datetime(self, string):

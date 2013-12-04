@@ -2,10 +2,10 @@
 
 import ssl
 import requests
-import xml.etree.ElementTree as etree
-from requests.packages.urllib3.poolmanager import PoolManager
+import superdesk
 from datetime import timedelta
-from flask import current_app as app
+from requests.packages.urllib3.poolmanager import PoolManager
+from superdesk.etree import etree
 from superdesk.utc import utcnow
 
 
@@ -14,19 +14,22 @@ def is_valid_token(token):
     return token.get('created') + ttl >= utcnow()
 
 
-def get_token(provider):
-    token = provider.get('token')
-    if token and is_valid_token(token):
-        return token.get('token')
-
-    token = {
-        'token': fetch_token_from_api(provider),
-        'created': utcnow(),
-    }
-
+def update_provider_token(provider):
+    """Update provider token."""
+    token = {}
+    token['token'] = fetch_token_from_api(provider)
+    token['created'] = utcnow()
     provider['token'] = token
-    app.data.update('ingest_providers', provider.get('_id'), {'token': token})
-    return token.get('token')
+    superdesk.app.data.update('ingest_providers', provider['_id'], {'token': token})
+    return token['token']
+
+
+def get_token(provider, update=False):
+    """Get auth token for given provider instance and save it in db."""
+    token = provider.get('token')
+    if token and (is_valid_token(token) or not update):
+        return token.get('token')
+    return update_provider_token(provider) if update else ''
 
 
 def fetch_token_from_api(provider):
@@ -39,7 +42,7 @@ def fetch_token_from_api(provider):
         'password': provider.get('config', {}).get('password', ''),
     }
 
-    response = session.get(url, params=payload)
+    response = session.get(url, params=payload, stream=False, verify=False)
     tree = etree.fromstring(response.text)
     return tree.text
 
@@ -50,7 +53,6 @@ class SSLAdapter(requests.adapters.HTTPAdapter):
 
     def init_poolmanager(self, connections, maxsize, **kwargs):
         """Init poolmanager to use ssl version v1."""
-
         self.poolmanager = PoolManager(
             num_pools=connections,
             maxsize=maxsize,

@@ -30,7 +30,12 @@ class ReutersUpdateService(object):
         self.parser = Parser()
 
     def get_token(self):
-        return get_token(self.provider)
+        """Get reuters token once for an update run."""
+        try:
+            return self.token
+        except AttributeError:
+            self.token = get_token(self.provider, update=True)
+            return self.token
 
     def update(self, provider):
         """Service update call."""
@@ -120,18 +125,16 @@ def on_read_ingest(data, docs):
     provider = data.find_one('ingest_providers', type=PROVIDER)
     if not provider:
         return
-
     for doc in docs:
-        if doc.get('ingest_provider') and str(doc['ingest_provider']) == str(provider['_id']):
+        if str(doc.get('ingest_provider')) == str(provider['_id']):
             for i, rendition in doc.get('renditions', {}).items():
-                rendition['href'] = '%s?auth_token=%s' % (rendition.get('href'), get_token(provider))
+                rendition['href'] = '%s?auth_token=%s' % (rendition['href'], get_token(provider))
 
 
 def on_create_archive(data, docs):
     provider = data.find_one('ingest_providers', type=PROVIDER)
     if not provider:
         return
-
     for doc in docs:
         if doc.get('ingest_provider') and str(doc['ingest_provider']) == str(provider['_id']):
             for i, rendition in doc.get('renditions', {}).items():
@@ -142,5 +145,4 @@ def on_create_archive(data, docs):
 
 superdesk.connect('read:ingest', on_read_ingest)
 superdesk.connect('create:archive', on_create_archive)
-
 superdesk.provider(PROVIDER, ReutersUpdateService())

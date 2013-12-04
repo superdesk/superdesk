@@ -31,7 +31,7 @@ def update_provider(provider):
                 ingested_count += 1
                 app.data.insert('ingest', [item], ttl='7d')
 
-        app.data.update('ingest_providers', str(provider.get('_id')), {
+        app.data.update('ingest_providers', provider['_id'], {
             'updated': start,
             'ingested_count': ingested_count
         })
@@ -70,14 +70,6 @@ class AddProvider(superdesk.Command):
 superdesk.command('ingest:update', UpdateIngest())
 superdesk.command('ingest:provider', AddProvider())
 
-superdesk.domain('feeds', {
-    'schema': {
-        'provider': {
-            'type': 'string'
-        }
-    }
-})
-
 # load providers now to have available types for the schema
 import superdesk.io.reuters
 import superdesk.io.aap
@@ -96,12 +88,13 @@ schema = {
         'type': 'dict'
     },
     'ingested_count': {
-        'type': 'integer',
-        'readonly': True
+        'type': 'integer'
     },
     'accepted_count': {
-        'type': 'integer',
-        'readonly': True
+        'type': 'integer'
+    },
+    'token': {
+        'type': 'dict'
     }
 }
 

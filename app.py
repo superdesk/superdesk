@@ -3,6 +3,7 @@ import os
 import eve
 import superdesk
 import settings
+import superdesk
 from superdesk import signals
 from eve.io.mongo import MongoJSONEncoder
 from superdesk.auth import SuperdeskTokenAuth
@@ -39,6 +40,7 @@ def get_app(config=None):
     for blueprint in superdesk.BLUEPRINTS:
         app.register_blueprint(blueprint, **blueprint.kwargs)
 
+    superdesk.app = app
     return app
 
 

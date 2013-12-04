@@ -1,2 +1,2 @@
 
-from lxml import etree  # noqa
+import xml.etree.ElementTree as etree  # noqa
