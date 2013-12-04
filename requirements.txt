@@ -4,6 +4,7 @@ Flask==0.10.1
 Flask-PyMongo==0.3.0
 Flask-Script==0.6.3
 Flask-Bootstrap==3.0.0.1
+gunicorn==18.0
 Jinja2==2.7.1
 MarkupSafe==0.18
 Werkzeug==0.9.4
@@ -12,6 +13,7 @@ blinker==1.3
 itsdangerous==0.23
 lxml==3.2.4
 nose==1.3.0
+newrelic==2.6.0.5
 parse==1.6.3
 pyelasticsearch==0.6.1
 pymongo==2.6.3
