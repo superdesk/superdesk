@@ -66,6 +66,9 @@ define(['angular', 'lodash'], function(angular, _) {
         };
 
         $scope.isAllowed = function (role, permissions) {
+            if (!role) {
+                return false;
+            }
             return userPermissions.isRoleAllowed(permissions, role);
         };
     }];

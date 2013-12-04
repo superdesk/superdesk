@@ -4,12 +4,26 @@ define(['angular'], function(angular) {
     angular.module('superdesk.services.userPermissions', [])
         .service('userPermissions', ['$rootScope', 'em', function($rootScope, em) {
 
-            this.isRoleAllowed = function(permissions, role) {
-                if (!role) {
-                    // TODO: should use current user's role
+            this.isUserAllowed = function(permissions, user) {
+                var self = this;
+
+                if (!user) {
+                    user = $rootScope.currentUser;
+                }
+                if (user.role) {
+                    if (typeof user.role === 'string') {
+                        return em.repository('user_roles').find(user.role).then(function(role) {
+                             return self.isRoleAllowed(permissions, role);
+                        });
+                    } else {
+                        return this.isRoleAllowed(permissions, user.role);
+                    }
+                } else {
                     return false;
                 }
+            };
 
+            this.isRoleAllowed = function(permissions, role) {
                 var allowed = true;
                 _.forEach(permissions, function(methods, resource) {
                     _.forEach(methods, function(status, method) {

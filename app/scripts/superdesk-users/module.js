@@ -53,11 +53,11 @@ define([
             });
             permissionsProvider.permission('user-roles-manage', {
                 label: 'Manage user roles',
-                permissions: {'user-roles': {write: true}}
+                permissions: {'user_roles': {write: true}}
             });
             permissionsProvider.permission('user-roles-read', {
                 label: 'Read user roles',
-                permissions: {'user-roles': {read: true}}
+                permissions: {'user_roles': {read: true}}
             });
         })
         .config(function(activityProvider) {
