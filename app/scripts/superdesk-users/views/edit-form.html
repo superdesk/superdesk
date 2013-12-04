@@ -15,8 +15,8 @@
     <div class="profile-info user-profile-edit">
         <div class="header-info">
             <h2>{{ user.display_name || user.username }}</h2>
-            <ul class="user-roles" ng-show="user.role">
-                <li>{{ roles[user.role].name }}</li>
+            <ul class="user-roles" ng-show="tempRole">
+                <li>{{ tempRole.name }}</li>
             </ul>
         </div>
         <div class="details-info">
@@ -66,7 +66,7 @@
 
                 <div sd-info-item>
                   <label for="user_role" translate>user role</label>
-                  <select ng-model="user.role" ng-options="role._id as role.name for (_id, role) in roles"></select>
+                  <div sd-select class="info-value" ng-model="tempRole" options="role._id as role.name for role in adjustedRoles"></div> 
                 </div>
             </div>
         </div>
