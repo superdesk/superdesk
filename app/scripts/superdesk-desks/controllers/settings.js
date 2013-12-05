@@ -103,5 +103,27 @@ define(['angular', 'lodash'], function(angular, _) {
 				}
 			];
 
+			$scope.edit = function(desk) {
+				if (desk === null || desk === undefined) {
+					$scope.editDesk = {
+						name : null,
+						members : [],
+						cards : [],
+						taskstatuses : []
+					};
+				}
+				else {
+					$scope.editDesk = desk;
+				}
+			};
+
+			$scope.cancel = function() {
+				$scope.editDesk = null;
+			};
+
+			$scope.save = function() {
+				$scope.desks.push($scope.editDesk);
+				$scope.cancel();
+			};
 		}];
 });

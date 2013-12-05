@@ -17,7 +17,7 @@
 					<div class="dropdown dropdown-simple pull-right">
                       <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
                       <ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
-                        <li><a href="" ng-click=""><i class="icon-pencil"></i> {{'Edit Desk' | translate}}</a></li>
+                        <li><a href="" ng-click="edit(desk)"><i class="icon-pencil"></i> {{'Edit Desk' | translate}}</a></li>
                         <li><a href="" ng-click=""><i class="icon-trash"></i> {{'Delete Desk' | translate }}</a></li>
                       </ul>
                   	</div>
@@ -26,8 +26,8 @@
 				<div class="desk-config-tab" ng-class="{'member-tab': !desk.viewCards, 'board-tab': desk.viewCards}">
 					<div class="desk-subheader subnav">
 						<ul class="nav nav-pills pull-left">
-					      <li ng-class="{active: !desk.viewCards}"><a href="" ng-click="desk.viewCards = false">{{'Desk members' | translate}}</a></li>
-					      <li ng-class="{active: desk.viewCards}"><a href="" ng-click="desk.viewCards = true">{{'Desk boards' | translate}}</a></li>
+					      <li ng-class="{active: !desk.viewCards}"><a href="" ng-click="desk.viewCards = false" translate>Desk members</a></li>
+					      <li ng-class="{active: desk.viewCards}"><a href="" ng-click="desk.viewCards = true" translate>Desk boards</a></li>
 					    </ul>
 					    <a class="btn btn-info pull-right" ng-show="!desk.viewCards"><span class="icon-plus-sign icon-white"></span> {{ 'Add Member' | translate}}</a>
 					    <a class="btn btn-info pull-right" ng-show="desk.viewCards"><span class="icon-plus-sign icon-white"></span> {{ 'Add Board' | translate}}</a>
@@ -44,13 +44,13 @@
 		                      </div>
 
 		                    </li>
-                            <li ng-show="!desk.members.length">{{'There are no members yet' | translate }}</li>
+                            <li ng-show="!desk.members.length" translate>There are no members yet</li>
 		                  </ul>
 					</div>
 
 					<div class="desk-config-tab-content" ng-show="desk.viewCards">
 						<ul class="board-table plain-table">
-		                    <li class="boardcolor-{{ card.color }}" ng-repeat="card in desk.cards" data-index="{{ $index }}" >
+		                    <li class="boardcolor-{{ card.color }}" ng-repeat="card in desk.cards">
 		                    	
 		                    	<span class="board-name">{{ card.name }}</span>
 
@@ -75,7 +75,7 @@
 
 		                      <span class="board-limit">Limit:<input type="text" placeholder="none" class="no-bg" ng-model="card.limit"></span>
 		                    </li>
-                            <li ng-show="!desk.cards.length">{{'There are no cards yet'|translate}}</li>
+                            <li ng-show="!desk.cards.length" translate>There are no cards yet</li>
 		                </ul>
 					</div>
 
@@ -83,6 +83,41 @@
 			</div>
 		</div>
     </div>
+
+
+    <div sd-modal-view data-model="editDesk">
+
+    
+	<div class="modal-header"> 
+		<a href="" class="close" ng-click="cancel()">×</a>
+		<h3 ng-show="!editDesk._id" translate>Add New Desk</h3>
+		<h3 ng-show="editDesk._id" translate>Edit Desk</h3>
+	</div>
+
+	
+
+	<div class="modal-body modal-body-min">
+		<form name="deskForm">
+
+			<div class="popup-subnav subnav">
+				<ul class="nav nav-pills pull-left">
+					<li class="active"><a href="" translate>General</a></li>
+					<li ng-show><a href="" translate>Desk members</a></li>
+					<li ng-show><a href="" translate>Desk boards</a></li>
+				</ul>
+			</div>
+		
+			<input type="text" placeholder="{{'Enter Desk name' | translate}}" class="fullwidth-input" ng-model="editDesk.name" required> 
+		</form>
+	</div>
+
+
+	<div class="modal-footer"> 
+	  	<a href="" class="btn" ng-click="cancel()" translate>Cancel</a> 
+	  	<button class="btn btn-primary" ng-click="save()" ng-disabled="!deskForm.$valid" translate>Save</button>
+	  </div>
+
+</div>
 
 
 </div>
