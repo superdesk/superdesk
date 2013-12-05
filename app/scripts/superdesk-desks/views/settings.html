@@ -1,8 +1,87 @@
 <div ng-controller="DesksSettingsCtrl">
+	<button class="btn btn-info pull-right" ng-click="edit()">
+        <i class="icon-plus-sign icon-white"></i> <span class="ng-scope">Add New Desk</span>
+    </button>
 
-    <h2 translate>Desks</h4>
+    <h2 translate>Desk management</h4>
     <div class="settings-tab-content ">
-        
+        <div class="config-page-container">
+
+			<div class="desk-config" ng-repeat="desk in desks">
+				<div class="desk-header">
+					<div class="toggle-desk">
+						<i class="icon-chevron-down toggle-desk-close"></i>
+						<i class="icon-chevron-right toggle-desk-open"></i>
+					</div>
+					{{ desk.name }}
+					<div class="dropdown dropdown-simple pull-right">
+                      <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+                      <ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
+                        <li><a href="" ng-click=""><i class="icon-pencil"></i> {{'Edit Desk' | translate}}</a></li>
+                        <li><a href="" ng-click=""><i class="icon-trash"></i> {{'Delete Desk' | translate }}</a></li>
+                      </ul>
+                  	</div>
+				</div>
+
+				<div class="desk-config-tab" ng-class="{'member-tab': !desk.viewCards, 'board-tab': desk.viewCards}">
+					<div class="desk-subheader subnav">
+						<ul class="nav nav-pills pull-left">
+					      <li ng-class="{active: !desk.viewCards}"><a href="" ng-click="desk.viewCards = false">{{'Desk members' | translate}}</a></li>
+					      <li ng-class="{active: desk.viewCards}"><a href="" ng-click="desk.viewCards = true">{{'Desk boards' | translate}}</a></li>
+					    </ul>
+					    <a class="btn btn-info pull-right" ng-show="!desk.viewCards"><span class="icon-plus-sign icon-white"></span> {{ 'Add Member' | translate}}</a>
+					    <a class="btn btn-info pull-right" ng-show="desk.viewCards"><span class="icon-plus-sign icon-white"></span> {{ 'Add Board' | translate}}</a>
+					</div>
+
+					<div class="desk-config-tab-content" ng-show="!desk.viewCards">
+						<ul class="plain-table user-list">
+		                    <li ng-repeat="user in desk.members">
+                              <figure class="user-pic"><img src="images/avatar_default.png"></figure>
+		                      <span class="user-name" >{{ user.name }}</span>
+		                      
+		                      <div class="table-buttons">
+		                        <a><i class="icon-remove"></i></a>
+		                      </div>
+
+		                    </li>
+                            <li ng-show="!desk.members.length">{{'There are no members yet' | translate }}</li>
+		                  </ul>
+					</div>
+
+					<div class="desk-config-tab-content" ng-show="desk.viewCards">
+						<ul class="board-table plain-table">
+		                    <li class="boardcolor-{{ card.color }}" ng-repeat="card in desk.cards" data-index="{{ $index }}" >
+		                    	
+		                    	<span class="board-name">{{ card.name }}</span>
+
+								<div class="dropdown dropdown-simple board-status" style="min-width:100px">
+									<a href="" class="dropdown-toggle" data-toggle="dropdown">
+										<span ng-repeat="status in card.statuses">
+											{{ status.key }}<span ng-show="!$last">, </span>
+										</span> 
+										<b class="caret"></b>
+									</a>
+									<ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
+									    <li ng-repeat="status in desk.statuses"><label><input type="checkbox"> {{ status.key }}</label></li>
+									</ul>
+								</div>
+
+		                       	<div class="dropdown dropdown-simple">
+		                        	<a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
+		                        	<ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
+		                        		<li><a href="" ng-click=""><i class="icon-trash"></i> {{'Delete' | translate}}</a></li>
+		                        	</ul>
+		                      	</div>
+
+		                      <span class="board-limit">Limit:<input type="text" placeholder="none" class="no-bg" ng-model="card.limit"></span>
+		                    </li>
+                            <li ng-show="!desk.cards.length">{{'There are no cards yet'|translate}}</li>
+		                </ul>
+					</div>
+
+				</div>
+			</div>
+		</div>
     </div>
 
 

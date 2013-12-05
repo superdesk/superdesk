@@ -1087,15 +1087,7 @@
    ============================ */
 
 .config-page-container {
-  width:800px;
-  position:relative;
-  z-index:1;
-  padding: @main-content-padding;
-  padding-top:@subnav-height + @main-content-padding;
-  padding-bottom: 170px; /*fix for last menu height */
-  min-height: 100%;
-  overflow: hidden;
-  .box-sizing(border-box);
+  padding-top:30px;
 }
 
 .config-page-title {
@@ -1112,33 +1104,35 @@
       .board-name {
         display: inline-block;
         line-height: 22px;
-        font-weight: bold;
+        .text-semibold();
       }
       .board-status {
         float: none;
         margin-left: 10px;
         .dropdown-toggle {
           color: #999;
+          .caret {
+            margin-top: 8px;
+          }
         }
       }
-      .board-limit, .board-limit-editable {
+      .board-limit{
         line-height: 22px;
         float: right;
         margin-right: 10px;
         width: 70px;
-        &:before {
-          content: "Limit: ";
-          color: #999;
-          margin-top: 2px;
+        color: #999;
+        margin-top: 2px;
+        input {
+          border: 0;
+          padding: 2px;
+          height: 22px;
+          width: 30px;
+          margin-left: 5px;
+          vertical-align: top;
         }
       }
-      .board-limit-editable {
-        width: 90px;
-         input {
-          width: 50px !important;
-          margin-top: -3px;
-        }
-      }
+
       &:before {
         position: absolute;
         width: 5px;
@@ -1163,11 +1157,10 @@
 
 .desk-config {
   .box-sizing(border-box);
-  width: 560px;
   border-top: 5px solid #959595;
   position: relative;
   .border-radius(3px 3px 0 0);
-  margin-bottom: 25px;
+  margin-bottom: 40px;
   min-height: 25px;
 
   .toggle-desk {
@@ -1226,9 +1219,6 @@
       }
   }
 
-  .desk-config-tab {
-    display: none;
-  }
 
   .member-tab {
     display: block;

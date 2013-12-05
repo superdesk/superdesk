@@ -932,14 +932,33 @@
 			height: 24px;
 			width: 80%;
 		}
+		.table-buttons {
+			float: right;
+			margin-left: 10px;	
+			visibility: hidden;
+			width: 48px;
+			text-align: right;
+			a {
+				width: 14px;
+				height: 14px;
+				margin-right: 2px;
+				padding: 3px;
+				display: inline-block;
+				vertical-align: middle;
+				.border-radius(3px);
+				&:hover {
+					background-color: #b0c9f8;
+				}
+			}
+		}
+		&:hover .table-buttons {
+			visibility: visible;
+		}
 	}
 
 	.dropdown-simple {
 		display: inline-block;
 		float: right;
-		a .caret {
-			margin-top: 8px;
-		}
 	}
 
 }
@@ -1002,90 +1021,6 @@
 	}
 }
 
-/* SF TOOLTIP */
-
-.sf-tooltip {
-  position:fixed;
-  z-index:9998;
-  top:0;
-  left:0;
-  display:none;
-  padding: 5px;
-  .sf-tooltip-arrow {
-  	width: 0; 
-	height: 0; 
-	position: absolute;
-	top:50%;
-	left:0;
-	margin: 0px;
-	margin-top: -5px;
-	border:0;
-	border-top: 5px solid transparent;
-	border-bottom: 5px solid transparent; 
-	border-right:5px solid #202020;
-  }
-  &.sf-tooltip-left {
-  	.sf-tooltip-arrow {
-  		top:50%;
-  		left:auto;
-  		right:0;
-  		margin: 0px;
-		margin-top: -5px;
-		border:0;
-  		border-top: 5px solid transparent;
-		border-bottom: 5px solid transparent; 
-		border-left:5px solid #202020;
-  	}
-  }
-  &.sf-tooltip-right {
-  	.sf-tooltip-arrow {
-  		top:50%;
-  		left:0;
-  		margin: 0px;
-		margin-top: -5px;
-		border:0;
-  		border-top: 5px solid transparent;
-		border-bottom: 5px solid transparent; 
-		border-right:5px solid #202020;
-  	}
-  }
-  &.sf-tooltip-top {
-  	.sf-tooltip-arrow {
-  		left:50%;
-  		top:auto;
-  		bottom:0;
-  		margin: 0px;
-		margin-left: -5px;
-  		border:0;
-  		border-left: 5px solid transparent;
-		border-right: 5px solid transparent; 
-		border-top:5px solid #202020; 
-  	}
-  }
-  &.sf-tooltip-bottom {
-  	.sf-tooltip-arrow {
-  		left:50%;
-  		top: 0;
-  		margin: 0px;
-		margin-left: -5px;
-		border:0;
-  		border-left: 5px solid transparent;
-		border-right: 5px solid transparent; 
-		border-bottom:5px solid #202020;
-  	}
-  }
-  .sf-tooltip-content {
-  	min-width: 35px;
-	max-width: 170px;
-	background: #202020;
-	color:#fff;
-	font-size:10px;
-	text-align: center;
-	padding:3px 8px;
-	.border-radius(2px);
-  }
-}
-
 /* list group */
 .list-group {
 	.box-sizing(border-box);
@@ -1111,6 +1046,32 @@
 			text-decoration: none;
 			color:#444;
 		}
+	}
+}
+
+/* User list */
+
+
+.user-list {
+	li {
+		.user-pic {
+          width: 22px;
+          height: 22px;
+          overflow: hidden;
+          margin-right: 15px;
+          float: left;
+          img {
+            width: 100%;
+            height: auto;
+          }
+        }
+        .user-name {
+        	.text-semibold();
+        	color: #0088d5;
+        	font-size: 13px;
+        	line-height: 22px;
+        	display: inline-block;
+        }
 	}
 }
 
@@ -1284,6 +1245,7 @@
 	}
 }
 
+/* scroll shadow */
 
 .scroll-shadow {
 	.box-shadow(0px 10px 8px -8px #a0a0a0);
