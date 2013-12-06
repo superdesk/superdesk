@@ -1,5 +1,5 @@
 <div ng-controller="RolesSettingsCtrl">
-    <a href="" class="btn btn-info pull-right" ng-click="openAddModal()">
+    <a href="" class="btn btn-info pull-right" ng-click="edit()">
         <i class="icon-plus-sign icon-white"></i> <span translate>Add New Role</span>
     </a>
 
@@ -8,8 +8,8 @@
         <div class="splitter">
             <div class="column-left">
                 <ul class="user-roles-list" sd-user-roles sd-roles="roles">
-                    <li ng-repeat="role in roles._items | filter:{child_of: undefined}" ng-click="preview(role)" ng-class="{active: selectedRole == role}">
-                        <div sd-roles-treeview data-role="role" data-roles="roles._items"></div>
+                    <li ng-repeat="role in roles._items"  ng-class="{active: selectedRole == role}">
+                        <div class="leaf" ng-click="preview(role)">{{role.name}}</div>
                         <a class="edit-btn" ng-click="edit(role)"><i class="icon-pencil"></i></a>
                     </li>
                     <li ng-show="!roles._items.length" class="alert alert-info" translate>No roles created yet.</li>
@@ -18,14 +18,17 @@
             <div class="column-right">
                 <div class="preview-box" ng-show="selectedRole">
                     <div class="preview-header">
-                        <div class="title">{{ selectedRole.name }}</div>
+                        <div class="title">
+                            {{ selectedRole.name }}
+                            <span class="inherit-info" ng-show="selectedRoleParent"><i>&lt;</i>{{ selectedRoleParent.name }}</span>
+                        </div>
                         <i class="close-preview pull-right icon-close-small" ng-click="preview()"></i>
                     </div>
                     <div class="preview-body">
                         <div class="permission-list">
                             <ul>
-                                <li ng-repeat="p in permissions">
-                                    <i class="icon-ok" ng-show="isAllowed(selectedRole, p)"></i>{{ p.label }}
+                                <li ng-repeat="p in permissions" ng-class="{'disable' : isAllowed(selectedRoleParent,p)}">
+                                    <i class="icon-ok" ng-show="isAllowed(selectedRole, p) || isAllowed(selectedRoleParent,p)"></i>{{ p.label }} <span ng-show="isAllowed(selectedRoleParent,p)">({{selectedRoleParent.name}})</span>
                                 </li>
                             </ul>
                         </div>
@@ -36,7 +39,7 @@
     </div>
 
     <div sd-modal-view data-model="editRole">
-        <div class="modal-header"> <a href="" class="close" ng-click="cancelAddModal()">&times;</a>
+        <div class="modal-header"> <a href="" class="close" ng-click="cancel()">&times;</a>
             <h3 translate>Add New Role</h3>
         </div>
 
@@ -58,7 +61,8 @@
                         <div class="permission-list">
                             <ul>
                                 <li ng-repeat="p in editPermissions">
-                                    <input type="checkbox" ng-model="p.selected"> {{ p.label }}
+                                    <div sd-check ng-model="p.selected" ng-show="!p.disable"></div>
+                                    <i class="icon-ok" ng-show="p.disable"></i> {{ p.label }} <span ng-show="p.disable">inherited</span>
                                 </li>
                             </ul>
                         </div>
@@ -68,7 +72,7 @@
         </div>
 
         <div class="modal-footer">
-            <button class="btn btn-default" ng-click="cancelAddModal()" translate>Cancel</button>
+            <button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
             <button class="btn btn-primary" ng-click="save()" ng-disabled="!roleForm.$valid" translate>Save</button>
         </div>
     </div>

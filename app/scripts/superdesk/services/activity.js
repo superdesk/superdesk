@@ -57,10 +57,6 @@ define([
                 activity: function(id, item) {
                     activities[id] = item;
 
-                    if (item.permissions !== undefined) {
-                        permissionsProvider.permission(id, item.permissions);
-                    }
-
                     if (item.menu !== false) {
                         menuProvider.menu(id, {
                             label: item.menuLabel || item.label,
@@ -69,7 +65,7 @@ define([
                             parent: item.parent
                         });
                     }
-                    var route = _.omit(_.extend({}, item), ['priority', 'href', 'menuLabel', 'menuHref', 'permissions']);
+                    var route = _.omit(_.extend({}, item), ['priority', 'href', 'menuLabel', 'menuHref']);
                     $routeProvider.when(item.href, route);
 
                     return this;

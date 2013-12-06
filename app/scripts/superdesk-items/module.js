@@ -38,6 +38,24 @@ define([
                 templateUrl: 'scripts/superdesk-items/views/reutersConfig.html'
             }
         })
+        .config(function(permissionsProvider) {
+            permissionsProvider.permission('items-manage', {
+                label: 'Manage ingest items',
+                permissions: {items: {write: true}}
+            });
+            permissionsProvider.permission('items-read', {
+                label: 'Read ingest items',
+                permissions: {items: {read: true}}
+            });
+            permissionsProvider.permission('archive-manage', {
+                label: 'Manage archive',
+                permissions: {archive: {write: true}}
+            });
+            permissionsProvider.permission('archive-read', {
+                label: 'Read archive',
+                permissions: {archive: {read: true}}
+            });
+        })
         .config(function(activityProvider) {
             /**
              * Resolve ingest/archive list
@@ -66,12 +84,6 @@ define([
 
             activityProvider
                 .activity('ingest', {
-                    permissions: {
-                        label: 'Read ingest',
-                        requires: {
-                            items: {get: 1}
-                        }
-                    },
                     href: '/ingest/:id?',
                     menuHref: '/ingest/',
                     label: gettext('Ingest'),
@@ -81,12 +93,6 @@ define([
                     priority: -300
                 })
                 .activity('archive', {
-                    permissions: {
-                        label: 'Read archive',
-                        requires: {
-                            archive: {get: 1}
-                        }
-                    },
                     href: '/archive/',
                     label: gettext('Archive'),
                     priority: -200,
@@ -94,21 +100,7 @@ define([
                     controller: require('superdesk-items/controllers/archive'),
                     resolve: resolve('archive'),
                 })
-                .activity('ingest-archive', {
-                    permissions: {
-                        label: gettext('Archive item'),
-                        requires: {
-                            archive: {post: 1}
-                        }
-                    }
-                })
                 .activity('archive-detail', {
-                    permissions: {
-                        label: 'Read archive details',
-                        requires: {
-                            archive: {get: 1}
-                        }
-                    },
                     href: '/archive/:id',
                     label: gettext('Archive'),
                     menu: false,
