@@ -2,6 +2,7 @@
 static/*
 media/*
 upload/*
+.coverage
 
 # env
 *.egg*
