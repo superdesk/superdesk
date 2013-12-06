@@ -28,7 +28,7 @@ define(function() {
                 var params = {
                     where: {user: user._id},
                     sort: ['created', -1],
-                    embedded: {user: 1},
+                    embedded: {user: 1}
                 };
 
                 if (maxResults) {

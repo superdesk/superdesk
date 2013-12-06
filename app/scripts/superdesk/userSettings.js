@@ -18,10 +18,7 @@ define(['angular'], function(angular) {
         factory('userSettings', ['storage', function(storage) {
             var UserSettingsContainer = function(key, defaultSettings) {
                 this._key = key + ':userSettings';
-                var settings = _.extend({}, defaultSettings);
-                for (var i in settings) {
-                    this[i] = settings[i];
-                }
+                _.extend(this, defaultSettings);
             };
             UserSettingsContainer.prototype.save = function() {
                 var settings = {};

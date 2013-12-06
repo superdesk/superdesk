@@ -11,7 +11,7 @@ define([
     './directives/sdInfoItem',
     './directives/sdUserEdit',
     './directives/sdUserDetailsPane',
-    './services/profile',
+    './services/profile'
 ], function(angular) {
     'use strict';
 

@@ -107,7 +107,7 @@ define([
         var modules = [
             'superdesk.directives',
             'superdesk.services',
-            'superdesk.filters',
+            'superdesk.filters'
         ];
 
         var apps = [

@@ -1,7 +1,7 @@
 define([
     'jquery',
     'angular',
-    'file-upload/jquery.fileupload-angular',
+    'file-upload/jquery.fileupload-angular'
 ], function($, angular) {
     'use strict';
 

@@ -212,7 +212,7 @@ define([
                         blockWidth : 320,
                         blockHeight : 250,
                         mergeSpaceLeft : 52,     //30 + 2 + 20
-                        mergeSpaceBottom : 99,   //30 + 2 + 20 + 47
+                        mergeSpaceBottom : 99   //30 + 2 + 20 + 47
                     };
 
                     var width = graphSettings.blockWidth * horizBlocks + graphSettings.mergeSpaceLeft*(horizBlocks-1),

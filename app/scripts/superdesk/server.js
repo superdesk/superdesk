@@ -237,7 +237,7 @@ define([
              * @param {Object} item
              * @return {Object} promise
              */
-            delete: function(item) {
+            'delete': function(item) {
                 return this._http('delete',
                     this._wrapUrl(item._links.self.href),
                     {},

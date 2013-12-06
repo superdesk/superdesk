@@ -186,8 +186,8 @@ define(['angular', 'lodash', './server'], function(angular, _) {
              * @param {Object} item
              * @return {Object}
              */
-            this.remove = function(item) {
-                return server.delete(item);
+            this['delete'] = function(item) {
+                return server['delete'](item);
             };
 
             /**

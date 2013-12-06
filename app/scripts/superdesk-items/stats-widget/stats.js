@@ -10,7 +10,7 @@ define([
                 .widget('ingeststats', {
                     name: 'Ingest Stats',
                     multiple: true,
-                    class: 'ingest-stats',
+                    'class': 'ingest-stats',
                     icon: 'signal',
                     max_sizex: 1,
                     max_sizey: 1,

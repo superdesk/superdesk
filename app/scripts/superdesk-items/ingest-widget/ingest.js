@@ -10,7 +10,7 @@ define([
                 .widget('ingest', {
                     name: 'Ingest',
                     multiple: true,
-                    class: 'ingest',
+                    'class': 'ingest',
                     icon: 'ingest',
                     max_sizex: 2,
                     max_sizey: 2,

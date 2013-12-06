@@ -163,7 +163,7 @@ define([
                 .widget('worldClock', {
                     name: 'World Clock',
                     multiple: true,
-                    class: 'world-clock',
+                    'class': 'world-clock',
                     icon: 'time',
                     max_sizex: 2,
                     max_sizey: 1,

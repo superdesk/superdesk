@@ -11,8 +11,8 @@ define(['angular'], function(angular) {
         $scope.locationParams = locationParams;
         $scope.search = locationParams.get('search');
 
-        $scope.delete = function(user) {
-            server.delete(user).then(function() {
+        $scope['delete'] = function(user) {
+            server['delete'](user).then(function() {
                 locationParams.reload();
             });
         };

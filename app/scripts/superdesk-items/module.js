@@ -67,7 +67,7 @@ define([
 
                         if ('provider' in $route.current.params) {
                             where = {
-                                provider: $route.current.params.provider,
+                                provider: $route.current.params.provider
                             };
                         }
 
@@ -98,7 +98,7 @@ define([
                     priority: -200,
                     templateUrl: 'scripts/superdesk-items/views/archive.html',
                     controller: require('superdesk-items/controllers/archive'),
-                    resolve: resolve('archive'),
+                    resolve: resolve('archive')
                 })
                 .activity('archive-detail', {
                     href: '/archive/:id',
