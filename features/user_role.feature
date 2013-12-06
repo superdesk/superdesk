@@ -67,3 +67,18 @@ Feature: User Role Resource
         And we have "Subscriber" role
         When we get user profile
         Then we get response code 200
+
+    @auth
+    Scenario: Inherit permissions from extended roles
+        Given "user_roles"
+            """
+            [
+                {"name": "Jurnalist", "permissions": {"ingest": {"read": 1}}},
+                {"name": "Editor"}
+            ]
+            """
+
+        And role "Editor" extends "Jurnalist"
+        And we have "Editor" role
+        When we get "/ingest"
+        Then we get response code 200

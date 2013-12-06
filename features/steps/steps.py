@@ -99,6 +99,14 @@ def step_impl(context, role_name):
     assert_ok(response)
 
 
+@given('role "{extending_name}" extends "{extended_name}"')
+def step_impl(context, extending_name, extended_name):
+    with context.app.test_request_context():
+        extended = context.app.data.find_one('user_roles', name=extended_name)
+        extending = context.app.data.find_one('user_roles', name=extending_name)
+        context.app.data.update('user_roles', extending['_id'], {'extends': extended['_id']})
+
+
 @when('we post to auth')
 def step_impl(context):
     data = context.text
