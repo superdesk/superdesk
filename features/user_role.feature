@@ -16,7 +16,7 @@ Feature: User Role Resource
 
         When we post to "/user_roles"
             """
-            {"name": "Editor", "child_of": "528de7b03b80a13eefc5e610"}
+            {"name": "Editor", "extends": "528de7b03b80a13eefc5e610"}
             """
 
         And we get "/user_roles"

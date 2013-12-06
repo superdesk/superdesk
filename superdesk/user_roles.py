@@ -8,7 +8,7 @@ superdesk.domain('user_roles', {
             'unique': True,
             'required': True,
         },
-        'child_of': {
+        'extends': {
             'type': 'objectid'
         },
         'permissions': {
