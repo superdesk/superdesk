@@ -13,7 +13,7 @@ define(['angular'], function(angular) {
                 if (user.role) {
                     if (typeof user.role === 'string') {
                         return em.repository('user_roles').find(user.role).then(function(role) {
-                             return self.isRoleAllowed(permissions, role);
+                            return self.isRoleAllowed(permissions, role);
                         });
                     } else {
                         return this.isRoleAllowed(permissions, user.role);
