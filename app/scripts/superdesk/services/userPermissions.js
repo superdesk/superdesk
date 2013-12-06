@@ -31,6 +31,8 @@ define(['angular'], function(angular) {
                     });
                 });
 
+                allowed = allowed || false;
+
                 return allowed;
             };
 
