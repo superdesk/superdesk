@@ -7,7 +7,7 @@
     <div class="settings-tab-content ">
         <div class="config-page-container">
 
-			<div class="desk-config" ng-repeat="desk in desks">
+			<div class="desk-config" ng-repeat="desk in desks._items">
 				<div class="desk-header">
 					<div class="toggle-desk">
 						<i class="icon-chevron-down toggle-desk-close"></i>
@@ -18,7 +18,7 @@
                       <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
                       <ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
                         <li><a href="" ng-click="edit(desk)"><i class="icon-pencil"></i> {{'Edit Desk' | translate}}</a></li>
-                        <li><a href="" ng-click=""><i class="icon-trash"></i> {{'Delete Desk' | translate }}</a></li>
+                        <li><a href="" ng-click="remove(desk)"><i class="icon-trash"></i> {{'Delete Desk' | translate }}</a></li>
                       </ul>
                   	</div>
 				</div>
@@ -114,7 +114,7 @@
 
 	<div class="modal-footer"> 
 	  	<a href="" class="btn" ng-click="cancel()" translate>Cancel</a> 
-	  	<button class="btn btn-primary" ng-click="save()" ng-disabled="!deskForm.$valid" translate>Save</button>
+	  	<button class="btn btn-primary" ng-click="save(editDesk)" ng-disabled="!deskForm.$valid" translate>Save</button>
 	  </div>
 
 </div>

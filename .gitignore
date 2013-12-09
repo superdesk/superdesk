@@ -5,3 +5,4 @@ dist
 app/scripts/bower_components
 app/styles/css/bootstrap.css
 po/
+Thumbs.db

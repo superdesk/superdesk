@@ -1,129 +1,52 @@
 define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
-    return ['$scope',
-        function($scope) {
+    return ['$scope', 'em', 'gettext', 'notify',
+        function($scope,em, gettext, notify) {
 
-			$scope.desks = [
-				{
-					name : 'Culture',
-					members : [
-						{
-							name : 'Paco González'
-						},
-						{
-							name : 'Matina Stevis'
-						},
-						{
-							name : 'April O\'Neil'
-						}
-					],
-					cards : [
-						{
-							name : 'To Do',
-							limit : 50,
-							color : 1,
-							statuses : [
-								{
-									key : 'created'
-								},
-								{
-									key : 'just added'
-								},
-								{
-									key : 'breaking'
-								}
-							]
-						},
-						{
-							name : 'In progress',
-							limit : 10,
-							color : 2,
-							statuses : [
-								{
-									key : 'in progress'
-								},
-								{
-									key : 'writing'
-								}
-							]
-						},
-						{
-							name : 'In progress',
-							limit : 300,
-							color : 3,
-							statuses : [
-								{
-									key : 'done'
-								},
-								{
-									key : 'finished'
-								}
-							]
-						}
-					],
-					statuses : [
-						{
-							key : 'created'
-						},
-						{
-							key : 'just added'
-						},
-						{
-							key : 'breaking'
-						},
-						{
-							key : 'in progress'
-						},
-						{
-							key : 'writing'
-						},
-						{
-							key : 'finished'
-						},
-						{
-							key : 'in review'
-						},
-						{
-							key : 'done'
-						}
-					]
-				},
-				{
-					name : 'Politics',
-					members : [],
-					cards : [],
-					taskstatuses : []
-				},
-				{
-					name : 'Sport',
-					members : [],
-					cards : [],
-					taskstatuses : []
-				}
-			];
+			var _desk = null;
+			$scope.editDesk = null;
+
+			em.getRepository('desks').matching().then(function(desks){
+				$scope.desks = desks;
+			});
 
 			$scope.edit = function(desk) {
-				if (desk === null || desk === undefined) {
-					$scope.editDesk = {
-						name : null,
-						members : [],
-						cards : [],
-						taskstatuses : []
-					};
-				}
-				else {
-					$scope.editDesk = desk;
-				}
+				$scope.editDesk = _.extend({},desk);
+				_desk = desk;
 			};
 
 			$scope.cancel = function() {
 				$scope.editDesk = null;
 			};
 
-			$scope.save = function() {
-				$scope.desks.push($scope.editDesk);
-				$scope.cancel();
+			$scope.save = function(desk) {
+				if (_desk === null || _desk === undefined) {
+					em.save('desks', desk).then(function(result) {
+						_.extend(desk,result);
+						notify.success(gettext('New Desk created.'), 3000);
+						$scope.desks._items.unshift(desk);
+						$scope.cancel();
+	                });
+				}
+				else {
+					em.update(desk).then(function(result) {
+						_.extend(_.find($scope.desks._items, _desk),result);
+						notify.success(gettext('Desk settings updated.'), 3000);
+						$scope.cancel();
+	                });
+				}
+				
 			};
+
+			$scope.remove = function(desk) {
+                /*
+                em.remove(desk).then(function() {
+                    _.remove($scope.desks._items, desk);
+                    notify.success(gettext('Desk deleted.'), 3000);
+                });
+				*/
+            };
+
 		}];
 });
