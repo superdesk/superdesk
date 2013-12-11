@@ -6,7 +6,7 @@ define([
     './resources',
     './controllers/main',
     './controllers/settings',
-    './directives',
+    './directives'
 ], function($, angular) {
     'use strict';
 

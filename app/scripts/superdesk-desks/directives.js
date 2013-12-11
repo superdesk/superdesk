@@ -2,7 +2,7 @@ define([
     'lodash',
     'jquery',
     'angular',
-    'moment',
+    'moment'
 ], function(_, $, angular, moment) {
     'use strict';
 

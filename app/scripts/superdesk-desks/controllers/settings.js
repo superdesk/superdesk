@@ -21,32 +21,27 @@ define(['angular', 'lodash'], function(angular, _) {
 			};
 
 			$scope.save = function(desk) {
-				if (_desk === null || _desk === undefined) {
+				if (!!_desk) {
 					em.save('desks', desk).then(function(result) {
-						_.extend(desk,result);
+						_.extend(desk, result);
 						notify.success(gettext('New Desk created.'), 3000);
 						$scope.desks._items.unshift(desk);
 						$scope.cancel();
 	                });
-				}
-				else {
+				} else {
 					em.update(desk).then(function(result) {
-						_.extend(_.find($scope.desks._items, _desk),result);
+						_.extend(_desk, result);
 						notify.success(gettext('Desk settings updated.'), 3000);
 						$scope.cancel();
 	                });
 				}
-				
 			};
 
 			$scope.remove = function(desk) {
-                /*
                 em.remove(desk).then(function() {
                     _.remove($scope.desks._items, desk);
                     notify.success(gettext('Desk deleted.'), 3000);
                 });
-				*/
             };
-
 		}];
 });

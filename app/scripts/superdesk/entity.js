@@ -213,6 +213,16 @@ define(['angular', 'lodash', './server'], function(angular, _) {
             };
 
             /**
+             * Remove given item from repository
+             *
+             * @param {Object} item
+             * @return {Object}
+             */
+            this.remove = function(item) {
+                return this['delete'](item);
+            };
+
+            /**
              * Save item
              *
              * @param {string} resource
