@@ -12,7 +12,7 @@ define(['angular', 'lodash'], function(angular, _) {
 			});
 
 			$scope.edit = function(desk) {
-				$scope.editDesk = _.extend({},desk);
+				$scope.editDesk = _.extend({}, desk);
 				_desk = desk;
 			};
 
@@ -21,7 +21,7 @@ define(['angular', 'lodash'], function(angular, _) {
 			};
 
 			$scope.save = function(desk) {
-				if (!!_desk) {
+				if (!_desk) {
 					em.save('desks', desk).then(function(result) {
 						_.extend(desk, result);
 						notify.success(gettext('New Desk created.'), 3000);
