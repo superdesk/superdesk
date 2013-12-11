@@ -116,7 +116,8 @@ define([
             'items',
             'users',
             'settings',
-            'dashboard'
+            'dashboard',
+            'desks'
         ];
 
         var deps = [];
