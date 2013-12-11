@@ -1,5 +1,5 @@
 <div class="subnav subnav-fixed">
-    <input type="text" name="searchbar" class="searchbar-container" placeholder="{{ 'Search'|translate }}" ng-model="search" ng-change="locationParams.set('search', search)" sd-debounce sd-auto-focus>
+    <input type="text"class="searchbar searchbar-large" placeholder="{{ 'Search'|translate }}" ng-model="search" ng-change="locationParams.set('search', search)" sd-debounce sd-auto-focus>
     <a class="btn btn-medium btn-info pull-right" href="#/users/new" sd-with-params><span class="medium-icon-add"></span> {{ 'Add new user'|translate }}</a>
 </div>
 
@@ -61,29 +61,29 @@
                                     <a class="dropdown-toggle" data-toggle="dropdown" href="">
                                         <i class="icon-switches"></i> <span class="caret"></span>
                                     </a>
-                                    <ul class="dropdown-menu sf-dropdown-simple pull-right">
+                                    <ul class="dropdown-menu sf-dropdown-simple sf-right">
                                         <li>
-                                            <input sd-check id="f-avatar" ng-click="userSettings.save()" ng-model="userSettings.fields.avatar">
+                                            <input sd-check id="f-avatar" ng-click="userSettings.save()" ng-model="userSettings.fields.avatar" class="pull-left">
                                             <label for="f-avatar" translate>Avatar</label>
                                         </li>
                                         <li>
-                                            <input sd-check id="f-name" ng-click="userSettings.save()" ng-model="userSettings.fields.display_name">
+                                            <input sd-check id="f-name" ng-click="userSettings.save()" ng-model="userSettings.fields.display_name" class="pull-left">
                                             <label for="f-name" translate>Name</label>
                                         </li>
                                         <li>
-                                            <input sd-check id="f-role" ng-click="userSettings.save()" ng-model="userSettings.fields.user_role">
+                                            <input sd-check id="f-role" ng-click="userSettings.save()" ng-model="userSettings.fields.user_role" class="pull-left">
                                             <label for="f-role" translate>User Role</label>
                                         </li>
                                         <li>
-                                            <input sd-check id="f-username" ng-click="userSettings.save()" ng-model="userSettings.fields.username">
+                                            <input sd-check id="f-username" ng-click="userSettings.save()" ng-model="userSettings.fields.username" class="pull-left">
                                             <label for="f-username" translate>Username</label>
                                         </li>
                                         <li>
-                                            <input sd-check id="f-email" ng-click="userSettings.save()" ng-model="userSettings.fields.email">
+                                            <input sd-check id="f-email" ng-click="userSettings.save()" ng-model="userSettings.fields.email" class="pull-left">
                                             <label for="f-email" translate>Email</label>
                                         </li>
                                         <li>
-                                            <input sd-check id="f-created" ng-click="userSettings.save()" ng-model="userSettings.fields.created">
+                                            <input sd-check id="f-created" ng-click="userSettings.save()" ng-model="userSettings.fields.created" class="pull-left">
                                             <label for="f-created" translate>Member Since</label>
                                         </li>
                                     </ul>
@@ -105,7 +105,7 @@
                             <td class="action_col">
                                 <div class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
-                                    <ul class="dropdown-menu sf-dropdown-simple pull-right">
+                                    <ul class="dropdown-menu sf-dropdown-simple sf-right">
                                         <li><a href="#"><i class="icon-eye-open"></i> {{ 'View details'|translate }}</a></li>
                                         <li><a href="#"><i class="icon-pencil"></i> {{ 'Edit details'|translate }}</a></li>
                                         <li><a href="#"><i class="icon-ban-circle"></i> {{ 'Permissions'|translate }}</a></li>

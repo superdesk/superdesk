@@ -19,9 +19,8 @@ define([
                     df: '@'
                 },
                 link: function(scope, element, attrs) {
-                    element.attr('name', 'searchbar');
                     element.attr('autofocus', 'autofocus');
-                    element.addClass('searchbar-container');
+                    element.addClass('searchbar searchbar-large');
                     element.val($routeParams.q || '');
 
                     element.change(function() {

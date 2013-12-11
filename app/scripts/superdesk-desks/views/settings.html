@@ -14,9 +14,9 @@
 						<i class="icon-chevron-right toggle-desk-open"></i>
 					</div>
 					{{ desk.name }}
-					<div class="dropdown dropdown-simple pull-right">
+					<div class="dropdown pull-right">
                       <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
-                      <ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
+                      <ul class="dropdown-menu sf-dropdown-simple">
                         <li><a href="" ng-click="edit(desk)"><i class="icon-pencil"></i> {{'Edit Desk' | translate}}</a></li>
                         <li><a href="" ng-click="remove(desk)"><i class="icon-trash"></i> {{'Delete Desk' | translate }}</a></li>
                       </ul>
@@ -54,21 +54,21 @@
 		                    	
 		                    	<span class="board-name">{{ card.name }}</span>
 
-								<div class="dropdown dropdown-simple board-status" style="min-width:100px">
+								<div class="dropdown board-status" style="min-width:100px">
 									<a href="" class="dropdown-toggle" data-toggle="dropdown">
 										<span ng-repeat="status in card.statuses">
 											{{ status.key }}<span ng-show="!$last">, </span>
 										</span> 
 										<b class="caret"></b>
 									</a>
-									<ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
+									<ul class="dropdown-menu  sf-dropdown-simple sf-right">
 									    <li ng-repeat="status in desk.statuses"><label><input type="checkbox"> {{ status.key }}</label></li>
 									</ul>
 								</div>
 
-		                       	<div class="dropdown dropdown-simple">
+		                       	<div class="dropdown">
 		                        	<a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
-		                        	<ul class="dropdown-menu bottom-up pull-right sf-dropdown-simple">
+		                        	<ul class="dropdown-menu sf-dropdown-simple sf-right">
 		                        		<li><a href="" ng-click=""><i class="icon-trash"></i> {{'Delete' | translate}}</a></li>
 		                        	</ul>
 		                      	</div>
