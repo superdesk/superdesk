@@ -8,6 +8,9 @@ superdesk.domain('desks', {
             'unique': True,
             'required': True,
         },
+        'members': {
+            'type': 'list'
+        }
     },
     'datasource': {
         'default_sort': [('created', -1)]
