@@ -5,6 +5,8 @@ define(['angular'], function(angular){
     function($scope, settings, locationParams, tab) {
         $scope.selected = null;
         $scope.settings = settings;
+
+        $scope.tab = tab; 
         
         if (tab) {
             if (settings[tab]) {
