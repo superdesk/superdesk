@@ -1,13 +1,13 @@
 define([
     'angular',
     'superdesk/entity',
-    'superdesk/services/userPermissions',
+    'superdesk/services/permissionsService',
     'angular-mocks'
 ], function(angular) {
     'use strict';
 
-    describe('UserPermissions', function() {
-        var rootScope, httpBackend, em, userPermissions;
+    describe('PermissionsService', function() {
+        var rootScope, httpBackend, em, permissionsService;
 
         var testPermissions = {
             testResource_1: {read: true},
@@ -17,32 +17,32 @@ define([
 
         beforeEach(function() {
             module('superdesk.entity');
-            module('superdesk.services.userPermissions');
-            inject(function($rootScope, $httpBackend, _em_, _userPermissions_) {
+            module('superdesk.services.permissionsService');
+            inject(function($rootScope, $httpBackend, _em_, _permissionsService_) {
                 rootScope = $rootScope;
                 httpBackend = $httpBackend;
                 em = _em_;
-                userPermissions = _userPermissions_;
+                permissionsService = _permissionsService_;
             });
         });
 
         it('can succeed checking role', function() {
-            var result = userPermissions.isRoleAllowed(testPermissions, {
+            permissionsService.isRoleAllowed(testPermissions, {
                 permissions: testPermissions
+            }).then(function(result) {
+                expect(result).toBe(true);
             });
-
-            expect(result).toBe(true);
         });
 
         it('can fail checking role', function() {
-            var result = userPermissions.isRoleAllowed(testPermissions, {
+            permissionsService.isRoleAllowed(testPermissions, {
                 permissions: {
                     testResource_1: {read: true},
                     testResource_3: {write: true}
                 }
+            }).then(function(result) {
+                expect(result).toBe(false);
             });
-
-            expect(result).toBe(false);
         });
 
         it('can succeed checking user', function() {
@@ -52,7 +52,7 @@ define([
                 .expectGET('http://localhost/user_roles/testRoleId')
                 .respond(200, {permissions: testPermissions});
 
-            userPermissions.isUserAllowed(testPermissions, {
+            permissionsService.isUserAllowed(testPermissions, {
                 role: 'testRoleId'
             }).then(function(isAllowed) {
                 result = isAllowed;
@@ -70,7 +70,7 @@ define([
                 .expectGET('http://localhost/user_roles/testRoleId')
                 .respond(200, {permissions: {testResource_1: {read: true}}});
 
-            userPermissions.isUserAllowed(testPermissions, {
+            permissionsService.isUserAllowed(testPermissions, {
                 role: 'testRoleId'
             }).then(function(isAllowed) {
                 result = isAllowed;
@@ -90,7 +90,7 @@ define([
                 .expectGET('http://localhost/user_roles/testRoleId')
                 .respond(200, {permissions: testPermissions});
 
-            userPermissions.isUserAllowed(testPermissions, false).then(function(isAllowed) {
+            permissionsService.isUserAllowed(testPermissions, false).then(function(isAllowed) {
                 result = isAllowed;
             });
 
@@ -108,7 +108,7 @@ define([
                 .expectGET('http://localhost/user_roles/testRoleId')
                 .respond(200, {permissions: {testResource_1: {read: true}}});
 
-            userPermissions.isUserAllowed(testPermissions, false).then(function(isAllowed) {
+            permissionsService.isUserAllowed(testPermissions, false).then(function(isAllowed) {
                 result = isAllowed;
             });
 
