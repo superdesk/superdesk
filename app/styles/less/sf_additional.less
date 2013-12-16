@@ -950,6 +950,25 @@
 
 }
 
+.sf-scroller {
+	&::-webkit-scrollbar {
+      border-left: 9px solid #fff;
+      border-right: 1px solid #fff;
+      width: 13px;
+      background: #fff;
+      &:hover {
+        background: #e8e8e8;
+      }
+    }
+    &::-webkit-scrollbar-thumb {
+      border-left: 8px solid #fff;
+      background: #bbb;
+      &:hover {
+        background: #787878;
+      }
+    }
+}
+
 .small-plain {
 	max-height: 150px;
 	overflow-y: scroll; 

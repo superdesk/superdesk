@@ -1090,13 +1090,6 @@
   padding-top:30px;
 }
 
-.config-page-title {
-  font-weight: normal;
-  font-size: 18px;
-  color: #676767;
-}
-
-
 .board-table {
     &.plain-table > li {
       padding-left: 20px;
@@ -1265,6 +1258,230 @@
   &.boardcolor-8 { background-color: @board8; }
   &.boardcolor-9 { background-color: @board9; }
   &.boardcolor-10 { background-color: @board10; }
+}
+
+
+/* Desk members popup */
+.desk-members {
+position: relative;
+height: 500px !important;
+overflow:hidden;
+
+   .members-screen1{
+      position: absolute;
+      .transition(all ease .4s);
+      top: 0; bottom: 0; left:0; right: 0;
+   }
+  .members-screen2 {
+      position: absolute;
+      .transition(all ease .4s);
+      top: 0; bottom: 0; left:560px; right: -560px;
+  }
+
+  .members-screen1.screen2 {
+    left:-560px; right: 560px;
+  }
+  .members-screen2.screen2 {
+    left:0; right: 0;
+  }
+
+
+
+    .members {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height:72px;
+      padding: 10px;
+      .box-sizing(border-box);
+      border-bottom: 1px solid #f0f0f0;
+      overflow: hidden;
+      .member-avatars {
+        height: 52px;
+        overflow: hidden;
+        li {
+          position: relative;
+          float: left;
+          margin-right:10px;
+          width: 52px;
+          height: 52px;
+          overflow: hidden;
+        }
+        figure {
+          border: 1px solid #e0e0e0;
+          position: absolute;
+          .transition(all ease .2s);
+          left: 0px;
+          img {
+            width: 50px;
+            height: 50px;
+          }
+        }
+        .member-name {
+          .transition(all ease .2s);
+          position: absolute;
+          bottom: 0;
+          left: 52px;
+          width: 44px;
+          padding: 3px;
+          top: 0;
+          border: 1px solid #e0e0e0;
+          background-color: #3798b4;
+          font-size: 11px;
+          color: #fff; 
+          text-shadow: 1px 1px 2px #0a678c;
+          line-height: 15px;
+          overflow: hidden;
+          word-break : break-all;
+          cursor: default;
+        }
+
+        .delete {
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          width: 14px;
+          height: 14px;
+          padding: 2px;
+          &:hover {
+            background: #237e98;
+            cursor: pointer;
+          }
+        }
+
+        li:hover {
+          figure {
+            left: -52px;
+          }
+          .member-name {
+            left: 0;
+          }
+        }
+      }
+      .no-member {
+        line-height: 52px;
+        text-align: center;
+        font-size: 12px;
+        color: #bbb;
+        width: auto !important;
+        float: none !important;
+      }
+      .view-all {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: -40px;
+        width: 40px;
+        line-height: 72px;
+        position: absolute;
+        #gradient > .horizontal(#ffffff, #f0f0f0);
+        text-align: center;
+        .transition(all ease 0.2s);
+        i {
+          .opacity(50);
+        }
+        &:hover {
+          cursor: pointer;
+          background: #f0f0f0;
+          i {
+            .opacity(70);
+          }
+        }
+        &.show {
+          right: 0px;
+        }
+      }
+    }
+
+    .members-screen2 {
+      .members {
+       height: auto;
+       bottom:0;
+        .member-avatars {
+          margin-top: 50px;
+          height: auto;
+          li {
+            margin: 0 20px 20px 0;
+            width: 82px;
+            height: 82px;
+            figure {
+              img {
+                width: 80px;
+                height: 80px;
+              }
+            }
+
+            .member-name {
+              left:82px;
+              right: -82px;
+              width: 68px;
+              padding: 6px;
+              font-size: 12px;
+            }
+
+            .delete {
+              padding: 6px;
+            }
+
+            &:hover {
+              figure {
+                left: -82px;
+                right: 82px;
+              }
+              .member-name {
+                left: 0;
+              }
+            }
+
+          } 
+        }  
+
+        .view-all {
+          left: 0;
+          bottom: auto;
+          height: 40px;
+          right: auto;
+          line-height: 40px;
+        }
+
+      }
+    }
+
+    .search-members {
+      position: absolute;
+      top: 72px; left: 0; right: 0;
+      height:50px;
+      border-bottom: 1px solid #e8e8e8;
+      .box-shadow(0 2px 7px 0 #f0f0f0);
+      .box-sizing(border-box);
+      padding: 10px 20px;
+      .searchbar {
+        width: 250px;
+      }
+
+    }
+    .all-users {
+      position: absolute;
+      top: 122px; left: 0; right: 3px; bottom:0;
+      overflow: auto;
+      padding: 15px;
+      .user-list li {
+          .btn {
+            margin-top: 1px;
+            i {
+              margin-top: 0;
+            }
+          }
+          .user-pic {
+            width: 25px;
+            height: 25px;
+          }
+      }
+      .plain-table>li {
+        height: 25px;
+        padding: 5px;
+      }
+    }
+
 }
 
 

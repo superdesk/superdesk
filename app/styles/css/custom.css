@@ -321,39 +321,7 @@ section.main-section {
 	z-index:1001;
 }
 		
-/*
-====================================================
-  Webkit scroll
-====================================================
-*/
 
-.scroller {
-	overflow: auto;
-	overflow-x:hidden;
-	margin-bottom:1px;
-	position:absolute;
-	top:0;
-	left:0;
-	right:0;
-	bottom:0;
-}
-
-.main .scroller {
-	padding: 20px;
-}
-
-
-.scroller::-webkit-scrollbar, ::-webkit-scrollbar {
-	width: 8px;
-	height: 8px;
-	margin: -1px 0;
-}
-.scroller::-webkit-scrollbar-thumb, ::-webkit-scrollbar-thumb {
-	background: #949494;
-}
-.scroller::-webkit-scrollbar-thumb:hover, ::-webkit-scrollbar-thumb:hover {
-	background: #6e6e6e;
-}
 
 
 /*

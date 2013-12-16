@@ -16,7 +16,7 @@
 					{{ desk.name }}
 					<div class="dropdown pull-right">
                       <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <b class="caret"></b></a>
-                      <ul class="dropdown-menu sf-dropdown-simple">
+                      <ul class="dropdown-menu sf-dropdown-simple sf-right">
                         <li><a href="" ng-click="edit(desk)"><i class="icon-pencil"></i> {{'Edit Desk' | translate}}</a></li>
                         <li><a href="" ng-click="remove(desk)"><i class="icon-trash"></i> {{'Delete Desk' | translate }}</a></li>
                       </ul>
@@ -29,20 +29,16 @@
 					      <li ng-class="{active: !desk.viewCards}"><a href="" ng-click="desk.viewCards = false" translate>Desk members</a></li>
 					      <li ng-class="{active: desk.viewCards}"><a href="" ng-click="desk.viewCards = true" translate>Desk boards</a></li>
 					    </ul>
-					    <a class="btn btn-info pull-right" ng-show="!desk.viewCards"><span class="icon-plus-sign icon-white"></span> {{ 'Add Member' | translate}}</a>
-					    <a class="btn btn-info pull-right" ng-show="desk.viewCards"><span class="icon-plus-sign icon-white"></span> {{ 'Add Board' | translate}}</a>
+					    <a class="btn btn-info pull-right" ng-show="!desk.viewCards" ng-click="openMembers(desk)">{{ 'Manage Members' | translate}}</a>
+					    <a class="btn btn-info pull-right" ng-show="desk.viewCards" ng-click="addBoards(desk)">{{ 'Manage Boards' | translate}}</a>
 					</div>
 
 					<div class="desk-config-tab-content" ng-show="!desk.viewCards">
 						<ul class="plain-table user-list">
-		                    <li ng-repeat="user in desk.members">
-                              <figure class="user-pic"><img src="images/avatar_default.png"></figure>
-		                      <span class="user-name" >{{ user.name }}</span>
+		                    <li ng-repeat="user in getMembers(desk)">
+                              <figure class="user-pic"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
+		                      <span class="user-name" >{{ user.first_name }} {{ user.last_name }}</span>
 		                      
-		                      <div class="table-buttons">
-		                        <a><i class="icon-remove"></i></a>
-		                      </div>
-
 		                    </li>
                             <li ng-show="!desk.members.length" translate>There are no members yet</li>
 		                  </ul>
@@ -61,7 +57,7 @@
 										</span> 
 										<b class="caret"></b>
 									</a>
-									<ul class="dropdown-menu  sf-dropdown-simple sf-right">
+									<ul class="dropdown-menu sf-dropdown-simple sf-right">
 									    <li ng-repeat="status in desk.statuses"><label><input type="checkbox"> {{ status.key }}</label></li>
 									</ul>
 								</div>
@@ -86,38 +82,100 @@
 
 
     <div sd-modal-view data-model="editDesk">
-
     
-	<div class="modal-header"> 
-		<a href="" class="close" ng-click="cancel()">×</a>
-		<h3 ng-show="!editDesk._id" translate>Add New Desk</h3>
-		<h3 ng-show="editDesk._id" translate>Edit Desk</h3>
+		<div class="modal-header"> 
+			<a href="" class="close" ng-click="cancel()">×</a>
+			<h3 ng-show="!editDesk._id" translate>Add New Desk</h3>
+			<h3 ng-show="editDesk._id" translate>Edit Desk</h3>
+		</div>
+
+		<div class="modal-body modal-body-min">
+			<form name="deskForm">
+				<div class="popup-subnav subnav">
+					<ul class="nav nav-pills pull-left">
+						<li class="active"><a href="" translate>General</a></li>
+						<li ng-show><a href="" translate>Desk members</a></li>
+						<li ng-show><a href="" translate>Desk boards</a></li>
+					</ul>
+				</div>
+				<input type="text" placeholder="{{'Enter Desk name' | translate}}" class="fullwidth-input" ng-model="editDesk.name" required> 
+			</form>
+		</div>
+
+		<div class="modal-footer"> 
+		  	<a href="" class="btn" ng-click="cancel()" translate>Cancel</a> 
+		  	<button class="btn btn-primary" ng-click="save(editDesk)" ng-disabled="!deskForm.$valid" translate>Save</button>
+		</div>
+
 	</div>
 
-	
 
-	<div class="modal-body modal-body-min">
-		<form name="deskForm">
+	<div sd-modal-view data-model="memberPopup">
+			<div class="modal-header"> 
+				<a href="" class="close" ng-click="cancelMember()">×</a>
+				<h3 translate>Desk members</h3>
+			</div>
 
-			<div class="popup-subnav subnav">
-				<ul class="nav nav-pills pull-left">
-					<li class="active"><a href="" translate>General</a></li>
-					<li ng-show><a href="" translate>Desk members</a></li>
-					<li ng-show><a href="" translate>Desk boards</a></li>
-				</ul>
+			<div class="modal-body modal-body-min desk-members">
+				<div class="members-screen1" ng-class="{'screen2':memberScreen2}">
+					<div class="members">
+				  		<ul class="member-avatars">
+							<li ng-repeat="user in selectedMembers" >
+								<figure ><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
+								<div class="member-name">
+									{{user.first_name}} {{user.last_name}}
+									<span class="delete" ng-click="removeMember(user)"><i class="icon-close-small icon-white"></i></span>
+								</div>
+
+							</li>
+							<li class="no-member" ng-show="!selectedMembers.length" translate>No members assigned to this desk.</li>
+					    </ul>
+					    <div class="view-all" ng-class="{'show': selectedMembers.length>8 }" ng-click="memberScreen2 = true">
+					    	<i class="icon-chevron-right"></i>
+					    </div>
+				  	</div>
+					<div class="search-members">
+						<input type="text" class="searchbar input-large" placeholder="Search" ng-model="memberSearch">
+					</div>
+				  	<div class="all-users">
+				  		<ul class="plain-table user-list">
+							<li ng-repeat="user in users | filter:notIn(selectedMembers)| filter:memberSearch" >
+								<figure class="user-pic"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
+								<span class="user-name" >{{ user.first_name }} {{ user.last_name }}</span>
+								<button class="btn btn-mini btn-success pull-right" ng-click="addMember(user)" tooltip="{{ 'Add to desk' | translate}}" tooltip-placement="left"><i class="icon-plus-small icon-white"></i></button>
+							</li>
+					    </ul>
+				  	</div>
+				</div>
+				<div class="members-screen2" ng-class="{'screen2':memberScreen2}">
+					
+					<div class="members">
+						<div class="view-all" ng-click="memberScreen2 = false">
+					    	<i class="icon-chevron-left"></i>
+					    </div>
+						<ul class="member-avatars">
+							<li ng-repeat="user in selectedMembers" >
+								<figure ><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
+								<div class="member-name">
+									{{user.first_name}} {{user.last_name}}
+									<span class="delete" ng-click="removeMember(user)"><i class="icon-close-small icon-white"></i></span>
+								</div>
+
+							</li>
+							<li class="no-member" ng-show="!selectedMembers.length" translate>No members assigned to this desk.</li>
+					    </ul>
+					</div>
+				</div>
+				
+
+			  	
+			              
+			</div>
+			<div class="modal-footer"> 
+			  	<a href="" class="btn" ng-click="cancelMember()" translate>Cancel</a> 
+			  	<button class="btn btn-primary" ng-click="saveMembers()"translate>Save</button>
 			</div>
 		
-			<input type="text" placeholder="{{'Enter Desk name' | translate}}" class="fullwidth-input" ng-model="editDesk.name" required> 
-		</form>
 	</div>
-
-
-	<div class="modal-footer"> 
-	  	<a href="" class="btn" ng-click="cancel()" translate>Cancel</a> 
-	  	<button class="btn btn-primary" ng-click="save(editDesk)" ng-disabled="!deskForm.$valid" translate>Save</button>
-	  </div>
-
-</div>
-
 
 </div>
