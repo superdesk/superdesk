@@ -1,43 +1,32 @@
 'use strict';
 
-var lrSnippet = require('grunt-contrib-livereload/lib/utils').livereloadSnippet;
-
-var mountFolder = function (connect, dir) {
-  return connect.static(require('path').resolve(dir));
-};
-
 module.exports = function (grunt) {
   // load all grunt tasks
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
-  grunt.loadTasks('lib/grunt');
 
-  // configurable paths
-  var yeomanConfig = {
+  var config = {
     app: 'app',
-    dist: 'dist'
-  };
-
-  var serverConfig = {
-    url: grunt.option('server') || 'http://localhost:5000'
+    dist: 'dist',
+    serverURL: grunt.option('server') || 'http://localhost:5000',
+    livereload: 35729
   };
 
   try {
-    yeomanConfig.app = require('./bower.json').appPath || yeomanConfig.app;
+    yeomanConfig.app = require('./bower.json').appPath || config.app;
   } catch (e) {}
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('./package.json'),
-    
-    yeoman: yeomanConfig,
-    
+    yeoman: config,
+
     less: {
       development: {
         options: {
-          paths: ["app/styles/less"],
+          paths: ['app/styles/less'],
           yuicompress: true
         },
         files: {
-          "app/styles/css/bootstrap.css": "app/styles/less/bootstrap.less"
+          'app/styles/css/bootstrap.css': 'app/styles/less/bootstrap.less'
         }
       }
     },
@@ -45,7 +34,7 @@ module.exports = function (grunt) {
     watch: {
       livereload: {
         options: {
-          livereload: true
+          livereload: config.livereload
         },
         files: [
           '<%= yeoman.app %>/{,*/}*.html',
@@ -57,40 +46,29 @@ module.exports = function (grunt) {
         tasks: ['less']
       }
     },
+
     connect: {
       options: {
         port: 9000,
-        // Change this to '0.0.0.0' to access the server from outside.
-        hostname: 'localhost'
+        hostname: 'localhost',
       },
-      livereload: {
+      server: {
         options: {
-          middleware: function (connect) {
-            return [
-              lrSnippet,
-              mountFolder(connect, '.tmp'),
-              mountFolder(connect, yeomanConfig.app),
-              mountFolder(connect, 'dist')
-            ];
-          }
-        }
-      },
-      test: {
-        options: {
-          middleware: function (connect) {
-            return [
-              mountFolder(connect, '.tmp'),
-              mountFolder(connect, 'test')
-            ];
-          }
+          livereload: config.livereload,
+          base: [
+            '<%= yeoman.dist %>',
+            '<%= yeoman.app %>'
+          ]
         }
       }
     },
+
     open: {
       server: {
         url: 'http://localhost:<%= connect.options.port %>'
       }
     },
+
     clean: {
       dist: {
         files: [{
@@ -104,10 +82,10 @@ module.exports = function (grunt) {
       },
       server: '.tmp'
     },
+
     jshint: {
       options: {
         jshintrc: '.jshintrc',
-
       },
       all: [
         //'Gruntfile.js',
@@ -116,13 +94,15 @@ module.exports = function (grunt) {
         '<%= yeoman.app %>/scripts/superdesk-*/**/*.js'
       ]
     },
+
     karma: {
       unit: {
         configFile: 'karma.conf.js',
-        singleRun: true,
-        autoWatch: false
+        singleRun: false,
+        autoWatch: true
       }
     },
+
     copy: {
       dist: {
         files: [{
@@ -131,8 +111,8 @@ module.exports = function (grunt) {
           cwd: '<%= yeoman.app %>',
           dest: '<%= yeoman.dist %>',
           src: [
-            '*.{ico,txt,html}',
             '.htaccess',
+            '*.{ico,txt}',
             'images/**/*',
             'styles/{,*/}*.css',
             'scripts/**/*.{html,js,css,jpg,jpeg,png,gif,json}',
@@ -142,18 +122,14 @@ module.exports = function (grunt) {
         }]
       }
     },
-    write: {
-      config: {
-        file: '<%= yeoman.dist %>/config.js',
-        content: 'ServerConfig = ' + JSON.stringify(serverConfig) + ";\n",
-      }
-    },
+
     compress: {
       build: {
         options: {archive: 'dist/<%= pkg.name %>.zip', mode: 'zip'},
         src: ['**'], cwd: '<%= yeoman.dist %>', expand: true, dot: true, dest: '<%= pkg.name %>/'
       }
     },
+
     nggettext_extract: {
       pot: {
         files: {
@@ -161,6 +137,7 @@ module.exports = function (grunt) {
         }
       }
     },
+
     nggettext_compile: {
       all: {
         files: {
@@ -168,6 +145,7 @@ module.exports = function (grunt) {
         }
       }
     },
+
     requirejs: {
       compile: {
         options: {
@@ -177,31 +155,44 @@ module.exports = function (grunt) {
           name: 'main'
         }
       }
+    },
+
+    template: {
+      local: {
+        options: {
+          data: {
+            server: {
+              url: config.serverURL
+            }
+          }
+        },
+        files: {
+          '<%= yeoman.dist %>/index.html': '<%= yeoman.app %>/index.html'
+        }
+      }
     }
   });
 
   grunt.registerTask('server', [
     'clean:dist',
     'clean:server',
-    'write:config',
     'less',
-    'connect:livereload',
+    'template',
+    'connect:server',
     'open',
     'watch'
   ]);
 
   grunt.registerTask('test', [
     'clean:server',
-    'connect:test',
     'karma'
   ]);
 
   grunt.registerTask('build', [
     'clean:dist',
-    'write:config',
     'jshint',
     'less',
-    'test',
+    'template',
     'copy'
   ]);
 

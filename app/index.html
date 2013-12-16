@@ -6,7 +6,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Superdesk</title>
+    <title>Superdesk!</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
 
@@ -24,7 +24,11 @@
     <div sd-login-modal></div>
     <div sd-notify></div>
 
-    <script src="config.js"></script>
+    <script>
+        ServerConfig = {
+            url: '<%= server.url %>'
+        };
+    </script>
     <script data-main="scripts/main" src="scripts/bower_components/requirejs/require.js"></script>
   </body>
 </html>
