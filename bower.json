@@ -12,18 +12,18 @@
     "moment-timezone": "~0.0.3",
     "angular-gettext": "~0.2.0",
     "angular-bootstrap": "~0.7",
-    "blueimp-file-upload": "~9.5.0",
+    "blueimp-file-upload": "~9.5.2",
     "gridster": "~0.2.1",
-    "d3": "~3.3.11",
+    "d3": "~3.3.12",
 
-    "angular": "~1.2.3",
-    "angular-resource": "~1.2.3",
-    "angular-route": "~1.2.3"
+    "angular": "~1.2.5",
+    "angular-resource": "~1.2.5",
+    "angular-route": "~1.2.5"
   },
   "devDependencies": {
-    "angular-mocks": "~1.2.3"
+    "angular-mocks": "~1.2.5"
   },
   "resolutions": {
-    "angular": "~1.2.3"
+    "angular": "~1.2.5"
   }
 }
