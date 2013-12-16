@@ -85,12 +85,16 @@ body {
 
 	.nav.pull-right li > a {
 		color: #fff;
-		font-size: 11px;
+		font-size: 12px;
 		&.user-profile {
-			padding-left: 41px;
-			background: url(../../images/avatar_default.png) no-repeat 9px 8px;
 			background-size: 23px;
 			.text-semibold();
+			.avatar {
+				width: 22px;
+				height: 22px;
+				float: left;
+				margin-right: 10px;
+			}
 		}
 	}
 
@@ -544,12 +548,16 @@ Popover override
   }
 
   .navbar .nav.pull-right li .user-profile {
-    padding-left: 31px;
-    background: url(../../images/avatar_default.png) no-repeat 0 0;
     background-size: 23px;
     .text-semibold();
     line-height: 23px;
     display: inline-block;
+    .avatar {
+				width: 22px;
+				height: 22px;
+				float: left;
+				margin-right: 10px;
+			}
   }
 
 }
