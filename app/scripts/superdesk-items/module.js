@@ -40,19 +40,19 @@ define([
         })
         .config(function(permissionsProvider) {
             permissionsProvider.permission('items-manage', {
-                label: 'Manage ingest items',
+                label: gettext('Manage ingest items'),
                 permissions: {items: {write: true}}
             });
             permissionsProvider.permission('items-read', {
-                label: 'Read ingest items',
+                label: gettext('Read ingest items'),
                 permissions: {items: {read: true}}
             });
             permissionsProvider.permission('archive-manage', {
-                label: 'Manage archive',
+                label: gettext('Manage archive'),
                 permissions: {archive: {write: true}}
             });
             permissionsProvider.permission('archive-read', {
-                label: 'Read archive',
+                label: gettext('Read archive'),
                 permissions: {archive: {read: true}}
             });
         })

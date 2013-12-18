@@ -44,19 +44,19 @@ define([
         })
         .config(function(permissionsProvider) {
             permissionsProvider.permission('users-manage', {
-                label: 'Manage users',
+                label: gettext('Manage users'),
                 permissions: {users: {write: true}}
             });
             permissionsProvider.permission('users-read', {
-                label: 'Read users',
+                label: gettext('Read users'),
                 permissions: {users: {read: true}}
             });
             permissionsProvider.permission('user-roles-manage', {
-                label: 'Manage user roles',
+                label: gettext('Manage user roles'),
                 permissions: {'user_roles': {write: true}}
             });
             permissionsProvider.permission('user-roles-read', {
-                label: 'Read user roles',
+                label: gettext('Read user roles'),
                 permissions: {'user_roles': {read: true}}
             });
         })

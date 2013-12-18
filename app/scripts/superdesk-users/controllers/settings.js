@@ -1,117 +1,100 @@
 define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
-    return ['$scope', 'em', 'permissions', 'userPermissions', function ($scope, em, permissions, userPermissions) {
+    return ['$q', '$scope', 'em', 'permissions', 'permissionsService', function ($q, $scope, em, permissions, permissionsService) {
 
         $scope.permissions = permissions;
+        $scope.selectedRole = null;
+        $scope.selectedRoleParent = null;
+        $scope.editRole = null;
+        $scope.editRoleParent = null;
 
-        em.repository('user_roles').matching().then(function(roles) {
-            $scope.roles = roles;
-        });
+        var loadRoles = function() {
+            var delay = $q.defer();
 
-
-        var getPermissions = function() {
-
-            $scope.editPermissions = _.extend({},permissions);
-            _.each($scope.editPermissions,function(p,key){
-                p.selected  = false;
+            em.repository('user_roles').matching().then(function(roles) {
+                $scope.roles = roles;
+                $scope.rolePermissions = {};
+                _.forEach($scope.roles._items, function(role) {
+                    $scope.rolePermissions[role._id] = {};
+                    _.forEach(permissions, function(permission, id) {
+                        permissionsService.isRoleAllowed(permission.permissions, role).then(function(isAllowed) {
+                            $scope.rolePermissions[role._id][id] = isAllowed;
+                            delay.resolve($scope.roles);
+                        });
+                    });
+                });
             });
 
-            var isRole = $scope.editRole !== null && $scope.editRole!==undefined && !_.isEmpty($scope.editRole);
-
-            if (isRole && $scope.editRole.child_of) {
-                //if we have parent, check what fields are set (and unchangeable)
-                var parent = $scope.roles._items[_.findKey($scope.roles._items, {_id:$scope.editRole.child_of})];
-                _.each($scope.editPermissions,function(p,key){
-                    if ($scope.isAllowed(parent, p)) {
-                        p.disable = true;
-                    }
-                    else {
-                        p.disable = false;
-                    }
-                });
-            } else {
-                _.each($scope.editPermissions,function(p,key){
-                    p.disable = false;
-                });
-            }
-            
-            //check what fields we have checked (set by role itself)
-            if (isRole && $scope.editRole.permissions) {
-                _.each($scope.editPermissions,function(p,key){
-                    if ($scope.isAllowed($scope.editRole, p)) {
-                        p.selected = true;
-                    }
-                });
-            }
+            return delay.promise;
         };
 
-        $scope.$watch('editRole.child_of',function(oldVal,newVal){
-            getPermissions();
-        });
+        loadRoles();
 
-        $scope.preview = function (role) {
+        $scope.selectRole = function(role) {
             $scope.selectedRole = role;
             $scope.selectedRoleParent = null;
-            if (role && role.child_of) {
-                $scope.selectedRoleParent = $scope.roles._items[_.findKey($scope.roles._items, {_id:role.child_of})];
+            if (role['extends']) {
+                _.forEach($scope.roles._items, function(item) {
+                    if (item._id === role['extends']) {
+                        $scope.selectedRoleParent = item;
+                    }
+                });
             }
         };
 
-        var newRole = false;
-        $scope.editRole = null;
-
-        $scope.edit = function(role) {
-            
-            if (role === undefined || role === null) { //new one
-                $scope.editRole = {};
-                newRole = true;
+        $scope.$watch('editRole', function(editRole) {
+            $scope.selectedRole = null;
+            $scope.editRoleParent = null;
+            if (editRole) {
+                if (editRole['extends']) {
+                    _.forEach($scope.roles._items, function(role) {
+                        if (role._id === editRole['extends']) {
+                            $scope.editRoleParent = role;
+                        }
+                    });
+                }
+                $scope.editPermissions = _.extend({}, permissions);
+                _.each($scope.editPermissions, function(p, k){
+                    if (editRole._id) {
+                        p.selected  = $scope.rolePermissions[editRole._id][k];
+                    } else {
+                        p.selected = false;
+                    }
+                    if ($scope.editRoleParent) {
+                        p.inherited = $scope.rolePermissions[$scope.editRoleParent._id][k];
+                    } else {
+                        p.inherited = false;
+                    }
+                });
             }
-            else { //editing
-                $scope.editRole = role;
-                newRole = false;
-            }
-
-        };
+        }, true);
 
         $scope.cancel = function() {
             $scope.editRole = null;
             $scope.editPermissions = null;
         };
 
-
         $scope.save = function() {
-
-            $scope.editRole.permissions = {};
-
             var selectedPermissions = _.where($scope.editPermissions, 'selected');
+            $scope.editRole.permissions = {};
             _.each(selectedPermissions, function(permission) {
                 _.merge($scope.editRole.permissions, permission.permissions);
             });
-
-
-            if (newRole) {
-                em.create('user_roles', $scope.editRole).then(function(role) {
-                    _.extend(role, $scope.editRole);
-                    $scope.roles._items.unshift(role);
-                    $scope.preview(role);
-                    $scope.cancel();
-                });
-            }
-            else {
+            if ($scope.editRole._id) {
                 em.update($scope.editRole).then(function(role) {
-                    $scope.preview(role);
-                    $scope.cancel();
+                    loadRoles().then(function(roles) {
+                        $scope.cancel();
+                    });
+                });
+            } else {
+                em.create('user_roles', $scope.editRole).then(function(role) {
+                    loadRoles().then(function(roles) {
+                        $scope.cancel();
+                    });
                 });
             }
-
         };
-
-        $scope.isAllowed = function (role, permissions) {
-            if (!role) {
-                return false;
-            }
-            return userPermissions.isRoleAllowed(permissions.permissions, role);
-        };
+        
     }];
 });
