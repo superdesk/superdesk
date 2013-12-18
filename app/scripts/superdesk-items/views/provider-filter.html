@@ -1,5 +1,5 @@
 <a class="btn dropdown-toggle" data-toggle="dropdown" href="">{{ 'Provider'|translate }} {{ activeProvider }} <span class="caret"></span></a>
-<ul class="dropdown-menu sf-dropdown">
+<ul class="dropdown-menu sf-dropdown sf-right">
     <li ng-repeat="provider in items._facets.provider.terms">
         <a href="" ng-click="setProvider(provider.term)">{{ provider.term }} <span class="badge">{{ provider.count }}</span></a>
     </li>

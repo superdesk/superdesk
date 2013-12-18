@@ -9,6 +9,7 @@ define([
     './permissions',
     './permissionsService',
     './activity',
+    './keyboardManager',
     '../userSettings',
     '../entity',
     '../server'
@@ -25,6 +26,7 @@ define([
         'superdesk.services.permissions',
         'superdesk.services.permissionsService',
         'superdesk.services.activity',
+        'superdesk.services.keyboard',
         'superdesk.userSettings',
         'superdesk.entity',
         'superdesk.server'

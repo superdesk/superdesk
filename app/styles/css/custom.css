@@ -1,11 +1,7 @@
 @charset "utf-8";
 /* CSS Document */
 
-html, body{
-	height:100%;width:100%; 
-	margin:0;padding:0;
-	/*overflow: hidden;*/
-	}
+
 	body > header {
 		color:#fff;
 		z-index:2000;
@@ -32,50 +28,7 @@ a.close {
 	color: #a0a0a0 !important;
 }
 	
-.btn-primary-gv {
-	background-color: #96c912;
-	background-image: -moz-linear-gradient(top, #96c912, #5c9315);
-	background-image: -ms-linear-gradient(top, #96c912, #5c9315);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#96c912), to(#5c9315));
-	background-image: -webkit-linear-gradient(top, #96c912, #5c9315);
-	background-image: -o-linear-gradient(top, #96c912, #5c9315);
-	background-image: linear-gradient(top, #96c912, #5c9315);
-	background-repeat: repeat-x;
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#96c912', endColorstr='#51a351', GradientType=0);
-	border-color: #4e8514 #4e8514 #3d6d0a;
-	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-	filter: progid:dximagetransform.microsoft.gradient(enabled=false);
-	color: #ffffff;
-	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-	}
-	.btn-primary-gv:hover,
-	.btn-primary-gv:active,
-	.btn-primary-gv.active,
-	.btn-primary-gv.disabled,
-	.btn-primary-gv[disabled] {
-		background-color: #5c9315;
-		color: #ffffff;
-		border-color: #4e8514 #4e8514 #3d6d0a;
-		border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-		}
-		.btn-primary-gv:active,
-		.btn-primary-gv.active {
-			background-color: #408140 \9;
-			color: #ffffff;
-			outline: 0 !important;
-			}
-	.btn-primary-gv:focus {
-		outline: 0 !important;
-		border-color: #4e8514 #4e8514 #3d6d0a;
-		border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-		}
 
-.btn-medium {
-	padding: 6px 10px;
-	-webkit-border-radius: 3px;
-	   -moz-border-radius: 3px;
-			border-radius: 3px;
-}
 
 
 .dropdown-simple > a {
@@ -366,39 +319,7 @@ section.main-section {
 	z-index:1001;
 }
 		
-/*
-====================================================
-  Webkit scroll
-====================================================
-*/
 
-.scroller {
-	overflow: auto;
-	overflow-x:hidden;
-	margin-bottom:1px;
-	position:absolute;
-	top:0;
-	left:0;
-	right:0;
-	bottom:0;
-}
-
-.main .scroller {
-	padding: 20px;
-}
-
-
-.scroller::-webkit-scrollbar, ::-webkit-scrollbar {
-	width: 8px;
-	height: 8px;
-	margin: -1px 0;
-}
-.scroller::-webkit-scrollbar-thumb, ::-webkit-scrollbar-thumb {
-	background: #949494;
-}
-.scroller::-webkit-scrollbar-thumb:hover, ::-webkit-scrollbar-thumb:hover {
-	background: #6e6e6e;
-}
 
 
 /*
@@ -429,9 +350,6 @@ section.main-section {
 	min-height:200px;
 }
 
-.btn.pull-right {
-	margin-left:10px;
-}
 
 .btn.bottom-full {
 	width:100%;
@@ -503,30 +421,6 @@ section.main-section {
 	background:#b0c9f8;
 }
 		
-
-
-
-		
-/*
-====================================================
-  Form
-====================================================
-*/
-					
-legend {
-	display: block;
-	width: 100%;
-	padding: 0;
-	margin-bottom: 27px;
-	font-size: 17px;
-	line-height: 31px;
-	color: #333;
-	border: 0;
-	border-bottom: 1px solid #EEE;
-}
-
-
-	
 /*
 ====================================================
   Collaborators
@@ -879,11 +773,6 @@ li.facebook .config-notif  {
 }
 
 
-.input-mini {
-	width: 50px;
-	padding: 2px 4px;
-	vertical-align: top;
-}
 
 .label-inline {
 	line-height: 24px;
@@ -1109,8 +998,7 @@ label.bgcolor {
 	vertical-align: top;
 }
 
-
-/* UPLOAD AVATAR*/
+/* UPLOAD AVATAR */
 
 .avatar-upload {
 	width: 100%;
@@ -1183,10 +1071,6 @@ label.bgcolor {
 }
 
 
-.searchbox {
-	padding-left: 30px;
-	background: url("../../images/search-icon.png") no-repeat 5px center;
-}
 
 @media all and (min-width:1300px) {
 	.collaborators-row {
@@ -1270,41 +1154,12 @@ label.bgcolor {
 }
 
 
-
 .dummy-info {
 	color: #7e7e7e;
 	font-size: 12px;
 	padding: 5px 0 10px;
 }
 
-
-
-.btn-inactive {
-    -moz-border-bottom-colors: none;
-    -moz-border-left-colors: none;
-    -moz-border-right-colors: none;
-    -moz-border-top-colors: none;
-    background-color: #F5F5F5;
-    background-image: -moz-linear-gradient(center top , #FFFFFF, #E6E6E6);
-    background-repeat: repeat-x;
-    border-color: #CCCCCC #CCCCCC #B3B3B3;
-    border-image: none;
-    border-radius: 4px 0px 0px 4px;
-    border-style: solid;
-    border-width: 1px;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
-    color: #333333;
-    //cursor: pointer;
-    display: inline-block;
-    font-size: 13px;
-    line-height: 18px;
-    margin-bottom: 0;
-    padding: 4px 10px;
-    text-align: center;
-    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
-    vertical-align: middle;
-    float:left;
-}
 
 /*
 ====================================================

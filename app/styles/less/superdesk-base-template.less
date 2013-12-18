@@ -1,3 +1,12 @@
+.reset-bootstrap-effects {
+	-webkit-transition: none;
+	-moz-transition: none;
+	-ms-transition: none;
+	-o-transition: none;
+	transition: none;
+}
+
+
 
 //theme
 @background-main:     #f8f8f8;
@@ -14,8 +23,33 @@
 body {
   background: @background-main;
   height:100%;
+  overflow: hidden;
 }
 
+/*
+====================================================
+  Webkit scroll
+====================================================
+*/
+
+
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+	margin: -1px 0;
+}
+::-webkit-scrollbar:hover {
+	background-color: #e8e8e8;
+	cursor: pointer;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #bbb;
+}
+::-webkit-scrollbar-thumb:hover {
+	background: #777;
+	cursor: pointer;
+}
 
 .navbar {
 
@@ -51,12 +85,16 @@ body {
 
 	.nav.pull-right li > a {
 		color: #fff;
-		font-size: 11px;
+		font-size: 12px;
 		&.user-profile {
-			padding-left: 41px;
-			background: url(../../images/avatar_default.png) no-repeat 9px 8px;
 			background-size: 23px;
 			.text-semibold();
+			.avatar {
+				width: 22px;
+				height: 22px;
+				float: left;
+				margin-right: 10px;
+			}
 		}
 	}
 
@@ -119,6 +157,7 @@ body {
 	}
   }
 }
+
 @media screen and (max-width: 1180px) {
 	.main-background-container {
 	  &.sf-menu-open {
@@ -330,50 +369,6 @@ body {
 }
 
 
-input[type="text"], 
-input[type="password"],
-textarea, select {
-	.border-radius(2px) !important;
-	border-color: #d0d0d0 !important;
-	padding: 6px;
-	height: 27px;
-	outline:none !important;
-	.box-shadow(inset 0 0 0 #000) !important;
-	.box-shadow(none) !important;
-	&:focus {
-		.box-shadow(0px 0px 5px 0px #d0d0d0) !important; 
-		border-color: #b8b8b8 !important;
-		outline:none !important;
-	}
-}
-
-
-.sf-inline-input {
-	border-width: 0px !important;
-	margin-left: 1px !important;
-	background: none;
-	&:focus {
-		border-width:  1px !important; 
-		margin-left: 0px !important;
-		background: #fff;
-	}
-}
-
-
-.fullwidth-input {
-	width: 100%;
-	.box-sizing(border-box);	
-	height: 28px;
-}
-
-.btn {
-	outline:none !important;
-	&:focus {
-		outline:none !important;
-	}
-}
-
-
 .side-tab-container {
 	position: absolute;
 	top: 0;
@@ -427,51 +422,6 @@ textarea, select {
 	}
 }
 
-.btn-dark {
-	background-color: #131313;
-	*background-color: #131313;
-
-	background-image: -moz-linear-gradient(top, #2b2a2a, #131313);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#2b2a2a), to(#131313));
-	background-image: -webkit-linear-gradient(top, #2b2a2a, #131313);
-	background-image: -o-linear-gradient(top, #2b2a2a, #131313);
-	background-image: linear-gradient(to bottom, #2b2a2a, #131313);
-	background-repeat: repeat-x;
-	border-color: #131313;
-	border-color: rgb(0, 0, 0) rgb(0, 0, 0) rgb(0, 0, 0);
-	color: #d1d1d1;
-	text-shadow: 0 -1px #070707;
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#2b2a2a', endColorstr='#131313', GradientType=0);
-	filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-}
-.btn-dark:hover,
-.btn-dark:active,
-.btn-dark.active,
-.btn-dark.disabled,
-.btn-dark[disabled] {
-	/*
-	color: #d1d1d1;
-	text-shadow: 0 -1px #070707;
-	background-color: #131313;
-	*background-color: #131313;
-	*/
-
-	background-color: #252525;
-	*background-color: #252525;
-	background-position:  0 0px;
-	background-image: -moz-linear-gradient(top, #434343, #252525);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#434343), to(#252525));
-	background-image: -webkit-linear-gradient(top, #434343, #252525);
-	background-image: -o-linear-gradient(top, #434343, #252525);
-	background-image: linear-gradient(to bottom, #434343, #252525);
-	background-repeat: repeat-x;
-	border-color: #252525;
-	border-color: rgb(0, 0, 0) rgb(0, 0, 0) rgb(0, 0, 0);
-	color: #f0f0f0;
-	text-shadow: 0 -1px #070707;
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#434343', endColorstr='#252525', GradientType=0);
-	filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-}
 
 
 /*
@@ -599,12 +549,16 @@ Popover override
   }
 
   .navbar .nav.pull-right li .user-profile {
-    padding-left: 31px;
-    background: url(../../images/avatar_default.png) no-repeat 0 0;
     background-size: 23px;
     .text-semibold();
     line-height: 23px;
     display: inline-block;
+    .avatar {
+				width: 22px;
+				height: 22px;
+				float: left;
+				margin-right: 10px;
+			}
   }
 
 }

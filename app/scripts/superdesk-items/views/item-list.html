@@ -1,7 +1,7 @@
-<div class="main-content">
+<div class="archive-content">
 
 
-    <div class="main-content-topnav">
+    <div class="archive-content-topnav">
         <div class="btn-group pull-right">
             <a href="" class="btn" ng-click="setView('grid')" ng-class="{active: ui.view === 'grid'}" tooltip="{{ 'grid view' | translate}}" tooltip-append-to-body="true"><i class="icon-th"></i></a>
             <a href="" class="btn" ng-click="setView('list')" ng-class="{active: ui.view === 'list'}" tooltip="{{ 'list view' | translate}}" tooltip-append-to-body="true"><i class="icon-th-list"></i></a>
@@ -9,14 +9,14 @@
         </div>
     </div>
 
-    <div class="main-content-subnav">
+    <div class="archive-content-subnav">
         <div sd-pagination data-model="items"></div>
         <div class="btn-group pull-left" ng-show="ui.view === 'list'">
             <a class="btn" ng-class="{'active': ui.compact}" ng-click="toggleCompact()" translate>Compact view</a>
         </div>
     </div>
 
-    <div class="main-content-inner {{ ui.view }}-view" ng-if="ui.view !== 'stats'">
+    <div class="archive-content-inner {{ ui.view }}-view" ng-if="ui.view !== 'stats'">
         <div ng-repeat="item in items._items" sd-media-box></div>
 
         <!-- floating box mask -->
@@ -24,8 +24,24 @@
 
         <div class="alert alert-info" ng-show="!items._items.length" translate>No results found.</div>
     </div>
+    <div
+        sd-item-preview-static
+        data-item="previewItem"
+        data-previewitem="previewSingle"
+        >
+    </div>
 
-    <div class="main-content-inner clearfix statistics" ng-if="ui.view === 'stats'">
+    <div class="context-menu" ng-class="{'show': context}">
+        <div class="title">Fetch</div>
+        <ul class="context-list">
+            <li ng-click="archive()"><i>as</i> Article</li>
+            <li><i>as</i> Factbox</li>
+            <li><i>as</i> Sidebar</li>
+            <li><i>as</i> Blank article</li>
+        </ul>
+    </div>
+
+    <div class="archive-content-inner clearfix statistics" ng-if="ui.view === 'stats'">
 
         <div class="stats-container size2">
             <div sd-pie-chart data-terms="items._facets.provider.terms" data-colors="superdesk" data-head="{{ 'Providers'| translate }}"></div>
@@ -37,10 +53,5 @@
             <div sd-pie-chart data-terms="items._facets.subject.terms" data-head="{{ 'Subject phrases'| translate }}" data-colors="superdesk" data-x="2" data-y="2"></div>
         </div>
         
-        
-
-        
-        
-
     </div>
 </div>

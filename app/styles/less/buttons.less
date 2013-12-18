@@ -84,6 +84,10 @@
   [class^="icon-"], [class*=" icon-"]{
     margin-top: 2px;
   }
+  outline:none !important;
+  &:focus {
+    outline:none !important;
+  }
 }
 
 // Hover state
@@ -128,7 +132,7 @@
 
 // Large
 .btn-large {
-  padding: 9px 14px;
+  padding: 6px 11px; //9 14
   font-size: @baseFontSize + 2px;
   line-height: normal;
   .border-radius(5px);
@@ -137,9 +141,14 @@
   margin-top: 1px;
 }
 
+.btn-medium {
+  padding: 6px 10px;
+  .border-radius(3px);
+}
+
 // Small
 .btn-small {
-  padding: 5px 9px;
+  padding: 4px 9px;
   font-size: @baseFontSize - 2px;
   line-height: @baseLineHeight - 2px;
 }
@@ -151,9 +160,8 @@
 .btn-mini {
   padding: 2px 6px;
   font-size: @baseFontSize - 2px;
-  line-height: @baseLineHeight - 4px;
+  line-height: 17px !important;
 }
-
 
 // Alternate buttons
 // --------------------------------------------------
@@ -162,8 +170,6 @@
 // -------------------------
 .btn-primary,
 .btn-primary:hover,
-.btn-warning,
-.btn-warning:hover,
 .btn-danger,
 .btn-danger:hover,
 .btn-success,
@@ -179,7 +185,6 @@
 }
 // Provide *some* extra contrast for those who can get it
 .btn-primary.active,
-.btn-warning.active,
 .btn-danger.active,
 .btn-success.active,
 .btn-info.active,
@@ -212,10 +217,7 @@
     .box-shadow(@shadow) !important;
   }
 }
-// Warning appears are orange
-.btn-warning {
-  .buttonBackground(@btnWarningBackground, @btnWarningBackgroundHighlight);
-}
+
 // Danger and error appear as red
 .btn-danger {
   border: 1px solid @btnDangerBorder;
@@ -361,6 +363,10 @@
   }
 }
 
+.btn.pull-right {
+  margin-left:10px;
+}
+
 // Cross-browser Jank
 // --------------------------------------------------
 
@@ -389,3 +395,5 @@ input[type="submit"].btn {
     *padding-bottom: 1px;
   }
 }
+
+

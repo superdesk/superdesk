@@ -1,7 +1,14 @@
 <div class="media-box media-{{item.type}} urgency-{{ item.urgency }}" 
-     ng-class="{selected : item.selected, 'compact-item': ui.compact, archived : item.archived!=null&&actions.archive}" >
+     ng-class="{
+     selected : item.selected, 
+     'compact-item': ui.compact, 
+     archived : item.archived!=null&&actions.archive,
+     active : item ==previewItem
+    }" >
 
     <div class="loading-status" ng-show="!item.archived && item.archiving"></div>
+
+    <span class="urgency-border"></span>
 
     <div class="list-field">
         <div sd-check ng-model="item.selected"></div>
@@ -14,31 +21,24 @@
         </div>
         <div class="list-field" ng-show="ui.compact"><span class="urgency-label">{{ item.urgency }}</span></div>
 
-        <a href="#/ingest/{{ item._id }}" sd-with-params>
-            <h5 class="list-field">
-                <div class="item-provider"  ng-show="ui.compact">{{ item.provider }}</div>
-                <div class="main-title">
-                    <div class="status-label" 
-                         ng-class="{'label-canceled' : item.pubstatus=='canceled'}"
-                         ng-show="item.pubstatus && item.pubstatus!='usable'">
-                         {{ item.pubstatus | translate }}
-                    </div>
-                    <div ng-show="item.headline">{{ item.headline }}</div>
-                    <div ng-show="!item.headline">{{ item.type }}</div>
+        <h5 class="list-field" ng-click="preview(item,$index)">
+            <div class="item-provider"  ng-show="ui.compact">{{ item.provider }}</div>
+            <div class="main-title">
+                <div class="status-label" 
+                     ng-class="{'label-canceled' : item.pubstatus=='canceled'}"
+                     ng-show="item.pubstatus && item.pubstatus!='usable'">
+                     {{ item.pubstatus | translate }}
                 </div>
-                <div class="meta-data-field" ng-show="!ui.compact"><div class="item-provider">{{ item.provider }}</div><span ng-show="item.subject">//</span> {{ item.subject | mergeWords}}</div>
-            </h5>
-        </a>
+                <div ng-show="item.headline">{{ item.headline }}</div>
+                <div ng-show="!item.headline">{{ item.type }}</div>
+            </div>
+            <div class="meta-data-field" ng-show="!ui.compact"><div class="item-provider">{{ item.provider }}</div><span ng-show="item.subject">//</span> {{ item.subject | mergeWords}}</div>
+        </h5>
+        
 
         <div class="item-right list-field">
             <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>
             <div class="item-functions">
-                <a class="list-field" 
-                    ng-click="preview(item)" 
-                    ng-show="actions.preview" 
-                    tooltip-placement="bottom" tooltip="{{ 'preview' | translate }}" tooltip-append-to-body="true">
-                        <i class="icon-eye-open"></i>
-                </a>
                 <a class="list-field" 
                     ng-click="archive(item)" 
                     ng-show="actions.archive && !item.archived" 
@@ -46,12 +46,12 @@
                         <i class="icon-archive"></i>
                 </a>
                 <a class="list-field disabled" 
-                    ng-click="archive(item)" 
+                    ng-click="archive()" 
                     ng-show="actions.archive && item.archived" 
                     tooltip-placement="bottom" tooltip="{{ 'already in Archive' | translate }}" tooltip-append-to-body="true">
                         <i class="icon-archive"></i>
                 </a>
-                <a class="list-field"><i class="icon-dots"></i></a>
+                
             </div>
         </div>
     </div>

@@ -12,5 +12,6 @@ define([
     './sdModal',
     './sdConfirm',
     './sdSelect',
-    './sdPermissions'
+    './sdPermissions',
+    './sdUserAvatar'
 ], function() {});
