@@ -9,7 +9,7 @@
             <div class="column-left">
                 <ul class="user-roles-list">
                     <li ng-repeat="role in roles._items"  ng-class="{active: selectedRole._id === role._id}">
-                        <div class="leaf" ng-click="$parent.selectedRole = role">{{role.name}}</div>
+                        <div class="leaf" ng-click="selectRole(role)">{{role.name}}</div>
                         <a class="edit-btn" ng-click="$parent.editRole = role"><i class="icon-pencil"></i></a>
                     </li>
                     <li ng-show="!roles._items.length" class="alert alert-info" translate>No roles created yet.</li>

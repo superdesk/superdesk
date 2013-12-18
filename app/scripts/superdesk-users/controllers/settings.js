@@ -31,18 +31,17 @@ define(['angular', 'lodash'], function(angular, _) {
 
         loadRoles();
 
-        $scope.$watch('selectedRole', function(selectedRole) {
+        $scope.selectRole = function(role) {
+            $scope.selectedRole = role;
             $scope.selectedRoleParent = null;
-            if (selectedRole) {
-                if (selectedRole.extends) {
-                    _.forEach($scope.roles._items, function(role) {
-                        if (role._id === selectedRole.extends) {
-                            $scope.selectedRoleParent = role;
-                        }
-                    });
-                }
+            if (role.extends) {
+                _.forEach($scope.roles._items, function(item) {
+                    if (item._id === role.extends) {
+                        $scope.selectedRoleParent = item;
+                    }
+                });
             }
-        }, true);
+        };
 
         $scope.$watch('editRole', function(editRole) {
             $scope.selectedRole = null;
@@ -78,9 +77,6 @@ define(['angular', 'lodash'], function(angular, _) {
 
         $scope.save = function() {
             var selectedPermissions = _.where($scope.editPermissions, 'selected');
-            if (!$scope.editRole.permissions) {
-                $scope.editRole.permissions = {};
-            }
             $scope.editRole.permissions = {};
             _.each(selectedPermissions, function(permission) {
                 _.merge($scope.editRole.permissions, permission.permissions);
