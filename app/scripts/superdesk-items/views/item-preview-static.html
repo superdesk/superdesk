@@ -1,0 +1,17 @@
+<div class="side-preview">
+    <div class="header">
+        <ul class="info-list pull-left">
+            <li>Keyword: <span>Dell</span></li>
+            <li>Take key: <span>Update</span></li>
+        </ul>
+        <div class="word-count pull-right"><i sd-wordcount ng-model="previewSingle.body_html">0</i> <span>words</span></div>
+    </div>
+    <div class="content">
+        <p class="date-info">Created {{ item.firstcreated }}</p>
+        <p class="title">{{ previewSingle.headline }}</p>
+        <div class="core-content">
+            <div class="description" ng-show="previewSingle.slugline">{{ previewSingle.slugline || previewSingle.headline }}</div>
+            <div class="text"  ng-show="previewSingle.body_html" sd-html ng-model="previewSingle.body_html" ></div>
+        </div>
+    </div>
+</div>

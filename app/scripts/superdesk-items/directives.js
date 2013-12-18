@@ -45,7 +45,27 @@ define([
                 require: '?ngModel',
                 link: function($scope, element, attrs, ngModel) {
                     ngModel.$render = function() {
+                        element.html('');
                         element.prepend(ngModel.$viewValue);
+                    };
+                }
+            };
+        }).
+        directive('sdWordcount', function() {
+            return {
+                require: '?ngModel',
+                link: function($scope, element, attrs, ngModel) {
+                    ngModel.$render = function() {
+                        if (ngModel.$viewValue !== undefined && ngModel.$viewValue !== null ) {
+                            var value = ngModel.$viewValue;
+                            var regex = /\s+/gi;
+                            var wordCount = value.trim().replace(regex, ' ').split(' ').length;
+                            element.html(wordCount);
+                        } else {
+                            element.html(0);
+                        }
+                        
+                        
                     };
                 }
             };
@@ -162,6 +182,38 @@ define([
                         em.create('archive', item).then(function() {
                             item.archived = true;
                         });
+                    };
+                }
+            };
+        })
+        .directive('sdItemPreviewStatic', function(em) {
+            return {
+                templateUrl: 'scripts/superdesk-items/views/item-preview-static.html',
+                replace: true,
+                scope: {
+                    item: '=',
+                    previewSingle : '=previewitem'
+                },
+                link: function(scope, element, attrs) {
+                    scope.treepreview = function(item) {
+                        scope.previewSingle = item;
+                    };
+                    scope.archive = function(item) {
+                        em.create('archive', item).then(function() {
+                            item.archived = true;
+                        });
+                    };
+                }
+            };
+        })
+        .directive('sdScrollVisible', function($routeParams, $location, providerRepository) {
+            return {
+                scope: {items: '='},
+                templateUrl: 'scripts/superdesk-items/views/provider-filter.html',
+                link: function(scope, element, attrs) {
+                    scope.activeProvider = $routeParams.provider || null;
+                    scope.setProvider = function(provider) {
+                        $location.search('provider', provider);
                     };
                 }
             };
