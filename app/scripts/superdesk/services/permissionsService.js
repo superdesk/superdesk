@@ -59,28 +59,42 @@ define(['angular'], function(angular) {
                 return delay.promise;
             };
 
+            this._isRoleAllowedSingle = function(resource, method, role) {
+                var self = this;
+
+                var delay = $q.defer();
+
+                if (role.permissions && role.permissions[resource] && role.permissions[resource][method]) {
+                    delay.resolve(true);
+                } else if (role.extends) {
+                    em.repository('user_roles').find(role.extends).then(function(extendedFrom) {
+                        delay.resolve(self._isRoleAllowedSingle(resource, method, extendedFrom));
+                    });
+                }
+
+                return delay.promise;
+            };
+
             this.isRoleAllowed = function(permissions, role) {
                 var self = this;
 
                 var delay = $q.defer();
 
-                var allowed = true;
+                var promises = [];
 
                 _.forEach(permissions, function(methods, resource) {
                     _.forEach(methods, function(status, method) {
-                        allowed = allowed && role.permissions && role.permissions[resource] && role.permissions[resource][method];
+                        promises.push(self._isRoleAllowedSingle(resource, method, role));
                     });
                 });
 
-                allowed = allowed || false;
-
-                if (!allowed && role.extends) {
-                    em.repository('user_roles').find(role.extends).then(function(extendedFrom) {
-                        delay.resolve(self.isRoleAllowed(permissions, extendedFrom));
-                    });
-                } else {
-                    delay.resolve(allowed);
-                }
+                $q.all(promises).then(function(final) {
+                    if (final.indexOf(false) === -1) {
+                        delay.resolve(true);
+                    } else {
+                        delay.resolve(false);
+                    }
+                });
 
                 return delay.promise;
             };
