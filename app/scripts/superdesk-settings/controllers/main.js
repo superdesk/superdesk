@@ -6,7 +6,7 @@ define(['angular'], function(angular){
         $scope.selected = null;
         $scope.settings = settings;
 
-        $scope.tab = tab; 
+        $scope.tab = tab;
         
         if (tab) {
             if (settings[tab]) {
