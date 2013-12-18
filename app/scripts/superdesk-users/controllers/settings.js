@@ -34,9 +34,9 @@ define(['angular', 'lodash'], function(angular, _) {
         $scope.selectRole = function(role) {
             $scope.selectedRole = role;
             $scope.selectedRoleParent = null;
-            if (role.extends) {
+            if (role['extends']) {
                 _.forEach($scope.roles._items, function(item) {
-                    if (item._id === role.extends) {
+                    if (item._id === role['extends']) {
                         $scope.selectedRoleParent = item;
                     }
                 });
@@ -47,9 +47,9 @@ define(['angular', 'lodash'], function(angular, _) {
             $scope.selectedRole = null;
             $scope.editRoleParent = null;
             if (editRole) {
-                if (editRole.extends) {
+                if (editRole['extends']) {
                     _.forEach($scope.roles._items, function(role) {
-                        if (role._id === editRole.extends) {
+                        if (role._id === editRole['extends']) {
                             $scope.editRoleParent = role;
                         }
                     });
