@@ -88,8 +88,8 @@ define(['angular'], function(angular) {
                     });
                 });
 
-                $q.all(promises).then(function(final) {
-                    if (final.indexOf(false) === -1) {
+                $q.all(promises).then(function(results) {
+                    if (results.indexOf(false) === -1) {
                         delay.resolve(true);
                     } else {
                         delay.resolve(false);
