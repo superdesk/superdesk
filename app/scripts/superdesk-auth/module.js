@@ -1,12 +1,12 @@
 define([
     'angular',
-    'angular-route',
-    'superdesk-auth/directives'
+    './directives',
+    './services'
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.auth', ['ngRoute', 'superdesk.auth.directives', 'superdesk.services.storage']).
-        run(function($rootScope, $route, authService) {
+    angular.module('superdesk.auth', ['superdesk.auth.directives', 'superdesk.auth.services']).
+        run(['$rootScope', '$route', 'authService', function($rootScope, $route, authService) {
             $rootScope.$on('$locationChangeStart', function(event, url) {
                 if (!authService.hasIdentity()) {
                     event.preventDefault();
@@ -17,7 +17,7 @@ define([
             $rootScope.$on('auth.login', function() {
                 $route.reload();
             });
-        }).
+        }]).
         controller('UserController', ['$scope', 'authService', function($scope, authService) {
             $scope.logout = function() {
                 authService.logout();

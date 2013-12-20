@@ -2,7 +2,7 @@ define(['angular'], function(angular) {
     'use strict';
 
     angular.module('superdesk.directives')
-        .directive('sdConfirm', function($window) {
+        .directive('sdConfirm', ['$window', function($window) {
             return {
                 scope: {
                     msg: '@sdConfirm',
@@ -16,5 +16,5 @@ define(['angular'], function(angular) {
                     });
                 }
             };
-        });
+        }]);
 });

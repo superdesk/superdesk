@@ -1,13 +1,10 @@
 define([
-    'jquery',
     'angular',
-    'angular-ui',
-    'superdesk/server',
     './resources',
     './controllers/main',
     './controllers/settings',
     './directives'
-], function($, angular) {
+], function(angular) {
     'use strict';
 
     angular.module('superdesk.desks', [
@@ -16,7 +13,7 @@ define([
     ])
     .controller('DesksSettingsCtrl', require('superdesk-desks/controllers/settings'))
 
-    .config(function(activityProvider) {
+    .config(['activityProvider', function(activityProvider) {
         activityProvider
             .activity('desks', {
                 permissions: {
@@ -29,12 +26,11 @@ define([
                 templateUrl: 'scripts/superdesk-desks/views/main.html',
                 controller: require('superdesk-desks/controllers/main')
             });
-    })
-    .config(function(settingsProvider) {
+    }])
+    .config(['settingsProvider', function(settingsProvider) {
         settingsProvider.register('desks', {
             label: gettext('Desks'),
             templateUrl: 'scripts/superdesk-desks/views/settings.html'
         });
-    });
-
+    }]);
 });

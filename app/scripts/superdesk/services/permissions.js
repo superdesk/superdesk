@@ -1,10 +1,7 @@
-define([
-    'angular',
-    'angular-route'
-], function(angular) {
+define(['angular'], function(angular) {
     'use strict';
 
-    angular.module('superdesk.services.permissions', [])
+    angular.module('superdesk.services')
         .provider('permissions', [function() {
             var permissions = {};
 
@@ -16,7 +13,5 @@ define([
                     permissions[id] = permission;
                 }
             };
-
         }]);
-
 });

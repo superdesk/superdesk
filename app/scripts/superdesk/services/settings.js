@@ -1,8 +1,8 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    angular.module('superdesk.services.settings', [])
-        .provider('settings', [function() {
+    angular.module('superdesk.services')
+        .provider('settings', function() {
             var settings = {};
             return {
 
@@ -15,5 +15,5 @@ define(['angular'], function(angular) {
                     return this;
                 }
             };
-        }]);
+        });
 });

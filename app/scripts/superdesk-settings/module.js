@@ -5,7 +5,7 @@ define([
     'use strict';
 
     angular.module('superdesk.settings', [])
-        .config(function(activityProvider) {
+        .config(['activityProvider', function(activityProvider) {
             activityProvider.activity('settings', {
                 href: '/settings/:tab?',
                 menuHref: '/settings/',
@@ -19,5 +19,5 @@ define([
                     }]
                 }
             });
-        });
+        }]);
 });

@@ -7,13 +7,13 @@ define([
 ], function(_, $, angular, moment, d3) {
     'use strict';
 
-    angular.module('superdesk.items.directives', ['ui.bootstrap','superdesk.items.resources']).
+    angular.module('superdesk.items.directives', []).
         filter('reldate', function() {
             return function(date) {
                 return moment(date).fromNow();
             };
         }).
-        directive('sdSearchbar', function($location, $routeParams) {
+        directive('sdSearchbar', ['$location', '$routeParams', function($location, $routeParams) {
             return {
                 scope: {
                     df: '@'
@@ -39,8 +39,8 @@ define([
                     });
                 }
             };
-        }).
-        directive('sdHtml', function($sce) {
+        }]).
+        directive('sdHtml', ['$sce', function($sce) {
             return {
                 require: '?ngModel',
                 link: function($scope, element, attrs, ngModel) {
@@ -50,7 +50,7 @@ define([
                     };
                 }
             };
-        }).
+        }]).
         directive('sdWordcount', function() {
             return {
                 require: '?ngModel',
@@ -69,8 +69,8 @@ define([
                     };
                 }
             };
-        }).
-        directive('sdContent', function() {
+        })
+        .directive('sdContent', function() {
             function getText(content) {
                 var lines = $(content);
                 var texts = [];
@@ -93,7 +93,7 @@ define([
                 }
             };
         })
-        .directive('sdMediaBox', function($position){
+        .directive('sdMediaBox', ['$position', function($position) {
             return {
                 restrict : 'A',
                 template: '<div ng-include="itemTemplate"></div>',
@@ -117,8 +117,8 @@ define([
                     };
                 }
             };
-        })
-        .directive('sdMediaBoxHover', function($position){
+        }])
+        .directive('sdMediaBoxHover', ['$position', function($position) {
             return {
                 restrict : 'A',
                 templateUrl : 'scripts/superdesk-items/views/media-box-hover.html',
@@ -126,8 +126,8 @@ define([
                 link: function(scope, element, attrs) {
                 }
             };
-        })
-        .directive('sdItemList', function($routeParams, $location, storage) {
+        }])
+        .directive('sdItemList', ['$routeParams', '$location', 'storage', function($routeParams, $location, storage) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/item-list.html',
                 link: function(scope, element, attrs) {
@@ -165,8 +165,8 @@ define([
 
                 }
             };
-        })
-        .directive('sdItemPreview', function(em) {
+        }])
+        .directive('sdItemPreview', ['em', function(em) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/item-preview.html',
                 replace: true,
@@ -185,8 +185,8 @@ define([
                     };
                 }
             };
-        })
-        .directive('sdItemPreviewStatic', function(em) {
+        }])
+        .directive('sdItemPreviewStatic', ['em', function(em) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/item-preview-static.html',
                 replace: true,
@@ -205,8 +205,9 @@ define([
                     };
                 }
             };
-        })
-        .directive('sdScrollVisible', function($routeParams, $location, providerRepository) {
+        }])
+        .directive('sdScrollVisible', ['$routeParams', '$location', 'providerRepository',
+        function($routeParams, $location, providerRepository) {
             return {
                 scope: {items: '='},
                 templateUrl: 'scripts/superdesk-items/views/provider-filter.html',
@@ -217,8 +218,8 @@ define([
                     };
                 }
             };
-        })
-        .directive('sdRef',function(em){
+        }])
+        .directive('sdRef', ['em', function(em) {
             return {
                 link: function(scope, element, attrs) {
                     scope.$watch('ref', function(ref) {
@@ -229,8 +230,9 @@ define([
 
                 }
             };
-        })
-        .directive('sdProviderFilter', function($routeParams, $location, providerRepository) {
+        }])
+        .directive('sdProviderFilter', ['$routeParams', '$location', 'providerRepository',
+        function($routeParams, $location, providerRepository) {
             return {
                 scope: {items: '='},
                 templateUrl: 'scripts/superdesk-items/views/provider-filter.html',
@@ -241,8 +243,8 @@ define([
                     };
                 }
             };
-        })
-        .directive('sdPieChart',function(colorSchemes) {
+        }])
+        .directive('sdPieChart', ['colorSchemes', function(colorSchemes) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/chartBox.html',
                 replace: true,
@@ -252,7 +254,6 @@ define([
                     theme: '@'
                 },
                 link: function(scope, element, attrs) {
-                    
                     
                     var appendTarget = element[0].getElementsByClassName('block')[0];
 
@@ -318,8 +319,8 @@ define([
                     });
                 }
             };
-        })
-        .directive('sdPieChartDashboard',function(colorSchemes) {
+        }])
+        .directive('sdPieChartDashboard', ['colorSchemes', function(colorSchemes) {
             return {
                 replace: true,
                 scope: {
@@ -401,8 +402,8 @@ define([
                     });
                 }
             };
-        })
-        .directive('sdHistogram', function(colorSchemes) {
+        }])
+        .directive('sdHistogram', ['colorSchemes', function(colorSchemes) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/chartBox.html',
                 replace: true,
@@ -501,8 +502,8 @@ define([
                     });
                 }
             };
-        })
-        .directive('sdSource', function($sce) {
+        }])
+        .directive('sdSource', ['$sce', function($sce) {
             var typeMap = {
                 'video/mpeg': 'video/mp4'
             };
@@ -523,5 +524,5 @@ define([
                     });
                 }
             };
-        });
+        }]);
 });

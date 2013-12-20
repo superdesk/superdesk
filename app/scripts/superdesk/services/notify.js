@@ -1,7 +1,7 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    angular.module('superdesk.services.notify', [])
+    angular.module('superdesk.services')
         .service('notify', ['$timeout', function ($timeout) {
             function NotifyService() {
                 this.messages = [];
@@ -30,7 +30,7 @@ define(['angular'], function(angular) {
 
             return new NotifyService();
         }])
-        .directive('sdNotify', function (notify) {
+        .directive('sdNotify', ['notify', function (notify) {
             return {
                 scope: {},
                 templateUrl: 'scripts/superdesk/views/notify.html',
@@ -38,5 +38,5 @@ define(['angular'], function(angular) {
                     scope.messages = notify.messages;
                 }
             };
-        });
+        }]);
 });

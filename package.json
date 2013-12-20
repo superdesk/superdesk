@@ -32,7 +32,10 @@
     "karma-phantomjs-launcher": "~0.1",
     "karma-firefox-launcher": "~0.1",
     "karma-chrome-launcher": "~0.1",
-    "matchdep": "~0.3"
+    "matchdep": "~0.3",
+    "grunt-preprocess": "~3.0.1",
+    "load-grunt-tasks": "~0.2.1",
+    "load-grunt-config": "~0.7.0"
   },
   "scripts": {
     "test": "./travis_build.sh"

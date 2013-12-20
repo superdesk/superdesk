@@ -1,7 +1,7 @@
 define(['lodash', 'angular'], function(_, angular) {
     'use strict';
 
-    angular.module('superdesk.users.providers', ['superdesk.entity'])
+    angular.module('superdesk.users.providers', [])
         .factory('rolesLoader', ['$q', 'em', function ($q, em) {
             var delay = $q.defer();
 

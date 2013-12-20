@@ -11,14 +11,14 @@ define([
      * This module provides localization support.
      * It's using angular-gettext.
      */
-    angular.module('superdesk.services.translate', ['gettext']).
-        run(['gettextCatalog', '$location', function(gettextCatalog, $location) {
+    angular.module('superdesk.services')
+        .run(['gettextCatalog', '$location', function(gettextCatalog, $location) {
             var params = $location.search();
             if ('lang' in params) {
                 gettextCatalog.currentLanguage = params.lang;
                 gettextCatalog.debug = true;
             }
-        }]).
+        }])
         /**
          * Gettext service to be used in controllers/services/directives.
          *
@@ -28,9 +28,9 @@ define([
          * This way "Translate Me" can be found by the string extractor and it will return
          * translated string if appropriet.
          */
-        factory('gettext', function(gettextCatalog) {
+        .factory('gettext', ['gettextCatalog', function(gettextCatalog) {
             return function(input) {
                 return gettextCatalog.getString(input);
             };
-        });
+        }]);
 });

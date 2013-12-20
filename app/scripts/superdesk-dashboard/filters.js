@@ -1,7 +1,4 @@
-define([
-    'jquery',
-    'angular'
-], function($, angular) {
+define(['angular'], function(angular) {
     'use strict';
 
     angular.module('superdesk.dashboard.filters', []).

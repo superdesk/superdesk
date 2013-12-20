@@ -10,8 +10,6 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
 
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-
     <!-- build:css styles/css/main.css -->
     <link rel="stylesheet" href="styles/css/bootstrap.css">
     <link rel="stylesheet" href="styles/css/custom.css">
@@ -24,11 +22,7 @@
     <div sd-login-modal></div>
     <div sd-notify></div>
 
-    <script>
-        ServerConfig = {
-            url: '<%= server.url %>'
-        };
-    </script>
+    <script>ServerConfig = {url: '<%= server.url %>'};</script>
     <script data-main="scripts/main" src="scripts/bower_components/requirejs/require.js"></script>
   </body>
 </html>

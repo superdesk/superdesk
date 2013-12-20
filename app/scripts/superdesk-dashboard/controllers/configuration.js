@@ -1,4 +1,4 @@
-define(['angular'], function(angular){
+define(['lodash'], function(_) {
     'use strict';
 
     return ['$scope','$modalInstance', 'widgetService', 'widget', 'id',

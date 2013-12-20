@@ -1,7 +1,7 @@
 define([
     'jquery',
     'angular',
-    'superdesk-dashboard/controllers/configuration'
+    './controllers/configuration'
 ], function($, angular) {
     'use strict';
 
@@ -15,7 +15,7 @@ define([
          * Params:
          * @param {Object} widget
          */
-        .directive('sdWidget', ['$modal', 'widgetsPath', 'widgetService', function($modal, widgetsPath, widgetService) {
+        .directive('sdWidget', ['$modal', 'widgetService', function($modal, widgetService) {
             return {
                 templateUrl: 'scripts/superdesk-dashboard/views/widget.html',
                 restrict: 'A',
@@ -66,7 +66,7 @@ define([
                 },
                 replace: true,
                 templateUrl: 'scripts/superdesk-dashboard/views/grid.html',
-                controller: function($scope) {
+                controller: ['$scope', function($scope) {
                     this.addWidget = function(element, sizex, sizey, col, row) {
                         return $scope.gridster.add_widget(element, sizex, sizey, col, row);
                     };
@@ -78,7 +78,7 @@ define([
                         $scope.gridster.resize_widget(element, sizex, sizey);
                         $scope.syncWidgets();
                     };
-                },
+                }],
                 link: function(scope, element, attrs) {
                     scope.syncWidgets = function() {
                         angular.forEach(scope.widgets, function(widget) {

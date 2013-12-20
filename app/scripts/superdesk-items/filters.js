@@ -29,9 +29,9 @@ define([
                 return subjectMerged.join(', ');
             };
         }).
-        filter('trusted', function($sce) {
+        filter('trusted', ['$sce', function($sce) {
             return function(value) {
                 return $sce.trustAsResourceUrl(value);
             };
-        });
+        }]);
 });

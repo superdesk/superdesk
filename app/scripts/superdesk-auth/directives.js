@@ -5,8 +5,8 @@ define([
 ], function($, angular) {
     'use strict';
 
-    angular.module('superdesk.auth.directives', ['superdesk.auth.services']).
-        directive('sdLoginModal', function($rootScope, authService) {
+    angular.module('superdesk.auth.directives', []).
+        directive('sdLoginModal', ['$rootScope', 'authService', function($rootScope, authService) {
             return {
                 restrict: 'A',
                 replace: true,
@@ -40,5 +40,5 @@ define([
                     }
                 }
             };
-        });
+        }]);
 });

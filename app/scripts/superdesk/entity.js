@@ -1,11 +1,10 @@
-define(['angular', 'lodash', './server'], function(angular, _) {
+define([
+    'angular',
+    'lodash'
+], function(angular, _) {
     'use strict';
 
-    /**
-     * Entity module
-     */
-    angular.module('superdesk.entity', ['superdesk.server'])
-
+    angular.module('superdesk.services')
         /**
          * Location Params service holds default params for given page
          * and combines those with current params.
@@ -119,7 +118,7 @@ define(['angular', 'lodash', './server'], function(angular, _) {
         /**
          * Entity manager service
          */
-        .service('em', function(server) {
+        .service('em', ['server', function(server) {
             /**
              * Entity repository
              */
@@ -247,5 +246,5 @@ define(['angular', 'lodash', './server'], function(angular, _) {
             this.find = function(resource, id) {
                 return this.repository(resource).find(id);
             };
-        });
+        }]);
 });

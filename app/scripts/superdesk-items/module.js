@@ -1,9 +1,6 @@
 define([
     'jquery',
     'angular',
-    'angular-ui',
-    'superdesk/server',
-    'superdesk/entity',
     './resources',
     './controllers/ingest',
     './controllers/archive',
@@ -18,11 +15,9 @@ define([
     'use strict';
 
     angular.module('superdesk.items', [
-        'superdesk.entity',
         'superdesk.items.resources',
         'superdesk.items.directives',
         'superdesk.items.filters',
-        'ui.bootstrap',
         'superdesk.widgets.ingest',
         'superdesk.widgets.ingeststats'
     ])
@@ -38,7 +33,7 @@ define([
                 templateUrl: 'scripts/superdesk-items/views/reutersConfig.html'
             }
         })
-        .config(function(permissionsProvider) {
+        .config(['permissionsProvider', function(permissionsProvider) {
             permissionsProvider.permission('items-manage', {
                 label: gettext('Manage ingest items'),
                 permissions: {items: {write: true}}
@@ -55,8 +50,8 @@ define([
                 label: gettext('Read archive'),
                 permissions: {archive: {read: true}}
             });
-        })
-        .config(function(activityProvider) {
+        }])
+        .config(['activityProvider', function(activityProvider) {
             /**
              * Resolve ingest/archive list
              */
@@ -112,13 +107,13 @@ define([
                         }]
                     }
                 });
-        })
-        .config(function(settingsProvider) {
+        }])
+        .config(['settingsProvider', function(settingsProvider) {
             settingsProvider.register('ingest-feed', {
                 label: gettext('Ingest Feed'),
                 templateUrl: 'scripts/superdesk-items/views/settings.html'
             });
-        })
+        }])
         .filter('characterCount', function() {
             return function(input) {
                 return $(input).text().length;

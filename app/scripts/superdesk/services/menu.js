@@ -19,8 +19,8 @@ define(['angular'], function(angular) {
      *     parent: null
      * });
      */
-    angular.module('superdesk.services.menu', [])
-        .provider('menu', [function() {
+    angular.module('superdesk.services')
+        .provider('menu', function() {
             var menu = {};
 
             var getContainer = function(id) {
@@ -60,6 +60,6 @@ define(['angular'], function(angular) {
                 }
             };
 
-        }]);
+        });
 
 });

@@ -1,7 +1,5 @@
 define([
     'angular',
-    'angular-route',
-    'gridster',
     './controllers/main',
     './services',
     './directives',
@@ -11,15 +9,13 @@ define([
     'use strict';
 
     angular.module('superdesk.dashboard', [
-        'ngRoute',
-        'superdesk.userSettings',
         'superdesk.dashboard.services',
         'superdesk.dashboard.directives',
         'superdesk.dashboard.filters',
         'superdesk.widgets.worldClock'
     ])
     .constant('widgetsPath', 'scripts/superdesk-dashboard/widgets/')
-    .config(function(activityProvider) {
+    .config(['activityProvider', function(activityProvider) {
         activityProvider.activity('dashboard', {
             href: '/',
             label: '',
@@ -29,5 +25,5 @@ define([
             resolve: {},
             priority: -1000
         });
-    });
+    }]);
 });

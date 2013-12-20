@@ -1,11 +1,10 @@
 define([
-    'jquery',
     'angular',
     'file-upload/jquery.fileupload-angular'
-], function($, angular) {
+], function(angular) {
     'use strict';
 
-    angular.module('superdesk.services.upload', ['blueimp.fileupload'])
+    angular.module('superdesk.services')
         .config(['fileUploadProvider', function(fileUploadProvider){
             angular.extend(fileUploadProvider.defaults, {
                 autoUpload: true,
@@ -14,7 +13,7 @@ define([
                 acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i
             });
         }])
-        .service('upload', function($q, $rootScope) {
+        .service('upload', ['$q', '$rootScope', function($q, $rootScope) {
             function UploadService() {
                 /**
                  * Start upload workflow
@@ -30,7 +29,7 @@ define([
             }
 
             return new UploadService();
-        })
+        }])
         .directive('sdUploadModal', ['upload', function(upload) {
             return {
                 restrict: 'A',

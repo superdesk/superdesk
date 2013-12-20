@@ -1,10 +1,9 @@
 define([
-    'angular',
-    'superdesk-dashboard/services'
+    'angular'
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.widgets.ingeststats', ['superdesk.dashboard.services'])
+    angular.module('superdesk.widgets.ingeststats', [])
         .config(['widgetsProvider', function(widgetsProvider) {
             widgetsProvider
                 .widget('ingeststats', {

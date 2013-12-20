@@ -4,9 +4,9 @@ define([
 ], function(_, angular) {
     'use strict';
 
-    angular.module('superdesk.server', [])
-    .value('config', window.ServerConfig || {url: 'http://localahost'})
-    .service('server', function($q, $http, config) {
+    angular.module('superdesk.services')
+    .value('config', window.ServerConfig || {url: 'http://localhost'})
+    .service('server', ['$q', '$http', 'config', function($q, $http, config) {
         return {
             _makeUrl: function() {
                 var url = config.url;
@@ -245,5 +245,5 @@ define([
                 );
             }
         };
-    });
+    }]);
 });

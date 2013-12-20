@@ -15,7 +15,7 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.users', ['superdesk.entity', 'superdesk.userSettings', 'superdesk.auth', 'superdesk.users.providers'])
+    angular.module('superdesk.users', ['superdesk.users.providers'])
         .service('profileService', require('superdesk-users/services/profile'))
         .controller('RolesSettingsCtrl', require('superdesk-users/controllers/settings'))
         .controller('UserDetailCtrl', require('superdesk-users/controllers/detail'))
@@ -42,7 +42,7 @@ define([
                 created: true
             }
         })
-        .config(function(permissionsProvider) {
+        .config(['permissionsProvider', function(permissionsProvider) {
             permissionsProvider.permission('users-manage', {
                 label: gettext('Manage users'),
                 permissions: {users: {write: true}}
@@ -59,8 +59,8 @@ define([
                 label: gettext('Read user roles'),
                 permissions: {'user_roles': {read: true}}
             });
-        })
-        .config(function(activityProvider) {
+        }])
+        .config(['activityProvider', function(activityProvider) {
             activityProvider
                 .activity('users-list', {
                     href: '/users/:id?',
@@ -112,11 +112,11 @@ define([
                         }]
                     }
                 });
-        })
-        .config(function(settingsProvider) {
+        }])
+        .config(['settingsProvider', function(settingsProvider) {
             settingsProvider.register('user-roles', {
                 label: gettext('User Roles'),
                 templateUrl: 'scripts/superdesk-users/views/settings.html'
             });
-        });
+        }]);
 });

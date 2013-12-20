@@ -1,10 +1,7 @@
-define([
-    'angular'
-], function(angular) {
+define(['angular'], function(angular) {
     'use strict';
 
-   
-    angular.module('superdesk.services.keyboard', []).
+    angular.module('superdesk.services').
 
     factory('keyboardManager', ['$window', '$timeout', function ($window, $timeout) {
             var keyboardManagerService = {};
@@ -239,6 +236,4 @@ define([
             //
             return keyboardManagerService;
         }]);
-        
 });
-

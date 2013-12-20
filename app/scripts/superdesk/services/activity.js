@@ -1,6 +1,5 @@
 define([
-    'angular',
-    'angular-route'
+    'angular'
 ], function(angular) {
     'use strict';
 
@@ -45,7 +44,7 @@ define([
      * parent: (optional) Directly passed to menu provider, to manage menu hierarchy.
      *
      */
-    angular.module('superdesk.services.activity', ['ngRoute'])
+    angular.module('superdesk.services')
         .provider('activity', ['menuProvider', '$routeProvider', 'permissionsProvider',
         function(menuProvider, $routeProvider, permissionsProvider) {
             var activities = {};

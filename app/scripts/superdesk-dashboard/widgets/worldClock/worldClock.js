@@ -1,15 +1,13 @@
 define([
-    'lodash',
     'angular',
-    'moment',
+    'lodash',
     'd3',
-    'moment-timezone',
-    'angular-resource',
-    '../../services'
-], function(_, angular, moment, d3) {
+    'moment',
+    'moment-timezone'
+], function(angular, _, d3, moment) {
     'use strict';
 
-    angular.module('superdesk.widgets.worldClock', ['ngResource', 'superdesk.dashboard.services'])
+    angular.module('superdesk.widgets.worldClock', [])
         .factory('tzdata', ['$resource', 'widgetsPath', function($resource, widgetsPath) {
             var filename = widgetsPath + 'worldClock/timezones-all.json';
             return $resource(filename);

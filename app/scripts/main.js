@@ -91,33 +91,44 @@ define([
     'jquery',
     'lodash',
     'angular',
-    'angular-ui'
+    'angular-ui',
+    'angular-route',
+    'angular-gettext',
+    'angular-resource',
+    'gridster'
 ], function($, _, angular) {
     'use strict';
 
-    angular.module('superdesk.directives', []);
     angular.module('superdesk.filters', []);
+    angular.module('superdesk.services', []);
+    angular.module('superdesk.directives', []);
 
     // load core components
     require([
-        'superdesk/directives/all',
+        'superdesk/filters/all',
         'superdesk/services/all',
-        'superdesk/filters/all'
+        'superdesk/directives/all'
     ], function() {
         var modules = [
-            'superdesk.directives',
+            'gettext',
+            'ngRoute',
+            'ngResource',
+            'ui.bootstrap',
+            'blueimp.fileupload',
+
+            'superdesk.filters',
             'superdesk.services',
-            'superdesk.filters'
+            'superdesk.directives'
         ];
 
         var apps = [
+            'dashboard',
+            'settings',
             'auth',
             'menu',
-            'items',
             'users',
-            'settings',
-            'dashboard',
-            'desks'
+            'desks',
+            'items'
         ];
 
         var deps = [];

@@ -19,7 +19,7 @@ define([
          * @param {string} label - user friendly text for sort field
          * @param {string} field - field name for sort field
          */
-        .directive('sdSort', function(locationParams) {
+        .directive('sdSort', ['locationParams', function(locationParams) {
             return {
                 scope: {
                     label: '@',
@@ -39,5 +39,5 @@ define([
                     });
                 }
             };
-        });
+        }]);
 });
