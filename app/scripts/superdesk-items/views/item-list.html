@@ -1,16 +1,32 @@
+<div class="tablist left-tablist">
+    <ul class="navigation-tabs">
+        <li ><a href="#"><i class="big-icon-search"></i></a></li>        
+    </ul>
+</div>
+
 <div class="archive-content">
 
-
     <div class="archive-content-topnav">
-        <div class="btn-group pull-right">
-            <a href="" class="btn" ng-click="setView('grid')" ng-class="{active: ui.view === 'grid'}" tooltip="{{ 'grid view' | translate}}" tooltip-append-to-body="true"><i class="icon-th"></i></a>
-            <a href="" class="btn" ng-click="setView('list')" ng-class="{active: ui.view === 'list'}" tooltip="{{ 'list view' | translate}}" tooltip-append-to-body="true"><i class="icon-th-list"></i></a>
-            <a href="" class="btn" ng-click="setView('stats')" ng-class="{active: ui.view === 'stats'}" tooltip="{{ 'statistics' | translate}}" tooltip-append-to-body="true"><i class="icon-signal"></i></a>
+        <ul class="basket-tabs pull-left clearfix">
+            <li><a href="" class="active">Basket one <b>(108)</b></a></li>
+            <li><a href="">Basket two <b>(223)</b><i>19</i></a></li>
+            <li><a href="">Basket three <b>(141)</b><i>23</i></a></li>
+        </ul>
+        <div class="flat-field dropdown pull-right">
+            <a class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <span class="caret"></span></a>
+            <ul class="dropdown-menu sf-dropdown sf-right">
+                <li><a href="" ng-click="setView('grid')"><i class="icon-th"></i> {{ 'grid view' | translate}}</a></li>
+                <li><a href="" ng-click="setView('list')"><i class="icon-th-list"></i> {{ 'list view' | translate}}</a></li>
+                <li><a href="" ng-click="setView('stats')"><i class="icon-signal"></i> {{ 'statistics' | translate}}</a></li>
+            </ul>
+        </div>
+        <div class="flat-field pull-right">
+            <a href=""><i class="icon-plus"></i></a>
         </div>
     </div>
 
     <div class="archive-content-subnav">
-        <div sd-pagination data-model="items"></div>
+        <div sd-pagination data-model="items" ng-if="ui.view !== 'stats'"></div>
         <div class="btn-group pull-left" ng-show="ui.view === 'list'">
             <a class="btn" ng-class="{'active': ui.compact}" ng-click="toggleCompact()" translate>Compact view</a>
         </div>
@@ -28,6 +44,7 @@
         sd-item-preview-static
         data-item="previewItem"
         data-previewitem="previewSingle"
+        ng-if="ui.view !== 'stats'"
         >
     </div>
 

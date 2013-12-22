@@ -1,4 +1,4 @@
-<div class="media-box media-{{item.type}} urgency-{{ item.urgency }}" 
+<div class="media-box media-{{item.type}}" 
      ng-class="{
      selected : item.selected, 
      'compact-item': ui.compact, 
@@ -8,21 +8,21 @@
 
     <div class="loading-status" ng-show="!item.archived && item.archiving"></div>
 
-    <span class="urgency-border"></span>
+    <span class="state-border"></span>
 
     <div class="list-field">
-        <div sd-check ng-model="item.selected"></div>
+        <i class="urgency-icon-{{item.urgency}}"></i>
     </div>
 
     <div class="media-info">
         <div class="list-field type-icon">
             <i class="filetype-icon-{{item.type}}"></i>
-            <span class="urgency-label" ng-show="!ui.compact">{{ item.urgency }}</span>
+            <span class="output-item-label  label-{{item.urgency}}" ng-show="!ui.compact">{{ item.urgency }}</span>
         </div>
-        <div class="list-field" ng-show="ui.compact"><span class="urgency-label">{{ item.urgency }}</span></div>
+        <div class="list-field" ng-show="ui.compact"><span class="output-item-label label-{{item.urgency}}">{{ item.urgency }}</span></div>
 
-        <h5 class="list-field" ng-click="preview(item,$index)">
-            <div class="item-provider"  ng-show="ui.compact">{{ item.provider }}</div>
+        <h5 class="list-field" ng-class="{'no-border': ui.compact}" ng-click="preview(item,$index)">
+            <div class="item-provider" ng-show="ui.compact">{{ item.provider }}</div>
             <div class="main-title">
                 <div class="status-label" 
                      ng-class="{'label-canceled' : item.pubstatus=='canceled'}"

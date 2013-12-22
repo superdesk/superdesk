@@ -19,6 +19,11 @@
 @subnav-level2: 40px;
 @main-content-padding: 20px;
 
+//tablists
+@tablist-width : 48px;
+@tablist-background:  #a1a1a1;
+
+
 
 body {
   background: @background-main;
@@ -51,6 +56,11 @@ body {
 	cursor: pointer;
 }
 
+/*
+====================================================
+  Navbar
+====================================================
+*/
 .navbar {
 
 	.brand {
@@ -134,6 +144,12 @@ body {
 
 }
 
+
+/*
+====================================================
+  Content containers
+====================================================
+*/
 .main-background-container {
   position:absolute;
   top:0;
@@ -152,9 +168,6 @@ body {
   		left: @sf-main-menu-width !important;
   		right: 0 !important;
   	}
-  	.left-tablist {
-	    left: @sf-main-menu-width !important;
-	}
   }
 }
 
@@ -165,9 +178,6 @@ body {
 	  	.subnav-fixed {
 	  		right: -@sf-main-menu-width !important;
 	  	}
-	  	.right-tablist {
-		    right: -@sf-main-menu-width !important;
-		}
 	  }
 	}
 }
@@ -193,7 +203,46 @@ body {
   .subnav-title {
     font-size: 20px;
 	float: left;
-
+  }
+  .navbtn {
+  	width: 48px;
+  	height: 52px;
+  	display: block;
+  	background: #898989;
+  	text-align: center;
+  	line-height: 52px;
+  	&:hover {
+  		background: #62b0d0;
+  	}
+  	.arrow {
+  		width: 15px;
+  		height: 23px;
+  		display: inline-block;
+  		background: url(../../images/subnav-arrows.png) no-repeat;
+  		vertical-align: middle;
+  		&.left {
+  			background-position: 0 0;
+  		}
+  		&.right {
+  			background-position: -15px 0;
+  		}
+  	}
+  	&.pull-left {
+  		margin: -10px 20px 0 -20px;
+  	}
+  	&.pull-right {
+  		margin: -10px -20px 0 20px;
+  	}
+  	&.disabled {
+  		background: #e1e1e1;
+  		&:hover {
+  			background: #e1e1e1;
+  			cursor: default;
+  		}
+  		.arrow {
+  			display: none;
+  		}
+  	}
   }
   &.subnav-level2 {
     	top:@subnav-height+@topspace;
@@ -327,6 +376,7 @@ body {
 
 .navbar-fixed-top .navbar-inner {
     padding: 0;
+    .box-shadow(none);
 }
 
 .subnav	.form-inline {margin-bottom:0;}
@@ -368,7 +418,8 @@ body {
 	top: @subnav-height+@topspace;
 }
 
-
+/*
+//used for liveblog side tabs
 .side-tab-container {
 	position: absolute;
 	top: 0;
@@ -421,7 +472,74 @@ body {
 		}
 	}
 }
+*/
 
+
+/*
+====================================================
+  Sidebar tabs - tablist
+====================================================
+*/
+
+.tablist {
+  .transition( all 0.3s ease);
+  width:@tablist-width;
+  position:absolute;
+  top:0;
+  bottom:0;
+  z-index:20;
+  background: @tablist-background;
+  overflow:hidden;
+    &.left-tablist {
+      left:0;
+      .box-shadow(inset -8px 0 7px -6px #888);
+    }
+    &.right-tablist {
+      right:0;
+      .box-shadow(inset 8px 0 7px -6px #888);
+    }
+    .navigation-tabs {
+      margin:-1px 0 0;
+      border:0;
+      list-style-type:none;
+        li {
+          position:relative;
+          float:none;
+          margin-bottom:-1px;
+            a {
+              display:block;
+              width: @tablist-width;
+              min-width: @tablist-width;
+              height: @tablist-width - 2;
+              line-height: @tablist-width - 2;
+              text-align: center;
+              padding: 0;
+              margin-bottom: 0;
+              margin-right: 0;
+              .border-radius(0px);
+              border: 1px solid #898989;
+              border-width: 1px 0 !important;
+              -khtml-user-drag: element;
+              -webkit-user-drag: element;
+                &:hover {
+                	background: #b7b7b7;
+                	border: 1px solid #999999;
+					border-width: 1px 0 !important;
+					&.tab-li-hov {
+						background:@background-main;
+						border: 1px solid #7c7c7c;
+						border-width: 1px 0 !important;
+					}
+                }
+            }
+            &.active {
+              a {
+                
+              }
+            }
+        }
+    }
+}
 
 
 /*
