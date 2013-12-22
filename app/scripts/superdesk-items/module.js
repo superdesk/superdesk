@@ -31,11 +31,11 @@ define([
         .value('providerTypes', {
             aap: {
                 label: 'AAP',
-                templateUrl: 'scripts/superdesk-items/views/aapConfig.html'
+                templateUrl: 'scripts/superdesk-items/views/settings/aapConfig.html'
             },
             reuters: {
                 label: 'Reuters',
-                templateUrl: 'scripts/superdesk-items/views/reutersConfig.html'
+                templateUrl: 'scripts/superdesk-items/views/settings/reutersConfig.html'
             }
         })
         .config(function(permissionsProvider) {
@@ -116,7 +116,7 @@ define([
         .config(function(settingsProvider) {
             settingsProvider.register('ingest-feed', {
                 label: gettext('Ingest Feed'),
-                templateUrl: 'scripts/superdesk-items/views/settings.html'
+                templateUrl: 'scripts/superdesk-items/views/settings/settings.html'
             });
         })
         .filter('characterCount', function() {
