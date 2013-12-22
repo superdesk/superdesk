@@ -146,8 +146,8 @@ define([
                     };
 
                     scope.ui = {
-                        compact: getSetting('archive:compact', false),
-                        view: $routeParams.view || 'grid'
+                        compact: getSetting('ingest:compact', false),
+                        view: getSetting('ingest:view', 'list')
                     };
 
                     var actions = attrs.actions.split(',');
@@ -155,12 +155,12 @@ define([
 
                     scope.toggleCompact = function() {
                         scope.ui.compact = !scope.ui.compact;
-                        storage.setItem('archive:compact', scope.ui.compact, true);
+                        storage.setItem('ingest:compact', scope.ui.compact, true);
                     };
 
                     scope.setView = function(val) {
-                        scope.view = val;
-                        $location.search('view', val !== 'grid' ? val : null);
+                        scope.ui.view = val;
+                        storage.setItem('ingest:view', scope.ui.view, true);
                     };
 
                 }
