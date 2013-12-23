@@ -1,6 +1,5 @@
 <div class="media-box media-{{item.type}}" 
      ng-class="{
-     selected : item.selected, 
      'compact-item': ui.compact, 
      archived : item.archived!=null&&actions.archive,
      active : item ==previewItem
@@ -40,15 +39,14 @@
             <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>
             <div class="item-functions">
                 <a class="list-field" 
-                    ng-click="archive(item)" 
+                    ng-click="fetch($index)"
                     ng-show="actions.archive && !item.archived" 
-                    tooltip-placement="bottom" tooltip="{{ 'archive' | translate }}" tooltip-append-to-body="true">
+                    tooltip-placement="bottom" tooltip="{{ 'fetch' | translate }}" tooltip-append-to-body="true">
                         <i class="icon-archive"></i>
                 </a>
-                <a class="list-field disabled" 
-                    ng-click="archive()" 
+                <a class="list-field disabled"  
                     ng-show="actions.archive && item.archived" 
-                    tooltip-placement="bottom" tooltip="{{ 'already in Archive' | translate }}" tooltip-append-to-body="true">
+                    tooltip-placement="bottom" tooltip="{{ 'already fetched' | translate }}" tooltip-append-to-body="true">
                         <i class="icon-archive"></i>
                 </a>
                 

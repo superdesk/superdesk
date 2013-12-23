@@ -47,14 +47,12 @@
         ng-if="ui.view !== 'stats'"
         >
     </div>
+    <div class="preview-backdrop" ng-class="{'show': context}"></div>
 
     <div class="context-menu" ng-class="{'show': context}">
         <div class="title">Fetch</div>
         <ul class="context-list">
-            <li ng-click="archive()"><i>as</i> Article</li>
-            <li><i>as</i> Factbox</li>
-            <li><i>as</i> Sidebar</li>
-            <li><i>as</i> Blank article</li>
+            <li ng-repeat="menuitem in contextMenu" ng-class="{'selected' : $index == selectedContext}" ng-click="contextAction(menuitem.action)" ng-mouseenter="selectContext($index)"><i>as</i> {{menuitem.title}}</li>
         </ul>
     </div>
 

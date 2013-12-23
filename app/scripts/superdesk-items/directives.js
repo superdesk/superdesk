@@ -19,7 +19,6 @@ define([
                     df: '@'
                 },
                 link: function(scope, element, attrs) {
-                    element.attr('autofocus', 'autofocus');
                     element.addClass('searchbar searchbar-large');
                     element.val($routeParams.q || '');
 
@@ -166,6 +165,8 @@ define([
                 }
             };
         })
+        /* 
+        //deprecated 
         .directive('sdItemPreview', function(em) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/item-preview.html',
@@ -186,6 +187,7 @@ define([
                 }
             };
         })
+        */
         .directive('sdItemPreviewStatic', function(em) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/item-preview-static.html',
@@ -197,23 +199,6 @@ define([
                 link: function(scope, element, attrs) {
                     scope.treepreview = function(item) {
                         scope.previewSingle = item;
-                    };
-                    scope.archive = function(item) {
-                        em.create('archive', item).then(function() {
-                            item.archived = true;
-                        });
-                    };
-                }
-            };
-        })
-        .directive('sdScrollVisible', function($routeParams, $location, providerRepository) {
-            return {
-                scope: {items: '='},
-                templateUrl: 'scripts/superdesk-items/views/provider-filter.html',
-                link: function(scope, element, attrs) {
-                    scope.activeProvider = $routeParams.provider || null;
-                    scope.setProvider = function(provider) {
-                        $location.search('provider', provider);
                     };
                 }
             };
