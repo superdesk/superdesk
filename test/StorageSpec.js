@@ -1,7 +1,7 @@
 define([
     'angular',
-    'superdesk/services/storage',
-    'angular-mocks'
+    'angular-mocks',
+    'superdesk/services/storage'
 ], function(angular) {
     'use strict';
 
@@ -9,7 +9,7 @@ define([
         var storage;
 
         beforeEach(function() {
-            module('superdesk.services.storage');
+            module('superdesk.services');
             inject(function(_storage_) {
                 storage = _storage_;
             });

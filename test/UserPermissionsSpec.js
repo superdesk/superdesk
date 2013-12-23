@@ -16,8 +16,7 @@ define([
         };
 
         beforeEach(function() {
-            module('superdesk.entity');
-            module('superdesk.services.permissionsService');
+            module('superdesk.services');
             inject(function($rootScope, $httpBackend, _em_, _permissionsService_) {
                 rootScope = $rootScope;
                 httpBackend = $httpBackend;

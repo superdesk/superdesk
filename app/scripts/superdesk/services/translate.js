@@ -1,7 +1,7 @@
 define([
     'angular',
-    'angular-gettext',
-    'translations'
+    'translations',
+    'angular-gettext'
 ], function(angular) {
     'use strict';
 

@@ -2,13 +2,13 @@ define([
     'superdesk-auth/authService',
     'superdesk/services/storage',
     'superdesk/entity',
+    'superdesk/server',
     'angular-mocks'
 ], function(authService) {
     'use strict';
 
     beforeEach(function() {
-        module('superdesk.services.storage');
-        module('superdesk.entity');
+        module('superdesk.services');
         module('ngMock');
     });
 
