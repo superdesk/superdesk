@@ -3,15 +3,19 @@ define(['angular'], function(angular) {
 
     return ['$scope', 'items', 'em', '$location', 'locationParams', 'keyboardManager', 'storage',
     function($scope, items, em, $location, locationParams, keyboardManager, storage) {
-        
+
         $scope.items = items;
         $scope.inprogress =  storage.getItem('collection:inprogress') || { all : [], opened : [], active : null };
 
-        var putInProgress = function(item) {
-            if (! _.has($scope.inprogress, item._id)) {
-                $scope.inprogress.all.push(item._id);
-                $scope.inprogress.opened.push(item._id);
+        var putInProgress = function(item, setActive) {
+            if (! _.has($scope.inprogress, item)) {
+                $scope.inprogress.all.push(item);
+                $scope.inprogress.opened.push(item);
+                if (setActive === true) {
+                    $scope.inprogress.active = item;
+                }
                 storage.setItem('collection:inprogress', $scope.inprogress, false);
+
             }
         };
         
@@ -150,27 +154,31 @@ define(['angular'], function(angular) {
             em.create('archive', item).then(function(data) {
                 delete item.archiving;
                 _.extend(item,data);
-                putInProgress(data._id);
+                putInProgress(data._id, false);
             });
             item.archiving = true;
         };
 
         nextitem(); //initialy select(focus on) first item on ingest page 
 
-        $scope.openEditor = function(path) {
+        $scope.openEditor = function(item_id) {
             //remember url params in session storage
             storage.setItem('ingest:navigation-params', $location.url(), false);
-            if (path !== undefined) {
-                $location.url('/article/'+path);
+            if (item_id !== undefined) {
+                putInProgress(item_id, true);
+                openItem(item_id);
             }
             else if ($scope.inprogress.active !== null) {
-                $location.url('/article/'+$scope.inprogress.active);
+                openItem($scope.inprogress.active);
             }
             else if ($scope.inprogress.opened.length) {
-                $location.url('/article/'+$scope.inprogress.opened[0]);
+                openItem($scope.inprogress.opened[0]);
             }
         };
 
+        var openItem = function(item_id) {
+            $location.url('/article/'+item_id);
+        };
 
 
         if (locationParams.get('id')) {
