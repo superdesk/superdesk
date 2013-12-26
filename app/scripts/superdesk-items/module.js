@@ -82,6 +82,33 @@ define([
                 };
             }
 
+            function resolveArticles() {
+                return {
+                    articles : ['server', 'storage', '$q', function(server,storage,$q) {
+
+                        var inprogress = storage.getItem('collection:inprogress') || {};
+                        var openedArticles = [];
+                        var resolved = 0;
+                        var deferred = $q.defer();
+
+                        angular.forEach(inprogress.opened, function(article_id, key) {
+                            server.readById('ingest',article_id).then(function(data){
+                                openedArticles[key]= data;
+                                resolved++;
+                                if (resolved === inprogress.opened.length) {
+                                    deferred.resolve(openedArticles);
+                                }
+                            });
+                        });
+
+                        return deferred.promise;
+                    }],
+                    item: ['$route', 'server', function($route, server) {
+                        return server.readById('ingest', $route.current.params.id);
+                    }],
+                };
+            }
+
             activityProvider
                 .activity('ingest', {
                     href: '/ingest/:id?',
@@ -101,16 +128,12 @@ define([
                     resolve: resolve('archive')
                 })
                 .activity('archive-detail', {
-                    href: '/archive/:id',
+                    href: '/article/:id',
                     label: gettext('Archive'),
                     menu: false,
                     templateUrl: 'scripts/superdesk-items/views/edit.html',
                     controller: require('superdesk-items/controllers/edit'),
-                    resolve: {
-                        item: ['$route', 'server', function($route, server) {
-                            return server.readById('items', $route.current.params.id);
-                        }]
-                    }
+                    resolve: resolveArticles()
                 });
         })
         .config(function(settingsProvider) {

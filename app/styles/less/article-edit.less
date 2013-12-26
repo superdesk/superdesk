@@ -79,8 +79,32 @@ html, body.article-edit {
     }
 }
 
+.article-edit-container {
+  position: absolute;
+  top:@topspace+@subnav-height;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.article-edit-container .tablist {
+  .fake-space {
+    height: @subnav-level2 - 1;
+    border-bottom: 1px solid #898989;
+  }
+}
 
 .main-article-container {
+  position: absolute;
+  top:0;
+  left: 0;
+  right: 0 ;
+  bottom: 0;
+  overflow-y: auto;
+}
+
+.main-article {
   width:auto;
   background:@main-article-color;
   border-color:@main-article-border;
@@ -88,7 +112,7 @@ html, body.article-edit {
   border-width:0 1px;
   position:relative;
   z-index:1;
-  padding:@subnav-height+@editor-toolbar+10 @main-article-padding-side 40px;
+  padding:10px @main-article-padding-side 40px;
   margin:0 auto;
   min-height:100%;
   .box-sizing(border-box);
@@ -158,7 +182,7 @@ html, body.article-edit {
     }
     &.article-full-text {
       p {
-        font-size:14px;
+        font-size:13px;
         line-height:20px;
       }
     }
@@ -255,6 +279,41 @@ html, body.article-edit {
     }
   }
   
+}
+
+
+.opened-articles {
+  position: absolute;
+  height: 30px;
+  left: 0; right: 0;
+  bottom: 0;
+  background: #111;
+  .opacity(90);
+  z-index: 25;
+  ul {
+    li {
+      line-height: 30px;
+      float: left;
+      margin: 0 20px;
+      color: #8bcaf7;
+      font-size: 13px;
+      .text-light();
+      text-shadow: 0 0 3px #000;
+      
+      &:hover {
+        cursor: pointer;
+        color: #fff;
+      }
+
+      &.active {
+        color: #fff;
+        .text-semibold();
+        &:hover {
+          cursor: default;
+        }
+      }
+    }
+  }
 }
 
 

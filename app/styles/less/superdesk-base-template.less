@@ -211,10 +211,7 @@ body {
   	background: #898989;
   	text-align: center;
   	line-height: 52px;
-  	&:hover {
-  		background: #62b0d0;
-  		cursor: pointer;
-  	}
+  	
   	.arrow {
   		width: 15px;
   		height: 23px;
@@ -243,6 +240,10 @@ body {
   		.arrow {
   			display: none;
   		}
+  	}
+  	&.active {
+  		background: #62b0d0;
+  		cursor: pointer;
   	}
   }
   &.subnav-level2 {

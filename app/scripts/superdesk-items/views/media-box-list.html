@@ -49,6 +49,11 @@
                     tooltip-placement="bottom" tooltip="{{ 'already fetched' | translate }}" tooltip-append-to-body="true">
                         <i class="icon-archive"></i>
                 </a>
+                <a class="list-field"
+                    ng-click="openEditor(item._id)"
+                    tooltip-placement="bottom" tooltip="{{ 'edit' | translate }}" tooltip-append-to-body="true">
+                        <i class="icon-pencil"></i>
+                </a>
                 
             </div>
         </div>

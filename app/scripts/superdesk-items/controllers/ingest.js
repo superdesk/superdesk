@@ -1,10 +1,19 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', 'items', 'em', 'locationParams', 'keyboardManager',
-    function($scope, items, em, locationParams, keyboardManager) {
-
+    return ['$scope', 'items', 'em', '$location', 'locationParams', 'keyboardManager', 'storage',
+    function($scope, items, em, $location, locationParams, keyboardManager, storage) {
+        
         $scope.items = items;
+        $scope.inprogress =  storage.getItem('collection:inprogress') || { all : [], opened : [], active : null };
+
+        var putInProgress = function(item) {
+            if (! _.has($scope.inprogress, item._id)) {
+                $scope.inprogress.all.push(item._id);
+                $scope.inprogress.opened.push(item._id);
+                storage.setItem('collection:inprogress', $scope.inprogress, false);
+            }
+        };
         
         $scope.context = false;     //status of context menu (open or not)
         $scope.contextMenu = [
@@ -39,6 +48,7 @@ define(['angular'], function(angular) {
                     break;
             }
         };
+
         $scope.selectedContext = 0;
         var previousContext = function() {
             if ($scope.selectedContext>0) {
@@ -51,7 +61,7 @@ define(['angular'], function(angular) {
             }
         };
         $scope.selectContext = function(index) {
-            //on mouse enter
+            //on mouseenter
             $scope.selectedContext = index;
         };
 
@@ -140,11 +150,28 @@ define(['angular'], function(angular) {
             em.create('archive', item).then(function(data) {
                 delete item.archiving;
                 _.extend(item,data);
+                putInProgress(data._id);
             });
             item.archiving = true;
         };
 
-        nextitem();
+        nextitem(); //initialy select(focus on) first item on ingest page 
+
+        $scope.openEditor = function(path) {
+            //remember url params in session storage
+            storage.setItem('ingest:navigation-params', $location.url(), false);
+            if (path !== undefined) {
+                $location.url('/article/'+path);
+            }
+            else if ($scope.inprogress.active !== null) {
+                $location.url('/article/'+$scope.inprogress.active);
+            }
+            else if ($scope.inprogress.opened.length) {
+                $location.url('/article/'+$scope.inprogress.opened[0]);
+            }
+        };
+
+
 
         if (locationParams.get('id')) {
             var item = _.find($scope.items._items, {_id: locationParams.get('id')});
@@ -152,7 +179,7 @@ define(['angular'], function(angular) {
                 $scope.preview(item);
             }
         }
-
+        
 
     }];
 });
