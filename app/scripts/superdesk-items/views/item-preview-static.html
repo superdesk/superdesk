@@ -10,7 +10,14 @@
         <p class="date-info">Created {{ item.firstcreated }}</p>
         <p class="title">{{ previewSingle.headline }}</p>
         <div class="core-content">
+
             <div class="description" ng-show="previewSingle.slugline">{{ previewSingle.slugline || previewSingle.headline }}</div>
+
+            <!-- picture preview -->
+            <figure class="picture-preview" ng-show="previewSingle.type == 'picture'">
+                <img sd-image-loader load-src="{{ previewSingle.renditions.viewImage.href }}" />
+            </figure>
+
             <div class="text"  ng-show="previewSingle.body_html" sd-html ng-model="previewSingle.body_html" ></div>
         </div>
     </div>

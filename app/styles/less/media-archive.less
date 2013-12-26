@@ -964,6 +964,7 @@
 		}
 		.title {
 			font-size: 17px;
+			line-height: 22px;
 			.text-semibold();
 			margin: 15px 0;
 			color: #333;
@@ -974,6 +975,19 @@
 				font-style: italic;
 				color: #656565;
 				margin-bottom: 15px;
+			}
+			.picture-preview {
+				max-width: 100%;
+				margin: 20px 0;
+				img {
+					max-width: 100%;
+					height: auto;
+				}
+				&.loading {
+					width: 100%;
+					height: 200px;
+					background: #f8f8f8 url(../../images/loading-large.gif) center center no-repeat;
+				}
 			}
 		}
 	}

@@ -47,7 +47,7 @@
         ng-if="ui.view !== 'stats'"
         >
     </div>
-    <div class="preview-backdrop" ng-class="{'show': context}"></div>
+    <div class="preview-backdrop" ng-show="context" ng-class="{'show': context}"></div>
 
     <div class="context-menu" ng-class="{'show': context}">
         <div class="title">Fetch</div>

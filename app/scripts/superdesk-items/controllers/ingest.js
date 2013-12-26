@@ -15,7 +15,6 @@ define(['angular'], function(angular) {
                     $scope.inprogress.active = item;
                 }
                 storage.setItem('collection:inprogress', $scope.inprogress, false);
-
             }
         };
         
@@ -153,7 +152,7 @@ define(['angular'], function(angular) {
             var item = items._items[$scope.selectedItemIndex];
             em.create('archive', item).then(function(data) {
                 delete item.archiving;
-                _.extend(item,data);
+                item.archived = data.archived;
                 putInProgress(data._id, false);
             });
             item.archiving = true;
