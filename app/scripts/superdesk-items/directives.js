@@ -50,25 +50,6 @@ define([
                 }
             };
         }).
-        directive('sdWordcount', function() {
-            return {
-                require: '?ngModel',
-                link: function($scope, element, attrs, ngModel) {
-                    ngModel.$render = function() {
-                        if (ngModel.$viewValue !== undefined && ngModel.$viewValue !== null ) {
-                            var value = ngModel.$viewValue;
-                            var regex = /\s+/gi;
-                            var wordCount = value.trim().replace(regex, ' ').split(' ').length;
-                            element.html(wordCount);
-                        } else {
-                            element.html(0);
-                        }
-                        
-                        
-                    };
-                }
-            };
-        }).
         directive('sdContent', function() {
             function getText(content) {
                 var lines = $(content);

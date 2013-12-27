@@ -7,15 +7,18 @@ define(['angular'], function(angular) {
         $scope.items = items;
         $scope.inprogress =  storage.getItem('collection:inprogress') || { all : [], opened : [], active : null };
 
-        var putInProgress = function(item, setActive) {
-            if (! _.has($scope.inprogress, item)) {
-                $scope.inprogress.all.push(item);
-                $scope.inprogress.opened.push(item);
-                if (setActive === true) {
-                    $scope.inprogress.active = item;
-                }
-                storage.setItem('collection:inprogress', $scope.inprogress, false);
+        var putInProgress = function(item_id, setActive) {
+
+            if (_.indexOf($scope.inprogress.all, item_id) === -1) {
+                $scope.inprogress.all.push(item_id);
             }
+            if (_.indexOf($scope.inprogress.opened, item_id) === -1) {
+                $scope.inprogress.opened.push(item_id);
+            }
+            if (setActive === true) {
+                $scope.inprogress.active = item_id;
+            }
+            storage.setItem('collection:inprogress', $scope.inprogress, false);
         };
         
         $scope.context = false;     //status of context menu (open or not)
@@ -38,7 +41,7 @@ define(['angular'], function(angular) {
             }
         ];
         
-        $scope.contextAction = function(action) {
+        var contextAction = function(action) {
             switch (action) {
                 case 'fetch-article' :
                     $scope.archive();
@@ -109,11 +112,7 @@ define(['angular'], function(angular) {
         });
 
         keyboardManager.bind('enter', function() {
-            if ($scope.context) {
-                $scope.contextAction($scope.contextMenu[$scope.selectedContext].action);
-                $scope.selectedContext = 0;
-            }
-            $scope.context = !$scope.context ;
+            $scope.selectAction();
         }, {
             'inputDisabled': true
         });
@@ -124,7 +123,15 @@ define(['angular'], function(angular) {
             }
         });
 
-
+        $scope.selectAction = function() {
+            if ($scope.context) {
+                //select context action if context menu is open
+                contextAction($scope.contextMenu[$scope.selectedContext].action);
+                $scope.selectedContext = 0;
+            }
+            //open/close context menu
+            $scope.context = !$scope.context ;
+        };
 
         $scope.fetch = function(index) {
             //preview
@@ -150,12 +157,14 @@ define(['angular'], function(angular) {
 
         $scope.archive = function() {
             var item = items._items[$scope.selectedItemIndex];
-            em.create('archive', item).then(function(data) {
-                delete item.archiving;
-                item.archived = data.archived;
-                putInProgress(data._id, false);
-            });
-            item.archiving = true;
+            if (item.archived === undefined) {
+                em.create('archive', item).then(function(data) {
+                    delete item.archiving;
+                    item.archived = data.archived;
+                    putInProgress(data._id, false);
+                });
+                item.archiving = true;
+            }
         };
 
         nextitem(); //initialy select(focus on) first item on ingest page 
@@ -171,6 +180,7 @@ define(['angular'], function(angular) {
                 openItem($scope.inprogress.active);
             }
             else if ($scope.inprogress.opened.length) {
+                putInProgress($scope.inprogress.opened[0], true);
                 openItem($scope.inprogress.opened[0]);
             }
         };

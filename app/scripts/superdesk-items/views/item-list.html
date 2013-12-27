@@ -52,7 +52,7 @@
     <div class="context-menu" ng-class="{'show': context}">
         <div class="title">Fetch</div>
         <ul class="context-list">
-            <li ng-repeat="menuitem in contextMenu" ng-class="{'selected' : $index == selectedContext}" ng-click="contextAction(menuitem.action)" ng-mouseenter="selectContext($index)"><i>as</i> {{menuitem.title}}</li>
+            <li ng-repeat="menuitem in contextMenu" ng-class="{'selected' : $index == selectedContext}" ng-click="selectAction()" ng-mouseenter="selectContext($index)"><i>as</i> {{menuitem.title}}</li>
         </ul>
     </div>
 

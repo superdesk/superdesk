@@ -4,7 +4,7 @@
             <li>Keyword: <span>Dell</span></li>
             <li>Take key: <span>Update</span></li>
         </ul>
-        <div class="word-count pull-right"><i sd-wordcount ng-model="previewSingle.body_html">0</i> <span>words</span></div>
+        <div class="word-count pull-right"><i>{{previewSingle.body_html | wordCount}}</i> <span>words</span></div>
     </div>
     <div class="content">
         <p class="date-info">Created {{ item.firstcreated }}</p>

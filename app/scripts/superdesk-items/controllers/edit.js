@@ -38,6 +38,7 @@ define(['angular'], function(angular) {
             //close this
             inprogress.opened = _.without(inprogress.opened,$scope.item._id);
             inprogress.active = null;
+            saveInprogress();
 
             //if there is at least one more item in opened array bring it
             if (inprogress.opened.length > 0) {
