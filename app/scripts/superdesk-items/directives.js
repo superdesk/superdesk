@@ -184,7 +184,7 @@ define([
                 }
             };
         })
-        .directive("sdImageLoader", function() {
+        .directive('sdImageLoader', function() {
             return {
                 link: function(scope, element, attrs) {
                     var img, loadImage;
@@ -192,19 +192,19 @@ define([
 
                     loadImage = function() {
 
-                        element[0].src = "";
-                        $(element[0]).parent().addClass("loading");
+                        element[0].src = '';
+                        $(element[0]).parent().addClass('loading');
 
                         img = new Image();
                         img.src = attrs.loadSrc;
 
                         img.onload = function() {
                             element[0].src = attrs.loadSrc;
-                            $(element[0]).parent().removeClass("loading");
+                            $(element[0]).parent().removeClass('loading');
                         };
                     };
 
-                    scope.$watch((function() { return attrs.loadSrc; }), function(newVal, oldVal) {
+                    scope.$watch(function() { return attrs.loadSrc; }, function(newVal, oldVal) {
                         loadImage();
                     });
                 }

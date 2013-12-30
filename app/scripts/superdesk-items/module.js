@@ -105,7 +105,7 @@ define([
                     }],
                     item: ['$route', 'server', function($route, server) {
                         return server.readById('ingest', $route.current.params.id);
-                    }],
+                    }]
                 };
             }
 
