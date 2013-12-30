@@ -21,7 +21,10 @@ require.config({
         'jquery.ui.widget': 'bower_components/blueimp-file-upload/js/vendor/jquery.ui.widget',
 
         'gridster': 'bower_components/gridster/dist/jquery.gridster.with-extras',
-        'd3': 'bower_components/d3/d3'
+        'd3': 'bower_components/d3/d3',
+
+        'ng-aloha-editor': 'bower_components/ng-aloha-editor/',
+        'aloha': 'bower_components/ng-aloha-editor/libs/alohaeditor-0.23.26/aloha/lib/aloha'
     },
     shim: {
         jquery: {

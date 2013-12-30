@@ -16,6 +16,7 @@
     "angular-bootstrap": "~0.9",
     "blueimp-file-upload": "~9.5.2",
     "gridster": "~0.2.1",
-    "d3": "~3.3.12"
+    "d3": "~3.3.12",
+    "ng-aloha-editor": "*"
   }
 }
