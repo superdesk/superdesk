@@ -19,7 +19,6 @@ define([
                     df: '@'
                 },
                 link: function(scope, element, attrs) {
-                    element.attr('autofocus', 'autofocus');
                     element.addClass('searchbar searchbar-large');
                     element.val($routeParams.q || '');
 
@@ -50,8 +49,8 @@ define([
                     };
                 }
             };
-        }]).
-        directive('sdWordcount', function() {
+        }])
+        .directive('sdWordcount', function() {
             return {
                 require: '?ngModel',
                 link: function($scope, element, attrs, ngModel) {
@@ -146,8 +145,8 @@ define([
                     };
 
                     scope.ui = {
-                        compact: getSetting('archive:compact', false),
-                        view: $routeParams.view || 'grid'
+                        compact: getSetting('ingest:compact', false),
+                        view: getSetting('ingest:view', 'list')
                     };
 
                     var actions = attrs.actions.split(',');
@@ -155,18 +154,20 @@ define([
 
                     scope.toggleCompact = function() {
                         scope.ui.compact = !scope.ui.compact;
-                        storage.setItem('archive:compact', scope.ui.compact, true);
+                        storage.setItem('ingest:compact', scope.ui.compact, true);
                     };
 
                     scope.setView = function(val) {
-                        scope.view = val;
-                        $location.search('view', val !== 'grid' ? val : null);
+                        scope.ui.view = val;
+                        storage.setItem('ingest:view', scope.ui.view, true);
                     };
 
                 }
             };
         }])
-        .directive('sdItemPreview', ['em', function(em) {
+        /* 
+        //deprecated 
+        .directive('sdItemPreview', function(em) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/item-preview.html',
                 replace: true,
@@ -186,6 +187,8 @@ define([
                 }
             };
         }])
+        })
+        */
         .directive('sdItemPreviewStatic', ['em', function(em) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/item-preview-static.html',
@@ -198,27 +201,38 @@ define([
                     scope.treepreview = function(item) {
                         scope.previewSingle = item;
                     };
-                    scope.archive = function(item) {
-                        em.create('archive', item).then(function() {
-                            item.archived = true;
-                        });
-                    };
                 }
             };
         }])
-        .directive('sdScrollVisible', ['$routeParams', '$location', 'providerRepository',
-        function($routeParams, $location, providerRepository) {
+        .directive('sdScrollVisible', ['$location', 'providerRepository', function($location, providerRepository) {
+            return;
+        }])
+        .directive('sdImageLoader', function() {
             return {
-                scope: {items: '='},
-                templateUrl: 'scripts/superdesk-items/views/provider-filter.html',
                 link: function(scope, element, attrs) {
-                    scope.activeProvider = $routeParams.provider || null;
-                    scope.setProvider = function(provider) {
-                        $location.search('provider', provider);
+                    var img, loadImage;
+                    img = null;
+
+                    loadImage = function() {
+
+                        element[0].src = '';
+                        $(element[0]).parent().addClass('loading');
+
+                        img = new Image();
+                        img.src = attrs.loadSrc;
+
+                        img.onload = function() {
+                            element[0].src = attrs.loadSrc;
+                            $(element[0]).parent().removeClass('loading');
+                        };
                     };
+
+                    scope.$watch(function() { return attrs.loadSrc; }, function(newVal, oldVal) {
+                        loadImage();
+                    });
                 }
             };
-        }])
+        })
         .directive('sdRef', ['em', function(em) {
             return {
                 link: function(scope, element, attrs) {

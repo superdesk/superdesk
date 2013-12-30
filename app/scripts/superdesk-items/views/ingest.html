@@ -1,6 +1,15 @@
 <div class="subnav subnav-fixed">
+
+	<a class="navbtn pull-left disabled">
+		<i class="left arrow"></i>
+	</a>
+	<a class="navbtn pull-right" ng-class="{active : inprogress.opened.length}" ng-click="openEditor()">
+		<i class="right arrow"></i>
+	</a>
+
     <div class="btn-group source-select" sd-provider-filter data-items="items"></div>
     <input type="text" sd-searchbar data-df="headline" />
+    
 </div>
 
 <section
