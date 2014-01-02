@@ -3,7 +3,7 @@ define(['angular'], function(angular) {
 
     angular.module('superdesk.services').
         /**
-         * UserSettings service to store plugin/controller specific settings such as 
+         * UserSettings service to store plugin/controller specific settings such as
          * items per page or displayed fields.
          *
          * Usage:

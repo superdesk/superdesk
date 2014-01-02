@@ -1,8 +1,8 @@
 define([
     'angular',
-    'superdesk/entity',
-    'superdesk/services/permissionsService',
-    'angular-mocks'
+    'angular-mocks',
+    'superdesk/services/entity',
+    'superdesk/services/permissionsService'
 ], function(angular) {
     'use strict';
 

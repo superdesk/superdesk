@@ -9,8 +9,8 @@ define([
     './permissionsService',
     './activity',
     './keyboardManager',
-    '../userSettings',
-    '../entity',
-    '../server'
+    './userSettings',
+    './entity',
+    './server'
 ], function() {
 });
