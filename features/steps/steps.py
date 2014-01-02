@@ -148,6 +148,19 @@ def step_impl(context, url):
     href = get_self_href(res, context)
     headers = [('If-Match', res['etag'])]
     headers += context.headers
+    print('patch', href)
+    context.response = context.client.patch(href, data=context.text, headers=headers)
+    assert_ok(context.response)
+
+
+@when('we patch again')
+def step_impl(context):
+    data = get_json_data(context.response)
+    href = get_self_href(data, context)
+    etag = data['etag']
+    headers = [('If-Match', etag)]
+    headers += context.headers
+    print('patch again', href, etag)
     context.response = context.client.patch(href, data=context.text, headers=headers)
     assert_ok(context.response)
 
@@ -287,3 +300,12 @@ def step_impl(context, keys):
 def step_impl(context):
     folder = context.app.config['UPLOAD_FOLDER']
     assert os.path.exists(os.path.join(folder, context.filename))
+
+
+@then('we get etag matching "{url}"')
+def step_impl(context, url):
+    etag = get_json_data(context.response)['etag']
+    assert etag, context.response.data
+    response = context.client.get(url, headers=context.headers)
+    data = get_json_data(response)
+    assert etag == data['etag'], '%s not in %s' % (etag, data)

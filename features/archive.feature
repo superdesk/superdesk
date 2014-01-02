@@ -45,6 +45,7 @@ Feature: News Items Archive
             {"guid": "tag:example.com,0000:newsml_BRE9A605"}
             """
 
+    @wip
     @auth
     Scenario: Update item
         Given "archive"
@@ -54,7 +55,13 @@ Feature: News Items Archive
 
         When we patch "/archive/xyz"
             """
-            {"slugline": "TEST"}
+            {"slugline": "TEST", "urgency": 2, "version": "1"}
+            """
+
+        And we patch again
+            """
+            {"slugline": "TEST2", "version": "2"}
             """
 
         Then we get updated response
+        And we get etag matching "/archive/xyz"
