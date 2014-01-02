@@ -5,17 +5,17 @@ define([
     'moment',
     'd3',
     'aloha',
-    'ng-aloha-editor/ng-aloha-editor'
+    'ng-aloha-editor'
 ], function(_, $, angular, moment, d3) {
     'use strict';
 
-    angular.module('superdesk.items.directives', ['ngAlohaEditor']).
-        filter('reldate', function() {
+    angular.module('superdesk.items.directives', ['ngAlohaEditor'])
+        .filter('reldate', function() {
             return function(date) {
                 return moment(date).fromNow();
             };
-        }).
-        directive('sdSearchbar', ['$location', '$routeParams', function($location, $routeParams) {
+        })
+        .directive('sdSearchbar', ['$location', '$routeParams', function($location, $routeParams) {
             return {
                 scope: {
                     df: '@'
@@ -44,7 +44,7 @@ define([
         .directive('sdEditor', ['$sce', function($sce) {
             return {
                 require: 'ngModel',
-                template: '<div class="editor" aloha ng-bind-html="editorContent"></div>',
+                template: '<div aloha class="editor" ng-bind-html="editorContent"></div>',
                 link: function(scope, element, attrs, ngModel) {
                     ngModel.$render = function() {
                         scope.editorContent = $sce.trustAsHtml(ngModel.$viewValue);

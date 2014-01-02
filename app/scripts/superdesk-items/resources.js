@@ -2,13 +2,6 @@ define(['angular'], function(angular) {
     'use strict';
 
     angular.module('superdesk.items.resources', [])
-        .service('ItemService', ['server', function(server) {
-            return {
-                update: function(item) {
-                    server.update(item);
-                }
-            };
-        }])
         .factory('colorSchemes', ['$resource', function($resource) {
             return $resource('scripts/superdesk-items/static-resources/color-schemes.json');
         }])
