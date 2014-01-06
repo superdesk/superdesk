@@ -7,7 +7,6 @@ define([
     './menu',
     './permissions',
     './permissionsService',
-    './activity',
     './keyboardManager',
     './userSettings',
     './entity',

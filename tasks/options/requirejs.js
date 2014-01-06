@@ -7,12 +7,11 @@ module.exports = {
             name: 'main',
             optimize: 'uglify2',
             include: [
+                'main',
                 'superdesk/filters/all',
                 'superdesk/services/all',
                 'superdesk/directives/all',
-                'main',
                 'superdesk-auth/module',
-                'superdesk-menu/module',
                 'superdesk-items/module',
                 'superdesk-users/module',
                 'superdesk-settings/module',
