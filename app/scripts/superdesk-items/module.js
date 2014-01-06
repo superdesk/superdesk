@@ -37,23 +37,24 @@ define([
         }
     });
 
-    app.config(['permissionsProvider', function(permissionsProvider) {
-        permissionsProvider.permission('items-manage', {
-            label: gettext('Manage ingest items'),
-            permissions: {items: {write: true}}
-        });
-        permissionsProvider.permission('items-read', {
-            label: gettext('Read ingest items'),
-            permissions: {items: {read: true}}
-        });
-        permissionsProvider.permission('archive-manage', {
-            label: gettext('Manage archive'),
-            permissions: {archive: {write: true}}
-        });
-        permissionsProvider.permission('archive-read', {
-            label: gettext('Read archive'),
-            permissions: {archive: {read: true}}
-        });
+    app.config(['superdeskProvider', function(superdesk) {
+        superdesk
+            .permission('items-manage', {
+                label: gettext('Manage ingest items'),
+                permissions: {items: {write: true}}
+            })
+            .permission('items-read', {
+                label: gettext('Read ingest items'),
+                permissions: {items: {read: true}}
+            })
+            .permission('archive-manage', {
+                label: gettext('Manage archive'),
+                permissions: {archive: {write: true}}
+            })
+            .permission('archive-read', {
+                label: gettext('Read archive'),
+                permissions: {archive: {read: true}}
+            });
     }]);
 
     app.config(['superdeskProvider', function(superdesk) {

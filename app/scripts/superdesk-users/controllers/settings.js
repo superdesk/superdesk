@@ -1,15 +1,14 @@
 define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
-    return ['$q', '$scope', 'em', 'permissions', 'permissionsService', function ($q, $scope, em, permissions, permissionsService) {
-
-        $scope.permissions = permissions;
+    return ['$q', '$scope', 'em', 'superdesk', 'permissionsService', function ($q, $scope, em, superdesk, permissionsService) {
+        $scope.permissions = superdesk.permissions;
         $scope.selectedRole = null;
         $scope.selectedRoleParent = null;
         $scope.editRole = null;
         $scope.editRoleParent = null;
 
-        var loadRoles = function() {
+        function loadRoles() {
             var delay = $q.defer();
 
             em.repository('user_roles').matching().then(function(roles) {
@@ -17,7 +16,7 @@ define(['angular', 'lodash'], function(angular, _) {
                 $scope.rolePermissions = {};
                 _.forEach($scope.roles._items, function(role) {
                     $scope.rolePermissions[role._id] = {};
-                    _.forEach(permissions, function(permission, id) {
+                    _.forEach(superdesk.permissions, function(permission, id) {
                         permissionsService.isRoleAllowed(permission.permissions, role).then(function(isAllowed) {
                             $scope.rolePermissions[role._id][id] = isAllowed;
                             delay.resolve($scope.roles);
@@ -27,7 +26,7 @@ define(['angular', 'lodash'], function(angular, _) {
             });
 
             return delay.promise;
-        };
+        }
 
         loadRoles();
 
@@ -48,14 +47,11 @@ define(['angular', 'lodash'], function(angular, _) {
             $scope.editRoleParent = null;
             if (editRole) {
                 if (editRole['extends']) {
-                    _.forEach($scope.roles._items, function(role) {
-                        if (role._id === editRole['extends']) {
-                            $scope.editRoleParent = role;
-                        }
-                    });
+                    $scope.editRoleParent = _.find($scope.roles._items, {_id: editRole['extends']});
                 }
-                $scope.editPermissions = _.extend({}, permissions);
-                _.each($scope.editPermissions, function(p, k){
+
+                $scope.editPermissions = _.extend({}, superdesk.permissions);
+                _.each($scope.editPermissions, function(p, k) {
                     if (editRole._id) {
                         p.selected  = $scope.rolePermissions[editRole._id][k];
                     } else {
@@ -95,6 +91,5 @@ define(['angular', 'lodash'], function(angular, _) {
                 });
             }
         };
-        
     }];
 });

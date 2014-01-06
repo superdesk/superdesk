@@ -47,23 +47,24 @@ define([
                 created: true
             }
         })
-        .config(['permissionsProvider', function(permissionsProvider) {
-            permissionsProvider.permission('users-manage', {
-                label: gettext('Manage users'),
-                permissions: {users: {write: true}}
-            });
-            permissionsProvider.permission('users-read', {
-                label: gettext('Read users'),
-                permissions: {users: {read: true}}
-            });
-            permissionsProvider.permission('user-roles-manage', {
-                label: gettext('Manage user roles'),
-                permissions: {'user_roles': {write: true}}
-            });
-            permissionsProvider.permission('user-roles-read', {
-                label: gettext('Read user roles'),
-                permissions: {'user_roles': {read: true}}
-            });
+        .config(['superdeskProvider', function(superdesk) {
+            superdesk
+                .permission('users-manage', {
+                    label: gettext('Manage users'),
+                    permissions: {users: {write: true}}
+                })
+                .permission('users-read', {
+                    label: gettext('Read users'),
+                    permissions: {users: {read: true}}
+                })
+                .permission('user-roles-manage', {
+                    label: gettext('Manage user roles'),
+                    permissions: {'user_roles': {write: true}}
+                })
+                .permission('user-roles-read', {
+                    label: gettext('Read user roles'),
+                    permissions: {'user_roles': {read: true}}
+                });
         }])
         .config(['superdeskProvider', function(superdesk) {
 

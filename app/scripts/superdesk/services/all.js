@@ -4,7 +4,6 @@ define([
     './notify',
     './settings',
     './storage',
-    './permissions',
     './permissionsService',
     './keyboardManager',
     './userSettings',
