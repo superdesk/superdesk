@@ -2,7 +2,8 @@ define(['angular', 'lodash'], function(angular, lodash) {
     'use strict';
 
     var constans = {
-        MENU_MAIN: 'superdesk.menu.main'
+        MENU_MAIN: 'superdesk.menu.main',
+        MENU_SETTINGS: 'superdesk.menu.settings'
     };
 
     var module = angular.module('superdesk.services');
@@ -29,10 +30,15 @@ define(['angular', 'lodash'], function(angular, lodash) {
          * Register activity.
          */
         this.activity = function(key, data) {
-            activities[key] = angular.extend({_id: key, priority: 0}, data);
+            activities[key] = angular.extend({
+                _id: key,
+                priority: 0,
+                href: data.when || null // use when as menu.item.href if href not set
+            }, data);
 
-            if ('when' in data) {
-                $routeProvider.when(data.when, activities[key]);
+            var when = data.when || data.href;
+            if (when != null) {
+                $routeProvider.when(when, activities[key]);
             }
 
             return this;

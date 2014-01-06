@@ -72,24 +72,18 @@ define(['angular', 'lodash'], function(angular, _) {
         };
 
         $scope.save = function() {
-            var selectedPermissions = _.where($scope.editPermissions, 'selected');
             $scope.editRole.permissions = {};
+            var selectedPermissions = _.where($scope.editPermissions, 'selected');
             _.each(selectedPermissions, function(permission) {
                 _.merge($scope.editRole.permissions, permission.permissions);
             });
-            if ($scope.editRole._id) {
-                em.update($scope.editRole).then(function(role) {
+
+            em.save('user_roles', $scope.editRole)
+                .then(function(role) {
                     loadRoles().then(function(roles) {
                         $scope.cancel();
                     });
                 });
-            } else {
-                em.create('user_roles', $scope.editRole).then(function(role) {
-                    loadRoles().then(function(roles) {
-                        $scope.cancel();
-                    });
-                });
-            }
         };
     }];
 });

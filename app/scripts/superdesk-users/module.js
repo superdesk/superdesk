@@ -22,14 +22,13 @@ define([
     ]);
 
     app
-        .controller('RolesSettingsCtrl', require('superdesk-users/controllers/settings'))
-        .controller('UserDetailCtrl', require('superdesk-users/controllers/detail'))
-        .directive('sdUserPicture', require('superdesk-users/directives/sdUserPicture'))
-        .directive('sdUserActivity', require('superdesk-users/directives/sdUserActivity'))
-        .directive('sdInfoItem', require('superdesk-users/directives/sdInfoItem'))
-        .directive('sdUserEdit', require('superdesk-users/directives/sdUserEdit'))
-        .directive('sdUserDetailsPane', require('superdesk-users/directives/sdUserDetailsPane'))
-        .directive('sdRolesTreeview', require('superdesk-users/directives/sdRolesTreeview'))
+        .controller('UserDetailCtrl', require('./controllers/detail'))
+        .directive('sdUserPicture', require('./directives/sdUserPicture'))
+        .directive('sdUserActivity', require('./directives/sdUserActivity'))
+        .directive('sdInfoItem', require('./directives/sdInfoItem'))
+        .directive('sdUserEdit', require('./directives/sdUserEdit'))
+        .directive('sdUserDetailsPane', require('./directives/sdUserDetailsPane'))
+        .directive('sdRolesTreeview', require('./directives/sdRolesTreeview'))
         .value('defaultListParams', {
             search: '',
             searchField: 'username',
@@ -111,7 +110,7 @@ define([
                     category: superdesk.MENU_MAIN
                 })
                 .activity('users-profile', {
-                    href: '/profile/',
+                    when: '/profile/',
                     label: gettext('My Profile'),
                     controller: require('./controllers/profile'),
                     templateUrl: 'scripts/superdesk-users/views/profile.html',
@@ -120,12 +119,14 @@ define([
                             return em.find('users', authService.getIdentity());
                         }]
                     }
+                })
+                .activity('settings-user-roles', {
+                    when: '/settings/user-roles',
+                    label: gettext('User Roles'),
+                    templateUrl: 'scripts/superdesk-users/views/settings.html',
+                    controller: require('./controllers/settings'),
+                    category: superdesk.MENU_SETTINGS,
+                    priority: -500
                 });
-        }])
-        .config(['settingsProvider', function(settingsProvider) {
-            settingsProvider.register('user-roles', {
-                label: gettext('User Roles'),
-                templateUrl: 'scripts/superdesk-users/views/settings.html'
-            });
         }]);
 });

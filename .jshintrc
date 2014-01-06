@@ -5,6 +5,7 @@
   "bitwise": true,
   "curly": true,
   "eqeqeq": true,
+  "eqnull": true,
   "immed": true,
   "indent": 4,
   "latedef": true,

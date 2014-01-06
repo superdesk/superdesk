@@ -2,7 +2,6 @@ define([
     './translate',
     './upload',
     './notify',
-    './settings',
     './storage',
     './permissionsService',
     './keyboardManager',

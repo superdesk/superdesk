@@ -13,23 +13,22 @@ define([
         'superdesk.desks.directives'
     ]);
 
-    app.controller('DesksSettingsCtrl', require('./controllers/settings'));
-
     app.config(['superdeskProvider', function(superdesk) {
         superdesk.activity('desks', {
             when: '/desks/',
-            href: '/desks/',
             label: gettext('Desks'),
             templateUrl: 'scripts/superdesk-desks/views/main.html',
             controller: require('./controllers/main'),
             category: superdesk.MENU_MAIN
         });
-    }]);
 
-    app.config(['settingsProvider', function(settingsProvider) {
-        settingsProvider.register('desks', {
+        superdesk.activity('settings-desks', {
+            when: '/settings/desks',
             label: gettext('Desks'),
-            templateUrl: 'scripts/superdesk-desks/views/settings.html'
+            controller: require('./controllers/settings'),
+            templateUrl: 'scripts/superdesk-desks/views/settings.html',
+            category: superdesk.MENU_SETTINGS,
+            priority: -800
         });
     }]);
 });

@@ -1,25 +1,29 @@
 define([
     'angular',
-    'require',
-    './controllers/main'
-], function(angular, require) {
+    'lodash'
+], function(angular, _) {
     'use strict';
 
     angular.module('superdesk.settings', [])
         .config(['superdeskProvider', function(superdesk) {
             superdesk.activity('settings', {
-                when: '/settings/:tab?',
-                href: '/settings/',
+                when: '/settings/',
                 label: gettext('Settings'),
-                controller: require('./controllers/main'),
+                controller: function() {},
                 templateUrl: 'scripts/superdesk-settings/views/main.html',
-                resolve: {
-                    tab: ['$route', function($route) {
-                        return $route.current.params.tab || null;
-                    }]
-                },
                 category: superdesk.MENU_MAIN,
                 priority: 1000
             });
+        }])
+        .directive('sdSettingsView', ['$route', 'superdesk', function($route, superdesk) {
+            return {
+                scope: {},
+                transclude: true,
+                templateUrl: 'scripts/superdesk-settings/views/settings-view.html',
+                link: function(scope, elem, attrs) {
+                    scope.settings = _.values(_.where(superdesk.activities, {category: superdesk.MENU_SETTINGS}));
+                    scope.currentRoute = $route.current;
+                }
+            };
         }]);
 });

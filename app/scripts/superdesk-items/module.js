@@ -23,7 +23,6 @@ define([
         'superdesk.widgets.ingeststats'
     ]);
 
-    app.controller('SettingsCtrl', require('./controllers/settings'));
     app.controller('RefController', require('./controllers/ref'));
 
     app.value('providerTypes', {
@@ -136,14 +135,14 @@ define([
                 templateUrl: 'scripts/superdesk-items/views/edit.html',
                 controller: require('./controllers/edit'),
                 resolve: resolveArticles()
+            })
+            .activity('settings-ingest', {
+                when: '/settings/ingest',
+                label: gettext('Ingest Feed'),
+                templateUrl: 'scripts/superdesk-items/views/settings/settings.html',
+                controller: require('./controllers/settings'),
+                category: superdesk.MENU_SETTINGS
             });
-    }]);
-
-    app.config(['settingsProvider', function(settingsProvider) {
-        settingsProvider.register('ingest-feed', {
-            label: gettext('Ingest Feed'),
-            templateUrl: 'scripts/superdesk-items/views/settings/settings.html'
-        });
     }]);
 
     app.filter('characterCount', function() {
