@@ -4,7 +4,6 @@
 </div>
 
 <div class="tab-background-container" style="top: 50px;">
-
     <div class="tab-content user-tabs">
         <div class="tab-pane active" id="active_users">
             <div class="tab-submenu"><i ng-show="users._items|any:'_checked'"></i>
@@ -93,11 +92,12 @@
                     </thead>
 
                     <tbody>
-
-                        <tr ng-repeat="user in users._items" ng-click="edit(user)">
+                        <tr ng-repeat="user in users._items" ng-click="intent('edit', user)">
                             <td><input sd-check ng-model="user._checked"></td>
                             <td><figure class="avatar" ng-show="userSettings.fields.avatar"><img sd-user-picture data-src="user.picture_url" width="22" height="22"></figure></td>
-                            <td class="name_col" ng-show="userSettings.fields.display_name"><a href="#/users/{{ user._id }}" sd-with-params>{{ user.display_name }}</a></td>
+                            <td class="name_col" ng-show="userSettings.fields.display_name">
+                                <a href="">{{ user.display_name }}</a>
+                            </td>
                             <td ng-show="userSettings.fields.username">{{ user.username }}</td>
                             <td ng-show="userSettings.fields.user_role">{{ roles[user.role].name }}</td>
                             <td class="email_col resp-hide" ng-show="userSettings.fields.email"><a href="">{{ user.email }}</a></td>
@@ -105,16 +105,10 @@
                             <td class="action_col">
                                 <div class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
-                                    <ul class="dropdown-menu sf-dropdown-simple sf-right">
-                                        <li><a href="#"><i class="icon-eye-open"></i> {{ 'View details'|translate }}</a></li>
-                                        <li><a href="#"><i class="icon-pencil"></i> {{ 'Edit details'|translate }}</a></li>
-                                        <li><a href="#"><i class="icon-ban-circle"></i> {{ 'Permissions'|translate }}</a></li>
-                                        <li><a href="" ng-click="delete(user)"><i class="icon-trash"></i> {{ 'Delete'|translate }}</a></li>
-                                    </ul>
+                                    <ul class="dropdown-menu sf-dropdown-simple sf-right" sd-activity-list="user.list"></ul>
                                 </div>
                             </td>
                         </tr>
-
                     </tbody>
                 </table>
             </div>
@@ -122,5 +116,4 @@
     </div>
 
     <div sd-user-details-pane data-user="user"></div>
-
 </div>

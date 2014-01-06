@@ -48,6 +48,22 @@ For trivial changes you can ommit JIRA ref or Description or both:
 Fix typo in superdesk.translate docs.
 ```
 
+### Register main menu item
+
+In your app use ```superdeskProvider``` and register an activity with ```superdeskProvider.MENU_MAIN``` category.
+
+```js
+angular.module('myApp').configure(function(superdeskProvider) {
+    superdeskProvider.activity('myActivity', {
+        label: gettext('Test Activity'),
+        href: '/test/',
+        category: superdeskProvider.MENU_MAIN,
+        controller: ...,
+        template: ...
+    });
+});
+
+```
 
 ### Creating new directives
 

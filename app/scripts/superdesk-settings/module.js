@@ -1,23 +1,25 @@
 define([
     'angular',
+    'require',
     './controllers/main'
-], function(angular) {
+], function(angular, require) {
     'use strict';
 
     angular.module('superdesk.settings', [])
-        .config(['activityProvider', function(activityProvider) {
-            activityProvider.activity('settings', {
-                href: '/settings/:tab?',
-                menuHref: '/settings/',
+        .config(['superdeskProvider', function(superdesk) {
+            superdesk.activity('settings', {
+                when: '/settings/:tab?',
+                href: '/settings/',
                 label: gettext('Settings'),
-                priority: 0,
-                controller: require('superdesk-settings/controllers/main'),
+                controller: require('./controllers/main'),
                 templateUrl: 'scripts/superdesk-settings/views/main.html',
                 resolve: {
                     tab: ['$route', function($route) {
                         return $route.current.params.tab || null;
                     }]
-                }
+                },
+                category: superdesk.MENU_MAIN,
+                priority: 1000
             });
         }]);
 });

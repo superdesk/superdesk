@@ -11,6 +11,7 @@ define([
     './keyboardManager',
     './userSettings',
     './entity',
-    './server'
+    './server',
+    './superdesk'
 ], function() {
 });

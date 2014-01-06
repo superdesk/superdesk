@@ -1,7 +1,9 @@
-define(function() {
+define(['angular'], function(angular) {
     'use strict';
 
-    return ['server', function(server) {
+    var module = angular.module('superdesk.users.services', []);
+
+    module.service('profileService', ['server', function(server) {
         /**
          * User profile service
          */
@@ -42,5 +44,5 @@ define(function() {
                 return server.list('activity', params);
             }
         };
-    }];
+    }]);
 });

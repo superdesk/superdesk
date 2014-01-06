@@ -125,7 +125,6 @@ define([
             'dashboard',
             'settings',
             'auth',
-            'menu',
             'users',
             'desks',
             'items'

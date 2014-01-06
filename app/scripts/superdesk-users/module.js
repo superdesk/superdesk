@@ -1,6 +1,8 @@
 define([
     'angular',
+    'require',
     './providers',
+    './services/profile',
     './controllers/list',
     './controllers/detail',
     './controllers/profile',
@@ -10,13 +12,16 @@ define([
     './directives/sdRolesTreeview',
     './directives/sdInfoItem',
     './directives/sdUserEdit',
-    './directives/sdUserDetailsPane',
-    './services/profile'
-], function(angular) {
+    './directives/sdUserDetailsPane'
+], function(angular, require) {
     'use strict';
 
-    angular.module('superdesk.users', ['superdesk.users.providers'])
-        .service('profileService', require('superdesk-users/services/profile'))
+    var app = angular.module('superdesk.users', [
+        'superdesk.users.providers',
+        'superdesk.users.services'
+    ]);
+
+    app
         .controller('RolesSettingsCtrl', require('superdesk-users/controllers/settings'))
         .controller('UserDetailCtrl', require('superdesk-users/controllers/detail'))
         .directive('sdUserPicture', require('superdesk-users/directives/sdUserPicture'))
@@ -60,51 +65,54 @@ define([
                 permissions: {'user_roles': {read: true}}
             });
         }])
-        .config(['activityProvider', function(activityProvider) {
-            activityProvider
+        .config(['superdeskProvider', function(superdesk) {
+
+            var usersResolve = {
+                users: ['locationParams', 'em', 'defaultListParams',
+                    function(locationParams, em, defaultListParams) {
+                        var criteria = locationParams.reset(defaultListParams);
+                        return em.getRepository('users').matching(criteria);
+                    }],
+                user: ['em', '$route',
+                    function(em, $route) {
+                        if ($route.current.params.id === 'new') {
+                            return {};
+                        } else if (_.isString($route.current.params.id)) {
+                            return em.find('users', $route.current.params.id);
+                        } else {
+                            return undefined;
+                        }
+                    }],
+                userSettings: ['userSettings', 'defaultListSettings',
+                    function(userSettings, defaultListSettings) {
+                        return userSettings('users:list', defaultListSettings);
+                    }],
+                locationParams: ['locationParams', 'defaultListParams', '$route',
+                    function(locationParams, defaultListParams, $route) {
+                        defaultListParams.id = $route.current.params.id;
+                        locationParams.reset(defaultListParams);
+                        return locationParams;
+                    }],
+                roles: ['rolesLoader', function(rolesLoader) {
+                    return rolesLoader;
+                }]
+            };
+
+            superdesk
                 .activity('users-list', {
-                    href: '/users/:id?',
-                    menuHref: '/users/',
+                    when: '/users/:id?',
+                    href: '/users/',
                     label: gettext('Users'),
-                    priority: -1,
-                    controller: require('superdesk-users/controllers/list'),
+                    priority: 100,
+                    controller: require('./controllers/list'),
                     templateUrl: 'scripts/superdesk-users/views/list.html',
-                    resolve: {
-                        users: ['locationParams', 'em', 'defaultListParams',
-                            function(locationParams, em, defaultListParams) {
-                                var criteria = locationParams.reset(defaultListParams);
-                                return em.getRepository('users').matching(criteria);
-                            }],
-                        user: ['em', '$route',
-                            function(em, $route) {
-                                if ($route.current.params.id === 'new') {
-                                    return {};
-                                } else if (_.isString($route.current.params.id)) {
-                                    return em.find('users', $route.current.params.id);
-                                } else {
-                                    return undefined;
-                                }
-                            }],
-                        userSettings: ['userSettings', 'defaultListSettings',
-                            function(userSettings, defaultListSettings) {
-                                return userSettings('users:list', defaultListSettings);
-                            }],
-                        locationParams: ['locationParams', 'defaultListParams', '$route',
-                            function(locationParams, defaultListParams, $route) {
-                                defaultListParams.id = $route.current.params.id;
-                                locationParams.reset(defaultListParams);
-                                return locationParams;
-                            }],
-                        roles: ['rolesLoader', function(rolesLoader) {
-                            return rolesLoader;
-                        }]
-                    }
+                    resolve: usersResolve,
+                    category: superdesk.MENU_MAIN
                 })
                 .activity('users-profile', {
                     href: '/profile/',
                     label: gettext('My Profile'),
-                    menu: false,
-                    controller: require('superdesk-users/controllers/profile'),
+                    controller: require('./controllers/profile'),
                     templateUrl: 'scripts/superdesk-users/views/profile.html',
                     resolve: {
                         user: ['authService', 'em', function(authService, em) {
