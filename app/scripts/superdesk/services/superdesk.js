@@ -32,7 +32,7 @@ define(['angular', 'lodash'], function(angular, lodash) {
             activities[key] = angular.extend({_id: key, priority: 0}, data);
 
             if ('when' in data) {
-                $routeProvider.when(data.when, data);
+                $routeProvider.when(data.when, activities[key]);
             }
 
             return this;
