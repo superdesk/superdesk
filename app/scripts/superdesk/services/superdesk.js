@@ -21,7 +21,7 @@ define(['angular', 'lodash'], function(angular, lodash) {
          * Register widget.
          */
         this.widget = function(key, data) {
-            widgets[key] = angular.extend({_id: key}, data);
+            widgets[key] = angular.extend({_id: key, wcode: key}, data);
             return this;
         };
 

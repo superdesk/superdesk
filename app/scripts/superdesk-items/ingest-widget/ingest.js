@@ -4,12 +4,11 @@ define([
     'use strict';
 
     angular.module('superdesk.widgets.ingest', [])
-        .config(['widgetsProvider', function(widgetsProvider) {
-            widgetsProvider
+        .config(['superdeskProvider', function(superdesk) {
+            superdesk
                 .widget('ingest', {
-                    name: 'Ingest',
+                    label: 'Ingest',
                     multiple: true,
-                    'class': 'ingest',
                     icon: 'ingest',
                     max_sizex: 2,
                     max_sizey: 2,

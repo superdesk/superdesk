@@ -1,8 +1,8 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', 'widgets', 'widgetService',
-        function($scope, widgets, widgetService) {
+    return ['$scope', 'superdesk', 'widgetService',
+        function($scope, superdesk, widgetService) {
 
             $scope.userWidgets = widgetService.load();
             $scope.editStatus = false;
@@ -16,13 +16,13 @@ define(['angular'], function(angular) {
                 $scope.hasWidgets = keys.length;
 
                 var omitList = [];
-                _.forEach(widgets, function(widget) {
+                _.forEach(superdesk.widgets, function(widget) {
                     if (!widget.multiple && _.indexOf(wcodeList, widget.wcode) > -1) {
                         omitList.push(widget.wcode);
                     }
                 });
 
-                $scope.availableWidgets = _.omit(widgets, omitList);
+                $scope.availableWidgets = _.omit(superdesk.widgets, omitList);
             }
 
             function save() {

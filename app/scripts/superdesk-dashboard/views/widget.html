@@ -1,8 +1,8 @@
-<div class="sd-widget {{ widget.class }} gs_w">
+<div class="sd-widget {{ widget._id }} gs_w">
 	<div class="widget-line"></div>
 	<div class="widget-header">
-		<span class="widget-icon"><i class="icon-{{ widget.icon }}"></i></span>
-		<div class="widget-title">{{ widget.name }}</div>
+		<span ng-show="widget.icon" class="widget-icon"><i class="icon-{{ widget.icon }}"></i></span>
+		<div class="widget-title" translate>{{ widget.label }}</div>
 	</div>
 	<div class="widget-content clearfix" ng-include="widget.template"></div>
     <div class="widget-settings">

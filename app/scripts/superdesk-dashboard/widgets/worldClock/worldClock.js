@@ -156,22 +156,20 @@ define([
                 }
             };
         })
-        .config(['widgetsProvider', function(widgetsProvider) {
-            widgetsProvider
-                .widget('worldClock', {
-                    name: 'World Clock',
-                    multiple: true,
-                    'class': 'world-clock',
-                    icon: 'time',
-                    max_sizex: 2,
-                    max_sizey: 1,
-                    sizex: 1,
-                    sizey: 1,
-                    thumbnail: 'scripts/superdesk-dashboard/widgets/worldClock/thumbnail.png',
-                    template: 'scripts/superdesk-dashboard/widgets/worldClock/widget-worldclock.html',
-                    configurationTemplate: 'scripts/superdesk-dashboard/widgets/worldClock/configuration.html',
-                    configuration: {zones: ['Europe/London', 'Asia/Tokyo', 'Europe/Moscow']},
-                    description: 'World clock widget'
-                });
+        .config(['superdeskProvider', function(superdesk) {
+            superdesk.widget('world-clock', {
+                label: gettext('World Clock'),
+                multiple: true,
+                icon: 'time',
+                max_sizex: 2,
+                max_sizey: 1,
+                sizex: 1,
+                sizey: 1,
+                thumbnail: 'scripts/superdesk-dashboard/widgets/worldClock/thumbnail.png',
+                template: 'scripts/superdesk-dashboard/widgets/worldClock/widget-worldclock.html',
+                configurationTemplate: 'scripts/superdesk-dashboard/widgets/worldClock/configuration.html',
+                configuration: {zones: ['Europe/London', 'Asia/Tokyo', 'Europe/Moscow']},
+                description: gettext('World clock widget')
+            });
         }]);
 });

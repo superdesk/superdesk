@@ -4,12 +4,11 @@ define([
     'use strict';
 
     angular.module('superdesk.widgets.ingeststats', [])
-        .config(['widgetsProvider', function(widgetsProvider) {
-            widgetsProvider
-                .widget('ingeststats', {
-                    name: 'Ingest Stats',
+        .config(['superdeskProvider', function(superdesk) {
+            superdesk
+                .widget('ingest-stats', {
+                    label: 'Ingest Stats',
                     multiple: true,
-                    'class': 'ingest-stats',
                     icon: 'signal',
                     max_sizex: 1,
                     max_sizey: 1,
@@ -28,7 +27,7 @@ define([
         }])
         .controller('IngestStatsController', ['$scope', '$timeout', 'em',
         function ($scope, $timeout, em) {
-            var updateData = function() {
+            function updateData() {
                 em.getRepository('ingest').matching().then(function(items) {
                     $scope.items = items;
 
@@ -36,7 +35,7 @@ define([
                         updateData();
                     }, $scope.widget.configuration.updateInterval * 1000 * 60);
                 });
-            };
+            }
 
             updateData();
         }])

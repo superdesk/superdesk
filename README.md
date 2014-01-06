@@ -65,6 +65,21 @@ angular.module('myApp').configure(function(superdeskProvider) {
 
 ```
 
+### Register widget
+
+In your app use ```superdeskProvider.widget```.
+
+```js
+angular.module('myApp').configure(function(superdeskProvider) {
+    superdeskProvider.widget('myWidget', {
+        label: 'My Widget',
+        template: 'scripts/my-app/views/my-widget.html',
+        thumbnail: 'scripts/my-app/views/my-widget.png',
+        description: 'My Widget'
+    });
+});
+```
+
 ### Creating new directives
 
 - Define attribute directives, not element or css based.
