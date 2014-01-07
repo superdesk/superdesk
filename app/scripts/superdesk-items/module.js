@@ -131,7 +131,6 @@ define([
             })
             .activity('archive-detail', {
                 when: '/article/:id',
-                label: gettext('Archive'),
                 templateUrl: 'scripts/superdesk-items/views/edit.html',
                 controller: require('./controllers/edit'),
                 resolve: resolveArticles()

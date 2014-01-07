@@ -1,4 +1,4 @@
-define(['angular', 'lodash'], function(angular, lodash) {
+define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
     var constans = {
@@ -87,28 +87,37 @@ define(['angular', 'lodash'], function(angular, lodash) {
         };
     }]);
 
-    module.directive('sdActivityItem', ['$window', 'superdesk', function($window, superdesk) {
+    /**
+     * Directive for listing available activities for given category.
+     */
+    module.directive('sdActivityList', ['superdesk', function(superdesk) {
         return {
-            scope: {
-                activity: '='
-            },
-            template: '<a href="" ng-click="run(activity)">{{ activity.label }}</a>',
+            scope: {item: '='},
+            template: '<li ng-repeat="activity in activities" sd-activity-item data-activity="activity"></li>',
             link: function(scope, elem, attrs) {
-                scope.run = function(activity) {
-                    if (activity.confirm && !$window.confirm(activity.confirm)) {
-                        return;
-                    }
-                };
+                scope.activities = _.values(_.where(superdesk.activities, {category: attrs.sdActivityList}));
             }
         };
     }]);
 
-    module.directive('sdActivityList', ['superdesk', function(superdesk) {
+    /**
+     * Directive for single activity which runs activity on click.
+     */
+    module.directive('sdActivityItem', ['$window', '$controller', 'gettext', function($window, $controller, gettext) {
         return {
-            scope: {},
-            template: '<li ng-repeat="activity in activities" sd-activity-item data-activity="activity"></li>',
+            template: '<a href="" ng-click="run(activity)" translate>{{ activity.label }}</a>',
             link: function(scope, elem, attrs) {
-                scope.activities = superdesk.activities;
+                scope.run = function(activity) {
+                    if (activity.confirm && !$window.confirm(gettext(activity.confirm))) {
+                        return;
+                    }
+
+                    var ctrl = $controller(activity.controller, {
+                        data: scope.item || {}
+                    });
+
+                    return !!ctrl;
+                };
             }
         };
     }]);

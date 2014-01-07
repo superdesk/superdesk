@@ -92,7 +92,7 @@
                     </thead>
 
                     <tbody>
-                        <tr ng-repeat="user in users._items" ng-click="intent('edit', user)">
+                        <tr ng-repeat="user in users._items" ng-click="edit(user)">
                             <td><input sd-check ng-model="user._checked"></td>
                             <td><figure class="avatar" ng-show="userSettings.fields.avatar"><img sd-user-picture data-src="user.picture_url" width="22" height="22"></figure></td>
                             <td class="name_col" ng-show="userSettings.fields.display_name">
@@ -105,7 +105,7 @@
                             <td class="action_col">
                                 <div class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
-                                    <ul class="dropdown-menu sf-dropdown-simple sf-right" sd-activity-list="user.list"></ul>
+                                    <ul class="dropdown-menu sf-dropdown-simple sf-right" sd-activity-list="user.list" data-item="user"></ul>
                                 </div>
                             </td>
                         </tr>

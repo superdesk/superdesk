@@ -127,6 +127,16 @@ define([
                     controller: require('./controllers/settings'),
                     category: superdesk.MENU_SETTINGS,
                     priority: -500
+                })
+                .activity('delete:user', {
+                    label: gettext('Delete user'),
+                    category: 'user.list',
+                    confirm: gettext('Please confirm you want to delete a user.'),
+                    controller: ['em', 'data', 'locationParams', function(em, data, locationParams) {
+                        em.remove(data).then(function() {
+                            locationParams.reload();
+                        });
+                    }]
                 });
         }]);
 });
