@@ -105,7 +105,12 @@
                             <td class="action_col">
                                 <div class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
-                                    <ul class="dropdown-menu sf-dropdown-simple sf-right" sd-activity-list="user.list" data-item="user"></ul>
+                                    <ul class="dropdown-menu sf-dropdown-simple sf-right"
+                                        sd-activity-list=""
+                                        data-data="user"
+                                        data-type="user"
+                                        data-action="{{ superdesk.ACTION_EDIT }}"
+                                    ></ul>
                                 </div>
                             </td>
                         </tr>

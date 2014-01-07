@@ -130,13 +130,18 @@ define([
                 })
                 .activity('delete:user', {
                     label: gettext('Delete user'),
-                    category: 'user.list',
                     confirm: gettext('Please confirm you want to delete a user.'),
                     controller: ['em', 'data', 'locationParams', function(em, data, locationParams) {
                         em.remove(data).then(function() {
                             locationParams.reload();
                         });
-                    }]
+                    }],
+                    filters: [
+                        {
+                            action: superdesk.ACTION_EDIT,
+                            type: 'user'
+                        }
+                    ]
                 });
         }]);
 });

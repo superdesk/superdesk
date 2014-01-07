@@ -3,7 +3,9 @@ define(['angular', 'lodash'], function(angular, _) {
 
     var constans = {
         MENU_MAIN: 'superdesk.menu.main',
-        MENU_SETTINGS: 'superdesk.menu.settings'
+        MENU_SETTINGS: 'superdesk.menu.settings',
+        ACTION_EDIT: 'edit',
+        ACTION_LIST: 'list'
     };
 
     var module = angular.module('superdesk.services');
@@ -33,8 +35,17 @@ define(['angular', 'lodash'], function(angular, _) {
             activities[key] = angular.extend({
                 _id: key,
                 priority: 0,
-                href: data.when || null // use when as menu.item.href if href not set
+                href: data.when || null, // use when as menu.item.href if href not set
+                filters: []
             }, data);
+
+            var actionless = _.find(activities[key].filters, function(filter) {
+                return !filter.action;
+            });
+
+            if (actionless) {
+                console.error('Missing filters action for activity', activities[key]);
+            }
 
             var when = data.when || data.href;
             if (when != null) {
@@ -70,8 +81,9 @@ define(['angular', 'lodash'], function(angular, _) {
         }];
     }]);
 
-    module.run(['$rootScope', 'intent', function($rootScope, intent) {
+    module.run(['$rootScope', 'intent', 'superdesk', function($rootScope, intent, superdesk) {
         $rootScope.intent = intent;
+        $rootScope.superdesk = superdesk;
     }]);
 
     module.factory('intent', ['superdesk', function(superdesk) {
@@ -92,10 +104,28 @@ define(['angular', 'lodash'], function(angular, _) {
      */
     module.directive('sdActivityList', ['superdesk', function(superdesk) {
         return {
-            scope: {item: '='},
+            scope: {
+                data: '=',
+                type: '@',
+                action: '@'
+            },
             template: '<li ng-repeat="activity in activities" sd-activity-item></li>',
             link: function(scope, elem, attrs) {
-                scope.activities = _.values(_.where(superdesk.activities, {category: attrs.sdActivityList}));
+                var intent = {
+                    action: scope.action
+                };
+
+                if (scope.type && scope.type !== '*') {
+                    intent.type = scope.type;
+                }
+
+                if (!intent.action) {
+                    console.error('No action set for intent in \'' + elem[0].outerHTML + '\'');
+                }
+
+                scope.activities = _.values(_.where(superdesk.activities, function(activity) {
+                    return _.find(activity.filters, intent);
+                }));
             }
         };
     }]);
@@ -113,7 +143,7 @@ define(['angular', 'lodash'], function(angular, _) {
                     }
 
                     var ctrl = $controller(activity.controller, {
-                        data: scope.item || {}
+                        data: scope.data || {}
                     });
 
                     return !!ctrl;
