@@ -93,7 +93,7 @@ define(['angular', 'lodash'], function(angular, _) {
     module.directive('sdActivityList', ['superdesk', function(superdesk) {
         return {
             scope: {item: '='},
-            template: '<li ng-repeat="activity in activities" sd-activity-item data-activity="activity"></li>',
+            template: '<li ng-repeat="activity in activities" sd-activity-item></li>',
             link: function(scope, elem, attrs) {
                 scope.activities = _.values(_.where(superdesk.activities, {category: attrs.sdActivityList}));
             }
