@@ -21,7 +21,9 @@ require.config({
         'jquery.ui.widget': 'bower_components/blueimp-file-upload/js/vendor/jquery.ui.widget',
 
         'gridster': 'bower_components/gridster/dist/jquery.gridster.with-extras',
-        'd3': 'bower_components/d3/d3'
+        'd3': 'bower_components/d3/d3',
+
+        'ng-aloha-editor': 'bower_components/ng-aloha-editor/ng-aloha-editor'
     },
     shim: {
         jquery: {
@@ -66,6 +68,9 @@ require.config({
         },
         d3: {
             exports: 'd3'
+        },
+        'ng-aloha-editor': {
+            deps: ['angular']
         }
     }
 });
@@ -103,42 +108,43 @@ define([
     angular.module('superdesk.services', []);
     angular.module('superdesk.directives', []);
 
-    // load core components
-    require([
-        'superdesk/filters/all',
-        'superdesk/services/all',
-        'superdesk/directives/all'
-    ], function() {
-        var modules = [
-            'gettext',
-            'ngRoute',
-            'ngResource',
-            'ui.bootstrap',
-            'blueimp.fileupload',
+    angular.element(document).ready(function() {
 
-            'superdesk.filters',
-            'superdesk.services',
-            'superdesk.directives'
-        ];
+        // load core components
+        require([
+            'superdesk/filters/all',
+            'superdesk/services/all',
+            'superdesk/directives/all'
+        ], function() {
+            var modules = [
+                'gettext',
+                'ngRoute',
+                'ngResource',
+                'ui.bootstrap',
+                'blueimp.fileupload',
 
-        var apps = [
-            'dashboard',
-            'settings',
-            'auth',
-            'users',
-            'desks',
-            'items'
-        ];
+                'superdesk.filters',
+                'superdesk.services',
+                'superdesk.directives'
+            ];
 
-        var deps = [];
-        angular.forEach(apps, function(app) {
-            deps.push('superdesk-' + app + '/module');
-            modules.push('superdesk.' + app);
-        });
+            var apps = [
+                'dashboard',
+                'settings',
+                'auth',
+                'users',
+                'desks',
+                'items'
+            ];
 
-        // load apps
-        require(deps, function() {
-            angular.element(document).ready(function() {
+            var deps = [];
+            angular.forEach(apps, function(app) {
+                deps.push('superdesk-' + app + '/module');
+                modules.push('superdesk.' + app);
+            });
+
+            // load apps
+            require(deps, function() {
                 angular.bootstrap(document, modules);
             });
         });

@@ -3,17 +3,18 @@ define([
     'jquery',
     'angular',
     'moment',
-    'd3'
+    'd3',
+    'ng-aloha-editor'
 ], function(_, $, angular, moment, d3) {
     'use strict';
 
-    angular.module('superdesk.items.directives', []).
-        filter('reldate', function() {
+    angular.module('superdesk.items.directives', ['ngAlohaEditor'])
+        .filter('reldate', function() {
             return function(date) {
                 return moment(date).fromNow();
             };
-        }).
-        directive('sdSearchbar', ['$location', '$routeParams', function($location, $routeParams) {
+        })
+        .directive('sdSearchbar', ['$location', '$routeParams', function($location, $routeParams) {
             return {
                 scope: {
                     df: '@'
@@ -38,15 +39,21 @@ define([
                     });
                 }
             };
-        }]).
-        directive('sdHtml', ['$sce', function($sce) {
+        }])
+        .directive('sdEditor', ['$sce', function($sce) {
             return {
-                require: '?ngModel',
-                link: function($scope, element, attrs, ngModel) {
+                require: 'ngModel',
+                template: '<div aloha class="editor" ng-bind-html="editorContent"></div>',
+                link: function(scope, element, attrs, ngModel) {
                     ngModel.$render = function() {
-                        element.html('');
-                        element.prepend(ngModel.$viewValue);
+                        scope.editorContent = $sce.trustAsHtml(ngModel.$viewValue);
                     };
+
+                    scope.$on('texteditor-content-changed', function(e, je, a) {
+                        scope.$apply(function() {
+                            ngModel.$setViewValue(a.editable.getContents());
+                        });
+                    });
                 }
             };
         }])

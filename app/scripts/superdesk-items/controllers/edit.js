@@ -1,8 +1,8 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', 'server', '$location', 'item', 'ItemService', 'storage', 'articles',
-    function($scope, server, $location, item, ItemService, storage, articles) {
+    return ['$scope', '$location', 'item', 'em', 'storage', 'articles',
+    function($scope, $location, item, em, storage, articles) {
 
         $scope.item = item;
         var inprogress = storage.getItem('collection:inprogress') || {};
@@ -14,7 +14,7 @@ define(['angular'], function(angular) {
         $scope.articles = articles;
 
         $scope.save = function(item) {
-            ItemService.update(item);
+            em.save('ingest', item);
         };
 
         $scope.close = function() {
