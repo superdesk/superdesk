@@ -4,7 +4,6 @@ define([
     'angular',
     'moment',
     'd3',
-    'aloha',
     'ng-aloha-editor'
 ], function(_, $, angular, moment, d3) {
     'use strict';
