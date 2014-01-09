@@ -13,7 +13,7 @@
     "angular-route": "~1.2.5",
     "angular-mocks": "~1.2.5",
     "angular-gettext": "~0.2.0",
-    "angular-bootstrap": "~0.9",
+    "angular-bootstrap": "~0.7.0",
     "blueimp-file-upload": "~9.5.2",
     "gridster": "~0.2.1",
     "d3": "~3.3.12",
