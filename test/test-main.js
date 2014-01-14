@@ -1,10 +1,10 @@
 var tests = [];
 for (var file in window.__karma__.files) {
-  if (window.__karma__.files.hasOwnProperty(file)) {
-    if (/[sS]pec\.js$/.test(file)) {
-      tests.push(file);
+    if (window.__karma__.files.hasOwnProperty(file)) {
+        if (/[sS]pec\.js$/.test(file)) {
+            tests.push(file);
+        }
     }
-  }
 }
 
 requirejs.config({
@@ -12,6 +12,8 @@ requirejs.config({
 
     deps: ['angular'],
     callback: function(angular) {
+        'use strict';
+
         angular.module('superdesk.filters', []);
         angular.module('superdesk.services', []);
         angular.module('superdesk.directives', []);
@@ -58,5 +60,3 @@ requirejs.config({
         }
     }
 });
-
-ServerConfig = {url: 'http://localhost'};

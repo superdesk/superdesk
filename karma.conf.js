@@ -8,13 +8,13 @@ module.exports = function(config) {
         // list of files / patterns to load in the browser
         files: [
           {pattern: 'app/**/*.js', included: false},
-          {pattern: 'test/**/*Spec.js', included: false},
+          {pattern: 'test/**/*[sS]pec.js', included: false},
           'test/test-main.js'
         ],
 
         // list of files to exclude
         exclude: [
-          'app/scripts/bower_components/**/*Spec.js',
+          'app/scripts/bower_components/**/*[sS]pec.js',
           'app/main.js'
         ],
 

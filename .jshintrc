@@ -23,7 +23,13 @@
     "define": false,
     "gettext": false,
     "ServerConfig": false,
-    "_": false
+    "_": false,
+    "it": false,
+    "beforeEach": false,
+    "inject": false,
+    "expect": false,
+    "describe": false,
+    "requirejs": false
   },
   "forin": true,
   "noempty": true,

@@ -11,7 +11,7 @@ define([
 
         var testPermissions = {
             testResource_1: {read: true},
-            testResource_2: {write: true,},
+            testResource_2: {write: true},
             testResource_3: {read: true, write: true}
         };
 
