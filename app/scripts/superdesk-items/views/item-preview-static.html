@@ -1,24 +1,21 @@
 <div class="side-preview">
     <div class="header">
         <ul class="info-list pull-left">
-            <li>Keyword: <span>Dell</span></li>
-            <li>Take key: <span>Update</span></li>
+            <li>{{ 'Slug:' | translate }} <span>{{ item.slugline }}</span></li>
+            <li ng-show="item.byline">{{ 'By:' | translate }} <span>{{ item.byline }}</span></li>
         </ul>
-        <div class="word-count pull-right"><i>{{previewSingle.body_html | wordCount}}</i> <span>words</span></div>
+        <div ng-show="item.type == 'text'" class="word-count pull-right"><i>{{ item.body_html | wordCount }}</i> <span>words</span></div>
     </div>
     <div class="content">
-        <p class="date-info">Created {{ item.firstcreated }}</p>
-        <p class="title">{{ previewSingle.headline }}</p>
+        <p class="date-info">{{ 'Created' | translate }} {{ item.firstcreated|reldate }}</p>
+        <p class="title">{{ item.headline }}</p>
         <div class="core-content">
-
-            <div class="description" ng-show="previewSingle.slugline">{{ previewSingle.slugline || previewSingle.headline }}</div>
-
             <!-- picture preview -->
-            <figure class="picture-preview" ng-show="previewSingle.type == 'picture'">
-                <img sd-image-loader load-src="{{ previewSingle.renditions.viewImage.href }}" />
+            <figure class="picture-preview" ng-show="item.type == 'picture'">
+                <img sd-image-loader load-src="{{ item.renditions.viewImage.href }}" />
             </figure>
 
-            <div class="text"  ng-show="previewSingle.body_html" sd-html ng-model="previewSingle.body_html" ></div>
+            <div class="text" ng-show="item.body_html" sd-html-preview="item.body_html"></div>
         </div>
     </div>
 </div>

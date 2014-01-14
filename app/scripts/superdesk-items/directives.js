@@ -57,6 +57,17 @@ define([
                 }
             };
         }])
+        .directive('sdHtmlPreview', ['$sce', function($sce) {
+            return {
+                scope: {sdHtmlPreview: '='},
+                template: '<div ng-bind-html="html"></div>',
+                link: function(scope, elem, attrs) {
+                    scope.$watch('sdHtmlPreview', function(html) {
+                        scope.html = $sce.trustAsHtml(html);
+                    });
+                }
+            };
+        }])
         .directive('sdWordcount', function() {
             return {
                 require: '?ngModel',
@@ -200,10 +211,7 @@ define([
             return {
                 templateUrl: 'scripts/superdesk-items/views/item-preview-static.html',
                 replace: true,
-                scope: {
-                    item: '=',
-                    previewSingle : '=previewitem'
-                },
+                scope: {item: '='},
                 link: function(scope, element, attrs) {
                     scope.treepreview = function(item) {
                         scope.previewSingle = item;
