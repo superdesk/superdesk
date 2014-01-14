@@ -99,18 +99,22 @@ define([
             };
 
             superdesk
-                .activity('users-list', {
-                    when: '/users/:id?',
-                    href: '/users/',
+                .activity('/users/', {
                     label: gettext('Users'),
                     priority: 100,
                     controller: require('./controllers/list'),
                     templateUrl: 'scripts/superdesk-users/views/list.html',
                     resolve: usersResolve,
-                    category: superdesk.MENU_MAIN
+                    category: superdesk.MENU_MAIN,
+                    reloadOnSearch: false,
+                    filters: [
+                        {
+                            action: superdesk.ACTION_PREVIEW,
+                            type: 'user'
+                        }
+                    ]
                 })
-                .activity('users-profile', {
-                    when: '/profile/',
+                .activity('/profile/', {
                     label: gettext('My Profile'),
                     controller: require('./controllers/profile'),
                     templateUrl: 'scripts/superdesk-users/views/profile.html',
@@ -120,15 +124,14 @@ define([
                         }]
                     }
                 })
-                .activity('settings-user-roles', {
-                    when: '/settings/user-roles',
+                .activity('/settings/user-roles', {
                     label: gettext('User Roles'),
                     templateUrl: 'scripts/superdesk-users/views/settings.html',
                     controller: require('./controllers/settings'),
                     category: superdesk.MENU_SETTINGS,
                     priority: -500
                 })
-                .activity('delete:user', {
+                .activity('delete/user', {
                     label: gettext('Delete user'),
                     confirm: gettext('Please confirm you want to delete a user.'),
                     controller: ['em', 'data', 'locationParams', function(em, data, locationParams) {

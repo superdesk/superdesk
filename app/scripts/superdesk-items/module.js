@@ -110,15 +110,20 @@ define([
         }
 
         superdesk
-            .activity('ingest', {
+            .activity('/ingest', {
                 when: '/ingest/:id?',
-                href: '/ingest/',
                 label: gettext('Ingest'),
                 templateUrl: 'scripts/superdesk-items/views/ingest.html',
                 controller: require('./controllers/ingest'),
                 resolve: resolve('ingest'),
                 priority: -800,
-                category: superdesk.MENU_MAIN
+                category: superdesk.MENU_MAIN,
+                filters: [
+                    {
+                        action: superdesk.ACTION_PREVIEW,
+                        type: 'ingest'
+                    }
+                ]
             })
             .activity('archive', {
                 when: '/archive/',
@@ -135,8 +140,7 @@ define([
                 controller: require('./controllers/edit'),
                 resolve: resolveArticles()
             })
-            .activity('settings-ingest', {
-                when: '/settings/ingest',
+            .activity('/settings/ingest', {
                 label: gettext('Ingest Feed'),
                 templateUrl: 'scripts/superdesk-items/views/settings/settings.html',
                 controller: require('./controllers/settings'),

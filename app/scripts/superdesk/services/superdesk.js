@@ -4,8 +4,10 @@ define(['angular', 'lodash'], function(angular, _) {
     var constans = {
         MENU_MAIN: 'superdesk.menu.main',
         MENU_SETTINGS: 'superdesk.menu.settings',
+
         ACTION_EDIT: 'edit',
-        ACTION_LIST: 'list'
+        ACTION_LIST: 'list',
+        ACTION_PREVIEW: 'preview'
     };
 
     var module = angular.module('superdesk.services');
@@ -22,44 +24,57 @@ define(['angular', 'lodash'], function(angular, _) {
 
         /**
          * Register widget.
+         *
+         * @param {string} id
+         * @param {Object} data
+         * @returns {Object} self
          */
-        this.widget = function(key, data) {
-            widgets[key] = angular.extend({_id: key, wcode: key}, data);
+        this.widget = function(id, data) {
+            widgets[id] = angular.extend({_id: id, wcode: id}, data);
             return this;
         };
 
         /**
          * Register activity.
+         *
+         * @param {string} id
+         * @param {Object} data
+         * @returns {Object} self
          */
-        this.activity = function(key, data) {
-            activities[key] = angular.extend({
-                _id: key,
+        this.activity = function(id, data) {
+            var activity = angular.extend({
+                _id: id,
                 priority: 0,
-                href: data.when || null, // use when as menu.item.href if href not set
+                when: id, // use id as default
+                href: id, // use id as default
                 filters: []
             }, data);
 
-            var actionless = _.find(activities[key].filters, function(filter) {
+            var actionless = _.find(activity.filters, function(filter) {
                 return !filter.action;
             });
 
             if (actionless) {
-                console.error('Missing filters action for activity', activities[key]);
+                console.error('Missing filters action for activity', activity);
             }
 
-            var when = data.when || data.href;
-            if (when != null) {
-                $routeProvider.when(when, activities[key]);
+            if (activity.when[0] === '/' && (activity.template || activity.templateUrl)) {
+                $routeProvider.when(activity.when, activity);
             }
 
+            activities[id] = activity;
             return this;
         };
 
         /**
          * Register permission.
+         *
+         * @param {string} id
+         * @param {Object} data
+         * @returns {Object} self
          */
-        this.permission = function(key, data) {
-            permissions[key] = angular.extend({_id: key}, data);
+        this.permission = function(id, data) {
+            permissions[id] = angular.extend({_id: id}, data);
             return this;
         };
 
@@ -74,28 +89,43 @@ define(['angular', 'lodash'], function(angular, _) {
                  * Resolve an intent
                  */
                 resolve: function(intent) {
-                    console.log('resolve', intent);
+                    var activity = _.find(this.activities, function(activity) {
+                        return _.find(activity.filters, {action: intent.action, type: intent.data});
+                    });
+
+                    if (activity) {
+                        $location
+                            .path(activity._id)
+                            .search(_.pick(intent.extras, '_id'));
+                        return intent;
+                    }
+
+                    console.log('No activity for intent found', intent);
+                },
+
+                /**
+                 * Intent factory
+                 */
+                intent: function(action, data, extras) {
+                    var intent = {
+                        action: action,
+                        data: data,
+                        extras: extras
+                    };
+
                     intentStack.push(intent);
+                    return this.resolve(intent);
                 }
             }, constans);
         }];
     }]);
 
-    module.run(['$rootScope', 'intent', 'superdesk', function($rootScope, intent, superdesk) {
-        $rootScope.intent = intent;
-        $rootScope.superdesk = superdesk;
-    }]);
+    module.run(['$rootScope', 'superdesk', function($rootScope, superdesk) {
 
-    module.factory('intent', ['superdesk', function(superdesk) {
-        function Intent(action, data, extras) {
-            this.action = action;
-            this.data = data;
-            this.extras = extras;
-        }
+        $rootScope.superdesk = superdesk; // add superdesk reference so we can use constants in templates
 
-        return function (action, data, extras) {
-            var intent = new Intent(action, data, extras);
-            superdesk.resolve(intent);
+        $rootScope.intent = function() {
+            superdesk.intent.apply(superdesk, arguments);
         };
     }]);
 
