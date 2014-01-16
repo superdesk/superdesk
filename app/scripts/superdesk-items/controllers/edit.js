@@ -1,8 +1,8 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', '$location', 'item', 'em', 'storage', 'articles',
-    function($scope, $location, item, em, storage, articles) {
+    return ['$scope', '$location', '$filter','item', 'em', 'storage', 'articles', 'panes',
+    function($scope, $location, $filter, item, em, storage, articles, panes) {
 
         $scope.item = item;
         var inprogress = storage.getItem('collection:inprogress') || {};
@@ -48,6 +48,21 @@ define(['angular'], function(angular) {
                 $location.url('/article/');
             }
         };
+
+        //tabpane logic
+        $scope.panes = panes.query();
+
+        $scope.tabpaneIsOpen = function(side) {
+            return $filter('filter')($scope.panes, {position:side, selected: true, active:true}).length > 0;
+        }
+
+        $scope.flipActive = function(pane, side) {
+            angular.forEach($filter('filter')($scope.panes, {position:side, selected: true, active:true}), function(value, key) {
+                value.active = (value != pane) ? false : value.active;
+            });
+            pane.active = !pane.active;
+        }
+        
 
     }];
 });

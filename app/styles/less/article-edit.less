@@ -40,7 +40,7 @@ html, body.article-edit {
 .tabpane {
   position:fixed;
   width:@tabpane-width;
-  top:@subnav-height + @topspace + @editor-toolbar;
+  top:@subnav-height + @topspace;
   bottom:0;
   background: @tabpane-background;
   border-color:@tabpane-border;
@@ -66,7 +66,6 @@ html, body.article-edit {
        }
     }
     .tabcontent {
-      display:none;
       padding:@tabcontent-padding;
       padding-bottom: @tabcontent-padding + 30px; //because of scratchpad
       .box-sizing(border-box);
@@ -86,12 +85,16 @@ html, body.article-edit {
   right: 0;
   bottom: 0;
   overflow: hidden;
-}
-
-.article-edit-container .tablist {
-  .fake-space {
-    height: @subnav-level2 - 1;
-    border-bottom: 1px solid #898989;
+  .tablist {
+    .fake-space {
+      height: @subnav-level2 - 1;
+      border-bottom: 1px solid #898989;
+    }
+  }
+  &.editmode {
+    .tabpane {
+      top:@subnav-height + @topspace + @editor-toolbar;
+    }
   }
 }
 
