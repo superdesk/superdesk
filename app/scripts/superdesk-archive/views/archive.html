@@ -9,9 +9,9 @@
 <section class="main-section archive-content-inner"
     sd-list-view
     data-adapter="items"
-    data-item-template="scripts/superdesk-items/views/media-box-list.html"
-    data-select="selectedItem = item"
-></section>
+    data-select="selectedItem = item">
+    <div ng-include="'scripts/superdesk-items/views/media-box-list.html'"></div>
+</section>
 
 <div class="side-preview"
     sd-item-preview-static

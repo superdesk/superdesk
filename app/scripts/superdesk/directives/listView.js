@@ -21,7 +21,7 @@ define(['angular', 'lodash'], function(angular, _) {
 
                     scope.$watch('adapter._items', function(items) {
                         scope.items = items;
-                        if ($route.current.params._id) {
+                        if (items && $route.current.params._id) {
                             var match = _.find(items, {_id: $route.current.params._id});
                             if (match) {
                                 scope.clickItem(match);
