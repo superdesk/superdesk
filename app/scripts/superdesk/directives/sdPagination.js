@@ -16,7 +16,7 @@ define([
         .directive('sdPagination', ['locationParams', function(locationParams) {
 
             function getTotalPages(data) {
-                if (data._links.last !== undefined) {
+                if (data && data._links && data._links.last != null) {
                     var parts = data._links.last.href.split('?')[1].split('&');
                     var parameters = {};
                     _.forEach(parts, function(part) {
@@ -31,22 +31,23 @@ define([
             }
 
             return {
-                scope: {model: '='},
+                scope: {adapter: '='},
                 templateUrl: 'scripts/superdesk/views/sdPagination.html',
                 link: function(scope, element, attrs) {
-                    scope.get = function(key) {
-                        return locationParams.get(key);
-                    };
 
-                    scope.page = locationParams.get('page');
-
-                    scope.$watch('page', function(page) {
-                        locationParams.set('page', page);
+                    scope.$watch('adapter._links', function(links) {
+                        if (links) {
+                            scope.page = scope.adapter.page();
+                            scope.totalPages = getTotalPages(scope.adapter || scope.page);
+                            scope.links = links;
+                        } else {
+                            scope.page = scope.totalPages = 0;
+                            scope.links = {};
+                        }
                     });
 
-                    scope.$watch('model', function(model) {
-                        scope.totalPages = getTotalPages(scope.model) || scope.page;
-                        scope.links = model._links;
+                    scope.$watch('page', function(page) {
+                        scope.adapter.page(page);
                     });
                 }
             };

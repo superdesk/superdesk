@@ -4,7 +4,6 @@ define([
     'require',
     './resources',
     './controllers/ingest',
-    './controllers/archive',
     './controllers/settings',
     './controllers/edit',
     './controllers/ref',
@@ -45,14 +44,6 @@ define([
             .permission('items-read', {
                 label: gettext('Read ingest items'),
                 permissions: {items: {read: true}}
-            })
-            .permission('archive-manage', {
-                label: gettext('Manage archive'),
-                permissions: {archive: {write: true}}
-            })
-            .permission('archive-read', {
-                label: gettext('Read archive'),
-                permissions: {archive: {read: true}}
             });
     }]);
 
@@ -116,7 +107,7 @@ define([
                 templateUrl: 'scripts/superdesk-items/views/ingest.html',
                 controller: require('./controllers/ingest'),
                 resolve: resolve('ingest'),
-                priority: -800,
+                priority: -500,
                 category: superdesk.MENU_MAIN,
                 filters: [
                     {
@@ -125,16 +116,7 @@ define([
                     }
                 ]
             })
-            .activity('archive', {
-                when: '/archive/',
-                label: gettext('Archive'),
-                priority: -700,
-                templateUrl: 'scripts/superdesk-items/views/archive.html',
-                controller: require('./controllers/archive'),
-                resolve: resolve('archive'),
-                category: superdesk.MENU_MAIN
-            })
-            .activity('archive-detail', {
+            .activity('/edit', {
                 when: '/article/:id',
                 templateUrl: 'scripts/superdesk-items/views/edit.html',
                 controller: require('./controllers/edit'),

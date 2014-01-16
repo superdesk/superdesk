@@ -115,6 +115,10 @@ define(['angular', 'lodash'], function(angular, _) {
 
                     intentStack.push(intent);
                     return this.resolve(intent);
+                },
+
+                data: function(uri, options) {
+                    return {};
                 }
             }, constans);
         }];

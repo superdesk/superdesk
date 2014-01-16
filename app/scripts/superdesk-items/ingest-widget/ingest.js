@@ -21,9 +21,9 @@ define([
                     description: 'Ingest widget'
                 });
         }])
-        .controller('IngestController', ['$scope', '$timeout', 'em',
-        function ($scope, $timeout, em) {
-            var update = function() {
+        .controller('IngestController', ['$scope', '$timeout', 'em', 'superdesk',
+        function ($scope, $timeout, em, superdesk) {
+            function update() {
                 var criteria = {
                     sort: ['versioncreated', 'desc'],
                     max_results: $scope.widget.configuration.maxItems,
@@ -44,13 +44,15 @@ define([
                         update();
                     }, $scope.widget.configuration.updateInterval * 1000 * 60);
                 });
-            };
+            }
 
             $scope.$watch('widget.configuration', function() {
                 update();
             }, true);
 
-            update();
+            $scope.preview = function(item) {
+                superdesk.intent(superdesk.ACTION_PREVIEW, 'ingest', item);
+            };
         }])
         .controller('IngestConfigController', ['$scope', 'em',
         function ($scope, em) {

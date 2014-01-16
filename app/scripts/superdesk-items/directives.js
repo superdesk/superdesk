@@ -167,7 +167,7 @@ define([
                         view: getSetting('ingest:view', 'list')
                     };
 
-                    var actions = attrs.actions.split(',');
+                    var actions = (attrs.actions || '').split(',');
                     scope.actions = _.zipObject(actions, _.range(1, actions.length + 1, 0));
 
                     scope.toggleCompact = function() {
@@ -266,9 +266,13 @@ define([
                 scope: {items: '='},
                 templateUrl: 'scripts/superdesk-items/views/provider-filter.html',
                 link: function(scope, element, attrs) {
-                    scope.activeProvider = $routeParams.provider || null;
+                    scope.$watch('items._facets', function(facets) {
+                        scope.facets = facets;
+                        scope.activeProvider = scope.items.where('provider');
+                    });
+
                     scope.setProvider = function(provider) {
-                        $location.search('provider', provider);
+                        scope.items.where('provider', provider);
                     };
                 }
             };

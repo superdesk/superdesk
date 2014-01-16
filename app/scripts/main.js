@@ -104,6 +104,7 @@ define([
 ], function($, _, angular) {
     'use strict';
 
+    angular.module('superdesk', []); // todo replace .filters/.directives/.services with superdesk
     angular.module('superdesk.filters', []);
     angular.module('superdesk.services', []);
     angular.module('superdesk.directives', []);
@@ -123,6 +124,7 @@ define([
                 'ui.bootstrap',
                 'blueimp.fileupload',
 
+                'superdesk',
                 'superdesk.filters',
                 'superdesk.services',
                 'superdesk.directives'
@@ -134,6 +136,7 @@ define([
                 'auth',
                 'users',
                 'desks',
+                'archive',
                 'items'
             ];
 

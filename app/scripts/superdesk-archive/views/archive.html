@@ -1,0 +1,21 @@
+<div class="subnav subnav-fixed">
+    <div class="pull-right" sd-pagination data-adapter="items"></div>
+    <div class="btn-group source-select" sd-provider-filter data-items="items"></div>
+    <input type="text" sd-searchbar data-df="headline" />
+</div>
+
+<div class="archive-content">
+
+<section class="main-section archive-content-inner"
+    sd-list-view
+    data-adapter="items"
+    data-item-template="scripts/superdesk-items/views/media-box-list.html"
+    data-select="selectedItem = item"
+></section>
+
+<div class="side-preview"
+    sd-item-preview-static
+    data-item="selectedItem"
+></div>
+
+</div>

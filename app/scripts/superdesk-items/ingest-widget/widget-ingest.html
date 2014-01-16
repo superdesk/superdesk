@@ -1,9 +1,7 @@
-<div>
-    <ul class="ingest-list" ng-controller="IngestController">
-        
-        <li ng-repeat="item in items._items" class="urgency-{{ item.urgency}}">
-
-            <a href="#/ingest/{{ item._id }}">
+<div ng-controller="IngestController">
+    <ul class="ingest-list">
+        <li ng-repeat="item in items._items track by item._id" class="urgency-{{ item.urgency}}">
+            <a href="" ng-click="preview(item)">
                 <ul class="top-line clearfix">
                     <li><span class="type-icon filetype-icon-{{item.type}}"></span><span class="urgency-label">{{ item.urgency }}</span></li>
                     <li>{{ item.versioncreated | reldate }}</li>
@@ -18,7 +16,6 @@
                     <h5 title="{{ item.headline }}">{{ item.headline }}</h5>
                 </div>
             </a>
-
         </li>
     </ul>
 </div>
