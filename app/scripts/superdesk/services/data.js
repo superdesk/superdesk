@@ -80,7 +80,7 @@ define(['angular', 'lodash'], function(angular, _) {
             this.page = function(page) {
                 switch(arguments.length) {
                     case 0:
-                    return state.get(page) || defaultParams.page;
+                    return state.get('page') || defaultParams.page;
                     break;
 
                     case 1:
