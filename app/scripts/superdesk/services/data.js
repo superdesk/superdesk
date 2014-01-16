@@ -2,20 +2,41 @@ define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
     angular.module('superdesk.services')
-    .factory('DataAdapter', ['$rootScope', '$location', '$route', 'em', function($rootScope, $location, $route, em) {
+    .factory('DataAdapter', ['$rootScope', '$location', 'em', function($rootScope, $location, em) {
+
+        /**
+         * $location state adapter
+         */
+        function LocationState(loc) {
+
+            this.get = function(key) {
+                return arguments.length ? loc.search()[key] : loc.search();
+            }
+
+            this.set = function(key, val) {
+                return loc.search(key, val);
+            }
+        }
+
+        // @todo implement storage state provider
+        var stateProviders = {
+            location: new LocationState($location)
+        };
+
         /**
          * Data Provider for given resource
          */
         return function DataAdapter(resource, params) {
             var _this = this;
+            var state = stateProviders.location;
             var defaultParams = angular.extend({max_results: 25, page: 1, where: {}, sort: [], filters: []}, params);
 
             /**
-             * Get query criteria - extend default params with current route params
+             * Get query criteria - extend default params with current search
              */
             function getQueryCriteria() {
-                var criteria = angular.extend({}, defaultParams, $route.current.params);
-                angular.extend(criteria.where, _.pick($route.current.params, defaultParams.filters));
+                var criteria = angular.extend({}, defaultParams, state.get());
+                angular.extend(criteria.where, _.pick(state.get(), defaultParams.filters));
 
                 if (criteria.hasOwnProperty('_id')) {
                     // prevent reload on preview
@@ -45,7 +66,6 @@ define(['angular', 'lodash'], function(angular, _) {
             function query(criteria) {
                 var start = Date.now();
                 _this._items = null;
-
                 return em.getRepository(resource).matching(criteria).then(function(data) {
                     slowQueryLog(start);
                     angular.extend(_this, data);
@@ -60,12 +80,12 @@ define(['angular', 'lodash'], function(angular, _) {
             this.page = function(page) {
                 switch(arguments.length) {
                     case 0:
-                    return $route.current.params.page || defaultParams.page;
+                    return state.get(page) || defaultParams.page;
                     break;
 
                     case 1:
                     if (this._items) {
-                        $location.search('page', page !== defaultParams.page ? page : null);
+                        state.set('page', page !== defaultParams.page ? page : null);
                     }
                     break;
                 }
@@ -80,14 +100,14 @@ define(['angular', 'lodash'], function(angular, _) {
             this.search = function(q, df) {
                 switch(arguments.length) {
                     case 0:
-                    return $route.current.params.q;
+                    return state.get('q');
                     break;
 
                     case 1:
                     if (this._items) {
-                        $location.search('q', q);
-                        $location.search('df', df);
-                        $location.search('page', null);
+                        state.set('q', q);
+                        state.set('df', df);
+                        state.set('page', null);
                     }
                     break;
                 }
@@ -103,13 +123,13 @@ define(['angular', 'lodash'], function(angular, _) {
              */
             this.where = function(key, val) {
                 switch(arguments.length) {
-                    case 2:
-                    $location.search(key, val || null);
-                    $location.search('page', null);
+                    case 1:
+                    return state.get(key) || null;
                     break;
 
-                    case 1:
-                    return $route.current.params[key] || null;
+                    case 2:
+                    state.set(key, val || null);
+                    state.set('page', null);
                     break;
                 }
 
