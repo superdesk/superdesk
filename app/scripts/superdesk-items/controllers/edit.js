@@ -1,8 +1,8 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', '$location', '$filter','item', 'em', 'storage', 'articles', 'panes',
-    function($scope, $location, $filter, item, em, storage, articles, panes) {
+    return ['$scope', '$location', '$filter','item', 'em', 'storage', 'articles', 'superdesk',
+    function($scope, $location, $filter, item, em, storage, articles, superdesk) {
 
         $scope.item = item;
         var inprogress = storage.getItem('collection:inprogress') || {};
@@ -50,7 +50,7 @@ define(['angular'], function(angular) {
         };
 
         //tabpane logic
-        $scope.panes = panes.query();
+        $scope.panes = _.map(superdesk.panes);
 
         $scope.tabpaneIsOpen = function(side) {
             return $filter('filter')($scope.panes, {position:side, selected: true, active:true}).length > 0;
