@@ -78,7 +78,7 @@ define(['angular', 'lodash'], function(angular, _) {
             return this;
         };
 
-        this.$get = ['$q', '$location', function($q, $location) {
+        this.$get = ['$q', '$location', 'DataAdapter', function($q, $location, DataAdapter) {
             var intentStack = [];
             return angular.extend({
                 widgets: widgets,
@@ -117,8 +117,8 @@ define(['angular', 'lodash'], function(angular, _) {
                     return this.resolve(intent);
                 },
 
-                data: function(uri, options) {
-                    return {};
+                data: function(resource, params) {
+                    return new DataAdapter(resource, params);
                 }
             }, constans);
         }];

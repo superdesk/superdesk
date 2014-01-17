@@ -2,15 +2,17 @@ define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
     angular.module('superdesk')
-        .directive('sdListView', function($route, $location) {
+        .directive('sdListView', ['$location', function($location) {
             return {
                 scope: {
                     select: '&',
+                    extras: '=',
                     adapter: '=',
                     itemTemplate: '@'
                 },
-                templateUrl: 'scripts/superdesk/views/list-view.html',
                 transclude: true,
+                replace: true,
+                templateUrl: 'scripts/superdesk/views/list-view.html',
                 link: function(scope, elem, attrs) {
 
                     scope.clickItem = function(item) {
@@ -19,20 +21,26 @@ define(['angular', 'lodash'], function(angular, _) {
                         $location.search('_id', item._id);
                     };
 
-                    scope.$watch('adapter._items', function(items) {
-                        scope.items = items;
-                        if (items && $route.current.params._id) {
-                            var match = _.find(items, {_id: $route.current.params._id});
+                    function fetchSelectedItem(itemId, items) {
+                        if (itemId) {
+                            var match = _.find(items, {_id: itemId});
                             if (match) {
                                 scope.clickItem(match);
-                            } else if (!scope.selected || $route.current.params._id !== scope.selected._id) {
-                                scope.adapter.find($route.current.params._id).then(function(item) {
+                            } else if (!scope.selected || itemId !== scope.selected._id) {
+                                scope.adapter.find(itemId).then(function(item) {
                                     scope.clickItem(item);
                                 });
                             }
                         }
+                    }
+
+                    scope.$watch('adapter._items', function(items) {
+                        scope.items = items;
+                        if (items) {
+                            fetchSelectedItem($location.search()._id, items);
+                        }
                     });
                 }
             };
-        });
+        }]);
 });

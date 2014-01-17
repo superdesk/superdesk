@@ -1,8 +1,8 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', 'DataAdapter', function($scope, DataAdapter) {
-        $scope.items = new DataAdapter('ingest', {
+    return ['$scope', 'superdesk', function($scope, superdesk) {
+        $scope.items = superdesk.data('ingest', {
             where: {},
             sort: ['firstcreated', 'desc'],
             max_results: 25,

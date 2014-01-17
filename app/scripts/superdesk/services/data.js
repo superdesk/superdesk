@@ -2,33 +2,27 @@ define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
     angular.module('superdesk.services')
-        .factory('DataAdapter', ['$rootScope', '$location', 'em', function($rootScope, $location, em) {
-            /**
-             * $location state adapter
-             */
-            function LocationState(loc) {
-
-                this.get = function(key) {
-                    return arguments.length ? loc.search()[key] : loc.search();
-                };
-
-                this.set = function(key, val) {
-                    return loc.search(key, val);
-                };
-            }
-
-            // @todo implement storage state provider
-            var stateProviders = {
-                location: new LocationState($location)
+        /**
+         * Location State Adapter for Data Layer
+         */
+        .service('LocationStateAdapter', ['$location', function($location) {
+            this.get = function(key) {
+                return arguments.length ? $location.search()[key] : $location.search();
             };
 
+            this.set = function(key, val) {
+                return $location.search(key, val);
+            };
+        }])
+        .factory('DataAdapter', ['$rootScope', '$timeout', 'em', 'LocationStateAdapter', function($rootScope, $timeout, em, LocationStateAdapter) {
             /**
              * Data Provider for given resource
              */
             return function DataAdapter(resource, params) {
                 var _this = this;
-                var state = stateProviders.location;
-                var defaultParams = angular.extend({max_results: 25, page: 1, where: {}, sort: [], filters: []}, params);
+                var state = LocationStateAdapter; // @todo implement storage state adapter
+                var cancelWatch = angular.noop;
+                var defaultParams = {};
 
                 /**
                  * Get query criteria - extend default params with current search
@@ -48,12 +42,12 @@ define(['angular', 'lodash'], function(angular, _) {
                 /**
                  * Log slow query into console
                  *
-                 * @param {integer} start
+                 * @param {Object} query
                  */
-                function slowQueryLog(start) {
-                    var took = Date.now() - start;
-                    if (took > 500) {
-                        console.log('Slow query: /' + resource + ' ' + took + 'ms');
+                function slowQueryLog(query) {
+                    query.time = Date.now() - query.start;
+                    if (query.time > 500) {
+                        console.info('Slow query', query);
                     }
                 }
 
@@ -62,14 +56,23 @@ define(['angular', 'lodash'], function(angular, _) {
                  *
                  * @param {Object} criteria
                  */
-                function query(criteria) {
-                    var start = Date.now();
-                    _this._items = null;
-                    return em.getRepository(resource).matching(criteria).then(function(data) {
-                        slowQueryLog(start);
+                this.query = function(criteria) {
+                    _this.loading = true;
+                    var query = {resource: resource, criteria: criteria, start: Date.now()};
+                    var promise = em.getRepository(resource).matching(criteria);
+                    promise.then(function(data) {
+                        _this.loading = false;
+                        slowQueryLog(query);
                         angular.extend(_this, data);
+                        if (defaultParams.ttl) {
+                            _this.timeout = $timeout(function() {
+                                _this.query(getQueryCriteria());
+                            }, defaultParams.ttl);
+                        }
                     });
-                }
+
+                    return promise;
+                };
 
                 /**
                  * Get/set current page
@@ -133,14 +136,39 @@ define(['angular', 'lodash'], function(angular, _) {
                  * Get single item by id
                  */
                 this.find = function(id) {
+                    console.info('find', resource, id);
                     return em.find(resource, id);
                 };
 
-                $rootScope.$watch(function watchQueryCriteria() {
-                    return getQueryCriteria();
-                }, function(criteria) {
-                    query(criteria);
-                }, true);
+                /**
+                 * Reset default params
+                 */
+                this.reset = function(params) {
+                    cancelWatch();
+                    if (this.timeout) {
+                        $timeout.cancel(this.timeout);
+                    }
+
+                    defaultParams = angular.extend({
+                        max_results: 25,
+                        page: 1,
+                        where: {},
+                        sort: [],
+                        filters: [],
+                        ttl: 0
+                    }, params);
+
+                    // main loop - update when query criteria change
+                    cancelWatch = $rootScope.$watchCollection(function () {
+                        return getQueryCriteria();
+                    }, function(criteria) {
+                        _this.query(criteria);
+                    });
+                };
+
+                if (params) {
+                    this.reset(params);
+                }
             };
         }]);
 });
