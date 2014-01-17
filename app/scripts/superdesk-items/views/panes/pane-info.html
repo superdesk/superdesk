@@ -1,0 +1,73 @@
+<section class="tabcontent info-tab" >
+	<div class="header">
+		<div class="wordcount">{{ item.body_html|wordCount }}<span translate>words</span></div>
+		<div class="data">
+			<p>{{ 'Created by' | translate }} <span>Jane Editor</span></p>
+			<p>{{item.firstcreated | reldate }}</p>
+		</div>
+	</div>
+	<ul class="metadata top-border">
+		<li>
+			<div class="lbl" translate>News value</div>
+			<div class="data">3</div>
+		</li>
+		<li>
+			<div class="lbl" translate>Urgency</div>
+			<div class="data">1</div>
+		</li>
+		<li>
+			<div class="lbl" translate>Take key</div>
+			<div class="data">Something</div>
+		</li>
+		<li>
+			<div class="lbl" translate>Place</div>
+			<div class="data">{{ item.place | mergeWords }}</div>
+		</li>
+		<li>
+			<div class="lbl" translate>Provider</div>
+			<div class="data">{{ item.provider }}</div>
+		</li>
+		
+		<li ng-show="item.byline">
+			<div class="lbl" translate>By</div>
+			<div class="data">{{ item.byline }}</div>
+		</li>
+	</ul>
+
+	<div sd-tabmodule data-title="{{ 'Subject' | translate }}" data-open="true">
+			<ul class="subject-terms">
+				<li ng-repeat="term in item.subject">
+					<span>{{term.name}}</span>
+					<i class="icon-remove"></i>
+				</li>
+			</ul>
+	</div>
+
+	<div sd-tabmodule data-title="{{ 'Details' | translate }}">
+		<ul class="metadata">
+			<li ng-show="item.creditline">
+				<div class="lbl" translate>Creditline</div>
+				<div class="data" >&copy;{{ item.creditline }}</div>
+			</li>
+			<li>
+				<div class="lbl" translate>Item type</div>
+				<div class="data">{{ item.type }}</div>
+			</li>
+			<li>
+				<div class="lbl" translate>GUID</div>
+				<div class="data">{{ item.guid }}</div>
+			</li>
+			<li>
+				<div class="lbl" translate>Version created</div>
+				<div class="data">{{ item.versioncreated|reldate }}</div>
+			</li>
+			<li ng-show="item.version">
+				<div class="lbl" translate>Version</div>
+				<div class="data">{{ item.version }}</div>
+			</li>
+		</ul>
+	</div>
+
+</section>
+
+

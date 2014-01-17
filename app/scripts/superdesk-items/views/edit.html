@@ -3,6 +3,9 @@
     <a class="navbtn pull-left active" ng-click="backToIngest()">
         <i class="left arrow"></i>
     </a>
+    <a class="navbtn pull-right large active" ng-click="">
+        <span>Publish</span><i class="right arrow"></i>
+    </a>
 
     <h1 class="main-article-title">{{ item.headline|limitTo:80 }}</h1>
 
@@ -44,7 +47,7 @@
             </section>
 
             <section class="article-date">
-                <time datetime="{{ item.firstCreated }}" title="{{ item.firstCreated|date:'medium' }}">{{ item.firstCreated|reldate }}</time>
+                <time datetime="{{ item.firstCreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>
             </section>
 
             <section class="article-title">

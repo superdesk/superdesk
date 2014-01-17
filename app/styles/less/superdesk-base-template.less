@@ -211,6 +211,7 @@ body {
   	background: #898989;
   	text-align: center;
   	line-height: 52px;
+  	text-decoration: none !important;
   	
   	.arrow {
   		width: 15px;
@@ -244,6 +245,17 @@ body {
   	&.active {
   		background: #62b0d0;
   		cursor: pointer;
+  	}
+  	&.large {
+  		width: auto;
+  		padding: 0 20px;
+  		span {
+  			text-transform: uppercase;
+  			color: #fff;
+  		}
+  		span + i {
+  			margin-left: 10px;
+  		}
   	}
   }
   &.subnav-level2 {

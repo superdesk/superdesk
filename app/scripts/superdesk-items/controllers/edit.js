@@ -62,6 +62,7 @@ define(['angular'], function(angular) {
             });
             pane.active = !pane.active;
         }
+
         
 
     }];

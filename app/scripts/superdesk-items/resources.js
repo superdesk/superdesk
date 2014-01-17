@@ -46,9 +46,9 @@ define(['angular'], function(angular) {
             {
                 name: 'Info',
                 icon:'info',
-                template: 'scripts/superdesk-items/views/panes/pane-blank.html',
+                template: 'scripts/superdesk-items/views/panes/pane-info.html',
                 position: 'right',
-                active: false,
+                active: true,
                 selected: true
             },
             {
