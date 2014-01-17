@@ -27,10 +27,13 @@
 			<div class="lbl" translate>Provider</div>
 			<div class="data">{{ item.provider }}</div>
 		</li>
-		
 		<li ng-show="item.byline">
 			<div class="lbl" translate>By</div>
 			<div class="data">{{ item.byline }}</div>
+		</li>
+		<li>
+			<div class="lbl" translate><i clas="icon-picture"></i>Has picture</div>
+			<div class="data"><input sd-switch ng-model="item.picture"></div>
 		</li>
 	</ul>
 
