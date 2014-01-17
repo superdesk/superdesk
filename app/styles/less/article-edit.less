@@ -642,10 +642,8 @@ button:focus {
     }
     i {
       margin-top: 2px;
-      display: none;
-      &.toggle-open {
-        display: inline-block;
-      }
+      .transition(all 0.2s ease);
+      .rotate(0deg);
     }
     .tabmodule-title {
       background: @tabpane-background;
@@ -669,11 +667,8 @@ button:focus {
   }
 
   &.open {
-    .toggle-open {
-      display: none !important;
-    }
-    .toggle-close {
-      display: inline-block;
+    .tabmodule-header i {
+      .rotate(90deg);
     }
     .tabmodule-content {
       display: block !important;
