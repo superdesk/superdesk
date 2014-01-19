@@ -10,6 +10,7 @@ define([
     './controllers/ref',
     './directives',
     './filters',
+    './services',
     './ingest-widget/ingest',
     './stats-widget/stats',
     './panes/info/info'
@@ -20,6 +21,7 @@ define([
         'superdesk.items.resources',
         'superdesk.items.directives',
         'superdesk.items.filters',
+        'superdesk.items.services',
         'superdesk.widgets.ingest',
         'superdesk.widgets.ingeststats',
         'superdesk.panes.info'

@@ -74,7 +74,7 @@
     <div class="tablist left-tablist">
         <div class="fake-space"></div>
         <ul class="navigation-tabs">
-            <li ng-repeat="pane in panes|filter:{position:'left', selected:true}" ng-class="{'active':pane.active}" ng-click="flipActive(pane, 'left')">
+            <li ng-repeat="pane in panes| filterObject:{position:'left', selected:true}" ng-class="{'active':pane.active}" ng-click="flipActive(pane, 'left')">
                 <a href="" tooltip="{{pane.name}}" tooltip-placement="right" tooltip-append-to-body="true"><i class="big-icon-{{pane.icon}}"></i></a>
             </li>
         </ul>
@@ -82,7 +82,7 @@
     <div class="tablist right-tablist">
         <div class="fake-space"></div>
         <ul class="navigation-tabs">
-            <li ng-repeat="pane in panes|filter:{position:'right', selected:true}" ng-class="{'active':pane.active}" ng-click="flipActive(pane, 'right')">
+            <li ng-repeat="pane in panes|filterObject:{position:'right', selected:true}" ng-class="{'active':pane.active}" ng-click="flipActive(pane, 'right')">
                 <a href="" tooltip="{{pane.name}}" tooltip-placement="left" tooltip-append-to-body="true"><i class="big-icon-{{pane.icon}}"></i></a>
             </li>
         </ul>

@@ -11,6 +11,7 @@ define([
                     icon:'info',
                     template: 'scripts/superdesk-items/panes/info/pane.html',
                     position: 'right',
+                    order: 0,
                     active: false,
                     selected: true
                 });

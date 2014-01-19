@@ -33,5 +33,16 @@ define([
             return function(value) {
                 return $sce.trustAsResourceUrl(value);
             };
-        }]);
+        }]).
+        filter('filterObject', function($filter) {
+            return function(items, fields) {
+                var filtered = [];
+                angular.forEach(items, function(item) {
+                    filtered.push(item);
+                });
+                return $filter('filter')(filtered, fields);
+            };
+        });
+
+
 });

@@ -1,8 +1,8 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', '$location', '$filter','item', 'em', 'storage', 'articles', 'superdesk',
-    function($scope, $location, $filter, item, em, storage, articles, superdesk) {
+    return ['$scope', '$location', '$filter','item', 'em', 'storage', 'articles', 'superdesk', 'panesService',
+    function($scope, $location, $filter, item, em, storage, articles, superdesk, panesService) {
 
         $scope.item = item;
         var inprogress = storage.getItem('collection:inprogress') || {};
@@ -50,20 +50,19 @@ define(['angular'], function(angular) {
         };
 
         //tabpane logic
-        $scope.panes = _.map(superdesk.panes);
+        $scope.panes = panesService.load();
 
         $scope.tabpaneIsOpen = function(side) {
-            return $filter('filter')($scope.panes, {position:side, selected: true, active:true}).length > 0;
-        }
+            return $filter('filterObject')($scope.panes, {position:side, selected: true, active:true}).length > 0;
+        };
 
         $scope.flipActive = function(pane, side) {
-            angular.forEach($filter('filter')($scope.panes, {position:side, selected: true, active:true}), function(value, key) {
-                value.active = (value != pane) ? false : value.active;
+            angular.forEach($filter('filterObject')($scope.panes, {position:side, selected: true, active:true}), function(value, key) {
+                value.active = (value !== pane) ? false : value.active;
             });
             pane.active = !pane.active;
-        }
-
-        
+            panesService.save($scope.panes);
+        };
 
     }];
 });
