@@ -2,6 +2,7 @@ define([
     'jquery',
     'angular',
     'require',
+    'angular-slider',
     './resources',
     './controllers/ingest',
     './controllers/archive',
@@ -24,7 +25,8 @@ define([
         'superdesk.items.services',
         'superdesk.widgets.ingest',
         'superdesk.widgets.ingeststats',
-        'superdesk.panes.info'
+        'superdesk.panes.info',
+        'uiSlider'
     ]);
 
     app.controller('RefController', require('./controllers/ref'));

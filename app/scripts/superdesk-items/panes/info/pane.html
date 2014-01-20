@@ -9,11 +9,16 @@
 	<ul class="metadata top-border">
 		<li>
 			<div class="lbl" translate>News value</div>
-			<div class="data">3</div>
+			<div class="data">
+				2
+			</div>
 		</li>
 		<li>
 			<div class="lbl" translate>Urgency</div>
-			<div class="data">1</div>
+			<div class="data urgency-data">
+				<slider floor="1" ceiling="5" step="1" precision="1" ng-model="item.urgency" class="sd-slider urgency-slider"></slider>
+				<div class="urgency-large urgency-{{item.urgency | number:0}}"></div>
+			</div>
 		</li>
 		<li>
 			<div class="lbl" translate>Take key</div>

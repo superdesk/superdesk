@@ -757,6 +757,36 @@ button:focus {
           border-color: #d0d0d0 !important;  
         }
       }
+      .urgency-data {
+        width: 200px;
+        .urgency-slider {
+          float: left;
+          margin-top: 2px;
+        }
+        .urgency-large {
+          width: 23px;
+          height: 22px;
+          float: right;
+          display: inline-block;
+          background: url(../../images/urgency-icons-large.png) no-repeat 0 0;
+          &.urgency-1 {
+            background-position: 0 0;
+          }
+          &.urgency-2 {
+            background-position: 0 -22px;
+          }
+          &.urgency-3 {
+            background-position: 0 -44px;
+          }
+          &.urgency-4 {
+            background-position: 0 -66px;
+          }
+
+          &.urgency-5 {
+            background-position: 0 -88px;
+          }
+        }
+      }
     }
   }
 

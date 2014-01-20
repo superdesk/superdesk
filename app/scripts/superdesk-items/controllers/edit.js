@@ -15,6 +15,14 @@ define(['angular'], function(angular) {
 
         $scope.articles = articles;
 
+        $scope.slider = {
+            options : {
+                from: 1,
+                to: 5,
+                step: 1
+            }
+        };
+
         $scope.save = function() {
             $scope.item.place = $filter('splitWords')( $scope.item.place);
             em.save('ingest', $scope.item).then(function(data) {

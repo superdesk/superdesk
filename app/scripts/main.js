@@ -23,7 +23,9 @@ require.config({
         'gridster': 'bower_components/gridster/dist/jquery.gridster.with-extras',
         'd3': 'bower_components/d3/d3',
 
-        'ng-aloha-editor': 'bower_components/ng-aloha-editor/ng-aloha-editor'
+        'ng-aloha-editor': 'bower_components/ng-aloha-editor/ng-aloha-editor',
+
+        'angular-slider': 'bower_components/angular-slider-royale/angular-slider'
     },
     shim: {
         jquery: {
