@@ -48,31 +48,6 @@ define([
     }]);
 
     app.config(['superdeskProvider', function(superdesk) {
-        /**
-         * Resolve ingest/archive list
-         */
-        function resolve(resource) {
-            return {
-                items: ['locationParams', 'em', '$route', function(locationParams, em, $route) {
-                    var where;
-
-                    if ('provider' in $route.current.params) {
-                        where = {
-                            provider: $route.current.params.provider
-                        };
-                    }
-
-                    var criteria = locationParams.reset({
-                        where: where,
-                        sort: ['firstcreated', 'desc'],
-                        max_results: 25
-                    });
-
-                    return em.getRepository(resource).matching(criteria);
-                }]
-            };
-        }
-
         function resolveArticles() {
             return {
                 articles : ['server', 'storage', '$q', function(server,storage,$q) {
@@ -106,7 +81,6 @@ define([
                 label: gettext('Ingest'),
                 templateUrl: 'scripts/superdesk-items/views/ingest.html',
                 controller: require('./controllers/ingest'),
-                resolve: resolve('ingest'),
                 priority: -500,
                 category: superdesk.MENU_MAIN,
                 filters: [

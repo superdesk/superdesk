@@ -1,10 +1,15 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', 'items', 'em', '$location', 'locationParams', 'keyboardManager', 'storage',
-    function($scope, items, em, $location, locationParams, keyboardManager, storage) {
+    return ['$scope', 'superdesk', '$location', 'locationParams', 'keyboardManager', 'storage', 'em',
+    function($scope, superdesk, $location, locationParams, keyboardManager, storage, em) {
 
-        $scope.items = items;
+        var items = $scope.items = superdesk.data('ingest', {
+            sort: ['firstcreated', 'desc'],
+            filters: ['provider'],
+            max_results: 25
+        });
+
         $scope.inprogress =  storage.getItem('collection:inprogress') || { all : [], opened : [], active : null };
 
         var putInProgress = function(item_id, setActive) {
@@ -167,8 +172,6 @@ define(['angular'], function(angular) {
             }
         };
 
-        nextitem(); //initialy select(focus on) first item on ingest page 
-
         $scope.openEditor = function(item_id) {
             //remember url params in session storage
             storage.setItem('ingest:navigation-params', $location.url(), false);
@@ -189,14 +192,11 @@ define(['angular'], function(angular) {
             $location.url('/article/'+item_id);
         };
 
-
-        if (locationParams.get('id')) {
-            var item = _.find($scope.items._items, {_id: locationParams.get('id')});
-            if (item) {
-                $scope.preview(item);
+        var stopWatch = $scope.$watch('items._items', function(items) {
+            if (items) {
+                nextitem(); //initialy select(focus on) first item on ingest page 
+                stopWatch();
             }
-        }
-        
-
+        });
     }];
 });
