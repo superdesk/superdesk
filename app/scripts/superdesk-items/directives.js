@@ -76,10 +76,10 @@ define([
                 scope: true,
                 link: function($scope, element, attrs) {
                     $scope.title = attrs.title;
-                    $scope.isOpen = (attrs.open == 'true' ) ? true : false;
+                    $scope.isOpen = (attrs.open === 'true' ) ? true : false;
                     $scope.toggleModule = function() {
                         $scope.isOpen = !$scope.isOpen;
-                    }
+                    };
                 }
             };
         })
