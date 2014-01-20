@@ -29,6 +29,16 @@ define([
                 return subjectMerged.join(', ');
             };
         }).
+        filter('splitWords', function() {
+            return function(word) {
+                var split = [];
+                _.forEach(word.split(','), function(w) {
+                    var trim = w.replace(/^\s+|\s+$/g,'');
+                    split.push({'name':trim});
+                });
+                return split;
+            };
+        }).
         filter('trusted', ['$sce', function($sce) {
             return function(value) {
                 return $sce.trustAsResourceUrl(value);

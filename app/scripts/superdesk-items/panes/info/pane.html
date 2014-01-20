@@ -21,15 +21,15 @@
 		</li>
 		<li>
 			<div class="lbl" translate>Place</div>
-			<div class="data">{{ item.place | mergeWords }}</div>
+			<div class="data"><input type="text" ng-model="item.placeMerged"></div>
 		</li>
 		<li>
 			<div class="lbl" translate>Provider</div>
 			<div class="data">{{ item.provider }}</div>
 		</li>
-		<li ng-show="item.byline">
+		<li>
 			<div class="lbl" translate>By</div>
-			<div class="data">{{ item.byline }}</div>
+			<div class="data"><input type="text" ng-model="item.byline"></div>
 		</li>
 		<li>
 			<div class="lbl" translate><i clas="icon-picture"></i>Has picture</div>
@@ -39,9 +39,9 @@
 
 	<div sd-tabmodule data-title="{{ 'Subject' | translate }}" data-open="true">
 			<ul class="subject-terms">
-				<li ng-repeat="term in item.subject">
+				<li ng-repeat="term in item.subject" >
 					<span>{{term.name}}</span>
-					<i class="icon-remove"></i>
+					<i class="icon-remove" ng-click="removeTerm(item.subject,term)"></i>
 				</li>
 			</ul>
 	</div>
@@ -51,10 +51,6 @@
 			<li ng-show="item.creditline">
 				<div class="lbl" translate>Creditline</div>
 				<div class="data" >&copy;{{ item.creditline }}</div>
-			</li>
-			<li>
-				<div class="lbl" translate>Item type</div>
-				<div class="data">{{ item.type }}</div>
 			</li>
 			<li>
 				<div class="lbl" translate>GUID</div>

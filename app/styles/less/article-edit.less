@@ -730,6 +730,32 @@ button:focus {
       }
       .data {
         float: right;
+        margin-top: -5px;
+        padding-top: 5px;
+        padding-right: 5px;
+        width: 190px;
+        height: 27px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        input {
+          margin-top: -5px;
+          margin-right: -5px;
+          text-align: right;
+          border-color: #f4f4f4 !important;
+          background: #f4f4f4;
+          font-size: 13px;
+          &:focus {
+            background: #fff;
+            border-color: #d0d0d0 !important;  
+          }
+        }
+      }
+      &:hover {
+        .data input {
+          background: #fff;
+          border-color: #d0d0d0 !important;  
+        }
       }
     }
   }

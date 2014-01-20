@@ -5,6 +5,8 @@ define(['angular'], function(angular) {
     function($scope, $location, $filter, item, em, storage, articles, superdesk, panesService) {
 
         $scope.item = item;
+        $scope.item.place = $filter('mergeWords')($scope.item.place);
+
         var inprogress = storage.getItem('collection:inprogress') || {};
 
         var saveInprogress = function() {
@@ -13,8 +15,13 @@ define(['angular'], function(angular) {
 
         $scope.articles = articles;
 
-        $scope.save = function(item) {
-            em.save('ingest', item);
+        $scope.save = function() {
+            $scope.item.place = $filter('splitWords')( $scope.item.place);
+            em.save('ingest', $scope.item).then(function(data) {
+                _.extend($scope.item,data);
+                $scope.item.place = $filter('mergeWords')( $scope.item.place);
+            });
+            
         };
 
         $scope.close = function() {

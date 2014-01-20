@@ -17,6 +17,10 @@ define([
                 });
         }])
         .controller('InfoPaneController', ['$scope', function ($scope) {
-            //pane controller code
-    }]);
+
+            $scope.removeTerm = function(arr, term) {
+                arr.splice( _.find(arr,term),1);
+            };
+
+        }]);
 });
