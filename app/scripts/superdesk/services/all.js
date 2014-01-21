@@ -8,6 +8,7 @@ define([
     './userSettings',
     './entity',
     './server',
-    './superdesk'
+    './superdesk',
+    './data'
 ], function() {
 });

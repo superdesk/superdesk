@@ -32,7 +32,7 @@ define([
                  * @return {*}
                  */
                 get: function(key) {
-                    return key in this.params ? this.params[key] : null;
+                    return this.params && this.params[key] ? this.params[key] : null;
                 },
 
                 /**

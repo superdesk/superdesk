@@ -22,8 +22,7 @@ define([
             category: superdesk.MENU_MAIN
         });
 
-        superdesk.activity('settings-desks', {
-            when: '/settings/desks',
+        superdesk.activity('/settings/desks', {
             label: gettext('Desks'),
             controller: require('./controllers/settings'),
             templateUrl: 'scripts/superdesk-desks/views/settings.html',

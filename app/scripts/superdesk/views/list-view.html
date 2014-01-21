@@ -1,0 +1,11 @@
+<ul class="list-view">
+    <li class="panel alert alert-info" ng-show="!items"><p translate>Loading..</p></li>
+    <li class="panel alert alert-info" ng-show="items.length == 0"><p translate>Ups! There are no items.</p></li>
+
+    <li class="list-item-view panel panel-default"
+        ng-repeat="item in items track by item._id"
+        ng-click="clickItem(item)"
+        ng-class="{active: item._id === selected._id}">
+        <div class="panel-body" ng-transclude></div>
+    </li>
+</ul>

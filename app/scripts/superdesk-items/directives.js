@@ -182,7 +182,7 @@ define([
                         view: getSetting('ingest:view', 'list')
                     };
 
-                    var actions = attrs.actions.split(',');
+                    var actions = (attrs.actions || '').split(',');
                     scope.actions = _.zipObject(actions, _.range(1, actions.length + 1, 0));
 
                     scope.toggleCompact = function() {
@@ -198,36 +198,12 @@ define([
                 }
             };
         }])
-        /* 
-        //deprecated 
-        .directive('sdItemPreview', function(em) {
-            return {
-                templateUrl: 'scripts/superdesk-items/views/item-preview.html',
-                replace: true,
-                scope: {
-                    item: '=',
-                    previewSingle : '=previewitem'
-                },
-                link: function(scope, element, attrs) {
-                    scope.treepreview = function(item) {
-                        scope.previewSingle = item;
-                    };
-                    scope.archive = function(item) {
-                        em.create('archive', item).then(function() {
-                            item.archived = true;
-                        });
-                    };
-                }
-            };
-        }])
-        })
-        */
         .directive('sdItemPreviewStatic', ['em', function(em) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/item-preview-static.html',
                 replace: true,
                 scope: {item: '='},
-                link: function(scope, element, attrs) {
+                link: function(scope, elem, attrs) {
                     scope.treepreview = function(item) {
                         scope.previewSingle = item;
                     };
@@ -281,9 +257,15 @@ define([
                 scope: {items: '='},
                 templateUrl: 'scripts/superdesk-items/views/provider-filter.html',
                 link: function(scope, element, attrs) {
-                    scope.activeProvider = $routeParams.provider || null;
+                    scope.$watch('items._facets', function(facets) {
+                        if (facets) {
+                            scope.facets = facets;
+                            scope.activeProvider = scope.items.where('provider');
+                        }
+                    });
+
                     scope.setProvider = function(provider) {
-                        $location.search('provider', provider);
+                        scope.items.where('provider', provider);
                     };
                 }
             };

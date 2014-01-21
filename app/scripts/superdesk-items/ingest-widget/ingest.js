@@ -21,40 +21,29 @@ define([
                     description: 'Ingest widget'
                 });
         }])
-        .controller('IngestController', ['$scope', '$timeout', 'em',
-        function ($scope, $timeout, em) {
-            var update = function() {
+        .controller('IngestController', ['$scope', 'superdesk',
+        function ($scope, superdesk) {
+            $scope.items = superdesk.data('ingest');
+
+            $scope.$watch('widget.configuration', function(config) {
                 var criteria = {
                     sort: ['versioncreated', 'desc'],
-                    max_results: $scope.widget.configuration.maxItems,
-                    page: 1,
-                    q: $scope.widget.configuration.search !== '' ? $scope.widget.configuration.search : undefined
+                    max_results: config.maxItems,
+                    q: config.search !== '' ? config.search : null,
+                    ttl: config.updateInterval * 1000 //* 60
                 };
 
-                if ($scope.widget.configuration.provider !== 'all') {
-                    criteria.where = {
-                        provider: $scope.widget.configuration.provider
-                    };
-                }
-
-                em.getRepository('ingest').matching(criteria).then(function(items) {
-                    $scope.items = items;
-
-                    $timeout(function() {
-                        update();
-                    }, $scope.widget.configuration.updateInterval * 1000 * 60);
-                });
-            };
-
-            $scope.$watch('widget.configuration', function() {
-                update();
+                $scope.items.reset(criteria);
             }, true);
 
-            update();
+            $scope.preview = function(item) {
+                superdesk.intent(superdesk.ACTION_PREVIEW, 'ingest', item);
+            };
         }])
-        .controller('IngestConfigController', ['$scope', 'em',
-        function ($scope, em) {
-            em.getRepository('ingest').matching({max_results: 0}).then(function(items) {
+        .controller('IngestConfigController', ['$scope', 'superdesk',
+        function ($scope, superdesk) {
+            var ingest = superdesk.data('ingest');
+            ingest.query({max_results: 0}).then(function(items) {
                 $scope.availableProviders = ['all'].concat(_.pluck(items._facets.provider.terms, 'term'));
             });
 
