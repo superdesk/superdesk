@@ -8,20 +8,20 @@
     "bootstrap": "~3.0.3",
     "momentjs": "~2.5.0",
     "moment-timezone": "~0.0.3",
-    "angular": "~1.2.5",
-    "angular-resource": "~1.2.5",
-    "angular-route": "~1.2.5",
-    "angular-mocks": "~1.2.5",
+    "angular": "1.2.9",
+    "angular-resource": "1.2.9",
+    "angular-route": "1.2.9",
+    "angular-mocks": "1.2.9",
     "angular-gettext": "~0.2.0",
     "angular-bootstrap": "~0.7.0",
+    "angular-slider-royale": "~0.1.16",
     "blueimp-file-upload": "~9.5.2",
     "gridster": "~0.2.1",
     "d3": "~3.3.12",
-    "ng-aloha-editor": "*",
-    "angular-slider-royale": "~0.1.16"
+    "ng-aloha-editor": "*"
   },
   "resolutions": {
-    "angular": "1.2.9-build.2122+sha.34fee06",
-    "jquery": "~2.0.3"
+    "jquery": "2.0.3",
+    "angular": "1.2.9"
   }
 }
