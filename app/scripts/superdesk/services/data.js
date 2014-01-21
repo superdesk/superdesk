@@ -22,7 +22,7 @@ define(['angular', 'lodash'], function(angular, _) {
                 var _this = this;
                 var state = LocationStateAdapter; // @todo implement storage state adapter
                 var cancelWatch = angular.noop;
-                var defaultParams = {};
+                var defaultParams = {page: 1};
 
                 /**
                  * Get query criteria - extend default params with current search
@@ -164,6 +164,17 @@ define(['angular', 'lodash'], function(angular, _) {
                     }, function(criteria) {
                         _this.query(criteria);
                     });
+                };
+
+                /**
+                 * Force reload with same params
+                 */
+                this.reload = function() {
+                    if (this.timeout) {
+                        $timeout.cancel(this.timeout);
+                    }
+
+                    _this.query(getQueryCriteria());
                 };
 
                 if (params) {
