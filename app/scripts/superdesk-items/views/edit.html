@@ -3,10 +3,13 @@
     <a class="navbtn pull-left active" ng-click="backToIngest()">
         <i class="left arrow"></i>
     </a>
+    <a class="navbtn pull-right large active" ng-click="">
+        <span>Publish</span><i class="right arrow"></i>
+    </a>
 
     <h1 class="main-article-title">{{ item.headline|limitTo:80 }}</h1>
 
-    <a class="btn btn-medium btn-info pull-right" href="" ng-click="save(item)">Save</a>
+    <a class="btn btn-medium btn-info pull-right" href="" ng-click="save()">Save</a>
     <a class="btn btn-medium pull-right" ng-click="closeArticle()" translate>Close</a>
     
     <a class="btn btn-medium pull-right mobile-hide" style="margin-right: 20px;" href="" ng-click="mode.zen = !mode.zen">Zen mode</a>
@@ -19,34 +22,16 @@
 
 <div class="zen-buttons">
     <a class="btn pull-right zen-close" href="" ng-click="mode.zen = false"><i class="icon-remove"></i></a>
-    <a class="btn pull-right btn-info" href="" ng-click="save(item)" >Save</a>
+    <a class="btn pull-right btn-info" href="" ng-click="save()" >Save</a>
 </div>
 
     
-<div class="article-edit-container">
+<div class="article-edit-container" ng-class="{'editmode':editmode}">
 
     <div class="opened-articles">
         <ul>
             <li ng-repeat="article in articles" ng-class="{active : article._id == item._id}" ng-click="switchArticle(article._id)">{{article.headline}}</li>
         </ul>
-    </div>
-
-    <div class="tablist left-tablist" >
-        <div class="fake-space"></div>
-        <ul class="navigation-tabs">
-            <li><a href="#" tooltip="Sources" tooltip-placement="right" tooltip-append-to-body="true" ><i class="big-icon-sources"></i></a></li>
-            <li><a href="#" tooltip="Archive" tooltip-placement="right" tooltip-append-to-body="true" ><i class="big-icon-archive"></i></a></li>
-            <li><a href="#" tooltip="Desks" tooltip-placement="right" tooltip-append-to-body="true" ><i class="big-icon-desks"></i></a></li>
-        </ul>
-    </div>
-            
-    <div class="tabpane left-tabpane">
-        <section class="tabcontent" id="ingest-tab">
-            <p>samole content</p>                
-        </section>
-        <section class="tabcontent" id="archive-tab">
-            <p>samole content</p>   
-        </section>
     </div>
 
     <div class="main-article-container">
@@ -62,7 +47,7 @@
             </section>
 
             <section class="article-date">
-                <time datetime="{{ item.firstCreated }}" title="{{ item.firstCreated|date:'medium' }}">{{ item.firstCreated|reldate }}</time>
+                <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>
             </section>
 
             <section class="article-title">
@@ -85,47 +70,29 @@
         </article>
     </div>
     
-
-
+    <!-- side tab panes -->
+    <div class="tablist left-tablist">
+        <div class="fake-space"></div>
+        <ul class="navigation-tabs">
+            <li ng-repeat="pane in panes| filterObject:{position:'left', selected:true}" ng-class="{'active':pane.active}" ng-click="flipActive(pane, 'left')">
+                <a href="" tooltip="{{pane.name}}" tooltip-placement="right" tooltip-append-to-body="true"><i class="big-icon-{{pane.icon}}"></i></a>
+            </li>
+        </ul>
+    </div>
     <div class="tablist right-tablist">
         <div class="fake-space"></div>
         <ul class="navigation-tabs">
-            <li><a href="#" tooltip="Info" tooltip-placement="left" tooltip-append-to-body="true" ><i class="big-icon-info"></i></a></li>
-            <li><a href="#" tooltip="Chat" tooltip-placement="left" tooltip-append-to-body="true" ><i class="big-icon-chat"></i></a></li>
-            <li><a href="#" tooltip="Editorial comments" tooltip-placement="left" tooltip-append-to-body="true" ><i class="big-icon-editorial"></i></a></li>
-            <li><a href="#" tooltip="Media" tooltip-placement="left" tooltip-append-to-body="true" ><i class="big-icon-media"></i></a></li>
-            <li><a href="#" tooltip="Switches" tooltip-placement="left" tooltip-append-to-body="true" ><i class="big-icon-switches"></i></a></li>
-            <li><a href="#" tooltip="Geolocation" tooltip-placement="left" tooltip-append-to-body="true" ><i class="big-icon-geolocation"></i></a></li>
-            <li><a href="#" tooltip="Comments" tooltip-placement="left" tooltip-append-to-body="true" ><i class="big-icon-comments"></i></a></li>
-            <li><a href="#" tooltip="Followup" tooltip-placement="left" tooltip-append-to-body="true" ><i class="big-icon-followup"></i></a></li>
+            <li ng-repeat="pane in panes|filterObject:{position:'right', selected:true}" ng-class="{'active':pane.active}" ng-click="flipActive(pane, 'right')">
+                <a href="" tooltip="{{pane.name}}" tooltip-placement="left" tooltip-append-to-body="true"><i class="big-icon-{{pane.icon}}"></i></a>
+            </li>
         </ul>
     </div>
 
-    <div class="tabpane right-tabpane" >
-        <section class="tabcontent" id="chat-tab">
-            <h3>Chat Tab</h3>
-        </section>
-        <section class="tabcontent temptabcont" id="editorial-tab">
-            <h3>Editorial comments</h3>
-        </section>
-        <section class="tabcontent temptabcont" id="media-tab">
-            <h3>Media Tab</h3>
-        </section>
-        <section class="tabcontent temptabcont" id="switches-tab">
-            <h3>Switches Tab</h3>
-        </section>
-        <section class="tabcontent temptabcont" id="geolocation-tab">
-            <h3>Geolocation Tab</h3>
-            <p>Geolocation interface</p>
-        </section>
-        <section class="tabcontent temptabcont" id="comments-tab">
-            <h3>Comments Tab</h3>
-            <p>Displays reader’s comments/feedback, if available</p>
-        </section>
-        <section class="tabcontent temptabcont" id="followup-tab">
-            <h3>Follow Up Tab</h3>
-            <p>Add article follow up to the Forward Planning calendar</p>
-        </section>
+    <div class="tabpane left-tabpane"  ng-class="{'open-tabpane':tabpaneIsOpen('left')}">
+        <section ng-repeat="pane in panes|filter:{position:'left', selected:true}" ng-show="pane.active" ng-include="pane.template"></section>
+    </div>
+    <div class="tabpane right-tabpane" ng-class="{'open-tabpane':tabpaneIsOpen('right')}">
+        <section ng-repeat="pane in panes|filter:{position:'right', selected:true}" ng-show="pane.active" ng-include="pane.template"></section>
     </div>
 
 </div>

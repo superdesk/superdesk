@@ -1,10 +1,12 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', '$location', 'item', 'em', 'storage', 'articles',
-    function($scope, $location, item, em, storage, articles) {
+    return ['$scope', '$location', '$filter','item', 'em', 'storage', 'articles', 'superdesk', 'panesService',
+    function($scope, $location, $filter, item, em, storage, articles, superdesk, panesService) {
 
         $scope.item = item;
+        $scope.item.place = $filter('mergeWords')($scope.item.place);
+
         var inprogress = storage.getItem('collection:inprogress') || {};
 
         var saveInprogress = function() {
@@ -13,8 +15,21 @@ define(['angular'], function(angular) {
 
         $scope.articles = articles;
 
-        $scope.save = function(item) {
-            em.save('ingest', item);
+        $scope.slider = {
+            options : {
+                from: 1,
+                to: 5,
+                step: 1
+            }
+        };
+
+        $scope.save = function() {
+            $scope.item.place = $filter('splitWords')( $scope.item.place);
+            em.save('ingest', $scope.item).then(function(data) {
+                _.extend($scope.item,data);
+                $scope.item.place = $filter('mergeWords')( $scope.item.place);
+            });
+            
         };
 
         $scope.close = function() {
@@ -47,6 +62,21 @@ define(['angular'], function(angular) {
             else {
                 $location.url('/article/');
             }
+        };
+
+        //tabpane logic
+        $scope.panes = panesService.load();
+
+        $scope.tabpaneIsOpen = function(side) {
+            return $filter('filterObject')($scope.panes, {position:side, selected: true, active:true}).length > 0;
+        };
+
+        $scope.flipActive = function(pane, side) {
+            angular.forEach($filter('filterObject')($scope.panes, {position:side, selected: true, active:true}), function(value, key) {
+                value.active = (value !== pane) ? false : value.active;
+            });
+            pane.active = !pane.active;
+            panesService.save($scope.panes);
         };
 
     }];

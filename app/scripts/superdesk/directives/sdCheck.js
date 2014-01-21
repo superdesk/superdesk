@@ -88,5 +88,42 @@ define([
                     });
                 }
             };
+        })
+        /**
+         * sdSwitch is sdCheck directive with different styling
+         *
+         * Usage:
+         * <input sd-switch ng-model="notifications.show">
+         * 
+         * Params:
+         * @param {boolean} ngModel - model for checkbox value
+         * @param {string} mode - optional, use 'onoff' to get labels in switch box 
+         *
+         */
+        .directive('sdSwitch', function() {
+            return {
+                require: 'ngModel',
+                replace: true,
+                template: '<span class="sf-toggle-custom" ng-class="{\'on-off-toggle\': isOnOff }"><span class="sf-toggle-custom-inner"></span></span>',
+                link: function($scope, element, attrs, ngModel) {
+                    ngModel.$render = function() {
+                        render(element, ngModel.$viewValue);
+                    };
+
+                    $scope.isOnOff = (attrs.mode === 'onoff');
+
+                    $scope.$watch(attrs.ngModel, function() {
+                        render(element, ngModel.$viewValue);
+                    });
+
+                    element.on('click', function(e) {
+                        $scope.$apply(function() {
+                            ngModel.$setViewValue(!ngModel.$viewValue);
+                        });
+
+                        return false;
+                    });
+                }
+            };
         });
 });

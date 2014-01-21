@@ -17,6 +17,7 @@ define(['angular', 'lodash'], function(angular, _) {
         var widgets = {};
         var activities = {};
         var permissions = {};
+        var panes = {};
 
         angular.extend(this, constans);
 
@@ -25,6 +26,14 @@ define(['angular', 'lodash'], function(angular, _) {
          */
         this.widget = function(key, data) {
             widgets[key] = angular.extend({_id: key, wcode: key}, data);
+            return this;
+        };
+
+        /**
+         * Register widget.
+         */
+        this.pane = function(key, data) {
+            panes[key] = angular.extend({_id: key}, data);
             return this;
         };
 
@@ -69,6 +78,7 @@ define(['angular', 'lodash'], function(angular, _) {
                 widgets: widgets,
                 activities: activities,
                 permissions: permissions,
+                panes: panes,
 
                 /**
                  * Resolve an intent

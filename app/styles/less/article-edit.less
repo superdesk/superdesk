@@ -40,7 +40,7 @@ html, body.article-edit {
 .tabpane {
   position:fixed;
   width:@tabpane-width;
-  top:@subnav-height + @topspace + @editor-toolbar;
+  top:@subnav-height + @topspace;
   bottom:0;
   background: @tabpane-background;
   border-color:@tabpane-border;
@@ -66,7 +66,6 @@ html, body.article-edit {
        }
     }
     .tabcontent {
-      display:none;
       padding:@tabcontent-padding;
       padding-bottom: @tabcontent-padding + 30px; //because of scratchpad
       .box-sizing(border-box);
@@ -86,12 +85,16 @@ html, body.article-edit {
   right: 0;
   bottom: 0;
   overflow: hidden;
-}
-
-.article-edit-container .tablist {
-  .fake-space {
-    height: @subnav-level2 - 1;
-    border-bottom: 1px solid #898989;
+  .tablist {
+    .fake-space {
+      height: @subnav-level2 - 1;
+      border-bottom: 1px solid #898989;
+    }
+  }
+  &.editmode {
+    .tabpane {
+      top:@subnav-height + @topspace + @editor-toolbar;
+    }
   }
 }
 
@@ -623,7 +626,7 @@ button:focus {
 /* tabs */
 
 .tabmodule {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 
   .tabmodule-header {
     position: relative;
@@ -639,10 +642,8 @@ button:focus {
     }
     i {
       margin-top: 2px;
-      display: none;
-      &.toggle-module-open {
-        display: inline-block;
-      }
+      .transition(all 0.2s ease);
+      .rotate(0deg);
     }
     .tabmodule-title {
       background: @tabpane-background;
@@ -665,12 +666,9 @@ button:focus {
     }
   }
 
-  &.tabmodule-open {
-    .toggle-module-open {
-      display: none !important;
-    }
-    .toggle-module-close {
-      display: inline-block;
+  &.open {
+    .tabmodule-header i {
+      .rotate(90deg);
     }
     .tabmodule-content {
       display: block !important;
@@ -678,6 +676,147 @@ button:focus {
   }
 
 }
+
+
+
+/* INFO tab */
+
+.info-tab {
+
+  .header {
+    height: 40px;
+    margin-bottom: 10px;
+    .wordcount {
+      float: left;
+      .text-light();
+      font-size: 32px;
+      color: #575757;
+      line-height: 36px;
+      span {
+        font-size: 11px;
+        color: #a1a1a1;
+        margin-left: 5px; 
+      }
+    }
+    .data {
+      
+      float: right;
+
+      p {
+        font-size: 12px;
+         color: #777676;
+         margin:0;
+         text-align: right;
+         span {
+          color:  #208fbd;
+         } 
+      }
+    }
+  }
+  
+  .metadata {
+    &.top-border {
+      border-top: 1px dotted #ddd;
+      margin-bottom: 30px;
+    }
+    li {
+      padding: 10px 0;
+      border-bottom: 1px dotted #ddd;
+      text-align: right;
+      height: 18px;
+      line-height: 18px;
+      .lbl {
+        float: left;
+      }
+      .data {
+        float: right;
+        margin-top: -5px;
+        padding-top: 5px;
+        padding-right: 5px;
+        width: 190px;
+        height: 27px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        input {
+          margin-top: -5px;
+          margin-right: -5px;
+          text-align: right;
+          border-color: #f4f4f4 !important;
+          background: #f4f4f4;
+          font-size: 13px;
+          &:focus {
+            background: #fff;
+            border-color: #d0d0d0 !important;  
+          }
+        }
+      }
+      &:hover {
+        .data input {
+          background: #fff;
+          border-color: #d0d0d0 !important;  
+        }
+      }
+      .urgency-data {
+        width: 200px;
+        .urgency-slider {
+          float: left;
+          margin-top: 2px;
+        }
+        .urgency-large {
+          width: 23px;
+          height: 22px;
+          float: right;
+          display: inline-block;
+          background: url(../../images/urgency-icons-large.png) no-repeat 0 0;
+          &.urgency-1 {
+            background-position: 0 0;
+          }
+          &.urgency-2 {
+            background-position: 0 -22px;
+          }
+          &.urgency-3 {
+            background-position: 0 -44px;
+          }
+          &.urgency-4 {
+            background-position: 0 -66px;
+          }
+
+          &.urgency-5 {
+            background-position: 0 -88px;
+          }
+        }
+      }
+    }
+  }
+
+  .subject-terms {
+    .clearfix();
+    li {
+      background: #e8e8e8;
+      line-height: 26px;
+      height: 26px;
+      padding: 0 6px;
+      .border-radius(3px);
+      margin: 0 5px 5px 0;
+      float: left;
+      i {
+        vertical-align: sub;
+        margin-left: 5px;
+        .opacity(40);
+      }
+      &:hover {
+        cursor: pointer;
+        background: #e0e0e0;
+        i {
+          .opacity(70);
+        }
+      }
+    }
+  }
+}
+
+
 
 .confirmation-label {
   display:block;

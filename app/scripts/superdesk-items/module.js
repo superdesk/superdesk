@@ -2,6 +2,7 @@ define([
     'jquery',
     'angular',
     'require',
+    'angular-slider',
     './resources',
     './controllers/ingest',
     './controllers/archive',
@@ -10,8 +11,10 @@ define([
     './controllers/ref',
     './directives',
     './filters',
+    './services',
     './ingest-widget/ingest',
-    './stats-widget/stats'
+    './stats-widget/stats',
+    './panes/info/info'
 ], function($, angular, require) {
     'use strict';
 
@@ -19,8 +22,11 @@ define([
         'superdesk.items.resources',
         'superdesk.items.directives',
         'superdesk.items.filters',
+        'superdesk.items.services',
         'superdesk.widgets.ingest',
-        'superdesk.widgets.ingeststats'
+        'superdesk.widgets.ingeststats',
+        'superdesk.panes.info',
+        'uiSlider'
     ]);
 
     app.controller('RefController', require('./controllers/ref'));

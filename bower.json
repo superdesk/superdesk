@@ -17,6 +17,11 @@
     "blueimp-file-upload": "~9.5.2",
     "gridster": "~0.2.1",
     "d3": "~3.3.12",
-    "ng-aloha-editor": "*"
+    "ng-aloha-editor": "*",
+    "angular-slider-royale": "~0.1.16"
+  },
+  "resolutions": {
+    "angular": "1.2.9-build.2122+sha.34fee06",
+    "jquery": "~2.0.3"
   }
 }
