@@ -2,7 +2,7 @@
      ng-class="{
      'compact-item': ui.compact, 
      archived : item.archived!=null&&actions.archive,
-     active : item ==previewItem
+     active : item === selected
     }" >
 
     <div class="loading-status" ng-show="!item.archived && item.archiving"></div>

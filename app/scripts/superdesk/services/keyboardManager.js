@@ -1,15 +1,24 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    angular.module('superdesk.services').
+    angular.module('superdesk.services')
 
-    factory('keyboardManager', ['$window', '$timeout', function ($window, $timeout) {
+    // unbind all keyboard shortcuts when switching route
+    .run(['$rootScope', 'keyboardManager', function($rootScope, kb) {
+        $rootScope.$on('$routeChangeStart', function() {
+            angular.forEach(kb.keyboardEvent, function(e, key) {
+                kb.unbind(key);
+            });
+        });
+    }])
+
+    .factory('keyboardManager', ['$window', '$timeout', function ($window, $timeout) {
             var keyboardManagerService = {};
 
             var defaultOpt = {
                 'type':             'keydown',
-                'propagate':        false,
-                'inputDisabled':    false,
+                'propagate':        true,
+                'inputDisabled':    true,
                 'target':           $window.document,
                 'keyCode':          false
             };

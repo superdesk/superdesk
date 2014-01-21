@@ -61,56 +61,11 @@ define(['angular'], function(angular) {
         };
 
         $scope.selectedContext = 0;
-        var previousContext = function() {
-            if ($scope.selectedContext>0) {
-                $scope.selectedContext--;
-            }
-        };
-        var nextContext = function() {
-            if ($scope.selectedContext<($scope.contextMenu.length-1)) {
-                $scope.selectedContext++;
-            }
-        };
+
         $scope.selectContext = function(index) {
             //on mouseenter
             $scope.selectedContext = index;
         };
-
-        $scope.selectedItemIndex = -1;
-        var previousitem = function() {
-            if ($scope.selectedItemIndex>0) {
-                $scope.selectedItemIndex--;
-            }
-            $scope.preview(items._items[$scope.selectedItemIndex],$scope.selectedItemIndex);
-        };
-        var nextitem = function() {
-            if ($scope.selectedItemIndex<(items._items.length-1)) {
-                $scope.selectedItemIndex++;
-            }
-            $scope.preview(items._items[$scope.selectedItemIndex],$scope.selectedItemIndex);
-        };
-        
-
-        keyboardManager.bind('up', function() {
-            if ($scope.context) {
-                previousContext();
-            }
-            else {
-                previousitem();
-            }
-        }, {
-            'inputDisabled': true
-        });
-        keyboardManager.bind('down', function() {
-            if ($scope.context) {
-                nextContext();
-            }
-            else {
-                nextitem();
-            }
-        }, {
-            'inputDisabled': true
-        });
 
         keyboardManager.bind('ctrl+a', function() {
             $scope.archive();
@@ -149,7 +104,6 @@ define(['angular'], function(angular) {
         $scope.preview = function(item, index) {
             $scope.context = false;
             if (item !== undefined) {
-                $scope.selectedItemIndex = index;
                 $scope.previewItem = item;
                 $scope.previewSingle = item;
 
@@ -191,12 +145,5 @@ define(['angular'], function(angular) {
         var openItem = function(item_id) {
             $location.url('/article/'+item_id);
         };
-
-        var stopWatch = $scope.$watch('items._items', function(items) {
-            if (items) {
-                nextitem(); //initialy select(focus on) first item on ingest page 
-                stopWatch();
-            }
-        });
     }];
 });
