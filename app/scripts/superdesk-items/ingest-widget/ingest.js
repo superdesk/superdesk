@@ -21,24 +21,43 @@ define([
                     description: 'Ingest widget'
                 });
         }])
-        .controller('IngestController', ['$scope', 'superdesk',
-        function ($scope, superdesk) {
+        .controller('IngestController', ['$scope', '$timeout', 'superdesk',
+        function ($scope, $timeout, superdesk) {
+            var timeoutId;
+
             $scope.items = superdesk.data('ingest');
 
-            $scope.$watch('widget.configuration', function(config) {
+            function refresh(config) {
                 var criteria = {
                     sort: ['versioncreated', 'desc'],
                     max_results: config.maxItems,
-                    q: config.search !== '' ? config.search : null,
-                    ttl: config.updateInterval * 1000 //* 60
+                    q: config.search !== '' ? config.search : null
                 };
 
-                $scope.items.reset(criteria);
+                $scope.items.query(criteria).then(function() {
+                    timeoutId = $timeout(function() {
+                        refresh(config);
+                    }, config.updateInterval * 1000 * 60);
+                });
+            }
+
+            $scope.$watch('widget.configuration', function(config) {
+                if (timeoutId) {
+                    $timeout.cancel(timeoutId);
+                }
+
+                if (config) {
+                    refresh(config);
+                }
             }, true);
 
             $scope.preview = function(item) {
                 superdesk.intent(superdesk.ACTION_PREVIEW, 'ingest', item);
             };
+
+            $scope.$on('$destroy', function() {
+                $timeout.cancel(timeoutId);
+            });
         }])
         .controller('IngestConfigController', ['$scope', 'superdesk',
         function ($scope, superdesk) {

@@ -14,7 +14,7 @@ define(['angular', 'lodash'], function(angular, _) {
                 return $location.search(key, val);
             };
         }])
-        .factory('DataAdapter', ['$rootScope', '$timeout', 'em', 'LocationStateAdapter', function($rootScope, $timeout, em, LocationStateAdapter) {
+        .factory('DataAdapter', ['$rootScope', 'em', 'LocationStateAdapter', function($rootScope, em, LocationStateAdapter) {
             /**
              * Data Provider for given resource
              */
@@ -64,11 +64,6 @@ define(['angular', 'lodash'], function(angular, _) {
                         _this.loading = false;
                         slowQueryLog(query);
                         angular.extend(_this, data);
-                        if (defaultParams.ttl) {
-                            _this.timeout = $timeout(function() {
-                                _this.query(getQueryCriteria());
-                            }, defaultParams.ttl);
-                        }
                     });
 
                     return promise;
@@ -145,9 +140,6 @@ define(['angular', 'lodash'], function(angular, _) {
                  */
                 this.reset = function(params) {
                     cancelWatch();
-                    if (this.timeout) {
-                        $timeout.cancel(this.timeout);
-                    }
 
                     defaultParams = angular.extend({
                         max_results: 25,
@@ -170,10 +162,6 @@ define(['angular', 'lodash'], function(angular, _) {
                  * Force reload with same params
                  */
                 this.reload = function() {
-                    if (this.timeout) {
-                        $timeout.cancel(this.timeout);
-                    }
-
                     _this.query(getQueryCriteria());
                 };
 
