@@ -9,6 +9,7 @@ define(['angular', 'lodash'], function(angular, _) {
                     extras: '=',
                     adapter: '='
                 },
+                replace: true,
                 transclude: true,
                 templateUrl: 'scripts/superdesk/views/list-view.html',
                 link: function(scope, elem, attrs) {
@@ -47,7 +48,7 @@ define(['angular', 'lodash'], function(angular, _) {
                     }
 
                     function onKey(dir, callback) {
-                        keyboardManager.bind(dir, callback, {target: elem[0]});
+                        keyboardManager.bind(dir, callback);
                     }
 
                     onKey('up', function() {

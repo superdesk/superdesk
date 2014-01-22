@@ -17,7 +17,7 @@ define(['angular'], function(angular) {
 
             var defaultOpt = {
                 'type':             'keydown',
-                'propagate':        true,
+                'propagate':        false,
                 'inputDisabled':    true,
                 'target':           $window.document,
                 'keyCode':          false
