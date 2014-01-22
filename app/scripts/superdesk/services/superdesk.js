@@ -56,7 +56,8 @@ define(['angular', 'lodash'], function(angular, _) {
                 priority: 0,
                 when: id, // use id as default
                 href: id, // use id as default
-                filters: []
+                filters: [],
+                reloadOnSearch: false
             }, data);
 
             var actionless = _.find(activity.filters, function(filter) {

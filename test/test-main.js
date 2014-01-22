@@ -14,6 +14,7 @@ requirejs.config({
     callback: function(angular) {
         'use strict';
 
+        angular.module('superdesk', []);
         angular.module('superdesk.filters', []);
         angular.module('superdesk.services', []);
         angular.module('superdesk.directives', []);
