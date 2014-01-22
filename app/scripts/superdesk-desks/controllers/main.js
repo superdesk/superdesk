@@ -3,9 +3,7 @@ define(['angular'], function(angular) {
 
     return ['$scope', 'superdesk',
     function($scope, superdesk) {
-
         $scope.desks = superdesk.data('desks');
-
-
+        $scope.desks.query();
     }];
 });

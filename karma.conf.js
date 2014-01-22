@@ -5,10 +5,16 @@ module.exports = function(config) {
             'requirejs'
         ],
 
+        preprocessors: {
+            '**/*.html': ['ng-html2js']
+        },
+
         // list of files / patterns to load in the browser
         files: [
+          'app/scripts/bower_components/angular/angular.js',
           {pattern: 'app/**/*.js', included: false},
           {pattern: 'test/**/*[sS]pec.js', included: false},
+          'app/scripts/superdesk/views/*.html',
           'test/test-main.js'
         ],
 
@@ -17,6 +23,11 @@ module.exports = function(config) {
           'app/scripts/bower_components/**/*[sS]pec.js',
           'app/main.js'
         ],
+
+        ngHtml2JsPreprocessor: {
+            stripPrefix: 'app/',
+            moduleName: 'templates'
+        },
 
         // test results reporter to use
         reporters: ['progress'],
