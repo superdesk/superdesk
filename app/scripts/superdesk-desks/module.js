@@ -1,11 +1,12 @@
 define([
     'angular',
     'require',
+    'view',
     './resources',
     './controllers/main',
     './controllers/settings',
     './directives'
-], function(angular, require) {
+], function(angular, require, view) {
     'use strict';
 
     var app = angular.module('superdesk.desks', [
@@ -14,20 +15,21 @@ define([
     ]);
 
     app.config(['superdeskProvider', function(superdesk) {
-        superdesk.activity('desks', {
-            when: '/desks/',
-            label: gettext('Desks'),
-            templateUrl: 'scripts/superdesk-desks/views/main.html',
-            controller: require('./controllers/main'),
-            category: superdesk.MENU_MAIN
-        });
+        superdesk
+            .activity('desks', {
+                when: '/desks/',
+                label: gettext('Desks'),
+                templateUrl: view('main.html', app),
+                controller: require('./controllers/main'),
+                category: superdesk.MENU_MAIN
+            })
 
-        superdesk.activity('/settings/desks', {
-            label: gettext('Desks'),
-            controller: require('./controllers/settings'),
-            templateUrl: 'scripts/superdesk-desks/views/settings.html',
-            category: superdesk.MENU_SETTINGS,
-            priority: -800
-        });
+            .activity('/settings/desks', {
+                label: gettext('Desks'),
+                controller: require('./controllers/settings'),
+                templateUrl: view('settings.html', app),
+                category: superdesk.MENU_SETTINGS,
+                priority: -800
+            });
     }]);
 });

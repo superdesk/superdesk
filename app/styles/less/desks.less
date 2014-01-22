@@ -34,20 +34,11 @@
   border-color:@main-desk-border;
   position:relative;
   z-index:1;
-  padding:@subnav-height + @subnav-level2 + @main-content-padding  0  @main-content-desk-bottom;
+  padding: @main-content-padding  0  @main-content-desk-bottom;
   margin:0 auto;
   min-height:100%;
   .box-sizing(border-box);
   overflow: hidden;
-
-  ::-webkit-scrollbar {
-      width: 8px;
-      height: 30px;
-    }
-    ::-webkit-scrollbar-thumb {
-      border-top: 10px solid @background-main;
-      border-bottom: 10px solid @background-main;
-    }
 }
 
 .desk-toolbar {
@@ -66,10 +57,10 @@
   width:auto;
   .box-sizing(border-box);
   position: absolute;
-  top:@subnav-height + @subnav-level2 + @main-content-padding;
+  top:@main-content-desk-bottom;
   bottom:@main-content-desk-bottom;
-  left: 0;
-  right: 0;
+  left: @main-content-desk-bottom;
+  right: @main-content-desk-bottom;
   overflow-x: auto;
   overflow-y: hidden;
 }
@@ -82,27 +73,7 @@
   padding-bottom: 30px;
 }
 
-.desk-header {
-    position: absolute;
-    top:0;
-    width: 100%;
-    .box-sizing(border-box);
-    height: 23px;
-    background: #bababa;
-    line-height: 23px;
-    color: #000;
-    font-size: 11px;
-    text-shadow: 0 1px 0 #ccc;
-    text-transform: uppercase;
-    padding-left: 7px;
-    font-weight: bold;
-    .dropdown {
-      margin-top: 1px;
-      line-height: 14px;
-      text-transform: none;
-      text-shadow:none;
-    }
-  }
+
 
 
 .desk-container {
@@ -113,13 +84,28 @@
   height: 100%;
   position: relative;
   float: left;
-  padding-top: 24px;
-
-  border-top: 5px solid #959595;
-  .border-radius(3px);  
+  padding-top: 28px;
+  
 
   .desk-header {
-    .desk-header();
+    position: absolute;
+    top:0;
+    width: 100%;
+    .box-sizing(border-box);
+    border-bottom: 5px solid #4d4d4d; 
+    height: 28px;
+    line-height: 23px;
+    color: #505050;
+    font-size: 11px;
+    text-transform: uppercase;
+    padding-left: 2px;
+    font-weight: bold;
+    .dropdown {
+      margin-top: 1px;
+      line-height: 14px;
+      text-transform: none;
+      text-shadow:none;
+    }
   }
 
   ::-webkit-scrollbar {
@@ -153,21 +139,23 @@
   float: left;
     border: 0;
     margin-right: 4px;
-    background: #959595;
+    background: #eee;
     .border-radius(3px);
     height: 18px;
     line-height: 18px;
-    color: #fff;
+    color: #444;
     padding: 2px 5px;
     min-height: auto;
     font-size: 10px;
+    i {
+      .opacity(50);
+    }
     &.urgent {
       background-color: #ba7474;
     }
     &.critical {
       background-color: #8b0000;
     }
-
     &.done {
       background-color: @done-color;
     }
@@ -185,30 +173,33 @@
 
 /* generic assingment - we need this for drag 'n' drop */
 .generic-assignment {
-  background: #e0e0e0;
+  background: #fff;
   margin-bottom: 2px;
   //border-bottom:2px solid  @background-main;
   padding: 5px;
   min-height: 24px;
   position: relative !important;
   height: auto !important;
+  border: 1px solid #fff;
+  border-bottom: 1px solid #dfdfdf;
 
   .assign-avatar {
-    width: 22px;
-    height: 22px;
-    border: 1px solid #959595;
+    width: 24px;
+    height: 24px;
     float:left;
     margin: 0 5px 5px 0;
+    .border-radius(11px);
+    overflow: hidden;
     img {
-      min-width: 22px;
-      max-width: 22px;
-      min-height: 22px;
-      max-height: 22px;
+      min-width: 24px;
+      max-width: 24px;
+      min-height: 24px;
+      max-height: 24px;
     }
   }
 
   .assign-description {
-    padding-left: 34px;
+    padding-left: 36px;
     font-size: 13px;
     color: #444;
     min-height: 24px;
@@ -224,10 +215,10 @@
 
   &:last-child {
     //margin-bottom: 1px; /* because od scroller*/
-    border-bottom:1px solid  @background-main;
+    //border-bottom:1px solid  @background-main;
   }
   &:hover {
-    background: #d8d8d8;
+    border: 1px solid #dfdfdf;
     cursor: default;
   }
   .subtasks {
@@ -321,9 +312,6 @@
   max-width: @desk-width;
   .box-sizing(border-box);
   
-  border-bottom: 23px solid #bababa;
-  .border-radius(0 0 3px 3px);  
-
   max-height: 100%;
   overflow-y: auto;
 
@@ -343,27 +331,50 @@
 
   }
 
-
+  .add-assignment {
+    height: 24px;
+    line-height: 24px;
+    background: #e7e7e7;
+    margin-top: 5px;
+    text-align: center;
+    .border-radius(2px);
+    i {
+      .opacity(70);
+    }
+    &:hover {
+      background: #d8d8d8;
+      cursor: pointer;
+    }
+  }
   section {
     position: relative;
     min-height: 40px;
-    margin-top: 21px;
+    margin-top: 26px;
     font-size: 10px;
-    header {
-      height: 21px;
-      top:-21px;
+    .board-info {
+      height: 26px;
+      top:-26px; left: 0; right: 0;
       position: absolute;
-      line-height: 21px;
-      padding-left: 3px;
-      text-transform: uppercase;
+      .title {
+        line-height: 26px;
+        padding-left: 3px;
+        padding-right: 10px;
+        text-transform: uppercase;
+        font-size: 11px;
+        background: #f8f8f8;
+      }
+      .line {
+        display: block;
+        height: 2px;
+        background: #787878;
+        margin-top: -14px;
+      }
     }
     .boardcolor-assign(@color) {
-      header {
-        color: @color;
+      .board-info .line {
+        background: @color;
       }
-      .assignments li {
-        border-left: 3px solid @color;
-      }
+
       .subtasks.open {
         .subtask-num-info {
           background-color: @color;
@@ -1171,9 +1182,7 @@
     }
   }
 
-  .desk-header {
-    .desk-header();
-  }
+  
   .subnav {
     height: auto !important;
     li a {
