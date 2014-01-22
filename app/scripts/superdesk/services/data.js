@@ -179,6 +179,8 @@ define(['angular', 'lodash'], function(angular, _) {
 
                 if (params) {
                     this.reset(params);
+                } else if (params === undefined) {
+                    _this.query();
                 }
             };
         }]);
