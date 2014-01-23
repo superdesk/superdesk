@@ -21,8 +21,7 @@
                  ng-show="item.pubstatus && item.pubstatus!='usable'">
                  {{ item.pubstatus | translate }}
             </div>
-            <div ng-show="item.headline">{{ item.headline }}</div>
-            <div ng-show="!item.headline">{{ item.type }}</div>
+            <a href="">{{ item.headline || item.type }}</a>
         </div>
         <div class="meta-data-field" ng-show="extras.view == 'list'">
             <div class="item-provider">{{ item.provider }}</div>

@@ -544,7 +544,6 @@ define([
         }])
         .directive('sdArchiveLayout', function() {
             return {
-                scope: {items: '='},
                 templateUrl: 'scripts/superdesk-items/views/item-list.html',
                 link: function(scope, elem, attrs) {
                     scope.view = 'grid';

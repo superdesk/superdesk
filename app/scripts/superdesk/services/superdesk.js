@@ -7,6 +7,7 @@ define(['angular', 'lodash'], function(angular, _) {
 
         ACTION_EDIT: 'edit',
         ACTION_LIST: 'list',
+        ACTION_VIEW: 'view',
         ACTION_PREVIEW: 'preview'
     };
 

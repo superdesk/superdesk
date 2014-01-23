@@ -54,33 +54,6 @@ define([
     }]);
 
     app.config(['superdeskProvider', function(superdesk) {
-        function resolveArticles() {
-            return {
-                articles : ['server', 'storage', '$q', function(server,storage,$q) {
-
-                    var inprogress = storage.getItem('collection:inprogress') || {};
-                    var openedArticles = [];
-                    var resolved = 0;
-                    var deferred = $q.defer();
-
-                    angular.forEach(inprogress.opened, function(article_id, key) {
-                        server.readById('ingest',article_id).then(function(data){
-                            openedArticles[key]= data;
-                            resolved++;
-                            if (resolved === inprogress.opened.length) {
-                                deferred.resolve(openedArticles);
-                            }
-                        });
-                    });
-
-                    return deferred.promise;
-                }],
-                item: ['$route', 'server', function($route, server) {
-                    return server.readById('ingest', $route.current.params.id);
-                }]
-            };
-        }
-
         superdesk
             .activity('/ingest', {
                 when: '/ingest/:id?',
@@ -91,22 +64,49 @@ define([
                 category: superdesk.MENU_MAIN,
                 filters: [
                     {
-                        action: superdesk.ACTION_PREVIEW,
+                        action: superdesk.ACTION_VIEW,
                         type: 'ingest'
                     }
                 ]
             })
             .activity('/edit', {
-                when: '/article/:id',
                 templateUrl: 'scripts/superdesk-items/views/edit.html',
                 controller: require('./controllers/edit'),
-                resolve: resolveArticles()
+                filters: [
+                    {action: 'edit', type: 'ingest'}
+                ]
             })
             .activity('/settings/ingest', {
                 label: gettext('Ingest Feed'),
                 templateUrl: 'scripts/superdesk-items/views/settings/settings.html',
                 controller: require('./controllers/settings'),
                 category: superdesk.MENU_SETTINGS
+            })
+            .activity('fetch', {
+                label: gettext('Fetch'),
+                icon: 'fetch',
+                controller: ['data', 'workqueue', function(data, queue) {
+                    // @todo trigger fetch as dialog
+                    queue.add(data);
+                }],
+                filters: [
+                    {action: 'list', type: 'ingest'}
+                ]
+            })
+            .activity('fetch-article', {
+                label: gettext('Article'),
+                controller: ['data', function(data) {
+                    console.log('fetch as article');
+                }],
+                filters: [
+                    {action: 'fetch', type: 'ingest'}
+                ]
+            })
+            .activity('fetch-factbox', {
+                label: gettext('Factbox'),
+                controller: ['data', function(data) {
+                    console.log('fetch as factbox', data);
+                }]
             });
     }]);
 

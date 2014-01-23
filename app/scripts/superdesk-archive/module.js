@@ -45,17 +45,6 @@ define([
                 filters: [
                     {action: 'list', type: 'ingest'}
                 ]
-            })
-            .activity('fetch', {
-                label: gettext('Fetch'),
-                icon: 'fetch',
-                controller: ['data', function(data) {
-                    // @todo trigger fetch as dialog
-                    console.log('fetch', data.headline);
-                }],
-                filters: [
-                    {action: 'list', type: 'ingest'}
-                ]
             });
     }]);
 });

@@ -1,19 +1,9 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', '$location', '$filter','item', 'em', 'storage', 'articles', 'superdesk', 'panesService',
-    function($scope, $location, $filter, item, em, storage, articles, superdesk, panesService) {
-
-        $scope.item = item;
-        $scope.item.place = $filter('mergeWords')($scope.item.place);
-
-        var inprogress = storage.getItem('collection:inprogress') || {};
-
-        var saveInprogress = function() {
-            storage.setItem('collection:inprogress',inprogress,false);
-        };
-
-        $scope.articles = articles;
+    return ['$scope', '$location', '$filter', 'em', 'storage', 'superdesk', 'panesService', 'workqueue',
+    function($scope, $location, $filter, em, storage, superdesk, panesService, queue) {
+        $scope.articles = queue.all();
 
         $scope.slider = {
             options : {
@@ -23,45 +13,28 @@ define(['angular'], function(angular) {
             }
         };
 
+        $scope.$watch(function() {
+            return $location.search()._id;
+        }, function(_id) {
+            $scope.item = queue.find({_id: _id}) || queue.active;
+            $scope.item.place = $filter('mergeWords')($scope.item.place || []);
+        });
+
         $scope.save = function() {
             $scope.item.place = $filter('splitWords')( $scope.item.place);
             em.save('ingest', $scope.item).then(function(data) {
-                _.extend($scope.item,data);
+                _.extend($scope.item, data);
                 $scope.item.place = $filter('mergeWords')( $scope.item.place);
             });
-            
-        };
-
-        $scope.close = function() {
-            $location.path('/');
         };
 
         $scope.backToIngest = function() {
-            var ingest = storage.getItem('ingest:navigation-params');
-            if (ingest !== null) {
-                $location.url(ingest);
-            }
+            superdesk.intent(superdesk.ACTION_VIEW, 'ingest');
         };
 
-        $scope.switchArticle = function(id) {
-            inprogress.active = id;
-            saveInprogress();
-            $location.url('/article/'+id);
-        };
-
-        $scope.closeArticle = function() {
-            //close this
-            inprogress.opened = _.without(inprogress.opened,$scope.item._id);
-            inprogress.active = null;
-            saveInprogress();
-
-            //if there is at least one more item in opened array bring it
-            if (inprogress.opened.length > 0) {
-                $scope.switchArticle(inprogress.opened[0]);
-            }
-            else {
-                $location.url('/article/');
-            }
+        $scope.switchArticle = function(article) {
+            queue.setActive(article);
+            $location.search('_id', article._id);
         };
 
         //tabpane logic

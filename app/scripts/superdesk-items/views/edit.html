@@ -1,8 +1,9 @@
 <div class="subnav subnav-fixed">
 
-    <a class="navbtn pull-left active" ng-click="backToIngest()">
+    <a class="navbtn pull-left" ng-class="{active: articles.length}" ng-click="backToIngest()">
         <i class="left arrow"></i>
     </a>
+
     <a class="navbtn pull-right large active" ng-click="">
         <span>Publish</span><i class="right arrow"></i>
     </a>
@@ -22,15 +23,15 @@
 
 <div class="zen-buttons">
     <a class="btn pull-right zen-close" href="" ng-click="mode.zen = false"><i class="icon-remove"></i></a>
-    <a class="btn pull-right btn-info" href="" ng-click="save()" >Save</a>
+    <a class="btn pull-right btn-info" href="" ng-click="save()">Save</a>
 </div>
 
     
-<div class="article-edit-container" ng-class="{'editmode':editmode}">
+<div class="article-edit-container" ng-class="{editmode: editmode}">
 
     <div class="opened-articles">
         <ul>
-            <li ng-repeat="article in articles" ng-class="{active : article._id == item._id}" ng-click="switchArticle(article._id)">{{article.headline}}</li>
+            <li ng-repeat="article in articles | orderBy:null:true" ng-class="{active: article._id == item._id}" ng-click="switchArticle(article)">{{ article.headline }}</li>
         </ul>
     </div>
 
