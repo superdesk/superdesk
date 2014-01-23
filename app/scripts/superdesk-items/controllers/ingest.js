@@ -1,9 +1,8 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', 'superdesk', '$location', 'locationParams', 'keyboardManager', 'storage', 'em',
-    function($scope, superdesk, $location, locationParams, keyboardManager, storage, em) {
-
+    return ['$scope', 'superdesk', 'locationParams', 'keyboardManager', 'storage', 'em',
+    function($scope, superdesk, locationParams, keyboardManager, storage, em) {
         var items = $scope.items = superdesk.data('ingest', {
             sort: ['firstcreated', 'desc'],
             filters: ['provider'],
@@ -67,10 +66,6 @@ define(['angular'], function(angular) {
             $scope.selectedContext = index;
         };
 
-        keyboardManager.bind('ctrl+a', function() {
-            $scope.archive();
-        });
-
         keyboardManager.bind('enter', function() {
             $scope.selectAction();
         }, {
@@ -114,21 +109,8 @@ define(['angular'], function(angular) {
             }
         };
 
-        $scope.archive = function() {
-            var item = items._items[$scope.selectedItemIndex];
-            if (item.archived === undefined) {
-                em.create('archive', item).then(function(data) {
-                    delete item.archiving;
-                    item.archived = data.archived;
-                    putInProgress(data._id, false);
-                });
-                item.archiving = true;
-            }
-        };
-
         $scope.openEditor = function(item_id) {
             //remember url params in session storage
-            storage.setItem('ingest:navigation-params', $location.url(), false);
             if (item_id !== undefined) {
                 putInProgress(item_id, true);
                 openItem(item_id);
@@ -140,10 +122,6 @@ define(['angular'], function(angular) {
                 putInProgress($scope.inprogress.opened[0], true);
                 openItem($scope.inprogress.opened[0]);
             }
-        };
-
-        var openItem = function(item_id) {
-            $location.url('/article/'+item_id);
         };
     }];
 });

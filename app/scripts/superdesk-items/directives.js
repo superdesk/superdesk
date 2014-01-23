@@ -128,25 +128,18 @@ define([
         .directive('sdMediaBox', ['$position', function($position) {
             return {
                 restrict : 'A',
-                template: '<div ng-include="itemTemplate"></div>',
+                templateUrl: 'scripts/superdesk-items/views/media-box.html',
                 link: function(scope, element, attrs) {
-
-                    scope.$watch('ui.view', function(view) {
+                    scope.$watch('extras.view', function(view) {
                         switch(view) {
                         case 'list':
+                        case 'compact':
                             scope.itemTemplate = 'scripts/superdesk-items/views/media-box-list.html';
                             break;
                         default:
                             scope.itemTemplate = 'scripts/superdesk-items/views/media-box-grid.html';
                         }
                     });
-
-                    scope.hoverItem = function(item) {
-                        var pos = $position.position(element.find('.media-box'));
-                        scope.selectedItem.item = item;
-                        scope.selectedItem.position = {left: pos.left - 9, top: pos.top - 15};
-                        scope.selectedItem.show = true;
-                    };
                 }
             };
         }])
@@ -200,13 +193,11 @@ define([
         }])
         .directive('sdItemPreviewStatic', ['em', function(em) {
             return {
-                templateUrl: 'scripts/superdesk-items/views/item-preview-static.html',
                 replace: true,
                 scope: {item: '='},
+                templateUrl: 'scripts/superdesk-items/views/item-preview-static.html',
                 link: function(scope, elem, attrs) {
-                    scope.treepreview = function(item) {
-                        scope.previewSingle = item;
-                    };
+                    // noop
                 }
             };
         }])
@@ -550,5 +541,18 @@ define([
                     });
                 }
             };
-        }]);
+        }])
+        .directive('sdArchiveLayout', function() {
+            return {
+                scope: {items: '='},
+                templateUrl: 'scripts/superdesk-items/views/item-list.html',
+                link: function(scope, elem, attrs) {
+                    scope.view = 'grid';
+
+                    scope.preview = function(item) {
+                        scope.previewItem = item;
+                    };
+                }
+            };
+        });
 });

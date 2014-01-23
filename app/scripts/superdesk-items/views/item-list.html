@@ -1,62 +1,58 @@
-<div class="tablist left-tablist">
-    <ul class="navigation-tabs">
-        <li ><a href="#"><i class="big-icon-search"></i></a></li>        
-    </ul>
+<div class="subnav subnav-fixed">
+    <a class="navbtn pull-left disabled">
+        <i class="left arrow"></i>
+    </a>
+    <a class="navbtn pull-right" ng-class="{active : inprogress.opened.length}" ng-click="openEditor()">
+        <i class="right arrow"></i>
+    </a>
 </div>
 
-<div class="archive-content">
+<section class="archive-main-section">
 
+<div class="archive-content">
     <div class="archive-content-topnav">
         <ul class="basket-tabs pull-left clearfix">
             <li><a href="" class="active">Basket one <b>(108)</b></a></li>
             <li><a href="">Basket two <b>(223)</b><i>19</i></a></li>
             <li><a href="">Basket three <b>(141)</b><i>23</i></a></li>
         </ul>
+
         <div class="flat-field dropdown pull-right">
             <a class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <span class="caret"></span></a>
             <ul class="dropdown-menu sf-dropdown sf-right">
-                <li><a href="" ng-click="setView('grid')"><i class="icon-th"></i> {{ 'grid view' | translate}}</a></li>
-                <li><a href="" ng-click="setView('list')"><i class="icon-th-list"></i> {{ 'list view' | translate}}</a></li>
-                <li><a href="" ng-click="setView('stats')"><i class="icon-signal"></i> {{ 'statistics' | translate}}</a></li>
+                <li><a href="" ng-click="view='grid'"><i class="icon-th"></i> {{ 'grid view' | translate}}</a></li>
+                <li><a href="" ng-click="view='list'"><i class="icon-th-list"></i> {{ 'list view' | translate}}</a></li>
+                <li><a href="" ng-click="view='compact'"><i class="icon-th-list"></i> {{ 'compact view' | translate}}</a></li>
+                <li><a href="" ng-click="view='stats'"><i class="icon-signal"></i> {{ 'statistics' | translate}}</a></li>
             </ul>
         </div>
+
         <div class="flat-field pull-right">
             <a href=""><i class="icon-plus"></i></a>
         </div>
     </div>
 
-    <div class="archive-content-subnav">
-        <div sd-pagination data-model="items" ng-if="ui.view !== 'stats'"></div>
-        <div class="btn-group pull-left" ng-show="ui.view === 'list'">
-            <a class="btn" ng-class="{'active': ui.compact}" ng-click="toggleCompact()" translate>Compact view</a>
-        </div>
+    <div class="archive-content-subnav" ng-show="view !== 'stats'">
+        <div sd-pagination data-adapter="items"></div>
+        <div class="btn-group source-select" sd-provider-filter data-items="items"></div>
+        <input type="text" sd-searchbar data-df="headline" />
     </div>
 
-    <div class="archive-content-inner {{ ui.view }}-view" ng-if="ui.view !== 'stats'">
-        <div ng-repeat="item in items._items" sd-media-box></div>
+    <div class="archive-content-inner {{ view }}-view"
+        ng-if="view !== 'stats'"
+        sd-list-view
+        data-adapter="items"
+        data-select="preview(item)"
+        data-extras="{view: view}"
+    ><div sd-media-box></div></div>
 
-        <!-- floating box mask -->
-        <div sd-media-box-hover sd-item="selectedItem.item"></div>
-
-        <div class="alert alert-info" ng-show="!items._items.length" translate>No results found.</div>
-    </div>
     <div
+        ng-show="view !== 'stats'"
         sd-item-preview-static
         data-item="previewItem"
-        ng-if="ui.view !== 'stats'"
-        >
-    </div>
-    <div class="preview-backdrop" ng-show="context" ng-class="{'show': context}"></div>
+    ></div>
 
-    <div class="context-menu" ng-class="{'show': context}">
-        <div class="title">Fetch</div>
-        <ul class="context-list">
-            <li ng-repeat="menuitem in contextMenu" ng-class="{'selected' : $index == selectedContext}" ng-click="selectAction()" ng-mouseenter="selectContext($index)"><i>as</i> {{menuitem.title}}</li>
-        </ul>
-    </div>
-
-    <div class="archive-content-inner clearfix statistics" ng-if="ui.view === 'stats'">
-
+    <div class="archive-content-inner clearfix statistics" ng-if="view === 'stats'">
         <div class="stats-container size2">
             <div sd-pie-chart data-terms="items._facets.provider.terms" data-colors="superdesk" data-head="{{ 'Providers'| translate }}"></div>
             <div sd-pie-chart data-terms="items._facets.urgency.terms" data-sort="term" data-head="{{ 'Urgency'| translate }}" data-colors="superdesk"></div>
@@ -66,6 +62,7 @@
         <div class="stats-container size2">
             <div sd-pie-chart data-terms="items._facets.subject.terms" data-head="{{ 'Subject phrases'| translate }}" data-colors="superdesk" data-x="2" data-y="2"></div>
         </div>
-        
     </div>
 </div>
+
+</section>

@@ -1,45 +1,42 @@
-<div class="media-box media-{{item.type}} urgency-{{ item.urgency }}"
-     ng-class="{ selected : item.selected, archived : item.archived!=null&&actions.archive}"
-     ng-mouseenter="hoverItem(item)" >
+<div class="loading-status" ng-show="!item.archived && item.archiving"></div>
 
-    <div class="loading-status" ng-show="!item.archived && item.archiving"></div>
+<figure class="media" ng-if="item.renditions.thumbnail">
+    <img ng-src="{{ item.renditions.thumbnail.href }}" alt="" title="{{ item.description }}" />
+    <figcaption class="caption">{{ item.creditline }}</figcaption>
+</figure>
 
-    <figure class="media" ng-if="item.renditions.thumbnail">
-        <img ng-src="{{ item.renditions.thumbnail.href }}" alt="" title="{{ item.description }}" />
-        <figcaption class="caption">{{ item.creditline }}</figcaption>
-    </figure>
-
-    <div class="media"  ng-show="item.type == 'text' || item.type == 'composite'">
-        <small title="{{ item.headline }}">{{ item.headline }}</small>
-    </div>
-
-    <div class="media"  ng-show="item.type == 'audio' || item.type == 'video'">
-        <i class="filetype-icon-large-{{ item.type}}"></i>
-    </div>
-
-    <div class="media-info" >
-        <h5 ng-show="item.slugline">{{ item.slugline }}</h5>
-        <h5 ng-show="!item.slugline">{{ item.type | translate }}</h5>
-        <dl class="clearfix">
-            <dt class="source"></dt>
-            <dd class="provider">{{ item.provider }}</dd>
-
-            <dt translate>created</dt>
-            <dd><time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time></dd>
-            <dt translate ng-show="item.subject">subject</dt>
-            <dd ng-show="item.subject" class="subject-line">
-                {{ item.subject | mergeWords}}
-            </dd>
-        </dl>
-        <div class="status-label" 
-             ng-class="{'label-canceled' : item.pubstatus=='canceled'}"
-             ng-show="item.pubstatus  && item.pubstatus!='usable'">
-             {{ item.pubstatus | translate }}
-        </div>
-
-    </div>
-
-    <span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
-    <span class="urgency-label">{{ item.urgency }}</span>
-    <span class="urgency-line"></span>
+<div class="media"  ng-show="item.type == 'text' || item.type == 'composite'">
+    <small title="{{ item.headline }}">{{ item.headline }}</small>
 </div>
+
+<div class="media"  ng-show="item.type == 'audio' || item.type == 'video'">
+    <i class="filetype-icon-large-{{ item.type}}"></i>
+</div>
+
+<div class="media-info" >
+    <h5 ng-show="item.slugline">{{ item.slugline }}</h5>
+    <h5 ng-show="!item.slugline">{{ item.type | translate }}</h5>
+    <dl class="clearfix">
+        <dt class="source"></dt>
+        <dd class="provider">{{ item.provider }}</dd>
+
+        <dt translate>created</dt>
+        <dd><time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time></dd>
+        <dt translate ng-show="item.subject">subject</dt>
+        <dd ng-show="item.subject" class="subject-line">
+            {{ item.subject | mergeWords}}
+        </dd>
+    </dl>
+    <div class="status-label"
+         ng-class="{'label-canceled' : item.pubstatus=='canceled'}"
+         ng-show="item.pubstatus  && item.pubstatus!='usable'">
+         {{ item.pubstatus | translate }}
+    </div>
+
+</div>
+
+<span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
+<span class="urgency-label">{{ item.urgency }}</span>
+<span class="urgency-line"></span>
+
+<div class="item-functions" sd-activity-list data-data="item" data-action="list"></div>

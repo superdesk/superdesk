@@ -160,7 +160,9 @@ define(['angular', 'lodash'], function(angular, _) {
                     action: scope.action
                 };
 
-                if (scope.type && scope.type !== '*') {
+                if (!scope.type) { // guess item type by self href
+                    intent.type = scope.data._links.self.href.split('/')[1];
+                } else {
                     intent.type = scope.type;
                 }
 
@@ -180,7 +182,7 @@ define(['angular', 'lodash'], function(angular, _) {
      */
     module.directive('sdActivityItem', ['$window', '$controller', 'gettext', function($window, $controller, gettext) {
         return {
-            template: '<a href="" ng-click="run(activity)" translate>{{ activity.label }}</a>',
+            template: '<a href="" class="list-field" ng-click="run(activity)" translate><i class="icon-{{ activity.icon }}" ng-show="activity.icon"></i> {{ activity.label }}</a>',
             link: function(scope, elem, attrs) {
                 scope.run = function(activity) {
                     if (activity.confirm && !$window.confirm(gettext(activity.confirm))) {

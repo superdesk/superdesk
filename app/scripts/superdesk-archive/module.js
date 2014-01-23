@@ -29,6 +29,33 @@ define([
                 controller: require('./controllers/archive'),
                 category: superdesk.MENU_MAIN,
                 reloadOnSearch: false
+            })
+            .activity('archive', {
+                label: gettext('Archive'),
+                icon: 'archive',
+                controller: ['em', 'data', function(em, data) {
+                    if (!data.archived) {
+                        em.create('archive', data).then(function(item) {
+                            delete data.archiving;
+                        });
+
+                        data.archiving = true; // set after create not to send it as part of data
+                    }
+                }],
+                filters: [
+                    {action: 'list', type: 'ingest'}
+                ]
+            })
+            .activity('fetch', {
+                label: gettext('Fetch'),
+                icon: 'fetch',
+                controller: ['data', function(data) {
+                    // @todo trigger fetch as dialog
+                    console.log('fetch', data.headline);
+                }],
+                filters: [
+                    {action: 'list', type: 'ingest'}
+                ]
             });
     }]);
 });
