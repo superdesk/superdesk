@@ -575,6 +575,81 @@ Angular extensions
 }
 
 
+
+/*
+=========================================
+COMPONENT ANIMATIONS
+=========================================
+*/
+.fade {
+  .transition(opacity .15s linear);
+  opacity: 0;
+  &.in {
+    opacity: 1;
+  }
+}
+
+.collapse {
+  .transition(height .35s ease);
+  position:relative;
+  overflow:hidden;
+  height: 0;
+  &.in {
+    height: auto;
+  }
+}
+
+/*
+=========================================
+Close icons
+=========================================
+*/
+.close {
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+  line-height: @baseLineHeight;
+  color: @black;
+  text-shadow: 0 1px 0 rgba(255,255,255,1);
+  .opacity(20);
+  &:hover {
+    color: @black;
+    text-decoration: none;
+    .opacity(40);
+    cursor: pointer;
+  }
+}
+
+/*
+=========================================
+UTILITY CLASSES
+=========================================
+*/
+
+// Quick floats
+.pull-right {
+  float: right;
+}
+.pull-left {
+  float: left;
+}
+
+// Toggling content
+.hide {
+  display: none;
+}
+.show {
+  display: block;
+}
+
+// Visibility
+.invisible {
+  visibility: hidden;
+}
+
+
+
+
 /*
 =========================================
 Notifications
@@ -708,3 +783,4 @@ Popover override
 
 
 }
+
