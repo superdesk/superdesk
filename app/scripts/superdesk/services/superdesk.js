@@ -105,15 +105,15 @@ define(['angular', 'lodash'], function(angular, _) {
              * Start given activity
              */
             function startActivity(activity, intent) {
-                intent.defer = $q.defer();
+                var defer = $q.defer();
 
                 if (activity.confirm && !$window.confirm(gettext(activity.confirm))) {
-                    intent.defer.reject();
+                    defer.reject();
                 } else {
-                    $controller(activity.controller, intent);
+                    defer.resolve($controller(activity.controller, intent));
                 }
 
-                return intent.defer.promise;
+                return defer.promise;
             }
 
             /**
@@ -173,7 +173,7 @@ define(['angular', 'lodash'], function(angular, _) {
                     };
 
                     var defer = $q.defer();
-                    return this.resolve(intent).then(function(activity) {
+                    this.resolve(intent).then(function(activity) {
                         if (activity._id[0] === '/') { // trigger route
                             $location
                                 .path(activity._id)
@@ -184,11 +184,16 @@ define(['angular', 'lodash'], function(angular, _) {
 
                         startActivity(activity, intent).then(function(res) {
                             defer.resolve(res);
+                        }, function(reason) {
+                            console.info('activity failed', reason);
+                            defer.reject();
                         });
-                    }, function() {
-                        console.warn('no activity for intent found', intent);
-                        defer.reject(intent);
+                    }, function(reason) {
+                        console.info('activity not resolved', reason);
+                        defer.reject();
                     });
+
+                    return defer.promise;
                 },
 
                 data: function(resource, params) {
@@ -278,6 +283,11 @@ define(['angular', 'lodash'], function(angular, _) {
             this.activities = null;
             defer.resolve(activity);
         };
+
+        this.reject = function() {
+            this.activities = null;
+            defer.reject();
+        };
     }]);
 
     /**
@@ -296,6 +306,10 @@ define(['angular', 'lodash'], function(angular, _) {
 
                 scope.choose = function(activity) {
                     activityChooser.resolve(activity);
+                };
+
+                scope.cancel = function() {
+                    activityChooser.reject();
                 };
             }
         };

@@ -96,7 +96,7 @@ define([
                 ]
             })
             .activity('fetch-article', {
-                label: gettext('Article'),
+                label: gettext('as Article'),
                 controller: ['data', function(data) {
                     console.log('fetch as article');
                 }],
@@ -105,7 +105,7 @@ define([
                 ]
             })
             .activity('fetch-factbox', {
-                label: gettext('Factbox'),
+                label: gettext('as Factbox'),
                 controller: ['data', function(data) {
                     console.log('fetch as factbox', data);
                 }],
@@ -114,7 +114,7 @@ define([
                 ]
             })
             .activity('fetch-sidebar', {
-                label: gettext('Sidebar'),
+                label: gettext('as Sidebar'),
                 controller: ['data', function(data) {
                     console.log('fatch as sidebar', data);
                 }],
