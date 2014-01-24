@@ -85,9 +85,11 @@ define([
             .activity('fetch', {
                 label: gettext('Fetch'),
                 icon: 'fetch',
-                controller: ['data', 'workqueue', function(data, queue) {
-                    // @todo trigger fetch as dialog
-                    queue.add(data);
+                controller: ['data', 'workqueue', 'superdesk', function(data, queue, superdesk) {
+                    superdesk.intent('fetch', 'ingest', data).then(function() {
+                        console.log('add to queue');
+                        queue.add(data);
+                    });
                 }],
                 filters: [
                     {action: 'list', type: 'ingest'}
@@ -106,7 +108,19 @@ define([
                 label: gettext('Factbox'),
                 controller: ['data', function(data) {
                     console.log('fetch as factbox', data);
-                }]
+                }],
+                filters: [
+                    {action: 'fetch', type: 'ingest'}
+                ]
+            })
+            .activity('fetch-sidebar', {
+                label: gettext('Sidebar'),
+                controller: ['data', function(data) {
+                    console.log('fatch as sidebar', data);
+                }],
+                filters: [
+                    {action: 'fetch', type: 'ingest'}
+                ]
             });
     }]);
 

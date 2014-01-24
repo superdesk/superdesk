@@ -16,9 +16,9 @@
   <body>
     <div sd-menu-wrapper></div>
     <div class="main-background-container" ng-class="{'sf-menu-open': displayMenu}" ng-view></div>
-
     <div sd-login-modal></div>
     <div sd-notify></div>
+    <div sd-activity-chooser></div>
 
     <script>ServerConfig = {url: '<%= server.url %>'};</script>
     <script data-main="scripts/main" src="scripts/bower_components/requirejs/require.js"></script>
