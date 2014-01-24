@@ -1,11 +1,11 @@
-<div sd-modal-view data-model="chooser.activities">
+<div sd-modal-view data-model="chooser.activities" class="activity-choose-modal">
     <ul class="list-group">
         <li class="list-group-item" ng-repeat="activity in chooser.activities" ng-click="chooser.resolve(activity)">
-            <a href="">{{ activity.label }}</a>
-        </li>
+			<a href="">{{ activity.label }}</a>
+		</li>
     </ul>
 
     <div class="btn-group">
-        <button type="button" class="btn btn-default" ng-click="chooser.reject()" translate>Cancel</button>
+        <button class="btn btn-inverse" ng-click="chooser.reject()" translate><i class="icon-close-small icon-white"></i> Cancel</button>
     </div>
 </div>

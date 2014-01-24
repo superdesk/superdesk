@@ -6,7 +6,7 @@
         </ul>
         <div ng-show="item.type == 'text'" class="word-count pull-right"><i>{{ item.body_html | wordCount }}</i> <span>words</span></div>
     </div>
-    <div class="content">
+    <div class="content" sd-shadow>
         <p class="date-info">{{ 'Created' | translate }} {{ item.firstcreated|reldate }}</p>
         <p class="title">{{ item.headline }}</p>
         <div class="core-content">

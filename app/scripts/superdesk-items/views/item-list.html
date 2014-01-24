@@ -20,8 +20,8 @@
         <div class="flat-field dropdown pull-right">
             <a class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <span class="caret"></span></a>
             <ul class="dropdown-menu sf-dropdown sf-right">
-                <li><a href="" ng-click="view='grid'"><i class="icon-th"></i> {{ 'grid view' | translate}}</a></li>
-                <li><a href="" ng-click="view='list'"><i class="icon-th-list"></i> {{ 'list view' | translate}}</a></li>
+                <li><a href="" ng-click="view='mgrid'"><i class="icon-th"></i> {{ 'grid view' | translate}}</a></li>
+                <li><a href="" ng-click="view='mlist'"><i class="icon-th-list"></i> {{ 'list view' | translate}}</a></li>
                 <li><a href="" ng-click="view='compact'"><i class="icon-th-list"></i> {{ 'compact view' | translate}}</a></li>
                 <li><a href="" ng-click="view='stats'"><i class="icon-signal"></i> {{ 'statistics' | translate}}</a></li>
             </ul>
@@ -44,6 +44,7 @@
         data-adapter="items"
         data-select="preview(item)"
         data-extras="{view: view}"
+        sd-shadow
     ><div sd-media-box></div></div>
 
     <div

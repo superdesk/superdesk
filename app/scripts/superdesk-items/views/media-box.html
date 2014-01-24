@@ -1,7 +1,6 @@
 <div
-    class="media-box"
+    class="media-box media-{{item.type}}"
     ng-class="{selected: item._id === selected._id, archived: item.archived}"
-    ng-mouseenter="hoverItem(item)"
     ng-include="itemTemplate"
 >
 </div>

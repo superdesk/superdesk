@@ -84,7 +84,7 @@ define([
             })
             .activity('fetch', {
                 label: gettext('Fetch'),
-                icon: 'fetch',
+                icon: 'expand',
                 controller: ['data', 'workqueue', 'superdesk', function(data, queue, superdesk) {
                     superdesk.intent('fetch', 'ingest', data).then(function() {
                         console.log('add to queue');

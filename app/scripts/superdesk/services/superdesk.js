@@ -250,7 +250,8 @@ define(['angular', 'lodash'], function(angular, _) {
      */
     module.directive('sdActivityItem', ['$window', '$controller', 'gettext', function($window, $controller, gettext) {
         return {
-            template: '<a href="" class="list-field" ng-click="run(activity)" translate><i class="icon-{{ activity.icon }}" ng-show="activity.icon"></i> {{ activity.label }}</a>',
+            replace : true,
+            template: '<li class="item-field" ng-click="run(activity)" title="{{activity.label}}"><i class="icon-{{ activity.icon }}" ng-show="activity.icon"></i><span translate>{{ activity.label }}</span></li>',
             link: function(scope, elem, attrs) {
                 scope.run = function(activity) {
                     if (activity.confirm && !$window.confirm(gettext(activity.confirm))) {

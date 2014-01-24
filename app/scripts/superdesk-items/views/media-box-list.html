@@ -9,7 +9,7 @@
 <div class="media-info">
     <div class="list-field type-icon">
         <i class="filetype-icon-{{item.type}}"></i>
-        <span class="output-item-label  label-{{item.urgency}}" ng-show="extras.view == 'list'">{{ item.urgency }}</span>
+        <span class="output-item-label  label-{{item.urgency}}" ng-show="extras.view == 'mlist'">{{ item.urgency }}</span>
     </div>
     <div class="list-field" ng-show="extras.view == 'compact'"><span class="output-item-label label-{{item.urgency}}">{{ item.urgency }}</span></div>
 
@@ -21,9 +21,9 @@
                  ng-show="item.pubstatus && item.pubstatus!='usable'">
                  {{ item.pubstatus | translate }}
             </div>
-            <a href="">{{ item.headline || item.type }}</a>
+            {{ item.headline || item.type }}
         </div>
-        <div class="meta-data-field" ng-show="extras.view == 'list'">
+        <div class="meta-data-field" ng-show="extras.view == 'mlist'">
             <div class="item-provider">{{ item.provider }}</div>
             <span ng-show="item.subject">//</span> {{ item.subject | mergeWords}}
         </div>
