@@ -299,19 +299,7 @@ define(['angular', 'lodash'], function(angular, _) {
             scope: {},
             templateUrl: 'scripts/superdesk/views/activityChooser.html',
             link: function(scope, elem, attrs) {
-                scope.$watchCollection(function() {
-                    return activityChooser.activities;
-                }, function(activities) {
-                    scope.activities = activities;
-                });
-
-                scope.choose = function(activity) {
-                    activityChooser.resolve(activity);
-                };
-
-                scope.cancel = function() {
-                    activityChooser.reject();
-                };
+                scope.chooser = activityChooser;
             }
         };
     }]);
