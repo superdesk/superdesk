@@ -36,6 +36,7 @@ define([
                 controller: ['em', 'data', function(em, data) {
                     if (!data.archived) {
                         em.create('archive', data).then(function(item) {
+                            data.archived = item.archived;
                             delete data.archiving;
                         });
 

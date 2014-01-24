@@ -84,7 +84,7 @@ define([
             })
             .activity('fetch', {
                 label: gettext('Fetch'),
-                icon: 'fetch',
+                icon: 'expand',
                 controller: ['data', 'workqueue', function(data, queue) {
                     // @todo trigger fetch as dialog
                     queue.add(data);
