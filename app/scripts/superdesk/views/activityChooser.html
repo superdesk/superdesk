@@ -1,9 +1,9 @@
-<div sd-modal-view data-model="activities">
+<div sd-modal-view data-model="activities" class="activity-choose-modal">
     <ul class="list-group">
         <li class="list-group-item" ng-repeat="activity in activities" ng-click="choose(activity)"><a href="">{{ activity.label }}</a></li>
     </ul>
 
     <div class="btn-group">
-        <button type="button" class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
+        <button class="btn btn-inverse" ng-click="cancel()" translate><i class="icon-close-small icon-white"></i> Cancel</button>
     </div>
 </div>
