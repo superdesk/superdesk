@@ -294,12 +294,47 @@ define(['angular', 'lodash'], function(angular, _) {
     /**
      * Render a popup with activities so user can choose one
      */
-    module.directive('sdActivityChooser', ['activityChooser', function(activityChooser) {
+    module.directive('sdActivityChooser', ['activityChooser', 'keyboardManager', function(activityChooser, keyboardManager) {
         return {
             scope: {},
             templateUrl: 'scripts/superdesk/views/activityChooser.html',
             link: function(scope, elem, attrs) {
                 scope.chooser = activityChooser;
+                scope.selected = null;
+
+                function move(diff, items) {
+                    var index = _.indexOf(items, scope.selected),
+                        next = _.max([0, _.min([items.length - 1, index + diff])]);
+                    scope.selected = items[next];
+                }
+
+                scope.$watch(function() {
+                    return activityChooser.activities;
+                }, function(activities, prev) {
+                    scope.selected = activities ? _.first(activities) : null;
+
+                    if (activities) {
+                        keyboardManager.push('up', function() {
+                            move(-1, activities);
+                        });
+
+                        keyboardManager.push('down', function() {
+                            move(1, activities);
+                        });
+
+                        keyboardManager.push('enter', function() {
+                            activityChooser.resolve(scope.selected);
+                        });
+                    } else if (prev) {
+                        keyboardManager.pop('up');
+                        keyboardManager.pop('down');
+                        keyboardManager.pop('enter');
+                    }
+                });
+
+                scope.select = function(activity) {
+                    scope.selected = activity;
+                };
             }
         };
     }]);

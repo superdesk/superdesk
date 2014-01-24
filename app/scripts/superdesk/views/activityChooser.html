@@ -1,7 +1,7 @@
 <div sd-modal-view data-model="chooser.activities" class="activity-choose-modal">
     <ul class="list-group">
-        <li class="list-group-item" ng-repeat="activity in chooser.activities" ng-click="chooser.resolve(activity)">
-			<a href="">{{ activity.label }}</a>
+        <li class="list-group-item" ng-repeat="activity in chooser.activities" ng-click="chooser.resolve(activity)" ng-mouseover="select(activity)">
+			<a href="">{{ activity.label }} <span class="badge" ng-show="activity === selected">&nbsp;</span></a>
 		</li>
     </ul>
 

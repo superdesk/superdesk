@@ -1,4 +1,4 @@
-define(['angular'], function(angular) {
+define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
     angular.module('superdesk.services')
@@ -212,12 +212,17 @@ define(['angular'], function(angular) {
                     }
 
                 };
+
                 // Store shortcut
                 keyboardManagerService.keyboardEvent[label] = {
                     'callback': fct,
                     'target':   elt,
-                    'event':    opt.type
+                    'event':    opt.type,
+                    '_callback': callback,
+                    'opt': opt,
+                    'label': label
                 };
+
                 //Attach the function with the event
                 if (elt.addEventListener) { elt.addEventListener(opt.type, fct, false); }
                 else if(elt.attachEvent) { elt.attachEvent('on' + opt.type, fct); }
@@ -225,6 +230,28 @@ define(['angular'], function(angular) {
                     elt['on' + opt.type] = fct;
                 }
             };
+
+            var stack = [];
+
+            keyboardManagerService.push = function(label, callback) {
+                var e = keyboardManagerService.keyboardEvent[label.toLowerCase()];
+                if (e) {
+                    stack.push(e);
+                    keyboardManagerService.unbind(label);
+                }
+
+                keyboardManagerService.bind(label, callback);
+            };
+
+            keyboardManagerService.pop = function(label) {
+                keyboardManagerService.unbind(label);
+                var index = _.findLastIndex(stack, {label: label});
+                if (index !== -1) {
+                    keyboardManagerService.bind(label, stack[index]._callback, stack[index].opt);
+                    stack.splice(index, 0);
+                }
+            };
+
             // Remove the shortcut - just specify the shortcut and I will remove the binding
             keyboardManagerService.unbind = function (label) {
                 label = label.toLowerCase();
