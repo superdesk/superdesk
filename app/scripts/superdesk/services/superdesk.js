@@ -89,8 +89,40 @@ define(['angular', 'lodash'], function(angular, _) {
             return this;
         };
 
-        this.$get = ['$q', '$location', 'DataAdapter', function($q, $location, DataAdapter) {
-            var intentStack = [];
+        this.$get = ['$q', '$location', '$controller', '$window', 'activityChooser', 'DataAdapter',
+        function($q, $location, $controller, $window, activityChooser, DataAdapter) {
+
+            /**
+             * Find all available activities for given intent
+             */
+            function findActivities(intent) {
+                return _.filter(activities, function(activity) {
+                    return _.find(activity.filters, {action: intent.action, type: intent.data});
+                });
+            }
+
+            /**
+             * Start given activity
+             */
+            function startActivity(activity, intent) {
+                var defer = $q.defer();
+
+                if (activity.confirm && !$window.confirm(gettext(activity.confirm))) {
+                    defer.reject();
+                } else {
+                    defer.resolve($controller(activity.controller, intent));
+                }
+
+                return defer.promise;
+            }
+
+            /**
+             * Let user to choose an activity
+             */
+            function chooseActivity(activities) {
+                return activityChooser.choose(activities);
+            }
+
             return angular.extend({
                 widgets: widgets,
                 activities: activities,
@@ -98,25 +130,40 @@ define(['angular', 'lodash'], function(angular, _) {
                 panes: panes,
 
                 /**
-                 * Resolve an intent
+                 * Resolve an intent to a single activity
                  */
                 resolve: function(intent) {
-                    var activity = _.find(this.activities, function(activity) {
-                        return _.find(activity.filters, {action: intent.action, type: intent.data});
-                    });
+                    var defer = $q.defer(),
+                        activities = findActivities(intent);
+                    switch (activities.length) {
+                        case 0:
+                            defer.reject();
+                            break;
 
-                    if (activity) {
-                        $location
-                            .path(activity._id)
-                            .search(_.pick(intent.extras, '_id'));
-                        return intent;
+                        case 1:
+                            defer.resolve(activities[0]);
+                            break;
+
+                        default:
+                            chooseActivity(activities).then(function(activity) {
+                                defer.resolve(activity);
+                            }, function() {
+                                defer.reject();
+                            });
                     }
 
-                    console.log('No activity for intent found', intent);
+                    return defer.promise;
                 },
 
                 /**
                  * Intent factory
+                 *
+                 * starts an activity for given action and data
+                 *
+                 * @param {string} action
+                 * @param {string} data type
+                 * @param {Object} extras
+                 * @returns {Object} promise
                  */
                 intent: function(action, data, extras) {
                     var intent = {
@@ -125,8 +172,28 @@ define(['angular', 'lodash'], function(angular, _) {
                         extras: extras
                     };
 
-                    intentStack.push(intent);
-                    return this.resolve(intent);
+                    var defer = $q.defer();
+                    this.resolve(intent).then(function(activity) {
+                        if (activity._id[0] === '/') { // trigger route
+                            $location
+                                .path(activity._id)
+                                .search(_.pick(intent.extras, '_id'));
+                            defer.resolve(intent);
+                            return;
+                        }
+
+                        startActivity(activity, intent).then(function(res) {
+                            defer.resolve(res);
+                        }, function(reason) {
+                            console.info('activity failed', reason);
+                            defer.reject();
+                        });
+                    }, function(reason) {
+                        console.info('activity not resolved', reason);
+                        defer.reject();
+                    });
+
+                    return defer.promise;
                 },
 
                 data: function(resource, params) {
@@ -196,6 +263,54 @@ define(['angular', 'lodash'], function(angular, _) {
                     });
 
                     return !!ctrl;
+                };
+            }
+        };
+    }]);
+
+    /**
+     * Activity chooser service - bridge between superdesk and activity chooser directive
+     */
+    module.service('activityChooser', ['$q', function($q) {
+        var defer;
+
+        this.choose = function(activities) {
+            defer = $q.defer();
+            this.activities = activities;
+            return defer.promise;
+        };
+
+        this.resolve = function(activity) {
+            this.activities = null;
+            defer.resolve(activity);
+        };
+
+        this.reject = function() {
+            this.activities = null;
+            defer.reject();
+        };
+    }]);
+
+    /**
+     * Render a popup with activities so user can choose one
+     */
+    module.directive('sdActivityChooser', ['activityChooser', function(activityChooser) {
+        return {
+            scope: {},
+            templateUrl: 'scripts/superdesk/views/activityChooser.html',
+            link: function(scope, elem, attrs) {
+                scope.$watchCollection(function() {
+                    return activityChooser.activities;
+                }, function(activities) {
+                    scope.activities = activities;
+                });
+
+                scope.choose = function(activity) {
+                    activityChooser.resolve(activity);
+                };
+
+                scope.cancel = function() {
+                    activityChooser.reject();
                 };
             }
         };
