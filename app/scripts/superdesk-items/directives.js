@@ -132,7 +132,7 @@ define([
                 link: function(scope, element, attrs) {
                     scope.$watch('extras.view', function(view) {
                         switch(view) {
-                        case 'list':
+                        case 'mlist':
                         case 'compact':
                             scope.itemTemplate = 'scripts/superdesk-items/views/media-box-list.html';
                             break;
@@ -546,7 +546,7 @@ define([
             return {
                 templateUrl: 'scripts/superdesk-items/views/item-list.html',
                 link: function(scope, elem, attrs) {
-                    scope.view = 'grid';
+                    scope.view = 'mgrid';
 
                     scope.preview = function(item) {
                         scope.previewItem = item;
