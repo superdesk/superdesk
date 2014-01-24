@@ -68,11 +68,6 @@ define([
         .config(['superdeskProvider', function(superdesk) {
 
             var usersResolve = {
-                users: ['locationParams', 'em', 'defaultListParams',
-                    function(locationParams, em, defaultListParams) {
-                        var criteria = locationParams.reset(defaultListParams);
-                        return em.getRepository('users').matching(criteria);
-                    }],
                 user: ['em', '$route',
                     function(em, $route) {
                         if ($route.current.params.id === 'new') {

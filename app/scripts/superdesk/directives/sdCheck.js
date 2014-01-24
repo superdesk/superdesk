@@ -68,9 +68,11 @@ define([
                         checkAttribute = attrs.checkAttribute;
                     }
 
-                    $scope.$watch(attrs.ngModel, function() {
-                        checked = (_.every(ngModel.$viewValue, checkAttribute) && (ngModel.$viewValue.length > 0));
-                        render(element, checked);
+                    $scope.$watch(attrs.ngModel, function(model) {
+                        if (model) {
+                            checked = (_.every(ngModel.$viewValue, checkAttribute) && (ngModel.$viewValue.length > 0));
+                            render(element, checked);
+                        }
                     }, true);
 
                     element.on('click', function(){

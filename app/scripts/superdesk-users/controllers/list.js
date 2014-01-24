@@ -1,11 +1,15 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', 'userSettings', 'server', 'locationParams', 'users', 'roles', 'user',
-    function UserListController($scope, userSettings, server, locationParams, users, roles, user) {
+    return ['$scope', 'userSettings', 'server', 'locationParams', 'superdesk', 'roles', 'user',
+    function UserListController($scope, userSettings, server, locationParams, superdesk, roles, user) {
         $scope.user = user;
-        $scope.users = users;
         $scope.roles = roles;
+
+        $scope.users = superdesk.data('users', {
+            sort: ['display_name', 'asc'],
+            perPage: 25
+        });
 
         $scope.userSettings = userSettings;
         $scope.locationParams = locationParams;
