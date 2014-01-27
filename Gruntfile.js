@@ -21,7 +21,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('server', [
         'clean',
-        'less',
+        'less:development',
         'template',
         'connect:server',
         'open',
@@ -36,7 +36,7 @@ module.exports = function (grunt) {
     grunt.registerTask('build', [
         'clean:dist',
         'jshint',
-        'less',
+        'less:production',
         'template',
         'nggettext_compile',
         'requirejs',
