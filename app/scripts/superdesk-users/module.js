@@ -95,6 +95,7 @@ define([
 
             superdesk
                 .activity('/users/', {
+                    when: '/users/:id?',
                     label: gettext('Users'),
                     priority: 100,
                     controller: require('./controllers/list'),
