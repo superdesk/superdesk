@@ -516,7 +516,7 @@
 
 @rightfield-width:200px;
 
-.mlist-view {
+.mlist-view, .compact-view {
 	> div:first-child {
 		.media-box {
 			border-top: 3px solid #ebebeb;
@@ -744,28 +744,32 @@
 			background: #b70000;
 		}
 
-		&.compact-item {
-			.loading-status {
-				background-size: 28px;
-			}
-			.list-field {
-				padding: 12px 11px;
-			}
-			.list-field.type-icon {
-				height: 16px;
-			}
-			h5 {
-				margin-left: 126px;
-				.status-label {
-					margin-top: 1px;
-				}
-			}
-
-		}
-
 	}
 	
 }
+
+.compact-view {
+
+	.loading-status {
+		background-size: 28px !important;
+	}
+	.list-field {
+		padding: 12px 11px !important;
+		&.type-icon {
+			height: 16px !important;
+		}
+	}
+	.item-field {
+		padding: 12px 11px !important;
+	}
+	h5 {
+		margin-left: 126px !important;
+		.status-label {
+			margin-top: 1px !important;
+		}
+	}
+
+} 
 
 /* ====================================== */
   // media box HOVER grid view 
