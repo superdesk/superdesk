@@ -1,4 +1,5 @@
 Cerberus==0.5.0
+Eve-Elastic==0.1.0
 Flask==0.10.1
 Flask-Bootstrap==3.0.3.1
 Flask-PyMongo==0.3.0
@@ -27,6 +28,5 @@ simplejson==3.3.2
 six==1.5.2
 
 git+git://github.com/petrjasek/events@master#egg=Events==0.2.1
-git+git://github.com/petrjasek/eve-elastic@master#egg=Eve-Elastic==0.1
 git+git://github.com/petrjasek/eve-docs@master#egg=Eve-Docs==0.1
 git+git://github.com/petrjasek/eve@elastic#egg=Eve==0.2
