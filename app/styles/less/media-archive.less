@@ -61,6 +61,10 @@
 		.doopen i {
 			.rotate(-180deg);
 		}
+		&.opened {
+			.box-shadow(inset -1px 0px 6px 0px rgba(0,0,0,.1));
+			border-right: 1px solid #d0d0d0;
+		}
 	}
 	.archive-content {
 		left: @archive-sidebar-width !important;	
