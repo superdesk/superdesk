@@ -14,5 +14,9 @@ define(['angular'], function(angular) {
         $scope.openEditor = function() {
             superdesk.intent('edit', 'ingest', queue.active);
         };
+
+        $scope.sidebar = false;
+        $scope.sidebarstick = false;
+        
     }];
 });

@@ -7,7 +7,20 @@
     </a>
 </div>
 
-<section class="archive-main-section">
+<section class="archive-main-section" ng-class="{'sidebar-sticked' : sidebarstick}">
+
+<div class="archive-sidebar" 
+    ng-class="{'opened' : sidebar}" 
+    ng-mouseenter="sidebar=true" 
+    ng-mouseleave="sidebar=false">
+    <div class="header">
+        <div class="title" translate>Filters</div>
+        <div class="doopen btn" ng-click="sidebarstick = !sidebarstick;sidebar=false"><i class="icon-forward-thin"></i></div>
+    </div>
+    <div class="content">
+        Here goes sidebar content
+    </div>
+</div>
 
 <div class="archive-content">
     <div class="archive-content-topnav">
