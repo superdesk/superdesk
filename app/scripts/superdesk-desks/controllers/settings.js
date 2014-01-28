@@ -46,13 +46,13 @@ define(['angular', 'lodash'], function(angular, _) {
 						notify.success(gettext('New Desk created.'), 3000);
 						$scope.desks._items.unshift(desk);
 						$scope.cancel();
-	                });
+                    });
 				} else {
 					em.update(desk).then(function(result) {
 						_.extend(_desk, result);
 						notify.success(gettext('Desk settings updated.'), 3000);
 						$scope.cancel();
-	                });
+                    });
 				}
 			};
 
