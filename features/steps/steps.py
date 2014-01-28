@@ -148,7 +148,6 @@ def step_impl(context, url):
     href = get_self_href(res, context)
     headers = [('If-Match', res['etag'])]
     headers += context.headers
-    print('patch', href)
     context.response = context.client.patch(href, data=context.text, headers=headers)
     assert_ok(context.response)
 
@@ -160,7 +159,6 @@ def step_impl(context):
     etag = data['etag']
     headers = [('If-Match', etag)]
     headers += context.headers
-    print('patch again', href, etag)
     context.response = context.client.patch(href, data=context.text, headers=headers)
     assert_ok(context.response)
 
@@ -207,7 +205,7 @@ def step_impl(context):
 def step_impl(context, total_count):
     assert_200(context.response)
     response_list = json.loads(context.response.get_data())
-    assert len(response_list['_items']) == int(total_count), response_list
+    assert len(response_list['_items']) == int(total_count), 'got %d' % len(response_list['_items'])
     if total_count == 0 or not context.text:
         return
 
@@ -215,8 +213,12 @@ def step_impl(context, total_count):
     item = response_list['_items'][0]
     for key in schema:
         assert key in item, '%s not in %s' % (key, item)
-        for keykey in schema[key]:
-            assert keykey in item[key], '%s not in %s' % (keykey, item[key])
+
+        if isinstance(schema[key], dict):
+            for keykey in schema[key]:
+                assert keykey in item[key], '%s not in %s' % (keykey, item[key])
+        else:
+            assert schema[key] == item[key], '%s not equal to %s' % (schema[key], item[key])
 
 
 @then('we get no "{field}"')
