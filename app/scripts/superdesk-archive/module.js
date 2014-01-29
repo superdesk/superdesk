@@ -121,4 +121,15 @@ define([
                 ]
             });
     }]);
+
+    /**
+     * Subjectcodes loader
+     */
+    app.service('subjectcodes', ['superdesk', function(superdesk) {
+        this.load = function() {
+            return superdesk.data('subjectcodes').query().then(function(codes) {
+                return codes._items;
+            });
+        };
+    }]);
 });
