@@ -73,12 +73,18 @@ define([
                 label: gettext('Fetch'),
                 icon: 'expand',
                 controller: ['data', 'workqueue', 'superdesk', 'resolve', function(data, queue, superdesk, resolve) {
-                    superdesk.intent('fetch', 'ingest', data).then(function() {
+                    var edit = function() {
                         superdesk.intent('archive', 'ingest', data).then(function(item) {
                             queue.add(item);
                             resolve(item);
                         });
-                    });
+                    };
+
+                    if (data.archived) {
+                        edit();
+                    } else {
+                        superdesk.intent('fetch', 'ingest', data).then(edit);
+                    }
                 }],
                 filters: [
                     {action: 'list', type: 'ingest'}
