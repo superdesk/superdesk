@@ -73,6 +73,60 @@ define([
                 templateUrl: 'scripts/superdesk-items/views/settings/settings.html',
                 controller: require('./controllers/settings'),
                 category: superdesk.MENU_SETTINGS
+            })
+            .activity('add-scratchpad', {
+                label: gettext('Add to scratchpad'),
+                icon: 'plus',
+                controller: ['scratchpadService', 'data', function(scratchpadService, data) {
+                    if (scratchpadService.checkItemExists(data)) {
+                        scratchpadService.removeItem(data);
+                    } else {
+                        scratchpadService.addItem(data);
+                    }
+                }],
+                filters: [
+                    {action: 'list', type: 'ingest'}
+                ]
+            })
+            .activity('fetch', {
+                label: gettext('Fetch'),
+                icon: 'expand',
+                controller: ['data', 'workqueue', 'superdesk', function(data, queue, superdesk) {
+                    superdesk.intent('fetch', 'ingest', data).then(function() {
+                        console.log('add to queue');
+                        queue.add(data);
+                    });
+                }],
+                filters: [
+                    {action: 'list', type: 'ingest'}
+                ]
+            })
+            .activity('fetch-article', {
+                label: gettext('as Article'),
+                controller: ['data', function(data) {
+                    console.log('fetch as article');
+                }],
+                filters: [
+                    {action: 'fetch', type: 'ingest'}
+                ]
+            })
+            .activity('fetch-factbox', {
+                label: gettext('as Factbox'),
+                controller: ['data', function(data) {
+                    console.log('fetch as factbox', data);
+                }],
+                filters: [
+                    {action: 'fetch', type: 'ingest'}
+                ]
+            })
+            .activity('fetch-sidebar', {
+                label: gettext('as Sidebar'),
+                controller: ['data', function(data) {
+                    console.log('fatch as sidebar', data);
+                }],
+                filters: [
+                    {action: 'fetch', type: 'ingest'}
+                ]
             });
     }]);
 
