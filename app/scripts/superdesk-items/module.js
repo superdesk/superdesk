@@ -6,7 +6,6 @@ define([
     './resources',
     './controllers/ingest',
     './controllers/settings',
-    './controllers/edit',
     './controllers/ref',
     './directives',
     './filters',
@@ -69,58 +68,11 @@ define([
                     }
                 ]
             })
-            .activity('/edit', {
-                templateUrl: 'scripts/superdesk-items/views/edit.html',
-                controller: require('./controllers/edit'),
-                filters: [
-                    {action: 'edit', type: 'ingest'}
-                ]
-            })
             .activity('/settings/ingest', {
                 label: gettext('Ingest Feed'),
                 templateUrl: 'scripts/superdesk-items/views/settings/settings.html',
                 controller: require('./controllers/settings'),
                 category: superdesk.MENU_SETTINGS
-            })
-            .activity('fetch', {
-                label: gettext('Fetch'),
-                icon: 'expand',
-                controller: ['data', 'workqueue', 'superdesk', function(data, queue, superdesk) {
-                    superdesk.intent('fetch', 'ingest', data).then(function() {
-                        console.log('add to queue');
-                        queue.add(data);
-                    });
-                }],
-                filters: [
-                    {action: 'list', type: 'ingest'}
-                ]
-            })
-            .activity('fetch-article', {
-                label: gettext('as Article'),
-                controller: ['data', function(data) {
-                    console.log('fetch as article');
-                }],
-                filters: [
-                    {action: 'fetch', type: 'ingest'}
-                ]
-            })
-            .activity('fetch-factbox', {
-                label: gettext('as Factbox'),
-                controller: ['data', function(data) {
-                    console.log('fetch as factbox', data);
-                }],
-                filters: [
-                    {action: 'fetch', type: 'ingest'}
-                ]
-            })
-            .activity('fetch-sidebar', {
-                label: gettext('as Sidebar'),
-                controller: ['data', function(data) {
-                    console.log('fatch as sidebar', data);
-                }],
-                filters: [
-                    {action: 'fetch', type: 'ingest'}
-                ]
             });
     }]);
 

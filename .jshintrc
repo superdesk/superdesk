@@ -8,7 +8,7 @@
   "eqnull": true,
   "immed": true,
   "indent": 4,
-  "latedef": true,
+  "latedef": "nofunc",
   "newcap": true,
   "noarg": true,
   "quotmark": "single",
@@ -32,5 +32,6 @@
   },
   "forin": true,
   "noempty": true,
-  "nonew": true
+  "nonew": true,
+  "freeze": true
 }

@@ -553,5 +553,21 @@ define([
                     };
                 }
             };
-        });
+        })
+        .directive('sdWorkflow', ['superdesk', 'workqueue', function(superdesk, queue) {
+            return {
+                scope: true,
+                link: function(scope, elem, attrs) {
+                    scope.$watch(function() {
+                        return queue.length;
+                    }, function(len) {
+                        scope.isActive = !!len;
+                    });
+
+                    scope.next = function() {
+                        superdesk.intent('edit', 'archive', queue.active);
+                    };
+                }
+            };
+        }]);
 });

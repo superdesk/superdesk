@@ -22,14 +22,10 @@ define(['angular'], function(angular) {
 
         $scope.save = function() {
             $scope.item.place = $filter('splitWords')( $scope.item.place);
-            em.save('ingest', $scope.item).then(function(data) {
+            em.save('archive', $scope.item).then(function(data) {
                 _.extend($scope.item, data);
                 $scope.item.place = $filter('mergeWords')( $scope.item.place);
             });
-        };
-
-        $scope.backToIngest = function() {
-            superdesk.intent(superdesk.ACTION_VIEW, 'ingest');
         };
 
         $scope.switchArticle = function(article) {

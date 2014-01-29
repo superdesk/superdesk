@@ -89,31 +89,16 @@ define(['angular', 'lodash'], function(angular, _) {
             return this;
         };
 
-        this.$get = ['$q', '$location', '$controller', '$window', 'activityChooser', 'DataAdapter',
-        function($q, $location, $controller, $window, activityChooser, DataAdapter) {
+        this.$get = ['$q', 'activityService', 'activityChooser', 'DataAdapter',
+        function($q, activityService, activityChooser, DataAdapter) {
 
             /**
              * Find all available activities for given intent
              */
             function findActivities(intent) {
                 return _.filter(activities, function(activity) {
-                    return _.find(activity.filters, {action: intent.action, type: intent.data});
+                    return _.find(activity.filters, {action: intent.action, type: intent.type});
                 });
-            }
-
-            /**
-             * Start given activity
-             */
-            function startActivity(activity, intent) {
-                var defer = $q.defer();
-
-                if (activity.confirm && !$window.confirm(gettext(activity.confirm))) {
-                    defer.reject();
-                } else {
-                    defer.resolve($controller(activity.controller, intent));
-                }
-
-                return defer.promise;
             }
 
             /**
@@ -165,27 +150,20 @@ define(['angular', 'lodash'], function(angular, _) {
                  * @param {Object} extras
                  * @returns {Object} promise
                  */
-                intent: function(action, data, extras) {
+                intent: function(action, type, data) {
+
                     var intent = {
                         action: action,
-                        data: data,
-                        extras: extras
+                        type: type,
+                        data: data
                     };
 
                     var defer = $q.defer();
                     this.resolve(intent).then(function(activity) {
-                        if (activity._id[0] === '/') { // trigger route
-                            $location
-                                .path(activity._id)
-                                .search(_.pick(intent.extras, '_id'));
-                            defer.resolve(intent);
-                            return;
-                        }
-
-                        startActivity(activity, intent).then(function(res) {
+                        activityService.start(activity, intent).then(function(res) {
                             defer.resolve(res);
-                        }, function(reason) {
-                            console.info('activity failed', reason);
+                        }, function(err) {
+                            console.error('activity not started', err);
                             defer.reject();
                         });
                     }, function(reason) {
@@ -201,6 +179,53 @@ define(['angular', 'lodash'], function(angular, _) {
                 }
             }, constans);
         }];
+    }]);
+
+    module.service('activityService', ['$window', '$location', '$controller', '$q', '$timeout', 'gettext',
+        function($window, $location, $controller, $q, $timeout, gettext) {
+
+        /**
+         * Start given activity
+         *
+         * @param {object} activity
+         * @param {object} locals
+         * @returns {object} promise
+         */
+        this.start = function startActivity(activity, locals) {
+            var defer = $q.defer(),
+                timeout;
+
+            if (activity.confirm && !$window.confirm(gettext(activity.confirm))) {
+                defer.reject('no confirm');
+                return defer.promise;
+            }
+
+            if (activity._id[0] === '/') { // trigger route
+                $location
+                    .path(activity._id)
+                    .search(_.pick(locals.data || {}, '_id'));
+                defer.resolve(locals);
+                return defer.promise;
+            }
+
+            timeout = $timeout(function() {
+                console.error('activity timeout', activity);
+                defer.reject('timeout');
+            }, 8000);
+
+            $controller(activity.controller, _.extend(locals, {
+                resolve: function(result) {
+                    $timeout.cancel(timeout);
+                    defer.resolve(result);
+                },
+                reject: function(reason) {
+                    $timeout.cancel(timeout);
+                    defer.reject(reason);
+                }
+            }));
+
+            return defer.promise;
+        };
     }]);
 
     module.run(['$rootScope', 'superdesk', function($rootScope, superdesk) {
@@ -248,21 +273,13 @@ define(['angular', 'lodash'], function(angular, _) {
     /**
      * Directive for single activity which runs activity on click.
      */
-    module.directive('sdActivityItem', ['$window', '$controller', 'gettext', function($window, $controller, gettext) {
+    module.directive('sdActivityItem', ['activityService', function(activityService) {
         return {
             replace : true,
             template: '<li class="item-field" ng-click="run(activity)" title="{{activity.label}}"><i class="icon-{{ activity.icon }}" ng-show="activity.icon"></i><span translate>{{ activity.label }}</span></li>',
             link: function(scope, elem, attrs) {
                 scope.run = function(activity) {
-                    if (activity.confirm && !$window.confirm(gettext(activity.confirm))) {
-                        return;
-                    }
-
-                    var ctrl = $controller(activity.controller, {
-                        data: scope.data || {}
-                    });
-
-                    return !!ctrl;
+                    return activityService.start(activity, {data: scope.data});
                 };
             }
         };
