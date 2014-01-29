@@ -8,7 +8,7 @@ import superdesk
 bp = Blueprint('subjectcodes', __name__)
 
 
-@bp.route('/subjectcodes/', methods=['GET'])
+@bp.route('/subjectcodes/', methods=['GET', 'OPTIONS'])
 def get_subjectcodes():
     from superdesk.io.iptc import subject_codes
 
