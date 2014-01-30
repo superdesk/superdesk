@@ -1,4 +1,4 @@
-define(['angular'], function(angular) {
+define(['angular', 'moment'], function(angular, moment) {
     'use strict';
 
     return ['$scope', 'superdesk', 'workqueue',
@@ -30,7 +30,10 @@ define(['angular'], function(angular) {
             general : {
                 urgencyfrom : 1,
                 urgencyto : 3,
-                versionupdated : '02/02/2013',
+                versionupdated : {
+                    startDate : null,
+                    endDate : null
+                },
                 provider : '',
                 creditline : '',
                 place : ''

@@ -25,7 +25,8 @@ require.config({
 
         'ng-aloha-editor': 'bower_components/ng-aloha-editor/ng-aloha-editor',
 
-        'angular-slider': 'bower_components/angular-slider-royale/angular-slider'
+        'angular-slider': 'bower_components/angular-slider-royale/angular-slider',
+        'bootstrap-daterange': 'bower_components/bootstrap-daterangepicker/daterangepicker'
     },
     shim: {
         jquery: {

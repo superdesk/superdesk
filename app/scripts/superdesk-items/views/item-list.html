@@ -55,7 +55,15 @@
 
                 <li>
                     <div class="lbl" translate>Last modified</div>
-                    <div class="data"><input type="text" ng-model="search.general.versionupdated"></div>
+                    <div class="data">
+                        <div class="date">
+                            <span class="range">
+                                 <time>{{ search.general.versionupdated.startDate | date:'shortDate' }}</time> - <time>{{ search.general.versionupdated.endDate | date:'shortDate' }}</time>
+                            </span>
+                            <i class="icon-calendar" sd-date-range type="daterange" ng-model="search.general.versionupdated"></i>
+                        </div>
+                        
+                    </div>
                 </li>
                 <li>
                     <div class="lbl" translate>Provider</div>

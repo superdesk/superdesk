@@ -3,6 +3,7 @@ define([
     'angular',
     'require',
     'angular-slider',
+    'bootstrap-daterange',
     './resources',
     './controllers/ingest',
     './controllers/settings',
