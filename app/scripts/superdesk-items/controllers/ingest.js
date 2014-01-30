@@ -16,7 +16,26 @@ define(['angular'], function(angular) {
         };
 
         $scope.sidebar = false;
-        $scope.sidebarstick = false;
+        $scope.sidebarstick = true;
+
+
+        $scope.search = {
+            content : {
+                audio : false,
+                video : false,
+                text : true,
+                images : true,
+                packages : false
+            },
+            general : {
+                urgencyfrom : 1,
+                urgencyto : 3,
+                versionupdated : '02/02/2013',
+                provider : '',
+                creditline : '',
+                place : ''
+            }
+        };
         
     }];
 });

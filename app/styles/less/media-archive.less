@@ -5,7 +5,7 @@
 	z-index: 1;
 }
 
-@archive-sidebar-width: 340px;
+@archive-sidebar-width: 350px;
 
 @archive-inner-topnav-height : 42px;
 @archive-inner-subnav-height : 50px;
@@ -19,7 +19,7 @@
 	left:-@archive-sidebar-width+48;
 	width:@archive-sidebar-width;
 	.box-sizing(border-box);
-	background-color:@background-main;
+	background-color:#f4f4f4;
 	.box-shadow(inset -1px 0px 6px 0px rgba(0,0,0,.1));
 	.transition(left 0.2s ease);
 	border-right: 1px solid #d0d0d0;
@@ -51,11 +51,11 @@
 
 	.content {
 		position: absolute;
-		top:60px;left:10px;bottom:0px;right:10px;
+		top:60px;left:20px;bottom:0px;right:30px;
 		overflow: auto;
 	}
 
-	.contenttype li {
+	.filter-contenttype li {
 		i {
 			margin-top: -2px;
 			.opacity(60);
@@ -63,6 +63,19 @@
 		.sf-checkbox-custom {
 			float: right;
 			margin: 1px 0 0;
+		}
+	}
+	.filter-general {
+		border-top: 1px dotted #ddd;
+		.urgency-data {
+			width: 230px !important;
+		}
+		.urgency-range {
+			float: right;
+			background: #e8e8e8;
+			.border-radius(3px);
+			padding: 3px 8px;
+			margin-top: -2px;
 		}
 	}
 }

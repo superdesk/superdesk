@@ -1279,9 +1279,10 @@
       z-index: 0;
       background: #dddddd;
       &.selection {
-        width: 50%;
+        height: 5px;
+		top: 8px;
         z-index: 1;
-        background: #ff0000;
+        background: #ccc;
       }
       &.selection-drag-handle {
         height: 21px;
@@ -1365,7 +1366,7 @@
   margin-bottom: 30px;
 
   .tabmodule-header {
-  	.user-select(none);
+
     position: relative;
     margin-bottom: 10px;
     &:before {
