@@ -625,59 +625,6 @@ button:focus {
 
 /* tabs */
 
-.tabmodule {
-  margin-bottom: 30px;
-
-  .tabmodule-header {
-    position: relative;
-    margin-bottom: 10px;
-    &:before {
-      content: " ";
-      position: absolute;
-      border-bottom: 1px solid #dcdcdc;
-      height: 1px;
-      top:9px;
-      left:20px;
-      right: 0px;
-    }
-    i {
-      margin-top: 2px;
-      .transition(all 0.2s ease);
-      .rotate(0deg);
-    }
-    .tabmodule-title {
-      background: @tabpane-background;
-      padding: 0 5px;
-      font-size: 11px;
-      text-transform: uppercase;
-      color: #666;
-      position: relative;
-    }
-    &:hover {
-      cursor: pointer;
-    }
-
-  }
-
-  .tabmodule-content {
-    display: none;
-    .checklist-selection li {
-      font-weight: normal;
-    }
-  }
-
-  &.open {
-    .tabmodule-header i {
-      .rotate(90deg);
-    }
-    .tabmodule-content {
-      display: block !important;
-    }
-  }
-
-}
-
-
 
 /* INFO tab */
 

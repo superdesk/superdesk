@@ -18,7 +18,30 @@
         <div class="doopen btn" ng-click="sidebarstick = !sidebarstick;sidebar=false"><i class="icon-forward-thin"></i></div>
     </div>
     <div class="content">
-        Here goes sidebar content
+        <div sd-tabmodule data-title="{{ 'Content type' | translate }}">
+            <ul class="contenttype selectionlist">
+                <li>
+                    <i class="filetype-icon-text"></i>Text 
+                    <input sd-check ng-model="search.content.text">
+                </li>
+                <li>
+                    <i class="filetype-icon-photo"></i> Images 
+                    <input sd-check ng-model="search.content.images">
+                </li>
+                <li>
+                    <i class="filetype-icon-video"></i> Video 
+                    <input sd-check ng-model="search.content.video">
+                </li>
+                <li>
+                    <i class="filetype-icon-audio"></i> Audio 
+                    <input sd-check ng-model="search.content.audio">
+                </li>
+                <li>
+                    <i class="filetype-icon-composite"></i> Packages 
+                    <input sd-check ng-model="search.content.packages">
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 

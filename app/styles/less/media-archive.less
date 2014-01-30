@@ -5,7 +5,7 @@
 	z-index: 1;
 }
 
-@archive-sidebar-width: 250px;
+@archive-sidebar-width: 340px;
 
 @archive-inner-topnav-height : 42px;
 @archive-inner-subnav-height : 50px;
@@ -19,7 +19,7 @@
 	left:-@archive-sidebar-width+48;
 	width:@archive-sidebar-width;
 	.box-sizing(border-box);
-	background-color:#e8e8e8;
+	background-color:@background-main;
 	.box-shadow(inset -1px 0px 6px 0px rgba(0,0,0,.1));
 	.transition(left 0.2s ease);
 	border-right: 1px solid #d0d0d0;
@@ -42,16 +42,28 @@
 			}
 		}
 	}
-	.content {
-		position: absolute;
-		top:50px;left:10px;bottom:0px;right:10px;
-		overflow: auto;
-	}
 	z-index: 100;
 	&.opened {
 		.box-shadow(1px 0px 5px 0px rgba(0,0,0,.2));
 		border-right: 2px solid #c0c0c0;
 		left:0;
+	}
+
+	.content {
+		position: absolute;
+		top:60px;left:10px;bottom:0px;right:10px;
+		overflow: auto;
+	}
+
+	.contenttype li {
+		i {
+			margin-top: -2px;
+			.opacity(60);
+		}
+		.sf-checkbox-custom {
+			float: right;
+			margin: 1px 0 0;
+		}
 	}
 }
 
