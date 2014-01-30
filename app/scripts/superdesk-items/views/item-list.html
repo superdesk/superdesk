@@ -67,7 +67,7 @@
                 </li>
                 <li>
                     <div class="lbl" translate>Provider</div>
-                    <div class="data"><input type="text" ng-model="search.general.provider"></div>
+                    <div class="data data-provider"><div class="dropdown source-select" sd-provider-filter data-items="items"></div></div>
                 </li>
                 <li>
                     <div class="lbl" translate>Creditline</div>
@@ -107,7 +107,6 @@
 
     <div class="archive-content-subnav" ng-show="view !== 'stats'">
         <div sd-pagination data-adapter="items"></div>
-        <div class="btn-group source-select" sd-provider-filter data-items="items"></div>
         <input type="text" sd-searchbar data-df="headline" />
     </div>
 
