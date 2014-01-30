@@ -2,5 +2,6 @@
     class="media-box media-{{item.type}}"
     ng-class="{selected: item._id === selected._id, archived: item.archived}"
     ng-include="itemTemplate"
+    sd-draggable data-item="item" data-container="'.scratchpad'"
 >
 </div>
