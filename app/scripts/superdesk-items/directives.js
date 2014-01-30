@@ -495,7 +495,9 @@ define([
                                     bar.append('text')
                                     .style('fill',colorScheme.text)
                                     .text(function(d) { return d.count + ' / ' + moment.unix(d.time / 1000).format('HH:mm') + '+'; })
-                                    .attr('transform', function(d, i) { return 'translate('+(2*barInner/3)+','+(height-5)+')rotate(270)'; });
+                                    .attr('transform', function(d, i) {
+                                        return 'translate('+(2*barInner/3)+','+(height-5)+')rotate(270)';
+                                    });
                                 }
                                 
                             } else {

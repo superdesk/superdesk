@@ -106,7 +106,11 @@ define([
             return {
                 require: 'ngModel',
                 replace: true,
-                template: '<span class="sf-toggle-custom" ng-class="{\'on-off-toggle\': isOnOff }"><span class="sf-toggle-custom-inner"></span></span>',
+                template: [
+                    '<span class="sf-toggle-custom" ng-class="{\'on-off-toggle\': isOnOff }">',
+                    '<span class="sf-toggle-custom-inner"></span>',
+                    '</span>'
+                ].join(''),
                 link: function($scope, element, attrs, ngModel) {
                     ngModel.$render = function() {
                         render(element, ngModel.$viewValue);

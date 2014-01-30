@@ -131,7 +131,8 @@ define(['angular', 'lodash'], function(angular, _) {
                 if (code === 190) { character = '.'; } // If the user presses , when the type is onkeydown
 
                 var keys = label.split('+');
-                // Key Pressed - counts the number of valid keypresses - if it is same as the number of keys, the shortcut function is invoked
+                // Key Pressed - counts the number of valid keypresses
+                // - if it is same as the number of keys, the shortcut function is invoked
                 var kp = 0;
                 // Some modifiers key
                 var modifiers = {

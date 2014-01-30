@@ -19,7 +19,8 @@ define([
                 compile: function(element, attrs, transclude) {
                     if (attrs.exclude) {
                         var excludes = attrs.exclude.split(',');
-                        attrs.$set('href', attrs.href.trim() + locationParams.makeQuery(_.omit(locationParams.params, excludes), locationParams.defaults));
+                        var query = locationParams.makeQuery(_.omit(locationParams.params, excludes), locationParams.defaults);
+                        attrs.$set('href', attrs.href.trim() + query);
                     } else {
                         attrs.$set('href', attrs.href.trim() + locationParams.getQuery());
                     }

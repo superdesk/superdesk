@@ -276,7 +276,12 @@ define(['angular', 'lodash'], function(angular, _) {
     module.directive('sdActivityItem', ['activityService', function(activityService) {
         return {
             replace : true,
-            template: '<li class="item-field" ng-click="run(activity)" title="{{activity.label}}"><i class="icon-{{ activity.icon }}" ng-show="activity.icon"></i><span translate>{{ activity.label }}</span></li>',
+            template: [
+                '<li class="item-field" ng-click="run(activity)" title="{{activity.label}}">',
+                '<i class="icon-{{ activity.icon }}" ng-show="activity.icon"></i>',
+                '<span translate>{{ activity.label }}</span>',
+                '</li>'
+            ].join(''),
             link: function(scope, elem, attrs) {
                 scope.run = function(activity) {
                     return activityService.start(activity, {data: scope.data});

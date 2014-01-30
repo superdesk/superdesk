@@ -33,5 +33,6 @@
   "forin": true,
   "noempty": true,
   "nonew": true,
-  "freeze": true
+  "freeze": true,
+  "maxlen": 140
 }
