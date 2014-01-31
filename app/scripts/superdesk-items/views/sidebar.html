@@ -1,0 +1,81 @@
+<div ng-class="{'sidebar-sticked' : sidebarstick}">
+
+	<div class="archive-sidebar" 
+		ng-mouseenter="sidebar=true"
+		ng-mouseleave="sidebar=false"
+	    ng-class="{'opened' : sidebar}" 
+	>
+	    <div class="header">
+	        <div class="title" translate>Filters</div>
+	        <div class="doopen btn" ng-click="sidebarstick = !sidebarstick;sidebar=false"><i class="icon-forward-thin"></i></div>
+	    </div>
+	    <div class="content">
+	        <div sd-tabmodule data-title="{{ 'Content type' | translate }}" data-open="true">
+	            <ul class="filter-contenttype selectionlist">
+	                <li>
+	                    <i class="filetype-icon-text"></i>Text 
+	                    <input sd-check ng-model="search.content.text">
+	                </li>
+	                <li>
+	                    <i class="filetype-icon-photo"></i> Images 
+	                    <input sd-check ng-model="search.content.images">
+	                </li>
+	                <li>
+	                    <i class="filetype-icon-video"></i> Video 
+	                    <input sd-check ng-model="search.content.video">
+	                </li>
+	                <li>
+	                    <i class="filetype-icon-audio"></i> Audio 
+	                    <input sd-check ng-model="search.content.audio">
+	                </li>
+	                <li>
+	                    <i class="filetype-icon-composite"></i> Packages 
+	                    <input sd-check ng-model="search.content.packages">
+	                </li>
+	            </ul>
+	        </div>
+	        <div class="info-tab filter-general" >
+	            <ul class="metadata">
+
+	                <li>
+	                    <div class="lbl" translate>Urgency</div>
+	                    <div class="data urgency-data">
+	                        <slider floor="1" ceiling="5" ng-model-low="search.general.urgencyfrom" ng-model-high="search.general.urgencyto" class="sd-slider urgency-slider"></slider>
+	                        <div class="urgency-range">{{search.general.urgencyfrom}} - {{search.general.urgencyto}}</div>
+	                    </div>
+
+	                </li>
+
+	                <li>
+	                    <div class="lbl" translate>Last modified</div>
+	                    <div class="data">
+	                        <div class="date">
+	                            <span class="range">
+	                                 <time>{{ search.general.versionupdated.startDate | date:'shortDate' }}</time> - <time>{{ search.general.versionupdated.endDate | date:'shortDate' }}</time>
+	                            </span>
+	                            <i class="icon-calendar" sd-date-range type="daterange" ng-model="search.general.versionupdated"></i>
+	                        </div>
+	                        
+	                    </div>
+	                </li>
+	                <li>
+	                    <div class="lbl" translate>Provider</div>
+	                    <div class="data data-provider"><div class="dropdown source-select" sd-provider-filter data-items="items"></div></div>
+	                </li>
+	                <li>
+	                    <div class="lbl" translate>Creditline</div>
+	                    <div class="data" ><input type="text" ng-model="search.general.creditline"></div>
+	                </li>
+	                <li>
+	                    <div class="lbl" translate>Place</div>
+	                    <div class="data"><input type="text" ng-model="search.general.place"></div>
+	                </li>
+	            </ul>
+	        </div>
+	    </div>
+	</div>
+
+    <div class="archive-content" ng-transclude>
+    
+    </div>
+</div>
