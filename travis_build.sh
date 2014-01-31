@@ -7,3 +7,7 @@ set -e
 
 # hint
 grunt jshint
+
+# check style
+grunt jscs
+
