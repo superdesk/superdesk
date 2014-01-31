@@ -24,7 +24,6 @@ define([
         };
     };
 
-    
     angular.module('superdesk.directives')
         /**
          * sdDebounce debounces model update.
@@ -33,8 +32,8 @@ define([
          * <input sd-debounce data-interval="1500" ng-model="keyword">
          *
          * Params:
-         * @param {number} interval
-         * @param {object} ngModel
+         * @scope {number} interval
+         * @scope {object} ngModel
          */
         .directive('sdDebounce', function() {
             return wrapper('debounce');
@@ -47,8 +46,8 @@ define([
          * <input sd-throttle data-interval="1500" ng-model="keyword">
          *
          * Params:
-         * @param {number} interval
-         * @param {object} ngModel
+         * @scope {number} interval
+         * @scope {object} ngModel
          */
         .directive('sdThrottle', function() {
             return wrapper('throttle');

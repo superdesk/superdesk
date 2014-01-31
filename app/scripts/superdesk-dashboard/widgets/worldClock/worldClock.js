@@ -14,10 +14,10 @@ define([
         }])
         .directive('sdWorldclock', ['widgetsPath', function(widgetsPath) {
             return {
-                templateUrl : widgetsPath + 'worldClock/worldClock.html',
+                templateUrl: widgetsPath + 'worldClock/worldClock.html',
                 replace: true,
                 restrict: 'A',
-                controller : 'WorldClockController'
+                controller: 'WorldClockController'
             };
         }])
         .controller('WorldClockConfigController', ['$scope', '$resource', 'tzdata',
@@ -53,11 +53,11 @@ define([
         .directive('sdClock', function() {
             var pi = Math.PI,
                 scales = {
-                    s: d3.scale.linear().domain([0, 59 + 999/1000]).range([0, 2 * pi]),
-                    m: d3.scale.linear().domain([0, 59 + 59/60]).range([0, 2 * pi]),
-                    h: d3.scale.linear().domain([0, 11 + 59/60]).range([0, 2 * pi])
+                    s: d3.scale.linear().domain([0, 59 + 999 / 1000]).range([0, 2 * pi]),
+                    m: d3.scale.linear().domain([0, 59 + 59 / 60]).range([0, 2 * pi]),
+                    h: d3.scale.linear().domain([0, 11 + 59 / 60]).range([0, 2 * pi])
                 };
-            
+
             return {
                 scope: {
                     'utc': '=',
@@ -73,7 +73,6 @@ define([
                         nightBg = '#313131',
                         nightClockhands = 'e0e0e0',
                         nightNumbers = '#848484';
-
 
                     var svg = d3.select(element[0])
                         .append('svg')
@@ -108,9 +107,9 @@ define([
                                     .endAngle(angle);
                                 return arc();
                             })
-                        .attr('class','number-lines')
+                        .attr('class', 'number-lines')
                         .style('stroke-width', 1.5);
-                    
+
                     // format data for given time
                     function getData(timeStr) {
                         var time = timeStr.split(':');

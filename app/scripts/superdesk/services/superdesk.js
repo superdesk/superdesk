@@ -146,8 +146,8 @@ define(['angular', 'lodash'], function(angular, _) {
                  * starts an activity for given action and data
                  *
                  * @param {string} action
-                 * @param {string} data type
-                 * @param {Object} extras
+                 * @param {string} type
+                 * @param {Object} data
                  * @returns {Object} promise
                  */
                 intent: function(action, type, data) {
@@ -275,7 +275,7 @@ define(['angular', 'lodash'], function(angular, _) {
      */
     module.directive('sdActivityItem', ['activityService', function(activityService) {
         return {
-            replace : true,
+            replace: true,
             template: [
                 '<li class="item-field" ng-click="run(activity)" title="{{activity.label}}">',
                 '<i class="icon-{{ activity.icon }}" ng-show="activity.icon"></i>',
@@ -321,6 +321,9 @@ define(['angular', 'lodash'], function(angular, _) {
             scope: {},
             templateUrl: 'scripts/superdesk/views/activityChooser.html',
             link: function(scope, elem, attrs) {
+                var UP = - 1,
+                    DOWN = 1;
+
                 scope.chooser = activityChooser;
                 scope.selected = null;
 
@@ -337,11 +340,11 @@ define(['angular', 'lodash'], function(angular, _) {
 
                     if (activities) {
                         keyboardManager.push('up', function() {
-                            move(-1, activities);
+                            move(UP, activities);
                         });
 
                         keyboardManager.push('down', function() {
-                            move(1, activities);
+                            move(DOWN, activities);
                         });
 
                         keyboardManager.push('enter', function() {

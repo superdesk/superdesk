@@ -11,9 +11,9 @@ define([
          *
          * Usage:
          * <div sd-widget data-widget="widget"></div>
-         * 
+         *
          * Params:
-         * @param {Object} widget
+         * @scope {Object} widget
          */
         .directive('sdWidget', ['$modal', 'widgetService', function($modal, widgetService) {
             return {
@@ -53,10 +53,10 @@ define([
          *  ng-class="{'editmode': editmode}"
          *  data-status="widgetBoxStatus"
          *  data-widgets="widgets"></div>
-         * 
+         *
          * Params:
-         * @param {Boolean} status - on/off switch for widget
-         * @param {Object} widgets
+         * @scope {Boolean} status - on/off switch for widget
+         * @scope {Object} widgets
          */
         .directive('sdGrid', function() {
             return {
@@ -138,7 +138,7 @@ define([
                     };
 
                     scope.resizeWidget = function(widget, direction) {
-                        switch(direction) {
+                        switch (direction) {
                         case 'left':
                             if (widget.sizex !== 1) {
                                 widget.sizex--;

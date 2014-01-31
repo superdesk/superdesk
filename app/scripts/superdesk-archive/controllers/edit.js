@@ -6,7 +6,7 @@ define(['angular'], function(angular) {
         $scope.articles = queue.all();
 
         $scope.slider = {
-            options : {
+            options: {
                 from: 1,
                 to: 5,
                 step: 1
@@ -21,10 +21,10 @@ define(['angular'], function(angular) {
         });
 
         $scope.save = function() {
-            $scope.item.place = $filter('splitWords')( $scope.item.place);
+            $scope.item.place = $filter('splitWords')($scope.item.place);
             em.save('archive', $scope.item).then(function(data) {
                 _.extend($scope.item, data);
-                $scope.item.place = $filter('mergeWords')( $scope.item.place);
+                $scope.item.place = $filter('mergeWords')($scope.item.place);
             });
         };
 
@@ -37,11 +37,11 @@ define(['angular'], function(angular) {
         $scope.panes = panesService.load();
 
         $scope.tabpaneIsOpen = function(side) {
-            return $filter('filterObject')($scope.panes, {position:side, selected: true, active:true}).length > 0;
+            return $filter('filterObject')($scope.panes, {position: side, selected: true, active: true}).length > 0;
         };
 
         $scope.flipActive = function(pane, side) {
-            angular.forEach($filter('filterObject')($scope.panes, {position:side, selected: true, active:true}), function(value, key) {
+            angular.forEach($filter('filterObject')($scope.panes, {position: side, selected: true, active: true}), function(value, key) {
                 value.active = (value !== pane) ? false : value.active;
             });
             pane.active = !pane.active;

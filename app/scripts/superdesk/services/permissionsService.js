@@ -5,9 +5,9 @@ define(['angular'], function(angular) {
      * Permissions service
      *
      * Permissions service checks if a given user or role is able to perform given actions.
-     * 
+     *
      * Usage:
-     * 
+     *
      * Checking user/permissions:
      *
      * permissionsService.isUserAllowed(permissions, user);
@@ -16,7 +16,7 @@ define(['angular'], function(angular) {
      *
      * @param {object} permissions - permissions object in {resource: {action: true/false, ...}, ...}
      * format.
-     * 
+     *
      * @param {object} user - user object as returned from server.
      *
      * If no user is given, current logged in user will be assumed.
@@ -29,7 +29,7 @@ define(['angular'], function(angular) {
      *
      * @param {object} permissions - permissions object in {resource: {action: true/false, ...}, ...}
      * format.
-     * 
+     *
      * @param {object} role - role object as returned from server.
      *
      */

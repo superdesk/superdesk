@@ -12,8 +12,8 @@ require.config({
         'lodash': 'bower_components/lodash/dist/lodash',
         'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext',
 
-        'file-upload' : 'bower_components/blueimp-file-upload/js/',
-        'canvas-to-blob' : 'bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
+        'file-upload': 'bower_components/blueimp-file-upload/js/',
+        'canvas-to-blob': 'bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
         'load-image': 'bower_components/blueimp-load-image/js/load-image',
         'load-image-meta': 'bower_components/blueimp-load-image/js/load-image-meta',
         'load-image-exif': 'bower_components/blueimp-load-image/js/load-image-exif',

@@ -58,7 +58,7 @@ define([
             });
 
             httpBackend.flush();
-            
+
             expect(result).toBe(true);
         });
 
@@ -76,7 +76,7 @@ define([
             });
 
             httpBackend.flush();
-            
+
             expect(result).toBe(false);
         });
 
@@ -94,7 +94,7 @@ define([
             });
 
             httpBackend.flush();
-            
+
             expect(result).toBe(true);
         });
 
@@ -112,7 +112,7 @@ define([
             });
 
             httpBackend.flush();
-            
+
             expect(result).toBe(false);
         });
 

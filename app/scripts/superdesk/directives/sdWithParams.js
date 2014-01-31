@@ -9,9 +9,9 @@ define([
          *
          * Usage:
          * <a href="#/users/{{ user._id }}" sd-with-params data-exclude="id,date"></a>
-         * 
+         *
          * Params:
-         * @param {String} dataExclude - url parameters to exclude (separated by comma).
+         * @attr {String} exclude - url parameters to exclude (separated by comma).
          */
         .directive('sdWithParams', ['locationParams', function(locationParams) {
 

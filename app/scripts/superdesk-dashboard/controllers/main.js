@@ -32,7 +32,7 @@ define(['angular'], function(angular) {
 
             $scope.addWidget = function(widget) {
                 var newWidget = angular.extend({}, widget, {row: 1, col: 1});
-                
+
                 var ids = _.keys($scope.userWidgets);
                 var lastId = _.max(ids);
                 if (lastId < 0) {

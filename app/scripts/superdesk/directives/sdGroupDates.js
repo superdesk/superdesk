@@ -10,8 +10,8 @@ define(['angular', 'moment'], function(angular, moment) {
          * <li ng-repeat="item in items" ng-model="item" sd-group-dates="updated">
          *
          * Params:
-         * @param {object} ngModel
-         * @param {string} sdGroupDates - model field to group by
+         * @scope {object} ngModel
+         * @scope {string} sdGroupDates - model field to group by
          */
         directive('sdGroupDates', function() {
             var lastDate = null;

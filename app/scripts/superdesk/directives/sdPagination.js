@@ -9,9 +9,9 @@ define([
          *
          * Usage:
          * <div sd-pagination data-model="list"></div>
-         * 
+         *
          * Params:
-         * @param {Object} dataModel - model for data
+         * @scope {Object} dataModel - model for data
          */
         .directive('sdPagination', ['locationParams', function(locationParams) {
 

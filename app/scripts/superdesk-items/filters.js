@@ -33,8 +33,8 @@ define([
             return function(word) {
                 var split = [];
                 _.forEach(word.split(','), function(w) {
-                    var trim = w.replace(/^\s+|\s+$/g,'');
-                    split.push({'name':trim});
+                    var trim = w.replace(/^\s+|\s+$/g, '');
+                    split.push({'name': trim});
                 });
                 return split;
             };
@@ -53,6 +53,4 @@ define([
                 return $filter('filter')(filtered, fields);
             };
         });
-
-
 });

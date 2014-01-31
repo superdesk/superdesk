@@ -1,7 +1,7 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    return ['$scope','$modalInstance', 'widgetService', 'widget', 'id',
+    return ['$scope', '$modalInstance', 'widgetService', 'widget', 'id',
     function ($scope, $modalInstance, widgetService, widget, id) {
         $scope.widget = widget;
         $scope.id = id;

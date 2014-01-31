@@ -5,16 +5,13 @@ define(function() {
      * sdActivityFeed is a widget rendering last activity for given user
      *
      * Usage:
-     * <div sd-activity-feed ng-model="user"></div>
-     *
-     * Params:
-     * @param {object} ngModel
+     * <div sd-activity-feed data-user="user"></div>
      */
     return ['profileService', function(profileService) {
         return {
             restrict: 'A',
             replace: true,
-            templateUrl : 'scripts/superdesk-users/views/activity-feed.html',
+            templateUrl: 'scripts/superdesk-users/views/activity-feed.html',
             scope: {
                 user: '='
             },

@@ -75,7 +75,7 @@ define(['angular', 'lodash'], function(angular, _) {
                  * @param {integer} page
                  */
                 this.page = function(page) {
-                    switch(arguments.length) {
+                    switch (arguments.length) {
                         case 0:
                             return state.get('page') || defaultParams.page;
 
@@ -93,7 +93,7 @@ define(['angular', 'lodash'], function(angular, _) {
                  * @param {string} df
                  */
                 this.search = function(q, df) {
-                    switch(arguments.length) {
+                    switch (arguments.length) {
                         case 0:
                             return state.get('q');
 
@@ -115,7 +115,7 @@ define(['angular', 'lodash'], function(angular, _) {
                  * @param {string} val
                  */
                 this.where = function(key, val) {
-                    switch(arguments.length) {
+                    switch (arguments.length) {
                         case 1:
                             return state.get(key) || null;
 
