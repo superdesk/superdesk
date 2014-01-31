@@ -52,6 +52,12 @@ define([
                 });
                 return $filter('filter')(filtered, fields);
             };
+        })
+        .filter('dateString', function($filter) {
+            return function(input) {
+                if (input !== null)
+                return $filter('date')(input.format(), 'dd/MM/yyyy');
+            };
         });
 
 

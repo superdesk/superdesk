@@ -13,24 +13,28 @@
 	        <div sd-tabmodule data-title="{{ 'Content type' | translate }}" data-open="true">
 	            <ul class="filter-contenttype selectionlist">
 	                <li>
-	                    <i class="filetype-icon-text"></i>Text 
-	                    <input sd-check ng-model="search.content.text">
+	                    <i class="filetype-icon-text"></i> {{ 'Text' | translate }} 
+	                    <input sd-check ng-model="search.type.text">
 	                </li>
 	                <li>
-	                    <i class="filetype-icon-photo"></i> Images 
-	                    <input sd-check ng-model="search.content.images">
+	                    <i class="filetype-icon-audio"></i> {{ 'Audio' | translate }} 
+	                    <input sd-check ng-model="search.type.audio">
 	                </li>
 	                <li>
-	                    <i class="filetype-icon-video"></i> Video 
-	                    <input sd-check ng-model="search.content.video">
+	                    <i class="filetype-icon-video"></i> {{ 'Video' | translate }} 
+	                    <input sd-check ng-model="search.type.video">
 	                </li>
 	                <li>
-	                    <i class="filetype-icon-audio"></i> Audio 
-	                    <input sd-check ng-model="search.content.audio">
+	                    <i class="filetype-icon-photo"></i> {{ 'Picture' | translate }} 
+	                    <input sd-check ng-model="search.type.picture">
 	                </li>
 	                <li>
-	                    <i class="filetype-icon-composite"></i> Packages 
-	                    <input sd-check ng-model="search.content.packages">
+	                    <i class="filetype-icon-graphic"></i> {{ 'Graphic' | translate }}  
+	                    <input sd-check ng-model="search.type.picture">
+	                </li>
+	                <li>
+	                    <i class="filetype-icon-composite"></i> {{ 'Composite' | translate }}  
+	                    <input sd-check ng-model="search.type.composite">
 	                </li>
 	            </ul>
 	        </div>
@@ -51,9 +55,9 @@
 	                    <div class="data">
 	                        <div class="date">
 	                            <span class="range">
-	                                 <time>{{ search.general.versionupdated.startDate | date:'shortDate' }}</time> - <time>{{ search.general.versionupdated.endDate | date:'shortDate' }}</time>
+	                                 <time>{{ search.general.versioncreated.startDate | dateString }}</time> - <time>{{ search.general.versioncreated.endDate | dateString }}</time>
 	                            </span>
-	                            <i class="icon-calendar" sd-date-range type="daterange" ng-model="search.general.versionupdated"></i>
+	                            <i class="icon-calendar" sd-date-range type="daterange" ng-model="search.general.versioncreated"></i>
 	                        </div>
 	                        
 	                    </div>
@@ -76,6 +80,6 @@
 	</div>
 
     <div class="archive-content" ng-transclude>
-    
+
     </div>
 </div>
