@@ -10,7 +10,14 @@ define([
                 scope: {update: '=', placeholder: '='},
                 link: function(scope, element, attrs) {
                     element.sortable({
+                        tolerance: 'intersect',
                         placeholder: scope.placeholder,
+                        forcePlaceholderSize: true,
+                        forceHelperSize: true,
+                        axis: 'x',
+                        start: function(event, ui) {
+                            $(event.target).data("ui-sortable").floating = true;
+                        },
                         update: function(event, ui) {
                             scope.update();
                         }
@@ -38,6 +45,7 @@ define([
                 scope: {update: '='},
                 link: function(scope, element, attrs) {
                     element.droppable({
+                        accept: ':not(.ui-sortable-helper)',
                         drop: function(event, ui) {
                             scope.update(dragDropService.item);
                             dragDropService.item = null;

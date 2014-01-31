@@ -68,35 +68,6 @@ define([
 
         this.load();
     }]);
-    app.directive('sdScratchpadAdd', ['scratchpadService', function(scratchpadService) {
-        return {
-            replace: true,
-            templateUrl: 'scripts/superdesk-scratchpad/views/scratchpadAdd.html',
-            scope: {
-                scratchpadItem: '='
-            },
-            link: function(scope, element, attrs) {
-                scope.check = function() {
-                    if (scope.scratchpadItem === null) {
-                        return false;
-                    }
-                    return scratchpadService.checkItemExists(scope.scratchpadItem);
-                };
-
-                scope.addRemove = function() {
-                    return (scope.check()) ? scope.remove() : scope.add();
-                };
-
-                scope.add = function() {
-                    return scratchpadService.addItem(scope.scratchpadItem);
-                };
-
-                scope.remove = function() {
-                    return scratchpadService.removeItem(scope.scratchpadItem);
-                };
-            }
-        };
-    }]);
     app.directive('sdScratchpad', ['scratchpadService', function(scratchpadService){
         return {
             templateUrl: 'scripts/superdesk-scratchpad/views/scratchpad.html',
@@ -110,7 +81,6 @@ define([
                 };
                 scope.sort = function() {
                     var newSort = _.pluck(_.pluck(element.find('div[data-index]'), 'dataset'), 'index');
-                    console.log(newSort);
                     scratchpadService.sort(newSort);
                 };
                 scope.drop = function(item) {
