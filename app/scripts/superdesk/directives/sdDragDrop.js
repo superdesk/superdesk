@@ -12,9 +12,6 @@ define([
                     element.sortable({
                         tolerance: 'intersect',
                         placeholder: scope.placeholder,
-                        forcePlaceholderSize: true,
-                        forceHelperSize: true,
-                        axis: 'x',
                         start: function(event, ui) {
                             $(event.target).data("ui-sortable").floating = true;
                         },
