@@ -7,56 +7,9 @@ define([
     var app = angular.module('superdesk.scratchpad', []);
     app.service('scratchpadService', ['$q', 'storage', 'server', function($q, storage, server) {
         this.listeners = [];
-        this.save = function() {
-            storage.setItem('scratchpad:items', this.items, true);
-            this.update();
-        };
-        this.load = function() {
-            this.items = storage.getItem('scratchpad:items');
-            if (!this.items) {
-                this.items = [];
-                this.save();
-            }
-            this.update();
-        };
-        this.getItems = function() {
-            return this.items;
-        };
-        this.getItemsResolved = function() {
-            var delay = $q.defer();
+        this.data = {};
+        this.itemList = [];
 
-            var promises = [];
-            _.forEach(this.items, function(item) {
-                promises.push(server._http('get', server._wrapUrl(item)));
-            });
-
-            $q.all(promises).then(function(response) {
-                delay.resolve(response);
-            });
-
-            return delay.promise;
-        };
-        this.addItem = function(item) {
-            this.removeItem(item);
-            this.items.push(item._links.self.href);
-            this.save();
-        };
-        this.removeItem = function(item) {
-            this.items = _.without(this.items, item._links.self.href);
-            this.save();
-        };
-        this.checkItemExists = function(item) {
-            return (this.items.indexOf(item._links.self.href) !== -1);
-        };
-        this.sort = function(newSort) {
-            var self = this;
-            var items = [];
-            _.forEach(newSort, function(index) {
-                items.push(self.items[index]);
-            });
-            this.items = items;
-            this.save();
-        };
         this.addListener = function(listener) {
             this.listeners.push(listener);
         };
@@ -65,8 +18,65 @@ define([
                 listener();
             });
         };
+        this.saveItemList = function() {
+            storage.setItem('scratchpad:items', this.itemList, true);
+            this.update();
+        };
+        this.loadItemList = function() {
+            var itemList = storage.getItem('scratchpad:items');
+            if (itemList) {
+                this.itemList = itemList;
+                this.update();
+            }
+        };
+        this.addItem = function(item) {
+            this.removeItem(item);
+            this.itemList.push(item._links.self.href);
+            this.data[item._links.self.href] = item;
+            this.saveItemList();
+        };
+        this.removeItem = function(item) {
+            this.itemList = _.without(this.itemList, item._links.self.href);
+            this.saveItemList();
+        };
+        this.checkItemExists = function(item) {
+            return (this.itemList.indexOf(item._links.self.href) !== -1);
+        };
+        this.sort = function(newSort) {
+            var self = this;
+            var itemList = [];
+            _.forEach(newSort, function(index) {
+                itemList.push(self.itemList[index]);
+            });
+            this.itemList = itemList;
+            this.saveItemList();
+        };
+        this.getItems = function() {
+            var self = this;
+            var delay = $q.defer();
+            var promises = [];
 
-        this.load();
+            _.forEach(this.itemList, function(href) {
+                if (!self.data[href]) {
+                    promises.push(server._http('get', server._wrapUrl(href)));
+                }
+            });
+
+            $q.all(promises).then(function(response) {
+                _.forEach(response, function(item) {
+                    self.data[item._links.self.href] = item;
+                });
+                var items = [];
+                _.forEach(self.itemList, function(href) {
+                    items.push(self.data[href]);
+                });
+                delay.resolve(items);
+            });
+
+            return delay.promise;
+        };
+
+        this.loadItemList();
     }]);
     app.directive('sdScratchpad', ['scratchpadService', function(scratchpadService){
         return {
@@ -74,8 +84,9 @@ define([
             replace: true,
             link: function(scope, element, attrs) {
                 scope.status = false;
+                scope.items = [];
                 scope.update = function() {
-                    scratchpadService.getItemsResolved().then(function(items) {
+                    scratchpadService.getItems().then(function(items) {
                         scope.items = items;
                     });
                 };
