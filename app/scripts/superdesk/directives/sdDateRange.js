@@ -9,7 +9,7 @@ define(['angular', 'moment'], function(angular, moment) {
          * <input sd-date-range ng-model="mydate"></span>
          *
          * Params:
-         * @param {Object} ngModel
+         * @scope {Object} ngModel
          *
          */
         directive('sdDateRange', function($compile, $parse) {
