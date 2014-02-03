@@ -8,9 +8,8 @@
     </a>
 </div>
 
-<section class="archive-main-section">
+<section sd-sidebar-layout  class="archive-main-section">
 
-<div class="archive-content">
     <div class="archive-content-topnav">
         <ul class="basket-tabs pull-left clearfix">
             <li><a href="" class="active">Basket one <b>(108)</b></a></li>
@@ -35,7 +34,6 @@
 
     <div class="archive-content-subnav" ng-show="view !== 'stats'">
         <div sd-pagination data-adapter="items"></div>
-        <div class="btn-group source-select" sd-provider-filter data-items="items"></div>
         <input type="text" sd-searchbar data-df="headline" />
     </div>
 
@@ -65,6 +63,5 @@
             <div sd-pie-chart data-terms="items._facets.subject.terms" data-head="{{ 'Subject phrases'| translate }}" data-colors="superdesk" data-x="2" data-y="2"></div>
         </div>
     </div>
-</div>
 
 </section>

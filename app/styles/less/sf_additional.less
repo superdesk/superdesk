@@ -627,8 +627,7 @@
 	li {
 		line-height: 16px;
 		height: 16px;
-		padding: 3px;
-		padding-left: 10px;
+		padding: 4px;
 		margin-bottom: 3px;
 		.border-radius(3px);
 		background: #e8e8e8;
@@ -1280,9 +1279,10 @@
       z-index: 0;
       background: #dddddd;
       &.selection {
-        width: 50%;
+        height: 5px;
+		top: 8px;
         z-index: 1;
-        background: #ff0000;
+        background: #ccc;
       }
       &.selection-drag-handle {
         height: 21px;
@@ -1358,4 +1358,59 @@
 	.btn {
 		.box-shadow(inset 0 1px 0 #707070);
 	}
+}
+
+//sidepanes and sidetabs module with title, toggle...
+
+.tabmodule {
+  margin-bottom: 30px;
+
+  .tabmodule-header {
+
+    position: relative;
+    margin-bottom: 10px;
+    &:before {
+      content: " ";
+      position: absolute;
+      border-bottom: 1px solid #dcdcdc;
+      height: 1px;
+      top:9px;
+      left:20px;
+      right: 0px;
+    }
+    i {
+      margin-top: 2px;
+      .transition(all 0.2s ease);
+      .rotate(0deg);
+    }
+    .tabmodule-title {
+      background: @tabpane-background;
+      padding: 0 5px;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #666;
+      position: relative;
+    }
+    &:hover {
+      cursor: pointer;
+    }
+
+  }
+
+  .tabmodule-content {
+    display: none;
+    .checklist-selection li {
+      font-weight: normal;
+    }
+  }
+
+  &.open {
+    .tabmodule-header i {
+      .rotate(90deg);
+    }
+    .tabmodule-content {
+      display: block !important;
+    }
+  }
+
 }

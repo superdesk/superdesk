@@ -6,7 +6,7 @@ before_install:
     - npm install -g grunt-cli
 
 before_script:
-    - bower install
+    - bower install --force-latest 
 
 cache:
     - node_modules

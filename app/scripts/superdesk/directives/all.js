@@ -15,5 +15,6 @@ define([
     './sdPermissions',
     './sdUserAvatar',
     './menu',
-    './listView'
+    './listView',
+    './sdDateRange'
 ], function() {});

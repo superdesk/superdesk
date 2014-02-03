@@ -259,6 +259,18 @@ define([
                 }
             };
         }])
+        .directive('sdProviderMenu', ['$routeParams', '$location', 'providerRepository',
+        function($routeParams, $location, providerRepository) {
+            return {
+                scope: {items: '=', selected: '='},
+                templateUrl: 'scripts/superdesk-items/views/provider-menu.html',
+                link: function(scope, element, attrs) {
+                    scope.setProvider = function(provider) {
+                        scope.selected = provider.term;
+                    };
+                }
+            };
+        }])
         .directive('sdPieChart', ['colorSchemes', function(colorSchemes) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/chartBox.html',
@@ -541,7 +553,19 @@ define([
                 }
             };
         })
-        .directive('sdWorkflow', ['superdesk', 'workqueue', function(superdesk, queue) {
+        .directive('sdSidebarLayout', function() {
+            return {
+                transclude: true,
+                templateUrl: 'scripts/superdesk-items/views/sidebar.html',
+                link: function(scope, elem, attrs) {
+
+                    scope.sidebar = false;
+                    scope.sidebarstick = true;
+
+                }
+            };
+        })
+		.directive('sdWorkflow', ['superdesk', 'workqueue', function(superdesk, queue) {
             return {
                 scope: true,
                 link: function(scope, elem, attrs) {

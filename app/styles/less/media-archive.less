@@ -5,7 +5,7 @@
 	z-index: 1;
 }
 
-@archive-sidebar-width: 235px;
+@archive-sidebar-width: 350px;
 
 @archive-inner-topnav-height : 42px;
 @archive-inner-subnav-height : 50px;
@@ -13,59 +13,109 @@
 @archive-sidepreview-width : 440px;
 
 
-.archive-sidebar-left {
+.archive-sidebar {
 	position:absolute;
-	top:0px;left:0px;bottom:0px;
+	top:0px;bottom:0px;
+	left:-@archive-sidebar-width+48;
 	width:@archive-sidebar-width;
-	height:auto;
-	background-color:#d2d2d2;
-	padding: 10px 20px 10px;
-	
-	&.hidden {
-		display:none;
-	}
-	
-	.module {
-		width:100%;
-		height:auto;
-		overflow:visible;
-		margin-bottom:20px;
-		position:relative;
-		float:left;
-		font-size:12px;
-		.header {
-			.border-radius(4px);
-			width:auto;
-			height:24px;
-			margin-bottom:10px;
-			padding-left:5px;
-			line-height:24px;
-			font-weight:bold;
-			font-size:13px;
-			color:#373737;
-			cursor:pointer;
-			background: #bbb;
+	.box-sizing(border-box);
+	background-color:#f4f4f4;
+	.box-shadow(inset -1px 0px 6px 0px rgba(0,0,0,.1));
+	.transition(left 0.2s ease);
+	border-right: 1px solid #d0d0d0;
+	.header {
+		.title {
+			padding: 10px;
+			font-size: 15px;
+			.text-semibold();
+			line-height: 28px;
+		}
+		.doopen {
+			position: absolute;
+			top: 9px;
+			right: 8px;
+			padding: 4px 8px;
 			i {
-				margin-right:7px;
+				.opacity(60);
+				.rotate(0);
+				.transition(all 0.3s ease);
+			}
+		}
+	}
+	z-index: 100;
+	&.opened {
+		.box-shadow(1px 0px 5px 0px rgba(0,0,0,.2));
+		border-right: 2px solid #c0c0c0;
+		left:0;
+	}
+
+	.content {
+		position: absolute;
+		top:60px;left:20px;bottom:0px;right:30px;
+		overflow: auto;
+	}
+
+	.filter-contenttype li {
+		i {
+			margin-top: -2px;
+			.opacity(60);
+		}
+		.sf-checkbox-custom {
+			float: right;
+			margin: 1px 0 0;
+		}
+	}
+	.filter-general {
+		border-top: 1px dotted #ddd;
+		.urgency-data {
+			width: 230px !important;
+		}
+		.urgency-range {
+			float: right;
+			background: #e8e8e8;
+			.border-radius(3px);
+			padding: 3px 8px;
+			margin-top: -2px;
+		}
+		.date {
+			.range {
+				float: left;
+				width: 170px;
+				overflow: hidden;
+			}
+			i {
+				margin-top: 2px;
+				float: right;
+				&:hover {
+					cursor: pointer;
+				}
 			}
 			
 		}
-		.module-row {
-			height:auto;
-			width:100%;
-			margin-bottom:3px;
-			position:relative;
-			float:left;
-			line-height:20px;
-			label { 
-				display:inline-block;
-				width:100%;
-				&.half {
-					width:49%;
-				}
+		.data-provider {
+			overflow: visible !important;
+			.sf-dropdown li i {
+				font-size: 11px;
+				color: #787878;
+				margin-left: 5px;
 			}
 		}
-		
+	}
+}
+
+.sidebar-sticked {
+	.archive-sidebar {
+		left:0 !important;
+		.doopen i {
+			.rotate(-180deg);
+		}
+		&.opened {
+			.box-shadow(inset -1px 0px 6px 0px rgba(0,0,0,.1));
+			border-right: 1px solid #d0d0d0;
+		}
+	}
+	.archive-content {
+		left: @archive-sidebar-width !important;	
 	}
 }
 
@@ -75,8 +125,7 @@
 	left:@tablist-width;
 	height:auto;
 	background-color:#f8f8f8;
-	.box-shadow(-1px 0px 6px 0px rgba(0,0,0,.1));
-	border-left: 1px solid #bbb;
+	.transition(left 0.2s ease);
 	&.wide {
 		left:10px;
 	}
@@ -220,28 +269,6 @@
 		}
 	}
 }
-
-.source-select {
-	float: left;
-	margin-right: 20px;
-	.dropdown-toggle {
-		text-align: left;	
-		width:200px;
-		height: 22px;
-		line-height: 22px;
-		.caret {
-			float: right;
-		}
-	}
-}
-.source-select [class^="dropdown-icon-"] {
-	margin: -2px 8px 0 10px;
-}
-.source-select .sf-dropdown {
-	width:200px;
-}
-
-
 
 
 /* ====================================== */
@@ -516,7 +543,7 @@
 
 @rightfield-width:200px;
 
-.mlist-view {
+.mlist-view, .compact-view {
 	> div:first-child {
 		.media-box {
 			border-top: 3px solid #ebebeb;
@@ -744,28 +771,32 @@
 			background: #b70000;
 		}
 
-		&.compact-item {
-			.loading-status {
-				background-size: 28px;
-			}
-			.list-field {
-				padding: 12px 11px;
-			}
-			.list-field.type-icon {
-				height: 16px;
-			}
-			h5 {
-				margin-left: 126px;
-				.status-label {
-					margin-top: 1px;
-				}
-			}
-
-		}
-
 	}
 	
 }
+
+.compact-view {
+
+	.loading-status {
+		background-size: 28px !important;
+	}
+	.list-field {
+		padding: 12px 11px !important;
+		&.type-icon {
+			height: 16px !important;
+		}
+	}
+	.item-field {
+		padding: 12px 11px !important;
+	}
+	h5 {
+		margin-left: 126px !important;
+		.status-label {
+			margin-top: 1px !important;
+		}
+	}
+
+} 
 
 /* ====================================== */
   // media box HOVER grid view 
