@@ -24,7 +24,11 @@ define(['angular','moment'], function(angular,moment) {
 					options.separator = $attributes.separator || ' - ';
 					options.minDate = $attributes.minDate && moment($attributes.minDate);
 					options.maxDate = $attributes.maxDate && moment($attributes.maxDate);
-					options.dateLimit = $attributes.limit && moment.duration.apply(this, $attributes.limit.split(' ').map(function (elem, index) { return index === 0 && parseInt(elem, 10) || elem; }) );
+					options.dateLimit = $attributes.limit && moment.duration.apply(this, $attributes.limit.split(' ').map(
+						function (elem, index) {
+							return index === 0 && parseInt(elem, 10) || elem;
+						})
+					);
 					options.ranges = $attributes.ranges && $parse($attributes.ranges)($scope);
 
 					function format(date) {
