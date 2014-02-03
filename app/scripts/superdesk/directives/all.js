@@ -14,6 +14,7 @@ define([
     './sdSelect',
     './sdPermissions',
     './sdUserAvatar',
+    './sdDragDrop',
     './menu',
     './listView',
     './sdDateRange'

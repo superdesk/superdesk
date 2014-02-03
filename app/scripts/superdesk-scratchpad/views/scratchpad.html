@@ -1,0 +1,17 @@
+<div class="scratchpad mobile-hide" sd-droppable data-update="drop">
+
+    <div class="header" ng-class="{'opened': !status, 'closed': status}">
+        <div class="title">SCRATCHPAD</div>
+        <div class="info"><span class="badge">{{items.length}}</span> <span translate>items</span></div>
+        <a class="scratchpad-openclose pull-right" href="" ng-click="status = !status"></a>   
+    </div>
+    <div class="content" style="height: 260px;" ng-show="status">
+
+        <div class="grid-view" sd-sortable data-update="sort" data-placeholder="'media-box'">
+            <div ng-repeat="item in items" data-index="{{$index}}" style="float: left;">
+                <div sd-media-box></div>
+            </div>
+        </div>
+
+    </div>
+</div>

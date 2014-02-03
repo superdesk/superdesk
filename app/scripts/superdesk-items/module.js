@@ -74,6 +74,20 @@ define([
                 templateUrl: 'scripts/superdesk-items/views/settings/settings.html',
                 controller: require('./controllers/settings'),
                 category: superdesk.MENU_SETTINGS
+            })
+            .activity('add-scratchpad', {
+                label: gettext('Add to scratchpad'),
+                icon: 'plus',
+                controller: ['scratchpadService', 'data', function(scratchpadService, data) {
+                    if (scratchpadService.checkItemExists(data)) {
+                        scratchpadService.removeItem(data);
+                    } else {
+                        scratchpadService.addItem(data);
+                    }
+                }],
+                filters: [
+                    {action: 'list', type: 'ingest'}
+                ]
             });
     }]);
 

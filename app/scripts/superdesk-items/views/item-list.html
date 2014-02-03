@@ -44,7 +44,11 @@
         data-select="preview(item)"
         data-extras="{view: view}"
         sd-shadow
-    ><div sd-media-box></div></div>
+    >
+        <div style="float: left;" sd-draggable data-item="item" data-container="'.scratchpad'">
+            <div sd-media-box></div>
+        </div>
+    </div>
 
     <div
         ng-show="view !== 'stats'"

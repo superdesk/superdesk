@@ -19,7 +19,8 @@
     "blueimp-file-upload": "~9.5.2",
     "gridster": "~0.2.1",
     "d3": "3.4.1",
-    "ng-aloha-editor": "*"
+    "ng-aloha-editor": "*",
+    "jquery-ui": "*"
   },
   "resolutions": {
     "jquery": "2.1.0",

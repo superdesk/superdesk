@@ -9,6 +9,7 @@ define([
     './entity',
     './server',
     './superdesk',
-    './data'
+    './data',
+    './dragDropService'
 ], function() {
 });

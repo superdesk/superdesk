@@ -12,6 +12,8 @@ require.config({
         'lodash': 'bower_components/lodash/dist/lodash',
         'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext',
 
+        'jquery-ui': 'bower_components/jquery-ui/ui/jquery-ui',
+
         'file-upload': 'bower_components/blueimp-file-upload/js/',
         'canvas-to-blob': 'bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
         'load-image': 'bower_components/blueimp-load-image/js/load-image',
@@ -74,6 +76,9 @@ require.config({
         },
         'ng-aloha-editor': {
             deps: ['angular']
+        },
+        'jquery-ui': {
+            deps: ['jquery']
         }
     }
 });
@@ -103,7 +108,8 @@ define([
     'angular-route',
     'angular-gettext',
     'angular-resource',
-    'gridster'
+    'gridster',
+    'jquery-ui'
 ], function($, _, angular) {
     'use strict';
 
@@ -140,7 +146,8 @@ define([
                 'users',
                 'desks',
                 'archive',
-                'items'
+                'items',
+                'scratchpad'
             ];
 
             var deps = [];
