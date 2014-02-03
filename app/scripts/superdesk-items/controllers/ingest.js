@@ -61,12 +61,6 @@ define(['angular', 'moment'], function(angular, moment) {
                     filters.push({range:rangefilter});
                 }
             }
-            
-            function chainOr(arr) {
-                if (arr.length>0) {
-                    filters.push({or : arr});
-                }
-            }
 
             function chain(val,key) {
                 if (val !== null && val!=='') {
@@ -80,12 +74,14 @@ define(['angular', 'moment'], function(angular, moment) {
             var contenttype = [];
             _.forEach($scope.search.type,function(checked, key) {
                 if (checked) {
-                    contenttype.push({term:{type : key}});
+                    contenttype.push(key);
                 }
             });
-
             //add content type filters as OR filters
-            chainOr(contenttype);
+            if (contenttype.length > 0) {
+                filters.push({terms: {type: contenttype}});
+            }
+
 
             //process general filters
             _.forEach($scope.search.general,function(val, key) {
