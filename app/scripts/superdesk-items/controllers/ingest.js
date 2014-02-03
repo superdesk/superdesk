@@ -61,7 +61,7 @@ define(['angular', 'moment'], function(angular, moment) {
                     filters.push({range:rangefilter});
                 }
             }
-
+            
             function chainOr(arr) {
                 if (arr.length>0) {
                     filters.push({or : arr});
@@ -102,26 +102,38 @@ define(['angular', 'moment'], function(angular, moment) {
         };
 
 
-        $scope.$watch('search', function(newVal,oldVal){
-            createFilters();
-        },true);
+        var createFiltersWrap = _.throttle(createFilters, 1000);
+        $scope.$watch('search', function(){
+            createFiltersWrap();
+        },true);    //deep watch
 
+
+        //date filter handling
         $scope.$watch('versioncreated', function(newVal){
             if (newVal.init === true) {
                 if (newVal.startDate !== null && newVal.endDate !== null) {
-                    var start = $filter('dateString')($scope.versioncreated.startDate);
-                    var end = $filter('dateString')($scope.versioncreated.endDate);
+                    var start = $filter('dateString')(newVal.startDate);
+                    var end = $filter('dateString')(newVal.endDate);
                     $scope.search.general.versioncreated = {from:start, to:end };
                 }
             }
         });
-        $scope.$watchCollection('urgency',function(newVal){
-            var ufrom = Math.round(newVal.from,10);
-            var uto = Math.round(newVal.to,10);
+
+
+        //urgency filter handling
+        function handleUrgency(urgency) {
+            var ufrom = Math.round(urgency.from);
+            var uto = Math.round(urgency.to);
             if (ufrom !== 1 || uto !== 5) {
                 $scope.search.general.urgency.from = ufrom;
                 $scope.search.general.urgency.to = uto;
             }
+        }
+        
+        var handleUrgencyWrap = _.throttle(handleUrgency, 2000);
+        
+        $scope.$watchCollection('urgency',function(newVal){
+            handleUrgencyWrap(newVal);
         });
         
     }];

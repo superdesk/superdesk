@@ -261,6 +261,18 @@ define([
                 }
             };
         }])
+        .directive('sdProviderMenu', ['$routeParams', '$location', 'providerRepository',
+        function($routeParams, $location, providerRepository) {
+            return {
+                scope: {items: '=', selected: '='},
+                templateUrl: 'scripts/superdesk-items/views/provider-menu.html',
+                link: function(scope, element, attrs) {
+                    scope.setProvider = function(provider) {
+                        scope.selected = provider.term;
+                    };
+                }
+            };
+        }])
         .directive('sdPieChart', ['colorSchemes', function(colorSchemes) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/chartBox.html',
