@@ -1,4 +1,4 @@
-define(['angular','moment'], function(angular,moment) {
+define(['angular', 'moment'], function(angular, moment) {
     'use strict';
 
     angular.module('superdesk.directives').
@@ -9,8 +9,8 @@ define(['angular','moment'], function(angular,moment) {
          * <input sd-date-range ng-model="mydate"></span>
          *
          * Params:
-         * @param {object} ngModel - object containing startDate, and endDate, 
-         *                           which have datetime string in utc (moment())
+         * @param {object} ngModel - object containing startDate, and endDate,  which have datetime string in utc (moment())
+         *                          
          */
         directive('sdDateRange', function($compile, $parse) {
 
@@ -60,7 +60,7 @@ define(['angular','moment'], function(angular,moment) {
 
 					$scope.$watch($attributes.ngModel, function (modelValue) {
 						if (!modelValue || (!modelValue.startDate)) {
-							ngModel.$setViewValue({ startDate: moment().startOf('day'), endDate: moment().startOf('day'), init:false });
+							ngModel.$setViewValue({startDate: moment().startOf('day'), endDate: moment().startOf('day'), init: false});
 							return;
 						}
 						$element.data('daterangepicker').startDate = modelValue.startDate;
@@ -72,7 +72,7 @@ define(['angular','moment'], function(angular,moment) {
 
 					$element.daterangepicker(options, function(start, end) {
 						$scope.$apply(function () {
-							ngModel.$setViewValue({ startDate: start, endDate: end, init:true});
+							ngModel.$setViewValue({startDate: start, endDate: end, init: true});
 							ngModel.$render();
 						});
 					});

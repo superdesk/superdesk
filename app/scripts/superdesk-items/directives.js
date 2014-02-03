@@ -558,7 +558,7 @@ define([
                 transclude: true,
                 templateUrl: 'scripts/superdesk-items/views/sidebar.html',
                 link: function(scope, elem, attrs) {
-                    
+
                     scope.sidebar = false;
                     scope.sidebarstick = true;
 
