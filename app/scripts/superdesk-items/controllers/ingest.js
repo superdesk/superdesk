@@ -63,7 +63,7 @@ define(['angular', 'moment'], function(angular, moment) {
             }
 
             function chain(val, key) {
-                if (val !== null && val!=='') {
+                if (val !== null && val !== '') {
                     var t = {};
                     t[key] = val;
                     filters.push({term: t});
@@ -121,7 +121,7 @@ define(['angular', 'moment'], function(angular, moment) {
                 $scope.search.general.urgency.to = uto;
             }
         }
-        
+
         var handleUrgencyWrap = _.throttle(handleUrgency, 2000);
 
         $scope.$watchCollection('urgency', function(newVal) {

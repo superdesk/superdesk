@@ -9,8 +9,8 @@ define(['angular', 'moment'], function(angular, moment) {
          * <input sd-date-range ng-model="mydate"></span>
          *
          * Params:
-         * @param {object} ngModel - object containing startDate, and endDate,  which have datetime string in utc (moment())
-         *                          
+         * @param {object} ngModel
+         *
          */
         directive('sdDateRange', function($compile, $parse) {
 
