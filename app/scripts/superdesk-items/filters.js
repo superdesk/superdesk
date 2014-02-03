@@ -44,7 +44,7 @@ define([
                 return $sce.trustAsResourceUrl(value);
             };
         }]).
-        filter('filterObject', function($filter) {
+        filter('filterObject', ['$filter', function($filter) {
             return function(items, fields) {
                 var filtered = [];
                 angular.forEach(items, function(item) {
@@ -52,12 +52,12 @@ define([
                 });
                 return $filter('filter')(filtered, fields);
             };
-        })
-        .filter('dateString', function($filter) {
+        }])
+        .filter('dateString', ['$filter', function($filter) {
             return function(input) {
                 if (input !== null) {
                     return $filter('date')(input.format(), 'yyyy-MM-dd');
                 }
             };
-        });
+        }]);
 });

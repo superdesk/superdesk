@@ -17,7 +17,8 @@ module.exports = {
                 'superdesk-settings/module',
                 'superdesk-dashboard/module',
                 'superdesk-desks/module',
-                'superdesk-archive/module'
+                'superdesk-archive/module',
+                'superdesk-scratchpad/module'
             ]
         }
     }

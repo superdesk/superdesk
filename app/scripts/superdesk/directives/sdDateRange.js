@@ -12,7 +12,7 @@ define(['angular', 'moment'], function(angular, moment) {
          * @scope {Object} ngModel
          *
          */
-        directive('sdDateRange', function($compile, $parse) {
+        directive('sdDateRange', ['$compile', '$parse', function($compile, $parse) {
 
             return {
                 restrict: 'A',
@@ -78,5 +78,5 @@ define(['angular', 'moment'], function(angular, moment) {
 					});
 				}
             };
-        });
+        }]);
 });
