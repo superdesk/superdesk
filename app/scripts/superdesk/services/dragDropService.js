@@ -4,5 +4,5 @@ define(['angular'], function(angular) {
     angular.module('superdesk.services').
         service('dragDropService', [function() {
             this.item = null;
-        }])
+        }]);
 });

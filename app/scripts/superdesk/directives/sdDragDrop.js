@@ -13,7 +13,7 @@ define([
                         tolerance: 'intersect',
                         placeholder: scope.placeholder,
                         start: function(event, ui) {
-                            $(event.target).data("ui-sortable").floating = true;
+                            $(event.target).data('ui-sortable').floating = true;
                         },
                         update: function(event, ui) {
                             scope.update();
@@ -32,7 +32,7 @@ define([
                         appendTo: scope.container,
                         start: function(event, ui) {
                             dragDropService.item = scope.item;
-                        },
+                        }
                     });
                 }
             };
