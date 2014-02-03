@@ -3,6 +3,4 @@ define([
     'angular-mocks'
 ], function(scratchpadService) {
     'use strict';
-
-    
 });

@@ -2,7 +2,7 @@ define(['lodash', 'angular'], function(_, angular) {
     'use strict';
 
     angular.module('superdesk.scratchpad.directives', [])
-        .directive('sdScratchpad', ['scratchpadService', function(scratchpadService){
+        .directive('sdScratchpad', ['scratchpadService', function(scratchpadService) {
             return {
                 templateUrl: 'scripts/superdesk-scratchpad/views/scratchpad.html',
                 replace: true,
@@ -30,5 +30,5 @@ define(['lodash', 'angular'], function(_, angular) {
                     scope.update();
                 }
             };
-    }]);
+        }]);
 });

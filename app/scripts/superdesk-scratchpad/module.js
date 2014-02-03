@@ -6,7 +6,7 @@ define([
 ], function(angular, _) {
     'use strict';
 
-    var app = angular.module('superdesk.scratchpad', [
+    angular.module('superdesk.scratchpad', [
         'superdesk.scratchpad.services',
         'superdesk.scratchpad.directives'
     ]);
