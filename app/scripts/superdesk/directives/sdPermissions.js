@@ -12,18 +12,18 @@ define([
          * Usage:
          * Checking for a user:
          * <div sd-permissions data-permission="users-manage" data-user="user" data-model="model" ng-show="model"></div>
-         * 
+         *
          * Checking for a role:
          * <div sd-permissions data-permission="users-manage" data-role="role" data-model="model" ng-show="model"></div>
-         * 
+         *
          * Checking for current user (default if no user/role specified):
          * <div sd-permissions data-permission="users-manage" data-model="model" ng-show="model"></div>
-         * 
+         *
          * Params:
-         * @param {Object} dataModel - model to assign permission to
-         * @param {String} dataPermission - id of required permission.
-         * @param {Object} dataRole - role to check
-         * @param {Object} dataUser - user to check
+         * @scope {Object} dataModel - model to assign permission to
+         * @scope {String} dataPermission - id of required permission.
+         * @scope {Object} dataRole - role to check
+         * @scope {Object} dataUser - user to check
          */
         .directive('sdPermissions', ['permissions', 'permissionsService', function(permissions, permissionsService) {
             return {

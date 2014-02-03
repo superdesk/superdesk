@@ -7,7 +7,7 @@ define(['lodash', 'angular'], function(_, angular) {
 
             this.load = function() {
                 var userWidgets = storage.getItem(widgetKey) || {};
-                
+
                 angular.forEach(userWidgets, function(userWidget, id) {
                     userWidgets[id] = angular.extend({}, superdesk.widgets[userWidget.wcode], userWidget);
                 });

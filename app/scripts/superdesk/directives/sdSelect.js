@@ -5,19 +5,7 @@ define([
     'use strict';
 
     angular.module('superdesk.directives')
-        /**
-         * sdSelect renders custom inpu type select with ability to select multiple items
-         *
-         * Usage:
-         * <sd-select multiple="true" ng-model="model" options="c.name for c in collection" change="action()"></sd-multiselect>
-         * 
-         * Params:
-         * @param {boolean} multiple    - choose wheather to use in multiple or single select
-         * @param {array} ngModel       - model for select box
-         * @param {expression} options  - expression for list items model, and values
-         * @param {function} change     - trigger function on change event 
-         * @param {boolean} showfilter  - choose wheather the filter is shown or not
-         */
+
     .factory('optionParser', ['$parse', function ($parse) {
 
         var TYPEAHEAD_REGEXP = /^\s*(.*?)(?:\s+as\s+(.*?))?\s+for\s+(?:([\$\w][\$\w\d]*))\s+in\s+(.*)$/;
@@ -42,6 +30,12 @@ define([
         };
     }])
 
+    /**
+     * sdSelect renders custom inpu type select with ability to select multiple items
+     *
+     * Usage:
+     * <sd-select multiple="true" ng-model="model" options="c.name for c in collection" change="action()"></sd-multiselect>
+     */
     .directive('sdSelect', ['$parse', '$document', '$compile', 'optionParser',
 
     function ($parse, $document, $compile, optionParser) {
@@ -118,7 +112,7 @@ define([
                 function parseModel() {
                     scope.items.length = 0;
                     var model = parsedResult.source(originalScope);
-                    if(!angular.isDefined(model)) { return; }
+                    if (!angular.isDefined(model)) { return; }
                     for (var i = 0; i < model.length; i++) {
                         var local = {};
                         local[parsedResult.itemName] = model[i];
@@ -159,11 +153,10 @@ define([
                 }
 
                 scope.valid = function validModel() {
-                    if(!required) { return true; }
+                    if (!required) { return true; }
                     var value = modelCtrl.$modelValue;
                     return (angular.isArray(value) && value.length > 0) || (!angular.isArray(value) && value !== null);
                 };
-
 
                 function selectSingle(item) {
                     if (item.checked) {
@@ -262,12 +255,10 @@ define([
                     }
                 };
 
-                scope.focus = function focus(){
+                scope.focus = function focus() {
                     var searchBox = element.find('input')[0];
                     searchBox.focus();
                 };
-
-                
             }
         };
     }]);

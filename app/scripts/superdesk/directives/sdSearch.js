@@ -24,7 +24,7 @@ define(['angular'], function(angular) {
                     var split = q.split(':');
                     if (split.length === 2) {
                         locationParams.set('search', q);
-                    } else if(q) {
+                    } else if (q) {
                         locationParams.set('search', attrs.sdSearch + ':' + q);
                     } else {
                         locationParams.set('search', null);

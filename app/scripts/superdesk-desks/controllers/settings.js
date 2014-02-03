@@ -2,7 +2,7 @@ define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
     return ['$scope', 'em', 'gettext', 'notify',
-        function($scope,em, gettext, notify) {
+        function($scope, em, gettext, notify) {
 
 			var _desk = null;
 			$scope.editDesk = null;
@@ -12,19 +12,19 @@ define(['angular', 'lodash'], function(angular, _) {
             $scope.desk = null;
             $scope.memberScreen2 = false;
 
-			em.getRepository('desks').matching().then(function(desks){
+			em.getRepository('desks').matching().then(function(desks) {
 				$scope.desks = desks;
 			});
 
-			em.getRepository('users').matching().then(function(users){
+			em.getRepository('users').matching().then(function(users) {
 				$scope.users = users._items;
 			});
 
 			$scope.getMembers = function(desk) {
 				var members = [];
 				if ($scope.desks !== undefined && $scope.users !== undefined) {
-                    angular.forEach(desk.members, function(value){
-                        members.push(_.find($scope.users, {_id : value}));
+                    angular.forEach(desk.members, function(value) {
+                        members.push(_.find($scope.users, {_id: value}));
                     });
                 }
                 return members;
@@ -46,13 +46,13 @@ define(['angular', 'lodash'], function(angular, _) {
 						notify.success(gettext('New Desk created.'), 3000);
 						$scope.desks._items.unshift(desk);
 						$scope.cancel();
-	                });
+                    });
 				} else {
 					em.update(desk).then(function(result) {
 						_.extend(_desk, result);
 						notify.success(gettext('Desk settings updated.'), 3000);
 						$scope.cancel();
-	                });
+                    });
 				}
 			};
 
@@ -65,12 +65,12 @@ define(['angular', 'lodash'], function(angular, _) {
             };
 
             $scope.openMembers = function(desk) {
-                $scope.desk = desk ;
+                $scope.desk = desk;
                 $scope.memberPopup = {};
-                angular.forEach(desk.members, function(value){
-                    $scope.selectedMembers.push(_.find($scope.users, {_id : value}));
+                angular.forEach(desk.members, function(value) {
+                    $scope.selectedMembers.push(_.find($scope.users, {_id: value}));
                 });
-                $scope.membersToSelect = _.without($scope.users,$scope.selectedMembers);
+                $scope.membersToSelect = _.without($scope.users, $scope.selectedMembers);
             };
 
             $scope.cancelMember = function(desk) {
@@ -101,8 +101,5 @@ define(['angular', 'lodash'], function(angular, _) {
                     return array.indexOf(item) === -1;
                 };
             };
-
-            
-            
 		}];
 });

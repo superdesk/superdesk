@@ -10,12 +10,13 @@ define(['angular'], function(angular) {
          * var listSettings = userSettings('users:list', default);
          * listSettings.test = 5;
          * listSettings.save();
-         *
-         * Params:
-         * @param {string} key - main key for accessing plugin/controller settings
-         * @param {Object} defaultSettings - default settings
          */
         factory('userSettings', ['storage', function(storage) {
+
+            /**
+             * @param {string} key - main key for accessing plugin/controller settings
+             * @param {Object} defaultSettings - default settings
+             */
             var UserSettingsContainer = function(key, defaultSettings) {
                 this._key = key + ':userSettings';
                 _.extend(this, defaultSettings);

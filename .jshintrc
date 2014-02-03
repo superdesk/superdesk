@@ -8,7 +8,7 @@
   "eqnull": true,
   "immed": true,
   "indent": 4,
-  "latedef": true,
+  "latedef": "nofunc",
   "newcap": true,
   "noarg": true,
   "quotmark": "single",
@@ -17,7 +17,6 @@
   "unused": "vars",
   "strict": true,
   "trailing": true,
-  "smarttabs": true,
   "globals": {
     "angular": false,
     "define": false,
@@ -33,5 +32,7 @@
   },
   "forin": true,
   "noempty": true,
-  "nonew": true
+  "nonew": true,
+  "freeze": true,
+  "maxlen": 140
 }

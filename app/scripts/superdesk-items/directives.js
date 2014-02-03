@@ -71,12 +71,12 @@ define([
         .directive('sdTabmodule', function() {
             return {
                 templateUrl: 'scripts/superdesk-items/views/tabmodule.html',
-                replace : true,
+                replace: true,
                 transclude: true,
                 scope: true,
                 link: function($scope, element, attrs) {
                     $scope.title = attrs.title;
-                    $scope.isOpen = (attrs.open === 'true' ) ? true : false;
+                    $scope.isOpen = attrs.open === 'true';
                     $scope.toggleModule = function() {
                         $scope.isOpen = !$scope.isOpen;
                     };
@@ -88,7 +88,7 @@ define([
                 require: '?ngModel',
                 link: function($scope, element, attrs, ngModel) {
                     ngModel.$render = function() {
-                        if (ngModel.$viewValue !== undefined && ngModel.$viewValue !== null ) {
+                        if (ngModel.$viewValue !== undefined && ngModel.$viewValue !== null) {
                             var value = ngModel.$viewValue;
                             var regex = /\s+/gi;
                             var wordCount = value.trim().replace(regex, ' ').split(' ').length;
@@ -96,8 +96,6 @@ define([
                         } else {
                             element.html(0);
                         }
-                        
-                        
                     };
                 }
             };
@@ -127,11 +125,11 @@ define([
         })
         .directive('sdMediaBox', ['$position', function($position) {
             return {
-                restrict : 'A',
+                restrict: 'A',
                 templateUrl: 'scripts/superdesk-items/views/media-box.html',
                 link: function(scope, element, attrs) {
                     scope.$watch('extras.view', function(view) {
-                        switch(view) {
+                        switch (view) {
                         case 'mlist':
                         case 'compact':
                             scope.itemTemplate = 'scripts/superdesk-items/views/media-box-list.html';
@@ -145,9 +143,9 @@ define([
         }])
         .directive('sdMediaBoxHover', ['$position', function($position) {
             return {
-                restrict : 'A',
-                templateUrl : 'scripts/superdesk-items/views/media-box-hover.html',
-                replace : true,
+                restrict: 'A',
+                templateUrl: 'scripts/superdesk-items/views/media-box-hover.html',
+                replace: true,
                 link: function(scope, element, attrs) {
                 }
             };
@@ -283,29 +281,29 @@ define([
                     theme: '@'
                 },
                 link: function(scope, element, attrs) {
-                    
+
                     var appendTarget = element[0].getElementsByClassName('block')[0];
 
                     var horizBlocks = attrs.x ? parseInt(attrs.x, 10) : 1;
                     var vertBlocks  = attrs.y ? parseInt(attrs.y, 10) : 1;
 
                     var graphSettings = {       //thightly depends on CSS
-                        blockWidth : 320,
-                        blockHeight : 250,
-                        mergeSpaceLeft : 52,     //30 + 2 + 20
-                        mergeSpaceBottom : 99   //30 + 2 + 20 + 47
+                        blockWidth: 320,
+                        blockHeight: 250,
+                        mergeSpaceLeft: 52,     //30 + 2 + 20
+                        mergeSpaceBottom: 99   //30 + 2 + 20 + 47
                     };
 
-                    var width = graphSettings.blockWidth * horizBlocks + graphSettings.mergeSpaceLeft*(horizBlocks-1),
-                        height = graphSettings.blockHeight * vertBlocks + graphSettings.mergeSpaceBottom*(vertBlocks-1),
+                    var width = graphSettings.blockWidth * horizBlocks + graphSettings.mergeSpaceLeft * (horizBlocks - 1),
+                        height = graphSettings.blockHeight * vertBlocks + graphSettings.mergeSpaceBottom * (vertBlocks - 1),
                         radius = Math.min(width, height) / 2;
 
-                    colorSchemes.get(function(colorsData){
-                        
+                    colorSchemes.get(function(colorsData) {
+
                         var colorScheme = colorsData.schemes[0];
 
                         if (attrs.colors !== null) {
-                            colorScheme = colorsData.schemes[_.findKey(colorsData.schemes,{ 'name' : attrs.colors})];
+                            colorScheme = colorsData.schemes[_.findKey(colorsData.schemes, {name: attrs.colors})];
                         }
 
                         var colorScale = d3.scale.ordinal()
@@ -320,7 +318,6 @@ define([
                             .value(function(d) { return d.count; })
                             .sort(sort ? function(a, b) { return d3.ascending(a[sort], b[sort]); } : null);
 
-
                         var svg = d3.select(appendTarget).append('svg')
                             .attr('width', width)
                             .attr('height', height)
@@ -328,8 +325,8 @@ define([
                             .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
                         scope.$watch('terms', function(terms) {
-                            
-                            if (terms!== undefined) {
+
+                            if (terms !== undefined) {
                                 var g = svg.selectAll('.arc')
                                     .data(pie(terms))
                                     .enter().append('g')
@@ -358,26 +355,24 @@ define([
                     colors: '='
                 },
                 link: function(scope, element, attrs) {
-                    
-                    
-                    var appendTarget = element[0];
 
+                    var appendTarget = element[0];
                     var horizBlocks = attrs.x ? parseInt(attrs.x, 10) : 1;
                     var vertBlocks  = attrs.y ? parseInt(attrs.y, 10) : 1;
 
                     var graphSettings = {       //thightly depends on CSS
-                        blockWidth : 300,
-                        blockHeight : 197,
-                        mergeSpaceLeft : 60,     //30 + 2 + 20
-                        mergeSpaceBottom : 99    //30 + 2 + 20 + 47
+                        blockWidth: 300,
+                        blockHeight: 197,
+                        mergeSpaceLeft: 60,     //30 + 2 + 20
+                        mergeSpaceBottom: 99    //30 + 2 + 20 + 47
                     };
 
-                    var width = graphSettings.blockWidth * horizBlocks + graphSettings.mergeSpaceLeft*(horizBlocks-1),
-                        height = graphSettings.blockHeight * vertBlocks + graphSettings.mergeSpaceBottom*(vertBlocks-1),
+                    var width = graphSettings.blockWidth * horizBlocks + graphSettings.mergeSpaceLeft * (horizBlocks - 1),
+                        height = graphSettings.blockHeight * vertBlocks + graphSettings.mergeSpaceBottom * (vertBlocks - 1),
                         radius = Math.min(width, height) / 2;
 
-                    colorSchemes.get(function(colorsData){
-                        
+                    colorSchemes.get(function(colorsData) {
+
                         var colorScheme = colorsData.schemes[0];
 
                         var arc = d3.svg.arc()
@@ -389,7 +384,6 @@ define([
                             .value(function(d) { return d.count; })
                             .sort(sort ? function(a, b) { return d3.ascending(a[sort], b[sort]); } : null);
 
-
                         var svg = d3.select(appendTarget).append('svg')
                             .attr('width', width)
                             .attr('height', height)
@@ -399,11 +393,11 @@ define([
                         scope.$watchCollection('[ terms, colors]', function(newData) {
 
                             if (newData[0] !== undefined) {
-                                
+
                                 if (newData[1] !== null) {
-                                    colorScheme = colorsData.schemes[_.findKey(colorsData.schemes,{ 'name' : newData[1]})];
+                                    colorScheme = colorsData.schemes[_.findKey(colorsData.schemes, {name: newData[1]})];
                                 }
-                                
+
                                 var colorScale = d3.scale.ordinal()
                                         .range(colorScheme.charts);
 
@@ -418,13 +412,11 @@ define([
                                     .attr('d', arc)
                                     .style('fill', function(d) { return colorScale(d.data.term); });
 
-                                
                                 g.append('text')
                                     .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
                                     .style('text-anchor', 'middle')
                                     .style('fill', colorScheme.text)
                                     .text(function(d) { return d.data.term; });
-                                    
                             }
 
                         });
@@ -443,35 +435,32 @@ define([
                 },
                 link: function(scope, element, attrs) {
 
-                    
                     var horizBlocks = attrs.x ? parseInt(attrs.x, 10) : 1;
                     var vertBlocks  = attrs.y ? parseInt(attrs.y, 10) : 1;
 
                     var appendTarget = element[0].getElementsByClassName('block')[0];
-                    
 
                     var graphSettings = {       //thightly depends on CSS
-                        blockWidth : 320,
-                        blockHeight : 250,
-                        mergeSpaceLeft : 52,     //30 + 2 + 20
-                        mergeSpaceBottom : 99,   //30 + 2 + 20 + 47
-                        horizontal : attrs.horizontal === 'true' ? true : false,
-                        showText : attrs.text === 'false'  ? false : true
+                        blockWidth: 320,
+                        blockHeight: 250,
+                        mergeSpaceLeft: 52,     //30 + 2 + 20
+                        mergeSpaceBottom: 99,   //30 + 2 + 20 + 47
+                        horizontal: attrs.horizontal === 'true' ? true : false,
+                        showText: attrs.text === 'false'  ? false : true
                     };
 
-                    var width = graphSettings.blockWidth * horizBlocks + graphSettings.mergeSpaceLeft*(horizBlocks-1),
-                        height = graphSettings.blockHeight * vertBlocks + graphSettings.mergeSpaceBottom*(vertBlocks-1),
+                    var width = graphSettings.blockWidth * horizBlocks + graphSettings.mergeSpaceLeft * (horizBlocks - 1),
+                        height = graphSettings.blockHeight * vertBlocks + graphSettings.mergeSpaceBottom * (vertBlocks - 1),
                         dimension = graphSettings.horizontal ? width : height,
                         oDimension = graphSettings.horizontal ? height : width,
                         x = d3.scale.linear().range([0, oDimension]);
-
 
                     colorSchemes.get(function(colorsData) {
 
                         var colorScheme = colorsData.schemes[0];
 
                         if (attrs.colors !== null) {
-                            colorScheme = colorsData.schemes[_.findKey(colorsData.schemes,{ 'name' : attrs.colors})];
+                            colorScheme = colorsData.schemes[_.findKey(colorsData.schemes, {name: attrs.colors})];
                         }
 
                         var colorScale = d3.scale.ordinal()
@@ -487,9 +476,9 @@ define([
                             data.reverse();
                             x.domain([0, d3.max(data, function(d) { return d.count; })]);
 
-                            var barOuter = Math.floor(dimension/data.length);
-                            var barSpace = Math.floor(barOuter*0.2);
-                            var barInner = barOuter-barSpace;
+                            var barOuter = Math.floor(dimension / data.length);
+                            var barSpace = Math.floor(barOuter * 0.2);
+                            var barInner = barOuter - barSpace;
 
                             var bar = svg.selectAll('.bar')
                                 .data(data)
@@ -498,20 +487,21 @@ define([
                                 .style('fill', function(d) { return colorScale(d.time); });
 
                             if (graphSettings.horizontal) {
-                                bar.attr('transform', function(d, i) { return 'translate('+ (i*barOuter) +',0)'; })
+                                bar.attr('transform', function(d, i) { return 'translate(' + (i * barOuter) + ',0)'; })
                                     .append('rect')
                                         .attr('height', function(d) { return x(d.count); })
                                         .attr('width', barInner)
                                         .attr('y', function(d) { return (height - x(d.count)); });
                                 if (graphSettings.showText) {
                                     bar.append('text')
-                                    .style('fill',colorScheme.text)
+                                    .style('fill', colorScheme.text)
                                     .text(function(d) { return d.count + ' / ' + moment.unix(d.time / 1000).format('HH:mm') + '+'; })
-                                    .attr('transform', function(d, i) { return 'translate('+(2*barInner/3)+','+(height-5)+')rotate(270)'; });
+                                    .attr('transform', function(d, i) {
+                                        return 'translate(' + (2 * barInner / 3) + ',' + (height - 5) + ')rotate(270)';
+                                    });
                                 }
-                                
                             } else {
-                                bar.attr('transform', function(d, i) { return 'translate(0,' + (i*barOuter) + ')'; })
+                                bar.attr('transform', function(d, i) { return 'translate(0,' + (i * barOuter) + ')'; })
                                     .append('rect')
                                         .attr('width', function(d) { return x(d.count); })
                                         .attr('height', barInner);
@@ -519,15 +509,12 @@ define([
                                 if (graphSettings.showText) {
                                     bar.append('text')
                                         .attr('x', 5)
-                                        .attr('y', barOuter/2)
-                                        .style('fill',colorScheme.text)
+                                        .attr('y', barOuter / 2)
+                                        .style('fill', colorScheme.text)
                                         .text(function(d) { return d.count + ' / ' + moment.unix(d.time / 1000).format('HH:mm') + '+'; });
                                 }
                             }
-
-                            
                         });
-
                     });
                 }
             };
@@ -577,5 +564,21 @@ define([
 
                 }
             };
-        });
+        })
+		.directive('sdWorkflow', ['superdesk', 'workqueue', function(superdesk, queue) {
+            return {
+                scope: true,
+                link: function(scope, elem, attrs) {
+                    scope.$watch(function() {
+                        return queue.length;
+                    }, function(len) {
+                        scope.isActive = !!len;
+                    });
+
+                    scope.next = function() {
+                        superdesk.intent('edit', 'archive', queue.active);
+                    };
+                }
+            };
+        }]);
 });

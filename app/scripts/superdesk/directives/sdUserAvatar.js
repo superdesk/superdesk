@@ -1,13 +1,13 @@
 
 define(['angular'], function (angular) {
     'use strict';
-    
+
     angular.module('superdesk.directives')
         .directive('sdUserAvatar', function() {
             return {
                 scope: {src: '='},
                 link: function (scope, element, attrs) {
-                    
+
                     function getDefaultPicture() {
                         return 'images/avatar_default.png';
                     }

@@ -64,7 +64,7 @@ define([
                 .respond(400);
             service.login('fake', 'bar');
             httpBackend.flush();
-            
+
             expect(service.hasIdentity()).toBe(false);
         });
     });

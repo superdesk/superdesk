@@ -18,9 +18,9 @@ define([
                     template: 'scripts/superdesk-items/stats-widget/widget-ingeststats.html',
                     configurationTemplate: 'scripts/superdesk-items/stats-widget/configuration.html',
                     configuration: {
-                        source : 'provider',
-                        colorScheme : 'superdesk',
-                        updateInterval : 5
+                        source: 'provider',
+                        colorScheme: 'superdesk',
+                        updateInterval: 5
                     },
                     description: 'Displaying news ingest statistics. You have ability to switch color themes or graph sources.'
                 });

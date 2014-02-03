@@ -8,7 +8,7 @@ define([
             superdesk
                 .pane('info', {
                     name: 'Info',
-                    icon:'info',
+                    icon: 'info',
                     template: 'scripts/superdesk-items/panes/info/pane.html',
                     position: 'right',
                     order: 0,
@@ -19,7 +19,7 @@ define([
         .controller('InfoPaneController', ['$scope', function ($scope) {
 
             $scope.removeTerm = function(arr, term) {
-                arr.splice( _.find(arr,term),1);
+                arr.splice(_.find(arr, term), 1);
             };
 
         }]);

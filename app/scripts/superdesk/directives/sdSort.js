@@ -14,10 +14,10 @@ define([
          *      data-label="{{ 'Name'|translate }}"
          *      data-field="display_name"
          * ></a>
-         * 
+         *
          * Params:
-         * @param {string} label - user friendly text for sort field
-         * @param {string} field - field name for sort field
+         * @scope {string} label - user friendly text for sort field
+         * @scope {string} field - field name for sort field
          */
         .directive('sdSort', ['locationParams', function(locationParams) {
             return {

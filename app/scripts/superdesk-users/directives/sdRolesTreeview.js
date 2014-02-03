@@ -4,15 +4,14 @@ define(function() {
     return ['$compile', function($compile) {
         return {
             restrict: 'A',
-            terminal : true,
-            scope :{ role : '=', roles : '='},
+            terminal: true,
+            scope: {role: '=', roles: '='},
             link: function(scope, element, attrs) {
 
-                if (scope.role['extends'] !== undefined ) {
-                    scope.childrole = scope.roles[_.findKey(scope.roles, {_id:scope.role['extends']})];
+                if (scope.role['extends'] !== undefined) {
+                    scope.childrole = scope.roles[_.findKey(scope.roles, {_id: scope.role['extends']})];
                     scope.treeTemplate = 'scripts/superdesk-users/views/rolesTree.html';
-                }
-                else {
+                } else {
                     scope.treeTemplate = 'scripts/superdesk-users/views/rolesLeaf.html';
                 }
 

@@ -15,10 +15,9 @@ define([
          *
          * Usage:
          * <input sd-check ng-model="user._checked">
-         * 
-         * Params:
-         * @param {boolean} ngModel - model for checkbox value
          *
+         * Params:
+         * @scope {boolean} ngModel - model for checkbox value
          */
         .directive('sdCheck', function() {
             return {
@@ -49,10 +48,10 @@ define([
          *
          * Usage:
          * <input sd-check-all ng-model="users" data-check-attribute="_checked">
-         * 
+         *
          * Params:
-         * @param {array} ngModel - array of objects managed by checkboxes
-         * @param {string} checkAttribute - name of attribute to set in model elements
+         * @scope {array} ngModel - array of objects managed by checkboxes
+         * @scope {string} checkAttribute - name of attribute to set in model elements
          *
          */
         .directive('sdCheckAll', function() {
@@ -75,9 +74,9 @@ define([
                         }
                     }, true);
 
-                    element.on('click', function(){
+                    element.on('click', function() {
                         checked = !checked;
-                        
+
                         var model = ngModel.$viewValue;
                         _.forEach(model, function(item) {
                             item[checkAttribute] = checked;
@@ -96,17 +95,20 @@ define([
          *
          * Usage:
          * <input sd-switch ng-model="notifications.show">
-         * 
-         * Params:
-         * @param {boolean} ngModel - model for checkbox value
-         * @param {string} mode - optional, use 'onoff' to get labels in switch box 
          *
+         * Params:
+         * @scope {boolean} ngModel - model for checkbox value
+         * @scope {string} mode - optional, use 'onoff' to get labels in switch box
          */
         .directive('sdSwitch', function() {
             return {
                 require: 'ngModel',
                 replace: true,
-                template: '<span class="sf-toggle-custom" ng-class="{\'on-off-toggle\': isOnOff }"><span class="sf-toggle-custom-inner"></span></span>',
+                template: [
+                    '<span class="sf-toggle-custom" ng-class="{\'on-off-toggle\': isOnOff }">',
+                    '<span class="sf-toggle-custom-inner"></span>',
+                    '</span>'
+                ].join(''),
                 link: function($scope, element, attrs, ngModel) {
                     ngModel.$render = function() {
                         render(element, ngModel.$viewValue);

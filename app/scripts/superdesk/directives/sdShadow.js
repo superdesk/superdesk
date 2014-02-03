@@ -10,7 +10,7 @@ define([
          *
          * Usage:
          * <div sd-shadow></div>
-         * 
+         *
          */
         .directive('sdShadow', function() {
             return {
@@ -24,11 +24,10 @@ define([
                         });
                     $('body').append(shadow);
 
-                    el.scroll(function(){
+                    el.scroll(function() {
                         if ($(this).scrollTop() > 0) {
                             shadow.addClass('shadow');
-                        }
-                        else {
+                        } else {
                             shadow.removeClass('shadow');
                         }
                     });

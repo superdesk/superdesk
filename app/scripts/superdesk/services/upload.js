@@ -5,7 +5,7 @@ define([
     'use strict';
 
     angular.module('superdesk.services')
-        .config(['fileUploadProvider', function(fileUploadProvider){
+        .config(['fileUploadProvider', function(fileUploadProvider) {
             angular.extend(fileUploadProvider.defaults, {
                 autoUpload: true,
                 url: ServerConfig.url + '/upload',
@@ -54,20 +54,20 @@ define([
                         }
                     };
 
-                    scope.$on('fileuploadadd', function(e,data) {
+                    scope.$on('fileuploadadd', function(e, data) {
                         scope.progress = 0;
                     });
 
-                    scope.$on('fileuploadprogress', function(e, data){
+                    scope.$on('fileuploadprogress', function(e, data) {
                         scope.progress = data.progressInterval;
                     });
 
-                    scope.$on('fileuploaddone', function(e, data){
+                    scope.$on('fileuploaddone', function(e, data) {
                         scope.uploaded = true;
                         result = data.result;
                     });
 
-                    scope.$on('fileuploadsubmit', function(e, data){
+                    scope.$on('fileuploadsubmit', function(e, data) {
                         scope.preview = true;
                         element.find('.preview-area').empty().append(data.files[0].preview);
                     });
