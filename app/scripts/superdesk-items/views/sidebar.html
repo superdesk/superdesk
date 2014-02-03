@@ -30,7 +30,7 @@
 	                </li>
 	                <li>
 	                    <i class="filetype-icon-graphic"></i> {{ 'Graphic' | translate }}  
-	                    <input sd-check ng-model="search.type.picture">
+	                    <input sd-check ng-model="search.type.graphic">
 	                </li>
 	                <li>
 	                    <i class="filetype-icon-composite"></i> {{ 'Composite' | translate }}  
@@ -44,8 +44,8 @@
 	                <li>
 	                    <div class="lbl" translate>Urgency</div>
 	                    <div class="data urgency-data">
-	                        <slider floor="1" ceiling="5" ng-model-low="search.general.urgencyfrom" ng-model-high="search.general.urgencyto" class="sd-slider urgency-slider"></slider>
-	                        <div class="urgency-range">{{search.general.urgencyfrom}} - {{search.general.urgencyto}}</div>
+	                        <slider floor="1" ceiling="5" precision="0" ng-model-low="urgency.from" ng-model-high="urgency.to" class="sd-slider urgency-slider"></slider>
+	                        <div class="urgency-range">{{urgency.from}} - {{urgency.to}}</div>
 	                    </div>
 
 	                </li>
@@ -54,10 +54,13 @@
 	                    <div class="lbl" translate>Last modified</div>
 	                    <div class="data">
 	                        <div class="date">
-	                            <span class="range">
-	                                 <time>{{ search.general.versioncreated.startDate | dateString }}</time> - <time>{{ search.general.versioncreated.endDate | dateString }}</time>
+	                            <span class="range" ng-show="versioncreated.init">
+	                                 <time>{{ versioncreated.startDate | dateString }}</time> - <time>{{ versioncreated.endDate | dateString }}</time>
 	                            </span>
-	                            <i class="icon-calendar" sd-date-range type="daterange" ng-model="search.general.versioncreated"></i>
+	                            <span class="selectdate" ng-show="!versioncreated.init">
+	                                 Select date
+	                            </span>
+	                            <i class="icon-calendar" sd-date-range type="daterange" ng-model="versioncreated"></i>
 	                        </div>
 	                        
 	                    </div>

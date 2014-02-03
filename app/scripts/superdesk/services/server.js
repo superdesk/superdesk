@@ -166,7 +166,7 @@ define([
 
             // transfer url params to server params
             _convertParams: function(params) {
-                var serverParams = _.extend({}, _.pick(params, ['max_results', 'page', 'embedded', 'where', 'q', 'df']));
+                var serverParams = _.extend({}, _.pick(params, ['filter','max_results', 'page', 'embedded', 'where', 'q', 'df']));
 
                 if ('sort' in params) {
                     serverParams.sort = '[(' + angular.toJson(params.sort[0]) + ',' + (params.sort[1] === 'asc' ? 1 : -1) + ')]';

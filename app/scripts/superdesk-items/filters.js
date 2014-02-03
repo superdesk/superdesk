@@ -56,7 +56,7 @@ define([
         .filter('dateString', function($filter) {
             return function(input) {
                 if (input !== null)
-                return $filter('date')(input.format(), 'dd/MM/yyyy');
+                return $filter('date')(input.format(), 'yyyy-MM-dd');
             };
         });
 

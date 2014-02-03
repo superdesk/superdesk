@@ -20,7 +20,7 @@ define(['angular','moment'], function(angular,moment) {
 				link: function ($scope, $element, $attributes, ngModel) {
 
 					var options = {};
-					options.format = $attributes.format || 'DD-MM-YYYY';
+					options.format = $attributes.format || 'YYYY-MM-DD';
 					options.separator = $attributes.separator || ' - ';
 					options.minDate = $attributes.minDate && moment($attributes.minDate);
 					options.maxDate = $attributes.maxDate && moment($attributes.maxDate);
@@ -56,7 +56,7 @@ define(['angular','moment'], function(angular,moment) {
 
 					$scope.$watch($attributes.ngModel, function (modelValue) {
 						if (!modelValue || (!modelValue.startDate)) {
-							ngModel.$setViewValue({ startDate: moment().startOf('day'), endDate: moment().startOf('day') });
+							ngModel.$setViewValue({ startDate: moment().startOf('day'), endDate: moment().startOf('day'), init:false });
 							return;
 						}
 						$element.data('daterangepicker').startDate = modelValue.startDate;
@@ -68,7 +68,7 @@ define(['angular','moment'], function(angular,moment) {
 
 					$element.daterangepicker(options, function(start, end) {
 						$scope.$apply(function () {
-							ngModel.$setViewValue({ startDate: start, endDate: end });
+							ngModel.$setViewValue({ startDate: start, endDate: end, init:true});
 							ngModel.$render();
 						});
 					});
