@@ -1,6 +1,5 @@
 {
   "name": "superdesk-client",
-  "version": "0.1.0",
   "dependencies": {
     "requirejs": "2.1.10",
     "jquery": "2.1.0",
