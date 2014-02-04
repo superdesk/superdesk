@@ -2,16 +2,16 @@
   "name": "superdesk-client",
   "version": "0.1.0",
   "dependencies": {
-    "requirejs": "2.1.8",
+    "requirejs": "2.1.10",
     "jquery": "2.1.0",
     "lodash": "2.4.1",
-    "bootstrap": "3.0.3",
+    "bootstrap": "3.1.0",
     "momentjs": "2.5.1",
     "moment-timezone": "~0.0.3",
-    "angular": "1.2.10",
-    "angular-resource": "1.2.10",
-    "angular-route": "1.2.10",
-    "angular-mocks": "1.2.10",
+    "angular": "1.2.11",
+    "angular-resource": "1.2.11",
+    "angular-route": "1.2.11",
+    "angular-mocks": "1.2.11",
     "angular-gettext": "~0.2.0",
     "angular-bootstrap": "~0.7.0",
     "angular-slider-royale": "~0.1.16",
@@ -19,11 +19,12 @@
     "blueimp-file-upload": "~9.5.2",
     "gridster": "~0.2.1",
     "d3": "3.4.1",
-    "ng-aloha-editor": "*",
+    "ng-aloha-editor": "0.0.2",
     "jquery-ui": "*"
   },
   "resolutions": {
     "jquery": "2.1.0",
-    "momentjs": "2.5.1"
+    "momentjs": "2.5.1",
+    "angular": "1.2.11"
   }
 }
