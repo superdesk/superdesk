@@ -259,8 +259,7 @@ define([
                 }
             };
         }])
-        .directive('sdProviderMenu', ['$routeParams', '$location', 'providerRepository',
-        function($routeParams, $location, providerRepository) {
+        .directive('sdProviderMenu', function() {
             return {
                 scope: {items: '=', selected: '='},
                 templateUrl: 'scripts/superdesk-items/views/provider-menu.html',
@@ -270,7 +269,7 @@ define([
                     };
                 }
             };
-        }])
+        })
         .directive('sdPieChart', ['colorSchemes', function(colorSchemes) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/chartBox.html',
@@ -553,15 +552,372 @@ define([
                 }
             };
         })
-        .directive('sdSidebarLayout', function() {
+        .directive('sdSidebarLayout', ['$location', '$filter', function($location, $filter) {
             return {
                 transclude: true,
                 templateUrl: 'scripts/superdesk-items/views/sidebar.html',
-                link: function(scope, elem, attrs) {
+                controller: function($scope) {
 
-                    scope.sidebar = false;
-                    scope.sidebarstick = true;
+                    $scope.sidebar = false;
+                    $scope.sidebarstick = true;
 
+                    $scope.search = {
+                        type: [
+                            {
+                                term: 'text',
+                                checked: false,
+                                count: 0
+                            },
+                            {
+                                term: 'audio',
+                                checked: false,
+                                count: 0
+                            },
+                            {
+                                term: 'video',
+                                checked: false,
+                                count: 0
+                            },
+                            {
+                                term: 'picture',
+                                checked: false,
+                                count: 0
+                            },
+                            {
+                                term: 'graphic',
+                                checked: false,
+                                count: 0
+                            },
+                            {
+                                term: 'composite',
+                                checked: false,
+                                count: 0
+                            }
+                        ],
+                        general: {
+                            provider: null,
+                            creditline: null,
+                            place: null,
+                            urgency: {
+                                from: null,
+                                to: null
+                            },
+                            versioncreated: {
+                                from: null,
+                                to: null
+                            }
+                        },
+                        subjects: [],
+                        places: []
+                    };
+
+                    //helper variables to handle large number of changes
+                    $scope.versioncreated = {
+                        startDate: null,
+                        endDate: null,
+                        init: false
+                    };
+                    $scope.urgency = {
+                        from: 1,
+                        to: 5
+                    };
+
+                    var createFilters = function() {
+
+                        var filters = [];
+
+                        function chainRange(obj, key) {
+                            if (obj !== null && obj.from !== null && obj.to !== null) {
+                                var rangefilter = {};
+                                rangefilter[key] = {from: obj.from, to: obj.to};
+                                filters.push({range: rangefilter});
+                            }
+                        }
+
+                        function chain(val, key) {
+                            if (val !== null && val !== '') {
+                                var t = {};
+                                t[key] = val;
+                                filters.push({term: t});
+                            }
+                        }
+
+                        //process content type
+                        var contenttype = _.map(_.where($scope.search.type, {'checked': true}), function(t) { return t.term; });
+
+                        //add content type filters as OR filters
+                        if (contenttype.length > 0) {
+                            filters.push({terms: {type: contenttype}});
+                        }
+
+                        //process general filters
+                        _.forEach($scope.search.general, function(val, key) {
+                            if (_.isObject(val)) {
+                                chainRange(val, key);
+                            } else {
+                                chain(val, key);
+                            }
+                        });
+
+                        //process subject filters
+                        if ($scope.search.subjects.length > 0) {
+                            filters.push({terms: {'subject.name': $scope.search.subjects, execution: 'and'}});
+                        }
+
+                        //process place filters
+                        if ($scope.search.places.length > 0) {
+                            filters.push({terms: {'place.name': $scope.search.places, execution: 'and'}});
+                        }
+
+                        //do filtering
+                        if (filters.length > 0) {
+                            $location.search('filter', angular.toJson({and: filters}));
+                        } else {
+                            $location.search('filter', null);
+                        }
+
+                    };
+
+                    var createFiltersWrap = _.throttle(createFilters, 1000);
+                    $scope.$watch('search', function() {
+                        createFiltersWrap();
+                    }, true);    //deep watch
+
+                    //date filter handling
+                    $scope.$watch('versioncreated', function(newVal) {
+                        if (newVal.init === true) {
+                            if (newVal.startDate !== null && newVal.endDate !== null) {
+                                var start = $filter('dateString')(newVal.startDate);
+                                var end = $filter('dateString')(newVal.endDate);
+                                $scope.search.general.versioncreated = {from: start, to: end};
+                            }
+                        }
+                    });
+
+                    //urgency filter handling
+                    function handleUrgency(urgency) {
+                        var ufrom = Math.round(urgency.from);
+                        var uto = Math.round(urgency.to);
+                        if (ufrom !== 1 || uto !== 5) {
+                            $scope.search.general.urgency.from = ufrom;
+                            $scope.search.general.urgency.to = uto;
+                        }
+                    }
+
+                    var handleUrgencyWrap = _.throttle(handleUrgency, 2000);
+
+                    $scope.$watchCollection('urgency', function(newVal) {
+                        handleUrgencyWrap(newVal);
+                    });
+
+                    //implementing typeahed directive, subject and place filtering
+                    var subjectsSource = [];
+                    var placesSource = [];
+
+                    $scope.$watchCollection('items', function() {
+                        if ($scope.items._facets !== undefined) {
+                            subjectsSource = $scope.items._facets.subject.terms;
+                            placesSource = $scope.items._facets.place.terms;
+                            _.forEach($scope.items._facets.type.terms, function(type) {
+                                _.extend(_.first(_.where($scope.search.type, {term: type.term})), type);
+                            });
+                        }
+                    });
+
+                    $scope.subjects = [];
+                    $scope.subjectTerm = '';
+
+                    $scope.searchSubjects = function(term) {
+                        if (!term) {
+                            $scope.subjects = [];
+                        } else {
+
+                            $scope.subjects = subjectsSource.filter(function(t) {
+                                return ((t.term.toLowerCase().indexOf(term.toLowerCase()) !== -1) &&
+                                    !_.contains($scope.search.subjects, t.term.toLowerCase()));
+                            });
+                        }
+
+                        return $scope.subjects;
+                    };
+
+                    $scope.selectSubject = function(item) {
+                        if (item) {
+                            $scope.search.subjects.push(item.term);
+                            $scope.subjectTerm = '';
+                        }
+                    };
+
+                    $scope.places = [];
+                    $scope.placeTerm = '';
+
+                    $scope.searchPlace = function(term) {
+                        if (!term) {
+                            $scope.places = [];
+                        } else {
+
+                            $scope.places = placesSource.filter(function(p) {
+                                return ((p.term.toLowerCase().indexOf(term.toLowerCase()) !== -1) &&
+                                    !_.contains($scope.search.places, p.term.toLowerCase()));
+                            });
+                        }
+
+                        return $scope.subjects;
+                    };
+
+                    $scope.selectPlace = function(item) {
+                        if (item) {
+                            $scope.search.places.push(item.term);
+                            $scope.placeTerm = '';
+                        }
+                    };
+
+                }
+            };
+        }])
+        .directive('sdTypeahead', ['$timeout', function($timeout) {
+            return {
+                restrict: 'A',
+                transclude: true,
+                replace: true,
+                templateUrl: 'scripts/superdesk-items/views/typeahead.html',
+                scope: {
+                    search: '&',
+                    select: '&',
+                    items: '=',
+                    term: '='
+                },
+                controller: ['$scope', function($scope) {
+                    $scope.items = [];
+                    $scope.hide = false;
+
+                    this.activate = function(item) {
+                        $scope.active = item;
+                    };
+
+                    this.activateNextItem = function() {
+                        var index = $scope.items.indexOf($scope.active);
+                        this.activate($scope.items[(index + 1) % $scope.items.length]);
+                    };
+
+                    this.activatePreviousItem = function() {
+                        var index = $scope.items.indexOf($scope.active);
+                        this.activate($scope.items[index === 0 ? $scope.items.length - 1 : index - 1]);
+                    };
+
+                    this.isActive = function(item) {
+                        return $scope.active === item;
+                    };
+
+                    this.selectActive = function() {
+                        this.select($scope.active);
+                    };
+
+                    this.select = function(item) {
+                        $scope.hide = true;
+                        $scope.focused = true;
+                        $scope.select({item: item});
+                    };
+
+                    $scope.isVisible = function() {
+                        return !$scope.hide && ($scope.focused || $scope.mousedOver) && ($scope.items.length > 0);
+                    };
+
+                    $scope.query = function() {
+                        $scope.hide = false;
+                        $scope.search({term: $scope.term});
+                    };
+                }],
+
+                link: function(scope, element, attrs, controller) {
+
+                    var $input = element.find('.input-term > input');
+                    var $list = element.find('.item-list');
+
+                    $input.bind('focus', function() {
+                        scope.$apply(function() { scope.focused = true; });
+                    });
+
+                    $input.bind('blur', function() {
+                        scope.$apply(function() { scope.focused = false; });
+                    });
+
+                    $list.bind('mouseover', function() {
+                        scope.$apply(function() { scope.mousedOver = true; });
+                    });
+
+                    $list.bind('mouseleave', function() {
+                        scope.$apply(function() { scope.mousedOver = false; });
+                    });
+
+                    $input.bind('keyup', function(e) {
+                        if (e.keyCode === 13) {
+                            scope.$apply(function() { controller.selectActive(); });
+                        }
+
+                        if (e.keyCode === 27) {
+                            scope.$apply(function() { scope.hide = true; });
+                        }
+                    });
+
+                    $input.bind('keydown', function(e) {
+                        if (e.keyCode === 13 || e.keyCode === 27) {
+                            e.preventDefault();
+                        }
+
+                        if (e.keyCode === 40) {
+                            e.preventDefault();
+                            scope.$apply(function() { controller.activateNextItem(); });
+                        }
+
+                        if (e.keyCode === 38) {
+                            e.preventDefault();
+                            scope.$apply(function() { controller.activatePreviousItem(); });
+                        }
+                    });
+
+                    scope.$watch('items', function(items) {
+                        controller.activate(items.length ? items[0] : null);
+                    });
+
+                    scope.$watch('focused', function(focused) {
+                        if (focused) {
+                            $timeout(function() { $input.focus(); }, 0, false);
+                        }
+                    });
+
+                    scope.$watch('isVisible()', function(visible) {
+                        if (visible) {
+                            $list.show();
+                        } else {
+                            $list.hide();
+                        }
+                    });
+                }
+            };
+        }])
+        .directive('typeaheadItem', function() {
+            return {
+                require: '^sdTypeahead',
+                link: function(scope, element, attrs, controller) {
+
+                    var item = scope.$eval(attrs.typeaheadItem);
+
+                    scope.$watch(function() { return controller.isActive(item); }, function(active) {
+                        if (active) {
+                            element.addClass('active');
+                        } else {
+                            element.removeClass('active');
+                        }
+                    });
+
+                    element.bind('mouseenter', function(e) {
+                        scope.$apply(function() { controller.activate(item); });
+                    });
+
+                    element.bind('click', function(e) {
+                        scope.$apply(function() { controller.select(item); });
+                    });
                 }
             };
         })

@@ -1337,6 +1337,36 @@
   }
 }
 
+.sd-typeahead {
+	position: relative;
+	input {
+
+	}
+	.item-list {
+		min-width: 190px;
+		height:auto;
+		max-height: 170px;
+		overflow-y: auto;
+		overflow-x: hidden;
+		.box-sizing(border-box);
+		background: #fff;
+		border: 1px solid #bbb;
+		.box-shadow(0 0 3px 0 #ccc);
+		position: absolute;
+		right: -5px;
+		top:24px;
+		z-index: 1;
+		ul {
+			li {
+				padding: 5px 10px;
+				&.active {
+					background: #f0f0f0;
+				}
+			}
+		}
+	}
+}
+
 
 .activity-choose-modal {
 	.border-radius(0px);

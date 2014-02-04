@@ -12,29 +12,10 @@
 	    <div class="content">
 	        <div sd-tabmodule data-title="{{ 'Content type' | translate }}" data-open="true">
 	            <ul class="filter-contenttype selectionlist">
-	                <li>
-	                    <i class="filetype-icon-text"></i> {{ 'Text' | translate }} 
-	                    <input sd-check ng-model="search.type.text">
-	                </li>
-	                <li>
-	                    <i class="filetype-icon-audio"></i> {{ 'Audio' | translate }} 
-	                    <input sd-check ng-model="search.type.audio">
-	                </li>
-	                <li>
-	                    <i class="filetype-icon-video"></i> {{ 'Video' | translate }} 
-	                    <input sd-check ng-model="search.type.video">
-	                </li>
-	                <li>
-	                    <i class="filetype-icon-photo"></i> {{ 'Picture' | translate }} 
-	                    <input sd-check ng-model="search.type.picture">
-	                </li>
-	                <li>
-	                    <i class="filetype-icon-graphic"></i> {{ 'Graphic' | translate }}  
-	                    <input sd-check ng-model="search.type.graphic">
-	                </li>
-	                <li>
-	                    <i class="filetype-icon-composite"></i> {{ 'Composite' | translate }}  
-	                    <input sd-check ng-model="search.type.composite">
+	                <li ng-repeat="t in search.type">
+	                    <i class="filetype-icon-{{t.term}}"></i>
+	                    <span class="term">{{ t.term | translate }} <i>({{ t.count}})</i></span>
+	                    <input sd-check ng-model="t.checked">
 	                </li>
 	            </ul>
 	        </div>
@@ -67,15 +48,49 @@
 	                </li>
 	                <li>
 	                    <div class="lbl" translate>Provider</div>
-	                    <div class="data data-provider"><div class="dropdown source-select" sd-provider-menu data-items="items" data-selected="search.general.provider"></div></div>
+	                    <div class="data data-provider">
+	                    	<div class="dropdown source-select" sd-provider-menu data-items="items" data-selected="search.general.provider"></div>
+	                    </div>
 	                </li>
+	                <li class="subject-data">
+	                    <div class="lbl" translate>Subject</div>
+	                    <div class="data">
+	                    	<div sd-typeahead items="subjects" term="subjectTerm" search="searchSubjects(term)" select="selectSubject(item)">
+	                    		<ul>
+		                            <li typeahead-item="s" ng-repeat="s in subjects" class="results">
+		                               {{s.term}} <i>({{s.count}})</i>
+		                            </li>
+		                        </ul>
+	                    	</div>
+	                    </div>
+	                    <div class="subject-container">
+                    		<ul>
+                    			<li ng-repeat="s in search.subjects">{{s}}</li>
+                    		</ul>
+                    	</div>
+	                </li>
+
+	                <li class="subject-data">
+	                    <div class="lbl" translate>Place</div>
+	                    <div class="data">
+	                    	<div sd-typeahead items="places" term="placeTerm" search="searchPlace(term)" select="selectPlace(item)">
+	                    		<ul>
+		                            <li typeahead-item="p" ng-repeat="p in places" class="results">
+		                               {{p.term}} <i>({{p.count}})</i>
+		                            </li>
+		                        </ul>
+	                    	</div>
+	                    </div>
+	                    <div class="subject-container">
+                    		<ul>
+                    			<li ng-repeat="p in search.places">{{p}}</li>
+                    		</ul>
+                    	</div>
+	                </li>
+	                
 	                <li>
 	                    <div class="lbl" translate>Creditline</div>
 	                    <div class="data" ><input type="text" ng-model="search.general.creditline"></div>
-	                </li>
-	                <li>
-	                    <div class="lbl" translate>Place</div>
-	                    <div class="data"><input type="text" ng-model="search.general.place"></div>
 	                </li>
 	            </ul>
 	        </div>

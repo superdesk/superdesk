@@ -734,6 +734,26 @@ button:focus {
           }
         }
       }
+      &.subject-data {
+        .data {
+          overflow: visible !important;
+        }
+        min-height: 18px;
+        height: auto !important;
+        .subject-container {
+          clear: both;
+          > ul {
+            text-align: left;
+            > li {
+              display: inline-block;
+              background: #e0e0e0;
+              .border-radius(3px);
+              margin: 0 10px 10px 0;
+              padding: 3px 8px;
+            }
+          }
+        }
+      }
     }
   }
 
