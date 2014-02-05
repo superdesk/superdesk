@@ -20,4 +20,4 @@ Feature: Ingest
 
         When we get "/ingest"
         Then we get list with 1 items
-        And we get facets "provider,urgency,subject"
+        And we get facets "type,provider,urgency,subject,place"

@@ -43,6 +43,11 @@ class SuperdeskDataLayer(DataLayer):
                     'properties': {
                         'name': {'type': 'string', 'index': 'not_analyzed'}
                     }
+                },
+                'place': {
+                    'properties': {
+                        'name': {'type': 'string', 'index': 'not_analyzed'}
+                    }
                 }
             }}
 

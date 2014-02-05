@@ -142,9 +142,11 @@ item_url = 'regex("[\w][\w,.:-]+")'
 extra_response_fields = ['guid', 'headline', 'firstcreated', 'versioncreated', 'archived']
 
 facets = {
+    'type': {'terms': {'field': 'type'}},
     'provider': {'terms': {'field': 'provider'}},
     'urgency': {'terms': {'field': 'urgency'}},
     'subject': {'terms': {'field': 'subject.name'}},
+    'place': {'terms': {'field': 'place.name'}},
     'versioncreated': {'date_histogram': {'field': 'versioncreated', 'interval': 'hour'}},
 }
 
