@@ -2,7 +2,7 @@ Superdesk-client is written and maintained by Sourcefabric and various contribut
 
 ### Development Lead
 
-- Petr Jasek <petr.jasek@sourcefabric.org>
+- [Petr Jasek](mailto:petr.jasek@sourcefabric.org)
 
 ### Patches and Contributions
 
@@ -10,4 +10,3 @@ Superdesk-client is written and maintained by Sourcefabric and various contribut
 - Nikola Nikolic
 - Ozan Ozbek
 - Sava Tatic
-
