@@ -17,5 +17,6 @@ define([
     './sdDragDrop',
     './menu',
     './listView',
-    './sdDateRange'
+    './sdDateRange',
+    './sdTypeahead'
 ], function() {});

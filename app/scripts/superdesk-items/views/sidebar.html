@@ -55,17 +55,11 @@
 	                <li class="subject-data">
 	                    <div class="lbl" translate>Subject</div>
 	                    <div class="data">
-	                    	<div sd-typeahead items="subjects" term="subjectTerm" search="searchSubjects(term)" select="selectSubject(item)">
-	                    		<ul>
-		                            <li typeahead-item="s" ng-repeat="s in subjects" class="results">
-		                               {{s.term}} <i>({{s.count}})</i>
-		                            </li>
-		                        </ul>
-	                    	</div>
+	                    	<div sd-filter-typeahead items="items._facets.subject.terms" additem="addSubject(item)"></div>
 	                    </div>
 	                    <div class="subject-container">
                     		<ul>
-                    			<li ng-repeat="s in search.subjects">{{s}}</li>
+                    			<li ng-repeat="s in search.subjects" ng-click="removeSubject(s)">{{s}}</li>
                     		</ul>
                     	</div>
 	                </li>
@@ -73,17 +67,11 @@
 	                <li class="subject-data">
 	                    <div class="lbl" translate>Place</div>
 	                    <div class="data">
-	                    	<div sd-typeahead items="places" term="placeTerm" search="searchPlace(term)" select="selectPlace(item)">
-	                    		<ul>
-		                            <li typeahead-item="p" ng-repeat="p in places" class="results">
-		                               {{p.term}} <i>({{p.count}})</i>
-		                            </li>
-		                        </ul>
-	                    	</div>
+	                    	<div sd-filter-typeahead items="items._facets.place.terms" additem="addPlace(item)"></div>
 	                    </div>
 	                    <div class="subject-container">
                     		<ul>
-                    			<li ng-repeat="p in search.places">{{p}}</li>
+                    			<li ng-repeat="p in search.places" ng-click="removePlace(p)">{{p}}</li>
                     		</ul>
                     	</div>
 	                </li>

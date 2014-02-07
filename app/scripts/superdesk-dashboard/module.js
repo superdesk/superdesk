@@ -17,9 +17,7 @@ define([
     ])
     .constant('widgetsPath', 'scripts/superdesk-dashboard/widgets/')
     .config(['superdeskProvider', function(superdesk) {
-        superdesk.activity('dashboard', {
-            href: '/',
-            when: '/',
+        superdesk.activity('/dashboard', {
             label: gettext('Dashboard'),
             controller: require('./controllers/main'),
             templateUrl: 'scripts/superdesk-dashboard/views/main.html',

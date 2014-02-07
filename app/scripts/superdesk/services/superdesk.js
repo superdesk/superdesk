@@ -22,6 +22,8 @@ define(['angular', 'lodash'], function(angular, _) {
         var permissions = {};
         var panes = {};
 
+        $routeProvider.when('/', {redirectTo: '/dashboard'});
+
         angular.extend(this, constans);
 
         /**

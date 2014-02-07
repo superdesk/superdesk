@@ -289,7 +289,7 @@ html, body.article-edit {
   position: absolute;
   height: 30px;
   left: 0; right: 0;
-  bottom: 0;
+  bottom: 33px;
   background: #111;
   .opacity(90);
   z-index: 25;
@@ -319,6 +319,11 @@ html, body.article-edit {
         }
       }
     }
+  }
+}
+&.scratchpad-open {
+  .opened-articles {
+    bottom: 293px;
   }
 }
 
@@ -748,8 +753,12 @@ button:focus {
               display: inline-block;
               background: #e0e0e0;
               .border-radius(3px);
-              margin: 0 10px 10px 0;
+              margin: 8px 8px 0 0;
               padding: 3px 8px;
+              &:hover {
+                background: #d0d0d0;
+                cursor: pointer;
+              }
             }
           }
         }

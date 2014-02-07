@@ -16,8 +16,7 @@ define([
 
     app.config(['superdeskProvider', function(superdesk) {
         superdesk
-            .activity('desks', {
-                when: '/desks/',
+            .activity('/desks', {
                 label: gettext('Desks'),
                 templateUrl: view('main.html', app),
                 controller: require('./controllers/main'),

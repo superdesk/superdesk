@@ -6,8 +6,7 @@ define([
 
     angular.module('superdesk.settings', [])
         .config(['superdeskProvider', function(superdesk) {
-            superdesk.activity('settings', {
-                when: '/settings/',
+            superdesk.activity('/settings', {
                 label: gettext('Settings'),
                 controller: function() {},
                 templateUrl: 'scripts/superdesk-settings/views/main.html',

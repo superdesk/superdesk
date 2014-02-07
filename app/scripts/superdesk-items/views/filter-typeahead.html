@@ -1,0 +1,7 @@
+<div sd-typeahead items="filtered" term="searchterm" search="searchItem(term)" select="selectItem(item)">
+	<ul>
+        <li typeahead-item="i" ng-repeat="i in filtered" class="results">
+           {{i.term}} <i>({{i.count}})</i>
+        </li>
+    </ul>
+</div>

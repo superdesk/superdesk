@@ -1,4 +1,4 @@
-define(['lodash', 'angular'], function(_, angular) {
+define(['lodash', 'angular', 'jquery'], function(_, angular, $) {
     'use strict';
 
     angular.module('superdesk.scratchpad.directives', [])
@@ -9,6 +9,12 @@ define(['lodash', 'angular'], function(_, angular) {
                 link: function(scope, element, attrs) {
                     scope.status = false;
                     scope.items = [];
+
+                    scope.toggle = function() {
+                        scope.status = !scope.status;
+                        $('.main-background-container').toggleClass('scratchpad-open');
+                    };
+
                     scope.update = function() {
                         scratchpadService.getItems().then(function(items) {
                             scope.items = items;
