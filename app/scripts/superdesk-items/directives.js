@@ -556,7 +556,7 @@ define([
             return {
                 transclude: true,
                 templateUrl: 'scripts/superdesk-items/views/sidebar.html',
-                controller: function($scope) {
+                controller: ['$scope', function($scope) {
 
                     $scope.sidebar = false;
                     $scope.sidebarstick = true;
@@ -737,8 +737,7 @@ define([
                     $scope.removePlace = function(item) {
                         $scope.search.places = _.without($scope.search.places, item);
                     };
-
-                }
+                }]
             };
         }])
 		.directive('sdFilterTypeahead', function() {
