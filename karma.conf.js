@@ -42,7 +42,7 @@ module.exports = function(config) {
         autoWatch: true,
 
         // Start these browsers, currently available:
-        browsers: ['Firefox'],
+        browsers: ['Chrome'],
 
         // If browser does not capture in given timeout [ms], kill it
         captureTimeout: 60000,

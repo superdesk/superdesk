@@ -28,8 +28,6 @@
     "karma": "~0.11.13",
     "karma-jasmine": "~0.1.0",
     "karma-requirejs": "~0.2.1",
-    "karma-phantomjs-launcher": "~0.1.1",
-    "karma-firefox-launcher": "~0.1.3",
     "karma-chrome-launcher": "~0.1.2",
     "matchdep": "~0.3.0",
     "grunt-preprocess": "~4.0.0",
