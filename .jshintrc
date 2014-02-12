@@ -28,7 +28,10 @@
     "inject": false,
     "expect": false,
     "describe": false,
-    "requirejs": false
+    "requirejs": false,
+    "browser": false,
+    "element": false,
+    "by": false
   },
   "forin": true,
   "noempty": true,

@@ -1,7 +1,7 @@
 <div class="login-popup modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form name="login" class="form-horizontal" ng-submit="authenticate()">
+            <form id="login-form" name="login" class="form-horizontal" ng-submit="authenticate()">
             <div class="modal-header">
                 <h3 translate>Please authenticate to continue</h3>
             </div>
@@ -19,7 +19,7 @@
                     </fieldset>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" translate>Submit</button>
+                <button id="login-button" type="submit" class="btn btn-primary" translate>Submit</button>
             </div>
             </form>
         </div>
