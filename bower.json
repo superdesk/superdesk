@@ -19,7 +19,8 @@
     "gridster": "~0.2.1",
     "d3": "3.4.1",
     "ng-aloha-editor": "0.0.2",
-    "jquery-ui": "*"
+    "jquery-ui": "*",
+    "jsSHA": "~1.5.0"
   },
   "resolutions": {
     "jquery": "2.1.0"

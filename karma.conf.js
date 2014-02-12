@@ -14,6 +14,7 @@ module.exports = function(config) {
           'app/scripts/bower_components/angular/angular.js',
           {pattern: 'app/**/*.js', included: false},
           {pattern: 'test/*[sS]pec.js', included: false},
+          {pattern: 'app/scripts/**/*[sS]pec.js', included: false},
           'app/scripts/superdesk/views/*.html',
           'test/test-main.js'
         ],

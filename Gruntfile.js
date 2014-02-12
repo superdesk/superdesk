@@ -30,9 +30,9 @@ module.exports = function (grunt) {
 
     grunt.registerTask('test', [
         'clean:server',
+        'karma',
         'jshint',
-        'jscs',
-        'karma'
+        'jscs'
     ]);
 
     grunt.registerTask('build', [
