@@ -1,124 +1,143 @@
 <div class="subnav subnav-fixed">
-    <input type="text"class="searchbar searchbar-large" placeholder="{{ 'Search'|translate }}" ng-model="search" ng-change="locationParams.set('search', search)" sd-debounce sd-auto-focus>
-    <a class="btn btn-medium btn-info pull-right" href="#/users/new" sd-with-params><span class="medium-icon-add"></span> {{ 'Add new user'|translate }}</a>
-</div>
-
-<div class="tab-background-container" style="top: 50px;">
-    <div class="tab-content user-tabs">
-        <div class="tab-pane active" id="active_users">
-            <div class="tab-submenu"><i ng-show="users._items|any:'_checked'"></i>
-                <div class="page-info pull-left" ng-show="users._items|any:'_checked'">
-                    {{ 'With selected'|translate }}: 
-                    <button class="btn" ng-click="deleteChecked();"><i class="icon-trash"></i> {{ 'Delete'|translate }}</button>
-                </div>
-                <div sd-pagination data-adapter="users"></div>
-                <!--<div class="page-info pull-right"></div>-->
-            </div>
-
-            <div class="tab-table">
-                <table class="sf_table user-table">
-                    <thead>
-                        <tr>
-                            <th class="chckbx_col"><input sd-check-all ng-model="users._items"></th>
-                            <th class="avatar_col" ng-show="userSettings.fields.avatar"></th>
-                            <th class="name_col" ng-show="userSettings.fields.display_name">
-                                <a href=""
-                                    sd-sort
-                                    data-label="{{ 'Name'|translate }}"
-                                    data-field="display_name"
-                                ></a>
-                            </th>
-                            <th class="username_col" ng-show="userSettings.fields.username">
-                                <a href=""
-                                    sd-sort
-                                    data-label="{{ 'Username'|translate }}"
-                                    data-field="username"
-                                ></a>
-                            </th>
-                            <th ng-show="userSettings.fields.user_role">
-                                <a href=""
-                                    sd-sort
-                                    data-label="{{ 'User Role'|translate }}"
-                                    data-field="user_role" ></a>
-                            </th>
-                            <th class="email_col resp-hide" ng-show="userSettings.fields.email">
-                                <a href=""
-                                    sd-sort
-                                    data-label="{{ 'Email'|translate }}"
-                                    data-field="email"
-                                ></a>
-                            </th>
-                            <th class="small_col resp-hide" ng-show="userSettings.fields.created">
-                                <a href=""
-                                    sd-sort
-                                    data-label="{{ 'Created'|translate }}"
-                                    data-field="created"
-                                ></a>
-                            </th>
-                            <th class="action_col">
-                                <div class="dropdown" style="text-align:right;" >
-                                    <a class="dropdown-toggle" data-toggle="dropdown" href="">
-                                        <i class="icon-switches"></i> <span class="caret"></span>
-                                    </a>
-                                    <ul class="dropdown-menu sf-dropdown-simple sf-right">
-                                        <li>
-                                            <input sd-check id="f-avatar" ng-click="userSettings.save()" ng-model="userSettings.fields.avatar" class="pull-left">
-                                            <label for="f-avatar" translate>Avatar</label>
-                                        </li>
-                                        <li>
-                                            <input sd-check id="f-name" ng-click="userSettings.save()" ng-model="userSettings.fields.display_name" class="pull-left">
-                                            <label for="f-name" translate>Name</label>
-                                        </li>
-                                        <li>
-                                            <input sd-check id="f-role" ng-click="userSettings.save()" ng-model="userSettings.fields.user_role" class="pull-left">
-                                            <label for="f-role" translate>User Role</label>
-                                        </li>
-                                        <li>
-                                            <input sd-check id="f-username" ng-click="userSettings.save()" ng-model="userSettings.fields.username" class="pull-left">
-                                            <label for="f-username" translate>Username</label>
-                                        </li>
-                                        <li>
-                                            <input sd-check id="f-email" ng-click="userSettings.save()" ng-model="userSettings.fields.email" class="pull-left">
-                                            <label for="f-email" translate>Email</label>
-                                        </li>
-                                        <li>
-                                            <input sd-check id="f-created" ng-click="userSettings.save()" ng-model="userSettings.fields.created" class="pull-left">
-                                            <label for="f-created" translate>Member Since</label>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <tr ng-repeat="user in users._items" ng-click="edit(user)">
-                            <td><input sd-check ng-model="user._checked"></td>
-                            <td><figure class="avatar" ng-show="userSettings.fields.avatar"><img sd-user-picture data-src="user.picture_url" width="22" height="22"></figure></td>
-                            <td class="name_col" ng-show="userSettings.fields.display_name">
-                                <a href="">{{ user.display_name }}</a>
-                            </td>
-                            <td ng-show="userSettings.fields.username">{{ user.username }}</td>
-                            <td ng-show="userSettings.fields.user_role">{{ roles[user.role].name }}</td>
-                            <td class="email_col resp-hide" ng-show="userSettings.fields.email"><a href="">{{ user.email }}</a></td>
-                            <td class="resp-hide" ng-show="userSettings.fields.created">{{ user.created | reldate}}</td>
-                            <td class="action_col">
-                                <div class="dropdown">
-                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b class="caret"></b></a>
-                                    <ul class="dropdown-menu sf-dropdown-simple sf-right"
-                                        sd-activity-list=""
-                                        data-data="user"
-                                        data-type="user"
-                                        data-action="{{ superdesk.ACTION_EDIT }}"
-                                    ></ul>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+    
+    <h3 class="page-nav-title" translate>Users</h3>
+    
+    <div class="button-stack pull-right">
+        <a class="navbtn navbtn-info navbtn-hover" href="" sd-with-params ng-click="createUser()">
+            <i class="svg-icon-add inverse"></i>
+            <span class="title" translate>Add new<span>
+        </a>
+        <div class="dropdown navbtn">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <i class="svg-icon-settings"></i>
+            </a>
+            <ul class="dropdown-menu sf-dropdown-simple sf-right">
+                <li><a href="">Settings 1</a></li>
+                <li><a href="">Settings 2</a></li>
+                <li><a href="">Settings 3</a></li>
+            </ul>
         </div>
     </div>
-
-    <div sd-user-details-pane data-user="user"></div>
+   
 </div>
+
+<section class="main-section users">
+    <div class="users-subnav">
+
+        <div class="flat-searchbar" sd-trigger-search>
+            <div class="search-handler">
+                <div class="trigger-icon"></div>
+                <input type="text" placeholder="{{ 'Search'|translate }}" ng-model="search" ng-change="locationParams.set('search', search)" sd-debounce>
+            </div>
+            <div class="separator-handler"></div>
+        </div>
+       
+
+        <div class="btn-group multiple-action">
+            
+            <button ng-disabled="!(users._items|any:'_checked')" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                {{ 'Multiple action' | translate }}
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu sf-dropdown sf-right">
+                <li><a href="" ng-click="deleteChecked();"><i class="icon-trash"></i> {{ 'Delete'|translate }}</a></li>
+            </ul>
+        </div>
+ 
+        
+        <div sd-pagination data-adapter="users"></div>
+    </div>
+    <div class="preview-layout">
+        <div class="list-pane">
+
+            <div class="users-table">
+                <ul class="table-header">
+                    <li>
+                        <div class=" chckbx">
+                            <input sd-check-all ng-model="users._items">
+                        </div>
+                        <div class="avatar"></div>
+                        
+                        <div class="row-wrapper" sd-col-width>
+                            <div class="name">
+                                <span
+                                    sd-sort
+                                    data-label="{{ 'Name'|translate }}"
+                                    data-field="display_name">
+                                </span>
+                            </div>
+                            <div class="username">
+                                <span
+                                    sd-sort
+                                    data-label="{{ 'Username'|translate }}"
+                                    data-field="username">
+                                </span>
+                            </div>
+                            <div class="role">
+                                <span
+                                    sd-sort
+                                    data-label="{{ 'User Role'|translate }}"
+                                    data-field="user_role">
+                                </span>
+                            </div>
+                            <div class="email">
+                                <span
+                                    sd-sort
+                                    data-label="{{ 'Email'|translate }}"
+                                    data-field="email">
+                                </span>
+                            </div>
+                            <div class="created">
+                                <span
+                                    sd-sort
+                                    data-label="{{ 'Created'|translate }}"
+                                    data-field="created">
+                                </span>
+                            </div>
+                        </div>
+                        <div class="action">
+
+                        </div>
+                    </li>
+                </ul>
+
+                <ul class="table-newest" ng-hide="true">
+                    
+                </ul>
+                <ul class="table-body">
+                    <li ng-repeat="user in users._items" ng-click="preview(user)" ng-class="{selected: user._checked}">
+                        <div class="chckbx">
+                            <input sd-check ng-model="user._checked">
+                        </div>
+                        <div class="avatar">
+                            <figure><img sd-user-picture data-src="user.picture_url"></figure>
+                        </div>
+                        <div class="row-wrapper" sd-col-width>
+                            
+                            <div class="name">{{ user.display_name }}</div>
+                            <div class="username">{{ user.username }}</div>
+                            <div class="role">{{ roles[user.role].name }}</div>
+                            <div class="email">{{ user.email }}</div>
+                            <div class="created">{{ user.created | reldate}}</div>
+                        </div>
+                        <div class="action">
+                            <ul class="item-functions" 
+                                sd-activity-list
+                                data-data="user"
+                                data-type="user"
+                                data-action="{{ superdesk.ACTION_EDIT }}">
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="preview-pane">
+            <div class="actions" ng-if="selectedUser">
+                <a href="#/users/{{selectedUser._id}}" class="btn btn-light pull-left" ng-show="selectedUser._id" translate>View full profile</a>
+                <div class="close" ng-click="closePreview()"><i class="icon-remove"></i></div>
+            </div>
+            <div sd-user-details-pane data-user="selectedUser"></div>
+        </div>
+    </div>
+</setion>

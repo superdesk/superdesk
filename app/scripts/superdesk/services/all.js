@@ -5,7 +5,6 @@ define([
     './storage',
     './permissionsService',
     './keyboardManager',
-    './userSettings',
     './entity',
     './server',
     './superdesk',

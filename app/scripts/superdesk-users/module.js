@@ -6,47 +6,26 @@ define([
     './controllers/list',
     './controllers/detail',
     './controllers/profile',
+    './controllers/edit',
     './controllers/settings',
-    './directives/sdUserPicture',
-    './directives/sdUserActivity',
-    './directives/sdRolesTreeview',
-    './directives/sdInfoItem',
-    './directives/sdUserEdit',
-    './directives/sdUserDetailsPane',
-    './directives/sdUserName'
+    './directives'
 ], function(angular, require) {
     'use strict';
 
     var app = angular.module('superdesk.users', [
         'superdesk.users.providers',
-        'superdesk.users.services'
+        'superdesk.users.services',
+        'superdesk.users.directives'
     ]);
 
     app
         .controller('UserDetailCtrl', require('./controllers/detail'))
-        .directive('sdUserPicture', require('./directives/sdUserPicture'))
-        .directive('sdUserActivity', require('./directives/sdUserActivity'))
-        .directive('sdInfoItem', require('./directives/sdInfoItem'))
-        .directive('sdUserEdit', require('./directives/sdUserEdit'))
-        .directive('sdUserDetailsPane', require('./directives/sdUserDetailsPane'))
-        .directive('sdRolesTreeview', require('./directives/sdRolesTreeview'))
-        .directive('sdUserName', require('./directives/sdUserName'))
         .value('defaultListParams', {
             search: '',
             searchField: 'username',
             sort: ['display_name', 'asc'],
             page: 1,
             perPage: 25
-        })
-        .value('defaultListSettings', {
-            fields: {
-                avatar: true,
-                display_name: true,
-                user_role: true,
-                username: false,
-                email: false,
-                created: true
-            }
         })
         .config(['superdeskProvider', function(superdesk) {
             superdesk
@@ -70,20 +49,6 @@ define([
         .config(['superdeskProvider', function(superdesk) {
 
             var usersResolve = {
-                user: ['em', '$route',
-                    function(em, $route) {
-                        if ($route.current.params.id === 'new') {
-                            return {};
-                        } else if (_.isString($route.current.params.id)) {
-                            return em.find('users', $route.current.params.id);
-                        } else {
-                            return undefined;
-                        }
-                    }],
-                userSettings: ['userSettings', 'defaultListSettings',
-                    function(userSettings, defaultListSettings) {
-                        return userSettings('users:list', defaultListSettings);
-                    }],
                 locationParams: ['locationParams', 'defaultListParams', '$route',
                     function(locationParams, defaultListParams, $route) {
                         defaultListParams.id = $route.current.params.id;
@@ -97,7 +62,6 @@ define([
 
             superdesk
                 .activity('/users/', {
-                    when: '/users/:id?',
                     label: gettext('Users'),
                     priority: 100,
                     controller: require('./controllers/list'),
@@ -111,6 +75,27 @@ define([
                             type: 'user'
                         }
                     ]
+                })
+                .activity('/users/:id', {
+                    label: gettext('Users profile'),
+                    priority: 100,
+                    controller: require('./controllers/edit'),
+                    templateUrl: 'scripts/superdesk-users/views/edit.html',
+                    resolve: {
+                        user: ['em', '$route',
+                            function(em, $route) {
+                                if ($route.current.params.id === 'new') {
+                                    return {};
+                                } else if (_.isString($route.current.params.id)) {
+                                    return em.find('users', $route.current.params.id);
+                                } else {
+                                    return undefined;
+                                }
+                            }],
+                        roles: ['rolesLoader', function(rolesLoader) {
+                            return rolesLoader;
+                        }]
+                    }
                 })
                 .activity('/profile/', {
                     label: gettext('My Profile'),
@@ -131,6 +116,7 @@ define([
                 })
                 .activity('delete/user', {
                     label: gettext('Delete user'),
+                    icon: 'trash',
                     confirm: gettext('Please confirm you want to delete a user.'),
                     controller: ['em', 'data', 'locationParams', function(em, data, locationParams) {
                         em.remove(data).then(function() {

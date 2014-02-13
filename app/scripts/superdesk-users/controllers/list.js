@@ -1,9 +1,10 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return ['$scope', 'userSettings', 'server', 'locationParams', 'superdesk', 'roles', 'user',
-    function UserListController($scope, userSettings, server, locationParams, superdesk, roles, user) {
-        $scope.user = user;
+    return ['$scope', 'server', 'locationParams', 'superdesk', 'roles',
+    function UserListController($scope, server, locationParams, superdesk, roles) {
+
+        $scope.selectedUser = null;
         $scope.roles = roles;
 
         $scope.users = superdesk.data('users', {
@@ -11,7 +12,6 @@ define(['angular'], function(angular) {
             perPage: 25
         });
 
-        $scope.userSettings = userSettings;
         $scope.locationParams = locationParams;
         $scope.search = locationParams.get('search');
 
@@ -28,8 +28,17 @@ define(['angular'], function(angular) {
             });
         };
 
-        $scope.edit = function(user) {
-            locationParams.path('/users/' + user._id);
+        $scope.createUser = function() {
+            $scope.selectedUser = {};
         };
+
+        $scope.preview = function(user) {
+            $scope.selectedUser = user;
+        };
+
+        $scope.closePreview = function() {
+            $scope.selectedUser = null;
+        };
+
     }];
 });

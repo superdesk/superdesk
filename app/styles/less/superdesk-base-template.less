@@ -204,6 +204,84 @@ body {
     font-size: 20px;
 	float: left;
   }
+
+  .button-stack {
+  	height:@subnav-height !important;
+  	position: absolute;
+  	top: 0; right: 0;
+  	.navbtn {
+  		float: left;
+  		padding: 0 15px;
+  		min-width: 18px;
+  		width: auto;
+  		border-left: 1px solid #dfdfdf;
+  		background: #f5f5f5;
+  		color:#333;
+  		&.navbtn-info {
+  			background: #5ea9c8;
+  			color: #fff;
+  		}
+
+  		&:hover {
+  			background: #e0e0e0;
+  			&.navbtn-info {
+	  			background:  lighten(#5ea9c8, 5%);
+	  		}
+  		}
+
+  		i {
+  			vertical-align: middle;
+  		}
+  		.title {
+  			text-transform: uppercase;
+  		}
+
+  		i + .title {
+  			margin-left: 10px;
+  		}
+  		&.navbtn-hover {
+	  		.title {
+	  			display: none;
+	  		}
+	  		&:hover {
+	  			.title {
+	  				display: inline;
+	  			}
+	  		}
+  		}
+
+  		&.dropdown {
+  			.dropdown-toggle {
+	  			position: absolute;
+				top: 0; right: 0; left: 0; bottom: 0;
+				.border-radius(0);
+				line-height: 48px;
+				&:hover {
+					background: none;
+				}
+	  		}
+	  		&.open .dropdown-toggle {
+	  			background: none;
+	  		}
+	  		.sf-dropdown-simple {
+	  			margin-top: 0;
+	  			.border-radius(0px) !important;
+	  			border:1px solid #e0e0e0;
+	  			background: #f0f0f0;
+	  			min-width: 200px;
+	  			.box-shadow(2px 2px 5px 0 #f0f0f0);
+	  			&.sf-right {
+	  				.box-shadow(-2px 2px 5px 0 #f0f0f0);
+	  			}
+	  			li {
+	  				padding: 10px 15px;
+	  				height: 35px;
+	  			}
+	  		}
+  		}
+  		
+  	}
+  }
   .navbtn {
   	width: 48px;
   	height: 52px;
@@ -284,13 +362,14 @@ body {
     .transition( all 0.3s ease);
     //page title placed in subnav-fixed
     .page-nav-title {
-		color: #909090;
+		color: #666;
 		font-size: 18px;
 		line-height: 34px;
 		float: left;
-		font-weight:600;
+		font-weight:400;
 		span {
-			font-weight: normal;
+			font-weight: 600;
+			color: #666;
 		}
     }
 }
@@ -403,6 +482,17 @@ body {
 	font-size:16px;
 }
 
+.main-section {
+	position:absolute;
+	top: @subnav-height+@topspace;
+	bottom:0; left:0; right:0; 
+	margin:0;
+	padding:0;
+	z-index:1;
+	padding-bottom:35px !important; /* because of scratchpad*/
+}
+
+
 .tab-background-container {
 	position: absolute;
 	left: 0;
@@ -420,16 +510,6 @@ body {
 		overflow-x: hidden;
 		padding-bottom: 20px;  
 	}
-}
-
-.main-content-container {
-	padding: @main-content-padding;
-	padding-top: @subnav-height + @subnav-level2 + @main-content-padding;
-}
-
-
-.users .tab-background-container {
-	top: @subnav-height+@topspace;
 }
 
 /*
@@ -487,6 +567,110 @@ body {
 	}
 }
 */
+
+
+
+/* layouts */
+
+/**/
+
+@sidepreview-width : 440px;
+.preview-layout {
+	position: absolute;
+	top: 0; right: 0;
+	left: 0; bottom: 0;
+	.list-pane {
+		position:absolute;
+		background: @background-main;
+		top: 0;
+	    right: @sidepreview-width; //sidebar preview static + scrollbar rigth space
+	    left: 0; bottom:0;
+	    border-right: 1px solid #d0d0d0;
+		.box-shadow(3px 0 5px -2px #d8d8d8);
+		padding: 20px;
+		overflow: auto;
+		overflow-x: hidden;
+		z-index: 1;
+	}
+	.preview-pane {
+		position: absolute;
+		width: @sidepreview-width; 
+		top: 0;
+		right: 0; bottom: 0;
+		background: #fff;
+	}
+}
+
+
+
+/* ====================================== */
+  // Context menu for sidepreview
+
+.preview-backdrop {
+	position: absolute;
+	width: @sidepreview-width; 
+	top: @archive-inner-topnav-height + @archive-inner-subnav-height;
+	right: 0; bottom: 0;
+	background: #fff;
+	.opacity(0);
+	.transition(all ease 0.2s);
+	&.show {
+		.opacity(80);
+	}
+}
+
+
+.context-menu {
+		position: absolute;
+		right: @sidepreview-width;
+		width: 250px;
+		top: @archive-inner-topnav-height + @archive-inner-subnav-height;
+		bottom: 0;
+		background: #fff;
+		border-right: 1px solid #dbdbdb;
+		.box-shadow(2px 0 3px 0 #e8e8e8);
+		.transition(all ease 0.3s);
+		&.show {
+			right: @sidepreview-width - 250;
+		}
+		.title {
+			font-size: 17px;
+			.text-light();
+			color: #333;
+			padding: 10px 15px;
+		}
+		.context-list {
+			padding: 10px 15px 20px;
+			li {
+				border : 1px solid #fff;
+				border-bottom: 1px solid #e5e5e5;
+				background: #e9f4f8;
+				padding: 6px 13px;
+				height: 21px;
+				line-height: 21px;
+				margin-bottom:7px;
+				font-size: 14px;
+				color: #333;
+				.border-radius(2px);
+				i {
+					font-style: normal;
+					color: #676565;
+					.text-light();
+				}
+				&:hover, &.selected {
+					background: #b3daf2;
+					border-color: #4aa8eb;
+					cursor: pointer;
+				}
+			}
+		}
+	}
+/* ====================================== */
+
+
+
+
+
 
 
 /*
@@ -899,6 +1083,7 @@ Login screen
 				height: 22px;
 				float: left;
 				margin-right: 10px;
+				.border-radius(11px);
 			}
   }
 

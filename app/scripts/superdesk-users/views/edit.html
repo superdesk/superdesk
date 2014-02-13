@@ -1,0 +1,23 @@
+<div class="subnav subnav-fixed">
+	<h3 class="page-nav-title">{{ 'Users Profile:'|translate }} <span>{{ user.first_name }} {{ user.last_name }}</span></h3>
+</div>
+
+<section class="main-section users-profile">
+	<div class="form-content">
+		<div sd-user-details-pane data-user="user"></div>
+	</div>
+	<div class="other-content">
+		<div class="tablist-container">
+			<ul>
+				<li class="active">Activity log</li>
+				<li>Analytics</li>
+				<li>Contributions</li>
+				<li>Payment</li>
+				<li>Biography</li>
+			</ul>
+		</div>
+		<div class="tabcontent-container">
+			<div class="profile-activity-container" sd-user-activity data-user="user"></div>
+		</div>
+	</div>
+</section>

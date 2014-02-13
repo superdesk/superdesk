@@ -3,16 +3,169 @@
 // ----------------------------------------------------------------------------------------
 
 
-.users-table {
-   margin: 0;
-   height: 100%; overflow: auto;
-   table {
-    td {
-      padding: 6px 8px;
-      line-height:22px;
-    }
-   }
+.users {
+	.users-subnav {
+		position: absolute;
+		left: 0; right: 0; top:0;
+		height: 50px;
+		.box-sizing(border-box);
+		background-color: @background-main;
+		z-index: 2;
+		border-bottom: 1px #e0e0e0 solid;
+		border-top: 1px #fcfcfc solid;
+		padding: 10px 20px;
+		.flat-searchbar {
+			margin: -10px 0 0 -20px;
+		}
+		.multiple-action {
+			margin-left: 30px;
+			float: left;
+		}
+	}
+	.preview-layout {
+		top : 50px;
+		.preview-pane {
+			.actions {
+				padding: 15px 20px;
+				height: 28px;
+			}
+			.user-details-pane {
+				top: 40px;
+			}
+		}
+	}
+	.sf_table {
+		table-layout: auto;
+	}
 }
+
+.users-table {
+	
+	border-top: 2px solid #d7d7d7;
+	.table-header {
+		background: #fff;
+	}
+	.table-newest {
+		margin: 30px 0;
+	}
+	.table-body {
+		background: #fff;
+		border-top: 1px solid #d7d7d7;
+		margin-top: -1px;
+	}
+	.table-header, .table-newest, .table-body {
+
+		> li {
+			height: 40px;
+			border-bottom: 1px solid #d7d7d7;
+			position: relative;
+			> div {
+				float: left;
+				height: 30px;
+				padding: 5px;
+				line-height: 30px;
+				//column width 
+				&.chckbx {
+					width: 25px;
+					text-align: center;
+					span {
+						vertical-align: middle;
+						margin: 0;
+					}
+				}
+				&.avatar {
+					width: 30px;
+					figure {
+						.border-radius(15px);
+						overflow: hidden;
+						width: 30px;
+						height: 30px;
+						img {
+							width: 30px;
+							height: 30px;
+							vertical-align: baseline;
+						}
+					}
+				}
+				&.row-wrapper {
+					position: absolute;
+					left: 90px;
+					right: 35px;
+					top: 5px;
+					padding: 0;
+					.box-sizing(border-box);
+					> div {
+						display: inline-block;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+						.box-sizing(border-box);
+						padding: 0 5px;
+						&.name, &.email {
+							color: #218baa;
+						}
+						//user columns width
+						&.name { width: 17%; }
+						&.role { width: 16%; }
+						&.username { width: 14%; }
+						&.email { width: 35%; }
+						&.created { width: 13%; }
+					}
+				}
+				&.action {
+					float: right;
+					width: 25px;
+					line-height: 18px !important;
+				}
+			}
+		}
+	}	
+	.table-header {
+		> li > div, .name, .email {
+			color: #000 !important;
+			.text-semibold();
+		}
+	}
+	.table-body , .table-newest {
+		> li {
+
+			&.selected {
+				background: #eff7fa;
+			}
+			&:hover {
+				background: #f4f4f4;
+				cursor: pointer;
+			}
+
+			> div {
+				&.action {
+					padding: 0;
+					height: 40px;
+					.item-functions {
+						display: none;
+						li {
+							height: 40px;
+							line-height: 40px;
+							text-align: center;
+							border-left: 1px solid #d8d8d8;
+							span {
+								display: none;
+							}
+						}
+					}
+				}
+			}
+
+			&:hover {
+				> div.action .item-functions {
+					display: block;
+				}
+			}
+
+		}
+	}
+}
+
 
 .user-table-avatar {
   width:22px;
@@ -105,7 +258,6 @@
   }
 
   &.open {
-    left:@user-details-pane-width;
     .tab-submenu {
       padding-left: 12px;
     }
@@ -133,25 +285,16 @@
 
 
 /* USER SCREEEn - DETAIL PANE */
-@user-details-pane-width : 500px;
+@user-details-pane-width : 440px;
 @user-details-header-height : 37px;
 .user-details-pane {
   position: absolute;
-  top: 7px;
-  bottom: 15px;
-  left: -@user-details-pane-width;
-  width: @user-details-pane-width;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   .box-sizing(border-box);
-  border:1px solid #afafaf;
-  border-width: 1px 1px 1px 0;
-  background: #fff;
-  .transition(all 0.3s ease);
-  .border-radius(0px 5px 5px 0px);
-  .box-shadow(0 0 5px 0 #a8a8a8);
-  &.open {
-    left:0; 
-  }
-
+  
   ::-webkit-scrollbar {
       border-left: 9px solid #fff;
       border-right: 1px solid #fff;
@@ -170,38 +313,11 @@
     }
 
 
-  /* button to close user-detail pane */
-  .close {
-    height: 14px;
-    width: 14px;
-    padding: 2px;
-    top:10px; right: 10px;
-    position: absolute;
-    z-index: 2;
-  }
-
-  /* user-detail-pane header which contains tab navigation */
-  .user-details-header {
-    background: #fafafa;
-    border-bottom: 1px solid #e2e2e2;
-    height: @user-details-header-height;
-    width: 100%;
-    .box-sizing(border-box);
-    position: absolute;
-    left:0; right:0;top:0;
-    .border-radius(0px 5px 0px 0px);
-    padding-right: 35px;
-  }
-
   /* user-detail-pane content which can be scrollable*/ 
   .user-details-content {
-    position: absolute;
-    left:0; right: 2px;
-    bottom: 0;
-    top:@user-details-header-height;
-    overflow-y: auto;
-    overflow-x: hidden; 
-    padding: 0;
+  	height: 100%;
+  	.box-sizing(border-box);
+	padding: 20px;
   }
   .tab-pane {
     padding:20px;
@@ -332,7 +448,7 @@
       margin: 0;
     }
     .info-editable {
-      width: 280px;
+      width: 275px;
       border: 0 !important;
       font-size: 13px;
       text-overflow: ellipsis;
@@ -462,7 +578,7 @@
     }
   }
 
-  &.open .profile-pic {
+  .profile-pic {
     width: 82px;
     height: 82px;
     float: left;
@@ -473,9 +589,7 @@
       float: left;
       width: 82px;
       height: 82px;
-      -webkit-border-radius: 3px;
-      -moz-border-radius: 3px;
-      border-radius: 3px;
+      .border-radius(3px);
       overflow: hidden;
       max-height: 82px;
       max-width: 82px;
@@ -978,17 +1092,20 @@ Profile page styles
   
   .profile-pic {
     width: 200px;
+    height: auto;
     float: left;
     overflow: hidden;
     .border-radius(3px);
     figure {
       width: 200px;
+      max-width: 200px;
       min-height: 200px;
       background: #f0f0f0;
       text-align: center;
         img {
-          max-width: 200px;
-          height: auto;
+        	width: auto;
+        	max-width: 200px;
+        	height: auto;
         }
     }
     .change-photo {
@@ -1002,7 +1119,6 @@ Profile page styles
       font-size: 11px;
       text-decoration: none;
       text-align: center;
-      position: relative;
       &:hover {
         cursor:pointer;
         background-color: rgba(55,152,180,0.8);
@@ -1083,6 +1199,64 @@ Profile page styles
   }
 }
 
+
+.users-profile {
+	
+	.form-content {
+		position: absolute;
+		top: 0; left: 0; bottom: 0;
+		width: 600px;
+		background: #fff;
+		border-right: 1px solid #ddd;
+		.box-sizing(border-box);
+		.box-shadow(0 0 5px 0 #e0e0e0);
+		z-index: 2;
+	}
+
+	.other-content {
+		position: absolute;
+		top: 0; left: 600px; bottom: 0; right: 0;
+		z-index: 1;
+		background: #f8f8f8;
+
+		.tablist-container {
+			width: 100%;
+			.box-sizing(border-box);
+			height: 38px;
+			border-bottom: 1px solid #e5e5e5;
+			background: #efefef;
+			ul li {
+				float: left;
+				height: 38px;
+				line-height: 38px;
+				padding: 0 20px;
+				border-right: 1px solid #dfdfdf;
+				color: #218baa;
+				&.active {
+					background: #f8f8f8;
+				}
+			}
+		}
+
+		.tabcontent-container {
+			position: absolute;
+			top: 38px;
+			left: 0; right: 0; bottom: 0;
+			overflow: auto;
+			.profile-activity-container {
+				left: 0;
+				background: none;
+				.activity.with-date .date span {
+					background-color: #f8f8f8 !important;
+				}
+			}
+		}
+	}
+}
+
+
+//activivty log styles
+
 .activity-log {
   margin-top: 10px;
   ul {
@@ -1102,7 +1276,7 @@ Profile page styles
           width: 42px;
           height: 42px;
           background-color: #f0f0f0;
-          .border-radius(2px);
+          .border-radius(21px);
           overflow: hidden;
           float: left;
           img {
@@ -1145,11 +1319,10 @@ Profile page styles
               background: #f8f8f8;
               padding-right: 5px;
             }
-          }
-          
+          } 
         }
-
       }
     }
   }
 }
+

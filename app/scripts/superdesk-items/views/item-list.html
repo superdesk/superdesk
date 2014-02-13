@@ -8,7 +8,7 @@
     </a>
 </div>
 
-<section sd-sidebar-layout  class="archive-main-section">
+<section sd-sidebar-layout  class="archive main-section">
 
     <div class="archive-content-topnav">
         <ul class="basket-tabs pull-left clearfix">
@@ -37,26 +37,30 @@
         <input type="text" sd-searchbar data-df="headline" />
     </div>
 
-    <div class="archive-content-inner {{ view }}-view"
-        ng-if="view !== 'stats'"
-        sd-list-view
-        data-adapter="items"
-        data-select="preview(item)"
-        data-extras="{view: view}"
-        sd-shadow
-    >
-        <div sd-draggable data-item="item" data-container="'.scratchpad'" class="draggable-item">
-            <div sd-media-box></div>
+    <div class="preview-layout">
+        <div class="archive-content-inner list-pane {{ view }}-view"
+            ng-if="view !== 'stats'"
+            sd-list-view
+            data-adapter="items"
+            data-select="preview(item)"
+            data-extras="{view: view}"
+            sd-shadow
+        >
+            <div sd-draggable data-item="item" data-container="'.scratchpad'" class="draggable-item">
+                <div sd-media-box></div>
+            </div>
         </div>
+
+        <div
+            ng-show="view !== 'stats'"
+            sd-item-preview-static
+            data-item="previewItem"
+            class="preview-pane"
+        ></div>
     </div>
+    
 
-    <div
-        ng-show="view !== 'stats'"
-        sd-item-preview-static
-        data-item="previewItem"
-    ></div>
-
-    <div class="archive-content-inner clearfix statistics" ng-if="view === 'stats'">
+    <div class="clearfix statistics" ng-if="view === 'stats'">
         <div class="stats-container size2">
             <div sd-pie-chart data-terms="items._facets.provider.terms" data-colors="superdesk" data-head="{{ 'Providers'| translate }}"></div>
             <div sd-pie-chart data-terms="items._facets.urgency.terms" data-sort="term" data-head="{{ 'Urgency'| translate }}" data-colors="superdesk"></div>
