@@ -1,8 +1,9 @@
 <div class="user-profile user-profile-edit">
+  <form name="userForm">
   <div sd-upload-modal></div>
 
   <div ng-controller="UserDetailCtrl">
-    <button class="btn btn-info pull-right" ng-click="save()">Save</button>
+    <button class="btn btn-info pull-right" ng-click="save()" ng-disabled="userForm.$invalid">Save</button>
 
     <div class="profile-pic">
         <figure>
@@ -26,32 +27,38 @@
 
                 <div sd-info-item>
                   <label for="display-name" translate>display name</label>
-                  <input type="text" id="display-name" ng-model="user.display_name">
+                  <input type="text" name="displayName" id="display-name" ng-model="user.display_name" ng-minlength="4" ng-maxlength="20" required>
+                  <div ng-show="userForm.displayName.$error.minlength || userForm.displayName.$error.maxlength" translate>display name must be 4-20 characters.</div>
                 </div>
 
                 <div sd-info-item>
                   <label for="first-name" translate>first name</label>
-                  <input type="text" id="first-name" ng-model="user.first_name">
+                  <input type="text" name="firstName" ng-minlength="2" ng-maxlength="20" id="first-name" ng-model="user.first_name" required>
+                  <div ng-show="userForm.firstName.$error.minlength || userForm.firstName.$error.maxlength" translate>first name must be 2-20 characters.</div>
                 </div>
 
                 <div sd-info-item>
                   <label for="last-name" translate>last name</label>
-                  <input type="text" id="last-name" ng-model="user.last_name">
+                  <input type="text" name="lastName" ng-minlength="2" ng-maxlength="20"  id="last-name" ng-model="user.last_name" required>
+                  <div ng-show="userForm.lastName.$error.minlength || userForm.lastName.$error.maxlength" translate>last name must be 2-20 characters.</div>
                 </div>
 
                 <div sd-info-item>
                   <label for="username" translate>username</label>
-                  <input type="text" id="username" class="info-value info-editable" ng-model="user.username" ng-readonly="user._id">
+                  <input type="text" name="userName" ng-minlength="4" ng-maxlength="20" id="username" class="info-value info-editable" ng-model="user.username" ng-readonly="user._id" required>
+                  <div ng-show="userForm.userName.$error.minlength || userForm.userName.$error.maxlength" translate>username must be 4-20 characters.</div>
                 </div>
 
                 <div sd-info-item>
                   <label for="email" translate>email</label>
-                  <input type="text" id="email" ng-model="user.email">
+                  <input type="email" name="email" id="email" ng-model="user.email" required>
+                  <div ng-show="userForm.email.$error.email" translate>email address must be valid.</div>
                 </div>
 
                 <div sd-info-item class="password">
                   <label for="password" translate>password</label>
-                  <input type="password" id="password" ng-model="user.password">
+                  <input type="password" name="password" ng-minlength="6" ng-maxlength="20" id="password" ng-model="user.password">
+                  <div ng-show="userForm.password.$error.minlength || userForm.password.$error.maxlength" translate>password must be 6-20 characters.</div>
                 </div>
 
                 <div sd-info-item>
@@ -72,4 +79,5 @@
         </div>
     </div>
   </div>
+  </form>
 </div>
