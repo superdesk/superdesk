@@ -25,7 +25,7 @@ requirejs.config({
     },
 
     paths: {
-        jquery: 'bower_components/jquery/jquery',
+        jquery: 'bower_components/jquery/dist/jquery',
         bootstrap: 'bower_components/bootstrap/js',
         angular: 'bower_components/angular/angular',
         'angular-resource': 'bower_components/angular-resource/angular-resource',

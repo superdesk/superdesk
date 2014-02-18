@@ -22,8 +22,6 @@
     "jquery-ui": "*"
   },
   "resolutions": {
-    "jquery": "2.1.0",
-    "momentjs": "2.5.1",
-    "angular": "1.2.11"
+    "jquery": "2.1.0"
   }
 }
