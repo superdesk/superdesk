@@ -163,7 +163,7 @@ class Parser():
     def parse_remote_content(self, tree):
         content = {}
         content['residRef'] = tree.attrib['residref']
-        content['sizeinbytes'] = int(tree.attrib['size'])
+        content['sizeinbytes'] = int(tree.attrib.get('size', '0'))
         content['rendition'] = tree.attrib['rendition'].split(':')[1]
         content['mimetype'] = tree.attrib['contenttype']
         content['href'] = tree.attrib['href']
