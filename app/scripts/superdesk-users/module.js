@@ -12,7 +12,8 @@ define([
     './directives/sdRolesTreeview',
     './directives/sdInfoItem',
     './directives/sdUserEdit',
-    './directives/sdUserDetailsPane'
+    './directives/sdUserDetailsPane',
+    './directives/sdUserName'
 ], function(angular, require) {
     'use strict';
 
@@ -29,6 +30,7 @@ define([
         .directive('sdUserEdit', require('./directives/sdUserEdit'))
         .directive('sdUserDetailsPane', require('./directives/sdUserDetailsPane'))
         .directive('sdRolesTreeview', require('./directives/sdRolesTreeview'))
+        .directive('sdUserName', require('./directives/sdUserName'))
         .value('defaultListParams', {
             search: '',
             searchField: 'username',

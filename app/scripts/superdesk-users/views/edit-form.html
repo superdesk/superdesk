@@ -45,8 +45,9 @@
 
                 <div sd-info-item>
                   <label for="username" translate>username</label>
-                  <input type="text" name="userName" ng-minlength="4" ng-maxlength="20" id="username" class="info-value info-editable" ng-model="user.username" ng-readonly="user._id" required>
+                  <input type="text" name="userName" ng-minlength="4" ng-maxlength="20" id="username" class="info-value info-editable" ng-model="user.username" ng-readonly="user._id" required sd-user-name>
                   <div ng-show="userForm.userName.$error.minlength || userForm.userName.$error.maxlength" translate>username must be 4-20 characters.</div>
+                  <div ng-show="userForm.userName.$error.usernameavailable" translate>username is already taken.</div>
                 </div>
 
                 <div sd-info-item>
