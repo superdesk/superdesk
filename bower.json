@@ -1,16 +1,16 @@
 {
   "name": "superdesk-client",
   "dependencies": {
-    "requirejs": "2.1.10",
+    "requirejs": "2.1.11",
     "jquery": "2.1.0",
     "lodash": "2.4.1",
     "bootstrap": "3.1.0",
     "momentjs": "2.5.1",
     "moment-timezone": "~0.0.3",
-    "angular": "1.2.11",
-    "angular-resource": "1.2.11",
-    "angular-route": "1.2.11",
-    "angular-mocks": "1.2.11",
+    "angular": "1.2.13",
+    "angular-resource": "1.2.13",
+    "angular-route": "1.2.13",
+    "angular-mocks": "1.2.13",
     "angular-gettext": "~0.2.0",
     "angular-bootstrap": "~0.7.0",
     "angular-slider-royale": "~0.1.16",
@@ -23,6 +23,7 @@
     "jsSHA": "~1.5.0"
   },
   "resolutions": {
-    "jquery": "2.1.0"
+    "jquery": "2.1.0",
+    "angular": "1.2.13"
   }
 }

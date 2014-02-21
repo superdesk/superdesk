@@ -1,8 +1,7 @@
 define([
-    'angular',
     'angular-mocks',
     'superdesk/services/storage'
-], function(angular) {
+], function() {
     'use strict';
 
     describe('Storage', function() {

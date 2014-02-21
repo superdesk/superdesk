@@ -2,14 +2,19 @@ module.exports = {
     options: {
         livereload: '<%= livereloadPort %>',
     },
-    css: {
+    less: {
         files: [
-            '<%= appDir %>/{,*/}*.html',
-            '{<%= tmpDir %>,<%= appDir %>}/styles/css/custom.css',
-            '{<%= tmpDir %>,<%= appDir %>}/styles/{,*/}*.less',
-            '{<%= tmpDir %>,<%= appDir %>}/{,*/}*.js',
-            '<%= appDir %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+            '{<%= tmpDir %>,<%= appDir %>}/styles/{,*/}*.less'
         ],
         tasks: ['less']
+    },
+    code: {
+        files: [
+            '<%= appDir %>/scripts/**/*.html',
+            '<%= appDir %>/scripts/**/*.js'
+        ],
+        options: {
+            livereload: true
+        }
     }
 };

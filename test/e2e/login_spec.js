@@ -8,13 +8,12 @@ describe('superdesk.auth', function() {
     }
 
     function LoginModal() {
-        var modal = element(by.id('login-form')),
-            usernameInput = element(by.model('username')),
+        var usernameInput = element(by.model('username')),
             passwordInput = element(by.model('password')),
             btn = element(by.id('login-button'));
 
         this.isDisplayed = function() {
-            return modal.isDisplayed();
+            return usernameInput.isDisplayed();
         };
 
         this.login = function(username, password) {
@@ -24,15 +23,15 @@ describe('superdesk.auth', function() {
         };
     }
 
-    describe('login', function() {
+    describe('login modal', function() {
         var modal;
 
         beforeEach(function() {
-            browser.get('');
+            browser.get('/');
             modal = new LoginModal();
         });
 
-        it('should be displayed on start', function() {
+        it('should be visible on load', function() {
             expect(modal.isDisplayed()).toBe(true);
         });
 

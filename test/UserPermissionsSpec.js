@@ -2,6 +2,7 @@ define([
     'angular',
     'angular-mocks',
     'superdesk/services/entity',
+    'superdesk/services/server',
     'superdesk/services/permissionsService'
 ], function(angular) {
     'use strict';

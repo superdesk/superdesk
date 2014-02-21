@@ -10,7 +10,7 @@ for (var file in window.__karma__.files) {
 requirejs.config({
     baseUrl: '/base/app/scripts',
 
-    deps: ['angular'],
+    deps: ['angular', 'angular-mocks'],
     callback: function(angular) {
         'use strict';
 

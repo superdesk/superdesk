@@ -83,7 +83,7 @@ require.config({
     }
 });
 
-/*jshint -W098 */
+/* jshint -W098 */
 /**
  * Noop for registering string for translation in js files.
  *
@@ -118,10 +118,13 @@ define([
     angular.module('superdesk.services', []);
     angular.module('superdesk.directives', []);
 
+    angular.module('superdesk').constant('config', {server: ServerConfig});
+
     angular.element(document).ready(function() {
 
         // load core components
         require([
+            'superdesk/auth/auth',
             'superdesk/filters/all',
             'superdesk/services/all',
             'superdesk/directives/all'
@@ -136,18 +139,18 @@ define([
                 'superdesk',
                 'superdesk.filters',
                 'superdesk.services',
-                'superdesk.directives'
+                'superdesk.directives',
+                'superdesk.auth'
             ];
 
             var apps = [
                 'dashboard',
-                'settings',
-                'auth',
-                'users',
-                'desks',
-                'archive',
-                'items',
-                'scratchpad'
+                //'settings',
+                //'desks',
+                //'archive',
+                //'items',
+                //'scratchpad',
+                'users'
             ];
 
             var deps = [];

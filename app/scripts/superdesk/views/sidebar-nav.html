@@ -17,7 +17,7 @@
               <li class="divider-vertical"></li>
               <li class="dropdown ipad-show">
                   <a class="dropdown-toggle">
-                    <span class="user-profile"><img sd-user-avatar data-src="currentUser.picture_url" class="avatar">{{ currentUser.display_name || currentUser.username || '..' }}</span> <b class="caret"></b>
+                    <span class="user-profile"><img sd-user-avatar data-src="currentUser.picture_url" class="avatar">{{ identity.FullName || identity.UserName || '..' }}</span> <b class="caret"></b>
                   </a>
                 <ul class="dropdown-menu ">
                   <li><a ng-click="logout()" translate>Logout</a></li>
@@ -25,7 +25,9 @@
                 </ul>
               </li>
               <li class="ipad-hide">
-                <a href="#/profile" class="user-profile"><img sd-user-avatar data-src="currentUser.picture_url"  class="avatar">{{ currentUser.display_name || currentUser.username || '..' }}</a>
+                <a href="#/profile" class="user-profile">
+                  <img sd-user-avatar data-src="identity.Avatar.href"  class="avatar">{{ identity.UserName || '..' }}
+                </a>
               </li>
               <li class="divider-vertical ipad-hide"></li>
               <li><a href="" ng-click="logout()" class="blink ipad-hide blue-text" translate>Logout</a></li>

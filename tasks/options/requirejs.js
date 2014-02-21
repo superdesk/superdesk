@@ -11,7 +11,7 @@ module.exports = {
                 'superdesk/filters/all',
                 'superdesk/services/all',
                 'superdesk/directives/all',
-                'superdesk-auth/module',
+                'superdesk/auth/auth',
                 'superdesk-items/module',
                 'superdesk-users/module',
                 'superdesk-settings/module',
