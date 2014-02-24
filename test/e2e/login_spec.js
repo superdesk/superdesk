@@ -21,6 +21,7 @@ describe('login', function() {
             usernameInput.sendKeys(username);
             passwordInput.sendKeys(password);
             btn.click();
+            protractor.getInstance().waitForAngular();
         };
     }
 
