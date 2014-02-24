@@ -1,4 +1,6 @@
 exports.config = {
+    baseUrl: 'http://localhost:9000/',
+
     specs: [
         'test/e2e/*spec.js'
     ],
@@ -7,11 +9,12 @@ exports.config = {
         browserName: 'chrome',
     },
 
-    baseUrl: 'http://localhost:9000/',
-
     framework: 'jasmine',
 
     jasmineNodeOpts: {
-        showColors: true
+        showColors: true,
+        isVerbose: false,
+        includeStackTrace: false,
+        defaultTimeoutInterval: 30000
     }
 }

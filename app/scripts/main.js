@@ -161,7 +161,8 @@ define([
 
             // load apps
             require(deps, function() {
-                angular.bootstrap(document, modules);
+                var body = angular.element('body');
+                angular.bootstrap(body, modules);
             });
         });
     });

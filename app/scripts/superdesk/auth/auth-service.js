@@ -1,7 +1,8 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    var AuthService = function($q, $http, storage, authAdapter) {
+    AuthService.$inject = ['$q', '$http', 'storage', 'authAdapter'];
+    function AuthService($q, $http, storage, authAdapter) {
 
         var TOKEN_KEY = 'auth:token',
             USER_KEY = 'auth:user',
@@ -85,11 +86,17 @@ define(['lodash'], function(_) {
                 $http.defaults.headers.common.Authorization = token;
                 $http.get(userHref)
                     .then(function(response) {
-                        defer.resolve(response.data);
-                        defer = null;
+                        if (defer) {
+                            defer.resolve(response.data);
+                            defer = null;
+                        }
+
+                        return response;
                     }, function(info) {
-                        defer.reject(info);
-                        defer = null;
+                        if (defer) {
+                            defer.reject(info);
+                            defer = null;
+                        }
                     });
             }
         }
@@ -101,8 +108,7 @@ define(['lodash'], function(_) {
             storage.setItem(TOKEN_KEY, identity.Session, useLocalStorage);
             storage.setItem(USER_KEY, identity.User.href, useLocalStorage);
         }
-    };
+    }
 
-    AuthService.$inject = ['$q', '$http', 'storage', 'authAdapter'];
     return AuthService;
 });

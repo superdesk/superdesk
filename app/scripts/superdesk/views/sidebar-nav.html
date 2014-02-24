@@ -15,24 +15,13 @@
 
           <ul class="nav pull-right" ng-controller="UserController">
               <li class="divider-vertical"></li>
-              <li class="dropdown ipad-show">
-                  <a class="dropdown-toggle">
-                    <span class="user-profile"><img sd-user-avatar data-src="currentUser.picture_url" class="avatar">{{ identity.FullName || identity.UserName || '..' }}</span> <b class="caret"></b>
-                  </a>
-                <ul class="dropdown-menu ">
-                  <li><a ng-click="logout()" translate>Logout</a></li>
-                  <li><a href="" translate>Help</a></li>
-                </ul>
+              <li>
+                <a href="#/profile" class="user-profile"><img sd-user-avatar data-src="identity.Avatar.href" class="avatar"> {{ identity.UserName }}</a>
               </li>
-              <li class="ipad-hide">
-                <a href="#/profile" class="user-profile">
-                  <img sd-user-avatar data-src="identity.Avatar.href"  class="avatar">{{ identity.UserName || '..' }}
-                </a>
-              </li>
-              <li class="divider-vertical ipad-hide"></li>
+              <li class="divider-vertical"></li>
               <li><a href="" ng-click="logout()" class="blink ipad-hide blue-text" translate>Logout</a></li>
-              <li class="divider-vertical ipad-hide"></li>
-              <li><a href="" class="ipad-hide" translate>Help</a></li>
+              <li class="divider-vertical"></li>
+              <li ng-show=""><a href="" translate>Help</a></li>
           </ul>
 
         </div>

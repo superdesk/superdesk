@@ -22,14 +22,13 @@ define([
         /**
          * Stop route loading if there is no user identity
          */
-        .run(['$rootScope', '$route', 'auth', function($rootScope, $route, auth) {
-            $rootScope.$on('$locationChangeStart', function(e) {
+        .run(['$rootScope', '$location', '$route', 'auth', function($rootScope, $location, $route, auth) {
+            $rootScope.$on('$locationChangeStart', function(e, url) {
                 if (!auth.identity) {
                     auth.getIdentity().then(function(identity) {
                         $rootScope.identity = identity;
                         $route.reload();
                     });
-
                     e.preventDefault();
                 }
             });

@@ -1,4 +1,4 @@
-describe('superdesk.auth', function() {
+describe('login', function() {
     'use strict';
 
     function getUrl() {
@@ -13,6 +13,7 @@ describe('superdesk.auth', function() {
             btn = element(by.id('login-button'));
 
         this.isDisplayed = function() {
+            browser.sleep(1000); // wait for modal animation to complete
             return usernameInput.isDisplayed();
         };
 
@@ -37,8 +38,9 @@ describe('superdesk.auth', function() {
 
         it('should be possible to login', function() {
             modal.login('admin', 'admin');
-            expect(getUrl()).toBe('/dashboard');
             expect(modal.isDisplayed()).toBe(false);
+            expect(getUrl()).toBe('/dashboard');
+            expect(element(by.tagName('body')).evaluate('identity.UserName')).toBe('john');
         });
     });
 });
