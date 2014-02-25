@@ -8,7 +8,7 @@ define(['lodash'], function(_) {
         /**
          * current user identity
          */
-        this.identity;
+        this.identity = null;
         initIdentity(this);
 
         /**
@@ -48,9 +48,6 @@ define(['lodash'], function(_) {
                         defer.resolve(identity);
                         defer = null;
                     }, rejectDefer);
-                }, function(rsn) {
-                    console.info('login failed', rsn);
-                    rejectDefer;
                 });
 
             return this.getIdentity();
