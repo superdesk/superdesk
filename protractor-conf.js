@@ -1,8 +1,8 @@
 exports.config = {
-    baseUrl: 'http://localhost:9000/',
+    baseUrl: 'http://localhost:9090/',
 
     specs: [
-        'test/e2e/*spec.js'
+        'spec/**/*[Ss]pec.js'
     ],
 
     capabilities: {

@@ -34,7 +34,8 @@
     "load-grunt-tasks": "~0.3.0",
     "load-grunt-config": "~0.7.0",
     "karma-ng-html2js-preprocessor": "~0.1.0",
-    "grunt-jscs-checker": "~0.3.2"
+    "grunt-jscs-checker": "~0.3.2",
+    "lodash": "~2.4.1"
   },
   "scripts": {
     "test": "./travis_build.sh"

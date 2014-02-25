@@ -11,11 +11,5 @@ module.exports = {
     },
     server: {
         files: '<%= tmpDir %>'
-    },
-    tmp: {
-        files: [{
-            dot: true,
-            src: ['<%= tmpDir %>']
-        }]
     }
 };

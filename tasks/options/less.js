@@ -1,17 +1,19 @@
 module.exports = {
-    development: {
+    dev: {
         options: {
             paths: ['<%= appDir %>/styles/less'],
-            compress: true,
+            compress: false,
             cleancss: true
         },
         files: {
             '<%= distDir %>/styles/css/bootstrap.css': '<%= appDir %>/styles/less/bootstrap.less'
         }
     },
-    production: {
+    prod: {
         options: {
             paths: ['<%= appDir %>/styles/less'],
+            compress: true,
+            cleancss: true
         },
         files: {
             '<%= distDir %>/styles/css/bootstrap.css': '<%= appDir %>/styles/less/bootstrap.less'

@@ -2,11 +2,8 @@
 
 set -e
 
-# test
+# unit test
 ./node_modules/karma/bin/karma start --single-run --browsers PhantomJS --reporters dots
 
-# hint
-grunt jshint
-
-# check style
-grunt jscs
+# code style checks
+grunt ci

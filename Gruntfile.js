@@ -8,8 +8,7 @@ module.exports = function (grunt) {
         tmpDir: '.tmp',
         distDir: 'dist',
         poDir: 'po',
-        livereloadPort: 35729,
-        serverURL: grunt.option('server') || 'http://localhost:5000'
+        livereloadPort: 35729
     };
 
     require('load-grunt-tasks')(grunt);
@@ -19,33 +18,11 @@ module.exports = function (grunt) {
         init: true
     });
 
-    grunt.registerTask('server', [
-        'clean',
-        'less:development',
-        'template',
-        'connect:server',
-        'open',
-        'watch'
-    ]);
-
-    grunt.registerTask('test', [
-        'clean:server',
-        'karma',
-        'jshint',
-        'jscs'
-    ]);
-
-    grunt.registerTask('build', [
-        'clean:dist',
-        'jshint',
-        'less:production',
-        'template',
-        'nggettext_compile',
-        'requirejs',
-        'copy:assets',
-        'clean:tmp'
-    ]);
-
-    grunt.registerTask('default', 'build');
-    grunt.registerTask('package', 'build compress');
+    grunt.registerTask('ci', ['jshint', 'jscs']);
+    grunt.registerTask('server:test', ['clean', 'less:dev', 'template:test', 'connect:test']);
+    grunt.registerTask('server', ['clean', 'less:dev', 'template:dev', 'connect:dev', 'open', 'watch']);
+    grunt.registerTask('test', ['clean:server', 'karma']);
+    grunt.registerTask('build', ['clean:dist', 'less:prod', 'template:prod', 'nggettext_compile', 'requirejs', 'copy:assets']);
+    grunt.registerTask('package', ['ci', 'build']);
+    grunt.registerTask('default', ['server']);
 };

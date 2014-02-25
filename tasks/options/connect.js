@@ -1,16 +1,19 @@
-module.exports = {
-    options: {
-        port: 9000,
-        hostname: 'localhost',
-        livereload: '<%= livereloadPort %>'
-    },
-    server: {
+
+module.exports = function(grunt) {
+    var base = ['<%= distDir %>', '<%= tmpDir %>', '<%= appDir %>'];
+    return {
         options: {
-            base: [
-                '<%= distDir %>',
-                '<%= tmpDir %>',
-                '<%= appDir %>'
-            ]
+            port: 9000,
+            hostname: 'localhost',
+            livereload: '<%= livereloadPort %>'
+        },
+        dev: {options: {base: base}},
+        test: {
+            options: {
+                base: base,
+                keepalive: true,
+                port: 9090
+            }
         }
-    }
+    };
 };
