@@ -725,6 +725,137 @@ Popover override
 
 
 
+/*
+=========================================
+Login screen
+=========================================
+*/
+
+
+.login-screen {
+	position: fixed;
+	z-index: 9999;
+	left: 0; right: 0; bottom: 0; top: 0;
+	background-color: #323232;
+	.logo-handler {
+		margin-bottom: 60px;
+	}
+	.login-form-container {
+		.box-sizing(border-box);
+		width: 320px;
+		height: 400px;
+		padding: 15px;
+		position: absolute;
+		top: 50%; margin-top: -200px;
+		left: 50%; margin-left: -125px;
+
+		.form-handler {
+			width: 240px;
+			.avatar-handler {
+				width: 160px;
+				height: 160px;
+				margin: 0 auto 35px;
+				.border-radius(80px);
+				overflow: hidden;
+				background-size: cover;
+				background-position: center;
+				
+			}
+			form {
+				.inputs {
+					input {
+						margin-bottom: 18px;
+						height: 38px;
+						.border-radius(4px) !important;
+						border: 1px solid #000 !important;
+						.box-shadow-both(inset 0 2px 0 0 #ccc, 0 1px 0 0 #656565) !important;
+						font-size: 13px;
+						line-height: 25px;
+					}
+				}
+				.buttons {
+					button {
+						width: 100%;
+						padding: 8px 12px;
+						text-transform: uppercase;
+						.text-semibold();
+						font-size: 14px;
+						.box-shadow(inset 0 0 0 0 #000);
+						position: relative;
+					}
+				}
+			}
+			.text {
+				color: #898989;
+				&:hover {
+					text-decoration: underline;
+					cursor: pointer;
+				}
+			}
+			.error-handler {
+				.error {
+					background: #301c1c;
+					padding: 12px;
+					color:#cc0000;
+					font-size: 12px;
+					line-height: 18px;
+					.border-radius(4px);
+				}
+			}
+		}
+	}
+
+
+	.spinner {
+	  width: 20px;
+	  height: 20px;
+	  position: absolute;
+	  text-align: center;
+	  right: 9px;
+	  top: 6px;
+	  
+	  -webkit-animation: rotate 2.0s infinite linear;
+	  animation: rotate 2.0s infinite linear;
+	}
+
+	.dot1, .dot2 {
+	  width: 60%;
+	  height: 60%;
+	  display: inline-block;
+	  position: absolute;
+	  top: 0;
+	  background-color: #fff;
+	  border-radius: 100%;
+	  
+	  -webkit-animation: bounce 2.0s infinite ease-in-out;
+	  animation: bounce 2.0s infinite ease-in-out;
+	}
+
+	.dot2 {
+	  top: auto;
+	  bottom: 0px;
+	  -webkit-animation-delay: -1.0s;
+	  animation-delay: -1.0s;
+	}
+
+	@-webkit-keyframes rotate { 100% { -webkit-transform: rotate(360deg) }}
+	@keyframes rotate { 100% { transform: rotate(360deg); -webkit-transform: rotate(360deg) }}
+
+	@-webkit-keyframes bounce {
+	  0%, 100% { -webkit-transform: scale(0.0) }
+	  50% { -webkit-transform: scale(1.0) }
+	}
+
+	@keyframes bounce {
+	  0%, 100% { 
+	    transform: scale(0.0);
+	    -webkit-transform: scale(0.0);
+	  } 50% { 
+	    transform: scale(1.0);
+	    -webkit-transform: scale(1.0);
+	  }
+	}
+}
 
 
 

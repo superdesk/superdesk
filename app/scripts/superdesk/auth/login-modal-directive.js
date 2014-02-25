@@ -8,10 +8,16 @@ define([], function() {
             templateUrl: 'scripts/superdesk/auth/login-modal.html',
             link: function(scope, element, attrs) {
 
-                element.modal({
-                    keyboard: false,
-                    show: !auth.identity
-                });
+                scope.onlypassword = true;
+
+                scope.different = function() {
+                    scope.onlypassword = false;
+                    //other code
+                };
+
+                if (!auth.identity) {
+                    element.show();
+                }
 
                 scope.authenticate = function() {
                     scope.loading = true;
@@ -20,12 +26,12 @@ define([], function() {
                             delete scope.loading;
                             scope.password = null;
                             scope.loginError = false;
-                            element.modal('hide');
+                            element.hide();
                         }, function() {
                             delete scope.loading;
                             scope.password = null;
                             scope.loginError = true;
-                            element.modal('show');
+                            element.show();
                         });
                 };
 
@@ -33,10 +39,10 @@ define([], function() {
                     return auth.identity;
                 }, function(identity) {
                     if (identity == null) {
-                        element.modal('show');
+                        element.show();
                         element.find('#username').focus();
                     } else {
-                        element.modal('hide');
+                        element.hide();
                     }
                 });
             }

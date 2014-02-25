@@ -1,27 +1,32 @@
-<div class="login-popup modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form name="login" class="form-horizontal" ng-submit="authenticate()">
-            <div class="modal-header">
-                <h3 translate>Please authenticate to continue</h3>
-            </div>
-            <div class="modal-body">
+<div class="login-screen">
+    <div class="login-form-container">
+        <div class="logo-handler" ng-show="!onlypassword">
+            <img src="images/superdesk-icon-large.png">
+        </div>
 
-                    <p class="alert alert-error" ng-show="loginError" translate>Login failed!</p>
-                    <p class="alert alert-warning" data-is="expired-warn" ng-show="" translate>Login session expired!</p>
-                    <p class="alert alert-info" style="margin-bottom:0" ng-show="loading" translate>Please wait..</p>
-
-                    <fieldset>
-                        <input type="text" id="username" ng-model="username" placeholder="{{ 'Username'|translate }}" class="fullwidth-input" />
-                        <input type="password" id="password" ng-model="password" placeholder="{{ 'Password'|translate }}" class="fullwidth-input login-pass" />
-                  
-                        <label for="login-remember-me" class="checkbox remember-me"><input type="checkbox" value="1" id="login-remember-me" ng-model="rememberMe"> {{ 'Remember login'|translate }}</label>
-                    </fieldset>
+        <div class="form-handler">
+            <div class="avatar-handler" style="background-image:url('images/avatar_default.png')" ng-show="onlypassword">
             </div>
-            <div class="modal-footer">
-                <button ng-disabled="loading" id="login-button" type="submit" class="btn btn-primary" translate>Submit</button>
-            </div>
+            <form name="login" ng-submit="authenticate()">
+                <fieldset class="inputs">
+                    <input type="text" id="username" ng-model="username" ng-show="!onlypassword" placeholder="{{ 'username'|translate }}" class="fullwidth-input" />
+                    <input type="password" id="password" ng-model="password" placeholder="{{ 'password'|translate }}" class="fullwidth-input login-pass" />
+                </fieldset>
+                <fieldset class="buttons">
+                    <button ng-disabled="loading" id="login-button" type="submit" class="btn btn-green" translate>
+                        {{ 'Log In' | translate }}
+                        <div class="spinner" ng-show="loading">
+                          <div class="dot1"></div>
+                          <div class="dot2"></div>
+                        </div>
+                    </button>
+                </fieldset>
             </form>
+            <div class="error-handler">
+                <p class="error" ng-show="loginError" translate>Oops! Invalid Username or Password. Please try again.</p>
+            </div>
+            <div class="text" ng-click="different()" ng-show="onlypassword">Sign in as different user</div>
+            
         </div>
     </div>
 </div>
