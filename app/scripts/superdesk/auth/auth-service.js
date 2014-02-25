@@ -1,17 +1,15 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    AuthService.$inject = ['$q', '$http', 'storage', 'authAdapter'];
-    function AuthService($q, $http, storage, authAdapter) {
-
-        var TOKEN_KEY = 'auth:token',
-            USER_KEY = 'auth:user',
-            defer;
+    AuthService.$inject = ['$q', '$http', '$rootScope', 'storage', 'authAdapter'];
+    function AuthService($q, $http, $rootScope, storage, authAdapter) {
+        var defer;
 
         /**
          * current user identity
          */
-        this.identity = null;
+        this.identity;
+        initIdentity(this);
 
         /**
          * Get identity from stored auth token
@@ -20,12 +18,8 @@ define(['lodash'], function(_) {
          */
         this.getIdentity = function() {
 
-            // return existing promise
-            if (defer) {
-                return defer.promise;
-            }
+            defer = defer ? defer : $q.defer();
 
-            defer = $q.defer();
             if (this.identity) {
                 var promise = defer.promise;
                 defer.resolve(this.identity);
@@ -33,13 +27,7 @@ define(['lodash'], function(_) {
                 return promise;
             }
 
-            loadIdentity();
-
-            // set this.identity when resolved
-            return defer.promise.then(_.bind(function(identity) {
-                this.identity = identity;
-                return this.identity;
-            }, this));
+            return defer.promise;
         };
 
         /**
@@ -47,17 +35,23 @@ define(['lodash'], function(_) {
          *
          * @param {string} username
          * @param {string} password
-         * @param {boolean} rememberMe
+         * @returns {object} promise
          */
-        this.login = function(username, password, rememberMe) {
+        this.login = function(username, password) {
+            var auth = this;
             authAdapter.authenticate(username, password)
-                .then(_.bind(function(session) {
-                    saveIdentity(session, rememberMe);
-                    loadIdentity();
-                }, this), _.bind(function(rsn) {
+                .then(function(session) {
+                    fetchIdentity(session).then(function(identity) {
+                        storage.setItem('auth:token', session.Session);
+                        storage.setItem('auth:identity', identity);
+                        initIdentity(auth);
+                        defer.resolve(identity);
+                        defer = null;
+                    }, rejectDefer);
+                }, function(rsn) {
                     console.info('login failed', rsn);
-                    this.logout();
-                }, this));
+                    rejectDefer;
+                });
 
             return this.getIdentity();
         };
@@ -66,47 +60,43 @@ define(['lodash'], function(_) {
          * Logout
          */
         this.logout = function() {
-            storage.removeItem(TOKEN_KEY);
-            storage.removeItem(USER_KEY);
-            this.identity = null;
+            storage.removeItem('auth:token');
+            storage.removeItem('auth:identity');
+            this.identity = $rootScope.currentUser = null;
+            delete $http.defaults.headers.common.Authorization;
+            rejectDefer();
+        };
+
+        /**
+         * Fetch user info for given session
+         *
+         * @param {object} session
+         */
+        function fetchIdentity(session) {
+            return $http.get(session.User.href, {headers: {Authorization: session.Session}})
+                .then(function(response) {
+                    return response.data;
+                });
+        }
+
+        /**
+         * Init identity info from storage
+         *
+         * @param {Object} auth - auth service instance
+         */
+        function initIdentity(auth) {
+            auth.identity = $rootScope.currentUser = storage.getItem('auth:identity');
+            $http.defaults.headers.common.Authorization = storage.getItem('auth:token');
+        }
+
+        /**
+         * Reject identity promise if exists
+         */
+        function rejectDefer() {
             if (defer) {
                 defer.reject();
                 defer = null;
             }
-        };
-
-        /**
-         * Load stored identity (if such exists)
-         */
-        function loadIdentity() {
-            var token = storage.getItem(TOKEN_KEY),
-                userHref = storage.getItem(USER_KEY);
-
-            if (token && userHref) {
-                $http.defaults.headers.common.Authorization = token;
-                $http.get(userHref)
-                    .then(function(response) {
-                        if (defer) {
-                            defer.resolve(response.data);
-                            defer = null;
-                        }
-
-                        return response;
-                    }, function(info) {
-                        if (defer) {
-                            defer.reject(info);
-                            defer = null;
-                        }
-                    });
-            }
-        }
-
-        /**
-         * Save identity info for loading
-         */
-        function saveIdentity(identity, useLocalStorage) {
-            storage.setItem(TOKEN_KEY, identity.Session, useLocalStorage);
-            storage.setItem(USER_KEY, identity.User.href, useLocalStorage);
         }
     }
 

@@ -26,7 +26,6 @@ define([
             $rootScope.$on('$locationChangeStart', function(e, url) {
                 if (!auth.identity) {
                     auth.getIdentity().then(function(identity) {
-                        $rootScope.identity = identity;
                         $route.reload();
                     });
                     e.preventDefault();

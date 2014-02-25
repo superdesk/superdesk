@@ -1,26 +1,48 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    angular.module('superdesk.services').
-        service('storage', function() {
+    angular.module('superdesk.services')
+        /**
+         * LocalStorage wrapper
+         *
+         * it stores data as json to keep its type
+         */
+        .service('storage', function() {
+
+            /**
+             * Get item from storage
+             *
+             * @param {string} key
+             * @returns {mixed}
+             */
             this.getItem = function(key) {
-                var storage = localStorage.hasOwnProperty(key) ? localStorage : sessionStorage;
-                return angular.fromJson(storage.getItem(key));
+                return angular.fromJson(localStorage.getItem(key));
             };
 
-            this.setItem = function(key, data, remember) {
-                var storage = remember ? localStorage : sessionStorage;
-                return storage.setItem(key, angular.toJson(data));
+            /**
+             * Set storage item
+             *
+             * @param {string} key
+             * @param {mixed} data
+             */
+            this.setItem = function(key, data) {
+                localStorage.setItem(key, angular.toJson(data));
             };
 
+            /**
+             * Remove item from storage
+             *
+             * @param {string} key
+             */
             this.removeItem = function(key) {
                 localStorage.removeItem(key);
-                sessionStorage.removeItem(key);
             };
 
+            /**
+             * Remove all items from storage
+             */
             this.clear = function() {
                 localStorage.clear();
-                sessionStorage.clear();
             };
         });
 });

@@ -19,10 +19,10 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('ci', ['jshint', 'jscs']);
-    grunt.registerTask('server:test', ['clean', 'less:dev', 'template:test', 'connect:test']);
-    grunt.registerTask('server', ['clean', 'less:dev', 'template:dev', 'connect:dev', 'open', 'watch']);
+    grunt.registerTask('server:test', ['clean', 'less:dev', 'template', 'connect:test']);
+    grunt.registerTask('server', ['clean', 'less:dev', 'template', 'connect:dev', 'open', 'watch']);
     grunt.registerTask('test', ['clean:server', 'karma']);
-    grunt.registerTask('build', ['clean:dist', 'less:prod', 'template:prod', 'nggettext_compile', 'requirejs', 'copy:assets']);
+    grunt.registerTask('build', ['clean:dist', 'less:prod', 'template', 'nggettext_compile', 'requirejs', 'copy:assets']);
     grunt.registerTask('package', ['ci', 'build']);
     grunt.registerTask('default', ['server']);
 };

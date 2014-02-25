@@ -41,7 +41,7 @@ describe('login', function() {
             modal.login('admin', 'admin');
             expect(modal.isDisplayed()).toBe(false);
             expect(getUrl()).toBe('/dashboard');
-            expect(element(by.tagName('body')).evaluate('identity.UserName')).toBe('john');
+            expect(element(by.tagName('body')).evaluate('currentUser.UserName')).toBe('john');
         });
     });
 });
