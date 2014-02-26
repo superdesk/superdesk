@@ -9,6 +9,5 @@ before_script:
     - npm install karma-phantomjs-launcher
     - bower install --force-latest 
 
-cache:
-    - node_modules
-    - app/scripts/bower_components
+after_success:
+    - grunt coveralls

@@ -1,6 +1,7 @@
 # Superdesk Client 
 [![Build Status](https://travis-ci.org/superdesk/superdesk-client.png?branch=master)](https://travis-ci.org/superdesk/superdesk-client)
 [![devDependency Status](https://david-dm.org/superdesk/superdesk-client/dev-status.png)](https://david-dm.org/superdesk/superdesk-client#info=devDependencies)
+[![Coverage Status](https://coveralls.io/repos/superdesk/superdesk-client/badge.png)](https://coveralls.io/r/superdesk/superdesk-client)
 
 Superdesk Client is a javascript client for Superdesk REST API server.
 
