@@ -6,15 +6,18 @@ module.exports = function(config) {
         ],
 
         preprocessors: {
-            '**/*.html': ['ng-html2js']
+            '**/*.html': ['ng-html2js'],
+            '**/superdesk/**/*.js': ['coverage'],
+            '**/test/*[sS]pec.js': ['coverage']
         },
 
         // list of files / patterns to load in the browser
         files: [
+          'app/scripts/bower_components/jquery/dist/jquery.js',
           'app/scripts/bower_components/angular/angular.js',
           {pattern: 'app/**/*.js', included: false},
           {pattern: 'test/*[sS]pec.js', included: false},
-          {pattern: 'app/scripts/**/*[sS]pec.js', included: false},
+          {pattern: 'app/scripts/superdesk/**/*[sS]pec.js', included: false},
           'app/scripts/superdesk/views/*.html',
           'test/test-main.js'
         ],
@@ -26,12 +29,17 @@ module.exports = function(config) {
         ],
 
         ngHtml2JsPreprocessor: {
-            stripPrefix: 'app/',
-            moduleName: 'templates'
+          stripPrefix: 'app/',
+          moduleName: 'templates'
+        },
+
+        coverageReporter: {
+          type: 'html',
+          dir: 'report'
         },
 
         // test results reporter to use
-        reporters: ['progress'],
+        reporters: ['progress', 'coverage'],
 
         // web server port
         port: 8080,
