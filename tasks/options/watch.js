@@ -16,6 +16,6 @@ module.exports = {
             '<%= appDir %>/scripts/**/*.html',
             '<%= appDir %>/scripts/**/*.js'
         ],
-        tasks: ['ci']
+        tasks: ['hint']
     }
 };

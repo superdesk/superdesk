@@ -13,9 +13,9 @@
                     <input type="password" id="password" ng-model="password" placeholder="{{ 'password'|translate }}" class="fullwidth-input login-pass" />
                 </fieldset>
                 <fieldset class="buttons">
-                    <button ng-disabled="loading" id="login-button" type="submit" class="btn btn-green" translate>
+                    <button ng-disabled="isLoading" id="login-button" type="submit" class="btn btn-green">
                         {{ 'Log In' | translate }}
-                        <div class="spinner" ng-show="loading">
+                        <div class="spinner" ng-show="isLoading">
                           <div class="dot1"></div>
                           <div class="dot2"></div>
                         </div>
@@ -26,7 +26,6 @@
                 <p class="error" ng-show="loginError" translate>Oops! Invalid Username or Password. Please try again.</p>
             </div>
             <div class="text" ng-click="different()" ng-show="onlypassword">Sign in as different user</div>
-            
         </div>
     </div>
 </div>

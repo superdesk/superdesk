@@ -13,7 +13,6 @@ describe('login', function() {
             btn = element(by.id('login-button'));
 
         this.isDisplayed = function() {
-            browser.sleep(1000); // wait for modal animation to complete
             return usernameInput.isDisplayed();
         };
 
@@ -21,7 +20,6 @@ describe('login', function() {
             usernameInput.sendKeys(username);
             passwordInput.sendKeys(password);
             btn.click();
-            protractor.getInstance().waitForAngular();
         };
     }
 

@@ -1,34 +1,36 @@
 define([], function() {
     'use strict';
 
-    var LoginModalDirective = function(auth) {
+    LoginModalDirective.$inject = ['auth'];
+    function LoginModalDirective(auth) {
         return {
             restrict: 'A',
             replace: true,
             templateUrl: 'scripts/superdesk/auth/login-modal.html',
             link: function(scope, element, attrs) {
 
-                scope.onlypassword = true;
+                scope.isLoading = false;
+                scope.onlypassword = false;
 
                 scope.different = function() {
                     scope.onlypassword = false;
-                    //other code
                 };
 
                 if (!auth.identity) {
+                    scope.onlypassword = false;
                     element.show();
                 }
 
                 scope.authenticate = function() {
-                    scope.loading = true;
+                    scope.isLoading = true;
                     auth.login(scope.username, scope.password, scope.rememberMe)
                         .then(function() {
-                            delete scope.loading;
+                            scope.isLoading = false;
                             scope.password = null;
                             scope.loginError = false;
                             element.hide();
                         }, function() {
-                            delete scope.loading;
+                            scope.isLoading = false;
                             scope.password = null;
                             scope.loginError = true;
                             element.show();
@@ -47,8 +49,7 @@ define([], function() {
                 });
             }
         };
-    };
+    }
 
-    LoginModalDirective.$inject = ['auth'];
     return LoginModalDirective;
 });
