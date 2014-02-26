@@ -9,12 +9,13 @@ module.exports = {
         tasks: ['less']
     },
     code: {
+        options: {
+            livereload: true
+        },
         files: [
             '<%= appDir %>/scripts/**/*.html',
             '<%= appDir %>/scripts/**/*.js'
         ],
-        options: {
-            livereload: true
-        }
+        tasks: ['ci']
     }
 };

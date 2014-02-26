@@ -19,11 +19,15 @@ define([
 
     describe('auth service from scratch', function() {
 
+        beforeEach(inject(function(auth) {
+            auth.logout();
+        }));
+
         it('has no identity on init', inject(function(auth) {
             expect(auth.identity).toBe(null);
         }));
 
-        it('can login', inject(function(auth, storage, $http, $httpBackend, $rootScope) {
+        it('can login', inject(function(auth, $http, $httpBackend, $rootScope) {
             var resolved = {};
 
             $httpBackend.expectGET(USER_HREF).respond({UserName: USERNAME});
@@ -36,8 +40,6 @@ define([
             auth.login('admin', 'admin').then(function() {
                 expect(auth.identity.UserName).toBe(USERNAME);
                 expect($rootScope.currentUser.UserName).toBe(USERNAME);
-                expect(storage.getItem('auth:identity').UserName).toBe(USERNAME);
-                expect(storage.getItem('auth:token')).toBe(SESSION);
                 expect($http.defaults.headers.common.Authorization).toBe(SESSION);
                 resolved.login = true;
             });
@@ -63,9 +65,13 @@ define([
     });
 
     describe('auth service with stored identity', function() {
-        beforeEach(inject(function(storage) {
-            storage.setItem('auth:token', SESSION);
-            storage.setItem('auth:identity', {UserName: USERNAME, href: 'http://localhost/HR/User/1'});
+        beforeEach(inject(function(auth, $rootScope, $httpBackend) {
+            $httpBackend.expectGET(USER_HREF).respond({UserName: USERNAME});
+
+            auth.login('admin', 'admin');
+
+            $httpBackend.flush();
+            $rootScope.$apply();
         }));
 
         it('can get reuse identity', inject(function(auth, $rootScope, $http) {
@@ -74,10 +80,9 @@ define([
             expect($http.defaults.headers.common.Authorization).toBe(SESSION);
         }));
 
-        it('can logout', inject(function(auth, storage, $rootScope, $http) {
+        it('can logout', inject(function(auth, $rootScope, $http) {
             auth.logout();
             expect(auth.identity).toBe(null);
-            expect(storage.getItem('auth:token')).toBe(null);
             expect($rootScope.currentUser).toBe(null);
             expect($http.defaults.headers.common.Authorization).toBe(undefined);
         }));
