@@ -1,11 +1,11 @@
-define(['angular'], function(angular) {
+define([], function() {
     'use strict';
 
-    return ['$scope', 'server', 'superdesk', 'roles', 'user',
-    function UserListController($scope, server, superdesk, roles, user) {
+    UserListController.$inject = ['$scope', 'server', 'superdesk', 'user'];
 
+    function UserListController($scope, server, superdesk, user) {
         $scope.user = user;
-        $scope.roles = roles;
+    }
 
-    }];
+    return UserListController;
 });

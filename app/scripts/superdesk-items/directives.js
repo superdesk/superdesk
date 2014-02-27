@@ -9,11 +9,6 @@ define([
     'use strict';
 
     angular.module('superdesk.items.directives', ['ngAlohaEditor'])
-        .filter('reldate', function() {
-            return function(date) {
-                return moment(date).fromNow();
-            };
-        })
         .directive('sdSearchbar', ['$location', '$routeParams', function($location, $routeParams) {
             return {
                 scope: {

@@ -107,20 +107,19 @@ define([
             };
         })
         .directive('sdUserPicture', function() {
-            function getDefaultPicture() {
-                return 'images/avatar_default.png';
-            }
-
+            var PICTURE_DEFAULT = 'https://avatars.githubusercontent.com/u/275305';
             return {
                 scope: {src: '='},
                 link: function (scope, element, attrs) {
-                    scope.$watch('src', function (src) {
-                        element.on('error', function (e) {
-                            element.attr('title', gettext('Error when loading: ') + element.attr('src'));
-                            element.attr('src', getDefaultPicture());
-                        });
 
-                        element.attr('src', src ? src : getDefaultPicture());
+                    scope.$watch('src', function(src) {
+                        src = src || PICTURE_DEFAULT;
+                        element.attr('src', src);
+                    });
+
+                    element.on('error', function (e) {
+                        console.log(e);
+                        return;
                     });
                 }
             };

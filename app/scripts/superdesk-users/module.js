@@ -54,10 +54,7 @@ define([
                         defaultListParams.id = $route.current.params.id;
                         locationParams.reset(defaultListParams);
                         return locationParams;
-                    }],
-                roles: ['rolesLoader', function(rolesLoader) {
-                    return rolesLoader;
-                }]
+                    }]
             };
 
             superdesk

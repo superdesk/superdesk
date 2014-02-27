@@ -1,7 +1,8 @@
-define(['angular'], function(angular) {
+define([], function() {
     'use strict';
 
-    return ['$scope', 'server', 'locationParams', 'superdesk', 'roles',
+    UserListController.$inject = ['$scope', 'server', 'locationParams', 'superdesk'];
+
     function UserListController($scope, server, locationParams, superdesk, roles) {
 
         $scope.selectedUser = null;
@@ -40,5 +41,7 @@ define(['angular'], function(angular) {
             $scope.selectedUser = null;
         };
 
-    }];
+    }
+
+    return UserListController;
 });

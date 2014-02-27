@@ -108,8 +108,7 @@ define([
     'angular-route',
     'angular-gettext',
     'angular-resource',
-    'gridster',
-    'jquery-ui'
+    'gridster'
 ], function($, _, angular) {
     'use strict';
 
@@ -125,6 +124,7 @@ define([
         // load core components
         require([
             'superdesk/auth/auth',
+            'superdesk/datetime/datetime',
             'superdesk/filters/all',
             'superdesk/services/all',
             'superdesk/directives/all'
@@ -140,7 +140,8 @@ define([
                 'superdesk.filters',
                 'superdesk.services',
                 'superdesk.directives',
-                'superdesk.auth'
+                'superdesk.auth',
+                'superdesk.datetime'
             ];
 
             var apps = [
