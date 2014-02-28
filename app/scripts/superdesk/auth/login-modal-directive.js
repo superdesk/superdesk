@@ -15,9 +15,11 @@ define([], function() {
                     scope.isLoading = true;
                     auth.login(scope.username, scope.password)
                         .then(function() {
+                            scope.isLoading = false;
                             scope.password = null;
                             scope.loginError = false;
                         }, function() {
+                            scope.isLoading = false;
                             scope.password = null;
                             scope.loginError = true;
                         });
