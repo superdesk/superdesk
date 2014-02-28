@@ -20,19 +20,10 @@ define(['bower_components/jsSHA/src/sha512'], function(SHA) {
          * @returns {object} promise
          */
         this.authenticate = function(username, password) {
-            var defer = $q.defer(),
-                reject = function(reason) {
-                    console.log(reason);
-                    defer.reject(reason);
-                };
-
-            getSessToken().then(function(token) {
-                getAuthToken(token, username, password).then(function(session) {
-                    defer.resolve(session);
-                }, reject);
-            }, reject);
-
-            return defer.promise;
+            return getSessToken()
+                .then(function(token) {
+                    return getAuthToken(token, username, password);
+                });
         };
 
         /**
@@ -49,7 +40,7 @@ define(['bower_components/jsSHA/src/sha512'], function(SHA) {
                 Token: token,
                 HashedToken: signToken(token, username, password)
             }).then(function(response) {
-                return response.data;
+                return response.data.Session ? response.data : $q.reject(response);
             });
         }
 
@@ -59,10 +50,10 @@ define(['bower_components/jsSHA/src/sha512'], function(SHA) {
          * @returns {object} promise
          */
         function getSessToken() {
-            return $http.post(url('/Security/Authentication'), {
-            }).then(function(response) {
-                return response.data.Token;
-            });
+            return $http.post(url('/Security/Authentication'))
+                .then(function(response) {
+                    return response.data.Token ? response.data.Token : $q.reject(response);
+                });
         }
 
         /**

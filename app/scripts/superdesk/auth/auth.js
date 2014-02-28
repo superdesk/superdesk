@@ -31,6 +31,8 @@ define([
                                 return $http(rejection.config);
                             });
                         }
+
+                        return rejection;
                     }
                 };
             });

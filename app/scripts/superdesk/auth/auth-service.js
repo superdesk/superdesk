@@ -1,8 +1,8 @@
 define([], function() {
     'use strict';
 
-    AuthService.$inject = ['session', '$http', 'authAdapter'];
-    function AuthService(session, $http, authAdapter) {
+    AuthService.$inject = ['$http', '$q', 'session', 'authAdapter'];
+    function AuthService($http, $q, session, authAdapter) {
 
         /**
          * Login using given credentials
@@ -12,29 +12,22 @@ define([], function() {
          * @returns {object} promise
          */
         this.login = function(username, password) {
-            var token;
-
-            function saveToken(loginData) {
-                token = loginData.Session;
-                return loginData;
-            }
 
             function fetchIdentity(loginData) {
                 return $http.get(loginData.User.href, {headers: {Authorization: loginData.Session}})
                     .then(function(response) {
-                        return response.data;
+                        return response.data ? response.data : $q.reject(response);
                     });
             }
 
-            function startSession(userData) {
-                session.start(token, userData);
-                return session.identity;
-            }
-
             return authAdapter.authenticate(username, password)
-                .then(saveToken)
-                .then(fetchIdentity)
-                .then(startSession);
+                .then(function(loginData) {
+                    return fetchIdentity(loginData)
+                        .then(function(userData) {
+                            session.start(loginData.Session, userData);
+                            return session.identity;
+                        });
+                });
         };
     }
 
