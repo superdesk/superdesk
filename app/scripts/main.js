@@ -146,12 +146,12 @@ define([
 
             var apps = [
                 'dashboard',
+                'users'
                 //'settings',
                 //'desks',
                 //'archive',
                 //'items',
                 //'scratchpad',
-                'users'
             ];
 
             var deps = [];

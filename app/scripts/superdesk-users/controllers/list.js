@@ -2,13 +2,12 @@ define([], function() {
     'use strict';
 
     UserListController.$inject = ['$scope', 'server', 'locationParams', 'superdesk'];
-
     function UserListController($scope, server, locationParams, superdesk, roles) {
 
         $scope.selectedUser = null;
         $scope.roles = roles;
 
-        $scope.users = superdesk.data('users', {
+        $scope.users = superdesk.data('http://superdesk.apiary.io/HR/User.json', {
             sort: ['display_name', 'asc'],
             perPage: 25
         });

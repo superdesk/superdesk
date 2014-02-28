@@ -1,46 +1,35 @@
 define([], function() {
     'use strict';
 
-    LoginModalDirective.$inject = ['auth'];
-    function LoginModalDirective(auth) {
+    /**
+     * Login modal is watching session token and displays modal when needed
+     */
+    LoginModalDirective.$inject = ['session', 'auth'];
+    function LoginModalDirective(session, auth) {
         return {
-            restrict: 'A',
             replace: true,
             templateUrl: 'scripts/superdesk/auth/login-modal.html',
             link: function(scope, element, attrs) {
 
-                scope.isLoading = false;
-                scope.onlypassword = false;
-
-                scope.different = function() {
-                    scope.onlypassword = false;
-                };
-
-                if (!auth.identity) {
-                    scope.onlypassword = false;
-                    element.show();
-                }
-
                 scope.authenticate = function() {
                     scope.isLoading = true;
-                    auth.login(scope.username, scope.password, scope.rememberMe)
+                    auth.login(scope.username, scope.password)
                         .then(function() {
-                            scope.isLoading = false;
                             scope.password = null;
                             scope.loginError = false;
-                            element.hide();
                         }, function() {
-                            scope.isLoading = false;
                             scope.password = null;
                             scope.loginError = true;
-                            element.show();
                         });
                 };
 
                 scope.$watch(function() {
-                    return auth.identity;
-                }, function(identity) {
-                    if (identity == null) {
+                    return session.token;
+                }, function(token) {
+                    scope.isLoading = false;
+                    scope.identity = session.identity;
+                    scope.username = session.identity ? session.identity.UserName : null;
+                    if (!token) {
                         element.show();
                         element.find('#username').focus();
                     } else {

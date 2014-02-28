@@ -1,7 +1,8 @@
 define(['bower_components/jsSHA/src/sha512'], function(SHA) {
     'use strict';
 
-    var AllyPyAuthAdapter = function($http, $q, config) {
+    AllyPyAuthAdapter.$inject = ['$http', '$q', 'config'];
+    function AllyPyAuthAdapter($http, $q, config) {
 
         function url(uri) {
             return config.server.url + uri;
@@ -10,8 +11,6 @@ define(['bower_components/jsSHA/src/sha512'], function(SHA) {
         var HASH_TYPE = 'ASCII',
             HASH_ALGO = 'SHA-512',
             HASH_OUT = 'HEX';
-
-        this.test = true;
 
         /**
          * Authenticate using given credentials
@@ -29,7 +28,6 @@ define(['bower_components/jsSHA/src/sha512'], function(SHA) {
 
             getSessToken().then(function(token) {
                 getAuthToken(token, username, password).then(function(session) {
-                    $http.defaults.headers.common.Authorization = session.token;
                     defer.resolve(session);
                 }, reject);
             }, reject);
@@ -110,8 +108,7 @@ define(['bower_components/jsSHA/src/sha512'], function(SHA) {
         function hash(input) {
             return sha(input).getHash(HASH_ALGO, HASH_OUT);
         }
-    };
+    }
 
-    AllyPyAuthAdapter.$inject = ['$http', '$q', 'config'];
     return AllyPyAuthAdapter;
 });

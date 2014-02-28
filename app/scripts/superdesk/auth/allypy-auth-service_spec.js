@@ -29,15 +29,15 @@ define([
                 .expectPOST(LOGIN_URL, {UserName: username, Token: token, HashedToken: hashedToken})
                     .respond({Session: session, User: {href: 'user'}});
 
-            var resolved = false;
+            var resolved;
             authAdapter.authenticate(username, password).then(function(identity) {
-                resolved = true;
+                resolved = 'authenticated';
                 expect(identity.Session).toBe(session);
                 expect(identity.User.href).toBe('user');
             });
 
             $httpBackend.flush();
-            expect(resolved).toBe(true);
+            expect(resolved).toBe('authenticated');
         }));
     });
 });

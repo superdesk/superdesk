@@ -1,15 +1,15 @@
 <div class="login-screen">
     <div class="login-form-container">
-        <div class="logo-handler" ng-show="!onlypassword">
-            <img src="images/superdesk-icon-large.png">
+        <div class="logo-handler" ng-show="!identity.Avatar">
+            <img src="images/superdesk-icon-large.png" alt="Superdesk Logo">
         </div>
 
         <div class="form-handler">
-            <div class="avatar-handler" style="background-image:url('images/avatar_default.png')" ng-show="onlypassword">
+            <div class="avatar-handler" style="background-image:url('{{ identity.Avatar.href || 'images/avatar_default.png' }}')" ng-show="identity.Avatar">
             </div>
             <form name="login" ng-submit="authenticate()">
                 <fieldset class="inputs">
-                    <input type="text" id="username" ng-model="username" ng-show="!onlypassword" placeholder="{{ 'username'|translate }}" class="fullwidth-input" />
+                    <input type="text" id="username" ng-model="username" ng-show="!identity" placeholder="{{ 'username'|translate }}" class="fullwidth-input" />
                     <input type="password" id="password" ng-model="password" placeholder="{{ 'password'|translate }}" class="fullwidth-input login-pass" />
                 </fieldset>
                 <fieldset class="buttons">
@@ -25,7 +25,7 @@
             <div class="error-handler">
                 <p class="error" ng-show="loginError" translate>Oops! Invalid Username or Password. Please try again.</p>
             </div>
-            <div class="text" ng-click="different()" ng-show="onlypassword">Sign in as different user</div>
+            <div class="text" ng-click="identity = null; username = null" ng-show="identity">Sign in as different user</div>
         </div>
     </div>
 </div>
