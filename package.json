@@ -40,6 +40,6 @@
     "grunt-karma-coveralls": "~2.4.0"
   },
   "scripts": {
-    "test": "./travis_build.sh"
+    "test": "grunt ci:travis"
   }
 }

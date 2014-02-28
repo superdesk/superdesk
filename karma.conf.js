@@ -7,8 +7,7 @@ module.exports = function(config) {
 
         preprocessors: {
             '**/*.html': ['ng-html2js'],
-            '**/superdesk/**/*.js': ['coverage'],
-            '**/test/*[sS]pec.js': ['coverage']
+            '**/superdesk/**/*.js': ['coverage']
         },
 
         // list of files / patterns to load in the browser
@@ -33,13 +32,8 @@ module.exports = function(config) {
           moduleName: 'templates'
         },
 
-        coverageReporter: {
-          type: 'lcov',
-          dir: 'report/'
-        },
-
         // test results reporter to use
-        reporters: ['dots', 'coverage'],
+        reporters: ['dots'],
 
         // web server port
         port: 8080,
@@ -52,9 +46,6 @@ module.exports = function(config) {
 
         // Start these browsers, currently available:
         browsers: ['Chrome'],
-
-        // If browser does not capture in given timeout [ms], kill it
-        captureTimeout: 60000,
 
         // Continuous Integration mode
         singleRun: false
