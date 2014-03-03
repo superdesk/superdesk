@@ -11,7 +11,7 @@ define([], function() {
             IDENTITY_KEY = 'sess:user',
             defer;
 
-        this.token = storage.getItem(TOKEN_KEY);
+        this.token = sessionStorage.getItem(TOKEN_KEY);
         this.identity = storage.getItem(IDENTITY_KEY);
 
         /**
@@ -34,7 +34,7 @@ define([], function() {
             this.token = token;
             this.identity = identity;
 
-            storage.setItem(TOKEN_KEY, token);
+            sessionStorage.setItem(TOKEN_KEY, token);
             storage.setItem(IDENTITY_KEY, identity);
 
             if (defer) {
@@ -48,7 +48,7 @@ define([], function() {
          */
         this.expire = function() {
             this.token = null;
-            storage.removeItem(TOKEN_KEY);
+            sessionStorage.removeItem(TOKEN_KEY);
         };
 
         /**
