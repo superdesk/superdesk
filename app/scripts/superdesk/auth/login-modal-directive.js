@@ -13,7 +13,7 @@ define([], function() {
 
                 scope.authenticate = function() {
                     scope.isLoading = true;
-                    auth.login(scope.username, scope.password)
+                    auth.login(scope.username || '', scope.password || '')
                         .then(function() {
                             scope.isLoading = false;
                             scope.password = null;

@@ -7,13 +7,13 @@
         <div class="form-handler">
             <div class="avatar-handler" style="background-image:url('{{ identity.Avatar.href || 'images/avatar_default.png' }}')" ng-show="identity.Avatar">
             </div>
-            <form name="login" ng-submit="authenticate()">
+            <form name="loginForm" ng-submit="authenticate()">
                 <fieldset class="inputs">
-                    <input type="text" id="username" ng-model="username" ng-show="!identity" placeholder="{{ 'username'|translate }}" class="fullwidth-input" />
-                    <input type="password" id="password" ng-model="password" placeholder="{{ 'password'|translate }}" class="fullwidth-input login-pass" />
+                    <input type="text" id="username" ng-model="username" ng-show="!identity" placeholder="{{ 'username'|translate }}" class="fullwidth-input" required />
+                    <input type="password" id="password" ng-model="password" placeholder="{{ 'password'|translate }}" class="fullwidth-input login-pass" required />
                 </fieldset>
                 <fieldset class="buttons">
-                    <button ng-disabled="isLoading" id="login-btn" type="submit" class="btn btn-green">
+                    <button ng-disabled="isLoading || !loginForm.$valid" id="login-btn" type="submit" class="btn btn-green">
                         {{ 'Log In' | translate }}
                         <div class="spinner" ng-show="isLoading">
                           <div class="dot1"></div>
