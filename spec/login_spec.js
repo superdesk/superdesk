@@ -8,22 +8,22 @@ describe('login', function() {
     }
 
     function LoginModal() {
-        var usernameInput = element(by.model('username')),
-            passwordInput = element(by.model('password')),
-            btn = element(by.id('login-button'));
+        this.username = element(by.model('username'));
+        this.password = element(by.model('password'));
+        this.btn = $('#login-btn');
 
         this.isDisplayed = function() {
-            return usernameInput.isDisplayed();
+            return this.btn.isDisplayed();
         };
 
         this.login = function(username, password) {
-            usernameInput.sendKeys(username);
-            passwordInput.sendKeys(password);
-            btn.click();
+            this.username.sendKeys(username);
+            this.password.sendKeys(password);
+            this.btn.click();
         };
     }
 
-    describe('login modal', function() {
+    describe('login', function() {
         var modal;
 
         beforeEach(function() {
@@ -31,15 +31,23 @@ describe('login', function() {
             modal = new LoginModal();
         });
 
-        it('should be visible on load', function() {
+        it('renders modal on load', function() {
             expect(modal.isDisplayed()).toBe(true);
         });
 
-        it('should be possible to login', function() {
+        it('can login', function() {
             modal.login('admin', 'admin');
             expect(modal.isDisplayed()).toBe(false);
             expect(getUrl()).toBe('/dashboard');
-            expect(element(by.tagName('body')).evaluate('currentUser.UserName')).toBe('john');
+            expect(element(by.binding('UserName')).getText()).toBe('john');
+        });
+
+        it('can logout', function() {
+            var logoutBtn = $('.logout-btn');
+            expect(logoutBtn.isDisplayed()).toBe(true);
+            logoutBtn.click();
+            expect(modal.btn.isDisplayed()).toBe(true);
+            expect(modal.username.isDisplayed()).toBe(false); // reuse stored username
         });
     });
 });
