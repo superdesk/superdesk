@@ -17,4 +17,4 @@ exports.config = {
         includeStackTrace: false,
         defaultTimeoutInterval: 30000
     }
-}
+};

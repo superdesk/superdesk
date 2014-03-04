@@ -7,19 +7,16 @@
 
     <div class="profile-pic">
         <figure>
-            <img sd-user-picture data-src="user.picture_url" alt="user.display_name">
+            <img sd-user-picture data-src="user.Avatar.href" alt="{{ user.FullName }}">
         </figure>
 
-        <a class="change-photo" href="" ng-click="editPicture()" translate>Change Photo</a>
+        <a ng-show="" class="change-photo" href="" ng-click="editPicture()" translate>Change Photo</a>
     </div>
 
     <div class="profile-info user-profile-edit">
         <div class="header-info">
-            <h2>{{ user.first_name }} {{ user.last_name }}</h2>
-            <h5>{{ user.username }}</h5>
-            <ul class="user-roles" ng-show="user.role">
-                <li>{{ roles[user.role].name }}</li>
-            </ul>
+            <h2>{{ user.FullName }}</h2>
+            <h5>{{ user.UserName }}</h5>
         </div>
         <div class="details-info">
             <div class="details-section">
@@ -27,37 +24,40 @@
                 <div class="details-section-header" translate>General</div>
 
                 <div sd-info-item>
-                  <label for="display-name" translate>display name</label>
-                  <input type="text" name="displayName" id="display-name" ng-model="user.display_name" ng-minlength="4" ng-maxlength="20" required>
-                  <div ng-show="userForm.displayName.$error.minlength || userForm.displayName.$error.maxlength" translate>display name must be 4-20 characters.</div>
+                  <label for="display-name" translate>full name</label>
+                  <input type="text" name="fullName" id="display-name" ng-model="user.FullName">
                 </div>
 
                 <div sd-info-item>
                   <label for="first-name" translate>first name</label>
-                  <input type="text" name="firstName" ng-minlength="2" ng-maxlength="20" id="first-name" ng-model="user.first_name" required>
-                  <div ng-show="userForm.firstName.$error.minlength || userForm.firstName.$error.maxlength" translate>first name must be 2-20 characters.</div>
+                  <input type="text" name="firstName" id="first-name" ng-model="user.FirstName">
                 </div>
 
                 <div sd-info-item>
                   <label for="last-name" translate>last name</label>
-                  <input type="text" name="lastName" ng-minlength="2" ng-maxlength="20"  id="last-name" ng-model="user.last_name" required>
+                  <input type="text" name="lastName" id="last-name" ng-model="user.LastName">
                   <div ng-show="userForm.lastName.$error.minlength || userForm.lastName.$error.maxlength" translate>last name must be 2-20 characters.</div>
                 </div>
 
                 <div sd-info-item>
                   <label for="username" translate>username</label>
-                  <input type="text" name="userName" ng-minlength="4" ng-maxlength="20" id="username" class="info-value info-editable" ng-model="user.username" ng-readonly="user._id" required sd-user-name>
+                  <input type="text" name="userName" id="username" class="info-value info-editable" ng-model="user.UserName" ng-readonly="user.Id" required sd-user-name>
                   <div ng-show="userForm.userName.$error.minlength || userForm.userName.$error.maxlength" translate>username must be 4-20 characters.</div>
                   <div ng-show="userForm.userName.$error.usernameavailable" translate>username is already taken.</div>
                 </div>
 
                 <div sd-info-item>
                   <label for="email" translate>email</label>
-                  <input type="email" name="email" id="email" ng-model="user.email" required>
+                  <input type="email" name="email" id="email" ng-model="user.EMail" required>
                   <div ng-show="userForm.email.$error.email" translate>email address must be valid.</div>
                 </div>
 
-                <div sd-info-item class="password">
+                <div sd-info-item>
+                  <label for="phone" translate>phone number</label>
+                  <input type="text" name="phone" id="phone" ng-model="user.PhoneNumber">
+                </div>
+
+                <div sd-info-item class="password" ng-show="!user.Id">
                   <label for="password" translate>password</label>
                   <input type="password" name="password" ng-minlength="6" ng-maxlength="20" id="password" ng-model="user.password">
                   <div ng-show="userForm.password.$error.minlength || userForm.password.$error.maxlength" translate>password must be 6-20 characters.</div>
@@ -65,15 +65,10 @@
 
                 <div sd-info-item>
                   <label for="created" translate>member since</label>
-                  <span class="info-value" sd-reldate ng-model="user.created"></span>
+                  <span class="info-value" sd-reldate ng-model="user.CreatedOn"></span>
                 </div>
 
-                <div sd-info-item>
-                  <label for="company" translate>company</label>
-                  <input type="text" id="company" ng-model="user.user_info.company">
-                </div>
-
-                <div sd-info-item>
+                <div sd-info-item ng-show="">
                   <label for="user_role" translate>user role</label>
                   <div sd-select class="info-value" ng-model="user.role" options="role._id as role.name for role in rolesList"></div>
                 </div>

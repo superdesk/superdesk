@@ -1,12 +1,8 @@
 define(['lodash', 'angular'], function(_, angular) {
     'use strict';
 
-    return ['$scope', '$q', 'upload', 'locationParams', 'em', 'notify', 'gettext', 'rolesLoader',
-    function ($scope, $q, upload, locationParams, em, notify, gettext, rolesLoader) {
-        rolesLoader.then(function(roles) {
-            $scope.roles = roles;
-            $scope.rolesList = _.values(roles);
-        });
+    return ['$scope', '$q', 'upload', 'locationParams', 'em', 'notify', 'gettext',
+    function ($scope, $q, upload, locationParams, em, notify, gettext) {
 
         $scope.editPicture = function() {
             upload.upload('users').then(function(data) {
