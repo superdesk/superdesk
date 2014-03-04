@@ -5,13 +5,14 @@ module.exports = {
             mainConfigFile: '<%= appDir %>/scripts/main.js',
             out: '<%= distDir %>/scripts/main.js',
             name: 'main',
-            optimize: 'uglify2',
             include: [
                 'main',
                 'superdesk/filters/all',
                 'superdesk/services/all',
                 'superdesk/directives/all',
                 'superdesk/auth/auth',
+                'superdesk/datetime/datetime',
+
                 'superdesk-items/module',
                 'superdesk-users/module',
                 'superdesk-settings/module',

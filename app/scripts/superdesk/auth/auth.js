@@ -19,7 +19,7 @@ define([
          * Intercept $http response errors and do login on 401
          */
         .config(['$httpProvider', function($httpProvider) {
-            $httpProvider.interceptors.push(function(session, $injector) {
+            $httpProvider.interceptors.push(['session', '$injector', function(session, $injector) {
                 return {
                     responseError: function(rejection) {
                         if (rejection.status === 401) {
@@ -35,7 +35,7 @@ define([
                         return rejection;
                     }
                 };
-            });
+            }]);
         }])
 
         // set root scope identity
