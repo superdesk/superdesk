@@ -286,7 +286,8 @@ define(['angular', 'lodash'], function(angular, _) {
             ].join(''),
             link: function(scope, elem, attrs) {
                 scope.run = function(activity) {
-                    return activityService.start(activity, {data: scope.data});
+                    activityService.start(activity, {data: scope.data});
+                    return false;
                 };
             }
         };

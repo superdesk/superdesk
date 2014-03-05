@@ -124,6 +124,7 @@ define([
         // load core components
         require([
             'superdesk/auth/auth',
+            'superdesk/data/data',
             'superdesk/datetime/datetime',
             'superdesk/filters/all',
             'superdesk/services/all',
@@ -141,6 +142,7 @@ define([
                 'superdesk.services',
                 'superdesk.directives',
                 'superdesk.auth',
+                'superdesk.data',
                 'superdesk.datetime'
             ];
 

@@ -129,5 +129,8 @@ define([
                         }
                     ]
                 });
+        }])
+        .config(['resourceProvider', function(resourceProvider) {
+            resourceProvider.resource('users', {rel: '/HR/User'});
         }]);
 });

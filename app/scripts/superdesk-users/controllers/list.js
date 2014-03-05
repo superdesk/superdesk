@@ -1,16 +1,14 @@
 define([], function() {
     'use strict';
 
-    UserListController.$inject = ['$scope', '$http', '$q', 'locationParams', 'superdesk'];
-    function UserListController($scope, $http, $q, locationParams, superdesk) {
+    UserListController.$inject = ['$scope', 'resource'];
+    function UserListController($scope, resource) {
 
         $scope.selectedUser = null;
 
-        $http.get('http://superdesk.apiary.io/HR/User/')
-            .success(function(data) {
-                $scope.users = data;
-                $scope.users._items = data.collection;
-            });
+        resource.users.query().then(function(users) {
+            $scope.users = users;
+        });
 
         $scope.preview = function(user) {
             $scope.selectedUser = user;

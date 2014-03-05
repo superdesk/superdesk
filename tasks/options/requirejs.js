@@ -11,6 +11,7 @@ module.exports = {
                 'superdesk/services/all',
                 'superdesk/directives/all',
                 'superdesk/auth/auth',
+                'superdesk/data/data',
                 'superdesk/datetime/datetime',
 
                 'superdesk-items/module',
