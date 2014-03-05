@@ -33,7 +33,7 @@
         </div>
        
 
-        <div class="btn-group multiple-action">
+        <div class="btn-group multiple-action" ng-show>
             
             <button ng-disabled="!(users._items|any:'_checked')" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                 {{ 'Multiple action' | translate }}
@@ -51,7 +51,7 @@
         <div class="list-pane">
 
             <div class="users-table">
-                <ul class="table-header">
+                <ul class="table-header" ng-show>
                     <li>
                         <div class=" chckbx">
                             <input sd-check-all ng-model="users._items">
@@ -73,7 +73,7 @@
                                     data-field="username">
                                 </span>
                             </div>
-                            <div class="role">
+                            <div class="role" ng-show>
                                 <span
                                     sd-sort
                                     data-label="{{ 'User Role'|translate }}"
@@ -110,15 +110,15 @@
                             <input sd-check ng-model="user._checked">
                         </div>
                         <div class="avatar">
-                            <figure><img sd-user-picture data-src="user.picture_url"></figure>
+                            <figure><img sd-user-picture data-src="user.Avatar.href"></figure>
                         </div>
                         <div class="row-wrapper" sd-col-width>
                             
-                            <div class="name">{{ user.display_name }}</div>
-                            <div class="username">{{ user.username }}</div>
-                            <div class="role">{{ roles[user.role].name }}</div>
-                            <div class="email">{{ user.email }}</div>
-                            <div class="created">{{ user.created | reldate}}</div>
+                            <div class="name">{{ user.FullName }}</div>
+                            <div class="username">{{ user.UserName }}</div>
+                            <div class="role" ng-show>{{ roles[user.role].name }}</div>
+                            <div class="email">{{ user.EMail }}</div>
+                            <div class="created">{{ user.CreatedOn | reldate}}</div>
                         </div>
                         <div class="action">
                             <ul class="item-functions" 

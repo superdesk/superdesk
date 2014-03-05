@@ -9,8 +9,8 @@
             </div>
             <form name="loginForm" ng-submit="authenticate()">
                 <fieldset class="inputs">
-                    <input type="text" id="username" ng-model="username" ng-show="!identity" placeholder="{{ 'username'|translate }}" class="fullwidth-input" required />
-                    <input type="password" id="password" ng-model="password" placeholder="{{ 'password'|translate }}" class="fullwidth-input login-pass" required />
+                    <input type="text" ng-model="username" placeholder="{{ 'username'|translate }}" class="fullwidth-input" required />
+                    <input type="password" ng-model="password" placeholder="{{ 'password'|translate }}" class="fullwidth-input login-pass" required />
                 </fieldset>
                 <fieldset class="buttons">
                     <button ng-disabled="isLoading || !loginForm.$valid" id="login-btn" type="submit" class="btn btn-green">

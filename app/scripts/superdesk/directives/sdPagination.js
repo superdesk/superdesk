@@ -47,7 +47,7 @@ define([
                     });
 
                     scope.$watch('page', function(page) {
-                        scope.adapter.page(page);
+                        //scope.adapter.page(page);
                     });
                 }
             };

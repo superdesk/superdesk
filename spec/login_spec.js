@@ -47,6 +47,7 @@ describe('login', function() {
         expect(logoutBtn.isDisplayed()).toBe(true);
         logoutBtn.click();
         expect(modal.btn.isDisplayed()).toBe(true);
-        expect(modal.username.isDisplayed()).toBe(false); // reuse stored username
+        expect(modal.username.isDisplayed()).toBe(true);
+        expect(modal.username.getAttribute('value')).toBe('john');
     });
 });
