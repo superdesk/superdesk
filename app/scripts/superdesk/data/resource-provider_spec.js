@@ -9,7 +9,7 @@ define(['angular', 'superdesk/data/resource-provider'], function(angular, Resour
         .constant('config', {server: {url: 'server_url'}})
         .provider('resource', ResourceProvider)
         .config(function(resourceProvider) {
-            resourceProvider.resource('users', {rel: '/HR/User'});
+            resourceProvider.resource('users', {rel: '/HR/User', headers: {'X-Filter': 'User.*'}});
         });
 
     describe('resource provider', function() {
@@ -40,10 +40,13 @@ define(['angular', 'superdesk/data/resource-provider'], function(angular, Resour
             $httpBackend.verifyNoOutstandingRequest();
         }));
 
-        it('can query', inject(function(resource, $httpBackend) {
+        it('can query', inject(function(resource, $httpBackend, $http) {
+
+            var headers = $http.defaults.headers.common || {};
+            headers['X-Filter'] = 'User.*';
 
             $httpBackend.expectGET('server_url').respond(links);
-            $httpBackend.expectGET('users_url').respond(collection([{}]));
+            $httpBackend.expectGET('users_url', headers).respond(collection([{}]));
 
             var users;
             resource.users.query().then(function(_users) {

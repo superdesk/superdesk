@@ -80,6 +80,16 @@ define(['lodash'], function(_) {
         }
 
         /**
+         * Get headers for given resource
+         *
+         * @param {Object} resource
+         * @returns {Object}
+         */
+        function getHeaders(resource) {
+            return resource.config.headers || {};
+        }
+
+        /**
          * Wrap $http call
          *
          * @param {Object} config
@@ -105,6 +115,7 @@ define(['lodash'], function(_) {
          */
         function Resource(config) {
             this.rel = config.rel;
+            this.config = config;
         }
 
         /**
@@ -131,7 +142,8 @@ define(['lodash'], function(_) {
             return http({
                 method: 'GET',
                 params: params,
-                url: getUrl(this)
+                url: getUrl(this),
+                headers: getHeaders(this)
             }).then(function(response) {
                 response.data._items = response.data.collection;
                 return response.data;

@@ -51,6 +51,11 @@ define([
             });
         }])
 
+        // set auth header
+        .run(['$http', 'session', function($http, session) {
+            $http.defaults.headers.common.Authorization = session.token;
+        }])
+
         // wait with route loading until we have auth token
         .run(['$rootScope', '$route', '$http', 'session', function($rootScope, $route, $http, session) {
             $rootScope.$on('$locationChangeStart', function (e) {

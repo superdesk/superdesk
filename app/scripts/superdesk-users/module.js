@@ -129,6 +129,6 @@ define([
                 });
         }])
         .config(['resourceProvider', function(resourceProvider) {
-            resourceProvider.resource('users', {rel: '/HR/User'});
+            resourceProvider.resource('users', {rel: 'HR/User', headers: {'X-Filter': 'User.*'}});
         }]);
 });
