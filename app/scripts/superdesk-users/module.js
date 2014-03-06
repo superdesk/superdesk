@@ -99,10 +99,8 @@ define([
                     controller: require('./controllers/profile'),
                     templateUrl: 'scripts/superdesk-users/views/profile.html',
                     resolve: {
-                        user: ['session', '$http', function(session, $http) {
-                            return $http.get(session.identity.href).then(function(response) {
-                                return response.data;
-                            });
+                        user: ['session', 'resource', function(session, resource) {
+                            return resource.users.getByUrl(session.identity.href);
                         }]
                     }
                 })

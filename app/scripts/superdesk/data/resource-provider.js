@@ -30,6 +30,8 @@ define(['lodash'], function(_) {
      */
     function ResourceService($http, $q, config) {
 
+        var links;
+
         /**
          * Register resource
          *
@@ -42,23 +44,39 @@ define(['lodash'], function(_) {
         };
 
         /**
-         * Get root url for given resource
+         * Get resource links via root url
+         *
+         * @returns {Promise}
+         */
+        function getResourceLinks() {
+
+            if (links) {
+                return $q.when(links);
+            }
+
+            return http({
+                method: 'GET',
+                url: config.server.url
+            }).then(function(response) {
+                links = {};
+                _.each(response.data.collection, function(link) {
+                    links[link.rel] = link.href;
+                });
+
+                return links;
+            });
+        }
+
+        /**
+         * Get url for given resource
          *
          * @param {Object} resource
          * @returns {Promise}
          */
         function getUrl(resource) {
-            return $http.get(config.server.url, {cache: true})
-                .then(function(response) {
-                    if (response.status === 200 && response.data) {
-                        var link = _.find(response.data.collection, {rel: resource.rel});
-                        if (link && link.href) {
-                            return link.href;
-                        }
-                    }
-
-                    $q.reject(response);
-                });
+            return getResourceLinks().then(function(links) {
+                return links[resource.rel] ? links[resource.rel] : $q.reject(resource);
+            });
         }
 
         /**
@@ -90,12 +108,18 @@ define(['lodash'], function(_) {
         }
 
         /**
-         * Get url
+         * Get entity by url
          *
-         * @return {Promise}
+         * @param {string} url
+         * @returns {Promise}
          */
-        Resource.prototype.getUrl = function() {
-            return getUrl(this);
+        Resource.prototype.getByUrl = function(url) {
+            return http({
+                method: 'GET',
+                url: url
+            }).then(function(response) {
+                return response.data;
+            });
         };
 
         /**
@@ -107,7 +131,7 @@ define(['lodash'], function(_) {
             return http({
                 method: 'GET',
                 params: params,
-                url: this.getUrl()
+                url: getUrl(this)
             }).then(function(response) {
                 response.data._items = response.data.collection;
                 return response.data;
@@ -143,7 +167,7 @@ define(['lodash'], function(_) {
             return http({
                 method: 'POST',
                 data: itemData,
-                url: this.getUrl()
+                url: getUrl(this)
             }).then(function(response) {
                 _.extend(itemData, response.data);
                 return itemData;

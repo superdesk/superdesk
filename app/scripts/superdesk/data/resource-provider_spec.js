@@ -6,7 +6,7 @@ define(['angular', 'superdesk/data/resource-provider'], function(angular, Resour
     }
 
     var testMod = angular.module('test.data.provider', [])
-        .constant('config', {server: {url: 'http://localhost'}})
+        .constant('config', {server: {url: 'server_url'}})
         .provider('resource', ResourceProvider)
         .config(function(resourceProvider) {
             resourceProvider.resource('users', {rel: '/HR/User'});
@@ -29,15 +29,20 @@ define(['angular', 'superdesk/data/resource-provider'], function(angular, Resour
 
     describe('resource service', function() {
 
-        var resources = collection([{rel: '/HR/User', href: 'users_url'}]);
+        var links = collection([{rel: '/HR/User', href: 'users_url'}]);
 
         beforeEach(function() {
             module(testMod.name);
         });
 
+        afterEach(inject(function($httpBackend) {
+            $httpBackend.verifyNoOutstandingExpectation();
+            $httpBackend.verifyNoOutstandingRequest();
+        }));
+
         it('can query', inject(function(resource, $httpBackend) {
 
-            $httpBackend.expectGET('http://localhost').respond(resources);
+            $httpBackend.expectGET('server_url').respond(links);
             $httpBackend.expectGET('users_url').respond(collection([{}]));
 
             var users;
@@ -52,27 +57,24 @@ define(['angular', 'superdesk/data/resource-provider'], function(angular, Resour
 
         it('rejects on query error', inject(function(resource, $httpBackend) {
 
-            $httpBackend.expectGET('http://localhost').respond(resources);
+            $httpBackend.expectGET('server_url').respond(links);
             $httpBackend.expectGET('users_url').respond(400);
 
-            var users, reject;
-            resource.users.query().then(function(_users) {
-                users = _users;
-            }, function(reason) {
-                reject = reason;
+            var reject;
+            resource.users.query().then(null, function(reason) {
+                reject = true;
             });
 
             $httpBackend.flush();
 
-            expect(!!users).toBe(false);
-            expect(!!reject).toBe(true);
+            expect(reject).toBe(true);
         }));
 
         it('can create new resource', inject(function(resource, $httpBackend) {
             var userData = {UserName: 'test'},
                 user;
 
-            $httpBackend.expectGET('http://localhost').respond(resources);
+            $httpBackend.expectGET('server_url').respond(links);
             $httpBackend.expectPOST('users_url', userData).respond(201, {href: 'user_href'});
 
             resource.users.save({UserName: 'test'}).then(function(_user) {
@@ -116,6 +118,49 @@ define(['angular', 'superdesk/data/resource-provider'], function(angular, Resour
 
             expect(deleted).toBe(true);
 
+        }));
+
+        it('can get item by url', inject(function(resource, $httpBackend) {
+            var user;
+
+            $httpBackend.expectGET('user_url').respond({UserName: 'foo'});
+
+            resource.users.getByUrl('user_url').then(function(_user) {
+                user = _user;
+            });
+
+            $httpBackend.flush();
+
+            expect(user.UserName).toBe('foo');
+        }));
+
+        it('rejects when it has no url', inject(function(resource, $httpBackend) {
+            $httpBackend.expectGET('server_url').respond(404);
+
+            var rejected = false;
+
+            resource.users.query().then(null, function() {
+                rejected = true;
+            });
+
+            $httpBackend.flush();
+
+            expect(rejected).toBe(true);
+        }));
+
+        it('can caches resource links', inject(function(resource, $httpBackend, $rootScope) {
+            $httpBackend.expectGET('server_url').respond(links);
+            $httpBackend.expectGET('users_url').respond(collection([]));
+
+            resource.users.query();
+
+            $httpBackend.flush();
+            $httpBackend.expectGET('users_url').respond(collection([]));
+
+            resource.users.query();
+
+            $rootScope.$apply();
+            $httpBackend.flush();
         }));
     });
 });
