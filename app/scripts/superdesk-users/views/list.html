@@ -42,34 +42,31 @@
         <div class="list-pane">
 
             <div class="users-table">
-                <ul class="table-newest" ng-show="createdUsers.length">
-                    <li ng-repeat="user in createdUsers" ng-click="preview(user)"
-                        sd-user-list-item
-                            data-user="user"
-                            data-list="createdUsers"
-                            data-index="$index"
-                    ></li>
-                </ul>
 
-                <ul class="table-body">
-                    <li ng-repeat="user in users._items" ng-click="preview(user)"
-                        sd-user-list-item
-                            data-user="user"
-                            data-list="users._items"
-                            data-index="$index"
-                    ></li>
-                </ul>
+                <ul class="table-newest"
+                    sd-user-list
+                    data-users="createdUsers"
+                    data-selected="selected.user"
+                    ng-show="createdUsers.length"
+                ></ul>
+
+                <ul class="table-body"
+                    sd-user-list
+                    data-users="users._items"
+                    data-selected="selected.user"
+                ></ul>
+
             </div>
         </div>
 
         <div class="preview-pane">
-            <div class="actions" ng-show="selectedUser">
-                <a ng-href="#/users/{{ selectedUser._id }}" class="btn btn-light pull-left" ng-show="selectedUser._id" translate>View full profile</a>
-                <div class="close" ng-click="selectedUser = null"><i class="icon-remove"></i></div>
+            <div class="actions" ng-show="selected.user">
+                <a ng-href="#/users/{{ selected.user._id }}" class="btn btn-light pull-left" ng-show="selected.user._id" translate>View full profile</a>
+                <div class="close" ng-click="selected.user = null"><i class="icon-remove"></i></div>
             </div>
 
-            <div sd-user-details-pane ng-show="selectedUser">
-                <div id="user-profile-edit" sd-user-edit data-user="selectedUser" data-onsave="render(user)"></div>
+            <div sd-user-details-pane ng-show="selected.user">
+                <div id="user-profile-edit" sd-user-edit data-user="selected.user" data-onsave="render(user)"></div>
             </div>
         </div>
     </div>

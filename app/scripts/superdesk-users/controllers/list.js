@@ -4,7 +4,7 @@ define(['lodash'], function(_) {
     UserListController.$inject = ['$scope', 'resource'];
     function UserListController($scope, resource) {
 
-        $scope.selectedUser = null;
+        $scope.selected = {user: null};
         $scope.createdUsers = [];
 
         resource.users.query({desc: 'createdOn'}).then(function(users) {
@@ -12,7 +12,7 @@ define(['lodash'], function(_) {
         });
 
         $scope.preview = function(user) {
-            $scope.selectedUser = user;
+            $scope.selected.user = user;
         };
 
         $scope.createUser = function() {

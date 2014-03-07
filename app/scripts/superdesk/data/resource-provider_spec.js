@@ -91,7 +91,7 @@ define(['angular', 'superdesk/data/resource-provider'], function(angular, Resour
 
         it('can update', inject(function(resource, $httpBackend) {
 
-            var userData = {href: 'users_url/1', UserName: 'test'},
+            var userData = {href: 'users_url/1', Id: 2, UserName: 'test', Avatar: {href: 'test'}},
                 user;
 
             $httpBackend.expectPATCH(userData.href, {UserName: 'test'}).respond(200);

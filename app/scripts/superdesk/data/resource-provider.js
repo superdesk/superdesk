@@ -157,14 +157,15 @@ define(['lodash'], function(_) {
          * @returns {Promise}
          */
         Resource.prototype.update = function(item) {
-            var url = item.href;
-            delete item.href;
             return http({
                 method: 'PATCH',
-                url: url,
-                data: item
+                url: item.href,
+                headers: getHeaders(this),
+                data: _.omit(item, function(value, key) {
+                    return key === 'href' || key === 'Id' || value.href;
+                })
             }).then(function(response) {
-                _.extend(item, {href: url}, response.data);
+                _.extend(item, response.data);
                 return item;
             });
         };

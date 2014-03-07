@@ -173,6 +173,41 @@ define([
                 }
             };
         }])
+        .directive('sdUserList', ['keyboardManager', function(keyboardManager) {
+            return {
+                templateUrl: 'scripts/superdesk-users/views/user-list-item.html',
+                scope: {
+                    users: '=',
+                    selected: '='
+                },
+                link: function(scope, elem, attrs) {
+                    scope.select = function(user) {
+                        scope.selected = user;
+                    };
+
+                    scope.$watch('users', function(users) {
+                    });
+
+                    function getSelectedIndex() {
+                        return _.findIndex(scope.users, scope.selected);
+                    }
+
+                    keyboardManager.bind('up', function() {
+                        var selectedIndex = getSelectedIndex();
+                        if (selectedIndex !== -1) {
+                            scope.select(scope.users[_.max([0, selectedIndex - 1])]);
+                        }
+                    });
+
+                    keyboardManager.bind('down', function() {
+                        var selectedIndex = getSelectedIndex();
+                        if (selectedIndex !== -1) {
+                            scope.select(scope.users[_.min([scope.users.length - 1, selectedIndex + 1])]);
+                        }
+                    });
+                }
+            };
+        }])
         .directive('sdUserListItem', function() {
             return {
                 templateUrl: 'scripts/superdesk-users/views/user-list-item.html',

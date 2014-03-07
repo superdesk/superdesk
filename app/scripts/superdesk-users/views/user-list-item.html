@@ -1,20 +1,22 @@
-<div class="avatar">
-    <figure><img sd-user-picture data-src="user.Avatar.href"></figure>
-</div>
+<li ng-repeat="user in users" ng-click="select(user)" ng-class="{selected: user === selected}">
+    <div class="avatar">
+        <figure><img sd-user-picture data-src="user.Avatar.href"></figure>
+    </div>
 
-<div class="row-wrapper" sd-col-width>
-    <div class="name">{{ user.FullName }}</div>
-    <div class="username">{{ user.UserName }}</div>
-    <div class="role" ng-show>{{ roles[user.role].name }}</div>
-    <div class="email">{{ user.EMail }}</div>
-    <div class="created">{{ user.CreatedOn | reldate}}</div>
-</div>
+    <div class="row-wrapper" sd-col-width>
+        <div class="name">{{ user.FullName }}</div>
+        <div class="username">{{ user.UserName }}</div>
+        <div class="role" ng-show>{{ roles[user.role].name }}</div>
+        <div class="email">{{ user.EMail }}</div>
+        <div class="created">{{ user.CreatedOn | reldate}}</div>
+    </div>
 
-<div class="action">
-    <ul class="item-functions"
-        sd-activity-list
-        data-data="{item: user, list: list, index: index}"
-        data-type="user"
-        data-action="edit">
-    </ul>
-</div>
+    <div class="action">
+        <ul class="item-functions"
+            sd-activity-list
+            data-data="{item: user, list: users, index: $index}"
+            data-type="user"
+            data-action="edit">
+        </ul>
+    </div>
+</li>
