@@ -1,8 +1,9 @@
 define([
     'lodash',
     'jquery',
-    'angular'
-], function(_, $, angular) {
+    'angular',
+    'superdesk/hashlib'
+], function(_, $, angular, hashlib) {
     'use strict';
 
     angular.module('superdesk.users.directives', [])
@@ -81,11 +82,9 @@ define([
         }])
         .directive('sdUserDetailsPane', ['$timeout', function($timeout) {
             return {
-                templateUrl: 'scripts/superdesk-users/views/user-details-pane.html',
                 replace: true,
-                scope: {
-                    user: '='
-                },
+                transclude: true,
+                template: '<div class="user-details-pane" ng-transclude></div>',
                 link: function(scope, element, attrs) {
                     $timeout(function() {
                         $('.user-details-pane').addClass('open');
@@ -97,15 +96,51 @@ define([
                 }
             };
         }])
-        .directive('sdUserEdit', function() {
+        .directive('sdUserEdit', ['resource', 'upload', 'gettext', 'notify',
+            function(resource, upload, gettext, notify) {
             return {
-                templateUrl: 'scripts/superdesk-users/views/edit-form.html',
                 replace: true,
+                templateUrl: 'scripts/superdesk-users/views/edit-form.html',
                 scope: {
-                    user: '='
+                    user: '=',
+                    onsave: '&'
+                },
+                link: function(scope, elem) {
+                    scope.editpicture = function() {
+                        // todo(petr): well just make it work
+                        upload.upload('users').then(function(data) {
+                            scope.user.avatar = data.url;
+                            resource.users.update(scope.user);
+                        });
+                    };
+
+                    /**
+                     * save user
+                     */
+                    scope.save = function(user) {
+
+                        // todo(petr): figure out where to put such logic
+                        if (user.Password) {
+                            user.Password = hashlib.hash(user.Password);
+                        } else {
+                            delete user.Password;
+                        }
+
+                        notify.info(gettext('saving..'));
+                        resource.users.save(user)
+                            .then(function() {
+                                notify.pop();
+                                notify.success(gettext('user saved.'), 3000);
+                                scope.onsave({user: user});
+                            }, function(reason) {
+                                notify.pop();
+                                // todo(petr) render errors in form
+                                notify.error(reason.data);
+                            });
+                    };
                 }
             };
-        })
+        }])
         .directive('sdUserPicture', function() {
             var PICTURE_DEFAULT = 'https://avatars.githubusercontent.com/u/275305';
             return {
@@ -137,6 +172,15 @@ define([
                     });
                 }
             };
-        }]);
-
+        }])
+        .directive('sdUserListItem', function() {
+            return {
+                templateUrl: 'scripts/superdesk-users/views/user-list-item.html',
+                scope: {
+                    user: '=',
+                    list: '=',
+                    index: '='
+                }
+            };
+        });
 });

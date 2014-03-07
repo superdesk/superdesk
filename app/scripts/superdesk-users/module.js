@@ -4,7 +4,6 @@ define([
     './providers',
     './services/profile',
     './controllers/list',
-    './controllers/detail',
     './controllers/profile',
     './controllers/edit',
     './controllers/settings',
@@ -19,7 +18,6 @@ define([
     ]);
 
     app
-        .controller('UserDetailCtrl', require('./controllers/detail'))
         .value('defaultListParams', {
             search: '',
             searchField: 'username',
@@ -115,9 +113,9 @@ define([
                     label: gettext('Delete user'),
                     icon: 'trash',
                     confirm: gettext('Please confirm you want to delete a user.'),
-                    controller: ['em', 'data', 'locationParams', function(em, data, locationParams) {
-                        em.remove(data).then(function() {
-                            locationParams.reload();
+                    controller: ['resource', 'data', function(resource, data) {
+                        return resource.users.remove(data.item).then(function() {
+                            data.list.splice(data.index, 1);
                         });
                     }],
                     filters: [

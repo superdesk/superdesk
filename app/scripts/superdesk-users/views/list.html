@@ -1,24 +1,16 @@
 <div class="subnav subnav-fixed">
-    
+
     <h3 class="page-nav-title" translate>Users</h3>
-    
+
     <div class="button-stack pull-right">
-        <a class="navbtn navbtn-info navbtn-hover" href="" sd-with-params ng-click="createUser()">
-            <i class="svg-icon-add inverse"></i>
-            <span class="title" translate>Add new<span>
+        <a class="navbtn navbtn-info navbtn-hover" href="" ng-click="createUser()">
+            <i class="svg-icon-add inverse"></i> <span class="title" translate>Add new<span>
         </a>
+
         <div class="dropdown navbtn">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                <i class="svg-icon-settings"></i>
-            </a>
-            <ul class="dropdown-menu sf-dropdown-simple sf-right">
-                <li><a href="">Settings 1</a></li>
-                <li><a href="">Settings 2</a></li>
-                <li><a href="">Settings 3</a></li>
-            </ul>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="svg-icon-settings"></i></a>
         </div>
     </div>
-   
 </div>
 
 <section class="main-section users">
@@ -31,113 +23,54 @@
             </div>
             <div class="separator-handler"></div>
         </div>
-       
 
         <div class="btn-group multiple-action" ng-show>
-            
             <button ng-disabled="!(users._items|any:'_checked')" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                 {{ 'Multiple action' | translate }}
                 <span class="caret"></span>
             </button>
+
             <ul class="dropdown-menu sf-dropdown sf-right">
                 <li><a href="" ng-click="deleteChecked();"><i class="icon-trash"></i> {{ 'Delete'|translate }}</a></li>
             </ul>
         </div>
  
-        
         <div sd-pagination data-adapter="users"></div>
     </div>
+
     <div class="preview-layout">
         <div class="list-pane">
 
             <div class="users-table">
-                <ul class="table-header" ng-show>
-                    <li>
-                        <div class=" chckbx">
-                            <input sd-check-all ng-model="users._items">
-                        </div>
-                        <div class="avatar"></div>
-                        
-                        <div class="row-wrapper" sd-col-width>
-                            <div class="name">
-                                <span
-                                    sd-sort
-                                    data-label="{{ 'Name'|translate }}"
-                                    data-field="display_name">
-                                </span>
-                            </div>
-                            <div class="username">
-                                <span
-                                    sd-sort
-                                    data-label="{{ 'Username'|translate }}"
-                                    data-field="username">
-                                </span>
-                            </div>
-                            <div class="role" ng-show>
-                                <span
-                                    sd-sort
-                                    data-label="{{ 'User Role'|translate }}"
-                                    data-field="user_role">
-                                </span>
-                            </div>
-                            <div class="email">
-                                <span
-                                    sd-sort
-                                    data-label="{{ 'Email'|translate }}"
-                                    data-field="email">
-                                </span>
-                            </div>
-                            <div class="created">
-                                <span
-                                    sd-sort
-                                    data-label="{{ 'Created'|translate }}"
-                                    data-field="created">
-                                </span>
-                            </div>
-                        </div>
-                        <div class="action">
-
-                        </div>
-                    </li>
+                <ul class="table-newest" ng-show="createdUsers.length">
+                    <li ng-repeat="user in createdUsers" ng-click="preview(user)"
+                        sd-user-list-item
+                            data-user="user"
+                            data-list="createdUsers"
+                            data-index="$index"
+                    ></li>
                 </ul>
 
-                <ul class="table-newest" ng-hide="true">
-                    
-                </ul>
                 <ul class="table-body">
-                    <li ng-repeat="user in users._items" ng-click="preview(user)" ng-class="{selected: user._checked}">
-                        <div class="chckbx">
-                            <input sd-check ng-model="user._checked">
-                        </div>
-                        <div class="avatar">
-                            <figure><img sd-user-picture data-src="user.Avatar.href"></figure>
-                        </div>
-                        <div class="row-wrapper" sd-col-width>
-                            
-                            <div class="name">{{ user.FullName }}</div>
-                            <div class="username">{{ user.UserName }}</div>
-                            <div class="role" ng-show>{{ roles[user.role].name }}</div>
-                            <div class="email">{{ user.EMail }}</div>
-                            <div class="created">{{ user.CreatedOn | reldate}}</div>
-                        </div>
-                        <div class="action">
-                            <ul class="item-functions" 
-                                sd-activity-list
-                                data-data="user"
-                                data-type="user"
-                                data-action="{{ superdesk.ACTION_EDIT }}">
-                            </ul>
-                        </div>
-                    </li>
+                    <li ng-repeat="user in users._items" ng-click="preview(user)"
+                        sd-user-list-item
+                            data-user="user"
+                            data-list="users._items"
+                            data-index="$index"
+                    ></li>
                 </ul>
             </div>
         </div>
+
         <div class="preview-pane">
-            <div class="actions" ng-if="selectedUser">
-                <a href="#/users/{{selectedUser._id}}" class="btn btn-light pull-left" ng-show="selectedUser._id" translate>View full profile</a>
-                <div class="close" ng-click="closePreview()"><i class="icon-remove"></i></div>
+            <div class="actions" ng-show="selectedUser">
+                <a ng-href="#/users/{{ selectedUser._id }}" class="btn btn-light pull-left" ng-show="selectedUser._id" translate>View full profile</a>
+                <div class="close" ng-click="selectedUser = null"><i class="icon-remove"></i></div>
             </div>
-            <div sd-user-details-pane data-user="selectedUser"></div>
+
+            <div sd-user-details-pane ng-show="selectedUser">
+                <div id="user-profile-edit" sd-user-edit data-user="selectedUser" data-onsave="render(user)"></div>
+            </div>
         </div>
     </div>
 </setion>

@@ -1,4 +1,4 @@
-define(['bower_components/jsSHA/src/sha512'], function(SHA) {
+define(['superdesk/hashlib'], function(hashlib) {
     'use strict';
 
     AllyPyAuthAdapter.$inject = ['$http', '$q', 'config'];
@@ -7,10 +7,6 @@ define(['bower_components/jsSHA/src/sha512'], function(SHA) {
         function url(uri) {
             return config.server.url + uri;
         }
-
-        var HASH_TYPE = 'ASCII',
-            HASH_ALGO = 'SHA-512',
-            HASH_OUT = 'HEX';
 
         /**
          * Authenticate using given credentials
@@ -65,39 +61,8 @@ define(['bower_components/jsSHA/src/sha512'], function(SHA) {
          * @returns {string}
          */
         function signToken(token, username, password) {
-            var secretKey = hmac(sha(hash(password)), username);
-            return hmac(sha(token), secretKey);
-        }
-
-        /**
-         * Get hmac for given sha obj and secret key
-         *
-         * @param {object} sha
-         * @param {string} key
-         * @returns {string}
-         */
-        function hmac(sha, key) {
-            return sha.getHMAC(key, HASH_TYPE, HASH_ALGO, HASH_OUT);
-        }
-
-        /**
-         * Get sha object for given string input
-         *
-         * @param {string} input
-         * @returns {object}
-         */
-        function sha(input) {
-            return new SHA(input, HASH_TYPE);
-        }
-
-        /**
-         * Get hash of given input
-         *
-         * @param {string} input
-         * @returns {string}
-         */
-        function hash(input) {
-            return sha(input).getHash(HASH_ALGO, HASH_OUT);
+            var secretKey = hashlib.hmac(hashlib.hash(password), username);
+            return hashlib.hmac(token, secretKey);
         }
     }
 

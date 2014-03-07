@@ -1,9 +1,9 @@
-<div class="user-profile user-profile-edit">
-  <form name="userForm">
+<div class="user-profile user-profile-edit"><form name="userForm" ng-submit="save(user)">
+
   <div sd-upload-modal></div>
 
-  <div ng-controller="UserDetailCtrl">
-    <button class="btn btn-info pull-right" ng-click="save()" ng-disabled="userForm.$invalid">Save</button>
+  <div>
+    <button type="submit" class="btn btn-info pull-right" ng-disabled="userForm.$invalid">Save</button>
 
     <div class="profile-pic">
         <figure>
@@ -23,7 +23,7 @@
 
                 <div class="details-section-header" translate>General</div>
 
-                <div sd-info-item>
+                <div sd-info-item ng-show="user.Id">
                   <label for="display-name" translate>full name</label>
                   <input type="text" name="fullName" id="display-name" ng-model="user.FullName">
                 </div>
@@ -41,7 +41,7 @@
 
                 <div sd-info-item>
                   <label for="username" translate>username</label>
-                  <input type="text" name="userName" id="username" class="info-value info-editable" ng-model="user.UserName" ng-readonly="user.Id" required sd-user-name>
+                  <input type="text" name="userName" id="username" class="info-value info-editable" ng-model="user.UserName" ng-readonly="user.Id" required>
                   <div ng-show="userForm.userName.$error.minlength || userForm.userName.$error.maxlength" translate>username must be 4-20 characters.</div>
                   <div ng-show="userForm.userName.$error.usernameavailable" translate>username is already taken.</div>
                 </div>
@@ -59,11 +59,11 @@
 
                 <div sd-info-item class="password" ng-show="!user.Id">
                   <label for="password" translate>password</label>
-                  <input type="password" name="password" ng-minlength="6" ng-maxlength="20" id="password" ng-model="user.password">
-                  <div ng-show="userForm.password.$error.minlength || userForm.password.$error.maxlength" translate>password must be 6-20 characters.</div>
+                  <input type="password" name="password" ng-minlength="5" id="password" ng-model="user.Password">
+                  <div ng-show="userForm.password.$error.minlength" translate>password must be 5+ characters long</div>
                 </div>
 
-                <div sd-info-item>
+                <div sd-info-item ng-show="user.Id">
                   <label for="created" translate>member since</label>
                   <span class="info-value" sd-reldate ng-model="user.CreatedOn"></span>
                 </div>
@@ -76,5 +76,4 @@
         </div>
     </div>
   </div>
-  </form>
-</div>
+</form></div>

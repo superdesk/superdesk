@@ -183,8 +183,8 @@ define(['angular', 'lodash'], function(angular, _) {
         }];
     }]);
 
-    module.service('activityService', ['$window', '$location', '$controller', '$q', '$timeout', 'gettext',
-        function($window, $location, $controller, $q, $timeout, gettext) {
+    module.service('activityService', ['$window', '$location', '$injector', '$q', '$timeout', 'gettext',
+        function($window, $location, $injector, $q, $timeout, gettext) {
 
         /**
          * Start given activity
@@ -194,39 +194,18 @@ define(['angular', 'lodash'], function(angular, _) {
          * @returns {object} promise
          */
         this.start = function startActivity(activity, locals) {
-            var defer = $q.defer(),
-                timeout;
-
             if (activity.confirm && !$window.confirm(gettext(activity.confirm))) {
-                defer.reject('no confirm');
-                return defer.promise;
+                return $q.reject('no confirm');
             }
 
             if (activity._id[0] === '/') { // trigger route
                 $location
                     .path(activity._id)
                     .search(_.pick(locals.data || {}, '_id'));
-                defer.resolve(locals);
-                return defer.promise;
+                return $q.when(locals);
             }
 
-            timeout = $timeout(function() {
-                console.error('activity timeout', activity);
-                defer.reject('timeout');
-            }, 8000);
-
-            $controller(activity.controller, _.extend(locals, {
-                resolve: function(result) {
-                    $timeout.cancel(timeout);
-                    defer.resolve(result);
-                },
-                reject: function(reason) {
-                    $timeout.cancel(timeout);
-                    defer.reject(reason);
-                }
-            }));
-
-            return defer.promise;
+            return $q.when($injector.invoke(activity.controller, this, locals));
         };
     }]);
 
