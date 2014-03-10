@@ -38,8 +38,8 @@ define([
             }]);
         }])
 
-        // set root scope identity
-        .run(['$rootScope', 'session', function($rootScope, session) {
+        // watch session
+        .run(['$rootScope', '$http', 'session', function($rootScope, $http, session) {
             $rootScope.logout = function() {
                 session.expire();
             };
@@ -49,14 +49,19 @@ define([
             }, function (identity) {
                 $rootScope.currentUser = session.identity;
             });
+
+            $rootScope.$watch(function() {
+                return session.token;
+            }, function(token) {
+                if (token != null) {
+                    $http.defaults.headers.common.Authorization = token;
+                } else {
+                    delete $http.defaults.headers.common.Authorization;
+                }
+            });
         }])
 
-        // set auth header
-        .run(['$http', 'session', function($http, session) {
-            $http.defaults.headers.common.Authorization = session.token;
-        }])
-
-        // wait with route loading until we have auth token
+        // stop routing when there is no session and reload after
         .run(['$rootScope', '$route', '$http', 'session', function($rootScope, $route, $http, session) {
             $rootScope.$on('$locationChangeStart', function (e) {
                 if (!session.token) {

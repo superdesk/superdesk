@@ -36,11 +36,11 @@ describe('users app', function() {
         beforeEach(open('/#/users'));
 
         it('can list users', function() {
-            element.all(by.repeater('user in users._items')).then(function(users) {
+            element.all(by.repeater('user in users')).then(function(users) {
                 expect(users.length).toBe(2);
             });
 
-            expect(element(by.repeater('user in users._items').row(0).column('UserName')).getText()).toBe('john');
+            expect(element(by.repeater('user in users').row(0).column('UserName')).getText()).toBe('john');
         });
     });
 
