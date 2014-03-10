@@ -77,18 +77,8 @@ define([
                     controller: require('./controllers/edit'),
                     templateUrl: 'scripts/superdesk-users/views/edit.html',
                     resolve: {
-                        user: ['em', '$route',
-                            function(em, $route) {
-                                if ($route.current.params.id === 'new') {
-                                    return {};
-                                } else if (_.isString($route.current.params.id)) {
-                                    return em.find('users', $route.current.params.id);
-                                } else {
-                                    return undefined;
-                                }
-                            }],
-                        roles: ['rolesLoader', function(rolesLoader) {
-                            return rolesLoader;
+                        user: ['resource', '$route', function(resource, $route) {
+                            return resource.users.getById($route.current.params.id);
                         }]
                     }
                 })

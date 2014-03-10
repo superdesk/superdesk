@@ -134,6 +134,19 @@ define(['lodash'], function(_) {
         };
 
         /**
+         * Get entity by given id
+         *
+         * @param {string} id
+         * @returns {Promise}
+         */
+        Resource.prototype.getById = function(id) {
+            return getUrl(this).then(_.bind(function(resourceUrl) {
+                var url = resourceUrl.replace(/\/+$/, '') + '/' + id;
+                return this.getByUrl(url);
+            }, this));
+        };
+
+        /**
          * Resource query method
          *
          * @param {Object} params

@@ -44,6 +44,19 @@ describe('users app', function() {
         });
     });
 
+    describe('user detail', function() {
+        beforeEach(open('/#/users'));
+
+        it('can open user detail', function() {
+            element(by.repeater('user in users').row(0).column('FullName')).click();
+            expect(modelValue('user.FullName')).toBe('John Doe');
+            $('.preview-pane > .actions > a.btn').click();
+            expect(browser.getCurrentUrl()).toBe('http://localhost:9090/#/users/2');
+            expect($('.page-nav-title').getText()).toBe('Users Profile: John Doe');
+        });
+
+    })
+
     function bindingValue(binding) {
         return element(by.binding(binding)).getText();
     }

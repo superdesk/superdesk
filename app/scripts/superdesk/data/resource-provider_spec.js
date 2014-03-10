@@ -137,6 +137,22 @@ define(['angular', 'superdesk/data/resource-provider'], function(angular, Resour
             expect(user.UserName).toBe('foo');
         }));
 
+        it('can get item by id', inject(function(resource, $httpBackend) {
+            var user;
+
+            $httpBackend.expectGET('server_url').respond(links);
+            $httpBackend.expectGET('users_url/1').respond({UserName: 'foo'});
+
+            resource.users.getById(1).then(function(_user) {
+                user = _user;
+            });
+
+            $httpBackend.flush();
+
+            expect(user.UserName).toBe('foo');
+
+        }));
+
         it('rejects when it has no url', inject(function(resource, $httpBackend) {
             $httpBackend.expectGET('server_url').respond(404);
 
