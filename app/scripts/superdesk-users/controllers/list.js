@@ -1,15 +1,11 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    UserListController.$inject = ['$scope', 'resource'];
-    function UserListController($scope, resource) {
+    UserListController.$inject = ['$scope', '$location', 'resource'];
+    function UserListController($scope, $location, resource) {
 
         $scope.selected = {user: null};
         $scope.createdUsers = [];
-
-        resource.users.query({desc: 'createdOn'}).then(function(users) {
-            $scope.users = users;
-        });
 
         $scope.preview = function(user) {
             $scope.selected.user = user;
@@ -35,6 +31,28 @@ define(['lodash'], function(_) {
 
             $scope.createdUsers.unshift(user);
         };
+
+        function getCriteria() {
+            var criteria = {},
+                params = $location.search();
+
+            if (params.q) {
+                criteria.userName = params.q + '%';
+                //criteria['fullName'] = params.q;
+                criteria.email = params.q + '%';
+            }
+
+            criteria.desc = 'createdOn';
+            criteria.maxResults = 50;
+            return criteria;
+        }
+
+        $scope.$watch(getCriteria, function(criteria) {
+            resource.users.query(criteria)
+                .then(function(users) {
+                    $scope.users = users;
+                });
+        }, true);
     }
 
     return UserListController;

@@ -19,22 +19,11 @@
         <div class="flat-searchbar" sd-trigger-search>
             <div class="search-handler">
                 <div class="trigger-icon"></div>
-                <input type="text" placeholder="{{ 'Search'|translate }}" ng-model="search" ng-change="locationParams.set('search', search)" sd-debounce>
+                <input type="text" placeholder="{{ 'Search'|translate }}" sd-search-param="q">
             </div>
             <div class="separator-handler"></div>
         </div>
 
-        <div class="btn-group multiple-action" ng-show>
-            <button ng-disabled="!(users._items|any:'_checked')" class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                {{ 'Multiple action' | translate }}
-                <span class="caret"></span>
-            </button>
-
-            <ul class="dropdown-menu sf-dropdown sf-right">
-                <li><a href="" ng-click="deleteChecked();"><i class="icon-trash"></i> {{ 'Delete'|translate }}</a></li>
-            </ul>
-        </div>
- 
         <div sd-pagination data-adapter="users"></div>
     </div>
 
@@ -60,7 +49,7 @@
         </div>
 
         <div class="preview-pane">
-            <div class="actions" ng-show="selected.user">
+            <div class="actions">
                 <a ng-href="#/users/{{ selected.user._id }}" class="btn btn-light pull-left" ng-show="selected.user._id" translate>View full profile</a>
                 <div class="close" ng-click="selected.user = null"><i class="icon-remove"></i></div>
             </div>
