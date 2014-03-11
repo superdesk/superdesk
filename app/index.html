@@ -20,6 +20,10 @@
     <div sd-notify></div>
     <div sd-activity-chooser></div>
 
+    <div class="hard-error" ng-show="serverStatus > 0">
+        <div class="alert alert-error" translate>Superdesk is experiencing network connection issues. Please be patient.</div>
+    </div>
+
     <script>ServerConfig = {url: '<%= server.url %>'};</script>
     <script data-main="scripts/main" src="scripts/bower_components/requirejs/require.js"></script>
 

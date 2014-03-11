@@ -909,6 +909,44 @@ Popover override
 
 
 
+.hard-error {
+	position: fixed;
+	top: 0;
+	right: 200px;
+	z-index: 9999;
+	width: auto;
+	max-width: 400px;
+
+	
+	.alert {
+		.border-radius(0);
+		border: 0;
+		.box-sizing(border-box);
+		height: 40px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		line-height: 40px;
+		padding: 0 15px;
+	}
+
+	.alert-error { 
+		background-color: #612525;
+		color: #cc7c7b;
+		text-shadow: none;
+	}
+
+	&:hover {
+		.alert {
+			height: auto;
+			line-height: 20px;
+			padding: 10px 15px;
+			overflow: visible;
+			white-space: pre-wrap;
+		}
+	}
+}
+
 /*
 =========================================
 Login screen
@@ -1040,6 +1078,8 @@ Login screen
 	  }
 	}
 }
+
+
 
 
 
