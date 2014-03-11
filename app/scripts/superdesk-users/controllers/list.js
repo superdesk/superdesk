@@ -33,17 +33,20 @@ define(['lodash'], function(_) {
         };
 
         function getCriteria() {
-            var criteria = {},
-                params = $location.search();
+            var params = $location.search(),
+                criteria = {
+                    desc: 'createdOn',
+                    maxResults: 25
+                };
 
             if (params.q) {
-                criteria.userName = params.q + '%';
-                //criteria['fullName'] = params.q;
-                criteria.email = params.q + '%';
+                criteria.all = params.q + '%';
             }
 
-            criteria.desc = 'createdOn';
-            criteria.maxResults = 50;
+            if (params.page) {
+                criteria.offset = parseInt(params.page, 10) * criteria.maxResults;
+            }
+
             return criteria;
         }
 
