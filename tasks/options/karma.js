@@ -5,6 +5,14 @@ module.exports = {
         autoWatch: false,
         reporters: ['dots', 'coverage']
     },
+    single: {
+        reporters: 'dots'
+    },
+    watch: {
+        singleRun: false,
+        autoWatch: true,
+        reporters: 'dots'
+    },
     unit: {
         coverageReporter: {
           type: 'html',

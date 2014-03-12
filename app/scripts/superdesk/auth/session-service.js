@@ -1,18 +1,18 @@
-define([], function() {
+define(['lodash'], function(_) {
     'use strict';
 
     /**
      * Session Service stores current user data
      */
-    SessionService.$inject = ['$q', 'storage'];
-    function SessionService($q, storage) {
+    SessionService.$inject = ['$q', '$rootScope', 'storage'];
+    function SessionService($q, $rootScope, storage) {
 
         var TOKEN_KEY = 'sess:id',
             IDENTITY_KEY = 'sess:user',
             defer;
 
-        this.token = sessionStorage.getItem(TOKEN_KEY);
-        this.identity = storage.getItem(IDENTITY_KEY);
+        this.token = null;
+        this.identity = null;
 
         /**
          * Get identity when available
@@ -34,7 +34,7 @@ define([], function() {
             this.token = token;
             this.identity = identity;
 
-            sessionStorage.setItem(TOKEN_KEY, token);
+            setToken(token);
             storage.setItem(IDENTITY_KEY, identity);
 
             if (defer) {
@@ -48,7 +48,7 @@ define([], function() {
          */
         this.expire = function() {
             this.token = null;
-            sessionStorage.removeItem(TOKEN_KEY);
+            setToken(null);
         };
 
         /**
@@ -59,6 +59,35 @@ define([], function() {
             this.identity = null;
             storage.removeItem(IDENTITY_KEY);
         };
+
+        $rootScope.$watch(getToken, _.bind(function(token) {
+            this.token = token;
+            this.identity = storage.getItem(IDENTITY_KEY);
+        }, this));
+
+        /**
+         * Save token into local storage
+         *
+         * @param {string} token
+         */
+        function setToken(token) {
+            if (token) {
+                localStorage.setItem(TOKEN_KEY, token);
+            } else {
+                localStorage.removeItem(TOKEN_KEY);
+            }
+        }
+
+        /**
+         * Get token from local storage
+         *
+         * it's used via watch so it skips json serialization withing storage service
+         *
+         * @returns string
+         */
+        function getToken() {
+            return localStorage.getItem(TOKEN_KEY) || null;
+        }
     }
 
     return SessionService;

@@ -29,31 +29,37 @@ define(['superdesk/auth/session-service'], function(SessionService) {
         }));
 
         it('can resolve identity on start', inject(function(session, $rootScope) {
-            var resolved = false;
+            var identity;
 
-            session.getIdentity().then(function(identity) {
-                expect(identity.name).toBe('foo');
-                resolved = true;
+            session.getIdentity().then(function(_identity) {
+                identity = _identity;
+            });
+
+            session.getIdentity().then(function(i2) {
+                expect(identity).toBe(i2);
             });
 
             session.start('test', {name: 'foo'});
 
             $rootScope.$apply();
-            expect(resolved).toBe(true);
+            expect(identity.name).toBe('foo');
         }));
 
-        it('can store state for future requests', inject(function(session, $injector) {
+        it('can store state for future requests', inject(function(session, $injector, $rootScope) {
             session.start('token', {name: 'bar'});
 
             var nextSession = $injector.instantiate(SessionService);
+
+            $rootScope.$apply();
+
             expect(nextSession.token).toBe('token');
             expect(nextSession.identity.name).toBe('bar');
 
             nextSession.expire();
+            $rootScope.$apply();
 
-            nextSession = $injector.instantiate(SessionService);
-            expect(nextSession.token).toBe(null);
-            expect(nextSession.identity.name).toBe('bar');
+            expect(session.token).toBe(null);
+            expect(session.identity.name).toBe('bar');
         }));
 
         it('can clear session', inject(function(session) {

@@ -43,6 +43,7 @@ describe('login', function() {
     });
 
     it('can logout', function() {
+        modal.login('admin', 'admin');
         var logoutBtn = $('.logout-btn');
         expect(logoutBtn.isDisplayed()).toBe(true);
         logoutBtn.click();
