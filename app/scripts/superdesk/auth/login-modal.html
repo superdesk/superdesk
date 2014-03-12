@@ -9,9 +9,10 @@
             </div>
             <form name="loginForm" ng-submit="authenticate()">
                 <fieldset class="inputs">
-                    <input type="text" ng-model="username" placeholder="{{ 'username'|translate }}" class="fullwidth-input" required />
-                    <input type="password" ng-model="password" placeholder="{{ 'password'|translate }}" class="fullwidth-input login-pass" required />
+                    <input type="text" id="login-username" ng-model="username" placeholder="{{ 'username'|translate }}" class="fullwidth-input" required />
+                    <input type="password" id="login-password" ng-model="password" placeholder="{{ 'password'|translate }}" class="fullwidth-input login-pass" required />
                 </fieldset>
+
                 <fieldset class="buttons">
                     <button ng-disabled="isLoading || !loginForm.$valid" id="login-btn" type="submit" class="btn btn-green">
                         {{ 'Log In' | translate }}
@@ -22,10 +23,12 @@
                     </button>
                 </fieldset>
             </form>
+
             <div class="error-handler">
-                <p class="error" ng-show="loginError" translate>Oops! Invalid Username or Password. Please try again.</p>
+                <p class="error" ng-show="!serverStatus && loginError" translate>Oops! Invalid Username or Password.<br />Please try again.</p>
+                <p class="error" ng-show="serverStatus == 1" translate>No server response so far.<br />Let me try again.</p>
+                <p class="error" ng-show="serverStatus > 1" translate>Hmm I think server is down:/<br />But i will keep trying..</p>
             </div>
-            <div class="text" ng-click="identity = null; username = null" ng-show="identity">Sign in as different user</div>
         </div>
     </div>
 </div>

@@ -48,7 +48,7 @@ define(['superdesk/hashlib'], function(hashlib) {
         function getSessToken() {
             return $http.post(url('/Security/Authentication'))
                 .then(function(response) {
-                    return response.data.Token ? response.data.Token : $q.reject(response);
+                    return response.data && response.data.Token ? response.data.Token : $q.reject(response);
                 });
         }
 

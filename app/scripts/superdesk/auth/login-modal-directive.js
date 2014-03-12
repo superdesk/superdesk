@@ -18,10 +18,12 @@ define([], function() {
                             scope.isLoading = false;
                             scope.password = null;
                             scope.loginError = false;
-                        }, function() {
+                        }, function(rejection) {
                             scope.isLoading = false;
-                            scope.password = null;
-                            scope.loginError = true;
+                            scope.loginError = rejection.status;
+                            if (scope.loginError) {
+                                scope.password = null;
+                            }
                         });
                 };
 
@@ -33,7 +35,8 @@ define([], function() {
                     scope.username = session.identity ? session.identity.UserName : null;
                     if (!token) {
                         element.show();
-                        element.find('#username').focus();
+                        var focusElem = scope.username ? 'password' : 'username';
+                        element.find('#login-' + focusElem).focus();
                     } else {
                         element.hide();
                     }
