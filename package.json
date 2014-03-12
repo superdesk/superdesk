@@ -38,7 +38,8 @@
     "lodash": "~2.4.1",
     "karma-coverage": "~0.2.0",
     "grunt-karma-coveralls": "~2.4.0",
-    "protractor": "^0.19.0"
+    "protractor": "^0.19.0",
+    "protractor-screenshot-reporter": "actionless/protractor-screenshot-reporter"
   },
   "scripts": {
     "test": "grunt ci:travis"
