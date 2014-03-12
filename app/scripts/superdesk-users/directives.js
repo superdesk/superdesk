@@ -64,6 +64,7 @@ define([
                     var updateParam = _.debounce(function() {
                         scope.$apply(function() {
                             $location.search('q', elem.val() || null);
+                            $location.search('page', null);
                         });
                     }, 500);
 

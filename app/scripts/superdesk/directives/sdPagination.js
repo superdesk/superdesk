@@ -26,15 +26,10 @@ define([
 
                     scope.$watch('cursor', function(cursor) {
                         var total = cursor && cursor.total,
-                            limit = cursor && cursor.limit;
+                            limit = cursor && cursor.maxResults;
 
                         if (limit) {
                             scope.lastPage = Math.ceil(total / limit) - 1;
-                            if (scope.page > scope.lastPage) {
-                                scope.setPage(scope.lastPage);
-                            } else if (scope.page < 0) {
-                                scope.setPage(0);
-                            }
                         }
                     });
 
