@@ -51,4 +51,10 @@ describe('login', function() {
         expect(modal.username.isDisplayed()).toBe(true);
         expect(modal.username.getAttribute('value')).toBe('john');
     });
+
+    it("can't login with wrong credentials", function() {
+        modal.login('admin', 'wrongpass');
+        expect(modal.isDisplayed()).toBe(true);
+        expect(element(by.css('p.error[ng-show="loginError"]')).getText()).toBe('Oops! Invalid Username or Password. Please try again.');
+    });
 });
