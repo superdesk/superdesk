@@ -106,6 +106,17 @@ define(['angular', 'superdesk/data/resource-provider'], function(angular, Resour
             expect(user.href).toBe('users_url/1');
         }));
 
+        it('can update with diff', inject(function(resource, $httpBackend) {
+            var userData = {href: 'users_url/1', UserName: 'test'},
+                diff = {Active: false};
+
+            $httpBackend.expectPATCH(userData.href, diff).respond({});
+
+            resource.users.save(userData, diff);
+
+            $httpBackend.flush();
+        }));
+
         it('can delete', inject(function(resource, $httpBackend) {
 
             var userData = {href: 'users_url/1'},

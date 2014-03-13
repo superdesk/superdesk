@@ -18,11 +18,12 @@
   "strict": true,
   "trailing": true,
   "globals": {
+    "$": false,
+    "_": false,
     "angular": false,
     "define": false,
     "gettext": false,
     "ServerConfig": false,
-    "_": false,
     "it": false,
     "beforeEach": false,
     "afterEach": false,

@@ -23,7 +23,8 @@ describe('users app', function() {
         beforeEach(open('/#/profile'));
 
         it('can render user profile', function() {
-            expect($('img[sd-user-picture').getAttribute('src')).toBe('http://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200');
+            expect($('img[sd-user-picture').getAttribute('src'))
+                .toBe('http://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200');
             expect(bindingValue('{{ user.UserName }}')).toBe('john');
             expect(modelValue('user.FirstName')).toBe('John');
             expect(modelValue('user.LastName')).toBe('Doe');
@@ -42,6 +43,21 @@ describe('users app', function() {
 
             expect(element(by.repeater('user in users').row(0).column('UserName')).getText()).toBe('john');
         });
+
+        it('can delete user', function() {
+            var user = element.all(by.repeater('user')),
+                activity = element.all(by.repeater('activity')),
+                ptor = protractor.getInstance();
+
+            expect(activity.count()).toBe(2);
+            user.first().click();
+            activity.first().click();
+
+            var confirm = ptor.switchTo().alert();
+            expect(confirm.getText()).toBe('Please confirm you want to delete a user.');
+            confirm.accept();
+            expect(element.all(by.repeater('user')).count()).toBe(1);
+        });
     });
 
     describe('user detail', function() {
@@ -55,7 +71,7 @@ describe('users app', function() {
             expect($('.page-nav-title').getText()).toBe('Users Profile: John Doe');
         });
 
-    })
+    });
 
     function bindingValue(binding) {
         return element(by.binding(binding)).getText();

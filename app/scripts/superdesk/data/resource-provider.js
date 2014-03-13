@@ -167,16 +167,21 @@ define(['lodash'], function(_) {
          * Update item
          *
          * @param {Object} item
+         * @param {Object} diff
          * @returns {Promise}
          */
-        Resource.prototype.update = function(item) {
+        Resource.prototype.update = function(item, diff) {
+            if (!diff) {
+                diff = _.omit(item, function(value, key) {
+                    return key === 'href' || key === 'Id' || value.href;
+                });
+            }
+
             return http({
                 method: 'PATCH',
                 url: item.href,
                 headers: getHeaders(this),
-                data: _.omit(item, function(value, key) {
-                    return key === 'href' || key === 'Id' || value.href;
-                })
+                data: diff
             }).then(function(response) {
                 _.extend(item, response.data);
                 return item;
@@ -204,10 +209,11 @@ define(['lodash'], function(_) {
          * Save item
          *
          * @param {Object} item
+         * @param {Object} diff
          * @returns {Promise}
          */
-        Resource.prototype.save = function(item) {
-            return item.href ? this.update(item) : this.create(item);
+        Resource.prototype.save = function(item, diff) {
+            return item.href ? this.update(item, diff) : this.create(item);
         };
 
         /**

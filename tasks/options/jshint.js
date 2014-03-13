@@ -8,5 +8,6 @@ module.exports = {
         '<%= appDir %>/scripts/superdesk/**/*.js',
         '<%= appDir %>/scripts/superdesk-*/**/*.js',
         'test/**/*.js',
+        'spec/**/*.js'
     ]
 };

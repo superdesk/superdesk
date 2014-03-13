@@ -104,7 +104,7 @@ define([
                     icon: 'trash',
                     confirm: gettext('Please confirm you want to delete a user.'),
                     controller: ['resource', 'data', function(resource, data) {
-                        return resource.users.remove(data.item).then(function() {
+                        return resource.users.save(data.item, {Active: false}).then(function() {
                             data.list.splice(data.index, 1);
                         });
                     }],
