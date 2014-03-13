@@ -97,6 +97,7 @@ body {
 		color: #fff;
 		font-size: 12px;
 		&.user-profile {
+			position: relative;
 			background-size: 23px;
 			.text-semibold();
 			.avatar {
@@ -104,6 +105,18 @@ body {
 				height: 22px;
 				float: left;
 				margin-right: 10px;
+			}
+			.notifications-count {
+				position: absolute;
+				width: 21px;
+				height: 13px;
+				background: #4aa8eb;
+				.border-radius(5px);
+				line-height: 13px;
+				text-align: center;
+				left: -4px;
+				top: 4px;
+				font-size: 10px;
 			}
 		}
 	}
@@ -1080,6 +1093,183 @@ Login screen
 }
 
 
+/*
+=========================================
+Notifications
+=========================================
+*/
+
+@notification-pane-width: 300px;
+.notification-pane {
+	position: fixed;
+	top: @topspace; 
+	bottom: 0; 
+	right: -@notification-pane-width;
+	width: @notification-pane-width;
+	.box-sizing(border-box);
+	background: #313131;
+	z-index: 2000;
+	.transition(right ease 0.3s);
+	&.show {
+		right: 0;
+	}
+	> .header {
+		height: 65px;
+		width: 100%;
+		background: #212121;
+		.box-shadow(inset 0 4px 4px -2px #000);
+		border-botom: 1px solid #313131;
+		.avatar-holder {
+			float: left;
+			width: 40px;
+			height: 40px;
+			.border-radius(20px);
+			overflow: hidden;
+			margin: 12px;
+			img {
+				width: 40px;
+				height: 40px;
+			}
+		}
+		.user-info {
+			margin-left: 65px;
+			height: 45px;
+			border-left: 1px solid #313131;
+			border-bottom: 1px solid #313131;
+			padding: 10px;
+			.box-sizing(border-box);
+			.name {
+				color: #c5c5c5;
+				font-size: 12px;
+				display: block;
+				line-height: 12px;
+			}
+			.displayname {
+				font-size: 11px;
+				color: #727272;
+				display: block;
+				line-height: 12px;
+				margin-top: 2px;
+			}
+		}
+		.actions {
+			margin-left: 65px;
+			height: 20px;
+			border-left: 1px solid #313131;
+			background: #252525;
+			a {
+				font-size: 10px;
+				color: #8d8d8d;
+				text-decoration: none;
+				width: 33%;
+				text-transform: uppercase;
+				.box-sizing(border-box);
+				line-height: 20px;
+				text-align: center;
+				float: left;
+				display: inline-block;
+				border-right: 1px solid #313131;
+				&:last-child {
+					border:0;
+				}
+				&:hover {
+					background: #303030;
+					color: #ccc;
+				}
+			}
+		}
+
+	}
+	> .content {
+		position: absolute;
+		top: 65px;
+		left: 0; right: 0; bottom: 0;
+		border-top: 2px solid #464646;
+		.box-shadow(inset 4px 0 4px -2px #202020);
+		.module {
+			margin-top: 20px;
+			.title {
+				font-size: 16px;
+				color:#f8f8f8;
+				padding: 10px;
+				.text-light();
+			}
+		}
+	}
+}
+
+
+
+.notification-list {
+  margin: 0;
+  list-style-type: none;
+  padding: 0 10px;
+  height: 100%;
+  overflow-y: auto;
+
+  li {
+  	border: 1px solid #393939;
+  	background: #393939;
+    padding: 10px 5px;
+    .box-sizing(border-box);
+    .border-radius(4px);
+    width: 100%;
+    min-height: 45px;
+    margin:0 0 7px 0;
+    .box-shadow(0 1px 1px 0 #202020);
+
+    .avatar-holder {
+      float: left;
+      width: 24px;
+      height: 24px;
+      overflow: hidden;
+      .border-radius(12px);
+      img {
+      	width: 24px;
+      	height: 24px;
+      }
+    }
+    .content {
+      padding-left: 35px;
+      .text {
+        margin:0;
+        font-size: 12px;
+        overflow: hidden;
+        color: #d7d7d7;
+      }
+      .date {
+        font-size: 11px;
+        color: #848484;
+        margin-top: -3px;
+        display: block;
+      }
+    }
+    &.unread {
+    	border-color: #545454;
+    	background: #2c2c2c;
+    }
+    &.important {
+      border: 1px solid #a60101 !important;
+      .box-shadow-both(inset 0px 0px 1px 1px #e4b2b2, 0px 2px 2px 0px #d8d8d8) !important;
+    }
+    &.personal, &.important {
+      border: 1px solid #c8c8c8;
+      .border-radius(3px);
+      background: #fff;
+      padding: 5px;
+      margin-bottom: 7px;
+      .box-shadow(0px 2px 2px 0 #d8d8d8);
+      + li {
+        border-top-width: 0;
+        &.personal, &.important {
+          border-top-width: 1px;
+        } 
+      }
+    }
+    
+  } 
+}
+
 
 
 
@@ -1118,13 +1308,15 @@ Login screen
     .text-semibold();
     line-height: 23px;
     display: inline-block;
+
     .avatar {
-				width: 22px;
-				height: 22px;
-				float: left;
-				margin-right: 10px;
-				.border-radius(11px);
-			}
+		width: 22px;
+		height: 22px;
+		float: left;
+		margin-right: 10px;
+		.border-radius(11px);
+	}
+
   }
 
 }

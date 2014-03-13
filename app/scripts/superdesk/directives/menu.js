@@ -1,7 +1,8 @@
 define([
     'angular',
-    'lodash'
-], function(angular, _) {
+    'lodash',
+    'jquery'
+], function(angular, _, $) {
     'use strict';
 
     var module = angular.module('superdesk.directives');
@@ -29,6 +30,10 @@ define([
                     scope.displayMenu = false;
                     scope.currentRoute = $route.current;
                 });
+
+                scope.openNotifications = function() {
+                    $('.notification-pane').toggleClass('show');
+                };
             }
         };
     }]);

@@ -1325,68 +1325,6 @@ button:focus {
 }
 
 
-
-
-
-.notification-list {
-  margin: 0;
-  list-style-type: none;
-  padding: 0 10px 0 5px;
-  height: 100%;
-  overflow-y: auto; 
-  li {
-    border-top: 1px solid #dedede;
-    padding: 10px 5px;
-    .box-sizing(border-box);
-    width: 100%;
-    min-height: 45px;
-    margin:0;
-    &:last-child {
-       border-bottom: 1px solid #dedede;
-    }
-    .notification-avatar {
-      float: left;
-      width: 24px;
-      height: 24px;
-      overflow: hidden;
-      background: url("../../images/avatar-notification.png") no-repeat 0 0;
-    }
-    .notification-content {
-      padding-left: 35px;
-      .notification-text {
-        margin: -3px 0 0 0;
-        font-size: 12px;
-        overflow: hidden;
-      }
-      .notification-info {
-        font-size: 11px;
-        color: #949494;
-      }
-    }
-    &.important {
-      border: 1px solid #a60101 !important;
-      .box-shadow-both(inset 0px 0px 1px 1px #e4b2b2, 0px 2px 2px 0px #d8d8d8) !important;
-    }
-    &.personal, &.important {
-      border: 1px solid #c8c8c8;
-      .border-radius(3px);
-      background: #fff;
-      padding: 5px;
-      margin-bottom: 7px;
-      .box-shadow(0px 2px 2px 0 #d8d8d8);
-      + li {
-        border-top-width: 0;
-        &.personal, &.important {
-          border-top-width: 1px;
-        } 
-      }
-    }
-    
-  } 
-}
-
-
-
 /*RESPONSIVE*/
 
 @media (max-width: 1024px) {

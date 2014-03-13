@@ -16,10 +16,11 @@
           <ul class="nav pull-right">
               <li class="divider-vertical"></li>
               <li>
-                <a href="#/profile" class="user-profile"><img sd-user-avatar data-src="currentUser.Avatar.href" class="avatar"> {{ currentUser.UserName }}</a>
+                <a href="" ng-click="openNotifications()" class="user-profile">
+                  <span class="notifications-count">3</span>
+                  <img sd-user-avatar data-src="currentUser.Avatar.href" class="avatar"> {{ currentUser.UserName }}
+                </a>
               </li>
-              <li class="divider-vertical"></li>
-              <li><a href="" ng-click="logout()" class="blink blue-text logout-btn" translate>Logout</a></li>
               <li class="divider-vertical"></li>
               <li ng-show=""><a href="" translate>Help</a></li>
           </ul>

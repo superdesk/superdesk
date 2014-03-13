@@ -18,5 +18,6 @@ define([
     './menu',
     './listView',
     './sdDateRange',
-    './sdTypeahead'
+    './sdTypeahead',
+    './sdNotifications'
 ], function() {});
