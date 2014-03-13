@@ -9,13 +9,21 @@ module.exports = {
         tasks: ['less']
     },
     code: {
-        options: {
-            livereload: true
-        },
+        options: {livereload: true},
+        tasks: ['hint'],
+        files: ['<%= appDir %>/scripts/**/*.js']
+    },
+    assets: {
+        options: {livereload: true},
+        tasks: ['copy:assets'],
         files: [
-            '<%= appDir %>/scripts/**/*.html',
-            '<%= appDir %>/scripts/**/*.js'
-        ],
-        tasks: ['hint']
+            '<%= appDir %>/styles/**/*.css',
+            '<%= appDir %>/scripts/**/*.html'
+        ]
+    },
+    index: {
+        options: {livereload: true},
+        tasks: ['template'],
+        files: ['<%= appDir %>/index.html']
     }
 };
