@@ -17,7 +17,9 @@ describe('login', function() {
         };
 
         this.login = function(username, password) {
+            this.username.clear();
             this.username.sendKeys(username);
+            this.password.clear();
             this.password.sendKeys(password);
             this.btn.click();
         };
@@ -39,14 +41,13 @@ describe('login', function() {
         modal.login('admin', 'admin');
         expect(modal.isDisplayed()).toBe(false);
         expect(getUrl()).toBe('/dashboard');
-        expect(element(by.binding('UserName')).getText()).toBe('john');
+        expect(element(by.binding('UserName')).getText()).toContain('john');
     });
 
     it('can logout', function() {
         modal.login('admin', 'admin');
-        var logoutBtn = $('.logout-btn');
-        expect(logoutBtn.isDisplayed()).toBe(true);
-        logoutBtn.click();
+        element(by.binding('UserName')).click();
+        element(by.buttonText('Sign out')).click();
         expect(modal.btn.isDisplayed()).toBe(true);
         expect(modal.username.isDisplayed()).toBe(true);
         expect(modal.username.getAttribute('value')).toBe('john');
