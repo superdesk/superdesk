@@ -1,9 +1,12 @@
+'use strict';
+
 var ScreenShotReporter = require('protractor-screenshot-reporter');
 
 exports.config = {
     baseUrl: 'http://localhost:9090/',
 
     specs: [
+        'spec/matchers.js',
         'spec/**/*[Ss]pec.js'
     ],
 

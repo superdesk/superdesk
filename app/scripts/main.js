@@ -1,16 +1,17 @@
 require.config({
     paths: {
         jquery: 'bower_components/jquery/dist/jquery',
-        bootstrap: 'bower_components/bootstrap/dist/js/bootstrap',
+        lodash: 'bower_components/lodash/dist/lodash',
         angular: 'bower_components/angular/angular',
+        bootstrap: 'bower_components/bootstrap/dist/js/bootstrap',
         'angular-ui': 'bower_components/angular-bootstrap/ui-bootstrap',
         'angular-resource': 'bower_components/angular-resource/angular-resource',
         'angular-route': 'bower_components/angular-route/angular-route',
-        'moment': 'bower_components/momentjs/moment',
-        'moment-timezone': 'bower_components/moment-timezone/moment-timezone',
-        'restangular': 'bower_components/restangular/dist/restangular',
-        'lodash': 'bower_components/lodash/dist/lodash',
         'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext',
+        'angular-mocks': 'bower_components/angular-mocks/angular-mocks',
+
+        moment: 'bower_components/momentjs/moment',
+        'moment-timezone': 'bower_components/moment-timezone/moment-timezone',
 
         'jquery-ui': 'bower_components/jquery-ui/ui/jquery-ui',
 
@@ -22,8 +23,8 @@ require.config({
         'load-image-ios': 'bower_components/blueimp-load-image/js/load-image-ios',
         'jquery.ui.widget': 'bower_components/blueimp-file-upload/js/vendor/jquery.ui.widget',
 
-        'gridster': 'bower_components/gridster/dist/jquery.gridster.with-extras',
-        'd3': 'bower_components/d3/d3',
+        gridster: 'bower_components/gridster/dist/jquery.gridster.with-extras',
+        d3: 'bower_components/d3/d3',
 
         'ng-aloha-editor': 'bower_components/ng-aloha-editor/ng-aloha-editor',
 
@@ -51,6 +52,9 @@ require.config({
             deps: ['angular']
         },
         'angular-gettext': {
+            deps: ['angular']
+        },
+        'angular-mocks': {
             deps: ['angular']
         },
         'translations': {
@@ -108,6 +112,7 @@ define([
     'angular-route',
     'angular-gettext',
     'angular-resource',
+    'angular-mocks',
     'gridster'
 ], function($, _, angular) {
     'use strict';
@@ -116,6 +121,7 @@ define([
     angular.module('superdesk.filters', []);
     angular.module('superdesk.services', []);
     angular.module('superdesk.directives', []);
+    angular.module('test', []); // used for mocking
 
     angular.module('superdesk').constant('config', {server: ServerConfig});
 
@@ -143,7 +149,8 @@ define([
                 'superdesk.directives',
                 'superdesk.auth',
                 'superdesk.data',
-                'superdesk.datetime'
+                'superdesk.datetime',
+                'test'
             ];
 
             var apps = [
