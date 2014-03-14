@@ -179,14 +179,17 @@ define([
                 }
             };
         })
-        .directive('sdUserName', ['em', function(em) {
+        .directive('sdUserUnique', ['resource', function(resource) {
             return {
                 require: 'ngModel',
                 link: function (scope, element, attrs, ctrl) {
                     ctrl.$parsers.unshift(function(viewValue) {
-                        if (viewValue) {
-                            em.getRepository('users').matching({where: {username: viewValue}}).then(function(result) {
-                                ctrl.$setValidity('usernameavailable', result._items.length === 0);
+                        if (viewValue && attrs.uniqueField) {
+                            var criteria = {};
+                            criteria[attrs.uniqueField] = viewValue;
+                            resource.users.query(criteria)
+                            .then(function(users) {
+                                ctrl.$setValidity('unique', users._items.length === 0);
                             });
                         }
                     });
