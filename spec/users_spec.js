@@ -4,6 +4,7 @@ describe('users app', function() {
     function login() {
         element(by.id('login-btn')).isDisplayed().then(function(needLogin) {
             if (needLogin) {
+                element(by.model('username')).clear();
                 element(by.model('username')).sendKeys('admin');
                 element(by.model('password')).sendKeys('admin');
                 element(by.id('login-btn')).click();
