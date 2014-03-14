@@ -11,7 +11,7 @@ exports.config = {
     ],
 
     capabilities: {
-        browserName: 'chrome',
+        browserName: 'chrome'
     },
 
     framework: 'jasmine',
@@ -23,6 +23,7 @@ exports.config = {
         defaultTimeoutInterval: 30000
     },
 
+    /* global jasmine */
     onPrepare: function() {
         jasmine.getEnv().addReporter(new ScreenShotReporter({
             baseDirectory: './screenshots',

@@ -14,24 +14,24 @@ module.exports = function(config) {
 
         // list of files / patterns to load in the browser
         files: [
-          'app/scripts/bower_components/jquery/dist/jquery.js',
-          'app/scripts/bower_components/angular/angular.js',
-          {pattern: 'app/**/*.js', included: false},
-          {pattern: 'test/*[sS]pec.js', included: false},
-          {pattern: 'app/scripts/superdesk/**/*[sS]pec.js', included: false},
-          'app/scripts/superdesk/views/*.html',
-          'test/test-main.js'
+            'app/scripts/bower_components/jquery/dist/jquery.js',
+            'app/scripts/bower_components/angular/angular.js',
+            {pattern: 'app/**/*.js', included: false},
+            {pattern: 'test/*[sS]pec.js', included: false},
+            {pattern: 'app/scripts/superdesk/**/*[sS]pec.js', included: false},
+            'app/scripts/superdesk/views/*.html',
+            'test/test-main.js'
         ],
 
         // list of files to exclude
         exclude: [
-          'app/scripts/bower_components/**/*[sS]pec.js',
-          'app/main.js'
+            'app/scripts/bower_components/**/*[sS]pec.js',
+            'app/main.js'
         ],
 
         ngHtml2JsPreprocessor: {
-          stripPrefix: 'app/',
-          moduleName: 'templates'
+            stripPrefix: 'app/',
+            moduleName: 'templates'
         },
 
         // test results reporter to use
@@ -51,5 +51,5 @@ module.exports = function(config) {
 
         // Continuous Integration mode
         singleRun: false
-  });
+    });
 };

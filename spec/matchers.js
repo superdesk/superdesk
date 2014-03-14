@@ -1,5 +1,7 @@
 'use strict';
 
+/* global jasmine */
+
 beforeEach(function() {
     this.addMatchers({
         // check if elem is displayed
