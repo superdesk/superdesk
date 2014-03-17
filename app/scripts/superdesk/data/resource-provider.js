@@ -180,8 +180,8 @@ define(['lodash'], function(_) {
             return http({
                 method: 'PATCH',
                 url: item.href,
-                headers: getHeaders(this),
-                data: diff
+                data: diff,
+                headers: getHeaders(this)
             }).then(function(response) {
                 _.extend(item, response.data);
                 return item;
@@ -197,8 +197,9 @@ define(['lodash'], function(_) {
         Resource.prototype.create = function(itemData) {
             return http({
                 method: 'POST',
+                url: getUrl(this),
                 data: itemData,
-                url: getUrl(this)
+                headers: getHeaders(this)
             }).then(function(response) {
                 _.extend(itemData, response.data);
                 return itemData;
