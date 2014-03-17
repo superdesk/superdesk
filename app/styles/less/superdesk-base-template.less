@@ -968,7 +968,7 @@ Login screen
 	.login-form-container {
 		.box-sizing(border-box);
 		width: 320px;
-		height: 400px;
+		height: 500px;
 		padding: 15px;
 		position: absolute;
 		top: 50%; margin-top: -200px;
@@ -1019,12 +1019,50 @@ Login screen
 			}
 			.error-handler {
 				.error {
-					background: #301c1c;
+					background: #9d0202;
 					padding: 12px;
-					color:#cc0000;
+					color:#fff;
 					font-size: 12px;
 					line-height: 18px;
 					.border-radius(4px);
+				}
+				.network-error {
+					height: 44px;
+					.border-radius(3px);
+					span {
+						width: 46px;
+						height: 44px;
+						float: left;
+						.border-radius(3px 0 0 3px);
+						background-repeat: no-repeat;
+						background-position: 8px 7px;
+						.opacity(60);
+					}
+					p {
+						margin-left: 46px;
+						color: #fff;
+						padding: 6px;
+						line-height: 16px;
+						font-size: 12px;
+					}
+					&.red {
+						background-color: #7a1212;
+						span {
+							background-color: #910707;
+						}
+					}
+					&.yellow {
+						background-color: #bc7c0e;
+						span {
+							background-color: #de8f05;
+						}
+					}
+					&.green {
+						background-color: #157310;
+						span {
+							background-color: #0c8507;
+						}
+					}
 				}
 			}
 		}

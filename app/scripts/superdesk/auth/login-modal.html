@@ -26,8 +26,17 @@
 
             <div class="error-handler">
                 <p class="error" ng-show="!serverStatus && loginError" translate>Oops! Invalid Username or Password.<br />Please try again.</p>
-                <p class="error" ng-show="serverStatus == 1" translate>No server response so far.<br />Let me try again.</p>
-                <p class="error" ng-show="serverStatus > 1" translate>Hmm I think server is down:/<br />But i will keep trying..</p>
+
+                <div class="network-error red" ng-show="serverStatus == 1">
+                    <span class="icon-unplug"></span>
+                    <p translate>No server response so far.<br />Let me try again.</p>
+                </div>
+
+                <div class="network-error yellow" ng-show="serverStatus > 1">
+                    <span class="icon-unplug"></span>
+                    <p translate>Trying to reconnect...<br />Please wait.</p>
+                </div>
+                
             </div>
         </div>
     </div>
