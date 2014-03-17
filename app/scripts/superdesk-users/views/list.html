@@ -51,7 +51,7 @@
         <div class="preview-pane">
             <div class="actions">
                 <a ng-href="#/users/{{ selected.user.Id }}" class="btn btn-light pull-left" ng-show="selected.user.href" translate>View full profile</a>
-                <div class="close" ng-click="selected.user = null"><i class="icon-remove"></i></div>
+                <div class="close" ng-click="selected.user = null" ng-show="selected.user"><i class="icon-remove"></i></div>
             </div>
 
             <div sd-user-details-pane ng-show="selected.user">
