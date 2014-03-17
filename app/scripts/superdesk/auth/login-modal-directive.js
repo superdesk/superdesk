@@ -16,8 +16,8 @@ define([], function() {
                     auth.login(scope.username || '', scope.password || '')
                         .then(function() {
                             scope.isLoading = false;
-                            scope.password = null;
                             scope.loginError = false;
+                            scope.password = null;
                         }, function(rejection) {
                             scope.isLoading = false;
                             scope.loginError = rejection.status;
@@ -33,6 +33,7 @@ define([], function() {
                     scope.isLoading = false;
                     scope.identity = session.identity;
                     scope.username = session.identity ? session.identity.UserName : null;
+                    scope.password = null;
                     if (!token) {
                         element.show();
                         var focusElem = scope.username ? 'password' : 'username';
