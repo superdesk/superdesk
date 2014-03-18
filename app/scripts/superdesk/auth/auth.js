@@ -21,18 +21,18 @@ define([
         .config(['$httpProvider', function($httpProvider) {
             $httpProvider.interceptors.push(['session', '$injector', function(session, $injector) {
                 return {
-                    responseError: function(rejection) {
-                        if (rejection.status === 401) {
+                    response: function(response) {
+                        if (response.status === 401) {
                             session.expire();
                             return session.getIdentity().then(function() {
                                 var $http = $injector.get('$http');
                                 $http.defaults.headers.common.Authorization = session.token;
-                                rejection.config.headers.Authorization = session.token;
-                                return $http(rejection.config);
+                                response.config.headers.Authorization = session.token;
+                                return $http(response.config);
                             });
                         }
 
-                        return rejection;
+                        return response;
                     }
                 };
             }]);
