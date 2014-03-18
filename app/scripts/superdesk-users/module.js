@@ -103,9 +103,18 @@ define([
                     label: gettext('Delete user'),
                     icon: 'trash',
                     confirm: gettext('Please confirm you want to delete a user.'),
-                    controller: ['resource', 'data', function(resource, data) {
-                        return resource.users.save(data.item, {Active: false}).then(function() {
+                    controller: ['resource', 'data', '$q', function(resource, data, $q) {
+                        function removeItem() {
                             data.list.splice(data.index, 1);
+                        }
+
+                        return resource.users['delete'](data.item).then(removeItem, function(response) {
+                            if (response.status === 404) {
+                                removeItem();
+                                return $q.resolve(response);
+                            }
+
+                            return $q.reject(response);
                         });
                     }],
                     filters: [
