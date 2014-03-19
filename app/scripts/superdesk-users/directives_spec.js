@@ -10,6 +10,7 @@ define([
     ].join('');
 
     describe('sdUserUnique Directive', function() {
+        var scope;
 
         beforeEach(module(function($provide) {
             $provide.service('resource', function($q) {
@@ -31,10 +32,12 @@ define([
 
         beforeEach(module('superdesk.users.directives'));
 
-        it('validates that field is unique', inject(function($rootScope, $compile) {
-            var scope = $rootScope.$new(true);
-            scope.user = {Id: 3, userName: 'test'};
+        beforeEach(inject(function($rootScope) {
+            scope = $rootScope.$new(true);
+        }));
 
+        it('fails on unique constraint', inject(function($compile) {
+            scope.user = {Id: 3, userName: 'test'};
             $compile(template)(scope);
 
             scope.$eval('userForm.username.$setViewValue("foo")');
@@ -43,10 +46,11 @@ define([
             expect(scope.$eval('userForm.username.$dirty')).toBe(true);
             expect(scope.$eval('userForm.username.$valid')).toBe(false);
             expect(scope.$eval('userForm.username.$error.unique')).toBe(true);
+        }));
 
-            scope.$apply(function() {
-                scope.user = {Id: 6, userName: 'baz'};
-            });
+        it('succeeds on unique constraint', inject(function($compile) {
+            scope.user = {Id: 6, userName: 'baz'};
+            $compile(template)(scope);
 
             expect(scope.$eval('userForm.username.$valid')).toBe(true);
 
@@ -56,19 +60,16 @@ define([
             expect(scope.$eval('userForm.username.$valid')).toBe(true);
             expect(scope.$eval('userForm.username.$error.unique')).toBe(false);
             expect(scope.$eval('userForm.username.$modelValue')).toBe('bar');
+        }));
 
-            scope.$apply(function() {
-                scope.user = {Id: 9, userName: 'foo'};
-            });
-
-            expect(scope.$eval('userForm.username.$valid')).toBe(true);
+        it('succeeds failing test using exclusion', inject(function($compile) {
+            scope.user = {Id: 9, userName: 'foo'};
+            $compile(template)(scope);
 
             scope.$eval('userForm.username.$setViewValue("foo")');
             scope.$digest();
 
             expect(scope.$eval('userForm.username.$valid')).toBe(true);
-            expect(scope.$eval('userForm.username.$error.unique')).toBe(false);
-            expect(scope.$eval('userForm.username.$modelValue')).toBe('foo');
         }));
     });
 });
