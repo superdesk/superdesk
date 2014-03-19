@@ -227,7 +227,7 @@ define(['angular', 'lodash'], function(angular, _) {
                 data: '=',
                 type: '@',
                 action: '@',
-                done: '='
+                done: '&'
             },
             template: '<li ng-repeat="activity in activities" sd-activity-item></li>',
             link: function(scope, elem, attrs) {
