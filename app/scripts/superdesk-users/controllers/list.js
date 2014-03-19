@@ -54,6 +54,7 @@ define(['lodash'], function(_) {
             resource.users.query(criteria)
                 .then(function(users) {
                     $scope.users = users;
+                    $scope.createdUsers = [];
                 });
         }, true);
     }
