@@ -5,7 +5,7 @@ define([
 
     var template = [
         '<form name="userForm">',
-        '<input type="text" name="username" sd-user-unique data-unique-field="userName" ng-model="userName">',
+        '<input type="text" name="username" sd-user-unique data-unique-field="userName" ng-model="user.userName">',
         '</form>'
     ].join('');
 
@@ -26,6 +26,7 @@ define([
 
         it('validates that field is unique', inject(function($rootScope, $compile) {
             var scope = $rootScope.$new(true);
+            scope.user = {userName: 'test'};
 
             $compile(template)(scope);
 
@@ -41,6 +42,7 @@ define([
 
             expect(scope.$eval('userForm.username.$valid')).toBe(true);
             expect(scope.$eval('userForm.username.$error.unique')).toBe(false);
+            expect(scope.$eval('userForm.username.$modelValue')).toBe('bar');
         }));
 
     });

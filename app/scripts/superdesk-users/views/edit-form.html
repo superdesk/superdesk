@@ -1,5 +1,5 @@
 <div class="user-details-content user-profile user-profile-edit">
-<form name="userForm" ng-submit="userForm.$valid && save(user)">
+<form name="userForm" ng-submit="userForm.$valid && save()">
 
   <div>
     <button type="submit" class="btn btn-info pull-right" ng-disabled="userForm.$invalid">Save</button>
@@ -11,6 +11,8 @@
 
         <a ng-show="" class="change-photo" href="" ng-click="editPicture()" translate>Change Photo</a>
     </div>
+
+    <p class="alert alert-error" ng-show="error" translate>Please fix issues below.</p>
 
     <div class="profile-info user-profile-edit">
         <div class="header-info">
@@ -45,19 +47,18 @@
                     sd-user-unique data-unique-field="userName"
                     required>
                   <div ng-show="userForm.userName.$error.required" translate>please provide a username.</div>
-                  <div ng-show="userForm.userName.$error.unique" translate>username is taken already.</div>
+                  <div ng-show="userForm.userName.$error.unique || error.UserName.conflict" translate>username is taken already.</div>
                 </div>
 
                 <div sd-info-item>
                   <label for="email" translate>email</label>
                   <input type="email" name="email" id="email"
                     ng-model="user.EMail"
-                    sd-user-unique
-                    data-unique-field="email"
+                    sd-user-unique data-unique-field="email"
                     required>
                   <div ng-show="userForm.email.$error.required" translate>please provide an email address.</div>
                   <div ng-show="userForm.email.$error.email" translate>email address must be valid.</div>
-                  <div ng-show="userForm.email.$error.unique" translate>a user with this email already exists.</div>
+                  <div ng-show="userForm.email.$error.unique || error.EMail.conflict" translate>a user with this email already exists.</div>
                 </div>
 
                 <div sd-info-item>
@@ -65,7 +66,7 @@
                   <input type="text" name="phone" id="phone" ng-model="user.PhoneNumber">
                 </div>
 
-                <div sd-info-item class="password" ng-show="!user.Id">
+                <div sd-info-item class="password" ng-if="!user.Id">
                   <label for="password" translate>password</label>
                   <input type="password" name="password" ng-minlength="5" id="password" ng-model="user.Password" required>
                   <div ng-show="userForm.password.$error.minlength" translate>password must be at least 5 characters long.</div>

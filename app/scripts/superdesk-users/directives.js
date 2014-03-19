@@ -122,7 +122,7 @@ define([
                 replace: true,
                 templateUrl: 'scripts/superdesk-users/views/edit-form.html',
                 scope: {
-                    user: '=',
+                    origUser: '=user',
                     onsave: '&'
                 },
                 link: function(scope, elem) {
@@ -134,28 +134,40 @@ define([
                         });
                     };
 
+                    scope.$watch('origUser', function(user) {
+                        scope.error = null;
+                        scope.user = angular.copy(user);
+                    });
+
                     /**
                      * save user
                      */
-                    scope.save = function(user) {
+                    scope.save = function() {
+
+                        var data = angular.copy(scope.user);
 
                         // todo(petr): figure out where to put such logic
-                        if (user.Password) {
-                            user.Password = hashlib.hash(user.Password);
+                        if (data.Password) {
+                            data.Password = hashlib.hash(data.Password);
                         } else {
-                            delete user.Password;
+                            delete data.Password;
                         }
 
                         notify.info(gettext('saving..'));
-                        resource.users.save(user)
-                            .then(function() {
+                        resource.users.save(data)
+                            .then(function(newData) {
                                 notify.pop();
                                 notify.success(gettext('user saved.'), 3000);
-                                scope.onsave({user: user});
-                            }, function(reason) {
+                                angular.extend(scope.origUser, newData);
+                                scope.onsave({user: scope.origUser});
+                            }, function(response) {
                                 notify.pop();
                                 // todo(petr) render errors in form
-                                notify.error(reason.data);
+                                if (response.status === 400) {
+                                    scope.error = response.data;
+                                } else {
+                                    console.error(response);
+                                }
                             });
                     };
                 }
@@ -192,6 +204,8 @@ define([
                                 ctrl.$setValidity('unique', !users.total);
                             });
                         }
+
+                        return viewValue;
                     });
                 }
             };
