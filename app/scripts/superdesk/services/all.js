@@ -9,6 +9,7 @@ define([
     './server',
     './superdesk',
     './data',
-    './dragDropService'
+    './dragDropService',
+    './beta'
 ], function() {
 });

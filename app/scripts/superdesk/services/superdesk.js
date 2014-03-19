@@ -60,6 +60,7 @@ define(['angular', 'lodash'], function(angular, _) {
                 when: id, // use id as default
                 href: id, // use id as default
                 filters: [],
+                beta: false,
                 reloadOnSearch: false
             }, data);
 
@@ -69,10 +70,6 @@ define(['angular', 'lodash'], function(angular, _) {
 
             if (actionless) {
                 console.error('Missing filters action for activity', activity);
-            }
-
-            if (activity.when[0] === '/' && (activity.template || activity.templateUrl)) {
-                $routeProvider.when(activity.when, activity);
             }
 
             activities[id] = activity;
@@ -91,8 +88,21 @@ define(['angular', 'lodash'], function(angular, _) {
             return this;
         };
 
-        this.$get = ['$q', 'activityService', 'activityChooser', 'DataAdapter',
-        function($q, activityService, activityChooser, DataAdapter) {
+        this.$get = ['$q', 'activityService', 'activityChooser', 'DataAdapter', 'betaService',
+        function($q, activityService, activityChooser, DataAdapter, betaService) {
+
+            /**
+             * Render main menu depending on registered acitivites
+             */
+            var beta = betaService.isBeta();
+            _.forEach(activities, function(activity, id) {
+                if (activity.beta === true && beta === false) {
+                    $routeProvider.when(activity.when, {redirectTo: '/dashboard'});
+                    delete activities[id];
+                } else if (activity.when[0] === '/' && (activity.template || activity.templateUrl)) {
+                    $routeProvider.when(activity.when, activity);
+                }
+            });
 
             /**
              * Find all available activities for given intent

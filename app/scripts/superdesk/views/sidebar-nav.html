@@ -14,10 +14,17 @@
           </div>
 
           <ul class="nav pull-right">
+              
+              <li>
+                <a href="" ng-click="toggleBeta()">
+                    <span class="version stable" ng-show="!beta" tooltip="{{'Switch to beta preview' | translate }}" tooltip-placement="left">stable</span>
+                    <span class="version beta" ng-show="beta" tooltip="{{'Turn off beta' | translate }}" tooltip-placement="left">beta</span>
+                </a>
+              </li>
               <li class="divider-vertical"></li>
               <li>
                 <a href="" ng-click="openNotifications()" class="user-profile">
-                  <span class="notifications-count">3</span>
+                  <span sd-beta class="notifications-count">3</span>
                   <img sd-user-avatar data-src="currentUser.Avatar.href" class="avatar"> {{ currentUser.UserName }}
                 </a>
               </li>

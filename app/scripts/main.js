@@ -155,7 +155,8 @@ define([
 
             var apps = [
                 'dashboard',
-                'users'
+                'users',
+                'planning'
                 //'settings',
                 //'desks',
                 //'archive',
