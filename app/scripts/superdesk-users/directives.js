@@ -245,7 +245,8 @@ define([
                 templateUrl: 'scripts/superdesk-users/views/user-list-item.html',
                 scope: {
                     users: '=',
-                    selected: '='
+                    selected: '=',
+                    done: '='
                 },
                 link: function(scope, elem, attrs) {
                     scope.select = function(user) {

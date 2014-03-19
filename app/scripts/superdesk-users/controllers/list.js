@@ -19,6 +19,15 @@ define(['lodash'], function(_) {
             $scope.preview(null);
         };
 
+        $scope.checkPreview = function() {
+            resource.users.getByUrl($scope.selected.user.href)
+                .then(function(user) {
+                    if (!user || user.Active !== true) {
+                        $scope.selected.user = null;
+                    }
+                });
+        };
+
         // make sure saved user is presented in the list
         $scope.render = function(user) {
             if (_.find($scope.users._items, {href: user.href})) {

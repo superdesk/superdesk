@@ -226,7 +226,8 @@ define(['angular', 'lodash'], function(angular, _) {
             scope: {
                 data: '=',
                 type: '@',
-                action: '@'
+                action: '@',
+                done: '='
             },
             template: '<li ng-repeat="activity in activities" sd-activity-item></li>',
             link: function(scope, elem, attrs) {
@@ -266,7 +267,11 @@ define(['angular', 'lodash'], function(angular, _) {
             link: function(scope, elem, attrs) {
                 scope.run = function(activity, e) {
                     e.stopPropagation();
-                    activityService.start(activity, {data: scope.data});
+                    activityService.start(activity, {data: scope.data}).then(function() {
+                        if (typeof scope.done === 'function') {
+                            scope.done();
+                        }
+                    });
                 };
             }
         };
