@@ -192,21 +192,38 @@ define([
             };
         })
         .directive('sdUserUnique', ['resource', function(resource) {
+            var NAME = 'unique';
             return {
                 require: 'ngModel',
                 link: function (scope, element, attrs, ctrl) {
-                    ctrl.$parsers.unshift(function(viewValue) {
+
+                    /**
+                     * Test if given value is unique for seleted field
+                     *
+                     * @param {string} viewValue
+                     * @returns {string}
+                     */
+                    function testUnique(viewValue) {
+
                         if (viewValue && attrs.uniqueField) {
                             var criteria = {};
                             criteria[attrs.uniqueField] = viewValue;
                             resource.users.query(criteria)
-                            .then(function(users) {
-                                ctrl.$setValidity('unique', !users.total);
-                            });
+                                .then(function(users) {
+                                    ctrl.$setValidity(NAME, !users.total);
+                                });
                         }
 
-                        return viewValue;
-                    });
+                        return reset(viewValue);
+                    }
+
+                    function reset(value) {
+                        ctrl.$setValidity(NAME, true);
+                        return value;
+                    }
+
+                    ctrl.$parsers.push(testUnique);
+                    ctrl.$formatters.push(reset);
                 }
             };
         }])

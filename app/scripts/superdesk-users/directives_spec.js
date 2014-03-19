@@ -37,6 +37,12 @@ define([
             expect(scope.$eval('userForm.username.$valid')).toBe(false);
             expect(scope.$eval('userForm.username.$error.unique')).toBe(true);
 
+            scope.$apply(function() {
+                scope.user.userName = 'baz';
+            });
+
+            expect(scope.$eval('userForm.username.$valid')).toBe(true);
+
             scope.$eval('userForm.username.$setViewValue("bar")');
             scope.$digest();
 
@@ -44,6 +50,5 @@ define([
             expect(scope.$eval('userForm.username.$error.unique')).toBe(false);
             expect(scope.$eval('userForm.username.$modelValue')).toBe('bar');
         }));
-
     });
 });
