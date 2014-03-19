@@ -1,6 +1,5 @@
-<div class="user-details-content user-profile user-profile-edit"><form name="userForm" ng-submit="save(user)">
-
-  <div sd-upload-modal></div>
+<div class="user-details-content user-profile user-profile-edit">
+<form name="userForm" ng-submit="userForm.$valid && save(user)">
 
   <div>
     <button type="submit" class="btn btn-info pull-right" ng-disabled="userForm.$invalid">Save</button>
@@ -59,8 +58,8 @@
 
                 <div sd-info-item class="password" ng-show="!user.Id">
                   <label for="password" translate>password</label>
-                  <input type="password" name="password" ng-minlength="5" id="password" ng-model="user.Password">
-                  <div ng-show="userForm.password.$error.minlength" translate>password must be 5+ characters long</div>
+                  <input type="password" name="password" ng-minlength="5" id="password" ng-model="user.Password" required>
+                  <div ng-hide="userForm.password.$valid" translate>password must be 5+ characters long</div>
                 </div>
 
                 <div sd-info-item ng-show="user.Id">
@@ -76,4 +75,5 @@
         </div>
     </div>
   </div>
-</form></div>
+</form>
+</div>
