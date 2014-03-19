@@ -195,6 +195,7 @@ define([
             var NAME = 'unique';
             return {
                 require: 'ngModel',
+                scope: {exclude: '='},
                 link: function (scope, element, attrs, ctrl) {
 
                     /**
@@ -204,13 +205,16 @@ define([
                      * @returns {string}
                      */
                     function testUnique(viewValue) {
-
                         if (viewValue && attrs.uniqueField) {
                             var criteria = {};
                             criteria[attrs.uniqueField] = viewValue;
                             resource.users.query(criteria)
                                 .then(function(users) {
-                                    ctrl.$setValidity(NAME, !users.total);
+                                    if (scope.exclude && users.total === 1) {
+                                        ctrl.$setValidity(NAME, users._items[0].Id === scope.exclude.Id);
+                                    } else {
+                                        ctrl.$setValidity(NAME, !users.total);
+                                    }
                                 });
                         }
 

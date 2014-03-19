@@ -44,7 +44,7 @@
                   <input type="text" name="userName" id="username" class="info-value info-editable"
                     ng-model="user.UserName"
                     ng-readonly="user.Id"
-                    sd-user-unique data-unique-field="userName"
+                    sd-user-unique data-unique-field="userName" data-exclude="user"
                     required>
                   <div ng-show="userForm.userName.$error.required" translate>please provide a username.</div>
                   <div ng-show="userForm.userName.$error.unique || error.UserName.conflict" translate>username is taken already.</div>
@@ -54,7 +54,7 @@
                   <label for="email" translate>email</label>
                   <input type="email" name="email" id="email"
                     ng-model="user.EMail"
-                    sd-user-unique data-unique-field="email"
+                    sd-user-unique data-unique-field="email" data-exclude="user"
                     required>
                   <div ng-show="userForm.email.$error.required" translate>please provide an email address.</div>
                   <div ng-show="userForm.email.$error.email" translate>email address must be valid.</div>
