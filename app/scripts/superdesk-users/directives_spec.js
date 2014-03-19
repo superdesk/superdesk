@@ -1,67 +1,47 @@
 define([
-    'superdesk/data/resource-provider',
-    'superdesk-users/directives',
-    'angular-mocks'
-], function(resourceProvider) {
+    'superdesk-users/directives'
+], function() {
     'use strict';
 
+    var template = [
+        '<form name="userForm">',
+        '<input type="text" name="username" sd-user-unique data-unique-field="userName" ng-model="userName">',
+        '</form>'
+    ].join('');
+
     describe('sdUserUnique Directive', function() {
-        var $compile, $rootScope, httpBackend;
 
-        beforeEach(module('superdesk.users.directives'));
-        beforeEach(module('ngMock'));
-
-        beforeEach(inject(function($injector) {
-            $compile = $injector.get('$compile');
-            $rootScope = $injector.get('$rootScope');
-            httpBackend = $injector.get('$httpBackend');
+        beforeEach(module(function($provide) {
+            $provide.service('resource', function($q) {
+                this.users = {
+                    // make it find foo but not any other
+                    query: function(criteria) {
+                        return $q.when({total: criteria.userName === 'foo' ? 1 : 0});
+                    }
+                };
+            });
         }));
 
-        it('succeeds validating unique user by userName', function() {
-            
-            var elem = $compile('<form name="userForm"><input sd-user-unique data-unique-field="userName" value="testUsername"></form>')($rootScope);
-            
-            /*
-            httpBackend
-                .expectGET('http://HR/User/?userName=testUsername')
-                .respond(200, {
-                    total:1,
-                    maxResults:30,
-                    offset:0,
-                    collection:[{
-                        href:'https://apytest.apy.sd-test.sourcefabric.org/api/HR/User/1',
-                        Id:1,
-                        Active:true,
-                        EMail:'User.Admin@email.addr',
-                        FirstName:'User',
-                        FullName:'User Admin',
-                        LastName:'Admin',
-                        UserName:'admin',
-                        CreatedOn:'2014-03-17T11:47:36Z',
-                        Avatar:{href:'http://www.gravatar.com/avatar/a3959a77482a11a08385adc04d04199c?s=200'},
-                        ActionList:{href:'https://apytest.apy.sd-test.sourcefabric.org/api/HR/User/1/Action/'},
-                        AllActionList:{href:'https://apytest.apy.sd-test.sourcefabric.org/api/HR/User/1/AllAction/'},
-                        RightList:{href:'https://apytest.apy.sd-test.sourcefabric.org/api/HR/User/1/Right/'},
-                        RoleList:{href:'https://apytest.apy.sd-test.sourcefabric.org/api/HR/User/1/Role/'}
-                    }]
-                });
-            */
+        beforeEach(module('superdesk.users.directives'));
 
-            $rootScope.$digest();
+        it('validates that field is unique', inject(function($rootScope, $compile) {
+            var scope = $rootScope.$new(true);
 
-            httpBackend.flush();
-        });
+            $compile(template)(scope);
 
-        it('fails validating unique user by userName', function() {
-            
-        });
+            scope.$eval('userForm.username.$setViewValue("foo")');
+            scope.$digest();
 
-        it('succeeds validating unique user by EMail', function() {
-            
-        });
+            expect(scope.$eval('userForm.username.$dirty')).toBe(true);
+            expect(scope.$eval('userForm.username.$valid')).toBe(false);
+            expect(scope.$eval('userForm.username.$error.unique')).toBe(true);
 
-        it('fails validating unique user by EMail', function() {
-            
-        });
+            scope.$eval('userForm.username.$setViewValue("bar")');
+            scope.$digest();
+
+            expect(scope.$eval('userForm.username.$valid')).toBe(true);
+            expect(scope.$eval('userForm.username.$error.unique')).toBe(false);
+        }));
+
     });
 });

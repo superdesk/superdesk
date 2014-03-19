@@ -189,7 +189,7 @@ define([
                             criteria[attrs.uniqueField] = viewValue;
                             resource.users.query(criteria)
                             .then(function(users) {
-                                ctrl.$setValidity('unique', users._items.length === 0);
+                                ctrl.$setValidity('unique', !users.total);
                             });
                         }
                     });
