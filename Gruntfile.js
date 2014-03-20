@@ -22,9 +22,12 @@ module.exports = function (grunt) {
     grunt.registerTask('hint', ['jshint', 'jscs']);
     grunt.registerTask('ci', ['test', 'hint']);
     grunt.registerTask('ci:travis', ['karma:travis', 'hint']);
-    grunt.registerTask('server', ['clean', 'less:dev', 'template', 'connect:dev', 'open', 'watch']);
-    grunt.registerTask('server:e2e', ['clean', 'less:dev', 'template', 'connect:test']);
-    grunt.registerTask('build', ['clean', 'less:prod', 'template', 'nggettext_compile', 'requirejs', 'copy:assets']);
+
+    grunt.registerTask('server', ['clean', 'less:dev', 'template:test', 'connect:dev', 'open:test', 'watch']);
+    grunt.registerTask('server:mock', ['clean', 'less:dev', 'template:mock', 'connect:mock', 'open:mock', 'watch']);
+    grunt.registerTask('server:e2e', ['clean', 'less:dev', 'template:mock', 'connect:test']);
+
+    grunt.registerTask('build', ['clean', 'less:prod', 'template:test', 'nggettext_compile', 'requirejs', 'copy:assets']);
     grunt.registerTask('package', ['ci', 'build']);
     grunt.registerTask('default', ['server']);
 };

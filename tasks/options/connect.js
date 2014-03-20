@@ -8,6 +8,12 @@ module.exports = function(grunt) {
             livereload: '<%= livereloadPort %>'
         },
         dev: {options: {base: base}},
+        mock: {
+            options: {
+                base: base,
+                port: 9001
+            }
+        },
         test: {
             options: {
                 base: base,

@@ -1,11 +1,19 @@
-
 module.exports = function(grunt) {
+
+    function data(url) {
+        return {data: {server: {url: grunt.option('server') || url}}};
+    }
+
+    var files = {'<%= distDir %>/index.html': '<%= appDir %>/index.html'};
+
     return {
-        options: {
-            data: {server: {url: grunt.option('server') || 'http://superdesk.apiary.io'}}
+        mock: {
+            options: data('http://superdesk.apiary.io'),
+            files: files
         },
-        apiary: {
-            files: {'<%= distDir %>/index.html': '<%= appDir %>/index.html'},
+        test: {
+            options: data('https://apytest.apy.sd-test.sourcefabric.org/api'),
+            files: files
         }
     };
 };

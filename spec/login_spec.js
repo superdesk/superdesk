@@ -41,7 +41,7 @@ describe('login', function() {
     it('can logout', function() {
         modal.login('admin', 'admin');
         element(by.binding('UserName')).click();
-        element(by.buttonText('Sign out')).click();
+        element(by.buttonText('SIGN OUT')).click();
         expect(modal.btn).toBeDisplayed();
         expect(modal.username).toBeDisplayed();
         expect(modal.username.getAttribute('value')).toBe('john');
