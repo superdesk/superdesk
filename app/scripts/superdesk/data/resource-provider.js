@@ -227,6 +227,8 @@ define(['lodash'], function(_) {
             return http({
                 method: 'DELETE',
                 url: item.href
+            }).then(null, function(response) {
+                return response.status === 404 ? $q.when(response) : $q.reject(response);
             });
         };
 

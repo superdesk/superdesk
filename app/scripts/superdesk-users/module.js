@@ -2,6 +2,7 @@ define([
     'angular',
     'require',
     './providers',
+    './users-service',
     './services/profile',
     './controllers/list',
     './controllers/profile',
@@ -11,6 +12,16 @@ define([
 ], function(angular, require) {
     'use strict';
 
+    UserDeleteCommand.$inject = ['resource', 'data', '$q', 'notify', 'gettext'];
+    function UserDeleteCommand(resource, data, $q, notify, gettext) {
+        return resource.users['delete'](data.item).then(function(response) {
+            console.log(response);
+            data.list.splice(data.index, 1);
+        }, function(response) {
+            notify.error(gettext('I\'m sorry but can\'t delete the user right now.'));
+        });
+    }
+
     var app = angular.module('superdesk.users', [
         'superdesk.users.providers',
         'superdesk.users.services',
@@ -18,6 +29,7 @@ define([
     ]);
 
     app
+        .service('api', require('./users-service'))
         .value('defaultListParams', {
             search: '',
             searchField: 'username',
@@ -103,20 +115,7 @@ define([
                     label: gettext('Delete user'),
                     icon: 'trash',
                     confirm: gettext('Please confirm you want to delete a user.'),
-                    controller: ['resource', 'data', '$q', function(resource, data, $q) {
-                        function removeItem() {
-                            data.list.splice(data.index, 1);
-                        }
-
-                        return resource.users['delete'](data.item).then(removeItem, function(response) {
-                            if (response.status === 404) {
-                                removeItem();
-                                return $q.resolve(response);
-                            }
-
-                            return $q.reject(response);
-                        });
-                    }],
+                    controller: UserDeleteCommand,
                     filters: [
                         {
                             action: superdesk.ACTION_EDIT,

@@ -119,19 +119,45 @@ define(['angular', 'superdesk/data/resource-provider'], function(angular, Resour
 
         it('can delete', inject(function(resource, $httpBackend) {
 
-            var userData = {href: 'users_url/1'},
-                deleted;
+            var user = {href: 'users_url/1'},
+                then = jasmine.createSpy('then');
 
-            $httpBackend.expectDELETE(userData.href).respond(204);
+            $httpBackend.expectDELETE(user.href).respond(204);
 
-            resource.users.remove(userData).then(function(_deleted) {
-                deleted = true;
-            });
+            resource.users.remove(user).then(then);
 
             $httpBackend.flush();
 
-            expect(deleted).toBe(true);
+            expect(then).toHaveBeenCalled();
+        }));
 
+        it('handles delete on deleted resource as success', inject(function(resource, $httpBackend) {
+
+            var user = {href: 'users/1'},
+                then = jasmine.createSpy('then');
+
+            $httpBackend.expectDELETE(user.href).respond(404);
+
+            resource.users.remove(user).then(then);
+
+            $httpBackend.flush();
+
+            expect(then).toHaveBeenCalled();
+        }));
+
+        it('rejects other delete errors as errors', inject(function(resource, $httpBackend) {
+            var user = {href: 'users/1'},
+                success = jasmine.createSpy('success'),
+                error = jasmine.createSpy('error');
+
+            $httpBackend.expectDELETE(user.href).respond(405);
+
+            resource.users.remove(user).then(success, error);
+
+            $httpBackend.flush();
+
+            expect(success).not.toHaveBeenCalled();
+            expect(error).toHaveBeenCalled();
         }));
 
         it('can get item by url', inject(function(resource, $httpBackend) {

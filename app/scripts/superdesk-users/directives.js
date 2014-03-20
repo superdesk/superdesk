@@ -1,9 +1,8 @@
 define([
     'lodash',
     'jquery',
-    'angular',
-    'superdesk/hashlib'
-], function(_, $, angular, hashlib) {
+    'angular'
+], function(_, $, angular) {
     'use strict';
 
     angular.module('superdesk.users.directives', [])
@@ -116,8 +115,8 @@ define([
                 }
             };
         }])
-        .directive('sdUserEdit', ['resource', 'upload', 'gettext', 'notify',
-            function(resource, upload, gettext, notify) {
+        .directive('sdUserEdit', ['gettext', 'notify', 'api',
+            function(gettext, notify, api) {
             return {
                 replace: true,
                 templateUrl: 'scripts/superdesk-users/views/edit-form.html',
@@ -126,14 +125,6 @@ define([
                     onsave: '&'
                 },
                 link: function(scope, elem) {
-                    scope.editpicture = function() {
-                        // todo(petr): well just make it work
-                        upload.upload('users').then(function(data) {
-                            scope.user.avatar = data.url;
-                            resource.users.update(scope.user);
-                        });
-                    };
-
                     scope.$watch('origUser', function(user) {
                         scope.error = null;
                         scope.user = angular.copy(user);
@@ -143,32 +134,20 @@ define([
                      * save user
                      */
                     scope.save = function() {
-
-                        var data = angular.copy(scope.user);
-
-                        // todo(petr): figure out where to put such logic
-                        if (data.Password) {
-                            data.Password = hashlib.hash(data.Password);
-                        } else {
-                            delete data.Password;
-                        }
-
                         notify.info(gettext('saving..'));
-                        resource.users.save(data)
-                            .then(function(newData) {
-                                notify.pop();
-                                notify.success(gettext('user saved.'), 3000);
-                                angular.extend(scope.origUser, newData);
-                                scope.onsave({user: scope.origUser});
-                            }, function(response) {
-                                notify.pop();
-                                // todo(petr) render errors in form
-                                if (response.status === 400) {
-                                    scope.error = response.data;
-                                } else {
-                                    console.error(response);
-                                }
-                            });
+                        return api.users.save(scope.origUser, scope.user).then(function() {
+                            notify.pop();
+                            notify.success(gettext('user saved.'), 3000);
+                            scope.onsave({user: scope.origUser});
+                        }, function(response) {
+                            notify.pop();
+                            if (response.status === 400) {
+                                scope.error = response.data;
+                            } else {
+                                console.error(response);
+                                notify.error(gettext('Hmm, there was an error when saving user.'));
+                            }
+                        });
                     };
                 }
             };
