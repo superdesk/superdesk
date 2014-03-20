@@ -31,7 +31,20 @@
         <div class="list-pane">
 
             <div class="users-table">
-
+                <ul class="table-header">
+                    <li>
+                        <div class="avatar"></div>
+                        <div class="row-wrapper" sd-col-width>
+                            <div class="name" translate>Full name</div>
+                            <div class="username" translate>Username</div>
+                            <div class="role" ng-show translate>Role</div>
+                            <div class="email" translate>Email</div>
+                            <div class="created" translate>Created</div>
+                        </div>
+                    </li>
+                </ul>
+                
+                <div class="table-title" ng-show="createdUsers.length" translate>Recently added</div>
                 <ul class="table-newest"
                     sd-user-list
                     data-users="createdUsers"
