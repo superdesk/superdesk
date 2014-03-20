@@ -12,6 +12,9 @@ define([
 ], function(angular, require) {
     'use strict';
 
+    /**
+     * Delete a user and remove it from list
+     */
     UserDeleteCommand.$inject = ['resource', 'data', '$q', 'notify', 'gettext'];
     function UserDeleteCommand(resource, data, $q, notify, gettext) {
         return resource.users['delete'](data.item).then(function(response) {
@@ -20,6 +23,22 @@ define([
         }, function(response) {
             notify.error(gettext('I\'m sorry but can\'t delete the user right now.'));
         });
+    }
+
+    /**
+     * Resolve a user by route id and redirect to /users if such user does not exist
+     */
+    UserResolver.$inject = ['resource', '$route', 'notify', 'gettext', '$location'];
+    function UserResolver(resource, $route, notify, gettext, $location) {
+        return resource.users.getById($route.current.params.id)
+            .then(null, function(response) {
+                if (response.status === 404) {
+                    $location.path('/users/');
+                    notify.error(gettext('User was not found, sorry.'), 5000);
+                }
+
+                return response;
+            });
     }
 
     var app = angular.module('superdesk.users', [
@@ -58,22 +77,12 @@ define([
         }])
         .config(['superdeskProvider', function(superdesk) {
 
-            var usersResolve = {
-                locationParams: ['locationParams', 'defaultListParams', '$route',
-                    function(locationParams, defaultListParams, $route) {
-                        defaultListParams.id = $route.current.params.id;
-                        locationParams.reset(defaultListParams);
-                        return locationParams;
-                    }]
-            };
-
             superdesk
                 .activity('/users/', {
                     label: gettext('Users'),
                     priority: 100,
                     controller: require('./controllers/list'),
                     templateUrl: 'scripts/superdesk-users/views/list.html',
-                    resolve: usersResolve,
                     category: superdesk.MENU_MAIN,
                     reloadOnSearch: false,
                     filters: [
@@ -89,9 +98,7 @@ define([
                     controller: require('./controllers/edit'),
                     templateUrl: 'scripts/superdesk-users/views/edit.html',
                     resolve: {
-                        user: ['resource', '$route', function(resource, $route) {
-                            return resource.users.getById($route.current.params.id);
-                        }]
+                        user: UserResolver
                     }
                 })
                 .activity('/profile/', {
