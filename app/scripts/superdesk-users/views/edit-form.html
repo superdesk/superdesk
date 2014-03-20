@@ -12,7 +12,7 @@
         <a ng-show="" class="change-photo" href="" ng-click="editPicture()" translate>Change Photo</a>
     </div>
 
-    <p class="alert alert-error" ng-show="error" translate>Please fix issues below.</p>
+    <p class="alert alert-error" ng-show="error" translate>Please fix the issues below.</p>
 
     <div class="profile-info user-profile-edit">
         <div class="header-info">
@@ -47,7 +47,7 @@
                     sd-user-unique data-unique-field="userName" data-exclude="user"
                     required>
                   <div ng-show="userForm.userName.$error.required" translate>please provide a username.</div>
-                  <div ng-show="userForm.userName.$error.unique || error.UserName.conflict" translate>username is taken already.</div>
+                  <div ng-show="userForm.userName.$error.unique || error.UserName.conflict" translate>the username is already taken.</div>
                 </div>
 
                 <div sd-info-item>
@@ -69,7 +69,7 @@
                 <div sd-info-item class="password" ng-if="!user.Id">
                   <label for="password" translate>password</label>
                   <input type="password" name="password" ng-minlength="5" id="password" ng-model="user.Password" required>
-                  <div ng-show="userForm.password.$error.minlength" translate>password must be at least 5 characters long.</div>
+                  <div ng-show="userForm.password.$error.minlength" translate>password must have at least 5 characters.</div>
                 </div>
 
                 <div sd-info-item ng-show="user.Id">
