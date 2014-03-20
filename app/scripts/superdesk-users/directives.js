@@ -135,6 +135,7 @@ define([
                      */
                     scope.save = function() {
                         notify.info(gettext('saving..'));
+                        delete scope.user.passwordConfirm;
                         return api.users.save(scope.origUser, scope.user).then(function() {
                             notify.pop();
                             notify.success(gettext('user saved.'), 3000);
@@ -206,6 +207,30 @@ define([
                     }
 
                     ctrl.$parsers.push(testUnique);
+                    ctrl.$formatters.push(reset);
+                }
+            };
+        }])
+        .directive('sdPasswordConfirm', [function() {
+            var NAME = 'confirm';
+            return {
+                require: 'ngModel',
+                scope: {password: '='},
+                link: function (scope, element, attrs, ctrl) {
+                    function testPassword(viewValue) {
+                        if (viewValue && scope.password) {
+                            ctrl.$setValidity(NAME, viewValue === scope.password);
+                        }
+
+                        return viewValue;
+                    }
+
+                    function reset(value) {
+                        ctrl.$setValidity(NAME, true);
+                        return value;
+                    }
+
+                    ctrl.$parsers.push(testPassword);
                     ctrl.$formatters.push(reset);
                 }
             };

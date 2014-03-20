@@ -72,6 +72,12 @@
                   <div ng-show="userForm.password.$error.minlength" translate>password must have at least 5 characters.</div>
                 </div>
 
+                <div sd-info-item class="password" ng-if="!user.Id">
+                  <label for="passwordConfirm" translate>password (again)</label>
+                  <input type="password" name="passwordConfirm" ng-minlength="5" id="passwordConfirm" sd-password-confirm ng-model="user.passwordConfirm" data-password="user.Password" required>
+                  <div ng-show="userForm.passwordConfirm.$error.confirm" translate>passwords must be same.</div>
+                </div>
+
                 <div sd-info-item ng-show="user.Id">
                   <label for="created" translate>member since</label>
                   <span class="info-value" sd-reldate ng-model="user.CreatedOn"></span>

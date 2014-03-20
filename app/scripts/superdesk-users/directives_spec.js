@@ -6,6 +6,9 @@ define([
     var template = [
         '<form name="userForm">',
         '<input type="text" name="username" sd-user-unique data-unique-field="userName" data-exclude="user" ng-model="user.userName">',
+        '<input type="password" name="password" ng-model="user.password">',
+        '<input type="password" name="passwordConfirm" ng-model="user.password"',
+        ' sd-password-confirm ng-model="passwordConfirm" data-password="user.password">',
         '</form>'
     ].join('');
 
@@ -70,6 +73,29 @@ define([
             scope.$digest();
 
             expect(scope.$eval('userForm.username.$valid')).toBe(true);
+        }));
+
+        it('fails confirming password', inject(function($compile) {
+            scope.user = {password: 'test'};
+            $compile(template)(scope);
+
+            scope.$eval('userForm.passwordConfirm.$setViewValue("not-test")');
+            scope.$digest();
+
+            expect(scope.$eval('userForm.passwordConfirm.$dirty')).toBe(true);
+            expect(scope.$eval('userForm.passwordConfirm.$valid')).toBe(false);
+            expect(scope.$eval('userForm.passwordConfirm.$error.confirm')).toBe(true);
+        }));
+
+        it('succeeds confirming password', inject(function($compile) {
+            scope.user = {password: 'test'};
+            $compile(template)(scope);
+
+            scope.$eval('userForm.passwordConfirm.$setViewValue("test")');
+            scope.$digest();
+
+            expect(scope.$eval('userForm.passwordConfirm.$valid')).toBe(true);
+            expect(scope.$eval('userForm.passwordConfirm.$error.confirm')).toBe(false);
         }));
     });
 });

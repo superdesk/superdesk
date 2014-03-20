@@ -49,12 +49,12 @@
         </div>
 
         <div class="preview-pane">
-            <div class="actions" ng-show="selected.user">
+            <div class="actions" ng-if="selected.user">
                 <a ng-href="#/users/{{ selected.user.Id }}" class="btn btn-light pull-left" ng-show="selected.user.href" translate>View full profile</a>
                 <div class="close" ng-click="selected.user = null" ng-show="selected.user"><i class="icon-remove"></i></div>
             </div>
 
-            <div sd-user-details-pane ng-show="selected.user">
+            <div sd-user-details-pane ng-if="selected.user">
                 <div id="user-profile-edit" sd-user-edit data-user="selected.user" data-onsave="render(user)"></div>
             </div>
         </div>
