@@ -44,10 +44,12 @@
                   <input type="text" name="userName" id="username" class="info-value info-editable"
                     ng-model="user.UserName"
                     ng-readonly="user.Id"
+                    ng-pattern="/^[-_.'a-z0-9]+$/i"
                     sd-user-unique data-unique-field="userName" data-exclude="user"
                     required>
                   <div ng-show="userForm.userName.$error.required" translate>please provide a username.</div>
-                  <div ng-show="userForm.userName.$error.unique || error.UserName.conflict" translate>the username is already taken.</div>
+                  <div ng-show="userForm.userName.$error.unique || error.UserName.conflict" translate>sorry, this username is already taken.</div>
+                  <div ng-show="userForm.userName.$error.pattern" translate>please use only letters (a-z), numbers (0-9), dashes (&mdash;), underscores (_), apostrophes (') and periods (.).</div>
                 </div>
 
                 <div sd-info-item>
@@ -57,8 +59,8 @@
                     sd-user-unique data-unique-field="email" data-exclude="user"
                     required>
                   <div ng-show="userForm.email.$error.required" translate>please provide an email address.</div>
-                  <div ng-show="userForm.email.$error.email" translate>email address must be valid.</div>
-                  <div ng-show="userForm.email.$error.unique || error.EMail.conflict" translate>a user with this email already exists.</div>
+                  <div ng-show="userForm.email.$error.email" translate>please provide a valid email address.</div>
+                  <div ng-show="userForm.email.$error.unique || error.EMail.conflict" translate>sorry, a user with this email already exists.</div>
                 </div>
 
                 <div sd-info-item>
