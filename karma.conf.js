@@ -19,7 +19,7 @@ module.exports = function(config) {
             {pattern: 'app/**/*.js', included: false},
             {pattern: 'test/*[sS]pec.js', included: false},
             {pattern: 'app/scripts/superdesk/**/*[sS]pec.js', included: false},
-            'app/scripts/superdesk/views/*.html',
+            'app/scripts/superdesk*/views/*.html',
             'test/test-main.js'
         ],
 

@@ -115,8 +115,10 @@ define([
                 }
             };
         }])
-        .directive('sdUserEdit', ['gettext', 'notify', 'api',
-            function(gettext, notify, api) {
+        .directive('sdUserEdit', ['gettext', 'notify', 'api', function(gettext, notify, api) {
+
+            var USERNAME_REGEXP = /^[A-Za-z0-9_.'-]+$/;
+
             return {
                 replace: true,
                 templateUrl: 'scripts/superdesk-users/views/edit-form.html',
@@ -125,6 +127,9 @@ define([
                     onsave: '&'
                 },
                 link: function(scope, elem) {
+
+                    scope.usernamePattern = USERNAME_REGEXP;
+
                     scope.$watch('origUser', function(user) {
                         scope.error = null;
                         scope.user = angular.copy(user);

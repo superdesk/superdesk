@@ -97,5 +97,44 @@ define([
             expect(scope.$eval('userForm.passwordConfirm.$valid')).toBe(true);
             expect(scope.$eval('userForm.passwordConfirm.$error.confirm')).toBe(false);
         }));
+
+    });
+
+    describe('user edit directive', function() {
+        function noop() {
+        }
+
+        beforeEach(module(function($provide) {
+            $provide.service('gettext', noop);
+            $provide.service('api', noop);
+            $provide.service('notify', noop);
+            $provide.service('resource', noop);
+        }));
+
+        beforeEach(module('superdesk.users.directives'));
+        beforeEach(module('templates'));
+
+        it('checks username for valid characters', inject(function($compile, $rootScope) {
+            var scope = $rootScope.$new(true),
+                elem = $compile('<div sd-user-edit></div>')(scope);
+
+            scope.$digest();
+            var dirScope = elem.isolateScope();
+
+            expect(dirScope.usernamePattern.test('!')).toBe(false);
+            expect(dirScope.usernamePattern.test('@')).toBe(false);
+            expect(dirScope.usernamePattern.test('#')).toBe(false);
+            expect(dirScope.usernamePattern.test(' ')).toBe(false);
+
+            expect(dirScope.usernamePattern.test('.')).toBe(true);
+            expect(dirScope.usernamePattern.test('_')).toBe(true);
+            expect(dirScope.usernamePattern.test('-')).toBe(true);
+            expect(dirScope.usernamePattern.test('\'')).toBe(true);
+
+            expect(dirScope.usernamePattern.test('b')).toBe(true);
+            expect(dirScope.usernamePattern.test('B')).toBe(true);
+            expect(dirScope.usernamePattern.test('1')).toBe(true);
+        }));
+
     });
 });

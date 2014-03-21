@@ -44,7 +44,7 @@
                   <input type="text" name="userName" id="username" class="info-value info-editable"
                     ng-model="user.UserName"
                     ng-readonly="user.Id"
-                    ng-pattern="/^[-_.'a-z0-9]+$/i"
+                    ng-pattern="usernamePattern"
                     sd-user-unique data-unique-field="userName" data-exclude="user"
                     required>
                   <div ng-show="userForm.userName.$error.required" translate>please provide a username.</div>
