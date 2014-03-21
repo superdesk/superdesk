@@ -18,7 +18,6 @@ define([
     UserDeleteCommand.$inject = ['resource', 'data', '$q', 'notify', 'gettext'];
     function UserDeleteCommand(resource, data, $q, notify, gettext) {
         return resource.users['delete'](data.item).then(function(response) {
-            console.log(response);
             data.list.splice(data.index, 1);
         }, function(response) {
             notify.error(gettext('I\'m sorry but can\'t delete the user right now.'));
