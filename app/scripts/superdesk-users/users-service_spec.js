@@ -8,8 +8,11 @@ define(['lodash', 'superdesk/hashlib', 'superdesk-users/users-service'], functio
             $provide.service('resource', function($q) {
                 this.users = {
                     save: function(user) {
-                        expect(user.Password).toBe(hashlib.hash('bar'));
-                        return $q.when(_.extend({Id: 1}, user));
+                        if (user.Password) {
+                            expect(user.Password).toBe(hashlib.hash('bar'));
+                        }
+
+                        return $q.when(_.extend({Id: 1, FullName: 'Foo Bar'}, user));
                     }
                 };
             });
@@ -32,6 +35,21 @@ define(['lodash', 'superdesk/hashlib', 'superdesk-users/users-service'], functio
             expect(data.Id).toBe(1);
             expect(user.password).toBe(undefined);
             expect(data.password).toBe(undefined);
+        }));
+
+        it('can update user', inject(function(api, $rootScope) {
+
+            var user = {UserName: 'foo', FirstName: 'a'},
+                data = {UserName: 'foo', FirstName: 'foo', LastName: 'bar'};
+
+            api.users.save(user, data);
+
+            $rootScope.$digest();
+
+            expect(user.FirstName).toBe('foo');
+            expect(data.FirstName).toBe('foo');
+            expect(user.FullName).toBe('Foo Bar');
+            expect(data.FullName).toBe('Foo Bar');
         }));
     });
 });

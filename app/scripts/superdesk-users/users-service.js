@@ -18,7 +18,7 @@ define(['lodash', 'superdesk/hashlib'], function(_, hashlib) {
              * @returns {Promise}
              */
             save: function(user, data) {
-                _.extend(data, user);
+                _.defaults(data, user);
 
                 if (data.Password) {
                     data.Password = hashlib.hash(data.Password);
