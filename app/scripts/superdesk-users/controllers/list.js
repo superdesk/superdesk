@@ -19,10 +19,11 @@ define(['lodash'], function(_) {
             $scope.preview(null);
         };
 
-        $scope.checkPreview = function(data) {
+        $scope.afterDelete = function(data) {
             if ($scope.selected.user && data.item && data.item.href === $scope.selected.user.href) {
                 $scope.selected.user = null;
             }
+            fetchUsers();
         };
 
         // make sure saved user is presented in the list
@@ -56,12 +57,16 @@ define(['lodash'], function(_) {
             return criteria;
         }
 
-        $scope.$watch(getCriteria, function(criteria) {
+        function fetchUsers(criteria) {
             resource.users.query(criteria)
                 .then(function(users) {
                     $scope.users = users;
                     $scope.createdUsers = [];
                 });
+        }
+
+        $scope.$watch(getCriteria, function(criteria) {
+            fetchUsers(criteria);
         }, true);
     }
 
