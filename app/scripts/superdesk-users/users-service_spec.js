@@ -13,6 +13,9 @@ define(['lodash', 'superdesk/hashlib', 'superdesk-users/users-service'], functio
                         }
 
                         return $q.when(_.extend({Id: 1, FullName: 'Foo Bar'}, user));
+                    },
+                    replace: function(dest, data) {
+                        return $q.when({});
                     }
                 };
             });
@@ -50,6 +53,20 @@ define(['lodash', 'superdesk/hashlib', 'superdesk-users/users-service'], functio
             expect(data.FirstName).toBe('foo');
             expect(user.FullName).toBe('Foo Bar');
             expect(data.FullName).toBe('Foo Bar');
+        }));
+
+        it('can change user password', inject(function(api, resource, $rootScope) {
+
+            var user = {UserPassword: {href: 'pwd_url'}};
+
+            spyOn(resource.users, 'replace');
+
+            api.users.changePassword(user, 'old', 'new');
+
+            expect(resource.users.replace).toHaveBeenCalledWith('pwd_url', {
+                OldPassword: hashlib.hash('old'),
+                NewPassword: hashlib.hash('new')
+            });
         }));
     });
 });

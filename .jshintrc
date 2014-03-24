@@ -35,7 +35,8 @@
     "element": false,
     "by": false,
     "protractor": false,
-    "jasmine": false
+    "jasmine": false,
+    "spyOn": false
   },
   "forin": true,
   "noempty": true,

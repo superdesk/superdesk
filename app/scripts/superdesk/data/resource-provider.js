@@ -218,6 +218,24 @@ define(['lodash'], function(_) {
         };
 
         /**
+         * Replace item
+         *
+         * @param {Object} dest
+         * @param {Object} item
+         * @returns {Promise}
+         */
+        Resource.prototype.replace = function(dest, item) {
+            return http({
+                method: 'PUT',
+                url: dest,
+                data: item
+            }).then(function(response) {
+                _.extend(item, response.data);
+                return item;
+            });
+        };
+
+        /**
          * Delete item
          *
          * @param {Object} item

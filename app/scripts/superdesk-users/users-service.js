@@ -32,6 +32,21 @@ define(['lodash', 'superdesk/hashlib'], function(_, hashlib) {
                         _.extend(data, user);
                         return user;
                     });
+            },
+
+            /**
+             * Change user password
+             *
+             * @param {Object} user
+             * @param {string} oldPassword
+             * @param {string} newPassword
+             * @returns {Promise}
+             */
+            changePassword: function(user, oldPassword, newPassword) {
+                return resource.users.replace(user.UserPassword.href, {
+                    OldPassword: hashlib.hash(oldPassword),
+                    NewPassword: hashlib.hash(newPassword)
+                });
             }
         };
     }

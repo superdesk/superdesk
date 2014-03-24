@@ -165,6 +165,32 @@ define([
                 }
             };
         }])
+        .directive('sdChangePassword', ['api', 'notify', 'gettext', function(api, notify, gettext) {
+            return {
+                link: function(scope) {
+                    scope.$watch('user', function() {
+                        scope.oldPasswordInvalid = false;
+                    });
+
+                    /**
+                     * change user password
+                     *
+                     * @param {string} oldPassword
+                     * @param {string} newPassword
+                     */
+                    scope.changePassword = function(oldPassword, newPassword) {
+                        return api.users.changePassword(scope.user, oldPassword, newPassword)
+                            .then(function(response) {
+                                scope.oldPasswordInvalid = false;
+                                notify.success(gettext('New password is saved now.'), 3000);
+                                scope.show.password = false;
+                            }, function(response) {
+                                scope.oldPasswordInvalid = true;
+                            });
+                    };
+                }
+            };
+        }])
         .directive('sdUserPicture', function() {
             var PICTURE_DEFAULT = 'https://avatars.githubusercontent.com/u/275305';
             return {
