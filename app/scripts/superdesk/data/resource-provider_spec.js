@@ -42,7 +42,7 @@ define(['angular', 'superdesk/data/resource-provider'], function(angular, Resour
 
         it('can query', inject(function(resource, $httpBackend, $http) {
 
-            var headers = $http.defaults.headers.common || {};
+            var headers = $http.defaults.headers.common;
             headers['X-Filter'] = 'User.*';
 
             $httpBackend.expectGET('server_url').respond(links);
@@ -190,6 +190,17 @@ define(['angular', 'superdesk/data/resource-provider'], function(angular, Resour
 
         }));
 
+        it('can replace resource on given dest', inject(function(resource, $httpBackend) {
+
+            var data = {UserName: 'foo'};
+
+            $httpBackend.expectPUT('user_url', data).respond({});
+
+            resource.users.replace('user_url', data);
+
+            $httpBackend.flush();
+        }));
+
         it('rejects when it has no url', inject(function(resource, $httpBackend) {
             $httpBackend.expectGET('server_url').respond(404);
 
@@ -202,6 +213,20 @@ define(['angular', 'superdesk/data/resource-provider'], function(angular, Resour
             $httpBackend.flush();
 
             expect(rejected).toBe(true);
+        }));
+
+        it('rejects non success responses', inject(function(resource, $httpBackend) {
+            $httpBackend.expectGET('some_url').respond(400);
+
+            var success = jasmine.createSpy('success'),
+                error = jasmine.createSpy('error');
+
+            resource.users.getByUrl('some_url').then(success, error);
+
+            $httpBackend.flush();
+
+            expect(success).not.toHaveBeenCalled();
+            expect(error).toHaveBeenCalled();
         }));
 
         it('can caches resource links', inject(function(resource, $httpBackend, $rootScope) {
