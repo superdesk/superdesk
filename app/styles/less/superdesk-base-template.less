@@ -985,13 +985,28 @@ Login screen
 		margin-bottom: 60px;
 	}
 	.login-form-container {
+
 		.box-sizing(border-box);
 		width: 320px;
 		height: 500px;
-		padding: 15px;
+		padding: 0 15px;
 		position: absolute;
-		top: 50%; margin-top: -200px;
+		top: 50%; margin-top: -260px;
 		left: 50%; margin-left: -125px;
+		padding-top: 80px;
+
+		.session-error {
+			position: absolute;
+			top:0;
+			width: 240px;
+			height: 44px;
+			.border-radius(3px);
+			color: #fff;
+			font-size: 11px;
+			background-color: #bc7c0e;
+			text-align: center;
+			margin:0;
+		}
 
 		.form-handler {
 			width: 240px;

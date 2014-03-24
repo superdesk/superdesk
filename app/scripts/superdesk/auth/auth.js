@@ -40,8 +40,12 @@ define([
 
         // watch session
         .run(['$rootScope', '$http', 'session', function($rootScope, $http, session) {
+
+            $rootScope.forcedLogout = false;
+
             $rootScope.logout = function() {
                 session.expire();
+                $rootScope.forcedLogout = false;
             };
 
             $rootScope.$watch(function() {
@@ -53,8 +57,10 @@ define([
             $rootScope.$watch(function() {
                 return session.token;
             }, function(token) {
+
                 if (token != null) {
                     $http.defaults.headers.common.Authorization = token;
+                    $rootScope.forcedLogout = true;
                 } else {
                     delete $http.defaults.headers.common.Authorization;
                 }

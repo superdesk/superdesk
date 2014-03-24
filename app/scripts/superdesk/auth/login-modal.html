@@ -1,5 +1,8 @@
 <div class="login-screen">
     <div class="login-form-container">
+        
+        <p ng-if="identity.Id && forcedLogout" class="session-error">Your session has expired.<br /> Please log in again.</p>
+        
         <div class="logo-handler" ng-show="!identity.Avatar">
             <img src="images/superdesk-icon-large.png" alt="Superdesk Logo">
         </div>
