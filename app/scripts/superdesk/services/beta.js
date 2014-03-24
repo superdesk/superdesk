@@ -1,4 +1,4 @@
-define(['angular', 'lodash'], function(angular, _) {
+define(['angular', 'jquery'], function(angular, $) {
     'use strict';
 
     var module = angular.module('superdesk.services');
@@ -6,66 +6,57 @@ define(['angular', 'lodash'], function(angular, _) {
     /**
      * Superdesk service for enabling/disabling beta preview in app
      */
-    module.service('betaService', ['$window', '$rootScope', 'storage',
-        function($window, $rootScope, storage) {
+    module.service('betaService', ['$window', '$rootScope',
+        function($window, $rootScope) {
 
         $rootScope.beta = localStorage.getItem('beta') === 'true';
 
         this.toggleBeta = function() {
-            localStorage.setItem('beta', !$rootScope.beta);
+            $rootScope.beta = !$rootScope.beta;
+            localStorage.setItem('beta', $rootScope.beta);
             $window.location.reload();
         };
 
         this.isBeta = function() {
 			return $rootScope.beta;
         };
-
     }]);
 
-	/**
-	* Detect beta elements in phase of loading html templates and prevent rendering of those
-	*/
-	module.config(['$httpProvider', function($httpProvider) {
-        $httpProvider.responseInterceptors.push([
-            '$q', '$templateCache', 'betaService',
-            function($q, $templateCache, betaService) {
+    module.config(['$httpProvider', function($httpProvider) {
+        $httpProvider.interceptors.push(BetaTemplateInterceptor);
+    }]);
 
-                var modifiedTemplates = {};
+    /**
+     * Detect beta elements in phase of loading html templates and prevent rendering of those
+     */
+    BetaTemplateInterceptor.$inject = ['$q', '$templateCache', 'betaService'];
+    function BetaTemplateInterceptor($q, $templateCache, betaService) {
+        var modifiedTemplates = {};
 
-                var HAS_FLAGS_EXP = /sd-beta/;
+        var HAS_FLAGS_EXP = /sd-beta/,
+            IS_HTML_PAGE = /\.html$|\.html\?/i;
 
-                var IS_HTML_PAGE = /\.html$|\.html\?/i;
+        return {
+            response: function(response) {
+                var url = response.config.url;
 
-                return function(promise) {
-                    return promise.then(function(response) {
-                        var url = response.config.url,
-                        responseData = response.data;
+                if (!modifiedTemplates[url] && IS_HTML_PAGE.test(url) && HAS_FLAGS_EXP.test(response.data)) {
+                    var template = $('<div>').append(response.data);
 
-                        if (!modifiedTemplates[url] && IS_HTML_PAGE.test(url) &&
-                        HAS_FLAGS_EXP.test(responseData)) {
+                    if (!betaService.isBeta()) {
+                        template.find('[sd-beta]').each(function() {
+                            $(this).remove();
+                        });
+                    }
 
-                            var template = $('<div>').append(responseData);
+                    response.data = template.html();
 
-                            if (!betaService.isBeta()) {
-                                template.find('[sd-beta]').each(function() {
-                                    $(this).remove();
-                                });
-                            }
+                    $templateCache.put(url, response.data);
+                    modifiedTemplates[url] = true;
+                }
 
-                            response.data = template.html();
-
-                            $templateCache.put(url, response.data);
-                            modifiedTemplates[url] = true;
-                        }
-
-                        return response;
-                    },
-
-                    function(response) {
-                        return $q.reject(response);
-                    });
-                };
+                return response;
             }
-        ]);
-    }]);
+        };
+    }
 });
