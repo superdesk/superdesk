@@ -23,7 +23,7 @@ define(['lodash'], function(_) {
             if ($scope.selected.user && data.item && data.item.href === $scope.selected.user.href) {
                 $scope.selected.user = null;
             }
-            fetchUsers();
+            fetchUsers(getCriteria());
         };
 
         // make sure saved user is presented in the list
@@ -65,9 +65,7 @@ define(['lodash'], function(_) {
                 });
         }
 
-        $scope.$watch(getCriteria, function(criteria) {
-            fetchUsers(criteria);
-        }, true);
+        $scope.$watch(getCriteria, fetchUsers, true);
     }
 
     return UserListController;
