@@ -136,5 +136,25 @@ define([
             expect(dirScope.usernamePattern.test('1')).toBe(true);
         }));
 
+        it('checks phone number for valid characters', inject(function($compile, $rootScope) {
+            var scope = $rootScope.$new(true),
+                elem = $compile('<div sd-user-edit></div>')(scope);
+
+            scope.$digest();
+            var dirScope = elem.isolateScope();
+
+            expect(dirScope.phonePattern.test('z')).toBe(false);
+            expect(dirScope.phonePattern.test('zxcvbnmas')).toBe(false);
+
+            expect(dirScope.phonePattern.test('12345678')).toBe(false);
+            expect(dirScope.phonePattern.test('123456789')).toBe(true);
+            expect(dirScope.phonePattern.test('+1234567890')).toBe(true);
+            expect(dirScope.phonePattern.test('+123456789000')).toBe(true);
+
+            expect(dirScope.phonePattern.test('+')).toBe(false);
+            expect(dirScope.phonePattern.test('$')).toBe(false);
+            expect(dirScope.phonePattern.test('$$$$$$$$$')).toBe(false);
+        }));
+
     });
 });

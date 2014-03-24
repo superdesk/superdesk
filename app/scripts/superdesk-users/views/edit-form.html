@@ -65,7 +65,8 @@
 
                 <div sd-info-item>
                   <label for="phone" translate>phone number</label>
-                  <input type="text" name="phone" id="phone" ng-model="user.PhoneNumber">
+                  <input type="text" name="phone" id="phone" ng-model="user.PhoneNumber" ng-pattern="phonePattern">
+                  <div ng-show="userForm.phone.$error.pattern" translate>please use 9+ numbers (with possible +).</div>
                 </div>
 
                 <div sd-info-item class="password" ng-if="!user.Id">

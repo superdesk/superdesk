@@ -118,6 +118,7 @@ define([
         .directive('sdUserEdit', ['gettext', 'notify', 'api', function(gettext, notify, api) {
 
             var USERNAME_REGEXP = /^[A-Za-z0-9_.'-]+$/;
+            var PHONE_REGEXP = /^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$/;
 
             return {
                 replace: true,
@@ -129,6 +130,7 @@ define([
                 link: function(scope, elem) {
 
                     scope.usernamePattern = USERNAME_REGEXP;
+                    scope.phonePattern = PHONE_REGEXP;
 
                     scope.$watch('origUser', function(user) {
                         scope.error = null;
