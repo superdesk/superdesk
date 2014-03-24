@@ -20,7 +20,8 @@ module.exports = {
                 'superdesk-dashboard/module',
                 'superdesk-desks/module',
                 'superdesk-archive/module',
-                'superdesk-scratchpad/module'
+                'superdesk-scratchpad/module',
+                'superdesk-planning/module'
             ]
         }
     }
