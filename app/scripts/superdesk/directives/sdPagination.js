@@ -1,6 +1,4 @@
-define([
-    'angular'
-], function(angular) {
+define(['angular'], function(angular) {
     'use strict';
 
     angular.module('superdesk.directives')
@@ -15,22 +13,24 @@ define([
          */
         .directive('sdPagination', ['$location', function($location) {
             return {
-                scope: {cursor: '='},
                 templateUrl: 'scripts/superdesk/views/sdPagination.html',
+                scope: {
+                    total: '=',
+                    limit: '='
+                },
                 link: function(scope, element, attrs) {
-                    scope.$watch(function() {
-                        return $location.search().page || 0;
-                    }, function(page) {
-                        scope.page = page;
-                    });
 
-                    scope.$watch('cursor', function(cursor) {
-                        var total = cursor && cursor.total,
-                            limit = cursor && cursor.maxResults;
-
-                        if (limit) {
-                            scope.lastPage = Math.ceil(total / limit) - 1;
-                        }
+                    var params = {};
+                    scope.$watchCollection(function() {
+                        params.page = $location.search().page || 0;
+                        params.limit = scope.limit;
+                        params.total = scope.total;
+                        return params;
+                    }, function() {
+                        scope.page = Math.max(0, params.page);
+                        scope.lastPage = params.limit ? Math.ceil(params.total / params.limit) - 1 : 0;
+                        scope.from = scope.page * params.limit + 1;
+                        scope.to = Math.min(params.total, scope.from + params.limit - 1);
                     });
 
                     /**

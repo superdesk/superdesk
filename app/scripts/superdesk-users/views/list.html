@@ -24,7 +24,7 @@
             <div class="separator-handler"></div>
         </div>
 
-        <div sd-pagination data-cursor="users"></div>
+        <div sd-pagination data-total="users.total + createdUsers.length" data-limit="users.maxResults"></div>
     </div>
 
     <div class="preview-layout">
@@ -43,14 +43,15 @@
                         </div>
                     </li>
                 </ul>
-                
+
                 <div class="table-title" ng-show="createdUsers.length" translate>Recently added</div>
+
                 <ul class="table-newest"
                     sd-user-list
                     data-users="createdUsers"
                     data-selected="selected.user"
                     data-done="afterDelete"
-                    ng-show="createdUsers.length"
+                    ng-if="createdUsers.length"
                 ></ul>
 
                 <ul class="table-body"
@@ -65,8 +66,8 @@
 
         <div class="preview-pane">
             <div class="actions" ng-if="selected.user">
-                <a ng-href="#/users/{{ selected.user.Id }}" class="btn btn-light pull-left" ng-show="selected.user.href" translate>View full profile</a>
-                <div class="close" ng-click="selected.user = null" ng-show="selected.user"><i class="icon-remove"></i></div>
+                <a ng-href="#/users/{{ selected.user.Id }}" class="btn btn-light pull-left" translate>View full profile</a>
+                <div class="close" ng-click="selected.user = null"><i class="icon-remove"></i></div>
             </div>
 
             <div sd-user-details-pane ng-if="selected.user">
