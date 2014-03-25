@@ -142,7 +142,6 @@ define([
                      */
                     scope.save = function() {
                         notify.info(gettext('saving..'));
-                        delete scope.user.passwordConfirm;
                         return api.users.save(scope.origUser, scope.user).then(function() {
                             notify.pop();
                             notify.success(gettext('user saved.'), 3000);

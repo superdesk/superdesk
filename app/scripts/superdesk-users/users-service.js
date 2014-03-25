@@ -20,11 +20,13 @@ define(['lodash', 'superdesk/hashlib'], function(_, hashlib) {
             save: function(user, data) {
                 _.defaults(data, user);
 
-                if (data.Password) {
-                    data.Password = hashlib.hash(data.Password);
+                var newData = _.extend({}, data);
+
+                if (newData.Password) {
+                    newData.Password = hashlib.hash(newData.Password);
                 }
 
-                return resource.users.save(data)
+                return resource.users.save(newData)
                     .then(function(updates) {
                         _.extend(user, updates);
                         _.extend(data, user);

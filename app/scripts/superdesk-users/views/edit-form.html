@@ -77,7 +77,7 @@
 
                 <div sd-info-item class="password" ng-if="!user.Id">
                   <label for="passwordConfirm" translate>password (again)</label>
-                  <input type="password" name="passwordConfirm" ng-minlength="5" id="passwordConfirm" sd-password-confirm ng-model="user.passwordConfirm" data-password="user.Password" required>
+                  <input type="password" name="passwordConfirm" ng-minlength="5" id="passwordConfirm" sd-password-confirm ng-model="passwordConfirm" data-password="user.Password" required>
                   <div ng-show="userForm.passwordConfirm.$error.confirm" translate>passwords must be same.</div>
                 </div>
 
