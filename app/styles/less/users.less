@@ -455,6 +455,11 @@
           -webkit-text-security: disc;
         }
       }
+      .change-btn {
+      	&:hover {
+			cursor: pointer;
+      	}
+      }
     }
     p.info-editable {
       margin: 0;
@@ -667,6 +672,65 @@
       }
     }
   }
+}
+
+.password-popup {
+	position: absolute;
+	left: 0;
+	right: 0;
+  top: 140px;
+  bottom: 0;
+  background: #f8f8f8;
+  .title {
+    background: #fff;
+    font-size: 16px;
+    color: #4f4f4f;
+    padding: 2px 0 12px 20px;
+  }
+	.content-holder {
+    position: absolute;
+    top: 32px;
+    left: 0; right: 0; bottom: 0;
+    overflow: auto;
+		border-top: 1px solid #ddd !important;
+		padding-left: 20px;
+	  padding-right: 30px;
+  }
+	label {
+		float: left;
+		padding: 8px 0 0px 2px;
+	}
+	.change-btn {
+		&:hover {
+		  cursor: pointer;
+		}
+	}
+	.password-change-holder {
+		padding: 10px 0 0 0;
+		.box-sizing(border-box);
+		form {
+			margin-bottom: 0;
+		}
+		label {
+			display: block;
+			color: #666;
+			height: 22px;
+		}
+  	input {
+	    border: 1px solid #cecece !important;
+	    background: #fff;
+	    margin-left: 0;
+	    width: 100%;
+	    text-decoration: none;
+      height: 33px !important;
+      .border-radius(3px) !important;
+  	}
+
+		.action-buttons {
+			text-align: right;
+			padding-top: 25px;
+		}
+	}
 }
 
 .author-view {
@@ -1150,6 +1214,13 @@ Profile page styles
     }
   }
 
+  .password-popup {
+    left: 260px;
+		.title {
+      padding-left: 0;
+    }
+  }
+
 }
 
 .profile-activity-container {
@@ -1217,7 +1288,7 @@ Profile page styles
 	.form-content {
 		position: absolute;
 		top: 0; left: 0; bottom: 0;
-		width: 600px;
+		width: 500px;
 		background: #fff;
 		border-right: 1px solid #ddd;
 		.box-sizing(border-box);
@@ -1227,7 +1298,7 @@ Profile page styles
 
 	.other-content {
 		position: absolute;
-		top: 0; left: 600px; bottom: 0; right: 0;
+		top: 0; left: 500px; bottom: 0; right: 0;
 		z-index: 1;
 		background: #f8f8f8;
 

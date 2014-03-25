@@ -1,5 +1,4 @@
-<div class="user-details-content user-profile user-profile-edit">
-
+<div class="user-details-content user-profile user-profile-edit" ng-init="show={password:false}">
 <form name="userForm" ng-submit="userForm.$valid && save()">
 
   <div>
@@ -52,6 +51,23 @@
                   <div ng-show="userForm.userName.$error.unique || error.UserName.conflict" translate>sorry, this username is already taken.</div>
                   <div ng-show="userForm.userName.$error.pattern" translate>please use only letters (a-z), numbers (0-9), dashes (&mdash;), underscores (_), apostrophes (') and periods (.).</div>
                 </div>
+                
+                <div sd-info-item class="password" ng-if="!user.Id">
+                  <label for="password" translate>password</label>
+                  <input type="password" name="password" ng-minlength="5" id="password" ng-model="user.Password" required>
+                  <div ng-show="userForm.password.$error.minlength" translate>password must have at least 5 characters.</div>
+                </div>
+
+                <div sd-info-item class="password" ng-if="!user.Id">
+                  <label for="passwordConfirm" translate>password (again)</label>
+                  <input type="password" name="passwordConfirm" id="passwordConfirm" sd-password-confirm ng-model="user.passwordConfirm" data-password="user.Password" required>
+                  <div ng-show="userForm.passwordConfirm.$error.confirm" translate>passwords must be same.</div>
+                </div>
+
+                <div sd-info-item class="password" ng-if="user.Id" id="password-change-trigger">
+                  <label translate>password</label>
+                  <i class="change-btn" ng-click="show.password = !show.password" ng-show="!show.password">change password</i>
+                </div>
 
                 <div sd-info-item>
                   <label for="email" translate>email</label>
@@ -97,34 +113,32 @@
   </div>
 </form>
 
-  <div sd-change-password class="password-extended" ng-if="user.Id" ng-class="{open: show.password}">
-    <label for="password" translate>password</label>
+<div sd-change-password class="password-popup" ng-if="show.password">
+    <div class="title">Change password</div>
+    <div class="content-holder">
+      <div class="password-change-holder" >
+          <form name="passwordForm">
 
-    <i class="change-btn" ng-click="show.password = !show.password" ng-show="!show.password">change password</i>
+            <label translate>current</label>
+            <input name="old" type="password" ng-model="oldPwd" required>
+            <p class="alert alert-error" ng-show="oldPasswordInvalid">sorry, but this is not the original password.</p>
 
-    <div class="password-change-holder" ng-if="show.password">
+            <label translate>new</label>
+            <input name="new" type="password" ng-model="newPwd" required ng-minlength="5">
+            <p class="alert alert-error" ng-show="passwordForm.new.$error.minlength">please provide password at least 5 characters long.</p>
 
-      <form name="passwordForm">
+            <label translate>confirm</label>
+            <input name="confirm" type="password" ng-model="_confirm" required
+              sd-password-confirm ng-model="_confirm" data-password="newPwd">
+            <p class="alert alert-error" ng-show="passwordForm.confirm.$error.confirm">confirm doesn't match new password yet.</p>
 
-        <label translate>current</label>
-        <input name="old" type="password" ng-model="oldPwd" required>
-        <p class="alert alert-error" ng-show="oldPasswordInvalid">sorry, but this is not the original password.</p>
-
-        <label translate>new</label>
-        <input name="new" type="password" ng-model="newPwd" required ng-minlength="5">
-        <p class="alert alert-error" ng-show="passwordForm.new.$error.minlength">please provide password at least 5 characters long.</p>
-
-        <label translate>confirm</label>
-        <input name="confirm" type="password" ng-model="_confirm" required
-          sd-password-confirm ng-model="_confirm" data-password="newPwd">
-        <p class="alert alert-error" ng-show="passwordForm.confirm.$error.confirm">confirm doesn't match new password yet.</p>
-
-        <div class="action-buttons">
-          <button type="reset" class="btn btn-small" ng-click="show.password = false" translate>Cancel</button>
-          <button type="submit" class="btn btn-info btn-small"
-            ng-click="passwordForm.$valid && changePassword(oldPwd, newPwd)"
-            translate>Save password</button>
-        </div>
-      </form> 
-  </div>
+            <div class="action-buttons">
+              <button type="reset" class="btn btn-small" ng-click="show.password = false" translate>Cancel</button>
+              <button type="submit" class="btn btn-info btn-small"
+                ng-click="passwordForm.$valid && changePassword(oldPwd, newPwd)"
+                translate>Save password</button>
+            </div>
+          </form> 
+      </div>
+    </div>    
 </div>
