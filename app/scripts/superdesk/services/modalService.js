@@ -4,6 +4,7 @@ define(['angular'], function(angular) {
     angular.module('superdesk.services')
         .service('modal', ['$q', '$modal', function($q, $modal) {
             this.confirm = function(bodyText, headerText, okText, cancelText) {
+                headerText = headerText || gettext('Confirm');
                 okText = okText || gettext('OK');
                 cancelText = cancelText || gettext('Cancel');
 
