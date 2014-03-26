@@ -10,6 +10,7 @@ define([
     './superdesk',
     './data',
     './dragDropService',
+    './modalService',
     './beta'
 ], function() {
 });

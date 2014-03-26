@@ -193,8 +193,8 @@ define(['angular', 'lodash'], function(angular, _) {
         }];
     }]);
 
-    module.service('activityService', ['$window', '$location', '$injector', '$q', '$timeout', 'gettext',
-        function($window, $location, $injector, $q, $timeout, gettext) {
+    module.service('activityService', ['$location', '$injector', '$q', '$timeout', 'gettext', 'modal',
+        function($location, $injector, $q, $timeout, gettext, modal) {
 
         /**
          * Start given activity
@@ -204,19 +204,28 @@ define(['angular', 'lodash'], function(angular, _) {
          * @returns {object} promise
          */
         this.start = function startActivity(activity, locals) {
-            if (activity.confirm && !$window.confirm(gettext(activity.confirm))) {
-                return $q.reject('no confirm');
+            function execute (activity, locals) {
+                if (activity._id[0] === '/') { // trigger route
+                    $location
+                        .path(activity._id)
+                        .search(_.pick(locals.data || {}, '_id'));
+                    return $q.when(locals);
+                }
+
+                return $q.when($injector.invoke(activity.controller, {}, locals));
             }
 
-            if (activity._id[0] === '/') { // trigger route
-                $location
-                    .path(activity._id)
-                    .search(_.pick(locals.data || {}, '_id'));
-                return $q.when(locals);
+            if (activity.confirm) {
+                return modal.confirm(gettext(activity.confirm)).then(function() {
+                    return execute(activity, locals);
+                }, function() {
+                    return $q.reject('no confirm');
+                });
+            } else {
+                return execute(activity, locals);
             }
-
-            return $q.when($injector.invoke(activity.controller, this, locals));
         };
+
     }]);
 
     module.run(['$rootScope', 'superdesk', function($rootScope, superdesk) {
