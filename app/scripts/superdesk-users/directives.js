@@ -135,6 +135,7 @@ define([
                     scope.$watch('origUser', function(user) {
                         scope.error = null;
                         scope.user = angular.copy(user);
+                        scope.confirm = {password: null};
                     });
 
                     /**

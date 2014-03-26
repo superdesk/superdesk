@@ -1,4 +1,5 @@
 <div class="user-details-content user-profile user-profile-edit">
+
 <form name="userForm" ng-submit="userForm.$valid && save()">
 
   <div>
@@ -76,8 +77,8 @@
                 </div>
 
                 <div sd-info-item class="password" ng-if="!user.Id">
-                  <label for="passwordConfirm" translate>password (again)</label>
-                  <input type="password" name="passwordConfirm" ng-minlength="5" id="passwordConfirm" sd-password-confirm ng-model="passwordConfirm" data-password="user.Password" required>
+                  <label for="passwordConfirm" translate>confirm</label>
+                  <input type="password" name="passwordConfirm" ng-minlength="5" id="passwordConfirm" sd-password-confirm ng-model="confirm.password" data-password="user.Password" required>
                   <div ng-show="userForm.passwordConfirm.$error.confirm" translate>passwords must be same.</div>
                 </div>
 
@@ -95,4 +96,5 @@
     </div>
   </div>
 </form>
+
 </div>
