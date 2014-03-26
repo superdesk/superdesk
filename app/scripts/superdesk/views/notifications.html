@@ -1,49 +1,49 @@
-<div class="notification-pane" sd-beta>
-        <div class="header">
-            <figure class="avatar-holder">
-                <img sd-user-avatar data-src="currentUser.Avatar.href" class="avatar">
-            </figure>
-            <div class="user-info">
-                <span class="name">{{ currentUser.FirstName }} {{ currentUser.LastName }}</span>
-                <span class="displayname">{{ currentUser.UserName }}</span>
-            </div>
-            <div class="actions">
-                <a href="#/profile" translate>Profile</a>
-                <button ng-click="logout()" translate>Sign out</button>
-            </div>
+<div class="notification-pane">
+    <div class="header">
+        <figure class="avatar-holder">
+            <img sd-user-avatar data-src="currentUser.Avatar.href" class="avatar">
+        </figure>
+        <div class="user-info">
+            <span class="name">{{ currentUser.FirstName }} {{ currentUser.LastName }}</span>
+            <span class="displayname">{{ currentUser.UserName }}</span>
         </div>
-        <div class="content">
-            <section class="module">
-                <header class="title" translate>Notifications</header>
-                <ul class="notification-list">
-                    <li class="unread">
-                        <figure class="avatar-holder">
-                            <img src="images/avatar_default.png">
-                        </figure>
-                        <div class="content">
-                            <span class="date">Today at 13:05</span>
-                            <p class="text"><b>Desa Bauer</b> aproved images for article “Gaza ceasefire munced in Cairo” </p>
-                        </div>
-                    </li>
-                    <li>
-                        <figure class="avatar-holder">
-                            <img src="images/avatar_default.png">
-                        </figure>
-                        <div class="content">
-                            <span class="date">Today at 12:46</span>
-                            <p class="text"><b>Desa Bauer</b> aproved images for article “Gaza ceasefire munced in Cairo” </p>
-                        </div>
-                    </li>
-                    <li>
-                        <figure class="avatar-holder">
-                            <img src="images/avatar_default.png">
-                        </figure>
-                        <div class="content">
-                            <span class="date">Today at 12:39</span>
-                            <p class="text"><b>Desa Bauer</b> aproved images for article “Gaza ceasefire munced in Cairo” </p>
-                        </div>
-                    </li>
-                </ul>
-            </section>
+        <div class="actions">
+            <a href="#/profile" translate>Profile</a>
+            <button ng-click="logout()" translate>Sign out</button>
         </div>
     </div>
+    <div class="content">
+        <section class="module" sd-beta>
+            <header class="title" translate>Notifications</header>
+            <ul class="notification-list">
+                <li class="unread">
+                    <figure class="avatar-holder">
+                        <img src="images/avatar_default.png">
+                    </figure>
+                    <div class="content">
+                        <span class="date">Today at 13:05</span>
+                        <p class="text"><b>Desa Bauer</b> aproved images for article “Gaza ceasefire munced in Cairo” </p>
+                    </div>
+                </li>
+                <li>
+                    <figure class="avatar-holder">
+                        <img src="images/avatar_default.png">
+                    </figure>
+                    <div class="content">
+                        <span class="date">Today at 12:46</span>
+                        <p class="text"><b>Desa Bauer</b> aproved images for article “Gaza ceasefire munced in Cairo” </p>
+                    </div>
+                </li>
+                <li>
+                    <figure class="avatar-holder">
+                        <img src="images/avatar_default.png">
+                    </figure>
+                    <div class="content">
+                        <span class="date">Today at 12:39</span>
+                        <p class="text"><b>Desa Bauer</b> aproved images for article “Gaza ceasefire munced in Cairo” </p>
+                    </div>
+                </li>
+            </ul>
+        </section>
+    </div>
+</div>

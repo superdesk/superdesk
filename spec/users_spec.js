@@ -52,12 +52,20 @@ describe('users app', function() {
 
             expect(activity.count()).toBe(2);
             user.first().click();
+
+            expect($('.preview-pane').evaluate('selected.user')).not.toBe(null);
+
             activity.first().click();
 
             var confirm = ptor.switchTo().alert();
             expect(confirm.getText()).toBe('Please confirm you want to delete a user.');
             confirm.accept();
-            expect(element.all(by.repeater('user')).count()).toBe(1);
+
+            // it reloads the list after delete which will on apiary return 2 items again..
+            expect(element.all(by.repeater('user')).count()).toBe(2);
+
+            // but there should be no preview
+            expect($('.preview-pane').evaluate('selected.user')).toBe(null);
         });
     });
 

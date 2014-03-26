@@ -42,6 +42,10 @@ describe('login', function() {
         modal.login('admin', 'admin');
         element(by.binding('UserName')).click();
         element(by.buttonText('SIGN OUT')).click();
+
+        protractor.getInstance().sleep(500); // it reloads page
+        protractor.getInstance().waitForAngular();
+
         expect(modal.btn).toBeDisplayed();
         expect(modal.username).toBeDisplayed();
         expect(modal.username.getAttribute('value')).toBe('john');
