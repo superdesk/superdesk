@@ -865,27 +865,26 @@ Notifications
 =========================================
 */
 
-@notif-holder-w : 300px;
+@notif-holder-w : 340px;
 .notification-holder {
 	position: fixed;
-	z-index: 1001;
+	z-index: 2011;
 	width: @notif-holder-w;
-	top: @topspace;
+	top: -5px;
 	left: 50%;
 	margin-left: -@notif-holder-w/2;
 	overflow: hidden;
-	background: rgba(245,245,245,1);
-    border-color: #d5d5d5;
-
     padding: 0 10px 10px;
-    //.box-shadow-both(inset 0 5px 3px -3px #d5d5d5,0 1px 5px -3px rgba(0,0,0,.1));
 	.alert {
-		height: @subnav-height - 20 - 1;
-		line-height: @subnav-height - 20 - 1;
 		.box-sizing(border-box);
-		.border-radius(0);
-		padding: 0 15px;
-		margin: 10px 0 0;
+		.border-radius(5px);
+		.box-shadow(0 2px 3px -2px #666);
+		padding: 15px 30px;
+		margin: 0 0 10px;
+		.opacity(98);
+		&.success {
+			border-color:#a6d5a2;
+		}
 	}
 }
 .zen-mode {
