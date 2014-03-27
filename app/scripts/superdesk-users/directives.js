@@ -152,6 +152,10 @@ define([
                             notify.pop();
                             if (response.status === 400) {
                                 scope.error = response.data;
+                            } else if (response.status === 404) {
+                                scope.origUser = null;
+                                console.error(response);
+                                notify.error(gettext('User is not found. It might be deleted.'));
                             } else {
                                 console.error(response);
                                 notify.error(gettext('Hmm, there was an error when saving user.'));
