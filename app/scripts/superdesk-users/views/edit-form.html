@@ -61,7 +61,7 @@
                     required>
                   <div ng-show="userForm.email.$error.required" translate>please provide an email address.</div>
                   <div ng-show="userForm.email.$error.email || error.EMail.email" translate>please provide a valid email address.</div>
-                  <div ng-show="userForm.email.$error.unique || error.EMail.conflict" translate>sorry, a user with this email already exists.</div>
+                  <div ng-show="userForm.email.$error.unique || error.EMail.unique" translate>sorry, a user with this email already exists.</div>
                 </div>
 
                 <div sd-info-item>
