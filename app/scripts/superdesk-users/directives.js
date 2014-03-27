@@ -142,6 +142,7 @@ define([
                      * save user
                      */
                     scope.save = function() {
+                        scope.error = null;
                         notify.info(gettext('saving..'));
                         return api.users.save(scope.origUser, scope.user).then(function() {
                             notify.pop();

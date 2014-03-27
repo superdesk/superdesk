@@ -60,14 +60,14 @@
                     sd-user-unique data-unique-field="email" data-exclude="user"
                     required>
                   <div ng-show="userForm.email.$error.required" translate>please provide an email address.</div>
-                  <div ng-show="userForm.email.$error.email" translate>please provide a valid email address.</div>
+                  <div ng-show="userForm.email.$error.email || error.EMail.email" translate>please provide a valid email address.</div>
                   <div ng-show="userForm.email.$error.unique || error.EMail.conflict" translate>sorry, a user with this email already exists.</div>
                 </div>
 
                 <div sd-info-item>
                   <label for="phone" translate>phone number</label>
                   <input type="text" name="phone" id="phone" ng-model="user.PhoneNumber" ng-pattern="phonePattern">
-                  <div ng-show="userForm.phone.$error.pattern" translate>please use 9+ numbers (with possible +).</div>
+                  <div ng-show="userForm.phone.$error.pattern || error.PhoneNumber['phone number']" translate>please provide number in international format</div>
                 </div>
 
                 <div sd-info-item class="password" ng-if="!user.Id">
