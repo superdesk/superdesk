@@ -13,16 +13,17 @@
         <a ng-show="" class="change-photo" href="" ng-click="editPicture()" translate>Change Photo</a>
     </div>
 
-    <p class="alert alert-error" ng-show="error" translate>Please fix the issues below.</p>
 
     <div class="profile-info user-profile-edit">
         <div class="header-info">
             <h2>{{ user.FullName }}</h2>
             <h5>{{ user.UserName }}</h5>
         </div>
-        <div class="details-info">
+        <div class="error-holder">
+          <p class="alert alert-error" ng-show="error" translate>Please fix the issues below.</p>
+        </div>
+        <div class="details-info" ng-class="{shifted : error}">
             <div class="details-section">
-
                 <div class="details-section-header" translate>General</div>
 
                 <div sd-info-item ng-show="user.Id">
@@ -48,21 +49,21 @@
                     ng-pattern="usernamePattern"
                     sd-user-unique data-unique-field="userName" data-exclude="user"
                     required>
-                  <div ng-show="userForm.userName.$error.required" translate>please provide a username.</div>
-                  <div ng-show="userForm.userName.$error.unique || error.UserName.conflict" translate>sorry, this username is already taken.</div>
-                  <div ng-show="userForm.userName.$error.pattern" translate>please use only letters (a-z), numbers (0-9), dashes (&mdash;), underscores (_), apostrophes (') and periods (.).</div>
+                  <div ng-show="userForm.userName.$error.required" sd-valid-error translate>please provide a username.</div>
+                  <div ng-show="userForm.userName.$error.unique || error.UserName.conflict" sd-valid-error translate>sorry, this username is already taken.</div>
+                  <div ng-show="userForm.userName.$error.pattern" sd-valid-error translate>please use only letters (a-z), numbers (0-9), dashes (&mdash;), underscores (_), apostrophes (') and periods (.).</div>
                 </div>
 
                 <div sd-info-item class="password" ng-if="!user.Id">
                   <label for="password" translate>password</label>
                   <input type="password" name="password" ng-minlength="5" id="password" ng-model="user.Password" required>
-                  <div ng-show="userForm.password.$error.minlength" translate>password must have at least 5 characters.</div>
+                  <div ng-show="userForm.password.$error.minlength" sd-valid-error translate>password must have at least 5 characters.</div>
                 </div>
 
                 <div sd-info-item class="password" ng-if="!user.Id">
                   <label for="passwordConfirm" translate>confirm</label>
                   <input type="password" name="passwordConfirm" ng-minlength="5" id="passwordConfirm" sd-password-confirm ng-model="confirm.password" data-password="user.Password" required>
-                  <div ng-show="userForm.passwordConfirm.$error.confirm" translate>passwords must be same.</div>
+                  <div ng-show="userForm.passwordConfirm.$error.confirm" sd-valid-error translate>passwords must be same.</div>
                 </div>
 
                 <div sd-info-item class="password" ng-if="user.Id" id="password-change-trigger">
@@ -76,15 +77,15 @@
                     ng-model="user.EMail"
                     sd-user-unique data-unique-field="email" data-exclude="user"
                     required>
-                  <div ng-show="userForm.email.$error.required" translate>please provide an email address.</div>
-                  <div ng-show="userForm.email.$error.email || error.EMail.email" translate>please provide a valid email address.</div>
-                  <div ng-show="userForm.email.$error.unique || error.EMail.unique" translate>sorry, a user with this email already exists.</div>
+                  <div ng-show="userForm.email.$error.required" sd-valid-error translate>please provide an email address.</div>
+                  <div ng-show="userForm.email.$error.email || error.EMail.email" sd-valid-error translate>please provide a valid email address.</div>
+                  <div ng-show="userForm.email.$error.unique || error.EMail.unique" sd-valid-error translate>sorry, a user with this email already exists.</div>
                 </div>
 
                 <div sd-info-item>
                   <label for="phone" translate>phone number</label>
                   <input type="text" name="phone" id="phone" ng-model="user.PhoneNumber" ng-pattern="phonePattern">
-                  <div ng-show="userForm.phone.$error.pattern || error.PhoneNumber['phone number']" translate>please provide number in international format</div>
+                  <div ng-show="userForm.phone.$error.pattern || error.PhoneNumber['phone number']" sd-valid-error translate>please provide number in international format</div>
                 </div>
 
                 <div sd-info-item ng-show="user.Id">
@@ -102,7 +103,7 @@
   </div>
 </form>
 
-<div sd-change-password class="password-popup" ng-if="show.password && user.Id">
+<div sd-change-password class="password-popup" ng-if="show.password && user.Id" ng-class="{shifted : error}">
     <div class="title">Change password</div>
     <div class="content-holder">
       <div class="password-change-holder" >
@@ -110,16 +111,16 @@
 
             <label translate>current</label>
             <input name="old" type="password" ng-model="oldPwd" required>
-            <p class="alert alert-error" ng-show="oldPasswordInvalid">sorry, but this is not the original password.</p>
+            <p sd-valid-error ng-show="oldPasswordInvalid">sorry, but this is not the original password.</p>
 
             <label translate>new</label>
             <input name="new" type="password" ng-model="newPwd" required ng-minlength="5">
-            <p class="alert alert-error" ng-show="passwordForm.new.$error.minlength">please provide password at least 5 characters long.</p>
+            <p sd-valid-error ng-show="passwordForm.new.$error.minlength">please provide password at least 5 characters long.</p>
 
             <label translate>confirm</label>
             <input name="confirm" type="password" ng-model="_confirm" required
               sd-password-confirm ng-model="_confirm" data-password="newPwd">
-            <p class="alert alert-error" ng-show="passwordForm.confirm.$error.confirm">confirm doesn't match new password yet.</p>
+            <p sd-valid-error ng-show="passwordForm.confirm.$error.confirm">confirm doesn't match new password yet.</p>
 
             <div class="action-buttons">
               <button type="reset" class="btn btn-small" ng-click="show.password = false" translate>Cancel</button>

@@ -17,6 +17,13 @@ define([
                 }
             };
         })
+        .directive('sdValidError', function() {
+            return {
+                link: function (scope, element) {
+                    element.addClass('validation-error');
+                }
+            };
+        })
         .directive('sdRolesTreeview', ['$compile', function($compile) {
             return {
                 restrict: 'A',
