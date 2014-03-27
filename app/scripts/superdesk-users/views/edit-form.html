@@ -1,4 +1,4 @@
-<div class="user-details-content user-profile user-profile-edit" ng-init="show={password:false}">
+<div class="user-details-content user-profile user-profile-edit">
 <form name="userForm" ng-submit="userForm.$valid && save()">
 
   <div>
@@ -51,7 +51,7 @@
                   <div ng-show="userForm.userName.$error.unique || error.UserName.conflict" translate>sorry, this username is already taken.</div>
                   <div ng-show="userForm.userName.$error.pattern" translate>please use only letters (a-z), numbers (0-9), dashes (&mdash;), underscores (_), apostrophes (') and periods (.).</div>
                 </div>
-                
+
                 <div sd-info-item class="password" ng-if="!user.Id">
                   <label for="password" translate>password</label>
                   <input type="password" name="password" ng-minlength="5" id="password" ng-model="user.Password" required>
@@ -59,8 +59,8 @@
                 </div>
 
                 <div sd-info-item class="password" ng-if="!user.Id">
-                  <label for="passwordConfirm" translate>password (again)</label>
-                  <input type="password" name="passwordConfirm" id="passwordConfirm" sd-password-confirm ng-model="user.passwordConfirm" data-password="user.Password" required>
+                  <label for="passwordConfirm" translate>confirm</label>
+                  <input type="password" name="passwordConfirm" ng-minlength="5" id="passwordConfirm" sd-password-confirm ng-model="confirm.password" data-password="user.Password" required>
                   <div ng-show="userForm.passwordConfirm.$error.confirm" translate>passwords must be same.</div>
                 </div>
 
@@ -86,18 +86,6 @@
                   <div ng-show="userForm.phone.$error.pattern || error.PhoneNumber['phone number']" translate>please provide number in international format</div>
                 </div>
 
-                <div sd-info-item class="password" ng-if="!user.Id">
-                  <label for="password" translate>password</label>
-                  <input type="password" name="password" ng-minlength="5" id="password" ng-model="user.Password" required>
-                  <div ng-show="userForm.password.$error.minlength" translate>password must have at least 5 characters.</div>
-                </div>
-
-                <div sd-info-item class="password" ng-if="!user.Id">
-                  <label for="passwordConfirm" translate>confirm</label>
-                  <input type="password" name="passwordConfirm" ng-minlength="5" id="passwordConfirm" sd-password-confirm ng-model="confirm.password" data-password="user.Password" required>
-                  <div ng-show="userForm.passwordConfirm.$error.confirm" translate>passwords must be same.</div>
-                </div>
-
                 <div sd-info-item ng-show="user.Id">
                   <label for="created" translate>member since</label>
                   <span class="info-value" sd-reldate ng-model="user.CreatedOn"></span>
@@ -113,7 +101,7 @@
   </div>
 </form>
 
-<div sd-change-password class="password-popup" ng-if="show.password">
+<div sd-change-password class="password-popup" ng-if="show.password && user.Id">
     <div class="title">Change password</div>
     <div class="content-holder">
       <div class="password-change-holder" >
@@ -138,7 +126,7 @@
                 ng-click="passwordForm.$valid && changePassword(oldPwd, newPwd)"
                 translate>Save password</button>
             </div>
-          </form> 
+          </form>
       </div>
-    </div>    
+    </div>
 </div>

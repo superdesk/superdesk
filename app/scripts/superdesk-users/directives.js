@@ -136,6 +136,7 @@ define([
                         scope.error = null;
                         scope.user = angular.copy(user);
                         scope.confirm = {password: null};
+                        scope.show = {password: false};
                     });
 
                     /**
