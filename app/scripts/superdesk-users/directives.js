@@ -133,11 +133,15 @@ define([
                     scope.phonePattern = PHONE_REGEXP;
 
                     scope.$watch('origUser', function(user) {
+                        scope.reset(user);
+                    });
+
+                    scope.reset = function(user) {
                         scope.error = null;
                         scope.user = angular.copy(user);
                         scope.confirm = {password: null};
                         scope.show = {password: false};
-                    });
+                    };
 
                     /**
                      * save user
