@@ -12,7 +12,7 @@ define(['angular'], function(angular) {
 
                 $modal.open({
                     templateUrl: 'scripts/superdesk/views/confirmation-modal.html',
-                    controller: function($scope, $modalInstance) {
+                    controller: ['$scope', '$modalInstance', function($scope, $modalInstance) {
                         $scope.headerText = headerText;
                         $scope.bodyText = bodyText;
                         $scope.okText = okText;
@@ -27,7 +27,7 @@ define(['angular'], function(angular) {
                             delay.reject();
                             $modalInstance.dismiss();
                         };
-                    }
+                    }]
                 });
 
                 return delay.promise;
