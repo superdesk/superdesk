@@ -2,8 +2,10 @@
 <form name="userForm" ng-submit="userForm.$valid && save()">
 
   <div>
-    <button type="submit" class="btn btn-info pull-right" ng-disabled="userForm.$invalid">Save</button>
-    <button type="button" class="btn pull-right" ng-click="reset(origUser)" translate>Cancel</button>
+    <div class="action-buttons-main clearfix">
+        <button type="submit" class="btn btn-info pull-right" ng-disabled="userForm.$invalid">Save</button>
+        <button type="button" class="btn pull-right" ng-click="reset(origUser)" translate>Cancel</button>
+    </div>
 
     <div class="profile-pic">
         <figure>
