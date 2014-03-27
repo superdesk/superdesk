@@ -47,8 +47,7 @@ describe('users app', function() {
 
         it('can delete user', function() {
             var user = element.all(by.repeater('user')),
-                activity = element.all(by.repeater('activity')),
-                ptor = protractor.getInstance();
+                activity = element.all(by.repeater('activity'));
 
             expect(activity.count()).toBe(2);
             user.first().click();
@@ -57,9 +56,9 @@ describe('users app', function() {
 
             activity.first().click();
 
-            var confirm = ptor.switchTo().alert();
-            expect(confirm.getText()).toBe('Please confirm you want to delete a user.');
-            confirm.accept();
+            expect(element(by.binding('{{bodyText}}')).getText())
+                .toBe('Please confirm you want to delete a user.');
+            element(by.buttonText('OK')).click();
 
             // it reloads the list after delete which will on apiary return 2 items again..
             expect(element.all(by.repeater('user')).count()).toBe(2);
