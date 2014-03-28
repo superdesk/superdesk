@@ -14,9 +14,9 @@ define([
     /**
      * Delete a user and remove it from list
      */
-    UserDeleteCommand.$inject = ['resource', 'data', '$q', 'notify', 'gettext'];
-    function UserDeleteCommand(resource, data, $q, notify, gettext) {
-        return resource.users['delete'](data.item).then(function(response) {
+    UserDeleteCommand.$inject = ['api', 'data', '$q', 'notify', 'gettext'];
+    function UserDeleteCommand(api, data, $q, notify, gettext) {
+        return api.users.remove(data.item).then(function(response) {
             data.list.splice(data.index, 1);
         }, function(response) {
             notify.error(gettext('I\'m sorry but can\'t delete the user right now.'));
@@ -26,9 +26,9 @@ define([
     /**
      * Resolve a user by route id and redirect to /users if such user does not exist
      */
-    UserResolver.$inject = ['resource', '$route', 'notify', 'gettext', '$location'];
-    function UserResolver(resource, $route, notify, gettext, $location) {
-        return resource.users.getById($route.current.params.Id)
+    UserResolver.$inject = ['api', '$route', 'notify', 'gettext', '$location'];
+    function UserResolver(api, $route, notify, gettext, $location) {
+        return api.users.getById($route.current.params.id)
             .then(null, function(response) {
                 if (response.status === 404) {
                     $location.path('/users/');
@@ -46,7 +46,6 @@ define([
     ]);
 
     app
-        .service('api', require('./users-service'))
         .value('defaultListParams', {
             search: '',
             searchField: 'username',
@@ -108,8 +107,8 @@ define([
                     controller: require('./controllers/edit'),
                     templateUrl: 'scripts/superdesk-users/views/edit.html',
                     resolve: {
-                        user: ['session', 'resource', function(session, resource) {
-                            return resource.users.getByUrl(session.identity.href);
+                        user: ['session', 'api', function(session, api) {
+                            return api.users.getByUrl(session.identity.href);
                         }]
                     }
                 })
@@ -133,7 +132,14 @@ define([
                     ]
                 });
         }])
-        .config(['resourceProvider', function(resourceProvider) {
-            resourceProvider.resource('users', {rel: 'HR/User', headers: {'X-Filter': 'User.*'}});
+        .config(['apiProvider', function(apiProvider) {
+            apiProvider.api('users', {
+                type: 'http',
+                backend: {
+                    rel: 'HR/User',
+                    headers: {'X-Filter': 'User.*'}
+                },
+                service: require('./users-service')
+            });
         }]);
 });

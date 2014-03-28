@@ -1,47 +1,13 @@
-define(['lodash'], function(_) {
+define([], function() {
     'use strict';
 
     /**
-     * Resource service provider
+     * Http endpoint factory
      */
-    function ResourceServiceProvider() {
-
-        var resources = {};
-
-        this.resource = function(name, config) {
-            resources[name] = config;
-        };
-
-        this.$get = ['$http', '$q', 'config', function($http, $q, config) {
-            var service = new ResourceService($http, $q, config);
-            registerResources(service);
-            return service;
-        }];
-
-        function registerResources(service) {
-            _.each(resources, function(config, name) {
-                service.resource(name, config);
-            });
-        }
-    }
-
-    /**
-     * Resource service
-     */
-    function ResourceService($http, $q, config) {
+    HttpEndpointFactory.$inject = ['$http', '$q', 'config'];
+    function HttpEndpointFactory($http, $q, config) {
 
         var links;
-
-        /**
-         * Register resource
-         *
-         * @param {string} name
-         * @param {Object} config
-         * @returns {ResourceService}
-         */
-        this.resource = function(name, config) {
-            this[name] = new Resource(config);
-        };
 
         /**
          * Get resource links via root url
@@ -111,11 +77,12 @@ define(['lodash'], function(_) {
         }
 
         /**
-         * Resource wrapper
+         * Http Endpoint
          */
-        function Resource(config) {
-            this.rel = config.rel;
+        function HttpEndpoint(name, config) {
+            this.name = name;
             this.config = config;
+            this.rel = config.rel;
         }
 
         /**
@@ -124,7 +91,7 @@ define(['lodash'], function(_) {
          * @param {string} url
          * @returns {Promise}
          */
-        Resource.prototype.getByUrl = function(url) {
+        HttpEndpoint.prototype.getByUrl = function(url) {
             return http({
                 method: 'GET',
                 url: url
@@ -139,7 +106,7 @@ define(['lodash'], function(_) {
          * @param {string} id
          * @returns {Promise}
          */
-        Resource.prototype.getById = function(id) {
+        HttpEndpoint.prototype.getById = function(id) {
             return getUrl(this).then(_.bind(function(resourceUrl) {
                 var url = resourceUrl.replace(/\/+$/, '') + '/' + id;
                 return this.getByUrl(url);
@@ -151,7 +118,7 @@ define(['lodash'], function(_) {
          *
          * @param {Object} params
          */
-        Resource.prototype.query = function(params) {
+        HttpEndpoint.prototype.query = function(params) {
             return http({
                 method: 'GET',
                 params: params,
@@ -170,7 +137,7 @@ define(['lodash'], function(_) {
          * @param {Object} diff
          * @returns {Promise}
          */
-        Resource.prototype.update = function(item, diff) {
+        HttpEndpoint.prototype.update = function(item, diff) {
             if (!diff) {
                 diff = _.omit(item, function(value, key) {
                     return key === 'href' || key === 'Id' || value.href;
@@ -194,7 +161,7 @@ define(['lodash'], function(_) {
          * @param {Object} itemData
          * @returns {Promise}
          */
-        Resource.prototype.create = function(itemData) {
+        HttpEndpoint.prototype.create = function(itemData) {
             return http({
                 method: 'POST',
                 url: getUrl(this),
@@ -213,7 +180,7 @@ define(['lodash'], function(_) {
          * @param {Object} diff
          * @returns {Promise}
          */
-        Resource.prototype.save = function(item, diff) {
+        HttpEndpoint.prototype.save = function(item, diff) {
             return item.href ? this.update(item, diff) : this.create(item);
         };
 
@@ -224,7 +191,7 @@ define(['lodash'], function(_) {
          * @param {Object} item
          * @returns {Promise}
          */
-        Resource.prototype.replace = function(dest, item) {
+        HttpEndpoint.prototype.replace = function(dest, item) {
             return http({
                 method: 'PUT',
                 url: dest,
@@ -236,12 +203,12 @@ define(['lodash'], function(_) {
         };
 
         /**
-         * Delete item
+         * Remove item
          *
          * @param {Object} item
          * @returns {Promise}
          */
-        Resource.prototype['delete'] = function(item) {
+        HttpEndpoint.prototype.remove = function(item) {
             return http({
                 method: 'DELETE',
                 url: item.href
@@ -250,11 +217,8 @@ define(['lodash'], function(_) {
             });
         };
 
-        /**
-         * Remove item - alias for delete
-         */
-        Resource.prototype.remove = Resource.prototype['delete'];
+        return HttpEndpoint;
     }
 
-    return ResourceServiceProvider;
+    return HttpEndpointFactory;
 });

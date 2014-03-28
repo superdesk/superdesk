@@ -16,7 +16,7 @@ define([
     describe('allypy auth adapter', function() {
         beforeEach(function() {
             module(function($provide) {
-                $provide.value('config', {server: {url: SERVER_URL}});
+                $provide.constant('config', {server: {url: SERVER_URL}});
                 $provide.service('authAdapter', AuthAdapterService);
             });
         });

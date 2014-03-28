@@ -1,8 +1,8 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    UserListController.$inject = ['$scope', '$location', 'resource'];
-    function UserListController($scope, $location, resource) {
+    UserListController.$inject = ['$scope', '$location', 'api'];
+    function UserListController($scope, $location, api) {
 
         $scope.selected = {user: null};
         $scope.createdUsers = [];
@@ -58,7 +58,7 @@ define(['lodash'], function(_) {
         }
 
         function fetchUsers(criteria) {
-            resource.users.query(criteria)
+            api.users.query(criteria)
                 .then(function(users) {
                     $scope.users = users;
                     $scope.createdUsers = [];

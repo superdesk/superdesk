@@ -243,7 +243,7 @@ define([
                 }
             };
         })
-        .directive('sdUserUnique', ['resource', function(resource) {
+        .directive('sdUserUnique', ['api', function(api) {
             var NAME = 'unique';
             return {
                 require: 'ngModel',
@@ -260,7 +260,7 @@ define([
                         if (viewValue && attrs.uniqueField) {
                             var criteria = {};
                             criteria[attrs.uniqueField] = viewValue;
-                            resource.users.query(criteria)
+                            api.users.query(criteria)
                                 .then(function(users) {
                                     if (scope.exclude && users.total === 1) {
                                         ctrl.$setValidity(NAME, users._items[0].Id === scope.exclude.Id);

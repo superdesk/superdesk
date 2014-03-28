@@ -16,7 +16,7 @@ define([
         var scope;
 
         beforeEach(module(function($provide) {
-            $provide.service('resource', function($q) {
+            $provide.service('api', function($q) {
                 this.users = {
                     // make it find foo but not any other
                     query: function(criteria) {

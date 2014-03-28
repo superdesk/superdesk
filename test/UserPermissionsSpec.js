@@ -16,6 +16,10 @@ define([
             testResource_3: {read: true, write: true}
         };
 
+        beforeEach(module(function($provide) {
+            $provide.value('config', {url: 'http://localhost'});
+        }));
+
         beforeEach(function() {
             module('superdesk.services');
             inject(function($rootScope, $httpBackend, _em_, _permissionsService_) {

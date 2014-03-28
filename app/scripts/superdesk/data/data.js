@@ -1,13 +1,13 @@
 define([
     'angular',
     'require',
-    './resource-provider',
+    './api-service',
     './timeout-interceptor'
 ], function(angular, require) {
     'use strict';
 
     return angular.module('superdesk.data', ['superdesk'])
-        .provider('resource', require('./resource-provider'))
+        .provider('api', require('./api-service'))
         .config(['$httpProvider', function($httpProvider) {
             $httpProvider.interceptors.push(require('./timeout-interceptor'));
         }]);

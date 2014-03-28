@@ -2,35 +2,29 @@ define(['lodash', 'superdesk/hashlib', 'superdesk-users/users-service'], functio
     'use strict';
 
     describe('users api', function() {
-
         beforeEach(module(function($provide) {
-            $provide.service('api', UsersService);
+            $provide.service('users', UsersService);
             $provide.service('resource', function($q) {
-                this.users = {
-                    save: function(user) {
-                        if (user.Password) {
-                            expect(user.Password).toBe(hashlib.hash('bar'));
-                        }
-
-                        return $q.when(_.extend({Id: 1, FullName: 'Foo Bar'}, user));
-                    },
-                    replace: function(dest, data) {
-                        return $q.when({});
+                this.save = function(user) {
+                    if (user.Password) {
+                        expect(user.Password).toBe(hashlib.hash('bar'));
                     }
+
+                    return $q.when(_.extend({Id: 1, FullName: 'Foo Bar'}, user));
+                };
+
+                this.replace = function(dest, data) {
+                    return $q.when({});
                 };
             });
         }));
 
-        it('exists', inject(function(api) {
-            expect(api.users).not.toBe(undefined);
-        }));
-
-        it('can create user', inject(function(api, $rootScope) {
+        it('can create user', inject(function(users, $rootScope) {
 
             var user = {},
                 data = {'UserName': 'foo', 'Password': 'bar'};
 
-            api.users.save(user, data);
+            users.save(user, data);
 
             $rootScope.$digest();
 
@@ -40,12 +34,12 @@ define(['lodash', 'superdesk/hashlib', 'superdesk-users/users-service'], functio
             expect(data.password).toBe(undefined);
         }));
 
-        it('can update user', inject(function(api, $rootScope) {
+        it('can update user', inject(function(users, $rootScope) {
 
             var user = {UserName: 'foo', FirstName: 'a'},
                 data = {UserName: 'foo', FirstName: 'foo', LastName: 'bar'};
 
-            api.users.save(user, data);
+            users.save(user, data);
 
             $rootScope.$digest();
 
@@ -55,15 +49,15 @@ define(['lodash', 'superdesk/hashlib', 'superdesk-users/users-service'], functio
             expect(data.FullName).toBe('Foo Bar');
         }));
 
-        it('can change user password', inject(function(api, resource, $rootScope) {
+        it('can change user password', inject(function(users, resource, $rootScope) {
 
             var user = {UserPassword: {href: 'pwd_url'}};
 
-            spyOn(resource.users, 'replace');
+            spyOn(resource, 'replace');
 
-            api.users.changePassword(user, 'old', 'new');
+            users.changePassword(user, 'old', 'new');
 
-            expect(resource.users.replace).toHaveBeenCalledWith('pwd_url', {
+            expect(resource.replace).toHaveBeenCalledWith('pwd_url', {
                 OldPassword: hashlib.hash('old'),
                 NewPassword: hashlib.hash('new')
             });
