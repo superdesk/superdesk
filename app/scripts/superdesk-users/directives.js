@@ -138,9 +138,14 @@ define([
 
                     scope.usernamePattern = USERNAME_REGEXP;
                     scope.phonePattern = PHONE_REGEXP;
+                    scope.dirty = false;
 
                     scope.$watch('origUser', function(user) {
                         scope.reset(user);
+                    });
+
+                    scope.$watchCollection('user', function(user) {
+                        scope.dirty = !angular.equals(user, scope.origUser);
                     });
 
                     scope.reset = function(user) {

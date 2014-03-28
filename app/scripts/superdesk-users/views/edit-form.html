@@ -3,8 +3,8 @@
 
   <div>
     <div class="action-buttons-main clearfix">
-        <button type="submit" class="btn btn-info pull-right" ng-disabled="userForm.$invalid">Save</button>
-        <button type="button" class="btn pull-right" ng-click="reset(origUser)" translate>Cancel</button>
+        <button type="submit" class="btn btn-info pull-right" ng-disabled="userForm.$invalid || !dirty" translate>Save</button>
+        <button type="button" class="btn pull-right" ng-click="reset(origUser)" ng-disabled="!dirty" translate>Cancel</button>
     </div>
 
     <div class="profile-pic">
