@@ -5,7 +5,6 @@ define([
     './users-service',
     './services/profile',
     './controllers/list',
-    './controllers/profile',
     './controllers/edit',
     './controllers/settings',
     './directives'
@@ -102,8 +101,8 @@ define([
                 })
                 .activity('/profile/', {
                     label: gettext('My Profile'),
-                    controller: require('./controllers/profile'),
-                    templateUrl: 'scripts/superdesk-users/views/profile.html',
+                    controller: require('./controllers/edit'),
+                    templateUrl: 'scripts/superdesk-users/views/edit.html',
                     resolve: {
                         user: ['session', 'resource', function(session, resource) {
                             return resource.users.getByUrl(session.identity.href);
