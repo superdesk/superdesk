@@ -229,16 +229,27 @@ body {
 
   .button-stack {
   	height:@subnav-height !important;
-  	position: absolute;
-  	top: 0; right: 0;
+  	position: relative;
+  	height: 53px;
+  	margin: -10px 20px 0 -20px;
+  	float: left;
+  	&.right-stack {
+		float: right;
+		margin: -10px -20px 0 20px;
+		float: right;
+  	}
   	.navbtn {
   		float: left;
   		padding: 0 15px;
-  		min-width: 18px;
   		width: auto;
-  		border-left: 1px solid #dfdfdf;
   		background: #f5f5f5;
   		color:#333;
+  		height: 52px;
+  		display: block;
+  		text-align: center;
+  		line-height: 52px;
+  		text-decoration: none !important;
+
   		&.navbtn-info {
   			background: #5ea9c8;
   			color: #fff;
@@ -274,8 +285,7 @@ body {
 
   		&.dropdown {
   			.dropdown-toggle {
-	  			position: absolute;
-				top: 0; right: 0; left: 0; bottom: 0;
+  				padding: 0;
 				.border-radius(0);
 				line-height: 48px;
 				&:hover {
@@ -305,33 +315,8 @@ body {
   	}
   }
   .navbtn {
-  	width: 48px;
-  	height: 52px;
-  	display: block;
-  	background: #898989;
-  	text-align: center;
-  	line-height: 52px;
-  	text-decoration: none !important;
   	
-  	.arrow {
-  		width: 15px;
-  		height: 23px;
-  		display: inline-block;
-  		background: url(../../images/subnav-arrows.png) no-repeat;
-  		vertical-align: middle;
-  		&.left {
-  			background-position: 0 0;
-  		}
-  		&.right {
-  			background-position: -15px 0;
-  		}
-  	}
-  	&.pull-left {
-  		margin: -10px 20px 0 -20px;
-  	}
-  	&.pull-right {
-  		margin: -10px -20px 0 20px;
-  	}
+  	
   	&.disabled {
   		background: #e1e1e1;
   		&:hover {

@@ -1,12 +1,16 @@
 <div class="subnav subnav-fixed">
 
-    <a class="navbtn pull-left">
-        <i class="left arrow"></i>
-    </a>
+    <div class="button-stack">
+        <a class="navbtn navbtn-info navbtn-hover" href="">
+            <i class="arrow-icon-left"></i>
+        </a>
+    </div>
 
-    <a class="navbtn pull-right large active" ng-click="">
-        <span>Publish</span><i class="right arrow"></i>
-    </a>
+    <div class="button-stack right-stack">
+        <a class="navbtn navbtn-info navbtn-hover" href="">
+            <i class="arrow-icon-right"></i> <span class="title" translate>PUBLISH</span>
+        </a>
+    </div>
 
     <h1 class="main-article-title">{{ item.headline|limitTo:80 }}</h1>
 

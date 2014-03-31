@@ -1,11 +1,17 @@
 <div class="subnav subnav-fixed" sd-workflow>
-    <a class="navbtn pull-left disabled">
-        <i class="left arrow"></i>
-    </a>
 
-    <a class="navbtn pull-right" ng-class="{active: isActive}" ng-click="next()">
-        <i class="right arrow"></i>
-    </a>
+    <div class="button-stack">
+        <a class="navbtn navbtn-info navbtn-hover" href="">
+            <i class="arrow-icon-left"></i>
+        </a>
+    </div>
+
+    <div class="button-stack right-stack">
+        <a class="navbtn navbtn-info navbtn-hover" ng-class="{active: isActive}" href="" ng-click="next()">
+            <i class="arrow-icon-right"></i>
+        </a>
+    </div>
+
 </div>
 
 <section sd-sidebar-layout  class="archive main-section">
