@@ -163,7 +163,7 @@ define([
                         notify.info(gettext('saving..'));
                         return api.users.save(scope.origUser, scope.user).then(function() {
                             notify.pop();
-                            notify.success(gettext('user saved.'), 3000);
+                            notify.success(gettext('user saved.'));
                             scope.onsave({user: scope.origUser});
                         }, function(response) {
                             notify.pop();

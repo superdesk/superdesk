@@ -4,6 +4,13 @@ define(['angular'], function(angular) {
     angular.module('superdesk.services')
         .service('notify', ['$timeout', function ($timeout) {
             function NotifyService() {
+
+                var ttls = {
+                    info: 3000,
+                    success: 3000,
+                    error: 5000
+                };
+
                 this.messages = [];
 
                 this.pop = function() {
@@ -12,6 +19,11 @@ define(['angular'], function(angular) {
 
                 this.addMessage = function(type, text, ttl) {
                     var self = this;
+
+                    if (ttl == null) {
+                        ttl = ttls[type];
+                    }
+
                     this.messages.push({type: type, msg: text});
                     if (ttl) {
                         $timeout(function() {
