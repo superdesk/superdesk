@@ -28,7 +28,7 @@ define([
      */
     UserResolver.$inject = ['resource', '$route', 'notify', 'gettext', '$location'];
     function UserResolver(resource, $route, notify, gettext, $location) {
-        return resource.users.getById($route.current.params.id)
+        return resource.users.getById($route.current.params.Id)
             .then(null, function(response) {
                 if (response.status === 404) {
                     $location.path('/users/');
@@ -87,17 +87,21 @@ define([
                         {
                             action: superdesk.ACTION_PREVIEW,
                             type: 'user'
-                        }
+                        },
+                        {action: 'list', type: 'user'}
                     ]
                 })
-                .activity('/users/:id', {
+                .activity('/users/:Id', {
                     label: gettext('Users profile'),
                     priority: 100,
                     controller: require('./controllers/edit'),
                     templateUrl: 'scripts/superdesk-users/views/edit.html',
                     resolve: {
                         user: UserResolver
-                    }
+                    },
+                    filters: [
+                        {action: 'detail', type: 'user'}
+                    ]
                 })
                 .activity('/profile/', {
                     label: gettext('My Profile'),

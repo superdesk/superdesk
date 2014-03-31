@@ -197,6 +197,19 @@ define(['angular', 'lodash'], function(angular, _) {
         function($location, $injector, $q, $timeout, gettext, modal) {
 
         /**
+         * Expand path using given locals, eg. with /users/:Id and locals {Id: 2} returns /users/2
+         *
+         * @param {Object} activity
+         * @param {Object} locals
+         * @returns {string}
+         */
+        function getPath(activity, locals) {
+            return activity.when.replace(/:([a-zA-Z0-9]+)/, function(match, key) {
+                return locals[key] ? locals[key] : match;
+            });
+        }
+
+        /**
          * Start given activity
          *
          * @param {object} activity
@@ -206,9 +219,7 @@ define(['angular', 'lodash'], function(angular, _) {
         this.start = function startActivity(activity, locals) {
             function execute (activity, locals) {
                 if (activity._id[0] === '/') { // trigger route
-                    $location
-                        .path(activity._id)
-                        .search(_.pick(locals.data || {}, '_id'));
+                    $location.path(getPath(activity, locals.data));
                     return $q.when(locals);
                 }
 
