@@ -1,18 +1,17 @@
 <div class="login-screen">
     <div class="login-form-container">
-        
-        <p ng-if="identity.Id && forcedLogout" class="session-error">Your session has expired.<br /> Please log in again.</p>
-        
+
+        <p ng-if="identity.Id" class="session-error">{{ 'Your session has expired.'|translate }}<br />{{ 'Please log in again.'|translate }}</p>
+
         <div class="logo-handler" ng-show="!identity.Avatar">
             <img src="images/superdesk-icon-large.png" alt="Superdesk Logo">
         </div>
 
         <div class="form-handler">
-            <div class="avatar-handler" style="background-image:url('{{ identity.Avatar.href || 'images/avatar_default.png' }}')" ng-show="identity.Avatar">
-            </div>
+            <div class="avatar-handler" style="background-image:url('{{ identity.Avatar.href || 'images/avatar_default.png' }}')" ng-show="identity.Avatar"></div>
             <form name="loginForm" ng-submit="authenticate()">
                 <fieldset class="inputs">
-                    <input type="text" id="login-username" ng-model="username" placeholder="{{ 'username'|translate }}" class="fullwidth-input" required />
+                    <input type="text" id="login-username" ng-model="username" placeholder="{{ 'username'|translate }}" class="fullwidth-input" ng-disabled="identity.Id" required />
                     <input type="password" id="login-password" ng-model="password" placeholder="{{ 'password'|translate }}" class="fullwidth-input login-pass" required />
                 </fieldset>
 
@@ -25,6 +24,8 @@
                         </div>
                     </button>
                 </fieldset>
+
+                <a href="" ng-click="logout()" class="text" ng-show="identity.Id">Sign in as a different user.</a>
             </form>
 
             <div class="error-handler">

@@ -18,9 +18,7 @@ define([
             response: function(response) {
                 if (response.status === 401) {
                     session.expire();
-                    $rootScope.forcedLogout = true;
                     return session.getIdentity().then(function() {
-                        $rootScope.forcedLogout = false;
                         var $http = $injector.get('$http');
                         $http.defaults.headers.common.Authorization = session.token;
                         response.config.headers.Authorization = session.token;
@@ -47,7 +45,7 @@ define([
         function($rootScope, $route, $location, $http, $window, session) {
 
             $rootScope.logout = function() {
-                session.expire();
+                session.clear();
                 $window.location.replace('/'); // reset page for new user
             };
 

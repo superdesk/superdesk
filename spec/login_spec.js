@@ -48,7 +48,7 @@ describe('login', function() {
 
         expect(modal.btn).toBeDisplayed();
         expect(modal.username).toBeDisplayed();
-        expect(modal.username.getAttribute('value')).toBe('john');
+        expect(modal.username.getAttribute('value')).toBe('');
     });
 
     it('should not login with wrong credentials', function() {
