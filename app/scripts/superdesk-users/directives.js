@@ -132,7 +132,8 @@ define([
                 templateUrl: 'scripts/superdesk-users/views/edit-form.html',
                 scope: {
                     origUser: '=user',
-                    onsave: '&'
+                    onsave: '&',
+                    oncancel: '&'
                 },
                 link: function(scope, elem) {
 
@@ -147,6 +148,13 @@ define([
                     scope.$watchCollection('user', function(user) {
                         scope.dirty = !angular.equals(user, scope.origUser);
                     });
+
+                    scope.cancel = function() {
+                        scope.reset(scope.origUser);
+                        if (!scope.origUser.Id) {
+                            scope.oncancel();
+                        }
+                    };
 
                     scope.reset = function(user) {
                         scope.error = null;

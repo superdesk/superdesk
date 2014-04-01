@@ -27,7 +27,7 @@
         <div sd-pagination data-total="users.total + createdUsers.length" data-limit="users.maxResults"></div>
     </div>
 
-    <div class="preview-layout">
+    <div class="preview-layout" ng-class="{closed: !selected.user}">
         <div class="list-pane">
 
             <div class="users-table">
@@ -71,7 +71,7 @@
             </div>
 
             <div sd-user-details-pane ng-if="selected.user">
-                <div id="user-profile-edit" sd-user-edit data-user="selected.user" data-onsave="render(user)"></div>
+                <div id="user-profile-edit" sd-user-edit data-user="selected.user" data-onsave="render(user)" data-oncancel="closePreview()"></div>
             </div>
         </div>
     </div>

@@ -351,8 +351,13 @@
   }
   .action-buttons-main {
     position: absolute;
-    top: -25px;
+    top: -70px;
     right: 12px;
+    .transition(top ease 0.1s);
+    background: #fff;
+    &.show {
+      top: -25px;
+    }
   }
 
   .header-info {
