@@ -13,15 +13,15 @@ define([], function() {
 
                 scope.authenticate = function() {
                     scope.isLoading = true;
+                    scope.loginError = null;
                     auth.login(scope.username || '', scope.password || '')
                         .then(function() {
                             scope.isLoading = false;
-                            scope.loginError = false;
                             scope.password = null;
                         }, function(rejection) {
                             scope.isLoading = false;
                             scope.loginError = rejection.status;
-                            if (scope.loginError) {
+                            if (scope.loginError === 400) {
                                 scope.password = null;
                             }
                         });

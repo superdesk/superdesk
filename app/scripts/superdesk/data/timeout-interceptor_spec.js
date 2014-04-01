@@ -17,7 +17,7 @@ define(['angular', 'superdesk/data/timeout-interceptor'], function(angular, Time
             expect($rootScope.serverStatus).toBe(0);
 
             expect(service.request(config)).toBe(config);
-            expect(config.timeout > 0).toBe(true);
+            expect(config.timeout).toBeTruthy();
 
             service.responseError({
                 status: null,
@@ -43,7 +43,7 @@ define(['angular', 'superdesk/data/timeout-interceptor'], function(angular, Time
             service.request(config);
 
             service.responseError({status: null, config: config});
-            expect(service.responseError({status: 400, config: config}).status).toBe(400);
+            service.responseError({status: 400, config: config});
             expect($rootScope.serverStatus).toBe(0);
         }));
 
