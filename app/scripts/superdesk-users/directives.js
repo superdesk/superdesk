@@ -122,7 +122,7 @@ define([
                 }
             };
         }])
-        .directive('sdUserEdit', ['gettext', 'notify', 'api', '$location', function(gettext, notify, api, $location) {
+        .directive('sdUserEdit', ['gettext', 'notify', 'api', '$location', '$route', function(gettext, notify, api, $location, $route) {
 
             var USERNAME_REGEXP = /^[A-Za-z0-9_.'-]+$/;
             var PHONE_REGEXP = /^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$/;
@@ -178,7 +178,11 @@ define([
                             if (response.status === 400) {
                                 scope.error = response.data;
                             } else if (response.status === 404) {
-                                $location.path('/users/');
+                                if ($location.path() === '/users/') {
+                                    $route.reload();
+                                } else {
+                                    $location.path('/users/');
+                                }
                                 console.error(response);
                                 notify.error(gettext('User is not found. It might be deleted.'));
                             } else {

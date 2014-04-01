@@ -109,6 +109,7 @@ define([
             $provide.service('api', noop);
             $provide.service('notify', noop);
             $provide.service('resource', noop);
+            $provide.service('$route', noop);
         }));
 
         beforeEach(module('superdesk.users.directives'));
