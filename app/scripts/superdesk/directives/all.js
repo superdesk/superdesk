@@ -19,5 +19,6 @@ define([
     './listView',
     './sdDateRange',
     './sdTypeahead',
-    './sdNotifications'
+    './sdNotifications',
+    './image-preview'
 ], function() {});
