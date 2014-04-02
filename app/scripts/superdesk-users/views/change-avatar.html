@@ -6,26 +6,18 @@
     <aside>Here there should be a sidebar with options.</aside>
     <section>
 
-        <div ng-if="">
-            <label>URL</label>
-            <input type="text" ng-model="preview.url">
-        </div>
+        <label>URL</label>
+        <input type="text" ng-model="preview.url">
 
         <label>File</label>
         <input type="file" accept="image/*;capture=camera" ng-model="image" sd-image-preview="preview.url">
 
         <label>Click to capture <small>but first enamble me</small></label>
-
         <video autoplay sd-video-capture="preview.url"
-            style="max-width:300px;max-height:300px"
-            ></video>
+            style="max-width:300px;max-height:300px"></video>
 
-        <div ng-if="preview.url">
-            <label>Preview &amp; Crop</label>
-            <img ng-src="{{ preview.url }}"
-                style="max-width:500px;max-height:500px">
-        </div>
-
+        <div sd-crop data-src="preview.url" data-cords="cords"></div>
+        <pre ng-show="cords">{{ cords }}</pre>
     </section>
 </div>
 <div class="modal-footer">

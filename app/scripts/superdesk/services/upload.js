@@ -1,21 +1,9 @@
-define([
-    'angular',
-    'file-upload/jquery.fileupload-angular'
-], function(angular) {
+define(['angular'], function(angular) {
     'use strict';
 
-    angular.module('superdesk.services')
-        .config(['fileUploadProvider', function(fileUploadProvider) {
-            angular.extend(fileUploadProvider.defaults, {
-                autoUpload: true,
-                url: ServerConfig.url + '/upload',
-                maxFileSize: 5000000,
-                acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i
-            });
-        }])
+    angular.module('superdesk')
         .service('upload', ['$q', '$rootScope', function($q, $rootScope) {
-            function UploadService() {
-                /**
+            function UploadService() {/**
                  * Start upload workflow
                  *
                  * @param {string} base

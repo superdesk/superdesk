@@ -1,11 +1,11 @@
-define(['angular'], function(angular) {
+define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function(angular, _) {
     'use strict';
 
     var URL = window.URL || window.webkitURL;
 
-    angular.module('superdesk')
+    var module = angular.module('superdesk');
 
-    .directive('sdImagePreview', function() {
+    module.directive('sdImagePreview', function() {
         return {
             scope: {
                 sdImagePreview: '='
@@ -27,9 +27,15 @@ define(['angular'], function(angular) {
                 });
             }
         };
-    })
+    });
 
-    .directive('sdVideoCapture', function() {
+    module.directive('sdVideoCapture', function() {
+
+        navigator.getMedia = (navigator.getUserMedia ||
+            navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia ||
+            navigator.msGetUserMedia);
+
         return {
             scope: {
                 sdVideoCapture: '='
@@ -41,16 +47,18 @@ define(['angular'], function(angular) {
 
                 elem.after(canvas);
 
-                navigator.webkitGetUserMedia({
-                    video: {
-                        mandatory: {
-                            minWidth: 500,
-                            minHeight: 500
-                        }
-                    }
+                navigator.getMedia({
+                    video: true,
+                    audio: false
                 }, function(stream) {
-                    elem.attr('src', URL.createObjectURL(stream));
                     localMediaStream = stream;
+                    if (navigator.mozGetUserMedia) {
+                        elem[0].mozSrcObject = stream;
+                    } else {
+                        elem[0].src = URL.createObjectURL(stream);
+                    }
+                }, function(err) {
+                    console.error('There was an error when getting media: ' + err);
                 });
 
                 elem.click(function(e) {
@@ -67,7 +75,47 @@ define(['angular'], function(angular) {
                     try {
                         elem[0].pause();
                         localMediaStream.stop();
-                    } catch(err) {}
+                    } catch (err) {}
+                });
+            }
+        };
+    });
+
+    module.directive('sdCrop', function() {
+        return {
+            scope: {
+                src: '=',
+                cords: '=',
+                width: '@',
+                height: '@'
+            },
+            link: function(scope, elem) {
+
+                var updateScope = _.throttle(function(c) {
+                    scope.$apply(function() {
+                        scope.cords = c;
+                    });
+                }, 300);
+
+                scope.$watch('src', function(src) {
+                    elem.empty();
+
+                    if (src) {
+                        var img = new Image();
+                        img.onload = function() {
+                            $(this).Jcrop({
+                                aspectRatio: 1.0,
+                                minSize: [200, 200],
+                                trueSize: [this.width, this.height],
+                                setSelect: [0, 0, 200, 200],
+                                onChange: updateScope
+                            });
+                        };
+                        $(img).css('max-width', '450px');
+                        $(img).css('max-height', '450px');
+                        elem.append(img);
+                        img.src = src;
+                    }
                 });
             }
         };

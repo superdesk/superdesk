@@ -15,18 +15,8 @@ require.config({
 
         'jquery-ui': 'bower_components/jquery-ui/ui/jquery-ui',
 
-        'file-upload': 'bower_components/blueimp-file-upload/js/',
-        'canvas-to-blob': 'bower_components/blueimp-canvas-to-blob/js/canvas-to-blob',
-        'load-image': 'bower_components/blueimp-load-image/js/load-image',
-        'load-image-meta': 'bower_components/blueimp-load-image/js/load-image-meta',
-        'load-image-exif': 'bower_components/blueimp-load-image/js/load-image-exif',
-        'load-image-ios': 'bower_components/blueimp-load-image/js/load-image-ios',
-        'jquery.ui.widget': 'bower_components/blueimp-file-upload/js/vendor/jquery.ui.widget',
-
         gridster: 'bower_components/gridster/dist/jquery.gridster.with-extras',
         d3: 'bower_components/d3/d3',
-
-        'ng-aloha-editor': 'bower_components/ng-aloha-editor/ng-aloha-editor',
 
         'angular-slider': 'bower_components/angular-slider-royale/angular-slider',
         'bootstrap-daterange': 'bower_components/bootstrap-daterangepicker/daterangepicker'
@@ -77,9 +67,6 @@ require.config({
         },
         d3: {
             exports: 'd3'
-        },
-        'ng-aloha-editor': {
-            deps: ['angular']
         },
         'jquery-ui': {
             deps: ['jquery']
@@ -141,7 +128,6 @@ define([
                 'ngRoute',
                 'ngResource',
                 'ui.bootstrap',
-                'blueimp.fileupload',
 
                 'superdesk',
                 'superdesk.filters',
