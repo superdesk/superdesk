@@ -146,6 +146,11 @@ define([
                     });
 
                     scope.$watchCollection('user', function(user) {
+                        _.each(user, function(value, key) {
+                            if (value === '') {
+                                delete user[key];
+                            }
+                        });
                         scope.dirty = !angular.equals(user, scope.origUser);
                     });
 
