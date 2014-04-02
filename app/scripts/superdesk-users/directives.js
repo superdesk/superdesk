@@ -299,6 +299,10 @@ define([
 
                     ctrl.$parsers.push(testPassword);
                     ctrl.$formatters.push(reset);
+
+                    scope.$watch('password', function(password) {
+                        ctrl.$setValidity(NAME, !password || ctrl.$viewValue === password);
+                    });
                 }
             };
         }])

@@ -129,6 +129,7 @@
               <button type="reset" class="btn btn-small" ng-click="show.password = false" translate>Cancel</button>
               <button type="submit" class="btn btn-info btn-small"
                 ng-click="passwordForm.$valid && changePassword(oldPwd, newPwd)"
+                ng-disabled="passwordForm.$invalid"
                 translate>Save password</button>
             </div>
           </form>
