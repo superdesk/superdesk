@@ -122,7 +122,8 @@ define([
                 }
             };
         }])
-        .directive('sdUserEdit', ['gettext', 'notify', 'api', '$location', '$route', function(gettext, notify, api, $location, $route) {
+        .directive('sdUserEdit', ['gettext', 'notify', 'api', '$location', '$route', 'superdesk',
+        function(gettext, notify, api, $location, $route, superdesk) {
 
             var USERNAME_REGEXP = /^[A-Za-z0-9_.'-]+$/;
             var PHONE_REGEXP = /^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$/;
@@ -159,9 +160,12 @@ define([
                         }
                     };
 
-                                        /**
-                     * save user
-                     */
+                    scope.editPicture = function() {
+                        superdesk.intent('edit', 'avatar', scope.user).then(function(result) {
+                            scope.user.Avatar.href = result.url;
+                        });
+                    };
+
                     scope.save = function() {
                         scope.error = null;
                         notify.info(gettext('saving..'));

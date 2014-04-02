@@ -130,26 +130,17 @@ define(['angular', 'lodash'], function(angular, _) {
                  * Resolve an intent to a single activity
                  */
                 resolve: function(intent) {
-                    var defer = $q.defer(),
-                        activities = findActivities(intent);
+                    var activities = findActivities(intent);
                     switch (activities.length) {
                         case 0:
-                            defer.reject();
-                            break;
+                            return $q.reject();
 
                         case 1:
-                            defer.resolve(activities[0]);
-                            break;
+                            return $q.when(activities[0]);
 
                         default:
-                            chooseActivity(activities).then(function(activity) {
-                                defer.resolve(activity);
-                            }, function() {
-                                defer.reject();
-                            });
+                            return chooseActivity(activities);
                     }
-
-                    return defer.promise;
                 },
 
                 /**
@@ -170,20 +161,9 @@ define(['angular', 'lodash'], function(angular, _) {
                         data: data
                     };
 
-                    var defer = $q.defer();
-                    this.resolve(intent).then(function(activity) {
-                        activityService.start(activity, intent).then(function(res) {
-                            defer.resolve(res);
-                        }, function(err) {
-                            console.error('activity not started', err);
-                            defer.reject();
-                        });
-                    }, function(reason) {
-                        console.info('activity not resolved', reason);
-                        defer.reject();
+                    return this.resolve(intent).then(function(activity) {
+                        return activityService.start(activity, intent);
                     });
-
-                    return defer.promise;
                 },
 
                 data: function(resource, params) {
@@ -194,7 +174,10 @@ define(['angular', 'lodash'], function(angular, _) {
     }]);
 
     module.service('activityService', ['$location', '$injector', '$q', '$timeout', 'gettext', 'modal',
-        function($location, $injector, $q, $timeout, gettext, modal) {
+    function($location, $injector, $q, $timeout, gettext, modal) {
+
+        var activityStack = [];
+        this.activityStack = activityStack;
 
         /**
          * Expand path using given locals, eg. with /users/:Id and locals {Id: 2} returns /users/2
@@ -223,7 +206,13 @@ define(['angular', 'lodash'], function(angular, _) {
                     return $q.when(locals);
                 }
 
-                return $q.when($injector.invoke(activity.controller, {}, locals));
+                if (activity.modal) {
+                    activity.defer = $q.defer();
+                    activityStack.push(activity);
+                    return activity.defer.promise;
+                } else {
+                    return $q.when($injector.invoke(activity.controller, {}, locals));
+                }
             }
 
             if (activity.confirm) {
@@ -380,4 +369,37 @@ define(['angular', 'lodash'], function(angular, _) {
             }
         };
     }]);
+
+    module.directive('sdActivityModal', function(activityService) {
+        return {
+            scope: true,
+            templateUrl: 'scripts/superdesk/views/activity-modal.html',
+            link: function(scope, elem) {
+                scope.stack = activityService.activityStack;
+
+                scope.$watch('stack.length', function(len) {
+                    scope.activity = null;
+                    scope.reject = _.noop;
+                    scope.resolve = _.noop;
+
+                    if (len) {
+                        scope.activity = scope.stack[len - 1];
+
+                        var defer = scope.activity.defer;
+                        defer.promise['finally'](function() {
+                            scope.stack.pop();
+                        });
+
+                        scope.reject = function(reason) {
+                            defer.reject(reason);
+                        };
+
+                        scope.resolve = function(result) {
+                            return defer.resolve(result);
+                        };
+                    }
+                });
+            }
+        };
+    });
 });

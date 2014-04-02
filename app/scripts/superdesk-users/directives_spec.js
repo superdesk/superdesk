@@ -110,6 +110,7 @@ define([
             $provide.service('notify', noop);
             $provide.service('resource', noop);
             $provide.service('$route', noop);
+            $provide.service('superdesk', noop);
         }));
 
         beforeEach(module('superdesk.users.directives'));
