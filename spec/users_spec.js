@@ -81,6 +81,50 @@ describe('users app', function() {
 
     });
 
+    describe('user edit', function() {
+        beforeEach(open('/#/users/2'));
+
+        var buttonSave = element(by.buttonText('Save'));
+        var buttonCancel = element(by.buttonText('Cancel'));
+        var inputFirstName = element(by.model('user.FirstName'));
+        var inputPhoneNumber = element(by.model('user.PhoneNumber'));
+
+        var validationMessages = element.all(by.css('.info-item > .validation-error'));
+
+        it('can enable/disable buttons based on form status', function() {
+            expect(buttonSave.getAttribute('disabled')).toBe('true');
+            expect(buttonCancel.getAttribute('disabled')).toBe('true');
+
+            inputFirstName.sendKeys('a');
+
+            expect(buttonSave.getAttribute('disabled')).toBe(null);
+            expect(buttonCancel.getAttribute('disabled')).toBe(null);
+
+            inputFirstName.clear();
+            inputFirstName.sendKeys('John');
+
+            expect(buttonSave.getAttribute('disabled')).toBe('true');
+            expect(buttonCancel.getAttribute('disabled')).toBe('true');
+        });
+
+        it('can validate fields', function() {
+            expect(validationMessages.get(6).isDisplayed()).toBe(false);
+
+            inputPhoneNumber.clear();
+
+            expect(validationMessages.get(6).isDisplayed()).toBe(false);
+
+            inputPhoneNumber.sendKeys('1234');
+
+            expect(validationMessages.get(6).isDisplayed()).toBe(true);
+
+            inputPhoneNumber.clear();
+            inputPhoneNumber.sendKeys('123456789');
+
+            expect(validationMessages.get(6).isDisplayed()).toBe(false);
+        });
+    });
+
     function bindingValue(binding) {
         return element(by.binding(binding)).getText();
     }
