@@ -1,4 +1,4 @@
-<div class="modal fade in" ng-if="activity">
+<div class="modal fade in {{activity.cssClass}}" ng-if="activity">
     <div class="modal-dialog" ng-controller="activity.controller">
         <div class="modal-content" ng-include="activity.templateUrl"></div>
     </div>

@@ -64,3 +64,63 @@ single uploader
 
 }
 
+/*
+======================================
+user avatar uploader
+======================================
+*/
+.upload-avatar {
+	width: 680px;
+	margin-left: -340px;
+	margin-top: -280px;
+	.modal-body {
+		height: 400px;
+		position: relative;
+	}
+	.sidebar {
+		z-index: 1;
+		ul {
+			margin-top: 50px;
+			li {
+				border-top: 1px solid #ddd;
+				border-right: 1px solid #ddd;
+				padding: 7px 20px;
+				height: 32px;
+				width: @split-modal-sidebar+1;
+				color: #3599b6;
+				font-size: 13px;
+				.box-sizing(border-box);
+				&:last-child {
+					border-bottom: 1px solid #ddd;
+				}
+				&:hover {
+					cursor: pointer;
+					background: #f4f4f4;
+				}
+				&.active {
+					color: #333;
+					border-right: 1px solid #fff;
+					&:hover {
+						background: #fff;
+					}
+				}
+			}
+		}
+	}
+	.main {
+		padding: 20px;
+		overflow: visible;
+		.preview {
+			.original {
+				.box-sizing(border-box);
+				width: auto;
+				height: auto;
+				max-width: 100%;
+				max-height: 80%;
+			}
+		}
+
+	}
+}
+
+

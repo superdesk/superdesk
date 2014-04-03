@@ -134,7 +134,7 @@
 }
 
 /*************************************
-  SPLIT POPUP
+  SPLIT POPUP (right sidebar)
  *************************************/
 /*  
     > used for add/edit task
@@ -189,6 +189,30 @@
     .box-sizing(border-box);
     .box-shadow(inset 2px 1px 5px -2px #ddd);
     overflow: auto;
+  }
+}
+
+/*************************************
+  SPLIT POPUP (left sidebar)
+ *************************************/
+/* 
+/*  
+    > used for upload avatar task
+*/
+
+@split-modal-sidebar : 230px;
+
+.modal-body {
+  .sidebar {
+    position: absolute;
+    top:0; left: 0; bottom: 0;
+    width: @split-modal-sidebar;
+    border-right: 1px solid #ddd;
+  }
+  .main {
+    position: absolute;
+    top:0; right: 0; bottom: 0;
+    left: @split-modal-sidebar;
   }
 }
  

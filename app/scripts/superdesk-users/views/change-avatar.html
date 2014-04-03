@@ -1,31 +1,58 @@
 <div class="modal-header">
-    <button type="button" class="close" ng-click="reject()">&times;</button>
-    <h1>{{ activity.label }}</h1>
+    <h3 class="pull-left">{{ activity.label }}</h3>
+    <button type="button" class="close" ng-click="reject()"><i class="icon-close-small"></i></button>
 </div>
 <div class="modal-body" ng-init="preview.img = null; preview.url = null;">
-    <aside>Here there should be a sidebar with options.</aside>
-    <section>
+    <aside class="sidebar">
+        <ul>
+            <li ng-repeat="source in sources" ng-click="activate($index)" ng-class="{active : source.active}">{{source.title}}</li>
+        </ul>
+    </aside>
+    <section class="main">
 
-        <label>URL</label>
-        <input type="text" ng-model="url" ng-change="preview.url = url">
+        <div class="computer" ng-if="sources[0].active && !preview.url">
+            <label>File</label>
+            <input type="file" accept="image/*;capture=camera"
+                ng-file-select="img = $files[0]"
+                sd-image-preview="preview.url"
+                data-file="img">
 
-        <label>File</label>
-        <input type="file" accept="image/*;capture=camera"
-            ng-file-select="img = $files[0]"
-            sd-image-preview="preview.url"
-            data-file="img">
+            <div ng-file-drop="img = $files[0]"
+                sd-image-preview="preview.url"
+                data-file="img">
+                <h1>Drop it here</h1>
+            </div>
 
-        <div ng-file-drop="img = $files[0]"
-            sd-image-preview="preview.url"
-            data-file="img">
-            <h1>Drop it here</h1>
         </div>
 
-        <label>Click to capture <small>but first enamble me</small></label>
-        <video autoplay sd-video-capture="preview.url"
-            style="max-width:300px;max-height:300px"></video>
+        <div class="camera" ng-if="sources[1].active && !preview.url">
 
-        <div sd-crop data-src="preview.url" data-cords="cords"></div>
+            <label>Click to capture <small>but first enamble me</small></label>
+
+            <video autoplay sd-video-capture="preview.url"
+                style="max-width:300px;max-height:300px"
+                ></video>
+        </div>
+
+        <div class="gravatar" ng-if="sources[2].active && !preview.url">
+            <label>enter your email</label>
+            <input type="text">
+        </div>
+
+        <div class="web" ng-if="sources[3].active && !preview.url">
+            <label>enter web url</label>
+            <input type="text">
+        </div>
+
+        <div class="default" ng-if="sources[4].active && !preview.url">
+            <label>Use default avatar</label>
+        </div>
+
+        <div class="preview" ng-if="preview.url">
+            <label>Make sure you're looking the best</label>
+            <div sd-crop data-src="preview.url" data-cords="cords"></div>
+            <pre ng-show="cords">{{ cords }}</pre>
+        </div>
     </section>
 </div>
 <div class="modal-footer">
