@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="styles/css/custom.css">
     <link rel="stylesheet" href="scripts/bower_components/jcrop/css/jquery.Jcrop.css">
     <!-- endbuild -->
+
+    <script>ServerConfig = {url: '<%= server.url %>'};</script>
+    <script data-main="scripts/main" src="scripts/bower_components/requirejs/require.js"></script>
   </head>
   <body>
     <div sd-menu-wrapper></div>
@@ -26,9 +29,5 @@
     <div class="hard-error" ng-cloak ng-show="serverStatus">
         <div class="alert alert-error" translate>Superdesk is experiencing network connection issues:/</div>
     </div>
-
-    <script>ServerConfig = {url: '<%= server.url %>'};</script>
-    <script data-main="scripts/main" src="scripts/bower_components/requirejs/require.js"></script>
-
   </body>
 </html>

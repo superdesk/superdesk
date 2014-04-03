@@ -1,76 +1,50 @@
 require.config({
     paths: {
+        d3: 'bower_components/d3/d3',
         jquery: 'bower_components/jquery/dist/jquery',
         lodash: 'bower_components/lodash/dist/lodash',
         angular: 'bower_components/angular/angular',
         bootstrap: 'bower_components/bootstrap/dist/js/bootstrap',
+        moment: 'bower_components/momentjs/moment',
+        gridster: 'bower_components/gridster/dist/jquery.gridster.with-extras',
+
         'angular-ui': 'bower_components/angular-bootstrap/ui-bootstrap',
         'angular-resource': 'bower_components/angular-resource/angular-resource',
         'angular-route': 'bower_components/angular-route/angular-route',
         'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext',
         'angular-mocks': 'bower_components/angular-mocks/angular-mocks',
+        'angular-file-upload': 'bower_components/ng-file-upload/angular-file-upload',
+        'angular-slider': 'bower_components/angular-slider-royale/angular-slider',
 
-        moment: 'bower_components/momentjs/moment',
         'moment-timezone': 'bower_components/moment-timezone/moment-timezone',
 
         'jquery-ui': 'bower_components/jquery-ui/ui/jquery-ui',
 
-        gridster: 'bower_components/gridster/dist/jquery.gridster.with-extras',
-        d3: 'bower_components/d3/d3',
-
-        'angular-slider': 'bower_components/angular-slider-royale/angular-slider',
         'bootstrap-daterange': 'bower_components/bootstrap-daterangepicker/daterangepicker'
     },
     shim: {
-        jquery: {
-            exports: 'jQuery'
-        },
-        bootstrap: {
-            deps: ['jquery']
-        },
+        jquery: {exports: 'jQuery'},
+        d3: {exports: 'd3'},
+
         angular: {
             deps: ['jquery'],
             exports: 'angular'
         },
-        'angular-ui': {
-            deps: ['angular', 'bootstrap']
-        },
-        'angular-resource': {
-            deps: ['angular']
-        },
-        'angular-route': {
-            deps: ['angular']
-        },
-        'angular-gettext': {
-            deps: ['angular']
-        },
-        'angular-mocks': {
-            deps: ['angular']
-        },
-        'translations': {
-            deps: ['angular-gettext']
-        },
-        'bootstrap/dropdown': {
-            deps: ['jquery']
-        },
-        'bootstrap/modal': {
-            deps: ['jquery']
-        },
-        'bootstrap_ui': {
-            deps: ['angular']
-        },
-        'restangular': {
-            deps: ['lodash']
-        },
-        'gridster': {
-            deps: ['angular']
-        },
-        d3: {
-            exports: 'd3'
-        },
-        'jquery-ui': {
-            deps: ['jquery']
-        }
+
+        'angular-resource': ['angular'],
+        'angular-route': ['angular'],
+        'angular-gettext': ['angular'],
+        'angular-mocks': ['angular'],
+        'angular-file-upload': ['angular'],
+        'bootstrap_ui': ['angular'],
+        'gridster': ['angular'],
+        'translations': ['angular-gettext'],
+        'angular-ui': ['angular', 'bootstrap'],
+
+        'bootstrap': ['jquery'],
+        'jquery-ui': ['jquery'],
+        'bootstrap/modal': ['jquery'],
+        'bootstrap/dropdown': ['jquery']
     }
 });
 
@@ -100,6 +74,7 @@ define([
     'angular-gettext',
     'angular-resource',
     'angular-mocks',
+    'angular-file-upload',
     'gridster'
 ], function($, _, angular) {
     'use strict';
@@ -128,6 +103,7 @@ define([
                 'ngRoute',
                 'ngResource',
                 'ui.bootstrap',
+                'angularFileUpload',
 
                 'superdesk',
                 'superdesk.filters',
@@ -139,6 +115,7 @@ define([
                 'test'
             ];
 
+            // todo(petr): put somewhere in index.html..
             var apps = [
                 'dashboard',
                 'users',

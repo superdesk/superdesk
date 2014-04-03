@@ -207,9 +207,13 @@ define(['angular', 'lodash'], function(angular, _) {
                 }
 
                 if (activity.modal) {
-                    activity.defer = $q.defer();
-                    activityStack.push(activity);
-                    return activity.defer.promise;
+                    var defer = $q.defer();
+                    activityStack.push({
+                        defer: defer,
+                        activity: activity,
+                        locals: locals
+                    });
+                    return defer.promise;
                 } else {
                     return $q.when($injector.invoke(activity.controller, {}, locals));
                 }
@@ -376,27 +380,24 @@ define(['angular', 'lodash'], function(angular, _) {
             templateUrl: 'scripts/superdesk/views/activity-modal.html',
             link: function(scope, elem) {
                 scope.stack = activityService.activityStack;
-
                 scope.$watch('stack.length', function(len) {
                     scope.activity = null;
-                    scope.reject = _.noop;
-                    scope.resolve = _.noop;
-
                     if (len) {
-                        scope.activity = scope.stack[len - 1];
-
-                        var defer = scope.activity.defer;
-                        defer.promise['finally'](function() {
-                            scope.stack.pop();
-                        });
+                        var config = scope.stack[len - 1];
+                        scope.activity = config.activity;
+                        scope.locals = config.locals;
 
                         scope.reject = function(reason) {
-                            defer.reject(reason);
+                            return config.defer.reject(reason);
                         };
 
                         scope.resolve = function(result) {
-                            return defer.resolve(result);
+                            return config.defer.resolve(result);
                         };
+
+                        config.defer.promise['finally'](function() {
+                            scope.stack.pop();
+                        });
                     }
                 });
             }

@@ -6,23 +6,27 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
     var module = angular.module('superdesk');
 
     module.directive('sdImagePreview', function() {
+        var IS_IMG_REGEXP = /^image\//;
         return {
             scope: {
+                file: '=',
                 sdImagePreview: '='
             },
-            link: function(scope, elem, attrs) {
-                elem.change(function(e) {
-                    if (e.target.files.length) {
-                        var file = e.target.files[0],
-                            fileReader = new FileReader();
+            link: function(scope, elem) {
 
-                        fileReader.onload = function(e) {
-                            scope.$apply(function() {
-                                scope.sdImagePreview = e.target.result;
-                            });
-                        };
+                function updatePreview(e) {
+                    scope.$apply(function() {
+                        scope.sdImagePreview = e.target.result;
+                    });
+                }
 
+                scope.$watch('file', function(file) {
+                    if (file && IS_IMG_REGEXP.test(file.type)) {
+                        var fileReader = new FileReader();
+                        fileReader.onload = updatePreview;
                         fileReader.readAsDataURL(file);
+                    } else if (file) {
+                        console.error('File type is not supported: ' + file.type);
                     }
                 });
             }
@@ -43,7 +47,8 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
             link: function(scope, elem) {
                 var localMediaStream = null,
                     canvas = angular.element('<canvas style="display:none"></canvas>'),
-                    ctx = canvas[0].getContext('2d');
+                    ctx = canvas[0].getContext('2d'),
+                    tooLate = false;
 
                 elem.after(canvas);
 
@@ -51,6 +56,11 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
                     video: true,
                     audio: false
                 }, function(stream) {
+                    if (tooLate) {
+                        stream.stop();
+                        return;
+                    }
+
                     localMediaStream = stream;
                     if (navigator.mozGetUserMedia) {
                         elem[0].mozSrcObject = stream;
@@ -73,6 +83,7 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
 
                 scope.$on('$destroy', function() {
                     try {
+                        tooLate = true;
                         elem[0].pause();
                         localMediaStream.stop();
                     } catch (err) {}
@@ -99,7 +110,6 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
 
                 scope.$watch('src', function(src) {
                     elem.empty();
-
                     if (src) {
                         var img = new Image();
                         img.onload = function() {

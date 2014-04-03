@@ -2,24 +2,32 @@
     <button type="button" class="close" ng-click="reject()">&times;</button>
     <h1>{{ activity.label }}</h1>
 </div>
-<div class="modal-body">
+<div class="modal-body" ng-init="preview.img = null; preview.url = null;">
     <aside>Here there should be a sidebar with options.</aside>
     <section>
 
         <label>URL</label>
-        <input type="text" ng-model="preview.url">
+        <input type="text" ng-model="url" ng-change="preview.url = url">
 
         <label>File</label>
-        <input type="file" accept="image/*;capture=camera" ng-model="image" sd-image-preview="preview.url">
+        <input type="file" accept="image/*;capture=camera"
+            ng-file-select="img = $files[0]"
+            sd-image-preview="preview.url"
+            data-file="img">
+
+        <div ng-file-drop="img = $files[0]"
+            sd-image-preview="preview.url"
+            data-file="img">
+            <h1>Drop it here</h1>
+        </div>
 
         <label>Click to capture <small>but first enamble me</small></label>
         <video autoplay sd-video-capture="preview.url"
             style="max-width:300px;max-height:300px"></video>
 
         <div sd-crop data-src="preview.url" data-cords="cords"></div>
-        <pre ng-show="cords">{{ cords }}</pre>
     </section>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn submit" ng-click="resolve({url: preview.url})">Done</button>
+    <button type="button" class="btn submit" ng-click="upload({url: preview.url, img: img, cords: cords})">Done</button>
 </div>
