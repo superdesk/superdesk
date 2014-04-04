@@ -1,4 +1,4 @@
-describe('users app', function() {
+describe('USERS', function() {
     'use strict';
 
     function login() {
@@ -19,7 +19,7 @@ describe('users app', function() {
         };
     }
 
-    describe('profile', function() {
+    describe('profile:', function() {
 
         beforeEach(open('/#/profile'));
 
@@ -34,7 +34,7 @@ describe('users app', function() {
         });
     });
 
-    describe('users', function() {
+    describe('users list:', function() {
         beforeEach(open('/#/users'));
 
         it('can list users', function() {
@@ -68,7 +68,7 @@ describe('users app', function() {
         });
     });
 
-    describe('user detail', function() {
+    describe('user detail:', function() {
         beforeEach(open('/#/users'));
 
         it('can open user detail', function() {
@@ -81,47 +81,51 @@ describe('users app', function() {
 
     });
 
-    describe('user edit', function() {
+    describe('user edit:', function() {
         beforeEach(open('/#/users/2'));
 
-        var buttonSave = element(by.buttonText('Save'));
-        var buttonCancel = element(by.buttonText('Cancel'));
-        var inputFirstName = element(by.model('user.FirstName'));
-        var inputPhoneNumber = element(by.model('user.PhoneNumber'));
-
-        var validationMessages = element.all(by.css('.info-item > .validation-error'));
-
         it('can enable/disable buttons based on form status', function() {
+            var buttonSave = element(by.buttonText('Save'));
+            var buttonCancel = element(by.buttonText('Cancel'));
+            var inputFirstName = element(by.model('user.FirstName'));
+
             expect(buttonSave.getAttribute('disabled')).toBe('true');
             expect(buttonCancel.getAttribute('disabled')).toBe('true');
 
             inputFirstName.sendKeys('a');
+            expect(inputFirstName.getAttribute('value')).toBe('Johna');
 
             expect(buttonSave.getAttribute('disabled')).toBe(null);
             expect(buttonCancel.getAttribute('disabled')).toBe(null);
 
             inputFirstName.clear();
-            inputFirstName.sendKeys('John');
+            expect(inputFirstName.getAttribute('value')).toBe('John');
 
             expect(buttonSave.getAttribute('disabled')).toBe('true');
             expect(buttonCancel.getAttribute('disabled')).toBe('true');
         });
 
-        it('can validate fields', function() {
-            expect(validationMessages.get(6).isDisplayed()).toBe(false);
+        it('can validate phone number', function() {
+            var input = element(by.model('user.PhoneNumber')),
+                msg = $('[ng-show^="userForm.phone.$error"]'),
+                number = '0123456789';
 
-            inputPhoneNumber.clear();
+            expect(msg.isDisplayed()).toBe(false);
 
-            expect(validationMessages.get(6).isDisplayed()).toBe(false);
+            input.clear();
+            expect(input.getAttribute('value')).toBe(number);
 
-            inputPhoneNumber.sendKeys('1234');
+            expect(msg.isDisplayed()).toBe(false);
 
-            expect(validationMessages.get(6).isDisplayed()).toBe(true);
+            input.sendKeys('1234');
+            expect(input.getAttribute('value')).toBe(number + '1234');
 
-            inputPhoneNumber.clear();
-            inputPhoneNumber.sendKeys('123456789');
+            expect(msg.isDisplayed()).toBe(true);
 
-            expect(validationMessages.get(6).isDisplayed()).toBe(false);
+            input.clear();
+            expect(input.getAttribute('value')).toBe(number);
+
+            expect(msg.isDisplayed()).toBe(false);
         });
     });
 
