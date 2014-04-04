@@ -6,38 +6,34 @@
 <div class="modal-body">
     <aside class="sidebar">
         <ul>
-            <li ng-class="{active: method == 'computer'}"><a href="" ng-click="setMethod('computer')" translate>Upload from Computer</a></li>
-            <li ng-class="{active: method == 'camera'}"><a href="" ng-click="setMethod('camera')" translate>Take a snapshot</a></li>
-            <li ng-class="{active: method == 'web'}"><a href="" ng-click="setMethod('web')" translate>Use Web URL</a></li>
+            <li ng-class="{active: method == 'computer'}" ng-click="setMethod('computer')"><i class="avatar-icon-upload"></i><a href="" translate>Upload from Computer</a><i class="icon-chevron-right"></i></li>
+            <li ng-class="{active: method == 'camera'}" ng-click="setMethod('camera')"><i class="avatar-icon-camera"></i><a href="" translate>Take a snapshot</a><i class="icon-chevron-right"></i></li>
+            <li ng-class="{active: method == 'web'}" ng-click="setMethod('web')"><i class="avatar-icon-web"></i><a href="" translate>Use Web URL</a><i class="icon-chevron-right"></i></li>
         </ul>
     </aside>
     <section class="main">
         <div class="computer" ng-if="method == 'computer' && !preview.url">
-            <label translate>File</label>
-            <input type="file" accept="image/*;capture=camera"
-                ng-file-select="img = $files[0]"
-                sd-image-preview="preview.url"
-                data-file="img">
-
+            
             <div class="dropzone"
                 ng-file-drop="img = $files[0]"
                 sd-image-preview="preview.url"
                 data-file="img">
-                <h1 translate>Drop it here</h1>
+
+                <div class="text" translate>Drop it here</div>
+				
+				<div class="input-holder">
+	                <input type="file" accept="image/*;capture=camera"
+		                ng-file-select="img = $files[0]"
+		                sd-image-preview="preview.url"
+		                data-file="img">
+				</div>
             </div>
 
         </div>
 
         <div class="camera" ng-show="method == 'camera' && !preview.url">
-            <label translate>Click to capture using camera</label>
-            <video autoplay sd-video-capture="preview.url"
-                style="max-width:300px;max-height:300px"
-                ></video>
-        </div>
-
-        <div class="gravatar" ng-if="sources[2].active && !preview.url">
-            <label>enter your email</label>
-            <input type="text">
+            <label translate>Click to capture using camera. Be sure that you allow camera accessibility.</label>
+            <video autoplay sd-video-capture="preview.url"></video>
         </div>
 
         <div class="web" ng-if="method == 'web' && !preview.url">
@@ -47,8 +43,20 @@
 
         <div class="preview" ng-if="preview.url">
             <label translate>Make sure you're looking the best</label>
-            <div sd-crop data-src="preview.url" data-cords="cords"></div>
-            <pre ng-show="cords">{{ cords }}</pre>
+            <div class="crop-area">
+                <div class="original">
+                    <div sd-crop data-src="preview.url" data-cords="cords"></div>
+                </div>
+                <div class="preview">
+                    <div class="preview-large">
+                        <img ng-src="{{preview.url}}" class="preview-target-1">
+                    </div>
+                    <div class="preview-round">
+                        <img ng-src="{{preview.url}}" class="preview-target-2">
+                    </div>
+                </div>
+            </div>
+            
         </div>
     </section>
 </div>

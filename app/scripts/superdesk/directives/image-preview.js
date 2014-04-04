@@ -102,27 +102,45 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
             },
             link: function(scope, elem) {
 
+                var bounds, boundx, boundy;
+
                 var updateScope = _.throttle(function(c) {
                     scope.$apply(function() {
                         scope.cords = c;
+                        var rx = 120 / scope.cords.w;
+                        var ry = 120 / scope.cords.h;
+                        showPreview('.preview-target-1', rx, ry, boundx, boundy, scope.cords.x, scope.cords.y);
+                        showPreview('.preview-target-2', rx / 2, ry / 2, boundx, boundy, scope.cords.x, scope.cords.y);
                     });
                 }, 300);
+
+                function showPreview(e, rx, ry, boundx, boundy, cordx, cordy) {
+                    $(e).css({
+                        width: Math.round(rx * boundx) + 'px',
+                        height: Math.round(ry * boundy) + 'px',
+                        marginLeft: '-' + Math.round(rx * cordx) + 'px',
+                        marginTop: '-' + Math.round(ry * cordy) + 'px'
+                    });
+                }
 
                 scope.$watch('src', function(src) {
                     elem.empty();
                     if (src) {
                         var img = new Image();
                         img.onload = function() {
+
                             $(this).Jcrop({
                                 aspectRatio: 1.0,
                                 minSize: [200, 200],
                                 trueSize: [this.width, this.height],
                                 setSelect: [0, 0, 200, 200],
                                 onChange: updateScope
+                            }, function() {
+                                bounds = this.getBounds();
+                                boundx = bounds[0];
+                                boundy = bounds[1];
                             });
                         };
-                        $(img).css('max-width', '450px');
-                        $(img).css('max-height', '450px');
                         elem.append(img);
                         img.src = src;
                     }
