@@ -15,18 +15,17 @@ define(['lodash', 'superdesk/hashlib'], function(_, hashlib) {
          * @returns {Promise}
          */
         this.save = function(user, data) {
-            _.defaults(data, user);
+            var copy = _.clone(data);
 
-            var newData = _.extend({}, data);
-
-            if (newData.Password) {
-                newData.Password = hashlib.hash(newData.Password);
+            if (copy.Password) {
+                copy.Password = hashlib.hash(copy.Password);
             }
 
-            return resource.save(newData)
+            return resource.save(user, copy)
                 .then(function(updates) {
+                    _.extend(user, data);
                     _.extend(user, updates);
-                    _.extend(data, user);
+                    delete user.Password;
                     return user;
                 });
         };

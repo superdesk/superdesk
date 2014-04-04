@@ -141,9 +141,7 @@ define([
                     scope.phonePattern = PHONE_REGEXP;
                     scope.dirty = false;
 
-                    scope.$watch('origUser', function(user) {
-                        scope.reset(user);
-                    });
+                    scope.$watch('origUser', resetUser);
 
                     scope.$watchCollection('user', function(user) {
                         _.each(user, function(value, key) {
@@ -155,26 +153,19 @@ define([
                     });
 
                     scope.cancel = function() {
-                        scope.reset(scope.origUser);
+                        resetUser(scope.origUser);
                         if (!scope.origUser.Id) {
                             scope.oncancel();
                         }
                     };
 
-                    scope.reset = function(user) {
-                        scope.error = null;
-                        scope.user = angular.copy(user);
-                        scope.confirm = {password: null};
-                        scope.show = {password: false};
-                    };
-
-                    /**
+                                        /**
                      * save user
                      */
                     scope.save = function() {
                         scope.error = null;
                         notify.info(gettext('saving..'));
-                        return api.users.save(scope.origUser, scope.user).then(function() {
+                        return api.users.save(scope.origUser, getDiff(scope.user)).then(function() {
                             notify.pop();
                             notify.success(gettext('user saved.'));
                             scope.onsave({user: scope.origUser});
@@ -188,14 +179,27 @@ define([
                                 } else {
                                     $location.path('/users/');
                                 }
-                                console.error(response);
                                 notify.error(gettext('User is not found. It might be deleted.'));
                             } else {
-                                console.error(response);
                                 notify.error(gettext('Hmm, there was an error when saving user.'));
                             }
                         });
                     };
+
+                    function getDiff(user) {
+                        var diff = {};
+                        _.forOwn(user, function(val, key) {
+                            diff[key] = val;
+                        });
+                        return diff;
+                    }
+
+                    function resetUser(user) {
+                        scope.error = null;
+                        scope.user = _.create(user);
+                        scope.confirm = {password: null};
+                        scope.show = {password: false};
+                    }
                 }
             };
         }])

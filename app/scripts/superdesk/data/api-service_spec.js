@@ -227,6 +227,20 @@ define(['superdesk/data/api-service'], function(APIProvider) {
             expect(user.href).toBe('user_href');
         }));
 
+        it('can create new with diff', inject(function(api, $httpBackend) {
+            var user = {},
+                data = {UserName: 'test'};
+
+            $httpBackend.expectGET('server_url').respond(links);
+            $httpBackend.expectPOST('users_url', data).respond(201, {href: 'user_href'});
+
+            api.http.save(user, data);
+
+            $httpBackend.flush();
+
+            expect(user.UserName).toBe('test');
+        }));
+
         it('can update', inject(function(api, $httpBackend) {
 
             var userData = {href: 'users_url/1', Id: 2, UserName: 'test', Avatar: {href: 'test'}},

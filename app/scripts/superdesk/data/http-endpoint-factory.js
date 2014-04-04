@@ -138,12 +138,11 @@ define([], function() {
          * @returns {Promise}
          */
         HttpEndpoint.prototype.update = function(item, diff) {
-            if (!diff) {
+            if (diff == null) {
                 diff = _.omit(item, function(value, key) {
                     return key === 'href' || key === 'Id' || value.href;
                 });
             }
-
             return http({
                 method: 'PATCH',
                 url: item.href,
@@ -181,7 +180,7 @@ define([], function() {
          * @returns {Promise}
          */
         HttpEndpoint.prototype.save = function(item, diff) {
-            return item.href ? this.update(item, diff) : this.create(item);
+            return item.href ? this.update(item, diff) : this.create(_.extend(item, diff));
         };
 
         /**
