@@ -23,7 +23,7 @@
     "angular": false,
     "define": false,
     "gettext": false,
-    "ServerConfig": false,
+    "Configuration": false,
     "it": false,
     "beforeEach": false,
     "afterEach": false,

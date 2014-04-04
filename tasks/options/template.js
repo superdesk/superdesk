@@ -1,7 +1,12 @@
 module.exports = function(grunt) {
 
     function data(url) {
-        return {data: {server: {url: grunt.option('server') || url}}};
+        return {data: {
+            raven: {
+                dsn: process.env['SUPERDESK_RAVEN_DSN']
+            },
+            server: {url: grunt.option('server') || url}}
+        };
     }
 
     var files = {'<%= distDir %>/index.html': '<%= appDir %>/index.html'};

@@ -29,5 +29,12 @@
     <div class="hard-error" ng-cloak ng-show="serverStatus">
         <div class="alert alert-error" translate>Superdesk is experiencing network connection issues:/</div>
     </div>
+    <script>
+        Configuration = {
+            server: {url: '<%= server.url %>'},
+            raven: {dsn: '<%= raven.dsn %>'}
+        };
+    </script>
+    <script data-main="scripts/main" src="scripts/bower_components/requirejs/require.js"></script>
   </body>
 </html>

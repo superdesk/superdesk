@@ -5,11 +5,10 @@ define([
     'use strict';
 
     angular.module('superdesk.services')
-    .value('config', window.ServerConfig || {url: 'http://localhost'})
     .service('server', ['$q', '$http', 'config', function($q, $http, config) {
         return {
             _makeUrl: function() {
-                var url = config.url;
+                var url = config.server.url;
                 for (var i = 0; i < arguments.length; i++) {
                     url += '/' + arguments[i];
                 }
@@ -18,7 +17,7 @@ define([
             },
 
             _wrapUrl: function(url) {
-                if (config.url.indexOf('https') === 0) {
+                if (config.server.url.indexOf('https') === 0) {
                     return 'https://' + url;
                 } else {
                     return 'http://' + url;

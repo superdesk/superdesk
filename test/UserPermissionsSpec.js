@@ -7,6 +7,10 @@ define([
 ], function(angular) {
     'use strict';
 
+    beforeEach(module(function($provide) {
+        $provide.value('config', {server: {url: 'http://localhost'}});
+    }));
+
     describe('PermissionsService', function() {
         var rootScope, httpBackend, em, permissionsService;
 
@@ -15,10 +19,6 @@ define([
             testResource_2: {write: true},
             testResource_3: {read: true, write: true}
         };
-
-        beforeEach(module(function($provide) {
-            $provide.value('config', {url: 'http://localhost'});
-        }));
 
         beforeEach(function() {
             module('superdesk.services');

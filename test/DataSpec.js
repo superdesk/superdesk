@@ -9,6 +9,10 @@ define([
         module('ngMock');
     });
 
+    beforeEach(module(function($provide) {
+        $provide.value('config', {server: {url: 'http://localhost'}});
+    }));
+
     describe('DataService', function() {
         var DataAdapter, httpBackend;
 

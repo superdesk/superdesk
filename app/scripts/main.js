@@ -20,7 +20,9 @@ require.config({
 
         'jquery-ui': 'bower_components/jquery-ui/ui/jquery-ui',
 
-        'bootstrap-daterange': 'bower_components/bootstrap-daterangepicker/daterangepicker'
+        'bootstrap-daterange': 'bower_components/bootstrap-daterangepicker/daterangepicker',
+        'raven-js': 'bower_components/raven-js/dist/raven',
+        'error-catcher': 'errorCatcher'
     },
     shim: {
         jquery: {exports: 'jQuery'},
@@ -31,6 +33,7 @@ require.config({
             exports: 'angular'
         },
 
+        'raven-js': {exports: 'Raven'},
         'angular-resource': ['angular'],
         'angular-route': ['angular'],
         'angular-gettext': ['angular'],
@@ -59,6 +62,7 @@ require.config({
  * @return {string} unmodified input
  *
  */
+
 function gettext(input)
 {
     'use strict';
@@ -75,17 +79,18 @@ define([
     'angular-resource',
     'angular-mocks',
     'angular-file-upload',
-    'gridster'
+    'gridster',
+    'error-catcher'
 ], function($, _, angular) {
     'use strict';
 
-    angular.module('superdesk', []); // todo replace .filters/.directives/.services with superdesk
+    angular.module('superdesk', ['errorCatcher']); // todo replace .filters/.directives/.services with superdesk
     angular.module('superdesk.filters', []);
     angular.module('superdesk.services', []);
     angular.module('superdesk.directives', []);
     angular.module('test', []); // used for mocking
 
-    angular.module('superdesk').constant('config', {server: ServerConfig});
+    angular.module('superdesk').constant('config', {server: Configuration.server});
 
     angular.element(document).ready(function() {
 
