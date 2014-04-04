@@ -92,13 +92,14 @@ describe('USERS', function() {
             expect(buttonSave.getAttribute('disabled')).toBe('true');
             expect(buttonCancel.getAttribute('disabled')).toBe('true');
 
-            inputFirstName.sendKeys('a');
-            expect(inputFirstName.getAttribute('value')).toBe('Johna');
+            inputFirstName.sendKeys('X');
+            expect(inputFirstName.getAttribute('value')).toBe('JohnX');
 
             expect(buttonSave.getAttribute('disabled')).toBe(null);
             expect(buttonCancel.getAttribute('disabled')).toBe(null);
 
             inputFirstName.clear();
+            inputFirstName.sendKeys('John');
             expect(inputFirstName.getAttribute('value')).toBe('John');
 
             expect(buttonSave.getAttribute('disabled')).toBe('true');

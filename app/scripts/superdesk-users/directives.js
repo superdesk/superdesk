@@ -166,6 +166,7 @@ define([
                         scope.error = null;
                         notify.info(gettext('saving..'));
                         return api.users.save(scope.origUser, getDiff(scope.user)).then(function() {
+                            resetUser(scope.origUser);
                             notify.pop();
                             notify.success(gettext('user saved.'));
                             scope.onsave({user: scope.origUser});

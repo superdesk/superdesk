@@ -35,12 +35,14 @@
 
                 <div sd-info-item>
                   <label for="first-name" translate>first name</label>
-                  <input type="text" name="firstName" id="first-name" ng-model="user.FirstName">
+                  <input type="text" name="firstName" id="first-name" ng-model="user.FirstName" required>
+                  <div ng-show="userForm.firstName.$error.required" sd-valid-error translate>please provide a first name.</div>
                 </div>
 
                 <div sd-info-item>
                   <label for="last-name" translate>last name</label>
-                  <input type="text" name="lastName" id="last-name" ng-model="user.LastName">
+                  <input type="text" name="lastName" id="last-name" ng-model="user.LastName" required>
+                  <div ng-show="userForm.lastName.$error.required" sd-valid-error translate>please provide a last name.</div>
                 </div>
 
                 <div sd-info-item>
