@@ -47,7 +47,7 @@ define(['lodash'], function(_) {
                 };
 
             if (params.q) {
-                criteria.all = params.q + '%';
+                criteria.all = /%/.test(params.q) ? params.q : '%' + params.q + '%';
             }
 
             if (params.page) {
