@@ -165,7 +165,7 @@ define([
                     scope.save = function() {
                         scope.error = null;
                         notify.info(gettext('saving..'));
-                        return api.users.save(scope.origUser, getDiff(scope.user)).then(function() {
+                        return api.users.save(scope.origUser, scope.user).then(function() {
                             resetUser(scope.origUser);
                             notify.pop();
                             notify.success(gettext('user saved.'));
@@ -186,14 +186,6 @@ define([
                             }
                         });
                     };
-
-                    function getDiff(user) {
-                        var diff = {};
-                        _.forOwn(user, function(val, key) {
-                            diff[key] = val;
-                        });
-                        return diff;
-                    }
 
                     function resetUser(user) {
                         scope.error = null;
