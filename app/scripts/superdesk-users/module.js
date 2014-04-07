@@ -29,7 +29,7 @@ define([
      */
     UserResolver.$inject = ['api', '$route', 'notify', 'gettext', '$location'];
     function UserResolver(api, $route, notify, gettext, $location) {
-        return api.users.getById($route.current.params.id)
+        return api.users.getById($route.current.params.Id)
             .then(null, function(response) {
                 if (response.status === 404) {
                     $location.path('/users/');
