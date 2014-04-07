@@ -11,6 +11,10 @@ define([], function() {
             $scope.method = method;
             $scope.preview.url = null;
         };
+
+        $scope.upload = function(config) {
+            return $scope.resolve(config);
+        };
     }
 
     return ChangeAvatarController;
