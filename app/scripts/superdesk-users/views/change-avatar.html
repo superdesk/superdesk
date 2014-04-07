@@ -1,34 +1,35 @@
 <div class="modal-header">
-    <h3 class="pull-left">{{ activity.label }}</h3>
+    <h3 class="pull-left">{{ activity.label|translate }}</h3>
     <button type="button" class="close" ng-click="reject()"><i class="icon-close-small"></i></button>
 </div>
-<div class="modal-body" ng-init="preview.img = null; preview.url = null;">
+
+<div class="modal-body">
     <aside class="sidebar">
         <ul>
-            <li ng-repeat="source in sources" ng-click="activate($index)" ng-class="{active : source.active}">{{source.title}}</li>
+            <li ng-class="{active: method == 'computer'}"><a href="" ng-click="setMethod('computer')" translate>Upload from Computer</a></li>
+            <li ng-class="{active: method == 'camera'}"><a href="" ng-click="setMethod('camera')" translate>Take a snapshot</a></li>
+            <li ng-class="{active: method == 'web'}"><a href="" ng-click="setMethod('web')" translate>Use Web URL</a></li>
         </ul>
     </aside>
     <section class="main">
-
-        <div class="computer" ng-if="sources[0].active && !preview.url">
-            <label>File</label>
+        <div class="computer" ng-if="method == 'computer' && !preview.url">
+            <label translate>File</label>
             <input type="file" accept="image/*;capture=camera"
                 ng-file-select="img = $files[0]"
                 sd-image-preview="preview.url"
                 data-file="img">
 
-            <div ng-file-drop="img = $files[0]"
+            <div class="dropzone"
+                ng-file-drop="img = $files[0]"
                 sd-image-preview="preview.url"
                 data-file="img">
-                <h1>Drop it here</h1>
+                <h1 translate>Drop it here</h1>
             </div>
 
         </div>
 
-        <div class="camera" ng-if="sources[1].active && !preview.url">
-
-            <label>Click to capture <small>but first enamble me</small></label>
-
+        <div class="camera" ng-show="method == 'camera' && !preview.url">
+            <label translate>Click to capture using camera</label>
             <video autoplay sd-video-capture="preview.url"
                 style="max-width:300px;max-height:300px"
                 ></video>
@@ -39,22 +40,19 @@
             <input type="text">
         </div>
 
-        <div class="web" ng-if="sources[3].active && !preview.url">
-            <label>enter web url</label>
-            <input type="text">
-        </div>
-
-        <div class="default" ng-if="sources[4].active && !preview.url">
-            <label>Use default avatar</label>
+        <div class="web" ng-if="method == 'web' && !preview.url">
+            <label translate>Enter web url</label>
+            <input type="url" ng-model="url" ng-change="preview.url = url">
         </div>
 
         <div class="preview" ng-if="preview.url">
-            <label>Make sure you're looking the best</label>
+            <label translate>Make sure you're looking the best</label>
             <div sd-crop data-src="preview.url" data-cords="cords"></div>
             <pre ng-show="cords">{{ cords }}</pre>
         </div>
     </section>
 </div>
+
 <div class="modal-footer">
     <button type="button" class="btn submit" ng-click="upload({url: preview.url, img: img, cords: cords})">Done</button>
 </div>

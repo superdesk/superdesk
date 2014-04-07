@@ -1,4 +1,4 @@
-define(['angular', 'lodash'], function(angular, _) {
+define(['angular', 'lodash', 'require'], function(angular, _, require) {
     'use strict';
 
     var constans = {
@@ -374,10 +374,10 @@ define(['angular', 'lodash'], function(angular, _) {
         };
     }]);
 
-    module.directive('sdActivityModal', function(activityService) {
+    module.directive('sdActivityModal', ['activityService', function(activityService) {
         return {
             scope: true,
-            templateUrl: 'scripts/superdesk/views/activity-modal.html',
+            templateUrl: require.toUrl('../views/activity-modal.html'),
             link: function(scope, elem) {
                 scope.stack = activityService.activityStack;
                 scope.$watch('stack.length', function(len) {
@@ -402,5 +402,5 @@ define(['angular', 'lodash'], function(angular, _) {
                 });
             }
         };
-    });
+    }]);
 });

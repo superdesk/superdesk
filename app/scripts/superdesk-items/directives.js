@@ -3,12 +3,11 @@ define([
     'jquery',
     'angular',
     'moment',
-    'd3',
-    'ng-aloha-editor'
+    'd3'
 ], function(_, $, angular, moment, d3) {
     'use strict';
 
-    angular.module('superdesk.items.directives', ['ngAlohaEditor'])
+    angular.module('superdesk.items.directives', [])
         .directive('sdSearchbar', ['$location', '$routeParams', function($location, $routeParams) {
             return {
                 scope: {
