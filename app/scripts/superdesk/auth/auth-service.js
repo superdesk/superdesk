@@ -24,7 +24,7 @@ define([], function() {
                 .then(function(loginData) {
                     return fetchIdentity(loginData)
                         .then(function(userData) {
-                            session.start(loginData.Session, userData);
+                            session.start(loginData, userData);
                             return session.identity;
                         });
                 });

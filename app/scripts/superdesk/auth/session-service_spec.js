@@ -16,13 +16,13 @@ define(['superdesk/auth/session-service'], function(SessionService) {
         }));
 
         it('can be started', inject(function(session) {
-            session.start('token', {name: 'user'});
+            session.start({Session: 'token'}, {name: 'user'});
             expect(session.token).toBe('token');
             expect(session.identity.name).toBe('user');
         }));
 
         it('can be set expired', inject(function(session) {
-            session.start('token', {name: 'foo'});
+            session.start({Session: 'token'}, {name: 'foo'});
             session.expire();
             expect(session.token).toBe(null);
             expect(session.identity.name).toBe('foo');
@@ -39,14 +39,14 @@ define(['superdesk/auth/session-service'], function(SessionService) {
                 expect(identity).toBe(i2);
             });
 
-            session.start('test', {name: 'foo'});
+            session.start({Session: 'test'}, {name: 'foo'});
 
             $rootScope.$apply();
             expect(identity.name).toBe('foo');
         }));
 
         it('can store state for future requests', inject(function(session, $injector, $rootScope) {
-            session.start('token', {name: 'bar'});
+            session.start({Session: 'token'}, {name: 'bar'});
 
             var nextSession = $injector.instantiate(SessionService);
 
@@ -63,10 +63,15 @@ define(['superdesk/auth/session-service'], function(SessionService) {
         }));
 
         it('can clear session', inject(function(session) {
-            session.start('token', {name: 'bar'});
+            session.start({Session: 'token'}, {name: 'bar'});
             session.clear();
             expect(session.token).toBe(null);
             expect(session.identity).toBe(null);
+        }));
+
+        it('can persist session delete href', inject(function(session) {
+            session.start({Session: 'sess', href: 'test'}, {name: 'bar'});
+            expect(session.getSessionHref()).toBe('test');
         }));
     });
 });

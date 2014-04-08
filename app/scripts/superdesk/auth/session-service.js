@@ -8,6 +8,7 @@ define(['lodash'], function(_) {
     function SessionService($q, $rootScope, storage) {
 
         var TOKEN_KEY = 'sess:id',
+            TOKEN_HREF = 'sess:href',
             IDENTITY_KEY = 'sess:user',
             defer;
 
@@ -27,14 +28,16 @@ define(['lodash'], function(_) {
         /**
          * Start a new session
          *
-         * @param {string} token
+         * @param {object} session
          * @param {object} identity
          */
-        this.start = function(token, identity) {
-            this.token = token;
+        this.start = function(session, identity) {
+            this.token = session.Session;
             this.identity = identity;
 
-            setToken(token);
+            setToken(session.Session);
+            setSessionHref(session.href);
+
             storage.setItem(IDENTITY_KEY, identity);
 
             if (defer) {
@@ -57,7 +60,17 @@ define(['lodash'], function(_) {
         this.clear = function() {
             this.expire();
             this.identity = null;
+            setSessionHref(null);
             storage.removeItem(IDENTITY_KEY);
+        };
+
+        /**
+         * Return session url for delete
+         *
+         * @returns {string}
+         */
+        this.getSessionHref = function() {
+            return localStorage.getItem(TOKEN_HREF);
         };
 
         $rootScope.$watch(getToken, _.bind(function(token) {
@@ -75,6 +88,14 @@ define(['lodash'], function(_) {
                 localStorage.setItem(TOKEN_KEY, token);
             } else {
                 localStorage.removeItem(TOKEN_KEY);
+            }
+        }
+
+        function setSessionHref(href) {
+            if (href) {
+                localStorage.setItem(TOKEN_HREF, href);
+            } else {
+                localStorage.removeItem(TOKEN_HREF);
             }
         }
 

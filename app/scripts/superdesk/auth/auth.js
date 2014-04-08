@@ -57,8 +57,18 @@ define([
         function($rootScope, $route, $location, $http, $window, session) {
 
             $rootScope.logout = function() {
-                session.clear();
-                $window.location.replace('/'); // reset page for new user
+
+                function replace() {
+                    session.clear();
+                    $window.location.replace('/'); // reset page for new user
+                }
+
+                var sessionHref = session.getSessionHref();
+                if (sessionHref) {
+                    $http['delete'](sessionHref).then(replace, replace);
+                } else {
+                    replace();
+                }
             };
 
             // populate current user
