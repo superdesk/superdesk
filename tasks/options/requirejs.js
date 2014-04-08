@@ -1,10 +1,13 @@
+
 module.exports = {
     compile: {
         options: {
-            baseUrl: '<%= appDir %>/scripts',
-            mainConfigFile: '<%= appDir %>/scripts/main.js',
-            out: '<%= distDir %>/scripts/main.js',
+            baseUrl: '<%= appDir %>/scripts/',
+            mainConfigFile: '<%= appDir %>/scripts/config.js',
+
             name: 'main',
+            out: '<%= distDir %>/scripts/main.js',
+
             include: [
                 'main',
                 'superdesk/filters/all',

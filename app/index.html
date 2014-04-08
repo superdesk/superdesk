@@ -7,14 +7,15 @@
     <meta name="viewport" content="width=device-width">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-    <!-- build:css styles/css/main.css -->
+    <!-- build:css styles/css/bootstrap.css -->
     <link rel="stylesheet" href="styles/css/bootstrap.css">
-    <link rel="stylesheet" href="styles/css/custom.css">
-    <link rel="stylesheet" href="scripts/bower_components/jcrop/css/jquery.Jcrop.css">
     <!-- endbuild -->
 
-    <script>ServerConfig = {url: '<%= server.url %>'};</script>
-    <script data-main="scripts/main" src="scripts/bower_components/requirejs/require.js"></script>
+    <!-- build:css styles/css/custom.css -->
+    <link rel="stylesheet" href="styles/css/custom.css">
+    <!-- endbuild -->
+
+    <link rel="stylesheet" href="scripts/bower_components/jcrop/css/jquery.Jcrop.css">
   </head>
   <body>
     <div sd-menu-wrapper></div>
@@ -29,12 +30,24 @@
     <div class="hard-error" ng-cloak ng-show="serverStatus">
         <div class="alert alert-error" translate>Superdesk is experiencing network connection issues:/</div>
     </div>
+
     <script>
         Configuration = {
             server: {url: '<%= server.url %>'},
             raven: {dsn: '<%= raven.dsn %>'}
         };
     </script>
-    <script data-main="scripts/main" src="scripts/bower_components/requirejs/require.js"></script>
+
+    <script src="scripts/bower_components/requirejs/require.js"></script>
+
+    <!-- build:js scripts/config.js -->
+    <script src="scripts/config.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:js scripts/main.js -->
+    <script src="scripts/main.js"></script>
+    <!-- endbuild -->
+
+    <script>require(['main'], function() {});</script>
   </body>
 </html>

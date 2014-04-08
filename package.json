@@ -38,7 +38,9 @@
     "karma-coverage": "~0.2.0",
     "grunt-karma-coveralls": "~2.4.0",
     "protractor": "~0.21.0",
-    "protractor-screenshot-reporter": "~0.0.4"
+    "protractor-screenshot-reporter": "~0.0.4",
+    "grunt-usemin": "^2.1.0",
+    "grunt-filerev": "^0.2.1"
   },
   "scripts": {
     "test": "grunt ci:travis"

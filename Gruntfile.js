@@ -27,7 +27,17 @@ module.exports = function (grunt) {
     grunt.registerTask('server:mock', ['clean', 'less:dev', 'template:mock', 'connect:mock', 'open:mock', 'watch']);
     grunt.registerTask('server:e2e', ['clean', 'less:dev', 'template:mock', 'connect:test']);
 
-    grunt.registerTask('build', ['clean', 'less:prod', 'template:test', 'nggettext_compile', 'requirejs', 'copy:assets']);
+    grunt.registerTask('build', [
+        'clean',
+        'less:prod',
+        'template:test',
+        'nggettext_compile',
+        'requirejs',
+        'copy',
+        'filerev',
+        'usemin'
+    ]);
+
     grunt.registerTask('package', ['ci', 'build']);
     grunt.registerTask('default', ['server']);
 };
