@@ -14,8 +14,8 @@
 
     <section class="main">
 
-        <div class="progress" ng-show="progress.width">
-            <div class="bar progress-bar-stripes" role="progressbar" style="width: {{ progress.width }}%;">{{ progress.width }}%</div>
+        <div class="upload-progress" ng-show="progress.width">
+            <div class="bar" style="width: {{ progress.width }}%;"></div>
         </div>
 
         <div class="computer" ng-if="active.id == 'upload' && !preview.url" ng-hide="progress.width">
