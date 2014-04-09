@@ -55,7 +55,7 @@ define(['angular'], function(angular) {
                 isUpload: true
             }).then(function(response) {
                 console.log(response);
-                return $scope.resolve(response.data);
+                return $scope.resolve(response.data.Avatar);
             }, null, function(update) {
                 $scope.progress.width = Math.round(update.loaded / update.total * 100.0);
             });
