@@ -5,7 +5,7 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
 
     var module = angular.module('superdesk');
 
-    module.directive('sdImagePreview', function() {
+    module.directive('sdImagePreview', ['notify', 'gettext', function(notify, gettext) {
         var IS_IMG_REGEXP = /^image\//;
         return {
             scope: {
@@ -29,12 +29,13 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
                         fileReader.onload = updatePreview;
                         fileReader.readAsDataURL(file);
                     } else if (file) {
-                        console.error('File type is not supported: ' + file.type);
+                        notify.pop();
+                        notify.error(gettext('Sorry, but given file type is not supported.'));
                     }
                 });
             }
         };
-    });
+    }]);
 
     module.directive('sdVideoCapture', function() {
 
@@ -104,7 +105,7 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
         };
     });
 
-    module.directive('sdCrop', function() {
+    module.directive('sdCrop', ['notify', 'gettext', function(notify, gettext) {
         return {
             scope: {
                 src: '=',
@@ -142,6 +143,18 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
                         img.onload = function() {
                             scope.progressWidth = 80;
                             var size = [this.width, this.height];
+
+                            if (this.width < 200 || this.height < 200) {
+                                scope.$apply(function() {
+                                    notify.pop();
+                                    notify.error(gettext('Sorry, but avatar must be at least 200x200 pixels big.'));
+                                    scope.src = null;
+                                    scope.progressWidth = 0;
+                                });
+
+                                return;
+                            }
+
                             elem.append(img);
                             $(this).Jcrop({
                                 aspectRatio: 1.0,
@@ -164,5 +177,5 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
                 });
             }
         };
-    });
+    }]);
 });

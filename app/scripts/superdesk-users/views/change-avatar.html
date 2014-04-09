@@ -12,27 +12,17 @@
         </ul>
     </aside>
 
-    <section class="main">
+    <section class="main" sd-image-preview="preview.url" data-file="preview.img" data-progress-width="progress.width">
 
         <div class="upload-progress" ng-show="progress.width">
             <div class="bar" style="width: {{ progress.width }}%;"></div>
         </div>
 
         <div class="computer" ng-if="active.id == 'upload' && !preview.url" ng-hide="progress.width">
-            <div class="dropzone"
-                ng-file-drop="preview.img = $files[0]"
-                sd-image-preview="preview.url"
-                data-file="preview.img"
-                data-progress-width="progress.width">
-
+            <div class="dropzone" ng-file-drop="preview.img = $files[0]">
                 <div class="text" translate>Drop it here</div>
-				
 				<div class="input-holder">
-	                <input type="file" accept="image/*;capture=camera"
-		                ng-file-select="preview.img = $files[0]"
-		                sd-image-preview="preview.url"
-		                data-file="preview.img"
-                        data-progress-width="progress.width">
+	                <input type="file" accept="image/*;capture=camera" ng-file-select="preview.img = $files[0]">
 				</div>
             </div>
         </div>
