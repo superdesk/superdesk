@@ -1,19 +1,64 @@
-define([], function() {
+define(['angular'], function(angular) {
     'use strict';
 
-    ChangeAvatarController.$inject = ['$scope'];
-    function ChangeAvatarController($scope) {
+    function getJson(data) {
+        return new Blob([angular.toJson(data)], {type: 'application/json'});
+    }
 
-        $scope.method = 'computer';
-        $scope.preview = {url: null};
+    function getCords(c) {
+        return {
+            CropLeft: Math.round(Math.min(c.x, c.x2)),
+            CropRight: Math.round(Math.max(c.x, c.x2)),
+            CropTop: Math.round(Math.max(c.y, c.y2)),
+            CropBottom: Math.round(Math.min(c.y, c.y2))
+        };
+    }
 
-        $scope.setMethod = function(method) {
-            $scope.method = method;
-            $scope.preview.url = null;
+    ChangeAvatarController.$inject = ['$scope', '$upload'];
+    function ChangeAvatarController($scope, $upload) {
+
+        $scope.progress = {width: 0};
+
+        $scope.methods = [
+            {id: 'upload', label: gettext('Upload from computer')},
+            {id: 'camera', label: gettext('Take a picture')},
+            {id: 'web', label: gettext('Use a Web URL')}
+        ];
+
+        $scope.activate = function(method) {
+            $scope.active = method;
+            $scope.preview = {};
         };
 
+        $scope.activate($scope.methods[0]);
+
         $scope.upload = function(config) {
-            return $scope.resolve(config);
+            var form = new FormData(),
+                data = getCords(config.cords);
+
+            if (config.img) {
+                form.append('model', getJson(data));
+                form.append('file', config.img);
+            } else if (config.url) {
+                data.URL = config.url;
+                form.append('model', getJson(data));
+            } else {
+                return;
+            }
+
+            return $upload.http({
+                url: $scope.locals.data.UserAvatar.href,
+                method: 'PUT',
+                data: form,
+                headers: {'Content-Type': undefined, 'X-Filter': 'Avatar.*'},
+                transformRequest: angular.identity,
+                isUpload: true
+            }).then(function(response) {
+                console.log(response);
+                return $scope.resolve(response.data);
+            }, null, function(update) {
+                $scope.progress.width = Math.round(update.loaded / update.total * 100.0);
+            });
         };
     }
 

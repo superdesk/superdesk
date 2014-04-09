@@ -25,7 +25,7 @@ define([], function() {
 
             // set timeout for every request
             request: function(config) {
-                if (!IS_VIEW_REGEXP.test(config.url)) {
+                if (!IS_VIEW_REGEXP.test(config.url) && !config.isUpload) {
                     config._ttl = config._ttl ? Math.min(TIMEOUT_MAX, config._ttl * 2) : TIMEOUT;
                     config.timeout = $timeout(noop, config._ttl);
                 }

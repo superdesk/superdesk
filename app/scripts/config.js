@@ -16,6 +16,7 @@ require.config({
         'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext',
         'angular-mocks': 'bower_components/angular-mocks/angular-mocks',
         'angular-file-upload': 'bower_components/ng-file-upload/angular-file-upload',
+        'angular-file-upload-shim': 'bower_components/ng-file-upload/angular-file-upload-shim',
         'angular-slider': 'bower_components/angular-slider-royale/angular-slider',
 
         'moment-timezone': 'bower_components/moment-timezone/moment-timezone',
@@ -40,7 +41,7 @@ require.config({
         'angular-route': ['angular'],
         'angular-gettext': ['angular'],
         'angular-mocks': ['angular'],
-        'angular-file-upload': ['angular'],
+        'angular-file-upload': ['angular', 'angular-file-upload-shim'],
         'bootstrap_ui': ['angular'],
         'gridster': ['angular'],
         'translations': ['angular-gettext'],

@@ -10,18 +10,21 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
         return {
             scope: {
                 file: '=',
-                sdImagePreview: '='
+                sdImagePreview: '=',
+                progressWidth: '='
             },
             link: function(scope, elem) {
 
                 function updatePreview(e) {
                     scope.$apply(function() {
                         scope.sdImagePreview = e.target.result;
+                        scope.progressWidth = 50;
                     });
                 }
 
                 scope.$watch('file', function(file) {
                     if (file && IS_IMG_REGEXP.test(file.type)) {
+                        scope.progressWidth = 30; // will continue in sd-crop
                         var fileReader = new FileReader();
                         fileReader.onload = updatePreview;
                         fileReader.readAsDataURL(file);
@@ -35,6 +38,8 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
 
     module.directive('sdVideoCapture', function() {
 
+        var DATA_URL_REGEXP = /^data:([a-z\/]+);(base64,)?(.*)$/;
+
         navigator.getMedia = (navigator.getUserMedia ||
             navigator.webkitGetUserMedia ||
             navigator.mozGetUserMedia ||
@@ -42,7 +47,8 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
 
         return {
             scope: {
-                sdVideoCapture: '='
+                sdVideoCapture: '=',
+                file: '='
             },
             link: function(scope, elem) {
                 var localMediaStream = null,
@@ -76,8 +82,14 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
                     canvas[0].width = img.videoWidth;
                     canvas[0].height = img.videoHeight;
                     ctx.drawImage(img, 0, 0);
+
+                    // todo(petr): use canvas.toBlog once available in chrome
                     scope.$apply(function() {
-                        scope.sdVideoCapture = canvas[0].toDataURL('image/webp');
+                        scope.sdVideoCapture = canvas[0].toDataURL('image/jpeg', 0.95);
+                        var matches = DATA_URL_REGEXP.exec(scope.sdVideoCapture);
+                        if (matches.length === 4) {
+                            scope.file = new Blob([atob(matches[3])], {type: matches[1]});
+                        }
                     });
                 });
 
@@ -97,8 +109,7 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
             scope: {
                 src: '=',
                 cords: '=',
-                width: '@',
-                height: '@'
+                progressWidth: '='
             },
             link: function(scope, elem) {
 
@@ -126,22 +137,28 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
                 scope.$watch('src', function(src) {
                     elem.empty();
                     if (src) {
+                        console.time('img');
                         var img = new Image();
                         img.onload = function() {
-
+                            scope.progressWidth = 80;
+                            var size = [this.width, this.height];
+                            elem.append(img);
                             $(this).Jcrop({
                                 aspectRatio: 1.0,
                                 minSize: [200, 200],
-                                trueSize: [this.width, this.height],
-                                setSelect: [0, 0, 200, 200],
+                                trueSize: size,
+                                boxWidth: 300,
+                                boxHeight: 225,
+                                setSelect: [0, 0, Math.min.apply(size), Math.min.apply(size)],
+                                allowSelect: false,
                                 onChange: updateScope
                             }, function() {
                                 bounds = this.getBounds();
                                 boundx = bounds[0];
                                 boundy = bounds[1];
                             });
+                            scope.progressWidth = 0;
                         };
-                        elem.append(img);
                         img.src = src;
                     }
                 });
