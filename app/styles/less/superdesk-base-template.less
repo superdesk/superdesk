@@ -586,6 +586,7 @@ body {
 	position: absolute;
 	top: 0; right: 0;
 	left: 0; bottom: 0;
+	.transition(right ease 0.2s);
 	.list-pane {
 		position:absolute;
 		background: @background-main;
@@ -609,6 +610,7 @@ body {
 		.transition(right ease 0.2s);
 	}
 	&.closed {
+		.transition(right ease 0.2s);
 		.list-pane {
 			right: 0;
 			border-right: 0;

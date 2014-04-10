@@ -1,4 +1,4 @@
-<div class="user-details-content user-profile user-profile-edit">
+<div class="user-profile-edit">
 <form name="userForm" ng-submit="userForm.$valid && save()">
 
   <div>
@@ -47,7 +47,7 @@
 
                 <div sd-info-item>
                   <label for="username" translate>username</label>
-                  <input type="text" name="userName" id="username" class="info-value info-editable"
+                  <input type="text" name="userName" id="username"
                     ng-model="user.UserName"
                     ng-readonly="user.Id"
                     ng-pattern="usernamePattern"
