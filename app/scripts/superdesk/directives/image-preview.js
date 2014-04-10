@@ -2,7 +2,6 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
     'use strict';
 
     var URL = window.URL || window.webkitURL;
-
     var module = angular.module('superdesk');
 
     module.directive('sdImagePreview', ['notify', 'gettext', function(notify, gettext) {
@@ -38,8 +37,6 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
     }]);
 
     module.directive('sdVideoCapture', function() {
-
-        var DATA_URL_REGEXP = /^data:([a-z\/]+);(base64,)?(.*)$/;
 
         navigator.getMedia = (navigator.getUserMedia ||
             navigator.webkitGetUserMedia ||
@@ -87,10 +84,6 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
                     // todo(petr): use canvas.toBlog once available in chrome
                     scope.$apply(function() {
                         scope.sdVideoCapture = canvas[0].toDataURL('image/jpeg', 0.95);
-                        var matches = DATA_URL_REGEXP.exec(scope.sdVideoCapture);
-                        if (matches.length === 4) {
-                            scope.file = new Blob([atob(matches[3])], {type: matches[1]});
-                        }
                     });
                 });
 
@@ -138,7 +131,6 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
                 scope.$watch('src', function(src) {
                     elem.empty();
                     if (src) {
-                        console.time('img');
                         var img = new Image();
                         img.onload = function() {
                             scope.progressWidth = 80;
@@ -156,7 +148,7 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
                             }
 
                             elem.append(img);
-                            $(this).Jcrop({
+                            $(img).Jcrop({
                                 aspectRatio: 1.0,
                                 minSize: [200, 200],
                                 trueSize: size,

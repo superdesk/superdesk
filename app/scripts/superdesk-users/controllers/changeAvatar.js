@@ -17,8 +17,6 @@ define(['angular'], function(angular) {
     ChangeAvatarController.$inject = ['$scope', '$upload', 'session'];
     function ChangeAvatarController($scope, $upload, session) {
 
-        $scope.progress = {width: 0};
-
         $scope.methods = [
             {id: 'upload', label: gettext('Upload from computer')},
             {id: 'camera', label: gettext('Take a picture')},
@@ -28,6 +26,7 @@ define(['angular'], function(angular) {
         $scope.activate = function(method) {
             $scope.active = method;
             $scope.preview = {};
+            $scope.progress = {width: 0};
         };
 
         $scope.activate($scope.methods[0]);
