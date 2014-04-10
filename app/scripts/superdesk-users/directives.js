@@ -162,7 +162,7 @@ define([
 
                     scope.editPicture = function() {
                         superdesk.intent('edit', 'avatar', scope.user).then(function(avatar) {
-                            scope.user.Avatar = avatar;
+                            scope.user.Avatar.href = avatar.href; // prevent replacing Avatar which would get into diff
                         });
                     };
 
