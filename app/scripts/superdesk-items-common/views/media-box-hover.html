@@ -1,0 +1,70 @@
+<div class="media-box media-box-hover media-{{selectedItem.item.type}} urgency-{{ selectedItem.item.urgency }}"
+    ng-class="{selected: selectedItem.item.selected, archived : (selectedItem.item.archived!=null&&actions.archive)}"
+    ng-style="selectedItem.position"
+    ng-show="selectedItem.item"
+    ng-mouseleave="selectedItem.item = null" >
+
+    <div class="loading-status" ng-show="!selectedItem.item.archived && selectedItem.item.archiving"></div>
+    
+    <div class="media-select">
+        <div sd-check ng-model="selectedItem.item.selected"></div>
+    </div>
+
+    <div class="drag-fake"></div>
+    <a href="#/ingest/{{ selectedItem.item._id }}" sd-with-params>
+        <figure class="media" ng-show="selectedItem.item.renditions.thumbnail">
+            <img ng-src="{{ selectedItem.item.renditions.thumbnail.href }}" alt="" title="{{ selectedItem.item.description }}" />
+            <figcaption class="caption">{{ selectedItem.item.creditline }}</figcaption>
+        </figure>
+
+        <div class="media" ng-show="selectedItem.item.type == 'text' || selectedItem.item.type == 'composite'">
+            <small title="{{ selectedItem.item.headline }}">{{ selectedItem.item.headline }}</small>
+        </div>
+
+        <div class="media"  
+             ng-show="selectedItem.item.type == 'audio' || 
+                      selectedItem.item.type == 'video'">
+            <i class="filetype-icon-large-{{ selectedItem.item.type}}"></i>
+        </div>
+
+        <div class="media-box-content">
+            <div class="media-info" >
+                <h5 ng-show="selectedItem.item.slugline">{{ selectedItem.item.slugline }}</h5>
+                <h5 ng-show="!selectedItem.item.slugline">{{ selectedItem.item.type }}</h5>
+                <dl class="clearfix">
+
+                    <dt class="source"></dt>
+                    <dd class="provider">{{ selectedItem.item.provider }}</dd>
+
+                    <dt translate>created</dt>
+                    <dd><time datetime="{{ selectedItem.item.firstcreated }}" title="{{ selectedItem.item.firstcreated|date:'medium' }}">{{ selectedItem.item.firstcreated|reldate }}</time></dd>
+
+                    <dt translate ng-show="selectedItem.item.subject">subject</dt>
+                    <dd ng-show="selectedItem.item.subject" class="subject-line" popover="{{ selectedItem.item.subject | mergeWords }}" popover-placement="right" popover-trigger="mouseenter">
+                        {{ selectedItem.item.subject | mergeWords }}
+                    </dd>
+                </dl>
+            </div>
+
+            <div class="status-label" 
+                 ng-class="{'label-canceled' : selectedItem.item.pubstatus=='canceled'}"
+                 ng-show="selectedItem.item.pubstatus  && selectedItem.item.pubstatus!='usable'">
+                 {{ selectedItem.item.pubstatus | translate }}
+            </div>
+
+            <span class="type-icon"><i class="filetype-icon-{{selectedItem.item.type}}"></i></span>
+            <span class="urgency-label">{{ selectedItem.item.urgency }}</span>
+
+        </div>
+    </a>
+
+    <div class="item-functions">
+        <a class="thumb-field" href="#/ingest/{{ selectedItem.item._id }}" sd-with-params ng-show="actions.preview" tooltip-placement="bottom" tooltip="{{ 'preview' | translate }}" ><i class="icon-eye-open"></i></a>
+        <a class="thumb-field" ng-click="archive(selectedItem.item)" ng-show="actions.archive && !selectedItem.item.archived" tooltip-placement="bottom" tooltip="{{ 'archive' | translate }}"><i class="icon-archive"></i></a>
+        <a class="thumb-field disabled" ng-show="actions.archive && selectedItem.item.archived" tooltip-placement="bottom" tooltip="{{ 'already in Archive' | translate }}"><i class="icon-archive"></i></a>
+
+        <a class="thumb-field"><i class="icon-dots"></i></a>
+    </div>
+
+    
+</div>

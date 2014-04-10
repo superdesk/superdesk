@@ -10,6 +10,7 @@ define(['lodash'], function(_) {
         function MockCursor(data) {
             this.total = data.length;
             this._items = data;
+            this.collection = data;
         }
 
         /**

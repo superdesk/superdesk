@@ -65,7 +65,7 @@ define(['angular', 'lodash'], function(angular, _) {
                         $location.search('_id', item ? item._id : null);
                     };
 
-                    scope.$watch('adapter._items', function(items) {
+                    scope.$watch('adapter.collection', function(items) {
                         scope.items = items;
                         fetchSelectedItem($location.search()._id);
                         elem.find('.list-view').focus();

@@ -259,7 +259,8 @@ define(['angular', 'lodash', 'require'], function(angular, _, require) {
                 };
 
                 if (!scope.type) { // guess item type by self href
-                    intent.type = scope.data._links.self.href.split('/')[1];
+                    //intent.type = scope.data._links.self.href.split('/')[1];
+                    intent.type = scope.data.href.split('/')[1];
                 } else {
                     intent.type = scope.type;
                 }

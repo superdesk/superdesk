@@ -66,7 +66,7 @@ define('main', [
             'superdesk/data/data',
             'superdesk/datetime/datetime',
             'superdesk/error/error',
-            'superdesk/filters/all',
+            'superdesk/filters',
             'superdesk/services/all',
             'superdesk/directives/all'
         ], function() {
