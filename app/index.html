@@ -48,6 +48,8 @@
     <script src="scripts/main.js"></script>
     <!-- endbuild -->
 
-    <script>require(['main'], function() {});</script>
+    <script>require(['main'], function(bootstrap) {
+        bootstrap(['dashboard', 'users', 'planning']);
+    });</script>
   </body>
 </html>

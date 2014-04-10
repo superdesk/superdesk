@@ -37,11 +37,9 @@ define('main', [
     angular.module('superdesk.services', []);
     angular.module('superdesk.directives', []);
     angular.module('test', []); // used for mocking
-
     angular.module('superdesk').constant('config', {server: Configuration.server});
 
-    angular.element(document).ready(function() {
-
+    return function bootstrap(apps) {
         // load core components
         require([
             'superdesk/auth/auth',
@@ -68,18 +66,6 @@ define('main', [
                 'test'
             ];
 
-            // todo(petr): put somewhere in index.html..
-            var apps = [
-                'dashboard',
-                'users',
-                'planning'
-                //'settings',
-                //'desks',
-                //'archive',
-                //'items',
-                //'scratchpad',
-            ];
-
             var deps = [];
             angular.forEach(apps, function(app) {
                 deps.push('superdesk-' + app + '/module');
@@ -89,8 +75,10 @@ define('main', [
             // load apps
             require(deps, function() {
                 var body = angular.element('body');
-                angular.bootstrap(body, modules);
+                body.ready(function() {
+                    angular.bootstrap(body, modules);
+                });
             });
         });
-    });
+    };
 });
