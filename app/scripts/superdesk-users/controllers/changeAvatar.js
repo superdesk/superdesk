@@ -14,8 +14,8 @@ define(['angular'], function(angular) {
         };
     }
 
-    ChangeAvatarController.$inject = ['$scope', '$upload'];
-    function ChangeAvatarController($scope, $upload) {
+    ChangeAvatarController.$inject = ['$scope', '$upload', 'session'];
+    function ChangeAvatarController($scope, $upload, session) {
 
         $scope.progress = {width: 0};
 
@@ -54,8 +54,9 @@ define(['angular'], function(angular) {
                 transformRequest: angular.identity,
                 isUpload: true
             }).then(function(response) {
-                if ($scope.currentUser) {
-                    $scope.currentUser.Avatar = response.data.Avatar;
+
+                if ($scope.locals.data.Id === session.identity.Id) {
+                    session.updateIdentity({Avatar: response.data.Avatar});
                 }
 
                 return $scope.resolve(response.data.Avatar);

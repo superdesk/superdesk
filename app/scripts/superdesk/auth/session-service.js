@@ -26,6 +26,18 @@ define(['lodash'], function(_) {
         };
 
         /**
+         * Update identity
+         *
+         * @param {object} updates
+         * @returns {object} identity
+         */
+        this.updateIdentity = function(updates) {
+            this.identity = this.identity || {};
+            _.extend(this.identity, updates);
+            storage.setItem(IDENTITY_KEY, this.identity);
+        };
+
+        /**
          * Start a new session
          *
          * @param {object} session
@@ -33,12 +45,11 @@ define(['lodash'], function(_) {
          */
         this.start = function(session, identity) {
             this.token = session.Session;
-            this.identity = identity;
-
             setToken(session.Session);
             setSessionHref(session.href);
 
-            storage.setItem(IDENTITY_KEY, identity);
+            this.identity = null;
+            this.updateIdentity(identity);
 
             if (defer) {
                 defer.resolve(identity);
