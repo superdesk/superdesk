@@ -131,7 +131,8 @@
   background-image: none;
   background-color: darken(@white, 10%);
   .opacity(65);
-  .box-shadow(none);
+  @shadow: inset 0 0 0 #000, 0 0 0 0 #000;
+  .box-shadow(@shadow) !important;
 }
 
 

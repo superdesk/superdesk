@@ -1,5 +1,5 @@
 //theme
-@background-main:     #f8f8f8;
+@background-main: #f8f8f8;
 
 //positioning
 @topspace : 40px;
@@ -13,6 +13,7 @@
 @tablist-width : 48px;
 @tablist-background:  #a1a1a1;
 
+@sd-color-blue: #5ea9c8;
 
 
 body {
@@ -251,14 +252,14 @@ body {
   		text-decoration: none !important;
 
   		&.navbtn-info {
-  			background: #5ea9c8;
+  			background: @sd-color-blue;
   			color: #fff;
   		}
 
   		&:hover {
   			background: #e0e0e0;
   			&.navbtn-info {
-	  			background:  lighten(#5ea9c8, 5%);
+	  			background:  lighten(@sd-color-blue, 5%);
 	  		}
   		}
 
@@ -519,67 +520,10 @@ body {
 	}
 }
 
-/*
-//used for liveblog side tabs
-.side-tab-container {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	width: 60px;
-	left: 0;
-	background:#8f8f8f;
-	.box-shadow(inset -4px 0 8px rgba(0, 0, 0, .1));
-	overflow: hidden;
-
-	.nav-tabs {
-		top:0px; 
-	}
-
-	.tabmove {
-		position: absolute;
-		left:0;
-		width: 60px;
-		height: 35px;
-		text-align: center;
-		padding: 10px 0;
-		.box-sizing(border-box);
-		background: #282828;
-		z-index: 1001;
-		display: none;
-		-webkit-touch-callout: none;
-		-webkit-user-select: none;
-		-khtml-user-select: none;
-		-moz-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
-		&.tabmove-up {
-			top:0;
-		}
-		&.tabmove-down {
-			bottom:0;
-		}
-		&:hover {
-			cursor: pointer;
-			background: #000;
-		}
-	}
-
-	&.compact-tabs {
-		.tabmove {
-			display: block;
-		}
-		.nav-tabs {
-			top:35px; 
-		}
-	}
-}
-*/
-
 
 
 /* layouts */
 
-/**/
 
 @sidepreview-width : 440px;
 .preview-layout {

@@ -544,7 +544,7 @@
 		top: 170px;
 	}
 	bottom: 0;
-	background: #f8f8f8;
+	background: @background-main;
 	.title {
 		background: #fff;
 		font-size: 16px;
@@ -610,7 +610,7 @@ Profile page styles
   top: 0;
   bottom: 0;
   padding: 30px 40px 0;
-  background-color: #f8f8f8;
+  background-color: @background-main;
   overflow-x: hidden;
   overflow-y: auto;
 
@@ -619,7 +619,7 @@ Profile page styles
       border-left:0
     }
   &::-webkit-scrollbar-thumb {
-    border-right: 2px solid #f8f8f8;
+    border-right: 2px solid @background-main;
     border-left: 0;
   }
 
@@ -652,13 +652,13 @@ Profile page styles
     }
   }
   ::-webkit-scrollbar {
-    border-left: 9px solid #f8f8f8;
-    border-right: 1px solid #f8f8f8;
+    border-left: 9px solid @background-main;
+    border-right: 1px solid @background-main;
     width: 13px;
-    background: #f8f8f8;
+    background: @background-main;
   }
   ::-webkit-scrollbar-thumb {
-    border-left: 8px solid #f8f8f8;
+    border-left: 8px solid @background-main;
   }
 }
 
@@ -685,7 +685,7 @@ Profile page styles
 		position: absolute;
 		top: 0; left: 500px; bottom: 0; right: 0;
 		z-index: 1;
-		background: #f8f8f8;
+		background: @background-main;
 
 		.tablist-container {
 			width: 100%;
@@ -701,7 +701,7 @@ Profile page styles
 				border-right: 1px solid #dfdfdf;
 				color: #218baa;
 				&.active {
-					background: #f8f8f8;
+					background: @background-main;
 				}
 			}
 		}
@@ -715,17 +715,14 @@ Profile page styles
 				left: 0;
 				background: none;
 				.activity.with-date .date span {
-					background-color: #f8f8f8 !important;
+					background-color: @background-main !important;
 				}
 			}
 		}
 	}
 }
 
-
-//activivty log styles
-
-.activity-log {
+.activity-log { 	//activivty log styles
   margin-top: 10px;
   ul {
     margin:0;
@@ -784,7 +781,7 @@ Profile page styles
               margin-top: -10px;
               display: block;
               float: left;
-              background: #f8f8f8;
+              background: @background-main;
               padding-right: 5px;
             }
           } 

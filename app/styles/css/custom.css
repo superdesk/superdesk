@@ -1,35 +1,9 @@
 @charset "utf-8";
 /* CSS Document */
 
-
-	body > header {
-		color:#fff;
-		z-index:2000;
-		}
-	body > section {
-		position:relative;
-		top:105px;
-		padding: 10px 20px 20px;
-		margin:0;
-		}
-	body > section.scroller {top:105px;}
-		body > section > header {
-			padding: 7px 20px 7px;
-			margin: -10px -20px 20px -20px;
-			background-color:#fafafa;
-			border-bottom: 1px solid #ddd;
-			}
-.help-block,
-.help-inline {
-  color: #7b7b7b;
-}
-
 a.close {
 	color: #a0a0a0 !important;
 }
-	
-
-
 
 .dropdown-simple > a {
 	padding:1px 4px 0;
@@ -42,29 +16,7 @@ a.close {
 	}
 	.dropdown-simple a .caret{
 		margin-top:6px;
-		}
-
-.alert form {
-	margin-bottom:0;
 	}
-.alert p {
-	margin-bottom:4px;
-	}
-.alert.alert-info label {
-	color:#3A87AD;
-	}
-
-footer {
-	text-align:center;
-	padding:10px 0 0 20px;
-	font-size:11px;
-	color:#999;
-	margin:0;
-	border-top:1px solid #f2f2f2;
-	}
-	footer a, footer a:hover {
-		}
-
 
 .tooltip-inner {
 	max-width: 200px;
