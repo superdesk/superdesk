@@ -11,11 +11,12 @@ module.exports = function (grunt) {
         livereloadPort: 35729
     };
 
+    grunt.initConfig(config);
+
     require('load-grunt-tasks')(grunt);
     require('load-grunt-config')(grunt, {
         config: config,
-        configPath: require('path').join(process.cwd(), 'tasks', 'options'),
-        init: true
+        configPath: require('path').join(process.cwd(), 'tasks', 'options')
     });
 
     grunt.registerTask('test', ['karma:unit']);
