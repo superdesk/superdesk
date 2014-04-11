@@ -15,7 +15,7 @@ module.exports = function(grunt) {
 
     var include = [
         'main',
-        'superdesk/filters/all',
+        'superdesk/filters',
         'superdesk/services/all',
         'superdesk/directives/all',
         'superdesk/auth/auth',
