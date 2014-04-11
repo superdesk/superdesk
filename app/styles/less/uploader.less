@@ -1,67 +1,13 @@
-/*
-======================================
-single uploader
-======================================
-*/
-.uploader {
-	width: 300px;
-	height: 300px;
-	border: 3px dashed #c8c8c8;
-	padding: 2px;
-	margin: 0 auto;
-	.uploader-area {
-		height: 100%;
-		background: #f8f8f8;
-		text-align: center;
-		p {
-			font-size: 18px;
-			font-weight: bold;
-			padding: 100px 0 20px;
-			color: #b8b8b8; 
-		}
+.generic-upload-progress(@height:2px) {
+	position: absolute;
+	height: @height;
+	top: 0; left: 0; right: 0;
+	z-index: 1;
+	background: #f0f0f0;
+	.bar {
+		height: @height;
+		background: @sd-color-blue;
 	}
-	.fileinput-button {
-		position: relative;
-		overflow: hidden;
-	}
-	.fileinput-button input {
-		position: absolute;
-		top: 0;
-		right: 0;
-		margin: 0;
-		opacity: 0;
-		-ms-filter: 'alpha(opacity=0)';
-		font-size: 200px;
-		direction: ltr;
-		cursor: pointer;
-		display: block !important;
-	}
-	.progress {
-		height: 2px;
-		width: 300px;
-		margin-top: -2px;
-		margin-bottom: 0;
-		.box-shadow(none);
-		.bar {
-			height: 2px;
-			.box-shadow(none);
-
-		}
-	}
-	canvas {
-		display: block;
-	}
-	.temp {
-		display: block;
-		margin-top: 10px;
-	}
-	&.preview {
-		border-color: #fff;
-		.progress {
-			margin-top: 0;
-		}
-	}
-
 }
 
 /*
@@ -236,17 +182,144 @@ user avatar uploader
 		}
 		
 		.upload-progress {
-			position: absolute;
-			height: 2px;
-			top: 0; left: 0; right: 0;
-			z-index: 1;
-			background: #f0f0f0;
-			.bar {
-				height: 2px;
-				background: @sd-color-blue;
-			}
+			.generic-upload-progress();
 		}
+		
 	}
 }
 
 
+
+/*
+======================================
+media uploader
+======================================
+*/
+.upload-media {
+
+	.modal-body {
+		background: @background-main;
+	}
+
+	.drag-area { //start screen on modal show
+		position: absolute;
+		top:0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		.user-select(none);
+
+		.title {
+			position: absolute;
+			height: 120px; width: 220px;
+			.box-sizing(border-box);
+			top: 50%; left: 50%;
+			margin-top: -120px;
+			margin-left: -110px;
+			background: url("../../images/dragfiles.png") no-repeat 50% 0;
+			padding-top: 100px;
+			text-align: center;
+			color: #a0a0a0;
+			font-size: 24px;
+			font-weight: 300;
+		}
+
+		.upload-manual {
+			position: absolute;
+			top: 50%; left: 50%;
+			width: 200px;
+			margin-top: 20px;
+			margin-left: -100px;
+			text-align: center;
+			.or-label {
+				margin-bottom: 20px;
+			}
+			
+		}
+	}
+	
+
+	.upload-edit {	//detail upload screen and basic edit
+		
+		.upload-thumbs {
+			li {
+				float: left;
+				margin: 0 10px 10px 0;
+				width: 260px;
+				.thumb {
+					.border-radius(3px 3px 0 0);
+					overflow: hidden;
+					.holder {
+						height: 205px;
+						background: #fff;
+						position: relative;
+						line-height: 205px;
+						i {
+							position: absolute;
+							top: 50%; margin-top: -25px;
+							left: 50%; margin-left: -30px;
+							.opacity(20);
+							z-index: 1;
+						}
+						img {
+							width: 100%;
+							position: relative;
+							z-index: 2;
+							display: inline-block;
+							vertical-align: middle;
+						}
+					}
+				}
+				.info {
+					position: relative;
+					padding-top: 2px;
+					border-top: 1px solid #ebebeb;
+					border-bottom: 1px solid #c8c8c8;
+					.border-radius(0 0 3px 3px);
+					background: #fff;
+					
+					.upload-progress {
+						.generic-upload-progress();
+						top:-1px;
+					}
+					
+					input[type="text"] {
+						border: 0 !important;
+						height: 34px !important;
+						&:focus {
+							.box-shadow(none) !important;
+						}
+					}
+
+					.title {
+						position: relative;
+						input {
+						
+						}
+						.remove {
+							position: absolute;
+							top: 3px; right: 5px;
+							.opacity(50);
+						}
+					}
+					.other-info {
+						.row {
+							border-top: 1px solid #ebebeb;
+							height: 34px;
+							line-height: 30px;
+							&.shadow {
+								background: #f4f4f4;
+								border-top-width: 2px; 
+							}
+							.text {
+								color: #999;
+								font-size: 11px;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+}

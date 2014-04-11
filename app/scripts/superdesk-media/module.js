@@ -2,6 +2,7 @@ define([
     'angular',
     'require',
     './controllers/list',
+    './controllers/uploadMedia',
     '../superdesk-items-common/module'
 ], function(angular, require) {
     'use strict';
@@ -18,6 +19,16 @@ define([
                 category: superdesk.MENU_MAIN,
                 reloadOnSearch: false,
                 beta: true
+            })
+            .activity('edit.media', {
+                label: gettext('Upload media'),
+                modal: true,
+                cssClass: 'upload-media responsive-popup',
+                controller: require('./controllers/uploadMedia'),
+                templateUrl: require.toUrl('./views/upload-media.html'),
+                filters: [
+                    {action: 'edit', type: 'media'}
+                ]
             });
     }])
     .config(['apiProvider', function(apiProvider) {

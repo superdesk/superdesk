@@ -15,5 +15,16 @@ define([
         };
 
         $scope.$watch(getCriteria, fetchItems, true);
+
+        $scope.view = 'mgrid';
+
+        $scope.preview = function(item) {
+            $scope.previewItem = item;
+        };
+
+        $scope.openUpload = function() {
+            superdesk.intent('edit','media');
+        };
+
     }];
 });

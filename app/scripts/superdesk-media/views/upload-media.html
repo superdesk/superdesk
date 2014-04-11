@@ -1,0 +1,81 @@
+<div class="modal-header">
+    <h3 class="pull-left">{{ activity.label|translate }}</h3>
+    <button type="button" class="close" ng-click="reject()"><i class="icon-close-small"></i></button>
+</div>
+
+<div class="modal-body">
+
+    <div class="drag-area" ng-show="">
+        <div class="title" translate>Drag Your Files Here</div>
+        <div class="upload-manual">
+            <div class="or-label" translate>or</div>
+            <button class="btn">{{ 'Select them from folder' | translate }}</button>
+        </div>
+    </div>
+
+    <div class="upload-edit">
+
+        <ul class="upload-thumbs">
+            <li>
+                <div class="thumb">
+                    <div class="holder">
+                        <i class="icon-image"></i>
+                        <img src="http://www.maximumpc.com/files/u46173/snowden.jpg" />
+                    </div>
+                </div>
+                <div class="info">
+                    <div class="title">
+                        <input type="text"  placeholder="Add a description">
+                        <span class="remove"><i class="icon-close-small"></i></span>
+                    </div>
+                    <div class="other-info">
+                        <div class="row shadow">
+                            <input type="checkbox" checked> <span class="text">Use this for all images</span>
+                        </div>
+                        <div class="row">
+                            <input type="text" placeholder="Add a location">
+                        </div>
+                        <div class="row">
+                            <input type="text" placeholder="Add author / photographer">
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li>
+                <div class="thumb">
+                    <div class="holder">
+                        <i class="icon-image"></i>
+                    </div>
+                </div>
+                <div class="info">
+                    <div class="upload-progress">
+                        <div class="bar" style="width:80%"></div>
+                    </div>
+                    <div class="title">
+                        <input type="text" placeholder="Add a description">
+                        <span class="remove"><i class="icon-close-small"></i></span>
+                    </div>
+                    <div class="other-info">
+                        <div class="row shadow">
+                            <input type="checkbox" checked> <span class="text">Use this for all images</span>
+                        </div>
+                        <div class="row">
+                            <input type="text" placeholder="Add a location">
+                        </div>
+                        <div class="row">
+                            <input type="text" placeholder="Add author / photographer">
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+
+        </ul>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-primary pull-right" translate>Save</button>
+    <button class="btn btn-default pull-right" ng-click="reject()" translate>Cancel</button>
+</div>
