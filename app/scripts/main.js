@@ -18,56 +18,61 @@ function gettext(input)
 }
 
 define('main', [
+    'angular',
     'jquery',
     'lodash',
-    'angular',
     'angular-ui',
     'angular-route',
     'angular-gettext',
     'angular-resource',
     'angular-mocks',
     'angular-file-upload',
-    'gridster',
-    'error-catcher'
-], function($, _, angular) {
+    'gridster'
+], function(angular) {
     'use strict';
 
-    angular.module('superdesk', ['errorCatcher']); // todo replace .filters/.directives/.services with superdesk
+    var modules = [
+        'gettext',
+        'ngRoute',
+        'ngResource',
+        'ui.bootstrap',
+        'angularFileUpload',
+
+        'superdesk',
+        'superdesk.filters',
+        'superdesk.services',
+        'superdesk.directives',
+
+        'superdesk.auth',
+        'superdesk.data',
+        'superdesk.datetime',
+        'superdesk.error',
+
+        'test'
+    ];
+
+    angular.module('superdesk', []); // todo replace .filters/.directives/.services with superdesk
     angular.module('superdesk.filters', []);
     angular.module('superdesk.services', []);
     angular.module('superdesk.directives', []);
     angular.module('test', []); // used for mocking
-    angular.module('superdesk').constant('config', {server: Configuration.server});
 
-    return function bootstrap(apps) {
+    return function bootstrap(config) {
+        angular.module('superdesk').constant('config', config);
+
         // load core components
         require([
             'superdesk/auth/auth',
             'superdesk/data/data',
             'superdesk/datetime/datetime',
+            'superdesk/error/error',
             'superdesk/filters/all',
             'superdesk/services/all',
             'superdesk/directives/all'
         ], function() {
-            var modules = [
-                'gettext',
-                'ngRoute',
-                'ngResource',
-                'ui.bootstrap',
-                'angularFileUpload',
-
-                'superdesk',
-                'superdesk.filters',
-                'superdesk.services',
-                'superdesk.directives',
-                'superdesk.auth',
-                'superdesk.data',
-                'superdesk.datetime',
-                'test'
-            ];
-
+            // build deps
             var deps = [];
-            angular.forEach(apps, function(app) {
+            angular.forEach(config.apps, function(app) {
                 deps.push('superdesk-' + app + '/module');
                 modules.push('superdesk.' + app);
             });

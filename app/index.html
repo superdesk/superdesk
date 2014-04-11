@@ -31,13 +31,6 @@
         <div class="alert alert-error" translate>Superdesk is experiencing network connection issues:/</div>
     </div>
 
-    <script>
-        Configuration = {
-            server: {url: '<%= server.url %>'},
-            raven: {dsn: '<%= raven.dsn %>'}
-        };
-    </script>
-
     <script src="scripts/bower_components/requirejs/require.js"></script>
 
     <!-- build:js scripts/config.js -->
@@ -48,8 +41,16 @@
     <script src="scripts/main.js"></script>
     <!-- endbuild -->
 
-    <script>require(['main'], function(bootstrap) {
-        bootstrap(['dashboard', 'users', 'planning']);
-    });</script>
+    <script>
+        var config = {
+            server: {url: '<%= server.url %>'},
+            raven: {dsn: '<%= raven.dsn %>'},
+            apps: ['dashboard', 'users', 'planning']
+        };
+
+        require(['main'], function(bootstrap) {
+            bootstrap(config);
+        });
+    </script>
   </body>
 </html>
