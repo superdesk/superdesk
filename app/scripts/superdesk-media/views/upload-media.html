@@ -5,7 +5,7 @@
 
 <div class="modal-body">
 
-    <div class="drag-area" ng-show="">
+    <div class="drag-area" ng-hide="items.length" ng-file-drop="addFiles($files)">
         <div class="title" translate>Drag Your Files Here</div>
         <div class="upload-manual">
             <div class="or-label" translate>or</div>
@@ -14,9 +14,8 @@
     </div>
 
     <div class="upload-edit">
-
         <ul class="upload-thumbs">
-            <li>
+            <li ng-show>
                 <div class="thumb">
                     <div class="holder">
                         <i class="icon-image"></i>
@@ -42,7 +41,7 @@
                 </div>
             </li>
 
-            <li>
+            <li ng-show>
                 <div class="thumb">
                     <div class="holder">
                         <i class="icon-image"></i>
@@ -70,7 +69,19 @@
                 </div>
             </li>
 
-
+            <li ng-repeat="item in items">
+                <div class="thumb" sd-image-preview="item.url" data-file="item.file">
+                    <div class="holder">
+                        <i class="icon-image"></i>
+                        <img ng-src="{{ item.url }}" />
+                    </div>
+                </div>
+                <div class="info">
+                    <div class="upload-progress">
+                        <div class="bar" style="width:{{ item.progress }}%"></div>
+                    </div>
+                </div>
+            </li>
         </ul>
     </div>
 </div>

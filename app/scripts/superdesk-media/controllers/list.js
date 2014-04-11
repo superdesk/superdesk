@@ -23,7 +23,7 @@ define([
         };
 
         $scope.openUpload = function() {
-            superdesk.intent('edit','media');
+            superdesk.intent('upload', 'media');
         };
 
     }];

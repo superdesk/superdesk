@@ -1,8 +1,8 @@
 define([
     'angular',
     'require',
+    './upload-controller',
     './controllers/list',
-    './controllers/uploadMedia',
     '../superdesk-items-common/module'
 ], function(angular, require) {
     'use strict';
@@ -20,14 +20,14 @@ define([
                 reloadOnSearch: false,
                 beta: true
             })
-            .activity('edit.media', {
+            .activity('upload.media', {
                 label: gettext('Upload media'),
                 modal: true,
                 cssClass: 'upload-media responsive-popup',
-                controller: require('./controllers/uploadMedia'),
+                controller: require('./upload-controller'),
                 templateUrl: require.toUrl('./views/upload-media.html'),
                 filters: [
-                    {action: 'edit', type: 'media'}
+                    {action: 'upload', type: 'media'}
                 ]
             });
     }])

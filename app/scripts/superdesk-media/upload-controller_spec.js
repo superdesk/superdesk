@@ -1,0 +1,71 @@
+define(['./upload-controller.js'], function(UploadController) {
+    'use strict';
+
+    describe('Upload controller', function() {
+
+        var files = [{type: 'text/plain'}];
+
+        it('can upload files when added', inject(function($controller, $rootScope, $q) {
+            var scope = $rootScope.$new(true),
+                defer;
+
+            var $upload = {
+                upload: function() {
+                    defer = $q.defer();
+                    return defer.promise;
+                }
+            };
+
+            var upload = spyOn($upload, 'upload').andCallThrough();
+
+            $controller(UploadController, {
+                $upload: $upload,
+                $scope: scope
+            });
+
+            $rootScope.$digest();
+
+            expect(scope.items.length).toBe(0);
+
+            scope.addFiles(files);
+
+            expect(upload).toHaveBeenCalledWith({
+                method: 'POST',
+                url: '',
+                file: files[0]
+            });
+
+            expect(scope.items.length).toBe(1);
+            expect(scope.items[0].file.type).toBe('text/plain');
+            expect(scope.items[0].meta).not.toBe(undefined);
+            expect(scope.items[0].progress).toBe(0);
+
+            defer.notify({
+                total: 100,
+                loaded: 50
+            });
+
+            $rootScope.$digest();
+
+            expect(scope.items[0].progress).toBe(50);
+
+            scope.items[0].meta.Description = 'test';
+
+            var result;
+            scope.save().then(function(_result) {
+                result = _result;
+            });
+
+            $rootScope.$digest();
+
+            expect(result).toBe(undefined);
+
+            defer.resolve({});
+
+            $rootScope.$digest();
+
+            expect(result).toBe(scope.items);
+        }));
+    });
+
+});
