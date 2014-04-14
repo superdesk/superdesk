@@ -375,6 +375,17 @@ define(['angular', 'lodash', 'require'], function(angular, _, require) {
         };
     }]);
 
+    // reject modal on route change
+    // todo(petr): what about blocking route change as long as it is opened?
+    module.run(['$rootScope', 'activityService', function($rootScope, activityService) {
+        $rootScope.$on('$routeChangeStart', function() {
+            if (activityService.activityStack.length) {
+                var item = activityService.activityStack.pop();
+                item.defer.reject();
+            }
+        });
+    }]);
+
     module.directive('sdActivityModal', ['activityService', function(activityService) {
         return {
             scope: true,
