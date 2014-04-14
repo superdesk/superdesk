@@ -5,11 +5,12 @@
 
 <div class="modal-body" ng-init="dragshow = false">
 
-    <div class="drag-area" ng-show="!items.length || dragshow" ng-file-drop="addFiles($files)" ng-class="{ compact : dragshow }">
+    <div class="drag-area" ng-show="!items.length || dragshow" ng-file-drop="addFiles($files)" ng-class="{compact: dragshow}">
         <div class="title" translate>Drag Your Files Here</div>
         <div class="upload-manual">
             <div class="or-label" translate>or</div>
-            <button class="btn">{{ 'Select them from folder' | translate }}</button>
+            <label class="btn" for="images-input">{{ 'Select them from folder' | translate }}</label>
+            <input id="images-input" type="file" accept="image/*" ng-file-select="addFiles($files)" multiple class="hide">
         </div>
     </div>
 
