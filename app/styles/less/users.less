@@ -516,7 +516,8 @@
         background: #fff;
         font-size: 16px;
         line-height: 22px;
-        .info {
+        .required-info {
+          display: none;
           font-size: 11px;
           color: #666;
           float: right;
@@ -535,6 +536,12 @@
       &:last-child {
         border-bottom: 1px dotted #ddd;
       }
+    }
+  }
+
+  .ng-invalid-required {
+    .required-info {
+      display: inline-block !important;
     }
   }
 }

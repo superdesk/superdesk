@@ -26,7 +26,7 @@
         </div>
         <div class="details-info" ng-class="{shifted : error}">
             <div class="details-section">
-                <div class="details-section-header">{{ 'General' | translate }} <span class="info" translate>* mandatory fields</span></div>
+                <div class="details-section-header">{{ 'General' | translate }} <span class="required-info" translate>* mandatory fields</span></div>
 
                 <div sd-info-item ng-show="user.Id">
                   <label for="display-name" translate>full name</label>
@@ -36,13 +36,13 @@
                 <div sd-info-item>
                   <label for="first-name" translate>first name</label>
                   <input type="text" name="firstName" id="first-name" ng-model="user.FirstName" required>
-                  <i class="required-asteriks">*</i>
+                  <i ng-show="userForm.firstName.$error.required" class="required-asteriks">*</i>
                 </div>
 
                 <div sd-info-item>
                   <label for="last-name" translate>last name</label>
                   <input type="text" name="lastName" id="last-name" ng-model="user.LastName" required>
-                  <i class="required-asteriks">*</i>
+                  <i ng-show="userForm.lastName.$error.required" class="required-asteriks">*</i>
                 </div>
 
                 <div sd-info-item>
@@ -53,7 +53,7 @@
                     ng-pattern="usernamePattern"
                     sd-user-unique data-unique-field="userName" data-exclude="user"
                     required>
-                    <i class="required-asteriks">*</i>
+                    <i ng-show="userForm.userName.$error.required" class="required-asteriks">*</i>
                   <div ng-show="userForm.userName.$error.unique || error.UserName.conflict" sd-valid-error translate>sorry, this username is already taken.</div>
                   <div ng-show="userForm.userName.$error.pattern" sd-valid-error translate>please use only letters (a-z), numbers (0-9), dashes (&mdash;), underscores (_), apostrophes (') and periods (.).</div>
                 </div>
@@ -61,14 +61,14 @@
                 <div sd-info-item class="password" ng-if="!user.Id">
                   <label for="password" translate>password</label>
                   <input type="password" name="password" ng-minlength="5" id="password" ng-model="user.Password" required>
-                  <i class="required-asteriks">*</i>
+                  <i ng-show="userForm.password.$error.required" class="required-asteriks">*</i>
                   <div ng-show="userForm.password.$error.minlength" sd-valid-error translate>password must have at least 5 characters.</div>
                 </div>
 
                 <div sd-info-item class="password" ng-if="!user.Id">
                   <label for="passwordConfirm" translate>confirm</label>
                   <input type="password" name="passwordConfirm" ng-minlength="5" id="passwordConfirm" sd-password-confirm ng-model="confirm.password" data-password="user.Password" required>
-                  <i class="required-asteriks">*</i>
+                  <i ng-show="userForm.passwordConfirm.$error.required" class="required-asteriks">*</i>
                   <div ng-show="userForm.passwordConfirm.$error.confirm" sd-valid-error translate>passwords must be same.</div>
                 </div>
 
@@ -83,7 +83,7 @@
                     ng-model="user.EMail"
                     sd-user-unique data-unique-field="email" data-exclude="user"
                     required>
-                    <i class="required-asteriks">*</i>
+                    <i ng-show="userForm.email.$error.required" class="required-asteriks">*</i>
                   <div ng-show="userForm.email.$error.email || error.EMail.format" sd-valid-error translate>please provide a valid email address.</div>
                   <div ng-show="userForm.email.$error.unique || error.EMail.unique" sd-valid-error translate>sorry, a user with this email already exists.</div>
                 </div>
