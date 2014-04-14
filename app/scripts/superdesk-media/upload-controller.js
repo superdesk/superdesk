@@ -36,6 +36,10 @@ define(['lodash'], function(_) {
             });
         };
 
+        $scope.remove = function(file) {
+            $scope.items = _.without($scope.items, file);
+        };
+
         /**
          * Wait for uploads to finish and save meta
          */

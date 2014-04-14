@@ -3,9 +3,9 @@
     <button type="button" class="close" ng-click="reject()"><i class="icon-close-small"></i></button>
 </div>
 
-<div class="modal-body">
+<div class="modal-body" ng-init="dragshow = false">
 
-    <div class="drag-area" ng-hide="items.length" ng-file-drop="addFiles($files)">
+    <div class="drag-area" ng-show="!items.length || dragshow" ng-file-drop="addFiles($files)" ng-class="{ compact : dragshow }">
         <div class="title" translate>Drag Your Files Here</div>
         <div class="upload-manual">
             <div class="or-label" translate>or</div>
@@ -13,61 +13,8 @@
         </div>
     </div>
 
-    <div class="upload-edit">
+    <div class="upload-edit" ng-show="items.length">
         <ul class="upload-thumbs">
-            <li ng-show>
-                <div class="thumb">
-                    <div class="holder">
-                        <i class="icon-image"></i>
-                        <img src="http://www.maximumpc.com/files/u46173/snowden.jpg" />
-                    </div>
-                </div>
-                <div class="info">
-                    <div class="title">
-                        <input type="text"  placeholder="Add a description">
-                        <span class="remove"><i class="icon-close-small"></i></span>
-                    </div>
-                    <div class="other-info">
-                        <div class="row shadow">
-                            <input type="checkbox" checked> <span class="text">Use this for all images</span>
-                        </div>
-                        <div class="row">
-                            <input type="text" placeholder="Add a location">
-                        </div>
-                        <div class="row">
-                            <input type="text" placeholder="Add author / photographer">
-                        </div>
-                    </div>
-                </div>
-            </li>
-
-            <li ng-show>
-                <div class="thumb">
-                    <div class="holder">
-                        <i class="icon-image"></i>
-                    </div>
-                </div>
-                <div class="info">
-                    <div class="upload-progress">
-                        <div class="bar" style="width:80%"></div>
-                    </div>
-                    <div class="title">
-                        <input type="text" placeholder="Add a description">
-                        <span class="remove"><i class="icon-close-small"></i></span>
-                    </div>
-                    <div class="other-info">
-                        <div class="row shadow">
-                            <input type="checkbox" checked> <span class="text">Use this for all images</span>
-                        </div>
-                        <div class="row">
-                            <input type="text" placeholder="Add a location">
-                        </div>
-                        <div class="row">
-                            <input type="text" placeholder="Add author / photographer">
-                        </div>
-                    </div>
-                </div>
-            </li>
 
             <li ng-repeat="item in items">
                 <div class="thumb" sd-image-preview="item.url" data-file="item.file">
@@ -80,10 +27,36 @@
                     <div class="upload-progress">
                         <div class="bar" style="width:{{ item.progress }}%"></div>
                     </div>
+                    <div class="title">
+                        <input type="text" placeholder="Add a description" ng-focus="showmeta = true" ng-blur="showmeta = false">
+                        <span class="remove" ng-click="remove(item)"><i class="icon-close-small"></i></span>
+                    </div>
+                    <div class="other-info" ng-show="showmeta">
+                        <div class="row shadow" >
+                            <input type="checkbox" checked ng-focus="showmeta = true" ng-blur="showmeta = false"> <span class="text" >Use this for all images</span>
+                        </div>
+                        <div class="row">
+                            <input type="text" placeholder="Add a location" ng-focus="showmeta = true" ng-blur="showmeta = false">
+                        </div>
+                        <div class="row">
+                            <input type="text" placeholder="Add author / photographer" ng-focus="showmeta = true" ng-blur="showmeta = false">
+                        </div>
+                    </div>
                 </div>
             </li>
+
         </ul>
+
+        <div class="optional-drag-holder" ng-class="{open: dragshow}">
+            <div class="optional-drag" ng-click="dragshow = !dragshow">
+                <i class="icon-chevron-up-thin" ng-show="!dragshow"></i>
+                <i class="icon-chevron-down-thin" ng-show="dragshow"></i>
+                <span class="add-more-files" translate >Add more files</span>
+            </div>
+        </div>
+
     </div>
+
 </div>
 
 <div class="modal-footer">
