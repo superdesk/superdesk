@@ -34,12 +34,12 @@
                 <ul class="table-header">
                     <li>
                         <div class="avatar"></div>
-                        <div class="row-wrapper" sd-col-width>
-                            <div class="name" translate>Full name</div>
-                            <div class="username" translate>Username</div>
+                        <div class="row-wrapper">
+                            <div class="name" sd-sort data-label="{{ 'Full name' | translate }}" data-field="fullName"></div>
+                            <div class="username" sd-sort data-label="{{ 'Username' | translate }}" data-field="userName"></div>
                             <div class="role" ng-show translate>Role</div>
-                            <div class="email" translate>Email</div>
-                            <div class="created" translate>Created</div>
+                            <div class="email" sd-sort data-label="{{ 'Email' | translate }}" data-field="email"></div>
+                            <div class="created" sd-sort data-label="{{ 'Created' | translate }}" data-field="createdOn"></div>
                         </div>
                     </li>
                 </ul>

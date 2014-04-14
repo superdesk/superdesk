@@ -47,13 +47,6 @@ define([
     ]);
 
     app
-        .value('defaultListParams', {
-            search: '',
-            searchField: 'username',
-            sort: ['display_name', 'asc'],
-            page: 1,
-            perPage: 25
-        })
         .config(['superdeskProvider', function(superdesk) {
             superdesk
                 .permission('users-manage', {

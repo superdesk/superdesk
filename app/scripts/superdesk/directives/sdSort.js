@@ -19,7 +19,7 @@ define([
          * @scope {string} label - user friendly text for sort field
          * @scope {string} field - field name for sort field
          */
-        .directive('sdSort', ['locationParams', function(locationParams) {
+        .directive('sdSort', ['$location', function($location) {
             return {
                 scope: {
                     label: '@',
@@ -27,16 +27,27 @@ define([
                 },
                 templateUrl: 'scripts/superdesk/views/sdSort.html',
                 link: function(scope, element, attrs) {
-                    scope.sort = locationParams.get('sort');
+
+                    scope.loc = $location;
+                    scope.sort = scope.loc.search().sort;
+
+                    scope.$watch('(loc.search()).sort', function(val) {
+                        scope.sort = val;
+                    });
+
                     element.click(function() {
                         scope.$apply(function() {
-                            if (scope.field === scope.sort[0]) {
-                                locationParams.set('sort', [scope.field, scope.sort[1] === 'asc' ? 'desc' : 'asc']);
+                            if (scope.sort && scope.field === scope.sort[0]) {
+                                //switch sort direction
+                                $location.search('sort', [scope.field, scope.sort[1] === 'asc' ? 'desc' : 'asc']);
                             } else {
-                                locationParams.set('sort', [scope.field, 'asc']);
+                                //set sort field
+                                $location.search('sort', [scope.field, 'asc']);
                             }
                         });
                     });
+
+                    element.addClass('sortable');
                 }
             };
         }]);

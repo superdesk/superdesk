@@ -42,7 +42,6 @@ define(['lodash'], function(_) {
         function getCriteria() {
             var params = $location.search(),
                 criteria = {
-                    desc: 'createdOn',
                     maxResults: 25
                 };
 
@@ -52,6 +51,10 @@ define(['lodash'], function(_) {
 
             if (params.page) {
                 criteria.offset = parseInt(params.page, 10) * criteria.maxResults;
+            }
+
+            if (params.sort) {
+                criteria[params.sort[1]] = params.sort[0];
             }
 
             return criteria;
