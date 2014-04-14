@@ -34,18 +34,9 @@ define([
     .config(['apiProvider', function(apiProvider) {
         apiProvider.api('media', {
             type: 'mock',
-            service: function() {
-
-                this.getName = function() {
-                    return this.name;
-                };
-
-                var query = this.query;
-                this.query = function(criteria) {
-                    return query.call(this, criteria);
-                };
-            },
+            service: function() {},
             backend: {
+                url: 'test_url',
                 data: [
                     {
                         'Id': 1,

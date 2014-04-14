@@ -26,6 +26,7 @@ define(['superdesk/data/api-service'], function(APIProvider) {
             };
         },
         backend: {
+            url: 'mock_url',
             data: [
                 {Id: 1, UserName: 'foo'},
                 {Id: 2, UserName: 'bar'}
@@ -166,6 +167,17 @@ define(['superdesk/data/api-service'], function(APIProvider) {
 
             expect(users.total).toBe(1);
         }));
+
+        it('can get resource url', inject(function(api, $rootScope) {
+            var url;
+            api.mock.getUrl().then(function(_url) {
+                url = _url;
+            });
+
+            $rootScope.$digest();
+
+            expect(url).toBe(MOCK_API.backend.url);
+        }));
     });
 
     describe('HTTP API Endpoint', function() {
@@ -215,7 +227,7 @@ define(['superdesk/data/api-service'], function(APIProvider) {
             var userData = {UserName: 'test'},
                 user;
 
-            $httpBackend.expectGET('server_url').respond(links);
+        $httpBackend.expectGET('server_url').respond(links);
             $httpBackend.expectPOST('users_url', userData).respond(201, {href: 'user_href'});
 
             api.http.save({UserName: 'test'}).then(function(_user) {
@@ -394,6 +406,19 @@ define(['superdesk/data/api-service'], function(APIProvider) {
 
             $rootScope.$apply();
             $httpBackend.flush();
+        }));
+
+        it('can get resource url', inject(function(api, $httpBackend) {
+            $httpBackend.expectGET('server_url').respond(links);
+
+            var url;
+            api.http.getUrl().then(function(_url) {
+                url = _url;
+            });
+
+            $httpBackend.flush();
+
+            expect(url).toBe('users_url');
         }));
     });
 

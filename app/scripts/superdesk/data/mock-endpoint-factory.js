@@ -19,6 +19,7 @@ define(['lodash'], function(_) {
         function MockEndpoint(name, config) {
             this.name = name;
             this.data = _.create(config.data);
+            this.url = config.url || null;
         }
 
         /**
@@ -71,6 +72,15 @@ define(['lodash'], function(_) {
         MockEndpoint.prototype.remove = function(item) {
             _.remove(this.data, item);
             return $q.when(item);
+        };
+
+        /**
+         * Get url - there is no url, it is here to match http api endpoint
+         *
+         * @returns {Promise}
+         */
+        MockEndpoint.prototype.getUrl = function() {
+            return $q.when(this.url);
         };
 
         return MockEndpoint;

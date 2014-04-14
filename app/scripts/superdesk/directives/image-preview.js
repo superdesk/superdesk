@@ -14,19 +14,25 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
             },
             link: function(scope, elem) {
 
+                function setProgress(val) {
+                    if (scope.progressWidth !== undefined) {
+                        scope.progressWidth = val;
+                    }
+                }
+
                 function updatePreview(e) {
                     scope.$apply(function() {
                         scope.sdImagePreview = e.target.result;
-                        scope.progressWidth = 50;
+                        setProgress(50);
                     });
                 }
 
                 scope.$watch('file', function(file) {
                     if (file && IS_IMG_REGEXP.test(file.type)) {
-                        scope.progressWidth = 30; // will continue in sd-crop
                         var fileReader = new FileReader();
                         fileReader.onload = updatePreview;
                         fileReader.readAsDataURL(file);
+                        setProgress(30);
                     } else if (file) {
                         notify.pop();
                         notify.error(gettext('Sorry, but given file type is not supported.'));

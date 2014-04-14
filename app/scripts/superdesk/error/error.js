@@ -21,7 +21,7 @@ define([
                 Raven.captureException(exception, {tags: {component: 'ui'}, extra: exception});
             }
 
-            console.error(exception, cause);
+            throw exception;
         };
     });
 

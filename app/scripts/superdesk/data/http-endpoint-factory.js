@@ -216,6 +216,15 @@ define([], function() {
             });
         };
 
+        /**
+         * Get resource url
+         *
+         * @returns {Promise}
+         */
+        HttpEndpoint.prototype.getUrl = function() {
+            return getUrl(this);
+        };
+
         return HttpEndpoint;
     }
 

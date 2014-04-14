@@ -3,9 +3,22 @@ define(['./upload-controller.js'], function(UploadController) {
 
     describe('Upload controller', function() {
 
-        var files = [{type: 'text/plain'}];
+        var files = [{type: 'text/plain'}],
+            UPLOAD_URL = 'upload_url';
 
-        it('can upload files when added', inject(function($controller, $rootScope, $q) {
+        beforeEach(module(function($provide) {
+            $provide.service('api', function($q) {
+                return {
+                    media: {
+                        getUrl: function() {
+                            return $q.when(UPLOAD_URL);
+                        }
+                    }
+                };
+            });
+        }));
+
+        it('can upload files when added', inject(function($controller, $rootScope, $q, api) {
             var scope = $rootScope.$new(true),
                 defer;
 
@@ -20,7 +33,8 @@ define(['./upload-controller.js'], function(UploadController) {
 
             $controller(UploadController, {
                 $upload: $upload,
-                $scope: scope
+                $scope: scope,
+                api: api
             });
 
             $rootScope.$digest();
@@ -29,9 +43,11 @@ define(['./upload-controller.js'], function(UploadController) {
 
             scope.addFiles(files);
 
+            $rootScope.$digest();
+
             expect(upload).toHaveBeenCalledWith({
                 method: 'POST',
-                url: '',
+                url: UPLOAD_URL,
                 file: files[0]
             });
 
