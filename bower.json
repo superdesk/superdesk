@@ -5,8 +5,8 @@
     "jquery": "~2.1.0",
     "lodash": "~2.4.1",
     "bootstrap": "~3.1.0",
-    "momentjs": "~2.5.1",
-    "moment-timezone": "~0.0.3",
+    "momentjs": "~2.6.0",
+    "moment-timezone": "~0.0.5",
     "angular": "~1.2.13",
     "angular-resource": "~1.2.13",
     "angular-route": "~1.2.13",
@@ -23,6 +23,7 @@
     "raven-js": "~1.1.11"
   },
   "resolutions": {
-    "jquery": "2.1.0"
+    "jquery": "2.1.0",
+    "momentjs": "~2.6.0"
   }
 }
