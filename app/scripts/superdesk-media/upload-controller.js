@@ -44,6 +44,12 @@ define(['lodash'], function(_) {
             });
         };
 
+        $scope.setAllMeta = function(field, val) {
+            _.each($scope.items, function(item) {
+                item.meta[field] = val;
+            });
+        };
+
         $scope.cancel = function() {
             _.each($scope.items, cancelItem);
             $scope.reject();

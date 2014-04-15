@@ -20,7 +20,7 @@
             <li ng-repeat="item in items">
                 <div class="thumb" sd-image-preview="item.url" data-file="item.file">
                     <div class="holder">
-                        <i class="icon-image"></i>
+                        <i class="icon-image" ng-show="!item.url"></i>
                         <img ng-src="{{ item.url }}" />
                     </div>
                     <span class="remove" ng-click="cancelOne(item, $index)"><i class="icon-close-small"></i></span>
@@ -29,16 +29,29 @@
                     <div class="upload-progress" ng-show="item.progress < 100">
                         <div class="bar" style="width:{{ item.progress }}%"></div>
                     </div>
-                    <div class="title">
-                        <input type="text" placeholder="Add a description" ng-focus="showmeta = true" ng-blur="showmeta = false">
+
+                    <div sd-inline-meta
+                        data-item="item.meta.description"
+                        data-setmeta="setAllMeta('description', item.meta.description)"
+                        data-placeholder="Add a description"
+                        data-showmeta="showmeta">
                     </div>
+                    
                     <div class="other-info" ng-show="showmeta">
-                        <div class="row">
-                            <input type="text" ng-model="item.meta.Provider" placeholder="Provider" ng-focus="showmeta = true" ng-blur="showmeta = false">
+                        <div sd-inline-meta
+                            data-item="item.meta.Provider"
+                            data-setmeta="setAllMeta('Provider', item.meta.Provider)"
+                            data-placeholder="Add a provider"
+                            data-showmeta="showmeta">
                         </div>
-                        <div class="row">
-                            <input type="text" placeholder="Add author / photographer" ng-focus="showmeta = true" ng-blur="showmeta = false">
+
+                        <div sd-inline-meta
+                            data-item="item.meta.author"
+                            data-setmeta="setAllMeta('author', item.meta.author)"
+                            data-placeholder="Add author / photographer"
+                            data-showmeta="showmeta">
                         </div>
+
                     </div>
                 </div>
             </li>
