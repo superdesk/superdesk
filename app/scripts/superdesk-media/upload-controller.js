@@ -21,17 +21,21 @@ define(['lodash'], function(_) {
                 };
 
                 var upload = function() {
-                    return api.media.getUrl().then(function(url) {
-                        return $upload.upload({
+                    return api.image.getUrl().then(function(url) {
+                        item.upload = $upload.upload({
                             method: 'POST',
                             url: url,
-                            file: file
+                            file: file,
+                            isUpload: true,
+                            headers: api.image.getHeaders()
                         }).then(function(response) {
                             item.model = response.data;
                             return item;
                         }, null, function(progress) {
                             item.progress = Math.round(progress.loaded / progress.total * 100.0);
                         });
+
+                        return item.upload;
                     });
                 };
 
@@ -40,8 +44,14 @@ define(['lodash'], function(_) {
             });
         };
 
-        $scope.remove = function(file) {
-            $scope.items = _.without($scope.items, file);
+        $scope.cancel = function() {
+            _.each($scope.items, cancelItem);
+            $scope.reject();
+        };
+
+        $scope.cancelOne = function(item, index) {
+            cancelItem(item);
+            $scope.items.splice(index, 1);
         };
 
         /**
@@ -53,6 +63,19 @@ define(['lodash'], function(_) {
                     return $scope.items;
                 });
         };
+
+        /**
+         * Cancel uploading of single item
+         *
+         * @param {Object} item
+         */
+        function cancelItem(item) {
+            if (item.model) {
+                api.image.remove(item.model);
+            } else if (item.upload) {
+                item.upload.abort();
+            }
+        }
     }
 
     return UploadController;

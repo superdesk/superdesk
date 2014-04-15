@@ -420,6 +420,10 @@ define(['superdesk/data/api-service'], function(APIProvider) {
 
             expect(url).toBe('users_url');
         }));
+
+        it('can get resource headers', inject(function(api) {
+            expect(api.http.getHeaders()['X-Filter']).toBe('User.*');
+        }));
     });
 
 });

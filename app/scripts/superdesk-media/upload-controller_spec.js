@@ -9,9 +9,12 @@ define(['./upload-controller.js'], function(UploadController) {
         beforeEach(module(function($provide) {
             $provide.service('api', function($q) {
                 return {
-                    media: {
+                    image: {
                         getUrl: function() {
                             return $q.when(UPLOAD_URL);
+                        },
+                        getHeaders: function() {
+                            return {};
                         }
                     }
                 };
@@ -48,7 +51,9 @@ define(['./upload-controller.js'], function(UploadController) {
             expect(upload).toHaveBeenCalledWith({
                 method: 'POST',
                 url: UPLOAD_URL,
-                file: files[0]
+                file: files[0],
+                isUpload: true,
+                headers: api.image.getHeaders()
             });
 
             expect(scope.items.length).toBe(1);

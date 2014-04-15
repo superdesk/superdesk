@@ -1,6 +1,6 @@
 <div class="modal-header">
     <h3 class="pull-left">{{ activity.label|translate }}</h3>
-    <button type="button" class="close" ng-click="reject()"><i class="icon-close-small"></i></button>
+    <button type="button" class="close" ng-click="cancel()"><i class="icon-close-small"></i></button>
 </div>
 
 <div class="modal-body" ng-init="dragshow = false">
@@ -30,7 +30,7 @@
                     </div>
                     <div class="title">
                         <input type="text" placeholder="Add a description" ng-focus="showmeta = true" ng-blur="showmeta = false">
-                        <span class="remove" ng-click="remove(item)"><i class="icon-close-small"></i></span>
+                        <span class="remove" ng-click="cancelOne(item, $index)"><i class="icon-close-small"></i></span>
                     </div>
                     <div class="other-info" ng-show="showmeta">
                         <div class="row shadow" >
@@ -61,5 +61,5 @@
 
 <div class="modal-footer">
     <button class="btn btn-primary pull-right" translate>Save</button>
-    <button class="btn btn-default pull-right" ng-click="reject()" translate>Cancel</button>
+    <button class="btn btn-default pull-right" ng-click="cancel()" translate>Cancel</button>
 </div>

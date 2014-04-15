@@ -225,6 +225,15 @@ define([], function() {
             return getUrl(this);
         };
 
+        /**
+         * Get headers
+         *
+         * @return {Object}
+         */
+        HttpEndpoint.prototype.getHeaders = function() {
+            return getHeaders(this) || {};
+        };
+
         return HttpEndpoint;
     }
 

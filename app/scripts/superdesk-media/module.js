@@ -32,11 +32,19 @@ define([
             });
     }])
     .config(['apiProvider', function(apiProvider) {
+        apiProvider.api('image', {
+            type: 'http',
+            backend: {
+                rel: 'Content/ItemImage',
+                headers: {'X-Filter': 'ItemImage.*'}
+            }
+        });
+
         apiProvider.api('media', {
             type: 'mock',
             service: function() {},
             backend: {
-                url: 'test_url',
+                url: 'https://apytest.apy.sd-test.sourcefabric.org/api/Content/ItemImage/',
                 data: [
                     {
                         'Id': 1,

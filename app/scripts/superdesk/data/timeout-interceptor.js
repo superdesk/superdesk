@@ -17,17 +17,15 @@ define([], function() {
 
         $rootScope.serverStatus = STATUS.OK;
 
-        function noop() {
-            // noop
-        }
-
         return {
 
             // set timeout for every request
             request: function(config) {
                 if (!IS_VIEW_REGEXP.test(config.url) && !config.isUpload) {
                     config._ttl = config._ttl ? Math.min(TIMEOUT_MAX, config._ttl * 2) : TIMEOUT;
-                    config.timeout = $timeout(noop, config._ttl);
+                    config.timeout = $timeout(function() {
+                        config._isTimeout = true;
+                    }, config._ttl);
                 }
 
                 return config;
@@ -45,7 +43,7 @@ define([], function() {
 
             // repeat request with higher timeout
             responseError: function(rejection) {
-                if (!rejection.status) {
+                if (!rejection.status && !rejection.config.isUpload) {
                     $rootScope.serverStatus += 1;
                     return $injector.get('$http')(rejection.config);
                 } else {
