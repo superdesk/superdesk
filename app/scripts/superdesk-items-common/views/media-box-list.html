@@ -8,29 +8,29 @@
 
 <div class="media-info">
     <div class="list-field type-icon">
-        <i class="filetype-icon-{{item.type}}"></i>
+        <i class="filetype-icon-{{item.ContentType}}"></i>
         <span class="output-item-label  label-{{item.urgency}}" ng-show="extras.view == 'mlist'">{{ item.urgency }}</span>
     </div>
     <div class="list-field" ng-show="extras.view == 'compact'"><span class="output-item-label label-{{item.urgency}}">{{ item.urgency }}</span></div>
 
     <h5 class="list-field" ng-class="{'no-border': extras.view == 'compact'}" ng-click="preview(item,$index)">
-        <div class="item-provider" ng-show="extras.view == 'compact'">{{ item.provider }}</div>
+        <div class="item-provider" ng-show="extras.view == 'compact'">{{ item.Provider }}</div>
         <div class="main-title">
             <div class="status-label"
-                 ng-class="{'label-canceled' : item.pubstatus=='canceled'}"
-                 ng-show="item.pubstatus && item.pubstatus!='usable'">
-                 {{ item.pubstatus | translate }}
+                 ng-class="{'label-canceled': item.PubStatus=='canceled'}"
+                 ng-show="item.PubStatus && item.PubStatus!='usable'">
+                 {{ item.PubStatus | translate }}
             </div>
-            {{ item.headline || item.type }}
+            {{ item.HeadLine || item.ContentType }}
         </div>
         <div class="meta-data-field" ng-show="extras.view == 'mlist'">
-            <div class="item-provider">{{ item.provider }}</div>
+            <div class="item-provider">{{ item.Provider }}</div>
             <span ng-show="item.subject">//</span> {{ item.subject | mergeWords}}
         </div>
     </h5>
 
     <div class="item-right list-field">
-        <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>
+        <time datetime="{{ item.CreatedOn }}" title="{{ item.CreatedOn|date:'medium' }}">{{ item.CreatedOn|reldate }}</time>
         <div class="item-functions" sd-activity-list data-data="item" data-action="list"></div>
     </div>
 </div>

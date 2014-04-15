@@ -5,11 +5,13 @@ define([
 
     return ['$scope', 'superdesk', 'api', function($scope, superdesk, api) {
         var getCriteria = function() {
-            return {};
+            return {
+                desc: 'createdOn'
+            };
         };
 
         var fetchItems = function(criteria) {
-            api.media.query().then(function(items) {
+            api.image.query().then(function(items) {
                 $scope.items = items;
             });
         };
@@ -25,6 +27,5 @@ define([
         $scope.openUpload = function() {
             superdesk.intent('upload', 'media');
         };
-
     }];
 });

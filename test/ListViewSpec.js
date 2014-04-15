@@ -20,7 +20,7 @@ define([
 
         it('renders list', function() {
             $rootScope.adapter = {
-                collection: [{_id: 1, name: 'foo'}, {_id: 2, name: 'bar'}]
+                collection: [{href: 1, name: 'foo'}, {href: 2, name: 'bar'}]
             };
 
             var elem = $compile('<div sd-list-view data-adapter="adapter"><div class="item">{{ item.name }}</div></div>')($rootScope);
