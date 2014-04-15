@@ -1,6 +1,7 @@
 define([
+    'angular',
     'superdesk-users/directives'
-], function() {
+], function(angular) {
     'use strict';
 
     var template = [
@@ -111,6 +112,11 @@ define([
             $provide.service('resource', noop);
             $provide.service('$route', noop);
             $provide.service('superdesk', noop);
+            $provide.provider('translateFilter', function() {
+                this.$get = function() {
+                    return angular.identity;
+                };
+            });
         }));
 
         beforeEach(module('superdesk.users.directives'));
