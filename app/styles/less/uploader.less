@@ -204,13 +204,14 @@ media uploader
 
 	.drag-area { //start screen on modal show
 		position: absolute;
-		top:0;
-		left: 0;
-		bottom: 0;
-		right: 0;
+		top:5px;
+		left: 5px;
+		bottom: 5px;
+		right: 5px;
+		border: 3px dashed @background-main;
 		.user-select(none);
 		&.dragover {
-			border-color: #c7c7c7;
+			border-color: #e7e7e7;
 		}
 
 		.title {
@@ -245,8 +246,7 @@ media uploader
 			z-index: 5;
 			top: auto;
 			height: 90px;
-			border: 3px dashed #e7e7e7;
-			left: 5px; bottom: 5px; right: 5px; 
+			border-color: #e7e7e7;
 			&.dragover {
 				border-color: #c7c7c7;
 			}
@@ -289,7 +289,8 @@ media uploader
 		position: absolute;
 		left: 0; right: 0; bottom: 0; top: 0px;
 		z-index: 1;
-		padding: 20px;
+		padding: 20px 20px 91px 20px;
+		overflow: auto;
 
 		.upload-thumbs {
 			li {
@@ -299,6 +300,7 @@ media uploader
 				.thumb {
 					.border-radius(3px 3px 0 0);
 					overflow: hidden;
+					position: relative;
 					.holder {
 						height: 205px;
 						background: #fff;
@@ -317,6 +319,24 @@ media uploader
 							z-index: 2;
 							display: inline-block;
 							vertical-align: middle;
+						}
+					}
+					.remove {
+						position: absolute;
+						top: 0px; right: 0px;
+						height: 20px;
+						width: 20px;
+						background: #fff;
+						.opacity(40);
+						text-align: center;
+						line-height: 20px;
+						z-index: 1;
+						&:hover {
+							cursor: pointer;
+							.opacity(90);
+							i {
+								.opacity(50);
+							}
 						}
 					}
 				}
@@ -343,19 +363,7 @@ media uploader
 					}
 
 					.title {
-						position: relative;
-						input {
 						
-						}
-						.remove {
-							position: absolute;
-							top: 3px; right: 5px;
-							.opacity(40);
-							&:hover {
-								cursor: pointer;
-								.opacity(70);
-							}
-						}
 					}
 					.other-info {
 						position: absolute; left: 0; right: 0;
@@ -380,29 +388,33 @@ media uploader
 			}
 		}
 
-		.optional-drag-holder {
-			position: absolute;
-			bottom: -1px; left: 0; right: 0;
-			z-index: 1;
-			border-bottom: 1px solid #ddd;
-			&.open {
-				bottom: 105px;
-			}
-			.optional-drag {
-				width: 120px;
-				margin: 0 auto;
-				background: #ececec;
-				padding: 5px 10px;
-				text-align: center;
-				&:hover {
-					cursor: pointer;
-				}
-				i {
-					margin-top: -2px;
-				}
-			}
-			
+		&.compact {
+			bottom: 105px;
 		}
+	}
+
+	.optional-drag-holder {
+		position: absolute;
+		bottom: -1px; left: 0; right: 0;
+		z-index: 10;
+		border-bottom: 1px solid #ddd;
+		&.open {
+			bottom: 105px;
+		}
+		.optional-drag {
+			width: 120px;
+			margin: 0 auto;
+			background: #ececec;
+			padding: 5px 10px;
+			text-align: center;
+			&:hover {
+				cursor: pointer;
+			}
+			i {
+				margin-top: -2px;
+			}
+		}
+		
 	}
 
 }

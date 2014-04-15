@@ -14,7 +14,7 @@
         </div>
     </div>
 
-    <div class="upload-edit" ng-show="items.length">
+    <div class="upload-edit" ng-show="items.length" ng-class="{compact: dragshow}">
         <ul class="upload-thumbs">
 
             <li ng-repeat="item in items">
@@ -23,19 +23,16 @@
                         <i class="icon-image"></i>
                         <img ng-src="{{ item.url }}" />
                     </div>
+                    <span class="remove" ng-click="cancelOne(item, $index)"><i class="icon-close-small"></i></span>
                 </div>
                 <div class="info">
-                    <div class="upload-progress">
+                    <div class="upload-progress" ng-show="item.progress < 100">
                         <div class="bar" style="width:{{ item.progress }}%"></div>
                     </div>
                     <div class="title">
-                        <input type="text" ng-model="item.meta.HeadLine" placeholder="Add a description" ng-focus="showmeta = true" ng-blur="showmeta = false">
-                        <span class="remove" ng-click="cancelOne(item, $index)"><i class="icon-close-small"></i></span>
+                        <input type="text" placeholder="Add a description" ng-focus="showmeta = true" ng-blur="showmeta = false">
                     </div>
                     <div class="other-info" ng-show="showmeta">
-                        <div class="row shadow" >
-                            <input type="checkbox" checked ng-focus="showmeta = true" ng-blur="showmeta = false"> <span class="text" >Use this for all images</span>
-                        </div>
                         <div class="row">
                             <input type="text" ng-model="item.meta.Provider" placeholder="Provider" ng-focus="showmeta = true" ng-blur="showmeta = false">
                         </div>
@@ -46,15 +43,14 @@
                 </div>
             </li>
         </ul>
+    </div>
 
-        <div class="optional-drag-holder" ng-class="{open: dragshow}">
-            <div class="optional-drag" ng-click="dragshow = !dragshow">
-                <i class="icon-chevron-up-thin" ng-show="!dragshow"></i>
-                <i class="icon-chevron-down-thin" ng-show="dragshow"></i>
-                <span class="add-more-files" translate >Add more files</span>
-            </div>
+    <div class="optional-drag-holder" ng-class="{open: dragshow}" ng-show="items.length" >
+        <div class="optional-drag" ng-click="dragshow = !dragshow">
+            <i class="icon-chevron-up-thin" ng-show="!dragshow"></i>
+            <i class="icon-chevron-down-thin" ng-show="dragshow"></i>
+            <span class="add-more-files" translate >Add more files</span>
         </div>
-
     </div>
 
 </div>
