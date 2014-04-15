@@ -1,31 +1,46 @@
-define([
-    'angular'
-], function(angular) {
+define([], function() {
     'use strict';
 
-    return ['$scope', 'superdesk', 'api', function($scope, superdesk, api) {
-        var getCriteria = function() {
-            return {
-                desc: 'createdOn'
-            };
-        };
-
-        var fetchItems = function(criteria) {
-            api.image.query().then(function(items) {
-                $scope.items = items;
-            });
-        };
-
-        $scope.$watch(getCriteria, fetchItems, true);
-
+    ArchiveListController.$inject = ['$scope', '$location', 'superdesk', 'api'];
+    function ArchiveListController($scope, $location, superdesk, api) {
         $scope.view = 'mgrid';
+        $scope.$watch(getQuery, fetchItems, true);
 
         $scope.preview = function(item) {
             $scope.previewItem = item;
         };
 
         $scope.openUpload = function() {
-            superdesk.intent('upload', 'media');
+            superdesk.intent('upload', 'media').then(function(items) {
+                // todo: put somewhere else
+                $scope.items.collection.unshift.apply($scope.items.collection, items);
+            });
         };
-    }];
+
+        function getQuery() {
+            var search = $location.search(),
+                query = {
+                    size: 50,
+                    from: search.from || 0
+                };
+
+            if (search.q) {
+                query.filtered = {
+                    query: {
+                        term: {HeadLine: search.q}
+                    }
+                };
+            }
+
+            return query;
+        }
+
+        function fetchItems(criteria) {
+            api.image.query().then(function(items) {
+                $scope.items = items;
+            });
+        }
+    }
+
+    return ArchiveListController;
 });

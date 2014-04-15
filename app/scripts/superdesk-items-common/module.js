@@ -5,5 +5,5 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    angular.module('superdesk.items-common', ['superdesk.items-common.directives']);
+    return angular.module('superdesk.items-common', ['superdesk.items-common.directives']);
 });

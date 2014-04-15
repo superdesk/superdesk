@@ -58,9 +58,15 @@ define(['lodash'], function(_) {
          * Wait for uploads to finish and save meta
          */
         $scope.save = function() {
+            $scope.saving = true;
             return $q.all(promises)
                 .then(function() {
-                    return $scope.items;
+                    return $q.all(_.map($scope.items, function(item) {
+                        return api.image.update(item.model, item.meta);
+                    })).then(function(results) {
+                        $scope.resolve(results);
+                        return results;
+                    });
                 });
         };
 

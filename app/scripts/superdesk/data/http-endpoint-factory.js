@@ -1,4 +1,4 @@
-define([], function() {
+define(['lodash'], function(_) {
     'use strict';
 
     /**
@@ -52,7 +52,7 @@ define([], function() {
          * @returns {Object}
          */
         function getHeaders(resource) {
-            return resource.config.headers || {};
+            return _.extend({}, resource.config.headers || {});
         }
 
         /**

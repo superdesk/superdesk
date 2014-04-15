@@ -15,6 +15,9 @@ define(['./upload-controller.js'], function(UploadController) {
                         },
                         getHeaders: function() {
                             return {};
+                        },
+                        update: function(dest, diff) {
+                            return $q.when({data: {}});
                         }
                     }
                 };
@@ -33,6 +36,9 @@ define(['./upload-controller.js'], function(UploadController) {
             };
 
             var upload = spyOn($upload, 'upload').andCallThrough();
+
+            scope.resolve = function() {};
+            var resolve = spyOn(scope, 'resolve');
 
             $controller(UploadController, {
                 $upload: $upload,
@@ -80,12 +86,12 @@ define(['./upload-controller.js'], function(UploadController) {
             $rootScope.$digest();
 
             expect(result).toBe(undefined);
-
             defer.resolve({});
 
             $rootScope.$digest();
 
-            expect(result).toBe(scope.items);
+            expect(result.length).toBe(1);
+            expect(resolve).toHaveBeenCalledWith(result);
         }));
     });
 

@@ -7,7 +7,9 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    var app = angular.module('superdesk.media', ['superdesk.items-common']);
+    var app = angular.module('superdesk.media', [
+        require('../superdesk-items-common/module').name]
+    );
 
     app.config(['superdeskProvider', function(superdesk) {
         superdesk
@@ -30,13 +32,14 @@ define([
                     {action: 'upload', type: 'media'}
                 ]
             });
-    }])
-    .config(['apiProvider', function(apiProvider) {
+    }]);
+
+    app.config(['apiProvider', function(apiProvider) {
         apiProvider.api('image', {
             type: 'http',
             backend: {
                 rel: 'Content/ItemImage',
-                headers: {'X-Filter': 'ItemImage.*, RenditionList.*'}
+                headers: {'X-Filter': 'Item.*, ItemImage.*'}
             }
         });
     }]);
