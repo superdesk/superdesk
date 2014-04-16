@@ -32,11 +32,13 @@ define([], function() {
                 };
             }
 
-            return query;
+            return {
+                desc: 'q.createdOn'
+            };
         }
 
         function fetchItems(criteria) {
-            api.image.query().then(function(items) {
+            api.image.query(criteria).then(function(items) {
                 $scope.items = items;
             });
         }
