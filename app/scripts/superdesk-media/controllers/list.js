@@ -10,6 +10,10 @@ define([], function() {
             $scope.previewItem = item;
         };
 
+        $scope.display = function(item) {
+            $scope.viewItem = item;
+        };
+
         $scope.openUpload = function() {
             superdesk.intent('upload', 'media').then(function(items) {
                 // todo: put somewhere else

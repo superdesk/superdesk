@@ -16,6 +16,8 @@
         </a>
     </div>
 
+    <div sd-media-view data-item="viewItem" data-items="items" ng-if="viewItem"></div>
+
 </div>
 
 <section sd-sidebar-layout class="archive main-section">
@@ -57,6 +59,18 @@
             sd-shadow
         >
             <div sd-media-box></div>
+        </div>
+
+        <div class="preview-pane">
+            <div class="actions" ng-if="previewItem">
+                <a ng-href="" ng-click="display(previewItem)" class="btn btn-light pull-left" translate>View</a>
+                <div class="close" ng-click="preview(null)"><i class="icon-remove"></i></div>
+            </div>
+            
+            <div sd-user-details-pane ng-if="previewItem">
+                <div id="user-profile-edit" sd-media-preview data-item="previewItem"></div>
+            </div>
+            
         </div>
     </div>
 

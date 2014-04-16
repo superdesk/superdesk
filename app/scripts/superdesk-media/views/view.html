@@ -1,0 +1,70 @@
+<div class="modal lightbox-preview">
+    <section class="lightbox-top">
+        <a class="btn btn-inverse" href="" ><i class="icon-pencil icon-white"></i> {{ 'Edit'|translate }}</a>
+        <a class="btn btn-inverse" href="" ><i class="icon-download-alt icon-white"></i> {{ 'Download'|translate }}</a>
+        <a class="btn btn-inverse" href="" ><i class="icon-trash icon-white"></i> {{ 'Delete'|translate }}</a>
+        <a class="lightbox-close" data-dismiss="modal" href="" on-click="item = null">
+            <i class="icon-remove icon-white"></i>
+        </a>
+    </section>
+
+    <!-- preview pane -->
+
+        <div ng-class="{'lightbox-composite-preview' : item.type == 'composite'}">
+
+            <section class="lightbox-left">
+                
+                <!-- picture preview -->
+                <figure class="lightbox-large-preview" ng-show="item.ContentType == 'image'">
+                    <img ng-src="{{ item.Renditions.original.href }}" />
+                </figure>
+                <div class="lightbox-caption" ng-show="item.ContentType == 'image'">{{ item.HeadLine }}</div>
+
+            </section>
+
+        </div>
+    <!-- end of preview pane -->
+
+    <section class="lightbox-right">
+        <header>
+            <h5 class="lightbox-title">{{ item.HeadLine }}</h5>
+            <span class="lightbox-modified-info">{{ 'Created:'|translate }} {{ item.CreatedOn|date:'medium' }}</span>
+            <span class="lightbox-modified-info">{{ 'Modified:'|translate }} {{ item.VersionOn|date:'medium' }}</span>
+            
+            <span class="lightbox-media-type filetype-icon-{{item.ContentType}}"></span>
+
+            <div class="btn-group lightbox-actions">
+              <button class="btn"><i class="icon-list-alt"></i> {{ 'Edit metadata'|translate }}</a>
+            </div>
+            
+        </header>
+        <div class="lightbox-media-data" >
+            <div class="lightbox-descritpion">
+            </div>
+            <div class="tabmodule" ng-class="{'tabmodule-open':toggleDetails}" ng-init="toggleDetails=false">
+                <div class="tabmodule-header" ng-click="toggleDetails=!toggleDetails">
+                    <i class="icon-chevron-down toggle-module-close" ng-show="toggleDetails"></i>
+                    <i class="icon-chevron-right toggle-module-open" ng-show="!toggleDetails"></i>
+                    <span class="tabmodule-title" translate>Details</span>
+                </div>
+                <div ng-show="toggleDetails">
+                    <dl class="metadata-details-new clearfix">
+                        <dt translate>GUID</dt><dd>{{ item.GUID }}</dd>
+                        <dt translate>provider</dt><dd>{{ item.Provider }}</dd>
+                        <dt translate ng-show="item.Version">version</dt><dd ng-show="item.Version">{{ item.Version }}</dd>
+                        <dt translate ng-show="item.ByLine">by</dt><dd ng-show="item.ByLine">{{ item.ByLine }}</dd>
+                    </dl>
+                    <dl class="metadata-details-new clearfix">
+                        <dt translate>aperture</dt><dd>{{ item.FileMeta.Aperture }}</dd>
+                        <dt translate>exposure time</dt><dd>{{ item.FileMeta['Exposure time'] }}</dd>
+                        <dt translate>focal length</dt><dd>{{ item.FileMeta['Focal length'] }}</dd>
+                        <dt translate>iso</dt><dd>{{ item.FileMeta['ISO speed'] }}</dd>
+                        <dt translate>flash</dt><dd>{{ item.FileMeta.Flash }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <button ng-click="prev()" ng-disabled="!prevEnabled">previous</button>
+        <button href="" ng-click="next()" ng-disabled="!nextEnabled">next</button>
+    </section>
+</div>
