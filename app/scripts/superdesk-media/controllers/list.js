@@ -1,8 +1,8 @@
 define([], function() {
     'use strict';
 
-    ArchiveListController.$inject = ['$scope', '$location', 'superdesk', 'api'];
-    function ArchiveListController($scope, $location, superdesk, api) {
+    ArchiveListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'es'];
+    function ArchiveListController($scope, $location, superdesk, api, es) {
         $scope.view = 'mgrid';
         $scope.$watch(getQuery, fetchItems, true);
 
@@ -22,21 +22,9 @@ define([], function() {
         };
 
         function getQuery() {
-            var search = $location.search(),
-                query = {
-                    size: 50,
-                    from: search.from || 0
-                };
-
-            if (search.q) {
-                query.filtered = {
-                    query: {
-                        term: {HeadLine: search.q}
-                    }
-                };
-            }
-
-            return {
+            var query = es($location.search());
+            console.log(query);
+            return { // todo(petr) replace with elastic
                 desc: 'q.createdOn'
             };
         }
