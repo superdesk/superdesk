@@ -4,7 +4,12 @@ define([], function() {
     ArchiveListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'es'];
     function ArchiveListController($scope, $location, superdesk, api, es) {
         $scope.view = 'mgrid';
-        $scope.$watch(getQuery, fetchItems, true);
+
+        $scope.$watch(function() {
+            return $location.search();
+        }, function(search) {
+            fetchItems(getQuery(search));
+        });
 
         $scope.preview = function(item) {
             $scope.previewItem = item;
@@ -21,8 +26,24 @@ define([], function() {
             });
         };
 
-        function getQuery() {
-            var query = es($location.search());
+        function buildFilters(params) {
+            if (params.before || params.after) {
+                var range = {ChangeOn: {}};
+                if (params.before) {
+                    range.ChangeOn.lte = params.before;
+                }
+
+                if (params.after) {
+                    range.ChangeOn.gte = params.after;
+                }
+
+                params.filters = [{range: range}];
+            }
+        }
+
+        function getQuery(params) {
+            buildFilters(params);
+            var query = es(params);
             console.log(query);
             return { // todo(petr) replace with elastic
                 desc: 'q.createdOn'

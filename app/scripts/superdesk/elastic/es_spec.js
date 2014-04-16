@@ -1,4 +1,4 @@
-define(['superdesk/data/es'], function(ElasticSearch) {
+define(['./es'], function(ElasticSearch) {
     'use strict';
 
     describe('elastic query builder', function() {
@@ -20,9 +20,14 @@ define(['superdesk/data/es'], function(ElasticSearch) {
         }));
 
         it('generates filtered query when using filter', inject(function(es) {
-            var body = es({filter: {type: 'picture'}});
+            var filters = [
+                {term: {type: 'picture'}},
+                {term: {provider: 'foo'}}
+            ];
+
+            var body = es({filters: filters});
             expect(body.query.filtered.query.match_all).toEqual({});
-            expect(body.query.filtered.filter.term.type).toEqual('picture');
+            expect(body.query.filtered.filter.and.length).toBe(2);
         }));
 
         it('does pagination', inject(function(es) {

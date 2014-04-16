@@ -7,87 +7,23 @@
     >
         <div class="header">
             <div class="title" translate>Filters</div>
-            <div class="doopen btn" ng-click="sidebarstick = !sidebarstick;sidebar=false"><i class="icon-forward-thin"></i></div>
+            <div class="doopen btn" ng-click="sidebarstick = !sidebarstick; sidebar=false"><i class="icon-forward-thin"></i></div>
         </div>
-        <!--
         <div class="content">
-            <div sd-tabmodule data-title="{{ 'Content type' | translate }}" data-open="true">
-                <ul class="filter-contenttype selectionlist">
-                    <li ng-repeat="t in search.type">
-                        <i class="filetype-icon-{{t.term}}"></i>
-                        <span class="term">{{ t.term | translate }} <i>({{ t.count}})</i></span>
-                        <input sd-check ng-model="t.checked">
-                    </li>
-                </ul>
-            </div>
-            <div class="info-tab filter-general" >
-                <ul class="metadata">
-
+            <div class="info-tab filter-general">
+                <ul class="metadata" sd-date-range data-lte="lte" data-gte="gte">
                     <li>
-                        <div class="lbl" translate>Urgency</div>
-                        <div class="data urgency-data">
-                            <slider floor="1" ceiling="5" precision="0" ng-model-low="urgency.from" ng-model-high="urgency.to" class="sd-slider urgency-slider"></slider>
-                            <div class="urgency-range">{{urgency.from}} - {{urgency.to}}</div>
-                        </div>
-
-                    </li>
-
-                    <li>
-                        <div class="lbl" translate>Last modified</div>
-                        <div class="data">
-                            <div class="date">
-                                <span class="range" ng-show="versioncreated.init">
-                                     <time>{{ versioncreated.startDate | dateString }}</time> - <time>{{ versioncreated.endDate | dateString }}</time>
-                                </span>
-                                <span class="selectdate" ng-show="!versioncreated.init">
-                                     Select date
-                                </span>
-                                <i class="icon-calendar" sd-date-range type="daterange" ng-model="versioncreated"></i>
-                            </div>
-                            
-                        </div>
+                        <label for="created_before" translate>Created before</label>
+                        <input id="created_before" type="date" ng-model="lte">
                     </li>
                     <li>
-                        <div class="lbl" translate>Provider</div>
-                        <div class="data data-provider">
-                            <div class="dropdown source-select" sd-provider-menu data-items="items" data-selected="search.general.provider"></div>
-                        </div>
-                    </li>
-                    <li class="subject-data">
-                        <div class="lbl" translate>Subject</div>
-                        <div class="data">
-                            <div sd-filter-typeahead items="items._facets.subject.terms" additem="addSubject(item)"></div>
-                        </div>
-                        <div class="subject-container">
-                            <ul>
-                                <li ng-repeat="s in search.subjects" ng-click="removeSubject(s)">{{s}}</li>
-                            </ul>
-                        </div>
-                    </li>
-
-                    <li class="subject-data">
-                        <div class="lbl" translate>Place</div>
-                        <div class="data">
-                            <div sd-filter-typeahead items="items._facets.place.terms" additem="addPlace(item)"></div>
-                        </div>
-                        <div class="subject-container">
-                            <ul>
-                                <li ng-repeat="p in search.places" ng-click="removePlace(p)">{{p}}</li>
-                            </ul>
-                        </div>
-                    </li>
-                    
-                    <li>
-                        <div class="lbl" translate>Creditline</div>
-                        <div class="data" ><input type="text" ng-model="search.general.creditline"></div>
+                        <label for="created_after" translate>Created after</label>
+                        <input id="created_after" type="date" ng-model="gte">
                     </li>
                 </ul>
             </div>
         </div>
-        -->
     </div>
 
-    <div class="archive-content" ng-transclude>
-
-    </div>
+    <div class="archive-content" ng-transclude></div>
 </div>

@@ -36,11 +36,11 @@ define([], function() {
                 query = {match_all: {}};
             }
 
-            if (params.filter) {
+            if (params.filters) {
                 query = {
                     filtered: {
                         query: query,
-                        filter: {term: params.filter}
+                        filter: {and: params.filters}
                     }
                 };
             }

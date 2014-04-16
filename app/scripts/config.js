@@ -49,6 +49,7 @@ require.config({
         'jquery-ui': ['jquery'],
         'bootstrap/modal': ['jquery'],
         'bootstrap/dropdown': ['jquery'],
+        'bootstrap-daterange': ['jquery', 'moment'],
         'bower_components/jcrop/js/jquery.Jcrop': ['jquery']
     }
 });

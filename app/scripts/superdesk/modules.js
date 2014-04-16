@@ -15,6 +15,7 @@ define([
     './upload/upload',
     './beta/beta',
     './activity/activity',
+    './elastic/elastic',
 
     './filters',
     './services/all',
@@ -34,7 +35,8 @@ define([
         require('./notify/notify').name,
         require('./upload/upload').name,
         require('./beta/beta').name,
-        require('./activity/activity').name
+        require('./activity/activity').name,
+        require('./elastic/elastic').name
     ];
 
     modules.push(require('./filters').name);
