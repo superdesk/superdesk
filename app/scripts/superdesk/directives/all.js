@@ -4,8 +4,6 @@ define([
     './sdModal',
     './sdAutofocus',
     './sdDebounceThrottle',
-    './sdReldate',
-    './sdGroupDates',
     './sdPagination',
     './sdSort',
     './sdCheck',
@@ -19,7 +17,6 @@ define([
     './sdDragDrop',
     './menu',
     './listView',
-    './sdDateRange',
     './sdTypeahead',
     './sdNotifications',
     './image-preview'
@@ -29,9 +26,7 @@ define([
     return [
         require('./sdAutofocus').name,
         require('./sdDebounceThrottle').name,
-        require('./sdReldate').name,
         require('./sdModal').name,
-        require('./sdGroupDates').name,
         require('./sdPagination').name,
         require('./sdSort').name,
         require('./sdWithParams').name,
@@ -45,7 +40,6 @@ define([
         require('./menu').name,
         require('./listView').name,
         require('./sdTypeahead').name,
-        require('./sdDateRange').name,
         require('./sdNotifications').name,
         require('./image-preview').name
     ];
