@@ -1,5 +1,6 @@
 
-/* jshint -W098 */
+/* exported gettext */
+
 /**
  * Noop for registering string for translation in js files.
  *
@@ -8,11 +9,8 @@
  *
  * @param {string} input
  * @return {string} unmodified input
- *
  */
-
-function gettext(input)
-{
+function gettext(input) {
     'use strict';
     return input;
 }
