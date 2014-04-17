@@ -20,14 +20,22 @@ define([
                 controller: 'WorldClockController'
             };
         }])
-        .controller('WorldClockConfigController', ['$scope', '$resource', 'tzdata',
-        function ($scope, $resource, tzdata) {
+        .controller('WorldClockConfigController', ['$scope', '$resource', 'notify', 'tzdata',
+        function ($scope, $resource, notify, tzdata) {
             tzdata.get(function(data) {
                 $scope.availableZones = _.union(
                     _.keys(data.zones),
                     _.keys(data.links)
                 );
             });
+
+            $scope.notify = function(action, zone) {
+                if (action === 'add') {
+                    notify.success(gettext('World clock added:') + ' ' + zone, 3000);
+                } else if (action === 'remove') {
+                    notify.success(gettext('World clock removed:') + ' ' + zone, 3000);
+                }
+            };
 
             $scope.notIn = function(haystack) {
                 return function(needle) {
