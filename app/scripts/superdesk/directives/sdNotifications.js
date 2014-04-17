@@ -3,7 +3,7 @@ define([
 ], function(angular) {
     'use strict';
 
-    var module = angular.module('superdesk.directives');
+    var module = angular.module('superdesk.notifi.directives', []);
 
     module.directive('sdNotifications', [ function() {
         return {
@@ -14,4 +14,5 @@ define([
         };
     }]);
 
+    return module;
 });

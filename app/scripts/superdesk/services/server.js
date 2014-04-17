@@ -4,7 +4,7 @@ define([
 ], function(_, angular) {
     'use strict';
 
-    angular.module('superdesk.services')
+    return angular.module('superdesk.services.server', [])
     .service('server', ['$q', '$http', 'config', function($q, $http, config) {
         return {
             _makeUrl: function() {

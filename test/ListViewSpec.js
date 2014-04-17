@@ -2,14 +2,14 @@ define([
     'superdesk/directives/listView',
     'superdesk/services/keyboardManager',
     'angular-mocks'
-], function() {
+], function(ListViewModule, kbModule) {
     'use strict';
 
     describe('ListView directive', function() {
         var $compile, $rootScope;
 
-        beforeEach(module('superdesk.services'));
-        beforeEach(module('superdesk'));
+        beforeEach(module(ListViewModule.name));
+        beforeEach(module(kbModule.name));
         beforeEach(module('templates'));
         beforeEach(module('ngMock'));
 

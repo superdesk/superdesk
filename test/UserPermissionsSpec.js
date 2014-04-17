@@ -4,14 +4,19 @@ define([
     'superdesk/services/entity',
     'superdesk/services/server',
     'superdesk/services/permissionsService'
-], function(angular) {
+], function(angular, mock, entity, server, permissions) {
     'use strict';
 
-    beforeEach(module(function($provide) {
-        $provide.value('config', {server: {url: 'http://localhost'}});
-    }));
-
     describe('PermissionsService', function() {
+
+        beforeEach(module(entity.name));
+        beforeEach(module(server.name));
+        beforeEach(module(permissions.name));
+
+        beforeEach(module(function($provide) {
+            $provide.value('config', {server: {url: 'http://localhost'}});
+        }));
+
         var rootScope, httpBackend, em, permissionsService;
 
         var testPermissions = {

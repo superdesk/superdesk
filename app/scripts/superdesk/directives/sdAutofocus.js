@@ -1,10 +1,9 @@
 define([
-    'jquery',
     'angular'
-], function($, angular) {
+], function(angular) {
     'use strict';
 
-    angular.module('superdesk.directives')
+    return angular.module('superdesk.directives.autofocus', [])
         /**
          * sdAutoFocus automatically focuses on an element on page render.
          *

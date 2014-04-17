@@ -11,7 +11,7 @@ define([
      * This module provides localization support.
      * It's using angular-gettext.
      */
-    angular.module('superdesk.services')
+    return angular.module('superdesk.translate', ['gettext'])
         .run(['gettextCatalog', '$location', function(gettextCatalog, $location) {
             var params = $location.search();
             if ('lang' in params) {

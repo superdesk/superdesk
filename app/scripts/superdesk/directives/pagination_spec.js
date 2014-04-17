@@ -1,8 +1,8 @@
-define(['superdesk/directives/sdPagination'], function() {
+define(['superdesk/directives/sdPagination'], function(paginationModule) {
     'use strict';
 
     describe('pagination', function() {
-        beforeEach(module('superdesk.directives'));
+        beforeEach(module(paginationModule.name));
         beforeEach(module('templates'));
         beforeEach(module(function($provide) {
             $provide.provider('translateFilter', function() {

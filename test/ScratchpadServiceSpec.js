@@ -1,17 +1,25 @@
 define([
     'jquery',
     'angular',
+    'superdesk/services/storage',
+    'superdesk/services/server',
     'superdesk-scratchpad/services',
     'angular-mocks'
-], function($, angular) {
+], function($, angular, storageService, serverService) {
     'use strict';
 
-    beforeEach(function() {
-        module('superdesk.scratchpad.services');
-        module('ngMock');
-    });
-
     describe('scratchpadService', function() {
+        beforeEach(function() {
+            module(storageService.name);
+            module(serverService.name);
+            module('superdesk.scratchpad.services');
+            module('ngMock');
+        });
+
+        beforeEach(module(function($provide) {
+            $provide.constant('config', {server: {url: 'http://localhost'}});
+        }));
+
         var $q, storage, server, service, httpBackend, testItem, testItem2;
 
         beforeEach(inject(function($injector) {

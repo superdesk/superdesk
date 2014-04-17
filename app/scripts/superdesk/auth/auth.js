@@ -43,7 +43,7 @@ define([
         };
     }
 
-    angular.module('superdesk.auth', ['superdesk', 'ngRoute'])
+    return angular.module('superdesk.auth', ['ngRoute'])
         .service('auth', require('./auth-service'))
         .service('session', require('./session-service'))
         .service('authAdapter', require('./allypy-auth-service'))

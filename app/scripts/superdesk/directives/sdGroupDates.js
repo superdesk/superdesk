@@ -1,7 +1,7 @@
 define(['angular', 'moment'], function(angular, moment) {
     'use strict';
 
-    angular.module('superdesk.directives').
+    return angular.module('superdesk.directives.groupDates', []).
 
         /**
          * sdGroupDates directive will group list items by a date provided as a param.

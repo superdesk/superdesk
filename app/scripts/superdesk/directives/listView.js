@@ -1,7 +1,7 @@
 define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
-    angular.module('superdesk')
+    return angular.module('superdesk.list', [])
         .directive('sdListView', ['$location', 'keyboardManager', function($location, keyboardManager) {
             return {
                 scope: {

@@ -1,11 +1,11 @@
 define([
     'superdesk/services/storage'
-], function() {
+], function(storageService) {
     'use strict';
 
     describe('Storage', function() {
         beforeEach(function() {
-            module('superdesk.services');
+            module(storageService.name);
             localStorage.clear();
         });
 

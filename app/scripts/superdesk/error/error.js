@@ -42,4 +42,6 @@ define([
             }
         };
     }
+
+    return app;
 });

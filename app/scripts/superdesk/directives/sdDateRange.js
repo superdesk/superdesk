@@ -1,7 +1,7 @@
 define(['angular', 'moment'], function(angular, moment) {
     'use strict';
 
-    angular.module('superdesk.directives').
+    return angular.module('superdesk.date.directives', []).
 		/**
          * Show date range picker on element
          *

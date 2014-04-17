@@ -1,7 +1,7 @@
 define(['angular', 'jquery'], function(angular, $) {
     'use strict';
 
-    var module = angular.module('superdesk.services');
+    var module = angular.module('superdesk.services.beta', []);
 
     /**
      * Superdesk service for enabling/disabling beta preview in app
@@ -59,4 +59,6 @@ define(['angular', 'jquery'], function(angular, $) {
             }
         };
     }
+
+    return module;
 });

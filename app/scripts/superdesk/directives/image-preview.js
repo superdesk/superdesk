@@ -2,7 +2,7 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
     'use strict';
 
     var URL = window.URL || window.webkitURL;
-    var module = angular.module('superdesk');
+    var module = angular.module('superdesk.preview', []);
 
     module.directive('sdImagePreview', ['notify', 'gettext', function(notify, gettext) {
         var IS_IMG_REGEXP = /^image\//;
@@ -176,4 +176,6 @@ define(['angular', 'lodash', 'bower_components/jcrop/js/jquery.Jcrop'], function
             }
         };
     }]);
+
+    return module;
 });

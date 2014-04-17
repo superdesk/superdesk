@@ -1,7 +1,7 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    angular.module('superdesk')
+    return angular.module('superdesk.upload', [])
         .service('upload', ['$q', '$rootScope', function($q, $rootScope) {
             function UploadService() {/**
                  * Start upload workflow

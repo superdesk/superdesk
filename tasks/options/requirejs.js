@@ -13,17 +13,7 @@ module.exports = function(grunt) {
         });
     }
 
-    var include = [
-        'main',
-        'superdesk/filters',
-        'superdesk/services/all',
-        'superdesk/directives/all',
-        'superdesk/auth/auth',
-        'superdesk/data/data',
-        'superdesk/datetime/datetime',
-        'superdesk/error/error',
-    ];
-
+    var include = ['main'];
     include.push.apply(include, getModules());
 
     return {

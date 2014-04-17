@@ -4,7 +4,7 @@ define([
 ], function(angular, _) {
     'use strict';
 
-    angular.module('superdesk.services')
+    return angular.module('superdesk.services.entity', [])
         /**
          * Location Params service holds default params for given page
          * and combines those with current params.

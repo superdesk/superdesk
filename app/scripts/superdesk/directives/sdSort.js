@@ -1,10 +1,9 @@
 define([
-    'jquery',
     'angular'
-], function($, angular) {
+], function(angular) {
     'use strict';
 
-    angular.module('superdesk.directives')
+    return angular.module('superdesk.directives.sort', [])
         /**
          * sdSort inserts sort links based on current sort field and direction.
          *

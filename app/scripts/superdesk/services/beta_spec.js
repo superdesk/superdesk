@@ -1,9 +1,9 @@
-define(['superdesk/services/beta'], function() {
+define(['superdesk/services/beta'], function(BetaService) {
     'use strict';
 
     describe('beta service', function() {
 
-        beforeEach(module('superdesk.services'));
+        beforeEach(module(BetaService.name));
 
         it('can filter out sd-beta from html when beta is off', inject(function(betaService, $rootScope, $http, $httpBackend) {
             $rootScope.beta = false;

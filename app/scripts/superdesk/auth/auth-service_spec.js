@@ -1,7 +1,8 @@
 define([
+    'superdesk/services/storage',
     'superdesk/auth/auth-service',
     'superdesk/auth/session-service'
-], function(AuthService, SessionService) {
+], function(StorageService, AuthService, SessionService) {
     'use strict';
 
     var USER_HREF = 'http://user/1',
@@ -9,7 +10,7 @@ define([
         USERNAME = 'foo';
 
     beforeEach(function() {
-        module('superdesk.services');
+        module(StorageService.name);
         module(function($provide) {
             $provide.service('auth', AuthService);
             $provide.service('session', SessionService);

@@ -1,7 +1,7 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    angular.module('superdesk.directives')
+    return angular.module('superdesk.directives.pagination', [])
         /**
          * sdPagination inserts pagination controls for a given data set.
          *

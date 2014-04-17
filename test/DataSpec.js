@@ -1,19 +1,23 @@
 define([
     'superdesk/services/data',
+    'superdesk/services/entity',
+    'superdesk/services/server',
     'angular-mocks'
-], function() {
+], function(dataService, entityService, serverService) {
     'use strict';
 
-    beforeEach(function() {
-        module('superdesk.services');
-        module('ngMock');
-    });
-
-    beforeEach(module(function($provide) {
-        $provide.value('config', {server: {url: 'http://localhost'}});
-    }));
-
     describe('DataService', function() {
+        beforeEach(function() {
+            module(dataService.name);
+            module(entityService.name);
+            module(serverService.name);
+            module('ngMock');
+        });
+
+        beforeEach(module(function($provide) {
+            $provide.value('config', {server: {url: 'http://localhost'}});
+        }));
+
         var DataAdapter, httpBackend;
 
         beforeEach(inject(function($injector) {

@@ -1,17 +1,14 @@
 define([
     'jquery',
     'angular',
-    'superdesk/services/keyboardManager',
-    'angular-mocks'
-], function($, angular) {
+    'superdesk/services/keyboardManager'
+], function($, angular, kbManager) {
     'use strict';
 
-    beforeEach(function() {
-        module('superdesk.services');
-        module('ngMock');
-    });
-
     describe('keyboardManager', function() {
+
+        beforeEach(module(kbManager.name));
+
         var km, elem, $timeout,
             options = {inputDisabled: false};
 

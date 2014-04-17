@@ -1,4 +1,6 @@
 define([
+    'angular',
+    'require',
     './sdModal',
     './sdAutofocus',
     './sdDebounceThrottle',
@@ -21,4 +23,30 @@ define([
     './sdTypeahead',
     './sdNotifications',
     './image-preview'
-], function() {});
+], function(angular, require) {
+    'use strict';
+
+    return [
+        require('./sdAutofocus').name,
+        require('./sdDebounceThrottle').name,
+        require('./sdReldate').name,
+        require('./sdModal').name,
+        require('./sdGroupDates').name,
+        require('./sdPagination').name,
+        require('./sdSort').name,
+        require('./sdWithParams').name,
+        require('./sdCheck').name,
+        require('./sdSearch').name,
+        require('./sdConfirm').name,
+        require('./sdSelect').name,
+        require('./sdPermissions').name,
+        require('./sdUserAvatar').name,
+        require('./sdDragDrop').name,
+        require('./menu').name,
+        require('./listView').name,
+        require('./sdTypeahead').name,
+        require('./sdDateRange').name,
+        require('./sdNotifications').name,
+        require('./image-preview').name
+    ];
+});

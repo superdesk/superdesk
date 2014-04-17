@@ -1,7 +1,7 @@
 define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
-    angular.module('superdesk.services')
+    return angular.module('superdesk.services.data', [])
         /**
          * Location State Adapter for Data Layer
          */

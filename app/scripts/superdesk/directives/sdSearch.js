@@ -1,7 +1,7 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    angular.module('superdesk.directives')
+    return angular.module('superdesk.search.dir', [])
     /**
      * Search directive wraps locationParams for search
      *

@@ -11,7 +11,7 @@ define(['angular', 'lodash', 'require'], function(angular, _, require) {
         ACTION_PREVIEW: 'preview'
     };
 
-    var module = angular.module('superdesk.services');
+    var module = angular.module('superdesk.services.superdesk', []);
 
     /**
      * Superdesk Provider for registering of app components.
@@ -415,4 +415,6 @@ define(['angular', 'lodash', 'require'], function(angular, _, require) {
             }
         };
     }]);
+
+    return module;
 });

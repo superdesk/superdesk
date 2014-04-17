@@ -1,10 +1,14 @@
-define(['superdesk/auth/session-service'], function (SessionService) {
+define([
+    'superdesk/auth/session-service',
+    'superdesk/services/storage'
+], function (SessionService, StorageService) {
     'use strict';
 
     describe('session service', function() {
 
         beforeEach(function() {
             localStorage.clear();
+            module(StorageService.name);
             module(function ($provide) {
                 $provide.service('session', SessionService);
             });

@@ -5,7 +5,7 @@ define([
 ], function(angular, _, $) {
     'use strict';
 
-    var module = angular.module('superdesk.directives');
+    var module = angular.module('superdesk.menu.directives', []);
 
     module.directive('sdMenuWrapper', ['$route', 'superdesk', '$location', 'betaService',
         function($route, superdesk, $location, betaService) {
@@ -55,4 +55,6 @@ define([
             template: '<a ng-href="#{{ item.href }}" ng-click="followLink()" translate>{{ item.label }}</a>'
         };
     });
+
+    return module;
 });
