@@ -1,10 +1,9 @@
 define([
     'angular',
     'require',
-    'view',
     './controllers/archive',
     './controllers/edit'
-], function(angular, require, view) {
+], function(angular, require) {
     'use strict';
 
     var app = angular.module('superdesk.archive', []);
@@ -26,13 +25,13 @@ define([
             .activity('/archive', {
                 label: gettext('Archive'),
                 priority: -700,
-                templateUrl: view('archive.html', app),
+                templateUrl: require.toUrl('./views/archive.html'),
                 controller: require('./controllers/archive'),
                 category: superdesk.MENU_MAIN,
                 reloadOnSearch: false
             })
             .activity('/edit', {
-                templateUrl: view('edit.html', app),
+                templateUrl: require.toUrl('./views/edit.html'),
                 controller: require('./controllers/edit'),
                 filters: [
                     {action: 'edit', type: 'archive'}

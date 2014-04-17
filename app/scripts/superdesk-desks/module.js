@@ -1,12 +1,11 @@
 define([
     'angular',
     'require',
-    'view',
     './resources',
     './controllers/main',
     './controllers/settings',
     './directives'
-], function(angular, require, view) {
+], function(angular, require) {
     'use strict';
 
     var app = angular.module('superdesk.desks', [
@@ -18,7 +17,7 @@ define([
         superdesk
             .activity('/desks', {
                 label: gettext('Desks'),
-                templateUrl: view('main.html', app),
+                templateUrl: require.toUrl('./views/main.html'),
                 controller: require('./controllers/main'),
                 category: superdesk.MENU_MAIN
             })
@@ -26,7 +25,7 @@ define([
             .activity('/settings/desks', {
                 label: gettext('Desks'),
                 controller: require('./controllers/settings'),
-                templateUrl: view('settings.html', app),
+                templateUrl: require.toUrl('./views/settings.html'),
                 category: superdesk.MENU_SETTINGS,
                 priority: -800
             });
