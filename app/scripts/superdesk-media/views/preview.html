@@ -1,34 +1,16 @@
-<div class="user-profile-edit">
-  <div>
-    
-    <div class="profile-info user-profile-edit">
-        <div class="header-info">
-            <h2>{{ item.HeadLine }}</h2>
-        </div>
-        <div class="details-info" ng-class="{shifted : error}">
-            <div class="details-section">
-                <div class="details-section-header">{{ 'Metadata' | translate }}</div>
+<div>
+    <div class="header">
+        <ul class="info-list pull-left">
+            <li>{{ 'Provider:' | translate }} <span>{{ item.Provider }}</span></li>
+            <li>{{ 'Version:' | translate }} <span>{{ item.Version }}</span></li>
+        </ul>
+    </div>
+    <div class="content" sd-shadow>
+        <p class="date-info">{{ 'Created' | translate }} {{ item.CreatedOn | reldate }}</p>
+        <p class="date-info">{{ 'Modified' | translate }} {{ item.VersionOn | reldate }}</p>
+        <p class="title">{{ item.HeadLine }}</p>
+        <div class="core-content">
 
-                <div sd-info-item>
-                  <label for="display-name" translate>provider</label>
-                  <span class="info-value">{{item.Provider}}</span>
-                </div>
-
-                <div sd-info-item>
-                  <label for="display-name" translate>version</label>
-                  <span class="info-value">{{item.Version}}</span>
-                </div>
-
-                <div sd-info-item>
-                  <label for="display-name" translate>created</label>
-                  <span class="info-value" sd-reldate ng-model="item.CreatedOn"></span>
-                </div>
-
-                <div sd-info-item>
-                  <label for="display-name" translate>modified</label>
-                  <span class="info-value" sd-reldate ng-model="item.VersionOn"></span>
-                </div>
-            </div>
         </div>
     </div>
   </div>

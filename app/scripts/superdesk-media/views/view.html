@@ -3,7 +3,7 @@
         <a class="btn btn-inverse" href="" ><i class="icon-pencil icon-white"></i> {{ 'Edit'|translate }}</a>
         <a class="btn btn-inverse" href="" ><i class="icon-download-alt icon-white"></i> {{ 'Download'|translate }}</a>
         <a class="btn btn-inverse" href="" ><i class="icon-trash icon-white"></i> {{ 'Delete'|translate }}</a>
-        <a class="lightbox-close" data-dismiss="modal" href="" on-click="item = null">
+        <a class="lightbox-close"  href="" ng-click="item = null">
             <i class="icon-remove icon-white"></i>
         </a>
     </section>
@@ -33,8 +33,12 @@
             
             <span class="lightbox-media-type filetype-icon-{{item.ContentType}}"></span>
 
-            <div class="btn-group lightbox-actions">
-              <button class="btn"><i class="icon-list-alt"></i> {{ 'Edit metadata'|translate }}</a>
+            <div class="lightbox-actions">
+                <button class="btn pull-left"><i class="icon-list-alt"></i> {{ 'Edit metadata'|translate }}</button>
+                <div class="btn-group pull-right">
+                    <button class="btn" ng-click="prev()" ng-disabled="!prevEnabled" translate>previous</button>
+                    <button class="btn" ng-click="next()" ng-disabled="!nextEnabled" translate>next</button>
+                </div>
             </div>
             
         </header>
@@ -64,7 +68,5 @@
                 </div>
             </div>
         </div>
-        <button ng-click="prev()" ng-disabled="!prevEnabled">previous</button>
-        <button href="" ng-click="next()" ng-disabled="!nextEnabled">next</button>
     </section>
 </div>
