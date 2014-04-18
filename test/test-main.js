@@ -10,15 +10,9 @@ for (var file in window.__karma__.files) {
 requirejs.config({
     baseUrl: '/base/app/scripts',
 
-    deps: ['angular', 'angular-mocks'],
-    callback: function(angular) {
+    deps: ['angular-mocks'],
+    callback: function() {
         'use strict';
-
-        angular.module('superdesk', []);
-        angular.module('superdesk.filters', []);
-        angular.module('superdesk.services', []);
-        angular.module('superdesk.directives', []);
-
         require(tests, function(tests) {
             return window.__karma__.start(tests);
         });

@@ -1,5 +1,4 @@
 define([
-    'angular',
     'require',
     './data',
     './translate',
@@ -10,15 +9,13 @@ define([
     './server',
     './superdesk',
     './dragDropService',
-    './modalService',
-    './beta'
-], function(angular, require) {
+    './modalService'
+], function(require) {
     'use strict';
 
     return [
         require('./data').name,
         require('./superdesk').name,
-        require('./beta').name,
         require('./modalService').name,
         require('./dragDropService').name,
         require('./server').name,

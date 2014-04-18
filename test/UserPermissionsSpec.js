@@ -26,7 +26,6 @@ define([
         };
 
         beforeEach(function() {
-            module('superdesk.services');
             inject(function($rootScope, $httpBackend, _em_, _permissionsService_) {
                 rootScope = $rootScope;
                 httpBackend = $httpBackend;

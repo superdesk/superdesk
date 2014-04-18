@@ -6,7 +6,6 @@ define([
     'angular-route',
     'angular-resource',
     'angular-file-upload',
-    'gridster',
 
     './auth/auth',
     './data/data',
@@ -14,6 +13,7 @@ define([
     './error/error',
     './notify/notify',
     './upload/upload',
+    './beta/beta',
 
     './filters',
     './services/all',
@@ -32,6 +32,7 @@ define([
         require('./error/error').name,
         require('./notify/notify').name,
         require('./upload/upload').name,
+        require('./beta/beta').name,
         require('./filters').name
     ];
 

@@ -8,7 +8,7 @@ require.config({
         angular: 'bower_components/angular/angular',
         bootstrap: 'bower_components/bootstrap/dist/js/bootstrap',
         moment: 'bower_components/momentjs/moment',
-        gridster: 'bower_components/gridster/dist/jquery.gridster.with-extras',
+        bower_components: 'bower_components/',
 
         'angular-ui': 'bower_components/angular-bootstrap/ui-bootstrap',
         'angular-resource': 'bower_components/angular-resource/angular-resource',
@@ -42,7 +42,6 @@ require.config({
         'angular-mocks': ['angular'],
         'angular-file-upload': ['angular', 'angular-file-upload-shim'],
         'bootstrap_ui': ['angular'],
-        'gridster': ['angular'],
         'translations': ['angular-gettext'],
         'angular-ui': ['angular', 'bootstrap'],
 

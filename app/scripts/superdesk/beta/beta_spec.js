@@ -1,4 +1,4 @@
-define(['superdesk/services/beta'], function(BetaService) {
+define(['./beta.js'], function(BetaService) {
     'use strict';
 
     describe('beta service', function() {

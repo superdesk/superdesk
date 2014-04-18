@@ -5,7 +5,8 @@ define([
     './services',
     './directives',
     './filters',
-    './widgets/worldClock/worldClock'
+    './widgets/worldClock/worldClock',
+    'bower_components/gridster/dist/jquery.gridster.with-extras'
 ], function(angular, require) {
     'use strict';
 

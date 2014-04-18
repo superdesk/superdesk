@@ -1,5 +1,4 @@
 define([
-    'angular',
     'require',
     './sdModal',
     './sdAutofocus',
@@ -19,7 +18,7 @@ define([
     './listView',
     './sdTypeahead',
     './sdNotifications'
-], function(angular, require) {
+], function(require) {
     'use strict';
 
     return [
