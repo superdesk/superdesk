@@ -3,7 +3,6 @@ define([
     'require',
     './data',
     './translate',
-    './upload',
     './storage',
     './permissionsService',
     './keyboardManager',
@@ -27,7 +26,6 @@ define([
         require('./keyboardManager').name,
         require('./permissionsService').name,
         require('./storage').name,
-        require('./translate').name,
-        require('./upload').name
+        require('./translate').name
     ];
 });

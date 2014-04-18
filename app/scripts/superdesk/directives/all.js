@@ -18,8 +18,7 @@ define([
     './menu',
     './listView',
     './sdTypeahead',
-    './sdNotifications',
-    './image-preview'
+    './sdNotifications'
 ], function(angular, require) {
     'use strict';
 
@@ -40,7 +39,6 @@ define([
         require('./menu').name,
         require('./listView').name,
         require('./sdTypeahead').name,
-        require('./sdNotifications').name,
-        require('./image-preview').name
+        require('./sdNotifications').name
     ];
 });

@@ -13,6 +13,7 @@ define([
     './datetime/datetime',
     './error/error',
     './notify/notify',
+    './upload/upload',
 
     './filters',
     './services/all',
@@ -30,6 +31,7 @@ define([
         require('./datetime/datetime').name,
         require('./error/error').name,
         require('./notify/notify').name,
+        require('./upload/upload').name,
         require('./filters').name
     ];
 
