@@ -12,6 +12,8 @@ define([
     './data/data',
     './datetime/datetime',
     './error/error',
+    './notify/notify',
+
     './filters',
     './services/all',
     './directives/all'
@@ -27,6 +29,7 @@ define([
         require('./data/data').name,
         require('./datetime/datetime').name,
         require('./error/error').name,
+        require('./notify/notify').name,
         require('./filters').name
     ];
 

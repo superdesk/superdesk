@@ -1,4 +1,4 @@
-define(['angular'], function(angular) {
+define(['angular', 'require'], function(angular, require) {
     'use strict';
 
     return angular.module('superdesk.notify', [])
@@ -44,8 +44,8 @@ define(['angular'], function(angular) {
         }])
         .directive('sdNotify', ['notify', function (notify) {
             return {
-                scope: {},
-                templateUrl: 'scripts/superdesk/views/notify.html',
+                scope: true,
+                templateUrl: require.toUrl('./views/notify.html'),
                 link: function (scope, element, items) {
                     scope.messages = notify.messages;
                 }
