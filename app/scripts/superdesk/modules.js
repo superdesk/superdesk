@@ -26,7 +26,8 @@ define([
         require('./auth/auth').name,
         require('./data/data').name,
         require('./datetime/datetime').name,
-        require('./error/error').name
+        require('./error/error').name,
+        require('./filters').name
     ];
 
     modules.push.apply(modules, require('./services/all'));
