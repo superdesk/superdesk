@@ -7,7 +7,6 @@ define([
     './keyboardManager',
     './entity',
     './server',
-    './superdesk',
     './dragDropService',
     './modalService'
 ], function(require) {
@@ -15,7 +14,6 @@ define([
 
     return [
         require('./data').name,
-        require('./superdesk').name,
         require('./modalService').name,
         require('./dragDropService').name,
         require('./server').name,

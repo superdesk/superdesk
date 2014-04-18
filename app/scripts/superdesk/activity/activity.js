@@ -4,14 +4,13 @@ define(['angular', 'lodash', 'require'], function(angular, _, require) {
     var constans = {
         MENU_MAIN: 'superdesk.menu.main',
         MENU_SETTINGS: 'superdesk.menu.settings',
-
         ACTION_EDIT: 'edit',
         ACTION_LIST: 'list',
         ACTION_VIEW: 'view',
         ACTION_PREVIEW: 'preview'
     };
 
-    var module = angular.module('superdesk.services.superdesk', []);
+    var module = angular.module('superdesk.activity', []);
 
     /**
      * Superdesk Provider for registering of app components.
@@ -330,7 +329,7 @@ define(['angular', 'lodash', 'require'], function(angular, _, require) {
     module.directive('sdActivityChooser', ['activityChooser', 'keyboardManager', function(activityChooser, keyboardManager) {
         return {
             scope: {},
-            templateUrl: 'scripts/superdesk/views/activityChooser.html',
+            templateUrl: require.toUrl('./views/activity-chooser.html'),
             link: function(scope, elem, attrs) {
                 var UP = - 1,
                     DOWN = 1;
@@ -389,7 +388,7 @@ define(['angular', 'lodash', 'require'], function(angular, _, require) {
     module.directive('sdActivityModal', ['activityService', function(activityService) {
         return {
             scope: true,
-            templateUrl: require.toUrl('../views/activity-modal.html'),
+            templateUrl: require.toUrl('./views/activity-modal.html'),
             link: function(scope, elem) {
                 scope.stack = activityService.activityStack;
                 scope.$watch('stack.length', function(len) {

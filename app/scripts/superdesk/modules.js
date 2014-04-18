@@ -14,6 +14,7 @@ define([
     './notify/notify',
     './upload/upload',
     './beta/beta',
+    './activity/activity',
 
     './filters',
     './services/all',
@@ -33,11 +34,11 @@ define([
         require('./notify/notify').name,
         require('./upload/upload').name,
         require('./beta/beta').name,
-        require('./filters').name
+        require('./activity/activity').name
     ];
 
+    modules.push(require('./filters').name);
     modules.push.apply(modules, require('./services/all'));
     modules.push.apply(modules, require('./directives/all'));
-
     return modules;
 });
