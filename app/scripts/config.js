@@ -48,6 +48,7 @@ require.config({
         'bootstrap': ['jquery'],
         'jquery-ui': ['jquery'],
         'bootstrap/modal': ['jquery'],
-        'bootstrap/dropdown': ['jquery']
+        'bootstrap/dropdown': ['jquery'],
+        'bower_components/jcrop/js/jquery.Jcrop': ['jquery']
     }
 });

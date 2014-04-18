@@ -1,4 +1,6 @@
-define(['superdesk/data/api-service'], function(APIProvider) {
+define([
+    './api-service'
+], function(APIProvider) {
     'use strict';
 
     function collection(data) {

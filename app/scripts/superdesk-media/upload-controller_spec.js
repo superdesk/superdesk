@@ -1,4 +1,4 @@
-define(['./upload-controller.js'], function(UploadController) {
+define(['./upload-controller'], function(UploadController) {
     'use strict';
 
     describe('Upload controller', function() {

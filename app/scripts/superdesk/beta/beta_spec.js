@@ -1,4 +1,4 @@
-define(['./beta.js'], function(BetaService) {
+define(['./beta'], function(BetaService) {
     'use strict';
 
     describe('beta service', function() {

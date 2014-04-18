@@ -1,21 +1,26 @@
 var tests = [];
+var APP_SPEC_REG_EXP = /^\/base\/app\/scripts\/(.*)\.js$/;
+
 for (var file in window.__karma__.files) {
     if (window.__karma__.files.hasOwnProperty(file)) {
         if (/[sS]pec\.js$/.test(file)) {
-            tests.push(file);
+            var matches = APP_SPEC_REG_EXP.exec(file);
+            if (matches && matches.length === 2) {
+                tests.push(matches[1]);
+            } else {
+                tests.push(file);
+            }
         }
     }
 }
 
 requirejs.config({
     baseUrl: '/base/app/scripts',
-
     deps: ['angular-mocks'],
+
     callback: function() {
         'use strict';
-        require(tests, function(tests) {
-            return window.__karma__.start(tests);
-        });
+        require(tests, window.__karma__.start);
     },
 
     paths: {
@@ -34,24 +39,14 @@ requirejs.config({
         jquery: {
             exports: 'jQuery'
         },
+
         angular: {
             exports: 'angular',
             deps: ['jquery']
         },
-        'angular-resource': {
-            deps: ['angular']
-        },
-        'angular-route': {
-            deps: ['angular']
-        },
-        'angular-mocks': {
-            deps: ['angular']
-        },
-        'bootstrap/dropdown': {
-            deps: ['jquery']
-        },
-        'bootstrap/modal': {
-            deps: ['jquery']
-        }
+
+        'angular-resource': ['angular'],
+        'angular-route': ['angular'],
+        'angular-mocks': ['angular']
     }
 });

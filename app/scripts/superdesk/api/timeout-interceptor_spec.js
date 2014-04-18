@@ -1,4 +1,4 @@
-define(['angular', 'superdesk/data/timeout-interceptor'], function(angular, TimeoutHttpInterceptor) {
+define(['./timeout-interceptor'], function(TimeoutHttpInterceptor) {
     'use strict';
 
     describe('timeout http interceptor', function() {
