@@ -6,6 +6,7 @@ exports.config = {
     baseUrl: 'http://localhost:9090/',
 
     specs: [
+        'spec/setup.js',
         'spec/matchers.js',
         'spec/**/*[Ss]pec.js'
     ],
