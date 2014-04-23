@@ -1,4 +1,12 @@
-define(['angular', 'lodash', 'require'], function(angular, _, require) {
+define([
+    'angular',
+    'lodash',
+    'require',
+    './activity-list-directive',
+    './activity-item-directive',
+    './activity-chooser-directive',
+    './activity-modal-directive'
+], function(angular, _, require) {
     'use strict';
 
     var constans = {
@@ -241,66 +249,6 @@ define(['angular', 'lodash', 'require'], function(angular, _, require) {
     }]);
 
     /**
-     * Directive for listing available activities for given category.
-     */
-    module.directive('sdActivityList', ['superdesk', function(superdesk) {
-        return {
-            scope: {
-                data: '=',
-                type: '@',
-                action: '@',
-                done: '='
-            },
-            template: '<li ng-repeat="activity in activities" sd-activity-item></li>',
-            link: function(scope, elem, attrs) {
-                var intent = {
-                    action: scope.action
-                };
-
-                if (!scope.type) { // guess item type by self href
-                    //intent.type = scope.data._links.self.href.split('/')[1];
-                    intent.type = scope.data.href.split('/')[1];
-                } else {
-                    intent.type = scope.type;
-                }
-
-                if (!intent.action) {
-                    console.error('No action set for intent in \'' + elem[0].outerHTML + '\'');
-                }
-
-                scope.activities = _.values(_.where(superdesk.activities, function(activity) {
-                    return _.find(activity.filters, intent);
-                }));
-            }
-        };
-    }]);
-
-    /**
-     * Directive for single activity which runs activity on click.
-     */
-    module.directive('sdActivityItem', ['activityService', function(activityService) {
-        return {
-            replace: true,
-            template: [
-                '<li class="item-field" ng-click="run(activity, $event)" title="{{activity.label}}">',
-                '<i class="icon-{{ activity.icon }}" ng-show="activity.icon"></i>',
-                '<span translate>{{ activity.label }}</span>',
-                '</li>'
-            ].join(''),
-            link: function(scope, elem, attrs) {
-                scope.run = function(activity, e) {
-                    e.stopPropagation();
-                    activityService.start(activity, {data: scope.data}).then(function() {
-                        if (typeof scope.done === 'function') {
-                            scope.done(scope.data);
-                        }
-                    });
-                };
-            }
-        };
-    }]);
-
-    /**
      * Activity chooser service - bridge between superdesk and activity chooser directive
      */
     module.service('activityChooser', ['$q', function($q) {
@@ -323,57 +271,6 @@ define(['angular', 'lodash', 'require'], function(angular, _, require) {
         };
     }]);
 
-    /**
-     * Render a popup with activities so user can choose one
-     */
-    module.directive('sdActivityChooser', ['activityChooser', 'keyboardManager', function(activityChooser, keyboardManager) {
-        return {
-            scope: {},
-            templateUrl: require.toUrl('./views/activity-chooser.html'),
-            link: function(scope, elem, attrs) {
-                var UP = - 1,
-                    DOWN = 1;
-
-                scope.chooser = activityChooser;
-                scope.selected = null;
-
-                function move(diff, items) {
-                    var index = _.indexOf(items, scope.selected),
-                        next = _.max([0, _.min([items.length - 1, index + diff])]);
-                    scope.selected = items[next];
-                }
-
-                scope.$watch(function() {
-                    return activityChooser.activities;
-                }, function(activities, prev) {
-                    scope.selected = activities ? _.first(activities) : null;
-
-                    if (activities) {
-                        keyboardManager.push('up', function() {
-                            move(UP, activities);
-                        });
-
-                        keyboardManager.push('down', function() {
-                            move(DOWN, activities);
-                        });
-
-                        keyboardManager.push('enter', function() {
-                            activityChooser.resolve(scope.selected);
-                        });
-                    } else if (prev) {
-                        keyboardManager.pop('up');
-                        keyboardManager.pop('down');
-                        keyboardManager.pop('enter');
-                    }
-                });
-
-                scope.select = function(activity) {
-                    scope.selected = activity;
-                };
-            }
-        };
-    }]);
-
     // reject modal on route change
     // todo(petr): what about blocking route change as long as it is opened?
     module.run(['$rootScope', 'activityService', function($rootScope, activityService) {
@@ -385,35 +282,10 @@ define(['angular', 'lodash', 'require'], function(angular, _, require) {
         });
     }]);
 
-    module.directive('sdActivityModal', ['activityService', function(activityService) {
-        return {
-            scope: true,
-            templateUrl: require.toUrl('./views/activity-modal.html'),
-            link: function(scope, elem) {
-                scope.stack = activityService.activityStack;
-                scope.$watch('stack.length', function(len) {
-                    scope.activity = null;
-                    if (len) {
-                        var config = scope.stack[len - 1];
-                        scope.activity = config.activity;
-                        scope.locals = config.locals;
-
-                        scope.reject = function(reason) {
-                            return config.defer.reject(reason);
-                        };
-
-                        scope.resolve = function(result) {
-                            return config.defer.resolve(result);
-                        };
-
-                        config.defer.promise['finally'](function() {
-                            scope.stack.pop();
-                        });
-                    }
-                });
-            }
-        };
-    }]);
+    module.directive('sdActivityList', require('./activity-list-directive'));
+    module.directive('sdActivityItem', require('./activity-item-directive'));
+    module.directive('sdActivityChooser', require('./activity-chooser-directive'));
+    module.directive('sdActivityModal', require('./activity-modal-directive'));
 
     return module;
 });
