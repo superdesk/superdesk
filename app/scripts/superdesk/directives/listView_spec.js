@@ -1,7 +1,6 @@
 define([
-    'superdesk/directives/listView',
-    'superdesk/services/keyboardManager',
-    'angular-mocks'
+    './listView',
+    '../services/keyboardManager'
 ], function(ListViewModule, kbModule) {
     'use strict';
 

@@ -1,5 +1,5 @@
 define([
-    'superdesk/services/storage'
+    './storage'
 ], function(storageService) {
     'use strict';
 

@@ -1,8 +1,7 @@
 define([
     'jquery',
-    'angular',
-    'superdesk/services/keyboardManager'
-], function($, angular, kbManager) {
+    './keyboardManager'
+], function($, kbManager) {
     'use strict';
 
     describe('keyboardManager', function() {

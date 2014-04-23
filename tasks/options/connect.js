@@ -1,6 +1,9 @@
 
 module.exports = function(grunt) {
+    'use strict';
+
     var base = ['<%= distDir %>', '<%= tmpDir %>', '<%= appDir %>'];
+
     return {
         options: {
             port: 9000,

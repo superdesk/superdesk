@@ -1,10 +1,8 @@
 define([
-    'angular',
-    'angular-mocks',
-    'superdesk/services/entity',
-    'superdesk/services/server',
-    'superdesk/services/permissionsService'
-], function(angular, mock, entity, server, permissions) {
+    './entity',
+    './server',
+    './permissionsService'
+], function(entity, server, permissions) {
     'use strict';
 
     describe('PermissionsService', function() {

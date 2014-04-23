@@ -17,10 +17,9 @@ module.exports = function(config) {
             'app/scripts/bower_components/jquery/dist/jquery.js',
             'app/scripts/bower_components/angular/angular.js',
             {pattern: 'app/**/*.js', included: false},
-            {pattern: 'test/*[sS]pec.js', included: false},
             {pattern: 'app/scripts/superdesk/**/*[sS]pec.js', included: false},
             'app/scripts/superdesk*/views/*.html',
-            'test/test-main.js'
+            'test-main.js'
         ],
 
         // list of files to exclude

@@ -1,8 +1,7 @@
 define([
-    'superdesk/services/data',
-    'superdesk/services/entity',
-    'superdesk/services/server',
-    'angular-mocks'
+    './data',
+    './entity',
+    './server'
 ], function(dataService, entityService, serverService) {
     'use strict';
 
@@ -11,7 +10,6 @@ define([
             module(dataService.name);
             module(entityService.name);
             module(serverService.name);
-            module('ngMock');
         });
 
         beforeEach(module(function($provide) {

@@ -1,11 +1,8 @@
 define([
-    'jquery',
-    'angular',
     'superdesk/services/storage',
     'superdesk/services/server',
-    'superdesk-scratchpad/services',
-    'angular-mocks'
-], function($, angular, storageService, serverService) {
+    './services'
+], function(storageService, serverService) {
     'use strict';
 
     describe('scratchpadService', function() {

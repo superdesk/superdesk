@@ -1,9 +1,11 @@
 module.exports = function(grunt) {
 
+    'use strict';
+
     function data(url) {
         return {data: {
             raven: {
-                dsn: process.env['SUPERDESK_RAVEN_DSN']
+                dsn: process.env.SUPERDESK_RAVEN_DSN || ''
             },
             server: {url: grunt.option('server') || url}}
         };
