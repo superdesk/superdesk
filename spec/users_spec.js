@@ -1,27 +1,12 @@
+
+var openUrl = require('./utils').open;
+
 describe('USERS', function() {
     'use strict';
 
-    function login() {
-        element(by.id('login-btn')).isDisplayed().then(function(needLogin) {
-            if (needLogin) {
-                element(by.model('username')).clear();
-                element(by.model('username')).sendKeys('admin');
-                element(by.model('password')).sendKeys('admin');
-                element(by.id('login-btn')).click();
-            }
-        });
-    }
-
-    function open(url) {
-        return function() {
-            browser.get(url);
-            login();
-        };
-    }
-
     describe('profile:', function() {
 
-        beforeEach(open('/#/profile'));
+        beforeEach(openUrl('/#/profile'));
 
         it('can render user profile', function() {
             expect($('img[sd-user-picture').getAttribute('src'))
@@ -35,7 +20,7 @@ describe('USERS', function() {
     });
 
     describe('users list:', function() {
-        beforeEach(open('/#/users'));
+        beforeEach(openUrl('/#/users'));
 
         it('can list users', function() {
             element.all(by.repeater('user in users')).then(function(users) {
@@ -69,7 +54,7 @@ describe('USERS', function() {
     });
 
     describe('user detail:', function() {
-        beforeEach(open('/#/users'));
+        beforeEach(openUrl('/#/users'));
 
         it('can open user detail', function() {
             element(by.repeater('user in users').row(0).column('FullName')).click();
@@ -82,7 +67,7 @@ describe('USERS', function() {
     });
 
     describe('user edit:', function() {
-        beforeEach(open('/#/users/2'));
+        beforeEach(openUrl('/#/users/2'));
 
         it('can enable/disable buttons based on form status', function() {
             var buttonSave = element(by.buttonText('Save'));
