@@ -17,11 +17,13 @@ define([
                     action: scope.action
                 };
 
-                if (!scope.type) { // guess item type by self href
+                if (!scope.type && scope.data.href) { // guess item type by self href
                     //intent.type = scope.data._links.self.href.split('/')[1];
                     intent.type = scope.data.href.split('/')[1];
-                } else {
+                } else if (scope.type) {
                     intent.type = scope.type;
+                } else {
+                    return;
                 }
 
                 if (!intent.action) {

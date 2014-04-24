@@ -1,4 +1,4 @@
-define([], function() {
+define(['lodash'], function(_) {
     'use strict';
 
     ArchiveListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'es'];
@@ -24,8 +24,7 @@ define([], function() {
             return $location.search();
         }, function(search) {
             var query = getQuery(search);
-            console.log(query);
-            //fetchItems(query);
+            fetchItems({source: query});
         });
 
         function buildFilters(params) {
@@ -54,7 +53,9 @@ define([], function() {
 
         function fetchItems(criteria) {
             api.archive.query(criteria).then(function(items) {
-                console.log(items);
+                items._items = _.pluck(items.hits.hits, '_source');
+                items.collection = items._items;
+                $scope.items = items;
             });
         }
     }
