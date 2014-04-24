@@ -1,7 +1,7 @@
 define('main', [
     'gettext',
     'angular',
-    'superdesk/module'
+    'superdesk/superdesk'
 ], function(gettext, angular, superdesk) {
     'use strict';
 
