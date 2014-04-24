@@ -45,4 +45,6 @@ define([
             }
         });
     }]);
+
+    return app;
 });

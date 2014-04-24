@@ -45,11 +45,16 @@
         var config = {
             server: {url: '<%= server.url %>'},
             raven: {dsn: '<%= raven.dsn %>'},
-            apps: ['dashboard', 'users', 'planning', 'media']
         };
 
-        require(['main'], function(bootstrap) {
-            bootstrap(config);
+        require([
+            'main',
+            'superdesk-dashboard/module',
+            'superdesk-users/module',
+            'superdesk-planning/module',
+            'superdesk-media/module'
+        ], function(bootstrap) {
+            bootstrap(config, arguments);
         });
     </script>
   </body>

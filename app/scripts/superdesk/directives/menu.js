@@ -52,7 +52,7 @@ define([
 
     module.directive('sdMenuItem', function() {
         return {
-            template: '<a ng-href="#{{ item.href }}" ng-click="followLink()" translate>{{ item.label }}</a>'
+            template: '<a ng-href="#{{ item.href }}" ng-click="followLink()">{{ item.label|translate }}</a>'
         };
     });
 

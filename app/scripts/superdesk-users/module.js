@@ -146,4 +146,6 @@ define([
                 service: require('./users-service')
             });
         }]);
+
+    return app;
 });

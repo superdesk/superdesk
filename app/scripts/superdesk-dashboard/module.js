@@ -10,7 +10,7 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    angular.module('superdesk.dashboard', [
+    return angular.module('superdesk.dashboard', [
         'superdesk.dashboard.services',
         'superdesk.dashboard.directives',
         'superdesk.dashboard.filters',

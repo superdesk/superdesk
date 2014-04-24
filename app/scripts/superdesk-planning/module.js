@@ -10,7 +10,7 @@ define([
         'superdesk.planning.directives'
     ]);
 
-    app
+    return app
         .value('mockDataExample', {
             list: ['array1', 'array2', 'array3'],
             name: 'sample name'

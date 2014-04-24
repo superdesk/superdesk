@@ -1,48 +1,25 @@
-
-/* exported gettext */
-
-/**
- * Noop for registering string for translation in js files.
- *
- * This is supposed to be used in angular config phase,
- * where we can't use the translate service.
- *
- * @param {string} input
- * @return {string} unmodified input
- */
-function gettext(input) {
-    'use strict';
-    return input;
-}
-
 define('main', [
+    'gettext',
     'angular',
-    'require',
-    'superdesk/modules',
-    'angular-mocks'
-], function(angular, require, modules) {
+    'superdesk/modules'
+], function(gettext, angular, modules) {
     'use strict';
 
-    angular.module('test', []); // used for mocking
-    modules.push('test');
+    return function bootstrap(config, apps) {
 
-    return function bootstrap(config) {
         angular.module('superdesk', []).constant('config', config);
         modules.push('superdesk');
 
-        // build deps
-        var deps = [];
-        angular.forEach(config.apps, function(app) {
-            deps.push('superdesk-' + app + '/module');
-            modules.push('superdesk.' + app);
+        angular.forEach(apps, function(app) {
+            if (angular.isFunction(app.config)) {
+                modules.push(app.name);
+            }
         });
 
         // load apps & bootstrap
-        require(deps, function() {
-            var body = angular.element('body');
-            body.ready(function() {
-                angular.bootstrap(body, modules);
-            });
+        var body = angular.element('body');
+        body.ready(function() {
+            angular.bootstrap(body, modules);
         });
     };
 });
