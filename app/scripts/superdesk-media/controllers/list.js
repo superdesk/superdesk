@@ -5,12 +5,6 @@ define([], function() {
     function ArchiveListController($scope, $location, superdesk, api, es) {
         $scope.view = 'mgrid';
 
-        $scope.$watch(function() {
-            return $location.search();
-        }, function(search) {
-            fetchItems(getQuery(search));
-        });
-
         $scope.preview = function(item) {
             $scope.previewItem = item;
         };
@@ -26,7 +20,17 @@ define([], function() {
             });
         };
 
+        $scope.$watchCollection(function() {
+            return $location.search();
+        }, function(search) {
+            var query = getQuery(search);
+            console.log(query);
+            //fetchItems(query);
+        });
+
         function buildFilters(params) {
+            var filters = [];
+
             if (params.before || params.after) {
                 var range = {ChangeOn: {}};
                 if (params.before) {
@@ -37,22 +41,20 @@ define([], function() {
                     range.ChangeOn.gte = params.after;
                 }
 
-                params.filters = [{range: range}];
+                filters.push({range: range});
             }
+
+            return filters;
         }
 
         function getQuery(params) {
-            buildFilters(params);
-            var query = es(params);
-            console.log(query);
-            return { // todo(petr) replace with elastic
-                desc: 'q.createdOn'
-            };
+            var filters = buildFilters(params);
+            return es(params, filters);
         }
 
         function fetchItems(criteria) {
-            api.image.query(criteria).then(function(items) {
-                $scope.items = items;
+            api.archive.query(criteria).then(function(items) {
+                console.log(items);
             });
         }
     }

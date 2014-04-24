@@ -25,9 +25,10 @@ define([], function() {
          * Build query using elastic query dsl
          *
          * @param {Object} params
+         * @param {Array} filters
          * @returns {Object}
          */
-        function buildQuery(params) {
+        function buildQuery(params, filters) {
             var query = {};
 
             if (params.q) {
@@ -36,11 +37,11 @@ define([], function() {
                 query = {match_all: {}};
             }
 
-            if (params.filters) {
+            if (filters && filters.length) {
                 query = {
                     filtered: {
                         query: query,
-                        filter: {and: params.filters}
+                        filter: {and: filters}
                     }
                 };
             }

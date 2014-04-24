@@ -1,5 +1,9 @@
-define([], function() {
+define(['moment'], function(moment) {
     'use strict';
+
+    function format(date) {
+        return date ? moment(date).format('YYYY-MM-DD') : null;
+    }
 
 	/**
      * Show date range picker on element
@@ -12,6 +16,7 @@ define([], function() {
      *
      */
     return ['$location', function($location) {
+
         return {
             restrict: 'A',
             scope: {
@@ -22,14 +27,15 @@ define([], function() {
 
                 // init
                 var search = $location.search();
-                scope.lte = search.before || null;
-                scope.gte = search.after || null;
+                scope.lte = search.before ? new Date(search.before) : null;
+                scope.gte = search.after ? new Date(search.after) : null;
 
-                // change location on change
-                scope.$watch('lte + gte', function() {
-                    console.log(scope.lte, scope.gte);
-                    $location.search('before', scope.lte || null);
-                    $location.search('after', scope.gte || null);
+                scope.$watch('lte', function(lte) {
+                    $location.search('before', format(lte));
+                });
+
+                scope.$watch('gte', function(gte) {
+                    $location.search('after', format(gte));
                 });
 			}
         };

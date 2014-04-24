@@ -37,6 +37,13 @@ define([
     }]);
 
     app.config(['apiProvider', function(apiProvider) {
+        apiProvider.api('archive', {
+            type: 'http',
+            backend: {
+                rel: 'Content/ItemMedia/Find'
+            }
+        });
+
         apiProvider.api('image', {
             type: 'http',
             backend: {

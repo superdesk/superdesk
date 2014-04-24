@@ -25,7 +25,7 @@ define(['./es'], function(ElasticSearch) {
                 {term: {provider: 'foo'}}
             ];
 
-            var body = es({filters: filters});
+            var body = es({}, filters);
             expect(body.query.filtered.query.match_all).toEqual({});
             expect(body.query.filtered.filter.and.length).toBe(2);
         }));
