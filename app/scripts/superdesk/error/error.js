@@ -4,7 +4,7 @@ define([
 ], function(angular, Raven) {
     'use strict';
 
-    var app = angular.module('superdesk.error', ['superdesk']),
+    var app = angular.module('superdesk.error', []),
         ravenIsActive = false;
 
     app.config(['config', '$httpProvider', function(config, $httpProvider) {

@@ -9,6 +9,7 @@ define([
 
     './api/api',
     './auth/auth',
+    './config/config',
     './datetime/datetime',
     './error/error',
     './notify/notify',
@@ -30,6 +31,7 @@ define([
         'angularFileUpload',
         require('./api/api').name,
         require('./auth/auth').name,
+        require('./config/config').name,
         require('./datetime/datetime').name,
         require('./error/error').name,
         require('./notify/notify').name,
@@ -40,7 +42,10 @@ define([
     ];
 
     modules.push(require('./filters').name);
+
+    // todo(petr): refactor into func based modules
     modules.push.apply(modules, require('./services/all'));
     modules.push.apply(modules, require('./directives/all'));
-    return modules;
+
+    return angular.module('superdesk', modules);
 });

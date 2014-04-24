@@ -1,14 +1,15 @@
 define('main', [
     'gettext',
     'angular',
-    'superdesk/modules'
-], function(gettext, angular, modules) {
+    'superdesk/module'
+], function(gettext, angular, superdesk) {
     'use strict';
+
+    var modules = [superdesk.name];
 
     return function bootstrap(config, apps) {
 
-        angular.module('superdesk', []).constant('config', config);
-        modules.push('superdesk');
+        superdesk.constant('config', config);
 
         angular.forEach(apps, function(app) {
             if (angular.isFunction(app.config)) {
