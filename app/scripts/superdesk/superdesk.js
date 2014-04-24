@@ -7,16 +7,17 @@ define([
     'angular-resource',
     'angular-file-upload',
 
+    './activity/activity',
     './api/api',
     './auth/auth',
+    './beta/beta',
     './config/config',
     './datetime/datetime',
+    './elastic/elastic',
     './error/error',
+    './list/list',
     './notify/notify',
     './upload/upload',
-    './beta/beta',
-    './activity/activity',
-    './elastic/elastic',
 
     './filters',
     './services/all',
@@ -29,16 +30,18 @@ define([
         'ngResource',
         'ui.bootstrap',
         'angularFileUpload',
+
+        require('./activity/activity').name,
         require('./api/api').name,
         require('./auth/auth').name,
+        require('./beta/beta').name,
         require('./config/config').name,
         require('./datetime/datetime').name,
+        require('./elastic/elastic').name,
         require('./error/error').name,
+        require('./list/list').name,
         require('./notify/notify').name,
-        require('./upload/upload').name,
-        require('./beta/beta').name,
-        require('./activity/activity').name,
-        require('./elastic/elastic').name
+        require('./upload/upload').name
     ];
 
     modules.push(require('./filters').name);

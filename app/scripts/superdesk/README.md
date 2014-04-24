@@ -10,6 +10,7 @@ This is group of modules which provide basic functionality for building superdes
 - datetime
 - elastic
 - error
+- list
 - notify
 - upload
 

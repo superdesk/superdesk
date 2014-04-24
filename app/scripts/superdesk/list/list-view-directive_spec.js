@@ -1,23 +1,16 @@
 define([
-    './listView',
-    '../services/keyboardManager'
-], function(ListViewModule, kbModule) {
+    './list',
+    '../services/keyboardManager',
+    './views/list-view.html'
+], function(ListModule, kbModule) {
     'use strict';
 
     describe('ListView directive', function() {
-        var $compile, $rootScope;
-
-        beforeEach(module(ListViewModule.name));
+        beforeEach(module(ListModule.name));
         beforeEach(module(kbModule.name));
         beforeEach(module('templates'));
-        beforeEach(module('ngMock'));
 
-        beforeEach(inject(function($injector) {
-            $compile = $injector.get('$compile');
-            $rootScope = $injector.get('$rootScope');
-        }));
-
-        it('renders list', function() {
+        it('renders list', inject(function($compile, $rootScope) {
             $rootScope.adapter = {
                 collection: [{href: 1, name: 'foo'}, {href: 2, name: 'bar'}]
             };
@@ -27,6 +20,6 @@ define([
 
             expect(elem.html()).toContain('foo');
             expect(elem.find('.item').length).toBe(2);
-        });
+        }));
     });
 });

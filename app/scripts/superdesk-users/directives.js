@@ -1,8 +1,9 @@
 define([
     'lodash',
     'jquery',
-    'angular'
-], function(_, $, angular) {
+    'angular',
+    'require'
+], function(_, $, angular, require) {
     'use strict';
 
     angular.module('superdesk.users.directives', [])
@@ -58,26 +59,6 @@ define([
                 }
             };
         })
-        .directive('sdSearchParam', ['$location', function($location) {
-            return {
-                scope: {
-                    sdSearchParam: '@'
-                },
-                link: function(scope, elem) {
-                    var params = $location.search();
-                    elem.val(params[scope.sdSearchParam]);
-
-                    var updateParam = _.debounce(function() {
-                        scope.$apply(function() {
-                            $location.search('q', elem.val() || null);
-                            $location.search('page', null);
-                        });
-                    }, 500);
-
-                    elem.keyup(updateParam);
-                }
-            };
-        }])
         .directive('sdUserActivity', ['profileService', function(profileService) {
             return {
                 restrict: 'A',
@@ -130,7 +111,7 @@ define([
 
             return {
                 replace: true,
-                templateUrl: 'scripts/superdesk-users/views/edit-form.html',
+                templateUrl: require.toUrl('./views/edit-form.html'),
                 scope: {
                     origUser: '=user',
                     onsave: '&',

@@ -19,6 +19,7 @@ module.exports = function(config) {
             {pattern: 'app/**/*.js', included: false},
             {pattern: 'app/scripts/superdesk/**/*[sS]pec.js', included: false},
             'app/scripts/superdesk*/views/*.html',
+            'app/scripts/superdesk/**/*.html',
             'test-main.js'
         ],
 
@@ -29,7 +30,7 @@ module.exports = function(config) {
         ],
 
         ngHtml2JsPreprocessor: {
-            stripPrefix: 'app/',
+            prependPrefix: '/base/',
             moduleName: 'templates'
         },
 
