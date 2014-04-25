@@ -14,7 +14,7 @@
             <section class="lightbox-left">
                 <!-- picture preview -->
                 <div class="lightbox-large-preview" sd-item-rendition data-item="item" data-rendition="original"></div>
-                <div class="lightbox-caption">{{ item.HeadLine.en }}</div>
+                <div class="lightbox-caption">{{ item.Headline.en }}</div>
             </section>
 
         </div>
@@ -22,14 +22,14 @@
 
     <section class="lightbox-right">
         <header>
-            <h5 class="lightbox-title">{{ item.HeadLine }}</h5>
+            <h5 class="lightbox-title">{{ item.Headline.en }}</h5>
             <span class="lightbox-modified-info">{{ 'Created:'|translate }} {{ item.CreatedOn|date:'medium' }}</span>
-            <span class="lightbox-modified-info">{{ 'Modified:'|translate }} {{ item.VersionOn|date:'medium' }}</span>
+            <span class="lightbox-modified-info">{{ 'Modified:'|translate }} {{ item.VersionCreated|date:'medium' }}</span>
             
             <span class="lightbox-media-type filetype-icon-{{item.ContentType}}"></span>
 
             <div class="lightbox-actions">
-                <button class="btn pull-left"><i class="icon-list-alt"></i> {{ 'Edit metadata'|translate }}</button>
+                <button class="btn pull-left" ng-show><i class="icon-list-alt"></i> {{ 'Edit metadata'|translate }}</button>
                 <div class="btn-group pull-right">
                     <button class="btn" ng-click="prev()" ng-disabled="!prevEnabled" translate>previous</button>
                     <button class="btn" ng-click="next()" ng-disabled="!nextEnabled" translate>next</button>

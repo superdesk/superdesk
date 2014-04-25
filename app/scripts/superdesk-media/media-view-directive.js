@@ -14,7 +14,7 @@ define(['lodash', 'require'], function(_, require) {
                 scope.nextEnabled = true;
 
                 var getIndex = function(item) {
-                    return _.findIndex(scope.items.collection, {GUID: item.GUID});
+                    return _.findIndex(scope.items.collection, item);
                 };
 
                 var setItem = function(item) {
@@ -37,8 +37,12 @@ define(['lodash', 'require'], function(_, require) {
                     }
                 };
 
-                keyboardManager.bind('left', scope.prev);
-                keyboardManager.bind('right', scope.next);
+                keyboardManager.push('left', scope.prev);
+                keyboardManager.push('right', scope.next);
+                scope.$on('$destroy', function() {
+                    keyboardManager.pop('left');
+                    keyboardManager.pop('right');
+                });
 
                 setItem(scope.item);
             }
