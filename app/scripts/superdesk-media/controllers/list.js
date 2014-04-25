@@ -49,7 +49,9 @@ define(['lodash'], function(_) {
 
         function getQuery(params) {
             var filters = buildFilters(params);
-            return es(params, filters);
+            var query = es(params, filters);
+            query.sort = ['_score', {VersionCreated: 'desc'}];
+            return query;
         }
 
         function fetchItems(criteria) {
