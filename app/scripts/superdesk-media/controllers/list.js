@@ -32,13 +32,13 @@ define(['lodash'], function(_) {
             var filters = [];
 
             if (params.before || params.after) {
-                var range = {ChangeOn: {}};
+                var range = {VersionCreated: {}};
                 if (params.before) {
-                    range.ChangeOn.lte = params.before;
+                    range.VersionCreated.lte = params.before;
                 }
 
                 if (params.after) {
-                    range.ChangeOn.gte = params.after;
+                    range.VersionCreated.gte = params.after;
                 }
 
                 filters.push({range: range});
