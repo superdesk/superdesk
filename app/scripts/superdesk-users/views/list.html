@@ -15,16 +15,10 @@
 
 <section class="main-section users">
     <div class="users-subnav">
-
-        <div class="flat-searchbar" sd-trigger-search>
-            <div class="search-handler">
-                <div class="trigger-icon"></div>
-                <input type="text" placeholder="{{ 'Search'|translate }}" sd-search-param="q">
-            </div>
-            <div class="separator-handler"></div>
-        </div>
-
-        <div sd-pagination data-total="users.total + createdUsers.length" data-limit="users.maxResults"></div>
+        <div sd-searchbar></div>
+        <div sd-pagination
+            data-total="users.total + createdUsers.length"
+            data-limit="users.maxResults"></div>
     </div>
 
     <div class="preview-layout" ng-class="{closed: !selected.user}">

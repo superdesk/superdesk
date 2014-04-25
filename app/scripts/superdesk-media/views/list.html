@@ -44,8 +44,8 @@
     </div>
 
     <div class="archive-content-subnav" ng-show="view !== 'stats'">
-        <div sd-pagination data-adapter="items"></div>
-        <input type="text" sd-search-param="q" />
+        <div sd-searchbar></div>
+        <div sd-pagination data-total="items.hits.total" data-limit="25"></div>
     </div>
 
     <div class="preview-layout">

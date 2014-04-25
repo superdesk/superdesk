@@ -47,18 +47,6 @@ define([
                 }
             };
         }])
-        .directive('sdTriggerSearch', function() {
-            return {
-                link: function (scope, element) {
-                    element.find('.trigger-icon').click(function(e) {
-                        element.toggleClass('open');
-                        if (element.hasClass('open')) {
-                            element.find('input').focus();
-                        }
-                    });
-                }
-            };
-        })
         .directive('sdUserActivity', ['profileService', function(profileService) {
             return {
                 restrict: 'A',

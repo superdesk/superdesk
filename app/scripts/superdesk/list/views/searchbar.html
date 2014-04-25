@@ -1,0 +1,7 @@
+<div class="flat-searchbar" ng-class="{open: flags.open}">
+    <div class="search-handler">
+        <label for="search-input" class="trigger-icon" ng-click="flags.open = !flags.open"></label>
+        <input id="search-input" type="text" placeholder="{{ 'Search'|translate }}" sd-search-param="q">
+    </div>
+    <div class="separator-handler"></div>
+</div>
