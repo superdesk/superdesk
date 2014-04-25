@@ -35,7 +35,16 @@ define(['angular', 'require'], function(angular, require) {
         .directive('sdItemRendition', function() {
             return {
                 templateUrl: require.toUrl('./views/item-rendition.html'),
-                scope: {item: '=', rendition: '@'}
+                scope: {item: '=', rendition: '@'},
+                link: function(scope, elem) {
+                    scope.$watch('item.Renditions[rendition]', function(rendition) {
+                        var img = elem.find('img');
+                        img.css('opacity', 0.5);
+                        img.load(function() {
+                            img.css('opacity', 1.0);
+                        });
+                    });
+                }
             };
         });
 });

@@ -12,8 +12,8 @@ define(['require', 'lodash'], function(require, _) {
             transclude: true,
             templateUrl: require.toUrl('./views/list-view.html'),
             link: function(scope, elem, attrs) {
-                var MOVE_UP = -1,
-                    MOVE_DOWN = 1;
+                var UP = -1,
+                    DOWN = 1;
 
                 function fetchSelectedItem(itemId) {
                     if (!itemId) {
@@ -30,33 +30,32 @@ define(['require', 'lodash'], function(require, _) {
                     }
                 }
 
-                function selectItem(diff) {
-                    if (scope.items) {
-                        var index = _.indexOf(scope.items, scope.selected);
-                        if (index === -1) { // selected not in current items, select first
-                            return scope.clickItem(_.first(scope.items));
-                        }
+                function move(diff) {
+                    return function() {
+                        if (scope.items) {
+                            var index = _.indexOf(scope.items, scope.selected);
+                            if (index === -1) { // selected not in current items, select first
+                                return scope.clickItem(_.first(scope.items));
+                            }
 
-                        var nextIndex = _.max([0, _.min([scope.items.length - 1, index + diff])]);
-                        if (nextIndex < 0) {
-                            return scope.clickItem(_.last(scope.items));
-                        }
+                            var nextIndex = _.max([0, _.min([scope.items.length - 1, index + diff])]);
+                            if (nextIndex < 0) {
+                                return scope.clickItem(_.last(scope.items));
+                            }
 
-                        return scope.clickItem(scope.items[nextIndex]);
-                    }
+                            return scope.clickItem(scope.items[nextIndex]);
+                        }
+                    };
                 }
 
                 function onKey(dir, callback) {
                     keyboardManager.bind(dir, callback);
                 }
 
-                onKey('up', function() {
-                    selectItem(MOVE_UP);
-                });
-
-                onKey('down', function() {
-                    selectItem(MOVE_DOWN);
-                });
+                onKey('up', move(UP));
+                onKey('left', move(UP));
+                onKey('down', move(DOWN));
+                onKey('right', move(DOWN));
 
                 scope.clickItem = function(item) {
                     scope.selected = item;
