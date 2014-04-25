@@ -1,26 +1,27 @@
-<div ng-class="{'sidebar-sticked' : sidebarstick}">
+<div ng-class="{'sidebar-sticked': sidebarstick}">
 
     <div class="archive-sidebar" 
         ng-mouseenter="sidebar=true"
         ng-mouseleave="sidebar=false"
-        ng-class="{'opened' : sidebar}" 
-    >
+        ng-class="{opened: sidebar}">
         <div class="header">
             <div class="title" translate>Filters</div>
             <div class="doopen btn" ng-click="sidebarstick = !sidebarstick; sidebar=false"><i class="icon-forward-thin"></i></div>
         </div>
         <div class="content">
             <div class="info-tab filter-general">
+                <form>
                 <ul class="metadata" sd-date-range data-lte="lte" data-gte="gte">
-                    <li>
+                    <li class="control-group">
                         <label for="created_before" translate>Created before</label>
-                        <input id="created_before" type="date" ng-model="lte">
+                        <input id="created_before" type="date" ng-model="lte" class="form-control">
                     </li>
-                    <li>
+                    <li class="control-group">
                         <label for="created_after" translate>Created after</label>
-                        <input id="created_after" type="date" ng-model="gte">
+                        <input id="created_after" type="date" ng-model="gte" class="form-control">
                     </li>
                 </ul>
+                </form>
             </div>
         </div>
     </div>

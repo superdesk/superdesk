@@ -3,14 +3,14 @@ define([
     'require',
     './upload-controller',
     './controllers/list',
-    '../superdesk-items-common/module',
-    './directives'
+    './directives',
+    'superdesk-items-common/module'
 ], function(angular, require) {
     'use strict';
 
     var app = angular.module('superdesk.media', [
-        require('../superdesk-items-common/module').name,
-		'superdesk.media.directives'
+        require('superdesk-items-common/module').name,
+		require('./directives').name
 	]);
 
     app.config(['superdeskProvider', function(superdesk) {

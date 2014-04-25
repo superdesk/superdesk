@@ -1,20 +1,17 @@
-<div class="loading-status" ng-show="!item.archived && item.archiving"></div>
 
-<figure class="media" ng-if="item.renditions.thumbnail">
-    <img ng-src="{{ item.renditions.thumbnail.href }}" alt="" title="{{ item.description }}" />
-    <figcaption class="caption">{{ item.creditline }}</figcaption>
-</figure>
+<div sd-item-rendition data-item="item" data-rendition="thumbnail_small"></div>
 
-<div class="media"  ng-show="item.type == 'text' || item.type == 'composite'">
-    <small title="{{ item.headline }}">{{ item.headline }}</small>
+<div class="media" ng-hide="item.Renditions.thumbnail_small">
+    <small title="{{ item.Headline.en }}">{{ item.Headline.en }}</small>
 </div>
 
-<div class="media"  ng-show="item.type == 'audio' || item.type == 'video'">
+<div class="media" ng-show="item.type == 'audio' || item.type == 'video'">
     <i class="filetype-icon-large-{{ item.type}}"></i>
 </div>
 
 <div class="media-info" >
     <h5 ng-show="item.HeadLine">{{ item.HeadLine || item.ContentType }}</h5>
+    <address ng-show="item.ByLine">{{ item.ByLine }}</address>
 
     <dl class="clearfix">
         <dt class="source"></dt>
@@ -33,11 +30,8 @@
          ng-show="item.PubStatus && item.PubStatus!='usable'">
          {{ item.PubStatus | translate }}
     </div>
-
 </div>
 
 <span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
 <span class="urgency-label"><i class="urgency-icon-{{item.urgency}}"></i></span>
 <span class="urgency-line"></span>
-
-<div class="item-functions" sd-activity-list data-data="item" data-action="list"></div>

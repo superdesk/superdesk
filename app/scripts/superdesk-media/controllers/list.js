@@ -4,13 +4,14 @@ define(['lodash'], function(_) {
     ArchiveListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'es'];
     function ArchiveListController($scope, $location, superdesk, api, es) {
         $scope.view = 'mgrid';
+        $scope.selected = {};
 
         $scope.preview = function(item) {
-            $scope.previewItem = item;
+            $scope.selected.preview = item;
         };
 
         $scope.display = function(item) {
-            $scope.viewItem = item;
+            $scope.selected.view = item;
         };
 
         $scope.openUpload = function() {

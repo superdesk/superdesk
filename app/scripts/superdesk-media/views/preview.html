@@ -7,10 +7,11 @@
     </div>
     <div class="content" sd-shadow>
         <p class="date-info">{{ 'Created' | translate }} {{ item.CreatedOn | reldate }}</p>
-        <p class="date-info">{{ 'Modified' | translate }} {{ item.VersionOn | reldate }}</p>
-        <p class="title">{{ item.HeadLine }}</p>
-        <div class="core-content">
+        <p class="date-info">{{ 'Modified' | translate }} {{ item.VersionCreated | reldate }}</p>
+        <p class="title">{{ item.HeadLine.en }}</p>
 
+        <div class="core-content">
+            <div sd-item-rendition data-item="item" data-rendition="thumbnail_small"></div>
         </div>
     </div>
   </div>

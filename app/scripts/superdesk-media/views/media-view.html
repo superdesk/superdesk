@@ -1,11 +1,10 @@
 <div class="modal lightbox-preview">
     <section class="lightbox-top">
-        <a class="btn btn-inverse" href="" ><i class="icon-pencil icon-white"></i> {{ 'Edit'|translate }}</a>
-        <a class="btn btn-inverse" href="" ><i class="icon-download-alt icon-white"></i> {{ 'Download'|translate }}</a>
-        <a class="btn btn-inverse" href="" ><i class="icon-trash icon-white"></i> {{ 'Delete'|translate }}</a>
-        <a class="lightbox-close"  href="" ng-click="item = null">
-            <i class="icon-remove icon-white"></i>
-        </a>
+        <a ng-show class="btn btn-inverse" href="" ><i class="icon-pencil icon-white"></i> {{ 'Edit'|translate }}</a>
+        <a ng-show class="btn btn-inverse" href="" ><i class="icon-download-alt icon-white"></i> {{ 'Download'|translate }}</a>
+        <a ng-show class="btn btn-inverse" href="" ><i class="icon-trash icon-white"></i> {{ 'Delete'|translate }}</a>
+
+        <a class="lightbox-close" href="" ng-click="item = null"><i class="icon-remove icon-white"></i></a>
     </section>
 
     <!-- preview pane -->
@@ -13,13 +12,9 @@
         <div ng-class="{'lightbox-composite-preview' : item.type == 'composite'}">
 
             <section class="lightbox-left">
-                
                 <!-- picture preview -->
-                <figure class="lightbox-large-preview" ng-show="item.ContentType == 'image'">
-                    <img ng-src="{{ item.Renditions.original.href }}" />
-                </figure>
-                <div class="lightbox-caption" ng-show="item.ContentType == 'image'">{{ item.HeadLine }}</div>
-
+                <div class="lightbox-large-preview" sd-item-rendition data-item="item" data-rendition="original"></div>
+                <div class="lightbox-caption">{{ item.HeadLine.en }}</div>
             </section>
 
         </div>

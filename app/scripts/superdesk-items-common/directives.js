@@ -1,20 +1,20 @@
-define(['angular'], function(angular) {
+define(['angular', 'require'], function(angular, require) {
     'use strict';
 
     angular.module('superdesk.items-common.directives', [])
         .directive('sdMediaBox', ['$position', function($position) {
             return {
                 restrict: 'A',
-                templateUrl: 'scripts/superdesk-items-common/views/media-box.html',
+                templateUrl: require.toUrl('./views/media-box.html'),
                 link: function(scope, element, attrs) {
                     scope.$watch('extras.view', function(view) {
                         switch (view) {
                         case 'mlist':
                         case 'compact':
-                            scope.itemTemplate = 'scripts/superdesk-items-common/views/media-box-list.html';
+                            scope.itemTemplate = require.toUrl('./views/media-box-list.html');
                             break;
                         default:
-                            scope.itemTemplate = 'scripts/superdesk-items-common/views/media-box-grid.html';
+                            scope.itemTemplate = require.toUrl('./views/media-box-grid.html');
                         }
                     });
                 }
@@ -22,201 +22,20 @@ define(['angular'], function(angular) {
         }])
         .directive('sdMediaBoxHover', ['$position', function($position) {
             return {
-                restrict: 'A',
-                templateUrl: 'scripts/superdesk-items-common/views/media-box-hover.html',
                 replace: true,
-                link: function(scope, element, attrs) {
-                }
+                templateUrl: require.toUrl('./views/media-box-hover.html')
             };
         }])
         .directive('sdSidebarLayout', ['$location', '$filter', function($location, $filter) {
             return {
                 transclude: true,
-                templateUrl: 'scripts/superdesk-items-common/views/sidebar.html',
-                controller: ['$scope', function($scope) {
-                    /*
-
-                    $scope.sidebar = false;
-                    $scope.sidebarstick = true;
-
-                    $scope.search = {
-                        type: [
-                            {
-                                term: 'text',
-                                checked: false,
-                                count: 0
-                            },
-                            {
-                                term: 'audio',
-                                checked: false,
-                                count: 0
-                            },
-                            {
-                                term: 'video',
-                                checked: false,
-                                count: 0
-                            },
-                            {
-                                term: 'picture',
-                                checked: false,
-                                count: 0
-                            },
-                            {
-                                term: 'graphic',
-                                checked: false,
-                                count: 0
-                            },
-                            {
-                                term: 'composite',
-                                checked: false,
-                                count: 0
-                            }
-                        ],
-                        general: {
-                            provider: null,
-                            creditline: null,
-                            place: null,
-                            urgency: {
-                                from: null,
-                                to: null
-                            },
-                            versioncreated: {
-                                from: null,
-                                to: null
-                            }
-                        },
-                        subjects: [],
-                        places: []
-                    };
-
-                    //helper variables to handle large number of changes
-                    $scope.versioncreated = {
-                        startDate: null,
-                        endDate: null,
-                        init: false
-                    };
-                    $scope.urgency = {
-                        from: 1,
-                        to: 5
-                    };
-
-                    var createFilters = function() {
-
-                        var filters = [];
-
-                        function chainRange(obj, key) {
-                            if (obj !== null && obj.from !== null && obj.to !== null) {
-                                var rangefilter = {};
-                                rangefilter[key] = {from: obj.from, to: obj.to};
-                                filters.push({range: rangefilter});
-                            }
-                        }
-
-                        function chain(val, key) {
-                            if (val !== null && val !== '') {
-                                var t = {};
-                                t[key] = val;
-                                filters.push({term: t});
-                            }
-                        }
-
-                        //process content type
-                        var contenttype = _.map(_.where($scope.search.type, {'checked': true}), function(t) { return t.term; });
-
-                        //add content type filters as OR filters
-                        if (contenttype.length > 0) {
-                            filters.push({terms: {type: contenttype}});
-                        }
-
-                        //process general filters
-                        _.forEach($scope.search.general, function(val, key) {
-                            if (_.isObject(val)) {
-                                chainRange(val, key);
-                            } else {
-                                chain(val, key);
-                            }
-                        });
-
-                        //process subject filters
-                        if ($scope.search.subjects.length > 0) {
-                            filters.push({terms: {'subject.name': $scope.search.subjects, execution: 'and'}});
-                        }
-
-                        //process place filters
-                        if ($scope.search.places.length > 0) {
-                            filters.push({terms: {'place.name': $scope.search.places, execution: 'and'}});
-                        }
-
-                        //do filtering
-                        if (filters.length > 0) {
-                            $location.search('filter', angular.toJson({and: filters}));
-                        } else {
-                            $location.search('filter', null);
-                        }
-
-                    };
-
-                    var createFiltersWrap = _.throttle(createFilters, 1000);
-                    $scope.$watch('search', function() {
-                        createFiltersWrap();
-                    }, true);    //deep watch
-
-                    //date filter handling
-                    $scope.$watch('versioncreated', function(newVal) {
-                        if (newVal.init === true) {
-                            if (newVal.startDate !== null && newVal.endDate !== null) {
-                                var start = $filter('1')(newVal.startDate);
-                                var end = $filter('dateString')(newVal.endDate);
-                                $scope.search.general.versioncreated = {from: start, to: end};
-                            }
-                        }
-                    });
-
-                    //urgency filter handling
-                    function handleUrgency(urgency) {
-                        var ufrom = Math.round(urgency.from);
-                        var uto = Math.round(urgency.to);
-                        if (ufrom !== 1 || uto !== 5) {
-                            $scope.search.general.urgency.from = ufrom;
-                            $scope.search.general.urgency.to = uto;
-                        }
-                    }
-
-                    var handleUrgencyWrap = _.throttle(handleUrgency, 2000);
-
-                    $scope.$watchCollection('urgency', function(newVal) {
-                        handleUrgencyWrap(newVal);
-                    });
-
-                    $scope.$watchCollection('items', function() {
-                        if ($scope.items._facets !== undefined) {
-                            _.forEach($scope.items._facets.type.terms, function(type) {
-                                _.extend(_.first(_.where($scope.search.type, {term: type.term})), type);
-                            });
-                        }
-                    });
-
-                    $scope.addSubject = function(item) {
-                        if (!_.contains($scope.search.subjects, item.term.toLowerCase())) {
-                            $scope.search.subjects.push(item.term);
-                        }
-                    };
-
-                    $scope.removeSubject = function(item) {
-                        $scope.search.subjects = _.without($scope.search.subjects, item);
-                    };
-
-                    $scope.addPlace = function(item) {
-                        if (!_.contains($scope.search.places, item.term.toLowerCase())) {
-                            $scope.search.places.push(item.term);
-                        }
-                    };
-
-                    $scope.removePlace = function(item) {
-                        $scope.search.places = _.without($scope.search.places, item);
-                    };
-                    */
-                }]
+                templateUrl: require.toUrl('./views/sidebar.html')
             };
-        }]);
+        }])
+        .directive('sdItemRendition', function() {
+            return {
+                templateUrl: require.toUrl('./views/item-rendition.html'),
+                scope: {item: '=', rendition: '@'}
+            };
+        });
 });
