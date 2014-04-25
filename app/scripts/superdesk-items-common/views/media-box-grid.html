@@ -10,19 +10,15 @@
 </div>
 
 <div class="media-info" >
-    <h5 ng-show="item.HeadLine">{{ item.HeadLine || item.ContentType }}</h5>
-    <address ng-show="item.ByLine">{{ item.ByLine }}</address>
+    <h5 ng-show="item.Headline.en">{{ item.Headline.en || item.ContentType }} <small ng-show="item.ByLine">by {{ item.ByLine }}</small></h5>
 
-    <dl class="clearfix">
-        <dt class="source"></dt>
-        <dd class="provider">{{ item.Provider }}</dd>
-
+    <dl>
+        <dt class="source" translate>provider:</dt>
+        <dd class="provider">&nbsp;{{ item.Provider }}</dd>
         <dt translate>created</dt>
         <dd><time datetime="{{ item.CreatedOn }}" title="{{ item.CreatedOn|date:'medium' }}">{{ item.CreatedOn|reldate }}</time></dd>
         <dt translate ng-show="item.subject">subject</dt>
-        <dd ng-show="item.subject" class="subject-line">
-            {{ item.subject | mergeWords}}
-        </dd>
+        <dd ng-show="item.subject" class="subject-line">{{ item.subject | mergeWords}}</dd>
     </dl>
 
     <div class="status-label"
@@ -31,7 +27,3 @@
          {{ item.PubStatus | translate }}
     </div>
 </div>
-
-<span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
-<span class="urgency-label"><i class="urgency-icon-{{item.urgency}}"></i></span>
-<span class="urgency-line"></span>

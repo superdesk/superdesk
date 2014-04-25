@@ -3,10 +3,8 @@ module.exports = {
         livereload: '<%= livereloadPort %>'
     },
     less: {
-        files: [
-            '{<%= tmpDir %>,<%= appDir %>}/styles/{,*/}*.less'
-        ],
-        tasks: ['less']
+        tasks: ['less'],
+        files: ['{<%= tmpDir %>,<%= appDir %>}/styles/{,*/}*.less']
     },
     code: {
         options: {livereload: true},
