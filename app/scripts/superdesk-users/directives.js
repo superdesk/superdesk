@@ -25,6 +25,13 @@ define([
                 }
             };
         })
+        .directive('sdValidInfo', function() {
+            return {
+                link: function (scope, element) {
+                    element.addClass('validation-info');
+                }
+            };
+        })
         .directive('sdRolesTreeview', ['$compile', function($compile) {
             return {
                 restrict: 'A',

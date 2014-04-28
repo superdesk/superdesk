@@ -55,21 +55,30 @@
                     required>
                     <i ng-show="userForm.userName.$error.required" class="required-asteriks">*</i>
                   <div ng-show="userForm.userName.$error.unique || error.UserName.conflict" sd-valid-error translate>sorry, this username is already taken.</div>
-                  <div ng-show="userForm.userName.$error.pattern" sd-valid-error translate>please use only letters (a-z), numbers (0-9), dashes (&mdash;), underscores (_), apostrophes (') and periods (.).</div>
+                  <div ng-show="userForm.userName.$error.pattern" sd-valid-info>
+                    <i class="icon-info-sign icon-warning"></i>
+                    <span translate>please use only letters (a-z), numbers (0-9), dashes (&mdash;), underscores (_), apostrophes (') and periods (.)</span>
+                  </div>
                 </div>
 
                 <div sd-info-item class="password" ng-if="!user.Id">
                   <label for="password" translate>password</label>
                   <input type="password" name="password" ng-minlength="5" id="password" ng-model="user.Password" required>
                   <i ng-show="userForm.password.$error.required" class="required-asteriks">*</i>
-                  <div ng-show="userForm.password.$error.minlength" sd-valid-error translate>password must have at least 5 characters.</div>
+                  <div ng-show="userForm.password.$error.minlength" sd-valid-info>
+                    <i class="icon-info-sign icon-warning"></i>
+                    <span translate>password must have at least 5 characters</span>
+                  </div>
                 </div>
 
                 <div sd-info-item class="password" ng-if="!user.Id">
                   <label for="passwordConfirm" translate>confirm</label>
                   <input type="password" name="passwordConfirm" ng-minlength="5" id="passwordConfirm" sd-password-confirm ng-model="confirm.password" data-password="user.Password" required>
                   <i ng-show="userForm.passwordConfirm.$error.required" class="required-asteriks">*</i>
-                  <div ng-show="userForm.passwordConfirm.$error.confirm" sd-valid-error translate>passwords must be same.</div>
+                  <div ng-show="userForm.passwordConfirm.$error.confirm" sd-valid-info>
+                    <i class="icon-info-sign icon-warning"></i>
+                    <span translate>passwords must be same</span>
+                  </div>
                 </div>
 
                 <div sd-info-item class="password" ng-if="user.Id" id="password-change-trigger">
@@ -84,14 +93,20 @@
                     sd-user-unique data-unique-field="email" data-exclude="user"
                     required>
                     <i ng-show="userForm.email.$error.required" class="required-asteriks">*</i>
-                  <div ng-show="userForm.email.$error.email || error.EMail.format" sd-valid-error translate>please provide a valid email address.</div>
-                  <div ng-show="userForm.email.$error.unique || error.EMail.unique" sd-valid-error translate>sorry, a user with this email already exists.</div>
+                  <div ng-show="userForm.email.$error.email || error.EMail.format" sd-valid-info>
+                    <i class="icon-info-sign icon-warning"></i>
+                    <span translate>please provide a valid email address</span>
+                  </div>
+                  <div ng-show="userForm.email.$error.unique || error.EMail.unique" sd-valid-error translate>sorry, a user with this email already exists</div>
                 </div>
 
                 <div sd-info-item>
                   <label for="phone" translate>phone number</label>
                   <input type="text" name="phone" id="phone" ng-model="user.PhoneNumber" ng-pattern="phonePattern">
-                  <div ng-show="userForm.phone.$error.pattern || error.PhoneNumber.format" sd-valid-error translate>please provide number in international format</div>
+                  <div ng-show="userForm.phone.$error.pattern || error.PhoneNumber.format" sd-valid-info>
+                    <i class="icon-info-sign icon-warning"></i>
+                    <span translate>please provide number in international format</span>
+                  </div>
                 </div>
 
                 <div sd-info-item ng-show="user.Id">
