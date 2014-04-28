@@ -125,14 +125,18 @@
 
 
 // Disabled state
-.btn.disabled,
-.btn[disabled] {
+.btn.disabled, .btn[disabled], 
+.btn.disabled:hover, .btn[disabled]:hover, 
+.btn.disabled:focus, .btn[disabled]:focus, 
+.btn.disabled:active, .btn[disabled]:active {
   cursor: default;
   background-image: none;
   background-color: darken(@white, 10%);
-  .opacity(65);
+  .opacity(45) !important;
   @shadow: inset 0 0 0 #000, 0 0 0 0 #000;
   .box-shadow(@shadow) !important;
+  text-shadow : none;
+  border-color: @btnDefaultBorder;
 }
 
 
@@ -206,7 +210,7 @@
 
 // Set the backgrounds
 // -------------------------
-.btn-primary {
+.btn-primary, .btn-info {
   //.buttonBackground(@btnPrimaryBackground, @btnPrimaryBackgroundHighlight);
   border: 1px solid @btnInfoBorder;
   border-bottom-color: darken(@btnInfoBorder, 10%);
@@ -226,6 +230,10 @@
   &.no-shadow {
      @shadow: inset 0 1px 0 @btnInfoInsetShadowColor;
     .box-shadow(@shadow) !important;
+  }
+  &.disabled, &[disabled], &.disabled:hover, &[disabled]:hover, &.disabled:focus, &[disabled]:focus, &.disabled:active, &[disabled]:active {
+  	background: @btnInfoBackground1 !important;
+  	border-color: @btnInfoBorder;
   }
 }
 
@@ -250,6 +258,10 @@
      @shadow: inset 0 1px 0 @btnDangerInsetShadowColor;
     .box-shadow(@shadow) !important;
   }
+  &.disabled, &[disabled], &.disabled:hover, &[disabled]:hover, &.disabled:focus, &[disabled]:focus, &.disabled:active, &[disabled]:active {
+  	background: @btnDangerBackground1 !important;
+  	border-color: @btnDangerBorder;
+  }
 }
 // Success appears as green
 .btn-success {
@@ -272,29 +284,12 @@
      @shadow: inset 0 1px 0 @btnSuccessInsetShadowColor;
     .box-shadow(@shadow) !important;
   }
-}
-// Info appears as a neutral blue
-.btn-info {
-  border: 1px solid @btnInfoBorder;
-  border-bottom-color: darken(@btnInfoBorder, 10%);
-  .buttonBackground(@btnInfoBackground1, @btnInfoBackground2);
-  @shadow: inset 0 1px 0 @btnInfoInsetShadowColor, 0 1px 0 0 rgba(255,255,255,1);
-  .box-shadow(@shadow);
-  &:hover {
-    .buttonBackground(@btnInfoHoverBackground1, @btnInfoHoverBackground2);
-     @shadow: inset 0 1px 0 @btnInfoInsetShadowColor,  0 2px 6px -4px rgba(0,0,0,.5);
-    .box-shadow(@shadow);
-  }
-  &:active {
-    background-color: @btnInfoColor !important;
-    background-color: @btnInfoColor e("\9") !important;
-    border-bottom-color: @btnInfoBorder !important;
-  }
-  &.no-shadow {
-     @shadow: inset 0 1px 0 @btnInfoInsetShadowColor;
-    .box-shadow(@shadow) !important;
+  &.disabled, &[disabled], &.disabled:hover, &[disabled]:hover, &.disabled:focus, &[disabled]:focus, &.disabled:active, &[disabled]:active {
+  	background: @btnSuccessBackground1 !important;
+  	border-color: @btnSuccessBorder;
   }
 }
+
 
 // Inverse appears as dark gray
 .btn-inverse {
@@ -316,6 +311,10 @@
   &.no-shadow {
      @shadow: inset 0 1px 0 @btnInverseInsetShadowColor;
     .box-shadow(@shadow) !important;
+  }
+  &.disabled, &[disabled], &.disabled:hover, &[disabled]:hover, &.disabled:focus, &[disabled]:focus, &.disabled:active, &[disabled]:active {
+  	background: @btnInverseBackground1 !important;
+  	border-color: @btnInverseBorder;
   }
 }
 
@@ -343,6 +342,10 @@
      @shadow: inset 0 1px 0 @btnLightInsetShadowColor;
     .box-shadow(@shadow) !important;
   }
+  &.disabled, &[disabled], &.disabled:hover, &[disabled]:hover, &.disabled:focus, &[disabled]:focus, &.disabled:active, &[disabled]:active {
+  	background: @btnLightBackground1 !important;
+  	border-color: @btnLightBorder;
+  }
 }
 
 
@@ -366,6 +369,10 @@
   &.no-shadow {
      @shadow: inset 0 1px 0 @btnGreenInsetShadowColor;
     .box-shadow(@shadow) !important;
+  }
+  &.disabled, &[disabled], &.disabled:hover, &[disabled]:hover, &.disabled:focus, &[disabled]:focus, &.disabled:active, &[disabled]:active {
+  	background: @btnGreenBackground1 !important;
+  	border-color: @btnGreenBorder;
   }
 }
 
