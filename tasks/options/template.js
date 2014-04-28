@@ -7,7 +7,8 @@ module.exports = function(grunt) {
             raven: {
                 dsn: process.env.SUPERDESK_RAVEN_DSN || ''
             },
-            server: {url: grunt.option('server') || url}}
+            server: {url: grunt.option('server') || url}},
+            ga: process.env.TRACKING_ID || ''
         };
     }
 
