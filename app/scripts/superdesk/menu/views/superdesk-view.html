@@ -1,0 +1,14 @@
+<div sd-menu-wrapper></div>
+<div sd-notifications></div>
+
+<div class="main-background-container" ng-class="{'sf-menu-open': flags.menu}" ng-view></div>
+
+<div sd-scratchpad></div>
+<div sd-activity-modal></div>
+<div sd-login-modal></div>
+<div sd-notify></div>
+<div sd-activity-chooser></div>
+
+<div class="hard-error" ng-cloak ng-show="serverStatus">
+    <div class="alert alert-error" translate>Superdesk is experiencing network connection issues:/</div>
+</div>

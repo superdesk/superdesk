@@ -1,4 +1,4 @@
-<div class="notification-pane">
+<div class="notification-pane" ng-class="{show: flags.notifications}">
     <div class="header">
         <figure class="avatar-holder">
             <img sd-user-avatar data-src="currentUser.Avatar.href" class="avatar">
@@ -8,7 +8,7 @@
             <span class="displayname">{{ currentUser.UserName }}</span>
         </div>
         <div class="actions">
-            <a href="#/profile" translate>Profile</a>
+            <a href="#/profile" ng-click="flags.notifications = false" translate>Profile</a>
             <button ng-click="logout()" translate>Sign out</button>
         </div>
     </div>
