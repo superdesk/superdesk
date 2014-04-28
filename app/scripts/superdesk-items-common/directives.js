@@ -37,12 +37,21 @@ define(['angular', 'require'], function(angular, require) {
                 templateUrl: require.toUrl('./views/item-rendition.html'),
                 scope: {item: '=', rendition: '@'},
                 link: function(scope, elem) {
-                    scope.$watch('item.Renditions[rendition]', function(rendition) {
-                        var img = elem.find('img');
-                        img.css('opacity', 0.5);
-                        img.load(function() {
-                            img.css('opacity', 1.0);
-                        });
+                    scope.$watch('item.Renditions[rendition].href', function(href) {
+                        var figure = elem.find('figure'),
+                            oldImg = figure.find('img').css('opacity', 0.5);
+                        if (href) {
+                            var img = new Image();
+                            img.onload = function() {
+                                if (oldImg.length) {
+                                    oldImg.replaceWith(img);
+                                } else {
+                                    figure.prepend(img);
+                                }
+                            };
+
+                            img.src = href;
+                        }
                     });
                 }
             };
