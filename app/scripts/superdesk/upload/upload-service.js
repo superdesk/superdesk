@@ -1,18 +1,37 @@
 define([], function() {
     'use strict';
 
-    UploadService.$inject = ['$q', '$rootScope'];
-    function UploadService($q, $rootScope) {
+    UploadService.$inject = ['$upload'];
+    function UploadService($upload) {
         /**
-         * Start upload workflow
+         * Start upload
          *
-         * @param {string} base
-         * @return {object} promise
+         * @param {Object} config
+         * @returns Promise
          */
-        this.upload = function(base) {
-            this.delay = $q.defer();
-            $rootScope.$broadcast('upload:show');
-            return this.delay.promise;
+        this.start = function(config) {
+            config.isUpload = true;
+            return $upload.upload(config);
+        };
+
+        /**
+         * Restart upload
+         *
+         * @param {Object} config
+         * @returns {Promise}
+         */
+        this.restart = function(config) {
+            return $upload.http(config);
+        };
+
+        /**
+         * Test if given request config is an upload
+         *
+         * @param {Object} config
+         * @returns {bool}
+         */
+        this.isUpload = function(config) {
+            return config.isUpload || false;
         };
     }
 

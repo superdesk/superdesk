@@ -4,8 +4,8 @@ define([], function() {
     /**
      * Set timeout for requests and notify $rootScope when it is triggered
      */
-    TimeoutInterceptor.$inject = ['$timeout', '$q', '$injector', '$rootScope'];
-    function TimeoutInterceptor($timeout, $q, $injector, $rootScope) {
+    TimeoutInterceptor.$inject = ['$timeout', '$q', '$rootScope', 'request'];
+    function TimeoutInterceptor($timeout, $q, $rootScope, request) {
 
         var TIMEOUT = 3000,
             TIMEOUT_MAX = 60000,
@@ -19,9 +19,9 @@ define([], function() {
 
         return {
 
-            // set timeout for every request
+            // set timeout for every request but upload
             request: function(config) {
-                if (!IS_VIEW_REGEXP.test(config.url) && !config.isUpload) {
+                if (!IS_VIEW_REGEXP.test(config.url) && !request.isUpload(config)) {
                     config._ttl = config._ttl ? Math.min(TIMEOUT_MAX, config._ttl * 2) : TIMEOUT;
                     config.timeout = $timeout(function() {
                         config._isTimeout = true;
@@ -43,9 +43,9 @@ define([], function() {
 
             // repeat request with higher timeout
             responseError: function(rejection) {
-                if (!rejection.status && !rejection.config.isUpload) {
+                if (!rejection.status && !request.isUpload(rejection.config)) {
                     $rootScope.serverStatus += 1;
-                    return $injector.get('$http')(rejection.config);
+                    return request.resend(rejection.config);
                 } else {
                     $timeout.cancel(rejection.config.timeout);
                 }

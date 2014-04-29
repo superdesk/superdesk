@@ -14,8 +14,8 @@ define(['angular'], function(angular) {
         };
     }
 
-    ChangeAvatarController.$inject = ['$scope', '$upload', 'session'];
-    function ChangeAvatarController($scope, $upload, session) {
+    ChangeAvatarController.$inject = ['$scope', 'upload', 'session'];
+    function ChangeAvatarController($scope, upload, session) {
 
         $scope.methods = [
             {id: 'upload', label: gettext('Upload from computer')},
@@ -32,26 +32,24 @@ define(['angular'], function(angular) {
         $scope.activate($scope.methods[0]);
 
         $scope.upload = function(config) {
-            var form = new FormData(),
+            var form = {},
                 data = getCords(config.cords);
 
             if (config.img) {
-                form.append('model', getJson(data));
-                form.append('file', config.img);
+                form.model = getJson(data);
+                form.file = config.img;
             } else if (config.url) {
                 data.URL = config.url;
-                form.append('model', getJson(data));
+                form.model = getJson(data);
             } else {
                 return;
             }
 
-            return $upload.http({
+            return upload.start({
                 url: $scope.locals.data.UserAvatar.href,
                 method: 'PUT',
                 data: form,
-                headers: {'Content-Type': undefined, 'X-Filter': 'Avatar.*'},
-                transformRequest: angular.identity,
-                isUpload: true
+                headers: {'X-Filter': 'Avatar.*'}
             }).then(function(response) {
 
                 if ($scope.locals.data.Id === session.identity.Id) {

@@ -1,8 +1,8 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    UploadController.$inject = ['$scope', '$upload', '$q', 'api'];
-    function UploadController($scope, $upload, $q, api) {
+    UploadController.$inject = ['$scope', '$q', 'upload', 'api'];
+    function UploadController($scope, $q, upload, api) {
 
         var promises = [];
         $scope.items = [];
@@ -20,13 +20,12 @@ define(['lodash'], function(_) {
                     progress: 0
                 };
 
-                var upload = function() {
+                var startUpload = function() {
                     return api.image.getUrl().then(function(url) {
-                        item.upload = $upload.upload({
+                        item.upload = upload.start({
                             method: 'POST',
                             url: url,
                             file: file,
-                            isUpload: true,
                             headers: api.image.getHeaders()
                         }).then(function(response) {
                             item.model = response.data;
@@ -39,7 +38,7 @@ define(['lodash'], function(_) {
                     });
                 };
 
-                promises.push(upload());
+                promises.push(startUpload());
                 $scope.items.unshift(item);
             });
         };

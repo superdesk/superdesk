@@ -1,55 +1,21 @@
 define([
     'angular',
     'require',
-    'angular-route',
+    './auth-interceptor',
     './auth-service',
     './session-service',
     './allypy-auth-service',
     './login-modal-directive'
-], function(angular, require) {
+], function(angular, require, AuthInterceptor) {
     'use strict';
 
-    /**
-     * Expire session on 401 server response
-     */
-    AuthExpiredInterceptor.$inject = ['session', '$q', '$injector', '$rootScope'];
-    function AuthExpiredInterceptor(session, $q, $injector, $rootScope) {
-
-        function handleAuthExpired(response) {
-            session.expire();
-            return session.getIdentity().then(function() {
-                var $http = $injector.get('$http');
-                $http.defaults.headers.common.Authorization = session.token;
-                response.config.headers.Authorization = session.token;
-                return $http(response.config);
-            });
-        }
-
-        return {
-            response: function(response) {
-                if (response.status === 401) {
-                    return handleAuthExpired(response);
-                }
-
-                return response;
-            },
-            responseError: function(response) {
-                if (response.status === 401) {
-                    return handleAuthExpired(response);
-                }
-
-                return $q.reject(response);
-            }
-        };
-    }
-
-    return angular.module('superdesk.auth', ['ngRoute'])
+    return angular.module('superdesk.auth', [])
         .service('auth', require('./auth-service'))
         .service('session', require('./session-service'))
         .service('authAdapter', require('./allypy-auth-service'))
         .directive('sdLoginModal', require('./login-modal-directive'))
         .config(['$httpProvider', function($httpProvider) {
-            $httpProvider.interceptors.push(AuthExpiredInterceptor);
+            $httpProvider.interceptors.push(AuthInterceptor);
         }])
 
         // watch session token, identity

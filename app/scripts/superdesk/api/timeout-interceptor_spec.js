@@ -1,8 +1,20 @@
-define(['./timeout-interceptor'], function(TimeoutHttpInterceptor) {
+define([
+    './timeout-interceptor',
+    './request-service'
+], function(TimeoutHttpInterceptor, RequestService) {
     'use strict';
 
     describe('timeout http interceptor', function() {
         var service;
+
+        beforeEach(module(function($provide) {
+            $provide.service('request', RequestService);
+            $provide.service('upload', function() {
+                this.isUpload = function() {
+                    return false;
+                };
+            });
+        }));
 
         beforeEach(inject(function($injector) {
             service = $injector.invoke(TimeoutHttpInterceptor);

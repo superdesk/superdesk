@@ -22,29 +22,24 @@ define(['./upload-controller'], function(UploadController) {
                     }
                 };
             });
+
+            $provide.service('upload', function($q) {
+                this.start = function(config) {
+                    this.defer = $q.defer();
+                    return this.defer.promise;
+                };
+            });
         }));
 
-        it('can upload files when added', inject(function($controller, $rootScope, $q, api) {
-            var scope = $rootScope.$new(true),
-                defer;
+        it('can upload files when added', inject(function($controller, $rootScope, $q, api, upload) {
+            var scope = $rootScope.$new(true);
 
-            var $upload = {
-                upload: function() {
-                    defer = $q.defer();
-                    return defer.promise;
-                }
-            };
-
-            var upload = spyOn($upload, 'upload').andCallThrough();
+            spyOn(upload, 'start').andCallThrough();
 
             scope.resolve = function() {};
             var resolve = spyOn(scope, 'resolve');
 
-            $controller(UploadController, {
-                $upload: $upload,
-                $scope: scope,
-                api: api
-            });
+            $controller(UploadController, {$scope: scope});
 
             $rootScope.$digest();
 
@@ -54,11 +49,10 @@ define(['./upload-controller'], function(UploadController) {
 
             $rootScope.$digest();
 
-            expect(upload).toHaveBeenCalledWith({
+            expect(upload.start).toHaveBeenCalledWith({
                 method: 'POST',
                 url: UPLOAD_URL,
                 file: files[0],
-                isUpload: true,
                 headers: api.image.getHeaders()
             });
 
@@ -67,7 +61,7 @@ define(['./upload-controller'], function(UploadController) {
             expect(scope.items[0].meta).not.toBe(undefined);
             expect(scope.items[0].progress).toBe(0);
 
-            defer.notify({
+            upload.defer.notify({
                 total: 100,
                 loaded: 50
             });
@@ -86,7 +80,7 @@ define(['./upload-controller'], function(UploadController) {
             $rootScope.$digest();
 
             expect(result).toBe(undefined);
-            defer.resolve({});
+            upload.defer.resolve({});
 
             $rootScope.$digest();
 
