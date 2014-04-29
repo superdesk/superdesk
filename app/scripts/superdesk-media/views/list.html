@@ -49,15 +49,31 @@
     </div>
 
     <div class="preview-layout">
-        <div class="archive-content-inner list-pane {{ view }}-view"
-            ng-if="view !== 'stats'"
-            sd-list-view
-            data-adapter="items"
-            data-select="preview(item)"
-            data-extras="{view: view}"
-            sd-shadow>
-            <div sd-media-box></div>
-        </div>
+    	<div class="archive-content-inner list-pane {{ view }}-view">
+
+    		<div class="newest-items" ng-show="createdMedia.collection.length">
+    			<span translate>Recently added media</span>
+	    		<div ng-if="view !== 'stats'"
+		            sd-list-view
+		            data-adapter="createdMedia"
+		            data-select="preview(item)"
+		            data-extras="{view: view}"
+		            sd-shadow>
+		            <div sd-media-box></div>
+		        </div>
+		    </div>
+
+    		<div ng-if="view !== 'stats'"
+	            sd-list-view
+	            data-adapter="items"
+	            data-select="preview(item)"
+	            data-extras="{view: view}"
+	            sd-shadow>
+	            <div sd-media-box></div>
+	        </div>
+    	</div>
+        
+
 
         <div class="preview-pane item-preview">
             <div class="actions" ng-if="selected.preview">

@@ -5,6 +5,9 @@ define(['lodash'], function(_) {
     function ArchiveListController($scope, $location, superdesk, api, es) {
         $scope.view = 'mgrid';
         $scope.selected = {};
+        $scope.createdMedia = {
+            collection: []
+        };
 
         $scope.preview = function(item) {
             $scope.selected.preview = item;
@@ -17,7 +20,8 @@ define(['lodash'], function(_) {
         $scope.openUpload = function() {
             superdesk.intent('upload', 'media').then(function(items) {
                 // todo: put somewhere else
-                $scope.items.collection.unshift.apply($scope.items.collection, items);
+                //$scope.items.collection.unshift.apply($scope.items.collection, items);
+                $scope.createdMedia.collection.unshift.apply($scope.createdMedia.collection, items);
             });
         };
 
@@ -59,6 +63,9 @@ define(['lodash'], function(_) {
                 items._items = _.pluck(items.hits.hits, '_source');
                 items.collection = items._items;
                 $scope.items = items;
+                $scope.createdMedia = {
+                    collection: []
+                };
             });
         }
     }
