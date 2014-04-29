@@ -30,9 +30,7 @@ define([
                     console.error('No action set for intent in \'' + elem[0].outerHTML + '\'');
                 }
 
-                scope.activities = _.values(_.where(superdesk.activities, function(activity) {
-                    return _.find(activity.filters, intent);
-                }));
+                scope.activities = superdesk.findActivities(intent);
             }
         };
     }];
