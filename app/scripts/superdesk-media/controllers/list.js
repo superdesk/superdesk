@@ -20,7 +20,6 @@ define(['lodash'], function(_) {
         $scope.openUpload = function() {
             superdesk.intent('upload', 'media').then(function(items) {
                 // todo: put somewhere else
-                //$scope.items.collection.unshift.apply($scope.items.collection, items);
                 $scope.createdMedia.collection.unshift.apply($scope.createdMedia.collection, items);
             });
         };
