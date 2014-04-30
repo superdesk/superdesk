@@ -1,17 +1,21 @@
 <div class="subnav subnav-fixed">
 
 	<h3 class="page-nav-title" translate>Dashboard</h3>
-	<button class="btn btn-info btn-medium pull-right" ng-disabled="editStatus" ng-click="widgetBoxStatus = true;"><i class="icon-plus-sign icon-white"></i> <span translate>Add Widget</span></button>
-	<div class="dropdown pull-right">
-	    <button class="btn btn-medium dropdown-toggle pull-right" ><i class="icon-cog"></i> <b class="caret"></b></button>
-	    <ul class="dropdown-menu sf-dropdown sf-right">
-	    	<li translate> Configure view</li>
-	    	<li translate> Configure permissions</li>
-	    	<li translate> Configure devices</li>
-	    </ul>
-	</div>
-	<button class="btn btn-medium pull-right" ng-click="editStatus = true;" ng-show="hasWidgets && !editStatus"><i class="icon-move"></i> <span translate>Rearrange widgets</span></button>
-	<button class="btn btn-medium btn-info pull-right" ng-click="saveWidgets()" ng-show="editStatus" translate>Save</button>
+
+	<div class="button-stack right-stack">
+        
+        <button class="navbtn" href="" ng-click="editStatus = true;" ng-show="hasWidgets && !editStatus">
+            <i class="svg-icon-move"></i> <span class="title" translate>Rearrange widgets</span>
+        </button>
+        <button class="navbtn navbtn-info" href="" ng-click="saveWidgets()" ng-show="editStatus">
+            <i class="svg-icon-ok inverse"></i> <span class="title" translate>Save</span>
+        </button>
+        
+        <button class="navbtn navbtn-info" href="" ng-disabled="editStatus" ng-click="widgetBoxStatus = true;">
+            <i class="svg-icon-add inverse"></i> <span class="title" translate>Add widget</span>
+        </button>
+
+    </div>
 </div>
 
 <!-- widgetbox -->
