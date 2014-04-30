@@ -1,16 +1,17 @@
 define([
     'superdesk/services/storage',
     'superdesk/services/server',
-    './services'
-], function(storageService, serverService) {
+    './scratchpad-service'
+], function(storageService, serverService, ScratchpadService) {
     'use strict';
 
     describe('scratchpadService', function() {
         beforeEach(function() {
             module(storageService.name);
             module(serverService.name);
-            module('superdesk.scratchpad.services');
-            module('ngMock');
+            module(function($provide) {
+                $provide.service('scratchpad', ScratchpadService);
+            });
         });
 
         beforeEach(module(function($provide) {
@@ -24,7 +25,7 @@ define([
             storage = $injector.get('storage');
             httpBackend = $injector.get('$httpBackend');
             server = $injector.get('server');
-            service = $injector.get('scratchpadService');
+            service = $injector.get('scratchpad');
             testItem = {
                 _links: {self: {href: 'test'}},
                 data: 1

@@ -1,13 +1,11 @@
 define([
     'angular',
-    'lodash',
-    './services',
-    './directives'
-], function(angular, _) {
+    './scratchpad-directive',
+    './scratchpad-service'
+], function(angular, ScratchpadDirective, ScratchpadService) {
     'use strict';
 
-    angular.module('superdesk.scratchpad', [
-        'superdesk.scratchpad.services',
-        'superdesk.scratchpad.directives'
-    ]);
+    return angular.module('superdesk.scratchpad', [])
+        .directive('sdScratchpad', ScratchpadDirective)
+        .service('scratchpad', ScratchpadService);
 });
