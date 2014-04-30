@@ -74,6 +74,10 @@
 
 /* Global classes */
 
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
 .blue-text {
 	color: #419fc6 !important;
 	&::-webkit-input-placeholder {
@@ -94,14 +98,12 @@
 	background-color:#e4f8de !important;
 }
 
-
 .no-bg {
 	background: none !important;
 	&:hover {
 		background: none !important;
 	}
 }
-
 
 
 /* pagination */
