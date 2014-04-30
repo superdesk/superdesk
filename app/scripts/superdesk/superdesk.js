@@ -8,6 +8,7 @@ define([
     'angular-file-upload',
 
     './activity/activity',
+    './analytics/analytics',
     './api/api',
     './auth/auth',
     './beta/beta',
@@ -33,6 +34,7 @@ define([
         'angularFileUpload',
 
         require('./activity/activity').name,
+        require('./analytics/analytics').name,
         require('./api/api').name,
         require('./auth/auth').name,
         require('./beta/beta').name,

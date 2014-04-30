@@ -3,11 +3,21 @@ module.exports = function(grunt) {
     'use strict';
 
     function data(url) {
-        return {data: {
+        var config = {
             raven: {dsn: process.env.SUPERDESK_RAVEN_DSN || ''},
             server: {url: grunt.option('server') || url},
-            ga: process.env.TRACKING_ID || ''
-        }};
+            analytics: {
+                piwik: {
+                    url: process.env.PIWIK_URL || '',
+                    id: process.env.PIWIK_SITE_ID || ''
+                },
+                ga: {
+                    id: process.env.TRACKING_ID || ''
+                }
+            }
+        };
+
+        return {data: {config: config}};
     }
 
     var files = {'<%= distDir %>/index.html': '<%= appDir %>/index.html'};
