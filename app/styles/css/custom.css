@@ -372,13 +372,6 @@ a.close {
 */
 
 
-.ajax-loader {
-    background-image:url('../../images/ajax-loader.gif');
-    width: 32px;
-    height: 32px;
-    margin: 0px auto;
-}
-
 .collaborators-list, .box-list, .box-list.block  {
     list-style: none;
     margin: 0 0 0 -10px;
@@ -909,17 +902,10 @@ ul.posttemplates li {
 	background-color: #fff;
 }
 
-
-
-.icon-underline {
-	background: url(../../images/icon-underline.png) no-repeat 0 0;
-}
-
 label.bgcolor {
 	float: left;
 	padding-top: 5px;
 }
-
 
 .modalscreen {
 	display: none;
@@ -1131,16 +1117,6 @@ label.bgcolor {
 }
 
 
-.upload-image {
-	width: 100%;
-	box-sizing: border-box;
-	height: 140px;
-	margin: 0;
-	padding: 0;
-	background: #F8F8F8 url("../../images/uploadedimg.png") no-repeat center center;
-	border: 1px solid #D7D7D7;
-	float: left;
-}
 
 
 .form-row {
