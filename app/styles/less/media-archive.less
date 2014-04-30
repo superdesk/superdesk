@@ -286,8 +286,40 @@
 
 	.item-preview {
 		.actions {
-			position: relative;
+			position: absolute;
 			z-index: 1;
+			top: 0;
+			right: 0;
+			width: 30px;
+			height: 54px;
+			border-left: 1px solid #ececec;
+			.action {
+				width: 30px;
+				height: 27px;
+				.box-sizing(border-box);
+				display: inline-block;
+				line-height: 27px;
+				text-align: center;
+				i {
+					.opacity(50);
+					&.icon-white { display: none; }
+				}
+				&.preview {
+					border-top: 1px solid #f1f1f1;
+					i {
+						margin: -3px 0 0 1px;
+					}
+				}
+				&:hover {
+					background: @sd-color-blue;
+					cursor: pointer;
+					i {
+						display: none;
+						.opacity(100);
+						&.icon-white { display: inline-block !important; }
+					}
+				}
+			}
 		}
 		.header {
 			.box-sizing(border-box);
