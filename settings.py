@@ -5,6 +5,12 @@ SERVER_NAME = 'localhost:5000'
 
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S+0000'
 
+ETAG = 'etag'
+STATUS = 'status'
+ISSUES = 'issues'
+DATE_CREATED = 'created'
+LAST_UPDATED = 'updated'
+
 X_DOMAINS = '*'
 X_HEADERS = ['Content-Type', 'Authorization', 'If-Match']
 

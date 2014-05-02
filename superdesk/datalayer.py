@@ -94,9 +94,11 @@ class SuperdeskDataLayer(DataLayer):
         self._send('update', resource, id=id_, updates=document)
         return self._backend(resource).replace(resource, id_, document)
 
-    def remove(self, resource, id_=None):
-        self._send('delete', resource, id_=id_)
-        return self._backend(resource).remove(resource, id_)
+    def remove(self, resource, lookup=None):
+        if lookup is None:
+            lookup = {}
+        self._send('delete', resource, lookup=lookup)
+        return self._backend(resource).remove(resource, lookup)
 
     def _backend(self, resource):
         datasource = self._datasource(resource)

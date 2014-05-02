@@ -33,7 +33,7 @@ def get_res(url, context):
 
 def assert_200(response):
     """Assert we get status code 200."""
-    assert response.status_code == 200, '%d\n%s' % (response.status_code, response.get_data().decode('utf-8'))
+    assert response.status_code in (200, 201), 'Expected 20*, got %d' % (response.status_code)
 
 
 def assert_ok(response):
