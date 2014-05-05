@@ -60,6 +60,12 @@ class SuperdeskTokenAuth(TokenAuth):
             flask.g.user = app.data.find_one('users', _id=user_id)
             return self.check_permissions(resource, method, flask.g.user)
 
+    def authorized(self, allowed_roles, resource, method):
+        """Ignores auth on home endpoint."""
+        if not resource:
+            return True
+        return super(SuperdeskTokenAuth, self).authorized(allowed_roles, resource, method)
+
 
 def authenticate(credentials, db):
     if 'username' not in credentials:

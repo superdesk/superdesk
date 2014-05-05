@@ -37,7 +37,7 @@ class ActivityLogHandler(logging.Handler):
         data['user'] = getattr(record, 'user', {}).get('_id')
         superdesk.app.data.insert('activity', [data])
 
-#superdesk.logger.addHandler(ActivityLogHandler())
+# superdesk.logger.addHandler(ActivityLogHandler())
 
 superdesk.domain('activity', {
     'resource_methods': ['GET'],

@@ -5,6 +5,7 @@ SERVER_NAME = 'localhost:5000'
 
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S+0000'
 
+XML = False
 ETAG = 'etag'
 STATUS = 'status'
 ISSUES = 'issues'

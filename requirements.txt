@@ -1,6 +1,6 @@
 Cerberus==0.6
 Eve==0.3
-Eve-Elastic==0.1.4
+Eve-Elastic==0.1.5
 Eve-Docs==0.1.1
 Flask==0.10.1
 Flask-Bootstrap==3.1.1.2

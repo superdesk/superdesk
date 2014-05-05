@@ -42,9 +42,4 @@ Feature: Authentication
 
     Scenario: Fetch resources without auth token
         When we get "/"
-        Then we get response code 401
-
-    @auth
-    Scenario: Get auth info with auth token
-        When we get "/"
         Then we get response code 200
