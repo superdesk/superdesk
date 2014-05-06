@@ -20,7 +20,7 @@ define([], function() {
         return {
 
             // set timeout for every request but upload
-            request: function(config) {
+            xrequest: function(config) {
                 if (!IS_VIEW_REGEXP.test(config.url) && !request.isUpload(config)) {
                     config._ttl = config._ttl ? Math.min(TIMEOUT_MAX, config._ttl * 2) : TIMEOUT;
                     config.timeout = $timeout(function() {
@@ -32,7 +32,7 @@ define([], function() {
             },
 
             // reset server status on success
-            response: function(response) {
+            xresponse: function(response) {
                 if (response.config.timeout) {
                     $timeout.cancel(response.config.timeout);
                     $rootScope.serverStatus = STATUS.OK;
@@ -42,7 +42,7 @@ define([], function() {
             },
 
             // repeat request with higher timeout
-            responseError: function(rejection) {
+            xresponseError: function(rejection) {
                 if (!rejection.status && !request.isUpload(rejection.config)) {
                     $rootScope.serverStatus += 1;
                     return request.resend(rejection.config);

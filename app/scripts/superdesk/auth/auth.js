@@ -49,7 +49,7 @@ define([
                 return session.token;
             }, function(token) {
                 if (token) {
-                    $http.defaults.headers.common.Authorization = token;
+                    $http.defaults.headers.common.Authorization = 'Basic ' + btoa(token + ':');
                 } else {
                     delete $http.defaults.headers.common.Authorization;
                 }
@@ -59,7 +59,7 @@ define([
             $rootScope.$on('$locationChangeStart', function (e) {
                 if (!session.token) {
                     session.getIdentity().then(function() {
-                        $http.defaults.headers.common.Authorization = session.token;
+                        $http.defaults.headers.common.Authorization = 'Basic ' + btoa(session.token + ':');
                         $route.reload();
                     });
                     e.preventDefault();

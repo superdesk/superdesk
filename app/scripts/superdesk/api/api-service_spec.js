@@ -4,7 +4,7 @@ define([
     'use strict';
 
     function collection(data) {
-        return {collection: data};
+        return {_links: {child: data}};
     }
 
     var MOCK_API = {
@@ -185,7 +185,7 @@ define([
     describe('HTTP API Endpoint', function() {
         beforeEach(module(doConfig));
 
-        var links = collection([{rel: '/HR/User', href: 'users_url'}]);
+        var links = collection([{title: '/HR/User', href: 'users_url'}]);
 
         afterEach(inject(function($httpBackend) {
             $httpBackend.verifyNoOutstandingExpectation();

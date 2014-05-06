@@ -1,8 +1,8 @@
 define([], function() {
     'use strict';
 
-    AuthService.$inject = ['$http', '$q', 'session', 'authAdapter'];
-    function AuthService($http, $q, session, authAdapter) {
+    AuthService.$inject = ['$q', 'api', 'session', 'authAdapter'];
+    function AuthService($q, api, session, authAdapter) {
 
         /**
          * Login using given credentials
@@ -14,17 +14,14 @@ define([], function() {
         this.login = function(username, password) {
 
             function fetchIdentity(loginData) {
-                return $http.get(loginData.User.href, {headers: {Authorization: loginData.Session}})
-                    .then(function(response) {
-                        return response.data ? response.data : $q.reject(response);
-                    });
+                return api.users.getById(loginData.user);
             }
 
             return authAdapter.authenticate(username, password)
-                .then(function(loginData) {
-                    return fetchIdentity(loginData)
+                .then(function(sessionData) {
+                    return fetchIdentity(sessionData)
                         .then(function(userData) {
-                            session.start(loginData, userData);
+                            session.start(sessionData, userData);
                             return session.identity;
                         });
                 });

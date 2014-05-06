@@ -25,8 +25,8 @@ define(['lodash'], function(_) {
                 url: config.server.url
             }).then(function(response) {
                 links = {};
-                _.each(response.data.collection, function(link) {
-                    links[link.rel] = link.href;
+                _.each(response.data._links.child, function(link) {
+                    links[link.title] = 'http://' + link.href;
                 });
 
                 return links;
@@ -125,7 +125,6 @@ define(['lodash'], function(_) {
                 url: getUrl(this),
                 headers: getHeaders(this)
             }).then(function(response) {
-                response.data._items = response.data.collection;
                 return response.data;
             });
         };

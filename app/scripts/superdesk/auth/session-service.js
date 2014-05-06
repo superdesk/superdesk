@@ -44,9 +44,9 @@ define(['lodash'], function(_) {
          * @param {object} identity
          */
         this.start = function(session, identity) {
-            this.token = session.Session;
-            setToken(session.Session);
-            setSessionHref(session.href);
+            this.token = session.token;
+            setToken(session.token);
+            setSessionHref(session._links.self.href);
 
             this.identity = null;
             this.updateIdentity(identity);
