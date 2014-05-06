@@ -139,10 +139,7 @@ define([
         .config(['apiProvider', function(apiProvider) {
             apiProvider.api('users', {
                 type: 'http',
-                backend: {
-                    rel: 'HR/User',
-                    headers: {'X-Filter': 'User.*'}
-                },
+                backend: {rel: 'users'},
                 service: require('./users-service')
             });
         }]);

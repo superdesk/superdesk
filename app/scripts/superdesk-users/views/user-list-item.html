@@ -1,14 +1,14 @@
 <li ng-repeat="user in users" ng-click="select(user)" ng-class="{selected: user === selected}">
     <div class="avatar">
-        <figure><img sd-user-picture data-src="user.Avatar.href"></figure>
+        <figure><img sd-user-picture data-src="user.picture_url"></figure>
     </div>
 
     <div class="row-wrapper" sd-col-width>
-        <div class="name">{{ user.FullName }}</div>
-        <div class="username">{{ user.UserName }}</div>
+        <div class="name">{{ user.display_name }}</div>
+        <div class="username">{{ user.username }}</div>
         <div class="role" ng-show>{{ roles[user.role].name }}</div>
-        <div class="email">{{ user.EMail }}</div>
-        <div class="created">{{ user.CreatedOn | reldate}}</div>
+        <div class="email">{{ user.email }}</div>
+        <div class="created">{{ user.created | reldate}}</div>
     </div>
 
     <div class="action">
