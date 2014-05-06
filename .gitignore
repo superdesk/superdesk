@@ -6,6 +6,7 @@ upload/*
 
 # env
 *.egg*
+env/
 bin/
 lib/
 man/

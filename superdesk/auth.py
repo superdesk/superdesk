@@ -89,9 +89,9 @@ def on_create_auth(data, docs):
             doc['user'] = user['_id']
             doc['token'] = utils.get_random_string(40)
         except NotFoundAuthException:
-            superdesk.abort(404)
+            superdesk.abort(400)
         except CredentialsAuthException:
-            superdesk.abort(403)
+            superdesk.abort(400)
 
 superdesk.connect('create:auth', on_create_auth)
 

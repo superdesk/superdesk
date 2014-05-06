@@ -25,7 +25,7 @@ Feature: Authentication
             {"username": "foo", "password": "xyz"}
             """
 
-        Then we get response code 403
+        Then we get response code 400
 
     Scenario: Authenticate with non existing username
         Given "users"
@@ -38,7 +38,7 @@ Feature: Authentication
             {"username": "x", "password": "y"}
             """
 
-        Then we get response code 404
+        Then we get response code 400
 
     Scenario: Fetch resources without auth token
         When we get "/"
