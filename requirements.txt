@@ -1,11 +1,11 @@
 Cerberus==0.6
 Eve==0.3
 Eve-Elastic==0.1.5
-Eve-Docs==0.1.1
+Eve-Docs==0.1.2
 Flask==0.10.1
 Flask-Bootstrap==3.1.1.2
 Flask-PyMongo==0.3.0
-Flask-Script==0.6.7
+Flask-Script==2.0.3
 Jinja2==2.7.2
 MarkupSafe==0.21
 Werkzeug==0.9.4
@@ -16,8 +16,8 @@ flake8==2.1.0
 itsdangerous==0.24
 mccabe==0.2.1
 newrelic==2.18.1.15
-nose==1.3.1
-parse==1.6.3
+nose==1.3.3
+parse==1.6.4
 pep8==1.5.6
 pyelasticsearch==0.6.1
 pyflakes==0.8.1
@@ -25,7 +25,7 @@ pymongo==2.7
 python-dateutil==2.2
 pytz==2014.2
 requests==2.2.1
-simplejson==3.4
+simplejson==3.4.1
 six==1.6.1
 waitress==0.8.8
 

@@ -22,7 +22,10 @@ logger.setLevel(logging.INFO)
 
 
 def get_headers(self, environ=None):
-    """Fix CORS for abort responses."""
+    """Fix CORS for abort responses.
+
+    todo(petr): put in in custom flask error handler instead
+    """
     return [
         ('Content-Type', 'text/html'),
         ('Access-Control-Allow-Origin', '*'),

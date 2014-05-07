@@ -1,10 +1,11 @@
 
 from flask.ext.bootstrap import Bootstrap
 from eve_docs import eve_docs
-from app import application
+from app import get_app
 
-Bootstrap(application)
-application.register_blueprint(eve_docs, url_prefix='/docs')
+app = get_app()
+app.register_blueprint(eve_docs, url_prefix='/docs')
+Bootstrap(app)
 
 if __name__ == '__main__':
-    application.run(debug=True)
+    app.run(debug=True)
