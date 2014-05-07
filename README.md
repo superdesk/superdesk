@@ -2,9 +2,11 @@
 
 Superdesk REST API Server is python app on top of mongodb.
 
-## Dependencies
+## Requirements
 
-Application requires mongodb running on standard port.
+It requires mongodb server running on standard port and elastisearch also on standard port.
+
+Both can be overriden via environment variables (see [settings.py](./settings.py)).
 
 Python version supported are 2.7.5+ and 3.3+.
 
