@@ -4,34 +4,8 @@ define(['lodash'], function(_) {
     /**
      * Http endpoint factory
      */
-    HttpEndpointFactory.$inject = ['$http', '$q', 'config'];
-    function HttpEndpointFactory($http, $q, config) {
-
-        var links;
-
-        /**
-         * Get resource links via root url
-         *
-         * @returns {Promise}
-         */
-        function getResourceLinks() {
-
-            if (links) {
-                return $q.when(links);
-            }
-
-            return http({
-                method: 'GET',
-                url: config.server.url
-            }).then(function(response) {
-                links = {};
-                _.each(response.data._links.child, function(link) {
-                    links[link.title] = 'http://' + link.href;
-                });
-
-                return links;
-            });
-        }
+    HttpEndpointFactory.$inject = ['$http', '$q', 'urlResolver'];
+    function HttpEndpointFactory($http, $q, urlResolver) {
 
         /**
          * Get url for given resource
@@ -40,9 +14,7 @@ define(['lodash'], function(_) {
          * @returns {Promise}
          */
         function getUrl(resource) {
-            return getResourceLinks().then(function(links) {
-                return links[resource.rel] ? links[resource.rel] : $q.reject(resource);
-            });
+            return urlResolver.get(resource.rel);
         }
 
         /**

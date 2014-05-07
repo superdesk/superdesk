@@ -4,6 +4,13 @@ define([
 ], function (SessionService, StorageService) {
     'use strict';
 
+    var SESSION = {
+        token: 'abcd',
+        _links: {
+            self: {href: 'delete_session_url'}
+        }
+    };
+
     describe('session service', function() {
 
         beforeEach(function() {
@@ -20,13 +27,13 @@ define([
         }));
 
         it('can be started', inject(function (session) {
-            session.start({Session: 'token'}, {name: 'user'});
-            expect(session.token).toBe('token');
+            session.start(SESSION, {name: 'user'});
+            expect(session.token).toBe(SESSION.token);
             expect(session.identity.name).toBe('user');
         }));
 
         it('can be set expired', inject(function (session) {
-            session.start({Session: 'token'}, {name: 'foo'});
+            session.start(SESSION, {name: 'foo'});
             session.expire();
             expect(session.token).toBe(null);
             expect(session.identity.name).toBe('foo');
@@ -43,20 +50,20 @@ define([
                 expect(identity).toBe(i2);
             });
 
-            session.start({Session: 'test'}, {name: 'foo'});
+            session.start(SESSION, {name: 'foo'});
 
             $rootScope.$apply();
             expect(identity.name).toBe('foo');
         }));
 
         it('can store state for future requests', inject(function (session, $injector, $rootScope) {
-            session.start({Session: 'token'}, {name: 'bar'});
+            session.start(SESSION, {name: 'bar'});
 
             var nextSession = $injector.instantiate(SessionService);
 
             $rootScope.$apply();
 
-            expect(nextSession.token).toBe('token');
+            expect(nextSession.token).toBe(SESSION.token);
             expect(nextSession.identity.name).toBe('bar');
 
             nextSession.expire();
@@ -67,19 +74,19 @@ define([
         }));
 
         it('can clear session', inject(function (session) {
-            session.start({Session: 'token'}, {name: 'bar'});
+            session.start(SESSION, {name: 'bar'});
             session.clear();
             expect(session.token).toBe(null);
             expect(session.identity).toBe(null);
         }));
 
         it('can persist session delete href', inject(function (session) {
-            session.start({Session: 'sess', href: 'test'}, {name: 'bar'});
-            expect(session.getSessionHref()).toBe('test');
+            session.start(SESSION, {name: 'bar'});
+            expect(session.getSessionHref()).toBe(SESSION._links.self.href);
         }));
 
         it('can update identity', inject(function (session, $injector, $rootScope) {
-            session.start({Session: 'token'}, {Id: 1, name: 'bar'});
+            session.start(SESSION, {name: 'bar'});
             session.updateIdentity({name: 'baz'});
             expect(session.identity.name).toBe('baz');
 

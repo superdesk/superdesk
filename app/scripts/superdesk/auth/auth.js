@@ -4,7 +4,7 @@ define([
     './auth-interceptor',
     './auth-service',
     './session-service',
-    './allypy-auth-service',
+    './basic-auth-adapter',
     './login-modal-directive'
 ], function(angular, require, AuthInterceptor) {
     'use strict';
@@ -12,7 +12,7 @@ define([
     return angular.module('superdesk.auth', [])
         .service('auth', require('./auth-service'))
         .service('session', require('./session-service'))
-        .service('authAdapter', require('./allypy-auth-service'))
+        .service('authAdapter', require('./basic-auth-adapter'))
         .directive('sdLoginModal', require('./login-modal-directive'))
         .config(['$httpProvider', function($httpProvider) {
             $httpProvider.interceptors.push(AuthInterceptor);

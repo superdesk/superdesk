@@ -1,4 +1,4 @@
-define(['superdesk/hashlib'], function(hashlib) {
+define([], function() {
     'use strict';
 
     SuperdeskAuthAdapter.$inject = ['$http', '$q', 'config'];

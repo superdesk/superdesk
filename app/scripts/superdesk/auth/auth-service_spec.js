@@ -12,6 +12,13 @@ define([
     beforeEach(function() {
         module(StorageService.name);
         module(function($provide) {
+            $provide.service('api', function($q) {
+                this.users = {
+                    getById: function(id) {
+                        return $q.when({username: USERNAME});
+                    }
+                };
+            });
             $provide.service('auth', AuthService);
             $provide.service('session', SessionService);
             $provide.service('authAdapter', AuthAdapterMock);
@@ -30,19 +37,18 @@ define([
 
             var resolved = {};
 
-            $httpBackend.expectGET(USER_HREF).respond({UserName: USERNAME});
+            $httpBackend.expectGET(USER_HREF).respond({username: USERNAME});
 
             session.getIdentity().then(function() {
                 resolved.identity = true;
             });
 
             auth.login('admin', 'admin').then(function(identity) {
-                expect(session.identity.UserName).toBe(USERNAME);
+                expect(session.identity.username).toBe(USERNAME);
                 expect(session.token).toBe(SESSION);
                 resolved.login = true;
             });
 
-            $httpBackend.flush();
             $rootScope.$apply();
 
             expect(resolved.login).toBe(true);
@@ -76,7 +82,7 @@ define([
             var defer = $q.defer();
 
             if (username === 'admin' && password === 'admin') {
-                defer.resolve({Session: SESSION, User: {href: USER_HREF}});
+                defer.resolve({token: SESSION, user: '1', _links: {self: {href: 'delete_session_url'}}});
             } else {
                 defer.reject();
             }

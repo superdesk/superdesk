@@ -4,8 +4,10 @@ define([
     'use strict';
 
     function collection(data) {
-        return {_links: {child: data}};
+        return {_items: data};
     }
+
+    var USERS_URL = 'users_url';
 
     var MOCK_API = {
         type: 'mock',
@@ -51,7 +53,12 @@ define([
         var apiProvider = $provide.provider('api', APIProvider);
         apiProvider.api('mock', MOCK_API);
         apiProvider.api('http', HTTP_API);
-        $provide.constant('config', {server: {url: 'server_url'}});
+
+        $provide.service('urlResolver', function($q) {
+            this.get = function(title) {
+                return $q.when(USERS_URL);
+            };
+        });
     }
 
     describe('API Provider', function() {
@@ -183,9 +190,11 @@ define([
     });
 
     describe('HTTP API Endpoint', function() {
+
         beforeEach(module(doConfig));
 
-        var links = collection([{title: '/HR/User', href: 'users_url'}]);
+        beforeEach(module(function($provide) {
+        }));
 
         afterEach(inject(function($httpBackend) {
             $httpBackend.verifyNoOutstandingExpectation();
@@ -197,8 +206,7 @@ define([
             var headers = $http.defaults.headers.common;
             headers['X-Filter'] = 'User.*';
 
-            $httpBackend.expectGET('server_url').respond(links);
-            $httpBackend.expectGET('users_url', headers).respond(collection([{}]));
+            $httpBackend.expectGET(USERS_URL, headers).respond(collection([{}]));
 
             var users;
             api.http.query().then(function(_users) {
@@ -212,8 +220,7 @@ define([
 
         it('rejects on query error', inject(function(api, $httpBackend) {
 
-            $httpBackend.expectGET('server_url').respond(links);
-            $httpBackend.expectGET('users_url').respond(400);
+            $httpBackend.expectGET(USERS_URL).respond(400);
 
             var reject;
             api.http.query().then(null, function(reason) {
@@ -229,8 +236,7 @@ define([
             var userData = {UserName: 'test'},
                 user;
 
-        $httpBackend.expectGET('server_url').respond(links);
-            $httpBackend.expectPOST('users_url', userData).respond(201, {href: 'user_href'});
+            $httpBackend.expectPOST(USERS_URL, userData).respond(201, {href: 'user_href'});
 
             api.http.save({UserName: 'test'}).then(function(_user) {
                 user = _user;
@@ -245,7 +251,6 @@ define([
             var user = {},
                 data = {UserName: 'test'};
 
-            $httpBackend.expectGET('server_url').respond(links);
             $httpBackend.expectPOST('users_url', data).respond(201, {href: 'user_href'});
 
             api.http.save(user, data);
@@ -343,7 +348,6 @@ define([
         it('can get item by id', inject(function(api, $httpBackend) {
             var user;
 
-            $httpBackend.expectGET('server_url').respond(links);
             $httpBackend.expectGET('users_url/1').respond({UserName: 'foo'});
 
             api.http.getById(1).then(function(_user) {
@@ -367,20 +371,6 @@ define([
             $httpBackend.flush();
         }));
 
-        it('rejects when it has no url', inject(function(api, $httpBackend) {
-            $httpBackend.expectGET('server_url').respond(404);
-
-            var rejected = false;
-
-            api.http.query().then(null, function() {
-                rejected = true;
-            });
-
-            $httpBackend.flush();
-
-            expect(rejected).toBe(true);
-        }));
-
         it('rejects non success responses', inject(function(api, $httpBackend) {
             $httpBackend.expectGET('some_url').respond(400);
 
@@ -395,32 +385,16 @@ define([
             expect(error).toHaveBeenCalled();
         }));
 
-        it('can caches resource links', inject(function(api, $httpBackend, $rootScope) {
-            $httpBackend.expectGET('server_url').respond(links);
-            $httpBackend.expectGET('users_url').respond(collection([]));
-
-            api.http.query();
-
-            $httpBackend.flush();
-            $httpBackend.expectGET('users_url').respond(collection([]));
-
-            api.http.query();
-
-            $rootScope.$apply();
-            $httpBackend.flush();
-        }));
-
-        it('can get resource url', inject(function(api, $httpBackend) {
-            $httpBackend.expectGET('server_url').respond(links);
-
+        it('can get resource url', inject(function(api, $rootScope) {
             var url;
+
             api.http.getUrl().then(function(_url) {
                 url = _url;
             });
 
-            $httpBackend.flush();
+            $rootScope.$digest();
 
-            expect(url).toBe('users_url');
+            expect(url).toBe(USERS_URL);
         }));
 
         it('can get resource headers', inject(function(api) {
