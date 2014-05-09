@@ -21,10 +21,15 @@ define(['lodash'], function(_) {
          * Get headers for given resource
          *
          * @param {Object} resource
+         * @param {Object} item
          * @returns {Object}
          */
-        function getHeaders(resource) {
-            return _.extend({}, resource.config.headers || {});
+        function getHeaders(resource, item) {
+            var headers = _.extend({}, resource.config.headers || {});
+            if (item && item.etag) {
+                headers['If-Match'] = item.etag;
+            }
+            return headers;
         }
 
         /**
@@ -36,6 +41,9 @@ define(['lodash'], function(_) {
         function http(config) {
             return $q.when(config.url)
                 .then(function(url) {
+                    if (url.indexOf('http') !== 0) {
+                        url = 'http://' + url;
+                    }
                     config.url = url;
                     return $http(config);
                 })
@@ -111,14 +119,15 @@ define(['lodash'], function(_) {
         HttpEndpoint.prototype.update = function(item, diff) {
             if (diff == null) {
                 diff = _.omit(item, function(value, key) {
-                    return key === 'href' || key === 'Id' || value.href;
+                    return key === '_links' || key === '_id';
                 });
             }
+            var url = item._links.self.href;
             return http({
                 method: 'PATCH',
-                url: item.href,
+                url: url,
                 data: diff,
-                headers: getHeaders(this)
+                headers: getHeaders(this, item)
             }).then(function(response) {
                 _.extend(item, response.data);
                 return item;
@@ -151,7 +160,7 @@ define(['lodash'], function(_) {
          * @returns {Promise}
          */
         HttpEndpoint.prototype.save = function(item, diff) {
-            return item.href ? this.update(item, diff) : this.create(_.extend(item, diff));
+            return item._id ? this.update(item, diff) : this.create(_.extend(item, diff));
         };
 
         /**
@@ -181,7 +190,7 @@ define(['lodash'], function(_) {
         HttpEndpoint.prototype.remove = function(item) {
             return http({
                 method: 'DELETE',
-                url: item.href
+                url: item._links.self.href
             }).then(null, function(response) {
                 return response.status === 404 ? $q.when(response) : $q.reject(response);
             });

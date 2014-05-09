@@ -28,11 +28,15 @@ define(['lodash'], function(_) {
 
         // make sure saved user is presented in the list
         $scope.render = function(user) {
-            if (_.find($scope.users._items, {href: user.href})) {
+            if (_.find($scope.users._items, function(item) {
+                return item._links.self.href === user._links.self.href;
+            })) {
                 return;
             }
 
-            if (_.find($scope.createdUsers, {href: user.href})) {
+            if (_.find($scope.createdUsers, function(item) {
+                return item._links.self.href === user._links.self.href;
+            })) {
                 return;
             }
 

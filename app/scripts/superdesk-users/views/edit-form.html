@@ -12,14 +12,13 @@
             <img sd-user-picture data-src="user.Avatar.href" alt="{{ user.FullName }}">
         </figure>
 
-        <a sd-beta href="" ng-show="user.Id" class="change-photo" ng-click="editPicture()" translate>Change Photo</a>
+        <a sd-beta href="" ng-show="user._id" class="change-photo" ng-click="editPicture()" translate>Change Photo</a>
     </div>
-
 
     <div class="profile-info user-profile-edit">
         <div class="header-info">
-            <h2>{{ user.FullName }}</h2>
-            <h5>{{ user.UserName }}</h5>
+            <h2>{{ user.display_name }}</h2>
+            <h5>{{ user.username }}</h5>
         </div>
         <div class="error-holder">
           <p class="alert alert-error" ng-show="error" translate>Please fix the issues below.</p>
@@ -28,30 +27,30 @@
             <div class="details-section">
                 <div class="details-section-header">{{ 'General' | translate }} <span class="required-info" translate>* mandatory fields</span></div>
 
-                <div sd-info-item ng-show="user.Id">
+                <div sd-info-item ng-show="user._id">
                   <label for="display-name" translate>full name</label>
-                  <input type="text" name="fullName" id="display-name" ng-model="user.FullName" readonly>
+                  <input type="text" name="fullName" id="display-name" ng-model="user.display_name" readonly>
                 </div>
 
                 <div sd-info-item>
                   <label for="first-name" translate>first name</label>
-                  <input type="text" name="firstName" id="first-name" ng-model="user.FirstName" required>
+                  <input type="text" name="firstName" id="first-name" ng-model="user.first_name" required>
                   <i ng-show="userForm.firstName.$error.required" class="required-asteriks">*</i>
                 </div>
 
                 <div sd-info-item>
                   <label for="last-name" translate>last name</label>
-                  <input type="text" name="lastName" id="last-name" ng-model="user.LastName" required>
+                  <input type="text" name="lastName" id="last-name" ng-model="user.last_name" required>
                   <i ng-show="userForm.lastName.$error.required" class="required-asteriks">*</i>
                 </div>
 
                 <div sd-info-item>
                   <label for="username" translate>username</label>
                   <input type="text" name="userName" id="username"
-                    ng-model="user.UserName"
-                    ng-readonly="user.Id"
+                    ng-model="user.username"
+                    ng-readonly="user._id"
                     ng-pattern="usernamePattern"
-                    sd-user-unique data-unique-field="userName" data-exclude="user"
+                    sd-user-unique data-unique-field="username" data-exclude="user"
                     required>
                     <i ng-show="userForm.userName.$error.required" class="required-asteriks">*</i>
                   <div ng-show="userForm.userName.$error.unique || error.UserName.conflict" sd-valid-error translate>sorry, this username is already taken.</div>
@@ -61,9 +60,9 @@
                   </div>
                 </div>
 
-                <div sd-info-item class="password" ng-if="!user.Id">
+                <div sd-info-item class="password" ng-if="!user._id">
                   <label for="password" translate>password</label>
-                  <input type="password" name="password" ng-minlength="5" id="password" ng-model="user.Password" required>
+                  <input type="password" name="password" ng-minlength="5" id="password" ng-model="user.password" required>
                   <i ng-show="userForm.password.$error.required" class="required-asteriks">*</i>
                   <div ng-show="userForm.password.$error.minlength" sd-valid-info>
                     <i class="icon-info-sign icon-warning"></i>
@@ -71,9 +70,9 @@
                   </div>
                 </div>
 
-                <div sd-info-item class="password" ng-if="!user.Id">
+                <div sd-info-item class="password" ng-if="!user._id">
                   <label for="passwordConfirm" translate>confirm</label>
-                  <input type="password" name="passwordConfirm" ng-minlength="5" id="passwordConfirm" sd-password-confirm ng-model="confirm.password" data-password="user.Password" required>
+                  <input type="password" name="passwordConfirm" ng-minlength="5" id="passwordConfirm" sd-password-confirm ng-model="confirm.password" data-password="user.password" required>
                   <i ng-show="userForm.passwordConfirm.$error.required" class="required-asteriks">*</i>
                   <div ng-show="userForm.passwordConfirm.$error.confirm" sd-valid-info>
                     <i class="icon-info-sign icon-warning"></i>
@@ -81,7 +80,7 @@
                   </div>
                 </div>
 
-                <div sd-info-item class="password" ng-if="user.Id" id="password-change-trigger">
+                <div sd-info-item class="password" ng-if="user._id" id="password-change-trigger">
                   <label translate>password</label>
                   <i class="change-btn" ng-click="show.password = !show.password" ng-show="!show.password">change password</i>
                 </div>
@@ -89,7 +88,7 @@
                 <div sd-info-item>
                   <label for="email" translate>email</label>
                   <input type="email" name="email" id="email"
-                    ng-model="user.EMail"
+                    ng-model="user.email"
                     sd-user-unique data-unique-field="email" data-exclude="user"
                     required>
                     <i ng-show="userForm.email.$error.required" class="required-asteriks">*</i>
@@ -102,16 +101,16 @@
 
                 <div sd-info-item>
                   <label for="phone" translate>phone number</label>
-                  <input type="text" name="phone" id="phone" ng-model="user.PhoneNumber" ng-pattern="phonePattern">
+                  <input type="text" name="phone" id="phone" ng-model="user.phone" ng-pattern="phonePattern">
                   <div ng-show="userForm.phone.$error.pattern || error.PhoneNumber.format" sd-valid-info>
                     <i class="icon-info-sign icon-warning"></i>
                     <span translate>please provide number in international format</span>
                   </div>
                 </div>
 
-                <div sd-info-item ng-show="user.Id">
+                <div sd-info-item ng-show="user._id">
                   <label for="created" translate>member since</label>
-                  <span class="info-value" sd-reldate ng-model="user.CreatedOn"></span>
+                  <span class="info-value" sd-reldate ng-model="user.created"></span>
                 </div>
 
                 <div sd-info-item ng-show="">
@@ -124,7 +123,7 @@
   </div>
 </form>
 
-<div sd-change-password class="password-popup" ng-if="show.password && user.Id" ng-class="{shifted : error}">
+<div sd-change-password class="password-popup" ng-if="show.password && user._id" ng-class="{shifted : error}">
     <div class="title">Change password</div>
     <div class="content-holder">
       <div class="password-change-holder" >

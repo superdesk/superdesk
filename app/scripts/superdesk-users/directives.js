@@ -145,7 +145,7 @@ define([
                     scope.save = function() {
                         scope.error = null;
                         notify.info(gettext('saving..'));
-                        return api.users.save(scope.origUser, scope.user).then(function() {
+                        return api.users.save(scope.origUser, scope.user).then(function(response) {
                             resetUser(scope.origUser);
                             notify.pop();
                             notify.success(gettext('user saved.'));

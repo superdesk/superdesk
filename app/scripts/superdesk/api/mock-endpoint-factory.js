@@ -40,7 +40,7 @@ define(['lodash'], function(_) {
          * @returns {Promise}
          */
         MockEndpoint.prototype.find = function(id) {
-            var item = _.find(this.data, {Id: id});
+            var item = _.find(this.data, {_id: id});
             return item ? $q.when(item) : $q.reject(item);
         };
 
@@ -55,8 +55,8 @@ define(['lodash'], function(_) {
 
             _.extend(item, diff);
 
-            if (!item.Id) {
-                item.Id = _.max(_.pluck(this.data, 'Id')) + 1;
+            if (!item._id) {
+                item._id = _.max(_.pluck(this.data, '_id')) + 1;
                 this.data.push(item);
             }
 

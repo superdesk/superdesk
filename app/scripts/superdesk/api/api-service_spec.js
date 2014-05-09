@@ -7,7 +7,7 @@ define([
         return {_items: data};
     }
 
-    var USERS_URL = 'users_url';
+    var USERS_URL = 'http://users_url';
 
     var MOCK_API = {
         type: 'mock',
@@ -32,8 +32,8 @@ define([
         backend: {
             url: 'mock_url',
             data: [
-                {Id: 1, UserName: 'foo'},
-                {Id: 2, UserName: 'bar'}
+                {_id: 1, username: 'foo'},
+                {_id: 2, username: 'bar'}
             ]
         }
     };
@@ -111,7 +111,7 @@ define([
 
             $rootScope.$digest();
 
-            expect(user.UserName).toBe('bar');
+            expect(user.username).toBe('bar');
         }));
 
         it('can reject fail on find', inject(function(api, $rootScope) {
@@ -129,14 +129,14 @@ define([
         it('can save item', inject(function(api, $rootScope) {
             var user, users;
 
-            api.mock.save({UserName: 'joe'}).then(function(_user) {
+            api.mock.save({username: 'joe'}).then(function(_user) {
                 user = _user;
             });
 
             $rootScope.$digest();
 
-            expect(user.UserName).toBe('joe');
-            expect(user.Id).toBe(3);
+            expect(user.username).toBe('joe');
+            expect(user._id).toBe(3);
 
             api.mock.query().then(function(_users) {
                 users = _users;
@@ -146,13 +146,13 @@ define([
 
             expect(users.total).toBe(3);
 
-            api.mock.save(user, {UserName: 'john'});
+            api.mock.save(user, {username: 'john'});
 
             $rootScope.$digest();
 
-            expect(user.UserName).toBe('john');
+            expect(user.username).toBe('john');
 
-            api.mock.query({UserName: 'john'}).then(function(_users) {
+            api.mock.query({username: 'john'}).then(function(_users) {
                 users = _users;
             });
 
@@ -163,7 +163,7 @@ define([
 
         it('can delete item', inject(function(api, $rootScope) {
 
-            api.mock.remove({Id: 2});
+            api.mock.remove({_id: 2});
 
             $rootScope.$digest();
 
@@ -233,39 +233,39 @@ define([
         }));
 
         it('can create new resource', inject(function(api, $httpBackend) {
-            var userData = {UserName: 'test'},
+            var userData = {username: 'test'},
                 user;
 
-            $httpBackend.expectPOST(USERS_URL, userData).respond(201, {href: 'user_href'});
+            $httpBackend.expectPOST(USERS_URL, userData).respond(201, {_links: {self: {href: 'user_href'}}});
 
-            api.http.save({UserName: 'test'}).then(function(_user) {
+            api.http.save({username: 'test'}).then(function(_user) {
                 user = _user;
             });
 
             $httpBackend.flush();
 
-            expect(user.href).toBe('user_href');
+            expect(user._links.self.href).toBe('user_href');
         }));
 
         it('can create new with diff', inject(function(api, $httpBackend) {
             var user = {},
-                data = {UserName: 'test'};
+                data = {username: 'test'};
 
-            $httpBackend.expectPOST('users_url', data).respond(201, {href: 'user_href'});
+            $httpBackend.expectPOST(USERS_URL, data).respond(201, {_links: {self: {href: 'user_href'}}});
 
             api.http.save(user, data);
 
             $httpBackend.flush();
 
-            expect(user.UserName).toBe('test');
+            expect(user.username).toBe('test');
         }));
 
         it('can update', inject(function(api, $httpBackend) {
 
-            var userData = {href: 'users_url/1', Id: 2, UserName: 'test', Avatar: {href: 'test'}},
+            var userData = {_links: {self: {href: 'user_href'}}, _id: 2, username: 'test', Avatar: {href: 'test'}},
                 user;
 
-            $httpBackend.expectPATCH(userData.href, {UserName: 'test'}).respond(200);
+            $httpBackend.expectPATCH('http://' + userData._links.self.href, {username: 'test', Avatar: {href: 'test'}}).respond(200);
 
             api.http.save(userData).then(function(_user) {
                 user = _user;
@@ -273,15 +273,15 @@ define([
 
             $httpBackend.flush();
 
-            expect(user.UserName).toBe('test');
-            expect(user.href).toBe('users_url/1');
+            expect(user.username).toBe('test');
+            expect(user._links.self.href).toBe('user_href');
         }));
 
         it('can update with diff', inject(function(api, $httpBackend) {
-            var userData = {href: 'users_url/1', UserName: 'test'},
+            var userData = {_links: {self: {href: 'user_href'}}, _id: 2, username: 'test'},
                 diff = {Active: false};
 
-            $httpBackend.expectPATCH(userData.href, diff).respond({});
+            $httpBackend.expectPATCH('http://' + userData._links.self.href, diff).respond({});
 
             api.http.save(userData, diff);
 
@@ -290,10 +290,10 @@ define([
 
         it('can delete', inject(function(api, $httpBackend) {
 
-            var user = {href: 'users_url/1'},
+            var user = {_links: {self: {href: 'user_href'}}},
                 then = jasmine.createSpy('then');
 
-            $httpBackend.expectDELETE(user.href).respond(204);
+            $httpBackend.expectDELETE('http://' + user._links.self.href).respond(204);
 
             api.http.remove(user).then(then);
 
@@ -304,10 +304,10 @@ define([
 
         it('handles delete on deleted resource as success', inject(function(api, $httpBackend) {
 
-            var user = {href: 'users/1'},
+            var user = {_links: {self: {href: 'user_href'}}},
                 then = jasmine.createSpy('then');
 
-            $httpBackend.expectDELETE(user.href).respond(404);
+            $httpBackend.expectDELETE('http://' + user._links.self.href).respond(404);
 
             api.http.remove(user).then(then);
 
@@ -317,11 +317,11 @@ define([
         }));
 
         it('rejects other delete errors as errors', inject(function(api, $httpBackend) {
-            var user = {href: 'users/1'},
+            var user = {_links: {self: {href: 'user_href'}}},
                 success = jasmine.createSpy('success'),
                 error = jasmine.createSpy('error');
 
-            $httpBackend.expectDELETE(user.href).respond(405);
+            $httpBackend.expectDELETE('http://' + user._links.self.href).respond(405);
 
             api.http.remove(user).then(success, error);
 
@@ -334,7 +334,7 @@ define([
         it('can get item by url', inject(function(api, $httpBackend) {
             var user;
 
-            $httpBackend.expectGET('user_url').respond({UserName: 'foo'});
+            $httpBackend.expectGET('http://user_url').respond({username: 'foo'});
 
             api.http.getByUrl('user_url').then(function(_user) {
                 user = _user;
@@ -342,13 +342,13 @@ define([
 
             $httpBackend.flush();
 
-            expect(user.UserName).toBe('foo');
+            expect(user.username).toBe('foo');
         }));
 
         it('can get item by id', inject(function(api, $httpBackend) {
             var user;
 
-            $httpBackend.expectGET('users_url/1').respond({UserName: 'foo'});
+            $httpBackend.expectGET('http://users_url/1').respond({username: 'foo'});
 
             api.http.getById(1).then(function(_user) {
                 user = _user;
@@ -356,15 +356,15 @@ define([
 
             $httpBackend.flush();
 
-            expect(user.UserName).toBe('foo');
+            expect(user.username).toBe('foo');
 
         }));
 
         it('can replace resource on given dest', inject(function(api, $httpBackend) {
 
-            var data = {UserName: 'foo'};
+            var data = {username: 'foo'};
 
-            $httpBackend.expectPUT('user_url', data).respond({});
+            $httpBackend.expectPUT('http://user_url', data).respond({});
 
             api.http.replace('user_url', data);
 
@@ -372,7 +372,7 @@ define([
         }));
 
         it('rejects non success responses', inject(function(api, $httpBackend) {
-            $httpBackend.expectGET('some_url').respond(400);
+            $httpBackend.expectGET('http://some_url').respond(400);
 
             var success = jasmine.createSpy('success'),
                 error = jasmine.createSpy('error');
