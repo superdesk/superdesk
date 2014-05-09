@@ -12,9 +12,22 @@
         <div ng-class="{'lightbox-composite-preview' : item.type == 'composite'}">
 
             <section class="lightbox-left">
+
                 <!-- picture preview -->
-                <div class="lightbox-large-preview" sd-item-rendition data-item="item" data-rendition="original"></div>
-                <div class="lightbox-caption">{{ item.Headline.en }}</div>
+                <div class="lightbox-large-preview" sd-item-rendition data-item="item" data-rendition="baseImage"></div>
+                <div class="lightbox-caption">{{ item.headline }}</div>
+
+                <!-- text preview -->
+                <div class="lightbox-paper" ng-show="item.type == 'text'">
+                    <div class="lightbox-text">
+                        <div class="lightbox-title">{{ item.headline }}</div>
+                        <div class="lightbox-fulltext">
+                            <small ng-show="item.slugline">{{ item.slugline || item.headline }}</small>
+                            <div ng-show="item.body_html" class="lightbox-fullcontent" sd-html-preview="item.body_html"></div>
+                        </div>
+                    </div>
+                </div>
+
             </section>
 
         </div>
@@ -22,11 +35,11 @@
 
     <section class="lightbox-right">
         <header>
-            <h5 class="lightbox-title">{{ item.Headline.en }}</h5>
-            <span class="lightbox-modified-info">{{ 'Created:'|translate }} {{ item.CreatedOn|date:'medium' }}</span>
-            <span class="lightbox-modified-info">{{ 'Modified:'|translate }} {{ item.VersionCreated|date:'medium' }}</span>
+            <h5 class="lightbox-title">{{ item.headline }}</h5>
+            <span class="lightbox-modified-info">{{ 'Created:'|translate }} {{ item.firstcreated|date:'medium' }}</span>
+            <span class="lightbox-modified-info">{{ 'Modified:'|translate }} {{ item.versioncreated|date:'medium' }}</span>
             
-            <span class="lightbox-media-type filetype-icon-{{item.ContentType}}"></span>
+            <span class="lightbox-media-type filetype-icon-{{item.type}}"></span>
 
             <div class="lightbox-actions">
                 <button class="btn pull-left" ng-show><i class="icon-list-alt"></i> {{ 'Edit metadata'|translate }}</button>
@@ -48,10 +61,10 @@
                 </div>
                 <div ng-show="toggleDetails">
                     <dl class="metadata-details-new clearfix">
-                        <dt translate>GUID</dt><dd>{{ item.GUID }}</dd>
-                        <dt translate>provider</dt><dd>{{ item.Provider }}</dd>
-                        <dt translate ng-show="item.Version">version</dt><dd ng-show="item.Version">{{ item.Version }}</dd>
-                        <dt translate ng-show="item.ByLine">by</dt><dd ng-show="item.ByLine">{{ item.ByLine }}</dd>
+                        <dt translate>GUID</dt><dd>{{ item.guid }}</dd>
+                        <dt translate>provider</dt><dd>{{ item.provider }}</dd>
+                        <dt translate ng-show="item.version">version</dt><dd ng-show="item.version">{{ item.version }}</dd>
+                        <dt translate ng-show="item.byline">by</dt><dd ng-show="item.byline">{{ item.byline }}</dd>
                     </dl>
                     <dl class="metadata-details-new clearfix">
                         <dt translate>aperture</dt><dd>{{ item.FileMeta.Aperture }}</dd>

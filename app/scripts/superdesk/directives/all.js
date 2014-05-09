@@ -12,7 +12,8 @@ define([
     './sdPermissions',
     './sdUserAvatar',
     './sdDragDrop',
-    './sdTypeahead'
+    './sdTypeahead',
+    './sdShadow'
 ], function(require) {
     'use strict';
 
@@ -28,6 +29,7 @@ define([
         require('./sdPermissions').name,
         require('./sdUserAvatar').name,
         require('./sdDragDrop').name,
-        require('./sdTypeahead').name
+        require('./sdTypeahead').name,
+        require('./sdShadow').name
     ];
 });

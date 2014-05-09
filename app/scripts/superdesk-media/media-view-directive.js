@@ -14,26 +14,26 @@ define(['lodash', 'require'], function(_, require) {
                 scope.nextEnabled = true;
 
                 var getIndex = function(item) {
-                    return _.findIndex(scope.items.collection, item);
+                    return _.findIndex(scope.items, item);
                 };
 
                 var setItem = function(item) {
                     scope.item = item;
                     var index = getIndex(scope.item);
-                    scope.prevEnabled = !!scope.items.collection[index - 1];
-                    scope.nextEnabled = !!scope.items.collection[index + 1];
+                    scope.prevEnabled = !!scope.items[index - 1];
+                    scope.nextEnabled = !!scope.items[index + 1];
                 };
 
                 scope.prev = function() {
                     var index = getIndex(scope.item);
                     if (index > 0) {
-                        setItem(scope.items.collection[index - 1]);
+                        setItem(scope.items[index - 1]);
                     }
                 };
                 scope.next = function() {
                     var index = getIndex(scope.item);
-                    if (index !== -1 && index < scope.items.collection.length - 1) {
-                        setItem(scope.items.collection[index + 1]);
+                    if (index !== -1 && index < scope.items.length - 1) {
+                        setItem(scope.items[index + 1]);
                     }
                 };
 

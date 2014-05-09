@@ -1,17 +1,18 @@
 <div>
     <div class="header">
         <ul class="info-list pull-left">
-            <li>{{ 'Provider:' | translate }} <span>{{ item.Provider }}</span></li>
-            <li>{{ 'Version:' | translate }} <span>{{ item.Version }}</span></li>
+            <li>{{ 'Provider:' | translate }} <span>{{ item.provider }}</span></li>
+            <li>{{ 'Version:' | translate }} <span>{{ item.version }}</span></li>
         </ul>
     </div>
     <div class="content" sd-shadow>
-        <p class="date-info">{{ 'Created' | translate }} {{ item.CreatedOn | reldate }}</p>
-        <p class="date-info">{{ 'Modified' | translate }} {{ item.VersionCreated | reldate }}</p>
-        <p class="title">{{ item.HeadLine.en }}</p>
+        <p class="date-info">{{ 'Created' | translate }} {{ item.firstcreated | reldate }}</p>
+        <p class="date-info">{{ 'Modified' | translate }} {{ item.versioncreated | reldate }}</p>
+        <p class="title">{{ item.headline }}</p>
 
         <div class="core-content">
-            <div sd-item-rendition data-item="item" data-rendition="original"></div>
+            <div sd-item-rendition data-item="item" data-rendition="viewImage"></div>
+            <div class="text" ng-show="item.body_html" sd-html-preview="item.body_html"></div>
         </div>
     </div>
   </div>

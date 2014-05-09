@@ -6,7 +6,7 @@ define(['require', 'lodash'], function(require, _) {
             scope: {
                 select: '&',
                 extras: '=',
-                adapter: '='
+                items: '='
             },
             replace: true,
             transclude: true,
@@ -23,11 +23,11 @@ define(['require', 'lodash'], function(require, _) {
                     var match = _.find(scope.items, {_id: itemId});
                     if (match) {
                         scope.clickItem(match);
-                    } else if (!scope.selected || itemId !== scope.selected._id) {
+                    }/* else if (!scope.selected || itemId !== scope.selected._id) {
                         scope.adapter.find(itemId).then(function(item) {
                             scope.clickItem(item);
                         });
-                    }
+                    }*/
                 }
 
                 function move(diff) {
@@ -63,7 +63,7 @@ define(['require', 'lodash'], function(require, _) {
                     $location.search('_id', item ? item._id : null);
                 };
 
-                scope.$watch('adapter.collection', function(items) {
+                scope.$watch('items', function(items) {
                     scope.items = items;
                     fetchSelectedItem($location.search()._id);
                     elem.find('.list-view').focus();

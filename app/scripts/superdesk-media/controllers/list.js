@@ -6,7 +6,7 @@ define(['lodash'], function(_) {
         $scope.view = 'mgrid';
         $scope.selected = {};
         $scope.createdMedia = {
-            collection: []
+            items: []
         };
 
         $scope.preview = function(item) {
@@ -20,7 +20,7 @@ define(['lodash'], function(_) {
         $scope.openUpload = function() {
             superdesk.intent('upload', 'media').then(function(items) {
                 // todo: put somewhere else
-                $scope.createdMedia.collection.unshift.apply($scope.createdMedia.collection, items);
+                $scope.createdMedia.items.unshift.apply($scope.createdMedia.items, items);
             });
         };
 
@@ -35,13 +35,13 @@ define(['lodash'], function(_) {
             var filters = [];
 
             if (params.before || params.after) {
-                var range = {VersionCreated: {}};
+                var range = {versioncreated: {}};
                 if (params.before) {
-                    range.VersionCreated.lte = params.before;
+                    range.versioncreated.lte = params.before;
                 }
 
                 if (params.after) {
-                    range.VersionCreated.gte = params.after;
+                    range.versioncreated.gte = params.after;
                 }
 
                 filters.push({range: range});
@@ -53,17 +53,15 @@ define(['lodash'], function(_) {
         function getQuery(params) {
             var filters = buildFilters(params);
             var query = es(params, filters);
-            query.sort = ['_score', {VersionCreated: 'desc'}];
+            query.sort = ['_score', {versioncreated: 'desc'}];
             return query;
         }
 
         function fetchItems(criteria) {
             api.archive.query(criteria).then(function(items) {
-                items._items = _.pluck(items.hits.hits, '_source');
-                items.collection = items._items;
-                $scope.items = items;
+                $scope.items = items._items;
                 $scope.createdMedia = {
-                    collection: []
+                    items: []
                 };
             });
         }

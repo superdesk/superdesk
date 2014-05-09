@@ -37,7 +37,7 @@ define(['angular', 'require'], function(angular, require) {
                 templateUrl: require.toUrl('./views/item-rendition.html'),
                 scope: {item: '=', rendition: '@'},
                 link: function(scope, elem) {
-                    scope.$watch('item.Renditions[rendition].href', function(href) {
+                    scope.$watch('item.renditions[rendition].href', function(href) {
                         var figure = elem.find('figure'),
                             oldImg = figure.find('img').css('opacity', 0.5);
                         if (href) {
@@ -55,5 +55,16 @@ define(['angular', 'require'], function(angular, require) {
                     });
                 }
             };
-        });
+        })
+        .directive('sdHtmlPreview', ['$sce', function($sce) {
+            return {
+                scope: {sdHtmlPreview: '='},
+                template: '<div ng-bind-html="html"></div>',
+                link: function(scope, elem, attrs) {
+                    scope.$watch('sdHtmlPreview', function(html) {
+                        scope.html = $sce.trustAsHtml(html);
+                    });
+                }
+            };
+        }]);
 });

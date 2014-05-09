@@ -4,7 +4,7 @@ define([
 ], function($, angular) {
     'use strict';
 
-    angular.module('superdesk.directives')
+    return angular.module('superdesk.directives.sdshadow', [])
         /**
          * sdShadow gives top shadow for scroll elements
          *

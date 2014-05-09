@@ -40,7 +40,7 @@ define([
         apiProvider.api('archive', {
             type: 'http',
             backend: {
-                rel: 'Content/ItemMedia/Find'
+                rel: 'ingest'
             }
         });
 

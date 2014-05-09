@@ -1,8 +1,8 @@
 
-<div sd-item-rendition data-item="item" data-rendition="thumbnail_small"></div>
+<div sd-item-rendition data-item="item" data-rendition="thumbnail"></div>
 
-<div class="media" ng-hide="item.Renditions.thumbnail_small">
-    <small title="{{ item.Headline.en }}">{{ item.Headline.en }}</small>
+<div class="media"  ng-show="item.type == 'text' || item.type == 'composite'">
+    <small title="{{ item.headline }}">{{ item.headline }}</small>
 </div>
 
 <div class="media" ng-show="item.type == 'audio' || item.type == 'video'">
@@ -10,20 +10,24 @@
 </div>
 
 <div class="media-info" >
-    <h5 ng-show="item.Headline.en">{{ item.Headline.en || item.ContentType }} <small ng-show="item.ByLine">by {{ item.ByLine }}</small></h5>
+    <h5 ng-show="item.slugline">{{ item.slugline }}</h5>
+    <h5 ng-show="!item.slugline">{{ item.type | translate }}</h5>
 
     <dl>
         <dt class="source" translate>provider:</dt>
-        <dd class="provider">&nbsp;{{ item.Provider }}</dd>
+        <dd class="provider">&nbsp;{{ item.provider }}</dd>
         <dt translate>created</dt>
-        <dd><time datetime="{{ item.CreatedOn }}" title="{{ item.CreatedOn|date:'medium' }}">{{ item.CreatedOn|reldate }}</time></dd>
+        <dd><time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time></dd>
         <dt translate ng-show="item.subject">subject</dt>
         <dd ng-show="item.subject" class="subject-line">{{ item.subject | mergeWords}}</dd>
     </dl>
+</div>
 
-    <div class="status-label"
-         ng-class="{'label-canceled': item.PubStatus=='canceled'}"
-         ng-show="item.PubStatus && item.PubStatus!='usable'">
-         {{ item.PubStatus | translate }}
-    </div>
+<span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
+<span class="urgency-label"><i class="urgency-icon-{{item.urgency}}"></i></span>
+
+<div class="status-label"
+     ng-class="{'label-canceled': item.pubstatus=='canceled'}"
+     ng-show="item.pubstatus && item.pubstatus!='usable'">
+     {{ item.pubstatus | translate }}
 </div>
