@@ -174,7 +174,8 @@ define(['lodash'], function(_) {
             return http({
                 method: 'PUT',
                 url: dest,
-                data: item
+                data: item,
+                headers: getHeaders(this, item)
             }).then(function(response) {
                 _.extend(item, response.data);
                 return item;
@@ -190,7 +191,8 @@ define(['lodash'], function(_) {
         HttpEndpoint.prototype.remove = function(item) {
             return http({
                 method: 'DELETE',
-                url: item._links.self.href
+                url: item._links.self.href,
+                headers: getHeaders(this, item)
             }).then(null, function(response) {
                 return response.status === 404 ? $q.when(response) : $q.reject(response);
             });
