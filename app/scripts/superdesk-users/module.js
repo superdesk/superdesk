@@ -102,6 +102,8 @@ define([
                         }]
                     }
                 })
+
+                /*
                 .activity('/settings/user-roles', {
                     label: gettext('User Roles'),
                     templateUrl: require.toUrl('./views/settings.html'),
@@ -109,6 +111,8 @@ define([
                     category: superdesk.MENU_SETTINGS,
                     priority: -500
                 })
+                */
+
                 .activity('delete/user', {
                     label: gettext('Delete user'),
                     icon: 'trash',
@@ -127,9 +131,7 @@ define([
                     cssClass: 'upload-avatar',
                     controller: require('./controllers/changeAvatar'),
                     templateUrl: require.toUrl('./views/change-avatar.html'),
-                    filters: [
-                        {action: 'edit', type: 'avatar'}
-                    ]
+                    filters: [{action: 'edit', type: 'avatar'}]
                 });
         }])
         .config(['apiProvider', function(apiProvider) {

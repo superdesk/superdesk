@@ -4,7 +4,7 @@ define([
 ], function(angular, _) {
     'use strict';
 
-    angular.module('superdesk.settings', [])
+    return angular.module('superdesk.settings', [])
         .config(['superdeskProvider', function(superdesk) {
             superdesk.activity('/settings', {
                 label: gettext('Settings'),
