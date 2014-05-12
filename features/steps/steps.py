@@ -274,7 +274,6 @@ def step_impl(context):
 def step_impl(context):
     assert_200(context.response)
     data = get_json_data(context.response)
-    context.filename = data['name']
     url = '/upload/%s' % data['_id']
     headers = [('Accept', 'application/json')]
     headers += context.headers
