@@ -100,6 +100,9 @@ class SuperdeskDataLayer(Mongo):
         self._send('delete', resource, lookup=lookup)
         return self._backend(resource).remove(resource, lookup)
 
+    def is_empty(self, resource):
+        return self._backend(resource).is_empty(resource)
+
     def _backend(self, resource):
         datasource = self._datasource(resource)
         backend = config.SOURCES[datasource[0]].get('backend', 'mongo')

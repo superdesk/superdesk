@@ -130,7 +130,13 @@ def step_impl(context, url):
 
 @when('we get "{url}"')
 def step_impl(context, url):
-    context.response = context.client.get(url, headers=context.headers)
+    headers = []
+    if context.text:
+        for line in context.text.split('\n'):
+            key, val = line.split(': ')
+            headers.append((key, val))
+    headers += context.headers
+    context.response = context.client.get(url, headers=headers)
 
 
 @when('we delete "{url}"')
@@ -311,3 +317,8 @@ def step_impl(context, url):
     response = context.client.get(url, headers=context.headers)
     data = get_json_data(response)
     assert etag == data['etag'], '%s not in %s' % (etag, data)
+
+
+@then('we get not modified response')
+def step_impl(context):
+    assert 304 == context.response.status_code, 'exptected 304, but it was %d' % context.response.status_code
