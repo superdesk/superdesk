@@ -4,6 +4,7 @@ import superdesk
 import settings
 from superdesk import signals
 from eve.io.mongo import MongoJSONEncoder
+from eve.io.mongo.media import GridFSMediaStorage
 from superdesk.auth import SuperdeskTokenAuth
 from cerberus.errors import ERROR_BAD_TYPE
 from eve.io.mongo import Validator
@@ -19,6 +20,7 @@ class SuperdeskValidator(Validator):
             self._error(field, ERROR_BAD_TYPE % 'Phone Number')
 
 class SuperdeskEve(eve.Eve):
+
     """Superdesk API"""
 
     def load_config(self):
@@ -39,6 +41,7 @@ def get_app(config=None):
     app = SuperdeskEve(
         data=superdesk.SuperdeskDataLayer,
         auth=SuperdeskTokenAuth,
+        media=GridFSMediaStorage,
         settings=config,
         json_encoder=MongoJSONEncoder,
         validator=SuperdeskValidator)

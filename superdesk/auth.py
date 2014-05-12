@@ -10,21 +10,25 @@ logger = logging.getLogger(__name__)
 
 
 class AuthException(Exception):
+
     """Base Auth Exception"""
     pass
 
 
 class NotFoundAuthException(AuthException):
+
     """Username Not Found Auth Exception"""
     pass
 
 
 class CredentialsAuthException(AuthException):
+
     """Credentials Not Match Auth Exception"""
     pass
 
 
 class SuperdeskTokenAuth(TokenAuth):
+
     """Superdesk Token Auth"""
 
     method_map = {

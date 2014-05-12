@@ -1,5 +1,4 @@
 
-from eve.io import DataLayer
 from eve.io.mongo import Mongo
 from eve.utils import config, ParsedRequest
 from eve_elastic import Elastic
@@ -8,21 +7,22 @@ from .signals import send
 from .utils import import_by_path
 
 
-class SuperdeskDataLayer(DataLayer):
+class SuperdeskDataLayer(Mongo):
+
     """Superdesk Data Layer"""
 
     serializers = Mongo.serializers
     serializers.update(Elastic.serializers)
 
     def init_app(self, app):
+        super(SuperdeskDataLayer, self).init_app(app)
         self.elastic = Elastic(app)
-        self.mongo = Mongo(app)
 
         if 'DEFAULT_FILE_STORAGE' in app.config:
             self.storage = import_by_path(app.config['DEFAULT_FILE_STORAGE'])()
             self.storage.init_app(app)
         else:
-            self.storage = self.mongo.driver
+            self.storage = self.driver
 
         self._init_elastic()
 
@@ -70,8 +70,8 @@ class SuperdeskDataLayer(DataLayer):
         req.max_results = max_results
         return self._backend(resource).find(resource, req, None)
 
-    def find_one(self, resource, **lookup):
-        return self._backend(resource).find_one(resource, **lookup)
+    def find_one(self, resource, req=None, **lookup):
+        return self._backend(resource).find_one(resource, req=req, **lookup)
 
     def find_list_of_ids(self, resource, ids, client_projection=None):
         return self._backend(resource).find_list_of_ids(resource, ids, client_projection)
@@ -103,6 +103,8 @@ class SuperdeskDataLayer(DataLayer):
     def _backend(self, resource):
         datasource = self._datasource(resource)
         backend = config.SOURCES[datasource[0]].get('backend', 'mongo')
+        if backend is 'mongo':
+            return super(SuperdeskDataLayer, self)
         return getattr(self, backend)
 
     def _send(self, signal, resource, **kwargs):

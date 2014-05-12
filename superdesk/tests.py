@@ -28,7 +28,7 @@ def drop_elastic(settings):
 def drop_mongo(app):
     with app.test_request_context():
         try:
-            app.data.mongo.driver.cx.drop_database(app.config['MONGO_DBNAME'])
+            app.data.driver.cx.drop_database(app.config['MONGO_DBNAME'])
         except AttributeError:
             pass
 

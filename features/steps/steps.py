@@ -180,7 +180,7 @@ def step_impl(context):
 @when('we upload a binary file')
 def step_impl(context):
     with open(get_fixture_path('flower.jpg'), 'rb') as f:
-        data = {'file': f}
+        data = {'media': f, 'name': 'some flower'}
         headers = [('Content-Type', 'multipart/form-data')]
         headers.append(context.headers[1])
         context.response = context.client.post('/upload', data=data, headers=headers)
@@ -274,13 +274,14 @@ def step_impl(context):
 def step_impl(context):
     assert_200(context.response)
     data = get_json_data(context.response)
-    assert 'url' in data
-    assert 'filename' in data
-    context.filename = data['filename']
-    response = context.client.get(data['url'], headers=context.headers)
+    context.filename = data['name']
+    url = '/upload/%s' % data['_id']
+    headers = [('Accept', 'application/json')]
+    headers += context.headers
+    response = context.client.get(url, headers=headers)
     assert_200(response)
     assert len(response.get_data()), response
-    assert response.mimetype == 'image/jpeg', response.mimetype
+    assert response.mimetype == 'application/json', response.mimetype
 
 
 @then('we get a picture url')

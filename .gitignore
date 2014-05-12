@@ -1,4 +1,7 @@
 *.pyc
+*.swp
+*.swo
+.ropeproject
 static/*
 media/*
 upload/*
