@@ -6,6 +6,6 @@
     <li ng-repeat="provider in items._facets.provider.terms"><a href="" ng-click="setProvider(provider)">{{ provider.term }} <i>({{ provider.count }})</i></a></li>
     <li class="divider" ng-show="selected"></li>
     <li ng-show="selected">
-        <a href="" ng-click="setProvider()" translate>Show All</a>
+        <a href="" ng-click="selected=null" translate>Show All</a>
     </li>
 </ul>

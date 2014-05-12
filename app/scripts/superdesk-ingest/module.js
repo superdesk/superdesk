@@ -2,7 +2,6 @@ define([
     'jquery',
     'angular',
     'require',
-    'angular-slider',
     'bootstrap-daterange',
     './resources',
     './controllers/ingest',
@@ -24,8 +23,7 @@ define([
         'superdesk.items.services',
         'superdesk.widgets.ingest',
         'superdesk.widgets.ingeststats',
-        'superdesk.panes.info',
-        'uiSlider'
+        'superdesk.panes.info'
     ]);
 
     app.controller('RefController', require('./controllers/ref'));
@@ -33,11 +31,11 @@ define([
     app.value('providerTypes', {
         aap: {
             label: 'AAP',
-            templateUrl: 'scripts/superdesk-items/views/settings/aapConfig.html'
+            templateUrl: require.toUrl('./views/settings/aapConfig.html')
         },
         reuters: {
             label: 'Reuters',
-            templateUrl: 'scripts/superdesk-items/views/settings/reutersConfig.html'
+            templateUrl: require.toUrl('./views/settings/reutersConfig.html')
         }
     });
 
@@ -55,6 +53,8 @@ define([
 
     app.config(['superdeskProvider', function(superdesk) {
         superdesk
+
+            /*
             .activity('/ingest', {
                 when: '/ingest/:id?',
                 label: gettext('Ingest'),
@@ -69,12 +69,16 @@ define([
                     }
                 ]
             })
+            */
+
             .activity('/settings/ingest', {
                 label: gettext('Ingest Feed'),
-                templateUrl: 'scripts/superdesk-items/views/settings/settings.html',
+                templateUrl: require.toUrl('./views/settings/settings.html'),
                 controller: require('./controllers/settings'),
                 category: superdesk.MENU_SETTINGS
-            })
+            });
+
+            /*
             .activity('add-scratchpad', {
                 label: gettext('Add to scratchpad'),
                 icon: 'plus',
@@ -89,6 +93,7 @@ define([
                     {action: 'list', type: 'ingest'}
                 ]
             });
+            */
     }]);
 
     app.filter('characterCount', function() {
@@ -105,4 +110,6 @@ define([
             return text.replace(nonchar, ' ').split(whitesp).length;
         };
     });
+
+    return app;
 });
