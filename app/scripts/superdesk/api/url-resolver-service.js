@@ -1,6 +1,7 @@
 define([], function() {
     'use strict';
 
+    URLResolver.$inject = ['$http', '$q', 'config'];
     function URLResolver($http, $q, config) {
         var links;
 
