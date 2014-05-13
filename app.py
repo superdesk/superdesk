@@ -1,7 +1,7 @@
 import os
 import eve
-import superdesk
 import settings
+import superdesk
 from superdesk import signals
 from eve.io.mongo import MongoJSONEncoder
 from eve.io.mongo.media import GridFSMediaStorage
@@ -51,6 +51,7 @@ def get_app(config=None):
 
     app.on_fetch_resource = signals.proxy_resource_signal('read', app)
     app.on_fetch_item = signals.proxy_item_signal('read', app)
+    app.on_inserted = signals.proxy_resource_signal('created', app)
 
     for blueprint in superdesk.BLUEPRINTS:
         app.register_blueprint(blueprint, **blueprint.kwargs)

@@ -1,7 +1,6 @@
 """Superdesk Users"""
 
 import superdesk
-from .utc import utcnow
 
 
 class EmptyUsernameException(Exception):
@@ -19,10 +18,7 @@ def create_user(userdata=None, db=None, **kwargs):
 
     if not userdata:
         userdata = {}
-
     userdata.update(kwargs)
-    userdata.setdefault('created', utcnow())
-    userdata.setdefault('updated', userdata.get('created'))
 
     if not userdata.get('username'):
         raise EmptyUsernameException()
@@ -36,9 +32,6 @@ def create_user(userdata=None, db=None, **kwargs):
 
 
 def get_display_name(user):
-    if user.get('display_name'):
-        return user.get('display_name')
-
     if user.get('first_name') or user.get('last_name'):
         display_name = '%s %s' % (user.get('first_name'), user.get('last_name'))
         return display_name.strip()
@@ -46,12 +39,9 @@ def get_display_name(user):
         return user.get('username')
 
 
-def on_create_users(data, docs):
+def on_read_users(data, docs):
     """Set default fields for users"""
     for doc in docs:
-        now = utcnow()
-        doc.setdefault('created', now)
-        doc.setdefault('updated', now)
         doc.setdefault('display_name', get_display_name(doc))
 
 
@@ -80,7 +70,9 @@ class CreateUserCommand(superdesk.Command):
                 superdesk.app.data.insert('users', [userdata])
                 return userdata
 
-superdesk.connect('create:users', on_create_users)
+
+superdesk.connect('read:users', on_read_users)
+superdesk.connect('created:users', on_read_users)
 
 superdesk.command('users:create', CreateUserCommand())
 
@@ -108,6 +100,7 @@ superdesk.domain('users', {
             'type': 'string',
         },
         'email': {
+            'unique': True,
             'type': 'string',
         },
         'phone': {

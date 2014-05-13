@@ -4,7 +4,7 @@ import logging
 import settings
 import importlib
 from flask import abort, json, Blueprint  # noqa
-from flask.ext.script import Command, Option  # noqa
+from flask.ext.script import Command, Option  # noqa @UnresolvedImport
 from eve.methods.common import document_link  # noqa
 from .datalayer import SuperdeskDataLayer  # noqa
 from .signals import connect, send  # noqa
