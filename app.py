@@ -6,7 +6,17 @@ from superdesk import signals
 from eve.io.mongo import MongoJSONEncoder
 from superdesk.auth import SuperdeskTokenAuth
 from cerberus.errors import ERROR_BAD_TYPE
+from eve.io.mongo import Validator
 import re
+
+class SuperdeskValidator(Validator):
+    def _validate_type_phone_number(self, field, value):
+        """ Enables validation for `phone_number` schema attribute.
+            :param field: field name.
+            :param value: field value.
+        """
+        if not re.match("^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$", value):
+            self._error(field, ERROR_BAD_TYPE % 'Phone Number')
 
 class SuperdeskEve(eve.Eve):
     """Superdesk API"""
@@ -15,14 +25,6 @@ class SuperdeskEve(eve.Eve):
         """Let us override settings withing plugins"""
         super(SuperdeskEve, self).load_config()
         self.config.from_object(superdesk)
-
-    def _validate_type_phone_number(self, field, value):
-        """ Enables validation for `phone_number` schema attribute.
-            :param field: field name.
-            :param value: field value.
-        """
-        if not re.match("^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$", value):
-            self._error(field, ERROR_BAD_TYPE % 'Phone Number')
 
 def get_app(config=None):
     """App factory."""
@@ -38,7 +40,8 @@ def get_app(config=None):
         data=superdesk.SuperdeskDataLayer,
         auth=SuperdeskTokenAuth,
         settings=config,
-        json_encoder=MongoJSONEncoder)
+        json_encoder=MongoJSONEncoder,
+        validator=SuperdeskValidator)
 
     app.on_fetch_resource = signals.proxy_resource_signal('read', app)
     app.on_fetch_item = signals.proxy_item_signal('read', app)
