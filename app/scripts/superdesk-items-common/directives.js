@@ -66,5 +66,19 @@ define(['angular', 'require'], function(angular, require) {
                     });
                 }
             };
+        }])
+        .directive('sdProviderMenu', ['$location', function($location) {
+            return {
+                scope: {items: '='},
+                templateUrl: 'scripts/superdesk-items-common/views/provider-menu.html',
+                link: function(scope, element, attrs) {
+
+                    scope.setProvider = function(provider) {
+                        scope.selected = provider.term;
+                        $location.search('provider', scope.selected);
+                    };
+
+                }
+            };
         }]);
 });

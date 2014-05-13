@@ -47,19 +47,28 @@ define(['lodash'], function(_) {
                 filters.push({range: range});
             }
 
+            if (params.provider) {
+                var provider = {
+                    provider: params.provider
+                };
+                filters.push({term: provider});
+            }
+
             return filters;
         }
 
         function getQuery(params) {
             var filters = buildFilters(params);
             var query = es(params, filters);
-            query.sort = ['_score', {versioncreated: 'desc'}];
+            query.sort = [{versioncreated: 'desc'}];
             return query;
         }
 
         function fetchItems(criteria) {
+            console.log(criteria);
             api.archive.query(criteria).then(function(items) {
-                $scope.items = items._items;
+                console.log(items);
+                $scope.items = items;
                 $scope.createdMedia = {
                     items: []
                 };

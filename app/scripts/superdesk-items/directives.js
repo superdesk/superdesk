@@ -234,36 +234,6 @@ define([
                 }
             };
         }])
-        .directive('sdProviderFilter', ['$routeParams', '$location', 'providerRepository',
-        function($routeParams, $location, providerRepository) {
-            return {
-                scope: {items: '='},
-                templateUrl: 'scripts/superdesk-items/views/provider-filter.html',
-                link: function(scope, element, attrs) {
-                    scope.$watch('items._facets', function(facets) {
-                        if (facets) {
-                            scope.facets = facets;
-                            scope.activeProvider = scope.items.where('provider');
-                        }
-                    });
-
-                    scope.setProvider = function(provider) {
-                        scope.items.where('provider', provider);
-                    };
-                }
-            };
-        }])
-        .directive('sdProviderMenu', function() {
-            return {
-                scope: {items: '=', selected: '='},
-                templateUrl: 'scripts/superdesk-items/views/provider-menu.html',
-                link: function(scope, element, attrs) {
-                    scope.setProvider = function(provider) {
-                        scope.selected = provider.term;
-                    };
-                }
-            };
-        })
         .directive('sdPieChart', ['colorSchemes', function(colorSchemes) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/chartBox.html',
