@@ -18,7 +18,7 @@ define([
 
     var app = angular.module('superdesk.items', [
         'superdesk.items.resources',
-        'superdesk.items.directives',
+        //'superdesk.items.directives',
         'superdesk.items.filters',
         'superdesk.items.services',
         'superdesk.widgets.ingest',
