@@ -1,7 +1,10 @@
 
 import os
 
-SERVER_NAME = 'localhost:5000'
+
+URL_PREFIX = os.environ.get('SUPERDESK_URL_PREFIX', '')
+SERVER_NAME = os.environ.get('SUPERDESK_SERVER_NAME', 'localhost:5000')
+
 BANDWIDTH_SAVER = False
 
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S+0000'
