@@ -110,6 +110,9 @@ superdesk.domain('users', {
         'email': {
             'type': 'string',
         },
+        'phone': {
+            'type': 'phone_number',
+        },
         'user_info': {
             'type': 'dict'
         },

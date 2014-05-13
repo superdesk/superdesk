@@ -1,7 +1,7 @@
 
 import os
 import superdesk.tests as tests
-from behave import given, when, then
+from behave import given, when, then  # @UnresolvedImport
 from flask import json
 from eve.methods.common import parse
 

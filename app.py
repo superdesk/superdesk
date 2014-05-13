@@ -1,13 +1,12 @@
-
 import os
 import eve
 import superdesk
 import settings
-import superdesk
 from superdesk import signals
 from eve.io.mongo import MongoJSONEncoder
 from superdesk.auth import SuperdeskTokenAuth
-
+from cerberus.errors import ERROR_BAD_TYPE
+import re
 
 class SuperdeskEve(eve.Eve):
     """Superdesk API"""
@@ -17,6 +16,13 @@ class SuperdeskEve(eve.Eve):
         super(SuperdeskEve, self).load_config()
         self.config.from_object(superdesk)
 
+    def _validate_type_phone_number(self, field, value):
+        """ Enables validation for `phone_number` schema attribute.
+            :param field: field name.
+            :param value: field value.
+        """
+        if not re.match("^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$", value):
+            self._error(field, ERROR_BAD_TYPE % 'Phone Number')
 
 def get_app(config=None):
     """App factory."""
