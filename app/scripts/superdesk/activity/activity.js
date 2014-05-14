@@ -31,7 +31,7 @@ define([
          * @returns {string}
          */
         function getPath(activity, locals) {
-            return activity.when.replace(/:([a-zA-Z0-9]+)/, function(match, key) {
+            return activity.when.replace(/:([_a-zA-Z0-9]+)/, function(match, key) {
                 return locals[key] ? locals[key] : match;
             });
         }

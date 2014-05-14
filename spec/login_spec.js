@@ -20,12 +20,12 @@ describe('login', function() {
         modal.login('admin', 'admin');
         expect(modal.btn).not.toBeDisplayed();
         expect(browser.getCurrentUrl()).toBe('http://localhost:9090/#/dashboard');
-        expect(element(by.binding('UserName')).getText()).toContain('john');
+        expect(element(by.binding('display_name')).getText()).toBe('John Doe');
     });
 
     it('can logout', function() {
         modal.login('admin', 'admin');
-        element(by.binding('UserName')).click();
+        element(by.binding('display_name')).click();
         element(by.buttonText('SIGN OUT')).click();
 
         protractor.getInstance().sleep(500); // it reloads page

@@ -29,7 +29,7 @@ define([
      */
     UserResolver.$inject = ['api', '$route', 'notify', 'gettext', '$location'];
     function UserResolver(api, $route, notify, gettext, $location) {
-        return api.users.getById($route.current.params.Id)
+        return api.users.getById($route.current.params._id)
             .then(null, function(response) {
                 if (response.status === 404) {
                     $location.path('/users/');
@@ -84,17 +84,13 @@ define([
                         {action: 'list', type: 'user'}
                     ]
                 })
-                .activity('/users/:Id', {
+                .activity('/users/:_id', {
                     label: gettext('Users profile'),
                     priority: 100,
                     controller: require('./controllers/edit'),
                     templateUrl: require.toUrl('./views/edit.html'),
-                    resolve: {
-                        user: UserResolver
-                    },
-                    filters: [
-                        {action: 'detail', type: 'user'}
-                    ]
+                    resolve: {user: UserResolver},
+                    filters: [{action: 'detail', type: 'user'}]
                 })
                 .activity('/profile/', {
                     label: gettext('My Profile'),

@@ -44,10 +44,10 @@ define(['lodash'], function(_) {
         };
 
         function getCriteria() {
-            var params = $location.search();
-            var criteria = {
-                max_results: 25
-            };
+            var params = $location.search(),
+                criteria = {
+                    max_results: 25
+                };
 
             if (params.q) {
                 criteria.where = JSON.stringify({
@@ -62,7 +62,7 @@ define(['lodash'], function(_) {
             }
 
             if (params.page) {
-                criteria.offset = parseInt(params.page, 10) * criteria.max_results;
+                criteria.page = parseInt(params.page, 10);
             }
 
             if (params.sort) {
