@@ -152,9 +152,7 @@ define([
                             scope.onsave({user: scope.origUser});
                         }, function(response) {
                             notify.pop();
-                            if (response.status === 400) {
-                                scope.error = response.data;
-                            } else if (response.status === 404) {
+                            if (response.status === 404) {
                                 if ($location.path() === '/users/') {
                                     $route.reload();
                                 } else {
@@ -162,7 +160,19 @@ define([
                                 }
                                 notify.error(gettext('User is not found. It might be deleted.'));
                             } else {
-                                notify.error(gettext('Hmm, there was an error when saving user.'));
+                                if (response.data && response.data.issues) {
+                                    scope.error = response.data.issues;
+                                    for (var field in response.data.issues) {
+                                        if (scope.userForm[field]) {
+                                            for (var constraint in response.data.issues[field]) {
+                                                if (response.data.issues[field][constraint]) {
+                                                    scope.userForm[field].$setValidity(constraint, false);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                notify.error(gettext('Hmm, there was an error when saving user. '));
                             }
                         });
                     };

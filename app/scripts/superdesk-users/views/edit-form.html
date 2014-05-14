@@ -34,27 +34,27 @@
 
                 <div sd-info-item>
                   <label for="first-name" translate>first name</label>
-                  <input type="text" name="firstName" id="first-name" ng-model="user.first_name" required>
-                  <i ng-show="userForm.firstName.$error.required" class="required-asteriks">*</i>
+                  <input type="text" name="first_name" id="first-name" ng-model="user.first_name" required>
+                  <i ng-show="userForm.first_name.$error.required" class="required-asteriks">*</i>
                 </div>
 
                 <div sd-info-item>
                   <label for="last-name" translate>last name</label>
-                  <input type="text" name="lastName" id="last-name" ng-model="user.last_name" required>
-                  <i ng-show="userForm.lastName.$error.required" class="required-asteriks">*</i>
+                  <input type="text" name="last_name" id="last-name" ng-model="user.last_name" required>
+                  <i ng-show="userForm.last_name.$error.required" class="required-asteriks">*</i>
                 </div>
 
                 <div sd-info-item>
                   <label for="username" translate>username</label>
-                  <input type="text" name="userName" id="username"
+                  <input type="text" name="username" id="username"
                     ng-model="user.username"
                     ng-readonly="user._id"
                     ng-pattern="usernamePattern"
                     sd-user-unique data-unique-field="username" data-exclude="user"
                     required>
-                    <i ng-show="userForm.userName.$error.required" class="required-asteriks">*</i>
-                  <div ng-show="userForm.userName.$error.unique || error.UserName.conflict" sd-valid-error translate>sorry, this username is already taken.</div>
-                  <div ng-show="userForm.userName.$error.pattern" sd-valid-info>
+                    <i ng-show="userForm.username.$error.required" class="required-asteriks">*</i>
+                  <div ng-show="userForm.username.$error.unique || error.username.conflict" sd-valid-error translate>sorry, this username is already taken.</div>
+                  <div ng-show="userForm.username.$error.pattern" sd-valid-info>
                     <i class="icon-info-sign icon-warning"></i>
                     <span translate>please use only letters (a-z), numbers (0-9), dashes (&mdash;), underscores (_), apostrophes (') and periods (.)</span>
                   </div>
@@ -92,17 +92,17 @@
                     sd-user-unique data-unique-field="email" data-exclude="user"
                     required>
                     <i ng-show="userForm.email.$error.required" class="required-asteriks">*</i>
-                  <div ng-show="userForm.email.$error.email || error.EMail.format" sd-valid-info>
+                  <div ng-show="userForm.email.$error.email || error.email.format" sd-valid-info>
                     <i class="icon-info-sign icon-warning"></i>
                     <span translate>please provide a valid email address</span>
                   </div>
-                  <div ng-show="userForm.email.$error.unique || error.EMail.unique" sd-valid-error translate>sorry, a user with this email already exists</div>
+                  <div ng-show="userForm.email.$error.unique || error.email.unique" sd-valid-error translate>sorry, a user with this email already exists</div>
                 </div>
 
                 <div sd-info-item>
                   <label for="phone" translate>phone number</label>
                   <input type="text" name="phone" id="phone" ng-model="user.phone" ng-pattern="phonePattern">
-                  <div ng-show="userForm.phone.$error.pattern || error.PhoneNumber.format" sd-valid-info>
+                  <div ng-show="userForm.phone.$error.pattern || error.phone.format" sd-valid-info>
                     <i class="icon-info-sign icon-warning"></i>
                     <span translate>please provide number in international format</span>
                   </div>

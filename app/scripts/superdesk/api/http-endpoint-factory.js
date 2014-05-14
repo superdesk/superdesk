@@ -45,7 +45,8 @@ define(['lodash'], function(_) {
                     return $http(config);
                 })
                 .then(function(response) {
-                    if (response.status >= 200 && response.status < 300 && response.data.status !== 'ERR') {
+                    if (response.status >= 200 && response.status < 300 &&
+                    (!response.data || !response.data.status || response.data.status !== 'ERR')) {
                         return response;
                     } else {
                         return $q.reject(response);
