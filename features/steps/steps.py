@@ -321,4 +321,11 @@ def step_impl(context, url):
 
 @then('we get not modified response')
 def step_impl(context):
-    assert 304 == context.response.status_code, 'exptected 304, but it was %d' % context.response.status_code
+    assert 304 == context.response.status_code, \
+        'exptected 304, but it was %d' % context.response.status_code
+
+
+@then('we get "{header}" header')
+def step_impl(context, header):
+    assert header in context.response.headers, \
+        'expected %s header, but got only %s' % (header, sorted(context.response.headers.keys()))

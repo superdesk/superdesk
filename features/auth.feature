@@ -43,3 +43,8 @@ Feature: Authentication
     Scenario: Fetch resources without auth token
         When we get "/"
         Then we get response code 200
+
+    Scenario: Fetch users without auth token
+        When we get "/users"
+        Then we get response code 401
+        And we get "Access-Control-Allow-Origin" header

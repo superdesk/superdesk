@@ -4,7 +4,8 @@ import logging
 import superdesk
 import superdesk.utils as utils
 from flask import json, current_app as app, request
-from eve.auth import TokenAuth
+from eve.auth import TokenAuth, Response
+
 
 logger = logging.getLogger(__name__)
 
@@ -69,6 +70,12 @@ class SuperdeskTokenAuth(TokenAuth):
         if not resource:
             return True
         return super(SuperdeskTokenAuth, self).authorized(allowed_roles, resource, method)
+
+    def authenticate(self):
+        """ Returns 401 response with CORS headers."""
+        return Response('Please provide auth token', 401, {
+            'Access-Control-Allow-Origin': '*'
+        })
 
 
 def authenticate(credentials, db):
