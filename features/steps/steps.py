@@ -22,7 +22,7 @@ def get_fixture_path(fixture):
 
 def get_self_href(resource, context):
     href = resource['_links']['self']['href']
-    return href.replace(context.app.config['SERVER_NAME'], '')
+    return href
 
 
 def get_res(url, context):
