@@ -3,7 +3,7 @@ define(['./url-resolver-service'], function(URLResolver) {
 
     describe('url resolver', function() {
 
-        var SERVER_URL = 'server_url',
+        var SERVER_URL = 'http://localhost',
             USERS_URL = '/users',
             RESOURCES = {_links: {child: [{title: 'users', href: USERS_URL}]}};
 
@@ -27,7 +27,38 @@ define(['./url-resolver-service'], function(URLResolver) {
         }));
 
         it('can resolve item urls', inject(function(urls) {
-            expect(urls.item('/item')).toBe('server_url/item');
+            expect(urls.item('/item')).toBe(SERVER_URL + '/item');
+        }));
+    });
+
+    describe('url resolver when server has prefix', function() {
+
+        var SERVER_URL = 'http://localhost:5000/api';
+
+        beforeEach(module(function($provide) {
+            $provide.service('urls', URLResolver);
+            $provide.constant('config', {server: {url: SERVER_URL}});
+        }));
+
+        it('can handle server url prefix', inject(function(urls, $httpBackend) {
+
+            $httpBackend.expectGET(SERVER_URL).respond({
+                _links: {
+                    child: [
+                        {title: 'users', href: '/api/users'}
+                    ]
+                }
+            });
+
+            var url;
+            urls.resource('users').then(function(_url) {
+                url = _url;
+            });
+
+            $httpBackend.flush();
+
+            expect(url).toBe('http://localhost:5000/api/users');
+
         }));
     });
 });

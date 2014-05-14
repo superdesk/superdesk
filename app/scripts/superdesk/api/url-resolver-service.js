@@ -3,7 +3,13 @@ define([], function() {
 
     URLResolver.$inject = ['$http', '$q', 'config'];
     function URLResolver($http, $q, config) {
-        var links;
+
+        var links,
+            server,
+            parser = document.createElement('a');
+
+        parser.href = config.server.url;
+        server = parser.protocol + '//' + parser.host;
 
         /**
          * Get url for given resource
@@ -24,7 +30,7 @@ define([], function() {
          * @returns {String}
          */
         this.item = function(item) {
-            return config.server.url + item;
+            return server + item;
         };
 
         /**
@@ -46,7 +52,7 @@ define([], function() {
 
                 if (response.status === 200) {
                     _.each(response.data._links.child, function(link) {
-                        links[link.title] = config.server.url + link.href;
+                        links[link.title] = server + link.href;
                     });
                 }
 
