@@ -4,15 +4,14 @@ define([
 ], function($, angular) {
     'use strict';
 
-    return angular.module('superdesk.directives.sdshadow', [])
         /**
-         * sdShadow gives top shadow for scroll elements
+         * Gives top shadow for scroll elements
          *
          * Usage:
          * <div sd-shadow></div>
          *
          */
-        .directive('sdShadow', function() {
+        return function() {
             return {
                 link: function(scope, element, attrs) {
                     var el = $(element);
@@ -33,5 +32,5 @@ define([
                     });
                 }
             };
-        });
+        };
 });

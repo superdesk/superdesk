@@ -15,17 +15,23 @@ define(['./pagination-directive'], function(paginationDirective) {
 
         it('can do the math', inject(function($rootScope, $injector) {
             var scope = $rootScope.$new(true),
-                TOTAL = 34,
+                ITEMS = {
+                    _links: {
+                        last: {
+                            href: 'superdesk-api.herokuapp.com/ingest?page=2'
+                        }
+                    }
+                },
                 LIMIT = 25;
 
-            scope.total = TOTAL;
+            scope.items = ITEMS;
             scope.limit = LIMIT;
 
             var directive = $injector.invoke(paginationDirective);
             directive.link(scope);
             $rootScope.$digest();
 
-            expect(scope.total).toBe(TOTAL);
+            expect(scope.items).toBe(ITEMS);
             expect(scope.page).toBe(0);
             expect(scope.lastPage).toBe(1);
             expect(scope.from).toBe(1);
@@ -37,7 +43,7 @@ define(['./pagination-directive'], function(paginationDirective) {
             expect(scope.page).toBe(1);
             expect(scope.lastPage).toBe(1);
             expect(scope.from).toBe(26);
-            expect(scope.to).toBe(TOTAL);
+            expect(scope.to).toBe(scope.total);
         }));
 
     });

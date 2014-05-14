@@ -12,7 +12,7 @@ define(['require'], function(require) {
      */
     return ['$location', function($location) {
 
-        function getTotalPages(data) {
+        function getTotalItems(data) {
             if (data && data._links && data._links.last != null) {
                 var parts = data._links.last.href.split('?')[1].split('&');
                 var parameters = {};
@@ -21,7 +21,7 @@ define(['require'], function(require) {
                     parameters[item[0]] = item[1];
                 });
                 if (parameters.page !== undefined) {
-                    return parameters.page;
+                    return parameters.page * 25; //hardcoded
                 }
             }
             return undefined;
@@ -43,7 +43,7 @@ define(['require'], function(require) {
                     params.items = scope.items;
                     return params;
                 }, function() {
-                    scope.total = getTotalPages(params.items);
+                    scope.total = getTotalItems(params.items);
                     scope.page = Math.max(0, params.page);
                     scope.lastPage = params.limit ? Math.ceil(scope.total / params.limit) - 1 : 0;
                     scope.from = scope.page * params.limit + 1;

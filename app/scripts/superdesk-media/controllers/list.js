@@ -65,9 +65,7 @@ define(['lodash'], function(_) {
         }
 
         function fetchItems(criteria) {
-            console.log(criteria);
             api.archive.query(criteria).then(function(items) {
-                console.log(items);
                 $scope.items = items;
                 $scope.createdMedia = {
                     items: []

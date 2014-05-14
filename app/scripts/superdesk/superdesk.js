@@ -20,6 +20,7 @@ define([
     './menu/menu',
     './notify/notify',
     './upload/upload',
+    './ui/ui',
 
     './filters',
     './services/all',
@@ -45,7 +46,8 @@ define([
         require('./list/list').name,
         require('./menu/menu').name,
         require('./notify/notify').name,
-        require('./upload/upload').name
+        require('./upload/upload').name,
+        require('./ui/ui').name
     ];
 
     modules.push(require('./filters').name);
