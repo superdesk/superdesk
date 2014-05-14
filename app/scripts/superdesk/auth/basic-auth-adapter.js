@@ -16,7 +16,8 @@ define([], function() {
                 username: username,
                 password: password
             }).then(function(response) {
-                $http.defaults.headers.common.Authorization = 'Basic ' + btoa(response.data.token + ':');
+                response.data.token = 'Basic ' + btoa(response.data.token + ':');
+                $http.defaults.headers.common.Authorization = response.data.token;
                 return response.data;
             });
         };

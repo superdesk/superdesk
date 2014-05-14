@@ -30,7 +30,7 @@ define([
 
             $httpBackend.flush();
 
-            expect(identity.token).toBe(session);
+            expect(identity.token).toBe('Basic ' + btoa(session + ':'));
         }));
 
         it('can reject on failed auth', inject(function(authAdapter, $httpBackend) {
