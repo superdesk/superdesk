@@ -54,5 +54,7 @@ define([
     modules.push.apply(modules, require('./services/all'));
     modules.push.apply(modules, require('./directives/all'));
 
-    return angular.module('superdesk', modules);
+    var app = angular.module('superdesk', modules);
+
+    return app;
 });

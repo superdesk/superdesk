@@ -44,17 +44,25 @@ define(['lodash'], function(_) {
         };
 
         function getCriteria() {
-            var params = $location.search(),
-                criteria = {
-                    maxResults: 25
-                };
+            var params = $location.search();
+            var criteria = {
+                max_results: 25
+            };
 
             if (params.q) {
-                criteria.all = /%/.test(params.q) ? params.q : '%' + params.q + '%';
+                criteria.where = JSON.stringify({
+                    '$or': [
+                        {username: {'$regex': params.q}},
+                        {first_name: {'$regex': params.q}},
+                        {last_name: {'$regex': params.q}},
+                        {display_name: {'$regex': params.q}},
+                        {email: {'$regex': params.q}}
+                    ]
+                });
             }
 
             if (params.page) {
-                criteria.offset = parseInt(params.page, 10) * criteria.maxResults;
+                criteria.offset = parseInt(params.page, 10) * criteria.max_results;
             }
 
             if (params.sort) {
