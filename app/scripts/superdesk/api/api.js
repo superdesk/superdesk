@@ -11,7 +11,7 @@ define([
     return angular.module('superdesk.data', [])
         .provider('api', require('./api-service'))
         .service('request', require('./request-service'))
-        .service('urlResolver', require('./url-resolver-service'))
+        .service('urls', require('./url-resolver-service'))
         .config(['$httpProvider', function($httpProvider) {
             $httpProvider.interceptors.push(require('./timeout-interceptor'));
         }]);

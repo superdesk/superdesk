@@ -1,6 +1,7 @@
 define([
+    'superdesk/api/url-resolver-service',
     './basic-auth-adapter'
-], function(BasicAuthAdapter) {
+], function(UrlResolverService, BasicAuthAdapter) {
     'use strict';
 
     /* jshint maxlen:false */
@@ -15,13 +16,16 @@ define([
             module(function($provide) {
                 $provide.constant('config', {server: {url: SERVER_URL}});
                 $provide.service('authAdapter', BasicAuthAdapter);
+                $provide.service('urls', UrlResolverService);
             });
         });
 
-        it('can login', inject(function(authAdapter, $httpBackend) {
+        it('can login', inject(function(authAdapter, urls, $q, $httpBackend) {
             $httpBackend
                 .expectPOST(LOGIN_URL, {username: username, password: password})
                     .respond({token: session, user: '1'});
+
+            spyOn(urls, 'resource').andReturn($q.when(LOGIN_URL));
 
             var identity;
             authAdapter.authenticate(username, password).then(function(_identity) {
@@ -30,11 +34,14 @@ define([
 
             $httpBackend.flush();
 
+            expect(urls.resource).toHaveBeenCalledWith('auth');
             expect(identity.token).toBe('Basic ' + btoa(session + ':'));
         }));
 
-        it('can reject on failed auth', inject(function(authAdapter, $httpBackend) {
+        it('can reject on failed auth', inject(function(authAdapter, urls, $q, $httpBackend) {
             var resolved = false, rejected = false;
+
+            spyOn(urls, 'resource').andReturn($q.when(LOGIN_URL));
 
             $httpBackend.expectPOST(LOGIN_URL).respond(400);
 

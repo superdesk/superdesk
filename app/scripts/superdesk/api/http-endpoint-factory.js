@@ -4,8 +4,8 @@ define(['lodash'], function(_) {
     /**
      * Http endpoint factory
      */
-    HttpEndpointFactory.$inject = ['$http', '$q', 'urlResolver'];
-    function HttpEndpointFactory($http, $q, urlResolver) {
+    HttpEndpointFactory.$inject = ['$http', '$q', 'urls'];
+    function HttpEndpointFactory($http, $q, urls) {
 
         /**
          * Get url for given resource
@@ -14,7 +14,7 @@ define(['lodash'], function(_) {
          * @returns {Promise}
          */
         function getUrl(resource) {
-            return urlResolver.get(resource.rel);
+            return urls.resource(resource.rel);
         }
 
         /**
@@ -41,9 +41,6 @@ define(['lodash'], function(_) {
         function http(config) {
             return $q.when(config.url)
                 .then(function(url) {
-                    if (url.indexOf('http') !== 0) {
-                        url = 'http://' + url;
-                    }
                     config.url = url;
                     return $http(config);
                 })
@@ -74,7 +71,7 @@ define(['lodash'], function(_) {
         HttpEndpoint.prototype.getByUrl = function(url) {
             return http({
                 method: 'GET',
-                url: url
+                url: urls.item(url)
             }).then(function(response) {
                 return response.data;
             });
@@ -89,7 +86,12 @@ define(['lodash'], function(_) {
         HttpEndpoint.prototype.getById = function(id) {
             return getUrl(this).then(_.bind(function(resourceUrl) {
                 var url = resourceUrl.replace(/\/+$/, '') + '/' + id;
-                return this.getByUrl(url);
+                return http({
+                    method: 'GET',
+                    url: url
+                }).then(function(response) {
+                    return response.data;
+                });
             }, this));
         };
 
@@ -125,7 +127,7 @@ define(['lodash'], function(_) {
             var url = item._links.self.href;
             return http({
                 method: 'PATCH',
-                url: url,
+                url: urls.item(url),
                 data: diff,
                 headers: getHeaders(this, item)
             }).then(function(response) {
@@ -173,7 +175,7 @@ define(['lodash'], function(_) {
         HttpEndpoint.prototype.replace = function(dest, item) {
             return http({
                 method: 'PUT',
-                url: dest,
+                url: urls.item(dest),
                 data: item,
                 headers: getHeaders(this, item)
             }).then(function(response) {
@@ -191,7 +193,7 @@ define(['lodash'], function(_) {
         HttpEndpoint.prototype.remove = function(item) {
             return http({
                 method: 'DELETE',
-                url: item._links.self.href,
+                url: urls.item(item._links.self.href),
                 headers: getHeaders(this, item)
             }).then(null, function(response) {
                 return response.status === 404 ? $q.when(response) : $q.reject(response);

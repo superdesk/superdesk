@@ -5,10 +5,26 @@ define([], function() {
     function URLResolver($http, $q, config) {
         var links;
 
-        this.get = function(title) {
+        /**
+         * Get url for given resource
+         *
+         * @param {String} resource
+         * @returns Promise
+         */
+        this.resource = function(resource) {
             return getResourceLinks().then(function() {
-                return links[title] ? links[title] : $q.reject(title);
+                return links[resource] ? links[resource] : $q.reject(resource);
             });
+        };
+
+        /**
+         * Get server url for given item
+         *
+         * @param {String} item
+         * @returns {String}
+         */
+        this.item = function(item) {
+            return config.server.url + item;
         };
 
         /**
@@ -30,7 +46,7 @@ define([], function() {
 
                 if (response.status === 200) {
                     _.each(response.data._links.child, function(link) {
-                        links[link.title] = 'http://' + link.href;
+                        links[link.title] = config.server.url + link.href;
                     });
                 }
 
