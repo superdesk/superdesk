@@ -87,10 +87,12 @@ superdesk.domain('users', {
         'username': {
             'type': 'string',
             'unique': True,
-            'required': True
+            'required': True,
+            'minlength': 1
         },
         'password': {
             'type': 'string',
+            'minlength': 6
         },
         'first_name': {
             'type': 'string',
@@ -103,7 +105,7 @@ superdesk.domain('users', {
         },
         'email': {
             'unique': True,
-            'type': 'string',
+            'type': 'email',
         },
         'phone': {
             'type': 'phone_number',

@@ -20,6 +20,16 @@ class SuperdeskValidator(Validator):
         if not re.match("^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$", value):
             self._error(field, ERROR_BAD_TYPE % 'Phone Number')
 
+    def _validate_type_email(self, field, value):
+        """ Enables validation for `phone_number` schema attribute.
+            :param field: field name.
+            :param value: field value.
+        """
+        regex = "^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@" \
+                "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,4}[a-z0-9]){1}$"
+        if not re.match(regex, value):
+            self._error(field, ERROR_BAD_TYPE % 'Email')
+
 
 class SuperdeskEve(eve.Eve):
 
@@ -72,4 +82,4 @@ if __name__ == '__main__':
         debug = True
 
     app = get_app()
-    app.run(host=host, port=port, debug=debug)
+    app.run(host=host, port=port, debug=debug, use_reloader=True)
