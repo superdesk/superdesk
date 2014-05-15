@@ -124,6 +124,29 @@ define([
             expect(urls.resource).toHaveBeenCalledWith('users');
         }));
 
+        it('can fail creating new resource', inject(function(api, urls, $q, $httpBackend) {
+            var userData = {username: 'test'};
+
+            spyOn(urls, 'resource').andReturn($q.when(USERS_URL));
+
+            $httpBackend.expectPOST(USERS_URL, userData).respond(200, {
+                _status: 'ERR',
+                _issues: {first_name: {required: 1}}
+            });
+
+            var test = null;
+
+            api.http.save({username: 'test'}).then(function(response) {
+                test = true;
+            }, function(response) {
+                test = false;
+            });
+
+            $httpBackend.flush();
+
+            expect(test).toBe(false);
+        }));
+
         it('can create new with diff', inject(function(api, urls, $q, $httpBackend) {
             var user = {},
                 data = {username: 'test'};
