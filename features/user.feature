@@ -34,7 +34,7 @@ Feature: User Resource
         When we get "/users/foo"
         Then we get existing resource
             """
-            {"username": "foo", "first_name": "Foo", "last_name": "Bar", "display_name": "Foo Bar", "created": "", "updated": "", "_id": ""}
+            {"username": "foo", "first_name": "Foo", "last_name": "Bar", "display_name": "Foo Bar", "_created": "", "_updated": "", "_id": ""}
             """
 
     @auth

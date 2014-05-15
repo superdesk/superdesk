@@ -10,7 +10,7 @@ def test_json(context):
     response_data = json.loads(context.response.get_data())
     context_data = json.loads(context.text)
     for key in context_data:
-        assert key in response_data, key
+        assert key in response_data, '%s not in %s' % (key, response_data)
         if context_data[key]:
             assert response_data[key] == context_data[key], response_data[key]
 
@@ -40,7 +40,7 @@ def assert_ok(response):
     """Assert we get ok status within api response."""
     assert_200(response)
     data = json.loads(response.get_data())
-    assert data['status'] == 'OK', data
+    assert data['_status'] == 'OK', data
 
 
 def get_json_data(response):
@@ -50,7 +50,7 @@ def get_json_data(response):
 def get_it(context):
     it = context.data[0]
     res = get_res('/%s/%s' % (context.resource, it['_id']), context)
-    return get_self_href(res, context), res['etag']
+    return get_self_href(res, context), res['_etag']
 
 
 def if_match(context, etag):
@@ -62,7 +62,7 @@ def if_match(context, etag):
 def patch_current_user(context, data):
     response = context.client.get('/users/%s' % context.user['_id'], headers=context.headers)
     user = json.loads(response.get_data())
-    headers = if_match(context, user['etag'])
+    headers = if_match(context, user['_etag'])
     response = context.client.patch('/users/%s' % context.user['_id'], data=data, headers=headers)
     assert_ok(response)
     return response
@@ -143,7 +143,7 @@ def step_impl(context, url):
 def step_impl(context, url):
     res = get_res(url, context)
     href = get_self_href(res, context)
-    headers = [('If-Match', res['etag'])]
+    headers = [('If-Match', res['_etag'])]
     headers += context.headers
     context.response = context.client.delete(href, headers=headers)
 
@@ -152,7 +152,7 @@ def step_impl(context, url):
 def step_impl(context, url):
     res = get_res(url, context)
     href = get_self_href(res, context)
-    headers = [('If-Match', res['etag'])]
+    headers = [('If-Match', res['_etag'])]
     headers += context.headers
     context.response = context.client.patch(href, data=context.text, headers=headers)
     assert_ok(context.response)
@@ -162,7 +162,7 @@ def step_impl(context, url):
 def step_impl(context):
     data = get_json_data(context.response)
     href = get_self_href(data, context)
-    etag = data['etag']
+    etag = data['_etag']
     headers = [('If-Match', etag)]
     headers += context.headers
     context.response = context.client.patch(href, data=context.text, headers=headers)
@@ -202,7 +202,7 @@ def step_impl(context):
 def step_impl(context):
     assert_200(context.response)
     data = json.loads(context.response.get_data())
-    assert data['status'] == 'OK', data
+    assert data['_status'] == 'OK', data
     assert data['_links']['self'], data
     test_json(context)
 
@@ -312,11 +312,11 @@ def step_impl(context):
 
 @then('we get etag matching "{url}"')
 def step_impl(context, url):
-    etag = get_json_data(context.response)['etag']
+    etag = get_json_data(context.response)['_etag']
     assert etag, context.response.data
     response = context.client.get(url, headers=context.headers)
     data = get_json_data(response)
-    assert etag == data['etag'], '%s not in %s' % (etag, data)
+    assert etag == data['_etag'], '%s not in %s' % (etag, data)
 
 
 @then('we get not modified response')

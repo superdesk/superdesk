@@ -43,6 +43,8 @@ def on_read_users(data, docs):
     """Set default fields for users"""
     for doc in docs:
         doc.setdefault('display_name', get_display_name(doc))
+        if doc.get('password'):
+            del doc['password']
 
 
 class CreateUserCommand(superdesk.Command):

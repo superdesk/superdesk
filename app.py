@@ -49,8 +49,8 @@ def get_app(config=None):
         json_encoder=MongoJSONEncoder,
         validator=SuperdeskValidator)
 
-    app.on_fetch_resource = signals.proxy_resource_signal('read', app)
-    app.on_fetch_item = signals.proxy_item_signal('read', app)
+    app.on_fetched_resource = signals.proxy_resource_signal('read', app)
+    app.on_fetched_item = signals.proxy_item_signal('read', app)
     app.on_inserted = signals.proxy_resource_signal('created', app)
 
     for blueprint in superdesk.BLUEPRINTS:

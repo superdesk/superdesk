@@ -22,7 +22,7 @@ class SignalsTestCase(TestCase):
         superdesk.connect('read:items', logger.callme)
 
         with self.app.test_request_context():
-            getattr(self.app, 'on_fetch_resource')('items', ({}, ))
+            getattr(self.app, 'on_fetched_resource')('items', ({}, ))
 
         self.assertTrue(logger.called)
         self.assertIn('docs', logger.kwargs)
