@@ -229,7 +229,7 @@ define([
              * @return {Object}
              */
             this.save = function(resource, item) {
-                if ('etag' in item) {
+                if ('_etag' in item) {
                     return this.update(item);
                 } else {
                     return this.create(resource, item);

@@ -29,7 +29,7 @@ define(['angular'], function(angular) {
             getUserActivity: function(user, maxResults, page) {
                 var params = {
                     where: {user: user._id},
-                    sort: ['created', -1],
+                    sort: ['_created', -1],
                     embedded: {user: 1}
                 };
 

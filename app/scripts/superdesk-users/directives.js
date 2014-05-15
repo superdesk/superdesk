@@ -160,12 +160,12 @@ define([
                                 }
                                 notify.error(gettext('User is not found. It might be deleted.'));
                             } else {
-                                if (response.data && response.data.issues) {
-                                    scope.error = response.data.issues;
-                                    for (var field in response.data.issues) {
+                                if (response.data && response.data._issues) {
+                                    scope.error = response.data._issues;
+                                    for (var field in response.data._issues) {
                                         if (scope.userForm[field]) {
-                                            for (var constraint in response.data.issues[field]) {
-                                                if (response.data.issues[field][constraint]) {
+                                            for (var constraint in response.data._issues[field]) {
+                                                if (response.data._issues[field][constraint]) {
                                                     scope.userForm[field].$setValidity(constraint, false);
                                                 }
                                             }

@@ -5,7 +5,7 @@ define(['moment'], function(moment) {
      * Display relative date in <time> element
      *
      * Usage:
-     * <span sd-reldate ng-model="user.created"></span>
+     * <span sd-reldate ng-model="user._created"></span>
      *
      * Params:
      * @param {object} ngModel - datetime string in utc

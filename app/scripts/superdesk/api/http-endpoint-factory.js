@@ -26,8 +26,8 @@ define(['lodash'], function(_) {
          */
         function getHeaders(resource, item) {
             var headers = _.extend({}, resource.config.headers || {});
-            if (item && item.etag) {
-                headers['If-Match'] = item.etag;
+            if (item && item._etag) {
+                headers['If-Match'] = item._etag;
             }
             return headers;
         }
@@ -46,7 +46,7 @@ define(['lodash'], function(_) {
                 })
                 .then(function(response) {
                     if (response.status >= 200 && response.status < 300 &&
-                    (!response.data || !response.data.status || response.data.status !== 'ERR')) {
+                    (!response.data || !response.data._status || response.data._status !== 'ERR')) {
                         return response;
                     } else {
                         return $q.reject(response);

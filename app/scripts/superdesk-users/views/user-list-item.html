@@ -8,7 +8,7 @@
         <div class="username">{{ user.username }}</div>
         <div class="role" ng-show>{{ roles[user.role].name }}</div>
         <div class="email">{{ user.email }}</div>
-        <div class="created">{{ user.created | reldate}}</div>
+        <div class="created">{{ user._created | reldate}}</div>
     </div>
 
     <div class="action">
