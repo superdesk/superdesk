@@ -11,7 +11,7 @@
 <div sd-media-view data-item="selected.view" data-items="items._items" ng-if="selected.view"></div>
 
 <section sd-sidebar-layout class="archive main-section">
-    <div class="archive-content-topnav">
+    <div class="archive-content-topnav" sd-beta>
         <ul class="basket-tabs pull-left clearfix">
             <li><a href="" class="active">Basket one <b>(108)</b></a></li>
             <li><a href="">Basket two <b>(223)</b><i>19</i></a></li>
@@ -33,12 +33,12 @@
         </div>
     </div>
 
-    <div class="archive-content-subnav" ng-show="view !== 'stats'">
+    <div class="archive-content-subnav " ng-show="view !== 'stats'" ng-class="{'hidetop' : !beta}" >
         <div sd-searchbar></div>
         <div sd-pagination data-items="items" data-limit="25"></div>
     </div>
 
-    <div class="preview-layout">
+    <div class="preview-layout" ng-class="{'hidetop' : !beta}">
     	<div class="archive-content-inner list-pane {{ view }}-view" sd-shadow>
 
     		<div class="newest-items" ng-show="createdMedia.items.length">

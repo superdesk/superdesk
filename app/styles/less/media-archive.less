@@ -243,6 +243,9 @@
 	    left: 0;
 	    right: 0;
 	    top:@archive-inner-topnav-height;
+	    &.hidetop {
+			top:0;
+		}
 		position:absolute;
 		z-index:2;
 		border-bottom:1px #e0e0e0 solid;
@@ -279,6 +282,9 @@
 
 	.preview-layout {
 		top:@archive-inner-topnav-height+@archive-inner-subnav-height;
+		&.hidetop {
+			top:@archive-inner-subnav-height;
+		}
 	}
 
 

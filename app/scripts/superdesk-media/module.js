@@ -21,8 +21,7 @@ define([
                 controller: require('./controllers/list'),
                 templateUrl: require.toUrl('./views/list.html'),
                 category: superdesk.MENU_MAIN,
-                reloadOnSearch: false,
-                beta: true
+                reloadOnSearch: false
             })
             .activity('upload.media', {
                 label: gettext('Upload media'),
