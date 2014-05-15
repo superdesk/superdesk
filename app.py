@@ -10,6 +10,7 @@ from cerberus.errors import ERROR_BAD_TYPE
 from eve.io.mongo import Validator
 import re
 
+
 class SuperdeskValidator(Validator):
     def _validate_type_phone_number(self, field, value):
         """ Enables validation for `phone_number` schema attribute.
@@ -19,6 +20,7 @@ class SuperdeskValidator(Validator):
         if not re.match("^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$", value):
             self._error(field, ERROR_BAD_TYPE % 'Phone Number')
 
+
 class SuperdeskEve(eve.Eve):
 
     """Superdesk API"""
@@ -27,6 +29,7 @@ class SuperdeskEve(eve.Eve):
         """Let us override settings withing plugins"""
         super(SuperdeskEve, self).load_config()
         self.config.from_object(superdesk)
+
 
 def get_app(config=None):
     """App factory."""
