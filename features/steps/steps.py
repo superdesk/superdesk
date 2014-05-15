@@ -69,13 +69,13 @@ def patch_current_user(context, data):
 
 
 @given('empty "{resource}"')
-def step_impl(context, resource):
+def step_impl_given_empty(context, resource):
     with context.app.test_request_context():
         context.app.data.remove(resource)
 
 
 @given('"{resource}"')
-def step_impl(context, resource):
+def step_impl_given_(context, resource):
     with context.app.test_request_context():
         context.app.data.remove(resource)
         items = [parse(item, resource) for item in json.loads(context.text)]
@@ -85,13 +85,13 @@ def step_impl(context, resource):
 
 
 @given('config')
-def step_impl(context):
+def step_impl_given_config(context):
     tests.setup(context, json.loads(context.text))
     tests.setup_auth_user(context)
 
 
 @given('we have "{role_name}" role')
-def step_impl(context, role_name):
+def step_impl_given_role(context, role_name):
     with context.app.test_request_context():
         role = context.app.data.find_one('user_roles', name=role_name)
         data = json.dumps({'role': str(role['_id'])})
@@ -100,7 +100,7 @@ def step_impl(context, role_name):
 
 
 @given('role "{extending_name}" extends "{extended_name}"')
-def step_impl(context, extending_name, extended_name):
+def step_impl_given_role_extends(context, extending_name, extended_name):
     with context.app.test_request_context():
         extended = context.app.data.find_one('user_roles', name=extended_name)
         extending = context.app.data.find_one('user_roles', name=extending_name)
@@ -108,20 +108,19 @@ def step_impl(context, extending_name, extended_name):
 
 
 @when('we post to auth')
-def step_impl(context):
+def step_impl_when_auth(context):
     data = context.text
     context.response = context.client.post('/auth', data=data, headers=context.headers)
 
 
 @when('we post to "{url}"')
-def step_impl(context, url):
+def step_impl_when_post_url(context, url):
     data = context.text
     context.response = context.client.post(url, data=data, headers=context.headers)
-    assert_ok(context.response)
 
 
 @when('we put to "{url}"')
-def step_impl(context, url):
+def step_impl_when_put_url(context, url):
     data = context.text
     href = get_self_href(url)
     context.response = context.client.put(href, data=data, headers=context.headers)
@@ -129,7 +128,7 @@ def step_impl(context, url):
 
 
 @when('we get "{url}"')
-def step_impl(context, url):
+def step_impl_when_get_url(context, url):
     headers = []
     if context.text:
         for line in context.text.split('\n'):
@@ -140,7 +139,7 @@ def step_impl(context, url):
 
 
 @when('we delete "{url}"')
-def step_impl(context, url):
+def step_impl_when_delete_url(context, url):
     res = get_res(url, context)
     href = get_self_href(res, context)
     headers = [('If-Match', res['_etag'])]
@@ -149,7 +148,7 @@ def step_impl(context, url):
 
 
 @when('we patch "{url}"')
-def step_impl(context, url):
+def step_impl_when_patch_url(context, url):
     res = get_res(url, context)
     href = get_self_href(res, context)
     headers = [('If-Match', res['_etag'])]
@@ -159,7 +158,7 @@ def step_impl(context, url):
 
 
 @when('we patch again')
-def step_impl(context):
+def step_impl_when_patch_again(context):
     data = get_json_data(context.response)
     href = get_self_href(data, context)
     etag = data['_etag']
@@ -170,7 +169,7 @@ def step_impl(context):
 
 
 @when('we patch it')
-def step_impl(context):
+def step_impl_when_patch(context):
     href, etag = get_it(context)
     headers = if_match(context, etag)
     context.response = context.client.patch(href, data=context.text, headers=headers)
@@ -178,13 +177,13 @@ def step_impl(context):
 
 
 @when('we get it')
-def step_impl(context):
-    href, etag = get_it(context)
+def step_impl_when_get(context):
+    href, _etag = get_it(context)
     context.response = context.client.get(href, headers=context.headers)
 
 
 @when('we upload a binary file')
-def step_impl(context):
+def step_impl_when_upload(context):
     with open(get_fixture_path('flower.jpg'), 'rb') as f:
         data = {'media': f, 'name': 'some flower'}
         headers = [('Content-Type', 'multipart/form-data')]
@@ -193,22 +192,27 @@ def step_impl(context):
 
 
 @when('we get user profile')
-def step_impl(context):
+def step_impl_when_get_user(context):
     profile_url = '/%s/%s' % ('users', context.user['_id'])
     context.response = context.client.get(profile_url, headers=context.headers)
 
 
 @then('we get new resource')
-def step_impl(context):
-    assert_200(context.response)
+def step_impl_then_get_new(context):
+    assert_ok(context.response)
     data = json.loads(context.response.get_data())
-    assert data['_status'] == 'OK', data
     assert data['_links']['self'], data
     test_json(context)
 
 
+@then('we get error {code}')
+def step_impl_then_get_error(context, code):
+    assert context.response.status_code == int(code), context.response.status_code
+    test_json(context)
+
+
 @then('we get list with {total_count} items')
-def step_impl(context, total_count):
+def step_impl_then_get_list(context, total_count):
     assert_200(context.response)
     response_list = json.loads(context.response.get_data())
     assert len(response_list['_items']) == int(total_count), 'got %d' % len(response_list['_items'])
@@ -228,34 +232,35 @@ def step_impl(context, total_count):
 
 
 @then('we get no "{field}"')
-def step_impl(context, field):
+def step_impl_then_get_nofield(context, field):
+    assert_200(context.response)
     response_data = json.loads(context.response.get_data())
     assert field not in response_data, response_data
 
 
 @then('we get existing resource')
-def step_impl(context):
+def step_impl_then_get_existing(context):
     assert_200(context.response)
     test_json(context)
 
 
 @then('we get OK response')
-def step_impl(context):
-    assert_200(context.response)
+def step_impl_then_get_ok(context):
+    assert_ok(context.response)
 
 
 @then('we get response code {code}')
-def step_impl(context, code):
+def step_impl_then_get_code(context, code):
     assert context.response.status_code == int(code), context.response.status_code
 
 
 @then('we get updated response')
-def step_impl(context):
-    assert_200(context.response)
+def step_impl_then_get_updated(context):
+    assert_ok(context.response)
 
 
 @then('we get "{key}" in "{url}"')
-def step_impl(context, key, url):
+def step_impl_then_get_key_in_url(context, key, url):
     res = context.client.get(url, headers=context.headers)
     assert_200(res)
     data = get_json_data(res)
@@ -263,21 +268,21 @@ def step_impl(context, key, url):
 
 
 @then('we get "{key}"')
-def step_impl(context, key):
+def step_impl_then_get_key(context, key):
     assert_200(context.response)
     data = get_json_data(context.response)
     assert data.get(key), data
 
 
 @then('we get action in user activity')
-def step_impl(context):
+def step_impl_then_get_action(context):
     response = context.client.get('/activity', headers=context.headers)
     data = get_json_data(response)
     assert len(data['_items']), data
 
 
 @then('we get a file reference')
-def step_impl(context):
+def step_impl_then_get_file(context):
     assert_200(context.response)
     data = get_json_data(context.response)
     url = '/upload/%s' % data['_id']
@@ -290,13 +295,15 @@ def step_impl(context):
 
 
 @then('we get a picture url')
-def step_impl(context):
+def step_impl_then_get_picture(context):
+    assert_ok(context.response)
     data = get_json_data(context.response)
     assert 'picture_url' in data, data
 
 
 @then('we get facets "{keys}"')
-def step_impl(context, keys):
+def step_impl_then_get_facets(context, keys):
+    assert_200(context.response)
     data = get_json_data(context.response)
     assert '_facets' in data, data.keys()
     facets = data['_facets']
@@ -305,13 +312,15 @@ def step_impl(context, keys):
 
 
 @then('the file is stored localy')
-def step_impl(context):
+def step_impl_then_file(context):
+    assert_200(context.response)
     folder = context.app.config['UPLOAD_FOLDER']
     assert os.path.exists(os.path.join(folder, context.filename))
 
 
 @then('we get etag matching "{url}"')
-def step_impl(context, url):
+def step_impl_then_get_etag(context, url):
+    assert_200(context.response)
     etag = get_json_data(context.response)['_etag']
     assert etag, context.response.data
     response = context.client.get(url, headers=context.headers)
@@ -320,12 +329,12 @@ def step_impl(context, url):
 
 
 @then('we get not modified response')
-def step_impl(context):
+def step_impl_then_not_modified(context):
     assert 304 == context.response.status_code, \
         'exptected 304, but it was %d' % context.response.status_code
 
 
 @then('we get "{header}" header')
-def step_impl(context, header):
+def step_impl_then_get_header(context, header):
     assert header in context.response.headers, \
         'expected %s header, but got only %s' % (header, sorted(context.response.headers.keys()))

@@ -5,14 +5,40 @@ Feature: User Resource
         Given empty "users"
         When we post to "/users"
             """
-            {"username": "foo", "password": "bar"}
+            {"username": "foo", "password": "barbar", "email": "foo@bar.com"}
             """
 
         Then we get new resource
             """
-            {"username": "foo", "display_name": "foo"}
+            {"username": "foo", "display_name": "foo", "email": "foo@bar.com"}
             """
         And we get no "password"
+
+    @auth
+    Scenario: Test email validation
+        Given empty "users"
+        When we post to "/users"
+            """
+            {"username": "foo", "password": "barbar", "email": "invalid email"}
+            """
+
+        Then we get error 200
+            """
+            {"_status": "ERR", "_issues": {"email": "must be of Email type"}}
+            """
+
+    @auth
+    Scenario: Test phone validation
+        Given empty "users"
+        When we post to "/users"
+            """
+            {"username": "foo", "password": "barbar", "phone": "0123"}
+            """
+
+        Then we get error 200
+            """
+            {"_issues": {"phone": "must be of Phone Number type"}, "_status": "ERR"}
+            """
 
     @auth
     Scenario: List users
@@ -36,6 +62,7 @@ Feature: User Resource
             """
             {"username": "foo", "first_name": "Foo", "last_name": "Bar", "display_name": "Foo Bar", "_created": "", "_updated": "", "_id": ""}
             """
+        And we get no "password"
 
     @auth
     Scenario: Delete user
@@ -45,7 +72,7 @@ Feature: User Resource
             """
 
         When we delete "/users/foo"
-        Then we get OK response
+        Then we get response code 200
 
     @auth
     Scenario: Update user
