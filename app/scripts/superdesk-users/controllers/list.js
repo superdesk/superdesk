@@ -3,6 +3,7 @@ define(['lodash'], function(_) {
 
     UserListController.$inject = ['$scope', '$location', 'api'];
     function UserListController($scope, $location, api) {
+        $scope.maxResults = 25;
 
         $scope.selected = {user: null};
         $scope.createdUsers = [];
@@ -46,7 +47,7 @@ define(['lodash'], function(_) {
         function getCriteria() {
             var params = $location.search(),
                 criteria = {
-                    max_results: 25
+                    max_results: $scope.maxResults
                 };
 
             if (params.q) {

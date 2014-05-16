@@ -17,5 +17,5 @@
         </button>
     </div>
 
-    <div class="page-info pull-right" ng-show="page <= lastPage">{{ from }}-{{ to }} {{ 'of'|translate }} {{ total }}</div>
+    <div class="page-info pull-right" ng-show="page <= lastPage">{{ from }}-{{ to }} {{ 'of'|translate }} <span ng-show="approx">~</span>{{ total }}</div>
 </div>

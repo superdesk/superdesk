@@ -5,26 +5,33 @@ define(['require'], function(require) {
      * sdPagination inserts pagination controls for a given data set.
      *
      * Usage:
-     * <div sd-pagination data-cursor="list"></div>
+     * <div sd-pagination data-items="users" data-limit="maxResults"></div>
      *
      * Params:
-     * @data {Object} cursor
+     * @data-items {object} Item container as received from server, with _items and _links.
+     * @data-limit {number} Maximum number of items per page.
      */
     return ['$location', function($location) {
 
-        function getTotalItems(data) {
-            if (data && data._links && data._links.last != null) {
-                var parts = data._links.last.href.split('?')[1].split('&');
-                var parameters = {};
-                _.forEach(parts, function(part) {
-                    var item = part.split('=');
-                    parameters[item[0]] = item[1];
-                });
-                if (parameters.page !== undefined) {
-                    return parameters.page * 25; //hardcoded
+        function getPage(url) {
+            return parseInt(/page=([0-9]+)/.exec(url)[1], 10) + 1;
+        }
+
+        function getTotal(data, limit) {
+            var total = 0;
+            if (data._links) {
+                if (data._links.last) {
+                    // (any but last) of many pages
+                    total = getPage(data._links.last.href) * limit;
+                } else if (data._links.prev) {
+                    // last of many pages
+                    total = (getPage(data._links.prev.href) * limit) + data._items.length;
+                } else {
+                    // one page
+                    total = data._items.length;
                 }
             }
-            return undefined;
+            return total;
         }
 
         return {
@@ -36,18 +43,15 @@ define(['require'], function(require) {
 
             link: function(scope, element, attrs) {
 
-                var params = {};
-                scope.$watchCollection(function() {
-                    params.page = $location.search().page || 0;
-                    params.limit = scope.limit;
-                    params.items = scope.items;
-                    return params;
-                }, function() {
-                    scope.total = getTotalItems(params.items);
-                    scope.page = Math.max(0, params.page);
-                    scope.lastPage = params.limit ? Math.ceil(scope.total / params.limit) - 1 : 0;
-                    scope.from = scope.page * params.limit + 1;
-                    scope.to = Math.min(scope.total, scope.from + params.limit - 1);
+                scope.$watchCollection('items', function() {
+                    if (scope.items) {
+                        scope.total = getTotal(scope.items, scope.limit);
+                        scope.page = Math.max(0, $location.search().page || 0);
+                        scope.lastPage = scope.limit ? Math.ceil(scope.total / scope.limit) - 1 : 0;
+                        scope.from = scope.page * scope.limit + 1;
+                        scope.to = Math.min(scope.total, scope.from + scope.limit - 1);
+                        scope.approx = !!(scope.items._links && scope.items._links.last);
+                    }
                 });
 
                 /**
