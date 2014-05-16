@@ -4,26 +4,30 @@ import logging
 import superdesk
 import superdesk.utils as utils
 from flask import json, current_app as app, request
-from eve.auth import TokenAuth, Response
+from eve.auth import TokenAuth
 
 
 logger = logging.getLogger(__name__)
 
 
-class AuthException(Exception):
+class AuthRequiredError(superdesk.SuperdeskError):
+    """Auth required error."""
+    status_code = 401
+    payload = {'auth': 1}
 
-    """Base Auth Exception"""
+
+class AuthError(superdesk.SuperdeskError):
+    """Base Auth Error"""
+    status_code = 400
+    payload = {'credentials': 1}
+
+
+class NotFoundAuthError(AuthError):
+    """Username Not Found Auth Error"""
     pass
 
 
-class NotFoundAuthException(AuthException):
-
-    """Username Not Found Auth Exception"""
-    pass
-
-
-class CredentialsAuthException(AuthException):
-
+class CredentialsAuthError(AuthError):
     """Credentials Not Match Auth Exception"""
     pass
 
@@ -73,36 +77,29 @@ class SuperdeskTokenAuth(TokenAuth):
 
     def authenticate(self):
         """ Returns 401 response with CORS headers."""
-        return Response('Please provide auth token', 401, {
-            'Access-Control-Allow-Origin': '*'
-        })
+        raise AuthRequiredError()
 
 
 def authenticate(credentials, db):
     if 'username' not in credentials:
-        raise NotFoundAuthException()
+        raise NotFoundAuthError()
 
     user = db.find_one('auth_users', username=credentials.get('username'))
     if not user:
-        raise NotFoundAuthException()
+        raise NotFoundAuthError()
 
     if not credentials.get('password') or user.get('password') != credentials.get('password'):
         logger.warning("Login failure: %s" % json.dumps(credentials))
-        raise CredentialsAuthException()
+        raise CredentialsAuthError()
 
     return user
 
 
 def on_create_auth(data, docs):
     for doc in docs:
-        try:
-            user = authenticate(doc, data)
-            doc['user'] = user['_id']
-            doc['token'] = utils.get_random_string(40)
-        except NotFoundAuthException:
-            superdesk.abort(400)
-        except CredentialsAuthException:
-            superdesk.abort(400)
+        user = authenticate(doc, data)
+        doc['user'] = user['_id']
+        doc['token'] = utils.get_random_string(40)
 
 superdesk.connect('create:auth', on_create_auth)
 

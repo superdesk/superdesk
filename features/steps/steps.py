@@ -7,12 +7,20 @@ from eve.methods.common import parse
 
 
 def test_json(context):
-    response_data = json.loads(context.response.get_data())
-    context_data = json.loads(context.text)
+    try:
+        response_data = json.loads(context.response.get_data())
+    except Exception:
+        assert False, 'response is not valid json\nresponse: %s' % (context.response.get_data())
+
+    try:
+        context_data = json.loads(context.text)
+    except Exception:
+        assert False, 'scenario payload is not valid json'
+
     for key in context_data:
         assert key in response_data, '%s not in %s' % (key, response_data)
         if context_data[key]:
-            assert response_data[key] == context_data[key], response_data[key]
+            assert response_data[key] == context_data[key], '"%s" field does not match (%s)' % (key, response_data[key])
 
 
 def get_fixture_path(fixture):

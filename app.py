@@ -8,6 +8,7 @@ from eve.io.mongo.media import GridFSMediaStorage
 from superdesk.auth import SuperdeskTokenAuth
 from cerberus.errors import ERROR_BAD_TYPE
 from eve.io.mongo import Validator
+from eve.render import send_response
 import re
 
 
@@ -32,8 +33,7 @@ class SuperdeskValidator(Validator):
 
 
 class SuperdeskEve(eve.Eve):
-
-    """Superdesk API"""
+    """Superdesk app"""
 
     def load_config(self):
         """Let us override settings withing plugins"""
@@ -42,7 +42,11 @@ class SuperdeskEve(eve.Eve):
 
 
 def get_app(config=None):
-    """App factory."""
+    """App factory.
+
+    :param config: configuration that can override config from `settings.py`
+    :return: a new SuperdeskEve app instance
+    """
 
     if config is None:
         config = {}
@@ -65,6 +69,14 @@ def get_app(config=None):
 
     for blueprint in superdesk.BLUEPRINTS:
         app.register_blueprint(blueprint, **blueprint.kwargs)
+
+    @app.errorhandler(superdesk.SuperdeskError)
+    def error_handler(error):
+        """Return json error response.
+
+        :param error: an instance of :attr:`superdesk.SuperdeskError` class
+        """
+        return send_response(None, (error.to_dict(), None, None, error.status_code))
 
     superdesk.app = app
     return app

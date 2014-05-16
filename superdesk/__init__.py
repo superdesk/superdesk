@@ -21,6 +21,36 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
+class SuperdeskError(Exception):
+    """Base error class for superdesk."""
+
+    # default error status code
+    status_code = 400
+
+    def __init__(self, message=None, status_code=None, payload=None):
+        """
+        :param message: a human readable error description
+        :param status_code: response status code
+        :param payload: a dict with request issues
+        """
+        Exception.__init__(self)
+        self.message = message
+
+        if status_code is not None:
+            self.status_code = status_code
+
+        if payload is not None:
+            self.payload = payload
+
+    def to_dict(self):
+        """Create dict for json response."""
+        rv = {}
+        rv[app.config['STATUS']] = app.config['STATUS_ERR']
+        rv[app.config['ISSUES']] = dict(self.payload or ())
+        rv['_message'] = self.message or ''
+        return rv
+
+
 def get_headers(self, environ=None):
     """Fix CORS for abort responses.
 

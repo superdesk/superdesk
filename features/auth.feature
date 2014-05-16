@@ -1,3 +1,4 @@
+@wip
 Feature: Authentication
 
     Scenario: Authenticate existing user
@@ -25,7 +26,10 @@ Feature: Authentication
             {"username": "foo", "password": "xyz"}
             """
 
-        Then we get response code 400
+        Then we get error 400
+            """
+            {"_status": "ERR", "_issues": {"credentials": 1}}
+            """
 
     Scenario: Authenticate with non existing username
         Given "users"
@@ -38,7 +42,10 @@ Feature: Authentication
             {"username": "x", "password": "y"}
             """
 
-        Then we get response code 400
+        Then we get error 400
+            """
+            {"_status": "ERR", "_issues": {"credentials": 1}}
+            """
 
     Scenario: Fetch resources without auth token
         When we get "/"
@@ -46,5 +53,9 @@ Feature: Authentication
 
     Scenario: Fetch users without auth token
         When we get "/users"
-        Then we get response code 401
+        Then we get error 401
+            """
+            {"_status": "ERR", "_issues": {"auth": 1}}
+            """
+
         And we get "Access-Control-Allow-Origin" header
