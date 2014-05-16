@@ -9,3 +9,4 @@ report/
 screenshots/
 coverage/
 Thumbs.db
+test-results.xml

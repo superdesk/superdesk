@@ -34,6 +34,10 @@ module.exports = function(config) {
             moduleName: 'templates'
         },
 
+        junitReporter: {
+            outputFile: 'test-results.xml'
+        },
+
         // test results reporter to use
         reporters: ['dots'],
 

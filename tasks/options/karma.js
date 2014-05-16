@@ -25,5 +25,9 @@ module.exports = {
             type: 'lcov',
             dir: 'report/'
         }
+    },
+    bamboo: {
+        browsers: ['PhantomJS'],
+        reporters: ['dots', 'junit']
     }
 };
