@@ -1,67 +1,66 @@
-define(['angular'], function(angular) {
+define(['angular', 'require'], function(angular, require) {
     'use strict';
 
     angular.module('superdesk.items-common.directives')
         .directive('sdSidebarLayout', ['$location', '$filter', function($location, $filter) {
             return {
                 transclude: true,
-                templateUrl: 'scripts/superdesk-items-common/views/sidebar.html',
+                templateUrl: require.toUrl('../views/sidebar.html'),
                 controller: ['$scope', function($scope) {
-                    /*
 
-                    $scope.sidebar = false;
-                    $scope.sidebarstick = true;
+                    $scope.$watchCollection('items', function() {
+                        if ($scope.items && $scope.items._facets !== undefined) {
+                            _.forEach($scope.items._facets.type.terms, function(type) {
+                                _.extend(_.first(_.where($scope.contenttype, {term: type.term})), type);
+                            });
+                        }
+                    });
 
-                    $scope.search = {
-                        type: [
-                            {
-                                term: 'text',
-                                checked: false,
-                                count: 0
-                            },
-                            {
-                                term: 'audio',
-                                checked: false,
-                                count: 0
-                            },
-                            {
-                                term: 'video',
-                                checked: false,
-                                count: 0
-                            },
-                            {
-                                term: 'picture',
-                                checked: false,
-                                count: 0
-                            },
-                            {
-                                term: 'graphic',
-                                checked: false,
-                                count: 0
-                            },
-                            {
-                                term: 'composite',
-                                checked: false,
-                                count: 0
-                            }
-                        ],
-                        general: {
-                            provider: null,
-                            creditline: null,
-                            place: null,
-                            urgency: {
-                                from: null,
-                                to: null
-                            },
-                            versioncreated: {
-                                from: null,
-                                to: null
-                            }
+                    $scope.contenttype = [
+                        {
+                            term: 'text',
+                            checked: false,
+                            count: 0
                         },
-                        subjects: [],
-                        places: []
+                        {
+                            term: 'audio',
+                            checked: false,
+                            count: 0
+                        },
+                        {
+                            term: 'video',
+                            checked: false,
+                            count: 0
+                        },
+                        {
+                            term: 'picture',
+                            checked: false,
+                            count: 0
+                        },
+                        {
+                            term: 'graphic',
+                            checked: false,
+                            count: 0
+                        },
+                        {
+                            term: 'composite',
+                            checked: false,
+                            count: 0
+                        }
+                    ];
+
+                    $scope.setContenttypeFilter = function() {
+                        var contenttype = _.map(_.where($scope.contenttype, {'checked': true}), function(t) {
+                            return t.term;
+                        });
+                        if (contenttype.length === 0) {
+                            $location.search('type', null);
+                        } else {
+                            $location.search('type', JSON.stringify(contenttype));
+                        }
                     };
 
+                     /*
                     //helper variables to handle large number of changes
                     $scope.versioncreated = {
                         startDate: null,
@@ -129,11 +128,6 @@ define(['angular'], function(angular) {
 
                     };
 
-                    var createFiltersWrap = _.throttle(createFilters, 1000);
-                    $scope.$watch('search', function() {
-                        createFiltersWrap();
-                    }, true);    //deep watch
-
                     //date filter handling
                     $scope.$watch('versioncreated', function(newVal) {
                         if (newVal.init === true) {
@@ -159,14 +153,6 @@ define(['angular'], function(angular) {
 
                     $scope.$watchCollection('urgency', function(newVal) {
                         handleUrgencyWrap(newVal);
-                    });
-
-                    $scope.$watchCollection('items', function() {
-                        if ($scope.items._facets !== undefined) {
-                            _.forEach($scope.items._facets.type.terms, function(type) {
-                                _.extend(_.first(_.where($scope.search.type, {term: type.term})), type);
-                            });
-                        }
                     });
 
                     $scope.addSubject = function(item) {

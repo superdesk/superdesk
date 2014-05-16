@@ -9,6 +9,15 @@
             <div class="doopen btn" ng-click="sidebarstick = !sidebarstick; sidebar=false"><i class="icon-forward-thin"></i></div>
         </div>
         <div class="content">
+            <div sd-tabmodule data-title="{{ 'Content type' | translate }}" data-open="true">
+                <ul class="filter-contenttype selectionlist">
+                    <li ng-repeat="t in contenttype">
+                        <i class="filetype-icon-{{t.term}}"></i>
+                        <span class="term">{{ t.term | translate }} <i>({{ t.count}})</i></span>
+                        <input sd-check ng-model="t.checked" ng-click="setContenttypeFilter()">
+                    </li>
+                </ul>
+            </div>
             <div class="info-tab filter-general">
                 <form>
                 <ul class="metadata">

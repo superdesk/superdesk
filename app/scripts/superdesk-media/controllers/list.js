@@ -54,6 +54,13 @@ define(['lodash'], function(_) {
                 filters.push({term: provider});
             }
 
+            if (params.type) {
+                var type = {
+                    type: JSON.parse(params.type)
+                };
+                filters.push({terms: type});
+            }
+
             return filters;
         }
 

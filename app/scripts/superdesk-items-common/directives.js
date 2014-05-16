@@ -26,12 +26,6 @@ define(['angular', 'require'], function(angular, require) {
                 templateUrl: require.toUrl('./views/media-box-hover.html')
             };
         }])
-        .directive('sdSidebarLayout', ['$location', '$filter', function($location, $filter) {
-            return {
-                transclude: true,
-                templateUrl: require.toUrl('./views/sidebar.html')
-            };
-        }])
         .directive('sdItemRendition', function() {
             return {
                 templateUrl: require.toUrl('./views/item-rendition.html'),
@@ -88,5 +82,20 @@ define(['angular', 'require'], function(angular, require) {
 
                 }
             };
-        }]);
+        }])
+        .directive('sdTabmodule', function() {
+            return {
+                templateUrl: require.toUrl('./views/tabmodule.html'),
+                replace: true,
+                transclude: true,
+                scope: true,
+                link: function($scope, element, attrs) {
+                    $scope.title = attrs.title;
+                    $scope.isOpen = attrs.open === 'true';
+                    $scope.toggleModule = function() {
+                        $scope.isOpen = !$scope.isOpen;
+                    };
+                }
+            };
+        });
 });

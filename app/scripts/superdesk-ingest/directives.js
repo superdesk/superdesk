@@ -62,21 +62,6 @@ define([
                 }
             };
         }])
-        .directive('sdTabmodule', function() {
-            return {
-                templateUrl: 'scripts/superdesk-items/views/tabmodule.html',
-                replace: true,
-                transclude: true,
-                scope: true,
-                link: function($scope, element, attrs) {
-                    $scope.title = attrs.title;
-                    $scope.isOpen = attrs.open === 'true';
-                    $scope.toggleModule = function() {
-                        $scope.isOpen = !$scope.isOpen;
-                    };
-                }
-            };
-        })
         .directive('sdWordcount', function() {
             return {
                 require: '?ngModel',
