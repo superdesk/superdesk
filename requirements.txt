@@ -1,5 +1,6 @@
 Cerberus==0.6
-Eve-Elastic==0.1.5
+Events==0.2.1
+Eve-Elastic==0.1.6
 Eve-Docs==0.1.2
 Flask==0.10.1
 Flask-Bootstrap==3.1.1.2
@@ -28,5 +29,4 @@ simplejson==3.4.1
 six==1.6.1
 waitress==0.8.8
 
-git+git://github.com/petrjasek/events@master#egg=Events==0.2.1
 git+git://github.com/superdesk/eve@develop#egg=Eve==0.4
