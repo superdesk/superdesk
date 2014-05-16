@@ -50,11 +50,13 @@ def get_json_data(response):
 def get_it(context):
     it = context.data[0]
     res = get_res('/%s/%s' % (context.resource, it['_id']), context)
-    return get_self_href(res, context), res['_etag']
+    return get_self_href(res, context), res.get('_etag')
 
 
 def if_match(context, etag):
-    headers = [('If-Match', etag)]
+    headers = []
+    if etag:
+        headers = [('If-Match', etag)]
     headers += context.headers
     return headers
 
@@ -62,7 +64,7 @@ def if_match(context, etag):
 def patch_current_user(context, data):
     response = context.client.get('/users/%s' % context.user['_id'], headers=context.headers)
     user = json.loads(response.get_data())
-    headers = if_match(context, user['_etag'])
+    headers = if_match(context, user.get('_etag'))
     response = context.client.patch('/users/%s' % context.user['_id'], data=data, headers=headers)
     assert_ok(response)
     return response
@@ -142,8 +144,7 @@ def step_impl_when_get_url(context, url):
 def step_impl_when_delete_url(context, url):
     res = get_res(url, context)
     href = get_self_href(res, context)
-    headers = [('If-Match', res['_etag'])]
-    headers += context.headers
+    headers = if_match(context, res.get('_etag'))
     context.response = context.client.delete(href, headers=headers)
 
 
@@ -151,8 +152,7 @@ def step_impl_when_delete_url(context, url):
 def step_impl_when_patch_url(context, url):
     res = get_res(url, context)
     href = get_self_href(res, context)
-    headers = [('If-Match', res['_etag'])]
-    headers += context.headers
+    headers = if_match(context, res.get('_etag'))
     context.response = context.client.patch(href, data=context.text, headers=headers)
     assert_ok(context.response)
 
@@ -161,9 +161,7 @@ def step_impl_when_patch_url(context, url):
 def step_impl_when_patch_again(context):
     data = get_json_data(context.response)
     href = get_self_href(data, context)
-    etag = data['_etag']
-    headers = [('If-Match', etag)]
-    headers += context.headers
+    headers = if_match(context, data.get('_etag'))
     context.response = context.client.patch(href, data=context.text, headers=headers)
     assert_ok(context.response)
 
@@ -320,12 +318,13 @@ def step_impl_then_file(context):
 
 @then('we get etag matching "{url}"')
 def step_impl_then_get_etag(context, url):
-    assert_200(context.response)
-    etag = get_json_data(context.response)['_etag']
-    assert etag, context.response.data
-    response = context.client.get(url, headers=context.headers)
-    data = get_json_data(response)
-    assert etag == data['_etag'], '%s not in %s' % (etag, data)
+    if context.app.config['IF_MATCH']:
+        assert_200(context.response)
+        etag = get_json_data(context.response).get('_etag')
+        assert etag, 'etag not in %s' % (context.response.data)
+        response = context.client.get(url, headers=context.headers)
+        data = get_json_data(response)
+        assert etag == data.get('_etag'), 'etag %s is not in %s' % (etag, data)
 
 
 @then('we get not modified response')
