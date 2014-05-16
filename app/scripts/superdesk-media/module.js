@@ -15,8 +15,8 @@ define([
 
     app.config(['superdeskProvider', function(superdesk) {
         superdesk
-            .activity('/media/', {
-                label: gettext('Media'),
+            .activity('/ingest/', {
+                label: gettext('Ingest'),
                 priority: 100,
                 controller: require('./controllers/list'),
                 templateUrl: require.toUrl('./views/list.html'),

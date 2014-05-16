@@ -1,6 +1,7 @@
 define([
-    'angular'
-], function(angular) {
+    'angular',
+    'require'
+], function(angular, require) {
     'use strict';
 
     angular.module('superdesk.widgets.ingeststats', [])
@@ -14,9 +15,9 @@ define([
                     max_sizey: 1,
                     sizex: 1,
                     sizey: 1,
-                    thumbnail: 'scripts/superdesk-items/stats-widget/thumbnail.png',
-                    template: 'scripts/superdesk-items/stats-widget/widget-ingeststats.html',
-                    configurationTemplate: 'scripts/superdesk-items/stats-widget/configuration.html',
+                    thumbnail: require.toUrl('./thumbnail.png'),
+                    template: require.toUrl('./widget-ingeststats.html'),
+                    configurationTemplate: require.toUrl('./configuration.html'),
                     configuration: {
                         source: 'provider',
                         colorScheme: 'superdesk',

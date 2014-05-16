@@ -1,5 +1,6 @@
 define([
-    'angular'
+    'angular',
+    'require'
 ], function(angular) {
     'use strict';
 
@@ -14,9 +15,9 @@ define([
                     max_sizey: 2,
                     sizex: 1,
                     sizey: 2,
-                    thumbnail: 'scripts/superdesk-items/ingest-widget/thumbnail.png',
-                    template: 'scripts/superdesk-items/ingest-widget/widget-ingest.html',
-                    configurationTemplate: 'scripts/superdesk-items/ingest-widget/configuration.html',
+                    thumbnail: require.toUrl('./thumbnail.png'),
+                    template: require.toUrl('./widget-ingest.html'),
+                    configurationTemplate: require.toUrl('./configuration.html'),
                     configuration: {maxItems: 10, provider: 'all', search: '', updateInterval: 5},
                     description: 'Ingest widget'
                 });
