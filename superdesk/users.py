@@ -13,24 +13,6 @@ class ConflictUsernameException(Exception):
         return "Username '%s' exists already" % self.args[0]
 
 
-def create_user(userdata=None, db=None, **kwargs):
-    """Create a new user"""
-
-    if not userdata:
-        userdata = {}
-    userdata.update(kwargs)
-
-    if not userdata.get('username'):
-        raise EmptyUsernameException()
-
-    conflict_user = db.users.find_one({'username': userdata.get('username')})
-    if conflict_user:
-        raise ConflictUsernameException(userdata.get('username'))
-
-    db.users.insert(userdata)
-    return userdata
-
-
 def get_display_name(user):
     if user.get('first_name') or user.get('last_name'):
         display_name = '%s %s' % (user.get('first_name'), user.get('last_name'))
