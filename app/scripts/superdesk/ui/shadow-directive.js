@@ -18,14 +18,15 @@ define([
                     $timeout(function() {
                         var el = $(element);
                         var shadow = $('<div class="scroll-shadow"></div>');
-                        shadow.css({
+
+                        el.append(shadow);
+
+                        el.scroll(function() {
+                            shadow.css({
                                 top: el.offset().top,
                                 left: el.offset().left,
                                 width: el.outerWidth()
                             });
-                        $('body').append(shadow);
-
-                        el.scroll(function() {
                             if ($(this).scrollTop() > 0) {
                                 shadow.addClass('shadow');
                             } else {
