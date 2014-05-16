@@ -6,7 +6,7 @@ define([
 
     var template = [
         '<form name="userForm">',
-        '<input type="text" name="username" sd-user-unique data-unique-field="userName" data-exclude="user" ng-model="user.userName">',
+        '<input type="text" name="username" sd-user-unique data-unique-field="username" data-exclude="user" ng-model="user.username">',
         '<input type="password" name="password" ng-model="user.password">',
         '<input type="password" name="passwordConfirm" ng-model="_confirm"',
         ' sd-password-confirm ng-model="passwordConfirm" data-password="user.password">',
@@ -21,13 +21,12 @@ define([
                 this.users = {
                     // make it find foo but not any other
                     query: function(criteria) {
-                        if (criteria.userName === 'foo') {
+                        if (criteria.where && criteria.where.username === 'foo') {
                             return $q.when({
-                                total: 1,
-                                _items: [{Id: 9}]
+                                _items: [{_id: 9, username: 'foo'}]
                             });
                         } else {
-                            return $q.when({total: 0});
+                            return $q.when({_items: []});
                         }
                     }
                 };
@@ -41,7 +40,7 @@ define([
         }));
 
         it('fails on unique constraint', inject(function($compile) {
-            scope.user = {Id: 3, userName: 'test'};
+            scope.user = {_id: 3, username: 'test'};
             $compile(template)(scope);
 
             scope.$eval('userForm.username.$setViewValue("foo")');
@@ -53,7 +52,7 @@ define([
         }));
 
         it('succeeds on unique constraint', inject(function($compile) {
-            scope.user = {Id: 6, userName: 'baz'};
+            scope.user = {_id: 6, username: 'baz'};
             $compile(template)(scope);
 
             expect(scope.$eval('userForm.username.$valid')).toBe(true);
@@ -67,7 +66,7 @@ define([
         }));
 
         it('succeeds failing test using exclusion', inject(function($compile) {
-            scope.user = {Id: 9, userName: 'foo'};
+            scope.user = {_id: 9, username: 'foo'};
             $compile(template)(scope);
 
             scope.$eval('userForm.username.$setViewValue("foo")');

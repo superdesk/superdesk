@@ -245,14 +245,14 @@ define([
                      */
                     function testUnique(viewValue) {
                         if (viewValue && attrs.uniqueField) {
-                            var criteria = {};
-                            criteria[attrs.uniqueField] = viewValue;
+                            var criteria = {where: {}};
+                            criteria.where[attrs.uniqueField] = viewValue;
                             api.users.query(criteria)
                                 .then(function(users) {
-                                    if (scope.exclude && users.total === 1) {
-                                        ctrl.$setValidity(NAME, users._items[0].Id === scope.exclude.Id);
+                                    if (scope.exclude && users._items.length === 1) {
+                                        ctrl.$setValidity(NAME, users._items[0]._id === scope.exclude._id);
                                     } else {
-                                        ctrl.$setValidity(NAME, !users.total);
+                                        ctrl.$setValidity(NAME, !users._items.length);
                                     }
                                 });
                         }
