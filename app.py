@@ -6,30 +6,8 @@ from superdesk import signals
 from eve.io.mongo import MongoJSONEncoder
 from eve.io.mongo.media import GridFSMediaStorage
 from superdesk.auth import SuperdeskTokenAuth
-from cerberus.errors import ERROR_BAD_TYPE
-from eve.io.mongo import Validator
+from superdesk.validator import SuperdeskValidator
 from eve.render import send_response
-import re
-
-
-class SuperdeskValidator(Validator):
-    def _validate_type_phone_number(self, field, value):
-        """ Enables validation for `phone_number` schema attribute.
-            :param field: field name.
-            :param value: field value.
-        """
-        if not re.match("^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$", value):
-            self._error(field, ERROR_BAD_TYPE % 'Phone Number')
-
-    def _validate_type_email(self, field, value):
-        """ Enables validation for `phone_number` schema attribute.
-            :param field: field name.
-            :param value: field value.
-        """
-        regex = "^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@" \
-                "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,4}[a-z0-9]){1}$"
-        if not re.match(regex, value):
-            self._error(field, ERROR_BAD_TYPE % 'Email')
 
 
 class SuperdeskEve(eve.Eve):

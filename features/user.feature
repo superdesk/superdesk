@@ -24,7 +24,24 @@ Feature: User Resource
 
         Then we get error 200
             """
-            {"_status": "ERR", "_issues": {"email": "must be of Email type"}}
+            {"_status": "ERR", "_issues": {"email": {"format": 1}}}
+            """
+
+    @auth
+    Scenario: Test unique validation
+        Given "users"
+            """
+            [{"username": "foo", "email": "foo@bar.com"}]
+            """
+
+        When we post to "/users"
+            """
+            {"username": "foo", "email": "foo@bar.com"}
+            """
+
+        Then we get error 200
+            """
+            {"_status": "ERR", "_issues": {"email": {"unique": 1}, "username": {"unique": 1}}}
             """
 
     @auth
@@ -37,7 +54,7 @@ Feature: User Resource
 
         Then we get error 200
             """
-            {"_issues": {"phone": "must be of Phone Number type"}, "_status": "ERR"}
+            {"_issues": {"phone": {"format": 1}}, "_status": "ERR"}
             """
 
     @auth
