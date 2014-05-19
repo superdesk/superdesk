@@ -6,6 +6,7 @@ define([
     'angular-route',
     'angular-resource',
     'angular-file-upload',
+    'angular-slider',
 
     './activity/activity',
     './analytics/analytics',
@@ -33,6 +34,7 @@ define([
         'ngResource',
         'ui.bootstrap',
         'angularFileUpload',
+        'uiSlider',
 
         require('./activity/activity').name,
         require('./analytics/analytics').name,

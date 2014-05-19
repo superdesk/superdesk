@@ -44,6 +44,7 @@ require.config({
         'bootstrap_ui': ['angular'],
         'translations': ['angular-gettext'],
         'angular-ui': ['angular', 'bootstrap'],
+        'angular-slider': ['angular'],
 
         'bootstrap': ['jquery'],
         'jquery-ui': ['jquery'],

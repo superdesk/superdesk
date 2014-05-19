@@ -8,6 +8,8 @@ define(['angular', 'require'], function(angular, require) {
                 templateUrl: require.toUrl('../views/sidebar.html'),
                 controller: ['$scope', function($scope) {
 
+                    //content type filter handling
+
                     $scope.$watchCollection('items', function() {
                         if ($scope.items && $scope.items._facets !== undefined) {
                             _.forEach($scope.items._facets.type.terms, function(type) {
@@ -60,16 +62,37 @@ define(['angular', 'require'], function(angular, require) {
                         }
                     };
 
+                    //urgency filter handling
+
+                    $scope.urgency = {
+                        from: 1,
+                        to: 5
+                    };
+
+                    function handleUrgency(urgency) {
+                        var ufrom = Math.round(urgency.from);
+                        var uto = Math.round(urgency.to);
+                        if (ufrom !== 1 || uto !== 5) {
+                            var urgency_norm = {
+                                from: ufrom,
+                                to: uto
+                            };
+                            $location.search('urgency', JSON.stringify(urgency_norm));
+                        }
+                    }
+
+                    var handleUrgencyWrap = _.throttle(handleUrgency, 2000);
+
+                    $scope.$watchCollection('urgency', function(newVal) {
+                        handleUrgencyWrap(newVal);
+                    });
+
                      /*
                     //helper variables to handle large number of changes
                     $scope.versioncreated = {
                         startDate: null,
                         endDate: null,
                         init: false
-                    };
-                    $scope.urgency = {
-                        from: 1,
-                        to: 5
                     };
 
                     var createFilters = function() {
@@ -137,22 +160,6 @@ define(['angular', 'require'], function(angular, require) {
                                 $scope.search.general.versioncreated = {from: start, to: end};
                             }
                         }
-                    });
-
-                    //urgency filter handling
-                    function handleUrgency(urgency) {
-                        var ufrom = Math.round(urgency.from);
-                        var uto = Math.round(urgency.to);
-                        if (ufrom !== 1 || uto !== 5) {
-                            $scope.search.general.urgency.from = ufrom;
-                            $scope.search.general.urgency.to = uto;
-                        }
-                    }
-
-                    var handleUrgencyWrap = _.throttle(handleUrgency, 2000);
-
-                    $scope.$watchCollection('urgency', function(newVal) {
-                        handleUrgencyWrap(newVal);
                     });
 
                     $scope.addSubject = function(item) {

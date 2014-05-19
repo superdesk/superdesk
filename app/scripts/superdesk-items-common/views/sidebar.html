@@ -21,6 +21,13 @@
             <div class="info-tab filter-general">
                 <form>
                 <ul class="metadata">
+                    <li>
+                        <div class="lbl" translate>Urgency</div>
+                        <div class="data urgency-data">
+                            <slider floor="1" ceiling="5" precision="0" ng-model-low="urgency.from" ng-model-high="urgency.to" class="sd-slider urgency-slider"></slider>
+                            <div class="urgency-range">{{urgency.from}} - {{urgency.to}}</div>
+                        </div>
+                    </li>
                     <li class="sublist">
                         <ul sd-date-range data-lte="lte" data-gte="gte">
                             <li>

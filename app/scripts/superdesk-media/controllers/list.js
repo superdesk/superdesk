@@ -61,6 +61,13 @@ define(['lodash'], function(_) {
                 filters.push({terms: type});
             }
 
+            if (params.urgency) {
+                var urgency = {
+                    urgency: JSON.parse(params.urgency)
+                };
+                filters.push({range: urgency});
+            }
+
             return filters;
         }
 
