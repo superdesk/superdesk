@@ -6,6 +6,12 @@ from eve.utils import config
 from flask import current_app as app
 
 
+ERROR_PATTERN = {'pattern': 1}
+ERROR_UNIQUE = {'unique': 1}
+ERROR_MINLENGTH = {'minlength': 1}
+ERROR_REQUIRED = {'required': 1}
+
+
 class SuperdeskValidator(Validator):
     def _validate_type_phone_number(self, field, value):
         """ Enables validation for `phone_number` schema attribute.
@@ -13,7 +19,7 @@ class SuperdeskValidator(Validator):
             :param value: field value.
         """
         if not re.match("^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$", value):
-            self._error(field, {'format': 1})
+            self._error(field, ERROR_PATTERN)
 
     def _validate_type_email(self, field, value):
         """ Enables validation for `phone_number` schema attribute.
@@ -23,10 +29,10 @@ class SuperdeskValidator(Validator):
         regex = "^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@" \
                 "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,4}[a-z0-9]){1}$"
         if not re.match(regex, value):
-            self._error(field, {'format': 1})
+            self._error(field, ERROR_PATTERN)
 
     def _validate_unique(self, unique, field, value):
-        """Override unique validation to return json."""
+        """Validate unique with custom error msg."""
 
         if unique:
             query = {field: value}
@@ -37,4 +43,19 @@ class SuperdeskValidator(Validator):
                     query[config.ID_FIELD] = {'$ne': self._id}
 
             if app.data.find_one(self.resource, None, **query):
-                self._error(field, {'unique': 1})
+                self._error(field, ERROR_UNIQUE)
+
+    def _validate_minlength(self, min_length, field, value):
+        """Validate minlength with custom error msg."""
+        if isinstance(value, (type(''), list)):
+            if len(value) < min_length:
+                self._error(field, ERROR_MINLENGTH)
+
+    def _validate_required_fields(self):
+        required = list(field for field, definition in self.schema.items()
+                        if definition.get('required') is True)
+        missing = set(required) - set(key for key in self.document.keys()
+                                      if self.document.get(key) is not None
+                                      or not self.ignore_none_values)
+        for field in missing:
+            self._error(field, ERROR_REQUIRED)

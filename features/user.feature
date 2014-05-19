@@ -24,7 +24,7 @@ Feature: User Resource
 
         Then we get error 200
             """
-            {"_status": "ERR", "_issues": {"email": {"format": 1}}}
+            {"_status": "ERR", "_issues": {"email": {"pattern": 1}}}
             """
 
     @auth
@@ -54,7 +54,7 @@ Feature: User Resource
 
         Then we get error 200
             """
-            {"_issues": {"phone": {"format": 1}}, "_status": "ERR"}
+            {"_issues": {"phone": {"pattern": 1}}, "_status": "ERR"}
             """
 
     @auth
