@@ -22,14 +22,5 @@ define([
                     });
                 }
             };
-        }])
-        .directive('sdMediaBoxHover', ['$position', function($position) {
-            return {
-                restrict: 'A',
-                templateUrl: 'scripts/superdesk-items-common/views/media-box-hover.html',
-                replace: true,
-                link: function(scope, element, attrs) {
-                }
-            };
         }]);
 });

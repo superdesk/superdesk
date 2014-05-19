@@ -2,7 +2,13 @@ define(['angular', 'require'], function(angular, require) {
     'use strict';
 
     angular.module('superdesk.items-common.directives', [])
-        .directive('sdMediaBox', ['$position', function($position) {
+        .directive('sdSidebarLayout', ['$location', '$filter', function($location, $filter) {
+            return {
+                transclude: true,
+                templateUrl: require.toUrl('./views/sidebar.html')
+            };
+        }])
+        .directive('sdMediaBox', function() {
             return {
                 restrict: 'A',
                 templateUrl: require.toUrl('./views/media-box.html'),
@@ -19,13 +25,7 @@ define(['angular', 'require'], function(angular, require) {
                     });
                 }
             };
-        }])
-        .directive('sdMediaBoxHover', ['$position', function($position) {
-            return {
-                replace: true,
-                templateUrl: require.toUrl('./views/media-box-hover.html')
-            };
-        }])
+        })
         .directive('sdItemRendition', function() {
             return {
                 templateUrl: require.toUrl('./views/item-rendition.html'),
@@ -97,5 +97,107 @@ define(['angular', 'require'], function(angular, require) {
                     };
                 }
             };
-        });
+        })
+        .directive('sdFilterUrgency', ['$location', function($location) {
+            return {
+                scope: true,
+                link: function($scope, element, attrs) {
+
+                    $scope.urgency = {
+                        from: 1,
+                        to: 5
+                    };
+
+                    function handleUrgency(urgency) {
+                        var ufrom = Math.round(urgency.from);
+                        var uto = Math.round(urgency.to);
+                        if (ufrom !== 1 || uto !== 5) {
+                            var urgency_norm = {
+                                from: ufrom,
+                                to: uto
+                            };
+                            $location.search('urgency', JSON.stringify(urgency_norm));
+                        }
+                    }
+
+                    var handleUrgencyWrap = _.throttle(handleUrgency, 2000);
+
+                    $scope.$watchCollection('urgency', function(newVal) {
+                        handleUrgencyWrap(newVal);
+                    });
+                }
+            };
+        }])
+        .directive('sdFilterContenttype', [ '$location', function($location) {
+            return {
+                restrict: 'A',
+                templateUrl: require.toUrl('./views/filter-contenttype.html'),
+                replace: true,
+                scope: {
+                    items: '='
+                },
+                link: function(scope, element, attrs) {
+
+                    scope.contenttype = [
+                        {
+                            term: 'text',
+                            checked: false,
+                            count: 0
+                        },
+                        {
+                            term: 'audio',
+                            checked: false,
+                            count: 0
+                        },
+                        {
+                            term: 'video',
+                            checked: false,
+                            count: 0
+                        },
+                        {
+                            term: 'picture',
+                            checked: false,
+                            count: 0
+                        },
+                        {
+                            term: 'graphic',
+                            checked: false,
+                            count: 0
+                        },
+                        {
+                            term: 'composite',
+                            checked: false,
+                            count: 0
+                        }
+                    ];
+
+                    var search = $location.search();
+                    if (search.type) {
+                        var type = JSON.parse(search.type);
+                        _.forEach(type, function(term) {
+                            _.extend(_.first(_.where(scope.contenttype, {term: term})), {checked: true});
+                        });
+                    }
+
+                    scope.$watchCollection('items', function() {
+                        if (scope.items && scope.items._facets !== undefined) {
+                            _.forEach(scope.items._facets.type.terms, function(type) {
+                                _.extend(_.first(_.where(scope.contenttype, {term: type.term})), type);
+                            });
+                        }
+                    });
+
+                    scope.setContenttypeFilter = function() {
+                        var contenttype = _.map(_.where(scope.contenttype, {'checked': true}), function(t) {
+                            return t.term;
+                        });
+                        if (contenttype.length === 0) {
+                            $location.search('type', null);
+                        } else {
+                            $location.search('type', JSON.stringify(contenttype));
+                        }
+                    };
+                }
+            };
+        }]);
 });

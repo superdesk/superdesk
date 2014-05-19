@@ -120,15 +120,6 @@ define([
                 }
             };
         }])
-        .directive('sdMediaBoxHover', ['$position', function($position) {
-            return {
-                restrict: 'A',
-                templateUrl: 'scripts/superdesk-items/views/media-box-hover.html',
-                replace: true,
-                link: function(scope, element, attrs) {
-                }
-            };
-        }])
         .directive('sdItemList', ['$routeParams', '$location', 'storage', function($routeParams, $location, storage) {
             return {
                 templateUrl: 'scripts/superdesk-items/views/item-list.html',

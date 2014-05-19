@@ -1,8 +1,7 @@
 define([
     'angular',
     'require',
-    './directives',
-    './directives/sidebar-layout'
+    './directives'
 ], function(angular, require) {
     'use strict';
 
