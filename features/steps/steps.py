@@ -197,6 +197,15 @@ def step_impl_when_upload(context):
         context.response = context.client.post('/upload', data=data, headers=headers)
 
 
+@when('we upload a binary file with cropping')
+def step_impl_when_upload_with_crop(context):
+    with open(get_fixture_path('flower.jpg'), 'rb') as f:
+        data = {'media': f, 'CropTop': 0, 'CropLeft': 0, 'CropBottom': 333, 'CropRight': 333}
+        headers = [('Content-Type', 'multipart/form-data')]
+        headers.append(context.headers[1])
+        context.response = context.client.post('/upload', data=data, headers=headers)
+
+
 @when('we get user profile')
 def step_impl_when_get_user(context):
     profile_url = '/%s/%s' % ('users', context.user['_id'])
@@ -298,6 +307,22 @@ def step_impl_then_get_file(context):
     assert_200(response)
     assert len(response.get_data()), response
     assert response.mimetype == 'application/json', response.mimetype
+
+
+@then('we get a cropped file reference')
+def step_impl_then_get_cropped_file(context):
+    assert_200(context.response)
+    data = get_json_data(context.response)
+    url = '/upload/%s' % data['_id']
+    headers = [('Accept', 'application/json')]
+    headers += context.headers
+    response = context.client.get(url, headers=headers)
+    assert_200(response)
+    assert len(response.get_data()), response
+    fetched_data = get_json_data(response)
+    print(fetched_data)
+    assert fetched_data['media']['content_type'] == 'image/jpeg', fetched_data['media']['content-type']
+    assert fetched_data['media']['length'] == 12656, 12656
 
 
 @then('we get a picture url')
