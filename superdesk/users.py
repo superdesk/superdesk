@@ -94,7 +94,7 @@ superdesk.domain('users', {
         },
         'password': {
             'type': 'string',
-            'minlength': 6
+            'minlength': 5
         },
         'first_name': {
             'type': 'string',
