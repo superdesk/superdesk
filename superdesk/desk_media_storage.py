@@ -23,7 +23,8 @@ class SuperdeskGridFSMediaStorage(GridFSMediaStorage):
         file_name = content.filename
         logger.debug('Going to save media file with %s ' % file_name)
 
-        if 'CropTop' in request.form and 'CropLeft' in request.form and 'CropRight' in request.form and 'CropBottom' in request.form:
+        if ('CropTop' in request.form and 'CropLeft' in request.form and
+                'CropRight' in request.form and 'CropBottom' in request.form):
             cropping_data = (int(request.form['CropLeft']), int(request.form['CropTop']),
                              int(request.form['CropRight']), int(request.form['CropBottom']))
             file_ext = os.path.splitext(file_name)[1][1:]
