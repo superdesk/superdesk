@@ -34,6 +34,7 @@ INSTALLED_APPS = (
 
 RESOURCE_METHODS = ['GET', 'POST']
 ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
+EXTENDED_MEDIA_INFO = ['content_type', 'name', 'length']
 
 # uncomment to use local file storage
 # DEFAULT_FILE_STORAGE = 'superdesk.storage.FileSystemStorage'
