@@ -27,6 +27,8 @@ class SuperdeskGridFSMediaStorage(GridFSMediaStorage):
             cropping_data = (int(request.form['CropLeft']), int(request.form['CropTop']),
                              int(request.form['CropRight']), int(request.form['CropBottom']))
             file_ext = os.path.splitext(file_name)[1][1:]
+            if file_ext in ('JPG', 'jpg'):
+                file_ext = 'jpeg'
             logger.debug('Opened image from stream, going to crop it s')
             img = Image.open(content)
             cropped = img.crop(cropping_data)

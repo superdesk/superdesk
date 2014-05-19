@@ -1,6 +1,7 @@
 """Superdesk Users"""
 
 import superdesk
+import base64
 
 
 class EmptyUsernameException(Exception):
@@ -42,9 +43,14 @@ def get_display_name(user):
 def on_read_users(data, docs):
     """Set default fields for users"""
     for doc in docs:
-
         doc.setdefault('display_name', get_display_name(doc))
-
+        if doc.get('upload_id'):
+            upload_id = doc.get('upload_id')
+            upload = superdesk.app.data.find_one('upload', _id=upload_id)
+            media_file = superdesk.app.media.get(upload.get('media'))
+            media_content = base64.encodestring(media_file.read())
+            picture_url = 'data:' + media_file.content_type + ';base64,' + media_content.decode('utf-8')
+            doc['picture_url'] = picture_url
         if doc.get('password'):
             del doc['password']
 
@@ -118,6 +124,9 @@ superdesk.domain('users', {
         'picture_url': {
             'type': 'string'
         },
+        'upload_id': {
+            'type': 'string'
+        },
         'role': {
             'type': 'objectid',
             'data_relation': {
@@ -133,6 +142,7 @@ superdesk.domain('users', {
         'email',
         'user_info',
         'picture_url',
+        'upload_id',
     ],
     'datasource': {
         'projection': {
@@ -143,6 +153,7 @@ superdesk.domain('users', {
             'email': 1,
             'user_info': 1,
             'picture_url': 1,
+            'upload_id': 1,
             'role': 1,
             '_created': 1,
             '_updated': 1,
