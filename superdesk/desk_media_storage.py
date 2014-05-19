@@ -18,7 +18,6 @@ class SuperdeskGridFSMediaStorage(GridFSMediaStorage):
         logger.debug('Getting media file with id= %s' % _id)
         return super().get(_id)
 
-    # content is class werkzeug.datastructures.FileStorage(stream=None, filename=None, name=None, content_type=None, content_length=None, headers=None)¶
     def put(self, content, filename=None, content_type=None):
         file_name = content.filename
         logger.debug('Going to save media file with %s ' % file_name)
