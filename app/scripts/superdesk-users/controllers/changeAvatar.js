@@ -43,10 +43,9 @@ define(['angular'], function(angular) {
                     return;
                 }
                 if ($scope.locals.data.Id === session.identity.Id) {
-                    session.updateIdentity({upload_id: response.data._id});
+                    session.updateIdentity({picture_url: response.data.data_uri_url});
                 }
-                $scope.locals.data.upload_id = response.data._id;
-                var picture_url = 'data:' + response.data.media.content_type + ';base64,' + response.data.media.file;
+                var picture_url = response.data.data_uri_url;
                 $scope.locals.data.picture_url = picture_url;
 
                 return $scope.resolve(picture_url);
