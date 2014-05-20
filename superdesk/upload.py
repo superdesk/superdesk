@@ -2,7 +2,6 @@
 
 import superdesk
 from flask import url_for, Response
-import base64
 
 bp = superdesk.Blueprint('upload', __name__)
 
@@ -11,9 +10,7 @@ bp = superdesk.Blueprint('upload', __name__)
 def get_upload_as_data_uri(upload_id):
     upload = superdesk.app.data.find_one('upload', _id=upload_id)
     media_file = superdesk.app.media.get(upload.get('media'))
-    media_content = base64.encodestring(media_file.read())
-    file_as_data_uri = 'data:' + media_file.content_type + ';base64,' + media_content.decode('utf-8')
-    return Response(file_as_data_uri, mimetype=media_file.content_type)
+    return Response(media_file.read(), mimetype=media_file.content_type)
 
 
 def on_read_upload(data, docs):
