@@ -7,6 +7,8 @@ URL_PREFIX = os.environ.get('SUPERDESK_URL_PREFIX', '')
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S+0000'
 BANDWIDTH_SAVER = False
 
+CACHE_CONTROL = 'max-age=0, no-cache'
+
 XML = False
 
 X_DOMAINS = '*'
