@@ -327,7 +327,7 @@ def step_impl_we_fetch_data_uri(context):
     response = context.client.get(context.fetched_data['data_uri_url'], headers=headers)
     assert_200(response)
     assert len(response.get_data()), response
-    assert response.mimetype == 'text/html', response.mimetype
+    assert response.mimetype == 'image/jpeg', response.mimetype
 
 
 @then('we get a picture url')
