@@ -45,7 +45,6 @@ def on_read_users(data, docs):
         doc.setdefault('display_name', get_display_name(doc))
         if doc.get('password'):
             del doc['password']
-        print(doc)
 
 
 class CreateUserCommand(superdesk.Command):
