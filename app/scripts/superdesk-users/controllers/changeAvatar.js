@@ -37,22 +37,24 @@ define(['lodash'], function(lodash) {
                 return;
             }
 
-            return upload.start({
-                url: urls.item('/upload'),
-                method: 'POST',
-                data: form
-            }).then(function(response) {
+            return urls.resource('upload').then(function(uploadUrl) {
+                return upload.start({
+                    url: uploadUrl,
+                    method: 'POST',
+                    data: form
+                }).then(function(response) {
 
-                if (response.data._status === 'ERR'){
-                    return;
-                }
+                    if (response.data._status === 'ERR'){
+                        return;
+                    }
 
-                var picture_url = response.data.data_uri_url;
-                $scope.locals.data.picture_url = picture_url;
+                    var picture_url = response.data.data_uri_url;
+                    $scope.locals.data.picture_url = picture_url;
 
-                return $scope.resolve(picture_url);
-            }, null, function(update) {
-                $scope.progress.width = Math.round(update.loaded / update.total * 100.0);
+                    return $scope.resolve(picture_url);
+                }, null, function(update) {
+                    $scope.progress.width = Math.round(update.loaded / update.total * 100.0);
+                });
             });
         };
     }
