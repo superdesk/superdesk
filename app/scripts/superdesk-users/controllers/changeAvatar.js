@@ -1,21 +1,8 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    function getJson(data) {
-        return new Blob([angular.toJson(data)], {type: 'application/json'});
-    }
-
-    function getCords(c) {
-        return {
-            CropLeft: Math.round(Math.min(c.x, c.x2)),
-            CropRight: Math.round(Math.max(c.x, c.x2)),
-            CropTop: Math.round(Math.max(c.y, c.y2)),
-            CropBottom: Math.round(Math.min(c.y, c.y2))
-        };
-    }
-
-    ChangeAvatarController.$inject = ['$scope', 'upload', 'session'];
-    function ChangeAvatarController($scope, upload, session) {
+    ChangeAvatarController.$inject = ['$scope', 'upload', 'session', 'urls'];
+    function ChangeAvatarController($scope, upload, session, urls) {
 
         $scope.methods = [
             {id: 'upload', label: gettext('Upload from computer')},
@@ -32,31 +19,36 @@ define(['angular'], function(angular) {
         $scope.activate($scope.methods[0]);
 
         $scope.upload = function(config) {
-            var form = {},
-                data = getCords(config.cords);
+            var form = {};
+            form.CropLeft = Math.round(Math.min(config.cords.x, config.cords.x2));
+            form.CropRight = Math.round(Math.max(config.cords.x, config.cords.x2));
+            form.CropTop = Math.round(Math.min(config.cords.y, config.cords.y2));
+            form.CropBottom = Math.round(Math.max(config.cords.y, config.cords.y2));
 
             if (config.img) {
-                form.model = getJson(data);
-                form.file = config.img;
+                form.media = config.img;
             } else if (config.url) {
-                data.URL = config.url;
-                form.model = getJson(data);
+                form.URL = config.url;
             } else {
                 return;
             }
 
             return upload.start({
-                url: $scope.locals.data.UserAvatar.href,
-                method: 'PUT',
-                data: form,
-                headers: {'X-Filter': 'Avatar.*'}
+                url: urls.item('/upload'),
+                method: 'POST',
+                data: form
             }).then(function(response) {
 
-                if ($scope.locals.data.Id === session.identity.Id) {
-                    session.updateIdentity({Avatar: response.data.Avatar});
+                if (response.data._status === 'ERR'){
+                    return;
                 }
+                if ($scope.locals.data.Id === session.identity.Id) {
+                    session.updateIdentity({picture_url: response.data.data_uri_url});
+                }
+                var picture_url = response.data.data_uri_url;
+                $scope.locals.data.picture_url = picture_url;
 
-                return $scope.resolve(response.data.Avatar);
+                return $scope.resolve(picture_url);
             }, null, function(update) {
                 $scope.progress.width = Math.round(update.loaded / update.total * 100.0);
             });
