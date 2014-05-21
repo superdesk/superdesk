@@ -119,8 +119,8 @@ define(['angular', 'require'], function(angular, require) {
                             $location.search('urgency_min', urgency_norm.min);
                             $location.search('urgency_max', urgency_norm.max);
                         } else {
-                            $location.search('urgency_min',null);
-                            $location.search('urgency_max',null)
+                            $location.search('urgency_min', null);
+                            $location.search('urgency_max', null);
                         }
                     }
 
