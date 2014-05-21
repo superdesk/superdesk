@@ -18,8 +18,8 @@
                     <li>
                         <div class="lbl" translate>Urgency</div>
                         <div class="data urgency-data" sd-filter-urgency>
-                            <slider floor="1" ceiling="5" precision="0" ng-model-low="urgency.from" ng-model-high="urgency.to" class="sd-slider urgency-slider"></slider>
-                            <div class="urgency-range">{{urgency.from}} - {{urgency.to}}</div>
+                            <slider floor="1" ceiling="5" precision="0" ng-model-low="urgency.min" ng-model-high="urgency.max" class="sd-slider urgency-slider"></slider>
+                            <div class="urgency-range">{{urgency.min}} - {{urgency.max}}</div>
                         </div>
                     </li>
                     <li class="sublist">

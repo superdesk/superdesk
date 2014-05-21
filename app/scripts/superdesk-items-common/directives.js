@@ -104,19 +104,23 @@ define(['angular', 'require'], function(angular, require) {
                 link: function($scope, element, attrs) {
 
                     $scope.urgency = {
-                        from: 1,
-                        to: 5
+                        min: $location.search().urgency_min || 1,
+                        max: $location.search().urgency_max || 5
                     };
 
                     function handleUrgency(urgency) {
-                        var ufrom = Math.round(urgency.from);
-                        var uto = Math.round(urgency.to);
-                        if (ufrom !== 1 || uto !== 5) {
+                        var min = Math.round(urgency.min);
+                        var max = Math.round(urgency.max);
+                        if (min !== 1 || max !== 5) {
                             var urgency_norm = {
-                                from: ufrom,
-                                to: uto
+                                min: min,
+                                max: max
                             };
-                            $location.search('urgency', JSON.stringify(urgency_norm));
+                            $location.search('urgency_min', urgency_norm.min);
+                            $location.search('urgency_max', urgency_norm.max);
+                        } else {
+                            $location.search('urgency_min',null);
+                            $location.search('urgency_max',null)
                         }
                     }
 
