@@ -191,7 +191,16 @@ def step_impl_when_get(context):
 @when('we upload a binary file')
 def step_impl_when_upload(context):
     with open(get_fixture_path('flower.jpg'), 'rb') as f:
-        data = {'media': f, 'name': 'some flower'}
+        data = {'media': f}
+        headers = [('Content-Type', 'multipart/form-data')]
+        headers.append(context.headers[1])
+        context.response = context.client.post('/upload', data=data, headers=headers)
+
+
+@when('we upload a binary file with cropping')
+def step_impl_when_upload_with_crop(context):
+    with open(get_fixture_path('flower.jpg'), 'rb') as f:
+        data = {'media': f, 'CropTop': 0, 'CropLeft': 0, 'CropBottom': 333, 'CropRight': 333}
         headers = [('Content-Type', 'multipart/form-data')]
         headers.append(context.headers[1])
         context.response = context.client.post('/upload', data=data, headers=headers)
@@ -291,6 +300,7 @@ def step_impl_then_get_action(context):
 def step_impl_then_get_file(context):
     assert_200(context.response)
     data = get_json_data(context.response)
+    assert data['data_uri_url']
     url = '/upload/%s' % data['_id']
     headers = [('Accept', 'application/json')]
     headers += context.headers
@@ -298,6 +308,26 @@ def step_impl_then_get_file(context):
     assert_200(response)
     assert len(response.get_data()), response
     assert response.mimetype == 'application/json', response.mimetype
+    fetched_data = get_json_data(context.response)
+    print(fetched_data)
+    assert fetched_data['data_uri_url']
+    assert fetched_data['media']['content_type'] == 'image/jpeg', fetched_data['media']['content-type']
+    context.fetched_data = fetched_data
+
+
+@then('we get cropped data')
+def step_impl_then_get_cropped_file(context):
+    assert context.fetched_data['media']['length'] == 12656, 12656
+
+
+@then('we can fetch a data_uri')
+def step_impl_we_fetch_data_uri(context):
+    headers = [('Accept', 'application/json')]
+    headers += context.headers
+    response = context.client.get(context.fetched_data['data_uri_url'], headers=headers)
+    assert_200(response)
+    assert len(response.get_data()), response
+    assert response.mimetype == 'image/jpeg', response.mimetype
 
 
 @then('we get a picture url')

@@ -4,9 +4,9 @@ import settings
 import superdesk
 from superdesk import signals
 from eve.io.mongo import MongoJSONEncoder
-from eve.io.mongo.media import GridFSMediaStorage
 from superdesk.auth import SuperdeskTokenAuth
 from superdesk.validator import SuperdeskValidator
+from superdesk.desk_media_storage import SuperdeskGridFSMediaStorage
 from eve.render import send_response
 
 
@@ -36,7 +36,7 @@ def get_app(config=None):
     app = SuperdeskEve(
         data=superdesk.SuperdeskDataLayer,
         auth=SuperdeskTokenAuth,
-        media=GridFSMediaStorage,
+        media=SuperdeskGridFSMediaStorage,
         settings=config,
         json_encoder=MongoJSONEncoder,
         validator=SuperdeskValidator)

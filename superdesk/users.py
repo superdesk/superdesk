@@ -42,9 +42,7 @@ def get_display_name(user):
 def on_read_users(data, docs):
     """Set default fields for users"""
     for doc in docs:
-
         doc.setdefault('display_name', get_display_name(doc))
-
         if doc.get('password'):
             del doc['password']
 
@@ -116,7 +114,7 @@ superdesk.domain('users', {
             'type': 'dict'
         },
         'picture_url': {
-            'type': 'string'
+            'type': 'string',
         },
         'role': {
             'type': 'objectid',

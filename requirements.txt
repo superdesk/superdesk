@@ -9,6 +9,7 @@ Flask-Script==2.0.3
 Jinja2==2.7.2
 MarkupSafe==0.21
 Werkzeug==0.9.4
+Pillow==2.4.0
 arrow==0.4.2
 behave==1.2.4
 blinker==1.3
