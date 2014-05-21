@@ -98,8 +98,8 @@ define([
                 }
             };
         }])
-        .directive('sdUserEdit', ['gettext', 'notify', 'api', '$location', '$route', 'superdesk',
-        function(gettext, notify, api, $location, $route, superdesk) {
+        .directive('sdUserEdit', ['gettext', 'notify', 'api', 'session', '$location', '$route', 'superdesk',
+        function(gettext, notify, api, session, $location, $route, superdesk) {
 
             var USERNAME_REGEXP = /^[A-Za-z0-9_.'-]+$/;
             var PHONE_REGEXP = /^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$/;
@@ -150,6 +150,11 @@ define([
                             notify.pop();
                             notify.success(gettext('user saved.'));
                             scope.onsave({user: scope.origUser});
+
+                            if (scope.user._id === session.identity._id) {
+                                session.updateIdentity(scope.user);
+                            }
+
                         }, function(response) {
                             notify.pop();
                             if (response.status === 404) {

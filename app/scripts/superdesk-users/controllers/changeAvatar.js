@@ -1,14 +1,18 @@
-define(['angular'], function(angular) {
+define(['lodash'], function(lodash) {
     'use strict';
 
-    ChangeAvatarController.$inject = ['$scope', 'upload', 'session', 'urls'];
-    function ChangeAvatarController($scope, upload, session, urls) {
+    ChangeAvatarController.$inject = ['$scope', 'upload', 'session', 'urls', 'betaService'];
+    function ChangeAvatarController($scope, upload, session, urls, beta) {
 
         $scope.methods = [
             {id: 'upload', label: gettext('Upload from computer')},
-            {id: 'camera', label: gettext('Take a picture')},
-            {id: 'web', label: gettext('Use a Web URL')}
+            {id: 'camera', label: gettext('Take a picture'), beta: true},
+            {id: 'web', label: gettext('Use a Web URL'), beta: true}
         ];
+
+        if (!beta.isBeta()) {
+            $scope.methods = _.reject($scope.methods, {beta: true});
+        }
 
         $scope.activate = function(method) {
             $scope.active = method;
@@ -42,9 +46,7 @@ define(['angular'], function(angular) {
                 if (response.data._status === 'ERR'){
                     return;
                 }
-                if ($scope.locals.data.Id === session.identity.Id) {
-                    session.updateIdentity({picture_url: response.data.data_uri_url});
-                }
+
                 var picture_url = response.data.data_uri_url;
                 $scope.locals.data.picture_url = picture_url;
 
