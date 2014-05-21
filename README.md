@@ -18,6 +18,10 @@ Using virtualenv is recommended for installing python dependencies.
 $ pip install -r requirements.txt
 ```
 
+### External libs
+
+- [image manipulation](http://pillow.readthedocs.org/en/latest/installation.html#external-libraries)
+
 ## Unit Testing
 
 ```sh
