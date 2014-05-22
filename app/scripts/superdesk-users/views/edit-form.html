@@ -1,4 +1,4 @@
-<div class="user-profile-edit">
+<div>
 <form name="userForm" ng-submit="userForm.$valid && save()">
 
   <div>
@@ -15,7 +15,7 @@
         <a href="" class="change-photo" ng-click="editPicture()" translate>Change Photo</a>
     </div>
 
-    <div class="profile-info user-profile-edit">
+    <div class="profile-info editmode">
         <div class="header-info">
             <h2>{{ user.display_name }}</h2>
             <h5>{{ user.username }}</h5>
