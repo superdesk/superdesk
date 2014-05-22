@@ -16,12 +16,12 @@ def get_upload_as_data_uri(upload_id):
 def on_read_upload(data, docs):
     for doc in docs:
         upload_id = doc['_id']
-        doc['data_uri_url'] = url_for('upload.get_upload_as_data_uri', upload_id=upload_id, _external=True)
+        doc['data_uri_url'] = url_for('upload.get_upload_as_data_uri', upload_id=upload_id)
 
 
 def on_upload_created(data, docs):
     for doc in docs:
-        doc['data_uri_url'] = url_for('upload.get_upload_as_data_uri', upload_id=doc['_id'], _external=True)
+        doc['data_uri_url'] = url_for('upload.get_upload_as_data_uri', upload_id=doc['_id'])
 
 
 superdesk.connect('read:upload', on_read_upload)
