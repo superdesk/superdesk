@@ -1,7 +1,7 @@
 <div class="subnav subnav-fixed" sd-workflow>
 
     <div class="button-stack right-stack">
-    	<a class="navbtn navbtn-info" href="" ng-click="openUpload()">
+        <a class="navbtn navbtn-info" href="" ng-if="openUpload" ng-click="openUpload()">
             <i class="svg-icon-add inverse"></i> <span class="title" translate>Add media</span>
         </a>
     </div>
@@ -39,39 +39,39 @@
     </div>
 
     <div class="preview-layout" ng-class="{'hidetop' : !beta}">
-    	<div class="archive-content-inner list-pane {{ view }}-view" sd-shadow>
+        <div class="archive-content-inner list-pane {{ view }}-view" sd-shadow>
 
-    		<div class="newest-items" ng-show="createdMedia.items.length">
-    			<span translate>Recently added media</span>
-	    		<div ng-if="view !== 'stats'"
-		            sd-list-view
-		            data-items="createdMedia.items"
-		            data-select="preview(item)"
-		            data-extras="{view: view}">
-		            <div sd-media-box></div>
-		        </div>
-		    </div>
+            <div class="newest-items" ng-show="createdMedia.items.length">
+                <span translate>Recently added media</span>
+                <div ng-if="view !== 'stats'"
+                    sd-list-view
+                    data-items="createdMedia.items"
+                    data-select="preview(item)"
+                    data-extras="{view: view}">
+                    <div sd-media-box></div>
+                </div>
+            </div>
 
-    		<div ng-if="view !== 'stats'"
-	            sd-list-view
-	            data-items="items._items"
-	            data-select="preview(item)"
-	            data-extras="{view: view}">
-	            <div sd-media-box></div>
-	        </div>
-    	</div>
+            <div ng-if="view !== 'stats'"
+                sd-list-view
+                data-items="items._items"
+                data-select="preview(item)"
+                data-extras="{view: view}">
+                <div sd-media-box></div>
+            </div>
+        </div>
         
 
 
         <div class="preview-pane item-preview">
             <div class="actions" ng-if="selected.preview">
-            	<a ng-click="preview(null)" class="action">
-            		<i class="icon-close-small"></i>
-					<i class="icon-close-small icon-white"></i>
-            	</a>
+                <a ng-click="preview(null)" class="action">
+                    <i class="icon-close-small"></i>
+                    <i class="icon-close-small icon-white"></i>
+                </a>
                 <a ng-click="display(selected.preview)" class="action preview">
-                	<i class="icon-fullscreen"></i>
-                	<i class="icon-fullscreen icon-white"></i>
+                    <i class="icon-fullscreen"></i>
+                    <i class="icon-fullscreen icon-white"></i>
                 </a>
             </div>
             

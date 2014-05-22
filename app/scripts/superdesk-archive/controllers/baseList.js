@@ -1,13 +1,12 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    ArchiveListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'es'];
-    function ArchiveListController($scope, $location, superdesk, api, es) {
+    BaseListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'es'];
+    function BaseListController($scope, $location, superdesk, api, es) {
+        var self = this;
+
         $scope.view = 'mgrid';
         $scope.selected = {};
-        $scope.createdMedia = {
-            items: []
-        };
 
         $scope.preview = function(item) {
             $scope.selected.preview = item;
@@ -17,21 +16,14 @@ define(['lodash'], function(_) {
             $scope.selected.view = item;
         };
 
-        $scope.openUpload = function() {
-            superdesk.intent('upload', 'media').then(function(items) {
-                // todo: put somewhere else
-                $scope.createdMedia.items.unshift.apply($scope.createdMedia.items, items);
-            });
-        };
-
         $scope.$watchCollection(function() {
             return $location.search();
         }, function(search) {
-            var query = getQuery(search);
-            fetchItems({source: query});
+            var query = self.getQuery(search);
+            self.fetchItems({source: query});
         });
 
-        function buildFilters(params) {
+        this.buildFilters = function(params) {
             var filters = [];
 
             if (params.before || params.after) {
@@ -69,24 +61,19 @@ define(['lodash'], function(_) {
             }
 
             return filters;
-        }
+        };
 
-        function getQuery(params) {
-            var filters = buildFilters(params);
+        this.getQuery = function(params) {
+            var filters = this.buildFilters(params);
             var query = es(params, filters);
             query.sort = [{versioncreated: 'desc'}];
             return query;
-        }
+        };
 
-        function fetchItems(criteria) {
-            api.archive.query(criteria).then(function(items) {
-                $scope.items = items;
-                $scope.createdMedia = {
-                    items: []
-                };
-            });
-        }
+        this.fetchItems = function(criteria) {
+            console.log('no api defined');
+        };
     }
 
-    return ArchiveListController;
+    return BaseListController;
 });

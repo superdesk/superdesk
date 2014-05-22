@@ -1,7 +1,76 @@
-define(['angular', 'require'], function(angular, require) {
+define([
+    'lodash',
+    'angular',
+    'require'
+], function(_, angular, require) {
     'use strict';
 
-    angular.module('superdesk.items-common.directives', [])
+    return angular.module('superdesk.ingest.directives', [])
+        .directive('sdInlineMeta', function() {
+            return {
+                templateUrl: require.toUrl('./views/inline-meta.html'),
+                scope: {
+                    'placeholder': '@',
+                    'showmeta': '=',
+                    'item': '=',
+                    'setmeta': '&'
+                }
+            };
+        })
+        .directive('sdMediaPreview', [function() {
+            return {
+                replace: true,
+                templateUrl: require.toUrl('./views/preview.html'),
+                scope: {item: '='}
+            };
+        }])
+        .directive('sdMediaView', ['keyboardManager', function(keyboardManager) {
+            return {
+                replace: true,
+                templateUrl: require.toUrl('./views/media-view.html'),
+                scope: {
+                    items: '=',
+                    item: '='
+                },
+                link: function(scope, elem) {
+                    scope.prevEnabled = true;
+                    scope.nextEnabled = true;
+
+                    var getIndex = function(item) {
+                        return _.findIndex(scope.items, item);
+                    };
+
+                    var setItem = function(item) {
+                        scope.item = item;
+                        var index = getIndex(scope.item);
+                        scope.prevEnabled = !!scope.items[index - 1];
+                        scope.nextEnabled = !!scope.items[index + 1];
+                    };
+
+                    scope.prev = function() {
+                        var index = getIndex(scope.item);
+                        if (index > 0) {
+                            setItem(scope.items[index - 1]);
+                        }
+                    };
+                    scope.next = function() {
+                        var index = getIndex(scope.item);
+                        if (index !== -1 && index < scope.items.length - 1) {
+                            setItem(scope.items[index + 1]);
+                        }
+                    };
+
+                    keyboardManager.push('left', scope.prev);
+                    keyboardManager.push('right', scope.next);
+                    scope.$on('$destroy', function() {
+                        keyboardManager.pop('left');
+                        keyboardManager.pop('right');
+                    });
+
+                    setItem(scope.item);
+                }
+            };
+        }])
         .directive('sdSidebarLayout', ['$location', '$filter', function($location, $filter) {
             return {
                 transclude: true,
@@ -203,5 +272,18 @@ define(['angular', 'require'], function(angular, require) {
                     };
                 }
             };
-        }]);
+        }])
+        .directive('sdGridLayout', function() {
+            return {
+                templateUrl: 'scripts/superdesk-items-common/views/grid-layout.html',
+                scope: {items: '='},
+                link: function(scope, elem, attrs) {
+                    scope.view = 'mgrid';
+
+                    scope.preview = function(item) {
+                        scope.previewItem = item;
+                    };
+                }
+            };
+        });
 });

@@ -1,8 +1,8 @@
 <div ng-controller="IngestController">
     <div class="ingest-list"
         sd-list-view
-        data-adapter="items"
-        data-select="preview(item)"
+        data-items="items._items"
+        data-select="view(item)"
         data-extras="widget">
         <div class="urgency-{{ item.urgency}}">
             <ul class="top-line clearfix">

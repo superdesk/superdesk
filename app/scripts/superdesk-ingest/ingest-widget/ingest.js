@@ -15,27 +15,30 @@ define([
                     max_sizey: 2,
                     sizex: 1,
                     sizey: 2,
-                    thumbnail: require.toUrl('./thumbnail.png'),
-                    template: require.toUrl('./widget-ingest.html'),
-                    configurationTemplate: require.toUrl('./configuration.html'),
+                    thumbnail: require.toUrl('./superdesk-ingest/ingest-widget/thumbnail.png'),
+                    template: require.toUrl('./superdesk-ingest/ingest-widget/widget-ingest.html'),
+                    configurationTemplate: require.toUrl('./superdesk-ingest/ingest-widget/configuration.html'),
                     configuration: {maxItems: 10, provider: 'all', search: '', updateInterval: 5},
                     description: 'Ingest widget'
                 });
         }])
-        .controller('IngestController', ['$scope', '$timeout', 'superdesk',
-        function ($scope, $timeout, superdesk) {
+        .controller('IngestController', ['$scope', '$timeout', 'superdesk', 'api', 'es',
+        function ($scope, $timeout, superdesk, api, es) {
             var timeoutId;
 
-            $scope.items = superdesk.data('ingest');
-
             function refresh(config) {
-                var criteria = {
-                    sort: ['versioncreated', 'desc'],
-                    max_results: config.maxItems,
-                    q: config.search !== '' ? config.search : null
+                var params = {
+                    q: config.search || undefined,
+                    size: config.maxItems
                 };
+                var filters = [];
+                if (config.provider && config.provider !== 'all') {
+                    filters.push({term: {provider: config.provider}});
+                }
+                var criteria = es(params, filters);
 
-                $scope.items.query(criteria).then(function() {
+                api.ingest.query({source: criteria}).then(function(items) {
+                    $scope.items = items;
                     timeoutId = $timeout(function() {
                         refresh(config);
                     }, config.updateInterval * 1000 * 60);
@@ -52,18 +55,17 @@ define([
                 }
             }, true);
 
-            $scope.preview = function(item) {
-                superdesk.intent(superdesk.ACTION_PREVIEW, 'ingest', item);
+            $scope.view = function(item) {
+                //superdesk.intent(superdesk.ACTION_VIEW, 'ingest', item);
             };
 
             $scope.$on('$destroy', function() {
                 $timeout.cancel(timeoutId);
             });
         }])
-        .controller('IngestConfigController', ['$scope', 'superdesk',
-        function ($scope, superdesk) {
-            var ingest = superdesk.data('ingest');
-            ingest.query({max_results: 0}).then(function(items) {
+        .controller('IngestConfigController', ['$scope', 'superdesk', 'api',
+        function ($scope, superdesk, api) {
+            api.ingest.query({source: {size: 0}}).then(function(items) {
                 $scope.availableProviders = ['all'].concat(_.pluck(items._facets.provider.terms, 'term'));
             });
 
