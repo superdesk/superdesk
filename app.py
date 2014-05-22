@@ -46,7 +46,8 @@ def get_app(config=None):
     app.on_inserted = signals.proxy_resource_signal('created', app)
 
     for blueprint in superdesk.BLUEPRINTS:
-        app.register_blueprint(blueprint, **blueprint.kwargs)
+        prefix = app.api_prefix or None
+        app.register_blueprint(blueprint, url_prefix=prefix)
 
     @app.errorhandler(superdesk.SuperdeskError)
     def error_handler(error):
