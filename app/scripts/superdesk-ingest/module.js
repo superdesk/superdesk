@@ -9,6 +9,30 @@ define([
 
     var app = angular.module('superdesk.ingest', ['superdesk.widgets.ingest']);
 
+    app.factory('providerRepository', ['em', function(em) {
+        var repository = em.getRepository('ingest_providers');
+
+        /**
+         * Find all registered providers
+         */
+        repository.findAll = function() {
+            return repository.matching({sort: ['created', 'desc'], max_results: 50});
+        };
+
+        return repository;
+    }]);
+
+    app.value('providerTypes', {
+        aap: {
+            label: 'AAP',
+            templateUrl: require.toUrl('./views/settings/aapConfig.html')
+        },
+        reuters: {
+            label: 'Reuters',
+            templateUrl: require.toUrl('./views/settings/reutersConfig.html')
+        }
+    });
+
     app.config(['superdeskProvider', function(superdesk) {
         superdesk
             .activity('/ingest/', {
