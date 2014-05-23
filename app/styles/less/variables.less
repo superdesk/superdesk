@@ -29,10 +29,11 @@
 @pink:                  #c3325f;
 @purple:                #7a43b6;
 
+@sd-background: 		#f8f8f8;
 
 // Scaffolding
 // -------------------------
-@bodyBackground:        @grayLighter; 
+@bodyBackground:        @sd-background; 
 @textColor:             @grayDark;
 
 
@@ -149,18 +150,6 @@
 @navbarLinkBackgroundHover:       transparent;
 @navbarLinkBackgroundActive:      @navbarBackground;
 
-@navbarSearchBackground:          lighten(@navbarBackground, 25%);
-@navbarSearchBackgroundFocus:     @white;
-@navbarSearchBorder:              darken(@navbarSearchBackground, 30%);
-@navbarSearchPlaceholderColor:    #ccc;
-
-
-// Hero unit
-// -------------------------
-@heroUnitBackground:              @white;
-@heroUnitHeadingColor:            inherit;
-@heroUnitLeadColor:               inherit;
-
 
 // Form states and alerts
 // -------------------------
@@ -182,31 +171,13 @@
 
 
 
-
-// GRID
-// --------------------------------------------------
-
-// Default 940px grid
-// -------------------------
-@gridColumns:             12;
-@gridColumnWidth:         60px;
-@gridGutterWidth:         20px;
-@gridRowWidth:            (@gridColumns * @gridColumnWidth) + (@gridGutterWidth * (@gridColumns - 1));
-
-
-// Fluid grid
-// -------------------------
-@fluidGridColumnWidth:    6.382978723%;
-@fluidGridGutterWidth:    2.127659574%;
-
-
 // Superdesk special vars
 // --------------------------------------------------
 @sf-main-menu-width : 300px;
 
 // Theme
 // -------------------------
-@background-main: #f8f8f8;
+@background-main: @bodyBackground;
 
 
 // Positioning

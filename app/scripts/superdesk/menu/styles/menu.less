@@ -1,0 +1,285 @@
+// menu.less
+// Styling for the superdesk top menu and sidebar main menu
+// ----------------------------------------------------------------------------------------
+@import 'variables.less';
+@import 'mixins.less';
+
+
+/*
+====================================================
+  Navbar
+====================================================
+*/
+.navbar {
+
+  .nav.pull-right li > a {
+    color: #fff;
+    font-size: 12px;
+    &.user-profile {
+      position: relative;
+      background-size: 23px;
+      .text-semibold();
+      .avatar {
+        width: 22px;
+        height: 22px;
+        float: left;
+        margin-right: 10px;
+      }
+      .notifications-count {
+        position: absolute;
+        width: 21px;
+        height: 13px;
+        background: #4aa8eb;
+        .border-radius(5px);
+        line-height: 13px;
+        text-align: center;
+        left: -4px;
+        top: 4px;
+        font-size: 10px;
+      }
+    }
+  }
+  
+  //feature-preview button
+  .version {
+    height: 10px;
+    font-size: 10px;
+    padding: 2px 5px;
+    margin-right: 20px;
+    .border-radius(2px);
+    &.stable {
+      background: #111;
+      color: #777;
+    }
+    &.beta {
+      background: #009360;
+      color: #fff;
+    }
+  }
+}
+
+.navbar-fixed-top {
+  .transition( all 0.3s ease);
+  &.sf-menu-open {
+    left: @sf-main-menu-width !important;
+    right: 0 !important;
+  }
+}
+
+// 
+.sf-top-menu {
+  .container {
+    margin: 0 !important;
+  }
+  .navigation-header {
+    float: left;
+    height: 40px;
+    overflow:hidden;
+  }
+  .collapse-navigation {
+    width: 48px;
+    height: 40px;
+    display: block;
+    float: left;
+    border-right: 1px solid #323232 !important;
+    .gradientBar(#262626, #1a1a1a);
+    .box-shadow(inset -2px 0 4px -4px #000);
+    i.icon-collapse {
+      height: 15px;
+      width: 17px;
+      margin-top: 12px;
+      margin-left:16px;
+      background: url(../../images/sf-menu-collapse.png) no-repeat 0 0;
+    }
+    &:hover {
+      background: #101010;
+      cursor: pointer;
+    }
+  }
+  .navigation-selected {
+    height: 40px;
+    display: block;
+    float: left;
+    line-height: 39px;
+    font-size: 15px;
+    color: #a1a1a1;
+    text-shadow: 0 -1px #101010;
+    font-weight: bold;
+    padding: 0 20px;
+    background: #202020;
+    margin-right: 30px;
+    &:after {
+      content: " ";
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      background: #202020;
+      border-right: 1px solid #404040;
+      border-top: 1px solid #353535;
+      transform: rotate(45deg) translate(9px);
+      -webkit-transform: rotate(45deg) translate(9px);
+      -ms-transform: rotate(45deg) translate(9px);
+      -moz-transform: rotate(45deg) translate(9px);
+      .box-shadow-both(inset -1px 0px 0px 0px #181818, 0px -2px 0 -1px #181818); 
+    }
+  }
+}
+
+.sf-main-menu {
+  position: fixed;
+  top: 0;
+  left:0;
+  bottom: 0;
+  width: @sf-main-menu-width;
+  background: #272727;
+  .user-select(none);
+  .box-shadow(inset -5px 0 6px -0px #181818);
+  .sf-menu-header-bar {
+    height: 40px;
+    width: 100%;
+    .gradientBar(#262626, #1a1a1a);
+    .box-sizing(border-box);
+    .box-shadow-both(inset -13px 0px 10px -10px #070707, 0 2px 3px 0px #202020);
+    border-bottom: 1px solid #121212;
+  }
+  .sf-menu-content {
+    position: absolute;
+    bottom: 100px;
+    left:0; right: 0;
+    top:40px;
+    .box-sizing(border-box);
+    overflow: auto;
+    > ul {
+      list-style-type: none;
+      margin:0;
+      padding: 0;
+      > li {
+        > a {
+          .user-select(none);
+          display: block;
+          position: relative;
+          height: 100%;
+          .box-sizing(border-box);
+          border-bottom:1px solid #353535;
+          border-top: 1px solid #272727; //fake border - same as bg
+          .box-shadow(inset 0 -1px 0px 0px #1b1b1b);
+          padding-left: 30px;
+          height: 37px;
+          line-height: 33px;
+          font-size: 14px;
+          color: #f0f0f0;
+          text-decoration: none;
+          text-transform: capitalize;
+          i {
+            position: absolute;
+            top:8px;
+            right:10px;
+            .opacity(30);
+          }
+          &:hover {
+            background: #283032;
+            border-top-color: #283032;
+            color:#3299b7;
+            cursor: pointer;
+          }
+        }
+        ul {
+          display: none;
+        }
+        &.open {
+          > a {
+            border-bottom:1px solid #1b1b1b;
+            .box-shadow(none);
+            i {
+              background-position: -313px -119px;
+            }
+          }
+          ul {
+            display: block;
+            list-style-type: none;
+            margin:0;
+            padding: 0;
+            .box-shadow(inset 0 7px 5px -5px #202020);
+            .user-select(none);
+            li a {
+              color: #9e9e9e;
+              font-size: 13px;
+              line-height: 32px;
+              height: 32px;
+              padding-left: 30px;
+              text-decoration: none;
+              display: block;
+              &:hover {
+                color: #c8c8c8;
+              }
+            }
+          }
+          + li {
+            > a {
+              border-top-color: #353535;
+              .box-shadow-both(inset 0 -1px 0px 0px #1b1b1b,0 -2px 2px 0px #202020);
+            }
+            &.open {
+              > a {
+                .box-shadow(0 -2px 2px 0px #202020);
+              }
+            }
+          }
+        }
+
+        &.active > a {
+          background: #1f1f1f;
+          color:#3299b7;
+        }
+      }
+    }
+  }
+  .sf-menu-footer {
+    position: absolute;
+    height: 100px;
+    .box-sizing(border-box);
+    left:0; right:0; bottom: 0;
+    border-top: 1px solid #1f1f1f;
+    .box-shadow-both(inset 0 1px 0px 0px #353535,0 -2px 3px 0px #232323);
+    text-align: center;
+    .icon-superdesk {
+      background: url(../../images/superdesk-icon.png) no-repeat 0 0;
+      width: 154px;
+      height: 45px;
+      margin-top: 15px;
+    }
+    span {
+      display: block;
+      color: #505050;
+      font-size: 11px;
+      margin-top: 8px;
+    }
+  }
+}
+
+
+
+@media screen and (max-width: 1180px) {
+  .navbar-fixed-top {
+    &.sf-menu-open {
+      left: @sf-main-menu-width !important;
+      right: -@sf-main-menu-width !important;
+    }
+  }
+
+}
+
+@media screen and (max-width: 320px) {
+
+  .sf-main-menu {
+    width:260px;
+  }
+  .navbar-fixed-top {
+    max-height: 40px;
+    overflow: hidden;
+    &.sf-menu-open {
+      left: 260px !important;
+      right: -260px !important;
+    }
+  }
+}
