@@ -8,7 +8,7 @@ BANDWIDTH_SAVER = False
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S+0000'
 
 
-server_url = urlparse(os.environ.get('SUPERDESK_URL', 'http://localhost:5000/api'))
+server_url = urlparse(os.environ.get('SUPERDESK_URL', 'http://localhost:5000'))
 URL_PROTOCOL = server_url.scheme or None
 SERVER_NAME = server_url.netloc or None
 URL_PREFIX = server_url.path.lstrip('/') or ''
