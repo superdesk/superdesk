@@ -99,9 +99,6 @@ schema = {
     'renditions': {
         'type': 'dict'
     },
-    'original': {
-        'type': 'dict'
-    },
     'slugline': {
         'type': 'string'
     },
