@@ -26,10 +26,6 @@ define([
                     return;
                 }
 
-                if (!intent.action) {
-                    console.error('No action set for intent in \'' + elem[0].outerHTML + '\'');
-                }
-
                 scope.activities = superdesk.findActivities(intent);
             }
         };

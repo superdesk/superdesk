@@ -136,8 +136,15 @@ define([
                  * Find all available activities for given intent
                  */
                 findActivities: function(intent) {
+                    var criteria = {};
+                    if (intent.action) {
+                        criteria.action = intent.action;
+                    }
+                    if (intent.type) {
+                        criteria.type = intent.type;
+                    }
                     return _.filter(this.activities, function(activity) {
-                        return _.find(activity.filters, {action: intent.action, type: intent.type});
+                        return _.find(activity.filters, criteria);
                     });
                 },
 

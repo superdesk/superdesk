@@ -31,6 +31,6 @@
 
     <div class="item-right list-field">
         <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>
-        <div class="item-functions" sd-activity-list data-data="item" data-action="list"></div>
+        <div class="item-functions" sd-activity-list data-data="{item: item, list: items, index: $index}" data-type="{{extras.type}}"></div>
     </div>
 </div>

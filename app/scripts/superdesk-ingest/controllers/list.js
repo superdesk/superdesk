@@ -8,6 +8,8 @@ define([
     function IngestListController($scope, $injector, api) {
         $injector.invoke(BaseListController, this, {$scope: $scope});
 
+        $scope.type = 'ingest';
+
         this.fetchItems = function(criteria) {
             api.ingest.query(criteria).then(function(items) {
                 $scope.items = items;

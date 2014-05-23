@@ -12,6 +12,8 @@ define([
             items: []
         };
 
+        $scope.type = 'archive';
+
         $scope.openUpload = function() {
             superdesk.intent('upload', 'media').then(function(items) {
                 // todo: put somewhere else

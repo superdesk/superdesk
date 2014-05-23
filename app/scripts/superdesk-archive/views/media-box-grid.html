@@ -1,4 +1,6 @@
 
+<div class="loading-status" ng-show="!item.archived && item.archiving"></div>
+
 <div sd-item-rendition data-item="item" data-rendition="thumbnail"></div>
 
 <div class="media"  ng-show="item.type == 'text' || item.type == 'composite'">
@@ -30,4 +32,12 @@
      ng-class="{'label-canceled': item.pubstatus=='canceled'}"
      ng-show="item.pubstatus && item.pubstatus!='usable'">
      {{ item.pubstatus | translate }}
+</div>
+
+<div class="action">
+    <ul class="item-functions"
+        sd-activity-list
+        data-data="{item: item, list: items, index: $index}"
+        data-type="{{extras.type}}">
+    </ul>
 </div>

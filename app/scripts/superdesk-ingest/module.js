@@ -24,6 +24,22 @@ define([
                 templateUrl: require.toUrl('./views/settings/settings.html'),
                 controller: require('./controllers/settings'),
                 category: superdesk.MENU_SETTINGS
+            })
+            .activity('archive', {
+                label: gettext('Archive'),
+                icon: 'archive',
+                controller: ['$timeout', 'data', function($timeout, data) {
+                    if (data.item && !data.item.archived) {
+                        data.item.archiving = true;
+                        $timeout(function() {
+                            data.item.archiving = false;
+                            data.item.archived = true;
+                        }, 2000);
+                    }
+                }],
+                filters: [
+                    {action: 'archive', type: 'ingest'}
+                ]
             });
     }]);
 
