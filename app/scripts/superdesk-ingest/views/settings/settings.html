@@ -31,12 +31,12 @@
 
     <div sd-modal-view data-model="provider">
         <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
-            <h3 translate ng-show="provider._id">Edit Provider {{ provider.name }}</h3>
+            <h3 translate ng-show="provider._id">Edit Provider {{ origProvider.name }}</h3>
             <h3 translate ng-hide="provider._id">Add New Provider</h3>
         </div>
 
         <div class="modal-body">
-            <form name="editForm" ng-submit="save(provider)">
+            <form name="editForm" ng-submit="save()">
 
             <div class="control-group">
                 <label for="provider" translate>Provider Type</label>
@@ -56,7 +56,7 @@
 
         <div class="modal-footer">
             <button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
-            <button class="btn btn-primary" ng-click="save(provider)" ng-disabled="!editForm.$valid" translate>Save</button>
+            <button class="btn btn-primary" ng-click="save()" ng-disabled="!editForm.$valid" translate>Save</button>
         </div>
     </div>
 </div>

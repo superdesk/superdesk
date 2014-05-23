@@ -9,19 +9,6 @@ define([
 
     var app = angular.module('superdesk.ingest', ['superdesk.widgets.ingest']);
 
-    app.factory('providerRepository', ['em', function(em) {
-        var repository = em.getRepository('ingest_providers');
-
-        /**
-         * Find all registered providers
-         */
-        repository.findAll = function() {
-            return repository.matching({sort: ['created', 'desc'], max_results: 50});
-        };
-
-        return repository;
-    }]);
-
     app.value('providerTypes', {
         aap: {
             label: 'AAP',
@@ -72,6 +59,12 @@ define([
             type: 'http',
             backend: {
                 rel: 'ingest'
+            }
+        });
+        apiProvider.api('ingestProviders', {
+            type: 'http',
+            backend: {
+                rel: 'ingest_providers'
             }
         });
     }]);
