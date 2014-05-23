@@ -1,9 +1,7 @@
 module.exports = {
     dev: {
         options: {
-            paths: [
-                '<%= appDir %>/styles/less'
-                ],
+            paths: ['<%= appDir %>/styles/less'],
             compress: false,
             cleancss: true
         },
@@ -19,7 +17,7 @@ module.exports = {
     },
     prod: {
         options: {
-            paths: ['<%= appDir %>/styles/less','<%= appDir %>/scripts/superdesk-users/styles'],
+            paths: ['<%= appDir %>/styles/less'],
             compress: true,
             cleancss: true
         },
