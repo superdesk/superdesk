@@ -57,6 +57,9 @@ schema = {
     'type': {
         'type': 'string'
     },
+    'mimetype': {
+        'type': 'string'
+    },
     'version': {
         'type': 'string'
     },
@@ -70,6 +73,9 @@ schema = {
         'type': 'string'
     },
     'copyrightnotice': {
+        'type': 'string'
+    },
+    'usageterms': {
         'type': 'string'
     },
     'language': {
@@ -93,6 +99,9 @@ schema = {
     'renditions': {
         'type': 'dict'
     },
+    'original': {
+        'type': 'dict'
+    },
     'slugline': {
         'type': 'string'
     },
@@ -105,6 +114,9 @@ schema = {
     },
     'firstcreated': {
         'type': 'datetime'
+    },
+    'filemeta': {
+        'type': 'dict'
     },
     'ingest_provider': {
         'type': 'string'
