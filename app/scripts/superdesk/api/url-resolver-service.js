@@ -4,12 +4,7 @@ define([], function() {
     URLResolver.$inject = ['$http', '$q', 'config'];
     function URLResolver($http, $q, config) {
 
-        var links,
-            server,
-            parser = document.createElement('a');
-
-        parser.href = config.server.url;
-        server = parser.protocol + '//' + parser.host;
+        var links;
 
         /**
          * Get url for given resource
@@ -30,7 +25,7 @@ define([], function() {
          * @returns {String}
          */
         this.item = function(item) {
-            return server + item;
+            return item; // noop - items should have full urls now
         };
 
         /**
@@ -52,8 +47,10 @@ define([], function() {
 
                 if (response.status === 200) {
                     _.each(response.data._links.child, function(link) {
-                        links[link.title] = server + link.href;
+                        links[link.title] = link.href;
                     });
+                } else {
+                    $q.reject(response);
                 }
 
                 return links;

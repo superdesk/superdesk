@@ -3,8 +3,8 @@ define(['./url-resolver-service'], function(URLResolver) {
 
     describe('url resolver', function() {
 
-        var SERVER_URL = 'http://localhost',
-            USERS_URL = '/users',
+        var SERVER_URL = 'http://localhost/api',
+            USERS_URL = SERVER_URL + '/users',
             RESOURCES = {_links: {child: [{title: 'users', href: USERS_URL}]}};
 
         beforeEach(module(function($provide) {
@@ -23,11 +23,11 @@ define(['./url-resolver-service'], function(URLResolver) {
             $httpBackend.flush();
             $rootScope.$digest();
 
-            expect(url).toBe(SERVER_URL + USERS_URL);
+            expect(url).toBe(USERS_URL);
         }));
 
         it('can resolve item urls', inject(function(urls) {
-            expect(urls.item('/item')).toBe(SERVER_URL + '/item');
+            expect(urls.item('/item')).toBe('/item');
         }));
     });
 
@@ -45,7 +45,7 @@ define(['./url-resolver-service'], function(URLResolver) {
             $httpBackend.expectGET(SERVER_URL).respond({
                 _links: {
                     child: [
-                        {title: 'users', href: '/api/users'}
+                        {title: 'users', href: SERVER_URL + '/users'}
                     ]
                 }
             });

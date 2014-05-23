@@ -168,7 +168,7 @@ define([
             var userData = {_links: {self: {href: '/user_href'}}, _id: 2, username: 'test', Avatar: {href: 'test'}},
                 user;
 
-            $httpBackend.expectPATCH(SERVER_URL + userData._links.self.href, {username: 'test', Avatar: {href: 'test'}}).respond(200);
+            $httpBackend.expectPATCH(userData._links.self.href, {username: 'test', Avatar: {href: 'test'}}).respond(200);
 
             api.http.save(userData).then(function(_user) {
                 user = _user;
@@ -184,7 +184,7 @@ define([
             var userData = {_links: {self: {href: '/user_href'}}, _id: 2, username: 'test'},
                 diff = {Active: false};
 
-            $httpBackend.expectPATCH(SERVER_URL + userData._links.self.href, diff).respond({});
+            $httpBackend.expectPATCH(userData._links.self.href, diff).respond({});
 
             api.http.save(userData, diff);
 
@@ -196,7 +196,7 @@ define([
             var user = {_links: {self: {href: '/user_href'}}},
                 then = jasmine.createSpy('then');
 
-            $httpBackend.expectDELETE(SERVER_URL + user._links.self.href).respond(204);
+            $httpBackend.expectDELETE(user._links.self.href).respond(204);
 
             api.http.remove(user).then(then);
 
@@ -210,7 +210,7 @@ define([
             var user = {_links: {self: {href: '/user_href'}}},
                 then = jasmine.createSpy('then');
 
-            $httpBackend.expectDELETE(SERVER_URL + user._links.self.href).respond(404);
+            $httpBackend.expectDELETE(user._links.self.href).respond(404);
 
             api.http.remove(user).then(then);
 
@@ -224,7 +224,7 @@ define([
                 success = jasmine.createSpy('success'),
                 error = jasmine.createSpy('error');
 
-            $httpBackend.expectDELETE(SERVER_URL + user._links.self.href).respond(405);
+            $httpBackend.expectDELETE(user._links.self.href).respond(405);
 
             api.http.remove(user).then(success, error);
 
@@ -237,7 +237,7 @@ define([
         it('can get item by url', inject(function(api, $httpBackend) {
             var user;
 
-            $httpBackend.expectGET(SERVER_URL + '/user_url').respond({username: 'foo'});
+            $httpBackend.expectGET('/user_url').respond({username: 'foo'});
 
             api.http.getByUrl('/user_url').then(function(_user) {
                 user = _user;
@@ -270,7 +270,7 @@ define([
 
             var data = {username: 'foo'};
 
-            $httpBackend.expectPUT(SERVER_URL + '/user_url', data).respond({});
+            $httpBackend.expectPUT('/user_url', data).respond({});
 
             api.http.replace('/user_url', data);
 
@@ -278,7 +278,7 @@ define([
         }));
 
         it('rejects non success responses', inject(function(api, $httpBackend) {
-            $httpBackend.expectGET(SERVER_URL + '/some_url').respond(400);
+            $httpBackend.expectGET('/some_url').respond(400);
 
             var success = jasmine.createSpy('success'),
                 error = jasmine.createSpy('error');
