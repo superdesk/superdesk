@@ -22,7 +22,8 @@ Feature: News Items Archive
                 "headline": "htext",
                 "urgency": "3",
                 "firstcreated": "2013-11-07T13:54:45+00:00",
-                "versioncreated": "2013-11-07T13:54:45+00:00"
+                "versioncreated": "2013-11-07T13:54:45+00:00",
+                "type": "text"
             }
             """
 

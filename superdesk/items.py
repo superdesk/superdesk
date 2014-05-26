@@ -42,7 +42,7 @@ superdesk.connect('create:ingest', on_create_item)
 superdesk.connect('create:archive', on_create_item)
 superdesk.connect('create:archive', on_create_archive)
 
-schema = {
+base_schema = {
     'uri': {
         'type': 'string',
         'required': True
@@ -55,7 +55,8 @@ schema = {
         'required': True
     },
     'type': {
-        'type': 'string'
+        'type': 'string',
+        'required': True
     },
     'mimetype': {
         'type': 'string'
@@ -130,9 +131,6 @@ schema = {
     'body_html': {
         'type': 'string'
     },
-    'archived': {
-        'type': 'datetime'
-    },
     'user': {
         'type': 'objectid',
         'data_relation': {
@@ -145,6 +143,17 @@ schema = {
         'type': 'list'
     },
 }
+
+ingest_schema = {
+    'archived': {
+        'type': 'datetime'
+    }
+}
+
+archive_schema = {}
+
+ingest_schema.update(base_schema)
+archive_schema.update(base_schema)
 
 item_url = 'regex("[\w][\w,.:-]+")'
 
@@ -160,7 +169,7 @@ facets = {
 }
 
 superdesk.domain('ingest', {
-    'schema': schema,
+    'schema': ingest_schema,
     'extra_response_fields': extra_response_fields,
     'item_url': item_url,
     'datasource': {
@@ -170,7 +179,7 @@ superdesk.domain('ingest', {
 })
 
 superdesk.domain('archive', {
-    'schema': schema,
+    'schema': archive_schema,
     'extra_response_fields': extra_response_fields,
     'item_url': item_url,
     'datasource': {
