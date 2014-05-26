@@ -39,7 +39,8 @@
     "karma-coverage": "~0.2.0",
     "protractor": "~0.22.0",
     "protractor-screenshot-reporter": "~0.0.4",
-    "karma-junit-reporter": "^0.2.2"
+    "karma-junit-reporter": "^0.2.2",
+    "grunt-contrib-cssmin": "^0.9.0"
   },
   "scripts": {
     "test": "grunt ci:travis"

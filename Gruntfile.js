@@ -24,19 +24,21 @@ module.exports = function (grunt) {
         configPath: require('path').join(process.cwd(), 'tasks', 'options')
     });
 
+    grunt.registerTask('style', ['less:dev', 'cssmin']);
+
     grunt.registerTask('test', ['karma:unit']);
     grunt.registerTask('hint', ['jshint', 'jscs']);
     grunt.registerTask('ci', ['test', 'hint']);
     grunt.registerTask('ci:travis', ['karma:travis', 'hint']);
     grunt.registerTask('bamboo', ['karma:bamboo']);
 
-    grunt.registerTask('server', ['clean', 'less:dev', 'template:test', 'connect:dev', 'open:test', 'watch']);
-    grunt.registerTask('server:mock', ['clean', 'less:dev', 'template:mock', 'connect:mock', 'open:mock', 'watch']);
-    grunt.registerTask('server:e2e', ['clean', 'less:dev', 'template:mock', 'connect:test']);
+    grunt.registerTask('server', ['clean', 'style', 'template:test', 'connect:dev', 'open:test', 'watch']);
+    grunt.registerTask('server:mock', ['clean', 'style', 'template:mock', 'connect:mock', 'open:mock', 'watch']);
+    grunt.registerTask('server:e2e', ['clean', 'style', 'template:mock', 'connect:test']);
 
     grunt.registerTask('build', [
         'clean',
-        'less:prod',
+        'style',
         'template:test',
         'nggettext_compile',
         'requirejs',
