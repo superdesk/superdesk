@@ -15,7 +15,8 @@ module.exports = {
             '<%= distDir %>/styles/css/uploader.css': '<%= appDir %>/scripts/superdesk/upload/styles/uploader.less',
             '<%= distDir %>/styles/css/media-archive.css': '<%= appDir %>/scripts/superdesk-items-common/styles/media-archive.less',
             '<%= distDir %>/styles/css/desks.css': '<%= appDir %>/scripts/superdesk-desks/styles/desks.less',
-            '<%= distDir %>/styles/css/menu.css': '<%= appDir %>/scripts/superdesk/menu/styles/menu.less'
+            '<%= distDir %>/styles/css/menu.css': '<%= appDir %>/scripts/superdesk/menu/styles/menu.less',
+            '<%= distDir %>/styles/css/notify.css': '<%= appDir %>/scripts/superdesk/notify/styles/notify.less'
         }
     },
     prod: {
@@ -34,7 +35,8 @@ module.exports = {
             '<%= distDir %>/styles/css/uploader.css': '<%= appDir %>/scripts/superdesk/upload/styles/uploader.less',
             '<%= distDir %>/styles/css/media-archive.css': '<%= appDir %>/scripts/superdesk-items-common/styles/media-archive.less',
             '<%= distDir %>/styles/css/desks.css': '<%= appDir %>/scripts/superdesk-desks/styles/desks.less',
-            '<%= distDir %>/styles/css/menu.css': '<%= appDir %>/scripts/superdesk/menu/styles/menu.less'
+            '<%= distDir %>/styles/css/menu.css': '<%= appDir %>/scripts/superdesk/menu/styles/menu.less',
+            '<%= distDir %>/styles/css/notify.css': '<%= appDir %>/scripts/superdesk/notify/styles/notify.less'
         }
     }
 };
