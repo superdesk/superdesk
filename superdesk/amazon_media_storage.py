@@ -1,7 +1,6 @@
 ''' Amazon media storage module'''
 from eve.io.media import MediaStorage
-from libcloud.storage.types import Provider, ContainerDoesNotExistError
-from libcloud.storage.providers import get_driver
+import tinys3
 from superdesk.media_operations import get_hashed_filename
 import logging
 from io import BytesIO
@@ -36,20 +35,12 @@ class AmazonMediaStorage(MediaStorage):
         if 'AMAZON_REGION' in app.config:
             region = app.config['AMAZON_REGION']
         else:
-            region = Provider.S3
-        self.cls = get_driver(region)
+            region = 's3'
         username = self.app.config['AMAZON_ACCESS_KEY_ID']
         api_key = self.app.config['AMAZON_SECRET_ACCESS_KEY']
         self.container_name = self.app.config['AMAZON_CONTAINER_NAME']
-        self.driver = self.cls(username, api_key)
-
-        # Create a container if it doesn't already exist
-        # This currently does not work with the test account
-        try:
-            self.container = self.driver.get_container(container_name=self.container_name)
-        except ContainerDoesNotExistError as ex:
-            logger.exception(ex)
-            self.container = self.driver.create_container(container_name=self.container_name)
+        endpoint = '%s.amazonaws.com' % region
+        self.conn = tinys3.Connection(username, api_key, tls=True, endpoint=endpoint)
 
     def get(self, id_or_filename):
         """ Opens the file given by name or unique id. Note that although the
@@ -58,8 +49,7 @@ class AmazonMediaStorage(MediaStorage):
         """
         found, obj = self._check_exists(id_or_filename)
         if found:
-            obj_stream = self.driver.download_object_as_stream(obj, 1024)
-            return AmazonObjectWrapper(obj_stream, obj.extra['content_type'], obj.size, obj.name)
+            return AmazonObjectWrapper(obj, obj.headers['content-type'], obj.headers['content-length'], id_or_filename)
         return None
 
     def put(self, content, filename=None, content_type=None):
@@ -76,20 +66,19 @@ class AmazonMediaStorage(MediaStorage):
         if found:
             return existing_file.name
 
-        extra = {'content_type': content_type}
         try:
-            obj = self.driver.upload_object_via_stream(iterator=iter_content,
-                                                       container=self.container,
-                                                       object_name=file_name,
-                                                       extra=extra)
-            return obj.name
+            res = self.conn.upload(file_name, iter_content, self.container_name, content_type=content_type)
+            assert res.status_code == 200, 'File upload failed'
+            return file_name
         except Exception as ex:
             logger.exception(ex)
             raise
 
     def delete(self, id_or_filename):
         found, obj = self._check_exists(id_or_filename)
-        return self.driver.delete_object(obj)
+        if found:
+            del_res = self.conn.delete(id_or_filename, self.container_name)
+            assert del_res.status_code == 200, 'File deletion failed'
 
     def exists(self, id_or_filename):
         """ Returns True if a file referenced by the given name or unique id
@@ -101,8 +90,7 @@ class AmazonMediaStorage(MediaStorage):
 
     def _check_exists(self, id_or_filename):
         try:
-            obj = self.driver.get_object(container_name=self.container_name,
-                                         object_name=id_or_filename)
+            obj = self.conn.get(id_or_filename, self.container_name)
             return (True, obj)
         except Exception as ex:
             logger.exception(ex)

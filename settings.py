@@ -48,7 +48,7 @@ EXTENDED_MEDIA_INFO = ['content_type', 'name', 'length']
 # AMAZON_SECRET_ACCESS_KEY = 'dummy-access-key'
 
 # allowed: 's3' 's3_us_west' 's3_eu_west' 's3_ap_southeast' 's3_ap_northeast'
-# AMAZON_REGION = 's3_eu_west'
+# AMAZON_REGION = 's3-eu-west-1'
 
 RENDITIONS = {
     'picture': {

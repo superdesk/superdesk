@@ -10,7 +10,7 @@ Jinja2==2.7.2
 MarkupSafe==0.21
 Werkzeug==0.9.4
 Pillow==2.4.0
-apache-libcloud==0.14.0
+tinys3==0.1.10
 arrow==0.4.2
 behave==1.2.4
 blinker==1.3
