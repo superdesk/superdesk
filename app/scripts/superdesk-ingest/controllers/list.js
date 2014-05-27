@@ -1,6 +1,6 @@
 define([
     'lodash',
-    '../../superdesk-archive/controllers/baseList'
+    'superdesk-archive/controllers/baseList'
 ], function(_, BaseListController) {
     'use strict';
 
