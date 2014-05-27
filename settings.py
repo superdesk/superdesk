@@ -58,6 +58,8 @@ RENDITIONS = {
     }
 }
 
+SERVER_DOMAIN = 'localhost'
+
 # uncomment to use local file storage
 # DEFAULT_FILE_STORAGE = 'superdesk.storage.FileSystemStorage'
 # abspath = os.path.abspath(os.path.dirname(__file__))

@@ -3,6 +3,7 @@
 import superdesk
 from superdesk import SuperdeskError
 from flask import url_for, Response
+from werkzeug.datastructures import FileStorage
 
 bp = superdesk.Blueprint('upload', __name__)
 
@@ -23,8 +24,20 @@ def on_read_upload(data, docs):
         doc['data_uri_url'] = url_for('upload.get_upload_as_data_uri', upload_id=upload_id, _external=True)
 
 
+def on_upload_created(data, docs):
+    for doc in docs:
+        media_file = superdesk.app.media.get(doc.get('media'))
+        doc['mime_type'] = media_file.content_type
+        doc['file_meta'] = media_file.metadata
+        doc['data_uri_url'] = url_for('upload.get_upload_as_data_uri', upload_id=doc['_id'], _external=True)
+        superdesk.logger.debug('debug upload: set %s' % doc)
+        superdesk.logger.warning('warning upload: set %s' % doc)
+        data.update('upload', str(doc['_id']), doc)
+        superdesk.logger.warning('upload: done')
+
+
 superdesk.connect('read:upload', on_read_upload)
-superdesk.connect('created:upload', on_read_upload)
+superdesk.connect('created:upload', on_upload_created)
 superdesk.blueprint(bp)
 
 
@@ -37,6 +50,18 @@ superdesk.domain('upload', {
         'CropBottom': {'type': 'integer'},
         'URL': {'type': 'string'},
         'data_uri_url': {'type': 'string'},
+        'mime_type': {'type': 'string'},
+        'file_meta': {'type': 'dict'}
+    },
+    'datasource': {
+        'projection': {
+            'URL':1,
+            'data_uri_url':1,
+            'mime_type':1,
+            'file_meta':1,
+            '_created':1,
+            '_updated':1
+        }
     },
     'item_methods': ['GET', 'DELETE'],
     'resource_methods': ['GET', 'POST'],
