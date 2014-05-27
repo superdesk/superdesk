@@ -27,13 +27,15 @@ def on_read_upload(data, docs):
 def on_upload_created(data, docs):
     for doc in docs:
         media_file = superdesk.app.media.get(doc.get('media'))
-        doc['mime_type'] = media_file.content_type
-        doc['file_meta'] = media_file.metadata
-        doc['data_uri_url'] = url_for('upload.get_upload_as_data_uri', upload_id=doc['_id'], _external=True)
-        superdesk.logger.debug('debug upload: set %s' % doc)
-        superdesk.logger.warning('warning upload: set %s' % doc)
-        data.update('upload', str(doc['_id']), doc)
-        superdesk.logger.warning('upload: done')
+        updates = {}
+        updates['mime_type'] = media_file.content_type
+        updates['file_meta'] = media_file.metadata
+        updates['data_uri_url'] = url_for('upload.get_upload_as_data_uri', upload_id=doc['_id'], _external=True)
+        superdesk.logger.info('debug upload: set %s' % doc)
+        superdesk.logger.info('warning upload: set %s' % doc)
+        data.update('upload', doc['_id'], updates)
+        superdesk.logger.info('upload: done')
+        doc.update(updates)
 
 
 superdesk.connect('read:upload', on_read_upload)
@@ -60,7 +62,8 @@ superdesk.domain('upload', {
             'mime_type':1,
             'file_meta':1,
             '_created':1,
-            '_updated':1
+            '_updated':1,
+            'media':1,
         }
     },
     'item_methods': ['GET', 'DELETE'],
