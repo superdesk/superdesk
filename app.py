@@ -2,6 +2,7 @@ import os
 import eve
 import settings
 import superdesk
+import logging
 from superdesk import signals
 from eve.io.mongo import MongoJSONEncoder
 from superdesk.auth import SuperdeskTokenAuth
@@ -77,6 +78,8 @@ if __name__ == '__main__':
         port = 5000
         host = '127.0.0.1'
         debug = True
+        superdesk.logger.setLevel(logging.INFO)
+        superdesk.logger.addHandler(logging.StreamHandler())
 
     app = get_app()
     app.run(host=host, port=port, debug=debug, use_reloader=True)

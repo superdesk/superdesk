@@ -3,7 +3,6 @@
 import superdesk
 from superdesk import SuperdeskError
 from flask import url_for, Response
-from werkzeug.datastructures import FileStorage
 
 bp = superdesk.Blueprint('upload', __name__)
 
@@ -57,13 +56,13 @@ superdesk.domain('upload', {
     },
     'datasource': {
         'projection': {
-            'URL':1,
-            'data_uri_url':1,
-            'mime_type':1,
-            'file_meta':1,
-            '_created':1,
-            '_updated':1,
-            'media':1,
+            'URL': 1,
+            'data_uri_url': 1,
+            'mime_type': 1,
+            'file_meta': 1,
+            '_created': 1,
+            '_updated': 1,
+            'media': 1,
         }
     },
     'item_methods': ['GET', 'DELETE'],
