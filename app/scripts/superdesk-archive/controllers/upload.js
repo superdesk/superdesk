@@ -7,6 +7,24 @@ define(['lodash'], function(_) {
         var promises = [];
         $scope.items = [];
 
+        var startUpload = function(item) {
+            return api.archiveMedia.getUrl().then(function(url) {
+                item.upload = upload.start({
+                    method: 'POST',
+                    url: url,
+                    data: {media: item.file},
+                    headers: api.archive.getHeaders()
+                }).then(function(response) {
+                    item.model = response.data;
+                    return item;
+                }, null, function(progress) {
+                    item.progress = Math.round(progress.loaded / progress.total * 100.0);
+                });
+
+                return item.upload;
+            });
+        };
+
         /**
          * Add files
          *
@@ -20,25 +38,7 @@ define(['lodash'], function(_) {
                     progress: 0
                 };
 
-                var startUpload = function() {
-                    return api.image.getUrl().then(function(url) {
-                        item.upload = upload.start({
-                            method: 'POST',
-                            url: url,
-                            file: file,
-                            headers: api.image.getHeaders()
-                        }).then(function(response) {
-                            item.model = response.data;
-                            return item;
-                        }, null, function(progress) {
-                            item.progress = Math.round(progress.loaded / progress.total * 100.0);
-                        });
-
-                        return item.upload;
-                    });
-                };
-
-                promises.push(startUpload());
+                promises.push(startUpload(item));
                 $scope.items.unshift(item);
             });
         };
@@ -67,7 +67,7 @@ define(['lodash'], function(_) {
             return $q.all(promises)
                 .then(function() {
                     return $q.all(_.map($scope.items, function(item) {
-                        return api.image.update(item.model, item.meta);
+                        return api.archive.update(item.model, item.meta);
                     })).then(function(results) {
                         $scope.resolve(results);
                         return results;
@@ -82,7 +82,7 @@ define(['lodash'], function(_) {
          */
         function cancelItem(item) {
             if (item.model) {
-                api.image.remove(item.model);
+                api.archive.remove(item.model);
             } else if (item.upload) {
                 item.upload.abort();
             }

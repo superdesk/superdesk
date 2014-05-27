@@ -30,6 +30,21 @@ define([
                 filters: [
                     {action: 'upload', type: 'media'}
                 ]
+            })
+            .activity('delete.archive', {
+                label: gettext('Delete archive'),
+                confirm: gettext('Please confirm you want to delete an archive item.'),
+                icon: 'remove',
+                controller: ['api', 'notify', 'data', function(api, notify, data) {
+                    return api.archive.remove(data.item).then(function(response) {
+                        data.list.splice(data.index, 1);
+                    }, function(response) {
+                        notify.error(gettext('I\'m sorry but can\'t delete the archive item right now.'));
+                    });
+                }],
+                filters: [
+                    {action: superdesk.ACTION_EDIT, type: 'archive'}
+                ]
             });
     }]);
 
@@ -38,6 +53,12 @@ define([
             type: 'http',
             backend: {
                 rel: 'ingest'
+            }
+        });
+        apiProvider.api('archiveMedia', {
+            type: 'http',
+            backend: {
+                rel: 'archive_media'
             }
         });
     }]);

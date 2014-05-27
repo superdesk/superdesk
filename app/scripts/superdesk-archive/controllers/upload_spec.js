@@ -9,7 +9,7 @@ define(['./upload'], function(UploadController) {
         beforeEach(module(function($provide) {
             $provide.service('api', function($q) {
                 return {
-                    image: {
+                    archive: {
                         getUrl: function() {
                             return $q.when(UPLOAD_URL);
                         },
@@ -53,7 +53,7 @@ define(['./upload'], function(UploadController) {
                 method: 'POST',
                 url: UPLOAD_URL,
                 file: files[0],
-                headers: api.image.getHeaders()
+                headers: api.archive.getHeaders()
             });
 
             expect(scope.items.length).toBe(1);
