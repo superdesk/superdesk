@@ -199,7 +199,7 @@ def step_impl_when_upload(context):
         data = {'media': f}
         headers = [('Content-Type', 'multipart/form-data')]
         headers.append(context.headers[1])
-        context.response = context.client.post('/media_storage', data=data, headers=headers)
+        context.response = context.client.post('/upload', data=data, headers=headers)
 
 
 @when('we upload a binary file with cropping')
@@ -208,7 +208,7 @@ def step_impl_when_upload_with_crop(context):
         data = {'media': f, 'CropTop': 0, 'CropLeft': 0, 'CropBottom': 333, 'CropRight': 333}
         headers = [('Content-Type', 'multipart/form-data')]
         headers.append(context.headers[1])
-        context.response = context.client.post('/media_storage', data=data, headers=headers)
+        context.response = context.client.post('/upload', data=data, headers=headers)
 
 
 @when('we get user profile')
@@ -306,7 +306,7 @@ def step_impl_then_get_file(context):
     assert_200(context.response)
     data = get_json_data(context.response)
     assert data.get('data_uri_url'), 'expecting data_uri_url, got %s' % (data)
-    url = '/media_storage/%s' % data['_id']
+    url = '/upload/%s' % data['_id']
     headers = [('Accept', 'application/json')]
     headers += context.headers
     response = context.client.get(url, headers=headers)
@@ -336,7 +336,7 @@ def step_impl_we_fetch_data_uri(context):
 
 @then('we can delete that file')
 def step_impl_we_delete_file(context):
-    url = '/media_storage/%s' % context.fetched_data['_id']
+    url = '/upload/%s' % context.fetched_data['_id']
     headers = [('Accept', 'application/json')]
     headers += context.headers
     print(url)

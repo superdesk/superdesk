@@ -13,3 +13,5 @@ def before_scenario(context, scenario):
     ]
     if 'auth' in scenario.tags:
         tests.setup_auth_user(context)
+    if 'amazon' in scenario.tags:
+        tests.setup_amazon(context)
