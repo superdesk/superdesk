@@ -44,8 +44,9 @@ EXTENDED_MEDIA_INFO = ['content_type', 'name', 'length']
 
 RENDITIONS = {
     'picture': {
-        'thumbnail': {'width': 150, 'height': 150},
-        'view': {'width': 640, 'height': 640}
+        'thumbnail': {'width': 220, 'height': 120},
+        'sidebar': {'width': 640, 'height': 640},
+        'large': {'width': 1400, 'height': 1400},
     }
 }
 
