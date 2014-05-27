@@ -46,8 +46,9 @@ class SuperdeskError(Exception):
         """Create dict for json response."""
         rv = {}
         rv[app.config['STATUS']] = app.config['STATUS_ERR']
-        rv[app.config['ISSUES']] = dict(self.payload or ())
         rv['_message'] = self.message or ''
+        if self.payload:
+            rv[app.config['ISSUES']] = self.payload
         return rv
 
 

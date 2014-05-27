@@ -33,10 +33,16 @@ def get_app(config=None):
         if key.isupper():
             config.setdefault(key, getattr(settings, key))
 
+    media_storage = SuperdeskGridFSMediaStorage
+
+    if 'AMAZON_CONTAINER_NAME' in config:
+        from superdesk.amazon_media_storage import AmazonMediaStorage
+        media_storage = AmazonMediaStorage
+
     app = SuperdeskEve(
         data=superdesk.SuperdeskDataLayer,
         auth=SuperdeskTokenAuth,
-        media=SuperdeskGridFSMediaStorage,
+        media=media_storage,
         settings=config,
         json_encoder=MongoJSONEncoder,
         validator=SuperdeskValidator)

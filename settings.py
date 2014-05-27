@@ -42,6 +42,14 @@ RESOURCE_METHODS = ['GET', 'POST']
 ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
 EXTENDED_MEDIA_INFO = ['content_type', 'name', 'length']
 
+# Amazon S3
+# AMAZON_CONTAINER_NAME = 'superdesk-test'  # To be replaced with a proper container
+# AMAZON_ACCESS_KEY_ID = 'dummy-key'
+# AMAZON_SECRET_ACCESS_KEY = 'dummy-access-key'
+
+# allowed: 's3' 's3_us_west' 's3_eu_west' 's3_ap_southeast' 's3_ap_northeast'
+# AMAZON_REGION = 's3_eu_west'
+
 RENDITIONS = {
     'picture': {
         'thumbnail': {'width': 220, 'height': 120},

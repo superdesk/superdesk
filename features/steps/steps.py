@@ -44,6 +44,11 @@ def assert_200(response):
     assert response.status_code in (200, 201), 'Expected 20*, got %d' % (response.status_code)
 
 
+def assert_404(response):
+    """Assert we get status code 404."""
+    assert response.status_code == 404, 'Expected 404, got %d' % (response.status_code)
+
+
 def assert_ok(response):
     """Assert we get ok status within api response."""
     assert_200(response)
@@ -194,7 +199,7 @@ def step_impl_when_upload(context):
         data = {'media': f}
         headers = [('Content-Type', 'multipart/form-data')]
         headers.append(context.headers[1])
-        context.response = context.client.post('/upload', data=data, headers=headers)
+        context.response = context.client.post('/media_storage', data=data, headers=headers)
 
 
 @when('we upload a binary file with cropping')
@@ -203,7 +208,7 @@ def step_impl_when_upload_with_crop(context):
         data = {'media': f, 'CropTop': 0, 'CropLeft': 0, 'CropBottom': 333, 'CropRight': 333}
         headers = [('Content-Type', 'multipart/form-data')]
         headers.append(context.headers[1])
-        context.response = context.client.post('/upload', data=data, headers=headers)
+        context.response = context.client.post('/media_storage', data=data, headers=headers)
 
 
 @when('we get user profile')
@@ -301,7 +306,7 @@ def step_impl_then_get_file(context):
     assert_200(context.response)
     data = get_json_data(context.response)
     assert data.get('data_uri_url'), 'expecting data_uri_url, got %s' % (data)
-    url = '/upload/%s' % data['_id']
+    url = '/media_storage/%s' % data['_id']
     headers = [('Accept', 'application/json')]
     headers += context.headers
     response = context.client.get(url, headers=headers)
@@ -327,6 +332,18 @@ def step_impl_we_fetch_data_uri(context):
     assert_200(response)
     assert len(response.get_data()), response
     assert response.mimetype == 'image/jpeg', response.mimetype
+
+
+@then('we can delete that file')
+def step_impl_we_delete_file(context):
+    url = '/media_storage/%s' % context.fetched_data['_id']
+    headers = [('Accept', 'application/json')]
+    headers += context.headers
+    print(url)
+    response = context.client.delete(url, headers=headers)
+    assert_200(response)
+    response = context.client.get(url, headers=headers)
+    assert_404(response)
 
 
 @then('we get a picture url')
