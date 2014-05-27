@@ -483,8 +483,7 @@
 @sfbox_sidepadding : 5px;
 @sfbox_minHeight : 220px;
 @sfbox_minWidth : 140px;
-
-@sfbox_mediaWidth : 250px;
+@sfbox_mediaMaxWidth: 220px;
 
 	.media-box-generic () {
 		height:auto;
@@ -526,7 +525,10 @@
 			position:relative;
 			background: #f4f4f4;
 			img {
-				height: @sfbox_mediaHeight;
+				height: auto;
+				width: auto;
+				max-width: @sfbox_mediaMaxWidth;
+				max-height: @sfbox_mediaHeight;
 			}
 			.caption {
 				display: none;
