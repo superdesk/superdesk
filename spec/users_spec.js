@@ -9,7 +9,8 @@ describe('USERS', function() {
         beforeEach(openUrl('/#/profile'));
 
         it('can render user profile', function() {
-            expect($('img[sd-user-picture').getAttribute('src')).toBe('https://avatars.githubusercontent.com/u/275305');
+            expect($('img[sd-user-picture').getAttribute('src'))
+                .toBe('http://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200');
             expect(bindingValue('{{ user.username }}')).toBe('john');
             expect(modelValue('user.first_name')).toBe('John');
             expect(modelValue('user.last_name')).toBe('Doe');
