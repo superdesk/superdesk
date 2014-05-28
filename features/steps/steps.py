@@ -5,22 +5,30 @@ from behave import given, when, then  # @UnresolvedImport
 from flask import json
 from eve.methods.common import parse
 
+from wooper.general import parse_json_input, fail_and_print_body
+from wooper.expect import (
+    expect_status, expect_status_in,
+    expect_json_contains, expect_json_not_contains,
+    expect_json_length, expect_headers_contain,
+)
+from wooper.assertions import (
+    assert_in, assert_equal)
+
 
 def test_json(context):
     try:
         response_data = json.loads(context.response.get_data())
     except Exception:
-        assert False, 'response is not valid json\nresponse: %s' % (context.response.get_data())
+        fail_and_print_body(
+            context.response,
+            'response is not valid json' % (context.response.get_data()))
 
-    try:
-        context_data = json.loads(context.text)
-    except Exception:
-        assert False, 'scenario payload is not valid json'
+    context_data = parse_json_input(context.text)
 
     for key in context_data:
-        assert key in response_data, '%s not in %s' % (key, response_data)
+        assert_in(key, response_data)
         if context_data[key]:
-            assert response_data[key] == context_data[key], '"%s" field does not match (%s)' % (key, response_data[key])
+            assert_equal(response_data[key], context_data[key])
 
 
 def get_fixture_path(fixture):
@@ -35,20 +43,19 @@ def get_self_href(resource, context):
 
 def get_res(url, context):
     response = context.client.get(url, headers=context.headers)
-    assert response.status_code == 200, response.get_data()
+    expect_status(response, 200)
     return json.loads(response.get_data())
 
 
 def assert_200(response):
     """Assert we get status code 200."""
-    assert response.status_code in (200, 201), 'Expected 20*, got %d' % (response.status_code)
+    expect_status_in(response, (200, 201))
 
 
 def assert_ok(response):
     """Assert we get ok status within api response."""
-    assert_200(response)
-    data = json.loads(response.get_data())
-    assert data['_status'] == 'OK', data
+    expect_status_in(response, (200, 201))
+    expect_json_contains(response, {'_status': 'OK'})
 
 
 def get_json_data(response):
@@ -215,42 +222,39 @@ def step_impl_when_get_user(context):
 @then('we get new resource')
 def step_impl_then_get_new(context):
     assert_ok(context.response)
-    data = json.loads(context.response.get_data())
-    assert data['_links']['self'], data
+    expect_json_contains(context.response, 'self', path='_links')
     test_json(context)
 
 
 @then('we get error {code}')
 def step_impl_then_get_error(context, code):
-    assert context.response.status_code == int(code), context.response.status_code
+    expect_status(context.response, int(code))
     test_json(context)
 
 
 @then('we get list with {total_count} items')
 def step_impl_then_get_list(context, total_count):
     assert_200(context.response)
-    response_list = json.loads(context.response.get_data())
-    assert len(response_list['_items']) == int(total_count), 'got %d' % len(response_list['_items'])
+    expect_json_length(context.response, int(total_count), path='_items')
     if total_count == 0 or not context.text:
         return
-
+    # @TODO: generalize json schema check
     schema = json.loads(context.text)
+    response_list = json.loads(context.response.get_data())
     item = response_list['_items'][0]
     for key in schema:
-        assert key in item, '%s not in %s' % (key, item)
-
+        assert_in(key, item, '%s not in %s' % (key, item))
         if isinstance(schema[key], dict):
             for keykey in schema[key]:
-                assert keykey in item[key], '%s not in %s' % (keykey, item[key])
+                assert_in(keykey, item[key])
         else:
-            assert schema[key] == item[key], '%s not equal to %s' % (schema[key], item[key])
+            assert_equal(schema[key], item[key])
 
 
 @then('we get no "{field}"')
 def step_impl_then_get_nofield(context, field):
     assert_200(context.response)
-    response_data = json.loads(context.response.get_data())
-    assert field not in response_data, response_data
+    expect_json_not_contains(context.response, field)
 
 
 @then('we get existing resource')
@@ -266,7 +270,7 @@ def step_impl_then_get_ok(context):
 
 @then('we get response code {code}')
 def step_impl_then_get_code(context, code):
-    assert context.response.status_code == int(code), context.response.status_code
+    expect_status(context.response, int(code))
 
 
 @then('we get updated response')
@@ -278,29 +282,26 @@ def step_impl_then_get_updated(context):
 def step_impl_then_get_key_in_url(context, key, url):
     res = context.client.get(url, headers=context.headers)
     assert_200(res)
-    data = get_json_data(res)
-    assert data.get(key), data
+    expect_json_contains(context.response, key)
 
 
 @then('we get "{key}"')
 def step_impl_then_get_key(context, key):
     assert_200(context.response)
-    data = get_json_data(context.response)
-    assert data.get(key), data
+    expect_json_contains(context.response, key)
 
 
 @then('we get action in user activity')
 def step_impl_then_get_action(context):
     response = context.client.get('/activity', headers=context.headers)
-    data = get_json_data(response)
-    assert len(data['_items']), data
+    expect_json_contains(response, '_items')
 
 
 @then('we get a file reference')
 def step_impl_then_get_file(context):
     assert_200(context.response)
+    expect_json_contains(context.response, 'data_uri_url')
     data = get_json_data(context.response)
-    assert data.get('data_uri_url'), 'expecting data_uri_url, got %s' % (data)
     url = '/upload/%s' % data['_id']
     headers = [('Accept', 'application/json')]
     headers += context.headers
@@ -308,9 +309,10 @@ def step_impl_then_get_file(context):
     assert_200(response)
     assert len(response.get_data()), response
     assert response.mimetype == 'application/json', response.mimetype
+    expect_json_contains(response, 'data_uri_url')
+    expect_json_contains(response,
+                         {'content_type': 'image/jpeg'}, path='media')
     fetched_data = get_json_data(context.response)
-    assert fetched_data['data_uri_url']
-    assert fetched_data['media']['content_type'] == 'image/jpeg', fetched_data['media']['content-type']
     context.fetched_data = fetched_data
 
 
@@ -332,18 +334,17 @@ def step_impl_we_fetch_data_uri(context):
 @then('we get a picture url')
 def step_impl_then_get_picture(context):
     assert_ok(context.response)
-    data = get_json_data(context.response)
-    assert 'picture_url' in data, data
+    expect_json_contains(context.response, 'picture_url')
 
 
 @then('we get facets "{keys}"')
 def step_impl_then_get_facets(context, keys):
     assert_200(context.response)
+    expect_json_contains(context.response, '_facets')
     data = get_json_data(context.response)
-    assert '_facets' in data, data.keys()
     facets = data['_facets']
     for key in keys.split(','):
-        assert key in facets, '%s not in [%s]' % (key, ', '.join(facets.keys()))
+        assert_in(key, facets)
 
 
 @then('the file is stored localy')
@@ -357,20 +358,17 @@ def step_impl_then_file(context):
 def step_impl_then_get_etag(context, url):
     if context.app.config['IF_MATCH']:
         assert_200(context.response)
+        expect_json_contains(context.response, '_etag')
         etag = get_json_data(context.response).get('_etag')
-        assert etag, 'etag not in %s' % (context.response.data)
         response = context.client.get(url, headers=context.headers)
-        data = get_json_data(response)
-        assert etag == data.get('_etag'), 'etag %s is not in %s' % (etag, data)
+        expect_json_contains(response, {'_etag': etag})
 
 
 @then('we get not modified response')
 def step_impl_then_not_modified(context):
-    assert 304 == context.response.status_code, \
-        'exptected 304, but it was %d' % context.response.status_code
+    expect_status(context.response, 304)
 
 
 @then('we get "{header}" header')
 def step_impl_then_get_header(context, header):
-    assert header in context.response.headers, \
-        'expected %s header, but got only %s' % (header, sorted(context.response.headers.keys()))
+    expect_headers_contain(context.response, header)
