@@ -2,7 +2,6 @@
 from eve.io.mongo import Mongo
 from eve.utils import config, ParsedRequest
 from eve_elastic import Elastic
-from pyelasticsearch.exceptions import IndexAlreadyExistsError
 from .signals import send
 from .utils import import_by_path
 
@@ -23,13 +22,6 @@ class SuperdeskDataLayer(Mongo):
             self.storage.init_app(app)
         else:
             self.storage = self.driver
-
-        try:
-            self.elastic.es.create_index(self.elastic.index)
-        except IndexAlreadyExistsError:
-            pass
-
-        self.elastic.put_mapping(app)
 
     def find(self, resource, req, lookup):
         cursor = self._backend(resource).find(resource, req, lookup)
