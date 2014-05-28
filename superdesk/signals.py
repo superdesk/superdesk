@@ -9,7 +9,7 @@ def connect(signal, subscriber):
 
 def send(signal, sender, **kwargs):
     """Send signal"""
-    blinker.signal(signal).send(sender, **kwargs)
+    return blinker.signal(signal).send(sender, **kwargs)
 
 
 def proxy_resource_signal(action, app):

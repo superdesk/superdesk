@@ -25,6 +25,9 @@ if os.environ.get('MONGOLAB_URI'):
 ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL', 'http://localhost:9200')
 ELASTICSEARCH_INDEX = os.environ.get('ELASTICSEARCH_INDEX', 'superdesk')
 
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379')
+
 INSTALLED_APPS = (
     'superdesk.io',
     'superdesk.auth',
@@ -36,6 +39,7 @@ INSTALLED_APPS = (
     'superdesk.sessions',
     'superdesk.desks',
     'superdesk.subjectcodes',
+    'superdesk.io.import_ingest',
 )
 
 RESOURCE_METHODS = ['GET', 'POST']
