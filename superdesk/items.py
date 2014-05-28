@@ -1,8 +1,12 @@
-
 import flask
 import superdesk
 from .utc import utcnow
-
+from datetime import datetime
+from settings import SERVER_DOMAIN
+from uuid import uuid4
+from eve.methods.post import post
+from eve.methods.delete import deleteitem
+from flask import abort
 
 def archive_assets(data, doc):
     """Archive all related assets for given doc."""
@@ -37,9 +41,61 @@ def on_create_archive(data, docs):
         # set who created the item
         doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
 
+
+def on_delete_archive(data, lookup):
+    '''Delete associated binary files.'''
+#     print('data: %s, lookup: %s' % (data, lookup))
+#     res = data.find_one('archive', None, **lookup)
+#     if res:
+#         print('delete', str(res['_id']))
+#         deleteitem('upload', {'_id':str(res['_id'])})
+
+
+def generate_guid(hints):
+    '''Generate a GUID based on given hints'''
+    newsml_guid_format = 'urn:newsml:%(domain)s:%(timestamp)s:%(identifier)s'
+    tag_guid_format = 'tag:%(domain)s:%(year)d:%(identifier)s'
+    
+    assert isinstance(hints, dict)
+    t = datetime.today()
+    if hints['type'].lower() == 'tag':
+        return tag_guid_format % {'domain':SERVER_DOMAIN, 'year':t.year, 'identifier':hints['id']}
+    elif hints['type'].lower() == 'newsml':
+        return newsml_guid_format % {'domain':SERVER_DOMAIN, 'timestamp':t.isoformat(), 'identifier':hints['id']}
+    return None
+
+
+def on_upload_create(data, docs):
+    for doc in docs:
+        res, _u, _e, code = post('upload')
+        if code != 201:
+            abort(500)
+        res = superdesk.app.data.find_one('upload', None, _id=str(res['_id']))
+        if not res:
+            abort(500)
+        type = res['mime_type'].split('/')[0]
+        if type != 'image':
+            deleteitem('upload', {'_id':str(res['_id'])})
+            abort(400, 'Invalid file type: %s' % type)
+
+        del doc['media']
+        doc['media_file'] = str(res['_id'])
+        doc['guid'] = generate_guid({'type':'tag', 'id':str(uuid4())})
+        doc['type'] = 'picture'
+        doc['version'] = 1
+
+
+def on_upload_update(data, docs):
+    for doc in docs:
+        doc['version'] += 1
+
+
 superdesk.connect('create:ingest', on_create_item)
 superdesk.connect('create:archive', on_create_item)
 superdesk.connect('create:archive_ingest', on_create_archive)
+superdesk.connect('create:archive', on_create_archive)
+superdesk.connect('create:archive_media', on_upload_create)
+superdesk.connect('delete:archive', on_delete_archive)
 
 base_schema = {
     'uri': {
@@ -141,6 +197,14 @@ base_schema = {
             'embeddable': True
         }
     },
+    'media_file': {
+        'type': 'objectid',
+        'data_relation': {
+            'resource': 'upload',
+            'field': '_id',
+            'embeddable': True
+        }
+    },
     'contents': {
         'type': 'list'
     },
@@ -187,7 +251,31 @@ superdesk.domain('archive', {
     'datasource': {
         'backend': 'elastic',
         'facets': facets
-    }
+    },
+    'resource_methods': ['GET', 'POST', 'DELETE']
+})
+
+superdesk.domain('archive_media', {
+    'additional_lookup': {
+        'url': 'regex("[\w,.:-]+")',
+        'field': 'guid'
+    },
+    'schema': {
+        'guid': { 'type': 'string' },
+        'media': {'type': 'media', 'required': True},
+        'CropLeft': {'type': 'integer'},
+        'CropRight': {'type': 'integer'},
+        'CropTop': {'type': 'integer'},
+        'CropBottom': {'type': 'integer'},
+        'URL': {'type': 'string'},
+        'data_uri_url': {'type': 'string'},
+    },
+    'datasource': {
+        'backend': 'elastic',
+        'source': 'archive'
+    },
+    'item_methods': ['PUT'],
+    'resource_methods': ['POST']
 })
 
 superdesk.domain('archive_ingest', {

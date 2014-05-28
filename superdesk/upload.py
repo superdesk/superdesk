@@ -26,18 +26,15 @@ def on_read_upload(data, docs):
 def on_upload_created(data, docs):
     for doc in docs:
         media_file = superdesk.app.media.get(doc.get('media'))
-        updates = {}
-        updates['mime_type'] = media_file.content_type
-        updates['file_meta'] = media_file.metadata
-        updates['data_uri_url'] = url_for('upload.get_upload_as_data_uri', upload_id=doc['_id'], _external=True)
-        superdesk.logger.info('debug upload: set %s' % doc)
-        superdesk.logger.info('warning upload: set %s' % doc)
-        data.update('upload', doc['_id'], updates)
-        superdesk.logger.info('upload: done')
-        doc.update(updates)
+        update = {}
+        update['mime_type'] = media_file.content_type
+        update['file_meta'] = media_file.metadata
+        update['data_uri_url'] = url_for('upload.get_upload_as_data_uri', upload_id=doc['_id'], _external=True)
+        data.update('upload', doc['_id'], update)
 
 
 superdesk.connect('read:upload', on_read_upload)
+superdesk.connect('created:upload', on_read_upload)
 superdesk.connect('created:upload', on_upload_created)
 superdesk.blueprint(bp)
 
@@ -65,7 +62,7 @@ superdesk.domain('upload', {
             'media': 1,
         }
     },
-    'item_methods': ['GET', 'DELETE'],
-    'resource_methods': ['GET', 'POST'],
-    'public_methods': ['GET', 'POST', 'DELETE']
+    'item_methods': ['GET'],
+    'resource_methods': ['GET', 'POST', 'DELETE'],
+    'public_methods': ['GET']
 })
