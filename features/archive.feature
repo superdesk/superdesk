@@ -6,6 +6,7 @@ Feature: News Items Archive
         When we get "/archive"
         Then we get list with 0 items
 
+    @wip
     @auth
     Scenario: Move item into archive
         Given empty "archive"
@@ -14,22 +15,16 @@ Feature: News Items Archive
             [{"guid": "tag:xyz-abc-123", "headline": "htext"}]
             """
 
-        When we post to "/archive"
+        When we post to "/archive_ingest"
             """
             {
-                "uri": "tag:xyz-abc-123",
-                "guid": "tag:xyz-abc-123",
-                "headline": "htext",
-                "urgency": "3",
-                "firstcreated": "2013-11-07T13:54:45+00:00",
-                "versioncreated": "2013-11-07T13:54:45+00:00",
-                "type": "text"
+                "guid": "tag:xyz-abc-123"
             }
             """
 
         Then we get new resource
             """
-            {"_id": "tag:xyz-abc-123", "guid": "tag:xyz-abc-123", "headline": "htext"}
+            {"guid": "tag:xyz-abc-123"}
             """
         And we get "archived" in "ingest/tag:xyz-abc-123"
 

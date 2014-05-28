@@ -15,7 +15,7 @@ class SuperdeskDataLayer(Mongo):
     serializers.update(Elastic.serializers)
 
     def init_app(self, app):
-        super(SuperdeskDataLayer, self).init_app(app)
+        Mongo.init_app(self, app)
         self.elastic = Elastic(app)
 
         if 'DEFAULT_FILE_STORAGE' in app.config:
@@ -24,37 +24,12 @@ class SuperdeskDataLayer(Mongo):
         else:
             self.storage = self.driver
 
-        self._init_elastic()
-
-    def _init_elastic(self):
-        """Put elasticsearch mapping.
-
-        todo(petr): create a command to set mapping and use domain for mapping
-        """
-        mappings = {}
-        for typename in ('archive', 'ingest'):
-            mappings[typename] = {'properties': {
-                'uri': {'type': 'string', 'index': 'not_analyzed'},
-                'guid': {'type': 'string', 'index': 'not_analyzed'},
-                'firstcreated': {'type': 'date'},
-                'versioncreated': {'type': 'date'},
-                'version': {'type': 'string'},
-                'subject': {
-                    'properties': {
-                        'name': {'type': 'string', 'index': 'not_analyzed'}
-                    }
-                },
-                'place': {
-                    'properties': {
-                        'name': {'type': 'string', 'index': 'not_analyzed'}
-                    }
-                }
-            }}
-
         try:
-            self.elastic.es.create_index(self.elastic.index, {'mappings': mappings})
+            self.elastic.es.create_index(self.elastic.index)
         except IndexAlreadyExistsError:
             pass
+
+        self.elastic.put_mapping(app)
 
     def find(self, resource, req, lookup):
         cursor = self._backend(resource).find(resource, req, lookup)

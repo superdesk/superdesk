@@ -284,7 +284,7 @@ def step_impl_then_get_key_in_url(context, key, url):
     res = context.client.get(url, headers=context.headers)
     assert_200(res)
     data = get_json_data(res)
-    assert data.get(key), data
+    assert data.get(key), '"%s" not in %s' % (key, data)
 
 
 @then('we get "{key}"')

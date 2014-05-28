@@ -26,13 +26,12 @@ def on_create_archive(data, docs):
     for doc in docs:
         if doc.get('guid'):
             # set archived on ingest item
-            doc['archived'] = utcnow()
-            ingest_doc = data.find_one('ingest', _id=doc.get('guid'))
+            ingest_doc = data.find_one('ingest', guid=doc.get('guid'))
+            print('ingest', ingest_doc)
             if ingest_doc:
-                data.update('ingest', ingest_doc.get('_id'), {
-                    'archived': doc['archived']
-                })
-
+                doc.update(ingest_doc)
+                data.update('ingest', ingest_doc.get('_id'), {'archived': utcnow()})
+                del doc['_id']  # use all data from ingest but id
             archive_assets(data, doc)
 
         # set who created the item
@@ -40,19 +39,21 @@ def on_create_archive(data, docs):
 
 superdesk.connect('create:ingest', on_create_item)
 superdesk.connect('create:archive', on_create_item)
-superdesk.connect('create:archive', on_create_archive)
+superdesk.connect('create:archive_ingest', on_create_archive)
 
 base_schema = {
     'uri': {
         'type': 'string',
-        'required': True
-    },
-    'provider': {
-        'type': 'string'
+        'required': True,
+        'unique': True
     },
     'guid': {
         'type': 'string',
-        'required': True
+        'required': True,
+        'unique': True
+    },
+    'provider': {
+        'type': 'string'
     },
     'type': {
         'type': 'string',
@@ -70,6 +71,7 @@ base_schema = {
     'pubstatus': {
         'type': 'string'
     },
+
     'copyrightholder': {
         'type': 'string'
     },
@@ -186,4 +188,19 @@ superdesk.domain('archive', {
         'backend': 'elastic',
         'facets': facets
     }
+})
+
+superdesk.domain('archive_ingest', {
+    'schema': {
+        'guid': {
+            'type': 'string',
+            'required': True,
+            'unique': True
+        }
+    },
+    'datasource': {
+        'source': 'archive'
+    },
+    'resource_methods': ['POST'],
+    'item_methods': []
 })
