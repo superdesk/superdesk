@@ -319,6 +319,16 @@ def step_impl_then_get_file(context):
     context.fetched_data = fetched_data
 
 
+@then('the file is not serialized in response')
+def step_the_file_is_not_attached_to_response(context):
+    assert context.fetched_data['media']['file'] is None, context.fetched_data['media']['file']
+
+
+@then('the file is serialized in response')
+def step_the_file_is_attached_to_response(context):
+    assert context.fetched_data['media']['file'] is not None, context.fetched_data['media']['file']
+
+
 @then('we get cropped data')
 def step_impl_then_get_cropped_file(context):
     assert context.fetched_data['media']['length'] < 15000, 'was expecting smaller image'

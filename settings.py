@@ -41,6 +41,7 @@ INSTALLED_APPS = (
 RESOURCE_METHODS = ['GET', 'POST']
 ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
 EXTENDED_MEDIA_INFO = ['content_type', 'name', 'length']
+RETURN_MEDIA_AS_BASE64_STRING = False
 
 # Amazon S3
 # AMAZON_CONTAINER_NAME = 'superdesk-test'  # To be replaced with a proper container
