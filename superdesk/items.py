@@ -8,6 +8,7 @@ from eve.methods.post import post
 from eve.methods.delete import deleteitem
 from flask import abort
 
+
 def archive_assets(data, doc):
     """Archive all related assets for given doc."""
     for group in doc.get('groups', []):
@@ -31,7 +32,6 @@ def on_create_archive(data, docs):
         if doc.get('guid'):
             # set archived on ingest item
             ingest_doc = data.find_one('ingest', guid=doc.get('guid'))
-            print('ingest', ingest_doc)
             if ingest_doc:
                 doc.update(ingest_doc)
                 data.update('ingest', ingest_doc.get('_id'), {'archived': utcnow()})
@@ -55,13 +55,13 @@ def generate_guid(hints):
     '''Generate a GUID based on given hints'''
     newsml_guid_format = 'urn:newsml:%(domain)s:%(timestamp)s:%(identifier)s'
     tag_guid_format = 'tag:%(domain)s:%(year)d:%(identifier)s'
-    
+
     assert isinstance(hints, dict)
     t = datetime.today()
     if hints['type'].lower() == 'tag':
-        return tag_guid_format % {'domain':SERVER_DOMAIN, 'year':t.year, 'identifier':hints['id']}
+        return tag_guid_format % {'domain': SERVER_DOMAIN, 'year': t.year, 'identifier': hints['id']}
     elif hints['type'].lower() == 'newsml':
-        return newsml_guid_format % {'domain':SERVER_DOMAIN, 'timestamp':t.isoformat(), 'identifier':hints['id']}
+        return newsml_guid_format % {'domain': SERVER_DOMAIN, 'timestamp': t.isoformat(), 'identifier': hints['id']}
     return None
 
 
@@ -75,12 +75,12 @@ def on_upload_create(data, docs):
             abort(500)
         type = res['mime_type'].split('/')[0]
         if type != 'image':
-            deleteitem('upload', {'_id':str(res['_id'])})
+            deleteitem('upload', {'_id': str(res['_id'])})
             abort(400, 'Invalid file type: %s' % type)
 
         del doc['media']
         doc['media_file'] = str(res['_id'])
-        doc['guid'] = generate_guid({'type':'tag', 'id':str(uuid4())})
+        doc['guid'] = generate_guid({'type': 'tag', 'id': str(uuid4())})
         doc['type'] = 'picture'
         doc['version'] = 1
 
@@ -256,35 +256,19 @@ superdesk.domain('archive', {
 })
 
 superdesk.domain('archive_media', {
-    'additional_lookup': {
-        'url': 'regex("[\w,.:-]+")',
-        'field': 'guid'
-    },
     'schema': {
-        'guid': { 'type': 'string' },
-        'media': {'type': 'media', 'required': True},
-        'CropLeft': {'type': 'integer'},
-        'CropRight': {'type': 'integer'},
-        'CropTop': {'type': 'integer'},
-        'CropBottom': {'type': 'integer'},
-        'URL': {'type': 'string'},
-        'data_uri_url': {'type': 'string'},
+        'media': {'type': 'media', 'required': True}
     },
     'datasource': {
-        'backend': 'elastic',
         'source': 'archive'
     },
-    'item_methods': ['PUT'],
-    'resource_methods': ['POST']
+    'resource_methods': ['POST'],
+    'item_methods': []
 })
 
 superdesk.domain('archive_ingest', {
     'schema': {
-        'guid': {
-            'type': 'string',
-            'required': True,
-            'unique': True
-        }
+        'guid': {'type': 'string', 'required': True}
     },
     'datasource': {
         'source': 'archive'

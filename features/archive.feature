@@ -6,7 +6,6 @@ Feature: News Items Archive
         When we get "/archive"
         Then we get list with 0 items
 
-    @wip
     @auth
     Scenario: Move item into archive
         Given empty "archive"
@@ -60,3 +59,15 @@ Feature: News Items Archive
 
         Then we get updated response
         And we get etag matching "/archive/xyz"
+
+    @auth
+    Scenario: Upload file into archive
+        Given empty "archive"
+        When we upload a binary file to "archive_media"
+        Then we get new resource
+            """
+            {"guid": ""}
+            """
+
+        When we get "/archive"
+        Then we get list with 1 items

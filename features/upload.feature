@@ -1,9 +1,8 @@
-@wip
 Feature: Upload
 
     @amazon
     Scenario: Upload a binary file
-        When we upload a binary file
+        When we upload a binary file to "/upload"
         Then we get a file reference
         And we can delete that file
 
@@ -21,5 +20,5 @@ Feature: Upload
             {"DEFAULT_FILE_STORAGE": "superdesk.storage.FileSystemStorage"}
             """
 
-        When we upload a binary file
+        When we upload a binary file to "/upload"
         Then we get a file reference

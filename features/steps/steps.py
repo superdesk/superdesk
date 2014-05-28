@@ -193,13 +193,13 @@ def step_impl_when_get(context):
     context.response = context.client.get(href, headers=context.headers)
 
 
-@when('we upload a binary file')
-def step_impl_when_upload(context):
+@when('we upload a binary file to "{dest}"')
+def step_impl_when_upload(context, dest):
     with open(get_fixture_path('flower.jpg'), 'rb') as f:
         data = {'media': f}
         headers = [('Content-Type', 'multipart/form-data')]
         headers += context.headers
-        context.response = context.client.post('/upload', data=data, headers=headers)
+        context.response = context.client.post(dest, data=data, headers=headers)
 
 
 @when('we upload a binary file with cropping')
