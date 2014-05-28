@@ -1,7 +1,7 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    return ['$q', 'storage', 'server', function($q, storage, server) {
+    return ['$q', 'storage', 'api', function($q, storage, api) {
         this.listeners = [];
         this.data = {};
         this.itemList = [];
@@ -54,7 +54,7 @@ define(['lodash'], function(_) {
 
             _.forEach(this.itemList, function(href) {
                 if (!self.data[href]) {
-                    promises.push(server._http('get', server._wrapUrl(href)));
+                    promises.push(api.archive.getByUrl(href));
                 }
             });
 

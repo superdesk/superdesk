@@ -1,30 +1,37 @@
 define([
     'superdesk/services/storage',
-    'superdesk/services/server',
     './scratchpad-service'
-], function(storageService, serverService, ScratchpadService) {
+], function(storageService, ScratchpadService) {
     'use strict';
 
     describe('scratchpadService', function() {
         beforeEach(function() {
             module(storageService.name);
-            module(serverService.name);
             module(function($provide) {
                 $provide.service('scratchpad', ScratchpadService);
             });
         });
 
-        beforeEach(module(function($provide) {
-            $provide.constant('config', {server: {url: 'http://localhost'}});
-        }));
+        var $q, storage, service, testItem, testItem2;
 
-        var $q, storage, server, service, httpBackend, testItem, testItem2;
+        beforeEach(module(function($provide) {
+            $provide.service('api', function($q) {
+                return {
+                    archive: {
+                        getByUrl: function() {
+                            return $q.when(testItem);
+                        },
+                        getHeaders: function() {
+                            return {};
+                        }
+                    }
+                };
+            });
+        }));
 
         beforeEach(inject(function($injector) {
             $q = $injector.get('$q');
             storage = $injector.get('storage');
-            httpBackend = $injector.get('$httpBackend');
-            server = $injector.get('server');
             service = $injector.get('scratchpad');
             testItem = {
                 _links: {self: {href: 'test'}},
@@ -71,23 +78,20 @@ define([
             expect(test).toEqual(['test2', 'test']);
         });
 
-        it('can get items', function() {
+        it('can get items', inject(function($rootScope) {
             var test = null;
 
             service.addItem(testItem);
             service.data = {};
 
-            httpBackend
-                .expectGET('http://test')
-                .respond(200, testItem);
-
             service.getItems().then(function(response) {
                 test = response[0];
             });
-            httpBackend.flush();
+
+            $rootScope.$apply();
 
             expect(test.data).toEqual(testItem.data);
-        });
+        }));
 
         it('can announce to listeners', function() {
             var test = false;
