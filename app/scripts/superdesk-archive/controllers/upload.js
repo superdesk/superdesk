@@ -13,7 +13,7 @@ define(['lodash'], function(_) {
                     method: 'POST',
                     url: url,
                     data: {media: item.file},
-                    headers: api.archive.getHeaders()
+                    headers: api.archiveMedia.getHeaders()
                 }).then(function(response) {
                     item.model = response.data;
                     return item;

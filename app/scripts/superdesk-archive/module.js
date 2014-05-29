@@ -52,7 +52,7 @@ define([
         apiProvider.api('archive', {
             type: 'http',
             backend: {
-                rel: 'ingest'
+                rel: 'archive'
             }
         });
         apiProvider.api('archiveMedia', {
