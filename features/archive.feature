@@ -60,6 +60,7 @@ Feature: News Items Archive
         Then we get updated response
         And we get etag matching "/archive/xyz"
 
+    @wip
     @auth
     Scenario: Upload file into archive
         Given empty "archive"
@@ -69,5 +70,13 @@ Feature: News Items Archive
             {"guid": ""}
             """
 
+        When we patch again
+            """
+            {"headline": "flower", "byline": "foo", "description_text": "flower desc"}
+            """
+
         When we get "/archive"
         Then we get list with 1 items
+            """
+            {"headline": "flower", "byline": "foo", "description_text": "flower desc"}
+            """

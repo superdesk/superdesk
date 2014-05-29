@@ -73,7 +73,7 @@ def on_upload_create(data, docs):
         res, _u, _e, code = post('upload')
         if code != 201:
             abort(500)
-        res = superdesk.app.data.find_one('upload', None, _id=str(res['_id']))
+        res = superdesk.app.data.find_one('upload', req=None, _id=str(res['_id']))
         if not res:
             abort(500)
         type = res['mime_type'].split('/')[0]
@@ -261,13 +261,20 @@ superdesk.domain('archive', {
 
 superdesk.domain('archive_media', {
     'schema': {
-        'media': {'type': 'media', 'required': True}
+        'media': {
+            'type': 'media',
+            'required': True
+        },
+        'headline': base_schema['headline'],
+        'byline': base_schema['byline'],
+        'description_text': base_schema['description_text']
     },
     'datasource': {
         'source': 'archive'
     },
     'resource_methods': ['POST'],
-    'item_methods': []
+    'item_methods': ['PATCH', 'GET'],
+    'item_url': item_url
 })
 
 superdesk.domain('archive_ingest', {
