@@ -399,6 +399,7 @@ def step_impl_then_not_modified(context):
 def step_impl_then_get_header(context, header):
     expect_headers_contain(context.response, header)
 
+
 @then('we get link to "{resource}"')
 def then_we_get_link_to_resource(context, resource):
     doc = get_json_data(context.response)

@@ -1,6 +1,7 @@
 import flask
 import superdesk
 from .utc import utcnow
+from .upload import get_media_url
 from datetime import datetime
 from settings import SERVER_DOMAIN
 from uuid import uuid4
@@ -81,12 +82,32 @@ def on_upload_create(data, docs):
             deleteitem('upload', {'_id': str(res['_id'])})
             abort(400, 'Invalid file type: %s' % type)
 
-        del doc['media']
         doc['media_file'] = str(res['_id'])
         doc['guid'] = generate_guid({'type': 'tag', 'id': str(uuid4())})
         doc['type'] = 'picture'
         doc['version'] = 1
         doc['versioncreated'] = utcnow()
+        doc['renditions'] = generate_renditions(doc['media'])
+        del doc['media']
+
+
+def generate_renditions(media_id):
+    """Generate system renditions for given media file id.
+
+    This is just a mock implementation for ui..
+    """
+    url = get_media_url(media_id)
+    return {
+        'thumbnail': {
+            'href': url
+        },
+        'baseImage': {
+            'href': url
+        },
+        'original': {
+            'href': url
+        }
+    }
 
 
 def on_upload_update(data, docs):

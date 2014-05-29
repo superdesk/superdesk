@@ -21,8 +21,12 @@ def on_create_upload(data, docs):
         media_file = superdesk.app.media.get(doc.get('media'))
         update['mime_type'] = media_file.content_type
         update['file_meta'] = media_file.metadata
-        update['data_uri_url'] = url_for('upload.get_upload_as_data_uri', media_id=doc.get('media'), _external=True)
+        update['data_uri_url'] = get_media_url(doc.get('media'))
         doc.update(update)
+
+
+def get_media_url(media_id):
+    return url_for('upload.get_upload_as_data_uri', media_id=media_id, _external=True)
 
 
 superdesk.connect('create:upload', on_create_upload)

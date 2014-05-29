@@ -54,7 +54,7 @@ RETURN_MEDIA_AS_BASE64_STRING = False
 RENDITIONS = {
     'picture': {
         'thumbnail': {'width': 220, 'height': 120},
-        'sidebar': {'width': 640, 'height': 640},
+        'baseImage': {'width': 640, 'height': 640},
         'large': {'width': 1400, 'height': 1400},
     }
 }
