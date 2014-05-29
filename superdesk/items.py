@@ -7,6 +7,7 @@ from uuid import uuid4
 from eve.methods.post import post
 from eve.methods.delete import deleteitem
 from flask import abort
+from werkzeug.exceptions import NotFound
 
 
 def archive_assets(data, doc):
@@ -44,11 +45,12 @@ def on_create_archive(data, docs):
 
 def on_delete_archive(data, lookup):
     '''Delete associated binary files.'''
-#     print('data: %s, lookup: %s' % (data, lookup))
-#     res = data.find_one('archive', None, **lookup)
-#     if res:
-#         print('delete', str(res['_id']))
-#         deleteitem('upload', {'_id':str(res['_id'])})
+    res = data.find_one('archive', res=None, **lookup)
+    if res:
+        try:
+            deleteitem('upload', {'_id': str(res['media_file'])})
+        except NotFound:
+            pass
 
 
 def generate_guid(hints):
@@ -66,6 +68,7 @@ def generate_guid(hints):
 
 
 def on_upload_create(data, docs):
+    ''' Create corresponding item on file upload '''
     for doc in docs:
         res, _u, _e, code = post('upload')
         if code != 201:
@@ -83,6 +86,7 @@ def on_upload_create(data, docs):
         doc['guid'] = generate_guid({'type': 'tag', 'id': str(uuid4())})
         doc['type'] = 'picture'
         doc['version'] = 1
+        doc['versioncreated'] = utcnow()
 
 
 def on_upload_update(data, docs):
