@@ -40,6 +40,9 @@ class SuperdeskDataLayer(Mongo):
     def find_one(self, resource, req=None, **lookup):
         return self._backend(resource).find_one(resource, req=req, **lookup)
 
+    def find_one_raw(self, resource, _id):
+        return self._backend(resource).find_one_raw(resource, _id)
+
     def find_list_of_ids(self, resource, ids, client_projection=None):
         return self._backend(resource).find_list_of_ids(resource, ids, client_projection)
 
