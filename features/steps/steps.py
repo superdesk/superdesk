@@ -168,6 +168,14 @@ def step_impl_when_delete_url(context, url):
     context.response = context.client.delete(href, headers=headers)
 
 
+@when('we delete it')
+def when_we_delete_it(context):
+    res = get_json_data(context.response)
+    href = get_self_href(res, context)
+    headers = if_match(context, res.get('_etag'))
+    context.response = context.client.delete(href, headers=headers)
+
+
 @when('we patch "{url}"')
 def step_impl_when_patch_url(context, url):
     res = get_res(url, context)
@@ -405,3 +413,8 @@ def then_we_get_link_to_resource(context, resource):
     doc = get_json_data(context.response)
     self_link = doc.get('_links').get('self')
     assert resource in self_link['href'], 'expect link to "%s", got %s' % (resource, self_link)
+
+
+@then('we get deleted response')
+def then_we_get_deleted_response(context):
+    assert_200(context.response)

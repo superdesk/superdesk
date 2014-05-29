@@ -60,7 +60,6 @@ Feature: News Items Archive
         Then we get updated response
         And we get etag matching "/archive/xyz"
 
-    @wip
     @auth
     Scenario: Upload file into archive
         Given empty "archive"
@@ -80,3 +79,12 @@ Feature: News Items Archive
             """
             {"headline": "flower", "byline": "foo", "description_text": "flower desc"}
             """
+
+    @wip
+    @auth
+    Scenario: Cancel upload
+        Given empty "archive"
+        When we upload a binary file to "archive_media"
+        And we delete it
+        Then we get deleted response
+

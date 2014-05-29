@@ -88,7 +88,6 @@ def on_upload_create(data, docs):
         doc['version'] = 1
         doc['versioncreated'] = utcnow()
         doc['renditions'] = generate_renditions(doc['media'])
-        del doc['media']
 
 
 def generate_renditions(media_id):
