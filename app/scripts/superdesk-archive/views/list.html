@@ -47,9 +47,9 @@
                     sd-list-view
                     data-items="createdMedia.items"
                     data-select="preview(item)"
-                    data-extras="{view: view, type: type}">
-                    <div sd-media-box ng-if="extras.type === 'archive'" sd-draggable data-item="item" data-container="'.scratchpad'"></div>
-                    <div sd-media-box ng-if="extras.type !== 'archive'"></div>
+                    data-extras="{view: view, activityFilter: {type: type}}">
+                    <div sd-media-box ng-if="activityFilter.type === 'archive'" sd-draggable data-item="item" data-container="'.scratchpad'"></div>
+                    <div sd-media-box ng-if="activityFilter.type !== 'archive'"></div>
                 </div>
             </div>
 
@@ -57,9 +57,9 @@
                 sd-list-view
                 data-items="items._items"
                 data-select="preview(item)"
-                data-extras="{view: view, type: type}">
-                <div sd-media-box ng-if="extras.type === 'archive'" sd-draggable data-item="item" data-container="'.scratchpad'"></div>
-                <div sd-media-box ng-if="extras.type !== 'archive'"></div>
+                data-extras="{view: view, activityFilter: {type: type}}">
+                <div sd-media-box ng-if="activityFilter.type === 'archive'" sd-draggable data-item="item" data-container="'.scratchpad'"></div>
+                <div sd-media-box ng-if="activityFilter.type !== 'archive'"></div>
             </div>
         </div>
         

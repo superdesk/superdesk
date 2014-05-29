@@ -35,9 +35,10 @@
 </div>
 
 <div class="action">
-    <ul class="item-functions"
+    <ul ng-if="activityFilter" class="item-functions"
         sd-activity-list
         data-data="{item: item, list: items, index: $index}"
-        data-type="{{extras.type}}">
+        data-type="{{activityFilter.type}}"
+        data-action="{{activityFilter.action}}">
     </ul>
 </div>

@@ -60,7 +60,6 @@ define(['require', 'lodash'], function(require, _) {
                 scope.clickItem = function(item) {
                     scope.selected = item;
                     scope.select({item: item});
-                    $location.search('_id', item ? item._id : null);
                 };
 
                 scope.$watch('items', function() {

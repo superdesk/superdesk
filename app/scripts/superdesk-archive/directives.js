@@ -82,6 +82,9 @@ define([
                 restrict: 'A',
                 templateUrl: require.toUrl('./views/media-box.html'),
                 link: function(scope, element, attrs) {
+                    if (!scope.activityFilter && scope.extras) {
+                        scope.activityFilter = scope.extras.activityFilter;
+                    }
                     scope.$watch('extras.view', function(view) {
                         switch (view) {
                         case 'mlist':

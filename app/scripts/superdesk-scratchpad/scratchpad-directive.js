@@ -9,6 +9,7 @@ define(['lodash', 'require'], function(_, require) {
             link: function(scope, element, attrs, ctrl) {
                 scope.flags = ctrl.flags;
                 scope.items = [];
+                scope.activityFilter = {type: 'scratchpad'};
 
                 scope.toggle = function() {
                     scope.flags['scratchpad-open'] = !scope.flags['scratchpad-open'];

@@ -18,7 +18,17 @@ define([
                     scratchpad.addItem(data.item);
                 }],
                 filters: [
-                    {action: 'addToScratchpad', type: 'archive'}
+                    {action: 'addScratchpad', type: 'archive'}
+                ]
+            })
+            .activity('remove.scratchpad', {
+                label: gettext('Remove from scratchpad'),
+                icon: 'scratchpad-remove',
+                controller: ['scratchpad', 'data', function(scratchpad, data) {
+                    scratchpad.removeItem(data.item);
+                }],
+                filters: [
+                    {action: 'removeScratchpad', type: 'scratchpad'}
                 ]
             });
     }]);

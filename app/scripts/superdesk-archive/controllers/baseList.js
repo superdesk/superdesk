@@ -10,6 +10,7 @@ define(['lodash'], function(_) {
 
         $scope.preview = function(item) {
             $scope.selected.preview = item;
+            $location.search('_id', item ? item._id : null);
         };
 
         $scope.display = function(item) {
