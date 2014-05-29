@@ -13,7 +13,7 @@ define([
         superdesk
             .activity('add.scratchpad', {
                 label: gettext('Add to scratchpad'),
-                icon: 'plus',
+                icon: 'scratchpad-add',
                 controller: ['scratchpad', 'data', function(scratchpad, data) {
                     scratchpad.addItem(data.item);
                 }],

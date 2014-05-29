@@ -299,6 +299,23 @@
 		&.hidetop {
 			top:@archive-inner-subnav-height;
 		}
+		.list-pane {
+			.list-view {
+				.clearfix();
+				.panel {
+					float: left;
+					&.alert {
+						float: none;
+					}
+					.panel-body {
+						display: inline-block;
+						.ui-draggable {
+							display: inline-block;
+						}
+					}
+				}
+			}
+		}
 	}
 
 
@@ -481,7 +498,7 @@
 
 @sfbox_mediaHeight : 120px;
 @sfbox_sidepadding : 5px;
-@sfbox_minHeight : 220px;
+@sfbox_minHeight : 225px;
 @sfbox_minWidth : 140px;
 @sfbox_mediaMaxWidth: 220px;
 
@@ -662,6 +679,9 @@
 				float: left;
 				.box-sizing(border-box);
 				padding: 8px 9px 8px 8px;
+				i {
+					vertical-align: baseline;
+				}
 				span {
 					display: none;
 				}
