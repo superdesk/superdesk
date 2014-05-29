@@ -1,4 +1,5 @@
 
+from eve.io.base import DataLayer
 from eve.io.mongo import Mongo
 from eve.utils import config, ParsedRequest
 from eve_elastic import Elastic
@@ -6,15 +7,14 @@ from .signals import send
 from .utils import import_by_path
 
 
-class SuperdeskDataLayer(Mongo):
-
+class SuperdeskDataLayer(DataLayer):
     """Superdesk Data Layer"""
 
     serializers = Mongo.serializers
     serializers.update(Elastic.serializers)
 
     def init_app(self, app):
-        Mongo.init_app(self, app)
+        self.mongo = Mongo(app)
         self.elastic = Elastic(app)
 
         if 'DEFAULT_FILE_STORAGE' in app.config:
@@ -76,8 +76,6 @@ class SuperdeskDataLayer(Mongo):
     def _backend(self, resource):
         datasource = self._datasource(resource)
         backend = config.SOURCES[datasource[0]].get('backend', 'mongo')
-        if backend is 'mongo':
-            return super(SuperdeskDataLayer, self)
         return getattr(self, backend)
 
     def _send(self, signal, resource, **kwargs):

@@ -1,15 +1,13 @@
 from eve.io.mongo.media import GridFSMediaStorage
 import logging
 from superdesk.media_operations import get_hashed_filename
+from gridfs import GridFS
 
 
 logger = logging.getLogger(__name__)
 
 
 class SuperdeskGridFSMediaStorage(GridFSMediaStorage):
-
-    def __init__(self, app=None):
-        super().__init__(app)
 
     def get(self, _id):
         logger.debug('Getting media file with id= %s' % _id)
@@ -22,3 +20,8 @@ class SuperdeskGridFSMediaStorage(GridFSMediaStorage):
         _id = self.fs().put(out, content_type=content_type, filename=file_name)
         logger.debug('Saved  media file with id= %s' % _id)
         return _id
+
+    def fs(self):
+        if self._fs is None:
+            self._fs = GridFS(self.app.data.mongo.driver.db)
+        return self._fs
