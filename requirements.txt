@@ -32,4 +32,4 @@ waitress==0.8.8
 
 git+git://github.com/superdesk/eve@develop#egg=Eve==0.4
 git+git://github.com/actionless/behave@master#egg=behave
-git+git://github.com/actionless/wooper@devel#egg=wooper
+git+git://github.com/actionless/wooper@0.1.0#egg=wooper==0.1.0

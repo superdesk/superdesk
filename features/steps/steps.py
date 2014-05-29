@@ -19,9 +19,7 @@ def test_json(context):
     try:
         response_data = json.loads(context.response.get_data())
     except Exception:
-        fail_and_print_body(
-            context.response,
-            'response is not valid json' % (context.response.get_data()))
+        fail_and_print_body(context.response, 'response is not valid json')
 
     context_data = parse_json_input(context.text)
 
