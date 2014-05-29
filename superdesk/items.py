@@ -273,7 +273,7 @@ superdesk.domain('archive_media', {
         'source': 'archive'
     },
     'resource_methods': ['POST'],
-    'item_methods': ['PATCH', 'GET'],
+    'item_methods': ['PATCH', 'GET', 'DELETE'],
     'item_url': item_url
 })
 
