@@ -49,7 +49,6 @@ define(['lodash'], function(_) {
         };
         this.getItems = function() {
             var self = this;
-            var delay = $q.defer();
             var promises = [];
 
             _.forEach(this.itemList, function(href) {
@@ -58,7 +57,7 @@ define(['lodash'], function(_) {
                 }
             });
 
-            $q.all(promises).then(function(response) {
+            return $q.all(promises).then(function(response) {
                 _.forEach(response, function(item) {
                     self.data[item._links.self.href] = item;
                 });
@@ -66,10 +65,8 @@ define(['lodash'], function(_) {
                 _.forEach(self.itemList, function(href) {
                     items.push(self.data[href]);
                 });
-                delay.resolve(items);
+                return items;
             });
-
-            return delay.promise;
         };
 
         this.loadItemList();
