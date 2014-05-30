@@ -7,6 +7,7 @@ from settings import SERVER_DOMAIN
 from uuid import uuid4
 from eve.methods.post import post
 from eve.methods.delete import deleteitem
+from eve.utils import config
 from flask import abort
 from werkzeug.exceptions import NotFound
 
@@ -96,17 +97,10 @@ def generate_renditions(media_id):
     This is just a mock implementation for ui..
     """
     url = get_media_url(media_id)
-    return {
-        'thumbnail': {
-            'href': url
-        },
-        'baseImage': {
-            'href': url
-        },
-        'original': {
-            'href': url
-        }
-    }
+    renditions = {}
+    for rendition in config.RENDITIONS['picture']:
+        renditions[rendition] = {'href': url}
+    return renditions
 
 
 def on_upload_update(data, docs):
