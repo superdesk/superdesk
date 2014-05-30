@@ -1,7 +1,6 @@
 Feature: User Resource
 
     @auth
-    @wip
     Scenario: Create a user
         Given empty "users"
         When we post to "/users"
