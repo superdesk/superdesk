@@ -65,8 +65,6 @@ def setup_amazon(context):
         context.app.config['AMAZON_ACCESS_KEY_ID'] = os.environ.get('AMAZON_ACCESS_KEY_ID')
         context.app.config['AMAZON_SECRET_ACCESS_KEY'] = os.environ.get('AMAZON_SECRET_ACCESS_KEY')
         context.app.config['AMAZON_REGION'] = os.environ.get('AMAZON_REGION')
-    else:
-        setup_auth_user(context)
 
 
 class TestCase(unittest.TestCase):

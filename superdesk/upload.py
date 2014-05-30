@@ -57,5 +57,5 @@ superdesk.domain('upload', {
         }
     },
     'item_methods': ['GET', 'DELETE'],
-    'resource_methods': ['GET', 'POST', 'DELETE'],
+    'resource_methods': ['GET', 'POST'],
 })
