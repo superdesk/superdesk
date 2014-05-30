@@ -67,8 +67,12 @@ define(['lodash'], function(_) {
             }
 
             if (params.sort) {
-                criteria[params.sort[1]] = params.sort[0];
+                criteria.sort = formatSort(params.sort[0], params.sort[1]);
+            } else {
+                criteria.sort = formatSort('full_name', 'asc');
             }
+
+            console.log(criteria);
 
             return criteria;
         }
@@ -79,6 +83,16 @@ define(['lodash'], function(_) {
                     $scope.users = users;
                     $scope.createdUsers = [];
                 });
+        }
+
+        function formatSort(key, dir) {
+            var val = dir === 'asc' ? 1 : -1;
+            switch (key) {
+                case 'full_name':
+                    return '[("first_name", ' + val + '), ("last_name", ' + val + ')]';
+                default:
+                    return '[("' + encodeURIComponent(key) + '", ' + val + ')]';
+            }
         }
 
         $scope.$watch(getCriteria, fetchUsers, true);
