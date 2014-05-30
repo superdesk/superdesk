@@ -5,7 +5,7 @@
         <a class="scratchpad-openclose pull-right" href="" ng-click="toggle()"></a>
     </div>
     <div class="content" ng-if="flags['scratchpad-open']">
-        <div sd-sortable data-update="sort" data-placeholder="'media-box'">
+        <div sd-sortable data-update="sort" data-placeholder="'media-box'" class="scratchpad-items">
             <div ng-repeat="item in items" data-index="{{$index}}" style="float: left;">
                 <div sd-media-box></div>
             </div>
