@@ -1,7 +1,7 @@
 import flask
 import superdesk
 from .utc import utcnow
-from .upload import get_media_url
+from .upload import url_for_media
 from datetime import datetime
 from settings import SERVER_DOMAIN
 from uuid import uuid4
@@ -96,7 +96,7 @@ def generate_renditions(media_id):
 
     This is just a mock implementation for ui..
     """
-    url = get_media_url(media_id)
+    url = url_for_media(media_id)
     renditions = {}
     for rendition in config.RENDITIONS['picture']:
         renditions[rendition] = {'href': url}
