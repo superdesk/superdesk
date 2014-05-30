@@ -23,11 +23,18 @@
                         <i class="icon-image" ng-show="!item.url"></i>
                         <img ng-src="{{ item.url }}" />
                     </div>
-                    <span class="remove" ng-click="cancelOne(item, $index)"><i class="icon-close-small"></i></span>
+                    <span class="remove" ng-click="cancelItem(item, $index)"><i class="icon-close-small"></i></span>
                 </div>
                 <div class="info">
                     <div class="upload-progress" ng-show="item.progress">
                         <div class="bar" style="width:{{ item.progress }}%"></div>
+                    </div>
+
+                    <div>
+                        status:
+                        <span ng-show="item.model">upload complete</span>
+                        <span ng-show="item.model === undefined">upload hasnt started</span>
+                        <span ng-show="item.model === false">upload failed</span>
                     </div>
 
                     <div sd-inline-meta
@@ -69,6 +76,9 @@
 </div>
 
 <div class="modal-footer">
+    <span ng-show="saving" translate>Saving...</span>
+    <span ng-show="failed" translate>There are failed uploads.</span>
     <button class="btn btn-primary pull-right" ng-click="save()" ng-disabled="saving" translate>Save</button>
     <button class="btn btn-default pull-right" ng-click="cancel()" ng-disabled="saving" translate>Cancel</button>
+    <button class="btn pull-right" ng-show="failed" ng-click="upload()" translate>Try again</button>
 </div>
