@@ -11,10 +11,11 @@ define([
         beforeEach(module('templates'));
 
         it('renders list', inject(function($compile, $rootScope) {
-            $rootScope.items = [{href: 1, name: 'foo'}, {href: 2, name: 'bar'}];
+            var scope = $rootScope.$new(true);
+            scope.items = [{href: 1, name: 'foo'}, {href: 2, name: 'bar'}];
 
-            var elem = $compile('<div sd-list-view data-items="items"><div class="item">{{ item.name }}</div></div>')($rootScope);
-            $rootScope.$digest();
+            var elem = $compile('<div sd-list-view data-items="items"><div class="item">{{ item.name }}</div></div>')(scope);
+            scope.$digest();
 
             expect(elem.html()).toContain('foo');
             expect(elem.find('.item').length).toBe(2);

@@ -6,6 +6,6 @@
         ng-repeat="item in items track by $index"
         ng-click="clickItem(item)"
         ng-class="{active: item.href === selected.href}">
-        <div class="panel-body" ng-transclude></div>
+        <div class="panel-body" sd-list-item data-item="item"></div>
     </li>
 </ul>

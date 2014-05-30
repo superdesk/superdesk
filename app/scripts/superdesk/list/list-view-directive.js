@@ -63,8 +63,7 @@ define(['require', 'lodash'], function(require, _) {
                     $location.search('_id', item ? item._id : null);
                 };
 
-                scope.$watch('items', function(items) {
-                    scope.items = items;
+                scope.$watch('items', function() {
                     fetchSelectedItem($location.search()._id);
                     elem.find('.list-view').focus();
                 });

@@ -72,8 +72,6 @@ define(['lodash'], function(_) {
                 criteria.sort = formatSort('full_name', 'asc');
             }
 
-            console.log(criteria);
-
             return criteria;
         }
 

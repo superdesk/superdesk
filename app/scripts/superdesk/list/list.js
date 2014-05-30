@@ -4,13 +4,16 @@ define([
     './pagination-directive',
     './list-view-directive',
     './search-param-directive',
-    './searchbar-directive'
+    './searchbar-directive',
+    './list-item-directive'
 ], function(angular, require) {
     'use strict';
 
-    return angular.module('superdesk.list', [])
-        .directive('sdPagination', require('./pagination-directive'))
-        .directive('sdListView', require('./list-view-directive'))
-        .directive('sdSearchParam', require('./search-param-directive'))
-        .directive('sdSearchbar', require('./searchbar-directive'));
+    var mod = angular.module('superdesk.list', []);
+    mod.directive('sdPagination', require('./pagination-directive'));
+    mod.directive('sdListView', require('./list-view-directive'));
+    mod.directive('sdSearchParam', require('./search-param-directive'));
+    mod.directive('sdSearchbar', require('./searchbar-directive'));
+    mod.directive('sdListItem', require('./list-item-directive'));
+    return mod;
 });
