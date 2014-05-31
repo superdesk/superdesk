@@ -7,7 +7,7 @@ from flask import url_for, Response
 bp = superdesk.Blueprint('upload', __name__)
 
 
-@bp.route('/upload/<ObjectId:media_id>/raw', methods=['GET'])
+@bp.route('/upload/<path:media_id>/raw', methods=['GET'])
 def get_upload_as_data_uri(media_id):
     media_file = superdesk.app.media.get(media_id)
     if media_file:
@@ -17,6 +17,8 @@ def get_upload_as_data_uri(media_id):
 
 def on_create_upload(data, docs):
     for doc in docs:
+        if doc.get('URL') and doc.get('media'):
+            raise SuperdeskError(payload='Uploading file by URL and file stream in the same time is not supported.')
         update = {}
         media_file = superdesk.app.media.get(doc.get('media'))
         update['mime_type'] = media_file.content_type
@@ -35,7 +37,7 @@ superdesk.blueprint(bp)
 
 superdesk.domain('upload', {
     'schema': {
-        'media': {'type': 'media', 'required': True},
+        'media': {'type': 'media'},
         'CropLeft': {'type': 'integer'},
         'CropRight': {'type': 'integer'},
         'CropTop': {'type': 'integer'},
@@ -47,7 +49,6 @@ superdesk.domain('upload', {
     },
     'datasource': {
         'projection': {
-            'URL': 1,
             'data_uri_url': 1,
             'mime_type': 1,
             'file_meta': 1,

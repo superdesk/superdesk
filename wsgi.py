@@ -1,4 +1,5 @@
 
-from app import get_app
+from app import get_app, setup_amazon
 
-application = get_app()
+config = setup_amazon({})
+application = get_app(config=config)

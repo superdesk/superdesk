@@ -20,6 +20,16 @@ class SuperdeskEve(eve.Eve):
         self.config.from_object(superdesk)
 
 
+def setup_amazon(config):
+    if ('AMAZON_CONTAINER_NAME' in os.environ and
+            'AMAZON_ACCESS_KEY_ID' in os.environ and
+            'AMAZON_SECRET_ACCESS_KEY' in os.environ):
+        config['AMAZON_CONTAINER_NAME'] = os.environ.get('AMAZON_CONTAINER_NAME')
+        config['AMAZON_ACCESS_KEY_ID'] = os.environ.get('AMAZON_ACCESS_KEY_ID')
+        config['AMAZON_SECRET_ACCESS_KEY'] = os.environ.get('AMAZON_SECRET_ACCESS_KEY')
+        config['AMAZON_REGION'] = os.environ.get('AMAZON_REGION')
+
+
 def get_app(config=None):
     """App factory.
 
@@ -81,5 +91,6 @@ if __name__ == '__main__':
         superdesk.logger.setLevel(logging.INFO)
         superdesk.logger.addHandler(logging.StreamHandler())
 
-    app = get_app()
+    config = setup_amazon({})
+    app = get_app(config=config)
     app.run(host=host, port=port, debug=debug, use_reloader=True)

@@ -1,5 +1,6 @@
 from eve.io.mongo.media import GridFSMediaStorage
 import logging
+from bson import ObjectId
 from superdesk.media_operations import get_hashed_filename
 from gridfs import GridFS
 
@@ -11,6 +12,8 @@ class SuperdeskGridFSMediaStorage(GridFSMediaStorage):
 
     def get(self, _id):
         logger.debug('Getting media file with id= %s' % _id)
+        if isinstance(_id, str):
+            _id = ObjectId(_id)
         return super().get(_id)
 
     def put(self, content, filename=None, content_type=None):
