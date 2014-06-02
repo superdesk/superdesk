@@ -51,7 +51,6 @@ require.config({
         'bootstrap/modal': ['jquery'],
         'bootstrap/dropdown': ['jquery'],
         'bootstrap-daterange': ['jquery', 'moment'],
-        'bower_components/jcrop/js/jquery.Jcrop': ['jquery'],
-        'bower_components/gridster/dist/jquery.gridster.with-extras': ['jquery']
+        'bower_components/jcrop/js/jquery.Jcrop': ['jquery']
     }
 });

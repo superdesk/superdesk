@@ -1,27 +1,33 @@
 define([
     'angular',
     'require',
-    './controllers/main',
-    './services',
-    './directives',
-    './filters',
-    './widgets/worldClock/worldClock',
-    'bower_components/gridster/dist/jquery.gridster.with-extras'
+    './dashboard-controller',
+    './widget-service',
+    './sd-widget-directive',
+    './grid/grid',
+    './world-clock/world-clock'
 ], function(angular, require) {
     'use strict';
 
     return angular.module('superdesk.dashboard', [
-        'superdesk.dashboard.services',
-        'superdesk.dashboard.directives',
-        'superdesk.dashboard.filters',
-        'superdesk.widgets.worldClock'
+        'superdesk.dashboard.grid',
+        'superdesk.dashboard.world-clock'
     ])
-    .constant('widgetsPath', 'scripts/superdesk-dashboard/widgets/')
+
+    .service('widgetService', require('./widget-service'))
+    .directive('sdWidget', require('./sd-widget-directive'))
+
+    .filter('wcodeFilter', function() {
+        return function(input, values) {
+            return _.pick(input, _.difference(_.keys(input), _.keys(values)));
+        };
+    })
+
     .config(['superdeskProvider', function(superdesk) {
         superdesk.activity('/dashboard', {
             label: gettext('Dashboard'),
-            controller: require('./controllers/main'),
-            templateUrl: 'scripts/superdesk-dashboard/views/main.html',
+            controller: require('./dashboard-controller'),
+            templateUrl: require.toUrl('./views/dashboard.html'),
             priority: -1000,
             category: superdesk.MENU_MAIN
         });

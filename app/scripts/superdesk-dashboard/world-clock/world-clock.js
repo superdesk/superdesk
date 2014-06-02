@@ -1,20 +1,21 @@
 define([
+    'require',
     'angular',
     'lodash',
     'd3',
     'moment',
     'moment-timezone'
-], function(angular, _, d3, moment) {
+], function(require, angular, _, d3, moment) {
     'use strict';
 
-    angular.module('superdesk.widgets.worldClock', [])
-        .factory('tzdata', ['$resource', 'widgetsPath', function($resource, widgetsPath) {
-            var filename = widgetsPath + 'worldClock/timezones-all.json';
+    angular.module('superdesk.dashboard.world-clock', [])
+        .factory('tzdata', ['$resource', function($resource) {
+            var filename = require.toUrl('./timezones-all.json');
             return $resource(filename);
         }])
-        .directive('sdWorldclock', ['widgetsPath', function(widgetsPath) {
+        .directive('sdWorldclock', [function() {
             return {
-                templateUrl: widgetsPath + 'worldClock/worldClock.html',
+                templateUrl: require.toUrl('./worldClock.html'),
                 replace: true,
                 restrict: 'A',
                 controller: 'WorldClockController'
@@ -172,9 +173,9 @@ define([
                 max_sizey: 1,
                 sizex: 1,
                 sizey: 1,
-                thumbnail: 'scripts/superdesk-dashboard/widgets/worldClock/thumbnail.png',
-                template: 'scripts/superdesk-dashboard/widgets/worldClock/widget-worldclock.html',
-                configurationTemplate: 'scripts/superdesk-dashboard/widgets/worldClock/configuration.html',
+                thumbnail: require.toUrl('./thumbnail.png'),
+                template: require.toUrl('./widget-worldclock.html'),
+                configurationTemplate: require.toUrl('./configuration.html'),
                 configuration: {zones: ['Europe/London', 'Asia/Tokyo', 'Europe/Moscow']},
                 description: gettext('World clock widget')
             });

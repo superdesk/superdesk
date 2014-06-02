@@ -1,47 +1,18 @@
+require.config({
+    shim: {
+        'bower_components/gridster/dist/jquery.gridster.with-extras': ['jquery']
+    }
+});
+
 define([
     'jquery',
     'angular',
-    './controllers/configuration'
-], function($, angular) {
+    'require',
+    'bower_components/gridster/dist/jquery.gridster.with-extras'
+], function($, angular, require) {
     'use strict';
 
-    angular.module('superdesk.dashboard.directives', [])
-        /**
-         * sdWidget give appropriate template to data assgined to it
-         *
-         * Usage:
-         * <div sd-widget data-widget="widget"></div>
-         *
-         * Params:
-         * @scope {Object} widget
-         */
-        .directive('sdWidget', ['$modal', 'widgetService', function($modal, widgetService) {
-            return {
-                templateUrl: 'scripts/superdesk-dashboard/views/widget.html',
-                restrict: 'A',
-                replace: true,
-                scope: {
-                    widget: '=',
-                    id: '='
-                },
-                link: function(scope, element, attrs) {
-                    scope.openConfiguration = function() {
-                        $modal.open({
-                            templateUrl: 'scripts/superdesk-dashboard/views/configuration.html',
-                            controller: require('superdesk-dashboard/controllers/configuration'),
-                            resolve: {
-                                widget: function() {
-                                    return scope.widget;
-                                },
-                                id: function() {
-                                    return scope.id;
-                                }
-                            }
-                        });
-                    };
-                }
-            };
-        }])
+    angular.module('superdesk.dashboard.grid', [])
         /**
          * sdGrid is directive which add functionality of dashboard. It is possible
          * to add, remove, move, edit, resize widgets within dashboard. It is working with gridster.js
@@ -65,7 +36,7 @@ define([
                     widgets: '='
                 },
                 replace: true,
-                templateUrl: 'scripts/superdesk-dashboard/views/grid.html',
+                templateUrl: require.toUrl('./views/grid.html'),
                 controller: ['$scope', function($scope) {
                     this.addWidget = function(element, sizex, sizey, col, row) {
                         return $scope.gridster.add_widget(element, sizex, sizey, col, row);
@@ -123,7 +94,7 @@ define([
             return {
                 require: '^sdGrid',
                 transclude: true,
-                templateUrl: 'scripts/superdesk-dashboard/views/grid-item.html',
+                templateUrl: require.toUrl('./views/grid-item.html'),
                 link: function(scope, element, attrs, sdGrid) {
                     scope.widget.el = sdGrid.addWidget(
                         $(element),
