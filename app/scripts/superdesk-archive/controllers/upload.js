@@ -26,7 +26,7 @@ define(['lodash'], function(_) {
                     }, function(progress) {
                         item.progress = Math.round(progress.loaded / progress.total * 100.0);
                     })
-                    .finally(function() {
+                    ['finally'](function() {
                         checkFail();
                     });
                     return item.upload;
@@ -76,14 +76,14 @@ define(['lodash'], function(_) {
 
         $scope.save = function() {
             $scope.saving = true;
-            $scope.upload().then(function(results) {
+            return $scope.upload().then(function(results) {
                 $q.all(_.map($scope.items, function(item) {
                     return api.archive.update(item.model, item.meta);
                 })).then(function(results) {
                     $scope.resolve(results);
                 });
             })
-            .finally(function() {
+            ['finally'](function() {
                 $scope.saving = false;
                 checkFail();
             });
