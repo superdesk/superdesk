@@ -2,9 +2,10 @@
 
 import superdesk
 from flask.ext.script import Manager
-from app import get_app
+from app import get_app, setup_amazon
 
-app = get_app()
+config = setup_amazon({})
+app = get_app(config=config)
 manager = Manager(app)
 
 if __name__ == '__main__':
