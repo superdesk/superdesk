@@ -11,21 +11,7 @@ define(['lodash'], function(_) {
         var uploadFile = function(item) {
             return api.archiveMedia.getUrl()
                 .then(function(url) {
-                    var x;
-                    if (Math.random() > 0.50) {
-                        x = upload;
-                    } else {
-                        x = {
-                            start: function() {
-                                var p = $q.defer();
-                                p.reject();
-                                return p.promise;
-                            },
-                            abort: function() {}
-                        };
-                    }
-                    item.upload = x.start({
-                    //item.upload = upload.start({
+                    item.upload = upload.start({
                         method: 'POST',
                         url: url,
                         data: {media: item.file},
@@ -85,7 +71,7 @@ define(['lodash'], function(_) {
             if (promises.length) {
                 return $q.all(promises);
             }
-            return $q.resolve();
+            return $q.when();
         };
 
         $scope.save = function() {
@@ -114,7 +100,7 @@ define(['lodash'], function(_) {
             if (item.model) {
                 api.archive.remove(item.model);
             } else if (item.upload) {
-                //item.upload.abort();
+                item.upload.abort();
             }
             if (index !== undefined) {
                 $scope.items.splice(index, 1);
