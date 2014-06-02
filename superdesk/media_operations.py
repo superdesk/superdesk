@@ -2,8 +2,11 @@ from PIL import Image
 from io import BytesIO
 import os
 import hashlib
+import magic
 import logging
 from flask import request
+import requests
+import superdesk
 
 
 logger = logging.getLogger(__name__)
@@ -30,18 +33,40 @@ def get_file_name(file):
     return hash_file(file, hashlib.sha256())
 
 
+def store_file_from_url(url):
+    rv = requests.get(url)
+    if rv.status_code not in (200, 201):
+        payload = 'Failed to retrieve file from URL: %s' % url
+        raise superdesk.SuperdeskError(payload=payload)
+
+    mime = magic.from_buffer(rv.content, mime=True).decode('UTF-8')
+    ext = mime.split('/')[1]
+    name = 'stub.' + ext
+    id = superdesk.app.media.put(content=BytesIO(rv.content), filename=name, content_type=mime)
+    return id
+
+
 def get_hashed_filename(content, filename=None, content_type=None):
     content_type = content_type or content.content_type
     file_name = filename or content.filename
-    isCropped, altered_content = crop_if_needed(content, file_name, content_type)
+    type = content_type.split('/')[0]
+    content = process_image(content, file_name, type)
+    file_name = get_file_name(content)
+    content.seek(0)
+    return file_name, content, content_type
+
+
+def process_image(content, file_name, type):
+    if type != 'image':
+        return content
+
+    isCropped, altered_content = crop_if_needed(content, file_name)
     iter_content = altered_content if isCropped else BytesIO(altered_content.read())
     iter_content.seek(0)
-    file_name = get_file_name(iter_content)
-    iter_content.seek(0)
-    return file_name, iter_content, content_type
+    return iter_content
 
 
-def crop_if_needed(content, file_name, content_type):
+def crop_if_needed(content, file_name):
     cropping_data = get_cropping_data()
     if cropping_data:
         file_ext = os.path.splitext(file_name)[1][1:]

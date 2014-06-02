@@ -224,6 +224,26 @@ def step_impl_when_upload_with_crop(context):
         context.response = context.client.post('/upload', data=data, headers=headers)
 
 
+@when('we upload a file from URL')
+def step_impl_when_upload_from_url(context):
+    data = {'URL': 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'}
+    headers = [('Content-Type', 'multipart/form-data')]
+    headers += context.headers
+    context.response = context.client.post('/upload', data=data, headers=headers)
+
+
+@when('we upload a file from URL with cropping')
+def step_impl_when_upload_from_url_with_crop(context):
+    data = {'URL': 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg',
+            'CropTop': 0,
+            'CropLeft': 0,
+            'CropBottom': 333,
+            'CropRight': 333}
+    headers = [('Content-Type', 'multipart/form-data')]
+    headers += context.headers
+    context.response = context.client.post('/upload', data=data, headers=headers)
+
+
 @when('we get user profile')
 def step_impl_when_get_user(context):
     profile_url = '/%s/%s' % ('users', context.user['_id'])
@@ -337,9 +357,9 @@ def step_the_file_is_attached_to_response(context):
     assert context.fetched_data['media']['file'] is not None, context.fetched_data['media']['file']
 
 
-@then('we get cropped data')
-def step_impl_then_get_cropped_file(context):
-    assert context.fetched_data['media']['length'] < 15000, 'was expecting smaller image'
+@then('we get cropped data smaller than "{max_size}"')
+def step_impl_then_get_cropped_file(context, max_size):
+    assert context.fetched_data['media']['length'] < int(max_size), 'was expecting smaller image'
 
 
 @then('we can fetch a data_uri')

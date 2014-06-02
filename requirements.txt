@@ -24,8 +24,9 @@ pyelasticsearch==0.6.1
 pyflakes==0.8.1
 pymongo==2.7
 python-dateutil==2.2
+python-magic==0.4.6
 pytz==2014.2
-requests==2.2.1
+requests==2.3.0
 simplejson==3.4.1
 six==1.6.1
 waitress==0.8.8

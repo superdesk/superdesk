@@ -3,6 +3,7 @@
 import superdesk
 from superdesk import SuperdeskError
 from flask import url_for, Response
+from .media_operations import store_file_from_url
 
 bp = superdesk.Blueprint('upload', __name__)
 
@@ -19,12 +20,21 @@ def on_create_upload(data, docs):
     for doc in docs:
         if doc.get('URL') and doc.get('media'):
             raise SuperdeskError(payload='Uploading file by URL and file stream in the same time is not supported.')
+        download_file(doc)
         update = {}
         media_file = superdesk.app.media.get(doc.get('media'))
         update['mime_type'] = media_file.content_type
         update['file_meta'] = media_file.metadata
         update['data_uri_url'] = url_for_media(doc.get('media'))
         doc.update(update)
+
+
+def download_file(doc):
+    url = doc.get('URL')
+    if not url:
+        return
+    id = store_file_from_url(url)
+    doc['media'] = id
 
 
 def url_for_media(media_id):
