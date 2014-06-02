@@ -22,25 +22,17 @@ define(['lodash'], function(_) {
                         return item;
                     }, function(response) {
                         item.model = false;
+                        $scope.failed = true;
                         return $q.reject();
                     }, function(progress) {
                         item.progress = Math.round(progress.loaded / progress.total * 100.0);
-                    })
-                    ['finally'](function() {
-                        checkFail();
                     });
                     return item.upload;
                 });
         };
 
         var checkFail = function() {
-            $scope.failed = false;
-            _.each($scope.items, function(item) {
-                if (item.model === false) {
-                    $scope.failed = true;
-                    return false;
-                }
-            });
+            $scope.failed = _.some($scope.items, {model: false});
         };
 
         $scope.setAllMeta = function(field, val) {
@@ -64,7 +56,7 @@ define(['lodash'], function(_) {
         $scope.upload = function() {
             var promises = [];
             _.each($scope.items, function(item) {
-                if (!item.model) {
+                if (!item.model && !item.progress) {
                     promises.push(uploadFile(item));
                 }
             });
@@ -90,9 +82,7 @@ define(['lodash'], function(_) {
         };
 
         $scope.cancel = function() {
-            _.each($scope.items, function(item) {
-                $scope.cancelItem(item);
-            });
+            _.each($scope.items, $scope.cancelItem, $scope);
             $scope.reject();
         };
 
