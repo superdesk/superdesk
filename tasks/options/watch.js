@@ -4,7 +4,11 @@ module.exports = {
     },
     less: {
         tasks: ['style'],
-        files: ['{<%= tmpDir %>,<%= appDir %>}/styles/{,*/}*.less']
+        files: [
+            '<%= appDir %>/styles/{,*/}*.less',
+            '<%= appDir %>/scripts/superdesk/**/*.less',
+            '<%= appDir %>/scripts/superdesk-*/**/*.less'
+        ]
     },
     code: {
         options: {livereload: true},
