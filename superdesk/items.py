@@ -5,11 +5,15 @@ from .upload import url_for_media
 from datetime import datetime
 from settings import SERVER_DOMAIN
 from uuid import uuid4
-from eve.methods.post import post
 from eve.methods.delete import deleteitem
 from eve.utils import config
 from flask import abort
 from werkzeug.exceptions import NotFound
+from flask import request
+from werkzeug.datastructures import FileStorage
+from PIL import Image, ExifTags
+from _io import BufferedRandom
+from superdesk.file_meta.image import get_meta
 
 
 def archive_assets(data, doc):
@@ -48,9 +52,9 @@ def on_create_archive(data, docs):
 def on_delete_archive(data, lookup):
     '''Delete associated binary files.'''
     res = data.find_one('archive', res=None, **lookup)
-    if res:
+    if res and res.get('media_file'):
         try:
-            deleteitem('upload', {'_id': str(res['media_file'])})
+            deleteitem('upload', {'_id': str(res['upload_id'])})
         except NotFound:
             pass
 
@@ -72,24 +76,27 @@ def generate_guid(hints):
 def on_upload_create(data, docs):
     ''' Create corresponding item on file upload '''
     for doc in docs:
-        res, _u, _e, code = post('upload')
-        if code != 201:
-            abort(500)
-        res = superdesk.app.data.find_one('upload', req=None, _id=str(res['_id']))
+        file = request.files['media']
+        assert isinstance(file, FileStorage)
+        type = file.content_type.split('/')[0]
+        if type != 'image':
+            abort(400, 'Invalid file type %s' % type)
+
+        media = {}
+        media['media'] = str(doc['media'])
+        res = superdesk.app.data.insert('upload', [media])
         if not res:
             abort(500)
-        type = res['mime_type'].split('/')[0]
-        if type != 'image':
-            deleteitem('upload', {'_id': str(res['_id'])})
-            abort(400, 'Invalid file type: %s' % type)
 
-        doc['media_file'] = str(res['_id'])
+        doc['media_file'] = url_for_media(media['media'])
+        doc['upload_id'] = res[0]
         doc['guid'] = generate_guid({'type': 'tag', 'id': str(uuid4())})
         doc['type'] = 'picture'
         doc['version'] = 1
         doc['versioncreated'] = utcnow()
         doc['renditions'] = generate_renditions(doc['media'])
-
+        doc['mimetype'] = file.content_type
+        doc['filemeta'] = get_meta(file.stream)
 
 def generate_renditions(media_id):
     """Generate system renditions for given media file id.
@@ -116,15 +123,9 @@ superdesk.connect('create:archive_media', on_upload_create)
 superdesk.connect('delete:archive', on_delete_archive)
 
 base_schema = {
-    'uri': {
-        'type': 'string',
-        'required': True,
-        'unique': True
-    },
     'guid': {
         'type': 'string',
-        'required': True,
-        'unique': True
+        'required': True
     },
     'provider': {
         'type': 'string'
@@ -145,7 +146,6 @@ base_schema = {
     'pubstatus': {
         'type': 'string'
     },
-
     'copyrightholder': {
         'type': 'string'
     },
@@ -216,16 +216,12 @@ base_schema = {
         }
     },
     'media_file': {
-        'type': 'objectid',
-        'data_relation': {
-            'resource': 'upload',
-            'field': '_id',
-            'embeddable': True
-        }
+        'type': 'string'
     },
     'contents': {
         'type': 'list'
     },
+    'media': {'type': 'media'}
 }
 
 ingest_schema = {
@@ -279,6 +275,7 @@ superdesk.domain('archive_media', {
             'type': 'media',
             'required': True
         },
+        'upload_id': {'type': 'string'},
         'headline': base_schema['headline'],
         'byline': base_schema['byline'],
         'description_text': base_schema['description_text']

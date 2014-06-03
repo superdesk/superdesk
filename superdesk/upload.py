@@ -24,7 +24,6 @@ def on_create_upload(data, docs):
         update = {}
         media_file = superdesk.app.media.get(doc.get('media'))
         update['mime_type'] = media_file.content_type
-        update['file_meta'] = media_file.metadata
         update['data_uri_url'] = url_for_media(doc.get('media'))
         doc.update(update)
 
@@ -65,7 +64,6 @@ superdesk.domain('upload', {
             'file_meta': 1,
             '_created': 1,
             '_updated': 1,
-            'media': 1,
         }
     },
     'item_methods': ['GET', 'DELETE'],
