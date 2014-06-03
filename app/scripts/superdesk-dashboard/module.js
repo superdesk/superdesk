@@ -1,20 +1,26 @@
 define([
     'angular',
     'require',
-    './dashboard-controller',
-    './widget-service',
+    './workspace-controller',
+    './workspace-service',
     './sd-widget-directive',
+    './widgets-provider',
     './grid/grid',
     './world-clock/world-clock'
 ], function(angular, require) {
     'use strict';
 
+    // to avoid circular dependency
+    angular.module('superdesk.dashboard.widgets', []).
+        provider('widgets', require('./widgets-provider'));
+
     return angular.module('superdesk.dashboard', [
+        'superdesk.dashboard.widgets',
         'superdesk.dashboard.grid',
         'superdesk.dashboard.world-clock'
     ])
 
-    .service('widgetService', require('./widget-service'))
+    .service('workspace', require('./workspace-service'))
     .directive('sdWidget', require('./sd-widget-directive'))
 
     .filter('wcodeFilter', function() {
@@ -26,7 +32,7 @@ define([
     .config(['superdeskProvider', function(superdesk) {
         superdesk.activity('/dashboard', {
             label: gettext('Dashboard'),
-            controller: require('./dashboard-controller'),
+            controller: require('./workspace-controller'),
             templateUrl: require.toUrl('./views/dashboard.html'),
             priority: -1000,
             category: superdesk.MENU_MAIN

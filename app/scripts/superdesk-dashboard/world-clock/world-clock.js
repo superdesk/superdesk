@@ -8,7 +8,7 @@ define([
 ], function(require, angular, _, d3, moment) {
     'use strict';
 
-    angular.module('superdesk.dashboard.world-clock', [])
+    angular.module('superdesk.dashboard.world-clock', ['superdesk.dashboard'])
         .factory('tzdata', ['$resource', function($resource) {
             var filename = require.toUrl('./timezones-all.json');
             return $resource(filename);
@@ -43,6 +43,8 @@ define([
                     return haystack.indexOf(needle) === -1;
                 };
             };
+
+            $scope.configuration.zones = $scope.configuration.zones || [];
         }])
         .controller('WorldClockController', ['$scope', '$timeout', 'tzdata',
         function ($scope, $timeout, tzdata) {
@@ -164,8 +166,8 @@ define([
                 }
             };
         })
-        .config(['superdeskProvider', function(superdesk) {
-            superdesk.widget('world-clock', {
+        .config(['widgetsProvider', function(widgetsProvider) {
+            widgetsProvider.widget('world-clock', {
                 label: gettext('World Clock'),
                 multiple: true,
                 icon: 'time',

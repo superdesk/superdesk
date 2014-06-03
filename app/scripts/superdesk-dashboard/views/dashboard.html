@@ -1,25 +1,23 @@
 <div class="subnav subnav-fixed">
-
 	<h3 class="page-nav-title" translate>Dashboard</h3>
 
 	<div class="button-stack right-stack">
-        
-        <button class="navbtn" href="" ng-click="editStatus = true;" ng-show="hasWidgets && !editStatus">
+		<button class="navbtn" href="" ng-click="flags.edit = true" ng-show="userWidgets.length && !flags.edit">
             <i class="svg-icon-move"></i> <span class="title" translate>Rearrange widgets</span>
         </button>
-        <button class="navbtn navbtn-info" href="" ng-click="saveWidgets()" ng-show="editStatus">
+
+        <button class="navbtn navbtn-info" href="" ng-click="saveWidgets()" ng-show="flags.edit">
             <i class="svg-icon-ok inverse"></i> <span class="title" translate>Save</span>
         </button>
-        
-        <button class="navbtn navbtn-info" href="" ng-disabled="editStatus" ng-click="widgetBoxStatus = true;">
+
+        <button class="navbtn navbtn-info" href="" ng-disabled="flags.edit" ng-click="flags.add = true">
             <i class="svg-icon-add inverse"></i> <span class="title" translate>Add widget</span>
         </button>
-
     </div>
 </div>
 
 <!-- widgetbox -->
-<div ng-show="widgetBoxStatus">
+<div ng-if="flags.add">
 	<div>
 	    <div class="backdrop"></div>
 	    <div class="widget-select modal">
@@ -27,9 +25,9 @@
 	            <div class="modal-content">
 	                <div class="modal-header">
 	                    <h3 class="pull-left" translate>Add new widget</h3>
-	                    <a href="" class="close" ng-click="widgetBoxStatus = false;"><i class="icon-close-small"></i></a>
+	                    <a href="" class="close" ng-click="flags.add"><i class="icon-close-small"></i></a>
 	                </div>
-	                <div ng-show="!selectedWidget">
+	                <div ng-if="!selectedWidget">
 	                    <div class="modal-body">
 	                        <div class="popup-subnav subnav">
 	                            <label translate>Category: </label>
@@ -46,7 +44,7 @@
 	                            </div>
 	                        </div>
 	                        <ul class="widget-list">
-	                            <li ng-repeat="widget in availableWidgets" ng-click="$parent.selectedWidget = widget">
+	                            <li ng-repeat="widget in availableWidgets" ng-click="selectWidget(widget)">
 	                                <div class="thumbnail">
 	                                    <img ng-src="{{ widget.thumbnail }}">
 	                                </div>
@@ -62,14 +60,14 @@
 	                    		<button class="btn" disabled="disable" ng-click="goPrev()"><i class="icon-chevron-left-thin"></i> {{ 'Previous' | translate}}</button>
 	                       		<button class="btn btn-next" disabled="disable" ng-click="goNext()">{{ 'Next' | translate }} <i class="icon-chevron-right-thin"></i></button>
 	                    	</div>
-	                        <button class="btn btn-info btn-done" ng-click="widgetBoxStatus = false;" translate>Done</button>
+	                        <button class="btn btn-info btn-done" ng-click="flags.add = false" translate>Done</button>
 	                    </div>
 	                </div>
 
-	                <div class="widget-detail" ng-show="selectedWidget">
+	                <div class="widget-detail" ng-if="selectedWidget">
 	                    <div class="modal-body">
 	                        <div class="popup-subnav subnav">
-	                            <a href="" class="backlink" ng-click="selectedWidget = null" translate>Back to overview</a>
+	                            <a href="" class="backlink" ng-click="selectWidget()" translate>Back to overview</a>
 	                        </div>
 	                        <div class="thumbnail-box">
 	                            <img ng-src="{{ selectedWidget.thumbnail }}">
@@ -83,8 +81,8 @@
 	                    </div>
 
 	                    <div class="modal-footer">
-	                        <button class="btn" ng-click="widgetBoxStatus = false;" translate>Cancel</button>
-	                        <button class="btn btn-primary" ng-click="addWidget(selectedWidget); selectedWidget = null" translate>Add Widget</button>
+	                        <button class="btn" ng-click="flags.add = false" translate>Cancel</button>
+	                        <button class="btn btn-primary" ng-click="addWidget(selectedWidget)" translate>Add Widget</button>
 	                    </div>
 	                </div>
 	                
@@ -97,7 +95,8 @@
 
 <div class="dashboard-container">
 	<div class="content clearfix">
-		<div sd-grid data-status="editStatus" data-widgets="userWidgets"></div>
-		<div class="empty-dashboard" ng-hide="hasWidgets" translate>Your dashboard is empty.</div>
+		<div sd-grid data-status="flags.edit" data-widgets="userWidgets"></div>
+		<div class="empty-dashboard" ng-show="userWidgets.length === 0" translate>Your dashboard is empty.</div>
+		<div class="empty-dashboard loading" ng-show="userWidgets === undefind" translate>Loading..</div>
 	</div>
 </div>

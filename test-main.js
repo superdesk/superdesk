@@ -16,7 +16,7 @@ for (var file in window.__karma__.files) {
 
 requirejs.config({
     baseUrl: '/base/app/scripts',
-    deps: ['angular-mocks'],
+    deps: ['angular-mocks', 'gettext'],
 
     callback: function() {
         'use strict';
@@ -27,12 +27,14 @@ requirejs.config({
         jquery: 'bower_components/jquery/dist/jquery',
         bootstrap: 'bower_components/bootstrap/js',
         angular: 'bower_components/angular/angular',
+        moment: 'bower_components/momentjs/moment',
+        lodash: 'bower_components/lodash/dist/lodash',
+        d3: 'bower_components/d3/d3',
         'angular-resource': 'bower_components/angular-resource/angular-resource',
         'angular-route': 'bower_components/angular-route/angular-route',
         'angular-mocks': 'bower_components/angular-mocks/angular-mocks',
         'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext',
-        'moment': 'bower_components/momentjs/moment',
-        'lodash': 'bower_components/lodash/dist/lodash'
+        'moment-timezone': 'bower_components/moment-timezone/moment-timezone'
     },
 
     shim: {

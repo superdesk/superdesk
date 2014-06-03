@@ -13,28 +13,18 @@ define([
      * Params:
      * @scope {Object} widget
      */
-    return ['$modal', 'widgetService', function($modal, widgetService) {
+    return ['$modal', function($modal) {
         return {
             templateUrl: require.toUrl('./views/widget.html'),
             restrict: 'A',
             replace: true,
-            scope: {
-                widget: '=',
-                id: '='
-            },
+            scope: false,
             link: function(scope, element, attrs) {
                 scope.openConfiguration = function() {
                     $modal.open({
                         templateUrl: require.toUrl('./views/configuration.html'),
                         controller: require('./configuration-controller'),
-                        resolve: {
-                            widget: function() {
-                                return scope.widget;
-                            },
-                            id: function() {
-                                return scope.id;
-                            }
-                        }
+                        scope: scope
                     });
                 };
             }
