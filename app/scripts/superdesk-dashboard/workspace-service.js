@@ -22,7 +22,7 @@ define(['lodash'], function(_) {
                 var allWidgets = _.indexBy(widgets, '_id');
                 var userWidgets = (response.data.workspace || {widgets: []}).widgets;
                 this.widgets = _.map(userWidgets, function(widget) {
-                    return _.extend(allWidgets[widget._id] || {}, widget);
+                    return _.defaults(widget, allWidgets[widget._id]);
                 });
 
                 return this;

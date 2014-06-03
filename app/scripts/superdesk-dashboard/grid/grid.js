@@ -6,10 +6,11 @@ require.config({
 
 define([
     'jquery',
+    'lodash',
     'angular',
     'require',
     'bower_components/gridster/dist/jquery.gridster.with-extras'
-], function($, angular, require) {
+], function($, _, angular, require) {
     'use strict';
 
     angular.module('superdesk.dashboard.grid', [])
@@ -38,13 +39,21 @@ define([
                 replace: true,
                 templateUrl: require.toUrl('./views/grid.html'),
                 controller: ['$scope', function($scope) {
-                    this.addWidget = function(element, sizex, sizey, col, row) {
-                        return $scope.gridster.add_widget(element, sizex, sizey, col, row);
+                    this.addWidget = function(widget, element) {
+                        widget.el = $scope.gridster.add_widget(
+                            element,
+                            widget.sizex,
+                            widget.sizey,
+                            widget.col,
+                            widget.row
+                        );
                     };
-                    this.removeWidget = function(id) {
-                        $scope.gridster.remove_widget($scope.widgets[id].el);
-                        delete $scope.widgets[id];
+
+                    this.removeWidget = function(widget, element) {
+                        $scope.gridster.remove_widget(element);
+                        $scope.widgets.splice(_.indexOf(widget), 1);
                     };
+
                     this.resizeWidget = function(element, sizex, sizey) {
                         $scope.gridster.resize_widget(element, sizex, sizey);
                         $scope.syncWidgets();
@@ -53,7 +62,7 @@ define([
                 link: function(scope, element, attrs) {
                     scope.syncWidgets = function() {
                         angular.forEach(scope.widgets, function(widget) {
-                            var sizes = scope.gridster.serialize($(widget.el));
+                            var sizes = scope.gridster.serialize(widget.el);
                             angular.extend(widget, {
                                 row: sizes[0].row,
                                 col: sizes[0].col,
@@ -96,16 +105,10 @@ define([
                 transclude: true,
                 templateUrl: require.toUrl('./views/grid-item.html'),
                 link: function(scope, element, attrs, sdGrid) {
-                    scope.widget.el = sdGrid.addWidget(
-                        $(element),
-                        scope.widget.sizex,
-                        scope.widget.sizey,
-                        scope.widget.col,
-                        scope.widget.row
-                    );
+                    sdGrid.addWidget(scope.widget, element);
 
-                    scope.removeWidget = function(widget) {
-                        sdGrid.removeWidget(widget);
+                    scope.removeWidget = function() {
+                        sdGrid.removeWidget(scope.widget, element);
                     };
 
                     scope.resizeWidget = function(widget, direction) {
@@ -132,7 +135,7 @@ define([
                             break;
                         }
 
-                        sdGrid.resizeWidget($(element), widget.sizex, widget.sizey);
+                        sdGrid.resizeWidget(element, widget.sizex, widget.sizey);
                     };
                 }
             };

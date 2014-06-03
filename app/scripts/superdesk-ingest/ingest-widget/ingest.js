@@ -1,26 +1,25 @@
 define([
     'angular',
     'require'
-], function(angular) {
+], function(angular, require) {
     'use strict';
 
     angular.module('superdesk.widgets.ingest', [])
-        .config(['superdeskProvider', function(superdesk) {
-            superdesk
-                .widget('ingest', {
-                    label: 'Ingest',
-                    multiple: true,
-                    icon: 'ingest',
-                    max_sizex: 2,
-                    max_sizey: 2,
-                    sizex: 1,
-                    sizey: 2,
-                    thumbnail: require.toUrl('./superdesk-ingest/ingest-widget/thumbnail.png'),
-                    template: require.toUrl('./superdesk-ingest/ingest-widget/widget-ingest.html'),
-                    configurationTemplate: require.toUrl('./superdesk-ingest/ingest-widget/configuration.html'),
-                    configuration: {maxItems: 10, provider: 'all', search: '', updateInterval: 5},
-                    description: 'Ingest widget'
-                });
+        .config(['widgetsProvider', function(widgets) {
+            widgets.widget('ingest', {
+                label: 'Ingest',
+                multiple: true,
+                icon: 'ingest',
+                max_sizex: 2,
+                max_sizey: 2,
+                sizex: 1,
+                sizey: 2,
+                thumbnail: require.toUrl('./thumbnail.png'),
+                template: require.toUrl('./widget-ingest.html'),
+                configurationTemplate: require.toUrl('./configuration.html'),
+                configuration: {maxItems: 10, provider: 'all', search: '', updateInterval: 5},
+                description: 'Ingest widget'
+            });
         }])
         .controller('IngestController', ['$scope', '$timeout', 'superdesk', 'api', 'es',
         function ($scope, $timeout, superdesk, api, es) {

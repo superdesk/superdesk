@@ -1,9 +1,9 @@
 define(['./module', 'angular'], function(DashboardModule, angular) {
     'use strict';
 
-    describe('dashboard', function() {
+    var USER_URL = 'user_url/1';
 
-        var USER_URL = 'user_url/1';
+    describe('dashboard', function() {
 
         beforeEach(module(function($provide) {
 
@@ -28,10 +28,13 @@ define(['./module', 'angular'], function(DashboardModule, angular) {
 
         beforeEach(module('superdesk.dashboard'));
 
-        var widget;
-        beforeEach(inject(function(widgets) {
-            widget = {_id: widgets[0]._id, row: 1, col: 1, sizex: 1, sizey: 1, configuration: widgets[0].configuration};
-        }));
+        function getWidget() {
+            var widget;
+            inject(function(widgets) {
+                widget = {_id: widgets[0]._id, row: 1, col: 1, sizex: 1, sizey: 1, configuration: widgets[0].configuration};
+            });
+            return widget;
+        }
 
         function getScope(widgets) {
             var scope;
@@ -54,7 +57,7 @@ define(['./module', 'angular'], function(DashboardModule, angular) {
         it('can add widget to user workspace', inject(function($httpBackend) {
             var scope = getScope();
 
-            $httpBackend.expectPATCH(USER_URL, {workspace: {widgets: [widget]}}).respond({});
+            $httpBackend.expectPATCH(USER_URL, {workspace: {widgets: [getWidget()]}}).respond({});
 
             scope.addWidget(scope.availableWidgets[0]);
 
@@ -65,7 +68,7 @@ define(['./module', 'angular'], function(DashboardModule, angular) {
         }));
 
         it('can load stored widgets', inject(function() {
-            var scope = getScope([widget]);
+            var scope = getScope([getWidget()]);
             expect(scope.userWidgets.length).toBe(1);
             expect(scope.userWidgets[0].label).toBe(scope.availableWidgets[0].label);
         }));
