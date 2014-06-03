@@ -96,3 +96,4 @@ Feature: News Items Archive
             """		
 		When we get "/archive"
         Then we get list with 2 items
+        
