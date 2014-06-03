@@ -344,6 +344,7 @@
     .border-radius(2px);
     i {
       .opacity(70);
+      margin-top: -5px;
     }
     &:hover {
       background: #d8d8d8;
@@ -1165,11 +1166,20 @@
 
 .desk-config {
   .box-sizing(border-box);
-  border-top: 5px solid #959595;
+
   position: relative;
   .border-radius(3px 3px 0 0);
   margin-bottom: 40px;
   min-height: 25px;
+  
+  .desk-header {
+    color: #444;
+    font-weight: bold;
+    font-size: 12px;
+    border-bottom: 5px solid #4d4d4d;
+    padding-bottom: 5px;
+    text-transform: uppercase;
+  }
 
   .toggle-desk {
     float: left;
@@ -1187,23 +1197,54 @@
   }
 
   
-  .subnav {
-    height: auto !important;
-    li a {
-      padding: 5px 10px !important;
-    }
-    .btn {
-      padding: 3px 10px 3px 5px !important;
-    }
-  }
-  .desk-subheader {
-    .box-sizing(border-box);
-    height: 38px !important;
-    padding: 6px 0 !important;
+  .desk-subnav {
     background: @background-main;
-    .box-shadow(inset 0 5px 3px -5px #bbb);
-    margin-top: 23px;
-    border: 0;
+    .clearfix();
+    border-left: 1px solid #dfdfdf;
+
+    .subnav-tabs {
+      li {
+        a {
+          font-size: 14px;
+          color:@sd-color-blue-text;
+          .box-sizing(border-box);
+          height: 38px !important;
+          line-height: 38px;
+          display: inline-block;
+          border-right: 1px solid #dfdfdf;
+          float: left;
+          padding: 0 10px;
+          &:hover {
+            text-decoration: none;
+            background: #fff;
+          }
+        }
+        &.active a {
+          background: #fff;
+          color: #333;
+        }
+      }
+      
+    }
+    .action {
+      font-size: 11px;
+      background:#ebebeb;
+      color: #4f4f4f;
+      text-transform: uppercase;
+      .text-semibold();
+      .box-sizing(border-box);
+      height: 38px !important;
+      line-height: 38px;
+      display: inline-block;
+      float: right;
+      padding: 0 10px;
+      &:hover {
+        background:@sd-color-blue;
+        color: #fff;
+        text-decoration: none;
+        cursor: pointer;
+      }
+    }
   }
 
   .desk-config-tab-content {
@@ -1224,7 +1265,6 @@
         }
       }
   }
-
 
   .member-tab {
     display: block;
@@ -1259,6 +1299,19 @@
 
 }
 
+.members-list {
+  li {
+    .avatar {
+      .border-radius(15px);
+      overflow: hidden;
+    }
+    .fullname {
+      font-size: 13px;
+      color: @sd-color-blue-text;
+    }
+  }
+}
+
 
 .simple-color-list li span.color {
   &.boardcolor-1 { background-color: @board1; }
@@ -1280,11 +1333,11 @@ position: relative;
 height: 500px !important;
 overflow:hidden;
 
-   .members-screen1{
+  .members-screen1{
       position: absolute;
       .transition(all ease .4s);
       top: 0; bottom: 0; left:0; right: 0;
-   }
+  }
   .members-screen2 {
       position: absolute;
       .transition(all ease .4s);
@@ -1298,7 +1351,11 @@ overflow:hidden;
     left:0; right: 0;
   }
 
-
+  .members-list li {
+    .btn {
+      margin-top: 9px;
+    }
+  }
 
     .members {
       position: absolute;
@@ -1477,22 +1534,6 @@ overflow:hidden;
       top: 122px; left: 0; right: 3px; bottom:0;
       overflow: auto;
       padding: 15px;
-      .user-list li {
-          .btn {
-            margin-top: 1px;
-            i {
-              margin-top: 0;
-            }
-          }
-          .user-pic {
-            width: 25px;
-            height: 25px;
-          }
-      }
-      .plain-table>li {
-        height: 25px;
-        padding: 5px;
-      }
     }
 
 }

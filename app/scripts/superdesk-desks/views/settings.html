@@ -24,20 +24,20 @@
 				</div>
 
 				<div class="desk-config-tab" ng-class="{'member-tab': !desk.viewCards, 'board-tab': desk.viewCards}">
-					<div class="desk-subheader subnav">
-						<ul class="nav nav-pills pull-left">
+					<div class="desk-subnav">
+						<ul class="subnav-tabs">
 					      <li ng-class="{active: !desk.viewCards}"><a href="" ng-click="desk.viewCards = false" translate>Desk members</a></li>
 					      <li ng-class="{active: desk.viewCards}"><a href="" ng-click="desk.viewCards = true" translate>Desk boards</a></li>
 					    </ul>
-					    <a class="btn btn-info pull-right" ng-show="!desk.viewCards" ng-click="openMembers(desk)">{{ 'Manage Members' | translate}}</a>
-					    <a class="btn btn-info pull-right" ng-show="desk.viewCards" ng-click="addBoards(desk)">{{ 'Manage Boards' | translate}}</a>
+					    <a class="pull-right action" ng-show="!desk.viewCards" ng-click="openMembers(desk)">{{ 'Manage Members' | translate}}</a>
+					    <a class="pull-right action" ng-show="desk.viewCards" ng-click="addBoards(desk)">{{ 'Manage Boards' | translate}}</a>
 					</div>
 
 					<div class="desk-config-tab-content" ng-show="!desk.viewCards">
-						<ul class="plain-table user-list">
+						<ul class="plain-table members-list">
 		                    <li ng-repeat="user in getMembers(desk)">
-                              <figure class="user-pic"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
-		                      <span class="user-name" >{{ user.first_name }} {{ user.last_name }}</span>
+                              <figure class="avatar"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
+		                      <span class="fullname" >{{ user.first_name }} {{ user.last_name }}</span>
 		                      
 		                    </li>
                             <li ng-show="!desk.members.length" translate>There are no members yet</li>
@@ -138,10 +138,10 @@
 						<input type="text" class="searchbar input-large" placeholder="Search" ng-model="memberSearch">
 					</div>
 				  	<div class="all-users">
-				  		<ul class="plain-table user-list">
+				  		<ul class="plain-table members-list">
 							<li ng-repeat="user in users | filter:notIn(selectedMembers)| filter:memberSearch" >
-								<figure class="user-pic"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
-								<span class="user-name" >{{ user.first_name }} {{ user.last_name }}</span>
+								<figure class="avatar"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
+								<span class="fullname" >{{ user.first_name }} {{ user.last_name }}</span>
 								<button class="btn btn-mini btn-success pull-right" ng-click="addMember(user)" tooltip="{{ 'Add to desk' | translate}}" tooltip-placement="left"><i class="icon-plus-small icon-white"></i></button>
 							</li>
 					    </ul>
