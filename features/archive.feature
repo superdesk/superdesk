@@ -88,3 +88,11 @@ Feature: News Items Archive
         And we delete it
         Then we get deleted response
 
+	@auth
+	Scenario: Browse content
+		Given "archive"
+			"""
+            [{"type":"text", "headline": "test1", "guid": "testid1"}, {"type":"text", "headline": "test2", "guid": "testid2"}]
+            """		
+		When we get "/archive"
+        Then we get list with 2 items
