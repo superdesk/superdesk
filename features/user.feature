@@ -104,3 +104,16 @@ Feature: User Resource
             """
 
         Then we get updated response
+
+    @auth
+    Scenario: User workspace
+        Given "users"
+            """
+            [{"username": "foo", "workspace": {"name": "my workspace"}}]
+            """
+
+        When we get "/users/foo"
+        Then we get existing resource
+            """
+            {"username": "foo", "workspace": {}}
+            """

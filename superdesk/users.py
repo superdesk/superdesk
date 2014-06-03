@@ -105,6 +105,9 @@ superdesk.domain('users', {
                 'field': '_id',
                 'embeddable': True
             }
+        },
+        'workspace': {
+            'type': 'dict'
         }
     },
     'extra_response_fields': [
@@ -116,16 +119,7 @@ superdesk.domain('users', {
     ],
     'datasource': {
         'projection': {
-            'username': 1,
-            'first_name': 1,
-            'last_name': 1,
-            'display_name': 1,
-            'email': 1,
-            'user_info': 1,
-            'picture_url': 1,
-            'role': 1,
-            '_created': 1,
-            '_updated': 1,
+            'password': 0
         }
     }
 })
