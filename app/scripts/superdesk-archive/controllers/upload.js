@@ -89,7 +89,7 @@ define(['lodash'], function(_) {
         $scope.cancelItem = function(item, index) {
             if (item.model) {
                 api.archive.remove(item.model);
-            } else if (item.upload) {
+            } else if (item.upload && item.upload.abort) {
                 item.upload.abort();
             }
             if (index !== undefined) {
