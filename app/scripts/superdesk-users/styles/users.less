@@ -700,17 +700,37 @@ Profile page styles
 	.form-content {
 		position: absolute;
 		top: 0; left: 0; bottom: 0;
-		width: 500px;
+		width: 600px;
 		background: #fff;
 		border-right: 1px solid #ddd;
 		.box-sizing(border-box);
 		.box-shadow(0 0 5px 0 #e0e0e0);
 		z-index: 2;
 	}
+  
+  .profile-pic {
+    width: 160px;
+    height: 160px;
+    figure {
+      width: 160px;
+      height: 160px;
+      img {
+        width: 160px;
+        max-width: 160px;
+      }
+    }
+  }
+
+  .header-info {
+    height: 160px;
+  }
+  .details-info {
+    top:220px !important;
+  }
 
 	.other-content {
 		position: absolute;
-		top: 0; left: 500px; bottom: 0; right: 0;
+		top: 0; left: 600px; bottom: 0; right: 0;
 		z-index: 1;
 		background: @background-main;
 
