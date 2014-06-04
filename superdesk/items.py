@@ -133,7 +133,8 @@ superdesk.connect('delete:archive', on_delete_archive)
 base_schema = {
     'guid': {
         'type': 'string',
-        'required': True
+        'required': True,
+        'unique': True
     },
     'provider': {
         'type': 'string'

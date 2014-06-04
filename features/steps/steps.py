@@ -5,7 +5,8 @@ from behave import given, when, then  # @UnresolvedImport
 from flask import json
 from eve.methods.common import parse
 
-from wooper.general import parse_json_input, fail_and_print_body
+from wooper.general import parse_json_input, fail_and_print_body, apply_path,\
+    parse_json_response
 from wooper.expect import (
     expect_status, expect_status_in,
     expect_json_contains, expect_json_not_contains,
@@ -208,7 +209,7 @@ def step_impl_when_get(context):
 
 @when('we upload a binary file to "{dest}"')
 def step_impl_when_upload(context, dest):
-    with open(get_fixture_path('flower.jpg'), 'rb') as f:
+    with open(get_fixture_path('bike.jpg'), 'rb') as f:
         data = {'media': f}
         headers = [('Content-Type', 'multipart/form-data')]
         headers += context.headers
@@ -314,6 +315,13 @@ def step_impl_then_get_key_in_url(context, key, url):
     res = context.client.get(url, headers=context.headers)
     assert_200(res)
     expect_json_contains(res, key)
+
+
+@then('we get file metadata')
+def step_impl_then_get_file_meta(context):
+    expect_json_contains(context.response, 'filemeta')
+    meta = apply_path(parse_json_response(context.response), 'filemeta')
+    assert isinstance(meta, dict), 'expected dict for file meta'
 
 
 @then('we get "{key}"')
