@@ -5,16 +5,18 @@ define(['./upload-service'], function(UploadService) {
 
         beforeEach(module(function($provide) {
             $provide.service('upload', UploadService);
-            $provide.service('$upload', function() {
+            $provide.service('$upload', ['$q', function($q) {
                  // angular-file-upload api
-                this.upload = function() {};
+                this.upload = function() {
+                    return $q.when();
+                };
                 this.http = function() {};
-            });
+            }]);
         }));
 
         it('can start uploading', inject(function(upload, $upload) {
             var config = {url: 'test', method: 'POST', data: 'test'};
-            spyOn($upload, 'upload');
+            spyOn($upload, 'upload').andCallThrough();
             upload.start(config);
             expect($upload.upload).toHaveBeenCalledWith(config);
         }));

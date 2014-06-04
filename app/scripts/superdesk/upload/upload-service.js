@@ -1,8 +1,8 @@
 define([], function() {
     'use strict';
 
-    UploadService.$inject = ['$upload'];
-    function UploadService($upload) {
+    UploadService.$inject = ['$q', '$upload'];
+    function UploadService($q, $upload) {
         /**
          * Start upload
          *
@@ -11,7 +11,12 @@ define([], function() {
          */
         this.start = function(config) {
             config.isUpload = true;
-            return $upload.upload(config);
+            return $upload.upload(config)
+                .then(function(response) {
+                    if (response.data && response.data._issues) {
+                        return $q.reject();
+                    }
+                });
         };
 
         /**

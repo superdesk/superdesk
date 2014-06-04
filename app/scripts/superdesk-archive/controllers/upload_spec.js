@@ -11,7 +11,7 @@ define(['./upload'], function(UploadController) {
                 return {
                     archive: {
                         update: function(dest, diff) {
-                            return $q.when({data: {}});
+                            return $q.when({});
                         }
                     },
                     archiveMedia: {
@@ -77,20 +77,12 @@ define(['./upload'], function(UploadController) {
 
             scope.items[0].meta.Description = 'test';
 
-            var result;
-            scope.save().then(function(_result) {
-                result = _result;
-            });
-
+            scope.save();
             $rootScope.$digest();
-
-            expect(result).toBe(undefined);
             upload.defer.resolve({});
-
             $rootScope.$digest();
 
-            expect(result.length).toBe(1);
-            expect(resolve).toHaveBeenCalledWith(result);
+            expect(resolve).toHaveBeenCalledWith([{}]);
         }));
     });
 

@@ -289,6 +289,28 @@ media uploader
 		}
 	}
 	
+	.upload-error {
+		height: 40px;
+		position: absolute;
+		left: 0; right: 0; top: 0;
+		.box-sizing(border-box);
+		background: #f7e8e8;
+		border-bottom: 1px solid #eed7d7;
+		text-align: center;
+		line-height: 40px;
+		span {
+			.text-light();
+			font-size: 14px;
+			color: #b90000;
+		}
+		.action {
+			text-decoration: underline;
+			margin-left: 10px;
+			&:hover {
+				cursor: pointer;
+			}
+		}
+	}
 
 	.upload-edit {	//detail upload screen and basic edit
 		
@@ -297,6 +319,9 @@ media uploader
 		z-index: 1;
 		padding: 20px 20px 91px 20px;
 		overflow: auto;
+		&.error {
+			top: 40px;
+		}
 
 		.upload-thumbs {
 			li {
@@ -326,7 +351,14 @@ media uploader
 							display: inline-block;
 							vertical-align: middle;
 						}
+						.failed {
+							position: absolute;
+							left: 0; right: 0; top:0 ; bottom:0;
+							z-index: 2;
+							background: rgba(255,255,255,0.7) url('../../images/icon_upload_error_big.png') no-repeat center center;
+						}
 					}
+
 					.remove {
 						position: absolute;
 						top: 0px; right: 0px;

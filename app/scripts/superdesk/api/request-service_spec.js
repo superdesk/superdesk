@@ -5,9 +5,11 @@ define(['./request-service', 'superdesk/upload/upload-service'], function(Reques
         beforeEach(module(function($provide) {
             $provide.service('request', RequestService);
             $provide.service('upload', UploadService);
-            $provide.service('$upload', function() {
-                this.upload = function() {};
-            });
+            $provide.service('$upload', ['$q', function($q) {
+                this.upload = function() {
+                    return $q.when();
+                };
+            }]);
         }));
 
         it('can resend $http request', inject(function(request, $httpBackend) {
