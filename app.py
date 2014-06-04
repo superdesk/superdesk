@@ -91,6 +91,7 @@ if __name__ == '__main__':
         superdesk.logger.setLevel(logging.INFO)
         superdesk.logger.addHandler(logging.StreamHandler())
 
-    config = setup_amazon({})
+    config = {}
+    setup_amazon(config)
     app = get_app(config=config)
     app.run(host=host, port=port, debug=debug, use_reloader=True)
