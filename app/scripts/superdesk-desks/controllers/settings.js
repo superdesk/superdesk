@@ -34,20 +34,21 @@ define(['angular', 'lodash'], function(angular, _) {
 
             $scope.edit = function(desk) {
 				$scope.editDesk = _.create(desk);
-                _desk = desk;
+                _desk = desk || {};
 			};
 
 			$scope.cancel = function() {
 				$scope.editDesk = null;
 			};
 
-			$scope.save = function() {
+			$scope.save = function(desk) {
                 notify.info(gettext('saving...'));
-                var _new = $scope.editDesk._id ? false : true;
-				api.desks.save($scope.editDesk, $scope.editDesk).then(function(result) {
+                var _new = desk._id ? false : true;
+				api.desks.save(_desk, $scope.editDesk).then(function(result) {
                     notify.pop();
                     if (_new) {
                         notify.success(gettext('New Desk created.'));
+                        _.extend(desk, result);
                         $scope.desks._items.unshift($scope.editDesk);
                     } else {
                         notify.success(gettext('Desk settings updated.'));
