@@ -68,6 +68,7 @@ Feature: News Items Archive
             """
             {"guid": ""}
             """
+        And we get file metadata
 
         When we patch again
             """
