@@ -1,18 +1,23 @@
-import os
-import eve
-import settings
-import superdesk
 import logging
-from superdesk import signals
+import os
+
+import eve
 from eve.io.mongo import MongoJSONEncoder
-from superdesk.auth import SuperdeskTokenAuth
-from superdesk.validator import SuperdeskValidator
-from superdesk.desk_media_storage import SuperdeskGridFSMediaStorage
 from eve.render import send_response
+
+import settings
+from superdesk import signals
+import superdesk
+from superdesk.auth import SuperdeskTokenAuth
+from superdesk.desk_media_storage import SuperdeskGridFSMediaStorage
+from superdesk.validator import SuperdeskValidator
 
 
 class SuperdeskEve(eve.Eve):
     """Superdesk app"""
+
+    def __init__(self, **kwargs):
+        super(SuperdeskEve, self).__init__(**kwargs)
 
     def load_config(self):
         """Let us override settings withing plugins"""
@@ -36,7 +41,6 @@ def get_app(config=None):
     :param config: configuration that can override config from `settings.py`
     :return: a new SuperdeskEve app instance
     """
-
     if config is None:
         config = {}
 
@@ -76,7 +80,6 @@ def get_app(config=None):
 
     superdesk.app = app
     return app
-
 
 if __name__ == '__main__':
 

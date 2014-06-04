@@ -1,4 +1,3 @@
-import flask
 import superdesk
 from .utc import utcnow
 from .upload import url_for_media
@@ -25,37 +24,11 @@ class InvalidFileType(SuperdeskError):
         super().__init__('Invalid file type %s' % type, payload={})
 
 
-def archive_assets(data, doc):
-    """Archive all related assets for given doc."""
-    for group in doc.get('groups', []):
-        for ref in group.get('refs', []):
-            if 'residRef' in ref:
-                item = data.find_one('ingest', _id=ref['residRef'])
-                if item:
-                    data.insert('archive', [item])
-
-
 def on_create_item(data, docs):
     """Set guid as doc _id."""
     for doc in docs:
         if 'guid' in doc:
             doc.setdefault('_id', doc['guid'])
-
-
-def on_create_archive(data, docs):
-    """Set user and archived properties."""
-    for doc in docs:
-        if doc.get('guid'):
-            # set archived on ingest item
-            ingest_doc = data.find_one('ingest', guid=doc.get('guid'))
-            if ingest_doc:
-                doc.update(ingest_doc)
-                data.update('ingest', ingest_doc.get('_id'), {'archived': utcnow()})
-                del doc['_id']  # use all data from ingest but id
-            archive_assets(data, doc)
-
-        # set who created the item
-        doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
 
 
 def on_delete_archive(data, lookup):
@@ -190,8 +163,6 @@ def on_upload_update(data, docs):
 
 superdesk.connect('create:ingest', on_create_item)
 superdesk.connect('create:archive', on_create_item)
-superdesk.connect('create:archive_ingest', on_create_archive)
-superdesk.connect('create:archive', on_create_archive)
 superdesk.connect('create:archive_media', on_upload_create)
 superdesk.connect('delete:archive', on_delete_archive)
 superdesk.blueprint(bp)
@@ -362,15 +333,4 @@ superdesk.domain(ARCHIVE_MEDIA, {
     'resource_methods': ['POST'],
     'item_methods': ['PATCH', 'GET', 'DELETE'],
     'item_url': item_url
-})
-
-superdesk.domain('archive_ingest', {
-    'schema': {
-        'guid': {'type': 'string', 'required': True}
-    },
-    'datasource': {
-        'source': 'archive'
-    },
-    'resource_methods': ['POST'],
-    'item_methods': []
 })

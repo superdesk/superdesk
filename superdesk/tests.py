@@ -5,6 +5,7 @@ from app import get_app
 from pyelasticsearch import ElasticSearch
 from base64 import b64encode
 from flask import json
+from superdesk.task_runner import celery
 
 test_user = {'username': 'test_user', 'password': 'test_password'}
 
@@ -14,6 +15,9 @@ def get_test_settings():
     test_settings['ELASTICSEARCH_URL'] = 'http://localhost:9200'
     test_settings['ELASTICSEARCH_INDEX'] = 'sptests'
     test_settings['MONGO_DBNAME'] = 'sptests'
+    test_settings['CELERY_BROKER_URL'] = 'redis://localhost:6379'
+    test_settings['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379'
+    test_settings['CELERY_ALWAYS_EAGER'] = True
     return test_settings
 
 
@@ -41,6 +45,8 @@ def setup(context=None, config=None):
 
     drop_elastic(config)
     app = get_app(config)
+    celery.conf.update(app.config)
+
     drop_mongo(app)
     if context:
         context.app = app

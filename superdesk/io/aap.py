@@ -28,6 +28,12 @@ class AAPIngestService(object):
     def __init__(self):
         self.tz = timezone('Australia/Sydney')
 
+    def get_items(self, guid):
+        pass
+
+    def prepare_href(self, href):
+        return href
+
     def update(self, provider):
         path = provider.get('config', {}).get('path', None)
         if not path:
