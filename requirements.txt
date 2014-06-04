@@ -1,4 +1,4 @@
-Cerberus==0.6
+Cerberus==0.7
 Events==0.2.1
 Eve-Elastic==0.1.9
 Eve-Docs==0.1.2
@@ -7,7 +7,7 @@ Flask-Bootstrap==3.1.1.2
 Flask-PyMongo==0.3.0
 Flask-Script==2.0.3
 Jinja2==2.7.2
-MarkupSafe==0.21
+MarkupSafe==0.23
 Werkzeug==0.9.4
 Pillow==2.4.0
 tinys3==0.1.10
@@ -22,7 +22,7 @@ parse==1.6.4
 pep8==1.5.6
 pyelasticsearch==0.6.1
 pyflakes==0.8.1
-pymongo==2.7
+pymongo==2.7.1
 python-dateutil==2.2
 python-magic==0.4.6
 pytz==2014.2
