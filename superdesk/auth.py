@@ -73,6 +73,8 @@ class SuperdeskTokenAuth(TokenAuth):
         """Ignores auth on home endpoint."""
         if not resource:
             return True
+        if app.debug and request.args.get('skip_auth'):
+            return True
         return super(SuperdeskTokenAuth, self).authorized(allowed_roles, resource, method)
 
     def authenticate(self):
