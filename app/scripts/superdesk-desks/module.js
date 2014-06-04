@@ -13,21 +13,34 @@ define([
         'superdesk.desks.directives'
     ]);
 
-    app.config(['superdeskProvider', function(superdesk) {
-        superdesk
-            .activity('/desks', {
-                label: gettext('Desks'),
-                templateUrl: require.toUrl('./views/main.html'),
-                controller: require('./controllers/main'),
-                category: superdesk.MENU_MAIN
-            })
+    app
+        .config(['superdeskProvider', function(superdesk) {
+            superdesk
+                .activity('/desks/', {
+                    label: gettext('Desks'),
+                    templateUrl: require.toUrl('./views/main.html'),
+                    controller: require('./controllers/main'),
+                    category: superdesk.MENU_MAIN,
+                    beta: true
+                })
 
-            .activity('/settings/desks', {
-                label: gettext('Desks'),
-                controller: require('./controllers/settings'),
-                templateUrl: require.toUrl('./views/settings.html'),
-                category: superdesk.MENU_SETTINGS,
-                priority: -800
+                .activity('/settings/desks', {
+                    label: gettext('Desks'),
+                    controller: require('./controllers/settings'),
+                    templateUrl: require.toUrl('./views/settings.html'),
+                    category: superdesk.MENU_SETTINGS,
+                    priority: -800,
+                    beta: true
+                });
+        }])
+        .config(['apiProvider', function(apiProvider) {
+            apiProvider.api('desks', {
+                type: 'http',
+                backend: {
+                    rel: 'desks'
+                }
             });
-    }]);
+        }]);
+
+    return app;
 });
