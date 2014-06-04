@@ -11,12 +11,7 @@ define([], function() {
          */
         this.start = function(config) {
             config.isUpload = true;
-            return $upload.upload(config)
-                .then(function(response) {
-                    if (response.data && response.data._issues) {
-                        return $q.reject();
-                    }
-                });
+            return $upload.upload(config);
         };
 
         /**

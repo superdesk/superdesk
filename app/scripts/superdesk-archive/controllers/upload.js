@@ -9,6 +9,13 @@ define(['lodash'], function(_) {
         $scope.failed = false;
 
         var uploadFile = function(item) {
+
+            var handleError = function(reason) {
+                item.model = false;
+                $scope.failed = true;
+                return $q.reject(reason);
+            };
+
             return api.archiveMedia.getUrl()
                 .then(function(url) {
                     item.upload = upload.start({
@@ -18,15 +25,16 @@ define(['lodash'], function(_) {
                         headers: api.archiveMedia.getHeaders()
                     })
                     .then(function(response) {
+                        if (response.data._issues) {
+                            return handleError(response);
+                        }
+
                         item.model = response.data;
                         return item;
-                    }, function(response) {
-                        item.model = false;
-                        $scope.failed = true;
-                        return $q.reject();
-                    }, function(progress) {
+                    }, handleError, function(progress) {
                         item.progress = Math.round(progress.loaded / progress.total * 100.0);
                     });
+
                     return item.upload;
                 });
         };

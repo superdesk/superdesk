@@ -79,7 +79,7 @@ define(['./upload'], function(UploadController) {
 
             scope.save();
             $rootScope.$digest();
-            upload.defer.resolve({});
+            upload.defer.resolve({data: {}});
             $rootScope.$digest();
 
             expect(resolve).toHaveBeenCalledWith([{}]);
