@@ -3,9 +3,12 @@ module.exports = function(grunt) {
     'use strict';
 
     function data(url) {
+
+        var server = grunt.option('server') || process.env.SUPERDESK_URL || url;
+
         var config = {
             raven: {dsn: process.env.SUPERDESK_RAVEN_DSN || ''},
-            server: {url: grunt.option('server') || url},
+            server: {url: server},
             analytics: {
                 piwik: {
                     url: process.env.PIWIK_URL || '',
@@ -28,7 +31,7 @@ module.exports = function(grunt) {
             files: files
         },
         test: {
-            options: data('https://apytest.apy.sd-test.sourcefabric.org/api'),
+            options: data('https://master.sd-test.sourcefabric.org/api'),
             files: files
         }
     };
