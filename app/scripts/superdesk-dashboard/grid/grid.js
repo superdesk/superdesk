@@ -51,7 +51,7 @@ define([
 
                     this.removeWidget = function(widget, element) {
                         $scope.gridster.remove_widget(element);
-                        $scope.widgets.splice(_.indexOf(widget), 1);
+                        $scope.widgets.splice(_.indexOf($scope.widgets, widget), 1);
                     };
 
                     this.resizeWidget = function(element, sizex, sizey) {
