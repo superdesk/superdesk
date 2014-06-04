@@ -54,9 +54,14 @@ define(['lodash'], function(_) {
                 filters.push({terms: type});
             }
 
-            if (params.urgency) {
+            if (params.urgency_min || params.urgency_max) {
+                params.urgency_min = params.urgency_min || 1;
+                params.urgency_max = params.urgency_max || 5;
                 var urgency = {
-                    urgency: JSON.parse(params.urgency)
+                    urgency: {
+                        gte: params.urgency_min,
+                        lte: params.urgency_max
+                    }
                 };
                 filters.push({range: urgency});
             }
