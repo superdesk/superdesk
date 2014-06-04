@@ -40,10 +40,6 @@ define([
                     rel: 'desks'
                 }
             });
-            apiProvider.api('users', {
-                type: 'http',
-                backend: {rel: 'users'}
-            });
         }]);
 
     return app;
