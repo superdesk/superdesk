@@ -11,9 +11,15 @@ from flask import abort
 from werkzeug.exceptions import NotFound
 from flask import request
 from werkzeug.datastructures import FileStorage
-from PIL import Image, ExifTags
-from _io import BufferedRandom
 from superdesk.file_meta.image import get_meta
+from superdesk import SuperdeskError
+
+
+class InvalidFileType(SuperdeskError):
+    """Exception raised when receiving a file type that is not supported."""
+
+    def __init__(self, type=None):
+        super().__init__('Invalid file type %s' % type, payload={})
 
 
 def archive_assets(data, doc):
@@ -80,7 +86,8 @@ def on_upload_create(data, docs):
         assert isinstance(file, FileStorage)
         type = file.content_type.split('/')[0]
         if type != 'image':
-            abort(400, 'Invalid file type %s' % type)
+            superdesk.app.media.delete(doc['media'])
+            raise InvalidFileType(type)
 
         media = {}
         media['media'] = str(doc['media'])
@@ -97,6 +104,7 @@ def on_upload_create(data, docs):
         doc['renditions'] = generate_renditions(doc['media'])
         doc['mimetype'] = file.content_type
         doc['filemeta'] = get_meta(file.stream)
+
 
 def generate_renditions(media_id):
     """Generate system renditions for given media file id.

@@ -64,6 +64,7 @@ superdesk.domain('upload', {
             'file_meta': 1,
             '_created': 1,
             '_updated': 1,
+            'media': 1
         }
     },
     'item_methods': ['GET', 'DELETE'],
