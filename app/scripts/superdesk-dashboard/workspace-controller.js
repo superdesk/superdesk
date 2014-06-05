@@ -4,10 +4,9 @@ define(['lodash'], function(_) {
     WorkspaceController.$inject = ['$scope', 'widgets', 'workspace'];
     function WorkspaceController($scope, widgets, workspace) {
 
-        $scope.flags = {
-            loading: true,
-            edit: false
-        };
+        $scope.flags = $scope.flags || {};
+        $scope.flags.loading = true;
+        $scope.flags.edit = false;
 
         $scope.selectedWidget = null;
 
