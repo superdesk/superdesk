@@ -1,7 +1,7 @@
 ''' Amazon media storage module'''
 from eve.io.media import MediaStorage
 import tinys3
-from superdesk.media_operations import get_hashed_filename
+from superdesk.media_operations import process_file_from_stream
 from superdesk import SuperdeskError
 import logging
 from io import BytesIO
@@ -64,7 +64,7 @@ class AmazonMediaStorage(MediaStorage):
         of the stored file will be returned. The content type argument is used
         to appropriately identify the file when it is retrieved.
         """
-        file_name, iter_content, content_type = get_hashed_filename(content, filename, content_type)
+        file_name, iter_content, content_type, metadata = process_file_from_stream(content, filename, content_type)
         logger.debug('Going to save media file with %s ' % file_name)
         found, existing_file = self._check_exists(file_name)
         if found:

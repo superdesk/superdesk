@@ -2,17 +2,18 @@ import flask
 import superdesk
 from .utc import utcnow
 from .upload import url_for_media
+from .media_operations import store_file_from_url
 from datetime import datetime
 from settings import SERVER_DOMAIN
 from uuid import uuid4
 from eve.methods.delete import deleteitem
 from eve.utils import config
-from flask import abort
+from flask import abort, request, Response
 from werkzeug.exceptions import NotFound
-from flask import request
-from werkzeug.datastructures import FileStorage
-from superdesk.file_meta.image import get_meta
 from superdesk import SuperdeskError
+
+
+bp = superdesk.Blueprint('archive_media', __name__)
 
 
 class InvalidFileType(SuperdeskError):
@@ -79,11 +80,65 @@ def generate_guid(hints):
     return None
 
 
+@bp.route('/archive_media/import_media/', methods=['POST'])
+def import_media_into_archive():
+    archive_guid = request.form['media_archive_guid']
+    media_url = request.form['href']
+
+    if request.form.get('rendition_name'):
+        rendition_name = request.form['rendition_name']
+        rv = import_rendition(archive_guid, rendition_name, media_url)
+    else:
+        rv = import_media(archive_guid, media_url)
+    return Response(rv)
+
+
+def import_media(media_archive_guid, href):
+    '''
+    media_archive_guid: media_archive guid
+    href: external file URL from which to download it
+    Download from href and save file on app storage, process it and
+    update "original" rendition for guid content item
+    '''
+    rv = import_rendition(media_archive_guid, 'baseImage', href)
+    return rv
+
+
+def import_rendition(media_archive_guid, rendition_name, href):
+    '''
+    media_archive_guid: media_archive guid
+    rendition_name: rendition to update,
+    href: external file URL from which to download it
+    Download from href and save file on app storage, process it and
+    update "rendition_name" rendition for guid content item
+    '''
+    archive = fetch_media_from_archive(media_archive_guid)
+    if rendition_name not in archive['renditions']:
+        payload = 'Invalid rendition name %s' % rendition_name
+        raise superdesk.SuperdeskError(payload=payload)
+
+    file_guid = store_file_from_url(href)
+    updates = {}
+    updates['media_file'] = str(file_guid)
+    updates['renditions'] = {rendition_name: {'href': url_for_media(file_guid)}}
+    rv = superdesk.app.data.update(ARCHIVE_MEDIA, id_=str(media_archive_guid), updates=updates)
+    if int(archive['version']) >= int(rv['_version']):
+        raise superdesk.SuperdeskError('Updating media archive failed')
+    return rv
+
+
+def fetch_media_from_archive(media_archive_guid):
+    archive = superdesk.app.data.find_one(ARCHIVE_MEDIA, req=None, _id=str(media_archive_guid))
+    if not archive:
+        msg = 'No document found in the media archive with this ID: %s' % media_archive_guid
+        raise superdesk.SuperdeskError(payload=msg)
+    return archive
+
+
 def on_upload_create(data, docs):
     ''' Create corresponding item on file upload '''
     for doc in docs:
-        file = request.files['media']
-        assert isinstance(file, FileStorage)
+        file = superdesk.app.media.get(doc['media'])
         type = file.content_type.split('/')[0]
         if type != 'image':
             superdesk.app.media.delete(doc['media'])
@@ -103,7 +158,7 @@ def on_upload_create(data, docs):
         doc['versioncreated'] = utcnow()
         doc['renditions'] = generate_renditions(doc['media'])
         doc['mimetype'] = file.content_type
-        doc['filemeta'] = get_meta(file.stream)
+        doc['filemeta'] = file.metadata
 
 
 def generate_renditions(media_id):
@@ -129,6 +184,7 @@ superdesk.connect('create:archive_ingest', on_create_archive)
 superdesk.connect('create:archive', on_create_archive)
 superdesk.connect('create:archive_media', on_upload_create)
 superdesk.connect('delete:archive', on_delete_archive)
+superdesk.blueprint(bp)
 
 base_schema = {
     'guid': {
@@ -278,7 +334,8 @@ superdesk.domain('archive', {
     'resource_methods': ['GET', 'POST', 'DELETE']
 })
 
-superdesk.domain('archive_media', {
+ARCHIVE_MEDIA = 'archive_media'
+superdesk.domain(ARCHIVE_MEDIA, {
     'schema': {
         'media': {
             'type': 'media',

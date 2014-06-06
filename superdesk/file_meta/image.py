@@ -19,5 +19,6 @@ def get_meta(file_stream):
     exif = dict(img._getexif())
     exifMeta = {ExifTags.TAGS[k]: v for k, v in exif.items() if k in ExifTags.TAGS}
     file_stream.seek(current)
-    del exifMeta['UserComment']
+    if exifMeta.get('UserComment'):
+        del exifMeta['UserComment']
     return exifMeta

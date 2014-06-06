@@ -7,6 +7,7 @@ import logging
 from flask import request
 import requests
 import superdesk
+from superdesk.file_meta.image import get_meta
 
 
 logger = logging.getLogger(__name__)
@@ -46,14 +47,14 @@ def store_file_from_url(url):
     return id
 
 
-def get_hashed_filename(content, filename=None, content_type=None):
+def process_file_from_stream(content, filename=None, content_type=None):
     content_type = content_type or content.content_type
     file_name = filename or content.filename
     type = content_type.split('/')[0]
-    content = process_image(content, file_name, type)
+    content, metadata = process_image(content, file_name, type)
     file_name = get_file_name(content)
     content.seek(0)
-    return file_name, content, content_type
+    return file_name, content, content_type, metadata
 
 
 def process_image(content, file_name, type):
@@ -63,7 +64,8 @@ def process_image(content, file_name, type):
     isCropped, altered_content = crop_if_needed(content, file_name)
     iter_content = altered_content if isCropped else BytesIO(altered_content.read())
     iter_content.seek(0)
-    return iter_content
+    meta = get_meta(iter_content)
+    return iter_content, meta
 
 
 def crop_if_needed(content, file_name):

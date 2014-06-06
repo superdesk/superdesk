@@ -1,7 +1,7 @@
 from eve.io.mongo.media import GridFSMediaStorage
 import logging
 from bson import ObjectId
-from superdesk.media_operations import get_hashed_filename
+from superdesk.media_operations import process_file_from_stream
 from gridfs import GridFS
 
 
@@ -17,10 +17,10 @@ class SuperdeskGridFSMediaStorage(GridFSMediaStorage):
         return super().get(_id)
 
     def put(self, content, filename=None, content_type=None):
-        file_name, out, content_type = get_hashed_filename(content, filename, content_type)
+        file_name, out, content_type, metadata = process_file_from_stream(content, filename, content_type)
         logger.debug('Going to save media file with %s ' % file_name)
 
-        _id = self.fs().put(out, content_type=content_type, filename=file_name)
+        _id = self.fs().put(out, content_type=content_type, filename=file_name, metadata=metadata)
         logger.debug('Saved  media file with id= %s' % _id)
         return _id
 

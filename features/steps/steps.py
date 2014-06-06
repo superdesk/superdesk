@@ -15,6 +15,8 @@ from wooper.expect import (
 from wooper.assertions import (
     assert_in, assert_equal)
 
+external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
+
 
 def test_json(context):
     try:
@@ -227,7 +229,7 @@ def step_impl_when_upload_with_crop(context):
 
 @when('we upload a file from URL')
 def step_impl_when_upload_from_url(context):
-    data = {'URL': 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'}
+    data = {'URL': external_url}
     headers = [('Content-Type', 'multipart/form-data')]
     headers += context.headers
     context.response = context.client.post('/upload', data=data, headers=headers)
@@ -235,7 +237,7 @@ def step_impl_when_upload_from_url(context):
 
 @when('we upload a file from URL with cropping')
 def step_impl_when_upload_from_url_with_crop(context):
-    data = {'URL': 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg',
+    data = {'URL': external_url,
             'CropTop': 0,
             'CropLeft': 0,
             'CropBottom': 333,
@@ -324,6 +326,53 @@ def step_impl_then_get_file_meta(context):
     assert isinstance(meta, dict), 'expected dict for file meta'
 
 
+def import_rendition(context, rendition_name=None):
+    rv = parse_json_response(context.response)
+    headers = [('Content-Type', 'multipart/form-data')]
+    headers += context.headers
+    context._id = rv['_id']
+    context.renditions = rv['renditions']
+    data = {'media_archive_guid': rv['_id'], 'href': external_url}
+    if rendition_name:
+        data['rendition_name'] = rendition_name
+    context.response = context.client.post('/archive_media/import_media', data=data, headers=headers)
+    assert_200(context.response)
+
+
+@when('we import rendition from url')
+def import_rendition_from_url(context):
+    import_rendition(context)
+
+
+@when('we import thumbnail rendition from url')
+def import_thumbnail_rendition_from_url(context):
+    import_rendition(context, 'thumbnail')
+
+
+@when('we get updated media from archive')
+def get_updated_media_from_archive(context):
+    url = 'archive/%s' % context._id
+    step_impl_when_get_url(context, url)
+    assert_200(context.response)
+
+
+@then('baseImage rendition is updated')
+def check_base_image_rendition(context):
+    check_rendition(context, 'baseImage')
+
+
+@then('thumbnail rendition is updated')
+def check_thumbnail_rendition(context):
+    check_rendition(context, 'thumbnail')
+
+
+def check_rendition(context, rendition_name):
+    rv = parse_json_response(context.response)
+    print('Got:', rv)
+    print('Had:', context.renditions)
+    assert rv['renditions'][rendition_name] != context.renditions[rendition_name], rv['renditions']
+
+
 @then('we get "{key}"')
 def step_impl_then_get_key(context, key):
     assert_200(context.response)
@@ -372,9 +421,13 @@ def step_impl_then_get_cropped_file(context, max_size):
 
 @then('we can fetch a data_uri')
 def step_impl_we_fetch_data_uri(context):
+    we_can_fetch_an_image(context, context.fetched_data['data_uri_url'])
+
+
+def we_can_fetch_an_image(context, url):
     headers = [('Accept', 'application/json')]
     headers += context.headers
-    response = context.client.get(context.fetched_data['data_uri_url'], headers=headers)
+    response = context.client.get(url, headers=headers)
     assert_200(response)
     assert len(response.get_data()), response
     assert response.mimetype == 'image/jpeg', response.mimetype
