@@ -331,8 +331,8 @@ def step_impl_then_get_renditions(context):
     expect_json_contains(context.response, 'renditions')
     renditions = apply_path(parse_json_response(context.response), 'renditions')
     assert isinstance(renditions, dict), 'expected dict for image renditions'
-    for name, desc in renditions.items():
-        assert isinstance(name, str), 'expected string for rendition name'
+    for rend_name in context.app.config['RENDITIONS']['picture']:
+        desc = renditions[rend_name]
         assert isinstance(desc, dict), 'expected dict for rendition description'
         assert 'href' in desc, 'expected href in rendition description'
         assert 'media' in desc, 'expected media identifier in rendition description'

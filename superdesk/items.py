@@ -11,8 +11,8 @@ from flask import abort, request, Response
 from werkzeug.exceptions import NotFound
 from superdesk import SuperdeskError
 from superdesk.media_operations import resize_image
-from superdesk.file_meta.image import get_meta
 from werkzeug.datastructures import FileStorage
+from PIL import Image
 
 
 bp = superdesk.Blueprint('archive_media', __name__)
@@ -141,8 +141,7 @@ def fetch_media_from_archive(media_archive_guid):
 def on_upload_create(data, docs):
     ''' Create corresponding item on file upload '''
     for doc in docs:
-        file = request.files['media']
-        assert isinstance(file, FileStorage)
+        file = superdesk.app.media.get(doc['media'])
         inserted = [doc['media']]
         file_type = file.content_type.split('/')[0]
         if file_type != 'image':
@@ -154,9 +153,9 @@ def on_upload_create(data, docs):
             doc['type'] = 'picture'
             doc['version'] = 1
             doc['versioncreated'] = utcnow()
-            doc['renditions'] = generate_renditions(doc['media'], inserted)
+            doc['renditions'] = generate_renditions(file, doc['media'], inserted)
             doc['mimetype'] = file.content_type
-            doc['filemeta'] = get_meta(file.stream)
+            doc['filemeta'] = file.metadata
         except Exception as io:
             superdesk.logger.exception(io)
             for file_id in inserted:
@@ -164,20 +163,23 @@ def on_upload_create(data, docs):
             abort(500)
 
 
-def generate_renditions(media_id, inserted):
+def generate_renditions(original, media_id, inserted):
     """Generate system renditions for given media file id."""
-    original = superdesk.app.media.get(media_id)
-    renditions = {'original': {'href': url_for_media(media_id), 'media': media_id}}
+    img = Image.open(original)
+    width, height = img.size
+    renditions = {'original': {'href': url_for_media(media_id), 'media': media_id,
+                               'mimetype': original.content_type, 'width': width, 'height': height}}
     ext = original.content_type.split('/')[1].lower()
     ext = ext if ext in ('jpeg', 'gif', 'tiff', 'png') else 'png'
     for rendition, rsize in config.RENDITIONS['picture'].items():
         size = (rsize['width'], rsize['height'])
         original.seek(0)
-        resized = resize_image(original, ext, size)
+        resized, width, height = resize_image(original, ext, size)
         resized = FileStorage(stream=resized, content_type='image/%s' % ext)
         id = superdesk.app.media.put(resized)
         inserted.append(id)
-        renditions[rendition] = {'href': url_for_media(id), 'media': id}
+        renditions[rendition] = {'href': url_for_media(id), 'media': id,
+                                 'mimetype': 'image/%s' % ext, 'width': width, 'height': height}
     return renditions
 
 

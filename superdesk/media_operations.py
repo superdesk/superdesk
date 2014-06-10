@@ -101,7 +101,7 @@ def resize_image(content, format, size, keepProportions=True):
     out = BytesIO()
     resized.save(out, format)
     out.seek(0)
-    return out
+    return out, new_width, new_height
 
 
 def crop_if_needed(content, file_name):
