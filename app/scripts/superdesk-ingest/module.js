@@ -3,11 +3,17 @@ define([
     'require',
     './controllers/list',
     './controllers/settings',
-    './ingest-widget/ingest'
+    './ingest-widget/ingest',
+    './ingest-stats-widget/stats',
+    './directives'
 ], function(angular, require) {
     'use strict';
 
-    var app = angular.module('superdesk.ingest', ['superdesk.widgets.ingest']);
+    var app = angular.module('superdesk.ingest', [
+        'superdesk.widgets.ingest',
+        'superdesk.widgets.ingeststats',
+        require('./directives').name
+    ]);
 
     app.value('providerTypes', {
         aap: {

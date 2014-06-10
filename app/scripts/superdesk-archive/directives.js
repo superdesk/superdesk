@@ -5,7 +5,7 @@ define([
 ], function(_, angular, require) {
     'use strict';
 
-    return angular.module('superdesk.ingest.directives', [])
+    return angular.module('superdesk.archive.directives', [])
         .directive('sdInlineMeta', function() {
             return {
                 templateUrl: require.toUrl('./views/inline-meta.html'),
