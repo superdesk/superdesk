@@ -9,7 +9,12 @@
             <a href="" class="collapse-navigation" ng-click="toggleMenu()">
               <i class="icon-collapse"></i>
             </a>
-            <span class="navigation-selected" translate>{{ currentRoute.label }}</span>
+            
+            <a class="main-link" href="" translate>{{ currentRoute.label }}</a>
+            <span class="top-space" ng-include="selected.topTemplateUrl">
+              
+            </span>
+
           </div>
 
           <ul class="nav pull-right">
@@ -40,7 +45,7 @@
     <div class="sf-menu-header-bar"></div>
     <div class="sf-menu-content">
       <ul>
-        <li ng-repeat="item in menu | orderBy:'priority'" ng-class="{active: isActive(item)}">
+        <li ng-repeat="item in menu | orderBy:'priority'" ng-class="{active: item._id === selected._id}">
           <a ng-href="#{{ item.href }}" title="{{ item.label | translate }}">{{ item.label|translate }}</a>
         </li>
       </ul>

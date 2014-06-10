@@ -16,6 +16,29 @@
 	background: url("../../images/image-icon.png");
 }
 
+.icon-list-view, .icon-kanban-view {
+	width: 20px;
+	height: 19px;
+	display: inline-block;
+	background: url("../../images/icons_switch_view.png") no-repeat 0 0;
+	vertical-align: middle;
+}
+.icon-list-view {
+	background-position: -20px 0px;
+}
+.icon-kanban-view {
+	background-position: 0px 0px;	
+}
+.active {
+	.icon-list-view {
+		background-position: -20px -20px;
+	}
+	.icon-kanban-view {
+		background-position: 0px -20px;
+	}
+}
+
+
 /* desk label icons */
 .icon-desk-time {
 	background: url(../../images/desk-icons.png) no-repeat -1px -1px;

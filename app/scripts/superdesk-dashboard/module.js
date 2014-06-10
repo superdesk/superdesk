@@ -30,12 +30,31 @@ define([
     })
 
     .config(['superdeskProvider', function(superdesk) {
-        superdesk.activity('/dashboard', {
-            label: gettext('Dashboard'),
+        superdesk.activity('/workspace', {
+            label: gettext('Workspace'),
             controller: require('./workspace-controller'),
-            templateUrl: require.toUrl('./views/dashboard.html'),
+            templateUrl: require.toUrl('./views/workspace.html'),
+            topTemplateUrl: require.toUrl('./views/workspace-topnav.html'),
             priority: -1000,
             category: superdesk.MENU_MAIN
+        });
+        superdesk.activity('/workspace/tasks', {
+            label: gettext('Workspace'),
+            templateUrl: require.toUrl('./views/workspace-tasks.html'),
+            topTemplateUrl: require.toUrl('./views/workspace-topnav.html'),
+            beta: true
+        });
+        superdesk.activity('/workspace/content', {
+            label: gettext('Workspace'),
+            templateUrl: require.toUrl('./views/workspace-content.html'),
+            topTemplateUrl: require.toUrl('./views/workspace-topnav.html'),
+            beta: true
+        });
+        superdesk.activity('/workspace/stream', {
+            label: gettext('Workspace'),
+            templateUrl: require.toUrl('./views/workspace-stream.html'),
+            topTemplateUrl: require.toUrl('./views/workspace-topnav.html'),
+            beta: true
         });
     }]);
 });

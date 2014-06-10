@@ -41,7 +41,7 @@ define(['./module', 'angular'], function(DashboardModule, angular) {
             inject(function(superdesk, $controller, $rootScope, $httpBackend) {
                 scope = $rootScope.$new(true);
                 $httpBackend.expectGET(USER_URL).respond(widgets ? {workspace: {widgets: widgets}} : {});
-                $controller(superdesk.activity['/dashboard'].controller, {$scope: scope});
+                $controller(superdesk.activity['/workspace'].controller, {$scope: scope});
                 $httpBackend.flush();
             });
 

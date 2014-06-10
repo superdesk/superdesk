@@ -29,9 +29,7 @@ define(['angular', 'require', 'lodash'], function(angular, require, _) {
                     scope.flags = ctrl.flags;
                     scope.menu = _.values(_.where(superdesk.activities, {category: superdesk.MENU_MAIN}));
 
-                    scope.isActive = function(item) {
-                        return $location.path().substr(0, item.href.length) === item.href;
-                    };
+                    scope.selected = null;
 
                     scope.toggleMenu = function() {
                         ctrl.flags.menu = !ctrl.flags.menu;
@@ -48,6 +46,9 @@ define(['angular', 'require', 'lodash'], function(angular, require, _) {
                     scope.$on('$routeChangeSuccess', function(ev, route) {
                         scope.currentRoute = route;
                         ctrl.flags.menu = false;
+                        scope.selected = _.find(scope.menu, function(item) {
+                            return $location.path().substr(0, item.href.length) === item.href;
+                        });
                     });
                 }
             };
