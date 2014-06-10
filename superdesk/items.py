@@ -6,11 +6,13 @@ from .media_operations import store_file_from_url
 from datetime import datetime
 from settings import SERVER_DOMAIN
 from uuid import uuid4
-from eve.methods.delete import deleteitem
 from eve.utils import config
 from flask import abort, request, Response
 from werkzeug.exceptions import NotFound
 from superdesk import SuperdeskError
+from superdesk.media_operations import resize_image
+from superdesk.file_meta.image import get_meta
+from werkzeug.datastructures import FileStorage
 
 
 bp = superdesk.Blueprint('archive_media', __name__)
@@ -59,11 +61,12 @@ def on_create_archive(data, docs):
 def on_delete_archive(data, lookup):
     '''Delete associated binary files.'''
     res = data.find_one('archive', res=None, **lookup)
-    if res and res.get('media_file'):
-        try:
-            deleteitem('upload', {'_id': str(res['upload_id'])})
-        except NotFound:
-            pass
+    if res and res.get('renditions'):
+        for _name, ref in res['renditions'].items():
+            try:
+                superdesk.app.media.delete(ref['media'])
+            except (KeyError, NotFound):
+                pass
 
 
 def generate_guid(hints):
@@ -138,38 +141,43 @@ def fetch_media_from_archive(media_archive_guid):
 def on_upload_create(data, docs):
     ''' Create corresponding item on file upload '''
     for doc in docs:
-        file = superdesk.app.media.get(doc['media'])
-        type = file.content_type.split('/')[0]
-        if type != 'image':
+        file = request.files['media']
+        assert isinstance(file, FileStorage)
+        inserted = [doc['media']]
+        file_type = file.content_type.split('/')[0]
+        if file_type != 'image':
             superdesk.app.media.delete(doc['media'])
-            raise InvalidFileType(type)
+            raise InvalidFileType(file_type)
 
-        media = {}
-        media['media'] = str(doc['media'])
-        res = superdesk.app.data.insert('upload', [media])
-        if not res:
+        try:
+            doc['guid'] = generate_guid({'type': 'tag', 'id': str(uuid4())})
+            doc['type'] = 'picture'
+            doc['version'] = 1
+            doc['versioncreated'] = utcnow()
+            doc['renditions'] = generate_renditions(doc['media'], inserted)
+            doc['mimetype'] = file.content_type
+            doc['filemeta'] = get_meta(file.stream)
+        except Exception as io:
+            superdesk.logger.exception(io)
+            for file_id in inserted:
+                superdesk.app.media.delete(file_id)
             abort(500)
 
-        doc['media_file'] = url_for_media(media['media'])
-        doc['upload_id'] = res[0]
-        doc['guid'] = generate_guid({'type': 'tag', 'id': str(uuid4())})
-        doc['type'] = 'picture'
-        doc['version'] = 1
-        doc['versioncreated'] = utcnow()
-        doc['renditions'] = generate_renditions(doc['media'])
-        doc['mimetype'] = file.content_type
-        doc['filemeta'] = file.metadata
 
-
-def generate_renditions(media_id):
-    """Generate system renditions for given media file id.
-
-    This is just a mock implementation for ui..
-    """
-    url = url_for_media(media_id)
-    renditions = {}
-    for rendition in config.RENDITIONS['picture']:
-        renditions[rendition] = {'href': url}
+def generate_renditions(media_id, inserted):
+    """Generate system renditions for given media file id."""
+    original = superdesk.app.media.get(media_id)
+    renditions = {'original': {'href': url_for_media(media_id), 'media': media_id}}
+    ext = original.content_type.split('/')[1].lower()
+    ext = ext if ext in ('jpeg', 'gif', 'tiff', 'png') else 'png'
+    for rendition, rsize in config.RENDITIONS['picture'].items():
+        size = (rsize['width'], rsize['height'])
+        original.seek(0)
+        resized = resize_image(original, ext, size)
+        resized = FileStorage(stream=resized, content_type='image/%s' % ext)
+        id = superdesk.app.media.put(resized)
+        inserted.append(id)
+        renditions[rendition] = {'href': url_for_media(id), 'media': id}
     return renditions
 
 

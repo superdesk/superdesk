@@ -5,6 +5,17 @@ from eve.utils import config, ParsedRequest
 from eve_elastic import Elastic
 from .signals import send
 from .utils import import_by_path
+from pyelasticsearch.client import JsonEncoder
+from bson.objectid import ObjectId
+
+
+class SuperdeskJsonEncoder(JsonEncoder):
+    '''Customize the JSON encoder used in Elastic'''
+    def default(self, value):
+        """Convert more Python data types to ES-understandable JSON."""
+        if isinstance(value, ObjectId):
+            return str(value)
+        return super(SuperdeskJsonEncoder, self).default(value)
 
 
 class SuperdeskDataLayer(DataLayer):
@@ -16,6 +27,7 @@ class SuperdeskDataLayer(DataLayer):
     def init_app(self, app):
         self.mongo = Mongo(app)
         self.elastic = Elastic(app)
+        self.elastic.es.json_encoder = SuperdeskJsonEncoder
 
         if 'DEFAULT_FILE_STORAGE' in app.config:
             self.storage = import_by_path(app.config['DEFAULT_FILE_STORAGE'])()
