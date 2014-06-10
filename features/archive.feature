@@ -69,6 +69,7 @@ Feature: News Items Archive
             {"guid": ""}
             """
         And we get file metadata
+        And we get image renditions
 
         When we patch again
             """
