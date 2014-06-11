@@ -13,10 +13,34 @@ Feature: Desks
             """
             {"name": "Sports Desk"}
             """
-
         And we get "/desks"
         Then we get list with 1 items
             """
             {"name": "Sports Desk"}
             """
 
+	@auth
+	Scenario: Update desk
+	    Given empty "desks"
+		When we post to "/desks"
+            """
+            {"name": "Sports Desk"}
+            """
+		And we patch the desk
+			 """
+            {"name": "Sports Desk modified"}
+             """
+		Then we get updated response
+
+	@auth
+	Scenario: Delete desk
+		Given "desks"
+			"""
+			[{"name": "test_desk1"}]
+			"""
+		When we post to "/desks"
+        	"""
+            [{"name": "test_desk2"}]
+            """
+        And we delete the desk
+        Then we get deleted response

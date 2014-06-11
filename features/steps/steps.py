@@ -175,6 +175,16 @@ def when_we_delete_it(context):
     href = get_self_href(res, context)
     headers = if_match(context, res.get('_etag'))
     context.response = context.client.delete(href, headers=headers)
+    
+
+@when('we delete the desk')
+def step_impl_when_del_desk(context):
+    res = get_json_data(context.response)
+    desk_id = res['_id']
+    url = '/desks/' + desk_id
+    rv = context.client.delete(url, data=context.text, headers=context.headers)
+    assert_200(rv)
+    context.response = rv
 
 
 @when('we patch "{url}"')
@@ -201,6 +211,16 @@ def step_impl_when_patch(context):
     headers = if_match(context, etag)
     context.response = context.client.patch(href, data=context.text, headers=headers)
     assert_ok(context.response)
+
+
+@when('we patch the desk')
+def step_impl_we_patch_the_desk(context):
+    res = get_json_data(context.response)
+    desk_id = res['_id']
+    url = '/desks/' + desk_id
+    rv = context.client.patch(url, data=context.text, headers=context.headers)
+    assert_200(rv)
+    context.response = rv
 
 
 @when('we get it')
