@@ -6,7 +6,7 @@ define([
 ], function(_, angular, require, d3) {
     'use strict';
 
-    return angular.module('superdesk.archive.directives', [])
+    return angular.module('superdesk.ingest.directives', [])
         .directive('sdPieChartDashboard', ['colorSchemes', function(colorSchemes) {
             return {
                 replace: true,
