@@ -12,23 +12,6 @@ from superdesk.io import providers
 
 from .utc import utc, utcnow
 from superdesk.celery_app import celery, app
-from celery.result import AsyncResult
-
-
-def update_progress(task_id, value):
-    # TODO: finish it
-    task = AsyncResult(task_id)
-    state = task.state
-    if not state:
-        assert(value > 0)
-        current = 0
-        total = value
-    else:
-        # TODO: get crt total and current
-        print(state)
-
-    print('update: current=', current, ', total=', total)
-    task.update_state(state='PROGRESS', meta={'current': current, 'total': total})
 
 
 @celery.task()
@@ -119,6 +102,8 @@ def ingest_set_archived(guid):
     ingest_doc = app.data.find_one('ingest', guid=guid)
     if ingest_doc:
         app.data.update('ingest', ingest_doc.get('_id'), {'archived': utcnow()})
+        ingest_doc = app.data.find_one('ingest', guid=guid)
+        print(ingest_doc)
 
 
 def archive_ingest(data, docs, **kwargs):
@@ -128,7 +113,6 @@ def archive_ingest(data, docs, **kwargs):
         doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
         data.insert('archive', [doc])
         task = archive_item.delay(doc.get('guid'), doc.get('provider'), doc.get('user'))
-        update_progress(task.id, 1)
         data.update('archive', doc.get('guid'), {"task_id": task.id})
         ingest_set_archived(doc.get('guid'))
     return [doc.get('guid') for doc in docs]

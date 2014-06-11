@@ -18,7 +18,7 @@ def on_create(data, resource, docs):
     activity['resource'] = resource
     activity['action'] = 'create'
     activity['extra'] = docs[0]
-    #always the activity is written on mongo
+    # always the activity is written on mongo
     data.app.data.insert('activity', [activity])
 
 superdesk.connect('create', on_create)

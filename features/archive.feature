@@ -6,27 +6,27 @@ Feature: News Items Archive
         When we get "/archive"
         Then we get list with 0 items
 
-#         @auth
-#     Scenario: Move item into archive
-#         Given empty "archive"
-#         And "ingest"
-#             """
-#             [{"guid": "tag:reuters.com,0000:newsml_GM1EA631K7J0", "provider": "reuters"}]
-#             """
-# 
-#         When we post to "/archive_ingest"
-#             """
-#             {
-#                 "guid": "tag:reuters.com,0000:newsml_GM1EA631K7J0",
-#                 "provider": "reuters"
-#             }
-#             """
-# 
-#         Then we get new resource
-#             """
-#             {"guid": "tag:reuters.com,0000:newsml_GM1EA631K7J0"}
-#             """
-#         And we get "archived" in "ingest/tag:reuters.com,0000:newsml_GM1EA631K7J0"
+    @auth
+    Scenario: Move item into archive
+        Given empty "archive"
+        And "ingest"
+            """
+            [{"guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401", "provider": "reuters"}]
+            """
+ 
+        When we post to "/archive_ingest"
+            """
+            {
+                "guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401",
+                "provider": "reuters"
+            }
+            """
+ 
+        Then we get new resource
+            """
+            {"guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401"}
+            """
+         And we get "archived" in "ingest/tag:reuters.com,0000:newsml_GM1EA6A1P8401"
       
 
     @auth
