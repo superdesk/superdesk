@@ -47,12 +47,12 @@ Feature: News Items Archive
             [{"_id": "xyz", "guid": "testid", "headline": "test"}]
             """
 
-        When we patch "/archive/xyz"
+        When we patch first
             """
             {"slugline": "TEST", "urgency": 2, "version": "1"}
             """
 
-        And we patch again
+        And we patch it
             """
             {"slugline": "TEST2", "version": "2"}
             """
@@ -71,7 +71,7 @@ Feature: News Items Archive
         And we get file metadata
         And we get image renditions
 
-        When we patch again
+        When we patch it
             """
             {"headline": "flower", "byline": "foo", "description_text": "flower desc"}
             """

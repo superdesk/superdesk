@@ -26,7 +26,7 @@ Feature: Desks
             """
             {"name": "Sports Desk"}
             """
-		And we patch the desk
+		And we patch it
 			 """
             {"name": "Sports Desk modified"}
              """
@@ -42,5 +42,5 @@ Feature: Desks
         	"""
             [{"name": "test_desk2"}]
             """
-        And we delete the desk
+        And we delete it
         Then we get deleted response

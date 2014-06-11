@@ -175,16 +175,6 @@ def when_we_delete_it(context):
     href = get_self_href(res, context)
     headers = if_match(context, res.get('_etag'))
     context.response = context.client.delete(href, headers=headers)
-    
-
-@when('we delete the desk')
-def step_impl_when_del_desk(context):
-    res = get_json_data(context.response)
-    desk_id = res['_id']
-    url = '/desks/' + desk_id
-    rv = context.client.delete(url, data=context.text, headers=context.headers)
-    assert_200(rv)
-    context.response = rv
 
 
 @when('we patch "{url}"')
@@ -196,7 +186,7 @@ def step_impl_when_patch_url(context, url):
     assert_ok(context.response)
 
 
-@when('we patch again')
+@when('we patch it')
 def step_impl_when_patch_again(context):
     data = get_json_data(context.response)
     href = get_self_href(data, context)
@@ -205,7 +195,7 @@ def step_impl_when_patch_again(context):
     assert_ok(context.response)
 
 
-@when('we patch it')
+@when('we patch first')
 def step_impl_when_patch(context):
     href, etag = get_it(context)
     headers = if_match(context, etag)
@@ -213,17 +203,7 @@ def step_impl_when_patch(context):
     assert_ok(context.response)
 
 
-@when('we patch the desk')
-def step_impl_we_patch_the_desk(context):
-    res = get_json_data(context.response)
-    desk_id = res['_id']
-    url = '/desks/' + desk_id
-    rv = context.client.patch(url, data=context.text, headers=context.headers)
-    assert_200(rv)
-    context.response = rv
-
-
-@when('we get it')
+@when('we get first')
 def step_impl_when_get(context):
     href, _etag = get_it(context)
     context.response = context.client.get(href, headers=context.headers)
