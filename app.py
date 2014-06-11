@@ -1,23 +1,20 @@
 import logging
 import os
-
 import eve
 from eve.io.mongo import MongoJSONEncoder
 from eve.render import send_response
-
 import settings
-from superdesk import signals
+from superdesk import signals, celery_app
 import superdesk
 from superdesk.auth import SuperdeskTokenAuth
+from superdesk.celery_app import get_celery
 from superdesk.desk_media_storage import SuperdeskGridFSMediaStorage
 from superdesk.validator import SuperdeskValidator
+import importlib
 
 
 class SuperdeskEve(eve.Eve):
     """Superdesk app"""
-
-    def __init__(self, **kwargs):
-        super(SuperdeskEve, self).__init__(**kwargs)
 
     def load_config(self):
         """Let us override settings withing plugins"""
@@ -79,7 +76,18 @@ def get_app(config=None):
         return send_response(None, (error.to_dict(), None, None, error.status_code))
 
     superdesk.app = app
+
+    celery = get_celery(app)
+    celery_app.app = app
+    celery_app.celery = celery
+    importlib.import_module('superdesk.archive_ingest')
+    app.register_resource('archive_ingest', app.config['DOMAIN']['archive_ingest'])
+
     return app
+
+config = setup_amazon({})
+app = get_app(config=config)
+celery = celery_app.celery
 
 if __name__ == '__main__':
 
@@ -94,7 +102,4 @@ if __name__ == '__main__':
         superdesk.logger.setLevel(logging.INFO)
         superdesk.logger.addHandler(logging.StreamHandler())
 
-    config = {}
-    setup_amazon(config)
-    app = get_app(config=config)
     app.run(host=host, port=port, debug=debug, use_reloader=True)

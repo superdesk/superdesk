@@ -3,10 +3,10 @@ from .signals import send
 from eve.io.base import DataLayer
 
 
-class BussinessDataLayer(DataLayer):
+class NoopDataLayer(DataLayer):
 
     """
-      Business Data Layer is used in the case when it is needed to have custom CRUD implementation
+      Noop Data Layer is used in the case when it is needed to have custom CRUD implementation
       for resources
     """
 

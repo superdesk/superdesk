@@ -27,7 +27,7 @@ ELASTICSEARCH_INDEX = os.environ.get('ELASTICSEARCH_INDEX', 'superdesk')
 
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379')
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379')
-CELERY_ALWAYS_EAGER = True
+CELERY_ALWAYS_EAGER = False
 
 
 INSTALLED_APPS = (
@@ -41,7 +41,6 @@ INSTALLED_APPS = (
     'superdesk.sessions',
     'superdesk.desks',
     'superdesk.subjectcodes',
-    'superdesk.archive_ingest',
 )
 
 RESOURCE_METHODS = ['GET', 'POST']
@@ -69,5 +68,5 @@ SERVER_DOMAIN = 'localhost'
 
 # uncomment to use local file storage
 # DEFAULT_FILE_STORAGE = 'superdesk.storage.FileSystemStorage'
-abspath = os.path.abspath(os.path.dirname(__file__))
-UPLOAD_FOLDER = os.path.join(abspath, 'upload')
+# abspath = os.path.abspath(os.path.dirname(__file__))
+# UPLOAD_FOLDER = os.path.join(abspath, 'upload')

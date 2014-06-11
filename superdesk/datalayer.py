@@ -7,7 +7,7 @@ from .signals import send
 from .utils import import_by_path
 from pyelasticsearch.client import JsonEncoder
 from bson.objectid import ObjectId
-from superdesk.bussiness_datalayer import BussinessDataLayer
+from superdesk.noop_datalayer import NoopDataLayer
 
 
 class SuperdeskJsonEncoder(JsonEncoder):
@@ -29,7 +29,7 @@ class SuperdeskDataLayer(DataLayer):
         self.mongo = Mongo(app)
         self.elastic = Elastic(app)
         self.elastic.es.json_encoder = SuperdeskJsonEncoder
-        self.business = BussinessDataLayer(app)
+        self.noop = NoopDataLayer(app)
 
         if 'DEFAULT_FILE_STORAGE' in app.config:
             self.storage = import_by_path(app.config['DEFAULT_FILE_STORAGE'])()

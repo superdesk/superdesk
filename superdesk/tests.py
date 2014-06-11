@@ -5,7 +5,6 @@ from app import get_app
 from pyelasticsearch import ElasticSearch
 from base64 import b64encode
 from flask import json
-from superdesk.task_runner import celery
 
 test_user = {'username': 'test_user', 'password': 'test_password'}
 
@@ -45,7 +44,6 @@ def setup(context=None, config=None):
 
     drop_elastic(config)
     app = get_app(config)
-    celery.conf.update(app.config)
 
     drop_mongo(app)
     if context:
