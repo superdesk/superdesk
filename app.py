@@ -47,6 +47,7 @@ def get_app(config=None):
 
     media_storage = SuperdeskGridFSMediaStorage
 
+    setup_amazon(config)
     if 'AMAZON_CONTAINER_NAME' in config:
         from superdesk.amazon_media_storage import AmazonMediaStorage
         media_storage = AmazonMediaStorage
@@ -77,17 +78,12 @@ def get_app(config=None):
 
     superdesk.app = app
 
-    celery = get_celery(app)
+    app.celery = get_celery(app)
     celery_app.app = app
-    celery_app.celery = celery
+    celery_app.celery = app.celery
     importlib.import_module('superdesk.archive_ingest')
     app.register_resource('archive_ingest', app.config['DOMAIN']['archive_ingest'])
-
     return app
-
-config = setup_amazon({})
-app = get_app(config=config)
-celery = celery_app.celery
 
 if __name__ == '__main__':
 
@@ -102,4 +98,5 @@ if __name__ == '__main__':
         superdesk.logger.setLevel(logging.INFO)
         superdesk.logger.addHandler(logging.StreamHandler())
 
+    app = get_app()
     app.run(host=host, port=port, debug=debug, use_reloader=True)
