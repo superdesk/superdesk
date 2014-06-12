@@ -49,12 +49,12 @@ Feature: News Items Archive
             [{"_id": "xyz", "guid": "testid", "headline": "test"}]
             """
 
-        When we patch first
+        When we patch given
             """
             {"slugline": "TEST", "urgency": 2, "version": "1"}
             """
 
-        And we patch it
+        And we patch latest
             """
             {"slugline": "TEST2", "version": "2"}
             """
@@ -73,7 +73,7 @@ Feature: News Items Archive
         And we get file metadata
         And we get image renditions
 
-        When we patch it
+        When we patch latest
             """
             {"headline": "flower", "byline": "foo", "description_text": "flower desc"}
             """

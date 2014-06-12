@@ -186,7 +186,7 @@ def step_impl_when_patch_url(context, url):
     assert_ok(context.response)
 
 
-@when('we patch it')
+@when('we patch latest')
 def step_impl_when_patch_again(context):
     data = get_json_data(context.response)
     href = get_self_href(data, context)
@@ -195,7 +195,7 @@ def step_impl_when_patch_again(context):
     assert_ok(context.response)
 
 
-@when('we patch first')
+@when('we patch given')
 def step_impl_when_patch(context):
     href, etag = get_it(context)
     headers = if_match(context, etag)
@@ -203,7 +203,7 @@ def step_impl_when_patch(context):
     assert_ok(context.response)
 
 
-@when('we get first')
+@when('we get given')
 def step_impl_when_get(context):
     href, _etag = get_it(context)
     context.response = context.client.get(href, headers=context.headers)

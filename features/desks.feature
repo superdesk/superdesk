@@ -26,7 +26,7 @@ Feature: Desks
             """
             {"name": "Sports Desk"}
             """
-		And we patch it
+		And we patch latest
 			 """
             {"name": "Sports Desk modified"}
              """

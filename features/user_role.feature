@@ -28,12 +28,12 @@ Feature: User Role Resource
             [{"name": "Admin"}]
             """
 
-        When we patch first
+        When we patch given
             """
             {"permissions": {"ingest": {"read": 1}, "archive": {"write": 1}}}
             """
 
-        And we get first
+        And we get given
         Then we get "permissions"
 
     @auth
