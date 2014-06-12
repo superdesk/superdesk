@@ -103,46 +103,49 @@ def on_create_auth(data, docs):
         doc['user'] = user['_id']
         doc['token'] = utils.get_random_string(40)
 
-superdesk.connect('create:auth', on_create_auth)
 
-superdesk.domain('auth_users', {
-    'datasource': {
-        'source': 'users'
-    },
-    'schema': {
-        'username': {
-            'type': 'string',
+def init_app(app):
+    app.register_resource('auth_users', {
+        'datasource': {
+            'source': 'users'
         },
-        'password': {
-            'type': 'string',
-        }
-    },
-    'item_methods': [],
-    'resource_methods': []
-})
-
-superdesk.domain('auth', {
-    'schema': {
-        'username': {
-            'type': 'string'
-        },
-        'password': {
-            'type': 'string'
-        },
-        'token': {
-            'type': 'string'
-        },
-        'user': {
-            'type': 'objectid',
-            'data_relation': {
-                'resource': 'users',
-                'field': '_id',
-                'embeddable': True
+        'schema': {
+            'username': {
+                'type': 'string',
+            },
+            'password': {
+                'type': 'string',
             }
-        }
-    },
-    'resource_methods': ['POST'],
-    'item_methods': ['GET'],
-    'public_methods': ['POST'],
-    'extra_response_fields': ['user', 'token', 'username']
-})
+        },
+        'item_methods': [],
+        'resource_methods': []
+    })
+
+    app.register_resource('auth', {
+        'schema': {
+            'username': {
+                'type': 'string'
+            },
+            'password': {
+                'type': 'string'
+            },
+            'token': {
+                'type': 'string'
+            },
+            'user': {
+                'type': 'objectid',
+                'data_relation': {
+                    'resource': 'users',
+                    'field': '_id',
+                    'embeddable': True
+                }
+            }
+        },
+        'resource_methods': ['POST'],
+        'item_methods': ['GET'],
+        'public_methods': ['POST'],
+        'extra_response_fields': ['user', 'token', 'username']
+    })
+
+
+superdesk.connect('create:auth', on_create_auth)

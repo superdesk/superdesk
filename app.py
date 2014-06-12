@@ -4,10 +4,10 @@ import eve
 from eve.io.mongo import MongoJSONEncoder
 from eve.render import send_response
 import settings
-from superdesk import signals, celery_app
+from superdesk import signals
 import superdesk
 from superdesk.auth import SuperdeskTokenAuth
-from superdesk.celery_app import get_celery
+from superdesk.celery_app import init_celery
 from superdesk.desk_media_storage import SuperdeskGridFSMediaStorage
 from superdesk.validator import SuperdeskValidator
 import importlib
@@ -73,13 +73,15 @@ def get_app(config=None):
         """
         return send_response(None, (error.to_dict(), None, None, error.status_code))
 
-    superdesk.app = app
+    app.celery = init_celery(app)
 
-    app.celery = get_celery(app)
-    celery_app.app = app
-    celery_app.celery = app.celery
-    importlib.import_module('superdesk.archive_ingest')
-    app.register_resource('archive_ingest', app.config['DOMAIN']['archive_ingest'])
+    for module_name in app.config['INSTALLED_APPS']:
+        app_module = importlib.import_module(module_name)
+        try:
+            app_module.init_app(app)
+        except AttributeError:
+            pass
+
     return app
 
 if __name__ == '__main__':

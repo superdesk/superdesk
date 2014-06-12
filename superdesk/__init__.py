@@ -1,9 +1,8 @@
 """Superdesk"""
 
 import logging
-import settings
-import importlib
-from flask import abort, json, Blueprint  # noqa
+import settings  # noqa
+from flask import abort, json, Blueprint, current_app as app  # noqa
 from flask.ext.script import Command, Option  # noqa @UnresolvedImport
 from eve.methods.common import document_link  # noqa
 from .datalayer import SuperdeskDataLayer  # noqa
@@ -11,12 +10,12 @@ from .signals import connect, send  # noqa
 from werkzeug.exceptions import HTTPException
 from eve.utils import config  # noqa
 
-app = None
 API_NAME = 'Superdesk API'
 VERSION = (0, 0, 1)
 DOMAIN = {}
 COMMANDS = {}
 BLUEPRINTS = []
+apps = []
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +79,3 @@ def blueprint(blueprint, **kwargs):
     """Register blueprint"""
     blueprint.kwargs = kwargs
     BLUEPRINTS.append(blueprint)
-
-
-for app_name in getattr(settings, 'INSTALLED_APPS'):
-    importlib.import_module(app_name)

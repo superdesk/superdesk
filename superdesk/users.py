@@ -57,10 +57,9 @@ class CreateUserCommand(superdesk.Command):
 
 superdesk.connect('read:users', on_read_users)
 superdesk.connect('created:users', on_read_users)
-
 superdesk.command('users:create', CreateUserCommand())
 
-superdesk.domain('users', {
+users_config = {
     'additional_lookup': {
         'url': 'regex("[\w]+")',
         'field': 'username'
@@ -122,4 +121,8 @@ superdesk.domain('users', {
             'password': 0
         }
     }
-})
+}
+
+
+def init_app(app):
+    app.register_resource('users', users_config)

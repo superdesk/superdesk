@@ -6,13 +6,14 @@ Created on May 29, 2014
 
 
 from celery import Celery
+from flask import current_app as app  # noqa
+from superdesk import settings
 
-app = None
-celery = None
+
+celery = Celery(__name__, broker=settings.CELERY_BROKER_URL)
 
 
-def get_celery(app):
-    celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])
+def init_celery(app):
     celery.conf.update(app.config)
 
     TaskBase = celery.Task
