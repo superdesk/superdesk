@@ -11,7 +11,8 @@ import superdesk
 from superdesk.io import providers
 
 from .utc import utc, utcnow
-from superdesk.celery_app import celery, app
+from superdesk.celery_app import celery
+from flask import current_app as app
 
 
 @celery.task()

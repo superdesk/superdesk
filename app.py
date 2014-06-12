@@ -1,25 +1,21 @@
-import logging
 import os
+import logging
+import importlib
 import eve
+import settings
+import superdesk
 from eve.io.mongo import MongoJSONEncoder
 from eve.render import send_response
-import settings
 from superdesk import signals
-import superdesk
 from superdesk.auth import SuperdeskTokenAuth
 from superdesk.celery_app import init_celery
 from superdesk.desk_media_storage import SuperdeskGridFSMediaStorage
 from superdesk.validator import SuperdeskValidator
-import importlib
 
 
 class SuperdeskEve(eve.Eve):
     """Superdesk app"""
-
-    def load_config(self):
-        """Let us override settings withing plugins"""
-        super(SuperdeskEve, self).load_config()
-        self.config.from_object(superdesk)
+    pass
 
 
 def setup_amazon(config):
@@ -73,7 +69,7 @@ def get_app(config=None):
         """
         return send_response(None, (error.to_dict(), None, None, error.status_code))
 
-    app.celery = init_celery(app)
+    init_celery(app)
 
     for module_name in app.config['INSTALLED_APPS']:
         app_module = importlib.import_module(module_name)
@@ -81,6 +77,9 @@ def get_app(config=None):
             app_module.init_app(app)
         except AttributeError:
             pass
+
+    for resource in superdesk.DOMAIN:
+        app.register_resource(resource, superdesk.DOMAIN[resource])
 
     return app
 

@@ -2,6 +2,8 @@
 import os
 from urllib.parse import urlparse
 
+DOMAIN = {}
+
 XML = False
 IF_MATCH = False
 BANDWIDTH_SAVER = False

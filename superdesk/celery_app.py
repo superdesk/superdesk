@@ -6,23 +6,22 @@ Created on May 29, 2014
 
 
 from celery import Celery
-from flask import current_app as app  # noqa
 from superdesk import settings
 
 
 celery = Celery(__name__, broker=settings.CELERY_BROKER_URL)
+TaskBase = celery.Task
 
 
 def init_celery(app):
     celery.conf.update(app.config)
 
-    TaskBase = celery.Task
-
-    class ContextTask(TaskBase):
+    class AppContextTask(TaskBase):
         abstract = True
 
         def __call__(self, *args, **kwargs):
-            with app.test_request_context():
-                return TaskBase.__call__(self, *args, **kwargs)
-    celery.Task = ContextTask
-    return celery
+            with app.app_context():
+                return super(AppContextTask, self).__call__(*args, **kwargs)
+
+    celery.Task = AppContextTask
+    app.celery = celery
