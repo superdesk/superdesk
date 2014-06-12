@@ -13,15 +13,18 @@ celery = Celery(__name__, broker=settings.CELERY_BROKER_URL)
 TaskBase = celery.Task
 
 
-def init_celery(app):
-    celery.conf.update(app.config)
-
-    class AppContextTask(TaskBase):
+class AppContextTask(TaskBase):
         abstract = True
+        flask_app = None
 
         def __call__(self, *args, **kwargs):
-            with app.app_context():
+            with self.flask_app.app_context():
                 return super(AppContextTask, self).__call__(*args, **kwargs)
 
-    celery.Task = AppContextTask
+celery.Task = AppContextTask
+
+
+def init_celery(app):
+    celery.conf.update(app.config)
+    celery.Task.flask_app = app
     app.celery = celery
