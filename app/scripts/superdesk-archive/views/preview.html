@@ -1,18 +1,49 @@
-<div>
+<div ng-init="iscomposite = item.type === 'composite'">
     <div class="header">
         <ul class="info-list pull-left">
             <li>{{ 'Provider:' | translate }} <span>{{ item.provider }}</span></li>
             <li>{{ 'Version:' | translate }} <span>{{ item.version }}</span></li>
         </ul>
     </div>
-    <div class="content" sd-shadow>
-        <p class="date-info">{{ 'Created' | translate }} {{ item.firstcreated | reldate }}</p>
-        <p class="date-info">{{ 'Modified' | translate }} {{ item.versioncreated | reldate }}</p>
+    <div class="preview-nav" ng-if="iscomposite">
+       <div class="top">
+           <span><i class="filetype-icon-large-composite"></i> {{ 'Package preview' | translate }}</span>
+       </div> 
+       <div class="nested" ng-show>
+           <a ng-click="" href="">back</a>
+           <span>Package</span>
+       </div>
+    </div>
+
+    <div class="content" ng-class="{'with-nav': iscomposite}" sd-shadow>
+        <div class="date">
+            <p>{{ 'Created' | translate }} {{ item.firstcreated | reldate }}</p>
+            <p>{{ 'Modified' | translate }} {{ item.versioncreated | reldate }}</p>    
+        </div>
         <p class="title">{{ item.headline }}</p>
 
         <div class="core-content">
+
             <div sd-item-rendition data-item="item" data-rendition="baseImage"></div>
             <div class="text" ng-show="item.body_html" sd-html-preview="item.body_html"></div>
+            
+            <div class="composite-preview" ng-if="iscomposite">
+                <div class="subtitle" translate>Package content</div>
+                <div class="items">
+                    <section ng-repeat="section in contents">
+                        <header><i class="filetype-icon-{{section.type}}"></i> {{ section.type }}</header>
+                        <div class="list">
+                            <ul>
+                                <li ng-repeat="p_item in section.items">
+                                    <div ng-if="p_item.type === 'text'">{{item.headline}}</div>
+                                    <div ng-if="p_item.type === 'picture'" sd-item-rendition data-item="p_item" data-rendition="baseImage"></div>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                    </section>
+                </div>
+            </div>
         </div>
     </div>
   </div>

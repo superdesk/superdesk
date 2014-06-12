@@ -17,11 +17,44 @@ define([
                 }
             };
         })
-        .directive('sdMediaPreview', [function() {
+        .directive('sdMediaPreview', ['api', function(api) {
+
             return {
                 replace: true,
                 templateUrl: require.toUrl('./views/preview.html'),
-                scope: {item: '='}
+                scope: {item: '='},
+				link: function(scope, elem) {
+					scope.$watch('item', function(item) {
+						scope.contents = null;
+
+						if (item.type === 'composite') {
+
+							scope.contents = [];
+
+							var mainPackage = _.find(item.groups, {id: 'main'});
+
+							_.each(mainPackage.refs, function(r) {
+
+								api.ingest.getById(r.residRef)
+									.then(function(_item) {
+
+										var t = _item.type;
+										if (_.find(scope.contents, {type: t}) === undefined) {
+											scope.contents.push({type: t, items: [_item]});
+										} else {
+											scope.contents[_.findIndex(scope.contents, {type: t})].items.push(_item);
+										}
+
+									}, function(response) {
+										if (response.status === 404) {
+						                    console.log('Item not found');
+						                }
+
+									});
+							});
+						}
+					});
+				}
             };
         }])
         .directive('sdMediaView', ['keyboardManager', function(keyboardManager) {
