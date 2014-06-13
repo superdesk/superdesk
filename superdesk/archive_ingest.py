@@ -115,6 +115,7 @@ def archive_ingest(data, docs, **kwargs):
         task = archive_item.delay(doc.get('guid'), doc.get('provider'), doc.get('user'))
         data.update('archive', doc.get('guid'), {"task_id": task.id})
         ingest_set_archived(doc.get('guid'))
+        doc['task_id'] = task.id
     return [doc.get('guid') for doc in docs]
 
 
