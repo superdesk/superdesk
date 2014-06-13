@@ -23,10 +23,10 @@ class SuperdeskEve(eve.Eve):
 
 
 def setup_amazon(config):
-    config['AMAZON_CONTAINER_NAME'] = os.environ.get('AMAZON_CONTAINER_NAME')
-    config['AMAZON_ACCESS_KEY_ID'] = os.environ.get('AMAZON_ACCESS_KEY_ID')
-    config['AMAZON_SECRET_ACCESS_KEY'] = os.environ.get('AMAZON_SECRET_ACCESS_KEY')
-    config['AMAZON_REGION'] = os.environ.get('AMAZON_REGION')
+    config.setdefault('AMAZON_CONTAINER_NAME', os.environ.get('AMAZON_CONTAINER_NAME'))
+    config.setdefault('AMAZON_ACCESS_KEY_ID', os.environ.get('AMAZON_ACCESS_KEY_ID'))
+    config.setdefault('AMAZON_SECRET_ACCESS_KEY', os.environ.get('AMAZON_SECRET_ACCESS_KEY'))
+    config.setdefault('AMAZON_REGION', os.environ.get('AMAZON_REGION'))
 
 
 def get_app(config=None):
