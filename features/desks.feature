@@ -42,5 +42,5 @@ Feature: Desks
         	"""
             [{"name": "test_desk2"}]
             """
-        And we delete it
+        And we delete latest
         Then we get deleted response

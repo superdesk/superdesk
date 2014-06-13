@@ -115,7 +115,7 @@ Feature: News Items Archive
     Scenario: Cancel upload
         Given empty "archive"
         When we upload a binary file to "archive_media"
-        And we delete it
+        And we delete latest
         Then we get deleted response
 
 	@auth

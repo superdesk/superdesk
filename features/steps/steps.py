@@ -169,7 +169,7 @@ def step_impl_when_delete_url(context, url):
     context.response = context.client.delete(href, headers=headers)
 
 
-@when('we delete it')
+@when('we delete latest')
 def when_we_delete_it(context):
     res = get_json_data(context.response)
     href = get_self_href(res, context)
