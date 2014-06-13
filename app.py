@@ -23,13 +23,10 @@ class SuperdeskEve(eve.Eve):
 
 
 def setup_amazon(config):
-    if ('AMAZON_CONTAINER_NAME' in os.environ and
-            'AMAZON_ACCESS_KEY_ID' in os.environ and
-            'AMAZON_SECRET_ACCESS_KEY' in os.environ):
-        config['AMAZON_CONTAINER_NAME'] = os.environ.get('AMAZON_CONTAINER_NAME')
-        config['AMAZON_ACCESS_KEY_ID'] = os.environ.get('AMAZON_ACCESS_KEY_ID')
-        config['AMAZON_SECRET_ACCESS_KEY'] = os.environ.get('AMAZON_SECRET_ACCESS_KEY')
-        config['AMAZON_REGION'] = os.environ.get('AMAZON_REGION')
+    config['AMAZON_CONTAINER_NAME'] = os.environ.get('AMAZON_CONTAINER_NAME')
+    config['AMAZON_ACCESS_KEY_ID'] = os.environ.get('AMAZON_ACCESS_KEY_ID')
+    config['AMAZON_SECRET_ACCESS_KEY'] = os.environ.get('AMAZON_SECRET_ACCESS_KEY')
+    config['AMAZON_REGION'] = os.environ.get('AMAZON_REGION')
 
 
 def get_app(config=None):
@@ -48,7 +45,7 @@ def get_app(config=None):
     media_storage = SuperdeskGridFSMediaStorage
 
     setup_amazon(config)
-    if 'AMAZON_CONTAINER_NAME' in config:
+    if config['AMAZON_CONTAINER_NAME']:
         from superdesk.amazon_media_storage import AmazonMediaStorage
         media_storage = AmazonMediaStorage
 
