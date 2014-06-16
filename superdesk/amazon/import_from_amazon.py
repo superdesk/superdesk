@@ -73,14 +73,12 @@ class ImportFromAmazonCommand(superdesk.Command):
         return False
 
     def get_query_for_already_imported(self, file_id):
-        query = {'query':
-                 {'bool':
-                  {'should':
-                   [{'term': {'archive.media': file_id}},
-                    {'term': {'archive.renditions.baseImage.media': file_id}},
-                    {'term': {'archive.renditions.original.media': file_id}},
-                    {'term': {'archive.renditions.thumbnail.media': file_id}},
-                    {'term': {'archive.renditions.viewImage.media': file_id}}]}
-                  },
-                 'size': 10}
+        query = {'bool':
+                 {'should':
+                  [{'term': {'archive.media': file_id}},
+                   {'term': {'archive.renditions.baseImage.media': file_id}},
+                   {'term': {'archive.renditions.original.media': file_id}},
+                   {'term': {'archive.renditions.thumbnail.media': file_id}},
+                   {'term': {'archive.renditions.viewImage.media': file_id}}]}
+                 }
         return json.dumps(query)
