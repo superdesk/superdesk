@@ -13,11 +13,6 @@ from superdesk.desk_media_storage import SuperdeskGridFSMediaStorage
 from superdesk.validator import SuperdeskValidator
 
 
-class SuperdeskEve(eve.Eve):
-    """Superdesk app"""
-    pass
-
-
 def setup_amazon(config):
     config.setdefault('AMAZON_CONTAINER_NAME', os.environ.get('AMAZON_CONTAINER_NAME'))
     config.setdefault('AMAZON_ACCESS_KEY_ID', os.environ.get('AMAZON_ACCESS_KEY_ID'))
@@ -42,10 +37,12 @@ def get_app(config=None):
 
     setup_amazon(config)
     if config['AMAZON_CONTAINER_NAME']:
-        from superdesk.amazon_media_storage import AmazonMediaStorage
+        from superdesk.amazon.amazon_media_storage import AmazonMediaStorage
+        from superdesk.amazon.import_from_amazon import ImportFromAmazonCommand
         media_storage = AmazonMediaStorage
+        superdesk.command('import:amazon', ImportFromAmazonCommand())
 
-    app = SuperdeskEve(
+    app = eve.Eve(
         data=superdesk.SuperdeskDataLayer,
         auth=SuperdeskTokenAuth,
         media=media_storage,
@@ -56,10 +53,6 @@ def get_app(config=None):
     app.on_fetched_resource = signals.proxy_resource_signal('read', app)
     app.on_fetched_item = signals.proxy_item_signal('read', app)
     app.on_inserted = signals.proxy_resource_signal('created', app)
-
-    for blueprint in superdesk.BLUEPRINTS:
-        prefix = app.api_prefix or None
-        app.register_blueprint(blueprint, url_prefix=prefix)
 
     @app.errorhandler(superdesk.SuperdeskError)
     def error_handler(error):
@@ -80,6 +73,10 @@ def get_app(config=None):
 
     for resource in superdesk.DOMAIN:
         app.register_resource(resource, superdesk.DOMAIN[resource])
+
+    for blueprint in superdesk.BLUEPRINTS:
+        prefix = app.api_prefix or None
+        app.register_blueprint(blueprint, url_prefix=prefix)
 
     return app
 

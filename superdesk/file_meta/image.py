@@ -14,9 +14,12 @@ def get_meta(file_stream):
     current = file_stream.tell()
     file_stream.seek(0)
     img = Image.open(file_stream)
-    if not img._getexif():
+    if not hasattr(img, '_getexif'):
         return {}
-    exif = dict(img._getexif())
+    rv = img._getexif()
+    if not rv:
+        return {}
+    exif = dict(rv)
     exifMeta = {ExifTags.TAGS[k]: v for k, v in exif.items() if k in ExifTags.TAGS}
     file_stream.seek(current)
     if exifMeta.get('UserComment'):

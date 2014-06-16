@@ -25,6 +25,7 @@ def on_create_upload(data, docs):
         media_file = superdesk.app.media.get(doc.get('media'))
         update['mime_type'] = media_file.content_type
         update['data_uri_url'] = url_for_media(doc.get('media'))
+        update['filemeta'] = media_file.metadata
         doc.update(update)
 
 
@@ -55,7 +56,7 @@ superdesk.domain('upload', {
         'URL': {'type': 'string'},
         'data_uri_url': {'type': 'string'},
         'mime_type': {'type': 'string'},
-        'file_meta': {'type': 'dict'}
+        'filemeta': {'type': 'dict'}
     },
     'datasource': {
         'projection': {

@@ -50,7 +50,7 @@ def store_file_from_url(url):
 def process_file_from_stream(content, filename=None, content_type=None):
     content_type = content_type or content.content_type
     file_name = filename or content.filename
-    file_type = content_type.split('/')[0]
+    file_type, ext = content_type.split('/')
     content, metadata = process_image(content, file_name, file_type)
     file_name = get_file_name(content)
     content.seek(0)
@@ -59,12 +59,13 @@ def process_file_from_stream(content, filename=None, content_type=None):
 
 def process_image(content, file_name, type):
     if type != 'image':
-        return content
+        return content, {}
 
-    isCropped, altered_content = crop_if_needed(content, file_name)
-    iter_content = altered_content if isCropped else BytesIO(altered_content.read())
+    content = BytesIO(content.read())
+    content.seek(0)
+    meta = get_meta(content)
+    isCropped, iter_content = crop_if_needed(content, file_name)
     iter_content.seek(0)
-    meta = get_meta(iter_content)
     return iter_content, meta
 
 

@@ -65,9 +65,9 @@ def get_headers(self, environ=None):
 setattr(HTTPException, 'get_headers', get_headers)
 
 
-def domain(resource, config):
+def domain(resource, res_config):
     """Register domain resource"""
-    DOMAIN[resource] = config
+    DOMAIN[resource] = res_config
 
 
 def command(name, command):

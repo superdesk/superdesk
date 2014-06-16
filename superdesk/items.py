@@ -95,7 +95,6 @@ def import_rendition(media_archive_guid, rendition_name, href):
 
     file_guid = store_file_from_url(href)
     updates = {}
-    updates['media_file'] = str(file_guid)
     updates['renditions'] = {rendition_name: {'href': url_for_media(file_guid)}}
     rv = superdesk.app.data.update(ARCHIVE_MEDIA, id_=str(media_archive_guid), updates=updates)
     if int(archive['version']) >= int(rv['_version']):
@@ -114,11 +113,11 @@ def fetch_media_from_archive(media_archive_guid):
 def on_upload_create(data, docs):
     ''' Create corresponding item on file upload '''
     for doc in docs:
-        file = superdesk.app.media.get(doc['media'])
+        file = get_file_from_document(doc)
         inserted = [doc['media']]
         file_type = file.content_type.split('/')[0]
         if file_type != 'image':
-            superdesk.app.media.delete(doc['media'])
+            delete_file_on_error(doc, doc['media'])
             raise InvalidFileType(file_type)
 
         try:
@@ -132,8 +131,24 @@ def on_upload_create(data, docs):
         except Exception as io:
             superdesk.logger.exception(io)
             for file_id in inserted:
-                superdesk.app.media.delete(file_id)
+                delete_file_on_error(doc, file_id)
             abort(500)
+
+
+def get_file_from_document(doc):
+    file = doc.get('media_fetched')
+    if not file:
+        file = superdesk.app.media.get(doc['media'])
+    else:
+        del doc['media_fetched']
+    return file
+
+
+def delete_file_on_error(doc, file_id):
+    # Don't delete the file if we are on the import from storage flow
+    if doc['_import']:
+        return
+    superdesk.app.media.delete(file_id)
 
 
 def generate_renditions(original, media_id, inserted):
