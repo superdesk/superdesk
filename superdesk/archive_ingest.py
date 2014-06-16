@@ -11,35 +11,54 @@ import superdesk
 from superdesk.io import providers
 
 from .utc import utc, utcnow
-from superdesk.celery_app import celery
-from flask import current_app as app
+from superdesk.celery_app import celery, inc_progress, dec_progress,\
+    del_progress
+import time
+from celery.result import AsyncResult
+from flask.globals import current_app as app
+
+
+def update_status(task_id, current, total):
+    archive_item.update_state(task_id, state='PROGRESS', meta={'current': current, 'total': total})
 
 
 @celery.task()
 def archive_media(task_id, guid, href):
+    update_status(*inc_progress(task_id))
     # TODO: download from href and save file on app storage,
     # process it and update original rendition for guid content item
-    pass
+    # for testing simulate a processing; to be removed
+    time.sleep(2)
+    update_status(*dec_progress(task_id))
 
 
 @celery.task()
 def archive_rendition(task_id, guid, name, href):
+    update_status(*inc_progress(task_id))
     # TODO: download from href and save on app storage and update the 'name' rendition for guid content item
-    pass
+    # for testing simulate a processing; to be removed
+    time.sleep(2)
+    update_status(*dec_progress(task_id))
 
 
 @celery.task()
-def update_item(result, task_id, guid):
+def update_item(result, is_main_task, task_id, guid):
     # update import status as done
-    app.data.update('archive', guid, {"task_id": ""})
+    data = archive_media.flask_app.data
+    data.update('archive', guid, {"task_id": ""})
+
+    if is_main_task:
+        update_status(*del_progress(task_id))
 
 
 @celery.task()
 def archive_item(guid, provider, user, task_id=None):
-    data = app.data
+    data = archive_item.flask_app.data
     crt_task_id = archive_item.request.id
     if not task_id:
         task_id = crt_task_id
+
+    update_status(*inc_progress(task_id))
 
     service_provider = providers[provider]
     service_provider.provider = data.find_one('ingest_providers', type=provider)
@@ -96,7 +115,11 @@ def archive_item(guid, provider, user, task_id=None):
             tasks.append(archive_rendition.s(task_id, guid, rendition['rendition'], href))
 
     if tasks:
-        chord((task for task in tasks), update_item.s(task_id, guid)).delay()
+        chord((task for task in tasks), update_item.s(crt_task_id == task_id, task_id, guid)).delay()
+
+    update_status(*dec_progress(task_id))
+    if not tasks and task_id == crt_task_id:
+        update_status(*del_progress(task_id))
 
 
 def ingest_set_archived(guid):
@@ -104,7 +127,6 @@ def ingest_set_archived(guid):
     if ingest_doc:
         app.data.update('ingest', ingest_doc.get('_id'), {'archived': utcnow()})
         ingest_doc = app.data.find_one('ingest', guid=guid)
-        print(ingest_doc)
 
 
 def archive_ingest(data, docs, **kwargs):
@@ -120,18 +142,39 @@ def archive_ingest(data, docs, **kwargs):
     return [doc.get('guid') for doc in docs]
 
 
-def read_status_archive_ingest(data, req, **lookup):
-    # TODO: implement
-    return {"task_id": lookup["task_id"], "status": "fake ingest status", "current": 10, "total": 20}
+def archive_ingest_progress(data, req, **lookup):
+    try:
+        task_id = lookup["task_id"]
+        task = AsyncResult(task_id)
+
+        if task.result:
+            doc = task.result
+        else:
+            doc = {}
+
+        if task.state:
+            doc['state'] = task.state
+        doc['task_id'] = task_id
+        doc['_id'] = task_id
+
+        return doc
+    except Exception:
+        msg = 'No progress information is available for task_id: %s' % task_id
+        raise superdesk.SuperdeskError(payload=msg)
+
 
 superdesk.connect('impl_insert:archive_ingest', archive_ingest)
-superdesk.connect('impl_find_one:archive_ingest', read_status_archive_ingest)
+superdesk.connect('impl_find_one:archive_ingest', archive_ingest_progress)
 
 superdesk.domain('archive_ingest', {
     'url': 'archive_ingest',
     'resource_title': 'archive_ingest',
     'resource_methods': ['POST'],
     'item_methods': ['GET'],
+    'additional_lookup': {
+        'url': 'regex("[\w-]+")',
+        'field': 'task_id'
+    },
     'schema': {
         'provider': {
             'type': 'string',
@@ -140,6 +183,10 @@ superdesk.domain('archive_ingest', {
         'guid': {
             'type': 'string',
             'required': True,
+        },
+        'task_id': {
+            'type': 'string',
+            'required': False,
         },
     },
     'datasource': {
