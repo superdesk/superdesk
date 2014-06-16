@@ -38,8 +38,8 @@ def get_fixture_path(fixture):
 
 
 def get_self_href(resource, context):
-    href = resource['_links']['self']['href']
-    return href
+    assert '_links' in resource, 'expted "_links", but got only %s' % (resource)
+    return resource['_links']['self']['href']
 
 
 def get_res(url, context):

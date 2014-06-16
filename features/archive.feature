@@ -126,3 +126,14 @@ Feature: News Items Archive
             """		
 		When we get "/archive"
         Then we get list with 2 items
+
+    @auth
+    @ticket-sd-360
+    Scenario: Delete archive item with guid starting with "-"
+        Given empty "archive"
+        When we post to "/archive"
+            """
+            [{"guid": "-abcde1234567890", "type": "text"}]
+            """
+        And we delete latest
+        Then we get deleted response

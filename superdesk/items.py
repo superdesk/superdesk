@@ -296,7 +296,7 @@ archive_schema = {}
 ingest_schema.update(base_schema)
 archive_schema.update(base_schema)
 
-item_url = 'regex("[\w][\w,.:-]+")'
+item_url = 'regex("[\w,.:-]+")'
 
 extra_response_fields = ['guid', 'headline', 'firstcreated', 'versioncreated', 'archived']
 
