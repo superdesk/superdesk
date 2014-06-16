@@ -11,8 +11,8 @@ import superdesk
 from superdesk.io import providers
 
 from .utc import utc, utcnow
-from superdesk.celery_app import celery, inc_progress, dec_progress,\
-    del_progress
+from superdesk.celery_app import celery, finish_task_for_progress,\
+    finish_subtask_from_progress, add_subtask_to_progress
 import time
 from celery.result import AsyncResult
 from flask.globals import current_app as app
@@ -24,21 +24,21 @@ def update_status(task_id, current, total):
 
 @celery.task()
 def archive_media(task_id, guid, href):
-    update_status(*inc_progress(task_id))
+    update_status(*add_subtask_to_progress(task_id))
     # TODO: download from href and save file on app storage,
     # process it and update original rendition for guid content item
     # for testing simulate a processing; to be removed
     time.sleep(2)
-    update_status(*dec_progress(task_id))
+    update_status(*finish_subtask_from_progress(task_id))
 
 
 @celery.task()
 def archive_rendition(task_id, guid, name, href):
-    update_status(*inc_progress(task_id))
+    update_status(*add_subtask_to_progress(task_id))
     # TODO: download from href and save on app storage and update the 'name' rendition for guid content item
     # for testing simulate a processing; to be removed
     time.sleep(2)
-    update_status(*dec_progress(task_id))
+    update_status(*finish_subtask_from_progress(task_id))
 
 
 @celery.task()
@@ -48,7 +48,7 @@ def update_item(result, is_main_task, task_id, guid):
     data.update('archive', guid, {"task_id": ""})
 
     if is_main_task:
-        update_status(*del_progress(task_id))
+        update_status(*finish_task_for_progress(task_id))
 
 
 @celery.task()
@@ -58,7 +58,7 @@ def archive_item(guid, provider, user, task_id=None):
     if not task_id:
         task_id = crt_task_id
 
-    update_status(*inc_progress(task_id))
+    update_status(*add_subtask_to_progress(task_id))
 
     service_provider = providers[provider]
     service_provider.provider = data.find_one('ingest_providers', type=provider)
@@ -117,9 +117,9 @@ def archive_item(guid, provider, user, task_id=None):
     if tasks:
         chord((task for task in tasks), update_item.s(crt_task_id == task_id, task_id, guid)).delay()
 
-    update_status(*dec_progress(task_id))
+    update_status(*finish_subtask_from_progress(task_id))
     if not tasks and task_id == crt_task_id:
-        update_status(*del_progress(task_id))
+        update_status(*finish_task_for_progress(task_id))
 
 
 def ingest_set_archived(guid):

@@ -31,15 +31,15 @@ def init_celery(app):
     app.celery = celery
 
 
-def inc_progress(task_id):
+def add_subtask_to_progress(task_id):
     return _update_subtask_progress(task_id, total=True)
 
 
-def dec_progress(task_id):
+def finish_subtask_from_progress(task_id):
     return _update_subtask_progress(task_id, current=True)
 
 
-def del_progress(task_id):
+def finish_task_for_progress(task_id):
     return _update_subtask_progress(task_id, delete=True)
 
 
