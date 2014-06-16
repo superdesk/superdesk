@@ -1,3 +1,5 @@
+
+from __future__ import absolute_import
 from PIL import Image
 from io import BytesIO
 import os
