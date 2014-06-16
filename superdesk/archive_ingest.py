@@ -44,7 +44,7 @@ def archive_rendition(task_id, guid, name, href):
 @celery.task()
 def update_item(result, is_main_task, task_id, guid):
     # update import status as done
-    data = archive_media.flask_app.data
+    data = app.data
     data.update('archive', guid, {"task_id": ""})
 
     if is_main_task:
@@ -53,7 +53,7 @@ def update_item(result, is_main_task, task_id, guid):
 
 @celery.task()
 def archive_item(guid, provider, user, task_id=None):
-    data = archive_item.flask_app.data
+    data = app.data
     crt_task_id = archive_item.request.id
     if not task_id:
         task_id = crt_task_id
