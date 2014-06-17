@@ -1292,10 +1292,10 @@
 
 //sidepanes and sidetabs module with title, toggle...
 
-.tabmodule {
+.toggle-box {
   margin-bottom: 30px;
 
-  .tabmodule-header {
+  > header {
 
     position: relative;
     margin-bottom: 10px;
@@ -1308,18 +1308,18 @@
       left:20px;
       right: 0px;
     }
-    i {
-      margin-top: 2px;
+    .chevron {
       .transition(all 0.2s ease);
       .rotate(0deg);
     }
-    .tabmodule-title {
+    h6 {
       background: @tabpane-background;
       padding: 0 5px;
       font-size: 11px;
       text-transform: uppercase;
       color: #666;
       position: relative;
+      display: 	inline-block;
     }
     &:hover {
       cursor: pointer;
@@ -1327,7 +1327,8 @@
 
   }
 
-  .tabmodule-content {
+  > .toggle-content {
+  	.clearfix();
     display: none;
     .checklist-selection li {
       font-weight: normal;
@@ -1335,10 +1336,10 @@
   }
 
   &.open {
-    .tabmodule-header i {
+    > header .chevron {
       .rotate(90deg);
     }
-    .tabmodule-content {
+    > .toggle-content {
       display: block !important;
     }
   }

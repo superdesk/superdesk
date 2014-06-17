@@ -53,27 +53,20 @@
         <div class="lightbox-media-data" >
             <div class="lightbox-descritpion">
             </div>
-            <div class="tabmodule" ng-class="{'tabmodule-open':toggleDetails}" ng-init="toggleDetails=false">
-                <div class="tabmodule-header" ng-click="toggleDetails=!toggleDetails">
-                    <i class="icon-chevron-down toggle-module-close" ng-show="toggleDetails"></i>
-                    <i class="icon-chevron-right toggle-module-open" ng-show="!toggleDetails"></i>
-                    <span class="tabmodule-title" translate>Details</span>
-                </div>
-                <div ng-show="toggleDetails">
-                    <dl class="metadata-details-new clearfix">
-                        <dt translate>GUID</dt><dd>{{ item.guid }}</dd>
-                        <dt translate>provider</dt><dd>{{ item.provider }}</dd>
-                        <dt translate ng-show="item.version">version</dt><dd ng-show="item.version">{{ item.version }}</dd>
-                        <dt translate ng-show="item.byline">by</dt><dd ng-show="item.byline">{{ item.byline }}</dd>
-                    </dl>
-                    <dl class="metadata-details-new clearfix">
-                        <dt translate>aperture</dt><dd>{{ item.FileMeta.Aperture }}</dd>
-                        <dt translate>exposure time</dt><dd>{{ item.FileMeta['Exposure time'] }}</dd>
-                        <dt translate>focal length</dt><dd>{{ item.FileMeta['Focal length'] }}</dd>
-                        <dt translate>iso</dt><dd>{{ item.FileMeta['ISO speed'] }}</dd>
-                        <dt translate>flash</dt><dd>{{ item.FileMeta.Flash }}</dd>
-                    </dl>
-                </div>
+            <div sd-toggle-box data-title="{{ 'Details' | translate }}" data-open="true">
+                <dl class="metadata-details-new clearfix">
+                    <dt translate>GUID</dt><dd>{{ item.guid }}</dd>
+                    <dt translate>provider</dt><dd>{{ item.provider }}</dd>
+                    <dt translate ng-show="item.version">version</dt><dd ng-show="item.version">{{ item.version }}</dd>
+                    <dt translate ng-show="item.byline">by</dt><dd ng-show="item.byline">{{ item.byline }}</dd>
+                </dl>
+                <dl class="metadata-details-new clearfix">
+                    <dt translate>aperture</dt><dd>{{ item.FileMeta.Aperture }}</dd>
+                    <dt translate>exposure time</dt><dd>{{ item.FileMeta['Exposure time'] }}</dd>
+                    <dt translate>focal length</dt><dd>{{ item.FileMeta['Focal length'] }}</dd>
+                    <dt translate>iso</dt><dd>{{ item.FileMeta['ISO speed'] }}</dd>
+                    <dt translate>flash</dt><dd>{{ item.FileMeta.Flash }}</dd>
+                </dl>
             </div>
         </div>
     </section>

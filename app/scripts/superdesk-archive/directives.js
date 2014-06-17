@@ -155,6 +155,28 @@ define([
                 }
             };
         })
+        .directive('sdSource', [ function() {
+            var typeMap = {
+                'video/mpeg': 'video/mp4'
+            };
+            return {
+                scope: {
+                    sdSource: '='
+                },
+                link: function(scope, element) {
+                    scope.$watch('sdSource', function(source) {
+                        console.log('empty');
+                        element.empty();
+                        if (source) {
+                            angular.element('<source />')
+                                .attr('type', typeMap[source.mimetype] || source.mimetype)
+                                .attr('src', source.href)
+                                .appendTo(element);
+                        }
+                    });
+                }
+            };
+        }])
         .directive('sdHtmlPreview', ['$sce', function($sce) {
             return {
                 scope: {sdHtmlPreview: '='},
@@ -188,15 +210,16 @@ define([
                 }
             };
         }])
-        .directive('sdTabmodule', function() {
+        .directive('sdToggleBox', function() {
             return {
-                templateUrl: require.toUrl('./views/tabmodule.html'),
+                templateUrl: require.toUrl('./views/toggleBox.html'),
                 replace: true,
                 transclude: true,
                 scope: true,
                 link: function($scope, element, attrs) {
                     $scope.title = attrs.title;
                     $scope.isOpen = attrs.open === 'true';
+                    $scope.icon = attrs.icon;
                     $scope.toggleModule = function() {
                         $scope.isOpen = !$scope.isOpen;
                     };
