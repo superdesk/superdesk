@@ -3,6 +3,7 @@ Utilities for extractid metadata from image files.
 '''
 
 from PIL import Image, ExifTags
+from flask import json
 
 
 def get_meta(file_stream):
@@ -20,8 +21,15 @@ def get_meta(file_stream):
     if not rv:
         return {}
     exif = dict(rv)
-    exifMeta = {ExifTags.TAGS[k]: v for k, v in exif.items() if k in ExifTags.TAGS}
     file_stream.seek(current)
-    if exifMeta.get('UserComment'):
-        del exifMeta['UserComment']
-    return exifMeta
+
+    exif_meta = {}
+    for k, v in exif.items():
+        try:
+            json.dumps(v)
+            exif_meta[ExifTags.TAGS[k]] = v
+        except:
+            # ignore fields we can't store in db
+            pass
+
+    return exif_meta
