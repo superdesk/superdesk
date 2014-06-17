@@ -38,6 +38,7 @@ class SuperdeskDataLayer(DataLayer):
             self.storage = self.driver
 
     def find(self, resource, req, lookup):
+        self._send('before_read', resource, lookup=lookup)
         cursor = self._backend(resource).find(resource, req, lookup)
         if not cursor.count():
             return cursor  # return 304 if not modified
