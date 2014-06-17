@@ -10,7 +10,7 @@ from superdesk import settings
 import redis
 
 
-celery = Celery(__name__, broker=settings.CELERY_BROKER_URL)
+celery = Celery(__name__, broker=settings.CELERY_BROKER_URL, backend=settings.CELERY_RESULT_BACKEND)
 TaskBase = celery.Task
 
 

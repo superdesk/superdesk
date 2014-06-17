@@ -13,9 +13,9 @@ from superdesk.io import providers
 from .utc import utc, utcnow
 from superdesk.celery_app import celery, finish_task_for_progress,\
     finish_subtask_from_progress, add_subtask_to_progress
-import time
 from celery.result import AsyncResult
 from flask.globals import current_app as app
+from .items import import_rendition, import_media
 
 
 def update_status(task_id, current, total):
@@ -28,7 +28,7 @@ def archive_media(task_id, guid, href):
     # TODO: download from href and save file on app storage,
     # process it and update original rendition for guid content item
     # for testing simulate a processing; to be removed
-    time.sleep(2)
+    import_media(guid, href)
     update_status(*finish_subtask_from_progress(task_id))
 
 
@@ -37,7 +37,7 @@ def archive_rendition(task_id, guid, name, href):
     update_status(*add_subtask_to_progress(task_id))
     # TODO: download from href and save on app storage and update the 'name' rendition for guid content item
     # for testing simulate a processing; to be removed
-    time.sleep(2)
+    import_rendition(guid, name, href)
     update_status(*finish_subtask_from_progress(task_id))
 
 
