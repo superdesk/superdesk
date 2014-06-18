@@ -8,15 +8,20 @@ Feature: Desks
 
     @auth
     Scenario: Create new desk
+        Given empty "users"
         Given empty "desks"
+        When we post to "users"
+            """
+            {"username": "foo", "email": "foo@bar.com"}
+            """
         When we post to "/desks"
             """
-            {"name": "Sports Desk"}
+            {"name": "Sports Desk", "members": [{"user": "#USERS_ID#"}]}
             """
         And we get "/desks"
         Then we get list with 1 items
             """
-            {"name": "Sports Desk"}
+            {"name": "Sports Desk", "members": [{"user": "#USERS_ID#"}]}
             """
 
 	@auth

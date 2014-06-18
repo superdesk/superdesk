@@ -91,6 +91,22 @@ def patch_current_user(context, data):
     return response
 
 
+def set_placeholder(context, name, value):
+    old_p = getattr(context, 'placeholders', None)
+    if not old_p:
+        context.placeholders = dict()
+    context.placeholders['#%s#' % name] = value
+
+
+def apply_placeholders(context, text):
+    placeholders = getattr(context, 'placeholders', None)
+    if not placeholders:
+        return text
+    for tag, value in placeholders.items():
+        text = text.replace(tag, value)
+    return text
+
+
 @given('empty "{resource}"')
 def step_impl_given_empty(context, resource):
     with context.app.test_request_context():
@@ -138,13 +154,17 @@ def step_impl_when_auth(context):
 
 @when('we post to "{url}"')
 def step_impl_when_post_url(context, url):
-    data = context.text
+    data = apply_placeholders(context, context.text)
     context.response = context.client.post(url, data=data, headers=context.headers)
+    if context.response.status_code in (200, 201):
+        item = json.loads(context.response.get_data())
+        if item['_status'] == 'OK' and item.get('_id'):
+            set_placeholder(context, '%s_ID' % url.upper(), item['_id'])
 
 
 @when('we put to "{url}"')
 def step_impl_when_put_url(context, url):
-    data = context.text
+    data = apply_placeholders(context, context.text)
     href = get_self_href(url)
     context.response = context.client.put(href, data=data, headers=context.headers)
     assert_ok(context.response)
@@ -273,7 +293,7 @@ def step_impl_then_get_list(context, total_count):
     if total_count == 0 or not context.text:
         return
     # @TODO: generalize json schema check
-    schema = json.loads(context.text)
+    schema = json.loads(apply_placeholders(context, context.text))
     response_list = json.loads(context.response.get_data())
     item = response_list['_items'][0]
     for key in schema:
