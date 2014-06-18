@@ -1,41 +1,58 @@
 <div class="modal lightbox-preview">
-    <section class="lightbox-top">
-        <a ng-show class="btn btn-inverse" href="" ><i class="icon-pencil icon-white"></i> {{ 'Edit'|translate }}</a>
-        <a ng-show class="btn btn-inverse" href="" ><i class="icon-download-alt icon-white"></i> {{ 'Download'|translate }}</a>
-        <a ng-show class="btn btn-inverse" href="" ><i class="icon-trash icon-white"></i> {{ 'Delete'|translate }}</a>
 
-        <a class="lightbox-close" href="" ng-click="item = null"><i class="icon-close-small icon-white"></i></a>
-    </section>
+    
+    <!-- package items list -->
+    <div class="lightbox-composite" ng-show="item.type == 'composite'" ng-class="{'open': compositeOpen}" ng-init="compositeOpen = true">
+        <div class="toggle-composite" ng-click="compositeOpen = !compositeOpen">
+            <i class="arrow-icon-right"></i>
+        </div>
+        <div class="header" ng-click="setSingleItem(item)">
+            <span><i class="filetype-icon-large-composite icon-white"></i></span>
+            <h5>{{ item.headline }}</h5>
+        </div>
+        <ul>
+            <li ng-repeat="p_item in packageContents" 
+                class="{{p_item.type}}" 
+                ng-click="setSingleItem(p_item)" 
+                ng-class="{selected: singleItem._id == p_item._id}">
 
+                <figure>
+                    <div sd-item-rendition data-item="p_item" data-rendition="thumbnail"></div>
+                    <i class="filetype-icon-large-{{p_item.type}} icon-white" ng-show="p_item.type !== 'picture'"></i>
+                </figure>
+                <h6 ng-show="p_item.headline">{{ p_item.headline }}</h6>
+            </li>
+        </ul>
+    </div>
+
+    
     <!-- preview pane -->
 
-        <div ng-class="{'lightbox-composite-preview' : item.type == 'composite'}">
+    <section class="lightbox-left" ng-class="{'composite' : item.type === 'composite', 'open' : compositeOpen}">
 
-            <section class="lightbox-left">
+        <div sd-single-item data-item="singleItem" data-contents="packageContents"></div>        
+        <div class="lightbox-caption">{{ item.headline }}</div>
 
-                <!-- picture preview -->
-                <div class="lightbox-large-preview" sd-item-rendition data-item="item" data-rendition="baseImage"></div>
-                <div class="lightbox-caption">{{ item.headline }}</div>
-
-                <!-- text preview -->
-                <div class="lightbox-paper" ng-show="item.type == 'text'">
-                    <div class="lightbox-text">
-                        <div class="lightbox-title">{{ item.headline }}</div>
-                        <div class="lightbox-fulltext">
-                            <small ng-show="item.slugline">{{ item.slugline || item.headline }}</small>
-                            <div ng-show="item.body_html" class="lightbox-fullcontent" sd-html-preview="item.body_html"></div>
-                        </div>
-                    </div>
-                </div>
-
-            </section>
-
+        <div class="navigation">
+            <button class="pull-left" ng-click="prev()" ng-disabled="!prevEnabled" title="{ 'previous' | translate }">
+                <i class="arrow-icon-large-left"></i>
+            </button>
+            <button class="pull-right" ng-click="next()" ng-disabled="!nextEnabled" title="{ 'next' | translate}">
+                <i class="arrow-icon-large-right"></i>
+            </button>
         </div>
+
+    </section>
+
+    
+
+
     <!-- end of preview pane -->
 
     <section class="lightbox-right">
         <header>
             <h5 class="lightbox-title">{{ item.headline }}</h5>
+            <a class="lightbox-close" href="" ng-click="item = null"><i class="icon-close-small"></i></a>
             <span class="lightbox-modified-info">{{ 'Created:'|translate }} {{ item.firstcreated|date:'medium' }}</span>
             <span class="lightbox-modified-info">{{ 'Modified:'|translate }} {{ item.versioncreated|date:'medium' }}</span>
             
@@ -43,10 +60,6 @@
 
             <div class="lightbox-actions">
                 <button class="btn pull-left" ng-show><i class="icon-list-alt"></i> {{ 'Edit metadata'|translate }}</button>
-                <div class="btn-group pull-right">
-                    <button class="btn" ng-click="prev()" ng-disabled="!prevEnabled" translate>previous</button>
-                    <button class="btn" ng-click="next()" ng-disabled="!nextEnabled" translate>next</button>
-                </div>
             </div>
             
         </header>

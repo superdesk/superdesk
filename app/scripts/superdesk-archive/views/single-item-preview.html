@@ -1,0 +1,33 @@
+<div>
+    <!-- picture preview -->
+        <div class="full-preview">
+            <div sd-item-rendition data-item="item" data-rendition="baseImage"></div>
+        </div>
+
+        <div class="condensed-preview">
+            
+            <!-- text preview -->
+            <div class="lightbox-paper" ng-show="item.type == 'text'">
+                <div class="lightbox-text">
+                    <div class="lightbox-title">{{ item.headline }}</div>
+                    <div class="lightbox-fulltext">
+                        <small ng-show="item.slugline">{{ item.slugline || item.headline }}</small>
+                        <div ng-show="item.body_html" class="lightbox-fullcontent" sd-html-preview="item.body_html"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- composite preview -->
+            <div class="lightbox-mosaic" ng-show="item.type == 'composite'">
+                <ul>
+                    <li ng-repeat="thumb in contents">
+                        <figure ng-show="thumb.type == 'picture'">
+                            <div sd-item-rendition data-item="thumb" data-rendition="viewImage"></div>
+                        </figure>
+                        <h6 ng-show="thumb.type !== 'picture'">{{ thumb.headline }}</h6>
+                    </li>
+                </ul>
+            </div>
+            
+        </div>
+</div>

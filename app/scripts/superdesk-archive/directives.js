@@ -57,7 +57,7 @@ define([
 				}
             };
         }])
-        .directive('sdMediaView', ['keyboardManager', function(keyboardManager) {
+        .directive('sdMediaView', ['keyboardManager', 'api', function(keyboardManager, api) {
             return {
                 replace: true,
                 templateUrl: require.toUrl('./views/media-view.html'),
@@ -66,6 +66,10 @@ define([
                     item: '='
                 },
                 link: function(scope, elem) {
+
+                    scope.singleItem = null;
+                    scope.packageContents = null;
+
                     scope.prevEnabled = true;
                     scope.nextEnabled = true;
 
@@ -75,6 +79,7 @@ define([
 
                     var setItem = function(item) {
                         scope.item = item;
+                        scope.setSingleItem(item);
                         var index = getIndex(scope.item);
                         scope.prevEnabled = !!scope.items[index - 1];
                         scope.nextEnabled = !!scope.items[index + 1];
@@ -100,7 +105,44 @@ define([
                         keyboardManager.pop('right');
                     });
 
+                    scope.setSingleItem = function(item) {
+                        scope.singleItem = item;
+                        if (scope.singleItem !== null) {
+                            if (scope.singleItem.type === 'composite') {
+                                scope.packageContents = [];
+
+                                var mainPackage = _.find(scope.singleItem.groups, {id: 'main'});
+
+                                _.each(mainPackage.refs, function(r) {
+
+                                    api.ingest.getById(r.residRef)
+                                        .then(function(item) {
+                                            scope.packageContents.push(item);
+                                        }, function(response) {
+                                            if (response.status === 404) {
+                                                console.log('Item not found');
+                                            }
+                                        });
+                                });
+                            }
+                        }
+                    };
+
                     setItem(scope.item);
+                }
+            };
+        }])
+        .directive('sdSingleItem', [ function() {
+
+            return {
+                replace: true,
+                templateUrl: require.toUrl('./views/single-item-preview.html'),
+                scope: {
+                    item: '=',
+                    contents: '='
+                },
+                link: function(scope, elem) {
+
                 }
             };
         }])
