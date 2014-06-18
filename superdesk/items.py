@@ -97,8 +97,6 @@ def import_rendition(media_archive_guid, rendition_name, href):
     updates = {}
     updates['renditions'] = {rendition_name: {'href': url_for_media(file_guid)}}
     rv = superdesk.app.data.update(ARCHIVE_MEDIA, id_=str(media_archive_guid), updates=updates)
-    if int(archive['version']) >= int(rv['_version']):
-        raise superdesk.SuperdeskError('Updating media archive failed')
     return rv
 
 
