@@ -27,9 +27,11 @@ def get_meta(file_stream):
     for k, v in exif.items():
         try:
             json.dumps(v)
-            exif_meta[ExifTags.TAGS[k]] = v
+            exif_meta[ExifTags.TAGS[k]] = json.dumps(v)
         except:
             # ignore fields we can't store in db
             pass
-
+    # Remove this as it's too long to send in headers
+    if exif_meta.get('UserComment'):
+        del exif_meta['UserComment']
     return exif_meta
