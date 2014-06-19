@@ -49,6 +49,12 @@ define([
     }]);
 
     app.config(['apiProvider', function(apiProvider) {
+    	apiProvider.api('notification', {
+            type: 'http',
+            backend: {
+                rel: 'notification'
+            }
+        });
         apiProvider.api('archive', {
             type: 'http',
             backend: {

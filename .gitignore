@@ -1,3 +1,6 @@
+/npm-debug.log
+/.settings
+/.project
 node_modules
 dist
 .tmp
