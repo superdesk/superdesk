@@ -28,7 +28,7 @@ def process_bucket(marker=None):
     keys, marker = extract_keys(rv)
     if not keys:
         return marker
-    res = group(import_file.s(key=key) for key in keys)()
+    res = group(import_file.si(key=key) for key in keys)()
     rv = res.get()
     for value in rv:
         print(value['status'])
