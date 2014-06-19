@@ -49,6 +49,7 @@ INSTALLED_APPS = (
     'superdesk.subjectcodes',
     'superdesk.archive_ingest',
     'superdesk.amazon.import_from_amazon'
+    'superdesk.notification',
 )
 
 RESOURCE_METHODS = ['GET', 'POST']
