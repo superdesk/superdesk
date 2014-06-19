@@ -11,7 +11,7 @@ setup(
     long_description=LONG_DESCRIPTION,
     author='petr jasek',
     author_email='petr.jasek@sourcefabric.org',
-    url='https://github.com/superdesk/superdes-server',
+    url='https://github.com/superdesk/superdesk-server',
     license='GPLv3',
     platforms=['any'],
     packages=find_packages(),
