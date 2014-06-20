@@ -9,7 +9,7 @@ define([
             scope: {},
             templateUrl: require.toUrl('./views/activity-chooser.html'),
             link: function(scope, elem, attrs) {
-                var UP = - 1,
+                var UP = -1,
                     DOWN = 1;
 
                 scope.chooser = activityChooser;
