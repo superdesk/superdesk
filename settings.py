@@ -33,7 +33,8 @@ ELASTICSEARCH_INDEX = os.environ.get('ELASTICSEARCH_INDEX', 'superdesk')
 
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379')
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379')
-CELERY_ALWAYS_EAGER = os.environ.get('CELERY_ALWAYS_EAGER', False)
+if os.environ.get('CELERY_ALWAYS_EAGER'):
+    CELERY_ALWAYS_EAGER = (os.environ.get('CELERY_ALWAYS_EAGER') == 'True')
 
 
 INSTALLED_APPS = (
