@@ -231,21 +231,40 @@ def step_impl_when_get(context):
 
 @when('we upload a binary file to "{dest}"')
 def step_impl_when_upload(context, dest):
-    with open(get_fixture_path('bike.jpg'), 'rb') as f:
-        data = {'media': f}
-        headers = [('Content-Type', 'multipart/form-data')]
-        headers += context.headers
-        context.response = context.client.post(dest, data=data, headers=headers)
-        assert_ok(context.response)
+    upload_file(context, dest, 'bike.jpg')
+
+
+@when('we upload an image file to "{dest}"')
+def step_impl_when_upload_image(context, dest):
+    upload_file(context, dest, 'bike.jpg', title='Dummy Title')
+
+
+@when('we upload an audio file to "{dest}"')
+def step_impl_when_upload_audio(context, dest):
+    upload_file(context, dest, 'green.ogg', title='MyTitle')
+
+
+@when('we upload an video file to "{dest}"')
+def step_impl(context, dest):
+    upload_file(context, dest, 'this_week_nasa.mp4', title='This week at NASA')
 
 
 @when('we upload a binary file with cropping')
 def step_impl_when_upload_with_crop(context):
-    with open(get_fixture_path('bike.jpg'), 'rb') as f:
-        data = {'media': f, 'CropTop': 0, 'CropLeft': 0, 'CropBottom': 333, 'CropRight': 333}
+    data = {'CropTop': 0, 'CropLeft': 0, 'CropBottom': 333, 'CropRight': 333}
+    upload_file(context, '/upload', 'bike.jpg', crop_data=data)
+
+
+def upload_file(context, dest, filename, title=None, crop_data=None):
+    with open(get_fixture_path(filename), 'rb') as f:
+        data = {'media': f}
+        if title:
+            data.update({'title': title})
+        if crop_data:
+            data.update(crop_data)
         headers = [('Content-Type', 'multipart/form-data')]
         headers += context.headers
-        context.response = context.client.post('/upload', data=data, headers=headers)
+        context.response = context.client.post(dest, data=data, headers=headers)
         assert_ok(context.response)
 
 
@@ -396,6 +415,14 @@ def check_base_image_rendition(context):
     check_rendition(context, 'baseImage')
 
 
+@then('original rendition is updated with link to file having mimetype "{mimetype}"')
+def check_original_rendition(context, mimetype):
+    rv = parse_json_response(context.response)
+    link_to_file = rv['renditions']['original']['href']
+    assert link_to_file
+    we_can_fetch_a_file(context, link_to_file, mimetype)
+
+
 @then('thumbnail rendition is updated')
 def check_thumbnail_rendition(context):
     check_rendition(context, 'thumbnail')
@@ -454,16 +481,16 @@ def step_impl_then_get_cropped_file(context, max_size):
 
 @then('we can fetch a data_uri')
 def step_impl_we_fetch_data_uri(context):
-    we_can_fetch_an_image(context, context.fetched_data['data_uri_url'])
+    we_can_fetch_a_file(context, context.fetched_data['data_uri_url'], 'image/jpeg')
 
 
-def we_can_fetch_an_image(context, url):
+def we_can_fetch_a_file(context, url, mimetype):
     headers = [('Accept', 'application/json')]
     headers += context.headers
     response = context.client.get(url, headers=headers)
     assert_200(response)
     assert len(response.get_data()), response
-    assert response.mimetype == 'image/jpeg', response.mimetype
+    assert response.mimetype == mimetype, response.mimetype
 
 
 @then('we can delete that file')
