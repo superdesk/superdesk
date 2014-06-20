@@ -229,24 +229,9 @@ def step_impl_when_get(context):
     context.response = context.client.get(href, headers=context.headers)
 
 
-@when('we upload a binary file to "{dest}"')
-def step_impl_when_upload(context, dest):
-    upload_file(context, dest, 'bike.jpg')
-
-
-@when('we upload an image file to "{dest}"')
-def step_impl_when_upload_image(context, dest):
-    upload_file(context, dest, 'bike.jpg', title='Dummy Title')
-
-
-@when('we upload an audio file to "{dest}"')
-def step_impl_when_upload_audio(context, dest):
-    upload_file(context, dest, 'green.ogg', title='MyTitle')
-
-
-@when('we upload an video file to "{dest}"')
-def step_impl(context, dest):
-    upload_file(context, dest, 'this_week_nasa.mp4', title='This week at NASA')
+@when('we upload a file "{filename}" to "{dest}"')
+def step_impl_when_upload_image(context, filename, dest):
+    upload_file(context, dest, filename)
 
 
 @when('we upload a binary file with cropping')
@@ -255,11 +240,9 @@ def step_impl_when_upload_with_crop(context):
     upload_file(context, '/upload', 'bike.jpg', crop_data=data)
 
 
-def upload_file(context, dest, filename, title=None, crop_data=None):
+def upload_file(context, dest, filename, crop_data=None):
     with open(get_fixture_path(filename), 'rb') as f:
         data = {'media': f}
-        if title:
-            data.update({'title': title})
         if crop_data:
             data.update(crop_data)
         headers = [('Content-Type', 'multipart/form-data')]

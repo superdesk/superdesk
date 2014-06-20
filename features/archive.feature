@@ -65,7 +65,7 @@ Feature: News Items Archive
     @auth
     Scenario: Upload image into archive
         Given empty "archive"
-        When we upload an image file to "archive_media"
+        When we upload a file "bike.jpg" to "archive_media"
         Then we get new resource
         """
         {"guid": ""}
@@ -87,7 +87,7 @@ Feature: News Items Archive
     @auth
     Scenario: Upload audio file into archive
         Given empty "archive"
-        When we upload an audio file to "archive_media"
+        When we upload a file "green.ogg" to "archive_media"
         Then we get new resource
         """
         {"guid": ""}
@@ -106,7 +106,7 @@ Feature: News Items Archive
     @auth
     Scenario: Upload video file into archive
         Given empty "archive"
-        When we upload an video file to "archive_media"
+        When we upload a file "this_week_nasa.mp4" to "archive_media"
         Then we get new resource
         """
         {"guid": ""}
@@ -126,7 +126,7 @@ Feature: News Items Archive
     @auth
     Scenario: Upload file into archive and import baseImage rendition
         Given empty "archive"
-        When we upload an image file to "archive_media"
+        When we upload a file "bike.jpg" to "archive_media"
         Then we get new resource
         """
         {"guid": ""}
@@ -139,7 +139,7 @@ Feature: News Items Archive
     @auth
     Scenario: Upload file into archive and import renditions
         Given empty "archive"
-        When we upload an image file to "archive_media"
+        When we upload a file "bike.jpg" to "archive_media"
         Then we get new resource
         """
         {"guid": ""}
@@ -153,7 +153,7 @@ Feature: News Items Archive
     @auth
     Scenario: Cancel audio upload
         Given empty "archive"
-        When we upload an audio file to "archive_media"
+        When we upload a file "green.ogg" to "archive_media"
         And we delete latest
         Then we get deleted response
 
@@ -161,7 +161,7 @@ Feature: News Items Archive
     @auth
     Scenario: Cancel upload
         Given empty "archive"
-        When we upload an image file to "archive_media"
+        When we upload a file "bike.jpg" to "archive_media"
         And we delete latest
         Then we get deleted response
 

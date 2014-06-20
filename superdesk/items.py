@@ -345,9 +345,7 @@ superdesk.domain(ARCHIVE_MEDIA, {
         'upload_id': {'type': 'string'},
         'headline': base_schema['headline'],
         'byline': base_schema['byline'],
-        'description_text': base_schema['description_text'],
-        'title': {'type': 'string',
-                  'required': True}
+        'description_text': base_schema['description_text']
     },
     'datasource': {
         'source': 'archive'
