@@ -1,12 +1,8 @@
-// ARTICLE EDIT SCREEN
-
-
-
-@tabpane-background:  #f5f5f5;
-@tabpane-border:      #7c7c7c;
-@tabpane-width:       330px;
-@tabcontent-padding:  15px;
-
+// article-edit.less
+// Styling for the superdesk article edit module
+// ----------------------------------------------------------------------------------------
+@import 'mixins.less';
+@import 'variables.less';
 
 @main-article-color:  #ffffff;
 @main-article-border: #cacaca;
@@ -15,12 +11,6 @@
 
 //positioning
 @editor-toolbar : 40px;
-
-
-html, body.article-edit {
-  height:100%;
-  overflow: visible;
-}
 
 .subnav-fixed {
   .main-article-title {
@@ -80,7 +70,8 @@ html, body.article-edit {
 
 .article-edit-container {
   position: absolute;
-  top:@topspace+@subnav-height;
+  //top:@subnav-height;
+  top:0;
   left: 0;
   right: 0;
   bottom: 0;
@@ -89,11 +80,6 @@ html, body.article-edit {
     .fake-space {
       height: @subnav-level2 - 1;
       border-bottom: 1px solid #898989;
-    }
-  }
-  &.editmode {
-    .tabpane {
-      top:@subnav-height + @topspace + @editor-toolbar;
     }
   }
 }
@@ -119,7 +105,6 @@ html, body.article-edit {
   margin:0 auto;
   min-height:100%;
   .box-sizing(border-box);
-  /*.transition( all 0.3s ease);*/
 
   max-width: 960px;
 
@@ -135,7 +120,6 @@ html, body.article-edit {
 
   section {
     header {
-      visibility:hidden;
       margin-bottom: 3px;
       .edit-label {
         background: #c0c0c0;
@@ -166,13 +150,19 @@ html, body.article-edit {
       }
     }
     &.article-title {
-      header {
-        font-family:Arial, Verdana, sans-serif !important;
-      }
-      p {
+      margin: 30px 0;
+      input {
         font-family: Georgia, serif;
         font-size:36px;
         line-height: 40px;
+        height: 50px;
+        border-color: #eee !important;
+        &:focus {
+          .box-shadow(none) !important;
+        }
+      }
+      header, header input {
+        font-family:Arial, Verdana, sans-serif !important;
       }
     }
     &.article-short-text {
@@ -184,31 +174,28 @@ html, body.article-edit {
       }
     }
     &.article-full-text {
-      p {
+      textarea {
         font-size:13px;
         line-height:20px;
+        min-height: 400px;
+        border-color: #eee !important;
+        &:focus {
+          .box-shadow(none) !important;
+        }
       }
     }
-    .aloha-editable {
-      margin: -5px;
-      padding: 5px;
-      border: 1px solid #fff;
-      .border-radius(2px);
-      &:hover {
-        border-color:#e8e8e8;
-      }
-      &:focus {
-        outline:none;
-        border-color:#e8e8e8;
-      }
-    }
-
   }
 
-  &.edit-mode section {
-    header {
-      visibility:visible;
-      display:block;
+  &:hover {
+    .article-title {
+      input {
+        border-color: #ddd !important;
+      }
+    }
+    .article-full-text {
+      textarea {
+        border-color: #ddd !important;
+      }
     }
   }
 
@@ -323,7 +310,7 @@ html, body.article-edit {
 }
 &.scratchpad-open {
   .opened-articles {
-    bottom: 293px;
+    bottom: 318px;
   }
 }
 
