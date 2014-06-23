@@ -28,18 +28,11 @@
             <!-- item rendition -->
             <div sd-item-rendition data-item="item" data-rendition="baseImage"></div>
             
-            <!-- item body text -->
-            <div class="text" ng-show="item.body_html" sd-html-preview="item.body_html"></div>
+            <div ng-if="item.type == 'audio'">
+                <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
+            </div>
 
-            <!-- audio -->
-            <div ng-if="item.type === 'audio'">
-                <audio controls sd-source="item.renditions.stream"></audio>
-            </div>
-            
-            <!-- video -->
-            <div ng-if="item.type === 'video'">
-                <video controls sd-source="item.renditions.stream"></audio>
-            </div>
+            <div class="text" ng-show="item.body_html" sd-html-preview="item.body_html"></div>
 
             <div class="composite-preview" ng-if="item.type === 'composite'">
                 <div class="subtitle" translate>Package content</div>
@@ -74,4 +67,4 @@
             </div>
         </div>
     </div>
-  </div>
+</div>

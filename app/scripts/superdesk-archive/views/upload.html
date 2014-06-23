@@ -10,7 +10,7 @@
         <div class="upload-manual">
             <div class="or-label" translate>or</div>
             <label class="btn" for="images-input">{{ 'Select them from folder' | translate }}</label>
-            <input id="images-input" type="file" accept="image/*" ng-file-select="addFiles($files)" multiple class="hide">
+            <input id="images-input" type="file" ng-file-select="addFiles($files)" multiple class="hide">
         </div>
     </div>
 	<div class="upload-error" ng-show="failed">
@@ -27,6 +27,7 @@
                     </div>
                     <span class="remove" ng-click="cancelItem(item, $index)"><i class="icon-close-small"></i></span>
                 </div>
+
                 <div class="info">
                     <div class="upload-progress" ng-show="item.progress">
                         <div class="bar" style="width:{{ item.progress }}%"></div>

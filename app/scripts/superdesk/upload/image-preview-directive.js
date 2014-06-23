@@ -1,6 +1,6 @@
 define([], function() {
     'use strict';
-    return ['notify', 'gettext', function(notify, gettext) {
+    return [function() {
         var IS_IMG_REGEXP = /^image\//;
         return {
             scope: {
@@ -29,9 +29,6 @@ define([], function() {
                         fileReader.onload = updatePreview;
                         fileReader.readAsDataURL(file);
                         setProgress(30);
-                    } else if (file) {
-                        notify.pop();
-                        notify.error(gettext('Sorry, but given file type is not supported.'));
                     }
                 });
             }
