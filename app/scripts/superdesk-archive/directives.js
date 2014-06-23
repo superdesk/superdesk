@@ -17,8 +17,70 @@ define([
                 }
             };
         })
-        .directive('sdMediaPreview', ['api', function(api) {
+        .directive('sdPackage', [function() {
+            var solveRefs = function(item, groups) {
+                var tree = {_items: []};
+                _.each(item.refs, function(ref) {
+                    if (ref.idRef) {
+                        tree[ref.idRef] = solveRefs(_.find(groups, {id: ref.idRef}), groups);
+                    } else if (ref.residRef) {
+                        tree._items.push(ref);
+                    }
+                });
+                return tree;
+            };
 
+            return {
+                replace: true,
+                templateUrl: require.toUrl('./views/package.html'),
+                scope: {item: '='},
+                link: function(scope, elem) {
+                    scope.$watch('item', function() {
+                        scope.tree = solveRefs(
+                            _.find(scope.item.groups, {id: 'root'}),
+                            scope.item.groups
+                        );
+                    });
+                }
+            };
+        }])
+        .directive('sdPackageItem', ['$compile', function($compile) {
+            var template =    '<span ng-if="id !== \'root\'">{{id}}:</span>'
+                            + '<div ng-repeat="(childId, childData) in item" ng-if="childId !== \'_items\'">'
+                                + '<div sd-package-item data-id="childId" data-item="childData">'
+                                + '</div>'
+                            + '</div>'
+                            + '<div ng-if="item._items.length">'
+                                + '<div ng-repeat="child in item._items">'
+                                    + '<div sd-package-ref data-item="child"></div>'
+                                + '</div>'
+                            + '</div>'
+                        ;
+
+            return {
+                replace: true,
+                templateUrl: require.toUrl('./views/package-item.html'),
+                scope: {id: '=', item: '='},
+                link: function(scope, elem) {
+                    elem.append($compile(template)(scope));
+                }
+            };
+        }])
+        .directive('sdPackageRef', ['api', function(api) {
+            return {
+                replace: true,
+                templateUrl: require.toUrl('./views/package-ref.html'),
+                scope: {item: '='},
+                link: function(scope, elem) {
+                    scope.data = null;
+                    api.ingest.getById(scope.item.residRef)
+                    .then(function(result) {
+                        scope.data = result;
+                    });
+                }
+            };
+        }])
+        .directive('sdMediaPreview', [function() {
             return {
                 replace: true,
                 templateUrl: require.toUrl('./views/preview.html'),
