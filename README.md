@@ -12,7 +12,7 @@ We support python version 3.3+.
 Other requirements are mongodb server and elasticsearch instance.
 Both can be configured via environment variables (see [settings.py](./settings.py)).
 
-## Instalation
+## Installation
 
 Using virtualenv is recommended for installing python requirements. So once activated, run:
 

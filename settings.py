@@ -40,7 +40,6 @@ INSTALLED_APPS = (
     'superdesk.io',
     'superdesk.auth',
     'superdesk.users',
-    'superdesk.user_roles',
     'superdesk.items',
     'superdesk.activity',
     'superdesk.upload',

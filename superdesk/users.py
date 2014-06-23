@@ -123,6 +123,26 @@ users_config = {
     }
 }
 
+user_roles_config = {
+    'schema': {
+        'name': {
+            'type': 'string',
+            'unique': True,
+            'required': True,
+        },
+        'extends': {
+            'type': 'objectid'
+        },
+        'permissions': {
+            'type': 'dict'
+        }
+    },
+    'datasource': {
+        'default_sort': [('created', -1)]
+    }
+}
+
 
 def init_app(app):
     app.register_resource('users', users_config)
+    app.register_resource('user_roles', user_roles_config)
