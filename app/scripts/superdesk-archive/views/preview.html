@@ -26,7 +26,7 @@
         <div class="core-content">
             
             <!-- item rendition -->
-            <div sd-item-rendition data-item="item" data-rendition="baseImage"></div>
+            <div sd-item-rendition data-item="item" data-rendition="viewImage"></div>
             
             <div ng-if="item.type == 'audio'">
                 <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
@@ -47,7 +47,7 @@
                                         <div class="headline">{{p_item.headline}}</div>
                                     </div>
                                     <div ng-if="p_item.type === 'picture'" class="holder">
-                                        <div sd-item-rendition data-item="p_item" data-rendition="baseImage"></div>
+                                        <div sd-item-rendition data-item="p_item" data-rendition="viewImage"></div>
                                         <div class="headline" ng-show="p_item.headline">{{p_item.headline}}</div>
                                     </div>
                                     <div ng-if="p_item.type === 'audio'">

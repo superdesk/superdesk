@@ -1,10 +1,15 @@
 <div>
-    <!-- picture preview -->
+        <!-- picture preview -->
         <div class="full-preview">
             <div sd-item-rendition data-item="item" data-rendition="baseImage"></div>
         </div>
 
         <div class="condensed-preview">
+
+            <!-- audio preview -->
+            <div class="full-preview" ng-if="item.type == 'audio'">
+                <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
+            </div>
             
             <!-- text preview -->
             <div class="lightbox-paper" ng-show="item.type == 'text'">

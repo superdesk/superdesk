@@ -27,26 +27,21 @@
 
     
     <!-- preview pane -->
-
     <section class="lightbox-left" ng-class="{'composite' : item.type === 'composite', 'open' : compositeOpen}">
 
         <div sd-single-item data-item="singleItem" data-contents="packageContents"></div>        
         <div class="lightbox-caption">{{ item.headline }}</div>
 
         <div class="navigation">
-            <button class="pull-left" ng-click="prev()" ng-disabled="!prevEnabled" title="{ 'previous' | translate }">
+            <button class="pull-left" ng-click="prev()" ng-disabled="!prevEnabled" title="{{ 'previous' | translate }}">
                 <i class="arrow-icon-large-left"></i>
             </button>
-            <button class="pull-right" ng-click="next()" ng-disabled="!nextEnabled" title="{ 'next' | translate}">
+            <button class="pull-right" ng-click="next()" ng-disabled="!nextEnabled" title="{{ 'next' | translate }}">
                 <i class="arrow-icon-large-right"></i>
             </button>
         </div>
 
     </section>
-
-    
-
-
     <!-- end of preview pane -->
 
     <section class="lightbox-right">
