@@ -31,9 +31,11 @@ define(['lodash', 'angular'], function(_, angular) {
          * Update item in a queue
          */
         this.update = function(item) {
-            var base = this.find({_id: item._id});
-            queue[_.indexOf(queue, base)] = _.extend(base, item);
-            this.save();
+            if (item) {
+                var base = this.find({_id: item._id});
+                queue[_.indexOf(queue, base)] = _.extend(base, item);
+                this.save();
+            }
         };
 
         /**
@@ -69,6 +71,28 @@ define(['lodash', 'angular'], function(_, angular) {
          */
         this.setActive = function(item) {
             this.active = this.find({_id: item._id});
+        };
+
+        /**
+         * Get '_id' of active item or null if it's not defined
+         */
+        this.getActive = function() {
+            return this.active ? this.active._id : null;
+        };
+
+        /**
+         * Remove given item from queue
+         */
+        this.remove = function(item) {
+            _.remove(queue, {_id: item._id});
+            this.length = queue.length;
+            this.save();
+
+            if (this.active._id === item._id && this.length > 0) {
+                this.setActive(_.first(queue));
+            } else {
+                this.active = null;
+            }
         };
 
     }

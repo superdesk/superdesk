@@ -120,7 +120,6 @@ define(['lodash'], function(_) {
          * @returns {Promise}
          */
         HttpEndpoint.prototype.update = function(item, diff) {
-            console.log('call update');
             if (diff == null) {
                 diff = _.omit(item, function(value, key) {
                     return key === '_links' || key === '_id';
@@ -145,7 +144,6 @@ define(['lodash'], function(_) {
          * @returns {Promise}
          */
         HttpEndpoint.prototype.create = function(itemData) {
-            console.log('call create');
             return http({
                 method: 'POST',
                 url: getUrl(this),
