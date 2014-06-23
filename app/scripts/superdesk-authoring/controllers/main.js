@@ -20,7 +20,6 @@ define(['lodash'], function(_) {
                 $scope.item = null;
                 _item = null;
             }
-            
         });
 
         $scope.create = function() {
@@ -52,7 +51,7 @@ define(['lodash'], function(_) {
 
         $scope.close = function() {
             workqueue.remove(_item);
-            $location.search('_id',workqueue.getNext());
+            $location.search('_id', workqueue.getNext());
         };
 
     }
