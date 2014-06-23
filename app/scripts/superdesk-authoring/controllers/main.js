@@ -17,6 +17,7 @@ define(['lodash'], function(_) {
         });
 
         $scope.switchArticle = function(article) {
+            workqueue.update($scope.editItem);
             workqueue.setActive(article);
             $location.search('_id', article._id);
         };

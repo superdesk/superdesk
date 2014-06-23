@@ -1,12 +1,13 @@
 define(['lodash', 'angular'], function(_, angular) {
     'use strict';
 
-    function WorkqueueService() {
+    WorkqueueService.$inject = ['storage'];
+    function WorkqueueService(storage) {
         /**
          * Set items for further work, in next step of the workflow.
          */
 
-        var queue = [];
+        var queue = storage.getItem('workqueue:items') || [];
         this.length = 0;
         this.active = null;
 
@@ -22,7 +23,17 @@ define(['lodash', 'angular'], function(_, angular) {
             queue.unshift(item);
             this.length = queue.length;
             this.active = item;
+            this.save();
             return this;
+        };
+
+        /**
+         * Update item in a queue
+         */
+        this.update = function(item) {
+            var base = this.find({_id: item._id});
+            queue[_.indexOf(queue, base)] = _.extend(base, item);
+            this.save();
         };
 
         /**
@@ -37,6 +48,13 @@ define(['lodash', 'angular'], function(_, angular) {
          */
         this.all = function() {
             return queue;
+        };
+
+        /**
+         * Save queue to local storage
+         */
+        this.save = function() {
+            storage.setItem('workqueue:items', queue);
         };
 
         /**
