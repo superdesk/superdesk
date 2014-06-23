@@ -2,7 +2,7 @@ Feature: Upload
 
     @auth
     Scenario: Upload a binary file
-        When we upload a binary file to "/upload"
+        When we upload a file "bike.jpg" to "/upload"
         Then we get a file reference
         Then we get file metadata
         And the file is not serialized in response
@@ -14,7 +14,7 @@ Feature: Upload
             """
             {"RETURN_MEDIA_AS_BASE64_STRING": "True"}
             """
-        When we upload a binary file to "/upload"
+        When we upload a file "bike.jpg" to "/upload"
         Then we get a file reference
         Then we get file metadata
         And the file is serialized in response
@@ -52,7 +52,7 @@ Feature: Upload
     @amazon
     @auth
     Scenario: Upload a binary file
-        When we upload a binary file to "/upload"
+        When we upload a file "bike.jpg" to "/upload"
         Then we get a file reference
         Then we get file metadata
         And the file is not serialized in response
@@ -65,7 +65,7 @@ Feature: Upload
             """
             {"RETURN_MEDIA_AS_BASE64_STRING": "True"}
             """
-        When we upload a binary file to "/upload"
+        When we upload a file "bike.jpg" to "/upload"
         Then we get a file reference
         Then we get file metadata
         And the file is serialized in response

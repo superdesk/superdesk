@@ -108,22 +108,22 @@ def fetch_media_from_archive(media_archive_guid):
     return archive
 
 
+type_av = {'image': 'picture', 'audio': 'audio', 'video': 'video'}
+
+
 def on_upload_create(data, docs):
     ''' Create corresponding item on file upload '''
     for doc in docs:
         file = get_file_from_document(doc)
         inserted = [doc['media']]
         file_type = file.content_type.split('/')[0]
-        if file_type != 'image':
-            delete_file_on_error(doc, doc['media'])
-            raise InvalidFileType(file_type)
 
         try:
             doc['guid'] = generate_guid({'type': 'tag', 'id': str(uuid4())})
-            doc['type'] = 'picture'
+            doc['type'] = type_av.get(file_type)
             doc['version'] = 1
             doc['versioncreated'] = utcnow()
-            doc['renditions'] = generate_renditions(file, doc['media'], inserted)
+            doc['renditions'] = generate_renditions(file, doc['media'], inserted, file_type)
             doc['mimetype'] = file.content_type
             doc['filemeta'] = file.metadata
         except Exception as io:
@@ -149,12 +149,19 @@ def delete_file_on_error(doc, file_id):
     superdesk.app.media.delete(file_id)
 
 
-def generate_renditions(original, media_id, inserted):
+def generate_renditions(original, media_id, inserted, file_type):
     """Generate system renditions for given media file id."""
+    rend = {'href': url_for_media(media_id), 'media': media_id, 'mimetype': original.content_type}
+    renditions = {'original': rend}
+
+    if file_type != 'image':
+        return renditions
+
     img = Image.open(original)
     width, height = img.size
-    renditions = {'original': {'href': url_for_media(media_id), 'media': media_id,
-                               'mimetype': original.content_type, 'width': width, 'height': height}}
+    rend.update({'width': width})
+    rend.update({'height': height})
+
     ext = original.content_type.split('/')[1].lower()
     ext = ext if ext in ('jpeg', 'gif', 'tiff', 'png') else 'png'
     for rendition, rsize in config.RENDITIONS['picture'].items():
