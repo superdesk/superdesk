@@ -113,7 +113,7 @@ type_av = {'image': 'picture', 'audio': 'audio', 'video': 'video'}
 
 
 def update_dates_for(doc):
-    for item in ['firstcreated', 'created', 'updated', 'versioncreated']:
+    for item in ['firstcreated', 'versioncreated']:
         doc.setdefault(item, utcnow())
 
 
