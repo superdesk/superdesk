@@ -197,28 +197,6 @@ define([
                 }
             };
         })
-        .directive('sdSource', [ function() {
-            var typeMap = {
-                'video/mpeg': 'video/mp4'
-            };
-            return {
-                scope: {
-                    sdSource: '='
-                },
-                link: function(scope, element) {
-                    scope.$watch('sdSource', function(source) {
-                        console.log('empty');
-                        element.empty();
-                        if (source) {
-                            angular.element('<source />')
-                                .attr('type', typeMap[source.mimetype] || source.mimetype)
-                                .attr('src', source.href)
-                                .appendTo(element);
-                        }
-                    });
-                }
-            };
-        }])
         .directive('sdHtmlPreview', ['$sce', function($sce) {
             return {
                 scope: {sdHtmlPreview: '='},
