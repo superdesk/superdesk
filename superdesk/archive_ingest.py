@@ -107,7 +107,7 @@ def archive_item(guid, provider, user, task_id=None):
                 ingest_set_archived(doc.get('guid'))
                 tasks.append(archive_item.s(task_id, ref['residRef'], provider))
 
-    for rendition in item.get('renditions', []).values():
+    for rendition in item.get('renditions', {}).values():
         href = service_provider.prepare_href(rendition['href'])
         if rendition['rendition'] == 'baseImage':
             tasks.append(archive_media.s(task_id, guid, href))
