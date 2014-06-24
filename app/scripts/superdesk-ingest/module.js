@@ -45,14 +45,43 @@ define([
             .activity('archive', {
                 label: gettext('Archive'),
                 icon: 'archive',
-                controller: ['$timeout', 'data', function($timeout, data) {
-                    if (data.item && !data.item.archived) {
-                        data.item.archiving = true;
-                        $timeout(function() {
-                            data.item.archiving = false;
-                            data.item.archived = true;
-                        }, 2000);
-                    }
+                controller: ['$timeout', 'api', 'data', function($timeout, api, data) {
+                    var checkProgress = function(taskId, callback) {
+                        var progress = 0;
+                        api.archiveIngest.getById(taskId)
+                        .then(function(result) {
+                            if (result.state === 'SUCCESS') {
+                                callback(100);
+                            } else if (result.state === 'PROGRESS') {
+                                var newProgress = Math.floor(parseInt(result.current || 0, 10) * 100 / parseInt(result.total, 10));
+                                if (progress !== newProgress) {
+                                    progress = newProgress;
+                                    callback(progress);
+                                }
+                                if (progress !== 100) {
+                                    $timeout(function() {
+                                        checkProgress(taskId, callback);
+                                    }, 1000);
+                                }
+                            }
+                        });
+                    };
+
+                    api.archiveIngest.create({
+                        guid: data.item._id,
+                        provider: 'reuters'
+                    })
+                    .then(function(archiveItem) {
+                        data.list[data.index].archiving = true;
+                        data.list[data.index].archivingProgress = 0;
+                        checkProgress(archiveItem.task_id, function(progress) {
+                            data.list[data.index].archivingProgress = progress;
+                            if (progress === 100) {
+                                data.list[data.index].archiving = false;
+                                data.list[data.index].archived = true;
+                            }
+                        });
+                    });
                 }],
                 filters: [
                     {action: 'archive', type: 'ingest'}
@@ -61,6 +90,12 @@ define([
     }]);
 
     app.config(['apiProvider', function(apiProvider) {
+        apiProvider.api('archiveIngest', {
+            type: 'http',
+            backend: {
+                rel: 'archive_ingest'
+            }
+        });
         apiProvider.api('ingest', {
             type: 'http',
             backend: {
