@@ -151,7 +151,8 @@
     }
     &.article-title {
       margin: 30px 0;
-      input {
+      textarea {
+        resize:none;
         font-family: Georgia, serif;
         font-size:36px;
         line-height: 40px;
@@ -175,9 +176,10 @@
     }
     &.article-full-text {
       textarea {
+        resize:none;
         font-size:13px;
         line-height:20px;
-        min-height: 400px;
+        min-height: 300px;
         border-color: #eee !important;
         &:focus {
           .box-shadow(none) !important;
@@ -188,7 +190,7 @@
 
   &:hover {
     .article-title {
-      input {
+      textarea {
         border-color: #ddd !important;
       }
     }

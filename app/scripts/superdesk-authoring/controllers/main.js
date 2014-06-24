@@ -51,7 +51,7 @@ define(['lodash'], function(_) {
 
         $scope.close = function() {
             workqueue.remove(_item);
-            $location.search('_id', workqueue.getNext());
+            $location.search('_id', workqueue.getActive());
         };
 
     }

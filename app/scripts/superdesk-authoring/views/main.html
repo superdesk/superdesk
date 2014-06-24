@@ -3,8 +3,8 @@
 
     <div class="button-stack right-stack">
     	
-    	<a class="btn btn-medium pull-left" ng-click="close()" translate ng-if="item">Close</a>
-    	<a class="btn btn-medium btn-info pull-left" href="" ng-click="save()" ng-if="item">Save</a>
+    	<a class="btn btn-medium pull-left" ng-click="close()" ng-if="item">{{ 'Close' | translate }}</a>
+    	<a class="btn btn-medium btn-info pull-left" href="" ng-click="save()" ng-if="item">{{ 'Save' | translate }}</a>
 
         <a class="navbtn navbtn-info" href="" ng-click="create()">
             <i class="svg-icon-add inverse"></i> <span class="title" translate>Create</span>
@@ -24,14 +24,14 @@
 	                <header>
 	                    <span class="edit-label" translate>Headline</span>
 	                </header>
-	                <input type="text" ng-model="item.headline">
+	                <textarea sd-auto-height ng-model="item.headline"></textarea>
 	            </section>
 
 	            <section class="article-full-text">
 	                <header>
 	                    <span class="edit-label" translate>Body</span> 
 	                </header>
-	                <textarea ng-model="item.body_html"></textarea>
+	                <textarea sd-auto-height ng-model="item.body_html"></textarea>
 	            </section>
 				
 	        </article>
