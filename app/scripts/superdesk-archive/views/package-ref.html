@@ -1,5 +1,20 @@
-<div style="background-color: #e0e0e0; margin: 2px; padding: 2px;">
-    <span>{{item.headline}}</span>
-    <div ng-show="!data">fetching...</div>
-    <div ng-show="data">data fetched!</div>
+<div class="item {{data.type}}">
+	<div ng-if="data.type === 'text'">
+        <div class="headline">{{data.headline}}</div>
+    </div>
+    <div ng-if="data.type === 'picture'" class="holder">
+        <div sd-item-rendition data-item="data" data-rendition="viewImage"></div>
+        <div class="headline" ng-show="data.headline">{{data.headline}}</div>
+    </div>
+    <div ng-if="data.type === 'audio'">
+        <audio controls="controls" sd-sources data-renditions="data.renditions"></audio>
+    </div>
+    <div ng-if="data.type === 'video'" class="holder">
+    	Video
+        <div class="headline">{{data.headline}}</div>
+    </div>
+    <div ng-if="data.type === 'composite'" class="holder">
+    	<i class="filetype-icon-large-composite"></i>
+        <div class="headline">{{data.headline}}</div>
+    </div>
 </div>

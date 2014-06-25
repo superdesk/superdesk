@@ -50,7 +50,7 @@ define([
                 templateUrl: require.toUrl('./views/package-item.html'),
                 scope: {id: '=', item: '='},
                 link: function(scope, elem) {
-                    
+
                 }
             };
         }])
@@ -83,39 +83,7 @@ define([
             return {
                 replace: true,
                 templateUrl: require.toUrl('./views/preview.html'),
-                scope: {item: '='},
-				link: function(scope, elem) {
-					scope.$watch('item', function(item) {
-						scope.contents = null;
-
-						if (item.type === 'composite') {
-
-							scope.contents = [];
-
-							var mainPackage = _.find(item.groups, {id: 'main'});
-
-							_.each(mainPackage.refs, function(r) {
-
-								api.ingest.getById(r.residRef)
-									.then(function(_item) {
-
-										var t = _item.type;
-										if (_.find(scope.contents, {type: t}) === undefined) {
-											scope.contents.push({type: t, items: [_item]});
-										} else {
-											scope.contents[_.findIndex(scope.contents, {type: t})].items.push(_item);
-										}
-
-									}, function(response) {
-										if (response.status === 404) {
-						                    console.log('Item not found');
-						                }
-
-									});
-							});
-						}
-					});
-				}
+                scope: {item: '='}
             };
         }])
         .directive('sdMediaView', ['keyboardManager', 'api', function(keyboardManager, api) {

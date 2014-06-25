@@ -37,7 +37,10 @@
             <div class="composite-preview" ng-if="item.type === 'composite'">
                 <div class="subtitle" translate>Package content</div>
                 <div class="items">
+
+                    <div sd-package data-item="item"></div>
                     
+                    <!--
                     <div ng-repeat="section in contents">
                         <div sd-toggle-box data-title="{{ section.type | translate }}" data-open="true" data-icon="filetype-icon-{{section.type}}">
                             <ul class="{{section.type}}">
@@ -62,14 +65,10 @@
                             </ul>
                         </div>                        
                     </div>
+                    -->
 
                 </div>
             </div>
-        </div>
-
-        <div class="core-content" ng-if="item.type === 'composite'">
-            <div class="subtitle" translate>Package content</div>
-            <div sd-package data-item="item"></div>
         </div>
     </div>
 </div>

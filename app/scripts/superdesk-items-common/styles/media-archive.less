@@ -470,14 +470,13 @@
 					}
 					.items {
 						.toggle-box {
+							margin-bottom: 20px;
 							header {
 								&:before {
 									left: 45px;
 								}
 								.box-icon {
-									float: none;
-									padding-left: 22px;
-									.opacity(70);
+									display: none;
 								}
 								h6 {
 									background: #fff;
@@ -485,63 +484,60 @@
 								}
 							}
 						}
-						.text {
-							li {
-								.border-radius(5px);
-								border: 1px solid #efefef;
-								background: #fafafa;
-								padding: 10px;
-								.headline {
-									font-size: 14px;
-									color: #000;
-								}
-							}
+						.headline {
+							font-size: 14px;
+							color: #000;
+						}
+						.item {
+							margin-bottom: 15px;
+						}
+						.text, .composite {
+							.border-radius(5px);
+							border: 1px solid #efefef;
+							background: #fafafa;
+							padding: 10px;
 						}
 
 						.picture {
-							margin: 0 -10px;
-							li {
+							height: 80px;
+							figure {
+								width: 120px;
+								.border-radius(2px);
+								overflow: hidden;
+								height: 80px;
+								background: #f0f0f0;
 								float: left;
-								width: 33.33%;
-								.box-sizing(border-box);
-								padding: 0 10px;
-								figure {
+								margin-right: 20px;
+								img {
 									max-width: 100%;
-									.box-sizing(border-box);
-									.border-radius(2px);
-									overflow: hidden;
-									height: 79px;
-									background: #f0f0f0;
-									img {
-										max-width: 100%;
-										height: auto;
-									}
-								}
-								.headline {
-									font-size: 13px;
-									color:#696969;
-									margin: 5px 0 0 0;
 									height: auto;
-									max-height: 54px;
-									overflow: hidden;
 								}
-								
+							}
+							.headline {
+								max-height: 74px;
+								overflow: hidden;
 							}
 						}
 
 						.video {
-							li {
+							height: 80px;
+							.holder {
+								width: 120px;
+								.border-radius(2px);
+								overflow: hidden;
+								height: 80px;
+								background: #f0f0f0;
 								float: left;
-								width: 33.33%;
-								.box-sizing(border-box);
-								padding: 0 10px;
-								.holder {
-									width: 100%;
-									background: #f0f0f0;
-									height: 99px;
-								}
-								
+								margin-right: 20px;
 							}
+							.headline {
+								max-height: 74px;
+								overflow: hidden;
+							}
+						}
+
+						.composite {
+
 						}
 					}
 				}

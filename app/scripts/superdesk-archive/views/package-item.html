@@ -1,11 +1,15 @@
-<div style="border: 1px solid #000000; margin: 2px; padding: 2px;">
-    <span ng-if="id !== 'root'">{{id}}:</span>
+<div>
+
     <div ng-repeat="(childId, childData) in item" ng-if="childId !== '_items'">
         <div sd-package-item-proxy data-id="childId" data-item="childData"></div>
     </div>
-    <div ng-if="item._items.length">
-        <div ng-repeat="child in item._items">
-            <div sd-package-ref data-item="child"></div>
-        </div>
+
+    <div ng-if="item._items.length" sd-toggle-box data-title="{{id}}" data-open="true">
+        <ul>
+            <li ng-repeat="child in item._items">
+                <div sd-package-ref data-item="child"></div>
+            </li>
+        </ul>
     </div>
+
 </div>
