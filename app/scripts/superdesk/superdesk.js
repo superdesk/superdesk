@@ -19,6 +19,7 @@ define([
     './error/error',
     './list/list',
     './menu/menu',
+    './notification/notification',
     './notify/notify',
     './upload/upload',
     './ui/ui',
@@ -48,6 +49,7 @@ define([
         require('./list/list').name,
         require('./menu/menu').name,
         require('./notify/notify').name,
+        require('./notification/notification').name,
         require('./upload/upload').name,
         require('./ui/ui').name
     ];
