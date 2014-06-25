@@ -44,22 +44,21 @@ define([
                 }
             };
         }])
-        .directive('sdPackageItem', ['$compile', function($compile) {
-            var template =    '<span ng-if="id !== \'root\'">{{id}}:</span>'
-                            + '<div ng-repeat="(childId, childData) in item" ng-if="childId !== \'_items\'">'
-                                + '<div sd-package-item data-id="childId" data-item="childData">'
-                                + '</div>'
-                            + '</div>'
-                            + '<div ng-if="item._items.length">'
-                                + '<div ng-repeat="child in item._items">'
-                                    + '<div sd-package-ref data-item="child"></div>'
-                                + '</div>'
-                            + '</div>'
-                        ;
-
+        .directive('sdPackageItem', [function() {
             return {
                 replace: true,
                 templateUrl: require.toUrl('./views/package-item.html'),
+                scope: {id: '=', item: '='},
+                link: function(scope, elem) {
+                    
+                }
+            };
+        }])
+        .directive('sdPackageItemProxy', ['$compile', function($compile) {
+            var template = '<div sd-package-item data-id="id" data-item="item"></div>';
+
+            return {
+                replace: true,
                 scope: {id: '=', item: '='},
                 link: function(scope, elem) {
                     elem.append($compile(template)(scope));
@@ -80,7 +79,7 @@ define([
                 }
             };
         }])
-        .directive('sdMediaPreview', [function() {
+        .directive('sdMediaPreview', ['api', function(api) {
             return {
                 replace: true,
                 templateUrl: require.toUrl('./views/preview.html'),
