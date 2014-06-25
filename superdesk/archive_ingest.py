@@ -127,7 +127,7 @@ def ingest_set_archived(guid):
 def archive_ingest(data, docs, **kwargs):
     data = app.data
     for doc in docs:
-        ingest_doc = data.find_one('ingest', guid=doc.get('guid'))
+        ingest_doc = data.find_one('ingest', _id=doc.get('guid'))
         if not ingest_doc:
             continue
         ingest_set_archived(doc.get('guid'))
