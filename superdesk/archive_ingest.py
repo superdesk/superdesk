@@ -25,9 +25,6 @@ def update_status(task_id, current, total):
 @celery.task()
 def archive_media(task_id, guid, href):
     update_status(*add_subtask_to_progress(task_id))
-    # TODO: download from href and save file on app storage,
-    # process it and update original rendition for guid content item
-    # for testing simulate a processing; to be removed
     import_media(guid, href)
     update_status(*finish_subtask_from_progress(task_id))
 
@@ -35,8 +32,6 @@ def archive_media(task_id, guid, href):
 @celery.task()
 def archive_rendition(task_id, guid, name, href):
     update_status(*add_subtask_to_progress(task_id))
-    # TODO: download from href and save on app storage and update the 'name' rendition for guid content item
-    # for testing simulate a processing; to be removed
     import_rendition(guid, name, href)
     update_status(*finish_subtask_from_progress(task_id))
 
@@ -52,7 +47,7 @@ def update_item(result, is_main_task, task_id, guid):
 
 
 @celery.task()
-def archive_item(guid, provider, user, task_id=None):
+def archive_item(guid, provider_id, user, task_id=None):
     data = app.data
     crt_task_id = archive_item.request.id
     if not task_id:
@@ -60,8 +55,9 @@ def archive_item(guid, provider, user, task_id=None):
 
     update_status(*add_subtask_to_progress(task_id))
 
-    service_provider = providers[provider]
-    service_provider.provider = data.find_one('ingest_providers', type=provider)
+    provider = data.find_one('ingest_providers', _id=provider_id)
+    service_provider = providers[provider.get('type')]
+    service_provider.provider = provider
 
     item = None
     try:
@@ -126,19 +122,23 @@ def ingest_set_archived(guid):
     ingest_doc = app.data.find_one('ingest', guid=guid)
     if ingest_doc:
         app.data.update('ingest', ingest_doc.get('_id'), {'archived': utcnow()})
-        ingest_doc = app.data.find_one('ingest', guid=guid)
 
 
 def archive_ingest(data, docs, **kwargs):
     data = app.data
     for doc in docs:
+        ingest_doc = data.find_one('ingest', guid=doc.get('guid'))  
+        if not ingest_doc:
+            continue
+        ingest_set_archived(doc.get('guid'))
+        
         doc.setdefault('_id', doc.get('guid'))
         doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
         data.insert('archive', [doc])
-        task = archive_item.delay(doc.get('guid'), doc.get('provider'), doc.get('user'))
-        data.update('archive', doc.get('guid'), {"task_id": task.id})
-        ingest_set_archived(doc.get('guid'))
+        
+        task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), doc.get('user'))
         doc['task_id'] = task.id
+        data.update('archive', doc.get('guid'), {"task_id": task.id})
     return [doc.get('guid') for doc in docs]
 
 
@@ -176,10 +176,6 @@ superdesk.domain('archive_ingest', {
         'field': 'task_id'
     },
     'schema': {
-        'provider': {
-            'type': 'string',
-            'required': True,
-        },
         'guid': {
             'type': 'string',
             'required': True,
