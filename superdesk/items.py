@@ -27,6 +27,7 @@ class InvalidFileType(SuperdeskError):
 def on_create_item(data, docs):
     """Set guid as doc _id."""
     for doc in docs:
+        update_dates_for(doc)
         if 'guid' in doc:
             doc.setdefault('_id', doc['guid'])
 
@@ -111,6 +112,11 @@ def fetch_media_from_archive(media_archive_guid):
 type_av = {'image': 'picture', 'audio': 'audio', 'video': 'video'}
 
 
+def update_dates_for(doc):
+    for item in ['firstcreated', 'versioncreated']:
+        doc.setdefault(item, utcnow())
+
+
 def on_upload_create(data, docs):
     ''' Create corresponding item on file upload '''
     for doc in docs:
@@ -119,10 +125,10 @@ def on_upload_create(data, docs):
         file_type = file.content_type.split('/')[0]
 
         try:
+            update_dates_for(doc)
             doc['guid'] = generate_guid({'type': 'tag', 'id': str(uuid4())})
             doc['type'] = type_av.get(file_type)
             doc['version'] = 1
-            doc['versioncreated'] = utcnow()
             doc['renditions'] = generate_renditions(file, doc['media'], inserted, file_type)
             doc['mimetype'] = file.content_type
             doc['filemeta'] = file.metadata
