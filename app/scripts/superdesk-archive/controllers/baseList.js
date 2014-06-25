@@ -18,7 +18,7 @@ define(['lodash'], function(_) {
         };
 
         $scope.$watchCollection(function() {
-            return $location.search();
+            return _.omit($location.search(), '_id');
         }, function(search) {
             var query = self.getQuery(search);
             self.fetchItems({source: query});
