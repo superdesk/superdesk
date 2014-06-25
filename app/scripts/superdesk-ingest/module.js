@@ -68,8 +68,7 @@ define([
                     };
 
                     api.archiveIngest.create({
-                        guid: data.item._id,
-                        provider: 'reuters'
+                        guid: data.item._id
                     })
                     .then(function(archiveItem) {
                         data.list[data.index].archiving = true;
