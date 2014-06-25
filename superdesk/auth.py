@@ -97,9 +97,9 @@ def authenticate(credentials, db):
     return user
 
 
-def on_create_auth(data, docs):
+def on_insert_auth(docs):
     for doc in docs:
-        user = authenticate(doc, data)
+        user = authenticate(doc, app.data)
         doc['user'] = user['_id']
         doc['token'] = utils.get_random_string(40)
 
@@ -147,5 +147,4 @@ def init_app(app):
         'extra_response_fields': ['user', 'token', 'username']
     })
 
-
-superdesk.connect('create:auth', on_create_auth)
+    app.on_insert_auth += on_insert_auth
