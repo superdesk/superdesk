@@ -11,14 +11,13 @@ Feature: News Items Archive
         Given empty "archive"
         And "ingest"
         """
-        [{"guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401", "provider": "reuters"}]
+        [{"guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401"}]
         """
 
         When we post to "/archive_ingest"
         """
         {
-        "guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401",
-        "provider": "reuters"
+        "guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401"
         }
         """
 

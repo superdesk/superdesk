@@ -127,15 +127,15 @@ def ingest_set_archived(guid):
 def archive_ingest(data, docs, **kwargs):
     data = app.data
     for doc in docs:
-        ingest_doc = data.find_one('ingest', guid=doc.get('guid'))  
+        ingest_doc = data.find_one('ingest', guid=doc.get('guid'))
         if not ingest_doc:
             continue
         ingest_set_archived(doc.get('guid'))
-        
+
         doc.setdefault('_id', doc.get('guid'))
         doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
         data.insert('archive', [doc])
-        
+
         task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), doc.get('user'))
         doc['task_id'] = task.id
         data.update('archive', doc.get('guid'), {"task_id": task.id})
