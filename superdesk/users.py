@@ -1,6 +1,7 @@
 """Superdesk Users"""
 
 import superdesk
+from .base_view_controller import BaseViewController
 
 
 class EmptyUsernameException(Exception):
@@ -59,12 +60,41 @@ superdesk.connect('read:users', on_read_users)
 superdesk.connect('created:users', on_read_users)
 superdesk.command('users:create', CreateUserCommand())
 
-users_config = {
-    'additional_lookup': {
+
+def init_app(app):
+    UsersViewController(app=app)
+    UserRolesViewController(app=app)
+
+
+class UserRolesViewController(BaseViewController):
+
+    endpoint_name = 'user_roles'
+    schema = {
+        'name': {
+            'type': 'string',
+            'unique': True,
+            'required': True,
+        },
+        'extends': {
+            'type': 'objectid'
+        },
+        'permissions': {
+            'type': 'dict'
+        }
+    }
+    datasource = {
+        'default_sort': [('created', -1)]
+    }
+
+
+class UsersViewController(BaseViewController):
+
+    endpoint_name = 'users'
+    additional_lookup = {
         'url': 'regex("[\w]+")',
         'field': 'username'
-    },
-    'schema': {
+    }
+    schema = {
         'username': {
             'type': 'string',
             'unique': True,
@@ -108,41 +138,18 @@ users_config = {
         'workspace': {
             'type': 'dict'
         }
-    },
-    'extra_response_fields': [
+    }
+
+    extra_response_fields = [
         'display_name',
         'username',
         'email',
         'user_info',
         'picture_url',
-    ],
-    'datasource': {
+    ]
+
+    datasource = {
         'projection': {
             'password': 0
         }
     }
-}
-
-user_roles_config = {
-    'schema': {
-        'name': {
-            'type': 'string',
-            'unique': True,
-            'required': True,
-        },
-        'extends': {
-            'type': 'objectid'
-        },
-        'permissions': {
-            'type': 'dict'
-        }
-    },
-    'datasource': {
-        'default_sort': [('created', -1)]
-    }
-}
-
-
-def init_app(app):
-    app.register_resource('users', users_config)
-    app.register_resource('user_roles', user_roles_config)

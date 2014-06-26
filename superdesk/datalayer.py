@@ -7,7 +7,7 @@ from .signals import send
 from .utils import import_by_path
 from pyelasticsearch.client import JsonEncoder
 from bson.objectid import ObjectId
-from superdesk.noop_datalayer import NoopDataLayer
+import superdesk
 
 
 class SuperdeskJsonEncoder(JsonEncoder):
@@ -29,7 +29,6 @@ class SuperdeskDataLayer(DataLayer):
         self.mongo = Mongo(app)
         self.elastic = Elastic(app)
         self.elastic.es.json_encoder = SuperdeskJsonEncoder
-        self.noop = NoopDataLayer(app)
 
         if 'DEFAULT_FILE_STORAGE' in app.config:
             self.storage = import_by_path(app.config['DEFAULT_FILE_STORAGE'])()
@@ -38,14 +37,7 @@ class SuperdeskDataLayer(DataLayer):
             self.storage = self.driver
 
     def find(self, resource, req, lookup):
-        self._send('before_read', resource, lookup=lookup)
-        cursor = self._backend(resource).find(resource, req, lookup)
-        if not cursor.count():
-            return cursor  # return 304 if not modified
-        else:
-            # but fetch without filter if there is a change
-            req.if_modified_since = None
-            return self._backend(resource).find(resource, req, lookup)
+        return superdesk.apps[resource].get(req=req, lookup=lookup)
 
     def find_all(self, resource, max_results=1000):
         req = ParsedRequest()
@@ -62,12 +54,10 @@ class SuperdeskDataLayer(DataLayer):
         return self._backend(resource).find_list_of_ids(resource, ids, client_projection)
 
     def insert(self, resource, docs, **kwargs):
-        self._send('create', resource, docs=docs)
-        return self._backend(resource).insert(resource, docs, **kwargs)
+        return superdesk.apps[resource].post(docs, **kwargs)
 
     def update(self, resource, id_, updates):
-        self._send('update', resource, id=id_, updates=updates)
-        return self._backend(resource).update(resource, id_, updates)
+        return superdesk.apps[resource].patch(id=id_, updates=updates)
 
     def update_all(self, resource, query, updates):
         datasource = self._datasource(resource)
@@ -82,8 +72,7 @@ class SuperdeskDataLayer(DataLayer):
     def remove(self, resource, lookup=None):
         if lookup is None:
             lookup = {}
-        self._send('delete', resource, lookup=lookup)
-        return self._backend(resource).remove(resource, lookup)
+        return superdesk.apps[resource].delete(lookup=lookup)
 
     def is_empty(self, resource):
         return self._backend(resource).is_empty(resource)
@@ -95,4 +84,5 @@ class SuperdeskDataLayer(DataLayer):
 
     def _send(self, signal, resource, **kwargs):
         send(signal, self, resource=resource, **kwargs)
-        send('%s:%s' % (signal, resource), self, **kwargs)
+        signal = '%s:%s' % (signal, resource)
+        send(signal, self, **kwargs)

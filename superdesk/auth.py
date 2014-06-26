@@ -5,6 +5,7 @@ import superdesk
 import superdesk.utils as utils
 from flask import json, current_app as app, request
 from eve.auth import TokenAuth
+from .base_view_controller import BaseViewController
 
 
 logger = logging.getLogger(__name__)
@@ -97,54 +98,58 @@ def authenticate(credentials, db):
     return user
 
 
-def on_insert_auth(docs):
-    for doc in docs:
-        user = authenticate(doc, app.data)
-        doc['user'] = user['_id']
-        doc['token'] = utils.get_random_string(40)
-
-
 def init_app(app):
-    app.register_resource('auth_users', {
-        'datasource': {
-            'source': 'users'
-        },
-        'schema': {
-            'username': {
-                'type': 'string',
-            },
-            'password': {
-                'type': 'string',
-            }
-        },
-        'item_methods': [],
-        'resource_methods': []
-    })
+    AuthUsersViewController(app)
+    auth_controller = AuthViewController(app)
+    app.on_insert_auth += auth_controller.on_insert_auth
 
-    app.register_resource('auth', {
-        'schema': {
-            'username': {
-                'type': 'string'
-            },
-            'password': {
-                'type': 'string'
-            },
-            'token': {
-                'type': 'string'
-            },
-            'user': {
-                'type': 'objectid',
-                'data_relation': {
-                    'resource': 'users',
-                    'field': '_id',
-                    'embeddable': True
-                }
-            }
-        },
-        'resource_methods': ['POST'],
-        'item_methods': ['GET'],
-        'public_methods': ['POST'],
-        'extra_response_fields': ['user', 'token', 'username']
-    })
 
-    app.on_insert_auth += on_insert_auth
+class AuthUsersViewController(BaseViewController):
+    endpoint_name = 'auth_users'
+    datasource = {
+        'source': 'users'
+    }
+    schema = {
+        'username': {
+            'type': 'string',
+        },
+        'password': {
+            'type': 'string',
+        }
+    }
+    item_methods = []
+    resource_methods = []
+
+
+class AuthViewController(BaseViewController):
+
+    endpoint_name = 'auth'
+    schema = {
+        'username': {
+            'type': 'string'
+        },
+        'password': {
+            'type': 'string'
+        },
+        'token': {
+            'type': 'string'
+        },
+        'user': {
+            'type': 'objectid',
+            'data_relation': {
+                'resource': 'users',
+                'field': '_id',
+                'embeddable': True
+            }
+        }
+    }
+    resource_methods = ['POST']
+    item_methods = ['GET']
+    public_methods = ['POST']
+    extra_response_fields = ['user', 'token', 'username']
+
+    def on_insert_auth(self, docs):
+        for doc in docs:
+            user = authenticate(doc, self.app.data)
+            doc['user'] = user['_id']
+            doc['token'] = utils.get_random_string(40)

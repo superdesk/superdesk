@@ -1,27 +1,8 @@
-
 import logging
 import superdesk
 from superdesk.utc import utcnow
+from .base_view_controller import BaseViewController
 import flask
-
-
-def on_create(data, resource, docs):
-    if resource == 'activity':
-        return
-
-    if not getattr(flask.g, 'user', False):
-        return
-
-    activity = {}
-    activity['created'] = activity['updated'] = utcnow()
-    activity['user'] = getattr(flask.g, 'user', {}).get('_id')
-    activity['resource'] = resource
-    activity['action'] = 'create'
-    activity['extra'] = docs[0]
-    # always the activity is written on mongo
-    data.insert('activity', [activity])
-
-superdesk.connect('create', on_create)
 
 
 class ActivityLogHandler(logging.Handler):
@@ -40,10 +21,16 @@ class ActivityLogHandler(logging.Handler):
 
 # superdesk.logger.addHandler(ActivityLogHandler())
 
-superdesk.domain('activity', {
-    'resource_methods': ['GET'],
-    'item_methods': [],
-    'schema': {
+
+def init_app(app):
+    ActivityViewController(app=app)
+
+
+class ActivityViewController(BaseViewController):
+    endpoint_name = 'activity'
+    resource_methods = ['GET']
+    item_methods = []
+    schema = {
         'resource': {'type': 'string'},
         'action': {'type': 'string'},
         'extra': {'type': 'dict'},
@@ -56,4 +43,19 @@ superdesk.domain('activity', {
             }
         }
     }
-})
+
+    def on_create(self, data, resource, docs):
+        if resource == 'activity':
+            return
+
+        if not getattr(flask.g, 'user', False):
+            return
+
+        activity = {}
+        activity['created'] = activity['updated'] = utcnow()
+        activity['user'] = getattr(flask.g, 'user', {}).get('_id')
+        activity['resource'] = resource
+        activity['action'] = 'create'
+        activity['extra'] = docs[0]
+        # always the activity is written on mongo
+        super().post([activity])

@@ -1,4 +1,4 @@
-import superdesk
+from .base_view_controller import BaseViewController
 from bson.objectid import ObjectId
 
 
@@ -23,28 +23,26 @@ desks_schema = {
 }
 
 
-def on_lookup_user_desks(data, lookup):
-    if lookup.get('user_id'):
-        lookup["members.user"] = ObjectId(lookup['user_id'])
-        del lookup['user_id']
+def init_app(app):
+    DesksViewController(app=app)
+    UserDesksViewController(app=app)
 
 
-superdesk.connect('before_read:user_desks', on_lookup_user_desks)
+class DesksViewController(BaseViewController):
+    endpoint_name = 'desks'
+    schema = desks_schema
+    datasource = {'default_sort': [('created', -1)]}
 
 
-superdesk.domain('desks', {
-    'schema': desks_schema,
-    'datasource': {
-        'default_sort': [('created', -1)]
-    }
-})
+class UserDesksViewController(BaseViewController):
+    endpoint_name = 'user_desks'
+    url = 'users/<regex("[a-f0-9]{24}"):user_id>/desks'
+    schema = desks_schema
+    datasource = {'source': 'desks'}
+    resource_methods = ['GET']
 
-
-superdesk.domain('user_desks', {
-    'url': 'users/<regex("[a-f0-9]{24}"):user_id>/desks',
-    'schema': desks_schema,
-    'datasource': {
-        'source': 'desks'
-    },
-    'resource_methods': ['GET'],
-})
+    def get(self, req, lookup):
+        if lookup.get('user_id'):
+            lookup["members.user"] = ObjectId(lookup['user_id'])
+            del lookup['user_id']
+        return super().get(req, lookup)

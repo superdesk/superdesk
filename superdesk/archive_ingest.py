@@ -16,6 +16,7 @@ from superdesk.celery_app import celery, finish_task_for_progress,\
 from celery.result import AsyncResult
 from flask.globals import current_app as app
 from .items import import_rendition, import_media
+from superdesk.base_view_controller import BaseViewController
 
 
 def update_status(task_id, current, total):
@@ -127,58 +128,19 @@ def ingest_set_archived(guid):
         app.data.update('ingest', ingest_doc.get('_id'), {'archived': utcnow()})
 
 
-def archive_ingest(data, docs, **kwargs):
-    data = app.data
-    for doc in docs:
-        ingest_doc = data.find_one('ingest', _id=doc.get('guid'), req=None)
-        if not ingest_doc:
-            continue
-        ingest_set_archived(doc.get('guid'))
-
-        doc.setdefault('_id', doc.get('guid'))
-        doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
-        data.insert('archive', [doc])
-
-        task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), doc.get('user'))
-        doc['task_id'] = task.id
-        data.update('archive', doc.get('guid'), {"task_id": task.id})
-    return [doc.get('guid') for doc in docs]
+def init_app(app):
+    ArchiveIngestViewController(app=app)
 
 
-def archive_ingest_progress(data, req, **lookup):
-    try:
-        task_id = lookup["task_id"]
-        task = AsyncResult(task_id)
-
-        if task.result:
-            doc = task.result
-        else:
-            doc = {}
-
-        if task.state:
-            doc['state'] = task.state
-        doc['task_id'] = task_id
-        doc['_id'] = task_id
-
-        return doc
-    except Exception:
-        msg = 'No progress information is available for task_id: %s' % task_id
-        raise superdesk.SuperdeskError(payload=msg)
-
-
-superdesk.connect('impl_insert:archive_ingest', archive_ingest)
-superdesk.connect('impl_find_one:archive_ingest', archive_ingest_progress)
-
-superdesk.domain('archive_ingest', {
-    'url': 'archive_ingest',
-    'resource_title': 'archive_ingest',
-    'resource_methods': ['POST'],
-    'item_methods': ['GET'],
-    'additional_lookup': {
+class ArchiveIngestViewController(BaseViewController):
+    endpoint_name = 'archive_ingest'
+    resource_methods = ['POST']
+    item_methods = ['GET']
+    additional_lookup = {
         'url': 'regex("[\w-]+")',
         'field': 'task_id'
-    },
-    'schema': {
+    }
+    schema = {
         'guid': {
             'type': 'string',
             'required': True,
@@ -186,9 +148,40 @@ superdesk.domain('archive_ingest', {
         'task_id': {
             'type': 'string',
             'required': False,
-        },
-    },
-    'datasource': {
-        'backend': 'noop'
+        }
     }
-})
+
+    def post(self, docs, **kwargs):
+        for doc in docs:
+            ingest_doc = self.app.data.find_one('ingest', _id=doc.get('guid'), req=None)
+            if not ingest_doc:
+                continue
+            ingest_set_archived(doc.get('guid'))
+
+            doc.setdefault('_id', doc.get('guid'))
+            doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
+            self.app.data.insert('archive', [doc])
+
+            task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), doc.get('user'))
+            doc['task_id'] = task.id
+            self.app.data.update('archive', doc.get('guid'), {"task_id": task.id})
+        return [doc.get('guid') for doc in docs]
+
+    def find_one(self, req=None, **lookup):
+        try:
+            task_id = lookup["task_id"]
+            task = AsyncResult(task_id)
+            if task.result:
+                doc = task.result
+            else:
+                doc = {}
+
+            if task.state:
+                doc['state'] = task.state
+            doc['task_id'] = task_id
+            doc['_id'] = task_id
+
+            return doc
+        except Exception:
+            msg = 'No progress information is available for task_id: %s' % task_id
+            raise superdesk.SuperdeskError(payload=msg)

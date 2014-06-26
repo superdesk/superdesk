@@ -15,7 +15,7 @@ VERSION = (0, 0, 1)
 DOMAIN = {}
 COMMANDS = {}
 BLUEPRINTS = []
-apps = []
+apps = dict()
 
 logger = logging.getLogger(__name__)
 

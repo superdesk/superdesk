@@ -2,6 +2,7 @@
 
 import superdesk
 from superdesk.utc import utcnow
+from superdesk.base_view_controller import BaseViewController
 from flask import current_app as app
 
 providers = {}
@@ -74,30 +75,33 @@ superdesk.command('ingest:provider', AddProvider())
 import superdesk.io.reuters
 import superdesk.io.aap
 
-schema = {
-    'name': {
-        'type': 'string',
-        'required': True
-    },
-    'type': {
-        'type': 'string',
-        'required': True,
-        'allowed': providers.keys()
-    },
-    'config': {
-        'type': 'dict'
-    },
-    'ingested_count': {
-        'type': 'integer'
-    },
-    'accepted_count': {
-        'type': 'integer'
-    },
-    'token': {
-        'type': 'dict'
-    }
-}
 
-superdesk.domain('ingest_providers', {
-    'schema': schema
-})
+def init_app(app):
+    IngestProviderViewController(app=app)
+
+
+class IngestProviderViewController(BaseViewController):
+    schema = {
+        'name': {
+            'type': 'string',
+            'required': True
+        },
+        'type': {
+            'type': 'string',
+            'required': True,
+            'allowed': providers.keys()
+        },
+        'config': {
+            'type': 'dict'
+        },
+        'ingested_count': {
+            'type': 'integer'
+        },
+        'accepted_count': {
+            'type': 'integer'
+        },
+        'token': {
+            'type': 'dict'
+        }
+    }
+    endpoint_name = 'ingest_providers'
