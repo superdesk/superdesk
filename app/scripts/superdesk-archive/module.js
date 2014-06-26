@@ -35,8 +35,11 @@ define([
                 label: gettext('Delete archive'),
                 confirm: gettext('Please confirm you want to delete an archive item.'),
                 icon: 'remove',
-                controller: ['api', 'notify', 'data', function(api, notify, data) {
+                controller: ['$location', 'api', 'notify', 'data', function($location, api, notify, data) {
                     return api.archive.remove(data.item).then(function(response) {
+                        if ($location.search()._id === data.item._id) {
+                            $location.search('_id', null);
+                        }
                         data.list.splice(data.index, 1);
                     }, function(response) {
                         notify.error(gettext('I\'m sorry but can\'t delete the archive item right now.'));
