@@ -21,9 +21,7 @@ define([
             });
         };
 
-        var self = this;
         this.fetchItems = function(criteria) {
-        	self.fetchItemsCriteria = criteria;
     		api.archive.query(criteria).then(function(items) {
                 $scope.items = items;
                 $scope.createdMedia = {
@@ -31,9 +29,7 @@ define([
                 };
             });
         };
-        $scope.$on('changes in media_archive', function() {
-        	self.fetchItems(self.fetchItemsCriteria);
-        });
+        $scope.$on('changes in media_archive', this.refresh);
     }
 
     return ArchiveListController;
