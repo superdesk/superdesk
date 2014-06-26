@@ -21,8 +21,8 @@
             <li ng-repeat="item in items">
                 <div class="thumb" sd-image-preview="item.url" data-file="item.file">
                     <div class="holder">
-                        <i class="icon-image" ng-show="!item.url"></i>
-                        <img ng-src="{{ item.url }}" />
+                        <i class="filetype-icon-large-{{item.cssType}}" ng-hide="item.url && item.cssType === 'image'"></i>
+                        <img ng-src="{{ item.url }}" ng-if="item.cssType === 'image'"/>
                         <div class="failed" ng-if="item.model === false"></div>
                     </div>
                     <span class="remove" ng-click="cancelItem(item, $index)"><i class="icon-close-small"></i></span>
