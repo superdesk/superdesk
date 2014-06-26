@@ -19,7 +19,9 @@ from .items import import_rendition, import_media
 
 
 def update_status(task_id, current, total):
-    archive_item.update_state(task_id, state='PROGRESS', meta={'current': current, 'total': total})
+    if current is None:
+        current = 0
+    archive_item.update_state(task_id, state='PROGRESS', meta={'current': int(current), 'total': int(total)})
 
 
 @celery.task()
@@ -110,10 +112,11 @@ def archive_item(guid, provider_id, user, task_id=None):
         else:
             tasks.append(archive_rendition.s(task_id, guid, rendition['rendition'], href))
 
+    update_status(*finish_subtask_from_progress(task_id))
+
     if tasks:
         chord((task for task in tasks), update_item.s(crt_task_id == task_id, task_id, guid)).delay()
 
-    update_status(*finish_subtask_from_progress(task_id))
     if not tasks and task_id == crt_task_id:
         update_status(*finish_task_for_progress(task_id))
 
