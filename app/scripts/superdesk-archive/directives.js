@@ -73,12 +73,15 @@ define([
                 link: function(scope, elem) {
                     scope.data = null;
                     scope.error = null;
-                    api.ingest.getById(scope.item.residRef)
-                    .then(function(result) {
-                        scope.data = result;
-                    }, function(response) {
-                        scope.error = true;
-                    });
+                    scope.type = scope.item.itemClass.split(':')[1];
+                    if (scope.type !== 'text' && scope.type !== 'composite') {
+                        api.ingest.getById(scope.item.residRef)
+                        .then(function(result) {
+                            scope.data = result;
+                        }, function(response) {
+                            scope.error = true;
+                        });
+                    }
                 }
             };
         }])

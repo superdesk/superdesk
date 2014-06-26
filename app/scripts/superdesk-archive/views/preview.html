@@ -35,10 +35,7 @@
             <div class="text" ng-show="item.body_html" sd-html-preview="item.body_html"></div>
 
             <div class="composite-preview" ng-if="item.type === 'composite'">
-                <div class="subtitle" translate>Package content</div>
-                <div class="items">
-                    <div sd-package data-item="item"></div>
-                </div>
+                <div sd-package data-item="item"></div>
             </div>
         </div>
     </div>

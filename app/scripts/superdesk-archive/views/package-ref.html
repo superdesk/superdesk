@@ -1,22 +1,20 @@
-<div class="item {{data.type}}">
-	<div ng-if="data.type === 'text'">
-        <div class="headline">{{data.headline}}</div>
-    </div>
-    <div ng-if="data.type === 'picture'" class="holder">
-        <div sd-item-rendition data-item="data" data-rendition="thumbnail"></div>
-        <div class="headline" ng-show="data.headline">{{data.headline}}</div>
-    </div>
-    <div ng-if="data.type === 'audio'">
-        <audio controls="controls" sd-sources data-renditions="data.renditions"></audio>
-    </div>
-    <div ng-if="data.type === 'video'" class="holder">
-    	Video
-        <div class="headline">{{data.headline}}</div>
-    </div>
-    <div ng-if="data.type === 'composite'" class="holder">
-    	<i class="filetype-icon-large-composite"></i>
-        <div class="headline">{{data.headline}}</div>
-    </div>
-    <div class="loading" ng-show="!data && !error"></div>
+<div class="item {{type}}">
+    
+    <i class="filetype-icon-large-{{type}}" ng-if="type === 'composite' || type === 'text'"></i>
+
+	<div class="holder" ng-if="type !== 'composite' && type !== 'text'">
+		<div class="loading" ng-show="!data && !error"></div>
+		<div class="loading" ng-show="error">
+			<i class="filetype-icon-{{type}}"></i>
+		</div>
+		<div ng-if="type === 'picture'" sd-item-rendition data-item="data" data-rendition="thumbnail"></div>
+		<audio ng-if="type === 'audio'" controls="controls" sd-sources data-renditions="data.renditions" ng-show="data"></audio>
+		<div ng-if="type === 'video'">video</div>
+	</div>
+
+	<div class="headline" ng-show="item.headline">{{item.headline}}</div>
+	<div class="headline" ng-hide="item.headline" translate>Blank headline received</div>
+
     <div class="alert alert-error" ng-show="error" translate>Problems occured while fetching data.</div>
+
 </div>
