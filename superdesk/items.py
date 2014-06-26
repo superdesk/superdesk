@@ -17,6 +17,10 @@ from PIL import Image
 bp = superdesk.Blueprint('archive_media', __name__)
 
 
+GUID_TAG = 'tag'
+GUID_NEWSML = 'newsml'
+
+
 class InvalidFileType(SuperdeskError):
     """Exception raised when receiving a file type that is not supported."""
 
@@ -25,11 +29,14 @@ class InvalidFileType(SuperdeskError):
 
 
 def on_create_item(data, docs):
-    """Set guid as doc _id."""
+    """Make sure item has basic fields populated."""
     for doc in docs:
         update_dates_for(doc)
-        if 'guid' in doc:
-            doc.setdefault('_id', doc['guid'])
+
+        if not doc.get('guid'):
+            doc['guid'] = generate_guid(type=GUID_NEWSML)
+
+        doc.setdefault('_id', doc['guid'])
 
 
 def on_delete_archive(data, lookup):
@@ -43,16 +50,19 @@ def on_delete_archive(data, lookup):
                 pass
 
 
-def generate_guid(hints):
+def generate_guid(**hints):
     '''Generate a GUID based on given hints'''
     newsml_guid_format = 'urn:newsml:%(domain)s:%(timestamp)s:%(identifier)s'
     tag_guid_format = 'tag:%(domain)s:%(year)d:%(identifier)s'
 
-    assert isinstance(hints, dict)
+    if not hints.get('id'):
+        hints['id'] = str(uuid4())
+
     t = datetime.today()
-    if hints['type'].lower() == 'tag':
+
+    if hints['type'].lower() == GUID_TAG:
         return tag_guid_format % {'domain': SERVER_DOMAIN, 'year': t.year, 'identifier': hints['id']}
-    elif hints['type'].lower() == 'newsml':
+    elif hints['type'].lower() == GUID_NEWSML:
         return newsml_guid_format % {'domain': SERVER_DOMAIN, 'timestamp': t.isoformat(), 'identifier': hints['id']}
     return None
 
@@ -126,7 +136,7 @@ def on_upload_create(data, docs):
 
         try:
             update_dates_for(doc)
-            doc['guid'] = generate_guid({'type': 'tag', 'id': str(uuid4())})
+            doc['guid'] = generate_guid(type=GUID_TAG)
             doc['type'] = type_av.get(file_type)
             doc['version'] = 1
             doc['renditions'] = generate_renditions(file, doc['media'], inserted, file_type)
@@ -196,7 +206,6 @@ superdesk.blueprint(bp)
 base_schema = {
     'guid': {
         'type': 'string',
-        'required': True,
         'unique': True
     },
     'provider': {

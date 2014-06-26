@@ -183,3 +183,15 @@ Feature: News Items Archive
         """
         And we delete latest
         Then we get deleted response
+
+    @auth
+    Scenario: Create new text item
+        Given empty "archive"
+        When we post to "/archive"
+        """
+        [{"type": "text"}]
+        """
+        Then we get new resource
+        """
+        {"_id": "", "guid": "", "type": "text"}
+        """
