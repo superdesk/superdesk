@@ -12,6 +12,7 @@ from superdesk import SuperdeskError
 from superdesk.media_operations import resize_image
 from werkzeug.datastructures import FileStorage
 from PIL import Image
+from superdesk.notification import push_notification
 
 
 bp = superdesk.Blueprint('archive_media', __name__)
@@ -347,3 +348,24 @@ superdesk.domain(ARCHIVE_MEDIA, {
     'item_methods': ['PATCH', 'GET', 'DELETE'],
     'item_url': item_url
 })
+
+def on_create_media_archive(resource, docs):
+    push_notification('media_archive', created=1)
+
+superdesk.connect('create:ingest', on_create_media_archive)
+superdesk.connect('create:archive', on_create_media_archive)
+superdesk.connect('create:archive_media', on_create_media_archive)
+
+def on_update_media_archive(resource, id, updates):
+    push_notification('media_archive', updated=1)
+
+superdesk.connect('update:ingest', on_update_media_archive)
+superdesk.connect('update:archive', on_update_media_archive)
+superdesk.connect('update:archive_media', on_update_media_archive)
+
+def on_delete_media_archive(resource, lookup):
+    push_notification('media_archive', deleted=1)
+
+superdesk.connect('delete:ingest', on_delete_media_archive)
+superdesk.connect('delete:archive', on_delete_media_archive)
+superdesk.connect('delete:archive_media', on_delete_media_archive)
