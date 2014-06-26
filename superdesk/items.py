@@ -34,7 +34,7 @@ def on_create_item(data, docs):
 
 def on_delete_archive(data, lookup):
     '''Delete associated binary files.'''
-    res = data.find_one('archive', res=None, **lookup)
+    res = data.find_one('archive', res=None, req=None, **lookup)
     if res and res.get('renditions'):
         for _name, ref in res['renditions'].items():
             try:

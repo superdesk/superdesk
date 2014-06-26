@@ -46,7 +46,7 @@ class CreateUserCommand(superdesk.Command):
                 'password': password,
             }
 
-            user = superdesk.app.data.find_one('users', username=userdata.get('username'))
+            user = superdesk.app.data.find_one('users', username=userdata.get('username'), req=None)
             if user:
                 superdesk.app.data.update('users', user.get('_id'), userdata)
                 return user

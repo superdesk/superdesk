@@ -52,7 +52,7 @@ class SuperdeskDataLayer(DataLayer):
         req.max_results = max_results
         return self._backend(resource).find(resource, req, None)
 
-    def find_one(self, resource, req=None, **lookup):
+    def find_one(self, resource, req, **lookup):
         return self._backend(resource).find_one(resource, req=req, **lookup)
 
     def find_one_raw(self, resource, _id):

@@ -46,5 +46,5 @@ class GetTokenTestCase(TestCase):
                 self.assertNotEquals('', token)
                 self.assertEquals(token, provider['token']['token'])
 
-                dbprovider = self.app.data.find_one('ingest_providers', type=PROVIDER)
+                dbprovider = self.app.data.find_one('ingest_providers', type=PROVIDER, req=None)
                 self.assertEquals(token, dbprovider['token']['token'])

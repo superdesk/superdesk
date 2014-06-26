@@ -42,7 +42,7 @@ class SuperdeskValidator(Validator):
                 except:
                     query[config.ID_FIELD] = {'$ne': self._id}
 
-            if app.data.find_one(self.resource, None, **query):
+            if app.data.find_one(self.resource, req=None, **query):
                 self._error(field, ERROR_UNIQUE)
 
     def _validate_minlength(self, min_length, field, value):

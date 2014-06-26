@@ -54,7 +54,7 @@ class SuperdeskTokenAuth(TokenAuth):
         perm_method = self.method_map[method.lower()]
         role_id = user.get('role')
         while role_id:
-            role = app.data.find_one('user_roles', _id=role_id) or {}
+            role = app.data.find_one('user_roles', _id=role_id, req=None) or {}
             perm = role.get('permissions', {})
             if perm.get(resource, {}).get(perm_method, False):
                 return True
@@ -63,10 +63,10 @@ class SuperdeskTokenAuth(TokenAuth):
 
     def check_auth(self, token, allowed_roles, resource, method):
         """Check if given token is valid"""
-        auth_token = app.data.find_one('auth', token=token)
+        auth_token = app.data.find_one('auth', token=token, req=None)
         if auth_token:
             user_id = str(auth_token['user'])
-            flask.g.user = app.data.find_one('users', _id=user_id)
+            flask.g.user = app.data.find_one('users', _id=user_id, req=None)
             return self.check_permissions(resource, method, flask.g.user)
 
     def authorized(self, allowed_roles, resource, method):
@@ -86,7 +86,7 @@ def authenticate(credentials, db):
     if 'username' not in credentials:
         raise NotFoundAuthError()
 
-    user = db.find_one('auth_users', username=credentials.get('username'))
+    user = db.find_one('auth_users', username=credentials.get('username'), req=None)
     if not user:
         raise NotFoundAuthError()
 

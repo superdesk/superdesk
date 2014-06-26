@@ -24,7 +24,7 @@ def update_provider(provider):
             item.setdefault('updated', utcnow())
             item['ingest_provider'] = str(provider['_id'])
 
-            old_item = app.data.find_one('ingest', guid=item['guid'])
+            old_item = app.data.find_one('ingest', guid=item['guid'], req=None)
             if old_item:
                 app.data.update('ingest', str(old_item.get('_id')), item)
             else:

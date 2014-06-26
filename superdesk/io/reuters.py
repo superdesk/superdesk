@@ -119,7 +119,7 @@ class ReutersUpdateService(object):
 
 
 def on_read_ingest(data, docs):
-    provider = data.find_one('ingest_providers', type=PROVIDER)
+    provider = data.find_one('ingest_providers', type=PROVIDER, req=None)
     if not provider:
         return
     for doc in docs:

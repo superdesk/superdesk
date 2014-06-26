@@ -55,7 +55,7 @@ def archive_item(guid, provider_id, user, task_id=None):
 
     update_status(*add_subtask_to_progress(task_id))
 
-    provider = data.find_one('ingest_providers', _id=provider_id)
+    provider = data.find_one('ingest_providers', _id=provider_id, req=None)
     service_provider = providers[provider.get('type')]
     service_provider.provider = provider
 
@@ -87,7 +87,7 @@ def archive_item(guid, provider_id, user, task_id=None):
             if 'residRef' in ref:
                 doc = {'guid': ref.get('residRef'), 'provider': provider, 'user': user, 'task_id': crt_task_id}
 
-                archived_doc = data.find_one('archive', guid=doc.get('guid'))
+                archived_doc = data.find_one('archive', guid=doc.get('guid'), req=None)
                 # check if task already started
                 if not archived_doc:
                     doc.setdefault('_id', doc.get('guid'))
@@ -119,7 +119,7 @@ def archive_item(guid, provider_id, user, task_id=None):
 
 
 def ingest_set_archived(guid):
-    ingest_doc = app.data.find_one('ingest', guid=guid)
+    ingest_doc = app.data.find_one('ingest', guid=guid, req=None)
     if ingest_doc:
         app.data.update('ingest', ingest_doc.get('_id'), {'archived': utcnow()})
 
@@ -127,7 +127,7 @@ def ingest_set_archived(guid):
 def archive_ingest(data, docs, **kwargs):
     data = app.data
     for doc in docs:
-        ingest_doc = data.find_one('ingest', _id=doc.get('guid'))
+        ingest_doc = data.find_one('ingest', _id=doc.get('guid'), req=None)
         if not ingest_doc:
             continue
         ingest_set_archived(doc.get('guid'))
