@@ -23,10 +23,7 @@ define(['lodash'], function(_) {
         });
 
         $scope.create = function() {
-            var temp = {
-                type: 'text',
-                guid: 'item:' + Math.random()
-            };
+            var temp = {type: 'text'};
             api.archive.save(temp, {}).then(function(newItem) {
                 workqueue.add(newItem);
                 $scope.switchArticle(newItem);
