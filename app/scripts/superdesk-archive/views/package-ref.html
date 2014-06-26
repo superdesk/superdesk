@@ -3,7 +3,7 @@
         <div class="headline">{{data.headline}}</div>
     </div>
     <div ng-if="data.type === 'picture'" class="holder">
-        <div sd-item-rendition data-item="data" data-rendition="viewImage"></div>
+        <div sd-item-rendition data-item="data" data-rendition="thumbnail"></div>
         <div class="headline" ng-show="data.headline">{{data.headline}}</div>
     </div>
     <div ng-if="data.type === 'audio'">
@@ -17,4 +17,6 @@
     	<i class="filetype-icon-large-composite"></i>
         <div class="headline">{{data.headline}}</div>
     </div>
+    <div class="loading" ng-show="!data && !error"></div>
+    <div class="alert alert-error" ng-show="error" translate>Problems occured while fetching data.</div>
 </div>

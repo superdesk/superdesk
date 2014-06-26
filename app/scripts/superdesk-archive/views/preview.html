@@ -37,36 +37,7 @@
             <div class="composite-preview" ng-if="item.type === 'composite'">
                 <div class="subtitle" translate>Package content</div>
                 <div class="items">
-
                     <div sd-package data-item="item"></div>
-                    
-                    <!--
-                    <div ng-repeat="section in contents">
-                        <div sd-toggle-box data-title="{{ section.type | translate }}" data-open="true" data-icon="filetype-icon-{{section.type}}">
-                            <ul class="{{section.type}}">
-                                
-                                <li ng-repeat="p_item in section.items">
-                                    <div ng-if="p_item.type === 'text'">
-                                        <div class="headline">{{p_item.headline}}</div>
-                                    </div>
-                                    <div ng-if="p_item.type === 'picture'" class="holder">
-                                        <div sd-item-rendition data-item="p_item" data-rendition="viewImage"></div>
-                                        <div class="headline" ng-show="p_item.headline">{{p_item.headline}}</div>
-                                    </div>
-                                    <div ng-if="p_item.type === 'audio'">
-                                        <audio controls sd-source="p_item.renditions.stream"></audio>
-                                    </div>
-
-                                    <div ng-if="p_item.type === 'video'" class="holder">
-                                        <video controls sd-source="p_item.renditions.stream"></video>
-                                    </div>
-                                </li>
-
-                            </ul>
-                        </div>                        
-                    </div>
-                    -->
-
                 </div>
             </div>
         </div>
