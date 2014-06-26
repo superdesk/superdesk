@@ -24,6 +24,14 @@ define(['lodash'], function(_) {
             self.fetchItems({source: query});
         });
 
+        $scope.$watchCollection(function() {
+            return $location.search();
+        }, function(search) {
+            if (!search._id) {
+                $scope.selected.preview = null;
+            }
+        });
+
         this.buildFilters = function(params) {
             var filters = [];
 
