@@ -5,8 +5,9 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    return angular.module('superdesk.notification', [ 'superdesk.data' ]).run(
-		function($rootScope, $timeout, api) {
+    return angular.module('superdesk.notification', [ 'superdesk.data' ])
+    .run(['$rootScope', '$timeout', 'api',
+    	function($rootScope, $timeout, api) {
 			var last = null;
 			(function pool() {
 				var q = null;
@@ -51,5 +52,5 @@ define([
 					$timeout(pool, 10000);
 				});
 			})();
-		});
+		}]);
 });
