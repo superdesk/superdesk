@@ -47,7 +47,8 @@ INSTALLED_APPS = (
     'superdesk.desks',
     'superdesk.subjectcodes',
     'superdesk.archive_ingest',
-    'superdesk.amazon.import_from_amazon'
+    # 'superdesk.amazon.import_from_amazon'
+    'superdesk.notification',
 )
 
 RESOURCE_METHODS = ['GET', 'POST']
@@ -77,3 +78,6 @@ SERVER_DOMAIN = 'localhost'
 # DEFAULT_FILE_STORAGE = 'superdesk.storage.FileSystemStorage'
 # abspath = os.path.abspath(os.path.dirname(__file__))
 # UPLOAD_FOLDER = os.path.join(abspath, 'upload')
+
+NOTIFICATION_PUSH_INTERVAL = 1
+# The time interval to push notifications for.
