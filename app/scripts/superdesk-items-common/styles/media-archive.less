@@ -484,10 +484,15 @@
 						background: #f0f0f0 url(../../images/loading-large.gif) center center no-repeat;
 					}
 					.alert-error {
-						font-size: 13px;
+						margin-top: 5px;
+						font-size: 12px;
+						padding: 4px 6px;
 					}
 					.item {
 						margin-bottom: 15px;
+					}
+					.info {
+						.clearfix();
 					}
 					.headline {
 						font-size: 14px;
@@ -517,9 +522,18 @@
 						.loading {
 							margin: 20px 0 0 40px;
 						}
+						.error-icon {
+							.opacity(50);
+							height: 80px;
+							line-height: 80px;
+							text-align: center;
+							i {
+								vertical-align: middle;
+								zoom: 0.7;
+							}
+						}
 					}
 					.picture {
-						height: 80px;
 						figure {
 							width: 100%;
 							img {
@@ -534,7 +548,14 @@
 					}
 
 					.video {
-						height: 80px;
+						.holder{
+							line-height: 80px;
+							text-align: center;
+							i {
+								vertical-align: middle;
+								.opacity(50);
+							}
+						}
 						.headline {
 							max-height: 74px;
 							overflow: hidden;
