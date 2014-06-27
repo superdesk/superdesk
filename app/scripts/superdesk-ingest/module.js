@@ -80,6 +80,8 @@ define([
                                 data.list[data.index].archived = true;
                             }
                         });
+                    }, function(response) {
+                        data.list[data.index].archiveError = true;
                     });
                 }],
                 filters: [

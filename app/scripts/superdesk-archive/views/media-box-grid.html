@@ -1,6 +1,6 @@
 <div class="archiving-progress" style="width:{{item.archivingProgress}}%" ng-show="!item.archived && item.archiving"></div>
 
-<div class="error-box" ng-show>
+<div class="error-box" ng-show="item.archiveError">
     <p class="message">There was an <b>error</b> archiving this item</p>
     <div class="buttons">
 
