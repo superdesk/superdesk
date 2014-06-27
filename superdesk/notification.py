@@ -28,11 +28,12 @@ push_interval = 3
 app = None
 notifications = {}
 
+
 def init_app(flask_app):
     global app, push_interval
     app = flask_app
     push_interval = app.config.get('NOTIFICATION_PUSH_INTERVAL', push_interval)
-    Timer(push_interval, save_notification).start()
+
 
 def save_notification():
     # TODO: pymongo connect
@@ -43,25 +44,28 @@ def save_notification():
         with app.test_request_context():
             log.info('Saving changes %s', old_notifications)
             post('notification', {'changes': old_notifications})
-        
-    Timer(push_interval, save_notification).start()
+
 
 def push_notification(name, created=0, deleted=0, updated=0):
     log.info('Pushing for %s, created %s, deleted %s, updated %s', name, created, deleted, updated)
-    if created == deleted == updated == 0: return
-    
+    if created == deleted == updated == 0:
+        return
+
     changes = notifications.get(name)
-    if changes == None:
+    if changes is None:
         changes = notifications[name] = {
             'created': 0,
             'updated': 0,
             'deleted': 0
         }
-        
-    if created: changes['created'] += created
-    if deleted: changes['deleted'] += deleted
-    if updated: changes['updated'] += updated
-    
+
+    changes['created'] += created
+    changes['deleted'] += deleted
+    changes['updated'] += updated
+
+    Timer(push_interval, save_notification).start()
+
+
 def post(resource, payl):
     """ Adds one or more documents to a resource. Each document is validated
     against the domain schema. If validation passes the document is inserted
