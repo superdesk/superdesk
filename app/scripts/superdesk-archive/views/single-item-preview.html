@@ -1,14 +1,15 @@
 <div>
-        <!-- picture preview -->
-        <div class="full-preview">
-            <div sd-item-rendition data-item="item" data-rendition="baseImage"></div>
-        </div>
 
         <div class="condensed-preview">
 
             <!-- audio preview -->
             <div class="full-preview" ng-if="item.type == 'audio'">
                 <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
+            </div>
+
+             <!-- picture preview -->
+            <div class="full-preview" ng-if="item.type == 'picture'">
+                <div sd-item-rendition data-item="item" data-rendition="baseImage"></div>
             </div>
             
             <!-- text preview -->
@@ -23,15 +24,8 @@
             </div>
 
             <!-- composite preview -->
-            <div class="lightbox-mosaic" ng-show="item.type == 'composite'">
-                <ul>
-                    <li ng-repeat="thumb in contents">
-                        <figure ng-show="thumb.type == 'picture'">
-                            <div sd-item-rendition data-item="thumb" data-rendition="viewImage"></div>
-                        </figure>
-                        <h6 ng-show="thumb.type !== 'picture'">{{ thumb.headline }}</h6>
-                    </li>
-                </ul>
+            <div class="full-preview composite" ng-show="item.type == 'composite'">
+                <i class="filetype-icon-large-composite icon-white"></i>
             </div>
             
         </div>

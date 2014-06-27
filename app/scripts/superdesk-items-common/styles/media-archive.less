@@ -504,12 +504,16 @@
 						background: #fafafa;
 						padding: 10px;
 						.clearfix();
-						i {
-							zoom: 0.5;
-							.opacity(50);
+						.icons-holder {
 							float: left;
 							margin-right: 20px;
+							.clearfix();
+							i {
+								zoom: 0.5;
+								.opacity(50);
+							}
 						}
+						
 					}
 					.holder {
 						width: 120px;
@@ -1438,6 +1442,14 @@
 			padding : 50px 0 ;
 			text-align: center;
 		}
+		.full-preview {
+			&.composite i {
+				position: absolute;
+				top:50%; left: 50%;
+				margin: -70px 0 0 -20px;
+				zoom:2;
+			}
+		}
 	}
 	
 	.lightbox-composite {
@@ -1446,7 +1458,7 @@
 			width: @lightbox-composite-width; 
 		}
 		.box-sizing(border-box);
-		background: rgba(0,0,0,0.8);
+		background: #000;
 		position: absolute;
 		top: 0; bottom: 0; left: 0;
 		z-index: 2;
@@ -1534,7 +1546,8 @@
 		ul {
 			list-style-type: none;
 			margin:0; padding: 0;
-			> li {
+			margin-top: 10px;
+			.item {
 				border-bottom: 1px solid #272727;
 				height: 40px;
 				padding: 20px;
@@ -1547,7 +1560,7 @@
 					border-left: 3px solid #62b0d0;
 					background: rgba(98,176,208,0.4);
 				}
-				> figure {
+				.holder, .icons-holder {
 					float: left;
 					width: 60px;
 					height: 40px;
@@ -1563,7 +1576,12 @@
 						margin-top: 15px;
 					}
 				}
-				h6 {
+				.icons-holder {
+					i {
+						background-image: url(../../images/file-types-icons-large-white.png);
+					}
+				}
+				.headline {
 					height: 40px;
 					overflow: hidden;
 					color: #dedede;
@@ -1571,6 +1589,37 @@
 					font-size: 14px;
 					.text-normal();
 					line-height: 21px;
+				}
+			}
+			.toggle-box > header {
+				margin-left: 5px;
+				background: #223d49;
+				margin-bottom: 0;
+				&:before {
+					display: none;
+				}
+				i {
+					background-image: url(../../images/glyphicons-halflings-white.png)
+				}
+				h6 {
+					background: #223d49;
+					color: #fff;
+				}
+			}
+			
+		}
+		&.open ul {
+			.toggle-box > header {
+				background: #000;
+				border:0;
+				&:before {
+					display: block;
+					border-bottom-color: #62b0d0;
+				}
+				h6 {
+					background: #000;
+					color: #fff;
+					padding-right: 10px;
 				}
 			}
 		}

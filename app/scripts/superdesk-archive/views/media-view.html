@@ -10,18 +10,8 @@
             <span><i class="filetype-icon-large-composite icon-white"></i></span>
             <h5>{{ item.headline }}</h5>
         </div>
-        <ul>
-            <li ng-repeat="p_item in packageContents" 
-                class="{{p_item.type}}" 
-                ng-click="setSingleItem(p_item)" 
-                ng-class="{selected: singleItem._id == p_item._id}">
-
-                <figure>
-                    <div sd-item-rendition data-item="p_item" data-rendition="thumbnail"></div>
-                    <i class="filetype-icon-large-{{p_item.type}} icon-white" ng-show="p_item.type !== 'picture'"></i>
-                </figure>
-                <h6 ng-show="p_item.headline">{{ p_item.headline }}</h6>
-            </li>
+        <ul ng-if="item.type === 'composite'">
+            <div sd-package data-item="item" data-setitem="setPackageSingle(selected)"></div>
         </ul>
     </div>
 
@@ -29,7 +19,7 @@
     <!-- preview pane -->
     <section class="lightbox-left" ng-class="{'composite' : item.type === 'composite', 'open' : compositeOpen}">
 
-        <div sd-single-item data-item="singleItem" data-contents="packageContents"></div>        
+        <div sd-single-item data-item="singleItem"></div>        
         <div class="lightbox-caption">{{ item.headline }}</div>
 
         <div class="navigation">

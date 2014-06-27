@@ -33,13 +33,18 @@ define([
             return {
                 replace: true,
                 templateUrl: require.toUrl('./views/package.html'),
-                scope: {item: '='},
+                scope: {
+                    item: '=',
+                    setitem: '&'
+                },
                 link: function(scope, elem) {
                     scope.$watch('item', function() {
-                        scope.tree = solveRefs(
-                            _.find(scope.item.groups, {id: 'root'}),
-                            scope.item.groups
-                        );
+                        if (scope.item !== null) {
+                            scope.tree = solveRefs(
+                                _.find(scope.item.groups, {id: 'root'}),
+                                scope.item.groups
+                            );
+                        }
                     });
                 }
             };
@@ -48,18 +53,25 @@ define([
             return {
                 replace: true,
                 templateUrl: require.toUrl('./views/package-item.html'),
-                scope: {id: '=', item: '='},
+                scope: {
+                    id: '=',
+                    item: '=',
+                    setitem: '&'
+                },
                 link: function(scope, elem) {
-
                 }
             };
         }])
         .directive('sdPackageItemProxy', ['$compile', function($compile) {
-            var template = '<div sd-package-item data-id="id" data-item="item"></div>';
+            var template = '<div sd-package-item data-id="id" data-item="item" data-setitem="setitem({selected: selected})"></div>';
 
             return {
                 replace: true,
-                scope: {id: '=', item: '='},
+                scope: {
+                    id: '=',
+                    item: '=',
+                    setitem: '&'
+                },
                 link: function(scope, elem) {
                     elem.append($compile(template)(scope));
                 }
@@ -69,7 +81,10 @@ define([
             return {
                 replace: true,
                 templateUrl: require.toUrl('./views/package-ref.html'),
-                scope: {item: '='},
+                scope: {
+                    item: '=',
+                    setitem: '&'
+                },
                 link: function(scope, elem) {
                     scope.data = null;
                     scope.error = null;
@@ -103,7 +118,6 @@ define([
                 link: function(scope, elem) {
 
                     scope.singleItem = null;
-                    scope.packageContents = null;
 
                     scope.prevEnabled = true;
                     scope.nextEnabled = true;
@@ -140,27 +154,20 @@ define([
                         keyboardManager.pop('right');
                     });
 
+                    scope.setPackageSingle = function(selected) {
+                        api.ingest.getById(selected)
+                            .then(function(item) {
+                                scope.setSingleItem(item);
+                            }, function(response) {
+                                if (response.status === 404) {
+                                    console.log('Item not found');
+                                }
+                            });
+
+                    }
+
                     scope.setSingleItem = function(item) {
                         scope.singleItem = item;
-                        if (scope.singleItem !== null) {
-                            if (scope.singleItem.type === 'composite') {
-                                scope.packageContents = [];
-
-                                var mainPackage = _.find(scope.singleItem.groups, {id: 'main'});
-
-                                _.each(mainPackage.refs, function(r) {
-
-                                    api.ingest.getById(r.residRef)
-                                        .then(function(item) {
-                                            scope.packageContents.push(item);
-                                        }, function(response) {
-                                            if (response.status === 404) {
-                                                console.log('Item not found');
-                                            }
-                                        });
-                                });
-                            }
-                        }
                     };
 
                     setItem(scope.item);

@@ -1,7 +1,9 @@
-<div class="item {{type}}">
+<div class="item {{type}}" ng-click="setitem({selected: item.residRef})">
     <div class="info">
-	    <i class="filetype-icon-large-{{type}}" ng-if="type === 'composite' || type === 'text'"></i>
-
+	    <figure class="icons-holder" ng-if="type === 'composite' || type === 'text'">
+	    	<i class="filetype-icon-large-{{type}}"></i>
+	    </figure>
+	    
 		<div class="holder" ng-if="type !== 'composite' && type !== 'text'">
 			<div class="loading" ng-show="!data && !error"></div>
 			<div class="error-icon" ng-show="error">
