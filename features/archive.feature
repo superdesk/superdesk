@@ -91,6 +91,7 @@ Feature: News Items Archive
         """
         {"guid": ""}
         """
+        And we get file metadata
         Then original rendition is updated with link to file having mimetype "audio/ogg"
         When we patch latest
         """
@@ -110,6 +111,7 @@ Feature: News Items Archive
         """
         {"guid": ""}
         """
+        And we get file metadata
         Then original rendition is updated with link to file having mimetype "video/mp4"
         When we patch latest
         """
