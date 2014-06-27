@@ -47,7 +47,7 @@ INSTALLED_APPS = (
     'superdesk.desks',
     'superdesk.subjectcodes',
     'superdesk.archive_ingest',
-    # 'superdesk.amazon.import_from_amazon'
+    'superdesk.amazon.import_from_amazon',
     'superdesk.notification',
 )
 
