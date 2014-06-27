@@ -87,6 +87,10 @@ define(['lodash'], function(_) {
         this.fetchItems = function(criteria) {
             console.log('no api defined');
         };
+        
+        this.refresh = function() {
+        	self.fetchItems($location.search());
+        };
     }
 
     return BaseListController;

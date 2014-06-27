@@ -22,13 +22,14 @@ define([
         };
 
         this.fetchItems = function(criteria) {
-            api.archive.query(criteria).then(function(items) {
+    		api.archive.query(criteria).then(function(items) {
                 $scope.items = items;
                 $scope.createdMedia = {
                     items: []
                 };
             });
         };
+        $scope.$on('changes in media_archive', this.refresh);
     }
 
     return ArchiveListController;
