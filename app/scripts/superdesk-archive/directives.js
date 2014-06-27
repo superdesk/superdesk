@@ -164,7 +164,7 @@ define([
                                 }
                             });
 
-                    }
+                    };
 
                     scope.setSingleItem = function(item) {
                         scope.singleItem = item;
