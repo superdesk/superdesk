@@ -16,7 +16,7 @@ from superdesk.celery_app import celery, finish_task_for_progress,\
 from celery.result import AsyncResult
 from flask.globals import current_app as app
 from .items import import_rendition, import_media
-from superdesk.base_view_controller import BaseViewController
+from superdesk.base_model import BaseModel
 
 
 def update_status(task_id, current, total):
@@ -129,10 +129,10 @@ def ingest_set_archived(guid):
 
 
 def init_app(app):
-    ArchiveIngestViewController(app=app)
+    ArchiveIngestModel(app=app)
 
 
-class ArchiveIngestViewController(BaseViewController):
+class ArchiveIngestModel(BaseModel):
     endpoint_name = 'archive_ingest'
     resource_methods = ['POST']
     item_methods = ['GET']
@@ -151,20 +151,20 @@ class ArchiveIngestViewController(BaseViewController):
         }
     }
 
-    def post(self, docs, **kwargs):
+    def create(self, docs, **kwargs):
         for doc in docs:
-            ingest_doc = self.app.data.find_one('ingest', _id=doc.get('guid'), req=None)
+            ingest_doc = app.data.find_one('ingest', _id=doc.get('guid'), req=None)
             if not ingest_doc:
                 continue
             ingest_set_archived(doc.get('guid'))
 
             doc.setdefault('_id', doc.get('guid'))
             doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
-            self.app.data.insert('archive', [doc])
+            app.data.insert('archive', [doc])
 
             task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), doc.get('user'))
             doc['task_id'] = task.id
-            self.app.data.update('archive', doc.get('guid'), {"task_id": task.id})
+            app.data.update('archive', doc.get('guid'), {"task_id": task.id})
         return [doc.get('guid') for doc in docs]
 
     def find_one(self, req=None, **lookup):

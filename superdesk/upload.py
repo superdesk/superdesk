@@ -2,8 +2,8 @@
 
 import superdesk
 from superdesk import SuperdeskError
-from superdesk.base_view_controller import BaseViewController
-from flask import url_for, Response
+from superdesk.base_model import BaseModel
+from flask import url_for, Response, current_app as app
 from .media_operations import store_file_from_url
 
 bp = superdesk.Blueprint('upload', __name__)
@@ -12,7 +12,7 @@ superdesk.blueprint(bp)
 
 @bp.route('/upload/<path:media_id>/raw', methods=['GET'])
 def get_upload_as_data_uri(media_id):
-    media_file = superdesk.app.media.get(media_id)
+    media_file = app.media.get(media_id)
     if media_file:
         return Response(media_file.read(), mimetype=media_file.content_type)
     raise SuperdeskError(status_code=404, payload='File not found on media storage.')
@@ -24,10 +24,10 @@ def url_for_media(media_id):
 
 
 def init_app(app):
-    UploadViewController(app=app)
+    UploadModel(app=app)
 
 
-class UploadViewController(BaseViewController):
+class UploadModel(BaseModel):
 
     endpoint_name = 'upload'
     schema = {
@@ -56,18 +56,18 @@ class UploadViewController(BaseViewController):
     item_methods = ['GET', 'DELETE']
     resource_methods = ['GET', 'POST']
 
-    def post(self, docs, **kwargs):
+    def create(self, docs, **kwargs):
         for doc in docs:
             if doc.get('URL') and doc.get('media'):
                 raise SuperdeskError(payload='Uploading file by URL and file stream in the same time is not supported.')
             self.download_file(doc)
             update = {}
-            media_file = self.app.media.get(doc.get('media'))
+            media_file = app.media.get(doc.get('media'))
             update['mime_type'] = media_file.content_type
             update['data_uri_url'] = url_for_media(doc.get('media'))
             update['filemeta'] = media_file.metadata
             doc.update(update)
-        return super().post(docs, **kwargs)
+        return super().create(docs, **kwargs)
 
     def download_file(self, doc):
         url = doc.get('URL')

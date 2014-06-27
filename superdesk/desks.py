@@ -1,4 +1,4 @@
-from .base_view_controller import BaseViewController
+from .base_model import BaseModel
 from bson.objectid import ObjectId
 
 
@@ -24,17 +24,17 @@ desks_schema = {
 
 
 def init_app(app):
-    DesksViewController(app=app)
-    UserDesksViewController(app=app)
+    DesksModel(app=app)
+    UserDesksModel(app=app)
 
 
-class DesksViewController(BaseViewController):
+class DesksModel(BaseModel):
     endpoint_name = 'desks'
     schema = desks_schema
     datasource = {'default_sort': [('created', -1)]}
 
 
-class UserDesksViewController(BaseViewController):
+class UserDesksModel(BaseModel):
     endpoint_name = 'user_desks'
     url = 'users/<regex("[a-f0-9]{24}"):user_id>/desks'
     schema = desks_schema

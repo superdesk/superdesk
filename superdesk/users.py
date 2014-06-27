@@ -1,7 +1,7 @@
 """Superdesk Users"""
 
 import superdesk
-from .base_view_controller import BaseViewController
+from .base_model import BaseModel
 
 
 class EmptyUsernameException(Exception):
@@ -62,11 +62,11 @@ superdesk.command('users:create', CreateUserCommand())
 
 
 def init_app(app):
-    UsersViewController(app=app)
-    UserRolesViewController(app=app)
+    UsersModel(app=app)
+    UserRolesModel(app=app)
 
 
-class UserRolesViewController(BaseViewController):
+class UserRolesModel(BaseModel):
 
     endpoint_name = 'user_roles'
     schema = {
@@ -87,7 +87,7 @@ class UserRolesViewController(BaseViewController):
     }
 
 
-class UsersViewController(BaseViewController):
+class UsersModel(BaseModel):
 
     endpoint_name = 'users'
     additional_lookup = {

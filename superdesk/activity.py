@@ -1,7 +1,7 @@
 import logging
 import superdesk
 from superdesk.utc import utcnow
-from .base_view_controller import BaseViewController
+from .base_model import BaseModel
 import flask
 
 
@@ -23,10 +23,10 @@ class ActivityLogHandler(logging.Handler):
 
 
 def init_app(app):
-    ActivityViewController(app=app)
+    ActivityModel(app=app)
 
 
-class ActivityViewController(BaseViewController):
+class ActivityModel(BaseModel):
     endpoint_name = 'activity'
     resource_methods = ['GET']
     item_methods = []
@@ -58,4 +58,4 @@ class ActivityViewController(BaseViewController):
         activity['action'] = 'create'
         activity['extra'] = docs[0]
         # always the activity is written on mongo
-        super().post([activity])
+        super().create([activity])

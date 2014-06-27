@@ -5,7 +5,7 @@ import superdesk
 import superdesk.utils as utils
 from flask import json, current_app as app, request
 from eve.auth import TokenAuth
-from .base_view_controller import BaseViewController
+from .base_model import BaseModel
 
 
 logger = logging.getLogger(__name__)
@@ -67,7 +67,7 @@ class SuperdeskTokenAuth(TokenAuth):
         auth_token = app.data.find_one('auth', token=token, req=None)
         if auth_token:
             user_id = str(auth_token['user'])
-            flask.g.user = app.data.find_one('users', _id=user_id, req=None)
+            flask.g.user = app.data.find_one('users', req=None, _id=user_id)
             return self.check_permissions(resource, method, flask.g.user)
 
     def authorized(self, allowed_roles, resource, method):
@@ -87,7 +87,7 @@ def authenticate(credentials, db):
     if 'username' not in credentials:
         raise NotFoundAuthError()
 
-    user = db.find_one('auth_users', username=credentials.get('username'), req=None)
+    user = db.find_one('auth_users', req=None, username=credentials.get('username'))
     if not user:
         raise NotFoundAuthError()
 
@@ -99,12 +99,12 @@ def authenticate(credentials, db):
 
 
 def init_app(app):
-    AuthUsersViewController(app)
-    auth_controller = AuthViewController(app)
+    AuthUsersModel(app)
+    auth_controller = AuthModel(app)
     app.on_insert_auth += auth_controller.on_insert_auth
 
 
-class AuthUsersViewController(BaseViewController):
+class AuthUsersModel(BaseModel):
     endpoint_name = 'auth_users'
     datasource = {
         'source': 'users'
@@ -121,7 +121,7 @@ class AuthUsersViewController(BaseViewController):
     resource_methods = []
 
 
-class AuthViewController(BaseViewController):
+class AuthModel(BaseModel):
 
     endpoint_name = 'auth'
     schema = {
@@ -150,6 +150,6 @@ class AuthViewController(BaseViewController):
 
     def on_insert_auth(self, docs):
         for doc in docs:
-            user = authenticate(doc, self.app.data)
+            user = authenticate(doc, app.data)
             doc['user'] = user['_id']
             doc['token'] = utils.get_random_string(40)

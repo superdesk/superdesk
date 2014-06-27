@@ -45,7 +45,7 @@ class SuperdeskDataLayer(DataLayer):
         return self._backend(resource).find(resource, req, None)
 
     def find_one(self, resource, req, **lookup):
-        return self._backend(resource).find_one(resource, req=req, **lookup)
+        return superdesk.apps[resource].find_one(req=req, **lookup)
 
     def find_one_raw(self, resource, _id):
         return self._backend(resource).find_one_raw(resource, _id)
@@ -54,10 +54,10 @@ class SuperdeskDataLayer(DataLayer):
         return self._backend(resource).find_list_of_ids(resource, ids, client_projection)
 
     def insert(self, resource, docs, **kwargs):
-        return superdesk.apps[resource].post(docs, **kwargs)
+        return superdesk.apps[resource].create(docs, **kwargs)
 
     def update(self, resource, id_, updates):
-        return superdesk.apps[resource].patch(id=id_, updates=updates)
+        return superdesk.apps[resource].update(id=id_, updates=updates)
 
     def update_all(self, resource, query, updates):
         datasource = self._datasource(resource)

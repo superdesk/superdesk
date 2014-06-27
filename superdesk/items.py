@@ -6,14 +6,14 @@ from datetime import datetime
 from settings import SERVER_DOMAIN
 from uuid import uuid4
 from eve.utils import config
-from flask import abort, request, Response
+from flask import abort, request, Response, current_app as app
 from werkzeug.exceptions import NotFound
 from superdesk import SuperdeskError
 from superdesk.media_operations import resize_image
 from werkzeug.datastructures import FileStorage
 from PIL import Image
 from superdesk.notification import push_notification
-from superdesk.base_view_controller import BaseViewController
+from superdesk.base_model import BaseModel
 
 
 bp = superdesk.Blueprint('archive_media', __name__)
@@ -104,12 +104,12 @@ def import_rendition(media_archive_guid, rendition_name, href):
     file_guid = store_file_from_url(href)
     updates = {}
     updates['renditions'] = {rendition_name: {'href': url_for_media(file_guid)}}
-    rv = superdesk.app.data.update(ARCHIVE_MEDIA, id_=str(media_archive_guid), updates=updates)
+    rv = app.data.update(ARCHIVE_MEDIA, id_=str(media_archive_guid), updates=updates)
     return rv
 
 
 def fetch_media_from_archive(media_archive_guid):
-    archive = superdesk.app.data.find_one(ARCHIVE_MEDIA, req=None, _id=str(media_archive_guid))
+    archive = app.data.find_one(ARCHIVE_MEDIA, req=None, _id=str(media_archive_guid))
     if not archive:
         msg = 'No document found in the media archive with this ID: %s' % media_archive_guid
         raise superdesk.SuperdeskError(payload=msg)
@@ -270,12 +270,12 @@ superdesk.connect('delete:archive_media', on_delete_media_archive)
 
 
 def init_app(app):
-    IngestViewController(app=app)
-    ArchiveViewController(app=app)
-    ArchiveMediaViewController(app=app)
+    IngestModel(app=app)
+    ArchiveModel(app=app)
+    ArchiveMediaModel(app=app)
 
 
-class IngestViewController(BaseViewController):
+class IngestModel(BaseModel):
     endpoint_name = 'ingest'
     schema = ingest_schema
     extra_response_fields = extra_response_fields
@@ -285,12 +285,12 @@ class IngestViewController(BaseViewController):
         'facets': facets
     }
 
-    def post(self, docs, **kwargs):
+    def create(self, docs, **kwargs):
         on_create_item(docs)
-        return super().post(docs, **kwargs)
+        return super().create(docs, **kwargs)
 
 
-class ArchiveViewController(BaseViewController):
+class ArchiveModel(BaseModel):
     endpoint_name = 'archive'
     schema = archive_schema
     extra_response_fields = extra_response_fields
@@ -301,23 +301,23 @@ class ArchiveViewController(BaseViewController):
     }
     resource_methods = ['GET', 'POST', 'DELETE']
 
-    def post(self, docs, **kwargs):
+    def create(self, docs, **kwargs):
         on_create_item(docs)
-        return super().post(docs, **kwargs)
+        return super().create(docs, **kwargs)
 
     def delete(self, lookup):
         '''Delete associated binary files.'''
-        res = self.app.data.find_one('archive', res=None, req=None, **lookup)
+        res = app.data.find_one('archive', res=None, req=None, **lookup)
         if res and res.get('renditions'):
             for _name, ref in res['renditions'].items():
                 try:
-                    superdesk.app.media.delete(ref['media'])
+                    app.media.delete(ref['media'])
                 except (KeyError, NotFound):
                     pass
         return super().delete(lookup)
 
 
-class ArchiveMediaViewController(BaseViewController):
+class ArchiveMediaModel(BaseModel):
     type_av = {'image': 'picture', 'audio': 'audio', 'video': 'video'}
     endpoint_name = ARCHIVE_MEDIA
     schema = {
@@ -335,7 +335,7 @@ class ArchiveMediaViewController(BaseViewController):
     item_methods = ['PATCH', 'GET', 'DELETE']
     item_url = item_url
 
-    def post(self, docs, **kwargs):
+    def create(self, docs, **kwargs):
         ''' Create corresponding item on file upload '''
         for doc in docs:
             file = self.get_file_from_document(doc)
@@ -356,12 +356,12 @@ class ArchiveMediaViewController(BaseViewController):
                 for file_id in inserted:
                     self.delete_file_on_error(doc, file_id)
                 abort(500)
-        return super().post(docs, **kwargs)
+        return super().create(docs, **kwargs)
 
     def get_file_from_document(self, doc):
         file = doc.get('media_fetched')
         if not file:
-            file = superdesk.app.media.get(doc['media'])
+            file = app.media.get(doc['media'])
         else:
             del doc['media_fetched']
         return file
@@ -370,7 +370,7 @@ class ArchiveMediaViewController(BaseViewController):
         # Don't delete the file if we are on the import from storage flow
         if doc['_import']:
             return
-        superdesk.app.media.delete(file_id)
+        app.media.delete(file_id)
 
     def generate_renditions(self, original, media_id, inserted, file_type):
         """Generate system renditions for given media file id."""

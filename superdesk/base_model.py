@@ -1,7 +1,8 @@
 import superdesk
+from flask import current_app as app
 
 
-class BaseViewController():
+class BaseModel():
     '''
     Base controller for all endpoints, defines the basic implementation
     for GET/POST/PATCH/DELETE datalayer functionality.
@@ -19,10 +20,6 @@ class BaseViewController():
     datasource = {}
 
     def __init__(self, app, endpoint_schema=None):
-        if not app:
-            from flask import current_app as app
-
-        self.app = app
 
         if not endpoint_schema:
             endpoint_schema = {'schema': self.schema}
@@ -48,23 +45,23 @@ class BaseViewController():
         app.register_resource(self.endpoint_name, endpoint_schema)
         superdesk.apps[self.endpoint_name] = self
 
-    def find_one(self, req=None, **lookup):
-        return self.app.data._backend(self.endpoint_name).find_one(self.endpoint_name, req, **lookup)
+    def find_one(self, req, **lookup):
+        return app.data._backend(self.endpoint_name).find_one(self.endpoint_name, req=req, **lookup)
 
     def get(self, req, lookup):
-        cursor = self.app.data._backend(self.endpoint_name).find(self.endpoint_name, req, lookup)
+        cursor = app.data._backend(self.endpoint_name).find(self.endpoint_name, req, lookup)
         if not cursor.count():
             return cursor  # return 304 if not modified
         else:
             # but fetch without filter if there is a change
             req.if_modified_since = None
-            return self.app.data._backend(self.endpoint_name).find(self.endpoint_name, req, lookup)
+            return app.data._backend(self.endpoint_name).find(self.endpoint_name, req, lookup)
 
-    def post(self, docs, **kwargs):
-        return self.app.data._backend(self.endpoint_name).insert(self.endpoint_name, docs, **kwargs)
+    def create(self, docs, **kwargs):
+        return app.data._backend(self.endpoint_name).insert(self.endpoint_name, docs, **kwargs)
 
-    def patch(self, id, updates):
-        return self.app.data._backend(self.endpoint_name).update(self.endpoint_name, id, updates)
+    def update(self, id, updates):
+        return app.data._backend(self.endpoint_name).update(self.endpoint_name, id, updates)
 
     def delete(self, lookup):
-        return self.app.data._backend(self.endpoint_name).remove(self.endpoint_name, lookup)
+        return app.data._backend(self.endpoint_name).remove(self.endpoint_name, lookup)

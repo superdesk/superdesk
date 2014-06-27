@@ -2,7 +2,7 @@
 
 import superdesk
 from superdesk.utc import utcnow
-from superdesk.base_view_controller import BaseViewController
+from superdesk.base_model import BaseModel
 from flask import current_app as app
 
 providers = {}
@@ -77,10 +77,10 @@ import superdesk.io.aap
 
 
 def init_app(app):
-    IngestProviderViewController(app=app)
+    IngestProviderModel(app=app)
 
 
-class IngestProviderViewController(BaseViewController):
+class IngestProviderModel(BaseModel):
     schema = {
         'name': {
             'type': 'string',

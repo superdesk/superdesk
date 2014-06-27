@@ -1,11 +1,11 @@
-from superdesk.base_view_controller import BaseViewController
+from superdesk.base_model import BaseModel
 
 
 def init_app(app):
-    SesssionsViewController(app=app)
+    SesssionsModel(app=app)
 
 
-class SesssionsViewController(BaseViewController):
+class SesssionsModel(BaseModel):
     endpoint_name = 'sessions'
     schema = {
         'user': {
