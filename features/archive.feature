@@ -25,7 +25,30 @@ Feature: News Items Archive
         """
         {"guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401"}
         """
+        And we get "task_id"
+        And we get "state" in "/archive_ingest/#task_id#"
         And we get "archived" in "ingest/tag:reuters.com,0000:newsml_GM1EA6A1P8401"
+        
+
+    @auth
+    Scenario: Move item into archive - wrong guid
+        Given empty "archive"
+        And "ingest"
+        """
+        [{"guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401"}]
+        """
+
+        When we post to "/archive_ingest"
+        """
+        {
+        "guid": "wrong guid"
+        }
+        """
+
+        Then we get error 400
+		"""
+		{"_message": "", "_issues": "Fail to found ingest item with guid: wrong guid", "_status": "ERR"}
+		"""
 
 
     @auth

@@ -338,7 +338,8 @@ def step_impl_then_get_updated(context):
 
 @then('we get "{key}" in "{url}"')
 def step_impl_then_get_key_in_url(context, key, url):
-    res = context.client.get(url, headers=context.headers)
+    new_url = apply_placeholders(context, url)
+    res = context.client.get(new_url, headers=context.headers)
     assert_200(res)
     expect_json_contains(res, key)
 
@@ -420,6 +421,8 @@ def check_rendition(context, rendition_name):
 def step_impl_then_get_key(context, key):
     assert_200(context.response)
     expect_json_contains(context.response, key)
+    item = json.loads(context.response.get_data())
+    set_placeholder(context, '%s' % key, item[key])
 
 
 @then('we get action in user activity')
