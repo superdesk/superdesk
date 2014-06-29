@@ -56,7 +56,7 @@ class UploadModel(BaseModel):
     item_methods = ['GET', 'DELETE']
     resource_methods = ['GET', 'POST']
 
-    def create(self, docs, **kwargs):
+    def on_create(self, docs):
         for doc in docs:
             if doc.get('URL') and doc.get('media'):
                 raise SuperdeskError(payload='Uploading file by URL and file stream in the same time is not supported.')
@@ -67,7 +67,6 @@ class UploadModel(BaseModel):
             update['data_uri_url'] = url_for_media(doc.get('media'))
             update['filemeta'] = media_file.metadata
             doc.update(update)
-        return super().create(docs, **kwargs)
 
     def download_file(self, doc):
         url = doc.get('URL')

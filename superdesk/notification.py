@@ -1,6 +1,5 @@
 """Superdesk change notifications"""
 
-import superdesk
 import logging
 from threading import Timer
 from datetime import datetime
@@ -10,19 +9,21 @@ from eve.defaults import resolve_default_values
 from eve.utils import config
 from eve.versioning import resolve_document_version, insert_versioning_documents
 from cerberus.cerberus import ValidationError
+from .base_model import BaseModel
 
 log = logging.getLogger(__name__)
 
-superdesk.domain('notification', {
-    'schema': {
+
+class NotificationModel(BaseModel):
+    endpoint_name = 'notification'
+    schema = {
         'changes': {
             'type': 'dict',
             'allow_unknwon': True,
         }
-    },
-    'resource_methods': ['GET'],
-    'item_methods': ['GET'],
-})
+    }
+    resource_methods = ['GET']
+    item_methods = ['GET']
 
 push_interval = 3
 app = None
@@ -33,6 +34,7 @@ def init_app(flask_app):
     global app, push_interval
     app = flask_app
     push_interval = app.config.get('NOTIFICATION_PUSH_INTERVAL', push_interval)
+    NotificationModel(app)
 
 
 def save_notification():

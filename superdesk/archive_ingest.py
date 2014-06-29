@@ -151,7 +151,7 @@ class ArchiveIngestModel(BaseModel):
         }
     }
 
-    def create(self, docs, **kwargs):
+    def create(self, docs, trigger_events=None, **kwargs):
         for doc in docs:
             ingest_doc = app.data.find_one('ingest', _id=doc.get('guid'), req=None)
             if not ingest_doc:
@@ -161,11 +161,16 @@ class ArchiveIngestModel(BaseModel):
             doc.setdefault('_id', doc.get('guid'))
             doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
             app.data.insert('archive', [doc])
-
             task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), doc.get('user'))
             doc['task_id'] = task.id
             app.data.update('archive', doc.get('guid'), {"task_id": task.id})
         return [doc.get('guid') for doc in docs]
+
+    def update(self, id, updates, trigger_events=None):
+        pass
+
+    def delete(self, lookup, trigger_events=None):
+        pass
 
     def find_one(self, req=None, **lookup):
         try:

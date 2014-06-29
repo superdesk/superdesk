@@ -101,7 +101,6 @@ def authenticate(credentials, db):
 def init_app(app):
     AuthUsersModel(app)
     auth_controller = AuthModel(app)
-    app.on_insert_auth += auth_controller.on_insert_auth
 
 
 class AuthUsersModel(BaseModel):
@@ -148,7 +147,7 @@ class AuthModel(BaseModel):
     public_methods = ['POST']
     extra_response_fields = ['user', 'token', 'username']
 
-    def on_insert_auth(self, docs):
+    def on_create(self, docs):
         for doc in docs:
             user = authenticate(doc, app.data)
             doc['user'] = user['_id']

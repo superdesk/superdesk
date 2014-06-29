@@ -23,7 +23,8 @@ class ActivityLogHandler(logging.Handler):
 
 
 def init_app(app):
-    ActivityModel(app=app)
+    activityModel = ActivityModel(app=app)
+    app.on_create += activityModel.on_generic_create
 
 
 class ActivityModel(BaseModel):
@@ -44,7 +45,7 @@ class ActivityModel(BaseModel):
         }
     }
 
-    def on_create(self, data, resource, docs):
+    def on_generic_create(self, resource, docs):
         if resource == 'activity':
             return
 

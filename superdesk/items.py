@@ -104,12 +104,14 @@ def import_rendition(media_archive_guid, rendition_name, href):
     file_guid = store_file_from_url(href)
     updates = {}
     updates['renditions'] = {rendition_name: {'href': url_for_media(file_guid)}}
-    rv = app.data.update(ARCHIVE_MEDIA, id_=str(media_archive_guid), updates=updates)
+    rv = superdesk.apps[ARCHIVE_MEDIA].update(id=str(media_archive_guid), updates=updates,
+                                              trigger_events=True)
     return rv
 
 
 def fetch_media_from_archive(media_archive_guid):
-    archive = app.data.find_one(ARCHIVE_MEDIA, req=None, _id=str(media_archive_guid))
+    print('Fetching media from archive with id=', media_archive_guid)
+    archive = superdesk.apps[ARCHIVE_MEDIA].find_one(req=None, _id=str(media_archive_guid))
     if not archive:
         msg = 'No document found in the media archive with this ID: %s' % media_archive_guid
         raise superdesk.SuperdeskError(payload=msg)
@@ -245,28 +247,16 @@ facets = {
 ARCHIVE_MEDIA = 'archive_media'
 
 
-def on_create_media_archive(resource, docs):
+def on_create_media_archive():
     push_notification('media_archive', created=1)
 
-superdesk.connect('create:ingest', on_create_media_archive)
-superdesk.connect('create:archive', on_create_media_archive)
-superdesk.connect('create:archive_media', on_create_media_archive)
 
-
-def on_update_media_archive(resource, id, updates):
+def on_update_media_archive():
     push_notification('media_archive', updated=1)
 
-superdesk.connect('update:ingest', on_update_media_archive)
-superdesk.connect('update:archive', on_update_media_archive)
-superdesk.connect('update:archive_media', on_update_media_archive)
 
-
-def on_delete_media_archive(resource, lookup):
+def on_delete_media_archive():
     push_notification('media_archive', deleted=1)
-
-superdesk.connect('delete:ingest', on_delete_media_archive)
-superdesk.connect('delete:archive', on_delete_media_archive)
-superdesk.connect('delete:archive_media', on_delete_media_archive)
 
 
 def init_app(app):
@@ -285,9 +275,15 @@ class IngestModel(BaseModel):
         'facets': facets
     }
 
-    def create(self, docs, **kwargs):
+    def on_create(self, docs):
         on_create_item(docs)
-        return super().create(docs, **kwargs)
+        on_create_media_archive()
+
+    def on_update(self, updates, original):
+        on_update_media_archive()
+
+    def on_delete(self, doc):
+        on_delete_media_archive()
 
 
 class ArchiveModel(BaseModel):
@@ -301,20 +297,22 @@ class ArchiveModel(BaseModel):
     }
     resource_methods = ['GET', 'POST', 'DELETE']
 
-    def create(self, docs, **kwargs):
+    def on_create(self, docs):
         on_create_item(docs)
-        return super().create(docs, **kwargs)
+        on_create_media_archive()
 
-    def delete(self, lookup):
+    def on_update(self, updates, original):
+        on_update_media_archive()
+
+    def on_delete(self, doc):
         '''Delete associated binary files.'''
-        res = app.data.find_one('archive', res=None, req=None, **lookup)
-        if res and res.get('renditions'):
-            for _name, ref in res['renditions'].items():
+        on_delete_media_archive()
+        if doc and doc.get('renditions'):
+            for _name, ref in doc['renditions'].items():
                 try:
                     app.media.delete(ref['media'])
                 except (KeyError, NotFound):
                     pass
-        return super().delete(lookup)
 
 
 class ArchiveMediaModel(BaseModel):
@@ -335,7 +333,13 @@ class ArchiveMediaModel(BaseModel):
     item_methods = ['PATCH', 'GET', 'DELETE']
     item_url = item_url
 
-    def create(self, docs, **kwargs):
+    def on_update(self, updates, original):
+        on_update_media_archive()
+
+    def on_delete(self, doc):
+        on_delete_media_archive()
+
+    def on_create(self, docs):
         ''' Create corresponding item on file upload '''
         for doc in docs:
             file = self.get_file_from_document(doc)
@@ -356,7 +360,7 @@ class ArchiveMediaModel(BaseModel):
                 for file_id in inserted:
                     self.delete_file_on_error(doc, file_id)
                 abort(500)
-        return super().create(docs, **kwargs)
+        on_create_media_archive()
 
     def get_file_from_document(self, doc):
         file = doc.get('media_fetched')
