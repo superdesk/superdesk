@@ -100,7 +100,7 @@ def authenticate(credentials, db):
 
 def init_app(app):
     AuthUsersModel(app)
-    auth_controller = AuthModel(app)
+    AuthModel(app)
 
 
 class AuthUsersModel(BaseModel):
