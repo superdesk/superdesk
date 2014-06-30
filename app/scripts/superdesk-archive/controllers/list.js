@@ -13,6 +13,7 @@ define([
         };
 
         $scope.type = 'archive';
+        $scope.api = api.ingest;
 
         $scope.openUpload = function() {
             superdesk.intent('upload', 'media').then(function(items) {

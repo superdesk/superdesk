@@ -21,8 +21,8 @@ define([
                 description: 'Ingest widget'
             });
         }])
-        .controller('IngestController', ['$scope', '$timeout', 'superdesk', 'api', 'es',
-        function ($scope, $timeout, superdesk, api, es) {
+        .controller('IngestController', ['$location', '$scope', '$timeout', 'superdesk', 'api', 'es',
+        function ($location, $scope, $timeout, superdesk, api, es) {
             var timeoutId;
 
             function refresh(config) {
@@ -56,6 +56,8 @@ define([
 
             $scope.view = function(item) {
                 //superdesk.intent(superdesk.ACTION_VIEW, 'ingest', item);
+                $location.path('/ingest');
+                $location.search('_id', item._id);
             };
 
             $scope.$on('$destroy', function() {

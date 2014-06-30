@@ -23,11 +23,11 @@ define(['require', 'lodash'], function(require, _) {
                     var match = _.find(scope.items, {_id: itemId});
                     if (match) {
                         scope.clickItem(match);
-                    }/* else if (!scope.selected || itemId !== scope.selected._id) {
-                        scope.adapter.find(itemId).then(function(item) {
+                    } else if ((!scope.selected || itemId !== scope.selected._id) && scope.extras.api) {
+                        scope.extras.api.getById(itemId).then(function(item) {
                             scope.clickItem(item);
                         });
-                    }*/
+                    }
                 }
 
                 function move(diff) {
