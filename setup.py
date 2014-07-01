@@ -6,7 +6,7 @@ LONG_DESCRIPTION = open('README.md').read()
 
 setup(
     name='Superdesk-Server',
-    version='0.1.2',
+    version='0.1.3-dev',
     description='Superdesk REST API server',
     long_description=LONG_DESCRIPTION,
     author='petr jasek',
