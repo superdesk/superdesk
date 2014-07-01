@@ -1,4 +1,5 @@
 Cerberus==0.7
+Eve==0.4
 Events==0.2.1
 Eve-Docs==0.1.2
 Flask==0.10.1
@@ -30,7 +31,6 @@ six==1.6.1
 waitress==0.8.8
 celery[redis]==3.1.11
 
-git+git://github.com/superdesk/eve@develop#egg=Eve==0.4
 git+git://github.com/petrjasek/eve-elastic@master#egg=Eve-Elastic==0.2
 git+git://github.com/actionless/behave@master#egg=behave
 git+git://github.com/amagdas/tinys3@list-buckets#egg=tinys3

@@ -22,7 +22,7 @@ Feature: User Resource
             {"username": "foo", "password": "barbar", "email": "invalid email"}
             """
 
-        Then we get error 200
+        Then we get error 400
             """
             {"_status": "ERR", "_issues": {"email": {"pattern": 1}}}
             """
@@ -39,7 +39,7 @@ Feature: User Resource
             {"username": "foo", "email": "foo@bar.com"}
             """
 
-        Then we get error 200
+        Then we get error 400
             """
             {"_status": "ERR", "_issues": {"email": {"unique": 1}, "username": {"unique": 1}}}
             """
@@ -52,7 +52,7 @@ Feature: User Resource
             {"username": "foo", "password": "barbar", "phone": "0123"}
             """
 
-        Then we get error 200
+        Then we get error 400
             """
             {"_issues": {"phone": {"pattern": 1}}, "_status": "ERR"}
             """
