@@ -22,7 +22,7 @@
 		text-align: left;
 		height: 40px;
 		color: #333;
-		font-size: 16px;
+		font-size: 14px;
 		line-height: 20px;
 		.transition(all 0.2s ease);
 		&:hover {
@@ -62,7 +62,7 @@
 			.border-radius(3px);
 			margin-bottom: 6px;
 			.header {
-				height: 24px;
+				min-height: 24px;
 				margin-bottom: 8px;
 				.assignee {
 					.clearfix();
@@ -96,6 +96,10 @@
 				span {
 					.task-label;
 				}
+			}
+			&:hover {
+				cursor: pointer;
+				.box-shadow(0 0px 0px 1px #ddd);
 			}
 		}
 	} //list view
@@ -166,7 +170,7 @@
 				.text-semibold();
 				line-height: 24px;
 				color: #444;
-				margin: 20px 0;
+				margin: 0 0 15px 0;
 			}
 
 			.description {

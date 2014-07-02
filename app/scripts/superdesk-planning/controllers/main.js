@@ -4,21 +4,14 @@ define(['lodash'], function(_) {
     PlanningDashboardController.$inject = ['$scope'];
     function PlanningDashboardController($scope) {
 
-    	$scope.newItem = null;
+    	$scope.newItem = {
+            headline: null
+        };
     	$scope.selectedItem = null;
 
     	$scope.addItem = function() {
-    		var newItem = {
-    			title: $scope.newItem,
-    			assignee: [
-    				{
-    					fullname: 'Sava Tatic',
-    					avatarurl: null
-    				}
-    			]
-    		};
-    		$scope.items.unshift(newItem);
-    		$scope.newItem = null;
+    		$scope.items.unshift(_.clone($scope.newItem));
+    		$scope.newItem.headline = null;
     	};
 
     	$scope.preview = function(item) {
@@ -27,19 +20,9 @@ define(['lodash'], function(_) {
 
     	$scope.items = [
     		{
-    			title: 'Et harum quidem rerum facilis est et expedita distinctio',
+    			headline: 'Et harum quidem rerum facilis est et expedita distinctio',
     			description: 'Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam' +
     			'nisi ut aliquid ex ea commodi consequatu',
-    			assignee: [
-    				{
-    					fullname: 'Ozan Ozbek',
-    					avatarurl: null
-    				},
-    				{
-    					fullname: 'Petr Jasek',
-    					avatarurl: null
-    				}
-    			],
     			duedate: 'Today at 15:30',
     			tasks: 'Story,Photo',
     			comments: 2,
@@ -47,20 +30,13 @@ define(['lodash'], function(_) {
     			links: 2
     		},
     		{
-    			title: ' Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates',
+    			headline: ' Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates',
     			description: 'Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci' +
     			'velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
-    			assignee: [
-    				{
-    					fullname: 'Ozan Ozbek',
-    					avatarurl: null
-    				}
-    			],
     			duedate: 'Today at 16:30',
     			tasks: 'Story',
     			comments: 4,
-    			attachments: 1,
-    			links: 0
+    			attachments: 1
     		}
     	];
     }

@@ -26,17 +26,19 @@
     <div class="preview-layout">
         <div class="list-pane">
         	<form name="addItemForm" ng-submit="addItemForm.$valid && addItem()">
-        		<input type="text" class="add-item" placeholder="Add item" ng-model="newItem" required>
+        		<input type="text" class="add-item" placeholder="{{ 'Add new item' | translate}}" ng-model="newItem.headline" required>
         	</form>
 			
 			<div class="items-list" ng-show="items.length">
                 <div sd-list-view data-items="items" data-select="preview(item)">
                 	<div class="planning-item">
 	                    <div class="header">
+	                    	<!--
 							<div class="assignee">
-								<span class="avatar" ng-repeat="assignee in item.assignee"></span>
+								<span class="avatar"></span>
 							</div>
-							<h6>{{ item.title }}</h6>
+							-->
+							<h6>{{ item.headline }}</h6>
 						</div>
 						<div class="info">
 							<span ng-show="item.duedate"><i class="icon-desk-time"></i>{{item.duedate}}</span>
@@ -64,7 +66,7 @@
 	    	</div>
           </div>
           <div class="content" ng-show="selectedItem">
-				<div class="title">{{selectedItem.title}}</div>
+				<div class="title">{{selectedItem.headline}}</div>
 				<div class="description" ng-show="selectedItem.description">{{selectedItem.description}}</div>
           </div>
         </div>
