@@ -51,11 +51,11 @@ class SuperdeskValidator(Validator):
             if len(value) < min_length:
                 self._error(field, ERROR_MINLENGTH)
 
-    def _validate_required_fields(self):
+    def _validate_required_fields(self, document):
         required = list(field for field, definition in self.schema.items()
                         if definition.get('required') is True)
-        missing = set(required) - set(key for key in self.document.keys()
-                                      if self.document.get(key) is not None
+        missing = set(required) - set(key for key in document.keys()
+                                      if document.get(key) is not None
                                       or not self.ignore_none_values)
         for field in missing:
             self._error(field, ERROR_REQUIRED)

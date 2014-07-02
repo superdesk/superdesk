@@ -3,7 +3,6 @@ from eve.io.base import DataLayer
 from eve.io.mongo import Mongo
 from eve.utils import config, ParsedRequest
 from eve_elastic import Elastic
-from .signals import send
 from .utils import import_by_path
 from pyelasticsearch.client import JsonEncoder
 from bson.objectid import ObjectId
@@ -66,7 +65,6 @@ class SuperdeskDataLayer(DataLayer):
         return collection.update(query, {'$set': updates}, multi=True)
 
     def replace(self, resource, id_, document):
-        self._send('update', resource, id=id_, updates=document)
         return self._backend(resource).replace(resource, id_, document)
 
     def remove(self, resource, lookup=None):
@@ -81,8 +79,3 @@ class SuperdeskDataLayer(DataLayer):
         datasource = self._datasource(resource)
         backend = config.SOURCES[datasource[0]].get('backend', 'mongo')
         return getattr(self, backend)
-
-    def _send(self, signal, resource, **kwargs):
-        send(signal, self, resource=resource, **kwargs)
-        signal = '%s:%s' % (signal, resource)
-        send(signal, self, **kwargs)

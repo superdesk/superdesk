@@ -1,4 +1,4 @@
-Cerberus==0.7
+Cerberus==0.7.2
 Eve==0.4
 Events==0.2.1
 Eve-Docs==0.1.4
@@ -8,7 +8,7 @@ Flask-PyMongo==0.3.0
 Flask-Script==2.0.5
 Jinja2==2.7.3
 MarkupSafe==0.23
-Werkzeug==0.9.4
+Werkzeug==0.9.6
 Pillow==2.4.0
 arrow==0.4.2
 blinker==1.3
