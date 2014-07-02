@@ -7,32 +7,40 @@ define(['angular', 'lodash'], function(angular, _) {
             var _desk = null;
 			$scope.editDesk = null;
 			$scope.memberPopup = null;
+            $scope.desks = {};
+            $scope.users = {};
+            $scope.deskMembers = {};
             $scope.selectedMembers = [];
             $scope.membersToSelect = [];
             $scope.desk = null;
             $scope.memberScreen2 = false;
 
-            api.desks.query()
-            .then(function(desks) {
-                $scope.desks = desks;
-            });
+            var fetchDesks = function() {
+                return api.desks.query()
+                .then(function(desks) {
+                    $scope.desks = desks;
+                });
+            };
 
-            api.users.query()
-            .then(function(users) {
-                $scope.users = users._items;
-            });
+            var fetchUsers = function() {
+                return api.users.query()
+                .then(function(users) {
+                    $scope.users = users;
+                });
+            };
 
-			$scope.getMembers = function(desk) {
-				var members = [];
-				if ($scope.desks !== undefined && $scope.users !== undefined) {
-                    angular.forEach(desk.members, function(value) {
-                        members.push(_.find($scope.users, {_id: value}));
+            var generateDeskMembers = function() {
+                _.each($scope.desks._items, function(desk) {
+                    $scope.deskMembers[desk._id] = [];
+                    _.each(desk.members, function(member, index) {
+                        $scope.deskMembers[desk._id].push(_.find($scope.users._items, {_id: member.user}));
                     });
-                }
-                return members;
-			};
+                });
+            };
 
-            $scope.edit = function(desk) {
+            fetchDesks().then(fetchUsers).then(generateDeskMembers);
+
+			$scope.edit = function(desk) {
 				$scope.editDesk = _.create(desk);
                 _desk = desk || {};
 			};
@@ -71,10 +79,8 @@ define(['angular', 'lodash'], function(angular, _) {
             $scope.openMembers = function(desk) {
                 $scope.desk = desk;
                 $scope.memberPopup = {};
-                angular.forEach(desk.members, function(value) {
-                    $scope.selectedMembers.push(_.find($scope.users, {_id: value}));
-                });
-                $scope.membersToSelect = _.without($scope.users, $scope.selectedMembers);
+                $scope.selectedMembers = $scope.deskMembers[desk._id];
+                $scope.membersToSelect = _.without($scope.users._items, $scope.selectedMembers);
             };
 
             $scope.cancelMember = function(desk) {
@@ -88,12 +94,12 @@ define(['angular', 'lodash'], function(angular, _) {
             };
 
             $scope.removeMember = function(member) {
-                $scope.selectedMembers = _.without($scope.selectedMembers, member);
+                _.remove($scope.selectedMembers, member);
             };
 
             $scope.saveMembers = function() {
                 var members = _.map($scope.selectedMembers, function(obj) {
-                    return obj._id;
+                    return {user: obj._id};
                 });
                 api.desks.save($scope.desk, {members: members}).then(function(result) {
 					_.extend($scope.desk, result);
