@@ -6,16 +6,18 @@ from datetime import datetime
 from settings import SERVER_DOMAIN
 from uuid import uuid4
 from eve.utils import config
-from flask import abort, request, Response
+from flask import abort, request, Response, current_app as app
 from werkzeug.exceptions import NotFound
 from superdesk import SuperdeskError
 from superdesk.media_operations import resize_image
 from werkzeug.datastructures import FileStorage
 from PIL import Image
 from superdesk.notification import push_notification
+from superdesk.base_model import BaseModel
 
 
 bp = superdesk.Blueprint('archive_media', __name__)
+superdesk.blueprint(bp)
 
 
 GUID_TAG = 'tag'
@@ -29,7 +31,7 @@ class InvalidFileType(SuperdeskError):
         super().__init__('Invalid file type %s' % type, payload={})
 
 
-def on_create_item(data, docs):
+def on_create_item(docs):
     """Make sure item has basic fields populated."""
     for doc in docs:
         update_dates_for(doc)
@@ -40,15 +42,9 @@ def on_create_item(data, docs):
         doc.setdefault('_id', doc['guid'])
 
 
-def on_delete_archive(data, lookup):
-    '''Delete associated binary files.'''
-    res = data.find_one('archive', res=None, req=None, **lookup)
-    if res and res.get('renditions'):
-        for _name, ref in res['renditions'].items():
-            try:
-                superdesk.app.media.delete(ref['media'])
-            except (KeyError, NotFound):
-                pass
+def update_dates_for(doc):
+    for item in ['firstcreated', 'versioncreated']:
+        doc.setdefault(item, utcnow())
 
 
 def generate_guid(**hints):
@@ -108,101 +104,19 @@ def import_rendition(media_archive_guid, rendition_name, href):
     file_guid = store_file_from_url(href)
     updates = {}
     updates['renditions'] = {rendition_name: {'href': url_for_media(file_guid)}}
-    rv = superdesk.app.data.update(ARCHIVE_MEDIA, id_=str(media_archive_guid), updates=updates)
+    rv = superdesk.apps[ARCHIVE_MEDIA].update(id=str(media_archive_guid), updates=updates,
+                                              trigger_events=True)
     return rv
 
 
 def fetch_media_from_archive(media_archive_guid):
-    archive = superdesk.app.data.find_one(ARCHIVE_MEDIA, req=None, _id=str(media_archive_guid))
+    print('Fetching media from archive with id=', media_archive_guid)
+    archive = superdesk.apps[ARCHIVE_MEDIA].find_one(req=None, _id=str(media_archive_guid))
     if not archive:
         msg = 'No document found in the media archive with this ID: %s' % media_archive_guid
         raise superdesk.SuperdeskError(payload=msg)
     return archive
 
-
-type_av = {'image': 'picture', 'audio': 'audio', 'video': 'video'}
-
-
-def update_dates_for(doc):
-    for item in ['firstcreated', 'versioncreated']:
-        doc.setdefault(item, utcnow())
-
-
-def on_upload_create(data, docs):
-    ''' Create corresponding item on file upload '''
-    for doc in docs:
-        file = get_file_from_document(doc)
-        inserted = [doc['media']]
-        file_type = file.content_type.split('/')[0]
-
-        try:
-            update_dates_for(doc)
-            doc['guid'] = generate_guid(type=GUID_TAG)
-            doc['type'] = type_av.get(file_type)
-            doc['version'] = 1
-            doc['renditions'] = generate_renditions(file, doc['media'], inserted, file_type)
-            doc['mimetype'] = file.content_type
-            doc['filemeta'] = file.metadata
-        except Exception as io:
-            superdesk.logger.exception(io)
-            for file_id in inserted:
-                delete_file_on_error(doc, file_id)
-            abort(500)
-
-
-def get_file_from_document(doc):
-    file = doc.get('media_fetched')
-    if not file:
-        file = superdesk.app.media.get(doc['media'])
-    else:
-        del doc['media_fetched']
-    return file
-
-
-def delete_file_on_error(doc, file_id):
-    # Don't delete the file if we are on the import from storage flow
-    if doc['_import']:
-        return
-    superdesk.app.media.delete(file_id)
-
-
-def generate_renditions(original, media_id, inserted, file_type):
-    """Generate system renditions for given media file id."""
-    rend = {'href': url_for_media(media_id), 'media': media_id, 'mimetype': original.content_type}
-    renditions = {'original': rend}
-
-    if file_type != 'image':
-        return renditions
-
-    img = Image.open(original)
-    width, height = img.size
-    rend.update({'width': width})
-    rend.update({'height': height})
-
-    ext = original.content_type.split('/')[1].lower()
-    ext = ext if ext in ('jpeg', 'gif', 'tiff', 'png') else 'png'
-    for rendition, rsize in config.RENDITIONS['picture'].items():
-        size = (rsize['width'], rsize['height'])
-        original.seek(0)
-        resized, width, height = resize_image(original, ext, size)
-        resized = FileStorage(stream=resized, content_type='image/%s' % ext)
-        id = superdesk.app.media.put(resized)
-        inserted.append(id)
-        renditions[rendition] = {'href': url_for_media(id), 'media': id,
-                                 'mimetype': 'image/%s' % ext, 'width': width, 'height': height}
-    return renditions
-
-
-def on_upload_update(data, docs):
-    for doc in docs:
-        doc['version'] += 1
-
-
-superdesk.connect('create:ingest', on_create_item)
-superdesk.connect('create:archive', on_create_item)
-superdesk.connect('create:archive_media', on_upload_create)
-superdesk.connect('delete:archive', on_delete_archive)
-superdesk.blueprint(bp)
 
 base_schema = {
     'guid': {
@@ -330,30 +244,81 @@ facets = {
     'versioncreated': {'date_histogram': {'field': 'versioncreated', 'interval': 'hour'}},
 }
 
-superdesk.domain('ingest', {
-    'schema': ingest_schema,
-    'extra_response_fields': extra_response_fields,
-    'item_url': item_url,
-    'datasource': {
+ARCHIVE_MEDIA = 'archive_media'
+
+
+def on_create_media_archive():
+    push_notification('media_archive', created=1)
+
+
+def on_update_media_archive():
+    push_notification('media_archive', updated=1)
+
+
+def on_delete_media_archive():
+    push_notification('media_archive', deleted=1)
+
+
+def init_app(app):
+    IngestModel(app=app)
+    ArchiveModel(app=app)
+    ArchiveMediaModel(app=app)
+
+
+class IngestModel(BaseModel):
+    endpoint_name = 'ingest'
+    schema = ingest_schema
+    extra_response_fields = extra_response_fields
+    item_url = item_url
+    datasource = {
         'backend': 'elastic',
         'facets': facets
     }
-})
 
-superdesk.domain('archive', {
-    'schema': archive_schema,
-    'extra_response_fields': extra_response_fields,
-    'item_url': item_url,
-    'datasource': {
+    def on_create(self, docs):
+        on_create_item(docs)
+        on_create_media_archive()
+
+    def on_update(self, updates, original):
+        on_update_media_archive()
+
+    def on_delete(self, doc):
+        on_delete_media_archive()
+
+
+class ArchiveModel(BaseModel):
+    endpoint_name = 'archive'
+    schema = archive_schema
+    extra_response_fields = extra_response_fields
+    item_url = item_url
+    datasource = {
         'backend': 'elastic',
         'facets': facets
-    },
-    'resource_methods': ['GET', 'POST', 'DELETE']
-})
+    }
+    resource_methods = ['GET', 'POST', 'DELETE']
 
-ARCHIVE_MEDIA = 'archive_media'
-superdesk.domain(ARCHIVE_MEDIA, {
-    'schema': {
+    def on_create(self, docs):
+        on_create_item(docs)
+        on_create_media_archive()
+
+    def on_update(self, updates, original):
+        on_update_media_archive()
+
+    def on_delete(self, doc):
+        '''Delete associated binary files.'''
+        on_delete_media_archive()
+        if doc and doc.get('renditions'):
+            for _name, ref in doc['renditions'].items():
+                try:
+                    app.media.delete(ref['media'])
+                except (KeyError, NotFound):
+                    pass
+
+
+class ArchiveMediaModel(BaseModel):
+    type_av = {'image': 'picture', 'audio': 'audio', 'video': 'video'}
+    endpoint_name = ARCHIVE_MEDIA
+    schema = {
         'media': {
             'type': 'media',
             'required': True
@@ -362,35 +327,77 @@ superdesk.domain(ARCHIVE_MEDIA, {
         'headline': base_schema['headline'],
         'byline': base_schema['byline'],
         'description_text': base_schema['description_text']
-    },
-    'datasource': {
-        'source': 'archive'
-    },
-    'resource_methods': ['POST'],
-    'item_methods': ['PATCH', 'GET', 'DELETE'],
-    'item_url': item_url
-})
+    }
+    datasource = {'source': 'archive'}
+    resource_methods = ['POST']
+    item_methods = ['PATCH', 'GET', 'DELETE']
+    item_url = item_url
 
+    def on_update(self, updates, original):
+        on_update_media_archive()
 
-def on_create_media_archive(resource, docs):
-    push_notification('media_archive', created=1)
+    def on_delete(self, doc):
+        on_delete_media_archive()
 
-superdesk.connect('create:ingest', on_create_media_archive)
-superdesk.connect('create:archive', on_create_media_archive)
-superdesk.connect('create:archive_media', on_create_media_archive)
+    def on_create(self, docs):
+        ''' Create corresponding item on file upload '''
+        for doc in docs:
+            file = self.get_file_from_document(doc)
+            inserted = [doc['media']]
+            file_type = file.content_type.split('/')[0]
 
+            try:
+                update_dates_for(doc)
+                doc['guid'] = generate_guid(type=GUID_TAG)
+                doc['type'] = self.type_av.get(file_type)
+                doc['version'] = 1
+                doc['versioncreated'] = utcnow()
+                doc['renditions'] = self.generate_renditions(file, doc['media'], inserted, file_type)
+                doc['mimetype'] = file.content_type
+                doc['filemeta'] = file.metadata
+            except Exception as io:
+                superdesk.logger.exception(io)
+                for file_id in inserted:
+                    self.delete_file_on_error(doc, file_id)
+                abort(500)
+        on_create_media_archive()
 
-def on_update_media_archive(resource, id, updates):
-    push_notification('media_archive', updated=1)
+    def get_file_from_document(self, doc):
+        file = doc.get('media_fetched')
+        if not file:
+            file = app.media.get(doc['media'])
+        else:
+            del doc['media_fetched']
+        return file
 
-superdesk.connect('update:ingest', on_update_media_archive)
-superdesk.connect('update:archive', on_update_media_archive)
-superdesk.connect('update:archive_media', on_update_media_archive)
+    def delete_file_on_error(self, doc, file_id):
+        # Don't delete the file if we are on the import from storage flow
+        if doc['_import']:
+            return
+        app.media.delete(file_id)
 
+    def generate_renditions(self, original, media_id, inserted, file_type):
+        """Generate system renditions for given media file id."""
+        rend = {'href': url_for_media(media_id), 'media': media_id, 'mimetype': original.content_type}
+        renditions = {'original': rend}
 
-def on_delete_media_archive(resource, lookup):
-    push_notification('media_archive', deleted=1)
+        if file_type != 'image':
+            return renditions
 
-superdesk.connect('delete:ingest', on_delete_media_archive)
-superdesk.connect('delete:archive', on_delete_media_archive)
-superdesk.connect('delete:archive_media', on_delete_media_archive)
+        img = Image.open(original)
+        width, height = img.size
+        rend.update({'width': width})
+        rend.update({'height': height})
+
+        ext = original.content_type.split('/')[1].lower()
+        ext = ext if ext in ('jpeg', 'gif', 'tiff', 'png') else 'png'
+        for rendition, rsize in config.RENDITIONS['picture'].items():
+            size = (rsize['width'], rsize['height'])
+            original.seek(0)
+            resized, width, height = resize_image(original, ext, size)
+            resized = FileStorage(stream=resized, content_type='image/%s' % ext)
+            id = superdesk.app.media.put(resized)
+            inserted.append(id)
+            renditions[rendition] = {'href': url_for_media(id), 'media': id,
+                                     'mimetype': 'image/%s' % ext, 'width': width, 'height': height}
+        return renditions

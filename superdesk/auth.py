@@ -5,6 +5,7 @@ import superdesk
 import superdesk.utils as utils
 from flask import json, current_app as app, request
 from eve.auth import TokenAuth
+from .base_model import BaseModel
 
 
 logger = logging.getLogger(__name__)
@@ -66,7 +67,7 @@ class SuperdeskTokenAuth(TokenAuth):
         auth_token = app.data.find_one('auth', token=token, req=None)
         if auth_token:
             user_id = str(auth_token['user'])
-            flask.g.user = app.data.find_one('users', _id=user_id, req=None)
+            flask.g.user = app.data.find_one('users', req=None, _id=user_id)
             return self.check_permissions(resource, method, flask.g.user)
 
     def authorized(self, allowed_roles, resource, method):
@@ -86,7 +87,7 @@ def authenticate(credentials, db):
     if 'username' not in credentials:
         raise NotFoundAuthError()
 
-    user = db.find_one('auth_users', username=credentials.get('username'), req=None)
+    user = db.find_one('auth_users', req=None, username=credentials.get('username'))
     if not user:
         raise NotFoundAuthError()
 
@@ -97,54 +98,57 @@ def authenticate(credentials, db):
     return user
 
 
-def on_insert_auth(docs):
-    for doc in docs:
-        user = authenticate(doc, app.data)
-        doc['user'] = user['_id']
-        doc['token'] = utils.get_random_string(40)
-
-
 def init_app(app):
-    app.register_resource('auth_users', {
-        'datasource': {
-            'source': 'users'
-        },
-        'schema': {
-            'username': {
-                'type': 'string',
-            },
-            'password': {
-                'type': 'string',
-            }
-        },
-        'item_methods': [],
-        'resource_methods': []
-    })
+    AuthUsersModel(app)
+    AuthModel(app)
 
-    app.register_resource('auth', {
-        'schema': {
-            'username': {
-                'type': 'string'
-            },
-            'password': {
-                'type': 'string'
-            },
-            'token': {
-                'type': 'string'
-            },
-            'user': {
-                'type': 'objectid',
-                'data_relation': {
-                    'resource': 'users',
-                    'field': '_id',
-                    'embeddable': True
-                }
-            }
-        },
-        'resource_methods': ['POST'],
-        'item_methods': ['GET'],
-        'public_methods': ['POST'],
-        'extra_response_fields': ['user', 'token', 'username']
-    })
 
-    app.on_insert_auth += on_insert_auth
+class AuthUsersModel(BaseModel):
+    endpoint_name = 'auth_users'
+    datasource = {
+        'source': 'users'
+    }
+    schema = {
+        'username': {
+            'type': 'string',
+        },
+        'password': {
+            'type': 'string',
+        }
+    }
+    item_methods = []
+    resource_methods = []
+
+
+class AuthModel(BaseModel):
+
+    endpoint_name = 'auth'
+    schema = {
+        'username': {
+            'type': 'string'
+        },
+        'password': {
+            'type': 'string'
+        },
+        'token': {
+            'type': 'string'
+        },
+        'user': {
+            'type': 'objectid',
+            'data_relation': {
+                'resource': 'users',
+                'field': '_id',
+                'embeddable': True
+            }
+        }
+    }
+    resource_methods = ['POST']
+    item_methods = ['GET']
+    public_methods = ['POST']
+    extra_response_fields = ['user', 'token', 'username']
+
+    def on_create(self, docs):
+        for doc in docs:
+            user = authenticate(doc, app.data)
+            doc['user'] = user['_id']
+            doc['token'] = utils.get_random_string(40)

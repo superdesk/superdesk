@@ -1,8 +1,13 @@
+from superdesk.base_model import BaseModel
 
-import superdesk
 
-superdesk.domain('sessions', {
-    'schema': {
+def init_app(app):
+    SesssionsModel(app=app)
+
+
+class SesssionsModel(BaseModel):
+    endpoint_name = 'sessions'
+    schema = {
         'user': {
             'type': 'objectid',
             'data_relation': {
@@ -11,13 +16,12 @@ superdesk.domain('sessions', {
                 'embeddable': True
             }
         }
-    },
-    'datasource': {
+    }
+    datasource = {
         'source': 'auth',
         'default_sort': [('_created', -1)],
         'filter': {'$where': '(ISODate() - this._created) / 3600000 <= 12'}  # last 12h
-    },
-    'resource_methods': ['GET'],
-    'item_methods': [],
-    'embedded_fields': ['user']
-})
+    }
+    resource_methods = ['GET']
+    item_methods = []
+    embedded_fields = ['user']
