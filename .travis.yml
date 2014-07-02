@@ -6,6 +6,7 @@ python:
 services:
     - mongodb
     - elasticsearch
+    - redis-server
 
 install: "pip install -r requirements.txt --use-mirrors"
 
