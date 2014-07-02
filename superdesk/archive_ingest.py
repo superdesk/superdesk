@@ -204,6 +204,7 @@ class ArchiveIngestModel(BaseModel):
             doc['state'] = task.state
             doc['task_id'] = task_id
             doc['_id'] = task_id
+            doc['_created'] = doc['_updated'] = utcnow()
 
             return doc
         except Exception:
