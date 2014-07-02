@@ -31,7 +31,7 @@ define(['./es'], function(ElasticSearch) {
         }));
 
         it('does pagination', inject(function(es) {
-            var body = es({page: 1});
+            var body = es({page: 2});
             expect(body.from).toBe(25);
         }));
     });

@@ -16,8 +16,9 @@ define([], function() {
          * @returns {Object}
          */
         function paginate(query, params) {
+            var page = params.page || 1;
             query.size = params.size || SIZE_DEFAULT;
-            query.from = (params.page || 0) * query.size;
+            query.from = (page - 1) * query.size;
             return query;
         }
 
