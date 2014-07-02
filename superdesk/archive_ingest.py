@@ -62,7 +62,7 @@ def update_item(result, is_main_task, task_id, guid):
 def archive_item(self, guid, provider_id, user, task_id=None):
     data = app.data
 
-    # I CELERY_ALWAYS_EAGER=True the created request context is empty and already initialized one is on request_stack
+    # For CELERY_ALWAYS_EAGER=True the current request context is empty but already initialized one is on request_stack
     if CELERY_ALWAYS_EAGER:
         self.request_stack.pop()
 
