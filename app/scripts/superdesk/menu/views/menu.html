@@ -1,5 +1,6 @@
 <div>
   <div class="navbar navbar-inverse navbar-fixed-top sf-top-menu" ng-class="{'sf-menu-open': flags.menu}">
+
     <!-- Top navigation bar -->
     <div class="navbar-inner">
       <div class="container">
@@ -11,10 +12,7 @@
             </a>
             
             <a class="main-link" href="" translate>{{ currentRoute.label }}</a>
-            <span class="top-space" ng-include="selected.topTemplateUrl">
-              
-            </span>
-
+            <span class="top-space" ng-include="currentRoute.topTemplateUrl"></span>
           </div>
 
           <ul class="nav pull-right">
@@ -45,7 +43,7 @@
     <div class="sf-menu-header-bar"></div>
     <div class="sf-menu-content">
       <ul>
-        <li ng-repeat="item in menu | orderBy:'priority'" ng-class="{active: item._id === selected._id}">
+        <li ng-repeat="item in menu | orderBy:'priority'" ng-class="{active: item.isActive}">
           <a ng-href="#{{ item.href }}" title="{{ item.label | translate }}">{{ item.label|translate }}</a>
         </li>
       </ul>
@@ -55,5 +53,4 @@
       <span>Powered by Superdesk technology</span>
     </div>
   </div>
-
 </div>
