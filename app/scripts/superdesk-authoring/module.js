@@ -2,7 +2,8 @@ define([
     'angular',
     'require',
     './workqueue-service',
-    './controllers/main'
+    './controllers/main',
+    './controllers/versions'
 ], function(angular, require, WorkqueueService) {
     'use strict';
 
@@ -17,7 +18,15 @@ define([
 	                templateUrl: require.toUrl('./views/main.html'),
 	                controller: require('./controllers/main'),
 	                category: superdesk.MENU_MAIN,
-	                beta: true
+	                beta: true,
+	                filters: [{action: 'article', type: 'author'}]
+	            })
+	            .activity('/versions/', {
+                	label: gettext('Authoring - item versions'),
+	                templateUrl: require.toUrl('./views/versions.html'),
+	                controller: require('./controllers/versions'),
+	                beta: true,
+	                filters: [{action: 'versions', type: 'author'}]
 	            })
 	            .activity('edit.text', {
 	            	label: gettext('Edit item'),
