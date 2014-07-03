@@ -18,6 +18,7 @@ server_url = urlparse(os.environ.get('SUPERDESK_URL', 'http://localhost:5000'))
 URL_PROTOCOL = server_url.scheme or None
 SERVER_NAME = server_url.netloc or None
 URL_PREFIX = server_url.path.lstrip('/') or ''
+VALIDATION_ERROR_STATUS = 400
 
 CACHE_CONTROL = 'max-age=0, no-cache'
 
