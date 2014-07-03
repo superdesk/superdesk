@@ -226,10 +226,23 @@ ingest_schema = {
     }
 }
 
+planning_schema = {
+    'scheduled': {
+        'type': 'datetime'
+    },
+    'edNote': {
+        'type': 'string'
+    },
+    'catalogRef': {
+        'type': 'string'
+    },
+}
+
 archive_schema = {}
 
 ingest_schema.update(base_schema)
 archive_schema.update(base_schema)
+planning_schema.update(base_schema)
 
 item_url = 'regex("[\w,.:-]+")'
 
@@ -259,10 +272,23 @@ def on_delete_media_archive():
     push_notification('media_archive', deleted=1)
 
 
+def on_create_planning():
+    push_notification('planning', created=1)
+
+
+def on_update_planning():
+    push_notification('planning', updated=1)
+
+
+def on_delete_planning():
+    push_notification('planning', deleted=1)
+
+
 def init_app(app):
     IngestModel(app=app)
     ArchiveModel(app=app)
     ArchiveMediaModel(app=app)
+    PlanningModel(app=app)
 
 
 class IngestModel(BaseModel):
@@ -284,6 +310,28 @@ class IngestModel(BaseModel):
 
     def on_delete(self, doc):
         on_delete_media_archive()
+
+
+class PlanningModel(BaseModel):
+    endpoint_name = 'planning'
+    schema = planning_schema
+    extra_response_fields = extra_response_fields
+    item_url = item_url
+    datasource = {
+        'backend': 'elastic',
+        'facets': facets
+    }
+    resource_methods = ['GET', 'POST', 'DELETE']
+
+    def on_create(self, docs):
+        on_create_item(docs)
+        on_create_planning()
+
+    def on_update(self, updates, original):
+        on_update_planning()
+
+    def on_delete(self, doc):
+        on_delete_planning()
 
 
 class ArchiveModel(BaseModel):
