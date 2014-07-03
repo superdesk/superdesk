@@ -1,11 +1,12 @@
 define([
     'angular',
     'require',
+    'lodash',
     './resources',
     './controllers/main',
     './controllers/settings',
     './directives'
-], function(angular, require) {
+], function(angular, require, _) {
     'use strict';
 
     var app = angular.module('superdesk.desks', [
@@ -40,6 +41,18 @@ define([
                     rel: 'desks'
                 }
             });
+        }])
+        .service('getDeskMembers', [function() {
+            return function(desks, users) {
+                var deskMembers = {};
+                _.each(desks._items, function(desk) {
+                    deskMembers[desk._id] = [];
+                    _.each(desk.members, function(member, index) {
+                        deskMembers[desk._id].push(_.find(users._items, {_id: member.user}));
+                    });
+                });
+                return deskMembers;
+            };
         }]);
 
     return app;
