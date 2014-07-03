@@ -47,7 +47,6 @@ INSTALLED_APPS = (
     'superdesk.sessions',
     'superdesk.desks',
     'superdesk.subjectcodes',
-    'superdesk.archive.archive_ingest',
     'superdesk.amazon.import_from_amazon',
     'superdesk.notification',
     'superdesk.planning',

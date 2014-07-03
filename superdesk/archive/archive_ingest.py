@@ -186,10 +186,6 @@ def ingest_set_archived(guid):
         app.data.update('ingest', ingest_doc.get('_id'), {'archived': utcnow()})
 
 
-def init_app(app):
-    ArchiveIngestModel(app=app)
-
-
 class ArchiveIngestModel(BaseModel):
     endpoint_name = 'archive_ingest'
     resource_methods = ['POST']
