@@ -1,20 +1,18 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    PlanningDashboardController.$inject = ['$scope', 'userDesks'];
-    function PlanningDashboardController($scope, userDesks) {
+    PlanningDashboardController.$inject = ['$scope', 'desks'];
+    function PlanningDashboardController($scope, desks) {
 
-    	$scope.userDesks = null;
-        $scope.currentDesk = null;
+    	$scope.currentDesk = null;
 
-        userDesks.getDesks($scope.currentUser)
-        .then(function(result) {
-            $scope.userDesks = result;
-            $scope.currentDesk = userDesks.getCurrentDesk();
+        desks.fetchCurrentDesk()
+        .then(function(currentDesk) {
+            $scope.currentDesk = currentDesk;
         });
 
         $scope.setCurrentDesk = function(desk) {
-            userDesks.setCurrentDesk(desk);
+            desks.setCurrentDesk(desk);
             $scope.currentDesk = desk;
         };
 

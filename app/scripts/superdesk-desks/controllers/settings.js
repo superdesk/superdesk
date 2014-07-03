@@ -1,8 +1,8 @@
 define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
-    return ['$scope', 'gettext', 'notify', 'api', 'getDeskMembers',
-        function($scope, gettext, notify, api, getDeskMembers) {
+    return ['$scope', 'gettext', 'notify', 'api', 'desks',
+        function($scope, gettext, notify, api, desks) {
 
             var _desk = null;
 			$scope.editDesk = null;
@@ -15,24 +15,11 @@ define(['angular', 'lodash'], function(angular, _) {
             $scope.desk = null;
             $scope.memberScreen2 = false;
 
-            var fetchDesks = function() {
-                return api.desks.query()
-                .then(function(desks) {
-                    $scope.desks = desks;
-                });
-            };
-
-            var fetchUsers = function() {
-                return api.users.query()
-                .then(function(users) {
-                    $scope.users = users;
-                });
-            };
-
-            fetchDesks()
-            .then(fetchUsers)
+            desks.initialize()
             .then(function() {
-                $scope.deskMembers = getDeskMembers($scope.desks, $scope.users);
+                $scope.desks = desks.desks;
+                $scope.users = desks.users;
+                $scope.deskMembers = desks.deskMembers;
             });
 
 			$scope.edit = function(desk) {

@@ -3,16 +3,9 @@
 	<div class="button-stack">
 		<div class="navbtn dropdown">
     		<button class="dropdown-toggle">{{currentDesk.name}} <b class="caret"></b></button>
-			<ul class="dropdown-menu sf-dropdown-simple">
-				<li ng-repeat="desk in userDesks._items"><a href="" ng-click="setCurrentDesk(desk)">
-                    <span ng-if="desk._id === currentDesk._id">
-                        <b>{{desk.name}}</b>
-                    </span>
-                    <span ng-if="desk._id !== currentDesk._id">
-                        {{desk.name}}
-                    </span>
-                </a></li>
-			</ul>
+			<div sd-user-desks data-user="currentUser" data-selected="currentDesk" data-select="setCurrentDesk">
+                <span>{{desk.name}}</span>
+            </div>
     	</div>
 	</div>
     <div class="button-stack right-stack">
