@@ -1,5 +1,10 @@
-define(['lodash'], function(_) {
-    'use strict';
+define(['angular','lodash'], function(angular, _) {
+    'use strict';  	
+
+    angular.module('superdesk.authoring', [])
+    .controller('AuthoringController',AuthoringController)
+    .controller('VersioningController',VersioningController);
+
 
     AuthoringController.$inject = ['$scope', 'api', '$location', 'workqueue', 'notify', 'gettext'];
     function AuthoringController($scope, api, $location, workqueue, notify, gettext) {
@@ -53,6 +58,9 @@ define(['lodash'], function(_) {
 
     }
 
-    return AuthoringController;
+    VersioningController.$inject = ['$scope', 'api', '$location'];
+    function VersioningController($scope, api, $location) {
+
+    }
 
 });
