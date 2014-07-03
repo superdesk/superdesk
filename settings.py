@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'superdesk.archive_ingest',
     'superdesk.amazon.import_from_amazon',
     'superdesk.notification',
+    'superdesk.planning',
 )
 
 RESOURCE_METHODS = ['GET', 'POST']
