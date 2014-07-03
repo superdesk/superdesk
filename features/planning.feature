@@ -12,7 +12,7 @@ Feature: News Items Planning
         Given empty "planning"
         When we post to "/planning"
         """
-        [{"type": "text", "headline": "testItem", "creditline": "friend Bob"}]
+        [{"type": "text", "headline": "testItem"}]
         """
         Then we get new resource
         """
@@ -28,12 +28,12 @@ Feature: News Items Planning
         
         When we patch given
         """
-        {"slugline": "test1", "urgency": 5, "version": "1"}
+        {"slugline": "test1", "urgency": 5}
         """
 
         And we patch latest
         """
-        {"slugline": "test of the test1", "version": "2"}
+        {"slugline": "test of the test1"}
         """
 
         Then we get updated response

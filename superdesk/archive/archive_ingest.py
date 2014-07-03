@@ -10,14 +10,57 @@ import flask
 import superdesk
 from superdesk.io import providers
 
-from .utc import utc, utcnow
+from superdesk.utc import utc, utcnow
 from superdesk.celery_app import celery, finish_task_for_progress,\
     finish_subtask_from_progress, add_subtask_to_progress
 from celery.result import AsyncResult
 from flask.globals import current_app as app
-from .items import import_rendition, import_media
+from .common import ARCHIVE_MEDIA
+from superdesk.upload import url_for_media
+from superdesk.media_operations import store_file_from_url
 from superdesk.base_model import BaseModel
 from settings import CELERY_ALWAYS_EAGER
+
+
+def import_media(media_archive_guid, href):
+    '''
+    media_archive_guid: media_archive guid
+    href: external file URL from which to download it
+    Download from href and save file on app storage, process it and
+    update "original" rendition for guid content item
+    '''
+    rv = import_rendition(media_archive_guid, 'baseImage', href)
+    return rv
+
+
+def import_rendition(media_archive_guid, rendition_name, href):
+    '''
+    media_archive_guid: media_archive guid
+    rendition_name: rendition to update,
+    href: external file URL from which to download it
+    Download from href and save file on app storage, process it and
+    update "rendition_name" rendition for guid content item
+    '''
+    archive = fetch_media_from_archive(media_archive_guid)
+    if rendition_name not in archive['renditions']:
+        payload = 'Invalid rendition name %s' % rendition_name
+        raise superdesk.SuperdeskError(payload=payload)
+
+    file_guid = store_file_from_url(href)
+    updates = {}
+    updates['renditions'] = {rendition_name: {'href': url_for_media(file_guid)}}
+    rv = superdesk.apps[ARCHIVE_MEDIA].update(id=str(media_archive_guid), updates=updates,
+                                              trigger_events=True)
+    return rv
+
+
+def fetch_media_from_archive(media_archive_guid):
+    print('Fetching media from archive with id=', media_archive_guid)
+    archive = superdesk.apps[ARCHIVE_MEDIA].find_one(req=None, _id=str(media_archive_guid))
+    if not archive:
+        msg = 'No document found in the media archive with this ID: %s' % media_archive_guid
+        raise superdesk.SuperdeskError(payload=msg)
+    return archive
 
 
 def update_status(task_id, current, total):
