@@ -159,8 +159,6 @@ define([
     var app = angular.module('superdesk.authoring', []);
     app
     	.service('workqueue', WorkqueueService)
-    	.controller('AuthoringController', AuthoringController)
-    	.controller('VersioningController', VersioningController)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
