@@ -2,12 +2,16 @@
 
 	<div class="button-stack">
 		<div class="navbtn dropdown">
-    		<button class="dropdown-toggle">News desk <b class="caret"></b></button>
+    		<button class="dropdown-toggle">{{currentDesk.name}} <b class="caret"></b></button>
 			<ul class="dropdown-menu sf-dropdown-simple">
-				<li><a href="">News desk</a></li>
-				<li><a href="">Sports desk</a></li>
-				<li><a href="">Finance desk</a></li>
-				<li><a href="">Photo desk</a></li>
+				<li ng-repeat="desk in userDesks._items"><a href="" ng-click="setCurrentDesk(desk)">
+                    <span ng-if="desk._id === currentDesk._id">
+                        <b>{{desk.name}}</b>
+                    </span>
+                    <span ng-if="desk._id !== currentDesk._id">
+                        {{desk.name}}
+                    </span>
+                </a></li>
 			</ul>
     	</div>
 	</div>

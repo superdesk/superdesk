@@ -1,9 +1,10 @@
 define([
     'angular',
     'require',
+    'lodash',
     './controllers/main',
     './directives'
-], function(angular, require) {
+], function(angular, require, _) {
     'use strict';
 
     var app = angular.module('superdesk.planning', [
@@ -27,5 +28,27 @@ define([
                     reloadOnSearch: false,
                     filters: []
                 });
+        }])
+        .service('userDesks', ['api', 'storage', function(api, storage) {
+            return {
+                currentDeskId: null,
+                desks: null,
+                getDesks: function(user) {
+                    var self = this;
+                    return api.users.getByUrl(user._links.self.href + '/desks')
+                    .then(function(result) {
+                        self.desks = result;
+                        return result;
+                    });
+                },
+                getCurrentDesk: function() {
+                    this.currentDeskId = storage.getItem('planning:currentDeskId') || null;
+                    return _.find(this.desks._items, {_id: this.currentDeskId});
+                },
+                setCurrentDesk: function(desk) {
+                    this.currentDeskId = desk._id;
+                    storage.setItem('planning:currentDeskId', this.currentDeskId);
+                }
+            };
         }]);
 });
