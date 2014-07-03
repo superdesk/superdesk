@@ -68,7 +68,7 @@ define([
                     };
 
                     api.archiveIngest.create({
-                        guid: data.item._id
+                        guid: data.item.guid
                     })
                     .then(function(archiveItem) {
                         data.list[data.index].archiving = true;
