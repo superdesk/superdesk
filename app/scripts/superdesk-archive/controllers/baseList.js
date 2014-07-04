@@ -89,7 +89,8 @@ define(['lodash'], function(_) {
         };
 
         this.refresh = function() {
-        	self.fetchItems($location.search());
+        	var query = self.getQuery(_.omit($location.search(), '_id'));
+            self.fetchItems({source: query});
         };
     }
 
