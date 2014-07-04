@@ -34,7 +34,7 @@ define([
             link: function(scope, element, attrs) {
 
                 scope.$watch('items', function(items) {
-                    if (items) {
+                    if (items && items._meta) {
                         scope.total = items._meta.total;
                         scope.page = $location.search().page || 1;
                         scope.lastPage = scope.limit ? Math.ceil(scope.total / scope.limit) : scope.page;
