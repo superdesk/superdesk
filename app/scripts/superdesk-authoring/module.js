@@ -177,8 +177,7 @@ define([
 
     }
 
-    var app = angular.module('superdesk.authoring', []);
-    app
+    return angular.module('superdesk.authoring', ['superdesk.editor'])
     	.service('workqueue', WorkqueueService)
 
         .config(['superdeskProvider', function(superdesk) {
@@ -210,5 +209,4 @@ define([
 	                ]
 	            });
         }]);
-    return app;
 });

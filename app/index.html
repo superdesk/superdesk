@@ -17,10 +17,24 @@
 
     <link rel="stylesheet" href="scripts/bower_components/jcrop/css/jquery.Jcrop.css">
 
+    <link rel="stylesheet" href="scripts/bower_components/medium-editor/dist/css/medium-editor.css">
+    <link rel="stylesheet" href="scripts/bower_components/medium-editor/dist/css/themes/flat.css">
+
   </head>
   <body>
 
     <div sd-superdesk-view></div>
+
+    <script src="scripts/bower_components/jquery/dist/jquery.js"></script>
+    <script src="scripts/bower_components/jquery-ui/ui/jquery-ui.js"></script>
+
+    <script src="scripts/bower_components/angular/angular.js"></script>
+
+    <script src="scripts/bower_components/gridster/dist/jquery.gridster.with-extras.js"></script>
+
+    <!-- editor -->
+    <script src="scripts/bower_components/medium-editor/dist/js/medium-editor.js"></script>
+    <script src="scripts/superdesk/editor/editor.js"></script>
 
     <script src="scripts/bower_components/requirejs/require.js"></script>
 
@@ -34,6 +48,18 @@
 
     <script>
         var config = <%= grunt.toJSON(config) %>;
+        var modules = [
+            'superdesk.settings',
+            'superdesk.dashboard',
+            'superdesk.users',
+            'superdesk.planning',
+            'superdesk.archive',
+            'superdesk.ingest',
+            'superdesk.scratchpad',
+            'superdesk.desks',
+            'superdesk.authoring',
+            'superdesk.editor'
+        ];
 
         require([
             'main',
@@ -47,7 +73,7 @@
             'superdesk-desks/module',
             'superdesk-authoring/module'
         ], function(bootstrap) {
-            bootstrap(config, arguments);
+            bootstrap(config, modules);
         });
     </script>
   </body>

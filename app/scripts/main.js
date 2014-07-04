@@ -1,3 +1,15 @@
+// loaded already
+define('jquery', [], function() {
+    'use strict';
+    return window.jQuery;
+});
+
+// loaded already
+define('angular', [], function() {
+    'use strict';
+    return window.angular;
+});
+
 define('main', [
     'gettext',
     'angular',
@@ -5,22 +17,15 @@ define('main', [
 ], function(gettext, angular, superdesk) {
     'use strict';
 
-    var modules = [superdesk.name];
-
     return function bootstrap(config, apps) {
 
+        apps.unshift(superdesk.name);
         superdesk.constant('config', config);
-
-        angular.forEach(apps, function(app) {
-            if (angular.isFunction(app.config)) {
-                modules.push(app.name);
-            }
-        });
 
         // load apps & bootstrap
         var body = angular.element('body');
         body.ready(function() {
-            angular.bootstrap(body, modules);
+            angular.bootstrap(body, apps);
         });
     };
 });

@@ -1,15 +1,8 @@
-require.config({
-    shim: {
-        'bower_components/gridster/dist/jquery.gridster.with-extras': ['jquery']
-    }
-});
-
 define([
     'jquery',
     'lodash',
     'angular',
-    'require',
-    'bower_components/gridster/dist/jquery.gridster.with-extras'
+    'require'
 ], function($, _, angular, require) {
     'use strict';
 

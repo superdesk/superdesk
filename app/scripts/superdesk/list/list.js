@@ -33,9 +33,9 @@ define([
             },
             link: function(scope, element, attrs) {
 
-                scope.$watch('items', function(items) {
-                    if (items && items._meta) {
-                        scope.total = items._meta.total;
+                scope.$watch('items._meta', function(meta) {
+                    if (meta) {
+                        scope.total = meta.total;
                         scope.page = $location.search().page || 1;
                         scope.lastPage = scope.limit ? Math.ceil(scope.total / scope.limit) : scope.page;
                         scope.from = (scope.page - 1) * scope.limit + 1;
