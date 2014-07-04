@@ -1,14 +1,29 @@
 define([
-    'angular',
-    'require',
-    './controllers/main',
-    './directives'
+    'angular'
 ], function(angular, require) {
     'use strict';
 
-    var app = angular.module('superdesk.planning', [
-        'superdesk.planning.directives'
-    ]);
+    PlanningDashboardController.$inject = ['$scope', 'mockItems'];
+    function PlanningDashboardController($scope, mockItems) {
+
+    	$scope.newItem = {
+            headline: null
+        };
+    	$scope.selectedItem = null;
+
+    	$scope.addItem = function() {
+    		$scope.items.unshift(_.clone($scope.newItem));
+    		$scope.newItem.headline = null;
+    	};
+
+    	$scope.preview = function(item) {
+    		$scope.selectedItem = item;
+    	};
+
+    	$scope.items = mockItems.list;
+    }
+
+    var app = angular.module('superdesk.planning', []);
 
     return app
         .value('mockItems', {
@@ -40,7 +55,7 @@ define([
                     label: gettext('Planning'),
                     priority: 100,
                     beta: true,
-                    controller: require('./controllers/main'),
+                    controller: PlanningDashboardController,
                     templateUrl: 'scripts/superdesk-planning/views/main.html',
                     category: superdesk.MENU_MAIN,
                     reloadOnSearch: false,
