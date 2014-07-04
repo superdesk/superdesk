@@ -169,7 +169,7 @@ class ArchiveIngestModel(BaseModel):
     def create(self, docs, trigger_events=None, **kwargs):
         data = app.data
         for doc in docs:
-            ingest_doc = data.find_one('ingest', _id=doc.get('guid'), req=None)
+            ingest_doc = data.find_one('ingest', guid=doc.get('guid'), req=None)
             if not ingest_doc:
                 msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
                 raise superdesk.SuperdeskError(payload=msg)
