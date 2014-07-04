@@ -52,11 +52,13 @@ define([
                         .then(function(result) {
                             if (result.state === 'SUCCESS') {
                                 callback(100);
-                            } else if (result.state === 'PROGRESS') {
-                                var newProgress = Math.floor(parseInt(result.current || 0, 10) * 100 / parseInt(result.total, 10));
-                                if (progress !== newProgress) {
-                                    progress = newProgress;
-                                    callback(progress);
+                            } else {
+                                if (result.state === 'PROGRESS') {
+                                    var newProgress = Math.floor(parseInt(result.current || 0, 10) * 100 / parseInt(result.total, 10));
+                                    if (progress !== newProgress) {
+                                        progress = newProgress;
+                                        callback(progress);
+                                    }
                                 }
                                 if (progress !== 100) {
                                     $timeout(function() {
