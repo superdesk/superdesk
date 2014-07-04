@@ -1,6 +1,6 @@
 
 import superdesk
-from .tests import TestCase
+from superdesk.tests import TestCase
 
 
 class Logger(object):

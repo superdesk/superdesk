@@ -41,15 +41,15 @@ INSTALLED_APPS = (
     'superdesk.io',
     'superdesk.auth',
     'superdesk.users',
-    'superdesk.items',
+    'superdesk.archive',
     'superdesk.activity',
     'superdesk.upload',
     'superdesk.sessions',
     'superdesk.desks',
     'superdesk.subjectcodes',
-    'superdesk.archive_ingest',
     'superdesk.amazon.import_from_amazon',
     'superdesk.notification',
+    'superdesk.planning',
 )
 
 RESOURCE_METHODS = ['GET', 'POST']
