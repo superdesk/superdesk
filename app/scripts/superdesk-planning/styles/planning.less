@@ -164,6 +164,31 @@
 					.task-label;
 				}
 			}
+			.action-buttons {
+				position: absolute;
+				top: -80px;
+				right: 0;
+				height: 37px;
+				background: #fff;
+				box-sizing: border-box;
+				padding: 4px 5px 0 0;
+				.transition(top ease 0.2s);
+				&.show {
+					top:-40px;
+				}
+			}
+
+			textarea {
+				height: 32px;
+				border-color: #fff !important;
+				&:hover {
+					border-color: #ddd !important;
+				}
+				&:focus {
+					border-color: #ddd !important;
+					.box-shadow(none) !important;
+				}
+			}
 
 			.title {
 				font-size: 16px;

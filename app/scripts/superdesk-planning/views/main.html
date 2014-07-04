@@ -52,23 +52,8 @@
             </div>
         </div>
 
-        <div class="preview-pane" sd-preview-item data-item="selectedItem">
-          <div class="header" ng-show="selectedItem">
-          	<time translate>Created 07:55:44, 26. June 2014</time>
-          	<div class="dropdown more-actions">
-	    		<button class="dropdown-toggle"><i class="icon-dots"></i></button>
-				<ul class="dropdown-menu sf-dropdown-simple sf-right">
-					<li><a href="">Add coverage</a></li>
-					<li><a href="">Attach file</a></li>
-					<li><a href="">Add Link</a></li>
-					<li><a href="">Add comment</a></li>
-				</ul>
-	    	</div>
-          </div>
-          <div class="content" ng-show="selectedItem">
-				<div class="title">{{selectedItem.headline}}</div>
-				<div class="description" ng-show="selectedItem.description">{{selectedItem.description}}</div>
-          </div>
+        <div class="preview-pane">
+        	<div sd-preview-item ng-if="selected.item" data-item="selected.item"></div>
         </div>
 
     </div>

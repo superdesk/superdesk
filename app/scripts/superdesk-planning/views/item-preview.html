@@ -1,0 +1,21 @@
+<div>
+	<div class="header">
+		<time translate>{{ 'Created on' |translate}} {{item.createdon}}</time>
+		<div class="dropdown more-actions">
+			<button class="dropdown-toggle"><i class="icon-dots"></i></button>
+			<ul class="dropdown-menu sf-dropdown-simple sf-right">
+				<li><a href="">Add coverage</a></li>
+			</ul>
+		</div>
+	</div>
+	<div class="content">
+		<form name="itemEditForm" ng-submit="itemEditForm.$valid && save()">
+			<div class="action-buttons clearfix" ng-class="{show:dirty}">
+		        <button type="submit" class="btn btn-info pull-right" ng-disabled="itemEditForm.$invalid || !dirty" translate>Save</button>
+		        <button type="button" class="btn pull-right" ng-click="cancel()" ng-disabled="!dirty" translate>Cancel</button>
+		    </div>
+			<textarea class="title" sd-auto-height ng-model="item.headline" placeholder="{{'Add title' | translate}}" required></textarea>
+			<textarea class="description" sd-auto-height ng-model="item.description" placeholder="{{'Add description' | translate}}"></textarea>
+		</form>
+	</div>
+</div>
