@@ -42,16 +42,65 @@ define([
                 }
             });
         }])
-        .service('getDeskMembers', [function() {
-            return function(desks, users) {
-                var deskMembers = {};
-                _.each(desks._items, function(desk) {
-                    deskMembers[desk._id] = [];
-                    _.each(desk.members, function(member, index) {
-                        deskMembers[desk._id].push(_.find(users._items, {_id: member.user}));
+        .service('desks', ['$q', 'api', 'storage', function($q, api, storage) {
+            return {
+                desks: null,
+                users: null,
+                deskMembers: {},
+                fetchDesks: function() {
+                    var self = this;
+
+                    return api.desks.query()
+                    .then(function(result) {
+                        self.desks = result;
                     });
-                });
-                return deskMembers;
+                },
+                fetchUsers: function() {
+                    var self = this;
+
+                    return api.users.query()
+                    .then(function(result) {
+                        self.users = result;
+                    });
+                },
+                generateDeskMembers: function() {
+                    var self = this;
+
+                    _.each(this.desks._items, function(desk) {
+                        self.deskMembers[desk._id] = [];
+                        _.each(desk.members, function(member, index) {
+                            self.deskMembers[desk._id].push(_.find(self.users._items, {_id: member.user}));
+                        });
+                    });
+
+                    return $q.when();
+                },
+                fetchUserDesks: function(user) {
+                    return api.users.getByUrl(user._links.self.href + '/desks');
+                },
+                getCurrentDeskId: function() {
+                    return storage.getItem('desks:currentDeskId') || null;
+                },
+                setCurrentDeskId: function(deskId) {
+                    storage.setItem('desks:currentDeskId', deskId);
+                },
+                fetchCurrentDesk: function() {
+                    return api.desks.getById(this.getCurrentDeskId());
+                },
+                setCurrentDesk: function(desk) {
+                    this.setCurrentDeskId(desk._id);
+                },
+                initialize: function() {
+                    var self = this;
+
+                    return this.fetchDesks()
+                    .then(function() {
+                        return self.fetchUsers();
+                    })
+                    .then(function() {
+                        return self.generateDeskMembers();
+                    });
+                }
             };
         }]);
 

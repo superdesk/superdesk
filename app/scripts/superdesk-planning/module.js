@@ -1,9 +1,10 @@
 define([
     'angular',
     'require',
+    'lodash',
     './controllers/main',
     './directives'
-], function(angular, require) {
+], function(angular, require, _) {
     'use strict';
 
     var app = angular.module('superdesk.planning', [
