@@ -25,7 +25,30 @@ Feature: News Items Archive
         """
         {"guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401"}
         """
+        And we get "task_id"
+        And we get "state" in "/archive_ingest/#task_id#"
         And we get "archived" in "ingest/tag:reuters.com,0000:newsml_GM1EA6A1P8401"
+        
+
+    @auth
+    Scenario: Move item into archive - wrong guid
+        Given empty "archive"
+        And "ingest"
+        """
+        [{"guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401"}]
+        """
+
+        When we post to "/archive_ingest"
+        """
+        {
+        "guid": "wrong guid"
+        }
+        """
+
+        Then we get error 400
+		"""
+		{"_message": "", "_issues": "Fail to found ingest item with guid: wrong guid", "_status": "ERR"}
+		"""
 
 
     @auth
@@ -122,33 +145,6 @@ Feature: News Items Archive
         """
         {"headline": "week @ nasa", "byline": "foo", "description_text": "nasa video"}
         """
-
-
-    @auth
-    Scenario: Upload file into archive and import baseImage rendition
-        Given empty "archive"
-        When we upload a file "bike.jpg" to "archive_media"
-        Then we get new resource
-        """
-        {"guid": ""}
-        """
-        And we get file metadata
-        When we import rendition from url
-        When we get updated media from archive
-        Then baseImage rendition is updated
-
-    @auth
-    Scenario: Upload file into archive and import renditions
-        Given empty "archive"
-        When we upload a file "bike.jpg" to "archive_media"
-        Then we get new resource
-        """
-        {"guid": ""}
-        """
-        And we get file metadata
-        When we import thumbnail rendition from url
-        When we get updated media from archive
-        Then thumbnail rendition is updated
 
     @wip
     @auth

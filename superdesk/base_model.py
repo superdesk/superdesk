@@ -4,7 +4,7 @@ from flask import current_app as app
 
 class BaseModel():
     '''
-    Base controller for all endpoints, defines the basic implementation
+    Base model for all endpoints, defines the basic implementation
     for CRUD datalayer functionality.
     '''
     endpoint_name = str()

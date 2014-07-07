@@ -78,8 +78,16 @@ def if_match(context, etag):
     headers = []
     if etag:
         headers = [('If-Match', etag)]
-    headers += context.headers
+    headers = unique_headers(headers, context.headers)
     return headers
+
+
+def unique_headers(headers_to_add, old_headers):
+    headers = dict(old_headers)
+    for item in headers_to_add:
+        headers.update({item[0]: item[1]})
+    unique_headers = [(k, v) for k, v in headers.items()]
+    return unique_headers
 
 
 def patch_current_user(context, data):
@@ -179,7 +187,7 @@ def step_impl_when_get_url(context, url):
         for line in context.text.split('\n'):
             key, val = line.split(': ')
             headers.append((key, val))
-    headers += context.headers
+    headers = unique_headers(headers, context.headers)
     context.response = context.client.get(url, headers=headers)
 
 
@@ -238,7 +246,7 @@ def step_impl_when_upload_image(context, filename, dest):
 
 @when('we upload a binary file with cropping')
 def step_impl_when_upload_with_crop(context):
-    data = {'CropTop': 0, 'CropLeft': 0, 'CropBottom': 333, 'CropRight': 333}
+    data = {'CropTop': '0', 'CropLeft': '0', 'CropBottom': '333', 'CropRight': '333'}
     upload_file(context, '/upload', 'bike.jpg', crop_data=data)
 
 
@@ -248,7 +256,7 @@ def upload_file(context, dest, filename, crop_data=None):
         if crop_data:
             data.update(crop_data)
         headers = [('Content-Type', 'multipart/form-data')]
-        headers += context.headers
+        headers = unique_headers(headers, context.headers)
         context.response = context.client.post(dest, data=data, headers=headers)
         assert_ok(context.response)
 
@@ -257,19 +265,19 @@ def upload_file(context, dest, filename, crop_data=None):
 def step_impl_when_upload_from_url(context):
     data = {'URL': external_url}
     headers = [('Content-Type', 'multipart/form-data')]
-    headers += context.headers
+    headers = unique_headers(headers, context.headers)
     context.response = context.client.post('/upload', data=data, headers=headers)
 
 
 @when('we upload a file from URL with cropping')
 def step_impl_when_upload_from_url_with_crop(context):
     data = {'URL': external_url,
-            'CropTop': 0,
-            'CropLeft': 0,
-            'CropBottom': 333,
-            'CropRight': 333}
+            'CropTop': '0',
+            'CropLeft': '0',
+            'CropBottom': '333',
+            'CropRight': '333'}
     headers = [('Content-Type', 'multipart/form-data')]
-    headers += context.headers
+    headers = unique_headers(headers, context.headers)
     context.response = context.client.post('/upload', data=data, headers=headers)
 
 
@@ -340,7 +348,8 @@ def step_impl_then_get_updated(context):
 
 @then('we get "{key}" in "{url}"')
 def step_impl_then_get_key_in_url(context, key, url):
-    res = context.client.get(url, headers=context.headers)
+    new_url = apply_placeholders(context, url)
+    res = context.client.get(new_url, headers=context.headers)
     assert_200(res)
     expect_json_contains(res, key)
 
@@ -368,7 +377,7 @@ def step_impl_then_get_renditions(context):
 def import_rendition(context, rendition_name=None):
     rv = parse_json_response(context.response)
     headers = [('Content-Type', 'multipart/form-data')]
-    headers += context.headers
+    headers = unique_headers(headers, context.headers)
     context._id = rv['_id']
     context.renditions = rv['renditions']
     data = {'media_archive_guid': rv['_id'], 'href': external_url}
@@ -422,6 +431,8 @@ def check_rendition(context, rendition_name):
 def step_impl_then_get_key(context, key):
     assert_200(context.response)
     expect_json_contains(context.response, key)
+    item = json.loads(context.response.get_data())
+    set_placeholder(context, '%s' % key, item[key])
 
 
 @then('we get action in user activity')
@@ -437,7 +448,7 @@ def step_impl_then_get_file(context):
     data = get_json_data(context.response)
     url = '/upload/%s' % data['_id']
     headers = [('Accept', 'application/json')]
-    headers += context.headers
+    headers = unique_headers(headers, context.headers)
     response = context.client.get(url, headers=headers)
     assert_200(response)
     assert len(response.get_data()), response
@@ -471,7 +482,7 @@ def step_impl_we_fetch_data_uri(context):
 
 def we_can_fetch_a_file(context, url, mimetype):
     headers = [('Accept', 'application/json')]
-    headers += context.headers
+    headers = unique_headers(headers, context.headers)
     response = context.client.get(url, headers=headers)
     assert_200(response)
     assert len(response.get_data()), response
@@ -482,7 +493,7 @@ def we_can_fetch_a_file(context, url, mimetype):
 def step_impl_we_delete_file(context):
     url = '/upload/%s' % context.fetched_data['_id']
     headers = [('Accept', 'application/json')]
-    headers += context.headers
+    headers = unique_headers(headers, context.headers)
     response = context.client.delete(url, headers=headers)
     assert_200(response)
     response = context.client.get(url, headers=headers)

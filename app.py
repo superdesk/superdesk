@@ -78,6 +78,9 @@ def get_app(config=None):
         prefix = app.api_prefix or None
         app.register_blueprint(blueprint, url_prefix=prefix)
 
+    # we can only put mapping when all resources are registered
+    app.data.elastic.put_mapping(app)
+
     return app
 
 if __name__ == '__main__':

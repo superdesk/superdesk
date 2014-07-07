@@ -1,1 +1,2 @@
-web: newrelic-admin run-program waitress-serve --port=$PORT wsgi:application
+server: gunicorn -w 5 -b :$PORT wsgi
+worker: celery worker -A worker.celery
