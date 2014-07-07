@@ -61,7 +61,7 @@ define(['angular', 'lodash'], function(angular, _) {
             $scope.openMembers = function(desk) {
                 $scope.desk = desk;
                 $scope.memberPopup = {};
-                $scope.selectedMembers = $scope.deskMembers[desk._id];
+                $scope.selectedMembers = _.clone($scope.deskMembers[desk._id]) || [];
                 $scope.membersToSelect = _.without($scope.users._items, $scope.selectedMembers);
             };
 
@@ -85,6 +85,7 @@ define(['angular', 'lodash'], function(angular, _) {
                 });
                 api.desks.save($scope.desk, {members: members}).then(function(result) {
 					_.extend($scope.desk, result);
+                    $scope.deskMembers[$scope.desk._id] = $scope.selectedMembers;
 					notify.success(gettext('Desk members updated.'), 3000);
 					$scope.cancelMember();
                 }, function(response) {
