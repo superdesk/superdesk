@@ -77,5 +77,5 @@ SERVER_DOMAIN = 'localhost'
 # abspath = os.path.abspath(os.path.dirname(__file__))
 # UPLOAD_FOLDER = os.path.join(abspath, 'upload')
 
-NOTIFICATION_PUSH_INTERVAL = 1
-# The time interval to push notifications for.
+NOTIFICATION_PUSH_INTERVAL = 1  # The time interval to push notifications for.
+BCRYPT_GENSALT_WORK_FACTOR = 12

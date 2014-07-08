@@ -6,6 +6,7 @@ import superdesk.utils as utils
 from flask import json, current_app as app, request
 from eve.auth import TokenAuth
 from .base_model import BaseModel
+import bcrypt
 
 
 logger = logging.getLogger(__name__)
@@ -91,11 +92,25 @@ def authenticate(credentials, db):
     if not user:
         raise NotFoundAuthError()
 
-    if not credentials.get('password') or user.get('password') != credentials.get('password'):
-        logger.warning("Login failure: %s" % json.dumps(credentials))
-        raise CredentialsAuthError()
+    password = credentials.get('password').encode('UTF-8')
+    hashed = user.get('password').encode('UTF-8')
+
+    if not (password and hashed):
+        raiseCredentialsAuthError(credentials)
+
+    try:
+        rehashed = bcrypt.hashpw(password, hashed)
+        if hashed != rehashed:
+            raiseCredentialsAuthError(credentials)
+    except ValueError:
+        raiseCredentialsAuthError(credentials)
 
     return user
+
+
+def raiseCredentialsAuthError(credentials):
+    logger.warning("Login failure: %s" % json.dumps(credentials))
+    raise CredentialsAuthError()
 
 
 def init_app(app):

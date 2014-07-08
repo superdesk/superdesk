@@ -1,7 +1,9 @@
 """Superdesk Users"""
 
 import superdesk
+import bcrypt
 from .base_model import BaseModel
+from flask import current_app as app
 
 
 class EmptyUsernameException(Exception):
@@ -30,6 +32,12 @@ def on_read_users(data, docs):
             del doc['password']
 
 
+def hash_password(password):
+    work_factor = app.config['BCRYPT_GENSALT_WORK_FACTOR']
+    hashed = bcrypt.hashpw(password.encode('UTF-8'), bcrypt.gensalt(work_factor))
+    return hashed.decode('UTF-8')
+
+
 class CreateUserCommand(superdesk.Command):
     """Create a user with given username and password.
     If user with given username exists, reset password.
@@ -42,9 +50,10 @@ class CreateUserCommand(superdesk.Command):
 
     def run(self, username, password):
         if username and password:
+            hashed = hash_password(password)
             userdata = {
                 'username': username,
-                'password': password,
+                'password': hashed,
             }
 
             user = superdesk.app.data.find_one('users', username=userdata.get('username'), req=None)
@@ -153,3 +162,9 @@ class UsersModel(BaseModel):
             'password': 0
         }
     }
+
+    def on_create(self, docs):
+        for doc in docs:
+            if doc.get('password'):
+                hashed = hash_password(doc.get('password'))
+                doc['password'] = hashed

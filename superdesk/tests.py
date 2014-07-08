@@ -5,6 +5,8 @@ from app import get_app
 from pyelasticsearch import ElasticSearch
 from base64 import b64encode
 from flask import json
+import bcrypt
+
 
 test_user = {'username': 'test_user', 'password': 'test_password'}
 
@@ -19,6 +21,7 @@ def get_test_settings():
     test_settings['CELERY_ALWAYS_EAGER'] = True
     test_settings['DEBUG'] = True
     test_settings['TESTING'] = True
+    test_settings['BCRYPT_GENSALT_WORK_FACTOR'] = 4
     return test_settings
 
 
@@ -55,7 +58,13 @@ def setup(context=None, config=None):
 
 def setup_auth_user(context):
     with context.app.test_request_context():
+        original_password = test_user['password']
+        work_factor = context.app.config['BCRYPT_GENSALT_WORK_FACTOR']
+        hashed = bcrypt.hashpw(test_user['password'].encode('UTF-8'),
+                               bcrypt.gensalt(work_factor)).decode('UTF-8')
+        test_user['password'] = hashed
         context.app.data.insert('users', [test_user])
+        test_user['password'] = original_password
     auth_data = json.dumps({'username': test_user['username'], 'password': test_user['password']})
     auth_response = context.client.post('/auth', data=auth_data, headers=context.headers)
     token = json.loads(auth_response.get_data()).get('token').encode('ascii')

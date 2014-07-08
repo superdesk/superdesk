@@ -125,11 +125,12 @@ def step_impl_given_empty(context, resource):
 def step_impl_given_(context, resource):
     with context.app.test_request_context():
         context.app.data.remove(resource)
+        orig_items = {}
         items = [parse(item, resource) for item in json.loads(context.text)]
         ev = getattr(context.app, 'on_insert_%s' % resource)
         ev(items)
         context.app.data.insert(resource, items)
-        context.data = items
+        context.data = orig_items or items
         context.resource = resource
 
 
