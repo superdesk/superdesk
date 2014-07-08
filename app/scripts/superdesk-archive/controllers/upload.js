@@ -9,14 +9,13 @@ define(['lodash'], function(_) {
         $scope.failed = false;
 
         var uploadFile = function(item) {
-
             var handleError = function(reason) {
                 item.model = false;
                 $scope.failed = true;
                 return $q.reject(reason);
             };
 
-            return api.archiveMedia.getUrl()
+            return item.upload || api.archiveMedia.getUrl()
                 .then(function(url) {
                     item.upload = upload.start({
                         method: 'POST',
