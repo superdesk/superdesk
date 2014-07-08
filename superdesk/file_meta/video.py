@@ -23,6 +23,7 @@ def get_meta(filestream):
             try:
                 json.dumps(text)
                 key, value = text.split(':', maxsplit=1)
+                key, value = key.strip(), value.strip()
                 if key and value:
                     metadata.update({key: value})
             except Exception as ex:
