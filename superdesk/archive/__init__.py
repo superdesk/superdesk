@@ -1,9 +1,8 @@
 '''Media archive module'''
-from .archive import ArchiveModel
+from .archive import ArchiveModel, ArchiveVersionsModel
 from .ingest import IngestModel
 from .archive_media import ArchiveMediaModel
 from .archive_ingest import ArchiveIngestModel
-from superdesk.archive.archive import ArchiveVersionsModel
 
 
 def init_app(app):

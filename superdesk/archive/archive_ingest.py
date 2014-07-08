@@ -19,7 +19,6 @@ from .common import ARCHIVE_MEDIA
 from superdesk.upload import url_for_media
 from superdesk.media_operations import store_file_from_url
 from superdesk.base_model import BaseModel
-from settings import CELERY_ALWAYS_EAGER
 
 
 def import_media(media_archive_guid, href):
@@ -104,10 +103,6 @@ def update_item(result, is_main_task, task_id, guid):
 @celery.task(bind=True, max_retries=3)
 def archive_item(self, guid, provider_id, user, task_id=None):
     data = app.data
-
-    # For CELERY_ALWAYS_EAGER=True the current request context is empty but already initialized one is on request_stack
-    if CELERY_ALWAYS_EAGER:
-        self.request_stack.pop()
 
     crt_task_id = self.request.id
     if not task_id:

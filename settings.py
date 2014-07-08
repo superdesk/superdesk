@@ -6,13 +6,10 @@ try:
 except ImportError:
     from urlparse import urlparse
 
-DOMAIN = {}
-
 XML = False
 IF_MATCH = False
 BANDWIDTH_SAVER = False
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S+0000'
-
 
 server_url = urlparse(os.environ.get('SUPERDESK_URL', 'http://localhost:5000'))
 URL_PROTOCOL = server_url.scheme or None

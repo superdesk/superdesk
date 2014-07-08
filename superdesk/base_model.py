@@ -81,14 +81,13 @@ class BaseModel():
     def create(self, docs, trigger_events=None, **kwargs):
         if trigger_events:
             self.on_create(docs)
-        id = app.data._backend(self.endpoint_name).insert(self.endpoint_name, docs, **kwargs)
-        if not id:
-            return id
-        inserted = self.find_one(req=None, _id=id[0])
+        ids = app.data._backend(self.endpoint_name).insert(self.endpoint_name, docs, **kwargs)
         search_backend = app.data._search_backend(self.endpoint_name)
-        if search_backend is not None:
-            search_backend.insert(self.endpoint_name, [inserted], **kwargs)
-        return id
+        if search_backend:
+            for _id in ids:
+                inserted = self.find_one(req=None, _id=_id)
+                search_backend.insert(self.endpoint_name, [inserted], **kwargs)
+        return ids
 
     def update(self, id, updates, trigger_events=None):
         if trigger_events:

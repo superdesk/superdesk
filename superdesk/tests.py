@@ -17,6 +17,8 @@ def get_test_settings():
     test_settings['CELERY_BROKER_URL'] = 'redis://localhost:6379'
     test_settings['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379'
     test_settings['CELERY_ALWAYS_EAGER'] = True
+    test_settings['DEBUG'] = True
+    test_settings['TESTING'] = True
     return test_settings
 
 

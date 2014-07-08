@@ -42,6 +42,8 @@ def get_app(config=None):
         media_storage = AmazonMediaStorage
         superdesk.command('import:amazon', ImportFromAmazonCommand())
 
+    config['DOMAIN'] = {}
+
     app = eve.Eve(
         data=superdesk.SuperdeskDataLayer,
         auth=SuperdeskTokenAuth,

@@ -36,7 +36,7 @@ class GetTokenTestCase(TestCase):
     def test_fetch_token(self):
         with self.app.test_request_context():
             provider = setup_provider('abc', 24)
-            self.app.data.insert('ingest_providers', provider)
+            self.app.data.insert('ingest_providers', [provider])
             self.assertTrue(provider.get('_id'))
             provider['config'] = {}
             provider['config']['username'] = os.environ.get('REUTERS_USERNAME', '')
