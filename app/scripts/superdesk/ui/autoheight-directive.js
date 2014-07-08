@@ -49,11 +49,10 @@ define([
                                       '-moz-box-sizing: content-box; box-sizing: content-box;' +
                                       'min-height: 0 !important; height: 0 !important; padding: 0;' +
                                       'word-wrap: break-word; border: 0;',
-                        $mirror = angular.element('<textarea tabindex="-1" ' +
+                        $mirror = angular.element('<textarea tabindex="-1" class="sdAutoHeight" ' +
                                                   'style="' + mirrorStyle + '"/>').data('elastic', true),
                         mirror = $mirror[0],
                         taStyle = getComputedStyle(ta),
-                        resize = taStyle.getPropertyValue('resize'),
                         borderBox = taStyle.getPropertyValue('box-sizing') === 'border-box' ||
                                     taStyle.getPropertyValue('-moz-box-sizing') === 'border-box' ||
                                     taStyle.getPropertyValue('-webkit-box-sizing') === 'border-box',
@@ -98,7 +97,7 @@ define([
 
                     // set resize and apply elastic
                     $ta.css({
-                      'resize': (resize === 'none' || resize === 'vertical') ? 'none' : 'horizontal'
+                      'resize': 'none'
                     }).data('elastic', true);
 
                     /*
