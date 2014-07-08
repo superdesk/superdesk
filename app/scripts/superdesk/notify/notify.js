@@ -2,7 +2,7 @@ define(['angular', 'require'], function(angular, require) {
     'use strict';
 
     return angular.module('superdesk.notify', [])
-        .service('notify', ['$timeout', function ($timeout) {
+        .service('notify', ['$timeout', 'gettext', function ($timeout, gettext) {
             function NotifyService() {
 
                 var ttls = {
@@ -38,6 +38,14 @@ define(['angular', 'require'], function(angular, require) {
                         self.addMessage(type, text, ttl);
                     };
                 }, this);
+
+                this.startSaving = function() {
+                    this.info(gettext('Saving..'));
+                };
+
+                this.stopSaving = function() {
+                    this.pop();
+                };
             }
 
             return new NotifyService();

@@ -46,10 +46,10 @@ define([
 						$rootScope.$broadcast('changes in ' + name, changes);
 					});
 					// Pool next notifications in 3 seconds.
-					$timeout(pool, 3000);
+					$timeout(pool, 34000);
 				}, function() {
 					// In case of error we will try in 10 seconds.
-					$timeout(pool, 10000);
+					$timeout(pool, 55000);
 				});
 			})();
 		}]);

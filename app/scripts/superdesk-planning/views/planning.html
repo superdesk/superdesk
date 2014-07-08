@@ -2,9 +2,9 @@
 
 	<div class="button-stack">
 		<div class="navbtn dropdown">
-    		<button class="dropdown-toggle">{{currentDesk.name}} <b class="caret"></b></button>
-			<div sd-user-desks data-user="currentUser" data-selected="currentDesk" data-select="setCurrentDesk">
-                <span>{{desk.name}}</span>
+    		<button class="dropdown-toggle">{{ selected.desk.name }} <b class="caret"></b></button>
+			<div sd-user-desks data-user="currentUser" data-selected="selected.desk">
+                <span>{{ desk.name }}</span>
             </div>
     	</div>
 	</div>
@@ -25,16 +25,11 @@
         	<form name="addItemForm" ng-submit="addItemForm.$valid && addItem()">
         		<input type="text" class="add-item" placeholder="{{ 'Add new item' | translate}}" ng-model="newItem.headline" required>
         	</form>
-			
-			<div class="items-list" ng-show="items.length">
-                <div sd-list-view data-items="items" data-select="preview(item)">
+
+			<div class="items-list">
+                <div sd-list-view data-items="items._items" data-select="preview(item)">
                 	<div class="planning-item">
 	                    <div class="header">
-	                    	<!--
-							<div class="assignee">
-								<span class="avatar"></span>
-							</div>
-							-->
 							<h6>{{ item.headline }}</h6>
 						</div>
 						<div class="info">
@@ -50,7 +45,7 @@
         </div>
 
         <div class="preview-pane">
-        	<div sd-preview-item ng-if="selected.item" data-item="selected.item"></div>
+        	<div sd-preview-item ng-if="selected.item" data-item="selected.item" data-save="save(item)"></div>
         </div>
 
     </div>

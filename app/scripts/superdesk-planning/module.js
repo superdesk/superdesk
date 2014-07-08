@@ -3,27 +3,90 @@ define([
 ], function(angular) {
     'use strict';
 
-    PlanningDashboardController.$inject = ['$scope', 'mockItems'];
-    function PlanningDashboardController($scope, mockItems) {
+    function PlanningItem(deskId) {
+        this.headline = null;
+    }
 
-    	$scope.newItem = {
-            headline: null
+    function PlanningService($location, api, es, notify, desks) {
+
+        this.items = null;
+
+        function getCriteria() {
+            var query = es(
+                $location.search(),
+                [{term: {desk: desks.getCurrentDeskId()}}]
+            );
+
+            query.sort = [{firstcreated: 'desc'}];
+
+            return {source: query};
+        }
+
+        this.query = function() {
+            var criteria = getCriteria();
+            return api.planning.query(criteria)
+                .then(angular.bind(this, function(items) {
+                this.items = items;
+                return this.items;
+            }));
         };
-    	$scope.selected = {item: null};
+
+        this.create = function() {
+            return new PlanningItem();
+        };
+
+        this.save = function(item, diff) {
+
+            if (!item.desk && desks.getCurrentDeskId()) {
+                item.desk = desks.getCurrentDeskId();
+            }
+
+            notify.startSaving();
+            return api.planning.save(item, diff)
+                .then(angular.bind(this, function() {
+                    return this.query();
+                }))
+                .then(function(items) {
+                    notify.stopSaving();
+                    return items;
+                });
+        };
+    }
+
+    PlanningDashboardController.$inject = ['$scope', '$location', 'es', 'planning', 'desks'];
+    function PlanningDashboardController($scope, $location, es, planning, desks) {
+
+        $scope.newItem = planning.create();
+        $scope.selected = {item: null};
+
+        $scope.$watch(function() {
+            return $location.search().q;
+        }, reload);
+
+        $scope.$watch(function() {
+            return desks.getCurrentDeskId();
+        }, reload);
+
+        function reload() {
+            $scope.items = null;
+            planning.query().then(function() {
+                $scope.items = planning.items;
+            });
+        }
 
     	$scope.addItem = function() {
-    		$scope.items.unshift(_.clone($scope.newItem));
-    		$scope.newItem.headline = null;
+            planning.save($scope.newItem).then(function() {
+                $scope.items = planning.items;
+                $scope.newItem = planning.create();
+            });
     	};
 
     	$scope.preview = function(item) {
     		$scope.selected.item = item;
     	};
-
-    	$scope.items = mockItems.list;
     }
 
-    function SdPreviewItem() {
+    function PreviewItemDirective(planning) {
     	return {
     		templateUrl: 'scripts/superdesk-planning/views/item-preview.html',
     		scope: {
@@ -32,8 +95,6 @@ define([
     		link: function(scope, elem) {
 
     			scope.$watch('origItem', resetItem);
-
-    			scope.dirty = false;
 
     			scope.$watchCollection('item', function(item) {
                     scope.dirty = !angular.equals(item, scope.origItem);
@@ -44,7 +105,9 @@ define([
                 };
 
                 scope.save = function() {
-                	console.log('save changes');
+                    planning.save(scope.origItem, scope.item).then(function() {
+                        resetItem(scope.origItem);
+                    });
                 };
 
     			function resetItem(item) {
@@ -54,35 +117,15 @@ define([
     	};
     }
 
-    var app = angular.module('superdesk.planning', []);
-
-    return app
-    	.directive('sdPreviewItem', SdPreviewItem)
-        .value('mockItems', {
-            list: [
-	    		{
-	    			headline: 'Et harum quidem rerum facilis est et expedita distinctio',
-	    			description: 'Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam' +
-	    			'nisi ut aliquid ex ea commodi consequatu',
-	    			createdon: '07:55:44, 26. June 2014',
-	    			duedate: 'Today at 15:30',
-	    			tasks: 'Story,Photo',
-	    			comments: 2,
-	    			attachments: 3,
-	    			links: 2
-	    		},
-	    		{
-	    			headline: ' Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates',
-	    			description: 'Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci' +
-	    			'velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.',
-	    			createdon: '08:13:20, 26. June 2014',
-	    			duedate: 'Today at 16:30',
-	    			tasks: 'Story',
-	    			comments: 4,
-	    			attachments: 1
-	    		}
-	    	]
-        })
+    return angular.module('superdesk.planning', ['superdesk.elastic'])
+    	.directive('sdPreviewItem', PreviewItemDirective)
+        .service('planning', PlanningService)
+        .config(['apiProvider', function(apiProvider) {
+            apiProvider.api('planning', {
+                type: 'http',
+                backend: {rel: 'planning'}
+            });
+        }])
         .config(['superdeskProvider', function(superdesk) {
             superdesk
                 .activity('/planning/', {
@@ -90,7 +133,7 @@ define([
                     priority: 100,
                     beta: true,
                     controller: PlanningDashboardController,
-                    templateUrl: 'scripts/superdesk-planning/views/main.html',
+                    templateUrl: 'scripts/superdesk-planning/views/planning.html',
                     category: superdesk.MENU_MAIN,
                     reloadOnSearch: false,
                     filters: []
