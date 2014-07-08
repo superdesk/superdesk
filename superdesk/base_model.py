@@ -18,6 +18,7 @@ class BaseModel():
     extra_response_fields = []
     embedded_fields = []
     datasource = {}
+    versioning = False
 
     def __init__(self, app, endpoint_schema=None):
 
@@ -41,6 +42,8 @@ class BaseModel():
                 endpoint_schema.update({'item_url': self.item_url})
             if self.embedded_fields:
                 endpoint_schema.update({'embedded_fields': self.embedded_fields})
+            if self.versioning:
+                endpoint_schema.update({'versioning': self.versioning})
 
         on_insert_event = getattr(app, 'on_insert_%s' % self.endpoint_name)
         on_insert_event += self.on_create
@@ -64,27 +67,48 @@ class BaseModel():
         return app.data._backend(self.endpoint_name).find_one(self.endpoint_name, req=req, **lookup)
 
     def get(self, req, lookup):
-        cursor = app.data._backend(self.endpoint_name).find(self.endpoint_name, req, lookup)
+        backend = app.data._search_backend(self.endpoint_name)
+        if backend is None:
+            backend = app.data._backend(self.endpoint_name)
+        cursor = backend.find(self.endpoint_name, req, lookup)
         if not cursor.count():
             return cursor  # return 304 if not modified
         else:
             # but fetch without filter if there is a change
             req.if_modified_since = None
-            return app.data._backend(self.endpoint_name).find(self.endpoint_name, req, lookup)
+            return backend.find(self.endpoint_name, req, lookup)
 
     def create(self, docs, trigger_events=None, **kwargs):
         if trigger_events:
             self.on_create(docs)
-        return app.data._backend(self.endpoint_name).insert(self.endpoint_name, docs, **kwargs)
+        id = app.data._backend(self.endpoint_name).insert(self.endpoint_name, docs, **kwargs)
+        if not id:
+            return id
+        inserted = self.find_one(req=None, _id=id[0])
+        search_backend = app.data._search_backend(self.endpoint_name)
+        if search_backend is not None:
+            search_backend.insert(self.endpoint_name, [inserted], **kwargs)
+        return id
 
     def update(self, id, updates, trigger_events=None):
         if trigger_events:
             original = self.find_one(req=None, _id=id)
             self.on_update(updates, original)
-        return app.data._backend(self.endpoint_name).update(self.endpoint_name, id, updates)
+        res = app.data._backend(self.endpoint_name).update(self.endpoint_name, id, updates)
+        search_backend = app.data._search_backend(self.endpoint_name)
+        if search_backend is not None:
+            search_backend.update(self.endpoint_name, id, updates)
+        return res
 
     def delete(self, lookup, trigger_events=None):
         if trigger_events:
             doc = self.find_one(req=None, lookup=lookup)
             self.on_delete(doc)
-        return app.data._backend(self.endpoint_name).remove(self.endpoint_name, lookup)
+        res = app.data._backend(self.endpoint_name).remove(self.endpoint_name, lookup)
+        search_backend = app.data._search_backend(self.endpoint_name)
+        if search_backend is not None:
+            try:
+                search_backend.remove(self.endpoint_name, lookup)
+            except ValueError:
+                pass
+        return res

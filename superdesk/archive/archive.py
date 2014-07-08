@@ -5,6 +5,14 @@ from flask import current_app as app
 from werkzeug.exceptions import NotFound
 
 
+class ArchiveVersionsModel(BaseModel):
+    endpoint_name = 'archive_versions'
+    schema = base_schema
+    extra_response_fields = extra_response_fields
+    item_url = item_url
+    resource_methods = []
+
+
 class ArchiveModel(BaseModel):
     endpoint_name = 'archive'
     schema = {}
@@ -12,10 +20,11 @@ class ArchiveModel(BaseModel):
     extra_response_fields = extra_response_fields
     item_url = item_url
     datasource = {
-        'backend': 'elastic',
+        'search_backend': 'elastic',
         'facets': facets
     }
     resource_methods = ['GET', 'POST', 'DELETE']
+    versioning = True
 
     def on_create(self, docs):
         on_create_item(docs)
