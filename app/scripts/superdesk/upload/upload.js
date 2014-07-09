@@ -12,6 +12,10 @@ define([
      * Populate audio/video sources using given renditions dict
      */
     function SourcesDirective() {
+        var typeMap = {
+            'video/mpeg': 'video/mp4'
+        };
+
         return {
             scope: {
                 renditions: '='
@@ -29,7 +33,7 @@ define([
                 function createSource(rendition) {
                     angular.element('<source>')
                         .attr('src', rendition.href)
-                        .attr('type', rendition.mimetype)
+                        .attr('type', typeMap[rendition.mimetype] || rendition.mimetype)
                         .appendTo(elem);
                 }
 

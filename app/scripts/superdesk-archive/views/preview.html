@@ -32,6 +32,10 @@
                 <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
             </div>
 
+            <div ng-if="item.type == 'video'">
+                <video controls="controls" sd-sources data-renditions="item.renditions"></video>
+            </div>
+
             <div class="text" ng-show="item.body_html" sd-html-preview="item.body_html"></div>
 
             <div class="composite-preview" ng-if="item.type === 'composite'">
