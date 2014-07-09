@@ -93,10 +93,13 @@ class BaseModel():
         if trigger_events:
             original = self.find_one(req=None, _id=id)
             self.on_update(updates, original)
+
         res = app.data._backend(self.endpoint_name).update(self.endpoint_name, id, updates)
+
         search_backend = app.data._search_backend(self.endpoint_name)
         if search_backend is not None:
-            search_backend.update(self.endpoint_name, id, updates)
+            all_updates = self.find_one(req=None, _id=id)
+            search_backend.update(self.endpoint_name, id, all_updates)
         return res
 
     def delete(self, lookup, trigger_events=None):
