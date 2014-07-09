@@ -76,7 +76,7 @@ define([
                         $scope.versions = result;
                         $scope.selected = _.find($scope.versions._items, {_version: $scope.item._latest_version});
                     });
-                })
+                });
             }
         });
     }

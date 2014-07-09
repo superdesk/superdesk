@@ -14,23 +14,21 @@
 		<ul>
 			<li class="item" ng-repeat="version in versions._items|orderBy:'_version':true" ng-click="$parent.selected = version">
 				<div class="header">
-					<time>{{version.versioncreated|reldate}}</time>
+					<time title="{{version.versioncreated|date:'medium'}}" datetime="{{version.versioncreated}}">{{version.versioncreated|reldate}}</time>
 					<span class="user">by</span>
 				</div>
 				<h6>{{version.headline}}</h6>
-				<div class="content">{{version.body_html}}</div>
 			</li>
 		</ul>
 	</div>
 	<div class="versions-preview">
 		<div class="article">
 			<div class="header">
-				<time>{{selected.versioncreated|reldate}}</time>
+				<time title="{{selected.versioncreated|date:'medium'}}" datetime="{{selected.versioncreated}}">{{selected.versioncreated|reldate}}</time>
 				<span class="user">by</span>
 			</div>
 			<h2>{{selected.headline}}</h2>
 			<div class="content">{{selected.body_html}}</div>
 		</div>
-		
 	</div>	
 </section>
