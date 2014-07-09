@@ -44,7 +44,8 @@ define(['angular', 'require', 'lodash'], function(angular, require, _) {
 
                     function setActiveMenuItem(route) {
                         _.each(scope.menu, function(activity) {
-                            activity.isActive = route.href && route.href.substr(0, activity.href.length) === activity.href;
+                            activity.isActive = route && route.href &&
+                                route.href.substr(0, activity.href.length) === activity.href;
                         });
                     }
 
@@ -55,8 +56,8 @@ define(['angular', 'require', 'lodash'], function(angular, require, _) {
                     scope.$watch(function() {
                         return $route.current;
                     }, function(route) {
-                        scope.currentRoute = route;
-                        setActiveMenuItem(route);
+                        scope.currentRoute = route || null;
+                        setActiveMenuItem(scope.currentRoute);
                     });
                 }
             };
