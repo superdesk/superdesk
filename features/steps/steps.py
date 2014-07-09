@@ -360,7 +360,8 @@ def step_impl_then_get_file_meta(context):
     assert len(
         apply_path(
             parse_json_response(context.response),
-            'filemeta').items()
+            'filemeta'
+        ).items()
     ) > 0
     'expected non empty metadata dictionary'
 
