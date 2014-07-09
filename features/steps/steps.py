@@ -523,6 +523,12 @@ def step_impl_then_file(context):
     assert os.path.exists(os.path.join(folder, context.filename))
 
 
+@then('we get version "{version}"')
+def step_impl_then_get_version(context, version):
+    assert_200(context.response)
+    expect_json_contains(context.response, {'_version': int(version)})
+
+
 @then('we get etag matching "{url}"')
 def step_impl_then_get_etag(context, url):
     if context.app.config['IF_MATCH']:

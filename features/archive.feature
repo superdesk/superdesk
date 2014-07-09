@@ -73,15 +73,16 @@ Feature: News Items Archive
 
         When we patch given
         """
-        {"slugline": "TEST", "urgency": 2, "version": "1"}
+        {"slugline": "TEST", "urgency": 2}
         """
 
         And we patch latest
         """
-        {"slugline": "TEST2", "version": "2"}
+        {"slugline": "TEST2"}
         """
 
         Then we get updated response
+        And we get version "3"
         And we get etag matching "/archive/xyz"
 
     @auth
