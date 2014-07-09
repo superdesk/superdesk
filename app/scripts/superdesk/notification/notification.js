@@ -5,11 +5,14 @@ define([
 ], function(angular, require) {
     'use strict';
 
+    var TIMEOUT = 8000;
+
     return angular.module('superdesk.notification', [ 'superdesk.data' ])
     .run(['$rootScope', '$timeout', 'api',
     	function($rootScope, $timeout, api) {
-			var last = null;
-			(function pool() {
+			var last, timeout;
+
+			function pool() {
 				var q = null;
 				if (last != null) {
 					q = {where: {'_created': {'$gt': last}}};
@@ -45,12 +48,25 @@ define([
 					_.each(notifications, function(changes, name) {
 						$rootScope.$broadcast('changes in ' + name, changes);
 					});
-					// Pool next notifications in 3 seconds.
-					$timeout(pool, 34000);
+					timeout = $timeout(pool, TIMEOUT);
 				}, function() {
 					// In case of error we will try in 10 seconds.
-					$timeout(pool, 55000);
+					timeout = $timeout(pool, TIMEOUT * 2);
 				});
-			})();
+			}
+
+			function startPool() {
+				timeout = $timeout(pool, TIMEOUT);
+			}
+
+			function stopPool() {
+				if (timeout) {
+					$timeout.cancel(timeout);
+					timeout = null;
+				}
+			}
+
+			$rootScope.$on('$routeChangeSuccess', startPool);
+			$rootScope.$on('$locationChangeStart', stopPool);
 		}]);
 });
