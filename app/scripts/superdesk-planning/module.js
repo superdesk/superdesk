@@ -7,18 +7,23 @@ define([
         this.headline = null;
     }
 
+    PlanningService.$inject = ['$location', 'api', 'es', 'notify', 'desks'];
     function PlanningService($location, api, es, notify, desks) {
 
         this.items = null;
 
+        function getDeskFilter() {
+            var currentDesk = desks.getCurrentDeskId();
+            if (currentDesk) {
+                return [{term: {desk: currentDesk}}];
+            } else {
+                return null;
+            }
+        }
+
         function getCriteria() {
-            var query = es(
-                $location.search(),
-                [{term: {desk: desks.getCurrentDeskId()}}]
-            );
-
+            var query = es($location.search(), getDeskFilter());
             query.sort = [{firstcreated: 'desc'}];
-
             return {source: query};
         }
 
@@ -67,13 +72,6 @@ define([
             return desks.getCurrentDeskId();
         }, reload);
 
-        function reload() {
-            $scope.items = null;
-            planning.query().then(function() {
-                $scope.items = planning.items;
-            });
-        }
-
     	$scope.addItem = function() {
             planning.save($scope.newItem).then(function() {
                 $scope.items = planning.items;
@@ -84,8 +82,16 @@ define([
     	$scope.preview = function(item) {
     		$scope.selected.item = item;
     	};
+
+        function reload() {
+            $scope.items = null;
+            planning.query().then(function() {
+                $scope.items = planning.items;
+            });
+        }
     }
 
+    PreviewItemDirective.$inject = ['planning'];
     function PreviewItemDirective(planning) {
     	return {
     		templateUrl: 'scripts/superdesk-planning/views/item-preview.html',

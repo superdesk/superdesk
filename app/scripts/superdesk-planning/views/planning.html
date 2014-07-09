@@ -2,7 +2,7 @@
 
 	<div class="button-stack">
 		<div class="navbtn dropdown">
-    		<button class="dropdown-toggle">{{ selected.desk.name }} <b class="caret"></b></button>
+            <button class="dropdown-toggle">{{ selected.desk.name || "Select desk" | translate }} <b class="caret"></b></button>
 			<div sd-user-desks data-user="currentUser" data-selected="selected.desk">
                 <span>{{ desk.name }}</span>
             </div>
