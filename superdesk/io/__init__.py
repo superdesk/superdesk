@@ -1,10 +1,13 @@
 """Superdesk IO"""
 
+import logging
 import superdesk
 from superdesk.utc import utcnow
 from superdesk.base_model import BaseModel
 from flask import current_app as app
 
+
+logger = logging.getLogger(__name__)
 providers = {}
 
 
@@ -48,7 +51,11 @@ class UpdateIngest(superdesk.Command):
     def run(self, provider_type=None):
         for provider in app.data.find_all('ingest_providers'):
             if not provider_type or provider_type == provider.get('type'):
-                update_provider(provider)
+                try:
+                    update_provider(provider)
+                except (Exception) as err:
+                    logger.exception(err)
+                    pass
 
 
 class AddProvider(superdesk.Command):
