@@ -5,6 +5,7 @@ import superdesk
 from superdesk.utc import utcnow
 from superdesk.base_model import BaseModel
 from flask import current_app as app
+from superdesk.celery_app import celery
 
 
 logger = logging.getLogger(__name__)
@@ -39,6 +40,11 @@ def update_provider(provider):
             'updated': start,
             'ingested_count': ingested_count
         })
+
+
+@celery.task()
+def fetch_ingest():
+    UpdateIngest().run()
 
 
 class UpdateIngest(superdesk.Command):

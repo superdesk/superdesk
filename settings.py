@@ -1,5 +1,6 @@
 
 import os
+from datetime import timedelta
 
 try:
     from urllib.parse import urlparse
@@ -32,6 +33,13 @@ ELASTICSEARCH_INDEX = os.environ.get('ELASTICSEARCH_INDEX', 'superdesk')
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379')
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379')
 CELERY_ALWAYS_EAGER = (os.environ.get('CELERY_ALWAYS_EAGER', False) == 'True')
+
+CELERYBEAT_SCHEDULE = {
+    'fetch_ingest': {
+        'task': 'superdesk.io.fetch_ingest',
+        'schedule': timedelta(minutes=5)
+    }
+}
 
 REUTERS_USERNAME = os.environ.get('REUTERS_USERNAME', '')
 REUTERS_PASSWORD = os.environ.get('REUTERS_PASSWORD', '')
