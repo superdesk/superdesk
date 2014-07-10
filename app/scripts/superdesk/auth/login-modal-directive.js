@@ -27,14 +27,14 @@ define([], function() {
                         });
                 };
 
-                scope.$watch(function() {
+                scope.$watchGroup([function() {
                     return session.token;
-                }, function(token) {
+                }, 'requiredLogin'], function(triggerLogin) {
                     scope.isLoading = false;
                     scope.identity = session.identity;
                     scope.username = session.identity ? session.identity.UserName : null;
                     scope.password = null;
-                    if (!token) {
+                    if (!triggerLogin[0] && triggerLogin[1]) {
                         element.show();
                         var focusElem = scope.username ? 'password' : 'username';
                         element.find('#login-' + focusElem).focus();

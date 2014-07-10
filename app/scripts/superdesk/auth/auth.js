@@ -9,13 +9,43 @@ define([
 ], function(angular, require, AuthInterceptor) {
     'use strict';
 
+    ResetPassworController.$inject = ['$scope', '$location'];
+    function ResetPassworController($scope, $location) {
+        $scope.flowStep = 1;
+
+        $scope.isSending = false;
+        $scope.sendToken = function() {
+            console.log('send token to user email');
+            var response = 200;
+            if (response === 200) {
+                $scope.flowStep = 2;
+            }
+        };
+
+        $scope.isReseting = false;
+        $scope.resetPassword = function() {
+            console.log('password reset');
+            var response = 200;
+            if (response === 200) {
+                $location.path('/');
+            }
+        };
+    }
+
     return angular.module('superdesk.auth', [])
         .service('auth', require('./auth-service'))
         .service('session', require('./session-service'))
         .service('authAdapter', require('./basic-auth-adapter'))
         .directive('sdLoginModal', require('./login-modal-directive'))
-        .config(['$httpProvider', function($httpProvider) {
+        .config(['$httpProvider', 'superdeskProvider', function($httpProvider, superdesk) {
             $httpProvider.interceptors.push(AuthInterceptor);
+
+            superdesk
+                .activity('/reset-password/', {
+                    controller: ResetPassworController,
+                    templateUrl: require.toUrl('./reset-password.html'),
+                    auth: false
+                });
         }])
 
         // watch session token, identity
@@ -57,7 +87,8 @@ define([
 
             // prevent routing when there is no token
             $rootScope.$on('$locationChangeStart', function (e) {
-                if (!session.token) {
+                $rootScope.requiredLogin = $route.routes[$location.path()].auth;
+                if (!session.token && $rootScope.requiredLogin) {
                     session.getIdentity().then(function() {
                         $http.defaults.headers.common.Authorization = session.token;
                         $route.reload();

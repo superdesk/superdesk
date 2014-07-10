@@ -59,7 +59,8 @@ define([
                 href: id, // use id as default
                 filters: [],
                 beta: false,
-                reloadOnSearch: false
+                reloadOnSearch: false,
+                auth: true
             }, data);
 
             var actionless = _.find(activity.filters, function(filter) {

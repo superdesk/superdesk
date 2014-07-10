@@ -17,10 +17,10 @@
 
 		.box-sizing(border-box);
 		width: 320px;
-		height: 500px;
+		height: 600px;
 		padding: 0 15px;
 		position: absolute;
-		top: 50%; margin-top: -260px;
+		top: 50%; margin-top: -300px;
 		left: 50%; margin-left: -125px;
 		padding-top: 80px;
 
@@ -73,11 +73,24 @@
 					}
 				}
 			}
+			.links {
+				border-top: 1px solid #484848;
+				padding-top: 10px;
+			}
 			.text {
 				color: #898989;
+				margin-bottom: 10px;
+				display: block;
 				&:hover {
 					text-decoration: underline;
 					cursor: pointer;
+				}
+			}
+			.reset-info {
+				color: #ccc;
+				margin-bottom: 20px;
+				i {
+					vertical-align: sub;
 				}
 			}
 			.error-handler {

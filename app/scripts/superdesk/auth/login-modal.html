@@ -24,9 +24,7 @@
                         </div>
                     </button>
                 </fieldset>
-
-                <a href="" ng-click="logout()" class="text" ng-show="identity.Id">Sign in as a different user.</a>
-            </form>
+            </form>            
 
             <div class="error-handler">
                 <p class="error" ng-show="loginError == 400" translate>Oops! Invalid Username or Password.<br />Please try again.</p>
@@ -43,6 +41,12 @@
                 </div>
                 
             </div>
+
+            <div class="links">
+                <a href="" ng-click="logout()" class="text" ng-show="identity.Id" translate>Sign in as a different user.</a>
+                <a href="/#/reset-password/" class="text" translate>Forgot password?</a>
+            </div>
+
         </div>
     </div>
 </div>
