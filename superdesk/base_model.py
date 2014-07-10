@@ -47,20 +47,35 @@ class BaseModel():
 
         on_insert_event = getattr(app, 'on_insert_%s' % self.endpoint_name)
         on_insert_event += self.on_create
+        on_inserted_event = getattr(app, 'on_inserted_%s' % self.endpoint_name)
+        on_inserted_event += self.on_created
         on_update_event = getattr(app, 'on_update_%s' % self.endpoint_name)
         on_update_event += self.on_update
+        on_updated_event = getattr(app, 'on_updated_%s' % self.endpoint_name)
+        on_updated_event += self.on_updated
         on_delete_event = getattr(app, 'on_delete_item_%s' % self.endpoint_name)
         on_delete_event += self.on_delete
+        on_deleted_event = getattr(app, 'on_deleted_item_%s' % self.endpoint_name)
+        on_deleted_event += self.on_deleted
         app.register_resource(self.endpoint_name, endpoint_schema)
         superdesk.apps[self.endpoint_name] = self
 
     def on_create(self, docs):
         pass
 
+    def on_created(self, docs):
+        pass
+
     def on_update(self, updates, original):
         pass
 
+    def on_updated(self, updates, original):
+        pass
+
     def on_delete(self, doc):
+        pass
+
+    def on_deleted(self, doc):
         pass
 
     def find_one(self, req, **lookup):
@@ -83,10 +98,12 @@ class BaseModel():
             self.on_create(docs)
         ids = app.data._backend(self.endpoint_name).insert(self.endpoint_name, docs, **kwargs)
         search_backend = app.data._search_backend(self.endpoint_name)
-        if search_backend and not self.endpoint_name.endswith(app.config['VERSIONS']):
+        if search_backend:
             for _id in ids:
                 inserted = self.find_one(req=None, _id=_id)
                 search_backend.insert(self.endpoint_name, [inserted], **kwargs)
+        if trigger_events:
+            self.on_created(docs)
         return ids
 
     def update(self, id, updates, trigger_events=None):
@@ -100,6 +117,8 @@ class BaseModel():
         if search_backend is not None:
             all_updates = self.find_one(req=None, _id=id)
             search_backend.update(self.endpoint_name, id, all_updates)
+        if trigger_events:
+            self.on_updated(updates, original)
         return res
 
     def delete(self, lookup, trigger_events=None):
@@ -113,4 +132,6 @@ class BaseModel():
                 search_backend.remove(self.endpoint_name, lookup)
             except ValueError:
                 pass
+        if trigger_events:
+            self.on_deleted(doc)
         return res
