@@ -368,7 +368,7 @@ def step_impl_then_get_file_meta(context):
 
 @then('we get "{filename}" metadata')
 def step_impl_then_get_file_meta(context, filename):
-    if filename == 'image':
+    if filename == 'bike.jpg':
         metadata = {
             'YCbCrPositioning': 1,
             'ImageLength': 2448,
