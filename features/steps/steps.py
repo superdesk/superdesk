@@ -25,11 +25,17 @@ def test_json(context):
         fail_and_print_body(context.response, 'response is not valid json')
 
     context_data = parse_json_input(context.text)
+    json_match(context_data, response_data)
 
+
+def json_match(context_data, response_data):
+    if not isinstance(context_data, dict):
+        assert_equal(context_data, response_data)
+        return
     for key in context_data:
         assert_in(key, response_data)
         if context_data[key]:
-            assert_equal(response_data[key], context_data[key])
+            json_match(context_data[key], response_data[key])
 
 
 def get_fixture_path(fixture):
@@ -131,6 +137,22 @@ def step_impl_given_(context, resource):
         ev(items)
         context.app.data.insert(resource, items)
         context.data = orig_items or items
+        context.resource = resource
+
+
+@given('ingest from "{provider}"')
+def step_impl_given_resource_with_provider(context, provider):
+    resource = 'ingest'
+    with context.app.test_request_context():
+        context.app.data.remove(resource)
+        items = [parse(item, resource) for item in json.loads(context.text)]
+        for item in items:
+            item['ingest_provider'] = context.providers[provider]
+            print(item)
+        ev = getattr(context.app, 'on_insert_%s' % resource)
+        ev(items)
+        context.app.data.insert(resource, items)
+        context.data = items
         context.resource = resource
 
 
@@ -349,8 +371,7 @@ def step_impl_then_get_updated(context):
 
 @then('we get "{key}" in "{url}"')
 def step_impl_then_get_key_in_url(context, key, url):
-    new_url = apply_placeholders(context, url)
-    res = context.client.get(new_url, headers=context.headers)
+    res = context.client.get(url, headers=context.headers)
     assert_200(res)
     expect_json_contains(res, key)
 
@@ -426,6 +447,17 @@ def check_thumbnail_rendition(context):
 def check_rendition(context, rendition_name):
     rv = parse_json_response(context.response)
     assert rv['renditions'][rendition_name] != context.renditions[rendition_name], rv['renditions']
+
+
+@then('we get archive ingest result')
+def step_impl_then_get_archive_ingest_result(context):
+    assert_200(context.response)
+    expect_json_contains(context.response, 'task_id')
+    item = json.loads(context.response.get_data())
+    url = '/archive_ingest/%s' % (item['task_id'])
+    context.response = context.client.get(url, headers=context.headers)
+    assert_200(context.response)
+    test_json(context)
 
 
 @then('we get "{key}"')

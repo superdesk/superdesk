@@ -43,7 +43,9 @@ def fetch_token_from_api(provider):
     }
 
     response = session.get(url, params=payload, stream=False, verify=False)
-    tree = etree.fromstring(response.text)
+    # workaround for httmock lib
+    # tree = etree.fromstring(response.text)
+    tree = etree.fromstring(response.content)
     return tree.text
 
 

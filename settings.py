@@ -33,6 +33,9 @@ CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379')
 CELERY_ALWAYS_EAGER = (os.environ.get('CELERY_ALWAYS_EAGER', False) == 'True')
 
+REUTERS_USERNAME = os.environ.get('REUTERS_USERNAME', '')
+REUTERS_PASSWORD = os.environ.get('REUTERS_PASSWORD', '')
+
 
 INSTALLED_APPS = (
     'superdesk.io',

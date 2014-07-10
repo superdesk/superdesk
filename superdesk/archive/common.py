@@ -150,7 +150,12 @@ base_schema = {
     'contents': {
         'type': 'list'
     },
-    'media': {'type': 'media'}
+    'media': {
+        'type': 'media'
+    },
+    'task_id': {
+        'type': 'string'
+    }
 }
 
 item_url = 'regex("[\w,.:-]+")'

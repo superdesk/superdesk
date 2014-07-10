@@ -5,9 +5,28 @@ Feature: News Items Archive
         Given empty "archive"
         When we get "/archive"
         Then we get list with 0 items
+                
 
     @auth
-    Scenario: Move item into archive
+    Scenario: Move item into archive - tag not on ingest
+        Given empty "archive"
+		And empty "ingest"
+
+        When we post to "/archive_ingest"
+        """
+        {
+        "guid": "not_on_ingest_tag"
+        }
+        """
+
+        Then we get error 400
+		"""
+		{"_message": "", "_issues": "Fail to found ingest item with guid: not_on_ingest_tag", "_status": "ERR"}
+		"""
+
+
+    @auth
+    Scenario: Move item into archive - no provider
         Given empty "archive"
         And "ingest"
         """
@@ -21,19 +40,39 @@ Feature: News Items Archive
         }
         """
 
-        Then we get new resource
+        Then we get archive ingest result
         """
-        {"guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401"}
+        {"state": "FAILURE",  "error": "For ingest with guid= tag:reuters.com,0000:newsml_GM1EA6A1P8401, failed to retrieve provider with _id=None"}
         """
-        And we get "task_id"
-        And we get "state" in "/archive_ingest/#task_id#"
-        And we get "archived" in "ingest/tag:reuters.com,0000:newsml_GM1EA6A1P8401"
-        
+
 
     @auth
-    Scenario: Move item into archive - wrong guid
+    @provider
+    Scenario: Move item into archive - tag not on provider
         Given empty "archive"
-        And "ingest"
+        And ingest from "reuters"
+        """
+        [{"guid": "not_on_provider_tag"}]
+        """
+
+        When we post to "/archive_ingest"
+        """
+        {
+        "guid": "not_on_provider_tag"
+        }
+        """
+
+        Then we get archive ingest result
+        """
+        {"state": "FAILURE",  "error": "Not found the ingest with guid: not_on_provider_tag for provider reuters"}
+        """
+
+		
+    @auth
+    @provider
+    Scenario: Move item into archive - success
+        Given empty "archive"
+        And ingest from "reuters"
         """
         [{"guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401"}]
         """
@@ -41,16 +80,38 @@ Feature: News Items Archive
         When we post to "/archive_ingest"
         """
         {
-        "guid": "wrong guid"
+        "guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401"
         }
         """
+        And we get "/archive/tag:reuters.com,0000:newsml_GM1EA6A1P8401"
 
-        Then we get error 400
+        Then we get existing resource
 		"""
-		{"_message": "", "_issues": "Fail to found ingest item with guid: wrong guid", "_status": "ERR"}
-		"""
-
-
+		{"renditions":  {      
+						  "thumbnail":{
+						     "residRef":"tag:reuters.com,0000:binary_GM1EA6A1P8401-THUMBNAIL",
+						     "rendition":"thumbnail",
+						     "sizeinbytes":17308
+						  },
+						  "baseImage":{
+						     "residRef":"tag:reuters.com,0000:binary_GM1EA6A1P8401-BASEIMAGE",
+						     "rendition":"baseImage",
+						     "sizeinbytes":775698
+						  },
+						  "viewImage":{
+						     "residRef":"tag:reuters.com,0000:binary_GM1EA6A1P8401-VIEWIMAGE",
+						     "rendition":"viewImage",
+						     "sizeinbytes":184755
+						  }},
+		  "task_id": ""								  
+		}  
+  		"""
+        And we get archive ingest result
+        """
+        {"state": "PROGRESS",  "current": 4, "total": 4}
+        """
+        
+        
     @auth
     Scenario: Get archive item by guid
         Given "archive"
