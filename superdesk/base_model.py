@@ -85,6 +85,7 @@ class BaseModel():
         backend = app.data._search_backend(self.endpoint_name)
         if backend is None:
             backend = app.data._backend(self.endpoint_name)
+
         cursor = backend.find(self.endpoint_name, req, lookup)
         if not cursor.count():
             return cursor  # return 304 if not modified

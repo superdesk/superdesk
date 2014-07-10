@@ -11,6 +11,7 @@ from superdesk.auth import SuperdeskTokenAuth
 from superdesk.celery_app import init_celery
 from superdesk.desk_media_storage import SuperdeskGridFSMediaStorage
 from superdesk.validator import SuperdeskValidator
+from raven.contrib.flask import Sentry
 
 
 def setup_amazon(config):
@@ -62,6 +63,8 @@ def get_app(config=None):
 
         :param error: an instance of :attr:`superdesk.SuperdeskError` class
         """
+        if error.status_code == 500:
+            app.sentry.captureException()
         return send_response(None, (error.to_dict(), None, None, error.status_code))
 
     init_celery(app)
@@ -82,6 +85,12 @@ def get_app(config=None):
 
     # we can only put mapping when all resources are registered
     app.data.elastic.put_mapping(app)
+
+    try:
+        app.sentry = Sentry()
+        app.sentry.init_app(app)
+    except AttributeError:
+        pass
 
     return app
 

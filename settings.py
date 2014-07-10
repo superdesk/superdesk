@@ -44,6 +44,8 @@ CELERYBEAT_SCHEDULE = {
 REUTERS_USERNAME = os.environ.get('REUTERS_USERNAME', '')
 REUTERS_PASSWORD = os.environ.get('REUTERS_PASSWORD', '')
 
+SENTRY_DSN = os.environ.get('SENTRY_DSN')
+SENTRY_INCLUDE_PATHS = ['superdesk']
 
 INSTALLED_APPS = (
     'superdesk.io',
