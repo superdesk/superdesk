@@ -125,6 +125,7 @@ Feature: News Items Archive
         {"guid": "tag:example.com,0000:newsml_BRE9A605"}
         """
 
+    @wip
     @auth
     Scenario: Update item
         Given "archive"
@@ -145,6 +146,9 @@ Feature: News Items Archive
         Then we get updated response
         And we get version "3"
         And we get etag matching "/archive/xyz"
+
+        When we get "/archive/xyz?version=all"
+        Then we get list with 3 items
 
     @auth
     Scenario: Upload image into archive

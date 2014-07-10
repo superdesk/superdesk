@@ -40,4 +40,5 @@ def setup_reuters_mock(context):
 
 
 def teardown_reuters_mock(context):
-    context.mock.__exit__(None, None, None)
+    if hasattr(context, 'mock'):
+        context.mock.__exit__(None, None, None)

@@ -6,6 +6,7 @@ from eve_elastic import Elastic
 from .utils import import_by_path
 from pyelasticsearch.client import JsonEncoder
 from bson.objectid import ObjectId
+from flask import current_app as app
 import superdesk
 
 
@@ -76,6 +77,8 @@ class SuperdeskDataLayer(DataLayer):
         return self._backend(resource).is_empty(resource)
 
     def _search_backend(self, resource):
+        if resource.endswith(app.config['VERSIONS']):
+            return
         datasource = self._datasource(resource)
         backend = config.SOURCES[datasource[0]].get('search_backend', None)
         return getattr(self, backend) if backend is not None else None
