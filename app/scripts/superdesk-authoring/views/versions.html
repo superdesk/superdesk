@@ -12,40 +12,23 @@
 <section class="main-section article-versions">
 	<div class="versions-list">
 		<ul>
-			<li class="item">
+			<li class="item" ng-repeat="version in versions._items|orderBy:'_version':true" ng-click="$parent.selected = version">
 				<div class="header">
-					<time>23.06.2014. 13:57:08</time>
-					<span class="user">by Nikola Nikolic</span>
+					<time title="{{version.versioncreated|date:'medium'}}" datetime="{{version.versioncreated}}">{{version.versioncreated|reldate}}</time>
+					<span class="user">by {{version.user.display_name}}</span>
 				</div>
-				<h6>Sed ut perspiciatis unde omnis iste natus error sit voluptatem</h6>
-				<div class="content">
-					Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt
-				</div>
-			</li>
-			<li class="item">
-				<div class="header">
-					<time>23.06.2014. 13:53:44</time>
-					<span class="user">by Nikola Nikolic</span>
-				</div>
-				<h6>Sed ut perspiciatis unde omnis iste natus error sit voluptatem</h6>
-				<div class="content">
-					Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt
-				</div>
+				<h6>{{version.headline}}</h6>
 			</li>
 		</ul>
 	</div>
 	<div class="versions-preview">
 		<div class="article">
 			<div class="header">
-				<time>23.06.2014. 13:57:08</time>
-				<span class="user">by Nikola Nikolic</span>
+				<time title="{{selected.versioncreated|date:'medium'}}" datetime="{{selected.versioncreated}}">{{selected.versioncreated|reldate}}</time>
+				<span class="user">by {{selected.user.display_name}}</span>
 			</div>
-			<h2>Sed ut perspiciatis unde omnis iste natus error sit voluptatem</h2>
-			<div class="content">
-				<p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.</p>
-				<p>Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>
-			</div>
+			<h2>{{selected.headline}}</h2>
+			<div class="content" sd-html-preview="selected.body_html"></div>
 		</div>
-		
 	</div>	
 </section>

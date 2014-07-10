@@ -57,7 +57,28 @@ define([
 
     VersioningController.$inject = ['$scope', 'api', '$location'];
     function VersioningController($scope, api, $location) {
+        $scope.item = null;
+        $scope.versions = null;
+        $scope.selected = null;
 
+        $scope.$watch(function() {
+            return $location.search()._id;
+        }, function(_id) {
+            $scope.item = null;
+            $scope.versions = null;
+
+            if (_id) {
+                api.archive.getById(_id)
+                .then(function(result) {
+                    $scope.item = result;
+                    api.archive.getByUrl(result._links.self.href + '?version=all&embedded={"user":1}')
+                    .then(function(result) {
+                        $scope.versions = result;
+                        $scope.selected = _.find($scope.versions._items, {_version: $scope.item._latest_version});
+                    });
+                });
+            }
+        });
     }
 
     WorkqueueService.$inject = ['storage'];
