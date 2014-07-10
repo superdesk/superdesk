@@ -7,9 +7,9 @@ import superdesk
 from eve.io.mongo import MongoJSONEncoder
 from eve.render import send_response
 from superdesk import signals
-from superdesk.auth import SuperdeskTokenAuth
+from superdesk.auth.auth import SuperdeskTokenAuth
 from superdesk.celery_app import init_celery
-from superdesk.desk_media_storage import SuperdeskGridFSMediaStorage
+from superdesk.storage.desk_media_storage import SuperdeskGridFSMediaStorage
 from superdesk.validator import SuperdeskValidator
 from raven.contrib.flask import Sentry
 
@@ -41,8 +41,8 @@ def get_app(config=None):
 
     setup_amazon(config)
     if config['AMAZON_CONTAINER_NAME']:
-        from superdesk.amazon.amazon_media_storage import AmazonMediaStorage
-        from superdesk.amazon.import_from_amazon import ImportFromAmazonCommand
+        from superdesk.storage.amazon.amazon_media_storage import AmazonMediaStorage
+        from superdesk.storage.amazon.import_from_amazon import ImportFromAmazonCommand
         media_storage = AmazonMediaStorage
         superdesk.command('import:amazon', ImportFromAmazonCommand())
 

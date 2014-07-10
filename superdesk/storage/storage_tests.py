@@ -1,5 +1,5 @@
 
-from .tests import TestCase
+from superdesk.tests import TestCase
 from .storage import FileSystemStorage
 
 

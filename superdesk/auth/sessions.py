@@ -1,10 +1,6 @@
 from superdesk.base_model import BaseModel
 
 
-def init_app(app):
-    SesssionsModel(app=app)
-
-
 class SesssionsModel(BaseModel):
     endpoint_name = 'sessions'
     schema = {

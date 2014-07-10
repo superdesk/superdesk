@@ -2,7 +2,7 @@
 
 import superdesk
 import bcrypt
-from .base_model import BaseModel
+from superdesk.base_model import BaseModel
 from flask import current_app as app
 
 
@@ -39,29 +39,31 @@ def hash_password(password):
 
 
 class CreateUserCommand(superdesk.Command):
-    """Create a user with given username and password.
+    """Create a user with given username, password and email.
     If user with given username exists, reset password.
     """
 
     option_list = (
         superdesk.Option('--username', '-u', dest='username'),
         superdesk.Option('--password', '-p', dest='password'),
+        superdesk.Option('--email', '-e', dest='email'),
     )
 
-    def run(self, username, password):
-        if username and password:
+    def run(self, username, password, email):
+        if username and password and email:
             hashed = hash_password(password)
             userdata = {
                 'username': username,
                 'password': hashed,
+                'email': email,
             }
 
             user = superdesk.app.data.find_one('users', username=userdata.get('username'), req=None)
             if user:
-                superdesk.app.data.update('users', user.get('_id'), userdata)
+                app.data.update('users', user.get('_id'), userdata)
                 return user
             else:
-                superdesk.app.data.insert('users', [userdata])
+                app.data.insert('users', [userdata])
                 return userdata
 
 
@@ -82,11 +84,6 @@ superdesk.connect('read:users', on_read_users)
 superdesk.connect('created:users', on_read_users)
 superdesk.command('users:create', CreateUserCommand())
 superdesk.command('users:hash_passwords', HashUserPasswordsCommand())
-
-
-def init_app(app):
-    UsersModel(app=app)
-    UserRolesModel(app=app)
 
 
 class UserRolesModel(BaseModel):
@@ -140,6 +137,7 @@ class UsersModel(BaseModel):
         'email': {
             'unique': True,
             'type': 'email',
+            'required': True
         },
         'phone': {
             'type': 'phone_number',

@@ -5,7 +5,7 @@ import superdesk
 import superdesk.utils as utils
 from flask import json, current_app as app, request
 from eve.auth import TokenAuth
-from .base_model import BaseModel
+from superdesk.base_model import BaseModel
 import bcrypt
 
 
@@ -111,11 +111,6 @@ def authenticate(credentials, db):
 def raiseCredentialsAuthError(credentials):
     logger.warning("Login failure: %s" % json.dumps(credentials))
     raise CredentialsAuthError()
-
-
-def init_app(app):
-    AuthUsersModel(app)
-    AuthModel(app)
 
 
 class AuthUsersModel(BaseModel):

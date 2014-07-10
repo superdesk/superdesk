@@ -54,10 +54,9 @@ INSTALLED_APPS = (
     'superdesk.archive',
     'superdesk.activity',
     'superdesk.upload',
-    'superdesk.sessions',
     'superdesk.desks',
     'superdesk.subjectcodes',
-    'superdesk.amazon.import_from_amazon',
+    'superdesk.storage.amazon.import_from_amazon',
     'superdesk.notification',
     'superdesk.planning',
 )
@@ -92,3 +91,13 @@ SERVER_DOMAIN = 'localhost'
 
 NOTIFICATION_PUSH_INTERVAL = 1  # The time interval to push notifications for.
 BCRYPT_GENSALT_WORK_FACTOR = 12
+
+# email server
+MAIL_SERVER = 'smtp.googlemail.com'
+MAIL_PORT = 465
+MAIL_USE_TLS = False
+MAIL_USE_SSL = True
+MAIL_USERNAME = 'mail-sender@sourcefabric.org'
+MAIL_PASSWORD = 'sender-password'
+# administrator list
+ADMINS = ['mail-sender@sourcefabric.org']

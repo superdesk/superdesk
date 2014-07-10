@@ -49,7 +49,7 @@ Feature: User Resource
         Given empty "users"
         When we post to "/users"
             """
-            {"username": "foo", "password": "barbar", "phone": "0123"}
+            {"username": "foo", "password": "barbar", "email": "foo@bar.com", "phone": "0123"}
             """
 
         Then we get error 400
