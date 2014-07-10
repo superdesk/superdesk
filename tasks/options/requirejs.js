@@ -19,10 +19,11 @@ module.exports = function(grunt) {
         compile: {
             options: {
                 name: 'main',
-                out: '<%= distDir %>/scripts/main.js',
                 baseUrl: '<%= appDir %>/scripts/',
+                out: '<%= tmpDir %>/concat/scripts/main.js',
                 mainConfigFile: '<%= appDir %>/scripts/config.js',
-                include: include
+                include: include,
+                optimize: 'none'
             }
         }
     };

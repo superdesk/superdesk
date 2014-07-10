@@ -38,11 +38,15 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', [
         'clean',
-        'style',
+        'less:dev',
+        'useminPrepare',
+        'concat',
+        'requirejs', // must go after concat
+        'uglify',
+        'cssmin',
+        'copy',
         'template:test',
         'nggettext_compile',
-        'requirejs',
-        'copy',
         'filerev',
         'usemin'
     ]);

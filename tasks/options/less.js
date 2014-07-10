@@ -24,7 +24,7 @@ module.exports = {
     prod: {
         options: {
             paths: ['<%= appDir %>/styles/less'],
-            compress: true,
+            compress: false,
             cleancss: true
         },
         files: files
