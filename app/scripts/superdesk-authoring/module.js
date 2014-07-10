@@ -72,7 +72,7 @@ define([
                 api.archive.getById(_id)
                 .then(function(result) {
                     $scope.item = result;
-                    api.archive.getByUrl(result._links.self.href + '?version=all')
+                    api.archive.getByUrl(result._links.self.href + '?version=all&embedded={"user":1}')
                     .then(function(result) {
                         $scope.versions = result;
                         $scope.selected = _.find($scope.versions._items, {_version: $scope.item._latest_version});
