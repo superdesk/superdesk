@@ -28,7 +28,7 @@
 				<span class="user">by {{selected.user.display_name}}</span>
 			</div>
 			<h2>{{selected.headline}}</h2>
-			<div class="content" ng-bind-html="body"></div>
+			<div class="content" sd-html-preview="selected.body_html"></div>
 		</div>
 	</div>	
 </section>

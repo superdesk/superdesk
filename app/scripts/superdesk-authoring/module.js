@@ -55,12 +55,11 @@ define([
 
     }
 
-    VersioningController.$inject = ['$scope', 'api', '$location', '$sce'];
-    function VersioningController($scope, api, $location, $sce) {
+    VersioningController.$inject = ['$scope', 'api', '$location'];
+    function VersioningController($scope, api, $location) {
         $scope.item = null;
         $scope.versions = null;
         $scope.selected = null;
-        $scope.body = null;
 
         $scope.$watch(function() {
             return $location.search()._id;
@@ -76,7 +75,6 @@ define([
                     .then(function(result) {
                         $scope.versions = result;
                         $scope.selected = _.find($scope.versions._items, {_version: $scope.item._latest_version});
-                        $scope.body = $sce.trustAsHtml($scope.selected.body_html);
                     });
                 });
             }
