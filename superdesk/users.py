@@ -65,9 +65,23 @@ class CreateUserCommand(superdesk.Command):
                 return userdata
 
 
+class HashUserPasswordsCommand(superdesk.Command):
+    def run(self):
+        users = superdesk.app.data.find_all('auth_users')
+        for user in users:
+            pwd = user.get('password')
+            if not pwd.startswith('$2a$'):
+                updates = {}
+                hashed = hash_password(user['password'])
+                user_id = user.get('_id')
+                updates['password'] = hashed
+                superdesk.apps['users'].update(id=user_id, updates=updates, trigger_events=True)
+
+
 superdesk.connect('read:users', on_read_users)
 superdesk.connect('created:users', on_read_users)
 superdesk.command('users:create', CreateUserCommand())
+superdesk.command('users:hash_passwords', HashUserPasswordsCommand())
 
 
 def init_app(app):
