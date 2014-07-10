@@ -9,8 +9,9 @@ from wooper.general import parse_json_input, fail_and_print_body, apply_path,\
     parse_json_response
 from wooper.expect import (
     expect_status, expect_status_in,
+    expect_json, expect_json_length,
     expect_json_contains, expect_json_not_contains,
-    expect_json_length, expect_headers_contain,
+    expect_headers_contain,
 )
 from wooper.assertions import (
     assert_in, assert_equal)
@@ -378,10 +379,96 @@ def step_impl_then_get_key_in_url(context, key, url):
 
 @then('we get file metadata')
 def step_impl_then_get_file_meta(context):
-    expect_json_contains(context.response, 'filemeta')
-    meta = apply_path(parse_json_response(context.response), 'filemeta')
-    assert isinstance(meta, dict), 'expected dict for file meta'
-    assert meta, 'expected non empty metadata dictionary'
+    assert len(
+        apply_path(
+            parse_json_response(context.response),
+            'filemeta'
+        ).items()
+    ) > 0
+    'expected non empty metadata dictionary'
+
+
+@then('we get "{filename}" metadata')
+def step_impl_then_get_file_meta(context, filename):
+    if filename == 'bike.jpg':
+        metadata = {
+            'YCbCrPositioning': 1,
+            'ImageLength': 2448,
+            'ExifImageWidth': 2448,
+            'MeteringMode': 2,
+            'DateTimeDigitized': '2013:08:01 16:19:28',
+            'ExposureMode': 0,
+            'FlashPixVersion': '0100',
+            'ISOSpeedRatings': 80,
+            'ImageUniqueID': 'f3533c05daef2debe6257fd99e058eec',
+            'DateTimeOriginal': '2013:08:01 16:19:28',
+            'WhiteBalance': 0,
+            'ExposureProgram': 3,
+            'ColorSpace': 1,
+            'ExifImageHeight': 3264,
+            'Software': 'Google',
+            'ResolutionUnit': 2,
+            'Make': 'SAMSUNG',
+            'MaxApertureValue': [276, 100],
+            'ApertureValue': [276, 100],
+            'SceneCaptureType': 0,
+            'ExposureTime': [1, 2004],
+            'DateTime': '2013:08:01 16:19:28',
+            'ExifOffset': 216,
+            'YResolution': [72, 1],
+            'Orientation': 1,
+            'ComponentsConfiguration': '0000',
+            'ExifVersion': '0220',
+            'FocalLength': [37, 10],
+            'Flash': 0,
+            'Model': 'GT-I9300',
+            'XResolution': [72, 1],
+            'FNumber': [26, 10],
+            'ImageWidth': 3264
+        }
+    elif filename == 'green.ogg':
+        metadata = {
+            'producer': 'Xiph.Org libVorbis I 20050304',
+            'music_genre': 'New Age',
+            'sample_rate': '48000',
+            'artist': 'Maxime Abbey',
+            'bit_rate': '224000',
+            'title': 'Green Hills',
+            'mime_type': 'audio/vorbis',
+            'format_version': 'Vorbis version 0',
+            'comment': '"Green Hills"\\nVersion 2.0 (2007-05-31)\\nCopyright (C) '
+                       '2002-2007 Maxime Abbey\\nPlaying Time: '
+                       '08:14\\n--------------------------\\nWebsite: '
+                       'http://www.arachnosoft.com\\nE-Mail: '
+                       'contact@arachnosoft.com\\n--------------------------\\nFreely '
+                       'distributed under copyright for personal and non-commercial '
+                       'use. Visit http(...)',
+            'compression': 'Vorbis',
+            'creation_date': '2007-01-01',
+            'duration': '0:08:14.728000',
+            'endian': 'Little endian',
+            'music_composer': 'Maxime Abbey',
+            'nb_channel': '2'
+        }
+    elif filename == 'this_week_nasa.mp4':
+        metadata = {
+            'mime_type': 'video/mp4',
+            'creation_date': '2014-06-13 19:26:17',
+            'duration': '0:03:19.733066',
+            'width': '480',
+            'comment': 'User volume: 100.0%',
+            'height': '270',
+            'endian': 'Big endian',
+            'last_modification': '2014-06-13 19:26:18'
+        }
+    else:
+        raise NotImplementedError("No metadata for file '{}'.".format(filename))
+
+    expect_json(
+        context.response,
+        metadata,
+        path='filemeta'
+    )
 
 
 @then('we get image renditions')

@@ -158,7 +158,7 @@ Feature: News Items Archive
         """
         {"guid": ""}
         """
-        And we get file metadata
+        And we get "bike.jpg" metadata
         And we get image renditions
 
         When we patch latest
@@ -180,7 +180,7 @@ Feature: News Items Archive
         """
         {"guid": ""}
         """
-        And we get file metadata
+        And we get "green.ogg" metadata
         Then original rendition is updated with link to file having mimetype "audio/ogg"
         When we patch latest
         """
@@ -200,7 +200,7 @@ Feature: News Items Archive
         """
         {"guid": ""}
         """
-        And we get file metadata
+        And we get "this_week_nasa.mp4" metadata
         Then original rendition is updated with link to file having mimetype "video/mp4"
         When we patch latest
         """
