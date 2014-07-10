@@ -8,6 +8,7 @@ static/*
 media/*
 upload/*
 .coverage
+celerybeat-schedule.db
 
 # env
 *.egg*
