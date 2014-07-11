@@ -149,13 +149,14 @@ Feature: News Items Archive
         When we get "/archive/xyz?version=all"
         Then we get list with 3 items
 
+    @wip
     @auth
     Scenario: Upload image into archive
         Given empty "archive"
         When we upload a file "bike.jpg" to "archive_media"
         Then we get new resource
         """
-        {"guid": ""}
+        {"guid": "", "firstcreated": "", "versioncreated": ""}
         """
         And we get "bike.jpg" metadata
         And we get image renditions
