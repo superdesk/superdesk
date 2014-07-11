@@ -25,8 +25,10 @@ def hash_file(afile, hasher, blocksize=65536):
 
 
 def get_cropping_data():
-    if (request and 'CropTop' in request.form and 'CropLeft' in request.form and
-            'CropRight' in request.form and 'CropBottom' in request.form):
+    if not (request and request.form):
+        return None
+    if all(('CropTop' in request.form, 'CropLeft' in request.form,
+           'CropRight' in request.form, 'CropBottom' in request.form)):
         cropping_data = (int(request.form['CropLeft']), int(request.form['CropTop']),
                          int(request.form['CropRight']), int(request.form['CropBottom']))
         return cropping_data

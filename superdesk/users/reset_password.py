@@ -1,5 +1,5 @@
 import superdesk
-from flask import request, current_app as app
+from flask import request, Response, current_app as app
 from superdesk.base_model import BaseModel
 from superdesk.utils import get_random_string
 from superdesk.emails import send_reset_password_email
@@ -10,17 +10,17 @@ from superdesk.utc import utcnow
 
 
 logger = logging.getLogger(__name__)
-bp = superdesk.Blueprint('reset_password', __name__)
+bp = superdesk.Blueprint('reset_user_password', __name__)
 superdesk.blueprint(bp)
 
 
-@bp.route('/users/reset_password', methods=['POST'])
+@bp.route('/reset_user_password', methods=['POST'])
 def reset_password():
     if not request.form:
         raise superdesk.SuperdeskError(payload='Invalid request.')
 
     email = request.form.get('email')
-    key = request.form.get('secret_key')
+    key = request.form.get('token')
     password = request.form.get('password')
 
     if key and password:
@@ -47,20 +47,20 @@ def update_password(key, password):
     updates[app.config['LAST_UPDATED']] = utcnow()
     superdesk.apps['users'].update(id=user_id, updates=updates, trigger_events=True)
     app.data.remove('reset_password', lookup={'email': reset_request['email']})
-    return ('Password updated', 200)
+    return Response(status=200, response='Password updated')
 
 
 def initiate_reset_password(email):
     user = app.data.find_one('users', req=None, email=email)
     if not user:
         logger.warning('User password reset triggered with invalid email: %s' % email)
-        return ('Reset password initialized', 201)
+        return Response(response='Reset password initialized', status=201)
     doc = {}
     doc['email'] = email
     doc[app.config['DATE_CREATED']] = utcnow()
     doc[app.config['LAST_UPDATED']] = utcnow()
     app.data.insert('reset_password', [doc])
-    return ('Reset password initialized', 201)
+    return Response(response='Reset password initialized', status=201)
 
 
 reset_schema = {

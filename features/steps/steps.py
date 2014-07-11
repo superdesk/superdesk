@@ -1,5 +1,6 @@
 
 import os
+import re
 import superdesk.tests as tests
 from behave import given, when, then  # @UnresolvedImport
 from flask import json
@@ -389,7 +390,7 @@ def step_impl_then_get_file_meta(context):
 
 
 @then('we get "{filename}" metadata')
-def step_impl_then_get_file_meta(context, filename):
+def step_impl_then_get_file_meta_for(context, filename):
     if filename == 'bike.jpg':
         metadata = {
             'YCbCrPositioning': 1,
@@ -679,3 +680,34 @@ def then_we_get_link_to_resource(context, resource):
 @then('we get deleted response')
 def then_we_get_deleted_response(context):
     assert_200(context.response)
+
+
+@when('we post to reset_password we get email with token')
+def we_post_to_reset_password(context):
+    data = {'email': 'foo@bar.org'}
+    headers = [('Content-Type', 'multipart/form-data')]
+    headers = unique_headers(headers, context.headers)
+    with context.app.mail.record_messages() as outbox:
+        context.response = context.client.post('/reset_user_password', data=data, headers=headers)
+        expect_status_in(context.response, (200, 201))
+        assert len(outbox) == 1
+        assert outbox[0].subject == "Reset password"
+        email_text = outbox[0].body
+        assert "24" in email_text
+        words = re.split('\W+', email_text)
+        token = words[words.index("token") + 1]
+        assert token
+        context.token = token
+
+
+@when('we reset password for user')
+def we_reset_password_for_user(context):
+    data = {'token': context.token, 'password': 'test_pass'}
+    headers = [('Content-Type', 'multipart/form-data')]
+    headers = unique_headers(headers, context.headers)
+    context.response = context.client.post('/reset_user_password', data=data, headers=headers)
+    expect_status_in(context.response, (200, 201))
+
+    auth_data = {'username': 'foo', 'password': 'test_pass'}
+    context.response = context.client.post('/auth', data=auth_data, headers=headers)
+    expect_status_in(context.response, (200, 201))

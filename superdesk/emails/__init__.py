@@ -1,4 +1,4 @@
-from flask.ext.mail import Message, Mail
+from flask.ext.mail import Message
 from superdesk.celery_app import celery
 from settings import ADMINS, RESET_PASSWORD_TOKEN_TIME_TO_LIVE as expiration_time
 from flask import render_template, current_app as app
@@ -14,8 +14,7 @@ def send_reset_password_email(doc):
 
 @celery.task(bind=True, max_retries=3)
 def send_email(self, subject, sender, recipients, text_body, html_body):
-    mail = Mail(app)
     msg = Message(subject, sender=sender, recipients=recipients)
     msg.body = text_body
     msg.html = html_body
-    return mail.send(msg)
+    return app.mail.send(msg)
