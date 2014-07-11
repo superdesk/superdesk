@@ -75,7 +75,13 @@
   }
 
   // Links within the dropdown menu
-  a {
+  button {
+    -webkit-appearance: none;
+    width: 100%;
+    text-align: left;
+  }
+  a, button {
+    background: none;
     display: block;
     padding: 3px 15px;
     clear: both;
@@ -88,9 +94,9 @@
 
 // Hover state
 // -----------
-.dropdown-menu li > a:hover,
-.dropdown-menu .active > a,
-.dropdown-menu .active > a:hover {
+.dropdown-menu li > a:hover, .dropdown-menu li > button:hover,
+.dropdown-menu .active > a, .dropdown-menu .active > button,
+.dropdown-menu .active > a:hover, .dropdown-menu .active > button:hover {
   color: @dropdownLinkColorHover;
   text-decoration: none;
   background-color: @dropdownLinkBackgroundHover;
