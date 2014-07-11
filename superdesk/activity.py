@@ -1,30 +1,28 @@
-import logging
-import superdesk
-from superdesk.utc import utcnow
 from .base_model import BaseModel
 import flask
+from eve.methods.post import post_intern
 
-
-class ActivityLogHandler(logging.Handler):
-    """Logging handler storing data into mongodb."""
-
-    level = logging.INFO
-
-    def emit(self, record):
-        data = {}
-        data['created'] = data['updated'] = utcnow()
-        data['action'] = getattr(record, 'msg')
-        data['level'] = getattr(record, 'levelname')
-        data['module'] = getattr(record, 'name')
-        data['user'] = getattr(record, 'user', {}).get('_id')
-        superdesk.app.data.insert('activity', [data])
+# 
+# class ActivityLogHandler(logging.Handler):
+#     """Logging handler storing data into mongodb."""
+# 
+#     level = logging.INFO
+# 
+#     def emit(self, record):
+#         data = {}
+#         data['created'] = data['updated'] = utcnow()
+#         data['action'] = getattr(record, 'msg')
+#         data['level'] = getattr(record, 'levelname')
+#         data['module'] = getattr(record, 'name')
+#         data['user'] = getattr(record, 'user', {}).get('_id')
+#         superdesk.app.data.insert('activity', [data])
 
 # superdesk.logger.addHandler(ActivityLogHandler())
 
-
+    
 def init_app(app):
     activityModel = ActivityModel(app=app)
-    app.on_create += activityModel.on_generic_create
+    app.on_insert += activityModel.on_generic_insert
 
 
 class ActivityModel(BaseModel):
@@ -44,19 +42,18 @@ class ActivityModel(BaseModel):
             }
         }
     }
+    exclude = {endpoint_name, 'notification'}
 
-    def on_generic_create(self, resource, docs):
-        if resource == 'activity':
-            return
+    def on_generic_insert(self, resource, docs):
+        if resource in self.exclude: return
 
-        if not getattr(flask.g, 'user', False):
-            return
+        user = getattr(flask.g, 'user', None)
+        if not user: return
 
-        activity = {}
-        activity['created'] = activity['updated'] = utcnow()
-        activity['user'] = getattr(flask.g, 'user', {}).get('_id')
-        activity['resource'] = resource
-        activity['action'] = 'create'
-        activity['extra'] = docs[0]
-        # always the activity is written on mongo
-        super().create([activity])
+        activity = {
+            'user': user.get('_id'),
+            'resource': resource,
+            'action': 'create',
+            'extra': docs[0]
+        }
+        post_intern(self.endpoint_name, activity)
