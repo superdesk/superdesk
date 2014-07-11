@@ -91,13 +91,14 @@ SERVER_DOMAIN = 'localhost'
 
 NOTIFICATION_PUSH_INTERVAL = 1  # The time interval to push notifications for.
 BCRYPT_GENSALT_WORK_FACTOR = 12
+RESET_PASSWORD_TOKEN_TIME_TO_LIVE = 24  # The number of hours a token is valid
 
 # email server
-MAIL_SERVER = 'smtp.googlemail.com'
-MAIL_PORT = 465
-MAIL_USE_TLS = False
-MAIL_USE_SSL = True
-MAIL_USERNAME = 'mail-sender@sourcefabric.org'
-MAIL_PASSWORD = 'sender-password'
-# administrator list
-ADMINS = ['mail-sender@sourcefabric.org']
+MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.googlemail.com')
+MAIL_PORT = int(os.environ.get('MAIL_PORT', 465))
+MAIL_USE_TLS = bool(os.environ.get('MAIL_USE_TLS', False))
+MAIL_USE_SSL = bool(os.environ.get('MAIL_USE_SSL', True))
+MAIL_USERNAME = os.environ.get('MAIL_USERNAME', '')
+MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', '')
+ADMINS = [MAIL_USERNAME]
+print(ADMINS)

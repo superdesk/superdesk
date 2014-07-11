@@ -1,6 +1,7 @@
 import os
 import logging
 import importlib
+import jinja2
 import eve
 import settings
 import superdesk
@@ -55,6 +56,11 @@ def get_app(config=None):
         settings=config,
         json_encoder=MongoJSONEncoder,
         validator=SuperdeskValidator)
+    custom_loader = jinja2.ChoiceLoader([
+        app.jinja_loader,
+        jinja2.FileSystemLoader(['superdesk/templates'])
+    ])
+    app.jinja_loader = custom_loader
 
     app.on_fetched_resource = signals.proxy_resource_signal('read', app)
     app.on_fetched_item = signals.proxy_item_signal('read', app)
