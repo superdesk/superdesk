@@ -614,11 +614,11 @@ Profile page styles
 
 .profile-activity-container {
   position: absolute;
-  left: 790px;
+  left: 20px;
   right: 0;
   top: 0;
   bottom: 0;
-  padding: 30px 40px 0;
+  padding: 20px 40px 0;
   background-color: @background-main;
   overflow-x: hidden;
   overflow-y: auto;
@@ -640,7 +640,7 @@ Profile page styles
     height: 100%;
     .box-sizing(border-box);
     overflow: auto;
-    max-width: 500px; 
+    max-width: 500px;
     .activity-header {
       height: 40px;
       border-bottom: 1px solid #ddd;
@@ -652,7 +652,52 @@ Profile page styles
         text-transform: none;
       }
     }
+    
+    .group-date {
+      margin-top: 20px;
+      margin-bottom: 16px;
+      color: #888;
+      font-size: 11px;
+      font-weight: 600;
+      height: 1px; 
+	  border-top: 1px solid #ddd;
+	  position: relative;
+	  .day {
+      	position: relative; 
+		top: -.9em; 
+		display: inline-block; 
+		background-color: @background-main;
+      }
+      .date {
+        padding-left: 4px;
+        padding-right: 4px;
+      	text-transform: lowercase;
+      	position: relative; 
+		top: -.9em; 
+		display: inline-block;
+		background-color: @background-main;
+      }
+    }
+    
+    .activity-entry {
+      height: 50px;
+      border-bottom: 1px solid #ddd;
+      background: #fff;
+      margin-top: 4px;
+      clear: left;
+      
+      .activity-figure {
+      	float: left;
+      }
+      
+      .activity-date {
+      	color: #888;
+      	font-size: 11px;
+      	font-weight: 600;
+      }
+    }
   }
+  
   ::-webkit-scrollbar {
     border-left: 9px solid @background-main;
     border-right: 1px solid @background-main;

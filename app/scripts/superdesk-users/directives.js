@@ -348,5 +348,10 @@ define([
                     index: '='
                 }
             };
+        })
+        .directive('sdActivity', function() {
+            return {
+                templateUrl: 'scripts/superdesk-users/views/activity-list.html'
+            };
         });
 });

@@ -8,6 +8,7 @@ define([
     './controllers/edit',
     './controllers/settings',
     './controllers/changeAvatar',
+    './activity-widget/activity',
     './directives'
 ], function(angular, require) {
     'use strict';
@@ -43,7 +44,8 @@ define([
     var app = angular.module('superdesk.users', [
         'superdesk.users.providers',
         'superdesk.users.services',
-        'superdesk.users.directives'
+        'superdesk.users.directives',
+        'superdesk.widgets.activity'
     ]);
 
     app
@@ -139,6 +141,13 @@ define([
                 type: 'http',
                 backend: {rel: 'users'},
                 service: require('./users-service')
+            });
+        }])
+        .config(['apiProvider', function(apiProvider) {
+            apiProvider.api('activity', {
+                type: 'http',
+                backend: {rel: 'activity'},
+                service: require('./services/profile')
             });
         }]);
 

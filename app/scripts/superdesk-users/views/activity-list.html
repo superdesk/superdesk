@@ -1,0 +1,16 @@
+<div>
+	<ul>
+		<li ng-repeat="activity in activityFeed._items" class="activity" ng-model="activity" sd-group-dates="_created">
+               <div class="activity-entry">
+			    <p class="activity-figure">
+			    	<img sd-user-picture data-src="user.picture_url" height="42" width="42">
+			    </p>
+			    <p><b>{{ activity.user.display_name || activity.user.username }}</b>
+			    {{ activity.action }}
+			    {{ activity.extra.headline || activity.extra.slugline || activity.resource }}</p>
+				<div class="activity-date" sd-reldate-complex ng-model="activity._created"></div>
+			</div>
+           </li>
+	</ul>
+</div>
+<button class="btn activity-load-more" translate ng-click="loadMore()" ng-show="activityFeed._links.next">Load more</button>
