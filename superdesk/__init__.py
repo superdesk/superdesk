@@ -35,10 +35,10 @@ class SuperdeskError(Exception):
         Exception.__init__(self)
         self.message = message
 
-        if status_code is not None:
+        if status_code:
             self.status_code = status_code
 
-        if payload is not None:
+        if payload:
             self.payload = payload
 
     def to_dict(self):
@@ -46,7 +46,7 @@ class SuperdeskError(Exception):
         rv = {}
         rv[app.config['STATUS']] = app.config['STATUS_ERR']
         rv['_message'] = self.message or ''
-        if self.payload:
+        if getattr(self, 'payload'):
             rv[app.config['ISSUES']] = self.payload
         return rv
 

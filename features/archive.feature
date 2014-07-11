@@ -125,7 +125,6 @@ Feature: News Items Archive
         {"guid": "tag:example.com,0000:newsml_BRE9A605"}
         """
 
-    @wip
     @auth
     Scenario: Update item
         Given "archive"
@@ -212,7 +211,6 @@ Feature: News Items Archive
         {"headline": "week @ nasa", "byline": "foo", "description_text": "nasa video"}
         """
 
-    @wip
     @auth
     Scenario: Cancel audio upload
         Given empty "archive"
@@ -220,7 +218,6 @@ Feature: News Items Archive
         And we delete latest
         Then we get deleted response
 
-    @wip
     @auth
     Scenario: Cancel upload
         Given empty "archive"

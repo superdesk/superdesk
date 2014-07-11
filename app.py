@@ -14,6 +14,9 @@ from superdesk.validator import SuperdeskValidator
 from raven.contrib.flask import Sentry
 
 
+sentry = Sentry(register_signal=False, wrap_wsgi=False)
+
+
 def setup_amazon(config):
     config.setdefault('AMAZON_CONTAINER_NAME', os.environ.get('AMAZON_CONTAINER_NAME'))
     config.setdefault('AMAZON_ACCESS_KEY_ID', os.environ.get('AMAZON_ACCESS_KEY_ID'))
@@ -58,14 +61,19 @@ def get_app(config=None):
     app.on_inserted = signals.proxy_resource_signal('created', app)
 
     @app.errorhandler(superdesk.SuperdeskError)
-    def error_handler(error):
+    def client_error_handler(error):
         """Return json error response.
 
         :param error: an instance of :attr:`superdesk.SuperdeskError` class
         """
-        if error.status_code == 500:
-            app.sentry.captureException()
         return send_response(None, (error.to_dict(), None, None, error.status_code))
+
+    @app.errorhandler(500)
+    def server_error_handler(error):
+        """Log server errors."""
+        app.sentry.captureException()
+        return_error = superdesk.SuperdeskError(status_code=500)
+        return client_error_handler(return_error)
 
     init_celery(app)
 
@@ -86,11 +94,8 @@ def get_app(config=None):
     # we can only put mapping when all resources are registered
     app.data.elastic.put_mapping(app)
 
-    try:
-        app.sentry = Sentry()
-        app.sentry.init_app(app)
-    except AttributeError:
-        pass
+    app.sentry = sentry
+    sentry.init_app(app)
 
     return app
 
