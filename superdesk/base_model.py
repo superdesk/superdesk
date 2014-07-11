@@ -100,9 +100,7 @@ class BaseModel():
         ids = app.data._backend(self.endpoint_name).insert(self.endpoint_name, docs, **kwargs)
         search_backend = app.data._search_backend(self.endpoint_name)
         if search_backend:
-            for _id in ids:
-                inserted = self.find_one(req=None, _id=_id)
-                search_backend.insert(self.endpoint_name, [inserted], **kwargs)
+            search_backend.insert(self.endpoint_name, docs, **kwargs)
         if trigger_events:
             self.on_created(docs)
         return ids
