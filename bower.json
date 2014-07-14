@@ -25,7 +25,6 @@
     "medium-editor": "~1.8.14"
   },
   "resolutions": {
-    "momentjs": "~2.6.0",
     "angular": "~1.3.0"
   }
 }
