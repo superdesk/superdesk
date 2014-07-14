@@ -54,10 +54,9 @@ INSTALLED_APPS = (
     'superdesk.archive',
     'superdesk.activity',
     'superdesk.upload',
-    'superdesk.sessions',
     'superdesk.desks',
     'superdesk.subjectcodes',
-    'superdesk.amazon.import_from_amazon',
+    'superdesk.storage.amazon.import_from_amazon',
     'superdesk.notification',
     'superdesk.planning',
 )
@@ -92,3 +91,13 @@ SERVER_DOMAIN = 'localhost'
 
 NOTIFICATION_PUSH_INTERVAL = 1  # The time interval to push notifications for.
 BCRYPT_GENSALT_WORK_FACTOR = 12
+RESET_PASSWORD_TOKEN_TIME_TO_LIVE = 24  # The number of hours a token is valid
+
+# email server
+MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.googlemail.com')
+MAIL_PORT = int(os.environ.get('MAIL_PORT', 465))
+MAIL_USE_TLS = bool(os.environ.get('MAIL_USE_TLS', False))
+MAIL_USE_SSL = bool(os.environ.get('MAIL_USE_SSL', True))
+MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'admin@sourcefabric.org')
+MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', 'admin-password')
+ADMINS = [MAIL_USERNAME]

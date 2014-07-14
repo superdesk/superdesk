@@ -1,15 +1,17 @@
 import os
 import logging
 import importlib
+import jinja2
+from flask.ext.mail import Mail
 import eve
 import settings
 import superdesk
 from eve.io.mongo import MongoJSONEncoder
 from eve.render import send_response
 from superdesk import signals
-from superdesk.auth import SuperdeskTokenAuth
+from superdesk.auth.auth import SuperdeskTokenAuth
 from superdesk.celery_app import init_celery
-from superdesk.desk_media_storage import SuperdeskGridFSMediaStorage
+from superdesk.storage.desk_media_storage import SuperdeskGridFSMediaStorage
 from superdesk.validator import SuperdeskValidator
 from raven.contrib.flask import Sentry
 
@@ -41,8 +43,8 @@ def get_app(config=None):
 
     setup_amazon(config)
     if config['AMAZON_CONTAINER_NAME']:
-        from superdesk.amazon.amazon_media_storage import AmazonMediaStorage
-        from superdesk.amazon.import_from_amazon import ImportFromAmazonCommand
+        from superdesk.storage.amazon.amazon_media_storage import AmazonMediaStorage
+        from superdesk.storage.amazon.import_from_amazon import ImportFromAmazonCommand
         media_storage = AmazonMediaStorage
         superdesk.command('import:amazon', ImportFromAmazonCommand())
 
@@ -55,6 +57,14 @@ def get_app(config=None):
         settings=config,
         json_encoder=MongoJSONEncoder,
         validator=SuperdeskValidator)
+
+    custom_loader = jinja2.ChoiceLoader([
+        app.jinja_loader,
+        jinja2.FileSystemLoader(['superdesk/templates'])
+    ])
+    app.jinja_loader = custom_loader
+
+    app.mail = Mail(app)
 
     app.on_fetched_resource = signals.proxy_resource_signal('read', app)
     app.on_fetched_item = signals.proxy_item_signal('read', app)
