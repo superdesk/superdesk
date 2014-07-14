@@ -52,15 +52,16 @@ def update_password(key, password):
 
 def initiate_reset_password(email):
     user = app.data.find_one('users', req=None, email=email)
+    default_response = Response(response='Reset password initialized', status=201)
     if not user:
         logger.warning('User password reset triggered with invalid email: %s' % email)
-        return Response(response='Reset password initialized', status=201)
+        return default_response
     doc = {}
     doc['email'] = email
     doc[app.config['DATE_CREATED']] = utcnow()
     doc[app.config['LAST_UPDATED']] = utcnow()
     app.data.insert('reset_password', [doc])
-    return Response(response='Reset password initialized', status=201)
+    return default_response
 
 
 reset_schema = {

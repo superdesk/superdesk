@@ -19,13 +19,6 @@ from raven.contrib.flask import Sentry
 sentry = Sentry(register_signal=False, wrap_wsgi=False)
 
 
-def setup_amazon(config):
-    config.setdefault('AMAZON_CONTAINER_NAME', os.environ.get('AMAZON_CONTAINER_NAME'))
-    config.setdefault('AMAZON_ACCESS_KEY_ID', os.environ.get('AMAZON_ACCESS_KEY_ID'))
-    config.setdefault('AMAZON_SECRET_ACCESS_KEY', os.environ.get('AMAZON_SECRET_ACCESS_KEY'))
-    config.setdefault('AMAZON_REGION', os.environ.get('AMAZON_REGION'))
-
-
 def get_app(config=None):
     """App factory.
 
@@ -41,7 +34,6 @@ def get_app(config=None):
 
     media_storage = SuperdeskGridFSMediaStorage
 
-    setup_amazon(config)
     if config['AMAZON_CONTAINER_NAME']:
         from superdesk.storage.amazon.amazon_media_storage import AmazonMediaStorage
         from superdesk.storage.amazon.import_from_amazon import ImportFromAmazonCommand

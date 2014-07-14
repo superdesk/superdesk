@@ -134,6 +134,7 @@ def crop_if_needed(content, file_name):
         if file_ext in ('JPG', 'jpg'):
             file_ext = 'jpeg'
         logger.debug('Opened image from stream, going to crop it s')
+        content.seek(0)
         img = Image.open(content)
         cropped = img.crop(cropping_data)
         logger.debug('Cropped image from stream, going to save it')
