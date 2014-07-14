@@ -73,6 +73,11 @@ RETURN_MEDIA_AS_BASE64_STRING = False
 
 # allowed: 's3' 's3_us_west' 's3_eu_west' 's3_ap_southeast' 's3_ap_northeast'
 # AMAZON_REGION = 's3-eu-west-1'
+AMAZON_CONTAINER_NAME = os.environ.get('AMAZON_CONTAINER_NAME', '')
+AMAZON_ACCESS_KEY_ID = os.environ.get('AMAZON_ACCESS_KEY_ID', '')
+AMAZON_SECRET_ACCESS_KEY = os.environ.get('AMAZON_SECRET_ACCESS_KEY', '')
+AMAZON_REGION = os.environ.get('AMAZON_REGION', '')
+
 
 RENDITIONS = {
     'picture': {

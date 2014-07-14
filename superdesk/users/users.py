@@ -4,6 +4,7 @@ import superdesk
 import bcrypt
 from superdesk.base_model import BaseModel
 from flask import current_app as app
+from superdesk.utc import utcnow
 
 
 class EmptyUsernameException(Exception):
@@ -52,6 +53,7 @@ class CreateUserCommand(superdesk.Command):
     def run(self, username, password, email):
         if username and password and email:
             hashed = hash_password(password)
+
             userdata = {
                 'username': username,
                 'password': hashed,
@@ -60,9 +62,12 @@ class CreateUserCommand(superdesk.Command):
 
             user = superdesk.app.data.find_one('users', username=userdata.get('username'), req=None)
             if user:
+                userdata[app.config['LAST_UPDATED']] = utcnow()
                 app.data.update('users', user.get('_id'), userdata)
                 return user
             else:
+                userdata[app.config['DATE_CREATED']] = utcnow()
+                userdata[app.config['LAST_UPDATED']] = utcnow()
                 app.data.insert('users', [userdata])
                 return userdata
 
