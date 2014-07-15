@@ -6,7 +6,7 @@ import os
 import hashlib
 import magic
 import logging
-from flask import request
+from flask import request, json
 import requests
 import superdesk
 from superdesk.file_meta.image import get_meta
@@ -65,7 +65,13 @@ def process_file_from_stream(content, filename=None, content_type=None):
     content, metadata = process_file(content, file_name, file_type)
     file_name = get_file_name(content)
     content.seek(0)
+    metadata = normalize_metadata(metadata)
     return file_name, content, content_type, metadata
+
+
+def normalize_metadata(metadata):
+    metadata = dict((k.lower(), json.dumps(v)) for k, v in metadata.items())
+    return metadata
 
 
 def process_file(content, file_name, type):

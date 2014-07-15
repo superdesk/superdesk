@@ -27,7 +27,8 @@ def get_meta(file_stream):
     for k, v in exif.items():
         try:
             json.dumps(v)
-            exif_meta[ExifTags.TAGS[k]] = v
+            value = v.decode('UTF-8') if isinstance(v, bytes) else v
+            exif_meta[ExifTags.TAGS[k].strip()] = value
         except:
             # ignore fields we can't store in db
             pass
