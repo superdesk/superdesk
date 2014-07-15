@@ -4,6 +4,7 @@ import tinys3
 from superdesk.media_operations import process_file_from_stream
 from superdesk import SuperdeskError
 import logging
+import json
 from io import BytesIO
 
 logger = logging.getLogger(__name__)
@@ -76,7 +77,11 @@ class AmazonMediaStorage(MediaStorage):
         for key, value in request_headers.items():
             if self.user_metadata_header in key:
                 new_key = key.split(self.user_metadata_header)[1]
-                headers[new_key] = value
+                if(value):
+                    try:
+                        headers[new_key] = json.loads(value)
+                    except Exception as ex:
+                        logger.exception(ex)
         return headers
 
     def update_metadata(self, key, metadata):
@@ -92,7 +97,7 @@ class AmazonMediaStorage(MediaStorage):
         file_metadata = {}
         for key, value in metadata.items():
             new_key = self.user_metadata_header + key
-            file_metadata[new_key] = str(value)
+            file_metadata[new_key] = value
         return file_metadata
 
     def put(self, content, filename=None, content_type=None):
