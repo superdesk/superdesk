@@ -54,7 +54,13 @@
             <div sd-toggle-box data-title="{{ 'Details' | translate }}" data-open="true">
                 <dl class="metadata-details-new clearfix">
                     <dt translate>GUID</dt><dd>{{ item.guid }}</dd>
-                    <dt translate>provider</dt><dd>{{ item.provider }}</dd>
+                    <dt ng-if="$parent.$parent.type === 'archive'">
+                        <span translate>source</span>
+                    </dt>
+                    <dt ng-if="$parent.$parent.type !== 'archive'">
+                        <span translate>provider</span>
+                    </dt>
+                    <dd>{{ item.provider }}</dd>
                     <dt translate ng-show="item.version">version</dt><dd ng-show="item.version">{{ item.version }}</dd>
                     <dt translate ng-show="item.byline">by</dt><dd ng-show="item.byline">{{ item.byline }}</dd>
                 </dl>
