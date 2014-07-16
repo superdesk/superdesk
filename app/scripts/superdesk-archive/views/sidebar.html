@@ -40,7 +40,12 @@
                     </li>
                     
                     <li>
-                        <div class="lbl" translate>Provider</div>
+                        <div class="lbl" ng-if="type === 'archive'">
+                            <span translate>Source</span>
+                        </div>
+                        <div class="lbl" ng-if="type !== 'archive'">
+                            <span translate>Provider</span>
+                        </div>
                         <div class="data data-provider">
                             <div class="dropdown source-select" sd-provider-menu data-items="items"></div>
                         </div>
