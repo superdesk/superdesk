@@ -264,6 +264,16 @@ def step_impl_when_get(context):
     context.response = context.client.get(href, headers=context.headers)
 
 
+@when('we restore version {version}')
+def step_impl_when_restore_version(context, version):
+    data = get_json_data(context.response)
+    href = get_self_href(data, context) + '/set-version'
+    headers = if_match(context, data.get('_etag'))
+    text = '{"old_version": "%s", "last_version": "%s"}' % (version, data.get('_version'))
+    context.response = context.client.post(href, data=text, headers=headers)
+    assert_ok(context.response)
+
+
 @when('we upload a file "{filename}" to "{dest}"')
 def step_impl_when_upload_image(context, filename, dest):
     upload_file(context, dest, filename)
@@ -644,10 +654,16 @@ def step_impl_then_file(context):
     assert os.path.exists(os.path.join(folder, context.filename))
 
 
-@then('we get version "{version}"')
+@then('we get version {version}')
 def step_impl_then_get_version(context, version):
     assert_200(context.response)
     expect_json_contains(context.response, {'_version': int(version)})
+
+
+@then('the field "{field}" value is "{value}"')
+def step_impl_then_get_field_value(context, field, value):
+    assert_200(context.response)
+    expect_json_contains(context.response, {field: value})
 
 
 @then('we get etag matching "{url}"')
