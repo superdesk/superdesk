@@ -46,7 +46,7 @@ class SuperdeskError(Exception):
         rv = {}
         rv[app.config['STATUS']] = app.config['STATUS_ERR']
         rv['_message'] = self.message or ''
-        if getattr(self, 'payload'):
+        if hasattr(self, 'payload'):
             rv[app.config['ISSUES']] = self.payload
         return rv
 
