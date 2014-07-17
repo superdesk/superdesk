@@ -14,10 +14,6 @@ class PlanningModel(BaseModel):
             'type': 'string',
             'unique': True
         },
-        'type': {
-            'type': 'string',
-            'required': True
-        },
         'language': {
             'type': 'string'
         },

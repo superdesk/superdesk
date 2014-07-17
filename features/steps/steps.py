@@ -1,5 +1,6 @@
 
 import os
+import re
 import superdesk.tests as tests
 from behave import given, when, then  # @UnresolvedImport
 from flask import json
@@ -9,8 +10,9 @@ from wooper.general import parse_json_input, fail_and_print_body, apply_path,\
     parse_json_response
 from wooper.expect import (
     expect_status, expect_status_in,
+    expect_json, expect_json_length,
     expect_json_contains, expect_json_not_contains,
-    expect_json_length, expect_headers_contain,
+    expect_headers_contain,
 )
 from wooper.assertions import (
     assert_in, assert_equal)
@@ -25,11 +27,17 @@ def test_json(context):
         fail_and_print_body(context.response, 'response is not valid json')
 
     context_data = parse_json_input(context.text)
+    json_match(context_data, response_data)
 
+
+def json_match(context_data, response_data):
+    if not isinstance(context_data, dict):
+        assert_equal(context_data, response_data)
+        return
     for key in context_data:
         assert_in(key, response_data)
         if context_data[key]:
-            assert_equal(response_data[key], context_data[key])
+            json_match(context_data[key], response_data[key])
 
 
 def get_fixture_path(fixture):
@@ -125,7 +133,24 @@ def step_impl_given_empty(context, resource):
 def step_impl_given_(context, resource):
     with context.app.test_request_context():
         context.app.data.remove(resource)
+        orig_items = {}
         items = [parse(item, resource) for item in json.loads(context.text)]
+        ev = getattr(context.app, 'on_insert_%s' % resource)
+        ev(items)
+        context.app.data.insert(resource, items)
+        context.data = orig_items or items
+        context.resource = resource
+
+
+@given('ingest from "{provider}"')
+def step_impl_given_resource_with_provider(context, provider):
+    resource = 'ingest'
+    with context.app.test_request_context():
+        context.app.data.remove(resource)
+        items = [parse(item, resource) for item in json.loads(context.text)]
+        for item in items:
+            item['ingest_provider'] = context.providers[provider]
+            print(item)
         ev = getattr(context.app, 'on_insert_%s' % resource)
         ev(items)
         context.app.data.insert(resource, items)
@@ -348,18 +373,103 @@ def step_impl_then_get_updated(context):
 
 @then('we get "{key}" in "{url}"')
 def step_impl_then_get_key_in_url(context, key, url):
-    new_url = apply_placeholders(context, url)
-    res = context.client.get(new_url, headers=context.headers)
+    res = context.client.get(url, headers=context.headers)
     assert_200(res)
     expect_json_contains(res, key)
 
 
 @then('we get file metadata')
 def step_impl_then_get_file_meta(context):
-    expect_json_contains(context.response, 'filemeta')
-    meta = apply_path(parse_json_response(context.response), 'filemeta')
-    assert isinstance(meta, dict), 'expected dict for file meta'
-    assert meta, 'expected non empty metadata dictionary'
+    assert len(
+        apply_path(
+            parse_json_response(context.response),
+            'filemeta'
+        ).items()
+    ) > 0
+    'expected non empty metadata dictionary'
+
+
+@then('we get "{filename}" metadata')
+def step_impl_then_get_file_meta_for(context, filename):
+    if filename == 'bike.jpg':
+        metadata = {
+            'ycbcrpositioning': 1,
+            'imagelength': 2448,
+            'exifimagewidth': 2448,
+            'meteringmode': 2,
+            'datetimedigitized': '2013:08:01 16:19:28',
+            'exposuremode': 0,
+            'flashpixversion': '0100',
+            'isospeedratings': 80,
+            'imageuniqueid': 'f3533c05daef2debe6257fd99e058eec',
+            'datetimeoriginal': '2013:08:01 16:19:28',
+            'whitebalance': 0,
+            'exposureprogram': 3,
+            'colorspace': 1,
+            'exifimageheight': 3264,
+            'software': 'Google',
+            'resolutionunit': 2,
+            'make': 'SAMSUNG',
+            'maxaperturevalue': [276, 100],
+            'aperturevalue': [276, 100],
+            'scenecapturetype': 0,
+            'exposuretime': [1, 2004],
+            'datetime': '2013:08:01 16:19:28',
+            'exifoffset': 216,
+            'yresolution': [72, 1],
+            'orientation': 1,
+            'componentsconfiguration': '0000',
+            'exifversion': '0220',
+            'focallength': [37, 10],
+            'flash': 0,
+            'model': 'GT-I9300',
+            'xresolution': [72, 1],
+            'fnumber': [26, 10],
+            'imagewidth': 3264
+        }
+    elif filename == 'green.ogg':
+        metadata = {
+            'producer': 'Xiph.Org libVorbis I 20050304',
+            'music_genre': 'New Age',
+            'sample_rate': '48000',
+            'artist': 'Maxime Abbey',
+            'bit_rate': '224000',
+            'title': 'Green Hills',
+            'mime_type': 'audio/vorbis',
+            'format_version': 'Vorbis version 0',
+            'comment': '"Green Hills"\\nVersion 2.0 (2007-05-31)\\nCopyright (C) '
+                       '2002-2007 Maxime Abbey\\nPlaying Time: '
+                       '08:14\\n--------------------------\\nWebsite: '
+                       'http://www.arachnosoft.com\\nE-Mail: '
+                       'contact@arachnosoft.com\\n--------------------------\\nFreely '
+                       'distributed under copyright for personal and non-commercial '
+                       'use. Visit http(...)',
+            'compression': 'Vorbis',
+            'creation_date': '2007-01-01',
+            'duration': '0:08:14.728000',
+            'endian': 'Little endian',
+            'music_composer': 'Maxime Abbey',
+            'nb_channel': '2'
+        }
+    elif filename == 'this_week_nasa.mp4':
+        metadata = {
+            'mime_type': 'video/mp4',
+            'creation_date': '2014-06-13 19:26:17',
+            'duration': '0:03:19.733066',
+            'width': '480',
+            'comment': 'User volume: 100.0%',
+            'height': '270',
+            'endian': 'Big endian',
+            'last_modification': '2014-06-13 19:26:18'
+        }
+    else:
+        raise NotImplementedError("No metadata for file '{}'.".format(filename))
+
+    expect_json(
+        context.response,
+        metadata,
+        path='filemeta'
+    )
 
 
 @then('we get image renditions')
@@ -425,6 +535,17 @@ def check_thumbnail_rendition(context):
 def check_rendition(context, rendition_name):
     rv = parse_json_response(context.response)
     assert rv['renditions'][rendition_name] != context.renditions[rendition_name], rv['renditions']
+
+
+@then('we get archive ingest result')
+def step_impl_then_get_archive_ingest_result(context):
+    assert_200(context.response)
+    expect_json_contains(context.response, 'task_id')
+    item = json.loads(context.response.get_data())
+    url = '/archive_ingest/%s' % (item['task_id'])
+    context.response = context.client.get(url, headers=context.headers)
+    assert_200(context.response)
+    test_json(context)
 
 
 @then('we get "{key}"')
@@ -523,6 +644,12 @@ def step_impl_then_file(context):
     assert os.path.exists(os.path.join(folder, context.filename))
 
 
+@then('we get version "{version}"')
+def step_impl_then_get_version(context, version):
+    assert_200(context.response)
+    expect_json_contains(context.response, {'_version': int(version)})
+
+
 @then('we get etag matching "{url}"')
 def step_impl_then_get_etag(context, url):
     if context.app.config['IF_MATCH']:
@@ -553,3 +680,34 @@ def then_we_get_link_to_resource(context, resource):
 @then('we get deleted response')
 def then_we_get_deleted_response(context):
     assert_200(context.response)
+
+
+@when('we post to reset_password we get email with token')
+def we_post_to_reset_password(context):
+    data = {'email': 'foo@bar.org'}
+    headers = [('Content-Type', 'multipart/form-data')]
+    headers = unique_headers(headers, context.headers)
+    with context.app.mail.record_messages() as outbox:
+        context.response = context.client.post('/reset_user_password', data=data, headers=headers)
+        expect_status_in(context.response, (200, 201))
+        assert len(outbox) == 1
+        assert outbox[0].subject == "Reset password"
+        email_text = outbox[0].body
+        assert "24" in email_text
+        words = re.split('\W+', email_text)
+        token = words[words.index("token") + 1]
+        assert token
+        context.token = token
+
+
+@when('we reset password for user')
+def we_reset_password_for_user(context):
+    data = {'token': context.token, 'password': 'test_pass'}
+    headers = [('Content-Type', 'multipart/form-data')]
+    headers = unique_headers(headers, context.headers)
+    context.response = context.client.post('/reset_user_password', data=data, headers=headers)
+    expect_status_in(context.response, (200, 201))
+
+    auth_data = {'username': 'foo', 'password': 'test_pass'}
+    context.response = context.client.post('/auth', data=auth_data, headers=headers)
+    expect_status_in(context.response, (200, 201))

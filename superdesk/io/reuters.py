@@ -100,8 +100,13 @@ class ReutersUpdateService(object):
             traceback.print_exc()
             raise error
 
+        if response.status_code == 404:
+            raise LookupError('Not found %s' % payload)
+
         try:
-            return etree.fromstring(response.text.encode('utf-8'))
+            # workaround for httmock lib
+            # return etree.fromstring(response.text.encode('utf-8'))
+            return etree.fromstring(response.content)
         except UnicodeEncodeError as error:
             traceback.print_exc()
             raise error

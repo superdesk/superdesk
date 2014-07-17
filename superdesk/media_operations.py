@@ -6,7 +6,7 @@ import os
 import hashlib
 import magic
 import logging
-from flask import request
+from flask import request, json
 import requests
 import superdesk
 from superdesk.file_meta.image import get_meta
@@ -25,8 +25,10 @@ def hash_file(afile, hasher, blocksize=65536):
 
 
 def get_cropping_data():
-    if ('CropTop' in request.form and 'CropLeft' in request.form and
-            'CropRight' in request.form and 'CropBottom' in request.form):
+    if not (request and request.form):
+        return None
+    if all(('CropTop' in request.form, 'CropLeft' in request.form,
+           'CropRight' in request.form, 'CropBottom' in request.form)):
         cropping_data = (int(request.form['CropLeft']), int(request.form['CropTop']),
                          int(request.form['CropRight']), int(request.form['CropBottom']))
         return cropping_data
@@ -63,7 +65,13 @@ def process_file_from_stream(content, filename=None, content_type=None):
     content, metadata = process_file(content, file_name, file_type)
     file_name = get_file_name(content)
     content.seek(0)
+    metadata = normalize_metadata(metadata)
     return file_name, content, content_type, metadata
+
+
+def normalize_metadata(metadata):
+    metadata = dict((k.lower(), json.dumps(v)) for k, v in metadata.items())
+    return metadata
 
 
 def process_file(content, file_name, type):
@@ -132,6 +140,7 @@ def crop_if_needed(content, file_name):
         if file_ext in ('JPG', 'jpg'):
             file_ext = 'jpeg'
         logger.debug('Opened image from stream, going to crop it s')
+        content.seek(0)
         img = Image.open(content)
         cropped = img.crop(cropping_data)
         logger.debug('Cropped image from stream, going to save it')

@@ -1,18 +1,16 @@
 
 import os
+from datetime import timedelta
 
 try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse
 
-DOMAIN = {}
-
 XML = False
 IF_MATCH = False
 BANDWIDTH_SAVER = False
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S+0000'
-
 
 server_url = urlparse(os.environ.get('SUPERDESK_URL', 'http://localhost:5000'))
 URL_PROTOCOL = server_url.scheme or None
@@ -36,6 +34,18 @@ CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379')
 CELERY_ALWAYS_EAGER = (os.environ.get('CELERY_ALWAYS_EAGER', False) == 'True')
 
+CELERYBEAT_SCHEDULE = {
+    'fetch_ingest': {
+        'task': 'superdesk.io.fetch_ingest',
+        'schedule': timedelta(minutes=5)
+    }
+}
+
+REUTERS_USERNAME = os.environ.get('REUTERS_USERNAME', '')
+REUTERS_PASSWORD = os.environ.get('REUTERS_PASSWORD', '')
+
+SENTRY_DSN = os.environ.get('SENTRY_DSN')
+SENTRY_INCLUDE_PATHS = ['superdesk']
 
 INSTALLED_APPS = (
     'superdesk.io',
@@ -44,10 +54,9 @@ INSTALLED_APPS = (
     'superdesk.archive',
     'superdesk.activity',
     'superdesk.upload',
-    'superdesk.sessions',
     'superdesk.desks',
     'superdesk.subjectcodes',
-    'superdesk.amazon.import_from_amazon',
+    'superdesk.storage.amazon.import_from_amazon',
     'superdesk.notification',
     'superdesk.planning',
 )
@@ -64,6 +73,11 @@ RETURN_MEDIA_AS_BASE64_STRING = False
 
 # allowed: 's3' 's3_us_west' 's3_eu_west' 's3_ap_southeast' 's3_ap_northeast'
 # AMAZON_REGION = 's3-eu-west-1'
+AMAZON_CONTAINER_NAME = os.environ.get('AMAZON_CONTAINER_NAME', '')
+AMAZON_ACCESS_KEY_ID = os.environ.get('AMAZON_ACCESS_KEY_ID', '')
+AMAZON_SECRET_ACCESS_KEY = os.environ.get('AMAZON_SECRET_ACCESS_KEY', '')
+AMAZON_REGION = os.environ.get('AMAZON_REGION', '')
+
 
 RENDITIONS = {
     'picture': {
@@ -80,5 +94,15 @@ SERVER_DOMAIN = 'localhost'
 # abspath = os.path.abspath(os.path.dirname(__file__))
 # UPLOAD_FOLDER = os.path.join(abspath, 'upload')
 
-NOTIFICATION_PUSH_INTERVAL = 1
-# The time interval to push notifications for.
+NOTIFICATION_PUSH_INTERVAL = 1  # The time interval to push notifications for.
+BCRYPT_GENSALT_WORK_FACTOR = 12
+RESET_PASSWORD_TOKEN_TIME_TO_LIVE = 24  # The number of hours a token is valid
+
+# email server
+MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.googlemail.com')
+MAIL_PORT = int(os.environ.get('MAIL_PORT', 465))
+MAIL_USE_TLS = bool(os.environ.get('MAIL_USE_TLS', False))
+MAIL_USE_SSL = bool(os.environ.get('MAIL_USE_SSL', True))
+MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'admin@sourcefabric.org')
+MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', 'admin-password')
+ADMINS = [MAIL_USERNAME]

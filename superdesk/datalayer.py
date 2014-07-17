@@ -6,6 +6,7 @@ from eve_elastic import Elastic
 from .utils import import_by_path
 from pyelasticsearch.client import JsonEncoder
 from bson.objectid import ObjectId
+from flask import current_app as app
 import superdesk
 
 
@@ -53,10 +54,10 @@ class SuperdeskDataLayer(DataLayer):
         return self._backend(resource).find_list_of_ids(resource, ids, client_projection)
 
     def insert(self, resource, docs, **kwargs):
-        return superdesk.apps[resource].create(docs, **kwargs)
+        return superdesk.apps[resource].create(docs, trigger_events=self._trigger_events(resource), **kwargs)
 
     def update(self, resource, id_, updates):
-        return superdesk.apps[resource].update(id=id_, updates=updates)
+        return superdesk.apps[resource].update(id=id_, updates=updates, trigger_events=self._trigger_events(resource))
 
     def update_all(self, resource, query, updates):
         datasource = self._datasource(resource)
@@ -70,12 +71,22 @@ class SuperdeskDataLayer(DataLayer):
     def remove(self, resource, lookup=None):
         if lookup is None:
             lookup = {}
-        return superdesk.apps[resource].delete(lookup=lookup)
+        return superdesk.apps[resource].delete(lookup=lookup, trigger_events=self._trigger_events(resource))
 
     def is_empty(self, resource):
         return self._backend(resource).is_empty(resource)
+
+    def _search_backend(self, resource):
+        if resource.endswith(app.config['VERSIONS']):
+            return
+        datasource = self._datasource(resource)
+        backend = config.SOURCES[datasource[0]].get('search_backend', None)
+        return getattr(self, backend) if backend is not None else None
 
     def _backend(self, resource):
         datasource = self._datasource(resource)
         backend = config.SOURCES[datasource[0]].get('backend', 'mongo')
         return getattr(self, backend)
+
+    def _trigger_events(self, resource):
+        return resource.endswith(app.config['VERSIONS'])

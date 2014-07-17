@@ -18,6 +18,7 @@ class BaseModel():
     extra_response_fields = []
     embedded_fields = []
     datasource = {}
+    versioning = False
 
     def __init__(self, app, endpoint_schema=None):
 
@@ -41,50 +42,95 @@ class BaseModel():
                 endpoint_schema.update({'item_url': self.item_url})
             if self.embedded_fields:
                 endpoint_schema.update({'embedded_fields': self.embedded_fields})
+            if self.versioning:
+                endpoint_schema.update({'versioning': self.versioning})
 
         on_insert_event = getattr(app, 'on_insert_%s' % self.endpoint_name)
         on_insert_event += self.on_create
+        on_inserted_event = getattr(app, 'on_inserted_%s' % self.endpoint_name)
+        on_inserted_event += self.on_created
         on_update_event = getattr(app, 'on_update_%s' % self.endpoint_name)
         on_update_event += self.on_update
+        on_updated_event = getattr(app, 'on_updated_%s' % self.endpoint_name)
+        on_updated_event += self.on_updated
         on_delete_event = getattr(app, 'on_delete_item_%s' % self.endpoint_name)
         on_delete_event += self.on_delete
+        on_deleted_event = getattr(app, 'on_deleted_item_%s' % self.endpoint_name)
+        on_deleted_event += self.on_deleted
         app.register_resource(self.endpoint_name, endpoint_schema)
         superdesk.apps[self.endpoint_name] = self
 
     def on_create(self, docs):
         pass
 
+    def on_created(self, docs):
+        pass
+
     def on_update(self, updates, original):
         pass
 
+    def on_updated(self, updates, original):
+        pass
+
     def on_delete(self, doc):
+        pass
+
+    def on_deleted(self, doc):
         pass
 
     def find_one(self, req, **lookup):
         return app.data._backend(self.endpoint_name).find_one(self.endpoint_name, req=req, **lookup)
 
     def get(self, req, lookup):
-        cursor = app.data._backend(self.endpoint_name).find(self.endpoint_name, req, lookup)
+        backend = app.data._search_backend(self.endpoint_name)
+        if backend is None:
+            backend = app.data._backend(self.endpoint_name)
+
+        cursor = backend.find(self.endpoint_name, req, lookup)
         if not cursor.count():
             return cursor  # return 304 if not modified
         else:
             # but fetch without filter if there is a change
             req.if_modified_since = None
-            return app.data._backend(self.endpoint_name).find(self.endpoint_name, req, lookup)
+            return backend.find(self.endpoint_name, req, lookup)
 
     def create(self, docs, trigger_events=None, **kwargs):
         if trigger_events:
             self.on_create(docs)
-        return app.data._backend(self.endpoint_name).insert(self.endpoint_name, docs, **kwargs)
+        ids = app.data._backend(self.endpoint_name).insert(self.endpoint_name, docs, **kwargs)
+        search_backend = app.data._search_backend(self.endpoint_name)
+        if search_backend:
+            search_backend.insert(self.endpoint_name, docs, **kwargs)
+        if trigger_events:
+            self.on_created(docs)
+        return ids
 
     def update(self, id, updates, trigger_events=None):
         if trigger_events:
             original = self.find_one(req=None, _id=id)
             self.on_update(updates, original)
-        return app.data._backend(self.endpoint_name).update(self.endpoint_name, id, updates)
+
+        res = app.data._backend(self.endpoint_name).update(self.endpoint_name, id, updates)
+
+        search_backend = app.data._search_backend(self.endpoint_name)
+        if search_backend is not None:
+            all_updates = self.find_one(req=None, _id=id)
+            search_backend.update(self.endpoint_name, id, all_updates)
+        if trigger_events:
+            self.on_updated(updates, original)
+        return res
 
     def delete(self, lookup, trigger_events=None):
         if trigger_events:
             doc = self.find_one(req=None, lookup=lookup)
             self.on_delete(doc)
-        return app.data._backend(self.endpoint_name).remove(self.endpoint_name, lookup)
+        res = app.data._backend(self.endpoint_name).remove(self.endpoint_name, lookup)
+        search_backend = app.data._search_backend(self.endpoint_name)
+        if search_backend is not None:
+            try:
+                search_backend.remove(self.endpoint_name, lookup)
+            except ValueError:
+                pass
+        if trigger_events:
+            self.on_deleted(doc)
+        return res

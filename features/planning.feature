@@ -12,11 +12,11 @@ Feature: News Items Planning
         Given empty "planning"
         When we post to "/planning"
         """
-        [{"type": "text", "headline": "testItem"}]
+        [{"headline": "testItem"}]
         """
         Then we get new resource
         """
-        {"_id": "", "guid": "", "type": "text"}
+        {"_id": "", "guid": ""}
         """
         
     @auth

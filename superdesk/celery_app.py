@@ -5,10 +5,9 @@ Created on May 29, 2014
 '''
 
 
+import redis
 from celery import Celery
 from superdesk import settings
-import redis
-from settings import URL_PREFIX
 
 
 celery = Celery(__name__, broker=settings.CELERY_BROKER_URL, backend=settings.CELERY_RESULT_BACKEND)
@@ -20,8 +19,15 @@ class AppContextTask(TaskBase):
         flask_app = None
 
         def __call__(self, *args, **kwargs):
-            with self.flask_app.test_request_context('/%s/' % (URL_PREFIX)):
-                return super(AppContextTask, self).__call__(*args, **kwargs)
+            with self.flask_app.app_context():
+                return super().__call__(*args, **kwargs)
+
+        def on_failure(self, exc, task_id, args, kwargs, einfo):
+            try:
+                self.flask_app.sentry.captureException()
+            except:
+                pass
+
 
 celery.Task = AppContextTask
 

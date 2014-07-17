@@ -14,8 +14,6 @@ class ExifMetaExtractionTestCase(TestCase):
         with open(self.img, mode='rb') as f:
             meta = get_meta(f)
 
-        print(meta)
-
         self.assertEquals(meta['ExifImageWidth'], 32)
         self.assertEquals(meta['ExifImageHeight'], 21)
         self.assertEquals(meta['Make'], 'Canon')

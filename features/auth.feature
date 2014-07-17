@@ -1,4 +1,3 @@
-@wip
 Feature: Authentication
 
     Scenario: Authenticate existing user
@@ -14,6 +13,16 @@ Feature: Authentication
 
         Then we get "token"
         And we get "user"
+
+
+    Scenario: Reset password existing user
+        Given "users"
+        """
+        [{"username": "foo", "password": "bar", "email": "foo@bar.org"}]
+        """
+
+        When we post to reset_password we get email with token
+        And we reset password for user
 
     Scenario: Authenticate with wrong password returns error
         Given "users"

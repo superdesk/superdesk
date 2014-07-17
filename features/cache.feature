@@ -1,10 +1,11 @@
 Feature: HTTP Caching
 
+    @wip
     @auth
     Scenario: If-Modified-Since caching
         Given "users"
         """
-        [{"username": "foo", "updated": "2012-12-12T10:11:12Z"}]
+        [{"username": "foo", "_updated": "2012-12-12T10:11:12+0000"}]
         """
 
         When we get "/users"
