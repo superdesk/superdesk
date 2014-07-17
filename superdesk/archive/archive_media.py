@@ -9,6 +9,7 @@ from superdesk.base_model import BaseModel
 from .common import base_schema, item_url, update_dates_for, generate_guid, GUID_TAG, ARCHIVE_MEDIA
 from .common import on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from eve.utils import config
+from bson.objectid import ObjectId
 
 
 class ArchiveMediaModel(BaseModel):
@@ -22,7 +23,8 @@ class ArchiveMediaModel(BaseModel):
         'upload_id': {'type': 'string'},
         'headline': base_schema['headline'],
         'byline': base_schema['byline'],
-        'description_text': base_schema['description_text']
+        'description_text': base_schema['description_text'],
+        'author': base_schema['author']
     }
     datasource = {'source': 'archive'}
     resource_methods = ['POST']
@@ -97,3 +99,17 @@ class ArchiveMediaModel(BaseModel):
             renditions[rendition] = {'href': url_for_media(id), 'media': id,
                                      'mimetype': 'image/%s' % ext, 'width': width, 'height': height}
         return renditions
+
+
+class AuthorItemModel(BaseModel):
+    endpoint_name = 'user_items'
+    url = 'users/<regex("[a-f0-9]{24}"):user_id>/archive'
+    schema = base_schema
+    datasource = {'source': 'archive'}
+    resource_methods = ['GET']
+
+    def get(self, req, lookup):
+        if lookup.get('user_id'):
+            lookup["author.user"] = ObjectId(lookup['user_id'])
+            del lookup['user_id']
+        return super().get(req, lookup)
