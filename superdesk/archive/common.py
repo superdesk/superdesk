@@ -136,12 +136,13 @@ base_schema = {
     'body_html': {
         'type': 'string'
     },
-    'user': {
-        'type': 'objectid',
-        'data_relation': {
-            'resource': 'users',
-            'field': '_id',
-            'embeddable': True
+    'author': {
+        'type': 'dict',
+        'schema': {
+            'user': {
+                'type': 'objectid',
+                'data_relation': {'resource': 'users', 'field': '_id', 'embeddable': True}
+            }
         }
     },
     'media_file': {
