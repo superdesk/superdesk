@@ -47,7 +47,7 @@ define([], function() {
 
                 if (response.status === 200) {
                     _.each(response.data._links.child, function(link) {
-                        links[link.title] = link.href;
+                        links[link.title] = config.server.url + link.href;
                     });
                 } else {
                     $q.reject(response);
