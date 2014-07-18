@@ -72,6 +72,12 @@ class BaseModel():
     def on_updated(self, updates, original):
         pass
 
+    def on_replace(self, document, original):
+        pass
+
+    def on_replaced(self, document, original):
+        pass
+
     def on_delete(self, doc):
         pass
 
@@ -118,6 +124,20 @@ class BaseModel():
             search_backend.update(self.endpoint_name, id, all_updates)
         if trigger_events:
             self.on_updated(updates, original)
+        return res
+
+    def replace(self, id, document, trigger_events=None):
+        if trigger_events:
+            original = self.find_one(req=None, _id=id)
+            self.on_replace(document, original)
+
+        res = app.data._backend(self.endpoint_name).replace(self.endpoint_name, id, document)
+
+        search_backend = app.data._search_backend(self.endpoint_name)
+        if search_backend is not None:
+            search_backend.update(self.endpoint_name, id, document)
+        if trigger_events:
+            self.on_replaced(document, original)
         return res
 
     def delete(self, lookup, trigger_events=None):

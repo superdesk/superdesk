@@ -5,7 +5,7 @@ Feature: News Items Archive
         Given empty "archive"
         When we get "/archive"
         Then we get list with 0 items
-                
+
 
     @auth
     Scenario: Move item into archive - tag not on ingest
@@ -110,8 +110,8 @@ Feature: News Items Archive
         """
         {"state": "PROGRESS",  "current": 4, "total": 4}
         """
-        
-        
+
+
     @auth
     Scenario: Get archive item by guid
         Given "archive"
@@ -134,20 +134,37 @@ Feature: News Items Archive
 
         When we patch given
         """
-        {"slugline": "TEST", "urgency": 2}
+        {"headline": "TEST 2", "urgency": 2}
         """
 
         And we patch latest
         """
-        {"slugline": "TEST2"}
+        {"headline": "TEST 3"}
         """
 
         Then we get updated response
-        And we get version "3"
+        And we get version 3
         And we get etag matching "/archive/xyz"
 
         When we get "/archive/xyz?version=all"
         Then we get list with 3 items
+
+
+	@auth
+	Scenario: Restore version
+        Given "archive"
+        """
+        [{"guid": "testid", "headline": "test"}]
+        """
+        When we patch given
+        """
+        {"headline": "TEST 2", "urgency": 2}
+        """
+		And we restore version 1
+
+        Then we get version 3
+        And the field "headline" value is "test"
+
 
     @wip
     @auth
