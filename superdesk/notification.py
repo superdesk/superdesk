@@ -19,6 +19,7 @@ class NotificationModel(BaseModel):
             'type': 'dict',
             'allow_unknwon': True,
         }
+            
     }
     resource_methods = ['GET']
     item_methods = ['GET']
@@ -40,7 +41,7 @@ def save_notification(app, push_interval):
     Timer(push_interval, save_notification, args=(app, push_interval)).start()
 
 
-def push_notification(name, created=0, deleted=0, updated=0):
+def push_notification(name, created=0, deleted=0, updated=0, keys=()):
     log.info('Pushing for %s, created %s, deleted %s, updated %s', name, created, deleted, updated)
     if created == deleted == updated == 0:
         return
@@ -52,9 +53,11 @@ def push_notification(name, created=0, deleted=0, updated=0):
         changes = notifications[name] = {
             'created': 0,
             'updated': 0,
-            'deleted': 0
+            'deleted': 0,
+            'keys': [],
         }
 
     changes['created'] += created
     changes['deleted'] += deleted
     changes['updated'] += updated
+    changes['keys'].extend(keys)
