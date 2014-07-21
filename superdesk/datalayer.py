@@ -66,7 +66,8 @@ class SuperdeskDataLayer(DataLayer):
         return collection.update(query, {'$set': updates}, multi=True)
 
     def replace(self, resource, id_, document):
-        return self._backend(resource).replace(resource, id_, document)
+        return superdesk.apps[resource].replace(id=id_, document=document,
+                                                trigger_events=self._trigger_events(resource))
 
     def remove(self, resource, lookup=None):
         if lookup is None:
