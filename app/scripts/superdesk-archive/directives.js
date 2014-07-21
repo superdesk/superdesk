@@ -77,7 +77,7 @@ define([
                 }
             };
         }])
-        .directive('sdPackageRef', ['api', function(api) {
+        .directive('sdPackageRef', ['api', '$rootScope', function(api, $rootScope) {
             return {
                 replace: true,
                 templateUrl: require.toUrl('./views/package-ref.html'),
@@ -89,8 +89,8 @@ define([
                     scope.data = null;
                     scope.error = null;
                     scope.type = scope.item.itemClass.split(':')[1];
-                    if (scope.type !== 'text' && scope.type !== 'composite') {
-                        api.ingest.getById(scope.item.residRef)
+                    if (scope.type !== 'text' && scope.type !== 'composite' && $rootScope.currentModule) {
+                        api[$rootScope.currentModule].getById(scope.item.residRef)
                         .then(function(result) {
                             scope.data = result;
                         }, function(response) {

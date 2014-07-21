@@ -4,8 +4,8 @@ define([
 ], function(_, BaseListController) {
     'use strict';
 
-    ArchiveListController.$inject = ['$scope', '$injector', 'superdesk', 'api'];
-    function ArchiveListController($scope, $injector, superdesk, api) {
+    ArchiveListController.$inject = ['$scope', '$injector', 'superdesk', 'api', '$rootScope'];
+    function ArchiveListController($scope, $injector, superdesk, api, $rootScope) {
         $injector.invoke(BaseListController, this, {$scope: $scope});
 
         $scope.createdMedia = {
@@ -14,6 +14,8 @@ define([
 
         $scope.type = 'archive';
         $scope.api = api.ingest;
+
+        $rootScope.currentModule = 'archive';
 
         $scope.openUpload = function() {
             superdesk.intent('upload', 'media').then(function(items) {
