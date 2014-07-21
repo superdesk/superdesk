@@ -8,39 +8,32 @@ define([
 
         $window.onbeforeunload = function() {
             if ($scope.dirty) {
-                return 'There are unsaved changes. If you navigate away, your changes will be lost.';
+                return gettext('There are unsaved changes. If you navigate away, your changes will be lost.');
             }
         };
 
-        $scope.dirty = null;
+        var _item;
         $scope.item = null;
-    	var _item = null;
-
+        $scope.dirty = null;
         $scope.workqueue = workqueue.all();
+        setupNewItem();
 
-        $scope.$watch(function() {
-            return $location.search()._id;
-        }, function(_id) {
+        function setupNewItem() {
+            var _id = $location.search()._id;
             if (_id) {
                 _item = workqueue.find({_id: _id}) || workqueue.active;
                 $scope.item = _.create(_item);
                 workqueue.setActive(_item);
-            } else {
-                $scope.item = null;
-                _item = null;
             }
-        });
+        }
 
         $scope.$watch('item', function(item, oldItem) {
-            if (item) {
-                if ($scope.dirty === null) {
-                    $scope.dirty = false;
-                } else {
-                    $scope.dirty = true;
-                }
-            } else {
-                $scope.dirty = null;
+            if (item === oldItem) {
+                $scope.dirty = false;
+                return;
             }
+
+            $scope.dirty = item && oldItem && item._id === oldItem._id;
         }, true);
 
         $scope.create = function() {
@@ -71,19 +64,36 @@ define([
 
         $scope.close = function() {
             if ($scope.dirty) {
-                return modal.confirm(gettext('There are unsaved changes. Please confirm you want to close the article without saving.'))
-                .then(function() {
-                    _close();
-                });
+                return confirmDirty().then(_close);
             } else {
                 _close();
             }
         };
 
+        var confirmed = false;
+        $scope.$on('$locationChangeStart', function(e, next) {
+            if ($scope.dirty && !confirmed) {
+                e.preventDefault();
+                confirmDirty().then(function() {
+                    confirmed = true;
+                    $location.url(next.split('#')[1]);
+                });
+            }
+        });
+
+        $scope.$on('$routeUpdate', function() {
+            confirmed = false;
+            setupNewItem();
+        });
+
         var _close = function() {
             workqueue.remove(_item);
             $location.search('_id', workqueue.getActive());
         };
+
+        function confirmDirty() {
+            return modal.confirm(gettext('There are unsaved changes. Please confirm you want to close the article without saving.'));
+        }
     }
 
     VersioningController.$inject = ['$scope', 'api', '$location'];
