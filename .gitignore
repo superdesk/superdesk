@@ -4,8 +4,6 @@
 node_modules
 dist
 .tmp
-*.swp
-*.swo
 .sass-cache
 app/scripts/bower_components
 app/styles/css/bootstrap.css
