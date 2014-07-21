@@ -52,13 +52,13 @@ define([
                         .then(function(result) {
                             if (result.state === 'SUCCESS') {
                                 callback(100);
-                            } else {
-                                if (result.state === 'PROGRESS') {
-                                    var newProgress = Math.floor(parseInt(result.current || 0, 10) * 100 / parseInt(result.total, 10));
-                                    if (progress !== newProgress) {
-                                        progress = newProgress;
-                                        callback(progress);
-                                    }
+                            } else if (result.state === 'FAILURE') {
+                                callback(null);
+                            } else if (result.state === 'PROGRESS') {
+                                var newProgress = Math.floor(parseInt(result.current || 0, 10) * 100 / parseInt(result.total, 10));
+                                if (progress !== newProgress) {
+                                    progress = newProgress;
+                                    callback(progress);
                                 }
                                 if (progress !== 100) {
                                     $timeout(function() {
@@ -76,11 +76,15 @@ define([
                         data.list[data.index].archiving = true;
                         data.list[data.index].archivingProgress = 0;
                         checkProgress(archiveItem.task_id, function(progress) {
-                            data.list[data.index].archivingProgress = progress;
                             if (progress === 100) {
                                 data.list[data.index].archiving = false;
                                 data.list[data.index].archived = true;
+                            } else if (progress === null) {
+                                data.list[data.index].archiving = false;
+                                data.list[data.index].archiveError = true;
+                                progress = 0;
                             }
+                            data.list[data.index].archivingProgress = progress;
                         });
                     }, function(response) {
                         data.list[data.index].archiveError = true;
