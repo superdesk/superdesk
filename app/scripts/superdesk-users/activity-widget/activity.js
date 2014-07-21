@@ -22,8 +22,10 @@ define([
         }]).controller('ActivityController', ['$scope', 'profileService',
         function ($scope, profileService) {
         	var page = 1;
+        	var current_config = null;
         	
         	function refresh(config) {
+        		current_config = config;
 	            profileService.getUserActivityFiltered(config.maxItems).then(function(list) {
 	            	$scope.activityFeed = list;
 	            });
@@ -37,6 +39,12 @@ define([
 	            };
         	}
             
+        	$scope.$on('changes in activity', function(){
+        		if (current_config) {
+        			refresh(current_config);
+        		}
+        	});
+        	
             $scope.$watch('widget.configuration', function(config) {
                 page = 1;
                 if (config) {
