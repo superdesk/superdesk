@@ -96,8 +96,8 @@ define([
         }
     }
 
-    VersioningController.$inject = ['$scope', 'api', '$location'];
-    function VersioningController($scope, api, $location) {
+    VersioningController.$inject = ['$scope', 'api', '$location', 'notify'];
+    function VersioningController($scope, api, $location, notify) {
         $scope.item = null;
         $scope.versions = null;
         $scope.selected = null;
@@ -112,14 +112,32 @@ define([
                 api.archive.getById(_id)
                 .then(function(result) {
                     $scope.item = result;
-                    api.archive.getByUrl(result._links.self.href + '?version=all&embedded={"user":1}')
-                    .then(function(result) {
-                        $scope.versions = result;
-                        $scope.selected = _.find($scope.versions._items, {_version: $scope.item._latest_version});
-                    });
+                    fetchVersions();
                 });
             }
         });
+
+        var fetchVersions = function() {
+            api.archive.getByUrl($scope.item._links.self.href + '?version=all&embedded={"user":1}')
+            .then(function(result) {
+                $scope.versions = result;
+                $scope.selected = _.find($scope.versions._items, {_version: $scope.item._latest_version});
+            });
+        };
+
+        $scope.revert = function(version) {
+            var newItem = _.find($scope.versions._items, {_version: version});
+            api.archive.save($scope.item, {
+                headline: newItem.headline,
+                body_html: newItem.body_html
+            })
+            .then(function(result) {
+                fetchVersions();
+                notify.success(gettext('Item reverted.'));
+            }, function(response) {
+                notify.error(gettext('Error. Item not reverted.'));
+            });
+        };
     }
 
     WorkqueueService.$inject = ['storage'];

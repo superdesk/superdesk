@@ -26,6 +26,7 @@
 			<div class="header">
 				<time title="{{selected.versioncreated|date:'medium'}}" datetime="{{selected.versioncreated}}">{{selected.versioncreated|reldate}}</time>
 				<span class="user">by {{selected.user.display_name}}</span>
+				<div ng-if="selected._version !== item._version"><a class="btn" translate ng-click="revert(selected._version)">Revert to this version</a></div>
 			</div>
 			<h2>{{selected.headline}}</h2>
 			<div class="content" sd-html-preview="selected.body_html"></div>
