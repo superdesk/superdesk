@@ -47,37 +47,37 @@ def finish_subtask_from_progress(task_id):
 
 
 def finish_task_for_progress(task_id):
-    return _update_subtask_progress(task_id, delete=True)
+    return _update_subtask_progress(task_id, done=True)
 
 
-def _update_subtask_progress(task_id, current=None, total=None, delete=None):
+def update_key(redis_db, key, flag):
+    if flag:
+        crt_value = redis_db.incr(key)
+    else:
+        crt_value = redis_db.get(key)
+
+    if crt_value:
+        crt_value = int(crt_value)
+    else:
+        crt_value = 0
+
+    return crt_value
+
+
+def _update_subtask_progress(task_id, current=None, total=None, done=None):
     redis_db = redis.from_url(celery.conf['CELERY_RESULT_BACKEND'])
 
     current_key = 'current_%s' % task_id
     total_key = 'total_%s' % task_id
+    done_key = 'done_%s' % task_id
 
-    if current:
-        crt_current = redis_db.incr(current_key)
-    else:
-        crt_current = redis_db.get(current_key)
+    crt_current = update_key(redis_db, current_key, current)
+    crt_total = update_key(redis_db, total_key, total)
+    crt_done = update_key(redis_db, done_key, done)
 
-    if total:
-        crt_total = redis_db.incr(total_key)
-    else:
-        crt_total = redis_db.get(total_key)
-
-    if crt_current:
-        crt_current = int(crt_current)
-    else:
-        crt_current = 0
-
-    if crt_total:
-        crt_total = int(crt_total)
-    else:
-        crt_total = 0
-
-    if delete and crt_current == crt_total:
+    if crt_done and crt_current == crt_total:
         redis_db.delete(current_key)
         redis_db.delete(crt_total)
+        redis_db.delete(done_key)
 
     return task_id, crt_current, crt_total
