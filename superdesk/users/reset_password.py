@@ -43,7 +43,7 @@ class ResetPasswordModel(BaseModel):
     endpoint_name = 'reset_user_password'
     schema = reset_schema
     public_methods = ['POST']
-    resource_methods = []
+    resource_methods = ['POST']
     item_methods = []
 
     def create(self, docs, trigger_events=None, **kwargs):
