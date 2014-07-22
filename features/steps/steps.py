@@ -16,6 +16,7 @@ from wooper.expect import (
 )
 from wooper.assertions import (
     assert_in, assert_equal)
+from superdesk.io import ingest_items
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 
@@ -27,17 +28,32 @@ def test_json(context):
         fail_and_print_body(context.response, 'response is not valid json')
 
     context_data = parse_json_input(context.text)
-    json_match(context_data, response_data)
+    assert_equal(json_match(context_data, response_data), True,
+                 msg=str(context_data) + '\n != \n' + str(response_data))
 
 
 def json_match(context_data, response_data):
-    if not isinstance(context_data, dict):
-        assert_equal(context_data, response_data)
-        return
-    for key in context_data:
-        assert_in(key, response_data)
-        if context_data[key]:
-            json_match(context_data[key], response_data[key])
+    if isinstance(context_data, dict):
+        for key in context_data:
+            if key not in response_data:
+                return False
+            if not context_data[key]:
+                continue
+            if not json_match(context_data[key], response_data[key]):
+                return False
+        return True
+    elif isinstance(context_data, list):
+        for item_context in context_data:
+            found = False
+            for item_response in response_data:
+                if json_match(item_context, item_response):
+                    found = True
+                    break
+            if not found:
+                return False
+        return True
+    elif not isinstance(context_data, dict):
+        return context_data == response_data
 
 
 def get_fixture_path(fixture):
@@ -185,6 +201,15 @@ def step_impl_given_role_extends(context, extending_name, extended_name):
 def step_impl_when_auth(context):
     data = context.text
     context.response = context.client.post('/auth', data=data, headers=context.headers)
+
+
+@when('we fetch from "{provider_name}" ingest "{guid}"')
+def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
+    with context.app.test_request_context():
+        provider = context.app.data.find_one('ingest_providers', name=provider_name, req=None)
+        provider_service = context.provider_services[provider.get('type')]
+        provider_service.provider = provider
+        ingest_items(provider, provider_service.fetch_ingest(guid))
 
 
 @when('we post to "{url}"')
@@ -400,7 +425,7 @@ def step_impl_then_get_file_meta(context):
 
 
 @then('we get "{filename}" metadata')
-def step_impl_then_get_file_meta_for(context, filename):
+def step_impl_then_get_given_file_meta(context, filename):
     if filename == 'bike.jpg':
         metadata = {
             'ycbcrpositioning': 1,

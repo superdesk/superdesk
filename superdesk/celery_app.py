@@ -66,9 +66,18 @@ def _update_subtask_progress(task_id, current=None, total=None, delete=None):
     else:
         crt_total = redis_db.get(total_key)
 
-    if delete:
+    if crt_current:
+        crt_current = int(crt_current)
+    else:
+        crt_current = 0
+
+    if crt_total:
+        crt_total = int(crt_total)
+    else:
+        crt_total = 0
+
+    if delete and crt_current == crt_total:
         redis_db.delete(current_key)
         redis_db.delete(crt_total)
-        crt_current = crt_total
 
     return task_id, crt_current, crt_total
