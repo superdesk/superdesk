@@ -16,7 +16,6 @@ from wooper.expect import (
 )
 from wooper.assertions import (
     assert_in, assert_equal)
-from superdesk.io import ingest_items
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 
@@ -209,7 +208,7 @@ def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
         provider = context.app.data.find_one('ingest_providers', name=provider_name, req=None)
         provider_service = context.provider_services[provider.get('type')]
         provider_service.provider = provider
-        ingest_items(provider, provider_service.fetch_ingest(guid))
+        context.ingest_items(provider, provider_service.fetch_ingest(guid))
 
 
 @when('we post to "{url}"')

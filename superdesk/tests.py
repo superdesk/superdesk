@@ -8,6 +8,7 @@ from flask import json
 import bcrypt
 from superdesk.io.reuters_mock import setup_reuters_mock, teardown_reuters_mock
 from superdesk.io.reuters import ReutersUpdateService
+from superdesk.io import ingest_items
 
 test_user = {'username': 'test_user', 'password': 'test_password'}
 
@@ -78,6 +79,7 @@ def setup_providers(context):
     app = context.app
     context.providers = {}
     context.provider_services = {}
+    context.ingest_items = ingest_items
     with app.test_request_context():
         if not app.config['REUTERS_USERNAME'] or not app.config['REUTERS_PASSWORD']:
             # no reuters credential available so use reuters mock
