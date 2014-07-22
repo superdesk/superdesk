@@ -19,7 +19,7 @@ class NotificationModel(BaseModel):
             'type': 'dict',
             'allow_unknwon': True,
         }
-            
+
     }
     resource_methods = ['GET']
     item_methods = ['GET']
@@ -28,7 +28,9 @@ class NotificationModel(BaseModel):
 def init_app(flask_app):
     push_interval = flask_app.config.get('NOTIFICATION_PUSH_INTERVAL', 3)
     NotificationModel(flask_app)
-    Timer(push_interval, save_notification, args=(flask_app, push_interval)).start()
+    timer = Timer(push_interval, save_notification, args=(flask_app, push_interval))
+    timer.daemon = True
+    timer.start()
 
 
 def save_notification(app, push_interval):
@@ -37,15 +39,17 @@ def save_notification(app, push_interval):
         with app.test_request_context():
             log.info('Saving changes %s', notifications)
             post_intern('notification', {'changes': notifications})
-            
-    Timer(push_interval, save_notification, args=(app, push_interval)).start()
+
+    timer = Timer(push_interval, save_notification, args=(app, push_interval))
+    timer.daemon = True
+    timer.start()
 
 
 def push_notification(name, created=0, deleted=0, updated=0, keys=()):
     log.info('Pushing for %s, created %s, deleted %s, updated %s', name, created, deleted, updated)
     if created == deleted == updated == 0:
         return
-    
+
     notifications = app.extensions.setdefault('superdesk_notifications', {})
 
     changes = notifications.get(name)
