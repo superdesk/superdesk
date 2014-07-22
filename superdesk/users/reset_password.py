@@ -15,7 +15,7 @@ superdesk.blueprint(bp)
 
 
 @bp.route('/reset_user_password', methods=['POST'])
-def reset_password():
+def reset_user_password():
     if not request.form:
         raise superdesk.SuperdeskError(payload='Invalid request.')
 
@@ -23,16 +23,18 @@ def reset_password():
     key = request.form.get('token')
     password = request.form.get('password')
 
+    active_tokens_model = ActiveTokensModel(app=app)
+    reset_pass_model = ResetPasswordModel(app=app)
     if key and password:
-        return update_password(key, password)
+        return update_password(key, password, active_tokens_model, reset_pass_model)
 
     if email:
-        return initiate_reset_password(email)
+        return initiate_reset_password(email, reset_pass_model)
     raise superdesk.SuperdeskError(payload='Invalid request')
 
 
-def update_password(key, password):
-    reset_request = app.data.find_one('active_tokens', req=None, secret_key=key)
+def update_password(key, password, active_tokens_model, reset_password_model):
+    reset_request = active_tokens_model.find_one(req=None, secret_key=key)
     if not reset_request:
         raise superdesk.SuperdeskError(payload='Invalid token received.')
 
@@ -46,11 +48,11 @@ def update_password(key, password):
     updates['password'] = hashed
     updates[app.config['LAST_UPDATED']] = utcnow()
     superdesk.apps['users'].update(id=user_id, updates=updates, trigger_events=True)
-    app.data.remove('reset_password', lookup={'email': reset_request['email']})
+    reset_password_model.delete(lookup={'email': reset_request['email']})
     return Response(status=200, response='Password updated')
 
 
-def initiate_reset_password(email):
+def initiate_reset_password(email, reset_password_model):
     user = app.data.find_one('users', req=None, email=email)
     default_response = Response(response='Reset password initialized', status=201)
     if not user:
@@ -60,7 +62,7 @@ def initiate_reset_password(email):
     doc['email'] = email
     doc[app.config['DATE_CREATED']] = utcnow()
     doc[app.config['LAST_UPDATED']] = utcnow()
-    app.data.insert('reset_password', [doc])
+    reset_password_model.create([doc])
     return default_response
 
 
@@ -78,8 +80,9 @@ reset_schema = {
 }
 
 
-class ActiveTokens(BaseModel):
+class ActiveTokensModel(BaseModel):
     endpoint_name = 'active_tokens'
+    internal_resource = True
     schema = reset_schema
     where_clause = '(ISODate() - this._created) / 3600000 <= %s' % token_ttl
     datasource = {
@@ -93,6 +96,7 @@ class ActiveTokens(BaseModel):
 
 class ResetPasswordModel(BaseModel):
     endpoint_name = 'reset_password'
+    internal_resource = True
     schema = reset_schema
     resource_methods = []
     item_methods = []

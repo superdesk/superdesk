@@ -19,6 +19,7 @@ class BaseModel():
     embedded_fields = []
     datasource = {}
     versioning = False
+    internal_resource = False
 
     def __init__(self, app, endpoint_schema=None):
 
@@ -44,6 +45,8 @@ class BaseModel():
                 endpoint_schema.update({'embedded_fields': self.embedded_fields})
             if self.versioning:
                 endpoint_schema.update({'versioning': self.versioning})
+            if self.internal_resource:
+                endpoint_schema.update({'internal_resource': self.internal_resource})
 
         on_insert_event = getattr(app, 'on_insert_%s' % self.endpoint_name)
         on_insert_event += self.on_create

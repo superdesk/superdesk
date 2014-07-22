@@ -6,7 +6,7 @@ from superdesk.base_model import BaseModel
 from flask import url_for, Response, current_app as app
 from .media_operations import store_file_from_url
 
-bp = superdesk.Blueprint('upload', __name__)
+bp = superdesk.Blueprint('upload_raw', __name__)
 superdesk.blueprint(bp)
 
 
@@ -19,7 +19,7 @@ def get_upload_as_data_uri(media_id):
 
 
 def url_for_media(media_id):
-    return url_for('upload.get_upload_as_data_uri', media_id=media_id,
+    return url_for('upload_raw.get_upload_as_data_uri', media_id=media_id,
                    _external=True, _schema=superdesk.config.URL_PROTOCOL)
 
 
