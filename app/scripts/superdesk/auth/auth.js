@@ -9,27 +9,41 @@ define([
 ], function(angular, require, AuthInterceptor) {
     'use strict';
 
-    ResetPassworController.$inject = ['$scope', '$location'];
-    function ResetPassworController($scope, $location) {
+    ResetPassworController.$inject = ['$scope', '$location', 'api', 'notify', 'gettext'];
+    function ResetPassworController($scope, $location, api, notify, gettext) {
         $scope.flowStep = 1;
-
         $scope.isSending = false;
-        $scope.sendToken = function() {
-            console.log('send token to user email');
-            var response = 200;
-            if (response === 200) {
-                $scope.flowStep = 2;
-            }
+        $scope.isReseting = false;
+
+        var resetForm = function() {
+            $scope.email = '';
+            $scope.token = '';
+            $scope.password = '';
+            $scope.passwordConfirm = '';
         };
 
-        $scope.isReseting = false;
-        $scope.resetPassword = function() {
-            console.log('password reset');
-            var response = 200;
-            if (response === 200) {
-                $location.path('/');
-            }
+        $scope.sendToken = function() {
+            api.resetPassword.create({email: $scope.email})
+            .then(function(result) {
+                notify.success(gettext('Token sent. Please check your email inbox.'));
+                $scope.flowStep = 2;
+            }, function(result) {
+                notify.error(gettext('There was a problem. Token is not sent.'));
+            });
+            resetForm();
         };
+        $scope.resetPassword = function() {
+            api.resetPassword.create({token: $scope.token, password: $scope.password})
+            .then(function(result) {
+                notify.success(gettext('Password is changed. You can login using your new password.'));
+                $location.path('/');
+            }, function(result) {
+                notify.error(gettext('Token is invalid. Password is not changed.'));
+            });
+            resetForm();
+        };
+
+        resetForm();
     }
 
     return angular.module('superdesk.auth', [])
@@ -46,6 +60,14 @@ define([
                     templateUrl: require.toUrl('./reset-password.html'),
                     auth: false
                 });
+        }])
+        .config(['apiProvider', function(apiProvider) {
+            apiProvider.api('resetPassword', {
+                type: 'http',
+                backend: {
+                    rel: 'reset_user_password'
+                }
+            });
         }])
 
         // watch session token, identity
