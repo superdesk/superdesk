@@ -19,17 +19,17 @@ class ReutersUpdateService(object):
 
     DATE_FORMAT = '%Y.%m.%d.%H.%M'
     URL = 'http://rmb.reuters.com/rmd/rest/xml'
+    token = None
 
     def __init__(self):
         self.parser = Parser()
 
     def get_token(self):
         """Get reuters token once for an update run."""
-        try:
-            return self.token
-        except AttributeError:
+
+        if not self.token:
             self.token = get_token(self.provider, update=True)
-            return self.token
+        return self.token
 
     def update(self, provider):
         """Service update call."""
@@ -43,21 +43,28 @@ class ReutersUpdateService(object):
 
         for channel in self.get_channels():
             for guid in self.get_ids(channel, last_updated, updated):
-                items = self.get_items(guid)
-                while items:
-                    item = items.pop()
-                    item['created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
-                    item['updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
-                    items.extend(self.fetch_assets(item))
-                    yield item
+                items = self.fetch_ingest(guid)
+                yield items
+
+    def fetch_ingest(self, guid):
+        items = self.get_items(guid)
+        result_items = []
+        while items:
+            item = items.pop()
+            result_items.append(item)
+            item['created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
+            item['updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
+            items.extend(self.fetch_assets(item))
+        return result_items
 
     def fetch_assets(self, item):
         """Fetch remote assets for given item."""
+        items = []
         for group in item.get('groups', []):
             for ref in group.get('refs', []):
                 if 'residRef' in ref:
-                    return self.get_items(ref.get('residRef'))
-        return []
+                    items.extend(self.get_items(ref.get('residRef')))
+        return items
 
     def get_items(self, guid):
         """Parse item message and return given items."""

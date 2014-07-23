@@ -147,7 +147,7 @@ def archive_item(self, guid, provider_id, user, trigger_events, task_id=None, ):
                     continue
 
                 ingest_set_archived(doc.get('guid'))
-                tasks.append(archive_item.s(ref['residRef'], provider, user, trigger_events, task_id))
+                tasks.append(archive_item.s(ref['residRef'], provider.get('_id'), user, trigger_events, task_id))
 
     for rendition in item.get('renditions', {}).values():
         href = service_provider.prepare_href(rendition['href'])
@@ -194,19 +194,23 @@ class ArchiveIngestModel(BaseModel):
 
     def create(self, docs, trigger_events=None, **kwargs):
         for doc in docs:
-            ingest_doc = superdesk.apps['ingest'].find_one(req=None, guid=doc.get('guid'))
+            ingest_doc = superdesk.apps['ingest'].find_one(req=None, _id=doc.get('guid'))
             if not ingest_doc:
                 msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
                 raise superdesk.SuperdeskError(payload=msg)
             ingest_set_archived(doc.get('guid'))
 
-            doc.setdefault('_id', doc.get('guid'))
-            doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
-            superdesk.apps['archive'].create([doc], trigger_events=trigger_events)
+            archived_doc = superdesk.apps['archive'].find_one(req=None, guid=doc.get('guid'))
+            if not archived_doc:
+                doc.setdefault('_id', doc.get('guid'))
+                doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
+                superdesk.apps['archive'].create([doc], trigger_events=trigger_events)
 
             task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'),
                                       doc.get('user'), trigger_events)
             doc['task_id'] = task.id
+            if task.state not in ('PROGRESS', states.SUCCESS, states.FAILURE) and not task.result:
+                update_status(task.id, 0, 0)
 
             superdesk.apps['archive'].update(doc.get('guid'), {"task_id": task.id}, trigger_events=trigger_events)
 
@@ -223,7 +227,7 @@ class ArchiveIngestModel(BaseModel):
             task_id = lookup["task_id"]
             task = AsyncResult(task_id)
 
-            if task.state in ('PROGRESS', states.FAILURE) and task.result:
+            if task.state in ('PROGRESS', states.SUCCESS, states.FAILURE) and task.result:
                 doc = task.result
             else:
                 doc = {}

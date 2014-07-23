@@ -7,43 +7,45 @@ class BaseModel():
     Base model for all endpoints, defines the basic implementation
     for CRUD datalayer functionality.
     '''
-    endpoint_name = str()
-    url = str()
-    item_url = str()
-    additional_lookup = {}
-    schema = {}
-    item_methods = []
-    resource_methods = []
-    public_methods = []
-    extra_response_fields = []
-    embedded_fields = []
-    datasource = {}
-    versioning = False
+    endpoint_name = None
+    url = None
+    item_url = None
+    additional_lookup = None
+    schema = None
+    item_methods = None
+    resource_methods = None
+    public_methods = None
+    extra_response_fields = None
+    embedded_fields = None
+    datasource = None
+    versioning = None
+    internal_resource = None
 
     def __init__(self, app, endpoint_schema=None):
-
         if not endpoint_schema:
             endpoint_schema = {'schema': self.schema}
-            if self.additional_lookup:
+            if self.additional_lookup is not None:
                 endpoint_schema.update({'additional_lookup': self.additional_lookup})
-            if self.extra_response_fields:
+            if self.extra_response_fields is not None:
                 endpoint_schema.update({'extra_response_fields': self.extra_response_fields})
-            if self.datasource:
+            if self.datasource is not None:
                 endpoint_schema.update({'datasource': self.datasource})
-            if self.item_methods:
+            if self.item_methods is not None:
                 endpoint_schema.update({'item_methods': self.item_methods})
-            if self.resource_methods:
+            if self.resource_methods is not None:
                 endpoint_schema.update({'resource_methods': self.resource_methods})
-            if self.public_methods:
+            if self.public_methods is not None:
                 endpoint_schema.update({'public_methods': self.public_methods})
-            if self.url:
+            if self.url is not None:
                 endpoint_schema.update({'url': self.url})
-            if self.item_url:
+            if self.item_url is not None:
                 endpoint_schema.update({'item_url': self.item_url})
-            if self.embedded_fields:
+            if self.embedded_fields is not None:
                 endpoint_schema.update({'embedded_fields': self.embedded_fields})
-            if self.versioning:
+            if self.versioning is not None:
                 endpoint_schema.update({'versioning': self.versioning})
+            if self.internal_resource is not None:
+                endpoint_schema.update({'internal_resource': self.internal_resource})
 
         on_insert_event = getattr(app, 'on_insert_%s' % self.endpoint_name)
         on_insert_event += self.on_create

@@ -14,12 +14,12 @@ Feature: News Items Archive Comments
         """
         When we post to "/item_comments"
         """
-        [{"text": "test comment", "item": "xyz", "user": "#USERS_ID#"}]
+        [{"text": "test comment", "item": "xyz"}]
         """
         And we get "/item_comments"
         Then we get list with 1 items
         """
-        {"text": "test comment", "item": "xyz", "user": "#USERS_ID#"}
+        {"text": "test comment", "item": "xyz"}
         """
 
     @auth
@@ -36,11 +36,11 @@ Feature: News Items Archive Comments
         """
         When we post to "/item_comments"
         """
-        [{"text": "test comment", "item": "xyz", "user": "#USERS_ID#"}]
+        [{"text": "test comment", "item": "xyz"}]
         """
         When we post to "/item_comments"
         """
-        [{"text": "test comment 1", "item": "xyz", "user": "#USERS_ID#"}]
+        [{"text": "test comment 1", "item": "xyz"}]
         """
         And we get "/item_comments"
         Then we get list with 2 items
@@ -60,12 +60,12 @@ Feature: News Items Archive Comments
         """
         When we post to "/item_comments"
         """
-        [{"text": "test comment", "item": "xyz", "user": "#USERS_ID#"}]
+        [{"text": "test comment", "item": "xyz"}]
         """
         And we get "/archive/xyz/comments"
         Then we get list with 1 items
         """
-        {"text": "test comment", "item": "xyz", "user": "#USERS_ID#"}
+        {"text": "test comment", "item": "xyz"}
         """
 
     @auth
@@ -76,13 +76,17 @@ Feature: News Items Archive Comments
         """
         Given empty "users"
         Given empty "item_comments"
+        When we post to "users"
+        """
+        {"username": "foo", "email": "foo@bar.com"}
+        """
         When we post to "/item_comments"
         """
-        [{"text": "test comment", "item": "xyz"}]
+        [{"text": "test comment", "item": "xyz", "user": "#USERS_ID#"}]
         """
         Then we get error 400
         """
-        {"_issues": {"user": {"required": 1}}, "_status": "ERR", "_error": {"message": "Insertion failure: 1 document(s) contain(s) error(s)", "code": 400}}
+        {"_status": "ERR", "_issues": "Commenting on behalf of someone else is prohibited.", "_message": ""}
         """
 
     @auth

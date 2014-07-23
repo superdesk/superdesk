@@ -20,15 +20,19 @@ superdesk.provider = register_provider
 
 def update_provider(provider):
     """Update given provider."""
-
     if provider.get('type') in providers:
+        for items in providers[provider.get('type')].update(provider):
+            ingest_items(provider, items)
+
+
+def ingest_items(provider, items):
         start = utcnow()
         ingested_count = provider.get('ingested_count', 0)
-        for item in providers[provider.get('type')].update(provider):
+        for item in items:
+            item.setdefault('_id', item['guid'])
             item.setdefault('created', utcnow())
             item.setdefault('updated', utcnow())
             item['ingest_provider'] = str(provider['_id'])
-
             old_item = app.data.find_one('ingest', guid=item['guid'], req=None)
             if old_item:
                 app.data.update('ingest', str(old_item.get('_id')), item)
