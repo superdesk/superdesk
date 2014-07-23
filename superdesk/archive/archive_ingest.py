@@ -194,7 +194,7 @@ class ArchiveIngestModel(BaseModel):
 
     def create(self, docs, trigger_events=None, **kwargs):
         for doc in docs:
-            ingest_doc = superdesk.apps['ingest'].find_one(req=None, guid=doc.get('guid'))
+            ingest_doc = superdesk.apps['ingest'].find_one(req=None, _id=doc.get('guid'))
             if not ingest_doc:
                 msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
                 raise superdesk.SuperdeskError(payload=msg)
