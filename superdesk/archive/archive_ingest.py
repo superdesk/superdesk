@@ -22,6 +22,10 @@ from celery.exceptions import Ignore
 from celery import states
 from superdesk.archive.common import facets
 import traceback
+from celery.utils.log import get_task_logger
+
+
+logger = get_task_logger(__name__)
 
 
 def update_status(task_id, current, total):
@@ -173,7 +177,7 @@ def archive_item(self, guid, provider_id, user, trigger_events, task_id=None, ):
         elif task_id == crt_task_id:
             update_status(*finish_task_for_progress(task_id))
     except Exception:
-        print(traceback.format_exc())
+        logger.error(traceback.format_exc())
 
 
 def ingest_set_archived(guid):
