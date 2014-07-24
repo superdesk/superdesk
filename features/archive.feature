@@ -45,57 +45,6 @@ Feature: News Items Archive
         {"state": "FAILURE",  "error": "For ingest with guid= tag:reuters.com,0000:newsml_GM1EA6A1P8401, failed to retrieve provider with _id=None"}
         """
 
-
-    @auth
-    @provider
-    Scenario: Move item into archive - tag not on provider
-        Given empty "archive"
-        And ingest from "reuters"
-        """
-        [{"guid": "not_on_provider_tag"}]
-        """
-
-        When we post to "/archive_ingest"
-        """
-        {
-        "guid": "not_on_provider_tag"
-        }
-        """
-
-        Then we get archive ingest result
-        """
-        {"state": "FAILURE",  "error": "Not found the ingest with guid: not_on_provider_tag for provider reuters"}
-        """
-
-
-    @auth
-    @provider
-    Scenario: Move item into archive - item is not available anymore on provider
-        Given empty "archive"
-        And ingest from "reuters"
-        """
-        [{"guid": "tag:reuters.com,2014:newsml_OV0SVJRCW"}]
-        """
-
-        When we post to "/archive_ingest"
-        """
-        {
-        "guid": "tag:reuters.com,2014:newsml_OV0SVJRCW"
-        }
-        """
-        And we get "/archive/tag:reuters.com,2014:newsml_OV0SVJRCW"
-
-        Then we get existing resource
-		"""
-		{
-		  "task_id": ""								  
-		}  
-  		"""
-        And we get archive ingest result
-        """
-        {"state": "FAILURE", "error": "Not found the ingest with guid: tag:reuters.com,2014:newsml_OV0SVJRCW for provider reuters"}
-        """
-        
         		
     @auth
     @provider
@@ -229,6 +178,51 @@ Feature: News Items Archive
 		} 
 		"""
         
+        
+    @auth
+    @provider
+    Scenario: Move audio item into archive - success
+        Given empty "archive"
+        And ingest from "reuters"
+        """
+        [{
+          "renditions": {
+            "stream": {
+                "mimetype": "audio/mpeg",
+                "residRef": "tag:reuters.com,0000:binary_LOVEA6M0L7U2E-STREAM:22.050:MP3",
+                "href": "http://content.reuters.com/auth-server/content/tag:reuters.com,2014:newsml_OV0TUFYV5:2/tag:reuters.com,0000:binary_LOVEA6M0L7U2E-STREAM:22.050:MP3?auth_token=token",
+                "rendition": "stream",
+                "sizeinbytes": 602548
+            }
+          },
+          "guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"
+        }]
+        """
+
+        When we post to "/archive_ingest"
+        """
+        {
+        "guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"
+        }
+        """
+        And we get "/archive/tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"
+
+        Then we get existing resource
+		"""
+		{"renditions": {
+            "stream": {
+                "mimetype": "audio/mpeg",
+                "residRef": "tag:reuters.com,0000:binary_LOVEA6M0L7U2E-STREAM:22.050:MP3",
+                "rendition": "stream",
+                "sizeinbytes": 602548
+            }
+        },
+		 "task_id": ""}  
+  		"""
+        And we get archive ingest result
+        """
+        {"state": "PROGRESS",  "current": 2, "total": 2}
+        """     
 
     @auth
     Scenario: Get archive item by guid

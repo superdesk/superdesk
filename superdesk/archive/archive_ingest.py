@@ -21,6 +21,11 @@ from superdesk.base_model import BaseModel
 from celery.exceptions import Ignore
 from celery import states
 from superdesk.archive.common import facets
+import traceback
+from celery.utils.log import get_task_logger
+
+
+logger = get_task_logger(__name__)
 
 
 def update_status(task_id, current, total):
@@ -84,83 +89,95 @@ def update_item(result, is_main_task, task_id, guid):
 
 @celery.task(bind=True, max_retries=3)
 def archive_item(self, guid, provider_id, user, trigger_events, task_id=None, ):
-    # For CELERY_ALWAYS_EAGER=True the current request context is empty but already initialized one is on request_stack
-    if app.config['CELERY_ALWAYS_EAGER']:
-        self.request_stack.pop()
-
-    crt_task_id = self.request.id
-    if not task_id:
-        task_id = crt_task_id
-
-    if not self.request.retries:
-        update_status(*add_subtask_to_progress(task_id))
-
-    provider = superdesk.apps['ingest_providers'].find_one(req=None, _id=provider_id)
-    if provider is None:
-        message = 'For ingest with guid= %s, failed to retrieve provider with _id=%s' % (guid, provider_id)
-        raise_fail(task_id, message)
-    service_provider = providers[provider.get('type')]
-    service_provider.provider = provider
-
-    item = None
     try:
-        items = service_provider.get_items(guid)
-    except LookupError:
-        message = 'Not found the ingest with guid: %s for provider %s' % (guid, provider.get('type'))
-        raise_fail(task_id, message)
+        # For CELERY_ALWAYS_EAGER=True the current request context is
+        # empty but already initialized one is on request_stack
+        if app.config['CELERY_ALWAYS_EAGER']:
+            self.request_stack.pop()
+
+        crt_task_id = self.request.id
+        if not task_id:
+            task_id = crt_task_id
+
+        if not self.request.retries:
+            update_status(*add_subtask_to_progress(task_id))
+
+        provider = superdesk.apps['ingest_providers'].find_one(req=None, _id=provider_id)
+        if provider is None:
+            message = 'For ingest with guid= %s, failed to retrieve provider with _id=%s' % (guid, provider_id)
+            raise_fail(task_id, message)
+        service_provider = providers[provider.get('type')]
+        service_provider.provider = provider
+
+        item = None
+        old_item = False
+        try:
+            items = service_provider.get_items(guid)
+        except LookupError:
+            ingest_doc = superdesk.apps['ingest'].find_one(req=None, _id=guid)
+            if not ingest_doc:
+                message = 'Not found the ingest with guid: %s for provider %s' % (guid, provider.get('type'))
+                raise_fail(task_id, message)
+            else:
+                old_item = True
+                ingest_doc.pop('_id')
+                items = [ingest_doc]
+        except Exception:
+            raise self.retry(countdown=2)
+
+        for item_it in items:
+            if 'guid' in item_it and item_it['guid'] == guid:
+                item = item_it
+                break
+
+        if item is None:
+            message = 'Returned ingest but not found the ingest with guid: %s for provider %s' \
+                      % (guid, provider.get('type'))
+            raise_fail(task_id, message)
+
+        if not old_item:
+            item['created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
+            item['updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
+        superdesk.apps['archive'].update(guid, item, trigger_events=trigger_events)
+
+        tasks = []
+        for group in item.get('groups', []):
+            for ref in group.get('refs', []):
+                if 'residRef' in ref:
+                    doc = {'guid': ref.get('residRef'), 'ingest_provider': provider_id,
+                           'user': user, 'task_id': crt_task_id}
+
+                    archived_doc = superdesk.apps['archive'].find_one(req=None, guid=doc.get('guid'))
+                    # check if task already started
+                    if not archived_doc:
+                        doc.setdefault('_id', doc.get('guid'))
+                        superdesk.apps['archive'].create([doc], trigger_events=trigger_events)
+                    elif archived_doc.get('task_id') == crt_task_id:
+                        # it is a retry so continue
+                        archived_doc.update(doc)
+                        superdesk.apps['archive'].update(archived_doc.get('_id'), archived_doc,
+                                                         trigger_events=trigger_events)
+                    else:
+                        # there is a cyclic dependency, skip it
+                        continue
+
+                    ingest_set_archived(doc.get('guid'))
+                    tasks.append(archive_item.s(ref['residRef'], provider.get('_id'), user, trigger_events, task_id))
+
+        for rendition in item.get('renditions', {}).values():
+            href = service_provider.prepare_href(rendition['href'])
+            if rendition['rendition'] == 'baseImage':
+                tasks.append(archive_media.s(task_id, guid, href, trigger_events))
+            else:
+                tasks.append(archive_rendition.s(task_id, guid, rendition['rendition'], href, trigger_events))
+
+        update_status(*finish_subtask_from_progress(task_id))
+        if tasks:
+            chord((task for task in tasks), update_item.s(crt_task_id == task_id, task_id, guid)).delay()
+        elif task_id == crt_task_id:
+            update_status(*finish_task_for_progress(task_id))
     except Exception:
-        raise self.retry(countdown=2)
-
-    for item_it in items:
-        if item_it['guid'] == guid:
-            item = item_it
-            break
-
-    if item is None:
-        message = 'Not found the ingest with guid: %s for provider %s' % (guid, provider.get('type'))
-        raise_fail(task_id, message)
-
-    item['created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
-    item['updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
-    superdesk.apps['archive'].update(guid, item, trigger_events=trigger_events)
-
-    tasks = []
-
-    for group in item.get('groups', []):
-        for ref in group.get('refs', []):
-            if 'residRef' in ref:
-                doc = {'guid': ref.get('residRef'), 'ingest_provider': provider_id,
-                       'user': user, 'task_id': crt_task_id}
-
-                archived_doc = superdesk.apps['archive'].find_one(req=None, guid=doc.get('guid'))
-                # check if task already started
-                if not archived_doc:
-                    doc.setdefault('_id', doc.get('guid'))
-                    superdesk.apps['archive'].create([doc], trigger_events=trigger_events)
-                elif archived_doc.get('task_id') == crt_task_id:
-                    # it is a retry so continue
-                    archived_doc.update(doc)
-                    superdesk.apps['archive'].update(archived_doc.get('_id'), archived_doc,
-                                                     trigger_events=trigger_events)
-                else:
-                    # there is a cyclic dependency, skip it
-                    continue
-
-                ingest_set_archived(doc.get('guid'))
-                tasks.append(archive_item.s(ref['residRef'], provider.get('_id'), user, trigger_events, task_id))
-
-    for rendition in item.get('renditions', {}).values():
-        href = service_provider.prepare_href(rendition['href'])
-        if rendition['rendition'] == 'baseImage':
-            tasks.append(archive_media.s(task_id, guid, href, trigger_events))
-        else:
-            tasks.append(archive_rendition.s(task_id, guid, rendition['rendition'], href, trigger_events))
-
-    update_status(*finish_subtask_from_progress(task_id))
-    if tasks:
-        chord((task for task in tasks), update_item.s(crt_task_id == task_id, task_id, guid)).delay()
-    elif task_id == crt_task_id:
-        update_status(*finish_task_for_progress(task_id))
+        logger.error(traceback.format_exc())
 
 
 def ingest_set_archived(guid):
