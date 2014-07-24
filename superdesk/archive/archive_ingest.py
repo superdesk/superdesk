@@ -181,7 +181,7 @@ def archive_item(self, guid, provider_id, user, trigger_events, task_id=None, ):
 
 
 def ingest_set_archived(guid):
-    ingest_doc = superdesk.apps['ingest'].find_one(req=None, guid=guid)
+    ingest_doc = superdesk.apps['ingest'].find_one(req=None, _id=guid)
     if ingest_doc:
         superdesk.apps['ingest'].update(ingest_doc.get('_id'), {'archived': utcnow()}, trigger_events=True)
 
