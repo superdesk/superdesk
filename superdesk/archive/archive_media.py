@@ -53,7 +53,7 @@ class ArchiveMediaModel(BaseModel):
                 doc['renditions'] = self.generate_renditions(file, doc['media'], inserted, file_type)
                 doc['mimetype'] = file.content_type
                 doc['filemeta'] = file.metadata
-                doc['creator'] = set_user(docs)
+                doc['creator'] = set_user(doc)
             except Exception as io:
                 superdesk.logger.exception(io)
                 for file_id in inserted:

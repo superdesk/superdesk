@@ -24,7 +24,7 @@ class ArchiveVersionsModel(BaseModel):
     def on_create(self, docs):
         for doc in docs:
             doc['versioncreated'] = utcnow()
-            doc['creator'] = set_user(docs)
+            doc['creator'] = set_user(doc)
 
 
 class ArchiveModel(BaseModel):

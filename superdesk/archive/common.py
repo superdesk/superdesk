@@ -25,7 +25,7 @@ def on_create_item(docs):
     """Make sure item has basic fields populated."""
     for doc in docs:
         update_dates_for(doc)
-        doc['creator'] = set_user(docs)
+        doc['creator'] = set_user(doc)
 
         if not doc.get('guid'):
             doc['guid'] = generate_guid(type=GUID_NEWSML)
@@ -65,14 +65,13 @@ def get_user():
     return user
 
 
-def set_user(docs):
+def set_user(doc):
     user = get_user()
-    for doc in docs:
-            sent_user = doc.get('user', None)
-            if sent_user and sent_user != user.get('_id'):
-                raise superdesk.SuperdeskError()
-            doc['user'] = str(user.get('_id'))
-            return str(user.get('_id'))
+    sent_user = doc.get('user', None)
+    if sent_user and sent_user != user.get('_id'):
+        raise superdesk.SuperdeskError()
+    doc['user'] = str(user.get('_id'))
+    return str(user.get('_id'))
 
 
 base_schema = {
