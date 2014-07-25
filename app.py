@@ -58,9 +58,9 @@ def get_app(config=None):
 
     app.mail = Mail(app)
 
-    app.on_fetched_resource = signals.proxy_resource_signal('read', app)
-    app.on_fetched_item = signals.proxy_item_signal('read', app)
-    app.on_inserted = signals.proxy_resource_signal('created', app)
+    app.on_fetched_resource += signals.proxy_resource_signal('read', app)
+    app.on_fetched_item += signals.proxy_item_signal('read', app)
+    app.on_inserted += signals.proxy_resource_signal('created', app)
 
     @app.errorhandler(superdesk.SuperdeskError)
     def client_error_handler(error):
@@ -115,4 +115,4 @@ if __name__ == '__main__':
         superdesk.logger.addHandler(logging.StreamHandler())
 
     app = get_app()
-    app.run(host=host, port=port, debug=debug, use_reloader=True)
+    app.run(host=host, port=port, debug=debug, use_reloader=False)

@@ -185,3 +185,9 @@ class UsersModel(BaseModel):
             if doc.get('password'):
                 hashed = hash_password(doc.get('password'))
                 doc['password'] = hashed
+
+    def activity_create(self, add, doc):
+        add('created user {{user}}', user=doc.get('display_name', doc.get('username')))
+
+    def activity_delete(self, add, doc):
+        add('removed user {{user}}', user=doc.get('display_name', doc.get('username')))

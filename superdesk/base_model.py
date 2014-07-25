@@ -156,3 +156,15 @@ class BaseModel():
         if trigger_events:
             self.on_deleted(doc)
         return res
+    
+    def activity_create(self, add, doc):
+        pass
+    
+    def activity_update(self, add, doc, original):
+        pass
+    
+    def activity_replace(self, add, doc):
+        pass
+    
+    def activity_delete(self, add, doc):
+        pass
