@@ -5,9 +5,35 @@
 			    <p class="activity-figure">
 			    	<img sd-user-picture data-src="user.picture_url" height="42" width="42">
 			    </p>
-			    <p><b>{{ activity.user.display_name || activity.user.username }}</b>
-			    {{ activity.action }}
-			    {{ activity.extra.headline || activity.extra.slugline || activity.resource }}</p>
+		    	<span ng-switch on="activity.message">
+		    		<p ng-switch-when="created user {{user}}">
+		    			<b>{{ activity.user.display_name || activity.user.username }} </b>
+		    			<span translate>created user <b>{{ activity.data.user }}</b></span>
+		    		</p>
+		    		<p ng-switch-when="removed user {{user}}">
+		    			<b>{{ activity.user.display_name || activity.user.username }} </b>
+		    			<span translate>removed user <b>{{ activity.data.user }}</b></span>
+		    		</p>
+		    		<div ng-switch-when="uploaded media {{ name }}">
+		    			<p><b>{{ activity.user.display_name || activity.user.username }} </b>
+		    			<span translate>uploaded in media archive <b>{{ activity.data.name }}</b></span></p>
+		    			<img src="{{ activity.data.renditions.thumbnail.href }}" width="150">
+		    		</div>
+		    		<div ng-switch-when="updated media {{ name }}">
+		    			<p><b>{{ activity.user.display_name || activity.user.username }} </b>
+		    			<span translate>updated in media archive <b>{{ activity.data.name }}</b></span></p>
+		    			<img src="{{ activity.data.renditions.thumbnail.href }}" width="150">
+		    		</div>
+		    		<div ng-switch-when="removed media {{ name }}">
+		    			<p><b>{{ activity.user.display_name || activity.user.username }} </b>
+		    			<span translate>removed from media archive <b>{{ activity.data.name }}</b></span></p>
+		    			<img src="{{ activity.data.renditions.thumbnail.href }}" width="150">
+		    		</div>
+		    		<p ng-switch-default>
+		    			<b>{{ activity.user.display_name || activity.user.username }} </b>
+		    			<span compile='activity.message' data='activity.data'/>
+		    		</p>
+		    	</span>
 				<div class="activity-date" sd-reldate-complex ng-model="activity._created"></div>
 			</div>
            </li>

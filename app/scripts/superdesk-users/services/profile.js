@@ -8,15 +8,15 @@ define(['angular'], function(angular) {
          * User profile service
          */
         return {
-            /**
-             * Get user for given username
-             *
-             * @param {string} username
-             * @return {object} user
-             */
-            getUserByUsername: function(username) {
-                return server.readItem('users', username);
-            },
+//            /**
+//             * Get user for given username
+//             *
+//             * @param {string} username
+//             * @return {object} user
+//             */
+//            getUserByUsername: function(username) {
+//                return server.readItem('users', username);
+//            },
 
             /**
              * Get user activity feed for given user
@@ -29,7 +29,7 @@ define(['angular'], function(angular) {
             getUserActivity: function(user, maxResults, page) {
                 var q = {
                     where: {user: user._id},
-                    sort: "[('_created',-1)]",
+                    sort: '[(\'_created\',-1)]',
                     embedded: {user: 1}
                 };
 
@@ -54,7 +54,7 @@ define(['angular'], function(angular) {
              */
             getUserActivityFiltered: function(maxResults, page) {
                 var q = {
-                    sort: "[('_created',-1)]",
+                    sort: '[(\'_created\',-1)]',
                     embedded: {user: 1}
                 };
 
