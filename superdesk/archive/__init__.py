@@ -5,6 +5,7 @@ from .archive_media import ArchiveMediaModel, AuthorItemModel
 from .archive_ingest import ArchiveIngestModel
 from .item_comments import ItemCommentsModel, ItemCommentsSubModel
 from .content_view import ContentViewModel
+from superdesk.archive.archive_lock import ArchiveLockModel
 
 
 def init_app(app):
@@ -17,3 +18,4 @@ def init_app(app):
     ItemCommentsModel(app=app)
     ItemCommentsSubModel(app=app)
     ContentViewModel(app=app)
+    ArchiveLockModel(app=app)

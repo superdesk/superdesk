@@ -49,6 +49,7 @@ class ArchiveMediaModel(BaseModel):
             try:
                 update_dates_for(doc)
                 doc['guid'] = generate_guid(type=GUID_TAG)
+                doc.setdefault('_id', doc['guid'])
                 doc['type'] = self.type_av.get(file_type)
                 doc['version'] = 1
                 doc['versioncreated'] = utcnow()
