@@ -357,9 +357,9 @@ Feature: News Items Archive
 
     @auth
     Scenario: Browse content
-        Given "archive"
+        Given the "archive"
         """
-        [{"type":"text", "headline": "test1", "guid": "testid1"}, {"type":"text", "headline": "test2", "guid": "testid2"}]
+        [{"type":"text", "headline": "test1", "guid": "testid1", "creator": "abc"}, {"type":"text", "headline": "test2", "guid": "testid2", "creator": "abc"}]
         """
         When we get "/archive"
         Then we get list with 2 items

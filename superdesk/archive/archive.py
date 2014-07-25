@@ -1,6 +1,7 @@
 from superdesk.base_model import BaseModel
 from .common import base_schema, extra_response_fields, item_url, facets
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
+from .common import get_user, set_user
 from flask import current_app as app, request, Response
 from werkzeug.exceptions import NotFound
 from superdesk.utc import utcnow
@@ -23,6 +24,7 @@ class ArchiveVersionsModel(BaseModel):
     def on_create(self, docs):
         for doc in docs:
             doc['versioncreated'] = utcnow()
+            doc['creator'] = set_user(doc)
 
 
 class ArchiveModel(BaseModel):
@@ -45,7 +47,9 @@ class ArchiveModel(BaseModel):
         on_create_media_archive()
 
     def on_update(self, updates, original):
+        user = get_user()
         updates['versioncreated'] = utcnow()
+        updates['creator'] = str(user.get('_id'))
 
     def on_updated(self, updates, original):
         on_update_media_archive()

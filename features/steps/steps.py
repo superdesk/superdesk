@@ -157,6 +157,17 @@ def step_impl_given_(context, resource):
         context.resource = resource
 
 
+@given('the "{resource}"')
+def step_impl_given_the(context, resource):
+    with context.app.test_request_context():
+        context.app.data.remove(resource)
+        orig_items = {}
+        items = [parse(item, resource) for item in json.loads(context.text)]
+        context.app.data.insert(resource, items)
+        context.data = orig_items or items
+        context.resource = resource
+
+
 @given('ingest from "{provider}"')
 def step_impl_given_resource_with_provider(context, provider):
     resource = 'ingest'

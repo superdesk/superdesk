@@ -4,6 +4,9 @@ from settings import SERVER_DOMAIN
 from uuid import uuid4
 from superdesk import SuperdeskError
 from superdesk.notification import push_notification
+import flask
+import superdesk
+from flask import current_app as app
 
 
 GUID_TAG = 'tag'
@@ -22,6 +25,7 @@ def on_create_item(docs):
     """Make sure item has basic fields populated."""
     for doc in docs:
         update_dates_for(doc)
+        doc['creator'] = set_user(doc)
 
         if not doc.get('guid'):
             doc['guid'] = generate_guid(type=GUID_NEWSML)
@@ -49,6 +53,25 @@ def generate_guid(**hints):
     elif hints['type'].lower() == GUID_NEWSML:
         return newsml_guid_format % {'domain': SERVER_DOMAIN, 'timestamp': t.isoformat(), 'identifier': hints['id']}
     return None
+
+
+def get_user():
+    user = getattr(flask.g, 'user') if hasattr(flask.g, 'user') else {}
+    if not user:
+            if app.debug:
+                user = user or {}
+            else:
+                raise superdesk.SuperdeskError(payload='Invalid user.')
+    return user
+
+
+def set_user(doc):
+    user = get_user()
+    sent_user = doc.get('user', None)
+    if sent_user and sent_user != user.get('_id'):
+        raise superdesk.SuperdeskError()
+    doc['user'] = str(user.get('_id'))
+    return str(user.get('_id'))
 
 
 base_schema = {
@@ -136,7 +159,7 @@ base_schema = {
     'body_html': {
         'type': 'string'
     },
-    'author': {
+    'creator': {
         'type': 'dict',
         'schema': {
             'user': {
