@@ -25,7 +25,7 @@ def on_create_item(docs):
     """Make sure item has basic fields populated."""
     for doc in docs:
         update_dates_for(doc)
-        doc['creator'] = set_user(doc)
+        doc['original_creator'] = set_user(doc)
 
         if not doc.get('guid'):
             doc['guid'] = generate_guid(type=GUID_NEWSML)
