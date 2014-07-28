@@ -34,8 +34,8 @@ define([
 								current.created += change.created;
 								current.updated += change.updated;
 								current.deleted += change.deleted;
-								if (change.keys !== undefined){
-									_.each(change.keys, function(key){
+								if (change.keys !== undefined) {
+									_.each(change.keys, function(key) {
 										current.keys[key] = true;
 									});
 								}

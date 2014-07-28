@@ -25,13 +25,13 @@ define(['moment'], function(moment) {
                 ngModel.$render = function() {
                     var date = moment.utc(ngModel.$viewValue);
                     scope.datetime = date.toISOString();
-                    
+
                     if (moment().format(COMPARE_FORMAT) === date.format(COMPARE_FORMAT)){
                     	scope.rday = date.format(DISPLAY_TODAY_FORMAT);
                     } else {
                     	scope.rday = date.format(DISPLAY_DAY_FORMAT);
                     }
-                	
+
                     if (moment().format('YYYY') === date.format('YYYY')){
                     	scope.rdate = date.format(DISPLAY_CDATE_FORMAT);
                     } else {

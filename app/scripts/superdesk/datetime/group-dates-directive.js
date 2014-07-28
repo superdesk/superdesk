@@ -31,7 +31,7 @@ define(['moment'], function(moment) {
                         } else {
                         	fday = date.format(DISPLAY_DAY_FORMAT);
                         }
-                    	
+
                         if (moment().format('YYYY') === date.format('YYYY')){
                         	fdate = date.format(DISPLAY_CDATE_FORMAT);
                         } else {
