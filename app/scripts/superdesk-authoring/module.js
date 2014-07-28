@@ -101,6 +101,7 @@ define([
         $scope.item = null;
         $scope.versions = null;
         $scope.selected = null;
+        $scope.users = {};
 
         $scope.$watch(function() {
             return $location.search()._id;
@@ -117,9 +118,22 @@ define([
             }
         });
 
+        var fetchUser = function(id) {
+            if (!$scope.users[id]) {
+                api.users.getById(id)
+                .then(function(result) {
+                    $scope.users[id] = result;
+                });
+            }
+        };
+
         var fetchVersions = function() {
             api.archive.getByUrl($scope.item._links.self.href + '?version=all&embedded={"user":1}')
             .then(function(result) {
+                var userList = _.uniq(_.pluck(result._items, 'creator'));
+                _.each(userList, function(userId) {
+                    fetchUser(userId);
+                });
                 $scope.versions = result;
                 $scope.selected = _.find($scope.versions._items, {_version: $scope.item._latest_version});
             });
