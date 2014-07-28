@@ -1,7 +1,7 @@
 from superdesk.base_model import BaseModel
 from .common import base_schema, extra_response_fields, item_url, facets
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
-from .common import get_user, set_user
+from .common import get_user
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
 from superdesk.utc import utcnow
@@ -20,7 +20,6 @@ class ArchiveVersionsModel(BaseModel):
     def on_create(self, docs):
         for doc in docs:
             doc['versioncreated'] = utcnow()
-            doc['creator'] = set_user(doc)
 
 
 class ArchiveModel(BaseModel):
