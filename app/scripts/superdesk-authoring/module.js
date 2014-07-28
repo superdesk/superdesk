@@ -110,29 +110,35 @@ define([
             $scope.versions = null;
 
             if (_id) {
-                api.archive.getById(_id)
-                .then(function(result) {
-                    $scope.item = result;
-                    fetchVersions();
-                });
+                fetchItem(_id);
             }
         });
 
         var fetchUser = function(id) {
-            if (!$scope.users[id]) {
-                api.users.getById(id)
-                .then(function(result) {
-                    $scope.users[id] = result;
-                });
-            }
+            api.users.getById(id)
+            .then(function(result) {
+                $scope.users[id] = result;
+            });
+        };
+
+        var fetchItem = function(id) {
+            id = id || $scope.item._id;
+            api.archive.getById(id)
+            .then(function(result) {
+                $scope.item = result;
+                fetchVersions();
+            });
         };
 
         var fetchVersions = function() {
+            $scope.users = {};
             api.archive.getByUrl($scope.item._links.self.href + '?version=all&embedded={"user":1}')
             .then(function(result) {
-                var userList = _.uniq(_.pluck(result._items, 'creator'));
-                _.each(userList, function(userId) {
-                    fetchUser(userId);
+                _.each(result._items, function(version) {
+                    var creator = version.creator || version.original_creator;
+                    if (creator && !$scope.users[creator]) {
+                        fetchUser(creator);
+                    }
                 });
                 $scope.versions = result;
                 $scope.selected = _.find($scope.versions._items, {_version: $scope.item._latest_version});
@@ -140,15 +146,15 @@ define([
         };
 
         $scope.revert = function(version) {
-            var newItem = _.find($scope.versions._items, {_version: version});
-            api.archive.save($scope.item, {
-                headline: newItem.headline,
-                body_html: newItem.body_html
+            api.archive.replace($scope.item._links.self.href, {
+                type: 'text',
+                last_version: $scope.item._version,
+                old_version: version
             })
             .then(function(result) {
-                fetchVersions();
+                fetchItem();
                 notify.success(gettext('Item reverted.'));
-            }, function(response) {
+            }, function(result) {
                 notify.error(gettext('Error. Item not reverted.'));
             });
         };
