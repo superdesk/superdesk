@@ -1,6 +1,7 @@
 
 import os
 from datetime import timedelta
+import json
 
 try:
     from urllib.parse import urlparse
@@ -94,8 +95,8 @@ RESET_PASSWORD_TOKEN_TIME_TO_LIVE = 24  # The number of hours a token is valid
 # email server
 MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.googlemail.com')
 MAIL_PORT = int(os.environ.get('MAIL_PORT', 465))
-MAIL_USE_TLS = bool(os.environ.get('MAIL_USE_TLS', False))
-MAIL_USE_SSL = bool(os.environ.get('MAIL_USE_SSL', True))
+MAIL_USE_TLS = json.loads(os.environ.get('MAIL_USE_TLS', 'False').lower())
+MAIL_USE_SSL = json.loads(os.environ.get('MAIL_USE_SSL', 'True').lower())
 MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'admin@sourcefabric.org')
 MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', 'admin-password')
 ADMINS = [MAIL_USERNAME]

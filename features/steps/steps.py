@@ -157,6 +157,17 @@ def step_impl_given_(context, resource):
         context.resource = resource
 
 
+@given('the "{resource}"')
+def step_impl_given_the(context, resource):
+    with context.app.test_request_context():
+        context.app.data.remove(resource)
+        orig_items = {}
+        items = [parse(item, resource) for item in json.loads(context.text)]
+        context.app.data.insert(resource, items)
+        context.data = orig_items or items
+        context.resource = resource
+
+
 @given('ingest from "{provider}"')
 def step_impl_given_resource_with_provider(context, provider):
     resource = 'ingest'
@@ -291,10 +302,10 @@ def step_impl_when_get(context):
 @when('we restore version {version}')
 def step_impl_when_restore_version(context, version):
     data = get_json_data(context.response)
-    href = get_self_href(data, context) + '/set-version'
+    href = get_self_href(data, context)
     headers = if_match(context, data.get('_etag'))
-    text = '{"old_version": "%s", "last_version": "%s"}' % (version, data.get('_version'))
-    context.response = context.client.post(href, data=text, headers=headers)
+    text = '{"type": "text", "old_version": %s, "last_version": %s}' % (version, data.get('_version'))
+    context.response = context.client.put(href, data=text, headers=headers)
     assert_ok(context.response)
 
 

@@ -6,7 +6,7 @@ from superdesk.media_operations import resize_image
 from werkzeug.datastructures import FileStorage
 from PIL import Image
 from superdesk.base_model import BaseModel
-from .common import base_schema, item_url, update_dates_for, generate_guid, GUID_TAG, ARCHIVE_MEDIA
+from .common import base_schema, item_url, update_dates_for, generate_guid, GUID_TAG, ARCHIVE_MEDIA, set_user
 from .common import on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from eve.utils import config
 from bson.objectid import ObjectId
@@ -24,7 +24,7 @@ class ArchiveMediaModel(BaseModel):
         'headline': base_schema['headline'],
         'byline': base_schema['byline'],
         'description_text': base_schema['description_text'],
-        'author': base_schema['author']
+        'creator': base_schema['creator']
     }
     datasource = {'source': 'archive'}
     resource_methods = ['POST']
@@ -53,6 +53,7 @@ class ArchiveMediaModel(BaseModel):
                 doc['renditions'] = self.generate_renditions(file, doc['media'], inserted, file_type)
                 doc['mimetype'] = file.content_type
                 doc['filemeta'] = file.metadata
+                doc['creator'] = set_user(doc)
             except Exception as io:
                 superdesk.logger.exception(io)
                 for file_id in inserted:

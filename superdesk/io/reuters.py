@@ -10,6 +10,7 @@ from .newsml import Parser
 from .reuters_token import get_token
 from ..utc import utc
 from ..etree import etree
+from urllib.parse import urlparse, urlunparse
 
 PROVIDER = 'reuters'
 
@@ -127,7 +128,9 @@ class ReutersUpdateService(object):
         return date.strftime(self.DATE_FORMAT)
 
     def prepare_href(self, href):
-        return '%s?auth_token=%s' % (href, self.get_token())
+        (scheme, netloc, path, params, query, fragment) = urlparse(href)
+        new_href = urlunparse((scheme, netloc, path, '', '', ''))
+        return '%s?auth_token=%s' % (new_href, self.get_token())
 
 
 def on_read_ingest(data, docs):

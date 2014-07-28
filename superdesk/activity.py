@@ -111,6 +111,7 @@ class ActivityModel(BaseModel):
             }
         }
     }
+    exclude = {endpoint_name, 'notification'}
 
 
 def add_activity(msg, **data):
@@ -124,3 +125,38 @@ def add_activity(msg, **data):
         'data': data
     })
     push_notification(ActivityModel.endpoint_name, created=1, keys=(user.get('_id'),))
+
+    def on_generic_updated(self, resource, doc, original):
+        if resource in self.exclude:
+            return
+
+        user = getattr(flask.g, 'user', None)
+        if not user:
+            return
+
+        activity = {
+            'user': user.get('_id'),
+            'resource': resource,
+            'action': 'updated',
+            'extra': doc
+        }
+        post_intern(self.endpoint_name, activity)
+
+        push_notification(self.endpoint_name, updated=1, keys=(str(user.get('_id')),))
+
+    def on_generic_deleted(self, resource, doc):
+        if resource in self.exclude:
+            return
+
+        user = getattr(flask.g, 'user', None)
+        if not user:
+            return
+
+        activity = {
+            'user': user.get('_id'),
+            'resource': resource,
+            'action': 'deleted',
+            'extra': doc
+        }
+        post_intern(self.endpoint_name, activity)
+        push_notification(self.endpoint_name, deleted=1, keys=(user.get('_id'),))

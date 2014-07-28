@@ -1,16 +1,12 @@
 from superdesk.base_model import BaseModel
 from .common import base_schema, extra_response_fields, item_url, facets
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
-from flask import current_app as app, request, Response
+from .common import get_user, set_user
+from flask import current_app as app
 from werkzeug.exceptions import NotFound
 from superdesk.utc import utcnow
-from datetime import datetime
-from settings import DATE_FORMAT
-from eve.utils import config
-from eve.versioning import resolve_document_version, insert_versioning_documents
-from eve.methods.common import build_response_document
+from eve.versioning import resolve_document_version
 import superdesk
-import json
 
 
 class ArchiveVersionsModel(BaseModel):
@@ -19,21 +15,34 @@ class ArchiveVersionsModel(BaseModel):
     extra_response_fields = extra_response_fields
     item_url = item_url
     resource_methods = []
+    internal_resource = True
 
     def on_create(self, docs):
         for doc in docs:
             doc['versioncreated'] = utcnow()
+            doc['creator'] = set_user(doc)
 
 
 class ArchiveModel(BaseModel):
     endpoint_name = 'archive'
-    schema = {}
+    schema = {
+        'old_version': {
+            'type': 'number',
+        },
+        'last_version': {
+            'type': 'number',
+        }
+    }
     schema.update(base_schema)
     extra_response_fields = extra_response_fields
     item_url = item_url
     datasource = {
         'search_backend': 'elastic',
-        'facets': facets
+        'facets': facets,
+        'projection': {
+            'old_version': 0,
+            'last_version': 0
+        }
     }
     resource_methods = ['GET', 'POST', 'DELETE']
     versioning = True
@@ -45,7 +54,9 @@ class ArchiveModel(BaseModel):
         on_create_media_archive()
 
     def on_update(self, updates, original):
+        user = get_user()
         updates['versioncreated'] = utcnow()
+        updates['creator'] = str(user.get('_id'))
 
     def on_updated(self, updates, original):
         on_update_media_archive()
@@ -65,44 +76,34 @@ class ArchiveModel(BaseModel):
     def on_deleted(self, doc):
         on_delete_media_archive()
 
+    def replace(self, id, document, trigger_events=None):
+        return self.restore_version(id, document) or \
+            super().replace(id, document, trigger_events=trigger_events)
 
-version_schema = {
-    'old_version': {
-        'type': 'string',
-        'required': True
-    },
-    'last_version': {
-        'type': 'string',
-        'required': True
-    }
-}
+    def restore_version(self, id, doc):
+        item_id = id
+        old_version = int(doc.get('old_version', 0))
+        last_version = int(doc.get('last_version', 0))
+        if(not all([item_id, old_version, last_version])):
+            return None
 
+        old = app.data.find_one('archive_versions', req=None, _id_document=item_id, _version=old_version)
+        if old is None:
+            raise superdesk.SuperdeskError(payload='Invalid version %s' % old_version)
 
-bp = superdesk.Blueprint('archive_set_version', __name__)
-superdesk.blueprint(bp)
+        curr = app.data.find_one('archive', req=None, _id=item_id)
+        if curr is None:
+            raise superdesk.SuperdeskError(payload='Invalid item id %s' % item_id)
 
+        if curr['_version'] != last_version:
+            raise superdesk.SuperdeskError(payload='Invalid last version %s' % last_version)
+        old['_id'] = old['_id_document']
+        old['_updated'] = old['versioncreated'] = utcnow()
+        del old['_id_document']
 
-@bp.route('/archive/<regex("[a-zA-Z0-9:\\-\\.]+"):item_id>/set-version', methods=['POST'])
-def set_version(item_id):
-    ver = json.loads(request.data.decode('utf_8'))
-    old = app.data.find_one('archive_versions', req=None, _id_document=item_id, _version=int(ver['old_version']))
-    if old is None:
-        raise superdesk.SuperdeskError(payload='Invalid version %s' % ver['old_version'])
-    curr = app.data.find_one('archive', req=None, _id=item_id)
-    if curr is None:
-        raise superdesk.SuperdeskError(payload='Invalid item id %s' % item_id)
-    if curr['_version'] != int(ver['last_version']):
-        raise superdesk.SuperdeskError(payload='Invalid last version %s' % ver['last_version'])
-    old['_id'] = old['_id_document']
-    old['_updated'] = old['versioncreated'] = utcnow()
-    del old['_id_document']
-    resolve_document_version(old, 'archive', 'PATCH', curr)
-    superdesk.apps['archive'].replace(id=item_id, document=old, trigger_events=True)
-    insert_versioning_documents('archive', old)
-    old[config.STATUS] = config.STATUS_OK
-    request.path = request.path[:request.path.find('/', request.path.find('/') + 1)]
-    build_response_document(old, 'archive', [])
-    for k, v in old.items():
-        if isinstance(v, datetime):
-            old[k] = v.strftime(DATE_FORMAT)
-    return Response(status=201, response=json.dumps(old), content_type='text/json')
+        resolve_document_version(old, 'archive', 'PATCH', curr)
+        res = super().replace(id=item_id, document=old, trigger_events=True)
+        del doc['old_version']
+        del doc['last_version']
+        doc.update(old)
+        return res
