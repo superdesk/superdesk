@@ -64,11 +64,11 @@ class ArchiveMediaModel(BaseModel):
     def activity_create(self, add, doc):
         add('uploaded media {{ name }}', name=doc.get('headline', doc.get('mimetype')),
             renditions=doc['renditions'])
-    
+
     def activity_update(self, add, doc, original):
         add('updated media {{ name }}', name=original.get('headline', original.get('mimetype')),
             renditions=doc['renditions'])
-        
+
     def activity_delete(self, add, doc):
         add('removed media {{ name }}', name=doc.get('headline', doc.get('mimetype')),
             renditions=doc['renditions'])

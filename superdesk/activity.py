@@ -41,10 +41,12 @@ class AuditModel(BaseModel):
     exclude = {endpoint_name, 'activity'}
 
     def on_generic_inserted(self, resource, docs):
-        if resource in self.exclude: return
+        if resource in self.exclude:
+            return
 
         user = getattr(flask.g, 'user', None)
-        if not user: return
+        if not user:
+            return
 
         audit = {
             'user': user.get('_id'),
@@ -59,10 +61,12 @@ class AuditModel(BaseModel):
             model.activity_create(add_activity, docs[0])
 
     def on_generic_updated(self, resource, doc, original):
-        if resource in self.exclude: return
+        if resource in self.exclude:
+            return
 
         user = getattr(flask.g, 'user', None)
-        if not user: return
+        if not user:
+            return
 
         audit = {
             'user': user.get('_id'),
@@ -77,10 +81,12 @@ class AuditModel(BaseModel):
             model.activity_update(add_activity, doc, original)
 
     def on_generic_deleted(self, resource, doc):
-        if resource in self.exclude: return
+        if resource in self.exclude:
+            return
 
         user = getattr(flask.g, 'user', None)
-        if not user: return
+        if not user:
+            return
 
         audit = {
             'user': user.get('_id'),
