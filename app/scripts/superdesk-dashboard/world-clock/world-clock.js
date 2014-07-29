@@ -82,7 +82,7 @@ define([
                         dayClockhands = '#313131',
                         dayNumbers = '#a0a0a0',
                         nightBg = '#313131',
-                        nightClockhands = 'e0e0e0',
+                        nightClockhands = '#e0e0e0',
                         nightNumbers = '#848484';
 
                     var svg = d3.select(element[0])
