@@ -6,22 +6,23 @@ define([
 ], function(_, $, angular, require) {
     'use strict';
 
-    angular.module('superdesk.users.directives', [], function($compileProvider) {
-        // configure new 'compile' directive by passing a directive
-        // factory function. The factory function injects the '$compile'
-        $compileProvider.directive('compile', function($compile) {
-          // directive factory creates a link function
-          return function(scope, element, attrs) {
-        	var value = scope.$eval(attrs.compile);
-        	element.html(value);
-        	var nscope = scope.$new(true);
-        	_.each(scope.$eval(attrs.data), function(value, key) {
-        		nscope[key] = value;
-        	});
-        	$compile(element.contents())(nscope);
-          };
-        });
-      })
+    angular.module('superdesk.users.directives', [])
+        .config(['$compileProvider', function($compileProvider) {
+            // configure new 'compile' directive by passing a directive
+            // factory function. The factory function injects the '$compile'
+            $compileProvider.directive('compile', function($compile) {
+              // directive factory creates a link function
+              return function(scope, element, attrs) {
+            	var value = scope.$eval(attrs.compile);
+            	element.html(value);
+            	var nscope = scope.$new(true);
+            	_.each(scope.$eval(attrs.data), function(value, key) {
+            		nscope[key] = value;
+            	});
+            	$compile(element.contents())(nscope);
+              };
+            });
+        }])
         .directive('sdInfoItem', function() {
             return {
                 link: function (scope, element) {
