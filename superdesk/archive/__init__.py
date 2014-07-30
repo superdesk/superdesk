@@ -4,6 +4,7 @@ from .ingest import IngestModel
 from .archive_media import ArchiveMediaModel, AuthorItemModel
 from .archive_ingest import ArchiveIngestModel
 from .item_comments import ItemCommentsModel, ItemCommentsSubModel
+from .content_view import ContentViewModel
 
 
 def init_app(app):
@@ -15,3 +16,4 @@ def init_app(app):
     AuthorItemModel(app=app)
     ItemCommentsModel(app=app)
     ItemCommentsSubModel(app=app)
+    ContentViewModel(app=app)
