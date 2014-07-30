@@ -1,0 +1,19 @@
+<div class="article-edit-container">
+    <div class="tablist left-tablist">
+        <ul class="navigation-tabs">
+            <li ng-repeat="widget in widgets" ng-class="{active: widget === active}">
+                <button class="btn" type="submit" ng-click="activate(widget)">
+                    <i class="icon-{{ widget.icon }}" title="{{ widget.label }}"></i>
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="tabpane left-tabpane open-tabpane" ng-if="active">
+        <section class="tabcontent">
+            <div sd-widget data-widget="active"></div>
+        </section>
+    </div>
+
+    <div ng-transclude></div>
+</div>

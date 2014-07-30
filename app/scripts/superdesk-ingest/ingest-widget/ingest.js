@@ -4,7 +4,7 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    var INGEST_EVENT = 'changes in ingest';
+    var INGEST_EVENT = 'changes in media_archive';
 
     angular.module('superdesk.widgets.ingest', [])
         .config(['widgetsProvider', function(widgets) {
