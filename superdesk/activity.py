@@ -13,8 +13,8 @@ log = logging.getLogger(__name__)
 
 def init_app(app):
     activityModel = ActivityModel(app=app)
-    app.on_insert += activityModel.on_generic_inserted
-    app.on_update += activityModel.on_generic_updated
+    app.on_inserted += activityModel.on_generic_inserted
+    app.on_updated += activityModel.on_generic_updated
     app.on_delete_item += activityModel.on_generic_deleted
 
 

@@ -12,7 +12,6 @@ import superdesk
 from superdesk.file_meta.image import get_meta
 from superdesk.file_meta.video import get_meta as video_meta
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -86,42 +85,6 @@ def process_image(content, file_name, type):
     meta = get_meta(content)
     content.seek(0)
     return content, meta
-
-
-def resize_image(content, format, size, keepProportions=True):
-    '''
-    Resize the image given as a binary stream
-
-    @param content: stream
-        The binary stream containing the image
-    @param format: str
-        The format of the resized image (e.g. png, jpg etc.)
-    @param size: tuple
-        A tuple of width, height
-    @param keepProportions: boolean
-        If true keep image proportions; it will adjust the resized
-        image size.
-    @return: stream
-        Returns the resized image as a binary stream.
-    '''
-    assert isinstance(size, tuple)
-    img = Image.open(content)
-    if keepProportions:
-        width, height = img.size
-        new_width, new_height = size
-        x_ratio = width / new_width
-        y_ratio = height / new_height
-        if x_ratio > y_ratio:
-            new_height = int(height / x_ratio)
-        else:
-            new_width = int(width / y_ratio)
-        size = (new_width, new_height)
-
-    resized = img.resize(size)
-    out = BytesIO()
-    resized.save(out, format)
-    out.seek(0)
-    return out, new_width, new_height
 
 
 def crop_image(content, file_name, cropping_data):

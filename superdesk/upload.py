@@ -1,10 +1,13 @@
 """Upload module"""
 import logging
 import superdesk
+from eve.utils import config
 from superdesk import SuperdeskError
 from superdesk.base_model import BaseModel
 from flask import url_for, Response, current_app as app, json
-from .media_operations import download_file_from_url, process_file_from_stream, crop_image, decode_metadata
+from superdesk.media.renditions import generate_renditions, delete_file_on_error
+from superdesk.media.media_operations import download_file_from_url, process_file_from_stream, \
+    crop_image, decode_metadata
 
 bp = superdesk.Blueprint('upload_raw', __name__)
 superdesk.blueprint(bp)
@@ -29,7 +32,6 @@ def init_app(app):
 
 
 class UploadModel(BaseModel):
-
     endpoint_name = 'upload'
     schema = {
         'media': {'type': 'file'},
@@ -38,22 +40,20 @@ class UploadModel(BaseModel):
         'CropTop': {'type': 'integer'},
         'CropBottom': {'type': 'integer'},
         'URL': {'type': 'string'},
-        'data_uri_url': {'type': 'string'},
         'mime_type': {'type': 'string'},
         'filemeta': {'type': 'dict'}
     }
-
+    extra_response_fields = ['renditions']
     datasource = {
         'projection': {
-            'data_uri_url': 1,
             'mime_type': 1,
             'filemeta': 1,
             '_created': 1,
             '_updated': 1,
-            'media': 1
+            'media': 1,
+            'renditions': 1,
         }
     }
-
     item_methods = ['GET', 'DELETE']
     resource_methods = ['GET', 'POST']
 
@@ -83,12 +83,24 @@ class UploadModel(BaseModel):
         _, out = crop_image(out, filename, cropping_data)
         metadata['length'] = json.dumps(len(out.getvalue()))
 
-        logger.debug('Going to save media file with %s ' % file_name)
-        id = app.media.put(out, filename=file_name, content_type=content_type, metadata=metadata)
-        doc['media'] = id
-        doc['mime_type'] = content_type
-        doc['data_uri_url'] = url_for_media(id)
-        doc['filemeta'] = decode_metadata(metadata)
+        try:
+            logger.debug('Going to save media file with %s ' % file_name)
+            id = app.media.put(out, filename=file_name, content_type=content_type, metadata=metadata)
+            doc['media'] = id
+            doc['mime_type'] = content_type
+            doc['filemeta'] = decode_metadata(metadata)
+            inserted = [doc['media']]
+            file_type = content_type.split('/')[0]
+
+            rendition_spec = config.RENDITIONS['avatar']
+            renditions = generate_renditions(out, doc['media'], inserted, file_type,
+                                             content_type, rendition_spec, url_for_media)
+            doc['renditions'] = renditions
+        except Exception as io:
+            logger.exception(io)
+            for file_id in inserted:
+                delete_file_on_error(doc, file_id)
+            raise SuperdeskError(message='Generating renditions failed')
 
     def get_cropping_data(self, doc):
         if all([doc.get('CropTop', None) is not None, doc.get('CropLeft', None) is not None,

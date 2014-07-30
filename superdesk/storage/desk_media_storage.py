@@ -15,7 +15,7 @@ class SuperdeskGridFSMediaStorage(GridFSMediaStorage):
         if isinstance(_id, str):
             _id = ObjectId(_id)
         media_file = super().get(_id)
-        if media_file:
+        if media_file and media_file.metadata:
             for k, v in media_file.metadata.items():
                 media_file.metadata[k] = json.loads(v)
         return media_file

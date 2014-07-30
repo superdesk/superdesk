@@ -153,6 +153,14 @@ class UsersModel(BaseModel):
         'picture_url': {
             'type': 'string',
         },
+        'avatar': {
+            'type': 'objectid',
+            'data_relation': {
+                'resource': 'upload',
+                'field': '_id',
+                'embeddable': True
+            }
+        },
         'role': {
             'type': 'objectid',
             'data_relation': {
@@ -172,6 +180,7 @@ class UsersModel(BaseModel):
         'email',
         'user_info',
         'picture_url',
+        'avatar',
     ]
 
     datasource = {

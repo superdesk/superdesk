@@ -16,7 +16,7 @@ from superdesk.celery_app import celery, finish_task_for_progress,\
 from celery.result import AsyncResult
 from flask.globals import current_app as app
 from superdesk.upload import url_for_media
-from superdesk.media_operations import download_file_from_url
+from superdesk.media.media_operations import download_file_from_url
 from superdesk.base_model import BaseModel
 from celery.exceptions import Ignore
 from celery import states

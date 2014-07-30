@@ -520,12 +520,12 @@ def step_impl_then_get_given_file_meta(context, filename):
     )
 
 
-@then('we get image renditions')
-def step_impl_then_get_renditions(context):
+@then('we get "{type}" renditions')
+def step_impl_then_get_renditions(context, type):
     expect_json_contains(context.response, 'renditions')
     renditions = apply_path(parse_json_response(context.response), 'renditions')
     assert isinstance(renditions, dict), 'expected dict for image renditions'
-    for rend_name in context.app.config['RENDITIONS']['picture']:
+    for rend_name in context.app.config['RENDITIONS'][type]:
         desc = renditions[rend_name]
         assert isinstance(desc, dict), 'expected dict for rendition description'
         assert 'href' in desc, 'expected href in rendition description'
@@ -613,7 +613,7 @@ def step_impl_then_get_action(context):
 @then('we get a file reference')
 def step_impl_then_get_file(context):
     assert_200(context.response)
-    expect_json_contains(context.response, 'data_uri_url')
+    expect_json_contains(context.response, 'renditions')
     data = get_json_data(context.response)
     url = '/upload/%s' % data['_id']
     headers = [('Accept', 'application/json')]
@@ -622,7 +622,7 @@ def step_impl_then_get_file(context):
     assert_200(response)
     assert len(response.get_data()), response
     assert response.mimetype == 'application/json', response.mimetype
-    expect_json_contains(response, 'data_uri_url')
+    expect_json_contains(response, 'renditions')
     expect_json_contains(response, {'mime_type': 'image/jpeg'})
     fetched_data = get_json_data(context.response)
     context.fetched_data = fetched_data
@@ -635,7 +635,7 @@ def step_impl_then_get_cropped_file(context, max_size):
 
 @then('we can fetch a data_uri')
 def step_impl_we_fetch_data_uri(context):
-    we_can_fetch_a_file(context, context.fetched_data['data_uri_url'], 'image/jpeg')
+    we_can_fetch_a_file(context, context.fetched_data['renditions']['original']['href'], 'image/jpeg')
 
 
 def we_can_fetch_a_file(context, url, mimetype):
