@@ -6,7 +6,7 @@ import os
 import hashlib
 import magic
 import logging
-from flask import request, json
+from flask import json
 import requests
 import superdesk
 from superdesk.file_meta.image import get_meta
@@ -24,22 +24,11 @@ def hash_file(afile, hasher, blocksize=65536):
     return hasher.hexdigest()
 
 
-def get_cropping_data():
-    if not (request and request.form):
-        return None
-    if all(('CropTop' in request.form, 'CropLeft' in request.form,
-           'CropRight' in request.form, 'CropBottom' in request.form)):
-        cropping_data = (int(request.form['CropLeft']), int(request.form['CropTop']),
-                         int(request.form['CropRight']), int(request.form['CropBottom']))
-        return cropping_data
-    return None
-
-
 def get_file_name(file):
     return hash_file(file, hashlib.sha256())
 
 
-def store_file_from_url(url):
+def download_file_from_url(url):
     rv = requests.get(url)
     if rv.status_code not in (200, 201):
         payload = 'Failed to retrieve file from URL: %s' % url
@@ -48,8 +37,7 @@ def store_file_from_url(url):
     mime = magic.from_buffer(rv.content, mime=True).decode('UTF-8')
     ext = mime.split('/')[1]
     name = 'stub.' + ext
-    id = superdesk.app.media.put(content=BytesIO(rv.content), filename=name, content_type=mime)
-    return id
+    return BytesIO(rv.content), name, mime
 
 
 def process_file_from_stream(content, filename=None, content_type=None):
@@ -65,13 +53,17 @@ def process_file_from_stream(content, filename=None, content_type=None):
     content, metadata = process_file(content, file_name, file_type)
     file_name = get_file_name(content)
     content.seek(0)
-    metadata = normalize_metadata(metadata)
+    metadata = encode_metadata(metadata)
+    metadata.update({'length': json.dumps(len(content.getvalue()))})
     return file_name, content, content_type, metadata
 
 
-def normalize_metadata(metadata):
-    metadata = dict((k.lower(), json.dumps(v)) for k, v in metadata.items())
-    return metadata
+def encode_metadata(metadata):
+    return dict((k.lower(), json.dumps(v)) for k, v in metadata.items())
+
+
+def decode_metadata(metadata):
+    return dict((k.lower(), json.loads(v)) for k, v in metadata.items())
 
 
 def process_file(content, file_name, type):
@@ -92,9 +84,8 @@ def process_video(content, file_name, type):
 def process_image(content, file_name, type):
     content.seek(0)
     meta = get_meta(content)
-    isCropped, iter_content = crop_if_needed(content, file_name)
-    iter_content.seek(0)
-    return iter_content, meta
+    content.seek(0)
+    return content, meta
 
 
 def resize_image(content, format, size, keepProportions=True):
@@ -133,8 +124,7 @@ def resize_image(content, format, size, keepProportions=True):
     return out, new_width, new_height
 
 
-def crop_if_needed(content, file_name):
-    cropping_data = get_cropping_data()
+def crop_image(content, file_name, cropping_data):
     if cropping_data:
         file_ext = os.path.splitext(file_name)[1][1:]
         if file_ext in ('JPG', 'jpg'):

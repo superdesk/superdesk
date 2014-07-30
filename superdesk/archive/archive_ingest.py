@@ -16,7 +16,7 @@ from superdesk.celery_app import celery, finish_task_for_progress,\
 from celery.result import AsyncResult
 from flask.globals import current_app as app
 from superdesk.upload import url_for_media
-from superdesk.media_operations import store_file_from_url
+from superdesk.media_operations import download_file_from_url
 from superdesk.base_model import BaseModel
 from celery.exceptions import Ignore
 from celery import states
@@ -50,7 +50,7 @@ def import_rendition(guid, rendition_name, href, trigger_events):
         payload = 'Invalid rendition name %s' % rendition_name
         raise superdesk.SuperdeskError(payload=payload)
 
-    file_guid = store_file_from_url(href)
+    file_guid = download_file_from_url(href)
     updates = {}
     # perform partial update
     updates['renditions.' + rendition_name + '.href'] = url_for_media(file_guid)
