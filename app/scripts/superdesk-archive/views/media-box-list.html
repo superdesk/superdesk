@@ -1,4 +1,4 @@
-<div class="loading-status" ng-show="!item.archived && item.archiving"></div>
+<div class="archiving-progress" style="width:{{item.archivingProgress}}%" ng-show="!item.archived && item.archiving"></div>
 
 <span class="state-border"></span>
 
@@ -9,12 +9,12 @@
 <div class="media-info">
     <div class="list-field type-icon">
         <i class="filetype-icon-{{item.type}}"></i>
-        <span class="output-item-label  label-{{item.urgency}}" ng-show="extras.view == 'mlist'">{{ item.urgency }}</span>
+        <span class="output-item-label label-{{item.urgency}}" ng-show="extras.view == 'mlist'">{{ item.urgency }}</span>
     </div>
     <div class="list-field" ng-show="extras.view == 'compact'"><span class="output-item-label label-{{item.urgency}}">{{ item.urgency }}</span></div>
 
-    <h5 class="list-field" ng-class="{'no-border': extras.view == 'compact'}" ng-click="preview(item,$index)">
-        <div class="item-provider" ng-show="extras.view == 'compact'">{{ item.provider }}</div>
+    <h5 class="list-field" ng-class="{'no-border': extras.view == 'compact'}">
+        <div class="item-provider" ng-if="extras.view == 'compact'">{{ item.provider }}</div>
         <div class="main-title">
             <div class="status-label"
                  ng-class="{'label-canceled': item.pubstatus=='canceled'}"
@@ -23,7 +23,7 @@
             </div>
             {{ item.headline || item.type }}
         </div>
-        <div class="meta-data-field" ng-show="extras.view == 'mlist'">
+        <div class="meta-data-field" ng-if="extras.view == 'mlist'">
             <div class="item-provider">{{ item.provider }}</div>
             <span ng-show="item.subject">//</span> {{ item.subject | mergeWords}}
         </div>
@@ -31,6 +31,17 @@
 
     <div class="item-right list-field">
         <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>
-        <div class="item-functions" sd-activity-list data-data="{item: item, list: items, index: $index}" data-type="{{extras.type}}"></div>
+        <div class="action">
+            <ul ng-if="activityFilter" class="item-functions"
+                sd-activity-list
+                data-data="{item: item, list: items, index: $index}"
+                data-type="{{activityFilter.type}}"
+                data-action="{{activityFilter.action}}">
+            </ul>
+        </div>
     </div>
+
+    
+
+
 </div>
