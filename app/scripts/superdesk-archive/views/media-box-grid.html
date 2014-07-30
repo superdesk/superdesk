@@ -22,8 +22,7 @@
     <h5 ng-show="!item.slugline">{{ item.type | translate }}</h5>
 
     <dl>
-        <dt class="source" ng-if="activityFilter.type === 'archive'"><span translate>source:</span></dt>
-        <dt class="source" ng-if="activityFilter.type !== 'archive'"><span translate>provider:</span></dt>
+        <dt class="source"><span translate>source:</span></dt>
         <dd class="provider">&nbsp;{{ item.provider }}</dd>
         <dt translate>created</dt>
         <dd><time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time></dd>

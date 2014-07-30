@@ -1,9 +1,9 @@
 <div sd-settings-view>
     <button class="btn btn-info pull-right" ng-click="edit()">
-        <i class="icon-plus-sign icon-white"></i> <span translate>Add New Provider</span>
+        <i class="icon-plus-sign icon-white"></i> <span translate>Add New Source</span>
     </button>
 
-    <h2 translate>Providers</h4>
+    <h2 translate>Sources</h4>
     <div class="settings-tab-content ">
         <ul class="selection-list provider-list">
 
@@ -18,8 +18,8 @@
                 <div class="dropdown pull-right">
                     <a href="" class="dropdown-toggle"><i class="icon-cog"></i> <b class="caret"></b></a>
                     <ul class="dropdown-menu sf-dropdown-simple sf-right">
-                        <li><a href="" ng-click="edit(provider)"><i class="icon-cog"></i> <span translate>Edit provider</span></a></li>
-                        <li><a href="" ng-click="remove(provider)" sd-confirm="{{ 'Please confirm you want to remove provider.'|translate }}"><i class="icon-trash"></i> <span translate>Delete provider</span></a></li>
+                        <li><a href="" ng-click="edit(provider)"><i class="icon-cog"></i> <span translate>Edit source</span></a></li>
+                        <li><a href="" ng-click="remove(provider)" sd-confirm="{{ 'Please confirm you want to remove source.'|translate }}"><i class="icon-trash"></i> <span translate>Delete source</span></a></li>
                     </ul>
                 </div>
 
@@ -31,15 +31,15 @@
 
     <div sd-modal-view data-model="provider">
         <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
-            <h3 translate ng-show="provider._id">Edit Provider {{ origProvider.name }}</h3>
-            <h3 translate ng-hide="provider._id">Add New Provider</h3>
+            <h3 translate ng-show="provider._id">Edit Source {{ origProvider.name }}</h3>
+            <h3 translate ng-hide="provider._id">Add New Source</h3>
         </div>
 
         <div class="modal-body">
             <form name="editForm" ng-submit="save()">
 
             <div class="control-group">
-                <label for="provider" translate>Provider Type</label>
+                <label for="provider" translate>Source Type</label>
                 <select id="provider" required ng-model="provider.type" ng-options="key as val.label for (key, val) in types"></select>
             </div>
 

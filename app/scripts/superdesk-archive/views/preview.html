@@ -1,8 +1,7 @@
 <div>
     <div class="header">
         <ul class="info-list pull-left">
-            <li ng-if="$parent.type === 'archive'">{{ 'Source:' | translate }} <span>{{ item.provider }}</span></li>
-            <li ng-if="$parent.type !== 'archive'">{{ 'Provider:' | translate }} <span>{{ item.provider }}</span></li>
+            <li>{{ 'Source:' | translate }} <span>{{ item.provider }}</span></li>
             <li>{{ 'Version:' | translate }} <span>{{ item.version }}</span></li>
         </ul>
     </div>
