@@ -4,6 +4,8 @@ define([
 ], function(angular, require) {
     'use strict';
 
+    var INGEST_EVENT = 'changes in ingest';
+
     angular.module('superdesk.widgets.ingest', [])
         .config(['widgetsProvider', function(widgets) {
             widgets.widget('ingest', {
@@ -21,48 +23,39 @@ define([
                 description: 'Ingest widget'
             });
         }])
-        .controller('IngestController', ['$location', '$scope', '$timeout', 'superdesk', 'api', 'es',
-        function ($location, $scope, $timeout, superdesk, api, es) {
-            var timeoutId;
+        .controller('IngestController', ['$location', '$scope', 'superdesk', 'api', 'es',
+        function ($location, $scope, superdesk, api, es) {
+            var config;
 
-            function refresh(config) {
+            $scope.$watch('widget.configuration', function(_config) {
+                config = _config;
+                refresh();
+            }, true);
+
+            $scope.$on(INGEST_EVENT, refresh);
+
+            function refresh() {
                 var params = {
                     q: config.search || undefined,
                     size: config.maxItems
                 };
+
                 var filters = [];
                 if (config.provider && config.provider !== 'all') {
                     filters.push({term: {provider: config.provider}});
                 }
-                var criteria = es(params, filters);
 
+                var criteria = es(params, filters);
                 api.ingest.query({source: criteria}).then(function(items) {
                     $scope.items = items;
-                    timeoutId = $timeout(function() {
-                        refresh(config);
-                    }, config.updateInterval * 1000 * 60);
                 });
             }
-
-            $scope.$watch('widget.configuration', function(config) {
-                if (timeoutId) {
-                    $timeout.cancel(timeoutId);
-                }
-
-                if (config) {
-                    refresh(config);
-                }
-            }, true);
 
             $scope.view = function(item) {
                 //superdesk.intent(superdesk.ACTION_VIEW, 'ingest', item);
                 $location.path('/ingest');
                 $location.search('_id', item._id);
             };
-
-            $scope.$on('$destroy', function() {
-                $timeout.cancel(timeoutId);
-            });
         }])
         .controller('IngestConfigController', ['$scope', 'superdesk', 'api',
         function ($scope, superdesk, api) {
