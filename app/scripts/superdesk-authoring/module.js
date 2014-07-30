@@ -88,7 +88,12 @@ define([
 
         var _close = function() {
             workqueue.remove(_item);
-            $location.search('_id', workqueue.getActive());
+            var active = workqueue.getActive();
+            $location.search('_id', active);
+            if (!active) {
+                $scope.item = null;
+                $scope.dirty = null;
+            }
         };
 
         function confirmDirty() {
@@ -96,8 +101,8 @@ define([
         }
     }
 
-    VersioningController.$inject = ['$scope', 'api', '$location', 'notify'];
-    function VersioningController($scope, api, $location, notify) {
+    VersioningController.$inject = ['$scope', 'api', '$location', 'notify', 'workqueue'];
+    function VersioningController($scope, api, $location, notify, workqueue) {
         $scope.item = null;
         $scope.versions = null;
         $scope.selected = null;
@@ -123,16 +128,16 @@ define([
 
         var fetchItem = function(id) {
             id = id || $scope.item._id;
-            api.archive.getById(id)
+            return api.archive.getById(id)
             .then(function(result) {
                 $scope.item = result;
-                fetchVersions();
+                return fetchVersions();
             });
         };
 
         var fetchVersions = function() {
             $scope.users = {};
-            api.archive.getByUrl($scope.item._links.self.href + '?version=all&embedded={"user":1}')
+            return api.archive.getByUrl($scope.item._links.self.href + '?version=all&embedded={"user":1}')
             .then(function(result) {
                 _.each(result._items, function(version) {
                     var creator = version.creator || version.original_creator;
@@ -152,8 +157,11 @@ define([
                 old_version: version
             })
             .then(function(result) {
-                fetchItem();
                 notify.success(gettext('Item reverted.'));
+                fetchItem()
+                .then(function() {
+                    workqueue.update($scope.item);
+                });
             }, function(result) {
                 notify.error(gettext('Error. Item not reverted.'));
             });
