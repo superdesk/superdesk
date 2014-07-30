@@ -1,15 +1,16 @@
 define([
-    'angular',
-    'lodash'
-], function(angular, _) {
+    'lodash',
+    'require',
+    'angular'
+], function(_, require, angular) {
     'use strict';
 
-    angular.module('superdesk.settings', [])
+    return angular.module('superdesk.settings', [])
         .config(['superdeskProvider', function(superdesk) {
             superdesk.activity('/settings', {
                 label: gettext('Settings'),
-                controller: function() {},
-                templateUrl: 'scripts/superdesk-settings/views/main.html',
+                controller: angular.noop,
+                templateUrl: require.toUrl('./views/main.html'),
                 category: superdesk.MENU_MAIN,
                 priority: 1000
             });
@@ -18,7 +19,7 @@ define([
             return {
                 scope: {},
                 transclude: true,
-                templateUrl: 'scripts/superdesk-settings/views/settings-view.html',
+                templateUrl: require.toUrl('./views/settings-view.html'),
                 link: function(scope, elem, attrs) {
                     scope.settings = _.values(_.where(superdesk.activities, {category: superdesk.MENU_SETTINGS}));
                     scope.currentRoute = $route.current;

@@ -24,7 +24,7 @@ define([
         };
     };
 
-    angular.module('superdesk.directives')
+    return angular.module('superdesk.directives.throttle', [])
         /**
          * sdDebounce debounces model update.
          *

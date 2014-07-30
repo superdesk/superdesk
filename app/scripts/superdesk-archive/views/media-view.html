@@ -1,0 +1,74 @@
+<div class="modal lightbox-preview">
+
+    
+    <!-- package items list -->
+    <div class="lightbox-composite" ng-show="item.type == 'composite'" ng-class="{'open': compositeOpen}" ng-init="compositeOpen = true">
+        <div class="toggle-composite" ng-click="compositeOpen = !compositeOpen">
+            <i class="arrow-icon-right"></i>
+        </div>
+        <div class="header" ng-click="setSingleItem(item)">
+            <span><i class="filetype-icon-large-composite icon-white"></i></span>
+            <h5>{{ item.headline }}</h5>
+        </div>
+        <ul ng-if="item.type === 'composite'">
+            <div sd-package data-item="item" data-setitem="setPackageSingle(selected)"></div>
+        </ul>
+    </div>
+
+    
+    <!-- preview pane -->
+    <section class="lightbox-left" ng-class="{'composite' : item.type === 'composite', 'open' : compositeOpen}">
+
+        <div sd-single-item data-item="singleItem"></div>        
+        <div class="lightbox-caption">{{ item.headline }}</div>
+
+        <div class="navigation">
+            <button class="pull-left" ng-click="prev()" ng-disabled="!prevEnabled" title="{{ 'previous' | translate }}">
+                <i class="arrow-icon-large-left"></i>
+            </button>
+            <button class="pull-right" ng-click="next()" ng-disabled="!nextEnabled" title="{{ 'next' | translate }}">
+                <i class="arrow-icon-large-right"></i>
+            </button>
+        </div>
+
+    </section>
+    <!-- end of preview pane -->
+
+    <section class="lightbox-right">
+        <header>
+            <h5 class="lightbox-title">{{ item.headline }}</h5>
+            <a class="lightbox-close" href="" ng-click="item = null"><i class="icon-close-small"></i></a>
+            <span class="lightbox-modified-info">{{ 'Created:'|translate }} {{ item.firstcreated|date:'medium' }}</span>
+            <span class="lightbox-modified-info">{{ 'Modified:'|translate }} {{ item.versioncreated|date:'medium' }}</span>
+            
+            <span class="lightbox-media-type filetype-icon-{{item.type}}"></span>
+
+            <div class="lightbox-actions">
+                <button class="btn pull-left" ng-show><i class="icon-list-alt"></i> {{ 'Edit metadata'|translate }}</button>
+            </div>
+            
+        </header>
+        <div class="lightbox-media-data" >
+            <div class="lightbox-descritpion">
+            </div>
+            <div sd-toggle-box data-title="{{ 'Details' | translate }}" data-open="true">
+                <dl class="metadata-details-new clearfix">
+                    <dt translate>GUID</dt><dd>{{ item.guid }}</dd>
+                    <dt>
+                        <span translate>source</span>
+                    </dt>
+                    <dd>{{ item.provider }}</dd>
+                    <dt translate ng-show="item.version">version</dt><dd ng-show="item.version">{{ item.version }}</dd>
+                    <dt translate ng-show="item.byline">by</dt><dd ng-show="item.byline">{{ item.byline }}</dd>
+                </dl>
+                <dl class="metadata-details-new clearfix">
+                    <dt translate>aperture</dt><dd>{{ item.FileMeta.Aperture }}</dd>
+                    <dt translate>exposure time</dt><dd>{{ item.FileMeta['Exposure time'] }}</dd>
+                    <dt translate>focal length</dt><dd>{{ item.FileMeta['Focal length'] }}</dd>
+                    <dt translate>iso</dt><dd>{{ item.FileMeta['ISO speed'] }}</dd>
+                    <dt translate>flash</dt><dd>{{ item.FileMeta.Flash }}</dd>
+                </dl>
+            </div>
+        </div>
+    </section>
+</div>

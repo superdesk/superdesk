@@ -13,8 +13,9 @@ body {
   line-height: @baseLineHeight;
   color: @textColor;
   background-color: @bodyBackground;
+  overflow: hidden;
+  height:100%;
 }
-
 
 // Links
 // -----
@@ -42,7 +43,7 @@ a:hover {
 
 // Fluid layouts (left aligned, with sidebar, min- & max-width content)
 .container-fluid {
-  padding-left: @gridGutterWidth;
-  padding-right: @gridGutterWidth;
+  padding-left: 20px;
+  padding-right: 20px;
   .clearfix();
 }

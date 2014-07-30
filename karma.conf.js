@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = function(config) {
     config.set({
         frameworks: [
@@ -6,31 +8,38 @@ module.exports = function(config) {
         ],
 
         preprocessors: {
-            '**/*.html': ['ng-html2js']
+            '**/*.html': ['ng-html2js'],
+            '**/superdesk/**/*.js': ['coverage']
         },
 
         // list of files / patterns to load in the browser
         files: [
-          'app/scripts/bower_components/angular/angular.js',
-          {pattern: 'app/**/*.js', included: false},
-          {pattern: 'test/*[sS]pec.js', included: false},
-          'app/scripts/superdesk/views/*.html',
-          'test/test-main.js'
+            'app/scripts/bower_components/jquery/dist/jquery.js',
+            'app/scripts/bower_components/angular/angular.js',
+            {pattern: 'app/**/*.js', included: false},
+            {pattern: 'app/scripts/superdesk/**/*[sS]pec.js', included: false},
+            'app/scripts/superdesk*/views/*.html',
+            'app/scripts/superdesk/**/*.html',
+            'test-main.js'
         ],
 
         // list of files to exclude
         exclude: [
-          'app/scripts/bower_components/**/*[sS]pec.js',
-          'app/main.js'
+            'app/scripts/bower_components/**/*[sS]pec.js',
+            'app/main.js'
         ],
 
         ngHtml2JsPreprocessor: {
-            stripPrefix: 'app/',
+            prependPrefix: '/base/',
             moduleName: 'templates'
         },
 
+        junitReporter: {
+            outputFile: 'test-results.xml'
+        },
+
         // test results reporter to use
-        reporters: ['progress'],
+        reporters: ['dots'],
 
         // web server port
         port: 8080,
@@ -44,10 +53,7 @@ module.exports = function(config) {
         // Start these browsers, currently available:
         browsers: ['Chrome'],
 
-        // If browser does not capture in given timeout [ms], kill it
-        captureTimeout: 60000,
-
         // Continuous Integration mode
         singleRun: false
-  });
+    });
 };

@@ -1,0 +1,37 @@
+<div class="subnav subnav-fixed">
+	
+	<div class="button-stack">
+        <a class="navbtn navbtn-info navbtn-hover" href="" ng-click="intent('list', 'user')">
+            <i class="arrow-icon-left"></i> <span class="title" translate>Back to Users list</span>
+        </a>
+    </div>
+
+	<h3 class="page-nav-title">{{ 'Users Profile:'|translate }} <span>{{ user.display_name }}</span></h3>
+</div>
+
+<section class="main-section user-profile-page">
+	<div class="form-content">
+		<div sd-user-details-pane>
+			<div sd-user-edit data-user="user"></div>
+		</div>
+	</div>
+	<!-- 
+	<div class="other-content" sd-beta>
+		<div class="tablist-container">
+			<ul>
+				<li class="active">Activity log</li>
+				<li>Analytics</li>
+				<li>Contributions</li>
+				<li>Payment</li>
+				<li>Biography</li>
+			</ul>
+		</div>
+		<div class="tabcontent-container">
+			<div class="profile-activity-container" data-user="user"></div>
+		</div>
+	</div>
+	 -->
+	<div class="other-content">
+		<div sd-user-activity data-user="user"></div>
+	</div>
+</section>

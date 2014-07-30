@@ -1,0 +1,67 @@
+// world-clock.less
+// Styling for ingest widget
+// ----------------------------------------------------------------------------------------
+@import 'mixins.less';
+@import 'variables.less';
+
+.sd-widget {
+	&.ingest {
+		.ingest-list {
+			margin:0;
+			list-style-type: none;
+			padding: 0;
+			> li {
+				cursor: pointer;
+				border-bottom: 1px solid #e5e5e5;
+				padding: 10px;
+				.top-line {
+					margin:0;
+					list-style-type: none;
+					padding: 0;
+					margin-bottom: 5px;
+					> li {
+						float: left;
+						padding-right: 7px;
+						margin-right: 7px;
+						border-right: 1px solid #e7e7e7;
+						font-size: 11px;
+						color: #626262;
+						em {
+							color: #aaa;
+							margin-right: 4px;
+						}
+						.type-icon {
+							.opacity(50);
+						}
+						.urgency-label {
+							margin-top: 2px;
+						}
+						&:last-child {
+							border: 0;
+						}
+					}
+				}
+				.main-line {
+					figure {
+						float: left;
+						margin-right: 10px;
+						border: 1px solid #f0f0f0;
+						padding: 2px;
+						margin-top: 3px;
+						img {
+							height: 55px;
+						}
+					}
+					h5 {
+						font-family:@altFontFamily;
+						font-size: 16px;
+						color: #0088d5;
+						.text-normal();
+						line-height: 22px;
+					}
+				}
+			}
+		}
+
+	}
+}

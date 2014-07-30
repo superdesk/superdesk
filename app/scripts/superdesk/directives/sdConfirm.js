@@ -1,7 +1,7 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    angular.module('superdesk.directives')
+    return angular.module('superdesk.confirm.directives', [])
         .directive('sdConfirm', ['$window', function($window) {
             return {
                 scope: {

@@ -61,6 +61,12 @@
   overflow-y: auto;
   max-height: 400px;
   padding: 15px;
+
+  &.modal-body-min {
+    min-height: 400px;
+    position: relative;
+  }
+
 }
 // Remove bottom margin if need be
 .modal-form {
@@ -104,7 +110,7 @@
   position: fixed;
   width: auto;
   height: auto;
-  margin: 100px 150px;
+  margin: 7% 12%;
   left: 0 !important;
   top: 0 !important;
   right: 0 !important;
@@ -118,7 +124,7 @@
   .modal-body {
     .box-sizing(border-box);
     position: absolute;
-    top: @modal-header-height;
+    top: @modal-header-height+2;
     left:0;
     bottom:@modal-footer-height;
     right: 0;
@@ -134,7 +140,7 @@
 }
 
 /*************************************
-  SPLIT POPUP
+  SPLIT POPUP (right sidebar)
  *************************************/
 /*  
     > used for add/edit task
@@ -189,6 +195,30 @@
     .box-sizing(border-box);
     .box-shadow(inset 2px 1px 5px -2px #ddd);
     overflow: auto;
+  }
+}
+
+/*************************************
+  SPLIT POPUP (left sidebar)
+ *************************************/
+/* 
+/*  
+    > used for upload avatar task
+*/
+
+@split-modal-sidebar : 230px;
+
+.modal-body {
+  .sidebar {
+    position: absolute;
+    top:0; left: 0; bottom: 0;
+    width: @split-modal-sidebar;
+    border-right: 1px solid #ddd;
+  }
+  .main {
+    position: absolute;
+    top:0; right: 0; bottom: 0;
+    left: @split-modal-sidebar;
   }
 }
  

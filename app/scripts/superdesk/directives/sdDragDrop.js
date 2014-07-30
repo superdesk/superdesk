@@ -1,10 +1,11 @@
 define([
     'jquery',
-    'angular'
+    'angular',
+    'jquery-ui'
 ], function($, angular) {
     'use strict';
 
-    angular.module('superdesk.directives')
+    return angular.module('superdesk.dragdrop.directives', [])
         /**
          * sdSortable creates a container in which contained items can be sortable by drag/drop.
          *

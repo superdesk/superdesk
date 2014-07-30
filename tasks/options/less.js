@@ -1,20 +1,32 @@
+
+var files = [
+    {
+        dest: '<%= distDir %>/styles/css/bootstrap.css',
+        src: '<%= appDir %>/styles/less/bootstrap.less'
+    }, {
+        expand: true,
+        dest: '<%= tmpDir %>/',
+        cwd: '<%= appDir %>/scripts/',
+        src: ['superdesk/**/*.less', 'superdesk-*/**/*.less'],
+        ext: '.css'
+    }
+];
+
 module.exports = {
-    development: {
+    dev: {
         options: {
             paths: ['<%= appDir %>/styles/less'],
-            compress: true,
+            compress: false,
             cleancss: true
         },
-        files: {
-            '<%= distDir %>/styles/css/bootstrap.css': '<%= appDir %>/styles/less/bootstrap.less'
-        }
+        files: files
     },
-    production: {
+    prod: {
         options: {
             paths: ['<%= appDir %>/styles/less'],
+            compress: false,
+            cleancss: true
         },
-        files: {
-            '<%= distDir %>/styles/css/bootstrap.css': '<%= appDir %>/styles/less/bootstrap.less'
-        }
+        files: files
     }
 };

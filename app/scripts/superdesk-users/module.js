@@ -2,52 +2,53 @@ define([
     'angular',
     'require',
     './providers',
+    './users-service',
     './services/profile',
     './controllers/list',
-    './controllers/detail',
-    './controllers/profile',
+    './controllers/edit',
     './controllers/settings',
-    './directives/sdUserPicture',
-    './directives/sdUserActivity',
-    './directives/sdRolesTreeview',
-    './directives/sdInfoItem',
-    './directives/sdUserEdit',
-    './directives/sdUserDetailsPane',
-    './directives/sdUserName'
+    './controllers/changeAvatar',
+    './activity-widget/activity',
+    './directives'
 ], function(angular, require) {
     'use strict';
 
+    /**
+     * Delete a user and remove it from list
+     */
+    UserDeleteCommand.$inject = ['api', 'data', '$q', 'notify', 'gettext'];
+    function UserDeleteCommand(api, data, $q, notify, gettext) {
+        return api.users.remove(data.item).then(function(response) {
+            data.list.splice(data.index, 1);
+        }, function(response) {
+            notify.error(gettext('I\'m sorry but can\'t delete the user right now.'));
+        });
+    }
+
+    /**
+     * Resolve a user by route id and redirect to /users if such user does not exist
+     */
+    UserResolver.$inject = ['api', '$route', 'notify', 'gettext', '$location'];
+    function UserResolver(api, $route, notify, gettext, $location) {
+        return api.users.getById($route.current.params._id)
+            .then(null, function(response) {
+                if (response.status === 404) {
+                    $location.path('/users/');
+                    notify.error(gettext('User was not found, sorry.'), 5000);
+                }
+
+                return response;
+            });
+    }
+
     var app = angular.module('superdesk.users', [
         'superdesk.users.providers',
-        'superdesk.users.services'
+        'superdesk.users.services',
+        'superdesk.users.directives',
+        'superdesk.widgets.activity'
     ]);
 
     app
-        .controller('UserDetailCtrl', require('./controllers/detail'))
-        .directive('sdUserPicture', require('./directives/sdUserPicture'))
-        .directive('sdUserActivity', require('./directives/sdUserActivity'))
-        .directive('sdInfoItem', require('./directives/sdInfoItem'))
-        .directive('sdUserEdit', require('./directives/sdUserEdit'))
-        .directive('sdUserDetailsPane', require('./directives/sdUserDetailsPane'))
-        .directive('sdRolesTreeview', require('./directives/sdRolesTreeview'))
-        .directive('sdUserName', require('./directives/sdUserName'))
-        .value('defaultListParams', {
-            search: '',
-            searchField: 'username',
-            sort: ['display_name', 'asc'],
-            page: 1,
-            perPage: 25
-        })
-        .value('defaultListSettings', {
-            fields: {
-                avatar: true,
-                display_name: true,
-                user_role: true,
-                username: false,
-                email: false,
-                created: true
-            }
-        })
         .config(['superdeskProvider', function(superdesk) {
             superdesk
                 .permission('users-manage', {
@@ -69,80 +70,86 @@ define([
         }])
         .config(['superdeskProvider', function(superdesk) {
 
-            var usersResolve = {
-                user: ['em', '$route',
-                    function(em, $route) {
-                        if ($route.current.params.id === 'new') {
-                            return {};
-                        } else if (_.isString($route.current.params.id)) {
-                            return em.find('users', $route.current.params.id);
-                        } else {
-                            return undefined;
-                        }
-                    }],
-                userSettings: ['userSettings', 'defaultListSettings',
-                    function(userSettings, defaultListSettings) {
-                        return userSettings('users:list', defaultListSettings);
-                    }],
-                locationParams: ['locationParams', 'defaultListParams', '$route',
-                    function(locationParams, defaultListParams, $route) {
-                        defaultListParams.id = $route.current.params.id;
-                        locationParams.reset(defaultListParams);
-                        return locationParams;
-                    }],
-                roles: ['rolesLoader', function(rolesLoader) {
-                    return rolesLoader;
-                }]
-            };
-
             superdesk
                 .activity('/users/', {
-                    when: '/users/:id?',
                     label: gettext('Users'),
                     priority: 100,
                     controller: require('./controllers/list'),
-                    templateUrl: 'scripts/superdesk-users/views/list.html',
-                    resolve: usersResolve,
+                    templateUrl: require.toUrl('./views/list.html'),
                     category: superdesk.MENU_MAIN,
                     reloadOnSearch: false,
                     filters: [
                         {
                             action: superdesk.ACTION_PREVIEW,
                             type: 'user'
-                        }
+                        },
+                        {action: 'list', type: 'user'}
                     ]
+                })
+                .activity('/users/:_id', {
+                    label: gettext('Users profile'),
+                    priority: 100,
+                    controller: require('./controllers/edit'),
+                    templateUrl: require.toUrl('./views/edit.html'),
+                    resolve: {user: UserResolver},
+                    filters: [{action: 'detail', type: 'user'}]
                 })
                 .activity('/profile/', {
                     label: gettext('My Profile'),
-                    controller: require('./controllers/profile'),
-                    templateUrl: 'scripts/superdesk-users/views/profile.html',
+                    controller: require('./controllers/edit'),
+                    templateUrl: require.toUrl('./views/edit.html'),
                     resolve: {
-                        user: ['authService', 'em', function(authService, em) {
-                            return em.find('users', authService.getIdentity());
+                        user: ['session', 'api', function(session, api) {
+                            return api.users.getByUrl(session.identity._links.self.href);
                         }]
                     }
                 })
+
+                /*
                 .activity('/settings/user-roles', {
                     label: gettext('User Roles'),
-                    templateUrl: 'scripts/superdesk-users/views/settings.html',
+                    templateUrl: require.toUrl('./views/settings.html'),
                     controller: require('./controllers/settings'),
                     category: superdesk.MENU_SETTINGS,
                     priority: -500
                 })
+                */
+
                 .activity('delete/user', {
                     label: gettext('Delete user'),
+                    icon: 'trash',
                     confirm: gettext('Please confirm you want to delete a user.'),
-                    controller: ['em', 'data', 'locationParams', function(em, data, locationParams) {
-                        em.remove(data).then(function() {
-                            locationParams.reload();
-                        });
-                    }],
+                    controller: UserDeleteCommand,
                     filters: [
                         {
                             action: superdesk.ACTION_EDIT,
                             type: 'user'
                         }
                     ]
+                })
+                .activity('edit.avatar', {
+                    label: gettext('Change avatar'),
+                    modal: true,
+                    cssClass: 'upload-avatar',
+                    controller: require('./controllers/changeAvatar'),
+                    templateUrl: require.toUrl('./views/change-avatar.html'),
+                    filters: [{action: 'edit', type: 'avatar'}]
                 });
+        }])
+        .config(['apiProvider', function(apiProvider) {
+            apiProvider.api('users', {
+                type: 'http',
+                backend: {rel: 'users'},
+                service: require('./users-service')
+            });
+        }])
+        .config(['apiProvider', function(apiProvider) {
+            apiProvider.api('activity', {
+                type: 'http',
+                backend: {rel: 'activity'},
+                service: require('./services/profile')
+            });
         }]);
+
+    return app;
 });

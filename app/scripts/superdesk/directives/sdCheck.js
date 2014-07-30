@@ -1,7 +1,4 @@
-define([
-    'jquery',
-    'angular'
-], function($, angular) {
+define(['angular'], function(angular) {
     'use strict';
 
     var render = function(element, value) {
@@ -9,7 +6,7 @@ define([
         element.attr('checked', !!value);
     };
 
-    angular.module('superdesk.directives')
+    return angular.module('superdesk.check.directives', [])
         /**
          * sdCheck creates a custom-styled checkbox.
          *

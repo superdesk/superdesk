@@ -1,38 +1,30 @@
 define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
-    return ['$scope', 'em', 'gettext', 'notify',
-        function($scope, em, gettext, notify) {
+    return ['$scope', 'gettext', 'notify', 'api', 'desks',
+        function($scope, gettext, notify, api, desks) {
 
-			var _desk = null;
+            var _desk = null;
 			$scope.editDesk = null;
 			$scope.memberPopup = null;
+            $scope.desks = {};
+            $scope.users = {};
+            $scope.deskMembers = {};
             $scope.selectedMembers = [];
             $scope.membersToSelect = [];
             $scope.desk = null;
             $scope.memberScreen2 = false;
 
-			em.getRepository('desks').matching().then(function(desks) {
-				$scope.desks = desks;
-			});
+            desks.initialize()
+            .then(function() {
+                $scope.desks = desks.desks;
+                $scope.users = desks.users;
+                $scope.deskMembers = desks.deskMembers;
+            });
 
-			em.getRepository('users').matching().then(function(users) {
-				$scope.users = users._items;
-			});
-
-			$scope.getMembers = function(desk) {
-				var members = [];
-				if ($scope.desks !== undefined && $scope.users !== undefined) {
-                    angular.forEach(desk.members, function(value) {
-                        members.push(_.find($scope.users, {_id: value}));
-                    });
-                }
-                return members;
-			};
-
-            $scope.edit = function(desk) {
-				$scope.editDesk = _.extend({}, desk);
-				_desk = desk;
+			$scope.edit = function(desk) {
+				$scope.editDesk = _.create(desk);
+                _desk = desk || {};
 			};
 
 			$scope.cancel = function() {
@@ -40,37 +32,37 @@ define(['angular', 'lodash'], function(angular, _) {
 			};
 
 			$scope.save = function(desk) {
-				if (!_desk) {
-					em.save('desks', desk).then(function(result) {
-						_.extend(desk, result);
-						notify.success(gettext('New Desk created.'), 3000);
-						$scope.desks._items.unshift(desk);
-						$scope.cancel();
-                    });
-				} else {
-					em.update(desk).then(function(result) {
-						_.extend(_desk, result);
-						notify.success(gettext('Desk settings updated.'), 3000);
-						$scope.cancel();
-                    });
-				}
+                notify.info(gettext('saving...'));
+                var _new = desk._id ? false : true;
+				api.desks.save(_desk, $scope.editDesk).then(function(result) {
+                    notify.pop();
+                    if (_new) {
+                        notify.success(gettext('New Desk created.'));
+                        _.extend(desk, result);
+                        $scope.desks._items.unshift($scope.editDesk);
+                    } else {
+                        notify.success(gettext('Desk settings updated.'));
+                        _.extend(_desk, result);
+                    }
+					$scope.cancel();
+                }, function(response) {
+                    notify.pop();
+                    notify.error(gettext('There was a problem, desk not created/updated.'));
+                });
 			};
 
 			$scope.remove = function(desk) {
-                em.remove(desk).then(function() {
+                api.desks.remove(desk).then(function() {
                     _.remove($scope.desks._items, desk);
                     notify.success(gettext('Desk deleted.'), 3000);
                 });
-                _desk = null;
             };
 
             $scope.openMembers = function(desk) {
                 $scope.desk = desk;
                 $scope.memberPopup = {};
-                angular.forEach(desk.members, function(value) {
-                    $scope.selectedMembers.push(_.find($scope.users, {_id: value}));
-                });
-                $scope.membersToSelect = _.without($scope.users, $scope.selectedMembers);
+                $scope.selectedMembers = _.clone($scope.deskMembers[desk._id]) || [];
+                $scope.membersToSelect = _.without($scope.users._items, $scope.selectedMembers);
             };
 
             $scope.cancelMember = function(desk) {
@@ -84,15 +76,20 @@ define(['angular', 'lodash'], function(angular, _) {
             };
 
             $scope.removeMember = function(member) {
-                $scope.selectedMembers = _.without($scope.selectedMembers, member);
+                _.remove($scope.selectedMembers, member);
             };
 
             $scope.saveMembers = function() {
-                $scope.desk.members = _.map($scope.selectedMembers, function(obj) { return obj._id; });
-                em.update($scope.desk).then(function(result) {
+                var members = _.map($scope.selectedMembers, function(obj) {
+                    return {user: obj._id};
+                });
+                api.desks.save($scope.desk, {members: members}).then(function(result) {
 					_.extend($scope.desk, result);
+                    $scope.deskMembers[$scope.desk._id] = $scope.selectedMembers;
 					notify.success(gettext('Desk members updated.'), 3000);
 					$scope.cancelMember();
+                }, function(response) {
+                    notify.error(gettext('There was a problem, desk members not updated.'));
                 });
             };
 

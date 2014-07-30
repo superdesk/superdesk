@@ -424,6 +424,17 @@
     background-repeat: no-repeat;
     filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",@startColor,@endColor)); // IE9 and down, gets no color-stop at all for proper fallback
   }
+  .horizontal-three-colors(@startColor: #00b3ee, @midColor: #7a43b6, @colorStop: 50%, @endColor: #c3325f) 
+  {
+      background-color: mix(@midColor, @endColor, 80%);
+      background-image: -webkit-gradient(linear, 0% 100%, 100% 100%, from(@startColor), color-stop(@colorStop, @midColor), to(@endColor));
+      background-image: -moz-linear-gradient(left, @startColor, @midColor @colorStop, @endColor);
+      background-image: -ms-linear-gradient(@startColor, @midColor @colorStop, @endColor);
+      background-image: -o-linear-gradient(@startColor, @midColor @colorStop, @endColor);
+      background-image: linear-gradient(@startColor, @midColor @colorStop, @endColor);
+      background-repeat: no-repeat;
+      filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",@startColor,@endColor)); // IE9 and down, gets no color-stop at all for proper fallback
+  }
   .radial(@innerColor: #555, @outerColor: #333)  {
     background-color: @outerColor;
     background-image: -webkit-gradient(radial, center center, 0, center center, 460, from(@innerColor), to(@outerColor));
@@ -490,6 +501,27 @@
   }
 }
 
+
+// Reset bootstrap
+// ------------------
+.reset-bootstrap-effects {
+  -webkit-transition: none;
+  -moz-transition: none;
+  -ms-transition: none;
+  -o-transition: none;
+  transition: none;
+}
+
+
+// Reset button styling
+// ------------------
+.reset-button {
+  border: 0;
+  background: 0;
+  .box-shadow-both(inset 0 0 0 0 #000, 0 0 0 0 #000);
+  color: #333;
+}
+
 // Navbar vertical align
 // -------------------------
 // Vertically center elements in the navbar.
@@ -544,125 +576,4 @@
   margin-left: auto;
   margin-right: auto;
   .clearfix();
-}
-
-// Table columns
-.tableColumns(@columnSpan: 1) {
-  float: none; // undo default grid column styles
-  width: ((@gridColumnWidth) * @columnSpan) + (@gridGutterWidth * (@columnSpan - 1)) - 16; // 16 is total padding on left and right of table cells
-  margin-left: 0; // undo default grid column styles
-}
-
-// Make a Grid
-// Use .makeRow and .makeColumn to assign semantic layouts grid system behavior
-.makeRow() {
-  margin-left: @gridGutterWidth * -1;
-  .clearfix();
-}
-.makeColumn(@columns: 1) {
-  float: left;
-  margin-left: @gridGutterWidth;
-  width: (@gridColumnWidth * @columns) + (@gridGutterWidth * (@columns - 1));
-}
-
-// The Grid
-#grid {
-
-  .core (@gridColumnWidth, @gridGutterWidth) {
-
-    .spanX (@index) when (@index > 0) {
-      (.span@{index}) { .span(@index); }
-      .spanX(@index - 1);
-    }
-    .spanX (0) {}
-
-    .offsetX (@index) when (@index > 0) {
-      (.offset@{index}) { .offset(@index); }
-      .offsetX(@index - 1);
-    }
-    .offsetX (0) {}
-
-    .offset (@columns) {
-      margin-left: (@gridColumnWidth * @columns) + (@gridGutterWidth * (@columns - 1)) + (@gridGutterWidth * 2);
-    }
-
-    .span (@columns) {
-      width: (@gridColumnWidth * @columns) + (@gridGutterWidth * (@columns - 1));
-    }
-
-    .row {
-      margin-left: @gridGutterWidth * -1;
-      .clearfix();
-    }
-
-    [class*="span"] {
-      float: left;
-      margin-left: @gridGutterWidth;
-    }
-
-    // Set the container width, and override it for fixed navbars in media queries
-    .container,
-    .navbar-fixed-top .container,
-    .navbar-fixed-bottom .container { .span(@gridColumns); }
-
-    // generate .spanX and .offsetX
-    .spanX (@gridColumns);
-    .offsetX (@gridColumns);
-
-  }
-
-  .fluid (@fluidGridColumnWidth, @fluidGridGutterWidth) {
-
-    .spanX (@index) when (@index > 0) {
-      (> .span@{index}) { .span(@index); }
-      .spanX(@index - 1);
-    }
-    .spanX (0) {}
-
-    .span (@columns) {
-      width: (@fluidGridColumnWidth * @columns) + (@fluidGridGutterWidth * (@columns - 1));
-    }
-
-    .row-fluid {
-      width: 100%;
-      .clearfix();
-      > [class*="span"] {
-        float: left;
-        margin-left: @fluidGridGutterWidth;
-      }
-      > [class*="span"]:first-child {
-        margin-left: 0;
-      }
-
-      // generate .spanX
-      .spanX (@gridColumns);
-    }
-
-  }
-
-  .input(@gridColumnWidth, @gridGutterWidth) {
-
-    .spanX (@index) when (@index > 0) {
-      (input.span@{index}) { .span(@index); }
-      (textarea.span@{index}) { .span(@index); }
-      (.uneditable-input.span@{index}) { .span(@index); }
-      .spanX(@index - 1);
-    }
-    .spanX (0) {}
-
-    .span(@columns) {
-      width: ((@gridColumnWidth) * @columns) + (@gridGutterWidth * (@columns - 1)) - 10;
-    }
-
-    input,
-    textarea,
-    .uneditable-input {
-      margin-left: 0; // override margin-left from core grid system
-    }
-
-    // generate .spanX
-    .spanX (@gridColumns);
-
-  }
-
 }

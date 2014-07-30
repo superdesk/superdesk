@@ -1,35 +1,100 @@
-define(['angular'], function(angular) {
+define(['lodash'], function(_) {
     'use strict';
 
-    return ['$scope', 'userSettings', 'server', 'locationParams', 'superdesk', 'roles', 'user',
-    function UserListController($scope, userSettings, server, locationParams, superdesk, roles, user) {
-        $scope.user = user;
-        $scope.roles = roles;
+    UserListController.$inject = ['$scope', '$location', 'api'];
+    function UserListController($scope, $location, api) {
+        $scope.maxResults = 25;
 
-        $scope.users = superdesk.data('users', {
-            sort: ['display_name', 'asc'],
-            perPage: 25
-        });
+        $scope.selected = {user: null};
+        $scope.createdUsers = [];
 
-        $scope.userSettings = userSettings;
-        $scope.locationParams = locationParams;
-        $scope.search = locationParams.get('search');
-
-        $scope['delete'] = function(user) {
-            server['delete'](user).then(function() {
-                locationParams.reload();
-            });
+        $scope.preview = function(user) {
+            $scope.selected.user = user;
         };
 
-        $scope.deleteChecked = function() {
-            var users = _.where($scope.users._items, {'_checked': true});
-            server.deleteAll(users).then(function() {
-                locationParams.reload();
-            });
+        $scope.createUser = function() {
+            $scope.preview({});
         };
 
-        $scope.edit = function(user) {
-            locationParams.path('/users/' + user._id);
+        $scope.closePreview = function() {
+            $scope.preview(null);
         };
-    }];
+
+        $scope.afterDelete = function(data) {
+            if ($scope.selected.user && data.item && data.item.href === $scope.selected.user.href) {
+                $scope.selected.user = null;
+            }
+            fetchUsers(getCriteria());
+        };
+
+        // make sure saved user is presented in the list
+        $scope.render = function(user) {
+            if (_.find($scope.users._items, function(item) {
+                return item._links.self.href === user._links.self.href;
+            })) {
+                return;
+            }
+
+            if (_.find($scope.createdUsers, function(item) {
+                return item._links.self.href === user._links.self.href;
+            })) {
+                return;
+            }
+
+            $scope.createdUsers.unshift(user);
+        };
+
+        function getCriteria() {
+            var params = $location.search(),
+                criteria = {
+                    max_results: $scope.maxResults
+                };
+
+            if (params.q) {
+                criteria.where = JSON.stringify({
+                    '$or': [
+                        {username: {'$regex': params.q}},
+                        {first_name: {'$regex': params.q}},
+                        {last_name: {'$regex': params.q}},
+                        {display_name: {'$regex': params.q}},
+                        {email: {'$regex': params.q}}
+                    ]
+                });
+            }
+
+            if (params.page) {
+                criteria.page = parseInt(params.page, 10);
+            }
+
+            if (params.sort) {
+                criteria.sort = formatSort(params.sort[0], params.sort[1]);
+            } else {
+                criteria.sort = formatSort('full_name', 'asc');
+            }
+
+            return criteria;
+        }
+
+        function fetchUsers(criteria) {
+            api.users.query(criteria)
+                .then(function(users) {
+                    $scope.users = users;
+                    $scope.createdUsers = [];
+                });
+        }
+
+        function formatSort(key, dir) {
+            var val = dir === 'asc' ? 1 : -1;
+            switch (key) {
+                case 'full_name':
+                    return '[("first_name", ' + val + '), ("last_name", ' + val + ')]';
+                default:
+                    return '[("' + encodeURIComponent(key) + '", ' + val + ')]';
+            }
+        }
+
+        $scope.$watch(getCriteria, fetchUsers, true);
+    }
+
+    return UserListController;
 });

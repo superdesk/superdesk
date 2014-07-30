@@ -1,0 +1,26 @@
+<li ng-repeat="user in users" ng-click="select(user)" ng-class="{selected: user === selected}">
+    <div class="avatar">
+        <figure><img sd-user-picture data-src="user.picture_url"></figure>
+    </div>
+
+    <div class="row-wrapper" sd-col-width>
+        <div class="name">{{ user.display_name }}</div>
+        <div class="username">{{ user.username }}</div>
+        <div class="role" ng-show>{{ roles[user.role].name }}</div>
+        <div class="email">{{ user.email }}</div>
+        <div class="created">{{ user._created | reldate}}</div>
+    </div>
+
+    <div class="action">
+        <ul class="item-functions"
+            sd-activity-list
+            data-data="{item: user, list: users, index: $index}"
+            data-type="user"
+            data-action="edit"
+            data-done="done">
+        </ul>
+    </div>
+</li>
+
+<li class="alert alert-info" ng-show="users.length == null"><p translate>Loading..</p></li>
+<li class="alert alert-info" ng-show="users.length == 0"><p translate>Oops! There are no items.</p></li>

@@ -56,7 +56,6 @@
   border-color: rgba(0,0,0,.2);
   border-style: solid;
   border-width: 1px;
-  .border-radius(0 0 5px 5px);
   .box-shadow(0 5px 10px rgba(0,0,0,.2));
   -webkit-background-clip: padding-box;
      -moz-background-clip: padding;
@@ -76,7 +75,13 @@
   }
 
   // Links within the dropdown menu
-  a {
+  button {
+    -webkit-appearance: none;
+    width: 100%;
+    text-align: left;
+  }
+  a, button {
+    background: none;
     display: block;
     padding: 3px 15px;
     clear: both;
@@ -89,9 +94,9 @@
 
 // Hover state
 // -----------
-.dropdown-menu li > a:hover,
-.dropdown-menu .active > a,
-.dropdown-menu .active > a:hover {
+.dropdown-menu li > a:hover, .dropdown-menu li > button:hover,
+.dropdown-menu .active > a, .dropdown-menu .active > button,
+.dropdown-menu .active > a:hover, .dropdown-menu .active > button:hover {
   color: @dropdownLinkColorHover;
   text-decoration: none;
   background-color: @dropdownLinkBackgroundHover;

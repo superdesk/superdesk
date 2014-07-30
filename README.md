@@ -1,6 +1,7 @@
 # Superdesk Client 
-[![Build Status](https://travis-ci.org/superdesk/superdesk-client.png?branch=master)](https://travis-ci.org/superdesk/superdesk-client)
+[![Build Status](https://travis-ci.org/superdesk/superdesk-client.png?branch=devel)](https://travis-ci.org/superdesk/superdesk-client)
 [![devDependency Status](https://david-dm.org/superdesk/superdesk-client/dev-status.png)](https://david-dm.org/superdesk/superdesk-client#info=devDependencies)
+[![Coverage Status](https://coveralls.io/repos/superdesk/superdesk-client/badge.png?branch=devel)](https://coveralls.io/r/superdesk/superdesk-client?branch=devel)
 
 Superdesk Client is a javascript client for Superdesk REST API server.
 
@@ -12,7 +13,7 @@ Superdesk Client is a javascript client for Superdesk REST API server.
 
 Client requires `nodejs` installed and a few steps:
 ```
-npm install -g grunt-cli # install grunt
+npm install -g bower grunt-cli
 npm install # install other node dependencies
 bower install # install bower components
 ```
@@ -41,5 +42,5 @@ For trivial changes you can ommit JIRA ref or Description or both: ```Fix typo i
 
 ### CI
 
-You can test your code before sending a PR via: ```./travis_build.sh```
+You can test your code before sending a PR via: ```grunt ci```
 

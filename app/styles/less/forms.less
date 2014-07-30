@@ -29,11 +29,18 @@ legend {
   border: 0;
   border-bottom: 1px solid #EEE;
 
-  // Small
+  // Small legend 
+  &.small {
+    margin-bottom: 10px;
+  }
+  
+  //small text
   small {
     font-size: @baseLineHeight * .75;
     color: @grayLight;
   }
+
+
 }
 
 
@@ -242,24 +249,6 @@ input,textarea,select {
 .input-large      { width: 210px; }
 .input-xlarge     { width: 270px; }
 .input-xxlarge    { width: 530px; }
-
-// Grid style input sizes
-input[class*="span"],
-select[class*="span"],
-textarea[class*="span"],
-.uneditable-input {
-  float: none;
-  margin-left: 0;
-}
-
-
-
-// GRID SIZING FOR INPUTS
-// ----------------------
-
-#grid > .input (@gridColumnWidth, @gridGutterWidth);
-
-
 
 
 // DISABLED STATE
@@ -565,8 +554,13 @@ legend + .control-group {
 
 /* SUPERDESK overrides */
 
-input[type="text"], 
+
+input[type="text"],
+input[type="date"],input[type="datetime"],input[type="datetime-local"],input[type="time"],
+input[type="number"],input[type="range"],
+input[type="url"], 
 input[type="password"],
+input[type="email"],
 textarea, select {
   .box-sizing(border-box);
   line-height:15px;
@@ -581,6 +575,8 @@ textarea, select {
   outline:none !important;
   .box-shadow(inset 0 0 0 #000) !important;
   .box-shadow(none) !important;
+  -moz-appearance: none !important;
+  background: #fff;
   &:focus {
     .box-shadow(0px 0px 5px 0px #d0d0d0) !important; 
     border-color: #b8b8b8 !important;
@@ -588,8 +584,12 @@ textarea, select {
   }
 }
 
-input[type="text"], 
+input[type="text"],
+input[type="date"],input[type="datetime"],input[type="datetime-local"],input[type="time"],
+input[type="number"],input[type="range"],
+input[type="url"],  
 input[type="password"],
+input[type="email"],
 select{
   height: 27px;
 }

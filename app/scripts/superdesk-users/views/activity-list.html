@@ -1,0 +1,42 @@
+<div>
+	<ul>
+		<li ng-repeat="activity in activityFeed._items" class="activity" ng-model="activity" sd-group-dates="_created">
+               <div class="activity-entry">
+			    <p class="activity-figure">
+			    	<img sd-user-picture data-src="user.picture_url" height="42" width="42">
+			    </p>
+		    	<span ng-switch on="activity.message">
+		    		<p ng-switch-when="created user {{user}}">
+		    			<b>{{ activity.user.display_name || activity.user.username }} </b>
+		    			<span translate>created user <b>{{ activity.data.user }}</b></span>
+		    		</p>
+		    		<p ng-switch-when="removed user {{user}}">
+		    			<b>{{ activity.user.display_name || activity.user.username }} </b>
+		    			<span translate>removed user <b>{{ activity.data.user }}</b></span>
+		    		</p>
+		    		<div ng-switch-when="uploaded media {{ name }}">
+		    			<p><b>{{ activity.user.display_name || activity.user.username }} </b>
+		    			<span translate>uploaded in media archive <b>{{ activity.data.name }}</b></span></p>
+		    			<img src="{{ activity.data.renditions.thumbnail.href }}" width="150">
+		    		</div>
+		    		<div ng-switch-when="updated media {{ name }}">
+		    			<p><b>{{ activity.user.display_name || activity.user.username }} </b>
+		    			<span translate>updated in media archive <b>{{ activity.data.name }}</b></span></p>
+		    			<img src="{{ activity.data.renditions.thumbnail.href }}" width="150">
+		    		</div>
+		    		<div ng-switch-when="removed media {{ name }}">
+		    			<p><b>{{ activity.user.display_name || activity.user.username }} </b>
+		    			<span translate>removed from media archive <b>{{ activity.data.name }}</b></span></p>
+		    			<img src="{{ activity.data.renditions.thumbnail.href }}" width="150">
+		    		</div>
+		    		<p ng-switch-default>
+		    			<b>{{ activity.user.display_name || activity.user.username }} </b>
+		    			<span compile='activity.message' data='activity.data'/>
+		    		</p>
+		    	</span>
+				<div class="activity-date" sd-reldate-complex ng-model="activity._created"></div>
+			</div>
+           </li>
+	</ul>
+</div>
+<button class="btn activity-load-more" translate ng-click="loadMore()" ng-show="activityFeed._links.next">Load more</button>

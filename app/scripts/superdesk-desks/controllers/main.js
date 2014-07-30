@@ -1,9 +1,15 @@
-define(['angular'], function(angular) {
+define(['lodash'], function(_) {
     'use strict';
 
-    return ['$scope', 'superdesk',
-    function($scope, superdesk) {
-        $scope.desks = superdesk.data('desks');
-        $scope.desks.query();
-    }];
+    DeskListController.$inject = ['$scope', 'api'];
+    function DeskListController($scope, api) {
+
+        api.desks.query()
+            .then(function(desks) {
+                $scope.desks = desks;
+            });
+    }
+
+    return DeskListController;
+
 });

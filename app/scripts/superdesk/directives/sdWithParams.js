@@ -3,7 +3,7 @@ define([
 ], function(angular) {
     'use strict';
 
-    angular.module('superdesk.directives')
+    return angular.module('superdesk.links', [])
         /**
          * sdWithParams manipulates href attribute to include current parameters.
          *

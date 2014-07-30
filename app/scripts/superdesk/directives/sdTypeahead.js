@@ -1,7 +1,7 @@
-define(['angular', 'moment'], function(angular, moment) {
+define(['angular'], function(angular) {
     'use strict';
 
-    angular.module('superdesk.directives').
+    return angular.module('superdesk.typeahead.directives', []).
         /**
          * Typeahead direcitve
          *

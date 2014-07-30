@@ -10,3 +10,5 @@ Superdesk-client is written and maintained by Sourcefabric and various contribut
 - Nikola Nikolic
 - Ozan Ozbek
 - Sava Tatic
+- Yauhen “actionless” Kirylau
+

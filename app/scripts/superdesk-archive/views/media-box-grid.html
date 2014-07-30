@@ -1,0 +1,50 @@
+<div class="archiving-progress" style="width:{{item.archivingProgress}}%" ng-show="!item.archived && item.archiving"></div>
+
+<div class="error-box" ng-show="item.archiveError">
+    <p class="message">There was an <b>error</b> archiving this item</p>
+    <div class="buttons">
+
+    </div>
+</div>
+
+<div sd-item-rendition data-item="item" data-rendition="thumbnail"></div>
+
+<div class="media"  ng-show="item.type == 'text' || item.type == 'composite'">
+    <small title="{{ item.headline }}">{{ item.headline }}</small>
+</div>
+
+<div class="media" ng-show="item.type == 'audio' || item.type == 'video'">
+    <i class="filetype-icon-large-{{ item.type}}"></i>
+</div>
+
+<div class="media-info" >
+    <h5 ng-show="item.slugline">{{ item.slugline }}</h5>
+    <h5 ng-show="!item.slugline">{{ item.type | translate }}</h5>
+
+    <dl>
+        <dt class="source"><span translate>source:</span></dt>
+        <dd class="provider">&nbsp;{{ item.provider }}</dd>
+        <dt translate>created</dt>
+        <dd><time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time></dd>
+        <dt translate ng-show="item.subject">subject</dt>
+        <dd ng-show="item.subject" class="subject-line">{{ item.subject | mergeWords}}</dd>
+    </dl>
+</div>
+
+<span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
+<span class="urgency-label"><i class="urgency-icon-{{item.urgency}}"></i></span>
+
+<div class="status-label"
+     ng-class="{'label-canceled': item.pubstatus=='canceled'}"
+     ng-show="item.pubstatus && item.pubstatus!='usable'">
+     {{ item.pubstatus | translate }}
+</div>
+
+<div class="action">
+    <ul ng-if="activityFilter" class="item-functions"
+        sd-activity-list
+        data-data="{item: item, list: items, index: $index}"
+        data-type="{{activityFilter.type}}"
+        data-action="{{activityFilter.action}}">
+    </ul>
+</div>

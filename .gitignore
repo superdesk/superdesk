@@ -1,3 +1,6 @@
+/npm-debug.log
+/.settings
+/.project
 node_modules
 dist
 .tmp
@@ -5,4 +8,8 @@ dist
 app/scripts/bower_components
 app/styles/css/bootstrap.css
 po/
+report/
+screenshots/
+coverage/
 Thumbs.db
+test-results.xml

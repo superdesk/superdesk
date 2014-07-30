@@ -1,0 +1,58 @@
+<div class="subnav subnav-fixed">
+    <h3 class="page-nav-title" translate>Authoring</h3>
+
+    <div class="button-stack right-stack">
+    	
+    	<a class="btn btn-medium pull-left" ng-click="close()" ng-if="item">{{ 'Close' | translate }}</a>
+    	<button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()" ng-if="item" ng-disabled="!dirty">{{ 'Save' | translate }}</button>
+
+        <a class="navbtn navbtn-info" href="" ng-click="create()">
+            <i class="svg-icon-add inverse"></i> <span class="title" translate>Create</span>
+        </a>
+
+        <div class="navbtn dropdown">
+    		<button class="dropdown-toggle condensed"><i class="svg-icon-settings"></i></button>
+			<ul class="dropdown-menu sf-dropdown-simple sf-right">
+				<li ng-click="intent('versions', 'author')" ng-if="item"><a href="">Version history</a></li>
+			</ul>
+    	</div>
+    </div>
+
+</div>
+
+<section class="main-section">
+
+	<div class="article-edit-container">
+
+	    <div class="main-article-container">
+	        <article class="main-article" ng-if="item._id">
+
+	            <section class="article-title">
+	                <header>
+	                    <span class="edit-label" translate>Headline</span>
+	                </header>
+	                <textarea sd-auto-height ng-model="item.headline"></textarea>
+	            </section>
+
+	            <section class="article-full-text">
+	                <header>
+	                    <span class="edit-label" translate>Body</span> 
+	                </header>
+                    <div sd-text-editor class="text-editor" ng-model="item.body_html"></div>
+	            </section>
+				
+	        </article>
+	    </div>
+
+	    <div class="opened-articles" ng-show="workqueue.length">
+	        <ul>
+	            <li ng-repeat="article in workqueue | orderBy:null:true" ng-class="{active: article._id == item._id}" ng-click="switchArticle(article)">
+	            	<span ng-show="article.headline">{{ article.headline }}</span>
+	            	<span ng-show="!article.headline">{{ 'Untitled' | translate }}</span>
+	            </li>
+	        </ul>
+	    </div>
+
+	</div>
+	
+</section>

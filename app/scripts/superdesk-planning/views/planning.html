@@ -1,0 +1,52 @@
+<div class="subnav subnav-fixed">
+
+	<div class="button-stack">
+		<div class="navbtn dropdown">
+            <button class="dropdown-toggle">{{ selected.desk.name || "Select desk" | translate }} <b class="caret"></b></button>
+			<div sd-user-desks data-user="currentUser" data-selected="selected.desk">
+                <span>{{ desk.name }}</span>
+            </div>
+    	</div>
+	</div>
+    <div class="button-stack right-stack">
+        <button class="navbtn">
+			<i class="svg-icon-settings"></i>
+        </button>
+    </div>
+</div>
+
+<section class="main-section with-subnav planning">
+    <div class="planning-subnav">
+        <div sd-searchbar></div>
+    </div>
+
+    <div class="preview-layout">
+        <div class="list-pane">
+        	<form name="addItemForm" ng-submit="addItemForm.$valid && addItem()">
+        		<input type="text" class="add-item" placeholder="{{ 'Add new item' | translate}}" ng-model="newItem.headline" required>
+        	</form>
+
+			<div class="items-list">
+                <div sd-list-view data-items="items._items" data-select="preview(item)">
+                	<div class="planning-item">
+	                    <div class="header">
+							<h6>{{ item.headline }}</h6>
+						</div>
+						<div class="info">
+							<span ng-show="item.duedate"><i class="icon-desk-time"></i>{{item.duedate}}</span>
+							<span ng-show="item.tasks"><i class="icon-desk-task"></i>{{item.tasks}}</span>
+							<span ng-show="item.attachments"><i class="icon-desk-attach"></i>{{item.attachments}}</span>
+							<span ng-show="item.links"><i class="icon-desk-link"></i>{{item.links}}</span>
+							<span ng-show="item.comments"><i class="icon-desk-comments"></i>{{item.comments}}</span>
+						</div>
+					</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="preview-pane">
+        	<div sd-preview-item ng-if="selected.item" data-item="selected.item" data-save="save(item)"></div>
+        </div>
+
+    </div>
+</setion>

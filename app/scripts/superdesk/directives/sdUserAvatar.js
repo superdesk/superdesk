@@ -2,7 +2,7 @@
 define(['angular'], function (angular) {
     'use strict';
 
-    angular.module('superdesk.directives')
+    return angular.module('superdesk.avatar', [])
         .directive('sdUserAvatar', function() {
             return {
                 scope: {src: '='},

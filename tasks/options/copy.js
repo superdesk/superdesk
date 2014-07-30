@@ -16,13 +16,14 @@ module.exports = {
             ]
         }]
     },
-    components: {
+    js: {
         files: [{
             expand: true,
             dot: true,
             cwd: '<%= appDir %>',
-            dest: '<%= tmpDir %>',
+            dest: '<%= distDir %>',
             src: [
+                'scripts/config.js',
                 'scripts/bower_components/**/*.js'
             ]
         }]

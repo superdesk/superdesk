@@ -1,7 +1,7 @@
 define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
-    angular.module('superdesk.services')
+    return angular.module('superdesk.keyboard', [])
 
     // unbind all keyboard shortcuts when switching route
     .run(['$rootScope', 'keyboardManager', function($rootScope, kb) {

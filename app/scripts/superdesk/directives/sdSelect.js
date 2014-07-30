@@ -1,10 +1,7 @@
-define([
-    'jquery',
-    'angular'
-], function($, angular) {
+define(['angular'], function(angular) {
     'use strict';
 
-    angular.module('superdesk.directives')
+    return angular.module('superdesk.select.directives', [])
 
     .factory('optionParser', ['$parse', function ($parse) {
 
