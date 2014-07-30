@@ -5,7 +5,8 @@ define(['lodash'], function(_) {
     function BaseListController($scope, $location, superdesk, api, es) {
         var self = this;
 
-        $scope.view = 'mgrid';
+        var savedView = localStorage.getItem('archive:view');
+        $scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
         $scope.selected = {};
 
         $scope.preview = function(item) {

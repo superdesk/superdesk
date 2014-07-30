@@ -270,7 +270,7 @@
 	.archive-content-inner {
 		.newest-items {
 			margin-bottom: 35px;
-			span {
+			> span {
 				height: 30px;
 				font-size: 11px;
 				color: #8a8a8a;
@@ -607,7 +607,7 @@
 			background: @outputItemColor2;
 			visibility: visible;
 		}
-		&.label-3 {
+		&.label-3, &.label-4, &.label-5 {
 			background: @outputItemColor3;
 			visibility: visible;
 		}
@@ -919,6 +919,18 @@
 			border-top: 3px solid #ebebeb;
 		}
 	}
+
+	.list-item-view {
+		//float: none !important;
+		width: 100%;
+		.panel-body {
+			display: block !important;
+			width: 100%;
+			.ui-draggable {
+				//display: block !important;
+			}
+		}
+	}
 	.media-box {
 		position: relative;
 		background: #fff;
@@ -956,14 +968,12 @@
 				}
 			}
 		}
-		.loading-status { 
+		.archiving-progress {
 			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			right: 0;
-			z-index: 2;
-			background: rgba(255,255,255,0.85) url('../../images/loading-large.gif') no-repeat 50% 50%;
+			bottom: 0px; left: 0;
+			height: 1px;
+			.box-shadow(0 0 1px 0 darken(@sd-color-blue,20%));
+			background: @sd-color-blue;
 		}
 		&.archived {
 			background: #f2f2f2;
@@ -1006,7 +1016,6 @@
 		}
 		
 		.media-info {
-
 			.item-provider {
 				font-size: 14px;
 				color: #787878;
@@ -1069,7 +1078,7 @@
 			top:0;
 			text-align: right;
 			overflow: hidden;
-			.item-functions {
+			.action {
 				background: #f4f4f4;
 				position: absolute;
 				right: -@rightfield-width;
@@ -1114,9 +1123,6 @@
 			background: #f8f8f8;
 			.box-shadow(inset 0 2px 0 0px #f2f2f2);
 			border-right: 2px solid #f8f8f8;
-			.state-border {
-				background: #2f93cd;
-			}
 			h5 {
 				background: url('../../images/checkmark-big-full.png') no-repeat right 50%;
 				background-size: 36px;
@@ -1128,7 +1134,7 @@
 		
 		
 		&:hover {
-			.item-functions {
+			.action {
 				right: 0;
 			}
 		}
@@ -1138,8 +1144,40 @@
 			left: 0;
 			top:0;
 			bottom: 0;
-			background: #b70000;
+			background: #bbb;
 		}
+
+	}
+
+	&.ui-draggable-dragging {
+		.media-box {
+			margin: 0;
+			padding: 0 0 0 3px;
+			border: 1px solid #ebebeb;
+			border-left: 0;
+			.clearfix();
+			float: none;
+			.box-shadow(none);
+			.media-info {
+				.clearfix();
+				.type-icon {
+					position: relative;
+					left: auto;
+					bottom: auto;
+					opacity: 1;
+				}
+				h5 {
+					margin-right: 0;
+					margin-left: 81px;
+					text-transform: none !important;
+				}
+			}
+			
+		}
+		.item-right {
+			display: none;
+		}
+		min-width: 400px;
 
 	}
 	

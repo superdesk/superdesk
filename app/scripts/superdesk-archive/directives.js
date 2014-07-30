@@ -211,6 +211,7 @@ define([
                         default:
                             scope.itemTemplate = require.toUrl('./views/media-box-grid.html');
                         }
+                        localStorage.setItem('archive:view', view);
                     });
                 }
             };
