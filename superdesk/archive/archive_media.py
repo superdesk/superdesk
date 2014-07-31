@@ -2,12 +2,10 @@ from bson.objectid import ObjectId
 from flask import abort, current_app as app
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
-import superdesk
 from superdesk.base_model import BaseModel
 from superdesk.upload import url_for_media
-from superdesk.upload import url_for_media
 from superdesk.utc import utcnow
-
+from eve.utils import config
 from .common import base_schema, item_url, update_dates_for, generate_guid, GUID_TAG, ARCHIVE_MEDIA, set_user
 from .common import on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from superdesk.activity import add_activity
