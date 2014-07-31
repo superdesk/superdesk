@@ -626,7 +626,7 @@ Activity log
 
 /*
 ====================================================
-  Sidebar tabs - tablist
+  Sidebar tabs - tablist & tabpanes
 ====================================================
 */
 
@@ -648,45 +648,78 @@ Activity log
       .box-shadow(inset 8px 0 7px -6px #888);
     }
     .navigation-tabs {
-      margin:-1px 0 0;
-      border:0;
-      list-style-type:none;
-        li {
+      margin: -1px 0 0;
+      border: 0;
+      list-style-type: none;
+	     li {
           position:relative;
           float:none;
           margin-bottom:-1px;
-            a {
-              display:block;
-              width: @tablist-width;
-              min-width: @tablist-width;
-              height: @tablist-width - 2;
-              line-height: @tablist-width - 2;
-              text-align: center;
-              padding: 0;
-              margin-bottom: 0;
-              margin-right: 0;
-              .border-radius(0px);
-              border: 1px solid #898989;
-              border-width: 1px 0 !important;
-              -khtml-user-drag: element;
-              -webkit-user-drag: element;
-                &:hover {
-                	background: #b7b7b7;
-                	border: 1px solid #999999;
+            .btn {
+				display:block;
+				width: @tablist-width;
+				height: @tablist-width - 2;
+				line-height: @tablist-width - 2;
+				text-align: center;
+				padding: 0;
+				margin:0;
+				.border-radius(0px);
+				border: 1px solid #898989;
+				border-width: 1px 0 !important;
+				background: none;
+				.box-shadow(none);
+				&:hover {
+					background: #b7b7b7;
+					border: 1px solid #999999;
 					border-width: 1px 0 !important;
-					&.tab-li-hov {
-						background:@background-main;
-						border: 1px solid #7c7c7c;
-						border-width: 1px 0 !important;
-					}
-                }
+				}
             }
             &.active {
-              a {
+              .btn {
                 background: #b8b8b8;
               }
             }
-        }
+        }	
+    }
+}
+.tabpane {
+  position:fixed;
+  width:@tabpane-width;
+  top:@subnav-height + @topspace;
+  bottom:0;
+  background: @tabpane-background;
+  border-color:@tabpane-border;
+  border-style: solid;
+  z-index:10;
+  .box-sizing(border-box);
+  .transition( all 0.3s ease);
+    &.left-tabpane {
+      left:-@tabpane-width;
+      border-width: 0 3px 0 0;
+      .box-shadow(2px 0px 8px 0px rgba(50,50,50,.35));
+      
+      &.open-tabpane {
+        left:@tablist-width;
+      }
+    }
+    &.right-tabpane {
+      right:-@tabpane-width;
+      border-width: 0 0 0 3px;
+       .box-shadow(-2px 0px 8px 0px rgba(40,50,50,.35));
+       &.open-tabpane {
+         right:@tablist-width;
+       }
+    }
+    .tabcontent {
+      padding:@tabcontent-padding;
+      padding-bottom: @tabcontent-padding + 30px; //because of scratchpad
+      .box-sizing(border-box);
+      position: absolute;
+      bottom: 0;
+      top: 0;
+      left:1px;
+      right:1px;
+      overflow: hidden;
     }
 }
 

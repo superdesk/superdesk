@@ -34,12 +34,6 @@
   right: 0;
   bottom: 0;
   overflow: hidden;
-  .tablist {
-    .fake-space {
-      height: @subnav-level2 - 1;
-      border-bottom: 1px solid #898989;
-    }
-  }
 }
 
 .main-article-container {
@@ -209,6 +203,40 @@
     bottom: 318px;
   }
 }
+
+
+.tabpane {
+  .sd-widget {
+    width: auto; height: auto;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border:0;
+    .widget-line {
+      display: none;
+    }
+    .widget-header {
+      height: 44px;
+      .widget-icon {
+        display: none;
+      }
+      .widget-title {
+        left: 0;
+        line-height: 44px;
+        font-size: 16px;
+        padding: 0 10px;
+      }
+    }
+    .widget-settings {
+      top: 8px;
+    }
+    .widget-content {
+      padding-bottom: 65px;
+      top: 44px;
+    }
+
+  }
+}
+
 
 
 /*
