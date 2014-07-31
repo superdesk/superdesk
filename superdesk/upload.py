@@ -1,13 +1,17 @@
 """Upload module"""
-
+import logging
 import superdesk
+from eve.utils import config
 from superdesk import SuperdeskError
 from superdesk.base_model import BaseModel
-from flask import url_for, Response, current_app as app
-from .media_operations import store_file_from_url
+from flask import url_for, Response, current_app as app, json
+from superdesk.media.renditions import generate_renditions, delete_file_on_error
+from superdesk.media.media_operations import download_file_from_url, process_file_from_stream, \
+    crop_image, decode_metadata
 
 bp = superdesk.Blueprint('upload_raw', __name__)
 superdesk.blueprint(bp)
+logger = logging.getLogger(__name__)
 
 
 @bp.route('/upload/<path:media_id>/raw', methods=['GET'])
@@ -28,49 +32,86 @@ def init_app(app):
 
 
 class UploadModel(BaseModel):
-
     endpoint_name = 'upload'
     schema = {
-        'media': {'type': 'media'},
+        'media': {'type': 'file'},
         'CropLeft': {'type': 'integer'},
         'CropRight': {'type': 'integer'},
         'CropTop': {'type': 'integer'},
         'CropBottom': {'type': 'integer'},
         'URL': {'type': 'string'},
-        'data_uri_url': {'type': 'string'},
         'mime_type': {'type': 'string'},
         'filemeta': {'type': 'dict'}
     }
-
+    extra_response_fields = ['renditions']
     datasource = {
         'projection': {
-            'data_uri_url': 1,
             'mime_type': 1,
-            'file_meta': 1,
+            'filemeta': 1,
             '_created': 1,
             '_updated': 1,
-            'media': 1
+            'media': 1,
+            'renditions': 1,
         }
     }
-
     item_methods = ['GET', 'DELETE']
     resource_methods = ['GET', 'POST']
 
     def on_create(self, docs):
         for doc in docs:
             if doc.get('URL') and doc.get('media'):
-                raise SuperdeskError(payload='Uploading file by URL and file stream in the same time is not supported.')
-            self.download_file(doc)
-            update = {}
-            media_file = app.media.get(doc.get('media'))
-            update['mime_type'] = media_file.content_type
-            update['data_uri_url'] = url_for_media(doc.get('media'))
-            update['filemeta'] = media_file.metadata
-            doc.update(update)
+                message = 'Uploading file by URL and file stream in the same time is not supported.'
+                raise SuperdeskError(payload=message)
+
+            content = None
+            filename = None
+            content_type = None
+            if doc.get('media'):
+                content = doc['media']
+                filename = content.filename
+                content_type = content.mimetype
+            elif doc.get('URL'):
+                content, filename, content_type = self.download_file(doc)
+
+            self.store_file(doc, content, filename, content_type)
+
+    def store_file(self, doc, content, filename, content_type):
+        res = process_file_from_stream(content, filename=filename, content_type=content_type)
+        file_name, out, content_type, metadata = res
+
+        cropping_data = self.get_cropping_data(doc)
+        _, out = crop_image(out, filename, cropping_data)
+        metadata['length'] = json.dumps(len(out.getvalue()))
+
+        try:
+            logger.debug('Going to save media file with %s ' % file_name)
+            id = app.media.put(out, filename=file_name, content_type=content_type, metadata=metadata)
+            doc['media'] = id
+            doc['mime_type'] = content_type
+            doc['filemeta'] = decode_metadata(metadata)
+            inserted = [doc['media']]
+            file_type = content_type.split('/')[0]
+
+            rendition_spec = config.RENDITIONS['avatar']
+            renditions = generate_renditions(out, doc['media'], inserted, file_type,
+                                             content_type, rendition_spec, url_for_media)
+            doc['renditions'] = renditions
+        except Exception as io:
+            logger.exception(io)
+            for file_id in inserted:
+                delete_file_on_error(doc, file_id)
+            raise SuperdeskError(message='Generating renditions failed')
+
+    def get_cropping_data(self, doc):
+        if all([doc.get('CropTop', None) is not None, doc.get('CropLeft', None) is not None,
+                doc.get('CropRight', None) is not None, doc.get('CropBottom', None) is not None]):
+            cropping_data = (doc['CropLeft'], doc['CropTop'], doc['CropRight'], doc['CropBottom'])
+            return cropping_data
+        return None
 
     def download_file(self, doc):
         url = doc.get('URL')
         if not url:
             return
-        id = store_file_from_url(url)
-        doc['media'] = id
+        content, filename, content_type = download_file_from_url(url)
+        return content, filename, content_type

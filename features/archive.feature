@@ -288,7 +288,7 @@ Feature: News Items Archive
         {"guid": "", "firstcreated": "", "versioncreated": ""}
         """
         And we get "bike.jpg" metadata
-        And we get image renditions
+        And we get "picture" renditions
 
         When we patch latest
         """

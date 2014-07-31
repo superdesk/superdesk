@@ -4,6 +4,7 @@ from bson import ObjectId
 from eve.io.mongo import Validator
 from eve.utils import config
 from flask import current_app as app
+from werkzeug.datastructures import FileStorage
 
 
 ERROR_PATTERN = {'pattern': 1}
@@ -22,13 +23,18 @@ class SuperdeskValidator(Validator):
             self._error(field, ERROR_PATTERN)
 
     def _validate_type_email(self, field, value):
-        """ Enables validation for `phone_number` schema attribute.
+        """ Enables validation for `email` schema attribute.
             :param field: field name.
             :param value: field value.
         """
         regex = "^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@" \
                 "(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,4}[a-z0-9]){1}$"
         if not re.match(regex, value):
+            self._error(field, ERROR_PATTERN)
+
+    def _validate_type_file(self, field, value):
+        """Enables validation for `file` schema attribute."""
+        if not isinstance(value, FileStorage):
             self._error(field, ERROR_PATTERN)
 
     def _validate_unique(self, unique, field, value):

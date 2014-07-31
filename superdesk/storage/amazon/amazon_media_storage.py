@@ -1,7 +1,6 @@
 ''' Amazon media storage module'''
 from eve.io.media import MediaStorage
 import tinys3
-from superdesk.media_operations import process_file_from_stream
 from superdesk import SuperdeskError
 import logging
 import json
@@ -100,7 +99,7 @@ class AmazonMediaStorage(MediaStorage):
             file_metadata[new_key] = value
         return file_metadata
 
-    def put(self, content, filename=None, content_type=None):
+    def put(self, content, filename=None, content_type=None, metadata=None):
         """ Saves a new file using the storage system, preferably with the name
         specified. If there already exists a file with this name name, the
         storage system may modify the filename as necessary to get a unique
@@ -108,19 +107,18 @@ class AmazonMediaStorage(MediaStorage):
         of the stored file will be returned. The content type argument is used
         to appropriately identify the file when it is retrieved.
         """
-        file_name, iter_content, content_type, metadata = process_file_from_stream(content, filename, content_type)
-        logger.debug('Going to save media file with %s ' % file_name)
-        found, existing_file = self._check_exists(file_name, raise_error=False)
+        logger.debug('Going to save media file with %s ' % filename)
+        found, existing_file = self._check_exists(filename, raise_error=False)
         if found:
-            return file_name
+            return filename
 
         try:
             file_metadata = self.transform_metadata_to_amazon_format(metadata)
-            res = self.conn.upload(file_name, iter_content, self.container_name, content_type=content_type,
+            res = self.conn.upload(filename, content, self.container_name, content_type=content_type,
                                    headers=file_metadata)
             if res.status_code not in (200, 201):
                 raise SuperdeskError(payload='Uploading file to amazon S3 failed')
-            return file_name
+            return filename
         except Exception as ex:
             logger.exception(ex)
             raise
