@@ -3,6 +3,7 @@
 /.project
 node_modules
 dist
+*.swp
 .tmp
 .sass-cache
 app/scripts/bower_components

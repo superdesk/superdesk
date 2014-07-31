@@ -48,8 +48,9 @@ define(['lodash'], function(lodash) {
                         return;
                     }
 
-                    var picture_url = response.data.data_uri_url;
+                    var picture_url = response.data.renditions.viewImage.href;
                     $scope.locals.data.picture_url = picture_url;
+                    $scope.locals.data.avatar = response.data._id;
 
                     return $scope.resolve(picture_url);
                 }, null, function(update) {
