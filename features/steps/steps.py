@@ -446,6 +446,7 @@ def step_impl_then_get_given_file_meta(context, filename):
             'exposuremode': 0,
             'flashpixversion': '0100',
             'isospeedratings': 80,
+            'length': 469900,
             'imageuniqueid': 'f3533c05daef2debe6257fd99e058eec',
             'datetimeoriginal': '2013:08:01 16:19:28',
             'whitebalance': 0,
@@ -478,6 +479,7 @@ def step_impl_then_get_given_file_meta(context, filename):
             'music_genre': 'New Age',
             'sample_rate': '48000',
             'artist': 'Maxime Abbey',
+            'length': 12996555,
             'bit_rate': '224000',
             'title': 'Green Hills',
             'mime_type': 'audio/vorbis',
@@ -502,6 +504,7 @@ def step_impl_then_get_given_file_meta(context, filename):
             'creation_date': '2014-06-13 19:26:17',
             'duration': '0:03:19.733066',
             'width': '480',
+            'length': 24757257,
             'comment': 'User volume: 100.0%',
             'height': '270',
             'endian': 'Big endian',
@@ -517,12 +520,12 @@ def step_impl_then_get_given_file_meta(context, filename):
     )
 
 
-@then('we get image renditions')
-def step_impl_then_get_renditions(context):
+@then('we get "{type}" renditions')
+def step_impl_then_get_renditions(context, type):
     expect_json_contains(context.response, 'renditions')
     renditions = apply_path(parse_json_response(context.response), 'renditions')
     assert isinstance(renditions, dict), 'expected dict for image renditions'
-    for rend_name in context.app.config['RENDITIONS']['picture']:
+    for rend_name in context.app.config['RENDITIONS'][type]:
         desc = renditions[rend_name]
         assert isinstance(desc, dict), 'expected dict for rendition description'
         assert 'href' in desc, 'expected href in rendition description'
@@ -610,7 +613,7 @@ def step_impl_then_get_action(context):
 @then('we get a file reference')
 def step_impl_then_get_file(context):
     assert_200(context.response)
-    expect_json_contains(context.response, 'data_uri_url')
+    expect_json_contains(context.response, 'renditions')
     data = get_json_data(context.response)
     url = '/upload/%s' % data['_id']
     headers = [('Accept', 'application/json')]
@@ -619,31 +622,20 @@ def step_impl_then_get_file(context):
     assert_200(response)
     assert len(response.get_data()), response
     assert response.mimetype == 'application/json', response.mimetype
-    expect_json_contains(response, 'data_uri_url')
-    expect_json_contains(response,
-                         {'content_type': 'image/jpeg'}, path='media')
+    expect_json_contains(response, 'renditions')
+    expect_json_contains(response, {'mime_type': 'image/jpeg'})
     fetched_data = get_json_data(context.response)
     context.fetched_data = fetched_data
 
 
-@then('the file is not serialized in response')
-def step_the_file_is_not_attached_to_response(context):
-    assert context.fetched_data['media']['file'] is None, context.fetched_data['media']['file']
-
-
-@then('the file is serialized in response')
-def step_the_file_is_attached_to_response(context):
-    assert context.fetched_data['media']['file'] is not None, context.fetched_data['media']['file']
-
-
 @then('we get cropped data smaller than "{max_size}"')
 def step_impl_then_get_cropped_file(context, max_size):
-    assert context.fetched_data['media']['length'] < int(max_size), 'was expecting smaller image'
+    assert int(context.fetched_data['filemeta']['length']) < int(max_size), 'was expecting smaller image'
 
 
 @then('we can fetch a data_uri')
 def step_impl_we_fetch_data_uri(context):
-    we_can_fetch_a_file(context, context.fetched_data['data_uri_url'], 'image/jpeg')
+    we_can_fetch_a_file(context, context.fetched_data['renditions']['original']['href'], 'image/jpeg')
 
 
 def we_can_fetch_a_file(context, url, mimetype):

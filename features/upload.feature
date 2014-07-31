@@ -5,19 +5,7 @@ Feature: Upload
         When we upload a file "bike.jpg" to "/upload"
         Then we get a file reference
         Then we get file metadata
-        And the file is not serialized in response
-        And we can delete that file
-
-    @auth
-    Scenario: Upload a binary file and enable file to be included in the response
-        Given config
-            """
-            {"RETURN_MEDIA_AS_BASE64_STRING": "True"}
-            """
-        When we upload a file "bike.jpg" to "/upload"
-        Then we get a file reference
-        Then we get file metadata
-        And the file is serialized in response
+        And we get "avatar" renditions
         And we can delete that file
 
     @auth
@@ -25,7 +13,7 @@ Feature: Upload
         When we upload a binary file with cropping
         Then we get a file reference
         Then we get file metadata
-        And the file is not serialized in response
+        And we get "avatar" renditions
         And we get cropped data smaller than "25000"
         And we can fetch a data_uri
         And we can delete that file
@@ -35,7 +23,7 @@ Feature: Upload
         When we upload a file from URL with cropping
         Then we get a file reference
         Then we get file metadata
-        And the file is not serialized in response
+        And we get "avatar" renditions
         And we get cropped data smaller than "30000"
         And we can fetch a data_uri
         And we can delete that file
@@ -45,7 +33,7 @@ Feature: Upload
         When we upload a file from URL
         Then we get a file reference
         Then we get file metadata
-        And the file is not serialized in response
+        And we get "avatar" renditions
         And we can fetch a data_uri
         And we can delete that file
  
@@ -55,20 +43,7 @@ Feature: Upload
         When we upload a file "bike.jpg" to "/upload"
         Then we get a file reference
         Then we get file metadata
-        And the file is not serialized in response
-        And we can delete that file
-
-    @amazon
-    @auth
-    Scenario: Upload a binary file and enable file to be included in the response
-        Given config
-            """
-            {"RETURN_MEDIA_AS_BASE64_STRING": "True"}
-            """
-        When we upload a file "bike.jpg" to "/upload"
-        Then we get a file reference
-        Then we get file metadata
-        And the file is serialized in response
+        And we get "avatar" renditions
         And we can delete that file
 
     @amazon
@@ -77,7 +52,6 @@ Feature: Upload
         When we upload a binary file with cropping
         Then we get a file reference
         Then we get file metadata
-        And the file is not serialized in response
         And we get cropped data smaller than "25000"
         And we can fetch a data_uri
         And we can delete that file

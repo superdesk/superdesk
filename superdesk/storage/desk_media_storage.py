@@ -2,7 +2,6 @@ from eve.io.mongo.media import GridFSMediaStorage
 import logging
 import json
 from bson import ObjectId
-from superdesk.media_operations import process_file_from_stream
 from gridfs import GridFS
 
 
@@ -16,16 +15,13 @@ class SuperdeskGridFSMediaStorage(GridFSMediaStorage):
         if isinstance(_id, str):
             _id = ObjectId(_id)
         media_file = super().get(_id)
-        if media_file:
+        if media_file and media_file.metadata:
             for k, v in media_file.metadata.items():
                 media_file.metadata[k] = json.loads(v)
         return media_file
 
-    def put(self, content, filename=None, content_type=None):
-        file_name, out, content_type, metadata = process_file_from_stream(content, filename, content_type)
-        logger.debug('Going to save media file with %s ' % file_name)
-
-        _id = self.fs().put(out, content_type=content_type, filename=file_name, metadata=metadata)
+    def put(self, content, filename=None, content_type=None, metadata=None):
+        _id = self.fs().put(content, content_type=content_type, filename=filename, metadata=metadata)
         logger.debug('Saved  media file with id= %s' % _id)
         return _id
 

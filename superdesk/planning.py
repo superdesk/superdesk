@@ -44,7 +44,7 @@ class PlanningModel(BaseModel):
     }
     item_url = 'regex("[\w,.:-]+")'
     datasource = {
-        'search-backend': 'elastic'
+        'search_backend': 'elastic'
     }
     resource_methods = ['GET', 'POST']
 
