@@ -6,7 +6,7 @@ define([
 
     var INGEST_EVENT = 'changes in media_archive';
 
-    angular.module('superdesk.widgets.ingest', [])
+    angular.module('superdesk.widgets.ingest', ['superdesk.authoring.widgets'])
         .config(['widgetsProvider', function(widgets) {
             widgets.widget('ingest', {
                 label: 'Ingest',
@@ -23,21 +23,34 @@ define([
                 description: 'Ingest widget'
             });
         }])
+        .config(['authoringWidgetsProvider', function(authoringWidgets) {
+            authoringWidgets.widget('ingest', {
+                label: gettext('Ingest'),
+                icon: 'ingest',
+                template: require.toUrl('./widget-ingest.html')
+            });
+        }])
         .controller('IngestController', ['$location', '$scope', 'superdesk', 'api', 'es',
         function ($location, $scope, superdesk, api, es) {
             var config;
-
-            $scope.$watch('widget.configuration', function(_config) {
-                config = _config;
-                refresh();
-            }, true);
+            var refresh = _.debounce(_refresh, 1000);
 
             $scope.$on(INGEST_EVENT, refresh);
 
-            function refresh() {
+            $scope.$watchGroup({
+                provider: 'widget.configuration.provider',
+                size: 'widget.configuration.maxItems',
+                q: 'widget.configuration.search',
+                item: 'item.headline'
+            }, function(vals) {
+                config = $scope.widget.configuration || {};
+                refresh();
+            });
+
+            function _refresh() {
                 var params = {
                     q: config.search || undefined,
-                    size: config.maxItems
+                    size: config.maxItems || 10
                 };
 
                 var filters = [];
@@ -45,10 +58,36 @@ define([
                     filters.push({term: {provider: config.provider}});
                 }
 
+                if ($scope.item) {
+                    var itemFilters = moreLikeThis($scope.item);
+                    if (itemFilters.length) {
+                        filters.push({or: moreLikeThis($scope.item)});
+                    }
+                }
+
                 var criteria = es(params, filters);
+                criteria.sort = [{firstcreated: 'desc'}];
                 api.ingest.query({source: criteria}).then(function(items) {
                     $scope.items = items;
                 });
+            }
+
+            function moreLikeThis(item) {
+                var filters = [];
+
+                if (item.slugline) {
+                    filters.push({term: {slugline: item.slugline}});
+                }
+
+                if (item.subject && item.subject.length) {
+                    filters.push({terms: {'subject.code': _.pluck(item.subject, 'code')}});
+                }
+
+                if (item.headline) {
+                    filters.push({query: {query_string: {query: item.headline}}});
+                }
+
+                return filters;
             }
 
             $scope.view = function(item) {
