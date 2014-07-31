@@ -1,10 +1,12 @@
 """Superdesk Users"""
 
-import superdesk
 import bcrypt
-from superdesk.base_model import BaseModel
 from flask import current_app as app
+
+import superdesk
+from superdesk.base_model import BaseModel
 from superdesk.utc import utcnow
+from superdesk.activity import add_activity
 
 
 class EmptyUsernameException(Exception):
@@ -182,12 +184,10 @@ class UsersModel(BaseModel):
 
     def on_create(self, docs):
         for doc in docs:
+            add_activity('created user {{user}}', user=doc.get('display_name', doc.get('username')))
             if doc.get('password'):
                 hashed = hash_password(doc.get('password'))
                 doc['password'] = hashed
 
-    def activity_create(self, add, doc):
-        add('created user {{user}}', user=doc.get('display_name', doc.get('username')))
-
-    def activity_delete(self, add, doc):
-        add('removed user {{user}}', user=doc.get('display_name', doc.get('username')))
+    def on_delete(self, doc):
+        add_activity('removed user {{user}}', user=doc.get('display_name', doc.get('username')))

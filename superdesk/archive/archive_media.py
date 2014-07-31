@@ -1,15 +1,18 @@
-import superdesk
-from superdesk.utc import utcnow
-from superdesk.upload import url_for_media
-from flask import abort, current_app as app
-from superdesk.media_operations import resize_image
-from werkzeug.datastructures import FileStorage
 from PIL import Image
+from bson.objectid import ObjectId
+from eve.utils import config
+from flask import abort, current_app as app
+from werkzeug.datastructures import FileStorage
+
+import superdesk
 from superdesk.base_model import BaseModel
+from superdesk.media_operations import resize_image
+from superdesk.upload import url_for_media
+from superdesk.utc import utcnow
+
 from .common import base_schema, item_url, update_dates_for, generate_guid, GUID_TAG, ARCHIVE_MEDIA, set_user
 from .common import on_create_media_archive, on_update_media_archive, on_delete_media_archive
-from eve.utils import config
-from bson.objectid import ObjectId
+from superdesk.activity import add_activity
 
 
 class ArchiveMediaModel(BaseModel):
@@ -54,24 +57,17 @@ class ArchiveMediaModel(BaseModel):
                 doc['mimetype'] = file.content_type
                 doc['filemeta'] = file.metadata
                 doc['creator'] = set_user(doc)
+
+                add_activity('uploaded media {{ name }}',
+                             name=doc.get('headline', doc.get('mimetype')),
+                             renditions=doc.get('renditions'))
+
             except Exception as io:
                 superdesk.logger.exception(io)
                 for file_id in inserted:
                     self.delete_file_on_error(doc, file_id)
                 abort(500)
         on_create_media_archive()
-
-    def activity_create(self, add, doc):
-        add('uploaded media {{ name }}', name=doc.get('headline', doc.get('mimetype')),
-            renditions=doc.get('renditions'))
-
-    def activity_update(self, add, doc, original):
-        add('updated media {{ name }}', name=original.get('headline', original.get('mimetype')),
-            renditions=doc.get('renditions'))
-
-    def activity_delete(self, add, doc):
-        add('removed media {{ name }}', name=doc.get('headline', doc.get('mimetype')),
-            renditions=doc.get('renditions'))
 
     def get_file_from_document(self, doc):
         file = doc.get('media_fetched')

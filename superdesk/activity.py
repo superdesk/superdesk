@@ -6,7 +6,6 @@ import flask
 from superdesk.notification import push_notification
 
 from .base_model import BaseModel
-import superdesk
 
 
 log = logging.getLogger(__name__)
@@ -56,10 +55,6 @@ class AuditModel(BaseModel):
         }
         post_intern(self.endpoint_name, audit)
 
-        model = superdesk.apps.get(resource)
-        if model:
-            model.activity_create(add_activity, docs[0])
-
     def on_generic_updated(self, resource, doc, original):
         if resource in self.exclude:
             return
@@ -76,10 +71,6 @@ class AuditModel(BaseModel):
         }
         post_intern(self.endpoint_name, audit)
 
-        model = superdesk.apps.get(resource)
-        if model:
-            model.activity_update(add_activity, doc, original)
-
     def on_generic_deleted(self, resource, doc):
         if resource in self.exclude:
             return
@@ -95,10 +86,6 @@ class AuditModel(BaseModel):
             'extra': doc
         }
         post_intern(self.endpoint_name, audit)
-
-        model = superdesk.apps.get(resource)
-        if model:
-            model.activity_delete(add_activity, doc)
 
 
 class ActivityModel(BaseModel):
@@ -131,38 +118,3 @@ def add_activity(msg, **data):
         'data': data
     })
     push_notification(ActivityModel.endpoint_name, created=1, keys=(user.get('_id'),))
-
-    def on_generic_updated(self, resource, doc, original):
-        if resource in self.exclude:
-            return
-
-        user = getattr(flask.g, 'user', None)
-        if not user:
-            return
-
-        activity = {
-            'user': user.get('_id'),
-            'resource': resource,
-            'action': 'updated',
-            'extra': doc
-        }
-        post_intern(self.endpoint_name, activity)
-
-        push_notification(self.endpoint_name, updated=1, keys=(str(user.get('_id')),))
-
-    def on_generic_deleted(self, resource, doc):
-        if resource in self.exclude:
-            return
-
-        user = getattr(flask.g, 'user', None)
-        if not user:
-            return
-
-        activity = {
-            'user': user.get('_id'),
-            'resource': resource,
-            'action': 'deleted',
-            'extra': doc
-        }
-        post_intern(self.endpoint_name, activity)
-        push_notification(self.endpoint_name, deleted=1, keys=(user.get('_id'),))
