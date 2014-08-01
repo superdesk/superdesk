@@ -15,7 +15,6 @@ define([
     function ToggleBoxDirective() {
     	return {
             templateUrl: 'scripts/superdesk/ui/views/toggle-box.html',
-            replace: true,
             transclude: true,
             scope: true,
             link: function($scope, element, attrs) {

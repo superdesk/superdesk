@@ -202,7 +202,29 @@
 				line-height: 22px;
 				color:#444;
 			}
-
+			.coverage-box {
+				position: relative;
+				.toggle-add {
+					position: absolute;
+					right: 0;
+					top:0;
+					z-index: 1;
+					border: 0;
+					background: #fff;
+					i {
+						margin-right: 5px;
+						margin-top: -3px; 
+					}
+					span {
+						display: none;
+					}
+					&:hover {
+						span {
+							display: inline-block;
+						}
+					}
+				}
+			}
 			.toggle-box {
 				h6 {
 					background: #fff;
