@@ -30,48 +30,11 @@ define([
                 template: require.toUrl('./widget-ingest.html')
             });
         }])
-        .controller('IngestController', ['$location', '$scope', 'superdesk', 'api', 'es',
-        function ($location, $scope, superdesk, api, es) {
-            var config;
-            var refresh = _.debounce(_refresh, 1000);
+        .factory('IngestWidgetSearchCriteria', ['es', function(es) {
 
-            $scope.$on(INGEST_EVENT, refresh);
-
-            $scope.$watchGroup({
-                provider: 'widget.configuration.provider',
-                size: 'widget.configuration.maxItems',
-                q: 'widget.configuration.search',
-                item: 'item.headline'
-            }, function(vals) {
-                config = $scope.widget.configuration || {};
-                refresh();
-            });
-
-            function _refresh() {
-                var params = {
-                    q: config.search || undefined,
-                    size: config.maxItems || 10
-                };
-
-                var filters = [];
-                if (config.provider && config.provider !== 'all') {
-                    filters.push({term: {provider: config.provider}});
-                }
-
-                if ($scope.item) {
-                    var itemFilters = moreLikeThis($scope.item);
-                    if (itemFilters.length) {
-                        filters.push({or: moreLikeThis($scope.item)});
-                    }
-                }
-
-                var criteria = es(params, filters);
-                criteria.sort = [{firstcreated: 'desc'}];
-                api.ingest.query({source: criteria}).then(function(items) {
-                    $scope.items = items;
-                });
-            }
-
+            /**
+             * Get filter to match items similar to given item
+             */
             function moreLikeThis(item) {
                 var filters = [];
 
@@ -83,11 +46,56 @@ define([
                     filters.push({terms: {'subject.code': _.pluck(item.subject, 'code')}});
                 }
 
-                if (item.headline) {
-                    filters.push({query: {query_string: {query: item.headline}}});
+                return filters;
+            }
+
+            return function(config) {
+                var params = {
+                    q: config.search || null,
+                    size: config.size || 10
+                };
+
+                var filters = [];
+                if (config.provider && config.provider !== 'all') {
+                    filters.push({term: {provider: config.provider}});
                 }
 
-                return filters;
+                if (config.item && !config.search) {
+                    var itemFilters = moreLikeThis(config.item);
+                    if (itemFilters.length) {
+                        filters.push({or: itemFilters});
+                    } else {
+                        params.q = config.item.headline || null;
+                    }
+                }
+
+                angular.extend(this, es(params, filters));
+                this.sort = [{firstcreated: 'desc'}];
+            };
+        }])
+        .controller('IngestController', ['$location', '$scope', 'superdesk', 'api', 'IngestWidgetSearchCriteria',
+        function ($location, $scope, superdesk, api, SearchCriteria) {
+            var config;
+            var refresh = _.debounce(_refresh, 1000);
+
+            $scope.$on(INGEST_EVENT, refresh);
+
+            $scope.$watchGroup({
+                provider: 'widget.configuration.provider',
+                size: 'widget.configuration.maxItems',
+                search: 'query || widget.configuration.search',
+                item: 'item',
+                headline: 'headline'
+            }, function(vals) {
+                config = vals || {};
+                refresh();
+            });
+
+            function _refresh() {
+                var criteria = new SearchCriteria(config);
+                api.ingest.query({source: criteria}).then(function(items) {
+                    $scope.items = items;
+                });
             }
 
             $scope.view = function(item) {
