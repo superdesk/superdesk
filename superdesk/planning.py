@@ -40,6 +40,15 @@ class PlanningModel(BaseModel):
                 'field': '_id',
                 'embeddable': True
             }
+        },
+        'coverage_set': {
+            'type': 'list',
+            'schema': {
+                'coverage': {
+                    'type': 'objectid',
+                    'data_relation': {'resource': 'coverages', 'field': '_id', 'embeddable': True}
+                }
+            }
         }
     }
     item_url = 'regex("[\w,.:-]+")'
