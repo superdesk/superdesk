@@ -3,7 +3,7 @@
         <ul class="navigation-tabs">
             <li ng-repeat="widget in widgets" ng-class="{active: widget === active}">
                 <button class="btn" type="submit" ng-click="activate(widget)">
-                    <i class="icon-{{ widget.icon }}" title="{{ widget.label }}"></i>
+                    <i class="big-icon-{{ widget.icon }}" title="{{ widget.label }}"></i>
                 </button>
             </li>
         </ul>
