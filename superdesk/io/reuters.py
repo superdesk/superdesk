@@ -109,6 +109,7 @@ class ReutersUpdateService(object):
             raise error
 
         if response.status_code == 404:
+            print(response.content)
             raise LookupError('Not found %s' % payload)
 
         try:

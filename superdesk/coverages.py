@@ -8,10 +8,6 @@ def init_app(app):
 class CoverageModel(BaseModel):
     endpoint_name = 'coverages'
     schema = {
-        'guid': {
-            'type': 'string',
-            'unique': True
-        },
         'headline': {
             'type': 'string'
         },
@@ -27,5 +23,5 @@ class CoverageModel(BaseModel):
     }
 
     datasource = {
-        'search-backend': 'elastic'
+        'search_backend': 'elastic'
     }
