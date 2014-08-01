@@ -37,7 +37,7 @@ define([
      *
      */
     ShadowDirective.$inject = ['$timeout'];
-    function ShadowDirective($timeout) {       
+    function ShadowDirective($timeout) {
         return {
             link: function(scope, element, attrs) {
 
@@ -68,5 +68,5 @@ define([
 
         .directive('sdShadow', ShadowDirective)
         .directive('sdAutoHeight', require('./autoheight-directive'))
-        .directive('sdToggleBox',ToggleBoxDirective);
+        .directive('sdToggleBox', ToggleBoxDirective);
 });

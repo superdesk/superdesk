@@ -123,8 +123,18 @@ define([
     	};
     }
 
+    function AssigneeBoxDirective() {
+        return {
+            templateUrl: 'scripts/superdesk-planning/views/assignee-box.html',
+            link: function(scope, elem) {
+                scope.open = false;
+            }
+        };
+    }
+
     return angular.module('superdesk.planning', ['superdesk.elastic'])
     	.directive('sdPreviewItem', PreviewItemDirective)
+        .directive('sdAssigneeBox', AssigneeBoxDirective)
         .service('planning', PlanningService)
         .config(['apiProvider', function(apiProvider) {
             apiProvider.api('planning', {

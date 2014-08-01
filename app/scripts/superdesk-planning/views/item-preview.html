@@ -4,7 +4,7 @@
 		<div class="dropdown more-actions">
 			<button class="dropdown-toggle"><i class="icon-dots"></i></button>
 			<ul class="dropdown-menu sf-dropdown-simple sf-right">
-				<li><button>Add coverage</button></li>
+				<li><button translate>Add coverage</button></li>
 			</ul>
 		</div>
 	</div>
@@ -19,6 +19,31 @@
 			<textarea class="description" sd-auto-height ng-model="item.description_text" placeholder="{{'Add description' | translate}}"></textarea>
 		</form>
 		<div sd-toggle-box data-title="{{ 'Coverage' | translate }}" data-open="true">
+			<button class="toggle-add"><i class="icon-plus"></i><span translate>Add new</span></button>
+
+			<div class="coverage">
+				<div class="info">
+					<div sd-assignee-box></div>
+					<div class="assignee-name">Unassigned</div>
+					<div class="coverage-type dropdown">
+						<button class="dropdown-toggle">Story<b class="caret"></b></button>
+						<ul class="dropdown-menu sf-dropdown">
+							<li><button>Story</button></li>
+							<li><button>Photo</button></li>
+							<li><button>Research</button></li>
+							<li><button>Review</button></li>
+						</ul>
+					</div>
+					<div class="dropdown more-actions">
+						<button class="dropdown-toggle"><i class="icon-dots"></i></button>
+						<ul class="dropdown-menu sf-dropdown sf-right">
+							<li><button><i class="icon-trash"></i><span translate>Remove coverage</span></button></li>
+						</ul>
+					</div>
+				</div>
+
+				<textarea class="description" sd-auto-height ng-model="coverage.description" placeholder="{{'Add description' | translate}}"></textarea>
+			</div>
         </div>
 	</div>
 </div>

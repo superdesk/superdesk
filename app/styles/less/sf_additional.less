@@ -256,6 +256,7 @@
 	margin-top:10px !important;
 	padding: 5px 7px;
 	text-align: left !important; 
+	.border-radius(5px);
 	&:before {
 		width:25px;
 		height:13px;
@@ -1295,6 +1296,26 @@
 
 .toggle-box {
   margin-bottom: 30px;
+  position: relative;
+
+  .toggle-add {
+  	position: absolute;
+  	top: 0; right: 0;
+  	border: 0;
+  	background: #fff;
+  	i {
+  		margin-right: 5px;
+  		margin-top: 2px; 
+  	}
+  	span {
+  		display: none;
+  	}
+  	&:hover {
+  		span {
+  			display: inline-block;
+  		}
+  	}
+  }
 
   > header {
 
@@ -1311,7 +1332,7 @@
     }
     .chevron {
       .transition(all 0.2s ease);
-      .rotate(0deg);
+      .rotate(90deg);
     }
     h6 {
       background: @tabpane-background;
@@ -1330,18 +1351,18 @@
 
   > .toggle-content {
   	.clearfix();
-    display: none;
     .checklist-selection li {
       font-weight: normal;
     }
   }
 
-  &.open {
+  &.hidden {
     > header .chevron {
-      .rotate(90deg);
+      .rotate(0);
     }
     > .toggle-content {
-      display: block !important;
+    	height: 0px;
+    	overflow: hidden;
     }
   }
 
