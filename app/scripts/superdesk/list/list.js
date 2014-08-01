@@ -34,6 +34,7 @@ define([
             link: function(scope, element, attrs) {
 
                 scope.$watch('items._meta', function(meta) {
+                    scope.total = 0;
                     if (meta) {
                         scope.total = meta.total;
                         scope.page = $location.search().page || 1;
