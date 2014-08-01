@@ -1,3 +1,7 @@
+from eve_elastic.elastic import ElasticCursor
+
+ETAG='_etag'
+
 class InvalidFilter(Exception):
     def __init__(self, filter, operation):
         self.filter = filter
@@ -6,11 +10,16 @@ class InvalidFilter(Exception):
     def __src__(self):
         return 'Invalid filter on %s: %s' % (self.operation, filter)
 
+class Validator():
+    def validate(self, doc):
+        raise NotImplementedError
+
 class BaseModel():
     def __init__(self, resource, data_layer, schema, validator):
         self.resource = resource
         self.data_layer = data_layer
         self.schema = schema
+        self.validator = validator
 
     def on_create(self, docs):
         '''
@@ -50,22 +59,22 @@ class BaseModel():
         @param docs: list of deleted docs
         '''
 
-    def find_one(self, filter, projection):
+    def find_one(self, filter, projection=None):
         '''
         Return one document selected based on the given filter.
         @param filter: dict
         @param projection: dict
         '''
-        return self.data_layer.find_one(filter, projection)
+        return self.data_layer.find_one(self.resource, filter, projection)
 
-    def find(self, filter, projection, options):
+    def find(self, filter, projection=None, **options):
         '''
         Return a list of documents selected based on the given filter.
         @param filter: dict
         @param projection: dict
         @param options: dict
         '''
-        return self.data_layer.find(filter, projection, options)
+        return self.data_layer.find(self.resource, filter, projection, **options)
 
     def create(self, docs):
         '''
@@ -74,7 +83,7 @@ class BaseModel():
         '''
         errors = self.validate(docs)
         self.on_create(docs)
-        res = self.data_layer.create(docs)
+        res = self.data_layer.create(self.resource, docs)
         self.on_created(docs)
         self.add_errors(res, errors)
         return res
@@ -87,12 +96,12 @@ class BaseModel():
         '''
         self.validate(doc)
         orig = self.find(filter)
-        if len(orig) > 1:
+        if orig.count() > 1:
             raise InvalidFilter(filter, 'update')
-        if len(orig) == 0:
+        if orig.count() == 0:
             return
         self.on_update(doc, orig[0])
-        res = self.data_layer.replace(filter, doc)
+        res = self.data_layer.update(self.resource, filter, doc)
         self.on_updated(doc, orig[0])
         return res
 
@@ -107,7 +116,7 @@ class BaseModel():
         if len(orig) != 1:
             raise InvalidFilter(filter, 'replace')
         self.on_update(doc, orig[0])
-        res = self.data_layer.update(filter, doc)
+        res = self.data_layer.replace(self.resource, filter, doc)
         self.on_updated(doc, orig[0])
         return res
 
@@ -120,7 +129,7 @@ class BaseModel():
         if not orig:
             return
         self.on_delete(orig)
-        res = self.data_layer.delete(filter)
+        res = self.data_layer.delete(self.resource, filter)
         self.on_deleted(orig)
         return res
 

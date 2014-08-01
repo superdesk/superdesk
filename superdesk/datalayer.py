@@ -8,6 +8,7 @@ from pyelasticsearch.client import JsonEncoder
 from bson.objectid import ObjectId
 from flask import current_app as app
 import superdesk
+from superdesk.datalayer_custom import CustomDataLayer
 
 
 class SuperdeskJsonEncoder(JsonEncoder):
@@ -28,6 +29,7 @@ class SuperdeskDataLayer(DataLayer):
     def init_app(self, app):
         self.mongo = Mongo(app)
         self.elastic = Elastic(app)
+        self.custom = CustomDataLayer(app)
         self.elastic.es.json_encoder = SuperdeskJsonEncoder
 
         if 'DEFAULT_FILE_STORAGE' in app.config:
