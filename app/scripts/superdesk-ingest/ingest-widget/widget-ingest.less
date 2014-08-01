@@ -6,10 +6,26 @@
 
 .sd-widget {
 	&.ingest {
+		.search-box {
+			.searchbar {
+				border:0 !important;
+				height: 32px;
+				background-position: 8px 8px !important;
+				border-bottom: 1px solid #e0e0e0 !important;
+			}
+			input[type="text"]:focus {
+				.box-shadow(none) !important;
+			}
+		}
 		.ingest-list {
 			margin:0;
 			list-style-type: none;
 			padding: 0;
+			position: absolute;
+			top:32px;
+			left: 0; right: 0;
+			bottom: 0;
+			overflow: auto;
 			> li {
 				cursor: pointer;
 				border-bottom: 1px solid #e5e5e5;
@@ -59,6 +75,10 @@
 						.text-normal();
 						line-height: 22px;
 					}
+				}
+				&.alert {
+					border:0;
+					.border-radius(0);
 				}
 			}
 		}

@@ -224,6 +224,7 @@
         line-height: 44px;
         font-size: 16px;
         padding: 0 10px;
+        right: 0;
       }
     }
     .widget-settings {
@@ -232,8 +233,19 @@
     .widget-content {
       padding-bottom: 65px;
       top: 44px;
+      border-top:1px solid #e0e0e0; 
     }
+  }
 
+  .sd-widget {
+    &.ingest {
+      .ingest-list > li .main-line h5 {
+          font-family: @baseFontFamily;
+          color: #000;
+          font-size: 13px;
+          line-height: 20px;
+      }
+    }
   }
 }
 
