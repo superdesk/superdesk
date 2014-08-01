@@ -1,13 +1,14 @@
-from superdesk.utc import utcnow
+from bson.objectid import ObjectId
 from flask import abort, current_app as app
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from superdesk.base_model import BaseModel
 from superdesk.upload import url_for_media
+from superdesk.utc import utcnow
+from eve.utils import config
 from .common import base_schema, item_url, update_dates_for, generate_guid, GUID_TAG, ARCHIVE_MEDIA, set_user
 from .common import on_create_media_archive, on_update_media_archive, on_delete_media_archive
-from eve.utils import config
-from bson.objectid import ObjectId
+from superdesk.activity import add_activity
 import logging
 
 logger = logging.getLogger(__name__)
@@ -58,6 +59,11 @@ class ArchiveMediaModel(BaseModel):
                 doc['mimetype'] = content_type
                 doc['filemeta'] = metadata
                 doc['creator'] = set_user(doc)
+
+                add_activity('uploaded media {{ name }}',
+                             name=doc.get('headline', doc.get('mimetype')),
+                             renditions=doc.get('renditions'))
+
             except Exception as io:
                 logger.exception(io)
                 for file_id in inserted:

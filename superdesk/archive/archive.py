@@ -7,6 +7,16 @@ from werkzeug.exceptions import NotFound
 from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
 import superdesk
+from superdesk.activity import add_activity
+
+
+def get_subject(doc1, doc2=None):
+    for key in ('headline', 'subject', 'slugline'):
+        value = doc1.get(key)
+        if not value and doc2:
+            value = doc2.get(key)
+        if value:
+            return value
 
 
 class ArchiveVersionsModel(BaseModel):
@@ -51,6 +61,9 @@ class ArchiveModel(BaseModel):
 
     def on_created(self, docs):
         on_create_media_archive()
+        for doc in docs:
+            add_activity('added new item {{ type }} about {{ subject }}',
+                         type=doc['type'], subject=get_subject(doc))
 
     def on_update(self, updates, original):
         user = get_user()
@@ -59,6 +72,10 @@ class ArchiveModel(BaseModel):
 
     def on_updated(self, updates, original):
         on_update_media_archive()
+
+        if '_version' in updates:
+            add_activity('created new version {{ version }} for item {{ type }} about {{ subject }}',
+                         version=updates['_version'], subject=get_subject(updates, original))
 
     def on_replaced(self, document, original):
         on_update_media_archive()
@@ -74,6 +91,8 @@ class ArchiveModel(BaseModel):
 
     def on_deleted(self, doc):
         on_delete_media_archive()
+        add_activity('removed item {{ type }} about {{ subject }}',
+                     type=doc['type'], subject=get_subject(doc))
 
     def replace(self, id, document, trigger_events=None):
         return self.restore_version(id, document) or \

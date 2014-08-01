@@ -1,5 +1,11 @@
-import superdesk
+import logging
+
 from flask import current_app as app
+
+import superdesk
+
+
+log = logging.getLogger(__name__)
 
 
 class BaseModel():
