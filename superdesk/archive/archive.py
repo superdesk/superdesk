@@ -74,7 +74,7 @@ class ArchiveModel(BaseModel):
         on_update_media_archive()
 
         if '_version' in updates:
-            add_activity('new version {{ version }} for item {{ type }} about {{ subject }}',
+            add_activity('created new version {{ version }} for item {{ type }} about {{ subject }}',
                          version=updates['_version'], subject=get_subject(updates, original))
 
     def on_replaced(self, document, original):
@@ -91,6 +91,8 @@ class ArchiveModel(BaseModel):
 
     def on_deleted(self, doc):
         on_delete_media_archive()
+        add_activity('removed item {{ type }} about {{ subject }}',
+                     type=doc['type'], subject=get_subject(doc))
 
     def replace(self, id, document, trigger_events=None):
         return self.restore_version(id, document) or \
