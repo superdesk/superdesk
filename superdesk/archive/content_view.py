@@ -2,9 +2,9 @@ from eve.utils import ParsedRequest
 
 import superdesk
 from superdesk.base_model import BaseModel
-from settings import URL_PREFIX
-from flask import current_app as app
-import flask
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ContentViewModel(BaseModel):
@@ -12,13 +12,11 @@ class ContentViewModel(BaseModel):
     schema = {
         'name': {
             'type': 'string',
-            'unique': True,
             'required': True,
             'minlength': 1
         },
         'description': {
             'type': 'string',
-            'required': True,
             'minlength': 1
         },
         'location': {
@@ -47,14 +45,13 @@ class ContentViewModel(BaseModel):
         # TOOD: change this after refactoring Eve to avoid direct access to request
         # object on datalayer
         parsed_request = ParsedRequest()
-        url = URL_PREFIX + '/' + location + '?source=' + filter
+        parsed_request.args = {'source': filter}
         payload = None
-        with app.test_request_context(url, method='GET'):
-            try:
-                superdesk.apps[location].get(req=parsed_request, lookup={})
-            except Exception as e:
-                payload = 'Fail to validate the filter against %s. ' % location
-                payload = payload + 'The search returns the following error: %s' % str(e)
+        try:
+            superdesk.apps[location].get(req=parsed_request, lookup={})
+        except Exception as e:
+            logger.exception(e)
+            payload = 'Fail to validate the filter against %s.' % location
         if payload:
             raise superdesk.SuperdeskError(payload=payload)
 
@@ -74,29 +71,3 @@ class ContentViewModel(BaseModel):
 
     def on_update(self, updates, original):
         self.process_and_validate(updates)
-
-
-location_content_view = {
-    'current_desk': {
-        'type': 'string'
-    },
-    'location': {
-        'type': 'string',
-        'allowed': ['ingest', 'archive'],
-        'required': True
-    }
-}
-
-
-class UserContentViewModel(BaseModel):
-    endpoint_name = 'user_content_view'
-    schema = location_content_view
-    resource_methods = ['GET']
-
-    def get(self, req, lookup):
-        # TODO: change the condition for role when the user support multiple roles
-        user = flask.g.user
-        filter = {"$or": [{"roles": user['role']}, {"roles": None}]}
-        if 'desk' in lookup and lookup['desk']:
-            filter = {"$and": [filter, {"$or": [{"desks": lookup['desk']}, {"desks": None}]}]}
-        return superdesk.apps[lookup['location']].get(req=None, lookup=filter)

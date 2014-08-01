@@ -81,24 +81,3 @@ Feature: User Role Resource
         And we have "Editor" role
         When we get "/ingest"
         Then we get response code 200
-        
-        
-  #  @auth
-  #  Scenario: Set a role to a user
-  #      
-  #      Given empty "user_roles"
-  #      
-  #      When we post to "/user_roles"
-  #          """
-  #          {"name": "Editor"}
-  #          """
-  #
-  #      When we patch "/users/test_user"
-  #          """
-  #          {"role": "#USER_ROLES_ID#"}
-  #          """
-  #           
-  #     Then we get existing resource
-  #      """
-  #      {"username": "test_user", "role": "#USER_ROLES_ID#"}
-  #      """             
