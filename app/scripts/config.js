@@ -21,7 +21,7 @@ require.config({
 
         'moment-timezone': 'bower_components/moment-timezone/moment-timezone',
 
-        'jquery-ui': 'bower_components/jquery-ui/ui/jquery-ui',
+        'jquery-ui': 'bower_components/jquery-ui/jquery-ui',
 
         'bootstrap-daterange': 'bower_components/bootstrap-daterangepicker/daterangepicker',
         'raven-js': 'bower_components/raven-js/dist/raven'
