@@ -67,6 +67,9 @@ class ArchiveModel(BaseModel):
 
     def on_update(self, updates, original):
         user = get_user()
+        lock_user = original.get('lock_user', None)
+        if lock_user and lock_user != user['_id']:
+            raise superdesk.SuperdeskError(payload='The item was locked by another user')
         updates['versioncreated'] = utcnow()
         updates['creator'] = str(user.get('_id'))
 

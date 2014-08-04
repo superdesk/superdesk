@@ -1,15 +1,24 @@
 from models.io.data_layer import DataLayer
-from eve.utils import ParsedRequest
 from flask import current_app as app
+from eve.utils import ParsedRequest
 from eve import ID_FIELD
+import json
 
 
 class Eve(DataLayer):
     def find_one(self, resource, filter, projection):
-        return app.data.find_one(resource, ParsedRequest(), **filter)
+        req = ParsedRequest()
+        req.args = {}
+        req.where = json.dumps(filter)
+        req.projection = projection
+        return app.data.find_one(resource, req)
 
     def find(self, resource, filter, projection, **options):
-        return app.data.find(resource, ParsedRequest(), filter, **options)
+        req = ParsedRequest()
+        req.args = {}
+        req.where = json.dumps(filter)
+        req.projection = projection
+        return app.data.find(resource, req, filter)
 
     def create(self, resource, docs):
         return app.data.insert(resource, docs)

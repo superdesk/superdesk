@@ -2,8 +2,7 @@ from superdesk.base_model import BaseModel
 from components.item_lock import ItemLock
 from models.io.eve import Eve
 from flask import request
-from superdesk import SuperdeskError
-import flask
+from superdesk.archive.common import get_user
 
 
 class ArchiveLockModel(BaseModel):
@@ -16,9 +15,7 @@ class ArchiveLockModel(BaseModel):
     resource_methods = ['GET', 'POST']
 
     def on_create(self, docs):
-        user = getattr(flask.g, 'user', None)
-        if not user:
-            raise SuperdeskError('User must me authenticated to perform an archive lock.')
+        user = get_user()
         c = ItemLock(Eve())
         docs.clear()
         docs.append(c.lock({'_id': request.view_args['item_id']}, user['_id'], None))

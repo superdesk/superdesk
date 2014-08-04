@@ -1,5 +1,6 @@
 from builtins import NotImplementedError
 
+
 class DataLayer():
     def find_one(self, resource, filter, projection, options):
         raise NotImplementedError

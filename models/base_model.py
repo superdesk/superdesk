@@ -1,6 +1,5 @@
-from eve_elastic.elastic import ElasticCursor
+ETAG = '_etag'
 
-ETAG='_etag'
 
 class InvalidFilter(Exception):
     def __init__(self, filter, operation):
@@ -10,9 +9,11 @@ class InvalidFilter(Exception):
     def __src__(self):
         return 'Invalid filter on %s: %s' % (self.operation, filter)
 
+
 class Validator():
     def validate(self, doc):
         raise NotImplementedError
+
 
 class BaseModel():
     def __init__(self, resource, data_layer, schema, validator):
