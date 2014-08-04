@@ -272,7 +272,8 @@ def step_impl_when_patch_url(context, url):
     res = get_res(url, context)
     href = get_self_href(res, context)
     headers = if_match(context, res.get('_etag'))
-    context.response = context.client.patch(href, data=context.text, headers=headers)
+    data = apply_placeholders(context, context.text)
+    context.response = context.client.patch(href, data=data, headers=headers)
     assert_ok(context.response)
 
 
