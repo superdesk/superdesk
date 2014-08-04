@@ -16,9 +16,10 @@ function CommentsService(api) {
             embedded: {user: 1}
         };
 
-        return api.item_comments.query(criteria).then(function(result) {
-            this.comments = result._items;
-        }.bind(this));
+        return api.item_comments.query(criteria)
+            .then(angular.bind(this, function(result) {
+                this.comments = result._items;
+            }));
     };
 
     this.save = function(comment) {
