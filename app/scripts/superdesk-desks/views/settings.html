@@ -91,14 +91,14 @@
 
 		<div class="modal-body modal-body-min">
 			<form name="deskForm">
-				<div class="popup-subnav subnav">
-					<ul class="nav nav-pills pull-left">
-						<li class="active"><a href="" translate>General</a></li>
-						<li ng-show><a href="" translate>Desk members</a></li>
-						<li ng-show><a href="" translate>Desk boards</a></li>
-					</ul>
+				<div class="popup-subnav">
+					<ul class="nav nav-tabs">
+        				<li class="active"><button translate>General</button></li>
+        			</ul>
 				</div>
-				<input type="text" placeholder="{{'Enter Desk name' | translate}}" class="fullwidth-input" ng-model="editDesk.name" required> 
+				<div class="modal-screen">
+					<input type="text" placeholder="{{'Enter Desk name' | translate}}" class="fullwidth-input" ng-model="editDesk.name" required> 
+				</div>
 			</form>
 		</div>
 

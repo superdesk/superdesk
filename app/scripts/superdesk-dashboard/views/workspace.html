@@ -19,8 +19,8 @@
 <!-- widgetbox -->
 <div ng-if="flags.add">
 	<div>
-	    <div class="backdrop"></div>
-	    <div class="widget-select modal">
+	    <div class="modal-backdrop fade in"></div>
+	    <div class="widget-select modal fade in">
 	        <div class="modal-dialog">
 	            <div class="modal-content">
 	                <div class="modal-header">
@@ -29,7 +29,7 @@
 	                </div>
 	                <div ng-if="!selectedWidget">
 	                    <div class="modal-body">
-	                        <div class="popup-subnav subnav">
+	                        <div class="popup-subnav">
 	                            <label translate>Category: </label>
 	                            <div class="dropdown">
 	                                <a href="#" class="dropdown-toggle">All <b class="caret"></b></a>
@@ -43,16 +43,18 @@
 	                                </ul>
 	                            </div>
 	                        </div>
-	                        <ul class="widget-list">
-	                            <li ng-repeat="widget in availableWidgets" ng-click="selectWidget(widget)">
-	                                <div class="thumbnail">
-	                                    <img ng-src="{{ widget.thumbnail }}">
-	                                </div>
-	                                <div class="title">
-	                                    {{ widget.label }}
-	                                </div>
-	                            </li>
-	                        </ul>
+	                        <div class="modal-screen">
+	                        	<ul class="widget-list">
+		                            <li ng-repeat="widget in availableWidgets" ng-click="selectWidget(widget)">
+		                                <div class="thumbnail">
+		                                    <img ng-src="{{ widget.thumbnail }}">
+		                                </div>
+		                                <div class="title">
+		                                    {{ widget.label }}
+		                                </div>
+		                            </li>
+		                        </ul>
+	                        </div>  
 	                    </div>
 
 	                    <div class="modal-footer">

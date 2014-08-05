@@ -1,13 +1,23 @@
 <div class="subnav subnav-fixed">
 	
 	<div class="button-stack right-stack">
-        <button class="navbtn" href="">
-            <i class="svg-icon-add"></i>
+		<div class="navbtn dropdown views-settings">
+    		<button class="dropdown-toggle condensed"><i class="svg-icon-settings"></i></button>
+			<ul class="dropdown-menu sf-dropdown-simple sf-right">
+				<li><span>View 1<i class="icon-pencil"></i></span></li>
+				<li><span>View 2<i class="icon-pencil"></i></span></li>
+				<li><span>View 3<i class="icon-pencil"></i></span></li>
+				<li><button class="full" ng-click="edit()"><i class="svg-icon-add"></i><span translate>Create new view</span></button></li>
+			</ul>
+    	</div>
+
+        <button class="navbtn navbtn-info">
+            <i class="svg-icon-add inverse"></i>
         </button>
-        <button class="navbtn" href="">
+        <button class="navbtn">
             <span class="title">Create highlight</span>
         </button>
-        <button class="navbtn navbtn-info disabled" href="">
+        <button class="navbtn">
         	<i class="arrow-icon-right"></i>
         </button>
     </div>
@@ -49,3 +59,27 @@
 		</div>
 	</div>
 </section>
+<div sd-modal-view data-model="view" class="add-view-modal responsive-popup">
+    <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+        <h3 translate ng-show="provider._id">Edit View {{ origView.name }}</h3>
+        <h3 translate ng-hide="provider._id">Add New View</h3>
+    </div>
+
+    <div class="modal-body">
+        <form name="editForm" ng-submit="save()" ng-init="general=true">
+        	<div class="popup-subnav">
+        		<ul class="nav nav-tabs">
+        			<li ng-class="{'active': general}"><button ng-click="general=true">General</button></li>
+        			<li ng-class="{'active': !general}"><button ng-click="general=false">Filters</button> </li>
+        		</ul>     
+	        </div>
+	        <div class="modal-screen" ng-if="general">General content</div>
+	        <div class="modal-screen" ng-if="!general">Filters content</div>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
+        <button class="btn btn-primary" ng-click="save()" translate>Save</button>
+    </div>
+</div>
