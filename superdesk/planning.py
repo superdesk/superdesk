@@ -40,21 +40,10 @@ class PlanningModel(BaseModel):
                 'field': '_id',
                 'embeddable': True
             }
-        },
-        'coverage_set': {
-            'type': 'list',
-            'schema': {
-                'coverage': {
-                    'type': 'objectid',
-                    'data_relation': {'resource': 'coverages', 'field': '_id', 'embeddable': True}
-                }
-            }
         }
     }
     item_url = 'regex("[\w,.:-]+")'
-    datasource = {
-        'search_backend': 'elastic'
-    }
+    datasource = {'search_backend': 'elastic'}
     resource_methods = ['GET', 'POST']
 
     def on_create(self, docs):
