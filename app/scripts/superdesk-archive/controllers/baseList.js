@@ -5,6 +5,7 @@ define(['lodash'], function(_) {
     function BaseListController($scope, $location, superdesk, api, es) {
         var self = this;
 
+        var lastQueryParams = {};
         var savedView = localStorage.getItem('archive:view');
         $scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
         $scope.selected = {};
@@ -79,9 +80,13 @@ define(['lodash'], function(_) {
         };
 
         this.getQuery = function(params) {
+            if (!_.isEqual(_.omit(params, 'page'), _.omit(lastQueryParams, 'page'))) {
+                $location.search('page', null);
+            }
             var filters = this.buildFilters(params);
             var query = es(params, filters);
             query.sort = [{versioncreated: 'desc'}];
+            lastQueryParams = params;
             return query;
         };
 
