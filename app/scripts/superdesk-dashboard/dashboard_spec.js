@@ -1,7 +1,7 @@
 define(['./module', 'angular'], function(DashboardModule, angular) {
     'use strict';
 
-    var USER_URL = 'user_url/1';
+    var USER_URL = '/users/1';
 
     describe('dashboard', function() {
 
@@ -24,6 +24,18 @@ define(['./module', 'angular'], function(DashboardModule, angular) {
                 };
             });
 
+            $provide.service('api', function($q) {
+                this.users = {
+                    widgets: {},
+                    getByUrl: function(url) {
+                        return $q.when(this.widgets);
+                    },
+                    save: function(dest, diff) {
+                        return;
+                    }
+                };
+            });
+
         }));
 
         beforeEach(module('superdesk.dashboard'));
@@ -38,11 +50,11 @@ define(['./module', 'angular'], function(DashboardModule, angular) {
 
         function getScope(widgets) {
             var scope;
-            inject(function(superdesk, $controller, $rootScope, $httpBackend) {
+            inject(function(superdesk, api, $controller, $rootScope) {
                 scope = $rootScope.$new(true);
-                $httpBackend.expectGET(USER_URL).respond(widgets ? {workspace: {widgets: widgets}} : {});
+                api.users.widgets = widgets ? {workspace: {widgets: widgets}} : {};
                 $controller(superdesk.activity['/workspace'].controller, {$scope: scope});
-                $httpBackend.flush();
+                $rootScope.$apply();
             });
 
             return scope;
@@ -54,17 +66,17 @@ define(['./module', 'angular'], function(DashboardModule, angular) {
             expect(scope.availableWidgets.length).toBe(1);
         }));
 
-        it('can add widget to user workspace', inject(function($httpBackend) {
+        it('can add widget to user workspace', inject(function(api, $q, $rootScope) {
             var scope = getScope();
 
-            $httpBackend.expectPATCH(USER_URL, {workspace: {widgets: [getWidget()]}}).respond({});
+            spyOn(api.users, 'save').andReturn($q.when());
 
             scope.addWidget(scope.availableWidgets[0]);
-
-            $httpBackend.flush();
+            $rootScope.$apply();
 
             expect(scope.userWidgets.length).toBe(1);
             expect(scope.availableWidgets.length).toBe(1);
+            expect(api.users.save).toHaveBeenCalled();
         }));
 
         it('can load stored widgets', inject(function() {

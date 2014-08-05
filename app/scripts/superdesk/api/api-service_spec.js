@@ -8,7 +8,9 @@ define([
         return {_items: data};
     }
 
-    var USERS_URL = 'http://users_url',
+    var USER_URL = 'http://localhost/users/1',
+        USER_PATH = '/users/1',
+        USERS_URL = 'http://localhost/users',
         SERVER_URL = 'http://localhost';
 
     var HTTP_API = {
@@ -46,8 +48,7 @@ define([
             expect(api).toBeDefined();
         }));
 
-        it('can register apis', inject(function(api) {
-            expect(api.http).toBeDefined();
+        it('can register apis', inject(function(api) {expect(api.http).toBeDefined();
         }));
 
         it('can override backend methods', inject(function(api, $rootScope) {
@@ -165,10 +166,10 @@ define([
 
         it('can update', inject(function(api, $httpBackend) {
 
-            var userData = {_links: {self: {href: '/user_href'}}, _id: 2, username: 'test', Avatar: {href: 'test'}},
+            var userData = {_links: {self: {href: USER_PATH}}, _id: 2, username: 'test', Avatar: {href: 'test'}},
                 user;
 
-            $httpBackend.expectPATCH(userData._links.self.href, {username: 'test', Avatar: {href: 'test'}}).respond(200);
+            $httpBackend.expectPATCH(USER_URL, {username: 'test', Avatar: {href: 'test'}}).respond(200);
 
             api.http.save(userData).then(function(_user) {
                 user = _user;
@@ -177,14 +178,14 @@ define([
             $httpBackend.flush();
 
             expect(user.username).toBe('test');
-            expect(user._links.self.href).toBe('/user_href');
+            expect(user._links.self.href).toBe(USER_PATH);
         }));
 
         it('can update with diff', inject(function(api, $httpBackend) {
-            var userData = {_links: {self: {href: '/user_href'}}, _id: 2, username: 'test'},
+            var userData = {_links: {self: {href: USER_PATH}}, _id: 2, username: 'test'},
                 diff = {Active: false};
 
-            $httpBackend.expectPATCH(userData._links.self.href, diff).respond({});
+            $httpBackend.expectPATCH(USER_URL, diff).respond({});
 
             api.http.save(userData, diff);
 
@@ -193,10 +194,10 @@ define([
 
         it('can delete', inject(function(api, $httpBackend) {
 
-            var user = {_links: {self: {href: '/user_href'}}},
+            var user = {_links: {self: {href: USER_PATH}}},
                 then = jasmine.createSpy('then');
 
-            $httpBackend.expectDELETE(user._links.self.href).respond(204);
+            $httpBackend.expectDELETE(USER_URL).respond(204);
 
             api.http.remove(user).then(then);
 
@@ -207,10 +208,10 @@ define([
 
         it('handles delete on deleted resource as success', inject(function(api, $httpBackend) {
 
-            var user = {_links: {self: {href: '/user_href'}}},
+            var user = {_links: {self: {href: USER_PATH}}},
                 then = jasmine.createSpy('then');
 
-            $httpBackend.expectDELETE(user._links.self.href).respond(404);
+            $httpBackend.expectDELETE(USER_URL).respond(404);
 
             api.http.remove(user).then(then);
 
@@ -220,11 +221,11 @@ define([
         }));
 
         it('rejects other delete errors as errors', inject(function(api, $httpBackend) {
-            var user = {_links: {self: {href: '/user_href'}}},
+            var user = {_links: {self: {href: USER_PATH}}},
                 success = jasmine.createSpy('success'),
                 error = jasmine.createSpy('error');
 
-            $httpBackend.expectDELETE(user._links.self.href).respond(405);
+            $httpBackend.expectDELETE(USER_URL).respond(405);
 
             api.http.remove(user).then(success, error);
 
@@ -237,9 +238,9 @@ define([
         it('can get item by url', inject(function(api, $httpBackend) {
             var user;
 
-            $httpBackend.expectGET('/user_url').respond({username: 'foo'});
+            $httpBackend.expectGET(USER_URL).respond({username: 'foo'});
 
-            api.http.getByUrl('/user_url').then(function(_user) {
+            api.http.getByUrl(USER_PATH).then(function(_user) {
                 user = _user;
             });
 
@@ -270,20 +271,20 @@ define([
 
             var data = {username: 'foo'};
 
-            $httpBackend.expectPUT('/user_url', data).respond({});
+            $httpBackend.expectPUT(USER_URL, data).respond({});
 
-            api.http.replace('/user_url', data);
+            api.http.replace(USER_PATH, data);
 
             $httpBackend.flush();
         }));
 
         it('rejects non success responses', inject(function(api, $httpBackend) {
-            $httpBackend.expectGET('/some_url').respond(400);
+            $httpBackend.expectGET(USER_URL).respond(400);
 
             var success = jasmine.createSpy('success'),
                 error = jasmine.createSpy('error');
 
-            api.http.getByUrl('/some_url').then(success, error);
+            api.http.getByUrl(USER_PATH).then(success, error);
 
             $httpBackend.flush();
 

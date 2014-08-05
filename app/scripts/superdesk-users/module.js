@@ -100,6 +100,7 @@ define([
                     templateUrl: require.toUrl('./views/edit.html'),
                     resolve: {
                         user: ['session', 'api', function(session, api) {
+                            console.log(session.identity._links);
                             return api.users.getByUrl(session.identity._links.self.href);
                         }]
                     }

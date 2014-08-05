@@ -4,7 +4,11 @@ define([], function() {
     URLResolver.$inject = ['$http', '$q', 'config'];
     function URLResolver($http, $q, config) {
 
-        var links;
+        var links, baseUrl = config.server.url;
+
+        function basejoin(path) {
+            return baseUrl + path;
+        }
 
         /**
          * Get url for given resource
@@ -25,7 +29,7 @@ define([], function() {
          * @returns {String}
          */
         this.item = function(item) {
-            return item; // noop - items should have full urls now
+            return basejoin(item);
         };
 
         /**
@@ -34,20 +38,19 @@ define([], function() {
          * @returns {Promise}
          */
         function getResourceLinks() {
-
             if (links != null) {
                 return $q.when(links);
             }
 
             return $http({
                 method: 'GET',
-                url: config.server.url
+                url: baseUrl
             }).then(function(response) {
                 links = {};
 
                 if (response.status === 200) {
                     _.each(response.data._links.child, function(link) {
-                        links[link.title] = link.href;
+                        links[link.title] = basejoin(link.href);
                     });
                 } else {
                     $q.reject(response);
