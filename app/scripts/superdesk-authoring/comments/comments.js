@@ -3,6 +3,8 @@
 
 'use strict';
 
+var ENTER = 13;
+
 CommentsService.$inject = ['api'];
 function CommentsService(api) {
 
@@ -29,37 +31,40 @@ function CommentsService(api) {
 
 CommentsCtrl.$inject = ['$scope', 'commentsService'];
 function CommentsCtrl($scope, commentsService) {
+
     $scope.text = null;
-
-    $scope.save = function() {
-        commentsService.save({
-            text: $scope.text,
-            item: $scope.item._id
-        }).then(function() {
-            $scope.text = null;
-        }).then(reload);
-    };
-
     $scope.$watch('item._id', reload);
     $scope.$on('changes in archive_comment', reload);
+
+    $scope.saveOnEnter = function($event) {
+        if ($event.keyCode !== ENTER || $event.shiftKey) {
+            return;
+        }
+
+        save();
+        return false;
+    };
+
+    function save() {
+        var text = $scope.text || '';
+        if (!text.length) {
+            return;
+        }
+
+        $scope.text = '';
+        $scope.flags = {saving: true};
+
+        commentsService.save({
+            text: text,
+            item: $scope.item._id
+        }).then(reload);
+    }
 
     function reload() {
         commentsService.fetch($scope.item._id).then(function() {
             $scope.comments = commentsService.comments;
         });
     }
-}
-
-function EnterKeyDirective() {
-    return {
-        link: function(scope, element) {
-            element.bind("keydown keypress", function(event) {
-                if(event.which === 13) {
-                    scope.save();
-                }
-            });
-        }
-    };
 }
 
 angular.module('superdesk.authoring.comments', ['superdesk.authoring.widgets'])
@@ -80,7 +85,6 @@ angular.module('superdesk.authoring.comments', ['superdesk.authoring.widgets'])
     }])
 
     .controller('CommentsWidgetCtrl', CommentsCtrl)
-    .service('commentsService', CommentsService)
-    .directive('sdEnterKey', EnterKeyDirective);
+    .service('commentsService', CommentsService);
 
 })();

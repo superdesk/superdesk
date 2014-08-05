@@ -14,8 +14,8 @@
         <li class="alert alert-info" ng-show="comments === null" translate>Loading..</li>
     </ul>
     <div class="add-comment">
-        <form name="addComment">
-            <textarea type="text" class="new-comment" sd-auto-height sd-enter-key ng-model="text"></textarea>
+        <form name="commentsForm">
+            <textarea class="new-comment" sd-auto-height ng-model="text" ng-keyup="saveOnEnter($event)"></textarea>
         </form>
     </div>
 </div>
