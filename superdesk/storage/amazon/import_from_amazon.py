@@ -15,23 +15,32 @@ class ImportFromAmazonCommand(superdesk.Command):
     Import content from Amazon S3 into content archive.
     """
 
-    def run(self):
-        marker = process_bucket()
+    max_bucket_size = 50
+
+    option_list = (
+        superdesk.Option('--bucket-size', '-s', dest='bucket_size'),
+    )
+
+    def run(self, bucket_size=None):
+        bucket_size = int(bucket_size) or self.max_bucket_size
+        marker = process_bucket(bucket_size=bucket_size)
         while marker:
-            marker = process_bucket(marker)
+            marker = process_bucket(bucket_size, marker)
         print('Import completed')
 
 
-def process_bucket(marker=None):
+def process_bucket(bucket_size, marker=None):
     print('Retrieving bucket with marker: ', marker)
     rv = app.media.get_bucket_objects(marker=marker)
     keys, marker = extract_keys(rv)
     if not keys:
         return marker
-    res = group(import_file.si(key=key) for key in keys)()
-    rv = res.get()
-    for value in rv:
-        print(value['status'])
+    paged_keys = [keys[i:i + bucket_size] for i in range(0, len(keys), bucket_size)]
+    for key_group in paged_keys:
+        res = group(import_file.si(key=key) for key in key_group)()
+        rv = res.get()
+        for value in rv:
+            print(value['status'])
     return marker
 
 
@@ -39,14 +48,15 @@ def process_bucket(marker=None):
 def import_file(key):
     try:
         if check_if_file_already_imported(key):
-            return {'status': 'File %s already imported' % key}
+            msg = 'File %s already imported' % key
+            return {'status': msg}
 
         file = retrieve_file(key)
         if not file:
             return {'status': 'Failed to retrieve file: ' + key}
 
         data = [{'media': key, 'media_fetched': file, '_import': True}]
-        id = app.data.insert('archive_media', data)
+        id = superdesk.apps['archive_media'].create(data, True)
         return {'status': 'Imported file %s to archive media with id= %s' % (key, id)}
     except Exception as ex:
         return {'status': ex}
@@ -80,11 +90,10 @@ def extract_keys(xml_content):
 
 def check_if_file_already_imported(key):
     query_filter = get_query_for_already_imported(key)
-    with app.test_request_context('?filter=' + query_filter):
-        req = ParsedRequest()
-        res = app.data.find('archive_media', req, None).count()
-        return res > 0
-    return False
+    req = ParsedRequest()
+    req.args = {'filter': query_filter}
+    res = app.data.find('archive', req, None).count()
+    return res > 0
 
 
 def get_query_for_already_imported(file_id):

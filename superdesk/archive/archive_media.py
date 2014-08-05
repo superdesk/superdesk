@@ -58,7 +58,8 @@ class ArchiveMediaModel(BaseModel):
                 doc['renditions'] = renditions
                 doc['mimetype'] = content_type
                 doc['filemeta'] = metadata
-                doc['creator'] = set_user(doc)
+                if not doc.get('_import', None):
+                    doc['creator'] = set_user(doc)
 
                 add_activity('uploaded media {{ name }}',
                              name=doc.get('headline', doc.get('mimetype')),

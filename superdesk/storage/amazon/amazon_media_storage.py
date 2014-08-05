@@ -21,10 +21,6 @@ class AmazonObjectWrapper(BytesIO):
         self.name = name
         self.metadata = metadata
 
-    def __repr__(self):
-        return ('[AmazonObjectWrapper name=%s content_type=%s length=%s metadata=%s]' % self.name,
-                self.content_type, self.length, self.metadata)
-
 
 class AmazonMediaStorage(MediaStorage):
 
@@ -93,6 +89,8 @@ class AmazonMediaStorage(MediaStorage):
             raise SuperdeskError(payload=payload)
 
     def transform_metadata_to_amazon_format(self, metadata):
+        if not metadata:
+            return {}
         file_metadata = {}
         for key, value in metadata.items():
             new_key = self.user_metadata_header + key

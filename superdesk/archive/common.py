@@ -58,10 +58,10 @@ def generate_guid(**hints):
 def get_user():
     user = getattr(flask.g, 'user') if hasattr(flask.g, 'user') else {}
     if not user:
-            if app.debug:
-                user = user or {}
-            else:
-                raise superdesk.SuperdeskError(payload='Invalid user.')
+        if app.debug:
+            user = user or {}
+        else:
+            raise superdesk.SuperdeskError(payload='Invalid user.')
     return user
 
 

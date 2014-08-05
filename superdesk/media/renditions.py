@@ -4,6 +4,7 @@ from io import BytesIO
 import logging
 from flask import current_app as app
 from werkzeug.datastructures import FileStorage
+from .media_operations import process_file_from_stream
 
 logger = logging.getLogger(__name__)
 
@@ -28,8 +29,10 @@ def generate_renditions(original, media_id, inserted, file_type, content_type, r
         size = (rsize['width'], rsize['height'])
         original.seek(0)
         resized, width, height = resize_image(original, ext, size)
-        resized = FileStorage(stream=resized, content_type='image/%s' % ext)
-        id = app.media.put(resized)
+        rend_content_type = 'image/%s' % ext
+        resized = FileStorage(stream=resized, content_type=rend_content_type)
+        file_name, out, rend_content_type, metadata = process_file_from_stream(resized, content_type=rend_content_type)
+        id = app.media.put(content=resized, filename=file_name, content_type=rend_content_type, metadata=metadata)
         inserted.append(id)
         renditions[rendition] = {'href': url_for_media(id), 'media': id,
                                  'mimetype': 'image/%s' % ext, 'width': width, 'height': height}
