@@ -19,13 +19,10 @@
 		</div>
 		<div class="dropdown-content sf-dropdown" ng-show="open">
 			<div class="dropdown desk-select">
-				<button class="btn dropdown-toggle">Select desk <b class="caret"></b></button>
+				<button class="btn dropdown-toggle">{{'Select desk'|translate}} <b class="caret"></b></button>
 				<div class="dropdown-menu">
 					<ul>
-						<li>News Desk</li>
-						<li>Photo Desk</li>
-						<li>Culture Desk</li>
-						<li>Sport Desk</li>
+						<li ng-repeat="desk in desks._items" ng-click="">{{desk.name}}</li>
 					</ul>
 				</div>
 			</div>
@@ -35,28 +32,15 @@
 			</form>
 			<div class="search-result">
 				<ul>
-					<li>
-						<div class="avatar"></div>
+					<li ng-repeat="user in (deskMembers[desk._id] || users._items) | filter:search" ng-click="selectUser(user)">
+						<div class="avatar"><!--<figure><img sd-user-picture data-src="user.picture_url"></figure>--></div>
 						<button class="remove"><i class="icon-close-small"></i></button>
-						<div class="name">Vladimir stefanovic</div>
+						<div class="name">{{user.display_name}}</div>
 					</li>
-					<li>
-						<div class="avatar"></div>
-						<div class="name">Nikola Nikolic</div>
-					</li>
-					<li>
-						<div class="avatar"></div>
-						<div class="name">Jon Doe</div>
-					</li>
-					<li>
-						<div class="avatar"></div>
-						<div class="name">Petr Jasek</div>
-					</li>
-
 				</ul>
 			</div>
 			<div class="footer">
-				<button class="btn btn-info pull-right" ng-click="open = false">Assign</button>
+				<!--<button class="btn btn-info pull-right" ng-click="open = false">Assign</button>-->
 				<button class="btn pull-right" ng-click="open = false">Cancel</button>
 			</div>
 		</div>
