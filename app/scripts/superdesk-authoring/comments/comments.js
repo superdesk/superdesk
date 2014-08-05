@@ -50,6 +50,18 @@ function CommentsCtrl($scope, commentsService) {
     }
 }
 
+function EnterKeyDirective() {
+    return {
+        link: function(scope, element) {
+            element.bind("keydown keypress", function(event) {
+                if(event.which === 13) {
+                    scope.save();
+                }
+            });
+        }
+    };
+}
+
 angular.module('superdesk.authoring.comments', ['superdesk.authoring.widgets'])
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
@@ -68,6 +80,7 @@ angular.module('superdesk.authoring.comments', ['superdesk.authoring.widgets'])
     }])
 
     .controller('CommentsWidgetCtrl', CommentsCtrl)
-    .service('commentsService', CommentsService);
+    .service('commentsService', CommentsService)
+    .directive('sdEnterKey', EnterKeyDirective);
 
 })();

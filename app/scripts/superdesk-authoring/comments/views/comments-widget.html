@@ -1,18 +1,21 @@
 <div class="notification-list-box" ng-controller="CommentsWidgetCtrl">
-    <ul class="notification-list">
-        <li ng-repeat="comment in comments" style="color:#fff">
-            <figure class="notification-avatar" style="width:50px;height:50px;float:right;">
-                <img sd-user-picture data-src="comment.user.picture_url" style="max-width:50px;max-height:50px">
+    <ul class="notification-list white">
+        <li ng-repeat="comment in comments">
+            <figure class="avatar-holder">
+                <img sd-user-picture data-src="comment.user.picture_url">
             </figure>
-            <p class="notification-text"><b>{{ comment.user.display_name }}</b>: {{ comment.text}}</p>
-            <span class="notification-info" sd-reldate ng-model="comment._created"></span>
+            <div class="content">
+                <p class="text"><b>{{ comment.user.display_name }}</b>: {{ comment.text}}</p>
+                <span class="date" sd-reldate ng-model="comment._created"></span>
+            </div>
         </li>
 
         <li class="alert alert-info" ng-show="comments.length === 0" translate>No comments so far. Be the first..</li>
         <li class="alert alert-info" ng-show="comments === null" translate>Loading..</li>
     </ul>
-
-    <form name="addComment" ng-submit="save()">
-        <input type="text" ng-model="text" />
-    </form>
+    <div class="add-comment">
+        <form name="addComment">
+            <textarea type="text" class="new-comment" sd-auto-height sd-enter-key ng-model="text"></textarea>
+        </form>
+    </div>
 </div>
