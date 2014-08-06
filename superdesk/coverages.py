@@ -1,4 +1,5 @@
 from superdesk.base_model import BaseModel
+from superdesk.notification import push_notification
 
 
 def init_app(app):
@@ -24,3 +25,12 @@ class CoverageModel(BaseModel):
         'assigned_desk': rel('desks', True),
         'planning_item': {'type': 'string'},
     }
+
+    def on_create_coverage(self, docs):
+        push_notification('coverages', created=1)
+
+    def on_update_coverage(self, updates, original):
+        push_notification('coverages', updated=1)
+
+    def on_delete_coverage(self, doc):
+        push_notification('coverages', deleted=1)
