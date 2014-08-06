@@ -1,8 +1,11 @@
 from eve.utils import ParsedRequest
 
 import superdesk
+import json
 from superdesk.base_model import BaseModel
 import logging
+from flask import current_app as app
+import flask
 
 logger = logging.getLogger(__name__)
 
@@ -15,37 +18,39 @@ class ContentViewModel(BaseModel):
             'required': True,
             'minlength': 1
         },
+        'location': {
+            'type': 'string',
+            'allowed': ['ingest', 'archive'],
+            'default': 'archive'
+        },
         'description': {
             'type': 'string',
             'minlength': 1
         },
-        'location': {
-            'type': 'string',
-            'allowed': ['ingest', 'archive'],
-            'required': True
-        },
-        'desks': {
-            'type': 'list',
-            'schema': {
-                'type': 'string'
+        'desk': {
+            'type': 'objectid',
+            'data_relation': {
+                'resource': 'desks',
+                'field': '_id',
+                'embeddable': True
             }
         },
-        'roles': {
-            'type': 'list',
-            'schema': {
-                'type': 'string'
+        'user': {
+            'type': 'objectid',
+            'data_relation': {
+                'resource': 'users',
+                'field': '_id',
+                'embeddable': True
             }
         },
         'filter': {
-            'type': 'string'
+            'type': 'dict'
         }
     }
 
     def check_filter(self, filter, location):
-        # TOOD: change this after refactoring Eve to avoid direct access to request
-        # object on datalayer
         parsed_request = ParsedRequest()
-        parsed_request.args = {'source': filter}
+        parsed_request.args = {'source': json.dumps({'query': {'filtered': {'filter': filter}}})}
         payload = None
         try:
             superdesk.apps[location].get(req=parsed_request, lookup={})
@@ -56,17 +61,22 @@ class ContentViewModel(BaseModel):
             raise superdesk.SuperdeskError(payload=payload)
 
     def process_and_validate(self, doc):
-        # if desks/roles list is empty set it as None in order filter by desks/roles more easily
         if 'desks' in doc and not doc['desks']:
             del doc['desks']
-        if 'roles' in doc and not doc['roles']:
-            del doc['roles']
 
         if 'filter' in doc and doc['filter']:
             self.check_filter(doc['filter'], doc['location'])
 
     def on_create(self, docs):
+        user = getattr(flask.g, 'user') if hasattr(flask.g, 'user') else {}
+        if not user:
+            if app.debug:
+                user = {}
+            else:
+                raise superdesk.SuperdeskError(payload='Invalid user.')
+
         for doc in docs:
+            doc.setdefault('user', user)
             self.process_and_validate(doc)
 
     def on_update(self, updates, original):
