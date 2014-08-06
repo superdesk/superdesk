@@ -68,17 +68,19 @@
 
 	                <div class="widget-detail" ng-if="selectedWidget">
 	                    <div class="modal-body">
-	                        <div class="popup-subnav subnav">
+	                        <div class="popup-subnav">
 	                            <a href="" class="backlink" ng-click="selectWidget()" translate>Back to overview</a>
 	                        </div>
-	                        <div class="thumbnail-box">
-	                            <img ng-src="{{ selectedWidget.thumbnail }}">
-	                        </div>
-	                        <div class="title">
-	                            {{ selectedWidget.label }}
-	                        </div>
-	                        <div class="description">
-	                            {{ selectedWidget.description }}
+	                        <div class="modal-screen">
+	                        	<div class="thumbnail-box">
+		                            <img ng-src="{{ selectedWidget.thumbnail }}">
+		                        </div>
+		                        <div class="title">
+		                            {{ selectedWidget.label }}
+		                        </div>
+		                        <div class="description">
+		                            {{ selectedWidget.description }}
+		                        </div>
 	                        </div>
 	                    </div>
 

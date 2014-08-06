@@ -97,7 +97,12 @@
         			</ul>
 				</div>
 				<div class="modal-screen">
-					<input type="text" placeholder="{{'Enter Desk name' | translate}}" class="fullwidth-input" ng-model="editDesk.name" required> 
+					<fieldset>
+						<div class="field">
+							<label translate>Desk name</label>
+							<input type="text" class="fullwidth-input" ng-model="editDesk.name" required> 
+						</div>
+					</fieldset>
 				</div>
 			</form>
 		</div>
