@@ -9,9 +9,6 @@
 @main-article-padding-side : 60px;
 
 
-//positioning
-@editor-toolbar : 40px;
-
 .subnav-fixed {
   .main-article-title {
     font-family: Georgia, serif;
@@ -163,7 +160,7 @@
 
 .opened-articles {
   position: absolute;
-  height: 30px;
+  height: @authoring-opened-articles;
   left: 0; right: 0;
   bottom: 33px;
   background: #111;
@@ -399,17 +396,13 @@ Responsive
   }
 
   .tablist {
-    top:@subnav-mobile-height+@topspace+@editor-toolbar;
+    top:@subnav-mobile-height+@topspace;
   }
   .tabpane {
-    top:@subnav-mobile-height+@topspace+@editor-toolbar;
+    top:@subnav-mobile-height+@topspace;
   }
   .main-article-container {
     padding-top: 60px;
-  }
-
-  .editor-toolbar {
-    top: @subnav-mobile-height+@topspace;
   }
 
 }

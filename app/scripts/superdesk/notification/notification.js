@@ -5,7 +5,7 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    var TIMEOUT = 8000;
+    var TIMEOUT = 5000;
 
     return angular.module('superdesk.notification', [ 'superdesk.data' ])
     .run(['$rootScope', '$timeout', 'api',

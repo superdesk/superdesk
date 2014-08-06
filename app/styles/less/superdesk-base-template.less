@@ -1020,7 +1020,7 @@ Notifications
         overflow: hidden;
         color: #d7d7d7;
       }
-      .date {
+      .date , .date time {
         font-size: 11px;
         color: #848484;
         margin-top: -3px;
@@ -1049,8 +1049,22 @@ Notifications
         } 
       }
     }
-    
   } 
+  &.white {
+  	li {
+  		background: #fff;
+  		border-color: #dedede;
+  		.box-shadow(0 1px 1px 0 #e0e0e0);
+  		.content {
+  			.text {
+  				color: #333;
+  			}
+  			.date, .date time {
+
+  			}
+  		}
+  	}
+  }
 }
 
 

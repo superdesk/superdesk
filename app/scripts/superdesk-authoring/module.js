@@ -264,7 +264,12 @@ define([
 
     }
 
-    return angular.module('superdesk.authoring', ['superdesk.editor', 'superdesk.authoring.widgets'])
+    return angular.module('superdesk.authoring', [
+            'superdesk.editor',
+            'superdesk.authoring.widgets',
+            'superdesk.authoring.comments'
+        ])
+
     	.service('workqueue', WorkqueueService)
 
         .config(['superdeskProvider', function(superdesk) {
