@@ -59,7 +59,7 @@ def setup(context=None, config=None):
         context.client = app.test_client()
 
 
-def setup_auth_user(context):
+def setup_auth_user(context, test_user=test_user):
     with context.app.test_request_context():
         original_password = test_user['password']
         work_factor = context.app.config['BCRYPT_GENSALT_WORK_FACTOR']

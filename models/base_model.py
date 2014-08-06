@@ -6,13 +6,18 @@ class InvalidFilter(Exception):
         self.filter = filter
         self.operation = operation
 
-    def __src__(self):
+    def __str__(self):
         return 'Invalid filter on %s: %s' % (self.operation, filter)
 
 
 class Validator():
     def validate(self, doc):
         raise NotImplementedError
+
+
+class ValidationError():
+    def __init__(self, errors):
+        self.errors = errors
 
 
 class BaseModel():
@@ -82,11 +87,10 @@ class BaseModel():
         Insert a list of documents
         @param docs: list
         '''
-        errors = self.validate(docs)
+        self.validate(docs)
         self.on_create(docs)
         res = self.data_layer.create(self.resource, docs)
         self.on_created(docs)
-        self.add_errors(res, errors)
         return res
 
     def update(self, filter, doc):
@@ -137,6 +141,7 @@ class BaseModel():
     def validate(self, docs):
         '''
         Validate a document or a list of documents.
+        Raise ValidationError on errors
         @param docs: list of documents
         '''
         errs = []
@@ -146,8 +151,5 @@ class BaseModel():
             err = self.validator.validate(doc)
             if errs:
                 errs.append(err)
-        return errs
-
-    def add_errors(self, res, errors):
-        # TODO: implement
-        pass
+        if errs:
+            raise ValidationError(errs)

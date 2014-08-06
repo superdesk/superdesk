@@ -386,3 +386,33 @@ Feature: News Items Archive
         """
         {"_id": "", "guid": "", "type": "text"}
         """
+
+    @auth
+    Scenario: Lock item
+        Given "archive"
+        """
+        [{"_id": "53e0e24acf0d606e08921234", "guid": "53e0e24acf0d606e08921234", "headline": "test"}]
+        """
+        When we post to "/archive/53e0e24acf0d606e08921234/lock"
+        """
+        {"lock_user": "user_id"}
+        """
+        Then we get OK response
+        When we post to "/users"
+        """
+        {"username": "foo", "email": "foo@bar.com", "password": "foo123"}
+        """
+        Then we get OK response
+        When we post to auth
+        """
+        {"username": "foo", "password": "foo123"}
+        """
+        Then we get OK response
+        When we patch "/archive/53e0e24acf0d606e08921234"
+        """
+        {"headline": "test 2"}
+        """
+        Then we get error 400
+        """
+        {"_status": "ERR", "_error": {"code": 400, "message": "An exception occurred: "}}
+        """
