@@ -3,7 +3,7 @@
 import logging
 from threading import Timer
 
-from eve.methods.post import post_intern
+from eve.methods.post import post_internal
 from superdesk import app
 
 from .base_model import BaseModel
@@ -38,7 +38,7 @@ def save_notification(app, push_interval):
     if notifications:
         with app.test_request_context():
             log.info('Saving changes %s', notifications)
-            post_intern('notification', {'changes': notifications})
+            post_internal('notification', {'changes': notifications})
 
     timer = Timer(push_interval, save_notification, args=(app, push_interval))
     timer.daemon = True
