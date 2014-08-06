@@ -1,6 +1,6 @@
 import logging
 
-from eve.methods.post import post_intern
+from eve.methods.post import post_internal
 import flask
 
 from superdesk.notification import push_notification
@@ -53,7 +53,7 @@ class AuditModel(BaseModel):
             'action': 'created',
             'extra': docs[0]
         }
-        post_intern(self.endpoint_name, audit)
+        post_internal(self.endpoint_name, audit)
 
     def on_generic_updated(self, resource, doc, original):
         if resource in self.exclude:
@@ -69,7 +69,7 @@ class AuditModel(BaseModel):
             'action': 'updated',
             'extra': doc
         }
-        post_intern(self.endpoint_name, audit)
+        post_internal(self.endpoint_name, audit)
 
     def on_generic_deleted(self, resource, doc):
         if resource in self.exclude:
@@ -85,7 +85,7 @@ class AuditModel(BaseModel):
             'action': 'deleted',
             'extra': doc
         }
-        post_intern(self.endpoint_name, audit)
+        post_internal(self.endpoint_name, audit)
 
 
 class ActivityModel(BaseModel):
@@ -112,7 +112,7 @@ def add_activity(msg, **data):
     if not user:
         return
 
-    post_intern(ActivityModel.endpoint_name, {
+    post_internal(ActivityModel.endpoint_name, {
         'user': user.get('_id'),
         'message': msg,
         'data': data
