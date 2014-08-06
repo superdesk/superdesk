@@ -628,3 +628,36 @@ input{
     padding:0 30px 0 5px;
   }
 }
+
+form {
+  fieldset {
+    .field {
+        margin-bottom: 20px;
+        label {
+          font-size: 11px;
+          .text-bold();
+          color: #a0a0a0;
+          text-transform: uppercase;
+          height: 18px;
+        }
+        &.row {
+          label {
+            .text-normal();
+            font-size: 13px;
+            text-transform: none;
+            color: @grayDark;
+            span {
+              color: #a0a0a0;
+            }
+          }
+          input, .sf-checkbox-custom {
+            float: left;
+            margin-top: 2px;
+          }
+          + .field.row {
+            margin-top: -5px;
+          }
+        }
+    }
+  }
+}

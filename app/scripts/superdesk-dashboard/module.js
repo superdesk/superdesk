@@ -10,7 +10,6 @@ define([
 ], function(angular, require) {
     'use strict';
 
-
     ViewsService.$inject = ['api'];
     function ViewsService(api) {
         //implement views service
@@ -18,6 +17,8 @@ define([
 
     WorkspaceContentController.$inject = ['$scope'];
     function WorkspaceContentController ($scope) {
+
+        $scope.general = true;
         $scope.origView = null;
         $scope.view = null;
         $scope.views = [];
@@ -28,17 +29,15 @@ define([
         };
 
         $scope.cancel = function() {
+            $scope.general = true;
             $scope.origView = null;
             $scope.view = null;
         };
 
         $scope.save = function() {
-            $scope.views._items.unshift($scope.origView);
             $scope.cancel();
         };
     }
-
-
 
     // to avoid circular dependency
     angular.module('superdesk.dashboard.widgets', []).
