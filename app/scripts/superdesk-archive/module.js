@@ -8,18 +8,18 @@ define([
     'use strict';
 
     var app = angular.module('superdesk.archive', [
-        require('./directives').name
+        require('./directives').name,
+        'superdesk.dashboard'
     ]);
 
     app.config(['superdeskProvider', function(superdesk) {
         superdesk
-            .activity('/archive/', {
-                label: gettext('Archive'),
+            .activity('/workspace/content', {
+                label: gettext('Workspace'),
                 priority: 100,
                 controller: require('./controllers/list'),
                 templateUrl: require.toUrl('./views/list.html'),
-                category: superdesk.MENU_MAIN,
-                reloadOnSearch: false
+                topTemplateUrl: require.toUrl('../superdesk-dashboard/views/workspace-topnav.html')
             })
             .activity('upload.media', {
                 label: gettext('Upload media'),

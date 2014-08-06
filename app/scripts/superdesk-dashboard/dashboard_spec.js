@@ -24,18 +24,22 @@ define(['./module', 'angular'], function(DashboardModule, angular) {
                 };
             });
 
-            $provide.service('api', function($q) {
-                this.users = {
-                    widgets: {},
-                    getByUrl: function(url) {
-                        return $q.when(this.widgets);
-                    },
-                    save: function(dest, diff) {
-                        return;
-                    }
+            $provide.provider('api', function() {
+                this.api = function() {};
+                this.$get = function($q) {
+                    return {
+                        users: {
+                            widgets: {},
+                            getByUrl: function(url) {
+                                return $q.when(this.widgets);
+                            },
+                            save: function(dest, diff) {
+                                return;
+                            }
+                        }
+                    };
                 };
             });
-
         }));
 
         beforeEach(module('superdesk.dashboard'));

@@ -1,7 +1,7 @@
+<button ng-show="desks" class="dropdown-toggle">{{ selectedDesk.name || "My content" | translate }} <b class="caret"></b></button>
 <ul class="dropdown-menu sf-dropdown-simple">
-    <li ng-repeat="desk in userDesks._items">
-        <a href="" ng-click="_select(desk)">
-            <div sd-user-desk></div>
-        </a>
+    <li ng-show="selectedDesk"><a href="" ng-click="select()" translate>My content</a></li>
+    <li ng-repeat="desk in desks">
+        <a href="" ng-click="select(desk)">{{ desk.name }}</a>
     </li>
 </ul>

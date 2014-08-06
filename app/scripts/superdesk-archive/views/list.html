@@ -1,9 +1,29 @@
-<div class="subnav subnav-fixed" sd-workflow>
+<div class="subnav subnav-fixed">
+	<div class="button-stack right-stack">
 
-    <div class="button-stack right-stack">
+		<div class="navbtn dropdown views-settings">
+    		<button class="dropdown-toggle condensed"><i class="svg-icon-settings"></i></button>
+			<ul class="dropdown-menu sf-dropdown-simple sf-right">
+				<li ng-repeat="view in views.views">
+                    <a href="" ng-click="views.edit(view)"><span>{{ view.name }} <i class="icon-pencil"></i></span></a>
+                </li>
+                <li ng-hide="views.views.length"><a href="" ng-click="views.create()">start creating a view</a></li>
+				<li><button class="full" ng-click="views.create()"><i class="svg-icon-add"></i><span translate>Create new view</span></button></li>
+			</ul>
+    	</div>
+
+        <button class="navbtn navbtn-info">
+            <i class="svg-icon-add inverse"></i>
+        </button>
+
         <a class="navbtn navbtn-info" href="" ng-if="openUpload" ng-click="openUpload()">
             <i class="svg-icon-add inverse"></i> <span class="title" translate>Add media</span>
         </a>
+
+        <button class="navbtn">
+            <span class="title" translate>Create highlight</span>
+        </button>
+
         <div class="navbtn dropdown">
             <button class="dropdown-toggle condensed"><i class="svg-icon-settings"></i></button>
             <ul class="dropdown-menu sf-dropdown-simple sf-right">
@@ -13,8 +33,16 @@
                 <li><a href="" ng-click="view='stats'"><i class="icon-signal"></i> {{ 'statistics' | translate}}</a></li>
             </ul>
         </div>
+
+        <button class="navbtn">
+        	<i class="arrow-icon-right"></i>
+        </button>
     </div>
 
+    <div class="button-stack">
+        <div class="navbtn dropdown" sd-user-desks data-desk="selectedDesk"></div>
+        <div class="navbtn toggle-list" sd-desk-views></div>
+    </div>
 </div>
 
 <div sd-media-view data-item="selected.view" data-items="items._items" ng-if="selected.view"></div>
@@ -61,8 +89,6 @@
                 <div sd-media-box ng-if="extras.activityFilter.type !== 'archive'"></div>
             </div>
         </div>
-        
-
 
         <div class="preview-pane item-preview">
             <div class="actions" ng-if="selected.preview">
@@ -79,7 +105,74 @@
             <div ng-if="selected.preview">
                 <div sd-media-preview data-item="selected.preview"></div>
             </div>
-            
+
         </div>
     </div>
 </section>
+
+<div sd-modal-view data-model="views.edited" class="add-view-modal responsive-popup">
+    <div class="modal-header"> <a href="" class="close" ng-click="views.cancel() && cancel()"><i class="icon-close-small"></i></a>
+        <h3 translate ng-show="views.edited._id">Edit View {{ origView.name }}</h3>
+        <h3 translate ng-hide="views.edited._id">Add New View</h3>
+    </div>
+
+    <div class="modal-body">
+        <form name="editForm">
+            <div class="popup-subnav">
+                <ul class="nav nav-tabs">
+                    <li ng-class="{'active': !views.flags.next}">
+                        <button ng-click="views.flags.next=false" translate>General</button>
+                    </li>
+                    <li ng-class="{'active': views.flags.next}">
+                        <button ng-click="views.flags.next=true" translate>Filters</button>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-screen" ng-if="!views.flags.next">
+                <fieldset>
+                    <div class="field">
+                        <label translate>Name</label>
+                        <input type="text" class="fullwidth-input" ng-model="views.edited.name" required />
+
+                        <div ng-show="views._issues.name" sd-valid-info>
+                            <i class="icon-info-sign icon-warning"></i>
+                            <span translate>name is required</span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label translate>Description</label>
+                        <textarea sd-auto-height ng-model="views.edited.description"></textarea>
+                    </div>
+                    <div class="field row">
+                        <input sd-check ng-model="views.flags.is_desk">
+                        <label translate>Attach to current desk</label>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="modal-screen" ng-if="views.flags.next">
+                <fieldset>
+                    <div class="field">
+                        <label translate>Filter query</label>
+                        <input type="text" class="fullwidth-input" ng-model="views.flags.query" required />
+
+                        <div ng-show="views._issues.filter.required" sd-valid-info>
+                            <i class="icon-info-sign icon-warning"></i>
+                            <span translate>filter is required</span>
+                        </div>
+
+                        <div ng-show="views._issues.filter && !views._issues.filter.required" sd-valid-info>
+                            <i class="icon-info-sign icon-warning"></i>
+                            <span translate>filter is not valid</span>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="views.cancel() && cancel()" translate>Cancel</button>
+        <button class="btn btn-primary" ng-click="views.flags.next=true" ng-show="!views.flags.next" translate>Next</button>
+        <button class="btn btn-primary" ng-click="views.save()" ng-show="views.flags.next" translate>Save</button>
+    </div>
+</div>

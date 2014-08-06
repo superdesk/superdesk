@@ -10,35 +10,6 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    ViewsService.$inject = ['api'];
-    function ViewsService(api) {
-        //implement views service
-    }
-
-    WorkspaceContentController.$inject = ['$scope'];
-    function WorkspaceContentController ($scope) {
-
-        $scope.general = true;
-        $scope.origView = null;
-        $scope.view = null;
-        $scope.views = [];
-
-        $scope.edit = function(view) {
-            $scope.origView = view || {};
-            $scope.view = _.create(view);
-        };
-
-        $scope.cancel = function() {
-            $scope.general = true;
-            $scope.origView = null;
-            $scope.view = null;
-        };
-
-        $scope.save = function() {
-            $scope.cancel();
-        };
-    }
-
     // to avoid circular dependency
     angular.module('superdesk.dashboard.widgets', []).
         provider('widgets', require('./widgets-provider'));
@@ -46,7 +17,8 @@ define([
     return angular.module('superdesk.dashboard', [
         'superdesk.dashboard.widgets',
         'superdesk.dashboard.grid',
-        'superdesk.dashboard.world-clock'
+        'superdesk.dashboard.world-clock',
+        'superdesk.workspace.content'
     ])
 
     .service('workspace', require('./workspace-service'))
@@ -71,13 +43,6 @@ define([
             label: gettext('Workspace'),
             templateUrl: require.toUrl('./views/workspace-tasks.html'),
             topTemplateUrl: require.toUrl('./views/workspace-topnav.html'),
-            beta: true
-        });
-        superdesk.activity('/workspace/content', {
-            label: gettext('Workspace'),
-            templateUrl: 'scripts/superdesk-dashboard/views/workspace-content.html',
-            controller: WorkspaceContentController,
-            topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
             beta: true
         });
         superdesk.activity('/workspace/stream', {

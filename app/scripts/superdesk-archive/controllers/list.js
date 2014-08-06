@@ -4,14 +4,16 @@ define([
 ], function(_, BaseListController) {
     'use strict';
 
-    ArchiveListController.$inject = ['$scope', '$injector', 'superdesk', 'api', '$rootScope'];
-    function ArchiveListController($scope, $injector, superdesk, api, $rootScope) {
+    ArchiveListController.$inject = ['$scope', '$injector', 'superdesk', 'api', '$rootScope', 'ViewsCtrl'];
+    function ArchiveListController($scope, $injector, superdesk, api, $rootScope, ViewsCtrl) {
+
         $injector.invoke(BaseListController, this, {$scope: $scope});
 
         $scope.createdMedia = {
             items: []
         };
 
+        $scope.views = new ViewsCtrl($scope);
         $scope.type = 'archive';
         $scope.api = api.ingest;
 

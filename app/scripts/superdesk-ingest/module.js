@@ -10,6 +10,7 @@ define([
     'use strict';
 
     var app = angular.module('superdesk.ingest', [
+        'superdesk.dashboard',
         'superdesk.widgets.ingest',
         'superdesk.widgets.ingeststats',
         require('./directives').name
@@ -28,13 +29,13 @@ define([
 
     app.config(['superdeskProvider', function(superdesk) {
         superdesk
-            .activity('/ingest/', {
-                label: gettext('Ingest'),
+            .activity('/workspace/ingest', {
+                label: gettext('Workspace'),
                 priority: 100,
                 controller: require('./controllers/list'),
                 templateUrl: require.toUrl('../superdesk-archive/views/list.html'),
-                category: superdesk.MENU_MAIN,
-                reloadOnSearch: false
+                category: '/workspace',
+                topTemplateUrl: require.toUrl('../superdesk-dashboard/views/workspace-topnav.html')
             })
             .activity('/settings/ingest', {
                 label: gettext('Ingest Feed'),

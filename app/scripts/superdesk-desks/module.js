@@ -88,7 +88,7 @@ define([
                     return api.desks.getById(this.getCurrentDeskId());
                 },
                 setCurrentDesk: function(desk) {
-                    this.setCurrentDeskId(desk._id);
+                    this.setCurrentDeskId(desk ? desk._id : null);
                 },
                 initialize: function() {
                     var self = this;

@@ -1,0 +1,6 @@
+<ul>
+    <li ng-class="{active: !views.selected}"><a href="" ng-click="views.select()" translate>any</a></li>
+    <li ng-repeat="view in views.views" ng-class="{active: view == views.selected}">
+        <a href="" ng-click="views.select(view)">{{ view.name }}</a>
+    </li>
+</ul>

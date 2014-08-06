@@ -6,44 +6,22 @@ define([
     'use strict';
 
     var app = angular.module('superdesk.desks.directives', []);
-    app.directive('sdUserDesks', ['desks', function(desks) {
+    app.directive('sdUserDesks', ['$rootScope', 'desks', function($rootScope, desks) {
         return {
             scope: {
-                user: '=',
-                selected: '=',
-                select: '='
+                selectedDesk: '=desk'
             },
-            transclude: true,
             templateUrl: require.toUrl('./views/user-desks.html'),
             link: function(scope, elem, attrs) {
-
-                scope.userDesks = null;
-
-                scope.$watch('user', function(user) {
-                    desks.fetchUserDesks(user)
-                    .then(function(userDesks) {
-                        scope.userDesks = userDesks;
-                        scope.selected = _.find(userDesks._items, {_id: desks.getCurrentDeskId()});
-                    });
+                desks.fetchUserDesks($rootScope.currentUser).then(function(userDesks) {
+                    scope.desks = userDesks._items;
+                    scope.selectedDesk = _.find(scope.desks, {_id: desks.getCurrentDeskId()});
                 });
 
-                scope._select = function(desk) {
+                scope.select = function(desk) {
+                    scope.selectedDesk = desk;
                     desks.setCurrentDesk(desk);
-                    scope.selected = desk;
-                    if (typeof scope.select === 'function') {
-                        scope.select(desk);
-                    }
                 };
-            }
-        };
-    }])
-    .directive('sdUserDesk', [function() {
-        return {
-            link: function(scope, element, attrs, controller, $transclude) {
-                $transclude(scope, function(clone) {
-                    element.empty();
-                    element.append(clone);
-                });
             }
         };
     }]);
