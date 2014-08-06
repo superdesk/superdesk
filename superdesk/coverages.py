@@ -19,8 +19,8 @@ class CoverageModel(BaseModel):
         'type': {'type': 'string'},
         'ed_note': {'type': 'string'},
         'scheduled': {'type': 'datetime'},
-        'delivery': rel('archive'),
+        'delivery': {'type': 'string'},
         'assigned_user': rel('users', True),
         'assigned_desk': rel('desks', True),
-        'planning_item': rel('planning'),
+        'planning_item': {'type': 'string'},
     }
