@@ -77,14 +77,15 @@ class UploadModel(BaseModel):
 
     def store_file(self, doc, content, filename, content_type):
         res = process_file_from_stream(content, filename=filename, content_type=content_type)
-        file_name, out, content_type, metadata = res
+        file_name, content_type, metadata = res
 
         cropping_data = self.get_cropping_data(doc)
-        _, out = crop_image(out, filename, cropping_data)
+        _, out = crop_image(content, filename, cropping_data)
         metadata['length'] = json.dumps(len(out.getvalue()))
 
         try:
             logger.debug('Going to save media file with %s ' % file_name)
+            out.seek(0)
             id = app.media.put(out, filename=file_name, content_type=content_type, metadata=metadata)
             doc['media'] = id
             doc['mime_type'] = content_type
@@ -113,5 +114,4 @@ class UploadModel(BaseModel):
         url = doc.get('URL')
         if not url:
             return
-        content, filename, content_type = download_file_from_url(url)
-        return content, filename, content_type
+        return download_file_from_url(url)

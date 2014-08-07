@@ -531,6 +531,7 @@ def step_impl_then_get_renditions(context, type):
         assert isinstance(desc, dict), 'expected dict for rendition description'
         assert 'href' in desc, 'expected href in rendition description'
         assert 'media' in desc, 'expected media identifier in rendition description'
+        we_can_fetch_a_file(context, desc['href'], 'image/jpeg')
 
 
 def import_rendition(context, rendition_name=None):

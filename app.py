@@ -115,4 +115,4 @@ if __name__ == '__main__':
         superdesk.logger.addHandler(logging.StreamHandler())
 
     app = get_app()
-    app.run(host=host, port=port, debug=debug, use_reloader=False)
+    app.run(host=host, port=port, debug=debug, use_reloader=debug)
