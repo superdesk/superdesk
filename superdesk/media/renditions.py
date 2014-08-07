@@ -24,7 +24,7 @@ def generate_renditions(original, media_id, inserted, file_type, content_type, r
 
     ext = content_type.split('/')[1].lower()
     if ext in ('JPG', 'jpg'):
-            ext = 'jpeg'
+        ext = 'jpeg'
     ext = ext if ext in ('jpeg', 'gif', 'tiff', 'png') else 'png'
     for rendition, rsize in rendition_config.items():
         size = (rsize['width'], rsize['height'])

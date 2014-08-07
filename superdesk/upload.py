@@ -85,6 +85,7 @@ class UploadModel(BaseModel):
 
         try:
             logger.debug('Going to save media file with %s ' % file_name)
+            out.seek(0)
             id = app.media.put(out, filename=file_name, content_type=content_type, metadata=metadata)
             doc['media'] = id
             doc['mime_type'] = content_type
@@ -113,5 +114,4 @@ class UploadModel(BaseModel):
         url = doc.get('URL')
         if not url:
             return
-        content, filename, content_type = download_file_from_url(url)
-        return content, filename, content_type
+        return download_file_from_url(url)
