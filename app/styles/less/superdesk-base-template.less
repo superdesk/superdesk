@@ -100,56 +100,6 @@
 		}
   	}
   	.navbtn {
-  		float: left;
-  		padding: 0 15px;
-  		width: auto;
-  		background: #f5f5f5;
-  		color:#333;
-  		height: 52px;
-  		display: block;
-  		text-align: center;
-  		line-height: 52px;
-  		text-decoration: none !important;
-		border:0;
-		border-right: 1px solid #e0e0e0;
-
-  		&.navbtn-info {
-  			background: @sd-color-blue;
-  			border-left: 1px solid lighten(@sd-color-blue, 10%);
-  			color: #fff;
-  			&.disabled {
-		  		background: #898989;
-  			}
-  		}
-
-  		&:hover {
-  			background: #e0e0e0;
-  			&.navbtn-info {
-	  			background:  lighten(@sd-color-blue, 5%);
-	  		}
-  		}
-
-  		i {
-  			vertical-align: middle;
-  		}
-  		.title {
-  			text-transform: uppercase;
-  		}
-
-  		i + .title {
-  			margin-left: 10px;
-  		}
-  		&.navbtn-hover {
-	  		.title {
-	  			display: none;
-	  		}
-	  		&:hover {
-	  			.title {
-	  				display: inline;
-	  			}
-	  		}
-  		}
-
   		&.dropdown {
   			padding: 0;
   			.dropdown-toggle {
@@ -232,7 +182,7 @@
 	  					border-top: 1px solid #e0e0e0;
 	  					.border-radius(0px);
 						&:hover {
-							background: @sd-color-blue;
+							background: @sd-blue;
 							color: #fff;
 						}
 	  				}
@@ -296,35 +246,6 @@
   	}
 
   }
-  .navbtn {
-  	
-  	
-  	&.disabled {
-  		background: #e1e1e1;
-  		&:hover {
-  			background: #e1e1e1;
-  			cursor: default;
-  		}
-  		.arrow {
-  			display: none;
-  		}
-  	}
-  	&.active {
-  		background: #62b0d0;
-  		cursor: pointer;
-  	}
-  	&.large {
-  		width: auto;
-  		padding: 0 20px;
-  		span {
-  			text-transform: uppercase;
-  			color: #fff;
-  		}
-  		span + i {
-  			margin-left: 10px;
-  		}
-  	}
-  }
 }
 .subnav-fixed {
     width:auto;
@@ -357,7 +278,6 @@
   margin-bottom: 0;
   border: 1px solid #cecece;
   .border-radius(4px);
-  .gradientBar(#f7f6f7, #eae9ed);
   .box-shadow(inset 0px 1px 0px rgba(255,255,255,1));
   .box-shadow(0px 1px 0px rgba(255,255,255,1));
   li {
@@ -368,14 +288,12 @@
 		text-shadow: 0 1px 0 rgba(255, 255, 255, 1);
 		color:#4f4f4f;	
 		.border-radius(0px);
-		.gradientBar(#f7f6f7, #eae9ed);
 		.box-shadow(inset 0px 1px 0px rgba(255,255,255,1));
 		border-left: 1px solid #fff;
 		border-right: 1px solid #cecece;
   		&:hover {
 	  		color: #333333;
 	  		text-decoration: none;
-	  		.gradientBar(#f1f0f1, #dddae1);
 	  		.transition(background-position 0.1s linear);
 	  		border-left: 1px solid #fff;
 			border-right: 1px solid #cecece;
@@ -394,7 +312,6 @@
 	  		text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 			color:#fff;	
 			.border-radius(0px);
-			.gradientBar(#0088cc, #0055cc);
 			.box-shadow(inset 0px 1px 0px rgba(255,255,255,0.2));
 			border-left: 1px solid #fff;
 			border-right: 1px solid #cecece;

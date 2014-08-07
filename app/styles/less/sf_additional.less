@@ -157,11 +157,6 @@
 
 		&.btn {
 			padding: 4px 12px;
-			&:hover {
-				.buttonBackground(@btnDefaultHoverBackground1, @btnDefaultHoverBackground2) !important;
-        		@shadow: inset 0 1px 0 @btnDefaultInsetShadowColor, 0 2px 4px -4px rgba(0,0,0,.8) !important;
-         		.box-shadow(@shadow);
-			}
 		}
 		&.btn-medium {
 			padding: 6px 12px;
@@ -176,18 +171,9 @@
 				color:#fff;
 			}
 			&.btn {
-				background-image: none;
-				@shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 0 rgba(255,255,255,1);
-				.box-shadow(@shadow);
-				background-color: @btnDefaultColorDark !important;
-			    background-color: @btnDefaultColorDark e("\9") !important;
-			    border-color: @btnDefaultBorderDark !important;
 			    color: #fff !important;
 			    text-shadow:0 -1px #575757 !important;
 			    &:hover {
-					background-color: @btnDefaultColorDark !important;
-				    background-color: @btnDefaultColorDark e("\9") !important;
-				    border-color: @btnDefaultBorderDark !important;
 				    color: #fff !important;
 				    text-shadow:0 -1px #575757 !important;
 			    }
@@ -951,8 +937,7 @@
 			.border-radius(5px 5px 0 0);
 		}
 		&:last-child {
-			.border-bottom-right-radius(5px);
-			.border-bottom-left-radius(5px);
+			.border-radius(0 0 5px 5px);
 		}
 		&:hover {
 			background-color: #f4f4f4;
@@ -979,11 +964,9 @@
 
 	.header {
 		height:@scratchpad-closed;
-		border-top: 1px solid #303030;
-		border-bottom: 1px solid #000;
+		background: #585858;
 		.box-shadow(0 6px 6px 0 #111);
 		.box-shadow(inset 0 1px 1px -1px #ccc);
-		.gradientBar(#444,#585858);
 		.title {
 			width:auto;
 			line-height:15px;
@@ -1031,8 +1014,6 @@
 			}
 			&.open {
 				.btn {
-					.gradientBar(#1a1a1a,#444);
-					background-image: linear-gradient(to bottom, #1a1a1a 0%, #444 100%);
 					color:#fff;
 				}
 			}
