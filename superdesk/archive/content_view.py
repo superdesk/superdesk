@@ -4,7 +4,6 @@ import superdesk
 import json
 from superdesk.base_model import BaseModel
 import logging
-from flask import current_app as app
 import flask
 
 logger = logging.getLogger(__name__)
@@ -68,15 +67,8 @@ class ContentViewModel(BaseModel):
             self.check_filter(doc['filter'], doc['location'])
 
     def on_create(self, docs):
-        user = getattr(flask.g, 'user') if hasattr(flask.g, 'user') else {}
-        if not user:
-            if app.debug:
-                user = {}
-            else:
-                raise superdesk.SuperdeskError(payload='Invalid user.')
-
         for doc in docs:
-            doc.setdefault('user', user)
+            doc.setdefault('user', flask.g.user)
             self.process_and_validate(doc)
 
     def on_update(self, updates, original):

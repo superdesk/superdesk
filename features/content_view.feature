@@ -9,7 +9,7 @@ Feature: Content View
         {
         "name": "show my content",
         "description": "Show content items created by the current logged user",
-        "filter": {"query":{"filtered":{"query":{"match_all":{}},"filter":{"and":[{"terms":{"type":["text","picture"]}}]}}}}
+        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
         }
         """
 
@@ -19,7 +19,7 @@ Feature: Content View
         "name": "show my content",
         "description": "Show content items created by the current logged user",
         "location": "archive",
-        "filter": {"query":{"filtered":{"query":{"match_all":{}},"filter":{"and":[{"terms":{"type":["text","picture"]}}]}}}}
+        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
         }
         """
         
@@ -50,7 +50,7 @@ Feature: Content View
         {
         "name": "show my content",
         "location": "ingest",
-        "filter": {"query":{"filtered":{"query":{"match_all":{}},"filter":{"and":[{"terms":{"type":["text","picture"]}}]}}}}
+        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
         }
         """
 
@@ -59,7 +59,7 @@ Feature: Content View
         {
         "name": "show my content",
         "location": "ingest",
-        "filter": {"query":{"filtered":{"query":{"match_all":{}},"filter":{"and":[{"terms":{"type":["text","picture"]}}]}}}}
+        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
         }
         """
       	
@@ -73,7 +73,7 @@ Feature: Content View
         "name": "show my content",
         "description": "Show content items created by the current logged user",
         "location": "wrong_location",
-        "filter": {"query":{"filtered":{"query":{"match_all":{}},"filter":{"and":[{"terms":{"type":["text","picture"]}}]}}}}
+        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
         }
         """
 
@@ -98,7 +98,7 @@ Feature: Content View
         "name": "show my content",
         "desk": "#DESKS_ID#",
         "description": "Show content items created by the current logged user",
-        "filter": {"query":{"filtered":{"query":{"match_all":{}},"filter":{"and":[{"terms":{"type":["text","picture"]}}]}}}}
+        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
         }
         """
 
@@ -108,7 +108,7 @@ Feature: Content View
         "name": "show my content",
         "description": "Show content items created by the current logged user",
         "location": "archive",
-        "filter": {"query":{"filtered":{"query":{"match_all":{}},"filter":{"and":[{"terms":{"type":["text","picture"]}}]}}}}
+        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
         }
         """    
                
