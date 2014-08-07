@@ -8,12 +8,12 @@
 
 .nav {
   margin-left: 0;
-  margin-bottom: @baseLineHeight;
   list-style: none;
 }
 
 // Make links block level
-.nav > li > a {
+.nav > li > a,
+.nav > li > button {
   display: block;
 }
 .nav > li > a:hover {
@@ -33,8 +33,11 @@
   text-transform: uppercase;
 }
 // Space them out when they follow another list item (link)
-.nav li + .nav-header {
-  margin-top: 9px;
+.nav {
+  margin-top:-10px;
+  li + .nav-header {
+    margin-top: 9px;
+  }
 }
 
 
@@ -46,16 +49,22 @@
   padding-right: 15px;
   margin-bottom: 0;
 }
+.nav-list > li > button {
+  border: 0;
+  background: 0;
+}
 .nav-list > li > a,
+.nav-list > li > button,
 .nav-list .nav-header {
   margin-left:  -15px;
   margin-right: -15px;
   text-shadow: 0 1px 0 rgba(255,255,255,.5);
 }
-.nav-list > li > a {
+.nav-list > li > a, .nav-list > li > button, {
   padding: 3px 15px;
 }
 .nav-list > .active > a,
+.nav-list > .active > button,
 .nav-list > .active > a:hover {
   color: @white;
   text-shadow: 0 -1px 0 rgba(0,0,0,.2);
@@ -84,7 +93,9 @@
   float: left;
 }
 .nav-tabs > li > a,
-.nav-pills > li > a {
+.nav-tabs > li > button,
+.nav-pills > li > a,
+.nav-pills > li > button {
   padding-right: 12px;
   padding-left: 12px;
   margin-right: 2px;
@@ -94,35 +105,45 @@
 // TABS
 // ----
 
-// Give the tabs something to sit on
-.nav-tabs {
-  border-bottom: 1px solid #ddd;
-}
 
 // Make the list-items overlay the bottom border
-.nav-tabs > li {
-  margin-bottom: -1px;
+.nav-tabs {
+  .box-sizing(border-box);
+  height: @nav-height;
+  > li {
+    margin-bottom: -1px;
+  }
 }
 
 // Actual tabs (as links)
-.nav-tabs > li > a {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  line-height: @baseLineHeight;
-  border: 1px solid transparent;
-  .border-radius(4px 4px 0 0);
+.nav-tabs > li > a,
+.nav-tabs > li > button {
+  padding: 8px 0px;
+  margin: 0 10px;
+  line-height: 30px;
+  font-size: 14px;
+  height: @nav-height;
+  background: none;
+  color: #7c7c7c;
+  border:0;
+  border-bottom: 3px solid transparent;
   &:hover {
-    border-color: @grayLighter @grayLighter #ddd;
+    border-bottom-color: #d8d8d8;
+    background: none;
   }
+}
+.nav-tabs > li > a {
+  .box-sizing(border-box);
 }
 // Active state, and it's :hover to override normal :hover
 .nav-tabs > .active > a,
-.nav-tabs > .active > a:hover {
-  color: @gray;
-  background-color: @white;
-  border: 1px solid #ddd;
-  border-bottom-color: transparent;
+.nav-tabs > .active > a:hover,
+.nav-tabs > .active > button,
+.nav-tabs > .active > button:hover {
+  background: none;
+  border-bottom-color: @sd-color-blue;
   cursor: default;
+  color: @grayDark;
 }
 
 // PILLS
@@ -160,10 +181,17 @@
 // Tabs
 .nav-tabs.nav-stacked {
   border-bottom: 0;
+  height: auto;
 }
-.nav-tabs.nav-stacked > li > a {
-  border: 1px solid #ddd;
-  .border-radius(0);
+.nav-tabs.nav-stacked > li {
+  > a {
+    border: 1px solid #ddd;
+    .border-radius(0);
+    margin: 0;
+  }
+  &.active a {
+    background: #fff;
+  }
 }
 .nav-tabs.nav-stacked > li:first-child > a {
   .border-radius(4px 4px 0 0);
@@ -287,38 +315,14 @@
 }
 
 
-// BOTTOM
-// ------
-
-.tabs-below .nav-tabs {
-  border-top: 1px solid #ddd;
-}
-.tabs-below .nav-tabs > li {
-  margin-top: -1px;
-  margin-bottom: 0;
-}
-.tabs-below .nav-tabs > li > a {
-  .border-radius(0 0 4px 4px);
-  &:hover {
-    border-bottom-color: transparent;
-    border-top-color: #ddd;
-  }
-}
-.tabs-below .nav-tabs .active > a,
-.tabs-below .nav-tabs .active > a:hover {
-  border-color: transparent #ddd #ddd #ddd;
-}
-
 // LEFT & RIGHT
 // ------------
 
 // Common styles
-.tabs-left .nav-tabs > li,
-.tabs-right .nav-tabs > li {
+.tabs-left .nav-tabs > li{
   float: none;
 }
-.tabs-left .nav-tabs > li > a,
-.tabs-right .nav-tabs > li > a {
+.tabs-left .nav-tabs > li > a{
   min-width: 74px;
   margin-right: 0;
   margin-bottom: 3px;
@@ -341,23 +345,4 @@
 .tabs-left .nav-tabs .active > a:hover {
   border-color: #ddd transparent #ddd #ddd;
   *border-right-color: @white;
-}
-
-// Tabs on the right
-.tabs-right .nav-tabs {
-  float: right;
-  margin-left: 19px;
-  border-left: 1px solid #ddd;
-}
-.tabs-right .nav-tabs > li > a {
-  margin-left: -1px;
-  .border-radius(0 4px 4px 0);
-}
-.tabs-right .nav-tabs > li > a:hover {
-  border-color: @grayLighter @grayLighter @grayLighter #ddd;
-}
-.tabs-right .nav-tabs .active > a,
-.tabs-right .nav-tabs .active > a:hover {
-  border-color: #ddd #ddd #ddd transparent;
-  *border-left-color: @white;
 }

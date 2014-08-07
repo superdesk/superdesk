@@ -4,6 +4,15 @@
         <a class="navbtn navbtn-info" href="" ng-if="openUpload" ng-click="openUpload()">
             <i class="svg-icon-add inverse"></i> <span class="title" translate>Add media</span>
         </a>
+        <div class="navbtn dropdown">
+            <button class="dropdown-toggle condensed"><i class="svg-icon-settings"></i></button>
+            <ul class="dropdown-menu sf-dropdown-simple sf-right">
+                <li><a href="" ng-click="view='mgrid'"><i class="icon-th"></i> {{ 'grid view' | translate}}</a></li>
+                <li><a href="" ng-click="view='mlist'"><i class="icon-th-list"></i> {{ 'list view' | translate}}</a></li>
+                <li><a href="" ng-click="view='compact'"><i class="icon-th-list"></i> {{ 'compact view' | translate}}</a></li>
+                <li><a href="" ng-click="view='stats'"><i class="icon-signal"></i> {{ 'statistics' | translate}}</a></li>
+            </ul>
+        </div>
     </div>
 
 </div>
@@ -11,29 +20,8 @@
 <div sd-media-view data-item="selected.view" data-items="items._items" ng-if="selected.view"></div>
 
 <section sd-sidebar-layout class="archive main-section">
-    <div class="archive-content-topnav" sd-beta>
-        <ul class="basket-tabs pull-left clearfix">
-            <li><a href="" class="active">Basket one <b>(108)</b></a></li>
-            <li><a href="">Basket two <b>(223)</b><i>19</i></a></li>
-            <li><a href="">Basket three <b>(141)</b><i>23</i></a></li>
-        </ul>
 
-        <div class="flat-field dropdown pull-right">
-            <a class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i> <span class="caret"></span></a>
-            <ul class="dropdown-menu sf-dropdown sf-right">
-                <li><a href="" ng-click="view='mgrid'"><i class="icon-th"></i> {{ 'grid view' | translate}}</a></li>
-                <li><a href="" ng-click="view='mlist'"><i class="icon-th-list"></i> {{ 'list view' | translate}}</a></li>
-                <li><a href="" ng-click="view='compact'"><i class="icon-th-list"></i> {{ 'compact view' | translate}}</a></li>
-                <li><a href="" ng-click="view='stats'"><i class="icon-signal"></i> {{ 'statistics' | translate}}</a></li>
-            </ul>
-        </div>
-
-        <div class="flat-field pull-right">
-            <a href=""><i class="icon-plus"></i></a>
-        </div>
-    </div>
-
-    <div class="archive-content-subnav " ng-show="view !== 'stats'" ng-class="{'hidetop' : !beta}" >
+    <div class="archive-content-nav " ng-show="view !== 'stats'">
         <div sd-searchbar></div>
         <div sd-pagination data-items="items" data-limit="25"></div>
     </div>

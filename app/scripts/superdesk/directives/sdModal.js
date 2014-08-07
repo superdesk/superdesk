@@ -5,21 +5,6 @@ define([
     'use strict';
 
     return angular.module('superdesk.directives.modal', [])
-        .directive('sdModal', function() {
-            return {
-                link: function(scope, element, attrs) {
-                    var show = false;
-                    if ('ngShow' in attrs) {
-                        show = !!scope.$eval(attrs.ngShow);
-                    }
-
-                    $(element).addClass('modal fade');
-                    $(element).modal({
-                        show: show
-                    });
-                }
-            };
-        })
         /**
          * Modal View directive
          *
