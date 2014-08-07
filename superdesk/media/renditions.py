@@ -3,7 +3,6 @@ from PIL import Image
 from io import BytesIO
 import logging
 from flask import current_app as app
-from werkzeug.datastructures import FileStorage
 from .media_operations import process_file_from_stream
 
 logger = logging.getLogger(__name__)
@@ -24,15 +23,17 @@ def generate_renditions(original, media_id, inserted, file_type, content_type, r
     rend.update({'height': height})
 
     ext = content_type.split('/')[1].lower()
+    if ext in ('JPG', 'jpg'):
+            ext = 'jpeg'
     ext = ext if ext in ('jpeg', 'gif', 'tiff', 'png') else 'png'
     for rendition, rsize in rendition_config.items():
         size = (rsize['width'], rsize['height'])
         original.seek(0)
         resized, width, height = resize_image(original, ext, size)
         rend_content_type = 'image/%s' % ext
-        resized = FileStorage(stream=resized, content_type=rend_content_type)
-        file_name, out, rend_content_type, metadata = process_file_from_stream(resized, content_type=rend_content_type)
-        id = app.media.put(content=resized, filename=file_name, content_type=rend_content_type, metadata=metadata)
+        file_name, rend_content_type, metadata = process_file_from_stream(resized, content_type=rend_content_type)
+        resized.seek(0)
+        id = app.media.put(resized, filename=file_name, content_type=rend_content_type, metadata=metadata)
         inserted.append(id)
         renditions[rendition] = {'href': url_for_media(id), 'media': id,
                                  'mimetype': 'image/%s' % ext, 'width': width, 'height': height}

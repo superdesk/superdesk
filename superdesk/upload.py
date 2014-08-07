@@ -77,10 +77,10 @@ class UploadModel(BaseModel):
 
     def store_file(self, doc, content, filename, content_type):
         res = process_file_from_stream(content, filename=filename, content_type=content_type)
-        file_name, out, content_type, metadata = res
+        file_name, content_type, metadata = res
 
         cropping_data = self.get_cropping_data(doc)
-        _, out = crop_image(out, filename, cropping_data)
+        _, out = crop_image(content, filename, cropping_data)
         metadata['length'] = json.dumps(len(out.getvalue()))
 
         try:

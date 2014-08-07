@@ -79,11 +79,11 @@ class ArchiveMediaModel(BaseModel):
         else:
             content = doc['media']
             res = process_file_from_stream(content, filename=content.filename, content_type=content.mimetype)
-            file_name, out, content_type, metadata = res
+            file_name, content_type, metadata = res
             logger.debug('Going to save media file with %s ' % file_name)
-            id = app.media.put(out, filename=file_name, content_type=content_type, metadata=metadata)
+            id = app.media.put(content, filename=file_name, content_type=content_type, metadata=metadata)
             doc['media'] = id
-            return out, content_type, decode_metadata(metadata)
+            return content, content_type, decode_metadata(metadata)
         return file, file.content_type, file.metadata
 
 

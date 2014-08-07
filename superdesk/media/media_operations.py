@@ -40,7 +40,6 @@ def download_file_from_url(url):
 
 
 def process_file_from_stream(content, filename=None, content_type=None):
-    file_name = filename or content.filename
     content_type = content_type or content.content_type
     content = BytesIO(content.read())
 
@@ -49,12 +48,12 @@ def process_file_from_stream(content, filename=None, content_type=None):
         content.seek(0)
 
     file_type, ext = content_type.split('/')
-    content, metadata = process_file(content, file_name, file_type)
+    metadata = process_file(content, file_type)
     file_name = get_file_name(content)
     content.seek(0)
     metadata = encode_metadata(metadata)
     metadata.update({'length': json.dumps(len(content.getvalue()))})
-    return file_name, content, content_type, metadata
+    return file_name, content_type, metadata
 
 
 def encode_metadata(metadata):
@@ -65,26 +64,26 @@ def decode_metadata(metadata):
     return dict((k.lower(), json.loads(v)) for k, v in metadata.items())
 
 
-def process_file(content, file_name, type):
+def process_file(content, type):
     if type == 'image':
-        return process_image(content, file_name, type)
+        return process_image(content, type)
     if type in ('audio', 'video'):
-        return process_video(content, file_name, type)
-    return content, {}
+        return process_video(content, type)
+    return {}
 
 
-def process_video(content, file_name, type):
+def process_video(content, type):
     content.seek(0)
     meta = video_meta(content)
     content.seek(0)
-    return content, meta
+    return meta
 
 
-def process_image(content, file_name, type):
+def process_image(content, type):
     content.seek(0)
     meta = get_meta(content)
     content.seek(0)
-    return content, meta
+    return meta
 
 
 def crop_image(content, file_name, cropping_data):
