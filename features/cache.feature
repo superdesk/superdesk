@@ -1,6 +1,5 @@
 Feature: HTTP Caching
 
-    @wip
     @auth
     Scenario: If-Modified-Since caching
         Given "users"

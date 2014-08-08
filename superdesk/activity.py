@@ -47,12 +47,16 @@ class AuditModel(BaseModel):
         if not user:
             return
 
+        if not len(docs):
+            return
+
         audit = {
             'user': user.get('_id'),
             'resource': resource,
             'action': 'created',
             'extra': docs[0]
         }
+
         post_internal(self.endpoint_name, audit)
 
     def on_generic_updated(self, resource, doc, original):

@@ -6,7 +6,6 @@ from superdesk import SuperdeskError
 from superdesk.notification import push_notification
 import flask
 import superdesk
-from flask import current_app as app
 
 
 GUID_TAG = 'tag'
@@ -55,13 +54,10 @@ def generate_guid(**hints):
     return None
 
 
-def get_user():
-    user = getattr(flask.g, 'user') if hasattr(flask.g, 'user') else {}
-    if not user:
-        if app.debug:
-            user = user or {}
-        else:
-            raise superdesk.SuperdeskError(payload='Invalid user.')
+def get_user(required=False):
+    user = flask.g.get('user', {})
+    if '_id' not in user and required:
+        raise superdesk.SuperdeskError(payload='Invalid user.')
     return user
 
 

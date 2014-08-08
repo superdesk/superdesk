@@ -15,10 +15,10 @@ class ArchiveLockModel(BaseModel):
     resource_methods = ['GET', 'POST']
 
     def on_create(self, docs):
-        user = get_user()
-        c = ItemLock(Eve())
         docs.clear()
-        docs.append(c.lock({'_id': request.view_args['item_id']}, user['_id'], None))
+        user = get_user(required=True)
+        c = ItemLock(Eve())
+        c.lock({'_id': request.view_args['item_id']}, user['_id'], None)
 
 
 class ArchiveUnlockModel(BaseModel):
@@ -31,7 +31,7 @@ class ArchiveUnlockModel(BaseModel):
     resource_methods = ['GET', 'POST']
 
     def on_create(self, docs):
-        user = get_user()
+        user = get_user(required=True)
         c = ItemLock(Eve())
         docs.clear()
         docs.append(c.unlock({'_id': request.view_args['item_id']}, user['_id'], None))

@@ -176,7 +176,6 @@ def step_impl_given_resource_with_provider(context, provider):
         items = [parse(item, resource) for item in json.loads(context.text)]
         for item in items:
             item['ingest_provider'] = context.providers[provider]
-            print(item)
         ev = getattr(context.app, 'on_insert_%s' % resource)
         ev(items)
         context.app.data.insert(resource, items)
@@ -274,7 +273,6 @@ def step_impl_when_patch_url(context, url):
     headers = if_match(context, res.get('_etag'))
     data = apply_placeholders(context, context.text)
     context.response = context.client.patch(href, data=data, headers=headers)
-    assert_ok(context.response)
 
 
 @when('we patch latest')
@@ -373,7 +371,8 @@ def step_impl_then_get_new(context):
 @then('we get error {code}')
 def step_impl_then_get_error(context, code):
     expect_status(context.response, int(code))
-    test_json(context)
+    if context.text:
+        test_json(context)
 
 
 @then('we get list with {total_count} items')
@@ -761,3 +760,9 @@ def we_reset_password_for_user(context):
     auth_data = {'username': 'foo', 'password': 'test_pass'}
     context.response = context.client.post('/auth', data=auth_data, headers=headers)
     expect_status_in(context.response, (200, 201))
+
+
+@when('we switch user')
+def when_we_switch_user(context):
+    user = {'username': 'test-user-2', 'password': 'pwd'}
+    tests.setup_auth_user(context, user)
