@@ -122,7 +122,7 @@ define(['lodash'], function(_) {
         HttpEndpoint.prototype.update = function(item, diff) {
             if (diff == null) {
                 diff = _.omit(item, function(value, key) {
-                    return key === '_links' || key === '_id';
+                    return key === '_links' || key === '_id' || key === '_created' || key === '_updated';
                 });
             }
             var url = item._links.self.href;

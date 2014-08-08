@@ -91,16 +91,23 @@ define([
         }
     }
 
-    PreviewItemDirective.$inject = ['planning'];
-    function PreviewItemDirective(planning) {
+    PreviewItemDirective.$inject = ['planning', 'api', 'notify', 'es'];
+    function PreviewItemDirective(planning, api, notify, es) {
     	return {
     		templateUrl: 'scripts/superdesk-planning/views/item-preview.html',
     		scope: {
     			origItem: '=item'
     		},
     		link: function(scope, elem) {
+                scope.item = null;
+                scope.origCoverages = {};
+                scope.coverages = {};
+                scope.coverage = null;
+                scope.userLookup = null;
 
-    			scope.$watch('origItem', resetItem);
+                scope.$watch('origItem', function(origItem) {
+                    resetItem(origItem);
+                });
 
     			scope.$watchCollection('item', function(item) {
                     scope.dirty = !angular.equals(item, scope.origItem);
@@ -112,22 +119,142 @@ define([
 
                 scope.save = function() {
                     planning.save(scope.origItem, scope.item).then(function() {
+                        notify.success(gettext('Item saved.'));
                         resetItem(scope.origItem);
                     });
                 };
 
-    			function resetItem(item) {
+                scope.addCoverage = function() {
+                    scope.coverage = {};
+                };
+
+                scope.saveCoverage = function(coverage) {
+                    var promise = null;
+                    if (coverage) {
+                        promise = api.coverages.save(coverage);
+                    } else {
+                        scope.coverage.planning_item = scope.item._id;
+                        promise = api.coverages.save({}, scope.coverage);
+                    }
+                    promise.then(function(result) {
+                        scope.coverage = null;
+                        notify.success(gettext('Item saved.'));
+                        fetchCoverages();
+                    });
+                };
+
+                scope.cancelCoverage = function(coverage) {
+                    if (coverage) {
+                        var index = _.findIndex(scope.coverages._items, {_id: coverage._id});
+                        scope.coverages._items[index] = _.cloneDeep(_.find(scope.origCoverages._items, {_id: coverage._id}));
+                    } else {
+                        scope.coverage = null;
+                    }
+                };
+
+                scope.removeCoverage = function(coverage) {
+                    api.coverages.remove(coverage)
+                    .then(function(result) {
+                        notify.success(gettext('Item removed.'));
+                        fetchCoverages();
+                    });
+                };
+
+                scope.isDirty = function(coverage) {
+                    if (coverage) {
+                        var dirty = false;
+                        var fields = ['ed_note', 'assigned_user'];
+                        var origCoverage = {};
+                        if (coverage._id) {
+                            origCoverage = scope.origCoverages._items[_.findIndex(scope.coverages._items, {_id: coverage._id})];
+                        }
+                        _.each(fields, function(field) {
+                            if (origCoverage[field] !== coverage[field]) {
+                                dirty = true;
+                                return false;
+                            }
+                        });
+                        return dirty;
+                    }
+                };
+
+                var fetchCoverages = function() {
+                    api.coverages.query({where: {planning_item: scope.item._id}})
+                    .then(function(result) {
+                        scope.origCoverages = result;
+                        scope.coverages = _.cloneDeep(result);
+                    });
+                };
+
+                var fetchUsers = function() {
+                    api.users.query()
+                    .then(function(result) {
+                        scope.userLookup = {};
+                        _.each(result._items, function(user) {
+                            scope.userLookup[user._id] = user;
+                        });
+                    });
+                };
+
+                var resetItem = function(item) {
     				scope.item = _.create(item);
-    			}
+                    fetchCoverages();
+                    fetchUsers();
+    			};
     		}
     	};
     }
 
-    function AssigneeBoxDirective() {
+    AssigneeBoxDirective.$inject = ['api', 'desks'];
+    function AssigneeBoxDirective(api, desks) {
         return {
             templateUrl: 'scripts/superdesk-planning/views/assignee-box.html',
+            scope: {coverage: '='},
             link: function(scope, elem) {
                 scope.open = false;
+                scope.users = null;
+                scope.desks = null;
+                scope.search = null;
+
+                scope.$watch('coverage', function() {
+                    fetchUsers();
+                    fetchDesks();
+                });
+
+                scope.$watch('search', function() {
+                    fetchUsers();
+                });
+
+                scope.selectUser = function(user) {
+                    scope.coverage.assigned_user = user._id;
+                    scope.open = false;
+                };
+
+                var fetchUsers = function() {
+                    var criteria = {};
+                    if (scope.search) {
+                        criteria.where = JSON.stringify({
+                            '$or': [
+                                {username: {'$regex': scope.search}},
+                                {first_name: {'$regex': scope.search}},
+                                {last_name: {'$regex': scope.search}},
+                                {display_name: {'$regex': scope.search}},
+                                {email: {'$regex': scope.search}}
+                            ]
+                        });
+                    }
+                    api.users.query(criteria)
+                    .then(function(result) {
+                        scope.users = result;
+                    });
+                };
+
+                var fetchDesks = function() {
+                    api.desks.query()
+                    .then(function(result) {
+                        scope.desks = result;
+                    });
+                };
             }
         };
     }
@@ -140,6 +267,10 @@ define([
             apiProvider.api('planning', {
                 type: 'http',
                 backend: {rel: 'planning'}
+            });
+            apiProvider.api('coverages', {
+                type: 'http',
+                backend: {rel: 'coverages'}
             });
         }])
         .config(['superdeskProvider', function(superdesk) {
