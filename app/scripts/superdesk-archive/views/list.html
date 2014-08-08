@@ -68,7 +68,7 @@
                         ng-if="extras.activityFilter.type === 'archive'"
                         sd-draggable
                         data-item="item" 
-                        data-container="'.scratchpad'" 
+                        data-container="'#scratchpad'" 
                         class="drag-{{extras.view}}"></div>
                     <div sd-media-box ng-if="extras.activityFilter.type !== 'archive'"></div>
                 </div>
@@ -83,7 +83,7 @@
                     ng-if="extras.activityFilter.type === 'archive'"
                     sd-draggable 
                     data-item="item" 
-                    data-container="'.scratchpad'" 
+                    data-container="'#scratchpad'" 
                     class="{{extras.view}}-view" 
                     data-cursor="extras.view !== 'mgrid'"></div>
                 <div sd-media-box ng-if="extras.activityFilter.type !== 'archive'"></div>

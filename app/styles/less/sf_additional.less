@@ -1,4 +1,5 @@
-/* SEARCHBAR */
+// Styling for the superdesk specific elements
+// ----------------------------------------------------------------------------------------
 .searchbar {
 	.border-radius(3px) !important;
 	background:url(../../images/search-icon.png) no-repeat 9px 4px #ffffff !important;
@@ -182,58 +183,6 @@
 	}
 }
 
-
-.navbar {
-	.divider-vertical {
-		margin: 0
-	}
-	.dropdown {
-		.dropdown-toggle {
-			.border-radius(0px);
-			padding: 10px 20px 11px;
-			&:hover {
-				color: #aaa !important;
-			}
-			.caret {
-				margin-right: 0;
-			}
-		}
-		&.open {
-			.dropdown-toggle {
-				padding: 10px 20px 11px;
-				background: #000;
-				color:#fff !important;
-				&:hover {
-					color:#fff;
-					.caret {
-						.opacity(100);
-					}
-				}
-			}
-		}
-		.dropdown-menu {
-			background: #404040;
-			border-color: #222;
-			border-top-width: 0px;
-			.border-radius(0px 0px 3px 3px); 
-			margin-top: -1px;
-			&:before {
-				display:none !important;
-			}
-			&:after {
-				display:none !important;
-			}
-			li {
-				a {
-					color: #e0e0e0;
-					&:hover {
-						background: #000;
-					}
-				}
-			}
-		}
-	}
-}
 
 /* dropdown override */
 .sf-dropdown {
@@ -846,25 +795,6 @@
 
 }
 
-.sf-scroller {
-	&::-webkit-scrollbar {
-      border-left: 9px solid #fff;
-      border-right: 1px solid #fff;
-      width: 13px;
-      background: #fff;
-      &:hover {
-        background: #e8e8e8;
-      }
-    }
-    &::-webkit-scrollbar-thumb {
-      border-left: 8px solid #fff;
-      background: #bbb;
-      &:hover {
-        background: #787878;
-      }
-    }
-}
-
 .small-plain {
 	max-height: 150px;
 	overflow-y: scroll; 
@@ -898,31 +828,6 @@
 }
 
 
-.btn-flat {
-	color: #2f2f2f !important;
-	text-decoration: none;
-	text-shadow : 0 1px #fff;
-	.box-shadow(0 0 0 0 #000) !important;
-	background: #f2f2f2;
-	padding: 1px 10px;
-	border: 0;
-	&:hover, &.active {
-		background: #d0d0d0;
-	}
-	&.active {
-		text-shadow : 0 1px #fff;
-		color: #2f2f2f !important;
-		&:hover {
-			background: #f2f2f2 !important;
-			color: #2f2f2f !important;
-			text-shadow : 0 1px #fff !important;
-		}
-	}
-	i {
-		margin-right: 3px;
-	}
-}
-
 /* list group */
 .list-group {
 	.box-sizing(border-box);
@@ -952,88 +857,49 @@
 
 
 
-/* scratchpad */
-
-.scratchpad {
-	width:100%;
+// Styling for the superdesk specific elements
+// ----------------------------------------------------------------------------------------
+#scratchpad {
 	position:fixed;
-	left:0;
-	right:0;
+	left:0; right:0; bottom:0px;
 	z-index: 1020;
-	bottom:0px;
-
+	.transition(all ease 0.3s);
+	&.left {
+    	left: @sf-main-menu-width !important;
+	}
 	.header {
 		height:@scratchpad-closed;
 		background: #585858;
-		.box-shadow(0 6px 6px 0 #111);
-		.box-shadow(inset 0 1px 1px -1px #ccc);
-		.title {
-			width:auto;
-			line-height:15px;
-			padding:8px 20px 8px;
-			font-weight:bold;
-			color:#969494;
-			font-size:12px;
-			text-shadow:0px -1px  1px #333;
-			border-right:1px solid #292929;
-			float:left;
-			position:relative;
-		}
-		.info {
-			width:auto;
-			line-height:15px;
-			padding:8px 20px 8px;
-			font-weight:normal;
-			color:#ffffff;
-			font-size:12px;
-			float:left;
-			position:relative;
-			.badge {
-				margin-right:5px;
-			}
-		}
-		.btn-group {
-			.btn {
-				.border-radius(0px);
-				background:none;
-				border:0;
-				border-left:1px solid #292929;
-				color:#bbb;
-				font-size:13px;
-				text-shadow: 0px -1px  1px #333;
-				.box-shadow(0px 0px 0px 0px #000);
-				padding:8px;
-				line-height:15px;
-				&.dropdown-toggle {
-					border-right:1px solid #292929;
-					border-left:1px solid #494949;
-				}
-				.caret {
-					border-bottom: 4px solid #fff;
-				}
-			}
-			&.open {
-				.btn {
-					color:#fff;
-				}
-			}
-		}
+		line-height:@scratchpad-closed;
+		font-size:12px;
+	}
+	.title {	
+		padding: 0 20px;
+		.text-extrabold();
+		color:#b7b7b7;
+		border-right:1px solid #747474;
+		float:left;
+	}
+	.info {
+		padding:0 20px;
+		.text-normal();
+		color:#ffffff;
+		float:left;
+	}
+	
 		
-		
-		
-		a.scratchpad-openclose {
-			width:28px;
-			height:15px;
-			margin: 8px 10px;
-			background:url(../../images/scratch-up-down.png) no-repeat;
+	.trigger {
+		border: 0;
+		width:28px;
+		height:15px;
+		margin: 12px 10px 0 0;
+		background:url(../../images/scratch-up-down.png) no-repeat;
+		background-position: 0px -15px;
+	}
+	
+	&.opened {
+		.trigger {
 			background-position: 0px 0px;
-		}
-		
-		&.opened {
-			bottom:@scratchpad-content-height;
-			a.scratchpad-openclose {
-				background-position: 0px -15px;
-			}
 		}
 	}
 
