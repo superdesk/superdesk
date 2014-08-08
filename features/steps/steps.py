@@ -773,3 +773,16 @@ def when_we_get_my_url(context, url):
     user_id = str(context.user.get('_id'))
     my_url = '{0}?where={1}'.format(url, json.dumps({'user': user_id}))
     return when_we_get_url(context, my_url)
+
+
+
+@then('we get embedded items')
+def step_impl(context):
+    response_data = json.loads(context.response.get_data())
+    href = get_self_href(response_data, context)
+    url = href + '/?embedded={"items": 1}'
+    context.response = context.client.get(url, headers=context.headers)
+    assert_200(context.response)
+    context.response_data = json.loads(context.response.get_data())
+    assert len(context.response_data['items']['view_items']) == 2
+
