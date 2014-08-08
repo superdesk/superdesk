@@ -6,12 +6,7 @@ Feature: News Items Archive Comments
         """
         [{"_id": "xyz", "guid": "testid", "headline": "test"}]
         """
-        Given empty "users"
         Given empty "item_comments"
-        When we post to "users"
-        """
-        {"username": "foo", "email": "foo@bar.com"}
-        """
         When we post to "/item_comments"
         """
         [{"text": "test comment", "item": "xyz"}]
@@ -28,12 +23,7 @@ Feature: News Items Archive Comments
         """
         [{"_id": "xyz", "guid": "testid", "headline": "test"}]
         """
-        Given empty "users"
         Given empty "item_comments"
-        When we post to "users"
-        """
-        {"username": "foo", "email": "foo@bar.com"}
-        """
         When we post to "/item_comments"
         """
         [{"text": "test comment", "item": "xyz"}]
@@ -52,12 +42,7 @@ Feature: News Items Archive Comments
         """
         [{"_id": "xyz", "guid": "testid", "headline": "test"}]
         """
-        Given empty "users"
         Given empty "item_comments"
-        When we post to "users"
-        """
-        {"username": "foo", "email": "foo@bar.com"}
-        """
         When we post to "/item_comments"
         """
         [{"text": "test comment", "item": "xyz"}]
@@ -74,7 +59,6 @@ Feature: News Items Archive Comments
         """
         [{"_id": "xyz", "guid": "testid", "headline": "test"}]
         """
-        Given empty "users"
         Given empty "item_comments"
         When we post to "users"
         """
@@ -95,15 +79,10 @@ Feature: News Items Archive Comments
         """
         [{"_id": "xyz", "guid": "testid", "headline": "test"}]
         """
-        Given empty "users"
         Given empty "item_comments"
-        When we post to "users"
-        """
-        {"username": "foo", "email": "foo@bar.com"}
-        """
         When we post to "/item_comments"
         """
-        [{"text": "test comment", "item": "xyz", "user": "#USERS_ID#"}]
+        [{"text": "test comment", "item": "xyz"}]
         """
         And we get "/archive/wrong_id/comments"
         Then we get error 400
@@ -115,15 +94,10 @@ Feature: News Items Archive Comments
     @auth
     Scenario: Create comment for item(Fail) - wrong archive item supplied
         Given empty "archive"
-        Given empty "users"
         Given empty "item_comments"
-        When we post to "users"
-        """
-        {"username": "foo", "email": "foo@bar.com"}
-        """
         When we post to "/item_comments"
         """
-        [{"text": "test comment", "item": "xyz", "user": "#USERS_ID#"}]
+        [{"text": "test comment", "item": "xyz"}]
         """
         Then we get error 400
         """
