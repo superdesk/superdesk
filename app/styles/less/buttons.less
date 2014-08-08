@@ -13,27 +13,27 @@
 
 //mixin
 .buttonStates(@background:@btnDefaultColor, @color: @sd-text) {
-  color: @color;
-  background-color: @background;
-  &:hover {
-    background-color: multiply(@background,rgba(0,0,0,15%));
-    .box-shadow(0 2px 0 0 rgba(0,0,0,50%));
-    text-decoration: none;
-    color: @color;
-  }
-  &:focus {
-    outline:none !important;
-  }
-  &:active, &.active {
-    background-color: @background;
-    .box-shadow(inset 0 2px 0 multiply(@background,rgba(0,0,0,20%)));
-  }
-  &.disabled, &[disabled], &.disabled:hover, &[disabled]:hover, &.disabled:focus, &[disabled]:focus, &.disabled:active, &[disabled]:active {
-    cursor: default;
-    .opacity(30) !important;
-    .box-shadow(none);
-    background-color: @background;
-  }
+	color: @color;
+	background-color: @background;
+	&:hover {
+		background-color: multiply(@background,rgba(0,0,0,15%));
+		.box-shadow(0 2px 0 0 rgba(0,0,0,50%));
+		text-decoration: none;
+		color: @color;
+	}
+	&:focus {
+		outline:none !important;
+	}
+	&:active, &.active {
+		background-color: @background;
+		.box-shadow(inset 0 2px 0 multiply(@background,rgba(0,0,0,20%)));
+	}
+	&.disabled, &[disabled], &.disabled:hover, &[disabled]:hover, &.disabled:focus, &[disabled]:focus, &.disabled:active, &[disabled]:active {
+		cursor: default;
+		.opacity(30) !important;
+		.box-shadow(none);
+		background-color: @background;
+	}
 }
 
 
@@ -42,61 +42,60 @@
 
 // Core
 .btn {
-  display: inline-block;
-  .ie7-inline-block();
-  padding: 10px 20px;
-  height: 28px;
-  line-height: 10px;
-  margin-bottom: 0; // For input.btn
-  font-size: 12px;
-  text-transform: uppercase;
-  text-decoration: none;
-  text-align: center;
-  vertical-align: middle;
-  .border-radius(3px);
-  cursor: pointer;
-  border: 0;
-  outline:none !important;
-  .box-sizing(border-box);
+	display: inline-block;
+	.ie7-inline-block();
+	padding: 10px 20px;
+	height: 28px;
+	line-height: 10px;
+	margin-bottom: 0; // For input.btn
+	font-size: 12px;
+	text-transform: uppercase;
+	text-decoration: none;
+	text-align: center;
+	vertical-align: middle;
+	.border-radius(3px);
+	cursor: pointer;
+	border: 0;
+	outline:none !important;
+	.box-sizing(border-box);
 
-  // Give IE7 some love
-  .ie7-restore-left-whitespace();
-  [class^="icon-"], [class*=" icon-"]{
-    margin-top: -4px;
-    margin-right: 3px;
-  }
-  
-  //other states
-  .buttonStates();
-  
+	// Give IE7 some love
+	.ie7-restore-left-whitespace();
+	[class^="icon-"], [class*=" icon-"]{
+		margin-top: -4px;
+		margin-right: 3px;
+	}
+	
+	//other states
+	.buttonStates();
 }
 
 .btn-info, .btn-primary {
-  .buttonStates(@btnInfoColor, @white);
+	.buttonStates(@btnInfoColor, @white);
 }
 .btn-green {
-  .buttonStates(@btnGreenColor, @white);
+	.buttonStates(@btnGreenColor, @white);
 }
 .btn-danger {
-  .buttonStates(@btnDangerColor, @white);
+	.buttonStates(@btnDangerColor, @white);
 }
 .btn-light {
-  .buttonStates(@btnLightColor);
+	.buttonStates(@btnLightColor);
 }
 .btn-inverse {
-  .buttonStates(@btnInverseColor, @white);
+	.buttonStates(@btnInverseColor, @white);
 }
 
 button {
-  outline:none !important;
-  &:focus {
-    outline:none !important;
-  }
+	outline:none !important;
+	&:focus {
+		outline:none !important;
+	}
 }
 
 // Focus state for keyboard and accessibility
 .btn:focus {
-  .tab-focus();
+	.tab-focus();
 }
 
 // Button Sizes
@@ -104,41 +103,41 @@ button {
 
 // Large
 .btn-large {
-  padding: 16px 32px;
-  font-size: 13px;
-  line-height: normal;
-  .border-radius(5px);
-  height: 40px;
+	padding: 16px 32px;
+	font-size: 13px;
+	line-height: normal;
+	.border-radius(5px);
+	height: 40px;
 }
 .btn-large [class^="icon-"] {
-  margin-top: 1px;
+	margin-top: 1px;
 }
 
 .btn-medium {
-  padding: 12px 25px;
-  .border-radius(3px);
-  height: 32px;
+	padding: 12px 25px;
+	.border-radius(3px);
+	height: 32px;
 }
 
 // Small
 .btn-small {
-  padding: 4px 9px;
-  font-size: @baseFontSize - 2px;
-  line-height: @baseLineHeight - 2px;
+	padding: 4px 9px;
+	font-size: @baseFontSize - 2px;
+	line-height: @baseLineHeight - 2px;
 }
 .btn-small [class^="icon-"] {
-  margin-top: -1px;
+	margin-top: -1px;
 }
 
 // Mini
 .btn-mini {
-  padding: 2px 6px;
-  font-size: @baseFontSize - 2px;
-  line-height: 17px !important;
+	padding: 2px 6px;
+	font-size: @baseFontSize - 2px;
+	line-height: 17px !important;
 }
 
 .btn.pull-right {
-  margin-left:10px;
+	margin-left:10px;
 }
 
 // Cross-browser Jank
@@ -147,105 +146,239 @@ button {
 button.btn,
 input[type="submit"].btn {
 
-  // Firefox 3.6 only I believe
-  &::-moz-focus-inner {
-    padding: 0;
-    border: 0;
-  }
+	// Firefox 3.6 only I believe
+	&::-moz-focus-inner {
+		padding: 0;
+		border: 0;
+	}
 
-  // IE7 has some default padding on button controls
-  *padding-top: 2px;
-  *padding-bottom: 2px;
-  &.btn-large {
-    *padding-top: 7px;
-    *padding-bottom: 7px;
-  }
-  &.btn-small {
-    *padding-top: 3px;
-    *padding-bottom: 3px;
-  }
-  &.btn-mini {
-    *padding-top: 1px;
-    *padding-bottom: 1px;
-  }
+	// IE7 has some default padding on button controls
+	*padding-top: 2px;
+	*padding-bottom: 2px;
+	&.btn-large {
+		*padding-top: 7px;
+		*padding-bottom: 7px;
+	}
+	&.btn-small {
+		*padding-top: 3px;
+		*padding-bottom: 3px;
+	}
+	&.btn-mini {
+		*padding-top: 1px;
+		*padding-bottom: 1px;
+	}
 }
 
 
-// Cross-browser Jank
+// Sub-Navigation buttons
 // --------------------------------------------------
 
 .navbtn {
-  float: left;
-  padding: 0 15px;
-  width: auto;
-  background: transparent;
-  color:#333;
-  height: 52px;
-  display: block;
-  text-align: center;
-  line-height: 52px;
-  text-decoration: none !important;
-  border:0;
-  border-right: 1px solid #e0e0e0;
-  &.navbtn-info {
-    background: @sd-blue;
-    border-left: 1px solid lighten(@sd-blue, 10%);
-    color: #fff;
-    &.disabled {
-      background: #898989;
-    }
-  }
+	float: left;
+	padding: 0 14px;
+	width: auto;
+	background: transparent;
+	color:#333;
+	height: @subnav-height;
+	display: block;
+	text-align: center;
+	line-height:@subnav-height;
+	text-decoration: none !important;
+	border:0;
+	border-right: 1px solid #e0e0e0;
+	&.navbtn-info {
+		background: @sd-blue;
+		border-left: 1px solid lighten(@sd-blue, 10%);
+		color: #fff;
+		&.disabled {
+			background: #898989;
+		}
+	}
 
-  &:hover {
-    background: #e0e0e0;
-    &.navbtn-info {
-      background:  lighten(@sd-blue, 5%);
-    }
-  }
+	&:hover {
+		background: #e0e0e0;
+		&.navbtn-info {
+			background:  lighten(@sd-blue, 5%);
+		}
+	}
 
-  i {
-    vertical-align: middle;
-  }
-  .title {
-    text-transform: uppercase;
-  }
+	i {
+		vertical-align: middle;
+	}
+	.title {
+		text-transform: uppercase;
+	}
 
-  i + .title {
-    margin-left: 10px;
-  }
-  &.navbtn-hover {
-    .title {
-      display: none;
-    }
-    &:hover {
-      .title {
-        display: inline;
-      }
-    }
-  }
-  &.disabled {
-    background: #e1e1e1;
-    &:hover {
-      background: #e1e1e1;
-      cursor: default;
-    }
-    .arrow {
-      display: none;
-    }
-  }
-  &.active {
-    background: #62b0d0;
-    cursor: pointer;
-  }
-  &.large {
-    width: auto;
-    padding: 0 20px;
-    span {
-      text-transform: uppercase;
-      color: #fff;
-    }
-    span + i {
-      margin-left: 10px;
-    }
-  }
+	i + .title {
+		margin-left: 10px;
+	}
+	&.navbtn-hover {
+		.title {
+			display: none;
+		}
+		&:hover {
+			.title {
+				display: inline;
+			}
+		}
+	}
+	&.disabled {
+		background: #e1e1e1;
+		&:hover {
+			background: #e1e1e1;
+			cursor: default;
+		}
+		.arrow {
+			display: none;
+		}
+	}
+	&.active {
+		background: #62b0d0;
+		cursor: pointer;
+	}
+	&.large {
+		width: auto;
+		padding: 0 20px;
+		span {
+			text-transform: uppercase;
+			color: #fff;
+		}
+		span + i {
+			margin-left: 10px;
+		}
+	}
+
+	//extension for dropdowns
+
+	&.dropdown {
+		padding: 0;
+		.dropdown-toggle {
+			border:0;
+			padding: 0 15px 0 25px;
+			.border-radius(0);
+			display: block;
+			background: #f5f5f5;
+			color:#333;
+			height: @subnav-height - 1;
+			text-align: center;
+			line-height: @subnav-height - 1;
+			text-decoration: none !important;
+			font-size: 15px;
+			position: relative;
+			z-index: 2;
+			&:hover {
+				background: #fff;
+				color:#333 !important;
+			}
+			&.condensed {
+				padding: 0 14px;
+			}
+		}
+		&.open {
+			.dropdown-toggle {
+				background: #fff;
+				color:#333 !important;
+				box-shadow:-3px 0px 1px -2px #999,3px 0px 1px -2px #999;
+			}
+		}
+
+		.caret {
+			margin: 25px 0 0 15px;
+		}
+
+		.sf-dropdown-simple {
+			z-index: 1;
+			margin-top: 0;
+			.border-radius(0px) !important;
+			border:0;
+			background: #fff;
+			min-width: 200px;
+			box-shadow:0px 1px 2px 1px #aaa;
+			padding: 10px 0;
+			li {
+				margin: 0;
+				padding: 0;
+				height: auto;
+				> a, > button, > span {
+					background: none;
+					border:0;
+					margin: 0 15px;
+					min-width: 225px;
+					padding: 7px 10px;
+					height: 31px;
+					line-height: 19px;
+					.border-radius(4px);
+					.box-sizing(border-box);
+					> i {
+						margin-right: 10px;
+					}
+					&:hover {
+						background: #cde0e9;
+					}
+				}
+				> span {
+					display: block;
+					&:hover {
+						background: none;
+					}
+				}
+				&:hover {
+					background: none !important;
+				}
+				button.full {
+					margin: 5px 0 0 0;
+					height: 41px;
+					padding: 10px 14px;
+					border-top: 1px solid #e0e0e0;
+					.border-radius(0px);
+					&:hover {
+						background: @sd-blue;
+						color: #fff;
+					}
+				}
+			}
+		}
+	}
+
+	&.toggle-list {
+		.box-sizing(border-box);
+		padding: 14px 7px 14px 17px;
+		ul {
+			.clearfix();
+			li {
+				float: left;
+				margin-right: 10px;
+				a {
+					display: inline-block;
+					.border-radius(3px);
+					height: 22px;
+					.box-sizing(border-box);
+					padding: 0 10px;
+					line-height: 22px;
+					color: #4f4f4f;
+					text-decoration: none;
+					text-transform: uppercase;
+					font-size: 12px;
+					&:hover {
+						background: #e4e4e4;
+					}
+					b {
+						margin-left: 5px;
+						font-size: 14px;
+						color: #949494;
+						.text-light();
+					}
+				}
+				&.active a {
+					background: #ddd;   
+					color: #000;
+					.box-shadow(inset 0 2px 0 #ccc);
+				}
+			}
+		}
+
+		&:hover {
+			background: none;
+		}
+	}
 }

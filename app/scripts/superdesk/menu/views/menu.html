@@ -1,54 +1,35 @@
 <div>
-  <div class="navbar navbar-inverse navbar-fixed-top sf-top-menu" ng-class="{'sf-menu-open': flags.menu}">
+  <div id="top-menu" ng-class="{'menu-open': flags.menu}">
 
-    <!-- Top navigation bar -->
-    <div class="navbar-inner">
-      <div class="container">
-        <div class="nav-collapse">
-
-          <div class="navigation-header">
-            <a href="" class="collapse-navigation" ng-click="toggleMenu()">
-              <i class="icon-collapse"></i>
-            </a>
-            
-            <a class="main-link" href="" translate>{{ currentRoute.label }}</a>
-            <span class="top-space" ng-include="currentRoute.topTemplateUrl"></span>
-          </div>
-
-          <ul class="nav pull-right">
-              <li>
-                <a href="" ng-click="toggleBeta()">
-                    <span class="version stable" ng-show="!beta" tooltip="{{'Switch to feature preview' | translate }}" tooltip-placement="left">stable</span>
-                    <span class="version beta" ng-show="beta" tooltip="{{'Turn off feature preview' | translate }}" tooltip-placement="left">feature preview</span>
-                </a>
-              </li>
-              <li class="divider-vertical"></li>
-              <li>
-                <a href="" ng-click="toggleNotifications()" class="user-profile">
-                  <span sd-beta class="notifications-count">3</span>
-                  <img sd-user-avatar data-src="currentUser.picture_url" class="avatar"> {{ currentUser.display_name }}
-                </a>
-              </li>
-              <li class="divider-vertical"></li>
-              <li ng-show=""><a href="" translate>Help</a></li>
-          </ul>
-
-        </div>
-
+      <div class="nav pull-left">
+        <button class="collapse-nav pull-left" ng-click="toggleMenu()">
+          <i class="icon-collapse"></i>
+        </button>
+        <button class="main-link pull-left" translate>{{ currentRoute.label }}</button>
+        <span class="top-nav pull-left" ng-include="currentRoute.topTemplateUrl"></span>
       </div>
-    </div>
+
+      <div class="nav pull-right">
+          <button class="current-user pull-right" ng-click="toggleNotifications()" >
+              <img sd-user-avatar data-src="currentUser.picture_url" class="avatar">
+          </button>
+          <button ng-click="toggleBeta()" class="beta-switch  pull-right">
+              <span class="stable" ng-show="!beta" tooltip="{{'Switch to feature preview' | translate }}" tooltip-placement="left">stable</span>
+              <span class="beta" ng-show="beta" tooltip="{{'Turn off feature preview' | translate }}" tooltip-placement="left">feature preview</span>
+          </button>
+      </div>
   </div>
 
-  <div class="sf-main-menu">
-    <div class="sf-menu-header-bar"></div>
-    <div class="sf-menu-content">
+  <div id="main-menu">
+    <div class="header"></div>
+    <div class="content">
       <ul>
         <li ng-repeat="item in menu | orderBy:'priority'" ng-class="{active: item.isActive}">
           <a ng-href="#{{ item.href }}" title="{{ item.label | translate }}">{{ item.label|translate }}</a>
         </li>
       </ul>
     </div>
-    <div class="sf-menu-footer">
+    <div class="footer">
       <i class="icon-superdesk"></i>
       <span>Powered by Superdesk technology</span>
     </div>
