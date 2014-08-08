@@ -41,17 +41,12 @@ class ItemCommentsModel(BaseModel):
     datasource = {'default_sort': [('_created', -1)]}
 
     def on_create(self, docs):
-        user = getattr(flask.g, 'user') if hasattr(flask.g, 'user') else {}
-        if not user:
-            if app.debug:
-                user = user or {}
-            else:
-                raise superdesk.SuperdeskError(payload='Invalid user.')
-        payload = 'Commenting on behalf of someone else is prohibited.'
         for doc in docs:
             check_item_valid(doc['item'])
             sent_user = doc.get('user', None)
+            user = flask.g.user
             if sent_user and sent_user != user.get('_id'):
+                payload = 'Commenting on behalf of someone else is prohibited.'
                 raise superdesk.SuperdeskError(payload=payload)
             doc['user'] = str(user.get('_id'))
 
