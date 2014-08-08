@@ -153,12 +153,42 @@ Feature: Content View
 	    """
 
     @auth
-    Scenario: Create user content view
+    Scenario: Get content view items
+        Given empty "content_view"
+        Given empty "archive"
+
+        When we upload a file "bike.jpg" to "archive_media"
+        Then we get new resource
+        """
+        {"guid": "", "firstcreated": "", "versioncreated": ""}
+        """
+
+        When we post to "/archive"
+        """
+        [{"type": "text"}]
+        """
+
+        Then we get new resource
+        """
+        {"_id": "", "guid": "", "type": "text"}
+        """
+
         When we post to "/content_view"
-            """
-            {"name": "test", "filter": {"term": {"headline": "test"}}}
-            """
+        """
+        {
+        "name": "show my content",
+        "description": "Show content items created by the current logged user",
+        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        }
+        """
 
-        And we get my "/content_view"
-
-        Then we get list with 1 items
+        Then we get new resource
+        """
+        {
+        "name": "show my content",
+        "description": "Show content items created by the current logged user",
+        "location": "archive",
+        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        }
+        """
+        Then we get embedded items
