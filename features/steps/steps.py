@@ -282,7 +282,12 @@ def step_impl_when_patch_again(context):
     data = get_json_data(context.response)
     href = get_self_href(data, context)
     headers = if_match(context, data.get('_etag'))
-    context.response = context.client.patch(href, data=context.text, headers=headers)
+    data2 = apply_placeholders(context, context.text)
+    context.response = context.client.patch(href, data=data2, headers=headers)
+    if context.response.status_code in (200, 201):
+        item = json.loads(context.response.get_data())
+        if item['_status'] == 'OK' and item.get('_id'):
+            set_placeholder(context, '%s_ID' % href.upper(), item['_id'])
     assert_ok(context.response)
 
 
