@@ -3,18 +3,14 @@
 
 		<div class="navbtn dropdown views-settings">
     		<button class="dropdown-toggle condensed"><i class="svg-icon-settings"></i></button>
-			<ul class="dropdown-menu sf-dropdown-simple sf-right">
+			<ul class="dropdown-menu pull-right">
 				<li ng-repeat="view in views.views">
-                    <a href="" ng-click="views.edit(view)"><span>{{ view.name }} <i class="icon-pencil"></i></span></a>
+                    <span ng-click="views.edit(view)">{{ view.name }} <i class="icon-pencil"></i></span>
                 </li>
                 <li ng-hide="views.views.length"><a href="" ng-click="views.create()">start creating a view</a></li>
 				<li><button class="full" ng-click="views.create()"><i class="svg-icon-add"></i><span translate>Create new view</span></button></li>
 			</ul>
     	</div>
-
-        <button class="navbtn navbtn-info">
-            <i class="svg-icon-add inverse"></i>
-        </button>
 
         <a class="navbtn navbtn-info" href="" ng-if="openUpload" ng-click="openUpload()">
             <i class="svg-icon-add inverse"></i> <span class="title" translate>Add media</span>
@@ -26,7 +22,7 @@
 
         <div class="navbtn dropdown">
             <button class="dropdown-toggle condensed"><i class="svg-icon-settings"></i></button>
-            <ul class="dropdown-menu sf-dropdown-simple sf-right">
+            <ul class="dropdown-menu pull-right">
                 <li><a href="" ng-click="view='mgrid'"><i class="icon-th"></i> {{ 'grid view' | translate}}</a></li>
                 <li><a href="" ng-click="view='mlist'"><i class="icon-th-list"></i> {{ 'list view' | translate}}</a></li>
                 <li><a href="" ng-click="view='compact'"><i class="icon-th-list"></i> {{ 'compact view' | translate}}</a></li>

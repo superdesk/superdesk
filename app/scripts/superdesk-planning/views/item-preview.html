@@ -3,7 +3,7 @@
 		<div class="time-info">{{ 'Created' | translate }} <time>{{ item._created | reldate }}</time></div>
 		<div class="dropdown more-actions">
 			<button class="dropdown-toggle"><i class="icon-dots"></i></button>
-			<ul class="dropdown-menu sf-dropdown-simple sf-right">
+			<ul class="dropdown-menu pull-right">
 				<li><button ng-click="add()" translate>Add coverage</button></li>
 			</ul>
 		</div>
@@ -27,7 +27,7 @@
 						<div class="assignee-name"><span ng-show="coverage.assigned_user">{{userLookup[coverage.assigned_user].display_name}}</span><span ng-hide="coverage.assigned_user" translate>Unassigned</span></div>
 						<div class="coverage-type dropdown">
 							<button class="dropdown-toggle">Story<b class="caret"></b></button>
-							<ul class="dropdown-menu sf-dropdown">
+							<ul class="dropdown-menu">
 								<li><button>Story</button></li>
 								<li><button>Photo</button></li>
 								<li><button>Research</button></li>
@@ -36,7 +36,7 @@
 						</div>
 						<div class="dropdown more-actions">
 							<button class="dropdown-toggle"><i class="icon-dots"></i></button>
-							<ul class="dropdown-menu sf-dropdown sf-right">
+							<ul class="dropdown-menu pull-right">
 								<!--<li><button><i class="icon-trash"></i><span translate>Remove coverage</span></button></li>-->
 							</ul>
 						</div>
@@ -52,7 +52,7 @@
 						<div class="assignee-name"><span ng-show="coverage.assigned_user">{{userLookup[coverage.assigned_user].display_name}}</span><span ng-hide="coverage.assigned_user" translate>Unassigned</span></div>
 						<div class="coverage-type dropdown">
 							<button class="dropdown-toggle">Story<b class="caret"></b></button>
-							<ul class="dropdown-menu sf-dropdown">
+							<ul class="dropdown-menu">
 								<li><button>Story</button></li>
 								<li><button>Photo</button></li>
 								<li><button>Research</button></li>
@@ -61,7 +61,7 @@
 						</div>
 						<div class="dropdown more-actions">
 							<button class="dropdown-toggle"><i class="icon-dots"></i></button>
-							<ul class="dropdown-menu sf-dropdown sf-right">
+							<ul class="dropdown-menu pull-right">
 								<li><button ng-click="removeCoverage(coverage)"><i class="icon-trash"></i><span translate>Remove coverage</span></button></li>
 							</ul>
 						</div>
