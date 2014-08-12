@@ -1,25 +1,32 @@
 define([
     'angular',
-    'require',
-    '../api/api-service'
-], function(angular, require) {
+    'moment'
+], function(angular, moment) {
     'use strict';
 
     var TIMEOUT = 5000;
 
-    return angular.module('superdesk.notification', [ 'superdesk.data' ])
-    .run(['$rootScope', '$timeout', 'api',
-    	function($rootScope, $timeout, api) {
+    return angular.module('superdesk.notification', ['superdesk.data'])
+    .run(['$rootScope', '$timeout', '$q', 'api',
+    	function($rootScope, $timeout, $q, api) {
 			var last, timeout;
 
-			function pool() {
-				var q = null;
-				if (last != null) {
-					q = {where: {'_created': {'$gt': last}}};
+			// get last notification and use it to query changes after
+			function getLast() {
+				if (last) {
+					return $q.when(last);
 				}
-				api.notification.query(q).then(function(items) {
-					var notifications = {};
-					if (last != null) {
+
+				return api.notification.query({size: 1}).then(function(items) {
+					return items._items.length ? items._items[0]._created : $q.reject(); // no notifications yet
+				});
+			}
+
+			function pool() {
+				getLast().then(function(_last) {
+					var q = {where: {_created: {$gt: _last}}};
+					api.notification.query(q).then(function(items) {
+						var notifications = {};
 						_.each(items._items, function(item) {
 							_.each(item.changes, function(change, name) {
 								var current = notifications[name];
@@ -41,23 +48,18 @@ define([
 								}
 							});
 						});
-					}
-					_.each(items._items, function(item) {
-						if (last == null) {
-							last = item._created;
-						} else {
-							if (last < item._created) {
-								last = item._created;
-							}
-						}
+
+						last = items._items.length ? items._items[0]._created : _last;
+
+						_.each(notifications, function(changes, name) {
+							$rootScope.$broadcast('changes in ' + name, changes);
+						});
+
+						timeout = $timeout(pool, TIMEOUT);
+					}, function() {
+						// In case of error we will try in 10 seconds.
+						timeout = $timeout(pool, TIMEOUT * 2);
 					});
-					_.each(notifications, function(changes, name) {
-						$rootScope.$broadcast('changes in ' + name, changes);
-					});
-					timeout = $timeout(pool, TIMEOUT);
-				}, function() {
-					// In case of error we will try in 10 seconds.
-					timeout = $timeout(pool, TIMEOUT * 2);
 				});
 			}
 
