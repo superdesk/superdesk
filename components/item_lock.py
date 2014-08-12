@@ -1,6 +1,7 @@
 from models.item import ItemModel
 from models.base_model import ETAG
 from superdesk import SuperdeskError
+from superdesk.utc import utcnow
 
 
 LOCK_USER = 'lock_user'
@@ -16,7 +17,7 @@ class ItemLock():
         item = item_model.find_one(filter)
         if item and self._can_lock(item, user):
             # filter[ETAG] = etag
-            updates = {LOCK_USER: user}
+            updates = {LOCK_USER: user, 'lock_time': utcnow()}
             item_model.update(filter, updates)
             item[LOCK_USER] = user
         else:
