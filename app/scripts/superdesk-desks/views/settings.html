@@ -147,7 +147,7 @@
 							<li ng-repeat="user in users._items | filter:notIn(selectedMembers)| filter:memberSearch" >
 								<figure class="avatar"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
 								<span class="fullname" >{{ user.first_name }} {{ user.last_name }}</span>
-								<button class="btn btn-mini btn-success pull-right" ng-click="addMember(user)" tooltip="{{ 'Add to desk' | translate}}" tooltip-placement="left"><i class="icon-plus-small icon-white"></i></button>
+								<button class="btn btn-mini btn-green pull-right" ng-click="addMember(user)" tooltip="{{ 'Add to desk' | translate}}" tooltip-placement="left"><i class="icon-plus-small icon-white"></i></button>
 							</li>
 					    </ul>
 				  	</div>

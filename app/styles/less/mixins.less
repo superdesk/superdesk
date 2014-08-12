@@ -99,75 +99,6 @@
 	white-space: nowrap;
 }
 
-// New image replacement
-// -------------------------
-// Source: http://www.zeldman.com/2012/03/01/replacing-the-9999px-hack-new-image-replacement/
-.hide-text {
-	overflow: hidden;
-	text-indent: 100%;
-	white-space: nowrap;
-}
-
-
-// Utility classes
-// -------------------------
-
-// Angular specific
-[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-	display: none !important;
-}
-
-// Quick floats
-.pull-right {
-	float: right;
-}
-.pull-left {
-	float: left;
-}
-
-// Toggling content
-.hide {
-	display: none;
-}
-.show {
-	display: block;
-}
-
-// Visibility
-.invisible {
-	visibility: hidden;
-}
-
-// Preview feature elements
-.beta-hide {
-	display: none !important;
-}
-
-// Blue text in input + blue placeholder
-.blue-text {
-	color: #419fc6 !important;
-	&::-webkit-input-placeholder {
-		color: #419fc6 !important;
-	}
-	&:-moz-placeholder {
-		color: #419fc6 !important;
-	}
-	&::-moz-placeholder {
-		color: #419fc6 !important;
-	}
-	&::-ms-input-placeholder {
-		color: #419fc6 !important;
-	}
-}
-
-// Remove background
-.no-bg {
-	background: none !important;
-	&:hover {
-		background: none !important;
-	}
-}
-
 
 
 // FONTS
@@ -268,15 +199,15 @@
 
 // Border Radius
 .border-radius(@radius: 5px) {
-		border-radius: @radius;
+	border-radius: @radius;
 }
 
 // Drop shadows
 .box-shadow(@shadow: 0 1px 3px rgba(0,0,0,.25)) {
-					box-shadow: @shadow;
+	box-shadow: @shadow;
 }
 .box-shadow-both(@shadow1 , @shadow2) {
-					box-shadow: @shadow1, @shadow2;
+	box-shadow: @shadow1, @shadow2;
 }
 // Transitions
 .transition(@transition) {
@@ -291,8 +222,8 @@
 					transform: rotate(@degrees);
 }
 .scale(@ratio) {
-	-webkit-transform: scaleX(@ratio);
-					transform: scaleX(@ratio);
+	-webkit-transform: scale(@ratio);
+					transform: scale(@ratio);
 }
 .scaleY(@ratio) {
 	-webkit-transform: scaleY(@ratio);
@@ -472,14 +403,4 @@
 		border-bottom: @arrowWidth solid transparent;
 		border-right: @arrowWidth solid @color;
 	}
-}
-
-// Grid System
-// -----------
-
-// Centered container element
-.container-fixed() {
-	margin-left: auto;
-	margin-right: auto;
-	.clearfix();
 }

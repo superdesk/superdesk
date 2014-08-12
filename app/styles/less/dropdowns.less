@@ -3,120 +3,121 @@
 
 // Use the .menu class on any <li> element within the topbar or ul.tabs and you'll get some superfancy dropdowns
 .dropdown {
-  position: relative;
-  a {
-  	color: @dropdownLinkColor;
-  }
-  a:hover {
-  	text-decoration: none;
-  }
-  button {
-  	-webkit-appearance: none;
-    border: 0;
-  }
+	position: relative;
+	a {
+		color: @dropdownLinkColor;
+	}
+	a:hover {
+		text-decoration: none;
+	}
+	button {
+		-webkit-appearance: none;
+		border: 0;
+	}
 }
 .dropdown-toggle {
-  // The caret makes the toggle a bit too tall in IE7
-  *margin-bottom: -3px;
+	// The caret makes the toggle a bit too tall in IE7
+	*margin-bottom: -3px;
 }
 .dropdown-toggle:active,
 .open .dropdown-toggle {
-  outline: 0;
+	outline: 0;
 }
 
 // Dropdown arrow/caret
 // --------------------
 .caret {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  vertical-align: middle;
-  margin-top: -2px;
-  border-left:  4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top:   4px solid @black;
-  .opacity(30);
-  content: "";
+	display: inline-block;
+	width: 0;
+	height: 0;
+	vertical-align: middle;
+	margin-top: -2px;
+	border-left:  4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top:   4px solid @black;
+	.opacity(30);
+	content: "";
 }
 
 // Place the caret
 .dropdown .caret {
-  margin-left: 4px;
+	margin-left: 4px;
 }
 .dropdown:hover .caret,
 .open.dropdown .caret {
-  .opacity(100);
+	.opacity(100);
 }
 
 // The dropdown menu (ul)
 // ----------------------
 .dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: @zindexDropdown;
-  float: left;
-  display: none; // none by default, but block on "open" of the menu
-  min-width: 160px;
-  padding: 10px;
-  margin: 13px 0 0 0; // override default ul
-  list-style: none;
-  background-color: @dropdownBackground;
-  border: @dropdownBorder;
-  .box-shadow(0 3px 5px rgba(0,0,0,.2));
-  .border-radius(3px);
-  text-align: left;
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: @zindexDropdown;
+	float: left;
+	display: none; // none by default, but block on "open" of the menu
+	min-width: 160px;
+	padding: 10px;
+	margin: 13px 0 0 0; // override default ul
+	list-style: none;
+	background-color: @dropdownBackground;
+	border: @dropdownBorder;
+	.box-shadow(0 3px 5px rgba(0,0,0,.2));
+	.border-radius(3px);
+	text-align: left;
 
-  // Aligns the dropdown menu to right
-  &.pull-right {
-    right: 0;
-    left: auto;
-  }
+	// Aligns the dropdown menu to right
+	&.pull-right {
+		right: 0;
+		left: auto;
+	}
 
-  // Dividers (basically an hr) within the dropdown
-  .divider {
-    .nav-divider();
-  }
+	// Dividers (basically an hr) within the dropdown
+	.divider {
+		.nav-divider();
+	}
 
-  // Links within the dropdown menu
-  button {
-    width: 100%;
-    text-align: left;
-  }
-  a, button {
-    background: none;
-    display: block;
-    padding: 3px 15px;
-    clear: both;
-    font-weight: normal;
-    line-height: @baseLineHeight;
-    color: @dropdownLinkColor;
-    white-space: nowrap;
-  }
+	// Links within the dropdown menu
+	button {
+		width: 100%;
+		text-align: left;
+	}
+	a, button {
+		background: none;
+		display: block;
+		padding: 3px 15px;
+		clear: both;
+		font-weight: normal;
+		line-height: @baseLineHeight;
+		color: @dropdownLinkColor;
+		white-space: nowrap;
+	}
 
-  li {
-  	> a, > button, > span {
-  		padding: 5px 7px;
-  		> i[class^="icon-"], i[class*=" icon-"] {
-			margin-right: 10px;
+	li {
+		> a, > button, > span {
+			padding: 5px 7px;
+			> i[class^="icon-"], i[class*=" icon-"] {
+				margin-right: 10px;
+				margin-top: -2px;
+			}
 		}
-  	}
-  	> a, > button {
-  		&:hover {
-			background: @dropdownLinkBackgroundHover;
+		> a, > button {
+			&:hover {
+				background: @dropdownLinkBackgroundHover;
+			}
 		}
-  	}
-  }
-  &.plain-menu {
-  	li {
-  		padding: 5px 7px;
-  		&:hover {
-  			background: @dropdownLinkBackgroundHover;
-  			cursor: pointer;
-  		}
-  	}
-  }
-  &:before {
+	}
+	&.plain-menu {
+		li {
+			padding: 5px 7px;
+			&:hover {
+				background: @dropdownLinkBackgroundHover;
+				cursor: pointer;
+			}
+		}
+	}
+	&:before {
 		width:23px;
 		height:16px;
 		display: block;
@@ -133,47 +134,47 @@
 // Open state for the dropdown
 // ---------------------------
 .dropdown.open {
-  // IE7's z-index only goes to the nearest positioned ancestor, which would
-  // make the menu appear below buttons that appeared later on the page
-  *z-index: @zindexDropdown;
+	// IE7's z-index only goes to the nearest positioned ancestor, which would
+	// make the menu appear below buttons that appeared later on the page
+	*z-index: @zindexDropdown;
 
-  .dropdown-toggle {
-  }
+	.dropdown-toggle {
+	}
 
-  .dropdown-menu {
-    display: block;
-  }
+	.dropdown-menu {
+		display: block;
+	}
 }
 
 // Right aligned dropdowns
-.pull-right .dropdown-menu {
-  left: auto;
-  right: 0;
-  &:before {
-  		left: auto;
-		  right:10px;
+.pull-right .dropdown-menu, .pull-right.dropdown-menu {
+	left: auto;
+	right: 0;
+	&:before {
+		left: auto;
+		right:10px;
 	}
 }
 
 
 .dropup {
-  // Reverse the caret
-  .caret {
-    border-top: 0;
-    border-bottom: 4px solid @black;
-    content: "\2191";
-  }
-  // Different positioning for bottom up menu
-  .dropdown-menu {
-    top: auto;
-    bottom: 100%;
-    margin-bottom: 1px;
-    &:before {
-      top: auto;
-      bottom:-16px;
-      background: url(../../images/dropdown-arrow-bottom.png) no-repeat;
-    }
-  }
+	// Reverse the caret
+	.caret {
+		border-top: 0;
+		border-bottom: 4px solid @black;
+		content: "\2191";
+	}
+	// Different positioning for bottom up menu
+	.dropdown-menu {
+		top: auto;
+		bottom: 100%;
+		margin-bottom: 1px;
+		&:before {
+			top: auto;
+			bottom:-16px;
+			background: url(../../images/dropdown-arrow-bottom.png) no-repeat;
+		}
+	}
 }
 
 
@@ -221,6 +222,9 @@
 		min-width: 200px;
 		box-shadow: 0px 1px 2px 1px #aaa;
 		padding: 10px 0;
+		&:before {
+			display: none;
+		}
 		li {
 			> a, > button, > span {
 				margin: 0 10px;
@@ -241,6 +245,9 @@
 				padding: 10px 14px;
 				border-top: 1px solid #e0e0e0;
 				.border-radius(0px);
+				i {
+					margin-right: 10px;
+				}
 				&:hover {
 					background: @sd-blue;
 					color: #fff;

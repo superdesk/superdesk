@@ -18,12 +18,12 @@
                 <div class="dropdown pull-right">
                     <a href="" class="dropdown-toggle"><i class="icon-cog"></i> <b class="caret"></b></a>
                     <ul class="dropdown-menu pull-right">
-                        <li><a href="" ng-click="edit(provider)"><i class="icon-cog"></i> <span translate>Edit source</span></a></li>
-                        <li><a href="" ng-click="remove(provider)" sd-confirm="{{ 'Please confirm you want to remove source.'|translate }}"><i class="icon-trash"></i> <span translate>Delete source</span></a></li>
+                        <li><a href="" ng-click="edit(provider)"><i class="icon-cog"></i> {{ 'Edit source' | translate}}</a></li>
+                        <li><a href="" ng-click="remove(provider)" sd-confirm="{{ 'Please confirm you want to remove source.'|translate }}"><i class="icon-trash"></i> {{ 'Delete source' | translate}}</a></li>
                     </ul>
                 </div>
 
-                <a class="goto-items" ng-href="#/ingest/?provider={{ provider.type === 'reuters' ? 'reuters.com' : provider.type }}" translate><i class="icon-external"></i> Go to Items</a>
+                <a class="pull-right link" ng-href="#/workspace/ingest/?provider={{ provider.type === 'reuters' ? 'reuters.com' : provider.type }}" translate><i class="icon-external"></i> {{ 'Go to Items' | translate}}</a>
 
             </li>
         </ul>
