@@ -13,16 +13,14 @@ log = logging.getLogger(__name__)
 
 
 class NotificationModel(BaseModel):
-    endpoint_name = 'notification'
-    schema = {
-        'changes': {
-            'type': 'dict',
-            'allow_unknwon': True,
-        }
 
-    }
+    endpoint_name = 'notification'
     resource_methods = ['GET']
     item_methods = ['GET']
+    datasource = {'default_sort': [('_created', -1)]}
+    schema = {
+        'changes': {'type': 'dict'},
+    }
 
 
 def init_app(flask_app):
