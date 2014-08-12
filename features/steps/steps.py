@@ -240,7 +240,7 @@ def step_impl_when_put_url(context, url):
 
 
 @when('we get "{url}"')
-def step_impl_when_get_url(context, url):
+def when_we_get_url(context, url):
     headers = []
     if context.text:
         for line in context.text.split('\n'):
@@ -766,3 +766,9 @@ def we_reset_password_for_user(context):
 def when_we_switch_user(context):
     user = {'username': 'test-user-2', 'password': 'pwd'}
     tests.setup_auth_user(context, user)
+
+@when('we get my "{url}"')
+def when_we_get_my_url(context, url):
+    user_id = str(context.user.get('_id'))
+    my_url = '{0}?where={1}'.format(url, json.dumps({'user': user_id}))
+    return when_we_get_url(context, my_url)

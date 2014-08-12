@@ -68,7 +68,7 @@ class ContentViewModel(BaseModel):
 
     def on_create(self, docs):
         for doc in docs:
-            doc.setdefault('user', flask.g.user)
+            doc.setdefault('user', flask.g.user.get('_id'))
             self.process_and_validate(doc)
 
     def on_update(self, updates, original):

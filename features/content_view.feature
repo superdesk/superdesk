@@ -151,3 +151,14 @@ Feature: Content View
 	    """
 	    {"_message": "", "_issues": "Fail to validate the filter against archive.", "_status": "ERR"}
 	    """
+
+    @auth
+    Scenario: Create user content view
+        When we post to "/content_view"
+            """
+            {"name": "test", "filter": {"term": {"headline": "test"}}}
+            """
+
+        And we get my "/content_view"
+
+        Then we get list with 1 items
