@@ -223,6 +223,16 @@
 		float: left;
 	}
 	
+	.search-close {
+		border: 0;
+		background: none;
+		display: none;
+		.opacity(0);
+		&.visible {
+			.opacity(100);
+		}
+	}
+
 	&.open {
 		.search-handler {
 			input {
@@ -234,6 +244,9 @@
 		}
 		.separator-handler {
 			margin-left: 14px;
+		}
+		.search-close {
+			display: inline-block;
 		}
 	}
 }
@@ -937,20 +950,17 @@
 		color:#ffffff;
 		float:left;
 	}
-	
-		
+
 	.trigger {
 		border: 0;
-		width:28px;
-		height:15px;
-		margin: 12px 10px 0 0;
-		background:url(../../images/scratch-up-down.png) no-repeat;
-		background-position: 0px -15px;
+		background: none;
+		margin-top: 10px;
+		margin-right: 10px;
 	}
 	
 	&.opened {
-		.trigger {
-			background-position: 0px 0px;
+		.trigger i {
+			.rotate(0);
 		}
 	}
 
@@ -973,18 +983,17 @@
 		overflow-x: auto;
 
 		&::-webkit-scrollbar {
-				background: #eee;
-				&:hover {
-			background: #fff;
-				}
+			background: #eee;
+			&:hover {
+				background: #fff;
+			}
 		}
 		&::-webkit-scrollbar-thumb {
-				background: #666;
-				&:hover {
-			background: #333;
-				}
+			background: #666;
+			&:hover {
+				background: #333;
+			}
 		}
-
 
 		> div {
 			float: none !important;
@@ -1013,14 +1022,14 @@
 // ---------------------------------------------
 
 .toggle-box {
-		margin-bottom: 30px;
-		position: relative;
-
-		> header {
-
+	margin-bottom: 30px;
 	position: relative;
-	margin-bottom: 10px;
-	&:before {
+
+	> header {
+
+		position: relative;
+		margin-bottom: 10px;
+		&:before {
 			content: " ";
 			position: absolute;
 			border-bottom: 1px solid #dcdcdc;
@@ -1028,12 +1037,12 @@
 			top:9px;
 			left:20px;
 			right: 0px;
-	}
-	.chevron {
+		}
+		.chevron {
 			.transition(all 0.2s ease);
 			.rotate(90deg);
-	}
-	h6 {
+		}
+		h6 {
 			background: @tabpane-background;
 			padding: 0 5px;
 			font-size: 11px;
@@ -1041,25 +1050,25 @@
 			color: #666;
 			position: relative;
 			display: 	inline-block;
-	}
-	&:hover {
-			cursor: pointer;
-	}
-
+		}
+		&:hover {
+				cursor: pointer;
 		}
 
-		> .toggle-content {
-	.clearfix();
-	.checklist-selection li {
-			font-weight: normal;
 	}
-		}
 
-		&.hidden {
-	> header .chevron {
+	> .toggle-content {
+		.clearfix();
+		.checklist-selection li {
+				font-weight: normal;
+		}
+	}
+
+	&.hidden {
+		> header .chevron {
 			.rotate(0);
-	}
 		}
+	}
 
 }
 
@@ -1068,11 +1077,11 @@
 // ---------------------------------------------
 
 .fade {
-		.transition(opacity .15s linear);
-		opacity: 0;
-		&.in {
-	opacity: 1;
-		}
+	.transition(opacity .15s linear);
+	opacity: 0;
+	&.in {
+		opacity: 1;
+	}
 }
 
 
@@ -1080,26 +1089,18 @@
 // ---------------------------------------------
 
 .close {
-		float: right;
-		font-size: 20px;
-		font-weight: bold;
-		line-height: @baseLineHeight;
-		color: @black;
-		text-shadow: 0 1px 0 rgba(255,255,255,1);
-		.opacity(20);
-		&:hover {
-	color: @black;
-	text-decoration: none;
-	.opacity(40);
-	cursor: pointer;
-		}
-		i {
-	vertical-align: middle;
-		}
+	float: right;
+	line-height: @baseLineHeight;
+	.opacity(20);
+	&:hover {
+		text-decoration: none;
+		.opacity(40);
+		cursor: pointer;
+	}
+	i {
+		vertical-align: middle;
+	}
 }
-
-
-
 
 
 

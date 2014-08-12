@@ -4,7 +4,8 @@ define([], function() {
     return ['$location', function($location) {
         return {
             scope: {
-                sdSearchParam: '@'
+                sdSearchParam: '@',
+                empty: '&'
             },
             link: function(scope, elem) {
                 var params = $location.search();
@@ -16,6 +17,15 @@ define([], function() {
                         $location.search('page', null);
                     });
                 }, 500);
+
+                scope.$on('$routeUpdate', function() {
+                    params = $location.search();
+                    var val = params[scope.sdSearchParam];
+                    if (val !== elem.val()) {
+                        elem.val(val || '');
+                        updateParam();
+                    }
+                 });
 
                 elem.keyup(updateParam);
             }

@@ -31,7 +31,7 @@
         </div>
 
         <button class="navbtn">
-        	<i class="arrow-icon-right"></i>
+        	<i class="svg-icon-right"></i>
         </button>
     </div>
 
@@ -50,7 +50,7 @@
         <div sd-pagination data-items="items" data-limit="25"></div>
     </div>
 
-    <div class="preview-layout" ng-class="{'hidetop' : !beta}">
+    <div class="preview-layout" ng-class="{closed: !selected.preview}">
         <div class="archive-content-inner list-pane {{ view }}-view" sd-shadow>
 
             <div class="newest-items" ng-show="createdMedia.items.length">

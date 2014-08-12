@@ -9,6 +9,14 @@ define(['require'], function(require) {
             link: function(scope, element) {
                 var search = $location.search();
                 scope.flags = {open: !!search.q};
+
+                scope.close = function() {
+                    $location.search({q: null});
+                };
+
+                scope.$on('$routeUpdate', function() {
+                    scope.visible = !!$location.search().q;
+                });
             }
         };
     }];
