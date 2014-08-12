@@ -117,14 +117,14 @@
   	}
   }
   &:before {
-		width:25px;
-		height:13px;
+		width:23px;
+		height:16px;
 		display: block;
 		z-index: 9999;
 		position: absolute;
-		top:-13px;
+		top:-16px;
 		left:10px;
-		background: url(../../images/dropdown-caret.png) no-repeat;
+		background: url(../../images/dropdown-arrow-top.png) no-repeat;
 		content: " ";
 	}
 }
@@ -151,7 +151,7 @@
   right: 0;
   &:before {
   		left: auto;
-		right:10px;
+		  right:10px;
 	}
 }
 
@@ -168,9 +168,13 @@
     top: auto;
     bottom: 100%;
     margin-bottom: 1px;
+    &:before {
+      top: auto;
+      bottom:-16px;
+      background: url(../../images/dropdown-arrow-bottom.png) no-repeat;
+    }
   }
 }
-
 
 
 ////////////// Diferent styles for dropdowns
@@ -247,13 +251,3 @@
 }
 
 
-.dropup {
-	.dropdown-menu {
-		margin-bottom: 10px !important;
-		&:before {
-			bottom:-13px;
-			top:auto;
-			background: url(../../images/dropup-caret.png) no-repeat;
-		}
-	}	
-}

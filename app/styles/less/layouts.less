@@ -7,43 +7,326 @@
 // ----------
 
 body {
-  margin: 0;
-  font-family: @baseFontFamily;
-  font-size: @baseFontSize;
-  line-height: @baseLineHeight;
-  color: @sd-text;
-  background-color: @sd-background;
-  overflow: hidden;
-  height:100%;
+	margin: 0;
+	font-family: @baseFontFamily;
+	font-size: @baseFontSize;
+	line-height: @baseLineHeight;
+	color: @sd-text;
+	background-color: @sd-background;
+	overflow: hidden;
+	height:100%;
 }
 
 // Links
 // -----
 
 a {
-  color: @linkColor;
-  text-decoration: none;
+	color: @linkColor;
+	text-decoration: none;
 }
 a:hover {
-  color: @linkColorHover;
-  text-decoration: underline;
+	color: @linkColorHover;
+	text-decoration: underline;
 }
 
 
-//
+
 // Layouts
-// Fixed-width and fluid (with sidebar) layouts
 // --------------------------------------------
 
 
-// Container (centered, fixed-width layouts)
-.container {
-  .container-fixed();
+// Main container
+// ------------------------------------
+#main-container {
+	position:absolute;
+	top:0; right: 0; left:0;
+	padding-top:@topspace;
+	.box-sizing(border-box);
+	height:100%;
+	background: @background-main;
+	overflow-y:visible;
+	.transition( all 0.3s ease);
+	overflow-x:hidden; 
+	&.menu {
+		left: @sf-main-menu-width !important;
+		.subnav {
+			left: @sf-main-menu-width;
+			right: 0 !important;
+		}
+	}
 }
 
-// Fluid layouts (left aligned, with sidebar, min- & max-width content)
-.container-fluid {
-  padding-left: 20px;
-  padding-right: 20px;
-  .clearfix();
+
+// Main section
+// ------------------------------------
+
+.main-section {
+	position:absolute;
+	top: @subnav-height+@topspace;
+	bottom:0; left:0; right:0; 
+	margin:0;
+	padding:0;
+	z-index:1;
+	padding-bottom:35px !important; /* because of scratchpad*/
+	&.with-subnav {
+		.preview-layout {
+			top : @nav-height;
+			.preview-pane {
+				.actions {
+					padding: 15px 20px;
+					height: 28px;
+				}
+				.user-details-pane {
+					top: 40px;
+				}
+			}
+		}
+	}
+}
+
+
+
+// Preview layout
+// ------------------------------------
+
+.preview-layout {
+	position: absolute;
+	top: 0; right: 0;
+	left: 0; bottom: 0;
+	.transition(right ease 0.2s);
+	.list-pane {
+		position:absolute;
+		background: @background-main;
+		top: 0;
+		right: @sidepreview-width; //sidebar preview static + scrollbar rigth space
+		left: 0; bottom:0;
+		border-right: 1px solid #d0d0d0;
+		.box-shadow(3px 0 5px -2px #d8d8d8);
+		padding: 20px 20px 50px 20px;
+		overflow: auto;
+		overflow-x: hidden;
+		z-index: 1;
+		.transition(right ease 0.2s);
+	}
+	.preview-pane {
+		position: absolute;
+		width: @sidepreview-width; 
+		top: 0;
+		right: 0; bottom: 0;
+		background: #fff;
+		.transition(right ease 0.2s);
+	}
+	&.closed {
+		.transition(right ease 0.2s);
+		.list-pane {
+			right: 0;
+			border-right: 0;
+		}
+		.preview-pane {
+			right: -@sidepreview-width;
+		}
+	}
+}
+
+
+
+// Tablist and tabpanes
+// ------------------------------------
+
+.tablist {
+	.transition( all 0.3s ease);
+	width:@tablist-width;
+	position:absolute;
+	top:0;
+	bottom:0;
+	z-index:20;
+	background: @tablist-background;
+	overflow:hidden;
+	&.left-tablist {
+		left:0;
+		.box-shadow(inset -8px 0 7px -6px #888);
+	}
+	&.right-tablist {
+		right:0;
+		.box-shadow(inset 8px 0 7px -6px #888);
+	}
+	.navigation-tabs {
+		margin: -1px 0 0;
+		border: 0;
+		list-style-type: none;
+		> li {
+			position:relative;
+			float:none;
+			margin-bottom:-1px;
+			.btn {
+				display:block;
+				width: @tablist-width;
+				height: @tablist-width - 2;
+				line-height: @tablist-width - 2;
+				text-align: center;
+				padding: 0;
+				margin:0;
+				.border-radius(0px);
+				border: 1px solid #898989;
+				border-width: 1px 0 !important;
+				background: none;
+				.box-shadow(none);
+				&:hover {
+					background: #b7b7b7;
+					border: 1px solid #999999;
+					border-width: 1px 0 !important;
+				}
+			}
+			&.active {
+				.btn {
+					background: #b8b8b8;
+				}
+			}
+		}	
+	}
+}
+.tabpane {
+	position:absolute;
+	width:@tabpane-width;
+	top:0;
+	bottom:0;
+	background: @tabpane-background;
+	border-color:@tabpane-border;
+	border-style: solid;
+	z-index:10;
+	.box-sizing(border-box);
+	.transition( all 0.3s ease);
+	&.left-tabpane {
+		left:-@tabpane-width;
+		border-width: 0 3px 0 0;
+		.box-shadow(2px 0px 8px 0px rgba(50,50,50,.35));
+
+		&.open-tabpane {
+			left:@tablist-width;
+		}
+	}
+	&.right-tabpane {
+		right:-@tabpane-width;
+		border-width: 0 0 0 3px;
+		.box-shadow(-2px 0px 8px 0px rgba(40,50,50,.35));
+		&.open-tabpane {
+		 	right:@tablist-width;
+		}
+	}
+	.tabcontent {
+		padding:@tabcontent-padding;
+		padding-bottom: @tabcontent-padding + 30px; //because of scratchpad
+		.box-sizing(border-box);
+		position: absolute;
+		bottom: 0;
+		top: 0;
+		left:1px;
+		right:1px;
+	 	overflow: hidden;
+	}
+}
+
+
+// Notificaton pane
+// ---------------------------------------------
+
+.notification-pane {
+	position: fixed;
+	top: @nav-height; 
+	bottom: 0; 
+	right: -@notification-pane-width;
+	width: @notification-pane-width;
+	.box-sizing(border-box);
+	background: #313131;
+	z-index: 2000;
+	.transition(right ease 0.3s);
+	&.show {
+		right: 0;
+	}
+	> .header {
+		height: 65px;
+		width: 100%;
+		background: #212121;
+		.box-shadow(inset 0 4px 4px -2px #000);
+		border-botom: 1px solid #313131;
+		.avatar-holder {
+			float: left;
+			width: 40px;
+			height: 40px;
+			.border-radius(20px);
+			overflow: hidden;
+			margin: 12px;
+			img {
+				width: 40px;
+				height: 40px;
+			}
+		}
+		.user-info {
+			margin-left: 65px;
+			height: 45px;
+			border-left: 1px solid #313131;
+			border-bottom: 1px solid #313131;
+			padding: 10px;
+			.box-sizing(border-box);
+			.name {
+				color: #c5c5c5;
+				font-size: 12px;
+				display: block;
+				line-height: 12px;
+			}
+			.displayname {
+				font-size: 11px;
+				color: #727272;
+				display: block;
+				line-height: 12px;
+				margin-top: 2px;
+			}
+		}
+		.actions {
+			margin-left: 65px;
+			height: 20px;
+			border-left: 1px solid #313131;
+			background: #252525;
+			button {
+				.reset-button();
+			}
+			a, button {
+				font-size: 10px;
+				color: #8d8d8d;
+				text-decoration: none;
+				width: 33%;
+				text-transform: uppercase;
+				.box-sizing(border-box);
+				line-height: 20px;
+				text-align: center;
+				float: left;
+				display: inline-block;
+				border-right: 1px solid #313131;
+				&:last-child {
+					border:0;
+				}
+				&:hover {
+					background: #303030;
+					color: #ccc;
+				}
+			}
+		}
+
+	}
+	> .content {
+		position: absolute;
+		top: 65px;
+		left: 0; right: 0; bottom: 0;
+		border-top: 2px solid #464646;
+		.box-shadow(inset 4px 0 4px -2px #202020);
+		.module {
+			margin-top: 20px;
+			.title {
+				font-size: 16px;
+				color:#f8f8f8;
+				padding: 10px;
+				.text-light();
+			}
+		}
+	}
 }
