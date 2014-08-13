@@ -3,6 +3,7 @@ define(['require'], function(require) {
 
     return ['$location', function($location) {
         return {
+            scope: true,
             templateUrl: require.toUrl('./views/searchbar.html'),
             link: function(scope, elem) {
                 var input = elem.find('#search-input');
