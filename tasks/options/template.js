@@ -5,10 +5,11 @@ module.exports = function(grunt) {
     function data(url) {
 
         var server = grunt.option('server') || process.env.SUPERDESK_URL || url;
+        var ws = grunt.option('ws') || process.env.SUPERDESK_WS_URL || 'ws://localhost:5100';
 
         var config = {
             raven: {dsn: process.env.SUPERDESK_RAVEN_DSN || ''},
-            server: {url: server},
+            server: {url: server, ws: ws},
             analytics: {
                 piwik: {
                     url: process.env.PIWIK_URL || '',

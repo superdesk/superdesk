@@ -4,7 +4,7 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    var INGEST_EVENT = 'changes in media_archive';
+    var INGEST_EVENT = 'ingest:update';
 
     angular.module('superdesk.widgets.ingest', ['superdesk.authoring.widgets'])
         .config(['widgetsProvider', function(widgets) {
@@ -94,6 +94,7 @@ define([
             });
 
             function _refresh() {
+                console.log('update ingest');
                 var criteria = new SearchCriteria(config);
                 api.ingest.query({source: criteria}).then(function(items) {
                     $scope.items = items;
