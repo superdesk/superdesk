@@ -78,6 +78,8 @@ define([
             var config;
             var refresh = _.debounce(_refresh, 1000);
 
+            $scope.selected = null;
+
             $scope.$on(INGEST_EVENT, refresh);
 
             $scope.$watchGroup({
@@ -99,8 +101,11 @@ define([
             }
 
             $scope.view = function(item) {
-                //superdesk.intent(superdesk.ACTION_VIEW, 'ingest', item);
-                $location.path('/ingest');
+                $scope.selected = item;
+            };
+
+            $scope.go = function(item) {
+                $location.path('/workspace/ingest');
                 $location.search('_id', item._id);
             };
         }])
