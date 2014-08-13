@@ -564,7 +564,7 @@ def import_thumbnail_rendition_from_url(context):
 @when('we get updated media from archive')
 def get_updated_media_from_archive(context):
     url = 'archive/%s' % context._id
-    step_impl_when_get_url(context, url)
+    when_we_get_url(context, url)
     assert_200(context.response)
 
 
@@ -766,6 +766,7 @@ def we_reset_password_for_user(context):
 def when_we_switch_user(context):
     user = {'username': 'test-user-2', 'password': 'pwd'}
     tests.setup_auth_user(context, user)
+
 
 @when('we get my "{url}"')
 def when_we_get_my_url(context, url):
