@@ -95,7 +95,6 @@ SERVER_DOMAIN = 'localhost'
 # abspath = os.path.abspath(os.path.dirname(__file__))
 # UPLOAD_FOLDER = os.path.join(abspath, 'upload')
 
-NOTIFICATION_PUSH_INTERVAL = 1  # The time interval to push notifications for.
 BCRYPT_GENSALT_WORK_FACTOR = 12
 RESET_PASSWORD_TOKEN_TIME_TO_LIVE = 24  # The number of hours a token is valid
 

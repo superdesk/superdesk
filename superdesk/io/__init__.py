@@ -6,6 +6,7 @@ from superdesk.utc import utcnow
 from superdesk.base_model import BaseModel
 from flask import current_app as app
 from superdesk.celery_app import celery
+from superdesk.notification import push_notification
 
 
 logger = logging.getLogger(__name__)
@@ -66,6 +67,8 @@ class UpdateIngest(superdesk.Command):
                 except (Exception) as err:
                     logger.exception(err)
                     pass
+                finally:
+                    push_notification('ingest:update')
 
 
 class AddProvider(superdesk.Command):
@@ -121,4 +124,5 @@ class IngestProviderModel(BaseModel):
             'type': 'dict'
         }
     }
+
     endpoint_name = 'ingest_providers'
