@@ -301,6 +301,28 @@
 			&.with-nav {
 				top: 95px;
 			}
+			.item-locked {
+				background: #f6f6f6;
+				.border-box();
+				.border-radius(2px);
+				height: 28px;
+				line-height: 24px;
+				padding-left: 10px;
+				margin-bottom: 10px;
+				i {
+					margin-right: 5px;
+				}
+				em {
+					color: #e51c23;
+					font-style: normal;
+				}
+				span {
+					.text-semibold();
+					color: @gray;
+					vertical-align: middle;
+				}
+			}
+
 			.date {
 				.clearfix();
 				p {
@@ -722,7 +744,10 @@
 .mgrid-view, #scratchpad {
 	.media-box {
 		.media-box-generic;
-
+		
+		&.locked {
+			border-bottom-color: #e51c23 !important;
+		}
 		/* control buttons on the bottom */
 		.item-functions {
 			background: #fff;
@@ -868,6 +893,7 @@
 				background-size: 51px;
 			}
 		}
+
 		.type-icon {
 			
 			i {
@@ -1031,6 +1057,9 @@
 			top:0;
 			bottom: 0;
 			background: #bbb;
+		}
+		&.locked .state-border {
+			background: #e51c23;
 		}
 
 	}

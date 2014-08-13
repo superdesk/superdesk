@@ -16,6 +16,11 @@
     </div>
 
     <div class="content" ng-class="{'with-nav': item.type === 'composite'}" sd-shadow>
+        <div class="item-locked" ng-show>
+            <i class="icon-lock-red"></i>
+            <span><em translate>Locked</em> {{ 'by' | translate }} Nikola Nikolic</span>
+            <button class="btn btn-light pull-right">Unlock</button>
+        </div>
         <div class="date">
             <p>{{ 'Created' | translate }} {{ item.firstcreated | reldate }}</p>
             <p>{{ 'Modified' | translate }} {{ item.versioncreated | reldate }}</p>    
