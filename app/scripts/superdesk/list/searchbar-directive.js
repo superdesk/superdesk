@@ -3,20 +3,29 @@ define(['require'], function(require) {
 
     return ['$location', function($location) {
         return {
-            scope: true,
-            replace: true,
             templateUrl: require.toUrl('./views/searchbar.html'),
-            link: function(scope, element) {
-                var search = $location.search();
-                scope.flags = {open: !!search.q};
+            link: function(scope, elem) {
+                var input = elem.find('#search-input');
+                var params = $location.search();
+                scope.search = params.q;
+                scope.flags = {open: !!scope.search};
+
+                var updateParam = _.debounce(function() {
+                    scope.$apply(function() {
+                        $location.search('q', scope.search || null);
+                        $location.search('page', null);
+                    });
+                }, 500);
+
+                scope.$watch('search', function() {
+                    updateParam();
+                });
 
                 scope.close = function() {
-                    $location.search({q: null});
+                    scope.search = null;
+                    input.focus();
                 };
 
-                scope.$on('$routeUpdate', function() {
-                    scope.visible = !!$location.search().q;
-                });
             }
         };
     }];

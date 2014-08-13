@@ -1,8 +1,8 @@
 <div class="flat-searchbar" ng-class="{open: flags.open}">
     <div class="search-handler">
         <label for="search-input" class="trigger-icon" ng-click="flags.open = !flags.open"></label>
-        <input id="search-input" type="text" placeholder="{{ 'Search'|translate }}" sd-search-param="q">
-        <button class="search-close" ng-click="close()" ng-class="{'visible': visible}"><i class="icon-close-small"></i></button>
+        <input id="search-input" type="text" placeholder="{{ 'Search'|translate }}" ng-model="search">
+        <button class="search-close" ng-click="close()" ng-class="{'visible': search}"><i class="icon-close-small"></i></button>
     </div>
     <div class="separator-handler"></div>
 </div>

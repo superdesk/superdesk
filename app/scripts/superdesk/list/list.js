@@ -2,7 +2,6 @@ define([
     'angular',
     'require',
     './list-view-directive',
-    './search-param-directive',
     './searchbar-directive',
     './list-item-directive'
 ], function(angular, require) {
@@ -10,7 +9,6 @@ define([
 
     var mod = angular.module('superdesk.list', []);
     mod.directive('sdListView', require('./list-view-directive'));
-    mod.directive('sdSearchParam', require('./search-param-directive'));
     mod.directive('sdSearchbar', require('./searchbar-directive'));
     mod.directive('sdListItem', require('./list-item-directive'));
 
