@@ -6,7 +6,6 @@
 @btnDefaultColor : rgba(0,0,0,15%);
 @btnInfoColor : @sd-blue;
 @btnGreenColor : #169f70;
-@btnLightColor : #f4f4f4;
 @btnDangerColor : #c83929;
 @btnInverseColor : #141414;
 
@@ -79,11 +78,20 @@
 .btn-danger {
 	.buttonStates(@btnDangerColor, @white);
 }
-.btn-light {
-	.buttonStates(@btnLightColor);
-}
 .btn-inverse {
 	.buttonStates(@btnInverseColor, @white);
+}
+
+.btn-light {
+	background-color: transparent;
+	&:hover {
+		background-color: #eaeaea;
+		.box-shadow(none);
+	}
+	&:active, &.active {
+		background-color: #f2f2f2;
+		.box-shadow(none);
+	}
 }
 
 button {
