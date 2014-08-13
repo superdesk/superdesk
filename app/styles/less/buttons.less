@@ -92,6 +92,9 @@
 		background-color: #f2f2f2;
 		.box-shadow(none);
 	}
+	&.disabled, &[disabled], &.disabled:hover, &[disabled]:hover, &.disabled:focus, &[disabled]:focus, &.disabled:active, &[disabled]:active {
+		background: transparent;
+	}
 }
 
 button {
@@ -187,7 +190,7 @@ input[type="submit"].btn {
 	width: auto;
 	background: transparent;
 	color:#333;
-	height: @subnav-height;
+	height: @subnav-height - 1; //because of subnav border
 	display: block;
 	text-align: center;
 	line-height:@subnav-height;
