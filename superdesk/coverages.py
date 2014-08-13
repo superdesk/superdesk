@@ -17,7 +17,12 @@ class CoverageModel(BaseModel):
     endpoint_name = 'coverages'
     schema = {
         'headline': {'type': 'string'},
-        'type': {'type': 'string'},
+        'coverage_type': {
+            'type': 'string',
+            'allowed': ['story', 'photo', 'video', 'graphics', 'live-blogging'],
+            'default': 'story',
+            'required': 'true'
+        },
         'ed_note': {'type': 'string'},
         'scheduled': {'type': 'datetime'},
         'delivery': {'type': 'string'},

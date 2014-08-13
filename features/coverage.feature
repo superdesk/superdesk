@@ -16,12 +16,12 @@ Feature: Planning Item Coverages
 	    """
         When we post to "coverages"
 	    """
-	    [{"headline": "first coverage", "assigned_user": "#USERS_ID#"}]
+	    [{"headline": "first coverage", "coverage_type": "story", "assigned_user": "#USERS_ID#"}]
 	    """
         And we get "/coverages"
         Then we get list with 1 items
 	    """
-	    {"headline": "first coverage", "assigned_user": "#USERS_ID#"}
+	    {"headline": "first coverage", "coverage_type": "story", "assigned_user": "#USERS_ID#"}
 	    """
 
     @auth
