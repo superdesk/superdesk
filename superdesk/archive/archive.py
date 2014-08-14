@@ -51,7 +51,8 @@ class ArchiveModel(BaseModel):
         'projection': {
             'old_version': 0,
             'last_version': 0
-        }
+        },
+        'default_sort': [('_updated', -1)],
     }
     resource_methods = ['GET', 'POST', 'DELETE']
     versioning = True

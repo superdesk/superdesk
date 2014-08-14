@@ -365,7 +365,8 @@ def step_impl_when_get_user(context):
 def step_impl_then_get_new(context):
     assert_ok(context.response)
     expect_json_contains(context.response, 'self', path='_links')
-    test_json(context)
+    if context.text is not None:
+        test_json(context)
 
 
 @then('we get error {code}')
@@ -773,3 +774,10 @@ def when_we_get_my_url(context, url):
     user_id = str(context.user.get('_id'))
     my_url = '{0}?where={1}'.format(url, json.dumps({'user': user_id}))
     return when_we_get_url(context, my_url)
+
+
+@when('we get user "{resource}"')
+def when_we_get_user_resource(context, resource):
+    url = '/users/{0}/{1}'.format(str(context.user.get('_id')), resource)
+    print('fetching', url)
+    return when_we_get_url(context, url)

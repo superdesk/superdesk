@@ -87,17 +87,3 @@ class ArchiveMediaModel(BaseModel):
             doc['media'] = id
             return content, content_type, decode_metadata(metadata)
         return file, file.content_type, file.metadata
-
-
-class AuthorItemModel(BaseModel):
-    endpoint_name = 'user_items'
-    url = 'users/<regex("[a-f0-9]{24}"):user_id>/archive'
-    schema = base_schema
-    datasource = {'source': 'archive'}
-    resource_methods = ['GET']
-
-    def get(self, req, lookup):
-        if lookup.get('user_id'):
-            lookup["author.user"] = ObjectId(lookup['user_id'])
-            del lookup['user_id']
-        return super().get(req, lookup)

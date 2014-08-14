@@ -17,7 +17,7 @@ class BaseModel():
     url = None
     item_url = None
     additional_lookup = None
-    schema = None
+    schema = {}
     item_methods = None
     resource_methods = None
     public_methods = None
@@ -96,17 +96,20 @@ class BaseModel():
         return app.data._backend(self.endpoint_name).find_one(self.endpoint_name, req=req, **lookup)
 
     def get(self, req, lookup):
-        backend = app.data._search_backend(self.endpoint_name)
-        if backend is None:
-            backend = app.data._backend(self.endpoint_name)
 
-        cursor = backend.find(self.endpoint_name, req, lookup)
+        resource = self._resource()
+
+        backend = app.data._search_backend(resource)
+        if backend is None:
+            backend = app.data._backend(resource)
+
+        cursor = backend.find(resource, req, lookup)
         if not cursor.count():
             return cursor  # return 304 if not modified
         else:
             # but fetch without filter if there is a change
             req.if_modified_since = None
-            return backend.find(self.endpoint_name, req, lookup)
+            return backend.find(resource, req, lookup)
 
     def create(self, docs, trigger_events=None, **kwargs):
         if trigger_events:
@@ -162,3 +165,6 @@ class BaseModel():
         if trigger_events:
             self.on_deleted(doc)
         return res
+
+    def _resource(self):
+        return app.data._datasource(self.endpoint_name)[0]
