@@ -1,4 +1,3 @@
-from bson.objectid import ObjectId
 from flask import abort, current_app as app
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
 from superdesk.media.renditions import generate_renditions, delete_file_on_error

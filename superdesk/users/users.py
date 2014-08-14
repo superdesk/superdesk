@@ -54,23 +54,21 @@ class CreateUserCommand(superdesk.Command):
 
     def run(self, username, password, email):
         if username and password and email:
-            hashed = hash_password(password)
-
             userdata = {
                 'username': username,
-                'password': hashed,
+                'password': password,
                 'email': email,
             }
 
             user = superdesk.app.data.find_one('users', username=userdata.get('username'), req=None)
             if user:
                 userdata[app.config['LAST_UPDATED']] = utcnow()
-                app.data.update('users', user.get('_id'), userdata)
-                return user
+                superdesk.apps['users'].update(user.get('_id'), userdata, trigger_events=True)
+                return userdata
             else:
                 userdata[app.config['DATE_CREATED']] = utcnow()
                 userdata[app.config['LAST_UPDATED']] = utcnow()
-                app.data.insert('users', [userdata])
+                superdesk.apps['users'].create([userdata], trigger_events=True)
                 return userdata
 
 
@@ -84,7 +82,7 @@ class HashUserPasswordsCommand(superdesk.Command):
                 hashed = hash_password(user['password'])
                 user_id = user.get('_id')
                 updates['password'] = hashed
-                superdesk.apps['users'].update(id=user_id, updates=updates, trigger_events=True)
+                superdesk.apps['users'].update(id=user_id, updates=updates, trigger_events=False)
 
 
 superdesk.connect('read:users', on_read_users)
@@ -194,9 +192,16 @@ class UsersModel(BaseModel):
     def on_create(self, docs):
         for doc in docs:
             add_activity('created user {{user}}', user=doc.get('display_name', doc.get('username')))
-            if doc.get('password'):
-                hashed = hash_password(doc.get('password'))
-                doc['password'] = hashed
+            ensure_hashed_password(doc)
+
+    def on_update(self, updates, dest):
+        ensure_hashed_password(updates)
 
     def on_delete(self, doc):
         add_activity('removed user {{user}}', user=doc.get('display_name', doc.get('username')))
+
+
+def ensure_hashed_password(doc):
+    if doc.get('password') and not doc.get('password').startswith('$2a$'):
+        hashed = hash_password(doc.get('password'))
+        doc['password'] = hashed
