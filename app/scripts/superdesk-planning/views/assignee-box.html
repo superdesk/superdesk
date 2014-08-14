@@ -20,9 +20,11 @@
 		<div class="dropdown-content" ng-show="open">
 			<div class="dropdown desk-select">
 				<button class="dropdown-toggle">{{'Select desk'|translate}} <b class="caret"></b></button>
-				<ul class="dropdown-menu">
-					<li ng-repeat="desk in desks._items"><button ng-click="">{{desk.name}}</button></li>
-				</ul>
+				<div class="dropdown-menu">
+					<ul>
+						<li ng-repeat="desk in desks._items"><button ng-click="">{{desk.name}}</button></li>
+					</ul>
+				</div>
 			</div>
 			<form>
 				<label for="assignee-search">Person</label>
@@ -31,8 +33,7 @@
 			<div class="search-result">
 				<ul>
 					<li ng-repeat="user in (deskMembers[desk._id] || users._items) | filter:search" ng-click="selectUser(user)">
-						<div class="avatar"><!--<figure><img sd-user-picture data-src="user.picture_url"></figure>--></div>
-						<button class="remove" ng-show><i class="icon-close-small"></i></button>
+						<figure class="avatar small"><img sd-user-avatar data-src="user.picture_url"></figure>
 						<div class="name">{{user.display_name}}</div>
 					</li>
 				</ul>

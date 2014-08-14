@@ -1,7 +1,7 @@
 <li ng-repeat="user in users" ng-click="select(user)" ng-class="{selected: user === selected}">
-    <div class="avatar">
-        <figure><img sd-user-picture data-src="user.picture_url"></figure>
-    </div>
+    <figure class="avatar">
+        <img sd-user-avatar data-src="user.picture_url">
+    </figure>
 
     <div class="row-wrapper" sd-col-width>
         <div class="name">{{ user.display_name }}</div>

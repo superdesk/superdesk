@@ -63,21 +63,6 @@
 					.clearfix();
 					margin-right: 6px;
 					float: left;
-					.avatar {
-						width: 24px;
-						height: 24px;
-						background: url('../../images/avatar_default.png') no-repeat 0 0;
-						background-size: 24px 24px;
-						overflow: hidden;
-						.border-radius(12px);
-						display: block;
-						float: left;
-						margin-right: 6px;
-						img {
-							width: 24px;
-							height: 24px;
-						}
-					}
 				}
 				h6 {
 					color: #444;
@@ -286,27 +271,20 @@
 .assignee {
 	position: relative;
 	.toggle {
-		width: 32px;
-		height: 32px;
+		width: 30px;
+		height: 30px;
 		text-align: center;
-		line-height: 32px;
+		line-height: 30px;
 		padding: 0;
 		display: block;
 		position: relative;
 		background: none !important;
-		.avatar {
-			background: url('../../images/avatar_default.png') no-repeat 0 0;
-			background-size: 32px;
-			width: 32px;
-			height: 32px;
-			.border-radius(50%);
-		}
 		.add {
 			.border-radius(50%);
 			background-color: #212121;
 			.transition(all ease 0.2s);
-			width: 32px;
-			height: 32px;
+			width: 30px;
+			height: 30px;
 			.scale(0);
 			position: absolute;
 			top: 0; left: 0;
@@ -321,7 +299,7 @@
 	}
 	.tooltip {
 		top:-3px;
-		left:32px;
+		left:30px;
 		.tooltip-arrow {
 			top: 19px;
 		}
@@ -402,11 +380,14 @@
 			.dropdown-menu {
 				right: 0;
 				padding: 5px 5px 10px;
-				max-height: 187px;
-				overflow: auto;
-				li {
-					margin-right: 5px;
+				ul {
+					max-height: 180px;
+					overflow: auto;
+						li {
+						margin-right: 5px;
+					}
 				}
+				
 			}
 		}
 
@@ -431,28 +412,14 @@
 				overflow: auto;
 				li {
 					height: 32px;
-					line-height: 24px;
+					line-height: 32px;
 					margin-right: 5px;
 					.avatar {
-						background: url('../../images/avatar_default.png') no-repeat 0 0;
-						background-size: 24px;
-						width: 24px;
-						height: 24px;
-						.border-radius(50%);
-						float: left;
-						margin-right: 10px;
-						display: inline-block;
+						margin: 4px 10px 4px 4px;
 					}
-					.name {
-
-					}
-					.remove {
-						float: right;
-						background: none;
-						margin: 2px 2px 0 0;
-						i {
-							margin: 0;
-						}
+					&:hover {
+						background: @sd-hover;
+						cursor: pointer;
 					}
 				}
 			}

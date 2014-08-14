@@ -1,11 +1,11 @@
 <div class="notification-list-box" ng-controller="CommentsWidgetCtrl">
     <ul class="notification-list white">
         <li ng-repeat="comment in comments">
-            <figure class="avatar-holder">
-                <img sd-user-picture data-src="comment.user.picture_url">
+            <figure class="avatar">
+                <img sd-user-avatar data-src="comment.user.picture_url">
             </figure>
             <div class="content">
-                <p class="text"><b>{{ comment.user.display_name }}</b>: {{ comment.text}}</p>
+                <p class="text"><b>{{ comment.user.display_name || comment.user.username }}</b>: {{ comment.text}}</p>
                 <span class="date" sd-reldate ng-model="comment._created"></span>
             </div>
         </li>

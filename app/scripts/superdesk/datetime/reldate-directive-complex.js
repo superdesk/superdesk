@@ -19,7 +19,7 @@ define(['moment'], function(moment) {
         return {
             require: 'ngModel',
             template: '<time datetime="{{ datetime }}" title="{{ title }}">' +
-            	'<span class="day">{{ rday }}</span><span class="date">{{ rdate }}</span></time>',
+            	'<span>{{ rday }}{{ rdate }}</span></time>',
             replate: true,
             link: function(scope, element, attrs, ngModel) {
                 ngModel.$render = function() {

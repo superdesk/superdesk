@@ -11,7 +11,9 @@
 
       <div class="nav pull-right">
           <button class="current-user pull-right" ng-click="toggleNotifications()" >
-              <img sd-user-avatar data-src="currentUser.picture_url" class="avatar">
+              <figure class="avatar">
+                <img sd-user-avatar data-src="currentUser.picture_url" class="avatar">
+              </figure>
           </button>
           <button ng-click="toggleBeta()" class="beta-switch  pull-right">
               <span class="stable" ng-show="!beta" tooltip="{{'Switch to feature preview' | translate }}" tooltip-placement="left">stable</span>

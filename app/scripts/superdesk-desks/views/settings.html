@@ -126,7 +126,7 @@
 					<div class="members">
 				  		<ul class="member-avatars">
 							<li ng-repeat="user in selectedMembers" >
-								<figure ><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
+								<figure class="avatar"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
 								<div class="member-name">
 									{{user.first_name}} {{user.last_name}}
 									<span class="delete" ng-click="removeMember(user)"><i class="icon-close-small icon-white"></i></span>
@@ -160,7 +160,7 @@
 					    </div>
 						<ul class="member-avatars">
 							<li ng-repeat="user in selectedMembers" >
-								<figure ><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
+								<figure class="avatar"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
 								<div class="member-name">
 									{{user.first_name}} {{user.last_name}}
 									<span class="delete" ng-click="removeMember(user)"><i class="icon-close-small icon-white"></i></span>

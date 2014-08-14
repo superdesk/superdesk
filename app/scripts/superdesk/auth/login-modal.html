@@ -8,7 +8,7 @@
         </div>
 
         <div class="form-handler">
-            <div class="avatar-handler" style="background-image:url('{{ identity.Avatar.href || 'images/avatar_default.png' }}')" ng-show="identity.Avatar"></div>
+            <figure class="avatar" style="background-image:url('{{ identity.Avatar.href || 'images/avatar_200.png' }}')" ng-show="identity.Avatar"></figure>
             <form name="loginForm" ng-submit="authenticate()">
                 <fieldset class="inputs">
                     <input type="text" id="login-username" ng-model="username" placeholder="{{ 'username'|translate }}" class="fullwidth-input" ng-disabled="identity.Id" required />

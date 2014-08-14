@@ -232,24 +232,6 @@ define([
                 }
             };
         }])
-        .directive('sdUserPicture', function() {
-            var PICTURE_DEFAULT = 'https://avatars.githubusercontent.com/u/275305';
-            return {
-                scope: {src: '='},
-                link: function (scope, element, attrs) {
-
-                    scope.$watch('src', function(src) {
-                        src = src || PICTURE_DEFAULT;
-                        element.attr('src', src);
-                    });
-
-                    element.on('error', function (e) {
-                        console.log(e);
-                        return;
-                    });
-                }
-            };
-        })
         .directive('sdUserUnique', ['api', function(api) {
             var NAME = 'unique';
             return {
