@@ -230,7 +230,7 @@ define([
                                 if (oldImg.length) {
                                     oldImg.replaceWith(img);
                                 } else {
-                                    figure.prepend(img);
+                                    figure.html(img);
                                 }
                             };
 
