@@ -6,10 +6,6 @@
     	<a class="btn btn-medium pull-left" ng-click="close()" ng-if="item">{{ 'Close' | translate }}</a>
     	<button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()" ng-if="item" ng-disabled="!dirty">{{ 'Save' | translate }}</button>
 
-        <a class="navbtn navbtn-info" href="" ng-click="create()">
-            <i class="svg-icon-add inverse"></i> <span class="title" translate>Create</span>
-        </a>
-
         <div class="navbtn dropdown">
     		<button class="dropdown-toggle condensed"><i class="svg-icon-settings"></i></button>
 			<ul class="dropdown-menu pull-right">

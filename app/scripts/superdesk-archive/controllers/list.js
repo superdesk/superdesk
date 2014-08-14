@@ -1,11 +1,13 @@
 define([
-    'lodash',
+    'angular',
     './baseList'
-], function(_, BaseListController) {
+], function(angular, BaseListController) {
     'use strict';
 
     ArchiveListController.$inject = ['$scope', '$injector', 'superdesk', 'api', '$rootScope', 'ViewsCtrl'];
     function ArchiveListController($scope, $injector, superdesk, api, $rootScope, ViewsCtrl) {
+
+        var resource;
 
         $injector.invoke(BaseListController, this, {$scope: $scope});
 
@@ -13,11 +15,9 @@ define([
             items: []
         };
 
+        $rootScope.currentModule = 'archive';
         $scope.views = new ViewsCtrl($scope);
         $scope.type = 'archive';
-        $scope.api = api.ingest;
-
-        $rootScope.currentModule = 'archive';
 
         $scope.openUpload = function() {
             superdesk.intent('upload', 'media').then(function(items) {
@@ -27,14 +27,24 @@ define([
         };
 
         this.fetchItems = function(criteria) {
-    		api.archive.query(criteria).then(function(items) {
+            if (resource == null) {
+                return;
+            }
+
+            resource.query(criteria).then(function(items) {
                 $scope.items = items;
                 $scope.createdMedia = {
                     items: []
                 };
             });
         };
+
         $scope.$on('changes in media_archive', this.refresh);
+
+        $scope.$watch('selectedDesk', angular.bind(this, function(desk) {
+            resource = desk ? api('archive') : api('content', $rootScope.currentUser);
+            this.refresh();
+        }));
     }
 
     return ArchiveListController;

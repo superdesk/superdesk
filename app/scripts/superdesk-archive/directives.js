@@ -234,6 +234,7 @@ define([
                                 }
                             };
 
+                            img.onerror = function() {};
                             img.src = href;
                         }
                     });

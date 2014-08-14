@@ -312,4 +312,82 @@ define([
         }));
     });
 
+    describe('new api service', function() {
+        beforeEach(module(doConfig));
+
+        afterEach(inject(function($httpBackend) {
+            $httpBackend.verifyNoOutstandingExpectation();
+            $httpBackend.verifyNoOutstandingRequest();
+        }));
+
+        beforeEach(inject(function(urls, $q) {
+            spyOn(urls, 'resource').andReturn($q.when(USERS_URL));
+        }));
+
+        it('can create', inject(function(api, $httpBackend) {
+            var user = {name: 'foo'};
+
+            $httpBackend.expectPOST(USERS_URL, user).respond(201, {_id: 1});
+
+            api('users').save(user);
+
+            $httpBackend.flush();
+
+            expect(user._id).toBe(1);
+        }));
+
+        it('can query resource', inject(function(api, $httpBackend) {
+            $httpBackend.expectGET(USERS_URL + '?limit=1').respond(200, {_items: []});
+
+            var users;
+            api('users').query({limit: 1}).then(function(_users) {
+                users = _users;
+            });
+
+            $httpBackend.flush();
+
+            expect(users._items.length).toBe(0);
+        }));
+
+        it('can query subresource', inject(function(api, $httpBackend) {
+
+            var user = {_links: {self: {href: USER_PATH}}};
+
+            $httpBackend.expectGET(USER_URL + '/content').respond(200, {});
+
+            api('content', user).query();
+
+            $httpBackend.flush();
+        }));
+
+        it('rejects on status error', inject(function(api, $httpBackend) {
+
+            $httpBackend.expectGET(USERS_URL).respond(400);
+
+            var success = jasmine.createSpy('success'),
+                error = jasmine.createSpy('error');
+
+            api('users').query().then(success, error);
+
+            $httpBackend.flush();
+
+            expect(success).not.toHaveBeenCalled();
+            expect(error).toHaveBeenCalled();
+        }));
+
+        it('rejects on data error', inject(function(api, $httpBackend) {
+
+            $httpBackend.expectPOST(USERS_URL).respond(200, {_status: 'ERR'});
+
+            var success = jasmine.createSpy('success'),
+                error = jasmine.createSpy('error');
+
+            api('users').save({}).then(success, error);
+
+            $httpBackend.flush();
+
+            expect(success).not.toHaveBeenCalled();
+            expect(error).toHaveBeenCalled();
+        }));
+    });
 });
