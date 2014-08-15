@@ -47,9 +47,9 @@ class CreateUserCommand(superdesk.Command):
     """
 
     option_list = (
-        superdesk.Option('--username', '-u', dest='username'),
-        superdesk.Option('--password', '-p', dest='password'),
-        superdesk.Option('--email', '-e', dest='email'),
+        superdesk.Option('--username', '-u', dest='username', required=True),
+        superdesk.Option('--password', '-p', dest='password', required=True),
+        superdesk.Option('--email', '-e', dest='email', required=True),
     )
 
     def run(self, username, password, email):
@@ -191,17 +191,13 @@ class UsersModel(BaseModel):
 
     def on_create(self, docs):
         for doc in docs:
-            add_activity('created user {{user}}', user=doc.get('display_name', doc.get('username')))
             ensure_hashed_password(doc)
-
-    def on_update(self, updates, dest):
-        ensure_hashed_password(updates)
+            add_activity('created user {{user}}', user=doc.get('display_name', doc.get('username')))
 
     def on_delete(self, doc):
         add_activity('removed user {{user}}', user=doc.get('display_name', doc.get('username')))
 
 
 def ensure_hashed_password(doc):
-    if doc.get('password') and not doc.get('password').startswith('$2a$'):
-        hashed = hash_password(doc.get('password'))
-        doc['password'] = hashed
+    if doc.get('password', None):
+        doc['password'] = hash_password(doc.get('password'))
