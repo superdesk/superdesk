@@ -4,9 +4,13 @@ define([], function() {
     return function ListItemDirectiveFactory() {
         return {
             link: function(scope, element, attrs, controller, $transclude) {
-                $transclude(scope, function(clone) {
-                    element.empty();
-                    element.append(clone);
+                scope.$watch('item', function() {
+                    var itemScope = scope.$parent.$parent.$new();
+                    itemScope.item = scope.item;
+                    $transclude(itemScope, function(clone) {
+                        element.empty();
+                        element.append(clone);
+                    });
                 });
             }
         };

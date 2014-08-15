@@ -73,12 +73,14 @@ define([
                 this.sort = [{firstcreated: 'desc'}];
             };
         }])
-        .controller('IngestController', ['$location', '$scope', 'superdesk', 'api', 'IngestWidgetSearchCriteria',
-        function ($location, $scope, superdesk, api, SearchCriteria) {
+        .controller('IngestController', ['$location', '$scope', 'superdesk', 'api', 'IngestWidgetSearchCriteria', 'storage',
+        function ($location, $scope, superdesk, api, SearchCriteria, storage) {
             var config;
             var refresh = _.debounce(_refresh, 1000);
 
             $scope.selected = null;
+            $scope.pinnedItems = storage.getItem('ingestWidget:pinned') || [];
+            $scope.processedItems = null;
 
             $scope.$on(INGEST_EVENT, function() {
                 refresh();
@@ -96,10 +98,15 @@ define([
                 refresh();
             });
 
+            function processItems() {
+                $scope.processedItems = $scope.pinnedItems.concat($scope.items._items);
+            }
+
             function _refresh() {
                 var criteria = new SearchCriteria(config);
                 api.ingest.query({source: criteria}).then(function(items) {
                     $scope.items = items;
+                    processItems();
                 });
             }
 
@@ -110,6 +117,25 @@ define([
             $scope.go = function(item) {
                 $location.path('/workspace/ingest');
                 $location.search('_id', item._id);
+            };
+
+            $scope.pin = function(item) {
+                var newItem = _.cloneDeep(item);
+                newItem.pinnedInstance = true;
+                $scope.pinnedItems.push(newItem);
+                $scope.pinnedItems = _.uniq($scope.pinnedItems, '_id');
+                storage.setItem('ingestWidget:pinned', $scope.pinnedItems);
+                processItems();
+            };
+
+            $scope.unpin = function(item) {
+                _.remove($scope.pinnedItems, {_id: item._id});
+                storage.setItem('ingestWidget:pinned', $scope.pinnedItems);
+                processItems();
+            };
+
+            $scope.isPinned = function(item) {
+                return _.findIndex($scope.pinnedItems, {_id: item._id}) !== -1;
             };
         }])
         .controller('IngestConfigController', ['$scope', 'superdesk', 'api',
