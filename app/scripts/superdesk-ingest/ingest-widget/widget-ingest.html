@@ -1,15 +1,16 @@
 <div ng-controller="IngestController">
-    <div ng-show="!selected">
+    <div class="main-list" ng-class="{wrap: selected}" >
         <div class="search-box">
-            <input type="text" placeholder="{{ 'Search'|translate }}" ng-model="query" class="searchbar"></li>
+            <input type="text" placeholder="{{ 'Search'|translate }}" ng-model="query" class="searchbar">
         </div>
 
         <div class="ingest-list"
             sd-list-view
             data-items="items._items"
             data-select="view(item)"
-            data-extras="widget">
-            <div class="urgency-{{ item.urgency}}">
+            data-extras="widget"
+            sd-shadow>
+            <div class="content-item urgency-{{ item.urgency}}" ng-class="{selected: item === selected}">
                 <ul class="top-line clearfix">
                     <li><span class="type-icon filetype-icon-{{item.type}}"></span><span class="urgency-label">{{ item.urgency }}</span></li>
                     <li>{{ item.versioncreated | reldate }}</li>
@@ -26,13 +27,13 @@
             </div>
         </div>
     </div>
-    <div ng-show="selected">
-        <header class="shadow-target">
-            <a class="btn" ng-click="selected = null"><i class="icon-chevron-left"></i> <span translate>Back to list</span></a>
-            <a class="btn pull-right" ng-click="go(selected)"><i class="icon-expand"></i> <span translate>Open</span></a>
-        </header>
-        <article class="shadow-source">
+    <div class="preview" ng-class="{wrap: !selected}" >
+        <div class="nav">
+            <button class="backlink" href="" ng-click="selected = null" translate>Back</button>
+            <button class="open pull-right" ng-click="go(selected)"><i class="icon-expand"></i> {{ 'Open' | translate }}</button>
+        </div>
+        <div class="content-item-preview">
             <div sd-media-preview data-item="selected"></div>
-        </article>
+        </div>
     </div>
 </div>

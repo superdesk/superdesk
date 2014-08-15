@@ -9,6 +9,8 @@
 	width: 8px;
 	height: 8px;
 	margin: -1px 0;
+	position: fixed;
+	right: 10px;
 }
 ::-webkit-scrollbar:hover {
 	background-color: #e8e8e8;
@@ -517,6 +519,26 @@
 }
 
 
+// Back screen button
+// ---------------------------------------------
+.backlink {
+	background: transparent url('../../images/back-arrow.png') no-repeat 5px 7px;
+	padding-left: 25px;
+	text-decoration: none;
+	color: @sd-text;
+	display: inline-block;
+	border:0;
+	.transition(all ease 0.2s);
+	vertical-align: middle;
+	height: 28px;
+	line-height: 28px;
+	margin-top: -4px;
+	&:hover {
+		background-position: 0 7px;
+		text-decoration: none;
+		color: @sd-text;
+	}
+}
 
 
 // Activity log
