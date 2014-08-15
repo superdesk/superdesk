@@ -1,6 +1,24 @@
 (function() {
 'use strict';
 
+ContentCtrlFactory.$inject = ['api', 'superdesk', 'workqueue'];
+function ContentCtrlFactory(api, superdesk, workqueue) {
+    return function ContentCtrl($scope) {
+        /**
+         * Create an item and start editing it
+         */
+        this.create = function() {
+            var item = {type: 'text'};
+            api('archive')
+                .save(item)
+                .then(function() {
+                    workqueue.add(item);
+                    superdesk.intent('author', 'article', item);
+                });
+        };
+    };
+}
+
 ViewsCtrlFactory.$inject = ['api', 'session'];
 function ViewsCtrlFactory(api, session) {
     /**
@@ -51,7 +69,7 @@ function ViewsCtrlFactory(api, session) {
 
             this.edited.location = this.edited.location || 'archive'; // for now
 
-            api.views.save(orig, this.edited)
+            api('views').save(orig, this.edited)
                 .then(angular.bind(this, function() {
                     this.reload();
                     this.cancel();
@@ -70,7 +88,7 @@ function ViewsCtrlFactory(api, session) {
                 criteria.where = {user: session.identity._id};
             }
 
-            return api.views.query(criteria).then(angular.bind(this, function(response) {
+            return api('views').query(criteria).then(angular.bind(this, function(response) {
                 this.views = response._items;
             }));
         };
@@ -91,13 +109,6 @@ function DeskViewsDirective() {
 
 angular.module('superdesk.workspace.content', [])
     .factory('ViewsCtrl', ViewsCtrlFactory)
-    .directive('sdDeskViews', DeskViewsDirective)
-
-    .config(['apiProvider', function(apiProvider) {
-        apiProvider.api('views', {
-            type: 'http',
-            backend: {rel: 'content_view'}
-        });
-    }]);
-
+    .factory('ContentCtrl', ContentCtrlFactory)
+    .directive('sdDeskViews', DeskViewsDirective);
 })();

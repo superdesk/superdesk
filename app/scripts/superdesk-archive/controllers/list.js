@@ -4,8 +4,8 @@ define([
 ], function(angular, BaseListController) {
     'use strict';
 
-    ArchiveListController.$inject = ['$scope', '$injector', 'superdesk', 'api', '$rootScope', 'ViewsCtrl'];
-    function ArchiveListController($scope, $injector, superdesk, api, $rootScope, ViewsCtrl) {
+    ArchiveListController.$inject = ['$scope', '$injector', 'superdesk', 'session', 'api', 'ViewsCtrl', 'ContentCtrl'];
+    function ArchiveListController($scope, $injector, superdesk, session, api, ViewsCtrl, ContentCtrl) {
 
         var resource;
 
@@ -15,8 +15,9 @@ define([
             items: []
         };
 
-        $rootScope.currentModule = 'archive';
+        $scope.currentModule = 'archive';
         $scope.views = new ViewsCtrl($scope);
+        $scope.content = new ContentCtrl($scope);
         $scope.type = 'archive';
 
         $scope.openUpload = function() {
@@ -42,7 +43,7 @@ define([
         $scope.$on('changes in media_archive', this.refresh);
 
         $scope.$watch('selectedDesk', angular.bind(this, function(desk) {
-            resource = desk ? api('archive') : api('content', $rootScope.currentUser);
+            resource = desk ? api('archive') : api('content', session.identity);
             this.refresh();
         }));
     }

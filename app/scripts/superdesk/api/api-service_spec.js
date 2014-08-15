@@ -336,6 +336,20 @@ define([
             expect(user._id).toBe(1);
         }));
 
+        it('can update', inject(function(api, $httpBackend) {
+
+            var user = {_id: 1, _links: {self: {href: USER_PATH}}, name: 'foo'};
+            var diff = {name: 'bar'};
+
+            $httpBackend.expectPATCH(USER_URL, diff).respond(200, {name: 'bar'});
+
+            api('users').save(user, diff);
+
+            $httpBackend.flush();
+
+            expect(user.name).toBe('bar');
+        }));
+
         it('can query resource', inject(function(api, $httpBackend) {
             $httpBackend.expectGET(USERS_URL + '?limit=1').respond(200, {_items: []});
 
@@ -388,6 +402,12 @@ define([
 
             expect(success).not.toHaveBeenCalled();
             expect(error).toHaveBeenCalled();
+        }));
+
+        it('cleans data before saving it', inject(function(api, $httpBackend) {
+            $httpBackend.expectPOST(USERS_URL, {name: 'foo'}).respond(200);
+            api('users').save({name: 'foo', _created: 'now', _updated: 'now', _id: 1});
+            $httpBackend.flush();
         }));
     });
 });
