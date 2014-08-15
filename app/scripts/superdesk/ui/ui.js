@@ -63,9 +63,24 @@ define([
         };
     }
 
+    /**
+     * Convert newline charachter from text into given html element (default <br/>)
+     *
+     * Usage:
+     * <div data-html="text | nl2el"></div>
+     * or
+     * <div data-html="text | nl2el:'</p><p>'"></div> for specific replace element
+     */
+    function NewlineToElement() {
+        return function(input, el) {
+            return input.replace(/(?:\r\n|\r|\n)/g, el || '<br/>');
+        };
+    }
+
     return angular.module('superdesk.ui', [])
 
         .directive('sdShadow', ShadowDirective)
         .directive('sdAutoHeight', require('./autoheight-directive'))
-        .directive('sdToggleBox', ToggleBoxDirective);
+        .directive('sdToggleBox', ToggleBoxDirective)
+        .filter('nl2el', NewlineToElement);
 });

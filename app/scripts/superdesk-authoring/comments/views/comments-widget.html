@@ -5,7 +5,8 @@
                 <img sd-user-avatar data-src="comment.user.picture_url">
             </figure>
             <div class="content">
-                <p class="text"><b>{{ comment.user.display_name || comment.user.username }}</b>: {{ comment.text}}</p>
+                <div class="text" sd-html-preview="'<p><b>' + (comment.user.display_name || comment.user.username) + '</b>:' + (comment.text | nl2el:'</p><p>') + '</p>'">
+                </div>
                 <span class="date" sd-reldate ng-model="comment._created"></span>
             </div>
         </li>
