@@ -93,29 +93,25 @@ class BaseModel():
         pass
 
     def find_one(self, req, **lookup):
-        return app.data._backend(self.endpoint_name).find_one(self.endpoint_name, req=req, **lookup)
+        backend = self._lookup_backend(fallback=True)
+        return backend.find_one(self.endpoint_name, req=req, **lookup)
 
     def get(self, req, lookup):
-
-        resource = self._resource()
-
-        backend = app.data._search_backend(resource)
-        if backend is None:
-            backend = app.data._backend(resource)
-
-        cursor = backend.find(resource, req, lookup)
+        backend = self._lookup_backend(fallback=True)
+        cursor = backend.find(self.endpoint_name, req, lookup)
         if not cursor.count():
             return cursor  # return 304 if not modified
         else:
             # but fetch without filter if there is a change
             req.if_modified_since = None
-            return backend.find(resource, req, lookup)
+            return backend.find(self.endpoint_name, req, lookup)
 
     def create(self, docs, trigger_events=None, **kwargs):
         if trigger_events:
             self.on_create(docs)
-        ids = app.data._backend(self.endpoint_name).insert(self.endpoint_name, docs, **kwargs)
-        search_backend = app.data._search_backend(self.endpoint_name)
+        backend = self._backend()
+        ids = backend.insert(self.endpoint_name, docs, **kwargs)
+        search_backend = self._lookup_backend()
         if search_backend:
             search_backend.insert(self.endpoint_name, docs, **kwargs)
         if trigger_events:
@@ -127,11 +123,12 @@ class BaseModel():
             original = self.find_one(req=None, _id=id)
             self.on_update(updates, original)
 
-        res = app.data._backend(self.endpoint_name).update(self.endpoint_name, id, updates)
+        backend = self._backend()
+        res = backend.update(self.endpoint_name, id, updates)
 
-        search_backend = app.data._search_backend(self.endpoint_name)
+        search_backend = self._lookup_backend()
         if search_backend is not None:
-            all_updates = self.find_one(req=None, _id=id)
+            all_updates = backend.find_one(self.endpoint_name, req=None, _id=id)
             search_backend.update(self.endpoint_name, id, all_updates)
         if trigger_events:
             self.on_updated(updates, original)
@@ -142,9 +139,10 @@ class BaseModel():
             original = self.find_one(req=None, _id=id)
             self.on_replace(document, original)
 
-        res = app.data._backend(self.endpoint_name).replace(self.endpoint_name, id, document)
+        backend = self._backend()
+        res = backend.replace(self.endpoint_name, id, document)
 
-        search_backend = app.data._search_backend(self.endpoint_name)
+        search_backend = self._lookup_backend()
         if search_backend is not None:
             search_backend.update(self.endpoint_name, id, document)
         if trigger_events:
@@ -155,8 +153,9 @@ class BaseModel():
         if trigger_events:
             doc = self.find_one(req=None, lookup=lookup)
             self.on_delete(doc)
-        res = app.data._backend(self.endpoint_name).remove(self.endpoint_name, lookup)
-        search_backend = app.data._search_backend(self.endpoint_name)
+        backend = self._backend()
+        res = backend.remove(self.endpoint_name, lookup)
+        search_backend = self._lookup_backend()
         if search_backend is not None:
             try:
                 search_backend.remove(self.endpoint_name, lookup)
@@ -166,5 +165,14 @@ class BaseModel():
             self.on_deleted(doc)
         return res
 
-    def _resource(self):
+    def _datasource(self):
         return app.data._datasource(self.endpoint_name)[0]
+
+    def _backend(self):
+        return app.data._backend(self.endpoint_name)
+
+    def _lookup_backend(self, fallback=False):
+        backend = app.data._search_backend(self.endpoint_name)
+        if backend is None and fallback:
+            backend = app.data._backend(self.endpoint_name)
+        return backend
