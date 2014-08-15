@@ -38,7 +38,7 @@ class ReutersUpdateService(object):
         self.provider = provider
         updated = utcnow()
 
-        last_updated = provider.get('updated')
+        last_updated = provider.get('_updated')
         if not last_updated or last_updated < updated + datetime.timedelta(days=-7):
             last_updated = updated + datetime.timedelta(hours=-24)
 
@@ -53,8 +53,8 @@ class ReutersUpdateService(object):
         while items:
             item = items.pop()
             result_items.append(item)
-            item['created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
-            item['updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
+            item['_created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
+            item['_updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
             items.extend(self.fetch_assets(item))
         return result_items
 
@@ -109,7 +109,6 @@ class ReutersUpdateService(object):
             raise error
 
         if response.status_code == 404:
-            print(response.content)
             raise LookupError('Not found %s' % payload)
 
         try:

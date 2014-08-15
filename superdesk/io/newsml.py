@@ -106,7 +106,7 @@ class Parser():
         """Parse Rights Info tag"""
         info = tree.find(self.qname('rightsInfo'))
         item['copyrightholder'] = info.find(self.qname('copyrightHolder')).attrib['literal']
-        item['copyrightnotice'] = info.find(self.qname('copyrightNotice')).text
+        item['copyrightnotice'] = getattr(info.find(self.qname('copyrightNotice')), 'text', None)
 
     def parse_group_set(self, tree, item):
         item['groups'] = []
@@ -166,7 +166,7 @@ class Parser():
         content['sizeinbytes'] = int(tree.attrib.get('size', '0'))
         content['rendition'] = tree.attrib['rendition'].split(':')[1]
         content['mimetype'] = tree.attrib['contenttype']
-        content['href'] = tree.attrib['href']
+        content['href'] = tree.attrib.get('href', None)
         return content
 
     def qname(self, tag, ns=None):
