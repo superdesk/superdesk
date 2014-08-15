@@ -22,7 +22,7 @@ class ArchiveLockModel(BaseModel):
 
 
 class ArchiveUnlockModel(BaseModel):
-    endpoint_name = 'archive_lock'
+    endpoint_name = 'archive_unlock'
     url = 'archive/<regex("[a-zA-Z0-9:\\-\\.]+"):item_id>/unlock'
     schema = {
         'lock_user': {'type': 'string'}
@@ -31,7 +31,7 @@ class ArchiveUnlockModel(BaseModel):
     resource_methods = ['GET', 'POST']
 
     def on_create(self, docs):
+        docs.clear()
         user = get_user(required=True)
         c = ItemLock(Eve())
-        docs.clear()
-        docs.append(c.unlock({'_id': request.view_args['item_id']}, user['_id'], None))
+        c.unlock({'_id': request.view_args['item_id']}, user['_id'], None)

@@ -125,7 +125,6 @@ class BaseModel():
 
         backend = self._backend()
         res = backend.update(self.endpoint_name, id, updates)
-
         search_backend = self._lookup_backend()
         if search_backend is not None:
             all_updates = backend.find_one(self.endpoint_name, req=None, _id=id)

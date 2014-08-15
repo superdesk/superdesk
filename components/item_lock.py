@@ -1,5 +1,5 @@
 from models.item import ItemModel
-from models.base_model import ETAG
+# from models.base_model import ETAG
 from superdesk import SuperdeskError
 from superdesk.utc import utcnow
 
@@ -25,13 +25,13 @@ class ItemLock():
         return item
 
     def unlock(self, filter, user, etag):
-        item_model = ItemModel()
+        item_model = ItemModel(self.data_layer)
         filter[LOCK_USER] = user
-        filter[ETAG] = etag
+        # filter[ETAG] = etag
         item = item_model.find_one(filter)
         if item:
-            update = {LOCK_USER: None}
-            item_model.update(filter, update)
+            updates = {LOCK_USER: None, 'lock_time': None}
+            item_model.update(filter, updates)
 
     def _can_lock(self, item, user):
         # TODO: implement
