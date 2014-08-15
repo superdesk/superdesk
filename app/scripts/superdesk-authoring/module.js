@@ -3,6 +3,26 @@ define([
 ], function(angular) {
     'use strict';
 
+    LockService.$inject = ['api'];
+    function LockService(api) {
+
+        function getBaseItem(item) {
+            return api('archive').getById(item._id);
+        }
+
+        this.lock = function(item) {
+            return getBaseItem(item).then(function(item) {
+                return api('lock', item).save({});
+            });
+        };
+
+        this.unlock = function(item) {
+            return getBaseItem(item).then(function(item) {
+                return api('unlock', item).save({});
+            });
+        };
+    }
+
     ConfirmDirtyFactory.$inject = ['$window', '$location', '$q', 'modal', 'gettext'];
     function ConfirmDirtyFactory($window, $location, $q, modal, gettext) {
         /**
@@ -54,10 +74,11 @@ define([
         'workqueue',
         'notify',
         'gettext',
-        'ConfirmDirty'
+        'ConfirmDirty',
+        'lock'
     ];
 
-    function AuthoringController($scope, $routeParams, superdesk, api, workqueue, notify, gettext, ConfirmDirty) {
+    function AuthoringController($scope, $routeParams, superdesk, api, workqueue, notify, gettext, ConfirmDirty, lock) {
         var _item;
         $scope.item = null;
         $scope.dirty = null;
@@ -70,8 +91,10 @@ define([
             var _id = $routeParams._id;
             if (_id) {
                 _item = workqueue.find({_id: _id}) || workqueue.active;
-                $scope.item = _.create(_item);
-                workqueue.setActive(_item);
+                lock.lock(_item).then(function() {
+                    $scope.item = _.create(_item);
+                    workqueue.setActive(_item);
+                });
             }
         }
 
@@ -102,7 +125,9 @@ define([
 
         $scope.close = function() {
             confirm.confirm().then(function() {
-                superdesk.intent('view', 'content');
+                lock.unlock($scope.item).then(function() {
+                    superdesk.intent('view', 'content');
+                });
             });
         };
 
@@ -282,6 +307,7 @@ define([
             'superdesk.authoring.comments'
         ])
 
+        .service('lock', LockService)
     	.service('workqueue', WorkqueueService)
         .factory('ConfirmDirty', ConfirmDirtyFactory)
 

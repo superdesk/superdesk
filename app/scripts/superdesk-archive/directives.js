@@ -6,6 +6,29 @@ define([
     'use strict';
 
     return angular.module('superdesk.archive.directives', [])
+        .directive('sdItemLock', ['api', 'lock', function(api, lock) {
+            return {
+                templateUrl: 'scripts/superdesk-archive/views/item-lock.html',
+                scope: {item: '='},
+                link: function(scope) {
+                    scope.$watch('item', function() {
+                        scope.lock = null;
+                        if (scope.item.lock_user) {
+                            api('users').getById(scope.item.lock_user).then(function(user) {
+                                scope.lock = {user: user};
+                            });
+                        }
+                    });
+
+                    scope.unlock = function() {
+                        lock.unlock(scope.item).then(function() {
+                            scope.item.lock_user = null;
+                            scope.lock = null;
+                        });
+                    };
+                }
+            };
+        }])
         .directive('sdInlineMeta', function() {
             return {
                 templateUrl: require.toUrl('./views/inline-meta.html'),

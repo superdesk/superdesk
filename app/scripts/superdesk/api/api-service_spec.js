@@ -409,5 +409,13 @@ define([
             api('users').save({name: 'foo', _created: 'now', _updated: 'now', _id: 1});
             $httpBackend.flush();
         }));
+
+        it('can fetch an item by id', inject(function(api, $httpBackend) {
+            var data = {_id: 1}, user;
+            $httpBackend.expectGET(USER_URL).respond(200, data);
+            api('users').getById(1).then(function(_user) {user = _user;});
+            $httpBackend.flush();
+            expect(user._id).toBe(1);
+        }));
     });
 });

@@ -44,7 +44,7 @@ define([
                     config.url = url;
                     return $http(config);
                 }).then(function(response) {
-                    return isOK(response) ? response : $q.reject(response);
+                    return isOK(response) ? response.data : $q.reject(response);
                 });
             }
 
@@ -66,10 +66,19 @@ define([
             }
 
             /**
-             * Get resource url
+             * Get resource/item url
              */
-            Resource.prototype.url = function() {
-                return this.parent ? urls.item(this.parent._links.self.href) + '/' + this.resource : urls.resource(this.resource);
+            Resource.prototype.url = function(_id) {
+                var baseurl = this.parent ? urls.item(this.parent._links.self.href) + '/' + this.resource : urls.resource(this.resource);
+                var promise = $q.when(baseurl);
+
+                if (_id) {
+                    promise = promise.then(function(url) {
+                        return url + '/' + _id;
+                    });
+                }
+
+                return promise;
             };
 
             /**
@@ -80,9 +89,9 @@ define([
                     method: item._links ? 'PATCH' : 'POST',
                     url: item._links ? urls.item(item._links.self.href) : this.url(),
                     data: diff ? diff : clean(item)
-                }).then(function(response) {
+                }).then(function(data) {
                     angular.extend(item, diff || {});
-                    angular.extend(item, response.data);
+                    angular.extend(item, data);
                     return item;
                 });
             };
@@ -95,8 +104,19 @@ define([
                     method: 'GET',
                     url: this.url(),
                     params: params
-                }).then(function(response) {
-                    return response.data;
+                });
+            };
+
+            /**
+             * Get an item by _id
+             *
+             * @param {String} _id
+             */
+            Resource.prototype.getById = function(_id, params) {
+                return http({
+                    method: 'GET',
+                    url: this.url(_id),
+                    params: params
                 });
             };
 
