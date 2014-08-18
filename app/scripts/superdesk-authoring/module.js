@@ -3,17 +3,30 @@ define([
 ], function(angular) {
     'use strict';
 
-    LockService.$inject = ['api', 'session'];
-    function LockService(api, session) {
+    LockService.$inject = ['$q', 'api', 'session'];
+    function LockService($q, api, session) {
 
+        /**
+         * Lock an item
+         */
         this.lock = function(item) {
-            return api('archive_lock', item).save({});
+            if (this.isLocked(item)) {
+                return $q.reject();
+            } else {
+                return api('archive_lock', item).save({});
+            }
         };
 
+        /**
+         * Unlock an item
+         */
         this.unlock = function(item) {
             return api('archive_unlock', item).save({});
         };
 
+        /**
+         * Test if an item is locked
+         */
         this.isLocked = function(item) {
             return item.lock_user && item.lock_user !== session.identity._id;
         };
@@ -34,7 +47,7 @@ define([
                     confirmDirty().then(function() {
                         confirmed = true;
                         $location.url(next.split('#')[1]);
-                    });
+                   });
                 }
             });
 
@@ -75,7 +88,9 @@ define([
     ];
 
     function AuthoringController($scope, $routeParams, superdesk, api, workqueue, notify, gettext, ConfirmDirty, lock) {
-        var _item;
+        var _item,
+            confirm = new ConfirmDirty($scope);
+
         $scope.item = null;
         $scope.dirty = null;
         $scope.workqueue = workqueue.all();
@@ -83,14 +98,12 @@ define([
         $scope.currentVersion = null;
         setupNewItem();
 
-        var confirm = new ConfirmDirty($scope);
-
         function setupNewItem() {
-            var _id = $routeParams._id;
-            if (_id) {
-                _item = workqueue.find({_id: _id}) || workqueue.active;
-                lock.lock(_item).then(function() {
+            if ($routeParams._id) {
+                _item = workqueue.find({_id: $routeParams._id}) || workqueue.active;
+                lock.lock(_item)['finally'](function() {
                     $scope.item = _.create(_item);
+                    $scope.editable = !lock.isLocked(_item);
                     workqueue.setActive(_item);
                 });
             }
@@ -124,9 +137,11 @@ define([
 
         $scope.close = function() {
             confirm.confirm().then(function() {
-                lock.unlock($scope.item).then(function() {
-                    superdesk.intent('view', 'content');
-                });
+                if ($scope.editable) {
+                    lock.unlock($scope.item);
+                }
+
+                superdesk.intent('view', 'content');
             });
         };
 

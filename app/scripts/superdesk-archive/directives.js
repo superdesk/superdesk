@@ -13,7 +13,7 @@ define([
                 link: function(scope) {
                     scope.$watch('item', function() {
                         scope.lock = null;
-                        if (lock.isLocked(scope.item)) {
+                        if (scope.item && lock.isLocked(scope.item)) {
                             api('users').getById(scope.item.lock_user).then(function(user) {
                                 scope.lock = {user: user};
                             });

@@ -4,7 +4,7 @@
     <div class="button-stack right-stack">
     	
     	<a class="btn btn-medium pull-left" ng-click="close()" ng-if="item">{{ 'Close' | translate }}</a>
-    	<button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()" ng-if="item" ng-disabled="!dirty || !editable">{{ 'Save' | translate }}</button>
+    	<button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()" ng-show="item && editable" ng-disabled="!dirty">{{ 'Save' | translate }}</button>
 
         <div class="navbtn dropdown">
     		<button class="dropdown-toggle condensed"><i class="svg-icon-settings"></i></button>
@@ -38,7 +38,6 @@
                     <div sd-text-editor class="text-editor" ng-model="item.body_html" ng-if="editable"></div>
                     <div class="text-editor" sd-html-preview="item.body_html" ng-if="!editable"></div>
 	            </section>
-				
 	        </article>
 	    </div>
 
