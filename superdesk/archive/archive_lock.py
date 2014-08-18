@@ -8,11 +8,10 @@ from superdesk.archive.common import get_user
 class ArchiveLockModel(BaseModel):
     endpoint_name = 'archive_lock'
     url = 'archive/<regex("[a-zA-Z0-9:\\-\\.]+"):item_id>/lock'
-    schema = {
-        'lock_user': {'type': 'string'}
-    }
+    schema = {'lock_user': {'type': 'string'}}
     datasource = {'backend': 'custom'}
     resource_methods = ['GET', 'POST']
+    resource_title = endpoint_name
 
     def on_create(self, docs):
         docs.clear()
@@ -24,11 +23,10 @@ class ArchiveLockModel(BaseModel):
 class ArchiveUnlockModel(BaseModel):
     endpoint_name = 'archive_unlock'
     url = 'archive/<regex("[a-zA-Z0-9:\\-\\.]+"):item_id>/unlock'
-    schema = {
-        'lock_user': {'type': 'string'}
-    }
+    schema = {'lock_user': {'type': 'string'}}
     datasource = {'backend': 'custom'}
     resource_methods = ['GET', 'POST']
+    resource_title = endpoint_name
 
     def on_create(self, docs):
         docs.clear()

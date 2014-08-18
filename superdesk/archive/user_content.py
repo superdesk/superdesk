@@ -11,3 +11,4 @@ class UserContentModel(BaseModel):
     datasource = {'source': 'archive'}
     resource_methods = ['GET', 'POST']
     item_methods = ['GET', 'PATCH', 'DELETE']
+    resource_title = endpoint_name

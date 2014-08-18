@@ -1,7 +1,6 @@
+
 import logging
-
 from flask import current_app as app
-
 import superdesk
 
 
@@ -26,6 +25,7 @@ class BaseModel():
     datasource = None
     versioning = None
     internal_resource = None
+    resource_title = None
 
     def __init__(self, app, endpoint_schema=None):
         if not endpoint_schema:
@@ -52,6 +52,8 @@ class BaseModel():
                 endpoint_schema.update({'versioning': self.versioning})
             if self.internal_resource is not None:
                 endpoint_schema.update({'internal_resource': self.internal_resource})
+            if self.resource_title is not None:
+                endpoint_schema.update({'resource_title': self.resource_title})
 
         on_insert_event = getattr(app, 'on_insert_%s' % self.endpoint_name)
         on_insert_event += self.on_create
