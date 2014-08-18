@@ -1,6 +1,6 @@
 <div class="article-versions" ng-controller="VersioningWidgetCtrl">
     <ul class="versions-list">
-        <li class="item" ng-repeat="version in versions._items|orderBy:'_version':true" ng-click="openVersion(version)">
+        <li class="item" ng-class="{active: version === selected}" ng-repeat="version in versions._items|orderBy:'_version':true" ng-click="openVersion(version)">
             <div class="header">
 
                 <time title="{{version.versioncreated|date:'medium'}}" datetime="{{version.versioncreated}}">{{version.versioncreated|reldate}}</time>

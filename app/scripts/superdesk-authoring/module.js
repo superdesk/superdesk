@@ -83,6 +83,8 @@ define([
         $scope.item = null;
         $scope.dirty = null;
         $scope.workqueue = workqueue.all();
+        $scope.editable = false;
+        $scope.currentVersion = null;
         setupNewItem();
 
         var confirm = new ConfirmDirty($scope);
@@ -103,7 +105,7 @@ define([
                 $scope.dirty = false;
                 return;
             }
-
+            $scope.editable = $scope.item._version === $scope.item._latest_version;
             $scope.dirty = item && oldItem && item._id === oldItem._id;
         }, true);
 
@@ -114,6 +116,7 @@ define([
         };
 
     	$scope.save = function() {
+            delete $scope.item._version;
     		api.archive.save(_item, $scope.item).then(function(res) {
                 workqueue.update($scope.item);
                 notify.success(gettext('Item updated.'));

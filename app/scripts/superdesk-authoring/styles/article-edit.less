@@ -87,66 +87,69 @@
 
   max-width: 960px;
 
-  section {
-    header {
-      margin-bottom: 3px;
-      .edit-label {
-        background: #c0c0c0;
-        .border-radius(2px);
-        font-size:10px;
-        color:#fff;
-        text-transform:uppercase;
-        line-height:18px;
-        padding:0 5px;
-      }
-      .edit-words-info {
-        color:#6b6b6b;
-        font-style:italic;
-        font-size:11px;
-        line-height:18px;
-        padding-left:5px;
-      }
-    }
+  header {
+    margin-bottom: 3px;
+  }
+  .edit-label {
+    background: #c0c0c0;
+    .border-radius(2px);
+    font-size:10px;
+    color:#fff;
+    text-transform:uppercase;
+    line-height:18px;
+    padding:0 5px;
+  }
+  .edit-words-info {
+    color:#6b6b6b;
+    font-style:italic;
+    font-size:11px;
+    line-height:18px;
+    padding-left:5px;
+  }
+  p {
+    padding:2px;
+  }
+  .article-section {
     p {
-      padding:2px;
+      text-transform:uppercase;
+      font-size:13px;
+      font-weight:bold;
+      margin:0;
     }
-    &.article-section {
-      p {
-        text-transform:uppercase;
-        font-size:13px;
-        font-weight:bold;
-        margin:0;
+  }
+  .article-title {
+    margin: 30px 0;
+    .title {
+      resize:none;
+      font-size:36px;
+      line-height: 40px;
+      border-color: #eee !important;
+      height: 58px;
+      padding: 7px;
+      .border-box();
+      &:focus {
+        .box-shadow(none) !important;
       }
     }
-    &.article-title {
-      margin: 30px 0;
-      textarea {
-        resize:none;
-        font-family: Georgia, serif;
-        font-size:36px;
-        line-height: 40px;
-        height: 50px;
-        border-color: #eee !important;
-        &:focus {
-          .box-shadow(none) !important;
-        }
-      }
-      header, header input {
-        font-family:Arial, Verdana, sans-serif !important;
-      }
+    textarea.title {
+      height: 50px;
+      padding: 6px;
     }
-    &.article-full-text {
+    header, header input {
+      font-family:Arial, Verdana, sans-serif !important;
     }
   }
 
+
   &:hover {
-    .text-editor {
+    .text-editor, .title {
       border-color: #ddd !important;
     }
-    .article-title {
-      textarea {
-        border-color: #ddd !important;
-      }
+  }
+
+  &.preview {
+    .text-editor {
+      border-color: #fff !important;
     }
   }
 

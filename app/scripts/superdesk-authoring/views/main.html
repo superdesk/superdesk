@@ -4,7 +4,7 @@
     <div class="button-stack right-stack">
     	
     	<a class="btn btn-medium pull-left" ng-click="close()" ng-if="item">{{ 'Close' | translate }}</a>
-    	<button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()" ng-if="item" ng-disabled="!dirty">{{ 'Save' | translate }}</button>
+    	<button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()" ng-if="item" ng-disabled="!dirty || !editable">{{ 'Save' | translate }}</button>
 
         <div class="navbtn dropdown">
     		<button class="dropdown-toggle condensed"><i class="svg-icon-settings"></i></button>
@@ -22,19 +22,21 @@
 
 	    <div class="main-article-container">
 
-	        <article class="main-article" ng-if="item._id">
+	        <article class="main-article" ng-if="item._id" ng-class="{preview: !editable}">
 	            <section class="article-title">
 	                <header>
 	                    <span class="edit-label" translate>Headline</span>
 	                </header>
-	                <textarea sd-auto-height ng-model="item.headline"></textarea>
+	                <textarea class="title" sd-auto-height ng-model="item.headline" ng-if="editable"></textarea>
+	                <div class="title" ng-if="!editable">{{item.headline}}</div>
 	            </section>
 
 	            <section class="article-full-text">
 	                <header>
 	                    <span class="edit-label" translate>Body</span> 
 	                </header>
-                    <div sd-text-editor class="text-editor" ng-model="item.body_html"></div>
+                    <div sd-text-editor class="text-editor" ng-model="item.body_html" ng-if="editable"></div>
+                    <div class="text-editor" sd-html-preview="item.body_html" ng-if="!editable"></div>
 	            </section>
 				
 	        </article>

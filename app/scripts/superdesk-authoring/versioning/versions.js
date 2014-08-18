@@ -5,35 +5,15 @@
 
     VersioningController.$inject = ['$scope', 'api', '$location', 'notify', 'workqueue'];
     function VersioningController($scope, api, $location, notify, workqueue) {
-        $scope.item = null;
+
         $scope.versions = null;
         $scope.selected = null;
         $scope.users = {};
-
-        $scope.$watch(function() {
-            return $location.search()._id;
-        }, function(_id) {
-            $scope.item = null;
-            $scope.versions = null;
-
-            if (_id) {
-                fetchItem(_id);
-            }
-        });
 
         var fetchUser = function(id) {
             api.users.getById(id)
             .then(function(result) {
                 $scope.users[id] = result;
-            });
-        };
-
-        var fetchItem = function(id) {
-            id = id || $scope.item._id;
-            return api.archive.getById(id)
-            .then(function(result) {
-                $scope.item = result;
-                return fetchVersions();
             });
         };
 
@@ -51,23 +31,31 @@
                 $scope.selected = _.find($scope.versions._items, {_version: $scope.item._latest_version});
             });
         };
+        fetchVersions();
 
-        $scope.revert = function(version) {
-            api.archive.replace($scope.item._links.self.href, {
-                type: 'text',
-                last_version: $scope.item._version,
-                old_version: version
-            })
-            .then(function(result) {
-                notify.success(gettext('Item reverted.'));
-                fetchItem()
-                .then(function() {
-                    workqueue.update($scope.item);
-                });
-            }, function(result) {
-                notify.error(gettext('Error. Item not reverted.'));
-            });
+        $scope.openVersion = function(version) {
+            $scope.selected = version;
+            $scope.item._version = version._version;
+            $scope.item.headline = version.headline;
+            $scope.item.body_html = version.body_html;
         };
+
+        // $scope.revert = function(version) {
+        //     api.archive.replace($scope.item._links.self.href, {
+        //         type: 'text',
+        //         last_version: $scope.item._version,
+        //         old_version: version
+        //     })
+        //     .then(function(result) {
+        //         notify.success(gettext('Item reverted.'));
+        //         fetchItem()
+        //         .then(function() {
+        //             workqueue.update($scope.item);
+        //         });
+        //     }, function(result) {
+        //         notify.error(gettext('Error. Item not reverted.'));
+        //     });
+        // };
     }
 
 angular.module('superdesk.authoring.versions', ['superdesk.authoring.versions'])
