@@ -66,19 +66,26 @@ define([
             }
 
             /**
-             * Get resource/item url
+             * Get resource url
              */
             Resource.prototype.url = function(_id) {
-                var baseurl = this.parent ? urls.item(this.parent._links.self.href) + '/' + this.resource : urls.resource(this.resource);
-                var promise = $q.when(baseurl);
 
-                if (_id) {
-                    promise = promise.then(function(url) {
-                        return url + '/' + _id;
-                    });
+                function resolve(urlTemplate, data) {
+                    return urlTemplate.replace(/<.*>/, data._id);
                 }
 
-                return promise;
+                return urls.resource(this.resource)
+                    .then(angular.bind(this, function(url) {
+                        if (this.parent) {
+                            url = resolve(url, this.parent);
+                        }
+
+                        if (_id) {
+                            url = url + '/' + _id;
+                        }
+
+                        return url;
+                    }));
             };
 
             /**

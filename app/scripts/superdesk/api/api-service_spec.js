@@ -320,8 +320,13 @@ define([
             $httpBackend.verifyNoOutstandingRequest();
         }));
 
-        beforeEach(inject(function(urls, $q) {
-            spyOn(urls, 'resource').andReturn($q.when(USERS_URL));
+        beforeEach(inject(function($httpBackend) {
+            $httpBackend.whenGET(SERVER_URL).respond(200, {
+                _links: {child: [
+                    {title: 'users', href: '/users'},
+                    {title: 'workspace', href: '/users/<regex():user_id>/workspace'}
+                ]}
+            });
         }));
 
         it('can create', inject(function(api, $httpBackend) {
@@ -365,11 +370,11 @@ define([
 
         it('can query subresource', inject(function(api, $httpBackend) {
 
-            var user = {_links: {self: {href: USER_PATH}}};
+            var user = {_id: 1};
 
-            $httpBackend.expectGET(USER_URL + '/content').respond(200, {});
+            $httpBackend.expectGET(USER_URL + '/workspace').respond(200, {});
 
-            api('content', user).query();
+            api('workspace', user).query();
 
             $httpBackend.flush();
         }));

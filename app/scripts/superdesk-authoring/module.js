@@ -6,20 +6,12 @@ define([
     LockService.$inject = ['api'];
     function LockService(api) {
 
-        function getBaseItem(item) {
-            return api('archive').getById(item._id);
-        }
-
         this.lock = function(item) {
-            return getBaseItem(item).then(function(item) {
-                return api('lock', item).save({});
-            });
+            return api('archive_lock', item).save({});
         };
 
         this.unlock = function(item) {
-            return getBaseItem(item).then(function(item) {
-                return api('unlock', item).save({});
-            });
+            return api('archive_unlock', item).save({});
         };
     }
 
