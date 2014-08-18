@@ -1,0 +1,12 @@
+<div class="article-versions" ng-controller="VersioningWidgetCtrl">
+    <ul class="versions-list">
+        <li class="item" ng-repeat="version in versions._items|orderBy:'_version':true" ng-click="openVersion(version)">
+            <div class="header">
+
+                <time title="{{version.versioncreated|date:'medium'}}" datetime="{{version.versioncreated}}">{{version.versioncreated|reldate}}</time>
+                <span class="user">by {{users[version.creator].display_name || users[version.original_creator].display_name}}</span>
+            </div>
+            <h6>{{version.headline}}</h6>
+        </li>
+    </ul>
+</div>
