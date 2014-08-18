@@ -359,7 +359,7 @@ Feature: News Items Archive
     Scenario: Browse content
         Given the "archive"
         """
-        [{"type":"text", "headline": "test1", "guid": "testid1", "creator": "abc"}, {"type":"text", "headline": "test2", "guid": "testid2", "creator": "abc"}]
+        [{"type":"text", "headline": "test1", "guid": "testid1", "original_creator": "abc"}, {"type":"text", "headline": "test2", "guid": "testid2", "original_creator": "abc"}]
         """
         When we get "/archive"
         Then we get list with 2 items
@@ -384,5 +384,28 @@ Feature: News Items Archive
         """
         Then we get new resource
         """
-        {"_id": "", "guid": "", "type": "text"}
+        {"_id": "", "guid": "", "type": "text", "original_creator": ""}
         """
+
+	@auth
+	Scenario: Update text items
+	    Given the "archive"
+	    """
+        [{"type":"text", "headline": "test1", "_id": "xyz", "original_creator": "abc"}]
+        """
+        When we switch user
+        When we patch given
+        """
+        {"headline": "test2"}
+        """
+        And we patch latest
+        """
+        {"headline": "test3"}
+        """
+        Then we get updated response
+        """
+        {"headline": "test3", "version_creator":"def"}
+        """
+       	And we get version 3
+       	When we get "/archive/xyz?version=all"
+        Then we get list with 3 items
