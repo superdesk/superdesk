@@ -266,7 +266,6 @@ define([
 	                templateUrl: 'scripts/superdesk-authoring/views/main.html',
                     topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
 	                controller: AuthoringController,
-	                category: superdesk.MENU_MAIN,
 	                beta: true,
 	                filters: [{action: 'author', type: 'article'}]
 	            })
