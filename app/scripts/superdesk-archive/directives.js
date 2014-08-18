@@ -13,7 +13,7 @@ define([
                 link: function(scope) {
                     scope.$watch('item', function() {
                         scope.lock = null;
-                        if (scope.item.lock_user) {
+                        if (lock.isLocked(scope.item)) {
                             api('users').getById(scope.item.lock_user).then(function(user) {
                                 scope.lock = {user: user};
                             });
@@ -217,14 +217,16 @@ define([
                 templateUrl: require.toUrl('./views/sidebar.html')
             };
         }])
-        .directive('sdMediaBox', function() {
+        .directive('sdMediaBox', ['lock', function(lock) {
             return {
                 restrict: 'A',
                 templateUrl: require.toUrl('./views/media-box.html'),
                 link: function(scope, element, attrs) {
+
                     if (!scope.activityFilter && scope.extras) {
                         scope.activityFilter = scope.extras.activityFilter;
                     }
+
                     scope.$watch('extras.view', function(view) {
                         switch (view) {
                         case 'mlist':
@@ -236,9 +238,13 @@ define([
                         }
                         localStorage.setItem('archive:view', view);
                     });
+
+                    scope.$watch('item', function(item) {
+                        scope.isLocked = item && lock.isLocked(item);
+                    });
                 }
             };
-        })
+        }])
         .directive('sdItemRendition', function() {
             return {
                 templateUrl: require.toUrl('./views/item-rendition.html'),

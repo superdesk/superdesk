@@ -1,6 +1,6 @@
 <div
     class="media-box media-{{item.type}}"
-    ng-class="{selected: item === selected, archived: item.archived, locked: item.lock_user}"
+    ng-class="{selected: item === selected, archived: item.archived, locked: isLocked}"
     ng-include="itemTemplate"
 >
 </div>

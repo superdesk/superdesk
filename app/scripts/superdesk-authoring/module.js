@@ -3,8 +3,8 @@ define([
 ], function(angular) {
     'use strict';
 
-    LockService.$inject = ['api'];
-    function LockService(api) {
+    LockService.$inject = ['api', 'session'];
+    function LockService(api, session) {
 
         this.lock = function(item) {
             return api('archive_lock', item).save({});
@@ -12,6 +12,10 @@ define([
 
         this.unlock = function(item) {
             return api('archive_unlock', item).save({});
+        };
+
+        this.isLocked = function(item) {
+            return item.lock_user && item.lock_user !== session.identity._id;
         };
     }
 
