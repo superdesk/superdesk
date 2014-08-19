@@ -6,6 +6,7 @@ from eve.utils import ParsedRequest
 import superdesk
 from superdesk.archive.common import base_schema, get_user
 from superdesk.base_model import BaseModel
+from superdesk.json_path_tool import json_merge_values, json_copy_values
 
 
 logger = logging.getLogger(__name__)
@@ -83,60 +84,21 @@ class ContentViewModel(BaseModel):
         self.process_and_validate(updates)
 
 
-def json_get(json, path):
-    crt = json
-    for name in path:
-        if name in crt:
-            crt = crt[name]
-        else:
-            return None
-    return crt
-
-
-def json_set(json, path, value):
-    crt = json
-    for name in path[:-1]:
-        if name not in crt:
-            crt[name] = {}
-        crt = crt[name]
-    crt[path[-1]] = value
-
-
-def combine_query(first, second):
+def merge_query(first, second):
     return '(' + first + ') AND (' + second + ')'
 
 
-def combine_filter(first, second):
+def merge_filter(first, second):
     return {'and': [first, second]}
-
-
-def update_query(query, additional_query, path, combine):
-    term = json_get(query, path)
-    aditional_term = json_get(additional_query, path)
-
-    if not aditional_term:
-        return
-
-    if term:
-        json_set(query, path, combine(term, aditional_term))
-    else:
-        json_set(query, path, aditional_term)
-
-
-def update_query_defaults(query, additional_query):
-    attributes = ['size', 'from', 'sort']
-    for attribute in attributes:
-        if attribute not in query and attribute in additional_query:
-            query[attribute] = additional_query[attribute]
 
 
 def apply_additional_query(query, additional_query):
     if not query:
         query = additional_query
     elif additional_query:
-        update_query(query, additional_query, ['query', 'filtered', 'query', 'query_string', 'query'], combine_query)
-        update_query(query, additional_query, ['query', 'filtered', 'filter'], combine_filter)
-        update_query_defaults(query, additional_query)
+        json_merge_values(query, additional_query, ['query', 'filtered', 'query', 'query_string', 'query'], merge_query)
+        json_merge_values(query, additional_query, ['query', 'filtered', 'filter'], merge_filter)
+        json_copy_values(query, additional_query, ['size', 'from', 'sort'])
 
     return query
 
