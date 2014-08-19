@@ -40,22 +40,21 @@
             $scope.item.body_html = version.body_html;
         };
 
-        // $scope.revert = function(version) {
-        //     api.archive.replace($scope.item._links.self.href, {
-        //         type: 'text',
-        //         last_version: $scope.item._version,
-        //         old_version: version
-        //     })
-        //     .then(function(result) {
-        //         notify.success(gettext('Item reverted.'));
-        //         fetchItem()
-        //         .then(function() {
-        //             workqueue.update($scope.item);
-        //         });
-        //     }, function(result) {
-        //         notify.error(gettext('Error. Item not reverted.'));
-        //     });
-        // };
+        $scope.revert = function(version) {
+            api.archive.replace($scope.item._links.self.href, {
+                type: 'text',
+                last_version: $scope.item._latest_version,
+                old_version: version
+            })
+            .then(function(result) {
+                notify.success(gettext('Item reverted.'));
+                workqueue.update(result);
+                $scope.openVersion(result);
+                fetchVersions();
+            }, function(result) {
+                notify.error(gettext('Error. Item not reverted.'));
+            });
+        };
     }
 
 angular.module('superdesk.authoring.versions', ['superdesk.authoring.versions'])

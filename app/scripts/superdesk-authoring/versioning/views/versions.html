@@ -2,11 +2,15 @@
     <ul class="versions-list">
         <li class="item" ng-class="{active: version === selected}" ng-repeat="version in versions._items|orderBy:'_version':true" ng-click="openVersion(version)">
             <div class="header">
-
                 <time title="{{version.versioncreated|date:'medium'}}" datetime="{{version.versioncreated}}">{{version.versioncreated|reldate}}</time>
-                <span class="user">by {{users[version.creator].display_name || users[version.original_creator].display_name}}</span>
+                <span class="user">{{ 'by' | translate }} {{users[version.creator].display_name || users[version.original_creator].display_name}}</span>
             </div>
-            <h6>{{version.headline}}</h6>
+            <h6 ng-if="version.headline">{{version.headline}}</h6>
+            <h6 class="no-title" ng-if="!version.headline">{{ 'No title provided' | translate}}</h6>
+            <div class="footer">
+            	<em>{{ 'version' | translate}} : {{version._version}}</em>
+	            <div class="btn btn-light btn-mini pull-right" ng-if="version._version !== version._latest_version && version === selected" ng-click="revert(version._version)">{{ 'revert' | translate}}</div>
+            </div>
         </li>
     </ul>
 </div>
