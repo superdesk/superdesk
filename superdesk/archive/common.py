@@ -178,7 +178,7 @@ base_schema = {
     }
 }
 
-item_url = 'regex("[\w,.:-]+")'
+item_url = 'regex("[\w,.:_-]+")'
 
 extra_response_fields = ['guid', 'headline', 'firstcreated', 'versioncreated', 'archived']
 
