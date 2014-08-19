@@ -77,9 +77,13 @@ define([
         function ($location, $scope, superdesk, api, SearchCriteria, storage) {
             var config;
             var refresh = _.debounce(_refresh, 1000);
+            var pinnedList = {};
 
             $scope.selected = null;
             $scope.pinnedItems = storage.getItem('ingestWidget:pinned') || [];
+            _.each($scope.pinnedItems, function(item) {
+                pinnedList[item._id] = true;
+            });
             $scope.processedItems = null;
 
             $scope.$on(INGEST_EVENT, function() {
@@ -124,18 +128,20 @@ define([
                 newItem.pinnedInstance = true;
                 $scope.pinnedItems.push(newItem);
                 $scope.pinnedItems = _.uniq($scope.pinnedItems, '_id');
+                pinnedList[item._id] = true;
                 storage.setItem('ingestWidget:pinned', $scope.pinnedItems);
                 processItems();
             };
 
             $scope.unpin = function(item) {
                 _.remove($scope.pinnedItems, {_id: item._id});
+                pinnedList[item._id] = false;
                 storage.setItem('ingestWidget:pinned', $scope.pinnedItems);
                 processItems();
             };
 
             $scope.isPinned = function(item) {
-                return _.findIndex($scope.pinnedItems, {_id: item._id}) !== -1;
+                return !!pinnedList[item._id];
             };
         }])
         .controller('IngestConfigController', ['$scope', 'superdesk', 'api',
