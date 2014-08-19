@@ -1,7 +1,7 @@
 Feature: Content View    
 
     @auth
-    Scenario: Add content view 
+    Scenario: Add content view - success
         Given empty "content_view"
 
         When we post to "/content_view"
@@ -9,7 +9,7 @@ Feature: Content View
         {
         "name": "show my content",
         "description": "Show content items created by the current logged user",
-        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        "filter": {"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
         }
         """
 
@@ -19,9 +19,10 @@ Feature: Content View
         "name": "show my content",
         "description": "Show content items created by the current logged user",
         "location": "archive",
-        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        "filter": {"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
         }
         """
+       
         
         
     @auth
@@ -50,7 +51,7 @@ Feature: Content View
         {
         "name": "show my content",
         "location": "ingest",
-        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        "filter": {"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
         }
         """
 
@@ -59,7 +60,7 @@ Feature: Content View
         {
         "name": "show my content",
         "location": "ingest",
-        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        "filter": {"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
         }
         """
       	
@@ -73,7 +74,7 @@ Feature: Content View
         "name": "show my content",
         "description": "Show content items created by the current logged user",
         "location": "wrong_location",
-        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        "filter": {"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
         }
         """
 
@@ -98,7 +99,7 @@ Feature: Content View
         "name": "show my content",
         "desk": "#DESKS_ID#",
         "description": "Show content items created by the current logged user",
-        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        "filter": {"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
         }
         """
 
@@ -108,7 +109,7 @@ Feature: Content View
         "name": "show my content",
         "description": "Show content items created by the current logged user",
         "location": "archive",
-        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        "filter": {"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
         }
         """    
                
@@ -165,12 +166,12 @@ Feature: Content View
 
         When we post to "/archive"
         """
-        [{"type": "text"}]
+        [{"body_html": "test text", "type": "text"}]
         """
 
         Then we get new resource
         """
-        {"_id": "", "guid": "", "type": "text"}
+        {"_id": "", "guid": "", "body_html": "test text", "type": "text"}
         """
 
         When we post to "/content_view"
@@ -178,7 +179,7 @@ Feature: Content View
         {
         "name": "show my content",
         "description": "Show content items created by the current logged user",
-        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        "filter": {"query": {"filtered": {"query": {"query_string": {"query": "test or samsung"}}, "filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
         }
         """
 
@@ -188,7 +189,28 @@ Feature: Content View
         "name": "show my content",
         "description": "Show content items created by the current logged user",
         "location": "archive",
-        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        "filter": {"query": {"filtered": {"query": {"query_string": {"query": "test or samsung"}}, "filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
         }
         """
-        Then we get embedded items
+        
+        When we get "/content_view/#CONTENT_VIEW_ID#/items"
+        Then we get list with 2 items
+        
+        When we get "/content_view/#CONTENT_VIEW_ID#/items?source={"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}"
+        Then we get list with 2 items
+        
+        When we get "/content_view/#CONTENT_VIEW_ID#/items?source={"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text"]}}]}}}}"
+        Then we get list with 1 items
+        
+        When we get "/content_view/#CONTENT_VIEW_ID#/items?source={"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["video"]}}]}}}}"
+        Then we get list with 0 items
+        
+        When we get "/content_view/#CONTENT_VIEW_ID#/items?source={"query": {"filtered": {"query": {"query_string": {"query": "test or samsung"}}}}}"
+        Then we get list with 2 items
+        
+        When we get "/content_view/#CONTENT_VIEW_ID#/items?source={"query": {"filtered": {"query": {"query_string": {"query": "test"}}}}}"
+        Then we get list with 1 items
+        
+        When we get "/content_view/#CONTENT_VIEW_ID#/items?source={"query": {"filtered": {"query": {"query_string": {"query": "other"}}}}}"
+        Then we get list with 0 items
+        
