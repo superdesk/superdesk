@@ -45,18 +45,6 @@
   overflow: hidden;
 }
 
-.desk-toolbar {
-    width:960px;
-    margin: 0 auto !important;
-
-    .nav-pills {
-      li a {
-        padding-top: 6px !important;
-        padding-bottom: 6px !important;
-      }
-    }
-}
-
 .desk-content-container {
   width:auto;
   .box-sizing(border-box);
@@ -76,8 +64,6 @@
   left: 0;
   padding-bottom: 30px;
 }
-
-
 
 
 .desk-container {
@@ -1102,9 +1088,6 @@
     DESK CONFIG
    ============================ */
 
-.config-page-container {
-  padding-top:30px;
-}
 
 .board-table {
     &.plain-table > li {
@@ -1164,42 +1147,30 @@
   }
 }
 
-.desk-config {
-  .box-sizing(border-box);
 
+.desk-settings {
+  top: 90px !important;
+}
+
+.desk-config {
+
+  .box-sizing(border-box);
   position: relative;
   .border-radius(3px 3px 0 0);
   margin-bottom: 40px;
   min-height: 25px;
   
   .desk-header {
-    color: #444;
-    font-weight: bold;
-    font-size: 12px;
     border-bottom: 5px solid #4d4d4d;
     padding-bottom: 5px;
-    text-transform: uppercase;
-    .dropdown {
-      text-transform: none;
+    h6 {
+      text-transform: uppercase;
+      font-size: 12px;
+      color: @sd-text;
+      .text-bold();
     }
   }
 
-  .toggle-desk {
-    float: left;
-    margin-top: 3px;
-    margin-right: 5px;
-    i:hover {
-      cursor: pointer;
-    }
-    .toggle-desk-close {
-      display: block;
-    }
-    .toggle-desk-open {
-      display: none;
-    }
-  }
-
-  
   .desk-subnav {
     background: @background-main;
     .clearfix();
@@ -1207,13 +1178,13 @@
 
     .subnav-tabs {
       li {
-        a {
+        button {
           font-size: 14px;
           color:@sd-blue-text;
           .box-sizing(border-box);
           height: 38px !important;
           line-height: 38px;
-          display: inline-block;
+          border:0;
           border-right: 1px solid #dfdfdf;
           float: left;
           padding: 0 10px;
@@ -1222,7 +1193,7 @@
             background: #fff;
           }
         }
-        &.active a {
+        &.active button {
           background: #fff;
           color: #333;
         }
@@ -1230,6 +1201,7 @@
       
     }
     .action {
+      border: 0;
       font-size: 11px;
       background:#ebebeb;
       color: #4f4f4f;
@@ -1302,19 +1274,6 @@
 
 }
 
-.members-list {
-  li {
-    .avatar {
-      .border-radius(15px);
-      overflow: hidden;
-    }
-    .fullname {
-      font-size: 13px;
-      color: @sd-blue-text;
-    }
-  }
-}
-
 
 .simple-color-list li span.color {
   &.boardcolor-1 { background-color: @board1; }
@@ -1332,9 +1291,10 @@
 
 /* Desk members popup */
 .desk-members {
-position: relative;
-height: 500px !important;
-overflow:hidden;
+  
+  position: relative;
+  height: 500px !important;
+  overflow:hidden;
 
   .members-screen1{
       position: absolute;

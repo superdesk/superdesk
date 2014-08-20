@@ -4,21 +4,15 @@
     </button>
 
     <h2 translate>Desk management</h4>
-    <div class="settings-tab-content ">
-        <div class="config-page-container">
-
+    <div class="settings-tab-content desk-settings" sd-shadow>
 			<div class="desk-config" ng-repeat="desk in desks._items">
-				<div class="desk-header">
-					<div class="toggle-desk">
-						<i class="icon-chevron-down toggle-desk-close"></i>
-						<i class="icon-chevron-right toggle-desk-open"></i>
-					</div>
-					{{ desk.name }}
+				<div class="desk-header clearfix">
+					<h6 class="pull-left">{{ desk.name }}</h6>
 					<div class="dropdown pull-right">
-                      <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-settings"></i> <b class="caret"></b></a>
+                      <button class="dropdown-toggle"><i class="icon-settings"></i> <b class="caret"></b></button>
                       <ul class="dropdown-menu pull-right">
-                        <li><a href="" ng-click="edit(desk)"><i class="icon-pencil"></i> {{'Edit Desk' | translate}}</a></li>
-                        <li><a href="" ng-click="remove(desk)"><i class="icon-trash"></i> {{'Delete Desk' | translate }}</a></li>
+                        <li><button ng-click="edit(desk)"><i class="icon-pencil"></i> {{'Edit Desk' | translate}}</button></li>
+                        <li><button ng-click="remove(desk)"><i class="icon-trash"></i> {{'Delete Desk' | translate }}</button></li>
                       </ul>
                   	</div>
 				</div>
@@ -26,26 +20,25 @@
 				<div class="desk-config-tab" ng-class="{'member-tab': !desk.viewCards, 'board-tab': desk.viewCards}">
 					<div class="desk-subnav">
 						<ul class="subnav-tabs">
-					      <li ng-class="{active: !desk.viewCards}"><a href="" ng-click="desk.viewCards = false" translate>Desk members</a></li>
-					      <li ng-class="{active: desk.viewCards}"><a href="" ng-click="desk.viewCards = true" translate>Desk boards</a></li>
+					      <li ng-class="{active: !desk.viewCards}"><button ng-click="desk.viewCards = false" translate>Desk members</button></li>
+					      <li ng-class="{active: desk.viewCards}"><button ng-click="desk.viewCards = true" translate>Desk boards</button></li>
 					    </ul>
-					    <a class="pull-right action" ng-show="!desk.viewCards" ng-click="openMembers(desk)">{{ 'Manage Members' | translate}}</a>
-					    <a class="pull-right action" ng-show="desk.viewCards" ng-click="addBoards(desk)">{{ 'Manage Boards' | translate}}</a>
+					    <button class="pull-right action" ng-show="!desk.viewCards" ng-click="openMembers(desk)">{{ 'Manage Members' | translate}}</button>
+					    <button class="pull-right action" ng-show="desk.viewCards" ng-click="addBoards(desk)">{{ 'Manage Boards' | translate}}</button>
 					</div>
 
-					<div class="desk-config-tab-content" ng-show="!desk.viewCards">
-						<ul class="plain-table members-list">
+					<div class="desk-config-tab-content" ng-if="!desk.viewCards">
+						<ul class="plain-list users-list">
 		                    <li ng-repeat="user in deskMembers[desk._id]">
                               <figure class="avatar"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
-		                      <span class="fullname" >{{ user.first_name }} {{ user.last_name }}</span>
-		                      
+		                      <span class="name" >{{ user.first_name }} {{ user.last_name }}</span>
 		                    </li>
                             <li ng-show="!desk.members.length" translate>There are no members yet</li>
-		                  </ul>
+		                </ul>
 					</div>
 
-					<div class="desk-config-tab-content" ng-show="desk.viewCards">
-						<ul class="board-table plain-table">
+					<div class="desk-config-tab-content" ng-if="desk.viewCards">
+						<ul class="board-table plain-list">
 		                    <li class="boardcolor-{{ card.color }}" ng-repeat="card in desk.cards">
 		                    	
 		                    	<span class="board-name">{{ card.name }}</span>
@@ -77,7 +70,6 @@
 
 				</div>
 			</div>
-		</div>
     </div>
 
 
@@ -143,10 +135,10 @@
 						<input type="text" class="searchbar input-large" placeholder="Search" ng-model="memberSearch">
 					</div>
 				  	<div class="all-users">
-				  		<ul class="plain-table members-list">
+				  		<ul class="plain-list users-list">
 							<li ng-repeat="user in users._items | filter:notIn(selectedMembers)| filter:memberSearch" >
 								<figure class="avatar"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
-								<span class="fullname" >{{ user.first_name }} {{ user.last_name }}</span>
+								<span class="name" >{{ user.first_name }} {{ user.last_name }}</span>
 								<button class="btn btn-mini btn-green pull-right" ng-click="addMember(user)" tooltip="{{ 'Add to desk' | translate}}" tooltip-placement="left"><i class="icon-plus-small icon-white"></i></button>
 							</li>
 					    </ul>

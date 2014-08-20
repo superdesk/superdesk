@@ -37,19 +37,24 @@
 
         <div class="modal-body">
             <form name="editForm" ng-submit="save()">
+                
+                <fieldset>
+                    
+                    <div class="field">
+                        <label for="provider-type" translate>Source Type</label>
+                        <select id="provider-type" required ng-model="provider.type" ng-options="key as val.label for (key, val) in types"></select>
+                    </div>
 
-            <div class="control-group">
-                <label for="provider" translate>Source Type</label>
-                <select id="provider" required ng-model="provider.type" ng-options="key as val.label for (key, val) in types"></select>
-            </div>
+                    <div class="field">
+                        <label for="provider-name" translate>Provider Name</label>
+                        <input type="text" id="provider-name" ng-model="provider.name">
+                    </div>
 
-            <div class="control-group">
-                <input type="text" class="large-text-input blue-text" placeholder="{{ 'name'|translate }}" ng-model="provider.name">
-            </div>
+                    <div class="field credentials">
+                        <div ng-include="types[provider.type].templateUrl"></div>
+                    </div>
 
-            <div class="control-group credentials">
-                <div ng-include="types[provider.type].templateUrl"></div>
-            </div>
+                </fieldset>
 
             </form>
         </div>
