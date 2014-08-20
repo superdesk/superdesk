@@ -16,7 +16,8 @@ from superdesk.celery_app import celery, finish_task_for_progress,\
 from celery.result import AsyncResult
 from flask.globals import current_app as app
 from superdesk.upload import url_for_media
-from superdesk.media.media_operations import download_file_from_url
+from superdesk.media.media_operations import download_file_from_url,\
+    process_file
 from superdesk.base_model import BaseModel
 from celery.exceptions import Ignore
 from celery import states
@@ -40,7 +41,7 @@ def raise_fail(task_id, message):
     raise Ignore()
 
 
-def import_rendition(guid, rendition_name, href, trigger_events):
+def import_rendition(guid, rendition_name, href, extract_metadata, trigger_events):
     archive = superdesk.apps['archive'].find_one(req=None, guid=guid)
     if not archive:
         msg = 'No document found in the media archive with this ID: %s' % guid
@@ -50,10 +51,19 @@ def import_rendition(guid, rendition_name, href, trigger_events):
         payload = 'Invalid rendition name %s' % rendition_name
         raise superdesk.SuperdeskError(payload=payload)
 
-    file_guid = download_file_from_url(href)
     updates = {}
+    metadata = None
+
+    content, filename, content_type = download_file_from_url(href)
+    if extract_metadata:
+        file_type, ext = content_type.split('/')
+        metadata = process_file(content, file_type)
+
+    file_guid = app.media.put(content, filename, content_type, metadata)
+
     # perform partial update
     updates['renditions.' + rendition_name + '.href'] = url_for_media(file_guid)
+    updates['renditions.' + rendition_name + '.media'] = file_guid
     result = superdesk.apps['archive'].update(id=guid, updates=updates, trigger_events=trigger_events)
 
     return result
@@ -64,7 +74,7 @@ def archive_media(self, task_id, guid, href, trigger_events):
     try:
         if not self.request.retries:
             update_status(*add_subtask_to_progress(task_id))
-        import_rendition(guid, 'baseImage', href, trigger_events)
+        import_rendition(guid, 'baseImage', href, True, trigger_events)
         update_status(*finish_subtask_from_progress(task_id))
     except Exception:
         raise self.retry(countdown=2)
@@ -75,7 +85,7 @@ def archive_rendition(self, task_id, guid, name, href, trigger_events):
     try:
         if not self.request.retries:
             update_status(*add_subtask_to_progress(task_id))
-        import_rendition(guid, name, href, trigger_events)
+        import_rendition(guid, name, href, False, trigger_events)
         update_status(*finish_subtask_from_progress(task_id))
     except Exception:
         raise self.retry(countdown=2)
