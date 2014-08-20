@@ -16,6 +16,8 @@ from wooper.expect import (
 )
 from wooper.assertions import (
     assert_in, assert_equal)
+from urllib.parse import urlparse
+from os.path import basename
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 
@@ -228,7 +230,9 @@ def step_impl_when_post_url(context, url):
     if context.response.status_code in (200, 201):
         item = json.loads(context.response.get_data())
         if item['_status'] == 'OK' and item.get('_id'):
-            set_placeholder(context, '%s_ID' % url.upper(), item['_id'])
+            parsed_url = urlparse(url)
+            name = basename(parsed_url.path)
+            set_placeholder(context, '%s_ID' % name.upper(), item['_id'])
 
 
 @when('we put to "{url}"')
@@ -247,6 +251,7 @@ def when_we_get_url(context, url):
             key, val = line.split(': ')
             headers.append((key, val))
     headers = unique_headers(headers, context.headers)
+    url = apply_placeholders(context, url)
     context.response = context.client.get(url, headers=headers)
 
 
@@ -781,3 +786,14 @@ def when_we_get_user_resource(context, resource):
     url = '/users/{0}/{1}'.format(str(context.user.get('_id')), resource)
     print('fetching', url)
     return when_we_get_url(context, url)
+
+
+@then('we get embedded items')
+def step_impl(context):
+    response_data = json.loads(context.response.get_data())
+    href = get_self_href(response_data, context)
+    url = href + '/?embedded={"items": 1}'
+    context.response = context.client.get(url, headers=context.headers)
+    assert_200(context.response)
+    context.response_data = json.loads(context.response.get_data())
+    assert len(context.response_data['items']['view_items']) == 2

@@ -1,7 +1,7 @@
 Feature: Content View    
 
     @auth
-    Scenario: Add content view 
+    Scenario: Add content view - success
         Given empty "content_view"
 
         When we post to "/content_view"
@@ -9,7 +9,7 @@ Feature: Content View
         {
         "name": "show my content",
         "description": "Show content items created by the current logged user",
-        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        "filter": {"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
         }
         """
 
@@ -19,9 +19,10 @@ Feature: Content View
         "name": "show my content",
         "description": "Show content items created by the current logged user",
         "location": "archive",
-        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        "filter": {"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
         }
         """
+       
         
         
     @auth
@@ -50,7 +51,7 @@ Feature: Content View
         {
         "name": "show my content",
         "location": "ingest",
-        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        "filter": {"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
         }
         """
 
@@ -59,7 +60,7 @@ Feature: Content View
         {
         "name": "show my content",
         "location": "ingest",
-        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        "filter": {"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
         }
         """
       	
@@ -73,7 +74,7 @@ Feature: Content View
         "name": "show my content",
         "description": "Show content items created by the current logged user",
         "location": "wrong_location",
-        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        "filter": {"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
         }
         """
 
@@ -98,7 +99,7 @@ Feature: Content View
         "name": "show my content",
         "desk": "#DESKS_ID#",
         "description": "Show content items created by the current logged user",
-        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        "filter": {"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
         }
         """
 
@@ -108,7 +109,7 @@ Feature: Content View
         "name": "show my content",
         "description": "Show content items created by the current logged user",
         "location": "archive",
-        "filter": {"and":[{"terms":{"type":["text","picture"]}}]}
+        "filter": {"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
         }
         """    
                
@@ -153,12 +154,63 @@ Feature: Content View
 	    """
 
     @auth
-    Scenario: Create user content view
+    Scenario: Get content view items
+        Given empty "content_view"
+        Given empty "archive"
+
+        When we upload a file "bike.jpg" to "archive_media"
+        Then we get new resource
+        """
+        {"guid": "", "firstcreated": "", "versioncreated": ""}
+        """
+
+        When we post to "/archive"
+        """
+        [{"body_html": "test text", "type": "text"}]
+        """
+
+        Then we get new resource
+        """
+        {"_id": "", "guid": "", "body_html": "test text", "type": "text"}
+        """
+
         When we post to "/content_view"
-            """
-            {"name": "test", "filter": {"term": {"headline": "test"}}}
-            """
+        """
+        {
+        "name": "show my content",
+        "description": "Show content items created by the current logged user",
+        "filter": {"query": {"filtered": {"query": {"query_string": {"query": "test or samsung"}}, "filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
+        }
+        """
 
-        And we get my "/content_view"
-
+        Then we get new resource
+        """
+        {
+        "name": "show my content",
+        "description": "Show content items created by the current logged user",
+        "location": "archive",
+        "filter": {"query": {"filtered": {"query": {"query_string": {"query": "test or samsung"}}, "filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
+        }
+        """
+        
+        When we get "/content_view/#CONTENT_VIEW_ID#/items"
+        Then we get list with 2 items
+        
+        When we get "/content_view/#CONTENT_VIEW_ID#/items?source={"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}"
+        Then we get list with 2 items
+        
+        When we get "/content_view/#CONTENT_VIEW_ID#/items?source={"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text"]}}]}}}}"
         Then we get list with 1 items
+        
+        When we get "/content_view/#CONTENT_VIEW_ID#/items?source={"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["video"]}}]}}}}"
+        Then we get list with 0 items
+        
+        When we get "/content_view/#CONTENT_VIEW_ID#/items?source={"query": {"filtered": {"query": {"query_string": {"query": "test or samsung"}}}}}"
+        Then we get list with 2 items
+        
+        When we get "/content_view/#CONTENT_VIEW_ID#/items?source={"query": {"filtered": {"query": {"query_string": {"query": "test"}}}}}"
+        Then we get list with 1 items
+        
+        When we get "/content_view/#CONTENT_VIEW_ID#/items?source={"query": {"filtered": {"query": {"query_string": {"query": "other"}}}}}"
+        Then we get list with 0 items
+        
