@@ -256,7 +256,7 @@
 // Checkox custom
 // ---------------------------------------------
 
-.sf-checkbox-custom {
+.sd-checkbox {
 	width: 17px;
 	height: 15px;
 	display: inline-block;
@@ -267,101 +267,51 @@
 		background-position: 0 -15px;
 		cursor: pointer;
 	}
-}
-.sf-checked {
-	background-position: 0 -30px !important;
-	&:hover {
+	&.checked {
 		background-position: 0 -30px !important;
+		&:hover {
+			background-position: 0 -30px !important;
+		}
 	}
 }
+
 
 
 // Toggle input
 // ---------------------------------------------
 
-.sf-toggle {
-		display:inline-block;
-		width:55px;
-		height:16px;
-		background: #444;
-		position:relative;
-		border:1px solid #3a3a3a;
-		cursor:pointer;
-		.border-radius(3px); 
-		overflow: hidden;
-		&.on-off-toggle {
-	&:before {
-		content: "ON";
-		position: absolute;
-		font-size: 11px;
-		color: #ebebeb;
-		top: 0;
-		left: 5px;
-	}
-	&:after {
-		content: "OFF";
-		position: absolute;
-		font-size: 11px;
-		color: #ebebeb;
-		top: 0;
-		left: 32px;
-	}
-		}
-		.sf-toggle-custom-inner {
-	position:absolute;
-	left:2px;
-	width:21px;
-	top:2px;
-	height:12px;
-	background:#ebebeb;
-	.border-radius(2px);
-	.transition( all 0.3s ease);
-		}
-		&.sf-checked {
-	&.on-off-toggle {
-		background: #369dbb;
-		border-color:#3091ad; 
-	}
-	.sf-toggle-custom-inner {
-			left:32px !important;
-	}
-		}
-		input[type="checkbox"] {
-	display:none;
-		}
-		&.sf-disable {
+.sd-toggle {
+	display:inline-block;
+	width:34px;
+	height:16px;
 	background: #e0e0e0;
-	border:1px solid #d8d8d8;
-	&:hover {
-		cursor: default;
+	position:relative;
+	cursor:pointer;
+	margin-right: 5px;
+	.border-radius(2px); 
+	overflow: hidden;
+	.box-shadow(inset 0 1px 0 0 rgba(0,0,0,0.15));
+	.inner {
+		position:absolute;
+		left:2px;
+		width:14px;
+		top:2px;
+		height:12px;
+		background:@white;
+		.border-radius(2px);
+		.transition( all 0.3s ease);
 	}
-	.sf-toggle-custom-inner {
-			background:#f0f0f0;
-	}
-		}
-}
-
-
-// Date picker
-// ---------------------------------------------
-
-.sf-datepicker {
-	height: 16px;
-	line-height: 16px;
-	input {
-		width: 140px;
-		border: 0;
-		height: 16px;
-		padding: 0;
-		vertical-align: top;
-		background: none;
-		color: #787878;
-		&:focus {
-			color: #333;
-			.box-shadow(none) !important;
+	&.checked {
+		background: @sd-blue;
+		.inner {
+			left:18px;
 		}
 	}
+	input[type="checkbox"] {
+		display:none;
+	}
 }
+
 
 // Slider input
 // ---------------------------------------------
@@ -733,7 +683,7 @@
 // Pagination
 // ---------------------------------------------
 
-.sf-pagination {
+.sd-pagination {
 	.btn {
 		padding: 10px;
 		i {
