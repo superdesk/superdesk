@@ -85,7 +85,7 @@ class ContentViewModel(BaseModel):
 
 
 def merge_query(first, second):
-    return '(' + first + ') AND (' + second + ')'
+    return {"bool": {"should": [first, second], "minimum_should_match": 2}}
 
 
 def merge_filter(first, second):
@@ -96,7 +96,7 @@ def apply_additional_query(query, additional_query):
     if not query:
         query = additional_query
     elif additional_query:
-        json_merge_values(query, additional_query, ['query', 'filtered', 'query', 'query_string', 'query'], merge_query)
+        json_merge_values(query, additional_query, ['query', 'filtered', 'query'], merge_query)
         json_merge_values(query, additional_query, ['query', 'filtered', 'filter'], merge_filter)
         json_copy_values(query, additional_query, ['size', 'from', 'sort'])
 
