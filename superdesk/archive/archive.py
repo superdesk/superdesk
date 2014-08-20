@@ -72,7 +72,7 @@ class ArchiveModel(BaseModel):
         if lock_user and str(lock_user) != str(user['_id']):
             raise superdesk.SuperdeskError(payload='The item was locked by another user')
         updates['versioncreated'] = utcnow()
-        updates['creator'] = str(user.get('_id'))
+        updates['version_creator'] = str(user.get('_id'))
 
     def on_updated(self, updates, original):
         on_update_media_archive()
