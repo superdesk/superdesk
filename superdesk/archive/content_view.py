@@ -105,6 +105,7 @@ def apply_additional_query(query, additional_query):
 
 class ContentViewItemsModel(BaseModel):
     endpoint_name = 'content_view_items'
+    resource_title = endpoint_name
     url = 'content_view/<regex("[a-zA-Z0-9:\\-\\.]+"):content_view_id>/items'
     schema = base_schema
     resource_methods = ['GET']
@@ -123,6 +124,5 @@ class ContentViewItemsModel(BaseModel):
 
         query = apply_additional_query(query, additional_query)
         parsed_request = init_parsed_request(query)
-        location = view_items['location']
-
+        location = view_items.get('location', 'archive')
         return superdesk.apps[location].get(req=parsed_request, lookup={})
