@@ -18,7 +18,8 @@ define([
             templateUrl: require.toUrl('./views/widget.html'),
             restrict: 'A',
             replace: true,
-            scope: {widget: '=', item: '='},
+            transclude: true,
+            scope: {widget: '='},
             link: function(scope, element, attrs) {
                 scope.openConfiguration = function() {
                     $modal.open({

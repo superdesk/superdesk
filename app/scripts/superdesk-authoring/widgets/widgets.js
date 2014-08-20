@@ -30,7 +30,6 @@ function AuthoringWidgetsDir() {
     return {
         controller: WidgetsManagerCtrl,
         templateUrl: 'scripts/superdesk-authoring/widgets/views/authoring-widgets.html',
-        scope: {item: '='},
         transclude: true
     };
 }

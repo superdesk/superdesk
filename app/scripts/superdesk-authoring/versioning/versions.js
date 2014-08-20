@@ -18,7 +18,6 @@
         };
 
         var fetchVersions = function() {
-            $scope.users = {};
             return api.archive.getByUrl($scope.item._links.self.href + '?version=all&embedded={"user":1}')
             .then(function(result) {
                 _.each(result._items, function(version) {
@@ -31,7 +30,6 @@
                 $scope.selected = _.find($scope.versions._items, {_version: $scope.item._latest_version});
             });
         };
-        fetchVersions();
 
         $scope.openVersion = function(version) {
             $scope.selected = version;
@@ -40,21 +38,11 @@
             $scope.item.body_html = version.body_html;
         };
 
-        $scope.revert = function(version) {
-            api.archive.replace($scope.item._links.self.href, {
-                type: 'text',
-                last_version: $scope.item._latest_version,
-                old_version: version
-            })
-            .then(function(result) {
-                notify.success(gettext('Item reverted.'));
-                workqueue.update(result);
-                $scope.openVersion(result);
-                fetchVersions();
-            }, function(result) {
-                notify.error(gettext('Error. Item not reverted.'));
-            });
+        $scope.revert = function() {
+            $scope.save();
         };
+
+        $scope.$watch('item', fetchVersions);
     }
 
 angular.module('superdesk.authoring.versions', ['superdesk.authoring.versions'])

@@ -9,7 +9,10 @@
             <h6 class="no-title" ng-if="!version.headline">{{ 'No title provided' | translate}}</h6>
             <div class="footer">
             	<em>{{ 'version' | translate}} : {{version._version}}</em>
-	            <div class="btn btn-light btn-mini pull-right" ng-if="version._version !== version._latest_version && version === selected" ng-click="revert(version._version)">{{ 'revert' | translate}}</div>
+	            <div
+                    class="btn btn-light btn-mini pull-right"
+                    ng-if="version._version !== version._latest_version && version === selected && editable"
+                    ng-click="revert()" translate>revert</div>
             </div>
         </li>
     </ul>

@@ -5,7 +5,7 @@
 		<div class="widget-title" translate>{{ widget.label }}</div>
 	</div>
 
-	<div class="widget-content clearfix" ng-include="widget.template"></div>
+	<div class="widget-content clearfix" ng-transclude></div>
 
     <div class="widget-settings" ng-if="widget.configurationTemplate">
         <a href="" class="single-btn" ng-click="openConfiguration()"><i class="icon-settings"></i></a>

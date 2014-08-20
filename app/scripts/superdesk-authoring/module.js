@@ -28,7 +28,7 @@ define([
          * Test if an item is locked
          */
         this.isLocked = function(item) {
-            return item.lock_user && item.lock_user !== session.identity._id;
+            return item && item.lock_user && item.lock_user !== session.identity._id;
         };
     }
 
@@ -109,14 +109,19 @@ define([
             }
         }
 
-        $scope.$watch('item', function(item, oldItem) {
-            if (item === oldItem) {
+        $scope.$watchCollection('item', function(item) {
+            if (!item) {
                 $scope.dirty = false;
                 return;
             }
-            $scope.editable = $scope.item._version === $scope.item._latest_version;
-            $scope.dirty = item && oldItem && item._id === oldItem._id;
-        }, true);
+
+            $scope.editable = !lock.isLocked(item) && item._version === item._latest_version;
+
+            $scope.dirty = false;
+            angular.forEach(item, function(val, key) {
+                $scope.dirty = $scope.dirty || val !== _item[key];
+            });
+        });
 
         $scope.switchArticle = function(article) {
             workqueue.update($scope.item);
@@ -126,10 +131,11 @@ define([
 
     	$scope.save = function() {
             delete $scope.item._version;
-    		api.archive.save(_item, $scope.item).then(function(res) {
-                workqueue.update($scope.item);
-                notify.success(gettext('Item updated.'));
+    		return api.archive.save(_item, $scope.item).then(function(res) {
+                workqueue.update(_item);
+                $scope.item = _.create(_item);
                 $scope.dirty = false;
+                notify.success(gettext('Item updated.'));
     		}, function(response) {
     			notify.error(gettext('Error. Item not updated.'));
     		});

@@ -11,7 +11,7 @@
 
     <div class="tabpane left-tabpane open-tabpane" ng-if="active">
         <section class="tabcontent">
-            <div sd-widget data-widget="active" data-item="item"></div>
+            <div sd-widget data-widget="active"><div ng-include="active.template"></div></div>
         </section>
     </div>
 
