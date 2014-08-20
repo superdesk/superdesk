@@ -211,12 +211,6 @@ define([
                 }
             };
         }])
-        .directive('sdSidebarLayout', ['$location', '$filter', function($location, $filter) {
-            return {
-                transclude: true,
-                templateUrl: require.toUrl('./views/sidebar.html')
-            };
-        }])
         .directive('sdMediaBox', ['lock', function(lock) {
             return {
                 restrict: 'A',

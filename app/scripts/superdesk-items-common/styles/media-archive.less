@@ -5,25 +5,31 @@
 @import 'variables.less';
 
 @archive-sidebar-width: 350px;
-@archive-inner-nav-height : 50px;
-
+@archive-inner-nav-height : 49px;
+@archive-sidebar-bg: #ededed;
 
 .archive-sidebar {
 	position:absolute;
 	top:0px;bottom:0px;
-	left:-@archive-sidebar-width+48;
+	left:0;
 	width:@archive-sidebar-width;
 	.box-sizing(border-box);
-	background-color:#f4f4f4;
+	background-color:@archive-sidebar-bg;
 	.box-shadow(inset -1px 0px 6px 0px rgba(0,0,0,.1));
 	.transition(left 0.2s ease);
-	border-right: 1px solid #d0d0d0;
+	border-right: 2px solid #bbb;
+
 	.header {
 		.title {
-			padding: 10px;
+			padding: 10px 10px 10px 15px;
 			font-size: 15px;
 			.text-semibold();
 			line-height: 28px;
+			i {
+				margin-right: 5px;
+				margin-top: -1px;
+				.opacity(60);
+			}
 		}
 		.doopen {
 			position: absolute;
@@ -33,22 +39,22 @@
 			padding-right: 10px;
 			i {
 				.opacity(60);
-				.rotate(0);
-				.transition(all 0.3s ease);
+			}
+			&:hover {
+				cursor: pointer;
 			}
 		}
 	}
-	z-index: 100;
-	&.opened {
-		.box-shadow(1px 0px 5px 0px rgba(0,0,0,.2));
-		border-right: 2px solid #c0c0c0;
-		left:0;
-	}
+	z-index: 10;
 
 	.content {
 		position: absolute;
 		top:60px;left:20px;bottom:0px;right:30px;
 		overflow: auto;
+	}
+
+	.toggle-box h6 {
+		background: @archive-sidebar-bg;
 	}
 
 	.filter-contenttype li {
@@ -115,17 +121,7 @@
 	}
 }
 
-.sidebar-sticked {
-	.archive-sidebar {
-		left:0 !important;
-		.doopen i {
-			.rotate(-180deg);
-		}
-		&.opened {
-			.box-shadow(inset -1px 0px 6px 0px rgba(0,0,0,.1));
-			border-right: 1px solid #d0d0d0;
-		}
-	}
+.sidebar-open {
 	.archive-content {
 		left: @archive-sidebar-width !important;	
 	}
@@ -133,17 +129,17 @@
 
 .archive-content {
 	position:absolute;
-	top:0px; right:0px; bottom:0px;
-	left:@tablist-width;
+	top:0px; right:0px; bottom:0px; left:0px;
 	height:auto;
-	background-color:#f8f8f8;
+	background-color:@sd-background;
 	.transition(left 0.2s ease);
+	z-index: 11;
 	&.wide {
 		left:10px;
 	}
 
 	.archive-content-nav {
-		background-color:#f8f8f8;
+		background-color:@sd-background;
 		height:@archive-inner-nav-height;
 		.box-sizing(border-box);
 	    left: 0;
@@ -152,8 +148,32 @@
 		position:absolute;
 		z-index:2;
 		border-bottom:1px #e0e0e0 solid;
-		border-top:1px #fcfcfc solid;
 		padding: 10px 20px;
+
+
+
+		.fitler-trigger {
+			margin: -10px 20px 0 -20px;
+			float: left;
+			width: 48px;
+			height: 48px;
+			line-height: 48px;
+			text-align: center;
+			background: @archive-sidebar-bg;
+			border-right: 1px solid #e0e0e0;
+			.transition(all ease 0.1s);
+			overflow: hidden;
+			i {
+				.opacity(60);
+			}
+			&:hover {
+				cursor: pointer;
+			}
+			&.hidden {
+				width: 0;
+				border-right: 0;
+			}
+		}
 	}
 
 	.archive-content-inner {
@@ -283,7 +303,7 @@
 				&.loading {
 					width: 100%;
 					height: 200px;
-					background: #f8f8f8 url(../../images/loading-large.gif) center center no-repeat;
+					background: @sd-background url(../../images/loading-large.gif) center center no-repeat;
 				}
 			}
 			video, audio {
@@ -1026,9 +1046,9 @@
 		}
 
 		&.archived {
-			background: #f8f8f8;
+			background: @sd-background;
 			.box-shadow(inset 0 2px 0 0px #f2f2f2);
-			border-right: 2px solid #f8f8f8;
+			border-right: 2px solid @sd-background;
 			h5 {
 				background: url('../../images/checkmark-big-full.png') no-repeat right 50%;
 				background-size: 36px;

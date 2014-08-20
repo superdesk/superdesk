@@ -43,65 +43,118 @@
 
 <div sd-media-view data-item="selected.view" data-items="items._items" ng-if="selected.view"></div>
 
-<section sd-sidebar-layout class="archive main-section">
+<section class="archive main-section" ng-class="{'sidebar-open': sidebarstick}">
 
-    <div class="archive-content-nav " ng-show="view !== 'stats'">
-        <div sd-searchbar></div>
-        <div sd-pagination data-items="items" data-limit="25"></div>
+    <div class="archive-sidebar">
+        <div class="header">
+            <div class="title"><i class="icon-filter-large"></i>{{ 'Filters' | translate }}</div>
+            <div class="doopen" ng-click="sidebarstick = false"><i class="icon-backward-thin"></i></div>
+        </div>
+        <div class="content">
+            <div sd-toggle-box data-title="{{ 'Content type' | translate }}" data-open="true">
+                <div sd-filter-contenttype data-items="items"></div>
+            </div>
+            <div class="info-tab filter-general">
+                <form>
+                <ul class="metadata">
+                    <li>
+                        <div class="lbl" translate>Urgency</div>
+                        <div class="data urgency-data" sd-filter-urgency>
+                            <slider floor="1" ceiling="5" precision="0" ng-model-low="urgency.min" ng-model-high="urgency.max" class="sd-slider urgency-slider"></slider>
+                            <div class="urgency-range">{{urgency.min}} - {{urgency.max}}</div>
+                        </div>
+                    </li>
+                    <li class="sublist">
+                        <ul sd-date-range data-lte="lte" data-gte="gte">
+                            <li>
+                                <label for="created_before" translate>Created before</label>
+                                <div class="data">
+                                    <input id="created_before" type="date" ng-model="lte" class="form-control">
+                                </div>
+                            </li>
+                            <li>
+                                <label for="created_after" translate>Created after</label>
+                                <div class="data">
+                                    <input id="created_after" type="date" ng-model="gte" class="form-control">
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <li>
+                        <div class="lbl">
+                            <span translate>Source</span>
+                        </div>
+                        <div class="data data-provider">
+                            <div class="dropdown source-select" sd-provider-menu data-items="items"></div>
+                        </div>
+                    </li>
+                </ul>
+                </form>
+            </div>
+        </div>
     </div>
 
-    <div class="preview-layout" ng-class="{closed: !selected.preview}">
-        <div class="archive-content-inner list-pane {{ view }}-view" sd-shadow>
+    <div class="archive-content">
+        <div class="archive-content-nav " ng-show="view !== 'stats'">
+            <div class="pull-left fitler-trigger" ng-click="sidebarstick = true" ng-class="{hidden: sidebarstick === true}"><i class="icon-filter-large"></i></div>
+            <div sd-searchbar></div>
+            <div sd-pagination data-items="items" data-limit="25"></div>
+        </div>
 
-            <div class="newest-items" ng-show="createdMedia.items.length">
-                <span translate>Recently added media</span>
+        <div class="preview-layout" ng-class="{closed: !selected.preview}">
+            <div class="archive-content-inner list-pane {{ view }}-view" sd-shadow>
+
+                <div class="newest-items" ng-show="createdMedia.items.length">
+                    <span translate>Recently added media</span>
+                    <div ng-if="view !== 'stats'"
+                        sd-list-view
+                        data-items="createdMedia.items"
+                        data-select="preview(item)"
+                        data-extras="{view: view, activityFilter: {type: type}, api: api}">
+                        <div sd-media-box 
+                            ng-if="extras.activityFilter.type === 'archive'"
+                            sd-draggable
+                            data-item="item" 
+                            data-container="'#scratchpad'" 
+                            class="drag-{{extras.view}}"></div>
+                        <div sd-media-box ng-if="extras.activityFilter.type !== 'archive'"></div>
+                    </div>
+                </div>
+
                 <div ng-if="view !== 'stats'"
                     sd-list-view
-                    data-items="createdMedia.items"
+                    data-items="items._items"
                     data-select="preview(item)"
                     data-extras="{view: view, activityFilter: {type: type}, api: api}">
                     <div sd-media-box 
                         ng-if="extras.activityFilter.type === 'archive'"
-                        sd-draggable
+                        sd-draggable 
                         data-item="item" 
                         data-container="'#scratchpad'" 
-                        class="drag-{{extras.view}}"></div>
+                        class="{{extras.view}}-view" 
+                        data-cursor="extras.view !== 'mgrid'"></div>
                     <div sd-media-box ng-if="extras.activityFilter.type !== 'archive'"></div>
                 </div>
             </div>
 
-            <div ng-if="view !== 'stats'"
-                sd-list-view
-                data-items="items._items"
-                data-select="preview(item)"
-                data-extras="{view: view, activityFilter: {type: type}, api: api}">
-                <div sd-media-box 
-                    ng-if="extras.activityFilter.type === 'archive'"
-                    sd-draggable 
-                    data-item="item" 
-                    data-container="'#scratchpad'" 
-                    class="{{extras.view}}-view" 
-                    data-cursor="extras.view !== 'mgrid'"></div>
-                <div sd-media-box ng-if="extras.activityFilter.type !== 'archive'"></div>
-            </div>
-        </div>
+            <div class="preview-pane content-item-preview">
+                <div class="actions" ng-if="selected.preview">
+                    <a ng-click="preview(null)" class="action">
+                        <i class="icon-close-small"></i>
+                        <i class="icon-close-small icon-white"></i>
+                    </a>
+                    <a ng-click="display(selected.preview)" class="action preview">
+                        <i class="icon-fullscreen"></i>
+                        <i class="icon-fullscreen icon-white"></i>
+                    </a>
+                </div>
+                
+                <div ng-if="selected.preview">
+                    <div sd-media-preview data-item="selected.preview"></div>
+                </div>
 
-        <div class="preview-pane content-item-preview">
-            <div class="actions" ng-if="selected.preview">
-                <a ng-click="preview(null)" class="action">
-                    <i class="icon-close-small"></i>
-                    <i class="icon-close-small icon-white"></i>
-                </a>
-                <a ng-click="display(selected.preview)" class="action preview">
-                    <i class="icon-fullscreen"></i>
-                    <i class="icon-fullscreen icon-white"></i>
-                </a>
             </div>
-            
-            <div ng-if="selected.preview">
-                <div sd-media-preview data-item="selected.preview"></div>
-            </div>
-
         </div>
     </div>
 </section>
