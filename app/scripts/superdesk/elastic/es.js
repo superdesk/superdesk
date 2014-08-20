@@ -30,21 +30,14 @@ define([], function() {
          * @returns {Object}
          */
         function buildQuery(params, filters) {
-            var query = {};
-
-            if (params.q) {
-                query = {query_string: {query: params.q}};
-            } else {
-                query = {match_all: {}};
-            }
+            var query = {filtered: {}};
 
             if (filters && filters.length) {
-                query = {
-                    filtered: {
-                        query: query,
-                        filter: {and: filters}
-                    }
-                };
+                query.filtered.filter = {and: filters};
+            }
+
+            if (params.q) {
+                query.filtered.query = {query_string: {query: params.q}};
             }
 
             return paginate({query: query}, params);

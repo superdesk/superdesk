@@ -42,8 +42,15 @@ define([
 
         $scope.$on('changes in media_archive', this.refresh);
 
-        $scope.$watch('selectedDesk', angular.bind(this, function(desk) {
-            resource = desk ? api('archive') : api('user_content', session.identity);
+        $scope.$watch('views.selected', angular.bind(this, function(view) {
+            if (view) {
+                resource = api('content_view_items', view);
+            } else if ($scope.selectedDesk) {
+                resource = api('archive');
+            } else {
+                resource = api('user_content', session.identity);
+            }
+
             this.refresh();
         }));
     }
