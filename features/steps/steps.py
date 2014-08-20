@@ -539,6 +539,17 @@ def step_impl_then_get_renditions(context, type):
         we_can_fetch_a_file(context, desc['href'], 'image/jpeg')
 
 
+@then('we get rendition "{name}" with mimetype "{mimetype}"')
+def step_impl_then_get_rendition_with_mimetype(context, name, mimetype):
+    expect_json_contains(context.response, 'renditions')
+    renditions = apply_path(parse_json_response(context.response), 'renditions')
+    assert isinstance(renditions, dict), 'expected dict for image renditions'
+    desc = renditions[name]
+    assert isinstance(desc, dict), 'expected dict for rendition description'
+    assert 'href' in desc, 'expected href in rendition description'
+    we_can_fetch_a_file(context, desc['href'], mimetype)
+
+
 def import_rendition(context, rendition_name=None):
     rv = parse_json_response(context.response)
     headers = [('Content-Type', 'multipart/form-data')]
