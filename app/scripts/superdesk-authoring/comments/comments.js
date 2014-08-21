@@ -33,19 +33,19 @@ CommentsCtrl.$inject = ['$scope', 'commentsService'];
 function CommentsCtrl($scope, commentsService) {
 
     $scope.text = null;
+    $scope.saveEnterFlag = false;
     $scope.$watch('item._id', reload);
     $scope.$on('changes in archive_comment', reload);
 
     $scope.saveOnEnter = function($event) {
-        if ($event.keyCode !== ENTER || $event.shiftKey) {
+        if (!$scope.saveEnterFlag || $event.keyCode !== ENTER || $event.shiftKey) {
             return;
         }
-
-        save();
+        $scope.save();
         return false;
     };
 
-    function save() {
+    $scope.save = function() {
         var text = $scope.text || '';
         if (!text.length) {
             return;
@@ -58,7 +58,11 @@ function CommentsCtrl($scope, commentsService) {
             text: text,
             item: $scope.item._id
         }).then(reload);
-    }
+    };
+
+    $scope.cancel = function() {
+        $scope.text = '';
+    };
 
     function reload() {
         commentsService.fetch($scope.item._id).then(function() {
