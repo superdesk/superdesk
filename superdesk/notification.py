@@ -3,6 +3,7 @@
 import logging
 import asyncio
 
+from ws import host, port
 from flask import current_app as app
 from flask import json
 from datetime import datetime
@@ -23,7 +24,7 @@ class Client(WebSocketClientProtocol):
         kwargs.setdefault('_created', datetime.utcnow().isoformat())
         self.sendMessage(json.dumps(kwargs).encode('utf8'))
 
-    def onOpen(self):
+    def onConnect(self, response):
         self.opened.set_result(None)
 
 
@@ -32,11 +33,11 @@ def init_app(app):
     factory.protocol = Client
     try:
         loop = asyncio.get_event_loop()
-        coro = loop.create_connection(factory, '127.0.0.1', 5050)
+        coro = loop.create_connection(factory, host, port)
         _transport, client = loop.run_until_complete(coro)
         loop.run_until_complete(client.opened)
         app.notification_client = client
-    except OSError: # no ws server running
+    except OSError:  # no ws server running
         pass
 
 

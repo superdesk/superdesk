@@ -1,16 +1,19 @@
 
+import os
 import logging
 import asyncio
+import signal
 from autobahn.asyncio.websocket import WebSocketServerProtocol
 from autobahn.asyncio.websocket import WebSocketServerFactory
-from datetime import datetime
 
 
+host = '0.0.0.0'
+port = int(os.environ.get('WSPORT', '5100'))
 logger = logging.getLogger(__name__)
 
 
 def log(msg):
-    log_msg = '{0} broadcast | {1}'.format(datetime.utcnow().strftime('%X'), msg)
+    log_msg = msg
     logger.info(log_msg)
     print(log_msg)
 
@@ -65,11 +68,15 @@ if __name__ == '__main__':
     factory = BroadcastServerFactory()
     factory.protocol = BroadcastProtocol
 
-    host = 'localhost'
-    port = 5050
     loop = asyncio.get_event_loop()
     coro = loop.create_server(factory, host, port)
     server = loop.run_until_complete(coro)
+
+    def stop():
+        server.close()
+        loop.call_soon_threadsafe(loop.stop)
+
+    loop.add_signal_handler(signal.SIGTERM, stop)
 
     try:
         log('listening on {0}:{1}'.format(host, port))
@@ -77,5 +84,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     finally:
-        server.close()
-        loop.close()
+        stop()

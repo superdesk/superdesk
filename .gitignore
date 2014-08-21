@@ -3,6 +3,7 @@
 *.pyc
 *.swp
 *.swo
+*.pid
 .ropeproject
 static/*
 media/*
@@ -16,4 +17,5 @@ env/
 bin/
 lib/
 man/
+build/
 include/
