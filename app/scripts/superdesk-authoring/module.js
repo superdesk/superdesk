@@ -32,34 +32,22 @@ define([
         };
     }
 
-    ConfirmDirtyFactory.$inject = ['$window', '$location', '$q', 'modal', 'gettext'];
-    function ConfirmDirtyFactory($window, $location, $q, modal, gettext) {
+    ConfirmDirtyFactory.$inject = ['$window', '$q', 'modal', 'gettext'];
+    function ConfirmDirtyFactory($window, $q, modal, gettext) {
         /**
          * Asks for user confirmation if there are some changes which are not saved.
          * - Detecting changes via $scope.dirty - it's up to the controller to set it.
          */
         return function ConfirmDirty($scope) {
-            var confirmed = false;
-
-            $scope.$on('$locationChangeStart', function(e, next) {
-                if ($scope.dirty && !confirmed) {
-                    e.preventDefault();
-                    confirmDirty().then(function() {
-                        confirmed = true;
-                        $location.url(next.split('#')[1]);
-                   });
-                }
-            });
-
-            $scope.$on('$routeUpdate', function() {
-                confirmed = false;
-            });
-
             $window.onbeforeunload = function() {
                 if ($scope.dirty) {
                     return gettext('There are unsaved changes. If you navigate away, your changes will be lost.');
                 }
             };
+
+            $scope.$on('$destroy', function() {
+                $window.onbeforeunload = angular.noop;
+            });
 
             this.confirm = function() {
                 if ($scope.dirty) {
@@ -109,18 +97,35 @@ define([
             }
         }
 
+        function isEditable(item) {
+            if (lock.isLocked(item)) {
+                return false;
+            }
+
+            if (!item._latest_version) {
+                return true;
+            }
+
+            return item._latest_version === item._version;
+        }
+
+        function isDirty(item) {
+            var dirty = false;
+            angular.forEach(item, function(val, key) {
+                dirty = dirty || val !== _item[key];
+            });
+
+            return dirty;
+        }
+
         $scope.$watchCollection('item', function(item) {
             if (!item) {
-                $scope.dirty = false;
+                $scope.dirty = $scope.editable = false;
                 return;
             }
 
-            $scope.editable = !lock.isLocked(item) && item._version === item._latest_version;
-
-            $scope.dirty = false;
-            angular.forEach(item, function(val, key) {
-                $scope.dirty = $scope.dirty || val !== _item[key];
-            });
+            $scope.editable = isEditable(item);
+            $scope.dirty = isDirty(item);
         });
 
         $scope.switchArticle = function(article) {
@@ -147,6 +152,7 @@ define([
                     lock.unlock($scope.item);
                 }
 
+                $scope.dirty = false;
                 superdesk.intent('view', 'content');
             });
         };

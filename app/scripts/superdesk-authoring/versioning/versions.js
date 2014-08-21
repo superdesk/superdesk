@@ -3,8 +3,8 @@
 
 'use strict';
 
-    VersioningController.$inject = ['$scope', 'api', '$location', 'notify', 'workqueue'];
-    function VersioningController($scope, api, $location, notify, workqueue) {
+    VersioningController.$inject = ['$scope', 'api', '$location', 'notify', 'workqueue', 'lock'];
+    function VersioningController($scope, api, $location, notify, workqueue, lock) {
 
         $scope.versions = null;
         $scope.selected = null;
@@ -18,6 +18,9 @@
         };
 
         var fetchVersions = function() {
+
+            $scope.locked = $scope.item && lock.isLocked($scope.item);
+
             return api.archive.getByUrl($scope.item._links.self.href + '?version=all&embedded={"user":1}')
             .then(function(result) {
                 _.each(result._items, function(version) {
