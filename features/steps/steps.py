@@ -544,6 +544,24 @@ def step_impl_then_get_renditions(context, type):
         we_can_fetch_a_file(context, desc['href'], 'image/jpeg')
 
 
+@then('item "{item_id}" is unlocked')
+def then_item_is_unlocked(context, item_id):
+    context.response = context.client.get('/archive/%s' % item_id, headers=context.headers)
+    assert_200(context.response)
+    try:
+        expect_json_contains(context.response, {'lock_user': None})
+    except Exception:
+        pass
+
+
+@then('item "{item_id}" is locked')
+def then_item_is_locked(context, item_id):
+    context.response = context.client.get('/archive/%s' % item_id, headers=context.headers)
+    assert_200(context.response)
+    resp = parse_json_response(context.response)
+    assert resp['lock_user'] is not None
+
+
 @then('we get rendition "{name}" with mimetype "{mimetype}"')
 def step_impl_then_get_rendition_with_mimetype(context, name, mimetype):
     expect_json_contains(context.response, 'renditions')
