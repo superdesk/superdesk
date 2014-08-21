@@ -502,13 +502,6 @@
 		list-style-type: none;
 		li {
 			&.activity {
-				padding: 10px;
-				background: #fff;
-				border-bottom: 1px solid #dfdfdf;
-				.border-radius(2px);
-				margin-bottom: 5px;
-				position: relative;
-
 				.activity-content {
 					padding-left: 45px;
 					margin-top: -3px;
@@ -545,7 +538,9 @@
 						}
 					} 
 				}
-
+				&:hover {
+					cursor: default;
+				}
 			}
 		}
 	}
@@ -831,6 +826,25 @@
 		margin-top: 3px;
 	}
 }
+
+
+// Card list
+// ---------------------------------------------
+.card-list > li , .card {
+	display: block;
+	padding: 10px;
+	background: #fff;
+	border: 1px solid #fff;
+	border-bottom-color: #dfdfdf;
+	.border-radius(2px);
+	margin-bottom: 5px;
+	position: relative;
+	&:hover {
+		cursor: pointer;
+		.box-shadow(0 0px 0px 1px #ddd);
+	}
+}
+
 
 
 // OR label
