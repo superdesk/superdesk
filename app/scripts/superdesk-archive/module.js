@@ -3,13 +3,15 @@ define([
     'require',
     './controllers/list',
     './controllers/upload',
+    './archive-widget/archive',
     './directives'
 ], function(angular, require) {
     'use strict';
 
     var app = angular.module('superdesk.archive', [
         require('./directives').name,
-        'superdesk.dashboard'
+        'superdesk.dashboard',
+        'superdesk.widgets.archive'
     ]);
 
     app.config(['superdeskProvider', function(superdesk) {
