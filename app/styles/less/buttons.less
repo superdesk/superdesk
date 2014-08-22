@@ -6,6 +6,7 @@
 @btnDefaultColor : rgba(0,0,0,15%);
 @btnInfoColor : @sd-blue;
 @btnGreenColor : #169f70;
+@btnSuccessColor: #53a93f;
 @btnDangerColor : #c83929;
 @btnInverseColor : #141414;
 
@@ -75,6 +76,9 @@
 .btn-green {
 	.buttonStates(@btnGreenColor, @white);
 }
+.btn-success {
+	.buttonStates(@btnSuccessColor, @white);
+}
 .btn-danger {
 	.buttonStates(@btnDangerColor, @white);
 }
@@ -114,9 +118,8 @@ button {
 
 // Large
 .btn-large {
-	padding: 16px 32px;
-	font-size: 13px;
-	line-height: normal;
+	padding: 10px 30px;
+	font-size: 14px;
 	.border-radius(5px);
 	height: 40px;
 }
@@ -133,8 +136,7 @@ button {
 // Small
 .btn-small {
 	padding: 4px 9px;
-	font-size: @baseFontSize - 2px;
-	line-height: @baseLineHeight - 2px;
+	font-size: 11px;
 }
 .btn-small [class^="icon-"] {
 	margin-top: -1px;
@@ -143,7 +145,7 @@ button {
 // Mini
 .btn-mini {
 	padding: 2px 6px;
-	font-size: @baseFontSize - 2px;
+	font-size: 11px;
 	line-height: 16px !important;
 	height: 20px;
 }
