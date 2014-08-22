@@ -21,7 +21,7 @@ Feature: Planning Item Coverages
         And we get "/coverages"
         Then we get list with 1 items
 	    """
-	    {"headline": "first coverage", "coverage_type": "story", "assigned_user": "#USERS_ID#"}
+	    {"_items": [{"headline": "first coverage", "coverage_type": "story", "assigned_user": "#USERS_ID#"}]}
 	    """
 
     @auth

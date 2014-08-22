@@ -4,5 +4,5 @@ Feature: Subject codes api
         When we get "/subjectcodes/"
         Then we get list with 1404 items
         """
-        {"name": "arts, culture and entertainment" , "code": "01000000"}
+        {"_items": [{"name": "arts, culture and entertainment" , "code": "01000000"}]}
         """

@@ -14,7 +14,7 @@ Feature: News Items Archive Comments
         And we get "/item_comments"
         Then we get list with 1 items
         """
-        {"text": "test comment", "item": "xyz"}
+        {"_items": [{"text": "test comment", "item": "xyz"}]}
         """
 
     @auth
@@ -50,7 +50,7 @@ Feature: News Items Archive Comments
         And we get "/archive/xyz/comments"
         Then we get list with 1 items
         """
-        {"text": "test comment", "item": "xyz"}
+        {"_items": [{"text": "test comment", "item": "xyz"}]}
         """
 
     @auth

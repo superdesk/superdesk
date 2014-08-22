@@ -6,7 +6,7 @@ from behave import given, when, then  # @UnresolvedImport
 from flask import json
 from eve.methods.common import parse
 
-from wooper.general import parse_json_input, fail_and_print_body, apply_path,\
+from wooper.general import fail_and_print_body, apply_path,\
     parse_json_response
 from wooper.expect import (
     expect_status, expect_status_in,
@@ -28,7 +28,7 @@ def test_json(context):
     except Exception:
         fail_and_print_body(context.response, 'response is not valid json')
 
-    context_data = parse_json_input(context.text)
+    context_data = json.loads(apply_placeholders(context, context.text))
     assert_equal(json_match(context_data, response_data), True,
                  msg=str(context_data) + '\n != \n' + str(response_data))
 
@@ -37,6 +37,7 @@ def json_match(context_data, response_data):
     if isinstance(context_data, dict):
         for key in context_data:
             if key not in response_data:
+                print(key, ' not in ', response_data)
                 return False
             if not context_data[key]:
                 continue
@@ -51,9 +52,12 @@ def json_match(context_data, response_data):
                     found = True
                     break
             if not found:
+                print(item_context, ' not in ', context_data)
                 return False
         return True
     elif not isinstance(context_data, dict):
+        if context_data != response_data:
+            print(context_data, ' != ', response_data)
         return context_data == response_data
 
 
@@ -387,17 +391,7 @@ def step_impl_then_get_list(context, total_count):
     expect_json_length(context.response, int(total_count), path='_items')
     if total_count == 0 or not context.text:
         return
-    # @TODO: generalize json schema check
-    schema = json.loads(apply_placeholders(context, context.text))
-    response_list = json.loads(context.response.get_data())
-    item = response_list['_items'][0]
-    for key in schema:
-        assert_in(key, item, '%s not in %s' % (key, item))
-        if isinstance(schema[key], dict):
-            for keykey in schema[key]:
-                assert_in(keykey, item[key])
-        else:
-            assert_equal(schema[key], item[key])
+    test_json(context)
 
 
 @then('we get no "{field}"')
@@ -813,7 +807,6 @@ def when_we_get_my_url(context, url):
 @when('we get user "{resource}"')
 def when_we_get_user_resource(context, resource):
     url = '/users/{0}/{1}'.format(str(context.user.get('_id')), resource)
-    print('fetching', url)
     return when_we_get_url(context, url)
 
 

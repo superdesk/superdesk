@@ -80,7 +80,7 @@ Feature: News Items Archive
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"headline": "flower", "byline": "foo", "description_text": "flower desc"}
+        {"_items": [{"headline": "flower", "byline": "foo", "description_text": "flower desc"}]}
         """
 
     @auth
@@ -100,7 +100,7 @@ Feature: News Items Archive
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"headline": "green", "byline": "foo", "description_text": "green music"}
+        {"_items": [{"headline": "green", "byline": "foo", "description_text": "green music"}]}
         """
 
     @auth
@@ -120,7 +120,7 @@ Feature: News Items Archive
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"headline": "week @ nasa", "byline": "foo", "description_text": "nasa video"}
+        {"_items": [{"headline": "week @ nasa", "byline": "foo", "description_text": "nasa video"}]}
         """
 
     @auth

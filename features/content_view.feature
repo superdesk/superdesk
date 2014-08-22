@@ -154,7 +154,7 @@ Feature: Content View
 	    """
 
     @auth
-    Scenario: Get content view items
+    Scenario: Get content view items - check filters
         Given empty "content_view"
         Given empty "archive"
 
@@ -213,4 +213,55 @@ Feature: Content View
         
         When we get "/content_view/#CONTENT_VIEW_ID#/items?source={"query": {"filtered": {"query": {"query_string": {"query": "other"}}}}}"
         Then we get list with 0 items
+        
+
+    @auth
+    Scenario: Get content view items - check self
+        Given empty "content_view"
+        Given empty "archive"
+
+        When we post to "/archive"
+        """
+        [{"guid": "12345678", "body_html": "test text", "type": "text"}]
+        """
+
+        Then we get new resource
+        """
+        {"_id": "12345678", "guid": "12345678", "body_html": "test text", "type": "text"}
+        """
+
+        When we post to "/content_view"
+        """
+        {
+        "name": "show test content",
+        "description": "Show content that contain test word",
+        "filter": {"query": {"filtered": {"query": {"query_string": {"query": "test"}}}}}
+        }
+        """
+
+        Then we get new resource
+        """
+        {
+        "name": "show test content",
+        "description": "Show content that contain test word",
+        "location": "archive",
+        "filter": {"query": {"filtered": {"query": {"query_string": {"query": "test"}}}}}
+        }
+        """
+        
+        When we get "/content_view/#CONTENT_VIEW_ID#/items"
+        Then we get list with 1 items
+        """
+        {
+          "_items": [{
+              "_links": {
+                  "self": {
+                      "title": "Archive",
+                      "href": "/archive/12345678"
+                  }
+              },
+              "guid": "12345678"
+          }]
+        }
+        """
         

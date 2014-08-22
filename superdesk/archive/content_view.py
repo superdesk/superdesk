@@ -1,7 +1,7 @@
 import json
 import logging
 
-from eve.utils import ParsedRequest
+from eve.utils import ParsedRequest, config
 
 import superdesk
 from superdesk.archive.common import base_schema, get_user
@@ -54,6 +54,9 @@ class ContentViewModel(BaseModel):
         },
         'filter': {
             'type': 'dict'
+        },
+        'hateoas': {
+            'self': '/{location}/{_id}'
         }
     }
 
@@ -103,6 +106,20 @@ def apply_additional_query(query, additional_query):
     return query
 
 
+def build_custom_hateoas(hateoas, doc, **values):
+    values.update(doc)
+    links = doc.get(config.LINKS)
+    if not links:
+        links = {}
+        doc[config.LINKS] = links
+
+    for link_name in hateoas.keys():
+        link = hateoas[link_name]
+        link = {'title': link['title'], 'href': link['href']}
+        link['href'] = link['href'].format(**values)
+        links[link_name] = link
+
+
 class ContentViewItemsModel(BaseModel):
     endpoint_name = 'content_view_items'
     resource_title = endpoint_name
@@ -110,6 +127,7 @@ class ContentViewItemsModel(BaseModel):
     schema = base_schema
     resource_methods = ['GET']
     datasource = {'backend': 'custom'}
+    custom_hateoas = {'self': {'title': 'Archive', 'href': '/{location}/{_id}'}}
 
     def get(self, req, **lookup):
         content_view_id = lookup['lookup']['content_view_id']
@@ -125,4 +143,9 @@ class ContentViewItemsModel(BaseModel):
         query = apply_additional_query(query, additional_query)
         parsed_request = init_parsed_request(query)
         location = view_items.get('location', 'archive')
-        return superdesk.apps[location].get(req=parsed_request, lookup={})
+        docs = superdesk.apps[location].get(req=parsed_request, lookup={})
+
+        for doc in docs:
+            build_custom_hateoas(self.custom_hateoas, doc, location=location)
+
+        return docs

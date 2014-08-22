@@ -21,7 +21,7 @@ Feature: Desks
         And we get "/desks"
         Then we get list with 1 items
             """
-            {"name": "Sports Desk", "members": [{"user": "#USERS_ID#"}]}
+            {"_items": [{"name": "Sports Desk", "members": [{"user": "#USERS_ID#"}]}]}
             """
 
 	@auth
