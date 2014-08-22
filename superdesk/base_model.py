@@ -2,9 +2,24 @@
 import logging
 from flask import current_app as app
 import superdesk
+from eve.utils import config
 
 
 log = logging.getLogger(__name__)
+
+
+def build_custom_hateoas(hateoas, doc, **values):
+    values.update(doc)
+    links = doc.get(config.LINKS)
+    if not links:
+        links = {}
+        doc[config.LINKS] = links
+
+    for link_name in hateoas.keys():
+        link = hateoas[link_name]
+        link = {'title': link['title'], 'href': link['href']}
+        link['href'] = link['href'].format(**values)
+        links[link_name] = link
 
 
 class BaseModel():

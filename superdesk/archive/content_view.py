@@ -1,11 +1,11 @@
 import json
 import logging
 
-from eve.utils import ParsedRequest, config
+from eve.utils import ParsedRequest
 
 import superdesk
 from superdesk.archive.common import base_schema, get_user
-from superdesk.base_model import BaseModel
+from superdesk.base_model import BaseModel, build_custom_hateoas
 from superdesk.json_path_tool import json_merge_values, json_copy_values
 
 
@@ -106,20 +106,6 @@ def apply_additional_query(query, additional_query):
     return query
 
 
-def build_custom_hateoas(hateoas, doc, **values):
-    values.update(doc)
-    links = doc.get(config.LINKS)
-    if not links:
-        links = {}
-        doc[config.LINKS] = links
-
-    for link_name in hateoas.keys():
-        link = hateoas[link_name]
-        link = {'title': link['title'], 'href': link['href']}
-        link['href'] = link['href'].format(**values)
-        links[link_name] = link
-
-
 class ContentViewItemsModel(BaseModel):
     endpoint_name = 'content_view_items'
     resource_title = endpoint_name
@@ -147,5 +133,4 @@ class ContentViewItemsModel(BaseModel):
 
         for doc in docs:
             build_custom_hateoas(self.custom_hateoas, doc, location=location)
-
         return docs
