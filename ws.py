@@ -1,5 +1,6 @@
 
 import os
+import json
 import logging
 import asyncio
 import signal
@@ -47,6 +48,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
         if client not in self.clients:
             log('registered client {}'.format(client.peer))
             self.clients.append(client)
+            client.sendMessage(json.dumps({'event': 'connected'}).encode('utf8'))
 
     def unregister(self, client):
         """Unregister a client"""
