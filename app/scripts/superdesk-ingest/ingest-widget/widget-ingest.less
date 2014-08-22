@@ -29,10 +29,19 @@
 			left: 0; right: 0;
 			bottom: 0;
 			overflow: auto;
-			.content-item {
-				cursor: pointer;
-				border-bottom: 1px solid #e5e5e5;
-				padding: 10px;
+			> li {
+				.item-block {
+					cursor: pointer;
+					border-bottom: 1px solid #e5e5e5;
+					padding: 10px;
+				}
+				.dropdown {
+					position: absolute;
+					right: 3px;
+					.dropdown-toggle {
+						background: none;
+					}
+				}
 				.top-line {
 					margin:0;
 					list-style-type: none;
@@ -80,6 +89,22 @@
 				&.alert {
 					border:0;
 					.border-radius(0);
+				}
+				.pinned {
+					.content {
+						.opacity(40);
+					}
+				}
+				.pinned.pinned-instance {
+					padding: 10px 5px 5px;
+					border-bottom: 0;
+					.content {
+						padding: 5px;
+						background: @white;
+						.opacity(100);
+						border: 1px solid #d0d0d0;
+						.border-radius(3px);
+					}
 				}
 			}
 			.selected {
@@ -148,6 +173,18 @@
 				.scroll-shadow {
 					display: none;
 				}
+			}
+		}
+	}
+}
+
+.tabpane {
+	.sd-widget.ingest {
+		.ingest-list {
+			padding-bottom: @scratchpad-closed + @authoring-opened-articles;
+			background: #f8f8f8;
+			> li .item-block {
+				border-color: #dedede;
 			}
 		}
 	}

@@ -8,21 +8,30 @@
             sd-list-view
             data-items="processedItems"
             data-select="view(item)"
-            data-extras="widget"
-            sd-shadow>
-            <div class="content-item urgency-{{ item.urgency}}" ng-class="{selected: item === selected}">
-                <ul class="top-line clearfix">
-                    <li><span class="type-icon filetype-icon-{{item.type}}"></span><span class="urgency-label">{{ item.urgency }}</span></li>
-                    <li>{{ item.versioncreated | reldate }}</li>
-                    <li ng-show="item.byline"><em translate>by</em>{{ item.byline }}</li>
-                    <li ng-show="item.provider && extras.sizex > 1"><em translate>source</em>{{ item.provider }}</li>
-                </ul>
+            data-extras="widget">
+            <div class="item-block urgency-{{ item.urgency}}" ng-class="{'pinned': isPinned(item), 'pinned-instance': item.pinnedInstance}" >
+                <div class="content">
+                    <div class="dropdown more-actions">
+                        <button class="dropdown-toggle"><i class="icon-dots-vertical"></i></button>
+                        <div class="dropdown-menu pull-right">
+                            <li><button ng-show="!isPinned(item)" ng-click="pin(item);$event.stopPropagation()"><i class="icon-pin"></i> {{ 'Pin' | translate }}</button></li>
+                            <li><button ng-show="item.pinnedInstance && isPinned(item)" ng-click="unpin(item);$event.stopPropagation();"><i class="icon-pin"></i> {{ 'Unpin' | translate }}</button></li>
+                            <li><button><i class="icon-expand" ng-click="view(item)"></i> Open</button></li>
+                        </div>
+                    </div>
+                    <ul class="top-line clearfix">
+                        <li><span class="type-icon filetype-icon-{{item.type}}"></span><span class="urgency-label">{{ item.urgency }}</span></li>
+                        <li>{{ item.versioncreated | reldate }}</li>
+                        <li ng-show="item.byline"><em translate>by</em>{{ item.byline }}</li>
+                        <li ng-show="item.provider && extras.sizex > 1"><em translate>source</em>{{ item.provider }}</li>
+                    </ul>
 
-                <div class="main-line clearfix">
-                    <figure class="media" ng-if="item.renditions.thumbnail">
-                        <img ng-src="{{ item.renditions.thumbnail.href }}" title="{{ item.description }}" />
-                    </figure>
-                    <h5 title="{{ item.headline }}">{{ item.headline }}</h5>
+                    <div class="main-line clearfix">
+                        <figure class="media" ng-if="item.renditions.thumbnail">
+                            <img ng-src="{{ item.renditions.thumbnail.href }}" title="{{ item.description }}" />
+                        </figure>
+                        <h5 title="{{ item.headline }}">{{ item.headline }}</h5>
+                    </div>
                 </div>
             </div>
         </div>
