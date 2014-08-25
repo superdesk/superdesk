@@ -26,6 +26,11 @@ For image processing you will need some extra packages:
 
 - [image manipulation](http://pillow.readthedocs.org/en/latest/installation.html#external-libraries)
 
+### Services
+
+- mongodb
+- elasticsearch
+- redis
 
 ## CI
 
@@ -49,18 +54,10 @@ $ flake8
 
 ## Running Dev Server
 
-This will start a dev server on port `5000` with auto reaload feature. Don't use in production..
+Use honchu to run the app - it will start api server on port `5000`, websocket server on port `5100` and celery.
 
 ```sh
-$ python app.py
-```
-
-## Running in production
-
-Prefered way is using nginx + [gunicorn](http://gunicorn.org/):
-
-```sh
-$ gunicorn -w 4 -b :5000 wsgi
+$ honcho start
 ```
 
 ### API Documentation

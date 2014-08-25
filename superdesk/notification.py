@@ -1,65 +1,47 @@
-"""Superdesk change notifications"""
+"""Superdesk push notifications"""
 
 import logging
-from threading import Timer
+import asyncio
 
-from eve.methods.post import post_internal
-from superdesk import app
-
-from .base_model import BaseModel
-
-
-log = logging.getLogger(__name__)
-
-
-class NotificationModel(BaseModel):
-
-    endpoint_name = 'notification'
-    resource_methods = ['GET']
-    item_methods = ['GET']
-    datasource = {'default_sort': [('_created', -1)]}
-    schema = {
-        'changes': {'type': 'dict'},
-    }
+from ws import host, port
+from flask import current_app as app
+from flask import json
+from datetime import datetime
+from autobahn.asyncio.websocket import WebSocketClientProtocol
+from autobahn.asyncio.websocket import WebSocketClientFactory
 
 
-def init_app(flask_app):
-    push_interval = flask_app.config.get('NOTIFICATION_PUSH_INTERVAL', 3)
-    NotificationModel(flask_app)
-    timer = Timer(push_interval, save_notification, args=(flask_app, push_interval))
-    timer.daemon = True
-    timer.start()
+logger = logging.getLogger(__name__)
 
 
-def save_notification(app, push_interval):
-    notifications = app.extensions.pop('superdesk_notifications', None)
-    if notifications:
-        with app.test_request_context():
-            log.info('Saving changes %s', notifications)
-            post_internal('notification', {'changes': notifications})
+class Client(WebSocketClientProtocol):
 
-    timer = Timer(push_interval, save_notification, args=(app, push_interval))
-    timer.daemon = True
-    timer.start()
+    def __init__(self, *args):
+        WebSocketClientProtocol.__init__(self, *args)
+        self.opened = asyncio.Future()
+
+    def notify(self, **kwargs):
+        kwargs.setdefault('_created', datetime.utcnow().isoformat())
+        self.sendMessage(json.dumps(kwargs).encode('utf8'))
+
+    def onConnect(self, response):
+        self.opened.set_result(None)
 
 
-def push_notification(name, created=0, deleted=0, updated=0, keys=()):
-    log.info('Pushing for %s, created %s, deleted %s, updated %s', name, created, deleted, updated)
-    if created == deleted == updated == 0:
-        return
+def init_app(app):
+    factory = WebSocketClientFactory()
+    factory.protocol = Client
+    try:
+        loop = asyncio.get_event_loop()
+        coro = loop.create_connection(factory, host, port)
+        _transport, client = loop.run_until_complete(coro)
+        loop.run_until_complete(client.opened)
+        app.notification_client = client
+    except OSError:  # no ws server running
+        pass
 
-    notifications = app.extensions.setdefault('superdesk_notifications', {})
 
-    changes = notifications.get(name)
-    if changes is None:
-        changes = notifications[name] = {
-            'created': 0,
-            'updated': 0,
-            'deleted': 0,
-            'keys': [],
-        }
-
-    changes['created'] += created
-    changes['deleted'] += deleted
-    changes['updated'] += updated
-    changes['keys'].extend(keys)
+def push_notification(name, **kwargs):
+    logger.info('pushing event {0} ({1})'.format(name, json.dumps(kwargs)))
+    if app.notification_client:
+        app.notification_client.notify(event=name, extra=kwargs)

@@ -1,10 +1,9 @@
-import logging
 
-from eve.methods.post import post_internal
+import logging
 import flask
 
+from eve.methods.post import post_internal
 from superdesk.notification import push_notification
-
 from .base_model import BaseModel
 
 
@@ -121,4 +120,5 @@ def add_activity(msg, **data):
         'message': msg,
         'data': data
     })
-    push_notification(ActivityModel.endpoint_name, created=1, keys=(user.get('_id'),))
+
+    push_notification(ActivityModel.endpoint_name, created=1, keys=(str(user.get('_id')),))

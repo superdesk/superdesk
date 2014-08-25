@@ -1,11 +1,12 @@
+
 import os
 import logging
 import importlib
 import jinja2
-from flask.ext.mail import Mail
 import eve
 import settings
 import superdesk
+from flask.ext.mail import Mail
 from eve.io.mongo import MongoJSONEncoder
 from eve.render import send_response
 from superdesk import signals
@@ -103,16 +104,11 @@ def get_app(config=None):
 
 if __name__ == '__main__':
 
-    if 'PORT' in os.environ:
-        port = int(os.environ.get('PORT'))
-        host = '0.0.0.0'
-        debug = 'SUPERDESK_DEBUG' in os.environ
-    else:
-        port = 5000
-        host = '127.0.0.1'
-        debug = True
-        superdesk.logger.setLevel(logging.INFO)
-        superdesk.logger.addHandler(logging.StreamHandler())
+    debug = True
+    port = int(os.environ.get('PORT', '5000'))
+    host = '0.0.0.0'
+    superdesk.logger.setLevel(logging.INFO)
+    superdesk.logger.addHandler(logging.StreamHandler())
 
     app = get_app()
     app.run(host=host, port=port, debug=debug, use_reloader=debug)

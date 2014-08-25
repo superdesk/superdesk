@@ -16,4 +16,5 @@ pip install -U -r requirements.txt
 pip install -U gunicorn
 
 # run
-gunicorn -w 4 -b 0.0.0.0:5000 wsgi
+python ws.py
+python app.py
