@@ -10,8 +10,7 @@ define([
 
     	ws.onmessage = function(event) {
     		var msg = angular.fromJson(event.data);
-            console.info('ws', msg);
-    		$rootScope.$broadcast(msg.event, msg);
+            $rootScope.$broadcast(msg.event, msg.extra);
     	};
 
     	ws.onerror = function(event) {

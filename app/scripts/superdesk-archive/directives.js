@@ -11,7 +11,7 @@ define([
                 templateUrl: 'scripts/superdesk-archive/views/item-lock.html',
                 scope: {item: '='},
                 link: function(scope) {
-                    scope.$watch('item', function() {
+                    scope.$watch('item.lock_user', function() {
                         scope.lock = null;
                         if (scope.item && lock.isLocked(scope.item)) {
                             api('users').getById(scope.item.lock_user).then(function(user) {
@@ -26,6 +26,20 @@ define([
                             scope.lock = null;
                         });
                     };
+
+                    scope.$on('item:lock', function(_e, data) {
+                        if (scope.item && scope.item._id === data.item) {
+                            scope.item.lock_user = data.user;
+                            scope.$digest();
+                        }
+                    });
+
+                    scope.$on('item:unlock', function(_e, data) {
+                        if (scope.item && scope.item._id === data.item) {
+                            scope.item.lock_user = null;
+                            scope.$digest();
+                        }
+                    });
                 }
             };
         }])
@@ -235,6 +249,22 @@ define([
 
                     scope.$watch('item', function(item) {
                         scope.isLocked = item && lock.isLocked(item);
+                    });
+
+                    scope.$on('item:lock', function(_e, data) {
+                        if (scope.item && scope.item._id === data.item) {
+                            scope.isLocked = true;
+                            scope.item.lock_user = data.user;
+                            scope.$digest();
+                        }
+                    });
+
+                    scope.$on('item:unlock', function(_e, data) {
+                        if (scope.item && scope.item._id === data.item) {
+                            scope.isLocked = false;
+                            scope.item.lock_user = null;
+                            scope.$digest();
+                        }
                     });
                 }
             };
