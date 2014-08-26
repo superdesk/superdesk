@@ -21,7 +21,7 @@ class CoverageModel(BaseModel):
             'type': 'string',
             'allowed': ['story', 'photo', 'video', 'graphics', 'live-blogging'],
             'default': 'story',
-            'required': 'true'
+            'required': True
         },
         'ed_note': {'type': 'string'},
         'scheduled': {'type': 'datetime'},
