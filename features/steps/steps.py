@@ -542,10 +542,8 @@ def step_impl_then_get_renditions(context, type):
 def then_item_is_unlocked(context, item_id):
     context.response = context.client.get('/archive/%s' % item_id, headers=context.headers)
     assert_200(context.response)
-    try:
-        expect_json_contains(context.response, {'lock_user': None})
-    except Exception:
-        pass
+    data = json.loads(context.response.get_data())
+    assert data.get('lock_user', None) is None, 'item is locked by user #{0}'.format(data.get('lock_user'))
 
 
 @then('item "{item_id}" is locked')

@@ -54,7 +54,8 @@ Feature: Content Locking
             """
         Then item "item-1" is locked
 
-        When we post to "/archive/item-1/unlock"
+        When we switch user
+        And we post to "/archive/item-1/unlock"
             """
             {}
             """
