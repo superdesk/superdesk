@@ -263,6 +263,7 @@ define([
     return angular.module('superdesk.authoring', [
             'superdesk.editor',
             'superdesk.authoring.widgets',
+            'superdesk.authoring.metadata',
             'superdesk.authoring.comments',
             'superdesk.authoring.versions'
         ])

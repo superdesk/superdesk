@@ -1,0 +1,39 @@
+<div class="metadata" ng-controller="MetadataWidgetCtrl">
+	<ul class="basic-list">
+		<li ng-if="item.byline">
+			<div class="lbl" translate>By</div>
+			<div class="data">{{item.byline}}</div>
+		</li>
+		<li ng-if="item.firstcreated">
+			<div class="lbl" translate>First created</div>
+			<div class="data" sd-reldate-complex ng-model="item.firstcreated"></div>
+		</li>
+		<li ng-if="item.versioncreated">
+			<div class="lbl" translate>Last updated</div>
+			<div class="data" sd-reldate-complex ng-model="item.versioncreated"></div>
+		</li>
+		<li ng-if="item.provider">
+			<div class="lbl" translate>Provider</div>
+			<div class="data">{{ item.provider }}</div>
+		</li>
+		<li ng-if="item.urgency">
+			<div class="lbl" translate>Urgency</div>
+			<div class="data">{{item.urgency}}</div>
+		</li>
+		<li ng-if="item.copyrightholder">
+			<div class="lbl" translate>Copyright</div>
+			<div class="data">{{item.copyrightholder}}</div>
+		</li>
+		<li ng-if="item.creditline">
+			<div class="lbl" translate>Credit</div>
+			<div class="data">{{item.creditline}}</div>
+		</li>
+	</ul>
+	<div sd-toggle-box data-title="Subjects" data-open="true" ng-if="item.subject.length">
+		<ul class="subject-terms">
+			<li ng-repeat="term in item.subject">
+				<span>{{term.name}}</span>
+			</li>
+		</ul>
+	</div>
+</div>
