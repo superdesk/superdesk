@@ -60,6 +60,11 @@ class BroadcastServerFactory(WebSocketServerFactory):
     def broadcast(self, msg, author):
         """Broadcast msg to all clients but author."""
         log('broadcasting "{}"'.format(msg.decode('utf8')))
+
+        for c in self.clients:
+            if c.state == c.STATE_CLOSED:
+                self.unregister(c)
+
         for c in self.clients:
             if c.peer is not author:
                 c.sendMessage(msg)
