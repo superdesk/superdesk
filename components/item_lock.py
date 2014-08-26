@@ -26,7 +26,6 @@ class ItemLock():
 
     def unlock(self, filter, user, etag):
         item_model = ItemModel(self.data_layer)
-        filter[LOCK_USER] = user
         # filter[ETAG] = etag
         item = item_model.find_one(filter)
         if item:
