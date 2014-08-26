@@ -94,7 +94,6 @@ define([
             });
 
             function _refresh() {
-                console.log('update ingest');
                 var criteria = new SearchCriteria(config);
                 api.ingest.query({source: criteria}).then(function(items) {
                     $scope.items = items;
