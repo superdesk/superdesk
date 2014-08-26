@@ -5,7 +5,7 @@
 
 MetadataCtrl.$inject = ['$scope'];
 function MetadataCtrl($scope) {
-    console.log($scope.item);
+
 }
 
 angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
@@ -14,7 +14,8 @@ angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
             .widget('metadata', {
                 icon: 'info',
                 label: gettext('Info'),
-                template: 'scripts/superdesk-authoring/metadata/views/metadata-widget.html'
+                template: 'scripts/superdesk-authoring/metadata/views/metadata-widget.html',
+                order: 1
             });
     }])
 

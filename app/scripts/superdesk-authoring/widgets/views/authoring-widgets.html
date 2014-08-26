@@ -1,7 +1,7 @@
 <div class="article-edit-container">
     <div class="tablist left-tablist" ng-if="item">
         <ul class="navigation-tabs">
-            <li ng-repeat="widget in widgets" ng-class="{active: widget === active}">
+            <li ng-repeat="widget in widgets | orderBy:'order'" ng-class="{active: widget === active}">
                 <button class="btn" type="submit" ng-click="activate(widget)">
                     <i class="big-icon-{{ widget.icon }}" title="{{ widget.label }}"></i>
                 </button>
