@@ -543,7 +543,7 @@ def then_item_is_unlocked(context, item_id):
     context.response = context.client.get('/archive/%s' % item_id, headers=context.headers)
     assert_200(context.response)
     data = json.loads(context.response.get_data())
-    assert data.get('lock_user', None) == None, 'item is locked by user #{0}'.format(data.get('lock_user'))
+    assert data.get('lock_user', None) is None, 'item is locked by user #{0}'.format(data.get('lock_user'))
 
 
 @then('item "{item_id}" is locked')
