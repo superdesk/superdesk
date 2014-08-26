@@ -165,7 +165,7 @@
   position: absolute;
   height: @authoring-opened-articles;
   left: 0; right: 0;
-  bottom: 33px;
+  bottom: @scratchpad-closed;
   background: #111;
   .opacity(90);
   z-index: 25;
@@ -200,7 +200,7 @@
 
 &.scratchpad-open {
   .opened-articles {
-    bottom: 318px;
+    bottom: @scratchpad-closed + @scratchpad-content-height;
   }
 }
 

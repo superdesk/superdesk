@@ -1,0 +1,8 @@
+<div class="opened-articles" ng-show="workqueue.length">
+    <ul>
+        <li ng-repeat="article in workqueue | orderBy:null:true" ng-click="openItem(article)" ng-class="{'active': article._id == active._id}">
+        	<span ng-show="article.headline">{{ article.headline }}</span>
+        	<span ng-show="!article.headline">{{ 'Untitled' | translate }}</span>
+        </li>
+    </ul>
+</div>

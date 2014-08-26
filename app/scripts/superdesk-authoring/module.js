@@ -128,10 +128,9 @@ define([
             $scope.dirty = isDirty(item);
         });
 
-        $scope.switchArticle = function(article) {
-            workqueue.update($scope.item);
-            workqueue.setActive(article);
-            superdesk.intent('author', 'article', article);
+        $scope.update = function() {
+            //do update, on local storage or server
+            //workqueue.update($scope.item);
         };
 
     	$scope.save = function() {
@@ -260,6 +259,29 @@ define([
 
     }
 
+    WorkqueueDirective.$inject = ['workqueue', 'superdesk'];
+    function WorkqueueDirective(workqueue, superdesk) {
+        return {
+            templateUrl: 'scripts/superdesk-authoring/views/opened-articles.html',
+            scope: {
+                active: '=',
+                update: '&'
+            },
+            link: function(scope, elem) {
+                scope.workqueue = workqueue.all();
+
+                scope.openItem = function(article) {
+                    if (scope.active) {
+                        scope.update();
+                    }
+                    workqueue.setActive(article);
+                    superdesk.intent('author', 'article', article);
+
+                };
+            }
+        };
+    }
+
     return angular.module('superdesk.authoring', [
             'superdesk.editor',
             'superdesk.authoring.widgets',
@@ -271,6 +293,7 @@ define([
         .service('lock', LockService)
     	.service('workqueue', WorkqueueService)
         .factory('ConfirmDirty', ConfirmDirtyFactory)
+        .directive('sdWorkqueue', WorkqueueDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
