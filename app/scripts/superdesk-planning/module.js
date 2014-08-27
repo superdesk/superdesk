@@ -3,8 +3,15 @@ define([
 ], function(angular) {
     'use strict';
 
+    var coverageTypes = ['story', 'photo', 'video', 'graphics', 'live-blogging'];
+
     function PlanningItem(deskId) {
         this.headline = null;
+    }
+
+    function Coverage(planningItemId) {
+        this.planning_item = planningItemId;
+        this.coverage_type = coverageTypes[0];
     }
 
     PlanningService.$inject = ['$location', 'api', 'es', 'notify', 'desks'];
@@ -125,7 +132,7 @@ define([
                 };
 
                 scope.addCoverage = function() {
-                    scope.coverage = {};
+                    scope.coverage = new Coverage(scope.item._id);
                 };
 
                 scope.saveCoverage = function(coverage) {
@@ -163,7 +170,7 @@ define([
                 scope.isDirty = function(coverage) {
                     if (coverage) {
                         var dirty = false;
-                        var fields = ['ed_note', 'assigned_user'];
+                        var fields = ['ed_note', 'assigned_user', 'coverage_type'];
                         var origCoverage = {};
                         if (coverage._id) {
                             origCoverage = scope.origCoverages._items[_.findIndex(scope.coverages._items, {_id: coverage._id})];
@@ -259,9 +266,19 @@ define([
         };
     }
 
+    function CoverageTypeDirective() {
+        return {
+            templateUrl: 'scripts/superdesk-planning/views/coverage-type.html',
+            controller: function($scope) {
+                $scope.coverageTypes = coverageTypes;
+            }
+        };
+    }
+
     return angular.module('superdesk.planning', ['superdesk.elastic'])
     	.directive('sdPreviewItem', PreviewItemDirective)
         .directive('sdAssigneeBox', AssigneeBoxDirective)
+        .directive('sdCoverageType', CoverageTypeDirective)
         .service('planning', PlanningService)
         .config(['apiProvider', function(apiProvider) {
             apiProvider.api('planning', {

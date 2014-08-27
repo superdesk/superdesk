@@ -23,17 +23,11 @@
 			<div sd-toggle-box data-title="{{ 'Coverage' | translate }}" data-open="true">
 				<div class="coverage" ng-show="coverage">
 					<div class="info">
-						<div sd-assignee-box data-coverage=coverage></div>
+						<div sd-assignee-box data-coverage="coverage"></div>
 						<div class="assignee-name"><span ng-show="coverage.assigned_user">{{userLookup[coverage.assigned_user].display_name}}</span><span ng-hide="coverage.assigned_user" translate>Unassigned</span></div>
-						<div class="coverage-type dropdown">
-							<button class="dropdown-toggle">Story<b class="caret"></b></button>
-							<ul class="dropdown-menu">
-								<li><button>Story</button></li>
-								<li><button>Photo</button></li>
-								<li><button>Research</button></li>
-								<li><button>Review</button></li>
-							</ul>
-						</div>
+
+						<div sd-coverage-type></div>
+
 						<div class="dropdown more-actions">
 							<button class="dropdown-toggle"><i class="icon-dots"></i></button>
 							<ul class="dropdown-menu pull-right">
@@ -50,15 +44,9 @@
 					<div class="info">
 						<div sd-assignee-box data-coverage="coverage"></div>
 						<div class="assignee-name"><span ng-show="coverage.assigned_user">{{userLookup[coverage.assigned_user].display_name}}</span><span ng-hide="coverage.assigned_user" translate>Unassigned</span></div>
-						<div class="coverage-type dropdown">
-							<button class="dropdown-toggle">Story<b class="caret"></b></button>
-							<ul class="dropdown-menu">
-								<li><button>Story</button></li>
-								<li><button>Photo</button></li>
-								<li><button>Research</button></li>
-								<li><button>Review</button></li>
-							</ul>
-						</div>
+						
+						<div sd-coverage-type></div>
+						
 						<div class="dropdown more-actions">
 							<button class="dropdown-toggle"><i class="icon-dots"></i></button>
 							<ul class="dropdown-menu pull-right">
