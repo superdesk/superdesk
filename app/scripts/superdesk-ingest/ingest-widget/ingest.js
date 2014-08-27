@@ -80,7 +80,10 @@ define([
 
             $scope.selected = null;
 
-            $scope.$on(INGEST_EVENT, refresh);
+            $scope.$on(INGEST_EVENT, function() {
+                refresh();
+                $scope.$digest();
+            });
 
             $scope.$watchGroup({
                 provider: 'widget.configuration.provider',
