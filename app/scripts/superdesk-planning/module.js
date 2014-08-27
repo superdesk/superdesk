@@ -216,7 +216,10 @@ define([
     function AssigneeBoxDirective(api, desks) {
         return {
             templateUrl: 'scripts/superdesk-planning/views/assignee-box.html',
-            scope: {coverage: '='},
+            scope: {
+                coverage: '=',
+                assignee: '='
+            },
             link: function(scope, elem) {
                 scope.open = false;
                 scope.users = null;

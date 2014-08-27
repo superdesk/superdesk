@@ -1,19 +1,21 @@
 <div class="assignee-box">
 	<div class="assignee" ng-class="{'open': open}" ng-init="hoveractive = false">
 		<div class="toggle" ng-click="open = !open" ng-mouseenter="hoveractive = true" ng-mouseleave="hoveractive = false">
-			<div class="avatar"></div>
+			<div class="avatar">
+				<img sd-user-avatar data-src="assignee.picture_url">
+			</div>
 			<div class="add">
 				<i class="icon-plus-large icon-white"></i>
 			</div>
 		</div>
 		<div class="tooltip right fade in" ng-show="hoveractive && !open">
 			<div class="tooltip-arrow"></div>
-			<div class="tooltip-inner" ng-show>
+			<div class="tooltip-inner" ng-show="assignee">
 				<p class="dark" translate>Assigned to:</p>
-				<p class="name">Nikola Nikolic</p>
+				<p class="name">{{assignee.display_name}}</p>
 				<p translate>Click to reassign</p>
 			</div>
-			<div class="tooltip-inner simple">
+			<div class="tooltip-inner simple" ng-show="!assignee">
 				<p translate>Click to assign</p>
 			</div>
 		</div>
