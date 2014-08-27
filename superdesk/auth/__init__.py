@@ -1,4 +1,4 @@
-from .auth import AuthUsersModel, AuthModel
+from .auth import AuthUsersModel, AuthModel, authenticate  # noqa
 from .sessions import SesssionsModel
 
 

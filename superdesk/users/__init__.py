@@ -1,5 +1,5 @@
 from .reset_password import ResetPasswordModel, ActiveTokensModel  # NOQA
-from .users import UserRolesModel, UsersModel
+from .users import UserRolesModel, UsersModel, CreateUserCommand  # noqa
 
 
 def init_app(app):
