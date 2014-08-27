@@ -3,7 +3,7 @@
 		<li ng-repeat="activity in activityFeed._items" class="activity" ng-model="activity" sd-group-dates="_created">
 	        <div>
 			    <figure class="avatar">
-			    	<img sd-user-avatar data-src="user.picture_url">
+			    	<img sd-user-avatar data-src="activity.user.picture_url">
 			    </figure>
 		    	<div ng-switch on="activity.message" class="activity-content">
 		    		<p ng-switch-when="created user {{user}}">
