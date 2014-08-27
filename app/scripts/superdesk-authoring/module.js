@@ -98,7 +98,7 @@ define([
         }
 
         function isEditable(item) {
-            if (lock.isLocked(item)) {
+            if ($scope.isLocked(item)) {
                 return false;
             }
 
@@ -127,6 +127,10 @@ define([
             $scope.editable = isEditable(item);
             $scope.dirty = isDirty(item);
         });
+
+        $scope.isLocked = function(item) {
+            return lock.isLocked(item);
+        };
 
         $scope.update = function() {
             //do update, on local storage or server
