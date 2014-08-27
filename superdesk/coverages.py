@@ -31,6 +31,8 @@ class CoverageModel(BaseModel):
         'planning_item': {'type': 'string'},
     }
 
+    datasource = {'default_sort': [('_created', -1)]}
+
     def on_create_coverage(self, docs):
         push_notification('coverages', created=1)
 

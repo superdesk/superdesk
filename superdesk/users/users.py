@@ -53,23 +53,23 @@ class CreateUserCommand(superdesk.Command):
     )
 
     def run(self, username, password, email):
-        if username and password and email:
-            userdata = {
-                'username': username,
-                'password': password,
-                'email': email,
-            }
+        userdata = {
+            'username': username,
+            'password': password,
+            'email': email,
+        }
 
-            user = superdesk.app.data.find_one('users', username=userdata.get('username'), req=None)
-            if user:
-                userdata[app.config['LAST_UPDATED']] = utcnow()
-                superdesk.apps['users'].update(user.get('_id'), userdata, trigger_events=True)
-                return userdata
-            else:
-                userdata[app.config['DATE_CREATED']] = utcnow()
-                userdata[app.config['LAST_UPDATED']] = utcnow()
-                superdesk.apps['users'].create([userdata], trigger_events=True)
-                return userdata
+        user = superdesk.app.data.find_one('users', username=userdata.get('username'), req=None)
+        if user:
+            userdata[app.config['LAST_UPDATED']] = utcnow()
+            userdata['password'] = hash_password(userdata['password'])
+            superdesk.apps['users'].update(user.get('_id'), userdata, trigger_events=False)
+            return userdata
+        else:
+            userdata[app.config['DATE_CREATED']] = utcnow()
+            userdata[app.config['LAST_UPDATED']] = utcnow()
+            superdesk.apps['users'].create([userdata], trigger_events=True)
+            return userdata
 
 
 class HashUserPasswordsCommand(superdesk.Command):
