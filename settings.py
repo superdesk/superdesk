@@ -63,6 +63,7 @@ INSTALLED_APPS = (
     'superdesk.notification',
     'superdesk.planning',
     'superdesk.coverages',
+    'superdesk.tasks',
 )
 
 RESOURCE_METHODS = ['GET', 'POST']
