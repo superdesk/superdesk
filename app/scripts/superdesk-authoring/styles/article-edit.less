@@ -162,46 +162,111 @@
 }
 
 .opened-articles {
-  position: absolute;
-  height: @authoring-opened-articles;
-  left: 0; right: 0;
-  bottom: @scratchpad-closed;
-  background: #111;
-  .opacity(90);
-  z-index: 25;
-  ul {
-    li {
-      line-height: 30px;
-      float: left;
-      margin: 0 20px;
-      color: #8bcaf7;
-      font-size: 13px;
-      .text-light();
-      text-shadow: 0 0 3px #000;
-      max-width: 300px;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-      &:hover {
-        cursor: pointer;
-        color: #fff;
-      }
+	position: absolute;
+	min-height: @authoring-opened-articles;
+	left: 0; right: 0;
+	bottom: @scratchpad-closed;
+	background: rgba(0,0,0,0.85);
+	z-index: 25;
+ 	ul {
+ 		padding-left: 63px;
+    	li {
+			float: left;
+			padding: 0 25px 0 15px;
+			color: #8bcaf7;
+			font-size: 13px;
+			.text-light();
+			max-width: 250px;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			border-right: 1px solid #333;
+			overflow: hidden;
+			position: relative;
+			line-height: 30px;
+			.close {
+				position: absolute;
+				right: 5px;
+				top: 5px;
+			}
+			&:hover {
+				cursor: pointer;
+				color: #fff;
+				.close {
 
-      &.active {
-        color: #fff;
-        .text-semibold();
-        &:hover {
-          cursor: default;
-        }
-      }
-    }
-  }
+				}
+			}
+			&:active {
+				background: #444;
+			}
+			&.active {
+				color: #fff;
+				background: darken(@sd-blue,10%) !important;
+				&:hover {
+					cursor: default;
+				}
+			}
+			
+    	}
+  	}
+  	.quick-actions {
+  		button {
+  			background: none;
+  			border: 0;
+  			height: 30px;
+			line-height: 30px;
+			width: 30px;
+			text-align: center;
+			&:hover {
+				cursor: pointer;
+				background: @sd-blue;
+			}
+  		}
+		i {
+			margin: -5px 0 0 0;
+		}
+		
+	}
 }
 
 &.scratchpad-open {
   .opened-articles {
     bottom: @scratchpad-closed + @scratchpad-content-height;
   }
+}
+
+
+
+// Article dashboard
+// -------------------------------------------------
+
+.authoring-dashboard {
+	padding: 40px;
+	.card-list > li {
+		width: 190px;
+		height: 170px;
+		float: left;
+		margin: 10px;
+		padding: 15px 20px;
+		position: relative;
+		.title {
+			max-height: 135px;
+			overflow: hidden;
+			font-size: 14px;
+			line-height: 22px;
+		}
+		.created {
+			position: absolute;
+			bottom: 15px;
+			left: 20px;
+			color: #888;
+			font-size: 12px;
+		}
+		.close {
+			position: absolute;
+			right: 7px;
+			top: 3px;
+		}
+	}
 }
 
 

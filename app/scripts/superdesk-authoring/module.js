@@ -150,9 +150,9 @@ define([
                 if ($scope.editable) {
                     lock.unlock($scope.item);
                 }
-
                 $scope.dirty = false;
-                superdesk.intent('view', 'content');
+                workqueue.remove($scope.item);
+                superdesk.intent('author', 'dashboard');
             });
         };
 
@@ -259,26 +259,42 @@ define([
 
     }
 
-    WorkqueueDirective.$inject = ['workqueue', 'superdesk'];
-    function WorkqueueDirective(workqueue, superdesk) {
+    WorkqueueCtrl.$inject = ['$scope', 'workqueue', 'superdesk', 'ContentCtrl'];
+    function WorkqueueCtrl($scope, workqueue, superdesk, ContentCtrl) {
+        $scope.workqueue = workqueue.all();
+        $scope.content = new ContentCtrl();
+
+        $scope.openItem = function(article) {
+            if ($scope.active) {
+                $scope.update();
+            }
+            workqueue.setActive(article);
+            superdesk.intent('author', 'article', article);
+        };
+
+        $scope.openDashboard = function() {
+            superdesk.intent('author', 'dashboard');
+        };
+
+        $scope.closeItem = function(item) {
+            if ($scope.active) {
+                $scope.close();
+            } else {
+                workqueue.remove(item);
+                superdesk.intent('author', 'dashboard');
+            }
+        };
+    }
+
+    function WorkqueueListDirective() {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/opened-articles.html',
             scope: {
                 active: '=',
-                update: '&'
+                update: '&',
+                close: '&'
             },
-            link: function(scope, elem) {
-                scope.workqueue = workqueue.all();
-
-                scope.openItem = function(article) {
-                    if (scope.active) {
-                        scope.update();
-                    }
-                    workqueue.setActive(article);
-                    superdesk.intent('author', 'article', article);
-
-                };
-            }
+            controller: WorkqueueCtrl
         };
     }
 
@@ -293,7 +309,7 @@ define([
         .service('lock', LockService)
     	.service('workqueue', WorkqueueService)
         .factory('ConfirmDirty', ConfirmDirtyFactory)
-        .directive('sdWorkqueue', WorkqueueDirective)
+        .directive('sdWorkqueue', WorkqueueListDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
@@ -305,6 +321,15 @@ define([
 	                beta: true,
 	                filters: [{action: 'author', type: 'article'}]
 	            })
+                .activity('/authoring/', {
+                    label: gettext('Authoring'),
+                    templateUrl: 'scripts/superdesk-authoring/views/dashboard.html',
+                    topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
+                    beta: true,
+                    controller: WorkqueueCtrl,
+                    category: superdesk.MENU_MAIN,
+                    filters: [{action: 'author', type: 'dashboard'}]
+                })
 	            .activity('edit.text', {
 	            	label: gettext('Edit item'),
 	            	icon: 'pencil',

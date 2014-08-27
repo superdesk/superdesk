@@ -1,8 +1,13 @@
-<div class="opened-articles" ng-show="workqueue.length">
-    <ul>
+<div class="opened-articles">
+	<div class="quick-actions pull-left">
+		<button ng-click="openDashboard()" title="{{ 'All opened items' | translate }}"><i class="icon-th-large icon-white"></i></button>
+		<button ng-click="content.create()" title="{{ 'Create new item' | translate }}"><i class="icon-plus-small icon-white"></i></button>
+	</div>
+    <ul ng-show="workqueue.length">
         <li ng-repeat="article in workqueue | orderBy:null:true" ng-click="openItem(article)" ng-class="{'active': article._id == active._id}">
         	<span ng-show="article.headline">{{ article.headline }}</span>
         	<span ng-show="!article.headline">{{ 'Untitled' | translate }}</span>
+        	<span class="close" ng-click="closeItem(article)"><i class="icon-close-small icon-white"></i></span>
         </li>
     </ul>
 </div>

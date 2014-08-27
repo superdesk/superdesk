@@ -1,0 +1,26 @@
+<div class="subnav">
+    <h3 class="page-nav-title" translate>Authoring - opened articles</h3>
+
+    <div class="button-stack right-stack">		
+        <a class="navbtn navbtn-info" href="" ng-click="content.create()">
+            <i class="svg-icon-add inverse"></i> <span class="title" translate>Create</span>
+        </a>
+    </div>
+</div>
+
+<section class="main-section authoring-dashboard">
+
+	<div class="workqueue-list">
+		<ul class="card-list">
+			<li ng-repeat="article in workqueue | orderBy:null:true" ng-click="openItem(article)">
+				<span class="close" ng-click="closeItem(article)"><i class="icon-close-small"></i></span>
+				<div class="title" ng-show="article.headline">{{ article.headline }}</div>
+				<div class="title" ng-show="!article.headline">{{ 'Untitled' | translate }}</div>
+				<div class="created" sd-reldate-complex ng-model="article.versioncreated"></div>
+			</li>
+		</ul>
+	</div>
+
+	<div sd-workqueue></div>
+	
+</section>
