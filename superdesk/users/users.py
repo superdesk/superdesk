@@ -35,6 +35,11 @@ def on_read_users(data, docs):
             del doc['password']
 
 
+def ensure_hashed_password(doc):
+    if doc.get('password', None):
+        doc['password'] = hash_password(doc.get('password'))
+
+
 def hash_password(password):
     work_factor = app.config['BCRYPT_GENSALT_WORK_FACTOR']
     hashed = bcrypt.hashpw(password.encode('UTF-8'), bcrypt.gensalt(work_factor))
@@ -113,7 +118,6 @@ class UserRolesModel(BaseModel):
 
 
 class UsersModel(BaseModel):
-
     endpoint_name = 'users'
     additional_lookup = {
         'url': 'regex("[\w]+")',
@@ -153,22 +157,8 @@ class UsersModel(BaseModel):
         'picture_url': {
             'type': 'string',
         },
-        'avatar': {
-            'type': 'objectid',
-            'data_relation': {
-                'resource': 'upload',
-                'field': '_id',
-                'embeddable': True
-            }
-        },
-        'role': {
-            'type': 'objectid',
-            'data_relation': {
-                'resource': 'user_roles',
-                'field': '_id',
-                'embeddable': True
-            }
-        },
+        'avatar': BaseModel.rel('upload', True),
+        'role': BaseModel.rel('user_roles', True),
         'workspace': {
             'type': 'dict'
         }
@@ -192,12 +182,10 @@ class UsersModel(BaseModel):
     def on_create(self, docs):
         for doc in docs:
             ensure_hashed_password(doc)
+
+    def on_created(self, docs):
+        for doc in docs:
             add_activity('created user {{user}}', user=doc.get('display_name', doc.get('username')))
 
-    def on_delete(self, doc):
+    def on_deleted(self, doc):
         add_activity('removed user {{user}}', user=doc.get('display_name', doc.get('username')))
-
-
-def ensure_hashed_password(doc):
-    if doc.get('password', None):
-        doc['password'] = hash_password(doc.get('password'))

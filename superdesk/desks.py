@@ -13,10 +13,7 @@ desks_schema = {
         'schema': {
             'type': 'dict',
             'schema': {
-                'user': {
-                    'type': 'objectid',
-                    'data_relation': {'resource': 'users', 'field': '_id', 'embeddable': True}
-                }
+                'user': BaseModel.rel('users', True)
             }
         }
     }

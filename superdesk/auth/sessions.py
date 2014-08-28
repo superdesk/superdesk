@@ -4,14 +4,7 @@ from superdesk.base_model import BaseModel
 class SesssionsModel(BaseModel):
     endpoint_name = 'sessions'
     schema = {
-        'user': {
-            'type': 'objectid',
-            'data_relation': {
-                'resource': 'users',
-                'field': '_id',
-                'embeddable': True
-            }
-        }
+        'user': BaseModel.rel('users', True)
     }
     datasource = {
         'source': 'auth',

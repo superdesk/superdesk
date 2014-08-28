@@ -143,14 +143,7 @@ class AuthModel(BaseModel):
         'token': {
             'type': 'string'
         },
-        'user': {
-            'type': 'objectid',
-            'data_relation': {
-                'resource': 'users',
-                'field': '_id',
-                'embeddable': True
-            }
-        }
+        'user': BaseModel.rel('users', True)
     }
     resource_methods = ['POST']
     item_methods = ['GET']
