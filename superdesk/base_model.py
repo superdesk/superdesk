@@ -182,9 +182,9 @@ class BaseModel():
         return res
 
     @staticmethod
-    def rel(resource, embeddable=False, required=False):
+    def rel(resource, embeddable=False, required=False, type='objectid'):
         return {
-            'type': 'string',
+            'type': type,
             'required': required,
             'data_relation': {'resource': resource, 'field': '_id', 'embeddable': embeddable}
         }

@@ -32,7 +32,7 @@ class TaskModel(BaseModel):
         'finished_at': {'type': 'datetime'},
         'assigned_user': BaseModel.rel('users', True, True),
         'assigned_desk': BaseModel.rel('desks', True),
-        'planning_item': BaseModel.rel('planning', True)
+        'planning_item': BaseModel.rel('planning', True, type='string')
     }
 
     def update_times(self, doc):

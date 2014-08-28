@@ -21,7 +21,7 @@ class CoverageModel(BaseModel):
         'delivery': {'type': 'string'},
         'assigned_user': BaseModel.rel('users', True),
         'assigned_desk': BaseModel.rel('desks', True),
-        'planning_item': BaseModel.rel('planning', True),
+        'planning_item': BaseModel.rel('planning', True, type='string'),
     }
 
     datasource = {'default_sort': [('_created', -1)]}

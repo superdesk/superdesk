@@ -12,7 +12,7 @@ comments_schema = {
         'maxlength': 500,
         'required': True,
     },
-    'item': BaseModel.rel('archive', True, True),
+    'item': BaseModel.rel('archive', True, True, type='string'),
     'user': BaseModel.rel('users', True),
 }
 
