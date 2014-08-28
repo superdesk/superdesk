@@ -265,3 +265,36 @@ Feature: Content View
         }
         """
         
+	@auth
+    Scenario: Edit content view - modify description and name
+        Given empty "content_view"
+
+        When we post to "/content_view"
+        """
+        {
+        "name": "show my content",
+        "description": "Show content items created by the current logged user",
+        "filter": {"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
+        }
+        """
+
+        Then we get new resource
+        """
+        {
+        "name": "show my content",
+        "description": "Show content items created by the current logged user",
+        "location": "archive",
+        "filter": {"query": {"filtered": {"filter": {"and": [{"terms": {"type": ["text", "picture"]}}]}}}}
+        }
+        """
+        When we patch latest
+        """
+        {
+        "description": "Show content that I just updated", 
+        "name": "My view"
+        }
+        """
+        Then we get updated response
+
+
+        
