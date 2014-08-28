@@ -1,5 +1,5 @@
 '''Media archive module'''
-from .archive import ArchiveModel, ArchiveVersionsModel
+from .archive import ArchiveModel, ArchiveVersionsModel, AutoSaveModel
 from .ingest import IngestModel
 from .archive_media import ArchiveMediaModel
 from .archive_ingest import ArchiveIngestModel
@@ -22,3 +22,4 @@ def init_app(app):
     UserContentModel(app)
     ContentViewModel(app=app)
     ContentViewItemsModel(app=app)
+    AutoSaveModel(app)
