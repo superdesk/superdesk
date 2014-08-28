@@ -43,6 +43,26 @@ Feature: News Items Archive
         When we get "/archive/xyz?version=all"
         Then we get list with 3 items
 
+    @wip
+    @auth
+    Scenario: Update item and keep version
+        Given "archive"
+        """
+        [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
+        """
+
+        When we patch given
+        """
+        {"headline": "another"}
+        """
+
+        And we post to "archive/item-1/autosave"
+        """
+        {"headline": "another one"}
+        """
+
+        And we get "archive/item-1"
+        Then we get version 2
 
 	@auth
 	Scenario: Restore version
