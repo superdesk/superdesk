@@ -52,11 +52,28 @@
 		
 	</div>
 	<div class="preview-layout">
-		<div class="list-pane">
-			list of tasks
+		<div class="list-pane task-list">
+            <div 
+            	sd-list-view
+                data-items="tasks"
+                data-select="preview(item)">
+                <div class="card" ng-class="{selected: item === selected}">
+					<div class="header">
+						<figure class="avatar small"></figure>
+						<div class="title">{{item.title}}</div>
+					</div>
+                	<div class="info">
+                		<ul class="task-labels clearfix">
+							<li><i class="icon-desk-time"></i> {{ item.due_date | reldate }}</li>
+						</ul>
+                	</div>
+                </div>
+            </div>
 		</div>
 		<div class="preview-pane">
-			preview of tasks
+			<div ng-if="selected">
+				{{selected.preview.title}}
+			</div>
 		</div>
 	</div>
 	<div sd-workqueue></div>

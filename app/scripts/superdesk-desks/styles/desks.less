@@ -125,8 +125,14 @@
 
 }
 
-.assign-label {
-  float: left;
+.task-labels {
+  list-style-type: none;
+  padding: 0;
+  margin: 5px 0 0;
+}
+
+.task-label , .task-labels > li {
+  	float: left;
     border: 0;
     margin-right: 4px;
     background: #eee;
@@ -151,15 +157,25 @@
     }
 }
 
-.assign-labels {
-  list-style-type: none;
-  padding: 0;
-  margin: 5px 0 0;
-  li {
-    .assign-label;
-  }
-}
 
+.task-list {
+	.card {
+		.header {
+			min-height: 24px;
+		}
+		.avatar {
+			margin-right: 10px;
+		}
+		.title {
+			padding: 3px 0;
+			line-height: 18px;
+			min-height: 18px;
+		}
+		.task-label {
+
+		}
+	}
+}
 
 /* generic assingment - we need this for drag 'n' drop */
 .generic-assignment {
@@ -195,9 +211,8 @@
     min-height: 24px;
   }
 
-  .assign-labels {
-    .assign-labels();
-    li {
+  .task-labels {
+    > li {
       padding: 0 5px;
       .border-radius(2px);
     }
