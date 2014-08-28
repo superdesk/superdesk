@@ -181,6 +181,14 @@ class BaseModel():
             self.on_deleted(doc)
         return res
 
+    @staticmethod
+    def rel(resource, embeddable=False, required=False, type='objectid'):
+        return {
+            'type': type,
+            'required': required,
+            'data_relation': {'resource': resource, 'field': '_id', 'embeddable': embeddable}
+        }
+
     def _datasource(self):
         return app.data._datasource(self.endpoint_name)[0]
 

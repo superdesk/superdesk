@@ -14,14 +14,7 @@ reset_schema = {
     'email': {'type': 'email'},
     'token': {'type': 'string'},
     'password': {'type': 'string'},
-    'user': {
-        'type': 'objectid',
-        'data_relation': {
-            'resource': 'users',
-            'field': '_id',
-            'embeddable': True
-        }
-    }
+    'user': BaseModel.rel('users', True)
 }
 
 

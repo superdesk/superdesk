@@ -36,22 +36,8 @@ class ContentViewModel(BaseModel):
             'type': 'string',
             'minlength': 1
         },
-        'desk': {
-            'type': 'objectid',
-            'data_relation': {
-                'resource': 'desks',
-                'field': '_id',
-                'embeddable': True
-            }
-        },
-        'user': {
-            'type': 'objectid',
-            'data_relation': {
-                'resource': 'users',
-                'field': '_id',
-                'embeddable': True
-            }
-        },
+        'desk': BaseModel.rel('desks', True),
+        'user': BaseModel.rel('users', True),
         'filter': {
             'type': 'dict'
         },

@@ -12,18 +12,8 @@ comments_schema = {
         'maxlength': 500,
         'required': True,
     },
-    'item': {
-        'type': 'string',
-        'required': True,
-    },
-    'user': {
-        'type': 'objectid',
-        'data_relation': {
-            'resource': 'users',
-            'field': '_id',
-            'embeddable': True
-        }
-    },
+    'item': BaseModel.rel('archive', True, True, type='string'),
+    'user': BaseModel.rel('users', True),
 }
 
 
@@ -42,7 +32,6 @@ class ItemCommentsModel(BaseModel):
 
     def on_create(self, docs):
         for doc in docs:
-            check_item_valid(doc['item'])
             sent_user = doc.get('user', None)
             user = flask.g.user
             if sent_user and sent_user != user.get('_id'):

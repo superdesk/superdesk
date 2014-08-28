@@ -33,14 +33,7 @@ class PlanningModel(BaseModel):
         'urgency': {
             'type': 'integer'
         },
-        'desk': {
-            'type': 'objectid',
-            'data_relation': {
-                'resource': 'desks',
-                'field': '_id',
-                'embeddable': True
-            }
-        }
+        'desk': BaseModel.rel('desks', True)
     }
     item_url = 'regex("[\w,.:-]+")'
     datasource = {'search_backend': 'elastic'}
@@ -48,10 +41,12 @@ class PlanningModel(BaseModel):
 
     def on_create(self, docs):
         on_create_item(docs)
+
+    def on_created(self, docs):
         push_notification('planning', created=1)
 
-    def on_update(self, updates, original):
+    def on_updated(self, updates, original):
         push_notification('planning', updated=1)
 
-    def on_delete(self, doc):
+    def on_deleted(self, doc):
         push_notification('planning', deleted=1)

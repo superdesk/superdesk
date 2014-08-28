@@ -27,14 +27,7 @@ class AuditModel(BaseModel):
         'resource': {'type': 'string'},
         'action': {'type': 'string'},
         'extra': {'type': 'dict'},
-        'user': {
-            'type': 'objectid',
-            'data_relation': {
-                'resource': 'users',
-                'field': '_id',
-                'embeddable': False
-            }
-        }
+        'user': BaseModel.rel('users', False)
     }
     exclude = {endpoint_name, 'activity'}
 
