@@ -32,11 +32,11 @@
     <div class="item-right list-field">
         <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>
         <div class="action">
-            <ul ng-if="activityFilter" class="item-functions"
+            <ul ng-if="extras.activityFilter" class="item-functions"
                 sd-activity-list
                 data-data="{item: item, list: items, index: $index}"
-                data-type="{{activityFilter.type}}"
-                data-action="{{activityFilter.action}}">
+                data-type="{{extras.activityFilter.type}}"
+                data-action="{{extras.activityFilter.action}}">
             </ul>
         </div>
     </div>
