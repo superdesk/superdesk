@@ -133,8 +133,11 @@ define([
         };
 
         $scope.update = function() {
-            //do update, on local storage or server
-            //workqueue.update($scope.item);
+            if ($scope.dirty && $scope.editable) {
+                api('autosave', $scope.item).save({}, $scope.item).then(function() {
+                    workqueue.update($scope.item);
+                });
+            }
         };
 
     	$scope.save = function() {
