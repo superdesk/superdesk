@@ -138,15 +138,25 @@ define([
                 scope.saveCoverage = function(coverage) {
                     var promise = null;
                     if (coverage) {
-                        promise = api.coverages.save(coverage);
+                        promise = api.coverages.save(coverage)
+                        .then(function(result) {
+                            var index = _.findIndex(scope.origCoverages._items, {_id: result._id});
+                            if (index !== -1) {
+                                scope.origCoverages._items[index] = result;
+                                scope.coverages._items[index] = _.cloneDeep(result);
+                            }
+                        });
                     } else {
                         scope.coverage.planning_item = scope.item._id;
-                        promise = api.coverages.save({}, scope.coverage);
+                        promise = api.coverages.save({}, scope.coverage)
+                        .then(function(result) {
+                            scope.origCoverages._items.unshift(result);
+                            scope.coverages._items.unshift(_.cloneDeep(result));
+                        });
                     }
                     promise.then(function(result) {
                         scope.coverage = null;
                         notify.success(gettext('Item saved.'));
-                        fetchCoverages();
                     });
                 };
 

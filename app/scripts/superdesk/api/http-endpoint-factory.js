@@ -150,6 +150,7 @@ define(['lodash'], function(_) {
                 data: itemData,
                 headers: getHeaders(this)
             }).then(function(response) {
+                delete response.data._status;
                 _.extend(itemData, response.data);
                 return itemData;
             });
