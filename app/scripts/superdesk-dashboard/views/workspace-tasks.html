@@ -1,11 +1,8 @@
 <div class="subnav">
 
 	<div class="button-stack right-stack">
-        <button class="navbtn" href="">
+        <button class="navbtn" ng-click="create()">
             <i class="svg-icon-add"></i>
-        </button>
-        <button class="navbtn" href="">
-            <i class="svg-icon-settings"></i>
         </button>
     </div>
 
@@ -78,3 +75,51 @@
 	</div>
 	<div sd-workqueue></div>
 </section>
+
+<div sd-modal-view data-model="newtask" class="create-task responsive-popup split-popup">
+    <div class="modal-header"> <button class="close" ng-click="close()"><i class="icon-close-small"></i></button>
+        <h3 translate>Create New Task</h3>
+    </div>
+
+    <div class="modal-body task-details">
+       <div class="main">
+			<div class="content">
+				<ul class="task-labels clearfix">
+					<li><i class="icon-desk-time"></i> Today at 15:30</li>
+				</ul>
+				<textarea class="title" sd-auto-height ng-model="newtask.title" placeholder="{{'Add task title' | translate}}" required></textarea>
+				<textarea class="description" sd-auto-height ng-model="newtask.description" placeholder="{{'Add task description' | translate}}"></textarea>
+			</div>
+       </div>
+       <aside class="sidebar">
+       		<header translate>Assignee</header>
+       		<section class="assignee-container">
+				<div sd-assignee-box></div>
+				<div class="assignee-name">
+					<span>Vladimir Stefanovic</span>
+				</div>
+			</section>
+			<header translate>Action</header>
+			<section>
+				<form>
+					<fieldset>
+						<div class="field">
+							<label>Due date:</label>
+							<input type="date" ng-model="newtask.due_date">
+						</div>
+						<div class="field">
+							<label>Due time:</label>
+							<input type="time" ng-model="newtask.due_time">
+						</div>
+					</fieldset>
+				</form>
+								
+			</section>
+       </aside>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="close()" translate>Cancel</button>
+        <button class="btn btn-primary" ng-click="save()" translate>Save</button>
+    </div>
+</div>

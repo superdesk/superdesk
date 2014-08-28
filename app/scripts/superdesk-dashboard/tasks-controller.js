@@ -5,6 +5,7 @@ define(['lodash'], function(_) {
     function TasksController($scope) {
 
         $scope.selected = {};
+        $scope.newtask = null;
 
         $scope.tasks = [
             {
@@ -40,6 +41,19 @@ define(['lodash'], function(_) {
         $scope.preview = function(item) {
             $scope.selected.preview = item;
         };
+
+        $scope.create = function() {
+            $scope.newtask = {};
+        };
+
+        $scope.save = function() {
+
+        };
+
+        $scope.close = function() {
+            $scope.newtask = null;
+        };
+
     }
 
     return TasksController;

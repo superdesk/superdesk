@@ -175,76 +175,11 @@
 	}
 }
 
-/*************************************
-	SPLIT POPUP (right sidebar)
- *************************************/
-/*  
-		> used for add/edit task
-*/
-@split-popup-right-width : 210px;
-.split-popup {
-	position: fixed;
-	max-width: 820px;
-	width: auto;
-	height: auto;
-	margin: 50px auto;
-	top: 0 !important;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	.modal-header {
-		border-bottom-color: #dfdfdf; 
-	}
-	.modal-body {
-		position: absolute;
-		left: 0;
-		right: 0;
-		top: @modal-header-height;
-		bottom: @modal-footer-height;
-		padding:  0px;
-		overflow: hidden;
-		max-height: none;
-	}
-	.modal-footer {
-		position: absolute;
-		bottom: 0;
-		right: 0;
-		left: 0;
-		border-bottom-color: #dfdfdf; 
-	}
-	.modal-left-pane {
-		width: auto;
-		right: @split-popup-right-width;
-		left:0;
-		border: 0;
-		padding: 10px 10px 10px 20px;
-	}
-	.modal-right-pane {
-		width: @split-popup-right-width - 2px;
-		right: 2px;
-		left: auto;
-		top: 1px;
-		background: #f8f8f8;
-		margin: 0;
-		padding: 10px 8px 10px 10px;
-		border-left: 1px solid #d0d0d0;
-		.box-sizing(border-box);
-		.box-shadow(inset 2px 1px 5px -2px #ddd);
-		overflow: auto;
-	}
-}
 
-/*************************************
-	SPLIT POPUP (left sidebar)
- *************************************/
-/* 
-/*  
-		> used for upload avatar task
-*/
-
+// SPLIT POPUP (left sidebar)
+// > used for upload avatar task
 @split-modal-sidebar : 230px;
-
-.modal-body {
+.split-popup {
 	.sidebar {
 		position: absolute;
 		top:0; left: 0; bottom: 0;
@@ -257,6 +192,33 @@
 		left: @split-modal-sidebar;
 	}
 }
+
+
+
+// SPLIT POPUP (right sidebar)
+// > used for add/edit task
+
+@split-popup-right-width : 270px;
+.create-task {
+	max-width: 820px;
+	margin: 50px auto 100px;
+	.main {
+		right: @split-popup-right-width;
+		left:0;
+		padding: 20px;
+	}
+	.sidebar {
+		width: @split-popup-right-width;
+		right: 0;
+		left: auto;
+		background: @sd-background;
+		padding: 10px 8px 10px 10px;
+		border-right: 0;
+		border-left: 1px solid #d0d0d0;
+		.box-sizing(border-box);
+	}
+}
+
 
 
 .activity-choose-modal {
