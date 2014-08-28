@@ -10,6 +10,7 @@ media/*
 upload/*
 .coverage
 celerybeat-schedule.db
+celerybeat-schedule
 
 # env
 *.egg*
