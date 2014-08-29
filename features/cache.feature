@@ -9,7 +9,7 @@ Feature: HTTP Caching
 
         When we get "/users"
         """
-        If-Modified-Since: 2014-12-12T10:10:10+0000
+        If-Modified-Since: Tue, 18 Sep 2012 10:12:30 GMT
         """
 
         Then we get not modified response
