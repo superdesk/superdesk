@@ -2,6 +2,7 @@ define([
     'angular',
     'require',
     './workspace-controller',
+    './tasks-controller',
     './workspace-service',
     './sd-widget-directive',
     './widgets-provider',
@@ -41,6 +42,7 @@ define([
         });
         superdesk.activity('/workspace/tasks', {
             label: gettext('Workspace'),
+            controller: require('./tasks-controller'),
             templateUrl: require.toUrl('./views/workspace-tasks.html'),
             topTemplateUrl: require.toUrl('./views/workspace-topnav.html'),
             beta: true

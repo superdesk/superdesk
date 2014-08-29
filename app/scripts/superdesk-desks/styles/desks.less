@@ -125,9 +125,14 @@
 
 }
 
-.assign-label {
-  float: left;
-    border: 0;
+.task-labels {
+  list-style-type: none;
+  padding: 0;
+  margin: 5px 0 0;
+}
+
+.task-label , .task-labels > li {
+  	float: left;
     margin-right: 4px;
     background: #eee;
     .border-radius(3px);
@@ -138,7 +143,7 @@
     min-height: auto;
     font-size: 10px;
     i {
-      .opacity(50);
+      .opacity(70);
     }
     &.urgent {
       background-color: #ba7474;
@@ -151,14 +156,87 @@
     }
 }
 
-.assign-labels {
-  list-style-type: none;
-  padding: 0;
-  margin: 5px 0 0;
-  li {
-    .assign-label;
-  }
+
+.task-list {
+	.card {
+		.header {
+			min-height: 24px;
+		}
+		.avatar {
+			margin-right: 10px;
+		}
+		.title {
+			padding: 3px 0;
+			line-height: 18px;
+			min-height: 18px;
+		}
+		.task-label {
+
+		}
+	}
 }
+
+.task-details {
+	textarea {
+		margin-bottom: 10px;
+		border-color: #fff !important; 
+		&:focus {
+			border-color: #d0d0d0 !important;
+		}
+	}
+	.content:hover {
+		textarea {
+			border-color: #d0d0d0 !important;
+		}
+	}
+	.task-labels {
+		margin: 0 0 10px;
+	}
+	.title {
+		height: 40px;
+		font-size: 18px;
+		line-height: 28px;
+	}
+	.description {
+		height: 20px;
+	}
+	.assignee-container {
+		margin: 5px 0;
+		.border-radius(5px);
+		background: #888;
+		padding: 10px;
+		.clearfix();
+	}
+	.assignee-box {
+		float: left;
+		margin-right: 10px;
+	}
+	.assignee-name {
+		color: #fff;
+		height: 30px;
+		line-height: 30px;
+	}
+	.assignee {
+		> .dropdown-content {
+			left: -320px;
+			&:before {
+				left: auto;
+				right: -15px;
+				.scaleX(-1);
+			}
+		}
+	}
+	.sidebar {
+		header {
+	     	font-size: 17px;
+	     	padding-bottom: 5px;
+	    }
+	    section {
+	    	margin-bottom: 30px;
+	    }
+	}
+}
+
 
 
 /* generic assingment - we need this for drag 'n' drop */
@@ -195,9 +273,8 @@
     min-height: 24px;
   }
 
-  .assign-labels {
-    .assign-labels();
-    li {
+  .task-labels {
+    > li {
       padding: 0 5px;
       .border-radius(2px);
     }
