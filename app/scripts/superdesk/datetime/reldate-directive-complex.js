@@ -18,13 +18,15 @@ define(['moment'], function(moment) {
         var DISPLAY_TODAY_FORMAT = '[Today], ';
         return {
             require: 'ngModel',
-            template: '<time datetime="{{ datetime }}" title="{{ title }}">' +
+            template: '<time datetime="{{ datetime }}">' +
             	'<span>{{ rday }}{{ rdate }}</span></time>',
             replate: true,
             link: function(scope, element, attrs, ngModel) {
                 ngModel.$render = function() {
                     var date = moment.utc(ngModel.$viewValue);
                     scope.datetime = date.toISOString();
+
+                    date.local(); // switch to local time zone
 
                     if (moment().format(COMPARE_FORMAT) === date.format(COMPARE_FORMAT)){
                     	scope.rday = date.format(DISPLAY_TODAY_FORMAT);
@@ -37,9 +39,6 @@ define(['moment'], function(moment) {
                     } else {
                     	scope.rdate = date.format(DISPLAY_DATE_FORMAT);
                     }
-
-                    date.local(); // switch to local time zone
-                    scope.title = date.format('LLLL');
                 };
             }
         };
