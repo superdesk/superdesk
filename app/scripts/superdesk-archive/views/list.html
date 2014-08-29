@@ -23,10 +23,10 @@
         <div class="navbtn dropdown">
             <button class="dropdown-toggle condensed"><i class="svg-icon-down"></i></button>
             <ul class="dropdown-menu pull-right">
-                <li><a href="" ng-click="view='mgrid'"><i class="icon-th"></i> {{ 'grid view' | translate}}</a></li>
-                <li><a href="" ng-click="view='mlist'"><i class="icon-th-list"></i> {{ 'list view' | translate}}</a></li>
-                <li><a href="" ng-click="view='compact'"><i class="icon-th-list"></i> {{ 'compact view' | translate}}</a></li>
-                <li><a href="" ng-click="view='stats'"><i class="icon-signal"></i> {{ 'statistics' | translate}}</a></li>
+                <li><a href="" ng-click="setView('mgrid')"><i class="icon-th"></i> {{ 'grid view' | translate}}</a></li>
+                <li><a href="" ng-click="setView('mlist')"><i class="icon-th-list"></i> {{ 'list view' | translate}}</a></li>
+                <li><a href="" ng-click="setView('compact')"><i class="icon-th-list"></i> {{ 'compact view' | translate}}</a></li>
+                <li><a href="" ng-click="setView('stats')"><i class="icon-signal"></i> {{ 'statistics' | translate}}</a></li>
             </ul>
         </div>
 
@@ -113,12 +113,12 @@
                         data-select="preview(item)"
                         data-extras="{view: view, activityFilter: {type: type}, api: api}">
                         <div sd-media-box 
-                            ng-if="extras.activityFilter.type === 'archive'"
+                            ng-if="type === 'archive'"
                             sd-draggable
                             data-item="item" 
                             data-container="'#scratchpad'" 
-                            class="drag-{{extras.view}}"></div>
-                        <div sd-media-box ng-if="extras.activityFilter.type !== 'archive'"></div>
+                            class="drag-{{view}}"></div>
+                        <div sd-media-box ng-if="type !== 'archive'"></div>
                     </div>
                 </div>
 
@@ -128,13 +128,13 @@
                     data-select="preview(item)"
                     data-extras="{view: view, activityFilter: {type: type}, api: api}">
                     <div sd-media-box 
-                        ng-if="extras.activityFilter.type === 'archive'"
+                        ng-if="type === 'archive'"
                         sd-draggable 
                         data-item="item" 
                         data-container="'#scratchpad'" 
-                        class="{{extras.view}}-view" 
-                        data-cursor="extras.view !== 'mgrid'"></div>
-                    <div sd-media-box ng-if="extras.activityFilter.type !== 'archive'"></div>
+                        class="{{view}}-view" 
+                        data-cursor="view !== 'mgrid'"></div>
+                    <div sd-media-box ng-if="type !== 'archive'"></div>
                 </div>
             </div>
 

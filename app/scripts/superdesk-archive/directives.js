@@ -231,7 +231,7 @@ define([
                 templateUrl: require.toUrl('./views/media-box.html'),
                 link: function(scope, element, attrs) {
 
-                    scope.$watch('extras.view', function(view) {
+                    scope.$watch('view', function(view) {
                         switch (view) {
                         case 'mlist':
                         case 'compact':
@@ -240,7 +240,6 @@ define([
                         default:
                             scope.itemTemplate = require.toUrl('./views/media-box-grid.html');
                         }
-                        localStorage.setItem('archive:view', view);
                     });
 
                     scope.$watch('item', function(item) {

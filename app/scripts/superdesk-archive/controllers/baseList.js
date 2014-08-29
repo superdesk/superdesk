@@ -10,6 +10,11 @@ define(['lodash'], function(_) {
         $scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
         $scope.selected = {};
 
+        $scope.setView = function(view) {
+            $scope.view = view || 'mgrid';
+            localStorage.setItem('archive:view', $scope.view);
+        };
+
         $scope.preview = function(item) {
             $scope.selected.preview = item;
             $location.search('_id', item ? item._id : null);
