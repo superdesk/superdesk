@@ -282,9 +282,9 @@ define([
     function CoverageTypeDirective() {
         return {
             templateUrl: 'scripts/superdesk-planning/views/coverage-type.html',
-            controller: function($scope) {
+            controller: ['$scope', function($scope) {
                 $scope.coverageTypes = coverageTypes;
-            }
+            }]
         };
     }
 
