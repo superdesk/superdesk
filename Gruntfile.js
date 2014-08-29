@@ -32,9 +32,8 @@ module.exports = function (grunt) {
     grunt.registerTask('ci:travis', ['karma:travis', 'hint']);
     grunt.registerTask('bamboo', ['karma:bamboo']);
 
-    grunt.registerTask('server', ['clean', 'style', 'template:test', 'connect:dev', 'open:test', 'watch']);
-    grunt.registerTask('server:mock', ['clean', 'style', 'template:mock', 'connect:mock', 'open:mock', 'watch']);
-    grunt.registerTask('server:e2e', ['clean', 'style', 'template:mock', 'connect:test', 'watch']);
+    grunt.registerTask('server', ['clean', 'style', 'template:test', 'connect:test', 'open:test', 'watch']);
+    grunt.registerTask('server:e2e', ['clean', 'style', 'template:mock', 'connect:mock', 'watch']);
 
     grunt.registerTask('build', [
         'clean',

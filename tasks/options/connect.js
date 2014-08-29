@@ -10,17 +10,12 @@ module.exports = function(grunt) {
             hostname: 'localhost',
             livereload: '<%= livereloadPort %>'
         },
-        dev: {options: {base: base}},
+        test: {options: {base: base}},
         mock: {
             options: {
                 base: base,
-                port: 9001
-            }
-        },
-        test: {
-            options: {
-                base: base,
                 keepalive: true,
+                livereload: false,
                 port: 9090
             }
         },
@@ -31,7 +26,6 @@ module.exports = function(grunt) {
                 livereload: false,
                 keepalive: true
             }
-
         }
     };
 };

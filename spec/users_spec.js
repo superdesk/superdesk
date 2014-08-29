@@ -9,13 +9,10 @@ describe('USERS', function() {
         beforeEach(openUrl('/#/profile'));
 
         it('can render user profile', function() {
-            expect($('img[sd-user-picture').getAttribute('src'))
-                .toBe('http://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200');
             expect(bindingValue('{{ user.username }}')).toBe('john');
             expect(modelValue('user.first_name')).toBe('John');
             expect(modelValue('user.last_name')).toBe('Doe');
             expect(modelValue('user.email')).toBe('john.doe@email.com');
-            //expect(modelValue('user.phone')).toBe('0123456789');
         });
     });
 
@@ -70,25 +67,25 @@ describe('USERS', function() {
         beforeEach(openUrl('/#/users/2'));
 
         it('can enable/disable buttons based on form status', function() {
-            var buttonSave = element(by.buttonText('Save'));
-            var buttonCancel = element(by.buttonText('Cancel'));
+            var buttonSave = element(by.id('save-edit-btn'));
+            var buttonCancel = element(by.id('cancel-edit-btn'));
             var inputFirstName = element(by.model('user.first_name'));
 
-            expect(buttonSave.getAttribute('disabled')).toBe('true');
-            expect(buttonCancel.getAttribute('disabled')).toBe('true');
+            expect(buttonSave.isEnabled()).toBe(false);
+            expect(buttonCancel.isEnabled()).toBe(false);
 
             inputFirstName.sendKeys('X');
             expect(inputFirstName.getAttribute('value')).toBe('JohnX');
 
-            expect(buttonSave.getAttribute('disabled')).toBe(null);
-            expect(buttonCancel.getAttribute('disabled')).toBe(null);
+            expect(buttonSave.isEnabled()).toBe(true);
+            expect(buttonCancel.isEnabled()).toBe(true);
 
             inputFirstName.clear();
             inputFirstName.sendKeys('John');
             expect(inputFirstName.getAttribute('value')).toBe('John');
 
-            expect(buttonSave.getAttribute('disabled')).toBe('true');
-            expect(buttonCancel.getAttribute('disabled')).toBe('true');
+            expect(buttonSave.isEnabled()).toBe(false);
+            expect(buttonCancel.isEnabled()).toBe(false);
         });
 
         it('can validate phone number', function() {

@@ -19,8 +19,8 @@ describe('login', function() {
     it('can login', function() {
         modal.login('admin', 'admin');
         expect(modal.btn).not.toBeDisplayed();
-        expect(browser.getCurrentUrl()).toBe('http://localhost:9090/#/dashboard');
-        expect(element(by.binding('display_name')).getText()).toBe('John Doe');
+        expect(browser.getCurrentUrl()).toBe('http://localhost:9090/#/workspace');
+        expect(element(by.binding('currentUser.display_name')).getText()).toBe('John Doe');
     });
 
     it('can logout', function() {
