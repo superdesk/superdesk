@@ -58,7 +58,7 @@ define([
                 fetchUsers: function() {
                     var self = this;
 
-                    return api.users.query()
+                    return api.users.query({max_results: 500})
                     .then(function(result) {
                         self.users = result;
                     });
@@ -69,7 +69,10 @@ define([
                     _.each(this.desks._items, function(desk) {
                         self.deskMembers[desk._id] = [];
                         _.each(desk.members, function(member, index) {
-                            self.deskMembers[desk._id].push(_.find(self.users._items, {_id: member.user}));
+                            var user = _.find(self.users._items, {_id: member.user});
+                            if (user) {
+                                self.deskMembers[desk._id].push(user);
+                            }
                         });
                     });
 

@@ -83,6 +83,7 @@ define(['angular', 'lodash'], function(angular, _) {
                 var members = _.map($scope.selectedMembers, function(obj) {
                     return {user: obj._id};
                 });
+
                 api.desks.save($scope.desk, {members: members}).then(function(result) {
 					_.extend($scope.desk, result);
                     $scope.deskMembers[$scope.desk._id] = $scope.selectedMembers;
