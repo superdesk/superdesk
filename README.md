@@ -62,11 +62,7 @@ $ honcho start
 
 ### API Documentation
 
-You can also run server with documentation on ```/docs``` url.
-
-```sh
-$ python docs.py
-```
+You can see API Documentation on [apiary](http://docs.superdesk.apiary.io/).
 
 ## Running cli commands
 
