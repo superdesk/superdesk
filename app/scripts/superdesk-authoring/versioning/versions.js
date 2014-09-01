@@ -52,7 +52,7 @@ angular.module('superdesk.authoring.versions', ['superdesk.authoring.versions'])
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
             .widget('versions', {
-                icon: 'archive',
+                icon: 'revision',
                 label: gettext('Versions'),
                 template: 'scripts/superdesk-authoring/versioning/views/versions.html'
             });
