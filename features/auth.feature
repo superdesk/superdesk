@@ -13,6 +13,7 @@ Feature: Authentication
 
         Then we get "token"
         And we get "user"
+        And we get no "password"
 
 
     Scenario: Reset password existing user

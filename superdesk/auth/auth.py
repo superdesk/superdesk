@@ -155,3 +155,4 @@ class AuthModel(BaseModel):
             user = authenticate(doc, app.data)
             doc['user'] = user['_id']
             doc['token'] = utils.get_random_string(40)
+            del doc['password']
