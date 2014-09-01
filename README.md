@@ -77,5 +77,5 @@ This will give you list of available commands.
 This command will create an administrator user.
 
 ```sh
-$ python manage.py users:create -u <username> -p <password>
+$ python manage.py users:create -u <username> -p <password> -e <email>
 ```
