@@ -9,6 +9,7 @@ Superdesk Client is a javascript client for Superdesk REST API server.
 
 *Copyright*: [Sourcefabric o.p.s.](http://www.sourcefabric.org)
 
+
 ## Setup
 
 Client requires `nodejs` installed and a few steps:
