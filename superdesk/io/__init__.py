@@ -39,7 +39,7 @@ def ingest_items(provider, items):
                 app.data.update('ingest', str(old_item.get('_id')), item)
             else:
                 ingested_count += 1
-                app.data.insert('ingest', [item], ttl='7d')
+                app.data.insert('ingest', [item])
 
         app.data.update('ingest_providers', provider['_id'], {
             '_updated': start,
