@@ -91,11 +91,6 @@ RENDITIONS = {
 
 SERVER_DOMAIN = 'localhost'
 
-# uncomment to use local file storage
-# DEFAULT_FILE_STORAGE = 'superdesk.storage.FileSystemStorage'
-# abspath = os.path.abspath(os.path.dirname(__file__))
-# UPLOAD_FOLDER = os.path.join(abspath, 'upload')
-
 BCRYPT_GENSALT_WORK_FACTOR = 12
 RESET_PASSWORD_TOKEN_TIME_TO_LIVE = 24  # The number of hours a token is valid
 

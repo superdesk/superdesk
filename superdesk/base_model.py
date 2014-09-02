@@ -160,7 +160,7 @@ class BaseModel():
 
         search_backend = self._lookup_backend()
         if search_backend is not None:
-            search_backend.update(self.endpoint_name, id, document)
+            search_backend.replace(self.endpoint_name, id, document)
         if trigger_events:
             self.on_replaced(document, original)
         return res
@@ -175,7 +175,8 @@ class BaseModel():
         if search_backend is not None:
             try:
                 search_backend.remove(self.endpoint_name, lookup)
-            except ValueError:
+            except ValueError as ex:
+                log.error(ex)
                 pass
         if trigger_events:
             self.on_deleted(doc)

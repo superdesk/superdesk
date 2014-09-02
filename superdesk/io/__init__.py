@@ -2,13 +2,12 @@
 
 import logging
 import superdesk
-from superdesk.utc import utcnow
 from superdesk.base_model import BaseModel
-from flask import current_app as app
 from superdesk.celery_app import celery
-from superdesk.notification import push_notification
+from superdesk.io.reuters import ReutersUpdateService, PROVIDER as ReutersName
+from superdesk.io.aap import AAPIngestService, PROVIDER as AAPName
 
-
+DAYS_TO_KEEP = 2
 logger = logging.getLogger(__name__)
 providers = {}
 
@@ -18,82 +17,21 @@ def register_provider(type, provider):
 
 superdesk.provider = register_provider
 
+superdesk.provider(ReutersName, ReutersUpdateService())
+superdesk.provider(AAPName, AAPIngestService())
 
-def update_provider(provider):
-    """Update given provider."""
-    if provider.get('type') in providers:
-        for items in providers[provider.get('type')].update(provider):
-            ingest_items(provider, items)
-
-
-def ingest_items(provider, items):
-        start = utcnow()
-        ingested_count = provider.get('ingested_count', 0)
-        for item in items:
-            item.setdefault('_id', item['guid'])
-            item.setdefault('_created', utcnow())
-            item.setdefault('_updated', utcnow())
-            item['ingest_provider'] = str(provider['_id'])
-            old_item = app.data.find_one('ingest', guid=item['guid'], req=None)
-            if old_item:
-                app.data.update('ingest', str(old_item.get('_id')), item)
-            else:
-                ingested_count += 1
-                app.data.insert('ingest', [item])
-
-        app.data.update('ingest_providers', provider['_id'], {
-            '_updated': start,
-            'ingested_count': ingested_count
-        })
+from superdesk.io.commands.remove_expired_content import RemoveExpiredContent
+from superdesk.io.commands.update_ingest import UpdateIngest
+from superdesk.io.commands.add_provider import AddProvider  # NOQA
 
 
 @celery.task()
 def fetch_ingest():
+    try:
+        RemoveExpiredContent().run()
+    except Exception as ex:
+        logger.error(ex)
     UpdateIngest().run()
-
-
-class UpdateIngest(superdesk.Command):
-    """Update ingest providers."""
-
-    option_list = (
-        superdesk.Option('--provider', '-p', dest='provider_type'),
-    )
-
-    def run(self, provider_type=None):
-        for provider in app.data.find_all('ingest_providers'):
-            if not provider_type or provider_type == provider.get('type'):
-                try:
-                    update_provider(provider)
-                except (Exception) as err:
-                    logger.exception(err)
-                    pass
-                finally:
-                    push_notification('ingest:update')
-
-
-class AddProvider(superdesk.Command):
-    """Add ingest provider."""
-
-    option_list = {
-        superdesk.Option('--provider', '-p', dest='provider'),
-    }
-
-    def run(self, provider=None):
-        if provider:
-            data = superdesk.json.loads(provider)
-            data.setdefault('_created', utcnow())
-            data.setdefault('_updated', utcnow())
-            data.setdefault('name', data['type'])
-            db = superdesk.get_db()
-            db['ingest_providers'].save(data)
-            return data
-
-superdesk.command('ingest:update', UpdateIngest())
-superdesk.command('ingest:provider', AddProvider())
-
-# load providers now to have available types for the schema
-import superdesk.io.reuters
-import superdesk.io.aap
 
 
 def init_app(app):
@@ -101,6 +39,7 @@ def init_app(app):
 
 
 class IngestProviderModel(BaseModel):
+    endpoint_name = 'ingest_providers'
     schema = {
         'name': {
             'type': 'string',
@@ -110,6 +49,11 @@ class IngestProviderModel(BaseModel):
             'type': 'string',
             'required': True,
             'allowed': providers.keys()
+        },
+        'days_to_keep': {
+            'type': int,
+            'required': True,
+            'default': DAYS_TO_KEEP
         },
         'config': {
             'type': 'dict'
@@ -124,5 +68,3 @@ class IngestProviderModel(BaseModel):
             'type': 'dict'
         }
     }
-
-    endpoint_name = 'ingest_providers'
