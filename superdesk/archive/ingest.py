@@ -14,7 +14,7 @@ class IngestModel(BaseModel):
     extra_response_fields = extra_response_fields
     item_url = item_url
     datasource = {
-        'backend': 'elastic',
+        'search_backend': 'elastic',
         'facets': facets
     }
 
