@@ -42,16 +42,12 @@ define([
 
                 $timeout(function() {
                     var el = $(element);
-                    var shadow = $('<div class="scroll-shadow"></div>');
+                    var shadow = $('<div class="scroll-shadow"><div class="inner"></div></div>');
 
-                    el.append(shadow);
+                    el.addClass('shadow-list-holder');
+                    el.parent().prepend(shadow);
 
                     el.scroll(function() {
-                        shadow.css({
-                            top: el.offset().top,
-                            left: el.offset().left,
-                            width: el.outerWidth()
-                        });
                         if ($(this).scrollTop() > 0) {
                             shadow.addClass('shadow');
                         } else {

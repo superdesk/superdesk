@@ -4,7 +4,8 @@
     </button>
 
     <h2 translate>Desk management</h4>
-    <div class="settings-tab-content desk-settings" sd-shadow>
+    <div class="settings-tab-content desk-settings">
+    	<div sd-shadow>
 			<div class="desk-config" ng-repeat="desk in desks._items">
 				<div class="desk-header clearfix">
 					<h6 class="pull-left">{{ desk.name }}</h6>
@@ -70,6 +71,7 @@
 
 				</div>
 			</div>
+		</div>
     </div>
 
 

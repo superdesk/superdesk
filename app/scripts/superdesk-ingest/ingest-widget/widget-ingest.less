@@ -5,7 +5,7 @@
 @import 'variables.less';
 
 .sd-widget {
-	&.ingest {
+	&.ingest, &.archive {
 		.widget-content {
 			overflow-x: hidden;
 		}
@@ -20,16 +20,19 @@
 				.box-shadow(none) !important;
 			}
 		}
-		.ingest-list {
-			margin:0;
-			list-style-type: none;
-			padding: 0;
+		.ingest-list-holder {
 			position: absolute;
 			top:32px;
 			left: 0; right: 0;
 			bottom: 0;
+		}
+		.ingest-list {
+			margin:0;
+			list-style-type: none;
+			padding: 0;
 			overflow: auto;
 			> li {
+				position: relative;
 				.item-block {
 					cursor: pointer;
 					border-bottom: 1px solid #e5e5e5;
@@ -116,6 +119,7 @@
 			left: 0; right: 0; bottom: 0; top: 0;
 			width: 100%;
 			.transition(all ease 0.2s);
+			overflow: hidden;
 			&.wrap {
 				left: -100%;
 				right: auto;

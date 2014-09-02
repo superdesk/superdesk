@@ -236,8 +236,9 @@
 		.box-sizing(border-box);
 		position: absolute;
 		left: 0; right: 0; top:54px; bottom: 0;
-		padding: 10px 22px;
-		overflow-y: auto;
+		.shadow-list-holder {
+			padding: 10px 22px 10px+@bottom-view-padding;
+		}
 		&.with-nav {
 			top: 95px;
 		}

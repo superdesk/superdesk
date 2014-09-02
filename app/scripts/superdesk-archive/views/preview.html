@@ -15,33 +15,35 @@
        </div>
     </div>
 
-    <div class="content" ng-class="{'with-nav': item.type === 'composite'}" sd-shadow>
-        <div sd-item-lock data-item="item"></div>
+    <div class="content" ng-class="{'with-nav': item.type === 'composite'}">
+        <div sd-shadow>
+            <div sd-item-lock data-item="item"></div>
 
-        <div class="date">
-            <p>{{ 'Created' | translate }} {{ item.firstcreated | reldate }}</p>
-            <p>{{ 'Modified' | translate }} {{ item.versioncreated | reldate }}</p>    
-        </div>
-        <!-- item headline -->
-        <p class="title">{{ item.headline }}</p>
-
-        <div class="core-content">
-            
-            <!-- item rendition -->
-            <div sd-item-rendition data-item="item" data-rendition="viewImage"></div>
-            
-            <div ng-if="item.type == 'audio'">
-                <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
+            <div class="date">
+                <p>{{ 'Created' | translate }} {{ item.firstcreated | reldate }}</p>
+                <p>{{ 'Modified' | translate }} {{ item.versioncreated | reldate }}</p>    
             </div>
+            <!-- item headline -->
+            <p class="title">{{ item.headline }}</p>
 
-            <div ng-if="item.type == 'video'">
-                <video controls="controls" sd-sources data-renditions="item.renditions"></video>
-            </div>
+            <div class="core-content">
+                
+                <!-- item rendition -->
+                <div sd-item-rendition data-item="item" data-rendition="viewImage"></div>
+                
+                <div ng-if="item.type == 'audio'">
+                    <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
+                </div>
 
-            <div class="text" ng-show="item.body_html" sd-html-preview="item.body_html"></div>
+                <div ng-if="item.type == 'video'">
+                    <video controls="controls" sd-sources data-renditions="item.renditions"></video>
+                </div>
 
-            <div class="composite-preview" ng-if="item.type === 'composite'">
-                <div sd-package data-item="item"></div>
+                <div class="text" ng-show="item.body_html" sd-html-preview="item.body_html"></div>
+
+                <div class="composite-preview" ng-if="item.type === 'composite'">
+                    <div sd-package data-item="item"></div>
+                </div>
             </div>
         </div>
     </div>
