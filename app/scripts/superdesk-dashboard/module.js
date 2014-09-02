@@ -53,5 +53,11 @@ define([
             topTemplateUrl: require.toUrl('./views/workspace-topnav.html'),
             beta: true
         });
+    }])
+    .config(['apiProvider', function(apiProvider) {
+        apiProvider.api('tasks', {
+            type: 'http',
+            backend: {rel: 'tasks'}
+        });
     }]);
 });

@@ -227,26 +227,32 @@ define([
         return {
             templateUrl: 'scripts/superdesk-planning/views/assignee-box.html',
             scope: {
-                coverage: '=',
-                assignee: '='
+                selectedId: '='
             },
             link: function(scope, elem) {
                 scope.open = false;
                 scope.users = null;
                 scope.desks = null;
                 scope.search = null;
-
-                scope.$watch('coverage', function() {
-                    fetchUsers();
-                    fetchDesks();
-                });
+                scope.selected = null;
 
                 scope.$watch('search', function() {
                     fetchUsers();
                 });
 
+                scope.$watch('selectedId', function() {
+                    if (scope.selectedId && (!scope.selected || scope.selected._id !== scope.selectedId)) {
+                        api.users.getById(scope.selectedId)
+                        .then(function(result) {
+                            scope.selected = result;
+                        });
+                    } else {
+                        scope.selected = null;
+                    }
+                });
+
                 scope.selectUser = function(user) {
-                    scope.coverage.assigned_user = user._id;
+                    scope.selectedId = user._id;
                     scope.open = false;
                 };
 
@@ -275,6 +281,9 @@ define([
                         scope.desks = result;
                     });
                 };
+
+                fetchUsers();
+                fetchDesks();
             }
         };
     }
