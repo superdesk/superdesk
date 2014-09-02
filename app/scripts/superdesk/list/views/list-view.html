@@ -5,7 +5,7 @@
     <li class="list-item-view panel panel-default"
         ng-repeat="item in items track by $index"
         ng-click="clickItem(item)"
-        ng-class="{active: item.href === selected.href}">
+        ng-class="{active: item._id === selected._id}">
         <div class="panel-body" sd-list-item data-item="item"></div>
     </li>
 </ul>

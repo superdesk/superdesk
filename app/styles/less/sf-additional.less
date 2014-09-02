@@ -851,6 +851,15 @@
 		}
 	}
 }
+.active {
+	.card {
+		background-color: @sd-hover;
+		border-color: #dfdfdf;
+		&:hover {
+			.box-shadow(0 1px 0px 0px #ddd);
+		}
+	}
+}
 
 
 
@@ -1002,6 +1011,7 @@
 	overflow-y: auto;
 	width: 100%;
 	max-height: 100%;
+	min-height: 100%;
 	box-sizing: border-box;
 }
 .scroll-shadow {
