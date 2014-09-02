@@ -128,6 +128,7 @@ class AuthUsersModel(BaseModel):
     }
     item_methods = []
     resource_methods = []
+    internal_resource = True
 
 
 class AuthModel(BaseModel):
