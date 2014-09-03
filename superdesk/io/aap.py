@@ -51,6 +51,6 @@ class AAPIngestService(object):
                     item['created'] = item['firstcreated']
                     item['updated'] = item['versioncreated']
                     item.setdefault('provider', provider.get('name', provider['type']))
-                    yield item
+                    yield [item]
 
 superdesk.provider(PROVIDER, AAPIngestService())
