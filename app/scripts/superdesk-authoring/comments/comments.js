@@ -29,13 +29,14 @@ function CommentsService(api) {
     };
 }
 
-CommentsCtrl.$inject = ['$scope', 'commentsService'];
-function CommentsCtrl($scope, commentsService) {
+CommentsCtrl.$inject = ['$scope', 'commentsService', 'api', 'mentioUtil', '$q'];
+function CommentsCtrl($scope, commentsService, api, mentioUtil, $q) {
 
     $scope.text = null;
     $scope.saveEnterFlag = false;
     $scope.$watch('item._id', reload);
     $scope.$on('changes in archive_comment', reload);
+    $scope.users = null;
 
     $scope.saveOnEnter = function($event) {
         if (!$scope.saveEnterFlag || $event.keyCode !== ENTER || $event.shiftKey) {
@@ -69,9 +70,28 @@ function CommentsCtrl($scope, commentsService) {
             $scope.comments = commentsService.comments;
         });
     }
+
+    $scope.searchUsers = function(term) {
+        var userlist = [];
+        api.users.query()
+        .then(function(result) {
+            _.each(result._items, function(item) {
+                if (item.display_name.toUpperCase().indexOf(term.toUpperCase()) >= 0) {
+                    userlist.push(item);
+                }
+            });
+            $scope.users = userlist;
+            return $q.when(userlist);
+        });
+    };
+
+    $scope.selectUser = function(user) {
+        return '@' + user.username;
+    };
+
 }
 
-angular.module('superdesk.authoring.comments', ['superdesk.authoring.widgets'])
+angular.module('superdesk.authoring.comments', ['superdesk.authoring.widgets', 'mentio'])
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
             .widget('comments', {
