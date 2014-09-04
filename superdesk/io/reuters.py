@@ -144,4 +144,3 @@ def on_read_ingest(data, docs):
 
 
 superdesk.connect('read:ingest', on_read_ingest)
-superdesk.provider(PROVIDER, ReutersUpdateService())

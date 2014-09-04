@@ -8,7 +8,7 @@ from flask import json
 import bcrypt
 from superdesk.io.reuters_mock import setup_reuters_mock, teardown_reuters_mock
 from superdesk.io.reuters import ReutersUpdateService
-from superdesk.io import ingest_items
+from superdesk.io.commands.update_ingest import ingest_items
 
 test_user = {'username': 'test_user', 'password': 'test_password'}
 
