@@ -19,10 +19,12 @@ define(['lodash'], function(_) {
         };
 
         $scope.save = function() {
-            $scope.newTask.due_date.setTime($scope.newTask.due_time.getTime());
+            if ($scope.newTask.due_time && $scope.newTask.due_time) {
+                $scope.newTask.due_date.setTime($scope.newTask.due_time.getTime());
+            }
             delete $scope.newTask.due_time;
 
-            api.tasks.save($scope.newTask)
+            api('tasks').save($scope.newTask)
             .then(function(result) {
                 notify.success(gettext('Item saved.'));
                 $scope.close();
@@ -35,7 +37,7 @@ define(['lodash'], function(_) {
         };
 
         var fetchTasks = function() {
-            api.tasks.query()
+            api('tasks').query()
             .then(function(tasks) {
                 $scope.tasks = tasks;
             });

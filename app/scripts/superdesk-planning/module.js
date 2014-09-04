@@ -222,8 +222,8 @@ define([
     	};
     }
 
-    AssigneeBoxDirective.$inject = ['api', 'desks'];
-    function AssigneeBoxDirective(api, desks) {
+    AssigneeBoxDirective.$inject = ['api', 'desks', 'userList'];
+    function AssigneeBoxDirective(api, desks, userList) {
         return {
             templateUrl: 'scripts/superdesk-planning/views/assignee-box.html',
             scope: {
@@ -257,19 +257,7 @@ define([
                 };
 
                 var fetchUsers = function() {
-                    var criteria = {};
-                    if (scope.search) {
-                        criteria.where = JSON.stringify({
-                            '$or': [
-                                {username: {'$regex': scope.search}},
-                                {first_name: {'$regex': scope.search}},
-                                {last_name: {'$regex': scope.search}},
-                                {display_name: {'$regex': scope.search}},
-                                {email: {'$regex': scope.search}}
-                            ]
-                        });
-                    }
-                    api.users.query(criteria)
+                    userList.get(scope.search)
                     .then(function(result) {
                         scope.users = result;
                     });

@@ -124,6 +124,6 @@
 
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="close()" translate>Cancel</button>
-        <button class="btn btn-primary" ng-click="save()" translate>Save</button>
+        <button class="btn btn-primary" ng-disabled="!newTask.assigned_user || !newTask.title" ng-click="save()" translate>Save</button>
     </div>
 </div>
