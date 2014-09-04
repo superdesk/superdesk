@@ -2,7 +2,7 @@
 
 INSTANCE=test
 
-DOCKER_IF="172.17.42.1"
+DOCKER_IF=$(ip addr show docker0 | sed -nr 's/.*inet[ ]+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\/.*/\1/p')
 API_PORT=8080
 WS_PORT=5100
 SERVER_NAME=127.0.0.1:$API_PORT
