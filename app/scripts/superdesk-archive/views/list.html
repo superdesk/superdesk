@@ -20,16 +20,6 @@
             <i class="svg-icon-add inverse"></i> <span class="title" translate>Upload</span>
         </a>
 
-        <div class="navbtn dropdown">
-            <button class="dropdown-toggle condensed"><i class="svg-icon-down"></i></button>
-            <ul class="dropdown-menu pull-right">
-                <li><a href="" ng-click="setView('mgrid')"><i class="icon-th"></i> {{ 'grid view' | translate}}</a></li>
-                <li><a href="" ng-click="setView('mlist')"><i class="icon-th-list"></i> {{ 'list view' | translate}}</a></li>
-                <li><a href="" ng-click="setView('compact')"><i class="icon-th-list"></i> {{ 'compact view' | translate}}</a></li>
-                <li><a href="" ng-click="setView('stats')"><i class="icon-signal"></i> {{ 'statistics' | translate}}</a></li>
-            </ul>
-        </div>
-
         <button class="navbtn">
         	<i class="svg-icon-right"></i>
         </button>
@@ -96,65 +86,74 @@
     </div>
 
     <div class="archive-content">
-        <div class="archive-content-nav " ng-show="view !== 'stats'">
-            <div class="pull-left fitler-trigger" ng-click="sidebarstick = true" ng-class="{hidden: sidebarstick === true}"><i class="icon-filter-large"></i></div>
-            <div sd-searchbar></div>
-            <div sd-pagination data-items="items" data-limit="25"></div>
-        </div>
-
         <div class="preview-layout" ng-class="{closed: !selected.preview}">
-            <div class="archive-content-inner list-pane {{ view }}-view">
-                <div sd-shadow>
-                    <div class="newest-items" ng-show="createdMedia.items.length">
-                        <span translate>Recently added media</span>
+            <div class="list-pane {{ view }}-view">
+                <header ng-show="view !== 'stats'">
+                    <div class="pull-left fitler-trigger" ng-click="sidebarstick = true" ng-class="{hidden: sidebarstick === true}"><i class="icon-filter-large"></i></div>
+                    <div sd-searchbar></div>
+                    <div class="view-select pull-right">
+                        <button title="{{ 'switch to grid view' | translate}}" ng-show="view !== 'mgrid'"><i class="icon-th" ng-click="setView('mgrid')"></i></button>
+                        <button title="{{ 'switch to list view' | translate}}" ng-show="view !== 'compact'"><i class="icon-th-list" ng-click="setView('compact')"></i></button>
+                    </div>
+                    <div sd-pagination data-items="items" data-limit="25"></div>
+                </header>
+                <div class="content">
+                    <div sd-shadow>
+                        <div class="newest-items" ng-show="createdMedia.items.length">
+                            <span translate>Recently added media</span>
+                            <div ng-if="view !== 'stats'"
+                                sd-list-view
+                                data-items="createdMedia.items"
+                                data-select="preview(item)"
+                                data-extras="{view: view, activityFilter: {type: type}, api: api}">
+                                <div sd-media-box 
+                                    ng-if="type === 'archive'"
+                                    sd-draggable
+                                    data-item="item" 
+                                    data-container="'#scratchpad'" 
+                                    class="drag-{{view}}"></div>
+                                <div sd-media-box ng-if="type !== 'archive'"></div>
+                            </div>
+                        </div>
+
                         <div ng-if="view !== 'stats'"
                             sd-list-view
-                            data-items="createdMedia.items"
+                            data-items="items._items"
                             data-select="preview(item)"
                             data-extras="{view: view, activityFilter: {type: type}, api: api}">
                             <div sd-media-box 
                                 ng-if="type === 'archive'"
-                                sd-draggable
+                                sd-draggable 
                                 data-item="item" 
                                 data-container="'#scratchpad'" 
-                                class="drag-{{view}}"></div>
+                                class="{{view}}-view" 
+                                data-cursor="view !== 'mgrid'"></div>
                             <div sd-media-box ng-if="type !== 'archive'"></div>
                         </div>
                     </div>
-
-                    <div ng-if="view !== 'stats'"
-                        sd-list-view
-                        data-items="items._items"
-                        data-select="preview(item)"
-                        data-extras="{view: view, activityFilter: {type: type}, api: api}">
-                        <div sd-media-box 
-                            ng-if="type === 'archive'"
-                            sd-draggable 
-                            data-item="item" 
-                            data-container="'#scratchpad'" 
-                            class="{{view}}-view" 
-                            data-cursor="view !== 'mgrid'"></div>
-                        <div sd-media-box ng-if="type !== 'archive'"></div>
-                    </div>
-                </div>
-                
+                </div>                
             </div>
 
             <div class="preview-pane content-item-preview">
-                <div class="actions" ng-if="selected.preview">
-                    <a ng-click="preview(null)" class="action">
+                <header>
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <button><span translate>Content</span></button>
+                        </li>
+                        <li>
+                            <button><span translate>Metadata</span></button>
+                        </li>
+                    </ul>
+                    <button ng-click="preview(null)" class="close-preview">
                         <i class="icon-close-small"></i>
-                        <i class="icon-close-small icon-white"></i>
-                    </a>
-                    <a ng-click="display(selected.preview)" class="action preview">
-                        <i class="icon-fullscreen"></i>
-                        <i class="icon-fullscreen icon-white"></i>
-                    </a>
+                    </button>
+                </header>
+                <div class="content">
+                    <div sd-shadow ng-if="selected.preview">
+                        <div sd-media-preview data-item="selected.preview" data-display="display()"></div>
+                    </div>
                 </div>
                 
-                <div ng-if="selected.preview">
-                    <div sd-media-preview data-item="selected.preview"></div>
-                </div>
 
             </div>
         </div>

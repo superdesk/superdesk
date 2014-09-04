@@ -141,7 +141,10 @@ define([
             return {
                 replace: true,
                 templateUrl: require.toUrl('./views/preview.html'),
-                scope: {item: '='}
+                scope: {
+                    item: '=',
+                    display: '&'
+                }
             };
         }])
         .directive('sdMediaView', ['keyboardManager', 'api', function(keyboardManager, api) {

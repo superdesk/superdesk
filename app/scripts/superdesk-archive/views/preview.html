@@ -1,8 +1,12 @@
 <div>
-    <div class="header">
-        <ul class="info-list pull-left">
-            <li>{{ 'Source:' | translate }} <span>{{ item.provider }}</span></li>
-            <li>{{ 'Version:' | translate }} <span>{{ item.version }}</span></li>
+    <div class="additional-info">
+        <ul>
+            <li class="date">
+                <p>{{ 'Created' | translate }} {{ item.firstcreated | reldate }}</p>
+                <p>{{ 'Modified' | translate }} {{ item.versioncreated | reldate }}</p>    
+            </li>
+            <li ng-if="item.provider">{{ 'Source:' | translate }} <span>{{ item.provider }}</span></li>
+            <li ng-if="item.version">{{ 'Version:' | translate }} <span>{{ item.version }}</span></li>
         </ul>
     </div>
     <div class="preview-nav" ng-if="item.type === 'composite'">
@@ -15,35 +19,37 @@
        </div>
     </div>
 
-    <div class="content" ng-class="{'with-nav': item.type === 'composite'}">
-        <div sd-shadow>
-            <div sd-item-lock data-item="item"></div>
+    <div class="content-container">
 
-            <div class="date">
-                <p>{{ 'Created' | translate }} {{ item.firstcreated | reldate }}</p>
-                <p>{{ 'Modified' | translate }} {{ item.versioncreated | reldate }}</p>    
-            </div>
-            <!-- item headline -->
+        <div sd-item-lock data-item="item"></div>
+
+        <!-- item headline -->
+        <div class="title-holder">
             <p class="title">{{ item.headline }}</p>
+            <div>
+                <button ng-click="display()" class="fullscreen">
+                    <i class="icon-fullscreen"></i>
+                </button>
+            </div>
+        </div>
 
-            <div class="core-content">
-                
-                <!-- item rendition -->
-                <div sd-item-rendition data-item="item" data-rendition="viewImage"></div>
-                
-                <div ng-if="item.type == 'audio'">
-                    <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
-                </div>
+        <div class="core-content">
+            
+            <!-- item rendition -->
+            <div sd-item-rendition data-item="item" data-rendition="viewImage"></div>
+            
+            <div ng-if="item.type == 'audio'">
+                <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
+            </div>
 
-                <div ng-if="item.type == 'video'">
-                    <video controls="controls" sd-sources data-renditions="item.renditions"></video>
-                </div>
+            <div ng-if="item.type == 'video'">
+                <video controls="controls" sd-sources data-renditions="item.renditions"></video>
+            </div>
 
-                <div class="text" ng-show="item.body_html" sd-html-preview="item.body_html"></div>
+            <div class="text" ng-show="item.body_html" sd-html-preview="item.body_html"></div>
 
-                <div class="composite-preview" ng-if="item.type === 'composite'">
-                    <div sd-package data-item="item"></div>
-                </div>
+            <div class="composite-preview" ng-if="item.type === 'composite'">
+                <div sd-package data-item="item"></div>
             </div>
         </div>
     </div>

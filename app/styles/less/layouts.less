@@ -94,6 +94,19 @@ a:hover {
 	top: 0; right: 0;
 	left: 0; bottom: 0;
 	.transition(right ease 0.2s);
+	.list-pane, .preview-pane {
+		> header {
+			height: 48px;
+			.border-box();
+			border-bottom: 1px solid #dfdfdf;
+		}
+		> .content {
+			position: absolute;
+			top: 48px;
+			left: 0; right: 0; bottom: 0;
+			
+		}
+	}
 	.list-pane {
 		position:absolute;
 		background: @background-main;
@@ -101,13 +114,16 @@ a:hover {
 		right: @sidepreview-width; //sidebar preview static + scrollbar rigth space
 		left: 0; bottom:0;
 		border-right: 1px solid #d0d0d0;
-		.box-shadow(3px 0 5px -2px #d8d8d8);
+		.box-shadow(2px 0 3px -1px #d8d8d8);
 		overflow: auto;
 		overflow-x: hidden;
 		z-index: 1;
 		.transition(right ease 0.2s);
 		.shadow-list-holder {
 			padding: 20px 20px 20px+@bottom-view-padding 20px;
+		}
+		> header {
+			background-color:@sd-background;
 		}
 	}
 	.preview-pane {
@@ -118,6 +134,45 @@ a:hover {
 		background: #fff;
 		overflow-y: auto;
 		.transition(right ease 0.2s);
+		> header {
+			padding: 0 20px;
+			position: relative;
+			.btn {
+				margin-top: 10px;
+			}
+			.close-preview {
+				position: absolute;
+				top: 14px; right: 14px;
+				.opacity(60);
+				background: none;
+				border: 0;
+				padding: 0;
+				&:hover {
+					.opacity(80);
+				}
+			}
+		}
+		> .content {
+			.additional-info {
+				border-bottom: 1px solid #dfdfdf;
+				padding: 10px 20px;
+			}
+		}
+		.action-bar { //overhidding the header
+			position: absolute;
+			top: -96px;
+			left: 0; right: 0;
+			height: 48px;
+			background: #fff;
+			z-index: 1;
+			.border-box();
+			padding: 10px;
+			.transition(all ease 0.2s);
+			border-bottom: 1px solid #dfdfdf;
+			&.show {
+				top: -48px;
+			}
+		}
 	}
 	&.closed {
 		.transition(right ease 0.2s);

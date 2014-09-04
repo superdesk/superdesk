@@ -9,30 +9,33 @@
     </div>
 </div>
 
-<section class="main-section with-subnav planning">
-    <div class="planning-subnav subnav level2">
-        <div sd-searchbar></div>
-    </div>
+<section class="main-section planning">
+    
 
-    <div class="preview-layout">
+    <div class="preview-layout" ng-class="{closed: !selected.item}">
         <div class="list-pane">
-            <div sd-shadow>
-                <form name="addItemForm" ng-submit="addItemForm.$valid && addItem()">
-                    <input type="text" class="add-item" placeholder="{{ 'Add new item' | translate}}" ng-model="newItem.headline" required>
-                </form>
+            <header>
+                <div sd-searchbar></div>
+            </header>
+            <div class="content">
+                <div sd-shadow>
+                    <form name="addItemForm" ng-submit="addItemForm.$valid && addItem()">
+                        <input type="text" class="add-item" placeholder="{{ 'Add new item' | translate}}" ng-model="newItem.headline" required>
+                    </form>
 
-                <div class="items-list">
-                    <div sd-list-view data-items="items._items" data-select="preview(item)">
-                        <div class="planning-item card">
-                            <div class="header">
-                                <h6>{{ item.headline }}</h6>
-                            </div>
-                            <div class="info">
-                                <span ng-show="item.duedate"><i class="icon-desk-time"></i>{{item.duedate}}</span>
-                                <span ng-show="item.tasks"><i class="icon-desk-task"></i>{{item.tasks}}</span>
-                                <span ng-show="item.attachments"><i class="icon-desk-attach"></i>{{item.attachments}}</span>
-                                <span ng-show="item.links"><i class="icon-desk-link"></i>{{item.links}}</span>
-                                <span ng-show="item.comments"><i class="icon-desk-comments"></i>{{item.comments}}</span>
+                    <div class="items-list">
+                        <div sd-list-view data-items="items._items" data-select="preview(item)">
+                            <div class="planning-item card">
+                                <div class="header">
+                                    <h6>{{ item.headline }}</h6>
+                                </div>
+                                <div class="info">
+                                    <span ng-show="item.duedate"><i class="icon-desk-time"></i>{{item.duedate}}</span>
+                                    <span ng-show="item.tasks"><i class="icon-desk-task"></i>{{item.tasks}}</span>
+                                    <span ng-show="item.attachments"><i class="icon-desk-attach"></i>{{item.attachments}}</span>
+                                    <span ng-show="item.links"><i class="icon-desk-link"></i>{{item.links}}</span>
+                                    <span ng-show="item.comments"><i class="icon-desk-comments"></i>{{item.comments}}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -41,7 +44,12 @@
         </div>
 
         <div class="preview-pane">
-        	<div sd-preview-item ng-if="selected.item" data-item="selected.item" data-save="save(item)"></div>
+            <header>
+                <button ng-click="selected.item = null" class="close-preview">
+                    <i class="icon-close-small"></i>
+                </button>
+            </header>
+        	<div class="content" sd-preview-item ng-if="selected.item" data-item="selected.item" data-save="save(item)"></div>
         </div>
 
     </div>

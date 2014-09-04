@@ -1,14 +1,5 @@
-<div>
-	<div class="header">
+<div sd-shadow>
 		<div class="time-info">{{ 'Created' | translate }} <time>{{ item._created | reldate }}</time></div>
-		<div class="dropdown more-actions">
-			<button class="dropdown-toggle"><i class="icon-dots"></i></button>
-			<ul class="dropdown-menu pull-right">
-				<li><button ng-click="add()" translate>Add coverage</button></li>
-			</ul>
-		</div>
-	</div>
-	<div class="content">
 		<form name="itemEditForm" ng-submit="itemEditForm.$valid && save()">
 			<div class="action-buttons clearfix" ng-class="{show: dirty}">
 		        <button type="submit" class="btn btn-info pull-right" ng-disabled="itemEditForm.$invalid || !dirty" translate>Save</button>
@@ -61,5 +52,4 @@
 				</div>
 	        </div>
 		</div>
-	</div>
 </div>

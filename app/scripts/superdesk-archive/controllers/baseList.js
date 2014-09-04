@@ -20,8 +20,8 @@ define(['lodash'], function(_) {
             $location.search('_id', item ? item._id : null);
         };
 
-        $scope.display = function(item) {
-            $scope.selected.view = item;
+        $scope.display = function() {
+            $scope.selected.view = $scope.selected.preview;
         };
 
         $scope.$watchCollection(function() {
