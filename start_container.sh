@@ -9,6 +9,7 @@ SERVER_NAME=127.0.0.1:$API_PORT
 
 docker run \
 	-p $API_PORT:5000 \
+	-p $WS_PORT:5100 \
 	-e SUPERDESK_URL="https://$SERVER_NAME/api" \
 	-e MONGOLAB_URI=mongodb://test:test@$DOCKER_IF:27017/superdesk \
 	-e ELASTICSEARCH_URL=http://$DOCKER_IF:9200 \
