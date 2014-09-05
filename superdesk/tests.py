@@ -14,11 +14,8 @@ test_user = {'username': 'test_user', 'password': 'test_password'}
 
 def get_test_settings():
     test_settings = {}
-    test_settings['ELASTICSEARCH_URL'] = 'http://localhost:9200'
     test_settings['ELASTICSEARCH_INDEX'] = 'sptests'
     test_settings['MONGO_DBNAME'] = 'sptests'
-    test_settings['CELERY_BROKER_URL'] = 'redis://localhost:6379'
-    test_settings['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379'
     test_settings['DEBUG'] = True
     test_settings['TESTING'] = True
     test_settings['BCRYPT_GENSALT_WORK_FACTOR'] = 4
