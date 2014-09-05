@@ -1,4 +1,4 @@
 .git/
 env/
 start_container.sh
-
+.vagrant/

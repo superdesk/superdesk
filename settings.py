@@ -27,12 +27,20 @@ X_HEADERS = ['Content-Type', 'Authorization', 'If-Match']
 MONGO_DBNAME = os.environ.get('MONGO_DBNAME', 'superdesk')
 if os.environ.get('MONGOLAB_URI'):
     MONGO_URI = os.environ.get('MONGOLAB_URI')
+elif os.environ.get('MONGODB_PORT'):
+    MONGO_URI = '{0}/{1}'.format(os.environ.get('MONGODB_PORT').replace('tcp:', 'mongodb:'), MONGO_DBNAME)
+    print('mongo', MONGO_URI)
 
 ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL', 'http://localhost:9200')
 ELASTICSEARCH_INDEX = os.environ.get('ELASTICSEARCH_INDEX', 'superdesk')
+if os.environ.get('ELASTIC_PORT'):
+    ELASTICSEARCH_URL = os.environ.get('ELASTIC_PORT').replace('tcp:', 'http:')
 
-CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379')
-CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379')
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+if os.environ.get('REDIS_PORT'):
+    REDIS_URL = os.environ.get('REDIS_PORT').replace('tcp:', 'redis:')
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', REDIS_URL)
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', REDIS_URL)
 CELERY_ALWAYS_EAGER = (os.environ.get('CELERY_ALWAYS_EAGER', False) == 'True')
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['pickle', 'json']  # it's using pickle when in eager mode
@@ -43,9 +51,6 @@ CELERYBEAT_SCHEDULE = {
         'schedule': timedelta(minutes=5)
     }
 }
-
-REUTERS_USERNAME = os.environ.get('REUTERS_USERNAME', '')
-REUTERS_PASSWORD = os.environ.get('REUTERS_PASSWORD', '')
 
 SENTRY_DSN = os.environ.get('SENTRY_DSN')
 SENTRY_INCLUDE_PATHS = ['superdesk']
