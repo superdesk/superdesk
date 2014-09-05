@@ -122,7 +122,6 @@ Feature: News Items Archive Comments
         """
         {"username": "joe", "display_name": "Joe Black", "email": "joe@black.com"}
         """
-        
         When we post to "/item_comments"
         """
         [{"text": "test comment [no_user] with one user mention [joe]", "item": "xyz"}]
@@ -132,7 +131,10 @@ Feature: News Items Archive Comments
         """
         {"_items": [{"text": "test comment [no_user] with one user mention [joe]", "item": "xyz", "mentioned_users": ["#USERS_ID#"]}]}
         """ 
+        When we get "/users/test_user"
+        Then we get "_id"
         And we get notifications
         """
-        [{"event": "archive_comment_user_mention", "extra": {"mentioned_username": "joe", "user_id": "", "comment_id": "", "item_id": "xyz"}, "_created": ""}]
+        [{"event": "archive_comment_user_mention", "extra": {
+             "mentioned_username": "joe", "user_id": "#_id#", "comment_id": "#ITEM_COMMENTS_ID#", "item_id": "xyz"}, "_created": ""}]
         """

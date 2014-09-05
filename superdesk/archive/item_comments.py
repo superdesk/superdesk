@@ -45,20 +45,16 @@ def get_users_mentions(text):
 
 
 def get_user_ids(usernames):
-    user_ids = []
     req = ParsedRequest()
     users = superdesk.apps['users'].get(req=req, lookup={'username': {'$in': usernames}})
-    for user in users:
-        user_ids.append(user.get('_id'))
+    user_ids = [user.get('_id') for user in users]
     return user_ids
 
 
 def get_usernames(user_ids):
-    usernames = []
     req = ParsedRequest()
     users = superdesk.apps['users'].get(req=req, lookup={'_id': {'$in': user_ids}})
-    for user in users:
-        usernames.append(user.get('username'))
+    usernames = [user.get('username') for user in users]
     return usernames
 
 
