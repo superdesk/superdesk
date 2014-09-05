@@ -19,10 +19,7 @@ comments_schema = {
     'item': BaseModel.rel('archive', True, True, type='string'),
     'user': BaseModel.rel('users', True),
     'mentioned_users': {
-        'type': 'list',
-        'schema': {
-            'type': 'objectid'
-        }
+        'type': 'dict'
     }
 }
 
@@ -44,18 +41,11 @@ def get_users_mentions(text):
     return usernames
 
 
-def get_user_ids(usernames):
+def get_users(usernames):
     req = ParsedRequest()
     users = superdesk.apps['users'].get(req=req, lookup={'username': {'$in': usernames}})
-    user_ids = [user.get('_id') for user in users]
-    return user_ids
-
-
-def get_usernames(user_ids):
-    req = ParsedRequest()
-    users = superdesk.apps['users'].get(req=req, lookup={'_id': {'$in': user_ids}})
-    usernames = [user.get('username') for user in users]
-    return usernames
+    users = {user.get('username'): user.get('_id') for user in users}
+    return users
 
 
 class ItemCommentsModel(BaseModel):
@@ -73,16 +63,15 @@ class ItemCommentsModel(BaseModel):
                 raise superdesk.SuperdeskError(payload=payload)
             doc['user'] = str(user.get('_id'))
             usernames = get_users_mentions(doc.get('text'))
-            doc['mentioned_users'] = get_user_ids(usernames)
+            doc['mentioned_users'] = get_users(usernames)
 
     def on_created(self, docs):
         push_notification('archive_comment', created=1)
         for doc in docs:
-            user_ids = doc.get('mentioned_users')
-            if not user_ids:
+            mentioned_users = doc.get('mentioned_users')
+            if not mentioned_users:
                 continue
-            usernames = get_usernames(user_ids)
-            for username in usernames:
+            for username in mentioned_users.keys():
                 push_notification('archive_comment_user_mention',
                                   item_id=doc.get('item'), comment_id=str(doc.get('_id')),
                                   user_id=doc.get('user'), mentioned_username=username)
