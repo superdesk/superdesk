@@ -32,7 +32,7 @@ class AppContextTask(TaskBase):
 celery.Task = AppContextTask
 
 
-def init_celery(app):
+def init_app(app):
     celery.conf.update(app.config)
     celery.Task.flask_app = app
     app.celery = celery

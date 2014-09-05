@@ -10,8 +10,7 @@ from flask.ext.mail import Mail
 from eve.io.mongo import MongoJSONEncoder
 from eve.render import send_response
 from superdesk import signals
-from superdesk.auth.auth import SuperdeskTokenAuth
-from superdesk.celery_app import init_celery
+from apps.auth.auth import SuperdeskTokenAuth
 from superdesk.storage.desk_media_storage import SuperdeskGridFSMediaStorage
 from superdesk.validator import SuperdeskValidator
 from raven.contrib.flask import Sentry
@@ -77,8 +76,6 @@ def get_app(config=None):
         app.sentry.captureException()
         return_error = superdesk.SuperdeskError(status_code=500)
         return client_error_handler(return_error)
-
-    init_celery(app)
 
     for module_name in app.config['INSTALLED_APPS']:
         app_module = importlib.import_module(module_name)
