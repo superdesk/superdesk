@@ -51,7 +51,7 @@ class IngestProviderModel(BaseModel):
             'allowed': providers.keys()
         },
         'days_to_keep': {
-            'type': int,
+            'type': 'integer',
             'required': True,
             'default': DAYS_TO_KEEP
         },
