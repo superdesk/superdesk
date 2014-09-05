@@ -8,6 +8,8 @@ from flask import json
 import bcrypt
 from superdesk.io.reuters_mock import setup_reuters_mock, teardown_reuters_mock
 from superdesk.io.reuters import ReutersUpdateService
+from superdesk.notification_mock import setup_notification_mock,\
+    teardown_notification_mock
 from superdesk.io.commands.update_ingest import ingest_items
 
 test_user = {'username': 'test_user', 'password': 'test_password'}
@@ -101,6 +103,14 @@ def setup_providers(context):
 
 def teardown_providers(context):
     teardown_reuters_mock(context)
+
+
+def setup_notification(context):
+    setup_notification_mock(context)
+
+
+def teardown_notification(context):
+    teardown_notification_mock(context)
 
 
 class TestCase(unittest.TestCase):

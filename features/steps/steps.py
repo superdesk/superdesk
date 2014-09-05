@@ -817,3 +817,15 @@ def step_impl(context):
     assert_200(context.response)
     context.response_data = json.loads(context.response.get_data())
     assert len(context.response_data['items']['view_items']) == 2
+
+
+@then('we get notifications')
+def then_we_get_notifications(context):
+    notifications_data = []
+    notifications = context.app.notification_client.messages
+    for notification in notifications:
+        notifications_data.append(json.loads(notification))
+
+    context_data = json.loads(apply_placeholders(context, context.text))
+    assert_equal(json_match(context_data, notifications_data), True,
+                 msg=str(context_data) + '\n != \n' + str(notifications_data))
