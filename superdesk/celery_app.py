@@ -7,10 +7,9 @@ Created on May 29, 2014
 
 import redis
 from celery import Celery
-from superdesk import settings
 
 
-celery = Celery(__name__, broker=settings.CELERY_BROKER_URL, backend=settings.CELERY_RESULT_BACKEND)
+celery = Celery(__name__)
 TaskBase = celery.Task
 
 

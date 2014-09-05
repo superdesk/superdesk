@@ -29,7 +29,6 @@ if os.environ.get('MONGOLAB_URI'):
     MONGO_URI = os.environ.get('MONGOLAB_URI')
 elif os.environ.get('MONGODB_PORT'):
     MONGO_URI = '{0}/{1}'.format(os.environ.get('MONGODB_PORT').replace('tcp:', 'mongodb:'), MONGO_DBNAME)
-    print('mongo', MONGO_URI)
 
 ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL', 'http://localhost:9200')
 ELASTICSEARCH_INDEX = os.environ.get('ELASTICSEARCH_INDEX', 'superdesk')

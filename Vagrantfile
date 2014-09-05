@@ -26,7 +26,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         end
     end
 
-    config.vm.define "superdesk-server" do |app|
+    config.vm.define "superdesk" do |app|
         app.vm.provider "docker" do |d|
             d.build_dir = "."
             d.cmd = ["start"]
@@ -34,6 +34,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             d.link "mongodb:mongodb"
             d.link "elastic:elastic"
             d.link "redis:redis"
+            d.name = "superdesk"
+            d.build_args = ["--tag='superdesk/server'"]
         end
     end
 end
