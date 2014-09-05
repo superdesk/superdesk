@@ -19,7 +19,13 @@ def before_scenario(context, scenario):
     if 'provider' in scenario.tags:
         tests.setup_providers(context)
 
+    if 'notification' in scenario.tags:
+        tests.setup_notification(context)
+
 
 def after_scenario(context, scenario):
     if 'provider' in scenario.tags:
         tests.teardown_providers(context)
+
+    if 'notification' in scenario.tags:
+        tests.teardown_notification(context)
