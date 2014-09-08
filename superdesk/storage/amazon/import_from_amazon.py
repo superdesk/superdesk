@@ -2,7 +2,7 @@
 
 import superdesk
 import json
-from superdesk.file_meta.image import get_meta
+from superdesk.media.image import get_meta
 from eve.utils import ParsedRequest
 import xml.etree.ElementTree as etree
 from flask.globals import current_app as app

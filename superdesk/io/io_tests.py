@@ -1,6 +1,6 @@
 import os
 import unittest
-from ..etree import etree
+from superdesk.etree import etree
 import test
 
 from superdesk.io import newsml_2_0
