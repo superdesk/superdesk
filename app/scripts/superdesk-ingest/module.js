@@ -24,6 +24,10 @@ define([
         reuters: {
             label: 'Reuters',
             templateUrl: require.toUrl('./views/settings/reutersConfig.html')
+        },
+        afp: {
+            label: 'AFP',
+            templateUrl: require.toUrl('./views/settings/afpConfig.html')
         }
     });
 
