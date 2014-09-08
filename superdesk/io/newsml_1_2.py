@@ -39,7 +39,15 @@ class Parser():
         return self.populate_fields(item)
 
     def parse_elements(self, tree):
-        items = {item.tag: item.text for item in tree}
+        items = {}
+        for item in tree:
+            if item.text is None:
+                #read the attribute for the item
+                if item.tag != 'HeadLine':
+                    items[item.tag] = item.attrib
+            else:
+                #read the value for the item
+                items[item.tag] = item.text
         return items
 
     def parse_multivalued_elements(self, tree):
@@ -70,12 +78,16 @@ class Parser():
         item['guid'] = item['NewsIdentifier']['PublicIdentifier']
         item['provider'] = item['Provider'][0]['FormalName']
         item['type'] = 'text'
-        item['urgency'] = item['NewsManagement']['Urgency']
+        item['urgency'] = item['NewsManagement']['Urgency']['FormalName']
         item['version'] = item['NewsIdentifier']['RevisionId']
         item['versioncreated'] = self.datetime(item['NewsManagement']['ThisRevisionCreated'])
         item['firstcreated'] = self.datetime(item['NewsManagement']['FirstCreated'])
-        item['pubstatus'] = item['NewsManagement']['Status']
+        item['pubstatus'] = item['NewsManagement']['Status']['FormalName']
         item['subject'] = item['Subjects']
-        item['headline'] = item['NewsLines']['HeadLine']
+
+        if 'HeadLine' in item['NewsLines']:
+            item['headline'] = item['NewsLines']['HeadLine']
+        elif item['NewsManagement']['NewsItemType']['FormalName'] == 'Alert':
+            item['headline'] = 'Alert'
 
         return item
