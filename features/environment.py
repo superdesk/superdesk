@@ -1,5 +1,5 @@
 from superdesk import tests
-from apps.io.tests import setup_providers, teardown_providers
+from superdesk.io.tests import setup_providers, teardown_providers
 
 
 def before_all(context):

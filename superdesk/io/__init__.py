@@ -2,7 +2,7 @@
 
 import logging
 import superdesk
-from superdesk.base_model import BaseModel
+from superdesk.models import BaseModel
 from superdesk.celery_app import celery
 from .reuters import ReutersUpdateService, PROVIDER as ReutersName
 from .aap import AAPIngestService, PROVIDER as AAPName
@@ -23,7 +23,7 @@ superdesk.provider(AAPName, AAPIngestService())
 from .commands.remove_expired_content import RemoveExpiredContent
 from .commands.update_ingest import UpdateIngest
 from .commands.add_provider import AddProvider  # NOQA
-import apps.io.subjectcodes  # NOQA
+import superdesk.io.subjectcodes  # NOQA
 
 
 @celery.task()

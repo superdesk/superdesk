@@ -1,4 +1,4 @@
-from superdesk.base_model import BaseModel
+from superdesk.models import BaseModel
 from apps.item_lock.components.item_lock import ItemLock
 from apps.item_lock.models.io.eve import Eve
 from flask import request

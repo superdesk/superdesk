@@ -1,5 +1,5 @@
 
-from superdesk.base_model import BaseModel, build_custom_hateoas
+from superdesk.models import BaseModel, build_custom_hateoas
 
 from .archive import ArchiveModel
 

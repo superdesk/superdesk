@@ -51,16 +51,15 @@ SENTRY_DSN = os.environ.get('SENTRY_DSN')
 SENTRY_INCLUDE_PATHS = ['superdesk']
 
 INSTALLED_APPS = (
-    'superdesk.celery_app',  # this must be the first one
-    'apps.io',
     'apps.auth',
     'apps.users',
+    'superdesk.upload',
+    'superdesk.notification',
+    'superdesk.storage.amazon.import_from_amazon',
+    'superdesk.io',
     'apps.archive',
     'apps.activity',
-    'apps.upload',
     'apps.desks',
-    'superdesk.storage.amazon.import_from_amazon',
-    'superdesk.notification',
     'apps.planning',
     'apps.coverages',
     'apps.tasks',

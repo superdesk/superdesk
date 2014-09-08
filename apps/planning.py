@@ -1,5 +1,5 @@
 from superdesk.notification import push_notification
-from superdesk.base_model import BaseModel
+from superdesk.models import BaseModel
 from apps.archive.common import on_create_item
 
 

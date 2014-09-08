@@ -5,7 +5,7 @@ from flask import current_app as app
 import flask
 
 import superdesk
-from superdesk.base_model import BaseModel
+from superdesk.models import BaseModel
 from superdesk.notification import push_notification
 
 

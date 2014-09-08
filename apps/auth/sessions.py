@@ -1,4 +1,4 @@
-from superdesk.base_model import BaseModel
+from superdesk.models import BaseModel
 
 
 class SesssionsModel(BaseModel):

@@ -5,7 +5,7 @@ import superdesk
 import superdesk.utils as utils
 from flask import json, current_app as app, request
 from eve.auth import TokenAuth
-from superdesk.base_model import BaseModel
+from superdesk.models import BaseModel
 import bcrypt
 
 

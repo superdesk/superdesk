@@ -1,4 +1,4 @@
-from superdesk.base_model import BaseModel
+from superdesk.models import BaseModel
 from .common import base_schema, extra_response_fields, item_url, facets
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from .common import get_user

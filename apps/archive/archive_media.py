@@ -1,8 +1,8 @@
 from flask import abort, current_app as app
 from media.media_operations import process_file_from_stream, decode_metadata
 from media.renditions import generate_renditions, delete_file_on_error
-from superdesk.base_model import BaseModel
-from apps.upload import url_for_media
+from superdesk.models import BaseModel
+from superdesk.upload import url_for_media
 from superdesk.utc import utcnow
 from eve.utils import config
 from .common import base_schema, item_url, update_dates_for, generate_guid, GUID_TAG, ARCHIVE_MEDIA, set_user

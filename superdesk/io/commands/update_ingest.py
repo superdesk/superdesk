@@ -3,7 +3,7 @@ import superdesk
 from superdesk.utc import utcnow
 from flask import current_app as app
 from superdesk.notification import push_notification
-from apps.io import providers
+from superdesk.io import providers
 
 logger = logging.getLogger(__name__)
 

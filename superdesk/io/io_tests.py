@@ -3,7 +3,7 @@ import unittest
 from superdesk.etree import etree
 import test
 
-from io import newsml
+from superdesk.io import newsml
 
 
 class ItemTest(unittest.TestCase):

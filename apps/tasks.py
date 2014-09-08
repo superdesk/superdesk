@@ -1,4 +1,4 @@
-from superdesk.base_model import BaseModel
+from superdesk.models import BaseModel
 from superdesk.notification import push_notification
 from superdesk.utc import utcnow
 

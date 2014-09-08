@@ -5,7 +5,7 @@ from eve.utils import ParsedRequest
 
 import superdesk
 from .common import base_schema, get_user
-from superdesk.base_model import BaseModel, build_custom_hateoas
+from superdesk.models import BaseModel, build_custom_hateoas
 from superdesk.json_path_tool import json_merge_values, json_copy_values
 
 

@@ -8,17 +8,17 @@ from celery.canvas import chord
 import flask
 
 import superdesk
-from apps.io import providers
+from superdesk.io import providers
 
 from superdesk.utc import utc, utcnow
 from superdesk.celery_app import celery, finish_task_for_progress,\
     finish_subtask_from_progress, add_subtask_to_progress
 from celery.result import AsyncResult
 from flask.globals import current_app as app
-from apps.upload import url_for_media
+from superdesk.upload import url_for_media
 from media.media_operations import download_file_from_url,\
     process_file
-from superdesk.base_model import BaseModel
+from superdesk.models import BaseModel
 from celery.exceptions import Ignore
 from celery import states
 from .common import facets

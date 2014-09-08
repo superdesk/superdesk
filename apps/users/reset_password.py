@@ -1,6 +1,6 @@
 import superdesk
 from flask import current_app as app
-from superdesk.base_model import BaseModel
+from superdesk.models import BaseModel
 from superdesk.utils import get_random_string
 from superdesk.emails import send_email
 from settings import RESET_PASSWORD_TOKEN_TIME_TO_LIVE as token_ttl

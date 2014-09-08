@@ -4,7 +4,7 @@ import flask
 
 from eve.methods.post import post_internal
 from superdesk.notification import push_notification
-from superdesk.base_model import BaseModel
+from superdesk.models import BaseModel
 
 
 log = logging.getLogger(__name__)

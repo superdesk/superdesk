@@ -4,7 +4,7 @@ import bcrypt
 from flask import current_app as app
 
 import superdesk
-from superdesk.base_model import BaseModel
+from superdesk.models import BaseModel
 from superdesk.utc import utcnow
 from apps.activity import add_activity
 
