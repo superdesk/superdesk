@@ -42,8 +42,10 @@ function ViewsCtrlFactory(api, session) {
             orig = view;
 
             this.flags = {};
-            if (view.filter && view.filter.query.filtered) {
+            try {
                 this.flags.query = view.filter.query.filtered.query.query_string.query;
+            } catch (err) {
+                this.flags.query = null;
             }
 
             this._issues = null;
