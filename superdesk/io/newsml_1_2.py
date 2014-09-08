@@ -42,11 +42,11 @@ class Parser():
         items = {}
         for item in tree:
             if item.text is None:
-                #read the attribute for the item
+                # read the attribute for the item
                 if item.tag != 'HeadLine':
                     items[item.tag] = item.attrib
             else:
-                #read the value for the item
+                # read the value for the item
                 items[item.tag] = item.text
         return items
 
