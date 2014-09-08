@@ -33,7 +33,7 @@ def check_item_valid(item_id):
 
 def get_users_mentions(text):
     usernames = []
-    pattern = re.compile("\[([a-zA-Z]\w+)\]")
+    pattern = re.compile("(^|\s)\@([a-zA-Z0-9-_.]\w+)")
     for match in re.finditer(pattern, text):
         for username in match.groups():
             if username not in usernames:
