@@ -6,7 +6,7 @@ import datetime
 import superdesk
 
 from superdesk.utc import utcnow
-from .newsml import Parser
+from .newsml_2_0 import Parser
 from .reuters_token import get_token
 from ..utc import utc
 from ..etree import etree

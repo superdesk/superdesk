@@ -6,6 +6,7 @@ from superdesk.base_model import BaseModel
 from superdesk.celery_app import celery
 from superdesk.io.reuters import ReutersUpdateService, PROVIDER as ReutersName
 from superdesk.io.aap import AAPIngestService, PROVIDER as AAPName
+from superdesk.io.afp import AFPIngestService, PROVIDER as AFPName
 
 DAYS_TO_KEEP = 2
 logger = logging.getLogger(__name__)
@@ -19,6 +20,7 @@ superdesk.provider = register_provider
 
 superdesk.provider(ReutersName, ReutersUpdateService())
 superdesk.provider(AAPName, AAPIngestService())
+superdesk.provider(AFPName, AFPIngestService())
 
 from superdesk.io.commands.remove_expired_content import RemoveExpiredContent
 from superdesk.io.commands.update_ingest import UpdateIngest
@@ -51,7 +53,7 @@ class IngestProviderModel(BaseModel):
             'allowed': providers.keys()
         },
         'days_to_keep': {
-            'type': int,
+            'type': 'integer',
             'required': True,
             'default': DAYS_TO_KEEP
         },

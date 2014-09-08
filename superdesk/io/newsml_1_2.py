@@ -1,10 +1,10 @@
 
 import datetime
 from ..etree import etree
-from .iptc import subject_codes
+
 
 class Parser():
-    """NewsMl xml parser"""
+    """NewsMl xml 1.2 parser"""
 
     def parse_message(self, tree):
         """Parse NewsMessage."""
@@ -14,9 +14,12 @@ class Parser():
         item['NewsIdentifier'] = self.parse_elements(tree.find('NewsItem/Identification/NewsIdentifier'))
         item['NewsManagement'] = self.parse_elements(tree.find('NewsItem/NewsManagement'))
         item['NewsLines'] = self.parse_elements(tree.find('NewsItem/NewsComponent/NewsLines'))
-        item['Provider'] = self.parse_attributes_as_dictionary(tree.find('NewsItem/NewsComponent/AdministrativeMetadata/Provider'))
-        item['DescriptiveMetadata'] = self.parse_multivalued_elements(tree.find('NewsItem/NewsComponent/DescriptiveMetadata'))
-        item['located'] = self.parse_attributes_as_dictionary(tree.find('NewsItem/NewsComponent/DescriptiveMetadata/Location'))
+        item['Provider'] = self.parse_attributes_as_dictionary(
+            tree.find('NewsItem/NewsComponent/AdministrativeMetadata/Provider'))
+        item['DescriptiveMetadata'] = self.parse_multivalued_elements(
+            tree.find('NewsItem/NewsComponent/DescriptiveMetadata'))
+        item['located'] = self.parse_attributes_as_dictionary(
+            tree.find('NewsItem/NewsComponent/DescriptiveMetadata/Location'))
 
         keywords = tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/Property')
         item['keywords'] = self.parse_attribute_values(keywords, 'Keyword')
@@ -26,9 +29,12 @@ class Parser():
         subjects += tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/SubjectCode/Subject')
 
         item['Subjects'] = self.parse_attributes_as_dictionary(subjects)
-        item['ContentItem'] = self.parse_attributes_as_dictionary(tree.find('NewsItem/NewsComponent/ContentItem'))
-        #item['Content'] = etree.tostring(tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'))
-        item['body_html'] = etree.tostring(tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'))
+        item['ContentItem'] = self.parse_attributes_as_dictionary(
+            tree.find('NewsItem/NewsComponent/ContentItem'))
+        # item['Content'] = etree.tostring(
+        #       tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'))
+        item['body_html'] = etree.tostring(
+            tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'))
 
         return self.populate_fields(item)
 
@@ -39,7 +45,7 @@ class Parser():
     def parse_multivalued_elements(self, tree):
         items = {}
         for item in tree:
-            if not item.tag in items:
+            if item.tag not in items:
                 items[item.tag] = [item.text]
             else:
                 items[item.tag].append(item.text)
@@ -73,4 +79,3 @@ class Parser():
         item['headline'] = item['NewsLines']['HeadLine']
 
         return item
-

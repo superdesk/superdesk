@@ -53,18 +53,16 @@ class AFPIngestService(object):
                             item['created'] = item['firstcreated']
                             item['updated'] = item['versioncreated']
                             item.setdefault('provider', provider.get('name', provider['type']))
-                            self.move_the_current_file(filename, success = True)
+                            self.move_the_current_file(filename, success=True)
                             yield [item]
         except (Exception) as err:
             logger.exception(err)
-            self.move_the_current_file(filename, success = False)
+            self.move_the_current_file(filename, success=False)
             pass
         finally:
             push_notification('ingest:update')
 
-
-
-    def move_the_current_file(self, filename, success = True):
+    def move_the_current_file(self, filename, success=True):
         try:
             if not os.path.exists(os.path.join(self.path, "_PROCESSED/")):
                 os.makedirs(os.path.join(self.path, "_PROCESSED/"))
