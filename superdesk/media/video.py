@@ -1,7 +1,7 @@
 from hachoir.stream import InputIOStream
 from hachoir.parser import guessParser
 from hachoir.metadata import extractMetadata
-import json
+from flask import json
 import logging
 
 

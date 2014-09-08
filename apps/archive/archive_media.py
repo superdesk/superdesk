@@ -1,6 +1,6 @@
 from flask import abort, current_app as app
-from media.media_operations import process_file_from_stream, decode_metadata
-from media.renditions import generate_renditions, delete_file_on_error
+from superdesk.media.media_operations import process_file_from_stream, decode_metadata
+from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from superdesk.models import BaseModel
 from superdesk.upload import url_for_media
 from superdesk.utc import utcnow
