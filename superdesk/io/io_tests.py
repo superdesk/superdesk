@@ -3,7 +3,7 @@ import unittest
 from superdesk.etree import etree
 import test
 
-from superdesk.io import newsml
+from superdesk.io import newsml_2_0
 
 
 class ItemTest(unittest.TestCase):
@@ -13,7 +13,7 @@ class ItemTest(unittest.TestCase):
         fixture = os.path.join(dirname, 'fixtures', filename)
         with open(fixture) as f:
             self.tree = etree.fromstring(f.read().encode('utf-8'))
-        parser = newsml.Parser()
+        parser = newsml_2_0.Parser()
         self.item = parser.parse_message(self.tree)[0]
 
 

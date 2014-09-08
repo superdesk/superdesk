@@ -12,7 +12,7 @@ def is_package(item):
 
 
 class Parser():
-    """NewsMl xml parser"""
+    """NewsMl xml 2.0 parser"""
 
     def parse_message(self, tree):
         """Parse NewsMessage."""
