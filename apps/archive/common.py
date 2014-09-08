@@ -6,6 +6,7 @@ from superdesk import SuperdeskError
 from superdesk.notification import push_notification
 import flask
 import superdesk
+from superdesk.models import BaseModel
 
 
 GUID_TAG = 'tag'
@@ -80,7 +81,9 @@ base_schema = {
     },
     'type': {
         'type': 'string',
-        'required': True
+        'required': True,
+        'allowed': ['text', 'audio', 'video', 'picture', 'graphic', 'composite'],
+        'default': 'text'
     },
     'mimetype': {
         'type': 'string'
@@ -158,10 +161,7 @@ base_schema = {
     'creator': {
         'type': 'dict',
         'schema': {
-            'user': {
-                'type': 'objectid',
-                'data_relation': {'resource': 'users', 'field': '_id', 'embeddable': True}
-            }
+            'user': BaseModel.rel('users', True)
         }
     },
     'media_file': {
@@ -175,7 +175,19 @@ base_schema = {
     },
     'task_id': {
         'type': 'string'
-    }
+    },
+    'status': {
+        'type': 'string',
+        'allowed': ['todo', 'in-progress', 'done'],
+        'default': 'todo',
+        'required': True
+    },
+    'due_date': {'type': 'datetime'},
+    'started_at': {'type': 'datetime'},
+    'finished_at': {'type': 'datetime'},
+    'assigned_user': BaseModel.rel('users', True),
+    'assigned_desk': BaseModel.rel('desks', True),
+    'assigned_basket': BaseModel.rel('content_view', True)
 }
 
 item_url = 'regex("[\w,.:_-]+")'

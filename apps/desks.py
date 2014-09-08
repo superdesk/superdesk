@@ -16,7 +16,8 @@ desks_schema = {
                 'user': BaseModel.rel('users', True)
             }
         }
-    }
+    },
+    'incoming_basket': BaseModel.rel('content_view', True)
 }
 
 
