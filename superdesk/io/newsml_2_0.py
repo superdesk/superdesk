@@ -1,6 +1,6 @@
 
 import datetime
-from ..etree import etree
+from superdesk.etree import etree
 from .iptc import subject_codes
 
 XMLNS = 'http://iptc.org/std/nar/2006-10-01/'

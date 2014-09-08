@@ -3,7 +3,7 @@ import os
 from datetime import datetime, timedelta
 
 from .nitf import parse
-from ..utc import utc, utcnow, timezone
+from superdesk.utc import utc, utcnow, timezone
 
 PROVIDER = 'aap'
 

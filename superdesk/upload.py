@@ -3,7 +3,7 @@ import logging
 import superdesk
 from eve.utils import config
 from superdesk import SuperdeskError
-from superdesk.base_model import BaseModel
+from .models import BaseModel
 from flask import url_for, Response, current_app as app, json
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from superdesk.media.media_operations import download_file_from_url, process_file_from_stream, \

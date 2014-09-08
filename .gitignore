@@ -6,7 +6,6 @@
 *.pid
 .ropeproject
 static/*
-media/*
 upload/*
 .coverage
 celerybeat-schedule.db

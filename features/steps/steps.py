@@ -634,6 +634,7 @@ def step_impl_then_get_key(context, key):
     assert_200(context.response)
     expect_json_contains(context.response, key)
     item = json.loads(context.response.get_data())
+    print('item: ', item)
     set_placeholder(context, '%s' % key, item[key])
 
 
@@ -817,3 +818,12 @@ def step_impl(context):
     assert_200(context.response)
     context.response_data = json.loads(context.response.get_data())
     assert len(context.response_data['items']['view_items']) == 2
+
+
+@then('we get notifications')
+def then_we_get_notifications(context):
+    notifications = context.app.notification_client.messages
+    notifications_data = [json.loads(notification) for notification in notifications]
+    context_data = json.loads(apply_placeholders(context, context.text))
+    assert_equal(json_match(context_data, notifications_data), True,
+                 msg=str(context_data) + '\n != \n' + str(notifications_data))

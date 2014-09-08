@@ -9,8 +9,8 @@ import logging
 from flask import json
 import requests
 import superdesk
-from superdesk.file_meta.image import get_meta
-from superdesk.file_meta.video import get_meta as video_meta
+from .image import get_meta
+from .video import get_meta as video_meta
 
 logger = logging.getLogger(__name__)
 

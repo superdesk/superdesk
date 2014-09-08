@@ -8,8 +8,8 @@ import superdesk
 from superdesk.utc import utcnow
 from .newsml_2_0 import Parser
 from .reuters_token import get_token
-from ..utc import utc
-from ..etree import etree
+from superdesk.utc import utc
+from superdesk.etree import etree
 from urllib.parse import urlparse, urlunparse
 
 PROVIDER = 'reuters'

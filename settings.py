@@ -39,7 +39,7 @@ CELERY_ACCEPT_CONTENT = ['pickle', 'json']  # it's using pickle when in eager mo
 
 CELERYBEAT_SCHEDULE = {
     'fetch_ingest': {
-        'task': 'superdesk.io.fetch_ingest',
+        'task': 'apps.io.fetch_ingest',
         'schedule': timedelta(minutes=5)
     }
 }
@@ -51,19 +51,18 @@ SENTRY_DSN = os.environ.get('SENTRY_DSN')
 SENTRY_INCLUDE_PATHS = ['superdesk']
 
 INSTALLED_APPS = (
-    'superdesk.io',
-    'superdesk.auth',
-    'superdesk.users',
-    'superdesk.archive',
-    'superdesk.activity',
+    'apps.auth',
+    'apps.users',
     'superdesk.upload',
-    'superdesk.desks',
-    'superdesk.subjectcodes',
-    'superdesk.storage.amazon.import_from_amazon',
     'superdesk.notification',
-    'superdesk.planning',
-    'superdesk.coverages',
-    'superdesk.tasks',
+    'superdesk.storage.amazon.import_from_amazon',
+    'superdesk.io',
+    'apps.archive',
+    'apps.activity',
+    'apps.desks',
+    'apps.planning',
+    'apps.coverages',
+    'apps.tasks',
 )
 
 RESOURCE_METHODS = ['GET', 'POST']

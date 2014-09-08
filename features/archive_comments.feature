@@ -103,3 +103,38 @@ Feature: News Items Archive Comments
         """
         {"_issues": {"item": "value 'xyz' must exist in resource 'archive', field '_id'."}, "_status": "ERR", "_error": {"code": 400, "message": "Insertion failure: 1 document(s) contain(s) error(s)"}}
         """
+        
+        
+    @auth
+    @notification
+    Scenario: Create comment for item with user one mentions
+        Given "archive"
+        """
+        [{"_id": "xyz", "guid": "testid", "headline": "test"}]
+        """
+        Given empty "item_comments"
+        
+        When we post to "/users"
+        """
+        {"username": "joe", "display_name": "Joe Black", "email": "joe@black.com"}
+        """
+        Then we get new resource
+        """
+        {"username": "joe", "display_name": "Joe Black", "email": "joe@black.com"}
+        """
+        When we post to "/item_comments"
+        """
+        [{"text": "test comment @no_user with one user mention @joe", "item": "xyz"}]
+        """
+        And we get "/item_comments"
+        Then we get list with 1 items
+        """
+        {"_items": [{"text": "test comment @no_user with one user mention @joe", "item": "xyz", "mentioned_users": {"joe": "#USERS_ID#"}}]}
+        """ 
+        When we get "/users/test_user"
+        Then we get "_id"
+        And we get notifications
+        """
+        [{"event": "archive_comment_user_mention", "extra": {
+             "mentioned_username": "joe", "user_id": "#_id#", "comment_id": "#ITEM_COMMENTS_ID#", "item_id": "xyz"}, "_created": ""}]
+        """
