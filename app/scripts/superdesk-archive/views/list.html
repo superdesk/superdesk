@@ -167,8 +167,8 @@
         <h3 translate ng-hide="views.edited._id">Add New View</h3>
     </div>
 
+    <form name="editView">
     <div class="modal-body">
-        <form name="editForm">
             <div class="popup-subnav">
                 <ul class="nav nav-tabs">
                     <li ng-class="{'active': !views.flags.next}">
@@ -183,9 +183,9 @@
                 <fieldset>
                     <div class="field">
                         <label translate>Name</label>
-                        <input type="text" class="fullwidth-input" ng-model="views.edited.name" required />
+                        <input name="name" type="text" class="fullwidth-input" ng-model="views.edited.name" required />
 
-                        <div ng-show="views._issues.name" sd-valid-info>
+                        <div ng-show="editView.name.$error.required" sd-valid-info>
                             <i class="icon-info-sign-warning"></i>
                             <span translate>name is required</span>
                         </div>
@@ -204,9 +204,9 @@
                 <fieldset>
                     <div class="field">
                         <label translate>Filter query</label>
-                        <input type="text" class="fullwidth-input" ng-model="views.flags.query" required />
+                        <input name="filter" type="text" class="fullwidth-input" ng-model="views.flags.query" required />
 
-                        <div ng-show="views._issues.filter.required" sd-valid-info>
+                        <div ng-show="editView.filter.$error.required" sd-valid-info>
                             <i class="icon-info-sign-warning"></i>
                             <span translate>filter is required</span>
                         </div>
@@ -218,12 +218,12 @@
                     </div>
                 </fieldset>
             </div>
-        </form>
     </div>
 
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="views.cancel() && cancel()" translate>Cancel</button>
         <button class="btn btn-primary" ng-click="views.flags.next=true" ng-show="!views.flags.next" translate>Next</button>
-        <button class="btn btn-primary" ng-click="views.save()" ng-show="views.flags.next" translate>Save</button>
+        <button class="btn btn-primary" ng-click="views.save()" ng-show="views.flags.next" ng-disabled="editView.$invalid" translate>Save</button>
     </div>
+    </form>
 </div>
