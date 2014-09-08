@@ -124,12 +124,12 @@ Feature: News Items Archive Comments
         """
         When we post to "/item_comments"
         """
-        [{"text": "test comment [no_user] with one user mention [joe]", "item": "xyz"}]
+        [{"text": "test comment @no_user with one user mention @joe", "item": "xyz"}]
         """
         And we get "/item_comments"
         Then we get list with 1 items
         """
-        {"_items": [{"text": "test comment [no_user] with one user mention [joe]", "item": "xyz", "mentioned_users": {"joe": "#USERS_ID#"}}]}
+        {"_items": [{"text": "test comment @no_user with one user mention @joe", "item": "xyz", "mentioned_users": {"joe": "#USERS_ID#"}}]}
         """ 
         When we get "/users/test_user"
         Then we get "_id"
