@@ -11,17 +11,17 @@ def init_app(app):
 class TaskModel(BaseModel):
     endpoint_name = 'tasks'
     datasource = {'source': 'archive'}
-    schema = {k: base_schema[k] for k in ('slugline', 'description_text', 'type', 'status', 'assigned_user',
-                                          'assigned_desk', 'assigned_basket', 'due_date', 'started_at', 'finished_at')}
+    schema = {k: base_schema[k] for k in ('slugline', 'description_text', 'type', 'task')}
     schema.update({'planning_item': BaseModel.rel('planning', True, type='string')})
 
     def update_times(self, doc):
-        status = doc.get('status', None)
+        task = doc.get('task', {})
+        status = task.get('status', None)
         if status == 'in-progress':
-            doc.setdefault('started_at', utcnow())
+            task.setdefault('started_at', utcnow())
 
         if status == 'done':
-            doc.setdefault('finished_at', utcnow())
+            task.setdefault('finished_at', utcnow())
 
     def on_create(self, docs):
         for doc in docs:

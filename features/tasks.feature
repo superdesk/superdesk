@@ -16,12 +16,12 @@ Feature: Tasks
         """
         When we post to "tasks"
 	    """
-	    [{"slugline": "first task", "type": "text", "assigned_user": "#USERS_ID#"}]
+        [{"slugline": "first task", "type": "text", "task": {"assigned_user": "#USERS_ID#"}}]
 	    """
         And we get "/tasks"
         Then we get list with 1 items
 	    """
-	    {"_items": [{"slugline": "first task", "type": "text", "assigned_user": "#USERS_ID#"}]}
+        {"_items": [{"slugline": "first task", "type": "text", "task": {"assigned_user": "#USERS_ID#"}}]}
 	    """
 
     @auth
@@ -55,11 +55,11 @@ Feature: Tasks
         """
         When we post to "tasks"
 	    """
-	    [{"slugline": "first task", "type": "text", "assigned_user": "#USERS_ID#"}]
+        [{"slugline": "first task", "type": "text", "task": {"assigned_user": "#USERS_ID#"}}]
 	    """
         And we patch latest
         """
-        {"description_text": "second task modified", "assigned_desk":"#DESKS_ID#"}
+        {"description_text": "second task modified", "task": {"status": "in-progress", "assigned_desk":"#DESKS_ID#"}}
         """
         Then we get updated response
 
@@ -77,7 +77,7 @@ Feature: Tasks
         """
         When we post to "tasks"
 	    """
-	    [{"slugline": "first task", "type": "text", "assigned_user": "#USERS_ID#"}]
+        [{"slugline": "first task", "type": "text", "task": {"assigned_user": "#USERS_ID#"}}]
 	    """
         And we patch latest
         """
@@ -96,7 +96,7 @@ Feature: Tasks
         """
         When we post to "tasks"
 	    """
-	    [{"slugline": "first task", "type": "text", "assigned_user": "#USERS_ID#"}]
+        [{"slugline": "first task", "type": "text", "task": {"assigned_user": "#USERS_ID#"}}]
 	    """
         And we delete latest
         Then we get deleted response

@@ -176,18 +176,23 @@ base_schema = {
     'task_id': {
         'type': 'string'
     },
-    'status': {
-        'type': 'string',
-        'allowed': ['todo', 'in-progress', 'done'],
-        'default': 'todo',
-        'required': True
-    },
-    'due_date': {'type': 'datetime'},
-    'started_at': {'type': 'datetime'},
-    'finished_at': {'type': 'datetime'},
-    'assigned_user': BaseModel.rel('users', True),
-    'assigned_desk': BaseModel.rel('desks', True),
-    'assigned_basket': BaseModel.rel('content_view', True)
+    'task': {
+        'type': 'dict',
+        'schema': {
+            'status': {
+                'type': 'string',
+                'allowed': ['todo', 'in-progress', 'done'],
+                'default': 'todo',
+                'required': True
+            },
+            'due_date': {'type': 'datetime'},
+            'started_at': {'type': 'datetime'},
+            'finished_at': {'type': 'datetime'},
+            'assigned_user': BaseModel.rel('users', True),
+            'assigned_desk': BaseModel.rel('desks', True),
+            'assigned_basket': BaseModel.rel('content_view', True)
+        }
+    }
 }
 
 item_url = 'regex("[\w,.:_-]+")'
