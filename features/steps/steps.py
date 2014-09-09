@@ -770,7 +770,7 @@ def we_post_to_reset_password(context):
         assert len(outbox) == 1
         assert outbox[0].subject == "Reset password"
         email_text = outbox[0].body
-        assert "24" in email_text
+        assert "0.5" in email_text
         words = re.split('\W+', email_text)
         token = words[words.index("token") + 1]
         assert token

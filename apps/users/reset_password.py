@@ -19,13 +19,13 @@ reset_schema = {
 
 
 def send_reset_password_email(doc):
-    from settings import ADMINS, RESET_PASSWORD_TOKEN_TIME_TO_LIVE as expiration_time
+    from settings import ADMINS
     from flask import render_template
     send_email.delay(subject='Reset password',
                      sender=ADMINS[0],
                      recipients=[doc['email']],
-                     text_body=render_template("reset_password.txt", user=doc, expires=expiration_time),
-                     html_body=render_template("reset_password.html", user=doc, expires=expiration_time))
+                     text_body=render_template("reset_password.txt", user=doc, expires=token_ttl),
+                     html_body=render_template("reset_password.html", user=doc, expires=token_ttl))
 
 
 class ActiveTokensModel(BaseModel):
