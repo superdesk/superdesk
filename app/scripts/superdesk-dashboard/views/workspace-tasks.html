@@ -93,15 +93,15 @@
        <div class="main">
 			<div class="content">
 				<ul class="task-labels clearfix"></ul>
-				<textarea class="title" sd-auto-height ng-model="newTask.title" placeholder="{{'Add task title' | translate}}" required></textarea>
-				<textarea class="description" sd-auto-height ng-model="newTask.description" placeholder="{{'Add task description' | translate}}"></textarea>
+				<textarea class="title" sd-auto-height ng-model="newTask.slugline" placeholder="{{'Add task title' | translate}}" required></textarea>
+				<textarea class="description" sd-auto-height ng-model="newTask.description_text" placeholder="{{'Add task description' | translate}}"></textarea>
 			</div>
        </div>
        <aside class="sidebar">
        		<header translate>Assignee</header>
        		<section class="assignee-container">
-				<div sd-assignee-box data-selected-id="newTask.assigned_user"></div>
-				<div class="assignee-name"><span ng-show="newTask.assigned_user">{{userLookup[newTask.assigned_user].display_name}}</span><span ng-hide="newTask.assigned_user" translate>Unassigned</span></div>
+				<div sd-assignee-box data-selected-id="newTask.task.user"></div>
+				<div class="assignee-name"><span ng-show="newTask.task.user">{{userLookup[newTask.task.user].display_name}}</span><span ng-hide="newTask.task.user" translate>Unassigned</span></div>
 			</section>
 			<header translate>Action</header>
 			<section>
@@ -109,11 +109,11 @@
 					<fieldset>
 						<div class="field">
 							<label>Due date:</label>
-							<input type="date" ng-model="newTask.due_date">
+							<input type="date" ng-model="newTask.task.due_date">
 						</div>
 						<div class="field">
 							<label>Due time:</label>
-							<input type="time" ng-model="newTask.due_time">
+							<input type="time" ng-model="newTask.task.due_time">
 						</div>
 					</fieldset>
 				</form>
@@ -124,6 +124,6 @@
 
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="close()" translate>Cancel</button>
-        <button class="btn btn-primary" ng-disabled="!newTask.assigned_user || !newTask.title" ng-click="save()" translate>Save</button>
+        <button class="btn btn-primary" ng-disabled="!newTask.task.user || !newTask.slugline" ng-click="save()" translate>Save</button>
     </div>
 </div>

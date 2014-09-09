@@ -5,27 +5,13 @@ define([], function() {
      * Service for fetching users with caching.
      * Ideally, should be used app-wide.
      */
-    UserListService.$inject = ['api', '$q'];
-    function UserListService(api, $q) {
+    UserListService.$inject = ['api', '$q', '$cacheFactory'];
+    function UserListService(api, $q, $cacheFactory) {
 
         var perPage = 100;
-        var cache = {};
+        var cache = $cacheFactory('userList');
 
         return {
-            /**
-             * Flushes cached users.
-             */
-            flushCache: function() {
-                cache = {};
-            },
-            setCache: function(search, page, result) {
-                if (!cache[search]) {
-                    cache[search] = [];
-                }
-                if (!cache[search][page]) {
-                    cache[search][page] = result;
-                }
-            },
             /**
              * Fetches and caches users, or returns from the cache.
              *
@@ -37,9 +23,11 @@ define([], function() {
                 var self = this;
                 page = page || 1;
                 var key = search || '_nosearch';
+                key = key + '_' + page;
 
-                if (cache[key] && cache[key][page]) {
-                    return $q.when(cache[key][page]);
+                var value = cache.get(key);
+                if (value) {
+                    return $q.when(value);
                 } else {
                     var criteria = {
                         max_results: perPage
@@ -58,7 +46,7 @@ define([], function() {
 
                     return api('users').query(criteria)
                     .then(function(result) {
-                        self.setCache(key, page, result);
+                        cache.put(key, result);
                         return result;
                     });
                 }

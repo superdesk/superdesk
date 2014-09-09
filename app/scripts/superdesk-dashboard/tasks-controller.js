@@ -1,8 +1,8 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    TasksController.$inject = ['$scope', 'api', 'notify'];
-    function TasksController($scope, api, notify) {
+    TasksController.$inject = ['$scope', 'api', 'notify', 'userList'];
+    function TasksController($scope, api, notify, userList) {
 
         $scope.selected = {};
         $scope.newTask = null;
@@ -15,14 +15,14 @@ define(['lodash'], function(_) {
         };
 
         $scope.create = function() {
-            $scope.newTask = {};
+            $scope.newTask = {task: {}};
         };
 
         $scope.save = function() {
-            if ($scope.newTask.due_time && $scope.newTask.due_time) {
-                $scope.newTask.due_date.setTime($scope.newTask.due_time.getTime());
+            if ($scope.newTask.task.due_time && $scope.newTask.task.due_time) {
+                $scope.newTask.task.due_date.setTime($scope.newTask.task.due_time.getTime());
             }
-            delete $scope.newTask.due_time;
+            delete $scope.newTask.task.due_time;
 
             api('tasks').save($scope.newTask)
             .then(function(result) {
@@ -37,14 +37,14 @@ define(['lodash'], function(_) {
         };
 
         var fetchTasks = function() {
-            api('tasks').query()
+            api('tasks').query({source: {size: 100, sort: [{versioncreated: 'desc'}]}})
             .then(function(tasks) {
                 $scope.tasks = tasks;
             });
         };
 
         var fetchUsers = function() {
-            api.users.query()
+            userList.get()
             .then(function(result) {
                 $scope.userLookup = {};
                 _.each(result._items, function(user) {
