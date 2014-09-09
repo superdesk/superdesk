@@ -188,9 +188,9 @@ base_schema = {
             'due_date': {'type': 'datetime'},
             'started_at': {'type': 'datetime'},
             'finished_at': {'type': 'datetime'},
-            'assigned_user': BaseModel.rel('users', True),
-            'assigned_desk': BaseModel.rel('desks', True),
-            'assigned_basket': BaseModel.rel('content_view', True)
+            'user': BaseModel.rel('users', True),
+            'desk': BaseModel.rel('desks', True),
+            'basket': BaseModel.rel('content_view', True)
         }
     }
 }
