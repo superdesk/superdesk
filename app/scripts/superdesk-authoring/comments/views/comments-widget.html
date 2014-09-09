@@ -5,8 +5,7 @@
                 <img sd-user-avatar data-src="comment.user.picture_url">
             </figure>
             <div class="content">
-                <div class="text" sd-html-preview="'<p><b>' + (comment.user.display_name || comment.user.username) + '</b> : ' + (comment.text | nl2el:'</p><p>') + '</p>'">
-                </div>
+                <div class="text" sd-comment-text data-comment="comment" data-name="{{comment.user.display_name || comment.user.username}}" data-text="{{comment.text}}"></div>
                 <span class="date" sd-reldate ng-model="comment._created"></span>
             </div>
         </li>
@@ -16,17 +15,8 @@
     </ul>
     <div class="add-comment">
         <form name="commentsForm">
-            <!-- <textarea class="new-comment" sd-auto-height ng-model="text" ng-keyup="saveOnEnter($event)"></textarea> -->
-            <textarea class="new-comment" sd-auto-height ng-model="text" mentio id="comment-target"></textarea>
-            <mentio-menu 
-                class="mentio-menu"
-                mentio-for="'comment-target'"
-                mentio-trigger-char="'@'"
-                mentio-items="users" 
-                mentio-search="searchUsers(term)"
-                mentio-select="selectUser(item)"
-                mentio-template-url="scripts/superdesk-authoring/comments/views/mentions.html">
-            </mentio-menu>
+            <textarea class="new-comment" sd-auto-height ng-model="text" mentio id="mentio-users" ng-keyup="saveOnEnter($event)"></textarea>
+            <div sd-user-mentio data-target="comment-mentio"></div>
             <div class="actions">
                 <div class="pull-left post"><input sd-check ng-model="saveEnterFlag"> <span translate>Post on 'Enter'</span></div>
                 <button class="btn btn-info pull-right" ng-click="save()" ng-show="!saveEnterFlag" translate>Post</button>

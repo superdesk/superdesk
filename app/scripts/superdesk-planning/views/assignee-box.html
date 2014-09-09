@@ -33,7 +33,7 @@
 				<input type="text" name="assignee-search" ng-model="search" class="input-large searchbox">
 			</form>
 			<div class="search-result">
-				<ul>
+				<ul class="users-list-embed">
 					<li ng-repeat="user in (deskMembers[desk._id] || users._items) | filter:search" ng-click="selectUser(user)">
 						<figure class="avatar small"><img sd-user-avatar data-src="user.picture_url"></figure>
 						<div class="name">{{user.display_name}}</div>

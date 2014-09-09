@@ -351,5 +351,37 @@ define([
             return {
                 templateUrl: 'scripts/superdesk-users/views/activity-list.html'
             };
-        });
+        })
+        .directive('sdUserMentio', ['api', 'mentioUtil', '$q', function(api, mentioUtil, $q) {
+            return {
+                templateUrl: 'scripts/superdesk-users/views/mentions.html',
+                link: function(scope, elem) {
+                    scope.searchUsers = function(term) {
+                        var userlist = [];
+                        api.users.query()
+                        .then(function(result) {
+                            _.each(result._items, function(item) {
+                                if (item.display_name.toUpperCase().indexOf(term.toUpperCase()) >= 0) {
+                                    userlist.push(item);
+                                }
+                            });
+                            scope.users = userlist;
+                            return $q.when(userlist);
+                        });
+                    };
+
+                    scope.selectUser = function(user) {
+                        return '@' + user.username;
+                    };
+                }
+            };
+        }])
+        .directive('sdUserInfo', ['api', function(api) {
+            return {
+                link: function(scope, element, attrs) {
+                    console.log('user - info - ' + attrs.user);
+                }
+            };
+        }])
+        ;
 });
