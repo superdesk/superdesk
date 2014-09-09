@@ -38,6 +38,15 @@ class ContentViewModel(BaseModel):
         },
         'desk': BaseModel.rel('desks', True),
         'user': BaseModel.rel('users', True),
+        'outgoing': {
+            'type': 'list',
+            'schema': {
+                'type': 'dict',
+                'schema': {
+                    'basket': BaseModel.rel(endpoint_name, True)
+                }
+            }
+        },
         'filter': {
             'type': 'dict'
         },
