@@ -28,7 +28,7 @@ Feature: Tasks
     Scenario: Update task
         Given "tasks"
         """
-        [{"slugline": "testtask"}]
+        [{"slugline": "testtask", "task": {"status": "in-progress"}}]
         """
         When we patch given
         """
