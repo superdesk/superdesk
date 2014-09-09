@@ -38,7 +38,7 @@ if os.environ.get('ELASTIC_PORT'):
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 if os.environ.get('REDIS_PORT'):
     REDIS_URL = os.environ.get('REDIS_PORT').replace('tcp:', 'redis:')
-CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', REDIS_URL)
+BROKER_URL = os.environ.get('CELERY_BROKER_URL', REDIS_URL)
 CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', REDIS_URL)
 CELERY_ALWAYS_EAGER = (os.environ.get('CELERY_ALWAYS_EAGER', False) == 'True')
 CELERY_TASK_SERIALIZER = 'json'
