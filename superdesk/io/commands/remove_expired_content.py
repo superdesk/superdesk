@@ -5,7 +5,7 @@ from datetime import timedelta
 from superdesk.utc import utcnow
 from flask import current_app as app
 from superdesk.notification import push_notification
-from superdesk.io import DAYS_TO_KEEP
+from superdesk.io.ingest_provider_model import DAYS_TO_KEEP
 
 logger = logging.getLogger(__name__)
 

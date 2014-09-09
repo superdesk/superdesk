@@ -16,6 +16,7 @@ COMMANDS = {}
 BLUEPRINTS = []
 apps = dict()
 
+
 logger = logging.getLogger(__name__)
 
 

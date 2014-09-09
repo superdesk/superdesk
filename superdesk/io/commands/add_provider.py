@@ -1,6 +1,6 @@
 import superdesk
 from superdesk.utc import utcnow
-from superdesk.io import DAYS_TO_KEEP
+from superdesk.io.ingest_provider_model import DAYS_TO_KEEP
 
 
 class AddProvider(superdesk.Command):
