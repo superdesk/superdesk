@@ -3,7 +3,6 @@ import superdesk
 from superdesk.utc import utcnow
 from flask import current_app as app
 from superdesk.notification import push_notification
-from superdesk.io import providers
 
 logger = logging.getLogger(__name__)
 
@@ -31,8 +30,8 @@ superdesk.command('ingest:update', UpdateIngest())
 
 def update_provider(provider):
     """Update given provider."""
-    if provider.get('type') in providers:
-        for items in providers[provider.get('type')].update(provider):
+    if provider.get('type') in superdesk.providers:
+        for items in superdesk.providers[provider.get('type')].update(provider):
             ingest_items(provider, items)
 
 

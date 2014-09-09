@@ -8,8 +8,6 @@ from celery.canvas import chord
 import flask
 
 import superdesk
-from superdesk.io import providers
-
 from superdesk.utc import utc, utcnow
 from superdesk.celery_app import celery, finish_task_for_progress,\
     finish_subtask_from_progress, add_subtask_to_progress
@@ -116,7 +114,7 @@ def archive_item(self, guid, provider_id, user, trigger_events, task_id=None, ):
         if provider is None:
             message = 'For ingest with guid= %s, failed to retrieve provider with _id=%s' % (guid, provider_id)
             raise_fail(task_id, message)
-        service_provider = providers[provider.get('type')]
+        service_provider = superdesk.io.providers[provider.get('type')]
         service_provider.provider = provider
 
         item = None

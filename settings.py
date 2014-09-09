@@ -46,7 +46,7 @@ CELERY_ACCEPT_CONTENT = ['pickle', 'json']  # it's using pickle when in eager mo
 
 CELERYBEAT_SCHEDULE = {
     'fetch_ingest': {
-        'task': 'apps.io.fetch_ingest',
+        'task': 'superdesk.io.fetch_ingest',
         'schedule': timedelta(minutes=5)
     }
 }
