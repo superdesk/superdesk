@@ -9,12 +9,9 @@ def setup_providers(context):
     context.provider_services = {}
     context.ingest_items = ingest_items
     with app.test_request_context():
-        if not app.config['REUTERS_USERNAME'] or not app.config['REUTERS_PASSWORD']:
-            # no reuters credential available so use reuters mock
-            app.config['REUTERS_USERNAME'] = 'no_username'
-            app.config['REUTERS_PASSWORD'] = 'no_password'
-            setup_reuters_mock(context)
-
+        app.config['REUTERS_USERNAME'] = 'no_username'
+        app.config['REUTERS_PASSWORD'] = 'no_password'
+        setup_reuters_mock(context)
         provider = {'name': 'reuters',
                     'type': 'reuters',
                     'config': {'username': app.config['REUTERS_USERNAME'],

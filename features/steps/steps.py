@@ -497,7 +497,7 @@ def step_impl_then_get_given_file_meta(context, filename):
                        'distributed under copyright for personal and non-commercial '
                        'use. Visit http(...)',
             'compression': 'Vorbis',
-            'creation_date': '2007-01-01',
+            'creation_date': '2007-01-01T00:00:00+00:00',
             'duration': '0:08:14.728000',
             'endian': 'Little endian',
             'music_composer': 'Maxime Abbey',
@@ -506,14 +506,14 @@ def step_impl_then_get_given_file_meta(context, filename):
     elif filename == 'this_week_nasa.mp4':
         metadata = {
             'mime_type': 'video/mp4',
-            'creation_date': '2014-06-13 19:26:17',
+            'creation_date': '2014-06-13T19:26:17+00:00',
             'duration': '0:03:19.733066',
             'width': '480',
             'length': 24757257,
             'comment': 'User volume: 100.0%',
             'height': '270',
             'endian': 'Big endian',
-            'last_modification': '2014-06-13 19:26:18'
+            'last_modification': '2014-06-13T19:26:18+00:00'
         }
     else:
         raise NotImplementedError("No metadata for file '{}'.".format(filename))

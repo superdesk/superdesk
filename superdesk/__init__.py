@@ -1,7 +1,6 @@
 """Superdesk"""
 
 import logging
-import settings  # noqa
 from flask import abort, json, Blueprint, current_app as app  # noqa
 from flask.ext.script import Command, Option  # noqa @UnresolvedImport
 from eve.methods.common import document_link  # noqa

@@ -20,3 +20,4 @@ man/
 build/
 include/
 .idea/
+.vagrant/
