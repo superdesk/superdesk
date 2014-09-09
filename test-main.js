@@ -18,6 +18,7 @@ for (var file in window.__karma__.files) {
 tests.push('superdesk-authoring/widgets/widgets');
 tests.push('superdesk-authoring/comments/comments');
 tests.push('superdesk-workspace/content/content');
+tests.push('bower_components/ment.io/dist/mentio');
 
 requirejs.config({
     baseUrl: '/base/app/scripts',
