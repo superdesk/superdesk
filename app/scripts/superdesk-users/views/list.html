@@ -62,10 +62,8 @@
 
         <div class="preview-pane">
             <header>
-                <button ng-click="intent('detail', 'user', selected.user)" ng-show="selected.user._id" class="btn btn-light pull-left" translate>View full profile</button>
-                <button ng-click="selected.user = null" class="close-preview">
-                    <i class="icon-close-small"></i>
-                </button>
+                <a id="open-user-profile" href="" ng-click="intent('detail', 'user', selected.user)" ng-show="selected.user._id" class="btn btn-light pull-left" translate>View full profile</a>
+                <button ng-click="selected.user = null" class="close-preview"><i class="icon-close-small"></i></button>
             </header>
             <div class="content" sd-user-details-pane ng-if="selected.user">
                 <div id="user-profile-edit" sd-user-edit data-user="selected.user" data-onsave="render(user)" data-oncancel="closePreview()"></div>

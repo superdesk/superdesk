@@ -9,7 +9,7 @@ describe('USERS', function() {
         beforeEach(openUrl('/#/profile'));
 
         it('can render user profile', function() {
-            expect(bindingValue('{{ user.username }}')).toBe('john');
+            expect(bindingValue('user.username')).toBe('john');
             expect(modelValue('user.first_name')).toBe('John');
             expect(modelValue('user.last_name')).toBe('Doe');
             expect(modelValue('user.email')).toBe('john.doe@email.com');
@@ -38,7 +38,7 @@ describe('USERS', function() {
 
             activity.first().click();
 
-            expect(element(by.binding('{{bodyText}}')).getText())
+            expect(element(by.binding('bodyText')).getText())
                 .toBe('Please confirm you want to delete a user.');
             element(by.buttonText('OK')).click();
 
@@ -56,7 +56,7 @@ describe('USERS', function() {
         it('can open user detail', function() {
             element(by.repeater('user in users').row(0).column('username')).click();
             expect(modelValue('user.display_name')).toBe('John Doe');
-            $('.preview-pane > .actions > a.btn').click();
+            $('#open-user-profile').click();
             expect(browser.getCurrentUrl()).toBe('http://localhost:9090/#/users/2');
             expect($('.page-nav-title').getText()).toBe('Users Profile: John Doe');
         });
