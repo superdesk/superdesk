@@ -7,6 +7,7 @@ import flask
 import superdesk
 from superdesk.models import BaseModel
 from superdesk.notification import push_notification
+from apps.activity import add_activity
 
 
 comments_schema = {
@@ -66,15 +67,10 @@ class ItemCommentsModel(BaseModel):
             doc['mentioned_users'] = get_users(usernames)
 
     def on_created(self, docs):
-        push_notification('archive_comment', created=1)
         for doc in docs:
-            mentioned_users = doc.get('mentioned_users')
-            if not mentioned_users:
-                continue
-            for username in mentioned_users.keys():
-                push_notification('archive_comment_user_mention',
-                                  item_id=doc.get('item'), comment_id=str(doc.get('_id')),
-                                  user_id=doc.get('user'), mentioned_username=username)
+            push_notification('item:comment', item=str(doc.get('item')))
+            mentioned_users = doc.get('mentioned_users', {}).values()
+            add_activity('', type='comment', comment=doc.get('text'), _notify=mentioned_users)
 
     def on_updated(self, updates, original):
         push_notification('archive_comment', updated=1)

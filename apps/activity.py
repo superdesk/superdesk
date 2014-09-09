@@ -91,6 +91,7 @@ class ActivityModel(BaseModel):
     schema = {
         'message': {'type': 'string'},
         'data': {'type': 'dict'},
+        '_notify': {'type': 'dict'},
         'user': {
             'type': 'objectid',
             'data_relation': {
@@ -103,15 +104,21 @@ class ActivityModel(BaseModel):
     exclude = {endpoint_name, 'notification'}
 
 
-def add_activity(msg, **data):
+def add_activity(msg, _notify=None, **data):
     user = getattr(flask.g, 'user', None)
     if not user:
         return
 
+    if _notify is None:
+        _notify = {}
+    else:
+        _notify = {str(_id): 0 for _id in _notify}
+
     post_internal(ActivityModel.endpoint_name, {
         'user': user.get('_id'),
         'message': msg,
-        'data': data
+        'data': data,
+        '_notify': _notify
     })
 
-    push_notification(ActivityModel.endpoint_name, created=1, keys=(str(user.get('_id')),))
+    push_notification(ActivityModel.endpoint_name, _dest=_notify)
