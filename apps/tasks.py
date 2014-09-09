@@ -10,7 +10,11 @@ def init_app(app):
 
 class TaskModel(BaseModel):
     endpoint_name = 'tasks'
-    datasource = {'source': 'archive'}
+    datasource = {
+        'source': 'archive',
+        'default_sort': [('_updated', -1)],
+        'filter': {'task': {'$exists': True}}
+    }
     schema = {k: base_schema[k] for k in ('slugline', 'description_text', 'type', 'task')}
     schema.update({'planning_item': BaseModel.rel('planning', True, type='string')})
 
