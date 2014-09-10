@@ -70,7 +70,7 @@ class ItemCommentsModel(BaseModel):
         for doc in docs:
             push_notification('item:comment', item=str(doc.get('item')))
             mentioned_users = doc.get('mentioned_users', {}).values()
-            add_activity('', type='comment', comment=doc.get('text'), _notify=mentioned_users)
+            add_activity('', type='comment', comment=doc.get('text'), notify=mentioned_users)
 
     def on_updated(self, updates, original):
         push_notification('archive_comment', updated=1)
