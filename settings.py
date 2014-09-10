@@ -95,7 +95,7 @@ RENDITIONS = {
 SERVER_DOMAIN = 'localhost'
 
 BCRYPT_GENSALT_WORK_FACTOR = 12
-RESET_PASSWORD_TOKEN_TIME_TO_LIVE = 0.5  # The number of hours a token is valid
+RESET_PASSWORD_TOKEN_TIME_TO_LIVE = int(os.environ.get('RESET_PASS_TTL', 24))  # The number of hours a token is valid
 
 # email server
 MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.googlemail.com')
