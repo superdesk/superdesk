@@ -87,11 +87,11 @@ class AuditModel(BaseModel):
 class ActivityModel(BaseModel):
     endpoint_name = 'activity'
     resource_methods = ['GET']
-    item_methods = ['GET']
+    item_methods = ['GET', 'PATCH']
     schema = {
         'message': {'type': 'string'},
         'data': {'type': 'dict'},
-        '_notify': {'type': 'dict'},
+        'read': {'type': 'dict'},
         'user': {
             'type': 'objectid',
             'data_relation': {
@@ -102,23 +102,26 @@ class ActivityModel(BaseModel):
         }
     }
     exclude = {endpoint_name, 'notification'}
+    datasource = {
+        'default_sort': [('_created', -1)]
+    }
 
 
-def add_activity(msg, _notify=None, **data):
+def add_activity(msg, notify=None, **data):
     user = getattr(flask.g, 'user', None)
     if not user:
         return
 
-    if _notify is None:
-        _notify = {}
+    if notify is None:
+        read = {}
     else:
-        _notify = {str(_id): 0 for _id in _notify}
+        read = {str(_id): 0 for _id in notify}
 
     post_internal(ActivityModel.endpoint_name, {
         'user': user.get('_id'),
         'message': msg,
         'data': data,
-        '_notify': _notify
+        'read': read
     })
 
-    push_notification(ActivityModel.endpoint_name, _dest=_notify)
+    push_notification(ActivityModel.endpoint_name, _dest=read)
