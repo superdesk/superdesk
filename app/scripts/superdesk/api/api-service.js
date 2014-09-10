@@ -91,11 +91,12 @@ define([
             /**
              * Save an item
              */
-            Resource.prototype.save = function(item, diff) {
+            Resource.prototype.save = function(item, diff, params) {
                 return http({
                     method: item._links ? 'PATCH' : 'POST',
                     url: item._links ? urls.item(item._links.self.href) : this.url(),
-                    data: diff ? diff : clean(item)
+                    data: diff ? diff : clean(item),
+                    params: params
                 }).then(function(data) {
                     angular.extend(item, diff || {});
                     angular.extend(item, data);

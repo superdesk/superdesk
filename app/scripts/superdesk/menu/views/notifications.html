@@ -13,30 +13,20 @@
         </div>
     </div>
     <div class="content">
-        <section class="module" sd-beta>
+        <section class="module" ng-if="flags.notifications" >
             <header class="title" translate>Notifications</header>
             <ul class="notification-list">
-                <li class="unread">
-                    <figure class="avatar"></figure>
+                <li ng-repeat="notification in notifications._items" ng-class="{unread: item._unread}" sd-mark-as-read>
+                    <figure class="avatar">
+                        <img sd-user-avatar data-src="notification.user.picture_url" />
+                    </figure>
                     <div class="content">
-                        <span class="date">Today at 13:05</span>
-                        <p class="text"><b>Desa Bauer</b> aproved images for article “Gaza ceasefire munced in Cairo” </p>
+                        <span class="date">{{ notification._created|reldate }}</span>
+                        <p class="text"><b>{{ notification.user.display_name || notification.user.username }}</b> <span translate>commented</span><br />{{ notification.data.comment }}</p>
                     </div>
                 </li>
-                <li>
-                    <figure class="avatar"></figure>
-                    <div class="content">
-                        <span class="date">Today at 12:46</span>
-                        <p class="text"><b>Desa Bauer</b> aproved images for article “Gaza ceasefire munced in Cairo” </p>
-                    </div>
-                </li>
-                <li>
-                    <figure class="avatar"></figure>
-                    <div class="content">
-                        <span class="date">Today at 12:39</span>
-                        <p class="text"><b>Desa Bauer</b> aproved images for article “Gaza ceasefire munced in Cairo” </p>
-                    </div>
-                </li>
+                <li ng-show="notifications._items.length === 0" translate>All good so far.</li>
+                <li ng-show="notifications._items == null" translate>loading..</li>
             </ul>
         </section>
     </div>
