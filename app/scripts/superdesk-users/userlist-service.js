@@ -20,7 +20,6 @@ define([], function() {
              * @returns {Promise}
              */
             get: function(search, page) {
-                var self = this;
                 page = page || 1;
                 var key = search || '_nosearch';
                 key = key + '_' + page;
