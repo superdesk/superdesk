@@ -7,15 +7,30 @@ Created on May 29, 2014
 
 import redis
 from celery import Celery
+from kombu.serialization import register
+from eve.io.mongo import MongoJSONEncoder
+from flask import json
 
 
 celery = Celery(__name__)
 TaskBase = celery.Task
 
 
+def loads(s):
+    return json.loads(s)
+
+
+def dumps(o):
+    return MongoJSONEncoder().encode(o)
+
+
+register('eve/json', dumps, loads, content_type='application/json')
+
+
 class AppContextTask(TaskBase):
         abstract = True
         flask_app = None
+        serializer = 'eve/json'
 
         def __call__(self, *args, **kwargs):
             with self.flask_app.app_context():
