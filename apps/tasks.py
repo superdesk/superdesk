@@ -13,10 +13,32 @@ class TaskModel(BaseModel):
     datasource = {
         'source': 'archive',
         'default_sort': [('_updated', -1)],
-        'filter': {'task': {'$exists': True}}
+        'filter': {'task': {'$exists': True}},
+        'elastic_filter': {'exists': {'field': 'task'}}  # eve-elastic specific filter
     }
-    schema = {k: base_schema[k] for k in ('slugline', 'description_text', 'type', 'task')}
-    schema.update({'planning_item': BaseModel.rel('planning', True, type='string')})
+    schema = {
+        'slugline': base_schema['slugline'],
+        'description_text': base_schema['description_text'],
+        'type': base_schema['type'],
+        'planning_item': BaseModel.rel('planning', True, type='string'),
+        'task': {
+            'type': 'dict',
+            'schema': {
+                'status': {
+                    'type': 'string',
+                    'allowed': ['todo', 'in-progress', 'done'],
+                    'default': 'todo',
+                    'required': True
+                },
+                'due_date': {'type': 'datetime'},
+                'started_at': {'type': 'datetime'},
+                'finished_at': {'type': 'datetime'},
+                'user': BaseModel.rel('users', True),
+                'desk': BaseModel.rel('desks', True),
+                'basket': BaseModel.rel('content_view', True)
+            }
+        }
+    }
 
     def update_times(self, doc):
         task = doc.get('task', {})
