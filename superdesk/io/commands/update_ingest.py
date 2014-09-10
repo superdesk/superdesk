@@ -3,6 +3,8 @@ import superdesk
 from superdesk.utc import utcnow
 from flask import current_app as app
 from superdesk.notification import push_notification
+from superdesk.io import providers
+from superdesk.celery_app import celery
 
 logger = logging.getLogger(__name__)
 
@@ -18,21 +20,21 @@ class UpdateIngest(superdesk.Command):
         for provider in app.data.find_all('ingest_providers'):
             if not provider_type or provider_type == provider.get('type'):
                 try:
-                    update_provider(provider)
+                    update_provider.delay(provider)
                 except (Exception) as err:
                     logger.exception(err)
                     pass
-                finally:
-                    push_notification('ingest:update')
 
 superdesk.command('ingest:update', UpdateIngest())
 
 
+@celery.task()
 def update_provider(provider):
     """Update given provider."""
-    if provider.get('type') in superdesk.providers:
-        for items in superdesk.providers[provider.get('type')].update(provider):
+    if provider.get('type') in providers:
+        for items in providers[provider.get('type')].update(provider):
             ingest_items(provider, items)
+    push_notification('ingest:update')
 
 
 def ingest_items(provider, items):
