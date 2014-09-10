@@ -11,6 +11,7 @@ from PIL import Image
 from flask import json
 from .image import get_meta
 from .video import get_meta as video_meta
+import base64
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +38,15 @@ def download_file_from_url(url):
     ext = mime.split('/')[1]
     name = 'stub.' + ext
     return BytesIO(rv.content), name, mime
+
+
+def download_file_from_encoded_str(encoded_str):
+    content = encoded_str.split(';base64,')
+    mime = content[0].split(':')[1]
+    ext = content[0].split('/')[1]
+    name = 'web_capture.' + ext
+    content = base64.b64decode(content[1])
+    return BytesIO(content), name, mime
 
 
 def process_file_from_stream(content, filename=None, content_type=None):
