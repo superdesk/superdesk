@@ -376,12 +376,16 @@ define([
                 }
             };
         }])
-        .directive('sdUserInfo', ['api', function(api) {
+        .directive('sdUserInfo', ['userPopup', function(userPopup) {
             return {
                 link: function(scope, element, attrs) {
-                    console.log('user - info - ' + attrs.user);
+                    element.addClass('user-link');
+                    element.hover(function() {
+                        userPopup.set(attrs.user, element, scope);
+                    }, function() {
+                        userPopup.close();
+                    });
                 }
             };
-        }])
-        ;
+        }]);
 });
