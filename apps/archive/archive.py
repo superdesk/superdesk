@@ -1,13 +1,16 @@
+from flask import request
 from superdesk.models import BaseModel
 from .common import base_schema, extra_response_fields, item_url, facets
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from .common import get_user
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
+from superdesk import SuperdeskError
 from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
-import superdesk
-from apps.activity import add_activity
+from ..activity import add_activity
+from ..common.components.utils import get_component
+from ..item_autosave.components.item_autosave import ItemAutosave
 
 
 def get_subject(doc1, doc2=None):
@@ -70,11 +73,13 @@ class ArchiveModel(BaseModel):
         user = get_user()
         lock_user = original.get('lock_user', None)
         if lock_user and str(lock_user) != str(user['_id']):
-            raise superdesk.SuperdeskError(payload='The item was locked by another user')
+            raise SuperdeskError(payload='The item was locked by another user')
         updates['versioncreated'] = utcnow()
         updates['version_creator'] = str(user.get('_id'))
 
     def on_updated(self, updates, original):
+        c = get_component(ItemAutosave)
+        c.clear(original['_id'])
         on_update_media_archive()
 
         if '_version' in updates:
@@ -98,7 +103,7 @@ class ArchiveModel(BaseModel):
         add_activity('removed item {{ type }} about {{ subject }}',
                      type=doc['type'], subject=get_subject(doc))
 
-    def replace(self, id, document, trigger_events=None):
+    def replace(self, id, document, trigger_events=None, base_backend=False):
         return self.restore_version(id, document) or \
             super().replace(id, document, trigger_events=trigger_events)
 
@@ -111,14 +116,14 @@ class ArchiveModel(BaseModel):
 
         old = app.data.find_one('archive_versions', req=None, _id_document=item_id, _version=old_version)
         if old is None:
-            raise superdesk.SuperdeskError(payload='Invalid version %s' % old_version)
+            raise SuperdeskError(payload='Invalid version %s' % old_version)
 
         curr = app.data.find_one('archive', req=None, _id=item_id)
         if curr is None:
-            raise superdesk.SuperdeskError(payload='Invalid item id %s' % item_id)
+            raise SuperdeskError(payload='Invalid item id %s' % item_id)
 
         if curr['_version'] != last_version:
-            raise superdesk.SuperdeskError(payload='Invalid last version %s' % last_version)
+            raise SuperdeskError(payload='Invalid last version %s' % last_version)
         old['_id'] = old['_id_document']
         old['_updated'] = old['versioncreated'] = utcnow()
         del old['_id_document']
@@ -131,17 +136,22 @@ class ArchiveModel(BaseModel):
         return res
 
 
-class AutoSaveModel(BaseModel):
-    endpoint_name = 'autosave'
+class ArchiveAutosaveModel(BaseModel):
+    endpoint_name = 'archive_autosave'
+    url = 'archive/<{0}:item_id>/autosave'.format(item_url)
+    item_url = item_url
+    schema = {}
+    schema.update(base_schema)
+    schema['type'] = {'type': 'string'}
+    datasource = {'backend': 'custom', 'base_backend': 'mongo'}
+    resource_methods = ['GET', 'POST']
+#     item_methods = ['GET', 'PUT', 'PATCH']
     resource_title = endpoint_name
-    url = '{0}/<{1}:guid>/autosave'.format(ArchiveModel.endpoint_name, item_url)
-    schema = {k: base_schema[k] for k in ('headline', 'byline', 'slugline', 'keywords', 'body_html', 'guid')}
-    resource_methods = ['POST']
-    item_methods = []
-    datasource = {'source': 'archive'}
 
-    def create(self, docs, **kwargs):
-        doc = docs.pop()
-        doc.pop('_created')
-        guid = doc.pop('guid')
-        return self.update(guid, doc)
+    def on_create(self, docs):
+        c = get_component(ItemAutosave)
+        c.autosave(request.view_args['item_id'], docs[0], get_user(required=True), None)
+
+    def on_update(self, updates, original):
+        c = get_component(ItemAutosave)
+        c.autosave(request.view_args['item_id'], updates, get_user(required=True), None)

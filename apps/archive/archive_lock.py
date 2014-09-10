@@ -1,8 +1,8 @@
-from superdesk.models import BaseModel
-from apps.item_lock.components.item_lock import ItemLock
-from apps.item_lock.models.io.eve import Eve
 from flask import request
+from superdesk.models import BaseModel
+from ..item_lock.components.item_lock import ItemLock
 from .common import get_user, item_url
+from ..common.components.utils import get_component
 
 
 class ArchiveLockModel(BaseModel):
@@ -16,7 +16,7 @@ class ArchiveLockModel(BaseModel):
     def on_create(self, docs):
         docs.clear()
         user = get_user(required=True)
-        c = ItemLock(Eve())
+        c = get_component(ItemLock)
         c.lock({'_id': request.view_args['item_id']}, user['_id'], None)
 
 
@@ -31,5 +31,5 @@ class ArchiveUnlockModel(BaseModel):
     def on_create(self, docs):
         docs.clear()
         user = get_user(required=True)
-        c = ItemLock(Eve())
+        c = get_component(ItemLock)
         c.unlock({'_id': request.view_args['item_id']}, user['_id'], None)

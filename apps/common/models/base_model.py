@@ -13,7 +13,7 @@ class InvalidFilter(Exception):
 
 class Validator():
     def validate(self, doc):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
 class ValidationError():
@@ -27,6 +27,10 @@ class BaseModel():
         self.data_layer = data_layer
         self.schema = schema
         self.validator = validator
+
+    @classmethod
+    def name(cls):
+        raise NotImplementedError()
 
     def on_create(self, docs):
         '''

@@ -110,11 +110,11 @@ class BaseModel():
         pass
 
     def find_one(self, req, **lookup):
-        backend = self._lookup_backend(fallback=True)
+        backend = self._lookup_backend(fallback=True, base=True)
         return backend.find_one(self.endpoint_name, req=req, **lookup)
 
     def get(self, req, lookup):
-        backend = self._lookup_backend(fallback=True)
+        backend = self._lookup_backend(fallback=True, base=True)
         cursor = backend.find(self.endpoint_name, req, lookup)
         if not cursor.count():
             return cursor  # return 304 if not modified
@@ -126,7 +126,11 @@ class BaseModel():
     def create(self, docs, trigger_events=None, **kwargs):
         if trigger_events:
             self.on_create(docs)
-        backend = self._backend()
+        if 'base_backend' in kwargs:
+            backend = self._base_backend()
+            del kwargs['base_backend']
+        else:
+            backend = self._backend()
         ids = backend.insert(self.endpoint_name, docs, **kwargs)
         search_backend = self._lookup_backend()
         if search_backend:
@@ -135,12 +139,12 @@ class BaseModel():
             self.on_created(docs)
         return ids
 
-    def update(self, id, updates, trigger_events=None):
+    def update(self, id, updates, trigger_events=None, base_backend=False):
         if trigger_events:
             original = self.find_one(req=None, _id=id)
             self.on_update(updates, original)
 
-        backend = self._backend()
+        backend = self._backend() if not base_backend else self._base_backend()
         res = backend.update(self.endpoint_name, id, updates)
         search_backend = self._lookup_backend()
         if search_backend is not None:
@@ -150,12 +154,12 @@ class BaseModel():
             self.on_updated(updates, original)
         return res
 
-    def replace(self, id, document, trigger_events=None):
+    def replace(self, id, document, trigger_events=None, base_backend=False):
         if trigger_events:
             original = self.find_one(req=None, _id=id)
             self.on_replace(document, original)
 
-        backend = self._backend()
+        backend = self._backend() if not base_backend else self._base_backend()
         res = backend.replace(self.endpoint_name, id, document)
 
         search_backend = self._lookup_backend()
@@ -169,7 +173,7 @@ class BaseModel():
         if trigger_events:
             doc = self.find_one(req=None, lookup=lookup)
             self.on_delete(doc)
-        backend = self._backend()
+        backend = self._base_backend()
         res = backend.remove(self.endpoint_name, lookup)
         search_backend = self._lookup_backend()
         if search_backend is not None:
@@ -196,8 +200,14 @@ class BaseModel():
     def _backend(self):
         return app.data._backend(self.endpoint_name)
 
-    def _lookup_backend(self, fallback=False):
+    def _base_backend(self):
+        return app.data._base_backend(self.endpoint_name)
+
+    def _lookup_backend(self, fallback=False, base=False):
         backend = app.data._search_backend(self.endpoint_name)
         if backend is None and fallback:
-            backend = app.data._backend(self.endpoint_name)
+            if base:
+                backend = app.data._base_backend(self.endpoint_name)
+            else:
+                backend = app.data._backend(self.endpoint_name)
         return backend

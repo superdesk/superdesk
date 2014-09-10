@@ -176,6 +176,13 @@ base_schema = {
     'task_id': {
         'type': 'string'
     },
+    'lock_user': {
+        'type': 'objectid',
+        'data_relation': {'resource': 'users', 'field': '_id', 'embeddable': True}
+    },
+    'lock_time': {
+        'type': 'datetime'
+    },
 }
 
 item_url = 'regex("[\w,.:_-]+")'

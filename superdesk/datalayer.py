@@ -1,4 +1,4 @@
-
+import superdesk
 from eve.io.base import DataLayer
 from eve.io.mongo import Mongo
 from eve.utils import config, ParsedRequest
@@ -7,7 +7,6 @@ from .utils import import_by_path
 from pyelasticsearch.client import JsonEncoder
 from bson.objectid import ObjectId
 from flask import current_app as app
-import superdesk
 from superdesk.datalayer_custom import CustomDataLayer
 
 
@@ -58,8 +57,9 @@ class SuperdeskDataLayer(DataLayer):
     def insert(self, resource, docs, **kwargs):
         return superdesk.apps[resource].create(docs, trigger_events=self._trigger_events(resource), **kwargs)
 
-    def update(self, resource, id_, updates):
-        return superdesk.apps[resource].update(id=id_, updates=updates, trigger_events=self._trigger_events(resource))
+    def update(self, resource, id_, updates, base_backend=False):
+        return superdesk.apps[resource].update(id=id_, updates=updates, trigger_events=self._trigger_events(resource),
+                                               base_backend=base_backend)
 
     def update_all(self, resource, query, updates):
         datasource = self._datasource(resource)
@@ -67,9 +67,10 @@ class SuperdeskDataLayer(DataLayer):
         collection = driver.db[datasource[0]]
         return collection.update(query, {'$set': updates}, multi=True)
 
-    def replace(self, resource, id_, document):
+    def replace(self, resource, id_, document, base_backend=False):
         return superdesk.apps[resource].replace(id=id_, document=document,
-                                                trigger_events=self._trigger_events(resource))
+                                                trigger_events=self._trigger_events(resource),
+                                                base_backend=base_backend)
 
     def remove(self, resource, lookup=None):
         if lookup is None:
@@ -89,6 +90,13 @@ class SuperdeskDataLayer(DataLayer):
     def _backend(self, resource):
         datasource = self._datasource(resource)
         backend = config.SOURCES[datasource[0]].get('backend', 'mongo')
+        return getattr(self, backend)
+
+    def _base_backend(self, resource):
+        datasource = self._datasource(resource)
+        backend = config.SOURCES[datasource[0]].get('base_backend', None)
+        if not backend:
+            return self._backend(resource)
         return getattr(self, backend)
 
     def _trigger_events(self, resource):

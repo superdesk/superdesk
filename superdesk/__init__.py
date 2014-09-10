@@ -15,6 +15,8 @@ DOMAIN = {}
 COMMANDS = {}
 BLUEPRINTS = []
 apps = dict()
+app_components = dict()
+app_models = dict()
 
 
 logger = logging.getLogger(__name__)
