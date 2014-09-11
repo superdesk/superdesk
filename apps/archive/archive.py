@@ -1,4 +1,3 @@
-from flask import request
 from superdesk.models import BaseModel
 from .common import base_schema, extra_response_fields, item_url, facets
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
@@ -8,9 +7,11 @@ from werkzeug.exceptions import NotFound
 from superdesk import SuperdeskError
 from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
-from ..activity import add_activity
-from ..common.components.utils import get_component
-from ..item_autosave.components.item_autosave import ItemAutosave
+from apps.activity import add_activity
+from apps.common.components.utils import get_component
+from apps.item_autosave.components.item_autosave import ItemAutosave
+from eve.utils import parse_request
+from apps.common.models.base_model import InvalidEtag
 
 
 def get_subject(doc1, doc2=None):
@@ -138,20 +139,23 @@ class ArchiveModel(BaseModel):
 
 class ArchiveAutosaveModel(BaseModel):
     endpoint_name = 'archive_autosave'
-    url = 'archive/<{0}:item_id>/autosave'.format(item_url)
     item_url = item_url
-    schema = {}
+    schema = {
+        '_id': {'type': 'string'}
+    }
     schema.update(base_schema)
     schema['type'] = {'type': 'string'}
     datasource = {'backend': 'custom', 'base_backend': 'mongo'}
-    resource_methods = ['GET', 'POST']
-#     item_methods = ['GET', 'PUT', 'PATCH']
+    resource_methods = ['POST']
+    item_methods = ['GET', 'PUT', 'PATCH']
     resource_title = endpoint_name
 
     def on_create(self, docs):
+        if not docs:
+            raise SuperdeskError('Content is missing', 400)
+        req = parse_request(self.endpoint_name)
         c = get_component(ItemAutosave)
-        c.autosave(request.view_args['item_id'], docs[0], get_user(required=True), None)
-
-    def on_update(self, updates, original):
-        c = get_component(ItemAutosave)
-        c.autosave(request.view_args['item_id'], updates, get_user(required=True), None)
+        try:
+            c.autosave(docs[0]['_id'], docs[0], get_user(required=True), req.if_match)
+        except InvalidEtag:
+            raise SuperdeskError('Client and server etags don\'t match', 412)

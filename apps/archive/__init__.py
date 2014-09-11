@@ -7,14 +7,14 @@ from .item_comments import ItemCommentsModel, ItemCommentsSubModel
 from .user_content import UserContentModel
 from .archive_lock import ArchiveLockModel, ArchiveUnlockModel
 from .content_view import ContentViewModel, ContentViewItemsModel
-from ..archive.archive import ArchiveAutosaveModel
-from ..common.components.utils import register_component
-from ..item_lock.components.item_lock import ItemLock
-from ..common.models.utils import register_model
-from ..item_lock.models.item import ItemModel
-from ..common.models.io.eve_proxy import EveProxy
-from ..item_autosave.components.item_autosave import ItemAutosave
-from ..item_autosave.models.item_autosave import ItemAutosaveModel
+from .archive import ArchiveAutosaveModel
+from apps.common.components.utils import register_component
+from apps.item_lock.components.item_lock import ItemLock
+from apps.common.models.utils import register_model
+from apps.item_lock.models.item import ItemModel
+from apps.common.models.io.eve_proxy import EveProxy
+from apps.item_autosave.components.item_autosave import ItemAutosave
+from apps.item_autosave.models.item_autosave import ItemAutosaveModel
 
 
 def init_app(app):

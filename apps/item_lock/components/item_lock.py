@@ -2,8 +2,8 @@ from ..models.item import ItemModel
 from superdesk import SuperdeskError
 from superdesk.utc import utcnow
 from superdesk.notification import push_notification
-from ...common.components.base_component import BaseComponent
-from ...common.models.utils import get_model
+from apps.common.components.base_component import BaseComponent
+from apps.common.models.utils import get_model
 
 
 LOCK_USER = 'lock_user'

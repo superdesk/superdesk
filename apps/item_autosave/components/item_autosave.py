@@ -1,8 +1,8 @@
 from superdesk import SuperdeskError
 from ..models.item_autosave import ItemAutosaveModel
-from ...common.components.base_component import BaseComponent
-from ...common.models.utils import get_model
-from ...item_lock.models.item import ItemModel
+from apps.common.components.base_component import BaseComponent
+from apps.common.models.utils import get_model
+from apps.item_lock.models.item import ItemModel
 
 
 class ItemAutosave(BaseComponent):
@@ -19,12 +19,12 @@ class ItemAutosave(BaseComponent):
         item = item_model.find_one({'_id': item_id})
         if item is None:
             raise SuperdeskError('Invalid item identifier', 404)
+        if etag:
+            item_model.validate_etag(item, etag)
 
         lock_user = item.get('lock_user', None)
         if lock_user and str(lock_user) != str(user['_id']):
             raise SuperdeskError(payload='The item was locked by another user')
-
-        # TODO: implement etag check
 
         autosave_model = get_model(ItemAutosaveModel)
         item.update(updates)

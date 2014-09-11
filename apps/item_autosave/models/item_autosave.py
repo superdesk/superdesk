@@ -1,5 +1,5 @@
-from ...common.models.base_model import BaseModel
-from ...item_lock.models.item import ItemValidator
+from apps.common.models.base_model import BaseModel
+from apps.item_lock.models.item import ItemValidator
 
 
 class ItemAutosaveModel(BaseModel):

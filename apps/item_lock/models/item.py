@@ -1,4 +1,4 @@
-from ...common.models.base_model import Validator, BaseModel
+from apps.common.models.base_model import Validator, BaseModel
 
 
 class ItemValidator(Validator):

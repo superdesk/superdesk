@@ -1,8 +1,8 @@
 from flask import request
 from superdesk.models import BaseModel
-from ..item_lock.components.item_lock import ItemLock
+from apps.item_lock.components.item_lock import ItemLock
 from .common import get_user, item_url
-from ..common.components.utils import get_component
+from apps.common.components.utils import get_component
 
 
 class ArchiveLockModel(BaseModel):

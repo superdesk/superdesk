@@ -1,7 +1,3 @@
-
-ETAG = '_etag'
-
-
 class InvalidFilter(Exception):
     def __init__(self, filter, operation):
         self.filter = filter
@@ -9,6 +5,11 @@ class InvalidFilter(Exception):
 
     def __str__(self):
         return 'Invalid filter on %s: %s' % (self.operation, filter)
+
+
+class InvalidEtag(Exception):
+    def __str__(self):
+        return 'Client and server etags don\'t match'
 
 
 class Validator():
@@ -22,7 +23,22 @@ class ValidationError():
 
 
 class BaseModel():
+    '''
+    This is a basic interface for defining models. The only requirement is
+    to implement the name method that uniquely identifies a model.
+    '''
+
     def __init__(self, resource, data_layer, schema, validator):
+        '''
+        @param resource: str
+            The resource name
+        @param data_layer: object
+            The object that implements the database operations.
+        @param schema: dict
+            The model schema definition
+        @param validator: object
+            The object that validates the model data.
+        '''
         self.resource = resource
         self.data_layer = data_layer
         self.schema = schema
@@ -69,6 +85,20 @@ class BaseModel():
         Method called after the delete operation.
         @param docs: list of deleted docs
         '''
+
+    def etag(self, doc):
+        '''
+        Return the document etag.
+        '''
+        return self.data_layer.etag(doc)
+
+    def validate_etag(self, doc, etag):
+        '''
+        Validates the given etag for the given document.
+        Raises InvalidEtag if they don't match.
+        '''
+        if self.etag(doc) != etag:
+            raise InvalidEtag()
 
     def find_one(self, filter, projection=None):
         '''

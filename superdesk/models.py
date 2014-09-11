@@ -201,6 +201,11 @@ class BaseModel():
         return app.data._backend(self.endpoint_name)
 
     def _base_backend(self):
+        '''
+        Backend used in custom data layer - used for component based design.
+        The base backend is used when the model performs data operations,
+        otherwise the custom backend is used.
+        '''
         return app.data._base_backend(self.endpoint_name)
 
     def _lookup_backend(self, fallback=False, base=False):

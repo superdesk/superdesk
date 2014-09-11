@@ -2,6 +2,9 @@ from builtins import NotImplementedError
 
 
 class DataLayer():
+    def etag(self, doc):
+        raise NotImplementedError()
+
     def find_one(self, resource, filter, projection, options):
         raise NotImplementedError()
 
