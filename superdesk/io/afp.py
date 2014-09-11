@@ -5,7 +5,7 @@ import logging
 
 from datetime import datetime, timedelta
 from .newsml_1_2 import Parser
-from ..utc import utc, utcnow, timezone
+from ..utc import utc, utcnow
 from ..etree import etree
 from superdesk.notification import push_notification
 
@@ -22,15 +22,10 @@ def is_ready(last_updated, provider_last_updated=None):
     return provider_last_updated - timedelta(minutes=10) < last_updated
 
 
-def normalize_date(naive, tz):
-    return utc.normalize(tz.localize(naive))
-
-
 class AFPIngestService(object):
     """AFP Ingest Service"""
 
     def __init__(self):
-        self.tz = timezone('Australia/Sydney')
         self.parser = Parser()
 
     def update(self, provider):
@@ -48,10 +43,8 @@ class AFPIngestService(object):
                     if is_ready(last_updated, provider.get('updated')):
                         with open(os.path.join(self.path, filename), 'r') as f:
                             item = Parser().parse_message(etree.fromstring(f.read()))
-                            item['firstcreated'] = normalize_date(item.get('firstcreated'), self.tz)
-                            item['versioncreated'] = normalize_date(item.get('versioncreated'), self.tz)
-                            item['created'] = item['firstcreated']
-                            item['updated'] = item['versioncreated']
+                            item['_created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
+                            item['_updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
                             item.setdefault('provider', provider.get('name', provider['type']))
                             self.move_the_current_file(filename, success=True)
                             yield [item]
