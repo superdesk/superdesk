@@ -8,20 +8,25 @@ Feature: Tasks
 
     @auth
     Scenario: Create new task
-        Given empty "users"
+        Given empty "desks"
+        Given empty "archive"
         Given empty "tasks"
-        When we post to "users"
+        When we post to "desks"
         """
-        {"username": "foo", "email": "foo@bar.com"}
+        {"name": "Sports Desk"}
         """
         When we post to "tasks"
 	    """
-        [{"slugline": "first task", "type": "text", "task": {"user": "#USERS_ID#"}}]
+        [{"slugline": "first task", "type": "text", "task": {"desk":"#DESKS_ID#"}}]
 	    """
+        When we post to "archive"
+        """
+        [{"type": "text"}]
+        """
         And we get "/tasks"
         Then we get list with 1 items
 	    """
-        {"_items": [{"slugline": "first task", "type": "text", "task": {"user": "#USERS_ID#"}}]}
+        {"_items": [{"slugline": "first task", "type": "text", "task": {"desk": "#DESKS_ID#"}}]}
 	    """
 
     @auth
