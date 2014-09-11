@@ -6,9 +6,11 @@ Created on May 29, 2014
 
 
 import redis
+from bson import ObjectId
 from celery import Celery
 from kombu.serialization import register
 from eve.io.mongo import MongoJSONEncoder
+from eve.utils import str_to_date
 from flask import json
 
 
@@ -17,7 +19,16 @@ TaskBase = celery.Task
 
 
 def loads(s):
-    return json.loads(s)
+    o = json.loads(s)
+    for k, v in o.items():
+        try:
+            o[k] = str_to_date(v)
+        except:
+            try:
+                o[k] = ObjectId(v)
+            except:
+                pass
+    return o
 
 
 def dumps(o):

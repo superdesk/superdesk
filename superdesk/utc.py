@@ -1,4 +1,5 @@
 
+import arrow
 import datetime
 from pytz import utc, timezone # flake8: noqa
 
@@ -12,3 +13,8 @@ def utcnow():
         return datetime.datetime.now(tz=utc)
     else:
         return datetime.datetime.utcnow()
+
+
+def get_date(date_or_string):
+    if date_or_string:
+        return arrow.get(date_or_string).datetime
