@@ -198,7 +198,7 @@ def step_impl_given_config(context):
 @given('we have "{role_name}" role')
 def step_impl_given_role(context, role_name):
     with context.app.test_request_context():
-        role = context.app.data.find_one('user_roles', name=role_name, req=None)
+        role = context.app.data.find_one('roles', name=role_name, req=None)
         data = json.dumps({'role': str(role['_id'])})
     response = patch_current_user(context, data)
     assert_ok(response)
@@ -207,9 +207,9 @@ def step_impl_given_role(context, role_name):
 @given('role "{extending_name}" extends "{extended_name}"')
 def step_impl_given_role_extends(context, extending_name, extended_name):
     with context.app.test_request_context():
-        extended = context.app.data.find_one('user_roles', name=extended_name, req=None)
-        extending = context.app.data.find_one('user_roles', name=extending_name, req=None)
-        context.app.data.update('user_roles', extending['_id'], {'extends': extended['_id']})
+        extended = context.app.data.find_one('roles', name=extended_name, req=None)
+        extending = context.app.data.find_one('roles', name=extending_name, req=None)
+        context.app.data.update('roles', extending['_id'], {'extends': extended['_id']})
 
 
 @when('we post to auth')

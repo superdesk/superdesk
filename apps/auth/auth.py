@@ -56,7 +56,7 @@ class SuperdeskTokenAuth(TokenAuth):
         perm_method = self.method_map[method.lower()]
         role_id = user.get('role')
         while role_id:
-            role = app.data.find_one('user_roles', _id=role_id, req=None) or {}
+            role = app.data.find_one('roles', _id=role_id, req=None) or {}
             perm = role.get('permissions', {})
             if perm.get(resource, {}).get(perm_method, False):
                 return True

@@ -96,9 +96,9 @@ superdesk.command('users:create', CreateUserCommand())
 superdesk.command('users:hash_passwords', HashUserPasswordsCommand())
 
 
-class UserRolesModel(BaseModel):
+class RolesModel(BaseModel):
 
-    endpoint_name = 'user_roles'
+    endpoint_name = 'roles'
     schema = {
         'name': {
             'type': 'string',
@@ -158,7 +158,7 @@ class UsersModel(BaseModel):
             'type': 'string',
         },
         'avatar': BaseModel.rel('upload', True),
-        'role': BaseModel.rel('user_roles', True),
+        'role': BaseModel.rel('roles', True),
         'workspace': {
             'type': 'dict'
         }
