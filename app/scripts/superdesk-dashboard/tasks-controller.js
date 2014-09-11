@@ -1,8 +1,8 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    TasksController.$inject = ['$scope', 'api', 'notify', 'userList'];
-    function TasksController($scope, api, notify, userList) {
+    TasksController.$inject = ['$scope', 'api', 'notify', 'userList', '$rootScope', 'es'];
+    function TasksController($scope, api, notify, userList, $rootScope, es) {
 
         $scope.selected = {};
         $scope.newTask = null;
@@ -37,7 +37,13 @@ define(['lodash'], function(_) {
         };
 
         var fetchTasks = function() {
-            api('tasks').query({source: {size: 100, sort: [{versioncreated: 'desc'}]}})
+            api('tasks').query({
+                source: {
+                    size: 100,
+                    sort: [{_updated: 'desc'}],
+                    filter: {term: {'task.user': $rootScope.currentUser._id}}
+                }
+            })
             .then(function(tasks) {
                 $scope.tasks = tasks;
             });
