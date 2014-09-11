@@ -26,8 +26,7 @@ define([
         .directive('sdInfoItem', function() {
             return {
                 link: function (scope, element) {
-                    element.addClass('info-item');
-                    element.find('label').addClass('info-label');
+                    element.addClass('item');
                     element.find('input').addClass('info-value');
                     element.find('input').addClass('info-editable');
                 }
