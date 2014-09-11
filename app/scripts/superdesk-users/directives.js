@@ -352,13 +352,13 @@ define([
                 templateUrl: 'scripts/superdesk-users/views/activity-list.html'
             };
         })
-        .directive('sdUserMentio', ['api', 'mentioUtil', '$q', function(api, mentioUtil, $q) {
+        .directive('sdUserMentio', ['mentioUtil', '$q', 'userList', function(mentioUtil, $q, userList) {
             return {
                 templateUrl: 'scripts/superdesk-users/views/mentions.html',
                 link: function(scope, elem) {
                     scope.searchUsers = function(term) {
                         var userlist = [];
-                        api.users.query()
+                        userList.get()
                         .then(function(result) {
                             _.each(result._items, function(item) {
                                 if (item.display_name.toUpperCase().indexOf(term.toUpperCase()) >= 0) {
