@@ -7,17 +7,20 @@
 
 .sd-widget.versions {
 	
+	.widget-content {
+		background: @sd-background;
+	}
+
 	.article-versions {
-
+		position: absolute;
+		left: 0; top:0; right: 0;
+		overflow: auto;
+		bottom: @authoring-opened-articles + @scratchpad-closed;
+	
 		.versions-list {
-
-			position: absolute;
-			left: 0; top:0; bottom: 0; right: 0;
-			overflow: auto;
-
+			padding: 12px;
 			.item {
-				border-bottom: 1px solid #e8e8e8;
-				padding: 15px 20px 15px 15px;
+				margin-bottom: 12px;
 				.header {
 					font-size: 12px;
 					time {}
@@ -57,11 +60,8 @@
 				
 				&:hover {
 					cursor: pointer;
-					background: #fff;
 				}
-				&.active {
-					background: @sd-hover;
-				}
+				
 			}
 		}
 
