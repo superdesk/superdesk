@@ -2,12 +2,7 @@ from superdesk.models import BaseModel
 
 
 preference_schema = {
-    'category': {
-        'type': 'string'
-    },
-    'settings': {
-        'type': 'dict'
-    },
+    'preferences': {'type': 'dict', 'required': True}
 }
 
 
