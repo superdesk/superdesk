@@ -161,6 +161,9 @@ class UsersModel(BaseModel):
         'role': BaseModel.rel('roles', True),
         'workspace': {
             'type': 'dict'
+        },
+        'preferences': {
+            'type': 'dict'
         }
     }
 
@@ -175,7 +178,8 @@ class UsersModel(BaseModel):
 
     datasource = {
         'projection': {
-            'password': 0
+            'password': 0,
+            'preferences': 0
         }
     }
 
