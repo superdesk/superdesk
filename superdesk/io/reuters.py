@@ -6,17 +6,19 @@ import datetime
 import superdesk
 
 from superdesk.utc import utcnow
-from .newsml_2_0 import Parser
-from .reuters_token import get_token
 from superdesk.utc import utc
 from superdesk.etree import etree
 from urllib.parse import urlparse, urlunparse
+from superdesk.io import register_provider, IngestService
+from .newsml_2_0 import Parser
+from .reuters_token import get_token
+
 
 PROVIDER = 'reuters'
 
 
-class ReutersUpdateService(object):
-    """Update Service"""
+class ReutersIngestService(IngestService):
+    """Reuters ingest service."""
 
     DATE_FORMAT = '%Y.%m.%d.%H.%M'
     URL = 'http://rmb.reuters.com/rmd/rest/xml'
@@ -144,3 +146,4 @@ def on_read_ingest(data, docs):
 
 
 superdesk.connect('read:ingest', on_read_ingest)
+register_provider(PROVIDER, ReutersIngestService())

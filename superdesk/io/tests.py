@@ -1,6 +1,6 @@
 from .commands.update_ingest import ingest_items
 from .reuters_mock import setup_reuters_mock, teardown_reuters_mock
-from .reuters import ReutersUpdateService
+from .reuters import ReutersIngestService
 
 
 def setup_providers(context):
@@ -21,7 +21,7 @@ def setup_providers(context):
 
         result = app.data.insert('ingest_providers', [provider])
         context.providers['reuters'] = result[0]
-        context.provider_services['reuters'] = ReutersUpdateService()
+        context.provider_services['reuters'] = ReutersIngestService()
 
 
 def teardown_providers(context):

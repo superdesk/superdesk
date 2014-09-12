@@ -8,6 +8,7 @@ from .newsml_1_2 import Parser
 from ..utc import utc, utcnow
 from ..etree import etree
 from superdesk.notification import push_notification
+from superdesk.io import register_provider, IngestService
 
 logger = logging.getLogger(__name__)
 PROVIDER = 'afp'
@@ -22,7 +23,7 @@ def is_ready(last_updated, provider_last_updated=None):
     return provider_last_updated - timedelta(minutes=10) < last_updated
 
 
-class AFPIngestService(object):
+class AFPIngestService(IngestService):
     """AFP Ingest Service"""
 
     def __init__(self):
@@ -68,3 +69,5 @@ class AFPIngestService(object):
                 shutil.copy2(os.path.join(self.path, filename), os.path.join(self.path, "_ERROR/"))
         finally:
             os.remove(os.path.join(self.path, filename))
+
+register_provider(PROVIDER, AFPIngestService())
