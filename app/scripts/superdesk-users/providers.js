@@ -40,12 +40,7 @@ define(['lodash', 'angular'], function(_, angular) {
             // Set content
             popover.set = function(userId, el, scope) {
                 preventClose();
-                if (popover.userId && popover.userId === userId) {
-                    popover.element.show();
-                    return;
-                }
                 resetContent();
-                popover.userId = userId;
 
                 // do box positioning
                 var box = popover.get(true);
