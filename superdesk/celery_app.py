@@ -50,7 +50,8 @@ def loads(s):
         o['kwargs'] = {}
 
     for v in o['args']:
-        cast_item(v)
+        if isinstance(v, dict):
+            cast_item(v)
 
     for k, v in o['kwargs'].items():
         cast_item(v)
