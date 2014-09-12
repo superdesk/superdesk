@@ -21,7 +21,7 @@ define(['lodash', 'angular'], function(_, angular) {
 
             return delay.promise;
         }])
-        .factory('userPopup', ['$compile', 'api', '$timeout', function ($compile, api, $timeout) {
+        .factory('userPopup', ['$compile', '$timeout', 'userList', function ($compile, $timeout, userList) {
 
             var popover = {};
             var holdInterval = 300;
@@ -56,7 +56,7 @@ define(['lodash', 'angular'], function(_, angular) {
                 });
 
                 // get data
-                api.users.getById(userId)
+                userList.getUser(userId)
                 .then(function(user) {
                     buildTemplate(user, scope);
                 }, function(response) {

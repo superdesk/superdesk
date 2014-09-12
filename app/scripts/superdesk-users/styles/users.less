@@ -184,21 +184,21 @@
 	.box-sizing(border-box);
 	
 	::-webkit-scrollbar {
-			border-left: 9px solid #fff;
-			border-right: 1px solid #fff;
-			width: 13px;
-			background: #fff;
-			&:hover {
-				background: #e8e8e8;
-			}
+		border-left: 9px solid #fff;
+		border-right: 1px solid #fff;
+		width: 13px;
+		background: #fff;
+		&:hover {
+			background: #e8e8e8;
 		}
-		::-webkit-scrollbar-thumb {
-			border-left: 8px solid #fff;
-			background: #bbb;
-			&:hover {
-				background: #787878;
-			}
+	}
+	::-webkit-scrollbar-thumb {
+		border-left: 8px solid #fff;
+		background: #bbb;
+		&:hover {
+			background: #787878;
 		}
+	}
 
 	.action-buttons-main {
 		position: absolute;
@@ -251,71 +251,6 @@
 		}
 	}
 
-	.info-item {
-		width: 100%;
-		font-size: 13px;
-		color:#383838;
-		height: 20px;
-		line-height: 20px;
-		position: relative;
-		.info-label {
-			color: #a0a0a0;
-			min-width: 50px;
-			margin-right: 10px;
-			display: inline-block;
-		}
-		a {
-			color: #3097b5;
-		}
-		.info-value {
-			display: inline-block;
-			vertical-align: middle;
-			.sdselect-btn {
-				float: left;
-				color: #383838;
-				width: auto;
-				.caret {
-					margin-left: 5px;
-				}
-			}
-		}
-		&.password {
-			.info-value {
-			-webkit-text-security: disc;
-				.info-editable {
-					-webkit-text-security: disc;
-				}
-			}
-			.change-btn {
-				&:hover {
-			cursor: pointer;
-				}
-			}
-		}
-		p.info-editable {
-			margin: 0;
-		}
-		.info-editable {
-			width: 275px;
-			border: 0 !important;
-			font-size: 13px;
-			text-overflow: ellipsis;
-			margin-left: -6px; 
-			background: none;
-			color: #000 !important;
-			&:focus {
-				.box-shadow(0 0 0 0 #000) !important;
-				text-decoration: underline;
-			}
-		}
-		textarea.info-editable {
-			height: 150px;
-			width: 100%;
-			max-width: 100%;
-			line-height: 18px;
-			margin-left: 0; 
-		}
-	}
 	.validation-error {
 		color: #ab3434;
 		font-size: 12px;
@@ -329,103 +264,103 @@
 			
 		}
 	}
-	.stats-box {
-		position: relative;
-		margin-top: 20px;
-		&:before {
-			content: " ";
-			position: absolute;
-			height: 1px;
-			background: #919191;
-			top: 11px;
-			width: 100%;
-		}
-		header {
-			font-size: 11px;
-			font-weight: bold;
-			text-transform: uppercase;
-			float: left;
-			padding: 2px 5px 2px 0;
-			background: #fff;
-			position: relative;
-			z-index: 2;
-		}
-		.stats-list {
-			list-style-type: none;
-			padding: 0;
-			margin: 0;
-			padding-top: 25px;
-			li {
-				width: 100%;
-				.box-sizing(border-box);
-				height: 30px;
-				line-height: 30px;
-				border-bottom: 1px solid #f0f0f0;
-				padding: 0 5px;
-				.stat-num {
-					font-weight: bold;
-					font-size: 16px;
-					margin-right: 10px;
-					color: #262626;
-				}
-				.stat-text {
-					font-size: 12px;
-					text-transform: uppercase;
-					color: #262626;
-				}
-				&:first-child {
-					padding: 8px;
-					height: 46px;
-					background: #707070;
-					border: 0;
-					display: table;
-					.border-radius(3px);
-					.stat-num {
-						color:#fff;
-						font-size: 32px;
-						font-weight: normal;
-						display: table-cell; 
-						vertical-align: middle; 
-						padding-right: 15px;
-					}
-					.stat-text {
-						font-size: 12px;
-						color: #cdcdcd;
-						display: table-cell; 
-						vertical-align: middle; 
-						line-height: 15px;
-						padding-right: 10px;
-					}
-				}
-			}
-		}
-		&.stats-small {
-			width: 140px;
-			margin-top: 0;
-			&:before {
-				display: none;
-			}
-			.stats-list {
-				padding-top: 0;
-				li:first-child {
-					padding: 2px 5px;
-					height: 30px;
-					.stat-num {
-						font-size: 25px;
-					}
-					.stat-text {
-						font-size: 10px;
-						line-height: 12px;
-					}
-				}
-			}
-		}
-		&.stats-static {
-			position: absolute;
-			top:0;
-			right: 0;
-		}
-	}
+	// .stats-box {
+	// 	position: relative;
+	// 	margin-top: 20px;
+	// 	&:before {
+	// 		content: " ";
+	// 		position: absolute;
+	// 		height: 1px;
+	// 		background: #919191;
+	// 		top: 11px;
+	// 		width: 100%;
+	// 	}
+	// 	header {
+	// 		font-size: 11px;
+	// 		font-weight: bold;
+	// 		text-transform: uppercase;
+	// 		float: left;
+	// 		padding: 2px 5px 2px 0;
+	// 		background: #fff;
+	// 		position: relative;
+	// 		z-index: 2;
+	// 	}
+	// 	.stats-list {
+	// 		list-style-type: none;
+	// 		padding: 0;
+	// 		margin: 0;
+	// 		padding-top: 25px;
+	// 		li {
+	// 			width: 100%;
+	// 			.box-sizing(border-box);
+	// 			height: 30px;
+	// 			line-height: 30px;
+	// 			border-bottom: 1px solid #f0f0f0;
+	// 			padding: 0 5px;
+	// 			.stat-num {
+	// 				font-weight: bold;
+	// 				font-size: 16px;
+	// 				margin-right: 10px;
+	// 				color: #262626;
+	// 			}
+	// 			.stat-text {
+	// 				font-size: 12px;
+	// 				text-transform: uppercase;
+	// 				color: #262626;
+	// 			}
+	// 			&:first-child {
+	// 				padding: 8px;
+	// 				height: 46px;
+	// 				background: #707070;
+	// 				border: 0;
+	// 				display: table;
+	// 				.border-radius(3px);
+	// 				.stat-num {
+	// 					color:#fff;
+	// 					font-size: 32px;
+	// 					font-weight: normal;
+	// 					display: table-cell; 
+	// 					vertical-align: middle; 
+	// 					padding-right: 15px;
+	// 				}
+	// 				.stat-text {
+	// 					font-size: 12px;
+	// 					color: #cdcdcd;
+	// 					display: table-cell; 
+	// 					vertical-align: middle; 
+	// 					line-height: 15px;
+	// 					padding-right: 10px;
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// 	&.stats-small {
+	// 		width: 140px;
+	// 		margin-top: 0;
+	// 		&:before {
+	// 			display: none;
+	// 		}
+	// 		.stats-list {
+	// 			padding-top: 0;
+	// 			li:first-child {
+	// 				padding: 2px 5px;
+	// 				height: 30px;
+	// 				.stat-num {
+	// 					font-size: 25px;
+	// 				}
+	// 				.stat-text {
+	// 					font-size: 10px;
+	// 					line-height: 12px;
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// 	&.stats-static {
+	// 		position: absolute;
+	// 		top:0;
+	// 		right: 0;
+	// 	}
+	// }
 
 
 	.profile-pic {
@@ -459,66 +394,26 @@
 			}
 		}
 	}
+	
+	.alert {
+		.border-radius(0px);
+	}
 
-	.editmode {
-			.alert {
-				.border-radius(0px);
-			}
-
-		 .details-info {
-			position: absolute;
-			top:140px;
-			bottom: 20px;
-			overflow: auto;
-			right: 20px;
-			left: 20px;
-			&.shifted {
-				top: 170px;
-			}
-			
-			.details-section {
-				margin-bottom: 40px;
-				position: relative;
-				.details-section-header {
-					padding: 0 10px 10px 0;
-					color: #4f4f4f;
-					background: #fff;
-					font-size: 16px;
-					line-height: 22px;
-					.required-info {
-						display: none;
-						font-size: 11px;
-						color: #999;
-						float: right;
-					}
-				}
-			}
-			.info-item {
-				.box-sizing(border-box);
-				height: auto;
-				line-height: 24px;
-				border-top: 1px dotted #ddd;
-				padding: 5px 2px;
-					.info-label {
-					min-width: 100px;
-				}
-				&:last-child {
-					border-bottom: 1px dotted #ddd;
-				}
-				.required-asteriks {
-					font-size: 12px;
-					color: #999;
-					position: absolute;
-					right: 0;
-					top: 8px;
-				}
-			}
+	.details-info {
+		position: absolute;
+		top:140px;
+		bottom: 20px;
+		overflow: auto;
+		right: 20px;
+		left: 20px;
+		&.shifted {
+			top: 170px;
 		}
+	}
 
-		.ng-invalid-required {
-			.required-info {
-				display: inline-block !important;
-			}
+	.ng-invalid-required {
+		.required-info {
+			display: inline-block !important;
 		}
 	}
 
@@ -527,7 +422,7 @@
 		position: absolute;
 		left: 0;
 		right: 0;
-			top: 140px;
+		top: 140px;
 		&.shifted {
 			top: 170px;
 		}
@@ -691,12 +586,6 @@ Profile page styles
 
 .user-profile-page {
 	
-	.action-buttons-main, .action-buttons-main.show {
-		position: relative;
-		float: right;
-		top: auto;
-		right: auto;
-	}
 	.form-content {
 		position: absolute;
 		top: 0; left: 0; bottom: 0;
@@ -707,7 +596,25 @@ Profile page styles
 		.box-shadow(0 0 5px 0 #e0e0e0);
 		z-index: 2;
 	}
-	
+
+	.user-details-pane {
+		padding: 0;
+		> header {
+			height: 48px;
+			.border-box();
+			border-bottom: 1px solid #dfdfdf;
+			.nav-tabs {
+				padding: 0 10px;
+			}
+		}
+		> .content {
+			position: absolute;
+			top: 48px;
+			left: 0; right: 0; bottom: 0;
+			padding: 20px;
+		}
+	}
+
 	.profile-pic {
 		width: 160px;
 		height: 160px;
@@ -724,7 +631,7 @@ Profile page styles
 	.header-info {
 		height: 160px;
 	}
-	.details-info {
+	.details-info, .password-popup {
 		top:220px !important;
 	}
 

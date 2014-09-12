@@ -82,10 +82,17 @@
 		}
 
 		&.current-user {
+			position: relative;
 			padding: 0 10px;
 			.box-shadow(none);
 			.avatar {
 				.border-radius(2px);
+			}
+			.label {
+				position: absolute;
+				top: 3px;
+				left: 1px;
+				text-shadow: none;
 			}
 		}
 	}

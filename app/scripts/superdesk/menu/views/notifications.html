@@ -14,7 +14,7 @@
     </div>
     <div class="content">
         <section class="module" ng-if="flags.notifications" >
-            <header class="title" translate>Notifications</header>
+            <header class="title" translate>Notifications</header>           
             <ul class="notification-list">
                 <li ng-repeat="notification in notifications._items" ng-class="{unread: item._unread}" sd-mark-as-read>
                     <figure class="avatar">
@@ -25,8 +25,8 @@
                         <p class="text"><b>{{ notification.user.display_name || notification.user.username }}</b> <span translate>commented</span><br />{{ notification.data.comment }}</p>
                     </div>
                 </li>
-                <li ng-show="notifications._items.length === 0" translate>All good so far.</li>
-                <li ng-show="notifications._items == null" translate>loading..</li>
+                <div class="info" ng-show="notifications._items.length === 0" translate>All good so far.</div>
+                <div class="info" ng-show="notifications._items == null" translate>loading..</div>
             </ul>
         </section>
     </div>
