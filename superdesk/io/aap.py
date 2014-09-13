@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from .nitf import parse
 from superdesk.utc import utc, utcnow, timezone
+from superdesk.io import register_provider, IngestService
 
 PROVIDER = 'aap'
 
@@ -21,14 +22,11 @@ def normalize_date(naive, tz):
     return utc.normalize(tz.localize(naive))
 
 
-class AAPIngestService(object):
+class AAPIngestService(IngestService):
     """AAP Ingest Service"""
 
     def __init__(self):
         self.tz = timezone('Australia/Sydney')
-
-    def get_items(self, guid):
-        pass
 
     def prepare_href(self, href):
         return href
@@ -51,3 +49,5 @@ class AAPIngestService(object):
                     item['updated'] = item['versioncreated']
                     item.setdefault('provider', provider.get('name', provider['type']))
                     yield [item]
+
+register_provider(PROVIDER, AAPIngestService())

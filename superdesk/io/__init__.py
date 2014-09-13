@@ -1,15 +1,27 @@
 """Superdesk IO"""
 
 import logging
-import superdesk
 from superdesk.celery_app import celery
-from .reuters import ReutersUpdateService, PROVIDER as ReutersName
-from .aap import AAPIngestService, PROVIDER as AAPName
-from .afp import AFPIngestService, PROVIDER as AFPName
 
-logger = logging.getLogger(__name__)
+
 providers = {}
 allowed_providers = []
+logger = logging.getLogger(__name__)
+
+
+class IngestService():
+    """Base ingest service class."""
+
+    def get_items(self, guid):
+        raise LookupError()
+
+    def update(self, provider):
+        raise NotImplementedError()
+
+
+from .commands.remove_expired_content import RemoveExpiredContent
+from .commands.update_ingest import UpdateIngest
+from .commands.add_provider import AddProvider  # NOQA
 
 
 def init_app(app):
@@ -20,16 +32,6 @@ def init_app(app):
 def register_provider(type, provider):
     providers[type] = provider
     allowed_providers.append(type)
-
-
-register_provider(ReutersName, ReutersUpdateService())
-register_provider(AAPName, AAPIngestService())
-register_provider(AFPName, AFPIngestService())
-
-from .commands.remove_expired_content import RemoveExpiredContent
-from .commands.update_ingest import UpdateIngest
-from .commands.add_provider import AddProvider  # NOQA
-import superdesk.io.subjectcodes  # NOQA
 
 
 @celery.task()

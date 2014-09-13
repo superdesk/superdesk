@@ -60,7 +60,13 @@ INSTALLED_APPS = (
     'superdesk.upload',
     'superdesk.notification',
     'superdesk.storage.amazon.import_from_amazon',
+
     'superdesk.io',
+    'superdesk.io.subjectcodes',
+    'superdesk.io.reuters',
+    'superdesk.io.aap',
+    'superdesk.io.afp',
+
     'apps.archive',
     'apps.activity',
     'apps.desks',
