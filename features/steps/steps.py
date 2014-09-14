@@ -161,6 +161,8 @@ def step_impl_given_(context, resource):
         context.app.data.insert(resource, items)
         context.data = orig_items or items
         context.resource = resource
+        for item in items:
+            set_placeholder(context, '{0}_ID'.format(resource.upper()), str(item['_id']))
 
 
 @given('the "{resource}"')
@@ -277,6 +279,7 @@ def when_we_delete_it(context):
 
 @when('we patch "{url}"')
 def step_impl_when_patch_url(context, url):
+    url = apply_placeholders(context, url)
     res = get_res(url, context)
     href = get_self_href(res, context)
     headers = if_match(context, res.get('_etag'))
@@ -634,7 +637,6 @@ def step_impl_then_get_key(context, key):
     assert_200(context.response)
     expect_json_contains(context.response, key)
     item = json.loads(context.response.get_data())
-    print('item: ', item)
     set_placeholder(context, '%s' % key, item[key])
 
 
