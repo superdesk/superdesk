@@ -2,14 +2,17 @@ from superdesk.models import BaseModel
 from superdesk.notification import push_notification
 from superdesk.utc import utcnow
 from apps.archive.common import base_schema
+from superdesk.services import BaseService
+import superdesk
 
 
 def init_app(app):
-    TaskModel(app=app)
+    endpoint_name = 'tasks'
+    service = TasksService(endpoint_name=endpoint_name, backend=superdesk.get_backend())
+    TaskModel(endpoint_name=endpoint_name, app=app, service=service)
 
 
 class TaskModel(BaseModel):
-    endpoint_name = 'tasks'
     datasource = {
         'source': 'archive',
         'default_sort': [('_updated', -1)],
@@ -38,6 +41,9 @@ class TaskModel(BaseModel):
             }
         }
     }
+
+
+class TasksService(BaseService):
 
     def update_times(self, doc):
         task = doc.get('task', {})

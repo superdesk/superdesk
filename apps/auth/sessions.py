@@ -2,7 +2,6 @@ from superdesk.models import BaseModel
 
 
 class SesssionsModel(BaseModel):
-    endpoint_name = 'sessions'
     schema = {
         'user': BaseModel.rel('users', True)
     }

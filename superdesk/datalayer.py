@@ -55,11 +55,10 @@ class SuperdeskDataLayer(DataLayer):
         return self._backend(resource).find_list_of_ids(resource, ids, client_projection)
 
     def insert(self, resource, docs, **kwargs):
-        return superdesk.apps[resource].create(docs, trigger_events=self._trigger_events(resource), **kwargs)
+        return superdesk.apps[resource].create(docs, **kwargs)
 
-    def update(self, resource, id_, updates, base_backend=False):
-        return superdesk.apps[resource].update(id=id_, updates=updates, trigger_events=self._trigger_events(resource),
-                                               base_backend=base_backend)
+    def update(self, resource, id_, updates):
+        return superdesk.apps[resource].update(id=id_, updates=updates)
 
     def update_all(self, resource, query, updates):
         datasource = self._datasource(resource)
@@ -67,15 +66,13 @@ class SuperdeskDataLayer(DataLayer):
         collection = driver.db[datasource[0]]
         return collection.update(query, {'$set': updates}, multi=True)
 
-    def replace(self, resource, id_, document, base_backend=False):
-        return superdesk.apps[resource].replace(id=id_, document=document,
-                                                trigger_events=self._trigger_events(resource),
-                                                base_backend=base_backend)
+    def replace(self, resource, id_, document):
+        return superdesk.apps[resource].replace(id=id_, document=document)
 
     def remove(self, resource, lookup=None):
         if lookup is None:
             lookup = {}
-        return superdesk.apps[resource].delete(lookup=lookup, trigger_events=self._trigger_events(resource))
+        return superdesk.apps[resource].delete(lookup=lookup)
 
     def is_empty(self, resource):
         return self._backend(resource).is_empty(resource)
@@ -91,13 +88,3 @@ class SuperdeskDataLayer(DataLayer):
         datasource = self._datasource(resource)
         backend = config.SOURCES[datasource[0]].get('backend', 'mongo')
         return getattr(self, backend)
-
-    def _base_backend(self, resource):
-        datasource = self._datasource(resource)
-        backend = config.SOURCES[datasource[0]].get('base_backend', None)
-        if not backend:
-            return self._backend(resource)
-        return getattr(self, backend)
-
-    def _trigger_events(self, resource):
-        return resource.endswith(app.config['VERSIONS'])

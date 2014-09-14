@@ -63,12 +63,13 @@ def get_user(required=False):
 
 
 def set_user(doc):
-    user = get_user()
+    usr = get_user()
+    user = str(usr.get('_id', ''))
     sent_user = doc.get('user', None)
-    if sent_user and sent_user != user.get('_id'):
+    if sent_user and user and sent_user != user:
         raise superdesk.SuperdeskError()
-    doc['user'] = str(user.get('_id'))
-    return str(user.get('_id'))
+    doc['user'] = user
+    return user
 
 
 base_schema = {

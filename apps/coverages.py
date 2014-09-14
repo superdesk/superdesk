@@ -1,13 +1,16 @@
 from superdesk.models import BaseModel
 from superdesk.notification import push_notification
+from superdesk.services import BaseService
+import superdesk
 
 
 def init_app(app):
-    CoverageModel(app=app)
+    endpoint_name = 'coverages'
+    service = CoverageService(endpoint_name=endpoint_name, backend=superdesk.get_backend())
+    CoverageModel(endpoint_name=endpoint_name, app=app, service=service)
 
 
 class CoverageModel(BaseModel):
-    endpoint_name = 'coverages'
     schema = {
         'headline': {'type': 'string'},
         'coverage_type': {
@@ -25,6 +28,9 @@ class CoverageModel(BaseModel):
     }
 
     datasource = {'default_sort': [('_created', -1)]}
+
+
+class CoverageService(BaseService):
 
     def on_created(self, docs):
         push_notification('coverages', created=1)

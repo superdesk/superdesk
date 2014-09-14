@@ -1,14 +1,17 @@
 from superdesk.notification import push_notification
 from superdesk.models import BaseModel
 from apps.archive.common import on_create_item
+from superdesk.services import BaseService
+import superdesk
 
 
 def init_app(app):
-    PlanningModel(app=app)
+    endpoint_name = 'planning'
+    service = PlanningService(endpoint_name=endpoint_name, backend=superdesk.get_backend())
+    PlanningModel(endpoint_name=endpoint_name, app=app, service=service)
 
 
 class PlanningModel(BaseModel):
-    endpoint_name = 'planning'
     schema = {
         'guid': {
             'type': 'string',
@@ -38,6 +41,9 @@ class PlanningModel(BaseModel):
     item_url = 'regex("[\w,.:-]+")'
     datasource = {'search_backend': 'elastic'}
     resource_methods = ['GET', 'POST']
+
+
+class PlanningService(BaseService):
 
     def on_create(self, docs):
         on_create_item(docs)

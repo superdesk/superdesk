@@ -22,6 +22,7 @@ from celery import states
 from .common import facets
 import traceback
 from celery.utils.log import get_task_logger
+from superdesk.services import BaseService
 
 
 logger = get_task_logger(__name__)
@@ -39,7 +40,7 @@ def raise_fail(task_id, message):
     raise Ignore()
 
 
-def import_rendition(guid, rendition_name, href, extract_metadata, trigger_events):
+def import_rendition(guid, rendition_name, href, extract_metadata):
     archive = superdesk.apps['archive'].find_one(req=None, guid=guid)
     if not archive:
         msg = 'No document found in the media archive with this ID: %s' % guid
@@ -62,28 +63,28 @@ def import_rendition(guid, rendition_name, href, extract_metadata, trigger_event
     # perform partial update
     updates['renditions.' + rendition_name + '.href'] = url_for_media(file_guid)
     updates['renditions.' + rendition_name + '.media'] = file_guid
-    result = superdesk.apps['archive'].update(id=guid, updates=updates, trigger_events=trigger_events)
+    result = superdesk.apps['archive'].update(id=guid, updates=updates)
 
     return result
 
 
 @celery.task(bind=True, max_retries=3)
-def archive_media(self, task_id, guid, href, trigger_events):
+def archive_media(self, task_id, guid, href):
     try:
         if not self.request.retries:
             update_status(*add_subtask_to_progress(task_id))
-        import_rendition(guid, 'baseImage', href, True, trigger_events)
+        import_rendition(guid, 'baseImage', href, True)
         update_status(*finish_subtask_from_progress(task_id))
     except Exception:
         raise self.retry(countdown=2)
 
 
 @celery.task(bind=True, max_retries=3)
-def archive_rendition(self, task_id, guid, name, href, trigger_events):
+def archive_rendition(self, task_id, guid, name, href):
     try:
         if not self.request.retries:
             update_status(*add_subtask_to_progress(task_id))
-        import_rendition(guid, name, href, False, trigger_events)
+        import_rendition(guid, name, href, False)
         update_status(*finish_subtask_from_progress(task_id))
     except Exception:
         raise self.retry(countdown=2)
@@ -96,7 +97,7 @@ def update_item(result, is_main_task, task_id, guid):
 
 
 @celery.task(bind=True, max_retries=3)
-def archive_item(self, guid, provider_id, user, trigger_events, task_id=None, ):
+def archive_item(self, guid, provider_id, user, task_id=None):
     try:
         # For CELERY_ALWAYS_EAGER=True the current request context is
         # empty but already initialized one is on request_stack
@@ -146,7 +147,7 @@ def archive_item(self, guid, provider_id, user, trigger_events, task_id=None, ):
         if not old_item:
             item['created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
             item['updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
-        superdesk.apps['archive'].update(guid, item, trigger_events=trigger_events)
+        superdesk.apps['archive'].update(guid, item)
 
         tasks = []
         for group in item.get('groups', []):
@@ -159,25 +160,24 @@ def archive_item(self, guid, provider_id, user, trigger_events, task_id=None, ):
                     # check if task already started
                     if not archived_doc:
                         doc.setdefault('_id', doc.get('guid'))
-                        superdesk.apps['archive'].create([doc], trigger_events=trigger_events)
+                        superdesk.apps['archive'].create([doc])
                     elif archived_doc.get('task_id') == crt_task_id:
                         # it is a retry so continue
                         archived_doc.update(doc)
-                        superdesk.apps['archive'].update(archived_doc.get('_id'), archived_doc,
-                                                         trigger_events=trigger_events)
+                        superdesk.apps['archive'].update(archived_doc.get('_id'), archived_doc)
                     else:
                         # there is a cyclic dependency, skip it
                         continue
 
                     ingest_set_archived(doc.get('guid'))
-                    tasks.append(archive_item.s(ref['residRef'], provider.get('_id'), user, trigger_events, task_id))
+                    tasks.append(archive_item.s(ref['residRef'], provider.get('_id'), user, task_id))
 
         for rendition in item.get('renditions', {}).values():
             href = service_provider.prepare_href(rendition['href'])
             if rendition['rendition'] == 'baseImage':
-                tasks.append(archive_media.s(task_id, guid, href, trigger_events))
+                tasks.append(archive_media.s(task_id, guid, href))
             else:
-                tasks.append(archive_rendition.s(task_id, guid, rendition['rendition'], href, trigger_events))
+                tasks.append(archive_rendition.s(task_id, guid, rendition['rendition'], href))
 
         update_status(*finish_subtask_from_progress(task_id))
         if tasks:
@@ -191,11 +191,10 @@ def archive_item(self, guid, provider_id, user, trigger_events, task_id=None, ):
 def ingest_set_archived(guid):
     ingest_doc = superdesk.apps['ingest'].find_one(req=None, _id=guid)
     if ingest_doc:
-        superdesk.apps['ingest'].update(ingest_doc.get('_id'), {'archived': utcnow()}, trigger_events=True)
+        superdesk.apps['ingest'].update(ingest_doc.get('_id'), {'archived': utcnow()})
 
 
 class ArchiveIngestModel(BaseModel):
-    endpoint_name = 'archive_ingest'
     resource_methods = ['POST']
     item_methods = ['GET']
     datasource = {
@@ -217,7 +216,10 @@ class ArchiveIngestModel(BaseModel):
         }
     }
 
-    def create(self, docs, trigger_events=None, **kwargs):
+
+class ArchiveIngestService(BaseService):
+
+    def create(self, docs, **kwargs):
         for doc in docs:
             ingest_doc = superdesk.apps['ingest'].find_one(req=None, _id=doc.get('guid'))
             if not ingest_doc:
@@ -229,22 +231,21 @@ class ArchiveIngestModel(BaseModel):
             if not archived_doc:
                 doc.setdefault('_id', doc.get('guid'))
                 doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
-                superdesk.apps['archive'].create([doc], trigger_events=trigger_events)
+                superdesk.apps['archive'].create([doc])
 
-            task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'),
-                                      doc.get('user'), trigger_events)
+            task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), doc.get('user'))
             doc['task_id'] = task.id
             if task.state not in ('PROGRESS', states.SUCCESS, states.FAILURE) and not task.result:
                 update_status(task.id, 0, 0)
 
-            superdesk.apps['archive'].update(doc.get('guid'), {"task_id": task.id}, trigger_events=trigger_events)
+            superdesk.apps['archive'].update(doc.get('guid'), {"task_id": task.id})
 
         return [doc.get('guid') for doc in docs]
 
-    def update(self, id, updates, trigger_events=None):
+    def update(self, id, updates):
         pass
 
-    def delete(self, lookup, trigger_events=None):
+    def delete(self, lookup):
         pass
 
     def find_one(self, req=None, **lookup):

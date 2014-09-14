@@ -241,6 +241,18 @@ def step_impl_when_post_url(context, url):
             set_placeholder(context, '%s_ID' % name.upper(), item['_id'])
 
 
+@when('we post to "{url}" with success')
+def step_impl_when_post_url_with_success(context, url):
+    data = apply_placeholders(context, context.text)
+    context.response = context.client.post(url, data=data, headers=context.headers)
+    assert_ok(context.response)
+    item = json.loads(context.response.get_data())
+    if item.get('_id'):
+        parsed_url = urlparse(url)
+        name = basename(parsed_url.path)
+        set_placeholder(context, '%s_ID' % name.upper(), item['_id'])
+
+
 @when('we put to "{url}"')
 def step_impl_when_put_url(context, url):
     data = apply_placeholders(context, context.text)

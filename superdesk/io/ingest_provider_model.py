@@ -5,7 +5,6 @@ DAYS_TO_KEEP = 2
 
 
 class IngestProviderModel(BaseModel):
-    endpoint_name = 'ingest_providers'
     schema = {
         'name': {
             'type': 'string',

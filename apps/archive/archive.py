@@ -12,6 +12,7 @@ from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from eve.utils import parse_request
 from apps.common.models.base_model import InvalidEtag
+from superdesk.services import BaseService
 
 
 def get_subject(doc1, doc2=None):
@@ -24,12 +25,14 @@ def get_subject(doc1, doc2=None):
 
 
 class ArchiveVersionsModel(BaseModel):
-    endpoint_name = 'archive_versions'
     schema = base_schema
     extra_response_fields = extra_response_fields
     item_url = item_url
     resource_methods = []
     internal_resource = True
+
+
+class ArchiveVersionsService(BaseService):
 
     def on_create(self, docs):
         for doc in docs:
@@ -37,7 +40,6 @@ class ArchiveVersionsModel(BaseModel):
 
 
 class ArchiveModel(BaseModel):
-    endpoint_name = 'archive'
     schema = {
         'old_version': {
             'type': 'number',
@@ -61,6 +63,9 @@ class ArchiveModel(BaseModel):
     resource_methods = ['GET', 'POST', 'DELETE']
     versioning = True
 
+
+class ArchiveService(BaseService):
+
     def on_create(self, docs):
         on_create_item(docs)
 
@@ -73,10 +78,14 @@ class ArchiveModel(BaseModel):
     def on_update(self, updates, original):
         user = get_user()
         lock_user = original.get('lock_user', None)
-        if lock_user and str(lock_user) != str(user['_id']):
+        force_unlock = updates.get('force_unlock', False)
+        # TODO: check if the below check is still valid.
+        if lock_user and str(lock_user) != str(user['_id']) and not force_unlock:
             raise SuperdeskError(payload='The item was locked by another user')
         updates['versioncreated'] = utcnow()
         updates['version_creator'] = str(user.get('_id'))
+        if force_unlock:
+            del updates['force_unlock']
 
     def on_updated(self, updates, original):
         c = get_component(ItemAutosave)
@@ -104,9 +113,9 @@ class ArchiveModel(BaseModel):
         add_activity('removed item {{ type }} about {{ subject }}',
                      type=doc['type'], subject=get_subject(doc))
 
-    def replace(self, id, document, trigger_events=None, base_backend=False):
+    def replace(self, id, document):
         return self.restore_version(id, document) or \
-            super().replace(id, document, trigger_events=trigger_events)
+            super().replace(id, document)
 
     def restore_version(self, id, doc):
         item_id = id
@@ -130,7 +139,7 @@ class ArchiveModel(BaseModel):
         del old['_id_document']
 
         resolve_document_version(old, 'archive', 'PATCH', curr)
-        res = super().replace(id=item_id, document=old, trigger_events=True)
+        res = super().replace(id=item_id, document=old)
         del doc['old_version']
         del doc['last_version']
         doc.update(old)
@@ -145,10 +154,13 @@ class ArchiveAutosaveModel(BaseModel):
     }
     schema.update(base_schema)
     schema['type'] = {'type': 'string'}
-    datasource = {'backend': 'custom', 'base_backend': 'mongo'}
     resource_methods = ['POST']
     item_methods = ['GET', 'PUT', 'PATCH']
     resource_title = endpoint_name
+    datasource = {'source': 'archive'}
+
+
+class ArchiveSaveService(BaseService):
 
     def on_create(self, docs):
         if not docs:

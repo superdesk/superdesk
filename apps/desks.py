@@ -1,6 +1,7 @@
 from superdesk.models import BaseModel
 from bson.objectid import ObjectId
-
+from superdesk.services import BaseService
+import superdesk
 
 desks_schema = {
     'name': {
@@ -21,22 +22,27 @@ desks_schema = {
 
 
 def init_app(app):
-    DesksModel(app=app)
-    UserDesksModel(app=app)
+    endpoint_name = 'desks'
+    service = BaseService(endpoint_name=endpoint_name, backend=superdesk.get_backend())
+    DesksModel(endpoint_name=endpoint_name, app=app, service=service)
+    endpoint_name = 'user_desks'
+    service = UserDesksService(endpoint_name=endpoint_name, backend=superdesk.get_backend())
+    UserDesksModel(endpoint_name=endpoint_name, app=app, service=service)
 
 
 class DesksModel(BaseModel):
-    endpoint_name = 'desks'
     schema = desks_schema
     datasource = {'default_sort': [('created', -1)]}
 
 
 class UserDesksModel(BaseModel):
-    endpoint_name = 'user_desks'
     url = 'users/<regex("[a-f0-9]{24}"):user_id>/desks'
     schema = desks_schema
     datasource = {'source': 'desks'}
     resource_methods = ['GET']
+
+
+class UserDesksService(BaseService):
 
     def get(self, req, lookup):
         if lookup.get('user_id'):

@@ -7,6 +7,7 @@ import superdesk
 from .common import base_schema, get_user
 from superdesk.models import BaseModel, build_custom_hateoas
 from superdesk.json_path_tool import json_merge_values, json_copy_values
+from superdesk.services import BaseService
 
 
 logger = logging.getLogger(__name__)
@@ -45,6 +46,9 @@ class ContentViewModel(BaseModel):
             'self': '/{location}/{_id}'
         }
     }
+
+
+class ContentViewService(BaseService):
 
     def check_filter(self, filter, location):
         parsed_request = init_parsed_request(filter)
@@ -99,6 +103,10 @@ class ContentViewItemsModel(BaseModel):
     schema = base_schema
     resource_methods = ['GET']
     datasource = {'backend': 'custom'}
+
+
+class ContentViewItemsService(BaseService):
+
     custom_hateoas = {'self': {'title': 'Archive', 'href': '/{location}/{_id}'}}
 
     def get(self, req, **lookup):

@@ -5,18 +5,23 @@ import flask
 from eve.methods.post import post_internal
 from superdesk.notification import push_notification
 from superdesk.models import BaseModel
-
+from superdesk.services import BaseService
+import superdesk
 
 log = logging.getLogger(__name__)
 
 
 def init_app(app):
-    auditModel = AuditModel(app=app)
+    endpoint_name = 'audit'
+    service = BaseService(endpoint_name=endpoint_name, backend=superdesk.get_backend())
+    auditModel = AuditModel(endpoint_name=endpoint_name, app=app, service=service)
     app.on_inserted += auditModel.on_generic_inserted
     app.on_updated += auditModel.on_generic_updated
     app.on_deleted_item += auditModel.on_generic_deleted
 
-    ActivityModel(app=app)
+    endpoint_name = 'activity'
+    service = BaseService(endpoint_name=endpoint_name, backend=superdesk.get_backend())
+    ActivityModel(endpoint_name=endpoint_name, app=app, service=service)
 
 
 class AuditModel(BaseModel):

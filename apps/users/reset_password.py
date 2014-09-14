@@ -7,7 +7,7 @@ from settings import RESET_PASSWORD_TOKEN_TIME_TO_LIVE as token_ttl
 import logging
 from .users import hash_password
 from superdesk.utc import utcnow
-
+from superdesk.services import BaseService
 
 logger = logging.getLogger(__name__)
 reset_schema = {
@@ -29,7 +29,6 @@ def send_reset_password_email(doc):
 
 
 class ActiveTokensModel(BaseModel):
-    endpoint_name = 'active_tokens'
     internal_resource = True
     schema = reset_schema
     where_clause = '(ISODate() - this._created) / 3600000 <= %s' % token_ttl
@@ -43,13 +42,15 @@ class ActiveTokensModel(BaseModel):
 
 
 class ResetPasswordModel(BaseModel):
-    endpoint_name = 'reset_user_password'
     schema = reset_schema
     public_methods = ['POST']
     resource_methods = ['POST']
     item_methods = []
 
-    def create(self, docs, trigger_events=None, **kwargs):
+
+class ResetPasswordService(BaseService):
+
+    def create(self, docs, **kwargs):
         for doc in docs:
             email = doc.get('email')
             key = doc.get('token')
@@ -101,7 +102,7 @@ class ResetPasswordModel(BaseModel):
         hashed = hash_password(password)
         updates['password'] = hashed
         updates[app.config['LAST_UPDATED']] = utcnow()
-        superdesk.apps['users'].update(id=user_id, updates=updates, trigger_events=True)
+        superdesk.apps['users'].update(id=user_id, updates=updates)
 
     def remove_private_data(self, doc):
         self.remove_field_from(doc, 'password')

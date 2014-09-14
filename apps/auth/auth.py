@@ -7,6 +7,7 @@ from flask import json, current_app as app, request
 from eve.auth import TokenAuth
 from superdesk.models import BaseModel
 import bcrypt
+from superdesk.services import BaseService
 
 
 logger = logging.getLogger(__name__)
@@ -118,8 +119,6 @@ class AuthUsersModel(BaseModel):
 
     On users `find_one` never returns a password due to the projection.
     """
-
-    endpoint_name = 'auth_users'
     datasource = {'source': 'users'}
     schema = {
         'username': {
@@ -135,7 +134,6 @@ class AuthUsersModel(BaseModel):
 
 
 class AuthModel(BaseModel):
-    endpoint_name = 'auth'
     schema = {
         'username': {
             'type': 'string',
@@ -154,6 +152,9 @@ class AuthModel(BaseModel):
     item_methods = ['GET']
     public_methods = ['POST']
     extra_response_fields = ['user', 'token', 'username']
+
+
+class AuthService(BaseService):
 
     def on_create(self, docs):
         for doc in docs:

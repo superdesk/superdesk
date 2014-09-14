@@ -3,6 +3,7 @@ from superdesk.models import BaseModel
 from apps.item_lock.components.item_lock import ItemLock
 from .common import get_user, item_url
 from apps.common.components.utils import get_component
+from superdesk.services import BaseService
 
 
 class ArchiveLockModel(BaseModel):
@@ -12,6 +13,9 @@ class ArchiveLockModel(BaseModel):
     datasource = {'backend': 'custom'}
     resource_methods = ['GET', 'POST']
     resource_title = endpoint_name
+
+
+class ArchiveLockService(BaseService):
 
     def on_create(self, docs):
         docs.clear()
@@ -27,6 +31,9 @@ class ArchiveUnlockModel(BaseModel):
     datasource = {'backend': 'custom'}
     resource_methods = ['GET', 'POST']
     resource_title = endpoint_name
+
+
+class ArchiveUnlockService(BaseService):
 
     def on_create(self, docs):
         docs.clear()

@@ -8,6 +8,7 @@ import superdesk
 from superdesk.models import BaseModel
 from superdesk.notification import push_notification
 from apps.activity import add_activity
+from superdesk.services import BaseService
 
 
 comments_schema = {
@@ -50,10 +51,12 @@ def get_users(usernames):
 
 
 class ItemCommentsModel(BaseModel):
-    endpoint_name = 'item_comments'
     schema = comments_schema
     resource_methods = ['GET', 'POST', 'DELETE']
     datasource = {'default_sort': [('_created', -1)]}
+
+
+class ItemCommentsService(BaseService):
 
     def on_create(self, docs):
         for doc in docs:
@@ -82,11 +85,13 @@ class ItemCommentsModel(BaseModel):
 
 
 class ItemCommentsSubModel(BaseModel):
-    endpoint_name = 'content_item_comments'
     url = 'archive/<path:item>/comments'
     schema = comments_schema
     datasource = {'source': 'item_comments'}
     resource_methods = ['GET']
+
+
+class ItemCommentsSubService(BaseService):
 
     def get(self, req, lookup):
         check_item_valid(lookup.get('item'))
