@@ -16,7 +16,7 @@
         <section class="module" ng-if="flags.notifications" >
             <header class="title" translate>Notifications</header>           
             <ul class="notification-list">
-                <li ng-repeat="notification in notifications._items" ng-class="{unread: item._unread}" sd-mark-as-read>
+                <li ng-repeat="notification in notifications._items" ng-class="{unread: notification._unread}" sd-mark-as-read>
                     <figure class="avatar">
                         <img sd-user-avatar data-src="notification.user.picture_url" />
                     </figure>
