@@ -19,8 +19,15 @@ define(['lodash'], function(_) {
         };
 
         $scope.save = function() {
-            if ($scope.newTask.task.due_time && $scope.newTask.task.due_time) {
-                $scope.newTask.task.due_date.setTime($scope.newTask.task.due_time.getTime());
+            if ($scope.newTask.task.due_time) {
+                $scope.newTask.task.due_date = new Date(
+                    $scope.newTask.task.due_date.getFullYear(),
+                    $scope.newTask.task.due_date.getMonth(),
+                    $scope.newTask.task.due_date.getDate(),
+                    $scope.newTask.task.due_time.getHours(),
+                    $scope.newTask.task.due_time.getMinutes(),
+                    $scope.newTask.task.due_time.getSeconds()
+                );
             }
             delete $scope.newTask.task.due_time;
 
