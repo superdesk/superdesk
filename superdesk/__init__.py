@@ -19,6 +19,7 @@ apps = dict()
 app_components = dict()
 app_models = dict()
 
+eve_backend = EveBackend()
 
 logger = logging.getLogger(__name__)
 
@@ -86,4 +87,4 @@ def blueprint(blueprint, **kwargs):
 
 def get_backend():
     """Returns the available backend, this will be changed in a factory if needed."""
-    return EveBackend()
+    return eve_backend
