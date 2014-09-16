@@ -34,8 +34,7 @@ class TaskModel(BaseModel):
                 'started_at': {'type': 'datetime'},
                 'finished_at': {'type': 'datetime'},
                 'user': BaseModel.rel('users', True),
-                'desk': BaseModel.rel('desks', True),
-                'basket': BaseModel.rel('content_view', True)
+                'desk': BaseModel.rel('desks', True)
             }
         }
     }
