@@ -3,7 +3,7 @@ import flask
 import logging
 import superdesk
 import superdesk.utils as utils
-from .ldap_auth import login
+from .ldap_auth import authenticate_and_fetch_profile
 from flask import json, current_app as app, request
 from eve.auth import TokenAuth
 from superdesk.models import BaseModel
@@ -119,15 +119,15 @@ def authenticate_via_db(credentials, db):
 def authenticate_via_ad(credentials, db):
     username = credentials.get('username')
     password = credentials.get('password').encode('UTF-8')
-    userdata = login(username, password)
+    user_data = authenticate_and_fetch_profile(username, password, username)
 
     user = db.find_one('auth_users', req=None, username=username)
 
     if not user:
-        userdata[app.config['DATE_CREATED']] = utcnow()
-        userdata[app.config['LAST_UPDATED']] = utcnow()
-        userdata['username'] = username
-        db.insert('users', userdata)
+        user_data[app.config['DATE_CREATED']] = utcnow()
+        user_data[app.config['LAST_UPDATED']] = utcnow()
+        user_data['username'] = username
+        db.insert('users', user_data)
         user = db.find_one('auth_users', req=None, username=username)
 
     return user
