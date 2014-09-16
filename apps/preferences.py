@@ -7,6 +7,14 @@ preference_schema = {
     'preferences': {'type': 'dict', 'required': True}
 }
 
+options_schema = {
+    'options': {
+        'type': 'string',
+        'allowed': ['on', 'off'],
+        'default': 'on'
+    }
+}
+
 
 def init_app(app):
     endpoint_name = 'preferences'

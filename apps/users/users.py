@@ -8,6 +8,7 @@ from superdesk.resource import Resource
 from superdesk.utc import utcnow
 from apps.activity import add_activity
 from superdesk.services import BaseService
+from apps.preferences import options_schema
 
 
 class EmptyUsernameException(Exception):
@@ -161,7 +162,13 @@ class UsersResource(Resource):
             'type': 'dict'
         },
         'preferences': {
-            'type': 'dict'
+            'type': 'dict',
+            'schema': {
+                'email_notification': {
+                    'type': 'dict',
+                    'schema': options_schema
+                }
+            }
         }
     }
 
