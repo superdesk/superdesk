@@ -112,3 +112,13 @@ MAIL_USE_SSL = json.loads(os.environ.get('MAIL_USE_SSL', 'True').lower())
 MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'admin@sourcefabric.org')
 MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', 'admin-password')
 ADMINS = [MAIL_USERNAME]
+
+# LDAP settings
+LDAP_SERVER = os.environ.get('LDAP_SERVER', 'ldap://aap.com.au')
+#LDAP_BASE_FILTER limit the base filter to the security group
+#for example OU=Superdesk Users,dc=aap,dc=com,dc=au
+LDAP_BASE_FILTER = os.environ.get('LDAP_BASE_FILTER', 'OU=AAP Users,dc=aap,dc=com,dc=au')
+#change the user depending on the LDAP directory structure
+LDAP_USER_FILTER = "(&(objectCategory=user)(objectClass=user)(sAMAccountName={}))"
+#LDAP USER Attributes to fetch
+LDAP_USER_ATTRIBUTES = ['*']

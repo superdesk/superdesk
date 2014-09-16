@@ -3,9 +3,11 @@ import flask
 import logging
 import superdesk
 import superdesk.utils as utils
+from .ldap_auth import login
 from flask import json, current_app as app, request
 from eve.auth import TokenAuth
 from superdesk.models import BaseModel
+from superdesk.utc import utcnow
 import bcrypt
 
 
@@ -84,10 +86,17 @@ class SuperdeskTokenAuth(TokenAuth):
         raise AuthRequiredError()
 
 
-def authenticate(credentials, db):
+
+def authenticate(credentials, app):
     if 'username' not in credentials:
         raise NotFoundAuthError()
 
+    if superdesk.isLDAP():
+        return authenticate_via_ad(credentials, app.data)
+    else:
+        return authenticate_via_db(credentials, app.data)
+
+def authenticate_via_db(credentials, db):
     user = db.find_one('auth_users', req=None, username=credentials.get('username'))
     if not user:
         raise NotFoundAuthError()
@@ -107,6 +116,21 @@ def authenticate(credentials, db):
 
     return user
 
+def authenticate_via_ad(credentials, db):
+    username = credentials.get('username')
+    password = credentials.get('password').encode('UTF-8')
+    userdata = login(username, password)
+
+    user = db.find_one('auth_users', req=None, username=username)
+
+    if not user:
+        userdata[app.config['DATE_CREATED']] = utcnow()
+        userdata[app.config['LAST_UPDATED']] = utcnow()
+        userdata['username'] = username
+        db.insert('users', userdata)
+        user = db.find_one('auth_users', req=None, username=username)
+
+    return user
 
 def raiseCredentialsAuthError(credentials):
     logger.warning("Login failure: %s" % json.dumps(credentials))
@@ -157,7 +181,7 @@ class AuthModel(BaseModel):
 
     def on_create(self, docs):
         for doc in docs:
-            user = authenticate(doc, app.data)
+            user = authenticate(doc, app)
             doc['user'] = user['_id']
             doc['token'] = utils.get_random_string(40)
             del doc['password']

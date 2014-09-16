@@ -33,6 +33,7 @@ requests==2.3.0
 simplejson==3.6.3
 six==1.7.3
 httmock==1.2.2
+python3-ldap==0.9.5.3
 
 git+git://github.com/petrjasek/eve-elastic@master#egg=Eve-Elastic==0.1.13
 git+git://github.com/superdesk/eve@develop#egg=Eve==0.5-dev

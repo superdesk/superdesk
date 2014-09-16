@@ -79,3 +79,6 @@ def blueprint(blueprint, **kwargs):
     """Register blueprint"""
     blueprint.kwargs = kwargs
     BLUEPRINTS.append(blueprint)
+
+def isLDAP():
+    return app.settings['LDAP_SERVER'] != ''
