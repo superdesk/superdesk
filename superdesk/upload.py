@@ -3,7 +3,7 @@ import logging
 import superdesk
 from eve.utils import config
 from superdesk import SuperdeskError
-from .models import BaseModel
+from .resource import Resource
 from .services import BaseService
 from flask import url_for, Response, current_app as app, json
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
@@ -31,11 +31,11 @@ def url_for_media(media_id):
 
 def init_app(app):
     endpoint_name = 'upload'
-    service = UploadService(endpoint_name=endpoint_name, backend=superdesk.get_backend())
-    UploadModel(endpoint_name=endpoint_name, app=app, service=service)
+    service = UploadService(endpoint_name, backend=superdesk.get_backend())
+    UploadResource(endpoint_name, app=app, service=service)
 
 
-class UploadModel(BaseModel):
+class UploadResource(Resource):
     schema = {
         'media': {'type': 'file'},
         'CropLeft': {'type': 'integer'},

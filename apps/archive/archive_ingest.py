@@ -16,7 +16,7 @@ from flask.globals import current_app as app
 from superdesk.upload import url_for_media
 from superdesk.media.media_operations import download_file_from_url,\
     process_file
-from superdesk.models import BaseModel
+from superdesk.resource import Resource
 from celery.exceptions import Ignore
 from celery import states
 from .common import facets
@@ -41,7 +41,7 @@ def raise_fail(task_id, message):
 
 
 def import_rendition(guid, rendition_name, href, extract_metadata):
-    archive = superdesk.apps['archive'].find_one(req=None, guid=guid)
+    archive = superdesk.get_resource_service('archive').find_one(req=None, guid=guid)
     if not archive:
         msg = 'No document found in the media archive with this ID: %s' % guid
         raise superdesk.SuperdeskError(payload=msg)
@@ -63,7 +63,7 @@ def import_rendition(guid, rendition_name, href, extract_metadata):
     # perform partial update
     updates['renditions.' + rendition_name + '.href'] = url_for_media(file_guid)
     updates['renditions.' + rendition_name + '.media'] = file_guid
-    result = superdesk.apps['archive'].update(id=guid, updates=updates)
+    result = superdesk.get_resource_service('archive').update(id=guid, updates=updates)
 
     return result
 
@@ -111,7 +111,7 @@ def archive_item(self, guid, provider_id, user, task_id=None):
         if not self.request.retries:
             update_status(*add_subtask_to_progress(task_id))
 
-        provider = superdesk.apps['ingest_providers'].find_one(req=None, _id=provider_id)
+        provider = superdesk.get_resource_service('ingest_providers').find_one(req=None, _id=provider_id)
         if provider is None:
             message = 'For ingest with guid= %s, failed to retrieve provider with _id=%s' % (guid, provider_id)
             raise_fail(task_id, message)
@@ -123,7 +123,7 @@ def archive_item(self, guid, provider_id, user, task_id=None):
         try:
             items = service_provider.get_items(guid)
         except LookupError:
-            ingest_doc = superdesk.apps['ingest'].find_one(req=None, _id=guid)
+            ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=guid)
             if not ingest_doc:
                 message = 'Not found the ingest with guid: %s for provider %s' % (guid, provider.get('type'))
                 raise_fail(task_id, message)
@@ -147,7 +147,7 @@ def archive_item(self, guid, provider_id, user, task_id=None):
         if not old_item:
             item['created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
             item['updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
-        superdesk.apps['archive'].update(guid, item)
+        superdesk.get_resource_service('archive').update(guid, item)
 
         tasks = []
         for group in item.get('groups', []):
@@ -156,15 +156,15 @@ def archive_item(self, guid, provider_id, user, task_id=None):
                     doc = {'guid': ref.get('residRef'), 'ingest_provider': provider_id,
                            'user': user, 'task_id': crt_task_id}
 
-                    archived_doc = superdesk.apps['archive'].find_one(req=None, guid=doc.get('guid'))
+                    archived_doc = superdesk.get_resource_service('archive').find_one(req=None, guid=doc.get('guid'))
                     # check if task already started
                     if not archived_doc:
                         doc.setdefault('_id', doc.get('guid'))
-                        superdesk.apps['archive'].create([doc])
+                        superdesk.get_resource_service('archive').create([doc])
                     elif archived_doc.get('task_id') == crt_task_id:
                         # it is a retry so continue
                         archived_doc.update(doc)
-                        superdesk.apps['archive'].update(archived_doc.get('_id'), archived_doc)
+                        superdesk.get_resource_service('archive').update(archived_doc.get('_id'), archived_doc)
                     else:
                         # there is a cyclic dependency, skip it
                         continue
@@ -189,12 +189,12 @@ def archive_item(self, guid, provider_id, user, task_id=None):
 
 
 def ingest_set_archived(guid):
-    ingest_doc = superdesk.apps['ingest'].find_one(req=None, _id=guid)
+    ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=guid)
     if ingest_doc:
-        superdesk.apps['ingest'].update(ingest_doc.get('_id'), {'archived': utcnow()})
+        superdesk.get_resource_service('ingest').update(ingest_doc.get('_id'), {'archived': utcnow()})
 
 
-class ArchiveIngestModel(BaseModel):
+class ArchiveIngestResource(Resource):
     resource_methods = ['POST']
     item_methods = ['GET']
     datasource = {
@@ -221,24 +221,24 @@ class ArchiveIngestService(BaseService):
 
     def create(self, docs, **kwargs):
         for doc in docs:
-            ingest_doc = superdesk.apps['ingest'].find_one(req=None, _id=doc.get('guid'))
+            ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=doc.get('guid'))
             if not ingest_doc:
                 msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
                 raise superdesk.SuperdeskError(payload=msg)
             ingest_set_archived(doc.get('guid'))
 
-            archived_doc = superdesk.apps['archive'].find_one(req=None, guid=doc.get('guid'))
+            archived_doc = superdesk.get_resource_service('archive').find_one(req=None, guid=doc.get('guid'))
             if not archived_doc:
                 doc.setdefault('_id', doc.get('guid'))
                 doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
-                superdesk.apps['archive'].create([doc])
+                superdesk.get_resource_service('archive').create([doc])
 
             task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), doc.get('user'))
             doc['task_id'] = task.id
             if task.state not in ('PROGRESS', states.SUCCESS, states.FAILURE) and not task.result:
                 update_status(task.id, 0, 0)
 
-            superdesk.apps['archive'].update(doc.get('guid'), {"task_id": task.id})
+            superdesk.get_resource_service('archive').update(doc.get('guid'), {"task_id": task.id})
 
         return [doc.get('guid') for doc in docs]
 

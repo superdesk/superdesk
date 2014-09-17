@@ -1,10 +1,10 @@
 
-from superdesk.models import BaseModel
+from superdesk.resource import Resource
 from superdesk.io import allowed_providers
 DAYS_TO_KEEP = 2
 
 
-class IngestProviderModel(BaseModel):
+class IngestProviderResource(Resource):
     schema = {
         'name': {
             'type': 'string',

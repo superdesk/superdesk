@@ -1,14 +1,14 @@
 
-from superdesk.models import BaseModel, build_custom_hateoas
+from superdesk.resource import Resource, build_custom_hateoas
 from superdesk.services import BaseService
-from .archive import ArchiveModel
+from .archive import ArchiveResource
 
 
-class UserContentModel(BaseModel):
+class UserContentResource(Resource):
     endpoint_name = 'user_content'
-    item_url = ArchiveModel.item_url
+    item_url = ArchiveResource.item_url
     url = 'users/<regex("[a-f0-9]{24}"):original_creator>/content'
-    schema = ArchiveModel.schema
+    schema = ArchiveResource.schema
     datasource = {'source': 'archive'}
     resource_methods = ['GET', 'POST']
     item_methods = ['GET', 'PATCH', 'DELETE']

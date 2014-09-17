@@ -5,7 +5,7 @@ import superdesk
 import superdesk.utils as utils
 from flask import json, current_app as app, request
 from eve.auth import TokenAuth
-from superdesk.models import BaseModel
+from superdesk.resource import Resource
 import bcrypt
 from superdesk.services import BaseService
 
@@ -114,7 +114,7 @@ def raiseCredentialsAuthError(credentials):
     raise CredentialsAuthError()
 
 
-class AuthUsersModel(BaseModel):
+class AuthUsersResource(Resource):
     """ This resource is for authentication only.
 
     On users `find_one` never returns a password due to the projection.
@@ -133,7 +133,7 @@ class AuthUsersModel(BaseModel):
     internal_resource = True
 
 
-class AuthModel(BaseModel):
+class AuthResource(Resource):
     schema = {
         'username': {
             'type': 'string',
@@ -146,7 +146,7 @@ class AuthModel(BaseModel):
         'token': {
             'type': 'string'
         },
-        'user': BaseModel.rel('users', True)
+        'user': Resource.rel('users', True)
     }
     resource_methods = ['POST']
     item_methods = ['GET']

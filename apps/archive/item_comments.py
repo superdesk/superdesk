@@ -5,7 +5,7 @@ from flask import current_app as app
 import flask
 
 import superdesk
-from superdesk.models import BaseModel
+from superdesk.resource import Resource
 from superdesk.notification import push_notification
 from apps.activity import add_activity
 from superdesk.services import BaseService
@@ -18,8 +18,8 @@ comments_schema = {
         'maxlength': 500,
         'required': True,
     },
-    'item': BaseModel.rel('archive', True, True, type='string'),
-    'user': BaseModel.rel('users', True),
+    'item': Resource.rel('archive', True, True, type='string'),
+    'user': Resource.rel('users', True),
     'mentioned_users': {
         'type': 'dict'
     }
@@ -45,12 +45,12 @@ def get_users_mentions(text):
 
 def get_users(usernames):
     req = ParsedRequest()
-    users = superdesk.apps['users'].get(req=req, lookup={'username': {'$in': usernames}})
+    users = superdesk.get_resource_service('users').get(req=req, lookup={'username': {'$in': usernames}})
     users = {user.get('username'): user.get('_id') for user in users}
     return users
 
 
-class ItemCommentsModel(BaseModel):
+class ItemCommentsResource(Resource):
     schema = comments_schema
     resource_methods = ['GET', 'POST', 'DELETE']
     datasource = {'default_sort': [('_created', -1)]}
@@ -84,7 +84,7 @@ class ItemCommentsService(BaseService):
         push_notification('archive_comment', deleted=1)
 
 
-class ItemCommentsSubModel(BaseModel):
+class ItemCommentsSubResource(Resource):
     url = 'archive/<path:item>/comments'
     schema = comments_schema
     datasource = {'source': 'item_comments'}

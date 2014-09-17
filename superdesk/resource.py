@@ -2,7 +2,6 @@
 import logging
 import superdesk
 from eve.utils import config
-from eve.defaults import resolve_default_values
 
 
 log = logging.getLogger(__name__)
@@ -22,7 +21,7 @@ def build_custom_hateoas(hateoas, doc, **values):
         links[link_name] = link
 
 
-class BaseModel():
+class Resource():
     '''
     Base model for all endpoints, defines the basic implementation
     for CRUD datalayer functionality.
@@ -44,7 +43,7 @@ class BaseModel():
     service = None
     endpoint_schema = None
 
-    def __init__(self, endpoint_name, app, service=None, endpoint_schema=None):
+    def __init__(self, endpoint_name, app, service, endpoint_schema=None):
         self.endpoint_name = endpoint_name
         self.service = service
         if not endpoint_schema:
@@ -75,7 +74,7 @@ class BaseModel():
                 endpoint_schema.update({'resource_title': self.resource_title})
         self.endpoint_schema = endpoint_schema
         app.register_resource(self.endpoint_name, endpoint_schema)
-        superdesk.apps[self.endpoint_name] = self
+        superdesk.resources[self.endpoint_name] = self
 
     @staticmethod
     def rel(resource, embeddable=True, required=False, type='objectid'):
@@ -84,28 +83,3 @@ class BaseModel():
             'required': required,
             'data_relation': {'resource': resource, 'field': '_id', 'embeddable': embeddable}
         }
-
-    def find_one(self, req, **lookup):
-        return self.service.find_one(req=req, **lookup)
-
-    def get(self, req, lookup):
-        return self.service.get(req=req, lookup=lookup)
-
-    def create(self, docs, **kwargs):
-        for doc in docs:
-            resolve_default_values(doc, self.endpoint_schema['defaults'])
-        ids = self.service.post(docs, **kwargs)
-        return ids
-
-    def update(self, id, updates):
-        res = self.service.patch(id, updates)
-        return res
-
-    def replace(self, id, document):
-        resolve_default_values(document, self.endpoint_schema['defaults'])
-        res = self.service.put(id, document)
-        return res
-
-    def delete(self, lookup):
-        res = self.service.delete_action(lookup)
-        return res

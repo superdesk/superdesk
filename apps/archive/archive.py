@@ -1,4 +1,4 @@
-from superdesk.models import BaseModel
+from superdesk.resource import Resource
 from .common import base_schema, extra_response_fields, item_url, facets
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from .common import get_user
@@ -24,7 +24,7 @@ def get_subject(doc1, doc2=None):
             return value
 
 
-class ArchiveVersionsModel(BaseModel):
+class ArchiveVersionsResource(Resource):
     schema = base_schema
     extra_response_fields = extra_response_fields
     item_url = item_url
@@ -39,7 +39,7 @@ class ArchiveVersionsService(BaseService):
             doc['versioncreated'] = utcnow()
 
 
-class ArchiveModel(BaseModel):
+class ArchiveResource(Resource):
     schema = {
         'old_version': {
             'type': 'number',
@@ -146,7 +146,7 @@ class ArchiveService(BaseService):
         return res
 
 
-class ArchiveAutosaveModel(BaseModel):
+class AutoSaveResource(Resource):
     endpoint_name = 'archive_autosave'
     item_url = item_url
     schema = {

@@ -1,4 +1,4 @@
-from superdesk.models import BaseModel
+from superdesk.resource import Resource
 from bson.objectid import ObjectId
 from superdesk.services import BaseService
 import superdesk
@@ -14,7 +14,7 @@ desks_schema = {
         'schema': {
             'type': 'dict',
             'schema': {
-                'user': BaseModel.rel('users', True)
+                'user': Resource.rel('users', True)
             }
         }
     }
@@ -23,19 +23,19 @@ desks_schema = {
 
 def init_app(app):
     endpoint_name = 'desks'
-    service = BaseService(endpoint_name=endpoint_name, backend=superdesk.get_backend())
-    DesksModel(endpoint_name=endpoint_name, app=app, service=service)
+    service = BaseService(endpoint_name, backend=superdesk.get_backend())
+    DesksResource(endpoint_name, app=app, service=service)
     endpoint_name = 'user_desks'
-    service = UserDesksService(endpoint_name=endpoint_name, backend=superdesk.get_backend())
-    UserDesksModel(endpoint_name=endpoint_name, app=app, service=service)
+    service = UserDesksService(endpoint_name, backend=superdesk.get_backend())
+    UserDesksResource(endpoint_name, app=app, service=service)
 
 
-class DesksModel(BaseModel):
+class DesksResource(Resource):
     schema = desks_schema
     datasource = {'default_sort': [('created', -1)]}
 
 
-class UserDesksModel(BaseModel):
+class UserDesksResource(Resource):
     url = 'users/<regex("[a-f0-9]{24}"):user_id>/desks'
     schema = desks_schema
     datasource = {'source': 'desks'}

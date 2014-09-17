@@ -1,5 +1,5 @@
 from superdesk.notification import push_notification
-from superdesk.models import BaseModel
+from superdesk.resource import Resource
 from apps.archive.common import on_create_item
 from superdesk.services import BaseService
 import superdesk
@@ -7,11 +7,11 @@ import superdesk
 
 def init_app(app):
     endpoint_name = 'planning'
-    service = PlanningService(endpoint_name=endpoint_name, backend=superdesk.get_backend())
-    PlanningModel(endpoint_name=endpoint_name, app=app, service=service)
+    service = PlanningService(endpoint_name, backend=superdesk.get_backend())
+    PlanningResource(endpoint_name, app=app, service=service)
 
 
-class PlanningModel(BaseModel):
+class PlanningResource(Resource):
     schema = {
         'guid': {
             'type': 'string',
@@ -36,7 +36,7 @@ class PlanningModel(BaseModel):
         'urgency': {
             'type': 'integer'
         },
-        'desk': BaseModel.rel('desks', True)
+        'desk': Resource.rel('desks', True)
     }
     item_url = 'regex("[\w,.:-]+")'
     datasource = {'search_backend': 'elastic'}

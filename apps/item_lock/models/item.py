@@ -6,7 +6,7 @@ class ItemValidator(Validator):
         return True
 
 
-class ItemModel(BaseModel):
+class ItemResource(BaseModel):
     def __init__(self, data_layer):
         BaseModel.__init__(self, 'archive', data_layer, {}, ItemValidator())
 

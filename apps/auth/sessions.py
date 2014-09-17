@@ -1,9 +1,9 @@
-from superdesk.models import BaseModel
+from superdesk.resource import Resource
 
 
-class SesssionsModel(BaseModel):
+class SesssionsResource(Resource):
     schema = {
-        'user': BaseModel.rel('users', True)
+        'user': Resource.rel('users', True)
     }
     datasource = {
         'source': 'auth',

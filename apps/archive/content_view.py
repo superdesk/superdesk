@@ -5,7 +5,7 @@ from eve.utils import ParsedRequest
 
 import superdesk
 from .common import base_schema, get_user
-from superdesk.models import BaseModel, build_custom_hateoas
+from superdesk.resource import Resource, build_custom_hateoas
 from superdesk.json_path_tool import json_merge_values, json_copy_values
 from superdesk.services import BaseService
 
@@ -20,7 +20,7 @@ def init_parsed_request(filter):
     return parsed_request
 
 
-class ContentViewModel(BaseModel):
+class ContentViewResource(Resource):
     endpoint_name = 'content_view'
     schema = {
         'name': {
@@ -37,8 +37,8 @@ class ContentViewModel(BaseModel):
             'type': 'string',
             'minlength': 1
         },
-        'desk': BaseModel.rel('desks', True),
-        'user': BaseModel.rel('users', True),
+        'desk': Resource.rel('desks', True),
+        'user': Resource.rel('users', True),
         'filter': {
             'type': 'dict'
         },
@@ -54,7 +54,7 @@ class ContentViewService(BaseService):
         parsed_request = init_parsed_request(filter)
         payload = None
         try:
-            superdesk.apps[location].get(req=parsed_request, lookup={})
+            superdesk.get_resource_service(location).get(req=parsed_request, lookup={})
         except Exception as e:
             logger.exception(e)
             payload = 'Fail to validate the filter against %s.' % location
@@ -96,7 +96,7 @@ def apply_additional_query(query, additional_query):
     return query
 
 
-class ContentViewItemsModel(BaseModel):
+class ContentViewItemsResource(Resource):
     endpoint_name = 'content_view_items'
     resource_title = endpoint_name
     url = 'content_view/<regex("[a-zA-Z0-9:\\-\\.]+"):content_view_id>/items'
@@ -111,7 +111,7 @@ class ContentViewItemsService(BaseService):
 
     def get(self, req, **lookup):
         content_view_id = lookup['lookup']['content_view_id']
-        view_items = superdesk.apps['content_view'].find_one(req=None, _id=content_view_id)
+        view_items = superdesk.get_resource_service('content_view').find_one(req=None, _id=content_view_id)
         if not view_items:
             raise superdesk.SuperdeskError(payload='Invalid content view id.')
         additional_query = view_items.get('filter')
@@ -123,7 +123,7 @@ class ContentViewItemsService(BaseService):
         query = apply_additional_query(query, additional_query)
         parsed_request = init_parsed_request(query)
         location = view_items.get('location', 'archive')
-        docs = superdesk.apps[location].get(req=parsed_request, lookup={})
+        docs = superdesk.get_resource_service(location).get(req=parsed_request, lookup={})
 
         for doc in docs:
             build_custom_hateoas(self.custom_hateoas, doc, location=location)

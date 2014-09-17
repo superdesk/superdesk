@@ -1,6 +1,6 @@
 import superdesk
 from flask import current_app as app
-from superdesk.models import BaseModel
+from superdesk.resource import Resource
 from superdesk.utils import get_random_string
 from superdesk.emails import send_email
 from settings import RESET_PASSWORD_TOKEN_TIME_TO_LIVE as token_ttl
@@ -14,7 +14,7 @@ reset_schema = {
     'email': {'type': 'email'},
     'token': {'type': 'string'},
     'password': {'type': 'string'},
-    'user': BaseModel.rel('users', True)
+    'user': Resource.rel('users', True)
 }
 
 
@@ -28,7 +28,7 @@ def send_reset_password_email(doc):
                      html_body=render_template("reset_password.html", user=doc, expires=token_ttl))
 
 
-class ActiveTokensModel(BaseModel):
+class ActiveTokensResource(Resource):
     internal_resource = True
     schema = reset_schema
     where_clause = '(ISODate() - this._created) / 3600000 <= %s' % token_ttl
@@ -41,7 +41,7 @@ class ActiveTokensModel(BaseModel):
     item_methods = []
 
 
-class ResetPasswordModel(BaseModel):
+class ResetPasswordResource(Resource):
     schema = reset_schema
     public_methods = ['POST']
     resource_methods = ['POST']
@@ -80,7 +80,7 @@ class ResetPasswordService(BaseService):
         key = doc.get('token')
         password = doc.get('password')
 
-        reset_request = superdesk.apps['active_tokens'].find_one(req=None, token=key)
+        reset_request = superdesk.get_resource_service('active_tokens').find_one(req=None, token=key)
         if not reset_request:
             raise superdesk.SuperdeskError(payload='Invalid token received: %s' % key)
 
@@ -102,7 +102,7 @@ class ResetPasswordService(BaseService):
         hashed = hash_password(password)
         updates['password'] = hashed
         updates[app.config['LAST_UPDATED']] = utcnow()
-        superdesk.apps['users'].update(id=user_id, updates=updates)
+        superdesk.get_resource_service('users').update(id=user_id, updates=updates)
 
     def remove_private_data(self, doc):
         self.remove_field_from(doc, 'password')

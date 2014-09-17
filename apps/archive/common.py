@@ -6,7 +6,7 @@ from superdesk import SuperdeskError
 from superdesk.notification import push_notification
 import flask
 import superdesk
-from superdesk.models import BaseModel
+from superdesk.resource import Resource
 
 
 GUID_TAG = 'tag'
@@ -162,7 +162,7 @@ base_schema = {
     'creator': {
         'type': 'dict',
         'schema': {
-            'user': BaseModel.rel('users', True)
+            'user': Resource.rel('users', True)
         }
     },
     'media_file': {
