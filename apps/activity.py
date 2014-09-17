@@ -92,14 +92,8 @@ class ActivityModel(BaseModel):
         'message': {'type': 'string'},
         'data': {'type': 'dict'},
         'read': {'type': 'dict'},
-        'user': {
-            'type': 'objectid',
-            'data_relation': {
-                'resource': 'users',
-                'field': '_id',
-                'embeddable': True
-            }
-        }
+        'item': BaseModel.rel('archive', type='string'),
+        'user': BaseModel.rel('users'),
     }
     exclude = {endpoint_name, 'notification'}
     datasource = {
@@ -107,21 +101,29 @@ class ActivityModel(BaseModel):
     }
 
 
-def add_activity(msg, notify=None, **data):
-    user = getattr(flask.g, 'user', None)
-    if not user:
-        return
+def add_activity(msg, item=None, notify=None, **data):
+    """Add an activity into activity log.
 
-    if notify is None:
-        read = {}
-    else:
-        read = {str(_id): 0 for _id in notify}
+    This will became part of current user activity log.
 
-    post_internal(ActivityModel.endpoint_name, {
-        'user': user.get('_id'),
+    If there is someone set to be notified it will make it into his notifications box.
+    """
+    activity = {
         'message': msg,
         'data': data,
-        'read': read
-    })
+    }
 
-    push_notification(ActivityModel.endpoint_name, _dest=read)
+    user = getattr(flask.g, 'user', None)
+    if user:
+        activity['user'] = user.get('_id')
+
+    if notify:
+        activity['read'] = {str(_id): 0 for _id in notify}
+    else:
+        activity['read'] = {}
+
+    if item:
+        activity['item'] = str(item)
+
+    post_internal(ActivityModel.endpoint_name, activity)
+    push_notification(ActivityModel.endpoint_name, _dest=activity['read'])

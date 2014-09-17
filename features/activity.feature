@@ -1,5 +1,6 @@
 Feature: User Activity
 
+    @wip
     @auth
     Scenario: User activity
          When we post to "/users"
