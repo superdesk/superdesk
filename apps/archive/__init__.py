@@ -14,8 +14,6 @@ from apps.item_lock.components.item_lock import ItemLock
 from apps.common.models.utils import register_model
 from apps.item_lock.models.item import ItemModel
 from apps.common.models.io.eve_proxy import EveProxy
-from apps.item_autosave.components.item_autosave import ItemAutosave
-from apps.item_autosave.models.item_autosave import ItemAutosaveModel
 
 
 def init_app(app):
@@ -72,6 +70,8 @@ def init_app(app):
     service = ArchiveSaveService(endpoint_name, backend=superdesk.get_backend())
     AutoSaveResource(endpoint_name, app=app, service=service)
 
+    from apps.item_autosave.components.item_autosave import ItemAutosave
+    from apps.item_autosave.models.item_autosave import ItemAutosaveModel
     register_component(ItemLock(app))
     register_model(ItemModel(EveProxy(app.data)))
     register_component(ItemAutosave(app))

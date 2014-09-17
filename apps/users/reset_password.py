@@ -102,7 +102,7 @@ class ResetPasswordService(BaseService):
         hashed = hash_password(password)
         updates['password'] = hashed
         updates[app.config['LAST_UPDATED']] = utcnow()
-        superdesk.get_resource_service('users').update(id=user_id, updates=updates)
+        app.data.update('users', user_id, updates=updates)
 
     def remove_private_data(self, doc):
         self.remove_field_from(doc, 'password')

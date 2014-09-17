@@ -56,7 +56,8 @@ class BaseService():
         return res
 
     def find_one(self, req, **lookup):
-        return self.backend.find_one(self.datasource, req=req, **lookup)
+        res = self.backend.find_one(self.datasource, req=req, **lookup)
+        return res
 
     def get(self, req, lookup):
         return self.backend.get(self.datasource, req=req, lookup=lookup)
@@ -68,14 +69,14 @@ class BaseService():
         return ids
 
     def patch(self, id, updates):
-        original = self.backend.find_one_in_base_backend(self.datasource, req=None, _id=id)
+        original = self.find_one(req=None, _id=id)
         self.on_update(updates, original)
         res = self.update(id, updates)
         self.on_updated(updates, original)
         return res
 
     def put(self, id, document):
-        original = self.backend.find_one_in_base_backend(self.datasource, req=None, _id=id)
+        original = self.find_one(req=None, _id=id)
         self.on_replace(document, original)
         res = self.replace(id, document)
         self.on_replaced(document, original)
@@ -83,7 +84,7 @@ class BaseService():
 
     def delete_action(self, lookup):
         if lookup:
-            doc = self.backend.find_one_in_base_backend(self.datasource, req=None, **lookup)
+            doc = self.find_one(req=None, **lookup)
             self.on_delete(doc)
         res = self.delete(lookup)
         if lookup and doc:

@@ -69,12 +69,12 @@ class CreateUserCommand(superdesk.Command):
         if user:
             userdata[app.config['LAST_UPDATED']] = utcnow()
             userdata['password'] = hash_password(userdata['password'])
-            superdesk.resources['users'].update(user.get('_id'), userdata)
+            superdesk.app.data.update('users', user.get('_id'), userdata)
             return userdata
         else:
             userdata[app.config['DATE_CREATED']] = utcnow()
             userdata[app.config['LAST_UPDATED']] = utcnow()
-            superdesk.resources['users'].create([userdata])
+            superdesk.app.data.insert('users', [userdata])
             return userdata
 
 
@@ -88,7 +88,7 @@ class HashUserPasswordsCommand(superdesk.Command):
                 hashed = hash_password(user['password'])
                 user_id = user.get('_id')
                 updates['password'] = hashed
-                superdesk.resources['users'].update(id=user_id, updates=updates)
+                superdesk.app.data.update('users', user_id, updates=updates)
 
 
 superdesk.connect('read:users', on_read_users)

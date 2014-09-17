@@ -78,10 +78,10 @@ class ItemCommentsService(BaseService):
                          notify=mentioned_users)
 
     def on_updated(self, updates, original):
-        push_notification('archive_comment', updated=1)
+        push_notification('item:comment', updated=1)
 
     def on_deleted(self, doc):
-        push_notification('archive_comment', deleted=1)
+        push_notification('item:comment', deleted=1)
 
 
 class ItemCommentsSubResource(Resource):
