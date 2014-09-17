@@ -16,14 +16,21 @@ function AuthoringWidgetsProvider() {
     };
 }
 
-WidgetsManagerCtrl.$inject = ['$scope', 'authoringWidgets'];
-function WidgetsManagerCtrl($scope, authoringWidgets) {
+WidgetsManagerCtrl.$inject = ['$scope', '$routeParams', 'authoringWidgets'];
+function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets) {
     $scope.active = null;
     $scope.widgets = authoringWidgets;
 
     $scope.activate = function(widget) {
         $scope.active = $scope.active === widget ? null : widget;
     };
+
+    // activate widget based on query string
+    angular.forEach($scope.widgets, function(widget) {
+        if ($routeParams[widget._id]) {
+            $scope.activate(widget);
+        }
+    });
 }
 
 function AuthoringWidgetsDir() {

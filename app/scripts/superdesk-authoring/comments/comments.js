@@ -29,13 +29,12 @@ function CommentsService(api) {
     };
 }
 
-CommentsCtrl.$inject = ['$scope', 'commentsService', 'api', '$q'];
-function CommentsCtrl($scope, commentsService, api, $q) {
+CommentsCtrl.$inject = ['$scope', '$routeParams', 'commentsService', 'api', '$q'];
+function CommentsCtrl($scope, $routeParams, commentsService, api, $q) {
 
     $scope.text = null;
     $scope.saveEnterFlag = false;
     $scope.$watch('item._id', reload);
-    $scope.$on('changes in archive_comment', reload);
     $scope.users = null;
 
     $scope.saveOnEnter = function($event) {
@@ -65,9 +64,11 @@ function CommentsCtrl($scope, commentsService, api, $q) {
     };
 
     function reload() {
-        commentsService.fetch($scope.item._id).then(function() {
-            $scope.comments = commentsService.comments;
-        });
+        if ($scope.item) {
+            commentsService.fetch($scope.item._id).then(function() {
+                $scope.comments = commentsService.comments;
+            });
+        }
     }
 
     $scope.searchUsers = function(term) {
@@ -88,6 +89,17 @@ function CommentsCtrl($scope, commentsService, api, $q) {
         return '@' + user.username;
     };
 
+    $scope.$watch(function() {
+        return $routeParams.comments || null;
+    }, function(active) {
+        $scope.active = active;
+    });
+
+    $scope.$on('item:comment', function(e, data) {
+        if (data.item === $scope.item.guid) {
+            reload();
+        }
+    });
 }
 
 CommentTextDirective.$inject = ['$compile'];
