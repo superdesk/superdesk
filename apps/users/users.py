@@ -136,6 +136,7 @@ class ImportUserProfileFromADCommand(superdesk.Command):
         else:
             user_data[app.config['DATE_CREATED']] = utcnow()
             user_data[app.config['LAST_UPDATED']] = utcnow()
+            user_data['username'] = username
             superdesk.apps['users'].create([user_data], trigger_events=True)
             return user_data
 
