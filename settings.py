@@ -22,7 +22,9 @@ VALIDATION_ERROR_STATUS = 400
 CACHE_CONTROL = 'max-age=0, no-cache'
 
 X_DOMAINS = '*'
+X_MAX_AGE = 24 * 3600
 X_HEADERS = ['Content-Type', 'Authorization', 'If-Match']
+
 
 MONGO_DBNAME = os.environ.get('MONGO_DBNAME', 'superdesk')
 if os.environ.get('MONGOLAB_URI'):
