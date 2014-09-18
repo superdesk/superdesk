@@ -22,7 +22,7 @@
                     </figure>
                     <div class="content">
                         <span class="date">{{ notification._created|reldate }}</span>
-                        <p class="text"><b>{{ notification.user.display_name || notification.user.username }}</b> <span translate>commented on</span> <b><a ng-href="#/authoring/{{ notification.item.guid }}?comments={{ notification.data.comment_id }}" title="{{ notification.item.headline }}">{{ notification.item.slugline || notification.item.headline }}</a></b>:<br>{{ notification.data.comment }}</p>
+                        <p class="text"><b>{{ notification.user.display_name || notification.user.username }}</b> <span translate>commented on</span> <i><a ng-href="#/authoring/{{ notification.item.guid }}?comments={{ notification.data.comment_id }}" title="{{ notification.item.headline }}">{{ notification.item.slugline || notification.item.headline }}</a></i>:<br>{{ notification.data.comment }}</p>
                     </div>
                 </li>
                 <div class="info" ng-show="notifications._items.length === 0" translate>All good so far.</div>
