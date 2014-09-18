@@ -8,7 +8,7 @@ describe('notifications', function() {
         {read: {foo: 1, bar: 0}}
     ]};
 
-    beforeEach(module('superdesk.menu'));
+    beforeEach(module('superdesk.menu.notifications'));
     beforeEach(module(function($provide) {
         $provide.factory('api', function($q) {
             return function() {
