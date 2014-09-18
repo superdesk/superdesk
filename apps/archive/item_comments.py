@@ -5,9 +5,10 @@ from flask import current_app as app
 import flask
 
 import superdesk
-from superdesk.models import BaseModel
+from superdesk.resource import Resource
 from superdesk.notification import push_notification
 from apps.activity import add_activity
+from superdesk.services import BaseService
 
 
 comments_schema = {
@@ -17,8 +18,8 @@ comments_schema = {
         'maxlength': 500,
         'required': True,
     },
-    'item': BaseModel.rel('archive', True, True, type='string'),
-    'user': BaseModel.rel('users', True),
+    'item': Resource.rel('archive', True, True, type='string'),
+    'user': Resource.rel('users', True),
     'mentioned_users': {
         'type': 'dict'
     }
@@ -44,16 +45,18 @@ def get_users_mentions(text):
 
 def get_users(usernames):
     req = ParsedRequest()
-    users = superdesk.apps['users'].get(req=req, lookup={'username': {'$in': usernames}})
+    users = superdesk.get_resource_service('users').get(req=req, lookup={'username': {'$in': usernames}})
     users = {user.get('username'): user.get('_id') for user in users}
     return users
 
 
-class ItemCommentsModel(BaseModel):
-    endpoint_name = 'item_comments'
+class ItemCommentsResource(Resource):
     schema = comments_schema
     resource_methods = ['GET', 'POST', 'DELETE']
     datasource = {'default_sort': [('_created', -1)]}
+
+
+class ItemCommentsService(BaseService):
 
     def on_create(self, docs):
         for doc in docs:
@@ -75,18 +78,20 @@ class ItemCommentsModel(BaseModel):
                          notify=mentioned_users)
 
     def on_updated(self, updates, original):
-        push_notification('archive_comment', updated=1)
+        push_notification('item:comment', updated=1)
 
     def on_deleted(self, doc):
-        push_notification('archive_comment', deleted=1)
+        push_notification('item:comment', deleted=1)
 
 
-class ItemCommentsSubModel(BaseModel):
-    endpoint_name = 'content_item_comments'
+class ItemCommentsSubResource(Resource):
     url = 'archive/<path:item>/comments'
     schema = comments_schema
     datasource = {'source': 'item_comments'}
     resource_methods = ['GET']
+
+
+class ItemCommentsSubService(BaseService):
 
     def get(self, req, lookup):
         check_item_valid(lookup.get('item'))

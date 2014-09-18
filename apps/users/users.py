@@ -4,9 +4,10 @@ import bcrypt
 from flask import current_app as app
 
 import superdesk
-from superdesk.models import BaseModel
+from superdesk.resource import Resource
 from superdesk.utc import utcnow
 from apps.activity import add_activity
+from superdesk.services import BaseService
 
 
 class EmptyUsernameException(Exception):
@@ -68,12 +69,12 @@ class CreateUserCommand(superdesk.Command):
         if user:
             userdata[app.config['LAST_UPDATED']] = utcnow()
             userdata['password'] = hash_password(userdata['password'])
-            superdesk.apps['users'].update(user.get('_id'), userdata, trigger_events=False)
+            superdesk.app.data.update('users', user.get('_id'), userdata)
             return userdata
         else:
             userdata[app.config['DATE_CREATED']] = utcnow()
             userdata[app.config['LAST_UPDATED']] = utcnow()
-            superdesk.apps['users'].create([userdata], trigger_events=True)
+            superdesk.app.data.insert('users', [userdata])
             return userdata
 
 
@@ -87,7 +88,7 @@ class HashUserPasswordsCommand(superdesk.Command):
                 hashed = hash_password(user['password'])
                 user_id = user.get('_id')
                 updates['password'] = hashed
-                superdesk.apps['users'].update(id=user_id, updates=updates, trigger_events=False)
+                superdesk.app.data.update('users', user_id, updates=updates)
 
 
 superdesk.connect('read:users', on_read_users)
@@ -96,9 +97,7 @@ superdesk.command('users:create', CreateUserCommand())
 superdesk.command('users:hash_passwords', HashUserPasswordsCommand())
 
 
-class RolesModel(BaseModel):
-
-    endpoint_name = 'roles'
+class RolesResource(Resource):
     schema = {
         'name': {
             'type': 'string',
@@ -117,8 +116,7 @@ class RolesModel(BaseModel):
     }
 
 
-class UsersModel(BaseModel):
-    endpoint_name = 'users'
+class UsersResource(Resource):
     additional_lookup = {
         'url': 'regex("[\w]+")',
         'field': 'username'
@@ -157,8 +155,8 @@ class UsersModel(BaseModel):
         'picture_url': {
             'type': 'string',
         },
-        'avatar': BaseModel.rel('upload', True),
-        'role': BaseModel.rel('roles', True),
+        'avatar': Resource.rel('upload', True),
+        'role': Resource.rel('roles', True),
         'workspace': {
             'type': 'dict'
         },
@@ -182,6 +180,9 @@ class UsersModel(BaseModel):
             'preferences': 0
         }
     }
+
+
+class UsersService(BaseService):
 
     def on_create(self, docs):
         for doc in docs:

@@ -8,16 +8,17 @@ from .datalayer import SuperdeskDataLayer  # noqa
 from .signals import connect, send  # noqa
 from werkzeug.exceptions import HTTPException
 from eve.utils import config  # noqa
+from .eve_backend import EveBackend
 
 API_NAME = 'Superdesk API'
 VERSION = (0, 0, 1)
 DOMAIN = {}
 COMMANDS = {}
 BLUEPRINTS = []
-apps = dict()
 app_components = dict()
 app_models = dict()
-
+resources = dict()
+eve_backend = EveBackend()
 
 logger = logging.getLogger(__name__)
 
@@ -81,3 +82,12 @@ def blueprint(blueprint, **kwargs):
     """Register blueprint"""
     blueprint.kwargs = kwargs
     BLUEPRINTS.append(blueprint)
+
+
+def get_backend():
+    """Returns the available backend, this will be changed in a factory if needed."""
+    return eve_backend
+
+
+def get_resource_service(resource_name):
+    return resources[resource_name].service

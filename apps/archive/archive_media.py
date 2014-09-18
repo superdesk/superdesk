@@ -1,7 +1,7 @@
 from flask import abort, current_app as app
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
-from superdesk.models import BaseModel
+from superdesk.resource import Resource
 from superdesk.upload import url_for_media
 from superdesk.utc import utcnow
 from eve.utils import config
@@ -9,12 +9,12 @@ from .common import base_schema, item_url, update_dates_for, generate_guid, GUID
 from .common import on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from apps.activity import add_activity
 import logging
+from superdesk.services import BaseService
 
 logger = logging.getLogger(__name__)
 
 
-class ArchiveMediaModel(BaseModel):
-    type_av = {'image': 'picture', 'audio': 'audio', 'video': 'video'}
+class ArchiveMediaResource(Resource):
     endpoint_name = ARCHIVE_MEDIA
     schema = {
         'media': {
@@ -31,6 +31,11 @@ class ArchiveMediaModel(BaseModel):
     resource_methods = ['POST']
     item_methods = ['PATCH', 'GET', 'DELETE']
     item_url = item_url
+
+
+class ArchiveMediaService(BaseService):
+
+    type_av = {'image': 'picture', 'audio': 'audio', 'video': 'video'}
 
     def on_update(self, updates, original):
         on_update_media_archive()

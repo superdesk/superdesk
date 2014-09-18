@@ -48,7 +48,7 @@ Feature: Archive Ingest
         [{"guid": "tag:reuters.com,0000:newsml_GM1EA7M13RP01"}]
         """
 
-        When we post to "/archive_ingest"
+        When we post to "/archive_ingest" with success
         """
         {
         "guid": "tag:reuters.com,0000:newsml_GM1EA7M13RP01"

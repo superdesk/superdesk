@@ -5,7 +5,6 @@ from app import get_app
 from pyelasticsearch import ElasticSearch
 from base64 import b64encode
 from flask import json
-import bcrypt
 from superdesk.notification_mock import setup_notification_mock,\
     teardown_notification_mock
 
@@ -55,20 +54,17 @@ def setup(context=None, config=None):
         context.client = app.test_client()
 
 
-def setup_auth_user(context, test_user=test_user):
+def setup_auth_user(context, user=None):
+    user = user or test_user
     with context.app.test_request_context():
-        original_password = test_user['password']
-        work_factor = context.app.config['BCRYPT_GENSALT_WORK_FACTOR']
-        hashed = bcrypt.hashpw(test_user['password'].encode('UTF-8'),
-                               bcrypt.gensalt(work_factor)).decode('UTF-8')
-        test_user['password'] = hashed
-        context.app.data.insert('users', [test_user])
-        test_user['password'] = original_password
-    auth_data = json.dumps({'username': test_user['username'], 'password': test_user['password']})
+        original_password = user['password']
+        context.app.data.insert('users', [user])
+        user['password'] = original_password
+    auth_data = json.dumps({'username': user['username'], 'password': user['password']})
     auth_response = context.client.post('/auth', data=auth_data, headers=context.headers)
     token = json.loads(auth_response.get_data()).get('token').encode('ascii')
     context.headers.append(('Authorization', b'basic ' + b64encode(token + b':')))
-    context.user = test_user
+    context.user = user
 
 
 def setup_notification(context):

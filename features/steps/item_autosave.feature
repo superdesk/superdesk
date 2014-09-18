@@ -3,6 +3,7 @@ Feature: Content Autosave
 
     @auth
     Scenario: Autosave item
+        Given empty "archive_autosave"
         Given "archive"
             """
             [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
@@ -20,7 +21,7 @@ Feature: Content Autosave
     @auth
     Scenario: Autosave does not accept invalid item
         Given empty "archive"
-
+        Given empty "archive_autosave"
         When we post to "/archive_autosave"
             """
             {"_id": "item-1", "guid": "item-1", "headline": "test"}
@@ -29,6 +30,7 @@ Feature: Content Autosave
 
     @auth
     Scenario: Clean autosave on locked item
+        Given empty "archive_autosave"
         Given "archive"
             """
             [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
@@ -54,6 +56,7 @@ Feature: Content Autosave
 
     @auth
     Scenario: Clean autosave on item save
+        Given empty "archive_autosave"
         Given "archive"
             """
             [{"_id": "item-1", "guid": "item-1", "headline": "test"}]

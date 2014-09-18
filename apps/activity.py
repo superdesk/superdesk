@@ -4,22 +4,27 @@ import flask
 
 from eve.methods.post import post_internal
 from superdesk.notification import push_notification
-from superdesk.models import BaseModel
-
+from superdesk.resource import Resource
+from superdesk.services import BaseService
+import superdesk
 
 log = logging.getLogger(__name__)
 
 
 def init_app(app):
-    auditModel = AuditModel(app=app)
-    app.on_inserted += auditModel.on_generic_inserted
-    app.on_updated += auditModel.on_generic_updated
-    app.on_deleted_item += auditModel.on_generic_deleted
+    endpoint_name = 'audit'
+    service = BaseService(endpoint_name, backend=superdesk.get_backend())
+    auditResource = AuditResource(endpoint_name, app=app, service=service)
+    app.on_inserted += auditResource.on_generic_inserted
+    app.on_updated += auditResource.on_generic_updated
+    app.on_deleted_item += auditResource.on_generic_deleted
 
-    ActivityModel(app=app)
+    endpoint_name = 'activity'
+    service = BaseService(endpoint_name, backend=superdesk.get_backend())
+    ActivityResource(endpoint_name, app=app, service=service)
 
 
-class AuditModel(BaseModel):
+class AuditResource(Resource):
     endpoint_name = 'audit'
     resource_methods = ['GET']
     item_methods = ['GET']
@@ -27,7 +32,7 @@ class AuditModel(BaseModel):
         'resource': {'type': 'string'},
         'action': {'type': 'string'},
         'extra': {'type': 'dict'},
-        'user': BaseModel.rel('users', False)
+        'user': Resource.rel('users', False)
     }
     exclude = {endpoint_name, 'activity'}
 
@@ -84,7 +89,7 @@ class AuditModel(BaseModel):
         post_internal(self.endpoint_name, audit)
 
 
-class ActivityModel(BaseModel):
+class ActivityResource(Resource):
     endpoint_name = 'activity'
     resource_methods = ['GET']
     item_methods = ['GET', 'PATCH']
@@ -92,8 +97,8 @@ class ActivityModel(BaseModel):
         'message': {'type': 'string'},
         'data': {'type': 'dict'},
         'read': {'type': 'dict'},
-        'item': BaseModel.rel('archive', type='string'),
-        'user': BaseModel.rel('users'),
+        'item': Resource.rel('archive', type='string'),
+        'user': Resource.rel('users'),
     }
     exclude = {endpoint_name, 'notification'}
     datasource = {
@@ -125,5 +130,5 @@ def add_activity(msg, item=None, notify=None, **data):
     if item:
         activity['item'] = str(item)
 
-    post_internal(ActivityModel.endpoint_name, activity)
-    push_notification(ActivityModel.endpoint_name, _dest=activity['read'])
+    post_internal(ActivityResource.endpoint_name, activity)
+    push_notification(ActivityResource.endpoint_name, _dest=activity['read'])

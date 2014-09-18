@@ -1,10 +1,9 @@
-from superdesk.models import BaseModel
+from superdesk.resource import Resource
 
 
-class SesssionsModel(BaseModel):
-    endpoint_name = 'sessions'
+class SesssionsResource(Resource):
     schema = {
-        'user': BaseModel.rel('users', True)
+        'user': Resource.rel('users', True)
     }
     datasource = {
         'source': 'auth',

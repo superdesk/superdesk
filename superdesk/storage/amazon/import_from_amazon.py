@@ -56,7 +56,7 @@ def import_file(key):
             return {'status': 'Failed to retrieve file: ' + key}
 
         data = [{'media': key, 'media_fetched': file, '_import': True}]
-        id = superdesk.apps['archive_media'].create(data, True)
+        id = app.data.insert('archive_media', data)
         return {'status': 'Imported file %s to archive media with id= %s' % (key, id)}
     except Exception as ex:
         return {'status': ex}

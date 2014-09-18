@@ -28,7 +28,7 @@ class UpdateIngest(superdesk.Command):
 superdesk.command('ingest:update', UpdateIngest())
 
 
-@celery.task()
+@celery.task
 def update_provider(provider):
     """Update given provider."""
     if provider.get('type') in providers:

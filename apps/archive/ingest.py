@@ -1,10 +1,10 @@
-from superdesk.models import BaseModel
+from superdesk.resource import Resource
 from .common import base_schema, extra_response_fields, item_url, facets
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
+from superdesk.services import BaseService
 
 
-class IngestModel(BaseModel):
-    endpoint_name = 'ingest'
+class IngestResource(Resource):
     schema = {
         'archived': {
             'type': 'datetime'
@@ -17,6 +17,9 @@ class IngestModel(BaseModel):
         'search_backend': 'elastic',
         'facets': facets
     }
+
+
+class IngestService(BaseService):
 
     def on_create(self, docs):
         on_create_item(docs)
