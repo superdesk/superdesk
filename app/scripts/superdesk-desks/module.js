@@ -43,14 +43,14 @@ define([
             });
         }])
         .service('desks', ['$q', 'api', 'storage', function($q, api, storage) {
-            return {
+            var desksService = {
                 desks: null,
                 users: null,
                 deskMembers: {},
                 fetchDesks: function() {
                     var self = this;
 
-                    return api.desks.query()
+                    return api.desks.query({max_results: 500})
                     .then(function(result) {
                         self.desks = result;
                     });
@@ -93,18 +93,36 @@ define([
                 setCurrentDesk: function(desk) {
                     this.setCurrentDeskId(desk ? desk._id : null);
                 },
-                initialize: function() {
+                getDesk: function(deskId) {
+                    return this.desks ? _.find(this.desks._items, {_id: deskId}) : null;
+                },
+                getUser: function(userId) {
+                    return this.users ? _.find(this.users._items, {_id: userId}) : null;
+                },
+                initialize: function(force) {
                     var self = this;
 
-                    return this.fetchDesks()
-                    .then(function() {
-                        return self.fetchUsers();
-                    })
-                    .then(function() {
-                        return self.generateDeskMembers();
-                    });
+                    var p = $q.when();
+                    if (!this.desks || force) {
+                        p = p.then(function() {
+                            return self.fetchDesks();
+                        });
+                    }
+                    if (!this.users || force) {
+                        p = p.then(function() {
+                            return self.fetchUsers();
+                        });
+                    }
+                    if (_.isEmpty(this.deskMembers) || force) {
+                        p = p.then(function() {
+                            return self.generateDeskMembers();
+                        });
+                    }
+                    return p;
                 }
             };
+            desksService.initialize();
+            return desksService;
         }]);
 
     return app;
