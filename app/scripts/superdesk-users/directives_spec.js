@@ -61,7 +61,7 @@ define([
             scope.$digest();
 
             expect(scope.$eval('userForm.username.$valid')).toBe(true);
-            expect(scope.$eval('userForm.username.$error.unique')).toBe(false);
+            expect(scope.$eval('userForm.username.$error.unique')).toBe(undefined);
             expect(scope.$eval('userForm.username.$modelValue')).toBe('bar');
         }));
 
@@ -95,7 +95,7 @@ define([
             scope.$digest();
 
             expect(scope.$eval('userForm.passwordConfirm.$valid')).toBe(true);
-            expect(scope.$eval('userForm.passwordConfirm.$error.confirm')).toBe(false);
+            expect(scope.$eval('userForm.passwordConfirm.$error.confirm')).toBe(undefined);
         }));
 
     });
