@@ -19,6 +19,8 @@ app_components = dict()
 app_models = dict()
 resources = dict()
 eve_backend = EveBackend()
+resource_preferences = []
+
 
 logger = logging.getLogger(__name__)
 

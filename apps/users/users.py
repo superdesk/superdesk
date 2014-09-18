@@ -8,7 +8,6 @@ from superdesk.resource import Resource
 from superdesk.utc import utcnow
 from apps.activity import add_activity
 from superdesk.services import BaseService
-from apps.preferences import options_schema
 
 
 class EmptyUsernameException(Exception):
@@ -158,18 +157,10 @@ class UsersResource(Resource):
         },
         'avatar': Resource.rel('upload', True),
         'role': Resource.rel('roles', True),
+        'preferences': {'type': 'dict'},
         'workspace': {
             'type': 'dict'
         },
-        'preferences': {
-            'type': 'dict',
-            'schema': {
-                'email_notification': {
-                    'type': 'dict',
-                    'schema': options_schema
-                }
-            }
-        }
     }
 
     extra_response_fields = [

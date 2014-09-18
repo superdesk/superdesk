@@ -6,6 +6,11 @@ Feature: User preferences
         Given empty "preferences"
         When we get "/preferences"
         Then we get list with 0 items
+
+    @auth
+    Scenario: List available preferences
+        When we get "/available_preferences"
+        Then we get list with 1 items
         
 	@auth
     Scenario: Create new preference
