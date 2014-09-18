@@ -3,32 +3,32 @@
 import logging
 import asyncio
 
-from ws import host, port
 from flask import current_app as app
 from flask import json
 from datetime import datetime
-from autobahn.asyncio.websocket import WebSocketClientProtocol
-from autobahn.asyncio.websocket import WebSocketClientFactory
 
 
 logger = logging.getLogger(__name__)
 
 
-class Client(WebSocketClientProtocol):
-
-    def __init__(self, *args):
-        WebSocketClientProtocol.__init__(self, *args)
-        self.opened = asyncio.Future()
-
-    def notify(self, **kwargs):
-        kwargs.setdefault('_created', datetime.utcnow().isoformat())
-        self.sendMessage(json.dumps(kwargs).encode('utf8'))
-
-    def onConnect(self, response):
-        self.opened.set_result(None)
-
-
 def init_app(app):
+    from autobahn.asyncio.websocket import WebSocketClientProtocol
+    from autobahn.asyncio.websocket import WebSocketClientFactory
+    from ws import host, port
+
+    class Client(WebSocketClientProtocol):
+
+        def __init__(self, *args):
+            WebSocketClientProtocol.__init__(self, *args)
+            self.opened = asyncio.Future()
+
+        def notify(self, **kwargs):
+            kwargs.setdefault('_created', datetime.utcnow().isoformat())
+            self.sendMessage(json.dumps(kwargs).encode('utf8'))
+
+        def onConnect(self, response):
+            self.opened.set_result(None)
+
     factory = WebSocketClientFactory()
     factory.protocol = Client
     try:

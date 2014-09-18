@@ -22,6 +22,10 @@ setup(
         'Flask-Mail>=0.9.0,<0.10',
         'Flask-Script==2.0.5,<2.1',
         'Flask-PyMongo>=0.3.0',
+        'autobahn[asyncio]>=0.8.15',
+        'celery[redis]>=3.1.13',
+        'bcrypt>=1.0.2',
+        'blinker>=1.3',
     ],
     scripts=['settings.py', 'app.py', 'wsgi.py', 'ws.py', 'manage.py'],
     classifiers=[
