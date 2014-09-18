@@ -62,7 +62,7 @@ def get_query_for_expired_items(provider_id, expiration_date):
              {
                  'must': [
                      {
-                         'range': {'ingest._created': {'lte': date_to_str(expiration_date)}}
+                         'range': {'ingest._updated': {'lte': date_to_str(expiration_date)}}
                      },
                      {
                          'term': {'ingest.ingest_provider': provider_id}
