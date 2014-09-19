@@ -102,6 +102,8 @@ def get_app(config=None):
     sentry.init_app(app)
 
     superdesk.app = app
+    superdesk.is_ldap = (app.settings['LDAP_SERVER'] != '')
+
     return app
 
 if __name__ == '__main__':

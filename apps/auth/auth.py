@@ -157,7 +157,7 @@ def authenticate(credentials, app):
     if 'username' not in credentials:
         raise NotFoundAuthError()
 
-    if superdesk.isLDAP():
+    if superdesk.is_ldap:
         return authenticate_via_ad(credentials, app)
     else:
         return authenticate_via_db(credentials, app)

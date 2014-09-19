@@ -7,7 +7,7 @@ def init_app(app):
     UsersModel(app=app)
     RolesModel(app=app)
 
-    if not superdesk.isLDAP():
+    if not superdesk.is_ldap:
         ResetPasswordModel(app=app)
 
     ActiveTokensModel(app=app)
