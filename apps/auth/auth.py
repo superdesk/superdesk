@@ -38,7 +38,6 @@ class CredentialsAuthError(AuthError):
 
 
 class SuperdeskTokenAuth(TokenAuth):
-
     """Superdesk Token Auth"""
 
     method_map = {
@@ -91,6 +90,7 @@ class ADAuth:
     """
     Handles Authentication against Active Directory.
     """
+
     def __init__(self, host, port, base_filter, user_filter, profile_attributes, fqdn):
         """
         Initializes the AD Server
@@ -131,7 +131,7 @@ class ADAuth:
 
             with ldap_conn:
                 result = ldap_conn.search(self.base_filter, user_filter, SEARCH_SCOPE_WHOLE_SUBTREE,
-                              attributes=list(self.profile_attrs.keys()))
+                                          attributes=list(self.profile_attrs.keys()))
 
                 response = dict()
 
@@ -142,9 +142,8 @@ class ADAuth:
                         response[sd_profile_attr] = \
                             user_profile[ad_profile_attr] if user_profile.__contains__(ad_profile_attr) else ''
 
-                        response[sd_profile_attr] = \
-                            response[sd_profile_attr][0] if isinstance(response[sd_profile_attr], list) \
-                                else response[sd_profile_attr]
+                        response[sd_profile_attr] = response[sd_profile_attr][0] \
+                            if isinstance(response[sd_profile_attr], list) else response[sd_profile_attr]
 
                 return response
         except LDAPException as e:
@@ -213,6 +212,7 @@ def authenticate_via_ad(credentials, app):
 
     return user
 
+
 def raiseCredentialsAuthError(credentials):
     logger.warning("Login failure: %s" % json.dumps(credentials))
     raise CredentialsAuthError()
@@ -259,7 +259,6 @@ class AuthResource(Resource):
 
 
 class AuthService(BaseService):
-
     def on_create(self, docs):
         for doc in docs:
             user = authenticate(doc, app)

@@ -123,7 +123,7 @@ class ImportUserProfileFromADCommand(superdesk.Command):
         if not superdesk.is_ldap:
             raise InvalidCommand("Authentication using AD isn't enabled. Consider using 'users:create' command instead")
 
-        #Authenticate and fetch profile from AD
+        # Authenticate and fetch profile from AD
         settings = app.settings
         ad_auth = ADAuth(settings['LDAP_SERVER'], settings['LDAP_SERVER_PORT'], settings['LDAP_BASE_FILTER'],
                          settings['LDAP_USER_FILTER'], settings['LDAP_USER_ATTRIBUTES'], settings['LDAP_FQDN'])
@@ -133,7 +133,7 @@ class ImportUserProfileFromADCommand(superdesk.Command):
         if len(user_data) == 0:
             raise NotFoundAuthError()
 
-        #Check if User Profile already exists in Mongo
+        # Check if User Profile already exists in Mongo
         user = superdesk.app.data.find_one('users', username=username, req=None)
 
         if user:

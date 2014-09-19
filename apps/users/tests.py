@@ -20,5 +20,5 @@ class UsersTestCase(TestCase):
                 self.assertEquals(auth_user2['username'], user['username'])
                 self.assertEquals(auth_user2['_id'], auth_user['_id'])
         else:
+            # TODO: python3-ldap framework doesn't have test module to mock AD. Figure out a way to mock AD...
             pass
-        #TODO: python3-ldap framework doesn't have test module to mock AD. Figure out a way to mock AD...
