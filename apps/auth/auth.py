@@ -185,6 +185,12 @@ def authenticate_via_db(credentials, app):
 
 
 def authenticate_via_ad(credentials, app):
+    """
+    Authenticates the user against Active Directory
+    :param credentials: an object having "username" and "password" attributes
+    :param app: Eve App object
+    :return: if success returns User object, otherwise throws Error
+    """
     settings = app.settings
     ad_auth = ADAuth(settings['LDAP_SERVER'], settings['LDAP_SERVER_PORT'], settings['LDAP_BASE_FILTER'],
                      settings['LDAP_USER_FILTER'], settings['LDAP_USER_ATTRIBUTES'], settings['LDAP_FQDN'])

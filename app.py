@@ -52,6 +52,8 @@ def get_app(config=None):
         json_encoder=MongoJSONEncoder,
         validator=SuperdeskValidator)
 
+    superdesk.is_ldap = (app.settings['LDAP_SERVER'] != '')
+
     custom_loader = jinja2.ChoiceLoader([
         app.jinja_loader,
         jinja2.FileSystemLoader(['superdesk/templates'])
@@ -102,7 +104,7 @@ def get_app(config=None):
     sentry.init_app(app)
 
     superdesk.app = app
-    superdesk.is_ldap = (app.settings['LDAP_SERVER'] != '')
+
 
     return app
 

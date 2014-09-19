@@ -114,14 +114,14 @@ MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', 'admin-password')
 ADMINS = [MAIL_USERNAME]
 
 # LDAP settings
-LDAP_SERVER = os.environ.get('LDAP_SERVER', 'ldap://aap.com.au')
+LDAP_SERVER = os.environ.get('LDAP_SERVER', '') #Ex: ldap://sourcefabric.org
 LDAP_SERVER_PORT = os.environ.get('LDAP_SERVER_PORT', 389)
 
-#Fully Qualified Domain Name
-LDAP_FQDN="aap.com.au"
+#Fully Qualified Domain Name. Ex: sourcefabric.org
+LDAP_FQDN = os.environ.get('LDAP_FQDN', '')
 
-#LDAP_BASE_FILTER limit the base filter to the security group. Ex: OU=Superdesk Users,dc=aap,dc=com,dc=au
-LDAP_BASE_FILTER = os.environ.get('LDAP_BASE_FILTER', 'OU=AAP Users,dc=aap,dc=com,dc=au')
+#LDAP_BASE_FILTER limit the base filter to the security group. Ex: OU=Superdesk Users,dc=sourcefabric,dc=org
+LDAP_BASE_FILTER = os.environ.get('LDAP_BASE_FILTER', '')
 
 #change the user depending on the LDAP directory structure
 LDAP_USER_FILTER = "(&(objectCategory=user)(objectClass=user)(sAMAccountName={}))"
