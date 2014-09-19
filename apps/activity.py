@@ -104,6 +104,15 @@ class ActivityResource(Resource):
     datasource = {
         'default_sort': [('_created', -1)]
     }
+    resource_preferences = {
+        'email_notification': {
+            'enabled': False,
+            'options': {
+                'type': 'bool',
+                'default': False
+            }
+        }
+    }
 
 
 def add_activity(msg, item=None, notify=None, **data):

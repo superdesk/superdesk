@@ -168,12 +168,10 @@ class UsersResource(Resource):
         },
         'avatar': Resource.rel('upload', True),
         'role': Resource.rel('roles', True),
+        'preferences': {'type': 'dict'},
         'workspace': {
             'type': 'dict'
         },
-        'preferences': {
-            'type': 'dict'
-        }
     }
 
     extra_response_fields = [

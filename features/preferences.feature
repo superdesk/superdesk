@@ -6,6 +6,11 @@ Feature: User preferences
         Given empty "preferences"
         When we get "/preferences"
         Then we get list with 0 items
+
+    @auth
+    Scenario: List available preferences
+        When we get "/available_preferences"
+        Then we get list with 1 items
         
 	@auth
     Scenario: Create new preference
@@ -27,12 +32,12 @@ Feature: User preferences
 
         When we patch "/preferences/#USERS_ID#"
 	       """
-	       {"preferences": {"email": {"notification": 1}}}
+	       {"preferences": {"email_notification": {"options": "off"}}}
 	       """
 	    Then we get updated response
 
         When we get "/preferences/#USERS_ID#"
         Then we get existing resource
             """
-            {"_id": "#USERS_ID#", "preferences": {"email": {"notification": 1}}}
+            {"_id": "#USERS_ID#", "preferences": {"email_notification": {"options": "off"}}}
             """

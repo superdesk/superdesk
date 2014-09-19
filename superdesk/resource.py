@@ -42,6 +42,7 @@ class Resource():
     resource_title = None
     service = None
     endpoint_schema = None
+    resource_preferences = None
 
     def __init__(self, endpoint_name, app, service, endpoint_schema=None):
         self.endpoint_name = endpoint_name
@@ -75,6 +76,9 @@ class Resource():
         self.endpoint_schema = endpoint_schema
         app.register_resource(self.endpoint_name, endpoint_schema)
         superdesk.resources[self.endpoint_name] = self
+        if self.resource_preferences is not None:
+            self.resource_preferences.update({'resource_name': self.endpoint_name})
+            superdesk.resource_preferences.append(self.resource_preferences)
 
     @staticmethod
     def rel(resource, embeddable=True, required=False, type='objectid'):
