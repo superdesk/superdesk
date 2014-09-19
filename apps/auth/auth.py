@@ -1,5 +1,4 @@
 import logging
-
 import flask
 from flask import json, current_app as app, request
 from eve.auth import TokenAuth
@@ -7,11 +6,10 @@ from superdesk.resource import Resource
 import bcrypt
 from ldap3 import Connection, Server, SEARCH_SCOPE_WHOLE_SUBTREE
 from ldap3.core.exceptions import LDAPException
-
 import superdesk
 import superdesk.utils as utils
-from superdesk.models import BaseModel
 from superdesk.utc import utcnow
+from superdesk.services import BaseService
 
 
 logger = logging.getLogger(__name__)
