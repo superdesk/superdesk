@@ -35,7 +35,7 @@ function CommentsCtrl($scope, $routeParams, commentsService, api, $q) {
     $scope.text = null;
     $scope.saveEnterFlag = false;
     $scope.$watch('item._id', reload);
-    $scope.users = null;
+    $scope.users = [];
 
     $scope.saveOnEnter = function($event) {
         if (!$scope.saveEnterFlag || $event.keyCode !== ENTER || $event.shiftKey) {
@@ -71,35 +71,18 @@ function CommentsCtrl($scope, $routeParams, commentsService, api, $q) {
         }
     }
 
-    $scope.searchUsers = function(term) {
-        var userlist = [];
-        api.users.query()
-        .then(function(result) {
-            _.each(result._items, function(item) {
-                if (item.display_name.toUpperCase().indexOf(term.toUpperCase()) >= 0) {
-                    userlist.push(item);
-                }
-            });
-            $scope.users = userlist;
-            return $q.when(userlist);
-        });
-    };
-
-    $scope.selectUser = function(user) {
-        return '@' + user.username;
-    };
-
-    $scope.$watch(function() {
-        return $routeParams.comments || null;
-    }, function(active) {
-        $scope.active = active;
-    });
-
     $scope.$on('item:comment', function(e, data) {
         if (data.item === $scope.item.guid) {
             reload();
         }
     });
+
+    function setActiveComment() {
+        $scope.active = $routeParams.comments || null;
+    }
+
+    $scope.$on('$locationChangeSuccess', setActiveComment);
+    setActiveComment();
 }
 
 CommentTextDirective.$inject = ['$compile'];

@@ -338,22 +338,28 @@ define([
                 templateUrl: 'scripts/superdesk-users/views/activity-list.html'
             };
         })
-        .directive('sdUserMentio', ['mentioUtil', '$q', 'userList', function(mentioUtil, $q, userList) {
+        .directive('sdUserMentio', ['mentioUtil', 'api', function(mentioUtil, api) {
             return {
                 templateUrl: 'scripts/superdesk-users/views/mentions.html',
                 link: function(scope, elem) {
-                    scope.searchUsers = function(term) {
-                        var userlist = [];
-                        userList.get()
-                        .then(function(result) {
-                            _.each(result._items, function(item) {
-                                if (item.display_name.toUpperCase().indexOf(term.toUpperCase()) >= 0) {
-                                    userlist.push(item);
-                                }
+                    scope.users = [];
+
+                    // filter user by given prefix
+                    scope.searchUsers = function(prefix) {
+                        var criteria = {
+                            max_results: 5
+                        };
+
+                        if (prefix) {
+                            criteria.where = {$or: [
+                                {username: {$regex: prefix}}
+                            ]};
+                        }
+
+                        return api('users').query(criteria)
+                            .then(function(result) {
+                                scope.users = _.sortBy(result._items, 'display_name');
                             });
-                            scope.users = userlist;
-                            return $q.when(userlist);
-                        });
                     };
 
                     scope.selectUser = function(user) {
