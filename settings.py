@@ -115,10 +115,17 @@ ADMINS = [MAIL_USERNAME]
 
 # LDAP settings
 LDAP_SERVER = os.environ.get('LDAP_SERVER', 'ldap://aap.com.au')
-#LDAP_BASE_FILTER limit the base filter to the security group
-#for example OU=Superdesk Users,dc=aap,dc=com,dc=au
+LDAP_SERVER_PORT = os.environ.get('LDAP_SERVER_PORT', 389)
+
+#Fully Qualified Domain Name
+LDAP_FQDN="aap.com.au"
+
+#LDAP_BASE_FILTER limit the base filter to the security group. Ex: OU=Superdesk Users,dc=aap,dc=com,dc=au
 LDAP_BASE_FILTER = os.environ.get('LDAP_BASE_FILTER', 'OU=AAP Users,dc=aap,dc=com,dc=au')
+
 #change the user depending on the LDAP directory structure
 LDAP_USER_FILTER = "(&(objectCategory=user)(objectClass=user)(sAMAccountName={}))"
-#LDAP USER Attributes to fetch
-LDAP_USER_ATTRIBUTES = ['*']
+
+#LDAP User Attributes to fetch. Keys would be LDAP Attribute Name and Value would be Supderdesk Model Attribute Name
+LDAP_USER_ATTRIBUTES = {'givenName':'first_name', 'sn':'last_name', 'displayName':'display_name',
+                        'mail':'email', 'ipPhone':'phone'}

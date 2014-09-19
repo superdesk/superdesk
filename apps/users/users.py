@@ -3,7 +3,7 @@
 import bcrypt
 from flask import current_app as app
 from flask.ext.script.commands import InvalidCommand
-from apps.auth.ldap_auth import authenticate_and_fetch_profile
+from apps.auth.auth import ADAuth
 
 import superdesk
 from superdesk import isLDAP
@@ -124,7 +124,10 @@ class ImportUserProfileFromADCommand(superdesk.Command):
             raise InvalidCommand("Authentication using AD isn't enabled. Consider using 'users:create' command instead")
 
         #Authenticate and fetch profile from AD
-        user_data = authenticate_and_fetch_profile(ad_username, ad_password, username)
+        settings = app.settings
+        ad_auth = ADAuth(settings['LDAP_SERVER'], settings['LDAP_SERVER_PORT'], settings['LDAP_BASE_FILTER'],
+                         settings['LDAP_USER_FILTER'], settings['LDAP_USER_ATTRIBUTES'], settings['LDAP_FQDN'])
+        user_data = ad_auth.authenticate_and_fetch_profile(ad_username, ad_password, username)
 
         #Check if User Profile already exists in Mongo
         user = superdesk.app.data.find_one('users', username=username, req=None)
