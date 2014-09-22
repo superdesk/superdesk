@@ -35,5 +35,5 @@ class AvailablePreferencesResource(Resource):
 class AvailablePreferencesService(BaseService):
 
     def get(self, req, lookup):
-        prefs = superdesk.resource_preferences
+        prefs = [{k: v} for k, v in superdesk.resource_preferences.items()]
         return ListCursor(prefs)

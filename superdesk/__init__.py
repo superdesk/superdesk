@@ -19,7 +19,7 @@ app_components = dict()
 app_models = dict()
 resources = dict()
 eve_backend = EveBackend()
-resource_preferences = []
+resource_preferences = dict()
 
 
 logger = logging.getLogger(__name__)
@@ -93,3 +93,11 @@ def get_backend():
 
 def get_resource_service(resource_name):
     return resources[resource_name].service
+
+
+def register_user_option(option_name, option):
+    resource_preferences[option_name] = option
+
+
+def user_option(option_name):
+    return resource_preferences.get(option_name, None)
