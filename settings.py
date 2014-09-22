@@ -1,4 +1,3 @@
-
 import os
 from datetime import timedelta
 import json
@@ -56,7 +55,7 @@ CELERYBEAT_SCHEDULE = {
 SENTRY_DSN = os.environ.get('SENTRY_DSN')
 SENTRY_INCLUDE_PATHS = ['superdesk']
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'apps.auth',
     'apps.users',
     'superdesk.upload',
@@ -76,7 +75,7 @@ INSTALLED_APPS = (
     'apps.coverages',
     'apps.tasks',
     'apps.preferences',
-)
+]
 
 RESOURCE_METHODS = ['GET', 'POST']
 ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
@@ -131,3 +130,8 @@ LDAP_USER_FILTER = "(&(objectCategory=user)(objectClass=user)(sAMAccountName={})
 # LDAP User Attributes to fetch. Keys would be LDAP Attribute Name and Value would be Supderdesk Model Attribute Name
 LDAP_USER_ATTRIBUTES = {'givenName': 'first_name', 'sn': 'last_name', 'displayName': 'display_name',
                         'mail': 'email', 'ipPhone': 'phone'}
+
+if LDAP_SERVER != '':
+    INSTALLED_APPS.append('apps.auth.ldap')
+else:
+    INSTALLED_APPS.append('apps.auth.db')
