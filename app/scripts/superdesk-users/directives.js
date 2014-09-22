@@ -26,8 +26,7 @@ define([
         .directive('sdInfoItem', function() {
             return {
                 link: function (scope, element) {
-                    element.addClass('info-item');
-                    element.find('label').addClass('info-label');
+                    element.addClass('item');
                     element.find('input').addClass('info-value');
                     element.find('input').addClass('info-editable');
                 }
@@ -232,8 +231,7 @@ define([
                 }
             };
         }])
-        .directive('sdUserUnique', ['api', function(api) {
-            var NAME = 'unique';
+        .directive('sdUserUnique', ['$q', 'api', function($q, api) {
             return {
                 require: 'ngModel',
                 scope: {exclude: '='},
@@ -241,34 +239,28 @@ define([
 
                     /**
                      * Test if given value is unique for seleted field
-                     *
-                     * @param {string} viewValue
-                     * @returns {string}
                      */
-                    function testUnique(viewValue) {
-                        if (viewValue && attrs.uniqueField) {
+                    function testUnique(modelValue, viewValue) {
+                        var value = modelValue || viewValue;
+                        if (value && attrs.uniqueField) {
                             var criteria = {where: {}};
-                            criteria.where[attrs.uniqueField] = viewValue;
-                            api.users.query(criteria)
+                            criteria.where[attrs.uniqueField] = value;
+                            return api.users.query(criteria)
                                 .then(function(users) {
-                                    if (scope.exclude && users._items.length === 1) {
-                                        ctrl.$setValidity(NAME, users._items[0]._id === scope.exclude._id);
-                                    } else {
-                                        ctrl.$setValidity(NAME, !users._items.length);
+
+                                    if (users._items.length && (!scope.exclude._id || users._items[0]._id !== scope.exclude._id)) {
+                                        return $q.reject(users);
                                     }
+
+                                    return users;
                                 });
                         }
 
-                        return reset(viewValue);
+                        // mark as ok
+                        return $q.when();
                     }
 
-                    function reset(value) {
-                        ctrl.$setValidity(NAME, true);
-                        return value;
-                    }
-
-                    ctrl.$parsers.push(testUnique);
-                    ctrl.$formatters.push(reset);
+                    ctrl.$asyncValidators.unique = testUnique;
                 }
             };
         }])
@@ -278,24 +270,18 @@ define([
                 require: 'ngModel',
                 scope: {password: '='},
                 link: function (scope, element, attrs, ctrl) {
-                    function testPassword(viewValue) {
-                        if (viewValue && scope.password) {
-                            ctrl.$setValidity(NAME, viewValue === scope.password);
-                        }
 
-                        return viewValue;
+                    function isMatch(password, confirm) {
+                        return !password || password === confirm;
                     }
 
-                    function reset(value) {
-                        ctrl.$setValidity(NAME, true);
-                        return value;
-                    }
-
-                    ctrl.$parsers.push(testPassword);
-                    ctrl.$formatters.push(reset);
+                    ctrl.$validators[NAME] = function(modelValue, viewValue) {
+                        var value = modelValue || viewValue;
+                        return isMatch(scope.password, value);
+                    };
 
                     scope.$watch('password', function(password) {
-                        ctrl.$setValidity(NAME, !password || ctrl.$viewValue === password);
+                        ctrl.$setValidity(NAME, isMatch(password, ctrl.$viewValue));
                     });
                 }
             };
@@ -352,22 +338,28 @@ define([
                 templateUrl: 'scripts/superdesk-users/views/activity-list.html'
             };
         })
-        .directive('sdUserMentio', ['api', 'mentioUtil', '$q', function(api, mentioUtil, $q) {
+        .directive('sdUserMentio', ['mentioUtil', 'api', function(mentioUtil, api) {
             return {
                 templateUrl: 'scripts/superdesk-users/views/mentions.html',
                 link: function(scope, elem) {
-                    scope.searchUsers = function(term) {
-                        var userlist = [];
-                        api.users.query()
-                        .then(function(result) {
-                            _.each(result._items, function(item) {
-                                if (item.display_name.toUpperCase().indexOf(term.toUpperCase()) >= 0) {
-                                    userlist.push(item);
-                                }
+                    scope.users = [];
+
+                    // filter user by given prefix
+                    scope.searchUsers = function(prefix) {
+                        var criteria = {
+                            max_results: 5
+                        };
+
+                        if (prefix) {
+                            criteria.where = {$or: [
+                                {username: {$regex: prefix}}
+                            ]};
+                        }
+
+                        return api('users').query(criteria)
+                            .then(function(result) {
+                                scope.users = _.sortBy(result._items, 'display_name');
                             });
-                            scope.users = userlist;
-                            return $q.when(userlist);
-                        });
                     };
 
                     scope.selectUser = function(user) {

@@ -1,6 +1,6 @@
 <div class="notification-list-box" ng-controller="CommentsWidgetCtrl">
     <ul class="notification-list white">
-        <li ng-repeat="comment in comments">
+        <li ng-repeat="comment in comments" ng-class="{active: comment._id === active}">
             <figure class="avatar">
                 <img sd-user-avatar data-src="comment.user.picture_url">
             </figure>
@@ -18,7 +18,7 @@
             <textarea class="new-comment" sd-auto-height ng-model="text" mentio id="mentio-users" ng-keyup="saveOnEnter($event)"></textarea>
             <div sd-user-mentio></div>
             <div class="actions">
-                <div class="pull-left post"><input sd-check ng-model="saveEnterFlag"> <span translate>Post on 'Enter'</span></div>
+                <div class="pull-left post"><input type="checkbox" ng-model="saveEnterFlag"> <span translate>Post on 'Enter'</span></div>
                 <button class="btn btn-info pull-right" ng-click="save()" ng-show="!saveEnterFlag" translate>Post</button>
                 <button class="btn pull-right" ng-click="cancel()" ng-show="!saveEnterFlag" translate>Cancel</button>
             </div>

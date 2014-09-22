@@ -21,7 +21,7 @@ define(['lodash', 'angular'], function(_, angular) {
 
             return delay.promise;
         }])
-        .factory('userPopup', ['$compile', 'api', '$timeout', function ($compile, api, $timeout) {
+        .factory('userPopup', ['$compile', '$timeout', 'userList', function ($compile, $timeout, userList) {
 
             var popover = {};
             var holdInterval = 300;
@@ -40,12 +40,7 @@ define(['lodash', 'angular'], function(_, angular) {
             // Set content
             popover.set = function(userId, el, scope) {
                 preventClose();
-                if (popover.userId && popover.userId === userId) {
-                    popover.element.show();
-                    return;
-                }
                 resetContent();
-                popover.userId = userId;
 
                 // do box positioning
                 var box = popover.get(true);
@@ -56,7 +51,7 @@ define(['lodash', 'angular'], function(_, angular) {
                 });
 
                 // get data
-                api.users.getById(userId)
+                userList.getUser(userId)
                 .then(function(user) {
                     buildTemplate(user, scope);
                 }, function(response) {

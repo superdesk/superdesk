@@ -593,6 +593,13 @@
 				margin-top: -3px;
 				display: block;
 			}
+			a {
+				color: @sd-blue;
+				&:hover {
+					text-decoration: none;
+					color: lighten(@sd-blue, 15%);
+				}
+			}
 		}
 		&.unread {
 			border-color: #545454;
@@ -616,6 +623,9 @@
 				} 
 			}
 		}
+		.info {
+			color: #e0e0e0;
+		}
 	}
 
 	//bright version
@@ -631,6 +641,10 @@
 				.date, .date time {
 
 				}
+			}
+			&.active {
+				border-color: #999;
+				.box-shadow(0 1px 2px 0 #666);
 			}
 		}
 	}

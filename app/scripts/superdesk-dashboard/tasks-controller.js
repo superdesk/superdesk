@@ -1,14 +1,20 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    TasksController.$inject = ['$scope', 'api', 'notify', 'userList', '$rootScope', 'es'];
-    function TasksController($scope, api, notify, userList, $rootScope, es) {
+    TasksController.$inject = ['$scope', 'api', 'notify', 'userList', '$rootScope', 'es', 'desks'];
+    function TasksController($scope, api, notify, userList, $rootScope, es, desks) {
 
         $scope.selected = {};
         $scope.newTask = null;
         $scope.userLookup = null;
 
         $scope.tasks = {};
+
+        $scope.$watch(function() {
+            return desks.getCurrentDeskId();
+        }, function() {
+            fetchTasks();
+        });
 
         $scope.preview = function(item) {
             $scope.selected.preview = item;
@@ -19,8 +25,15 @@ define(['lodash'], function(_) {
         };
 
         $scope.save = function() {
-            if ($scope.newTask.task.due_time && $scope.newTask.task.due_time) {
-                $scope.newTask.task.due_date.setTime($scope.newTask.task.due_time.getTime());
+            if ($scope.newTask.task.due_time) {
+                $scope.newTask.task.due_date = new Date(
+                    $scope.newTask.task.due_date.getFullYear(),
+                    $scope.newTask.task.due_date.getMonth(),
+                    $scope.newTask.task.due_date.getDate(),
+                    $scope.newTask.task.due_time.getHours(),
+                    $scope.newTask.task.due_time.getMinutes(),
+                    $scope.newTask.task.due_time.getSeconds()
+                );
             }
             delete $scope.newTask.task.due_time;
 
@@ -37,11 +50,15 @@ define(['lodash'], function(_) {
         };
 
         var fetchTasks = function() {
+            var filter = {term: {'task.user': $rootScope.currentUser._id}};
+            if (desks.getCurrentDeskId()) {
+                filter = {term: {'task.desk': desks.getCurrentDeskId()}};
+            }
             api('tasks').query({
                 source: {
                     size: 100,
                     sort: [{_updated: 'desc'}],
-                    filter: {term: {'task.user': $rootScope.currentUser._id}}
+                    filter: filter
                 }
             })
             .then(function(tasks) {

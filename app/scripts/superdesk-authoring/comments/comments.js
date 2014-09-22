@@ -29,14 +29,13 @@ function CommentsService(api) {
     };
 }
 
-CommentsCtrl.$inject = ['$scope', 'commentsService', 'api', '$q'];
-function CommentsCtrl($scope, commentsService, api, $q) {
+CommentsCtrl.$inject = ['$scope', '$routeParams', 'commentsService', 'api', '$q'];
+function CommentsCtrl($scope, $routeParams, commentsService, api, $q) {
 
     $scope.text = null;
     $scope.saveEnterFlag = false;
     $scope.$watch('item._id', reload);
-    $scope.$on('changes in archive_comment', reload);
-    $scope.users = null;
+    $scope.users = [];
 
     $scope.saveOnEnter = function($event) {
         if (!$scope.saveEnterFlag || $event.keyCode !== ENTER || $event.shiftKey) {
@@ -65,29 +64,25 @@ function CommentsCtrl($scope, commentsService, api, $q) {
     };
 
     function reload() {
-        commentsService.fetch($scope.item._id).then(function() {
-            $scope.comments = commentsService.comments;
-        });
+        if ($scope.item) {
+            commentsService.fetch($scope.item._id).then(function() {
+                $scope.comments = commentsService.comments;
+            });
+        }
     }
 
-    $scope.searchUsers = function(term) {
-        var userlist = [];
-        api.users.query()
-        .then(function(result) {
-            _.each(result._items, function(item) {
-                if (item.display_name.toUpperCase().indexOf(term.toUpperCase()) >= 0) {
-                    userlist.push(item);
-                }
-            });
-            $scope.users = userlist;
-            return $q.when(userlist);
-        });
-    };
+    $scope.$on('item:comment', function(e, data) {
+        if (data.item === $scope.item.guid) {
+            reload();
+        }
+    });
 
-    $scope.selectUser = function(user) {
-        return '@' + user.username;
-    };
+    function setActiveComment() {
+        $scope.active = $routeParams.comments || null;
+    }
 
+    $scope.$on('$locationChangeSuccess', setActiveComment);
+    setActiveComment();
 }
 
 CommentTextDirective.$inject = ['$compile'];

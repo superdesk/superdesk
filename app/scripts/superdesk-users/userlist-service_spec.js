@@ -9,6 +9,9 @@ define(['superdesk-users/userlist-service'], function(UserListService) {
                     return {
                         query: function() {
                             return $q.when({_items: [{_id: 1}, {_id: 2}, {_id: 3}]});
+                        },
+                        getById: function() {
+                            return $q.when({_id: 1});
                         }
                     };
                 };
@@ -35,5 +38,27 @@ define(['superdesk-users/userlist-service'], function(UserListService) {
 
             expect(api).not.toHaveBeenCalled();
         }));
+
+        it('can fetch single user', inject(function(userList, $rootScope) {
+            var res = null;
+            userList.getUser(1)
+            .then(function(result) {
+                res = result;
+            });
+            $rootScope.$digest();
+            expect(res).toEqual({_id: 1});
+        }));
+
+        it('can return single user from default cacher', inject(function(userList, $rootScope, api) {
+            userList.get().then(function(result) {});
+            $rootScope.$digest();
+
+            api = jasmine.createSpy('api');
+            userList.getUser(1).then(function(result) {});
+            $rootScope.$digest();
+
+            expect(api).not.toHaveBeenCalled();
+        }));
+
     });
 });
