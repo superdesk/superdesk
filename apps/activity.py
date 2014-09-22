@@ -104,7 +104,7 @@ class ActivityResource(Resource):
     datasource = {
         'default_sort': [('_created', -1)]
     }
-    superdesk.register_user_option('email.notification', {
+    superdesk.register_available_preference('email:notification', {
         'type': 'bool',
         'enabled': True,
         'default': True,
