@@ -1,0 +1,6 @@
+<div class="popup-subnav">
+	<ul class="nav nav-tabs">
+		<li ng-repeat="step in steps" ng-class="{active: step.selected}" ng-click="goTo(step)"><button translate>{{ step.title }}</button></li>
+	</ul>
+</div>
+<div class="steps" ng-transclude></div>

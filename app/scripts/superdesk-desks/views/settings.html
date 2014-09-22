@@ -1,9 +1,9 @@
 <div sd-settings-view>
-	<button class="btn btn-info pull-right" ng-click="edit()">
+	<button class="btn btn-info pull-right" ng-click="openDesk('general')">
         <i class="icon-plus-sign icon-white"></i> <span class="ng-scope">Add New Desk</span>
     </button>
 
-    <h2 translate>Desk management</h4>
+    <h2 translate>Desk management</h2>
     <div class="settings-tab-content desk-settings">
     	<div sd-shadow>
 			<div class="desk-config" ng-repeat="desk in desks._items">
@@ -12,166 +12,77 @@
 					<div class="dropdown pull-right">
                       <button class="dropdown-toggle"><i class="icon-settings"></i> <b class="caret"></b></button>
                       <ul class="dropdown-menu pull-right">
-                        <li><button ng-click="edit(desk)"><i class="icon-pencil"></i> {{'Edit Desk' | translate}}</button></li>
+                        <li><button ng-click="openDesk('general', desk)"><i class="icon-pencil"></i> {{'Edit Desk' | translate}}</button></li>
                         <li><button ng-click="remove(desk)"><i class="icon-trash"></i> {{'Delete Desk' | translate }}</button></li>
                       </ul>
                   	</div>
-				</div>
-
-				<div class="desk-config-tab" ng-class="{'member-tab': !desk.viewCards, 'board-tab': desk.viewCards}">
-					<div class="desk-subnav">
-						<ul class="subnav-tabs">
-					      <li ng-class="{active: !desk.viewCards}"><button ng-click="desk.viewCards = false" translate>Desk members</button></li>
-					      <li ng-class="{active: desk.viewCards}"><button ng-click="desk.viewCards = true" translate>Desk boards</button></li>
-					    </ul>
-					    <button class="pull-right action" ng-show="!desk.viewCards" ng-click="openMembers(desk)">{{ 'Manage Members' | translate}}</button>
-					    <button class="pull-right action" ng-show="desk.viewCards" ng-click="addBoards(desk)">{{ 'Manage Boards' | translate}}</button>
-					</div>
-
-					<div class="desk-config-tab-content" ng-if="!desk.viewCards">
-						<ul class="plain-list users-list">
-		                    <li ng-repeat="user in deskMembers[desk._id]">
-                              <figure class="avatar"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
-		                      <span class="name" >{{ user.display_name || user.username }}</span>
-		                    </li>
-                            <li ng-show="!desk.members.length" translate>There are no members yet</li>
-		                </ul>
-					</div>
-
-					<div class="desk-config-tab-content" ng-if="desk.viewCards">
-						<ul class="board-table plain-list">
-		                    <li class="boardcolor-{{ card.color }}" ng-repeat="card in desk.cards">
-		                    	
-		                    	<span class="board-name">{{ card.name }}</span>
-
-								<div class="dropdown board-status" style="min-width:100px">
-									<a href="" class="dropdown-toggle" data-toggle="dropdown">
-										<span ng-repeat="status in card.statuses">
-											{{ status.key }}<span ng-show="!$last">, </span>
-										</span> 
-										<b class="caret"></b>
-									</a>
-									<ul class="dropdown-menu">
-									    <li ng-repeat="status in desk.statuses"><label><input type="checkbox"> {{ status.key }}</label></li>
-									</ul>
-								</div>
-
-		                       	<div class="dropdown">
-		                        	<a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-settings"></i> <b class="caret"></b></a>
-		                        	<ul class="dropdown-menu">
-		                        		<li><a href="" ng-click=""><i class="icon-trash"></i> {{'Delete' | translate}}</a></li>
-		                        	</ul>
-		                      	</div>
-
-		                      <span class="board-limit">Limit:<input type="text" placeholder="none" class="no-bg" ng-model="card.limit"></span>
-		                    </li>
-                            <li ng-show="!desk.cards.length" translate>There are no cards yet</li>
-		                </ul>
-					</div>
-
 				</div>
 			</div>
 		</div>
     </div>
 
 
-    <div sd-modal-view data-model="editDesk">
+    <div sd-modal-view data-model="modalActive" class="add-desk-popup responsive-popup hide" >
     
 		<div class="modal-header"> 
 			<a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
-			<h3 ng-show="!editDesk._id" translate>Add New Desk</h3>
-			<h3 ng-show="editDesk._id" translate>Edit Desk</h3>
+			<h3 ng-show="!desk.edit._id" translate>Add New Desk</h3>
+			<h3 ng-show="desk.edit._id" translate>Edit Desk</h3>
 		</div>
-
-		<div class="modal-body modal-body-min">
-			<form name="deskForm">
-				<div class="popup-subnav">
-					<ul class="nav nav-tabs">
-        				<li class="active"><button translate>General</button></li>
-        			</ul>
-				</div>
-				<div class="modal-screen">
-					<fieldset>
-						<div class="field">
-							<label translate>Desk name</label>
-							<input type="text" class="fullwidth-input" ng-model="editDesk.name" required> 
-						</div>
-					</fieldset>
-				</div>
-			</form>
-		</div>
-
-		<div class="modal-footer"> 
-		  	<a href="" class="btn" ng-click="cancel()" translate>Cancel</a> 
-		  	<button class="btn btn-primary" ng-click="save(editDesk)" ng-disabled="!deskForm.$valid" translate>Save</button>
-		</div>
-
-	</div>
-
-
-	<div sd-modal-view data-model="memberPopup">
-			<div class="modal-header"> 
-				<a href="" class="close" ng-click="cancelMember()"><i class="icon-close-small"></i></a>
-				<h3 translate>Desk members</h3>
-			</div>
-
-			<div class="modal-body modal-body-min desk-members">
-				<div class="members-screen1" ng-class="{'screen2':memberScreen2}">
-					<div class="members">
-				  		<ul class="member-avatars">
-							<li ng-repeat="user in selectedMembers">
-								<figure class="avatar"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
-								<div class="member-name">
-									{{ user.display_name || user.username }}
-									<span class="delete" ng-click="removeMember(user)"><i class="icon-close-small icon-white"></i></span>
-								</div>
-
-							</li>
-							<li class="no-member" ng-show="!selectedMembers.length" translate>No members assigned to this desk.</li>
-					    </ul>
-					    <div class="view-all" ng-class="{'show': selectedMembers.length>8 }" ng-click="memberScreen2 = true">
-					    	<i class="icon-chevron-right"></i>
-					    </div>
-				  	</div>
-					<div class="search-members">
-						<input type="text" class="searchbar input-large" placeholder="Search" ng-model="memberSearch">
-					</div>
-				  	<div class="all-users">
-				  		<ul class="plain-list users-list">
-							<li ng-repeat="user in users._items | filter:notIn(selectedMembers)| filter:memberSearch" >
-								<figure class="avatar"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
-								<span class="name" >{{ user.display_name || user.username }}</span>
-								<button class="btn btn-mini btn-green pull-right" ng-click="addMember(user)" tooltip="{{ 'Add to desk' | translate}}" tooltip-placement="left"><i class="icon-plus-small icon-white"></i></button>
-							</li>
-					    </ul>
-				  	</div>
-				</div>
-				<div class="members-screen2" ng-class="{'screen2':memberScreen2}">
-					
-					<div class="members">
-						<div class="view-all" ng-click="memberScreen2 = false">
-					    	<i class="icon-chevron-left"></i>
-					    </div>
-						<ul class="member-avatars">
-							<li ng-repeat="user in selectedMembers" >
-								<figure class="avatar"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
-								<div class="member-name">
-									{{user.first_name}} {{user.last_name}}
-									<span class="delete" ng-click="removeMember(user)"><i class="icon-close-small icon-white"></i></span>
-								</div>
-
-							</li>
-							<li class="no-member" ng-show="!selectedMembers.length" translate>No members assigned to this desk.</li>
-					    </ul>
-					</div>
-				</div>
-			              
-			</div>
-			<div class="modal-footer"> 
-			  	<a href="" class="btn" ng-click="cancelMember()" translate>Cancel</a> 
-			  	<button class="btn btn-primary" ng-click="saveMembers()"translate>Save</button>
-			</div>
 		
+		<div class="modal-body" sd-wizard data-current-step="currentStep" data-finish="cancel()" ng-if="modalActive">
+			
+			<div sd-wizard-step data-title="{{ 'General' | translate }}" data-code="general">
+				<div sd-deskedit-basic>
+					<form name="generalStep">
+						<div class="content">
+							<fieldset>
+								<div class="field">
+									<label translate>Desk name</label>
+									<input type="text" class="fullwidth-input" ng-model="desk.edit.name" required> 
+								</div>
+								<div class="field">
+									<label translate>Desk description {{test}}</label>
+									<textarea class="fullwidth-input" ng-model="desk.edit.description"></textarea>
+								</div>
+							</fieldset>
+						</div>
+						<div class="modal-footer">
+						  	<button class="btn btn-primary" ng-click="save(desk.edit)" ng-disabled="!generalStep.$valid" translate>Next</button>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<div sd-wizard-step data-title="{{ 'Stages' | translate }}" data-code="stages">
+				<div sd-deskedit-stages>
+					<div class="content">
+						<div class="stages">
+							<div class="header" translate>Work stages</div>
+							<div class="content">
+								<div class="stages-list">
+									<div class="stage" ng-repeat="stage in stages">
+										<span>{{ stage.name }}</span>
+										<i class="remove" ng-click="remove(stage)"></i>
+									</div>
+									<div class="stage editable" ng-show="newStage.show">
+										<input type="text" ng-model="newStage.model" ng-keyup="saveOnEnter($event)" />	
+									</div>
+									<a class="btn add" sd-focus-input ng-click="newStage.model = null; newStage.show = true" ><i class="icon-plus-small"></i></a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer"> 
+					  	<button class="btn pull-left" ng-click="previous()" translate>Previous</button> 
+					  	<button class="btn btn-primary" ng-click="done()" translate>Done</button>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+
 	</div>
 
 </div>
