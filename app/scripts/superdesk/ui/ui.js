@@ -111,7 +111,8 @@ define([
             templateUrl: 'scripts/superdesk/ui/views/wizard.html',
             scope: {
                 currentStep: '=',
-                finish: '&'
+                finish: '&',
+                name: '@'
             },
             transclude: true,
             controller: ['$scope', '$element', 'WizardHandler', function($scope, element, WizardHandler) {
@@ -145,13 +146,6 @@ define([
                     }
                     step.selected = true;
                 };
-
-                $scope.$watch('currentStep', function(step) {
-                    var stepCode = $scope.selectedStep.code;
-                    if ($scope.selectedStep && stepCode !== $scope.currentStep) {
-                        $scope.goTo(_.findWhere($scope.steps, {code: $scope.currentStep}));
-                    }
-                });
 
                 this.goTo = function(step) {
                     var stepTo;

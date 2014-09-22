@@ -1,8 +1,8 @@
 define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
-    return ['$scope', 'gettext', 'notify', 'api', 'desks',
-        function($scope, gettext, notify, api, desks) {
+    return ['$scope', 'gettext', 'notify', 'api', 'desks', 'WizardHandler',
+        function($scope, gettext, notify, api, desks, WizardHandler) {
 
             $scope.currentStep = null;
             $scope.modalActive = false;
@@ -18,12 +18,13 @@ define(['angular', 'lodash'], function(angular, _) {
 
             $scope.openDesk = function(step, desk) {
                 $scope.desk.edit = desk;
-                $scope.currentStep = step;
                 $scope.modalActive = true;
+                WizardHandler.wizard().goTo(step);
             };
 
             $scope.cancel = function() {
                 $scope.modalActive = false;
+                $scope.currentStep = null;
                 $scope.desk.edit = null;
             };
 

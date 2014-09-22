@@ -26,11 +26,11 @@ define([
             }
         };
     }])
-    .directive('sdFocusInput', [ '$timeout', function($timeout) {
+    .directive('sdFocusInput', [function() {
         return {
             link: function(scope, elem, attrs) {
                 elem.click(function() {
-                     $timeout(function() {
+                    _.defer(function() {
                         elem.parent().find('input').focus();
                     });
                 });
@@ -43,8 +43,6 @@ define([
             link: function(scope, elem, attrs) {
 
                 var _desk = null;
-
-                scope.message = null;
 
                 scope.$watch('currentStep', function(step) {
                     if (step === 'general') {
@@ -61,12 +59,10 @@ define([
                 scope.save = function(desk) {
                     scope.message = gettext('Saving...');
                     var _new = desk._id ? false : true;
-                    api.desks.save(_desk, scope.desk.edit).then(function(result) {
+                    api.desks.save(_desk, desk).then(function() {
                         if (_new) {
-                            _.extend(desk, result);
-                            scope.desks._items.unshift(scope.desk.edit);
-                        } else {
-                            _.extend(_desk, result);
+                            scope.edit(_desk);
+                            scope.desks._items.unshift(_desk);
                         }
                         WizardHandler.wizard().next();
                     }, function(response) {
@@ -82,15 +78,16 @@ define([
 
             link: function(scope, elem, attrs) {
 
-                scope.stages = [];
-                scope.newStage = {
-                    show: false,
-                    model: null
-                };
-                scope.message = null;
-
                 scope.$watch('currentStep', function(step, previous) {
                     if (step === 'stages') {
+
+                        scope.stages = [];
+                        scope.newStage = {
+                            show: false,
+                            model: null
+                        };
+                        scope.message = null;
+
                         if (scope.desk.edit && scope.desk.edit._id) {
                             scope.message = null;
                             api('content_view').query({where: {desk: scope.desk.edit._id}})

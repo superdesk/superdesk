@@ -30,7 +30,7 @@
 			<h3 ng-show="desk.edit._id" translate>Edit Desk</h3>
 		</div>
 		
-		<div class="modal-body" sd-wizard data-current-step="currentStep" data-finish="cancel()" ng-if="modalActive">
+		<div class="modal-body" sd-wizard data-current-step="currentStep" data-finish="cancel()">
 			
 			<div sd-wizard-step data-title="{{ 'General' | translate }}" data-code="general">
 				<div sd-deskedit-basic>
@@ -61,7 +61,7 @@
 						<div class="stages">
 							<div class="header" translate>Work stages</div>
 							<div class="content">
-								<div class="stages-list">
+								<div class="stages-list clearfix">
 									<div class="stage" ng-repeat="stage in stages">
 										<span>{{ stage.name }}</span>
 										<i class="remove" ng-click="remove(stage)"></i>
