@@ -14,7 +14,7 @@
 			<div sd-toggle-box data-title="{{ 'Coverage' | translate }}" data-open="true">
 				<div class="coverage" ng-show="coverage">
 					<div class="info">
-						<div sd-assignee-box data-selected-id="coverage.assigned_user"></div>
+						<div sd-assignee-box data-desk-id="coverage.assigned_desk" data-user-id="coverage.assigned_user"></div>
 						<div class="assignee-name"><span ng-show="coverage.assigned_user">{{userLookup[coverage.assigned_user].display_name}}</span><span ng-hide="coverage.assigned_user" translate>Unassigned</span></div>
 
 						<div sd-coverage-type></div>
@@ -33,7 +33,7 @@
 				</div>
 				<div class="coverage" ng-repeat="coverage in coverages._items">
 					<div class="info">
-						<div sd-assignee-box data-selected-id="coverage.assigned_user"></div>
+						<div sd-assignee-box data-desk-id="coverage.assigned_desk" data-user-id="coverage.assigned_user"></div>
 						<div class="assignee-name"><span ng-show="coverage.assigned_user">{{userLookup[coverage.assigned_user].display_name}}</span><span ng-hide="coverage.assigned_user" translate>Unassigned</span></div>
 						
 						<div sd-coverage-type></div>

@@ -240,7 +240,7 @@ define([
                 scope.$watch('deskId', function(deskId) {
                     scope.desk = null;
                     desks.initialize().then(function() {
-                        scope.desk = desks.deskLookup[deskId];
+                        scope.desk = deskId ? desks.deskLookup[deskId] : desks.getCurrentDesk();
                     });
                 });
 

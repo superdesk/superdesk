@@ -103,6 +103,9 @@ define([
                 setCurrentDesk: function(desk) {
                     this.setCurrentDeskId(desk ? desk._id : null);
                 },
+                getCurrentDesk: function(desk) {
+                    return this.deskLookup[this.getCurrentDeskId()];
+                },
                 initialize: function(force) {
                     var self = this;
 
@@ -125,7 +128,6 @@ define([
                     return p;
                 }
             };
-            desksService.initialize();
             return desksService;
         }]);
 
