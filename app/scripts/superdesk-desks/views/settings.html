@@ -46,6 +46,7 @@
 									<textarea class="fullwidth-input" ng-model="desk.edit.description"></textarea>
 								</div>
 							</fieldset>
+							<p ng-if="message">{{ message }}</p>
 						</div>
 						<div class="modal-footer">
 						  	<button class="btn btn-primary" ng-click="save(desk.edit)" ng-disabled="!generalStep.$valid" translate>Next</button>
@@ -70,6 +71,7 @@
 									</div>
 									<a class="btn add" sd-focus-input ng-click="newStage.model = null; newStage.show = true" ><i class="icon-plus-small"></i></a>
 								</div>
+								<p ng-if="message">{{ message }}</p>
 							</div>
 						</div>
 					</div>

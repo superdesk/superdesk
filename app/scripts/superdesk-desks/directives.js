@@ -37,16 +37,19 @@ define([
             }
         };
     }])
-    .directive('sdDeskeditBasic', ['gettext', 'notify', 'api', 'WizardHandler', function(gettext, notify, api, WizardHandler) {
+    .directive('sdDeskeditBasic', ['gettext', 'api', 'WizardHandler', function(gettext, api, WizardHandler) {
         return {
 
             link: function(scope, elem, attrs) {
 
                 var _desk = null;
 
+                scope.message = null;
+
                 scope.$watch('currentStep', function(step) {
                     if (step === 'general') {
                         scope.edit(scope.desk.edit);
+                        scope.message = null;
                     }
                 });
 
@@ -56,43 +59,40 @@ define([
                 };
 
                 scope.save = function(desk) {
-                    notify.info(gettext('saving...'));
+                    scope.message = gettext('Saving...');
                     var _new = desk._id ? false : true;
                     api.desks.save(_desk, scope.desk.edit).then(function(result) {
-                        notify.pop();
                         if (_new) {
-                            notify.success(gettext('New Desk created.'));
                             _.extend(desk, result);
                             scope.desks._items.unshift(scope.desk.edit);
                         } else {
-                            notify.success(gettext('Desk settings updated.'));
                             _.extend(_desk, result);
                         }
                         WizardHandler.wizard().next();
                     }, function(response) {
-                        notify.pop();
-                        notify.error(gettext('There was a problem, desk not created/updated.'));
+                        scope.message = gettext('There was a problem, desk not created/updated.');
                     });
                 };
             }
         };
     }])
-    .directive('sdDeskeditStages', ['gettext', 'notify', 'api', 'WizardHandler', 'desks',
-        function(gettext, notify, api, WizardHandler, desks) {
+    .directive('sdDeskeditStages', ['gettext', 'api', 'WizardHandler', 'desks',
+        function(gettext, api, WizardHandler, desks) {
         return {
 
             link: function(scope, elem, attrs) {
 
                 scope.stages = [];
-
                 scope.newStage = {
                     show: false,
                     model: null
                 };
+                scope.message = null;
 
                 scope.$watch('currentStep', function(step, previous) {
                     if (step === 'stages') {
                         if (scope.desk.edit && scope.desk.edit._id) {
+                            scope.message = null;
                             api('content_view').query({where: {desk: scope.desk.edit._id}})
                             .then(function(result) {
                                 scope.stages = result._items;
@@ -113,13 +113,16 @@ define([
 
                 scope.saveOnEnter = function($event) {
                     if ($event.keyCode === 13) {
+                        scope.message = gettext('Savinig...');
                         api('content_view').save({}, {name: scope.newStage.model, desk: scope.desk.edit._id})
                         .then(function(item) {
                             scope.stages.push(item);
                             scope.newStage.model = null;
                             scope.newStage.show = false;
+                            scope.message = gettext('Stage added successfully.');
                         }, function(response) {
                             console.log(response);
+                            scope.message = gettext('There was a problem, stage not added.');
                         });
                         return false;
                     }
