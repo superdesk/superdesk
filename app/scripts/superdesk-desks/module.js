@@ -42,10 +42,12 @@ define([
                 }
             });
         }])
-        .factory('desks', ['$q', 'api', 'storage', function($q, api, storage) {
+        .factory('desks', ['$q', 'api', 'storage', 'userList', function($q, api, storage, userList) {
             var desksService = {
                 desks: null,
                 users: null,
+                deskLookup: {},
+                userLookup: {},
                 deskMembers: {},
                 fetchDesks: function() {
                     var self = this;
@@ -53,14 +55,22 @@ define([
                     return api.desks.query({max_results: 500})
                     .then(function(result) {
                         self.desks = result;
+                        self.deskLookup = {};
+                        _.each(result._items, function(desk) {
+                            self.deskLookup[desk._id] = desk;
+                        });
                     });
                 },
                 fetchUsers: function() {
                     var self = this;
 
-                    return api.users.query({max_results: 500})
+                    return userList.get(null, 1, 500)
                     .then(function(result) {
                         self.users = result;
+                        self.userLookup = {};
+                        _.each(result._items, function(user) {
+                            self.userLookup[user._id] = user;
+                        });
                     });
                 },
                 generateDeskMembers: function() {
@@ -92,12 +102,6 @@ define([
                 },
                 setCurrentDesk: function(desk) {
                     this.setCurrentDeskId(desk ? desk._id : null);
-                },
-                getDesk: function(deskId) {
-                    return this.desks ? _.find(this.desks._items, {_id: deskId}) : null;
-                },
-                getUser: function(userId) {
-                    return this.users ? _.find(this.users._items, {_id: userId}) : null;
                 },
                 initialize: function(force) {
                     var self = this;

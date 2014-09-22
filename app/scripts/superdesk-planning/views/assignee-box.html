@@ -26,7 +26,7 @@
 				<button class="dropdown-toggle">{{'Select desk'|translate}} <b class="caret"></b></button>
 				<div class="dropdown-menu">
 					<ul>
-						<li ng-repeat="desk in desksService.desks._items"><button ng-click="$parent.desk = desk">{{desk.name}}</button></li>
+						<li ng-repeat="desk in desksService.desks._items"><button ng-click="$parent.desk = desk; $parent.user = null">{{desk.name}}</button></li>
 					</ul>
 				</div>
 			</div>
