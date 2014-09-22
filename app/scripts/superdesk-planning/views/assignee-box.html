@@ -20,8 +20,8 @@
 			</div>
 		</div>
 		<div class="dropdown-content" ng-show="open">
-			<div>Selected desk: {{desk.name}}</div>
-			<div>Selected user: {{user.display_name}}</div>
+			<div><span translate>Selected desk:</span> {{desk.name}}</div>
+			<div><span translate>Selected user:</span> {{user.display_name}}</div>
 			<div class="dropdown desk-select">
 				<button class="dropdown-toggle">{{'Select desk'|translate}} <b class="caret"></b></button>
 				<div class="dropdown-menu">
@@ -32,7 +32,7 @@
 			</div>
 			<div class="user-select" ng-show="desk">
 				<form>
-					<label for="assignee-search">Person</label>
+					<label for="assignee-search" translate>Person</label>
 					<input type="text" name="assignee-search" ng-model="search" class="input-large searchbox">
 				</form>
 				<div class="search-result">
@@ -45,9 +45,9 @@
 				</div>
 			</div>
 			<div class="footer">
-				<button class="btn btn-info pull-left" ng-disabled="!desk && !user" ng-click="desk = null; user = null">Clear</button>
-				<button class="btn btn-info pull-right" ng-disabled="!desk" ng-click="assign()">Assign</button>
-				<button class="btn pull-right" ng-click="open = false">Cancel</button>
+				<button class="btn btn-info pull-left" ng-disabled="!desk && !user" ng-click="desk = null; user = null" translate>Clear</button>
+				<button class="btn btn-info pull-right" ng-disabled="!desk" ng-click="assign()" translate>Assign</button>
+				<button class="btn pull-right" ng-click="open = false" translate>Cancel</button>
 			</div>
 		</div>
 	</div>

@@ -42,7 +42,7 @@ define([
                 }
             });
         }])
-        .service('desks', ['$q', 'api', 'storage', function($q, api, storage) {
+        .factory('desks', ['$q', 'api', 'storage', function($q, api, storage) {
             var desksService = {
                 desks: null,
                 users: null,

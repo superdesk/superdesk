@@ -240,14 +240,14 @@ define([
                 scope.$watch('deskId', function(deskId) {
                     scope.desk = null;
                     desks.initialize().then(function() {
-                        scope.desk = _.find(desks.desks._items, {_id: deskId}) || null;
+                        scope.desk = desks.getDesk(deskId);
                     });
                 });
 
                 scope.$watch('userId', function(userId) {
                     scope.user = null;
                     desks.initialize().then(function() {
-                        scope.user = _.find(desks.users._items, {_id: userId}) || null;
+                        scope.user = desks.getUser(userId);
                     });
                 });
 
