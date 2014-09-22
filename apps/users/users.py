@@ -1,6 +1,7 @@
 """Superdesk Users"""
 
 import bcrypt
+import logging
 from flask import current_app as app
 from flask.ext.script.commands import InvalidCommand
 from apps.auth.auth import ADAuth, NotFoundAuthError
@@ -11,6 +12,8 @@ from superdesk.utc import utcnow
 from apps.activity import add_activity
 from superdesk.services import BaseService
 
+logger = logging.getLogger(__name__)
+
 
 class EmptyUsernameException(Exception):
     def __str__(self):
@@ -20,6 +23,11 @@ class EmptyUsernameException(Exception):
 class ConflictUsernameException(Exception):
     def __str__(self):
         return "Username '%s' exists already" % self.args[0]
+
+
+def is_hashed(pwd):
+    """Check if given password is hashed."""
+    return pwd.startswith('$2a$')
 
 
 def get_display_name(user):
@@ -34,17 +42,16 @@ def on_read_users(data, docs):
     """Set default fields for users"""
     for doc in docs:
         doc.setdefault('display_name', get_display_name(doc))
-        if doc.get('password'):
-            del doc['password']
+        doc.pop('password', None)
 
 
 def ensure_hashed_password(doc):
-    if doc.get('password', None):
+    if doc.get('password', None) and not is_hashed(doc.get('password')):
         doc['password'] = hash_password(doc.get('password'))
 
 
 def hash_password(password):
-    work_factor = app.config['BCRYPT_GENSALT_WORK_FACTOR']
+    work_factor = app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12)
     hashed = bcrypt.hashpw(password.encode('UTF-8'), bcrypt.gensalt(work_factor))
     return hashed.decode('UTF-8')
 
@@ -69,18 +76,22 @@ class CreateUserCommand(superdesk.Command):
             'username': username,
             'password': password,
             'email': email,
+            app.config['LAST_UPDATED']: utcnow(),
         }
 
-        user = superdesk.app.data.find_one('users', username=userdata.get('username'), req=None)
-        if user:
-            userdata[app.config['LAST_UPDATED']] = utcnow()
-            userdata['password'] = hash_password(userdata['password'])
-            superdesk.app.data.update('users', user.get('_id'), userdata)
-            return userdata
-        else:
-            userdata[app.config['DATE_CREATED']] = utcnow()
-            userdata[app.config['LAST_UPDATED']] = utcnow()
-            superdesk.app.data.insert('users', [userdata])
+        with app.test_request_context('/users', method='POST'):
+            ensure_hashed_password(userdata)
+            user = app.data.find_one('users', username=userdata.get('username'), req=None)
+            if user:
+                logger.info('updating user %s' % (userdata))
+                app.data.update('users', user.get('_id'), userdata)
+                return userdata
+            else:
+                logger.info('creating user %s' % (userdata))
+                userdata[app.config['DATE_CREATED']] = userdata[app.config['LAST_UPDATED']]
+                app.data.insert('users', [userdata])
+
+            logger.info('user saved %s' % (userdata))
             return userdata
 
 
@@ -89,7 +100,7 @@ class HashUserPasswordsCommand(superdesk.Command):
         users = superdesk.app.data.find_all('auth_users')
         for user in users:
             pwd = user.get('password')
-            if not pwd.startswith('$2a$'):
+            if not is_hashed(pwd):
                 updates = {}
                 hashed = hash_password(user['password'])
                 user_id = user.get('_id')
@@ -215,12 +226,10 @@ class UsersResource(Resource):
         },
         'avatar': Resource.rel('upload', True),
         'role': Resource.rel('roles', True),
+        'preferences': {'type': 'dict'},
         'workspace': {
             'type': 'dict'
         },
-        'preferences': {
-            'type': 'dict'
-        }
     }
 
     extra_response_fields = [
