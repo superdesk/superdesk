@@ -30,6 +30,11 @@ class PreferencesService(BaseService):
         for k in ((k for k, v in prefs.items() if k not in superdesk.available_preferences)):
             raise ValidationError('Invalid preference: %s' % k)
 
+        for k, v in prefs.items():
+            new_value = dict(superdesk.available_preferences[k])
+            new_value.update(v)
+            prefs[k] = new_value
+
     def find_one(self, req, **lookup):
         doc = super().find_one(req, **lookup)
         self.enhance_document_with_default_prefs(doc)
