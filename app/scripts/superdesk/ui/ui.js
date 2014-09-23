@@ -94,11 +94,7 @@ define([
         };
 
         service.wizard = function(name) {
-            var nameToUse = name;
-            if (!name) {
-                nameToUse = service.defaultName;
-            }
-
+            var nameToUse = name || service.defaultName;
             return wizards[nameToUse];
         };
 
@@ -126,9 +122,6 @@ define([
 
                 this.addStep = function(step) {
                     $scope.steps.push(step);
-                    if ($scope.steps.length === 1) {
-                        $scope.goTo($scope.steps[0]);
-                    }
                 };
 
                 function unselectAll() {

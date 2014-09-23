@@ -11,7 +11,7 @@ define(['angular', 'lodash'], function(angular, _) {
             };
             $scope.desks = {};
 
-            desks.fetchDesks()
+            desks.initialize()
             .then(function() {
                 $scope.desks = desks.desks;
             });
