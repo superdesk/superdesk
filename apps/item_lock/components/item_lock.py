@@ -22,9 +22,11 @@ class ItemLock(BaseComponent):
         item_model = get_model(ItemModel)
         item = item_model.find_one(filter)
         if item and self._can_lock(item, user):
+            self.app.on_item_lock(item, user)
             updates = {LOCK_USER: user, 'lock_time': utcnow()}
             item_model.update(filter, updates)
             item[LOCK_USER] = user
+            self.app.on_item_locked(item, user)
             push_notification('item:lock', item=str(item.get('_id')), user=str(user))
         else:
             raise SuperdeskError('Item locked by another user')
