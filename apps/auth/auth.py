@@ -1,42 +1,55 @@
-
-import flask
 import logging
-import superdesk
-import superdesk.utils as utils
-from flask import json, current_app as app, request
 from eve.auth import TokenAuth
+from flask import current_app as app, request
+import flask
+from apps.auth.errors import AuthRequiredError
 from superdesk.resource import Resource
-import bcrypt
-from superdesk.services import BaseService
 
 
 logger = logging.getLogger(__name__)
 
 
-class AuthRequiredError(superdesk.SuperdeskError):
-    """Auth required error."""
-    status_code = 401
-    payload = {'auth': 1}
+class AuthUsersResource(Resource):
+    """ This resource is for authentication only.
+
+    On users `find_one` never returns a password due to the projection.
+    """
+    datasource = {'source': 'users'}
+    schema = {
+        'username': {
+            'type': 'string',
+        },
+        'password': {
+            'type': 'string',
+        }
+    }
+    item_methods = []
+    resource_methods = []
+    internal_resource = True
 
 
-class AuthError(superdesk.SuperdeskError):
-    """Base Auth Error"""
-    status_code = 400
-    payload = {'credentials': 1}
-
-
-class NotFoundAuthError(AuthError):
-    """Username Not Found Auth Error"""
-    pass
-
-
-class CredentialsAuthError(AuthError):
-    """Credentials Not Match Auth Exception"""
-    pass
+class AuthResource(Resource):
+    schema = {
+        'username': {
+            'type': 'string',
+            'required': True
+        },
+        'password': {
+            'type': 'string',
+            'required': True
+        },
+        'token': {
+            'type': 'string'
+        },
+        'user': Resource.rel('users', True)
+    }
+    resource_methods = ['POST']
+    item_methods = ['GET']
+    public_methods = ['POST']
+    extra_response_fields = ['user', 'token', 'username']
 
 
 class SuperdeskTokenAuth(TokenAuth):
-
     """Superdesk Token Auth"""
 
     method_map = {
@@ -83,82 +96,3 @@ class SuperdeskTokenAuth(TokenAuth):
     def authenticate(self):
         """ Returns 401 response with CORS headers."""
         raise AuthRequiredError()
-
-
-def authenticate(credentials, db):
-    if 'username' not in credentials:
-        raise NotFoundAuthError()
-
-    user = db.find_one('auth_users', req=None, username=credentials.get('username'))
-    if not user:
-        raise NotFoundAuthError()
-
-    password = credentials.get('password').encode('UTF-8')
-    hashed = user.get('password').encode('UTF-8')
-
-    if not (password and hashed):
-        raiseCredentialsAuthError(credentials)
-
-    try:
-        rehashed = bcrypt.hashpw(password, hashed)
-        if hashed != rehashed:
-            raiseCredentialsAuthError(credentials)
-    except ValueError:
-        raiseCredentialsAuthError(credentials)
-
-    return user
-
-
-def raiseCredentialsAuthError(credentials):
-    logger.warning("Login failure: %s" % json.dumps(credentials))
-    raise CredentialsAuthError()
-
-
-class AuthUsersResource(Resource):
-    """ This resource is for authentication only.
-
-    On users `find_one` never returns a password due to the projection.
-    """
-    datasource = {'source': 'users'}
-    schema = {
-        'username': {
-            'type': 'string',
-        },
-        'password': {
-            'type': 'string',
-        }
-    }
-    item_methods = []
-    resource_methods = []
-    internal_resource = True
-
-
-class AuthResource(Resource):
-    schema = {
-        'username': {
-            'type': 'string',
-            'required': True
-        },
-        'password': {
-            'type': 'string',
-            'required': True
-        },
-        'token': {
-            'type': 'string'
-        },
-        'user': Resource.rel('users', True)
-    }
-    resource_methods = ['POST']
-    item_methods = ['GET']
-    public_methods = ['POST']
-    extra_response_fields = ['user', 'token', 'username']
-
-
-class AuthService(BaseService):
-
-    def on_create(self, docs):
-        for doc in docs:
-            user = authenticate(doc, app.data)
-            doc['user'] = user['_id']
-            doc['token'] = utils.get_random_string(40)
-            del doc['password']

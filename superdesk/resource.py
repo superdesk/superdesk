@@ -74,6 +74,9 @@ class Resource():
             if self.resource_title is not None:
                 endpoint_schema.update({'resource_title': self.resource_title})
         self.endpoint_schema = endpoint_schema
+
+        on_fetched_resource = getattr(app, 'on_fetched_resource_%s' % self.endpoint_name)
+        on_fetched_resource += service.on_fetched
         app.register_resource(self.endpoint_name, endpoint_schema)
         superdesk.resources[self.endpoint_name] = self
 

@@ -1,44 +1,23 @@
-import superdesk
-from flask import current_app as app
-from superdesk.resource import Resource
-from superdesk.utils import get_random_string
-from superdesk.emails import send_email
-from settings import RESET_PASSWORD_TOKEN_TIME_TO_LIVE as token_ttl
 import logging
-from .users import hash_password
-from superdesk.utc import utcnow
+import superdesk
+from flask import current_app as app, render_template
+from superdesk.resource import Resource
 from superdesk.services import BaseService
+from superdesk.utc import utcnow
+from superdesk.utils import get_random_string, get_hash
+from settings import RESET_PASSWORD_TOKEN_TIME_TO_LIVE as token_ttl, ADMINS
+from superdesk.emails import send_email
+
 
 logger = logging.getLogger(__name__)
+
+
 reset_schema = {
     'email': {'type': 'email'},
     'token': {'type': 'string'},
     'password': {'type': 'string'},
     'user': Resource.rel('users', True)
 }
-
-
-def send_reset_password_email(doc):
-    from settings import ADMINS
-    from flask import render_template
-    send_email.delay(subject='Reset password',
-                     sender=ADMINS[0],
-                     recipients=[doc['email']],
-                     text_body=render_template("reset_password.txt", user=doc, expires=token_ttl),
-                     html_body=render_template("reset_password.html", user=doc, expires=token_ttl))
-
-
-class ActiveTokensResource(Resource):
-    internal_resource = True
-    schema = reset_schema
-    where_clause = '(ISODate() - this._created) / 3600000 <= %s' % token_ttl
-    datasource = {
-        'source': 'reset_user_password',
-        'default_sort': [('_created', -1)],
-        'filter': {'$where': where_clause}
-    }
-    resource_methods = []
-    item_methods = []
 
 
 class ResetPasswordResource(Resource):
@@ -72,7 +51,7 @@ class ResetPasswordService(BaseService):
         doc['user'] = user['_id']
         doc['token'] = get_random_string()
         ids = super().create([doc])
-        send_reset_password_email(doc)
+        self.send_reset_password_email(doc)
         self.remove_private_data(doc)
         return ids
 
@@ -99,8 +78,7 @@ class ResetPasswordService(BaseService):
 
     def update_user_password(self, user_id, password):
         updates = {}
-        hashed = hash_password(password)
-        updates['password'] = hashed
+        updates['password'] = get_hash(password, app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12))
         updates[app.config['LAST_UPDATED']] = utcnow()
         app.data.update('users', user_id, updates=updates)
 
@@ -112,3 +90,10 @@ class ResetPasswordService(BaseService):
     def remove_field_from(self, doc, field_name):
         if doc and doc.get(field_name):
             del doc[field_name]
+
+    def send_reset_password_email(self, doc):
+        send_email.delay(subject='Reset password',
+                         sender=ADMINS[0],
+                         recipients=[doc['email']],
+                         text_body=render_template("reset_password.txt", user=doc, expires=token_ttl),
+                         html_body=render_template("reset_password.html", user=doc, expires=token_ttl))

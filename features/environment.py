@@ -1,5 +1,6 @@
 from superdesk import tests
 from superdesk.io.tests import setup_providers, teardown_providers
+import os
 
 
 def before_all(context):
@@ -30,3 +31,8 @@ def after_scenario(context, scenario):
 
     if 'notification' in scenario.tags:
         tests.teardown_notification(context)
+
+
+def before_feature(context, feature):
+    if 'dbauth' in feature.tags and 'LDAP_SERVER' in os.environ:
+        feature.mark_skipped()

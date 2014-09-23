@@ -1,4 +1,3 @@
-
 import os
 from datetime import timedelta
 import json
@@ -56,7 +55,7 @@ CELERYBEAT_SCHEDULE = {
 SENTRY_DSN = os.environ.get('SENTRY_DSN')
 SENTRY_INCLUDE_PATHS = ['superdesk']
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'apps.auth',
     'apps.users',
     'superdesk.upload',
@@ -76,7 +75,7 @@ INSTALLED_APPS = (
     'apps.coverages',
     'apps.tasks',
     'apps.preferences',
-)
+]
 
 RESOURCE_METHODS = ['GET', 'POST']
 ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
@@ -114,3 +113,25 @@ MAIL_USE_SSL = json.loads(os.environ.get('MAIL_USE_SSL', 'True').lower())
 MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'admin@sourcefabric.org')
 MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', 'admin-password')
 ADMINS = [MAIL_USERNAME]
+
+# LDAP settings
+LDAP_SERVER = os.environ.get('LDAP_SERVER', '')  # Ex: ldap://sourcefabric.org
+LDAP_SERVER_PORT = os.environ.get('LDAP_SERVER_PORT', 389)
+
+# Fully Qualified Domain Name. Ex: sourcefabric.org
+LDAP_FQDN = os.environ.get('LDAP_FQDN', '')
+
+# LDAP_BASE_FILTER limit the base filter to the security group. Ex: OU=Superdesk Users,dc=sourcefabric,dc=org
+LDAP_BASE_FILTER = os.environ.get('LDAP_BASE_FILTER', '')
+
+# change the user depending on the LDAP directory structure
+LDAP_USER_FILTER = "(&(objectCategory=user)(objectClass=user)(sAMAccountName={}))"
+
+# LDAP User Attributes to fetch. Keys would be LDAP Attribute Name and Value would be Supderdesk Model Attribute Name
+LDAP_USER_ATTRIBUTES = {'givenName': 'first_name', 'sn': 'last_name', 'displayName': 'display_name',
+                        'mail': 'email', 'ipPhone': 'phone'}
+
+if LDAP_SERVER != '':
+    INSTALLED_APPS.append('apps.auth.ldap')
+else:
+    INSTALLED_APPS.append('apps.auth.db')

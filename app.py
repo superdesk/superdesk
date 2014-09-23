@@ -100,7 +100,6 @@ def get_app(config=None):
 
     app.sentry = sentry
     sentry.init_app(app)
-
     superdesk.app = app
     return app
 

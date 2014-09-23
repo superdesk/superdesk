@@ -1,14 +1,14 @@
 """Superdesk Users"""
 
-import bcrypt
 import logging
-from flask import current_app as app
-
+import os
 import superdesk
 from superdesk.resource import Resource
-from superdesk.utc import utcnow
 from apps.activity import add_activity
 from superdesk.services import BaseService
+from superdesk.utils import is_hashed, get_hash
+from flask import current_app as app
+
 
 logger = logging.getLogger(__name__)
 
@@ -21,11 +21,6 @@ class EmptyUsernameException(Exception):
 class ConflictUsernameException(Exception):
     def __str__(self):
         return "Username '%s' exists already" % self.args[0]
-
-
-def is_hashed(pwd):
-    """Check if given password is hashed."""
-    return pwd.startswith('$2a$')
 
 
 def get_display_name(user):
@@ -43,69 +38,8 @@ def on_read_users(data, docs):
         doc.pop('password', None)
 
 
-def ensure_hashed_password(doc):
-    if doc.get('password', None) and not is_hashed(doc.get('password')):
-        doc['password'] = hash_password(doc.get('password'))
-
-
-def hash_password(password):
-    work_factor = app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12)
-    hashed = bcrypt.hashpw(password.encode('UTF-8'), bcrypt.gensalt(work_factor))
-    return hashed.decode('UTF-8')
-
-
-class CreateUserCommand(superdesk.Command):
-    """Create a user with given username, password and email.
-    If user with given username exists, reset password.
-    """
-
-    option_list = (
-        superdesk.Option('--username', '-u', dest='username', required=True),
-        superdesk.Option('--password', '-p', dest='password', required=True),
-        superdesk.Option('--email', '-e', dest='email', required=True),
-    )
-
-    def run(self, username, password, email):
-        userdata = {
-            'username': username,
-            'password': password,
-            'email': email,
-            app.config['LAST_UPDATED']: utcnow(),
-        }
-
-        with app.test_request_context('/users', method='POST'):
-            ensure_hashed_password(userdata)
-            user = app.data.find_one('users', username=userdata.get('username'), req=None)
-            if user:
-                logger.info('updating user %s' % (userdata))
-                app.data.update('users', user.get('_id'), userdata)
-                return userdata
-            else:
-                logger.info('creating user %s' % (userdata))
-                userdata[app.config['DATE_CREATED']] = userdata[app.config['LAST_UPDATED']]
-                app.data.insert('users', [userdata])
-
-            logger.info('user saved %s' % (userdata))
-            return userdata
-
-
-class HashUserPasswordsCommand(superdesk.Command):
-    def run(self):
-        users = superdesk.app.data.find_all('auth_users')
-        for user in users:
-            pwd = user.get('password')
-            if not is_hashed(pwd):
-                updates = {}
-                hashed = hash_password(user['password'])
-                user_id = user.get('_id')
-                updates['password'] = hashed
-                superdesk.app.data.update('users', user_id, updates=updates)
-
-
 superdesk.connect('read:users', on_read_users)
 superdesk.connect('created:users', on_read_users)
-superdesk.command('users:create', CreateUserCommand())
-superdesk.command('users:hash_passwords', HashUserPasswordsCommand())
 
 
 class RolesResource(Resource):
@@ -128,10 +62,15 @@ class RolesResource(Resource):
 
 
 class UsersResource(Resource):
+    readonly = False
+    if 'LDAP_SERVER' in os.environ:
+        readonly = True
+
     additional_lookup = {
         'url': 'regex("[\w]+")',
         'field': 'username'
     }
+
     schema = {
         'username': {
             'type': 'string',
@@ -141,16 +80,20 @@ class UsersResource(Resource):
         },
         'password': {
             'type': 'string',
-            'minlength': 5
+            'minlength': 5,
+            'readonly': readonly
         },
         'first_name': {
             'type': 'string',
+            'readonly': readonly
         },
         'last_name': {
             'type': 'string',
+            'readonly': readonly
         },
         'display_name': {
             'type': 'string',
+            'readonly': readonly
         },
         'email': {
             'unique': True,
@@ -159,6 +102,7 @@ class UsersResource(Resource):
         },
         'phone': {
             'type': 'phone_number',
+            'readonly': readonly
         },
         'user_info': {
             'type': 'dict'
@@ -192,10 +136,13 @@ class UsersResource(Resource):
 
 
 class UsersService(BaseService):
+    readonly_fields = ['username', 'display_name', 'password', 'email',
+                       'phone', 'first_name', 'last_name']
 
     def on_create(self, docs):
         for doc in docs:
-            ensure_hashed_password(doc)
+            if doc.get('password', None) and not is_hashed(doc.get('password')):
+                doc['password'] = get_hash(doc.get('password'), app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12))
 
     def on_created(self, docs):
         for doc in docs:
@@ -203,3 +150,8 @@ class UsersService(BaseService):
 
     def on_deleted(self, doc):
         add_activity('removed user {{user}}', user=doc.get('display_name', doc.get('username')))
+
+    def on_fetched(self, doc):
+        if 'LDAP_SERVER' in os.environ:
+            for document in doc['_items']:
+                document['readonly'] = UsersService.readonly_fields
