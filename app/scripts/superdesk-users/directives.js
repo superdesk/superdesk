@@ -205,6 +205,67 @@ define([
                 }
             };
         }])
+        .directive('sdUserPreferences', ['api', 'session', function(api, session) {
+            return {
+                templateUrl: 'scripts/superdesk-users/views/user-preferences.html',
+                scope: {
+                    user: '='
+                },
+                link: function(scope, elem, attrs) {
+
+                    //scope.flag = scope.user._id === session.identity._id;
+                    scope.dirty = false;
+                    var orig;
+
+                    api('preferences').getById(session.identity._id)
+                    .then(function(result) {
+                        orig = result;
+                        buildPreferences(orig);
+                    });
+
+                    scope.$watch('preferences', function() {
+                        if (scope.preferences && orig) {
+                            dirtyChecking();
+                        }
+                    }, true);
+
+                    scope.cancel = function() {
+                        buildPreferences(orig);
+                    };
+
+                    scope.save = function() {
+                        api('preferences', session.identity._id)
+                        .save(orig, patch())
+                        .then(function(result) {
+                            buildPreferences(orig);
+                        }, function(response) {
+                            console.log(response);
+                        });
+                    };
+
+                    function buildPreferences(struct) {
+                        scope.preferences = {};
+                        _.each(struct.preferences, function(val, key) {
+                            scope.preferences[key] = _.create(val);
+                        });
+                        dirtyChecking();
+                    }
+
+                    function patch() {
+                        var p = {preferences: {}};
+                        _.each(orig.preferences, function(val, key) {
+                            p.preferences[key] = _.extend(val, scope.preferences[key]);
+                        });
+                        return p;
+                    }
+
+                    function dirtyChecking() {
+                        scope.dirty = !angular.equals(orig.preferences, scope.preferences);
+                    }
+
+                }
+            };
+        }])
         .directive('sdChangePassword', ['api', 'notify', 'gettext', function(api, notify, gettext) {
             return {
                 link: function(scope, element) {
