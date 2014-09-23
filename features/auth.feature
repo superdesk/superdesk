@@ -1,3 +1,4 @@
+@dbauth
 Feature: Authentication
 
     Scenario: Authenticate existing user
