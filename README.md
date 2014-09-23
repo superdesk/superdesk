@@ -31,6 +31,11 @@ docker build -t superdesk-client:devel ./
 docker run -i -p 9000:9000 -t superdesk-client:devel grunt server --server=http://localhost:5000 --force
 ```
 
+Also u can start it with default parameters using vagrant:
+```
+vagrant up --provider=docker
+```
+
 ## Info for contributors
 
 ### Commit messages
