@@ -1,6 +1,7 @@
 
 import string
 import random
+import bcrypt
 from importlib import import_module
 
 
@@ -13,6 +14,11 @@ def import_by_path(path):
     module_path, class_name = path.rsplit('.', 1)
     module = import_module(module_path)
     return getattr(module, class_name)
+
+
+def get_hash(input_str, salt):
+    hashed = bcrypt.hashpw(input_str.encode('UTF-8'), bcrypt.gensalt(salt))
+    return hashed.decode('UTF-8')
 
 
 class ListCursor(object):

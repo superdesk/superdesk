@@ -9,6 +9,7 @@ from superdesk.utc import utcnow
 from apps.activity import add_activity
 from superdesk.services import BaseService
 
+
 logger = logging.getLogger(__name__)
 
 
