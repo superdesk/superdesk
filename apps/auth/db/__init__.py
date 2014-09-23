@@ -2,7 +2,7 @@ from apps.auth import AuthResource
 from .reset_password import ResetPasswordService, ResetPasswordResource
 import superdesk
 from .db import DbAuthService, authenticate  # noqa
-
+from .commands import CreateUserCommand, HashUserPasswordsCommand
 
 def init_app(app):
     endpoint_name = 'auth'
