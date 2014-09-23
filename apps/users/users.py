@@ -1,13 +1,12 @@
 """Superdesk Users"""
 
-import bcrypt
 import logging
-from flask import current_app as app
 import superdesk
 from superdesk.resource import Resource
-from superdesk.utc import utcnow
 from apps.activity import add_activity
 from superdesk.services import BaseService
+from superdesk.utils import is_hashed, get_hash
+from flask import current_app as app
 
 
 logger = logging.getLogger(__name__)
@@ -21,11 +20,6 @@ class EmptyUsernameException(Exception):
 class ConflictUsernameException(Exception):
     def __str__(self):
         return "Username '%s' exists already" % self.args[0]
-
-
-def is_hashed(pwd):
-    """Check if given password is hashed."""
-    return pwd.startswith('$2a$')
 
 
 def get_display_name(user):
@@ -43,123 +37,8 @@ def on_read_users(data, docs):
         doc.pop('password', None)
 
 
-def ensure_hashed_password(doc):
-    if doc.get('password', None) and not is_hashed(doc.get('password')):
-        doc['password'] = hash_password(doc.get('password'))
-
-
-def hash_password(password):
-    work_factor = app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12)
-    hashed = bcrypt.hashpw(password.encode('UTF-8'), bcrypt.gensalt(work_factor))
-    return hashed.decode('UTF-8')
-
-
-class CreateUserCommand(superdesk.Command):
-    """Create a user with given username, password and email.
-    If user with given username exists, reset password.
-    """
-
-    option_list = (
-        superdesk.Option('--username', '-u', dest='username', required=True),
-        superdesk.Option('--password', '-p', dest='password', required=True),
-        superdesk.Option('--email', '-e', dest='email', required=True),
-    )
-
-    def run(self, username, password, email):
-
-        userdata = {
-            'username': username,
-            'password': password,
-            'email': email,
-            app.config['LAST_UPDATED']: utcnow(),
-        }
-
-        with app.test_request_context('/users', method='POST'):
-            ensure_hashed_password(userdata)
-            user = app.data.find_one('users', username=userdata.get('username'), req=None)
-            if user:
-                logger.info('updating user %s' % (userdata))
-                app.data.update('users', user.get('_id'), userdata)
-                return userdata
-            else:
-                logger.info('creating user %s' % (userdata))
-                userdata[app.config['DATE_CREATED']] = userdata[app.config['LAST_UPDATED']]
-                app.data.insert('users', [userdata])
-
-            logger.info('user saved %s' % (userdata))
-            return userdata
-
-
-class HashUserPasswordsCommand(superdesk.Command):
-    def run(self):
-        users = superdesk.app.data.find_all('auth_users')
-        for user in users:
-            pwd = user.get('password')
-            if not is_hashed(pwd):
-                updates = {}
-                hashed = hash_password(user['password'])
-                user_id = user.get('_id')
-                updates['password'] = hashed
-                superdesk.app.data.update('users', user_id, updates=updates)
-
-
-# class ImportUserProfileFromADCommand(superdesk.Command):
-#     """
-#     Responsible for importing a user profile from Active Directory (AD) to Mongo.
-#     This command runs on assumption that the user executing this command and
-#     the user whose profile need to be imported need not to be the same. Uses ad_username and ad_password to bind to AD
-#     and then searches for a user identified by username_to_import and if found imports into Mongo.
-#     """
-#
-#     option_list = (
-#         superdesk.Option('--ad_username', '-adu', dest='ad_username', required=True),
-#         superdesk.Option('--ad_password', '-adp', dest='ad_password', required=True),
-#         superdesk.Option('--username_to_import', '-u', dest='username', required=True),
-#     )
-#
-#     def run(self, ad_username, ad_password, username):
-#         """
-#         Imports or Updates a User Profile from AD to Mongo.
-#         :param ad_username: Active Directory Username
-#         :param ad_password: Password of Active Directory Username
-#         :param username: Username as in Active Directory whose profile needs to be imported to Superdesk.
-#         :return: User Profile.
-#         """
-#
-#         if not superdesk.is_ldap:
-#             raise InvalidCommand("Authentication using AD isn't enabled.
-#                                  Consider using 'users:create' command instead")
-#
-#         # Authenticate and fetch profile from AD
-#         settings = app.settings
-#         ad_auth = ADAuth(settings['LDAP_SERVER'], settings['LDAP_SERVER_PORT'], settings['LDAP_BASE_FILTER'],
-#                          settings['LDAP_USER_FILTER'], settings['LDAP_USER_ATTRIBUTES'], settings['LDAP_FQDN'])
-#
-#         user_data = ad_auth.authenticate_and_fetch_profile(ad_username, ad_password, username)
-#
-#         if len(user_data) == 0:
-#             raise NotFoundAuthError()
-#
-#         # Check if User Profile already exists in Mongo
-#         user = superdesk.app.data.find_one('users', username=username, req=None)
-#
-#         if user:
-#             user_data[app.config['LAST_UPDATED']] = utcnow()
-#             superdesk.apps['users'].update(user.get('_id'), user_data, trigger_events=False)
-#             return user_data
-#         else:
-#             user_data[app.config['DATE_CREATED']] = utcnow()
-#             user_data[app.config['LAST_UPDATED']] = utcnow()
-#             user_data['username'] = username
-#             superdesk.apps['users'].create([user_data], trigger_events=True)
-#             return user_data
-#
-
 superdesk.connect('read:users', on_read_users)
 superdesk.connect('created:users', on_read_users)
-superdesk.command('users:create', CreateUserCommand())
-superdesk.command('users:hash_passwords', HashUserPasswordsCommand())
-# superdesk.command('users:copyfromad', ImportUserProfileFromADCommand())
 
 
 class RolesResource(Resource):
@@ -249,7 +128,8 @@ class UsersService(BaseService):
 
     def on_create(self, docs):
         for doc in docs:
-            ensure_hashed_password(doc)
+            if doc.get('password', None) and not is_hashed(doc.get('password')):
+                doc['password'] = get_hash(doc.get('password'), app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12))
 
     def on_created(self, docs):
         for doc in docs:

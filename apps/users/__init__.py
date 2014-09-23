@@ -1,4 +1,4 @@
-from .users import RolesResource, UsersResource, CreateUserCommand, UsersService  # noqa
+from .users import RolesResource, UsersResource, UsersService  # noqa
 import superdesk
 from superdesk.services import BaseService
 

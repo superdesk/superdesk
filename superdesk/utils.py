@@ -21,6 +21,11 @@ def get_hash(input_str, salt):
     return hashed.decode('UTF-8')
 
 
+def is_hashed(input_str):
+    """Check if given input_str is hashed."""
+    return input_str.startswith('$2a$')
+
+
 class ListCursor(object):
     """Wrapper for a python list as a cursor."""
 

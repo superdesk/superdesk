@@ -1,6 +1,6 @@
 from apps.auth.db import authenticate
 from superdesk.tests import TestCase
-from .users import CreateUserCommand
+from .commands import CreateUserCommand
 
 
 class UsersTestCase(TestCase):
