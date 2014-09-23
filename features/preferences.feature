@@ -33,12 +33,18 @@ Feature: User preferences
         """
         {"preferences": {"email:notification": {"enabled": "false"}}}
         """
-        Then we get updated response
 
         When we get "/preferences/#USERS_ID#"
         Then we get existing resource
         """
-        {"_id": "#USERS_ID#", "preferences": {"email:notification": {"enabled": "false"}}}
+        {"_id": "#USERS_ID#", "preferences": {"email:notification": 
+        {
+        "type": "bool",
+        "enabled": false,
+        "default": true,
+        "label": "Send notifications via email",
+        "category": "notifications"
+        }}}
         """
 
     @auth
