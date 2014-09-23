@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'apps.users',
     'superdesk.upload',
     'superdesk.notification',
+    'superdesk.activity',
     'superdesk.storage.amazon.import_from_amazon',
 
     'superdesk.io',
@@ -69,12 +70,11 @@ INSTALLED_APPS = [
     'superdesk.io.afp',
 
     'apps.archive',
-    'apps.activity',
     'apps.desks',
     'apps.planning',
     'apps.coverages',
     'apps.tasks',
-    'apps.preferences',
+    'apps.preferences'
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']

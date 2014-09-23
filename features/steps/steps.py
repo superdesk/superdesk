@@ -845,3 +845,13 @@ def then_we_get_notifications(context):
 def get_default_prefs(context):
     response_data = json.loads(context.response.get_data())
     assert_equal(response_data['preferences'], available_preferences)
+
+
+@when('we mention user in comment for "{url}"')
+def we_mention_user_in_comment(context, url):
+    with context.app.mail.record_messages() as outbox:
+        step_impl_when_post_url(context, url)
+        assert len(outbox) == 1
+        assert_equal(outbox[0].subject, "You were mentioned in a comment by test_user")
+        email_text = outbox[0].body
+        assert email_text

@@ -7,7 +7,7 @@ from werkzeug.exceptions import NotFound
 from superdesk import SuperdeskError, get_resource_service
 from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
-from apps.activity import add_activity
+from superdesk.activity import add_activity
 from eve.utils import parse_request
 from superdesk.services import BaseService
 

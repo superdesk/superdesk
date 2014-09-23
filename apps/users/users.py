@@ -4,7 +4,7 @@ import logging
 import os
 import superdesk
 from superdesk.resource import Resource
-from apps.activity import add_activity
+from superdesk.activity import add_activity
 from superdesk.services import BaseService
 from superdesk.utils import is_hashed, get_hash
 from flask import current_app as app

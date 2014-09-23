@@ -25,6 +25,7 @@ Feature: News Items Archive Comments
         [{"_id": "xyz", "guid": "testid", "headline": "test"}]
         """
         Given empty "item_comments"
+        Given empty "activity"
         When we post to "/item_comments"
         """
         [{"text": "test comment", "item": "xyz"}]
@@ -37,7 +38,7 @@ Feature: News Items Archive Comments
         Then we get list with 2 items
 
         When we get "/activity"
-        Then we get list with 4 items
+        Then we get list with 2 items
 
 
     @auth
@@ -126,7 +127,7 @@ Feature: News Items Archive Comments
         """
         {"username": "joe", "display_name": "Joe Black", "email": "joe@black.com"}
         """
-        When we post to "/item_comments"
+        When we mention user in comment for "/item_comments"
         """
         [{"text": "test comment @no_user with one user mention @joe", "item": "xyz"}]
         """

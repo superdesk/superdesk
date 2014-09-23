@@ -7,7 +7,7 @@ from superdesk.utc import utcnow
 from eve.utils import config
 from .common import base_schema, item_url, update_dates_for, generate_guid, GUID_TAG, ARCHIVE_MEDIA, set_user
 from .common import on_create_media_archive, on_update_media_archive, on_delete_media_archive
-from apps.activity import add_activity
+from superdesk.activity import add_activity
 import logging
 from superdesk.services import BaseService
 

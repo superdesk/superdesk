@@ -1,0 +1,7 @@
+{{username}} mentioned you in a comment to the following article: {{data['item']}}.
+Comment: 
+{{data['text']}}
+
+Regards,
+
+The Superdesk admin

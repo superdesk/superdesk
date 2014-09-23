@@ -81,6 +81,10 @@ def get_app(config=None):
         return client_error_handler(return_error)
 
     init_celery(app)
+
+    if app.debug:
+        app.config['INSTALLED_APPS'].append('superdesk.comments')
+
     for module_name in app.config['INSTALLED_APPS']:
         app_module = importlib.import_module(module_name)
         try:
