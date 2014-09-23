@@ -23,6 +23,14 @@ After you can start local dev server on port `9000`:
 grunt server
 ```
 
+### Running with docker
+This also will start frontend on localhost:9000.
+Change `http://localhost:5000` to an actual backend server.
+```
+docker build -t superdesk-client:devel ./
+docker run -i -p 9000:9000 -t superdesk-client:devel grunt server --server=http://localhost:5000 --force
+```
+
 ## Info for contributors
 
 ### Commit messages
