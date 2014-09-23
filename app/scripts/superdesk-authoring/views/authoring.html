@@ -10,19 +10,21 @@
 	    
 	    <div class="button-stack right-stack">
 	    	<button class="btn btn-medium pull-left" ng-click="close()" ng-if="item">{{ 'Close' | translate }}</button>
-	    	<button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()" ng-show="item && editable" ng-disabled="!dirty">{{ 'Save' | translate }}</button>
+
+    	    <button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()"
+                ng-show="!item._locked && !_preview"
+                ng-disabled="!dirty && !item._autosave"
+                translate>Save</button>
 
 	    	<button class="navbtn navbtn-hover" ng-click="sendTo = !sendTo" ng-show="item.task.desk">
 	            <i class="svg-icon-add"></i>
 	        </button>
-	        
+        </div>
+
+        <div class="auto-save pull-right" ng-show="!_preview && !item._locked">
+		    <span ng-show="saving"><i class="icon-refresh"></i> {{ 'Saving' | translate }}</span>
+		    <span ng-show="!saving"><i class="icon-ok"></i> {{ 'Saved' | translate }}</span>
 	    </div>
-
-	    <div class="auto-save pull-right">
-			<span ng-if="saving"><i class="icon-refresh"></i> Auto saving</span>
-			<span ng-if="!saving && saved"><i class="icon-ok"></i> Auto saved</span>
-		</div>
-
 	</div>
 
 	<section class="main-section" ng-class="{'auth-sendto': sendTo}">
@@ -31,21 +33,21 @@
 
 		    <div class="main-article-container" ng-click="sendTo = false;">
 
-		        <article class="main-article" ng-if="item._id" ng-class="{preview: !editable}">
+		        <article class="main-article" ng-if="item._id" ng-class="{preview: !_editable}">
 		            <section class="article-title">
 		                <header>
 		                    <span class="edit-label" translate>Headline</span>
 		                </header>
-		                <textarea class="title" sd-auto-height ng-model="item.headline" ng-if="editable"></textarea>
-		                <div class="title" ng-if="!editable">{{item.headline}}</div>
+		                <textarea class="title" sd-auto-height ng-model="item.headline" ng-if="_editable"></textarea>
+		                <div class="title" ng-if="!_editable">{{item.headline}}</div>
 		            </section>
 
 		            <section class="article-full-text">
 		                <header>
 		                    <span class="edit-label" translate>Body</span> 
 		                </header>
-	                    <div sd-text-editor class="text-editor" ng-model="item.body_html" ng-if="editable"></div>
-	                    <div class="text-editor" sd-html-preview="item.body_html" ng-if="!editable"></div>
+	                    <div sd-text-editor class="text-editor" ng-model="item.body_html" ng-if="_editable"></div>
+	                    <div class="text-editor" sd-html-preview="item.body_html" ng-if="!_editable"></div>
 		            </section>
 		        </article>
 		    </div>
@@ -69,8 +71,5 @@
 			</ul>
 		</div>
 	</div>
-
 </div>
-
-
 

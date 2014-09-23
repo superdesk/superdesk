@@ -12,13 +12,19 @@
 
         function getFilter() {
             var filter = {},
-                user_key = 'read.' + session.identity._id;
+                user_key = 'read.' + session.identity._id || 'all';
             filter[user_key] = {$exists: true};
             return filter;
         }
 
         // reload notifications
         this.reload = function() {
+            if (!session.identity) {
+                this._items = null;
+                this.unread = 0;
+                return;
+            }
+
             var criteria = {
                 where: getFilter(),
                 embedded: {user: 1, item: 1}

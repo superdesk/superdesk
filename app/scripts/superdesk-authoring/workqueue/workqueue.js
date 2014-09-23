@@ -1,4 +1,5 @@
 (function() {
+
 'use strict';
 
 WorkqueueService.$inject = ['storage'];

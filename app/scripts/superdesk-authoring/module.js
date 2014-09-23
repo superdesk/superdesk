@@ -3,6 +3,90 @@ define([
 ], function(angular) {
     'use strict';
 
+    /**
+     * Extend content of dest
+     *
+     * @param {Object} dest
+     * @param {Object} src
+     */
+    function extendItem(dest, src) {
+        angular.extend(dest, {
+            headline: src.headline || '',
+            slugline: src.slugline || '',
+            body_html: src.body_html || ''
+        });
+    }
+
+    AutosaveService.$inject = ['$q', '$timeout', 'api'];
+    function AutosaveService($q, $timeout, api) {
+        var RESOURCE = 'archive_autosave',
+            AUTOSAVE_TIMEOUT = 3000,
+            _timeout;
+
+        /**
+         * Open an item
+         */
+        this.open = function(item) {
+            if (item._locked) {
+                // no way to get autosave
+                return $q.when(item);
+            }
+
+            return api(RESOURCE).getById(item._id).then(function(autosave) {
+                extendItem(item, autosave);
+                item._autosave = autosave;
+                return item;
+            }, function(err) {
+                return item;
+            });
+        };
+
+        /**
+         * Autosave an item
+         */
+        this.save = function(item) {
+            $timeout.cancel(_timeout);
+            _timeout = $timeout(function() {
+                var data = {_id: item._id, guid: item.guid};
+                extendItem(data, item);
+                return api(RESOURCE).save(data).then(function(autosave) {
+                    item._autosave = autosave;
+                });
+            }, AUTOSAVE_TIMEOUT);
+            return _timeout;
+        };
+
+        /**
+         * Drop autosave
+         */
+        this.drop = function(item) {
+            $timeout.cancel(_timeout);
+            api(RESOURCE).remove(item._autosave);
+            item._autosave = null;
+        };
+    }
+
+    ItemLoader.$inject = ['$route', 'api', 'lock', 'autosave', 'workqueue'];
+    function ItemLoader($route, api, lock, autosave, workqueue) {
+        console.time('item');
+        return api('archive').getById($route.current.params._id).then(function(item) {
+            console.time('lock');
+            return item;
+            // TODO(petr): enable lock once autosaved is fixed
+            // return lock.lock(item);
+        }).then(function(item) {
+            console.timeEnd('lock');
+            console.time('autosave');
+            return autosave.open(item);
+        }).then(function(item) {
+            workqueue.setActive(item);
+            console.timeEnd('lock');
+            console.timeEnd('autosave');
+            console.timeEnd('item');
+            return item;
+        });
+    }
+
     LockService.$inject = ['$q', 'api', 'session'];
     function LockService($q, api, session) {
 
@@ -10,11 +94,13 @@ define([
          * Lock an item
          */
         this.lock = function(item) {
-            if (this.isLocked(item)) {
-                return $q.reject();
-            } else {
-                return api('archive_lock', item).save({});
-            }
+            return api('archive_lock', item).save({}).then(function(lock) {
+                item._locked = false;
+                return item;
+            }, function(err) {
+                item._locked = true;
+                return item;
+            });
         };
 
         /**
@@ -28,6 +114,10 @@ define([
          * Test if an item is locked
          */
         this.isLocked = function(item) {
+            if ('_locked' in item) {
+                return item._locked;
+            }
+
             return item && item.lock_user && item.lock_user !== session.identity._id;
         };
     }
@@ -65,8 +155,7 @@ define([
 
     AuthoringController.$inject = [
         '$scope',
-        '$routeParams',
-        '$timeout',
+        '$q',
         'superdesk',
         'api',
         'workqueue',
@@ -74,130 +163,81 @@ define([
         'gettext',
         'ConfirmDirty',
         'lock',
-        '$q',
-        'desks'
+        'desks',
+        'item',
+        'autosave'
     ];
 
-    function AuthoringController($scope, $routeParams, $timeout, superdesk,
-            api, workqueue, notify, gettext, ConfirmDirty, lock, $q, desks) {
-        var _item,
-            confirm = new ConfirmDirty($scope);
+    function AuthoringController($scope, $q, superdesk, api, workqueue, notify, gettext, ConfirmDirty, lock, desks, item, autosave) {
+        var confirm = new ConfirmDirty($scope),
+            stopWatch = angular.noop;
 
-        var AUTOSAVE_AFTER = 3000;
-
-        $scope.item = null;
-        $scope.dirty = null;
         $scope.workqueue = workqueue.all();
-        $scope.editable = false;
-        $scope.currentVersion = null;
         $scope.saving = false;
         $scope.saved = false;
-
+        $scope.dirty = null;
         $scope.sendTo = false;
         $scope.stages = null;
 
-        function setupNewItem() {
-            if ($routeParams._id) {
-                fetchNewItem().then(function() {
-                    lock.lock(_item)['finally'](function() {
-                        $scope.item = _.create(_item);
-                        $scope.editable = !lock.isLocked(_item);
-                        workqueue.setActive(_item);
+        function startWatch() {
+            function isDirty() {
+                var dirty = false;
+                angular.forEach($scope.item, function(val, key) {
+                    dirty = dirty || val !== item[key];
+                });
+
+                return dirty;
+            }
+
+            stopWatch(); // stop watch if any
+            stopWatch = $scope.$watchCollection('item', function(item) {
+                $scope.dirty = isDirty();
+                if ($scope.dirty && $scope.isEditable()) {
+                    $scope.saving = true;
+                    autosave.save($scope.item).then(function() {
+                        $scope.saving = false;
                     });
-                }, function(response) {
-                    notify.error(gettext('Error. Item not found.'));
-                });
-            }
-        }
-
-        function fetchNewItem() {
-            var d = $q.defer();
-            _item = workqueue.find({_id: $routeParams._id});
-            if (!_item) {
-                api.archive.getById($routeParams._id)
-                .then(function(item) {
-                    workqueue.add(item);
-                    _item = workqueue.active;
-                    d.resolve();
-                }, function(response) {
-                    d.reject(response);
-                });
-            } else {
-                d.resolve();
-            }
-            return d.promise;
-        }
-
-        function isEditable(item) {
-            if ($scope.isLocked(item)) {
-                return false;
-            }
-
-            if (!angular.isDefined(item._latest_version)) {
-                return true;
-            }
-
-            return item._latest_version === item._version;
-        }
-
-        function isDirty(item) {
-            var dirty = false;
-            angular.forEach(item, function(val, key) {
-                dirty = dirty || val !== _item[key];
+                }
             });
-
-            return dirty;
         }
 
-        $scope.$watchCollection('item', function(item) {
-            if (!item) {
-                $scope.dirty = $scope.editable = false;
-                return;
-            }
-
-            desks.initialize()
-            .then(function() {
-                api('stages').query({where: {desk: $scope.item.task.desk}})
-                .then(function(result) {
-                    $scope.stages = result;
-                });
+        desks.initialize()
+        .then(function() {
+            api('stages').query({where: {desk: $scope.item.task.desk}})
+            .then(function(result) {
+                $scope.stages = result;
             });
-
-            $scope.editable = isEditable(item);
-            $scope.dirty = isDirty(item);
-
-            if ($scope.dirty && $scope.editable) {
-                $timeout(autosave, AUTOSAVE_AFTER);
-            }
         });
 
         $scope.isLocked = function(item) {
             return lock.isLocked(item);
         };
 
-        function autosave() {
-            workqueue.update($scope.item); //do local update
-            $scope.saving = true;
-            api('autosave', $scope.item)
-                .save({}, $scope.item)
-                .then(function() {
-                    $scope.saving = false;
-                    $scope.saved = true;
-                });
-        }
+        $scope.isEditable = function() {
+            return !$scope._preview && !item._locked;
+        };
 
+        /**
+         * Create a new version
+         */
     	$scope.save = function() {
-            delete $scope.item._version;
-    		return api.archive.save(_item, $scope.item).then(function(res) {
-                workqueue.update(_item);
-                $scope.item = _.create(_item);
+            stopWatch();
+    		return api.archive.save(item, $scope.item).then(function(res) {
+                item._autosave = null;
+                workqueue.update(item);
+                $scope.item = _.create(item);
                 $scope.dirty = false;
                 notify.success(gettext('Item updated.'));
+                startWatch();
+                return item;
     		}, function(response) {
     			notify.error(gettext('Error. Item not updated.'));
     		});
     	};
 
+        /**
+         * Close an item - unlock and remove from workqueue
+         */
         $scope.close = function() {
             confirm.confirm().then(function() {
                 if ($scope.editable) {
@@ -223,8 +263,46 @@ define([
             });
         };
 
-        $scope.$on('$routeUpdate', setupNewItem);
-        setupNewItem();
+        /**
+         * Preview different version of an item
+         */
+        $scope.preview = function(version) {
+            stopWatch();
+            extendItem($scope.item, version);
+            $scope._preview = true;
+            $scope._editable = false;
+        };
+
+        /**
+         * Revert item to given version
+         */
+        $scope.revert = function(version) {
+            extendItem($scope.item, version);
+            return $scope.save();
+        };
+
+        /**
+         * Close preview and start working again
+         */
+        $scope.closePreview = function() {
+            $scope._preview = false;
+            $scope._editable = $scope.isEditable();
+            $scope.item = _.create(item);
+            startWatch();
+        };
+
+        /**
+         * Drop autosave
+         */
+        $scope.dropAutosave = function(version) {
+            autosave.drop(item);
+            extendItem(item, version);
+        };
+
+        if ($scope.isEditable()) {
+            // start autosaving
+            $scope.closePreview();
+        }
     }
 
     function DashboardCard() {
@@ -251,6 +329,7 @@ define([
         ])
 
         .service('lock', LockService)
+        .service('autosave', AutosaveService)
         .factory('ConfirmDirty', ConfirmDirtyFactory)
         .directive('sdDashboardCard', DashboardCard)
 
@@ -258,11 +337,12 @@ define([
             superdesk
                 .activity('/authoring/:_id', {
                 	label: gettext('Authoring'),
-	                templateUrl: 'scripts/superdesk-authoring/views/main.html',
+	                templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
                     topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
 	                controller: AuthoringController,
 	                beta: true,
-	                filters: [{action: 'author', type: 'article'}]
+	                filters: [{action: 'author', type: 'article'}],
+                    resolve: {item: ItemLoader}
 	            })
 	            .activity('edit.text', {
 	            	label: gettext('Edit item'),

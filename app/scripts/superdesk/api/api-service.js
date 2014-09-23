@@ -53,7 +53,7 @@ define([
              */
             function clean(data) {
                 return _.omit(data, function(val, key) {
-                    return angular.isString(key) && key[0] === '_';
+                    return key === '_updated' || key === '_created' || key === '_etag';
                 });
             }
 
@@ -111,6 +111,17 @@ define([
                     angular.extend(item, diff || {});
                     angular.extend(item, data);
                     return item;
+                });
+            };
+
+            /**
+             * Replace an item
+             */
+            Resource.prototype.replace = function(item) {
+                return http({
+                    method: 'PUT',
+                    url: this.url(item._id),
+                    data: clean(item)
                 });
             };
 

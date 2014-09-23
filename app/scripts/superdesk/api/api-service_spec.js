@@ -415,7 +415,7 @@ define([
         }));
 
         it('cleans data before saving it', inject(function(api, $httpBackend) {
-            $httpBackend.expectPOST(USERS_URL, {name: 'foo'}).respond(200);
+            $httpBackend.expectPOST(USERS_URL, {name: 'foo', _id: 1}).respond(200);
             api('users').save({name: 'foo', _created: 'now', _updated: 'now', _id: 1});
             $httpBackend.flush();
         }));

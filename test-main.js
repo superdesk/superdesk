@@ -19,12 +19,13 @@ tests.push('superdesk/menu/menu');
 tests.push('superdesk/menu/notifications/notifications');
 tests.push('superdesk-authoring/widgets/widgets');
 tests.push('superdesk-authoring/comments/comments');
+tests.push('superdesk-authoring/workqueue/workqueue');
 tests.push('superdesk-workspace/content/content');
 tests.push('bower_components/ment.io/dist/mentio');
 
 requirejs.config({
     baseUrl: '/base/app/scripts',
-    deps: ['angular-mocks', 'gettext'],
+    deps: ['angular-mocks', 'gettext', 'angular'],
 
     callback: function() {
         'use strict';
