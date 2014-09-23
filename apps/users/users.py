@@ -1,6 +1,7 @@
 """Superdesk Users"""
 
 import logging
+import os
 import superdesk
 from superdesk.resource import Resource
 from apps.activity import add_activity
@@ -61,10 +62,15 @@ class RolesResource(Resource):
 
 
 class UsersResource(Resource):
+    readonly = False
+    if 'LDAP_SERVER' in os.environ:
+        readonly = True
+
     additional_lookup = {
         'url': 'regex("[\w]+")',
         'field': 'username'
     }
+
     schema = {
         'username': {
             'type': 'string',
@@ -74,16 +80,20 @@ class UsersResource(Resource):
         },
         'password': {
             'type': 'string',
-            'minlength': 5
+            'minlength': 5,
+            'readonly': readonly
         },
         'first_name': {
             'type': 'string',
+            'readonly': readonly
         },
         'last_name': {
             'type': 'string',
+            'readonly': readonly
         },
         'display_name': {
             'type': 'string',
+            'readonly': readonly
         },
         'email': {
             'unique': True,
@@ -92,6 +102,7 @@ class UsersResource(Resource):
         },
         'phone': {
             'type': 'phone_number',
+            'readonly': readonly
         },
         'user_info': {
             'type': 'dict'
@@ -125,6 +136,8 @@ class UsersResource(Resource):
 
 
 class UsersService(BaseService):
+    readonly_fields = ['username', 'display_name', 'password', 'email',
+                       'phone', 'first_name', 'last_name']
 
     def on_create(self, docs):
         for doc in docs:
@@ -137,3 +150,8 @@ class UsersService(BaseService):
 
     def on_deleted(self, doc):
         add_activity('removed user {{user}}', user=doc.get('display_name', doc.get('username')))
+
+    def on_fetched(self, doc):
+        if 'LDAP_SERVER' in os.environ:
+            for document in doc['_items']:
+                document['readonly'] = UsersService.readonly_fields

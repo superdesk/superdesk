@@ -39,6 +39,9 @@ class BaseService():
     def on_deleted(self, doc):
         pass
 
+    def on_fetched(self, doc):
+        pass
+
     def create(self, docs, **kwargs):
         ids = self.backend.create(self.datasource, docs, **kwargs)
         return ids
