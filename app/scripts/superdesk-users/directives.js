@@ -208,12 +208,8 @@ define([
         .directive('sdUserPreferences', ['api', 'session', function(api, session) {
             return {
                 templateUrl: 'scripts/superdesk-users/views/user-preferences.html',
-                scope: {
-                    user: '='
-                },
                 link: function(scope, elem, attrs) {
 
-                    //scope.flag = scope.user._id === session.identity._id;
                     scope.dirty = false;
                     var orig;
 
@@ -223,13 +219,8 @@ define([
                         buildPreferences(orig);
                     });
 
-                    scope.$watch('preferences', function() {
-                        if (scope.preferences && orig) {
-                            dirtyChecking();
-                        }
-                    }, true);
-
                     scope.cancel = function() {
+                        scope.userPrefs.$setPristine();
                         buildPreferences(orig);
                     };
 
@@ -237,7 +228,7 @@ define([
                         api('preferences', session.identity._id)
                         .save(orig, patch())
                         .then(function(result) {
-                            buildPreferences(orig);
+                            scope.cancel();
                         }, function(response) {
                             console.log(response);
                         });
@@ -248,7 +239,6 @@ define([
                         _.each(struct.preferences, function(val, key) {
                             scope.preferences[key] = _.create(val);
                         });
-                        dirtyChecking();
                     }
 
                     function patch() {
@@ -258,11 +248,6 @@ define([
                         });
                         return p;
                     }
-
-                    function dirtyChecking() {
-                        scope.dirty = !angular.equals(orig.preferences, scope.preferences);
-                    }
-
                 }
             };
         }])
