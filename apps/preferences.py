@@ -1,39 +1,53 @@
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_backend
-from superdesk.utils import ListCursor
+from eve.validation import ValidationError
 import superdesk
 
 
-preference_schema = {
-    'preferences': {'type': 'dict', 'required': True}
-}
+_preferences_key = 'preferences'
 
 
 def init_app(app):
     endpoint_name = 'preferences'
-    service = BaseService(endpoint_name, backend=get_backend())
+    service = PreferencesService(endpoint_name, backend=get_backend())
     PreferencesResource(endpoint_name, app=app, service=service)
-    endpoint_name = 'available_preferences'
-    service = AvailablePreferencesService(endpoint_name, backend=get_backend())
-    AvailablePreferencesResource(endpoint_name, app=app, service=service)
 
 
 class PreferencesResource(Resource):
     datasource = {'source': 'users', 'projection': {'preferences': 1}}
-    schema = preference_schema
-    resource_methods = ['GET']
+    schema = {
+        _preferences_key: {'type': 'dict', 'required': True}
+    }
+    resource_methods = []
     item_methods = ['GET', 'PATCH']
 
 
-class AvailablePreferencesResource(Resource):
-    schema = {}
-    resource_methods = ['GET']
-    item_methods = []
+class PreferencesService(BaseService):
 
+    def on_update(self, updates, original):
+        prefs = updates.get(_preferences_key, {})
+        for k in ((k for k, v in prefs.items() if k not in superdesk.available_preferences)):
+            raise ValidationError('Invalid preference: %s' % k)
 
-class AvailablePreferencesService(BaseService):
+    def find_one(self, req, **lookup):
+        doc = super().find_one(req, **lookup)
+        self.enhance_document_with_default_prefs(doc)
+        return doc
 
     def get(self, req, lookup):
-        prefs = superdesk.resource_preferences
-        return ListCursor(prefs)
+        docs = super().get(req, lookup)
+        for doc in docs:
+            self.enhance_document_with_default_prefs(doc)
+        return docs
+
+    def enhance_document_with_default_prefs(self, doc):
+        orig_prefs = doc.get(_preferences_key, {})
+        available = dict(superdesk.available_preferences)
+        available.update(orig_prefs)
+        doc[_preferences_key] = available
+
+    def get_user_preference(self, user_id, preference_name):
+        doc = self.find_one(req=None, _id=user_id)
+        prefs = doc.get(_preferences_key, {}).get(preference_name, {})
+        return prefs

@@ -5,6 +5,7 @@ import superdesk.tests as tests
 from behave import given, when, then  # @UnresolvedImport
 from flask import json
 from eve.methods.common import parse
+from superdesk import available_preferences
 
 from wooper.general import fail_and_print_body, apply_path,\
     parse_json_response
@@ -838,3 +839,9 @@ def then_we_get_notifications(context):
     context_data = json.loads(apply_placeholders(context, context.text))
     assert_equal(json_match(context_data, notifications_data), True,
                  msg=str(context_data) + '\n != \n' + str(notifications_data))
+
+
+@then('we get default preferences')
+def get_default_prefs(context):
+    response_data = json.loads(context.response.get_data())
+    assert_equal(response_data['preferences'], available_preferences)

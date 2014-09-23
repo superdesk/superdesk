@@ -58,16 +58,10 @@ def get_expired_items(provider_id, expiration_date):
 
 
 def get_query_for_expired_items(provider_id, expiration_date):
-    query = {'bool':
-             {
-                 'must': [
-                     {
-                         'range': {'ingest._updated': {'lte': date_to_str(expiration_date)}}
-                     },
-                     {
-                         'term': {'ingest.ingest_provider': provider_id}
-                     }
-                 ]
-             }
+    query = {'and':
+             [
+                 {'term': {'ingest.ingest_provider': provider_id}},
+                 {'range': {'ingest.versioncreated': {'lte': date_to_str(expiration_date)}}},
+             ]
              }
     return superdesk.json.dumps(query)

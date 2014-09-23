@@ -104,15 +104,13 @@ class ActivityResource(Resource):
     datasource = {
         'default_sort': [('_created', -1)]
     }
-    resource_preferences = {
-        'email_notification': {
-            'enabled': False,
-            'options': {
-                'type': 'bool',
-                'default': False
-            }
-        }
-    }
+    superdesk.register_available_preference('email:notification', {
+        'type': 'bool',
+        'enabled': True,
+        'default': True,
+        'label': 'Send notifications via email',
+        'category': 'notifications'
+    })
 
 
 def add_activity(msg, item=None, notify=None, **data):
