@@ -66,7 +66,6 @@ define([
     AuthoringController.$inject = [
         '$scope',
         '$routeParams',
-        '$interval',
         '$timeout',
         'superdesk',
         'api',
@@ -79,18 +78,18 @@ define([
         'desks'
     ];
 
-    function AuthoringController($scope, $routeParams, $interval, $timeout, superdesk, api,
-        workqueue, notify, gettext, ConfirmDirty, lock, $q, desks) {
+    function AuthoringController($scope, $routeParams, $timeout, superdesk,
+            api, workqueue, notify, gettext, ConfirmDirty, lock, $q, desks) {
         var _item,
-            _autosaveFlag,
             confirm = new ConfirmDirty($scope);
+
+        var AUTOSAVE_AFTER = 3000;
 
         $scope.item = null;
         $scope.dirty = null;
         $scope.workqueue = workqueue.all();
         $scope.editable = false;
         $scope.currentVersion = null;
-        setupNewItem();
         $scope.saving = false;
         $scope.saved = false;
 
@@ -150,13 +149,6 @@ define([
             return dirty;
         }
 
-        function stopAutosaving() {
-            if (angular.isDefined(_autosaveFlag)) {
-                $interval.cancel(_autosaveFlag);
-                _autosaveFlag = undefined;
-            }
-        }
-
         $scope.$watchCollection('item', function(item) {
             if (!item) {
                 $scope.dirty = $scope.editable = false;
@@ -174,12 +166,8 @@ define([
             $scope.editable = isEditable(item);
             $scope.dirty = isDirty(item);
 
-            if ($scope.dirty) {
-                if ($scope.editable && !angular.isDefined(_autosaveFlag)) {
-                    _autosaveFlag = $interval($scope.update, 5000);
-                }
-            } else {
-                stopAutosaving();
+            if ($scope.dirty && $scope.editable) {
+                $timeout(autosave, AUTOSAVE_AFTER);
             }
         });
 
@@ -187,28 +175,16 @@ define([
             return lock.isLocked(item);
         };
 
-        $scope.articleSwitch = function() {
-            $scope.update();
-            stopAutosaving();
-        };
-
-        $scope.update = function() {
-            if ($scope.dirty && $scope.editable) {
-                workqueue.update($scope.item); //do local update
-                $scope.saving = true;
-                api('autosave', $scope.item).save({}, $scope.item).then(function() {
+        function autosave() {
+            workqueue.update($scope.item); //do local update
+            $scope.saving = true;
+            api('autosave', $scope.item)
+                .save({}, $scope.item)
+                .then(function() {
                     $scope.saving = false;
                     $scope.saved = true;
-                    $timeout(function() {
-                        $scope.saved = false;
-                    }, 2000);
-                    console.log('success autosave');
-                }, function(response) {
-                    console.log('error on autosave');
-                    console.log(response);
                 });
-            }
-        };
+        }
 
     	$scope.save = function() {
             delete $scope.item._version;
@@ -248,145 +224,7 @@ define([
         };
 
         $scope.$on('$routeUpdate', setupNewItem);
-    }
-
-    WorkqueueService.$inject = ['storage'];
-    function WorkqueueService(storage) {
-        /**
-         * Set items for further work, in next step of the workflow.
-         */
-
-        var queue = storage.getItem('workqueue:items') || [];
-        this.length = 0;
-        this.active = null;
-
-        /**
-         * Add an item into queue
-         *
-         * it checks if item is in queue already and if yes it will move it to the very end
-         *
-         * @param {Object} item
-         */
-        this.add = function(item) {
-            _.remove(queue, {_id: item._id});
-            queue.unshift(item);
-            this.length = queue.length;
-            this.active = item;
-            this.save();
-            return this;
-        };
-
-        /**
-         * Update item in a queue
-         */
-        this.update = function(item) {
-            if (item) {
-                var base = this.find({_id: item._id});
-                queue[_.indexOf(queue, base)] = _.extend(base, item);
-                this.save();
-            }
-        };
-
-        /**
-         * Get first item
-         */
-        this.first = function() {
-            return _.first(queue);
-        };
-
-        /**
-         * Get all items from queue
-         */
-        this.all = function() {
-            return queue;
-        };
-
-        /**
-         * Save queue to local storage
-         */
-        this.save = function() {
-            storage.setItem('workqueue:items', queue);
-        };
-
-        /**
-         * Find item by given criteria
-         */
-        this.find = function(criteria) {
-            return _.find(queue, criteria);
-        };
-
-        /**
-         * Set given item as active
-         */
-        this.setActive = function(item) {
-            if (!item) {
-                this.active = null;
-            } else {
-                this.active = this.find({_id: item._id});
-            }
-        };
-
-        /**
-         * Get '_id' of active item or null if it's not defined
-         */
-        this.getActive = function() {
-            return this.active ? this.active._id : null;
-        };
-
-        /**
-         * Remove given item from queue
-         */
-        this.remove = function(item) {
-            _.remove(queue, {_id: item._id});
-            this.length = queue.length;
-            this.save();
-
-            if (this.active._id === item._id && this.length > 0) {
-                this.setActive(_.first(queue));
-            } else {
-                this.active = null;
-            }
-        };
-
-    }
-
-    WorkqueueCtrl.$inject = ['$scope', 'workqueue', 'superdesk', 'ContentCtrl'];
-    function WorkqueueCtrl($scope, workqueue, superdesk, ContentCtrl) {
-        $scope.workqueue = workqueue.all();
-        $scope.content = new ContentCtrl();
-
-        $scope.openItem = function(article) {
-            if ($scope.active) {
-                $scope.update();
-            }
-            workqueue.setActive(article);
-            superdesk.intent('author', 'article', article);
-        };
-
-        $scope.openDashboard = function() {
-            superdesk.intent('author', 'dashboard');
-        };
-
-        $scope.closeItem = function(item) {
-            if ($scope.active) {
-                $scope.close();
-            } else {
-                workqueue.remove(item);
-                superdesk.intent('author', 'dashboard');
-            }
-        };
-    }
-
-    function WorkqueueListDirective() {
-        return {
-            templateUrl: 'scripts/superdesk-authoring/views/opened-articles.html',
-            scope: {
-                active: '=',
-                update: '&',
-                close: '&'
-            },
-            controller: WorkqueueCtrl
-        };
+        setupNewItem();
     }
 
     function DashboardCard() {
@@ -408,13 +246,12 @@ define([
             'superdesk.authoring.widgets',
             'superdesk.authoring.metadata',
             'superdesk.authoring.comments',
-            'superdesk.authoring.versions'
+            'superdesk.authoring.versions',
+            'superdesk.authoring.workqueue'
         ])
 
         .service('lock', LockService)
-    	.service('workqueue', WorkqueueService)
         .factory('ConfirmDirty', ConfirmDirtyFactory)
-        .directive('sdWorkqueue', WorkqueueListDirective)
         .directive('sdDashboardCard', DashboardCard)
 
         .config(['superdeskProvider', function(superdesk) {
@@ -427,15 +264,6 @@ define([
 	                beta: true,
 	                filters: [{action: 'author', type: 'article'}]
 	            })
-                .activity('/authoring/', {
-                    label: gettext('Authoring'),
-                    templateUrl: 'scripts/superdesk-authoring/views/dashboard.html',
-                    topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-                    beta: true,
-                    controller: WorkqueueCtrl,
-                    category: superdesk.MENU_MAIN,
-                    filters: [{action: 'author', type: 'dashboard'}]
-                })
 	            .activity('edit.text', {
 	            	label: gettext('Edit item'),
 	            	icon: 'pencil',
