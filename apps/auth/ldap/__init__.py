@@ -1,7 +1,8 @@
 import superdesk
 from apps.auth import AuthResource
 from .ldap import LdapAuthService, authenticate, ADAuth  # noqa
-from .commands import ImportUserProfileFromADCommand
+from .commands import ImportUserProfileFromADCommand  # noqa
+
 
 def init_app(app):
     endpoint_name = 'auth'

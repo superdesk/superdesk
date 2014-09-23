@@ -2,6 +2,7 @@ from superdesk import tests
 from superdesk.io.tests import setup_providers, teardown_providers
 import os
 
+
 def before_all(context):
     tests.setup(context)
 
