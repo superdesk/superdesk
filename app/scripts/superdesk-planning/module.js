@@ -227,51 +227,35 @@ define([
         return {
             templateUrl: 'scripts/superdesk-planning/views/assignee-box.html',
             scope: {
-                selectedId: '='
+                userId: '=',
+                deskId: '='
             },
             link: function(scope, elem) {
                 scope.open = false;
-                scope.users = null;
-                scope.desks = null;
+                scope.desksService = desks;
+                scope.desk = null;
+                scope.user = null;
                 scope.search = null;
-                scope.selected = null;
 
-                scope.$watch('search', function() {
-                    fetchUsers();
+                scope.$watch('deskId', function(deskId) {
+                    scope.desk = null;
+                    desks.initialize().then(function() {
+                        scope.desk = deskId ? desks.deskLookup[deskId] : desks.getCurrentDesk();
+                    });
                 });
 
-                scope.$watch('selectedId', function() {
-                    if (scope.selectedId && (!scope.selected || scope.selected._id !== scope.selectedId)) {
-                        api.users.getById(scope.selectedId)
-                        .then(function(result) {
-                            scope.selected = result;
-                        });
-                    } else {
-                        scope.selected = null;
-                    }
+                scope.$watch('userId', function(userId) {
+                    scope.user = null;
+                    desks.initialize().then(function() {
+                        scope.user = desks.userLookup[userId];
+                    });
                 });
 
-                scope.selectUser = function(user) {
-                    scope.selectedId = user._id;
+                scope.assign = function() {
+                    scope.deskId = scope.desk._id;
+                    scope.userId = scope.user ? scope.user._id : null;
                     scope.open = false;
                 };
-
-                var fetchUsers = function() {
-                    userList.get(scope.search)
-                    .then(function(result) {
-                        scope.users = result;
-                    });
-                };
-
-                var fetchDesks = function() {
-                    api.desks.query()
-                    .then(function(result) {
-                        scope.desks = result;
-                    });
-                };
-
-                fetchUsers();
-                fetchDesks();
             }
         };
     }

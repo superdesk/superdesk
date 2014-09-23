@@ -4,6 +4,7 @@ define(['lodash'], function(_) {
     TasksController.$inject = ['$scope', 'api', 'notify', 'userList', '$rootScope', 'es', 'desks'];
     function TasksController($scope, api, notify, userList, $rootScope, es, desks) {
 
+        $scope.desksService = desks;
         $scope.selected = {};
         $scope.newTask = null;
         $scope.userLookup = null;
@@ -21,7 +22,11 @@ define(['lodash'], function(_) {
         };
 
         $scope.create = function() {
-            $scope.newTask = {task: {}};
+            $scope.newTask = {
+                task: {
+                    desk: desks.getCurrentDeskId()
+                }
+            };
         };
 
         $scope.save = function() {
@@ -66,19 +71,7 @@ define(['lodash'], function(_) {
             });
         };
 
-        var fetchUsers = function() {
-            userList.get()
-            .then(function(result) {
-                $scope.userLookup = {};
-                _.each(result._items, function(user) {
-                    $scope.userLookup[user._id] = user;
-                });
-            });
-        };
-
         fetchTasks();
-        fetchUsers();
-
     }
 
     return TasksController;

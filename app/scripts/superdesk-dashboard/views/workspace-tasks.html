@@ -88,8 +88,11 @@
        <aside class="sidebar">
        		<header translate>Assignee</header>
        		<section class="assignee-container">
-				<div sd-assignee-box data-selected-id="newTask.task.user"></div>
-				<div class="assignee-name"><span ng-show="newTask.task.user">{{userLookup[newTask.task.user].display_name}}</span><span ng-hide="newTask.task.user" translate>Unassigned</span></div>
+				<div sd-assignee-box data-desk-id="newTask.task.desk" data-user-id="newTask.task.user"></div>
+				<div class="assignee-name">
+                    <span ng-show="newTask.task.desk">{{desksService.deskLookup[newTask.task.desk].name}} / </span>
+                    <span ng-show="newTask.task.user">{{desksService.userLookup[newTask.task.user].display_name}}</span>
+                    <span ng-hide="newTask.task.user" translate>Unassigned</span></div>
 			</section>
 			<header translate>Action</header>
 			<section>
@@ -112,6 +115,6 @@
 
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="close()" translate>Cancel</button>
-        <button class="btn btn-primary" ng-disabled="!newTask.task.user || !newTask.slugline" ng-click="save()" translate>Save</button>
+        <button class="btn btn-primary" ng-disabled="!newTask.task.desk || !newTask.slugline" ng-click="save()" translate>Save</button>
     </div>
 </div>

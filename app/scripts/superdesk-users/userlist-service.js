@@ -10,23 +10,25 @@ define([], function() {
 
         var userservice = {};
 
-        var perPage = 100;
         var cache = $cacheFactory('userList');
 
         var DEFAULT_CACHE_KEY = '_nosearch';
         var DEFAULT_PAGE = 1;
+        var DEFAULT_PER_PAGE = 20;
 
         /**
          * Fetches and caches users, or returns from the cache.
          *
          * @param {String} search
          * @param {Integer} page (Shouldn't be used at the moment)
+         * @param {Integer} perPage
          * @returns {Promise}
          */
-        userservice.get = function(search, page) {
+        userservice.get = function(search, page, perPage) {
             page = page || DEFAULT_PAGE;
             var key = search || DEFAULT_CACHE_KEY;
-            key = buildKey(key, page);
+            perPage = perPage || DEFAULT_PER_PAGE;
+            key = buildKey(key, page, perPage);
 
             var value = cache.get(key);
             if (value) {
@@ -79,8 +81,8 @@ define([], function() {
 
         };
 
-        function buildKey(key, page) {
-            return key + '_' + page;
+        function buildKey(key, page, perPage) {
+            return key + '_' + page + '_' + perPage;
         }
 
         return userservice;

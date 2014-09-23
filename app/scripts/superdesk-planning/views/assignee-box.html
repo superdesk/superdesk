@@ -2,7 +2,7 @@
 	<div class="assignee" ng-class="{'open': open}" ng-init="hoveractive = false">
 		<div class="toggle" ng-click="open = !open" ng-mouseenter="hoveractive = true" ng-mouseleave="hoveractive = false">
 			<div class="avatar">
-				<img sd-user-avatar data-src="selected.picture_url">
+				<img sd-user-avatar data-src="user.picture_url">
 			</div>
 			<div class="add">
 				<i class="icon-plus-large icon-white"></i>
@@ -12,37 +12,42 @@
 			<div class="tooltip-arrow"></div>
 			<div class="tooltip-inner" ng-show="selected">
 				<p class="dark" translate>Assigned to:</p>
-				<p class="name">{{selected.display_name}}</p>
+				<p class="name">{{desk.name}}<span ng-show="user"> / {{user.display_name}}</span></p>
 				<p translate>Click to reassign</p>
 			</div>
-			<div class="tooltip-inner simple" ng-show="!selected">
+			<div class="tooltip-inner simple" ng-show="!selectedUser">
 				<p translate>Click to assign</p>
 			</div>
 		</div>
 		<div class="dropdown-content" ng-show="open">
+			<div><span translate>Selected desk:</span> {{desk.name}}</div>
+			<div><span translate>Selected user:</span> {{user.display_name}}</div>
 			<div class="dropdown desk-select">
 				<button class="dropdown-toggle">{{'Select desk'|translate}} <b class="caret"></b></button>
 				<div class="dropdown-menu">
 					<ul>
-						<li ng-repeat="desk in desks._items"><button ng-click="">{{desk.name}}</button></li>
+						<li ng-repeat="desk in desksService.desks._items"><button ng-click="$parent.desk = desk; $parent.user = null">{{desk.name}}</button></li>
 					</ul>
 				</div>
 			</div>
-			<form>
-				<label for="assignee-search">Person</label>
-				<input type="text" name="assignee-search" ng-model="search" class="input-large searchbox">
-			</form>
-			<div class="search-result">
-				<ul class="users-list-embed">
-					<li ng-repeat="user in (deskMembers[desk._id] || users._items) | filter:search" ng-click="selectUser(user)">
-						<figure class="avatar small"><img sd-user-avatar data-src="user.picture_url"></figure>
-						<div class="name">{{user.display_name}}</div>
-					</li>
-				</ul>
+			<div class="user-select" ng-show="desk">
+				<form>
+					<label for="assignee-search" translate>Person</label>
+					<input type="text" name="assignee-search" ng-model="search" class="input-large searchbox">
+				</form>
+				<div class="search-result">
+					<ul class="users-list-embed">
+						<li ng-repeat="user in desksService.deskMembers[desk._id] | filter:search" ng-click="$parent.user = user">
+							<figure class="avatar small"><img sd-user-avatar data-src="user.picture_url"></figure>
+							<div class="name">{{user.display_name}}</div>
+						</li>
+					</ul>
+				</div>
 			</div>
 			<div class="footer">
-				<!--<button class="btn btn-info pull-right" ng-click="open = false">Assign</button>-->
-				<button class="btn pull-right" ng-click="open = false">Cancel</button>
+				<button class="btn btn-info pull-left" ng-disabled="!desk && !user" ng-click="desk = null; user = null" translate>Clear</button>
+				<button class="btn btn-info pull-right" ng-disabled="!desk" ng-click="assign()" translate>Assign</button>
+				<button class="btn pull-right" ng-click="open = false" translate>Cancel</button>
 			</div>
 		</div>
 	</div>
