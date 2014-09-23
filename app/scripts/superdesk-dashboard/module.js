@@ -11,6 +11,16 @@ define([
 ], function(angular, require) {
     'use strict';
 
+    function TaskPreviewDirective() {
+        return {
+            templateUrl: 'scripts/superdesk-dashboard/views/task-preview.html',
+            scope: {
+                item: '=',
+                users: '='
+            }
+        };
+    }
+
     // to avoid circular dependency
     angular.module('superdesk.dashboard.widgets', []).
         provider('widgets', require('./widgets-provider'));
@@ -24,6 +34,7 @@ define([
 
     .service('workspace', require('./workspace-service'))
     .directive('sdWidget', require('./sd-widget-directive'))
+    .directive('sdTaskPreview', TaskPreviewDirective)
 
     .filter('wcodeFilter', function() {
         return function(input, values) {

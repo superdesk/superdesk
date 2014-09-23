@@ -1,59 +1,77 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    TasksController.$inject = ['$scope'];
-    function TasksController($scope) {
+    TasksController.$inject = ['$scope', 'api', 'notify', 'userList', '$rootScope', 'es', 'desks'];
+    function TasksController($scope, api, notify, userList, $rootScope, es, desks) {
 
+        $scope.desksService = desks;
         $scope.selected = {};
-        $scope.newtask = null;
+        $scope.newTask = null;
+        $scope.userLookup = null;
 
-        $scope.tasks = [
-            {
-                _id: '12345679asdfghjk',
-                title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                description: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem ' +
-                ' accusantium doloremque laudantium,totam rem aperiam, eaque ipsa quae ab illo ' +
-                ' inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo',
-                duedate: '2014-11-11T12:12:12+01:00',
-                assigned_user: '5399826e1024543327ebfafa',
-                status: 1
-            },
-            {
-                _id: '12aiouadm5679ajk',
-                title: 'At vero eos et accusamus et iusto odio dignissimos',
-                description: 'O inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo',
-                duedate: '2014-12-11T12:12:12+01:00',
-                assigned_user: '53fca4be1024542d4db4b588',
-                status: 1
-            },
-            {
-                _id: 'q1w2e3r4t5dfsdfsdhjk',
-                title: 'necessitatibus saepe eveniet ut et voluptates repudiandae',
-                description: 'Ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores' +
-                'et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui' +
-                ' officia deserunt mollitia animi',
-                duedate: '2014-11-12T12:12:12+01:00',
-                assigned_user: '53739e771024540be78f178a',
-                status: 2
-            }
-        ];
+        $scope.tasks = {};
+
+        $scope.$watch(function() {
+            return desks.getCurrentDeskId();
+        }, function() {
+            fetchTasks();
+        });
 
         $scope.preview = function(item) {
             $scope.selected.preview = item;
         };
 
         $scope.create = function() {
-            $scope.newtask = {};
+            $scope.newTask = {
+                task: {
+                    desk: desks.getCurrentDeskId()
+                }
+            };
         };
 
         $scope.save = function() {
+            if ($scope.newTask.task.due_time) {
+                $scope.newTask.task.due_date = new Date(
+                    $scope.newTask.task.due_date.getFullYear(),
+                    $scope.newTask.task.due_date.getMonth(),
+                    $scope.newTask.task.due_date.getDate(),
+                    $scope.newTask.task.due_time.getHours(),
+                    $scope.newTask.task.due_time.getMinutes(),
+                    $scope.newTask.task.due_time.getSeconds()
+                );
+            }
+            delete $scope.newTask.task.due_time;
 
+            api('tasks').save($scope.newTask)
+            .then(function(result) {
+                notify.success(gettext('Item saved.'));
+                $scope.close();
+                fetchTasks();
+            });
         };
 
         $scope.close = function() {
-            $scope.newtask = null;
+            $scope.newTask = null;
         };
 
+        var fetchTasks = function() {
+            var filter = {term: {'task.user': $rootScope.currentUser._id}};
+            if (desks.getCurrentDeskId()) {
+                filter = {term: {'task.desk': desks.getCurrentDeskId()}};
+            }
+            api('tasks').query({
+                source: {
+                    size: 100,
+                    sort: [{_updated: 'desc'}],
+                    filter: filter
+                }
+            })
+            .then(function(tasks) {
+                $scope.tasks = tasks;
+            });
+        };
+
+        fetchTasks();
     }
 
     return TasksController;

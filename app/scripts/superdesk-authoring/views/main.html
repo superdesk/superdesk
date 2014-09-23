@@ -6,12 +6,16 @@
     	<span class="lock-text pull-left" ng-show="isLocked(item)" translate>This article is locked</span>
     </div>
 
+    
     <div class="button-stack right-stack">
-    	
     	<button class="btn btn-medium pull-left" ng-click="close()" ng-if="item">{{ 'Close' | translate }}</button>
     	<button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()" ng-show="item && editable" ng-disabled="!dirty">{{ 'Save' | translate }}</button>
-
     </div>
+
+    <div class="auto-save pull-right">
+		<span ng-if="saving"><i class="icon-refresh"></i> Auto saving</span>
+		<span ng-if="!saving && saved"><i class="icon-ok"></i> Auto saved</span>
+	</div>
 
 </div>
 
@@ -40,7 +44,7 @@
 	        </article>
 	    </div>
 
-	    <div sd-workqueue data-active="item" data-update="update()" data-close="close()"></div>
+	    <div sd-workqueue data-active="item" data-update="articleSwitch()" data-close="close()"></div>
 
 	</div>
 	

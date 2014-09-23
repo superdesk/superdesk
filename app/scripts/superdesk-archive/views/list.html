@@ -194,7 +194,7 @@
                         <label translate>Description</label>
                         <textarea sd-auto-height ng-model="views.edited.description"></textarea>
                     </div>
-                    <div class="field row">
+                    <div class="field row" ng-hide="views.edited._id || !selectedDesk">
                         <input sd-check ng-model="views.flags.is_desk">
                         <label translate>Attach to current desk</label>
                     </div>

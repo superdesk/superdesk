@@ -1,0 +1,19 @@
+<header>
+	<button ng-click="item = null" class="close-preview">
+        <i class="icon-close-small"></i>
+    </button>
+</header>
+<div class="content" ng-if="item">
+	<div class="basic">
+		<p>{{ 'Created' | translate}} <span sd-reldate-complex ng-model="item._created"></span></p>
+	</div>
+	<div class="assignee clearfix">
+		<figure class="avatar"><img sd-user-avatar data-src="users[item.task.user].picture_url"></figure>
+		<p>{{ users[item.task.user].display_name }}</p>
+	</div>
+	<ul class="task-labels clearfix">
+		<li><i class="icon-desk-time"></i> {{ item.task.due_date | reldate }}</li>
+	</ul>
+	<div class="title">{{ item.slugline }}</div>
+	<div class="description">{{ item.description_text }}</div>
+</div>

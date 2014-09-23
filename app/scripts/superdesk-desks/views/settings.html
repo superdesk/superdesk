@@ -32,7 +32,7 @@
 						<ul class="plain-list users-list">
 		                    <li ng-repeat="user in deskMembers[desk._id]">
                               <figure class="avatar"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
-		                      <span class="name" >{{ user.first_name }} {{ user.last_name }}</span>
+		                      <span class="name" >{{ user.display_name || user.username }}</span>
 		                    </li>
                             <li ng-show="!desk.members.length" translate>There are no members yet</li>
 		                </ul>
@@ -122,7 +122,7 @@
 							<li ng-repeat="user in selectedMembers">
 								<figure class="avatar"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
 								<div class="member-name">
-									{{user.first_name}} {{user.last_name}}
+									{{ user.display_name || user.username }}
 									<span class="delete" ng-click="removeMember(user)"><i class="icon-close-small icon-white"></i></span>
 								</div>
 
@@ -140,7 +140,7 @@
 				  		<ul class="plain-list users-list">
 							<li ng-repeat="user in users._items | filter:notIn(selectedMembers)| filter:memberSearch" >
 								<figure class="avatar"><img sd-user-avatar data-src="user.picture_url" alt="user.display_name"></figure>
-								<span class="name" >{{ user.first_name }} {{ user.last_name }}</span>
+								<span class="name" >{{ user.display_name || user.username }}</span>
 								<button class="btn btn-mini btn-green pull-right" ng-click="addMember(user)" tooltip="{{ 'Add to desk' | translate}}" tooltip-placement="left"><i class="icon-plus-small icon-white"></i></button>
 							</li>
 					    </ul>

@@ -3,6 +3,7 @@ define([
     'require',
     './providers',
     './users-service',
+    './userlist-service',
     './services/profile',
     './controllers/list',
     './controllers/edit',
@@ -150,7 +151,8 @@ define([
                 backend: {rel: 'activity'},
                 service: require('./services/profile')
             });
-        }]);
+        }])
+        .factory('userList', require('./userlist-service'));
 
     return app;
 });

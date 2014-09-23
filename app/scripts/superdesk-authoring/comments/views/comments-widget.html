@@ -1,12 +1,11 @@
 <div class="notification-list-box" ng-controller="CommentsWidgetCtrl">
     <ul class="notification-list white">
-        <li ng-repeat="comment in comments">
+        <li ng-repeat="comment in comments" ng-class="{active: comment._id === active}">
             <figure class="avatar">
                 <img sd-user-avatar data-src="comment.user.picture_url">
             </figure>
             <div class="content">
-                <div class="text" sd-html-preview="'<p><b>' + (comment.user.display_name || comment.user.username) + '</b> : ' + (comment.text | nl2el:'</p><p>') + '</p>'">
-                </div>
+                <div class="text" sd-comment-text data-comment="comment" data-name="{{comment.user.display_name || comment.user.username}}" data-text="{{comment.text}}"></div>
                 <span class="date" sd-reldate ng-model="comment._created"></span>
             </div>
         </li>
@@ -16,19 +15,10 @@
     </ul>
     <div class="add-comment">
         <form name="commentsForm">
-            <!-- <textarea class="new-comment" sd-auto-height ng-model="text" ng-keyup="saveOnEnter($event)"></textarea> -->
-            <textarea class="new-comment" sd-auto-height ng-model="text" mentio id="comment-target"></textarea>
-            <mentio-menu 
-                class="mentio-menu"
-                mentio-for="'comment-target'"
-                mentio-trigger-char="'@'"
-                mentio-items="users" 
-                mentio-search="searchUsers(term)"
-                mentio-select="selectUser(item)"
-                mentio-template-url="scripts/superdesk-authoring/comments/views/mentions.html">
-            </mentio-menu>
+            <textarea class="new-comment" sd-auto-height ng-model="text" mentio id="mentio-users" ng-keyup="saveOnEnter($event)"></textarea>
+            <div sd-user-mentio></div>
             <div class="actions">
-                <div class="pull-left post"><input sd-check ng-model="saveEnterFlag"> <span translate>Post on 'Enter'</span></div>
+                <div class="pull-left post"><input type="checkbox" ng-model="saveEnterFlag"> <span translate>Post on 'Enter'</span></div>
                 <button class="btn btn-info pull-right" ng-click="save()" ng-show="!saveEnterFlag" translate>Post</button>
                 <button class="btn pull-right" ng-click="cancel()" ng-show="!saveEnterFlag" translate>Cancel</button>
             </div>

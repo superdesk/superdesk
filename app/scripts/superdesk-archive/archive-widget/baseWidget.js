@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('superdesk.widgets.base', [])
-        .factory('BaseWidgetController', ['$location', 'superdesk', 'storage', 'es',
-        function BaseWidgetControllerFactory($location, superdesk, storage, es) {
+        .factory('BaseWidgetController', ['$location', '$timeout', 'superdesk', 'storage', 'es',
+        function BaseWidgetControllerFactory($location, $timeout, superdesk, storage, es) {
 
             var INGEST_EVENT = 'ingest:update';
 
@@ -20,8 +20,7 @@
                 $scope.processedItems = null;
 
                 $scope.$on(INGEST_EVENT, function() {
-                    refresh();
-                    $scope.$digest();
+                    $timeout(refresh);
                 });
 
                 $scope.$watchGroup({
