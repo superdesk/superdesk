@@ -190,7 +190,7 @@
 	background: rgba(0,0,0,0.85);
 	z-index: 25;
 	ul {
-		padding-left: 63px;
+		padding-left: 31px;
 			li {
 			float: left;
 			padding: 0 25px 0 15px;
@@ -264,8 +264,12 @@
 
 .authoring-dashboard {
 	padding: 40px;
+	.card-list {
+		width: 0;
+		margin: 0 auto;
+	}
 	.card-list > li {
-		width: 190px;
+		width: 140px;
 		height: 170px;
 		float: left;
 		margin: 10px;
@@ -276,6 +280,9 @@
 			overflow: hidden;
 			font-size: 14px;
 			line-height: 22px;
+			max-height: 110px;
+			overflow: hidden;
+			.text-semibold();
 		}
 		.created {
 			position: absolute;
@@ -283,6 +290,11 @@
 			left: 20px;
 			color: #888;
 			font-size: 12px;
+		}
+		.text {
+			font-size: 12px;
+			color: @gray;
+			line-height: 18px;
 		}
 		.close {
 			position: absolute;
