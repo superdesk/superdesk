@@ -341,6 +341,20 @@ define([
         };
     }
 
+    function DashboardCard() {
+        return {
+            link: function(scope, elem) {
+                var p = elem.parent();
+                var maxW = p.parent().width();
+                var marginW = parseInt(elem.css('margin-left'), 10) + parseInt(elem.css('margin-right'), 10);
+                var newW = p.outerWidth() + elem.outerWidth() + marginW;
+                if (newW < maxW) {
+                    p.outerWidth(newW);
+                }
+            }
+        };
+    }
+
     return angular.module('superdesk.authoring', [
             'superdesk.editor',
             'superdesk.authoring.widgets',
@@ -353,6 +367,7 @@ define([
     	.service('workqueue', WorkqueueService)
         .factory('ConfirmDirty', ConfirmDirtyFactory)
         .directive('sdWorkqueue', WorkqueueListDirective)
+        .directive('sdDashboardCard', DashboardCard)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
