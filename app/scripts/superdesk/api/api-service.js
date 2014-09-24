@@ -128,6 +128,19 @@ define([
                 });
             };
 
+            /**
+             * Remove an item
+             *
+             * @param {Object} item
+             */
+            Resource.prototype.remove = function(item, params) {
+                return http({
+                    method: 'DELETE',
+                    url: urls.item(item._links.self.href),
+                    params: params
+                });
+            };
+
             // api service
             var api = function apiService(resource, parent) {
                 return new Resource(resource, parent);
