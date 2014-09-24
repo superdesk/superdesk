@@ -1,4 +1,4 @@
-from flask import g
+from flask import g, request
 import superdesk
 from superdesk.resource import Resource
 from superdesk.notification import push_notification
@@ -21,6 +21,7 @@ comments_schema = {
 
 
 class CommentsResource(Resource):
+    """Reusable implementation for comments."""
     schema = comments_schema
     resource_methods = ['GET', 'POST', 'DELETE']
     datasource = {'default_sort': [('_created', -1)]}
@@ -43,7 +44,9 @@ class CommentsService(BaseService):
     def on_created(self, docs):
         for doc in docs:
             push_notification(self.notification_key, item=str(doc.get('item')))
-        notify_mentioned_users(docs)
+
+        origin = next((value for (key, value) in request.headers if key == 'Origin'))
+        notify_mentioned_users(docs, origin)
 
     def on_updated(self, updates, original):
         push_notification(self.notification_key, updated=1)

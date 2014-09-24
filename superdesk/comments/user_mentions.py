@@ -15,15 +15,16 @@ def get_users_mentions(text):
     return list(usernames)
 
 
-def send_user_mentioned_email(recipients, user_name, doc):
+def send_user_mentioned_email(recipients, user_name, doc, url):
+    print('sending mention email to:', recipients)
     send_email.delay(subject='You were mentioned in a comment by %s' % user_name,
                      sender=ADMINS[0],
                      recipients=recipients,
-                     text_body=render_template("user_mention.txt", data=doc, username=user_name),
-                     html_body=render_template("user_mention.html", data=doc, username=user_name))
+                     text_body=render_template("user_mention.txt", text=doc['text'], username=user_name, link=url),
+                     html_body=render_template("user_mention.html", text=doc['text'], username=user_name, link=url))
 
 
-def send_email_to_mentioned_users(doc, mentioned_users):
+def send_email_to_mentioned_users(doc, mentioned_users, origin):
     prefs_service = superdesk.get_resource_service('preferences')
     recipients = []
     for user in mentioned_users:
@@ -33,7 +34,8 @@ def send_email_to_mentioned_users(doc, mentioned_users):
             recipients.append(user_doc['email'])
     if recipients:
         username = g.user.get('display_name') or g.user.get('username')
-        send_user_mentioned_email(recipients, username, doc)
+        url = '{}/#/authoring/{}?comments={}'.format(origin, doc['item'], doc['_id'])
+        send_user_mentioned_email(recipients, username, doc, url)
 
 
 def get_users(usernames):
@@ -43,10 +45,10 @@ def get_users(usernames):
     return users
 
 
-def notify_mentioned_users(docs):
+def notify_mentioned_users(docs, origin):
     for doc in docs:
         mentioned_users = doc.get('mentioned_users', {}).values()
         add_activity('', type='comment', item=str(doc.get('item')),
                      comment=doc.get('text'), comment_id=str(doc.get('_id')),
                      notify=mentioned_users)
-        send_email_to_mentioned_users(doc, mentioned_users)
+        send_email_to_mentioned_users(doc, mentioned_users, origin)

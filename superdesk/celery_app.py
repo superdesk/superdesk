@@ -53,8 +53,16 @@ def loads(s):
         if isinstance(v, dict):
             cast_item(v)
 
-    for k, v in o['kwargs'].items():
-        cast_item(v)
+    kwargs = o['kwargs']
+    for k, v in kwargs.items():
+        if isinstance(v, str):
+            kwargs[k] = try_cast(v)
+
+        if isinstance(v, list):
+            kwargs[k] = [try_cast(val) for val in v]
+
+        if isinstance(v, dict):
+            cast_item(v)
 
     return o
 

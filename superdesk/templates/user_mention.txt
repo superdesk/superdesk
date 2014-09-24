@@ -1,6 +1,6 @@
-{{username}} mentioned you in a comment to the following article: {{data['item']}}.
+{{username}} mentioned you in a comment to the following article: {{link}}.
 Comment: 
-{{data['text']}}
+{{text}}
 
 Regards,
 
