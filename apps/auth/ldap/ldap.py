@@ -93,15 +93,18 @@ def authenticate(credentials, app):
         raise NotFoundAuthError()
 
     db = app.data
-    user = db.find_one('auth_users', req=None, username=username)
+    user = db.find_one('users', username=username, req=None)
 
     if not user:
-        user_data[app.config['DATE_CREATED']] = utcnow()
-        user_data[app.config['LAST_UPDATED']] = utcnow()
         user_data['username'] = username
-        db.insert('users', user_data)
-        user = db.find_one('auth_users', req=None, username=username)
+        user_data[app.config['DATE_CREATED']] = user_data[app.config['LAST_UPDATED']] = utcnow()
 
+        db.insert('users', [user_data])
+    else:
+        user_data[app.config['LAST_UPDATED']] = utcnow()
+        app.data.update('users', user.get('_id'), user_data)
+
+    user = db.find_one('users', username=username, req=None)
     return user
 
 

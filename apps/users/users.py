@@ -136,13 +136,16 @@ class UsersResource(Resource):
 
 
 class UsersService(BaseService):
+    AUTH_MODE = 'AD' if 'LDAP_SERVER' in os.environ else 'DB'
+
     readonly_fields = ['username', 'display_name', 'password', 'email',
                        'phone', 'first_name', 'last_name']
 
     def on_create(self, docs):
-        for doc in docs:
-            if doc.get('password', None) and not is_hashed(doc.get('password')):
-                doc['password'] = get_hash(doc.get('password'), app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12))
+        if 'DB' == UsersService.AUTH_MODE:
+            for doc in docs:
+                if doc.get('password', None) and not is_hashed(doc.get('password')):
+                    doc['password'] = get_hash(doc.get('password'), app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12))
 
     def on_created(self, docs):
         for doc in docs:
@@ -152,6 +155,6 @@ class UsersService(BaseService):
         add_activity('removed user {{user}}', user=doc.get('display_name', doc.get('username')))
 
     def on_fetched(self, doc):
-        if 'LDAP_SERVER' in os.environ:
+        if 'AD' == UsersService.AUTH_MODE:
             for document in doc['_items']:
                 document['readonly'] = UsersService.readonly_fields
