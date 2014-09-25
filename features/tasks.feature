@@ -63,7 +63,7 @@ Feature: Tasks
 	    """
         And we patch latest
         """
-        {"description_text": "second task modified", "task": {"status": "in-progress", "desk":"#DESKS_ID#"}}
+        {"description_text": "second task modified", "task": {"desk":"#DESKS_ID#"}}
         """
         Then we get updated response
 

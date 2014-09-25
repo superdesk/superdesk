@@ -30,8 +30,7 @@ class TaskResource(Resource):
                 'status': {
                     'type': 'string',
                     'allowed': ['todo', 'in-progress', 'done'],
-                    'default': 'todo',
-                    'required': True
+                    'default': 'todo'
                 },
                 'due_date': {'type': 'datetime'},
                 'started_at': {'type': 'datetime'},
