@@ -3,7 +3,7 @@ Feature: Default Comments
     @auth
     Scenario: Create comment
         Given empty "comments"
-        When we post to "/comments"
+        When we post to "/comments" with success
         """
         [{"text": "test comment", "item": "xyz"}]
         """
@@ -17,11 +17,11 @@ Feature: Default Comments
     @wip
     Scenario: Create comments
         Given empty "comments"
-        When we post to "/comments"
+        When we post to "/comments" with success
         """
         [{"text": "test comment", "item": "xyz"}]
         """
-        When we post to "/comments"
+        When we post to "/comments" with success
         """
         [{"text": "test comment 1", "item": "xyz"}]
         """
@@ -32,7 +32,7 @@ Feature: Default Comments
     @auth
     Scenario: Create comment (Fail) - wrong user supplied
         Given empty "comments"
-        When we post to "users"
+        When we post to "users" with success
         """
         {"username": "foo", "email": "foo@bar.com"}
         """

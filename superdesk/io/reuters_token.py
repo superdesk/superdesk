@@ -20,7 +20,7 @@ def update_provider_token(provider):
     token['token'] = fetch_token_from_api(provider)
     token['created'] = utcnow()
     provider['token'] = token
-    superdesk.app.data.update('ingest_providers', provider['_id'], {'token': token})
+    superdesk.get_resource_service('ingest_providers').patch(provider['_id'], {'token': token})
     return token['token']
 
 

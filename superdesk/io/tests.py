@@ -1,6 +1,7 @@
 from .commands.update_ingest import ingest_items
 from .reuters_mock import setup_reuters_mock, teardown_reuters_mock
 from .reuters import ReutersIngestService
+import superdesk
 
 
 def setup_providers(context):
@@ -19,7 +20,7 @@ def setup_providers(context):
                                }
                     }
 
-        result = app.data.insert('ingest_providers', [provider])
+        result = superdesk.get_resource_service('ingest_providers').post([provider])
         context.providers['reuters'] = result[0]
         context.provider_services['reuters'] = ReutersIngestService()
 

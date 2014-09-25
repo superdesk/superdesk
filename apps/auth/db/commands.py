@@ -33,16 +33,16 @@ class CreateUserCommand(superdesk.Command):
                 userdata['password'] = get_hash(userdata.get('password'),
                                                 app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12))
 
-            user = app.data.find_one('users', username=userdata.get('username'), req=None)
+            user = superdesk.get_resource_service('users').find_one(username=userdata.get('username'), req=None)
 
             if user:
                 logger.info('updating user %s' % (userdata))
-                app.data.update('users', user.get('_id'), userdata)
+                superdesk.get_resource_service('users').patch(user.get('_id'), userdata)
                 return userdata
             else:
                 logger.info('creating user %s' % (userdata))
                 userdata[app.config['DATE_CREATED']] = userdata[app.config['LAST_UPDATED']]
-                app.data.insert('users', [userdata])
+                superdesk.get_resource_service('users').post([userdata])
 
             logger.info('user saved %s' % (userdata))
             return userdata
@@ -50,7 +50,7 @@ class CreateUserCommand(superdesk.Command):
 
 class HashUserPasswordsCommand(superdesk.Command):
     def run(self):
-        users = superdesk.app.data.find_all('auth_users')
+        users = superdesk.get_resource_service('auth_users').get(req=None, lookup={})
         for user in users:
             pwd = user.get('password')
             if not is_hashed(pwd):
@@ -58,7 +58,7 @@ class HashUserPasswordsCommand(superdesk.Command):
                 hashed = get_hash(user['password'], app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12))
                 user_id = user.get('_id')
                 updates['password'] = hashed
-                superdesk.app.data.update('users', user_id, updates=updates)
+                superdesk.get_resource_service('users').patch(user_id, updates=updates)
 
 
 superdesk.command('users:create', CreateUserCommand())

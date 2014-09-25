@@ -43,16 +43,16 @@ class ImportUserProfileFromADCommand(superdesk.Command):
             raise NotFoundAuthError()
 
         # Check if User Profile already exists in Mongo
-        user = app.data.find_one('users', username=username, req=None)
+        user = superdesk.get_resource_service('users').find_one(username=username, req=None)
         user_data[app.config['LAST_UPDATED']] = utcnow()
 
         if user:
-            app.data.update('users', user.get('_id'), user_data)
+            superdesk.get_resource_service('users').patch(user.get('_id'), user_data)
             return user_data
         else:
             user_data[app.config['DATE_CREATED']] = user_data[app.config['LAST_UPDATED']]
             user_data['username'] = username
-            app.data.insert('users', [user_data])
+            superdesk.get_resource_service('users').post([user_data])
             return user_data
 
 superdesk.command('users:copyfromad', ImportUserProfileFromADCommand())

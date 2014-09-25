@@ -2,7 +2,6 @@ import superdesk
 from eve.io.base import DataLayer
 from eve.io.mongo import Mongo
 from eve.utils import config, ParsedRequest
-from eve.defaults import resolve_default_values
 from eve_elastic import Elastic
 from .utils import import_by_path
 from pyelasticsearch.client import JsonEncoder
@@ -56,12 +55,10 @@ class SuperdeskDataLayer(DataLayer):
         return self._backend(resource).find_list_of_ids(resource, ids, client_projection)
 
     def insert(self, resource, docs, **kwargs):
-        for doc in docs:
-            resolve_default_values(doc, app.config['DOMAIN'][resource]['defaults'])
-        return superdesk.get_resource_service(resource).post(docs, **kwargs)
+        return superdesk.get_resource_service(resource).create(docs, **kwargs)
 
     def update(self, resource, id_, updates):
-        return superdesk.get_resource_service(resource).patch(id=id_, updates=updates)
+        return superdesk.get_resource_service(resource).update(id=id_, updates=updates)
 
     def update_all(self, resource, query, updates):
         datasource = self._datasource(resource)
@@ -70,13 +67,12 @@ class SuperdeskDataLayer(DataLayer):
         return collection.update(query, {'$set': updates}, multi=True)
 
     def replace(self, resource, id_, document):
-        resolve_default_values(document, app.config['DOMAIN'][resource]['defaults'])
-        return superdesk.get_resource_service(resource).put(id=id_, document=document)
+        return superdesk.get_resource_service(resource).replace(id=id_, document=document)
 
     def remove(self, resource, lookup=None):
         if lookup is None:
             lookup = {}
-        return superdesk.get_resource_service(resource).delete_action(lookup=lookup)
+        return superdesk.get_resource_service(resource).delete(lookup=lookup)
 
     def is_empty(self, resource):
         return self._backend(resource).is_empty(resource)

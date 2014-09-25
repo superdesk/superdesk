@@ -7,6 +7,7 @@ from base64 import b64encode
 from flask import json
 from superdesk.notification_mock import setup_notification_mock,\
     teardown_notification_mock
+from superdesk import get_resource_service
 
 test_user = {'username': 'test_user', 'password': 'test_password'}
 
@@ -58,7 +59,7 @@ def setup_auth_user(context, user=None):
     user = user or test_user
     with context.app.test_request_context():
         original_password = user['password']
-        context.app.data.insert('users', [user])
+        get_resource_service('users').post([user])
         user['password'] = original_password
     auth_data = json.dumps({'username': user['username'], 'password': user['password']})
     auth_response = context.client.post('/auth', data=auth_data, headers=context.headers)

@@ -63,7 +63,7 @@ def import_rendition(guid, rendition_name, href, extract_metadata):
     # perform partial update
     updates['renditions.' + rendition_name + '.href'] = url_for_media(file_guid)
     updates['renditions.' + rendition_name + '.media'] = file_guid
-    result = app.data.update('archive', guid, updates=updates)
+    result = superdesk.get_resource_service('archive').patch(guid, updates=updates)
 
     return result
 
@@ -111,7 +111,7 @@ def archive_item(self, guid, provider_id, user, task_id=None):
         if not self.request.retries:
             update_status(*add_subtask_to_progress(task_id))
 
-        provider = app.data.find_one('ingest_providers', req=None, _id=provider_id)
+        provider = superdesk.get_resource_service('ingest_providers').find_one(req=None, _id=provider_id)
         if provider is None:
             message = 'For ingest with guid= %s, failed to retrieve provider with _id=%s' % (guid, provider_id)
             raise_fail(task_id, message)
@@ -147,7 +147,7 @@ def archive_item(self, guid, provider_id, user, task_id=None):
         if not old_item:
             item['created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
             item['updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
-        app.data.update('archive', guid, item)
+        superdesk.get_resource_service('archive').patch(guid, item)
 
         tasks = []
         for group in item.get('groups', []):
@@ -160,11 +160,11 @@ def archive_item(self, guid, provider_id, user, task_id=None):
                     # check if task already started
                     if not archived_doc:
                         doc.setdefault('_id', doc.get('guid'))
-                        app.data.insert('archive', [doc])
+                        superdesk.get_resource_service('archive').post([doc])
                     elif archived_doc.get('task_id') == crt_task_id:
                         # it is a retry so continue
                         archived_doc.update(doc)
-                        app.data.update('archive', archived_doc.get('_id'), archived_doc)
+                        superdesk.get_resource_service('archive').patch(archived_doc.get('_id'), archived_doc)
                     else:
                         # there is a cyclic dependency, skip it
                         continue
@@ -191,7 +191,7 @@ def archive_item(self, guid, provider_id, user, task_id=None):
 def ingest_set_archived(guid):
     ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=guid)
     if ingest_doc:
-        app.data.update('ingest', ingest_doc.get('_id'), {'archived': utcnow()})
+        superdesk.get_resource_service('ingest').patch(ingest_doc.get('_id'), {'archived': utcnow()})
 
 
 class ArchiveIngestResource(Resource):
@@ -231,14 +231,14 @@ class ArchiveIngestService(BaseService):
             if not archived_doc:
                 doc.setdefault('_id', doc.get('guid'))
                 doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
-                app.data.insert('archive', [doc])
+                superdesk.get_resource_service('archive').post([doc])
 
             task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), doc.get('user'))
             doc['task_id'] = task.id
             if task.state not in ('PROGRESS', states.SUCCESS, states.FAILURE) and not task.result:
                 update_status(task.id, 0, 0)
 
-            app.data.update('archive', doc.get('guid'), {"task_id": task.id})
+            superdesk.get_resource_service('archive').patch(doc.get('guid'), {"task_id": task.id})
 
         return [doc.get('guid') for doc in docs]
 

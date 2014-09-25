@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'superdesk.upload',
     'superdesk.notification',
     'superdesk.activity',
+    'superdesk.comments',
     'superdesk.storage.amazon.import_from_amazon',
 
     'superdesk.io',
@@ -131,7 +132,7 @@ LDAP_USER_FILTER = "(&(objectCategory=user)(objectClass=user)(sAMAccountName={})
 LDAP_USER_ATTRIBUTES = {'givenName': 'first_name', 'sn': 'last_name', 'displayName': 'display_name',
                         'mail': 'email', 'ipPhone': 'phone'}
 
-if LDAP_SERVER != '':
+if LDAP_SERVER:
     INSTALLED_APPS.append('apps.auth.ldap')
 else:
     INSTALLED_APPS.append('apps.auth.db')

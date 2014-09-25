@@ -4,6 +4,7 @@ from flask import current_app as app, request
 import flask
 from apps.auth.errors import AuthRequiredError
 from superdesk.resource import Resource
+from superdesk import get_resource_service
 
 
 logger = logging.getLogger(__name__)
@@ -70,7 +71,7 @@ class SuperdeskTokenAuth(TokenAuth):
         perm_method = self.method_map[method.lower()]
         role_id = user.get('role')
         while role_id:
-            role = app.data.find_one('roles', _id=role_id, req=None) or {}
+            role = get_resource_service('roles').find_one(_id=role_id, req=None) or {}
             perm = role.get('permissions', {})
             if perm.get(resource, {}).get(perm_method, False):
                 return True
@@ -79,10 +80,10 @@ class SuperdeskTokenAuth(TokenAuth):
 
     def check_auth(self, token, allowed_roles, resource, method):
         """Check if given token is valid"""
-        auth_token = app.data.find_one('auth', token=token, req=None)
+        auth_token = get_resource_service('auth').find_one(token=token, req=None)
         if auth_token:
             user_id = str(auth_token['user'])
-            flask.g.user = app.data.find_one('users', req=None, _id=user_id)
+            flask.g.user = get_resource_service('users').find_one(req=None, _id=user_id)
             return self.check_permissions(resource, method, flask.g.user)
 
     def authorized(self, allowed_roles, resource, method):

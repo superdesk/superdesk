@@ -34,7 +34,7 @@ class CommentsService(BaseService):
         for doc in docs:
             sent_user = doc.get('user', None)
             user = g.user
-            if sent_user and sent_user != user.get('_id'):
+            if sent_user and sent_user != str(user.get('_id')):
                 payload = 'Commenting on behalf of someone else is prohibited.'
                 raise superdesk.SuperdeskError(payload=payload)
             doc['user'] = str(user.get('_id'))

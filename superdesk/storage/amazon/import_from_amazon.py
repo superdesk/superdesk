@@ -56,7 +56,7 @@ def import_file(key):
             return {'status': 'Failed to retrieve file: ' + key}
 
         data = [{'media': key, 'media_fetched': file, '_import': True}]
-        id = app.data.insert('archive_media', data)
+        id = superdesk.get_resource_service('archive_media').post(data)
         return {'status': 'Imported file %s to archive media with id= %s' % (key, id)}
     except Exception as ex:
         return {'status': ex}
@@ -92,7 +92,7 @@ def check_if_file_already_imported(key):
     query_filter = get_query_for_already_imported(key)
     req = ParsedRequest()
     req.args = {'filter': query_filter}
-    res = app.data.find('archive', req, None).count()
+    res = superdesk.get_resource_service('archive').get(req, None).count()
     return res > 0
 
 
