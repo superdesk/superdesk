@@ -33,7 +33,7 @@ Feature: Content Autosave
         Given empty "archive_autosave"
         Given "archive"
             """
-            [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
+            [{"_id": "item-1", "guid": "item-1", "headline": "test", "task": {"status": "done"}}]
             """
 
         When we post to "/archive_autosave"

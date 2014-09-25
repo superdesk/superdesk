@@ -35,11 +35,12 @@ class EveBackend():
 
     def update(self, endpoint_name, id, updates):
         backend = self._backend(endpoint_name)
+        doc = backend.find_one(endpoint_name, req=None, _id=id)
+        doc.update(updates)
         res = backend.update(endpoint_name, id, updates)
         search_backend = self._lookup_backend(endpoint_name)
         if search_backend is not None:
-            all_updates = backend.find_one(endpoint_name, req=None, _id=id)
-            search_backend.update(endpoint_name, id, all_updates)
+            search_backend.update(endpoint_name, id, doc)
         return res
 
     def replace(self, endpoint_name, id, document):

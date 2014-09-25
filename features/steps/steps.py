@@ -556,6 +556,14 @@ def then_item_is_locked(context, item_id):
     assert resp['lock_user'] is not None
 
 
+@then('item "{item_id}" is assigned')
+def then_item_is_assigned(context, item_id):
+    context.response = context.client.get('/archive/%s' % item_id, headers=context.headers)
+    assert_200(context.response)
+    resp = parse_json_response(context.response)
+    assert resp['task'].get('user', None) is not None, 'item is not assigned'
+
+
 @then('we get rendition "{name}" with mimetype "{mimetype}"')
 def step_impl_then_get_rendition_with_mimetype(context, name, mimetype):
     expect_json_contains(context.response, 'renditions')
