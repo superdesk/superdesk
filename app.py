@@ -82,10 +82,6 @@ def get_app(config=None):
 
     init_celery(app)
 
-    if app.debug:
-        # enable superdesk.comments app only for debug to test it with behave
-        app.config['INSTALLED_APPS'].append('superdesk.comments')
-
     for module_name in app.config['INSTALLED_APPS']:
         app_module = importlib.import_module(module_name)
         try:

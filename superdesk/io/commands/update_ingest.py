@@ -1,7 +1,6 @@
 import logging
 import superdesk
 from superdesk.utc import utcnow
-from flask import current_app as app
 from superdesk.notification import push_notification
 from superdesk.io import providers
 from superdesk.celery_app import celery
@@ -17,7 +16,7 @@ class UpdateIngest(superdesk.Command):
     )
 
     def run(self, provider_type=None):
-        for provider in app.data.find_all('ingest_providers'):
+        for provider in superdesk.get_resource_service('ingest_providers').get(req=None, lookup={}):
             if not provider_type or provider_type == provider.get('type'):
                 try:
                     update_provider.delay(provider)
@@ -45,14 +44,14 @@ def ingest_items(provider, items):
             item.setdefault('_created', utcnow())
             item.setdefault('_updated', utcnow())
             item['ingest_provider'] = str(provider['_id'])
-            old_item = app.data.find_one('ingest', guid=item['guid'], req=None)
+            old_item = superdesk.get_resource_service('ingest').find_one(guid=item['guid'], req=None)
             if old_item:
-                app.data.replace('ingest', item['guid'], item)
+                superdesk.get_resource_service('ingest').put(item['guid'], item)
             else:
                 ingested_count += 1
-                app.data.insert('ingest', [item])
+                superdesk.get_resource_service('ingest').post([item])
 
-        app.data.update('ingest_providers', provider['_id'], {
+        superdesk.get_resource_service('ingest_providers').patch(provider['_id'], {
             '_updated': start,
             'ingested_count': ingested_count
         })

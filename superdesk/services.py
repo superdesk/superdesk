@@ -1,4 +1,7 @@
 import logging
+from flask import current_app as app
+from eve.defaults import resolve_default_values
+from eve.utils import ParsedRequest
 
 
 log = logging.getLogger(__name__)
@@ -63,9 +66,13 @@ class BaseService():
         return res
 
     def get(self, req, lookup):
+        if req is None:
+            req = ParsedRequest()
         return self.backend.get(self.datasource, req=req, lookup=lookup)
 
     def post(self, docs, **kwargs):
+        for doc in docs:
+            resolve_default_values(doc, app.config['DOMAIN'][self.datasource]['defaults'])
         self.on_create(docs)
         ids = self.create(docs, **kwargs)
         self.on_created(docs)
@@ -79,17 +86,22 @@ class BaseService():
         return res
 
     def put(self, id, document):
+        resolve_default_values(document, app.config['DOMAIN'][self.datasource]['defaults'])
         original = self.find_one(req=None, _id=id)
         self.on_replace(document, original)
         res = self.replace(id, document)
         self.on_replaced(document, original)
         return res
 
-    def delete_action(self, lookup):
+    def delete_action(self, lookup=None):
+        if lookup is None:
+            lookup = {}
+
         if lookup:
             doc = self.find_one(req=None, **lookup)
             self.on_delete(doc)
         res = self.delete(lookup)
+
         if lookup and doc:
             self.on_deleted(doc)
         return res

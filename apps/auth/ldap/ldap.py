@@ -5,6 +5,7 @@ from superdesk.utc import utcnow
 from superdesk.services import BaseService
 import superdesk.utils as utils
 from flask import current_app as app
+import superdesk
 
 logger = logging.getLogger(__name__)
 
@@ -92,19 +93,18 @@ def authenticate(credentials, app):
     if len(user_data) == 0:
         raise NotFoundAuthError()
 
-    db = app.data
-    user = db.find_one('users', username=username, req=None)
+    user = superdesk.get_resource_service('users').find_one(username=username, req=None)
 
     if not user:
         user_data['username'] = username
         user_data[app.config['DATE_CREATED']] = user_data[app.config['LAST_UPDATED']] = utcnow()
 
-        db.insert('users', [user_data])
+        superdesk.get_resource_service('users').post([user_data])
     else:
         user_data[app.config['LAST_UPDATED']] = utcnow()
-        app.data.update('users', user.get('_id'), user_data)
+        superdesk.get_resource_service('users').patch(user.get('_id'), user_data)
 
-    user = db.find_one('users', username=username, req=None)
+    user = superdesk.get_resource_service('users').find_one(username=username, req=None)
     return user
 
 

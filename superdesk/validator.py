@@ -3,8 +3,8 @@ import re
 from bson import ObjectId
 from eve.io.mongo import Validator
 from eve.utils import config
-from flask import current_app as app
 from werkzeug.datastructures import FileStorage
+import superdesk
 
 
 ERROR_PATTERN = {'pattern': 1}
@@ -48,7 +48,7 @@ class SuperdeskValidator(Validator):
                 except:
                     query[config.ID_FIELD] = {'$ne': self._id}
 
-            if app.data.find_one(self.resource, req=None, **query):
+            if superdesk.get_resource_service(self.resource).find_one(req=None, **query):
                 self._error(field, ERROR_UNIQUE)
 
     def _validate_minlength(self, min_length, field, value):

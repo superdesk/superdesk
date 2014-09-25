@@ -3,7 +3,6 @@ import superdesk
 from eve.utils import ParsedRequest, date_to_str
 from datetime import timedelta
 from superdesk.utc import utcnow
-from flask import current_app as app
 from superdesk.notification import push_notification
 from superdesk.io.ingest_provider_model import DAYS_TO_KEEP
 
@@ -18,7 +17,7 @@ class RemoveExpiredContent(superdesk.Command):
     )
 
     def run(self, provider_type=None):
-        for provider in app.data.find_all('ingest_providers'):
+        for provider in superdesk.get_resource_service('ingest_providers').get(req=None, lookup={}):
             if not provider_type or provider_type == provider.get('type'):
                 try:
                     remove_expired_data(provider)
@@ -42,7 +41,7 @@ def remove_expired_data(provider):
     while items.count() > 0:
         for item in items:
             print('Removing item %s' % item['_id'])
-            app.data.remove('ingest', {'_id': str(item['_id'])})
+            superdesk.get_resource_service('ingest').delete_action({'_id': str(item['_id'])})
 
         items = get_expired_items(str(provider['_id']), expiration_date)
 
@@ -54,7 +53,7 @@ def get_expired_items(provider_id, expiration_date):
     req = ParsedRequest()
     req.max_results = 100
     req.args = {'filter': query_filter}
-    return app.data.find('ingest', req, None)
+    return superdesk.get_resource_service('ingest').get(req, None)
 
 
 def get_query_for_expired_items(provider_id, expiration_date):

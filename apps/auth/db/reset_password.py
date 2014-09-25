@@ -42,7 +42,7 @@ class ResetPasswordService(BaseService):
             raise superdesk.SuperdeskError(payload='Invalid request.')
 
     def initialize_reset_password(self, doc, email):
-        user = app.data.find_one('users', req=None, email=email)
+        user = superdesk.get_resource_service('users').find_one(req=None, email=email)
         if not user:
             logger.warning('User password reset triggered with invalid email: %s' % email)
             raise superdesk.SuperdeskError(status_code=201, message='Created')
@@ -64,7 +64,7 @@ class ResetPasswordService(BaseService):
             raise superdesk.SuperdeskError(payload='Invalid token received: %s' % key)
 
         user_id = reset_request['user']
-        user = app.data.find_one('users', req=None, _id=user_id)
+        user = superdesk.get_resource_service('users').find_one(req=None, _id=user_id)
         if not user:
             raise superdesk.SuperdeskError(payload='Invalid user.')
 
@@ -80,7 +80,7 @@ class ResetPasswordService(BaseService):
         updates = {}
         updates['password'] = get_hash(password, app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12))
         updates[app.config['LAST_UPDATED']] = utcnow()
-        app.data.update('users', user_id, updates=updates)
+        superdesk.get_resource_service('users').patch(user_id, updates=updates)
 
     def remove_private_data(self, doc):
         self.remove_field_from(doc, 'password')

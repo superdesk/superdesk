@@ -49,7 +49,6 @@ Feature: Tasks
     Scenario: Update task-desk asignment
         Given empty "desks"
         Given empty "tasks"
-        Given empty "users"
         When we post to "users"
         """
         {"username": "foo", "email": "foo@bar.com"}
@@ -93,7 +92,6 @@ Feature: Tasks
 
     @auth
     Scenario: Delete task
-        Given empty "users"
         Given empty "tasks"
         When we post to "users"
         """

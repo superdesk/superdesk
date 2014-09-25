@@ -119,11 +119,11 @@ class ArchiveService(BaseService):
         if(not all([item_id, old_version, last_version])):
             return None
 
-        old = app.data.find_one('archive_versions', req=None, _id_document=item_id, _version=old_version)
+        old = get_resource_service('archive_versions').find_one(req=None, _id_document=item_id, _version=old_version)
         if old is None:
             raise SuperdeskError(payload='Invalid version %s' % old_version)
 
-        curr = app.data.find_one('archive', req=None, _id=item_id)
+        curr = get_resource_service('archive').find_one(req=None, _id=item_id)
         if curr is None:
             raise SuperdeskError(payload='Invalid item id %s' % item_id)
 
@@ -161,7 +161,7 @@ class ArchiveSaveService(BaseService):
             raise SuperdeskError('Content is missing', 400)
         doc = docs[0]
 
-        item = app.data.find_one('archive', req=None, _id=doc['_id'])
+        item = get_resource_service('archive').find_one(req=None, _id=doc['_id'])
         if item is None:
             raise SuperdeskError('Invalid item identifier', 404)
 

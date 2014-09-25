@@ -5,7 +5,7 @@ import superdesk.tests as tests
 from behave import given, when, then  # @UnresolvedImport
 from flask import json
 from eve.methods.common import parse
-from superdesk import available_preferences
+from superdesk import available_preferences, get_resource_service
 
 from wooper.general import fail_and_print_body, apply_path,\
     parse_json_response
@@ -148,15 +148,15 @@ def apply_placeholders(context, text):
 @given('empty "{resource}"')
 def step_impl_given_empty(context, resource):
     with context.app.test_request_context():
-        context.app.data.remove(resource)
+        get_resource_service(resource).delete_action()
 
 
 @given('"{resource}"')
 def step_impl_given_(context, resource):
     with context.app.test_request_context():
-        context.app.data.remove(resource)
+        get_resource_service(resource).delete_action()
         items = [parse(item, resource) for item in json.loads(context.text)]
-        context.app.data.insert(resource, items)
+        get_resource_service(resource).post(items)
         context.data = items
         context.resource = resource
         for item in items:
@@ -166,10 +166,10 @@ def step_impl_given_(context, resource):
 @given('the "{resource}"')
 def step_impl_given_the(context, resource):
     with context.app.test_request_context():
-        context.app.data.remove(resource)
+        get_resource_service(resource).delete_action()
         orig_items = {}
         items = [parse(item, resource) for item in json.loads(context.text)]
-        context.app.data.insert(resource, items)
+        get_resource_service(resource).post(items)
         context.data = orig_items or items
         context.resource = resource
 
@@ -178,13 +178,11 @@ def step_impl_given_the(context, resource):
 def step_impl_given_resource_with_provider(context, provider):
     resource = 'ingest'
     with context.app.test_request_context():
-        context.app.data.remove(resource)
+        get_resource_service(resource).delete_action()
         items = [parse(item, resource) for item in json.loads(context.text)]
         for item in items:
             item['ingest_provider'] = context.providers[provider]
-        ev = getattr(context.app, 'on_insert_%s' % resource)
-        ev(items)
-        context.app.data.insert(resource, items)
+        get_resource_service(resource).post(items)
         context.data = items
         context.resource = resource
 
@@ -198,7 +196,7 @@ def step_impl_given_config(context):
 @given('we have "{role_name}" role')
 def step_impl_given_role(context, role_name):
     with context.app.test_request_context():
-        role = context.app.data.find_one('roles', name=role_name, req=None)
+        role = get_resource_service('roles').find_one(name=role_name, req=None)
         data = json.dumps({'role': str(role['_id'])})
     response = patch_current_user(context, data)
     assert_ok(response)
@@ -207,9 +205,9 @@ def step_impl_given_role(context, role_name):
 @given('role "{extending_name}" extends "{extended_name}"')
 def step_impl_given_role_extends(context, extending_name, extended_name):
     with context.app.test_request_context():
-        extended = context.app.data.find_one('roles', name=extended_name, req=None)
-        extending = context.app.data.find_one('roles', name=extending_name, req=None)
-        context.app.data.update('roles', extending['_id'], {'extends': extended['_id']})
+        extended = get_resource_service('roles').find_one(name=extended_name, req=None)
+        extending = get_resource_service('roles').find_one(name=extending_name, req=None)
+        get_resource_service('roles').patch(extending['_id'], {'extends': extended['_id']})
 
 
 @when('we post to auth')
@@ -221,7 +219,7 @@ def step_impl_when_auth(context):
 @when('we fetch from "{provider_name}" ingest "{guid}"')
 def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
     with context.app.test_request_context():
-        provider = context.app.data.find_one('ingest_providers', name=provider_name, req=None)
+        provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
         provider_service = context.provider_services[provider.get('type')]
         provider_service.provider = provider
         context.ingest_items(provider, provider_service.fetch_ingest(guid))
@@ -687,8 +685,8 @@ def we_can_fetch_a_file(context, url, mimetype):
 @then('we can delete that file')
 def step_impl_we_delete_file(context):
     url = '/upload/%s' % context.fetched_data['_id']
-    headers = [('Accept', 'application/json')]
-    headers = unique_headers(headers, context.headers)
+    context.headers.append(('Accept', 'application/json'))
+    headers = if_match(context, context.fetched_data.get('_etag'))
     response = context.client.delete(url, headers=headers)
     assert_200(response)
     response = context.client.get(url, headers=headers)

@@ -2,6 +2,7 @@
 import os
 from datetime import timedelta
 from superdesk.tests import TestCase
+import superdesk
 from superdesk.utc import utcnow
 from .reuters_token import get_token
 from .reuters import PROVIDER
@@ -36,7 +37,7 @@ class GetTokenTestCase(TestCase):
     def test_fetch_token(self):
         with self.app.test_request_context():
             provider = setup_provider('abc', 24)
-            self.app.data.insert('ingest_providers', [provider])
+            superdesk.get_resource_service('ingest_providers').post([provider])
             self.assertTrue(provider.get('_id'))
             provider['config'] = {}
             provider['config']['username'] = os.environ.get('REUTERS_USERNAME', '')
@@ -46,5 +47,5 @@ class GetTokenTestCase(TestCase):
                 self.assertNotEquals('', token)
                 self.assertEquals(token, provider['token']['token'])
 
-                dbprovider = self.app.data.find_one('ingest_providers', type=PROVIDER, req=None)
+                dbprovider = superdesk.get_resource_service('ingest_providers').find_one(type=PROVIDER, req=None)
                 self.assertEquals(token, dbprovider['token']['token'])

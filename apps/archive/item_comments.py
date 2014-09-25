@@ -1,5 +1,4 @@
 import superdesk
-from flask import current_app as app
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.comments import CommentsService, CommentsResource, comments_schema
@@ -29,7 +28,7 @@ class ItemCommentsSubResource(Resource):
 class ItemCommentsSubService(BaseService):
 
     def check_item_valid(self, item_id):
-        item = app.data.find_one('archive', req=None, _id=item_id)
+        item = superdesk.get_resource_service('archive').find_one(req=None, _id=item_id)
         if not item:
             msg = 'Invalid content item ID provided: %s' % item_id
             raise superdesk.SuperdeskError(payload=msg)
