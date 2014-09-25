@@ -135,9 +135,19 @@ class UsersResource(Resource):
     }
 
 
-class UsersService(BaseService):
-    readonly_fields = ['username', 'display_name', 'password', 'email',
-                       'phone', 'first_name', 'last_name']
+def add_created_user_activity(user_docs):
+    for user_doc in user_docs:
+        add_activity('created user {{user}}', user=user_doc.get('display_name', user_doc.get('username')))
+
+
+def add_deleted_user_activity(user_doc):
+    add_activity('removed user {{user}}', user=user_doc.get('display_name', user_doc.get('username')))
+
+
+class DBUsersService(BaseService):
+    """
+    Service class for UsersResource and should be used when AD is inactive.
+    """
 
     def on_create(self, docs):
         for doc in docs:
@@ -145,13 +155,25 @@ class UsersService(BaseService):
                 doc['password'] = get_hash(doc.get('password'), app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12))
 
     def on_created(self, docs):
-        for doc in docs:
-            add_activity('created user {{user}}', user=doc.get('display_name', doc.get('username')))
+        add_created_user_activity(docs)
 
     def on_deleted(self, doc):
-        add_activity('removed user {{user}}', user=doc.get('display_name', doc.get('username')))
+        add_deleted_user_activity(doc)
+
+
+class ADUsersService(BaseService):
+    """
+    Service class for UsersResource and should be used when AD is active.
+    """
+
+    readonly_fields = ['username', 'display_name', 'password', 'email', 'phone', 'first_name', 'last_name']
+
+    def on_created(self, docs):
+        add_created_user_activity(docs)
 
     def on_fetched(self, doc):
-        if 'LDAP_SERVER' in os.environ:
-            for document in doc['_items']:
-                document['readonly'] = UsersService.readonly_fields
+        for document in doc['_items']:
+            document['readonly'] = ADUsersService.readonly_fields
+
+    def on_deleted(self, doc):
+        add_deleted_user_activity(doc)
