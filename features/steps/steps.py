@@ -493,40 +493,31 @@ def step_impl_then_get_given_file_meta(context, filename):
         }
     elif filename == 'green.ogg':
         metadata = {
-            'producer': 'Xiph.Org libVorbis I 20050304',
+            'producer': 'Lavf54.59.103',
             'music_genre': 'New Age',
-            'sample_rate': '48000',
+            'sample_rate': '44100',
             'artist': 'Maxime Abbey',
-            'length': 12996555,
-            'bit_rate': '224000',
+            'length': 368058,
+            'bit_rate': '160000',
             'title': 'Green Hills',
             'mime_type': 'audio/vorbis',
             'format_version': 'Vorbis version 0',
-            'comment': '"Green Hills"\\nVersion 2.0 (2007-05-31)\\nCopyright (C) '
-                       '2002-2007 Maxime Abbey\\nPlaying Time: '
-                       '08:14\\n--------------------------\\nWebsite: '
-                       'http://www.arachnosoft.com\\nE-Mail: '
-                       'contact@arachnosoft.com\\n--------------------------\\nFreely '
-                       'distributed under copyright for personal and non-commercial '
-                       'use. Visit http(...)',
             'compression': 'Vorbis',
-            'creation_date': '2007-01-01T00:00:00+00:00',
-            'duration': '0:08:14.728000',
+            'duration': '0:00:20.088163',
             'endian': 'Little endian',
-            'music_composer': 'Maxime Abbey',
             'nb_channel': '2'
         }
     elif filename == 'this_week_nasa.mp4':
         metadata = {
             'mime_type': 'video/mp4',
-            'creation_date': '2014-06-13T19:26:17+00:00',
-            'duration': '0:03:19.733066',
+            'creation_date': '1904-01-01T00:00:00+00:00',
+            'duration': '0:00:10.224000',
             'width': '480',
-            'length': 24757257,
+            'length': 877869,
             'comment': 'User volume: 100.0%',
             'height': '270',
             'endian': 'Big endian',
-            'last_modification': '2014-06-13T19:26:18+00:00'
+            'last_modification': '1904-01-01T00:00:00+00:00'
         }
     else:
         raise NotImplementedError("No metadata for file '{}'.".format(filename))
