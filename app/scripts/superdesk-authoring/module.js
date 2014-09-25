@@ -93,6 +93,11 @@ define([
         $scope.saving = false;
         $scope.saved = false;
 
+        $scope.sendTo = false;
+        $scope.closeSendTo = function() {
+            $scope.sendTo = false;
+        };
+
         function setupNewItem() {
             if ($routeParams._id) {
                 fetchNewItem().then(function() {
