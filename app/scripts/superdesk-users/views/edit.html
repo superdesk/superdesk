@@ -11,8 +11,21 @@
 
 <section class="main-section user-profile-page">
 	<div class="form-content">
-		<div sd-user-details-pane>
-			<div sd-user-edit data-user="user"></div>
+		<div class="user-details-pane" ng-init="overview = true">
+			<header>
+		        <ul class="nav nav-tabs">
+		            <li ng-class="{active: overview}" ng-click="overview = true">
+		                <button translate>Overview</button>
+		            </li>
+		            <li ng-class="{active: !overview}" ng-click="overview = false" ng-show="profile">
+		                <button translate>Preferences</button>
+		            </li>
+		        </ul>
+		    </header>
+		    <div class="content">
+		    	<div sd-user-edit data-user="user" ng-if="overview"></div>
+		    	<div sd-user-preferences ng-if="!overview"></div>
+		    </div>
 		</div>
 	</div>
 	<!-- 

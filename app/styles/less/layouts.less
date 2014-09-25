@@ -88,6 +88,21 @@ a:hover {
 
 // Preview layout
 // ------------------------------------
+.action-bar { //overhidding the header of preview layout
+	position: absolute;
+	top: -96px;
+	left: 0; right: 0;
+	height: 48px;
+	background: #fff;
+	z-index: 1;
+	.border-box();
+	padding: 10px;
+	.transition(all ease 0.2s);
+	border-bottom: 1px solid #dfdfdf;
+	&.show {
+		top: -48px;
+	}
+}
 
 .preview-layout {
 	position: absolute;
@@ -156,21 +171,6 @@ a:hover {
 			.additional-info {
 				border-bottom: 1px solid #dfdfdf;
 				padding: 10px 20px;
-			}
-		}
-		.action-bar { //overhidding the header
-			position: absolute;
-			top: -96px;
-			left: 0; right: 0;
-			height: 48px;
-			background: #fff;
-			z-index: 1;
-			.border-box();
-			padding: 10px;
-			.transition(all ease 0.2s);
-			border-bottom: 1px solid #dfdfdf;
-			&.show {
-				top: -48px;
 			}
 		}
 	}

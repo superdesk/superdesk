@@ -42,25 +42,35 @@ define([
                 }
             });
         }])
-        .service('desks', ['$q', 'api', 'storage', function($q, api, storage) {
-            return {
+        .factory('desks', ['$q', 'api', 'storage', 'userList', function($q, api, storage, userList) {
+            var desksService = {
                 desks: null,
                 users: null,
+                deskLookup: {},
+                userLookup: {},
                 deskMembers: {},
                 fetchDesks: function() {
                     var self = this;
 
-                    return api.desks.query()
+                    return api.desks.query({max_results: 500})
                     .then(function(result) {
                         self.desks = result;
+                        self.deskLookup = {};
+                        _.each(result._items, function(desk) {
+                            self.deskLookup[desk._id] = desk;
+                        });
                     });
                 },
                 fetchUsers: function() {
                     var self = this;
 
-                    return api.users.query({max_results: 500})
+                    return userList.get(null, 1, 500)
                     .then(function(result) {
                         self.users = result;
+                        self.userLookup = {};
+                        _.each(result._items, function(user) {
+                            self.userLookup[user._id] = user;
+                        });
                     });
                 },
                 generateDeskMembers: function() {
@@ -93,18 +103,32 @@ define([
                 setCurrentDesk: function(desk) {
                     this.setCurrentDeskId(desk ? desk._id : null);
                 },
-                initialize: function() {
+                getCurrentDesk: function(desk) {
+                    return this.deskLookup[this.getCurrentDeskId()];
+                },
+                initialize: function(force) {
                     var self = this;
 
-                    return this.fetchDesks()
-                    .then(function() {
-                        return self.fetchUsers();
-                    })
-                    .then(function() {
-                        return self.generateDeskMembers();
-                    });
+                    var p = $q.when();
+                    if (!this.desks || force) {
+                        p = p.then(function() {
+                            return self.fetchDesks();
+                        });
+                    }
+                    if (!this.users || force) {
+                        p = p.then(function() {
+                            return self.fetchUsers();
+                        });
+                    }
+                    if (_.isEmpty(this.deskMembers) || force) {
+                        p = p.then(function() {
+                            return self.generateDeskMembers();
+                        });
+                    }
+                    return p;
                 }
             };
+            return desksService;
         }]);
 
     return app;

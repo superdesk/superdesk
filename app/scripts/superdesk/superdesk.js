@@ -18,7 +18,6 @@ define([
     './elastic/elastic',
     './error/error',
     './list/list',
-    './menu/menu',
     './notification/notification',
     './notify/notify',
     './upload/upload',
@@ -47,11 +46,12 @@ define([
         require('./elastic/elastic').name,
         require('./error/error').name,
         require('./list/list').name,
-        require('./menu/menu').name,
         require('./notify/notify').name,
         require('./notification/notification').name,
         require('./upload/upload').name,
-        require('./ui/ui').name
+        require('./ui/ui').name,
+
+        'superdesk.menu'
     ];
 
     modules.push(require('./filters').name);

@@ -459,6 +459,11 @@
 	height: 40px;
 }
 
+.avatar.big {
+	width: 64px;
+	height: 64px;
+}
+
 .avatar.unassigned {
 	background-color: #bababa;
 }
@@ -588,6 +593,13 @@
 				margin-top: -3px;
 				display: block;
 			}
+			a {
+				color: @sd-blue;
+				&:hover {
+					text-decoration: none;
+					color: lighten(@sd-blue, 15%);
+				}
+			}
 		}
 		&.unread {
 			border-color: #545454;
@@ -611,6 +623,9 @@
 				} 
 			}
 		}
+		.info {
+			color: #e0e0e0;
+		}
 	}
 
 	//bright version
@@ -626,6 +641,10 @@
 				.date, .date time {
 
 				}
+			}
+			&.active {
+				border-color: #999;
+				.box-shadow(0 1px 2px 0 #666);
 			}
 		}
 	}
@@ -827,6 +846,51 @@
 	}
 }
 
+.users-list-embed {
+	> li {
+		height: 32px;
+		line-height: 32px;
+		margin-right: 5px;
+		.avatar {
+			margin: 4px 10px 4px 4px;
+		}
+		&:hover, &.active {
+			cursor: pointer;
+			color: #fff;
+		}
+		&:hover {
+			background: lighten(@sd-blue, 10%);
+		}
+		&:active {
+			background: lighten(@sd-blue, 15%);
+		}
+		&.active {
+			background: @sd-blue;
+		}
+	}
+}
+
+// Card list
+// ---------------------------------------------
+.mentio-menu {
+	padding: 5px;
+	border: 1px solid #ddd;
+	max-height: 126px;
+	z-index: 9999 !important;
+	overflow: auto;
+	background: #fff;
+	.border-radius(3px);
+	.box-shadow(0 0 2px 0 rgba(0,0,0,0.2));
+	width: 190px;
+	bottom: 5px;
+	ul {
+		li {
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+	}
+}
 
 // Card list
 // ---------------------------------------------

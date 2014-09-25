@@ -66,6 +66,8 @@ define([
     AuthoringController.$inject = [
         '$scope',
         '$routeParams',
+        '$interval',
+        '$timeout',
         'superdesk',
         'api',
         'workqueue',
@@ -75,8 +77,10 @@ define([
         'lock'
     ];
 
-    function AuthoringController($scope, $routeParams, superdesk, api, workqueue, notify, gettext, ConfirmDirty, lock) {
+    function AuthoringController($scope, $routeParams, $interval, $timeout, superdesk, api,
+        workqueue, notify, gettext, ConfirmDirty, lock) {
         var _item,
+            _autosaveFlag,
             confirm = new ConfirmDirty($scope);
 
         $scope.item = null;
@@ -85,6 +89,8 @@ define([
         $scope.editable = false;
         $scope.currentVersion = null;
         setupNewItem();
+        $scope.saving = false;
+        $scope.saved = false;
 
         function setupNewItem() {
             if ($routeParams._id) {
@@ -102,7 +108,7 @@ define([
                 return false;
             }
 
-            if (!item._latest_version) {
+            if (!angular.isDefined(item._latest_version)) {
                 return true;
             }
 
@@ -118,6 +124,13 @@ define([
             return dirty;
         }
 
+        function stopAutosaving() {
+            if (angular.isDefined(_autosaveFlag)) {
+                $interval.cancel(_autosaveFlag);
+                _autosaveFlag = undefined;
+            }
+        }
+
         $scope.$watchCollection('item', function(item) {
             if (!item) {
                 $scope.dirty = $scope.editable = false;
@@ -126,16 +139,39 @@ define([
 
             $scope.editable = isEditable(item);
             $scope.dirty = isDirty(item);
+
+            if ($scope.dirty) {
+                if ($scope.editable && !angular.isDefined(_autosaveFlag)) {
+                    _autosaveFlag = $interval($scope.update, 5000);
+                }
+            } else {
+                stopAutosaving();
+            }
         });
 
         $scope.isLocked = function(item) {
             return lock.isLocked(item);
         };
 
+        $scope.articleSwitch = function() {
+            $scope.update();
+            stopAutosaving();
+        };
+
         $scope.update = function() {
             if ($scope.dirty && $scope.editable) {
+                workqueue.update($scope.item); //do local update
+                $scope.saving = true;
                 api('autosave', $scope.item).save({}, $scope.item).then(function() {
-                    workqueue.update($scope.item);
+                    $scope.saving = false;
+                    $scope.saved = true;
+                    $timeout(function() {
+                        $scope.saved = false;
+                    }, 2000);
+                    console.log('success autosave');
+                }, function(response) {
+                    console.log('error on autosave');
+                    console.log(response);
                 });
             }
         };
@@ -305,6 +341,20 @@ define([
         };
     }
 
+    function DashboardCard() {
+        return {
+            link: function(scope, elem) {
+                var p = elem.parent();
+                var maxW = p.parent().width();
+                var marginW = parseInt(elem.css('margin-left'), 10) + parseInt(elem.css('margin-right'), 10);
+                var newW = p.outerWidth() + elem.outerWidth() + marginW;
+                if (newW < maxW) {
+                    p.outerWidth(newW);
+                }
+            }
+        };
+    }
+
     return angular.module('superdesk.authoring', [
             'superdesk.editor',
             'superdesk.authoring.widgets',
@@ -317,6 +367,7 @@ define([
     	.service('workqueue', WorkqueueService)
         .factory('ConfirmDirty', ConfirmDirtyFactory)
         .directive('sdWorkqueue', WorkqueueListDirective)
+        .directive('sdDashboardCard', DashboardCard)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk

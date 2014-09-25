@@ -355,6 +355,10 @@
 			}
 		}
 
+		.user-select {
+			height: 196px;
+		}
+
 		form {
 			margin: 0;
 			label {
@@ -375,15 +379,11 @@
 				max-height: 136px;
 				overflow: auto;
 				li {
-					height: 32px;
-					line-height: 32px;
-					margin-right: 5px;
-					.avatar {
-						margin: 4px 10px 4px 4px;
-					}
-					&:hover {
-						background: @sd-hover;
-						cursor: pointer;
+					position: relative;
+					i {
+						position: absolute;
+						right: 9px;
+						top: 9px;
 					}
 				}
 			}
@@ -396,6 +396,15 @@
 			margin: 0 -10px -10px;
 			.clearfix();
 			.border-radius(0 0 5px 5px);
+
+			.clear {
+				color: @sd-blue;
+				line-height: 26px;
+				&:hover {
+					color: darken(@sd-blue, 10%);
+					cursor: pointer;
+				}
+			}
 		}
 
 	}

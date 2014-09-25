@@ -1,12 +1,12 @@
-define(['angular', 'require', 'lodash'], function(angular, require, _) {
+(function() {
     'use strict';
 
-    return angular.module('superdesk.menu', [])
+    angular.module('superdesk.menu', ['superdesk.menu.notifications'])
 
         // set flags for other directives
         .directive('sdSuperdeskView', function() {
             return {
-                templateUrl: require.toUrl('./views/superdesk-view.html'),
+                templateUrl: 'scripts/superdesk/menu/views/superdesk-view.html',
                 controller: function() {
                     this.flags = {
                         menu: false,
@@ -19,11 +19,11 @@ define(['angular', 'require', 'lodash'], function(angular, require, _) {
             };
         })
 
-        .directive('sdMenuWrapper', ['$route', 'superdesk', 'betaService',
-        function($route, superdesk, betaService) {
+        .directive('sdMenuWrapper', ['$route', 'superdesk', 'betaService', 'userNotifications',
+        function($route, superdesk, betaService, userNotifications) {
             return {
                 require: '^sdSuperdeskView',
-                templateUrl: require.toUrl('./views/menu.html'),
+                templateUrl: 'scripts/superdesk/menu/views/menu.html',
                 link: function(scope, elem, attrs, ctrl) {
 
                     scope.currentRoute = null;
@@ -59,17 +59,9 @@ define(['angular', 'require', 'lodash'], function(angular, require, _) {
                         scope.currentRoute = route || null;
                         setActiveMenuItem(scope.currentRoute);
                     });
-                }
-            };
-        }])
 
-        .directive('sdNotifications', function() {
-            return {
-                require: '^sdSuperdeskView',
-                templateUrl: require.toUrl('./views/notifications.html'),
-                link: function(scope, elem, attrs, ctrl) {
-                    scope.flags = ctrl.flags;
+                    scope.notifications = userNotifications;
                 }
             };
-        });
-});
+        }]);
+})();

@@ -222,58 +222,39 @@ define([
     	};
     }
 
-    AssigneeBoxDirective.$inject = ['api', 'desks'];
-    function AssigneeBoxDirective(api, desks) {
+    AssigneeBoxDirective.$inject = ['api', 'desks', 'userList'];
+    function AssigneeBoxDirective(api, desks, userList) {
         return {
             templateUrl: 'scripts/superdesk-planning/views/assignee-box.html',
             scope: {
-                coverage: '=',
-                assignee: '='
+                userId: '=',
+                deskId: '='
             },
             link: function(scope, elem) {
                 scope.open = false;
-                scope.users = null;
-                scope.desks = null;
+                scope.desksService = desks;
+                scope.desk = null;
+                scope.user = null;
                 scope.search = null;
 
-                scope.$watch('coverage', function() {
-                    fetchUsers();
-                    fetchDesks();
+                scope.$watch('deskId', function(deskId) {
+                    scope.desk = null;
+                    desks.initialize().then(function() {
+                        scope.desk = deskId ? desks.deskLookup[deskId] : desks.getCurrentDesk();
+                    });
                 });
 
-                scope.$watch('search', function() {
-                    fetchUsers();
+                scope.$watch('userId', function(userId) {
+                    scope.user = null;
+                    desks.initialize().then(function() {
+                        scope.user = desks.userLookup[userId];
+                    });
                 });
 
-                scope.selectUser = function(user) {
-                    scope.coverage.assigned_user = user._id;
+                scope.assign = function() {
+                    scope.deskId = scope.desk._id;
+                    scope.userId = scope.user ? scope.user._id : null;
                     scope.open = false;
-                };
-
-                var fetchUsers = function() {
-                    var criteria = {};
-                    if (scope.search) {
-                        criteria.where = JSON.stringify({
-                            '$or': [
-                                {username: {'$regex': scope.search}},
-                                {first_name: {'$regex': scope.search}},
-                                {last_name: {'$regex': scope.search}},
-                                {display_name: {'$regex': scope.search}},
-                                {email: {'$regex': scope.search}}
-                            ]
-                        });
-                    }
-                    api.users.query(criteria)
-                    .then(function(result) {
-                        scope.users = result;
-                    });
-                };
-
-                var fetchDesks = function() {
-                    api.desks.query()
-                    .then(function(result) {
-                        scope.desks = result;
-                    });
                 };
             }
         };

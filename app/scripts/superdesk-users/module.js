@@ -3,6 +3,7 @@ define([
     'require',
     './providers',
     './users-service',
+    './userlist-service',
     './services/profile',
     './controllers/list',
     './controllers/edit',
@@ -100,7 +101,6 @@ define([
                     templateUrl: require.toUrl('./views/edit.html'),
                     resolve: {
                         user: ['session', 'api', function(session, api) {
-                            console.log(session.identity._links);
                             return api.users.getByUrl(session.identity._links.self.href);
                         }]
                     }
@@ -150,7 +150,8 @@ define([
                 backend: {rel: 'activity'},
                 service: require('./services/profile')
             });
-        }]);
+        }])
+        .factory('userList', require('./userlist-service'));
 
     return app;
 });
