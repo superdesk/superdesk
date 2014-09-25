@@ -64,5 +64,21 @@ define([
             topTemplateUrl: require.toUrl('./views/workspace-topnav.html'),
             beta: true
         });
+        superdesk.activity('pick.task', {
+            label: gettext('Pick task'),
+            icon: 'pencil',
+            controller: ['api', 'data', 'session', 'superdesk', 'workqueue',
+                function(api, data, session, superdesk, workqueue) {
+                    api('tasks').save(
+                        _.clone(data.item),
+                        {task: _.extend({user: session.identity._id}, data.item.task)})
+                    .then(function(result) {
+                        workqueue.add(result);
+                        superdesk.intent('author', 'article', result);
+                    });
+                }
+            ],
+            filters: [{action: superdesk.ACTION_EDIT, type: 'task'}]
+        });
     }]);
 });

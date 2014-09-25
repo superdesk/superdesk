@@ -857,6 +857,14 @@
 		&:hover, &.active {
 			cursor: pointer;
 			color: #fff;
+		}
+		&:hover {
+			background: lighten(@sd-blue, 10%);
+		}
+		&:active {
+			background: lighten(@sd-blue, 15%);
+		}
+		&.active {
 			background: @sd-blue;
 		}
 	}

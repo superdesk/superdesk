@@ -205,6 +205,52 @@ define([
                 }
             };
         }])
+        .directive('sdUserPreferences', ['api', 'session', function(api, session) {
+            return {
+                templateUrl: 'scripts/superdesk-users/views/user-preferences.html',
+                link: function(scope, elem, attrs) {
+
+                    scope.dirty = false;
+                    var orig;
+
+                    api('preferences').getById(session.identity._id)
+                    .then(function(result) {
+                        orig = result;
+                        buildPreferences(orig);
+                    });
+
+                    scope.cancel = function() {
+                        scope.userPrefs.$setPristine();
+                        buildPreferences(orig);
+                    };
+
+                    scope.save = function() {
+                        api('preferences', session.identity._id)
+                        .save(orig, patch())
+                        .then(function(result) {
+                            scope.cancel();
+                        }, function(response) {
+                            console.log(response);
+                        });
+                    };
+
+                    function buildPreferences(struct) {
+                        scope.preferences = {};
+                        _.each(struct.preferences, function(val, key) {
+                            scope.preferences[key] = _.create(val);
+                        });
+                    }
+
+                    function patch() {
+                        var p = {preferences: {}};
+                        _.each(orig.preferences, function(val, key) {
+                            p.preferences[key] = _.extend(val, scope.preferences[key]);
+                        });
+                        return p;
+                    }
+                }
+            };
+        }])
         .directive('sdChangePassword', ['api', 'notify', 'gettext', function(api, notify, gettext) {
             return {
                 link: function(scope, element) {

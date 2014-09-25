@@ -355,6 +355,10 @@
 			}
 		}
 
+		.user-select {
+			height: 196px;
+		}
+
 		form {
 			margin: 0;
 			label {
@@ -374,6 +378,14 @@
 			ul {
 				max-height: 136px;
 				overflow: auto;
+				li {
+					position: relative;
+					i {
+						position: absolute;
+						right: 9px;
+						top: 9px;
+					}
+				}
 			}
 		}
 
@@ -384,6 +396,15 @@
 			margin: 0 -10px -10px;
 			.clearfix();
 			.border-radius(0 0 5px 5px);
+
+			.clear {
+				color: @sd-blue;
+				line-height: 26px;
+				&:hover {
+					color: darken(@sd-blue, 10%);
+					cursor: pointer;
+				}
+			}
 		}
 
 	}
