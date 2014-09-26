@@ -4,8 +4,10 @@ define(['angular', 'lodash'], function(angular, _) {
     return ['$scope', 'gettext', 'notify', 'api', 'desks', 'WizardHandler',
         function($scope, gettext, notify, api, desks, WizardHandler) {
 
-            $scope.currentStep = null;
             $scope.modalActive = false;
+            $scope.step = {
+                current: null
+            };
             $scope.desk = {
                 edit: null
             };
@@ -24,7 +26,7 @@ define(['angular', 'lodash'], function(angular, _) {
 
             $scope.cancel = function() {
                 $scope.modalActive = false;
-                $scope.currentStep = null;
+                $scope.step.current = null;
                 $scope.desk.edit = null;
             };
 
