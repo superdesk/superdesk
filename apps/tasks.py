@@ -1,7 +1,7 @@
 from superdesk.resource import Resource
 from superdesk.notification import push_notification
 from superdesk.utc import utcnow
-from apps.archive.common import base_schema
+from apps.archive.common import base_schema, on_create_item, item_url
 from superdesk.services import BaseService
 import superdesk
 
@@ -19,6 +19,7 @@ class TaskResource(Resource):
         'filter': {'task': {'$exists': True}},
         'elastic_filter': {'exists': {'field': 'task'}}  # eve-elastic specific filter
     }
+    item_url = item_url
     schema = {
         'slugline': base_schema['slugline'],
         'description_text': base_schema['description_text'],
@@ -54,6 +55,7 @@ class TasksService(BaseService):
             task.setdefault('finished_at', utcnow())
 
     def on_create(self, docs):
+        on_create_item(docs)
         for doc in docs:
             self.update_times(doc)
 
