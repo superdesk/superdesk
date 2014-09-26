@@ -9,6 +9,9 @@ desks_schema = {
         'unique': True,
         'required': True,
     },
+    'description': {
+        'type': 'string'
+    },
     'members': {
         'type': 'list',
         'schema': {
@@ -17,13 +20,14 @@ desks_schema = {
                 'user': Resource.rel('users', True)
             }
         }
-    }
+    },
+    'incoming_stage': Resource.rel('stages', True)
 }
 
 
 def init_app(app):
     endpoint_name = 'desks'
-    service = BaseService(endpoint_name, backend=superdesk.get_backend())
+    service = DesksService(endpoint_name, backend=superdesk.get_backend())
     DesksResource(endpoint_name, app=app, service=service)
     endpoint_name = 'user_desks'
     service = UserDesksService(endpoint_name, backend=superdesk.get_backend())
@@ -33,6 +37,19 @@ def init_app(app):
 class DesksResource(Resource):
     schema = desks_schema
     datasource = {'default_sort': [('created', -1)]}
+
+
+class DesksService(BaseService):
+
+    def create(self, docs, **kwargs):
+        for doc in docs:
+            if not doc.get('incoming_stage', None):
+                stage = {'name': '<to be defined>', 'default_incoming': True}
+                superdesk.get_resource_service('stages').post([stage])
+                doc['incoming_stage'] = stage.get('_id')
+                super().create([doc], **kwargs)
+                superdesk.get_resource_service('stages').patch(doc['incoming_stage'], {'desk': doc['_id']})
+        return [doc['_id'] for doc in docs]
 
 
 class UserDesksResource(Resource):

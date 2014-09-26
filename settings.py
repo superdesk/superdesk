@@ -71,6 +71,7 @@ INSTALLED_APPS = [
     'superdesk.io.afp',
 
     'apps.archive',
+    'apps.stages',
     'apps.desks',
     'apps.planning',
     'apps.coverages',

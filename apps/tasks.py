@@ -38,6 +38,7 @@ class TaskResource(Resource):
                 'finished_at': {'type': 'datetime'},
                 'user': Resource.rel('users', True),
                 'desk': Resource.rel('desks', True),
+                'stage': Resource.rel('stages', True)
             }
         }
     }
@@ -54,10 +55,19 @@ class TasksService(BaseService):
         if status == 'done':
             task.setdefault('finished_at', utcnow())
 
+    def update_stage(self, doc):
+        task = doc.get('task', {})
+        desk_id = task.get('desk', None)
+        stage_id = task.get('stage', None)
+        if desk_id and not stage_id:
+            desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
+            task['stage'] = desk['incoming_stage']
+
     def on_create(self, docs):
         on_create_item(docs)
         for doc in docs:
             self.update_times(doc)
+            self.update_stage(doc)
 
     def on_update(self, updates, original):
         self.update_times(updates)
