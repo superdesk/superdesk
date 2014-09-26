@@ -111,10 +111,15 @@ class UsersResource(Resource):
             'type': 'string',
         },
         'avatar': Resource.rel('upload', True),
-        'role': Resource.rel('roles', True),
+        'roles': {
+            'type': 'list'
+        },
         'preferences': {'type': 'dict'},
         'workspace': {
             'type': 'dict'
+        },
+        'is_admin': {
+            'type': 'boolean'
         },
     }
 
