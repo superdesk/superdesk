@@ -69,14 +69,19 @@ class SuperdeskTokenAuth(TokenAuth):
             return True
 
         perm_method = self.method_map[method.lower()]
-        role_id = user.get('role')
-        while role_id:
-            role = get_resource_service('roles').find_one(_id=role_id, req=None) or {}
-            perm = role.get('permissions', {})
-            if perm.get(resource, {}).get(perm_method, False):
-                return True
-            role_id = role.get('extends')
-        return not user.get('role')  # allow if there is no role
+        # Get the list of roles belonging to this user
+        roles = user.get('roles')
+        if roles is not None:
+            for role_id in roles:
+                # check the permissions for each role
+                while role_id:
+                    role = app.data.find_one('roles', _id=role_id, req=None) or {}
+                    perm = role.get('permissions', {})
+                    if perm.get(resource, {}).get(perm_method, False):
+                        return True
+                    role_id = role.get('extends')
+        return not user.get('roles')  # allow if there is no role
+
 
     def check_auth(self, token, allowed_roles, resource, method):
         """Check if given token is valid"""
