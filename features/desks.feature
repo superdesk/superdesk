@@ -23,6 +23,12 @@ Feature: Desks
             """
             {"_items": [{"name": "Sports Desk", "members": [{"user": "#USERS_ID#"}]}]}
             """
+        When we get the default incoming stage
+        And we delete latest
+        Then we get error 400
+        """
+        {"_status": "ERR", "_message": "Deleting default stages is not allowed."}
+        """
 
 	@auth
 	Scenario: Update desk
