@@ -53,6 +53,7 @@ class UploadResource(Resource):
             'filemeta': 1,
             '_created': 1,
             '_updated': 1,
+            '_etag': 1,
             'media': 1,
             'renditions': 1,
         }

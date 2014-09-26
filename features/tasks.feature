@@ -30,7 +30,23 @@ Feature: Tasks
 	    """
 
     @auth
-    Scenario: Update task
+    Scenario: Update task description
+        Given "tasks"
+        """
+        [{"slugline": "testtask", "task": {"status": "in-progress"}}]
+        """
+        When we patch given
+        """
+        {"slugline": "testtask changed"}
+        """
+        And we get "/tasks"
+        Then we get list with 1 items
+	    """
+        {"_items": [{"slugline": "testtask changed"}]}
+	    """
+    
+    @auth
+    Scenario: Update multiple task description
         Given "tasks"
         """
         [{"slugline": "testtask", "task": {"status": "in-progress"}}]
