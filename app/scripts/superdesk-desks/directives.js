@@ -44,7 +44,7 @@ define([
 
                 var _desk = null;
 
-                scope.$watch('currentStep', function(step) {
+                scope.$watch('step.current', function(step) {
                     if (step === 'general') {
                         scope.edit(scope.desk.edit);
                         scope.message = null;
@@ -72,13 +72,13 @@ define([
             }
         };
     }])
-    .directive('sdDeskeditStages', ['gettext', 'api', 'WizardHandler', 'desks',
-        function(gettext, api, WizardHandler, desks) {
+    .directive('sdDeskeditStages', ['gettext', 'api', 'WizardHandler',
+        function(gettext, api, WizardHandler) {
         return {
 
             link: function(scope, elem, attrs) {
 
-                scope.$watch('currentStep', function(step, previous) {
+                scope.$watch('step.current', function(step, previous) {
                     if (step === 'stages') {
 
                         scope.stages = [];
@@ -104,8 +104,8 @@ define([
                     WizardHandler.wizard().previous();
                 };
 
-                scope.done = function() {
-                    WizardHandler.wizard().finish();
+                scope.next = function() {
+                    WizardHandler.wizard().next();
                 };
 
                 scope.saveOnEnter = function($event) {
@@ -118,7 +118,6 @@ define([
                             scope.newStage.show = false;
                             scope.message = gettext('Stage added successfully.');
                         }, function(response) {
-                            console.log(response);
                             scope.message = gettext('There was a problem, stage not added.');
                         });
                         return false;
@@ -130,6 +129,66 @@ define([
                         .then(function(result) {
                             _.remove(scope.stages, stage);
                         });
+                };
+            }
+        };
+    }])
+    .directive('sdDeskeditPeople', ['gettext', 'api', 'WizardHandler', 'desks',
+        function(gettext, api, WizardHandler, desks) {
+        return {
+            link: function(scope, elem, attrs) {
+
+                scope.$watch('step.current', function(step, previous) {
+                    if (step === 'people') {
+                        scope.search = null;
+                        scope.deskMembers = [];
+                        scope.users = [];
+                        scope.membersToSelect = [];
+                        scope.message = null;
+
+                        if (scope.desk.edit && scope.desk.edit._id) {
+                            desks.initialize().then(function() {
+                                scope.deskMembers = desks.deskMembers[scope.desk.edit._id] || [];
+                                scope.users = desks.users._items;
+                                generateSearchList();
+                            });
+                        } else {
+                            WizardHandler.wizard().goTo(previous);
+                        }
+                    }
+                });
+
+                function generateSearchList() {
+                    scope.membersToSelect = _.difference(scope.users, scope.deskMembers);
+                }
+
+                scope.add = function(user) {
+                    scope.deskMembers.push(user);
+                    generateSearchList();
+                    scope.search = null;
+                };
+
+                scope.remove = function(user) {
+                    _.remove(scope.deskMembers, user);
+                    generateSearchList();
+                };
+
+                scope.previous = function() {
+                    WizardHandler.wizard().previous();
+                };
+
+                scope.save = function() {
+                    var members = _.map(scope.deskMembers, function(obj) {
+                        return {user: obj._id};
+                    });
+
+                    api.desks.save(scope.desk.edit, {members: members}).then(function(result) {
+                        _.extend(scope.desk.edit, result);
+                        desks.deskMembers[scope.desk.edit._id] = scope.deskMembers;
+                        WizardHandler.wizard().finish();
+                    }, function(response) {
+                        scope.message = gettext('There was a problem, members not saved.');
+                    });
                 };
             }
         };

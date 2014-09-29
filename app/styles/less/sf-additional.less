@@ -174,7 +174,7 @@
 	background:url(../../images/search-icon.png) no-repeat 9px 4px #ffffff !important;
 	padding:0 0 0 35px !important;
 	&.searchbar-large {
-		background-position: 9px 6px;
+		background-position: 9px 7px !important;
 		height:32px !important;		
 		font-size: 15px;
 		line-height: 26px;
@@ -906,6 +906,9 @@
 	&:hover {
 		cursor: pointer;
 		.box-shadow(0 0px 0px 1px #ddd);
+		.action {
+			display: block !important;
+		}
 	}
 	&.selected {
 		background-color: @sd-hover;
@@ -913,6 +916,41 @@
 		&:hover {
 			.box-shadow(0 1px 0px 0px #ddd);
 		}
+	}
+	.action {
+		display: none;
+		position: absolute;
+		right: 0; top: 0; bottom: 0; 
+		width: 200px;
+		ul {
+			height: 100%;
+		}
+		.item-field {
+			height: 100%;
+			span {
+				display: none;
+			}
+			float: right;
+			border-left: 1px solid #d8d8d8;
+			padding: 0 11px;
+			line-height: 70px;
+			&:hover {
+				background: #e8e8e8;
+			}
+			&:last-child {
+				float: right;
+			}
+			&.disabled {
+				cursor: default;
+				i {
+					.opacity(30);
+				}
+				&:hover {
+					background: #e8e8e8;
+				}
+			}
+		}
+		
 	}
 }
 .active {

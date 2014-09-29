@@ -30,7 +30,7 @@
 			<h3 ng-show="desk.edit._id" translate>Edit Desk</h3>
 		</div>
 		
-		<div class="modal-body" sd-wizard data-current-step="currentStep" data-finish="cancel()">
+		<div class="modal-body" sd-wizard data-current-step="step.current" data-finish="cancel()">
 			
 			<div sd-wizard-step data-title="{{ 'General' | translate }}" data-code="general">
 				<div sd-deskedit-basic>
@@ -62,6 +62,7 @@
 							<div class="header" translate>Work stages</div>
 							<div class="content">
 								<div class="stages-list clearfix">
+									<div class="stage" ng-if="desk.edit.incoming_stage" translate>Incoming</div>
 									<div class="stage" ng-repeat="stage in stages">
 										<span>{{ stage.name }}</span>
 										<i class="remove" ng-click="remove(stage)"></i>
@@ -77,7 +78,43 @@
 					</div>
 					<div class="modal-footer"> 
 					  	<button class="btn pull-left" ng-click="previous()" translate>Previous</button> 
-					  	<button class="btn btn-primary" ng-click="done()" translate>Done</button>
+					  	<button class="btn btn-primary" ng-click="next()" translate>Next</button>
+					</div>
+				</div>
+			</div>
+
+			<div sd-wizard-step data-title="{{ 'People' | translate }}" data-code="people">
+				<div sd-deskedit-people>
+					<div class="content people-stage">
+						<div class="header">
+							<form>
+								<input type="text" ng-model="search" class="searchbar searchbar-large">
+							</form>
+							<div class="search-result" ng-show="search">
+								<ul class="users-list-embed">
+									<li ng-repeat="user in membersToSelect | filter:search" ng-click="add(user)">
+										<figure class="avatar small"><img sd-user-avatar data-src="user.picture_url"></figure>
+										<div class="name">{{user.display_name}}</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+						<div class="content">
+							<p ng-if="message">{{ message }}</p>
+							<div class="member-list clearfix">
+								<ul>
+									<li ng-repeat="user in deskMembers">
+										<i class="icon-close-small" ng-click="remove(user)"></i>
+										<figure class="avatar"><img sd-user-avatar data-src="user.picture_url"></figure>
+										<div class="name">{{user.display_name}}</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer"> 
+					  	<button class="btn pull-left" ng-click="previous()" translate>Previous</button> 
+					  	<button class="btn btn-primary" ng-click="save()" translate>Done</button>
 					</div>
 				</div>
 			</div>
