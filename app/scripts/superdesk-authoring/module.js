@@ -190,7 +190,11 @@ define([
             }
 
             stopWatch(); // stop watch if any
-            stopWatch = $scope.$watchCollection('item', function(item) {
+            stopWatch = $scope.$watchGroup([
+                'item.headline',
+                'item.slugline',
+                'item.body_html'
+            ], function() {
                 $scope.dirty = isDirty();
                 if ($scope.dirty && $scope.isEditable()) {
                     $scope.saving = true;
