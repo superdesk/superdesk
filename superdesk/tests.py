@@ -63,27 +63,37 @@ def setup_auth_user(context, user=None):
         setup_db_user(context, user)
 
 
+def add_to_context(context, token, user):
+    context.headers.append(('Authorization', b'basic ' + b64encode(token + b':')))
+    context.user = user
+
+
 def setup_db_user(context, user):
     user = user or test_user
     with context.app.test_request_context():
         original_password = user['password']
         get_resource_service('users').post([user])
         user['password'] = original_password
+
     auth_data = json.dumps({'username': user['username'], 'password': user['password']})
     auth_response = context.client.post('/auth', data=auth_data, headers=context.headers)
     token = json.loads(auth_response.get_data()).get('token').encode('ascii')
-    context.headers.append(('Authorization', b'basic ' + b64encode(token + b':')))
-    context.user = user
+
+    add_to_context(context, token, user)
 
 
 def setup_ad_user(context, user):
-    user = {'username': 'mock_user1', 'first_name': 'Mock', 'last_name': 'User1', 'email': "mock@mail.com.au"}
-    with patch.object(ADAuth, 'authenticate_and_fetch_profile', return_value=user):
-        auth_data = json.dumps({'username': 'username', 'password': 'password'})
+    ad_user = {'username': 'mock_ad_user', 'first_name': 'Mock', 'last_name': 'User1', 'email': "mock@mail.com.au"}
+    if user and user['username']:
+        ad_user['username'] = user['username']
+
+    with patch.object(ADAuth, 'authenticate_and_fetch_profile', return_value=ad_user):
+        auth_data = json.dumps({'username': ad_user['username'], 'password': 'password'})
         auth_response = context.client.post('/auth', data=auth_data, headers=context.headers)
         token = json.loads(auth_response.get_data()).get('token').encode('ascii')
-        context.headers.append(('Authorization', b'basic ' + b64encode(token + b':')))
-        context.user = user
+
+
+        add_to_context(context, token, user)
 
 
 def setup_notification(context):

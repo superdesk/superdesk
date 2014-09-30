@@ -1,6 +1,10 @@
 from superdesk import tests
 from superdesk.io.tests import setup_providers, teardown_providers
 from settings import LDAP_SERVER
+from flask import json
+
+
+readonly_fields = ['display_name', 'password', 'phone', 'first_name', 'last_name']
 
 
 def before_all(context):
@@ -20,13 +24,16 @@ def before_scenario(context, scenario):
         ('Origin', 'localhost')
     ]
 
-    if 'auth' in scenario.tags:
+    if 'dbauth' in scenario.tags and LDAP_SERVER:
+        scenario.mark_skipped()
+
+    if scenario.status != 'skipped' and 'auth' in scenario.tags:
         tests.setup_auth_user(context)
 
-    if 'provider' in scenario.tags:
+    if scenario.status != 'skipped' and 'provider' in scenario.tags:
         setup_providers(context)
 
-    if 'notification' in scenario.tags:
+    if scenario.status != 'skipped' and 'notification' in scenario.tags:
         tests.setup_notification(context)
 
 
@@ -37,5 +44,12 @@ def after_scenario(context, scenario):
     if 'notification' in scenario.tags:
         tests.teardown_notification(context)
 
+
 def before_step(context, step):
+    if LDAP_SERVER and step.text:
+        txt_json = json.loads(step.text)
+        txt_json = {k: txt_json[k] for k in txt_json.keys() if k not in readonly_fields} if isinstance(txt_json, dict) \
+            else [{k: json_obj[k] for k in json_obj.keys() if k not in readonly_fields} for json_obj in txt_json]
+        step.text = json.dumps(txt_json)
+
     pass

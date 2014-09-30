@@ -45,6 +45,7 @@ Feature: User Resource
             """
 
     @auth
+    @dbauth
     Scenario: Test phone validation
         Given empty "users"
         When we post to "/users"

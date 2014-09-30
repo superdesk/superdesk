@@ -1,4 +1,4 @@
-import os
+from settings import LDAP_SERVER
 from .ldap import authenticate
 from superdesk.tests import TestCase
 from .commands import ImportUserProfileFromADCommand
@@ -7,7 +7,7 @@ from .commands import ImportUserProfileFromADCommand
 class ImportUsersTestCase(TestCase):
 
     def test_create_user_command(self):
-        if 'LDAP_SERVER' in os.environ:
+        if LDAP_SERVER:
             user = {'username': 'sduser1', 'password': 'Password.01', 'user_to_import': 'sduser1'}
             cmd = ImportUserProfileFromADCommand()
             with self.app.test_request_context():
