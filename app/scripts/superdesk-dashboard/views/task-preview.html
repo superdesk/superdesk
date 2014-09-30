@@ -16,9 +16,14 @@
         </div>
 	</div>
 	<div class="assignee clearfix">
-		<figure class="avatar"><img sd-user-avatar data-src="users[item.task.user].picture_url"></figure>
-		<p>{{ users[item.task.user].display_name }}</p>
+		<figure class="avatar"><img sd-user-avatar data-src="userLookup[item.task.user].picture_url"></figure>
+		<p>
+			<span ng-show="item.task.desk">{{deskLookup[item.task.desk].name}} / </span>
+			<span ng-show="item.task.user">{{userLookup[item.task.user].display_name}}</span>
+			<span ng-hide="item.task.user" translate>Unassigned</span></div>
+		</p>
 	</div>
+
 	<ul class="task-labels clearfix">
 		<li><i class="icon-desk-time"></i> {{ item.task.due_date | reldate }}</li>
 	</ul>

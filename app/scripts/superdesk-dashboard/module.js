@@ -11,12 +11,17 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    function TaskPreviewDirective() {
+    TaskPreviewDirective.$inject = ['desks'];
+    function TaskPreviewDirective(desks) {
         return {
             templateUrl: 'scripts/superdesk-dashboard/views/task-preview.html',
-            scope: {
-                item: '=',
-                users: '='
+            scope: {item: '='},
+            link: function(scope, element, attrs) {
+                desks.initialize()
+                .then(function() {
+                    scope.deskLookup = desks.deskLookup;
+                    scope.userLookup = desks.userLookup;
+                });
             }
         };
     }

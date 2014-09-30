@@ -24,9 +24,7 @@ define(['lodash'], function(_) {
         $scope.create = function() {
             $scope.newTask = {
                 task: {
-                    desk: desks.getCurrentDeskId(),
-                    due_date: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
-                    due_time: new Date(null, null, null, 12, 0, 0)
+                    desk: desks.getCurrentDeskId()
                 }
             };
         };
