@@ -1,0 +1,17 @@
+app/scripts/bower_components
+coverage/
+dist
+.git/
+node_modules
+/npm-debug.log
+po/
+/.project
+report/
+.sass-cache
+screenshots/
+/.settings
+*.swp
+test-results.xml
+Thumbs.db
+.tmp
+.vagrant/

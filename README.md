@@ -12,6 +12,10 @@ Superdesk Client is a javascript client for Superdesk REST API server.
 
 ## Setup
 
+There are few different ways to run it:
+
+#### a) locally
+
 Client requires `nodejs` installed and a few steps:
 ```
 npm install -g bower grunt-cli
@@ -21,6 +25,20 @@ bower install # install bower components
 After you can start local dev server on port `9000`:
 ```
 grunt server
+```
+
+#### b) using Docker
+This command will start frontend on localhost:9000.
+Change `http://localhost:5000` to an actual backend server:
+```
+docker build -t superdesk-client:devel ./
+docker run -i -p 9000:9000 -t superdesk-client:devel grunt server --server=http://localhost:5000 --force
+```
+
+#### c) using Vagrant
+Will start frontend on localhost:9000:
+```
+vagrant up --provider=docker
 ```
 
 ## Info for contributors
