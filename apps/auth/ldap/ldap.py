@@ -75,11 +75,10 @@ class ADAuth:
             raise AuthError()
 
 
-def authenticate(credentials, app):
+def authenticate(credentials):
     """
     Authenticates the user against Active Directory
     :param credentials: an object having "username" and "password" attributes
-    :param app: Eve App object
     :return: if success returns User object, otherwise throws Error
     """
     settings = app.settings
@@ -111,7 +110,7 @@ def authenticate(credentials, app):
 class LdapAuthService(BaseService):
     def on_create(self, docs):
         for doc in docs:
-            user = authenticate(doc, app)
+            user = authenticate(doc)
             doc['user'] = user['_id']
             doc['token'] = utils.get_random_string(40)
             del doc['password']

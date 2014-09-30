@@ -1,13 +1,14 @@
-
 import os
 import unittest
 from app import get_app
 from pyelasticsearch import ElasticSearch
 from base64 import b64encode
 from flask import json
-from superdesk.notification_mock import setup_notification_mock,\
-    teardown_notification_mock
+from superdesk.notification_mock import setup_notification_mock, teardown_notification_mock
 from superdesk import get_resource_service
+from settings import LDAP_SERVER
+from unittest.mock import patch
+from apps.auth.ldap.ldap import ADAuth
 
 test_user = {'username': 'test_user', 'password': 'test_password'}
 
@@ -56,6 +57,13 @@ def setup(context=None, config=None):
 
 
 def setup_auth_user(context, user=None):
+    if LDAP_SERVER:
+        setup_ad_user(context, user)
+    else:
+        setup_db_user(context, user)
+
+
+def setup_db_user(context, user):
     user = user or test_user
     with context.app.test_request_context():
         original_password = user['password']
@@ -66,6 +74,16 @@ def setup_auth_user(context, user=None):
     token = json.loads(auth_response.get_data()).get('token').encode('ascii')
     context.headers.append(('Authorization', b'basic ' + b64encode(token + b':')))
     context.user = user
+
+
+def setup_ad_user(context, user):
+    user = {'username': 'mock_user1', 'first_name': 'Mock', 'last_name': 'User1', 'email': "mock@mail.com.au"}
+    with patch.object(ADAuth, 'authenticate_and_fetch_profile', return_value=user):
+        auth_data = json.dumps({'username': 'username', 'password': 'password'})
+        auth_response = context.client.post('/auth', data=auth_data, headers=context.headers)
+        token = json.loads(auth_response.get_data()).get('token').encode('ascii')
+        context.headers.append(('Authorization', b'basic ' + b64encode(token + b':')))
+        context.user = user
 
 
 def setup_notification(context):
