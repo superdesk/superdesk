@@ -83,17 +83,20 @@ def setup_db_user(context, user):
 
 
 def setup_ad_user(context, user):
-    ad_user = {'username': 'mock_ad_user', 'first_name': 'Mock', 'last_name': 'User1', 'email': "mock@mail.com.au"}
+    ad_user = {'first_name': 'Mock', 'last_name': 'User1', 'email': "mock@mail.com.au"}
     if user and user['username']:
         ad_user['username'] = user['username']
+    else:
+        ad_user['username'] = test_user['username']
 
     with patch.object(ADAuth, 'authenticate_and_fetch_profile', return_value=ad_user):
-        auth_data = json.dumps({'username': ad_user['username'], 'password': 'password'})
+        auth_data = json.dumps({'username': ad_user['username'], 'password': test_user['password']})
         auth_response = context.client.post('/auth', data=auth_data, headers=context.headers)
-        token = json.loads(auth_response.get_data()).get('token').encode('ascii')
+        auth_response_as_json = json.loads(auth_response.get_data())
+        token = auth_response_as_json.get('token').encode('ascii')
+        ad_user['_id'] = auth_response_as_json['user']
 
-
-        add_to_context(context, token, user)
+        add_to_context(context, token, ad_user)
 
 
 def setup_notification(context):
