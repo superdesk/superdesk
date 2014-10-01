@@ -812,7 +812,7 @@ def when_we_get_user_resource(context, resource):
 
 
 @then('we get embedded items')
-def step_impl(context):
+def we_get_embedded_items(context):
     response_data = json.loads(context.response.get_data())
     href = get_self_href(response_data, context)
     url = href + '/?embedded={"items": 1}'
@@ -845,3 +845,22 @@ def we_mention_user_in_comment(context, url):
         assert_equal(outbox[0].subject, "You were mentioned in a comment by test_user")
         email_text = outbox[0].body
         assert email_text
+
+
+@when('we get the default incoming stage')
+def we_get_default_incoming_stage(context):
+    data = json.loads(context.response.get_data())
+    incoming_stage = data['_items'][0]['incoming_stage']
+    assert incoming_stage
+    url = 'stages/{0}'.format(incoming_stage)
+    when_we_get_url(context, url)
+    assert_200(context.response)
+    data = json.loads(context.response.get_data())
+    assert data['default_incoming'] is True
+    assert data['name'] == '<to be defined>'
+
+
+@then('we get stage filled in to default_incoming')
+def we_get_stage_filled_in(context):
+    data = json.loads(context.response.get_data())
+    assert data['task']['stage']

@@ -30,7 +30,23 @@ Feature: Tasks
 	    """
 
     @auth
-    Scenario: Update task
+    Scenario: Update task description
+        Given "tasks"
+        """
+        [{"slugline": "testtask", "task": {"status": "in-progress"}}]
+        """
+        When we patch given
+        """
+        {"slugline": "testtask changed"}
+        """
+        And we get "/tasks"
+        Then we get list with 1 items
+	    """
+        {"_items": [{"slugline": "testtask changed"}]}
+	    """
+    
+    @auth
+    Scenario: Update multiple task description
         Given "tasks"
         """
         [{"slugline": "testtask", "task": {"status": "in-progress"}}]
@@ -66,6 +82,22 @@ Feature: Tasks
         {"description_text": "second task modified", "task": {"desk":"#DESKS_ID#"}}
         """
         Then we get updated response
+
+
+    @auth
+    Scenario: Fill stage automatically when assigning a task to a desk
+        Given empty "desks"
+        Given empty "tasks"
+        When we post to "desks"
+        """
+        {"name": "Sports Desk"}
+        """
+        When we post to "tasks"
+	    """
+        [{"slugline": "first task", "type": "text", "task": {"desk": "#DESKS_ID#"}}]
+	    """
+        Then we get stage filled in to default_incoming
+
 
     @auth
     Scenario: Update task-planning item assignment

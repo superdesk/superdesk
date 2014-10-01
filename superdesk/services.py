@@ -1,7 +1,8 @@
 import logging
 from flask import current_app as app
 from eve.defaults import resolve_default_values
-from eve.utils import ParsedRequest
+from eve.utils import ParsedRequest, config
+from eve.methods.common import resolve_document_etag
 
 
 log = logging.getLogger(__name__)
@@ -74,13 +75,19 @@ class BaseService():
         for doc in docs:
             resolve_default_values(doc, app.config['DOMAIN'][self.datasource]['defaults'])
         self.on_create(docs)
+        resolve_document_etag(docs)
         ids = self.create(docs, **kwargs)
         self.on_created(docs)
         return ids
 
     def patch(self, id, updates):
         original = self.find_one(req=None, _id=id)
+        updated = original.copy()
         self.on_update(updates, original)
+        updated.update(updates)
+        if config.IF_MATCH:
+            resolve_document_etag(updated)
+            updates[config.ETAG] = updated[config.ETAG]
         res = self.update(id, updates)
         self.on_updated(updates, original)
         return res
@@ -89,6 +96,7 @@ class BaseService():
         resolve_default_values(document, app.config['DOMAIN'][self.datasource]['defaults'])
         original = self.find_one(req=None, _id=id)
         self.on_replace(document, original)
+        resolve_document_etag(document)
         res = self.replace(id, document)
         self.on_replaced(document, original)
         return res

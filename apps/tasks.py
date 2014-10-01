@@ -1,7 +1,7 @@
 from superdesk.resource import Resource
 from superdesk.notification import push_notification
 from superdesk.utc import utcnow
-from apps.archive.common import base_schema
+from apps.archive.common import base_schema, on_create_item, item_url
 from superdesk.services import BaseService
 import superdesk
 
@@ -19,6 +19,7 @@ class TaskResource(Resource):
         'filter': {'task': {'$exists': True}},
         'elastic_filter': {'exists': {'field': 'task'}}  # eve-elastic specific filter
     }
+    item_url = item_url
     schema = {
         'slugline': base_schema['slugline'],
         'description_text': base_schema['description_text'],
@@ -37,6 +38,7 @@ class TaskResource(Resource):
                 'finished_at': {'type': 'datetime'},
                 'user': Resource.rel('users', True),
                 'desk': Resource.rel('desks', True),
+                'stage': Resource.rel('stages', True)
             }
         }
     }
@@ -53,9 +55,19 @@ class TasksService(BaseService):
         if status == 'done':
             task.setdefault('finished_at', utcnow())
 
+    def update_stage(self, doc):
+        task = doc.get('task', {})
+        desk_id = task.get('desk', None)
+        stage_id = task.get('stage', None)
+        if desk_id and not stage_id:
+            desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
+            task['stage'] = desk['incoming_stage']
+
     def on_create(self, docs):
+        on_create_item(docs)
         for doc in docs:
             self.update_times(doc)
+            self.update_stage(doc)
 
     def on_update(self, updates, original):
         self.update_times(updates)
