@@ -47,9 +47,9 @@ def after_scenario(context, scenario):
 
 def before_step(context, step):
     if LDAP_SERVER and step.text:
-        txt_json = json.loads(step.text)
-        txt_json = {k: txt_json[k] for k in txt_json.keys() if k not in readonly_fields} if isinstance(txt_json, dict) \
-            else [{k: json_obj[k] for k in json_obj.keys() if k not in readonly_fields} for json_obj in txt_json]
-        step.text = json.dumps(txt_json)
+        step_text_json = json.loads(step.text)
+        step_text_json = {k: step_text_json[k] for k in step_text_json.keys() if k not in readonly_fields} \
+            if isinstance(step_text_json, dict) else \
+            [{k: json_obj[k] for k in json_obj.keys() if k not in readonly_fields} for json_obj in step_text_json]
 
-    pass
+        step.text = json.dumps(step_text_json)
