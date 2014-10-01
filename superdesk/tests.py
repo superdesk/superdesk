@@ -59,6 +59,7 @@ def setup_auth_user(context, user=None):
     user = user or test_user
     with context.app.test_request_context():
         original_password = user['password']
+        user['is_admin'] = True
         get_resource_service('users').post([user])
         user['password'] = original_password
     auth_data = json.dumps({'username': user['username'], 'password': user['password']})
