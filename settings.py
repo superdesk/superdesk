@@ -127,7 +127,7 @@ LDAP_FQDN = os.environ.get('LDAP_FQDN', '')
 LDAP_BASE_FILTER = os.environ.get('LDAP_BASE_FILTER', '')
 
 # change the user depending on the LDAP directory structure
-LDAP_USER_FILTER = os.environ('LDAP_USER_FILTER', "(&(objectCategory=user)(objectClass=user)(sAMAccountName={}))")
+LDAP_USER_FILTER = os.environ.get('LDAP_USER_FILTER', "(&(objectCategory=user)(objectClass=user)(sAMAccountName={}))")
 
 # LDAP User Attributes to fetch. Keys would be LDAP Attribute Name and Value would be Supderdesk Model Attribute Name
 LDAP_USER_ATTRIBUTES = {'givenName': 'first_name', 'sn': 'last_name', 'displayName': 'display_name',
