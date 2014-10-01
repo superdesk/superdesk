@@ -17,14 +17,22 @@ class CreateUserCommand(superdesk.Command):
         superdesk.Option('--username', '-u', dest='username', required=True),
         superdesk.Option('--password', '-p', dest='password', required=True),
         superdesk.Option('--email', '-e', dest='email', required=True),
+        superdesk.Option('--admin', '-a', dest='admin', required=False),
     )
 
-    def run(self, username, password, email):
+    def run(self, username, password, email, admin = 'false'):
+
+        # force type conversion to boolean
+        if admin.lower() == 'true':
+            is_admin = True
+        else:
+            is_admin = False
 
         userdata = {
             'username': username,
             'password': password,
             'email': email,
+            'is_admin' : is_admin,
             app.config['LAST_UPDATED']: utcnow(),
         }
 

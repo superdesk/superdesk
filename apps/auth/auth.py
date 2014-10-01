@@ -2,7 +2,7 @@ import logging
 from eve.auth import TokenAuth
 from flask import current_app as app, request
 import flask
-from apps.auth.errors import AuthRequiredError
+from apps.auth.errors import AuthRequiredError, ForbiddenError
 from superdesk.resource import Resource
 from superdesk import get_resource_service
 
@@ -65,10 +65,26 @@ class SuperdeskTokenAuth(TokenAuth):
         if not user:
             return True
 
+        # is the operation against the user record of the current user
         if request.view_args.get('_id') == str(user['_id']):
-            return True
+            # no user is allowed to delete their own user
+            if method.lower() == 'delete':
+                raise ForbiddenError
+            else:
+                return True
 
+        # We allow all reads
         perm_method = self.method_map[method.lower()]
+        if perm_method is 'read':
+            return True
+        # We only protect those resources in this list
+        if resource not in {'users', 'roles', 'desks'}:
+            return True
+        # To go further the user needs to be an admin
+        admin = user.get('is_admin')
+        if not admin:
+           raise ForbiddenError()
+
         # Get the list of roles belonging to this user
         roles = user.get('roles')
         if roles is not None:
