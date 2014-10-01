@@ -45,7 +45,7 @@ Feature: Role Resource
 
         And we have "Administrator" role
         When we get "/ingest"
-        Then we get response code 401
+        Then we get response code 200
 
     @auth
     Scenario: Check permissions on read with role and permissions
