@@ -49,6 +49,9 @@ class RolesResource(Resource):
             'unique': True,
             'required': True,
         },
+        'description': {
+            'type': 'string'
+        },
         'extends': {
             'type': 'objectid'
         },
@@ -118,9 +121,12 @@ class UsersResource(Resource):
         'workspace': {
             'type': 'dict'
         },
-        'is_admin': {
-            'type': 'boolean'
-        },
+        'user_type': {
+            'type': 'string',
+            'allowed': ['user', 'manager', 'administrator'],
+            'default': 'user',
+            'required': True
+        }
     }
 
     extra_response_fields = [

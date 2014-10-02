@@ -21,9 +21,10 @@ class ImportUserProfileFromADCommand(superdesk.Command):
         superdesk.Option('--ad_username', '-adu', dest='ad_username', required=True),
         superdesk.Option('--ad_password', '-adp', dest='ad_password', required=True),
         superdesk.Option('--username_to_import', '-u', dest='username', required=True),
+        superdesk.Option('--admin', '-a', dest='admin', required=False),
     )
 
-    def run(self, ad_username, ad_password, username):
+    def run(self, ad_username, ad_password, username, admin='false'):
         """
         Imports or Updates a User Profile from AD to Mongo.
         :param ad_username: Active Directory Username
@@ -31,6 +32,9 @@ class ImportUserProfileFromADCommand(superdesk.Command):
         :param username: Username as in Active Directory whose profile needs to be imported to Superdesk.
         :return: User Profile.
         """
+
+        # force type conversion to boolean
+        user_type = 'administrator' if admin.lower() == 'true' else 'user'
 
         # Authenticate and fetch profile from AD
         settings = app.settings
@@ -52,6 +56,7 @@ class ImportUserProfileFromADCommand(superdesk.Command):
         else:
             user_data[app.config['DATE_CREATED']] = user_data[app.config['LAST_UPDATED']]
             user_data['username'] = username
+            user_data['user_type'] = user_type
             superdesk.get_resource_service('users').post([user_data])
             return user_data
 

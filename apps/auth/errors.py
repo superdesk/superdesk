@@ -26,8 +26,10 @@ class CredentialsAuthError(AuthError):
     """Credentials Not Match Auth Exception"""
     pass
 
+
 class ForbiddenError(superdesk.SuperdeskError):
     status_code = 403
+
 
 def raiseCredentialsAuthError(credentials):
     logger.warning("Login failure: %s" % json.dumps(credentials))
