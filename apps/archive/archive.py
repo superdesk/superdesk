@@ -87,8 +87,7 @@ class ArchiveService(BaseService):
             del updates['force_unlock']
 
     def on_updated(self, updates, original):
-        c = get_component(ItemAutosave)
-        c.clear(original['_id'])
+        get_component(ItemAutosave).clear(original['_id'])
         on_update_media_archive()
 
         if '_version' in updates:
@@ -107,8 +106,7 @@ class ArchiveService(BaseService):
             del document['force_unlock']
 
     def on_replaced(self, document, original):
-        c = get_component(ItemAutosave)
-        c.clear(original['_id'])
+        get_component(ItemAutosave).clear(original['_id'])
         on_update_media_archive()
 
     def on_delete(self, doc):
@@ -177,9 +175,8 @@ class ArchiveSaveService(BaseService):
         if not docs:
             raise SuperdeskError('Content is missing', 400)
         req = parse_request(self.datasource)
-        c = get_component(ItemAutosave)
         try:
-            c.autosave(docs[0]['_id'], docs[0], get_user(required=True), req.if_match)
+            get_component(ItemAutosave).autosave(docs[0]['_id'], docs[0], get_user(required=True), req.if_match)
         except InvalidEtag:
             raise SuperdeskError('Client and server etags don\'t match', 412)
         return [docs[0]['_id']]

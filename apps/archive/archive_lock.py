@@ -19,9 +19,8 @@ class ArchiveLockService(BaseService):
 
     def create(self, docs, **kwargs):
         user = get_user(required=True)
-        c = get_component(ItemLock)
         item_id = request.view_args['item_id']
-        c.lock({'_id': request.view_args['item_id']}, user['_id'], None)
+        get_component(ItemLock).lock({'_id': request.view_args['item_id']}, user['_id'], None)
         return [item_id]
 
 
@@ -38,7 +37,6 @@ class ArchiveUnlockService(BaseService):
 
     def create(self, docs, **kwargs):
         user = get_user(required=True)
-        c = get_component(ItemLock)
         item_id = request.view_args['item_id']
-        c.unlock({'_id': item_id}, user['_id'], None)
+        get_component(ItemLock).unlock({'_id': item_id}, user['_id'], None)
         return [item_id]
