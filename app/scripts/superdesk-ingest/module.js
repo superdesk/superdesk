@@ -48,7 +48,7 @@ define([
                 category: superdesk.MENU_SETTINGS
             })
             .activity('archive', {
-                label: gettext('Archive'),
+                label: gettext('Fetch'),
                 icon: 'archive',
                 controller: ['$timeout', 'api', 'data', function($timeout, api, data) {
                     var checkProgress = function(taskId, callback) {
