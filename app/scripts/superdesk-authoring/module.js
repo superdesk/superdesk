@@ -74,11 +74,12 @@ define([
         'notify',
         'gettext',
         'ConfirmDirty',
-        'lock'
+        'lock',
+        '$q'
     ];
 
     function AuthoringController($scope, $routeParams, $interval, $timeout, superdesk, api,
-        workqueue, notify, gettext, ConfirmDirty, lock) {
+        workqueue, notify, gettext, ConfirmDirty, lock, $q) {
         var _item,
             _autosaveFlag,
             confirm = new ConfirmDirty($scope);
@@ -94,13 +95,34 @@ define([
 
         function setupNewItem() {
             if ($routeParams._id) {
-                _item = workqueue.find({_id: $routeParams._id}) || workqueue.active;
-                lock.lock(_item)['finally'](function() {
-                    $scope.item = _.create(_item);
-                    $scope.editable = !lock.isLocked(_item);
-                    workqueue.setActive(_item);
+                fetchNewItem().then(function() {
+                    lock.lock(_item)['finally'](function() {
+                        $scope.item = _.create(_item);
+                        $scope.editable = !lock.isLocked(_item);
+                        workqueue.setActive(_item);
+                    });
+                }, function(response) {
+                    notify.error(gettext('Error. Item not found.'));
                 });
             }
+        }
+
+        function fetchNewItem() {
+            var d = $q.defer();
+            _item = workqueue.find({_id: $routeParams._id});
+            if (!_item) {
+                api.archive.getById($routeParams._id)
+                .then(function(item) {
+                    workqueue.add(item);
+                    _item = workqueue.active;
+                    d.resolve();
+                }, function(response) {
+                    d.reject(response);
+                });
+            } else {
+                d.resolve();
+            }
+            return d.promise;
         }
 
         function isEditable(item) {
