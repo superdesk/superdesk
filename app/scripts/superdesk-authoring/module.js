@@ -47,10 +47,11 @@ define([
         this.save = function(item) {
             $timeout.cancel(_timeout);
             _timeout = $timeout(function() {
-                var data = {_id: item._id, guid: item.guid};
+                var autosave = item._autosave ? item._autosave : {};
+                var data = {guid: item.guid, _id: item._id};
                 extendItem(data, item);
-                return api(RESOURCE).save(data).then(function(autosave) {
-                    item._autosave = autosave;
+                return api(RESOURCE).save(autosave, data).then(function(_autosave) {
+                    item._autosave = _autosave;
                 });
             }, AUTOSAVE_TIMEOUT);
             return _timeout;
