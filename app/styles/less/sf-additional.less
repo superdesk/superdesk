@@ -565,8 +565,10 @@
 	margin: 0;
 	list-style-type: none;
 	padding: 0 10px;
-	height: 100%;
+	position: absolute;
 	overflow-y: auto;
+	bottom: 0;
+	top: 60px;
 
 	li {
 		border: 1px solid #393939;
@@ -650,6 +652,18 @@
 	}
 }
 
+.notification-pane {
+	::-webkit-scrollbar:hover {
+		background-color: #4a4a4a;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background: #5a5a5a;
+	}
+	::-webkit-scrollbar-thumb:hover {
+		background: #666;
+	}
+}
 
 // Hard error
 // ---------------------------------------------
