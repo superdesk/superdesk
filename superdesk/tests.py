@@ -1,13 +1,14 @@
-
 import os
 import unittest
 from app import get_app
 from pyelasticsearch import ElasticSearch
 from base64 import b64encode
 from flask import json
-from superdesk.notification_mock import setup_notification_mock,\
-    teardown_notification_mock
+from superdesk.notification_mock import setup_notification_mock, teardown_notification_mock
 from superdesk import get_resource_service
+from settings import LDAP_SERVER
+from unittest.mock import patch
+from apps.auth.ldap.ldap import ADAuth
 
 test_user = {'username': 'test_user', 'password': 'test_password'}
 
@@ -56,16 +57,46 @@ def setup(context=None, config=None):
 
 
 def setup_auth_user(context, user=None):
+    if LDAP_SERVER:
+        setup_ad_user(context, user)
+    else:
+        setup_db_user(context, user)
+
+
+def add_to_context(context, token, user):
+    context.headers.append(('Authorization', b'basic ' + b64encode(token + b':')))
+    context.user = user
+
+
+def setup_db_user(context, user):
     user = user or test_user
     with context.app.test_request_context():
         original_password = user['password']
         get_resource_service('users').post([user])
         user['password'] = original_password
+
     auth_data = json.dumps({'username': user['username'], 'password': user['password']})
     auth_response = context.client.post('/auth', data=auth_data, headers=context.headers)
     token = json.loads(auth_response.get_data()).get('token').encode('ascii')
-    context.headers.append(('Authorization', b'basic ' + b64encode(token + b':')))
-    context.user = user
+
+    add_to_context(context, token, user)
+
+
+def setup_ad_user(context, user):
+    ad_user = {'first_name': 'Mock', 'last_name': 'User1', 'email': "mock@mail.com.au"}
+    if user and user['username']:
+        ad_user['username'] = user['username']
+    else:
+        ad_user['username'] = test_user['username']
+
+    with patch.object(ADAuth, 'authenticate_and_fetch_profile', return_value=ad_user):
+        auth_data = json.dumps({'username': ad_user['username'], 'password': test_user['password']})
+        auth_response = context.client.post('/auth', data=auth_data, headers=context.headers)
+        auth_response_as_json = json.loads(auth_response.get_data())
+        token = auth_response_as_json.get('token').encode('ascii')
+        ad_user['_id'] = auth_response_as_json['user']
+
+        add_to_context(context, token, ad_user)
 
 
 def setup_notification(context):

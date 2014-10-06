@@ -1,4 +1,4 @@
-import os
+from settings import LDAP_SERVER
 from .users import RolesResource, UsersResource, ADUsersService, DBUsersService  # noqa
 import superdesk
 from superdesk.services import BaseService
@@ -6,7 +6,7 @@ from superdesk.services import BaseService
 
 def init_app(app):
     endpoint_name = 'users'
-    if 'LDAP_SERVER' in os.environ:
+    if LDAP_SERVER:
         service = ADUsersService(endpoint_name, backend=superdesk.get_backend())
     else:
         service = DBUsersService(endpoint_name, backend=superdesk.get_backend())

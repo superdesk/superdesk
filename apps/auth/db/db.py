@@ -1,5 +1,4 @@
 import bcrypt
-from flask import current_app as app
 from apps.auth.errors import NotFoundAuthError, raiseCredentialsAuthError
 from superdesk import utils as utils, get_resource_service
 from superdesk.services import BaseService
@@ -8,13 +7,13 @@ from superdesk.services import BaseService
 class DbAuthService(BaseService):
     def on_create(self, docs):
         for doc in docs:
-            user = authenticate(doc, app)
+            user = authenticate(doc)
             doc['user'] = user['_id']
             doc['token'] = utils.get_random_string(40)
             del doc['password']
 
 
-def authenticate(credentials, app):
+def authenticate(credentials):
     user = get_resource_service('auth_users').find_one(req=None, username=credentials.get('username'))
     if not user:
         raise NotFoundAuthError()
