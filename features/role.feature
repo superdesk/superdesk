@@ -58,26 +58,80 @@ Feature: Role Resource
         Then we get response code 200
 
     @auth
-    Scenario: User has always permissions to edit himself
+    Scenario: User has always permissions to read himself
         Given "roles"
             """
             [{"name": "Subscriber"}]
             """
         And we have "Subscriber" role
+        And we have "user" as type of user
         When we get user profile
         Then we get response code 200
+
 
     @auth
     Scenario: Inherit permissions from extended roles
         Given "roles"
             """
             [
-                {"name": "Jurnalist", "permissions": {"ingest": {"read": 1}}},
+                {"name": "Journalist", "permissions": {"ingest": {"read": 1}}},
                 {"name": "Editor"}
             ]
             """
 
-        And role "Editor" extends "Jurnalist"
+        And role "Editor" extends "Journalist"
         And we have "Editor" role
         When we get "/ingest"
         Then we get response code 200
+
+    @auth
+    Scenario: All users can read everything
+        Given we have "user" as type of user
+        When we get "/ingest"
+        Then we get response code 200
+
+    @auth
+    Scenario: Users cannot write to users and roles
+        Given we have "user" as type of user
+        When we post to "/roles"
+            """
+            {"name": "Sub Editor"}
+            """
+        Then we get response code 403
+
+    @auth
+    Scenario: Administrators can write to users and roles
+        Given we have "administrator" as type of user
+        When we post to "/roles"
+            """
+            {"name": "Sub Editor"}
+            """
+        Then we get response code 201
+
+    @auth
+    Scenario: Users can write to resources if they have permission
+        Given "roles"
+            """
+            [{"name": "Pool Subs", "permissions": {"desks": {"write": 1}}}]
+            """
+        And we have "Pool Subs" role
+        And we have "user" as type of user
+        When we post to "/desks"
+            """
+            {"name": "Sub Editing Desk"}
+            """
+        Then we get response code 201
+
+    @auth
+    Scenario: Users cannot write to resources if they don't have permission
+        Given "roles"
+            """
+            [{"name": "Producers"}]
+            """
+        And we have "Producers" role
+        And we have "user" as type of user
+        When we post to "/desks"
+            """
+            {"name": "Sub Editing Desk"}
+            """
+        Then we get response code 403

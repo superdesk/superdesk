@@ -196,9 +196,16 @@ def step_impl_given_config(context):
 @given('we have "{role_name}" role')
 def step_impl_given_role(context, role_name):
     with context.app.test_request_context():
-
-        role = context.app.data.find_one('roles', name=role_name, req=None)
+        role = get_resource_service('roles').find_one(name=role_name, req=None)
         data = json.dumps({'roles': [str(role['_id'])]})
+    response = patch_current_user(context, data)
+    assert_ok(response)
+
+
+@given('we have "{user_type}" as type of user')
+def step_impl_given_user_type(context, user_type):
+    with context.app.test_request_context():
+        data = json.dumps({'user_type': user_type})
     response = patch_current_user(context, data)
     assert_ok(response)
 

@@ -78,9 +78,15 @@ class SuperdeskTokenAuth(TokenAuth):
         if perm_method is 'read':
             return True
 
-        # To go further the user needs to be an admin
+        # Read the user type
         user_type = user.get('user_type')
-        if user_type != 'administrator':
+
+        # We allow all writes to administrators
+        if user_type == 'administrator':
+            return True
+
+        # Only administrators can write to those resources in this list
+        if resource in {'users', 'roles'}:
             raise ForbiddenError()
 
         # Get the list of roles belonging to this user
@@ -89,12 +95,14 @@ class SuperdeskTokenAuth(TokenAuth):
             for role_id in roles:
                 # check the permissions for each role
                 while role_id:
-                    role = app.data.find_one('roles', _id=role_id, req=None) or {}
+                    role = get_resource_service('roles').find_one(_id=role_id, req=None) or {}
                     perm = role.get('permissions', {})
                     if perm.get(resource, {}).get(perm_method, False):
                         return True
                     role_id = role.get('extends')
-        return not user.get('roles')  # allow if there is no role
+
+        # If we didn't return True so far then user is not authorized
+        raise ForbiddenError()
 
     def check_auth(self, token, allowed_roles, resource, method):
         """Check if given token is valid"""
