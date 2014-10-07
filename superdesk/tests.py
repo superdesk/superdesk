@@ -72,6 +72,7 @@ def setup_db_user(context, user):
     user = user or test_user
     with context.app.test_request_context():
         original_password = user['password']
+        user['user_type'] = 'administrator'
         get_resource_service('users').post([user])
         user['password'] = original_password
 

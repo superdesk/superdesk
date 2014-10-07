@@ -50,6 +50,9 @@ class RolesResource(Resource):
             'unique': True,
             'required': True,
         },
+        'description': {
+            'type': 'string'
+        },
         'extends': {
             'type': 'objectid'
         },
@@ -110,11 +113,19 @@ class UsersResource(Resource):
             'type': 'string',
         },
         'avatar': Resource.rel('upload', True),
-        'role': Resource.rel('roles', True),
+        'roles': {
+            'type': 'list'
+        },
         'preferences': {'type': 'dict'},
         'workspace': {
             'type': 'dict'
         },
+        'user_type': {
+            'type': 'string',
+            'allowed': ['user', 'manager', 'administrator'],
+            'default': 'user',
+            'required': True
+        }
     }
 
     extra_response_fields = [

@@ -2,7 +2,7 @@ import logging
 from eve.auth import TokenAuth
 from flask import current_app as app, request
 import flask
-from apps.auth.errors import AuthRequiredError
+from apps.auth.errors import AuthRequiredError, ForbiddenError
 from superdesk.resource import Resource
 from superdesk import get_resource_service
 
@@ -65,18 +65,44 @@ class SuperdeskTokenAuth(TokenAuth):
         if not user:
             return True
 
+        # is the operation against the user record of the current user
         if request.view_args.get('_id') == str(user['_id']):
+            # no user is allowed to delete their own user
+            if method.lower() == 'delete':
+                raise ForbiddenError
+            else:
+                return True
+
+        # We allow all reads
+        perm_method = self.method_map[method.lower()]
+        if perm_method is 'read':
             return True
 
-        perm_method = self.method_map[method.lower()]
-        role_id = user.get('role')
-        while role_id:
-            role = get_resource_service('roles').find_one(_id=role_id, req=None) or {}
-            perm = role.get('permissions', {})
-            if perm.get(resource, {}).get(perm_method, False):
-                return True
-            role_id = role.get('extends')
-        return not user.get('role')  # allow if there is no role
+        # Read the user type
+        user_type = user.get('user_type')
+
+        # We allow all writes to administrators
+        if user_type == 'administrator':
+            return True
+
+        # Only administrators can write to those resources in this list
+        if resource in {'users', 'roles'}:
+            raise ForbiddenError()
+
+        # Get the list of roles belonging to this user
+        roles = user.get('roles')
+        if roles is not None:
+            for role_id in roles:
+                # check the permissions for each role
+                while role_id:
+                    role = get_resource_service('roles').find_one(_id=role_id, req=None) or {}
+                    perm = role.get('permissions', {})
+                    if perm.get(resource, {}).get(perm_method, False):
+                        return True
+                    role_id = role.get('extends')
+
+        # If we didn't return True so far then user is not authorized
+        raise ForbiddenError()
 
     def check_auth(self, token, allowed_roles, resource, method):
         """Check if given token is valid"""
