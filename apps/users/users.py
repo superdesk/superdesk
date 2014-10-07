@@ -172,7 +172,7 @@ class ADUsersService(BaseService):
 
     def on_fetched(self, doc):
         for document in doc['_items']:
-            document['readonly'] = ADUsersService.readonly_fields
+            document['_readonly'] = ADUsersService.readonly_fields
 
     def on_deleted(self, doc):
         add_deleted_user_activity(doc)
