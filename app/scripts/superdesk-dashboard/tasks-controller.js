@@ -7,7 +7,12 @@ define(['lodash'], function(_) {
         $scope.desksService = desks;
         $scope.selected = {};
         $scope.newTask = null;
-        $scope.userLookup = null;
+
+        desks.initialize()
+        .then(function() {
+            $scope.deskLookup = desks.deskLookup;
+            $scope.userLookup = desks.userLookup;
+        });
 
         $scope.tasks = {};
 
