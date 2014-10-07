@@ -210,7 +210,6 @@ define([
                 templateUrl: 'scripts/superdesk-users/views/user-preferences.html',
                 link: function(scope, elem, attrs) {
 
-                    scope.dirty = false;
                     var orig;
 
                     api('preferences').getById(session.identity._id)

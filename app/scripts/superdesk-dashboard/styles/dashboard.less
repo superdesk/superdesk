@@ -307,8 +307,19 @@ TASK PAGE
 			padding: 20px;
 		}
 		
-		.basic p {
-			color: @grayLight;
+		.basic {
+			position: relative;
+			p {
+				position: relative;
+				color: @grayLight;
+			}
+			.dropdown {
+				position: absolute;
+				top: 0; right: -15px;
+				button {
+					padding: 1px 12px;
+				}
+			}
 		}
 		
 		.assignee {

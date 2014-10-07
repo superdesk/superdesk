@@ -7,8 +7,8 @@ define([
             replace: true,
             template: [
                 '<li class="item-field" ng-click="run(activity, $event)" title="{{activity.label}}">',
-                '<i class="icon-{{ activity.icon }}" ng-show="activity.icon"></i>',
-                '<span translate>{{ activity.label }}</span>',
+                '<button><i class="icon-{{ activity.icon }}" ng-show="activity.icon"></i>',
+                '<span translate>{{ activity.label }}</span></button>',
                 '</li>'
             ].join(''),
             link: function(scope, elem, attrs) {

@@ -278,15 +278,24 @@
 		}
 		.title-holder {
 			position: relative;
-			.fullscreen {
+			.actions {
 				position: absolute;
-				top: 0; right: 0;
+				top: 0; right: -15px;
+			}
+			.fullscreen {
 				border: 0;
 				background: 0;
 				padding: 0;
+				float: left;
+			}
+			.dropdown {
+				float: right;
+				> button {
+					padding:1px 12px; 
+				}
 			}
 			.title {
-				padding-right: 30px;
+				padding-right: 45px;
 			}
 		}
 		.title {
@@ -743,29 +752,12 @@
 			.item-field {
 				width: 31px;
 				height: 32px;
-				display: inline-block;
+				border-left: 0;
 				border-right: 1px solid #f0f0f0;
-				float: left;
 				.box-sizing(border-box);
 				padding: 8px 9px 8px 8px;
 				i {
 					vertical-align: baseline;
-				}
-				span {
-					display: none;
-				}
-				&:hover{
-					background: #f0f0f0;
-					border-color: #e0e0e0;
-				}
-				&.disabled {
-					cursor: default;
-					i {
-						.opacity(50);
-					}
-					&:hover {
-						background: #fff;
-					}
 				}
 			}
 			
@@ -955,12 +947,6 @@
 				bottom: 0;
 				width: @rightfield-width;
 				.item-field {
-					span {
-						display: none;
-					}
-					float: right !important;
-					border-left: 1px solid #d8d8d8;
-					float: left;
 					height: 16px;
 					padding: 21px 11px 20px;
 					&.type-icon {
@@ -968,21 +954,7 @@
 						height: 37px;
 						text-align: center;
 					}
-					&:hover {
-						background: #e8e8e8;
-					}
-					&:last-child {
-						float: right;
-					}
-					&.disabled {
-						cursor: default;
-						i {
-							.opacity(30);
-						}
-						&:hover {
-							background: #e8e8e8;
-						}
-					}
+					
 				}
 				
 			}

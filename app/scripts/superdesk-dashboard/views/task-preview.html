@@ -6,6 +6,14 @@
 <div class="content" ng-if="item">
 	<div class="basic">
 		<p>{{ 'Created' | translate}} <span sd-reldate-complex ng-model="item._created"></span></p>
+		<div class="dropdown pull-right">
+            <button class="dropdown-toggle"><i class="icon-dots-vertical"></i></button>
+            <div class="dropdown-menu pull-right"
+                sd-activity-list
+                data-data="{item: item}"
+                data-type="task">
+            </div>
+        </div>
 	</div>
 	<div class="assignee clearfix">
 		<figure class="avatar"><img sd-user-avatar data-src="users[item.task.user].picture_url"></figure>
