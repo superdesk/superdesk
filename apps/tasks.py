@@ -80,3 +80,10 @@ class TasksService(BaseService):
 
     def on_deleted(self, doc):
         push_notification(self.datasource, deleted=1)
+
+    def assign_user(self, item_id, user):
+        item = self.find_one(req=None, _id=item_id)
+        item['task'] = item.get('task', {})
+        item['task']['user'] = user
+        del item['_id']
+        self.update(item_id, item)

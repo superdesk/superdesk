@@ -10,6 +10,9 @@ from eve.versioning import resolve_document_version
 from superdesk.activity import add_activity
 from eve.utils import parse_request
 from superdesk.services import BaseService
+from apps.common.components.utils import get_component
+from apps.item_autosave.components.item_autosave import ItemAutosave
+from apps.common.models.base_model import InvalidEtag
 
 
 def get_subject(doc1, doc2=None):
@@ -84,14 +87,26 @@ class ArchiveService(BaseService):
             del updates['force_unlock']
 
     def on_updated(self, updates, original):
-        get_resource_service('archive_autosave').delete_action({'_id': original['_id']})
+        get_component(ItemAutosave).clear(original['_id'])
         on_update_media_archive()
 
         if '_version' in updates:
             add_activity('created new version {{ version }} for item {{ type }} about {{ subject }}',
                          version=updates['_version'], subject=get_subject(updates, original))
 
+    def on_replace(self, document, original):
+        user = get_user()
+        lock_user = original.get('lock_user', None)
+        force_unlock = document.get('force_unlock', False)
+        if lock_user and str(lock_user) != str(user['_id']) and not force_unlock:
+            raise SuperdeskError(payload='The item was locked by another user')
+        document['versioncreated'] = utcnow()
+        document['version_creator'] = str(user.get('_id'))
+        if force_unlock:
+            del document['force_unlock']
+
     def on_replaced(self, document, original):
+        get_component(ItemAutosave).clear(original['_id'])
         on_update_media_archive()
 
     def on_delete(self, doc):
@@ -159,21 +174,9 @@ class ArchiveSaveService(BaseService):
     def create(self, docs, **kwargs):
         if not docs:
             raise SuperdeskError('Content is missing', 400)
-        doc = docs[0]
-
-        item = get_resource_service('archive').find_one(req=None, _id=doc['_id'])
-        if item is None:
-            raise SuperdeskError('Invalid item identifier', 404)
-
         req = parse_request(self.datasource)
-        if req.if_match and item[app.config.ETAG] != req.if_match:
+        try:
+            get_component(ItemAutosave).autosave(docs[0]['_id'], docs[0], get_user(required=True), req.if_match)
+        except InvalidEtag:
             raise SuperdeskError('Client and server etags don\'t match', 412)
-
-        user = get_user(required=True)
-        lock_user = item.get('lock_user', None)
-        if lock_user and str(lock_user) != str(user['_id']):
-            raise SuperdeskError(payload='The item was locked by another user')
-
-        item.update(doc)
-        ids = super().create(item, **kwargs)
-        return [ids]
+        return [docs[0]['_id']]

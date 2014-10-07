@@ -45,4 +45,6 @@ class ItemAutosave(BaseComponent):
         return autosave_model.delete({'_id': item_id})
 
     def on_item_locked(self, item, user):
-        self.clear(item['_id'])
+        lock_user = item.get('lock_user', None)
+        if lock_user is not None and str(lock_user) != str(user):
+            self.clear(item['_id'])

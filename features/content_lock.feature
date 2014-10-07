@@ -1,11 +1,10 @@
-@wip
 Feature: Content Locking
 
     @auth
     Scenario: Lock item and edit
         Given "archive"
             """
-            [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
+            [{"_id": "item-1", "guid": "item-1", "headline": "test", "task": {"status": "done"}}]
             """
 
         When we post to "/archive/item-1/lock"
@@ -13,39 +12,37 @@ Feature: Content Locking
             {}
             """
         Then we get OK response
+        And item "item-1" is assigned
 
         When we patch "/archive/item-1"
             """
             {"headline": "test 2"}
             """
-
         Then we get OK response
 
     @auth
     Scenario: Fail edit on locked item
         Given "archive"
             """
-            [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
+            [{"_id": "item-1", "guid": "item-1", "headline": "test", "task": {"status": "done"}}]
             """
 
         When we post to "/archive/item-1/lock"
             """
             {}
             """
-
         And we switch user
         And we patch "/archive/item-1"
             """
             {"headline": "test 2"}
             """
-
         Then we get error 400
 
     @auth
     Scenario: Force unlock
         Given "archive"
             """
-            [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
+            [{"_id": "item-1", "guid": "item-1", "headline": "test", "task": {"status": "done"}}]
             """
 
         When we post to "/archive/item-1/lock"

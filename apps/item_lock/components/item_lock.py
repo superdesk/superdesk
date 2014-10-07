@@ -4,6 +4,7 @@ from superdesk.utc import utcnow
 from superdesk.notification import push_notification
 from apps.common.components.base_component import BaseComponent
 from apps.common.models.utils import get_model
+import superdesk
 
 
 LOCK_USER = 'lock_user'
@@ -22,9 +23,12 @@ class ItemLock(BaseComponent):
         item_model = get_model(ItemModel)
         item = item_model.find_one(filter)
         if item and self._can_lock(item, user):
+            self.app.on_item_lock(item, user)
             updates = {LOCK_USER: user, 'lock_time': utcnow()}
             item_model.update(filter, updates)
+            superdesk.get_resource_service('tasks').assign_user(item['_id'], user)
             item[LOCK_USER] = user
+            self.app.on_item_locked(item, user)
             push_notification('item:lock', item=str(item.get('_id')), user=str(user))
         else:
             raise SuperdeskError('Item locked by another user')
