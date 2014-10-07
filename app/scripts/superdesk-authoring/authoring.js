@@ -1,6 +1,4 @@
-define([
-    'angular'
-], function(angular) {
+(function() {
     'use strict';
 
     /**
@@ -32,7 +30,7 @@ define([
                 return $q.when(item);
             }
 
-            return api(RESOURCE).getById(item._id).then(function(autosave) {
+            return api.find(RESOURCE, item._id).then(function(autosave) {
                 extendItem(item, autosave);
                 item._autosave = autosave;
                 return item;
@@ -48,10 +46,17 @@ define([
             $timeout.cancel(_timeout);
             _timeout = $timeout(function() {
                 var autosave = item._autosave ? item._autosave : {};
-                var data = {guid: item.guid, _id: item._id};
+                var data = {guid: item.guid};
                 extendItem(data, item);
-                return api(RESOURCE).save(autosave, data).then(function(_autosave) {
-                    item._autosave = _autosave;
+
+                if (!autosave._id) {
+                    // id must be there for first time and first time only..
+                    data._id = item._id;
+                }
+
+                return api(RESOURCE).save(autosave, data).then(function() {
+                    item._autosave = autosave;
+                    extendItem(item._autosave, data);
                 });
             }, AUTOSAVE_TIMEOUT);
             return _timeout;
@@ -70,11 +75,9 @@ define([
     ItemLoader.$inject = ['$route', 'api', 'lock', 'autosave', 'workqueue'];
     function ItemLoader($route, api, lock, autosave, workqueue) {
         console.time('item');
-        return api('archive').getById($route.current.params._id).then(function(item) {
+        return api.find('archive', $route.current.params._id).then(function(item) {
             console.time('lock');
-            return item;
-            // TODO(petr): enable lock once autosaved is fixed
-            // return lock.lock(item);
+            return lock.shouldLock(item) ? lock.lock(item): item;
         }).then(function(item) {
             console.timeEnd('lock');
             console.time('autosave');
@@ -112,7 +115,15 @@ define([
         };
 
         /**
-         * Test if an item is locked
+         * Test if user should lock an item
+         */
+        this.shouldLock = function(item) {
+            item._locked = this.isLocked(item);
+            return item && !item.lock_user;
+        };
+
+        /**
+         * Test if an item is locked for me
          */
         this.isLocked = function(item) {
             if ('_locked' in item) {
@@ -227,7 +238,7 @@ define([
          */
     	$scope.save = function() {
             stopWatch();
-    		return api.archive.save(item, $scope.item).then(function(res) {
+    		return api.save('archive', item, $scope.item).then(function(res) {
                 item._autosave = null;
                 workqueue.update(item);
                 $scope.item = _.create(item);
@@ -326,6 +337,7 @@ define([
 
     return angular.module('superdesk.authoring', [
             'superdesk.editor',
+            'superdesk.activity',
             'superdesk.authoring.widgets',
             'superdesk.authoring.metadata',
             'superdesk.authoring.comments',
@@ -340,12 +352,12 @@ define([
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
-                .activity('/authoring/:_id', {
+                .activity('authoring', {
+                    when: '/authoring/:_id',
                 	label: gettext('Authoring'),
 	                templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
                     topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
 	                controller: AuthoringController,
-	                beta: true,
 	                filters: [{action: 'author', type: 'article'}],
                     resolve: {item: ItemLoader}
 	            })
@@ -361,4 +373,4 @@ define([
 	                ]
 	            });
         }]);
-});
+})();

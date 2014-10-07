@@ -140,7 +140,7 @@ function WorkqueueListDirective() {
     };
 }
 
-angular.module('superdesk.authoring.workqueue', [])
+angular.module('superdesk.authoring.workqueue', ['superdesk.activity'])
     .service('workqueue', WorkqueueService)
     .directive('sdWorkqueue', WorkqueueListDirective)
 

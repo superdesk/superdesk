@@ -168,6 +168,20 @@ define([
                 return new Resource(resource, parent);
             };
 
+            /**
+             * @alias api(resource).getById(id)
+             */
+            api.find = function(resource, id) {
+                return api(resource).getById(id);
+            };
+
+            /**
+             * @alias api(resource).save(dest, diff)
+             */
+            api.save = function(resource, dest, diff) {
+                return api(resource).save(dest, diff);
+            };
+
             angular.forEach(apis, function(config, apiName) {
                 var service = config.service || _.noop;
                 service.prototype = new endpoints[config.type](apiName, config.backend);

@@ -83,10 +83,10 @@
             }
         };
 
-        $scope.$watch('item._id + item._latest_version', fetchVersions);
+        $scope.$watchGroup(['item._id', 'item._latest_version'], fetchVersions);
     }
 
-angular.module('superdesk.authoring.versions', ['superdesk.authoring.versions'])
+angular.module('superdesk.authoring.versions', [])
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
             .widget('versions', {

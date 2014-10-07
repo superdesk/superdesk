@@ -14,14 +14,31 @@ for (var file in window.__karma__.files) {
     }
 }
 
-// we have to put here files tested without requirejs
+// core
+tests.push('superdesk/api/api');
+tests.push('superdesk/auth/auth');
 tests.push('superdesk/menu/menu');
+tests.push('superdesk/config/config');
+tests.push('superdesk/editor/editor');
+tests.push('superdesk/notify/notify');
+tests.push('superdesk/activity/activity');
 tests.push('superdesk/menu/notifications/notifications');
+tests.push('superdesk/services/translate');
+tests.push('superdesk/services/modalService');
+
+// apps
+tests.push('superdesk-authoring/authoring');
 tests.push('superdesk-authoring/widgets/widgets');
 tests.push('superdesk-authoring/comments/comments');
 tests.push('superdesk-authoring/workqueue/workqueue');
+tests.push('superdesk-authoring/metadata/metadata');
+tests.push('superdesk-authoring/versioning/versions');
 tests.push('superdesk-workspace/content/content');
+
+// libs
 tests.push('bower_components/ment.io/dist/mentio');
+tests.push('angular-gettext');
+tests.push('angular-ui');
 
 requirejs.config({
     baseUrl: '/base/app/scripts',
@@ -40,9 +57,10 @@ requirejs.config({
         lodash: 'bower_components/lodash/dist/lodash',
         d3: 'bower_components/d3/d3',
         'angular-resource': 'bower_components/angular-resource/angular-resource',
+        'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext',
         'angular-route': 'bower_components/angular-route/angular-route',
         'angular-mocks': 'bower_components/angular-mocks/angular-mocks',
-        'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext',
+        'angular-ui': 'bower_components/angular-bootstrap/ui-bootstrap',
         'moment-timezone': 'bower_components/moment-timezone/moment-timezone'
     },
 
@@ -57,7 +75,9 @@ requirejs.config({
         },
 
         'angular-resource': ['angular'],
+        'angular-gettext': ['angular'],
         'angular-route': ['angular'],
-        'angular-mocks': ['angular']
+        'angular-mocks': ['angular'],
+        'angular-ui': ['angular']
     }
 });
