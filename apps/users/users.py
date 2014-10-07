@@ -1,42 +1,6 @@
 """Superdesk Users"""
-
-import logging
-import superdesk
-
 from settings import LDAP_SERVER
 from superdesk.resource import Resource
-
-
-logger = logging.getLogger(__name__)
-
-
-class EmptyUsernameException(Exception):
-    def __str__(self):
-        return """Username is empty"""
-
-
-class ConflictUsernameException(Exception):
-    def __str__(self):
-        return "Username '%s' exists already" % self.args[0]
-
-
-def get_display_name(user):
-    if user.get('first_name') or user.get('last_name'):
-        display_name = '%s %s' % (user.get('first_name'), user.get('last_name'))
-        return display_name.strip()
-    else:
-        return user.get('username')
-
-
-def on_read_users(data, docs):
-    """Set default fields for users"""
-    for doc in docs:
-        doc.setdefault('display_name', get_display_name(doc))
-        doc.pop('password', None)
-
-
-superdesk.connect('read:users', on_read_users)
-superdesk.connect('created:users', on_read_users)
 
 
 class RolesResource(Resource):

@@ -2,6 +2,7 @@ from superdesk.resource import Resource
 from .common import base_schema, extra_response_fields, item_url, facets
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from superdesk.services import BaseService
+from superdesk.io.reuters import on_read_ingest
 
 
 class IngestResource(Resource):
@@ -30,3 +31,6 @@ class IngestService(BaseService):
 
     def on_delete(self, doc):
         on_delete_media_archive()
+
+    def on_fetched(self, doc):
+        on_read_ingest(doc['_items'])
