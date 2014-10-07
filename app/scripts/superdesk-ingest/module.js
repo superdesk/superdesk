@@ -78,21 +78,21 @@ define([
                         guid: data.item.guid
                     })
                     .then(function(archiveItem) {
-                        data.list[data.index].archiving = true;
-                        data.list[data.index].archivingProgress = 0;
+                        data.item.archiving = true;
+                        data.item.archivingProgress = 0;
                         checkProgress(archiveItem.task_id, function(progress) {
                             if (progress === 100) {
-                                data.list[data.index].archiving = false;
-                                data.list[data.index].archived = true;
+                                data.item.archiving = false;
+                                data.item.archived = true;
                             } else if (progress === null) {
-                                data.list[data.index].archiving = false;
-                                data.list[data.index].archiveError = true;
+                                data.item.archiving = false;
+                                data.item.archiveError = true;
                                 progress = 0;
                             }
-                            data.list[data.index].archivingProgress = progress;
+                            data.item.archivingProgress = progress;
                         });
                     }, function(response) {
-                        data.list[data.index].archiveError = true;
+                        data.item.archiveError = true;
                     });
                 }],
                 filters: [
