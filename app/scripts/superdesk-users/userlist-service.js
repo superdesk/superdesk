@@ -43,7 +43,6 @@ define([], function() {
                             {username: {'$regex': search}},
                             {first_name: {'$regex': search}},
                             {last_name: {'$regex': search}},
-                            {display_name: {'$regex': search}},
                             {email: {'$regex': search}}
                         ]
                     });

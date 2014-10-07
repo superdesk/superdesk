@@ -383,7 +383,7 @@ define([
                 templateUrl: 'scripts/superdesk-users/views/activity-list.html'
             };
         })
-        .directive('sdUserMentio', ['mentioUtil', 'api', function(mentioUtil, api) {
+        .directive('sdUserMentio', ['mentioUtil', 'api', 'userList', function(mentioUtil, api, userList) {
             return {
                 templateUrl: 'scripts/superdesk-users/views/mentions.html',
                 link: function(scope, elem) {
@@ -391,20 +391,12 @@ define([
 
                     // filter user by given prefix
                     scope.searchUsers = function(prefix) {
-                        var criteria = {
-                            max_results: 5
-                        };
 
-                        if (prefix) {
-                            criteria.where = {$or: [
-                                {username: {$regex: prefix}}
-                            ]};
-                        }
+                        return userList.get(prefix, 1, 10)
+                        .then(function(result) {
+                            scope.users = _.sortBy(result._items, 'username');
+                        });
 
-                        return api('users').query(criteria)
-                            .then(function(result) {
-                                scope.users = _.sortBy(result._items, 'display_name');
-                            });
                     };
 
                     scope.selectUser = function(user) {
