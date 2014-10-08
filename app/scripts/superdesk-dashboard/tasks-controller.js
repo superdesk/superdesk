@@ -7,7 +7,14 @@ define(['lodash'], function(_) {
         $scope.desksService = desks;
         $scope.selected = {};
         $scope.newTask = null;
-        $scope.userLookup = null;
+        $scope.userLookup = {};
+
+        userList.get(null, 1, 500)
+        .then(function(result) {
+            _.each(result._items, function(user) {
+            	$scope.userLookup[user._id] = user;
+            });
+        });
 
         $scope.tasks = {};
 
