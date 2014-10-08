@@ -54,13 +54,12 @@
 		                <div class="card" ng-class="{selected: item === selected}">
 		                	<span class="marker {{ item.task.status }}"></span>
 							<div class="header">
-                                <div class="assignee clearfix">
-                                    <figure class="avatar"><img sd-user-avatar data-src="userLookup[item.task.user].picture_url"></figure>
-                                    <p>
-                                        <span ng-show="item.task.desk">{{deskLookup[item.task.desk].name}} / </span>
-                                        <span ng-show="item.task.user">{{userLookup[item.task.user].display_name}}</span>
-                                        <span ng-hide="item.task.user" translate>Unassigned</span></div>
-                                    </p>
+
+                                <figure class="avatar"><img sd-user-avatar data-src="userLookup[item.task.user].picture_url"></figure>
+                                <div>
+                                    <span ng-show="item.task.desk">{{deskLookup[item.task.desk].name}} / </span>
+                                    <span ng-show="item.task.user">{{userLookup[item.task.user].display_name}}</span>
+                                    <span ng-hide="item.task.user" translate>Unassigned</span>
                                 </div>
 								<div class="title">{{item.slugline}}</div>
 							</div>
