@@ -49,6 +49,7 @@ define([
                 deskLookup: {},
                 userLookup: {},
                 deskMembers: {},
+                loading: null,
                 fetchDesks: function() {
                     var self = this;
 
@@ -106,26 +107,20 @@ define([
                 getCurrentDesk: function(desk) {
                     return this.deskLookup[this.getCurrentDeskId()];
                 },
-                initialize: function(force) {
+                initialize: function() {
                     var self = this;
 
-                    var p = $q.when();
-                    if (!this.desks || force) {
-                        p = p.then(function() {
+                    if (!this.loading) {
+                        this.loading = $q.when()
+                        .then(function() {
                             return self.fetchDesks();
-                        });
-                    }
-                    if (!this.users || force) {
-                        p = p.then(function() {
+                        }).then(function() {
                             return self.fetchUsers();
-                        });
-                    }
-                    if (_.isEmpty(this.deskMembers) || force) {
-                        p = p.then(function() {
+                        }).then(function() {
                             return self.generateDeskMembers();
                         });
                     }
-                    return p;
+                    return this.loading;
                 }
             };
             return desksService;

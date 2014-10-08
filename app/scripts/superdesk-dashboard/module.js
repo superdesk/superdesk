@@ -11,16 +11,38 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    TaskPreviewDirective.$inject = ['desks'];
-    function TaskPreviewDirective(desks) {
+    function TaskPreviewDirective() {
         return {
             templateUrl: 'scripts/superdesk-dashboard/views/task-preview.html',
             scope: {item: '='},
+            link: function(scope, element, attrs) {}
+        };
+    }
+
+    AssigneeViewDirective.$inject = ['desks'];
+    function AssigneeViewDirective(desks) {
+        var deskLookup = null;
+        var userLookup = null;
+
+        desks.initialize()
+        .then(function() {
+            deskLookup = desks.deskLookup;
+            userLookup = desks.userLookup;
+        });
+        return {
+            templateUrl: 'scripts/superdesk-dashboard/views/assignee-view.html',
+            scope: {item: '='},
             link: function(scope, element, attrs) {
-                desks.initialize()
-                .then(function() {
-                    scope.deskLookup = desks.deskLookup;
-                    scope.userLookup = desks.userLookup;
+                scope.$watch(function() {
+                    return deskLookup;
+                }, function() {
+                    scope.deskLookup = deskLookup;
+                });
+
+                scope.$watch(function() {
+                    return userLookup;
+                }, function() {
+                    scope.userLookup = userLookup;
                 });
             }
         };
@@ -40,6 +62,7 @@ define([
     .service('workspace', require('./workspace-service'))
     .directive('sdWidget', require('./sd-widget-directive'))
     .directive('sdTaskPreview', TaskPreviewDirective)
+    .directive('sdAssigneeView', AssigneeViewDirective)
 
     .filter('wcodeFilter', function() {
         return function(input, values) {
