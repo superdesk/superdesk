@@ -37,7 +37,7 @@ define([
                 ]
             })
             .activity('delete.archive', {
-                label: gettext('Delete archive'),
+                label: gettext('Delete item'),
                 confirm: gettext('Please confirm you want to delete an archive item.'),
                 icon: 'remove',
                 controller: ['$location', 'api', 'notify', 'data', function($location, api, notify, data) {

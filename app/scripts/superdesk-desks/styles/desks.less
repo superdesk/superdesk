@@ -1362,217 +1362,7 @@
 }
 
 
-/* Desk members popup */
-.desk-members {
-	
-	position: relative;
-	height: 500px !important;
-	overflow:hidden;
-
-	.members-screen1{
-			position: absolute;
-			.transition(all ease .4s);
-			top: 0; bottom: 0; left:0; right: 0;
-	}
-	.members-screen2 {
-			position: absolute;
-			.transition(all ease .4s);
-			top: 0; bottom: 0; left:560px; right: -560px;
-	}
-
-	.members-screen1.screen2 {
-		left:-560px; right: 560px;
-	}
-	.members-screen2.screen2 {
-		left:0; right: 0;
-	}
-
-	.members-list li {
-		.btn {
-			margin-top: 6px;
-			i {
-				margin-right: 0;
-			}
-		}
-	}
-
-		.members {
-			position: absolute;
-			top: 0; left: 0; right: 0;
-			height:72px;
-			padding: 10px;
-			.box-sizing(border-box);
-			border-bottom: 1px solid #f0f0f0;
-			overflow: hidden;
-			.member-avatars {
-				height: 52px;
-				overflow: hidden;
-				li {
-					position: relative;
-					float: left;
-					margin-right:10px;
-					width: 52px;
-					height: 52px;
-					overflow: hidden;
-				}
-				.avatar {
-					width: 100%;
-					height: 100%;
-					.border-radius(0);
-					position: absolute;
-					.transition(all ease .2s);
-				}
-				.member-name {
-					.transition(all ease .2s);
-					position: absolute;
-					bottom: 0;top: 0;
-					left: 52px;
-					width: 46px;
-					padding: 3px;
-					background-color: #3798b4;
-					font-size: 11px;
-					color: #fff; 
-					text-shadow: 1px 1px 2px #0a678c;
-					line-height: 15px;
-					overflow: hidden;
-					word-break : break-all;
-					cursor: default;
-				}
-
-				.delete {
-					position: absolute;
-					bottom: 0;
-					right: 0;
-					width: 14px;
-					height: 14px;
-					padding: 2px;
-					&:hover {
-						background: #237e98;
-						cursor: pointer;
-					}
-				}
-
-				li:hover {
-					figure {
-						left: -52px;
-					}
-					.member-name {
-						left: 0;
-					}
-				}
-			}
-			.no-member {
-				line-height: 52px;
-				text-align: center;
-				font-size: 12px;
-				color: #bbb;
-				width: auto !important;
-				float: none !important;
-			}
-			.view-all {
-				position: absolute;
-				top: 0;
-				bottom: 0;
-				right: -40px;
-				width: 40px;
-				line-height: 72px;
-				position: absolute;
-				background: #f0f0f0;
-				text-align: center;
-				.transition(all ease 0.2s);
-				i {
-					.opacity(50);
-				}
-				&:hover {
-					cursor: pointer;
-					background: #f0f0f0;
-					i {
-						.opacity(70);
-					}
-				}
-				&.show {
-					right: 0px;
-				}
-			}
-		}
-
-		.members-screen2 {
-			.members {
-			 height: auto;
-			 bottom:0;
-				.member-avatars {
-					margin-top: 50px;
-					height: auto;
-					li {
-						margin: 0 20px 20px 0;
-						width: 82px;
-						height: 82px;
-						.avatar {
-							img {
-								width: 80px;
-								height: 80px;
-							}
-						}
-
-						.member-name {
-							left:82px;
-							right: -82px;
-							width: 68px;
-							padding: 6px;
-							font-size: 12px;
-						}
-
-						.delete {
-							padding: 6px;
-						}
-
-						&:hover {
-							figure {
-								left: -82px;
-								right: 82px;
-							}
-							.member-name {
-								left: 0;
-							}
-						}
-
-					} 
-				}  
-
-				.view-all {
-					left: 0;
-					bottom: auto;
-					height: 40px;
-					right: auto;
-					line-height: 40px;
-				}
-
-			}
-		}
-
-		.search-members {
-			position: absolute;
-			top: 72px; left: 0; right: 0;
-			height:50px;
-			border-bottom: 1px solid #e8e8e8;
-			.box-shadow(0 2px 7px 0 #f0f0f0);
-			.box-sizing(border-box);
-			padding: 10px 20px;
-			.searchbar {
-				width: 250px;
-			}
-
-		}
-		.all-users {
-			position: absolute;
-			top: 122px; left: 0; right: 3px; bottom:0;
-			overflow: auto;
-			padding: 15px;
-		}
-
-}
-
-
+/* Desk create/edit popup */
 
 .add-desk-popup {
 	top: 100px!important;
@@ -1660,6 +1450,66 @@
 			float: left;
 			i {
 				margin-right: 0;
+			}
+		}
+	}
+	.people-stage {
+		.header {
+			height: 50px;
+			.search-result {
+				position: absolute;
+				left: 40px; right: 40px;
+				top: 51px; bottom: 80px;
+				overflow: auto;
+				border: 1px solid #ddd;
+				background: #fff;
+				padding: 10px;
+				z-index: 1;
+			}
+		}
+		.content {
+			position: absolute;
+			left: 20px; right: 20px;
+			top: 70px; bottom: 80px;
+			overflow: auto;
+		}
+		.member-list {
+			ul {
+				> li {
+					position: relative;
+					float: left;
+					margin: 5px;
+					border: 1px solid #fff;
+					.border-radius(5px);
+					padding: 15px 10px;
+					width: 115px;
+					.avatar {
+						display: block;
+						width: 84px;
+						height: 84px;
+						float: none;
+						margin: 0 auto 10px;
+					}
+					.name {
+						text-align: center;
+					}
+					i {
+						position: absolute;
+						right: 10px; top: 10px;
+						display: none;
+						.opacity(60);
+						&:hover {
+							.opacity(100);
+							cursor: pointer;
+						}
+					}
+					&:hover {
+						i {
+							display: block;
+						}
+						border-color: #e0e0e0;
+					}
+				}
 			}
 		}
 	}
