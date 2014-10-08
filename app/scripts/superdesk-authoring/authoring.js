@@ -54,7 +54,7 @@
                     data._id = item._id;
                 }
 
-                return api(RESOURCE).save(autosave, data).then(function() {
+                return api.save(RESOURCE, autosave, data).then(function() {
                     item._autosave = autosave;
                     extendItem(item._autosave, data);
                 });

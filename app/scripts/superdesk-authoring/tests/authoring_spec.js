@@ -55,7 +55,7 @@ describe('authoring', function() {
         expect(lock.lock).not.toHaveBeenCalled();
     }));
 
-    it('can edit an item', inject(function(superdesk, api, $q, $controller, $rootScope) {
+    it('can autosave and save an item', inject(function(superdesk, api, $q, $timeout, $controller, $rootScope) {
         var scope = $rootScope.$new(),
             headline = 'test headline';
 
@@ -63,13 +63,18 @@ describe('authoring', function() {
         expect(!!scope.dirty).toBe(false);
         expect(scope.item.guid).toBe(GUID);
 
+        // edit
         scope.item.headline = headline;
         $rootScope.$digest();
         expect(scope.dirty).toBe(true);
         expect(scope.saving).toBe(true);
 
+        // autosave
         spyOn(api, 'save').andReturn($q.when({}));
+        $timeout.flush(5000);
+        expect(api.save).toHaveBeenCalled();
 
+        // save
         scope.save();
         $rootScope.$digest();
         expect(api.save).toHaveBeenCalled();
