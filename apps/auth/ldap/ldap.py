@@ -1,6 +1,6 @@
 import logging
 from ldap3 import Server, Connection, SEARCH_SCOPE_WHOLE_SUBTREE, LDAPException
-from apps.auth.errors import AuthError, NotFoundAuthError
+from apps.auth.errors import AuthError, NotFoundAuthError, UserInactiveError
 from superdesk.utc import utcnow
 from superdesk.services import BaseService
 import superdesk.utils as utils
@@ -100,6 +100,9 @@ def authenticate(credentials):
 
         superdesk.get_resource_service('users').post([user_data])
     else:
+        if user.get('status', 'active') == 'inactive':
+            raise UserInactiveError()
+
         user_data[app.config['LAST_UPDATED']] = utcnow()
         superdesk.get_resource_service('users').patch(user.get('_id'), user_data)
 

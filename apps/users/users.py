@@ -85,6 +85,11 @@ class UsersResource(Resource):
             'allowed': ['user', 'manager', 'administrator'],
             'default': 'user',
             'required': True
+        },
+        'status': {
+            'type': 'string',
+            'allowed': ['active', 'inactive'],
+            'default': 'active'
         }
     }
 
@@ -95,6 +100,7 @@ class UsersResource(Resource):
         'user_info',
         'picture_url',
         'avatar',
+        'status'
     ]
 
     datasource = {

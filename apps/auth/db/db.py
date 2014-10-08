@@ -1,5 +1,5 @@
 import bcrypt
-from apps.auth.errors import NotFoundAuthError, raiseCredentialsAuthError
+from apps.auth.errors import NotFoundAuthError, raiseCredentialsAuthError, UserInactiveError
 from superdesk import utils as utils, get_resource_service
 from superdesk.services import BaseService
 
@@ -17,6 +17,9 @@ def authenticate(credentials):
     user = get_resource_service('auth_users').find_one(req=None, username=credentials.get('username'))
     if not user:
         raise NotFoundAuthError()
+
+    if user.get('status', 'active') == 'inactive':
+        raise UserInactiveError()
 
     password = credentials.get('password').encode('UTF-8')
     hashed = user.get('password').encode('UTF-8')

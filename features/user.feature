@@ -10,7 +10,7 @@ Feature: User Resource
 
         Then we get new resource
             """
-            {"username": "foo", "display_name": "foo", "email": "foo@bar.com"}
+            {"username": "foo", "display_name": "foo", "email": "foo@bar.com", "status": "active"}
             """
         And we get no "password"
 
@@ -105,6 +105,21 @@ Feature: User Resource
             """
 
         Then we get updated response
+
+    @auth
+    Scenario: Disable user
+        Given "users"
+            """
+            [{"username": "foo"}]
+            """
+
+        When we patch "/users/foo"
+            """
+            {"status": "inactive"}
+            """
+
+        Then we get updated response
+
 
     @auth
     Scenario: User workspace
