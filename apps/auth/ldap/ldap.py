@@ -1,9 +1,8 @@
 import logging
 from ldap3 import Server, Connection, SEARCH_SCOPE_WHOLE_SUBTREE, LDAPException
-from apps.auth.errors import AuthError, NotFoundAuthError, UserInactiveError
+from apps.auth.errors import AuthError, NotFoundAuthError
+from apps.auth.service import AuthService
 from superdesk.utc import utcnow
-from superdesk.services import BaseService
-import superdesk.utils as utils
 from flask import current_app as app
 import superdesk
 
@@ -75,45 +74,35 @@ class ADAuth:
             raise AuthError()
 
 
-def authenticate(credentials):
-    """
-    Authenticates the user against Active Directory
-    :param credentials: an object having "username" and "password" attributes
-    :return: if success returns User object, otherwise throws Error
-    """
-    settings = app.settings
-    ad_auth = ADAuth(settings['LDAP_SERVER'], settings['LDAP_SERVER_PORT'], settings['LDAP_BASE_FILTER'],
-                     settings['LDAP_USER_FILTER'], settings['LDAP_USER_ATTRIBUTES'], settings['LDAP_FQDN'])
+class LdapAuthService(AuthService):
 
-    username = credentials.get('username')
-    password = credentials.get('password')
+    def authenticate(self, credentials):
+        """
+        Authenticates the user against Active Directory
+        :param credentials: an object having "username" and "password" attributes
+        :return: if success returns User object, otherwise throws Error
+        """
+        settings = app.settings
+        ad_auth = ADAuth(settings['LDAP_SERVER'], settings['LDAP_SERVER_PORT'], settings['LDAP_BASE_FILTER'],
+                         settings['LDAP_USER_FILTER'], settings['LDAP_USER_ATTRIBUTES'], settings['LDAP_FQDN'])
 
-    user_data = ad_auth.authenticate_and_fetch_profile(username, password)
-    if len(user_data) == 0:
-        raise NotFoundAuthError()
+        username = credentials.get('username')
+        password = credentials.get('password')
 
-    user = superdesk.get_resource_service('users').find_one(username=username, req=None)
+        user_data = ad_auth.authenticate_and_fetch_profile(username, password)
+        if len(user_data) == 0:
+            raise NotFoundAuthError()
 
-    if not user:
-        user_data['username'] = username
-        user_data[app.config['DATE_CREATED']] = user_data[app.config['LAST_UPDATED']] = utcnow()
+        user = superdesk.get_resource_service('users').find_one(username=username, req=None)
 
-        superdesk.get_resource_service('users').post([user_data])
-    else:
-        if user.get('status', 'active') == 'inactive':
-            raise UserInactiveError()
+        if not user:
+            user_data['username'] = username
+            user_data[app.config['DATE_CREATED']] = user_data[app.config['LAST_UPDATED']] = utcnow()
 
-        user_data[app.config['LAST_UPDATED']] = utcnow()
-        superdesk.get_resource_service('users').patch(user.get('_id'), user_data)
+            superdesk.get_resource_service('users').post([user_data])
+        else:
+            user_data[app.config['LAST_UPDATED']] = utcnow()
+            superdesk.get_resource_service('users').patch(user.get('_id'), user_data)
 
-    user = superdesk.get_resource_service('users').find_one(username=username, req=None)
-    return user
-
-
-class LdapAuthService(BaseService):
-    def on_create(self, docs):
-        for doc in docs:
-            user = authenticate(doc)
-            doc['user'] = user['_id']
-            doc['token'] = utils.get_random_string(40)
-            del doc['password']
+        user = superdesk.get_resource_service('users').find_one(username=username, req=None)
+        return user

@@ -56,3 +56,7 @@ class PreferencesService(BaseService):
         doc = self.find_one(req=None, _id=user_id)
         prefs = doc.get(_preferences_key, {}).get(preference_name, {})
         return prefs
+
+    def email_notification_is_enabled(self, user_id):
+        send_email = self.get_user_preference(user_id, 'email:notification')
+        return send_email and send_email.get('enabled', False)

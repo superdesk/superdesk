@@ -1,5 +1,5 @@
-from apps.auth.db import authenticate
 from superdesk.tests import TestCase
+from superdesk import get_resource_service
 from .commands import CreateUserCommand
 
 
@@ -10,10 +10,10 @@ class UsersTestCase(TestCase):
         cmd = CreateUserCommand()
         with self.app.test_request_context():
             cmd.run(user['username'], user['password'], user['email'])
-            auth_user = authenticate(user)
+            auth_user = get_resource_service('auth').authenticate(user)
             self.assertEquals(auth_user['username'], user['username'])
 
             cmd.run(user['username'], user['password'], user['email'])
-            auth_user2 = authenticate(user)
+            auth_user2 = get_resource_service('auth').authenticate(user)
             self.assertEquals(auth_user2['username'], user['username'])
             self.assertEquals(auth_user2['_id'], auth_user['_id'])

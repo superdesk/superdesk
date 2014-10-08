@@ -1,0 +1,4 @@
+Your Superdesk account is {{status}}.
+
+Regards,
+The Superdesk admin

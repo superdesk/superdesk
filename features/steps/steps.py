@@ -862,6 +862,15 @@ def we_mention_user_in_comment(context, url):
         assert email_text
 
 
+@when('we change user status to "{status}" using "{url}"')
+def we_change_user_status(context, status, url):
+    with context.app.mail.record_messages() as outbox:
+        step_impl_when_patch_url(context, url)
+        assert len(outbox) == 1
+        assert_equal(outbox[0].subject, "Your Superdesk account is " + status)
+        assert outbox[0].body
+
+
 @when('we get the default incoming stage')
 def we_get_default_incoming_stage(context):
     data = json.loads(context.response.get_data())

@@ -107,19 +107,23 @@ Feature: User Resource
         Then we get updated response
 
     @auth
-    Scenario: Disable user
+    Scenario: Change user status
         Given "users"
             """
-            [{"username": "foo"}]
+            [{"username": "foo", "email": "foo@bar.co"}]
             """
 
-        When we patch "/users/foo"
+        When we change user status to "inactive" using "/users/foo"
             """
             {"status": "inactive"}
             """
 
         Then we get updated response
-
+        When we change user status to "active" using "/users/foo"
+            """
+            {"status": "active"}
+            """
+        Then we get updated response
 
     @auth
     Scenario: User workspace
