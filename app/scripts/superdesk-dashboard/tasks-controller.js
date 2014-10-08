@@ -43,6 +43,9 @@ define(['lodash'], function(_) {
                 );
             }
             delete $scope.newTask.task.due_time;
+            if (!$scope.newTask.task.user) {
+                delete $scope.newTask.task.user;
+            }
 
             api('tasks').save($scope.newTask)
             .then(function(result) {
