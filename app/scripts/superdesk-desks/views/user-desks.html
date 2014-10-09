@@ -1,4 +1,4 @@
-<button ng-show="desks" class="dropdown-toggle">{{ selectedDesk.name || deskLabel === "tasks"? "My tasks" : "My content" | translate }} <b class="caret"></b></button>
+<button ng-show="desks" class="dropdown-toggle">{{ selectedDesk ? selectedDesk.name : deskLabel === "tasks"? "My tasks" : "My content" | translate }} <b class="caret"></b></button>
 <ul class="dropdown-menu">
     <li ng-show="selectedDesk">
     	<a href="" ng-click="select()" ng-switch="deskLabel">
