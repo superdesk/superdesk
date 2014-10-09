@@ -1,19 +1,17 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    TasksController.$inject = ['$scope', 'api', 'notify', 'userList', '$rootScope', 'es', 'desks'];
-    function TasksController($scope, api, notify, userList, $rootScope, es, desks) {
+    TasksController.$inject = ['$scope', 'api', 'notify', '$rootScope', 'es', 'desks'];
+    function TasksController($scope, api, notify, $rootScope, es, desks) {
 
         $scope.desksService = desks;
         $scope.selected = {};
         $scope.newTask = null;
-        $scope.userLookup = {};
 
-        userList.get(null, 1, 500)
-        .then(function(result) {
-            _.each(result._items, function(user) {
-            	$scope.userLookup[user._id] = user;
-            });
+        desks.initialize()
+        .then(function() {
+            $scope.deskLookup = desks.deskLookup;
+            $scope.userLookup = desks.userLookup;
         });
 
         $scope.tasks = {};
