@@ -78,7 +78,7 @@ define([
         });
         superdesk.activity('pick.task', {
             label: gettext('Pick task'),
-            icon: 'pencil',
+            icon: 'pick',
             controller: ['api', 'data', 'session', 'superdesk', 'workqueue',
                 function(api, data, session, superdesk, workqueue) {
                     api('tasks').save(
