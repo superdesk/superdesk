@@ -26,9 +26,10 @@
                 </fieldset>
             </form>            
 
-            <div class="error-handler">
-                <p class="error" ng-show="loginError == 400" translate>Oops! Invalid Username or Password.<br />Please try again.</p>
-                <p class="error" ng-show="loginError && loginError != 400" translate>Sorry, but can't reach the server now.<br />Please try again later.</p>
+            <div class="error-handler" ng-switch on="loginError">
+                <p class="error" ng-switch-when="400" translate>Oops! Invalid Username or Password.<br />Please try again.</p>
+                <p class="error" ng-switch-when="403" translate>Sorry, but your account has been suspended.</p>
+                <p class="error" ng-show="loginError" ng-switch-default translate>Sorry, but can't reach the server now.<br />Please try again later.</p>
 
                 <div class="network-error red" ng-show="serverStatus == 1">
                     <span class="icon-unplug"></span>

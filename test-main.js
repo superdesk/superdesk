@@ -35,7 +35,11 @@ tests.push('superdesk-authoring/metadata/metadata');
 tests.push('superdesk-authoring/versioning/versions');
 tests.push('superdesk-workspace/content/content');
 tests.push('superdesk-desks/module');
-tests.push('superdesk-users/module');
+
+tests.push('superdesk-users/users');
+tests.push('superdesk-users/profile');
+tests.push('superdesk-users/activity/activity');
+
 tests.push('superdesk-dashboard/module');
 
 // libs

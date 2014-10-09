@@ -1,9 +1,16 @@
-define(['angular'], function(angular) {
+(function() {
     'use strict';
 
-    var module = angular.module('superdesk.users.services', []);
+    angular.module('superdesk.users.profile', ['superdesk.api'])
 
-    module.service('profileService', ['api', function(api) {
+        .config(['apiProvider', function(apiProvider) {
+            apiProvider.api('activity', {
+                type: 'http',
+                backend: {rel: 'activity'}
+            });
+        }])
+
+        .service('profileService', ['api', function(api) {
         /**
          * User profile service
          */
@@ -44,4 +51,4 @@ define(['angular'], function(angular) {
             }
         };
     }]);
-});
+})();

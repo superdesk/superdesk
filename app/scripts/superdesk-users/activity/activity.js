@@ -1,10 +1,7 @@
-define([
-    'angular',
-    'require'
-], function(angular, require) {
+(function() {
     'use strict';
 
-    angular.module('superdesk.widgets.activity', ['superdesk.dashboard.widgets'])
+    angular.module('superdesk.users.activity', ['superdesk.dashboard.widgets'])
         .config(['widgetsProvider', function(widgets) {
             widgets.widget('activity', {
                 label: 'Activity Log',
@@ -13,9 +10,9 @@ define([
                 max_sizey: 2,
                 sizex: 1,
                 sizey: 2,
-                thumbnail: require.toUrl('./thumbnail.png'),
-                template: require.toUrl('./widget-activity.html'),
-                configurationTemplate: require.toUrl('./configuration.html'),
+                thumbnail: 'scripts/superdesk-users/activity/thumbnail.png',
+                template: 'scripts/superdesk-users/activity/widget-activity.html',
+                configurationTemplate: 'scripts/superdesk-users/activity/configuration.html',
                 configuration: {maxItems: 5},
                 description: 'Activity log widget'
             });
@@ -59,4 +56,4 @@ define([
                 };
             };
         }]);
-});
+})();
