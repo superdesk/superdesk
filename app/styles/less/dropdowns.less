@@ -181,14 +181,11 @@
 
 ////////////// Diferent styles for dropdowns
 
-
 //navigation big dropdown
-.navbtn.dropdown {
-	padding: 0;
+.dropdown.dropdown-big, .navbtn.dropdown {
 	.dropdown-toggle {
 		padding: 0 15px 0 25px;
 		display: block;
-		background: #f5f5f5;
 		color:@sd-text;
 		height: @subnav-height - 1;
 		text-align: center;
@@ -240,22 +237,30 @@
 					background: none;
 				}
 			}
-			button.full {
-				margin: 5px 0 0 0;
-				height: 41px;
-				padding: 10px 14px;
-				border-top: 1px solid #e0e0e0;
-				.border-radius(0px);
-				i {
-					margin-right: 10px;
-				}
-				&:hover {
-					background: @sd-blue;
-					color: #fff;
+			button {
+				width: auto;
+				&.full {
+					width: 100%;
+					margin: 5px 0 0 0;
+					height: 41px;
+					padding: 10px 14px;
+					border-top: 1px solid #e0e0e0;
+					.border-radius(0px);
+					i {
+						margin-right: 10px;
+					}
+					&:hover {
+						background: @sd-blue;
+						color: #fff;
+					}
 				}
 			}
 		}
 	}
+}
+
+.navbtn.dropdown {
+	padding: 0;
 }
 
 
