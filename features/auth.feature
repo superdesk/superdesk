@@ -42,6 +42,22 @@ Feature: Authentication
             {"_status": "ERR", "_issues": {"credentials": 1}}
             """
 
+    Scenario: Authenticate after user is disabled
+        Given "users"
+            """
+            [{"username": "foo", "password": "bar", "status": "inactive"}]
+            """
+
+        When we post to auth
+            """
+            {"username": "foo", "password": "bar"}
+            """
+
+        Then we get error 403
+            """
+            {"_issues": {"status": "inactive"}, "_message": "", "_status": "ERR"}
+            """
+
     Scenario: Authenticate with non existing username
         Given "users"
             """

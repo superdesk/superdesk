@@ -20,6 +20,19 @@ reset_schema = {
 }
 
 
+class ActiveTokensResource(Resource):
+    internal_resource = True
+    schema = reset_schema
+    where_clause = '(ISODate() - this._created) / 3600000 <= %s' % token_ttl
+    datasource = {
+        'source': 'reset_user_password',
+        'default_sort': [('_created', -1)],
+        'filter': {'$where': where_clause}
+    }
+    resource_methods = []
+    item_methods = []
+
+
 class ResetPasswordResource(Resource):
     schema = reset_schema
     public_methods = ['POST']

@@ -3,7 +3,7 @@
 import requests
 import traceback
 import datetime
-import superdesk
+from superdesk import get_resource_service
 
 from superdesk.utc import utcnow
 from superdesk.utc import utc
@@ -15,6 +15,22 @@ from .reuters_token import get_token
 
 
 PROVIDER = 'reuters'
+
+
+def _on_read_ingest(docs):
+    provider = get_resource_service('ingest_providers').find_one(type=PROVIDER, req=None)
+    if not provider:
+        return
+
+    for doc in docs['_items']:
+        if str(doc.get('ingest_provider')) == str(provider['_id']):
+            for i, rendition in doc.get('renditions', {}).items():
+                rendition['href'] = '%s?auth_token=%s' % (rendition['href'], get_token(provider))
+
+
+def init_app(app):
+    app.on_fetched_resource_ingest -= _on_read_ingest
+    app.on_fetched_resource_ingest += _on_read_ingest
 
 
 class ReutersIngestService(IngestService):
@@ -135,15 +151,4 @@ class ReutersIngestService(IngestService):
         return '%s?auth_token=%s' % (new_href, self.get_token())
 
 
-def on_read_ingest(data, docs):
-    provider = data.find_one('ingest_providers', type=PROVIDER, req=None)
-    if not provider:
-        return
-    for doc in docs:
-        if str(doc.get('ingest_provider')) == str(provider['_id']):
-            for i, rendition in doc.get('renditions', {}).items():
-                rendition['href'] = '%s?auth_token=%s' % (rendition['href'], get_token(provider))
-
-
-superdesk.connect('read:ingest', on_read_ingest)
 register_provider(PROVIDER, ReutersIngestService())

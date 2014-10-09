@@ -28,8 +28,8 @@ def send_email_to_mentioned_users(doc, mentioned_users, origin):
     prefs_service = superdesk.get_resource_service('preferences')
     recipients = []
     for user in mentioned_users:
-        send_email = prefs_service.get_user_preference(user, 'email:notification')
-        if send_email and send_email.get('enabled', False):
+        send_email = prefs_service.email_notification_is_enabled(user)
+        if send_email:
             user_doc = superdesk.get_resource_service('users').find_one(req=None, _id=user)
             recipients.append(user_doc['email'])
     if recipients:

@@ -10,7 +10,7 @@ Feature: User Resource
 
         Then we get new resource
             """
-            {"username": "foo", "display_name": "foo", "email": "foo@bar.com"}
+            {"username": "foo", "display_name": "foo", "email": "foo@bar.com", "status": "active"}
             """
         And we get no "password"
 
@@ -104,6 +104,25 @@ Feature: User Resource
             {"first_name": "Foo"}
             """
 
+        Then we get updated response
+
+    @auth
+    Scenario: Change user status
+        Given "users"
+            """
+            [{"username": "foo", "email": "foo@bar.co"}]
+            """
+
+        When we change user status to "inactive" using "/users/foo"
+            """
+            {"status": "inactive"}
+            """
+
+        Then we get updated response
+        When we change user status to "active" using "/users/foo"
+            """
+            {"status": "active"}
+            """
         Then we get updated response
 
     @auth

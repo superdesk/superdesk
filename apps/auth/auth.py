@@ -22,6 +22,9 @@ class AuthUsersResource(Resource):
         },
         'password': {
             'type': 'string',
+        },
+        'status': {
+            'type': 'string'
         }
     }
     item_methods = []

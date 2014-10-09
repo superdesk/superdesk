@@ -1,6 +1,6 @@
 import superdesk
 from apps.auth import AuthResource
-from .ldap import LdapAuthService, authenticate, ADAuth  # noqa
+from .ldap import LdapAuthService, ADAuth  # noqa
 from .commands import ImportUserProfileFromADCommand  # noqa
 
 

@@ -9,7 +9,6 @@ import superdesk
 from flask.ext.mail import Mail
 from eve.io.mongo import MongoJSONEncoder
 from eve.render import send_response
-from superdesk import signals
 from superdesk.celery_app import init_celery
 from eve.auth import TokenAuth
 from superdesk.storage.desk_media_storage import SuperdeskGridFSMediaStorage
@@ -59,10 +58,6 @@ def get_app(config=None):
     app.jinja_loader = custom_loader
 
     app.mail = Mail(app)
-
-    app.on_fetched_resource += signals.proxy_resource_signal('read', app)
-    app.on_fetched_item += signals.proxy_item_signal('read', app)
-    app.on_inserted += signals.proxy_resource_signal('created', app)
 
     @app.errorhandler(superdesk.SuperdeskError)
     def client_error_handler(error):

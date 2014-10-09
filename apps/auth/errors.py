@@ -31,6 +31,12 @@ class ForbiddenError(superdesk.SuperdeskError):
     status_code = 403
 
 
+class UserInactiveError(ForbiddenError):
+    """User is inactive, access restricted"""
+    payload = {'status': 'inactive'}
+    message = 'Account suspended, access restricted.'
+
+
 def raiseCredentialsAuthError(credentials):
     logger.warning("Login failure: %s" % json.dumps(credentials))
     raise CredentialsAuthError()
