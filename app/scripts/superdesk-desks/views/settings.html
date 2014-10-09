@@ -62,9 +62,9 @@
 							<div class="header" translate>Work stages</div>
 							<div class="content">
 								<div class="stages-list clearfix">
-									<div class="stage" ng-if="desk.edit.incoming_stage" translate>Incoming</div>
+									<!--<div class="stage" ng-if="desk.edit.incoming_stage" translate>Incoming</div>-->
 									<div class="stage" ng-repeat="stage in stages">
-										<span>{{ stage.name }}</span>
+										{{ stage.name }}
 										<i class="remove" ng-click="remove(stage)"></i>
 									</div>
 									<div class="stage editable" ng-show="newStage.show">

@@ -12,7 +12,7 @@
 	    	<button class="btn btn-medium pull-left" ng-click="close()" ng-if="item">{{ 'Close' | translate }}</button>
 	    	<button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()" ng-show="item && editable" ng-disabled="!dirty">{{ 'Save' | translate }}</button>
 
-	    	<button class="navbtn navbtn-hover" ng-click="sendTo = !sendTo">
+	    	<button class="navbtn navbtn-hover" ng-click="sendTo = !sendTo" ng-show="item.task.desk">
 	            <i class="svg-icon-add"></i>
 	        </button>
 	        
@@ -29,7 +29,7 @@
 
 		<div sd-authoring-widgets data-item="item">
 
-		    <div class="main-article-container" ng-click="closeSendTo();">
+		    <div class="main-article-container" ng-click="sendTo = false;">
 
 		        <article class="main-article" ng-if="item._id" ng-class="{preview: !editable}">
 		            <section class="article-title">
@@ -60,13 +60,12 @@
 		<header>
 			<h3 translate>Send to</h3>
 			<div class="close" ng-click="sendTo = !sendTo"><i class="icon-close-small icon-white"></i></div>
-		</header>				
+		</header>
 		<div class="content">
 			<ul class="destination-list">
-				<li>Destination one</li>
-				<li>Destination two</li>
-				<li>Destination three</li>
-				<li>Destination four</li>
+				<li ng-repeat="stage in stages._items" ng-click="sendToStage(stage)">
+					{{ stage.name }}
+				</li>
 			</ul>
 		</div>
 	</div>

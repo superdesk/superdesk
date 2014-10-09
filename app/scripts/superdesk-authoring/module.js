@@ -75,11 +75,12 @@ define([
         'gettext',
         'ConfirmDirty',
         'lock',
-        '$q'
+        '$q',
+        'desks'
     ];
 
     function AuthoringController($scope, $routeParams, $interval, $timeout, superdesk, api,
-        workqueue, notify, gettext, ConfirmDirty, lock, $q) {
+        workqueue, notify, gettext, ConfirmDirty, lock, $q, desks) {
         var _item,
             _autosaveFlag,
             confirm = new ConfirmDirty($scope);
@@ -94,9 +95,7 @@ define([
         $scope.saved = false;
 
         $scope.sendTo = false;
-        $scope.closeSendTo = function() {
-            $scope.sendTo = false;
-        };
+        $scope.stages = null;
 
         function setupNewItem() {
             if ($routeParams._id) {
@@ -164,6 +163,14 @@ define([
                 return;
             }
 
+            desks.initialize()
+            .then(function() {
+                api('stages').query({where: {desk: $scope.item.task.desk}})
+                .then(function(result) {
+                    $scope.stages = result;
+                });
+            });
+
             $scope.editable = isEditable(item);
             $scope.dirty = isDirty(item);
 
@@ -222,6 +229,20 @@ define([
                 }
                 $scope.dirty = false;
                 workqueue.remove($scope.item);
+                superdesk.intent('author', 'dashboard');
+            });
+        };
+
+        $scope.sendToStage = function(stage) {
+            api('tasks').save(
+                $scope.item,
+                {task: _.extend(
+                    $scope.item.task,
+                    {stage: stage._id}
+                )}
+            )
+            .then(function(result) {
+                notify.success(gettext('Item sent.'));
                 superdesk.intent('author', 'dashboard');
             });
         };
