@@ -1,11 +1,11 @@
-define(['lodash', 'superdesk/hashlib'], function(_, hashlib) {
+define(['angular'], function(angular) {
     'use strict';
 
     /**
      * Bussiness logic layer, should be used instead of resource
      */
-    UsersService.$inject = ['resource'];
-    function UsersService(resource) {
+    UsersService.$inject = ['resource', '$q'];
+    function UsersService(resource, $q) {
 
         /**
          * Save user with given data
@@ -16,15 +16,10 @@ define(['lodash', 'superdesk/hashlib'], function(_, hashlib) {
          */
         this.save = function(user, data) {
             var copy = _.clone(data);
-
-            if (copy.Password) {
-                copy.Password = hashlib.hash(copy.Password);
-            }
-
             return resource.save(user, copy)
                 .then(function(updates) {
-                    _.extend(user, data);
-                    _.extend(user, updates);
+                    angular.extend(user, data);
+                    angular.extend(user, updates);
                     delete user.Password;
                     return user;
                 });
@@ -39,10 +34,8 @@ define(['lodash', 'superdesk/hashlib'], function(_, hashlib) {
          * @returns {Promise}
          */
         this.changePassword = function(user, oldPassword, newPassword) {
-            return resource.replace(user.UserPassword.href, {
-                OldPassword: hashlib.hash(oldPassword),
-                NewPassword: hashlib.hash(newPassword)
-            });
+            console.error('change password not implemented');
+            return $q.reject();
         };
     }
 
