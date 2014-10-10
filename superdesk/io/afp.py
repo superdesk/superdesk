@@ -1,6 +1,5 @@
 
 import os
-import shutil
 import logging
 
 from datetime import datetime, timedelta
@@ -47,7 +46,7 @@ class AFPIngestService(IngestService):
                             item['_created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
                             item['_updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
                             item.setdefault('provider', provider.get('name', provider['type']))
-                            self.move_the_current_file(filename, success=True)
+                            self.move_file(self.path, filename, success=True)
                             yield [item]
         except (Exception) as err:
             logger.exception(err)
@@ -56,18 +55,5 @@ class AFPIngestService(IngestService):
         finally:
             push_notification('ingest:update')
 
-    def move_the_current_file(self, filename, success=True):
-        try:
-            if not os.path.exists(os.path.join(self.path, "_PROCESSED/")):
-                os.makedirs(os.path.join(self.path, "_PROCESSED/"))
-            if not os.path.exists(os.path.join(self.path, "_ERROR/")):
-                os.makedirs(os.path.join(self.path, "_ERROR/"))
-
-            if success:
-                shutil.copy2(os.path.join(self.path, filename), os.path.join(self.path, "_PROCESSED/"))
-            else:
-                shutil.copy2(os.path.join(self.path, filename), os.path.join(self.path, "_ERROR/"))
-        finally:
-            os.remove(os.path.join(self.path, filename))
 
 register_provider(PROVIDER, AFPIngestService())

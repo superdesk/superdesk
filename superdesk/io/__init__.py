@@ -1,6 +1,8 @@
 """Superdesk IO"""
 
 import logging
+import os
+import shutil
 from superdesk.celery_app import celery
 
 
@@ -17,6 +19,20 @@ class IngestService():
 
     def update(self, provider):
         raise NotImplementedError()
+
+    def move_file(self, filepath, filename, success=True):
+        try:
+            if not os.path.exists(os.path.join(filepath, "_PROCESSED/")):
+                os.makedirs(os.path.join(filepath, "_PROCESSED/"))
+            if not os.path.exists(os.path.join(filepath, "_ERROR/")):
+                os.makedirs(os.path.join(filepath, "_ERROR/"))
+
+            if success:
+                shutil.copy2(os.path.join(filepath, filename), os.path.join(filepath, "_PROCESSED/"))
+            else:
+                shutil.copy2(os.path.join(filepath, filename), os.path.join(filepath, "_ERROR/"))
+        finally:
+            os.remove(os.path.join(filepath, filename))
 
 
 from .commands.remove_expired_content import RemoveExpiredContent
