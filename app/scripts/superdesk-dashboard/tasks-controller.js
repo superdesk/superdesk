@@ -1,13 +1,18 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    TasksController.$inject = ['$scope', 'api', 'notify', 'userList', '$rootScope', 'es', 'desks'];
-    function TasksController($scope, api, notify, userList, $rootScope, es, desks) {
+    TasksController.$inject = ['$scope', 'api', 'notify', '$rootScope', 'es', 'desks'];
+    function TasksController($scope, api, notify, $rootScope, es, desks) {
 
         $scope.desksService = desks;
         $scope.selected = {};
         $scope.newTask = null;
-        $scope.userLookup = null;
+
+        desks.initialize()
+        .then(function() {
+            $scope.deskLookup = desks.deskLookup;
+            $scope.userLookup = desks.userLookup;
+        });
 
         $scope.tasks = {};
 
@@ -43,6 +48,9 @@ define(['lodash'], function(_) {
                 );
             }
             delete $scope.newTask.task.due_time;
+            if (!$scope.newTask.task.user) {
+                delete $scope.newTask.task.user;
+            }
 
             api('tasks').save($scope.newTask)
             .then(function(result) {

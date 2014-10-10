@@ -36,4 +36,28 @@
 			</li>
 		</ul>
 	</div>
+	<div sd-toggle-box data-title="Task details" data-open="true" ng-if="item.task">
+		<ul class="basic-list task-info">
+			<li ng-if="item.slugline" class="auto">
+				<div class="lbl" translate>Title</div>
+				<div class="data">{{item.slugline}}</div>
+			</li>
+			<li ng-if="item.description_text" class="auto">
+				<div class="lbl" translate>Description</div>
+				<div class="data">{{item.description_text}}</div>
+			</li>
+			<li ng-if="item.task.status">
+				<div class="lbl" translate>Status</div>
+				<div class="data">{{item.task.status}}</div>
+			</li>
+			<li ng-if="item.task.due_date" class="wider">
+				<div class="lbl" translate>Due date</div>
+				<div class="data" sd-reldate-complex ng-model="item.task.due_date"></div>
+			</li>
+			<li ng-if="item.task.desk">
+				<div class="lbl" translate>Desk</div>
+				<div class="data">{{deskLookup[item.task.desk].name}}</div>
+			</li>
+		</ul>
+	</div>
 </div>
