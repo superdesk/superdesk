@@ -9,6 +9,7 @@ from werkzeug.exceptions import HTTPException
 from eve.utils import config  # noqa
 from .eve_backend import EveBackend
 
+
 API_NAME = 'Superdesk API'
 VERSION = (0, 0, 1)
 DOMAIN = {}
@@ -92,6 +93,9 @@ def get_backend():
 
 def get_resource_service(resource_name):
     return resources[resource_name].service
+
+
+from .app_prepopulate import AppPrepopulateCommand  # noqa
 
 
 def register_available_preference(preference_name, preference):
