@@ -58,6 +58,15 @@ define([
             }
 
             /**
+             * Get headers for given item
+             */
+            function getHeaders(item) {
+                return {
+                    'If-Match': item && item._etag ? item._etag : null
+                };
+            }
+
+            /**
              * API Resource instance
              */
             function Resource(resource, parent) {
@@ -96,7 +105,8 @@ define([
                     method: item._links ? 'PATCH' : 'POST',
                     url: item._links ? urls.item(item._links.self.href) : this.url(),
                     data: diff ? diff : clean(item),
-                    params: params
+                    params: params,
+                    headers: getHeaders(item)
                 }).then(function(data) {
                     angular.extend(item, diff || {});
                     angular.extend(item, data);
@@ -137,7 +147,8 @@ define([
                 return http({
                     method: 'DELETE',
                     url: urls.item(item._links.self.href),
-                    params: params
+                    params: params,
+                    headers: getHeaders(item)
                 });
             };
 

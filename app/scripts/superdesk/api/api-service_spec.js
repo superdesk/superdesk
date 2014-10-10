@@ -11,7 +11,12 @@ define([
     var USER_URL = 'http://localhost/users/1',
         USER_PATH = '/users/1',
         USERS_URL = 'http://localhost/users',
-        SERVER_URL = 'http://localhost';
+        SERVER_URL = 'http://localhost',
+        ETAG = 'xyz';
+
+    function testEtagHeader(headers) {
+        return headers['If-Match'] === ETAG;
+    }
 
     var HTTP_API = {
         type: 'http',
@@ -343,10 +348,10 @@ define([
 
         it('can update', inject(function(api, $httpBackend) {
 
-            var user = {_id: 1, _links: {self: {href: USER_PATH}}, name: 'foo'};
+            var user = {_id: 1, _links: {self: {href: USER_PATH}}, name: 'foo', _etag: ETAG};
             var diff = {name: 'bar'};
 
-            $httpBackend.expectPATCH(USER_URL, diff).respond(200, {name: 'bar'});
+            $httpBackend.expectPATCH(USER_URL, diff, testEtagHeader).respond(200, {name: 'bar'});
 
             api('users').save(user, diff);
 
@@ -424,8 +429,8 @@ define([
         }));
 
         it('can remove an item', inject(function(api, $httpBackend) {
-            var user = {_links: {self: {href: USER_PATH}}};
-            $httpBackend.expectDELETE(USER_URL).respond(200);
+            var user = {_links: {self: {href: USER_PATH}}, _etag: ETAG};
+            $httpBackend.expectDELETE(USER_URL, testEtagHeader).respond(200);
             api('users').remove(user);
             $httpBackend.flush();
         }));
