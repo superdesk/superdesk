@@ -61,9 +61,13 @@ define([
              * Get headers for given item
              */
             function getHeaders(item) {
-                return {
-                    'If-Match': item && item._etag ? item._etag : null
-                };
+                var headers = {};
+
+                if (item && item._etag) {
+                    headers['If-Match'] = item._etag;
+                }
+
+                return headers;
             }
 
             /**
