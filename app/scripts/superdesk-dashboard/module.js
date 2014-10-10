@@ -14,7 +14,7 @@ define([
     function TaskPreviewDirective() {
         return {
             templateUrl: 'scripts/superdesk-dashboard/views/task-preview.html',
-            scope: {item: '='},
+            scope: {item: '=', users: '='},
             link: function(scope, element, attrs) {}
         };
     }
