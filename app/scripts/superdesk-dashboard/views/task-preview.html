@@ -1,5 +1,5 @@
 <header>
-	<p class="pull-left">{{ 'Created' | translate}} <span sd-reldate-complex ng-model="item._created"></span> {{by | translate}} {{ users[item.original_creator].display_name }}</p>
+	<p class="pull-left">{{ 'Created on' | translate}} <span sd-reldate-complex ng-model="item._created"></span> {{ 'by' | translate}} {{ users[item.original_creator].display_name }}</p>
 	<button ng-click="item = null" class="close-preview">
         <i class="icon-close-small"></i>
     </button>
@@ -15,11 +15,12 @@
             </div>
         </div>
 	</div>
-	<div sd-assignee-view data-item="item"></div>
-
+	
 	<ul class="task-labels clearfix">
 		<li><i class="icon-desk-time"></i> {{ item.task.due_date | reldate }}</li>
 	</ul>
+	<div sd-assignee-view data-item="item" class="assignee"></div>
+
 	<div class="title">{{ item.slugline }}</div>
 	<div class="description">{{ item.description_text }}</div>
 </div>
