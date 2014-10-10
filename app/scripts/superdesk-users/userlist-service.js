@@ -40,10 +40,10 @@ define([], function() {
                 if (search) {
                     criteria.where = JSON.stringify({
                         '$or': [
-                            {username: {'$regex': search}},
-                            {first_name: {'$regex': search}},
-                            {last_name: {'$regex': search}},
-                            {email: {'$regex': search}}
+                            {username: {'$regex': search, '$options': '-i'}},
+                            {first_name: {'$regex': search, '$options': '-i'}},
+                            {last_name: {'$regex': search, '$options': '-i'}},
+                            {email: {'$regex': search, '$options': '-i'}}
                         ]
                     });
                 }
