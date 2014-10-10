@@ -14,9 +14,20 @@ define([
     function TaskPreviewDirective() {
         return {
             templateUrl: 'scripts/superdesk-dashboard/views/task-preview.html',
-            scope: {
-                item: '=',
-                users: '='
+            scope: {item: '='},
+            link: function(scope, element, attrs) {}
+        };
+    }
+
+    AssigneeViewDirective.$inject = ['desks'];
+    function AssigneeViewDirective(desks) {
+        desks.initialize();
+        return {
+            templateUrl: 'scripts/superdesk-dashboard/views/assignee-view.html',
+            scope: {item: '='},
+            link: function(scope) {
+                scope.deskLookup = desks.deskLookup;
+                scope.userLookup = desks.userLookup;
             }
         };
     }
@@ -35,6 +46,7 @@ define([
     .service('workspace', require('./workspace-service'))
     .directive('sdWidget', require('./sd-widget-directive'))
     .directive('sdTaskPreview', TaskPreviewDirective)
+    .directive('sdAssigneeView', AssigneeViewDirective)
 
     .filter('wcodeFilter', function() {
         return function(input, values) {

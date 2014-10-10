@@ -10,7 +10,8 @@ define([
     .directive('sdUserDesks', ['$rootScope', 'desks', function($rootScope, desks) {
         return {
             scope: {
-                selectedDesk: '=desk'
+                selectedDesk: '=desk',
+                deskLabel: '@'
             },
             templateUrl: require.toUrl('./views/user-desks.html'),
             link: function(scope, elem, attrs) {
@@ -18,7 +19,6 @@ define([
                     scope.desks = userDesks._items;
                     scope.selectedDesk = _.find(scope.desks, {_id: desks.getCurrentDeskId()});
                 });
-
                 scope.select = function(desk) {
                     scope.selectedDesk = desk;
                     desks.setCurrentDesk(desk);

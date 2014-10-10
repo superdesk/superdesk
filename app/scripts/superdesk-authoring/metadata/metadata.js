@@ -3,9 +3,12 @@
 
 'use strict';
 
-MetadataCtrl.$inject = ['$scope'];
-function MetadataCtrl($scope) {
-
+MetadataCtrl.$inject = ['$scope', 'desks'];
+function MetadataCtrl($scope, desks) {
+    desks.initialize()
+    .then(function() {
+        $scope.deskLookup = desks.deskLookup;
+    });
 }
 
 angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])

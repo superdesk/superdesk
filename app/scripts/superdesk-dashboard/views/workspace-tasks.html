@@ -7,7 +7,7 @@
     </div>
 
     <div class="button-stack">
-        <div class="navbtn dropdown" sd-user-desks data-desk="selected.desk"></div>
+        <div class="navbtn dropdown" sd-user-desks data-desk-label="tasks" data-desk="selected.desk"></div>
 		
 		<div class="navbtn toggle-list">
 			<ul>
@@ -54,9 +54,11 @@
 		                <div class="card" ng-class="{selected: item === selected}">
 		                	<span class="marker {{ item.task.status }}"></span>
 							<div class="header">
-								<figure class="avatar small"><img sd-user-avatar data-src="userLookup[item.task.user].picture_url"></figure>
+
+                                <div sd-assignee-view data-item="item"></div>
 								<div class="title">{{item.slugline}}</div>
 							</div>
+
 		                	<div class="info">
 		                		<ul class="task-labels clearfix">
 									<li><i class="icon-desk-time"></i> {{ item.task.due_date | reldate }}</li>

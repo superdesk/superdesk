@@ -143,7 +143,8 @@ define([
                 templateUrl: require.toUrl('./views/preview.html'),
                 scope: {
                     item: '=',
-                    display: '&'
+                    display: '&',
+                    type: '='
                 }
             };
         }])
