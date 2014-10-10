@@ -25,10 +25,11 @@
         </button>
     </div>
 
-    <div class="button-stack">
+    <div class="button-stack left-stack">
         <div class="navbtn dropdown" sd-user-desks data-desk="selectedDesk"></div>
-        <div class="navbtn toggle-list" sd-desk-views></div>
     </div>
+
+    <div class="navbtn toggle-list desk-views clearfix" sd-desk-views ng-class="{autoheight: overload && show}"></div>
 </div>
 
 <div sd-media-view data-item="selected.view" data-items="items._items" ng-if="selected.view"></div>

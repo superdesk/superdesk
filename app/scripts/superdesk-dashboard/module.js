@@ -14,8 +14,7 @@ define([
     function TaskPreviewDirective() {
         return {
             templateUrl: 'scripts/superdesk-dashboard/views/task-preview.html',
-            scope: {item: '=', users: '='},
-            link: function(scope, element, attrs) {}
+            scope: {item: '=', users: '='}
         };
     }
 
@@ -78,7 +77,7 @@ define([
         });
         superdesk.activity('pick.task', {
             label: gettext('Pick task'),
-            icon: 'pencil',
+            icon: 'pick',
             controller: ['api', 'data', 'session', 'superdesk', 'workqueue',
                 function(api, data, session, superdesk, workqueue) {
                     api('tasks').save(

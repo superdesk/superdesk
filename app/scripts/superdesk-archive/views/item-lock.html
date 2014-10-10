@@ -1,5 +1,5 @@
 <div class="item-locked" ng-if="lock">
-    <i class="icon-lock-red"></i>
-    <span><em translate>Locked</em> {{ 'by' | translate }} {{ lock.user.display_name || lock.user.username }}</span>
-    <button class="btn btn-light pull-right" ng-click="unlock()">Unlock</button>
+    <span class="lock-sign"><i class="icon-lock-red"></i></span>
+    <span class="text"><em translate>Locked by</em> {{ lock.user.display_name || lock.user.username }}</span>
+    <button class="btn btn-light pull-left" ng-click="unlock()">Unlock</button>
 </div>
