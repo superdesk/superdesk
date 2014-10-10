@@ -55,9 +55,11 @@ describe('authoring', function() {
         expect(lock.lock).not.toHaveBeenCalled();
     }));
 
-    it('can autosave and save an item', inject(function(superdesk, api, $q, $timeout, $controller, $rootScope) {
+    it('can autosave and save an item', inject(function(superdesk, api, desks, $q, $timeout, $controller, $rootScope) {
         var scope = $rootScope.$new(),
             headline = 'test headline';
+
+        spyOn(desks, 'initialize').andReturn($q.reject());
 
         $controller(superdesk.activity('authoring').controller, {item: item, $scope: scope});
         expect(!!scope.dirty).toBe(false);

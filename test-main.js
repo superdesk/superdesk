@@ -34,6 +34,9 @@ tests.push('superdesk-authoring/workqueue/workqueue');
 tests.push('superdesk-authoring/metadata/metadata');
 tests.push('superdesk-authoring/versioning/versions');
 tests.push('superdesk-workspace/content/content');
+tests.push('superdesk-desks/module');
+tests.push('superdesk-users/module');
+tests.push('superdesk-dashboard/module');
 
 // libs
 tests.push('bower_components/ment.io/dist/mentio');

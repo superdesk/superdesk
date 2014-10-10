@@ -342,7 +342,8 @@
             'superdesk.authoring.metadata',
             'superdesk.authoring.comments',
             'superdesk.authoring.versions',
-            'superdesk.authoring.workqueue'
+            'superdesk.authoring.workqueue',
+            'superdesk.desks'
         ])
 
         .service('lock', LockService)

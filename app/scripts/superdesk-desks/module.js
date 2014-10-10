@@ -10,6 +10,7 @@ define([
     'use strict';
 
     var app = angular.module('superdesk.desks', [
+        'superdesk.users',
         'superdesk.desks.resources',
         'superdesk.desks.directives'
     ]);

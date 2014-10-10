@@ -4,7 +4,7 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    angular.module('superdesk.widgets.activity', [])
+    angular.module('superdesk.widgets.activity', ['superdesk.dashboard.widgets'])
         .config(['widgetsProvider', function(widgets) {
             widgets.widget('activity', {
                 label: 'Activity Log',
