@@ -37,6 +37,7 @@ tests.push('superdesk-workspace/content/content');
 tests.push('superdesk-desks/module');
 tests.push('superdesk-users/module');
 tests.push('superdesk-dashboard/module');
+tests.push('superdesk-dashboard/workspace-tasks/tasks');
 
 // libs
 tests.push('bower_components/ment.io/dist/mentio');

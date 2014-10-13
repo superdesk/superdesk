@@ -320,6 +320,33 @@ TASK PAGE
 		.content {
 			padding: 20px;
 		}
+
+		textarea {
+			height: 32px;
+			border-color: #fff !important;
+			&:hover {
+				border-color: #ddd !important;
+			}
+			&:focus {
+				border-color: #ddd !important;
+				.box-shadow(none) !important;
+			}
+		}
+
+		.title {
+			font-size: 16px;
+			.text-semibold();
+			line-height: 24px;
+			color: #444;
+			margin: 0 0 15px 0;
+		}
+
+		.description {
+			font-size: 14px;
+			margin-bottom: 15px;
+			line-height: 22px;
+			color:#444;
+		}
 		
 		.assignee {
 			background: #eee;
@@ -338,21 +365,6 @@ TASK PAGE
 		.task-labels {
 			margin-top: 0;
 			margin-bottom: 15px;
-		}
-
-		.title {
-			font-size: 16px;
-			.text-semibold();
-			line-height: 24px;
-			color: #444;
-			margin: 0 0 15px 0;
-		}
-
-		.description {
-			font-size: 14px;
-			margin-bottom: 15px;
-			line-height: 22px;
-			color:#444;
 		}
 	}
 }
