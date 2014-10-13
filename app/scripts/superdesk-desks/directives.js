@@ -81,6 +81,7 @@ define([
                 scope.$watch('step.current', function(step, previous) {
                     if (step === 'stages') {
 
+                        scope.editStage = null;
                         scope.stages = [];
                         scope.newStage = {
                             show: false,
@@ -122,6 +123,24 @@ define([
                         });
                         return false;
                     }
+                };
+
+                scope.saveEditOnEnter = function($event) {
+                    if ($event.keyCode === 13) {
+                        scope.message = gettext('Saving...');
+                        api('stages').save(scope.editStage)
+                        .then(function(item) {
+                            scope.editStage = null;
+                            scope.message = gettext('Stage saved successfully.');
+                        }, function(response) {
+                            scope.message = gettext('There was a problem, stage was not saved.');
+                        });
+                        return false;
+                    }
+                };
+
+                scope.setEditStage = function(stage) {
+                    scope.editStage = stage;
                 };
 
                 scope.remove = function(stage) {
