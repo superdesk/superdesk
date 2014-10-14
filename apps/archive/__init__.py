@@ -73,6 +73,6 @@ def init_app(app):
     from apps.item_autosave.components.item_autosave import ItemAutosave
     from apps.item_autosave.models.item_autosave import ItemAutosaveModel
     register_component(ItemLock(app))
-    register_model(ItemModel(EveProxy(app.data)))
+    register_model(ItemModel(EveProxy(superdesk.get_backend())))
     register_component(ItemAutosave(app))
-    register_model(ItemAutosaveModel(EveProxy(app.data)))
+    register_model(ItemAutosaveModel(EveProxy(superdesk.get_backend())))
