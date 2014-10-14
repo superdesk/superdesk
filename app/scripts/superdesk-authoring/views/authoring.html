@@ -1,10 +1,10 @@
 <div class="auth-screen">
 	<div class="subnav" ng-class="{'auth-sendto': sendTo}">
 	    <div class="page-title-wrapper clearfix pull-left">
-	    	<span class="lock-info pull-left" ng-show="isLocked(item)"><i class="icon-lock-red"></i></span>
+	    	<span class="lock-info pull-left" ng-show="item._locked"><i class="icon-lock-red"></i></span>
 	    	<h3 class="page-nav-title" ng-show="item.headline">{{ item.headline }}</h3>
 	    	<h3 class="page-nav-title" ng-show="item && !item.headline" translate>Untitled</h3>
-	    	<span class="lock-text pull-left" ng-show="isLocked(item)" translate>This article is locked</span>
+	    	<span class="lock-text pull-left" ng-show="item._locked" translate>This article is locked</span>
 	    </div>
 
 	    
@@ -32,7 +32,6 @@
 		<div sd-authoring-widgets data-item="item">
 
 		    <div class="main-article-container" ng-click="sendTo = false;">
-
 		        <article class="main-article" ng-if="item._id" ng-class="{preview: !_editable}">
 		            <section class="article-title">
 		                <header>
@@ -53,7 +52,6 @@
 		    </div>
 
 		    <div sd-workqueue data-active="item" data-update="articleSwitch()" data-close="close()"></div>
-
 		</div>
 		
 	</section>

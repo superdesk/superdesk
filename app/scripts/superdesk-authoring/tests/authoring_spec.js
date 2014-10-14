@@ -20,7 +20,8 @@ describe('authoring', function() {
     }));
 
     beforeEach(inject(function(session) {
-        session.mock({_id: USER});
+        session.mock(USER);
+        expect(session.identity._id).toBe(USER);
     }));
 
     it('can open an item', inject(function(superdesk, api, lock, autosave, $injector, $q, $rootScope) {
@@ -48,11 +49,10 @@ describe('authoring', function() {
         lockedItem.lock_user = USER;
 
         spyOn(api, 'find').andReturn($q.when(lockedItem));
-        spyOn(lock, 'lock');
 
         $injector.invoke(superdesk.activity('authoring').resolve.item);
         $rootScope.$digest();
-        expect(lock.lock).not.toHaveBeenCalled();
+        expect(item._locked).toBe(false);
     }));
 
     it('can autosave and save an item', inject(function(superdesk, api, desks, $q, $timeout, $controller, $rootScope) {
@@ -62,7 +62,7 @@ describe('authoring', function() {
         spyOn(desks, 'initialize').andReturn($q.reject());
 
         $controller(superdesk.activity('authoring').controller, {item: item, $scope: scope});
-        expect(!!scope.dirty).toBe(false);
+        expect(scope.dirty).toBe(false);
         expect(scope.item.guid).toBe(GUID);
 
         // edit
@@ -79,7 +79,7 @@ describe('authoring', function() {
         // save
         scope.save();
         $rootScope.$digest();
-        expect(api.save).toHaveBeenCalled();
         expect(scope.dirty).toBe(false);
+        expect(api.save).toHaveBeenCalled();
     }));
 });
