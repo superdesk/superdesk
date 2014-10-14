@@ -1,0 +1,75 @@
+<div class="auth-screen">
+	<div class="subnav" ng-class="{'auth-sendto': sendTo}">
+	    <div class="page-title-wrapper clearfix pull-left">
+	    	<span class="lock-info pull-left" ng-show="isLocked(item)"><i class="icon-lock-red"></i></span>
+	    	<h3 class="page-nav-title" ng-show="item.headline">{{ item.headline }}</h3>
+	    	<h3 class="page-nav-title" ng-show="item && !item.headline" translate>Untitled</h3>
+	    	<span class="lock-text pull-left" ng-show="isLocked(item)" translate>This article is locked</span>
+	    </div>
+
+	    
+	    <div class="button-stack right-stack">
+	    	<button class="btn btn-medium pull-left" ng-click="close()" ng-if="item">{{ 'Close' | translate }}</button>
+
+    	    <button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()"
+                ng-show="!item._locked && !_preview"
+                ng-disabled="!dirty && !item._autosave"
+                translate>Save</button>
+
+	    	<button class="navbtn navbtn-hover" ng-click="sendTo = !sendTo" ng-show="item.task.desk">
+	            <i class="svg-icon-add"></i>
+	        </button>
+        </div>
+
+        <div class="auto-save pull-right" ng-show="!_preview && !item._locked">
+		    <span ng-show="saving"><i class="icon-refresh"></i> {{ 'Saving' | translate }}</span>
+		    <span ng-show="!saving"><i class="icon-ok"></i> {{ 'Saved' | translate }}</span>
+	    </div>
+	</div>
+
+	<section class="main-section" ng-class="{'auth-sendto': sendTo}">
+
+		<div sd-authoring-widgets data-item="item">
+
+		    <div class="main-article-container" ng-click="sendTo = false;">
+
+		        <article class="main-article" ng-if="item._id" ng-class="{preview: !_editable}">
+		            <section class="article-title">
+		                <header>
+		                    <span class="edit-label" translate>Headline</span>
+		                </header>
+		                <textarea class="title" sd-auto-height ng-model="item.headline" ng-if="_editable"></textarea>
+		                <div class="title" ng-if="!_editable">{{item.headline}}</div>
+		            </section>
+
+		            <section class="article-full-text">
+		                <header>
+		                    <span class="edit-label" translate>Body</span> 
+		                </header>
+	                    <div sd-text-editor class="text-editor" ng-model="item.body_html" ng-if="_editable"></div>
+	                    <div class="text-editor" sd-html-preview="item.body_html" ng-if="!_editable"></div>
+		            </section>
+		        </article>
+		    </div>
+
+		    <div sd-workqueue data-active="item" data-update="articleSwitch()" data-close="close()"></div>
+
+		</div>
+		
+	</section>
+
+	<div class="send-to-pane" ng-class="{show: sendTo}" sd-click-close>
+		<header>
+			<h3 translate>Send to</h3>
+			<div class="close" ng-click="sendTo = !sendTo"><i class="icon-close-small icon-white"></i></div>
+		</header>
+		<div class="content">
+			<ul class="destination-list">
+				<li ng-repeat="stage in stages._items" ng-click="sendToStage(stage)">
+					{{ stage.name }}
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+

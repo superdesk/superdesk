@@ -7,7 +7,20 @@
 @main-article-color:  #ffffff;
 @main-article-border: #cacaca;
 @main-article-padding-side : 60px;
+@send-to-pane-width: 445px;
 
+
+.auth-screen {
+	position: absolute;
+	top: 0; right: 0; left: 0; bottom: 0;
+	.main-section {
+		.transition(all ease 0.3s);
+		&.auth-sendto {
+			right: @send-to-pane-width;
+			left: -@send-to-pane-width;
+		}
+	}
+}
 
 .subnav {
 	.page-title-wrapper {
@@ -33,6 +46,10 @@
 			line-height: 30px;
 			.text-semibold();
 		}
+	}
+	&.auth-sendto {
+		right: @send-to-pane-width;
+		left: -@send-to-pane-width;
 	}
 }
 
@@ -62,6 +79,7 @@
 	bottom: 0;
 	overflow-y: auto;
 }
+
 
 .medium-editor-toolbar-actions {
 	li button {
@@ -300,6 +318,55 @@
 			position: absolute;
 			right: 7px;
 			top: 3px;
+		}
+	}
+}
+
+
+.send-to-pane {
+	width: @send-to-pane-width;
+	background: #3b3b3b;
+	position: absolute;
+	top: @nav-height; bottom: 0;
+	right: -@send-to-pane-width;
+	.transition(all ease 0.3s);
+	&.show {
+		right: 0;
+	}
+	header {
+		height: @nav-height;
+		border-bottom: 1px solid #424242;
+		padding: 0 20px;
+		h3 {
+			color: @white;	
+			line-height: @nav-height;
+			font-size: 20px;
+			.text-light();
+			float: left;
+		}
+		.close {
+			margin-top: 16px;
+		}
+	}
+	.content {
+		padding: 20px;
+		.destination-list {
+			li {
+				width: (@send-to-pane-width - 55)/2;
+				background: #496773;
+				padding: 10px 15px;
+				float: left;
+				color: #fff;
+				.border-box();
+				margin-bottom: 15px;
+				&:nth-child(2n) {
+					margin-left: 15px; 
+				}
+				&:hover {
+					cursor: pointer;
+					background: #5ea9c8;
+				}
+			}
 		}
 	}
 }

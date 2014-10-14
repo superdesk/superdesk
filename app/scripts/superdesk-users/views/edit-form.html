@@ -17,10 +17,15 @@
         <div class="header-info">
             <h2>{{ user.display_name }}</h2>
             <h5>{{ user.username }}</h5>
+            <dl>
+              <dt><label for="user-status-toggle" translate>Enabled</label></dt>
+              <dd><span sd-switch ng-model="_active" ng-click="toggleStatus(_active)"></span></dd>
+            </dl>
         </div>
         <div class="error-holder">
           <p class="alert alert-error" ng-show="error" translate>Please fix the issues below.</p>
         </div>
+        
         <div class="details-info form-flat" ng-class="{shifted : error}">
             <div class="title">{{ 'General' | translate }} <span class="required-info" translate>* mandatory fields</span></div>
             <fieldset class="label-light">

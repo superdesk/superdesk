@@ -1,7 +1,7 @@
 define(['angular', 'require'], function(angular, require) {
     'use strict';
 
-    return angular.module('superdesk.notify', [])
+    return angular.module('superdesk.notify', ['superdesk.translate'])
         .service('notify', ['$timeout', 'gettext', function ($timeout, gettext) {
             function NotifyService() {
 

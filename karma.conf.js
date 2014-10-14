@@ -9,7 +9,8 @@ module.exports = function(config) {
 
         preprocessors: {
             '**/*.html': ['ng-html2js'],
-            '**/superdesk/**/*.js': ['coverage']
+            '**/superdesk/**/*.js': ['coverage'],
+            '**/superdesk-*/**/*.js': ['coverage']
         },
 
         // list of files / patterns to load in the browser

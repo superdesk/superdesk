@@ -87,8 +87,8 @@ define([
             return this;
         };
 
-        this.$get = ['$q', 'activityService', 'activityChooser', 'DataAdapter', 'betaService',
-        function($q, activityService, activityChooser, DataAdapter, betaService) {
+        this.$get = ['$q', 'activityService', 'activityChooser', 'betaService',
+        function($q, activityService, activityChooser, betaService) {
 
             /**
              * Render main menu depending on registered acitivites
@@ -115,6 +115,13 @@ define([
                 activities: activities,
                 permissions: permissions,
                 panes: panes,
+
+                /**
+                 * Return activity by given id
+                 */
+                activity: function(id) {
+                    return activities[id] || null;
+                },
 
                 /**
                  * Resolve an intent to a single activity
@@ -170,10 +177,6 @@ define([
                     return this.resolve(intent).then(function(activity) {
                         return activityService.start(activity, intent);
                     });
-                },
-
-                data: function(resource, params) {
-                    return new DataAdapter(resource, params);
                 }
             }, constans);
         }];

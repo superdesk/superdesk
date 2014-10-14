@@ -10,7 +10,12 @@ define([
 ], function(angular, _, require) {
     'use strict';
 
-    var module = angular.module('superdesk.activity', []);
+    var module = angular.module('superdesk.activity', [
+        'ngRoute',
+        'superdesk.translate',
+        'superdesk.notify',
+        'superdesk.services.modal',
+        'superdesk.services.beta']);
 
     /**
      * Superdesk Provider for registering of app components.
@@ -45,7 +50,7 @@ define([
          */
         this.start = function startActivity(activity, locals) {
             function execute (activity, locals) {
-                if (activity._id[0] === '/') { // trigger route
+                if (activity.when[0] === '/') { // trigger route
                     $location.path(getPath(activity, locals.data));
                     return $q.when(locals);
                 }
