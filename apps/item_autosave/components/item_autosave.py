@@ -29,9 +29,10 @@ class ItemAutosave(BaseComponent):
         autosave_model = get_model(ItemAutosaveModel)
         item.update(updates)
         self.app.on_item_autosave(item)
-        try:
-            autosave_model.create(item)
-        except:
+        autosave_item = autosave_model.find_one({'_id': item_id})
+        if not autosave_item:
+            autosave_model.create([item])
+        else:
             id = item['_id']
             del item['_id']
             autosave_model.update({'_id': item_id}, item)
@@ -46,5 +47,5 @@ class ItemAutosave(BaseComponent):
 
     def on_item_locked(self, item, user):
         lock_user = item.get('lock_user', None)
-        if lock_user is not None and str(lock_user) != str(user):
+        if str(lock_user) != str(user):
             self.clear(item['_id'])

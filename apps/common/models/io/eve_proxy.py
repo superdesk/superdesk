@@ -24,10 +24,10 @@ class EveProxy(DataLayer):
         req = ParsedRequest()
         req.args = {}
         req.projection = projection
-        return self.eve_data_layer.find(resource, req, filter)
+        return self.eve_data_layer.get(resource, req, filter)
 
     def create(self, resource, docs):
-        return self.eve_data_layer.insert(resource, docs)
+        return self.eve_data_layer.create(resource, docs)
 
     def update(self, resource, filter, doc):
         return self.eve_data_layer.update(resource, filter[ID_FIELD], doc)
@@ -36,4 +36,4 @@ class EveProxy(DataLayer):
         return self.eve_data_layer.replace(resource, filter[ID_FIELD], doc)
 
     def delete(self, resource, filter):
-        return self.eve_data_layer.remove(resource, filter)
+        return self.eve_data_layer.delete(resource, filter)
