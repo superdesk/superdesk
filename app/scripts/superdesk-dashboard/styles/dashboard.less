@@ -283,6 +283,9 @@ TASK PAGE
 
 .task-list {
 	.card {
+		.title {
+			.text-semibold();
+		}
 		.marker {
 			width: 4px;
 			position: absolute;
@@ -303,41 +306,31 @@ TASK PAGE
 
 .workspace-tasks {
 	.preview-pane {
+		
+		header {
+			p {
+				line-height: @nav-height;
+				color: @grayLight;
+				max-width: 375px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+		}
 		.content {
 			padding: 20px;
 		}
-		
-		.basic {
-			position: relative;
-			p {
-				position: relative;
-				color: @grayLight;
-			}
-			.dropdown {
-				position: absolute;
-				top: 0; right: -15px;
-				button {
-					padding: 1px 12px;
-				}
-			}
-		}
-		
-		.assignee {
-			background: #eee;
-			padding: 5px;
-			.border-radius(3px);
-			margin-bottom: 10px;
-			.avatar {
-				margin-right: 10px;
-			}
-			p {
-				margin: 0;
-				line-height: 30px;
-			}
-		}
 
-		.task-labels {
-			margin-bottom: 15px;
+		textarea {
+			height: 32px;
+			border-color: #fff !important;
+			&:hover {
+				border-color: #ddd !important;
+			}
+			&:focus {
+				border-color: #ddd !important;
+				.box-shadow(none) !important;
+			}
 		}
 
 		.title {
@@ -353,6 +346,25 @@ TASK PAGE
 			margin-bottom: 15px;
 			line-height: 22px;
 			color:#444;
+		}
+		
+		.assignee {
+			background: #eee;
+			padding: 5px;
+			.border-radius(3px);
+			margin-bottom: 10px;
+			.avatar {
+				margin-right: 10px;
+			}
+			.assignee-name {
+				margin: 0;
+				line-height: 30px;
+			}
+		}
+
+		.task-labels {
+			margin-top: 0;
+			margin-bottom: 15px;
 		}
 	}
 }

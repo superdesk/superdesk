@@ -10,6 +10,7 @@ define([
     'use strict';
 
     var app = angular.module('superdesk.desks', [
+        'superdesk.users',
         'superdesk.desks.resources',
         'superdesk.desks.directives'
     ]);
@@ -49,13 +50,13 @@ define([
                 deskLookup: {},
                 userLookup: {},
                 deskMembers: {},
+                loading: null,
                 fetchDesks: function() {
                     var self = this;
 
                     return api.desks.query({max_results: 500})
                     .then(function(result) {
                         self.desks = result;
-                        self.deskLookup = {};
                         _.each(result._items, function(desk) {
                             self.deskLookup[desk._id] = desk;
                         });
@@ -67,7 +68,6 @@ define([
                     return userList.get(null, 1, 500)
                     .then(function(result) {
                         self.users = result;
-                        self.userLookup = {};
                         _.each(result._items, function(user) {
                             self.userLookup[user._id] = user;
                         });
@@ -106,26 +106,14 @@ define([
                 getCurrentDesk: function(desk) {
                     return this.deskLookup[this.getCurrentDeskId()];
                 },
-                initialize: function(force) {
-                    var self = this;
+                initialize: function() {
+                    if (!this.loading) {
+                        this.loading = this.fetchDesks()
+                            .then(angular.bind(this, this.fetchUsers))
+                            .then(angular.bind(this, this.generateDeskMembers));
+                    }
 
-                    var p = $q.when();
-                    if (!this.desks || force) {
-                        p = p.then(function() {
-                            return self.fetchDesks();
-                        });
-                    }
-                    if (!this.users || force) {
-                        p = p.then(function() {
-                            return self.fetchUsers();
-                        });
-                    }
-                    if (_.isEmpty(this.deskMembers) || force) {
-                        p = p.then(function() {
-                            return self.generateDeskMembers();
-                        });
-                    }
-                    return p;
+                    return this.loading;
                 }
             };
             return desksService;

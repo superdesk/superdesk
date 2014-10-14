@@ -102,7 +102,7 @@ function CommentTextDirective($compile) {
             var mentioned = html.match(/\@([a-zA-Z0-9-_.]\w+)/g);
             _.each(mentioned, function(token) {
                 var username = token.substring(1, token.length);
-                if (scope.comment.mentioned_users) {
+                if (scope.comment.mentioned_users && scope.comment.mentioned_users[username]) {
                     html = html.replace(token,
                     '<i sd-user-info data-user="' + scope.comment.mentioned_users[username] + '">' + token + '</i>');
                 }
@@ -116,7 +116,7 @@ function CommentTextDirective($compile) {
     };
 }
 
-angular.module('superdesk.authoring.comments', ['superdesk.authoring.widgets', 'mentio'])
+angular.module('superdesk.authoring.comments', ['superdesk.authoring.widgets', 'mentio', 'superdesk.api'])
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
             .widget('comments', {
