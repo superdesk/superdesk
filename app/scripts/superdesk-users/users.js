@@ -171,20 +171,16 @@
 
         // make sure saved user is presented in the list
         $scope.render = function(user) {
-            if (_.find($scope.users._items, function(item) {
-                return item._links.self.href === user._links.self.href;
-            })) {
-                return;
+            if (!findUser($scope.users._items, user) && !findUser($scope.createdUsers, user)) {
+                $scope.createdUsers.unshift(user);
             }
-
-            if (_.find($scope.createdUsers, function(item) {
-                return item._links.self.href === user._links.self.href;
-            })) {
-                return;
-            }
-
-            $scope.createdUsers.unshift(user);
         };
+
+        function findUser(list, user) {
+            return _.find(list, function(item) {
+                return item._links.self.href === user._links.self.href;
+            });
+        }
 
         function getCriteria() {
             var params = $location.search(),
@@ -682,7 +678,8 @@
                 scope: {
                     origUser: '=user',
                     onsave: '&',
-                    oncancel: '&'
+                    oncancel: '&',
+                    onupdate: '&'
                 },
                 link: function(scope, elem) {
 
@@ -758,6 +755,7 @@
                     scope.toggleStatus = function(active) {
                         users.toggleStatus(scope.origUser, active).then(function() {
                             resetUser(scope.origUser);
+                            scope.onupdate({user: scope.origUser});
                         });
                     };
 
@@ -902,7 +900,7 @@
             };
         }])
 
-        .directive('sdUserList', ['keyboardManager', function(keyboardManager) {
+        .directive('sdUserList', ['keyboardManager', 'users', function(keyboardManager, users) {
             return {
                 templateUrl: 'scripts/superdesk-users/views/user-list-item.html',
                 scope: {
@@ -911,6 +909,11 @@
                     done: '='
                 },
                 link: function(scope, elem, attrs) {
+
+                    scope.active = function(user) {
+                        return users.isActive(user);
+                    };
+
                     scope.select = function(user) {
                         scope.selected = user;
                     };
