@@ -22,7 +22,8 @@ module.exports = function(grunt) {
                 ga: {
                     id: process.env.TRACKING_ID || ''
                 }
-            }
+            },
+            strictDi: /localhost/.test(server)
         };
 
         return {data: {config: config}};
