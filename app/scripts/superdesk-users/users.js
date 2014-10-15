@@ -330,6 +330,62 @@
             });
     }
 
+    /**
+     * User roles controller - settings page
+     */
+    UserRolesController.$inject = ['$scope', 'api', 'modal', 'gettext'];
+    function UserRolesController($scope, api, modal, gettext) {
+
+        var _orig;
+        $scope.selectedRole = null;
+        $scope.editRole = null;
+
+        api('roles').query()
+        .then(function(result) {
+            $scope.roles = result._items;
+        });
+
+        $scope.select = function(role) {
+            $scope.selectedRole = role;
+        };
+
+        $scope.edit = function(role) {
+            $scope.editRole = _.create(role);
+            _orig = role;
+        };
+
+        $scope.save = function(role) {
+            var _new = role._id ? false : true;
+            api('roles').save(_orig, role)
+            .then(function() {
+                if (_new) {
+                    $scope.roles.unshift(_orig);
+                }
+                $scope.cancel();
+            });
+        };
+
+        $scope.cancel = function() {
+            $scope.editRole = null;
+        };
+
+        $scope.remove = function(role) {
+            confirm().then(function() {
+                api('roles').remove(role)
+                .then(function(result) {
+                    _.remove($scope.roles, role);
+                }, function(response) {
+                    console.log(response);
+                });
+            });
+        };
+
+        function confirm() {
+            return modal.confirm(gettext('Are you sure you want to delete user role?'));
+        }
+
+    }
+
     return angular.module('superdesk.users', [
         'superdesk.activity',
         'superdesk.users.profile',
@@ -338,26 +394,6 @@
 
         .service('users', UsersService)
         .factory('userList', UserListService)
-
-        .factory('rolesLoader', ['$q', 'em', function ($q, em) {
-            var delay = $q.defer();
-
-            function zip(items, key) {
-                var zipped = {};
-                _.each(items, function(item) {
-                    zipped[item[key]] = item;
-                });
-
-                return zipped;
-            }
-
-            em.repository('user_roles').all().then(function(data) {
-                var roles = zip(data._items, '_id');
-                delay.resolve(roles);
-            });
-
-            return delay.promise;
-        }])
 
         .factory('userPopup', ['$compile', '$timeout', 'userList', function ($compile, $timeout, userList) {
             var popover = {};
@@ -508,15 +544,13 @@
                     }
                 })
 
-                /*
                 .activity('/settings/user-roles', {
                     label: gettext('User Roles'),
-                    templateUrl: require.toUrl('./views/settings.html'),
-                    controller: require('./controllers/settings'),
+                    templateUrl: 'scripts/superdesk-users/views/settings.html',
+                    controller: UserRolesController,
                     category: superdesk.MENU_SETTINGS,
                     priority: -500
                 })
-                */
 
                 .activity('delete/user', {
                     label: gettext('Delete user'),
@@ -544,6 +578,10 @@
             apiProvider.api('users', {
                 type: 'http',
                 backend: {rel: 'users'}
+            });
+            apiProvider.api('roles', {
+                type: 'http',
+                backend: {rel: 'roles'}
             });
         }])
 
@@ -589,29 +627,6 @@
                 }
             };
         })
-
-        .directive('sdRolesTreeview', ['$compile', function($compile) {
-            return {
-                restrict: 'A',
-                terminal: true,
-                scope: {role: '=', roles: '='},
-                link: function(scope, element, attrs) {
-
-                    if (scope.role['extends'] !== undefined) {
-                        scope.childrole = scope.roles[_.findKey(scope.roles, {_id: scope.role['extends']})];
-                        scope.treeTemplate = 'scripts/superdesk-users/views/rolesTree.html';
-                    } else {
-                        scope.treeTemplate = 'scripts/superdesk-users/views/rolesLeaf.html';
-                    }
-
-                    var template = '<div class="role-holder" ng-include="treeTemplate"></div>';
-
-                    var newElement = angular.element(template);
-                    $compile(newElement)(scope);
-                    element.replaceWith(newElement);
-                }
-            };
-        }])
 
         .directive('sdUserActivity', ['profileService', function(profileService) {
             return {
