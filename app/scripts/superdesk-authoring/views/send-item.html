@@ -1,0 +1,27 @@
+<div class="send-to-pane" ng-class="{show: view}" sd-click-close>
+    <header>
+        <h3 translate>Send to</h3>
+        <div class="close" ng-click="view = !view"><i class="icon-close-small icon-white"></i></div>
+    </header>
+    <div class="content">
+        <div class="dropdown desk-select">
+            <button class="dropdown-toggle">
+                <span ng-show="!desk" translate>Select desk</span>
+                <span ng-show="desk">{{desk.name}}</span>
+                <b class="caret"></b>
+            </button>
+            <div class="dropdown-menu">
+                <ul>
+                    <li ng-repeat="desk in desks._items">
+                        <button ng-click="sendToDesk(desk);">{{desk.name}}</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul class="destination-list">
+            <li ng-repeat="stage in stages._items" ng-click="sendToStage(stage)">
+                {{stage.name}}
+            </li>
+        </ul>
+    </div>
+</div>
