@@ -2,9 +2,9 @@
 import os
 import logging
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from .newsml_1_2 import Parser
-from ..utc import utc, utcnow
+from ..utc import utc
 from ..etree import etree
 from superdesk.notification import push_notification
 from superdesk.io import register_provider, IngestService

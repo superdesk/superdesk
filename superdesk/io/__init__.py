@@ -3,9 +3,9 @@
 import logging
 import os
 import shutil
-from superdesk.utc import utc, utcnow, timezone
+from superdesk.utc import utcnow
 from superdesk.celery_app import celery
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 providers = {}
 allowed_providers = []

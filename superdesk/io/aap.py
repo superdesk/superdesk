@@ -2,9 +2,9 @@
 import os
 import logging
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from .nitf import parse
-from superdesk.utc import utc, utcnow, timezone
+from superdesk.utc import utc, timezone
 from superdesk.notification import push_notification
 from superdesk.io import register_provider, IngestService
 
@@ -58,6 +58,3 @@ class AAPIngestService(IngestService):
         push_notification('ingest:update')
 
 register_provider(PROVIDER, AAPIngestService())
-
-
-
