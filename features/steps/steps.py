@@ -905,6 +905,6 @@ def step_get_activation_email(context):
     assert context.email.subject == 'Superdesk account created'
     email_text = context.email.body
     words = email_text.split()
-    url = urlparse(words[words.index("link") + 1])
+    url = urlparse(words[words.index("to") + 1])
     token = url.fragment.split('token=')[-1]
     assert token

@@ -2,9 +2,8 @@ from superdesk.activity import add_activity
 from superdesk.services import BaseService
 from superdesk.utils import is_hashed, get_hash
 from superdesk import get_resource_service, SuperdeskError
-from flask import current_app as app, render_template
-from settings import ADMINS, ACTIVATE_ACCOUNT_TOKEN_TIME_TO_LIVE as activate_ttl, CLIENT_URL
-from superdesk.emails import send_email
+from flask import current_app as app
+from superdesk.emails import send_user_status_changed_email, send_activate_account_email
 from .users import UsersResource
 from superdesk.utc import utcnow
 
@@ -46,14 +45,7 @@ class UsersService(BaseService):
             # send email notification
             send_email = get_resource_service('preferences').email_notification_is_enabled(user['_id'])
             if send_email:
-                self._send_user_status_changed_email([user['email']], status)
-
-    def _send_user_status_changed_email(self, recipients, status):
-        send_email.delay(subject='Your Superdesk account is %s' % status,
-                         sender=ADMINS[0],
-                         recipients=recipients,
-                         text_body=render_template("account_status_changed.txt", status=status),
-                         html_body=render_template("account_status_changed.html", status=status))
+                send_user_status_changed_email([user['email']], status)
 
     def on_deleted(self, doc):
         add_activity('removed user {{user}}', user=doc.get('display_name', doc.get('username')))
@@ -83,13 +75,14 @@ class DBUsersService(UsersService):
         """Send email to user with reset password token."""
         super().on_created(docs)
         resetService = get_resource_service('reset_user_password')
+        activate_ttl = app.config['ACTIVATE_ACCOUNT_TOKEN_TIME_TO_LIVE']
         for doc in docs:
             if doc['status'] == UsersResource.needs_activation:
                 tokenDoc = {'user': doc['_id'], 'email': doc['email']}
                 id = resetService.store_reset_password_token(tokenDoc, doc['email'], activate_ttl)
                 if not id:
                     raise SuperdeskError('Failed to send account activation email.')
-                self._send_activate_account_email(tokenDoc)
+                send_activate_account_email(tokenDoc)
 
     def user_is_waiting_activation(self, doc):
         return doc['status'] == UsersResource.needs_activation
@@ -110,14 +103,6 @@ class DBUsersService(UsersService):
             updates['status'] = UsersResource.active
 
         self.patch(user_id, updates=updates)
-
-    def _send_activate_account_email(self, doc):
-        url = '{}/#/reset-password?token={}'.format(CLIENT_URL, doc['token'])
-        hours = activate_ttl * 24
-        text_body = render_template("account_created.txt", email=doc['email'], expires=hours, url=url)
-        html_body = render_template("account_created.html", email=doc['email'], expires=hours, url=url)
-        send_email.delay(subject='Superdesk account created', sender=ADMINS[0], recipients=[doc['email']],
-                         text_body=text_body, html_body=html_body)
 
 
 class ADUsersService(UsersService):

@@ -1,13 +1,12 @@
 import logging
 import superdesk
 from datetime import timedelta
-from flask import current_app as app, render_template
+from flask import current_app as app
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.utc import utcnow
 from superdesk.utils import get_random_string
-from settings import RESET_PASSWORD_TOKEN_TIME_TO_LIVE as token_ttl, ADMINS, CLIENT_URL
-from superdesk.emails import send_email
+from superdesk.emails import send_reset_password_email
 
 
 logger = logging.getLogger(__name__)
@@ -55,7 +54,8 @@ class ResetPasswordService(BaseService):
                 return self.initialize_reset_password(doc, email)
             raise superdesk.SuperdeskError(payload='Invalid request.')
 
-    def store_reset_password_token(self, doc, email, days_alive=token_ttl):
+    def store_reset_password_token(self, doc, email, days_alive):
+        token_ttl = app.config['RESET_PASSWORD_TOKEN_TIME_TO_LIVE']
         user = superdesk.get_resource_service('users').find_one(req=None, email=email)
         if not user:
             logger.warning('User password reset triggered with invalid email: %s' % email)
@@ -70,8 +70,9 @@ class ResetPasswordService(BaseService):
         return ids
 
     def initialize_reset_password(self, doc, email):
-        ids = self.store_reset_password_token(doc, email)
-        self.send_reset_password_email(doc)
+        token_ttl = app.config['RESET_PASSWORD_TOKEN_TIME_TO_LIVE']
+        ids = self.store_reset_password_token(doc, email, token_ttl)
+        send_reset_password_email(doc)
         self.remove_private_data(doc)
         return ids
 
@@ -101,11 +102,3 @@ class ResetPasswordService(BaseService):
     def remove_field_from(self, doc, field_name):
         if doc and doc.get(field_name):
             del doc[field_name]
-
-    def send_reset_password_email(self, doc):
-        url = '{}/#/reset-password?token={}'.format(CLIENT_URL, doc['token'])
-        hours = token_ttl * 24
-        text_body = render_template("reset_password.txt", email=doc['email'], expires=hours, url=url)
-        html_body = render_template("reset_password.html", email=doc['email'], expires=hours, url=url)
-        send_email.delay(subject='Reset password', sender=ADMINS[0], recipients=[doc['email']],
-                         text_body=text_body, html_body=html_body)

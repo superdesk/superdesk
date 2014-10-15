@@ -12,6 +12,7 @@ IF_MATCH = True
 BANDWIDTH_SAVER = False
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S+0000'
 
+APPLICATION_NAME = os.environ.get('APP_NAME', 'Superdesk')
 server_url = urlparse(os.environ.get('SUPERDESK_URL', 'http://localhost:5000'))
 CLIENT_URL = os.environ.get('SUPERDESK_CLIENT_URL', 'http://localhost:9000')
 URL_PROTOCOL = server_url.scheme or None
@@ -116,7 +117,7 @@ MAIL_PORT = int(os.environ.get('MAIL_PORT', 465))
 MAIL_USE_TLS = json.loads(os.environ.get('MAIL_USE_TLS', 'False').lower())
 MAIL_USE_SSL = json.loads(os.environ.get('MAIL_USE_SSL', 'True').lower())
 MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'admin@sourcefabric.org')
-MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', 'admin-password')
+MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD', 'admin-test')
 ADMINS = [MAIL_USERNAME]
 
 # LDAP settings
