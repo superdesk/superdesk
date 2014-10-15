@@ -1,21 +1,16 @@
 
 import os
-from datetime import datetime, timedelta
+import logging
 
+from datetime import datetime, timedelta
 from .nitf import parse
 from superdesk.utc import utc, utcnow, timezone
+from superdesk.notification import push_notification
 from superdesk.io import register_provider, IngestService
 
+
+logger = logging.getLogger(__name__)
 PROVIDER = 'aap'
-
-
-def is_ready(last_updated, provider_last_updated=None):
-    """Parse file only if it's not older than provider last update -10m"""
-
-    if not provider_last_updated:
-        provider_last_updated = utcnow() - timedelta(days=7)
-
-    return provider_last_updated - timedelta(minutes=10) < last_updated
 
 
 def normalize_date(naive, tz):
@@ -38,19 +33,31 @@ class AAPIngestService(IngestService):
             return
 
         for filename in os.listdir(self.path):
-            if os.path.isfile(os.path.join(self.path, filename)):
-                filepath = os.path.join(self.path, filename)
-                stat = os.lstat(filepath)
-                last_updated = datetime.fromtimestamp(stat.st_mtime, tz=utc)
-                if is_ready(last_updated, provider.get('updated')):
-                    with open(os.path.join(self.path, filename), 'r') as f:
-                        item = parse(f.read())
-                        item['firstcreated'] = normalize_date(item.get('firstcreated'), self.tz)
-                        item['versioncreated'] = normalize_date(item.get('versioncreated'), self.tz)
-                        item['created'] = item['firstcreated']
-                        item['updated'] = item['versioncreated']
-                        item.setdefault('provider', provider.get('name', provider['type']))
+            try:
+                if os.path.isfile(os.path.join(self.path, filename)):
+                    filepath = os.path.join(self.path, filename)
+                    stat = os.lstat(filepath)
+                    last_updated = datetime.fromtimestamp(stat.st_mtime, tz=utc)
+                    if self.is_latest_content(last_updated, provider.get('updated')):
+                        with open(os.path.join(self.path, filename), 'r') as f:
+                            item = parse(f.read())
+                            item['firstcreated'] = normalize_date(item.get('firstcreated'), self.tz)
+                            item['versioncreated'] = normalize_date(item.get('versioncreated'), self.tz)
+                            item['created'] = item['firstcreated']
+                            item['updated'] = item['versioncreated']
+                            item.setdefault('provider', provider.get('name', provider['type']))
+                            self.move_file(self.path, filename, success=True)
+                            yield [item]
+                    else:
                         self.move_file(self.path, filename, success=True)
-                        yield [item]
+            except (Exception) as err:
+                logger.exception(err)
+                self.move_file(self.path, filename, success=False)
+                pass
+
+        push_notification('ingest:update')
 
 register_provider(PROVIDER, AAPIngestService())
+
+
+

@@ -9,17 +9,9 @@ from ..etree import etree
 from superdesk.notification import push_notification
 from superdesk.io import register_provider, IngestService
 
+
 logger = logging.getLogger(__name__)
 PROVIDER = 'afp'
-
-
-def is_ready(last_updated, provider_last_updated=None):
-    """Parse file only if it's not older than provider last update -10m"""
-
-    if not provider_last_updated:
-        provider_last_updated = utcnow() - timedelta(days=7)
-
-    return provider_last_updated - timedelta(minutes=10) < last_updated
 
 
 class AFPIngestService(IngestService):
@@ -34,13 +26,13 @@ class AFPIngestService(IngestService):
         if not self.path:
             return
 
-        try:
-            for filename in os.listdir(self.path):
+        for filename in os.listdir(self.path):
+            try:
                 if os.path.isfile(os.path.join(self.path, filename)):
                     filepath = os.path.join(self.path, filename)
                     stat = os.lstat(filepath)
                     last_updated = datetime.fromtimestamp(stat.st_mtime, tz=utc)
-                    if is_ready(last_updated, provider.get('updated')):
+                    if self.is_latest_content(last_updated, provider.get('updated')):
                         with open(os.path.join(self.path, filename), 'r') as f:
                             item = Parser().parse_message(etree.fromstring(f.read()))
                             item['_created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
@@ -48,12 +40,14 @@ class AFPIngestService(IngestService):
                             item.setdefault('provider', provider.get('name', provider['type']))
                             self.move_file(self.path, filename, success=True)
                             yield [item]
-        except (Exception) as err:
-            logger.exception(err)
-            self.move_the_current_file(filename, success=False)
-            pass
-        finally:
-            push_notification('ingest:update')
+                    else:
+                        self.move_file(self.path, filename, success=True)
+            except Exception as err:
+                logger.exception(err)
+                self.move_file(self.path, filename, success=False)
+                pass
+
+        push_notification('ingest:update')
 
 
 register_provider(PROVIDER, AFPIngestService())

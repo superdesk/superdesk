@@ -3,8 +3,9 @@
 import logging
 import os
 import shutil
+from superdesk.utc import utc, utcnow, timezone
 from superdesk.celery_app import celery
-
+from datetime import datetime, timedelta
 
 providers = {}
 allowed_providers = []
@@ -33,6 +34,14 @@ class IngestService():
                 shutil.copy2(os.path.join(filepath, filename), os.path.join(filepath, "_ERROR/"))
         finally:
             os.remove(os.path.join(filepath, filename))
+
+    def is_latest_content(self, last_updated, provider_last_updated=None):
+        """Parse file only if it's not older than provider last update -10m"""
+
+        if not provider_last_updated:
+            provider_last_updated = utcnow() - timedelta(days=2)
+
+        return provider_last_updated - timedelta(minutes=10) < last_updated
 
 
 from .commands.remove_expired_content import RemoveExpiredContent
