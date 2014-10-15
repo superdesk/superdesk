@@ -12,7 +12,7 @@ Feature: Desks
         Given empty "desks"
         When we post to "users"
             """
-            {"username": "foo", "email": "foo@bar.com"}
+            {"username": "foo", "email": "foo@bar.com", "status": "active"}
             """
         When we post to "/desks"
             """

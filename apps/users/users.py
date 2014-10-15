@@ -32,6 +32,9 @@ class UsersResource(Resource):
         'url': 'regex("[\w]+")',
         'field': 'username'
     }
+    active = 'active'
+    inactive = 'inactive'
+    needs_activation = 'needs-activation'
 
     schema = {
         'username': {
@@ -88,8 +91,8 @@ class UsersResource(Resource):
         },
         'status': {
             'type': 'string',
-            'allowed': ['active', 'inactive'],
-            'default': 'active'
+            'allowed': [active, inactive, needs_activation],
+            'default': needs_activation
         }
     }
 

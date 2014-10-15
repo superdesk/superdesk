@@ -1,0 +1,5 @@
+A Superdesk account was created for this email address: {{email}}
+Please use this link {{url}} to complete the account registration.
+This link expires after {{expires}} hours.
+Regards,
+The Superdesk team

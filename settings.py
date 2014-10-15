@@ -13,6 +13,7 @@ BANDWIDTH_SAVER = False
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S+0000'
 
 server_url = urlparse(os.environ.get('SUPERDESK_URL', 'http://localhost:5000'))
+CLIENT_URL = os.environ.get('SUPERDESK_CLIENT_URL', 'http://localhost:9000')
 URL_PROTOCOL = server_url.scheme or None
 SERVER_NAME = server_url.netloc or None
 URL_PREFIX = server_url.path.lstrip('/') or ''
@@ -105,7 +106,9 @@ RENDITIONS = {
 SERVER_DOMAIN = 'localhost'
 
 BCRYPT_GENSALT_WORK_FACTOR = 12
-RESET_PASSWORD_TOKEN_TIME_TO_LIVE = int(os.environ.get('RESET_PASS_TTL', 24))  # The number of hours a token is valid
+RESET_PASSWORD_TOKEN_TIME_TO_LIVE = int(os.environ.get('RESET_PASS_TTL', 1))  # The number of days a token is valid
+# The number of days an activation token is valid
+ACTIVATE_ACCOUNT_TOKEN_TIME_TO_LIVE = int(os.environ.get('ACTIVATE_TTL', 7))
 
 # email server
 MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.googlemail.com')

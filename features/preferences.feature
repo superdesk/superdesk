@@ -15,7 +15,7 @@ Feature: User preferences
     Scenario: Create new preference
         Given "users"
         """
-        [{"username": "foo", "password": "barbar", "email": "foo@bar.com"}]
+        [{"username": "foo", "password": "barbar", "email": "foo@bar.com", "status": "active"}]
         """
 
         When we get "/preferences/#USERS_ID#"
@@ -26,7 +26,7 @@ Feature: User preferences
     Scenario: Update preference settings
         Given "users"
         """
-        [{"username": "foo", "password": "bar", "email": "foo@bar.com"}]
+        [{"username": "foo", "password": "bar", "email": "foo@bar.com", "status": "active"}]
         """
 
         When we patch "/preferences/#USERS_ID#"
@@ -51,7 +51,7 @@ Feature: User preferences
     Scenario: Update preference settings - wrong preference
         Given "users"
         """
-        [{"username": "foo", "password": "bar", "email": "foo@bar.com"}]
+        [{"username": "foo", "password": "bar", "email": "foo@bar.com", "status": "active"}]
         """
 
         When we patch "/preferences/#USERS_ID#"
