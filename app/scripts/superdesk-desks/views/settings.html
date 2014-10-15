@@ -1,9 +1,15 @@
 <div sd-settings-view>
-	<button class="btn btn-info pull-right" ng-click="openDesk('general')">
-        <i class="icon-plus-sign icon-white"></i> <span class="ng-scope">Add New Desk</span>
-    </button>
+	<div class="header">
+		<div class="container">
+			<h2 translate>Desk management</h2>
+			<button class="btn btn-info pull-right" ng-click="openDesk('general')">
+		        <i class="icon-plus-sign icon-white"></i> {{ 'Add New Desk' | translate }}
+		    </button>
+		</div>
+	</div>
+	
 
-    <h2 translate>Desk management</h2>
+    
     <div class="settings-tab-content desk-settings">
     	<div sd-shadow>
 			<div class="desk-config" ng-repeat="desk in desks._items">
