@@ -42,13 +42,11 @@
         /**
          * Autosave an item
          */
-        this.save = function(item) {
+        this.save = function(item, data) {
             $timeout.cancel(_timeout);
             _timeout = $timeout(function() {
                 var autosave = item._autosave ? item._autosave : {};
-                var data = {guid: item.guid};
-                extendItem(data, item);
-
+                data.guid = item.guid;
                 if (!autosave._id) {
                     // id must be there for first time and first time only..
                     data._id = item._id;
@@ -77,7 +75,7 @@
         console.time('item');
         return api.find('archive', $route.current.params._id).then(function(item) {
             console.time('lock');
-            return lock.shouldLock(item) ? lock.lock(item): item;
+            return lock.lock(item);
         }).then(function(item) {
             console.timeEnd('lock');
             console.time('autosave');
@@ -98,13 +96,18 @@
          * Lock an item
          */
         this.lock = function(item) {
-            return api('archive_lock', item).save({}).then(function(lock) {
-                item._locked = false;
-                return item;
-            }, function(err) {
-                item._locked = true;
-                return item;
-            });
+            if (!item.lock_user) {
+                return api('archive_lock', item).save({}).then(function(lock) {
+                    item._locked = false;
+                    return item;
+                }, function(err) {
+                    item._locked = true;
+                    return item;
+                });
+            } else {
+                item._locked = item.lock_user !== session.identity._id;
+                return $q.when(item);
+            }
         };
 
         /**
@@ -115,22 +118,10 @@
         };
 
         /**
-         * Test if user should lock an item
-         */
-        this.shouldLock = function(item) {
-            item._locked = this.isLocked(item);
-            return item && !item.lock_user;
-        };
-
-        /**
          * Test if an item is locked for me
          */
         this.isLocked = function(item) {
-            if ('_locked' in item) {
-                return item._locked;
-            }
-
-            return item && item.lock_user && item.lock_user !== session.identity._id;
+            return item.lock_user && item.lock_user !== session.identity._id;
         };
     }
 
@@ -187,9 +178,8 @@
         $scope.workqueue = workqueue.all();
         $scope.saving = false;
         $scope.saved = false;
-        $scope.dirty = null;
+        $scope.dirty = false;
         $scope.sendTo = false;
-        $scope.stages = null;
 
         function startWatch() {
             function isDirty() {
@@ -206,31 +196,19 @@
                 'item.headline',
                 'item.slugline',
                 'item.body_html'
-            ], function() {
+            ], function(changes) {
                 $scope.dirty = isDirty();
                 if ($scope.dirty && $scope.isEditable()) {
                     $scope.saving = true;
-                    autosave.save($scope.item).then(function() {
+                    autosave.save(item, $scope.item).then(function() {
                         $scope.saving = false;
                     });
                 }
             });
         }
 
-        desks.initialize()
-        .then(function() {
-            api('stages').query({where: {desk: $scope.item.task.desk}})
-            .then(function(result) {
-                $scope.stages = result;
-            });
-        });
-
-        $scope.isLocked = function(item) {
-            return lock.isLocked(item);
-        };
-
         $scope.isEditable = function() {
-            return !$scope._preview && !item._locked;
+            return !$scope._preview && !$scope.item._locked;
         };
 
         /**
@@ -239,10 +217,10 @@
     	$scope.save = function() {
             stopWatch();
     		return api.save('archive', item, $scope.item).then(function(res) {
-                item._autosave = null;
                 workqueue.update(item);
-                $scope.item = _.create(item);
+                item._autosave = null;
                 $scope.dirty = false;
+                $scope.item = _.create(item);
                 notify.success(gettext('Item updated.'));
                 startWatch();
                 return item;
@@ -302,9 +280,11 @@
          */
         $scope.closePreview = function() {
             $scope._preview = false;
-            $scope._editable = $scope.isEditable();
             $scope.item = _.create(item);
-            startWatch();
+            $scope._editable = $scope.isEditable();
+            if ($scope._editable) {
+                startWatch();
+            }
         };
 
         /**
@@ -315,9 +295,17 @@
             extendItem(item, version);
         };
 
-        if ($scope.isEditable()) {
-            // start autosaving
-            $scope.closePreview();
+        // init
+        $scope.closePreview();
+
+        if ($scope.item.task && $scope.item.task.desk) {
+            desks.initialize()
+            .then(function() {
+                api('stages').query({where: {desk: $scope.item.task.desk}})
+                .then(function(result) {
+                    $scope.stages = result;
+                });
+            });
         }
     }
 

@@ -19,7 +19,7 @@
             <div class="footer">
             	<em>{{ 'version' | translate }}: {{ version._version || 1 }}</em>
 	            <button class="btn btn-light btn-mini pull-right"
-                    ng-show="!item._locked && (!$first || item._autosave)"
+                    ng-show="!item._locked && !$first"
                     ng-click="revert(version)"
                     translate>revert</button>
             </div>
