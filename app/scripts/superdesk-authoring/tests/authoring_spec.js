@@ -82,3 +82,33 @@ describe('authoring', function() {
         expect(api.save).toHaveBeenCalled();
     }));
 });
+
+describe('autosave', function() {
+    beforeEach(module('superdesk.authoring'));
+
+    it('can fetch an autosave for not locked item', inject(function(autosave, api, $q, $rootScope) {
+        spyOn(api, 'find').andReturn($q.when({}));
+        autosave.open({_locked: false, _id: 1});
+        $rootScope.$digest();
+        expect(api.find).toHaveBeenCalledWith('archive_autosave', 1);
+    }));
+
+    it('will skip autosave fetch when item is locked', inject(function(autosave, api, $rootScope) {
+        spyOn(api, 'find');
+        autosave.open({_locked: true});
+        $rootScope.$digest();
+        expect(api.find).not.toHaveBeenCalled();
+    }));
+
+    it('can create an autosave', inject(function(autosave, api, $q, $timeout, $rootScope) {
+        var item = {_id: 1, _etag: 'x'};
+        spyOn(api, 'save').andReturn($q.when({_id: 2}));
+        autosave.save(item, {headline: 'test'});
+        $rootScope.$digest();
+        expect(api.save).not.toHaveBeenCalled();
+        $timeout.flush(5000);
+        expect(api.save).toHaveBeenCalledWith('archive_autosave', {}, {_id: 1, headline: 'test'});
+        expect(item._autosave._id).toBe(2);
+        expect(item.headline).toBe('test');
+    }));
+});

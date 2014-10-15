@@ -45,16 +45,11 @@
         this.save = function(item, data) {
             $timeout.cancel(_timeout);
             _timeout = $timeout(function() {
-                var autosave = item._autosave ? item._autosave : {};
-                data.guid = item.guid;
-                if (!autosave._id) {
-                    // id must be there for first time and first time only..
-                    data._id = item._id;
-                }
-
-                return api.save(RESOURCE, autosave, data).then(function() {
-                    item._autosave = autosave;
+                var diff = angular.extend({_id: item._id}, data);
+                return api.save(RESOURCE, {}, diff).then(function(_autosave) {
+                    item._autosave = _autosave;
                     extendItem(item._autosave, data);
+                    extendItem(item, data);
                 });
             }, AUTOSAVE_TIMEOUT);
             return _timeout;
