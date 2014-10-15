@@ -62,7 +62,7 @@
                   </div>
                 </div>
 
-                <div sd-info-item class="password" ng-if="!user._id">
+                <div sd-info-item class="password" ng-if="features.reset_user_passwod && !user._id">
                   <label for="password" translate>password</label>
                   <input type="password" name="password" ng-minlength="5" id="password" ng-model="user.password" required>
                   <i ng-show="userForm.password.$error.required" class="required-asteriks">*</i>
@@ -72,7 +72,7 @@
                   </div>
                 </div>
 
-                <div sd-info-item class="password" ng-if="!user._id">
+                <div sd-info-item class="password" ng-if="features.reset_user_password && !user._id">
                   <label for="passwordConfirm" translate>confirm</label>
                   <input type="password" name="passwordConfirm" ng-minlength="5" id="passwordConfirm" sd-password-confirm ng-model="confirm.password" data-password="user.password" required>
                   <i ng-show="userForm.passwordConfirm.$error.required" class="required-asteriks">*</i>
@@ -82,7 +82,7 @@
                   </div>
                 </div>
 
-                <div sd-info-item class="password" ng-if="user._id" id="password-change-trigger">
+                <div sd-info-item class="password" ng-if="features.reset_user_password && user._id" id="password-change-trigger">
                   <label translate>password</label>
                   <i class="change-btn" ng-click="show.password = !show.password" ng-show="!show.password">change password</i>
                 </div>
@@ -124,7 +124,7 @@
     </div>
 </form>
 
-<div sd-change-password class="password-popup" ng-if="show.password && user._id" ng-class="{shifted : error}">
+<div sd-change-password class="password-popup" ng-if="features.reset_user_password && show.password && user._id" ng-class="{shifted : error}">
     <div class="title">Change password</div>
     <div class="content-holder">
       <div class="password-change-holder" >
