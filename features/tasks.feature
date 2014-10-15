@@ -83,6 +83,26 @@ Feature: Tasks
         """
         Then we get updated response
 
+    @auth
+    Scenario: Existing archive item - update task-user asignment
+        Given empty "desks"
+        When we post to "users"
+        """
+        {"username": "foo", "email": "foo@bar.com"}
+        """
+        When we post to "desks"
+        """
+        {"name": "Sports Desk"}
+        """
+        When we post to "archive"
+	    """
+        [{"headline": "test"}]
+	    """
+        When we patch "/tasks/#ARCHIVE_ID#"
+	    """
+        {"slugline": "first task", "type": "text", "task": {"user": "#USERS_ID#"}}
+	    """
+        Then we get updated response
 
     @auth
     Scenario: Fill stage automatically when assigning a task to a desk

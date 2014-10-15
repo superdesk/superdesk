@@ -8,7 +8,7 @@ except ImportError:
     from urlparse import urlparse
 
 XML = False
-IF_MATCH = False
+IF_MATCH = True
 BANDWIDTH_SAVER = False
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S+0000'
 

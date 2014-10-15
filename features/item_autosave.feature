@@ -11,11 +11,18 @@ Feature: Content Autosave
 
         When we post to "/archive_autosave"
             """
-            {"_id": "item-1", "guid": "item-1", "headline": "test"}
+            {"_id": "item-1", "guid": "item-1", "headline": "test2"}
             """
+
         Then we get existing resource
             """
-            {"_id": "item-1", "guid": "item-1", "headline": "test"}
+            {"_id": "item-1", "guid": "item-1", "headline": "test2"}
+            """
+
+        When we get "/archive_autosave/item-1"
+        Then we get existing resource
+            """
+            {"_id": "item-1", "headline": "test2"}
             """
 
     @auth

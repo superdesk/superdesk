@@ -4,7 +4,7 @@ Feature: Content Locking
     Scenario: Lock item and edit
         Given "archive"
             """
-            [{"_id": "item-1", "guid": "item-1", "headline": "test", "task": {"status": "done"}}]
+            [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
             """
 
         When we post to "/archive/item-1/lock"
@@ -24,7 +24,7 @@ Feature: Content Locking
     Scenario: Fail edit on locked item
         Given "archive"
             """
-            [{"_id": "item-1", "guid": "item-1", "headline": "test", "task": {"status": "done"}}]
+            [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
             """
 
         When we post to "/archive/item-1/lock"
@@ -42,7 +42,7 @@ Feature: Content Locking
     Scenario: Force unlock
         Given "archive"
             """
-            [{"_id": "item-1", "guid": "item-1", "headline": "test", "task": {"status": "done"}}]
+            [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
             """
 
         When we post to "/archive/item-1/lock"

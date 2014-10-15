@@ -84,7 +84,7 @@ def setup_db_user(context, user):
 
 
 def setup_ad_user(context, user):
-    ad_user = {'first_name': 'Mock', 'last_name': 'User1', 'email': "mock@mail.com.au"}
+    ad_user = {'email': 'mock@mail.com.au', 'user_type': 'administrator'}
     if user and user['username']:
         ad_user['username'] = user['username']
     else:

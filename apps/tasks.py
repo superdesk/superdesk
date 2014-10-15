@@ -3,12 +3,13 @@ from superdesk.notification import push_notification
 from superdesk.utc import utcnow
 from apps.archive.common import base_schema, on_create_item, item_url
 from superdesk.services import BaseService
+from eve.utils import ParsedRequest
 import superdesk
 
 
 def init_app(app):
     endpoint_name = 'tasks'
-    service = TasksService(endpoint_name, backend=superdesk.get_backend())
+    service = TasksService(TaskResource.datasource['source'], backend=superdesk.get_backend())
     TaskResource(endpoint_name, app=app, service=service)
 
 
@@ -45,6 +46,11 @@ class TaskResource(Resource):
 
 
 class TasksService(BaseService):
+
+    def get(self, req, lookup):
+        if req is None:
+            req = ParsedRequest()
+        return self.backend.get('tasks', req=req, lookup=lookup)
 
     def update_times(self, doc):
         task = doc.get('task', {})
@@ -86,4 +92,4 @@ class TasksService(BaseService):
         item['task'] = item.get('task', {})
         item['task']['user'] = user
         del item['_id']
-        self.update(item_id, item)
+        return self.update(item_id, item)
