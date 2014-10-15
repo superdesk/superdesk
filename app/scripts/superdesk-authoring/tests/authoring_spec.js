@@ -10,9 +10,8 @@ describe('authoring', function() {
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.auth'));
 
-    beforeEach(module(function($provide) {
-        // avoid confirmation in tests
-        $provide.service('$window', function() {});
+    beforeEach(inject(function($window) {
+        $window.onbeforeunload = angular.noop;
     }));
 
     beforeEach(inject(function($route) {
