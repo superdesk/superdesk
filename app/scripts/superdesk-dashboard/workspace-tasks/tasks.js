@@ -169,15 +169,9 @@ angular.module('superdesk.workspace.tasks', [])
     superdesk.activity('pick.task', {
         label: gettext('Pick task'),
         icon: 'pick',
-        controller: ['api', 'data', 'session', 'superdesk', 'workqueue',
-            function(api, data, session, superdesk, workqueue) {
-                api('tasks').save(
-                    _.clone(data.item),
-                    {task: _.extend({user: session.identity._id}, data.item.task)})
-                .then(function(result) {
-                    workqueue.add(result);
-                    superdesk.intent('author', 'article', result);
-                });
+        controller: ['data', 'superdesk',
+            function pickTask(data, superdesk) {
+                return superdesk.intent('author', 'article', data.item);
             }
         ],
         filters: [{action: superdesk.ACTION_EDIT, type: 'task'}]
