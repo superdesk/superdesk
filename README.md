@@ -69,7 +69,7 @@ So after running this command server will start listening on `localhost:5000` fo
 $ vagrant up --provider=docker
 ```
 
-To create user u can start container instance directly with docker:
+To create user you can run that command (it will start container instance for command execution):
 
 ```sh
 docker run -i --link mongodb:mongodb --link elastic:elastic superdesk/server python3 manage.py users:create -u admin -p admin -e "admin@example.com" --admin=true
