@@ -48,7 +48,7 @@ class AuthResource(Resource):
         'user': Resource.rel('users', True)
     }
     resource_methods = ['POST']
-    item_methods = ['GET']
+    item_methods = ['GET', 'DELETE']
     public_methods = ['POST']
     extra_response_fields = ['user', 'token', 'username']
 

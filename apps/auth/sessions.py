@@ -1,15 +1,15 @@
 from superdesk.resource import Resource
 
 
-class SesssionsResource(Resource):
+class SessionsResource(Resource):
     schema = {
-        'user': Resource.rel('users', True)
+        'user': Resource.rel('users', True),
+        'preferences': {'type': 'dict'}
     }
     datasource = {
         'source': 'auth',
-        'default_sort': [('_created', -1)],
-        'filter': {'$where': '(ISODate() - this._created) / 3600000 <= 12'}  # last 12h
+        'default_sort': [('_created', -1)]
     }
-    resource_methods = ['GET']
-    item_methods = []
+    resource_methods = ['GET', 'POST']
+    item_methods = ['GET', 'DELETE', 'PATCH']
     embedded_fields = ['user']
