@@ -1,9 +1,8 @@
 from superdesk.activity import add_activity
 from eve.utils import ParsedRequest
-from flask import g, render_template
-from settings import ADMINS
+from flask import g
 
-from superdesk.emails import send_email
+from superdesk.emails import send_user_mentioned_email
 
 import re
 import superdesk
@@ -13,15 +12,6 @@ def get_users_mentions(text):
     pattern = re.compile("(^|\s)\@([a-zA-Z0-9-_.]\w+)")
     usernames = set(username for match in re.finditer(pattern, text) for username in match.groups())
     return list(usernames)
-
-
-def send_user_mentioned_email(recipients, user_name, doc, url):
-    print('sending mention email to:', recipients)
-    send_email.delay(subject='You were mentioned in a comment by %s' % user_name,
-                     sender=ADMINS[0],
-                     recipients=recipients,
-                     text_body=render_template("user_mention.txt", text=doc['text'], username=user_name, link=url),
-                     html_body=render_template("user_mention.html", text=doc['text'], username=user_name, link=url))
 
 
 def send_email_to_mentioned_users(doc, mentioned_users, origin):

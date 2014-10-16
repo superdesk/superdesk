@@ -4,7 +4,7 @@ Feature: Authentication
     Scenario: Authenticate existing user
         Given "users"
             """
-            [{"username": "foo", "password": "bar"}]
+            [{"username": "foo", "password": "bar", "email": "foo@bar.org", "status": "active"}]
             """
 
         When we post to auth
@@ -20,7 +20,7 @@ Feature: Authentication
     Scenario: Reset password existing user
         Given "users"
         """
-        [{"username": "foo", "password": "bar", "email": "foo@bar.org"}]
+        [{"username": "foo", "password": "bar", "email": "foo@bar.org", "status": "active"}]
         """
 
         When we post to reset_password we get email with token
@@ -29,7 +29,7 @@ Feature: Authentication
     Scenario: Authenticate with wrong password returns error
         Given "users"
             """
-            [{"username": "foo", "password": "bar"}]
+            [{"username": "foo", "password": "bar", "email": "foo@bar.org", "status": "active"}]
             """
 
         When we post to auth
@@ -45,7 +45,7 @@ Feature: Authentication
     Scenario: Authenticate after user is disabled
         Given "users"
             """
-            [{"username": "foo", "password": "bar", "status": "inactive"}]
+            [{"username": "foo", "password": "bar", "status": "inactive", "email": "foo@bar.org"}]
             """
 
         When we post to auth
@@ -61,7 +61,7 @@ Feature: Authentication
     Scenario: Authenticate with non existing username
         Given "users"
             """
-            [{"username": "foo", "password": "bar"}]
+            [{"username": "foo", "password": "bar", "email": "foo@bar.org", "status": "active"}]
             """
 
         When we post to auth

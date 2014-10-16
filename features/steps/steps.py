@@ -1,6 +1,5 @@
 
 import os
-import re
 import superdesk.tests as tests
 from behave import given, when, then  # @UnresolvedImport
 from flask import json
@@ -788,8 +787,9 @@ def we_post_to_reset_password(context):
         assert outbox[0].subject == "Reset password"
         email_text = outbox[0].body
         assert "24" in email_text
-        words = re.split('\W+', email_text)
-        token = words[words.index("token") + 1]
+        words = email_text.split()
+        url = urlparse(words[words.index("link") + 1])
+        token = url.fragment.split('token=')[-1]
         assert token
         context.token = token
 
@@ -809,7 +809,7 @@ def we_reset_password_for_user(context):
 
 @when('we switch user')
 def when_we_switch_user(context):
-    user = {'username': 'test-user-2', 'password': 'pwd'}
+    user = {'username': 'test-user-2', 'password': 'pwd', 'email': 'foo@bar.org'}
     tests.setup_auth_user(context, user)
 
 
@@ -888,3 +888,23 @@ def we_get_default_incoming_stage(context):
 def we_get_stage_filled_in(context):
     data = json.loads(context.response.get_data())
     assert data['task']['stage']
+
+
+@when('we create a new user')
+def step_create_a_user(context):
+    data = apply_placeholders(context, context.text)
+    with context.app.mail.record_messages() as outbox:
+        context.response = context.client.post('/users', data=data, headers=context.headers)
+        expect_status_in(context.response, (200, 201))
+        assert len(outbox) == 1
+        context.email = outbox[0]
+
+
+@then('we get activation email')
+def step_get_activation_email(context):
+    assert context.email.subject == 'Superdesk account created'
+    email_text = context.email.body
+    words = email_text.split()
+    url = urlparse(words[words.index("to") + 1])
+    token = url.fragment.split('token=')[-1]
+    assert token

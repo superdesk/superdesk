@@ -67,7 +67,7 @@ Feature: News Items Archive Comments
         Given empty "item_comments"
         When we post to "users"
         """
-        {"username": "foo", "email": "foo@bar.com"}
+        {"username": "foo", "email": "foo@bar.com", "status": "active"}
         """
         When we post to "/item_comments"
         """
@@ -121,7 +121,7 @@ Feature: News Items Archive Comments
         
         When we post to "/users"
         """
-        {"username": "joe", "display_name": "Joe Black", "email": "joe@black.com"}
+        {"username": "joe", "display_name": "Joe Black", "email": "joe@black.com", "status": "active"}
         """
         Then we get new resource
         """

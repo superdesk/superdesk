@@ -13,5 +13,4 @@ install: "pip install -r requirements.txt --use-mirrors"
 script:
     - nosetests
     - behave
-    - LDAP_SERVER="ldap://sourcefabric.org" LDAP_BASE_FILTER="OU=Superdesk Users,dc=sourcefabric,dc=org" behave
     - flake8

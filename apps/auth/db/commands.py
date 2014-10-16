@@ -1,5 +1,5 @@
 import logging
-from flask import current_app as app
+from flask import current_app as app, json
 import superdesk
 from superdesk.utc import utcnow
 from superdesk.utils import get_hash, is_hashed
@@ -23,13 +23,16 @@ class CreateUserCommand(superdesk.Command):
     def run(self, username, password, email, admin='false'):
 
         # force type conversion to boolean
-        user_type = 'administrator' if admin.lower() == 'true' else 'user'
+        is_admin = json.loads(admin)
+        user_type = 'administrator' if is_admin else 'user'
+        status = 'active' if is_admin else 'needs-activation'
 
         userdata = {
             'username': username,
             'password': password,
             'email': email,
             'user_type': user_type,
+            'status': status,
             app.config['LAST_UPDATED']: utcnow(),
         }
 

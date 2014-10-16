@@ -10,7 +10,7 @@ from settings import LDAP_SERVER
 from unittest.mock import patch
 from apps.auth.ldap.ldap import ADAuth
 
-test_user = {'username': 'test_user', 'password': 'test_password'}
+test_user = {'username': 'test_user', 'password': 'test_password', 'status': 'active'}
 
 
 def get_test_settings():

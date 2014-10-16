@@ -6,7 +6,7 @@ from superdesk.services import BaseService
 class AuthService(BaseService):
 
     def authenticate(self, document):
-        pass
+        raise NotImplementedError()
 
     def on_create(self, docs):
         for doc in docs:

@@ -1,4 +1,4 @@
-Your Superdesk account is {{status}}.
+Your {{app_name}} account is {{status}}.
 
 Regards,
-The Superdesk admin
+The {{app_name}} Team

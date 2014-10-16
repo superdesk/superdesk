@@ -5,7 +5,7 @@ Feature: User Activity
     Scenario: User activity
          When we post to "/users"
             """
-            {"username": "foo", "password": "barbar", "email": "foo@bar.com"}
+            {"username": "foo", "password": "barbar", "email": "foo@bar.com", "status": "active"}
             """
             
          Then we get response code 201
@@ -23,7 +23,7 @@ Feature: User Activity
          	"""
          	{"_items": [{"data": {"user": "foo"}, "message": "removed user {{user}}"}]}
          	"""
-    
+
     @wip
     @auth
     Scenario: Image archive activity
@@ -35,4 +35,3 @@ Feature: User Activity
          	"""
          	{"_items": [{"data": {"renditions": {}, "name": "image/jpeg"}, "message": "uploaded media {{ name }}"}]}
          	"""
-        
