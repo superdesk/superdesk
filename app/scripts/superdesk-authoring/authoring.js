@@ -174,7 +174,7 @@
         $scope.saving = false;
         $scope.saved = false;
         $scope.dirty = false;
-        $scope.sendTo = false;
+        $scope.viewSendTo = false;
 
         function startWatch() {
             function isDirty() {
@@ -238,20 +238,6 @@
             });
         };
 
-        $scope.sendToStage = function(stage) {
-            api('tasks').save(
-                $scope.item,
-                {task: _.extend(
-                    $scope.item.task,
-                    {stage: stage._id}
-                )}
-            )
-            .then(function(result) {
-                notify.success(gettext('Item sent.'));
-                superdesk.intent('author', 'dashboard');
-            });
-        };
-
         /**
          * Preview different version of an item
          */
@@ -292,16 +278,6 @@
 
         // init
         $scope.closePreview();
-
-        if ($scope.item.task && $scope.item.task.desk) {
-            desks.initialize()
-            .then(function() {
-                api('stages').query({where: {desk: $scope.item.task.desk}})
-                .then(function(result) {
-                    $scope.stages = result;
-                });
-            });
-        }
     }
 
     function DashboardCard() {
@@ -314,6 +290,68 @@
                 if (newW < maxW) {
                     p.outerWidth(newW);
                 }
+            }
+        };
+    }
+
+    SendItem.$inject = ['superdesk', 'api', 'desks', 'notify'];
+    function SendItem(superdesk, api, desks, notify) {
+        return {
+            scope: {
+                item: '=',
+                view: '='
+            },
+            templateUrl: 'scripts/superdesk-authoring/views/send-item.html',
+            link: function(scope, elem, attrs) {
+                scope.desk = null;
+                scope.desks = null;
+                scope.stages = null;
+
+                scope.$watch('item', function() {
+                    if (scope.item.task && scope.item.task.desk) {
+                        desks.initialize()
+                        .then(function() {
+                            scope.desks = desks.desks;
+                            scope.desk = desks.deskLookup[scope.item.task.desk];
+                            if (scope.desk) {
+                                api('stages').query({where: {desk: scope.desk._id}})
+                                .then(function(result) {
+                                    scope.stages = result;
+                                });
+                            }
+                        });
+                    }
+                });
+
+                scope.sendToDesk = function(desk) {
+                    api('tasks', scope.item).save({
+                        task: _.extend(
+                            scope.item.task,
+                            {desk: desk._id}
+                        )
+                    })
+                    .then(function(result) {
+                        end();
+                    });
+                };
+
+                scope.sendToStage = function(stage) {
+                    api('tasks', scope.item).save({
+                        task: _.extend(
+                            scope.item.task,
+                            {stage: stage._id}
+                        )
+                    })
+                    .then(function(result) {
+                        end();
+                    });
+                };
+
+                var end = function() {
+                    notify.success(gettext('Item sent.'));
+                    superdesk.intent('author', 'dashboard');
+                };
+
             }
         };
     }
@@ -333,6 +371,7 @@
         .service('autosave', AutosaveService)
         .factory('ConfirmDirty', ConfirmDirtyFactory)
         .directive('sdDashboardCard', DashboardCard)
+        .directive('sdSendItem', SendItem)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
