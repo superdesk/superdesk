@@ -77,6 +77,7 @@ define([
         return {
 
             link: function(scope, elem, attrs) {
+                scope.origEditName = null;
 
                 scope.$watch('step.current', function(step, previous) {
                     if (step === 'stages') {
@@ -140,7 +141,14 @@ define([
                 };
 
                 scope.setEditStage = function(stage) {
+                    scope.origEditName = stage.name;
                     scope.editStage = stage;
+                    scope.newStage.show = false;
+                };
+
+                scope.cancelEdit = function() {
+                    scope.editStage.name = scope.origEditName;
+                    scope.editStage = null;
                 };
 
                 scope.remove = function(stage) {
