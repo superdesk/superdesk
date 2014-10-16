@@ -54,24 +54,30 @@ class ResetPasswordService(BaseService):
                 return self.initialize_reset_password(doc, email)
             raise superdesk.SuperdeskError(payload='Invalid request.')
 
-    def store_reset_password_token(self, doc, email, days_alive):
+    def store_reset_password_token(self, doc, email, days_alive, user_id):
         token_ttl = app.config['RESET_PASSWORD_TOKEN_TIME_TO_LIVE']
-        user = superdesk.get_resource_service('users').find_one(req=None, email=email)
-        if not user:
-            logger.warning('User password reset triggered with invalid email: %s' % email)
-            raise superdesk.SuperdeskError(status_code=201, message='Created')
         now = utcnow()
         doc[app.config['DATE_CREATED']] = now
         doc[app.config['LAST_UPDATED']] = now
         doc['expire_time'] = now + timedelta(days=token_ttl)
-        doc['user'] = user['_id']
+        doc['user'] = user_id
         doc['token'] = get_random_string()
         ids = super().create([doc])
         return ids
 
     def initialize_reset_password(self, doc, email):
         token_ttl = app.config['RESET_PASSWORD_TOKEN_TIME_TO_LIVE']
-        ids = self.store_reset_password_token(doc, email, token_ttl)
+
+        user = superdesk.get_resource_service('users').find_one(req=None, email=email)
+        if not user:
+            logger.warning('User password reset triggered with invalid email: %s' % email)
+            raise superdesk.SuperdeskError(status_code=201, message='Created')
+
+        if not user.get('is_active', False):
+            logger.warning('User password reset triggered for an inactive user')
+            raise superdesk.SuperdeskError(status_code=201, message='Created')
+
+        ids = self.store_reset_password_token(doc, email, token_ttl, user['_id'])
         send_reset_password_email(doc)
         self.remove_private_data(doc)
         return ids
@@ -85,7 +91,6 @@ class ResetPasswordService(BaseService):
             raise superdesk.SuperdeskError(payload='Invalid token received: %s' % key)
 
         user_id = reset_request['user']
-
         superdesk.get_resource_service('users').update_password(user_id, password)
         self.remove_all_tokens_for_email(reset_request['email'])
         self.remove_private_data(doc)

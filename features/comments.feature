@@ -34,7 +34,7 @@ Feature: Default Comments
         Given empty "comments"
         When we post to "users" with success
         """
-        {"username": "foo", "email": "foo@bar.com", "status": "active"}
+        {"username": "foo", "email": "foo@bar.com", "is_active": true}
         """
         When we post to "/comments"
         """
@@ -52,7 +52,7 @@ Feature: Default Comments
         Given empty "comments"
         When we post to "/users"
         """
-        {"username": "joe", "display_name": "Joe Black", "email": "joe@black.com", "status": "active"}
+        {"username": "joe", "display_name": "Joe Black", "email": "joe@black.com", "is_active": true}
         """
         Then we get new resource
         """

@@ -4,7 +4,7 @@ Feature: Authentication
     Scenario: Authenticate existing user
         Given "users"
             """
-            [{"username": "foo", "password": "bar", "email": "foo@bar.org", "status": "active"}]
+            [{"username": "foo", "password": "bar", "email": "foo@bar.org", "is_active": true}]
             """
 
         When we post to auth
@@ -20,16 +20,39 @@ Feature: Authentication
     Scenario: Reset password existing user
         Given "users"
         """
-        [{"username": "foo", "password": "bar", "email": "foo@bar.org", "status": "active"}]
+        [{"username": "foo", "password": "bar", "email": "foo@bar.org", "is_active": true}]
         """
 
         When we post to reset_password we get email with token
         And we reset password for user
 
+    Scenario: Reset password disabled user
+        Given "users"
+        """
+        [{"username": "foo", "password": "bar", "email": "foo@bar.org", "is_active": false}]
+        """
+
+        When we post to reset_password we do not get email with token
+
+    @auth
+    Scenario: Reset password existing user - disabled after mail is sent
+        Given "users"
+        """
+        [{"username": "foo", "password": "bar", "email": "foo@bar.org", "is_active": true}]
+        """
+
+        When we post to reset_password we get email with token
+        When we change user status to "inactive" using "/users/foo"
+            """
+            {"is_active": false}
+            """
+
+        Then we fail to reset password for user
+ 
     Scenario: Authenticate with wrong password returns error
         Given "users"
             """
-            [{"username": "foo", "password": "bar", "email": "foo@bar.org", "status": "active"}]
+            [{"username": "foo", "password": "bar", "email": "foo@bar.org", "is_active": true}]
             """
 
         When we post to auth
@@ -45,7 +68,7 @@ Feature: Authentication
     Scenario: Authenticate after user is disabled
         Given "users"
             """
-            [{"username": "foo", "password": "bar", "status": "inactive", "email": "foo@bar.org"}]
+            [{"username": "foo", "password": "bar", "is_active": false, "email": "foo@bar.org"}]
             """
 
         When we post to auth
@@ -55,13 +78,13 @@ Feature: Authentication
 
         Then we get error 403
             """
-            {"_issues": {"status": "inactive"}, "_message": "", "_status": "ERR"}
+            {"_issues": {"is_active": false}, "_message": "", "_status": "ERR"}
             """
 
     Scenario: Authenticate with non existing username
         Given "users"
             """
-            [{"username": "foo", "password": "bar", "email": "foo@bar.org", "status": "active"}]
+            [{"username": "foo", "password": "bar", "email": "foo@bar.org", "is_active": true}]
             """
 
         When we post to auth

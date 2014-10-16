@@ -794,22 +794,46 @@ def we_post_to_reset_password(context):
         context.token = token
 
 
-@when('we reset password for user')
-def we_reset_password_for_user(context):
+@when('we post to reset_password we do not get email with token')
+def we_post_to_reset_password_it_fails(context):
+    data = {'email': 'foo@bar.org'}
+    headers = [('Content-Type', 'multipart/form-data')]
+    headers = unique_headers(headers, context.headers)
+    with context.app.mail.record_messages() as outbox:
+        context.response = context.client.post('/reset_user_password', data=data, headers=headers)
+        expect_status_in(context.response, (200, 201))
+        assert len(outbox) == 0
+
+
+def start_reset_password_for_user(context):
     data = {'token': context.token, 'password': 'test_pass'}
     headers = [('Content-Type', 'multipart/form-data')]
     headers = unique_headers(headers, context.headers)
     context.response = context.client.post('/reset_user_password', data=data, headers=headers)
+    print(context.response.get_data())
+
+
+@then('we fail to reset password for user')
+def we_fail_to_reset_password_for_user(context):
+    start_reset_password_for_user(context)
+    step_impl_then_get_error(context, 403)
+
+
+@when('we reset password for user')
+def we_reset_password_for_user(context):
+    start_reset_password_for_user(context)
     expect_status_in(context.response, (200, 201))
 
     auth_data = {'username': 'foo', 'password': 'test_pass'}
+    headers = [('Content-Type', 'multipart/form-data')]
+    headers = unique_headers(headers, context.headers)
     context.response = context.client.post('/auth', data=auth_data, headers=headers)
     expect_status_in(context.response, (200, 201))
 
 
 @when('we switch user')
 def when_we_switch_user(context):
-    user = {'username': 'test-user-2', 'password': 'pwd', 'email': 'foo@bar.org'}
+    user = {'username': 'test-user-2', 'password': 'pwd', 'email': 'foo@bar.org', 'is_active': True}
     tests.setup_auth_user(context, user)
 
 
@@ -881,7 +905,7 @@ def we_get_default_incoming_stage(context):
     assert_200(context.response)
     data = json.loads(context.response.get_data())
     assert data['default_incoming'] is True
-    assert data['name'] == '<to be defined>'
+    assert data['name'] == 'New'
 
 
 @then('we get stage filled in to default_incoming')

@@ -25,14 +25,13 @@ class CreateUserCommand(superdesk.Command):
         # force type conversion to boolean
         is_admin = json.loads(admin)
         user_type = 'administrator' if is_admin else 'user'
-        status = 'active' if is_admin else 'needs-activation'
 
         userdata = {
             'username': username,
             'password': password,
             'email': email,
             'user_type': user_type,
-            'status': status,
+            'is_active': is_admin,
             app.config['LAST_UPDATED']: utcnow(),
         }
 
