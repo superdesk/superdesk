@@ -302,15 +302,20 @@
                 view: '='
             },
             templateUrl: 'scripts/superdesk-authoring/views/send-item.html',
-            link: function(scope, elem, attrs) {
+            link: function sendItemLink(scope, elem, attrs) {
                 scope.desk = null;
                 scope.desks = null;
                 scope.stages = null;
 
-                scope.$watch('item', function() {
+                scope.$watch('item', function fetchDesks() {
                     if (scope.item.task && scope.item.task.desk) {
+
+                        api.find('tasks', scope.item._id).then(function(_task) {
+                            scope.task = _task;
+                        });
+
                         desks.initialize()
-                        .then(function() {
+                        .then(function fetchStages() {
                             scope.desks = desks.desks;
                             scope.desk = desks.deskLookup[scope.item.task.desk];
                             if (scope.desk) {
@@ -323,35 +328,28 @@
                     }
                 });
 
-                scope.sendToDesk = function(desk) {
-                    api('tasks', scope.item).save({
-                        task: _.extend(
-                            scope.item.task,
-                            {desk: desk._id}
-                        )
-                    })
-                    .then(function(result) {
-                        end();
-                    });
+                scope.sendToDesk = function sendToDesk(desk) {
+                    save({task: _.extend(
+                        scope.task.task,
+                        {desk: desk._id, stage: desk.incoming_stage || null}
+                    )});
                 };
 
-                scope.sendToStage = function(stage) {
-                    api('tasks', scope.item).save({
-                        task: _.extend(
-                            scope.item.task,
-                            {stage: stage._id}
-                        )
-                    })
-                    .then(function(result) {
-                        end();
-                    });
+                scope.sendToStage = function sendToStage(stage) {
+                    save({task: _.extend(
+                        scope.task.task,
+                        {stage: stage._id}
+                    )});
                 };
 
-                var end = function() {
+                function save(data) {
+                    api.save('tasks', scope.task, data).then(gotoDashboard);
+                }
+
+                function gotoDashboard() {
                     notify.success(gettext('Item sent.'));
                     superdesk.intent('author', 'dashboard');
-                };
-
+                }
             }
         };
     }
