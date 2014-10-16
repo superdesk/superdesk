@@ -24,6 +24,7 @@ class PreferencesResource(Resource):
 
     superdesk.register_available_preference('feature:preview', {
         'type': 'bool',
+        'allowed': ['mgrid','compact'],
         'enabled': False,
         'default': False,
         'label': 'Enable Feature Preview',
