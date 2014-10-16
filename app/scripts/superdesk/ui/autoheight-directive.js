@@ -19,7 +19,6 @@ define([
                 require: 'ngModel',
                 restrict: 'A, C',
                 link: function(scope, element, attrs, ngModel) {
-
                     // cache a reference to the DOM element
                     var ta = element[0],
                         $ta = element;
@@ -163,8 +162,7 @@ define([
                         // small delay to prevent an infinite loop
                         $timeout(function() {
                           active = false;
-                        }, 1);
-
+                        }, 1, false);
                       }
                     }
 
@@ -189,15 +187,10 @@ define([
 
                     scope.$watch(function() {
                       return ngModel.$modelValue;
-                    }, function(newValue) {
-                      forceAdjust();
-                    });
+                    }, forceAdjust);
 
-                    scope.$on('elastic:adjust', function() {
-                      forceAdjust();
-                    });
-
-                    $timeout(adjust);
+                    scope.$on('elastic:adjust', forceAdjust);
+                    $timeout(adjust, 0, false);
 
                     /*
                      * destroy

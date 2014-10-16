@@ -34,13 +34,10 @@ function TasksService(desks, $rootScope, api) {
         }
         return api('tasks').query({
             source: {
-                size: 100,
+                size: 50,
                 sort: [{_updated: 'desc'}],
                 filter: filter
             }
-        })
-        .then(function(tasks) {
-            return tasks;
         });
     };
 }
@@ -50,26 +47,17 @@ function TasksController($scope, api, notify, desks, tasks) {
 
     $scope.selected = {};
     $scope.newTask = null;
-
-    desks.initialize()
-    .then(function() {
-        $scope.deskLookup = desks.deskLookup;
-        $scope.userLookup = desks.userLookup;
-    });
-
-    $scope.tasks = {};
+    $scope.tasks = null;
 
     $scope.$watch(function() {
         return desks.getCurrentDeskId();
-    }, function() {
-        fetchTasks();
-    });
+    }, fetchTasks);
 
-    var fetchTasks = function() {
+    function fetchTasks() {
         tasks.fetch().then(function(list) {
             $scope.tasks = list;
         });
-    };
+    }
 
     $scope.preview = function(item) {
         $scope.selected.preview = item;
@@ -98,32 +86,29 @@ function TasksController($scope, api, notify, desks, tasks) {
         $scope.newTask = null;
     };
 
-    fetchTasks();
+    desks.initialize().then(function() {
+        $scope.userLookup = desks.userLookup;
+        $scope.deskLookup = desks.deskLookup;
+    });
 }
 
-TaskPreviewDirective.$inject = ['tasks', 'notify'];
-function TaskPreviewDirective(tasks, notify) {
+TaskPreviewDirective.$inject = ['tasks', 'desks', 'notify'];
+function TaskPreviewDirective(tasks, desks, notify) {
     return {
         templateUrl: 'scripts/superdesk-dashboard/workspace-tasks/views/task-preview.html',
         scope: {
-            item: '=',
-            users: '='
+            item: '='
         },
         link: function(scope) {
-            var _orig;
-            scope.task = null;
 
-            scope.$watch('item._id', function() {
-                edit();
-            });
+            scope.$watch('item', edit);
 
-            var edit = function() {
-                scope.task = _.create(scope.item);
-                _orig = scope.item;
-            };
+            function edit() {
+                scope.task = scope.item ? _.create(scope.item) : null;
+            }
 
             scope.save = function(form) {
-                tasks.save(_orig, scope.task)
+                tasks.save(scope.item, scope.task)
                 .then(function(result) {
                     notify.success(gettext('Item saved.'));
                     form.$setPristine();
@@ -140,13 +125,19 @@ function TaskPreviewDirective(tasks, notify) {
 
 AssigneeViewDirective.$inject = ['desks'];
 function AssigneeViewDirective(desks) {
-    desks.initialize();
+    var promise = desks.initialize();
     return {
         templateUrl: 'scripts/superdesk-dashboard/workspace-tasks/views/assignee-view.html',
-        scope: {item: '='},
+        scope: {task: '='},
         link: function(scope) {
-            scope.deskLookup = desks.deskLookup;
-            scope.userLookup = desks.userLookup;
+            promise.then(function setItemAssigne() {
+                var task = angular.extend({desk: null, user: null}, scope.task);
+                var desk = desks.deskLookup[task.desk] || {};
+                var user = desks.userLookup[task.user] || {};
+                scope.deskName = desk.name || null;
+                scope.userName = user.display_name || null;
+                scope.userPicture = user.picture_url || null;
+            });
         }
     };
 }
@@ -155,6 +146,7 @@ angular.module('superdesk.workspace.tasks', [])
 
 .directive('sdTaskPreview', TaskPreviewDirective)
 .directive('sdAssigneeView', AssigneeViewDirective)
+
 .service('tasks', TasksService)
 
 .config(['superdeskProvider', function(superdesk) {
@@ -166,6 +158,7 @@ angular.module('superdesk.workspace.tasks', [])
         topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
         beta: true
     });
+
     superdesk.activity('pick.task', {
         label: gettext('Pick task'),
         icon: 'pick',

@@ -24,7 +24,7 @@
 		<ul class="task-labels clearfix">
 			<li><i class="icon-desk-time"></i> {{ task.task.due_date | reldate }}</li>
 		</ul>
-		<div sd-assignee-view data-item="task" class="assignee"></div>
+		<div sd-assignee-view data-task="task.task" class="assignee"></div>
 
 		<textarea class="title" sd-auto-height ng-model="task.slugline" placeholder="{{'Add title' | translate}}" required></textarea>
 		<textarea class="description" sd-auto-height ng-model="task.description_text" placeholder="{{'Add description' | translate}}"></textarea>

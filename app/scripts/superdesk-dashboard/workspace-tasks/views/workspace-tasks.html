@@ -55,10 +55,9 @@
 		                	<span class="marker {{ item.task.status }}"></span>
 							<div class="header">
 
-                                <div sd-assignee-view data-item="item"></div>
+                                <div sd-assignee-view data-task="item.task"></div>
 								<div class="title">{{item.slugline}}</div>
 							</div>
-
 		                	<div class="info">
 		                		<ul class="task-labels clearfix">
 									<li><i class="icon-desk-time"></i> {{ item.task.due_date | reldate }}</li>
@@ -77,7 +76,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="preview-pane" sd-task-preview data-item="selected.preview" data-users="userLookup"></div>
+		<div class="preview-pane" ng-if="selected.preview" sd-task-preview data-item="selected.preview"></div>
 	</div>
 	<div sd-workqueue></div>
 </section>
@@ -87,7 +86,7 @@
         <h3 translate>Create New Task</h3>
     </div>
 
-    <div class="modal-body task-details">
+    <div class="modal-body task-details" ng-if="newTask">
        <div class="main">
 			<div class="content">
 				<ul class="task-labels clearfix"></ul>
@@ -102,7 +101,8 @@
 				<div class="assignee-name">
                     <span ng-show="newTask.task.desk">{{deskLookup[newTask.task.desk].name}} / </span>
                     <span ng-show="newTask.task.user">{{userLookup[newTask.task.user].display_name}}</span>
-                    <span ng-hide="newTask.task.user" translate>Unassigned</span></div>
+                    <span ng-hide="newTask.task.user" translate>Unassigned</span>
+                </div>
 			</section>
 			<header translate>Action</header>
 			<section>
