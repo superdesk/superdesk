@@ -13,6 +13,19 @@
 	}
 }
 
+.disabled-label {
+	background: #c8a1a8;
+	color: @white;
+	font-size: 10px;
+	.text-semibold();
+	text-transform: uppercase;
+	height: 13px;
+	line-height: 13px;
+	padding: 0 8px;
+	.border-radius(2px);
+	margin-right: 10px;
+}
+
 .users-table {	//main list styles
 	
 	border-top: 2px solid #d7d7d7;
@@ -71,6 +84,7 @@
 					padding: 0;
 					.box-sizing(border-box);
 					> div {
+						color: @sd-text;
 						display: inline-block;
 						overflow: hidden;
 						text-overflow: ellipsis;
@@ -78,20 +92,26 @@
 						.box-sizing(border-box);
 						padding: 0 5px;
 						&.name, &.email {
-							color: #218baa;
+							color: @sd-blue-text;
 						}
 						//user columns width
-						&.name { width: 17%; }
+						&.name { width: 23%; }
 						&.role { width: 16%; }
 						&.username { width: 14%; }
 						&.email { width: 35%; }
-						&.created { width: 13%; }
+						&.created { width: 12%; }
 					}
 				}
 				&.action {
 					float: right;
 					width: @user-table-actions-width;
 					line-height: 18px !important;
+				}
+			}
+			&.inactive .row-wrapper > div {
+				color: lighten(@sd-text, 60%);
+				&.name, &.email {
+					color: lighten(@sd-blue-text, 30%);
 				}
 			}
 		}
@@ -214,7 +234,6 @@
 	.header-info {
 		height: 82px;
 		margin-bottom: 10px;
-		
 
 		h2 { //used as user's full name
 			font-size: 20px;
@@ -226,7 +245,12 @@
 			font-weight: normal;
 			line-height: 16px;
 		}
-
+		
+		.active {
+			position: absolute;
+			top: 20px;
+			right: 15px;
+		}
 		.user-roles {
 			list-style-type: none;
 			margin: 15px 0;
@@ -392,6 +416,12 @@
 			.change-photo {
 			display: block;
 			}
+		}
+		.disabled-label {
+			position: absolute;
+			bottom: 15%;
+			left: 40%;
+			border: 1px solid #fff;
 		}
 	}
 	

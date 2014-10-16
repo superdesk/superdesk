@@ -9,7 +9,7 @@
         <figure class="avatar">
             <img sd-user-avatar data-src="user.picture_url" alt="{{ user.FullName }}">
         </figure>
-
+        <span class="disabled-label" ng-if="!_active" translate>disabled</span>
         <a href="" class="change-photo" ng-click="editPicture()" translate>Change Photo</a>
     </div>
 
@@ -17,10 +17,9 @@
         <div class="header-info">
             <h2>{{ user.display_name }}</h2>
             <h5>{{ user.username }}</h5>
-            <dl>
-              <dt><label for="user-status-toggle" translate>Enabled</label></dt>
-              <dd><span sd-switch ng-model="_active" ng-click="toggleStatus(_active)"></span></dd>
-            </dl>
+            <div class="active" tooltip="{{ _active ? 'Disable user' : 'Enable user' | translate }}" tooltip-placement="left">
+              <span sd-switch ng-model="_active" ng-click="toggleStatus(_active)"></span>
+            </div>
         </div>
         <div class="error-holder">
           <p class="alert alert-error" ng-show="error" translate>Please fix the issues below.</p>
