@@ -24,7 +24,8 @@ def send_activate_account_email(doc):
                      text_body=text_body, html_body=html_body)
 
 
-def send_user_status_changed_email(recipients, status):
+def send_user_status_changed_email(recipients, is_active):
+    status = 'active' if is_active else 'inactive'
     admins = app.config['ADMINS']
     app_name = app.config['APPLICATION_NAME']
     send_email.delay(subject='Your {} account is {}'.format(app_name, status),

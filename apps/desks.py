@@ -44,7 +44,7 @@ class DesksService(BaseService):
     def create(self, docs, **kwargs):
         for doc in docs:
             if not doc.get('incoming_stage', None):
-                stage = {'name': '<to be defined>', 'default_incoming': True}
+                stage = {'name': 'New', 'default_incoming': True}
                 superdesk.get_resource_service('stages').post([stage])
                 doc['incoming_stage'] = stage.get('_id')
                 super().create([doc], **kwargs)

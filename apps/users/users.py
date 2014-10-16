@@ -32,9 +32,6 @@ class UsersResource(Resource):
         'url': 'regex("[\w]+")',
         'field': 'username'
     }
-    active = 'active'
-    inactive = 'inactive'
-    needs_activation = 'needs-activation'
 
     schema = {
         'username': {
@@ -89,10 +86,13 @@ class UsersResource(Resource):
             'default': 'user',
             'required': True
         },
-        'status': {
-            'type': 'string',
-            'allowed': [active, inactive, needs_activation],
-            'default': needs_activation
+        'is_active': {
+            'type': 'boolean',
+            'default': False
+        },
+        'needs_activation': {
+            'type': 'boolean',
+            'default': True
         }
     }
 
@@ -103,7 +103,8 @@ class UsersResource(Resource):
         'user_info',
         'picture_url',
         'avatar',
-        'status'
+        'is_active',
+        'needs_activation'
     ]
 
     datasource = {

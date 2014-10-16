@@ -5,7 +5,7 @@ Feature: User Activity
     Scenario: User activity
          When we post to "/users"
             """
-            {"username": "foo", "password": "barbar", "email": "foo@bar.com", "status": "active"}
+            {"username": "foo", "password": "barbar", "email": "foo@bar.com", "is_active": true}
             """
             
          Then we get response code 201
