@@ -7,9 +7,6 @@
     UsersService.$inject = ['api', '$q'];
     function UsersService(api, $q) {
 
-        var STATUS_INACTIVE = 'inactive',
-            STATUS_ACTIVE = 'active';
-
         this.usernamePattern = /^[A-Za-z0-9_.'-]+$/;
         this.phonePattern = /^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$/;
 
@@ -46,14 +43,14 @@
          * Test if user is active
          */
         this.isActive = function isActive(user) {
-            return user && !user.status || user.status !== STATUS_INACTIVE;
+            return user && user.is_active;
         };
 
         /**
          * Toggle user status
          */
         this.toggleStatus = function toggleStatus(user, active) {
-            return this.save(user, {status: active ? STATUS_ACTIVE : STATUS_INACTIVE});
+            return this.save(user, {is_active: active});
         };
     }
 
