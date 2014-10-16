@@ -22,6 +22,22 @@ class PreferencesResource(Resource):
     resource_methods = []
     item_methods = ['GET', 'PATCH']
 
+    superdesk.register_available_preference('feature:preview', {
+        'type': 'bool',
+        'enabled': False,
+        'default': False,
+        'label': 'Enable Feature Preview',
+        'category': 'feature'
+    })
+
+    superdesk.register_available_preference('archive:view', {
+        'type': 'string',
+        'view': 'mgrid',
+        'default': 'mgrid',
+        'label': 'Users archive view format',
+        'category': 'archive'
+    })
+
 
 class PreferencesService(BaseService):
 

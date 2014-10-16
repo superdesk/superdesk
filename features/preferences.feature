@@ -23,6 +23,57 @@ Feature: User preferences
 
 
     @auth
+    Scenario: Update archive view preference settings
+        Given "users"
+        """
+        [{"username": "foo", "password": "bar", "email": "foo@bar.com"}]
+        """
+
+        When we patch "/preferences/#USERS_ID#"
+        """
+        {"preferences": {"archive:view": {"view": "compact" }}}
+        """
+
+        When we get "/preferences/#USERS_ID#"
+        Then we get existing resource
+        """
+        {"_id": "#USERS_ID#", "preferences": {"archive:view":
+        {
+        "type": "string",
+        "view": "compact",
+        "default": "mgrid",
+        "label": "Users archive view format",
+        "category": "archive"
+        }}}
+        """
+
+    @auth
+    Scenario: Update feature preview preference settings
+        Given "users"
+        """
+        [{"username": "foo", "password": "bar", "email": "foo@bar.com"}]
+        """
+
+        When we patch "/preferences/#USERS_ID#"
+        """
+        {"preferences": {"feature:preview": {"enabled": true }}}
+        """
+
+        When we get "/preferences/#USERS_ID#"
+        Then we get existing resource
+        """
+        {"_id": "#USERS_ID#", "preferences": {"feature:preview":
+        {
+        "type": "bool",
+        "enabled": true,
+        "default": false,
+        "label": "Enable Feature Preview",
+        "category": "feature"
+        }}}
+        """
+
+
+    @auth
     Scenario: Update preference settings
         Given "users"
         """
@@ -31,7 +82,7 @@ Feature: User preferences
 
         When we patch "/preferences/#USERS_ID#"
         """
-        {"preferences": {"email:notification": {"enabled": "false"}}}
+        {"preferences": {"email:notification": {"enabled": false }}}
         """
 
         When we get "/preferences/#USERS_ID#"
@@ -56,7 +107,7 @@ Feature: User preferences
 
         When we patch "/preferences/#USERS_ID#"
         """
-        {"preferences": {"email:bad_name": {"enabled": "false"}}}
+        {"preferences": {"email:bad_name": {"enabled": false }}}
         """
         Then we get error 400
         """
