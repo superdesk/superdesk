@@ -94,30 +94,49 @@ function TasksController($scope, api, notify, desks, tasks) {
 
 TaskPreviewDirective.$inject = ['tasks', 'desks', 'notify'];
 function TaskPreviewDirective(tasks, desks, notify) {
+    var promise = desks.initialize();
     return {
         templateUrl: 'scripts/superdesk-dashboard/workspace-tasks/views/task-preview.html',
         scope: {
             item: '='
         },
         link: function(scope) {
+            var _orig;
+            scope.task = null;
+            scope.task_details = null;
+            scope.editmode = false;
 
-            scope.$watch('item', edit);
+            promise.then(function() {
+                scope.desks = desks.deskLookup;
+                scope.users = desks.userLookup;
+            });
 
-            function edit() {
-                scope.task = scope.item ? _.create(scope.item) : null;
-            }
+            scope.$watch('item._id', function(val) {
+                if (val) {
+                    scope.reset();
+                }
+            });
 
-            scope.save = function(form) {
-                tasks.save(scope.item, scope.task)
+            scope.save = function() {
+                scope.task.task = _.extend(scope.task.task, scope.task_details);
+                tasks.save(_orig, scope.task)
                 .then(function(result) {
                     notify.success(gettext('Item saved.'));
-                    form.$setPristine();
+                    scope.editmode = false;
                 });
             };
 
-            scope.cancel = function(form) {
-                form.$setPristine();
-                edit();
+            scope.edit = function() {
+                scope.editmode = true;
+            };
+
+            scope.reset = function() {
+                scope.editmode = false;
+                scope.task = _.create(scope.item);
+                scope.task_details = _.extend({}, scope.item.task);
+                scope.task_details.due_date = new Date(scope.item.task.due_date);
+                scope.task_details.due_time = new Date(scope.item.task.due_date);
+                _orig = scope.item;
             };
         }
     };

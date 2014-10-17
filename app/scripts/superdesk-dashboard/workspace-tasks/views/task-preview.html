@@ -4,13 +4,16 @@
         <i class="icon-close-small"></i>
     </button>
 </header>
-<div class="content" ng-if="task">
+<div class="content">
 	<form name="taskForm">
-		<div class="action-bar clearfix" ng-class="{show: taskForm.$dirty}">
-	        <button class="btn btn-info pull-right" ng-click="save(taskForm)" translate>Save</button>
-	        <button class="btn pull-right" ng-click="cancel(taskForm)"  translate>Cancel</button>
+		<div class="action-bar clearfix" ng-class="{show: editmode}">
+	        <button class="btn btn-info pull-right" ng-click="save()" translate>Save</button>
+	        <button class="btn pull-right" ng-click="reset()"  translate>Cancel</button>
 	    </div>
 		<div class="action-menu">
+			<button ng-click="edit()" class="change">
+                <i class="icon-pencil"></i>
+            </button>
 			<div class="dropdown dropdown-big pull-right">
 	            <button class="dropdown-toggle condensed"><i class="icon-dots-vertical"></i></button>
 	            <div class="dropdown-menu pull-right"
@@ -20,14 +23,36 @@
 	            </div>
 	        </div>
 		</div>
-		
-		<ul class="task-labels clearfix">
-			<li><i class="icon-desk-time"></i> {{ task.task.due_date | reldate }}</li>
-		</ul>
-		<div sd-assignee-view data-task="task.task" class="assignee"></div>
 
-		<textarea class="title" sd-auto-height ng-model="task.slugline" placeholder="{{'Add title' | translate}}" required></textarea>
-		<textarea class="description" sd-auto-height ng-model="task.description_text" placeholder="{{'Add description' | translate}}"></textarea>
+		<ul class="task-labels clearfix" ng-if="!editmode">
+			<li><i class="icon-desk-time"></i> {{ task_details.due_date | reldate }}</li>
+		</ul>
+		<div ng-if="editmode" class="time-edit">
+			<div class="field">
+				<label translate>Due date</label>
+				<input type="date" ng-model="task_details.due_date">
+			</div>
+			<div class="field">
+				<label translate>Due time</label>
+				<input type="time" ng-model="task_details.due_time">
+			</div>
+		</div>
+
+		<div class="assignee-container" ng-class="{editable: editmode}">
+			<figure ng-if="!editmode" class="avatar"><img sd-user-avatar data-src="users[task_details.user].picture_url"></figure>
+			<div ng-if="editmode" sd-assignee-box data-desk-id="task_details.desk" data-user-id="task_details.user"></div>
+			<div class="assignee-name">
+	            <span ng-show="task_details.desk">{{desks[task_details.desk].name}} / </span>
+	            <span ng-show="task_details.user">{{users[task_details.user].display_name}}</span>
+	            <span ng-hide="task_details.user" translate>Unassigned</span>
+	        </div>
+		</div>	
+        
+        <div ng-if="!editmode" class="title">{{ task.slugline }}</div>
+		<textarea ng-if="editmode" class="title" sd-auto-height ng-model="task.slugline" placeholder="{{'Add title' | translate}}" required></textarea>
+
+		<textarea ng-if="editmode" class="description" sd-auto-height ng-model="task.description_text" placeholder="{{'Add description' | translate}}"></textarea>
+		<div ng-if="!editmode" class="description">{{ task.description_text }}</div>
 	</form>
 
 </div>

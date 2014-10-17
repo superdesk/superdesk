@@ -307,6 +307,15 @@ TASK PAGE
 .workspace-tasks {
 	.preview-pane {
 		
+		.action-menu {
+			width: 84px !important;
+			.change {
+				border: 0;
+				background: 0;
+				padding: 14px;
+				float: left;	
+			}
+		}
 		header {
 			p {
 				line-height: @nav-height;
@@ -323,10 +332,7 @@ TASK PAGE
 
 		textarea {
 			height: 32px;
-			border-color: #fff !important;
-			&:hover {
-				border-color: #ddd !important;
-			}
+			border-color: #ddd !important;
 			&:focus {
 				border-color: #ddd !important;
 				.box-shadow(none) !important;
@@ -348,23 +354,54 @@ TASK PAGE
 			color:#444;
 		}
 		
-		.assignee {
+		.assignee-container {
 			background: #eee;
-			padding: 5px;
+			&.editable {
+				.box-shadow(inset 0 2px 4px #ddd);
+			}
+			padding: 10px;
 			.border-radius(3px);
 			margin-bottom: 10px;
+			.clearfix();
 			.avatar {
+				margin-right: 10px;
+			}
+			.assignee-box {
+				float: left;
 				margin-right: 10px;
 			}
 			.assignee-name {
 				margin: 0;
 				line-height: 30px;
+				float: left;
 			}
 		}
+		
 
 		.task-labels {
 			margin-top: 0;
 			margin-bottom: 15px;
+		}
+
+		.time-edit {
+			margin-top: 5px;
+			margin-bottom: 10px;
+			.clearfix();
+			.field {
+				float: left;
+				width: 50%;
+				.border-box();
+				&:first-child {
+					padding-right: 5px;
+				}
+				&:last-child {
+					padding-left: 5px;
+				}
+			}
+			input {
+				.border-box();
+				width: 100%;
+			}
 		}
 	}
 }
