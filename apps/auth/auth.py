@@ -23,8 +23,8 @@ class AuthUsersResource(Resource):
         'password': {
             'type': 'string',
         },
-        'status': {
-            'type': 'string'
+        'is_active': {
+            'type': 'boolean'
         }
     }
     item_methods = []

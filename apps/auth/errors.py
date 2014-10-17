@@ -33,7 +33,7 @@ class ForbiddenError(superdesk.SuperdeskError):
 
 class UserInactiveError(ForbiddenError):
     """User is inactive, access restricted"""
-    payload = {'status': 'inactive'}
+    payload = {'is_active': False}
     message = 'Account suspended, access restricted.'
 
 

@@ -57,6 +57,7 @@ class ImportUserProfileFromADCommand(superdesk.Command):
             user_data[app.config['DATE_CREATED']] = user_data[app.config['LAST_UPDATED']]
             user_data['username'] = username
             user_data['user_type'] = user_type
+            user_data['is_active'] = True
             superdesk.get_resource_service('users').post([user_data])
             return user_data
 

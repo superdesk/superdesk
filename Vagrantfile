@@ -29,7 +29,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define "superdesk" do |app|
         app.vm.provider "docker" do |d|
             d.build_dir = "."
-            d.cmd = ["start"]
+            d.cmd = ["honcho", "start"]
             d.ports = ["5000:5000", "5100:5100"]
             d.link "mongodb:mongodb"
             d.link "elastic:elastic"

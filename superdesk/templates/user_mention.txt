@@ -4,4 +4,4 @@ Comment:
 
 Regards,
 
-The Superdesk admin
+The {{app_name}} Team

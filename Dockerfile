@@ -23,5 +23,4 @@ WORKDIR	/opt/superdesk/
 EXPOSE	5000
 EXPOSE	5100
 
-ENTRYPOINT ["honcho"]
-CMD ["start"]
+CMD ["honcho", "start"]
