@@ -849,7 +849,7 @@ def then_we_get_notifications(context):
 @then('we get default preferences')
 def get_default_prefs(context):
     response_data = json.loads(context.response.get_data())
-    assert_equal(response_data['preferences'], available_preferences)
+    assert_equal(response_data['user_preferences'], available_preferences)
 
 
 @when('we mention user in comment for "{url}"')
@@ -894,6 +894,9 @@ def we_have_sessions_get_id(context, url):
     when_we_get_url(context, url)
     item = json.loads(context.response.get_data())
     context.session_id = item['_items'][0]['_id']
+    context.data = item
+    set_placeholder(context, 'SESSION_ID', item['_items'][0]['_id'])
+    set_placeholder(context, 'USERS_ID', item['_items'][0]['user']['_id'])
 
 
 @then('we get session by id')

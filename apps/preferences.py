@@ -47,14 +47,16 @@ class PreferencesResource(Resource):
 class PreferencesService(BaseService):
 
     def on_update(self, updates, original):
-        prefs = updates.get(_preferences_key, {})
-        for k in ((k for k, v in prefs.items() if k not in superdesk.available_preferences)):
-            raise ValidationError('Invalid preference: %s' % k)
+        if updates.get(_user_preferences_key) is not None:
+            prefs = updates.get(_user_preferences_key, {})
+            for k in ((k for k, v in prefs.items() if k not in superdesk.available_preferences)):
+                raise ValidationError('Invalid preference: %s' % k)
 
-        for k, v in prefs.items():
-            new_value = dict(superdesk.available_preferences[k])
-            new_value.update(v)
-            prefs[k] = new_value
+            for k, v in prefs.items():
+                new_value = dict(superdesk.available_preferences[k])
+                new_value.update(v)
+                prefs[k] = new_value
+
 
     def find_one(self, req, **lookup):
         session_doc = super().find_one(req, **lookup)
@@ -91,8 +93,8 @@ class PreferencesService(BaseService):
             user_preference = {}
             user_preference['preferences'] = updates.get('user_preferences')
             get_resource_service('users').update(user_doc['user'], user_preference)
+            del updates[_user_preferences_key]
 
-        del updates[_user_preferences_key]
         res = self.backend.update(self.datasource, id, updates)
 
         return res
