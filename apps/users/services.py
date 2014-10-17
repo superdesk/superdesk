@@ -125,3 +125,7 @@ class ADUsersService(UsersService):
         super().on_fetched(doc)
         for document in doc['_items']:
             document['_readonly'] = ADUsersService.readonly_fields
+
+    def on_fetched_item(self, doc):
+        super().update_user_defaults(doc)
+        doc['_readonly'] = ADUsersService.readonly_fields
