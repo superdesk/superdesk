@@ -34,7 +34,7 @@ function TasksService(desks, $rootScope, api) {
         }
         return api('tasks').query({
             source: {
-                size: 50,
+                size: 25,
                 sort: [{_updated: 'desc'}],
                 filter: filter
             }

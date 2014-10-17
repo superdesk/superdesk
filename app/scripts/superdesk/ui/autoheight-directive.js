@@ -18,6 +18,7 @@ define([
                 require: 'ngModel',
                 restrict: 'A, C',
                 link: function(scope, element, attrs, ngModel) {
+
                     // cache a reference to the DOM element
                     var ta = element[0],
                         $ta = element;
@@ -161,7 +162,6 @@ define([
                         // small delay to prevent an infinite loop
                         _.delay(function() {
                           active = false;
-                          console.log('delay');
                         }, 1);
                       }
                     }

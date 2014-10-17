@@ -1,6 +1,7 @@
 <button ng-show="desks" class="dropdown-toggle">
 	<span ng-show="selectedDesk">{{ selectedDesk.name }}</span>
-	<span ng-show="!selectedDesk">{{ deskLabel === "tasks"? "My tasks" : "My content" | translate }}</span>
+	<span ng-show="!selectedDesk && tasks" translate>My tasks</span>
+    <span ng-show="!selectedDesk && !tasks" translate>My content</span>
 	<b class="caret"></b>
 </button>
 <ul class="dropdown-menu">
@@ -10,7 +11,7 @@
     		<span ng-switch-default translate>My content</span>
     	</a>
     </li>
-    <li ng-repeat="desk in desks">
+    <li ng-repeat="desk in desks track by desk._id">
         <a href="" ng-click="select(desk)">{{ desk.name }}</a>
     </li>
 </ul>

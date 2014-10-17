@@ -1,7 +1,7 @@
-<div class="login-screen">
+<div class="login-screen" ng-if="scope.active">
     <div class="login-form-container">
 
-        <p ng-if="identity.Id" class="session-error">{{ 'Your session has expired.'|translate }}<br />{{ 'Please log in again.'|translate }}</p>
+        <p ng-if="identity._id" class="session-error">{{ 'Your session has expired.'|translate }}<br />{{ 'Please log in again.'|translate }}</p>
 
         <div class="logo-handler" ng-show="!identity.Avatar">
             <img src="images/superdesk-icon-large.png" alt="Superdesk Logo">

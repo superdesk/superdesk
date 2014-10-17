@@ -9,6 +9,6 @@
 <div sd-notify></div>
 <div sd-activity-chooser></div>
 
-<div class="hard-error" ng-cloak ng-show="serverStatus">
+<div class="hard-error" ng-if="serverStatus">
     <div class="alert alert-error" translate>Superdesk is experiencing network connection issues:/</div>
 </div>

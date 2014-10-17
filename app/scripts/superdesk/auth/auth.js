@@ -97,14 +97,14 @@ define([
             };
 
             // populate current user
-            $rootScope.$watch(function() {
+            $rootScope.$watch(function watchSessionIdentity() {
                 return session.identity;
             }, function (identity) {
                 $rootScope.currentUser = session.identity;
             });
 
             // set auth header
-            $rootScope.$watch(function() {
+            $rootScope.$watch(function watchSessionToken() {
                 return session.token;
             }, function(token) {
                 if (token) {

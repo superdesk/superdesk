@@ -1,5 +1,4 @@
 <div class="subnav">
-
 	<div class="button-stack right-stack">
         <button class="navbtn" ng-click="create()">
             <i class="svg-icon-add"></i>
@@ -16,9 +15,7 @@
 				<li><a href="">Desk 2 tasks</a></li>
 			</ul>
 		</div>
-    
     </div>
-
 </div>
 
 <section class="main-section workspace-tasks">
@@ -55,11 +52,11 @@
 		                	<span class="marker {{ item.task.status }}"></span>
 							<div class="header">
                                 <div sd-assignee-view data-task="item.task"></div>
-								<div class="title">{{item.slugline}}</div>
+								<div class="title">{{ item.slugline }}</div>
 							</div>
 		                	<div class="info">
 		                		<ul class="task-labels clearfix">
-									<li><i class="icon-desk-time"></i> {{ item.task.due_date | reldate }}</li>
+									<li><i class="icon-desk-time"></i> <time sd-datetime data-date="item.task.due_date"></time></li>
 								</ul>
 		                	</div>
                             <div class="action">
@@ -89,8 +86,21 @@
        <div class="main">
 			<div class="content">
 				<ul class="task-labels clearfix"></ul>
-				<textarea class="title" sd-auto-height ng-model="newTask.slugline" placeholder="{{'Add task title' | translate}}" required></textarea>
-				<textarea class="description" sd-auto-height ng-model="newTask.description_text" placeholder="{{'Add task description' | translate}}"></textarea>
+				<textarea
+                    class="title"
+                    sd-auto-height
+                    ng-model="newTask.slugline"
+                    ng-model-options="{debounce: 500}"
+                    placeholder="{{ :: 'Add task title' | translate}}"
+                    required
+                ></textarea>
+				<textarea
+                    class="description"
+                    sd-auto-height
+                    ng-model="newTask.description_text"
+                    ng-model-options="{debounce: 500}"
+                    placeholder="{{ :: 'Add task description' | translate}}"
+                ></textarea>
 			</div>
        </div>
        <aside class="sidebar">
@@ -108,11 +118,11 @@
 				<form>
 					<fieldset>
 						<div class="field">
-							<label>Due date:</label>
+							<label translate>Due date:</label>
 							<input type="date" ng-model="newTask.task.due_date">
 						</div>
 						<div class="field">
-							<label>Due time:</label>
+							<label translate>Due time:</label>
 							<input type="time" ng-model="newTask.task.due_time">
 						</div>
 					</fieldset>
