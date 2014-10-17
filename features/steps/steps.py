@@ -888,3 +888,26 @@ def we_get_default_incoming_stage(context):
 def we_get_stage_filled_in(context):
     data = json.loads(context.response.get_data())
     assert data['task']['stage']
+
+@given('we have sessions "{url}"')
+def we_have_sessions_get_id(context, url):
+    when_we_get_url(context, url)
+    item = json.loads(context.response.get_data())
+    context.session_id = item['_items'][0]['_id']
+
+
+@then('we get session by id')
+def we_get_session_by_id(context):
+    url = 'sessions/' + context.session_id
+    when_we_get_url(context, url)
+    item = json.loads(context.response.get_data())
+    returned_id = item["_id"]
+    assert context.session_id == returned_id
+
+
+@then('we delete session by id')
+def we_delete_session_by_id(context):
+    url = 'sessions/' + context.session_id
+    step_impl_when_delete_url(context, url)
+    item = json.loads(context.response.get_data())
+    assert_200(context.response)

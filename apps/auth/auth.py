@@ -89,7 +89,7 @@ class SuperdeskTokenAuth(TokenAuth):
             return True
 
         # Only administrators can write to those resources in this list
-        if resource in {'users', 'roles'}:
+        if resource in {'users', 'roles', 'sessions'}:
             raise ForbiddenError()
 
         # Get the list of roles belonging to this user
