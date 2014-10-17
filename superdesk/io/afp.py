@@ -4,17 +4,18 @@ import logging
 
 from datetime import datetime
 from .newsml_1_2 import Parser
+from superdesk.io.file_ingest_service import FileIngestService
 from ..utc import utc
 from ..etree import etree
 from superdesk.notification import push_notification
-from superdesk.io import register_provider, IngestService
+from superdesk.io import register_provider
 
 
 logger = logging.getLogger(__name__)
 PROVIDER = 'afp'
 
 
-class AFPIngestService(IngestService):
+class AFPIngestService(FileIngestService):
     """AFP Ingest Service"""
 
     def __init__(self):
@@ -34,7 +35,7 @@ class AFPIngestService(IngestService):
                     last_updated = datetime.fromtimestamp(stat.st_mtime, tz=utc)
                     if self.is_latest_content(last_updated, provider.get('updated')):
                         with open(os.path.join(self.path, filename), 'r') as f:
-                            item = Parser().parse_message(etree.fromstring(f.read()))
+                            item = self.parser.parse_message(etree.fromstring(f.read()))
                             item['_created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
                             item['_updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
                             item.setdefault('provider', provider.get('name', provider['type']))
@@ -45,7 +46,6 @@ class AFPIngestService(IngestService):
             except Exception as err:
                 logger.exception(err)
                 self.move_file(self.path, filename, success=False)
-                pass
 
         push_notification('ingest:update')
 

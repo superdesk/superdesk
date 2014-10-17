@@ -4,9 +4,10 @@ import logging
 
 from datetime import datetime
 from .nitf import parse
+from superdesk.io.file_ingest_service import FileIngestService
 from superdesk.utc import utc, timezone
 from superdesk.notification import push_notification
-from superdesk.io import register_provider, IngestService
+from superdesk.io import register_provider
 
 
 logger = logging.getLogger(__name__)
@@ -17,7 +18,7 @@ def normalize_date(naive, tz):
     return utc.normalize(tz.localize(naive))
 
 
-class AAPIngestService(IngestService):
+class AAPIngestService(FileIngestService):
     """AAP Ingest Service"""
 
     def __init__(self):
@@ -41,10 +42,8 @@ class AAPIngestService(IngestService):
                     if self.is_latest_content(last_updated, provider.get('updated')):
                         with open(os.path.join(self.path, filename), 'r') as f:
                             item = parse(f.read())
-                            item['firstcreated'] = normalize_date(item.get('firstcreated'), self.tz)
-                            item['versioncreated'] = normalize_date(item.get('versioncreated'), self.tz)
-                            item['created'] = item['firstcreated']
-                            item['updated'] = item['versioncreated']
+                            item['_created'] = item['firstcreated'] = normalize_date(item.get('firstcreated'), self.tz)
+                            item['_updated'] = item['versioncreated'] = normalize_date(item.get('versioncreated'), self.tz)
                             item.setdefault('provider', provider.get('name', provider['type']))
                             self.move_file(self.path, filename, success=True)
                             yield [item]
@@ -53,7 +52,6 @@ class AAPIngestService(IngestService):
             except (Exception) as err:
                 logger.exception(err)
                 self.move_file(self.path, filename, success=False)
-                pass
 
         push_notification('ingest:update')
 
