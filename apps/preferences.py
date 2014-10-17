@@ -3,9 +3,12 @@ from superdesk.services import BaseService
 from superdesk import get_backend
 from eve.validation import ValidationError
 import superdesk
+from superdesk import get_resource_service
 
 
 _preferences_key = 'preferences'
+_user_preferences_key = 'user_preferences'
+_session_preferences_key = 'session_preferences'
 
 
 def init_app(app):
@@ -15,16 +18,16 @@ def init_app(app):
 
 
 class PreferencesResource(Resource):
-    datasource = {'source': 'users', 'projection': {'preferences': 1}}
+    datasource = {'source': 'auth', 'projection': {'session_preferences': 1, 'user': 1}}
     schema = {
-        _preferences_key: {'type': 'dict', 'required': True}
+        _session_preferences_key: {'type': 'dict', 'required': True},
+        _user_preferences_key: {'type': 'dict', 'required': True}
     }
     resource_methods = []
     item_methods = ['GET', 'PATCH']
 
     superdesk.register_available_preference('feature:preview', {
         'type': 'bool',
-        'allowed': ['mgrid','compact'],
         'enabled': False,
         'default': False,
         'label': 'Enable Feature Preview',
@@ -33,6 +36,7 @@ class PreferencesResource(Resource):
 
     superdesk.register_available_preference('archive:view', {
         'type': 'string',
+        'allowed': ['mgrid', 'compact'],
         'view': 'mgrid',
         'default': 'mgrid',
         'label': 'Users archive view format',
@@ -53,9 +57,10 @@ class PreferencesService(BaseService):
             prefs[k] = new_value
 
     def find_one(self, req, **lookup):
-        doc = super().find_one(req, **lookup)
-        self.enhance_document_with_default_prefs(doc)
-        return doc
+        session_doc = super().find_one(req, **lookup)
+        user_doc = get_resource_service('users').find_one(req=None, _id=session_doc['user'])
+        self.enhance_document_with_default_prefs(session_doc, user_doc)
+        return session_doc
 
     def get(self, req, lookup):
         docs = super().get(req, lookup)
@@ -63,11 +68,11 @@ class PreferencesService(BaseService):
             self.enhance_document_with_default_prefs(doc)
         return docs
 
-    def enhance_document_with_default_prefs(self, doc):
-        orig_prefs = doc.get(_preferences_key, {})
+    def enhance_document_with_default_prefs(self, session_doc, user_doc):
+        orig_prefs = user_doc.get(_preferences_key, {})
         available = dict(superdesk.available_preferences)
         available.update(orig_prefs)
-        doc[_preferences_key] = available
+        session_doc[_user_preferences_key] = available
 
     def get_user_preference(self, user_id, preference_name):
         doc = self.find_one(req=None, _id=user_id)
@@ -77,3 +82,17 @@ class PreferencesService(BaseService):
     def email_notification_is_enabled(self, user_id):
         send_email = self.get_user_preference(user_id, 'email:notification')
         return send_email and send_email.get('enabled', False)
+
+    def update(self, id, updates):
+
+        if updates.get(_user_preferences_key) is not None:
+            # update User
+            user_doc = get_resource_service('auth').find_one(req=None, _id=id)
+            user_preference = {}
+            user_preference['preferences'] = updates.get('user_preferences')
+            get_resource_service('users').update(user_doc['user'], user_preference)
+
+        del updates[_user_preferences_key]
+        res = self.backend.update(self.datasource, id, updates)
+
+        return res
