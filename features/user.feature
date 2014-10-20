@@ -1,6 +1,7 @@
 Feature: User Resource
 
     @auth
+    @dbauth
     Scenario: Create a user
         Given empty "users"
         When we create a new user

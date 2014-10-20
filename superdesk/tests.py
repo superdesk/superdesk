@@ -84,14 +84,19 @@ def setup_db_user(context, user):
 
 
 def setup_ad_user(context, user):
-    ad_user = {'email': 'mock@mail.com.au', 'user_type': 'administrator'}
-    if user and user['username']:
-        ad_user['username'] = user['username']
-    else:
-        ad_user['username'] = test_user['username']
+    ad_user = user or test_user
+
+    '''
+    This is necessary as test_user is in Global scope and del doc['password'] removes the key from test_user and
+    for the next scenario, auth_data = json.dumps({'username': ad_user['username'], 'password': ad_user['password']})
+    will fail as password key is removed by del doc['password']
+    '''
+    ad_user = ad_user.copy()
+    ad_user['email'] = 'mock@mail.com.au'
+    ad_user['user_type'] = 'administrator'
 
     with patch.object(ADAuth, 'authenticate_and_fetch_profile', return_value=ad_user):
-        auth_data = json.dumps({'username': ad_user['username'], 'password': test_user['password']})
+        auth_data = json.dumps({'username': ad_user['username'], 'password': ad_user['password']})
         auth_response = context.client.post('/auth', data=auth_data, headers=context.headers)
         auth_response_as_json = json.loads(auth_response.get_data())
         token = auth_response_as_json.get('token').encode('ascii')

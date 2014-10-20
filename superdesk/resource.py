@@ -78,21 +78,31 @@ class Resource():
         on_fetched_resource = getattr(app, 'on_fetched_resource_%s' % self.endpoint_name)
         on_fetched_resource -= service.on_fetched
         on_fetched_resource += service.on_fetched
+
+        on_fetched_item = getattr(app, 'on_fetched_item_%s' % self.endpoint_name)
+        on_fetched_item -= service.on_fetched_item
+        on_fetched_item += service.on_fetched_item
+
         on_insert_event = getattr(app, 'on_insert_%s' % self.endpoint_name)
         on_insert_event -= service.on_create
         on_insert_event += service.on_create
+
         on_inserted_event = getattr(app, 'on_inserted_%s' % self.endpoint_name)
         on_inserted_event -= service.on_created
         on_inserted_event += service.on_created
+
         on_update_event = getattr(app, 'on_update_%s' % self.endpoint_name)
         on_update_event -= service.on_update
         on_update_event += service.on_update
+
         on_updated_event = getattr(app, 'on_updated_%s' % self.endpoint_name)
         on_updated_event -= service.on_updated
         on_updated_event += service.on_updated
+
         on_delete_event = getattr(app, 'on_delete_item_%s' % self.endpoint_name)
         on_delete_event -= service.on_delete
         on_delete_event += service.on_delete
+
         on_deleted_event = getattr(app, 'on_deleted_item_%s' % self.endpoint_name)
         on_deleted_event -= service.on_deleted
         on_deleted_event += service.on_deleted
