@@ -47,15 +47,30 @@ class PreferencesResource(Resource):
 class PreferencesService(BaseService):
 
     def on_update(self, updates, original):
-        if updates.get(_user_preferences_key) is not None:
-            prefs = updates.get(_user_preferences_key, {})
-            for k in ((k for k, v in prefs.items() if k not in superdesk.available_preferences)):
-                raise ValidationError('Invalid preference: %s' % k)
+        existing_prefs = get_resource_service('preferences').find_one(req=None, _id=original['_id'])
+        existing_user_preferences = existing_prefs.get(_user_preferences_key, {})
 
-            for k, v in prefs.items():
-                new_value = dict(superdesk.available_preferences[k])
-                new_value.update(v)
-                prefs[k] = new_value
+        self.user_partial_update(updates, original, existing_user_preferences, _user_preferences_key)
+        #self.partial_update(updates, original, existing_prefs.get(_session_preferences_key, {}), _session_preferences_key)
+
+    def user_partial_update(self, updates, original, existing_prefs, key):
+        if updates.get(key) is not None:
+            prefs = updates.get(key, {})
+
+            # check if the input is validated against the default values
+            if key == _user_preferences_key:
+                for k in ((k for k, v in prefs.items() if k not in superdesk.available_preferences)):
+                    raise ValidationError('Invalid preference: %s' % k)
+
+            # check if we have any existing values
+            if existing_prefs == {}:
+                # there's no existing so use the default for missing values
+                for k in prefs.keys():
+                    updates[key][k] = dict(list(superdesk.available_preferences[k].items()) + list(prefs[k].items()))
+            else:
+                # there's existing so use it for missing values
+                for k in prefs.keys():
+                    updates[key][k] = dict(list(existing_prefs[k].items()) + list(prefs[k].items()))
 
 
     def find_one(self, req, **lookup):
