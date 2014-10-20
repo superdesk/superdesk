@@ -1,7 +1,6 @@
 define([
-    'jquery',
     'angular'
-], function($, angular) {
+], function(angular) {
     'use strict';
 
         /**
@@ -14,7 +13,7 @@ define([
          * https://github.com/monospaced/angular-elastic/blob/master/elastic.js
          *
          */
-        return ['$timeout', '$window', function($timeout, $window) {
+        return ['$window', function($window) {
             return {
                 require: 'ngModel',
                 restrict: 'A, C',
@@ -161,10 +160,9 @@ define([
                         }
 
                         // small delay to prevent an infinite loop
-                        $timeout(function() {
+                        _.delay(function() {
                           active = false;
                         }, 1);
-
                       }
                     }
 
@@ -189,15 +187,9 @@ define([
 
                     scope.$watch(function() {
                       return ngModel.$modelValue;
-                    }, function(newValue) {
-                      forceAdjust();
-                    });
+                    }, forceAdjust);
 
-                    scope.$on('elastic:adjust', function() {
-                      forceAdjust();
-                    });
-
-                    $timeout(adjust);
+                    _.defer(adjust);
 
                     /*
                      * destroy

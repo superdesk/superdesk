@@ -4,24 +4,31 @@
     UserNotificationsService.$inject = ['$rootScope', '$timeout', 'api', 'session'];
     function UserNotificationsService($rootScope, $timeout, api, session) {
 
-        var INIT_TIMEOUT = 500,
-            UPDATE_TIMEOUT = 300;
+        var INIT_TIMEOUT = 1000,
+            UPDATE_TIMEOUT = 500;
 
         this._items = null;
         this.unread = 0;
 
         function getFilter() {
             var filter = {},
-                user_key = 'read.' + session.identity._id;
+                user_key = 'read.' + session.identity._id || 'all';
             filter[user_key] = {$exists: true};
             return filter;
         }
 
         // reload notifications
         this.reload = function() {
+            if (!session.identity) {
+                this._items = null;
+                this.unread = 0;
+                return;
+            }
+
             var criteria = {
                 where: getFilter(),
-                embedded: {user: 1, item: 1}
+                embedded: {user: 1, item: 1},
+                max_results: 8
             };
 
             return api('activity')
@@ -56,15 +63,17 @@
             return !dest[session.identity._id];
         }
 
+        var reload = angular.bind(this, this.reload);
+
         // reload on activity notification
-        $rootScope.$on('activity', angular.bind(this, function(_e, extras) {
+        $rootScope.$on('activity', function(_e, extras) {
             if (isCurrentUser(extras)) {
-                $timeout(angular.bind(this, this.reload), UPDATE_TIMEOUT);
+                $timeout(reload, UPDATE_TIMEOUT);
             }
-        }));
+        });
 
         // init
-        $timeout(angular.bind(this, this.reload), INIT_TIMEOUT);
+        $timeout(reload, INIT_TIMEOUT);
     }
 
     /**

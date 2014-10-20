@@ -1,4 +1,13 @@
 define(['angular'], function(angular) {
     'use strict';
-    return angular.module('superdesk.config', []).constant('config', {});
+    var config = {
+        server: {
+            url: null
+        },
+        ws: {
+            url: null
+        }
+    };
+
+    return angular.module('superdesk.config', []).constant('config', config);
 });

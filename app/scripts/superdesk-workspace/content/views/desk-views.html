@@ -4,3 +4,5 @@
         <a href="" ng-click="views.select(view)">{{ view.name }}</a>
     </li>
 </ul>
+<div class="chevron" ng-show="overload && !show" ng-click="open()"><i class="icon-chevron-down-thin"></i></div>
+<div class="chevron" ng-show="overload && show" ng-click="close()"><i class="icon-chevron-up-thin"></i></div>

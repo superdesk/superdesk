@@ -1,11 +1,11 @@
 <div class="notification-pane" ng-class="{show: flags.notifications}">
     <div class="header">
         <figure class="avatar medium">
-            <img sd-user-avatar data-src="currentUser.picture_url">
+            <img sd-user-avatar data-src=":: currentUser.picture_url">
         </figure>
         <div class="user-info">
-            <span class="name">{{ currentUser.display_name }}</span>
-            <span class="displayname">{{ currentUser.username }}</span>
+            <span class="name">{{ :: currentUser.display_name }}</span>
+            <span class="displayname">{{ :: currentUser.username }}</span>
         </div>
         <div class="actions">
             <a href="#/profile" ng-click="flags.notifications = false" translate>Profile</a>

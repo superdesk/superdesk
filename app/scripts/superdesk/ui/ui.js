@@ -33,28 +33,31 @@ define([
      *
      * Usage:
      * <div sd-shadow></div>
-     *
      */
     ShadowDirective.$inject = ['$timeout'];
     function ShadowDirective($timeout) {
         return {
             link: function(scope, element, attrs) {
 
-                $timeout(function() {
-                    var el = $(element);
-                    var shadow = $('<div class="scroll-shadow"><div class="inner"></div></div>');
+                element.addClass('shadow-list-holder');
 
-                    el.addClass('shadow-list-holder');
-                    el.parent().prepend(shadow);
-
-                    el.scroll(function() {
+                function shadowTimeout() {
+                    var shadow = angular.element('<div class="scroll-shadow"><div class="inner"></div></div>');
+                    element.parent().prepend(shadow);
+                    element.on('scroll', function scroll() {
                         if ($(this).scrollTop() > 0) {
                             shadow.addClass('shadow');
                         } else {
                             shadow.removeClass('shadow');
                         }
                     });
-                }, 500);
+                }
+
+                scope.$on('$destroy', function() {
+                    element.off('scroll');
+                });
+
+                $timeout(shadowTimeout, 1, false);
             }
         };
     }

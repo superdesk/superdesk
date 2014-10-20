@@ -1,7 +1,7 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return angular.module('superdesk.services.modal', [])
+    return angular.module('superdesk.services.modal', ['ui.bootstrap'])
         .service('modal', ['$q', '$modal', function($q, $modal) {
             this.confirm = function(bodyText, headerText, okText, cancelText) {
                 headerText = headerText || gettext('Confirm');

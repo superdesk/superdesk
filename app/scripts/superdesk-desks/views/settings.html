@@ -1,9 +1,15 @@
 <div sd-settings-view>
-	<button class="btn btn-info pull-right" ng-click="openDesk('general')">
-        <i class="icon-plus-sign icon-white"></i> <span class="ng-scope">Add New Desk</span>
-    </button>
+	<div class="header">
+		<div class="container">
+			<h2 translate>Desk management</h2>
+			<button class="btn btn-info pull-right" ng-click="openDesk('general')">
+		        <i class="icon-plus-sign icon-white"></i> {{ 'Add New Desk' | translate }}
+		    </button>
+		</div>
+	</div>
+	
 
-    <h2 translate>Desk management</h2>
+    
     <div class="settings-tab-content desk-settings">
     	<div sd-shadow>
 			<div class="desk-config" ng-repeat="desk in desks._items">
@@ -62,15 +68,19 @@
 							<div class="header" translate>Work stages</div>
 							<div class="content">
 								<div class="stages-list clearfix">
-									<div class="stage" ng-if="desk.edit.incoming_stage" translate>Incoming</div>
-									<div class="stage" ng-repeat="stage in stages">
-										<span>{{ stage.name }}</span>
-										<i class="remove" ng-click="remove(stage)"></i>
+									<div ng-repeat="stage in stages">
+										<div class="stage" ng-class="{editable: editStage}">
+											<span ng-click="setEditStage(stage)" ng-if="editStage !== stage">{{ stage.name }}</span>
+											<span ng-if="editStage == stage">
+												<input type="text" ng-model="editStage.name" ng-keyup="saveEditOnEnter($event)" />	
+											</span>
+											<i class="remove" ng-click="remove(stage)"></i>
+										</div>
 									</div>
 									<div class="stage editable" ng-show="newStage.show">
 										<input type="text" ng-model="newStage.model" ng-keyup="saveOnEnter($event)" />	
 									</div>
-									<a class="btn add" sd-focus-input ng-click="newStage.model = null; newStage.show = true" ><i class="icon-plus-small"></i></a>
+									<a class="btn add" sd-focus-input ng-click="cancelEdit(); newStage.model = null; newStage.show = true" ><i class="icon-plus-small"></i></a>
 								</div>
 								<p ng-if="message">{{ message }}</p>
 							</div>

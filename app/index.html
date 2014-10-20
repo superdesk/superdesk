@@ -36,13 +36,24 @@
 
     <!-- build:js scripts/superdesk.js -->
     <script src="scripts/superdesk/editor/editor.js"></script>
+    <script src="scripts/superdesk/features/features.js"></script>
+
     <script src="scripts/superdesk/menu/menu.js"></script>
     <script src="scripts/superdesk/menu/notifications/notifications.js"></script>
+
+    <script src="scripts/superdesk-workspace/content/content.js"></script>
+    <script src="scripts/superdesk-dashboard/workspace-tasks/tasks.js"></script>
+
+    <script src="scripts/superdesk-authoring/authoring.js"></script>
     <script src="scripts/superdesk-authoring/widgets/widgets.js"></script>
     <script src="scripts/superdesk-authoring/comments/comments.js"></script>
-    <script src="scripts/superdesk-workspace/content/content.js"></script>
     <script src="scripts/superdesk-authoring/versioning/versions.js"></script>
     <script src="scripts/superdesk-authoring/metadata/metadata.js"></script>
+    <script src="scripts/superdesk-authoring/workqueue/workqueue.js"></script>
+
+    <script src="scripts/superdesk-users/users.js"></script>
+    <script src="scripts/superdesk-users/profile.js"></script>
+    <script src="scripts/superdesk-users/activity/activity.js"></script>
     <!-- endbuild -->
 
     <!-- build:js scripts/config.js -->
@@ -72,13 +83,11 @@
             'main',
             'superdesk-settings/module',
             'superdesk-dashboard/module',
-            'superdesk-users/module',
             'superdesk-planning/module',
             'superdesk-archive/module',
             'superdesk-ingest/module',
             'superdesk-scratchpad/module',
-            'superdesk-desks/module',
-            'superdesk-authoring/module'
+            'superdesk-desks/module'
         ], function(bootstrap) {
             bootstrap(config, modules);
         });

@@ -51,10 +51,25 @@ define([
             /**
              * Remove keys prefixed with '_'
              */
-            function clean(data) {
-                return _.omit(data, function(val, key) {
-                    return angular.isString(key) && key[0] === '_';
-                });
+            function clean(data, keepId) {
+                var fields = ['_updated', '_created', '_etag', '_links'];
+                if (!keepId) {
+                    fields.push('_id');
+                }
+                return _.omit(data, fields);
+            }
+
+            /**
+             * Get headers for given item
+             */
+            function getHeaders(item) {
+                var headers = {};
+
+                if (item && item._etag) {
+                    headers['If-Match'] = item._etag;
+                }
+
+                return headers;
             }
 
             /**
@@ -95,12 +110,24 @@ define([
                 return http({
                     method: item._links ? 'PATCH' : 'POST',
                     url: item._links ? urls.item(item._links.self.href) : this.url(),
-                    data: diff ? diff : clean(item),
-                    params: params
+                    data: diff ? diff : clean(item, !!!item._links),
+                    params: params,
+                    headers: getHeaders(item)
                 }).then(function(data) {
                     angular.extend(item, diff || {});
                     angular.extend(item, data);
                     return item;
+                });
+            };
+
+            /**
+             * Replace an item
+             */
+            Resource.prototype.replace = function(item) {
+                return http({
+                    method: 'PUT',
+                    url: this.url(item._id),
+                    data: clean(item)
                 });
             };
 
@@ -137,13 +164,28 @@ define([
                 return http({
                     method: 'DELETE',
                     url: urls.item(item._links.self.href),
-                    params: params
+                    params: params,
+                    headers: getHeaders(item)
                 });
             };
 
             // api service
             var api = function apiService(resource, parent) {
                 return new Resource(resource, parent);
+            };
+
+            /**
+             * @alias api(resource).getById(id)
+             */
+            api.find = function(resource, id) {
+                return api(resource).getById(id);
+            };
+
+            /**
+             * @alias api(resource).save(dest, diff)
+             */
+            api.save = function(resource, dest, diff) {
+                return api(resource).save(dest, diff);
             };
 
             angular.forEach(apis, function(config, apiName) {

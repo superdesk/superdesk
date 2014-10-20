@@ -53,9 +53,12 @@ define(['require', 'lodash'], function(require, _) {
                 onKey('down', move(DOWN));
                 onKey('right', move(DOWN));
 
-                scope.clickItem = function(item) {
+                scope.clickItem = function(item, $event) {
                     scope.selected = item;
                     scope.select({item: item});
+                    if ($event) {
+                        $event.stopPropagation();
+                    }
                 };
 
                 scope.$watch('items', function() {

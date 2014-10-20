@@ -77,10 +77,12 @@ define([
         return {
 
             link: function(scope, elem, attrs) {
+                scope.origEditName = null;
 
                 scope.$watch('step.current', function(step, previous) {
                     if (step === 'stages') {
 
+                        scope.editStage = null;
                         scope.stages = [];
                         scope.newStage = {
                             show: false,
@@ -90,7 +92,7 @@ define([
 
                         if (scope.desk.edit && scope.desk.edit._id) {
                             scope.message = null;
-                            api('content_view').query({where: {desk: scope.desk.edit._id}})
+                            api('stages').query({where: {desk: scope.desk.edit._id}})
                             .then(function(result) {
                                 scope.stages = result._items;
                             });
@@ -110,8 +112,8 @@ define([
 
                 scope.saveOnEnter = function($event) {
                     if ($event.keyCode === 13) {
-                        scope.message = gettext('Savinig...');
-                        api('content_view').save({}, {name: scope.newStage.model, desk: scope.desk.edit._id})
+                        scope.message = gettext('Saving...');
+                        api('stages').save({}, {name: scope.newStage.model, desk: scope.desk.edit._id})
                         .then(function(item) {
                             scope.stages.push(item);
                             scope.newStage.model = null;
@@ -124,8 +126,33 @@ define([
                     }
                 };
 
+                scope.saveEditOnEnter = function($event) {
+                    if ($event.keyCode === 13) {
+                        scope.message = gettext('Saving...');
+                        api('stages').save(scope.editStage)
+                        .then(function(item) {
+                            scope.editStage = null;
+                            scope.message = gettext('Stage saved successfully.');
+                        }, function(response) {
+                            scope.message = gettext('There was a problem, stage was not saved.');
+                        });
+                        return false;
+                    }
+                };
+
+                scope.setEditStage = function(stage) {
+                    scope.origEditName = stage.name;
+                    scope.editStage = stage;
+                    scope.newStage.show = false;
+                };
+
+                scope.cancelEdit = function() {
+                    scope.editStage.name = scope.origEditName;
+                    scope.editStage = null;
+                };
+
                 scope.remove = function(stage) {
-                    api('content_view').remove(stage)
+                    api('stages').remove(stage)
                         .then(function(result) {
                             _.remove(scope.stages, stage);
                         });
