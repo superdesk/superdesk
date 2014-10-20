@@ -1,11 +1,10 @@
 
 import os
-import re
 import superdesk.tests as tests
 from behave import given, when, then  # @UnresolvedImport
 from flask import json
 from eve.methods.common import parse
-from superdesk import available_preferences, get_resource_service
+from superdesk import default_user_preferences, get_resource_service
 
 from wooper.general import fail_and_print_body, apply_path,\
     parse_json_response
@@ -788,21 +787,46 @@ def we_post_to_reset_password(context):
         assert outbox[0].subject == "Reset password"
         email_text = outbox[0].body
         assert "24" in email_text
-        words = re.split('\W+', email_text)
-        token = words[words.index("token") + 1]
+        words = email_text.split()
+        url = urlparse(words[words.index("link") + 1])
+        token = url.fragment.split('token=')[-1]
         assert token
         context.token = token
 
 
-@when('we reset password for user')
-def we_reset_password_for_user(context):
+@when('we post to reset_password we do not get email with token')
+def we_post_to_reset_password_it_fails(context):
+    data = {'email': 'foo@bar.org'}
+    headers = [('Content-Type', 'multipart/form-data')]
+    headers = unique_headers(headers, context.headers)
+    with context.app.mail.record_messages() as outbox:
+        context.response = context.client.post('/reset_user_password', data=data, headers=headers)
+        expect_status_in(context.response, (200, 201))
+        assert len(outbox) == 0
+
+
+def start_reset_password_for_user(context):
     data = {'token': context.token, 'password': 'test_pass'}
     headers = [('Content-Type', 'multipart/form-data')]
     headers = unique_headers(headers, context.headers)
     context.response = context.client.post('/reset_user_password', data=data, headers=headers)
+    print(context.response.get_data())
+
+
+@then('we fail to reset password for user')
+def we_fail_to_reset_password_for_user(context):
+    start_reset_password_for_user(context)
+    step_impl_then_get_error(context, 403)
+
+
+@when('we reset password for user')
+def we_reset_password_for_user(context):
+    start_reset_password_for_user(context)
     expect_status_in(context.response, (200, 201))
 
     auth_data = {'username': 'foo', 'password': 'test_pass'}
+    headers = [('Content-Type', 'multipart/form-data')]
+    headers = unique_headers(headers, context.headers)
     context.response = context.client.post('/auth', data=auth_data, headers=headers)
     expect_status_in(context.response, (200, 201))
 
@@ -849,7 +873,7 @@ def then_we_get_notifications(context):
 @then('we get default preferences')
 def get_default_prefs(context):
     response_data = json.loads(context.response.get_data())
-    assert_equal(response_data['user_preferences'], available_preferences)
+    assert_equal(response_data['user_preferences'], default_user_preferences)
 
 
 @when('we mention user in comment for "{url}"')
@@ -881,7 +905,7 @@ def we_get_default_incoming_stage(context):
     assert_200(context.response)
     data = json.loads(context.response.get_data())
     assert data['default_incoming'] is True
-    assert data['name'] == '<to be defined>'
+    assert data['name'] == 'New'
 
 
 @then('we get stage filled in to default_incoming')
@@ -914,3 +938,23 @@ def we_delete_session_by_id(context):
     url = 'sessions/' + context.session_id
     step_impl_when_delete_url(context, url)
     assert_200(context.response)
+
+
+@when('we create a new user')
+def step_create_a_user(context):
+    data = apply_placeholders(context, context.text)
+    with context.app.mail.record_messages() as outbox:
+        context.response = context.client.post('/users', data=data, headers=context.headers)
+        expect_status_in(context.response, (200, 201))
+        assert len(outbox) == 1
+        context.email = outbox[0]
+
+
+@then('we get activation email')
+def step_get_activation_email(context):
+    assert context.email.subject == 'Superdesk account created'
+    email_text = context.email.body
+    words = email_text.split()
+    url = urlparse(words[words.index("to") + 1])
+    token = url.fragment.split('token=')[-1]
+    assert token

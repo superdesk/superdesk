@@ -86,10 +86,13 @@ class UsersResource(Resource):
             'default': 'user',
             'required': True
         },
-        'status': {
-            'type': 'string',
-            'allowed': ['active', 'inactive'],
-            'default': 'active'
+        'is_active': {
+            'type': 'boolean',
+            'default': False
+        },
+        'needs_activation': {
+            'type': 'boolean',
+            'default': True
         }
     }
 
@@ -100,7 +103,8 @@ class UsersResource(Resource):
         'user_info',
         'picture_url',
         'avatar',
-        'status'
+        'is_active',
+        'needs_activation'
     ]
 
     datasource = {

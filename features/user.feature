@@ -1,18 +1,20 @@
 Feature: User Resource
 
     @auth
+    @dbauth
     Scenario: Create a user
         Given empty "users"
-        When we post to "/users"
+        When we create a new user
             """
             {"username": "foo", "password": "barbar", "email": "foo@bar.com"}
             """
 
         Then we get new resource
             """
-            {"username": "foo", "display_name": "foo", "email": "foo@bar.com", "status": "active"}
+            {"username": "foo", "display_name": "foo", "email": "foo@bar.com", "is_active": false, "needs_activation": true}
             """
         And we get no "password"
+        And we get activation email
 
     @auth
     Scenario: Test email validation
@@ -31,12 +33,12 @@ Feature: User Resource
     Scenario: Test unique validation
         Given "users"
             """
-            [{"username": "foo", "email": "foo@bar.com"}]
+            [{"username": "foo", "email": "foo@bar.com", "is_active": true}]
             """
 
         When we post to "/users"
             """
-            {"username": "foo", "email": "foo@bar.com"}
+            {"username": "foo", "email": "foo@bar.com", "is_active": true}
             """
 
         Then we get error 400
@@ -50,7 +52,7 @@ Feature: User Resource
         Given empty "users"
         When we post to "/users"
             """
-            {"username": "foo", "password": "barbar", "email": "foo@bar.com", "phone": "0123"}
+            {"username": "foo", "password": "barbar", "email": "foo@bar.com", "phone": "0123", "is_active": true}
             """
 
         Then we get error 400
@@ -62,7 +64,7 @@ Feature: User Resource
     Scenario: List users
         Given "users"
             """
-            [{"username": "foo"}, {"username": "bar"}]
+            [{"username": "foo", "email": "foo@bar.org", "is_active": true}, {"username": "bar", "email": "foo@bar.or", "is_active": true}]
             """
 
         When we get "/users"
@@ -72,7 +74,7 @@ Feature: User Resource
     Scenario: Fetch single user
         Given "users"
             """
-            [{"username": "foo", "first_name": "Foo", "last_name": "Bar"}]
+            [{"username": "foo", "first_name": "Foo", "last_name": "Bar", "email": "foo@bar.org", "is_active": true}]
             """
 
         When we get "/users/foo"
@@ -86,7 +88,7 @@ Feature: User Resource
     Scenario: Delete user
         Given "users"
             """
-            [{"username": "foo"}]
+            [{"username": "foo", "email": "foo@bar.org", "is_active": true}]
             """
 
         When we delete "/users/foo"
@@ -96,7 +98,7 @@ Feature: User Resource
     Scenario: Update user
         Given "users"
             """
-            [{"username": "foo"}]
+            [{"username": "foo", "email": "foo@bar.org", "is_active": true}]
             """
 
         When we patch "/users/foo"
@@ -110,18 +112,18 @@ Feature: User Resource
     Scenario: Change user status
         Given "users"
             """
-            [{"username": "foo", "email": "foo@bar.co"}]
+            [{"username": "foo", "email": "foo@bar.co", "is_active": true}]
             """
 
         When we change user status to "inactive" using "/users/foo"
             """
-            {"status": "inactive"}
+            {"is_active": false}
             """
 
         Then we get updated response
         When we change user status to "active" using "/users/foo"
             """
-            {"status": "active"}
+            {"is_active": true}
             """
         Then we get updated response
 
@@ -129,7 +131,7 @@ Feature: User Resource
     Scenario: User workspace
         Given "users"
             """
-            [{"username": "foo", "workspace": {"name": "my workspace"}}]
+            [{"username": "foo", "workspace": {"name": "my workspace"}, "email": "foo@bar.org", "is_active": true}]
             """
 
         When we get "/users/foo"

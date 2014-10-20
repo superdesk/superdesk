@@ -1,8 +1,9 @@
-from flask import g, request
+from flask import g
 import superdesk
 from superdesk.resource import Resource
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
+from settings import CLIENT_URL
 from .user_mentions import get_users, get_users_mentions, notify_mentioned_users
 
 comments_schema = {
@@ -45,8 +46,7 @@ class CommentsService(BaseService):
         for doc in docs:
             push_notification(self.notification_key, item=str(doc.get('item')))
 
-        origin = next((value for (key, value) in request.headers if key == 'Origin'))
-        notify_mentioned_users(docs, origin)
+        notify_mentioned_users(docs, CLIENT_URL)
 
     def on_updated(self, updates, original):
         push_notification(self.notification_key, updated=1)

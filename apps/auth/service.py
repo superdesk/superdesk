@@ -6,13 +6,13 @@ from superdesk.services import BaseService
 class AuthService(BaseService):
 
     def authenticate(self, document):
-        pass
+        raise NotImplementedError()
 
     def on_create(self, docs):
         for doc in docs:
             user = self.authenticate(doc)
 
-            if user.get('status', 'active') == 'inactive':
+            if not user.get('is_active', False):
                 raise UserInactiveError()
 
             doc['user'] = user['_id']

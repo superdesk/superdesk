@@ -103,14 +103,14 @@ Feature: User preferences
 
       When we patch "/preferences/#SESSION_ID#"
       """
-      {"session_preferences": {"some preference": {"something": "valueofsomething" }}}
+      {"session_preferences": {"desk:items": [123]}}
       """
 
       When we get "/preferences/#SESSION_ID#"
       Then we get existing resource
       """
       {
-      "session_preferences": {"some preference": {"something": "valueofsomething"}
+      "session_preferences": {"desk:items": [123]
       }}
       """
 
