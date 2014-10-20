@@ -8,6 +8,7 @@ function MetadataCtrl($scope, desks) {
     desks.initialize()
     .then(function() {
         $scope.deskLookup = desks.deskLookup;
+        $scope.userLookup = desks.userLookup;
     });
 }
 
