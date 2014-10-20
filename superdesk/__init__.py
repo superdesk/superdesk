@@ -19,7 +19,8 @@ app_components = dict()
 app_models = dict()
 resources = dict()
 eve_backend = EveBackend()
-available_preferences = dict()
+default_user_preferences = dict()
+default_session_preferences = dict()
 
 
 logger = logging.getLogger(__name__)
@@ -98,5 +99,9 @@ def get_resource_service(resource_name):
 from .app_prepopulate import AppPrepopulateCommand  # noqa
 
 
-def register_available_preference(preference_name, preference):
-    available_preferences[preference_name] = preference
+def register_default_user_preference(preference_name, preference):
+    default_user_preferences[preference_name] = preference
+
+
+def register_default_session_preference(preference_name, preference):
+    default_session_preferences[preference_name] = preference
