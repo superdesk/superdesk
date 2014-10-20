@@ -1,29 +1,21 @@
 
 import os
-import shutil
 import logging
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from .newsml_1_2 import Parser
-from ..utc import utc, utcnow
+from superdesk.io.file_ingest_service import FileIngestService
+from ..utc import utc
 from ..etree import etree
 from superdesk.notification import push_notification
-from superdesk.io import register_provider, IngestService
+from superdesk.io import register_provider
+
 
 logger = logging.getLogger(__name__)
 PROVIDER = 'afp'
 
 
-def is_ready(last_updated, provider_last_updated=None):
-    """Parse file only if it's not older than provider last update -10m"""
-
-    if not provider_last_updated:
-        provider_last_updated = utcnow() - timedelta(days=7)
-
-    return provider_last_updated - timedelta(minutes=10) < last_updated
-
-
-class AFPIngestService(IngestService):
+class AFPIngestService(FileIngestService):
     """AFP Ingest Service"""
 
     def __init__(self):
@@ -35,39 +27,27 @@ class AFPIngestService(IngestService):
         if not self.path:
             return
 
-        try:
-            for filename in os.listdir(self.path):
+        for filename in os.listdir(self.path):
+            try:
                 if os.path.isfile(os.path.join(self.path, filename)):
                     filepath = os.path.join(self.path, filename)
                     stat = os.lstat(filepath)
                     last_updated = datetime.fromtimestamp(stat.st_mtime, tz=utc)
-                    if is_ready(last_updated, provider.get('updated')):
+                    if self.is_latest_content(last_updated, provider.get('updated')):
                         with open(os.path.join(self.path, filename), 'r') as f:
-                            item = Parser().parse_message(etree.fromstring(f.read()))
+                            item = self.parser.parse_message(etree.fromstring(f.read()))
                             item['_created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
                             item['_updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
                             item.setdefault('provider', provider.get('name', provider['type']))
-                            self.move_the_current_file(filename, success=True)
+                            self.move_file(self.path, filename, success=True)
                             yield [item]
-        except (Exception) as err:
-            logger.exception(err)
-            self.move_the_current_file(filename, success=False)
-            pass
-        finally:
-            push_notification('ingest:update')
+                    else:
+                        self.move_file(self.path, filename, success=True)
+            except Exception as err:
+                logger.exception(err)
+                self.move_file(self.path, filename, success=False)
 
-    def move_the_current_file(self, filename, success=True):
-        try:
-            if not os.path.exists(os.path.join(self.path, "_PROCESSED/")):
-                os.makedirs(os.path.join(self.path, "_PROCESSED/"))
-            if not os.path.exists(os.path.join(self.path, "_ERROR/")):
-                os.makedirs(os.path.join(self.path, "_ERROR/"))
+        push_notification('ingest:update')
 
-            if success:
-                shutil.copy2(os.path.join(self.path, filename), os.path.join(self.path, "_PROCESSED/"))
-            else:
-                shutil.copy2(os.path.join(self.path, filename), os.path.join(self.path, "_ERROR/"))
-        finally:
-            os.remove(os.path.join(self.path, filename))
 
 register_provider(PROVIDER, AFPIngestService())

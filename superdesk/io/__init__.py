@@ -1,23 +1,13 @@
 """Superdesk IO"""
 
 import logging
+
 from superdesk.celery_app import celery
 
 
 providers = {}
 allowed_providers = []
 logger = logging.getLogger(__name__)
-
-
-class IngestService():
-    """Base ingest service class."""
-
-    def get_items(self, guid):
-        raise LookupError()
-
-    def update(self, provider):
-        raise NotImplementedError()
-
 
 from .commands.remove_expired_content import RemoveExpiredContent
 from .commands.update_ingest import UpdateIngest
