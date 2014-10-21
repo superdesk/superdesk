@@ -763,8 +763,6 @@
 
                     var orig;
 
-                    
-
                     api('preferences').getById(session.sessionId)
                     .then(function(result) {
                         orig = result;
@@ -788,15 +786,18 @@
 
                     function buildPreferences(struct) {
                         scope.preferences = {};
-                        _.each(struct.preferences, function(val, key) {
+                        _.each(struct.user_preferences, function(val, key) {
+                        if (val.category === 'notifications')
+                        {
                             scope.preferences[key] = _.create(val);
+                        }
                         });
                     }
 
                     function patch() {
-                        var p = {preferences: {}};
-                        _.each(orig.preferences, function(val, key) {
-                            p.preferences[key] = _.extend(val, scope.preferences[key]);
+                        var p = {user_preferences: {}};
+                        _.each(orig.user_preferences, function(val, key) {
+                            p.user_preferences[key] = _.extend(val, scope.preferences[key]);
                         });
                         return p;
                     }
