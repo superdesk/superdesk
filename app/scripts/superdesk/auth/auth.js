@@ -102,8 +102,10 @@ define([
             }, function(token) {
                 if (token) {
                     $http.defaults.headers.common.Authorization = token;
+                    $rootScope.sessionId = session.sessionId;
                 } else {
                     delete $http.defaults.headers.common.Authorization;
+                    $rootScope.sessionId = null;
                 }
             });
 

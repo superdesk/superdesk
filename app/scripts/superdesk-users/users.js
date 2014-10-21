@@ -763,7 +763,9 @@
 
                     var orig;
 
-                    api('preferences').getById(session.identity._id)
+                    
+
+                    api('preferences').getById(session.sessionId)
                     .then(function(result) {
                         orig = result;
                         buildPreferences(orig);
@@ -775,7 +777,7 @@
                     };
 
                     scope.save = function() {
-                        api('preferences', session.identity._id)
+                        api('preferences', session.sessionId)
                         .save(orig, patch())
                         .then(function(result) {
                             scope.cancel();
