@@ -98,9 +98,16 @@ class PreferencesService(BaseService):
         available.update(orig_session_prefs)
         session_doc[_session_preferences_key] = available
 
+    def enhance_document_with_default_user_prefs(self, user_doc):
+        orig_user_prefs = user_doc.get(_preferences_key, {})
+        available = dict(superdesk.default_user_preferences)
+        available.update(orig_user_prefs)
+        user_doc[_user_preferences_key] = available
+
     def get_user_preference(self, user_id, preference_name):
-        doc = self.find_one(req=None, _id=user_id)
-        prefs = doc.get(_preferences_key, {}).get(preference_name, {})
+        doc = get_resource_service('users').find_one(req=None, _id=user_id)
+        self.enhance_document_with_default_user_prefs(user_doc=doc)
+        prefs = doc.get(_user_preferences_key, {}).get(preference_name, {})
         return prefs
 
     def email_notification_is_enabled(self, user_id):
