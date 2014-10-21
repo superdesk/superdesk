@@ -7,13 +7,15 @@ define(['lodash'], function(_) {
     SessionService.$inject = ['$q', '$rootScope', 'storage'];
     function SessionService($q, $rootScope, storage) {
 
-        var TOKEN_KEY = 'sess:id',
+        var TOKEN_KEY = 'sess:token',
             TOKEN_HREF = 'sess:href',
             IDENTITY_KEY = 'sess:user',
+            SESSION_ID = 'sess:id',
             defer;
 
         this.token = null;
         this.identity = null;
+        this.sessionId = null;
 
         /**
          * Get identity when available
@@ -45,7 +47,9 @@ define(['lodash'], function(_) {
          */
         this.start = function(session, identity) {
             this.token = session.token;
+            this.sessionId = session._id;
             setToken(session.token);
+            setSessionId(session._id);
             setSessionHref(session._links.self.href);
 
             this.identity = null;
@@ -77,7 +81,9 @@ define(['lodash'], function(_) {
          */
         this.expire = function() {
             this.token = null;
+            this.sessionId = null;
             setToken(null);
+            setSessionId(null);
         };
 
         /**
@@ -87,6 +93,7 @@ define(['lodash'], function(_) {
             this.expire();
             this.identity = null;
             setSessionHref(null);
+            setSessionId(null);
             storage.removeItem(IDENTITY_KEY);
         };
 
@@ -102,6 +109,7 @@ define(['lodash'], function(_) {
         $rootScope.$watch(getToken, _.bind(function(token) {
             this.token = token;
             this.identity = storage.getItem(IDENTITY_KEY);
+            this.sessionId = localStorage.getItem(SESSION_ID);
         }, this));
 
         /**
@@ -114,6 +122,19 @@ define(['lodash'], function(_) {
                 localStorage.setItem(TOKEN_KEY, token);
             } else {
                 localStorage.removeItem(TOKEN_KEY);
+            }
+        }
+
+        /**
+         * Save session id into local storage
+         *
+         * @param {string} session id
+         */
+        function setSessionId(sessionId) {
+            if (sessionId) {
+                localStorage.setItem(SESSION_ID, sessionId);
+            } else {
+                localStorage.removeItem(SESSION_ID);
             }
         }
 
@@ -135,6 +156,7 @@ define(['lodash'], function(_) {
         function getToken() {
             return localStorage.getItem(TOKEN_KEY) || null;
         }
+        
     }
 
     return SessionService;

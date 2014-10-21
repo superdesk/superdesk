@@ -34,7 +34,8 @@ define([], function() {
                 }, 'requiredLogin'], function(triggerLogin) {
                     scope.isLoading = false;
                     scope.identity = session.identity;
-                    scope.username = session.identity ? session.identity.username : null;
+                    scope.sessionId = session.sessionId;
+                    scope.username = session.identity ? session.identity.UserName : null;
                     scope.password = null;
                     if (!triggerLogin[0] && triggerLogin[1]) {
                         element.show();
