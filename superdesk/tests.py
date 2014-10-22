@@ -42,15 +42,14 @@ def drop_mongo(app):
 
 
 def setup(context=None, config=None):
+    app_config = get_test_settings()
     if config:
-        config.update(get_test_settings())
-    else:
-        config = get_test_settings()
+        app_config.update(config)
 
-    drop_elastic(config)
-    app = get_app(config)
-
+    drop_elastic(app_config)
+    app = get_app(app_config)
     drop_mongo(app)
+
     if context:
         context.app = app
         context.client = app.test_client()

@@ -80,6 +80,7 @@ INSTALLED_APPS = [
     'apps.tasks',
     'apps.preferences',
     'apps.groups'
+    'apps.prepopulate'
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']
@@ -142,3 +143,5 @@ if LDAP_SERVER:
     INSTALLED_APPS.append('apps.auth.ldap')
 else:
     INSTALLED_APPS.append('apps.auth.db')
+
+TESTING = (os.environ.get('SUPERDESK_TESTING', 'false').lower() == 'true')
