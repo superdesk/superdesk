@@ -78,7 +78,8 @@ INSTALLED_APPS = [
     'apps.planning',
     'apps.coverages',
     'apps.tasks',
-    'apps.preferences'
+    'apps.preferences',
+    'apps.groups'
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']
