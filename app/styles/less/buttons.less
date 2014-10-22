@@ -261,6 +261,54 @@ input[type="submit"].btn {
 			margin-left: 10px;
 		}
 	}
+	&.strict {
+		width: 48px;
+	}
+	&.sd-create-btn, .sd-create-btn {
+		width: 48px;
+		padding: 0 !important;
+		overflow: hidden;
+		position: relative;
+		background: @white;
+		i {
+			position: absolute;
+			z-index: 1;
+			display: block;
+			top: 50%; margin-top: -5px;
+			left: 50%; margin-left: -5px;
+		}
+		.circle {
+			.border-box();
+			display: inline-block;
+			text-align: center;
+			width: 22px;
+			height: 22px;
+			margin: 0;
+			padding: 0;
+			margin-top: 13px;
+			border-radius: 50%;
+			background-color: #5ea9c8;
+			color: #FFFFFF;
+			position: relative;
+			.transition(all 60ms ease-in);
+		}
+		&:hover {
+			.circle {
+				width: 32px;
+				height: 32px;
+				margin-top: 8px;
+				margin-left: 0;
+			}
+		}
+		&:active {
+			.circle {
+				width: 68px;
+				height: 68px;
+				margin: -10px 0 0 -10px;
+				.transition(all 30ms ease-in);
+			}
+		}
+	}
 
 	&.toggle-list {
 		.box-sizing(border-box);
