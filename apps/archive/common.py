@@ -62,6 +62,11 @@ def get_user(required=False):
     return user
 
 
+def get_auth():
+    auth = flask.g.get('auth', {})
+    return auth
+
+
 def set_user(doc):
     usr = get_user()
     user = str(usr.get('_id', ''))
@@ -184,6 +189,10 @@ base_schema = {
     'lock_time': {
         'type': 'datetime'
     },
+    'lock_session': {
+        'type': 'objectid',
+        'data_relation': {'resource': 'auth', 'field': '_id', 'embeddable': True}
+    }
 }
 
 item_url = 'regex("[\w,.:_-]+")'
