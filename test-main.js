@@ -36,6 +36,7 @@ tests.push('superdesk-authoring/metadata/metadata');
 tests.push('superdesk-authoring/versioning/versions');
 tests.push('superdesk-workspace/content/content');
 tests.push('superdesk-desks/module');
+tests.push('superdesk-groups/groups');
 
 tests.push('superdesk-users/users');
 tests.push('superdesk-users/profile');
