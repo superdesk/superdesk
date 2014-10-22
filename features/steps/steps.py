@@ -18,6 +18,7 @@ from wooper.assertions import (
     assert_in, assert_equal)
 from urllib.parse import urlparse
 from os.path import basename
+from superdesk.tests import test_user
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 
@@ -52,7 +53,7 @@ def json_match(context_data, response_data):
                     found = True
                     break
             if not found:
-                print(item_context, ' not in ', context_data)
+                print(item_context, ' not in ', response_data)
                 return False
         return True
     elif not isinstance(context_data, dict):
@@ -274,6 +275,19 @@ def when_we_get_url(context, url):
     headers = unique_headers(headers, context.headers)
     url = apply_placeholders(context, url)
     context.response = context.client.get(url, headers=headers)
+
+
+@when('we find for "{resource}" the id as "{name}" by "{search_criteria}"')
+def when_we_find_for_resource_the_id_as_name_by_search_criteria(context, resource, name, search_criteria):
+    url = '/' + resource + '?where=' + search_criteria
+    context.response = context.client.get(url, headers=context.headers)
+    print('context.response.status_code: ', context.response.status_code)
+    if context.response.status_code == 200:
+        expect_json_length(context.response, 1, path='_items')
+        item = json.loads(context.response.get_data())
+        item = item['_items'][0]
+        if item.get('_id'):
+            set_placeholder(context, name, item['_id'])
 
 
 @when('we delete "{url}"')
@@ -835,6 +849,11 @@ def we_reset_password_for_user(context):
 def when_we_switch_user(context):
     user = {'username': 'test-user-2', 'password': 'pwd', 'email': 'foo@bar.org', 'is_active': True}
     tests.setup_auth_user(context, user)
+
+
+@when('we setup test user')
+def when_we_setup_test_user(context):
+    tests.setup_auth_user(context, test_user)
 
 
 @when('we get my "{url}"')
