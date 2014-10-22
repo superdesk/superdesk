@@ -54,6 +54,7 @@
     <script src="scripts/superdesk-users/users.js"></script>
     <script src="scripts/superdesk-users/profile.js"></script>
     <script src="scripts/superdesk-users/activity/activity.js"></script>
+    <script src="scripts/superdesk-groups/groups.js"></script>
     <!-- endbuild -->
 
     <!-- build:js scripts/config.js -->
@@ -88,8 +89,7 @@
             'superdesk-archive/module',
             'superdesk-ingest/module',
             'superdesk-scratchpad/module',
-            'superdesk-desks/module',
-            'superdesk-groups/module'
+            'superdesk-desks/module'
         ], function(bootstrap) {
             bootstrap(config, modules);
         });

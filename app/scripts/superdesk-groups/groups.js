@@ -1,7 +1,4 @@
-define([
-    'angular',
-    'lodash'
-], function(angular, _) {
+(function() {
     'use strict';
 
     var app = angular.module('superdesk.groups', [
@@ -242,4 +239,4 @@ define([
         }
 
     return app;
-});
+})();
