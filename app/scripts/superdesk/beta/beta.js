@@ -9,26 +9,34 @@ define(['angular', 'jquery'], function(angular, $) {
     module.service('betaService', ['$window', '$rootScope', 'preferencesService',
         function($window, $rootScope, preferencesService) {
 
-        $rootScope.beta = localStorage.getItem('beta') === 'true';
-
+        //$rootScope.beta = localStorage.getItem('beta') === 'true';
+        this.load = function() {
+            $rootScope.beta = false;
+            var beta = preferencesService.get("feature:preview");
+            if(beta){
+                $rootScope.beta = preferencesService.get("feature:preview")["enabled"];
+            }
+        }
+        
         this.toggleBeta = function() {
             $rootScope.beta = !$rootScope.beta;
-            localStorage.setItem('beta', $rootScope.beta);
+            //localStorage.setItem('beta', $rootScope.beta);
             var update = { 
                 "feature:preview" : {
                     "default":false, 
-                    "enabled":false, 
+                    "enabled":$rootScope.beta, 
                     "label":"Enable Feature Preview", 
                     "type":"bool", 
                     "category":"feature"
                 }
             };
 
-            preferencesService.updateUserPreferences(update);
+            preferencesService.update(update);
             //$window.location.reload();
         };
 
         this.isBeta = function() {
+            this.load();
 			return $rootScope.beta;
         };
     }]);

@@ -101,6 +101,7 @@ define(['lodash'], function(_) {
             setSessionHref(null);
             setSessionId(null);
             storage.removeItem(IDENTITY_KEY);
+            preferencesService.deleteLocally();
         };
 
         /**
