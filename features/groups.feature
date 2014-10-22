@@ -23,6 +23,12 @@ Feature: Groups
         """
         {"_items": [{"name": "Sports group", "members": [{"user": "#USERS_ID#"}]}]}
         """
+        When we get "/users/#USERS_ID#/groups"
+        Then we get list with 1 items
+        """
+        {"_items": [{"name": "Sports group", "members": [{"user": "#USERS_ID#"}]}]}
+        """
+
 
     @auth
     Scenario: Update group
