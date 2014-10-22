@@ -45,7 +45,6 @@ define([
                         if ($location.search()._id === data.item._id) {
                             $location.search('_id', null);
                         }
-                        data.list.splice(data.index, 1);
                     }, function(response) {
                         notify.error(gettext('I\'m sorry but can\'t delete the archive item right now.'));
                     });

@@ -149,10 +149,8 @@
                         <i class="icon-close-small"></i>
                     </button>
                 </header>
-                <div class="content">
-                    <div sd-shadow ng-if="selected.preview">
-                        <div sd-media-preview data-item="selected.preview" data-display="display()" data-type="type"></div>
-                    </div>
+                <div class="content" ng-if="selected.preview">
+                    <div sd-media-preview data-item="selected.preview" data-display="display()" data-type="type"></div>
                 </div>
                 
 

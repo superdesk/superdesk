@@ -40,7 +40,7 @@ define([
             });
         };
 
-        $scope.$on('changes in media_archive', this.refresh);
+        $scope.$on('media_archive', this.refresh);
 
         $scope.$watch('selectedDesk', angular.bind(this, function(desk) {
             if (desk) {

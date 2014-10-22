@@ -230,11 +230,39 @@
 	
 	.content {
 		.shadow-list-holder {
-			padding-bottom: @bottom-view-padding;
+			
+		}
+		.additional-info {
+			position: absolute;
+			top: 0; left: 0; right: 0; 
+			height: @nav-height;
+			overflow: hidden;
+			.border-box();
+			.switch {
+				position: absolute;
+				bottom: 0;
+				right: 8px;
+				background: #f0f0f0;
+				padding: 2px 10px;
+				&:hover {
+					cursor: pointer;
+				}
+			}
+			&.open {
+				height: 95px;
+				.switch i {
+					.rotate(180deg);
+				}
+			}
 		}
 		.content-container {
-			padding: 14px 20px 10px;
-			position: relative;
+			position: absolute;
+			top:@nav-height; left: 0; right: 0; bottom: 0;
+			padding: 0 20px @bottom-view-padding;
+			overflow: auto;
+			&.padd {
+				top: 95px;
+			}
 		}
 		.item-locked {
 			float: left;
@@ -242,7 +270,7 @@
 			.border-radius(14px);
 			height: 28px;
 			line-height: 24px;
-			margin: 0 0 10px 0;
+			margin: 15px 0;
 			.lock-sign {
 				width: 28px;
 				height: 28px;
@@ -289,6 +317,7 @@
 				padding-right: 10px;
 				margin-right: 10px;
 				margin-bottom: 0;
+				line-height: 28px;
 				&:first-child {
 					border-right: 1px solid #e2e2e2;
 				}
@@ -296,6 +325,9 @@
 			+ li {
 				margin-top: 10px;
 			}	
+		}
+		.nav-space {
+			height: @nav-height;
 		}
 		.action-menu {
 			width: 84px !important;
@@ -309,32 +341,40 @@
 				float: right;
 			}
 		}
-		.title-holder {
-			clear: both;
-			&.condensed {
-				padding-right: 65px;
-			}
-			.title {
-				margin-top: 0;
-			}
-		}
 		.title {
+			clear: both;
 			font-size: 17px;
 			line-height: 22px;
 			.text-semibold();
-			margin: 15px 0;
+			margin-top: 15px;
 			color: #333;
+			
+			&.condensed {
+				padding-right: 65px;
+			}
+		}
+		.composite-nav {
+			height: 40px;
+			font-size: 16px;
+			line-height: 50px;
+			.text-light();
+			i {
+				zoom: 0.5;
+				.opacity(80);
+				vertical-align: middle;
+				margin: -2px 15px 0 0;
+			}
 		}
 		.core-content {
 			font-size: 14px;
 			.description {
 				font-style: italic;
 				color: #656565;
-				margin-bottom: 15px;
+				margin-top: 15px;
 			}
 			.picture-preview {
+				margin-top: 15px;
 				max-width: 100%;
-				margin: 20px 0;
 				img {
 					max-width: 100%;
 					height: auto;
@@ -463,41 +503,6 @@
 		}
 	}
 }
-
-//archive/ingest right preview
-.preview-pane.content-item-preview {
-	header {
-		.info-list {
-			li {
-				font-size: 12px;
-				.text-light();
-				color: #a1a1a1;
-				span {
-					.text-normal();
-					color: #565656;
-				}
-			}
-		}
-	}
-	.preview-nav {
-		position: absolute;
-		left: 0; right: 0; top:54px; bottom: 0;
-		height: 40px;
-		border-bottom: 1px solid #e2e2e2;
-		font-size: 16px;
-		color: #6e6e6e;
-		padding: 0 22px;
-		line-height: 41px;
-		.text-light();
-		i {
-			zoom: 0.5;
-			.opacity(80);
-			vertical-align: middle;
-			margin: -2px 15px 0 0;
-		}
-	}
-}
-
 
 /* ====================================== */
    // item(news) urgency colors and labels  
