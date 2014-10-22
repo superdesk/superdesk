@@ -147,7 +147,6 @@ define([
                 };
 
                 scope.cancelEdit = function() {
-                    scope.editStage.name = scope.origEditName;
                     scope.editStage = null;
                 };
 
