@@ -21,7 +21,7 @@ define(['angular', 'lodash'], function(angular, _) {
             $scope.openDesk = function(step, desk) {
                 $scope.desk.edit = desk;
                 $scope.modalActive = true;
-                WizardHandler.wizard().goTo(step);
+                WizardHandler.wizard('desks').goTo(step);
             };
 
             $scope.cancel = function() {

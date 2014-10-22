@@ -3,7 +3,7 @@
 		<div class="container">
 			<h2 translate>Group management</h2>
 			<button class="btn btn-info pull-right" ng-click="openGroup('general')">
-		        <i class="icon-plus-sign icon-white"></i> {{ 'Add New Group' | translate }}
+		        <i class="icon-plus-sign icon-white"></i> {{ :: 'Add New Group' | translate }}
 		    </button>
 		</div>
 	</div>
@@ -14,12 +14,12 @@
     	<div sd-shadow>
 			<div class="group-config" ng-repeat="group in groups._items">
 				<div class="group-header clearfix">
-					<h6 class="pull-left">{{ group.name }}</h6>
+					<h6 class="pull-left">{{ :: group.name }}</h6>
 					<div class="dropdown pull-right">
                       <button class="dropdown-toggle"><i class="icon-settings"></i> <b class="caret"></b></button>
                       <ul class="dropdown-menu pull-right">
-                        <li><button ng-click="openGroup('general', group)"><i class="icon-pencil"></i> {{'Edit Group' | translate}}</button></li>
-                        <li><button ng-click="remove(group)"><i class="icon-trash"></i> {{'Delete Group' | translate }}</button></li>
+                        <li><button ng-click="openGroup('general', group)"><i class="icon-pencil"></i> {{ :: 'Edit Group' | translate}}</button></li>
+                        <li><button ng-click="remove(group)"><i class="icon-trash"></i> {{ :: 'Delete Group' | translate }}</button></li>
                       </ul>
                   	</div>
 				</div>
@@ -36,7 +36,7 @@
 			<h3 ng-show="group.edit._id" translate>Edit Group</h3>
 		</div>
 		
-		<div class="modal-body" sd-wizard data-current-step="step.current" data-finish="cancel()">
+		<div class="modal-body" sd-wizard data-name="usergroups" data-current-step="step.current" data-finish="cancel()">
 			
 			<div sd-wizard-step data-title="{{ 'General' | translate }}" data-code="general">
 				<div sd-groupedit-basic>
@@ -48,7 +48,7 @@
 									<input type="text" class="fullwidth-input" ng-model="group.edit.name" required> 
 								</div>
 								<div class="field">
-									<label translate>Group description {{test}}</label>
+									<label translate>Group description</label>
 									<textarea class="fullwidth-input" ng-model="group.edit.description"></textarea>
 								</div>
 							</fieldset>
