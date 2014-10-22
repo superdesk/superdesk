@@ -17,13 +17,13 @@
             <ul class="dropdown-menu pull-right">
                 <li>
                     <button ng-click="content.create()">
-                        <i class="icon-plus-small icon-round icon-white"></i> {{ 'Story' }}
+                        <i class="icon-plus-small icon-round icon-white"></i> {{ :: 'Story' | translate }}
                     </button>
                 </li>
                 <li class="divider" ng-if="openUpload"></li>
-                <li ng-if="openUpload" ng-click="openUpload()">
-                    <button ng-click="content.create()">
-                        <i class="icon-upload-blue"></i> {{ 'UPLOAD' }}
+                <li ng-if="openUpload">
+                    <button ng-click="openUpload()">
+                        <i class="icon-upload-blue"></i> {{ :: 'UPLOAD' | translate }}
                     </button>
                 </li>
             </ul>
