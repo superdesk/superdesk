@@ -4,8 +4,8 @@ define(['lodash'], function(_) {
     /**
      * Session Service stores current user data
      */
-    SessionService.$inject = ['$q', '$rootScope', 'storage'];
-    function SessionService($q, $rootScope, storage) {
+    SessionService.$inject = ['$q', '$rootScope', 'storage', 'preferencesService'];
+    function SessionService($q, $rootScope, storage, preferencesService) {
 
         var TOKEN_KEY = 'sess:token',
             TOKEN_HREF = 'sess:href',
@@ -54,6 +54,12 @@ define(['lodash'], function(_) {
 
             this.identity = null;
             this.updateIdentity(identity);
+
+            console.log("doing preferencesService.getPreferences():", session._id);
+            preferencesService.getPreferences(session._id).then(function(preferences){
+                    console.log("original preferences:", preferences);
+                    preferencesService.saveLocally(preferences);
+            });
 
             if (defer) {
                 defer.resolve(identity);

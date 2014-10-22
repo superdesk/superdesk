@@ -2,8 +2,8 @@
 
 'use strict';
 
-WorkqueueService.$inject = ['storage'];
-function WorkqueueService(storage) {
+WorkqueueService.$inject = ['storage','preferencesService'];
+function WorkqueueService(storage, preferencesService) {
     /**
      * Set items for further work, in next step of the workflow.
      */

@@ -1,20 +1,31 @@
 define(['angular', 'jquery'], function(angular, $) {
     'use strict';
 
-    var module = angular.module('superdesk.services.beta', []);
+    var module = angular.module('superdesk.services.beta', ['superdesk.services.preferencesService']);
 
     /**
      * Superdesk service for enabling/disabling beta preview in app
      */
-    module.service('betaService', ['$window', '$rootScope',
-        function($window, $rootScope) {
+    module.service('betaService', ['$window', '$rootScope', 'preferencesService',
+        function($window, $rootScope, preferencesService) {
 
         $rootScope.beta = localStorage.getItem('beta') === 'true';
 
         this.toggleBeta = function() {
             $rootScope.beta = !$rootScope.beta;
             localStorage.setItem('beta', $rootScope.beta);
-            $window.location.reload();
+            var update = { 
+                "feature:preview" : {
+                    "default":false, 
+                    "enabled":false, 
+                    "label":"Enable Feature Preview", 
+                    "type":"bool", 
+                    "category":"feature"
+                }
+            };
+
+            preferencesService.updateUserPreferences(update);
+            //$window.location.reload();
         };
 
         this.isBeta = function() {

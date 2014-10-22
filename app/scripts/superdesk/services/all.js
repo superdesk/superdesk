@@ -3,6 +3,7 @@ define([
     './data',
     './translate',
     './storage',
+    './preferencesService',
     './permissionsService',
     './keyboardManager',
     './entity',
@@ -21,6 +22,7 @@ define([
         require('./keyboardManager').name,
         require('./permissionsService').name,
         require('./storage').name,
+        require('./preferencesService').name,
         require('./translate').name
     ];
 });
