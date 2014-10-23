@@ -1,4 +1,4 @@
-define(['angular'], function(angular) {
+define(['angular','lodash'], function(angular, _) {
     'use strict';
 
     return angular.module('superdesk.services.preferencesService', [])
@@ -15,9 +15,24 @@ define(['angular'], function(angular) {
             this.original_preferences;
 
             
-            this.saveLocally = function(preferences){
-                storage.setItem(PREFERENCES, preferences);
-                this.original_preferences = preferences
+            this.saveLocally = function(preferences, section, key){
+                
+                //console.log("saving saveLocally:", preferences, section, key);
+
+                if(section && key && this.original_preferences)
+                {
+                    this.original_preferences[section][key] = preferences[section][key];
+                    this.original_preferences["_etag"] = preferences["_etag"];
+                }
+                else
+                {
+                    this.original_preferences = preferences
+                }
+
+                //console.log("saved saveLocally:", this.original_preferences);
+
+                
+                storage.setItem(PREFERENCES, this.original_preferences);
             }
 
             
@@ -88,33 +103,32 @@ define(['angular'], function(angular) {
             };
 
             this.update = function(updates) {
-                var instance = this;
                 if (updates["feature:preview"]) {
-                    this.updateUserPreferences(updates).then(function(results){
-                        instance.saveLocally(results);
-                    });
+                    return this.updateUserPreferences(updates, "feature:preview");
                 } else {
 
                 }
             };
 
 
-            this.updateUserPreferences = function(updates) {
+            this.updateUserPreferences = function(updates, key) {
                 
-                var original_prefs = this.loadLocally();
+                var instance = this;
+                var original_prefs = _.cloneDeep(this.loadLocally());
                 var user_updates = {"user_preferences": updates};
 
                 if (!api) { api = $injector.get('api'); }
 
                 defer = $q.defer();
 
-                api('preferences', $rootScope.sessionId).save(this.original_preferences, user_updates)
+                api('preferences', $rootScope.sessionId).save(original_prefs, user_updates)
                     .then(function(result) {
-                            return defer.resolve(result);
+                                instance.saveLocally(result, "user_preferences", key);
+                                return defer.resolve(result);
                             }, 
                             function(response) {
-                            console.log("patch err response:", response);
-                            return defer.reject(response);
+                                console.log("patch err response:", response);
+                                return defer.reject(response);
                         });
 
                 return defer.promise;
