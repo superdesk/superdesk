@@ -9,18 +9,21 @@ define(['angular', 'jquery'], function(angular, $) {
     module.service('betaService', ['$window', '$rootScope', 'preferencesService',
         function($window, $rootScope, preferencesService) {
 
-        //$rootScope.beta = localStorage.getItem('beta') === 'true';
+        $rootScope.beta = null;
+
         this.load = function() {
-            $rootScope.beta = false;
-            var beta = preferencesService.get("feature:preview");
-            if(beta){
-                $rootScope.beta = preferencesService.get("feature:preview")["enabled"];
+            if(!$rootScope.beta)
+            {
+                $rootScope.beta = false;
+                var beta = preferencesService.get("feature:preview");
+                if(beta){
+                    $rootScope.beta = beta["enabled"];
+                }
             }
         }
         
         this.toggleBeta = function() {
             $rootScope.beta = !$rootScope.beta;
-            //localStorage.setItem('beta', $rootScope.beta);
             var update = { 
                 "feature:preview" : {
                     "default":false, 
@@ -32,7 +35,7 @@ define(['angular', 'jquery'], function(angular, $) {
             };
 
             preferencesService.update(update);
-            //$window.location.reload();
+            $window.location.reload();
         };
 
         this.isBeta = function() {

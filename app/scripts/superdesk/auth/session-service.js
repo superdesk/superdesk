@@ -59,12 +59,12 @@ define(['lodash'], function(_) {
             preferencesService.getPreferences(session._id).then(function(preferences){
                     console.log("original preferences:", preferences);
                     preferencesService.saveLocally(preferences);
-            });
 
-            if (defer) {
-                defer.resolve(identity);
-                defer = null;
-            }
+                    if (defer) {
+                        defer.resolve(identity);
+                        defer = null;
+                    }
+            });
         };
 
         /**

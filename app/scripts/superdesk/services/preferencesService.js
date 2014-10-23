@@ -56,24 +56,34 @@ define(['angular'], function(angular) {
                 var instance = this;
                 var original_prefs = this.loadLocally();
 
-                if (!original_prefs && $rootScope.sessionId)
-                {
-                    this.getPreferences($rootScope.sessionId).then(function(preferences){
-                        instance.saveLocally(preferences);
-                        original_prefs = preferences;
-                    });
-                }
-                
-                if (!original_prefs)
-                {
-                    return null;
-                }
-                
-                if (key == "feature:preview") {
-                    return original_prefs[USER_PREFERENCES][key];
-                }
-                else {
-                    return original_prefs[SESSION_PREFERENCES][key];
+                if (!original_prefs){
+
+                    if ($rootScope.sessionId){
+                        this.getPreferences($rootScope.sessionId).then(function(preferences){
+                            instance.saveLocally(preferences);
+                            original_prefs = preferences;
+
+                            if (key == "feature:preview") {
+                                return original_prefs[USER_PREFERENCES][key];
+                            }
+                            else {
+                                return original_prefs[SESSION_PREFERENCES][key];
+                            }
+
+                        });
+                    
+                    } else {
+                        
+                        return null;
+                    }
+                } else {
+
+                    if (key == "feature:preview") {
+                        return original_prefs[USER_PREFERENCES][key];
+                    }
+                    else {
+                        return original_prefs[SESSION_PREFERENCES][key];
+                    }
                 }
             };
 
