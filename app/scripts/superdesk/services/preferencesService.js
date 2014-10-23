@@ -9,6 +9,7 @@ define(['angular','lodash'], function(angular, _) {
             var USER_PREFERENCES = 'user_preferences',
                 SESSION_PREFERENCES = 'session_preferences',
                 PREFERENCES = 'preferences',
+                userPreferences = ["feature:preview", "archive:view"],
                 api,
                 defer;
 
@@ -78,7 +79,7 @@ define(['angular','lodash'], function(angular, _) {
                             instance.saveLocally(preferences);
                             original_prefs = preferences;
 
-                            if (key == "feature:preview") {
+                            if (userPreferences.indexOf(key) >= 0 ) {
                                 return original_prefs[USER_PREFERENCES][key];
                             }
                             else {
@@ -93,7 +94,7 @@ define(['angular','lodash'], function(angular, _) {
                     }
                 } else {
 
-                    if (key == "feature:preview") {
+                    if (userPreferences.indexOf(key) >= 0 ) {
                         return original_prefs[USER_PREFERENCES][key];
                     }
                     else {
@@ -102,9 +103,9 @@ define(['angular','lodash'], function(angular, _) {
                 }
             };
 
-            this.update = function(updates) {
-                if (updates["feature:preview"]) {
-                    return this.updateUserPreferences(updates, "feature:preview");
+            this.update = function(updates, key) {
+                if (userPreferences.indexOf(key) >= 0 ) {
+                    return this.updateUserPreferences(updates, key);
                 } else {
 
                 }

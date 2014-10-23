@@ -33,7 +33,7 @@ define(['angular', 'jquery'], function(angular, $) {
                 }
             };
 
-            preferencesService.update(update).then(function(){
+            preferencesService.update(update, "feature:preview").then(function(){
                     $rootScope.beta = !$rootScope.beta;
                     $window.location.reload();
                 },function(response) {
