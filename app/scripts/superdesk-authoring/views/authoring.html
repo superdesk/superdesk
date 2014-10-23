@@ -33,6 +33,13 @@
 
 		    <div class="main-article-container" ng-click="viewSendTo = false;">
 		        <article class="main-article" ng-if="item._id" ng-class="{preview: !_editable}">
+                    <section class="article-keyword">
+                        <header>
+                            <span class="edit-label" translate>Keyword</span>
+                        </header>
+                        <input type="text" class="keyword" ng-model="item.slugline" ng-if="_editable"></input>
+                    </section>
+
 		            <section class="article-title">
 		                <header>
 		                    <span class="edit-label" translate>Headline</span>
