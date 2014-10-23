@@ -31,6 +31,11 @@
   background-image: url("@{iconWhiteSpritePath}");
 }
 
+.icon-round {
+  .border-radius(50%);
+  background-color: @sd-blue;
+}
+
 .icon-glass              { background-position: 0      0; }
 .icon-music              { background-position: -24px  0; }
 .icon-search             { background-position: -48px  0; }
@@ -57,10 +62,10 @@
 .icon-time               { background-position: -48px  -24px; }
 .icon-scratchpad-add     { background-position: -73px  -24px; }
 .icon-scratchpad-remove  { background-position: -96px  -24px; }
-.icon-download           { background-position: -120px -24px; }
-.icon-upload             { background-position: -144px -24px; }
+.icon-download           { background-position: -120px -24px; width: 15px; }
+.icon-upload             { background-position: -144px -24px; width: 15px; }
 .icon-inbox              { background-position: -168px -24px; }
-.icon-play-circle        { background-position: -192px -24px; }
+.icon-upload-blue        { background-position: -192px -24px; width: 15px; }
 .icon-repeat             { background-position: -216px -24px; }
 .icon-refresh            { background-position: -240px -24px; }
 .icon-list-alt           { background-position: -264px -24px; }
@@ -192,7 +197,7 @@
 .icon-chevron-right-thin { background-position: -213px -165px; }
 .icon-archive            { background-position: -241px -165px; width:15px;}
 .icon-switches           { background-position: -265px -165px;}
-.icon-plus-small         { background-position: -288px -165px;}
+.icon-plus-small         { background-position: -287px -165px; width: 16px; height: 16px; }
 .icon-minus-small        { background-position: -313px -165px;}
 .icon-close-small        { background-position: -336px -166px;}
 .icon-post               { background-position: -361px -165px;}

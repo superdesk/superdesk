@@ -192,6 +192,14 @@ define([
         };
     }
 
+    CreateButtonDirective.$inject = [];
+    function CreateButtonDirective() {
+        return {
+            restrict: 'C',
+            template: '<i class="svg-icon-plus"></i><span class="circle"></span>'
+        };
+    }
+
     return angular.module('superdesk.ui', [])
 
         .directive('sdShadow', ShadowDirective)
@@ -200,5 +208,6 @@ define([
         .filter('nl2el', NewlineToElement)
         .factory('WizardHandler', WizardHandlerFactory)
         .directive('sdWizard', WizardDirective)
-        .directive('sdWizardStep', WizardStepDirective);
+        .directive('sdWizardStep', WizardStepDirective)
+        .directive('sdCreateBtn', CreateButtonDirective);
 });

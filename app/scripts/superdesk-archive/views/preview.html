@@ -1,26 +1,24 @@
 <div>
-    <div class="additional-info">
+    <div class="additional-info" ng-class="{open : additional && item.provider}">
         <ul>
             <li class="date">
                 <p>{{ 'Created' | translate }} {{ item.firstcreated | reldate }}</p>
                 <p>{{ 'Modified' | translate }} {{ item.versioncreated | reldate }}</p>    
             </li>
-            <li ng-if="item.provider">{{ 'Source:' | translate }} <span>{{ item.provider }}</span></li>
-            <li ng-if="item.version">{{ 'Version:' | translate }} <span>{{ item.version }}</span></li>
+            <li ng-if="item.provider">{{ 'Source' | translate }}: <span>{{ item.provider }}</span></li>
+            <li ng-if="item.version">{{ 'Version' | translate }}: <span>{{ item.version }}</span></li>
         </ul>
-    </div>
-    <div class="preview-nav" ng-if="item.type === 'composite'">
-       <div class="top">
-           <span><i class="filetype-icon-large-composite"></i> {{ 'Package preview' | translate }}</span>
-       </div> 
-       <div class="nested" ng-show>
-           <a ng-click="" href="">back</a>
-           <span>Package</span>
-       </div>
+        <div class="switch" ng-show="item.provider" ng-click="additional = !additional"><i class="icon-chevron-down-thin"></i></div>
     </div>
 
-    <div class="content-container">
-        
+    <div class="content-container" ng-class="{padd: additional && item.provider}">
+
+        <div class="composite-nav" ng-if="item.type === 'composite'">
+           <div class="top">
+               <span><i class="filetype-icon-large-composite"></i> {{ 'Package preview' | translate }}</span>
+           </div> 
+        </div>
+
         <div class="action-menu">
             <button ng-click="display()" class="fullscreen">
                 <i class="icon-fullscreen"></i>
@@ -37,15 +35,15 @@
 
         <div sd-item-lock data-item="item"></div>
 
-        <!-- item headline -->
-        <div class="title-holder" ng-class="{condensed: !lock}">
-            <p class="title">{{ item.headline }}</p>
-        </div>
+        <p class="title" ng-if="item.headline" ng-class="{condensed: !lock}">{{ item.headline }}</p>
+
+        <p class="nav-space" ng-if="!item.headline && !lock"></p>
+
 
         <div class="core-content">
             
             <!-- item rendition -->
-            <div sd-item-rendition data-item="item" data-rendition="viewImage"></div>
+            <div class="picture-preview" sd-item-rendition data-item="item" data-rendition="viewImage"></div>
             
             <div ng-if="item.type == 'audio'">
                 <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>

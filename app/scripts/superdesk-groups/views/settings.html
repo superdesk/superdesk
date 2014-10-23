@@ -1,0 +1,105 @@
+<div sd-settings-view>
+	<div class="header">
+		<div class="container">
+			<h2 translate>Group management</h2>
+			<button class="btn btn-info pull-right" ng-click="openGroup('general')">
+		        <i class="icon-plus-sign icon-white"></i> {{ :: 'Add New Group' | translate }}
+		    </button>
+		</div>
+	</div>
+	
+
+    
+    <div class="settings-tab-content group-settings">
+    	<div sd-shadow>
+			<div class="group-config" ng-repeat="group in groups._items">
+				<div class="group-header clearfix">
+					<h6 class="pull-left">{{ :: group.name }}</h6>
+					<div class="dropdown pull-right">
+                      <button class="dropdown-toggle"><i class="icon-settings"></i> <b class="caret"></b></button>
+                      <ul class="dropdown-menu pull-right">
+                        <li><button ng-click="openGroup('general', group)"><i class="icon-pencil"></i> {{ :: 'Edit Group' | translate}}</button></li>
+                        <li><button ng-click="remove(group)"><i class="icon-trash"></i> {{ :: 'Delete Group' | translate }}</button></li>
+                      </ul>
+                  	</div>
+				</div>
+			</div>
+		</div>
+    </div>
+
+
+    <div sd-modal-view data-model="modalActive" class="add-group-popup responsive-popup hide" >
+    
+		<div class="modal-header"> 
+			<a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+			<h3 ng-show="!group.edit._id" translate>Add New Group</h3>
+			<h3 ng-show="group.edit._id" translate>Edit Group</h3>
+		</div>
+		
+		<div class="modal-body" sd-wizard data-name="usergroups" data-current-step="step.current" data-finish="cancel()">
+			
+			<div sd-wizard-step data-title="{{ 'General' | translate }}" data-code="general">
+				<div sd-groupedit-basic>
+					<form name="generalStep">
+						<div class="content">
+							<fieldset>
+								<div class="field">
+									<label translate>Group name</label>
+									<input type="text" class="fullwidth-input" ng-model="group.edit.name" required> 
+								</div>
+								<div class="field">
+									<label translate>Group description</label>
+									<textarea class="fullwidth-input" ng-model="group.edit.description"></textarea>
+								</div>
+							</fieldset>
+							<p ng-if="message">{{ message }}</p>
+						</div>
+						<div class="modal-footer">
+						  	<button class="btn btn-primary" ng-click="save(group.edit)" ng-disabled="!generalStep.$valid" translate>Next</button>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			<div sd-wizard-step data-title="{{ 'People' | translate }}" data-code="people">
+				<div sd-groupedit-people>
+					<div class="content people-stage">
+						<div class="header">
+							<form>
+								<input type="text" ng-model="search" class="searchbar searchbar-large">
+							</form>
+							<div class="search-result" ng-show="search">
+								<ul class="users-list-embed">
+									<li ng-repeat="user in membersToSelect | filter:search" ng-click="add(user)">
+										<figure class="avatar small"><img sd-user-avatar data-src="user.picture_url"></figure>
+										<div class="name">{{user.display_name}}</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+						<div class="content">
+							<p ng-if="message">{{ message }}</p>
+							<div class="member-list clearfix">
+								<ul>
+									<li ng-repeat="user in groupMembers">
+										<i class="icon-close-small" ng-click="remove(user)"></i>
+										<figure class="avatar"><img sd-user-avatar data-src="user.picture_url"></figure>
+										<div class="name">{{user.display_name}}</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer"> 
+					  	<button class="btn pull-left" ng-click="previous()" translate>Previous</button> 
+					  	<button class="btn btn-primary" ng-click="save()" translate>Done</button>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+
+	</div>
+
+</div>
