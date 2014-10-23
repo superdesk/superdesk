@@ -39,7 +39,6 @@ define([
     function ShadowDirective($timeout) {
         return {
             link: function(scope, element, attrs) {
-
                 $timeout(function() {
                     var el = $(element);
                     var shadow = $('<div class="scroll-shadow"><div class="inner"></div></div>');
@@ -47,14 +46,18 @@ define([
                     el.addClass('shadow-list-holder');
                     el.parent().prepend(shadow);
 
-                    el.scroll(function() {
+                    el.on('scroll', function() {
                         if ($(this).scrollTop() > 0) {
                             shadow.addClass('shadow');
                         } else {
                             shadow.removeClass('shadow');
                         }
                     });
-                }, 500);
+                }, 500, false);
+
+                scope.$on('$destroy', function() {
+                    element.off('scroll');
+                });
             }
         };
     }

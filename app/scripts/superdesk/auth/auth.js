@@ -46,7 +46,7 @@ define([
         resetForm();
     }
 
-    return angular.module('superdesk.auth', [])
+    return angular.module('superdesk.auth', ['superdesk.features'])
         .service('auth', require('./auth-service'))
         .service('session', require('./session-service'))
         .service('authAdapter', require('./basic-auth-adapter'))

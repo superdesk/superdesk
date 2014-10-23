@@ -45,7 +45,7 @@
 
             <div class="links">
                 <a href="" ng-click="logout()" class="text" ng-show="identity.Id" translate>Sign in as a different user.</a>
-                <a href="/#/reset-password/" class="text" translate>Forgot password?</a>
+                <a href="/#/reset-password/" class="text" ng-show="features.reset_user_password" translate>Forgot password?</a>
             </div>
 
         </div>

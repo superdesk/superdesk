@@ -26,7 +26,7 @@ define('main', [
         var body = angular.element('body');
         body.ready(function() {
             try {
-                angular.bootstrap(body, apps);
+                angular.bootstrap(body, apps, {strictDi: true});
             } catch (err) {
                 console.error(err.message);
             }
