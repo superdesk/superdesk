@@ -79,7 +79,10 @@ define(['angular','lodash'], function(angular, _) {
                             instance.saveLocally(preferences);
                             original_prefs = preferences;
 
-                            if (userPreferences.indexOf(key) >= 0 ) {
+                            if(!key){
+                                return original_prefs[USER_PREFERENCES];
+                            }
+                            else if (userPreferences.indexOf(key) >= 0 ) {
                                 return original_prefs[USER_PREFERENCES][key];
                             }
                             else {
@@ -94,7 +97,10 @@ define(['angular','lodash'], function(angular, _) {
                     }
                 } else {
 
-                    if (userPreferences.indexOf(key) >= 0 ) {
+                    if(!key){
+                        return original_prefs[USER_PREFERENCES];
+                    }
+                    else if (userPreferences.indexOf(key) >= 0 ) {
                         return original_prefs[USER_PREFERENCES][key];
                     }
                     else {
@@ -104,7 +110,10 @@ define(['angular','lodash'], function(angular, _) {
             };
 
             this.update = function(updates, key) {
-                if (userPreferences.indexOf(key) >= 0 ) {
+                if(!key){
+                    return this.updateUserPreferences(updates)
+                }
+                else if (userPreferences.indexOf(key) >= 0 ) {
                     return this.updateUserPreferences(updates, key);
                 } else {
 
