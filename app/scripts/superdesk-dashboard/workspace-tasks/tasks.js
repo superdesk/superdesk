@@ -98,7 +98,8 @@ function TaskPreviewDirective(tasks, desks, notify) {
     return {
         templateUrl: 'scripts/superdesk-dashboard/workspace-tasks/views/task-preview.html',
         scope: {
-            item: '='
+            item: '=',
+            close: '&onclose'
         },
         link: function(scope) {
             var _orig;
