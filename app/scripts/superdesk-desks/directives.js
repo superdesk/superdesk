@@ -147,14 +147,19 @@ define([
                 };
 
                 scope.cancelEdit = function() {
+                    if (scope.editStage && scope.editStage.name) {
+                        scope.editStage.name = scope.origEditName;
+                    }
                     scope.editStage = null;
                 };
 
                 scope.remove = function(stage) {
                     api('stages').remove(stage)
-                        .then(function(result) {
-                            _.remove(scope.stages, stage);
-                        });
+                    .then(function(result) {
+                        _.remove(scope.stages, stage);
+                    }, function(result) {
+                        scope.message = gettext('There was a problem, stage was not deleted.');
+                    });
                 };
             }
         };

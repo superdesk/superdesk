@@ -74,13 +74,13 @@
 											<span ng-if="editStage == stage">
 												<input type="text" ng-model="editStage.name" ng-keyup="saveEditOnEnter($event)" />	
 											</span>
-											<i class="remove" ng-click="remove(stage)"></i>
+											<i class="remove" ng-hide="stage.default_incoming" ng-click="remove(stage)"></i>
 										</div>
 									</div>
 									<div class="stage editable" ng-show="newStage.show">
 										<input type="text" ng-model="newStage.model" ng-keyup="saveOnEnter($event)" />	
 									</div>
-									<a class="btn add" sd-focus-input ng-click="cancelEdit(); newStage.model = null; newStage.show = true" ><i class="icon-plus-small"></i></a>
+									<a class="btn add" ng-hide="newStage.show" sd-focus-input ng-click="cancelEdit(); newStage.model = null; newStage.show = true" ><i class="icon-plus-small"></i></a>
 								</div>
 								<p ng-if="message">{{ message }}</p>
 							</div>
