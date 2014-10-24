@@ -75,63 +75,51 @@
 	<div sd-workqueue></div>
 </section>
 
-<div sd-modal-view data-model="newTask" class="create-task responsive-popup split-popup">
+<div sd-modal-view data-model="newTask" class="create-task responsive-popup">
+	<form>
     <div class="modal-header"> <button class="close" ng-click="close()"><i class="icon-close-small"></i></button>
         <h3 translate>Create New Task</h3>
     </div>
+	
+	    <div class="modal-body task-details" ng-if="newTask">
+	    	<fieldset class="full">
+	    		<textarea
+					sd-autoexpand
+					class="title"
+	                ng-model="newTask.slugline"
+	                placeholder="{{ :: 'Add task title' | translate}}"
+	                tabindex="1"
+	                sd-autofocus
+	            ></textarea>
+	    	</fieldset>
 
-    <div class="modal-body task-details" ng-if="newTask">
-       <div class="main">
-			<div class="content">
-				<ul class="task-labels clearfix"></ul>
+            <fieldset>
 				<textarea
-                    class="title"
-                    sd-auto-height
-                    ng-model="newTask.slugline"
-                    ng-model-options="{debounce: 500}"
-                    placeholder="{{ :: 'Add task title' | translate}}"
-                    required
-                ></textarea>
-				<textarea
-                    class="description"
-                    sd-auto-height
-                    ng-model="newTask.description_text"
-                    ng-model-options="{debounce: 500}"
-                    placeholder="{{ :: 'Add task description' | translate}}"
-                ></textarea>
-			</div>
-       </div>
-       <aside class="sidebar">
-       		<header translate>Assignee</header>
-       		<section class="assignee-container">
-				<div sd-assignee-box data-desk-id="newTask.task.desk" data-user-id="newTask.task.user"></div>
-				<div class="assignee-name">
-                    <span ng-show="newTask.task.desk">{{deskLookup[newTask.task.desk].name}} / </span>
-                    <span ng-show="newTask.task.user">{{userLookup[newTask.task.user].display_name}}</span>
-                    <span ng-hide="newTask.task.user" translate>Unassigned</span>
-                </div>
-			</section>
-			<header translate>Action</header>
-			<section>
-				<form>
-					<fieldset>
-						<div class="field">
-							<label translate>Due date:</label>
-							<input type="date" ng-model="newTask.task.due_date">
-						</div>
-						<div class="field">
-							<label translate>Due time:</label>
-							<input type="time" ng-model="newTask.task.due_time">
-						</div>
-					</fieldset>
-				</form>
-								
-			</section>
-       </aside>
-    </div>
+					sd-autoexpand
+					class="description"
+	                ng-model="newTask.description_text"
+	                placeholder="{{ :: 'Add task description' | translate}}"
+	                tabindex="2"
+	            ></textarea>
 
-    <div class="modal-footer">
-        <button class="btn btn-default" ng-click="close()" translate>Cancel</button>
-        <button class="btn btn-primary" ng-disabled="!newTask.task.desk || !newTask.slugline" ng-click="save()" translate>Save</button>
-    </div>
+	            <div class="assignee-focus" sd-assignee-box data-desk-id="newTask.task.desk" data-user-id="newTask.task.user" tabindex="3"></div>
+	        </fieldset>
+
+	       	<fieldset class="due">	
+	       		<div class="break"></div>
+				<label translate>Due</label>
+				<div class="clear field">
+					<input type="date" ng-model="newTask.task.due_date" tabindex="4">
+				</div>
+				<div class="field">
+					<input type="time" ng-model="newTask.task.due_time" tabindex="5">
+				</div>
+			</fieldset>	
+	    </div>
+
+	    <div class="modal-footer">
+	        <button class="btn btn-default" ng-click="close()" translate>Cancel</button>
+	        <button class="btn btn-primary" ng-disabled="!newTask.task.desk || !newTask.slugline" ng-click="save()" translate>Save</button>
+	    </div>
+    </form>
 </div>
