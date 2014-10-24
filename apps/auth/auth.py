@@ -113,6 +113,7 @@ class SuperdeskTokenAuth(TokenAuth):
         if auth_token:
             user_id = str(auth_token['user'])
             flask.g.user = get_resource_service('users').find_one(req=None, _id=user_id)
+            flask.g.auth = auth_token
             return self.check_permissions(resource, method, flask.g.user)
 
     def authorized(self, allowed_roles, resource, method):

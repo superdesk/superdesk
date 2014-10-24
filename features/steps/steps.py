@@ -833,7 +833,7 @@ def we_reset_password_for_user(context):
 
 @when('we switch user')
 def when_we_switch_user(context):
-    user = {'username': 'test-user-2', 'password': 'pwd'}
+    user = {'username': 'test-user-2', 'password': 'pwd', 'is_active': True}
     tests.setup_auth_user(context, user)
 
 
