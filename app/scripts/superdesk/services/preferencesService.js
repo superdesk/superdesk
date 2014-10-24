@@ -9,7 +9,7 @@ define(['angular','lodash'], function(angular, _) {
             var USER_PREFERENCES = 'user_preferences',
                 SESSION_PREFERENCES = 'session_preferences',
                 PREFERENCES = 'preferences',
-                userPreferences = ["feature:preview", "archive:view", "email:notification"],
+                userPreferences = ["feature:preview", "archive:view", "email:notification", "workqueue:items"],
                 sessionPreferences = ["scratchpad:items", "pinned:items", "desk:items"],
                 api,
                 defer;

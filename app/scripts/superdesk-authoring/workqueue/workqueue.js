@@ -8,7 +8,7 @@ function WorkqueueService(storage, preferencesService) {
      * Set items for further work, in next step of the workflow.
      */
 
-    var queue = storage.getItem('workqueue:items') || [];
+    var queue = preferencesService.get("workqueue:items")["items"] || [];
     this.length = 0;
     this.active = null;
 
@@ -57,7 +57,18 @@ function WorkqueueService(storage, preferencesService) {
      * Save queue to local storage
      */
     this.save = function() {
-        storage.setItem('workqueue:items', queue);
+
+        var update = { 
+            "workqueue:items" : {
+                "items": queue
+            }
+        };
+
+        preferencesService.update(update, "workqueue:items").then(function(){
+                //nothing to do
+            },function(response) {
+                notify.error(gettext("User preference could not be saved..."));
+        });
     };
 
     /**
