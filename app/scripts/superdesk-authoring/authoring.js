@@ -1,6 +1,8 @@
 (function() {
     'use strict';
 
+    var CONTENT_FIELDS = ['headline', 'slugline', 'body_html'];
+
     /**
      * Extend content of dest
      *
@@ -8,11 +10,7 @@
      * @param {Object} src
      */
     function extendItem(dest, src) {
-        angular.extend(dest, {
-            headline: src.headline || '',
-            slugline: src.slugline || '',
-            body_html: src.body_html || ''
-        });
+        angular.extend(dest, _.pick(src, CONTENT_FIELDS));
     }
 
     AutosaveService.$inject = ['$q', '$timeout', 'api'];
@@ -153,22 +151,19 @@
 
     AuthoringController.$inject = [
         '$scope',
-        '$q',
         'superdesk',
         'api',
         'workqueue',
         'notify',
         'gettext',
-        'ConfirmDirty',
         'lock',
         'desks',
         'item',
         'autosave'
     ];
 
-    function AuthoringController($scope, $q, superdesk, api, workqueue, notify, gettext, ConfirmDirty, lock, desks, item, autosave) {
-        var confirm = new ConfirmDirty($scope),
-            stopWatch = angular.noop;
+    function AuthoringController($scope, superdesk, api, workqueue, notify, gettext, lock, desks, item, autosave) {
+        var stopWatch = angular.noop;
 
         $scope.workqueue = workqueue.all();
         $scope.saving = false;
@@ -228,14 +223,12 @@
          * Close an item - unlock and remove from workqueue
          */
         $scope.close = function() {
-            confirm.confirm().then(function() {
-                if ($scope.editable) {
-                    lock.unlock($scope.item);
-                }
-                $scope.dirty = false;
-                workqueue.remove($scope.item);
-                superdesk.intent('author', 'dashboard');
-            });
+            if ($scope._editable) {
+                lock.unlock($scope.item);
+            }
+            $scope.dirty = false;
+            workqueue.remove($scope.item);
+            superdesk.intent('author', 'dashboard');
         };
 
         /**
@@ -260,8 +253,9 @@
          * Close preview and start working again
          */
         $scope.closePreview = function() {
-            $scope._preview = false;
             $scope.item = _.create(item);
+            extendItem($scope.item, item._autosave || {});
+            $scope._preview = false;
             $scope._editable = $scope.isEditable();
             if ($scope._editable) {
                 startWatch();
