@@ -79,7 +79,8 @@ class PreferencesService(BaseService):
                     updates[key][k] = dict(list(existing_preferences.get(k, {}).items()) + list(prefs.get(k, {}).items()))
             else:
                 for k in existing_preferences.keys():
-                    updates[key][k] = existing_preferences.get(k, []) + prefs.get(k, [])
+                    if prefs.get(k, []) == []:
+                        updates[key][k] = existing_preferences.get(k, [])
 
     def find_one(self, req, **lookup):
         session_doc = super().find_one(req, **lookup)
