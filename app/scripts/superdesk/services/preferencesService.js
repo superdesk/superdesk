@@ -9,20 +9,21 @@ define(['angular','lodash'], function(angular, _) {
             var USER_PREFERENCES = 'user_preferences',
                 SESSION_PREFERENCES = 'session_preferences',
                 PREFERENCES = 'preferences',
-                userPreferences = ["feature:preview", "archive:view"],
+                userPreferences = ["feature:preview", "archive:view", "email:notification"],
+                sessionPreferences = ["scratchpad:items", "pinned:items", "desk:items"],
                 api,
                 defer;
 
             this.original_preferences;
 
             
-            this.saveLocally = function(preferences, section, key){
+            this.saveLocally = function(preferences, type, key){
                 
-                //console.log("saving saveLocally:", preferences, section, key);
+                //console.log("saving saveLocally:", preferences, type, key);
 
-                if(section && key && this.original_preferences)
+                if(type && key && this.original_preferences)
                 {
-                    this.original_preferences[section][key] = preferences[section][key];
+                    this.original_preferences[type][key] = preferences[type][key];
                     this.original_preferences["_etag"] = preferences["_etag"];
                 }
                 else
@@ -114,18 +115,19 @@ define(['angular','lodash'], function(angular, _) {
                     return this.updateUserPreferences(updates)
                 }
                 else if (userPreferences.indexOf(key) >= 0 ) {
-                    return this.updateUserPreferences(updates, key);
+                    return this.updatePreferences(USER_PREFERENCES, updates, key);
                 } else {
-
+                    return this.updatePreferences(SESSION_PREFERENCES, updates, key);
                 }
             };
 
 
-            this.updateUserPreferences = function(updates, key) {
+            this.updatePreferences = function(type, updates, key) {
                 
                 var instance = this;
                 var original_prefs = _.cloneDeep(this.loadLocally());
-                var user_updates = {"user_preferences": updates};
+                var user_updates = {};
+                user_updates[type] = updates;
 
                 if (!api) { api = $injector.get('api'); }
 
@@ -133,7 +135,7 @@ define(['angular','lodash'], function(angular, _) {
 
                 api('preferences', $rootScope.sessionId).save(original_prefs, user_updates)
                     .then(function(result) {
-                                instance.saveLocally(result, "user_preferences", key);
+                                instance.saveLocally(result, type, key);
                                 return defer.resolve(result);
                             }, 
                             function(response) {
