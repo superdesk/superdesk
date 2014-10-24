@@ -4,7 +4,8 @@ from superdesk import get_backend
 from eve.validation import ValidationError
 import superdesk
 from superdesk import get_resource_service
-
+from eve.methods.common import resolve_document_etag
+from eve.utils import parse_request
 
 _preferences_key = 'preferences'
 _user_preferences_key = 'user_preferences'
@@ -79,6 +80,9 @@ class PreferencesService(BaseService):
         session_doc = super().find_one(req, **lookup)
         user_doc = get_resource_service('users').find_one(req=None, _id=session_doc['user'])
         self.enhance_document_with_default_prefs(session_doc, user_doc)
+        if req is None:
+            req = parse_request('auth')
+            session_doc['_etag'] = req.if_match
         return session_doc
 
     def get(self, req, lookup):
@@ -118,5 +122,4 @@ class PreferencesService(BaseService):
             del updates[_user_preferences_key]
 
         res = self.backend.update(self.datasource, id, updates)
-
         return res
