@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('superdesk.widgets.base', [])
-        .factory('BaseWidgetController', ['$location', '$timeout', 'superdesk', 'storage', 'es',
-        function BaseWidgetControllerFactory($location, $timeout, superdesk, storage, es) {
+        .factory('BaseWidgetController', ['$location', '$timeout', 'superdesk', 'es', 'preferencesService', 'notify',
+        function BaseWidgetControllerFactory($location, $timeout, superdesk, es, preferencesService, notify) {
 
             var INGEST_EVENT = 'ingest:update';
 
@@ -13,7 +13,7 @@
                 var pinnedList = {};
 
                 $scope.selected = null;
-                $scope.pinnedItems = storage.getItem($scope.type + ':pinned') || [];
+                $scope.pinnedItems = preferencesService.get('pinned:items')|| [];
                 _.each($scope.pinnedItems, function(item) {
                     pinnedList[item._id] = true;
                 });
@@ -101,19 +101,29 @@
                     $scope.pinnedItems.push(newItem);
                     $scope.pinnedItems = _.uniq($scope.pinnedItems, '_id');
                     pinnedList[item._id] = true;
-                    storage.setItem($scope.type + ':pinned', $scope.pinnedItems);
-                    processItems();
+                    save($scope.pinnedItems);
                 };
 
                 $scope.unpin = function(item) {
                     _.remove($scope.pinnedItems, {_id: item._id});
                     pinnedList[item._id] = false;
-                    storage.setItem($scope.type + ':pinned', $scope.pinnedItems);
-                    processItems();
+                    save($scope.pinnedItems);
                 };
 
                 $scope.isPinned = function(item) {
                     return !!pinnedList[item._id];
+                };
+
+                var save = function(pinnedItems){
+                    var update = { 
+                        "pinned:items" : pinnedItems
+                    };
+
+                    preferencesService.update(update, "pinned:items").then(function(){
+                            processItems();
+                        },function(response) {
+                            notify.error(gettext("Session preference could not be saved..."));
+                    });
                 };
             };
         }])

@@ -756,18 +756,15 @@
             };
         }])
 
-        .directive('sdUserPreferences', ['api', 'session', function(api, session) {
+        .directive('sdUserPreferences', ['api', 'session', 'preferencesService', 'notify', 
+            function(api, session, preferencesService, notify) {
             return {
                 templateUrl: 'scripts/superdesk-users/views/user-preferences.html',
                 link: function(scope, elem, attrs) {
 
-                    var orig;
 
-                    api('preferences').getById(session.sessionId)
-                    .then(function(result) {
-                        orig = result;
-                        buildPreferences(orig);
-                    });
+                    var orig = preferencesService.get();
+					buildPreferences(orig);
 
                     scope.cancel = function() {
                         scope.userPrefs.$setPristine();
@@ -775,29 +772,28 @@
                     };
 
                     scope.save = function() {
-                        api('preferences', session.sessionId)
-                        .save(orig, patch())
-                        .then(function(result) {
-                            scope.cancel();
-                        }, function(response) {
-                            console.log(response);
+
+                        var update = patch();
+
+                        preferencesService.update(update).then(function(){
+                                scope.cancel();
+                            },function(response) {
+                                notify.error(gettext("User preferences could not be saved..."));
                         });
                     };
 
                     function buildPreferences(struct) {
                         scope.preferences = {};
-                        _.each(struct.user_preferences, function(val, key) {
-                        if (val.category === 'notifications')
-                        {
+                        _.each(struct, function(val, key) {
                             scope.preferences[key] = _.create(val);
-                        }
                         });
                     }
 
                     function patch() {
-                        var p = {user_preferences: {}};
-                        _.each(orig.user_preferences, function(val, key) {
-                            p.user_preferences[key] = _.extend(val, scope.preferences[key]);
+                    
+                        var p = {};
+                        _.each(orig, function(val, key) {
+                            p[key] = _.extend(val, scope.preferences[key]);
                         });
                         return p;
                     }

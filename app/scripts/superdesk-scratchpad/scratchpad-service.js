@@ -1,7 +1,8 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    return ['$q', 'storage', 'api', function($q, storage, api) {
+    return ['$q', 'storage', 'api', 'preferencesService', 'notify', 
+    function($q, storage, api, preferencesService, notify) {
         this.listeners = [];
         this.data = {};
         this.itemList = [];
@@ -15,23 +16,33 @@ define(['lodash'], function(_) {
             });
         };
         this.saveItemList = function() {
-            storage.setItem('scratchpad:items', this.itemList, true);
-            this.update();
+
+            var update = { 
+                "scratchpad:items" : this.itemList
+            };
+
+            var instance = this;
+
+            preferencesService.update(update, "scratchpad:items").then(function(){
+                    instance.update();
+                },function(response) {
+                    notify.error(gettext("User preference could not be saved..."));
+            });
         };
         this.loadItemList = function() {
-            var itemList = storage.getItem('scratchpad:items');
+            var itemList = preferencesService.get('scratchpad:items');
             if (itemList) {
                 this.itemList = itemList;
                 this.update();
             }
         };
         this.addItem = function(item) {
-            this.removeItem(item);
+            this.itemList = _.without(this.itemList, item._links.self.href);
             this.itemList.push(item._links.self.href);
             this.data[item._links.self.href] = item;
             this.saveItemList();
         };
-        this.removeItem = function(item) {
+        this.removeItem = function(item, save) {
             this.itemList = _.without(this.itemList, item._links.self.href);
             this.saveItemList();
         };

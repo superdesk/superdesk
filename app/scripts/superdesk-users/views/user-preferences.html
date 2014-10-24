@@ -4,13 +4,18 @@
     <button class="btn pull-right" ng-click="cancel()" ng-disabled="!userPrefs.$dirty" translate>Cancel</button>
 </div>
 <div class="preferences form-flat"ng-init="val = true"> 
-	<div class="title">Notification settings</div>
+	<div class="title">User settings</div>
 	<ul>
 		<li class="fieldset" ng-repeat="p in preferences">
 			<div class="legend">{{ p.category }}</div>
 			<div sd-info-item >
               <label translate>{{ p.label }}</label>
-              <span sd-switch ng-model="p.enabled"></span>
+              <span ng-hide="p.allowed" sd-switch ng-model="p.enabled"></span>
+              <span ng-show="p.allowed">
+              		<label ng-repeat="i in p.allowed">
+						<input name="allowed" type="radio" ng-model="p.view" ng-value="i">{{i}}
+              		</label>
+              </span>
             </div>
 		</li>
 	</ul>

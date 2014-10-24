@@ -1,23 +1,48 @@
 define(['angular', 'jquery'], function(angular, $) {
     'use strict';
 
-    var module = angular.module('superdesk.services.beta', []);
+    var module = angular.module('superdesk.services.beta', ['superdesk.services.preferencesService']);
 
     /**
      * Superdesk service for enabling/disabling beta preview in app
      */
-    module.service('betaService', ['$window', '$rootScope',
-        function($window, $rootScope) {
+    module.service('betaService', ['$window', '$rootScope', 'preferencesService', 'notify',
+        function($window, $rootScope, preferencesService, notify) {
 
-        $rootScope.beta = localStorage.getItem('beta') === 'true';
+        $rootScope.beta = null;
 
+        this.load = function() {
+            if(!$rootScope.beta)
+            {
+                $rootScope.beta = false;
+                var beta = preferencesService.get("feature:preview");
+                if(beta){
+                    $rootScope.beta = beta["enabled"];
+                }
+            }
+        }
+        
         this.toggleBeta = function() {
-            $rootScope.beta = !$rootScope.beta;
-            localStorage.setItem('beta', $rootScope.beta);
-            $window.location.reload();
+            var update = { 
+                "feature:preview" : {
+                    "default":false, 
+                    "enabled":!$rootScope.beta, 
+                    "label":"Enable Feature Preview", 
+                    "type":"bool", 
+                    "category":"feature"
+                }
+            };
+
+            preferencesService.update(update, "feature:preview").then(function(){
+                    $rootScope.beta = !$rootScope.beta;
+                    $window.location.reload();
+                },function(response) {
+                    notify.error(gettext("User preference could not be saved..."));
+            });
         };
 
         this.isBeta = function() {
+            this.load();
 			return $rootScope.beta;
         };
     }]);
