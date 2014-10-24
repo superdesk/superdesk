@@ -146,8 +146,6 @@
             return {
                 link: function(scope, elem, attrs) {
 
-                    var _group = null;
-
                     scope.$watch('step.current', function(step) {
                         if (step === 'general') {
                             scope.edit(scope.group.edit);
@@ -157,17 +155,20 @@
 
                     scope.edit = function(group) {
                         scope.group.edit = _.create(group);
-                        _group = group || {};
                     };
 
                     scope.save = function(group) {
                         scope.message = gettext('Saving...');
                         var _new = group._id ? false : true;
-                        api.groups.save(_group, group).then(function() {
+                        api.groups.save(scope.group.edit, group).then(function() {
                             if (_new) {
-                                scope.edit(_group);
-                                scope.groups._items.unshift(_group);
+                                scope.edit(scope.group.edit);
+                                scope.groups._items.unshift(scope.group.edit);
+                            } else {
+                                var orig = _.find(scope.groups._items, {_id: scope.group.edit._id});
+                                _.extend(orig, scope.group.edit);
                             }
+
                             WizardHandler.wizard('usergroups').next();
                         }, function(response) {
                             scope.message = gettext('There was a problem, group not created/updated.');
@@ -229,6 +230,8 @@
                         api.groups.save(scope.group.edit, {members: members}).then(function(result) {
                             _.extend(scope.group.edit, result);
                             groups.groupMembers[scope.group.edit._id] = scope.groupMembers;
+                            var orig = _.find(groups.groups._items, {_id: scope.group.edit._id});
+                            _.extend(orig, scope.group.edit);
                             WizardHandler.wizard('usergroups').finish();
                         }, function(response) {
                             scope.message = gettext('There was a problem, members not saved.');
