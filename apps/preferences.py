@@ -44,6 +44,11 @@ class PreferencesResource(Resource):
         'category': 'archive'
     })
 
+    superdesk.register_default_user_preference('workqueue:items', {
+        'items':[]
+    })
+
+
     superdesk.register_default_session_preference('scratchpad:items', [])
     superdesk.register_default_session_preference('desk:items', [])
     superdesk.register_default_session_preference('pinned:items', [])
@@ -70,11 +75,11 @@ class PreferencesService(BaseService):
                 raise ValidationError('Invalid preference: %s' % k)
 
             if key == _user_preferences_key:
-                for k in prefs.keys():
-                    updates[key][k] = dict(list(existing_preferences.get(k, {}).items()) + list(prefs[k].items()))
+                for k in existing_preferences.keys():
+                    updates[key][k] = dict(list(existing_preferences.get(k, {}).items()) + list(prefs.get(k, {}).items()))
             else:
-                for k in prefs.keys():
-                    updates[key][k] = existing_preferences.get(k, []) + prefs[k]
+                for k in existing_preferences.keys():
+                    updates[key][k] = existing_preferences.get(k, []) + prefs.get(k, [])
 
     def find_one(self, req, **lookup):
         session_doc = super().find_one(req, **lookup)
@@ -111,11 +116,11 @@ class PreferencesService(BaseService):
     def get_user_preference(self, user_id, preference_name):
         doc = get_resource_service('users').find_one(req=None, _id=user_id)
         self.enhance_document_with_default_user_prefs(user_doc=doc)
-        prefs = doc.get(_user_preferences_key, {}).get(preference_name, {})
+        prefs = doc.get(_user_preferences_key, {})
         return prefs
 
     def email_notification_is_enabled(self, user_id):
-        send_email = self.get_user_preference(user_id, 'email:notification')
+        send_email = self.get_user_preference(user_id).get('email:notification', {})
         return send_email and send_email.get('enabled', False)
 
     def update(self, id, updates):
