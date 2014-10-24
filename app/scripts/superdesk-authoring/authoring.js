@@ -99,13 +99,15 @@
             if (!item.lock_user) {
                 return api('archive_lock', item).save({}).then(function(lock) {
                     item._locked = false;
+                    item.lock_user = session.identity.id;
+                    item.lock_session = session.sessionId;
                     return item;
                 }, function(err) {
                     item._locked = true;
                     return item;
                 });
             } else {
-                item._locked = item.lock_user !== session.identity._id;
+                item._locked = (item.lock_user !== session.identity._id || item.lock_session !== session.sessionId);
                 return $q.when(item);
             }
         };
@@ -121,7 +123,16 @@
          * Test if an item is locked for me
          */
         this.isLocked = function(item) {
-            return item.lock_user && item.lock_user !== session.identity._id;
+            return item.lock_user && item.lock_session &&
+                (item.lock_user !== session.identity._id || item.lock_session !== session.sessionId);
+        };
+
+        /**
+        * Test is an item is locked by me in another session
+        */
+        this.isLockedByMe = function(item) {
+            return item.lock_user && item.lock_session &&
+                (item.lock_user === session.identity._id && item.lock_session !== session.sessionId);
         };
     }
 
