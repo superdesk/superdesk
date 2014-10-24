@@ -54,11 +54,9 @@ describe('authoring', function() {
         expect(item._locked).toBe(false);
     }));
 
-    it('can autosave and save an item', inject(function(superdesk, api, desks, $q, $timeout, $controller, $rootScope) {
+    it('can autosave and save an item', inject(function(superdesk, api, $q, $timeout, $controller, $rootScope) {
         var scope = $rootScope.$new(),
             headline = 'test headline';
-
-        spyOn(desks, 'initialize').andReturn($q.reject());
 
         $controller(superdesk.activity('authoring').controller, {item: item, $scope: scope});
         expect(scope.dirty).toBe(false);
@@ -80,6 +78,13 @@ describe('authoring', function() {
         $rootScope.$digest();
         expect(scope.dirty).toBe(false);
         expect(api.save).toHaveBeenCalled();
+    }));
+
+    it('can use a previously created autosave', inject(function($rootScope, $controller, superdesk) {
+        var scope = $rootScope.$new();
+        $controller(superdesk.activity('authoring').controller, {item: {_autosave: {headline: 'test'}}, $scope: scope});
+        expect(scope.item._autosave.headline).toBe('test');
+        expect(scope.item.headline).toBe('test');
     }));
 });
 
