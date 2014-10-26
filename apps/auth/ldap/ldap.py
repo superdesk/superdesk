@@ -138,7 +138,7 @@ class ADAuthService(AuthService):
         profile_to_import = credentials['profile_to_import'] if 'profile_to_import' in credentials else username
 
         profile_to_be_created = True
-        if credentials['profile_to_be_created'] and credentials['profile_to_be_created'] == 'false':
+        if 'profile_to_be_created' in credentials and credentials['profile_to_be_created'] == 'false':
             profile_to_be_created = False
 
         user_data = ad_auth.authenticate_and_fetch_profile(username, password, username_for_profile=profile_to_import)
