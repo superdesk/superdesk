@@ -91,6 +91,7 @@
         this.lock = function(item) {
             if (!item.lock_user) {
                 return api('archive_lock', item).save({}).then(function(lock) {
+                    _.extend(item, lock);
                     item._locked = false;
                     return item;
                 }, function(err) {
@@ -107,7 +108,14 @@
          * Unlock an item
          */
         this.unlock = function(item) {
-            return api('archive_unlock', item).save({});
+            return api('archive_unlock', item).save({}).then(function(lock) {
+                _.extend(item, lock);
+                item._locked = true;
+                return item;
+            }, function(err) {
+                item._locked = true;
+                return item;
+            });
         };
 
         /**
