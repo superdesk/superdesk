@@ -61,26 +61,6 @@
                   </div>
                 </div>
 
-                <div sd-info-item class="password" ng-if="features.reset_user_passwod && !user._id">
-                  <label for="password" translate>password</label>
-                  <input type="password" name="password" ng-minlength="5" id="password" ng-model="user.password" required>
-                  <i ng-show="userForm.password.$error.required" class="required-asteriks">*</i>
-                  <div ng-show="userForm.password.$error.minlength" sd-valid-info>
-                    <i class="icon-info-sign-warning"></i>
-                    <span translate>password must have at least 5 characters</span>
-                  </div>
-                </div>
-
-                <div sd-info-item class="password" ng-if="features.reset_user_password && !user._id">
-                  <label for="passwordConfirm" translate>confirm</label>
-                  <input type="password" name="passwordConfirm" ng-minlength="5" id="passwordConfirm" sd-password-confirm ng-model="confirm.password" data-password="user.password" required>
-                  <i ng-show="userForm.passwordConfirm.$error.required" class="required-asteriks">*</i>
-                  <div ng-show="userForm.passwordConfirm.$error.confirm" sd-valid-info>
-                    <i class="icon-info-sign-warning"></i>
-                    <span translate>passwords must be same</span>
-                  </div>
-                </div>
-
                 <div sd-info-item class="password" ng-if="features.reset_user_password && user._id" id="password-change-trigger">
                   <label translate>password</label>
                   <i class="change-btn" ng-click="show.password = !show.password" ng-show="!show.password">change password</i>
