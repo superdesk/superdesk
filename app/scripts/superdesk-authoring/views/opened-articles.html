@@ -1,6 +1,6 @@
 <div class="opened-articles">
 	<div class="quick-actions pull-left">
-		<button ng-click="openDashboard()" title="{{ 'All opened items' | translate }}"><i class="icon-th-large icon-white"></i></button>
+		<button ng-click="openDashboard()" title="{{ ::'All opened items' | translate }}"><i class="icon-th-large icon-white"></i></button>
 	</div>
     <ul ng-show="workqueue.length">
         <li ng-repeat="article in workqueue | orderBy:null:true" ng-click="openItem(article)" ng-class="{'active': article._id == active._id}">

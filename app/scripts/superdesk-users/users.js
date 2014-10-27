@@ -7,9 +7,6 @@
     UsersService.$inject = ['api', '$q'];
     function UsersService(api, $q) {
 
-        var STATUS_INACTIVE = 'inactive',
-            STATUS_ACTIVE = 'active';
-
         this.usernamePattern = /^[A-Za-z0-9_.'-]+$/;
         this.phonePattern = /^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$/;
 
@@ -46,14 +43,14 @@
          * Test if user is active
          */
         this.isActive = function isActive(user) {
-            return user && !user.status || user.status !== STATUS_INACTIVE;
+            return user && user.is_active;
         };
 
         /**
          * Toggle user status
          */
         this.toggleStatus = function toggleStatus(user, active) {
-            return this.save(user, {status: active ? STATUS_ACTIVE : STATUS_INACTIVE});
+            return this.save(user, {is_active: active});
         };
     }
 
@@ -171,20 +168,16 @@
 
         // make sure saved user is presented in the list
         $scope.render = function(user) {
-            if (_.find($scope.users._items, function(item) {
-                return item._links.self.href === user._links.self.href;
-            })) {
-                return;
+            if (!findUser($scope.users._items, user) && !findUser($scope.createdUsers, user)) {
+                $scope.createdUsers.unshift(user);
             }
-
-            if (_.find($scope.createdUsers, function(item) {
-                return item._links.self.href === user._links.self.href;
-            })) {
-                return;
-            }
-
-            $scope.createdUsers.unshift(user);
         };
+
+        function findUser(list, user) {
+            return _.find(list, function(item) {
+                return item._links.self.href === user._links.self.href;
+            });
+        }
 
         function getCriteria() {
             var params = $location.search(),
@@ -330,6 +323,62 @@
             });
     }
 
+    /**
+     * User roles controller - settings page
+     */
+    UserRolesController.$inject = ['$scope', 'api', 'modal', 'gettext'];
+    function UserRolesController($scope, api, modal, gettext) {
+
+        var _orig;
+        $scope.selectedRole = null;
+        $scope.editRole = null;
+
+        api('roles').query()
+        .then(function(result) {
+            $scope.roles = result._items;
+        });
+
+        $scope.select = function(role) {
+            $scope.selectedRole = role;
+        };
+
+        $scope.edit = function(role) {
+            $scope.editRole = _.create(role);
+            _orig = role;
+        };
+
+        $scope.save = function(role) {
+            var _new = role._id ? false : true;
+            api('roles').save(_orig, role)
+            .then(function() {
+                if (_new) {
+                    $scope.roles.unshift(_orig);
+                }
+                $scope.cancel();
+            });
+        };
+
+        $scope.cancel = function() {
+            $scope.editRole = null;
+        };
+
+        $scope.remove = function(role) {
+            confirm().then(function() {
+                api('roles').remove(role)
+                .then(function(result) {
+                    _.remove($scope.roles, role);
+                }, function(response) {
+                    console.log(response);
+                });
+            });
+        };
+
+        function confirm() {
+            return modal.confirm(gettext('Are you sure you want to delete user role?'));
+        }
+
+    }
+
     return angular.module('superdesk.users', [
         'superdesk.activity',
         'superdesk.users.profile',
@@ -338,26 +387,6 @@
 
         .service('users', UsersService)
         .factory('userList', UserListService)
-
-        .factory('rolesLoader', ['$q', 'em', function ($q, em) {
-            var delay = $q.defer();
-
-            function zip(items, key) {
-                var zipped = {};
-                _.each(items, function(item) {
-                    zipped[item[key]] = item;
-                });
-
-                return zipped;
-            }
-
-            em.repository('user_roles').all().then(function(data) {
-                var roles = zip(data._items, '_id');
-                delay.resolve(roles);
-            });
-
-            return delay.promise;
-        }])
 
         .factory('userPopup', ['$compile', '$timeout', 'userList', function ($compile, $timeout, userList) {
             var popover = {};
@@ -508,15 +537,13 @@
                     }
                 })
 
-                /*
                 .activity('/settings/user-roles', {
                     label: gettext('User Roles'),
-                    templateUrl: require.toUrl('./views/settings.html'),
-                    controller: require('./controllers/settings'),
+                    templateUrl: 'scripts/superdesk-users/views/settings.html',
+                    controller: UserRolesController,
                     category: superdesk.MENU_SETTINGS,
                     priority: -500
                 })
-                */
 
                 .activity('delete/user', {
                     label: gettext('Delete user'),
@@ -544,6 +571,10 @@
             apiProvider.api('users', {
                 type: 'http',
                 backend: {rel: 'users'}
+            });
+            apiProvider.api('roles', {
+                type: 'http',
+                backend: {rel: 'roles'}
             });
         }])
 
@@ -589,29 +620,6 @@
                 }
             };
         })
-
-        .directive('sdRolesTreeview', ['$compile', function($compile) {
-            return {
-                restrict: 'A',
-                terminal: true,
-                scope: {role: '=', roles: '='},
-                link: function(scope, element, attrs) {
-
-                    if (scope.role['extends'] !== undefined) {
-                        scope.childrole = scope.roles[_.findKey(scope.roles, {_id: scope.role['extends']})];
-                        scope.treeTemplate = 'scripts/superdesk-users/views/rolesTree.html';
-                    } else {
-                        scope.treeTemplate = 'scripts/superdesk-users/views/rolesLeaf.html';
-                    }
-
-                    var template = '<div class="role-holder" ng-include="treeTemplate"></div>';
-
-                    var newElement = angular.element(template);
-                    $compile(newElement)(scope);
-                    element.replaceWith(newElement);
-                }
-            };
-        }])
 
         .directive('sdUserActivity', ['profileService', function(profileService) {
             return {
@@ -659,18 +667,20 @@
             };
         }])
 
-        .directive('sdUserEdit', ['gettext', 'notify', 'users', 'session', '$location', '$route', 'superdesk',
-        function(gettext, notify, users, session, $location, $route, superdesk) {
+        .directive('sdUserEdit', ['gettext', 'notify', 'users', 'session', '$location', '$route', 'superdesk', 'features',
+        function(gettext, notify, users, session, $location, $route, superdesk, features) {
 
             return {
                 templateUrl: 'scripts/superdesk-users/views/edit-form.html',
                 scope: {
                     origUser: '=user',
                     onsave: '&',
-                    oncancel: '&'
+                    oncancel: '&',
+                    onupdate: '&'
                 },
                 link: function(scope, elem) {
 
+                    scope.features = features;
                     scope.usernamePattern = users.usernamePattern;
                     scope.phonePattern = users.phonePattern;
                     scope.dirty = false;
@@ -742,6 +752,7 @@
                     scope.toggleStatus = function(active) {
                         users.toggleStatus(scope.origUser, active).then(function() {
                             resetUser(scope.origUser);
+                            scope.onupdate({user: scope.origUser});
                         });
                     };
 
@@ -883,7 +894,7 @@
             };
         }])
 
-        .directive('sdUserList', ['keyboardManager', function(keyboardManager) {
+        .directive('sdUserList', ['keyboardManager', 'users', function(keyboardManager, users) {
             return {
                 templateUrl: 'scripts/superdesk-users/views/user-list-item.html',
                 scope: {
@@ -892,6 +903,11 @@
                     done: '='
                 },
                 link: function(scope, elem, attrs) {
+
+                    scope.active = function(user) {
+                        return users.isActive(user);
+                    };
+
                     scope.select = function(user) {
                         scope.selected = user;
                     };

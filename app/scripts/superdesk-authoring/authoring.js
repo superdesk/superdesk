@@ -1,6 +1,8 @@
 (function() {
     'use strict';
 
+    var CONTENT_FIELDS = ['headline', 'slugline', 'body_html'];
+
     /**
      * Extend content of dest
      *
@@ -8,11 +10,7 @@
      * @param {Object} src
      */
     function extendItem(dest, src) {
-        angular.extend(dest, {
-            headline: src.headline || '',
-            slugline: src.slugline || '',
-            body_html: src.body_html || ''
-        });
+        angular.extend(dest, _.pick(src, CONTENT_FIELDS));
     }
 
     AutosaveService.$inject = ['$q', '$timeout', 'api'];
@@ -45,16 +43,11 @@
         this.save = function(item, data) {
             $timeout.cancel(_timeout);
             _timeout = $timeout(function() {
-                var autosave = item._autosave ? item._autosave : {};
-                data.guid = item.guid;
-                if (!autosave._id) {
-                    // id must be there for first time and first time only..
-                    data._id = item._id;
-                }
-
-                return api.save(RESOURCE, autosave, data).then(function() {
-                    item._autosave = autosave;
+                var diff = angular.extend({_id: item._id}, data);
+                return api.save(RESOURCE, {}, diff).then(function(_autosave) {
+                    item._autosave = _autosave;
                     extendItem(item._autosave, data);
+                    extendItem(item, data);
                 });
             }, AUTOSAVE_TIMEOUT);
             return _timeout;
@@ -169,28 +162,25 @@
 
     AuthoringController.$inject = [
         '$scope',
-        '$q',
         'superdesk',
         'api',
         'workqueue',
         'notify',
         'gettext',
-        'ConfirmDirty',
         'lock',
         'desks',
         'item',
         'autosave'
     ];
 
-    function AuthoringController($scope, $q, superdesk, api, workqueue, notify, gettext, ConfirmDirty, lock, desks, item, autosave) {
-        var confirm = new ConfirmDirty($scope),
-            stopWatch = angular.noop;
+    function AuthoringController($scope, superdesk, api, workqueue, notify, gettext, lock, desks, item, autosave) {
+        var stopWatch = angular.noop;
 
         $scope.workqueue = workqueue.all();
         $scope.saving = false;
         $scope.saved = false;
         $scope.dirty = false;
-        $scope.sendTo = false;
+        $scope.viewSendTo = false;
 
         function startWatch() {
             function isDirty() {
@@ -244,28 +234,12 @@
          * Close an item - unlock and remove from workqueue
          */
         $scope.close = function() {
-            confirm.confirm().then(function() {
-                if ($scope.editable) {
-                    lock.unlock($scope.item);
-                }
-                $scope.dirty = false;
-                workqueue.remove($scope.item);
-                superdesk.intent('author', 'dashboard');
-            });
-        };
-
-        $scope.sendToStage = function(stage) {
-            api('tasks').save(
-                $scope.item,
-                {task: _.extend(
-                    $scope.item.task,
-                    {stage: stage._id}
-                )}
-            )
-            .then(function(result) {
-                notify.success(gettext('Item sent.'));
-                superdesk.intent('author', 'dashboard');
-            });
+            if ($scope._editable) {
+                lock.unlock($scope.item);
+            }
+            $scope.dirty = false;
+            workqueue.remove($scope.item);
+            superdesk.intent('author', 'dashboard');
         };
 
         /**
@@ -290,8 +264,9 @@
          * Close preview and start working again
          */
         $scope.closePreview = function() {
-            $scope._preview = false;
             $scope.item = _.create(item);
+            extendItem($scope.item, item._autosave || {});
+            $scope._preview = false;
             $scope._editable = $scope.isEditable();
             if ($scope._editable) {
                 startWatch();
@@ -308,16 +283,6 @@
 
         // init
         $scope.closePreview();
-
-        if ($scope.item.task && $scope.item.task.desk) {
-            desks.initialize()
-            .then(function() {
-                api('stages').query({where: {desk: $scope.item.task.desk}})
-                .then(function(result) {
-                    $scope.stages = result;
-                });
-            });
-        }
     }
 
     function DashboardCard() {
@@ -329,6 +294,66 @@
                 var newW = p.outerWidth() + elem.outerWidth() + marginW;
                 if (newW < maxW) {
                     p.outerWidth(newW);
+                }
+            }
+        };
+    }
+
+    SendItem.$inject = ['superdesk', 'api', 'desks', 'notify'];
+    function SendItem(superdesk, api, desks, notify) {
+        return {
+            scope: {
+                item: '=',
+                view: '='
+            },
+            templateUrl: 'scripts/superdesk-authoring/views/send-item.html',
+            link: function sendItemLink(scope, elem, attrs) {
+                scope.desk = null;
+                scope.desks = null;
+                scope.stages = null;
+
+                scope.$watch('item', function fetchDesks() {
+                    if (scope.item.task && scope.item.task.desk) {
+
+                        api.find('tasks', scope.item._id).then(function(_task) {
+                            scope.task = _task;
+                        });
+
+                        desks.initialize()
+                        .then(function fetchStages() {
+                            scope.desks = desks.desks;
+                            scope.desk = desks.deskLookup[scope.item.task.desk];
+                            if (scope.desk) {
+                                api('stages').query({where: {desk: scope.desk._id}})
+                                .then(function(result) {
+                                    scope.stages = result;
+                                });
+                            }
+                        });
+                    }
+                });
+
+                scope.sendToDesk = function sendToDesk(desk) {
+                    save({task: _.extend(
+                        scope.task.task,
+                        {desk: desk._id, stage: desk.incoming_stage || null}
+                    )});
+                };
+
+                scope.sendToStage = function sendToStage(stage) {
+                    save({task: _.extend(
+                        scope.task.task,
+                        {stage: stage._id}
+                    )});
+                };
+
+                function save(data) {
+                    api.save('tasks', scope.task, data).then(gotoDashboard);
+                }
+
+                function gotoDashboard() {
+                    notify.success(gettext('Item sent.'));
+                    superdesk.intent('author', 'dashboard');
                 }
             }
         };
@@ -349,6 +374,7 @@
         .service('autosave', AutosaveService)
         .factory('ConfirmDirty', ConfirmDirtyFactory)
         .directive('sdDashboardCard', DashboardCard)
+        .directive('sdSendItem', SendItem)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk

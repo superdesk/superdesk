@@ -1,6 +1,6 @@
-<div class="assignee-box">
+<div class="assignee-box" ng-click="open = !open">
 	<div class="assignee" ng-class="{'open': open}" ng-init="hoveractive = false">
-		<div class="toggle" ng-click="open = !open" ng-mouseenter="hoveractive = true" ng-mouseleave="hoveractive = false">
+		<div class="toggle" ng-mouseenter="hoveractive = true" ng-mouseleave="hoveractive = false">
 			<div class="avatar" ng-class="{desk : desk && !user }">
 				<img sd-user-avatar data-src="user.picture_url">
 			</div>
@@ -19,7 +19,7 @@
 				<p translate>Click to assign</p>
 			</div>
 		</div>
-		<div class="dropdown-content" ng-show="open">
+		<div class="dropdown-content" ng-show="open" ng-click=" $event.stopPropagation();">
 			<div class="dropdown desk-select">
 				<button class="dropdown-toggle">
 					<span ng-show="!desk.name" translate>Select desk</span>
@@ -29,7 +29,7 @@
 				<div class="dropdown-menu">
 					<ul>
 						<li ng-show="desk"><button ng-click="desk = null; user = null" translate>Select desk</button></li>
-						<li ng-repeat="desk in desksService.desks._items"><button ng-click="$parent.desk = desk; $parent.user = null">{{desk.name}}</button></li>
+						<li ng-repeat="desk in desksService.desks._items"><button ng-click="$parent.desk = desk; $parent.user = null;">{{desk.name}}</button></li>
 					</ul>
 				</div>
 			</div>
@@ -54,8 +54,13 @@
 			<div class="footer">
 				<span class="clear pull-left" ng-click="desk = null; user = null" ng-show="desk || user" translate>Clear</span>
 				<button class="btn btn-info pull-right" ng-disabled="!desk" ng-click="assign()" translate>Assign</button>
-				<button class="btn pull-right" ng-click="open = false;" translate>Cancel</button>
+				<button class="btn pull-right" ng-click="open = false;  $event.stopPropagation();" translate>Cancel</button>
 			</div>
 		</div>
 	</div>
+	<div class="assignee-name">
+        <span ng-show="desk">{{desk.name}} : </span>
+        <span ng-show="user">{{user.display_name}}</span>
+        <span ng-hide="user" translate>Unassigned</span>
+    </div>
 </div>

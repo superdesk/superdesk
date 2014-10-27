@@ -21,7 +21,7 @@ define([
                     scope.selected = items[next];
                 }
 
-                scope.$watch(function() {
+                scope.$watch(function watchActivities() {
                     return activityChooser.activities;
                 }, function(activities, prev) {
                     scope.selected = activities ? _.first(activities) : null;

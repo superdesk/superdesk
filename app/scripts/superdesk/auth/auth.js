@@ -11,7 +11,6 @@ define([
 
     ResetPassworController.$inject = ['$scope', '$location', 'api', 'notify', 'gettext'];
     function ResetPassworController($scope, $location, api, notify, gettext) {
-        $scope.flowStep = 1;
         $scope.isSending = false;
         $scope.isReseting = false;
 
@@ -25,10 +24,10 @@ define([
         $scope.sendToken = function() {
             api.resetPassword.create({email: $scope.email})
             .then(function(result) {
-                notify.success(gettext('Token sent. Please check your email inbox.'));
+                notify.success(gettext('Link sent. Please check your email inbox.'));
                 $scope.flowStep = 2;
             }, function(result) {
-                notify.error(gettext('There was a problem. Token is not sent.'));
+                notify.error(gettext('There was a problem. Link is not sent.'));
             });
             resetForm();
         };
@@ -36,14 +35,22 @@ define([
             api.resetPassword.create({token: $scope.token, password: $scope.password})
             .then(function(result) {
                 notify.success(gettext('Password is changed. You can login using your new password.'));
-                $location.path('/');
+                $location.path('/').search({});
             }, function(result) {
-                notify.error(gettext('Token is invalid. Password is not changed.'));
+                notify.error(gettext('Link is invalid. Password is not changed.'));
             });
             resetForm();
         };
 
         resetForm();
+
+        var query = $location.search();
+        if (query.token) {
+            $scope.token = query.token;
+            $scope.flowStep = 3;
+        } else {
+            $scope.flowStep = 1;
+        }
     }
 
     return angular.module('superdesk.auth', ['superdesk.features'])
@@ -90,14 +97,14 @@ define([
             };
 
             // populate current user
-            $rootScope.$watch(function() {
+            $rootScope.$watch(function watchSessionIdentity() {
                 return session.identity;
             }, function (identity) {
                 $rootScope.currentUser = session.identity;
             });
 
             // set auth header
-            $rootScope.$watch(function() {
+            $rootScope.$watch(function watchSessionToken() {
                 return session.token;
             }, function(token) {
                 if (token) {
