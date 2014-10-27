@@ -1,17 +1,6 @@
 <div class="subnav">
 	<div class="button-stack right-stack">
 
-		<div class="navbtn dropdown views-settings">
-    		<button class="dropdown-toggle condensed"><i class="svg-icon-settings"></i></button>
-			<ul class="dropdown-menu pull-right">
-				<li ng-repeat="view in views.views">
-                    <span ng-click="views.edit(view)">{{ view.name }} <i class="icon-pencil"></i></span>
-                </li>
-                <li ng-hide="views.views.length"><a href="" ng-click="views.create()">start creating a view</a></li>
-				<li><button class="full" ng-click="views.create()"><i class="svg-icon-add"></i><span translate>Create new view</span></button></li>
-			</ul>
-    	</div>
-
         <div class="navbtn dropdown strict">
             <button class="dropdown-toggle sd-create-btn"></button>
             <ul class="dropdown-menu pull-right">
@@ -38,19 +27,24 @@
         <div class="navbtn dropdown" sd-user-desks data-desk="selectedDesk"></div>
     </div>
 
-    <div class="navbtn toggle-list desk-views clearfix" sd-desk-views ng-class="{autoheight: overload && show}"></div>
 </div>
 
 <div sd-media-view data-item="selected.view" data-items="items._items" ng-if="selected.view"></div>
 
 <section class="archive main-section" ng-class="{'sidebar-open': sidebarstick}">
 
-    <div class="archive-sidebar">
+    <div class="archive-sidebar" ng-init="sTab = true">
         <div class="header">
-            <div class="title"><i class="icon-filter-large"></i>{{ 'Filters' | translate }}</div>
+            <div class="icon">
+                <i class="icon-filter-large"></i>
+            </div>
+            <ul>
+                <li ng-class="{active: sTab}" ng-click="sTab = true" translate>Filters</li>
+                <li ng-class="{active: !sTab}" ng-click="sTab = false" translate>Views</li>
+            </ul>
             <div class="doopen" ng-click="sidebarstick = false"><i class="icon-backward-thin"></i></div>
         </div>
-        <div class="content">
+        <div class="content" ng-if="sTab">
             <div sd-toggle-box data-title="{{ 'Content type' | translate }}" data-open="true">
                 <div sd-filter-contenttype data-items="items"></div>
             </div>
@@ -93,6 +87,13 @@
                 </form>
             </div>
         </div>
+        <div class="content views" ng-if="!sTab">
+            <div class="header">
+                <button class="btn pull-right" ng-disabled="!views.selected" ng-click="views.select()">{{ :: 'Clear' | translate }}</button>
+                <button class="btn btn-info" ng-click="views.create()"><i class="icon-plus-small icon-white"></i> {{ :: 'Create' | translate }}</button>
+            </div>
+            <div class="list" sd-desk-views></div>
+        </div>
     </div>
 
     <div class="archive-content">
@@ -108,6 +109,7 @@
                     <div sd-pagination data-items="items" data-limit="25"></div>
                 </header>
                 <div class="content">
+                    <div class="loading-indicator" ng-show="loading">{{:: 'Loading' | translate }}</div>
                     <div sd-shadow>
                         <div class="newest-items" ng-show="createdMedia.items.length">
                             <span translate>Recently added media</span>

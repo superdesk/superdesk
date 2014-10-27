@@ -25,6 +25,7 @@ function ViewsCtrlFactory(api, session) {
      * Views controller
      */
     return function ViewsCtrl($scope) {
+
         var orig, desk, resource = api('content_view');
 
         this.flags = {};
@@ -105,61 +106,7 @@ function ViewsCtrlFactory(api, session) {
 
 function DeskViewsDirective() {
     return {
-        priority: 0,
-        templateUrl: 'scripts/superdesk-workspace/content/views/desk-views.html',
-        link: function(scope, elem, attrs) {
-            var buttonLeft = elem.parent().find('.button-stack.left-stack');
-            var buttonRight = elem.parent().find('.button-stack.right-stack');
-            var viewsList = elem.find('ul');
-            var _marginTop = 10;
-            var _rowHeight = 32;
-
-            scope.show = false;
-
-            scope.$watch('views', function(newVal, oldVal) {
-                refresh();
-            }, true);
-
-            scope.$watch('selectedDesk', function() {
-                _.defer(function() {
-                    scope.show = false;
-                    refresh();
-                });
-            });
-
-            scope.close = function() {
-                var ulPos = viewsList.offset().top + _marginTop;
-                var active = viewsList.find('.active');
-                if (active.length) {
-                    var elPos = active.offset().top;
-                    if (elPos > ulPos) {
-                        viewsList.css({
-                            'margin-top': ulPos - elPos - _marginTop
-                        });
-                    }
-                }
-                scope.show = false;
-            };
-
-            scope.open = function() {
-                viewsList.css({
-                    'margin-top': -_marginTop
-                });
-                scope.show = true;
-            };
-
-            function refresh() {
-                elem.css({
-                    left: buttonLeft.outerWidth() - 1,
-                    right: buttonRight.outerWidth() - 1
-                });
-
-                if (!viewsList.hasClass('compact')) {
-                    scope.overload = viewsList.outerHeight() >= _rowHeight * 2;
-                }
-
-            }
-        }
+        templateUrl: 'scripts/superdesk-workspace/content/views/desk-views.html'
     };
 }
 

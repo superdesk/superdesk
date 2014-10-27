@@ -19,6 +19,7 @@ define([
         $scope.views = new ViewsCtrl($scope);
         $scope.content = new ContentCtrl($scope);
         $scope.type = 'archive';
+        $scope.loading = false;
 
         $scope.openUpload = function() {
             superdesk.intent('upload', 'media').then(function(items) {
@@ -32,11 +33,16 @@ define([
                 return;
             }
 
+            $scope.loading = true;
+
             resource.query(criteria).then(function(items) {
+                $scope.loading = false;
                 $scope.items = items;
                 $scope.createdMedia = {
                     items: []
                 };
+            }, function() {
+                $scope.loading = false;
             });
         };
 
