@@ -12,32 +12,32 @@ define(['angular', 'jquery'], function(angular, $) {
         $rootScope.beta = null;
 
         this.load = function() {
-            if(!$rootScope.beta)
+            if (!$rootScope.beta)
             {
                 $rootScope.beta = false;
-                var beta = preferencesService.get("feature:preview");
-                if(beta){
-                    $rootScope.beta = beta["enabled"];
+                var beta = preferencesService.get('feature:preview');
+                if (beta){
+                    $rootScope.beta = beta.enabled;
                 }
             }
-        }
-        
+        };
+
         this.toggleBeta = function() {
-            var update = { 
-                "feature:preview" : {
-                    "default":false, 
-                    "enabled":!$rootScope.beta, 
-                    "label":"Enable Feature Preview", 
-                    "type":"bool", 
-                    "category":"feature"
+            var update = {
+                'feature:preview': {
+                    'default':false,
+                    'enabled':!$rootScope.beta,
+                    'label':'Enable Feature Preview',
+                    'type':'bool',
+                    'category':'feature'
                 }
             };
 
-            preferencesService.update(update, "feature:preview").then(function(){
+            preferencesService.update(update, 'feature:preview').then(function() {
                     $rootScope.beta = !$rootScope.beta;
                     $window.location.reload();
-                },function(response) {
-                    notify.error(gettext("User preference could not be saved..."));
+                }, function(response) {
+                    notify.error(gettext('User preference could not be saved...'));
             });
         };
 

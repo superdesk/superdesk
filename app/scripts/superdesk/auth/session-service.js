@@ -55,7 +55,7 @@ define(['lodash'], function(_) {
             this.identity = null;
             this.updateIdentity(identity);
 
-            preferencesService.getPreferences(session._id).then(function(preferences){
+            preferencesService.getPreferences(session._id).then(function(preferences) {
                     preferencesService.saveLocally(preferences);
 
                     if (defer) {
@@ -133,7 +133,7 @@ define(['lodash'], function(_) {
         /**
          * Save session id into local storage
          *
-         * @param {string} session id
+         * @param {string} sessionId
          */
         function setSessionId(sessionId) {
             if (sessionId) {
@@ -161,7 +161,6 @@ define(['lodash'], function(_) {
         function getToken() {
             return localStorage.getItem(TOKEN_KEY) || null;
         }
-        
     }
 
     return SessionService;

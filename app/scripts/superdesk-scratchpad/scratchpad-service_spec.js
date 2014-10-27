@@ -54,22 +54,22 @@ define([
         it('can add items', function() {
             service.addItem(testItem);
 
-            var update = { 
-                "scratchpad:items" : service.itemList
+            var update = {
+                'scratchpad:items': service.itemList
             };
 
-            expect(preferencesService.update).toHaveBeenCalledWith(update, "scratchpad:items");
+            expect(preferencesService.update).toHaveBeenCalledWith(update, 'scratchpad:items');
         });
 
         it('can remove items', function() {
             service.addItem(testItem);
             service.removeItem(testItem);
 
-            var update = { 
-                "scratchpad:items" : []
+            var update = {
+                'scratchpad:items': []
             };
 
-            expect(preferencesService.update).toHaveBeenCalledWith(update, "scratchpad:items");
+            expect(preferencesService.update).toHaveBeenCalledWith(update, 'scratchpad:items');
             expect(service.itemList).toEqual([]);
         });
 
@@ -89,11 +89,11 @@ define([
             service.addItem(testItem2);
             service.sort([1, 0]);
 
-            var update = { 
-                "scratchpad:items" : service.itemList
+            var update = {
+                'scratchpad:items': service.itemList
             };
 
-            expect(preferencesService.update).toHaveBeenCalledWith(update, "scratchpad:items");
+            expect(preferencesService.update).toHaveBeenCalledWith(update, 'scratchpad:items');
             expect(service.itemList).toEqual(['test2', 'test']);
         });
 

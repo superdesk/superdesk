@@ -27,7 +27,6 @@ define([
         });
     });
 
-
     describe('auth service', function() {
         beforeEach(inject(function(session, preferencesService, $q) {
             session.clear();

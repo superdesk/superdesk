@@ -6,31 +6,31 @@ define(['lodash'], function(_) {
         var self = this;
 
         var lastQueryParams = {};
-        var savedView = preferencesService.get('archive:view')["view"];
+        var savedView = preferencesService.get('archive:view').view;
 
         $scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
         $scope.selected = {};
 
         $scope.setView = function(view) {
-            
-            var update = { 
-                "archive:view": {
-                    "allowed": [
-                        "mgrid",
-                        "compact"
+
+            var update = {
+                'archive:view': {
+                    'allowed': [
+                        'mgrid',
+                        'compact'
                     ],
-                    "category": "archive",
-                    "view": view || 'mgrid',
-                    "default": "mgrid",
-                    "label": "Users archive view format",
-                    "type": "string"
+                    'category': 'archive',
+                    'view': view || 'mgrid',
+                    'default': 'mgrid',
+                    'label': 'Users archive view format',
+                    'type': 'string'
                 }
             };
 
-            preferencesService.update(update, "archive:view").then(function(){
+            preferencesService.update(update, 'archive:view').then(function() {
                     $scope.view = view || 'mgrid';
-                },function(response) {
-                    notify.error(gettext("User preference could not be saved..."));
+                }, function(response) {
+                    notify.error(gettext('User preference could not be saved...'));
             });
         };
 

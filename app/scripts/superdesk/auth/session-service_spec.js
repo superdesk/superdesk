@@ -20,7 +20,6 @@ define([
             module(StorageService.name);
             module(function ($provide) {
                 $provide.service('session', SessionService);
-                
             });
         });
 
@@ -32,7 +31,7 @@ define([
             expect(session.token).toBe(null);
             expect(session.identity).toBe(null);
         }));
-        
+
         it('can be started', inject(function (session, preferencesService, $q) {
             session.start(SESSION, {name: 'user'});
             expect(session.token).toBe(SESSION.token);

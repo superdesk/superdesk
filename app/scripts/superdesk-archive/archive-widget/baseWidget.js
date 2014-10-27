@@ -114,15 +114,15 @@
                     return !!pinnedList[item._id];
                 };
 
-                var save = function(pinnedItems){
-                    var update = { 
-                        "pinned:items" : pinnedItems
+                var save = function(pinnedItems) {
+                    var update = {
+                        'pinned:items': pinnedItems
                     };
 
-                    preferencesService.update(update, "pinned:items").then(function(){
+                    preferencesService.update(update, 'pinned:items').then(function() {
                             processItems();
-                        },function(response) {
-                            notify.error(gettext("Session preference could not be saved..."));
+                        }, function(response) {
+                            notify.error(gettext('Session preference could not be saved...'));
                     });
                 };
             };

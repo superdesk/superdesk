@@ -1,7 +1,7 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    return ['$q', 'storage', 'api', 'preferencesService', 'notify', 
+    return ['$q', 'storage', 'api', 'preferencesService', 'notify',
     function($q, storage, api, preferencesService, notify) {
         this.listeners = [];
         this.data = {};
@@ -17,16 +17,16 @@ define(['lodash'], function(_) {
         };
         this.saveItemList = function() {
 
-            var update = { 
-                "scratchpad:items" : this.itemList
+            var update = {
+                'scratchpad:items': this.itemList
             };
 
             var instance = this;
 
-            preferencesService.update(update, "scratchpad:items").then(function(){
+            preferencesService.update(update, 'scratchpad:items').then(function() {
                     instance.update();
-                },function(response) {
-                    notify.error(gettext("User preference could not be saved..."));
+                }, function(response) {
+                    notify.error(gettext('User preference could not be saved...'));
             });
         };
         this.loadItemList = function() {

@@ -756,12 +756,11 @@
             };
         }])
 
-        .directive('sdUserPreferences', ['api', 'session', 'preferencesService', 'notify', 
+        .directive('sdUserPreferences', ['api', 'session', 'preferencesService', 'notify',
             function(api, session, preferencesService, notify) {
             return {
                 templateUrl: 'scripts/superdesk-users/views/user-preferences.html',
                 link: function(scope, elem, attrs) {
-
 
                     var orig = preferencesService.get();
 					buildPreferences(orig);
@@ -775,10 +774,10 @@
 
                         var update = patch();
 
-                        preferencesService.update(update).then(function(){
+                        preferencesService.update(update).then(function() {
                                 scope.cancel();
-                            },function(response) {
-                                notify.error(gettext("User preferences could not be saved..."));
+                            }, function(response) {
+                                notify.error(gettext('User preferences could not be saved...'));
                         });
                     };
 
@@ -790,7 +789,6 @@
                     }
 
                     function patch() {
-                    
                         var p = {};
                         _.each(orig, function(val, key) {
                             p[key] = _.extend(val, scope.preferences[key]);

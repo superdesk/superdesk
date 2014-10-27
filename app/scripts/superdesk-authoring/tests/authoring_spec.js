@@ -18,7 +18,7 @@ describe('authoring', function() {
 
     beforeEach(inject(function(preferencesService, $q) {
             spyOn(preferencesService, 'getPreferences').andReturn($q.when({}));
-            spyOn(preferencesService, 'get').andReturn($q.when({"items":[]}));
+            spyOn(preferencesService, 'get').andReturn($q.when({'items':[]}));
             spyOn(preferencesService, 'update').andReturn($q.when({}));
     }));
 

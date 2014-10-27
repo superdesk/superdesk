@@ -2,13 +2,13 @@
 
 'use strict';
 
-WorkqueueService.$inject = ['storage','preferencesService'];
-function WorkqueueService(storage, preferencesService) {
+WorkqueueService.$inject = ['storage', 'preferencesService', 'notify'];
+function WorkqueueService(storage, preferencesService, notify) {
     /**
      * Set items for further work, in next step of the workflow.
      */
 
-    var queue = preferencesService.get("workqueue:items")["items"] || [];
+    var queue = preferencesService.get('workqueue:items').items || [];
     this.length = 0;
     this.active = null;
 
@@ -58,16 +58,16 @@ function WorkqueueService(storage, preferencesService) {
      */
     this.save = function() {
 
-        var update = { 
-            "workqueue:items" : {
-                "items": queue
+        var update = {
+            'workqueue:items': {
+                'items': queue
             }
         };
 
-        preferencesService.update(update, "workqueue:items").then(function(){
+        preferencesService.update(update, 'workqueue:items').then(function() {
                 //nothing to do
-            },function(response) {
-                notify.error(gettext("User preference could not be saved..."));
+            }, function(response) {
+                notify.error(gettext('User preference could not be saved...'));
         });
     };
 
