@@ -143,7 +143,7 @@ class ADAuthService(AuthService):
 
         user_data = ad_auth.authenticate_and_fetch_profile(username, password, username_for_profile=profile_to_import)
         if len(user_data) == 0:
-            raise NotFoundAuthError()
+            raise NotFoundAuthError(message='No user has been found in AD', status_code=404, payload={'profile_to_import': 1})
 
         if profile_to_be_created:
             user = superdesk.get_resource_service('users').find_one(username=profile_to_import, req=None)
