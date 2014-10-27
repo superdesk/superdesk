@@ -4,6 +4,9 @@ define([
 ], function(storageService, ScratchpadService) {
     'use strict';
 
+    beforeEach(module('superdesk.services.preferencesService'));
+    beforeEach(module('superdesk.notify'));
+
     describe('scratchpadService', function() {
         beforeEach(function() {
             module(storageService.name);
@@ -12,7 +15,7 @@ define([
             });
         });
 
-        var $q, storage, service, testItem, testItem2;
+        var $q, storage, service, testItem, testItem2, preferencesService;
 
         beforeEach(module(function($provide) {
             $provide.service('api', function($q) {
@@ -29,9 +32,10 @@ define([
             });
         }));
 
-        beforeEach(inject(function($injector) {
+        beforeEach(inject(function($injector, notify) {
             $q = $injector.get('$q');
             storage = $injector.get('storage');
+            preferencesService = $injector.get('preferencesService');
             service = $injector.get('scratchpad');
             testItem = {
                 _links: {self: {href: 'test'}},
@@ -44,19 +48,29 @@ define([
             storage.clear();
             service.itemList = [];
             service.data = {};
+            spyOn(preferencesService, 'update').andReturn($q.when({}));
         }));
 
         it('can add items', function() {
             service.addItem(testItem);
-            var item = storage.getItem('scratchpad:items');
-            expect(item).toEqual(['test']);
+
+            var update = { 
+                "scratchpad:items" : service.itemList
+            };
+
+            expect(preferencesService.update).toHaveBeenCalledWith(update, "scratchpad:items");
         });
 
         it('can remove items', function() {
             service.addItem(testItem);
             service.removeItem(testItem);
-            var item = storage.getItem('scratchpad:items');
-            expect(item).toEqual([]);
+
+            var update = { 
+                "scratchpad:items" : []
+            };
+
+            expect(preferencesService.update).toHaveBeenCalledWith(update, "scratchpad:items");
+            expect(service.itemList).toEqual([]);
         });
 
         it('can check if item exists and return false', function() {
@@ -74,8 +88,13 @@ define([
             service.addItem(testItem);
             service.addItem(testItem2);
             service.sort([1, 0]);
-            var test = storage.getItem('scratchpad:items');
-            expect(test).toEqual(['test2', 'test']);
+
+            var update = { 
+                "scratchpad:items" : service.itemList
+            };
+
+            expect(preferencesService.update).toHaveBeenCalledWith(update, "scratchpad:items");
+            expect(service.itemList).toEqual(['test2', 'test']);
         });
 
         it('can get items', inject(function($rootScope) {
@@ -93,7 +112,7 @@ define([
             expect(test.data).toEqual(testItem.data);
         }));
 
-        it('can announce to listeners', function() {
+        it('can announce to listeners', inject(function($rootScope) {
             var test = false;
 
             service.addListener(function() {
@@ -103,8 +122,9 @@ define([
             expect(test).toEqual(false);
 
             service.addItem(testItem);
+            $rootScope.$digest();
 
             expect(test).toEqual(true);
-        });
+        }));
     });
 });

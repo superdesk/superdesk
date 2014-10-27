@@ -7,12 +7,19 @@ describe('authoring', function() {
     var USER = 'user:1';
     var item = {guid: GUID};
 
+    beforeEach(module('superdesk.services.preferencesService'));
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.auth'));
 
     beforeEach(module(function($provide) {
         // avoid confirmation in tests
         $provide.service('$window', function() {});
+    }));
+
+    beforeEach(inject(function(preferencesService, $q) {
+            spyOn(preferencesService, 'getPreferences').andReturn($q.when({}));
+            spyOn(preferencesService, 'get').andReturn($q.when({"items":[]}));
+            spyOn(preferencesService, 'update').andReturn($q.when({}));
     }));
 
     beforeEach(inject(function($route) {

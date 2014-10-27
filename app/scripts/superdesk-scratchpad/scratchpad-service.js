@@ -42,7 +42,7 @@ define(['lodash'], function(_) {
             this.data[item._links.self.href] = item;
             this.saveItemList();
         };
-        this.removeItem = function(item, save) {
+        this.removeItem = function(item) {
             this.itemList = _.without(this.itemList, item._links.self.href);
             this.saveItemList();
         };

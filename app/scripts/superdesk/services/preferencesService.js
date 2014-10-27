@@ -102,7 +102,8 @@ define(['angular','lodash'], function(angular, _) {
                         return original_prefs[USER_PREFERENCES];
                     }
                     else if (userPreferences.indexOf(key) >= 0 ) {
-                        return original_prefs[USER_PREFERENCES][key];
+                        var prefs = original_prefs[USER_PREFERENCES] || {};
+                        return prefs[key] || null;
                     }
                     else {
                         return original_prefs[SESSION_PREFERENCES][key];

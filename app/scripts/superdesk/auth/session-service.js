@@ -55,9 +55,7 @@ define(['lodash'], function(_) {
             this.identity = null;
             this.updateIdentity(identity);
 
-            console.log("doing preferencesService.getPreferences():", session._id);
             preferencesService.getPreferences(session._id).then(function(preferences){
-                    console.log("original preferences:", preferences);
                     preferencesService.saveLocally(preferences);
 
                     if (defer) {

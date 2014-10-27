@@ -13,23 +13,31 @@ define([
 
     describe('session service', function() {
 
+        beforeEach(module('superdesk.services.preferencesService'));
+
         beforeEach(function() {
             localStorage.clear();
             module(StorageService.name);
             module(function ($provide) {
                 $provide.service('session', SessionService);
+                
             });
         });
+
+        beforeEach(inject(function(preferencesService, $q) {
+            spyOn(preferencesService, 'getPreferences').andReturn($q.when({}));
+        }));
 
         it('has identity and token property', inject(function (session) {
             expect(session.token).toBe(null);
             expect(session.identity).toBe(null);
         }));
-
-        it('can be started', inject(function (session) {
+        
+        it('can be started', inject(function (session, preferencesService, $q) {
             session.start(SESSION, {name: 'user'});
             expect(session.token).toBe(SESSION.token);
             expect(session.identity.name).toBe('user');
+            expect(preferencesService.getPreferences).toHaveBeenCalledWith(session.identity._id);
         }));
 
         it('can be set expired', inject(function (session) {
