@@ -99,18 +99,18 @@
         };
     }
 
-    angular.module('superdesk.menu.notifications', [])
+    angular.module('superdesk.menu.notifications', ['superdesk.asset'])
 
         .service('userNotifications', UserNotificationsService)
         .directive('sdMarkAsRead', MarkAsReadDirective)
 
-        .directive('sdNotifications', function() {
+        .directive('sdNotifications', ['asset', function(asset) {
             return {
                 require: '^sdSuperdeskView',
-                templateUrl: 'scripts/superdesk/menu/notifications/views/notifications.html',
+                templateUrl: asset.templateUrl('superdesk/menu/notifications/views/notifications.html'),
                 link: function(scope, elem, attrs, ctrl) {
                     scope.flags = ctrl.flags;
                 }
             };
-        });
+        }]);
 })();

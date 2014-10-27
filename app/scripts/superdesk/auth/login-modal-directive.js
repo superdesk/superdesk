@@ -4,11 +4,11 @@ define([], function() {
     /**
      * Login modal is watching session token and displays modal when needed
      */
-    LoginModalDirective.$inject = ['session', 'auth', 'features'];
-    function LoginModalDirective(session, auth, features) {
+    LoginModalDirective.$inject = ['session', 'auth', 'features', 'asset'];
+    function LoginModalDirective(session, auth, features, asset) {
         return {
             replace: true,
-            templateUrl: 'scripts/superdesk/auth/login-modal.html',
+            templateUrl: asset.templateUrl('superdesk/auth/login-modal.html'),
             link: function(scope, element, attrs) {
 
                 scope.features = features;

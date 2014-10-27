@@ -1,8 +1,8 @@
 (function() {
     'use strict';
 
-    angular.module('superdesk.users.activity', ['superdesk.dashboard.widgets'])
-        .config(['widgetsProvider', function(widgets) {
+    angular.module('superdesk.users.activity', ['superdesk.dashboard.widgets', 'superdesk.asset'])
+        .config(['widgetsProvider', 'assetProvider', function(widgets, asset) {
             widgets.widget('activity', {
                 label: 'Activity Log',
                 multiple: true,
@@ -10,9 +10,9 @@
                 max_sizey: 2,
                 sizex: 1,
                 sizey: 2,
-                thumbnail: 'scripts/superdesk-users/activity/thumbnail.png',
-                template: 'scripts/superdesk-users/activity/widget-activity.html',
-                configurationTemplate: 'scripts/superdesk-users/activity/configuration.html',
+                thumbnail: asset.imageUrl('superdesk-users/activity/thumbnail.png'),
+                template: asset.templateUrl('superdesk-users/activity/widget-activity.html'),
+                configurationTemplate: asset.templateUrl('superdesk-users/activity/configuration.html'),
                 configuration: {maxItems: 5},
                 description: 'Activity log widget'
             });

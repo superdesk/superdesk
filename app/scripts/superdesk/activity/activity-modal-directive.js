@@ -3,10 +3,10 @@ define([
 ], function(require) {
     'use strict';
 
-    return ['activityService', function(activityService) {
+    return ['activityService', 'asset', function(activityService, asset) {
         return {
             scope: true,
-            templateUrl: require.toUrl('./views/activity-modal.html'),
+            templateUrl: asset.templateUrl('superdesk/activity/views/activity-modal.html'),
             link: function(scope, elem) {
                 scope.stack = activityService.activityStack;
                 scope.$watch('stack.length', function(len) {

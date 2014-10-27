@@ -389,7 +389,8 @@
     return angular.module('superdesk.users', [
         'superdesk.users.profile',
         'superdesk.users.activity',
-        'superdesk.activity'
+        'superdesk.activity',
+        'superdesk.asset'
     ])
 
         .service('users', UsersService)
@@ -508,13 +509,13 @@
                 });
         }])
 
-        .config(['superdeskProvider', function(superdesk) {
+        .config(['superdeskProvider', 'assetProvider', function(superdesk, asset) {
             superdesk
                 .activity('/users/', {
                     label: gettext('Users'),
                     priority: 100,
                     controller: UserListController,
-                    templateUrl: 'scripts/superdesk-users/views/list.html',
+                    templateUrl: asset.templateUrl('superdesk-users/views/list.html'),
                     category: superdesk.MENU_MAIN,
                     reloadOnSearch: false,
                     filters: [
@@ -529,14 +530,14 @@
                     label: gettext('Users profile'),
                     priority: 100,
                     controller: UserEditController,
-                    templateUrl: 'scripts/superdesk-users/views/edit.html',
+                    templateUrl: asset.templateUrl('superdesk-users/views/edit.html'),
                     resolve: {user: UserResolver},
                     filters: [{action: 'detail', type: 'user'}]
                 })
                 .activity('/profile/', {
                     label: gettext('My Profile'),
                     controller: UserEditController,
-                    templateUrl: 'scripts/superdesk-users/views/edit.html',
+                    templateUrl: asset.templateUrl('superdesk-users/views/edit.html'),
                     resolve: {
                         user: ['session', 'api', function(session, api) {
                             return api.users.getByUrl(session.identity._links.self.href);
@@ -545,7 +546,7 @@
                 })
                 .activity('/settings/user-roles', {
                     label: gettext('User Roles'),
-                    templateUrl: 'scripts/superdesk-users/views/settings.html',
+                    templateUrl: asset.templateUrl('superdesk-users/views/settings.html'),
                     controller: UserRolesController,
                     category: superdesk.MENU_SETTINGS,
                     priority: -500
@@ -567,7 +568,7 @@
                     modal: true,
                     cssClass: 'upload-avatar',
                     controller: ChangeAvatarController,
-                    templateUrl: 'scripts/superdesk-users/views/change-avatar.html',
+                    templateUrl: asset.templateUrl('superdesk-users/views/change-avatar.html'),
                     filters: [{action: 'edit', type: 'avatar'}]
                 });
         }])
@@ -626,11 +627,11 @@
             };
         })
 
-        .directive('sdUserActivity', ['profileService', function(profileService) {
+        .directive('sdUserActivity', ['profileService', 'asset', function(profileService, asset) {
             return {
                 restrict: 'A',
                 replace: true,
-                templateUrl: 'scripts/superdesk-users/views/activity-feed.html',
+                templateUrl: asset.templateUrl('superdesk-users/views/activity-feed.html'),
                 scope: {
                     user: '='
                 },
@@ -672,11 +673,11 @@
             };
         }])
 
-        .directive('sdUserEdit', ['gettext', 'notify', 'users', 'session', '$location', '$route', 'superdesk', 'features',
-        function(gettext, notify, users, session, $location, $route, superdesk, features) {
+        .directive('sdUserEdit', ['gettext', 'notify', 'users', 'session', '$location', '$route', 'superdesk', 'features', 'asset',
+        function(gettext, notify, users, session, $location, $route, superdesk, features, asset) {
 
             return {
-                templateUrl: 'scripts/superdesk-users/views/edit-form.html',
+                templateUrl: asset.templateUrl('superdesk-users/views/edit-form.html'),
                 scope: {
                     origUser: '=user',
                     onsave: '&',
@@ -771,11 +772,10 @@
                 }
             };
         }])
-
-        .directive('sdUserPreferences', ['api', 'session', 'preferencesService', 'notify',
-            function(api, session, preferencesService, notify) {
+        .directive('sdUserPreferences', ['api', 'session', 'preferencesService', 'notify', 'asset',
+            function(api, session, preferencesService, notify, asset) {
             return {
-                templateUrl: 'scripts/superdesk-users/views/user-preferences.html',
+                templateUrl: asset.templateUrl('superdesk-users/views/user-preferences.html'),
                 link: function(scope, elem, attrs) {
 
                     var orig;
@@ -902,9 +902,9 @@
             };
         }])
 
-        .directive('sdUserList', ['keyboardManager', 'users', function(keyboardManager, users) {
+        .directive('sdUserList', ['keyboardManager', 'users', 'asset', function(keyboardManager, users, asset) {
             return {
-                templateUrl: 'scripts/superdesk-users/views/user-list-item.html',
+                templateUrl: asset.templateUrl('superdesk-users/views/user-list-item.html'),
                 scope: {
                     users: '=',
                     selected: '=',
@@ -944,21 +944,21 @@
             };
         }])
 
-        .directive('sdUserListItem', function() {
+        .directive('sdUserListItem', ['asset', function(asset) {
             return {
-                templateUrl: 'scripts/superdesk-users/views/user-list-item.html'
+                templateUrl: asset.templateUrl('superdesk-users/views/user-list-item.html')
             };
-        })
+        }])
 
-        .directive('sdActivity', function() {
+        .directive('sdActivity', ['asset', function(asset) {
             return {
-                templateUrl: 'scripts/superdesk-users/views/activity-list.html'
+                templateUrl: asset.templateUrl('superdesk-users/views/activity-list.html')
             };
-        })
+        }])
 
-        .directive('sdUserMentio', ['mentioUtil', 'api', 'userList', function(mentioUtil, api, userList) {
+        .directive('sdUserMentio', ['mentioUtil', 'api', 'userList', 'asset', function(mentioUtil, api, userList, asset) {
             return {
-                templateUrl: 'scripts/superdesk-users/views/mentions.html',
+                templateUrl: asset.templateUrl('superdesk-users/views/mentions.html'),
                 link: function(scope, elem) {
                     scope.users = [];
 
