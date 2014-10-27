@@ -109,3 +109,41 @@ Feature: Stages
         }
         """
         Then we get updated response
+
+    @auth
+    Scenario: Get tasks for stage
+        Given empty "desks"
+        Given empty "archive"
+        Given empty "tasks"
+        Given empty "stages"
+        When we post to "/stages"
+        """
+        {
+        "name": "show my content",
+        "description": "Show content items created by the current logged user"
+        }
+        """
+        When we post to "desks"
+        """
+        {"name": "Sports Desk", "incoming_stage": "#STAGES_ID#"}
+        """
+        When we post to "tasks"
+	    """
+        [{"slugline": "first task", "type": "text", "task": {"desk":"#DESKS_ID#", "stage" :"#STAGES_ID#"}}]
+	    """
+        When we post to "archive"
+        """
+        [{"type": "text"}]
+        """
+        And we get "/tasks"
+        Then we get list with 1 items
+	    """
+        {"_items": [{"slugline": "first task", "type": "text", "task": {"desk": "#DESKS_ID#", "stage": "#STAGES_ID#"}}]}
+	    """
+
+        When we get "stages/#STAGES_ID#/items"
+        Then we get list with 1 items
+	    """
+        {"_items": [{"slugline": "first task", "type": "text", "task": {"desk": "#DESKS_ID#", "stage": "#STAGES_ID#"}}]}
+	    """
+
