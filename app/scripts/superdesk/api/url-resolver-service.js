@@ -18,7 +18,7 @@ define([], function() {
          */
         this.resource = function(resource) {
             return this.links().then(function() {
-                return _links[resource] ? _links[resource] : $q.reject(resource);
+                return _links[resource] ? _links[resource] : $q.reject({status: 404, resource: resource});
             });
         };
 

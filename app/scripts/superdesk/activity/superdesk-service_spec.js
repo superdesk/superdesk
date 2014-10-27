@@ -7,7 +7,6 @@ define([
 
     describe('Superdesk service', function() {
         var provider;
-        var isBeta = false;
         var intent = {action: 'testAction', type: 'testType'};
         var testWidget = {testData: 123};
         var testPane = {testData: 123};
@@ -23,17 +22,17 @@ define([
             module('ngRoute');
             module('superdesk.activity');
             module(function($provide) {
-                $provide.service('gettext', function() {});
-                $provide.service('modal', function() {});
-                $provide.service('betaService', function() {
-                    this.isBeta = function() { return isBeta; };
-                });
-                $provide.service('DataAdapter', function() {});
-
                 provider = $provide.provider('superdesk', superdeskProvider);
                 provider.widget('testWidget', testWidget);
                 provider.pane('testPane', testPane);
                 provider.activity('testActivity', testActivity);
+
+                provider.activity('missingFeatureActivity', {
+                    features: {missing: 1},
+                    filters: [{action: 'test', type: 'features'}]
+                });
+
+                $provide.value('features', {});
             });
         });
 
@@ -92,6 +91,11 @@ define([
             expect(success.length).toBe(1);
             expect(success[0].label).toBe('test');
             expect(failure.length).toBe(0);
+        }));
+
+        it('can check features required by activity', inject(function(superdesk, features) {
+            var list = superdesk.findActivities({type: 'features', action: 'test'});
+            expect(list.length).toBe(0);
         }));
     });
 });

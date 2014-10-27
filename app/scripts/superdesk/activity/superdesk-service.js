@@ -45,13 +45,25 @@ define([
         };
 
         /**
-         * Register activity.
+         * Register an activity.
          *
-         * @param {string} id
-         * @param {Object} data
+         * @param {string} id Activity ID. Can be used for later lookup.
+         * @param {Object} activityData Activity definition.
+         *
+         *    Object properties:
+         *
+         *    - `priority` - `{number}` - priority used for ordering.
+         *    - `when` - `{string}` - $route.when param.
+         *    - `href` - `{string}` - path for links generated for given activity.
+         *    - `filters` - `{Array.<Object>}` - list of `action` `type` pairs.
+         *    - `beta` - `{bool=false}` - is activity available only in beta mode?
+         *    - `reloadOnSearch` - `{bool=false}` - $route.reloadOnSearch param.
+         *    - `auth` - `{bool=true}` - does activity require authenticated user?
+         *    - `features` - `{Object}` - map of features this activity requires.
+         *
          * @returns {Object} self
          */
-        this.activity = function(id, data) {
+        this.activity = function(id, activityData) {
             var activity = angular.extend({
                 _id: id,
                 priority: 0,
@@ -60,8 +72,9 @@ define([
                 filters: [],
                 beta: false,
                 reloadOnSearch: false,
-                auth: true
-            }, data);
+                auth: true,
+                features: {}
+            }, activityData);
 
             var actionless = _.find(activity.filters, function(filter) {
                 return !filter.action;
@@ -87,8 +100,8 @@ define([
             return this;
         };
 
-        this.$get = ['$q', 'activityService', 'activityChooser', 'betaService',
-        function($q, activityService, activityChooser, betaService) {
+        this.$get = ['$q', '$rootScope', 'activityService', 'activityChooser', 'betaService', 'features',
+        function($q, $rootScope, activityService, activityChooser, betaService, features) {
 
             /**
              * Render main menu depending on registered acitivites
@@ -108,6 +121,14 @@ define([
              */
             function chooseActivity(activities) {
                 return activityChooser.choose(activities);
+            }
+
+            function checkFeatures(activity) {
+                var isMatch = true;
+                angular.forEach(activity.features, function(val, key) {
+                    isMatch = isMatch && features[key] && val;
+                });
+                return isMatch;
             }
 
             return angular.extend({
@@ -152,7 +173,7 @@ define([
                         criteria.type = intent.type;
                     }
                     return _.filter(this.activities, function(activity) {
-                        return _.find(activity.filters, criteria);
+                        return _.find(activity.filters, criteria) && checkFeatures(activity);
                     });
                 },
 
@@ -176,6 +197,13 @@ define([
 
                     return this.resolve(intent).then(function(activity) {
                         return activityService.start(activity, intent);
+                    }, function() {
+                        $rootScope.$broadcast([
+                            'intent',
+                            intent.action || '*',
+                            intent.type || '*'
+                        ].join(':'), intent);
+                        return $q.reject();
                     });
                 }
             }, constans);

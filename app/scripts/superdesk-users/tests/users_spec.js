@@ -2,6 +2,7 @@
 
 describe('users api', function() {
     beforeEach(module('superdesk.users'));
+    beforeEach(module('superdesk.mocks'));
 
     it('can create user', inject(function(users, api, $q, $rootScope) {
 
@@ -49,6 +50,7 @@ describe('users api', function() {
 
 describe('userlist service', function() {
     beforeEach(module('superdesk.users'));
+    beforeEach(module('superdesk.mocks'));
 
     beforeEach(module(function($provide) {
         $provide.service('api', function($q) {

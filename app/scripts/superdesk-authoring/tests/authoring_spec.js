@@ -9,6 +9,7 @@ describe('authoring', function() {
 
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.auth'));
+    beforeEach(module('superdesk.mocks'));
 
     beforeEach(inject(function($window) {
         $window.onbeforeunload = angular.noop;
@@ -107,6 +108,7 @@ describe('authoring', function() {
 
 describe('autosave', function() {
     beforeEach(module('superdesk.authoring'));
+    beforeEach(module('superdesk.mocks'));
 
     it('can fetch an autosave for not locked item', inject(function(autosave, api, $q, $rootScope) {
         spyOn(api, 'find').andReturn($q.when({}));
