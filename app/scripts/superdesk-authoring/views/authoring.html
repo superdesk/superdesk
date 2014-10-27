@@ -1,5 +1,5 @@
 <div class="auth-screen">
-	<div class="subnav" ng-class="{'auth-sendto': sendTo}">
+	<div class="subnav" ng-class="{'auth-sendto': viewSendTo}">
 	    <div class="page-title-wrapper clearfix pull-left">
 	    	<span class="lock-info pull-left" ng-show="item._locked"><i class="icon-lock-red"></i></span>
 	    	<h3 class="page-nav-title" ng-show="item.headline">{{ item.headline }}</h3>
@@ -13,10 +13,10 @@
 
     	    <button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()"
                 ng-show="!item._locked && !_preview"
-                ng-disabled="!dirty && !item._autosave"
+                ng-disabled="saving || (!dirty && !item._autosave)"
                 translate>Save</button>
 
-	    	<button class="navbtn navbtn-hover" ng-click="sendTo = !sendTo" ng-show="item.task.desk">
+	    	<button class="navbtn navbtn-hover" ng-click="viewSendTo = !viewSendTo" ng-show="item.task.desk">
 	            <i class="svg-icon-add"></i>
 	        </button>
         </div>
@@ -27,12 +27,19 @@
 	    </div>
 	</div>
 
-	<section class="main-section" ng-class="{'auth-sendto': sendTo}">
+	<section class="main-section" ng-class="{'auth-sendto': viewSendTo}">
 
 		<div sd-authoring-widgets data-item="item">
 
-		    <div class="main-article-container" ng-click="sendTo = false;">
+		    <div class="main-article-container" ng-click="viewSendTo = false;">
 		        <article class="main-article" ng-if="item._id" ng-class="{preview: !_editable}">
+                    <section class="article-keyword">
+                        <header>
+                            <span class="edit-label" translate>Keyword</span>
+                        </header>
+                        <input type="text" class="keyword" ng-model="item.slugline" ng-if="_editable"></input>
+                    </section>
+
 		            <section class="article-title">
 		                <header>
 		                    <span class="edit-label" translate>Headline</span>
@@ -56,18 +63,6 @@
 		
 	</section>
 
-	<div class="send-to-pane" ng-class="{show: sendTo}" sd-click-close>
-		<header>
-			<h3 translate>Send to</h3>
-			<div class="close" ng-click="sendTo = !sendTo"><i class="icon-close-small icon-white"></i></div>
-		</header>
-		<div class="content">
-			<ul class="destination-list">
-				<li ng-repeat="stage in stages._items" ng-click="sendToStage(stage)">
-					{{ stage.name }}
-				</li>
-			</ul>
-		</div>
-	</div>
+	<div sd-send-item data-item="item" data-view="viewSendTo"></div>
 </div>
 

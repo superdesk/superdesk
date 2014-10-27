@@ -12,13 +12,22 @@
 			</ul>
     	</div>
 
-        <a class="navbtn navbtn-info" href="" ng-click="content.create()">
-            <i class="svg-icon-add inverse"></i> <span class="title" translate>Create</span>
-        </a>
-
-        <a class="navbtn navbtn-info" href="" ng-if="openUpload" ng-click="openUpload()">
-            <i class="svg-icon-add inverse"></i> <span class="title" translate>Upload</span>
-        </a>
+        <div class="navbtn dropdown strict">
+            <button class="dropdown-toggle sd-create-btn"></button>
+            <ul class="dropdown-menu pull-right">
+                <li>
+                    <button ng-click="content.create()">
+                        <i class="icon-plus-small icon-round icon-white"></i> {{ :: 'Story' | translate }}
+                    </button>
+                </li>
+                <li class="divider" ng-if="openUpload"></li>
+                <li ng-if="openUpload">
+                    <button ng-click="openUpload()">
+                        <i class="icon-upload-blue"></i> {{ :: 'UPLOAD' | translate }}
+                    </button>
+                </li>
+            </ul>
+        </div>
 
         <button class="navbtn">
         	<i class="svg-icon-right"></i>
@@ -149,10 +158,8 @@
                         <i class="icon-close-small"></i>
                     </button>
                 </header>
-                <div class="content">
-                    <div sd-shadow ng-if="selected.preview">
-                        <div sd-media-preview data-item="selected.preview" data-display="display()" data-type="type"></div>
-                    </div>
+                <div class="content" ng-if="selected.preview">
+                    <div sd-media-preview data-item="selected.preview" data-display="display()" data-type="type"></div>
                 </div>
                 
 

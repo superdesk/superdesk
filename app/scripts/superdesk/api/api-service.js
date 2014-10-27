@@ -51,10 +51,12 @@ define([
             /**
              * Remove keys prefixed with '_'
              */
-            function clean(data) {
-                return _.omit(data, function(val, key) {
-                    return key === '_updated' || key === '_created' || key === '_etag';
-                });
+            function clean(data, keepId) {
+                var fields = ['_updated', '_created', '_etag', '_links'];
+                if (!keepId) {
+                    fields.push('_id');
+                }
+                return _.omit(data, fields);
             }
 
             /**
@@ -108,7 +110,7 @@ define([
                 return http({
                     method: item._links ? 'PATCH' : 'POST',
                     url: item._links ? urls.item(item._links.self.href) : this.url(),
-                    data: diff ? diff : clean(item),
+                    data: diff ? diff : clean(item, !!!item._links),
                     params: params,
                     headers: getHeaders(item)
                 }).then(function(data) {

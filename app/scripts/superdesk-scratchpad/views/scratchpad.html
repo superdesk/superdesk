@@ -1,7 +1,7 @@
 <div id="scratchpad" sd-droppable data-update="drop" ng-class="{opened: flags['scratchpad-open'], left: flags['menu']}">
     <div class="header">
         <div class="title" translate>SCRATCHPAD</div>
-        <div class="info">{{items.length}} {{'items' | translate}}</span></div>
+        <div class="info">{{ items.length }} {{ :: 'items' | translate}}</span></div>
         <button class="trigger pull-right" ng-click="toggle()">
             <i class="svg-icon-top inverse"></i>
         </button>

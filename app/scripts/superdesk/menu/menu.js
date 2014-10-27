@@ -53,7 +53,7 @@
                         ctrl.flags.menu = false;
                     });
 
-                    scope.$watch(function() {
+                    scope.$watch(function currentRoute() {
                         return $route.current;
                     }, function(route) {
                         scope.currentRoute = route || null;

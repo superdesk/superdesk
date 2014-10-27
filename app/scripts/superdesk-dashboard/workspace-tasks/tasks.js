@@ -34,13 +34,10 @@ function TasksService(desks, $rootScope, api) {
         }
         return api('tasks').query({
             source: {
-                size: 100,
+                size: 25,
                 sort: [{_updated: 'desc'}],
                 filter: filter
             }
-        })
-        .then(function(tasks) {
-            return tasks;
         });
     };
 }
@@ -50,26 +47,17 @@ function TasksController($scope, api, notify, desks, tasks) {
 
     $scope.selected = {};
     $scope.newTask = null;
-
-    desks.initialize()
-    .then(function() {
-        $scope.deskLookup = desks.deskLookup;
-        $scope.userLookup = desks.userLookup;
-    });
-
-    $scope.tasks = {};
+    $scope.tasks = null;
 
     $scope.$watch(function() {
         return desks.getCurrentDeskId();
-    }, function() {
-        fetchTasks();
-    });
+    }, fetchTasks);
 
-    var fetchTasks = function() {
+    function fetchTasks() {
         tasks.fetch().then(function(list) {
             $scope.tasks = list;
         });
-    };
+    }
 
     $scope.preview = function(item) {
         $scope.selected.preview = item;
@@ -98,41 +86,58 @@ function TasksController($scope, api, notify, desks, tasks) {
         $scope.newTask = null;
     };
 
-    fetchTasks();
+    desks.initialize().then(function() {
+        $scope.userLookup = desks.userLookup;
+        $scope.deskLookup = desks.deskLookup;
+    });
 }
 
-TaskPreviewDirective.$inject = ['tasks', 'notify'];
-function TaskPreviewDirective(tasks, notify) {
+TaskPreviewDirective.$inject = ['tasks', 'desks', 'notify'];
+function TaskPreviewDirective(tasks, desks, notify) {
+    var promise = desks.initialize();
     return {
         templateUrl: 'scripts/superdesk-dashboard/workspace-tasks/views/task-preview.html',
         scope: {
             item: '=',
-            users: '='
+            close: '&onclose'
         },
         link: function(scope) {
             var _orig;
             scope.task = null;
+            scope.task_details = null;
+            scope.editmode = false;
 
-            scope.$watch('item._id', function() {
-                edit();
+            promise.then(function() {
+                scope.desks = desks.deskLookup;
+                scope.users = desks.userLookup;
             });
 
-            var edit = function() {
-                scope.task = _.create(scope.item);
-                _orig = scope.item;
-            };
+            scope.$watch('item._id', function(val) {
+                if (val) {
+                    scope.reset();
+                }
+            });
 
-            scope.save = function(form) {
+            scope.save = function() {
+                scope.task.task = _.extend(scope.task.task, scope.task_details);
                 tasks.save(_orig, scope.task)
                 .then(function(result) {
                     notify.success(gettext('Item saved.'));
-                    form.$setPristine();
+                    scope.editmode = false;
                 });
             };
 
-            scope.cancel = function(form) {
-                form.$setPristine();
-                edit();
+            scope.edit = function() {
+                scope.editmode = true;
+            };
+
+            scope.reset = function() {
+                scope.editmode = false;
+                scope.task = _.create(scope.item);
+                scope.task_details = _.extend({}, scope.item.task);
+                scope.task_details.due_date = new Date(scope.item.task.due_date);
+                scope.task_details.due_time = new Date(scope.item.task.due_date);
+                _orig = scope.item;
             };
         }
     };
@@ -140,13 +145,19 @@ function TaskPreviewDirective(tasks, notify) {
 
 AssigneeViewDirective.$inject = ['desks'];
 function AssigneeViewDirective(desks) {
-    desks.initialize();
+    var promise = desks.initialize();
     return {
         templateUrl: 'scripts/superdesk-dashboard/workspace-tasks/views/assignee-view.html',
-        scope: {item: '='},
+        scope: {task: '='},
         link: function(scope) {
-            scope.deskLookup = desks.deskLookup;
-            scope.userLookup = desks.userLookup;
+            promise.then(function setItemAssigne() {
+                var task = angular.extend({desk: null, user: null}, scope.task);
+                var desk = desks.deskLookup[task.desk] || {};
+                var user = desks.userLookup[task.user] || {};
+                scope.deskName = desk.name || null;
+                scope.userName = user.display_name || null;
+                scope.userPicture = user.picture_url || null;
+            });
         }
     };
 }
@@ -155,6 +166,7 @@ angular.module('superdesk.workspace.tasks', [])
 
 .directive('sdTaskPreview', TaskPreviewDirective)
 .directive('sdAssigneeView', AssigneeViewDirective)
+
 .service('tasks', TasksService)
 
 .config(['superdeskProvider', function(superdesk) {
@@ -166,18 +178,13 @@ angular.module('superdesk.workspace.tasks', [])
         topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
         beta: true
     });
+
     superdesk.activity('pick.task', {
         label: gettext('Pick task'),
         icon: 'pick',
-        controller: ['api', 'data', 'session', 'superdesk', 'workqueue',
-            function(api, data, session, superdesk, workqueue) {
-                api('tasks').save(
-                    _.clone(data.item),
-                    {task: _.extend({user: session.identity._id}, data.item.task)})
-                .then(function(result) {
-                    workqueue.add(result);
-                    superdesk.intent('author', 'article', result);
-                });
+        controller: ['data', 'superdesk',
+            function pickTask(data, superdesk) {
+                return superdesk.intent('author', 'article', data.item);
             }
         ],
         filters: [{action: superdesk.ACTION_EDIT, type: 'task'}]

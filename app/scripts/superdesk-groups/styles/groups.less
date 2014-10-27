@@ -1,0 +1,183 @@
+// group.less
+// Styling for the superdesk group module
+// ----------------------------------------------------------------------------------------
+@import 'mixins.less';
+@import 'variables.less';
+
+
+/* 	============================ 
+		GROUP CONFIG
+	============================ */
+
+.group-settings {
+	margin-top: 20px;
+	margin-left: 20px;
+}
+
+.group-config {
+
+	.box-sizing(border-box);
+	position: relative;
+	.border-radius(3px 3px 0 0);
+	margin-bottom: 40px;
+	min-height: 25px;
+	
+	.group-header {
+		border-bottom: 5px solid #4d4d4d;
+		padding-bottom: 5px;
+		h6 {
+			text-transform: uppercase;
+			font-size: 12px;
+			color: @sd-text;
+			.text-bold();
+		}
+	}
+
+	.group-subnav {
+		background: @background-main;
+		.clearfix();
+		border-left: 1px solid #dfdfdf;
+
+		.subnav-tabs {
+			li {
+				button {
+					font-size: 14px;
+					color:@sd-blue-text;
+					.box-sizing(border-box);
+					height: 38px !important;
+					line-height: 38px;
+					border:0;
+					border-right: 1px solid #dfdfdf;
+					float: left;
+					padding: 0 10px;
+					&:hover {
+						text-decoration: none;
+						background: #fff;
+					}
+				}
+				&.active button {
+					background: #fff;
+					color: #333;
+				}
+			}
+			
+		}
+		.action {
+			border: 0;
+			font-size: 11px;
+			background:#ebebeb;
+			color: #4f4f4f;
+			text-transform: uppercase;
+			.text-semibold();
+			.box-sizing(border-box);
+			height: 38px !important;
+			line-height: 38px;
+			display: inline-block;
+			float: right;
+			padding: 0 10px;
+			&:hover {
+				background:@sd-blue;
+				color: #fff;
+				text-decoration: none;
+				cursor: pointer;
+			}
+		}
+	}
+
+	.group-config-tab-content {
+		background: #fff;
+		border-top: 1px solid #ddd;
+			.plain-table {
+				.table-buttons {
+					width: 0;
+					overflow: hidden;
+					visibility: visible;
+					.transition( all 0.3s ease);
+					margin-left:0px; 
+				}
+				li:hover .table-buttons {
+					width: 24px !important;
+					margin-left:5px !important;
+
+				}
+			}
+	}
+
+}
+
+
+/* Group create/edit popup */
+
+.add-group-popup {
+	top: 100px!important;
+	bottom: 100px!important;
+	width: 630px;
+	margin: 0 0 0 -315px;
+	left: 50%!important;
+	.modal-body {
+		bottom: 0;
+		.modal-screen {
+			top: 48px;
+		}
+	}
+	.people-stage {
+		.header {
+			height: 50px;
+			.search-result {
+				position: absolute;
+				left: 40px; right: 40px;
+				top: 51px; bottom: 80px;
+				overflow: auto;
+				border: 1px solid #ddd;
+				background: #fff;
+				padding: 10px;
+				z-index: 1;
+			}
+		}
+		.content {
+			position: absolute;
+			left: 20px; right: 20px;
+			top: 70px; bottom: 80px;
+			overflow: auto;
+		}
+		.member-list {
+			ul {
+				> li {
+					position: relative;
+					float: left;
+					margin: 5px;
+					border: 1px solid #fff;
+					.border-radius(5px);
+					padding: 15px 10px;
+					width: 115px;
+					.avatar {
+						display: block;
+						width: 84px;
+						height: 84px;
+						float: none;
+						margin: 0 auto 10px;
+					}
+					.name {
+						text-align: center;
+					}
+					i {
+						position: absolute;
+						right: 10px; top: 10px;
+						display: none;
+						.opacity(60);
+						&:hover {
+							.opacity(100);
+							cursor: pointer;
+						}
+					}
+					&:hover {
+						i {
+							display: block;
+						}
+						border-color: #e0e0e0;
+					}
+				}
+			}
+		}
+	}
+}

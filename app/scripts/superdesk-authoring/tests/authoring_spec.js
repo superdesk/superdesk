@@ -11,9 +11,8 @@ describe('authoring', function() {
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.auth'));
 
-    beforeEach(module(function($provide) {
-        // avoid confirmation in tests
-        $provide.service('$window', function() {});
+    beforeEach(inject(function($window) {
+        $window.onbeforeunload = angular.noop;
     }));
 
     beforeEach(inject(function(preferencesService, $q) {
@@ -62,11 +61,9 @@ describe('authoring', function() {
         expect(item._locked).toBe(false);
     }));
 
-    it('can autosave and save an item', inject(function(superdesk, api, desks, $q, $timeout, $controller, $rootScope) {
+    it('can autosave and save an item', inject(function(superdesk, api, $q, $timeout, $controller, $rootScope) {
         var scope = $rootScope.$new(),
             headline = 'test headline';
-
-        spyOn(desks, 'initialize').andReturn($q.reject());
 
         $controller(superdesk.activity('authoring').controller, {item: item, $scope: scope});
         expect(scope.dirty).toBe(false);
@@ -88,5 +85,42 @@ describe('authoring', function() {
         $rootScope.$digest();
         expect(scope.dirty).toBe(false);
         expect(api.save).toHaveBeenCalled();
+    }));
+
+    it('can use a previously created autosave', inject(function($rootScope, $controller, superdesk) {
+        var scope = $rootScope.$new();
+        $controller(superdesk.activity('authoring').controller, {item: {_autosave: {headline: 'test'}}, $scope: scope});
+        expect(scope.item._autosave.headline).toBe('test');
+        expect(scope.item.headline).toBe('test');
+    }));
+});
+
+describe('autosave', function() {
+    beforeEach(module('superdesk.authoring'));
+
+    it('can fetch an autosave for not locked item', inject(function(autosave, api, $q, $rootScope) {
+        spyOn(api, 'find').andReturn($q.when({}));
+        autosave.open({_locked: false, _id: 1});
+        $rootScope.$digest();
+        expect(api.find).toHaveBeenCalledWith('archive_autosave', 1);
+    }));
+
+    it('will skip autosave fetch when item is locked', inject(function(autosave, api, $rootScope) {
+        spyOn(api, 'find');
+        autosave.open({_locked: true});
+        $rootScope.$digest();
+        expect(api.find).not.toHaveBeenCalled();
+    }));
+
+    it('can create an autosave', inject(function(autosave, api, $q, $timeout, $rootScope) {
+        var item = {_id: 1, _etag: 'x'};
+        spyOn(api, 'save').andReturn($q.when({_id: 2}));
+        autosave.save(item, {headline: 'test'});
+        $rootScope.$digest();
+        expect(api.save).not.toHaveBeenCalled();
+        $timeout.flush(5000);
+        expect(api.save).toHaveBeenCalledWith('archive_autosave', {}, {_id: 1, headline: 'test'});
+        expect(item._autosave._id).toBe(2);
+        expect(item.headline).toBe('test');
     }));
 });

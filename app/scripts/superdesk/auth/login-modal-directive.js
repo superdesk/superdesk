@@ -29,20 +29,20 @@ define([], function() {
                         });
                 };
 
-                scope.$watchGroup([function() {
+                scope.$watchGroup([function getSessionToken() {
                     return session.token;
-                }, 'requiredLogin'], function(triggerLogin) {
+                }, 'requiredLogin'], function showLogin(triggerLogin) {
                     scope.isLoading = false;
                     scope.identity = session.identity;
                     scope.sessionId = session.sessionId;
                     scope.username = session.identity ? session.identity.UserName : null;
                     scope.password = null;
                     if (!triggerLogin[0] && triggerLogin[1]) {
-                        element.show();
+                        scope.active = true;
                         var focusElem = scope.username ? 'password' : 'username';
                         element.find('#login-' + focusElem).focus();
                     } else {
-                        element.hide();
+                        scope.active = false;
                     }
                 });
             }

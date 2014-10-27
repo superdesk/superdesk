@@ -1,9 +1,15 @@
 <div sd-settings-view>
-	<button class="btn btn-info pull-right" ng-click="openDesk('general')">
-        <i class="icon-plus-sign icon-white"></i> <span class="ng-scope">Add New Desk</span>
-    </button>
+	<div class="header">
+		<div class="container">
+			<h2 translate>Desk management</h2>
+			<button class="btn btn-info pull-right" ng-click="openDesk('general')">
+		        <i class="icon-plus-sign icon-white"></i> {{ 'Add New Desk' | translate }}
+		    </button>
+		</div>
+	</div>
+	
 
-    <h2 translate>Desk management</h2>
+    
     <div class="settings-tab-content desk-settings">
     	<div sd-shadow>
 			<div class="desk-config" ng-repeat="desk in desks._items">
@@ -30,7 +36,7 @@
 			<h3 ng-show="desk.edit._id" translate>Edit Desk</h3>
 		</div>
 		
-		<div class="modal-body" sd-wizard data-current-step="step.current" data-finish="cancel()">
+		<div class="modal-body" sd-wizard data-name="desks" data-current-step="step.current" data-finish="cancel()">
 			
 			<div sd-wizard-step data-title="{{ 'General' | translate }}" data-code="general">
 				<div sd-deskedit-basic>
@@ -64,17 +70,17 @@
 								<div class="stages-list clearfix">
 									<div ng-repeat="stage in stages">
 										<div class="stage" ng-class="{editable: editStage}">
-											<span ng-click="setEditStage(stage)" ng-show="editStage !== stage">{{ stage.name }}</span>
-											<span ng-show="editStage == stage">
+											<span ng-click="setEditStage(stage)" ng-if="editStage !== stage">{{ stage.name }}</span>
+											<span ng-if="editStage == stage">
 												<input type="text" ng-model="editStage.name" ng-keyup="saveEditOnEnter($event)" />	
 											</span>
-											<i class="remove" ng-click="remove(stage)"></i>
+											<i class="remove" ng-hide="stage.default_incoming" ng-click="remove(stage)"></i>
 										</div>
 									</div>
 									<div class="stage editable" ng-show="newStage.show">
 										<input type="text" ng-model="newStage.model" ng-keyup="saveOnEnter($event)" />	
 									</div>
-									<a class="btn add" sd-focus-input ng-click="newStage.model = null; newStage.show = true" ><i class="icon-plus-small"></i></a>
+									<a class="btn add" ng-hide="newStage.show" sd-focus-input ng-click="cancelEdit(); newStage.model = null; newStage.show = true" ><i class="icon-plus-small"></i></a>
 								</div>
 								<p ng-if="message">{{ message }}</p>
 							</div>

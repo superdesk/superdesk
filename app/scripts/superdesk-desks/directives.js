@@ -17,7 +17,7 @@ define([
             link: function(scope, elem, attrs) {
                 desks.fetchUserDesks($rootScope.currentUser).then(function(userDesks) {
                     scope.desks = userDesks._items;
-                    scope.selectedDesk = _.find(scope.desks, {_id: desks.getCurrentDeskId()});
+                    scope.selectedDesk = _.find(scope.desks._items, {_id: desks.getCurrentDeskId()});
                 });
                 scope.select = function(desk) {
                     scope.selectedDesk = desk;
@@ -42,8 +42,6 @@ define([
 
             link: function(scope, elem, attrs) {
 
-                var _desk = null;
-
                 scope.$watch('step.current', function(step) {
                     if (step === 'general') {
                         scope.edit(scope.desk.edit);
@@ -53,18 +51,20 @@ define([
 
                 scope.edit = function(desk) {
                     scope.desk.edit = _.create(desk);
-                    _desk = desk || {};
                 };
 
                 scope.save = function(desk) {
                     scope.message = gettext('Saving...');
                     var _new = desk._id ? false : true;
-                    api.desks.save(_desk, desk).then(function() {
+                    api.desks.save(scope.desk.edit, desk).then(function() {
                         if (_new) {
-                            scope.edit(_desk);
-                            scope.desks._items.unshift(_desk);
+                            scope.edit(scope.desk.edit);
+                            scope.desks._items.unshift(scope.desk.edit);
+                        } else {
+                            var origDesk = _.find(scope.desks._items, {_id: scope.desk.edit._id});
+                            _.extend(origDesk, scope.desk.edit);
                         }
-                        WizardHandler.wizard().next();
+                        WizardHandler.wizard('desks').next();
                     }, function(response) {
                         scope.message = gettext('There was a problem, desk not created/updated.');
                     });
@@ -77,6 +77,7 @@ define([
         return {
 
             link: function(scope, elem, attrs) {
+                scope.origEditName = null;
 
                 scope.$watch('step.current', function(step, previous) {
                     if (step === 'stages') {
@@ -96,17 +97,17 @@ define([
                                 scope.stages = result._items;
                             });
                         } else {
-                            WizardHandler.wizard().goTo(previous);
+                            WizardHandler.wizard('desks').goTo(previous);
                         }
                     }
                 });
 
                 scope.previous = function() {
-                    WizardHandler.wizard().previous();
+                    WizardHandler.wizard('desks').previous();
                 };
 
                 scope.next = function() {
-                    WizardHandler.wizard().next();
+                    WizardHandler.wizard('desks').next();
                 };
 
                 scope.saveOnEnter = function($event) {
@@ -140,14 +141,25 @@ define([
                 };
 
                 scope.setEditStage = function(stage) {
+                    scope.origEditName = stage.name;
                     scope.editStage = stage;
+                    scope.newStage.show = false;
+                };
+
+                scope.cancelEdit = function() {
+                    if (scope.editStage && scope.editStage.name) {
+                        scope.editStage.name = scope.origEditName;
+                    }
+                    scope.editStage = null;
                 };
 
                 scope.remove = function(stage) {
                     api('stages').remove(stage)
-                        .then(function(result) {
-                            _.remove(scope.stages, stage);
-                        });
+                    .then(function(result) {
+                        _.remove(scope.stages, stage);
+                    }, function(result) {
+                        scope.message = gettext('There was a problem, stage was not deleted.');
+                    });
                 };
             }
         };
@@ -172,7 +184,7 @@ define([
                                 generateSearchList();
                             });
                         } else {
-                            WizardHandler.wizard().goTo(previous);
+                            WizardHandler.wizard('desks').goTo(previous);
                         }
                     }
                 });
@@ -193,7 +205,7 @@ define([
                 };
 
                 scope.previous = function() {
-                    WizardHandler.wizard().previous();
+                    WizardHandler.wizard('desks').previous();
                 };
 
                 scope.save = function() {
@@ -204,7 +216,9 @@ define([
                     api.desks.save(scope.desk.edit, {members: members}).then(function(result) {
                         _.extend(scope.desk.edit, result);
                         desks.deskMembers[scope.desk.edit._id] = scope.deskMembers;
-                        WizardHandler.wizard().finish();
+                        var origDesk = desks.deskLookup[scope.desk.edit._id];
+                        _.extend(origDesk, scope.desk.edit);
+                        WizardHandler.wizard('desks').finish();
                     }, function(response) {
                         scope.message = gettext('There was a problem, members not saved.');
                     });
