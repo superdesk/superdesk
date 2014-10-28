@@ -26,7 +26,7 @@
     <div class="header"></div>
     <div class="content">
       <ul>
-        <li ng-repeat="item in ::menu | orderBy:'priority'" ng-class="{active: item.isActive}">
+        <li ng-repeat="item in menu | orderBy:'priority'" ng-class="{active: item.isActive}">
           <a ng-href="#{{ :: item.href }}" title="{{ :: item.label | translate }}">{{ :: item.label | translate }}</a>
         </li>
       </ul>

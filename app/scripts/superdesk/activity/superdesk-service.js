@@ -106,15 +106,17 @@ define([
             /**
              * Render main menu depending on registered acitivites
              */
-            var beta = betaService.isBeta();
-            _.forEach(activities, function(activity, id) {
-                if (activity.beta === true && beta === false) {
-                    $routeProvider.when(activity.when, {redirectTo: '/workspace'});
-                    delete activities[id];
-                } else if (activity.when[0] === '/' && (activity.template || activity.templateUrl)) {
-                    $routeProvider.when(activity.when, activity);
-                }
+            betaService.isBeta().then(function(beta){
+                _.forEach(activities, function(activity, id) {
+                    if (activity.beta === true && beta === false) {
+                        $routeProvider.when(activity.when, {redirectTo: '/workspace'});
+                        delete activities[id];
+                    } else if (activity.when[0] === '/' && (activity.template || activity.templateUrl)) {
+                        $routeProvider.when(activity.when, activity);
+                    }
+                });
             });
+
 
             /**
              * Let user to choose an activity

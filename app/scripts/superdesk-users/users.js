@@ -250,9 +250,11 @@
             {id: 'web', label: gettext('Use a Web URL'), beta: true}
         ];
 
-        if (!beta.isBeta()) {
-            $scope.methods = _.reject($scope.methods, {beta: true});
-        }
+        beta.isBeta().then(function(beta){
+            if (!beta) {
+                $scope.methods = _.reject($scope.methods, {beta: true});
+            }
+        });
 
         $scope.activate = function(method) {
             $scope.active = method;
@@ -776,8 +778,11 @@
                 templateUrl: 'scripts/superdesk-users/views/user-preferences.html',
                 link: function(scope, elem, attrs) {
 
-                    var orig = preferencesService.get();
-					buildPreferences(orig);
+                    var orig;
+                    preferencesService.get(function(result){
+                        orig = result;
+                        buildPreferences(orig);
+                    });
 
                     scope.cancel = function() {
                         scope.userPrefs.$setPristine();

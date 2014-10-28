@@ -4,8 +4,8 @@ define(['lodash'], function(_) {
     /**
      * Session Service stores current user data
      */
-    SessionService.$inject = ['$q', '$rootScope', 'storage', 'preferencesService'];
-    function SessionService($q, $rootScope, storage, preferencesService) {
+    SessionService.$inject = ['$q', '$rootScope', 'storage'];
+    function SessionService($q, $rootScope, storage) {
 
         var TOKEN_KEY = 'sess:token',
             TOKEN_HREF = 'sess:href',
@@ -54,12 +54,14 @@ define(['lodash'], function(_) {
 
             this.identity = null;
             this.updateIdentity(identity);
-            preferencesService.get();
 
-            if (defer) {
-                defer.resolve(identity);
-                defer = null;
-            }
+            console.log('start', session._id);
+            
+                if (defer) {
+                    defer.resolve(identity);
+                    defer = null;
+                }
+            
         };
 
         /**
@@ -96,7 +98,7 @@ define(['lodash'], function(_) {
             setSessionHref(null);
             setSessionId(null);
             storage.removeItem(IDENTITY_KEY);
-            preferencesService.remove();
+           // preferencesService.remove();
         };
 
         /**

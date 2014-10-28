@@ -13,10 +13,13 @@
                 var pinnedList = {};
 
                 $scope.selected = null;
-                $scope.pinnedItems = preferencesService.get('pinned:items')|| [];
-                _.each($scope.pinnedItems, function(item) {
-                    pinnedList[item._id] = true;
+                preferencesService.get('pinned:items').then(function(result){
+                    $scope.pinnedItems = result;
+                    _.each($scope.pinnedItems, function(item) {
+                        pinnedList[item._id] = true;
+                    });
                 });
+                
                 $scope.processedItems = null;
 
                 $scope.$on(INGEST_EVENT, function() {

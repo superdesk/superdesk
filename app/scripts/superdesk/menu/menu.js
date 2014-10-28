@@ -28,7 +28,11 @@
 
                     scope.currentRoute = null;
                     scope.flags = ctrl.flags;
-                    scope.menu = _.values(_.where(superdesk.activities, {category: superdesk.MENU_MAIN}));
+
+                    scope.$watch('beta', function() {
+                        console.log('beta...', scope.beta);
+                        scope.menu = _.values(_.where(superdesk.activities, {category: superdesk.MENU_MAIN}));
+                    });
 
                     scope.toggleMenu = function() {
                         ctrl.flags.menu = !ctrl.flags.menu;

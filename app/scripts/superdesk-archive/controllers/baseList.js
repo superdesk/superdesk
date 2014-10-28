@@ -6,9 +6,12 @@ define(['lodash'], function(_) {
         var self = this;
 
         var lastQueryParams = {};
-        var savedView = preferencesService.get('archive:view').view;
+        var savedView;
+        preferencesService.get('archive:view').then(function(result){
+            savedView = result.view;
+            $scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
+        });
 
-        $scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
         $scope.selected = {};
 
         $scope.setView = function(view) {

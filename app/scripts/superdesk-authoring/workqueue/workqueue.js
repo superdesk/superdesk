@@ -7,8 +7,11 @@ function WorkqueueService(storage, preferencesService, notify) {
     /**
      * Set items for further work, in next step of the workflow.
      */
+    var queue = [];
+    preferencesService.get('workqueue:items').then(function(result){
+        queue = result.items;
+    });
 
-    var queue = preferencesService.get('workqueue:items').items || [];
     this.length = 0;
     this.active = null;
 

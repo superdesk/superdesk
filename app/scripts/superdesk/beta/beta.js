@@ -6,22 +6,10 @@ define(['angular', 'jquery'], function(angular, $) {
     /**
      * Superdesk service for enabling/disabling beta preview in app
      */
-    module.service('betaService', ['$window', '$rootScope', 'preferencesService', 'notify',
-        function($window, $rootScope, preferencesService, notify) {
+    module.service('betaService', ['$window', '$rootScope', '$q', 'preferencesService', 'notify',
+        function($window, $rootScope, $q, preferencesService, notify) {
 
         $rootScope.beta = null;
-
-        this.load = function() {
-            if (!$rootScope.beta)
-            {
-                $rootScope.beta = false;
-                var beta = preferencesService.get('feature:preview');
-
-                if (beta){
-                    $rootScope.beta = beta.enabled;
-                }
-            }
-        };
 
         this.toggleBeta = function() {
             var update = {
@@ -43,9 +31,28 @@ define(['angular', 'jquery'], function(angular, $) {
         };
 
         this.isBeta = function() {
-            this.load();
-			return $rootScope.beta;
+            
+            console.log("isBeta called")
+
+            if ($rootScope.beta == null) {
+                console.log("$rootScope.beta == null")
+                return preferencesService.get('feature:preview').then(function(result){
+                    console.log("$rootScope.beta :", result.enabled);
+                    $rootScope.beta = result.enabled ;
+                    return result.enabled;
+                }, function(){
+                    console.log("defer.resolve(false)");
+                    return $q.when(false);
+                });
+            }
+            else {
+                console.log("resolving $rootScope.beta :", $rootScope.beta);
+                
+                return $q.when($rootScope.beta);
+
+            }
         };
+
     }]);
 
     module.config(['$httpProvider', function($httpProvider) {
@@ -69,16 +76,28 @@ define(['angular', 'jquery'], function(angular, $) {
                 if (!modifiedTemplates[url] && IS_HTML_PAGE.test(url) && HAS_FLAGS_EXP.test(response.data)) {
                     var template = $('<div>').append(response.data);
 
-                    if (!betaService.isBeta()) {
-                        template.find('[sd-beta]').each(function() {
-                            $(this).remove();
-                        });
-                    }
+                    console.log("here1");
+                    return betaService.isBeta().then(function(beta){
+                        console.log("here2:", beta);
+                        if (!beta) {
+                            template.find('[sd-beta]').each(function() {
+                                $(this).remove();
+                            });
+                        }
 
-                    response.data = template.html();
+                        response.data = template.html();
 
-                    $templateCache.put(url, response.data);
-                    modifiedTemplates[url] = true;
+                        $templateCache.put(url, response.data);
+                        modifiedTemplates[url] = true;
+                        return response;
+                    }, function() {
+                        console.log('err');
+                        response.data = template.html();
+
+                        $templateCache.put(url, response.data);
+                        modifiedTemplates[url] = true;
+                        return response;
+                    });
                 }
 
                 return response;

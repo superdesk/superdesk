@@ -3,8 +3,8 @@ define(['angular', 'lodash'], function(angular, _) {
 
     return angular.module('superdesk.services.preferencesService', [])
 
-        .service('preferencesService', ['$injector', '$rootScope', '$q', 'storage',
-            function($injector, $rootScope, $q, storage) {
+        .service('preferencesService', ['$injector', '$rootScope', '$q', 'storage', 'session',
+            function($injector, $rootScope, $q, storage, session) {
 
             var USER_PREFERENCES = 'user_preferences',
                 SESSION_PREFERENCES = 'session_preferences',
@@ -50,51 +50,55 @@ define(['angular', 'lodash'], function(angular, _) {
 
             function getPreferences(sessionId) {
                 if (!api) { api = $injector.get('api'); }
-
-                defer = $q.defer();
-                api('preferences').getById(sessionId)
-                    .then(function(result) {
-                        return defer.resolve(result);
-                    });
-
-                return defer.promise;
+                return api('preferences').getById(sessionId);
             }
 
-            this.get = function(key) {
+            this.get = function(key, sessionId) {
 
                 var original_prefs = loadLocally();
+                
+                var result;
+
+                sessionId = sessionId || $rootScope.sessionId;
 
                 if (!original_prefs){
 
-                    if ($rootScope.sessionId){
-                        getPreferences($rootScope.sessionId).then(function(preferences) {
+                    return session.getIdentity().then(function() {
+
+                        console.log('fetch', sessionId);
+                        return getPreferences(session.sessionId).then(function(preferences) {
 
                             saveLocally(preferences);
                             original_prefs = preferences;
 
                             if (!key){
-                                return original_prefs[USER_PREFERENCES];
+                                result = original_prefs[USER_PREFERENCES];
                             } else if (userPreferences.indexOf(key) >= 0) {
-                                return original_prefs[USER_PREFERENCES][key];
+                                result = original_prefs[USER_PREFERENCES][key];
                             } else {
-                                return original_prefs[SESSION_PREFERENCES][key];
+                                result = original_prefs[SESSION_PREFERENCES][key];
                             }
 
+                            return result;
+
                         });
-                    } else {
-                        return null;
-                    }
+
+                    });
                 } else {
                     if (!key){
-                        return original_prefs[USER_PREFERENCES];
+                        result = original_prefs[USER_PREFERENCES];
                     } else if (userPreferences.indexOf(key) >= 0) {
                         var prefs = original_prefs[USER_PREFERENCES] || {};
-                        return prefs[key] || null;
+                        result =  prefs[key] || null;
                     } else {
                         var sess_prefs = original_prefs[SESSION_PREFERENCES] || {};
-                        return sess_prefs[key] || null;
+                        result = sess_prefs[key] || null;
                     }
+
+                    return $q.when(result);
                 }
+                
+                return $q.reject();
             };
 
             this.update = function(updates, key) {

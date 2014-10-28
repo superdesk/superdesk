@@ -30,12 +30,9 @@ define(['lodash'], function(_) {
             });
         };
         this.loadItemList = function() {
-            var itemList = preferencesService.get('scratchpad:items');
-            if (itemList) {
-                this.itemList = itemList;
-                this.update();
-            }
+            return preferencesService.get('scratchpad:items');
         };
+
         this.addItem = function(item) {
             this.itemList = _.without(this.itemList, item._links.self.href);
             this.itemList.push(item._links.self.href);
@@ -80,6 +77,12 @@ define(['lodash'], function(_) {
             });
         };
 
-        this.loadItemList();
+        var instance = this;
+        this.loadItemList().then(function(result){
+            if (result) {
+                instance.itemList = result;
+                instance.update();
+            }
+        });
     }];
 });
