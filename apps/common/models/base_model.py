@@ -128,7 +128,7 @@ class BaseModel():
         self.on_created(docs)
         return res
 
-    def update(self, filter, doc):
+    def update(self, filter, doc, etag=None):
         '''
         Update one document selected based on the given filter.
         @param filter: dict
@@ -136,16 +136,16 @@ class BaseModel():
         '''
         self.validate(doc)
         orig = self.find(filter)
-        if orig.count() > 1:
+        if orig.count() != 1:
             raise InvalidFilter(filter, 'update')
-        if orig.count() == 0:
-            return
+        if etag:
+            self.validate_etag(orig, etag)
         self.on_update(doc, orig[0])
         res = self.data_layer.update(self.resource, filter, doc)
         self.on_updated(doc, orig[0])
         return res
 
-    def replace(self, filter, doc):
+    def replace(self, filter, doc, etag=None):
         '''
         Replace the content of one document selected based on the given filter.
         @param filter: dict
@@ -155,6 +155,8 @@ class BaseModel():
         orig = self.find(filter)
         if len(orig) != 1:
             raise InvalidFilter(filter, 'replace')
+        if etag:
+            self.validate_etag(orig, etag)
         self.on_update(doc, orig[0])
         res = self.data_layer.replace(self.resource, filter, doc)
         self.on_updated(doc, orig[0])

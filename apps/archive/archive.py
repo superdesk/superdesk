@@ -14,6 +14,7 @@ from apps.content import metadata_schema
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
+from apps.legal_archive.components.legal_archive_proxy import LegalArchiveProxy
 
 
 def get_subject(doc1, doc2=None):
@@ -72,6 +73,7 @@ class ArchiveService(BaseService):
 
     def on_created(self, docs):
         on_create_media_archive()
+        get_component(LegalArchiveProxy).create(docs)
         for doc in docs:
             add_activity('added new item {{ type }} about {{ subject }}',
                          type=doc['type'], subject=get_subject(doc))
@@ -89,6 +91,7 @@ class ArchiveService(BaseService):
 
     def on_updated(self, updates, original):
         get_component(ItemAutosave).clear(original['_id'])
+        get_component(LegalArchiveProxy).update(original['_id'], updates)
         on_update_media_archive()
 
         if '_version' in updates:

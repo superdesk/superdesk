@@ -3,7 +3,7 @@ from eve.utils import ParsedRequest, config, document_etag
 from eve import ID_FIELD
 
 
-class EveProxy(DataLayer):
+class MongoProxy(DataLayer):
     '''
     Data layer implementation used to connect the models to the Eve data layer.
     Transforms the model data layer API into Eve data layer calls.
@@ -24,10 +24,10 @@ class EveProxy(DataLayer):
         req = ParsedRequest()
         req.args = {}
         req.projection = projection
-        return self.eve_data_layer.get(resource, req, filter)
+        return self.eve_data_layer.find(resource, req, filter)
 
     def create(self, resource, docs):
-        return self.eve_data_layer.create(resource, docs)
+        return self.eve_data_layer.insert(resource, docs)
 
     def update(self, resource, filter, doc):
         _id = doc.get(ID_FIELD, None)
@@ -47,5 +47,5 @@ class EveProxy(DataLayer):
             doc[ID_FIELD] = _id
         return res
 
-    def delete(self, resource, filter):
+    def remove(self, resource, filter):
         return self.eve_data_layer.delete(resource, filter)
