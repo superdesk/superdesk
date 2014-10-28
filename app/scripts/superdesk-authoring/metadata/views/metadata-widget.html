@@ -58,9 +58,13 @@
 				<div class="lbl" translate>Desk</div>
 				<div class="data">{{deskLookup[item.task.desk].name}}</div>
 			</li>
-			<li ng-if="item.task.desk">
-				<div class="lbl" translate>Creator</div>
-				<div class="data">{{userLookup[item.original_creator].display_name}}</div>
+            <li>
+                <div class="lbl" translate>Creator</div>
+                <div class="data">{{userLookup[item.original_creator].display_name}}</div>
+            </li>
+			<li ng-if="item.task.user">
+				<div class="lbl" translate>Assignee</div>
+				<div class="data">{{userLookup[item.task.user].display_name}}</div>
 			</li>
 		</ul>
 	</div>
