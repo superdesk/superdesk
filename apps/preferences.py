@@ -4,7 +4,6 @@ from superdesk import get_backend
 from eve.validation import ValidationError
 import superdesk
 from superdesk import get_resource_service
-from eve.methods.common import resolve_document_etag
 from eve.utils import parse_request
 
 _preferences_key = 'preferences'
@@ -45,9 +44,8 @@ class PreferencesResource(Resource):
     })
 
     superdesk.register_default_user_preference('workqueue:items', {
-        'items':[]
+        'items': []
     })
-
 
     superdesk.register_default_session_preference('scratchpad:items', [])
     superdesk.register_default_session_preference('desk:items', [])
@@ -76,7 +74,8 @@ class PreferencesService(BaseService):
 
             if key == _user_preferences_key:
                 for k in existing_preferences.keys():
-                    updates[key][k] = dict(list(existing_preferences.get(k, {}).items()) + list(prefs.get(k, {}).items()))
+                    updates[key][k] = dict(list(existing_preferences.get(k, {}).items())
+                                           + list(prefs.get(k, {}).items()))
             else:
                 for k in existing_preferences.keys():
                     if prefs.get(k, []) == []:
@@ -114,7 +113,7 @@ class PreferencesService(BaseService):
         available.update(orig_user_prefs)
         user_doc[_user_preferences_key] = available
 
-    def get_user_preference(self, user_id, preference_name):
+    def get_user_preference(self, user_id):
         doc = get_resource_service('users').find_one(req=None, _id=user_id)
         self.enhance_document_with_default_user_prefs(user_doc=doc)
         prefs = doc.get(_user_preferences_key, {})
