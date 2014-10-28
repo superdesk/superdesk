@@ -86,6 +86,23 @@ describe('authoring', function() {
         expect(scope.item._autosave.headline).toBe('test');
         expect(scope.item.headline).toBe('test');
     }));
+
+    it('can save while item is being autosaved', inject(function($rootScope, $timeout, $controller, $q, api, superdesk) {
+        var $scope = $rootScope.$new();
+        $controller(superdesk.activity('authoring').controller, {item: {headline: 'test'}, $scope: $scope});
+        $scope.item.body_html = 'test';
+        $rootScope.$digest();
+
+        $timeout.flush(1000);
+
+        spyOn(api, 'save').andReturn($q.when({}));
+        $scope.save();
+        $rootScope.$digest();
+        expect($scope.saving).toBe(false);
+
+        $timeout.flush(5000);
+        expect($scope.item._autosave).toBe(null);
+    }));
 });
 
 describe('autosave', function() {

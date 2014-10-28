@@ -41,7 +41,7 @@
          * Autosave an item
          */
         this.save = function(item, data) {
-            $timeout.cancel(_timeout);
+            this.stop();
             _timeout = $timeout(function() {
                 var diff = angular.extend({_id: item._id}, data);
                 return api.save(RESOURCE, {}, diff).then(function(_autosave) {
@@ -51,6 +51,16 @@
                 });
             }, AUTOSAVE_TIMEOUT);
             return _timeout;
+        };
+
+        /**
+         * Stop pending autosave
+         */
+        this.stop = function() {
+            if (_timeout) {
+                $timeout.cancel(_timeout);
+                _timeout = null;
+            }
         };
 
         /**
@@ -214,10 +224,12 @@
          */
     	$scope.save = function() {
             stopWatch();
+            autosave.stop();
     		return api.save('archive', item, $scope.item).then(function(res) {
                 workqueue.update(item);
                 item._autosave = null;
                 $scope.dirty = false;
+                $scope.saving = false;
                 $scope.item = _.create(item);
                 notify.success(gettext('Item updated.'));
                 startWatch();

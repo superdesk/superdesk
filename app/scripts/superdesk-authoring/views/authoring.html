@@ -13,7 +13,7 @@
 
     	    <button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()"
                 ng-show="!item._locked && !_preview"
-                ng-disabled="saving || (!dirty && !item._autosave)"
+                ng-disabled="!dirty && !item._autosave"
                 translate>Save</button>
 
 	    	<button class="navbtn navbtn-hover" ng-click="viewSendTo = !viewSendTo" ng-show="item.task.desk">
