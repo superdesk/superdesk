@@ -1,0 +1,151 @@
+define([
+    './preferencesService',
+    './storage'
+], function(preferencesService, storage) {
+    'use strict';
+
+    beforeEach(function() {
+        module(preferencesService.name);
+        module(storage.name);
+    });
+
+    describe('Preferences Service', function() {
+
+        var $q,
+        	storage,
+        	preferencesService,
+        	test_preferences = {
+        		'user_preferences': {
+				    'archive:view': {
+				      'default': 'mgrid',
+				      'label': 'Users archive view format',
+				      'type': 'string',
+				      'category': 'archive',
+				      'allowed': [
+				        'mgrid',
+				        'compact'
+				      ],
+				      'view': 'mgrid'
+				    },
+				    'feature:preview': {
+				      'default': false,
+				      'type': 'bool',
+				      'category': 'feature',
+				      'enabled': true,
+				      'label': 'test'
+				    },
+				    'email:notification': {
+				      'default': true,
+				      'category': 'notifications',
+				      'enabled': true,
+				      'type': 'bool',
+				      'label': 'Send notifications via email'
+				    }
+			  },
+			  'session_preferences': {
+				    'desk:items': [],
+				    'pinned:items': [],
+				    'scratchpad:items': [
+				      '/archive/urn:newsml:localhost:2014-10-23T16:25:04.022745:a0cca6c9-fe94-46ed-9ce7-aab9361ff6b8',
+				      '/archive/urn:newsml:localhost:2014-10-23T16:25:04.022745:a0cca6c9-fe94-46ed-9ce7-aab9361ff6b8'
+				    ]
+			  }
+			};
+
+		var update = {
+            'feature:preview': {
+                'default':false,
+                'enabled':false,
+                'label':'Test Label',
+                'type':'bool',
+                'category':'feature'
+            }
+        };
+
+		beforeEach(module(function($provide) {
+	        $provide.service('api', function($q) {
+	            return function(resource) {
+	                return {
+	                    getById: function() {
+	                        return $q.when(test_preferences);
+	                    },
+	                    save: function(o, u) {
+	                    	return $q.when({'user_preferences': update});
+	                    }
+	                };
+	            };
+	        });
+	    }));
+
+	    beforeEach(inject(function($injector) {
+            $q = $injector.get('$q');
+            storage = $injector.get('storage');
+            preferencesService = $injector.get('preferencesService');
+	        storage.clear();
+	    }));
+
+		it('can get preferences', inject(function(api, $rootScope) {
+
+			expect(storage.getItem('preferences')).toBe(null);
+			$rootScope.sessionId = 1;
+			preferencesService.get();
+
+            $rootScope.$digest();
+			var preferences = preferencesService.get();
+
+			expect(preferences).not.toBe(null);
+			expect(preferences).not.toBe(undefined);
+			expect(storage.getItem('preferences')).not.toBe(null);
+
+		}));
+
+		it('can get user preferences by key', inject(function(api, $rootScope) {
+
+			expect(storage.getItem('preferences')).toBe(null);
+			$rootScope.sessionId = 1;
+			preferencesService.get();
+
+            $rootScope.$digest();
+            var preferences = preferencesService.get('archive:view');
+
+			expect(preferences.view).toBe('mgrid');
+			expect(storage.getItem('preferences')).not.toBe(null);
+
+		}));
+
+		it('update user preferences by key', inject(function(api, $rootScope) {
+
+			expect(storage.getItem('preferences')).toBe(null);
+			$rootScope.sessionId = 1;
+			preferencesService.get();
+            $rootScope.$digest();
+
+            preferencesService.update(update, 'feature:preview').then(function() {}, function(response) { });
+            $rootScope.$digest();
+
+            var preferences = preferencesService.get('feature:preview');
+
+			expect(preferences.enabled).toBe(false);
+			expect(storage.getItem('preferences').user_preferences['feature:preview'].enabled).toBe(false);
+
+		}));
+
+		it('can remove preferences', inject(function(api, $rootScope) {
+
+			expect(storage.getItem('preferences')).toBe(null);
+			$rootScope.sessionId = 1;
+			preferencesService.get();
+
+            $rootScope.$digest();
+
+            var preferences = preferencesService.get('archive:view');
+			expect(preferences).not.toBe(null);
+			expect(storage.getItem('preferences')).not.toBe(null);
+
+			preferencesService.remove();
+
+			expect(storage.getItem('preferences')).toBe(null);
+
+		}));
+    });
+});

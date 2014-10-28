@@ -52,7 +52,6 @@ define(['angular', 'lodash'], function(angular, _) {
                 if (!api) { api = $injector.get('api'); }
 
                 defer = $q.defer();
-
                 api('preferences').getById(sessionId)
                     .then(function(result) {
                         return defer.resolve(result);
@@ -69,6 +68,7 @@ define(['angular', 'lodash'], function(angular, _) {
 
                     if ($rootScope.sessionId){
                         getPreferences($rootScope.sessionId).then(function(preferences) {
+
                             saveLocally(preferences);
                             original_prefs = preferences;
 
@@ -91,7 +91,8 @@ define(['angular', 'lodash'], function(angular, _) {
                         var prefs = original_prefs[USER_PREFERENCES] || {};
                         return prefs[key] || null;
                     } else {
-                        return original_prefs[SESSION_PREFERENCES][key];
+                        var sess_prefs = original_prefs[SESSION_PREFERENCES] || {};
+                        return sess_prefs[key] || null;
                     }
                 }
             };
