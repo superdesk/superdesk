@@ -141,3 +141,6 @@ if LDAP_SERVER:
     INSTALLED_APPS.append('apps.auth.ldap')
 else:
     INSTALLED_APPS.append('apps.auth.db')
+
+# The number of minutes since the last update of the Mongo auth object after which it will be deleted
+SESSION_EXPIRY_MINUTES = 240
