@@ -1,0 +1,4 @@
+<ul>
+	<li ng-click="stages.select()" ng-class="{active: !stages.selected}"><a href="" translate>any</a></li>
+    <li ng-repeat="stage in stages.stages" ng-click="stages.select(stage)" ng-class="{active: stage == stages.selected}"><a href="">{{ stage.name }}</a></li>
+</ul>

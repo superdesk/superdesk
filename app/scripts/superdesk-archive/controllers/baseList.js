@@ -1,8 +1,8 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    BaseListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'es'];
-    function BaseListController($scope, $location, superdesk, api, es) {
+    BaseListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'es', 'desks'];
+    function BaseListController($scope, $location, superdesk, api, es, desks) {
         var self = this;
 
         var lastQueryParams = {};
@@ -41,6 +41,12 @@ define(['lodash'], function(_) {
 
         this.buildFilters = function(params) {
             var filters = [];
+
+            if (desks.getCurrentStageId()) {
+                filters.push({term: {'task.stage': desks.getCurrentStageId()}});
+            } else if (desks.getCurrentDeskId()) {
+                filters.push({term: {'task.desk': desks.getCurrentDeskId()}});
+            }
 
             if (params.before || params.after) {
                 var range = {versioncreated: {}};

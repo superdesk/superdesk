@@ -4,10 +4,11 @@ define([
 ], function(angular, BaseListController) {
     'use strict';
 
-    ArchiveListController.$inject = ['$scope', '$injector', 'superdesk', 'session', 'api', 'ViewsCtrl', 'ContentCtrl'];
-    function ArchiveListController($scope, $injector, superdesk, session, api, ViewsCtrl, ContentCtrl) {
+    ArchiveListController.$inject = ['$scope', '$injector', 'superdesk', 'session', 'api', 'ViewsCtrl', 'ContentCtrl', 'StagesCtrl'];
+    function ArchiveListController($scope, $injector, superdesk, session, api, ViewsCtrl, ContentCtrl, StagesCtrl) {
 
         var resource;
+        var self = this;
 
         $injector.invoke(BaseListController, this, {$scope: $scope});
 
@@ -17,6 +18,7 @@ define([
 
         $scope.currentModule = 'archive';
         $scope.views = new ViewsCtrl($scope);
+        $scope.stages = new StagesCtrl($scope);
         $scope.content = new ContentCtrl($scope);
         $scope.type = 'archive';
         $scope.loading = false;
@@ -32,9 +34,7 @@ define([
             if (resource == null) {
                 return;
             }
-
             $scope.loading = true;
-
             resource.query(criteria).then(function(items) {
                 $scope.loading = false;
                 $scope.items = items;
@@ -46,29 +46,37 @@ define([
             });
         };
 
-        $scope.$on('media_archive', this.refresh);
+        var refreshItems = _.debounce(_refresh, 1000);
 
-        $scope.$watch('selectedDesk', angular.bind(this, function(desk) {
-            if (desk) {
+        function _refresh() {
+            if ($scope.selectedDesk) {
                 resource = api('archive');
             } else {
                 resource = api('user_content', session.identity);
             }
+            self.refresh();
+        }
 
-            this.refresh();
-        }));
+        $scope.$on('media_archive', function(a, b) {
+            console.log('notification');
+            console.log(a);
+            console.log(b);
+            refreshItems();
+        });
 
-        $scope.$watch('views.selected', angular.bind(this, function(view) {
-            if (view) {
-                resource = api('content_view_items', view);
-            } else if ($scope.selectedDesk) {
-                resource = api('archive');
-            } else {
-                resource = api('user_content', session.identity);
-            }
+        $scope.$watch('selectedDesk', function() {
+            refreshItems();
+        });
+        $scope.$watch('stages.selected', function() {
+            refreshItems();
+        });
 
-            this.refresh();
-        }));
+        // $scope.$watch('views.selected', function(view) {
+        //     if (view) {
+        //         resource = api('content_view_items', view);
+        //         self.refresh();
+        //     }
+        // });
     }
 
     return ArchiveListController;

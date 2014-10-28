@@ -47,9 +47,11 @@ define([
             var desksService = {
                 desks: null,
                 users: null,
+                stages: null,
                 deskLookup: {},
                 userLookup: {},
                 deskMembers: {},
+                deskStages: {},
                 loading: null,
                 fetchDesks: function() {
                     var self = this;
@@ -73,6 +75,14 @@ define([
                         });
                     });
                 },
+                fetchStages: function() {
+                    var self = this;
+
+                    return api('stages').query({max_results: 500})
+                    .then(function(result) {
+                        self.stages = result;
+                    });
+                },
                 generateDeskMembers: function() {
                     var self = this;
 
@@ -88,6 +98,18 @@ define([
 
                     return $q.when();
                 },
+                generateDeskStages: function() {
+                    var self = this;
+
+                    _.each(self.desks._items, function(desk) {
+                        self.deskStages[desk._id] = [];
+                        _.each(_.where(self.stages._items, {desk: desk._id}), function(stage) {
+                            self.deskStages[desk._id].push(stage);
+                        });
+                    });
+
+                    return $q.when();
+                },
                 fetchUserDesks: function(user) {
                     return api.users.getByUrl(user._links.self.href + '/desks');
                 },
@@ -96,6 +118,12 @@ define([
                 },
                 setCurrentDeskId: function(deskId) {
                     storage.setItem('desks:currentDeskId', deskId);
+                },
+                getCurrentStageId: function() {
+                    return storage.getItem('desks:currentStageId') || null;
+                },
+                setCurrentStageId: function(stageId) {
+                    storage.setItem('desks:currentStageId', stageId);
                 },
                 fetchCurrentDesk: function() {
                     return api.desks.getById(this.getCurrentDeskId());
@@ -110,7 +138,9 @@ define([
                     if (!this.loading) {
                         this.loading = this.fetchDesks()
                             .then(angular.bind(this, this.fetchUsers))
-                            .then(angular.bind(this, this.generateDeskMembers));
+                            .then(angular.bind(this, this.generateDeskMembers))
+                            .then(angular.bind(this, this.fetchStages))
+                            .then(angular.bind(this, this.generateDeskStages));
                     }
 
                     return this.loading;
