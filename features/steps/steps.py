@@ -563,7 +563,6 @@ def step_impl_then_get_renditions(context, type):
 
 @then('item "{item_id}" is unlocked')
 def then_item_is_unlocked(context, item_id):
-    context.response = context.client.get('/archive/%s' % item_id, headers=context.headers)
     assert_200(context.response)
     data = json.loads(context.response.get_data())
     assert data.get('lock_user', None) is None, 'item is locked by user #{0}'.format(data.get('lock_user'))
@@ -571,7 +570,6 @@ def then_item_is_unlocked(context, item_id):
 
 @then('item "{item_id}" is locked')
 def then_item_is_locked(context, item_id):
-    context.response = context.client.get('/archive/%s' % item_id, headers=context.headers)
     assert_200(context.response)
     resp = parse_json_response(context.response)
     assert resp['lock_user'] is not None
@@ -579,8 +577,6 @@ def then_item_is_locked(context, item_id):
 
 @then('item "{item_id}" is assigned')
 def then_item_is_assigned(context, item_id):
-    context.response = context.client.get('/archive/%s' % item_id, headers=context.headers)
-    assert_200(context.response)
     resp = parse_json_response(context.response)
     assert resp['task'].get('user', None) is not None, 'item is not assigned'
 

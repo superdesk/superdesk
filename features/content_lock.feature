@@ -11,7 +11,10 @@ Feature: Content Locking
             """
             {}
             """
-        Then we get OK response
+        Then we get new resource
+            """
+            {"_id": "item-1", "guid": "item-1", "headline": "test"}
+            """
         And item "item-1" is assigned
 
         When we patch "/archive/item-1"
@@ -49,7 +52,11 @@ Feature: Content Locking
             """
             {}
             """
-        Then item "item-1" is locked
+        Then we get new resource
+            """
+            {"_id": "item-1", "guid": "item-1", "headline": "test"}
+            """
+        And item "item-1" is locked
 
         When we switch user
         And we post to "/archive/item-1/unlock"
