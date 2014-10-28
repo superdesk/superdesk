@@ -54,13 +54,10 @@ define([
             } else {
                 resource = api('user_content', session.identity);
             }
-            self.refresh();
+            self.refresh(true);
         }
 
-        $scope.$on('media_archive', function(a, b) {
-            console.log('notification');
-            console.log(a);
-            console.log(b);
+        $scope.$on('media_archive', function() {
             refreshItems();
         });
 
@@ -74,7 +71,7 @@ define([
         // $scope.$watch('views.selected', function(view) {
         //     if (view) {
         //         resource = api('content_view_items', view);
-        //         self.refresh();
+        //         self.refresh(true);
         //     }
         // });
     }

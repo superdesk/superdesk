@@ -101,12 +101,7 @@ define([
                 generateDeskStages: function() {
                     var self = this;
 
-                    _.each(self.desks._items, function(desk) {
-                        self.deskStages[desk._id] = [];
-                        _.each(_.where(self.stages._items, {desk: desk._id}), function(stage) {
-                            self.deskStages[desk._id].push(stage);
-                        });
-                    });
+                    this.deskStages = _.groupBy(self.stages._items, 'desk');
 
                     return $q.when();
                 },
