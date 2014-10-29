@@ -91,7 +91,7 @@
         </div>
         <div class="content views" ng-if="!sTab">
             <div class="header">
-                <button class="btn pull-right" ng-disabled="!views.selected" ng-click="views.select()">{{ :: 'Clear' | translate }}</button>
+                <button class="btn pull-right" ng-disabled="!views.selected" ng-click="views.select()" translate>Clear</button>
                 <button class="btn btn-info" ng-click="views.create()"><i class="icon-plus-small icon-white"></i> {{ :: 'Create' | translate }}</button>
             </div>
             <div class="list" sd-desk-views></div>

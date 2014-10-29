@@ -62,9 +62,9 @@ function TasksController($scope, api, notify, desks, tasks, StagesCtrl) {
 
     $scope.$watch(function() {
         return desks.getCurrentDeskId();
-    }, angular.bind(this, function(_deskId) {
+    }, function() {
         fetchTasks();
-    }));
+    });
 
     function fetchTasks(stage) {
         tasks.fetch(stage).then(function(list) {

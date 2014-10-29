@@ -57,23 +57,10 @@ define([
             self.refresh(true);
         }
 
-        $scope.$on('media_archive', function() {
-            refreshItems();
-        });
+        $scope.$on('media_archive', refreshItems);
 
-        $scope.$watch('selectedDesk', function() {
-            refreshItems();
-        });
-        $scope.$watch('stages.selected', function() {
-            refreshItems();
-        });
+        $scope.$watch(['stages.selected', 'selectedDesk'], refreshItems);
 
-        // $scope.$watch('views.selected', function(view) {
-        //     if (view) {
-        //         resource = api('content_view_items', view);
-        //         self.refresh(true);
-        //     }
-        // });
     }
 
     return ArchiveListController;
