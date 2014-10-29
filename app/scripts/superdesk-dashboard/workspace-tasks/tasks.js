@@ -27,11 +27,21 @@ function TasksService(desks, $rootScope, api) {
         });
     };
 
-    this.fetch = function() {
-        var filter = {term: {'task.user': $rootScope.currentUser._id}};
-        if (desks.getCurrentDeskId()) {
+    this.buildFilter = function(stage) {
+        var filter;
+        if (stage) {
+            filter = {term: {'task.stage': stage._id}};
+        } else if (desks.getCurrentDeskId()) {
             filter = {term: {'task.desk': desks.getCurrentDeskId()}};
+        } else {
+            filter = {term: {'task.user': $rootScope.currentUser._id}};
         }
+        return filter;
+    };
+
+    this.fetch = function(stage) {
+        var filter = this.buildFilter(stage);
+
         return api('tasks').query({
             source: {
                 size: 25,
@@ -42,19 +52,22 @@ function TasksService(desks, $rootScope, api) {
     };
 }
 
-TasksController.$inject = ['$scope', 'api', 'notify', 'desks', 'tasks'];
-function TasksController($scope, api, notify, desks, tasks) {
+TasksController.$inject = ['$scope', 'api', 'notify', 'desks', 'tasks', 'StagesCtrl'];
+function TasksController($scope, api, notify, desks, tasks, StagesCtrl) {
 
     $scope.selected = {};
     $scope.newTask = null;
     $scope.tasks = null;
+    $scope.stages = new StagesCtrl($scope);
 
     $scope.$watch(function() {
         return desks.getCurrentDeskId();
-    }, fetchTasks);
+    }, function() {
+        fetchTasks();
+    });
 
-    function fetchTasks() {
-        tasks.fetch().then(function(list) {
+    function fetchTasks(stage) {
+        tasks.fetch(stage).then(function(list) {
             $scope.tasks = list;
         });
     }
@@ -89,6 +102,12 @@ function TasksController($scope, api, notify, desks, tasks) {
     desks.initialize().then(function() {
         $scope.userLookup = desks.userLookup;
         $scope.deskLookup = desks.deskLookup;
+    });
+
+    $scope.$watch('stages.selected', function(stage, stageOld) {
+        if (stage || stageOld) {
+            fetchTasks(stage);
+        }
     });
 }
 
@@ -162,10 +181,57 @@ function AssigneeViewDirective(desks) {
     };
 }
 
+StagesCtrlFactory.$inject = ['api', 'desks'];
+function StagesCtrlFactory(api, desks) {
+
+    var promise = desks.initialize();
+    return function StagesCtrl($scope) {
+        var self = this;
+        promise.then(function() {
+
+            self.stages = null;
+            self.selected = null;
+
+            // select a stage as active
+            self.select = function(stage) {
+                self.selected = stage || null;
+                var stageId = stage ? stage._id : null;
+                desks.setCurrentStageId(stageId);
+            };
+
+            // reload list of stages
+            self.reload = function(deskId) {
+                if (deskId) {
+                    self.stages = desks.deskStages[deskId];
+                } else {
+                    self.stages = null;
+                }
+                self.select(_.find(self.stages, {_id: desks.getCurrentStageId()}));
+            };
+
+            $scope.$watch(function() {
+                return desks.getCurrentDeskId();
+            }, function(_deskId) {
+                self.reload(_deskId || null);
+            });
+
+        });
+    };
+}
+
+function DeskStagesDirective() {
+    return {
+        templateUrl: 'scripts/superdesk-dashboard/workspace-tasks/views/desk-stages.html'
+    };
+}
+
 angular.module('superdesk.workspace.tasks', [])
+
+.factory('StagesCtrl', StagesCtrlFactory)
 
 .directive('sdTaskPreview', TaskPreviewDirective)
 .directive('sdAssigneeView', AssigneeViewDirective)
+.directive('sdDeskStages', DeskStagesDirective)
 
 .service('tasks', TasksService)
 

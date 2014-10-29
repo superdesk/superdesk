@@ -3,16 +3,9 @@
         <button class="navbtn sd-create-btn" ng-click="create()"></button>
     </div>
 
-    <div class="button-stack">
+    <div class="button-stack left-stack">
         <div class="navbtn dropdown" sd-user-desks data-desk-label="tasks" data-desk="selected.desk"></div>
-		
-		<div class="navbtn toggle-list">
-			<ul>
-				<li><a href="">All tasks</a></li>
-				<li class="active"><a href="">Desk 1 tasks</a></li>
-				<li><a href="">Desk 2 tasks</a></li>
-			</ul>
-		</div>
+		<div class="navbtn toggle-list" sd-desk-stages ng-if="stages.stages.length"></div>
     </div>
 </div>
 

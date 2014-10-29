@@ -15,9 +15,10 @@ define([
             },
             templateUrl: require.toUrl('./views/user-desks.html'),
             link: function(scope, elem, attrs) {
+                scope.tasks = scope.deskLabel === 'tasks' ? true : false;
                 desks.fetchUserDesks($rootScope.currentUser).then(function(userDesks) {
                     scope.desks = userDesks._items;
-                    scope.selectedDesk = _.find(scope.desks._items, {_id: desks.getCurrentDeskId()});
+                    scope.selectedDesk = _.find(scope.desks, {_id: desks.getCurrentDeskId()});
                 });
                 scope.select = function(desk) {
                     scope.selectedDesk = desk;

@@ -1,8 +1,8 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    BaseListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'es'];
-    function BaseListController($scope, $location, superdesk, api, es) {
+    BaseListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'es', 'desks'];
+    function BaseListController($scope, $location, superdesk, api, es, desks) {
         var self = this;
 
         var lastQueryParams = {};
@@ -39,8 +39,16 @@ define(['lodash'], function(_) {
             }
         });
 
-        this.buildFilters = function(params) {
+        this.buildFilters = function(params, filterDesk) {
             var filters = [];
+
+            if (filterDesk) {
+                if (desks.getCurrentStageId()) {
+                    filters.push({term: {'task.stage': desks.getCurrentStageId()}});
+                } else if (desks.getCurrentDeskId()) {
+                    filters.push({term: {'task.desk': desks.getCurrentDeskId()}});
+                }
+            }
 
             if (params.before || params.after) {
                 var range = {versioncreated: {}};
@@ -84,11 +92,11 @@ define(['lodash'], function(_) {
             return filters;
         };
 
-        this.getQuery = function(params) {
+        this.getQuery = function(params, filterDesk) {
             if (!_.isEqual(_.omit(params, 'page'), _.omit(lastQueryParams, 'page'))) {
                 $location.search('page', null);
             }
-            var filters = this.buildFilters(params);
+            var filters = this.buildFilters(params, filterDesk);
             var query = es(params, filters);
             query.sort = [{versioncreated: 'desc'}];
             lastQueryParams = params;
@@ -99,8 +107,8 @@ define(['lodash'], function(_) {
             console.log('no api defined');
         };
 
-        this.refresh = function() {
-        	var query = self.getQuery(_.omit($location.search(), '_id'));
+        this.refresh = function(filterDesk) {
+        	var query = self.getQuery(_.omit($location.search(), '_id'), filterDesk);
             self.fetchItems({source: query});
         };
     }
