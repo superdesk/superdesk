@@ -15,6 +15,7 @@ for (var file in window.__karma__.files) {
 }
 
 // core
+tests.push('superdesk/mocks');
 tests.push('superdesk/api/api');
 tests.push('superdesk/auth/auth');
 tests.push('superdesk/menu/menu');
@@ -42,6 +43,7 @@ tests.push('superdesk-groups/groups');
 tests.push('superdesk-users/users');
 tests.push('superdesk-users/profile');
 tests.push('superdesk-users/activity/activity');
+tests.push('superdesk-users/import/import');
 
 tests.push('superdesk-dashboard/module');
 tests.push('superdesk-dashboard/workspace-tasks/tasks');

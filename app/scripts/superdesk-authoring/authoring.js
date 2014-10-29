@@ -41,7 +41,7 @@
          * Autosave an item
          */
         this.save = function(item, data) {
-            $timeout.cancel(_timeout);
+            this.stop();
             _timeout = $timeout(function() {
                 var diff = angular.extend({_id: item._id}, data);
                 return api.save(RESOURCE, {}, diff).then(function(_autosave) {
@@ -51,6 +51,16 @@
                 });
             }, AUTOSAVE_TIMEOUT);
             return _timeout;
+        };
+
+        /**
+         * Stop pending autosave
+         */
+        this.stop = function() {
+            if (_timeout) {
+                $timeout.cancel(_timeout);
+                _timeout = null;
+            }
         };
 
         /**
@@ -91,6 +101,7 @@
         this.lock = function(item) {
             if (!item.lock_user) {
                 return api('archive_lock', item).save({}).then(function(lock) {
+                    _.extend(item, lock);
                     item._locked = false;
                     item.lock_user = session.identity.id;
                     item.lock_session = session.sessionId;
@@ -109,7 +120,14 @@
          * Unlock an item
          */
         this.unlock = function(item) {
-            return api('archive_unlock', item).save({});
+            return api('archive_unlock', item).save({}).then(function(lock) {
+                _.extend(item, lock);
+                item._locked = true;
+                return item;
+            }, function(err) {
+                item._locked = true;
+                return item;
+            });
         };
 
         /**
@@ -217,10 +235,12 @@
          */
     	$scope.save = function() {
             stopWatch();
+            autosave.stop();
     		return api.save('archive', item, $scope.item).then(function(res) {
                 workqueue.update(item);
                 item._autosave = null;
                 $scope.dirty = false;
+                $scope.saving = false;
                 $scope.item = _.create(item);
                 notify.success(gettext('Item updated.'));
                 startWatch();

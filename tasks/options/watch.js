@@ -17,7 +17,6 @@ module.exports = {
     },
     assets: {
         options: {livereload: true},
-        tasks: ['copy:assets'],
         files: [
             '<%= appDir %>/styles/**/*.css',
             '<%= appDir %>/scripts/**/*.html'
