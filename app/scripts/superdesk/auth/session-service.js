@@ -57,12 +57,15 @@ define(['lodash'], function(_) {
 
             console.log('start', session._id);
             
-                if (defer) {
-                    defer.resolve(identity);
-                    defer = null;
-                }
-            
+            resolveIdentity(identity);
         };
+
+        function resolveIdentity(identity) {
+            if (defer) {
+                defer.resolve(identity);
+                defer = null;
+            }
+        }
 
         /**
          * Start a mock session for given user id
@@ -97,8 +100,7 @@ define(['lodash'], function(_) {
             this.identity = null;
             setSessionHref(null);
             setSessionId(null);
-            storage.removeItem(IDENTITY_KEY);
-           // preferencesService.remove();
+            storage.clear();
         };
 
         /**
@@ -114,6 +116,9 @@ define(['lodash'], function(_) {
             this.token = token;
             this.identity = storage.getItem(IDENTITY_KEY);
             this.sessionId = localStorage.getItem(SESSION_ID);
+            if (this.identity) {
+                resolveIdentity(this.identity);
+            }
         }, this));
 
         /**

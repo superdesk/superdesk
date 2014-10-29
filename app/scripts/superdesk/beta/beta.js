@@ -72,7 +72,7 @@ define(['angular', 'jquery'], function(angular, $) {
         return {
             response: function(response) {
                 var url = response.config.url;
-
+                
                 if (!modifiedTemplates[url] && IS_HTML_PAGE.test(url) && HAS_FLAGS_EXP.test(response.data)) {
                     var template = $('<div>').append(response.data);
 

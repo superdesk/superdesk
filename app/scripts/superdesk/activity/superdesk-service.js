@@ -100,8 +100,8 @@ define([
             return this;
         };
 
-        this.$get = ['$q', '$rootScope', 'activityService', 'activityChooser', 'betaService', 'features',
-        function($q, $rootScope, activityService, activityChooser, betaService, features) {
+        this.$get = ['$q', '$route', 'activityService', 'activityChooser', 'betaService', 'features',
+        function($q, $route, activityService, activityChooser, betaService, features) {
 
             /**
              * Render main menu depending on registered acitivites
@@ -115,6 +115,9 @@ define([
                         $routeProvider.when(activity.when, activity);
                     }
                 });
+
+                console.log($route.routes);
+                $route.reload();
             });
 
 

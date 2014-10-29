@@ -59,9 +59,12 @@ define(['angular', 'lodash'], function(angular, _) {
                 
                 var result;
 
+                console.log('getting', sessionId);
                 sessionId = sessionId || $rootScope.sessionId;
 
                 if (!original_prefs){
+
+                    console.log('original_prefs:', original_prefs);
 
                     return session.getIdentity().then(function() {
 

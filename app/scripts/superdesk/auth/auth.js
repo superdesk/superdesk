@@ -118,11 +118,12 @@ define([
 
             // prevent routing when there is no token
             $rootScope.$on('$locationChangeStart', function (e) {
+                console.log($route.routes);
                 $rootScope.requiredLogin = requiresLogin($route.routes[$location.path()]);
                 if (!session.token && $rootScope.requiredLogin) {
+                    console.log('auth');
                     session.getIdentity().then(function() {
                         $http.defaults.headers.common.Authorization = session.token;
-                        $route.reload();
                     });
                     e.preventDefault();
                 }
@@ -130,7 +131,7 @@ define([
 
             function requiresLogin(route) {
                 var nextRoute = route || {};
-                return nextRoute.auth || false;
+                return nextRoute.auth || true;
             }
 
         }]);
