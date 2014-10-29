@@ -30,7 +30,7 @@ define([
     describe('auth service', function() {
         beforeEach(inject(function(session, preferencesService, $q) {
             session.clear();
-            spyOn(preferencesService, 'getPreferences').andReturn($q.when({}));
+            spyOn(preferencesService, 'get').andReturn($q.when({}));
         }));
 
         it('can login', inject(function(auth, session, $httpBackend, $rootScope) {

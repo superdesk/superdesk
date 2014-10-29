@@ -16,6 +16,7 @@ define(['angular', 'jquery'], function(angular, $) {
             {
                 $rootScope.beta = false;
                 var beta = preferencesService.get('feature:preview');
+
                 if (beta){
                     $rootScope.beta = beta.enabled;
                 }

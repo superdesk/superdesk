@@ -54,15 +54,12 @@ define(['lodash'], function(_) {
 
             this.identity = null;
             this.updateIdentity(identity);
+            preferencesService.get();
 
-            preferencesService.getPreferences(session._id).then(function(preferences) {
-                    preferencesService.saveLocally(preferences);
-
-                    if (defer) {
-                        defer.resolve(identity);
-                        defer = null;
-                    }
-            });
+            if (defer) {
+                defer.resolve(identity);
+                defer = null;
+            }
         };
 
         /**
@@ -99,7 +96,7 @@ define(['lodash'], function(_) {
             setSessionHref(null);
             setSessionId(null);
             storage.removeItem(IDENTITY_KEY);
-            preferencesService.deleteLocally();
+            preferencesService.remove();
         };
 
         /**

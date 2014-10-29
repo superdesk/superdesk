@@ -24,7 +24,7 @@ define([
         });
 
         beforeEach(inject(function(preferencesService, $q) {
-            spyOn(preferencesService, 'getPreferences').andReturn($q.when({}));
+            spyOn(preferencesService, 'get').andReturn($q.when({}));
         }));
 
         it('has identity and token property', inject(function (session) {
@@ -36,7 +36,7 @@ define([
             session.start(SESSION, {name: 'user'});
             expect(session.token).toBe(SESSION.token);
             expect(session.identity.name).toBe('user');
-            expect(preferencesService.getPreferences).toHaveBeenCalledWith(session.identity._id);
+            expect(preferencesService.get).toHaveBeenCalled();
         }));
 
         it('can be set expired', inject(function (session) {

@@ -12,67 +12,64 @@ define(['angular', 'lodash'], function(angular, _) {
                 userPreferences = ['feature:preview', 'archive:view', 'email:notification', 'workqueue:items'],
                 //sessionPreferences = ['scratchpad:items', 'pinned:items', 'desk:items'],
                 api,
-                defer;
+                defer,
+                original_preferences = null;
 
-            this.original_preferences = null;
-
-            this.saveLocally = function(preferences, type, key) {
+            function saveLocally(preferences, type, key) {
 
                 //console.log('saving saveLocally:', preferences, type, key);
 
-                if (type && key && this.original_preferences)
+                if (type && key && original_preferences)
                 {
-                    this.original_preferences[type][key] = preferences[type][key];
-                    this.original_preferences._etag = preferences._etag;
+                    original_preferences[type][key] = preferences[type][key];
+                    original_preferences._etag = preferences._etag;
                 } else
                 {
-                    this.original_preferences = preferences;
+                    original_preferences = preferences;
                 }
 
                 //console.log('saved saveLocally:', this.original_preferences);
 
-                storage.setItem(PREFERENCES, this.original_preferences);
-            };
+                storage.setItem(PREFERENCES, original_preferences);
+            }
 
-            this.loadLocally = function()
+            function loadLocally()
             {
-                if (!this.original_preferences)
+                if (!original_preferences)
                 {
-                    this.original_preferences = storage.getItem(PREFERENCES);
+                    original_preferences = storage.getItem(PREFERENCES);
                 }
 
-                return this.original_preferences;
-            };
+                return original_preferences;
+            }
 
-            this.deleteLocally = function()
-            {
+            this.remove = function() {
                 storage.removeItem(PREFERENCES);
-                this.original_preferences = null;
+                original_preferences = null;
             };
 
-            this.getPreferences = function(sessionId) {
+            function getPreferences(sessionId) {
                 if (!api) { api = $injector.get('api'); }
 
                 defer = $q.defer();
-
                 api('preferences').getById(sessionId)
                     .then(function(result) {
                         return defer.resolve(result);
                     });
 
                 return defer.promise;
-            };
+            }
 
             this.get = function(key) {
 
-                var instance = this;
-                var original_prefs = this.loadLocally();
+                var original_prefs = loadLocally();
 
                 if (!original_prefs){
 
                     if ($rootScope.sessionId){
-                        this.getPreferences($rootScope.sessionId).then(function(preferences) {
-                            instance.saveLocally(preferences);
+                        getPreferences($rootScope.sessionId).then(function(preferences) {
+
+                            saveLocally(preferences);
                             original_prefs = preferences;
 
                             if (!key){
@@ -94,25 +91,25 @@ define(['angular', 'lodash'], function(angular, _) {
                         var prefs = original_prefs[USER_PREFERENCES] || {};
                         return prefs[key] || null;
                     } else {
-                        return original_prefs[SESSION_PREFERENCES][key];
+                        var sess_prefs = original_prefs[SESSION_PREFERENCES] || {};
+                        return sess_prefs[key] || null;
                     }
                 }
             };
 
             this.update = function(updates, key) {
                 if (!key){
-                    return this.updateUserPreferences(updates);
+                    return updatePreferences(updates);
                 } else if (userPreferences.indexOf(key) >= 0) {
-                    return this.updatePreferences(USER_PREFERENCES, updates, key);
+                    return updatePreferences(USER_PREFERENCES, updates, key);
                 } else {
-                    return this.updatePreferences(SESSION_PREFERENCES, updates, key);
+                    return updatePreferences(SESSION_PREFERENCES, updates, key);
                 }
             };
 
-            this.updatePreferences = function(type, updates, key) {
+            function updatePreferences (type, updates, key) {
 
-                var instance = this;
-                var original_prefs = _.cloneDeep(this.loadLocally());
+                var original_prefs = _.cloneDeep(loadLocally());
                 var user_updates = {};
                 user_updates[type] = updates;
 
@@ -122,7 +119,7 @@ define(['angular', 'lodash'], function(angular, _) {
 
                 api('preferences', $rootScope.sessionId).save(original_prefs, user_updates)
                     .then(function(result) {
-                                instance.saveLocally(result, type, key);
+                                saveLocally(result, type, key);
                                 return defer.resolve(result);
                             },
                             function(response) {
@@ -132,7 +129,7 @@ define(['angular', 'lodash'], function(angular, _) {
 
                 return defer.promise;
 
-            };
+            }
 
     }]);
 
