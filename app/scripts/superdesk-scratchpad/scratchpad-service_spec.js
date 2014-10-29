@@ -4,10 +4,10 @@ define([
 ], function(storageService, ScratchpadService) {
     'use strict';
 
-    beforeEach(module('superdesk.services.preferencesService'));
-    beforeEach(module('superdesk.notify'));
-
     describe('scratchpadService', function() {
+        beforeEach(module('superdesk.notify'));
+        beforeEach(module('superdesk.mocks'));
+
         beforeEach(function() {
             module(storageService.name);
             module(function($provide) {
@@ -32,10 +32,14 @@ define([
             });
         }));
 
-        beforeEach(inject(function($injector, notify) {
+        beforeEach(inject(function($injector, notify, beta) {
             $q = $injector.get('$q');
             storage = $injector.get('storage');
             preferencesService = $injector.get('preferencesService');
+            spyOn(beta, 'isBeta').andReturn($q.when(true));
+            spyOn(preferencesService, 'update').andReturn($q.when({}));
+            spyOn(preferencesService, 'get').andReturn($q.when(['test']));
+
             service = $injector.get('scratchpad');
             testItem = {
                 _links: {self: {href: 'test'}},
@@ -48,7 +52,6 @@ define([
             storage.clear();
             service.itemList = [];
             service.data = {};
-            spyOn(preferencesService, 'update').andReturn($q.when({}));
         }));
 
         it('can add items', function() {
@@ -103,11 +106,13 @@ define([
             service.addItem(testItem);
             service.data = {};
 
+            $rootScope.$digest();
+
             service.getItems().then(function(response) {
                 test = response[0];
             });
 
-            $rootScope.$apply();
+            $rootScope.$digest();
 
             expect(test.data).toEqual(testItem.data);
         }));

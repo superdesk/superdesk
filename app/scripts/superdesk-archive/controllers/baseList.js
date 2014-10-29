@@ -7,7 +7,7 @@ define(['lodash'], function(_) {
 
         var lastQueryParams = {};
         var savedView;
-        preferencesService.get('archive:view').then(function(result){
+        preferencesService.get('archive:view').then(function(result) {
             savedView = result.view;
             $scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
         });

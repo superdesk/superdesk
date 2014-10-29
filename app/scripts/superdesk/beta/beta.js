@@ -31,16 +31,15 @@ define(['angular', 'jquery'], function(angular, $) {
         };
 
         this.isBeta = function() {
-            
+
             if ($rootScope.beta == null) {
-                return preferencesService.get('feature:preview').then(function(result){
-                    $rootScope.beta = result.enabled ;
-                    return result.enabled;
-                }, function(){
+                return preferencesService.get('feature:preview').then(function(result) {
+                    $rootScope.beta = result && result.enabled;
+                    return $rootScope.beta;
+                }, function() {
                     return $q.when(false);
                 });
-            }
-            else {
+            } else {
                 return $q.when($rootScope.beta);
             }
         };
@@ -64,11 +63,11 @@ define(['angular', 'jquery'], function(angular, $) {
         return {
             response: function(response) {
                 var url = response.config.url;
-                
+
                 if (!modifiedTemplates[url] && IS_HTML_PAGE.test(url) && HAS_FLAGS_EXP.test(response.data)) {
                     var template = $('<div>').append(response.data);
 
-                    return betaService.isBeta().then(function(beta){
+                    return betaService.isBeta().then(function(beta) {
                         if (!beta) {
                             template.find('[sd-beta]').each(function() {
                                 $(this).remove();

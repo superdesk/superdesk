@@ -100,13 +100,13 @@ define([
             return this;
         };
 
-        this.$get = ['$q', '$route', 'activityService', 'activityChooser', 'betaService', 'features',
-        function($q, $route, activityService, activityChooser, betaService, features) {
+        this.$get = ['$q', '$route', '$rootScope', 'activityService', 'activityChooser', 'betaService', 'features',
+        function($q, $route, $rootScope, activityService, activityChooser, betaService, features) {
 
             /**
              * Render main menu depending on registered acitivites
              */
-            betaService.isBeta().then(function(beta){
+            betaService.isBeta().then(function(beta) {
                 _.forEach(activities, function(activity, id) {
                     if (activity.beta === true && beta === false) {
                         $routeProvider.when(activity.when, {redirectTo: '/workspace'});
@@ -118,7 +118,6 @@ define([
 
                 $route.reload();
             });
-
 
             /**
              * Let user to choose an activity

@@ -1,15 +1,13 @@
 define([
     './preferencesService',
     './storage'
-], function(preferencesService, storage) {
+], function(preferencesServiceSpec, storageSpec) {
     'use strict';
 
-    beforeEach(function() {
-        module(preferencesService.name);
-        module(storage.name);
-    });
-
     describe('Preferences Service', function() {
+
+    	beforeEach(module(preferencesServiceSpec.name));
+    	beforeEach(module(storageSpec.name));
 
         var $q,
         	storage,
@@ -77,11 +75,13 @@ define([
 	        });
 	    }));
 
-	    beforeEach(inject(function($injector) {
+	    beforeEach(inject(function($injector, session, api) {
             $q = $injector.get('$q');
             storage = $injector.get('storage');
             preferencesService = $injector.get('preferencesService');
 	        storage.clear();
+
+	        spyOn(session, 'getIdentity').andReturn($q.when({sessionId: 1}));
 	    }));
 
 		it('can get preferences', inject(function(api, $rootScope) {
@@ -92,6 +92,8 @@ define([
 
             $rootScope.$digest();
 			var preferences = preferencesService.get();
+
+			$rootScope.$digest();
 
 			expect(preferences).not.toBe(null);
 			expect(preferences).not.toBe(undefined);
@@ -106,7 +108,12 @@ define([
 			preferencesService.get();
 
             $rootScope.$digest();
-            var preferences = preferencesService.get('archive:view');
+            var preferences;
+            preferencesService.get('archive:view').then(function(_preferences) {
+            	preferences = _preferences;
+            });
+
+            $rootScope.$digest();
 
 			expect(preferences.view).toBe('mgrid');
 			expect(storage.getItem('preferences')).not.toBe(null);
@@ -123,7 +130,12 @@ define([
             preferencesService.update(update, 'feature:preview').then(function() {}, function(response) { });
             $rootScope.$digest();
 
-            var preferences = preferencesService.get('feature:preview');
+            var preferences;
+            preferencesService.get('feature:preview').then(function(_preferences) {
+            	preferences = _preferences;
+            });
+
+            $rootScope.$digest();
 
 			expect(preferences.enabled).toBe(false);
 			expect(storage.getItem('preferences').user_preferences['feature:preview'].enabled).toBe(false);

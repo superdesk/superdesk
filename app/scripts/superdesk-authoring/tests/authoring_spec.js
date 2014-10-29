@@ -17,7 +17,7 @@ describe('authoring', function() {
     }));
 
     beforeEach(inject(function(preferencesService, $q) {
-            spyOn(preferencesService, 'get').andReturn($q.when({'items':[]}));
+            spyOn(preferencesService, 'get').andReturn($q.when({'items':['urn:tag:superdesk-1']}));
             spyOn(preferencesService, 'update').andReturn($q.when({}));
     }));
 
@@ -30,7 +30,7 @@ describe('authoring', function() {
         expect(session.identity._id).toBe(USER);
     }));
 
-    it('can open an item', inject(function(superdesk, api, lock, autosave, $injector, $q, $rootScope) {
+    it('can open an item', inject(function(superdesk, api, lock, autosave, $injector, $q, $rootScope, $httpBackend) {
         var _item,
             lockedItem = angular.extend({_locked: false}, item);
 

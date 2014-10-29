@@ -90,7 +90,7 @@ define(['angular', 'lodash'], function(angular, _) {
 
                     return $q.when(result);
                 }
-                
+
                 return $q.reject();
             };
 

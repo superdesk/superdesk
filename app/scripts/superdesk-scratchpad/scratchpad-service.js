@@ -78,7 +78,7 @@ define(['lodash'], function(_) {
         };
 
         var instance = this;
-        this.loadItemList().then(function(result){
+        this.loadItemList().then(function(result) {
             if (result) {
                 instance.itemList = result;
                 instance.update();

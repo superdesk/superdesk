@@ -250,7 +250,7 @@
             {id: 'web', label: gettext('Use a Web URL'), beta: true}
         ];
 
-        beta.isBeta().then(function(beta){
+        beta.isBeta().then(function(beta) {
             if (!beta) {
                 $scope.methods = _.reject($scope.methods, {beta: true});
             }
@@ -779,7 +779,7 @@
                 link: function(scope, elem, attrs) {
 
                     var orig;
-                    preferencesService.get(function(result){
+                    preferencesService.get().then(function(result) {
                         orig = result;
                         buildPreferences(orig);
                     });
