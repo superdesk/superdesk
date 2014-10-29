@@ -92,4 +92,4 @@ class TasksService(BaseService):
         item['task'] = item.get('task', {})
         item['task']['user'] = user
         del item['_id']
-        return self.update(item_id, item)
+        return self.patch(item_id, item)

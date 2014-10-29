@@ -32,6 +32,7 @@ class ItemLock(BaseComponent):
             push_notification('item:lock', item=str(item.get('_id')), user=str(user))
         else:
             raise SuperdeskError('Item locked by another user')
+        item = item_model.find_one(filter)
         return item
 
     def unlock(self, filter, user, session, etag):
@@ -43,6 +44,8 @@ class ItemLock(BaseComponent):
             item_model.update(filter, updates)
             self.app.on_item_unlocked(item, user)
             push_notification('item:unlock', item=str(filter.get('_id')))
+        item = item_model.find_one(filter)
+        return item
 
     def _can_lock(self, item, user):
         # TODO: implement

@@ -96,9 +96,6 @@ def get_resource_service(resource_name):
     return resources[resource_name].service
 
 
-from .app_prepopulate import AppPrepopulateCommand  # noqa
-
-
 def register_default_user_preference(preference_name, preference):
     default_user_preferences[preference_name] = preference
 

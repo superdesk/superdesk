@@ -1,0 +1,3 @@
+[
+{"resource":"users", "data":{"username":"admin_other", "first_name":"first name other", "last_name":"last name other", "password":"admin_other", "user_type": "administrator", "email": "a@a_other.com"}}
+]

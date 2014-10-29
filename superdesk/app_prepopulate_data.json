@@ -1,5 +1,0 @@
-[
-{"resource":"users", "id_name":"#USERS_ID#", "data":{"username":"test_username", "first_name":"first name", "last_name":"last name", "password":"password"}},
-{"resource":"desks", "data":{"name": "Sports Desk", "members": [{"user": "#USERS_ID#"}]}},
-{"resource":"roles", "data":{"name": "Editor", "permissions": {"ingest": {"read": 1}}}}
-]

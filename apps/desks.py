@@ -49,6 +49,8 @@ class DesksService(BaseService):
                 doc['incoming_stage'] = stage.get('_id')
                 super().create([doc], **kwargs)
                 superdesk.get_resource_service('stages').patch(doc['incoming_stage'], {'desk': doc['_id']})
+            else:
+                super().create([doc], **kwargs)
         return [doc['_id'] for doc in docs]
 
 

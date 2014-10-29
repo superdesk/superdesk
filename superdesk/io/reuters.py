@@ -4,12 +4,13 @@ import requests
 import traceback
 import datetime
 from superdesk import get_resource_service
+from superdesk.io.ingest_service import IngestService
 
 from superdesk.utc import utcnow
 from superdesk.utc import utc
 from superdesk.etree import etree
 from urllib.parse import urlparse, urlunparse
-from superdesk.io import register_provider, IngestService
+from superdesk.io import register_provider
 from .newsml_2_0 import Parser
 from .reuters_token import get_token
 
