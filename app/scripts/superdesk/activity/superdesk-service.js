@@ -116,7 +116,6 @@ define([
                     }
                 });
 
-                console.log($route.routes);
                 $route.reload();
             });
 

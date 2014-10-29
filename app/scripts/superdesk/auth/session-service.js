@@ -54,9 +54,6 @@ define(['lodash'], function(_) {
 
             this.identity = null;
             this.updateIdentity(identity);
-
-            console.log('start', session._id);
-            
             resolveIdentity(identity);
         };
 

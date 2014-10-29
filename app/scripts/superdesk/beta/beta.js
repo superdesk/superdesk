@@ -32,24 +32,16 @@ define(['angular', 'jquery'], function(angular, $) {
 
         this.isBeta = function() {
             
-            console.log("isBeta called")
-
             if ($rootScope.beta == null) {
-                console.log("$rootScope.beta == null")
                 return preferencesService.get('feature:preview').then(function(result){
-                    console.log("$rootScope.beta :", result.enabled);
                     $rootScope.beta = result.enabled ;
                     return result.enabled;
                 }, function(){
-                    console.log("defer.resolve(false)");
                     return $q.when(false);
                 });
             }
             else {
-                console.log("resolving $rootScope.beta :", $rootScope.beta);
-                
                 return $q.when($rootScope.beta);
-
             }
         };
 
@@ -76,9 +68,7 @@ define(['angular', 'jquery'], function(angular, $) {
                 if (!modifiedTemplates[url] && IS_HTML_PAGE.test(url) && HAS_FLAGS_EXP.test(response.data)) {
                     var template = $('<div>').append(response.data);
 
-                    console.log("here1");
                     return betaService.isBeta().then(function(beta){
-                        console.log("here2:", beta);
                         if (!beta) {
                             template.find('[sd-beta]').each(function() {
                                 $(this).remove();
@@ -86,14 +76,11 @@ define(['angular', 'jquery'], function(angular, $) {
                         }
 
                         response.data = template.html();
-
                         $templateCache.put(url, response.data);
                         modifiedTemplates[url] = true;
                         return response;
                     }, function() {
-                        console.log('err');
                         response.data = template.html();
-
                         $templateCache.put(url, response.data);
                         modifiedTemplates[url] = true;
                         return response;

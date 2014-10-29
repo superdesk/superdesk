@@ -30,7 +30,6 @@
                     scope.flags = ctrl.flags;
 
                     scope.$watch('beta', function() {
-                        console.log('beta...', scope.beta);
                         scope.menu = _.values(_.where(superdesk.activities, {category: superdesk.MENU_MAIN}));
                     });
 

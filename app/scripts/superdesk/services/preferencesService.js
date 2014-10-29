@@ -17,8 +17,6 @@ define(['angular', 'lodash'], function(angular, _) {
 
             function saveLocally(preferences, type, key) {
 
-                //console.log('saving saveLocally:', preferences, type, key);
-
                 if (type && key && original_preferences)
                 {
                     original_preferences[type][key] = preferences[type][key];
@@ -27,8 +25,6 @@ define(['angular', 'lodash'], function(angular, _) {
                 {
                     original_preferences = preferences;
                 }
-
-                //console.log('saved saveLocally:', this.original_preferences);
 
                 storage.setItem(PREFERENCES, original_preferences);
             }
@@ -56,19 +52,13 @@ define(['angular', 'lodash'], function(angular, _) {
             this.get = function(key, sessionId) {
 
                 var original_prefs = loadLocally();
-                
                 var result;
-
-                console.log('getting', sessionId);
                 sessionId = sessionId || $rootScope.sessionId;
 
                 if (!original_prefs){
 
-                    console.log('original_prefs:', original_prefs);
-
                     return session.getIdentity().then(function() {
 
-                        console.log('fetch', sessionId);
                         return getPreferences(session.sessionId).then(function(preferences) {
 
                             saveLocally(preferences);
