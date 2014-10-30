@@ -61,19 +61,18 @@ describe('authoring', function() {
         expect(item._locked).toBe(false);
     }));
 
-    it('can autosave and save an item', inject(function(superdesk, api, $q, $timeout, $controller, $rootScope) {
-        var scope = $rootScope.$new(),
+    it('can autosave and save an item', inject(function(api, $q, $timeout, $rootScope) {
+        var $scope = startAuthoring(item),
             headline = 'test headline';
 
-        $controller(superdesk.activity('authoring').controller, {item: item, $scope: scope});
-        expect(scope.dirty).toBe(false);
-        expect(scope.item.guid).toBe(GUID);
+        expect($scope.dirty).toBe(false);
+        expect($scope.item.guid).toBe(GUID);
 
         // edit
-        scope.item.headline = headline;
+        $scope.item.headline = headline;
         $rootScope.$digest();
-        expect(scope.dirty).toBe(true);
-        expect(scope.saving).toBe(true);
+        expect($scope.dirty).toBe(true);
+        expect($scope.saving).toBe(true);
 
         // autosave
         spyOn(api, 'save').andReturn($q.when({}));
@@ -81,25 +80,23 @@ describe('authoring', function() {
         expect(api.save).toHaveBeenCalled();
 
         // save
-        scope.save();
+        $scope.save();
         $rootScope.$digest();
-        expect(scope.dirty).toBe(false);
+        expect($scope.dirty).toBe(false);
         expect(api.save).toHaveBeenCalled();
     }));
 
-    it('can use a previously created autosave', inject(function($rootScope, $controller, superdesk) {
-        var scope = $rootScope.$new();
-        $controller(superdesk.activity('authoring').controller, {item: {_autosave: {headline: 'test'}}, $scope: scope});
-        expect(scope.item._autosave.headline).toBe('test');
-        expect(scope.item.headline).toBe('test');
+    it('can use a previously created autosave', inject(function() {
+        var $scope = startAuthoring({_autosave: {headline: 'test'}});
+        expect($scope.item._autosave.headline).toBe('test');
+        expect($scope.item.headline).toBe('test');
     }));
 
-    it('can save while item is being autosaved', inject(function($rootScope, $timeout, $controller, $q, api, superdesk) {
-        var $scope = $rootScope.$new();
-        $controller(superdesk.activity('authoring').controller, {item: {headline: 'test'}, $scope: $scope});
+    it('can save while item is being autosaved', inject(function($rootScope, $timeout, $q, api) {
+        var $scope = startAuthoring({headline: 'test'});
+
         $scope.item.body_html = 'test';
         $rootScope.$digest();
-
         $timeout.flush(1000);
 
         spyOn(api, 'save').andReturn($q.when({}));
@@ -110,6 +107,69 @@ describe('authoring', function() {
         $timeout.flush(5000);
         expect($scope.item._autosave).toBe(null);
     }));
+
+    /**
+     * Start authoring ctrl for given item.
+     */
+    function startAuthoring(item) {
+        var $scope;
+
+        inject(function($rootScope, $controller, superdesk) {
+            $scope = $rootScope.$new();
+            $controller(superdesk.activity('authoring').controller, {item: item, $scope: $scope});
+        });
+
+        return $scope;
+    }
+
+    describe('authoring service', function() {
+
+        var confirmDefer;
+
+        beforeEach(inject(function(confirm, lock, workqueue, $q) {
+            confirmDefer = $q.defer();
+            spyOn(confirm, 'confirm').andReturn(confirmDefer.promise);
+            spyOn(lock, 'unlock').andReturn($q.when());
+            spyOn(workqueue, 'remove');
+        }));
+
+        xit('can open an item', function() {
+
+        });
+
+        xit('can save an item', function() {
+
+        });
+
+        it('can close a read-only item', inject(function(authoring, confirm, lock, workqueue, $rootScope) {
+            var done = jasmine.createSpy('done') ;
+            authoring.close({}).then(done);
+            $rootScope.$digest();
+
+            expect(confirm.confirm).not.toHaveBeenCalled();
+            expect(lock.unlock).not.toHaveBeenCalled();
+            expect(workqueue.remove).toHaveBeenCalled();
+            expect(done).toHaveBeenCalled();
+        }));
+
+        it('confirms if an item is dirty and saves', inject(function(authoring, confirm, lock, workqueue, $q, $rootScope) {
+            var diff = {test: 1};
+            authoring.close(item, diff, true);
+            $rootScope.$digest();
+
+            expect(confirm.confirm).toHaveBeenCalled();
+            expect(lock.unlock).not.toHaveBeenCalled();
+            expect(workqueue.remove).not.toHaveBeenCalled();
+
+            spyOn(authoring, 'save').andReturn($q.when());
+            confirmDefer.resolve();
+            $rootScope.$digest();
+
+            expect(authoring.save).toHaveBeenCalledWith(item, diff);
+            expect(lock.unlock).toHaveBeenCalled();
+            expect(workqueue.remove).toHaveBeenCalled();
+        }));
+    });
 });
 
 describe('autosave', function() {
