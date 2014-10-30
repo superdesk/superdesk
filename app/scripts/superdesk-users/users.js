@@ -333,8 +333,8 @@
     /**
      * User roles controller - settings page
      */
-    UserRolesController.$inject = ['$scope', 'api', 'modal', 'gettext'];
-    function UserRolesController($scope, api, modal, gettext) {
+    UserRolesController.$inject = ['$scope', 'api', 'modal', 'gettext', 'notify'];
+    function UserRolesController($scope, api, modal, gettext, notify) {
 
         var _orig;
         $scope.selectedRole = null;
@@ -362,6 +362,13 @@
                     $scope.roles.unshift(_orig);
                 }
                 $scope.cancel();
+            }, function(response) {
+                if (response.status === 400 && response.data._issues.name.unique === 1)
+                {
+                        notify.error(gettext('I\'m sorry but a role with that name already exists.'));
+                } else {
+                    notify.error(gettext('I\'m sorry but there was an error when saving the role.'));
+                }
             });
         };
 
