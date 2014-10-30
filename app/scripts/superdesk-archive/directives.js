@@ -13,17 +13,25 @@ define([
                 link: function(scope) {
                     scope.$watch('item.lock_user', function() {
                         scope.lock = null;
+                        scope.lockbyme = null;
                         if (scope.item && lock.isLocked(scope.item)) {
                             api('users').getById(scope.item.lock_user).then(function(user) {
                                 scope.lock = {user: user};
                             });
+                        }
+                        if (scope.item && lock.isLockedByMe(scope.item))
+                        {
+                            scope.lock = null;
+                            scope.lockbyme = true;
                         }
                     });
 
                     scope.unlock = function() {
                         lock.unlock(scope.item).then(function() {
                             scope.item.lock_user = null;
+                            scope.item.lock_sesssion = null;
                             scope.lock = null;
+                            scope.isLocked = false;
                         });
                     };
 
@@ -37,6 +45,7 @@ define([
                     scope.$on('item:unlock', function(_e, data) {
                         if (scope.item && scope.item._id === data.item) {
                             scope.item.lock_user = null;
+                            scope.item.lock_session = null;
                             scope.$digest();
                         }
                     });
@@ -262,6 +271,7 @@ define([
                         if (scope.item && scope.item._id === data.item) {
                             scope.isLocked = false;
                             scope.item.lock_user = null;
+                            scope.item.lock_session = null;
                             scope.$digest();
                         }
                     });

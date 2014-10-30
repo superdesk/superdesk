@@ -1,18 +1,41 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    BaseListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'es', 'desks'];
-    function BaseListController($scope, $location, superdesk, api, es, desks) {
+    BaseListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'es', 'desks', 'preferencesService', 'notify'];
+    function BaseListController($scope, $location, superdesk, api, es, desks, preferencesService, notify) {
         var self = this;
 
         var lastQueryParams = {};
-        var savedView = localStorage.getItem('archive:view');
-        $scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
+        var savedView;
+
+        preferencesService.get('archive:view').then(function(result) {
+            savedView = result.view;
+            $scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
+        });
+
         $scope.selected = {};
 
         $scope.setView = function(view) {
-            $scope.view = view || 'mgrid';
-            localStorage.setItem('archive:view', $scope.view);
+
+            var update = {
+                'archive:view': {
+                    'allowed': [
+                        'mgrid',
+                        'compact'
+                    ],
+                    'category': 'archive',
+                    'view': view || 'mgrid',
+                    'default': 'mgrid',
+                    'label': 'Users archive view format',
+                    'type': 'string'
+                }
+            };
+
+            preferencesService.update(update, 'archive:view').then(function() {
+                    $scope.view = view || 'mgrid';
+                }, function(response) {
+                    notify.error(gettext('User preference could not be saved...'));
+            });
         };
 
         $scope.preview = function(item) {

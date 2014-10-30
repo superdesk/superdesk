@@ -36,6 +36,8 @@ define([
             });
         });
 
+        beforeEach(module('superdesk.mocks'));
+
         it('exists', inject(function(superdesk) {
             expect(superdesk).toBeDefined();
         }));

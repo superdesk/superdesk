@@ -11,7 +11,7 @@ describe('users api', function() {
 
         spyOn(api, 'save').andReturn($q.when({}));
 
-        users.save(user, data);
+        users.save(user, data).then(function() {});
 
         $rootScope.$digest();
 

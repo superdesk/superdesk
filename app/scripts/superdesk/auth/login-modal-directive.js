@@ -34,9 +34,10 @@ define([], function() {
                 }, 'requiredLogin'], function showLogin(triggerLogin) {
                     scope.isLoading = false;
                     scope.identity = session.identity;
-                    scope.username = session.identity ? session.identity.username : null;
+                    scope.sessionId = session.sessionId;
+                    scope.username = session.identity ? session.identity.UserName : null;
                     scope.password = null;
-                    if (!triggerLogin[0] && triggerLogin[1]) {
+                    if (!triggerLogin[0] && triggerLogin[1] === true) {
                         scope.active = true;
                         var focusElem = scope.username ? 'password' : 'username';
                         element.find('#login-' + focusElem).focus();

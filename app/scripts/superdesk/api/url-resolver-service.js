@@ -49,6 +49,10 @@ define([], function() {
          * @returns {Promise}
          */
         function fetchResourceLinks() {
+            if (!baseUrl) {
+                return $q.reject();
+            }
+
             return $http({
                 method: 'GET',
                 url: baseUrl
