@@ -92,6 +92,11 @@ class SuperdeskTokenAuth(TokenAuth):
         if resource in {'users', 'roles', 'sessions'}:
             raise ForbiddenError()
 
+        # users should be able to change only their preferences
+        if resource == 'preferences':
+            session = get_resource_service('preferences').find_one(_id=request.view_args.get('_id'), req=None)
+            return user['_id'] == session.get("user")
+
         # Get the list of roles belonging to this user
         roles = user.get('roles')
         if roles is not None:
