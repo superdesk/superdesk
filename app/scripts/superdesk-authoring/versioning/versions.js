@@ -75,12 +75,7 @@
          * If the version is the last one and there is an autosave - drop autosave
          */
         $scope.revert = function(version) {
-            if ($scope.last === version) {
-                $scope.dropAutosave(version);
-                $scope.openVersion(version);
-            } else {
-                $scope.$parent.revert(version).then(fetchVersions);
-            }
+            $scope.$parent.revert(version).then(fetchVersions);
         };
 
         $scope.$watchGroup(['item._id', 'item._latest_version'], fetchVersions);
