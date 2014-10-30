@@ -4,10 +4,11 @@ import logging
 from eve.utils import ParsedRequest
 
 import superdesk
-from .common import base_schema, get_user
+from .common import get_user
 from superdesk.resource import Resource, build_custom_hateoas
 from superdesk.json_path_tool import json_merge_values, json_copy_values
 from superdesk.services import BaseService
+from apps.common import metadata_schema
 
 
 logger = logging.getLogger(__name__)
@@ -100,7 +101,7 @@ class ContentViewItemsResource(Resource):
     endpoint_name = 'content_view_items'
     resource_title = endpoint_name
     url = 'content_view/<regex("[a-zA-Z0-9:\\-\\.]+"):content_view_id>/items'
-    schema = base_schema
+    schema = metadata_schema
     resource_methods = ['GET']
     datasource = {'backend': 'custom'}
 
