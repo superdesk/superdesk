@@ -51,6 +51,10 @@ CELERYBEAT_SCHEDULE = {
     'fetch_ingest': {
         'task': 'superdesk.io.fetch_ingest',
         'schedule': timedelta(minutes=5)
+    },
+    'auth_session_purge': {
+        'task': 'apps.auth.session_purge',
+        'schedule': timedelta(minutes=1)
     }
 }
 
