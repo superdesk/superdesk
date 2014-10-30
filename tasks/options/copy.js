@@ -4,7 +4,7 @@ module.exports = {
             expand: true,
             dot: true,
             cwd: '<%= appDir %>',
-            dest: '<%= distDir %>',
+            dest: '<%= serverDir %>',
             src: [
                 'images/**/*',
                 'styles/css/*.css',
@@ -19,10 +19,26 @@ module.exports = {
             expand: true,
             dot: true,
             cwd: '<%= appDir %>',
-            dest: '<%= distDir %>',
+            dest: '<%= serverDir %>',
             src: [
                 'scripts/config.js',
                 'scripts/bower_components/**/*.js'
+            ]
+        }]
+    },
+    dist: {
+        files: [{
+            expand: true,
+            dot: true,
+            cwd: '<%= serverDir %>',
+            dest: '<%= distDir %>',
+            src: [
+                'images/**',
+                'styles/css/bootstrap.css',
+                'styles/css/app.css',
+                'scripts/vendor.js',
+                'scripts/superdesk-core.js',
+                'scripts/superdesk.js'
             ]
         }]
     }

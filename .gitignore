@@ -3,15 +3,7 @@
 /.settings
 /.project
 node_modules
-dist/*.*
-dist/template/**
-dist/scripts/**
-!dist/scripts/main.js
-!dist/scripts/superdesk-core.js
-!dist/scripts/vendor.js
-dist/styles/css/**
-!dist/styles/css/app.css
-!dist/styles/css/bootstrap.css
+server/**
 *.swp
 .tmp
 .sass-cache

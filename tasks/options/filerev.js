@@ -6,11 +6,11 @@ module.exports = {
         length: 8
     },
     css: {
-        src: '<%= distDir %>/styles/css/*.css',
-        dest: '<%= distDir %>/styles/css/'
+        src: '<%= serverDir %>/styles/css/*.css',
+        dest: '<%= serverDir %>/styles/css/'
     },
     js: {
-        src: '<%= distDir %>/scripts/*.js',
-        dest: '<%= distDir %>/scripts/'
+        src: '<%= serverDir %>/scripts/*.js',
+        dest: '<%= serverDir %>/scripts/'
     }
 };

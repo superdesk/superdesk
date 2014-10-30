@@ -2,7 +2,7 @@
 module.exports = function(grunt) {
     'use strict';
 
-    var base = ['<%= distDir %>', '<%= tmpDir %>', '<%= appDir %>'];
+    var base = ['<%= serverDir %>', '<%= tmpDir %>', '<%= appDir %>'];
 
     return {
         options: {
@@ -20,7 +20,7 @@ module.exports = function(grunt) {
         },
         build: {
             options: {
-                base: ['<%= distDir %>'],
+                base: ['<%= serverDir %>'],
                 port: 9090,
                 livereload: false,
                 keepalive: true

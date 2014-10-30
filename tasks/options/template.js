@@ -28,7 +28,7 @@ module.exports = function(grunt) {
         return {data: {config: config}};
     }
 
-    var files = {'<%= distDir %>/index.html': '<%= appDir %>/index.html'};
+    var files = {'<%= serverDir %>/index.html': '<%= appDir %>/index.html'};
     var APIARY_URL = process.env.APIARY_URL || 'http://superdesk.apiary.io';
 
     return {

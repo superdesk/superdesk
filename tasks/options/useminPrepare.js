@@ -1,4 +1,6 @@
-
 module.exports = {
-    html: '<%= appDir %>/index.html'
+    html: '<%= appDir %>/index.html',
+    options: {
+        dest: '<%= serverDir %>/'
+    }
 };
