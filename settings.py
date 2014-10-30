@@ -54,7 +54,7 @@ CELERYBEAT_SCHEDULE = {
     },
     'auth_session_purge': {
         'task': 'apps.auth.session_purge',
-        'schedule': timedelta(minutes=1)
+        'schedule': timedelta(minutes=30)
     }
 }
 
