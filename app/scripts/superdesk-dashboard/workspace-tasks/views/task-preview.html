@@ -1,6 +1,6 @@
 <header>
 	<p class="pull-left">{{ :: 'Created on' | translate}} <span sd-reldate-complex ng-model="task._created"></span> {{ :: 'by' | translate}} {{ users[task.original_creator].display_name }}</p>
-	<button ng-click="task = null" class="close-preview">
+	<button ng-click="close()" class="close-preview">
         <i class="icon-close-small"></i>
     </button>
 </header>

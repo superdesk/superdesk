@@ -3,9 +3,10 @@
 
 Features.$inject = ['urls'];
 function Features(urls) {
-    urls.links().then(angular.bind(this, function(links) {
-        angular.extend(this, links);
-    }));
+    var self = this;
+    urls.links().then(function(links) {
+        angular.extend(self, links);
+    });
 }
 
 /**

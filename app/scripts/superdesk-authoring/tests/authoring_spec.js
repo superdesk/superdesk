@@ -9,6 +9,7 @@ describe('authoring', function() {
 
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.auth'));
+    beforeEach(module('superdesk.mocks'));
 
     beforeEach(inject(function($window) {
         $window.onbeforeunload = angular.noop;
@@ -54,11 +55,9 @@ describe('authoring', function() {
         expect(item._locked).toBe(false);
     }));
 
-    it('can autosave and save an item', inject(function(superdesk, api, desks, $q, $timeout, $controller, $rootScope) {
+    it('can autosave and save an item', inject(function(superdesk, api, $q, $timeout, $controller, $rootScope) {
         var scope = $rootScope.$new(),
             headline = 'test headline';
-
-        spyOn(desks, 'initialize').andReturn($q.reject());
 
         $controller(superdesk.activity('authoring').controller, {item: item, $scope: scope});
         expect(scope.dirty).toBe(false);
@@ -81,10 +80,35 @@ describe('authoring', function() {
         expect(scope.dirty).toBe(false);
         expect(api.save).toHaveBeenCalled();
     }));
+
+    it('can use a previously created autosave', inject(function($rootScope, $controller, superdesk) {
+        var scope = $rootScope.$new();
+        $controller(superdesk.activity('authoring').controller, {item: {_autosave: {headline: 'test'}}, $scope: scope});
+        expect(scope.item._autosave.headline).toBe('test');
+        expect(scope.item.headline).toBe('test');
+    }));
+
+    it('can save while item is being autosaved', inject(function($rootScope, $timeout, $controller, $q, api, superdesk) {
+        var $scope = $rootScope.$new();
+        $controller(superdesk.activity('authoring').controller, {item: {headline: 'test'}, $scope: $scope});
+        $scope.item.body_html = 'test';
+        $rootScope.$digest();
+
+        $timeout.flush(1000);
+
+        spyOn(api, 'save').andReturn($q.when({}));
+        $scope.save();
+        $rootScope.$digest();
+        expect($scope.saving).toBe(false);
+
+        $timeout.flush(5000);
+        expect($scope.item._autosave).toBe(null);
+    }));
 });
 
 describe('autosave', function() {
     beforeEach(module('superdesk.authoring'));
+    beforeEach(module('superdesk.mocks'));
 
     it('can fetch an autosave for not locked item', inject(function(autosave, api, $q, $rootScope) {
         spyOn(api, 'find').andReturn($q.when({}));

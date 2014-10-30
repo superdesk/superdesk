@@ -12,10 +12,12 @@ define([
 
     var module = angular.module('superdesk.activity', [
         'ngRoute',
-        'superdesk.translate',
         'superdesk.notify',
-        'superdesk.services.modal',
-        'superdesk.services.beta']);
+        'superdesk.features',
+        'superdesk.translate',
+        'superdesk.services.beta',
+        'superdesk.services.modal'
+    ]);
 
     /**
      * Superdesk Provider for registering of app components.
@@ -49,7 +51,7 @@ define([
          * @returns {object} promise
          */
         this.start = function startActivity(activity, locals) {
-            function execute (activity, locals) {
+            function execute(activity, locals) {
                 if (activity.when[0] === '/') { // trigger route
                     $location.path(getPath(activity, locals.data));
                     return $q.when(locals);
@@ -69,10 +71,10 @@ define([
             }
 
             if (activity.confirm) {
-                return modal.confirm(gettext(activity.confirm)).then(function() {
+                return modal.confirm(gettext(activity.confirm)).then(function runConfirmed() {
                     return execute(activity, locals);
                 }, function() {
-                    return $q.reject('no confirm');
+                    return $q.reject({confirm: 1});
                 });
             } else {
                 return execute(activity, locals);
@@ -86,7 +88,7 @@ define([
         $rootScope.superdesk = superdesk; // add superdesk reference so we can use constants in templates
 
         $rootScope.intent = function() {
-            superdesk.intent.apply(superdesk, arguments);
+            return superdesk.intent.apply(superdesk, arguments);
         };
     }]);
 

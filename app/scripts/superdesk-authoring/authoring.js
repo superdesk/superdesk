@@ -1,6 +1,8 @@
 (function() {
     'use strict';
 
+    var CONTENT_FIELDS = ['headline', 'slugline', 'body_html'];
+
     /**
      * Extend content of dest
      *
@@ -8,11 +10,7 @@
      * @param {Object} src
      */
     function extendItem(dest, src) {
-        angular.extend(dest, {
-            headline: src.headline || '',
-            slugline: src.slugline || '',
-            body_html: src.body_html || ''
-        });
+        angular.extend(dest, _.pick(src, CONTENT_FIELDS));
     }
 
     AutosaveService.$inject = ['$q', '$timeout', 'api'];
@@ -43,7 +41,7 @@
          * Autosave an item
          */
         this.save = function(item, data) {
-            $timeout.cancel(_timeout);
+            this.stop();
             _timeout = $timeout(function() {
                 var diff = angular.extend({_id: item._id}, data);
                 return api.save(RESOURCE, {}, diff).then(function(_autosave) {
@@ -53,6 +51,16 @@
                 });
             }, AUTOSAVE_TIMEOUT);
             return _timeout;
+        };
+
+        /**
+         * Stop pending autosave
+         */
+        this.stop = function() {
+            if (_timeout) {
+                $timeout.cancel(_timeout);
+                _timeout = null;
+            }
         };
 
         /**
@@ -93,6 +101,7 @@
         this.lock = function(item) {
             if (!item.lock_user) {
                 return api('archive_lock', item).save({}).then(function(lock) {
+                    _.extend(item, lock);
                     item._locked = false;
                     return item;
                 }, function(err) {
@@ -109,7 +118,14 @@
          * Unlock an item
          */
         this.unlock = function(item) {
-            return api('archive_unlock', item).save({});
+            return api('archive_unlock', item).save({}).then(function(lock) {
+                _.extend(item, lock);
+                item._locked = true;
+                return item;
+            }, function(err) {
+                item._locked = true;
+                return item;
+            });
         };
 
         /**
@@ -153,22 +169,19 @@
 
     AuthoringController.$inject = [
         '$scope',
-        '$q',
         'superdesk',
         'api',
         'workqueue',
         'notify',
         'gettext',
-        'ConfirmDirty',
         'lock',
         'desks',
         'item',
         'autosave'
     ];
 
-    function AuthoringController($scope, $q, superdesk, api, workqueue, notify, gettext, ConfirmDirty, lock, desks, item, autosave) {
-        var confirm = new ConfirmDirty($scope),
-            stopWatch = angular.noop;
+    function AuthoringController($scope, superdesk, api, workqueue, notify, gettext, lock, desks, item, autosave) {
+        var stopWatch = angular.noop;
 
         $scope.workqueue = workqueue.all();
         $scope.saving = false;
@@ -211,10 +224,12 @@
          */
     	$scope.save = function() {
             stopWatch();
+            autosave.stop();
     		return api.save('archive', item, $scope.item).then(function(res) {
                 workqueue.update(item);
                 item._autosave = null;
                 $scope.dirty = false;
+                $scope.saving = false;
                 $scope.item = _.create(item);
                 notify.success(gettext('Item updated.'));
                 startWatch();
@@ -228,14 +243,12 @@
          * Close an item - unlock and remove from workqueue
          */
         $scope.close = function() {
-            confirm.confirm().then(function() {
-                if ($scope.editable) {
-                    lock.unlock($scope.item);
-                }
-                $scope.dirty = false;
-                workqueue.remove($scope.item);
-                superdesk.intent('author', 'dashboard');
-            });
+            if ($scope._editable) {
+                lock.unlock($scope.item);
+            }
+            $scope.dirty = false;
+            workqueue.remove($scope.item);
+            superdesk.intent('author', 'dashboard');
         };
 
         /**
@@ -260,8 +273,9 @@
          * Close preview and start working again
          */
         $scope.closePreview = function() {
-            $scope._preview = false;
             $scope.item = _.create(item);
+            extendItem($scope.item, item._autosave || {});
+            $scope._preview = false;
             $scope._editable = $scope.isEditable();
             if ($scope._editable) {
                 startWatch();
@@ -294,12 +308,13 @@
         };
     }
 
-    SendItem.$inject = ['superdesk', 'api', 'desks', 'notify'];
-    function SendItem(superdesk, api, desks, notify) {
+    SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify'];
+    function SendItem($q, superdesk, api, desks, notify) {
         return {
             scope: {
                 item: '=',
-                view: '='
+                view: '=',
+                _beforeSend: '=beforeSend'
             },
             templateUrl: 'scripts/superdesk-authoring/views/send-item.html',
             link: function sendItemLink(scope, elem, attrs) {
@@ -307,25 +322,45 @@
                 scope.desks = null;
                 scope.stages = null;
 
-                scope.$watch('item', function fetchDesks() {
-                    if (scope.item.task && scope.item.task.desk) {
+                scope.beforeSend = scope._beforeSend || $q.when;
 
-                        api.find('tasks', scope.item._id).then(function(_task) {
-                            scope.task = _task;
-                        });
-
+                var fetchDesks = function() {
+                    return api.find('tasks', scope.item._id)
+                    .then(function(_task) {
+                        scope.task = _task;
+                    })
+                    .then(function() {
                         desks.initialize()
-                        .then(function fetchStages() {
+                        .then(function() {
                             scope.desks = desks.desks;
-                            scope.desk = desks.deskLookup[scope.item.task.desk];
-                            if (scope.desk) {
-                                api('stages').query({where: {desk: scope.desk._id}})
-                                .then(function(result) {
-                                    scope.stages = result;
-                                });
+                            if (scope.item.task && scope.item.task.desk) {
+                                scope.desk = desks.deskLookup[scope.item.task.desk];
                             }
                         });
-                    }
+                    });
+                };
+
+                var fetchStages = function() {
+                    desks.initialize()
+                    .then(function() {
+                        scope.desks = desks.desks;
+                        if (scope.item.task && scope.item.task.desk) {
+                            scope.desk = desks.deskLookup[scope.item.task.desk];
+                        }
+                        if (scope.desk) {
+                            api('stages').query({where: {desk: scope.desk._id}})
+                            .then(function(result) {
+                                scope.stages = result;
+                            });
+                        }
+                    });
+                };
+
+                scope.$watch('item', function() {
+                    fetchDesks()
+                    .then(function() {
+                        fetchStages();
+                    });
                 });
 
                 scope.sendToDesk = function sendToDesk(desk) {
@@ -343,7 +378,10 @@
                 };
 
                 function save(data) {
-                    api.save('tasks', scope.task, data).then(gotoDashboard);
+                    scope.beforeSend()
+                    .then(function() {
+                        api.save('tasks', scope.task, data).then(gotoDashboard);
+                    });
                 }
 
                 function gotoDashboard() {

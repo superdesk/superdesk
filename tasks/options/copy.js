@@ -6,8 +6,6 @@ module.exports = {
             cwd: '<%= appDir %>',
             dest: '<%= distDir %>',
             src: [
-                '.htaccess',
-                '*.{ico,txt}',
                 'images/**/*',
                 'styles/css/*.css',
                 'scripts/**/*.{html,css,jpg,jpeg,png,gif,json}',

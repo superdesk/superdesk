@@ -178,7 +178,24 @@
 			font-family:Arial, Verdana, sans-serif !important;
 		}
 	}
-
+    .article-keyword {
+		margin: 30px 0;
+		.keyword {
+			resize:none;
+			font-size:24px;
+			line-height: 28px;
+			border-color: #eee !important;
+			min-height: 48px;
+			padding: 7px;
+			.border-box();
+			&:focus {
+				.box-shadow(none) !important;
+			}
+		}
+		header, header input {
+			font-family:Arial, Verdana, sans-serif !important;
+		}
+	}
 
 	&:hover {
 		.text-editor, .title {

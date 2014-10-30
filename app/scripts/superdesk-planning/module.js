@@ -244,6 +244,12 @@ define([
                     });
                 });
 
+                elem.focus(function() {
+                    scope.$apply(function() {
+                        scope.open = true;
+                    });
+                });
+
                 scope.$watch('userId', function(userId) {
                     scope.user = null;
                     desks.initialize().then(function() {

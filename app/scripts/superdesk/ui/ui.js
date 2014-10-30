@@ -200,6 +200,50 @@ define([
         };
     }
 
+    AutofocusDirective.$inject = [];
+    function AutofocusDirective() {
+        return {
+            link: function(scope, element) {
+                _.defer(function() {
+                    element.focus();
+                });
+            }
+        };
+    }
+
+    AutoexpandDirective.$inject = [];
+    function AutoexpandDirective() {
+        return {
+            link: function(scope, element) {
+
+                var _minHeight = element.outerHeight();
+
+                function resize() {
+                    var e = element[0];
+                    var vlen = e.value.length;
+                    if (vlen !== e.valLength) {
+                        if (vlen < e.valLength) {
+                            e.style.height = '0px';
+                        }
+                        var h = Math.max(_minHeight, e.scrollHeight);
+
+                        e.style.overflow = (e.scrollHeight > h ? 'auto' : 'hidden');
+                        e.style.height = h + 1 + 'px';
+
+                        e.valLength = vlen;
+                    }
+                }
+
+                resize();
+
+                element.on('keyup change', function() {
+                    resize();
+                });
+
+            }
+        };
+    }
+
     return angular.module('superdesk.ui', [])
 
         .directive('sdShadow', ShadowDirective)
@@ -209,5 +253,7 @@ define([
         .factory('WizardHandler', WizardHandlerFactory)
         .directive('sdWizard', WizardDirective)
         .directive('sdWizardStep', WizardStepDirective)
-        .directive('sdCreateBtn', CreateButtonDirective);
+        .directive('sdCreateBtn', CreateButtonDirective)
+        .directive('sdAutofocus', AutofocusDirective)
+        .directive('sdAutoexpand', AutoexpandDirective);
 });

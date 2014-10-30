@@ -152,8 +152,13 @@
         };
 
         $scope.createUser = function() {
-            $scope.preview({});
+            $scope.intent('create', 'user').then(fetchUsers);
         };
+
+        $scope.$on('intent:create:user', function createUser() {
+            // fallback if there is no other activity
+            $scope.preview({});
+        });
 
         $scope.closePreview = function() {
             $scope.preview(null);
@@ -380,9 +385,9 @@
     }
 
     return angular.module('superdesk.users', [
-        'superdesk.activity',
         'superdesk.users.profile',
-        'superdesk.users.activity'
+        'superdesk.users.activity',
+        'superdesk.activity'
     ])
 
         .service('users', UsersService)
@@ -536,7 +541,6 @@
                         }]
                     }
                 })
-
                 .activity('/settings/user-roles', {
                     label: gettext('User Roles'),
                     templateUrl: 'scripts/superdesk-users/views/settings.html',
@@ -544,7 +548,6 @@
                     category: superdesk.MENU_SETTINGS,
                     priority: -500
                 })
-
                 .activity('delete/user', {
                     label: gettext('Delete user'),
                     icon: 'trash',
@@ -986,7 +989,6 @@
                 }
             };
         }])
-
         ;
 
 })();

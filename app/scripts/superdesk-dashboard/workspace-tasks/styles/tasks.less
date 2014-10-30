@@ -1,0 +1,347 @@
+// tasks.less
+// Styling for the superdesk dashboard page (gridster, widgets)
+// ----------------------------------------------------------------------------------------
+@import 'mixins.less';
+@import 'variables.less';
+
+/*
+---------------------------------------------
+TASK PAGE
+---------------------------------------------
+*/
+.task-list > header {
+	padding: 10px;
+	button {
+		border:0;
+		background: none;
+	}
+	.switch-view {
+		float: left;
+		margin-right: 30px;
+		button {
+			display: inline-block;
+			.border-radius(3px);
+			height: 30px;
+			.box-sizing(border-box);
+			padding: 0 10px;
+			line-height: 30px;
+			color: #4f4f4f;
+			text-decoration: none;
+			text-transform: uppercase;
+			font-size: 12px;
+			&:hover {
+				background: #e4e4e4;
+			}
+			&.active {
+				background: #ddd;	
+				color: #000;
+				.box-shadow(inset 0 2px 0 #ccc);
+			}
+		}
+	}
+	.status-tabs {
+		float: left;
+		margin: -10px 0;
+		
+		li {
+			button {
+				text-transform: uppercase;
+				font-size: 12px;
+			}
+			&.active {
+				button {
+					border-bottom: 3px solid @gray;
+					&.todo {
+						border-bottom-color: @todo-color;
+					}
+					&.in-progress {
+						border-bottom-color: @inprogress-color;
+					}
+					&.done {
+						border-bottom-color: @done-color;
+					}
+				}
+			}
+		}
+	}
+}
+
+.task-list {
+	.card {
+		.title {
+			.text-semibold();
+		}
+		.marker {
+			width: 4px;
+			position: absolute;
+			left: 0; top: 0; bottom: 0;
+			.border-radius(2px 0 0 2px);
+			&.todo {
+				background: @todo-color;
+			}
+			&.in-progress {
+				background: @inprogress-color;
+			}
+			&.done {
+				background: @done-color;
+			}
+		}
+	}
+}
+
+.workspace-tasks {
+	.preview-pane {
+		
+		.action-menu {
+			width: 84px !important;
+			.change {
+				border: 0;
+				background: 0;
+				padding: 14px;
+				float: left;	
+			}
+		}
+		header {
+			p {
+				line-height: @nav-height;
+				color: @grayLight;
+				max-width: 375px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+		}
+		.content {
+			padding: 20px;
+		}
+
+		textarea {
+			height: 32px;
+			border-color: #ddd !important;
+			&:focus {
+				border-color: #ddd !important;
+				.box-shadow(none) !important;
+			}
+		}
+
+		.title {
+			font-size: 16px;
+			.text-semibold();
+			line-height: 24px;
+			color: #444;
+			margin: 0 0 15px 0;
+		}
+
+		.description {
+			font-size: 14px;
+			margin-bottom: 15px;
+			line-height: 22px;
+			color:#444;
+		}
+		
+		.assignee-container {
+			background: #eee;
+			&.editable {
+				.box-shadow(inset 0 2px 4px #ddd);
+			}
+			padding: 10px;
+			.border-radius(3px);
+			margin-bottom: 10px;
+			.clearfix();
+			.avatar {
+				margin-right: 10px;
+			}
+			.assignee-box {
+				float: left;
+				margin-right: 10px;
+			}
+			.assignee-name {
+				margin: 0;
+				line-height: 30px;
+				float: left;
+			}
+		}
+		
+
+		.task-labels {
+			margin-top: 0;
+			margin-bottom: 15px;
+		}
+
+		.time-edit {
+			margin-top: 5px;
+			margin-bottom: 10px;
+			.clearfix();
+			.field {
+				float: left;
+				width: 50%;
+				.border-box();
+				&:first-child {
+					padding-right: 5px;
+				}
+				&:last-child {
+					padding-left: 5px;
+				}
+			}
+			input {
+				.border-box();
+				width: 100%;
+			}
+		}
+	}
+}
+
+.create-task {
+	width: 460px;
+	margin: 0 -230px !important;
+	top: 100px !important;
+	left: 50% !important;
+	right: auto !important;
+	bottom: 100px !important;
+
+    .modal-body {
+    	background: @sd-background;
+		
+		textarea {
+			resize: none;
+		}
+
+    	.title {
+    		border: 0 !important;
+    		border-bottom: 1px solid #e0e0e0 !important;
+    		padding: 5px 20px;
+    		.text-normal();
+    		height: 40px;
+			font-size: 18px;
+			line-height: 28px;
+			&:focus {
+				.box-shadow(none) !important;
+			}
+    	}
+
+    	fieldset{
+    		&.full {
+	    		margin: -20px -20px 15px;
+	    	}
+			&.due {
+				margin: -0 -15px;
+				position: relative;
+				.break {
+					height: 1px;
+					background: #dcdcdc;
+					margin: 10px 15px 0;
+				}
+				label {
+					float: left;
+					background: @sd-background;
+					padding: 0 10px 0 0; 
+					margin: -10px 15px 10px;
+					font-weight: bold;
+					text-transform: uppercase;
+					color: #666;
+					.text-semibold();
+				}
+				.field {
+					&.clear {
+						clear: left;
+					}
+					width: 50%;
+					float: left;
+					.border-box();
+					padding: 0 15px;
+				}
+			}
+	    }
+
+    	.description {
+    		height: 28px;
+    		padding: 5px;
+			border: 1px solid #dfdfdf !important;
+			margin-bottom: 15px;
+			&:focus {
+				border-color: #ccc !important;
+			}
+    	}
+		.assignee-box {
+			margin-bottom: 15px;	
+		}
+    }
+
+}
+
+// stages styling
+// ---------------------------------------------
+
+@stage-color-default: rgb(80, 80, 80);
+@stage-color-0: rgb(168, 45, 100);
+@stage-color-1: rgb(31, 111, 159);
+@stage-color-2: rgb(105, 142, 72);
+@stage-color-3: rgb(114, 51, 141);
+@stage-color-4: rgb(197, 90, 57);
+@stage-color-5: rgb(154, 158, 64);
+@stage-color-6: rgb(84, 110, 122);
+
+.stage-color(@color) {
+	a {
+		border-color: rgba(red(@color), green(@color), blue(@color), 0.6) !important;
+		color: hsl(hue(@color), saturation(@color), lightness(@color)-10%) !important;
+		&:hover {
+			border-color: @color !important;
+			.box-shadow(0px 1px 3px 0px rgba(0,0,0,0.3));
+		}
+	} 
+	&.active {
+		a {
+			background: @color !important;
+			border-color: @color !important;
+			border-top: 0 !important;
+			color: #fff !important;
+			.box-shadow(inset 0 2px 0px hsl(hue(@color), saturation(@color), lightness(@color)-10%)) !important;
+			&:hover {
+				background: @color !important;
+			}
+		}
+	}
+}
+
+//color classes
+.stageclr-0 {
+	.stage-color(@stage-color-0);
+}
+.stageclr-1 {
+	.stage-color(@stage-color-1);
+}
+.stageclr-2 {
+	.stage-color(@stage-color-2);
+}
+.stageclr-3 {
+	.stage-color(@stage-color-3);
+}
+.stageclr-4 {
+	.stage-color(@stage-color-4);
+}
+.stageclr-5 {
+	.stage-color(@stage-color-5);
+}
+.stageclr-6 {
+	.stage-color(@stage-color-6);
+}
+.stageclr-default {
+	.stage-color(@stage-color-default);
+}
+
+
+.stages-list {
+	li {
+		margin: 7px 15px 0 0 !important;
+		a {
+			height: 25px !important;
+			line-height: 25px !important;
+			background: #fff !important;
+			border: 1px solid #d7d7d7;
+			&:hover {
+				background: #fff !important;
+			}
+		}
+	}
+}

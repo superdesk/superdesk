@@ -16,6 +16,7 @@ define([
         var scope;
 
         beforeEach(module('superdesk.users'));
+        beforeEach(module('superdesk.mocks'));
         beforeEach(module(function($provide) {
             $provide.service('api', function($q) {
                 this.users = {
