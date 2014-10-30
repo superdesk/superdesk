@@ -308,12 +308,13 @@
         };
     }
 
-    SendItem.$inject = ['superdesk', 'api', 'desks', 'notify'];
-    function SendItem(superdesk, api, desks, notify) {
+    SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify'];
+    function SendItem($q, superdesk, api, desks, notify) {
         return {
             scope: {
                 item: '=',
-                view: '='
+                view: '=',
+                _beforeSend: '=beforeSend'
             },
             templateUrl: 'scripts/superdesk-authoring/views/send-item.html',
             link: function sendItemLink(scope, elem, attrs) {
@@ -321,25 +322,45 @@
                 scope.desks = null;
                 scope.stages = null;
 
-                scope.$watch('item', function fetchDesks() {
-                    if (scope.item.task && scope.item.task.desk) {
+                scope.beforeSend = scope._beforeSend || $q.when;
 
-                        api.find('tasks', scope.item._id).then(function(_task) {
-                            scope.task = _task;
-                        });
-
+                var fetchDesks = function() {
+                    return api.find('tasks', scope.item._id)
+                    .then(function(_task) {
+                        scope.task = _task;
+                    })
+                    .then(function() {
                         desks.initialize()
-                        .then(function fetchStages() {
+                        .then(function() {
                             scope.desks = desks.desks;
-                            scope.desk = desks.deskLookup[scope.item.task.desk];
-                            if (scope.desk) {
-                                api('stages').query({where: {desk: scope.desk._id}})
-                                .then(function(result) {
-                                    scope.stages = result;
-                                });
+                            if (scope.item.task && scope.item.task.desk) {
+                                scope.desk = desks.deskLookup[scope.item.task.desk];
                             }
                         });
-                    }
+                    });
+                };
+
+                var fetchStages = function() {
+                    desks.initialize()
+                    .then(function() {
+                        scope.desks = desks.desks;
+                        if (scope.item.task && scope.item.task.desk) {
+                            scope.desk = desks.deskLookup[scope.item.task.desk];
+                        }
+                        if (scope.desk) {
+                            api('stages').query({where: {desk: scope.desk._id}})
+                            .then(function(result) {
+                                scope.stages = result;
+                            });
+                        }
+                    });
+                };
+
+                scope.$watch('item', function() {
+                    fetchDesks()
+                    .then(function() {
+                        fetchStages();
+                    });
                 });
 
                 scope.sendToDesk = function sendToDesk(desk) {
@@ -357,7 +378,10 @@
                 };
 
                 function save(data) {
-                    api.save('tasks', scope.task, data).then(gotoDashboard);
+                    scope.beforeSend()
+                    .then(function() {
+                        api.save('tasks', scope.task, data).then(gotoDashboard);
+                    });
                 }
 
                 function gotoDashboard() {

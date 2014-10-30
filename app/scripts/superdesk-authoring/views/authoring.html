@@ -16,7 +16,7 @@
                 ng-disabled="!dirty && !item._autosave"
                 translate>Save</button>
 
-	    	<button class="navbtn navbtn-hover" ng-click="viewSendTo = !viewSendTo" ng-show="item.task.desk">
+	    	<button class="navbtn navbtn-hover" ng-click="viewSendTo = !viewSendTo">
 	            <i class="svg-icon-add"></i>
 	        </button>
         </div>
@@ -63,6 +63,6 @@
 		
 	</section>
 
-	<div sd-send-item data-item="item" data-view="viewSendTo"></div>
+	<div sd-send-item data-item="item" data-view="viewSendTo" data-before-send="save"></div>
 </div>
 
