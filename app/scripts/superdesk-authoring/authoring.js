@@ -402,10 +402,7 @@
                             scope.desk = desks.deskLookup[scope.item.task.desk];
                         }
                         if (scope.desk) {
-                            api('stages').query({where: {desk: scope.desk._id}})
-                            .then(function(result) {
-                                scope.stages = result;
-                            });
+                        	scope.stages = desks.deskStages[scope.desk._id];
                         }
                     });
                 };
@@ -433,7 +430,8 @@
 
                 function save(data) {
                     scope.beforeSend()
-                    .then(function() {
+                    .then(function(result) {
+		    			scope.task._etag = result._etag;
                         api.save('tasks', scope.task, data).then(gotoDashboard);
                     });
                 }
