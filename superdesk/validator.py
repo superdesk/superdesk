@@ -51,6 +51,15 @@ class SuperdeskValidator(Validator):
             if superdesk.get_resource_service(self.resource).find_one(req=None, **query):
                 self._error(field, ERROR_UNIQUE)
 
+    def _validate_iunique(self, unique, field, value):
+        """Validate uniqueness ignoring case.MONGODB USE ONLY"""
+
+        if unique:
+            query = {field: re.compile(value, re.IGNORECASE)}
+
+            if superdesk.get_resource_service(self.resource).find_one(req=None, **query):
+                self._error(field, ERROR_UNIQUE)
+
     def _validate_minlength(self, min_length, field, value):
         """Validate minlength with custom error msg."""
         if isinstance(value, (type(''), list)):

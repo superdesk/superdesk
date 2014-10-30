@@ -7,7 +7,7 @@ class RolesResource(Resource):
     schema = {
         'name': {
             'type': 'string',
-            'unique': True,
+            'iunique': True,
             'required': True,
         },
         'description': {
