@@ -44,51 +44,44 @@ define(['angular', 'lodash'], function(angular, _) {
                 original_preferences = null;
             };
 
-            function getPreferences(sessionId) {
+            function getPreferences(sessionId, key){
                 if (!api) { api = $injector.get('api'); }
-                return api('preferences').getById(sessionId);
+
+                return api('preferences').getById(sessionId).then(function(preferences) {
+                    saveLocally(preferences);
+                    return processPreferences(preferences, key);
+                });
+            }
+
+            function processPreferences(preferences, key){
+
+                if (!key){
+                    return preferences[USER_PREFERENCES];
+                } else if (userPreferences.indexOf(key) >= 0) {
+                    return preferences[USER_PREFERENCES][key];
+                } else {
+                    return preferences[SESSION_PREFERENCES][key];
+                }
             }
 
             this.get = function(key, sessionId) {
 
                 var original_prefs = loadLocally();
-                var result;
-                sessionId = sessionId || $rootScope.sessionId;
+                sessionId = sessionId || session.sessionId || $rootScope.sessionId;
 
-                if (!original_prefs){
+                if (!original_prefs) {
 
-                    return session.getIdentity().then(function() {
-
-                        return getPreferences(session.sessionId).then(function(preferences) {
-
-                            saveLocally(preferences);
-                            original_prefs = preferences;
-
-                            if (!key){
-                                result = original_prefs[USER_PREFERENCES];
-                            } else if (userPreferences.indexOf(key) >= 0) {
-                                result = original_prefs[USER_PREFERENCES][key];
-                            } else {
-                                result = original_prefs[SESSION_PREFERENCES][key];
-                            }
-
-                            return result;
-
-                        });
-
-                    });
-                } else {
-                    if (!key){
-                        result = original_prefs[USER_PREFERENCES];
-                    } else if (userPreferences.indexOf(key) >= 0) {
-                        var prefs = original_prefs[USER_PREFERENCES] || {};
-                        result =  prefs[key] || null;
+                    if (sessionId) {
+                        return getPreferences(sessionId, key);
                     } else {
-                        var sess_prefs = original_prefs[SESSION_PREFERENCES] || {};
-                        result = sess_prefs[key] || null;
+                        return session.getIdentity().then(function() {
+                            return getPreferences(session.sessionId, key);
+                        });
                     }
 
-                    return $q.when(result);
+                } else {
+
+                    return $q.when(processPreferences(original_prefs, key));
                 }
 
                 return $q.reject();

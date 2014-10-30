@@ -30,7 +30,13 @@ define(['lodash'], function(_) {
             });
         };
         this.loadItemList = function() {
-            return preferencesService.get('scratchpad:items');
+            var instance = this;
+            return preferencesService.get('scratchpad:items').then(function(result) {
+                if (result) {
+                    instance.itemList = result;
+                }
+                return result;
+            });
         };
 
         this.addItem = function(item) {
@@ -75,14 +81,7 @@ define(['lodash'], function(_) {
                 });
                 return items;
             });
-        };
 
-        var instance = this;
-        this.loadItemList().then(function(result) {
-            if (result) {
-                instance.itemList = result;
-                instance.update();
-            }
-        });
+        };
     }];
 });
