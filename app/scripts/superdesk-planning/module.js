@@ -228,7 +228,8 @@ define([
             templateUrl: 'scripts/superdesk-planning/views/assignee-box.html',
             scope: {
                 userId: '=',
-                deskId: '='
+                deskId: '=',
+                hideAssignee: '='
             },
             link: function(scope, elem) {
                 scope.open = false;
