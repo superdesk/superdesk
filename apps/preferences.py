@@ -55,7 +55,7 @@ class PreferencesResource(Resource):
 class PreferencesService(BaseService):
 
     def on_update(self, updates, original):
-        existing_prefs = get_resource_service('preferences').find_one(req=None, _id=original['_id'])
+        existing_prefs = self.find_one(req=None, _id=original['_id'])
         existing_user_preferences = existing_prefs.get(_user_preferences_key, {})
         existing_session_preferences = existing_prefs.get(_session_preferences_key, {})
 
