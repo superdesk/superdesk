@@ -394,11 +394,11 @@
     }
 
     return angular.module('superdesk.users', [
-        'superdesk.users.profile',
         'superdesk.users.activity',
         'superdesk.activity'
     ])
 
+        .controller('UserEditController', UserEditController) // make it available to user.profile
         .service('users', UsersService)
         .factory('userList', UserListService)
 
@@ -535,20 +535,10 @@
                 .activity('/users/:_id', {
                     label: gettext('Users profile'),
                     priority: 100,
-                    controller: UserEditController,
+                    controller: 'UserEditController',
                     templateUrl: 'scripts/superdesk-users/views/edit.html',
                     resolve: {user: UserResolver},
                     filters: [{action: 'detail', type: 'user'}]
-                })
-                .activity('/profile/', {
-                    label: gettext('My Profile'),
-                    controller: UserEditController,
-                    templateUrl: 'scripts/superdesk-users/views/edit.html',
-                    resolve: {
-                        user: ['session', 'api', function(session, api) {
-                            return api.users.getByUrl(session.identity._links.self.href);
-                        }]
-                    }
                 })
                 .activity('/settings/user-roles', {
                     label: gettext('User Roles'),
@@ -632,35 +622,6 @@
                 }
             };
         })
-
-        .directive('sdUserActivity', ['profileService', function(profileService) {
-            return {
-                restrict: 'A',
-                replace: true,
-                templateUrl: 'scripts/superdesk-users/views/activity-feed.html',
-                scope: {
-                    user: '='
-                },
-                link: function(scope, element, attrs) {
-                    var page = 1;
-                    var maxResults = 5;
-
-                    scope.$watch('user', function() {
-                        profileService.getUserActivity(scope.user, maxResults).then(function(list) {
-                            scope.activityFeed = list;
-                        });
-                    });
-
-                    scope.loadMore = function() {
-                        page++;
-                        profileService.getUserActivity(scope.user, maxResults, page).then(function(next) {
-                            Array.prototype.push.apply(scope.activityFeed._items, next._items);
-                            scope.activityFeed._links = next._links;
-                        });
-                    };
-                }
-            };
-        }])
 
         .directive('sdUserDetailsPane', ['$timeout', function($timeout) {
             return {

@@ -188,6 +188,19 @@ define([
                 return api(resource).save(dest, diff);
             };
 
+            /**
+             * Get on a given url
+             *
+             * @param {string} url
+             */
+            api.get = function apiGet(url, params) {
+                return http({
+                    method: 'GET',
+                    url: urls.item(url),
+                    params: params
+                });
+            };
+
             angular.forEach(apis, function(config, apiName) {
                 var service = config.service || _.noop;
                 service.prototype = new endpoints[config.type](apiName, config.backend);
