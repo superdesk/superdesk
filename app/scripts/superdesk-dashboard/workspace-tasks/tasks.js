@@ -27,10 +27,10 @@ function TasksService(desks, $rootScope, api) {
         });
     };
 
-    this.buildFilter = function(stage) {
+    this.buildFilter = function() {
         var filter;
-        if (stage) {
-            filter = {term: {'task.stage': stage._id}};
+        if (desks.getCurrentStageId()) {
+            filter = {term: {'task.stage': desks.getCurrentStageId()}};
         } else if (desks.getCurrentDeskId()) {
             filter = {term: {'task.desk': desks.getCurrentDeskId()}};
         } else {
@@ -39,8 +39,8 @@ function TasksService(desks, $rootScope, api) {
         return filter;
     };
 
-    this.fetch = function(stage) {
-        var filter = this.buildFilter(stage);
+    this.fetch = function() {
+        var filter = this.buildFilter();
 
         return api('tasks').query({
             source: {
@@ -66,8 +66,10 @@ function TasksController($scope, api, notify, desks, tasks, StagesCtrl) {
         fetchTasks();
     });
 
-    function fetchTasks(stage) {
-        tasks.fetch(stage).then(function(list) {
+    var fetchTasks = _.debounce(fetch, 300);
+
+    function fetch() {
+        tasks.fetch().then(function(list) {
             $scope.tasks = list;
         });
     }
@@ -106,7 +108,7 @@ function TasksController($scope, api, notify, desks, tasks, StagesCtrl) {
 
     $scope.$watch('stages.selected', function(stage, stageOld) {
         if (stage || stageOld) {
-            fetchTasks(stage);
+            fetchTasks();
         }
     });
 }
