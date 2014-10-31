@@ -12,7 +12,7 @@ module.exports = function (grunt) {
         appDir: 'app',
         tmpDir: '.tmp',
         distDir: 'dist',
-        serverDir: 'server',
+        bowerDir: 'bower',
         poDir: 'po',
         livereloadPort: 35729
     };
@@ -36,9 +36,9 @@ module.exports = function (grunt) {
     grunt.registerTask('server', ['clean', 'style', 'template:test', 'connect:test', 'open:test', 'watch']);
     grunt.registerTask('server:e2e', ['clean', 'style', 'template:mock', 'connect:mock', 'watch']);
 
-    grunt.registerTask('dist', [
+    grunt.registerTask('bower', [
         'build',
-        'copy:dist'
+        'copy:bower'
     ]);
     grunt.registerTask('build', [
         'clean',

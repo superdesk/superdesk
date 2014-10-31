@@ -1,7 +1,7 @@
 
 var files = [
     {
-        dest: '<%= serverDir %>/styles/css/bootstrap.css',
+        dest: '<%= distDir %>/styles/css/bootstrap.css',
         src: '<%= appDir %>/styles/less/bootstrap.less'
     }, {
         expand: true,
@@ -13,10 +13,10 @@ var files = [
 ];
 
 module.exports = {
-    dist: {
+    bower: {
         files: [
             {
-                dest: '<%= distDir %>/styles/css/bootstrap.css',
+                dest: '<%= bowerDir %>/styles/css/bootstrap.css',
                 src: '<%= appDir %>/styles/less/bootstrap.less'
             }, {
                 expand: true,

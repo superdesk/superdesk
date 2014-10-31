@@ -4,8 +4,8 @@ module.exports = {
             dot: true,
             src: [
                 '<%= tmpDir %>',
-                '<%= serverDir %>/*',
-                '!<%= serverDir %>/.git*'
+                '<%= distDir %>/*',
+                '!<%= distDir %>/.git*'
             ]
         }]
     },

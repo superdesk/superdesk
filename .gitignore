@@ -3,7 +3,7 @@
 /.settings
 /.project
 node_modules
-server/**
+dist
 *.swp
 .tmp
 .sass-cache

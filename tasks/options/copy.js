@@ -4,7 +4,7 @@ module.exports = {
             expand: true,
             dot: true,
             cwd: '<%= appDir %>',
-            dest: '<%= serverDir %>',
+            dest: '<%= distDir %>',
             src: [
                 'images/**/*',
                 'styles/css/*.css',
@@ -19,19 +19,19 @@ module.exports = {
             expand: true,
             dot: true,
             cwd: '<%= appDir %>',
-            dest: '<%= serverDir %>',
+            dest: '<%= distDir %>',
             src: [
                 'scripts/config.js',
                 'scripts/bower_components/**/*.js'
             ]
         }]
     },
-    dist: {
+    bower: {
         files: [{
             expand: true,
             dot: true,
-            cwd: '<%= serverDir %>',
-            dest: '<%= distDir %>',
+            cwd: '<%= distDir %>',
+            dest: '<%= bowerDir %>',
             src: [
                 'images/**',
                 'styles/css/bootstrap.css',

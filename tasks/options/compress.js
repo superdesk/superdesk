@@ -1,6 +1,6 @@
 module.exports = {
     build: {
-        options: {archive: '<%= serverDir %>/<%= pkg.name %>.zip', mode: 'zip'},
-        src: ['**'], cwd: '<%= serverDir %>', expand: true, dot: true, dest: '<%= pkg.name %>/'
+        options: {archive: '<%= distDir %>/<%= pkg.name %>.zip', mode: 'zip'},
+        src: ['**'], cwd: '<%= distDir %>', expand: true, dot: true, dest: '<%= pkg.name %>/'
     }
 };
