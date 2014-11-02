@@ -16,3 +16,4 @@ coverage/
 Thumbs.db
 test-results.xml
 .vagrant/
+.bower.json

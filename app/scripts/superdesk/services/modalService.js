@@ -1,8 +1,8 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return angular.module('superdesk.services.modal', ['ui.bootstrap'])
-        .service('modal', ['$q', '$modal', function($q, $modal) {
+    return angular.module('superdesk.services.modal', ['ui.bootstrap', 'superdesk.asset'])
+        .service('modal', ['$q', '$modal', 'asset', function($q, $modal, asset) {
             this.confirm = function(bodyText, headerText, okText, cancelText) {
                 headerText = headerText || gettext('Confirm');
                 okText = okText || gettext('OK');
@@ -11,7 +11,7 @@ define(['angular'], function(angular) {
                 var delay = $q.defer();
 
                 $modal.open({
-                    templateUrl: 'scripts/superdesk/views/confirmation-modal.html',
+                    templateUrl: asset.templateUrl('superdesk/views/confirmation-modal.html'),
                     controller: ['$scope', '$modalInstance', function($scope, $modalInstance) {
                         $scope.headerText = headerText;
                         $scope.bodyText = bodyText;

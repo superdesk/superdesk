@@ -51,11 +51,11 @@
             });
         }])
 
-        .config(['superdeskProvider', function(superdeskProvider) {
+        .config(['superdeskProvider', 'assetProvider', function(superdeskProvider, asset) {
             superdeskProvider.activity('/profile/', {
                 label: gettext('My Profile'),
                 controller: 'UserEditController',
-                templateUrl: 'scripts/superdesk-users/views/edit.html',
+                templateUrl: asset.templateUrl('superdesk-users/views/edit.html'),
                 resolve: {
                     user: ['session', function(session) {
                         return session.getIdentity();
@@ -64,11 +64,11 @@
             });
         }])
 
-        .directive('sdUserActivity', ['profileService', function(profileService) {
+        .directive('sdUserActivity', ['profileService', 'asset', function(profileService, asset) {
             return {
                 restrict: 'A',
                 replace: true,
-                templateUrl: 'scripts/superdesk-users/views/activity-feed.html',
+                templateUrl: asset.templateUrl('superdesk-users/views/activity-feed.html'),
                 scope: {
                     user: '='
                 },

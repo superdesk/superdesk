@@ -25,5 +25,21 @@ module.exports = {
                 'scripts/bower_components/**/*.js'
             ]
         }]
+    },
+    bower: {
+        files: [{
+            expand: true,
+            dot: true,
+            cwd: '<%= distDir %>',
+            dest: '<%= bowerDir %>',
+            src: [
+                'images/**',
+                'styles/css/bootstrap.css',
+                'styles/css/app.css',
+                'scripts/vendor.js',
+                'scripts/superdesk-core.js',
+                'scripts/superdesk.js'
+            ]
+        }]
     }
 };
