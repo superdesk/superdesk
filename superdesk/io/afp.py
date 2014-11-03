@@ -3,7 +3,7 @@ import os
 import logging
 
 from datetime import datetime
-from .newsml_1_2 import Parser
+from .newsml_1_2 import NewsMLOneParser
 from superdesk.io.file_ingest_service import FileIngestService
 from ..utc import utc
 from ..etree import etree
@@ -19,7 +19,7 @@ class AFPIngestService(FileIngestService):
     """AFP Ingest Service"""
 
     def __init__(self):
-        self.parser = Parser()
+        self.parser = NewsMLOneParser()
 
     def update(self, provider):
         self.provider = provider

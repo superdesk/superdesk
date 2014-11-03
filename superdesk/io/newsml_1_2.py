@@ -1,9 +1,10 @@
 
 import datetime
 from ..etree import etree
+from superdesk.io import Parser
 
 
-class Parser():
+class NewsMLOneParser(Parser):
     """NewsMl xml 1.2 parser"""
 
     def parse_message(self, tree):

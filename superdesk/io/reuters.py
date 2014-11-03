@@ -12,7 +12,7 @@ from superdesk.io.ingest_service import IngestService
 from superdesk.utc import utcnow
 from superdesk.etree import etree
 from superdesk.io import register_provider
-from .newsml_2_0 import Parser
+from .newsml_2_0 import NewsMLTwoParser
 from .reuters_token import get_token
 
 
@@ -43,7 +43,7 @@ class ReutersIngestService(IngestService):
     token = None
 
     def __init__(self):
-        self.parser = Parser()
+        self.parser = NewsMLTwoParser()
 
     def get_token(self):
         """Get reuters token once for an update run."""
