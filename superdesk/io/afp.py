@@ -3,7 +3,7 @@ import os
 import logging
 
 from datetime import datetime
-from .newsml_1_2 import Parser
+from .newsml_1_2 import NewsMLOneParser
 from superdesk.io.file_ingest_service import FileIngestService
 from ..utc import utc
 from ..etree import etree
@@ -19,7 +19,7 @@ class AFPIngestService(FileIngestService):
     """AFP Ingest Service"""
 
     def __init__(self):
-        self.parser = Parser()
+        self.parser = NewsMLOneParser()
 
     def update(self, provider):
         self.provider = provider
@@ -36,8 +36,8 @@ class AFPIngestService(FileIngestService):
                     if self.is_latest_content(last_updated, provider.get('updated')):
                         with open(os.path.join(self.path, filename), 'r') as f:
                             item = self.parser.parse_message(etree.fromstring(f.read()))
-                            item['_created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
-                            item['_updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
+
+                            self.add_timestamps(item)
                             item.setdefault('provider', provider.get('name', provider['type']))
                             self.move_file(self.path, filename, success=True)
                             yield [item]

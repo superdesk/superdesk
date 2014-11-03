@@ -1,3 +1,5 @@
+from superdesk.utc import utc
+
 
 class IngestService():
     """Base ingest service class."""
@@ -7,3 +9,13 @@ class IngestService():
 
     def update(self, provider):
         raise NotImplementedError()
+
+    def add_timestamps(self, item):
+        """
+        Adds _created, firstcreated, versioncreated and _updated timestamps
+        :param item:
+        :return:
+        """
+
+        item['_created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
+        item['_updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])

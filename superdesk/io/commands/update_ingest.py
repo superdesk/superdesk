@@ -20,9 +20,8 @@ class UpdateIngest(superdesk.Command):
             if not provider_type or provider_type == provider.get('type'):
                 try:
                     update_provider.delay(provider)
-                except (Exception) as err:
+                except Exception as err:
                     logger.exception(err)
-                    pass
 
 superdesk.command('ingest:update', UpdateIngest())
 

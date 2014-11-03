@@ -1,6 +1,6 @@
 import os
 import unittest
-from superdesk.io.newsml_1_2 import Parser
+from superdesk.io.newsml_1_2 import NewsMLOneParser
 from superdesk.etree import etree
 import datetime
 
@@ -10,7 +10,7 @@ class TestCase(unittest.TestCase):
         dirname = os.path.dirname(os.path.realpath(__file__))
         fixture = os.path.join(dirname, 'fixtures', 'afp.xml')
         with open(fixture) as f:
-            self.item = Parser().parse_message(etree.fromstring(f.read()))
+            self.item = NewsMLOneParser().parse_message(etree.fromstring(f.read()))
 
     def test_headline(self):
         self.assertEquals(self.item.get('headline'), 'Sweden court accepts receivership for Saab carmaker')

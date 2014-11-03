@@ -13,7 +13,7 @@ class ItemTest(unittest.TestCase):
         fixture = os.path.join(dirname, 'fixtures', filename)
         with open(fixture) as f:
             self.tree = etree.fromstring(f.read().encode('utf-8'))
-        parser = newsml_2_0.Parser()
+        parser = newsml_2_0.NewsMLTwoParser()
         self.item = parser.parse_message(self.tree)[0]
 
 

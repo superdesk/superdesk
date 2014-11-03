@@ -1,8 +1,8 @@
 
 import os
 import unittest
-
-from .nitf import parse
+from superdesk.etree import etree
+from .nitf import NITFParser
 
 
 class TestCase(unittest.TestCase):
@@ -12,7 +12,7 @@ class TestCase(unittest.TestCase):
         fixture = os.path.join(dirname, 'fixtures', 'aap.xml')
         with open(fixture) as f:
             self.nitf = f.read()
-            self.item = parse(self.nitf)
+            self.item = NITFParser().parse_message(etree.fromstring(self.nitf))
 
     def test_headline(self):
         self.assertEquals(self.item.get('headline'), "The main stories on today's 1900 ABC TV news")

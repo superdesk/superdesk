@@ -2,16 +2,14 @@
 import datetime
 from superdesk.etree import etree
 from .iptc import subject_codes
+from superdesk.io import Parser
 
 XMLNS = 'http://iptc.org/std/nar/2006-10-01/'
+XHTML = 'http://www.w3.org/1999/xhtml'
 CLASS_PACKAGE = 'composite'
 
 
-def is_package(item):
-    return item['type'] == CLASS_PACKAGE
-
-
-class Parser():
+class NewsMLTwoParser(Parser):
     """NewsMl xml 2.0 parser"""
 
     def parse_message(self, tree):
@@ -27,7 +25,7 @@ class Parser():
     def parse_item(self, tree):
         """Parse given xml"""
 
-        item = {}
+        item = dict()
         item['guid'] = item['uri'] = tree.attrib['guid']
         item['version'] = tree.attrib['version']
 
@@ -35,7 +33,7 @@ class Parser():
         self.parse_content_meta(tree, item)
         self.parse_rights_info(tree, item)
 
-        if is_package(item):
+        if self.is_package(item):
             self.parse_group_set(tree, item)
         else:
             self.parse_content_set(tree, item)
@@ -146,7 +144,6 @@ class Parser():
                 item['renditions'][rendition['rendition']] = rendition
 
     def parse_inline_content(self, tree):
-        XHTML = 'http://www.w3.org/1999/xhtml'
         html = tree.find(self.qname('html', XHTML))
         body = html[1]
         elements = []
@@ -155,13 +152,13 @@ class Parser():
                 tag = elem.tag.rsplit('}')[1]
                 elements.append('<%s>%s</%s>' % (tag, elem.text, tag))
 
-        content = {}
+        content = dict()
         content['contenttype'] = tree.attrib['contenttype']
         content['content'] = "\n".join(elements)
         return content
 
     def parse_remote_content(self, tree):
-        content = {}
+        content = dict()
         content['residRef'] = tree.attrib['residref']
         content['sizeinbytes'] = int(tree.attrib.get('size', '0'))
         content['rendition'] = tree.attrib['rendition'].split(':')[1]
@@ -181,3 +178,6 @@ class Parser():
         """Get name for item with fallback to literal attribute if name is not provided."""
         name = item.find(self.qname('name'))
         return name.text if name is not None else item.attrib.get('literal')
+
+    def is_package(self, item):
+        return item['type'] == CLASS_PACKAGE

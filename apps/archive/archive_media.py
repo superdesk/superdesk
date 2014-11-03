@@ -1,15 +1,19 @@
+import logging
+
 from flask import abort, current_app as app
+from eve.utils import config
+
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from superdesk.resource import Resource
 from superdesk.upload import url_for_media
 from superdesk.utc import utcnow
-from eve.utils import config
-from .common import base_schema, item_url, update_dates_for, generate_guid, GUID_TAG, ARCHIVE_MEDIA, set_user
+from .common import item_url, update_dates_for, generate_guid, GUID_TAG, ARCHIVE_MEDIA, set_user
 from .common import on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from superdesk.activity import add_activity
-import logging
+from apps.common import metadata_schema
 from superdesk.services import BaseService
+
 
 logger = logging.getLogger(__name__)
 
@@ -22,10 +26,10 @@ class ArchiveMediaResource(Resource):
             'required': True
         },
         'upload_id': {'type': 'string'},
-        'headline': base_schema['headline'],
-        'byline': base_schema['byline'],
-        'description_text': base_schema['description_text'],
-        'creator': base_schema['creator']
+        'headline': metadata_schema['headline'],
+        'byline': metadata_schema['byline'],
+        'description_text': metadata_schema['description_text'],
+        'creator': metadata_schema['creator']
     }
     datasource = {'source': 'archive'}
     resource_methods = ['POST']
