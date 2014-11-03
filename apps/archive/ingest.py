@@ -2,7 +2,7 @@ from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, facets
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from superdesk.services import BaseService
-from apps.common import metadata_schema
+from apps.content import metadata_schema
 
 
 class IngestResource(Resource):

@@ -8,7 +8,7 @@ from .common import get_user
 from superdesk.resource import Resource, build_custom_hateoas
 from superdesk.json_path_tool import json_merge_values, json_copy_values
 from superdesk.services import BaseService
-from apps.common import metadata_schema
+from apps.content import metadata_schema
 
 
 logger = logging.getLogger(__name__)

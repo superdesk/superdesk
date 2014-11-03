@@ -5,7 +5,7 @@ from superdesk.notification import push_notification
 from superdesk.utc import utcnow
 from apps.archive.common import on_create_item, item_url
 from superdesk.services import BaseService
-from apps.common import metadata_schema
+from apps.content import metadata_schema
 import superdesk
 
 

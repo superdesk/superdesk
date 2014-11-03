@@ -11,7 +11,7 @@ from superdesk.utc import utcnow
 from .common import item_url, update_dates_for, generate_guid, GUID_TAG, ARCHIVE_MEDIA, set_user
 from .common import on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from superdesk.activity import add_activity
-from apps.common import metadata_schema
+from apps.content import metadata_schema
 from superdesk.services import BaseService
 
 

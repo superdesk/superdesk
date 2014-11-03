@@ -24,7 +24,7 @@ class AAPIngestService(FileIngestService):
 
     def __init__(self):
         self.tz = timezone('Australia/Sydney')
-        self.parse = NITFParser()
+        self.parser = NITFParser()
 
     def prepare_href(self, href):
         return href
@@ -43,7 +43,7 @@ class AAPIngestService(FileIngestService):
                     last_updated = datetime.fromtimestamp(stat.st_mtime, tz=utc)
                     if self.is_latest_content(last_updated, provider.get('updated')):
                         with open(os.path.join(self.path, filename), 'r') as f:
-                            item = self.parse.parse_message(etree.fromstring(f.read()))
+                            item = self.parser.parse_message(etree.fromstring(f.read()))
 
                             self.add_timestamps(item)
                             item.setdefault('provider', provider.get('name', provider['type']))

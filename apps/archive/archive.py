@@ -10,7 +10,7 @@ from eve.versioning import resolve_document_version
 from superdesk.activity import add_activity
 from eve.utils import parse_request
 from superdesk.services import BaseService
-from apps.common import metadata_schema
+from apps.content import metadata_schema
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
