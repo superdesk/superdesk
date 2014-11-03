@@ -174,6 +174,8 @@ define([
             templateUrl: 'scripts/superdesk-desks/views/user-select.html',
             link: function(scope, elem, attrs) {
 
+                var ARROW_UP = 38, ARROW_DOWN = 40, ENTER = 13;
+
                 scope.selected = null;
                 scope.search = null;
                 scope.filteredUsers = [];
@@ -206,15 +208,15 @@ define([
                 elem.bind('keydown keypress', function(event) {
                     scope.$apply(function() {
                         switch (event.which) {
-                            case 38:
+                            case ARROW_UP:
                                 event.preventDefault();
                                 previous();
                                 break;
-                            case 40:
+                            case ARROW_DOWN:
                                 event.preventDefault();
                                 next();
                                 break;
-                            case 13:
+                            case ENTER:
                                 event.preventDefault();
                                 scope.choose(scope.selected);
                                 break;
