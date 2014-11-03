@@ -24,7 +24,7 @@ class VocabulariesPopulateTest(TestCase):
              ]}
         ]
 
-        with open(self.filename, "wt+") as file:
+        with open(self.filename, "w+") as file:
             json.dump(self.json_data, file)
 
 

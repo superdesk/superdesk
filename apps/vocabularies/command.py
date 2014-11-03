@@ -8,7 +8,20 @@ from superdesk import get_resource_service
 logger = logging.getLogger(__name__)
 
 
-def populate_vocabularies(filepath):
+def populate_vocabularies(json_data):
+    service = get_resource_service('vocabularies')
+    for item in json_data:
+        id_name = item.get("_id")
+        try:
+            if service.find_one(_id=id_name, req=None):
+                service.put(id_name, item)
+            else:
+                service.post(item)
+        except Exception as e:
+            logger.exception("Failed process the vocabularies")
+
+
+def process_vocabularies(filepath):
     """
     This function upserts the vocabularies into the vocabularies collections.
     The format of the file used is JSON.
@@ -20,17 +33,9 @@ def populate_vocabularies(filepath):
 
     with open(filepath, 'rt') as vocabularies:
         json_data = json.loads(vocabularies.read())
-        service = get_resource_service('vocabularies')
+        populate_vocabularies(json_data)
 
-        for item in json_data:
-            id_name = item.get("_id")
-            try:
-                if service.find_one(_id=id_name, req=None):
-                    service.put(id_name, item)
-                else:
-                    service.post(item)
-            except Exception as e:
-                logger.exception("Failed process the vocabularies")
+
 
 
 class VocabulariesPopulateCommand(superdesk.Command):
@@ -42,7 +47,7 @@ class VocabulariesPopulateCommand(superdesk.Command):
     )
 
     def run(self, filepath):
-        populate_vocabularies(filepath)
+        process_vocabularies(filepath)
 
 
 superdesk.command('vocabularies:populate', VocabulariesPopulateCommand())
