@@ -123,7 +123,7 @@
             $scope.openGroup = function(step, group) {
                 $scope.group.edit = group;
                 $scope.modalActive = true;
-                WizardHandler.wizard('usergroups').goTo(step);
+                $scope.step.current = step;
             };
 
             $scope.cancel = function() {

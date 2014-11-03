@@ -121,11 +121,18 @@ define([
                     WizardHandler.removeWizard($scope.name || WizardHandler.defaultName);
                 });
 
+                $scope.selectedStep = null;
                 $scope.steps = [];
 
                 this.addStep = function(step) {
                     $scope.steps.push(step);
                 };
+
+                $scope.$watch('currentStep', function(stepCode) {
+                    if (stepCode && (($scope.selectedStep && $scope.selectedStep.code !== stepCode) || !$scope.selectedStep)) {
+                        $scope.goTo(_.findWhere($scope.steps, {code: stepCode}));
+                    }
+                });
 
                 function unselectAll() {
                     _.each($scope.steps, function (step) {
