@@ -30,8 +30,7 @@ def populate_vocabularies(filepath):
                 else:
                     service.post(item)
             except Exception as e:
-                print('Exception:', e)
-                logger.exception("Failed ")
+                logger.exception("Failed process the vocabularies")
 
 
 class VocabulariesPopulateCommand(superdesk.Command):
