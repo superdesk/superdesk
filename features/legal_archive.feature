@@ -7,18 +7,18 @@ Feature: Legal Archive
 
         When we post to "/archive"
             """
-            {"_id": "item-1", "guid": "item-1", "headline": "test"}
+            {"guid": "item-1", "headline": "test"}
             """
 
         Then we get existing resource
             """
-            {"_id": "item-1", "guid": "item-1", "headline": "test"}
+            {"guid": "item-1", "headline": "test"}
             """
 
-        When we get "/archive_autosave/item-1"
+        When we get "/legal_archive/item-1"
         Then we get existing resource
             """
-            {"_id": "item-1", "guid": "item-1", "headline": "test"}
+            {"guid": "item-1", "headline": "test"}
             """
 
     @auth
@@ -41,5 +41,5 @@ Feature: Legal Archive
         When we get "/legal_archive/item-1"
         Then we get existing resource
             """
-            {"_id": "item-1", "guid": "item-1", "headline": "test2"}
+            {"guid": "item-1", "headline": "test2"}
             """

@@ -91,7 +91,7 @@ class ArchiveService(BaseService):
 
     def on_updated(self, updates, original):
         get_component(ItemAutosave).clear(original['_id'])
-        get_component(LegalArchiveProxy).update(original['_id'], updates)
+        get_component(LegalArchiveProxy).update(original, updates)
         on_update_media_archive()
 
         if '_version' in updates:
@@ -167,7 +167,6 @@ class AutoSaveResource(Resource):
         '_id': {'type': 'string'}
     }
     schema.update(metadata_schema)
-    schema['type'] = {'type': 'string'}
     resource_methods = ['POST']
     item_methods = ['GET', 'PUT', 'PATCH']
     resource_title = endpoint_name

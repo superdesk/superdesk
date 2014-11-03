@@ -11,3 +11,9 @@ class LegalArchiveDataLayer(Mongo):
             self.driver = PyMongo(app, config_prefix='LEGAL_ARCHIVE')
         except Exception as e:
             raise ConnectionException(e)
+
+    def delete(self, resource, lookup):
+        self.remove(resource, lookup)
+
+    def create(self, resource, docs, **kwargs):
+        self.insert(resource, docs)

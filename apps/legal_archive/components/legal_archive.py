@@ -3,6 +3,7 @@ from apps.common.models.utils import get_model
 from apps.legal_archive.models.legal_archive import LegalArchiveModel
 from apps.common.components.utils import get_component
 from apps.legal_archive.components.error import Error
+from copy import copy, deepcopy
 
 
 class LegalArchive(BaseComponent):
@@ -14,13 +15,21 @@ class LegalArchive(BaseComponent):
         return 'legal_archive'
 
     def create(self, items):
+        citems = deepcopy(items)
+        for citem in citems:
+            citem['_id_document'] = citem['_id']
+            del citem['_id']
         try:
-            return get_model(LegalArchiveModel).create(items)
+            return get_model(LegalArchiveModel).create(citems)
         except Exception as e:
             get_component(Error).create(LegalArchiveModel.name(), items, str(e))
 
-    def update(self, item_id, updates):
+    def update(self, original, updates):
+        updated = copy(original)
+        updated.update(updates)
+        updated['_id_document'] = original['_id']
+        del updated['_id']
         try:
-            return get_model(LegalArchiveModel).update({'_id': item_id}, updates)
+            return get_model(LegalArchiveModel).create([updated])
         except Exception as e:
-            get_component(Error).create(LegalArchiveModel.name(), [updates], str(e))
+            get_component(Error).create(LegalArchiveModel.name(), [updated], str(e))
