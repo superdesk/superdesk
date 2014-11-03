@@ -22,7 +22,7 @@
         /**
          * Open an item
          */
-        this.open = function(item) {
+        this.open = function openAutosave(item) {
             if (item._locked) {
                 // no way to get autosave
                 return $q.when(item);
@@ -40,7 +40,7 @@
         /**
          * Autosave an item
          */
-        this.save = function(item, data) {
+        this.save = function saveAutosave(item, data) {
             this.stop();
             _timeout = $timeout(function() {
                 var diff = angular.extend({_id: item._id}, data);
@@ -56,7 +56,7 @@
         /**
          * Stop pending autosave
          */
-        this.stop = function() {
+        this.stop = function stopAutosave() {
             if (_timeout) {
                 $timeout.cancel(_timeout);
                 _timeout = null;
@@ -66,7 +66,7 @@
         /**
          * Drop autosave
          */
-        this.drop = function(item) {
+        this.drop = function dropAutosave(item) {
             $timeout.cancel(_timeout);
             api(RESOURCE).remove(item._autosave);
             item._autosave = null;
@@ -81,20 +81,13 @@
          *
          * @param {string} _id Item _id.
          */
-        this.open = function open(_id) {
-            console.time('item');
-            return api.find('archive', _id).then(function(item) {
-                console.time('lock');
+        this.open = function openAuthoring(_id) {
+            return api.find('archive', _id, {embedded: {lock_user: 1}}).then(function _lock(item) {
                 return lock.lock(item);
-            }).then(function(item) {
-                console.timeEnd('lock');
-                console.time('autosave');
+            }).then(function _autosave(item) {
                 return autosave.open(item);
-            }).then(function(item) {
+            }).then(function _workqueue(item) {
                 workqueue.setActive(item);
-                console.timeEnd('lock');
-                console.timeEnd('autosave');
-                console.timeEnd('item');
                 return item;
             });
         };
@@ -106,7 +99,7 @@
          * @param {Object} diff Changes.
          * @param {boolean} isDirty $scope dirty status.
          */
-        this.close = function close(item, diff, isDirty) {
+        this.close = function closeAuthoring(item, diff, isDirty) {
             if (isDirty) {
                 return confirm.confirm()
                     .then(angular.bind(this, function save() {
@@ -131,7 +124,7 @@
          * @param {Object} item Destination.
          * @param {Object} diff Changes.
          */
-        this.autosave = function(item, diff) {
+        this.autosave = function autosaveAuthoring(item, diff) {
             return autosave.save(item, diff);
         };
 
@@ -141,7 +134,7 @@
          * @param {Object} item Destination.
          * @param {Object} diff Changes.
          */
-        this.save = function(item, diff) {
+        this.save = function saveAuthoring(item, diff) {
             autosave.stop();
             return api.save('archive', item, diff).then(function(_item) {
                 item._autosave = null;
@@ -157,7 +150,7 @@
         /**
          * Lock an item
          */
-        this.lock = function(item) {
+        this.lock = function lock(item) {
             if (!item.lock_user) {
                 return api('archive_lock', item).save({}).then(function(lock) {
                     _.extend(item, lock);
@@ -170,7 +163,7 @@
                     return item;
                 });
             } else {
-                item._locked = (item.lock_user !== session.identity._id || item.lock_session !== session.sessionId);
+                item._locked = this.isLocked(item);
                 return $q.when(item);
             }
         };
@@ -178,7 +171,7 @@
         /**
          * Unlock an item
          */
-        this.unlock = function(item) {
+        this.unlock = function unlock(item) {
             return api('archive_unlock', item).save({}).then(function(lock) {
                 _.extend(item, lock);
                 item._locked = true;
@@ -190,19 +183,31 @@
         };
 
         /**
-         * Test if an item is locked for me
+         * Test if an item is locked, it can be locked by other user or you in different session.
          */
-        this.isLocked = function(item) {
-            return item.lock_user && item.lock_session &&
-                (item.lock_user !== session.identity._id || item.lock_session !== session.sessionId);
+        this.isLocked = function isLocked(item) {
+            var userId = item.lock_user && item.lock_user._id || item.lock_user;
+
+            if (!userId) {
+                return false;
+            }
+
+            if (userId !== session.identity._id) {
+                return true;
+            }
+
+            if (!!item.lock_session && item.lock_session !== session.sessionId) {
+                return true;
+            }
+
+            return false;
         };
 
         /**
         * Test is an item is locked by me in another session
         */
-        this.isLockedByMe = function(item) {
-            return item.lock_user && item.lock_session &&
-                (item.lock_user === session.identity._id && item.lock_session !== session.sessionId);
+        this.isLockedByMe = function isLockedByMe(item) {
+            return item.lock_user && item.lock_user === session.identity._id && item.lock_session !== session.sessionId;
         };
     }
 
@@ -346,6 +351,12 @@
 
         // init
         $scope.closePreview();
+
+        $scope.$on('item:unlock', function(_e, data) {
+            if ($scope.item && $scope.item._id === data.item) {
+                console.log('got unlocked - stop editing');
+            }
+        });
     }
 
     function DashboardCard() {

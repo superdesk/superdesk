@@ -5,7 +5,7 @@ define([
 ], function(_, angular, require) {
     'use strict';
 
-    return angular.module('superdesk.archive.directives', [])
+    return angular.module('superdesk.archive.directives', ['superdesk.authoring'])
         .directive('sdItemLock', ['api', 'lock', function(api, lock) {
             return {
                 templateUrl: 'scripts/superdesk-archive/views/item-lock.html',
@@ -256,7 +256,7 @@ define([
                     });
 
                     scope.$watch('item', function(item) {
-                        scope.isLocked = item && lock.isLocked(item);
+                        scope.isLocked = item && (lock.isLocked(item) || lock.isLockedByMe(item));
                     });
 
                     scope.$on('item:lock', function(_e, data) {

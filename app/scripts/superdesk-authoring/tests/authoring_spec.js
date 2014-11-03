@@ -44,7 +44,7 @@ describe('authoring', function() {
 
         $rootScope.$digest();
 
-        expect(api.find).toHaveBeenCalledWith('archive', GUID);
+        expect(api.find).toHaveBeenCalledWith('archive', GUID, jasmine.any(Object));
         expect(lock.lock).toHaveBeenCalledWith(item);
         expect(autosave.open).toHaveBeenCalledWith(lockedItem);
         expect(_item.guid).toBe(GUID);
@@ -200,5 +200,31 @@ describe('autosave', function() {
         expect(api.save).toHaveBeenCalledWith('archive_autosave', {}, {_id: 1, headline: 'test'});
         expect(item._autosave._id).toBe(2);
         expect(item.headline).toBe('test');
+    }));
+});
+
+describe('lock service', function() {
+    beforeEach(module('superdesk.authoring'));
+    beforeEach(module('superdesk.mocks'));
+
+    var user = {_id: 'user'};
+    var sess = {_id: 'sess'};
+
+    beforeEach(inject(function(session) {
+        session.start(sess, user);
+    }));
+
+    it('can test if item is locked', inject(function(lock) {
+        expect(lock.isLocked({})).toBe(false);
+        expect(lock.isLocked({lock_user: '1'})).toBe(true);
+    }));
+
+    it('can detect lock by same user and different session', inject(function(lock) {
+        expect(lock.isLocked({lock_user: 'user'})).toBe(false);
+        expect(lock.isLocked({lock_user: 'user', lock_session: 'othersess'})).toBe(true);
+    }));
+
+    it('can use lock_user dict', inject(function(lock) {
+        expect(lock.isLocked({lock_user: {_id: 'user'}})).toBe(false);
     }));
 });

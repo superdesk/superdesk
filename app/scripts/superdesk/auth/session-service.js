@@ -50,7 +50,7 @@ define(['lodash'], function(_) {
             this.sessionId = session._id;
             setToken(session.token);
             setSessionId(session._id);
-            setSessionHref(session._links.self.href);
+            setSessionHref(session._links && session._links.self.href);
 
             this.identity = null;
             this.updateIdentity(identity);

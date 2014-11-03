@@ -958,6 +958,12 @@
                 }
             };
         }])
+
+        .filter('username', ['session', function usernameFilter(session) {
+            return function getUsername(user) {
+                return user ? user.display_name || user.username : null;
+            };
+        }])
         ;
 
 })();
