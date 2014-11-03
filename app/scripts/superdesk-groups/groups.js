@@ -210,7 +210,6 @@
                     scope.add = function(user) {
                         scope.groupMembers.push(user);
                         generateSearchList();
-                        scope.search = null;
                     };
 
                     scope.remove = function(user) {

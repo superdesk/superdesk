@@ -64,19 +64,7 @@
 			<div sd-wizard-step data-title="{{ 'People' | translate }}" data-code="people">
 				<div sd-groupedit-people>
 					<div class="content people-stage">
-						<div class="header">
-							<form>
-								<input type="text" ng-model="search" class="searchbar searchbar-large">
-							</form>
-							<div class="search-result" ng-show="search">
-								<ul class="users-list-embed">
-									<li ng-repeat="user in membersToSelect | filter:search" ng-click="add(user)">
-										<figure class="avatar small"><img sd-user-avatar data-src="user.picture_url"></figure>
-										<div class="name">{{user.display_name}}</div>
-									</li>
-								</ul>
-							</div>
-						</div>
+						<div class="header" sd-user-select-list data-users="membersToSelect" data-onchoose="add(user)"></div>
 						<div class="content">
 							<p ng-if="message">{{ message }}</p>
 							<div class="member-list clearfix">
