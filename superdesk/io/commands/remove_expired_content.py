@@ -6,6 +6,7 @@ from superdesk.utc import utcnow
 from superdesk.notification import push_notification
 from superdesk.io.ingest_provider_model import DAYS_TO_KEEP
 
+
 logger = logging.getLogger(__name__)
 
 

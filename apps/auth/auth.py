@@ -48,7 +48,7 @@ class AuthResource(Resource):
         'user': Resource.rel('users', True)
     }
     resource_methods = ['POST']
-    item_methods = ['GET']
+    item_methods = ['GET', 'DELETE']
     public_methods = ['POST']
     extra_response_fields = ['user', 'token', 'username']
 
@@ -89,8 +89,13 @@ class SuperdeskTokenAuth(TokenAuth):
             return True
 
         # Only administrators can write to those resources in this list
-        if resource in {'users', 'roles'}:
+        if resource in {'users', 'roles', 'sessions'}:
             raise ForbiddenError()
+
+        # users should be able to change only their preferences
+        if resource == 'preferences':
+            session = get_resource_service('preferences').find_one(_id=request.view_args.get('_id'), req=None)
+            return user['_id'] == session.get("user")
 
         # Get the list of roles belonging to this user
         roles = user.get('roles')
@@ -113,6 +118,7 @@ class SuperdeskTokenAuth(TokenAuth):
         if auth_token:
             user_id = str(auth_token['user'])
             flask.g.user = get_resource_service('users').find_one(req=None, _id=user_id)
+            flask.g.auth = auth_token
             return self.check_permissions(resource, method, flask.g.user)
 
     def authorized(self, allowed_roles, resource, method):

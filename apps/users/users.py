@@ -109,7 +109,6 @@ class UsersResource(Resource):
 
     datasource = {
         'projection': {
-            'password': 0,
-            'preferences': 0
+            'password': 0
         }
     }

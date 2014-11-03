@@ -51,6 +51,10 @@ CELERYBEAT_SCHEDULE = {
     'fetch_ingest': {
         'task': 'superdesk.io.fetch_ingest',
         'schedule': timedelta(minutes=5)
+    },
+    'auth_session_purge': {
+        'task': 'apps.auth.session_purge',
+        'schedule': timedelta(minutes=30)
     }
 }
 
@@ -146,3 +150,6 @@ else:
     INSTALLED_APPS.append('apps.auth.db')
 
 TESTING = (os.environ.get('SUPERDESK_TESTING', 'false').lower() == 'true')
+
+# The number of minutes since the last update of the Mongo auth object after which it will be deleted
+SESSION_EXPIRY_MINUTES = 240

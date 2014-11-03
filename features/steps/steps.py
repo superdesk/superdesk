@@ -4,7 +4,7 @@ import superdesk.tests as tests
 from behave import given, when, then  # @UnresolvedImport
 from flask import json
 from eve.methods.common import parse
-from superdesk import available_preferences, get_resource_service
+from superdesk import default_user_preferences, get_resource_service
 
 from wooper.general import fail_and_print_body, apply_path,\
     parse_json_response
@@ -843,7 +843,7 @@ def we_reset_password_for_user(context):
 
 @when('we switch user')
 def when_we_switch_user(context):
-    user = {'username': 'test-user-2', 'password': 'pwd', 'email': 'foo@bar.org', 'is_active': True}
+    user = {'username': 'test-user-2', 'password': 'pwd', 'is_active': True}
     tests.setup_auth_user(context, user)
 
 
@@ -888,7 +888,7 @@ def then_we_get_notifications(context):
 @then('we get default preferences')
 def get_default_prefs(context):
     response_data = json.loads(context.response.get_data())
-    assert_equal(response_data['preferences'], available_preferences)
+    assert_equal(response_data['user_preferences'], default_user_preferences)
 
 
 @when('we mention user in comment for "{url}"')
@@ -927,6 +927,32 @@ def we_get_default_incoming_stage(context):
 def we_get_stage_filled_in(context):
     data = json.loads(context.response.get_data())
     assert data['task']['stage']
+
+
+@given('we have sessions "{url}"')
+def we_have_sessions_get_id(context, url):
+    when_we_get_url(context, url)
+    item = json.loads(context.response.get_data())
+    context.session_id = item['_items'][0]['_id']
+    context.data = item
+    set_placeholder(context, 'SESSION_ID', item['_items'][0]['_id'])
+    set_placeholder(context, 'USERS_ID', item['_items'][0]['user']['_id'])
+
+
+@then('we get session by id')
+def we_get_session_by_id(context):
+    url = 'sessions/' + context.session_id
+    when_we_get_url(context, url)
+    item = json.loads(context.response.get_data())
+    returned_id = item["_id"]
+    assert context.session_id == returned_id
+
+
+@then('we delete session by id')
+def we_delete_session_by_id(context):
+    url = 'sessions/' + context.session_id
+    step_impl_when_delete_url(context, url)
+    assert_200(context.response)
 
 
 @when('we create a new user')

@@ -1,9 +1,14 @@
 from apps.auth.auth import SuperdeskTokenAuth
 from .auth import AuthUsersResource, AuthResource  # noqa
-from .sessions import SesssionsResource
+from .sessions import SessionsResource
 import superdesk
 from superdesk.services import BaseService
 from .db.reset_password import reset_schema  # noqa
+from superdesk.celery_app import celery
+import logging
+from .session_purge import RemoveExpiredSessions
+
+logger = logging.getLogger(__name__)
 
 
 def init_app(app):
@@ -15,4 +20,12 @@ def init_app(app):
 
     endpoint_name = 'sessions'
     service = BaseService(endpoint_name, backend=superdesk.get_backend())
-    SesssionsResource(endpoint_name, app=app, service=service)
+    SessionsResource(endpoint_name, app=app, service=service)
+
+
+@celery.task()
+def session_purge():
+    try:
+        RemoveExpiredSessions().run()
+    except Exception as ex:
+        logger.error(ex)
