@@ -22,7 +22,8 @@ class VocabulariesResource(Resource):
     }
 
     item_url = 'regex("[\w]+")'
-    item_methods = ['GET', 'PUT']
+    item_methods = ['GET']
+    resource_methods = ['GET']
 
 
 class VocabulariesService(BaseService):
