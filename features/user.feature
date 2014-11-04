@@ -95,6 +95,7 @@ Feature: User Resource
         Then we get response code 200
 
     @auth
+    @dbauth
     Scenario: Update user
         Given "users"
             """
@@ -103,10 +104,10 @@ Feature: User Resource
 
         When we patch "/users/foo"
             """
-            {"first_name": "Foo"}
+            {"first_name": "Testing"}
             """
 
-        Then we get updated response
+        Then the field "display_name" value is "Testing"
 
     @auth
     Scenario: Change user status

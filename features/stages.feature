@@ -141,7 +141,7 @@ Feature: Stages
         {"_items": [{"slugline": "first task", "type": "text", "task": {"desk": "#DESKS_ID#", "stage": "#STAGES_ID#"}}]}
 	    """
 
-        When we get "stages/#STAGES_ID#/items"
+        When we get "/tasks?where={"task.stage": "#STAGES_ID#"}"
         Then we get list with 1 items
 	    """
         {"_items": [{"slugline": "first task", "type": "text", "task": {"desk": "#DESKS_ID#", "stage": "#STAGES_ID#"}}]}
