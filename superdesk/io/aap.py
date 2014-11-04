@@ -3,11 +3,12 @@ import os
 import logging
 
 from datetime import datetime
-from .nitf import parse
+from .nitf import NITFParser
 from superdesk.io.file_ingest_service import FileIngestService
 from superdesk.utc import utc, timezone
 from superdesk.notification import push_notification
 from superdesk.io import register_provider
+from ..etree import etree
 
 
 logger = logging.getLogger(__name__)
@@ -23,6 +24,7 @@ class AAPIngestService(FileIngestService):
 
     def __init__(self):
         self.tz = timezone('Australia/Sydney')
+        self.parser = NITFParser()
 
     def prepare_href(self, href):
         return href
@@ -41,17 +43,15 @@ class AAPIngestService(FileIngestService):
                     last_updated = datetime.fromtimestamp(stat.st_mtime, tz=utc)
                     if self.is_latest_content(last_updated, provider.get('updated')):
                         with open(os.path.join(self.path, filename), 'r') as f:
-                            item = parse(f.read())
-                            item['_created'] = item['firstcreated'] \
-                                = normalize_date(item.get('firstcreated'), self.tz)
-                            item['_updated'] = item['versioncreated'] \
-                                = normalize_date(item.get('versioncreated'), self.tz)
+                            item = self.parser.parse_message(etree.fromstring(f.read()))
+
+                            self.add_timestamps(item)
                             item.setdefault('provider', provider.get('name', provider['type']))
                             self.move_file(self.path, filename, success=True)
                             yield [item]
                     else:
                         self.move_file(self.path, filename, success=True)
-            except (Exception) as err:
+            except Exception as err:
                 logger.exception(err)
                 self.move_file(self.path, filename, success=False)
 

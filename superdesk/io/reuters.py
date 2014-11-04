@@ -1,17 +1,18 @@
 """Reuters io service."""
 
-import requests
 import traceback
 import datetime
+from urllib.parse import urlparse, urlunparse
+
+import requests
+
 from superdesk import get_resource_service
 from superdesk.io.ingest_service import IngestService
 
 from superdesk.utc import utcnow
-from superdesk.utc import utc
 from superdesk.etree import etree
-from urllib.parse import urlparse, urlunparse
 from superdesk.io import register_provider
-from .newsml_2_0 import Parser
+from .newsml_2_0 import NewsMLTwoParser
 from .reuters_token import get_token
 
 
@@ -42,7 +43,7 @@ class ReutersIngestService(IngestService):
     token = None
 
     def __init__(self):
-        self.parser = Parser()
+        self.parser = NewsMLTwoParser()
 
     def get_token(self):
         """Get reuters token once for an update run."""
@@ -72,8 +73,8 @@ class ReutersIngestService(IngestService):
         while items:
             item = items.pop()
             result_items.append(item)
-            item['_created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
-            item['_updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
+
+            self.add_timestamps(item)
             items.extend(self.fetch_assets(item))
         return result_items
 

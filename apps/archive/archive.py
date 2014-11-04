@@ -1,5 +1,5 @@
 from superdesk.resource import Resource
-from .common import base_schema, extra_response_fields, item_url, facets
+from .common import extra_response_fields, item_url, facets
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from .common import get_user
 from flask import current_app as app
@@ -10,6 +10,7 @@ from eve.versioning import resolve_document_version
 from superdesk.activity import add_activity
 from eve.utils import parse_request
 from superdesk.services import BaseService
+from apps.content import metadata_schema
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
@@ -25,7 +26,7 @@ def get_subject(doc1, doc2=None):
 
 
 class ArchiveVersionsResource(Resource):
-    schema = base_schema
+    schema = metadata_schema
     extra_response_fields = extra_response_fields
     item_url = item_url
     resource_methods = []
@@ -48,7 +49,7 @@ class ArchiveResource(Resource):
             'type': 'number',
         }
     }
-    schema.update(base_schema)
+    schema.update(metadata_schema)
     extra_response_fields = extra_response_fields
     item_url = item_url
     datasource = {
@@ -162,7 +163,7 @@ class AutoSaveResource(Resource):
     schema = {
         '_id': {'type': 'string'}
     }
-    schema.update(base_schema)
+    schema.update(metadata_schema)
     schema['type'] = {'type': 'string'}
     resource_methods = ['POST']
     item_methods = ['GET', 'PUT', 'PATCH']

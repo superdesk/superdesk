@@ -1,9 +1,11 @@
+from eve.utils import ParsedRequest
+
 from superdesk.resource import Resource
 from superdesk.notification import push_notification
 from superdesk.utc import utcnow
-from apps.archive.common import base_schema, on_create_item, item_url
+from apps.archive.common import on_create_item, item_url
 from superdesk.services import BaseService
-from eve.utils import ParsedRequest
+from apps.content import metadata_schema
 import superdesk
 
 
@@ -22,9 +24,9 @@ class TaskResource(Resource):
     }
     item_url = item_url
     schema = {
-        'slugline': base_schema['slugline'],
-        'description_text': base_schema['description_text'],
-        'type': base_schema['type'],
+        'slugline': metadata_schema['slugline'],
+        'description_text': metadata_schema['description_text'],
+        'type': metadata_schema['type'],
         'planning_item': Resource.rel('planning', True, type='string'),
         'task': {
             'type': 'dict',

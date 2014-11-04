@@ -1,4 +1,5 @@
 """Superdesk IO"""
+from abc import ABCMeta, abstractmethod
 
 import logging
 
@@ -35,3 +36,17 @@ def fetch_ingest():
     except Exception as ex:
         logger.error(ex)
     UpdateIngest().run()
+
+
+class Parser:
+    """
+    Parent Class for all types of Parsers like News ML 1.2, News ML G2, NITF,...
+    """
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def parse_message(self, xml_doc):
+        """
+        Parses the ingest XML and extracts the relevant elements/attributes values from the XML.
+        Sub-classes must override.
+        """
