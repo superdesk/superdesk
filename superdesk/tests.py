@@ -34,7 +34,7 @@ def drop_elastic(settings):
 
 
 def drop_mongo(app):
-    with app.test_request_context():
+    with app.test_request_context(app.config['URL_PREFIX']):
         try:
             app.data.mongo.driver.cx.drop_database(app.config['MONGO_DBNAME'])
         except AttributeError:
@@ -67,19 +67,29 @@ def add_to_context(context, token, user):
     context.user = user
 
 
+def get_prefixed_url(current_app, endpoint):
+    if endpoint.startswith('http://'):
+        return endpoint
+
+    endpoint = endpoint if endpoint.startswith('/') else ('/' + endpoint)
+    url = current_app.config['URL_PREFIX'] + endpoint
+    return url
+
+
 def setup_db_user(context, user):
     user = user or test_user
-    with context.app.test_request_context():
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
         original_password = user['password']
         user['user_type'] = 'administrator'
         get_resource_service('users').post([user])
         user['password'] = original_password
 
-    auth_data = json.dumps({'username': user['username'], 'password': user['password']})
-    auth_response = context.client.post('/auth', data=auth_data, headers=context.headers)
-    token = json.loads(auth_response.get_data()).get('token').encode('ascii')
+        auth_data = json.dumps({'username': user['username'], 'password': user['password']})
+        auth_response = context.client.post(get_prefixed_url(context.app, '/auth'),
+                                            data=auth_data, headers=context.headers)
+        token = json.loads(auth_response.get_data()).get('token').encode('ascii')
 
-    add_to_context(context, token, user)
+        add_to_context(context, token, user)
 
 
 def setup_ad_user(context, user):
@@ -96,7 +106,8 @@ def setup_ad_user(context, user):
 
     with patch.object(ADAuth, 'authenticate_and_fetch_profile', return_value=ad_user):
         auth_data = json.dumps({'username': ad_user['username'], 'password': ad_user['password']})
-        auth_response = context.client.post('/auth', data=auth_data, headers=context.headers)
+        auth_response = context.client.post(get_prefixed_url(context.app, '/auth'),
+                                            data=auth_data, headers=context.headers)
         auth_response_as_json = json.loads(auth_response.get_data())
         token = auth_response_as_json.get('token').encode('ascii')
         ad_user['_id'] = auth_response_as_json['user']

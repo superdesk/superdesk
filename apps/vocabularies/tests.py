@@ -3,6 +3,7 @@ import json
 from superdesk.tests import TestCase
 from superdesk import get_resource_service
 from .command import VocabulariesPopulateCommand
+from settings import URL_PREFIX
 
 
 class VocabulariesPopulateTest(TestCase):
@@ -29,7 +30,7 @@ class VocabulariesPopulateTest(TestCase):
 
     def test_populate_vocabularies(self):
         cmd = VocabulariesPopulateCommand()
-        with self.app.test_request_context():
+        with self.app.test_request_context(URL_PREFIX):
             cmd.run(self.filename)
             service = get_resource_service("vocabularies")
 

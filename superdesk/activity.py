@@ -1,8 +1,7 @@
 
 import logging
-import flask
+from flask import g
 
-from eve.methods.post import post_internal
 from superdesk.notification import push_notification
 from superdesk.resource import Resource
 from superdesk.services import BaseService
@@ -12,16 +11,16 @@ log = logging.getLogger(__name__)
 
 
 def init_app(app):
-    endpoint_name = 'audit'
-    service = BaseService(endpoint_name, backend=superdesk.get_backend())
-    auditResource = AuditResource(endpoint_name, app=app, service=service)
-    app.on_inserted += auditResource.on_generic_inserted
-    app.on_updated += auditResource.on_generic_updated
-    app.on_deleted_item += auditResource.on_generic_deleted
-
     endpoint_name = 'activity'
     service = BaseService(endpoint_name, backend=superdesk.get_backend())
     ActivityResource(endpoint_name, app=app, service=service)
+
+    endpoint_name = 'audit'
+    service = AuditService(endpoint_name, backend=superdesk.get_backend())
+    AuditResource(endpoint_name, app=app, service=service)
+    app.on_inserted += service.on_generic_inserted
+    app.on_updated += service.on_generic_updated
+    app.on_deleted_item += service.on_generic_deleted
 
 
 class AuditResource(Resource):
@@ -36,11 +35,14 @@ class AuditResource(Resource):
     }
     exclude = {endpoint_name, 'activity'}
 
+
+class AuditService(BaseService):
+
     def on_generic_inserted(self, resource, docs):
-        if resource in self.exclude:
+        if resource in AuditResource.exclude:
             return
 
-        user = getattr(flask.g, 'user', None)
+        user = getattr(g, 'user', None)
         if not user:
             return
 
@@ -54,13 +56,13 @@ class AuditResource(Resource):
             'extra': docs[0]
         }
 
-        post_internal(self.endpoint_name, audit)
+        self.post([audit])
 
     def on_generic_updated(self, resource, doc, original):
-        if resource in self.exclude:
+        if resource in AuditResource.exclude:
             return
 
-        user = getattr(flask.g, 'user', None)
+        user = getattr(g, 'user', None)
         if not user:
             return
 
@@ -70,13 +72,13 @@ class AuditResource(Resource):
             'action': 'updated',
             'extra': doc
         }
-        post_internal(self.endpoint_name, audit)
+        self.post([audit])
 
     def on_generic_deleted(self, resource, doc):
-        if resource in self.exclude:
+        if resource in AuditResource.exclude:
             return
 
-        user = getattr(flask.g, 'user', None)
+        user = getattr(g, 'user', None)
         if not user:
             return
 
@@ -86,7 +88,7 @@ class AuditResource(Resource):
             'action': 'deleted',
             'extra': doc
         }
-        post_internal(self.endpoint_name, audit)
+        self.post([audit])
 
 
 class ActivityResource(Resource):
@@ -125,7 +127,7 @@ def add_activity(msg, item=None, notify=None, **data):
         'data': data,
     }
 
-    user = getattr(flask.g, 'user', None)
+    user = getattr(g, 'user', None)
     if user:
         activity['user'] = user.get('_id')
 
@@ -137,5 +139,5 @@ def add_activity(msg, item=None, notify=None, **data):
     if item:
         activity['item'] = str(item)
 
-    post_internal(ActivityResource.endpoint_name, activity)
+    superdesk.get_resource_service(ActivityResource.endpoint_name).post([activity])
     push_notification(ActivityResource.endpoint_name, _dest=activity['read'])
