@@ -60,9 +60,14 @@
                   </div>
                 </div>
 
-                <div sd-info-item class="password" ng-if="features.reset_user_password && user._id" id="password-change-trigger">
+                <div sd-info-item class="password" ng-if="features.reset_user_password && user._id && !profile" id="password-reset-trigger">
                   <label translate>password</label>
-                  <i class="change-btn" ng-click="show.password = !show.password" ng-show="!show.password">change password</i>
+                  <i class="change-btn" ng-click="show.reset_password = !show.reset_password" ng-show="!show.reset_password">reset password</i>
+                </div>
+
+                <div sd-info-item class="password" ng-if="features.reset_user_password && user._id && profile" id="password-change-trigger">
+                  <label translate>password</label>
+                  <i class="change-btn" ng-click="show.change_password = !show.change_password" ng-show="!show.change_password">change password</i>
                 </div>
 
                 <div sd-info-item>
@@ -103,11 +108,32 @@
     </div>
 </form>
 
-<div sd-change-password class="password-popup" ng-if="features.reset_user_password && show.password && user._id" ng-class="{shifted : error}">
+
+<div sd-reset-password class="password-popup" ng-if="features.reset_user_password && show.reset_password && user._id" ng-class="{shifted : error}">
+    <div class="title">Reset password</div>
+    <div class="content-holder">
+      <div class="password-change-holder" >
+          <form name="resetPasswordForm">
+
+            <div class="title">{{ 'Do you want to reset the password for user ' + user.full_name  + '?' | translate }} </div>
+
+            <div class="action-buttons">
+              <button type="reset" class="btn btn-small" ng-click="show.reset_password = false" translate>Cancel</button>
+              <button type="submit" class="btn btn-info btn-small"
+                ng-click="resetPassword()"
+                translate>Reset password</button>
+            </div>
+          </form>
+      </div>
+    </div>
+</div>
+
+
+<div sd-change-password class="password-popup" ng-if="features.reset_user_password && show.change_password && user._id" ng-class="{shifted : error}">
     <div class="title">Change password</div>
     <div class="content-holder">
       <div class="password-change-holder" >
-          <form name="passwordForm">
+          <form name="changePasswordForm">
 
             <label translate>current</label>
             <input name="old" type="password" ng-model="oldPwd" required>
@@ -115,18 +141,18 @@
 
             <label translate>new</label>
             <input name="new" type="password" ng-model="newPwd" required ng-minlength="5">
-            <p sd-valid-error ng-show="passwordForm.new.$error.minlength">please provide password at least 5 characters long.</p>
+            <p sd-valid-error ng-show="changePasswordForm.new.$error.minlength">please provide password at least 5 characters long.</p>
 
             <label translate>confirm</label>
             <input name="confirm" type="password" ng-model="_confirm" required
               sd-password-confirm ng-model="_confirm" data-password="newPwd">
-            <p sd-valid-error ng-show="passwordForm.confirm.$error.confirm">confirm doesn't match new password yet.</p>
+            <p sd-valid-error ng-show="changePasswordForm.confirm.$error.confirm">confirm doesn't match new password yet.</p>
 
             <div class="action-buttons">
-              <button type="reset" class="btn btn-small" ng-click="show.password = false" translate>Cancel</button>
+              <button type="reset" class="btn btn-small" ng-click="show.change_password = false" translate>Cancel</button>
               <button type="submit" class="btn btn-info btn-small"
-                ng-click="passwordForm.$valid && changePassword(oldPwd, newPwd)"
-                ng-disabled="passwordForm.$invalid"
+                ng-click="changePasswordForm.$valid && changePassword(oldPwd, newPwd)"
+                ng-disabled="changePasswordForm.$invalid"
                 translate>Save password</button>
             </div>
           </form>
