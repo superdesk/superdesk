@@ -65,21 +65,6 @@ define(['lodash'], function(_) {
         }
 
         /**
-         * Start a mock session for given user id
-         *
-         * @param {string} userId
-         */
-        this.mock = function(userId) {
-            return this.start({
-                _links: {self: {href: null}},
-                token: 'token'
-            }, {
-                _id: userId,
-                username: 'foo'
-            });
-        };
-
-        /**
          * Set current session expired
          */
         this.expire = function() {

@@ -17,8 +17,8 @@ describe('authoring', function() {
     }));
 
     beforeEach(inject(function(preferencesService, $q) {
-            spyOn(preferencesService, 'get').andReturn($q.when({'items':['urn:tag:superdesk-1']}));
-            spyOn(preferencesService, 'update').andReturn($q.when({}));
+        spyOn(preferencesService, 'get').andReturn($q.when({'items':['urn:tag:superdesk-1']}));
+        spyOn(preferencesService, 'update').andReturn($q.when({}));
     }));
 
     beforeEach(inject(function($route) {
@@ -26,7 +26,7 @@ describe('authoring', function() {
     }));
 
     beforeEach(inject(function(session) {
-        session.mock(USER);
+        session.start({_id: 'sess'}, {_id: USER});
         expect(session.identity._id).toBe(USER);
     }));
 
@@ -72,7 +72,6 @@ describe('authoring', function() {
         $scope.item.headline = headline;
         $rootScope.$digest();
         expect($scope.dirty).toBe(true);
-        expect($scope.saving).toBe(true);
 
         // autosave
         spyOn(api, 'save').andReturn($q.when({}));
@@ -102,7 +101,6 @@ describe('authoring', function() {
         spyOn(api, 'save').andReturn($q.when({}));
         $scope.save();
         $rootScope.$digest();
-        expect($scope.saving).toBe(false);
 
         $timeout.flush(5000);
         expect($scope.item._autosave).toBe(null);
@@ -141,6 +139,11 @@ describe('authoring', function() {
 
         });
 
+        it('can check if an item is editable', inject(function(authoring, session) {
+            expect(authoring.isEditable({})).toBe(false);
+            expect(authoring.isEditable({lock_user: session.identity._id, lock_session: session.sessionId})).toBe(true);
+        }));
+
         it('can close a read-only item', inject(function(authoring, confirm, lock, workqueue, $rootScope) {
             var done = jasmine.createSpy('done') ;
             authoring.close({}).then(done);
@@ -168,6 +171,17 @@ describe('authoring', function() {
             expect(authoring.save).toHaveBeenCalledWith(item, diff);
             expect(lock.unlock).toHaveBeenCalled();
             expect(workqueue.remove).toHaveBeenCalled();
+        }));
+
+        it('can unlock an item', inject(function(authoring, session, confirm, autosave) {
+            var item = {lock_user: session.identity._id, lock_session: session.sessionId};
+            expect(authoring.isEditable(item)).toBe(true);
+            spyOn(confirm, 'unlock');
+            spyOn(autosave, 'stop');
+            authoring.unlock(item);
+            expect(authoring.isEditable(item)).toBe(false);
+            expect(confirm.unlock).toHaveBeenCalled();
+            expect(autosave.stop).toHaveBeenCalled();
         }));
     });
 });

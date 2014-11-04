@@ -100,7 +100,7 @@
          * @param {boolean} isDirty $scope dirty status.
          */
         this.close = function closeAuthoring(item, diff, isDirty) {
-            if (isDirty) {
+            if (isDirty && this.isEditable(item)) {
                 return confirm.confirm()
                     .then(angular.bind(this, function save() {
                         return this.save(item, diff);
@@ -142,6 +142,27 @@
                 return item;
             });
         };
+
+        /**
+         * Test if an item is editable
+         *
+         * @param {Object} item
+         */
+        this.isEditable = function isEditable(item) {
+            return !!item.lock_user && !lock.isLocked(item);
+        };
+
+        /**
+         * Unlock an item - callback for item:unlock event
+         *
+         * @param {Object} item
+         * @param {string} userId
+         */
+        this.unlock = function unlock(item, userId) {
+            autosave.stop();
+            item.lock_user = null;
+            confirm.unlock(userId);
+        };
     }
 
     LockService.$inject = ['$q', 'api', 'session'];
@@ -155,7 +176,7 @@
                 return api('archive_lock', item).save({}).then(function(lock) {
                     _.extend(item, lock);
                     item._locked = false;
-                    item.lock_user = session.identity.id;
+                    item.lock_user = session.identity._id;
                     item.lock_session = session.sessionId;
                     return item;
                 }, function(err) {
@@ -211,8 +232,8 @@
         };
     }
 
-    ConfirmDirtyService.$inject = ['$window', '$q', 'modal', 'gettext'];
-    function ConfirmDirtyService($window, $q, modal, gettext) {
+    ConfirmDirtyService.$inject = ['$window', '$q', '$filter', 'api', 'modal', 'gettext'];
+    function ConfirmDirtyService($window, $q, $filter, api, modal, gettext) {
         /**
          * Will ask for user confirmation for user confirmation if there are some changes which are not saved.
          * - Detecting changes via $scope.dirty - it's up to the controller to set it.
@@ -240,6 +261,19 @@
                 gettext('Ignore')
             );
         };
+
+        /**
+         * Make user aware that an item was unlocked
+         *
+         * @param {string} userId Id of user who unlocked an item.
+         */
+        this.unlock = function unlock(userId) {
+            api.find('users', userId).then(function(user) {
+                var msg = gettext('This item was unlocked by <b>{{ user }}</b>.').
+                    replace('{{ user }}', $filter('username')(user));
+                return modal.confirm(msg, gettext('Item Unlocked'), gettext('OK'), false);
+            });
+        };
     }
 
     AuthoringController.$inject = [
@@ -257,8 +291,6 @@
         var stopWatch = angular.noop;
 
         $scope.workqueue = workqueue.all();
-        $scope.saving = false;
-        $scope.saved = false;
         $scope.dirty = false;
         $scope.viewSendTo = false;
 
@@ -279,18 +311,11 @@
                 'item.body_html'
             ], function(changes) {
                 $scope.dirty = isDirty();
-                if ($scope.dirty && $scope.isEditable()) {
-                    $scope.saving = true;
-                    authoring.autosave(item, $scope.item).then(function() {
-                        $scope.saving = false;
-                    });
+                if ($scope.dirty && authoring.isEditable(item)) {
+                    authoring.autosave(item, $scope.item);
                 }
             });
         }
-
-        $scope.isEditable = function() {
-            return !$scope._preview && !$scope.item._locked;
-        };
 
         /**
          * Create a new version
@@ -299,7 +324,6 @@
             stopWatch();
     		return authoring.save(item, $scope.item).then(function(res) {
                 $scope.dirty = false;
-                $scope.saving = false;
                 $scope.item = _.create(item);
                 notify.success(gettext('Item updated.'));
                 startWatch();
@@ -324,7 +348,6 @@
         $scope.preview = function(version) {
             stopWatch();
             extendItem($scope.item, version);
-            $scope._preview = true;
             $scope._editable = false;
         };
 
@@ -342,8 +365,7 @@
         $scope.closePreview = function() {
             $scope.item = _.create(item);
             extendItem($scope.item, item._autosave || {});
-            $scope._preview = false;
-            $scope._editable = $scope.isEditable();
+            $scope._editable = authoring.isEditable(item);
             if ($scope._editable) {
                 startWatch();
             }
@@ -353,8 +375,10 @@
         $scope.closePreview();
 
         $scope.$on('item:unlock', function(_e, data) {
-            if ($scope.item && $scope.item._id === data.item) {
-                console.log('got unlocked - stop editing');
+            if ($scope.item._id === data.item) {
+                stopWatch();
+                authoring.unlock(item, data.user);
+                $scope._editable = false;
             }
         });
     }
