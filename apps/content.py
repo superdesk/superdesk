@@ -115,5 +115,11 @@ metadata_schema = {
     'lock_session': {
         'type': 'objectid',
         'data_relation': {'resource': 'auth', 'field': '_id', 'embeddable': True}
+    },
+    'is_spiked': {
+        'type': 'boolean'
+    },
+    'expiry':{
+        'type': 'datetime'
     }
 }
