@@ -685,7 +685,9 @@
                     scope.save = function() {
                         scope.error = null;
                         notify.info(gettext('saving..'));
-                        return users.save(scope.origUser, scope.user).then(function() {
+                        return users.save(scope.origUser, scope.user)
+                        .then(function(response) {
+                            scope.origUser = response;
                             resetUser(scope.origUser);
                             notify.pop();
                             notify.success(gettext('user saved.'));
