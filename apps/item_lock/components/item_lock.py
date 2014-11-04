@@ -43,7 +43,7 @@ class ItemLock(BaseComponent):
             updates = {LOCK_USER: None, LOCK_SESSION: None, 'lock_time': None, 'force_unlock': True}
             item_model.update(filter, updates)
             self.app.on_item_unlocked(item, user)
-            push_notification('item:unlock', item=str(filter.get('_id')))
+            push_notification('item:unlock', item=str(filter.get('_id')), user=str(user))
         item = item_model.find_one(filter)
         return item
 
