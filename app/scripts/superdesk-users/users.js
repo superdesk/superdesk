@@ -34,9 +34,20 @@
          * @param {string} newPassword
          * @returns {Promise}
          */
-        this.changePassword = function(user, oldPassword, newPassword) {
-            console.error('change password not implemented');
-            return $q.reject();
+        this.changePassword = function changePassword(user, oldPassword, newPassword) {
+            return api.changePassword.create({username: user.username, old_password: oldPassword, new_password: newPassword})
+            	.then(function(result) {});
+        };
+
+        /**
+         * Reset reset password
+         *
+         * @param {Object} user
+         * @returns {Promise}
+         */
+        this.resetPassword = function resetPassword(user) {
+            return api.resetPassword.create({email: user.email})
+                .then(function(result) {});
         };
 
         /**
@@ -578,6 +589,14 @@
                 type: 'http',
                 backend: {rel: 'roles'}
             });
+            apiProvider.api('resetPassword', {
+                type: 'http',
+                backend: {rel: 'reset_user_password'}
+            });
+            apiProvider.api('changePassword', {
+                type: 'http',
+                backend: {rel: 'change_user_password'}
+            });
         }])
 
         .config(['$compileProvider', function($compileProvider) {
@@ -652,7 +671,6 @@
                     onupdate: '&'
                 },
                 link: function(scope, elem) {
-
                     scope.features = features;
                     scope.usernamePattern = users.usernamePattern;
                     scope.phonePattern = users.phonePattern;
@@ -737,6 +755,7 @@
                         scope.confirm = {password: null};
                         scope.show = {password: false};
                         scope._active = users.isActive(user);
+                        scope.profile = scope.user._id === session.identity._id;
                     }
                 }
             };
@@ -787,7 +806,7 @@
             };
         }])
 
-        .directive('sdChangePassword', ['api', 'notify', 'gettext', function(api, notify, gettext) {
+        .directive('sdChangePassword', ['users', 'notify', 'gettext', function(users, notify, gettext) {
             return {
                 link: function(scope, element) {
                     scope.$watch('user', function() {
@@ -801,11 +820,35 @@
                      * @param {string} newPassword
                      */
                     scope.changePassword = function(oldPassword, newPassword) {
-                        return api.users.changePassword(scope.user, oldPassword, newPassword)
+                        return users.changePassword(scope.user, oldPassword, newPassword)
                             .then(function(response) {
                                 scope.oldPasswordInvalid = false;
-                                notify.success(gettext('New password is saved now.'), 3000);
-                                scope.show.password = false;
+                                notify.success(gettext('The password has been changed.'), 3000);
+                                scope.show.change_password = false;
+                            }, function(response) {
+                                scope.oldPasswordInvalid = true;
+                            });
+                    };
+                }
+            };
+        }])
+
+        .directive('sdResetPassword', ['users', 'notify', 'gettext', function(users, notify, gettext) {
+            return {
+                link: function(scope, element) {
+                	scope.$watch('user', function() {
+                        scope.oldPasswordInvalid = false;
+                    });
+
+                    /**
+                     * reset user password
+                     */
+                    scope.resetPassword = function() {
+                        return users.resetPassword(scope.user)
+                            .then(function(response) {
+                                scope.oldPasswordInvalid = false;
+                                notify.success(gettext('The password has been reset.'), 3000);
+                                scope.show.reset_password = false;
                             }, function(response) {
                                 scope.oldPasswordInvalid = true;
                             });
