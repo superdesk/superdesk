@@ -83,6 +83,7 @@ INSTALLED_APPS = [
     'apps.coverages',
     'apps.tasks',
     'apps.preferences',
+    'apps.spikes',
     'apps.groups',
     'apps.prepopulate',
     'apps.vocabularies'

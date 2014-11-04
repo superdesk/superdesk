@@ -11,6 +11,9 @@ LOCK_USER = 'lock_user'
 LOCK_SESSION = 'lock_session'
 STATUS = '_status'
 
+def can_lock(self, item, user):
+    # TODO: implement
+    return True
 
 class ItemLock(BaseComponent):
     def __init__(self, app):
@@ -23,7 +26,7 @@ class ItemLock(BaseComponent):
     def lock(self, filter, user, session, etag):
         item_model = get_model(ItemModel)
         item = item_model.find_one(filter)
-        if item and self._can_lock(item, user):
+        if item and _can_lock(item, user):
             self.app.on_item_lock(item, user)
             updates = {LOCK_USER: user, LOCK_SESSION: session, 'lock_time': utcnow()}
             item_model.update(filter, updates)
@@ -47,6 +50,3 @@ class ItemLock(BaseComponent):
         item = item_model.find_one(filter)
         return item
 
-    def _can_lock(self, item, user):
-        # TODO: implement
-        return True
