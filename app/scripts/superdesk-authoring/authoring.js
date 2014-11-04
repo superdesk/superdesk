@@ -22,7 +22,7 @@
         /**
          * Open an item
          */
-        this.open = function(item) {
+        this.open = function openAutosave(item) {
             if (item._locked) {
                 // no way to get autosave
                 return $q.when(item);
@@ -40,7 +40,7 @@
         /**
          * Autosave an item
          */
-        this.save = function(item, data) {
+        this.save = function saveAutosave(item, data) {
             this.stop();
             _timeout = $timeout(function() {
                 var diff = angular.extend({_id: item._id}, data);
@@ -56,7 +56,7 @@
         /**
          * Stop pending autosave
          */
-        this.stop = function() {
+        this.stop = function stopAutosave() {
             if (_timeout) {
                 $timeout.cancel(_timeout);
                 _timeout = null;
@@ -66,7 +66,7 @@
         /**
          * Drop autosave
          */
-        this.drop = function(item) {
+        this.drop = function dropAutosave(item) {
             $timeout.cancel(_timeout);
             api(RESOURCE).remove(item._autosave);
             item._autosave = null;
@@ -81,20 +81,13 @@
          *
          * @param {string} _id Item _id.
          */
-        this.open = function open(_id) {
-            console.time('item');
-            return api.find('archive', _id).then(function(item) {
-                console.time('lock');
+        this.open = function openAuthoring(_id) {
+            return api.find('archive', _id, {embedded: {lock_user: 1}}).then(function _lock(item) {
                 return lock.lock(item);
-            }).then(function(item) {
-                console.timeEnd('lock');
-                console.time('autosave');
+            }).then(function _autosave(item) {
                 return autosave.open(item);
-            }).then(function(item) {
+            }).then(function _workqueue(item) {
                 workqueue.setActive(item);
-                console.timeEnd('lock');
-                console.timeEnd('autosave');
-                console.timeEnd('item');
                 return item;
             });
         };
@@ -106,8 +99,8 @@
          * @param {Object} diff Changes.
          * @param {boolean} isDirty $scope dirty status.
          */
-        this.close = function close(item, diff, isDirty) {
-            if (isDirty) {
+        this.close = function closeAuthoring(item, diff, isDirty) {
+            if (isDirty && this.isEditable(item)) {
                 return confirm.confirm()
                     .then(angular.bind(this, function save() {
                         return this.save(item, diff);
@@ -131,7 +124,7 @@
          * @param {Object} item Destination.
          * @param {Object} diff Changes.
          */
-        this.autosave = function(item, diff) {
+        this.autosave = function autosaveAuthoring(item, diff) {
             return autosave.save(item, diff);
         };
 
@@ -141,13 +134,34 @@
          * @param {Object} item Destination.
          * @param {Object} diff Changes.
          */
-        this.save = function(item, diff) {
+        this.save = function saveAuthoring(item, diff) {
             autosave.stop();
             return api.save('archive', item, diff).then(function(_item) {
                 item._autosave = null;
                 workqueue.update(item);
                 return item;
             });
+        };
+
+        /**
+         * Test if an item is editable
+         *
+         * @param {Object} item
+         */
+        this.isEditable = function isEditable(item) {
+            return !!item.lock_user && !lock.isLocked(item);
+        };
+
+        /**
+         * Unlock an item - callback for item:unlock event
+         *
+         * @param {Object} item
+         * @param {string} userId
+         */
+        this.unlock = function unlock(item, userId) {
+            autosave.stop();
+            item.lock_user = null;
+            confirm.unlock(userId);
         };
     }
 
@@ -157,12 +171,12 @@
         /**
          * Lock an item
          */
-        this.lock = function(item) {
+        this.lock = function lock(item) {
             if (!item.lock_user) {
                 return api('archive_lock', item).save({}).then(function(lock) {
                     _.extend(item, lock);
                     item._locked = false;
-                    item.lock_user = session.identity.id;
+                    item.lock_user = session.identity._id;
                     item.lock_session = session.sessionId;
                     return item;
                 }, function(err) {
@@ -170,7 +184,7 @@
                     return item;
                 });
             } else {
-                item._locked = (item.lock_user !== session.identity._id || item.lock_session !== session.sessionId);
+                item._locked = this.isLocked(item);
                 return $q.when(item);
             }
         };
@@ -178,7 +192,7 @@
         /**
          * Unlock an item
          */
-        this.unlock = function(item) {
+        this.unlock = function unlock(item) {
             return api('archive_unlock', item).save({}).then(function(lock) {
                 _.extend(item, lock);
                 item._locked = true;
@@ -190,24 +204,36 @@
         };
 
         /**
-         * Test if an item is locked for me
+         * Test if an item is locked, it can be locked by other user or you in different session.
          */
-        this.isLocked = function(item) {
-            return item.lock_user && item.lock_session &&
-                (item.lock_user !== session.identity._id || item.lock_session !== session.sessionId);
+        this.isLocked = function isLocked(item) {
+            var userId = item.lock_user && item.lock_user._id || item.lock_user;
+
+            if (!userId) {
+                return false;
+            }
+
+            if (userId !== session.identity._id) {
+                return true;
+            }
+
+            if (!!item.lock_session && item.lock_session !== session.sessionId) {
+                return true;
+            }
+
+            return false;
         };
 
         /**
         * Test is an item is locked by me in another session
         */
-        this.isLockedByMe = function(item) {
-            return item.lock_user && item.lock_session &&
-                (item.lock_user === session.identity._id && item.lock_session !== session.sessionId);
+        this.isLockedByMe = function isLockedByMe(item) {
+            return item.lock_user && item.lock_user === session.identity._id && item.lock_session !== session.sessionId;
         };
     }
 
-    ConfirmDirtyService.$inject = ['$window', '$q', 'modal', 'gettext'];
-    function ConfirmDirtyService($window, $q, modal, gettext) {
+    ConfirmDirtyService.$inject = ['$window', '$q', '$filter', 'api', 'modal', 'gettext'];
+    function ConfirmDirtyService($window, $q, $filter, api, modal, gettext) {
         /**
          * Will ask for user confirmation for user confirmation if there are some changes which are not saved.
          * - Detecting changes via $scope.dirty - it's up to the controller to set it.
@@ -235,6 +261,19 @@
                 gettext('Ignore')
             );
         };
+
+        /**
+         * Make user aware that an item was unlocked
+         *
+         * @param {string} userId Id of user who unlocked an item.
+         */
+        this.unlock = function unlock(userId) {
+            api.find('users', userId).then(function(user) {
+                var msg = gettext('This item was unlocked by <b>{{ user }}</b>.').
+                    replace('{{ user }}', $filter('username')(user));
+                return modal.confirm(msg, gettext('Item Unlocked'), gettext('OK'), false);
+            });
+        };
     }
 
     AuthoringController.$inject = [
@@ -252,8 +291,6 @@
         var stopWatch = angular.noop;
 
         $scope.workqueue = workqueue.all();
-        $scope.saving = false;
-        $scope.saved = false;
         $scope.dirty = false;
         $scope.viewSendTo = false;
 
@@ -274,18 +311,11 @@
                 'item.body_html'
             ], function(changes) {
                 $scope.dirty = isDirty();
-                if ($scope.dirty && $scope.isEditable()) {
-                    $scope.saving = true;
-                    authoring.autosave(item, $scope.item).then(function() {
-                        $scope.saving = false;
-                    });
+                if ($scope.dirty && authoring.isEditable(item)) {
+                    authoring.autosave(item, $scope.item);
                 }
             });
         }
-
-        $scope.isEditable = function() {
-            return !$scope._preview && !$scope.item._locked;
-        };
 
         /**
          * Create a new version
@@ -294,7 +324,6 @@
             stopWatch();
     		return authoring.save(item, $scope.item).then(function(res) {
                 $scope.dirty = false;
-                $scope.saving = false;
                 $scope.item = _.create(item);
                 notify.success(gettext('Item updated.'));
                 startWatch();
@@ -319,7 +348,6 @@
         $scope.preview = function(version) {
             stopWatch();
             extendItem($scope.item, version);
-            $scope._preview = true;
             $scope._editable = false;
         };
 
@@ -337,8 +365,7 @@
         $scope.closePreview = function() {
             $scope.item = _.create(item);
             extendItem($scope.item, item._autosave || {});
-            $scope._preview = false;
-            $scope._editable = $scope.isEditable();
+            $scope._editable = authoring.isEditable(item);
             if ($scope._editable) {
                 startWatch();
             }
@@ -346,6 +373,14 @@
 
         // init
         $scope.closePreview();
+
+        $scope.$on('item:unlock', function(_e, data) {
+            if ($scope.item._id === data.item) {
+                stopWatch();
+                authoring.unlock(item, data.user);
+                $scope._editable = false;
+            }
+        });
     }
 
     function DashboardCard() {

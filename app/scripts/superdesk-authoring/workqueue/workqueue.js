@@ -106,12 +106,7 @@ function WorkqueueService(storage, preferencesService, notify) {
         _.remove(queue, {_id: item._id});
         this.length = queue.length;
         this.save();
-
-        if (this.active._id === item._id && this.length > 0) {
-            this.setActive(_.first(queue));
-        } else {
-            this.active = null;
-        }
+        this.active = null;
     };
 }
 

@@ -50,7 +50,7 @@ define(['lodash'], function(_) {
             this.sessionId = session._id;
             setToken(session.token);
             setSessionId(session._id);
-            setSessionHref(session._links.self.href);
+            setSessionHref(session._links && session._links.self.href);
 
             this.identity = null;
             this.updateIdentity(identity);
@@ -63,21 +63,6 @@ define(['lodash'], function(_) {
                 defer = null;
             }
         }
-
-        /**
-         * Start a mock session for given user id
-         *
-         * @param {string} userId
-         */
-        this.mock = function(userId) {
-            return this.start({
-                _links: {self: {href: null}},
-                token: 'token'
-            }, {
-                _id: userId,
-                username: 'foo'
-            });
-        };
 
         /**
          * Set current session expired
