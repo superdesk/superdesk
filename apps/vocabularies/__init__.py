@@ -1,6 +1,6 @@
-from .command import VocabulariesPopulateCommand
 from .vocabularies import VocabulariesResource, VocabulariesService
 import superdesk
+
 
 def init_app(app):
     endpoint_name = 'vocabularies'

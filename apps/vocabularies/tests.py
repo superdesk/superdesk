@@ -27,7 +27,6 @@ class VocabulariesPopulateTest(TestCase):
         with open(self.filename, "w+") as file:
             json.dump(self.json_data, file)
 
-
     def test_populate_vocabularies(self):
         cmd = VocabulariesPopulateCommand()
         with self.app.test_request_context():
@@ -38,8 +37,6 @@ class VocabulariesPopulateTest(TestCase):
                 data = service.find_one(_id=item["_id"], req=None)
                 self.assertEqual(data["_id"], item["_id"])
                 self.assertListEqual(data["items"], item["items"])
-
-
 
     def tearDown(self):
         os.remove(self.filename)

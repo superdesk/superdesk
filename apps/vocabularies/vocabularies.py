@@ -41,7 +41,3 @@ class VocabulariesService(BaseService):
         document[app.config['LAST_UPDATED']] = utcnow()
         document[app.config['DATE_CREATED']] = original[app.config['DATE_CREATED']]
         logger.info("updating vocabulary", document["_id"])
-
-
-
-

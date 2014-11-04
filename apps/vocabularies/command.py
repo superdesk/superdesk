@@ -17,7 +17,7 @@ def populate_vocabularies(json_data):
                 service.put(id_name, item)
             else:
                 service.post(item)
-        except Exception as e:
+        except Exception:
             logger.exception("Failed process the vocabularies")
 
 
@@ -36,8 +36,6 @@ def process_vocabularies(filepath):
         populate_vocabularies(json_data)
 
 
-
-
 class VocabulariesPopulateCommand(superdesk.Command):
     """
     Class defining the populate vocabularies command.
@@ -51,4 +49,3 @@ class VocabulariesPopulateCommand(superdesk.Command):
 
 
 superdesk.command('vocabularies:populate', VocabulariesPopulateCommand())
-
