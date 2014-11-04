@@ -119,7 +119,7 @@ metadata_schema = {
     'is_spiked': {
         'type': 'boolean'
     },
-    'expiry':{
+    'expiry': {
         'type': 'datetime'
     }
 }
