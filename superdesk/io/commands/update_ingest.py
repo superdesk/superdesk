@@ -43,7 +43,7 @@ def ingest_items(provider, items):
             item.setdefault('_created', utcnow())
             item.setdefault('_updated', utcnow())
             item['ingest_provider'] = str(provider['_id'])
-            old_item = superdesk.get_resource_service('ingest').find_one(guid=item['guid'], req=None)
+            old_item = superdesk.get_resource_service('ingest').find_one(_id=item['guid'], req=None)
             if old_item:
                 superdesk.get_resource_service('ingest').put(item['guid'], item)
             else:

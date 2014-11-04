@@ -1,5 +1,5 @@
 from superdesk.resource import Resource
-from .common import base_schema, extra_response_fields, item_url, facets
+from .common import extra_response_fields, item_url, facets
 from .common import on_create_item
 from superdesk.services import BaseService
 from apps.content import metadata_schema
