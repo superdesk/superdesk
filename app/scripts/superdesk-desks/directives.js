@@ -165,8 +165,78 @@ define([
             }
         };
     }])
-    .directive('sdDeskeditPeople', ['gettext', 'api', 'WizardHandler', 'desks',
-        function(gettext, api, WizardHandler, desks) {
+    .directive('sdUserSelectList', ['$filter', function($filter) {
+        return {
+            scope: {
+                users: '=',
+                onchoose: '&'
+            },
+            templateUrl: 'scripts/superdesk-desks/views/user-select.html',
+            link: function(scope, elem, attrs) {
+
+                var ARROW_UP = 38, ARROW_DOWN = 40, ENTER = 13;
+
+                scope.selected = null;
+                scope.search = null;
+                scope.filteredUsers = [];
+
+                scope.$watchGroup(['search', 'users'], function() {
+                    scope.filteredUsers = $filter('filter')(scope.users, scope.search);
+                    scope.selected = null;
+                });
+
+                function getSelectedIndex() {
+                    if (scope.selected) {
+                        return _.findIndex(scope.filteredUsers, scope.selected);
+                    } else {
+                        return -1;
+                    }
+                }
+
+                function previous() {
+                    var selectedIndex = getSelectedIndex();
+                    if (selectedIndex > 0) {
+                        scope.select(scope.filteredUsers[_.max([0, selectedIndex - 1])]);
+                    }
+                }
+
+                function next() {
+                    var selectedIndex = getSelectedIndex();
+                    scope.select(scope.filteredUsers[_.min([scope.filteredUsers.length - 1, selectedIndex + 1])]);
+                }
+
+                elem.bind('keydown keypress', function(event) {
+                    scope.$apply(function() {
+                        switch (event.which) {
+                            case ARROW_UP:
+                                event.preventDefault();
+                                previous();
+                                break;
+                            case ARROW_DOWN:
+                                event.preventDefault();
+                                next();
+                                break;
+                            case ENTER:
+                                event.preventDefault();
+                                scope.choose(scope.selected);
+                                break;
+                        }
+                    });
+                });
+
+                scope.choose = function(user) {
+                    scope.onchoose({user: user});
+                    scope.search = null;
+                };
+
+                scope.select = function(user) {
+                    scope.selected = user;
+                };
+            }
+        };
+    }])
+    .directive('sdDeskeditPeople', ['gettext', 'api', 'WizardHandler', 'desks', 'keyboardManager',
+        function(gettext, api, WizardHandler, desks, keyboardManager) {
         return {
             link: function(scope, elem, attrs) {
 
@@ -197,7 +267,6 @@ define([
                 scope.add = function(user) {
                     scope.deskMembers.push(user);
                     generateSearchList();
-                    scope.search = null;
                 };
 
                 scope.remove = function(user) {

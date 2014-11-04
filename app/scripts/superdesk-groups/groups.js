@@ -123,7 +123,7 @@
             $scope.openGroup = function(step, group) {
                 $scope.group.edit = group;
                 $scope.modalActive = true;
-                WizardHandler.wizard('usergroups').goTo(step);
+                $scope.step.current = step;
             };
 
             $scope.cancel = function() {
@@ -210,7 +210,6 @@
                     scope.add = function(user) {
                         scope.groupMembers.push(user);
                         generateSearchList();
-                        scope.search = null;
                     };
 
                     scope.remove = function(user) {
