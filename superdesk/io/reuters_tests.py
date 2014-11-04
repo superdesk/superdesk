@@ -6,6 +6,7 @@ import superdesk
 from superdesk.utc import utcnow
 from .reuters_token import get_token
 from .reuters import PROVIDER
+from settings import URL_PREFIX
 
 
 def setup_provider(token, hours):
@@ -35,7 +36,7 @@ class GetTokenTestCase(TestCase):
         self.assertEquals('abc', get_token(provider))
 
     def test_fetch_token(self):
-        with self.app.test_request_context():
+        with self.app.test_request_context(URL_PREFIX):
             provider = setup_provider('abc', 24)
             superdesk.get_resource_service('ingest_providers').post([provider])
             self.assertTrue(provider.get('_id'))
