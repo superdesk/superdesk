@@ -84,7 +84,8 @@ INSTALLED_APPS = [
     'apps.tasks',
     'apps.preferences',
     'apps.groups',
-    'apps.prepopulate'
+    'apps.prepopulate',
+    'apps.vocabularies'
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']
