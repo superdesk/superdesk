@@ -12,13 +12,11 @@ def populate_vocabularies(json_data):
     service = get_resource_service('vocabularies')
     for item in json_data:
         id_name = item.get("_id")
-        try:
-            if service.find_one(_id=id_name, req=None):
-                service.put(id_name, item)
-            else:
-                service.post(item)
-        except Exception:
-            logger.exception("Failed process the vocabularies")
+
+        if service.find_one(_id=id_name, req=None):
+            service.put(id_name, item)
+        else:
+            service.post(item)
 
 
 def process_vocabularies(filepath):
