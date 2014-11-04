@@ -12,7 +12,7 @@
 
     	    <button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()"
                 ng-show="_editable"
-                ng-disabled="!dirty"
+                ng-disabled="!dirty && !item._autosave"
                 translate>Save</button>
 
 	    	<button class="navbtn navbtn-hover" ng-show="_editable" ng-click="viewSendTo = !viewSendTo">
