@@ -89,7 +89,7 @@ define(['angular', 'lodash'], function(angular, _) {
 
             this.update = function(updates, key) {
                 if (!key){
-                    return updatePreferences(updates);
+                    return updatePreferences(USER_PREFERENCES, updates);
                 } else if (userPreferences.indexOf(key) >= 0) {
                     return updatePreferences(USER_PREFERENCES, updates, key);
                 } else {
