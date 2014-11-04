@@ -135,3 +135,15 @@ Feature: Role Resource
             {"name": "Sub Editing Desk"}
             """
         Then we get response code 403
+
+    @auth
+    Scenario: Role names are unique case insensitive
+        Given "roles"
+            """
+            [{"name": "BIG"}]
+            """
+        When we post to "/roles"
+            """
+            {"name": "big"}
+            """
+        Then we get response code 400
