@@ -100,6 +100,7 @@ INSTALLED_APPS = [
     'apps.vocabularies',
     'apps.legal_archive',
     'apps.search',
+    'apps.packages'
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']

@@ -241,6 +241,10 @@ def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
 def step_impl_when_post_url(context, url):
     data = apply_placeholders(context, context.text)
     context.response = context.client.post(get_prefixed_url(context.app, url), data=data, headers=context.headers)
+    store_placeholder(context, url)
+
+
+def store_placeholder(context, url):
     if context.response.status_code in (200, 201):
         item = json.loads(context.response.get_data())
         if item['_status'] == 'OK' and item.get('_id'):
@@ -299,7 +303,9 @@ def step_impl_when_delete_url(context, url):
     res = get_res(url, context)
     href = get_self_href(res, context)
     headers = if_match(context, res.get('_etag'))
-    context.response = context.client.delete(get_prefixed_url(context.app, href), headers=headers)
+    href = get_prefixed_url(context.app, href)
+    print(href, headers)
+    context.response = context.client.delete(href, headers=headers)
 
 
 @when('we delete latest')
@@ -307,7 +313,9 @@ def when_we_delete_it(context):
     res = get_json_data(context.response)
     href = get_self_href(res, context)
     headers = if_match(context, res.get('_etag'))
-    context.response = context.client.delete(get_prefixed_url(context.app, href), headers=headers)
+    href = get_prefixed_url(context.app, href)
+    print(href, headers)
+    context.response = context.client.delete(href, headers=headers)
 
 
 @when('we patch "{url}"')
@@ -376,8 +384,10 @@ def upload_file(context, dest, filename, crop_data=None):
             data.update(crop_data)
         headers = [('Content-Type', 'multipart/form-data')]
         headers = unique_headers(headers, context.headers)
-        context.response = context.client.post(get_prefixed_url(context.app, dest), data=data, headers=headers)
+        url = get_prefixed_url(context.app, dest)
+        context.response = context.client.post(url, data=data, headers=headers)
         assert_ok(context.response)
+        store_placeholder(context, url)
 
 
 @when('we upload a file from URL')
