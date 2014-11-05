@@ -18,7 +18,7 @@ from wooper.assertions import (
     assert_in, assert_equal)
 from urllib.parse import urlparse
 from os.path import basename
-from superdesk.tests import test_user
+from superdesk.tests import test_user, get_prefixed_url
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 
@@ -73,7 +73,7 @@ def get_self_href(resource, context):
 
 
 def get_res(url, context):
-    response = context.client.get(url, headers=context.headers)
+    response = context.client.get(get_prefixed_url(context.app, url), headers=context.headers)
     expect_status(response, 200)
     return json.loads(response.get_data())
 
@@ -121,10 +121,12 @@ def unique_headers(headers_to_add, old_headers):
 
 
 def patch_current_user(context, data):
-    response = context.client.get('/users/%s' % context.user['_id'], headers=context.headers)
+    response = context.client.get(get_prefixed_url(context.app, '/users/%s' % context.user['_id']),
+                                  headers=context.headers)
     user = json.loads(response.get_data())
     headers = if_match(context, user.get('_etag'))
-    response = context.client.patch('/users/%s' % context.user['_id'], data=data, headers=headers)
+    response = context.client.patch(get_prefixed_url(context.app, '/users/%s' % context.user['_id']),
+                                    data=data, headers=headers)
     assert_ok(response)
     return response
 
@@ -147,13 +149,13 @@ def apply_placeholders(context, text):
 
 @given('empty "{resource}"')
 def step_impl_given_empty(context, resource):
-    with context.app.test_request_context():
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
         get_resource_service(resource).delete_action()
 
 
 @given('"{resource}"')
 def step_impl_given_(context, resource):
-    with context.app.test_request_context():
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
         get_resource_service(resource).delete_action()
         items = [parse(item, resource) for item in json.loads(context.text)]
         get_resource_service(resource).post(items)
@@ -165,7 +167,7 @@ def step_impl_given_(context, resource):
 
 @given('the "{resource}"')
 def step_impl_given_the(context, resource):
-    with context.app.test_request_context():
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
         get_resource_service(resource).delete_action()
         orig_items = {}
         items = [parse(item, resource) for item in json.loads(context.text)]
@@ -177,7 +179,7 @@ def step_impl_given_the(context, resource):
 @given('ingest from "{provider}"')
 def step_impl_given_resource_with_provider(context, provider):
     resource = 'ingest'
-    with context.app.test_request_context():
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
         get_resource_service(resource).delete_action()
         items = [parse(item, resource) for item in json.loads(context.text)]
         for item in items:
@@ -195,7 +197,7 @@ def step_impl_given_config(context):
 
 @given('we have "{role_name}" role')
 def step_impl_given_role(context, role_name):
-    with context.app.test_request_context():
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
         role = get_resource_service('roles').find_one(name=role_name, req=None)
         data = json.dumps({'roles': [str(role['_id'])]})
     response = patch_current_user(context, data)
@@ -204,7 +206,7 @@ def step_impl_given_role(context, role_name):
 
 @given('we have "{user_type}" as type of user')
 def step_impl_given_user_type(context, user_type):
-    with context.app.test_request_context():
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
         data = json.dumps({'user_type': user_type})
     response = patch_current_user(context, data)
     assert_ok(response)
@@ -212,7 +214,7 @@ def step_impl_given_user_type(context, user_type):
 
 @given('role "{extending_name}" extends "{extended_name}"')
 def step_impl_given_role_extends(context, extending_name, extended_name):
-    with context.app.test_request_context():
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
         extended = get_resource_service('roles').find_one(name=extended_name, req=None)
         extending = get_resource_service('roles').find_one(name=extending_name, req=None)
         get_resource_service('roles').patch(extending['_id'], {'extends': extended['_id']})
@@ -221,12 +223,12 @@ def step_impl_given_role_extends(context, extending_name, extended_name):
 @when('we post to auth')
 def step_impl_when_auth(context):
     data = context.text
-    context.response = context.client.post('/auth', data=data, headers=context.headers)
+    context.response = context.client.post(get_prefixed_url(context.app, '/auth'), data=data, headers=context.headers)
 
 
 @when('we fetch from "{provider_name}" ingest "{guid}"')
 def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
-    with context.app.test_request_context():
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
         provider_service = context.provider_services[provider.get('type')]
         provider_service.provider = provider
@@ -236,7 +238,7 @@ def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
 @when('we post to "{url}"')
 def step_impl_when_post_url(context, url):
     data = apply_placeholders(context, context.text)
-    context.response = context.client.post(url, data=data, headers=context.headers)
+    context.response = context.client.post(get_prefixed_url(context.app, url), data=data, headers=context.headers)
     if context.response.status_code in (200, 201):
         item = json.loads(context.response.get_data())
         if item['_status'] == 'OK' and item.get('_id'):
@@ -248,7 +250,7 @@ def step_impl_when_post_url(context, url):
 @when('we post to "{url}" with success')
 def step_impl_when_post_url_with_success(context, url):
     data = apply_placeholders(context, context.text)
-    context.response = context.client.post(url, data=data, headers=context.headers)
+    context.response = context.client.post(get_prefixed_url(context.app, url), data=data, headers=context.headers)
     assert_ok(context.response)
     item = json.loads(context.response.get_data())
     if item.get('_id'):
@@ -261,7 +263,7 @@ def step_impl_when_post_url_with_success(context, url):
 def step_impl_when_put_url(context, url):
     data = apply_placeholders(context, context.text)
     href = get_self_href(url)
-    context.response = context.client.put(href, data=data, headers=context.headers)
+    context.response = context.client.put(get_prefixed_url(context.app, href), data=data, headers=context.headers)
     assert_ok(context.response)
 
 
@@ -274,13 +276,13 @@ def when_we_get_url(context, url):
             headers.append((key, val))
     headers = unique_headers(headers, context.headers)
     url = apply_placeholders(context, url)
-    context.response = context.client.get(url, headers=headers)
+    context.response = context.client.get(get_prefixed_url(context.app, url), headers=headers)
 
 
 @when('we find for "{resource}" the id as "{name}" by "{search_criteria}"')
 def when_we_find_for_resource_the_id_as_name_by_search_criteria(context, resource, name, search_criteria):
     url = '/' + resource + '?where=' + search_criteria
-    context.response = context.client.get(url, headers=context.headers)
+    context.response = context.client.get(get_prefixed_url(context.app, url), headers=context.headers)
     print('context.response.status_code: ', context.response.status_code)
     if context.response.status_code == 200:
         expect_json_length(context.response, 1, path='_items')
@@ -295,7 +297,7 @@ def step_impl_when_delete_url(context, url):
     res = get_res(url, context)
     href = get_self_href(res, context)
     headers = if_match(context, res.get('_etag'))
-    context.response = context.client.delete(href, headers=headers)
+    context.response = context.client.delete(get_prefixed_url(context.app, href), headers=headers)
 
 
 @when('we delete latest')
@@ -303,7 +305,7 @@ def when_we_delete_it(context):
     res = get_json_data(context.response)
     href = get_self_href(res, context)
     headers = if_match(context, res.get('_etag'))
-    context.response = context.client.delete(href, headers=headers)
+    context.response = context.client.delete(get_prefixed_url(context.app, href), headers=headers)
 
 
 @when('we patch "{url}"')
@@ -313,7 +315,7 @@ def step_impl_when_patch_url(context, url):
     href = get_self_href(res, context)
     headers = if_match(context, res.get('_etag'))
     data = apply_placeholders(context, context.text)
-    context.response = context.client.patch(href, data=data, headers=headers)
+    context.response = context.client.patch(get_prefixed_url(context.app, href), data=data, headers=headers)
 
 
 @when('we patch latest')
@@ -322,7 +324,7 @@ def step_impl_when_patch_again(context):
     href = get_self_href(data, context)
     headers = if_match(context, data.get('_etag'))
     data2 = apply_placeholders(context, context.text)
-    context.response = context.client.patch(href, data=data2, headers=headers)
+    context.response = context.client.patch(get_prefixed_url(context.app, href), data=data2, headers=headers)
     if context.response.status_code in (200, 201):
         item = json.loads(context.response.get_data())
         if item['_status'] == 'OK' and item.get('_id'):
@@ -334,14 +336,14 @@ def step_impl_when_patch_again(context):
 def step_impl_when_patch(context):
     href, etag = get_it(context)
     headers = if_match(context, etag)
-    context.response = context.client.patch(href, data=context.text, headers=headers)
+    context.response = context.client.patch(get_prefixed_url(context.app, href), data=context.text, headers=headers)
     assert_ok(context.response)
 
 
 @when('we get given')
 def step_impl_when_get(context):
     href, _etag = get_it(context)
-    context.response = context.client.get(href, headers=context.headers)
+    context.response = context.client.get(get_prefixed_url(context.app, href), headers=context.headers)
 
 
 @when('we restore version {version}')
@@ -350,7 +352,7 @@ def step_impl_when_restore_version(context, version):
     href = get_self_href(data, context)
     headers = if_match(context, data.get('_etag'))
     text = '{"type": "text", "old_version": %s, "last_version": %s}' % (version, data.get('_version'))
-    context.response = context.client.put(href, data=text, headers=headers)
+    context.response = context.client.put(get_prefixed_url(context.app, href), data=text, headers=headers)
     assert_ok(context.response)
 
 
@@ -372,7 +374,7 @@ def upload_file(context, dest, filename, crop_data=None):
             data.update(crop_data)
         headers = [('Content-Type', 'multipart/form-data')]
         headers = unique_headers(headers, context.headers)
-        context.response = context.client.post(dest, data=data, headers=headers)
+        context.response = context.client.post(get_prefixed_url(context.app, dest), data=data, headers=headers)
         assert_ok(context.response)
 
 
@@ -381,7 +383,7 @@ def step_impl_when_upload_from_url(context):
     data = {'URL': external_url}
     headers = [('Content-Type', 'multipart/form-data')]
     headers = unique_headers(headers, context.headers)
-    context.response = context.client.post('/upload', data=data, headers=headers)
+    context.response = context.client.post(get_prefixed_url(context.app, '/upload'), data=data, headers=headers)
 
 
 @when('we upload a file from URL with cropping')
@@ -393,13 +395,13 @@ def step_impl_when_upload_from_url_with_crop(context):
             'CropRight': '333'}
     headers = [('Content-Type', 'multipart/form-data')]
     headers = unique_headers(headers, context.headers)
-    context.response = context.client.post('/upload', data=data, headers=headers)
+    context.response = context.client.post(get_prefixed_url(context.app, '/upload'), data=data, headers=headers)
 
 
 @when('we get user profile')
 def step_impl_when_get_user(context):
     profile_url = '/%s/%s' % ('users', context.user['_id'])
-    context.response = context.client.get(profile_url, headers=context.headers)
+    context.response = context.client.get(get_prefixed_url(context.app, profile_url), headers=context.headers)
 
 
 @then('we get new resource')
@@ -455,7 +457,7 @@ def step_impl_then_get_updated(context):
 
 @then('we get "{key}" in "{url}"')
 def step_impl_then_get_key_in_url(context, key, url):
-    res = context.client.get(url, headers=context.headers)
+    res = context.client.get(get_prefixed_url(context.app, url), headers=context.headers)
     assert_200(res)
     expect_json_contains(res, key)
 
@@ -601,7 +603,8 @@ def import_rendition(context, rendition_name=None):
     data = {'media_archive_guid': rv['_id'], 'href': external_url}
     if rendition_name:
         data['rendition_name'] = rendition_name
-    context.response = context.client.post('/archive_media/import_media', data=data, headers=headers)
+    context.response = context.client.post(get_prefixed_url(context.app, '/archive_media/import_media'),
+                                           data=data, headers=headers)
     assert_200(context.response)
 
 
@@ -651,7 +654,7 @@ def step_impl_then_get_archive_ingest_result(context):
     expect_json_contains(context.response, 'task_id')
     item = json.loads(context.response.get_data())
     url = '/archive_ingest/%s' % (item['task_id'])
-    context.response = context.client.get(url, headers=context.headers)
+    context.response = context.client.get(get_prefixed_url(context.app, url), headers=context.headers)
     assert_200(context.response)
     test_json(context)
 
@@ -666,7 +669,7 @@ def step_impl_then_get_key(context, key):
 
 @then('we get action in user activity')
 def step_impl_then_get_action(context):
-    response = context.client.get('/activity', headers=context.headers)
+    response = context.client.get(get_prefixed_url(context.app, '/activity'), headers=context.headers)
     expect_json_contains(response, '_items')
 
 
@@ -678,7 +681,7 @@ def step_impl_then_get_file(context):
     url = '/upload/%s' % data['_id']
     headers = [('Accept', 'application/json')]
     headers = unique_headers(headers, context.headers)
-    response = context.client.get(url, headers=headers)
+    response = context.client.get(get_prefixed_url(context.app, url), headers=headers)
     assert_200(response)
     assert len(response.get_data()), response
     assert response.mimetype == 'application/json', response.mimetype
@@ -701,7 +704,7 @@ def step_impl_we_fetch_data_uri(context):
 def we_can_fetch_a_file(context, url, mimetype):
     headers = [('Accept', 'application/json')]
     headers = unique_headers(headers, context.headers)
-    response = context.client.get(url, headers=headers)
+    response = context.client.get(get_prefixed_url(context.app, url), headers=headers)
     assert_200(response)
     assert len(response.get_data()), response
     assert response.mimetype == mimetype, response.mimetype
@@ -712,9 +715,9 @@ def step_impl_we_delete_file(context):
     url = '/upload/%s' % context.fetched_data['_id']
     context.headers.append(('Accept', 'application/json'))
     headers = if_match(context, context.fetched_data.get('_etag'))
-    response = context.client.delete(url, headers=headers)
+    response = context.client.delete(get_prefixed_url(context.app, url), headers=headers)
     assert_200(response)
-    response = context.client.get(url, headers=headers)
+    response = context.client.get(get_prefixed_url(context.app, url), headers=headers)
     assert_404(response)
 
 
@@ -759,7 +762,7 @@ def step_impl_then_get_etag(context, url):
         assert_200(context.response)
         expect_json_contains(context.response, '_etag')
         etag = get_json_data(context.response).get('_etag')
-        response = context.client.get(url, headers=context.headers)
+        response = context.client.get(get_prefixed_url(context.app, url), headers=context.headers)
         expect_json_contains(response, {'_etag': etag})
 
 
@@ -791,7 +794,8 @@ def we_post_to_reset_password(context):
     headers = [('Content-Type', 'multipart/form-data')]
     headers = unique_headers(headers, context.headers)
     with context.app.mail.record_messages() as outbox:
-        context.response = context.client.post('/reset_user_password', data=data, headers=headers)
+        context.response = context.client.post(get_prefixed_url(context.app, '/reset_user_password'),
+                                               data=data, headers=headers)
         expect_status_in(context.response, (200, 201))
         assert len(outbox) == 1
         assert outbox[0].subject == "Reset password"
@@ -810,7 +814,8 @@ def we_post_to_reset_password_it_fails(context):
     headers = [('Content-Type', 'multipart/form-data')]
     headers = unique_headers(headers, context.headers)
     with context.app.mail.record_messages() as outbox:
-        context.response = context.client.post('/reset_user_password', data=data, headers=headers)
+        context.response = context.client.post(get_prefixed_url(context.app, '/reset_user_password'),
+                                               data=data, headers=headers)
         expect_status_in(context.response, (200, 201))
         assert len(outbox) == 0
 
@@ -819,7 +824,8 @@ def start_reset_password_for_user(context):
     data = {'token': context.token, 'password': 'test_pass'}
     headers = [('Content-Type', 'multipart/form-data')]
     headers = unique_headers(headers, context.headers)
-    context.response = context.client.post('/reset_user_password', data=data, headers=headers)
+    context.response = context.client.post(get_prefixed_url(context.app, '/reset_user_password'),
+                                           data=data, headers=headers)
     print(context.response.get_data())
 
 
@@ -837,7 +843,7 @@ def we_reset_password_for_user(context):
     auth_data = {'username': 'foo', 'password': 'test_pass'}
     headers = [('Content-Type', 'multipart/form-data')]
     headers = unique_headers(headers, context.headers)
-    context.response = context.client.post('/auth', data=auth_data, headers=headers)
+    context.response = context.client.post(get_prefixed_url(context.app, '/auth'), data=auth_data, headers=headers)
     expect_status_in(context.response, (200, 201))
 
 
@@ -870,7 +876,7 @@ def we_get_embedded_items(context):
     response_data = json.loads(context.response.get_data())
     href = get_self_href(response_data, context)
     url = href + '/?embedded={"items": 1}'
-    context.response = context.client.get(url, headers=context.headers)
+    context.response = context.client.get(get_prefixed_url(context.app, url), headers=context.headers)
     assert_200(context.response)
     context.response_data = json.loads(context.response.get_data())
     assert len(context.response_data['items']['view_items']) == 2
@@ -959,7 +965,8 @@ def we_delete_session_by_id(context):
 def step_create_a_user(context):
     data = apply_placeholders(context, context.text)
     with context.app.mail.record_messages() as outbox:
-        context.response = context.client.post('/users', data=data, headers=context.headers)
+        context.response = context.client.post(get_prefixed_url(context.app, '/users'),
+                                               data=data, headers=context.headers)
         expect_status_in(context.response, (200, 201))
         assert len(outbox) == 1
         context.email = outbox[0]

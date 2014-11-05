@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 def get_display_name(user):
     if user.get('first_name') or user.get('last_name'):
-        display_name = '%s %s' % (user.get('first_name'), user.get('last_name'))
+        display_name = '%s %s' % (user.get('first_name', ''), user.get('last_name', ''))
         return display_name.strip()
     else:
         return user.get('username')
@@ -90,6 +90,15 @@ class DBUsersService(UsersService):
                 if not id:
                     raise SuperdeskError('Failed to send account activation email.')
                 send_activate_account_email(tokenDoc)
+
+    def on_update(self, updates, user):
+        if updates.get('first_name') or updates.get('last_name'):
+            updated_user = {'first_name': updates.get('first_name', ''),
+                            'last_name': updates.get('last_name', ''),
+                            'username': user.get('username', '')}
+            updated_user.setdefault('first_name', user.get('first_name', ''))
+            updated_user.setdefault('last_name', user.get('last_name', ''))
+            updates['display_name'] = get_display_name(updated_user)
 
     def update_password(self, user_id, password):
         """

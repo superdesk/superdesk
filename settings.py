@@ -13,7 +13,7 @@ BANDWIDTH_SAVER = False
 DATE_FORMAT = '%Y-%m-%dT%H:%M:%S+0000'
 
 APPLICATION_NAME = os.environ.get('APP_NAME', 'Superdesk')
-server_url = urlparse(os.environ.get('SUPERDESK_URL', 'http://localhost:5000'))
+server_url = urlparse(os.environ.get('SUPERDESK_URL', 'http://localhost:5000/api'))
 CLIENT_URL = os.environ.get('SUPERDESK_CLIENT_URL', 'http://localhost:9000')
 URL_PROTOCOL = server_url.scheme or None
 SERVER_NAME = server_url.netloc or None
