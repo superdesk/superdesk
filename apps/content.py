@@ -5,6 +5,14 @@ metadata_schema = {
         'type': 'string',
         'unique': True
     },
+    'unique_id': {
+        'type': 'string',
+        'unique': True
+    },
+    'unique_name': {
+        'type': 'string',
+        'unique': True
+    },
     'provider': {
         'type': 'string'
     },
@@ -98,9 +106,6 @@ metadata_schema = {
     },
     'contents': {
         'type': 'list'
-    },
-    'media': {
-        'type': 'media'
     },
     'task_id': {
         'type': 'string'

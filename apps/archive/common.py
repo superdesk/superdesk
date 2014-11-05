@@ -31,6 +31,9 @@ def on_create_item(docs):
         if not doc.get('guid'):
             doc['guid'] = generate_guid(type=GUID_NEWSML)
 
+        if 'unique_id' not in doc:
+            generate_unique_id_and_name(doc)
+
         doc.setdefault('_id', doc['guid'])
 
 
@@ -102,3 +105,15 @@ def on_update_media_archive():
 
 def on_delete_media_archive():
     push_notification('media_archive', deleted=1)
+
+
+def generate_unique_id_and_name(item):
+    """
+    Generates and appends unique_id and unique_name to item.
+    :param item:
+    """
+
+    current_ts = datetime.today().strftime("%d%m%Y%H%M%S%f")
+
+    item['unique_id'] = current_ts
+    item['unique_name'] = "#" + current_ts
