@@ -118,7 +118,7 @@ Feature: Role Resource
         And we have "user" as type of user
         When we post to "/desks"
             """
-            {"name": "Sub Editing Desk", "spike_expiry": 60}
+            {"name": "Sub Editing Desk"}
             """
         Then we get response code 201
 
@@ -132,7 +132,7 @@ Feature: Role Resource
         And we have "user" as type of user
         When we post to "/desks"
             """
-            {"name": "Sub Editing Desk", "spike_expiry": 60}
+            {"name": "Sub Editing Desk"}
             """
         Then we get response code 403
 

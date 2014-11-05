@@ -16,7 +16,7 @@ Feature: Desks
             """
         When we post to "/desks"
             """
-            {"name": "Sports Desk", "members": [{"user": "#USERS_ID#"}], "spike_expiry": 60}
+            {"name": "Sports Desk", "members": [{"user": "#USERS_ID#"}]}
             """
         And we get "/desks"
         Then we get list with 1 items
@@ -35,7 +35,7 @@ Feature: Desks
 	    Given empty "desks"
 		When we post to "/desks"
             """
-            {"name": "Sports Desk", "spike_expiry": 60}
+            {"name": "Sports Desk"}
             """
 		And we patch latest
 			 """
@@ -51,7 +51,7 @@ Feature: Desks
 			"""
 		When we post to "/desks"
         	"""
-            [{"name": "test_desk2", "spike_expiry": 60}]
+            [{"name": "test_desk2"}]
             """
         And we delete latest
         Then we get deleted response
