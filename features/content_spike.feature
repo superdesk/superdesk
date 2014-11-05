@@ -13,8 +13,8 @@ Feature: Content Spiking
             {"is_spiked": true}
             """
         Then we get OK response
-        Then we get spiked content "item-1"
-        Then we get global spike expiry
+        And we get spiked content "item-1"
+        And we get global spike expiry
 
 
     @auth
@@ -29,7 +29,7 @@ Feature: Content Spiking
             "description": "Show content items created by the current logged user"
             }
             """
-        When we post to "desks"
+        And we post to "desks"
             """
             {"name": "Sports Desk", "incoming_stage": "#STAGES_ID#", "spike_expiry": 60}
             """
@@ -42,8 +42,8 @@ Feature: Content Spiking
             {"is_spiked": true}
             """
         Then we get OK response
-        Then we get spiked content "item-1"
-        Then we get desk spike expiry after "60"
+        And we get spiked content "item-1"
+        And we get desk spike expiry after "60"
 
 
     @auth
@@ -59,8 +59,7 @@ Feature: Content Spiking
             """
             {"is_spiked": true}
             """
-        Then we get OK response
 
-        When we unspike "/archive/item-1"
+        And we unspike "/archive/item-1"
 
         Then we get unspiked content "item-1"
