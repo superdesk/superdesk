@@ -1,10 +1,11 @@
 
 import os
+from datetime import datetime, timedelta
 import superdesk.tests as tests
 from behave import given, when, then  # @UnresolvedImport
 from flask import json
 from eve.methods.common import parse
-from superdesk import default_user_preferences, get_resource_service
+from superdesk import default_user_preferences, get_resource_service, utc
 
 from wooper.general import fail_and_print_body, apply_path,\
     parse_json_response
@@ -155,9 +156,10 @@ def step_impl_given_empty(context, resource):
 
 @given('"{resource}"')
 def step_impl_given_(context, resource):
+    data = apply_placeholders(context, context.text)
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
         get_resource_service(resource).delete_action()
-        items = [parse(item, resource) for item in json.loads(context.text)]
+        items = [parse(item, resource) for item in json.loads(data)]
         get_resource_service(resource).post(items)
         context.data = items
         context.resource = resource
@@ -895,6 +897,47 @@ def then_we_get_notifications(context):
 def get_default_prefs(context):
     response_data = json.loads(context.response.get_data())
     assert_equal(response_data['user_preferences'], default_user_preferences)
+
+
+@when('we unspike "{url}"')
+def step_impl_when_unspike_url(context, url):
+    res = get_res(url, context)
+    headers = if_match(context, res.get('_etag'))
+    context.response = context.client.delete(get_prefixed_url(context.app, url + "/spike"), headers=headers)
+
+
+@then('we get spiked content "{id}"')
+def get_spiked_content(context, id):
+    url = 'archive/{0}'.format(id)
+    when_we_get_url(context, url)
+    assert_200(context.response)
+    response_data = json.loads(context.response.get_data())
+    assert_equal(response_data['is_spiked'], True)
+
+
+@then('we get unspiked content "{id}"')
+def get_unspiked_content(context, id):
+    url = 'archive/{0}'.format(id)
+    when_we_get_url(context, url)
+    assert_200(context.response)
+    response_data = json.loads(context.response.get_data())
+    assert_equal(response_data['is_spiked'], None)
+    assert_equal(response_data['expiry'], None)
+
+
+@then('we get global spike expiry')
+def get_global_spike_expiry(context):
+    get_desk_spike_expiry(context, context.app.config['SPIKE_EXPIRY_MINUTES'])
+
+
+@then('we get desk spike expiry after "{test_minutes}"')
+def get_desk_spike_expiry(context, test_minutes):
+    response_data = json.loads(context.response.get_data())
+    assert response_data['expiry']
+    response_expiry = datetime.strptime(response_data['expiry'], "%Y-%m-%dT%H:%M:%S+0000")
+    expiry = utc.utcnow() + timedelta(minutes=int(test_minutes))
+    assert_equal(response_expiry.hour, expiry.hour)
+    assert_equal(response_expiry.minute, expiry.minute)
 
 
 @when('we mention user in comment for "{url}"')
