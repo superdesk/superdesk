@@ -15,7 +15,7 @@ define(['lodash'], function(_) {
 
         $scope.selected = {};
 
-        $scope.setView = function(view) {
+        $scope.setView = function setView(view) {
 
             var update = {
                 'archive:view': {
@@ -35,29 +35,20 @@ define(['lodash'], function(_) {
                     $scope.view = view || 'mgrid';
                 }, function(response) {
                     notify.error(gettext('User preference could not be saved...'));
-            });
+                });
         };
 
-        $scope.preview = function(item) {
+        $scope.preview = function preview(item) {
             $scope.selected.preview = item;
             $location.search('_id', item ? item._id : null);
         };
 
-        $scope.display = function() {
+        $scope.display = function display() {
             $scope.selected.view = $scope.selected.preview;
         };
 
-        $scope.$watchCollection(function() {
-            return _.omit($location.search(), '_id');
-        }, function(search) {
-            var query = self.getQuery(search);
-            self.fetchItems({source: query});
-        });
-
-        $scope.$watch(function() {
-            return $location.search()._id || null;
-        }, function(id) {
-            if (!id) {
+        $scope.$on('$routeUpdate', function(e, data) {
+            if (!$location.search()._id) {
                 $scope.selected.preview = null;
             }
         });
@@ -112,10 +103,16 @@ define(['lodash'], function(_) {
                 filters.push({range: urgency});
             }
 
+            if ($location.search().spike) {
+                filters.push({term: {is_spiked: true}});
+            } else {
+                filters.push({not: {term: {is_spiked: true}}});
+            }
+
             return filters;
         };
 
-        this.getQuery = function(params, filterDesk) {
+        this.getQuery = function getQuery(params, filterDesk) {
             if (!_.isEqual(_.omit(params, 'page'), _.omit(lastQueryParams, 'page'))) {
                 $location.search('page', null);
             }
@@ -130,7 +127,7 @@ define(['lodash'], function(_) {
             console.log('no api defined');
         };
 
-        this.refresh = function(filterDesk) {
+        this.refresh = function refresh(filterDesk) {
         	var query = self.getQuery(_.omit($location.search(), '_id'), filterDesk);
             self.fetchItems({source: query});
         };

@@ -26,7 +26,13 @@
     <div class="button-stack left-stack">
         <div class="navbtn dropdown" sd-user-desks data-desk="selectedDesk"></div>
 
-        <div class="navbtn toggle-list" sd-desk-stages ng-if="stages.stages.length"></div>
+        <div class="navbtn toggle-list" sd-desk-stages ng-if="!spike && stages.stages.length"></div>
+
+        <div class="navbtn toggle-list" ng-if="type === 'archive'">
+            <ul class="stages-list">
+                <li class="spike" ng-class="{active: spike}"><a href="" ng-click="toggleSpike()" translate>Spike</a></li>
+            </ul>
+        </div>
     </div>
 
 </div>
@@ -134,7 +140,7 @@
                             sd-list-view
                             data-items="items._items"
                             data-select="preview(item)"
-                            data-extras="{view: view, activityFilter: {type: type}, api: api}">
+                            data-extras="{view: view, activityFilter: {type: spike ? 'spike' : type}, api: api}">
                             <div sd-media-box 
                                 ng-if="type === 'archive'"
                                 sd-draggable 

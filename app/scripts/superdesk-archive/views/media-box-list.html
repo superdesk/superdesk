@@ -41,7 +41,7 @@
         </div>
     </div>
 
-    
-
-
+    <div class="item-right" ng-if="item.expiry">
+        <span translte>ttl:</span> <b>{{ item.expiry | reldate }}</b>
+    </div>
 </div>
