@@ -2,13 +2,14 @@
 
 'use strict';
 
-    VersioningController.$inject = ['$scope', 'api', '$location', 'notify', 'workqueue', 'lock'];
-    function VersioningController($scope, api, $location, notify, workqueue, lock) {
+    VersioningController.$inject = ['$scope', 'authoring', 'api', '$location', 'notify', 'workqueue', 'lock'];
+    function VersioningController($scope, authoring, api, $location, notify, workqueue, lock) {
 
         $scope.last = null;
         $scope.versions = null;
         $scope.selected = null;
         $scope.users = {};
+        $scope.canRevert = false;
 
         function fetchUser(id) {
             api.users.getById(id)
@@ -18,6 +19,7 @@
         }
 
         function fetchVersions() {
+            $scope.canRevert = authoring.isEditable($scope.item);
             return api.archive.getByUrl($scope.item._links.self.href + '?version=all&embedded={"user":1}')
             .then(function(result) {
                 _.each(result._items, function(version) {

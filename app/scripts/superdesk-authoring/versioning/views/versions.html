@@ -19,7 +19,7 @@
             <div class="footer">
             	<em>{{ 'version' | translate }}: {{ version._version || 1 }}</em>
 	            <button class="btn btn-light btn-mini pull-right"
-                    ng-show="_editable && !$first"
+                    ng-show="canRevert && !$first"
                     ng-click="revert(version)"
                     translate>revert</button>
             </div>
