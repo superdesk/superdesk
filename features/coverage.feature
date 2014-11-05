@@ -46,7 +46,7 @@ Feature: Planning Item Coverages
         Given empty "coverages"
         When we post to "desks"
         """
-        {"name": "Sports Desk"}
+        {"name": "Sports Desk", "spike_expiry": 60}
         """
         When we post to "coverages"
         """

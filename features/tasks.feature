@@ -13,7 +13,7 @@ Feature: Tasks
         Given empty "tasks"
         When we post to "desks"
         """
-        {"name": "Sports Desk"}
+        {"name": "Sports Desk", "spike_expiry": 60}
         """
         When we post to "tasks"
 	    """
@@ -71,7 +71,7 @@ Feature: Tasks
         """
         When we post to "desks"
         """
-        {"name": "Sports Desk"}
+        {"name": "Sports Desk", "spike_expiry": 60}
         """
         When we post to "tasks"
 	    """
@@ -92,7 +92,7 @@ Feature: Tasks
         """
         When we post to "desks"
         """
-        {"name": "Sports Desk"}
+        {"name": "Sports Desk", "spike_expiry": 60}
         """
         When we post to "archive"
 	    """
@@ -110,7 +110,7 @@ Feature: Tasks
         Given empty "tasks"
         When we post to "desks"
         """
-        {"name": "Sports Desk"}
+        {"name": "Sports Desk", "spike_expiry": 60}
         """
         When we post to "tasks"
 	    """

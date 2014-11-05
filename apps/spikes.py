@@ -25,7 +25,6 @@ class SpikesResource(Resource):
     resource_methods = ['GET']
 
 
-
 class SpikesService(BaseService):
 
     def get(self, req, lookup):

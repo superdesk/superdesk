@@ -90,7 +90,7 @@ Feature: Content View
 
         When we post to "desks"
         """
-        {"name": "Sports Desk"}
+        {"name": "Sports Desk", "spike_expiry": 60}
         """
 
         When we post to "/content_view"

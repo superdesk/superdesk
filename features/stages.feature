@@ -61,7 +61,7 @@ Feature: Stages
 
         When we post to "desks"
         """
-        {"name": "Sports Desk"}
+        {"name": "Sports Desk", "spike_expiry": 60}
         """
 
         When we post to "/stages"
@@ -125,7 +125,7 @@ Feature: Stages
         """
         When we post to "desks"
         """
-        {"name": "Sports Desk", "incoming_stage": "#STAGES_ID#"}
+        {"name": "Sports Desk", "incoming_stage": "#STAGES_ID#", "spike_expiry": 60}
         """
         When we post to "tasks"
 	    """

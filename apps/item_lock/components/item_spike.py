@@ -1,11 +1,10 @@
 from ..models.item import ItemModel
 from .item_lock import can_lock
-from superdesk import SuperdeskError
 from superdesk.utc import get_expiry_date
 from superdesk.notification import push_notification
 from apps.common.components.base_component import BaseComponent
 from apps.common.models.utils import get_model
-import superdesk
+from superdesk import app, get_resource_service, SuperdeskError
 
 
 IS_SPIKED = 'is_spiked'
@@ -24,8 +23,14 @@ class ItemSpike(BaseComponent):
         item_model = get_model(ItemModel)
         item = item_model.find_one(filter)
         if item and can_lock(item, user):
-			# for now setting the expiry to next hour
-            updates = {IS_SPIKED: True, EXPIRY: get_expiry_date(60)}
+            expiry_minutes = app.settings['SPIKE_EXPIRY_MINUTES']
+            # check if item is in a desk
+            if "task" in item and "desk" in item["task"]:
+                    # then use the desks spike_expiry
+                    desk = get_resource_service('desks').find_one(_id=item["task"]["desk"], req=None)
+                    expiry_minutes = desk.get('spike_expiry', expiry_minutes)
+
+            updates = {IS_SPIKED: True, EXPIRY: get_expiry_date(expiry_minutes)}
             item_model.update(filter, updates)
             push_notification('item:spike', item=str(item.get('_id')), user=str(user))
         else:
