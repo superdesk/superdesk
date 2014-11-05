@@ -17,8 +17,10 @@ def init_app(app):
 class SpikesResource(Resource):
     schema = metadata_schema
     datasource = {
+        'source': 'archive',
         'search_backend': 'elastic',
         'default_sort': [('expiry', -1)],
+        'elastic_filter': {'term': {'is_spiked': True}}
     }
     resource_methods = ['GET']
 
@@ -28,7 +30,4 @@ class SpikesService(BaseService):
 
     def get(self, req, lookup):
         docs = super().get(req, lookup)
-        for doc in docs:
-            self.enhance_document_with_default_prefs(doc)
         return docs
-

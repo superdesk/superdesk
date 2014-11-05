@@ -11,7 +11,7 @@ LOCK_USER = 'lock_user'
 LOCK_SESSION = 'lock_session'
 STATUS = '_status'
 
-def can_lock(self, item, user):
+def can_lock(item, user):
     # TODO: implement
     return True
 
