@@ -184,9 +184,26 @@ define([
             /**
              * @alias api(resource).save(dest, diff)
              */
-            api.save = function(resource, dest, diff) {
-                return api(resource).save(dest, diff);
+            api.save = function(resource, dest, diff, parent) {
+                return api(resource, parent).save(dest, diff);
             };
+
+            /**
+             * Remove a given item.
+             */
+            api.remove = function(item, params, resource) {
+                var url = resource ? getResourceUrl(resource, item) : urls.item(item._links.self.href);
+                return http({
+                    method: 'DELETE',
+                    url: url,
+                    params: params,
+                    headers: getHeaders(item)
+                });
+            };
+
+            function getResourceUrl(resource, item) {
+                return api(resource, item).url();
+            }
 
             /**
              * Get on a given url

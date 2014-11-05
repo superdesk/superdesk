@@ -24,8 +24,10 @@
     <dl>
         <dt class="source"><span translate>source:</span></dt>
         <dd class="provider">&nbsp;{{ item.provider }}</dd>
-        <dt translate>created</dt>
-        <dd><time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time></dd>
+        <dt translate>updated</dt>
+        <dd><time datetime="{{ item.versioncreated }}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time></dd>
+        <dt ng-show="item.is_spiked" translate>expires</dt>
+        <dd ng-if="item.is_spiked"><time title="{{ item.expiry | date:'medium' }}">{{ item.expiry | reldate }}</time></dd>
         <dt translate ng-show="item.subject">subject</dt>
         <dd ng-show="item.subject" class="subject-line">{{ item.subject | mergeWords}}</dd>
     </dl>

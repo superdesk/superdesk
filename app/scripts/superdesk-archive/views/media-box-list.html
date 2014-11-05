@@ -9,28 +9,27 @@
 <div class="media-info">
     <div class="list-field type-icon">
         <i class="filetype-icon-{{item.type}}"></i>
-        <span class="output-item-label label-{{item.urgency}}" ng-show="extras.view == 'mlist'">{{ item.urgency }}</span>
+        <span class="output-item-label label-{{item.urgency}}">{{ item.urgency }}</span>
     </div>
-    <div class="list-field" ng-show="extras.view == 'compact'"><span class="output-item-label label-{{item.urgency}}">{{ item.urgency }}</span></div>
 
-    <h5 class="list-field" ng-class="{'no-border': extras.view == 'compact'}">
-        <div class="item-provider" ng-if="extras.view == 'compact'">{{ item.provider }}</div>
+    <h5 class="list-field">
         <div class="main-title">
             <div class="status-label"
                  ng-class="{'label-canceled': item.pubstatus=='canceled'}"
                  ng-show="item.pubstatustatus && item.pubstatus!='usable'">
                  {{ item.pubstatus | translate }}
             </div>
-            {{ item.headline || item.type }}
+            {{ item.headline || item.slugline || item.type }}
         </div>
-        <div class="meta-data-field" ng-if="extras.view == 'mlist'">
-            <div class="item-provider">{{ item.provider }}</div>
+        <div class="meta-data-field">
+            <div class="item-provider" ng-if="item.provider">{{ item.provider }}</div>
             <span ng-show="item.subject">//</span> {{ item.subject | mergeWords}}
+            <span ng-if="item.is_spiked" class="label label-warning"><b>{{ item.expiry | reldate }}</b></span>
         </div>
     </h5>
 
     <div class="item-right list-field">
-        <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>
+        <time datetime="{{ item.versioncreated }}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time>
         <div class="action">
             <ul ng-if="extras.activityFilter" class="item-functions"
                 sd-activity-list
@@ -40,8 +39,4 @@
             </ul>
         </div>
     </div>
-
-    
-
-
 </div>

@@ -8,11 +8,46 @@ define([
 ], function(angular, require) {
     'use strict';
 
+    SpikeService.$inject = ['$location', 'api', 'notify', 'gettext'];
+    function SpikeService($location, api, notify, gettext) {
+        var RESOURCE = 'archive_spike';
+
+        /**
+         * Spike given item.
+         *
+         * @param {Object} item
+         */
+        this.spike = function spike(item) {
+            return api.save(RESOURCE, {is_spiked: true}, null, item)
+                .then(function() {
+                    if ($location.search()._id === item._id) {
+                        $location.search('_id', null);
+                    }
+                    notify.success(gettext('Item was spiked.'));
+                }, function(response) {
+                    notify.error(gettext('I\'m sorry but can\'t delete the archive item right now.'));
+                });
+        };
+
+        /**
+         * Unspike given item.
+         *
+         * @param {Object} item
+         */
+        this.unspike = function unspike(item) {
+            return api.remove(item, null, RESOURCE).then(function() {
+                notify.success(gettext('Item was unspiked.'));
+            });
+        };
+    }
+
     var app = angular.module('superdesk.archive', [
         require('./directives').name,
         'superdesk.dashboard',
         'superdesk.widgets.archive'
-    ]);
+        ])
+
+        .service('spike', SpikeService);
 
     app.config(['superdeskProvider', function(superdesk) {
         superdesk
@@ -36,22 +71,21 @@ define([
                     {action: 'upload', type: 'media'}
                 ]
             })
-            .activity('delete.archive', {
-                label: gettext('Delete item'),
-                confirm: gettext('Please confirm you want to delete an archive item.'),
+            .activity('spike', {
+                label: gettext('Spike Item'),
                 icon: 'remove',
-                controller: ['$location', 'api', 'notify', 'data', function($location, api, notify, data) {
-                    return api.archive.remove(data.item).then(function(response) {
-                        if ($location.search()._id === data.item._id) {
-                            $location.search('_id', null);
-                        }
-                    }, function(response) {
-                        notify.error(gettext('I\'m sorry but can\'t delete the archive item right now.'));
-                    });
+                controller: ['spike', 'data', function spikeActivity(spike, data) {
+                    return spike.spike(data.item);
                 }],
-                filters: [
-                    {action: superdesk.ACTION_EDIT, type: 'archive'}
-                ]
+                filters: [{action: superdesk.ACTION_EDIT, type: 'archive'}]
+            })
+            .activity('unspike', {
+                label: gettext('Unspike Item'),
+                icon: 'remove',
+                controller: ['spike', 'data', function unspikeActivity(spike, data) {
+                    return spike.unspike(data.item);
+                }],
+                filters: [{action: superdesk.ACTION_EDIT, type: 'spike'}]
             });
     }]);
 

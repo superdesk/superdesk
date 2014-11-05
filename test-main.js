@@ -49,6 +49,8 @@ tests.push('superdesk-users/import/import');
 tests.push('superdesk-dashboard/module');
 tests.push('superdesk-dashboard/workspace-tasks/tasks');
 
+tests.push('superdesk-archive/module');
+
 // libs
 tests.push('bower_components/ment.io/dist/mentio');
 tests.push('angular-gettext');

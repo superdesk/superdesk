@@ -4,13 +4,12 @@ define([
 ], function(_, BaseListController) {
     'use strict';
 
-    IngestListController.$inject = ['$scope', '$injector', 'api', '$rootScope'];
-    function IngestListController($scope, $injector, api, $rootScope) {
+    IngestListController.$inject = ['$scope', '$injector', '$location', 'api', '$rootScope'];
+    function IngestListController($scope, $injector, $location, api, $rootScope) {
         $injector.invoke(BaseListController, this, {$scope: $scope});
 
         $scope.type = 'ingest';
         $scope.api = api.ingest;
-
         $rootScope.currentModule = 'ingest';
 
         this.fetchItems = function(criteria) {
@@ -18,6 +17,13 @@ define([
                 $scope.items = items;
             });
         };
+
+        $scope.$watchCollection(function() {
+            return _.omit($location.search(), '_id');
+        }, angular.bind(this, function searchUpdated(search) {
+            var query = this.getQuery(search);
+            this.fetchItems({source: query});
+        }));
     }
 
     return IngestListController;

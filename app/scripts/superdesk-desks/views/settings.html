@@ -51,6 +51,10 @@
 									<label translate>Desk description {{test}}</label>
 									<textarea class="fullwidth-input" ng-model="desk.edit.description"></textarea>
 								</div>
+								<div class="field">
+									<label translate>Spike expiry (minutes)</label>
+									<input type="number" class="fullwidth-input" ng-model="desk.edit.spike_expiry" required> 
+								</div>
 							</fieldset>
 							<p ng-if="message">{{ message }}</p>
 						</div>
