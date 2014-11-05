@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     'apps.coverages',
     'apps.tasks',
     'apps.preferences',
+    'apps.spikes',
     'apps.groups',
     'apps.prepopulate',
     'apps.vocabularies',
@@ -161,3 +162,6 @@ TESTING = (os.environ.get('SUPERDESK_TESTING', 'false').lower() == 'true')
 
 # The number of minutes since the last update of the Mongo auth object after which it will be deleted
 SESSION_EXPIRY_MINUTES = 240
+
+# The number of minutes before spiked items purged
+SPIKE_EXPIRY_MINUTES = 300
