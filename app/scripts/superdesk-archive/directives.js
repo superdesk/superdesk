@@ -153,7 +153,7 @@ define([
                 scope: {
                     item: '=',
                     display: '&',
-                    type: '='
+                    type: '@'
                 }
             };
         }])
