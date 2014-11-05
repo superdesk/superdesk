@@ -113,7 +113,7 @@ def generate_unique_id_and_name(item):
     :param item:
     """
 
-    current_ts = datetime.today().strftime("%d%m%Y%H%M%S%f")
+    current_ts = utcnow().strftime("%d%m%Y%H%M%S%f")
 
     item['unique_id'] = current_ts
     item['unique_name'] = "#" + current_ts
