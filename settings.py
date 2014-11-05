@@ -33,6 +33,13 @@ if os.environ.get('MONGOLAB_URI'):
 elif os.environ.get('MONGODB_PORT'):
     MONGO_URI = '{0}/{1}'.format(os.environ.get('MONGODB_PORT').replace('tcp:', 'mongodb:'), MONGO_DBNAME)
 
+LEGAL_ARCHIVE_DBNAME = os.environ.get('LEGAL_ARCHIVE_DBNAME', 'legal_archive')
+if os.environ.get('LEGAL_ARCHIVE_URI'):
+    LEGAL_ARCHIVE_URI = os.environ.get('LEGAL_ARCHIVE_URI')
+elif os.environ.get('LEGAL_ARCHIVEDB_PORT'):
+    LEGAL_ARCHIVE_URI = '{0}/{1}'.format(os.environ.get('LEGAL_ARCHIVEDB_PORT').replace('tcp:', 'mongodb:'),
+                                         LEGAL_ARCHIVE_DBNAME)
+
 ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL', 'http://localhost:9200')
 ELASTICSEARCH_INDEX = os.environ.get('ELASTICSEARCH_INDEX', 'superdesk')
 if os.environ.get('ELASTIC_PORT'):
@@ -85,7 +92,8 @@ INSTALLED_APPS = [
     'apps.preferences',
     'apps.groups',
     'apps.prepopulate',
-    'apps.vocabularies'
+    'apps.vocabularies',
+    'apps.legal_archive'
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']

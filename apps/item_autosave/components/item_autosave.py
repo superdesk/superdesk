@@ -19,8 +19,6 @@ class ItemAutosave(BaseComponent):
         item = item_model.find_one({'_id': item_id})
         if item is None:
             raise superdesk.SuperdeskError('Invalid item identifier', 404)
-        if etag:
-            item_model.validate_etag(item, etag)
 
         lock_user = item.get('lock_user', None)
         if lock_user and str(lock_user) != str(user['_id']):
@@ -33,10 +31,7 @@ class ItemAutosave(BaseComponent):
         if not autosave_item:
             autosave_model.create([item])
         else:
-            id = item['_id']
-            del item['_id']
-            autosave_model.update({'_id': item_id}, item)
-            item['_id'] = id
+            autosave_model.update({'_id': item_id}, item, etag)
         self.app.on_item_autosaved(item)
         updates.update(item)
         return updates
