@@ -57,8 +57,10 @@
                 controller: 'UserEditController',
                 templateUrl: asset.templateUrl('superdesk-users/views/edit.html'),
                 resolve: {
-                    user: ['session', function(session) {
-                        return session.getIdentity();
+                    user: ['session', 'api', function(session, api) {
+                        return session.getIdentity().then(function(identity) {
+                            return api.get(identity._links.self.href);
+                        });
                     }]
                 }
             });
