@@ -177,8 +177,8 @@ define([
             /**
              * @alias api(resource).getById(id)
              */
-            api.find = function(resource, id) {
-                return api(resource).getById(id);
+            api.find = function(resource, id, params) {
+                return api(resource).getById(id, params);
             };
 
             /**
@@ -186,6 +186,19 @@ define([
              */
             api.save = function(resource, dest, diff) {
                 return api(resource).save(dest, diff);
+            };
+
+            /**
+             * Get on a given url
+             *
+             * @param {string} url
+             */
+            api.get = function apiGet(url, params) {
+                return http({
+                    method: 'GET',
+                    url: urls.item(url),
+                    params: params
+                });
             };
 
             angular.forEach(apis, function(config, apiName) {

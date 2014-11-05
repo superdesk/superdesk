@@ -2,13 +2,16 @@
 
 'use strict';
 
-WorkqueueService.$inject = ['storage'];
-function WorkqueueService(storage) {
+WorkqueueService.$inject = ['storage', 'preferencesService', 'notify'];
+function WorkqueueService(storage, preferencesService, notify) {
     /**
      * Set items for further work, in next step of the workflow.
      */
+    var queue = [];
+    preferencesService.get('workqueue:items').then(function(result) {
+        queue = result.items;
+    });
 
-    var queue = storage.getItem('workqueue:items') || [];
     this.length = 0;
     this.active = null;
 
@@ -57,7 +60,18 @@ function WorkqueueService(storage) {
      * Save queue to local storage
      */
     this.save = function() {
-        storage.setItem('workqueue:items', queue);
+
+        var update = {
+            'workqueue:items': {
+                'items': queue
+            }
+        };
+
+        preferencesService.update(update, 'workqueue:items').then(function() {
+                //nothing to do
+            }, function(response) {
+                notify.error(gettext('User preference could not be saved...'));
+        });
     };
 
     /**
@@ -92,12 +106,7 @@ function WorkqueueService(storage) {
         _.remove(queue, {_id: item._id});
         this.length = queue.length;
         this.save();
-
-        if (this.active._id === item._id && this.length > 0) {
-            this.setActive(_.first(queue));
-        } else {
-            this.active = null;
-        }
+        this.active = null;
     };
 }
 

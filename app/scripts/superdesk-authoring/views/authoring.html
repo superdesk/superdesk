@@ -3,36 +3,30 @@
 	    <div class="page-title-wrapper clearfix pull-left">
 	    	<span class="lock-info pull-left" ng-show="item._locked"><i class="icon-lock-red"></i></span>
 	    	<h3 class="page-nav-title" ng-show="item.headline">{{ item.headline }}</h3>
-	    	<h3 class="page-nav-title" ng-show="item && !item.headline" translate>Untitled</h3>
-	    	<span class="lock-text pull-left" ng-show="item._locked" translate>This article is locked</span>
+	    	<h3 class="page-nav-title" ng-show="!item.headline" translate>Untitled</h3>
+	    	<span class="lock-text pull-left" ng-show="item._locked" translate>This article is locked by <b>{{ item.lock_user | username }}</b></span>
 	    </div>
 
-	    
 	    <div class="button-stack right-stack">
-	    	<button class="btn btn-medium pull-left" ng-click="close()" ng-if="item">{{ 'Close' | translate }}</button>
+	    	<button class="btn btn-medium pull-left" ng-click="close()" translate>Close</button>
 
     	    <button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()"
-                ng-show="!item._locked && !_preview"
+                ng-show="_editable"
                 ng-disabled="!dirty && !item._autosave"
                 translate>Save</button>
 
-	    	<button class="navbtn navbtn-hover" ng-click="viewSendTo = !viewSendTo">
-	            <i class="svg-icon-add"></i>
+	    	<button class="navbtn navbtn-hover" ng-show="_editable" ng-click="viewSendTo = !viewSendTo">
+	            <i class="svg-icon-sendto"></i>
 	        </button>
         </div>
-
-        <div class="auto-save pull-right" ng-show="!_preview && !item._locked">
-		    <span ng-show="saving"><i class="icon-refresh"></i> {{ 'Saving' | translate }}</span>
-		    <span ng-show="!saving"><i class="icon-ok"></i> {{ 'Saved' | translate }}</span>
-	    </div>
 	</div>
 
 	<section class="main-section" ng-class="{'auth-sendto': viewSendTo}">
-
 		<div sd-authoring-widgets data-item="item">
 
 		    <div class="main-article-container" ng-click="viewSendTo = false;">
-		        <article class="main-article" ng-if="item._id" ng-class="{preview: !_editable}">
+
+                <article class="main-article" ng-if="item._id" ng-class="{preview: !_editable}">
                     <section class="article-keyword">
                         <header>
                             <span class="edit-label" translate>Keyword</span>
@@ -60,9 +54,7 @@
 
 		    <div sd-workqueue data-active="item" data-update="articleSwitch()" data-close="close()"></div>
 		</div>
-		
 	</section>
 
-	<div sd-send-item data-item="item" data-view="viewSendTo" data-before-send="save"></div>
+	<div sd-send-item data-item="item" data-view="viewSendTo" data-before-send="save" ng-if="viewSendTo"></div>
 </div>
-

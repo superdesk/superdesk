@@ -101,7 +101,7 @@
     <div class="archive-content">
         <div class="preview-layout" ng-class="{closed: !selected.preview}">
             <div class="list-pane {{ view }}-view">
-                <header ng-show="view !== 'stats'">
+                <header>
                     <div class="pull-left fitler-trigger" ng-click="sidebarstick = true" ng-class="{hidden: sidebarstick === true}"><i class="icon-filter-large"></i></div>
                     <div sd-searchbar></div>
                     <div class="view-select pull-right">
@@ -115,7 +115,7 @@
                     <div sd-shadow>
                         <div class="newest-items" ng-show="createdMedia.items.length">
                             <span translate>Recently added media</span>
-                            <div ng-if="view !== 'stats'"
+                            <div
                                 sd-list-view
                                 data-items="createdMedia.items"
                                 data-select="preview(item)"
@@ -130,7 +130,7 @@
                             </div>
                         </div>
 
-                        <div ng-if="view !== 'stats'"
+                        <div
                             sd-list-view
                             data-items="items._items"
                             data-select="preview(item)"
@@ -141,7 +141,8 @@
                                 data-item="item" 
                                 data-container="'#scratchpad'" 
                                 class="{{view}}-view" 
-                                data-cursor="view !== 'mgrid'"></div>
+                                data-cursor="view !== 'mgrid'">
+                            </div>
                             <div sd-media-box ng-if="type !== 'archive'"></div>
                         </div>
                     </div>

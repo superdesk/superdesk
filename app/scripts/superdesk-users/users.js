@@ -34,9 +34,20 @@
          * @param {string} newPassword
          * @returns {Promise}
          */
-        this.changePassword = function(user, oldPassword, newPassword) {
-            console.error('change password not implemented');
-            return $q.reject();
+        this.changePassword = function changePassword(user, oldPassword, newPassword) {
+            return api.changePassword.create({username: user.username, old_password: oldPassword, new_password: newPassword})
+            	.then(function(result) {});
+        };
+
+        /**
+         * Reset reset password
+         *
+         * @param {Object} user
+         * @returns {Promise}
+         */
+        this.resetPassword = function resetPassword(user) {
+            return api.resetPassword.create({email: user.email})
+                .then(function(result) {});
         };
 
         /**
@@ -250,9 +261,11 @@
             {id: 'web', label: gettext('Use a Web URL'), beta: true}
         ];
 
-        if (!beta.isBeta()) {
-            $scope.methods = _.reject($scope.methods, {beta: true});
-        }
+        beta.isBeta().then(function(beta) {
+            if (!beta) {
+                $scope.methods = _.reject($scope.methods, {beta: true});
+            }
+        });
 
         $scope.activate = function(method) {
             $scope.active = method;
@@ -331,8 +344,8 @@
     /**
      * User roles controller - settings page
      */
-    UserRolesController.$inject = ['$scope', 'api', 'modal', 'gettext'];
-    function UserRolesController($scope, api, modal, gettext) {
+    UserRolesController.$inject = ['$scope', 'api', 'modal', 'gettext', 'notify'];
+    function UserRolesController($scope, api, modal, gettext, notify) {
 
         var _orig;
         $scope.selectedRole = null;
@@ -360,6 +373,13 @@
                     $scope.roles.unshift(_orig);
                 }
                 $scope.cancel();
+            }, function(response) {
+                if (response.status === 400 && response.data._issues.name.unique === 1)
+                {
+                        notify.error(gettext('I\'m sorry but a role with that name already exists.'));
+                } else {
+                    notify.error(gettext('I\'m sorry but there was an error when saving the role.'));
+                }
             });
         };
 
@@ -385,11 +405,11 @@
     }
 
     return angular.module('superdesk.users', [
-        'superdesk.users.profile',
-        'superdesk.users.activity',
-        'superdesk.activity'
+        'superdesk.activity',
+        'superdesk.asset'
     ])
 
+        .controller('UserEditController', UserEditController) // make it available to user.profile
         .service('users', UsersService)
         .factory('userList', UserListService)
 
@@ -506,13 +526,13 @@
                 });
         }])
 
-        .config(['superdeskProvider', function(superdesk) {
+        .config(['superdeskProvider', 'assetProvider', function(superdesk, asset) {
             superdesk
                 .activity('/users/', {
                     label: gettext('Users'),
                     priority: 100,
                     controller: UserListController,
-                    templateUrl: 'scripts/superdesk-users/views/list.html',
+                    templateUrl: asset.templateUrl('superdesk-users/views/list.html'),
                     category: superdesk.MENU_MAIN,
                     reloadOnSearch: false,
                     filters: [
@@ -526,24 +546,14 @@
                 .activity('/users/:_id', {
                     label: gettext('Users profile'),
                     priority: 100,
-                    controller: UserEditController,
-                    templateUrl: 'scripts/superdesk-users/views/edit.html',
+                    controller: 'UserEditController',
+                    templateUrl: asset.templateUrl('superdesk-users/views/edit.html'),
                     resolve: {user: UserResolver},
                     filters: [{action: 'detail', type: 'user'}]
                 })
-                .activity('/profile/', {
-                    label: gettext('My Profile'),
-                    controller: UserEditController,
-                    templateUrl: 'scripts/superdesk-users/views/edit.html',
-                    resolve: {
-                        user: ['session', 'api', function(session, api) {
-                            return api.users.getByUrl(session.identity._links.self.href);
-                        }]
-                    }
-                })
                 .activity('/settings/user-roles', {
                     label: gettext('User Roles'),
-                    templateUrl: 'scripts/superdesk-users/views/settings.html',
+                    templateUrl: asset.templateUrl('superdesk-users/views/settings.html'),
                     controller: UserRolesController,
                     category: superdesk.MENU_SETTINGS,
                     priority: -500
@@ -565,7 +575,7 @@
                     modal: true,
                     cssClass: 'upload-avatar',
                     controller: ChangeAvatarController,
-                    templateUrl: 'scripts/superdesk-users/views/change-avatar.html',
+                    templateUrl: asset.templateUrl('superdesk-users/views/change-avatar.html'),
                     filters: [{action: 'edit', type: 'avatar'}]
                 });
         }])
@@ -578,6 +588,14 @@
             apiProvider.api('roles', {
                 type: 'http',
                 backend: {rel: 'roles'}
+            });
+            apiProvider.api('resetPassword', {
+                type: 'http',
+                backend: {rel: 'reset_user_password'}
+            });
+            apiProvider.api('changePassword', {
+                type: 'http',
+                backend: {rel: 'change_user_password'}
             });
         }])
 
@@ -624,35 +642,6 @@
             };
         })
 
-        .directive('sdUserActivity', ['profileService', function(profileService) {
-            return {
-                restrict: 'A',
-                replace: true,
-                templateUrl: 'scripts/superdesk-users/views/activity-feed.html',
-                scope: {
-                    user: '='
-                },
-                link: function(scope, element, attrs) {
-                    var page = 1;
-                    var maxResults = 5;
-
-                    scope.$watch('user', function() {
-                        profileService.getUserActivity(scope.user, maxResults).then(function(list) {
-                            scope.activityFeed = list;
-                        });
-                    });
-
-                    scope.loadMore = function() {
-                        page++;
-                        profileService.getUserActivity(scope.user, maxResults, page).then(function(next) {
-                            Array.prototype.push.apply(scope.activityFeed._items, next._items);
-                            scope.activityFeed._links = next._links;
-                        });
-                    };
-                }
-            };
-        }])
-
         .directive('sdUserDetailsPane', ['$timeout', function($timeout) {
             return {
                 replace: true,
@@ -670,11 +659,11 @@
             };
         }])
 
-        .directive('sdUserEdit', ['gettext', 'notify', 'users', 'session', '$location', '$route', 'superdesk', 'features',
-        function(gettext, notify, users, session, $location, $route, superdesk, features) {
+        .directive('sdUserEdit', ['gettext', 'notify', 'users', 'session', '$location', '$route', 'superdesk', 'features', 'asset',
+        function(gettext, notify, users, session, $location, $route, superdesk, features, asset) {
 
             return {
-                templateUrl: 'scripts/superdesk-users/views/edit-form.html',
+                templateUrl: asset.templateUrl('superdesk-users/views/edit-form.html'),
                 scope: {
                     origUser: '=user',
                     onsave: '&',
@@ -682,7 +671,6 @@
                     onupdate: '&'
                 },
                 link: function(scope, elem) {
-
                     scope.features = features;
                     scope.usernamePattern = users.usernamePattern;
                     scope.phonePattern = users.phonePattern;
@@ -715,7 +703,9 @@
                     scope.save = function() {
                         scope.error = null;
                         notify.info(gettext('saving..'));
-                        return users.save(scope.origUser, scope.user).then(function() {
+                        return users.save(scope.origUser, scope.user)
+                        .then(function(response) {
+                            scope.origUser = response;
                             resetUser(scope.origUser);
                             notify.pop();
                             notify.success(gettext('user saved.'));
@@ -765,20 +755,19 @@
                         scope.confirm = {password: null};
                         scope.show = {password: false};
                         scope._active = users.isActive(user);
+                        scope.profile = scope.user._id === session.identity._id;
                     }
                 }
             };
         }])
-
-        .directive('sdUserPreferences', ['api', 'session', function(api, session) {
+        .directive('sdUserPreferences', ['api', 'session', 'preferencesService', 'notify', 'asset',
+            function(api, session, preferencesService, notify, asset) {
             return {
-                templateUrl: 'scripts/superdesk-users/views/user-preferences.html',
+                templateUrl: asset.templateUrl('superdesk-users/views/user-preferences.html'),
                 link: function(scope, elem, attrs) {
 
                     var orig;
-
-                    api('preferences').getById(session.identity._id)
-                    .then(function(result) {
+                    preferencesService.get().then(function(result) {
                         orig = result;
                         buildPreferences(orig);
                     });
@@ -789,26 +778,27 @@
                     };
 
                     scope.save = function() {
-                        api('preferences', session.identity._id)
-                        .save(orig, patch())
-                        .then(function(result) {
-                            scope.cancel();
-                        }, function(response) {
-                            console.log(response);
+
+                        var update = patch();
+
+                        preferencesService.update(update).then(function() {
+                                scope.cancel();
+                            }, function(response) {
+                                notify.error(gettext('User preferences could not be saved...'));
                         });
                     };
 
                     function buildPreferences(struct) {
                         scope.preferences = {};
-                        _.each(struct.preferences, function(val, key) {
+                        _.each(struct, function(val, key) {
                             scope.preferences[key] = _.create(val);
                         });
                     }
 
                     function patch() {
-                        var p = {preferences: {}};
-                        _.each(orig.preferences, function(val, key) {
-                            p.preferences[key] = _.extend(val, scope.preferences[key]);
+                        var p = {};
+                        _.each(orig, function(val, key) {
+                            p[key] = _.extend(val, scope.preferences[key]);
                         });
                         return p;
                     }
@@ -816,7 +806,7 @@
             };
         }])
 
-        .directive('sdChangePassword', ['api', 'notify', 'gettext', function(api, notify, gettext) {
+        .directive('sdChangePassword', ['users', 'notify', 'gettext', function(users, notify, gettext) {
             return {
                 link: function(scope, element) {
                     scope.$watch('user', function() {
@@ -830,11 +820,35 @@
                      * @param {string} newPassword
                      */
                     scope.changePassword = function(oldPassword, newPassword) {
-                        return api.users.changePassword(scope.user, oldPassword, newPassword)
+                        return users.changePassword(scope.user, oldPassword, newPassword)
                             .then(function(response) {
                                 scope.oldPasswordInvalid = false;
-                                notify.success(gettext('New password is saved now.'), 3000);
-                                scope.show.password = false;
+                                notify.success(gettext('The password has been changed.'), 3000);
+                                scope.show.change_password = false;
+                            }, function(response) {
+                                scope.oldPasswordInvalid = true;
+                            });
+                    };
+                }
+            };
+        }])
+
+        .directive('sdResetPassword', ['users', 'notify', 'gettext', function(users, notify, gettext) {
+            return {
+                link: function(scope, element) {
+                	scope.$watch('user', function() {
+                        scope.oldPasswordInvalid = false;
+                    });
+
+                    /**
+                     * reset user password
+                     */
+                    scope.resetPassword = function() {
+                        return users.resetPassword(scope.user)
+                            .then(function(response) {
+                                scope.oldPasswordInvalid = false;
+                                notify.success(gettext('The password has been reset.'), 3000);
+                                scope.show.reset_password = false;
                             }, function(response) {
                                 scope.oldPasswordInvalid = true;
                             });
@@ -900,9 +914,9 @@
             };
         }])
 
-        .directive('sdUserList', ['keyboardManager', 'users', function(keyboardManager, users) {
+        .directive('sdUserList', ['keyboardManager', 'users', 'asset', function(keyboardManager, users, asset) {
             return {
-                templateUrl: 'scripts/superdesk-users/views/user-list-item.html',
+                templateUrl: asset.templateUrl('superdesk-users/views/user-list-item.html'),
                 scope: {
                     users: '=',
                     selected: '=',
@@ -942,21 +956,21 @@
             };
         }])
 
-        .directive('sdUserListItem', function() {
+        .directive('sdUserListItem', ['asset', function(asset) {
             return {
-                templateUrl: 'scripts/superdesk-users/views/user-list-item.html'
+                templateUrl: asset.templateUrl('superdesk-users/views/user-list-item.html')
             };
-        })
+        }])
 
-        .directive('sdActivity', function() {
+        .directive('sdActivity', ['asset', function(asset) {
             return {
-                templateUrl: 'scripts/superdesk-users/views/activity-list.html'
+                templateUrl: asset.templateUrl('superdesk-users/views/activity-list.html')
             };
-        })
+        }])
 
-        .directive('sdUserMentio', ['mentioUtil', 'api', 'userList', function(mentioUtil, api, userList) {
+        .directive('sdUserMentio', ['mentioUtil', 'api', 'userList', 'asset', function(mentioUtil, api, userList, asset) {
             return {
-                templateUrl: 'scripts/superdesk-users/views/mentions.html',
+                templateUrl: asset.templateUrl('superdesk-users/views/mentions.html'),
                 link: function(scope, elem) {
                     scope.users = [];
 
@@ -987,6 +1001,12 @@
                         userPopup.close();
                     });
                 }
+            };
+        }])
+
+        .filter('username', ['session', function usernameFilter(session) {
+            return function getUsername(user) {
+                return user ? user.display_name || user.username : null;
             };
         }])
         ;

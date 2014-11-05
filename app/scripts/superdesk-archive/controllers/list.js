@@ -59,7 +59,7 @@ define([
 
         $scope.$on('media_archive', refreshItems);
 
-        $scope.$watch(['stages.selected', 'selectedDesk'], refreshItems);
+        $scope.$watchGroup(['stages.selected', 'selectedDesk'], refreshItems);
 
     }
 

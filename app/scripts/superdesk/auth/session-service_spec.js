@@ -26,7 +26,7 @@ define([
             expect(session.identity).toBe(null);
         }));
 
-        it('can be started', inject(function (session) {
+        it('can be started', inject(function (session, $q) {
             session.start(SESSION, {name: 'user'});
             expect(session.token).toBe(SESSION.token);
             expect(session.identity.name).toBe('user');

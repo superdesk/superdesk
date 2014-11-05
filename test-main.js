@@ -26,7 +26,9 @@ tests.push('superdesk/activity/activity');
 tests.push('superdesk/menu/notifications/notifications');
 tests.push('superdesk/services/translate');
 tests.push('superdesk/services/modalService');
+tests.push('superdesk/services/preferencesService');
 tests.push('superdesk/features/features');
+tests.push('superdesk/services/asset');
 
 // apps
 tests.push('superdesk-authoring/authoring');

@@ -25,11 +25,7 @@ define('main', [
         // load apps & bootstrap
         var body = angular.element('body');
         body.ready(function() {
-            try {
-                angular.bootstrap(body, apps);
-            } catch (err) {
-                console.error(err.message);
-            }
+            angular.bootstrap(body, apps);
         });
     };
 });

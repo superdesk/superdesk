@@ -1,7 +1,7 @@
 define(['angular'], function(angular) {
     'use strict';
 
-    return angular.module('superdesk.select.directives', [])
+    return angular.module('superdesk.select.directives', ['superdesk.asset'])
 
     .factory('optionParser', ['$parse', function ($parse) {
 
@@ -235,12 +235,12 @@ define(['angular'], function(angular) {
         };
     }])
 
-    .directive('sdSelectPopup', ['$document', function ($document) {
+    .directive('sdSelectPopup', ['$document', 'asset', function ($document, asset) {
         return {
             restrict: 'A',
             scope: false,
             replace: true,
-            templateUrl: 'scripts/superdesk/views/sdselect.html',
+            templateUrl: asset.templateUrl('superdesk/views/sdselect.html'),
             link: function (scope, element, attrs) {
 
                 scope.open = false;

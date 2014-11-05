@@ -34,9 +34,10 @@
     <script src="scripts/bower_components/ment.io/dist/mentio.js"></script>
     <!-- endbuild -->
 
-    <!-- build:js scripts/superdesk.js -->
+    <!-- build:js scripts/superdesk-core.js -->
     <script src="scripts/superdesk/editor/editor.js"></script>
     <script src="scripts/superdesk/features/features.js"></script>
+    <script src="scripts/superdesk/services/asset.js"></script>
 
     <script src="scripts/superdesk/menu/menu.js"></script>
     <script src="scripts/superdesk/menu/notifications/notifications.js"></script>
@@ -44,18 +45,20 @@
     <script src="scripts/superdesk-workspace/content/content.js"></script>
     <script src="scripts/superdesk-dashboard/workspace-tasks/tasks.js"></script>
 
+    <script src="scripts/superdesk-users/users.js"></script>
+    <script src="scripts/superdesk-users/profile.js"></script>
+    <script src="scripts/superdesk-users/activity/activity.js"></script>
+    <script src="scripts/superdesk-users/import/import.js"></script>
+    <script src="scripts/superdesk-groups/groups.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:js scripts/superdesk.js -->
     <script src="scripts/superdesk-authoring/authoring.js"></script>
     <script src="scripts/superdesk-authoring/widgets/widgets.js"></script>
     <script src="scripts/superdesk-authoring/comments/comments.js"></script>
     <script src="scripts/superdesk-authoring/versioning/versions.js"></script>
     <script src="scripts/superdesk-authoring/metadata/metadata.js"></script>
     <script src="scripts/superdesk-authoring/workqueue/workqueue.js"></script>
-
-    <script src="scripts/superdesk-users/users.js"></script>
-    <script src="scripts/superdesk-users/profile.js"></script>
-    <script src="scripts/superdesk-users/activity/activity.js"></script>
-    <script src="scripts/superdesk-users/import/import.js"></script>
-    <script src="scripts/superdesk-groups/groups.js"></script>
     <!-- endbuild -->
 
     <!-- build:js scripts/config.js -->
@@ -81,7 +84,9 @@
             'superdesk.authoring',
             'superdesk.editor',
 
-            'superdesk.users.import'
+            'superdesk.users.import',
+            'superdesk.users.profile',
+            'superdesk.users.activity'
         ];
 
         require([

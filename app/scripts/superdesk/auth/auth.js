@@ -109,8 +109,10 @@ define([
             }, function(token) {
                 if (token) {
                     $http.defaults.headers.common.Authorization = token;
+                    $rootScope.sessionId = session.sessionId;
                 } else {
                     delete $http.defaults.headers.common.Authorization;
+                    $rootScope.sessionId = null;
                 }
             });
 
@@ -120,7 +122,6 @@ define([
                 if (!session.token && $rootScope.requiredLogin) {
                     session.getIdentity().then(function() {
                         $http.defaults.headers.common.Authorization = session.token;
-                        $route.reload();
                     });
                     e.preventDefault();
                 }
@@ -128,7 +129,7 @@ define([
 
             function requiresLogin(route) {
                 var nextRoute = route || {};
-                return nextRoute.auth || false;
+                return nextRoute.auth || true;
             }
 
         }]);

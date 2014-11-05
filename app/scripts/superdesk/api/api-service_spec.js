@@ -434,5 +434,11 @@ define([
             api('users').remove(user);
             $httpBackend.flush();
         }));
+
+        it('can get a given url', inject(function(api, $httpBackend) {
+            $httpBackend.expectGET(USER_URL).respond(200, {});
+            api.get(USER_PATH);
+            $httpBackend.flush();
+        }));
     });
 });

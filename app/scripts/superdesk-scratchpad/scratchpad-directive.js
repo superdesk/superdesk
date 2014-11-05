@@ -27,8 +27,10 @@ define(['lodash', 'require'], function(_, require) {
                 };
 
                 function update() {
-                    scratchpad.getItems().then(function(items) {
-                        scope.items = items;
+                    scratchpad.loadItemList().then(function() {
+                        scratchpad.getItems().then(function(items) {
+                            scope.items = items;
+                        });
                     });
                 }
 

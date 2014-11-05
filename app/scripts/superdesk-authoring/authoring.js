@@ -22,7 +22,7 @@
         /**
          * Open an item
          */
-        this.open = function(item) {
+        this.open = function openAutosave(item) {
             if (item._locked) {
                 // no way to get autosave
                 return $q.when(item);
@@ -40,7 +40,7 @@
         /**
          * Autosave an item
          */
-        this.save = function(item, data) {
+        this.save = function saveAutosave(item, data) {
             this.stop();
             _timeout = $timeout(function() {
                 var diff = angular.extend({_id: item._id}, data);
@@ -56,7 +56,7 @@
         /**
          * Stop pending autosave
          */
-        this.stop = function() {
+        this.stop = function stopAutosave() {
             if (_timeout) {
                 $timeout.cancel(_timeout);
                 _timeout = null;
@@ -66,30 +66,103 @@
         /**
          * Drop autosave
          */
-        this.drop = function(item) {
+        this.drop = function dropAutosave(item) {
             $timeout.cancel(_timeout);
             api(RESOURCE).remove(item._autosave);
             item._autosave = null;
         };
     }
 
-    ItemLoader.$inject = ['$route', 'api', 'lock', 'autosave', 'workqueue'];
-    function ItemLoader($route, api, lock, autosave, workqueue) {
-        console.time('item');
-        return api.find('archive', $route.current.params._id).then(function(item) {
-            console.time('lock');
-            return lock.lock(item);
-        }).then(function(item) {
-            console.timeEnd('lock');
-            console.time('autosave');
-            return autosave.open(item);
-        }).then(function(item) {
-            workqueue.setActive(item);
-            console.timeEnd('lock');
-            console.timeEnd('autosave');
-            console.timeEnd('item');
-            return item;
-        });
+    AuthoringService.$inject = ['$q', 'api', 'lock', 'autosave', 'workqueue', 'confirm'];
+    function AuthoringService($q, api, lock, autosave, workqueue, confirm) {
+
+        /**
+         * Open an item for editing
+         *
+         * @param {string} _id Item _id.
+         */
+        this.open = function openAuthoring(_id) {
+            return api.find('archive', _id, {embedded: {lock_user: 1}}).then(function _lock(item) {
+                return lock.lock(item);
+            }).then(function _autosave(item) {
+                return autosave.open(item);
+            }).then(function _workqueue(item) {
+                workqueue.setActive(item);
+                return item;
+            });
+        };
+
+        /**
+         * Close an item
+         *
+         * @param {Object} item Destination.
+         * @param {Object} diff Changes.
+         * @param {boolean} isDirty $scope dirty status.
+         */
+        this.close = function closeAuthoring(item, diff, isDirty) {
+            if (isDirty && this.isEditable(item)) {
+                return confirm.confirm()
+                    .then(angular.bind(this, function save() {
+                        return this.save(item, diff);
+                    }), function() { // ignore saving
+                        return $q.when();
+                    })
+                    .then(function unlock() {
+                        return lock.unlock(item);
+                    })
+                    .then(function removeFromWorkqueue() {
+                        return workqueue.remove(item);
+                    });
+            }
+
+            return $q.when(workqueue.remove(item));
+        };
+
+        /**
+         * Autosave the changes
+         *
+         * @param {Object} item Destination.
+         * @param {Object} diff Changes.
+         */
+        this.autosave = function autosaveAuthoring(item, diff) {
+            return autosave.save(item, diff);
+        };
+
+        /**
+         * Save the item
+         *
+         * @param {Object} item Destination.
+         * @param {Object} diff Changes.
+         */
+        this.save = function saveAuthoring(item, diff) {
+            autosave.stop();
+            return api.save('archive', item, diff).then(function(_item) {
+                item._autosave = null;
+                workqueue.update(item);
+                return item;
+            });
+        };
+
+        /**
+         * Test if an item is editable
+         *
+         * @param {Object} item
+         */
+        this.isEditable = function isEditable(item) {
+            return !!item.lock_user && !lock.isLocked(item);
+        };
+
+        /**
+         * Unlock an item - callback for item:unlock event
+         *
+         * @param {Object} item
+         * @param {string} userId
+         */
+        this.unlock = function unlock(item, userId) {
+            autosave.stop();
+            item.lock_user = null;
+            confirm.unlock(userId);
+        };
     }
 
     LockService.$inject = ['$q', 'api', 'session'];
@@ -98,18 +171,20 @@
         /**
          * Lock an item
          */
-        this.lock = function(item) {
+        this.lock = function lock(item) {
             if (!item.lock_user) {
                 return api('archive_lock', item).save({}).then(function(lock) {
                     _.extend(item, lock);
                     item._locked = false;
+                    item.lock_user = session.identity._id;
+                    item.lock_session = session.sessionId;
                     return item;
                 }, function(err) {
                     item._locked = true;
                     return item;
                 });
             } else {
-                item._locked = item.lock_user !== session.identity._id;
+                item._locked = this.isLocked(item);
                 return $q.when(item);
             }
         };
@@ -117,7 +192,7 @@
         /**
          * Unlock an item
          */
-        this.unlock = function(item) {
+        this.unlock = function unlock(item) {
             return api('archive_unlock', item).save({}).then(function(lock) {
                 _.extend(item, lock);
                 item._locked = true;
@@ -129,63 +204,93 @@
         };
 
         /**
-         * Test if an item is locked for me
+         * Test if an item is locked, it can be locked by other user or you in different session.
          */
-        this.isLocked = function(item) {
-            return item.lock_user && item.lock_user !== session.identity._id;
+        this.isLocked = function isLocked(item) {
+            var userId = item.lock_user && item.lock_user._id || item.lock_user;
+
+            if (!userId) {
+                return false;
+            }
+
+            if (userId !== session.identity._id) {
+                return true;
+            }
+
+            if (!!item.lock_session && item.lock_session !== session.sessionId) {
+                return true;
+            }
+
+            return false;
+        };
+
+        /**
+        * Test is an item is locked by me in another session
+        */
+        this.isLockedByMe = function isLockedByMe(item) {
+            return item.lock_user && item.lock_user === session.identity._id && item.lock_session !== session.sessionId;
         };
     }
 
-    ConfirmDirtyFactory.$inject = ['$window', '$q', 'modal', 'gettext'];
-    function ConfirmDirtyFactory($window, $q, modal, gettext) {
+    ConfirmDirtyService.$inject = ['$window', '$q', '$filter', 'api', 'modal', 'gettext'];
+    function ConfirmDirtyService($window, $q, $filter, api, modal, gettext) {
         /**
-         * Asks for user confirmation if there are some changes which are not saved.
+         * Will ask for user confirmation for user confirmation if there are some changes which are not saved.
          * - Detecting changes via $scope.dirty - it's up to the controller to set it.
          */
-        return function ConfirmDirty($scope) {
+        this.setupWindow = function setupWindow($scope) {
             $window.onbeforeunload = function() {
                 if ($scope.dirty) {
                     return gettext('There are unsaved changes. If you navigate away, your changes will be lost.');
                 }
-            };
 
-            $scope.$on('$destroy', function() {
-                $window.onbeforeunload = angular.noop;
+                $scope.$on('$destroy', function() {
+                    $window.onbeforeunload = angular.noop;
+                });
+            };
+        };
+
+        /**
+         * In case $scope is dirty ask user if he want's to loose his changes.
+         */
+        this.confirm = function confirm() {
+            return modal.confirm(
+                gettext('There are some unsaved changes, do you want to save it now?'),
+                gettext('Save changes?'),
+                gettext('Save'),
+                gettext('Ignore')
+            );
+        };
+
+        /**
+         * Make user aware that an item was unlocked
+         *
+         * @param {string} userId Id of user who unlocked an item.
+         */
+        this.unlock = function unlock(userId) {
+            api.find('users', userId).then(function(user) {
+                var msg = gettext('This item was unlocked by <b>{{ user }}</b>.').
+                    replace('{{ user }}', $filter('username')(user));
+                return modal.confirm(msg, gettext('Item Unlocked'), gettext('OK'), false);
             });
-
-            this.confirm = function() {
-                if ($scope.dirty) {
-                    return confirmDirty();
-                } else {
-                    return $q.when();
-                }
-            };
-
-            function confirmDirty() {
-                return modal.confirm(gettext('There are unsaved changes. Please confirm you want to close the article without saving.'));
-            }
         };
     }
 
     AuthoringController.$inject = [
         '$scope',
         'superdesk',
-        'api',
         'workqueue',
         'notify',
         'gettext',
-        'lock',
         'desks',
         'item',
-        'autosave'
+        'authoring'
     ];
 
-    function AuthoringController($scope, superdesk, api, workqueue, notify, gettext, lock, desks, item, autosave) {
+    function AuthoringController($scope, superdesk, workqueue, notify, gettext, desks, item, authoring) {
         var stopWatch = angular.noop;
 
         $scope.workqueue = workqueue.all();
-        $scope.saving = false;
-        $scope.saved = false;
         $scope.dirty = false;
         $scope.viewSendTo = false;
 
@@ -206,30 +311,19 @@
                 'item.body_html'
             ], function(changes) {
                 $scope.dirty = isDirty();
-                if ($scope.dirty && $scope.isEditable()) {
-                    $scope.saving = true;
-                    autosave.save(item, $scope.item).then(function() {
-                        $scope.saving = false;
-                    });
+                if ($scope.dirty && authoring.isEditable(item)) {
+                    authoring.autosave(item, $scope.item);
                 }
             });
         }
-
-        $scope.isEditable = function() {
-            return !$scope._preview && !$scope.item._locked;
-        };
 
         /**
          * Create a new version
          */
     	$scope.save = function() {
             stopWatch();
-            autosave.stop();
-    		return api.save('archive', item, $scope.item).then(function(res) {
-                workqueue.update(item);
-                item._autosave = null;
+    		return authoring.save(item, $scope.item).then(function(res) {
                 $scope.dirty = false;
-                $scope.saving = false;
                 $scope.item = _.create(item);
                 notify.success(gettext('Item updated.'));
                 startWatch();
@@ -243,12 +337,9 @@
          * Close an item - unlock and remove from workqueue
          */
         $scope.close = function() {
-            if ($scope._editable) {
-                lock.unlock($scope.item);
-            }
-            $scope.dirty = false;
-            workqueue.remove($scope.item);
-            superdesk.intent('author', 'dashboard');
+            authoring.close(item, $scope.item, $scope.dirty).then(function() {
+                superdesk.intent('author', 'dashboard');
+            });
         };
 
         /**
@@ -257,7 +348,6 @@
         $scope.preview = function(version) {
             stopWatch();
             extendItem($scope.item, version);
-            $scope._preview = true;
             $scope._editable = false;
         };
 
@@ -275,23 +365,22 @@
         $scope.closePreview = function() {
             $scope.item = _.create(item);
             extendItem($scope.item, item._autosave || {});
-            $scope._preview = false;
-            $scope._editable = $scope.isEditable();
+            $scope._editable = authoring.isEditable(item);
             if ($scope._editable) {
                 startWatch();
             }
         };
 
-        /**
-         * Drop autosave
-         */
-        $scope.dropAutosave = function(version) {
-            autosave.drop(item);
-            extendItem(item, version);
-        };
-
         // init
         $scope.closePreview();
+
+        $scope.$on('item:unlock', function(_e, data) {
+            if ($scope.item._id === data.item) {
+                stopWatch();
+                authoring.unlock(item, data.user);
+                $scope._editable = false;
+            }
+        });
     }
 
     function DashboardCard() {
@@ -348,10 +437,7 @@
                             scope.desk = desks.deskLookup[scope.item.task.desk];
                         }
                         if (scope.desk) {
-                            api('stages').query({where: {desk: scope.desk._id}})
-                            .then(function(result) {
-                                scope.stages = result;
-                            });
+                        	scope.stages = desks.deskStages[scope.desk._id];
                         }
                     });
                 };
@@ -379,7 +465,8 @@
 
                 function save(data) {
                     scope.beforeSend()
-                    .then(function() {
+                    .then(function(result) {
+		    			scope.task._etag = result._etag;
                         api.save('tasks', scope.task, data).then(gotoDashboard);
                     });
                 }
@@ -403,9 +490,11 @@
             'superdesk.desks'
         ])
 
-        .service('lock', LockService)
+        .service('authoring', AuthoringService)
         .service('autosave', AutosaveService)
-        .factory('ConfirmDirty', ConfirmDirtyFactory)
+        .service('confirm', ConfirmDirtyService)
+        .service('lock', LockService)
+
         .directive('sdDashboardCard', DashboardCard)
         .directive('sdSendItem', SendItem)
 
@@ -418,7 +507,11 @@
                     topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
 	                controller: AuthoringController,
 	                filters: [{action: 'author', type: 'article'}],
-                    resolve: {item: ItemLoader}
+                    resolve: {
+                        item: ['$route', 'authoring', function($route, authoring) {
+                            return authoring.open($route.current.params._id);
+                        }]
+                    }
 	            })
 	            .activity('edit.text', {
 	            	label: gettext('Edit item'),
