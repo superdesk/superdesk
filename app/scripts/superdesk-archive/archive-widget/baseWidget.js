@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('superdesk.widgets.base', [])
-        .factory('BaseWidgetController', ['$location', '$timeout', 'superdesk', 'es', 'preferencesService', 'notify',
-        function BaseWidgetControllerFactory($location, $timeout, superdesk, es, preferencesService, notify) {
+        .factory('BaseWidgetController', ['$location', '$timeout', 'superdesk', 'contentQuery', 'preferencesService', 'notify',
+        function BaseWidgetControllerFactory($location, $timeout, superdesk, contentQuery, preferencesService, notify) {
 
             var INGEST_EVENT = 'ingest:update';
 
@@ -26,14 +26,19 @@
                     $timeout(refresh);
                 });
 
-                $scope.$watchGroup({
-                    provider: 'widget.configuration.provider',
-                    size: 'widget.configuration.maxItems',
-                    search: 'query || widget.configuration.search',
-                    item: 'item',
-                    headline: 'headline'
-                }, function(vals) {
-                    config = vals || {};
+                $scope.$watchGroup([
+                    'widget.configuration.provider',
+                    'widget.configuration.maxItems',
+                    'query || widget.configuration.search',
+                    'item',
+                    'headline'
+                ], function(vals) {
+                    config = {
+                        provider: vals[0],
+                        size: parseInt(vals[1], 10),
+                        search: vals[2],
+                        item: vals[3]
+                    };
                     refresh();
                 });
 
@@ -52,29 +57,23 @@
                 }
 
                 function getSearchCriteria(config) {
-                    var params = {
-                        q: config.search || null,
-                        size: config.size || 10
-                    };
+                    var query = contentQuery.query(config.search || null);
+                    query.size(config.size || 10);
 
-                    var filters = [];
                     if (config.provider && config.provider !== 'all') {
-                        filters.push({term: {provider: config.provider}});
+                        query.filter({term: {provider: config.provider}});
                     }
 
                     if (config.item && !config.search) {
                         var itemFilters = moreLikeThis(config.item);
                         if (itemFilters.length) {
-                            filters.push({or: itemFilters});
+                            query.filter({or: itemFilters});
                         } else {
-                            params.q = config.item.headline || null;
+                            query.q(config.item.headline || null);
                         }
                     }
 
-                    var result = es(params, filters);
-                    result.sort = [{firstcreated: 'desc'}];
-
-                    return result;
+                    return query.getCriteria();
                 }
 
                 function processItems() {
