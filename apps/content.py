@@ -121,11 +121,5 @@ metadata_schema = {
     },
     'expiry': {
         'type': 'datetime'
-    },
-    'source': {
-        'type': 'string'
-    },
-    'original_source': {
-        'type': 'string'
     }
 }
