@@ -29,9 +29,17 @@
                     scope.currentRoute = null;
                     scope.flags = ctrl.flags;
 
-                    scope.$watch('beta', function() {
-                        scope.menu = _.values(_.where(superdesk.activities, {category: superdesk.MENU_MAIN}));
-                    });
+                    function filterMenu() {
+                        var filter = {category: superdesk.MENU_MAIN};
+
+                        if (!scope.beta) {
+                            filter.beta = false;
+                        }
+
+                        scope.menu = _.values(_.where(superdesk.activities, filter));
+                    }
+
+                    scope.$watch('beta', filterMenu);
 
                     scope.toggleMenu = function() {
                         ctrl.flags.menu = !ctrl.flags.menu;
