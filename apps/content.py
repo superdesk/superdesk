@@ -124,5 +124,8 @@ metadata_schema = {
     },
     'source': {
         'type': 'string'
+    },
+    'original_source': {
+        'type': 'string'
     }
 }
