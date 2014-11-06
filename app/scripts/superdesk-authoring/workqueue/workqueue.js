@@ -128,11 +128,10 @@ function WorkqueueCtrl($scope, workqueue, superdesk, ContentCtrl) {
     };
 
     $scope.closeItem = function(item) {
-        if ($scope.active) {
+        if ($scope.active && $scope.active._id === item._id) {
             $scope.close();
         } else {
             workqueue.remove(item);
-            superdesk.intent('author', 'dashboard');
         }
     };
 }
