@@ -19,7 +19,7 @@ def before_feature(context, feature):
 def before_scenario(context, scenario):
     config = {}
     if scenario.status != 'skipped' and 'notesting' in scenario.tags:
-        config['TESTING'] = False
+        config['SUPERDESK_TESTING'] = False
 
     tests.setup(context, config)
     context.headers = [
