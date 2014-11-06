@@ -5,7 +5,7 @@ describe('superdesk.features module', function() {
 
     beforeEach(module('superdesk.features'));
     beforeEach(inject(function(urls, $q) {
-        spyOn(urls, 'links').andReturn($q.when({users: 'http://users'}));
+        spyOn(urls, 'links').and.returnValue($q.when({users: 'http://users'}));
     }));
 
     it('can detect features based on resources', inject(function(urls, features, $rootScope) {

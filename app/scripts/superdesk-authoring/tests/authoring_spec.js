@@ -17,8 +17,8 @@ describe('authoring', function() {
     }));
 
     beforeEach(inject(function(preferencesService, $q) {
-        spyOn(preferencesService, 'get').andReturn($q.when({'items':['urn:tag:superdesk-1']}));
-        spyOn(preferencesService, 'update').andReturn($q.when({}));
+        spyOn(preferencesService, 'get').and.returnValue($q.when({'items':['urn:tag:superdesk-1']}));
+        spyOn(preferencesService, 'update').and.returnValue($q.when({}));
     }));
 
     beforeEach(inject(function($route) {
@@ -34,9 +34,9 @@ describe('authoring', function() {
         var _item,
             lockedItem = angular.extend({_locked: false}, item);
 
-        spyOn(api, 'find').andReturn($q.when(item));
-        spyOn(lock, 'lock').andReturn($q.when(lockedItem));
-        spyOn(autosave, 'open').andReturn($q.when(lockedItem));
+        spyOn(api, 'find').and.returnValue($q.when(item));
+        spyOn(lock, 'lock').and.returnValue($q.when(lockedItem));
+        spyOn(autosave, 'open').and.returnValue($q.when(lockedItem));
 
         $injector.invoke(superdesk.activity('authoring').resolve.item).then(function(resolvedItem) {
             _item = resolvedItem;
@@ -54,7 +54,7 @@ describe('authoring', function() {
         var lockedItem = item;
         lockedItem.lock_user = USER;
 
-        spyOn(api, 'find').andReturn($q.when(lockedItem));
+        spyOn(api, 'find').and.returnValue($q.when(lockedItem));
 
         $injector.invoke(superdesk.activity('authoring').resolve.item);
         $rootScope.$digest();
@@ -74,7 +74,7 @@ describe('authoring', function() {
         expect($scope.dirty).toBe(true);
 
         // autosave
-        spyOn(api, 'save').andReturn($q.when({}));
+        spyOn(api, 'save').and.returnValue($q.when({}));
         $timeout.flush(5000);
         expect(api.save).toHaveBeenCalled();
 
@@ -98,7 +98,7 @@ describe('authoring', function() {
         $rootScope.$digest();
         $timeout.flush(1000);
 
-        spyOn(api, 'save').andReturn($q.when({}));
+        spyOn(api, 'save').and.returnValue($q.when({}));
         $scope.save();
         $rootScope.$digest();
 
@@ -126,8 +126,8 @@ describe('authoring', function() {
 
         beforeEach(inject(function(confirm, lock, workqueue, $q) {
             confirmDefer = $q.defer();
-            spyOn(confirm, 'confirm').andReturn(confirmDefer.promise);
-            spyOn(lock, 'unlock').andReturn($q.when());
+            spyOn(confirm, 'confirm').and.returnValue(confirmDefer.promise);
+            spyOn(lock, 'unlock').and.returnValue($q.when());
             spyOn(workqueue, 'remove');
         }));
 
@@ -164,7 +164,7 @@ describe('authoring', function() {
             expect(lock.unlock).not.toHaveBeenCalled();
             expect(workqueue.remove).not.toHaveBeenCalled();
 
-            spyOn(authoring, 'save').andReturn($q.when());
+            spyOn(authoring, 'save').and.returnValue($q.when());
             confirmDefer.resolve();
             $rootScope.$digest();
 
@@ -191,7 +191,7 @@ describe('autosave', function() {
     beforeEach(module('superdesk.mocks'));
 
     it('can fetch an autosave for not locked item', inject(function(autosave, api, $q, $rootScope) {
-        spyOn(api, 'find').andReturn($q.when({}));
+        spyOn(api, 'find').and.returnValue($q.when({}));
         autosave.open({_locked: false, _id: 1});
         $rootScope.$digest();
         expect(api.find).toHaveBeenCalledWith('archive_autosave', 1);
@@ -206,7 +206,7 @@ describe('autosave', function() {
 
     it('can create an autosave', inject(function(autosave, api, $q, $timeout, $rootScope) {
         var item = {_id: 1, _etag: 'x'};
-        spyOn(api, 'save').andReturn($q.when({_id: 2}));
+        spyOn(api, 'save').and.returnValue($q.when({_id: 2}));
         autosave.save(item, {headline: 'test'});
         $rootScope.$digest();
         expect(api.save).not.toHaveBeenCalled();

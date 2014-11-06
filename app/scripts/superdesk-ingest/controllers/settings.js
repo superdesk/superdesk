@@ -31,6 +31,10 @@ define(['angular', 'lodash'], function(angular, _) {
                 $scope.provider = null;
             };
 
+            $scope.setConfig = function(provider) {
+                $scope.provider.config = provider.config;
+            };
+
             $scope.save = function() {
                 api.ingestProviders.save($scope.origProvider, $scope.provider)
                 .then(function(result) {

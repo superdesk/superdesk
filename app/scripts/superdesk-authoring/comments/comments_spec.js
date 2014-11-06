@@ -23,7 +23,7 @@ describe('item comments', function() {
 
     it('can fetch comments for an item', inject(function(commentsService, api, $rootScope, $q) {
 
-        spyOn(api.item_comments, 'query').andReturn($q.when({_items: [{_id: 1}]}));
+        spyOn(api.item_comments, 'query').and.returnValue($q.when({_items: [{_id: 1}]}));
 
         commentsService.fetch('test-id').then(function() {
             expect(commentsService.comments.length).toBe(1);

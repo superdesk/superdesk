@@ -73,7 +73,7 @@ define(['./module', 'angular'], function(DashboardModule, angular) {
         it('can add widget to user workspace', inject(function(api, $q, $rootScope) {
             var scope = getScope();
 
-            spyOn(api.users, 'save').andReturn($q.when());
+            spyOn(api.users, 'save').and.returnValue($q.when());
 
             scope.addWidget(scope.availableWidgets[0]);
             $rootScope.$apply();
