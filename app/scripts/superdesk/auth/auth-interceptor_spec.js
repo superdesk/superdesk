@@ -18,7 +18,7 @@ define([
                 response = {status: 401, config: config};
 
             spyOn(session, 'expire');
-            spyOn(session, 'getIdentity').andReturn($q.when());
+            spyOn(session, 'getIdentity').and.returnValue($q.when());
             spyOn(request, 'resend');
 
             interceptor.response(response);

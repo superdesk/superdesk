@@ -16,7 +16,7 @@ define(['./upload-service'], function(UploadService) {
 
         it('can start uploading', inject(function(upload, $upload) {
             var config = {url: 'test', method: 'POST', data: 'test'};
-            spyOn($upload, 'upload').andCallThrough();
+            spyOn($upload, 'upload').and.callThrough();
             upload.start(config);
             expect($upload.upload).toHaveBeenCalledWith(config);
         }));

@@ -81,7 +81,7 @@ define([
             preferencesService = $injector.get('preferencesService');
 	        storage.clear();
 
-	        spyOn(session, 'getIdentity').andReturn($q.when({sessionId: 1}));
+	        spyOn(session, 'getIdentity').and.returnValue($q.when({sessionId: 1}));
 	    }));
 
 		it('can get preferences', inject(function(api, $rootScope) {
