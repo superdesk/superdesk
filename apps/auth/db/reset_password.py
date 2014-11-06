@@ -71,11 +71,11 @@ class ResetPasswordService(BaseService):
         user = superdesk.get_resource_service('users').find_one(req=None, email=email)
         if not user:
             logger.warning('User password reset triggered with invalid email: %s' % email)
-            raise superdesk.SuperdeskError(status_code=201, message='Created')
+            raise superdesk.SuperdeskError(status_code=400, message='Created')
 
         if not user.get('is_active', False):
             logger.warning('User password reset triggered for an inactive user')
-            raise superdesk.SuperdeskError(status_code=201, message='Created')
+            raise superdesk.SuperdeskError(status_code=403, message='Created')
 
         ids = self.store_reset_password_token(doc, email, token_ttl, user['_id'])
         send_reset_password_email(doc)
@@ -88,9 +88,15 @@ class ResetPasswordService(BaseService):
 
         reset_request = superdesk.get_resource_service('active_tokens').find_one(req=None, token=key)
         if not reset_request:
-            raise superdesk.SuperdeskError(payload='Invalid token received: %s' % key)
+            logger.warning('Invalid token received: %s' % key)
+            raise superdesk.SuperdeskError(status_code=400, message='Created')
 
         user_id = reset_request['user']
+        user = superdesk.get_resource_service('users').find_one(req=None, _id=user_id)
+        if not user.get('is_active'):
+            logger.warning('Try to set password for an inactive user')
+            raise superdesk.SuperdeskError(status_code=403, message='Created')
+
         superdesk.get_resource_service('users').update_password(user_id, password)
         self.remove_all_tokens_for_email(reset_request['email'])
         self.remove_private_data(doc)
