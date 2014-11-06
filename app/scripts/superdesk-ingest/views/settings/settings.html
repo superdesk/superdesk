@@ -50,7 +50,12 @@
 
                     <div class="field">
                         <label for="provider-name" translate>Provider Name</label>
-                        <input type="text" id="provider-name" ng-model="provider.name">
+                        <input type="text" id="provider-name" ng-model="provider.name" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="source-name" translate>Source Name</label>
+                        <input type="text" id="source-name" ng-model="provider.source" required>
                     </div>
 
                     <div class="field credentials">
