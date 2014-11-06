@@ -19,4 +19,3 @@ class SpikesResource(Resource):
         'elastic_filter': {'term': {'is_spiked': True}}
     }
     resource_methods = ['GET']
-
