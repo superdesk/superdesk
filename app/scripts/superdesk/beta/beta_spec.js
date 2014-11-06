@@ -31,7 +31,7 @@ define(['./beta'], function(BetaService) {
         it('keeps it there when beta is on', inject(function(betaService, preferencesService, $rootScope, $http, $httpBackend, $q) {
             $rootScope.beta = true;
 
-            spyOn(preferencesService, 'get').andReturn($q.when({enabled: true}));
+            spyOn(preferencesService, 'get').and.returnValue($q.when({enabled: true}));
 
             betaService.isBeta().then(function(_beta) {
                 expect(_beta).toBe(true);

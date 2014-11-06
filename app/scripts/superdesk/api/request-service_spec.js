@@ -37,7 +37,7 @@ define(['./request-service', 'superdesk/upload/upload-service'], function(Reques
 
         it('can check if request is upload', inject(function(request, upload) {
             var config = {};
-            spyOn(upload, 'isUpload').andReturn(1);
+            spyOn(upload, 'isUpload').and.returnValue(1);
             expect(request.isUpload(config)).toBe(1);
             expect(upload.isUpload).toHaveBeenCalledWith(config);
         }));

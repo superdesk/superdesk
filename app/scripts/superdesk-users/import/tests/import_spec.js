@@ -8,7 +8,7 @@ describe('user import', function() {
 
     it('can import a user', inject(function($q, userImport, api) {
         var model = {username: 'foo', password: 'bar', profile_to_import: 'baz'};
-        spyOn(api, 'save').andReturn($q.when({}));
+        spyOn(api, 'save').and.returnValue($q.when({}));
         userImport.importUser(model);
         expect(api.save).toHaveBeenCalledWith('import_profile', model);
     }));
@@ -17,7 +17,7 @@ describe('user import', function() {
         var success = jasmine.createSpy('success'),
             error = jasmine.createSpy('error');
 
-        spyOn(api, 'save').andReturn($q.reject({status: 404}));
+        spyOn(api, 'save').and.returnValue($q.reject({status: 404}));
 
         userImport.importUser({}).then(success, error);
         $rootScope.$digest();

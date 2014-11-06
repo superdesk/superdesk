@@ -36,9 +36,9 @@ define([
             $q = $injector.get('$q');
             storage = $injector.get('storage');
             preferencesService = $injector.get('preferencesService');
-            spyOn(beta, 'isBeta').andReturn($q.when(true));
-            spyOn(preferencesService, 'update').andReturn($q.when({}));
-            spyOn(preferencesService, 'get').andReturn($q.when(['test']));
+            spyOn(beta, 'isBeta').and.returnValue($q.when(true));
+            spyOn(preferencesService, 'update').and.returnValue($q.when({}));
+            spyOn(preferencesService, 'get').and.returnValue($q.when(['test']));
 
             service = $injector.get('scratchpad');
             testItem = {

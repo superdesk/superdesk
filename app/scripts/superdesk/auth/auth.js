@@ -128,9 +128,7 @@ define([
             });
 
             function requiresLogin(route) {
-                var nextRoute = route || {};
-                return nextRoute.auth || true;
+                return route ? route.auth : false;
             }
-
         }]);
 });

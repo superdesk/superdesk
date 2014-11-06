@@ -39,7 +39,7 @@ define(['./upload'], function(UploadController) {
         it('can upload files when added', inject(function($controller, $rootScope, $q, api, upload) {
             var scope = $rootScope.$new(true);
 
-            spyOn(upload, 'start').andCallThrough();
+            spyOn(upload, 'start').and.callThrough();
 
             scope.resolve = function() {};
             var resolve = spyOn(scope, 'resolve');

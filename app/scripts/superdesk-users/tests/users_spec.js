@@ -9,7 +9,7 @@ describe('users api', function() {
         var user = {},
             data = {'UserName': 'foo', 'Password': 'bar'};
 
-        spyOn(api, 'save').andReturn($q.when({}));
+        spyOn(api, 'save').and.returnValue($q.when({}));
 
         users.save(user, data).then(function() {});
 
@@ -22,7 +22,7 @@ describe('users api', function() {
         var user = {UserName: 'foo', FirstName: 'a'},
             data = {FirstName: 'foo', LastName: 'bar'};
 
-        spyOn(api, 'save').andReturn($q.when({}));
+        spyOn(api, 'save').and.returnValue($q.when({}));
 
         users.save(user, data);
 

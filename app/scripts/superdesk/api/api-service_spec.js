@@ -81,7 +81,7 @@ define([
             var headers = $http.defaults.headers.common;
             headers['X-Filter'] = 'User.*';
 
-            spyOn(urls, 'resource').andReturn($q.when(USERS_URL));
+            spyOn(urls, 'resource').and.returnValue($q.when(USERS_URL));
 
             $httpBackend.expectGET(USERS_URL, headers).respond(collection([{}]));
 
@@ -100,7 +100,7 @@ define([
 
             $httpBackend.expectGET(USERS_URL).respond(400);
 
-            spyOn(urls, 'resource').andReturn($q.when(USERS_URL));
+            spyOn(urls, 'resource').and.returnValue($q.when(USERS_URL));
 
             var reject;
             api.http.query().then(null, function(reason) {
@@ -116,7 +116,7 @@ define([
             var userData = {username: 'test'},
                 user;
 
-            spyOn(urls, 'resource').andReturn($q.when(USERS_URL));
+            spyOn(urls, 'resource').and.returnValue($q.when(USERS_URL));
 
             $httpBackend.expectPOST(USERS_URL, userData).respond(201, {_links: {self: {href: 'user_href'}}});
 
@@ -133,7 +133,7 @@ define([
         it('can fail creating new resource', inject(function(api, urls, $q, $httpBackend) {
             var userData = {username: 'test'};
 
-            spyOn(urls, 'resource').andReturn($q.when(USERS_URL));
+            spyOn(urls, 'resource').and.returnValue($q.when(USERS_URL));
 
             $httpBackend.expectPOST(USERS_URL, userData).respond(200, {
                 _status: 'ERR',
@@ -157,7 +157,7 @@ define([
             var user = {},
                 data = {username: 'test'};
 
-            spyOn(urls, 'resource').andReturn($q.when(USERS_URL));
+            spyOn(urls, 'resource').and.returnValue($q.when(USERS_URL));
 
             $httpBackend.expectPOST(USERS_URL, data).respond(201, {_links: {self: {href: 'user_href'}}});
 
@@ -257,7 +257,7 @@ define([
         it('can get item by id', inject(function(api, urls, $q, $httpBackend) {
             var user;
 
-            spyOn(urls, 'resource').andReturn($q.when(SERVER_URL + '/users'));
+            spyOn(urls, 'resource').and.returnValue($q.when(SERVER_URL + '/users'));
 
             $httpBackend.expectGET(SERVER_URL + '/users/1').respond({username: 'foo'});
 
@@ -300,7 +300,7 @@ define([
         it('can get resource url', inject(function(api, urls, $q, $rootScope) {
             var url;
 
-            spyOn(urls, 'resource').andReturn($q.when(USERS_URL));
+            spyOn(urls, 'resource').and.returnValue($q.when(USERS_URL));
 
             api.http.getUrl().then(function(_url) {
                 url = _url;
