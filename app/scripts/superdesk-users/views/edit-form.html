@@ -16,7 +16,7 @@
         <div class="header-info">
             <h2>{{ user.display_name }}</h2>
             <h5>{{ user.username }}</h5>
-            <div class="active" tooltip="{{ _active ? 'Disable user' : 'Enable user' | translate }}" tooltip-placement="left">
+            <div class="active" ng-if="!profile" tooltip="{{ _active ? 'Disable user' : 'Enable user' | translate }}" tooltip-placement="left">
               <span sd-switch ng-model="_active" ng-click="toggleStatus(_active)"></span>
             </div>
         </div>
@@ -60,7 +60,7 @@
                   </div>
                 </div>
 
-                <div sd-info-item class="password" ng-if="features.reset_user_password && user._id && !profile" id="password-reset-trigger">
+                <div sd-info-item class="password" ng-if="features.reset_user_password && user._id && !profile && _active" id="password-reset-trigger">
                   <label translate>password</label>
                   <i class="change-btn" ng-click="show.reset_password = !show.reset_password" ng-show="!show.reset_password">reset password</i>
                 </div>

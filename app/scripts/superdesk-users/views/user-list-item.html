@@ -1,10 +1,14 @@
-<li ng-repeat="user in users" ng-click="select(user)" ng-init="_active = active(user)" ng-class="{selected: user === selected, 'inactive' : !_active}">
+<li ng-repeat="user in users" ng-click="select(user)" ng-init="_active = active(user); _pending = pending(user)" ng-class="{selected: user === selected, 'inactive' : !_active}">
     <figure class="avatar">
         <img sd-user-avatar data-src="user.picture_url">
     </figure>
 
     <div class="row-wrapper" sd-col-width>
-        <div class="name"><span class="disabled-label" ng-if="!_active" translate>disabled</span>{{ user.display_name }}</div>
+        <div class="name">
+        	<span class="disabled-label" ng-if="!_active" translate>disabled</span>
+        	<span class="disabled-label" ng-if="_pending" translate>pending</span>
+        	{{ user.display_name }}
+        </div>
         <div class="username">{{ user.username }}</div>
         <div class="role" ng-show>{{ roles[user.role].name }}</div>
         <div class="email">{{ user.email }}</div>
