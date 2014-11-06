@@ -18,3 +18,7 @@ def utcnow():
 def get_date(date_or_string):
     if date_or_string:
         return arrow.get(date_or_string).datetime
+
+
+def get_expiry_date(minutes):
+    return utcnow() + datetime.timedelta(minutes=minutes)
