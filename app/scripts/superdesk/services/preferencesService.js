@@ -10,9 +10,8 @@ define(['angular', 'lodash'], function(angular, _) {
                 SESSION_PREFERENCES = 'session_preferences',
                 PREFERENCES = 'preferences',
                 userPreferences = ['feature:preview', 'archive:view', 'email:notification', 'workqueue:items'],
-                //sessionPreferences = ['scratchpad:items', 'pinned:items', 'desk:items'],
+                //sessionPreferences = ['scratchpad:items', 'pinned:items', 'desk:items', 'stage:items'],
                 api,
-                defer,
                 original_preferences = null;
 
             function saveLocally(preferences, type, key) {
@@ -105,19 +104,15 @@ define(['angular', 'lodash'], function(angular, _) {
 
                 if (!api) { api = $injector.get('api'); }
 
-                defer = $q.defer();
-
-                api('preferences', $rootScope.sessionId).save(original_prefs, user_updates)
+                return api('preferences', $rootScope.sessionId).save(original_prefs, user_updates)
                     .then(function(result) {
                                 saveLocally(result, type, key);
-                                return defer.resolve(result);
+                                return result;
                             },
                             function(response) {
                                 console.log('patch err response:', response);
-                                return defer.reject(response);
+                                return response;
                         });
-
-                return defer.promise;
 
             }
 
