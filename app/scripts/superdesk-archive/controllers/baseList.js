@@ -1,8 +1,8 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    BaseListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'es', 'desks', 'preferencesService', 'notify'];
-    function BaseListController($scope, $location, superdesk, api, es, desks, preferencesService, notify) {
+    BaseListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'contentQuery', 'desks', 'preferencesService', 'notify'];
+    function BaseListController($scope, $location, superdesk, api, contentQuery, desks, preferencesService, notify) {
         var self = this;
 
         var lastQueryParams = {};
@@ -53,14 +53,15 @@ define(['lodash'], function(_) {
             }
         });
 
-        this.buildFilters = function(params, filterDesk) {
-            var filters = [];
+        this.buildQuery = function(params, filterDesk) {
+
+            var query = contentQuery.query(params.q || null);
 
             if (filterDesk) {
                 if (desks.getCurrentStageId()) {
-                    filters.push({term: {'task.stage': desks.getCurrentStageId()}});
+                    query.filter({term: {'task.stage': desks.getCurrentStageId()}});
                 } else if (desks.getCurrentDeskId()) {
-                    filters.push({term: {'task.desk': desks.getCurrentDeskId()}});
+                    query.filter({term: {'task.desk': desks.getCurrentDeskId()}});
                 }
             }
 
@@ -74,21 +75,18 @@ define(['lodash'], function(_) {
                     range.versioncreated.gte = params.after;
                 }
 
-                filters.push({range: range});
+                query.filter({range: range});
             }
 
             if (params.provider) {
-                var provider = {
-                    provider: params.provider
-                };
-                filters.push({term: provider});
+                query.filter({term: {provider: params.provider}});
             }
 
             if (params.type) {
                 var type = {
                     type: JSON.parse(params.type)
                 };
-                filters.push({terms: type});
+                query.filter({terms: type});
             }
 
             if (params.urgency_min || params.urgency_max) {
@@ -100,25 +98,17 @@ define(['lodash'], function(_) {
                         lte: params.urgency_max
                     }
                 };
-                filters.push({range: urgency});
+                query.filter({range: urgency});
             }
 
-            if ($location.search().spike) {
-                filters.push({term: {is_spiked: true}});
-            } else {
-                filters.push({not: {term: {is_spiked: true}}});
-            }
-
-            return filters;
+            return query.getCriteria();
         };
 
         this.getQuery = function getQuery(params, filterDesk) {
             if (!_.isEqual(_.omit(params, 'page'), _.omit(lastQueryParams, 'page'))) {
                 $location.search('page', null);
             }
-            var filters = this.buildFilters(params, filterDesk);
-            var query = es(params, filters);
-            query.sort = [{versioncreated: 'desc'}];
+            var query = this.buildQuery(params, filterDesk);
             lastQueryParams = params;
             return query;
         };
