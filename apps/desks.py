@@ -21,7 +21,10 @@ desks_schema = {
             }
         }
     },
-    'incoming_stage': Resource.rel('stages', True)
+    'incoming_stage': Resource.rel('stages', True),
+    'spike_expiry': {
+        'type': 'integer'
+    }
 }
 
 

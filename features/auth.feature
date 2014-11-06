@@ -16,8 +16,44 @@ Feature: Authentication
         And we get "user"
         And we get no "password"
 
+	
+	Scenario: Change user password with success
+        Given "users"
+        """
+        [{"username": "foo", "password": "bar", "email": "foo@bar.org", "is_active": true}]
+        """
 
-    Scenario: Reset password existing user
+        When we post to "/change_user_password" with success
+        """
+        [{"username": "foo", "old_password": "bar", "new_password": "new"}]
+        """
+        And we post to auth
+            """
+            {"username": "foo", "password": "new"}
+            """
+
+        Then we get "token"
+        And we get "user"
+        And we get no "password"
+        
+
+	Scenario: Change user password with wrong old password
+        Given "users"
+        """
+        [{"username": "foo", "password": "bar", "email": "foo@bar.org", "is_active": true}]
+        """
+
+        When we post to "/change_user_password"
+        """
+        [{"username": "foo", "old_password": "wrong", "new_password": "new"}]
+        """
+        Then we get error 400
+        """
+        {"_message": "", "_issues": "The provided old password is not correct.", "_status": "ERR"}
+        """        
+        
+        
+	Scenario: Reset password existing user
         Given "users"
         """
         [{"username": "foo", "password": "bar", "email": "foo@bar.org", "is_active": true}]

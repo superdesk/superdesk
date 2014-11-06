@@ -17,6 +17,7 @@ def get_test_settings():
     test_settings = {}
     test_settings['ELASTICSEARCH_INDEX'] = 'sptests'
     test_settings['MONGO_DBNAME'] = 'sptests'
+    test_settings['LEGAL_ARCHIVE_DBNAME'] = 'sptests_legal'
     test_settings['DEBUG'] = True
     test_settings['TESTING'] = True
     test_settings['BCRYPT_GENSALT_WORK_FACTOR'] = 4
@@ -37,6 +38,7 @@ def drop_mongo(app):
     with app.test_request_context(app.config['URL_PREFIX']):
         try:
             app.data.mongo.driver.cx.drop_database(app.config['MONGO_DBNAME'])
+            app.data.mongo.driver.cx.drop_database(app.config['LEGAL_ARCHIVE_DBNAME'])
         except AttributeError:
             pass
 
