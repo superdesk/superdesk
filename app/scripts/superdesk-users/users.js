@@ -58,6 +58,13 @@
         };
 
         /**
+         * Test if user is on pending state
+         */
+        this.isPending = function isPending(user) {
+            return user && user.needs_activation;
+        };
+
+        /**
          * Toggle user status
          */
         this.toggleStatus = function toggleStatus(user, active) {
@@ -761,6 +768,7 @@
                         scope.confirm = {password: null};
                         scope.show = {password: false};
                         scope._active = users.isActive(user);
+                        scope._pending = users.isPending(user);
                         scope.profile = scope.user._id === session.identity._id;
                     }
                 }
@@ -932,6 +940,10 @@
 
                     scope.active = function(user) {
                         return users.isActive(user);
+                    };
+
+                    scope.pending = function(user) {
+                        return users.isPending(user);
                     };
 
                     scope.select = function(user) {
