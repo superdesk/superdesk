@@ -2,7 +2,6 @@
 import os
 from datetime import timedelta
 from superdesk.tests import TestCase
-from superdesk.validator import SuperdeskValidator
 import superdesk
 from superdesk.utc import utcnow
 from .reuters_token import get_token
