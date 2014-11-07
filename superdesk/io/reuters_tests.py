@@ -2,6 +2,7 @@
 import os
 from datetime import timedelta
 from superdesk.tests import TestCase
+from superdesk.validator import SuperdeskValidator
 import superdesk
 from superdesk.utc import utcnow
 from .reuters_token import get_token
@@ -13,6 +14,8 @@ def setup_provider(token, hours):
     return {
         'name': PROVIDER,
         'type': PROVIDER,
+        'source': PROVIDER,
+        'days_to_keep': 2,
         'token': {
             'token': token,
             'created': utcnow() - timedelta(hours=hours),
