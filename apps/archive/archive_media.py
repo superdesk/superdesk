@@ -26,8 +26,7 @@ class ArchiveMediaResource(Resource):
             'type': 'file',
             'required': True
         },
-        'upload_id': {'type': 'string'},
-        'creator': metadata_schema['creator']
+        'upload_id': {'type': 'string'}
     }
 
     schema.update(metadata_schema)
@@ -64,7 +63,7 @@ class ArchiveMediaService(BaseService):
                 doc.setdefault('_id', doc['guid'])
 
                 doc['type'] = self.type_av.get(file_type)
-                doc['version'] = 1
+                doc[config.VERSION] = 1
                 doc['versioncreated'] = utcnow()
 
                 rendition_spec = config.RENDITIONS['picture']

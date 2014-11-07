@@ -82,10 +82,17 @@ class ArchiveService(BaseService):
         user = get_user()
         lock_user = original.get('lock_user', None)
         force_unlock = updates.get('force_unlock', False)
+
+        original_creator = updates.get('original_creator', None)
+        if not original_creator:
+            updates['original_creator'] = original['original_creator']
+
         if lock_user and str(lock_user) != str(user['_id']) and not force_unlock:
             raise SuperdeskError(payload='The item was locked by another user')
+
         updates['versioncreated'] = utcnow()
         updates['version_creator'] = str(user.get('_id'))
+
         if force_unlock:
             del updates['force_unlock']
 

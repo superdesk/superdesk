@@ -45,7 +45,11 @@ class AAPIngestService(FileIngestService):
                         with open(os.path.join(self.path, filename), 'r') as f:
                             item = self.parser.parse_message(etree.fromstring(f.read()))
 
-                            self.add_timestamps(item)
+                            item['_created'] = item['firstcreated'] \
+                                = normalize_date(item.get('firstcreated'), self.tz)
+                            item['_updated'] = item['versioncreated'] \
+                                = normalize_date(item.get('versioncreated'), self.tz)
+
                             item.setdefault('provider', provider.get('name', provider['type']))
                             self.move_file(self.path, filename, success=True)
                             yield [item]
