@@ -15,8 +15,9 @@ env/
 bin/
 lib/
 man/
+src/
+dist/
 build/
 include/
 .idea/
 .vagrant/
-src/
