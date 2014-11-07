@@ -23,6 +23,14 @@ class InvalidFileType(SuperdeskError):
         super().__init__('Invalid file type %s' % type, payload={})
 
 
+class IdentifierGenerationError(SuperdeskError):
+    """Exception raised if failed to generate unique_id."""
+
+    status_code = 500
+    payload = {'unique_id': 1}
+    message = "Failed to generate unique_id"
+
+
 def on_create_item(docs):
     """Make sure item has basic fields populated."""
     for doc in docs:
@@ -111,10 +119,16 @@ def on_delete_media_archive():
 def generate_unique_id_and_name(item):
     """
     Generates and appends unique_id and unique_name to item.
-    :param item:
+    :throws IdentifierGenerationError: if unable to generate unique_id
     """
 
-    unique_id = update_key("INGEST_SEQ", flag=True)
+    try:
+        unique_id = update_key("INGEST_SEQ", flag=True)
 
-    item['unique_id'] = unique_id
-    item['unique_name'] = "#" + str(unique_id)
+        if unique_id:
+            item['unique_id'] = unique_id
+            item['unique_name'] = "#" + str(unique_id)
+        else:
+            raise IdentifierGenerationError()
+    except Exception as e:
+        raise IdentifierGenerationError() from e
