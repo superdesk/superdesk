@@ -7,6 +7,8 @@ Created on May 29, 2014
 
 import redis
 import arrow
+import logging
+import werkzeug
 import superdesk
 from bson import ObjectId
 from celery import Celery
@@ -16,6 +18,7 @@ from eve.utils import str_to_date
 from flask import json, current_app as app
 
 
+logger = logging.getLogger(__name__)
 celery = Celery(__name__)
 TaskBase = celery.Task
 
@@ -81,7 +84,11 @@ class AppContextTask(TaskBase):
 
     def __call__(self, *args, **kwargs):
         with superdesk.app.app_context():
-            return super().__call__(*args, **kwargs)
+            try:
+                return super().__call__(*args, **kwargs)
+            except werkzeug.exceptions.InternalServerError as e:
+                superdesk.app.sentry.captureException()
+                logger.exception(e)
 
     def on_failure(self, exc, task_id, args, kwargs, einfo):
         try:
