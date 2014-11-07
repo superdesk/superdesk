@@ -1,4 +1,4 @@
-from settings import LDAP_SERVER
+from settings import LDAP_SERVER, URL_PREFIX
 from superdesk.tests import TestCase
 from superdesk import get_resource_service
 from .commands import ImportUserProfileFromADCommand
@@ -10,7 +10,8 @@ class ImportUsersTestCase(TestCase):
         if LDAP_SERVER:
             user = {'username': 'sduser1', 'password': 'Password.01', 'user_to_import': 'sduser1'}
             cmd = ImportUserProfileFromADCommand()
-            with self.app.test_request_context():
+
+            with self.app.test_request_context(URL_PREFIX):
                 cmd.run(user['username'], user['password'], user['user_to_import'])
                 auth_user = get_resource_service('auth').authenticate(user)
                 self.assertEquals(auth_user['username'], user['username'])
