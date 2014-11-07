@@ -33,6 +33,7 @@ class Preference_Tests(TestCase):
 
     _default_session_settings = {
         "desk:items": [],
+        "stage:items": [],
         "pinned:items": [],
         "scratchpad:items": []
     }
@@ -59,6 +60,7 @@ class Preference_Tests(TestCase):
     def test_setting_partial_session_preferences_with_existing(self):
         existing_session_settings = {
             "desk:items": [],
+            "stage:items": [],
             "pinned:items": ['a', 'b', 'c'],
             "scratchpad:items": []
         }

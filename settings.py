@@ -158,7 +158,7 @@ if LDAP_SERVER:
 else:
     INSTALLED_APPS.append('apps.auth.db')
 
-TESTING = (os.environ.get('SUPERDESK_TESTING', 'false').lower() == 'true')
+SUPERDESK_TESTING = (os.environ.get('SUPERDESK_TESTING', 'false').lower() == 'true')
 
 # The number of minutes since the last update of the Mongo auth object after which it will be deleted
 SESSION_EXPIRY_MINUTES = 240
