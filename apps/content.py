@@ -6,12 +6,19 @@ metadata_schema = {
         'unique': True
     },
     'unique_id': {
-        'type': 'string',
+        'type': 'integer',
         'unique': True
     },
     'unique_name': {
         'type': 'string',
         'unique': True
+    },
+    'parent_id': {
+        'type': 'string',
+        'unique': True
+    },
+    'version': {
+        'type': 'integer'
     },
     'provider': {
         'type': 'string'
@@ -23,9 +30,6 @@ metadata_schema = {
         'default': 'text'
     },
     'mimetype': {
-        'type': 'string'
-    },
-    'version': {
         'type': 'string'
     },
     'versioncreated': {

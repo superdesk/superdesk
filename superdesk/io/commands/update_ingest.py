@@ -1,9 +1,11 @@
+from _datetime import datetime
 import logging
 import superdesk
 from superdesk.utc import utcnow
 from superdesk.notification import push_notification
 from superdesk.io import providers
 from superdesk.celery_app import celery
+from eve.utils import config
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +40,11 @@ def update_provider(provider):
 def ingest_items(provider, items):
         start = utcnow()
         ingested_count = provider.get('ingested_count', 0)
+
+        # Hate to do this but there is no alternative, might be a bug in Pymongo
+        if isinstance(ingested_count, datetime):
+            ingested_count = 0
+
         for item in items:
             item.setdefault('_id', item['guid'])
             item.setdefault('_created', utcnow())
@@ -48,6 +55,7 @@ def ingest_items(provider, items):
                 superdesk.get_resource_service('ingest').put(item['guid'], item)
             else:
                 ingested_count += 1
+                item[config.VERSION] = 1
                 superdesk.get_resource_service('ingest').post([item])
 
         superdesk.get_resource_service('ingest_providers').patch(provider['_id'], {

@@ -2,6 +2,7 @@ from datetime import datetime
 from uuid import uuid4
 
 import flask
+from superdesk.celery_app import update_key
 
 from superdesk.utc import utcnow
 from settings import SERVER_DOMAIN
@@ -113,7 +114,7 @@ def generate_unique_id_and_name(item):
     :param item:
     """
 
-    current_ts = utcnow().strftime("%d%m%Y%H%M%S%f")
+    unique_id = update_key("INGEST_SEQ", flag=True)
 
-    item['unique_id'] = current_ts
-    item['unique_name'] = "#" + current_ts
+    item['unique_id'] = unique_id
+    item['unique_name'] = "#" + str(unique_id)
