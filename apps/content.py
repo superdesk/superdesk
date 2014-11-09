@@ -20,6 +20,8 @@ metadata_schema = {
     'version': {
         'type': 'integer'
     },
+    'original_creator': Resource.rel('users', True),
+    'version_creator': Resource.rel('users', True),
     'provider': {
         'type': 'string'
     },
@@ -98,12 +100,6 @@ metadata_schema = {
     },
     'body_html': {
         'type': 'string'
-    },
-    'creator': {
-        'type': 'dict',
-        'schema': {
-            'user': Resource.rel('users', True)
-        }
     },
     'media_file': {
         'type': 'string'

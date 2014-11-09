@@ -35,7 +35,7 @@ def on_create_item(docs):
     """Make sure item has basic fields populated."""
     for doc in docs:
         update_dates_for(doc)
-        doc['original_creator'] = set_user(doc)
+        set_original_creator(doc)
 
         if not doc.get('guid'):
             doc['guid'] = generate_guid(type=GUID_NEWSML)
@@ -80,14 +80,15 @@ def get_auth():
     return auth
 
 
-def set_user(doc):
+def set_original_creator(doc):
     usr = get_user()
     user = str(usr.get('_id', ''))
-    sent_user = doc.get('user', None)
-    if sent_user and user and sent_user != user:
-        raise superdesk.SuperdeskError()
-    doc['user'] = user
-    return user
+    doc['original_creator'] = user
+
+    # sent_user = doc.get('user', None)
+    # if sent_user and user and sent_user != user:
+    #     raise superdesk.SuperdeskError()
+    # doc['user'] = user
 
 
 item_url = 'regex("[\w,.:_-]+")'

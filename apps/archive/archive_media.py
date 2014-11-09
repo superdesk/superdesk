@@ -8,7 +8,7 @@ from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from superdesk.resource import Resource
 from superdesk.upload import url_for_media
 from superdesk.utc import utcnow
-from .common import item_url, update_dates_for, generate_guid, GUID_TAG, ARCHIVE_MEDIA, set_user, \
+from .common import item_url, update_dates_for, generate_guid, GUID_TAG, ARCHIVE_MEDIA, set_original_creator, \
     generate_unique_id_and_name
 from .common import on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from superdesk.activity import add_activity
@@ -74,7 +74,7 @@ class ArchiveMediaService(BaseService):
                 doc['filemeta'] = metadata
 
                 if not doc.get('_import', None):
-                    doc['creator'] = set_user(doc)
+                    set_original_creator(doc)
 
                 add_activity('uploaded media {{ name }}',
                              name=doc.get('headline', doc.get('mimetype')),

@@ -8,7 +8,7 @@ from superdesk import SuperdeskError, get_resource_service
 from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
 from superdesk.activity import add_activity
-from eve.utils import parse_request
+from eve.utils import parse_request, config
 from superdesk.services import BaseService
 from apps.content import metadata_schema
 from apps.common.components.utils import get_component
@@ -87,11 +87,12 @@ class ArchiveService(BaseService):
         if not original_creator:
             updates['original_creator'] = original['original_creator']
 
-        if lock_user and str(lock_user) != str(user['_id']) and not force_unlock:
+        str_user_id = str(user.get('_id'))
+        if lock_user and str(lock_user) != str_user_id and not force_unlock:
             raise SuperdeskError(payload='The item was locked by another user')
 
         updates['versioncreated'] = utcnow()
-        updates['version_creator'] = str(user.get('_id'))
+        updates['version_creator'] = str_user_id
 
         if force_unlock:
             del updates['force_unlock']
@@ -109,10 +110,11 @@ class ArchiveService(BaseService):
         user = get_user()
         lock_user = original.get('lock_user', None)
         force_unlock = document.get('force_unlock', False)
-        if lock_user and str(lock_user) != str(user['_id']) and not force_unlock:
+        user_id = str(user.get('_id'))
+        if lock_user and str(lock_user) != user_id and not force_unlock:
             raise SuperdeskError(payload='The item was locked by another user')
         document['versioncreated'] = utcnow()
-        document['version_creator'] = str(user.get('_id'))
+        document['version_creator'] = user_id
         if force_unlock:
             del document['force_unlock']
 
@@ -153,7 +155,7 @@ class ArchiveService(BaseService):
         if curr is None:
             raise SuperdeskError(payload='Invalid item id %s' % item_id)
 
-        if curr['_version'] != last_version:
+        if curr[config.VERSION] != last_version:
             raise SuperdeskError(payload='Invalid last version %s' % last_version)
         old['_id'] = old['_id_document']
         old['_updated'] = old['versioncreated'] = utcnow()
