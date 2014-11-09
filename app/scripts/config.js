@@ -19,7 +19,7 @@ require.config({
         'angular-file-upload-shim': 'bower_components/ng-file-upload/angular-file-upload-shim',
         'angular-slider': 'bower_components/angular-slider-royale/angular-slider',
 
-        'moment-timezone': 'bower_components/moment-timezone/moment-timezone',
+        'moment-timezone': 'bower_components/moment-timezone/builds/moment-timezone-with-data-2010-2020',
 
         'jquery-ui': 'bower_components/jquery-ui/jquery-ui',
 
