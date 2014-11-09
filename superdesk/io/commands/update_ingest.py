@@ -41,7 +41,7 @@ def ingest_items(provider, items):
         start = utcnow()
         ingested_count = provider.get('ingested_count', 0)
 
-        # Hate to do this but there is no alternative, might be a bug in Pymongo
+        # TODO: Hate to do this but there is no alternative, might be a bug in Pymongo
         if isinstance(ingested_count, datetime):
             ingested_count = 0
 

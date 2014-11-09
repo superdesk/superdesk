@@ -110,17 +110,11 @@ metadata_schema = {
     'task_id': {
         'type': 'string'
     },
-    'lock_user': {
-        'type': 'objectid',
-        'data_relation': {'resource': 'users', 'field': '_id', 'embeddable': True}
-    },
+    'lock_user': Resource.rel('users', True),
     'lock_time': {
         'type': 'datetime'
     },
-    'lock_session': {
-        'type': 'objectid',
-        'data_relation': {'resource': 'auth', 'field': '_id', 'embeddable': True}
-    },
+    'lock_session': Resource.rel('auth', True),
     'is_spiked': {
         'type': 'boolean'
     },
