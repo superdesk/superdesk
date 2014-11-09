@@ -133,6 +133,34 @@
 	}
 }
 
+.mini-modal {
+	padding: 20px;
+	border: 1px solid #9ecbde;
+	.border-box();
+	.box-shadow(0 0 2px 0 #bbb);
+	position: relative;
+	background: #fff;
+	.title {
+		font-size: 11px;
+		.text-semibold();
+		color: @black;
+		text-transform: uppercase;
+	}
+	.close {
+		position: absolute;
+		right: 12px;
+		top: 8px;
+	}
+	.content {
+		margin: 15px 0;
+		.field {
+			margin-bottom: 10px;
+		}
+	}
+	.footer {
+		text-align: right;
+	}
+}
 
 /*************************************
 	RESPONSIVE POPUP
