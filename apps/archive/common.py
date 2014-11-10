@@ -2,6 +2,7 @@ from datetime import datetime
 from uuid import uuid4
 
 import flask
+from superdesk.celery_app import update_key
 
 from superdesk.utc import utcnow
 from settings import SERVER_DOMAIN
@@ -22,14 +23,25 @@ class InvalidFileType(SuperdeskError):
         super().__init__('Invalid file type %s' % type, payload={})
 
 
+class IdentifierGenerationError(SuperdeskError):
+    """Exception raised if failed to generate unique_id."""
+
+    status_code = 500
+    payload = {'unique_id': 1}
+    message = "Failed to generate unique_id"
+
+
 def on_create_item(docs):
     """Make sure item has basic fields populated."""
     for doc in docs:
         update_dates_for(doc)
-        doc['original_creator'] = set_user(doc)
+        set_original_creator(doc)
 
         if not doc.get('guid'):
             doc['guid'] = generate_guid(type=GUID_NEWSML)
+
+        if 'unique_id' not in doc:
+            generate_unique_id_and_name(doc)
 
         doc.setdefault('_id', doc['guid'])
 
@@ -68,14 +80,15 @@ def get_auth():
     return auth
 
 
-def set_user(doc):
+def set_original_creator(doc):
     usr = get_user()
     user = str(usr.get('_id', ''))
-    sent_user = doc.get('user', None)
-    if sent_user and user and sent_user != user:
-        raise superdesk.SuperdeskError()
-    doc['user'] = user
-    return user
+    doc['original_creator'] = user
+
+    # sent_user = doc.get('user', None)
+    # if sent_user and user and sent_user != user:
+    #     raise superdesk.SuperdeskError()
+    # doc['user'] = user
 
 
 item_url = 'regex("[\w,.:_-]+")'
@@ -84,7 +97,7 @@ extra_response_fields = ['guid', 'headline', 'firstcreated', 'versioncreated', '
 
 facets = {
     'type': {'terms': {'field': 'type'}},
-    'provider': {'terms': {'field': 'provider'}},
+    'source': {'terms': {'field': 'source'}},
     'urgency': {'terms': {'field': 'urgency'}},
     'subject': {'terms': {'field': 'subject.name'}},
     'place': {'terms': {'field': 'place.name'}},
@@ -102,3 +115,21 @@ def on_update_media_archive():
 
 def on_delete_media_archive():
     push_notification('media_archive', deleted=1)
+
+
+def generate_unique_id_and_name(item):
+    """
+    Generates and appends unique_id and unique_name to item.
+    :throws IdentifierGenerationError: if unable to generate unique_id
+    """
+
+    try:
+        unique_id = update_key("INGEST_SEQ", flag=True)
+
+        if unique_id:
+            item['unique_id'] = unique_id
+            item['unique_name'] = "#" + str(unique_id)
+        else:
+            raise IdentifierGenerationError()
+    except Exception as e:
+        raise IdentifierGenerationError() from e

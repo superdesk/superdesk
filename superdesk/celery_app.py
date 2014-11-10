@@ -7,15 +7,18 @@ Created on May 29, 2014
 
 import redis
 import arrow
+import logging
+import werkzeug
 import superdesk
 from bson import ObjectId
 from celery import Celery
 from kombu.serialization import register
 from eve.io.mongo import MongoJSONEncoder
 from eve.utils import str_to_date
-from flask import json
+from flask import json, current_app as app
 
 
+logger = logging.getLogger(__name__)
 celery = Celery(__name__)
 TaskBase = celery.Task
 
@@ -81,7 +84,11 @@ class AppContextTask(TaskBase):
 
     def __call__(self, *args, **kwargs):
         with superdesk.app.app_context():
-            return super().__call__(*args, **kwargs)
+            try:
+                return super().__call__(*args, **kwargs)
+            except werkzeug.exceptions.InternalServerError as e:
+                superdesk.app.sentry.captureException()
+                logger.exception(e)
 
     def on_failure(self, exc, task_id, args, kwargs, einfo):
         try:
@@ -110,11 +117,15 @@ def finish_task_for_progress(task_id):
     return _update_subtask_progress(task_id, done=True)
 
 
-def update_key(redis_db, key, flag):
+def update_key(key, flag=False, db=None):
+
+    if db is None:
+        db = redis.from_url(app.config['REDIS_URL'])
+
     if flag:
-        crt_value = redis_db.incr(key)
+        crt_value = db.incr(key)
     else:
-        crt_value = redis_db.get(key)
+        crt_value = db.get(key)
 
     if crt_value:
         crt_value = int(crt_value)
@@ -131,9 +142,9 @@ def _update_subtask_progress(task_id, current=None, total=None, done=None):
     total_key = 'total_%s' % task_id
     done_key = 'done_%s' % task_id
 
-    crt_current = update_key(redis_db, current_key, current)
-    crt_total = update_key(redis_db, total_key, total)
-    crt_done = update_key(redis_db, done_key, done)
+    crt_current = update_key(current_key, current, redis_db)
+    crt_total = update_key(total_key, total, redis_db)
+    crt_done = update_key(done_key, done, redis_db)
 
     if crt_done and crt_current == crt_total:
         redis_db.delete(current_key)

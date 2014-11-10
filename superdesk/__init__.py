@@ -2,7 +2,7 @@
 
 import logging
 from flask import abort, json, Blueprint, current_app as app  # noqa
-from flask.ext.script import Command, Option  # noqa @UnresolvedImport
+from flask.ext.script import Command as BaseCommand, Option  # noqa @UnresolvedImport
 from eve.methods.common import document_link  # noqa
 from .datalayer import SuperdeskDataLayer  # noqa
 from werkzeug.exceptions import HTTPException
@@ -24,6 +24,18 @@ default_session_preferences = dict()
 
 
 logger = logging.getLogger(__name__)
+
+
+class Command(BaseCommand):
+    """
+    The Eve framework changes introduced with https://github.com/nicolaiarocci/eve/issues/213 make the commands fail.
+    Reason being the flask-script's run the commands using test_request_context() which is invalid.
+    That's the reason we are inheriting the Flask-Script's Command to overcome this issue.
+    """
+
+    def __call__(self, app=None, *args, **kwargs):
+        with app.app_context():
+            return self.run(*args, **kwargs)
 
 
 class SuperdeskError(Exception):

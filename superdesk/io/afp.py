@@ -38,7 +38,6 @@ class AFPIngestService(FileIngestService):
                             item = self.parser.parse_message(etree.fromstring(f.read()))
 
                             self.add_timestamps(item)
-                            item.setdefault('provider', provider.get('name', provider['type']))
                             self.move_file(self.path, filename, success=True)
                             yield [item]
                     else:

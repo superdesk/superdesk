@@ -5,7 +5,31 @@ metadata_schema = {
         'type': 'string',
         'unique': True
     },
-    'provider': {
+    'unique_id': {
+        'type': 'integer',
+        'unique': True
+    },
+    'unique_name': {
+        'type': 'string',
+        'unique': True
+    },
+    'parent_id': {
+        'type': 'string',
+        'unique': True
+    },
+    'version': {
+        'type': 'integer'
+    },
+    'original_creator': Resource.rel('users', True),
+    'version_creator': Resource.rel('users', True),
+    'ingest_provider': Resource.rel('ingest_providers', True),
+    'source': {     # The value is copied from the ingest_providers vocabulary
+        'type': 'string'
+    },
+    'original_source': {    # This value is extracted from the ingest
+        'type': 'string'
+    },
+    'ingest_provider_sequence': {
         'type': 'string'
     },
     'type': {
@@ -15,9 +39,6 @@ metadata_schema = {
         'default': 'text'
     },
     'mimetype': {
-        'type': 'string'
-    },
-    'version': {
         'type': 'string'
     },
     'versioncreated': {
@@ -72,9 +93,6 @@ metadata_schema = {
     'filemeta': {
         'type': 'dict'
     },
-    'ingest_provider': {
-        'type': 'string'
-    },
     'urgency': {
         'type': 'integer'
     },
@@ -87,35 +105,20 @@ metadata_schema = {
     'body_html': {
         'type': 'string'
     },
-    'creator': {
-        'type': 'dict',
-        'schema': {
-            'user': Resource.rel('users', True)
-        }
-    },
     'media_file': {
         'type': 'string'
     },
     'contents': {
         'type': 'list'
     },
-    'media': {
-        'type': 'media'
-    },
     'task_id': {
         'type': 'string'
     },
-    'lock_user': {
-        'type': 'objectid',
-        'data_relation': {'resource': 'users', 'field': '_id', 'embeddable': True}
-    },
+    'lock_user': Resource.rel('users', True),
     'lock_time': {
         'type': 'datetime'
     },
-    'lock_session': {
-        'type': 'objectid',
-        'data_relation': {'resource': 'auth', 'field': '_id', 'embeddable': True}
-    },
+    'lock_session': Resource.rel('auth', True),
     'is_spiked': {
         'type': 'boolean'
     },

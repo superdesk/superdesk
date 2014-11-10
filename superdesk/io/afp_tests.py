@@ -19,7 +19,6 @@ class TestCase(unittest.TestCase):
         self.assertEquals(self.item.get('guid'), 'urn:newsml:afp.com:20140829T135002Z:TX-PAR-FXW86:1')
 
     def test_coreitemvalues(self):
-        self.assertEquals(self.item.get('provider'), 'AFP')
         self.assertEquals(self.item.get('type'), 'text')
         self.assertEquals(self.item.get('urgency'), '4')
         self.assertEquals(self.item.get('version'), '1')

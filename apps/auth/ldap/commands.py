@@ -34,7 +34,7 @@ class ImportUserProfileFromADCommand(superdesk.Command):
         """
 
         # force type conversion to boolean
-        user_type = 'administrator' if admin.lower() == 'true' else 'user'
+        user_type = 'administrator' if admin is not None and admin.lower() == 'true' else 'user'
 
         # Authenticate and fetch profile from AD
         settings = app.settings
