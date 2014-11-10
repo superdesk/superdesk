@@ -15,6 +15,7 @@ def setup_providers(context):
         setup_reuters_mock(context)
         provider = {'name': 'reuters',
                     'type': 'reuters',
+                    'source': 'reuters',
                     'config': {'username': app.config['REUTERS_USERNAME'],
                                'password': app.config['REUTERS_PASSWORD']
                                }

@@ -13,6 +13,8 @@ def setup_provider(token, hours):
     return {
         'name': PROVIDER,
         'type': PROVIDER,
+        'source': PROVIDER,
+        'days_to_keep': 2,
         'token': {
             'token': token,
             'created': utcnow() - timedelta(hours=hours),
