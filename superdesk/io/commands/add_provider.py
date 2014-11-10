@@ -16,6 +16,7 @@ class AddProvider(superdesk.Command):
             data.setdefault('_created', utcnow())
             data.setdefault('_updated', utcnow())
             data.setdefault('name', data['type'])
+            data.setdefault('source', data['type'])
             data.setdefault('days_to_keep', DAYS_TO_KEEP)
             db = superdesk.get_db()
             db['ingest_providers'].save(data)

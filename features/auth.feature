@@ -68,7 +68,11 @@ Feature: Authentication
         [{"username": "foo", "password": "bar", "email": "foo@bar.org", "is_active": false}]
         """
 
-        When we post to reset_password we do not get email with token
+        When we post to "/reset_user_password"
+        """
+        [{"email": "foo@bar.org"}]
+        """
+        Then we get error 403
 
     @auth
     Scenario: Reset password existing user - disabled after mail is sent
