@@ -14,6 +14,7 @@ Feature: Ingest Provider
         [{
         "type": "reuters",
         "name": "reuters 4",
+        "source": "reuters",
         "config": {"username": "foo", "password": "bar"}
         }]
 	    """
@@ -24,6 +25,7 @@ Feature: Ingest Provider
         "type": "reuters",
         "name": "reuters 4",
         "days_to_keep": 2,
+        "source": "reuters",
         "config": {"username": "foo", "password": "bar"}
         }]}
 	    """
@@ -35,6 +37,7 @@ Feature: Ingest Provider
         [{
         "type": "reuters",
         "name": "reuters 4",
+        "source": "reuters",
         "config": {"username": "foo", "password": "bar"}
         }]
 	    """
@@ -57,6 +60,7 @@ Feature: Ingest Provider
         [{
         "type": "reuters",
         "name": "reuters 4",
+        "source": "reuters",
         "config": {"username": "foo", "password": "bar"}
         }]
 	    """

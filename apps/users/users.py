@@ -88,7 +88,7 @@ class UsersResource(Resource):
         },
         'is_active': {
             'type': 'boolean',
-            'default': False
+            'default': True
         },
         'needs_activation': {
             'type': 'boolean',

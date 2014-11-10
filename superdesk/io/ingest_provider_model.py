@@ -31,5 +31,9 @@ class IngestProviderResource(Resource):
         },
         'token': {
             'type': 'dict'
+        },
+        'source': {
+            'type': 'string',
+            'required': True,
         }
     }
