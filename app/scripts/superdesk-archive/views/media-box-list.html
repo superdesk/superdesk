@@ -2,41 +2,38 @@
 
 <span class="state-border"></span>
 
-<div class="list-field">
+<div class="list-field urgency">
     <i class="urgency-icon-{{item.urgency}}"></i>
 </div>
 
-<div class="media-info">
-    <div class="list-field type-icon">
-        <i class="filetype-icon-{{item.type}}"></i>
-        <span class="output-item-label label-{{item.urgency}}">{{ item.urgency }}</span>
-    </div>
+<div class="list-field type-icon">
+    <i class="filetype-icon-{{item.type}}"></i>
+    <span class="output-item-label label-{{item.urgency}}">{{ item.urgency }}</span>
+</div>
 
-    <h5 class="list-field">
-        <div class="main-title">
-            <div class="status-label"
-                 ng-class="{'label-canceled': item.pubstatus=='canceled'}"
-                 ng-show="item.pubstatustatus && item.pubstatus!='usable'">
-                 {{ item.pubstatus | translate }}
-            </div>
-            {{ item.headline || item.slugline || item.type }}
-        </div>
-        <div class="meta-data-field">
-            <div class="item-provider" ng-if="item.provider">{{ item.provider }}</div>
-            <span ng-show="item.subject">//</span> {{ item.subject | mergeWords}}
-            <span ng-if="item.is_spiked" class="label label-warning"><b>{{ item.expiry | reldate }}</b></span>
-        </div>
-    </h5>
+<div class="list-field word-count-box">
+    <span class="word-count">235</span>
+    <span class="signal">signal</span>
+</div>
 
-    <div class="item-right list-field">
+<div class="item-info">
+    <div class="line">
+        <div class="headline"><span class="keyword">Thisisamaxlengthkeyword1</span>{{ item.headline || item.slugline || item.type }}</div>
         <time datetime="{{ item.versioncreated }}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time>
-        <div class="action">
-            <ul ng-if="extras.activityFilter" class="item-functions"
-                sd-activity-list
-                data-data="{item: item, list: items, index: $index}"
-                data-type="{{extras.activityFilter.type}}"
-                data-action="{{extras.activityFilter.action}}">
-            </ul>
-        </div>
+    </div>
+    <div class="line">
+        <div class="takekey">HereIsATakeKey_MaxLength</div>
+        <div class="provider" ng-if="item.provider">{{ item.provider }}</div>
+    </div>
+</div>
+
+<div class="item-right list-field">
+    <div class="action">
+        <ul ng-if="extras.activityFilter" class="item-functions"
+            sd-activity-list
+            data-data="{item: item, list: items, index: $index}"
+            data-type="{{extras.activityFilter.type}}"
+            data-action="{{extras.activityFilter.action}}">
+        </ul>
     </div>
 </div>

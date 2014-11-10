@@ -1,17 +1,5 @@
 <div>
-    <div class="additional-info" ng-class="{open : additional && item.provider}">
-        <ul>
-            <li class="date">
-                <p>{{ 'Created' | translate }} {{ item.firstcreated | reldate }}</p>
-                <p>{{ 'Modified' | translate }} {{ item.versioncreated | reldate }}</p>    
-            </li>
-            <li ng-if="item.provider">{{ 'Source' | translate }}: <span>{{ item.provider }}</span></li>
-            <li ng-if="item.version">{{ 'Version' | translate }}: <span>{{ item.version }}</span></li>
-        </ul>
-        <div class="switch" ng-show="item.provider" ng-click="additional = !additional"><i class="icon-chevron-down-thin"></i></div>
-    </div>
-
-    <div class="content-container" ng-class="{padd: additional && item.provider}">
+    <div class="content-container">
 
         <div class="composite-nav" ng-if="item.type === 'composite'">
            <div class="top">
