@@ -31,7 +31,6 @@ class TextParserTest(ItemTest):
 
     def test_parse_item_meta(self):
         self.assertEquals("text", self.item.get('type'))
-        self.assertEquals("reuters.com", self.item.get('provider'))
         self.assertEquals("2013-03-01T15:09:04", self.item.get('versioncreated').isoformat())
         self.assertEquals("2013-03-01T15:09:04", self.item.get('firstcreated').isoformat())
 
@@ -109,7 +108,6 @@ class SNEPParserTest(ItemTest):
         self.assertEquals("tag:reuters.com,0000:newsml_BRE9220HA", ref.get('residRef'))
         self.assertEquals("application/vnd.iptc.g2.packageitem+xml", ref.get('contentType'))
         self.assertEquals("icls:composite", ref.get('itemClass'))
-        self.assertEquals("reuters.com", ref.get('provider'))
         self.assertEquals("At least 15 killed on Kenya coast on election day", ref.get('headline'))
 
 if __name__ == '__main__':

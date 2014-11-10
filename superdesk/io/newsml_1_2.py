@@ -1,4 +1,3 @@
-
 import datetime
 from ..etree import etree
 from superdesk.io import Parser
@@ -12,11 +11,17 @@ class NewsMLOneParser(Parser):
         item = {}
         self.root = tree
 
+        parsed_el = tree.find('NewsItem/NewsComponent/AdministrativeMetadata/Source')
+        if parsed_el is not None:
+            item['original_source'] = parsed_el.find('Party').get('FormalName', '')
+
+        parsed_el = tree.find('NewsEnvelope/TransmissionId')
+        if parsed_el is not None:
+            item['ingest_provider_sequence'] = parsed_el.text
+
         item['NewsIdentifier'] = self.parse_elements(tree.find('NewsItem/Identification/NewsIdentifier'))
         item['NewsManagement'] = self.parse_elements(tree.find('NewsItem/NewsManagement'))
         item['NewsLines'] = self.parse_elements(tree.find('NewsItem/NewsComponent/NewsLines'))
-        item['Provider'] = self.parse_attributes_as_dictionary(
-            tree.find('NewsItem/NewsComponent/AdministrativeMetadata/Provider'))
         item['DescriptiveMetadata'] = self.parse_multivalued_elements(
             tree.find('NewsItem/NewsComponent/DescriptiveMetadata'))
         item['located'] = self.parse_attributes_as_dictionary(
@@ -33,7 +38,7 @@ class NewsMLOneParser(Parser):
         item['ContentItem'] = self.parse_attributes_as_dictionary(
             tree.find('NewsItem/NewsComponent/ContentItem'))
         # item['Content'] = etree.tostring(
-        #       tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'))
+        # tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'))
         item['body_html'] = etree.tostring(
             tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'))
 
@@ -77,7 +82,6 @@ class NewsMLOneParser(Parser):
 
     def populate_fields(self, item):
         item['guid'] = item['NewsIdentifier']['PublicIdentifier']
-        item['provider'] = item['Provider'][0]['FormalName']
         item['type'] = 'text'
         item['urgency'] = item['NewsManagement']['Urgency']['FormalName']
         item['version'] = item['NewsIdentifier']['RevisionId']

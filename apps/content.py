@@ -22,7 +22,14 @@ metadata_schema = {
     },
     'original_creator': Resource.rel('users', True),
     'version_creator': Resource.rel('users', True),
-    'provider': {
+    'ingest_provider': Resource.rel('ingest_providers', True),
+    'source': {     # The value is copied from the ingest_providers vocabulary
+        'type': 'string'
+    },
+    'original_source': {    # This value is extracted from the ingest
+        'type': 'string'
+    },
+    'ingest_provider_sequence': {
         'type': 'string'
     },
     'type': {
@@ -85,9 +92,6 @@ metadata_schema = {
     },
     'filemeta': {
         'type': 'dict'
-    },
-    'ingest_provider': {
-        'type': 'string'
     },
     'urgency': {
         'type': 'integer'

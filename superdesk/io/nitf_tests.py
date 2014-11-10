@@ -49,5 +49,8 @@ class TestCase(unittest.TestCase):
     def test_pubstatus(self):
         self.assertEquals('usable', self.item.get('pubstatus'))
 
+    def test_ingest_provider_sequence(self):
+        self.assertEquals(self.item.get('ingest_provider_sequence'), '1747')
+
 if __name__ == '__main__':
     unittest.main()

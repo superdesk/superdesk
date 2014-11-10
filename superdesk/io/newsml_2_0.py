@@ -44,7 +44,6 @@ class NewsMLTwoParser(Parser):
         """Parse itemMeta tag"""
         meta = tree.find(self.qname('itemMeta'))
         item['type'] = meta.find(self.qname('itemClass')).attrib['qcode'].split(':')[1]
-        item['provider'] = meta.find(self.qname('provider')).attrib['literal']
         item['versioncreated'] = self.datetime(meta.find(self.qname('versionCreated')).text)
         item['firstcreated'] = self.datetime(meta.find(self.qname('firstCreated')).text)
         item['pubstatus'] = meta.find(self.qname('pubStatus')).attrib['qcode'].split(':')[1]
@@ -75,6 +74,11 @@ class NewsMLTwoParser(Parser):
 
         self.parse_content_subject(meta, item)
         self.parse_content_place(meta, item)
+
+        for info_source in meta.findall(self.qname('infoSource')):
+            if info_source.get('role', '') == 'cRole:source':
+                item['original_source'] = info_source.get('literal')
+                break
 
     def parse_content_subject(self, tree, item):
         """Parse subj type subjects into subject list."""
@@ -125,7 +129,6 @@ class NewsMLTwoParser(Parser):
                 ref['residRef'] = tree.attrib['residref']
                 ref['contentType'] = tree.attrib['contenttype']
                 ref['itemClass'] = tree.find(self.qname('itemClass')).attrib['qcode']
-                ref['provider'] = tree.find(self.qname('provider')).attrib['literal']
 
                 for headline in tree.findall(self.qname('headline')):
                     ref['headline'] = headline.text

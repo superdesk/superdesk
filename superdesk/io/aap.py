@@ -50,7 +50,6 @@ class AAPIngestService(FileIngestService):
                             item['_updated'] = item['versioncreated'] \
                                 = normalize_date(item.get('versioncreated'), self.tz)
 
-                            item.setdefault('provider', provider.get('name', provider['type']))
                             self.move_file(self.path, filename, success=True)
                             yield [item]
                     else:

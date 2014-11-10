@@ -97,7 +97,7 @@ extra_response_fields = ['guid', 'headline', 'firstcreated', 'versioncreated', '
 
 facets = {
     'type': {'terms': {'field': 'type'}},
-    'provider': {'terms': {'field': 'provider'}},
+    'source': {'terms': {'field': 'source'}},
     'urgency': {'terms': {'field': 'urgency'}},
     'subject': {'terms': {'field': 'subject.name'}},
     'place': {'terms': {'field': 'place.name'}},

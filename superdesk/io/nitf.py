@@ -23,7 +23,6 @@ class NITFParser(Parser):
         item['urgency'] = docdata.find('urgency').get('ed-urg', '5')
         item['firstcreated'] = self.get_norm_datetime(docdata.find('date.issue'))
         item['versioncreated'] = self.get_norm_datetime(docdata.find('date.issue'))
-        item['keywords'] = self.get_keywords(tree)
         item['subject'] = self.get_subjects(tree)
         item['body_html'] = self.get_content(tree)
         item['pubstatus'] = docdata.attrib.get('management-status', 'usable')
@@ -34,6 +33,8 @@ class NITFParser(Parser):
             item['copyrightholder'] = docdata.find('doc.copyright').get('holder')
         except AttributeError:
             pass
+
+        self.parse_meta(tree, item)
 
         return item
 
@@ -46,12 +47,17 @@ class NITFParser(Parser):
             elements.append(etree.tostring(elem, encoding='UTF-8').decode('utf-8'))
         return ''.join(elements)
 
-    def get_keywords(self, tree):
+    def parse_meta(self, tree, item):
         keywords = []
         for elem in tree.findall('head/meta'):
-            if elem.get('name') == 'anpa-keyword':
+            attribute_name = elem.get('name')
+
+            if attribute_name == 'anpa-keyword':
                 keywords.append(elem.get('content'))
-        return keywords
+            if attribute_name == 'anpa-sequence':
+                item['ingest_provider_sequence'] = elem.get('content')
+
+        item['keywords'] = keywords
 
     def get_subjects(self, tree):
         subjects = []
