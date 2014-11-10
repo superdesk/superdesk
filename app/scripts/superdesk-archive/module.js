@@ -188,5 +188,35 @@ define([
                 }
             });
         }])
+
+        /**
+         * Item filters sidebar
+         */
+        .directive('sdItemFilters', function() {
+            return {
+                templateUrl: 'scripts/superdesk-archive/views/item-filters.html',
+                link: function(scope) {
+                    scope.sTab = true;
+                }
+            };
+        })
+
+        /**
+         * Item list with sidebar preview
+         */
+        .directive('sdItemList', function() {
+            return {
+                templateUrl: 'scripts/superdesk-archive/views/item-list.html'
+            };
+        })
+
+        /**
+         * Edit item view
+         */
+        .directive('sdEditView', function() {
+            return {
+                templateUrl: 'scripts/superdesk-archive/views/edit-view.html'
+            };
+        })
         ;
 });

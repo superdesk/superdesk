@@ -1,4 +1,4 @@
-<div sd-modal-view data-model="chooser.activities" class="activity-choose-modal">
+<div sd-modal-view ng-if="chooser-activities" data-model="chooser.activities" class="activity-choose-modal">
     <ul class="list-group" ng-if="selected">
         <li class="list-group-item" ng-repeat="activity in chooser.activities" ng-click="chooser.resolve(activity)" ng-class="{active: activity === selected}">
 			<a href="">{{ activity.label }}</a>

@@ -1,0 +1,66 @@
+<div sd-modal-view data-model="views.edited" class="add-view-modal responsive-popup">
+    <div class="modal-header"> <a href="" class="close" ng-click="views.cancel() && cancel()"><i class="icon-close-small"></i></a>
+        <h3 translate ng-show="views.edited._id">Edit View {{ origView.name }}</h3>
+        <h3 translate ng-hide="views.edited._id">Add New View</h3>
+    </div>
+
+    <form name="editView">
+    <div class="modal-body">
+            <div class="popup-subnav">
+                <ul class="nav nav-tabs">
+                    <li ng-class="{'active': !views.flags.next}">
+                        <button ng-click="views.flags.next=false" translate>General</button>
+                    </li>
+                    <li ng-class="{'active': views.flags.next}">
+                        <button ng-click="views.flags.next=true" translate>Filters</button>
+                    </li>
+                </ul>
+            </div>
+            <div class="modal-screen" ng-if="!views.flags.next">
+                <fieldset>
+                    <div class="field">
+                        <label translate>Name</label>
+                        <input name="name" type="text" class="fullwidth-input" ng-model="views.edited.name" required />
+
+                        <div ng-show="editView.name.$error.required" sd-valid-info>
+                            <i class="icon-info-sign-warning"></i>
+                            <span translate>name is required</span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label translate>Description</label>
+                        <textarea sd-auto-height ng-model="views.edited.description"></textarea>
+                    </div>
+                    <div class="field row" ng-hide="views.edited._id || !selectedDesk">
+                        <input sd-check ng-model="views.flags.is_desk">
+                        <label translate>Attach to current desk</label>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="modal-screen" ng-if="views.flags.next">
+                <fieldset>
+                    <div class="field">
+                        <label translate>Filter query</label>
+                        <input name="filter" type="text" class="fullwidth-input" ng-model="views.flags.query" required />
+
+                        <div ng-show="editView.filter.$error.required" sd-valid-info>
+                            <i class="icon-info-sign-warning"></i>
+                            <span translate>filter is required</span>
+                        </div>
+
+                        <div ng-show="views._issues.filter && !views._issues.filter.required" sd-valid-info>
+                            <i class="icon-info-sign-warning"></i>
+                            <span translate>filter is not valid</span>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="views.cancel() && cancel()" translate>Cancel</button>
+        <button class="btn btn-primary" ng-click="views.flags.next=true" ng-show="!views.flags.next" translate>Next</button>
+        <button class="btn btn-primary" ng-click="views.save()" ng-show="views.flags.next" ng-disabled="editView.$invalid" translate>Save</button>
+    </div>
+    </form>
+</div>

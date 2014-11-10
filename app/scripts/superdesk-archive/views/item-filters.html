@@ -1,0 +1,63 @@
+<div ng-init="sTab = true">
+    <div class="header">
+        <div class="icon">
+            <i class="icon-filter-large"></i>
+        </div>
+        <ul>
+            <li ng-class="{active: sTab}" ng-click="sTab = true" translate>Filters</li>
+            <li ng-class="{active: !sTab}" ng-click="sTab = false" translate>Views</li>
+        </ul>
+        <div class="doopen" ng-click="sidebarstick = false"><i class="icon-backward-thin"></i></div>
+    </div>
+    <div class="content" ng-if="sTab">
+        <div sd-toggle-box data-title="{{ 'Content type' | translate }}" data-open="true">
+            <div sd-filter-contenttype data-items="items"></div>
+        </div>
+        
+        <div class="info-tab filter-general">
+            <form>
+            <ul class="metadata">
+                <li>
+                    <div class="lbl" translate>Urgency</div>
+                    <div class="data urgency-data" sd-filter-urgency>
+                        <slider floor="1" ceiling="5" precision="0" ng-model-low="urgency.min" ng-model-high="urgency.max" class="sd-slider urgency-slider"></slider>
+                        <div class="urgency-range">{{urgency.min}} - {{urgency.max}}</div>
+                    </div>
+                </li>
+                <li class="sublist">
+                    <ul sd-date-range data-lte="lte" data-gte="gte">
+                        <li>
+                            <label for="created_before" translate>Created before</label>
+                            <div class="data">
+                                <input id="created_before" type="date" ng-model="lte" class="form-control">
+                            </div>
+                        </li>
+                        <li>
+                            <label for="created_after" translate>Created after</label>
+                            <div class="data">
+                                <input id="created_after" type="date" ng-model="gte" class="form-control">
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                
+                <li>
+                    <div class="lbl">
+                        <span translate>Source</span>
+                    </div>
+                    <div class="data data-provider">
+                        <div class="dropdown source-select" sd-provider-menu data-items="items"></div>
+                    </div>
+                </li>
+            </ul>
+            </form>
+        </div>
+    </div>
+    <div class="content views" ng-if="!sTab">
+        <div class="header">
+            <button class="btn pull-right" ng-disabled="!views.selected" ng-click="views.select()" translate>Clear</button>
+            <button class="btn btn-info" ng-click="views.create()"><i class="icon-plus-small icon-white"></i> {{ :: 'Create' | translate }}</button>
+        </div>
+        <div class="list" sd-desk-views></div>
+    </div>
+</div>
