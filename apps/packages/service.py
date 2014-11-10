@@ -1,7 +1,9 @@
-from eve.utils import ParsedRequest
+from eve.utils import ParsedRequest, config
 from superdesk.services import BaseService
 from superdesk import SuperdeskError, get_resource_service
 from apps.archive.common import on_create_item
+from apps.content import LINKED_IN_PACKAGES
+from .resource import ASSOCIATIONS, ITEM_REF
 
 
 class PackageService(BaseService):
@@ -15,10 +17,25 @@ class PackageService(BaseService):
         on_create_item(docs)
         self.check_package_associations(docs)
 
+    def on_created(self, docs):
+        for (doc, assoc) in [(doc, assoc) for doc in docs for assoc in doc.get(ASSOCIATIONS, [])]:
+            self.update_link(doc[config.ID_FIELD], assoc)
+
+    def on_update(self, updates, original):
+        for assoc in updates.get(ASSOCIATIONS, []):
+            self.extract_default_association_data(assoc)
+
+    def on_updated(self, updates, original):
+        for assoc in updates.get(ASSOCIATIONS, []):
+            self.update_link(original[config.ID_FIELD], assoc)
+
+    def on_deleted(self, doc):
+        for assoc in doc.get(ASSOCIATIONS, []):
+            self.update_link(doc[config.ID_FIELD], assoc, delete=True)
+
     def check_package_associations(self, docs):
         for doc in docs:
-            doc['type'] = 'composite'
-            associations = doc.get('associations', [])
+            associations = doc.get(ASSOCIATIONS, [])
             if len(associations) == 0:
                 raise SuperdeskError(message='No content associated with the package.')
 
@@ -26,14 +43,23 @@ class PackageService(BaseService):
                 self.extract_default_association_data(assoc)
 
     def extract_default_association_data(self, assoc):
-        endpoint, item_id = assoc['itemRef'].split('/')[-2:]
-        item = get_resource_service(endpoint).find_one(req=None, _id=item_id)
-        if not item:
-            raise SuperdeskError(message='Invalid item reference: ' + assoc['itemRef'])
+        item, item_id, endpoint = self.get_associated_item(assoc)
         assoc['guid'] = item.get('guid', item_id)
         assoc['type'] = item.get('type')
 
-    def on_update(self, updates, original):
-        associations = updates.get('associations', [])
-        for assoc in associations:
-            self.extract_default_association_data(assoc)
+    def get_associated_item(self, assoc):
+        endpoint, item_id = assoc[ITEM_REF].split('/')[-2:]
+        item = get_resource_service(endpoint).find_one(req=None, _id=item_id)
+        if not item:
+            raise SuperdeskError(message='Invalid item reference: ' + assoc['itemRef'])
+        return item, item_id, endpoint
+
+    def update_link(self, package_id, assoc, delete=False):
+        item, item_id, endpoint = self.get_associated_item(assoc)
+        two_way_links = [d for d in item.get(LINKED_IN_PACKAGES, []) if not d['package'] == package_id]
+
+        if not delete:
+            two_way_links.append({'package': package_id})
+
+        item[LINKED_IN_PACKAGES] = two_way_links
+        get_resource_service(endpoint).patch(item_id, item)

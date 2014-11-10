@@ -189,6 +189,30 @@ Feature: Packages
         }
         """
         And we get latest
+        When we get "/archive"
+        Then we get list with 2 items
+            """
+            {
+                "_items": [
+                    {
+                        "guid": "#ARCHIVE_ID#",
+                        "headline": "test",
+                        "linked_in_packages": [{"package": "#PACKAGES_ID#"}],
+                        "type": "text"
+                    },
+                    {
+                        "associations": [
+                            {
+                                "headline": "test package with text",
+                                "itemRef": "/archive/#ARCHIVE_ID#",
+                                "slugline": "awesome article"
+                            }
+                        ],
+                        "type": "composite"
+                    }
+                ]
+            }
+            """
         
     @auth
     Scenario: Patch created package
@@ -283,3 +307,17 @@ Feature: Packages
         """
         When we delete latest
         Then we get deleted response
+        When we get "/archive"
+        Then we get list with 1 items
+            """
+            {
+                "_items": [
+                    {
+                    "headline": "test",
+                    "linked_in_packages": [],
+                    "guid": "#ARCHIVE_ID#",
+                    "type": "text"
+                    }
+                ]
+            }
+            """

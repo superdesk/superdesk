@@ -2,6 +2,8 @@
 from superdesk.resource import Resource
 from apps.content import metadata_schema
 from apps.archive.common import item_url
+ASSOCIATIONS = 'associations'
+ITEM_REF = 'itemRef'
 
 
 class PackageResource(Resource):
@@ -25,14 +27,14 @@ class PackageResource(Resource):
             'readonly': True,
             'default': 'composite'
         },
-        'associations': {
+        ASSOCIATIONS: {
             'type': 'list',
             'required': True,
             'minlength': 1,
             'schema': {
                 'type': 'dict',
                 'schema': {
-                    'itemRef': {'type': 'string'},
+                    ITEM_REF: {'type': 'string'},
                     'guid': {
                         'type': 'string',
                         'readonly': True
