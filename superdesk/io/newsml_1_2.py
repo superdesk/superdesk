@@ -45,6 +45,10 @@ class NewsMLOneParser(Parser):
         item['body_html'] = etree.tostring(
             tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'))
 
+        parsed_el = tree.findall('NewsItem/NewsComponent/ContentItem/Characteristics/Property')
+        characteristics = self.parse_attribute_values(parsed_el, 'Words')
+        item['word_count'] = characteristics[0] if len(characteristics) else None
+
         parsed_el = tree.find('NewsItem/NewsComponent/RightsMetadata/UsageRights/UsageType')
         if parsed_el is not None:
             item.setdefault('usageterms', parsed_el.text)
@@ -76,6 +80,18 @@ class NewsMLOneParser(Parser):
     def parse_attributes_as_dictionary(self, items):
         attributes = [item.attrib for item in items]
         return attributes
+
+
+    def parse_property_as_dictionary(self, tree):
+        """
+        To parse <Property FormalName="Words" Value="224"/>
+        :param tree:
+        :return:
+        """
+        items = {}
+        for item in tree:
+            items[item.attrib['FormalName']] = item.attrib['Value']
+        return items
 
     def parse_attribute_values(self, items, attribute):
         attributes = []
@@ -112,3 +128,4 @@ class NewsMLOneParser(Parser):
         item['dateline'] = parsed_el.get('DateLine', '')
         item['slugline'] = parsed_el.get('SlugLine', '')
         item['byline'] = parsed_el.get('ByLine', '')
+
