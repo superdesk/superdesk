@@ -15,10 +15,6 @@ define([
 
         $injector.invoke(BaseListController, this, {$scope: $scope});
 
-        $scope.createdMedia = {
-            items: []
-        };
-
         $scope.currentModule = 'archive';
         $scope.views = new ViewsCtrl($scope);
         $scope.stages = new StagesCtrl($scope);
@@ -34,10 +30,7 @@ define([
         };
 
         $scope.openUpload = function openUpload() {
-            superdesk.intent('upload', 'media').then(function(items) {
-                // todo: put somewhere else
-                $scope.createdMedia.items.unshift.apply($scope.createdMedia.items, items);
-            });
+            superdesk.intent('upload', 'media');
         };
 
         this.fetchItems = function fetchItems(criteria) {
@@ -48,9 +41,6 @@ define([
             resource.query(criteria).then(function(items) {
                 $scope.loading = false;
                 $scope.items = items;
-                $scope.createdMedia = {
-                    items: []
-                };
             }, function() {
                 $scope.loading = false;
             });

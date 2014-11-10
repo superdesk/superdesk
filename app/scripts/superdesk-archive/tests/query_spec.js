@@ -1,6 +1,7 @@
 'use strict';
 
-describe('content query builder', function() {
+describe('search service', function() {
+    beforeEach(module('templates'));
     beforeEach(module('superdesk.archive'));
 
     it('can create base query', inject(function(contentQuery) {
@@ -8,7 +9,7 @@ describe('content query builder', function() {
         var criteria = query.getCriteria();
         var filters = criteria.query.filtered.filter.and;
         expect(filters).toContain({not: {term: {is_spiked: true}}});
-        expect(criteria.sort).toContain({versioncreated: 'desc'});
+        expect(criteria.sort).toEqual([{versioncreated: 'desc'}]);
         expect(criteria.size).toBe(25);
     }));
 
@@ -24,5 +25,16 @@ describe('content query builder', function() {
     it('can set size', inject(function(contentQuery) {
         var criteria = contentQuery.query().size(10).getCriteria();
         expect(criteria.size).toBe(10);
+    }));
+
+    it('can sort items', inject(function(search, $location, $rootScope) {
+        search.sort('priority');
+        $rootScope.$digest();
+        expect($location.search().sort).toBe('priority:desc');
+        expect(search.getSort()).toEqual({label: 'Priority', field: 'priority', dir: 'desc'});
+
+        search.toggleSortDir();
+        $rootScope.$digest();
+        expect(search.getSort()).toEqual({label: 'Priority', field: 'priority', dir: 'asc'});
     }));
 });

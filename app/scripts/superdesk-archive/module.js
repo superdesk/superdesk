@@ -8,8 +8,40 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    ContentQueryBuilder.$inject = ['$location'];
-    function ContentQueryBuilder($location) {
+    SearchService.$inject = ['$location', 'gettext'];
+    function SearchService($location, gettext) {
+        this.sortOptions = [
+            {field: 'versioncreated', label: gettext('Updated')},
+            {field: 'firstcreated', label: gettext('Created')},
+            {field: 'urgency', label: gettext('News Value')},
+            {field: 'priority', label: gettext('Priority')},
+            {field: 'headline', label: gettext('Headline'), defaultDir: 'asc'}
+        ];
+
+        this.sort = function sort(field) {
+            var option = _.find(this.sortOptions, {field: field});
+            setSortSearch(option.field, option.defaultDir || 'desc');
+        };
+
+        this.getSort = function getSort() {
+            var sort = ($location.search().sort || 'versioncreated:desc').split(':');
+            return angular.extend(_.find(this.sortOptions, {field: sort[0]}), {dir: sort[1]});
+        };
+
+        this.toggleSortDir = function toggleSortDir() {
+            var sort = this.getSort();
+            var dir = sort.dir === 'asc' ? 'desc' : 'asc';
+            setSortSearch(sort.field, dir);
+        };
+
+        function setSortSearch(field, dir) {
+            $location.search('sort', field + ':' + dir);
+            $location.search('page', null);
+        }
+    }
+
+    ContentQueryBuilder.$inject = ['$location', 'search'];
+    function ContentQueryBuilder($location, search) {
 
         /**
          * Single query instance
@@ -17,19 +49,34 @@ define([
          * @param {string} q Query string query
          */
         function Query(q) {
-            var size = 25;
-            var sort = [{versioncreated: 'desc'}];
-            var filters = [];
+            var size = 25,
+                filters = [];
+
+            /**
+             * Set from/size for given query and params
+             *
+             * @param {Object} query
+             * @param {Object} params
+             * @returns {Object}
+             */
+            function paginate(query, params) {
+                var page = params.page || 1;
+                query.size = size;
+                query.from = (page - 1) * query.size;
+            }
 
             /**
              * Get criteria for given query
              */
             this.getCriteria = function getCriteria() {
+                var sort = search.getSort();
                 var criteria = {
                     query: {filtered: {filter: {and: filters}}},
-                    size: size,
-                    sort: sort
+                    sort: [_.zipObject([sort.field], [sort.dir])]
                 };
+
+                var params = $location.search();
+                paginate(criteria, params);
 
                 if (q) {
                     criteria.query.filtered.query = {query_string: {query: q}};
@@ -127,6 +174,7 @@ define([
 
         .service('spike', SpikeService)
         .service('contentQuery', ContentQueryBuilder)
+        .service('search', SearchService)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
@@ -216,6 +264,43 @@ define([
         .directive('sdEditView', function() {
             return {
                 templateUrl: 'scripts/superdesk-archive/views/edit-view.html'
+            };
+        })
+
+        /**
+         * Item search component
+         */
+        .directive('sdItemSearchbar', function() {
+            return {
+                templateUrl: 'scripts/superdesk-archive/views/item-searchbar.html'
+            };
+        })
+
+        /**
+         * Item sort component
+         */
+        .directive('sdItemSortbar', function($location, search) {
+            return {
+                scope: {},
+                templateUrl: 'scripts/superdesk-archive/views/item-sortbar.html',
+                link: function(scope) {
+                    scope.sortOptions = search.sortOptions;
+
+                    function getActive() {
+                        scope.active = search.getSort();
+                    }
+
+                    scope.sort = function sort(field) {
+                        search.sort(field);
+                    };
+
+                    scope.toggleDir = function toggleDir($event) {
+                        search.toggleSortDir();
+                    };
+
+                    scope.$on('$routeUpdate', getActive);
+                    getActive();
+                }
             };
         })
         ;

@@ -1,0 +1,9 @@
+<div class="dropdown navbtn pull-left">
+    <button class="dropdown-toggle pull-left">Sort: {{ active.label }}</button>
+    <ul class="dropdown-menu">
+        <li ng-repeat="option in sortOptions" ng-class="{active: option === selected}">
+            <a href="" ng-click="sort(option.field)">{{ option.label }}</a>
+        </li>
+    </ul>
+    <button ng-click="toggleDir()" class="pull-left">{{ active.dir }}</button>
+</div>

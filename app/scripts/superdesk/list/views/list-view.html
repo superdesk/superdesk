@@ -3,7 +3,7 @@
     <li class="panel alert alert-info" ng-show="items.length == 0"><p translate>Oops! There are no items.</p></li>
 
     <li class="list-item-view panel panel-default"
-        ng-repeat="item in items track by _id || $index"
+        ng-repeat="item in items track by item._id || $index"
         ng-click="clickItem(item, $event)"
         ng-class="{active: item._id === selected._id}">
         <div class="panel-body" sd-list-item data-item="item"></div>
