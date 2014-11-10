@@ -1,5 +1,7 @@
 
 from superdesk.resource import Resource
+from apps.content import metadata_schema
+from apps.archive.common import item_url
 
 
 class PackageResource(Resource):
@@ -7,22 +9,21 @@ class PackageResource(Resource):
     Package schema
     '''
     datasource = {
-        'search_backend': 'elastic',
-        'default_sort': [('_created', -1)],
+        'source': 'archive',
+        'default_sort': [('_updated', -1)],
+        'filter': {'type': 'composite'},
+        'elastic_filter': {'term': {'archive.type': 'composite'}}  # eve-elastic specific filter
     }
+    item_url = item_url
+    item_methods = ['GET', 'PATCH', 'DELETE']
 
-    schema = {
-        'guid': {
-            'type': 'string',
-            'unique': True
-        },
-        'provider': {
-            'type': 'string'
-        },
+    schema = {}
+    schema.update(metadata_schema)
+    schema.update({
         'type': {
             'type': 'string',
             'readonly': True,
-            'allowed': ['text', 'audio', 'video', 'picture', 'graphic', 'composite'],
+            'default': 'composite'
         },
         'associations': {
             'type': 'list',
@@ -51,51 +52,5 @@ class PackageResource(Resource):
         },
         'profile': {
             'type': 'string'
-        },
-        'versioncreated': {
-            'type': 'datetime'
-        },
-        'pubstatus': {
-            'type': 'string'
-        },
-        'copyrightholder': {
-            'type': 'string'
-        },
-        'copyrightnotice': {
-            'type': 'string'
-        },
-        'language': {
-            'type': 'string'
-        },
-        'place': {
-            'type': 'list'
-        },
-        'byline': {
-            'type': 'string'
-        },
-        'headline': {
-            'type': 'string'
-        },
-        'located': {
-            'type': 'string'
-        },
-        'description_text': {
-            'type': 'string',
-            'nullable': True
-        },
-        'firstcreated': {
-            'type': 'datetime'
-        },
-        'urgency': {
-            'type': 'integer'
-        },
-        'body_html': {
-            'type': 'string'
-        },
-        'creator': {
-            'type': 'dict',
-            'schema': {
-                'user': Resource.rel('users', True)
-            }
         }
-    }
+    })

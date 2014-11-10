@@ -61,11 +61,12 @@ Feature: Packages
                             }
                         ],
                         "guid": "tag:example.com,0000:newsml_BRE9A605",
-                        "type": "text"
+                        "type": "composite"
                     }
                 ]
             }
             """
+
     @auth
     Scenario: Create new package with image content
         Given empty "packages"
@@ -79,8 +80,7 @@ Feature: Packages
                     "itemRef": "/archive/#ARCHIVE_MEDIA_ID#",
                     "slugline": "awesome picture"
                 }
-            ],
-            "guid": "tag:example.com,0000:newsml_BRE9A605"
+            ]
         }
         """
         And we get "/packages"
@@ -98,8 +98,7 @@ Feature: Packages
                                 "type": "picture"
                             }
                         ],
-                        "guid": "tag:example.com,0000:newsml_BRE9A605",
-                        "type": "picture"
+                        "type": "composite"
                     }
                 ]
             }
@@ -127,8 +126,7 @@ Feature: Packages
                     "itemRef": "/archive/#ARCHIVE_ID#",
                     "slugline": "awesome article"
                 }
-            ],
-            "guid": "tag:example.com,0000:newsml_BRE9A605"
+            ]
         }
         """
         And we get "/packages"
@@ -148,12 +146,140 @@ Feature: Packages
                             {
                                 "headline": "test package with text",
                                 "itemRef": "/archive/#ARCHIVE_ID#",
-                                "slugline": "awesome article"
+                                "slugline": "awesome article",
+                                "type": "text"
                             }
                         ],
-                        "guid": "tag:example.com,0000:newsml_BRE9A605",
                         "type": "composite"
                     }
                 ]
             }
             """
+
+    @auth
+    Scenario: Retrieve created package
+        Given empty "packages"
+        When we post to "archive"
+	    """
+        [{"headline": "test"}]
+	    """
+        When we post to "/packages" with success
+        """
+        {
+            "associations": [
+                {
+                    "headline": "test package with text",
+                    "itemRef": "/archive/#ARCHIVE_ID#",
+                    "slugline": "awesome article"
+                }
+            ]
+        }
+        """
+        Then we get new resource
+        """
+        {
+            "associations": [
+                {
+                    "headline": "test package with text",
+                    "itemRef": "/archive/#ARCHIVE_ID#",
+                    "slugline": "awesome article"
+                }
+            ],
+            "type": "composite"
+        }
+        """
+        And we get latest
+        
+    @auth
+    Scenario: Patch created package
+        Given empty "packages"
+        When we post to "archive"
+	    """
+        [{"headline": "test"}]
+	    """
+        When we upload a file "bike.jpg" to "archive_media"
+        When we post to "/packages" with success
+        """
+        {
+            "associations": [
+                {
+                    "headline": "test package with text",
+                    "itemRef": "/archive/#ARCHIVE_ID#",
+                    "slugline": "awesome article"
+                }
+            ]
+        }
+        """
+        And we patch latest
+        """
+        {
+            "associations": [
+                {
+                    "headline": "test package with pic",
+                    "itemRef": "/archive/#ARCHIVE_MEDIA_ID#",
+                    "slugline": "awesome picture"
+                },
+                {
+                    "headline": "test package with text",
+                    "itemRef": "/archive/#ARCHIVE_ID#",
+                    "slugline": "awesome article"
+                }
+            ]
+        }
+        """
+        Then we get existing resource
+        """
+        {
+            "associations": [
+                {
+                    "guid": "#ARCHIVE_MEDIA_ID#",
+                    "headline": "test package with pic",
+                    "itemRef": "/archive/#ARCHIVE_MEDIA_ID#",
+                    "slugline": "awesome picture",
+                    "type": "picture"
+                },
+                {
+                    "headline": "test package with text",
+                    "itemRef": "/archive/#ARCHIVE_ID#",
+                    "slugline": "awesome article",
+                    "type": "text"
+                }
+            ],
+            "type": "composite"
+        }
+        """
+
+    @auth
+    Scenario: Delete created package
+        Given empty "packages"
+        When we post to "archive"
+	    """
+        [{"headline": "test"}]
+	    """
+        When we post to "/packages" with success
+        """
+        {
+            "associations": [
+                {
+                    "headline": "test package with text",
+                    "itemRef": "/archive/#ARCHIVE_ID#",
+                    "slugline": "awesome article"
+                }
+            ]
+        }
+        """
+        Then we get new resource
+        """
+        {
+            "associations": [
+                {
+                    "headline": "test package with text",
+                    "itemRef": "/archive/#ARCHIVE_ID#",
+                    "slugline": "awesome article"
+                }
+            ],
+            "type": "composite"
+        }
+        """
+        When we delete latest
+        Then we get deleted response
