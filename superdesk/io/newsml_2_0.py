@@ -107,8 +107,9 @@ class NewsMLTwoParser(Parser):
     def parse_rights_info(self, tree, item):
         """Parse Rights Info tag"""
         info = tree.find(self.qname('rightsInfo'))
-        item['copyrightholder'] = info.find(self.qname('copyrightHolder')).attrib['literal']
-        item['copyrightnotice'] = getattr(info.find(self.qname('copyrightNotice')), 'text', None)
+        item['usageterms'] = getattr(info.find(self.qname('usageTerms')), 'text', '')
+        # item['copyrightholder'] = info.find(self.qname('copyrightHolder')).attrib['literal']
+        # item['copyrightnotice'] = getattr(info.find(self.qname('copyrightNotice')), 'text', None)
 
     def parse_group_set(self, tree, item):
         item['groups'] = []

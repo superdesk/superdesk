@@ -42,6 +42,10 @@ class NewsMLOneParser(Parser):
         item['body_html'] = etree.tostring(
             tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'))
 
+        parsed_el = tree.find('NewsItem/NewsComponent/RightsMetadata/UsageRights/UsageType')
+        if parsed_el is not None:
+            item.setdefault('usageterms', parsed_el.text)
+
         return self.populate_fields(item)
 
     def parse_elements(self, tree):

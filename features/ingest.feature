@@ -39,6 +39,7 @@ Feature: Ingest
 		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS"
 		    }, {
 		        "type": "composite",
+		        "usageterms": "NO ARCHIVAL USE",
 		        "groups": [{
 		            "refs": [{
 		                "itemClass": "icls:text",

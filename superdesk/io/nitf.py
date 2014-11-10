@@ -29,10 +29,10 @@ class NITFParser(Parser):
 
         item['headline'] = tree.find('body/body.head/hedline/hl1').text
 
-        try:
-            item['copyrightholder'] = docdata.find('doc.copyright').get('holder')
-        except AttributeError:
-            pass
+        # try:
+        #     item['copyrightholder'] = docdata.find('doc.copyright').get('holder')
+        # except AttributeError:
+        #     pass
 
         self.parse_meta(tree, item)
 
