@@ -269,17 +269,9 @@ TASK PAGE
 // stages styling
 // ---------------------------------------------
 
-@stage-color-default: rgb(80, 80, 80);
-@stage-color-0: rgb(168, 45, 100);
-@stage-color-1: rgb(31, 111, 159);
-@stage-color-2: rgb(105, 142, 72);
-@stage-color-3: rgb(114, 51, 141);
-@stage-color-4: rgb(197, 90, 57);
-@stage-color-5: rgb(154, 158, 64);
-@stage-color-6: rgb(84, 110, 122);
-
 .stage-color(@color) {
-	a {
+	a, button {
+		background: #fff;
 		border-color: rgba(red(@color), green(@color), blue(@color), 0.6) !important;
 		color: hsl(hue(@color), saturation(@color), lightness(@color)-10%) !important;
 		&:hover {
