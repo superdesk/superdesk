@@ -12,17 +12,17 @@
 </div>
 
 <div class="list-field word-count-box">
-    <span class="word-count">235</span>
-    <span class="signal">signal</span>
+    <span class="word-count">{{ item.word_count }}</span>
+    <span class="signal" ng-if="item.signal">{{ item.signal }}</span>
 </div>
 
 <div class="item-info">
     <div class="line">
-        <div class="headline"><span class="keyword">Thisisamaxlengthkeyword1</span>{{ item.headline || item.slugline || item.type }}</div>
+        <div class="headline"><span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span>{{ item.headline || item.type }}</div>
         <time datetime="{{ item.versioncreated }}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time>
     </div>
     <div class="line">
-        <div class="takekey">HereIsATakeKey_MaxLength</div>
+        <div class="takekey" ng-if="item.takekey">{{ item.anpa_take_key }}</div>
         <div class="provider" ng-if="item.provider">{{ item.provider }}</div>
     </div>
 </div>

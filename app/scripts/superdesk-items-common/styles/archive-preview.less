@@ -253,6 +253,32 @@
 			}
 		}
 	}
+
+	.metadata {
+		position: absolute;
+		top:0; left: 0; right: 0; bottom: 0;
+		padding: 20px 20px @bottom-view-padding;
+		overflow: auto;
+
+		ul > li {
+			.clearfix();
+			margin-bottom: 10px;
+			> dt {
+				clear: both;
+				float: left;
+				width: 140px;
+				.text-semibold();
+			}
+			> dl {
+				padding-left: 140px;
+				min-height: 18px;
+				margin: 0;
+				word-break: break-word;
+			}
+		}
+
+
+	}
 }
 
 

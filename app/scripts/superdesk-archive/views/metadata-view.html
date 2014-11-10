@@ -1,0 +1,122 @@
+<div class="metadata">
+    <ul>       
+        <li ng-if="item.guid">
+            <dt translate>GUID</dt>
+            <dl> {{ item.guid }}</dl>
+        </li>
+        <li ng-if="item.unique_name">
+            <dt translate>Unique</dt>
+            <dl> {{ item.unique_name }}</dl>
+        </li>
+        <li ng-if="item._version">
+            <dt translate>Version</dt>
+            <dl> {{ item._version }}</dl>
+        </li>
+
+        <li ng-if="item.firstcreated">
+            <dt translate>First Created</dt>
+            <dl sd-reldate-complex ng-model="item.firstcreated"></dl>
+        </li>
+        <li ng-if="item.versioncreated">
+            <dt translate>Last updated</dt>
+            <dl sd-reldate-complex ng-model="item.versioncreated"></dl>
+        </li>
+        <li ng-if="original_creator">
+            <dt translate>Original creator</dt>
+            <dl> {{ original_creator }}</dl>
+        </li>
+        <li ng-if="version_creator">
+            <dt translate>Version creator</dt>
+            <dl> {{ version_creator }}</dl>
+        </li>
+
+        <!-- ingest details -->
+        <li ng-if="item.original_source">
+            <dt translate>Original source</dt>
+            <dl> {{ item.original_source }}</dl>
+        </li>
+        <li ng-if="item.provider">
+            <dt translate>Ingest provider</dt>
+            <dl> {{ item.provider }}</dl>
+        </li>
+        <li ng-if="item.ingest_provider_sequence">
+            <dt translate>Ingest provider sequence</dt>
+            <dl> {{ item.ingest_provider_sequence }}</dl>
+        </li>
+
+        <!-- copyright details details -->
+        <li ng-if="item.copyrightholder">
+            <dt translate>Copyright holder</dt>
+            <dl> {{ item.copyrightholder }}</dl>
+        </li>
+        <li ng-if="item.copyrightnotice">
+            <dt translate>Copyright notice</dt>
+            <dl> {{ item.copyrightnotice }}</dl>
+        </li>
+        <li ng-if="item.usageterms">
+            <dt translate>usageterms</dt>
+            <dl> {{ item.usageterms }}</dl>
+        </li>
+
+        <!-- category details -->
+        <li ng-if="item.anpa_category">
+            <dt translate>ANPA category</dt>
+            <dl> {{ item.anpa_category }}</dl>
+        </li>
+        <li ng-if="item.subject">
+            <dt translate>Subject</dt>
+            <dl> {{ item.subject | mergeWords}}</dl>
+        </li>
+        <li ng-if="item.genre">
+            <dt translate>Genre</dt>
+            <dl> {{ item.genre }}</dl>
+        </li>
+
+        <!-- Story details -->
+        <li ng-if="item.language">
+            <dt translate>Language</dt>
+            <dl> {{ item.language }}</dl>
+        </li>
+        <li ng-if="item.anpa_take_key">
+            <dt translate>ANPA take key</dt>
+            <dl> {{ item.anpa_take_key }}</dl>
+        </li>
+        <li ng-if="item.keywords">
+            <dt translate>Keywords</dt>
+            <dl> {{ item.keywords }}</dl>
+        </li>
+        <li ng-if="item.word_count">
+            <dt translate>Word Count</dt>
+            <dl> {{ item.word_count }}</dl>
+        </li>
+        <li ng-if="item.priority">
+            <dt translate>Priority</dt>
+            <dl> {{ item.priority }}</dl>
+        </li>
+        <li ng-if="item.urgency">
+            <dt translate>Urgency</dt>
+            <dl> {{ item.urgency }}</dl>
+        </li>
+        <li ng-if="item.pubstatus">
+            <dt translate>PubStatus</dt>
+            <dl> {{ item.pubstatus }}</dl>
+        </li>
+        <li ng-if="item.signal">
+            <dt translate>Signal</dt>
+            <dl> {{ item.signal }}</dl>
+        </li>
+        <li ng-if="item.byline">
+            <dt translate>Byline</dt>
+            <dl> {{ item.byline }}</dl>
+        </li>
+        <li ng-if="item.expiry">
+            <dt translate>Expiry</dt>
+            <dl> {{ item.expiry }}</dl>
+        </li>
+        <li ng-if="item.located">
+            <dt translate>located</dt>
+            <dl> {{ item.located }}</dl>
+        </li>
+
+    </ul>
+</div>

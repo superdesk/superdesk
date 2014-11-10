@@ -224,6 +224,33 @@ define([
                 }
             };
         }])
+        .directive('sdMediaMetadata', ['api', 'userList', function(api, userList) {
+            return {
+                scope: {
+                    item: '='
+                },
+                templateUrl: 'scripts/superdesk-archive/views/metadata-view.html',
+                link: function(scope, elem) {
+                    scope.$watch('item', reloadData);
+
+                    function reloadData() {
+                        scope.original_creator = null;
+                        scope.version_creator = null;
+
+                        if (scope.item.original_creator) {
+                            userList.getUser(scope.item.original_creator).then(function(user) {
+                                scope.original_creator = user.display_name;
+                            });
+                        }
+                        if (scope.item.version_creator) {
+                            userList.getUser(scope.item.version_creator).then(function(user) {
+                                scope.version_creator = user.display_name;
+                            });
+                        }
+                    }
+                }
+            };
+        }])
         .directive('sdSingleItem', [ function() {
 
             return {
@@ -234,7 +261,8 @@ define([
                     contents: '='
                 },
                 link: function(scope, elem) {
-
+                    console.log('=');
+                    console.log(scope.item);
                 }
             };
         }])

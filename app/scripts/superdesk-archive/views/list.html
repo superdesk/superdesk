@@ -152,14 +152,14 @@
                 </div>                
             </div>
 
-            <div class="preview-pane content-item-preview">
+            <div class="preview-pane content-item-preview" ng-init="contentTab = true">
                 <header>
                     <ul class="nav nav-tabs">
-                        <li class="active">
-                            <button><span translate>Content</span></button>
+                        <li ng-class="{active: contentTab}">
+                            <button ng-click="contentTab = true"><span translate>Content</span></button>
                         </li>
-                        <li>
-                            <button><span translate>Metadata</span></button>
+                        <li ng-class="{active: !contentTab}">
+                            <button ng-click="contentTab = false"><span translate>Metadata</span></button>
                         </li>
                     </ul>
                     <button ng-click="preview(null)" class="close-preview">
@@ -167,7 +167,8 @@
                     </button>
                 </header>
                 <div class="content" ng-if="selected.preview">
-                    <div sd-media-preview data-item="selected.preview" data-display="display()" data-type="{{ spike ? 'spike' : type }}"></div>
+                    <div ng-if="contentTab" sd-media-preview data-item="selected.preview" data-display="display()" data-type="{{ spike ? 'spike' : type }}"></div>
+                    <div ng-if="!contentTab" sd-media-metadata data-item="selected.preview"></div>
                 </div>
             </div>
         </div>
