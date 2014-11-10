@@ -8,6 +8,9 @@ from apps.item_lock.components.item_spike import ItemSpike
 import superdesk
 from eve.utils import ParsedRequest, date_to_str
 from superdesk.utc import utcnow
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ArchiveSpikeResource(Resource):
@@ -40,12 +43,12 @@ class ArchiveRemoveExpiredSpikes(superdesk.Command):
         self.remove_expired_spiked()
 
     def remove_expired_spiked(self):
-        print('Expiring spiked content')
+        logger.info('Expiring spiked content')
         now = date_to_str(utcnow())
         items = self.get_expired_items(now)
         while items.count() > 0:
             for item in items:
-                print('deleting {} expiry: {} now:{}'.format(item['_id'], item['expiry'], now))
+                logger.info('deleting {} expiry: {} now:{}'.format(item['_id'], item['expiry'], now))
                 superdesk.get_resource_service('archive').delete_action({'_id': str(item['_id'])})
             items = self.get_expired_items(now)
 
