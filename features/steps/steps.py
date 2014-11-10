@@ -1026,3 +1026,14 @@ def step_get_activation_email(context):
     url = urlparse(words[words.index("to") + 1])
     token = url.fragment.split('token=')[-1]
     assert token
+
+
+@when('role "{extending_name}" extends "{extended_name}"')
+def step_role_extends(context, extending_name, extended_name):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        extended = get_resource_service('roles').find_one(name=extended_name, req=None)
+        extending = get_resource_service('roles').find_one(name=extending_name, req=None)
+        headers = if_match(context, extending.get('_etag'))
+        data = json.dumps({'extends': str(extended['_id'])})
+        context.response = context.client.patch(get_prefixed_url(context.app, '/roles/%s' % extending['_id']),
+                                                data=data, headers=headers)

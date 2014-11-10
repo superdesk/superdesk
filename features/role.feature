@@ -144,6 +144,36 @@ Feature: Role Resource
             """
         When we post to "/roles"
             """
-            {"name": "big"}
+            [{"name": "big"}]
             """
+        Then we get response code 400
+
+    @auth
+    Scenario: A Role cannot extend its self
+        Given "roles"
+          """
+          [{"name": "BIG"}]
+          """
+
+        When we patch "/roles/#ROLES_ID#"
+          """
+          { "extends": "#ROLES_ID#"}
+          """
+
+        Then we get response code 400
+
+    @auth
+    Scenario: A Role can not inherit from its self
+        Given "roles"
+        """
+        [{"name": "A"}]
+        """
+
+        When we post to "/roles"
+        """
+        [{"name": "B", "extends": "#ROLES_ID#"}]
+        """
+
+        When role "A" extends "B"
+
         Then we get response code 400

@@ -1,8 +1,7 @@
 from settings import LDAP_SERVER
 from .users import RolesResource, UsersResource
-from .services import ADUsersService, DBUsersService
+from .services import ADUsersService, DBUsersService, RolesService
 import superdesk
-from superdesk.services import BaseService
 
 
 def init_app(app):
@@ -14,5 +13,5 @@ def init_app(app):
     UsersResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'roles'
-    service = BaseService(endpoint_name, backend=superdesk.get_backend())
+    service = RolesService(endpoint_name, backend=superdesk.get_backend())
     RolesResource(endpoint_name, app=app, service=service)
