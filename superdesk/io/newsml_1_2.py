@@ -81,18 +81,6 @@ class NewsMLOneParser(Parser):
         attributes = [item.attrib for item in items]
         return attributes
 
-
-    def parse_property_as_dictionary(self, tree):
-        """
-        To parse <Property FormalName="Words" Value="224"/>
-        :param tree:
-        :return:
-        """
-        items = {}
-        for item in tree:
-            items[item.attrib['FormalName']] = item.attrib['Value']
-        return items
-
     def parse_attribute_values(self, items, attribute):
         attributes = []
         for item in items:
