@@ -1,5 +1,6 @@
 from superdesk.resource import Resource
 
+
 metadata_schema = {
     'guid': {
         'type': 'string',
@@ -22,6 +23,12 @@ metadata_schema = {
     },
     'original_creator': Resource.rel('users', True),
     'version_creator': Resource.rel('users', True),
+    'firstcreated': {
+        'type': 'datetime'
+    },
+    'versioncreated': {
+        'type': 'datetime'
+    },
     'ingest_provider': Resource.rel('ingest_providers', True),
     'source': {     # The value is copied from the ingest_providers vocabulary
         'type': 'string'
@@ -30,6 +37,9 @@ metadata_schema = {
         'type': 'string'
     },
     'ingest_provider_sequence': {
+        'type': 'string'
+    },
+    'usageterms': {
         'type': 'string'
     },
     'type': {
@@ -41,19 +51,7 @@ metadata_schema = {
     'mimetype': {
         'type': 'string'
     },
-    'versioncreated': {
-        'type': 'datetime'
-    },
     'pubstatus': {
-        'type': 'string'
-    },
-    'copyrightholder': {
-        'type': 'string'
-    },
-    'copyrightnotice': {
-        'type': 'string'
-    },
-    'usageterms': {
         'type': 'string'
     },
     'language': {
@@ -86,9 +84,6 @@ metadata_schema = {
     'description_text': {
         'type': 'string',
         'nullable': True
-    },
-    'firstcreated': {
-        'type': 'datetime'
     },
     'filemeta': {
         'type': 'dict'

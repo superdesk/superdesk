@@ -34,5 +34,8 @@ class TestCase(unittest.TestCase):
         self.assertIn({'cat': 'ECO', 'FormalName': '04016038'}, self.item.get('subject'))
         self.assertIn({'cat': 'ECO', 'FormalName': '04011000'}, self.item.get('subject'))
 
+    def test_usageterms(self):
+        self.assertEquals(self.item.get('usageterms'), 'NO ARCHIVAL USE')
+
 if __name__ == '__main__':
     unittest.main()

@@ -35,8 +35,8 @@ class TestCase(unittest.TestCase):
     def test_urgency(self):
         self.assertEquals(self.item.get('urgency'), '5')
 
-    def test_copyright(self):
-        self.assertEquals(self.item.get('copyrightholder'), 'Australian Associated Press')
+    # def test_copyright(self):
+    #     self.assertEquals(self.item.get('copyrightholder'), 'Australian Associated Press')
 
     def test_dates(self):
         self.assertEquals(self.item.get('firstcreated').isoformat(), '2013-10-20T19:27:51')
