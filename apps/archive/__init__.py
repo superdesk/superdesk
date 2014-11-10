@@ -16,6 +16,12 @@ from apps.item_lock.components.item_spike import ItemSpike
 from apps.common.models.utils import register_model
 from apps.item_lock.models.item import ItemModel
 from apps.common.models.io.eve_proxy import EveProxy
+from superdesk.celery_app import celery
+import logging
+from .archive_spike import ArchiveRemoveExpiredSpikes
+
+
+logger = logging.getLogger(__name__)
 
 
 def init_app(app):
@@ -83,3 +89,14 @@ def init_app(app):
     register_model(ItemModel(EveProxy(superdesk.get_backend())))
     register_component(ItemAutosave(app))
     register_model(ItemAutosaveModel(EveProxy(superdesk.get_backend())))
+
+
+@celery.task()
+def spike_purge():
+    try:
+        print('Starting Spike purge')
+        ArchiveRemoveExpiredSpikes().run()
+        print('Finished Spike purge')
+    except Exception as ex:
+        print('Spike exception')
+        logger.error(ex)

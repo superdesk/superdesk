@@ -62,6 +62,10 @@ CELERYBEAT_SCHEDULE = {
     'auth_session_purge': {
         'task': 'apps.auth.session_purge',
         'schedule': timedelta(minutes=30)
+    },
+    'spike_purge': {
+        'task': 'apps.archive.spike_purge',
+        'schedule': timedelta(minutes=60)
     }
 }
 
