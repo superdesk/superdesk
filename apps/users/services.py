@@ -5,7 +5,7 @@ from superdesk import get_resource_service, SuperdeskError
 from flask import current_app as app
 from superdesk.emails import send_user_status_changed_email, send_activate_account_email
 from superdesk.utc import utcnow
-
+from eve.validation import ValidationError
 
 import logging
 
@@ -138,3 +138,19 @@ class ADUsersService(UsersService):
     def on_fetched_item(self, doc):
         super().update_user_defaults(doc)
         doc['_readonly'] = ADUsersService.readonly_fields
+
+
+class RolesService(BaseService):
+
+    def on_update(self, updates, original):
+        if updates.get('extends'):
+            if updates.get('extends') == original.get('_id'):
+                raise ValidationError('A role can not extend its self')
+            self.check_parents(original.get('_id'), updates.get('extends'))
+
+    def check_parents(self, myid, parentid):
+        parent = self.find_one(req=None, _id=parentid)
+        if parent:
+            if parent['_id'] == myid:
+                raise ValidationError('Circular role inheritance')
+            self.check_parents(myid, parent.get('extends'))
