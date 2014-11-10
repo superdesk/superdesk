@@ -3,8 +3,7 @@
 	    <div class="page-title-wrapper clearfix pull-left">
 	    	<button class="stage stageclr-1 pull-left" ng-show="stage">{{stage.name}}</button>
 	    	<span class="lock-info pull-left" ng-show="item._locked"><i class="icon-lock-red"></i></span>
-            <button ng-show="stage">{{stage.name}}</button>
-	    	<h3 class="page-nav-title" ng-show="item.headline">{{ item.headline }}</h3>
+            <h3 class="page-nav-title" ng-show="item.headline">{{ item.headline }}</h3>
 	    	<h3 class="page-nav-title" ng-show="!item.headline" translate>Untitled</h3>
 	    	<span class="lock-text pull-left" ng-show="item._locked" translate>This article is locked by <b>{{ item.lock_user | username }}</b></span>
 	    </div>
