@@ -4,10 +4,21 @@ define(['lodash'], function(_) {
     WorkspaceService.$inject = ['session', 'api'];
     function WorkspaceService(session, api) {
 
+        var _user;
+
         function filter(widgets) {
             return _.map(widgets, function(widget) {
                 return _.pick(widget, ['_id', 'sizex', 'sizey', 'col', 'row', 'configuration']);
             });
+        }
+
+        function cacheUser(user) {
+            _user = user;
+            return user;
+        }
+
+        function getUser() {
+            return _user || session.identity;
         }
 
         /**
@@ -28,14 +39,17 @@ define(['lodash'], function(_) {
                 return this;
             }, this);
 
-            return api.users.getByUrl(session.identity._links.self.href).then(parseWidgets);
+            return api.get(session.identity._links.self.href)
+                .then(cacheUser)
+                .then(parseWidgets);
         };
 
         /**
          * Save widgets to server
          */
         this.save = function(widgets) {
-            return api.users.save(session.identity, {workspace: {widgets: filter(widgets || this.widgets)}});
+            return api.save('users', getUser(), {workspace: {widgets: filter(widgets || this.widgets)}})
+                .then(cacheUser);
         };
     }
 

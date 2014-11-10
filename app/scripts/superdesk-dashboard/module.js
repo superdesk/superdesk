@@ -15,6 +15,7 @@ define([
         provider('widgets', require('./widgets-provider'));
 
     return angular.module('superdesk.dashboard', [
+        'superdesk.activity',
         'superdesk.dashboard.widgets',
         'superdesk.dashboard.grid',
         'superdesk.dashboard.world-clock',

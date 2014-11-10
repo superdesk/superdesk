@@ -1,92 +1,45 @@
-define(['./module', 'angular'], function(DashboardModule, angular) {
-    'use strict';
+'use strict';
+
+describe('dashboard', function() {
 
     var USER_URL = '/users/1';
+    var USER = {
+        _links: {self: {href: USER_URL}},
+        _etag: '1'
+    };
 
-    describe('dashboard', function() {
+    beforeEach(module('templates'));
+    beforeEach(module('superdesk.dashboard'));
 
-        beforeEach(module(function($provide) {
+    beforeEach(inject(function(session) {
+        session.start({}, USER);
+    }));
 
-            $provide.service('session', function() {
-                this.identity = {
-                    _links: {self: {href: USER_URL}}
-                };
-            });
+    it('can load user widgets', inject(function(workspace, api, $rootScope, $q) {
+        spyOn(api, 'get').and.returnValue($q.when(USER));
 
-            $provide.provider('superdesk', function() {
-                var _activity = {};
-                this.activity = function(id, activity) {
-                    _activity[id] = activity;
-                };
+        var widgets;
+        workspace.load().then(function(_widgets) {
+            widgets = _widgets.widgets;
+        });
 
-                this.$get = function() {
-                    return {activity: _activity};
-                };
-            });
+        $rootScope.$digest();
+        expect(api.get).toHaveBeenCalledWith(USER_URL);
+        expect(widgets.length).toBe(0);
+    }));
 
-            $provide.provider('api', function() {
-                this.api = function() {};
-                this.$get = function($q) {
-                    return {
-                        users: {
-                            widgets: {},
-                            getByUrl: function(url) {
-                                return $q.when(this.widgets);
-                            },
-                            save: function(dest, diff) {
-                                return;
-                            }
-                        }
-                    };
-                };
-            });
-        }));
+    it('can add widget to user workspace', inject(function(workspace, api, $rootScope, $q) {
 
-        beforeEach(module('superdesk.dashboard'));
+        var user = angular.extend(USER, {_etag: '2'});
 
-        function getWidget() {
-            var widget;
-            inject(function(widgets) {
-                widget = {_id: widgets[0]._id, row: 1, col: 1, sizex: 1, sizey: 1, configuration: widgets[0].configuration};
-            });
-            return widget;
-        }
+        spyOn(api, 'get').and.returnValue($q.when(user));
+        spyOn(api, 'save').and.returnValue($q.when(USER));
 
-        function getScope(widgets) {
-            var scope;
-            inject(function(superdesk, api, $controller, $rootScope) {
-                scope = $rootScope.$new(true);
-                api.users.widgets = widgets ? {workspace: {widgets: widgets}} : {};
-                $controller(superdesk.activity['/workspace'].controller, {$scope: scope});
-                $rootScope.$apply();
-            });
+        workspace.load();
+        $rootScope.$digest();
+        workspace.save();
+        $rootScope.$digest();
 
-            return scope;
-        }
-
-        it('can render load user widgets', inject(function() {
-            var scope = getScope();
-            expect(scope.userWidgets.length).toBe(0);
-            expect(scope.availableWidgets.length).toBe(1);
-        }));
-
-        it('can add widget to user workspace', inject(function(api, $q, $rootScope) {
-            var scope = getScope();
-
-            spyOn(api.users, 'save').and.returnValue($q.when());
-
-            scope.addWidget(scope.availableWidgets[0]);
-            $rootScope.$apply();
-
-            expect(scope.userWidgets.length).toBe(1);
-            expect(scope.availableWidgets.length).toBe(1);
-            expect(api.users.save).toHaveBeenCalled();
-        }));
-
-        it('can load stored widgets', inject(function() {
-            var scope = getScope([getWidget()]);
-            expect(scope.userWidgets.length).toBe(1);
-            expect(scope.userWidgets[0].label).toBe(scope.availableWidgets[0].label);
-        }));
-    });
+        expect(api.save).toHaveBeenCalledWith('users', user, {workspace: {widgets: []}});
+    }));
 });
