@@ -76,12 +76,11 @@ class NITFParser(Parser):
                 item['ingest_provider_sequence'] = elem.get('content')
             elif attribute_name == 'anpa-category':
                 item['anpa-category'] = {'qcode': elem.get('content'), 'name': ''}
-            if attribute_name == 'anpa-wordcount':
+            elif attribute_name == 'anpa-wordcount':
                 item['word_count'] = elem.get('content')
-
-                        if attribute_name == 'anpa-takekey':
+            elif attribute_name == 'anpa-takekey':
                 item['anpa_take_key'] = elem.get('content')
-            if attribute_name == 'anpa-format':
+            elif attribute_name == 'anpa-format':
                 anpa_format = elem.get('content').lower() if elem.get('content') is not None else 'x'
                 item['type'] = ITEM_CLASS_TEXT if anpa_format == 'x' else ITEM_CLASS_PRE_FORMATTED
 

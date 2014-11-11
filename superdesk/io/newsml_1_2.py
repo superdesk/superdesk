@@ -106,8 +106,8 @@ class NewsMLOneParser(Parser):
         parsed_el = self.parse_elements(tree.find('NewsItem/Identification/NewsIdentifier'))
         item['guid'] = parsed_el['PublicIdentifier']
         item['version'] = parsed_el['RevisionId']
-def parse_news_management(self, item, tree):
 
+    def parse_news_management(self, item, tree):
         parsed_el = self.parse_elements(tree.find('NewsItem/NewsManagement'))
         item['urgency'] = parsed_el['Urgency']['FormalName']
         item['versioncreated'] = self.datetime(parsed_el['ThisRevisionCreated'])
@@ -123,9 +123,9 @@ def parse_news_management(self, item, tree):
         item['slugline'] = parsed_el.get('SlugLine', '')
         item['byline'] = parsed_el.get('ByLine', '')
 
-            return True
+        return True
 
-        def format_subjects(self, subjects):
+    def format_subjects(self, subjects):
         """
         Maps the ingested Subject Codes to their corresponding names as per IPTC Specification.
         :returns [{"qcode": "01001000", "name": "archaeology"}, {"qcode": "01002000", "name": "architecture"}]
@@ -146,4 +146,3 @@ def parse_news_management(self, item, tree):
                 formatted_subjects.append({'qcode': formal_name, 'name': subject_codes.get(formal_name, '')})
 
         return formatted_subjects
-
