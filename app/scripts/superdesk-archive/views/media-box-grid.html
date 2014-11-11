@@ -42,6 +42,8 @@
      {{ item.pubstatus | translate }}
 </div>
 
+<div class="status-label" ng-show="item._type">{{ item._type }}</div>
+
 <div class="action">
     <ul ng-if="extras.activityFilter" class="item-functions"
         sd-activity-list

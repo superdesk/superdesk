@@ -177,21 +177,21 @@ define([
             /**
              * @alias api(resource).getById(id)
              */
-            api.find = function(resource, id, params) {
+            api.find = function apiFind(resource, id, params) {
                 return api(resource).getById(id, params);
             };
 
             /**
              * @alias api(resource).save(dest, diff)
              */
-            api.save = function(resource, dest, diff, parent) {
+            api.save = function apiSave(resource, dest, diff, parent) {
                 return api(resource, parent).save(dest, diff);
             };
 
             /**
              * Remove a given item.
              */
-            api.remove = function(item, params, resource) {
+            api.remove = function apiRemove(item, params, resource) {
                 var url = resource ? getResourceUrl(resource, item) : urls.item(item._links.self.href);
                 return http({
                     method: 'DELETE',
@@ -199,6 +199,16 @@ define([
                     params: params,
                     headers: getHeaders(item)
                 });
+            };
+
+            /**
+             * Query qiven resource
+             *
+             * @param {string} resource
+             * @param {Object} query
+             */
+            api.query = function apiQuery(resource, query) {
+                return api(resource).query(query);
             };
 
             function getResourceUrl(resource, item) {

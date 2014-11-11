@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('superdesk.widgets.base', [])
-        .factory('BaseWidgetController', ['$location', '$timeout', 'superdesk', 'contentQuery', 'preferencesService', 'notify',
-        function BaseWidgetControllerFactory($location, $timeout, superdesk, contentQuery, preferencesService, notify) {
+        .factory('BaseWidgetController', ['$location', '$timeout', 'superdesk', 'search', 'preferencesService', 'notify',
+        function BaseWidgetControllerFactory($location, $timeout, superdesk, search, preferencesService, notify) {
 
             var INGEST_EVENT = 'ingest:update';
 
@@ -57,7 +57,7 @@
                 }
 
                 function getSearchCriteria(config) {
-                    var query = contentQuery.query(config.search || null);
+                    var query = search.query(config.search || null);
                     query.size(config.size || 10);
 
                     if (config.provider && config.provider !== 'all') {

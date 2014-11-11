@@ -3,36 +3,38 @@
 
     SearchService.$inject = ['$location', 'gettext'];
     function SearchService($location, gettext) {
-        this.sortOptions = [
+        var sortOptions = [
             {field: 'versioncreated', label: gettext('Updated')},
             {field: 'firstcreated', label: gettext('Created')},
             {field: 'urgency', label: gettext('News Value')}
         ];
 
-        this.sort = function sort(field) {
-            var option = _.find(this.sortOptions, {field: field});
-            setSortSearch(option.field, option.defaultDir || 'desc');
-        };
-
-        this.getSort = function getSort() {
+        function getSort() {
             var sort = ($location.search().sort || 'versioncreated:desc').split(':');
-            return angular.extend(_.find(this.sortOptions, {field: sort[0]}), {dir: sort[1]});
-        };
+            return angular.extend(_.find(sortOptions, {field: sort[0]}), {dir: sort[1]});
+        }
 
-        this.toggleSortDir = function toggleSortDir() {
-            var sort = this.getSort();
+        function sort(field) {
+            var option = _.find(sortOptions, {field: field});
+            setSortSearch(option.field, option.defaultDir || 'desc');
+        }
+
+        function toggleSortDir() {
+            var sort = getSort();
             var dir = sort.dir === 'asc' ? 'desc' : 'asc';
             setSortSearch(sort.field, dir);
-        };
+        }
 
         function setSortSearch(field, dir) {
             $location.search('sort', field + ':' + dir);
             $location.search('page', null);
         }
-    }
 
-    ContentQueryBuilder.$inject = ['$location', 'search'];
-    function ContentQueryBuilder($location, search) {
+        // sort public api
+        this.setSort = sort;
+        this.getSort = getSort;
+        this.sortOptions = sortOptions;
+        this.toggleSortDir = toggleSortDir;
 
         /**
          * Single query instance
@@ -60,7 +62,7 @@
              * Get criteria for given query
              */
             this.getCriteria = function getCriteria() {
-                var sort = search.getSort();
+                var sort = getSort();
                 var criteria = {
                     query: {filtered: {filter: {and: filters}}},
                     sort: [_.zipObject([sort.field], [sort.dir])]
@@ -124,8 +126,22 @@
         };
     }
 
+    function SearchController($scope, api, search) {
+        function getQuery() {
+            return search.query().getCriteria();
+        }
+
+        function refresh() {
+            api.query('search', {source: getQuery()}).then(function(result) {
+                $scope.items = result;
+            });
+        }
+
+        $scope.$on('$routeUpdate', refresh);
+        refresh();
+    }
+
     angular.module('superdesk.search', ['superdesk.api', 'superdesk.activity'])
-        .service('contentQuery', ContentQueryBuilder)
         .service('search', SearchService)
 
         /**
@@ -219,7 +235,7 @@
                     }
 
                     scope.sort = function sort(field) {
-                        search.sort(field);
+                        search.setSort(field);
                     };
 
                     scope.toggleDir = function toggleDir($event) {
@@ -231,6 +247,17 @@
                 }
             };
         })
+
+        .config(['superdeskProvider', function(superdesk) {
+            superdesk.activity('/search', {
+                beta: 1,
+                priority: 200,
+                category: superdesk.MENU_MAIN,
+                label: gettext('Search'),
+                controller: SearchController,
+                templateUrl: 'scripts/superdesk-search/views/search.html'
+            });
+        }])
 
         ;
 })();

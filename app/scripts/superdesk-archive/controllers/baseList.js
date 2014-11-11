@@ -1,8 +1,8 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    BaseListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'contentQuery', 'desks', 'preferencesService', 'notify'];
-    function BaseListController($scope, $location, superdesk, api, contentQuery, desks, preferencesService, notify) {
+    BaseListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'search', 'desks', 'preferencesService', 'notify'];
+    function BaseListController($scope, $location, superdesk, api, search, desks, preferencesService, notify) {
         var self = this;
 
         var lastQueryParams = {};
@@ -59,7 +59,7 @@ define(['lodash'], function(_) {
 
         this.buildQuery = function(params, filterDesk) {
 
-            var query = contentQuery.query(params.q || null);
+            var query = search.query(params.q || null);
 
             if (filterDesk) {
                 if (desks.getCurrentStageId()) {
