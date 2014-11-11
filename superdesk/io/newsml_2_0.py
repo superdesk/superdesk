@@ -47,23 +47,29 @@ class NewsMLTwoParser(Parser):
         item['versioncreated'] = self.datetime(meta.find(self.qname('versionCreated')).text)
         item['firstcreated'] = self.datetime(meta.find(self.qname('firstCreated')).text)
         item['pubstatus'] = meta.find(self.qname('pubStatus')).attrib['qcode'].split(':')[1]
+        item['ednote'] = meta.find(self.qname('edNote')).text if meta.find(self.qname('edNote')) is not None else ''
 
     def parse_content_meta(self, tree, item):
         """Parse contentMeta tag"""
         meta = tree.find(self.qname('contentMeta'))
 
-        def parse_meta_item_text(key, dest=None):
+        def parse_meta_item_text(key, dest=None, elemTree=None):
             if dest is None:
                 dest = key
-            elem = meta.find(self.qname(key))
+
+            if elemTree is None:
+                elemTree = meta
+
+            elem = elemTree.find(self.qname(key))
             if elem is not None:
                 item[dest] = elem.text
 
         parse_meta_item_text('urgency')
         parse_meta_item_text('slugline')
         parse_meta_item_text('headline')
-        parse_meta_item_text('creditline')
+        # parse_meta_item_text('creditline')
         parse_meta_item_text('by', 'byline')
+        parse_meta_item_text('name', 'dateline', meta.find(self.qname('located')))
 
         try:
             item['description_text'] = meta.find(self.qname('description')).text
@@ -141,8 +147,12 @@ class NewsMLTwoParser(Parser):
         item['renditions'] = {}
         for content in tree.find(self.qname('contentSet')):
             if content.tag == self.qname('inlineXML'):
+                item['word_count'] = content.attrib['wordcount']
                 content = self.parse_inline_content(content)
                 item['body_html'] = content.get('content')
+            elif content.tag == self.qname('inlineData'):
+                item['body_html'] = content.text
+                item['word_count'] = content.attrib['wordcount']
             else:
                 rendition = self.parse_remote_content(content)
                 item['renditions'][rendition['rendition']] = rendition

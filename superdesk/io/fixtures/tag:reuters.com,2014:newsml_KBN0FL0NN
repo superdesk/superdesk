@@ -49,6 +49,7 @@
         <signal qcode="var:itemMod"/>
         <link contenttype="application/vnd.iptc.g2.newsitem+xml" rel="irel:derivedFrom" residref="tag:reuters.com,2014:newsml_L6N0PR263" rtr:id="L6N0PR263" rtr:type="idType:USN"/>
         <rtr:versionedId guid="tag:reuters.com,2014:newsml_KBN0FL0NN:5"/>
+        <edNote>This is editorial note.</edNote>
       </itemMeta>
       <contentMeta>
         <urgency>4</urgency>
