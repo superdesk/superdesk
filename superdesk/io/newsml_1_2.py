@@ -1,7 +1,7 @@
-
 import datetime
 from ..etree import etree
 from superdesk.io import Parser
+from superdesk.io.iptc import subject_codes
 
 
 class NewsMLOneParser(Parser):
@@ -12,15 +12,22 @@ class NewsMLOneParser(Parser):
         item = {}
         self.root = tree
 
-        item['NewsIdentifier'] = self.parse_elements(tree.find('NewsItem/Identification/NewsIdentifier'))
-        item['NewsManagement'] = self.parse_elements(tree.find('NewsItem/NewsManagement'))
-        item['NewsLines'] = self.parse_elements(tree.find('NewsItem/NewsComponent/NewsLines'))
-        item['Provider'] = self.parse_attributes_as_dictionary(
-            tree.find('NewsItem/NewsComponent/AdministrativeMetadata/Provider'))
-        item['DescriptiveMetadata'] = self.parse_multivalued_elements(
-            tree.find('NewsItem/NewsComponent/DescriptiveMetadata'))
-        item['located'] = self.parse_attributes_as_dictionary(
-            tree.find('NewsItem/NewsComponent/DescriptiveMetadata/Location'))
+        parsed_el = tree.find('NewsItem/NewsComponent/AdministrativeMetadata/Source')
+        if parsed_el is not None:
+            item['original_source'] = parsed_el.find('Party').get('FormalName', '')
+
+        parsed_el = tree.find('NewsEnvelope/TransmissionId')
+        if parsed_el is not None:
+            item['ingest_provider_sequence'] = parsed_el.text
+
+        self.parse_news_identifier(item, tree)
+        self.parse_newslines(item, tree)
+        self.parse_news_management(item, tree)
+
+        parsed_el = tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/Language')
+        if parsed_el is not None:
+            language = self.parse_attributes_as_dictionary(parsed_el)
+            item['language'] = language[0]['FormalName'] if len(language) else ''
 
         keywords = tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/Property')
         item['keywords'] = self.parse_attribute_values(keywords, 'Keyword')
@@ -29,13 +36,29 @@ class NewsMLOneParser(Parser):
         subjects += tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/SubjectCode/SubjectMatter')
         subjects += tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/SubjectCode/Subject')
 
-        item['Subjects'] = self.parse_attributes_as_dictionary(subjects)
-        item['ContentItem'] = self.parse_attributes_as_dictionary(
-            tree.find('NewsItem/NewsComponent/ContentItem'))
+        item['subject'] = self.format_subjects(subjects)
+
+        # item['ContentItem'] = self.parse_attributes_as_dictionary(
+        #    tree.find('NewsItem/NewsComponent/ContentItem'))
         # item['Content'] = etree.tostring(
-        #       tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'))
+        # tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'))
+
         item['body_html'] = etree.tostring(
             tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'))
+
+        parsed_el = tree.findall('NewsItem/NewsComponent/ContentItem/Characteristics/Property')
+        characteristics = self.parse_attribute_values(parsed_el, 'Words')
+        item['word_count'] = characteristics[0] if len(characteristics) else None
+
+        parsed_el = tree.find('NewsItem/NewsComponent/RightsMetadata/UsageRights/UsageType')
+        if parsed_el is not None:
+            item.setdefault('usageterms', parsed_el.text)
+
+        parsed_el = tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/Genre')
+        if parsed_el is not None:
+            item['genre'] = []
+            for el in parsed_el:
+                item['genre'].append(el.get('FormalName'))
 
         return self.populate_fields(item)
 
@@ -76,19 +99,50 @@ class NewsMLOneParser(Parser):
         return datetime.datetime.strptime(string, '%Y%m%dT%H%M%S+0000')
 
     def populate_fields(self, item):
-        item['guid'] = item['NewsIdentifier']['PublicIdentifier']
-        item['provider'] = item['Provider'][0]['FormalName']
         item['type'] = 'text'
-        item['urgency'] = item['NewsManagement']['Urgency']['FormalName']
-        item['version'] = item['NewsIdentifier']['RevisionId']
-        item['versioncreated'] = self.datetime(item['NewsManagement']['ThisRevisionCreated'])
-        item['firstcreated'] = self.datetime(item['NewsManagement']['FirstCreated'])
-        item['pubstatus'] = item['NewsManagement']['Status']['FormalName']
-        item['subject'] = item['Subjects']
-
-        if 'HeadLine' in item['NewsLines']:
-            item['headline'] = item['NewsLines']['HeadLine']
-        elif item['NewsManagement']['NewsItemType']['FormalName'] == 'Alert':
-            item['headline'] = 'Alert'
-
         return item
+
+    def parse_news_identifier(self, item, tree):
+        parsed_el = self.parse_elements(tree.find('NewsItem/Identification/NewsIdentifier'))
+        item['guid'] = parsed_el['PublicIdentifier']
+        item['version'] = parsed_el['RevisionId']
+
+    def parse_news_management(self, item, tree):
+        parsed_el = self.parse_elements(tree.find('NewsItem/NewsManagement'))
+        item['urgency'] = parsed_el['Urgency']['FormalName']
+        item['versioncreated'] = self.datetime(parsed_el['ThisRevisionCreated'])
+        item['firstcreated'] = self.datetime(parsed_el['FirstCreated'])
+        item['pubstatus'] = parsed_el['Status']['FormalName']
+        # if parsed_el['NewsItemType']['FormalName'] == 'Alert':
+        #    parsed_el['headline'] = 'Alert'
+
+    def parse_newslines(self, item, tree):
+        parsed_el = self.parse_elements(tree.find('NewsItem/NewsComponent/NewsLines'))
+        item['headline'] = parsed_el.get('HeadLine', '')
+        item['dateline'] = parsed_el.get('DateLine', '')
+        item['slugline'] = parsed_el.get('SlugLine', '')
+        item['byline'] = parsed_el.get('ByLine', '')
+
+        return True
+
+    def format_subjects(self, subjects):
+        """
+        Maps the ingested Subject Codes to their corresponding names as per IPTC Specification.
+        :returns [{"qcode": "01001000", "name": "archaeology"}, {"qcode": "01002000", "name": "architecture"}]
+        """
+
+        formatted_subjects = []
+
+        def is_not_formatted(qcode):
+            for formatted_subject in formatted_subjects:
+                if formatted_subject['qcode'] == qcode:
+                    return False
+
+            return True
+
+        for subject in subjects:
+            formal_name = subject.get('FormalName')
+            if formal_name and is_not_formatted(formal_name):
+                formatted_subjects.append({'qcode': formal_name, 'name': subject_codes.get(formal_name, '')})
+
+        return formatted_subjects

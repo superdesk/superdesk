@@ -3,10 +3,13 @@ import datetime
 from superdesk.etree import etree
 from .iptc import subject_codes
 from superdesk.io import Parser
+import logging
 
 XMLNS = 'http://iptc.org/std/nar/2006-10-01/'
 XHTML = 'http://www.w3.org/1999/xhtml'
 CLASS_PACKAGE = 'composite'
+
+logger = logging.getLogger("NewsMLTwoParser")
 
 
 class NewsMLTwoParser(Parser):
@@ -44,27 +47,32 @@ class NewsMLTwoParser(Parser):
         """Parse itemMeta tag"""
         meta = tree.find(self.qname('itemMeta'))
         item['type'] = meta.find(self.qname('itemClass')).attrib['qcode'].split(':')[1]
-        item['provider'] = meta.find(self.qname('provider')).attrib['literal']
         item['versioncreated'] = self.datetime(meta.find(self.qname('versionCreated')).text)
         item['firstcreated'] = self.datetime(meta.find(self.qname('firstCreated')).text)
         item['pubstatus'] = meta.find(self.qname('pubStatus')).attrib['qcode'].split(':')[1]
+        item['ednote'] = meta.find(self.qname('edNote')).text if meta.find(self.qname('edNote')) is not None else ''
 
     def parse_content_meta(self, tree, item):
         """Parse contentMeta tag"""
         meta = tree.find(self.qname('contentMeta'))
 
-        def parse_meta_item_text(key, dest=None):
+        def parse_meta_item_text(key, dest=None, elemTree=None):
             if dest is None:
                 dest = key
-            elem = meta.find(self.qname(key))
+
+            if elemTree is None:
+                elemTree = meta
+
+            elem = elemTree.find(self.qname(key))
             if elem is not None:
                 item[dest] = elem.text
 
         parse_meta_item_text('urgency')
         parse_meta_item_text('slugline')
         parse_meta_item_text('headline')
-        parse_meta_item_text('creditline')
+        # parse_meta_item_text('creditline')
         parse_meta_item_text('by', 'byline')
+        parse_meta_item_text('name', 'dateline', meta.find(self.qname('located')))
 
         try:
             item['description_text'] = meta.find(self.qname('description')).text
@@ -76,6 +84,18 @@ class NewsMLTwoParser(Parser):
         self.parse_content_subject(meta, item)
         self.parse_content_place(meta, item)
 
+        for info_source in meta.findall(self.qname('infoSource')):
+            if info_source.get('role', '') == 'cRole:source':
+                item['original_source'] = info_source.get('literal')
+                break
+
+        item['genre'] = []
+        for genre_el in meta.findall(self.qname('genre')):
+            for name_el in genre_el.findall(self.qname('name')):
+                lang = name_el.get(self.qname("lang", ns='xml'))
+                if lang and lang.startswith('en'):
+                    item['genre'].append(name_el.text)
+
     def parse_content_subject(self, tree, item):
         """Parse subj type subjects into subject list."""
         item['subject'] = []
@@ -84,11 +104,11 @@ class NewsMLTwoParser(Parser):
             if len(qcode_parts) == 2 and qcode_parts[0] == 'subj':
                 try:
                     item['subject'].append({
-                        'code': qcode_parts[1],
+                        'qcode': qcode_parts[1],
                         'name': subject_codes[qcode_parts[1]]
                     })
                 except KeyError:
-                    print("Subject code '%s' not found" % qcode_parts[1])
+                    logger.error("Subject code '%s' not found" % qcode_parts[1])
 
     def parse_content_place(self, tree, item):
         """Parse subject with type="cptType:5" into place list."""
@@ -103,8 +123,9 @@ class NewsMLTwoParser(Parser):
     def parse_rights_info(self, tree, item):
         """Parse Rights Info tag"""
         info = tree.find(self.qname('rightsInfo'))
-        item['copyrightholder'] = info.find(self.qname('copyrightHolder')).attrib['literal']
-        item['copyrightnotice'] = getattr(info.find(self.qname('copyrightNotice')), 'text', None)
+        item['usageterms'] = getattr(info.find(self.qname('usageTerms')), 'text', '')
+        # item['copyrightholder'] = info.find(self.qname('copyrightHolder')).attrib['literal']
+        # item['copyrightnotice'] = getattr(info.find(self.qname('copyrightNotice')), 'text', None)
 
     def parse_group_set(self, tree, item):
         item['groups'] = []
@@ -125,7 +146,6 @@ class NewsMLTwoParser(Parser):
                 ref['residRef'] = tree.attrib['residref']
                 ref['contentType'] = tree.attrib['contenttype']
                 ref['itemClass'] = tree.find(self.qname('itemClass')).attrib['qcode']
-                ref['provider'] = tree.find(self.qname('provider')).attrib['literal']
 
                 for headline in tree.findall(self.qname('headline')):
                     ref['headline'] = headline.text
@@ -137,8 +157,12 @@ class NewsMLTwoParser(Parser):
         item['renditions'] = {}
         for content in tree.find(self.qname('contentSet')):
             if content.tag == self.qname('inlineXML'):
+                item['word_count'] = content.attrib['wordcount']
                 content = self.parse_inline_content(content)
                 item['body_html'] = content.get('content')
+            elif content.tag == self.qname('inlineData'):
+                item['body_html'] = content.text
+                item['word_count'] = content.attrib['wordcount']
             else:
                 rendition = self.parse_remote_content(content)
                 item['renditions'][rendition['rendition']] = rendition
@@ -169,6 +193,9 @@ class NewsMLTwoParser(Parser):
     def qname(self, tag, ns=None):
         if ns is None:
             ns = self.root.tag.rsplit('}')[0].lstrip('{')
+        elif ns is not None and ns == 'xml':
+            ns = 'http://www.w3.org/XML/1998/namespace'
+
         return str(etree.QName(ns, tag))
 
     def datetime(self, string):

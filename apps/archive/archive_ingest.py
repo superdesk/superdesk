@@ -1,27 +1,26 @@
-'''
+"""
 Created on May 23, 2014
 
 @author: Ioan v. Pocol
-'''
+"""
+
+import traceback
 
 from celery.canvas import chord
-import flask
+from celery.result import AsyncResult
+from flask.globals import current_app as app
+from celery.exceptions import Ignore
+from celery import states
+from celery.utils.log import get_task_logger
 
 import superdesk
 from superdesk.utc import utc, utcnow
 from superdesk.celery_app import celery, finish_task_for_progress,\
     finish_subtask_from_progress, add_subtask_to_progress
-from celery.result import AsyncResult
-from flask.globals import current_app as app
 from superdesk.upload import url_for_media
-from superdesk.media.media_operations import download_file_from_url,\
-    process_file
+from superdesk.media.media_operations import download_file_from_url, process_file
 from superdesk.resource import Resource
-from celery.exceptions import Ignore
-from celery import states
-from .common import facets
-import traceback
-from celery.utils.log import get_task_logger
+from .common import facets, get_user
 from superdesk.services import BaseService
 
 
@@ -169,7 +168,7 @@ def archive_item(self, guid, provider_id, user, task_id=None):
                         # there is a cyclic dependency, skip it
                         continue
 
-                    ingest_set_archived(doc.get('guid'))
+                    mark_ingest_as_archived(doc.get('guid'))
                     tasks.append(archive_item.s(ref['residRef'], provider.get('_id'), user, task_id))
 
         for rendition in item.get('renditions', {}).values():
@@ -188,8 +187,14 @@ def archive_item(self, guid, provider_id, user, task_id=None):
         logger.error(traceback.format_exc())
 
 
-def ingest_set_archived(guid):
-    ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=guid)
+def mark_ingest_as_archived(guid=None, ingest_doc=None):
+    """
+    Updates the ingest document as archived. If guid is not None then first searches the collection for the document
+    and if found updates the same as archived.
+    """
+    if guid is not None:
+        ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=guid)
+
     if ingest_doc:
         superdesk.get_resource_service('ingest').patch(ingest_doc.get('_id'), {'archived': utcnow()})
 
@@ -225,15 +230,17 @@ class ArchiveIngestService(BaseService):
             if not ingest_doc:
                 msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
                 raise superdesk.SuperdeskError(payload=msg)
-            ingest_set_archived(doc.get('guid'))
+
+            mark_ingest_as_archived(ingest_doc=ingest_doc)
 
             archived_doc = superdesk.get_resource_service('archive').find_one(req=None, guid=doc.get('guid'))
             if not archived_doc:
                 doc.setdefault('_id', doc.get('guid'))
-                doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
+                # doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
                 superdesk.get_resource_service('archive').post([doc])
 
-            task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), doc.get('user'))
+            task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), str(get_user().get('_id')))
+
             doc['task_id'] = task.id
             if task.state not in ('PROGRESS', states.SUCCESS, states.FAILURE) and not task.result:
                 update_status(task.id, 0, 0)

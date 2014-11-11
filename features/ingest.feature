@@ -15,14 +15,14 @@ Feature: Ingest
             [{
                 "guid": "tag:example.com,0000:newsml_BRE9A605",
                 "urgency": "1",
-                "provider": "example.com",
+                "source": "example.com",
                 "versioncreated": "2013-11-11T11:11:11+00:00"
             }]
             """
 
         When we get "/ingest"
         Then we get list with 1 items
-        And we get facets "type,provider,urgency,subject,place"
+        And we get facets "type,source,urgency,subject,place"
 
 
     @auth
@@ -39,6 +39,7 @@ Feature: Ingest
 		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS"
 		    }, {
 		        "type": "composite",
+		        "usageterms": "NO ARCHIVAL USE",
 		        "groups": [{
 		            "refs": [{
 		                "itemClass": "icls:text",

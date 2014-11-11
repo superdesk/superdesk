@@ -23,7 +23,7 @@ class CreateUserCommand(superdesk.Command):
     def run(self, username, password, email, admin='false'):
 
         # force type conversion to boolean
-        is_admin = json.loads(admin)
+        is_admin = False if admin is None else json.loads(admin)
         user_type = 'administrator' if is_admin else 'user'
 
         userdata = {

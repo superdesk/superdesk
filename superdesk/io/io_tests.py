@@ -31,30 +31,32 @@ class TextParserTest(ItemTest):
 
     def test_parse_item_meta(self):
         self.assertEquals("text", self.item.get('type'))
-        self.assertEquals("reuters.com", self.item.get('provider'))
         self.assertEquals("2013-03-01T15:09:04", self.item.get('versioncreated').isoformat())
         self.assertEquals("2013-03-01T15:09:04", self.item.get('firstcreated').isoformat())
+        self.assertEquals("Editorial Note", self.item.get('ednote'))
 
     def test_parse_content_meta(self):
         self.assertEquals('3', self.item.get('urgency'))
         self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ", self.item["slugline"])
         self.assertEquals("Soccer-Smiling Benitez pleads for support after midweek outburst", self.item["headline"])
-        self.assertEquals("Reuters", self.item["creditline"])
+        # self.assertEquals("Reuters", self.item["creditline"])
+        self.assertEquals("Bangalore", self.item["dateline"])
         self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ:Soccer-Smiling Benitez pleads for support after midweek outburst", self.item.get('description_text'))  # noqa
 
-    def test_parse_rights_info(self):
-        self.assertEquals("Thomson Reuters", self.item.get('copyrightholder'))
-        self.assertEquals("(c) Copyright Thomson Reuters 2013. Click For Restrictions - http://about.reuters.com/fulllegal.asp", self.item.get('copyrightnotice'))  # noqa
+    # def test_parse_rights_info(self):
+    #     self.assertEquals("Thomson Reuters", self.item.get('copyrightholder'))
+    #     self.assertEquals("(c) Copyright Thomson Reuters 2013. Click For Restrictions - http://about.reuters.com/fulllegal.asp", self.item.get('copyrightnotice'))  # noqa
 
     def test_content_set(self):
         self.assertEquals("<p>By Toby Davis</p>", self.item.get('body_html'))
+        self.assertEquals("569", self.item.get('word_count'))
 
     def test_language(self):
         self.assertEquals('en', self.item.get('language'))
 
     def test_subject(self):
         self.assertEquals(2, len(self.item.get('subject')))
-        self.assertIn({'code': '15054000', 'name': 'soccer'}, self.item.get('subject'))
+        self.assertIn({'qcode': '15054000', 'name': 'soccer'}, self.item.get('subject'))
 
     def test_pubstatus(self):
         self.assertEquals('usable', self.item.get('pubstatus'))
@@ -109,7 +111,6 @@ class SNEPParserTest(ItemTest):
         self.assertEquals("tag:reuters.com,0000:newsml_BRE9220HA", ref.get('residRef'))
         self.assertEquals("application/vnd.iptc.g2.packageitem+xml", ref.get('contentType'))
         self.assertEquals("icls:composite", ref.get('itemClass'))
-        self.assertEquals("reuters.com", ref.get('provider'))
         self.assertEquals("At least 15 killed on Kenya coast on election day", ref.get('headline'))
 
 if __name__ == '__main__':

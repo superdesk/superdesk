@@ -18,6 +18,7 @@
       <rightsInfo>
         <copyrightHolder literal="Thomson Reuters"/>
         <copyrightNotice xml:lang="en-GB">(c) Copyright Thomson Reuters 2014. Click For Restrictions - http://about.reuters.com/fulllegal.asp</copyrightNotice>
+        <usageTerms xml:lang="en-GB">NO ARCHIVAL USE</usageTerms>
       </rightsInfo>
       <itemMeta>
         <itemClass qcode="icls:composite" rtr:msgType="R"/>
@@ -101,6 +102,13 @@
         <by>By Marwan Makdisi</by>
         <creditline>Reuters</creditline>
         <description role="descRole:caption">US-SYRIA-CRISIS-ASSAD:Confident Assad launches new term in stronger position</description>
+        <genre>
+            <name xml:lang="en-GB">Politics</name>
+            <name xml:lang="fr">politique</name>
+        </genre>
+        <genre>
+            <name xml:lang="en-GB">Elections</name>
+        </genre>
       </contentMeta>
       <groupSet root="root">
         <group id="root" role="grpRole:NEP">

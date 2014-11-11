@@ -1,13 +1,62 @@
 from superdesk.resource import Resource
 
+
 metadata_schema = {
     'guid': {
         'type': 'string',
         'unique': True
     },
-    'provider': {
+    'unique_id': {
+        'type': 'integer',
+        'unique': True
+    },
+    'unique_name': {
+        'type': 'string',
+        'unique': True
+    },
+    'parent_id': {
+        'type': 'string',
+        'unique': True
+    },
+    'version': {
+        'type': 'integer'
+    },
+
+    'original_creator': Resource.rel('users', True),
+    'version_creator': Resource.rel('users', True),
+
+    'firstcreated': {
+        'type': 'datetime'
+    },
+    'versioncreated': {
+        'type': 'datetime'
+    },
+
+    'ingest_provider': Resource.rel('ingest_providers', True),
+    'source': {     # The value is copied from the ingest_providers vocabulary
         'type': 'string'
     },
+    'original_source': {    # This value is extracted from the ingest
+        'type': 'string'
+    },
+    'ingest_provider_sequence': {
+        'type': 'string'
+    },
+
+    'usageterms': {
+        'type': 'string'
+    },
+
+    'anpa_category': {
+        'type': 'string'
+    },
+    'subject': {
+        'type': 'list'
+    },
+    'genre': {
+        'type': 'list'
+    },
+
     'type': {
         'type': 'string',
         'required': True,
@@ -17,31 +66,13 @@ metadata_schema = {
     'mimetype': {
         'type': 'string'
     },
-    'version': {
-        'type': 'string'
-    },
-    'versioncreated': {
-        'type': 'datetime'
-    },
     'pubstatus': {
-        'type': 'string'
-    },
-    'copyrightholder': {
-        'type': 'string'
-    },
-    'copyrightnotice': {
-        'type': 'string'
-    },
-    'usageterms': {
         'type': 'string'
     },
     'language': {
         'type': 'string'
     },
     'place': {
-        'type': 'list'
-    },
-    'subject': {
         'type': 'list'
     },
     'byline': {
@@ -66,14 +97,8 @@ metadata_schema = {
         'type': 'string',
         'nullable': True
     },
-    'firstcreated': {
-        'type': 'datetime'
-    },
     'filemeta': {
         'type': 'dict'
-    },
-    'ingest_provider': {
-        'type': 'string'
     },
     'urgency': {
         'type': 'integer'
@@ -81,17 +106,8 @@ metadata_schema = {
     'groups': {
         'type': 'list'
     },
-    'keywords': {
-        'type': 'list'
-    },
     'body_html': {
         'type': 'string'
-    },
-    'creator': {
-        'type': 'dict',
-        'schema': {
-            'user': Resource.rel('users', True)
-        }
     },
     'media_file': {
         'type': 'string'
@@ -99,23 +115,14 @@ metadata_schema = {
     'contents': {
         'type': 'list'
     },
-    'media': {
-        'type': 'media'
-    },
     'task_id': {
         'type': 'string'
     },
-    'lock_user': {
-        'type': 'objectid',
-        'data_relation': {'resource': 'users', 'field': '_id', 'embeddable': True}
-    },
+    'lock_user': Resource.rel('users', True),
     'lock_time': {
         'type': 'datetime'
     },
-    'lock_session': {
-        'type': 'objectid',
-        'data_relation': {'resource': 'auth', 'field': '_id', 'embeddable': True}
-    },
+    'lock_session': Resource.rel('auth', True),
     'is_spiked': {
         'type': 'boolean'
     },

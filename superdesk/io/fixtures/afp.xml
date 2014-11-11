@@ -44,7 +44,13 @@
 <NewsLines>
 <DateLine>STOCKHOLM, Aug 29, 2014 (AFP) -</DateLine>
 <HeadLine xml:lang="en">Sweden court accepts receivership for Saab carmaker</HeadLine>
+<SlugLine>Sweden-SAAB</SlugLine>
 </NewsLines>
+<RightsMetadata>
+<UsageRights>
+<UsageType>NO ARCHIVAL USE</UsageType>
+</UsageRights>
+</RightsMetadata>
 <AdministrativeMetadata>
 <Provider>
 <Party FormalName="AFP"/>
@@ -94,6 +100,8 @@
 <Property FormalName="Keyword" Value="business"/>
 <Property FormalName="Keyword" Value="bankruptcy"/>
 <Property FormalName="Keyword" Value="Saab"/>
+<Genre FormalName="business"/>
+<Genre FormalName="bankruptcy"/>
 </DescriptiveMetadata>
 <ContentItem>
 <MediaType FormalName="Text"/>

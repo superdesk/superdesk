@@ -2,7 +2,7 @@
 import os
 import unittest
 from superdesk.etree import etree
-from .nitf import NITFParser
+from superdesk.io.nitf import NITFParser
 
 
 class TestCase(unittest.TestCase):
@@ -18,12 +18,12 @@ class TestCase(unittest.TestCase):
         self.assertEquals(self.item.get('headline'), "The main stories on today's 1900 ABC TV news")
 
     def test_keywords(self):
-        self.assertEquals(self.item.get('keywords'), ['Monitor 1900 ABC News'])
+        self.assertEquals(self.item.get('slugline'), 'Monitor 1900 ABC News')
 
     def test_subjects(self):
         self.assertEquals(len(self.item.get('subject')), 2)
         self.assertIn({'name': 'Justice'}, self.item.get('subject'))
-        self.assertIn({'code': '02003000', 'name': 'Police'}, self.item.get('subject'))
+        self.assertIn({'qcode': '02003000', 'name': 'Police'}, self.item.get('subject'))
 
     def test_guid(self):
         self.assertEquals(self.item.get('guid'), 'AAP.115314987.5417374')
@@ -35,8 +35,17 @@ class TestCase(unittest.TestCase):
     def test_urgency(self):
         self.assertEquals(self.item.get('urgency'), '5')
 
-    def test_copyright(self):
-        self.assertEquals(self.item.get('copyrightholder'), 'Australian Associated Press')
+    def test_dateline(self):
+        self.assertEquals(self.item.get('dateline'), 'Sydney')
+
+    def test_byline(self):
+        self.assertEquals(self.item.get('byline'), 'By John Doe')
+
+    def test_abstract(self):
+        self.assertEquals(self.item.get('abstract'), 'The main stories on today\'s 1900 ABC TV news')
+
+    # def test_copyright(self):
+    #     self.assertEquals(self.item.get('copyrightholder'), 'Australian Associated Press')
 
     def test_dates(self):
         self.assertEquals(self.item.get('firstcreated').isoformat(), '2013-10-20T19:27:51')
@@ -48,6 +57,12 @@ class TestCase(unittest.TestCase):
 
     def test_pubstatus(self):
         self.assertEquals('usable', self.item.get('pubstatus'))
+
+    def test_ingest_provider_sequence(self):
+        self.assertEquals(self.item.get('ingest_provider_sequence'), '1747')
+
+    def test_anpa_category(self):
+        self.assertEquals(self.item.get('anpa-category')['qcode'], 'a')
 
 if __name__ == '__main__':
     unittest.main()

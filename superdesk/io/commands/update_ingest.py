@@ -1,9 +1,11 @@
+from _datetime import datetime
 import logging
 import superdesk
 from superdesk.utc import utcnow
 from superdesk.notification import push_notification
 from superdesk.io import providers
 from superdesk.celery_app import celery
+from eve.utils import config
 
 logger = logging.getLogger(__name__)
 
@@ -35,19 +37,42 @@ def update_provider(provider):
     push_notification('ingest:update')
 
 
+def process_anpa_category(item):
+    anpa_categories = superdesk.get_resource_service('vocabularies').find_one(req=None, _id='categories')
+    if anpa_categories:
+        for anpa_category in anpa_categories['items']:
+            if anpa_category['is_active'] is True \
+                    and item['anpa-category']['qcode'].lower() == anpa_category['value'].lower():
+                item['anpa-category'] = {'qcode': item['anpa-category']['qcode'], 'name': anpa_category['name']}
+                break
+
+
 def ingest_items(provider, items):
         start = utcnow()
         ingested_count = provider.get('ingested_count', 0)
+
+        # TODO: Hate to do this but there is no alternative, might be a bug in Pymongo
+        if isinstance(ingested_count, datetime):
+            ingested_count = 0
+
         for item in items:
             item.setdefault('_id', item['guid'])
-            item.setdefault('_created', utcnow())
-            item.setdefault('_updated', utcnow())
+
+            item.setdefault(config.DATE_CREATED, utcnow())
+            item.setdefault(config.LAST_UPDATED, utcnow())
+
             item['ingest_provider'] = str(provider['_id'])
+            item.setdefault('source', provider.get('source', ''))
+
+            if 'anpa-category' in item:
+                process_anpa_category(item)
+
             old_item = superdesk.get_resource_service('ingest').find_one(_id=item['guid'], req=None)
             if old_item:
                 superdesk.get_resource_service('ingest').put(item['guid'], item)
             else:
                 ingested_count += 1
+                item[config.VERSION] = 1
                 superdesk.get_resource_service('ingest').post([item])
 
         superdesk.get_resource_service('ingest_providers').patch(provider['_id'], {
