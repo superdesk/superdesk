@@ -28,13 +28,13 @@ describe('search service', function() {
     }));
 
     it('can sort items', inject(function(search, $location, $rootScope) {
-        search.sort('priority');
+        search.sort('urgency');
         $rootScope.$digest();
-        expect($location.search().sort).toBe('priority:desc');
-        expect(search.getSort()).toEqual({label: 'Priority', field: 'priority', dir: 'desc'});
+        expect($location.search().sort).toBe('urgency:desc');
+        expect(search.getSort()).toEqual({label: 'News Value', field: 'urgency', dir: 'desc'});
 
         search.toggleSortDir();
         $rootScope.$digest();
-        expect(search.getSort()).toEqual({label: 'Priority', field: 'priority', dir: 'asc'});
+        expect(search.getSort()).toEqual({label: 'News Value', field: 'urgency', dir: 'asc'});
     }));
 });

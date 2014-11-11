@@ -6,9 +6,7 @@
         this.sortOptions = [
             {field: 'versioncreated', label: gettext('Updated')},
             {field: 'firstcreated', label: gettext('Created')},
-            {field: 'urgency', label: gettext('News Value')},
-            {field: 'priority', label: gettext('Priority')},
-            {field: 'headline', label: gettext('Headline'), defaultDir: 'asc'}
+            {field: 'urgency', label: gettext('News Value')}
         ];
 
         this.sort = function sort(field) {
