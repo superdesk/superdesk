@@ -93,7 +93,4 @@ def init_app(app):
 
 @celery.task()
 def spike_purge():
-    try:
-        ArchiveRemoveExpiredSpikes().run()
-    except Exception as ex:
-        logger.exception(ex)
+    ArchiveRemoveExpiredSpikes().run()
