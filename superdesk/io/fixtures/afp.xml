@@ -99,6 +99,8 @@
 <Property FormalName="Keyword" Value="business"/>
 <Property FormalName="Keyword" Value="bankruptcy"/>
 <Property FormalName="Keyword" Value="Saab"/>
+<Genre FormalName="business"/>
+<Genre FormalName="bankruptcy"/>
 </DescriptiveMetadata>
 <ContentItem>
 <MediaType FormalName="Text"/>

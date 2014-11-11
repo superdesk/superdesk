@@ -54,8 +54,10 @@ class NITFParser(Parser):
 
             if attribute_name == 'anpa-keyword':
                 keywords.append(elem.get('content'))
-            if attribute_name == 'anpa-sequence':
+            elif attribute_name == 'anpa-sequence':
                 item['ingest_provider_sequence'] = elem.get('content')
+            elif attribute_name == 'anpa-category':
+                item['anpa-category'] = {'qcode': elem.get('content'), 'name': ''}
 
         item['keywords'] = keywords
 
@@ -70,6 +72,6 @@ class NITFParser(Parser):
                     })
 
             if len(subjects):
-                subjects[-1]['code'] = qcode
+                subjects[-1]['qcode'] = qcode
 
         return subjects

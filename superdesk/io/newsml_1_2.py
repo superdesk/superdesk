@@ -1,6 +1,7 @@
 import datetime
 from ..etree import etree
 from superdesk.io import Parser
+from superdesk.io.iptc import subject_codes
 
 
 class NewsMLOneParser(Parser):
@@ -34,7 +35,8 @@ class NewsMLOneParser(Parser):
         subjects += tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/SubjectCode/SubjectMatter')
         subjects += tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/SubjectCode/Subject')
 
-        item['Subjects'] = self.parse_attributes_as_dictionary(subjects)
+        item['subject'] = self.format_subjects(subjects)
+
         item['ContentItem'] = self.parse_attributes_as_dictionary(
             tree.find('NewsItem/NewsComponent/ContentItem'))
         # item['Content'] = etree.tostring(
@@ -45,6 +47,12 @@ class NewsMLOneParser(Parser):
         parsed_el = tree.find('NewsItem/NewsComponent/RightsMetadata/UsageRights/UsageType')
         if parsed_el is not None:
             item.setdefault('usageterms', parsed_el.text)
+
+        parsed_el = tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/Genre')
+        if parsed_el is not None:
+            item['genre'] = []
+            for el in parsed_el:
+                item['genre'].append(el.get('FormalName'))
 
         return self.populate_fields(item)
 
@@ -92,7 +100,6 @@ class NewsMLOneParser(Parser):
         item['versioncreated'] = self.datetime(item['NewsManagement']['ThisRevisionCreated'])
         item['firstcreated'] = self.datetime(item['NewsManagement']['FirstCreated'])
         item['pubstatus'] = item['NewsManagement']['Status']['FormalName']
-        item['subject'] = item['Subjects']
 
         if 'HeadLine' in item['NewsLines']:
             item['headline'] = item['NewsLines']['HeadLine']
@@ -100,3 +107,25 @@ class NewsMLOneParser(Parser):
             item['headline'] = 'Alert'
 
         return item
+
+    def format_subjects(self, subjects):
+        """
+        Maps the ingested Subject Codes to their corresponding names as per IPTC Specification.
+        :returns [{"qcode": "01001000", "name": "archaeology"}, {"qcode": "01002000", "name": "architecture"}]
+        """
+
+        formatted_subjects = []
+
+        def is_not_formatted(qcode):
+            for formatted_subject in formatted_subjects:
+                if formatted_subject['qcode'] == qcode:
+                    return False
+
+            return True
+
+        for subject in subjects:
+            formal_name = subject.get('FormalName')
+            if formal_name and is_not_formatted(formal_name):
+                formatted_subjects.append({'qcode': formal_name, 'name': subject_codes.get(formal_name, '')})
+
+        return formatted_subjects
