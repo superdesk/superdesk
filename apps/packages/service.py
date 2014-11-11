@@ -1,4 +1,6 @@
+from collections import Counter
 from eve.utils import ParsedRequest, config
+from eve.validation import ValidationError
 from superdesk.services import BaseService
 from superdesk import SuperdeskError, get_resource_service
 from apps.archive.common import on_create_item
@@ -22,8 +24,10 @@ class PackageService(BaseService):
             self.update_link(doc[config.ID_FIELD], assoc)
 
     def on_update(self, updates, original):
-        for assoc in updates.get(ASSOCIATIONS, []):
-            self.extract_default_association_data(assoc)
+        associations = updates.get(ASSOCIATIONS, [])
+        self.check_for_duplicates(original, associations)
+        for assoc in associations:
+            self.extract_default_association_data(original, assoc)
 
     def on_updated(self, updates, original):
         for assoc in updates.get(ASSOCIATIONS, []):
@@ -39,11 +43,13 @@ class PackageService(BaseService):
             if len(associations) == 0:
                 raise SuperdeskError(message='No content associated with the package.')
 
+            self.check_for_duplicates(doc, associations)
             for assoc in associations:
-                self.extract_default_association_data(assoc)
+                self.extract_default_association_data(doc, assoc)
 
-    def extract_default_association_data(self, assoc):
+    def extract_default_association_data(self, package, assoc):
         item, item_id, endpoint = self.get_associated_item(assoc)
+        self.check_for_circular_reference(package, item_id)
         assoc['guid'] = item.get('guid', item_id)
         assoc['type'] = item.get('type')
 
@@ -62,4 +68,20 @@ class PackageService(BaseService):
             two_way_links.append({'package': package_id})
 
         item[LINKED_IN_PACKAGES] = two_way_links
+        del item[config.ID_FIELD]
         get_resource_service(endpoint).patch(item_id, item)
+
+    def check_for_duplicates(self, package, associations):
+        counter = Counter()
+        package_id = package[config.ID_FIELD]
+        for itemRef in [assoc[ITEM_REF] for assoc in associations]:
+            if itemRef == package_id:
+                raise SuperdeskError(message='Trying to self reference as an association.')
+            counter[itemRef] += 1
+
+        if any(itemRef for itemRef, value in counter.items() if value > 1):
+            raise SuperdeskError(message='Content associated multiple times')
+
+    def check_for_circular_reference(self, package, item_id):
+        if any(d for d in package.get(LINKED_IN_PACKAGES, []) if d['package'] == item_id):
+            raise ValidationError('Trying to create a circular reference to: ' + item_id)

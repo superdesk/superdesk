@@ -25,6 +25,7 @@ Feature: Packages
         }
         """
 
+    
     @auth
     Scenario: Create new package with text content
         Given empty "packages"
@@ -156,6 +157,98 @@ Feature: Packages
             }
             """
 
+    @auth
+    Scenario: Fail on creating new package with duplicated content
+        Given empty "packages"
+        When we post to "/packages"
+        """
+        {
+            "associations": [
+                {
+                    "headline": "test package with text",
+                    "itemRef": "/archive/#ARCHIVE_ID#",
+                    "slugline": "awesome article"
+                },
+                {
+                    "headline": "test package with text",
+                    "itemRef": "/archive/#ARCHIVE_ID#",
+                    "slugline": "awesome article"
+                }
+            ],
+            "guid": "tag:example.com,0000:newsml_BRE9A605"
+        }
+        """
+        Then we get error 400
+        """
+        {
+            "_message": "Content associated multiple times",
+            "_status": "ERR"
+        }
+        """
+
+    @auth
+    Scenario: Fail on creating package with circular reference
+        When we post to "archive"
+	    """
+        [{"headline": "test"}]
+	    """
+        When we post to "/packages" with success
+        """
+        {
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
+            "associations": [
+                {
+                    "headline": "test package with text",
+                    "itemRef": "/archive/#ARCHIVE_ID#",
+                    "slugline": "awesome article"
+                }
+            ]
+        }
+        """
+        When we post to "/packages" with success
+        """
+        {
+            "associations": [
+                {
+                    "headline": "test package with text",
+                    "itemRef": "/archive/#ARCHIVE_ID#",
+                    "slugline": "awesome article"
+                },
+                {
+                    "headline": "test package with text",
+                    "itemRef": "/packages/tag:example.com,0000:newsml_BRE9A605",
+                    "slugline": "awesome circular article"
+                }
+            ]
+        }
+        """
+        And we patch "/packages/tag:example.com,0000:newsml_BRE9A605"
+        """
+        {
+            "associations": [
+                {
+                    "headline": "test package with text",
+                    "itemRef": "/archive/#ARCHIVE_ID#",
+                    "slugline": "awesome article"
+                },
+                {
+                    "headline": "test package with text",
+                    "itemRef": "/packages/#PACKAGES_ID#",
+                    "slugline": "awesome circular article"
+                }
+            ]
+        }
+        """
+        Then we get error 400
+        """
+        {
+            "_issues": {
+                "validator exception": "Trying to create a circular reference to: #PACKAGES_ID#"
+            },
+            "_status": "ERR"
+        }
+        """
+ 
     @auth
     Scenario: Retrieve created package
         Given empty "packages"
