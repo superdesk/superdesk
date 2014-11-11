@@ -1,4 +1,5 @@
 from .vocabularies import VocabulariesResource, VocabulariesService
+from .command import VocabulariesPopulateCommand  # noqa
 import superdesk
 
 
