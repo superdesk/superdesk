@@ -254,30 +254,30 @@
 		}
 	}
 
-	.metadata {
+	.metadata-view {
 		position: absolute;
 		top:0; left: 0; right: 0; bottom: 0;
 		padding: 20px 20px @bottom-view-padding;
 		overflow: auto;
+	}
+}
 
-		ul > li {
-			.clearfix();
-			margin-bottom: 10px;
-			> dt {
-				clear: both;
-				float: left;
-				width: 140px;
-				.text-semibold();
-			}
-			> dl {
-				padding-left: 140px;
-				min-height: 18px;
-				margin: 0;
-				word-break: break-word;
-			}
+.metadata-view {
+	dl {
+		.clearfix();
+		margin-bottom: 10px;
+		> dt {
+			clear: both;
+			float: left;
+			width: 140px;
+			.text-semibold();
 		}
-
-
+		> dd {
+			padding-left: 140px;
+			min-height: 18px;
+			margin: 0;
+			word-break: break-word;
+		}
 	}
 }
 
@@ -390,6 +390,9 @@
 			white-space: nowrap; 
 		}
 		.lightbox-close {
+			background: none;
+			padding: 0;
+			border: 0;
 			width: 16px;
 			height: 16px;
 			display: block;
@@ -756,37 +759,36 @@
 
 }
 
+// .metadata-details-new {
+// 	color:#777;
+// 	position:relative;
+// 	height:auto;
+// 	margin:0;
+// 	font-size: 12px;
+// 	dt {
+// 		width:100px;
+// 		float: left;
+// 		clear: left;
+// 		font-weight:normal;
+// 		color:#474747;
+// 		margin-bottom:5px;
+// 		line-height:16px;
+// 		vertical-align:middle;
 
-.metadata-details-new {
-	color:#777;
-	position:relative;
-	height:auto;
-	margin:0;
-	font-size: 12px;
-	dt {
-		width:100px;
-		float: left;
-		clear: left;
-		font-weight:normal;
-		color:#474747;
-		margin-bottom:5px;
-		line-height:16px;
-		vertical-align:middle;
-
-	}
-	dt:after {
-		content : ":";
-	}
-	dd { 
-		width:245px;
-		max-width: 245px;
-		float:left;
-		margin-left:0px;
-		line-height:16px;
-		margin-bottom:7px;
-		vertical-align:middle;
-		word-break: break-word;
-	}
-}
+// 	}
+// 	dt:after {
+// 		content : ":";
+// 	}
+// 	dd { 
+// 		width:245px;
+// 		max-width: 245px;
+// 		float:left;
+// 		margin-left:0px;
+// 		line-height:16px;
+// 		margin-bottom:7px;
+// 		vertical-align:middle;
+// 		word-break: break-word;
+// 	}
+// }
 
 /* END OF LIGHTBOX PREVIEW */

@@ -37,7 +37,7 @@
 
 </div>
 
-<div sd-media-view data-item="selected.view" data-items="items._items" ng-if="selected.view"></div>
+<div sd-media-view data-item="selected.view" data-items="items._items" ng-if="selected.view" data-close="closeLightbox()"></div>
 
 <section class="archive main-section" ng-class="{'sidebar-open': sidebarstick}">
 
@@ -167,7 +167,7 @@
                     </button>
                 </header>
                 <div class="content" ng-if="selected.preview">
-                    <div ng-if="contentTab" sd-media-preview data-item="selected.preview" data-display="display()" data-type="{{ spike ? 'spike' : type }}"></div>
+                    <div ng-if="contentTab" sd-media-preview data-item="selected.preview" data-display="openLightbox()" data-type="{{ spike ? 'spike' : type }}"></div>
                     <div ng-if="!contentTab" sd-media-metadata data-item="selected.preview"></div>
                 </div>
             </div>

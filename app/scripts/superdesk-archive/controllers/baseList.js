@@ -43,8 +43,12 @@ define(['lodash'], function(_) {
             $location.search('_id', item ? item._id : null);
         };
 
-        $scope.display = function display() {
+        $scope.openLightbox = function openLightbox() {
             $scope.selected.view = $scope.selected.preview;
+        };
+
+        $scope.closeLightbox = function closeLightbox() {
+            $scope.selected.view = null;
         };
 
         $scope.$on('$routeUpdate', function(e, data) {

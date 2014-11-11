@@ -163,7 +163,8 @@ define([
                 templateUrl: require.toUrl('./views/media-view.html'),
                 scope: {
                     items: '=',
-                    item: '='
+                    item: '=',
+                    close: '&'
                 },
                 link: function(scope, elem) {
 
@@ -259,10 +260,6 @@ define([
                 scope: {
                     item: '=',
                     contents: '='
-                },
-                link: function(scope, elem) {
-                    console.log('=');
-                    console.log(scope.item);
                 }
             };
         }])
