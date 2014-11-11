@@ -48,6 +48,7 @@ AUTHOR: thomsonreuters.com
         <signal qcode="prodId:TXT" />
         <signal qcode="pmt:text" />
         <rtr:versionedId guid="tag:reuters.com,0000:newsml_L4N0BT5PJ:263518268" />
+        <edNote>Editorial Note</edNote>
       </itemMeta>
       <contentMeta>
         <urgency>3</urgency>
@@ -72,6 +73,14 @@ AUTHOR: thomsonreuters.com
         <headline>Soccer-Smiling Benitez pleads for support after midweek outburst</headline>
         <creditline>Reuters</creditline>
         <description role="descRole:caption">SOCCER-ENGLAND/CHELSEA-BENITEZ:Soccer-Smiling Benitez pleads for support after midweek outburst</description>
+        <located literal="Bangalore" type="cptType:5">
+          <name>Bangalore</name>
+          <facet qcode="geoProp:8"/>
+          <broader qcode="N2:IND" type="cptType:5">
+            <name>India</name>
+            <facet qcode="geoProp:5"/>
+          </broader>
+        </located>
       </contentMeta>
       <contentSet>
         <inlineXML contenttype="application/xhtml+html" wordcount="569">

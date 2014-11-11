@@ -116,4 +116,3 @@ class NewsMLOneParser(Parser):
         item['dateline'] = parsed_el.get('DateLine', '')
         item['slugline'] = parsed_el.get('SlugLine', '')
         item['byline'] = parsed_el.get('ByLine', '')
-

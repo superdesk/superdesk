@@ -18,7 +18,7 @@ class TestCase(unittest.TestCase):
         self.assertEquals(self.item.get('headline'), "The main stories on today's 1900 ABC TV news")
 
     def test_keywords(self):
-        self.assertEquals(self.item.get('keywords'), ['Monitor 1900 ABC News'])
+        self.assertEquals(self.item.get('slugline'), 'Monitor 1900 ABC News')
 
     def test_subjects(self):
         self.assertEquals(len(self.item.get('subject')), 2)
@@ -34,6 +34,15 @@ class TestCase(unittest.TestCase):
 
     def test_urgency(self):
         self.assertEquals(self.item.get('urgency'), '5')
+
+    def test_dateline(self):
+        self.assertEquals(self.item.get('dateline'), 'Sydney')
+
+    def test_byline(self):
+        self.assertEquals(self.item.get('byline'), 'By John Doe')
+
+    def test_abstract(self):
+        self.assertEquals(self.item.get('abstract'), 'The main stories on today\'s 1900 ABC TV news')
 
     # def test_copyright(self):
     #     self.assertEquals(self.item.get('copyrightholder'), 'Australian Associated Press')
