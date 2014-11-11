@@ -2,7 +2,7 @@
 
 describe('search service', function() {
     beforeEach(module('templates'));
-    beforeEach(module('superdesk.archive'));
+    beforeEach(module('superdesk.search'));
 
     it('can create base query', inject(function(contentQuery) {
         var query = contentQuery.query();
