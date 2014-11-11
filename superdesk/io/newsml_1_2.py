@@ -1,6 +1,7 @@
 import datetime
 from ..etree import etree
 from superdesk.io import Parser
+from superdesk.io.iptc import subject_codes
 
 
 class NewsMLOneParser(Parser):
@@ -35,7 +36,7 @@ class NewsMLOneParser(Parser):
         subjects += tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/SubjectCode/SubjectMatter')
         subjects += tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/SubjectCode/Subject')
 
-        item['Subjects'] = self.parse_attributes_as_dictionary(subjects)
+        item['subject'] = self.format_subjects(subjects)
 
         # item['ContentItem'] = self.parse_attributes_as_dictionary(
         #    tree.find('NewsItem/NewsComponent/ContentItem'))
@@ -52,6 +53,12 @@ class NewsMLOneParser(Parser):
         parsed_el = tree.find('NewsItem/NewsComponent/RightsMetadata/UsageRights/UsageType')
         if parsed_el is not None:
             item.setdefault('usageterms', parsed_el.text)
+
+        parsed_el = tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/Genre')
+        if parsed_el is not None:
+            item['genre'] = []
+            for el in parsed_el:
+                item['genre'].append(el.get('FormalName'))
 
         return self.populate_fields(item)
 
@@ -93,15 +100,14 @@ class NewsMLOneParser(Parser):
 
     def populate_fields(self, item):
         item['type'] = 'text'
-        item['subject'] = item['Subjects']
         return item
 
     def parse_news_identifier(self, item, tree):
         parsed_el = self.parse_elements(tree.find('NewsItem/Identification/NewsIdentifier'))
         item['guid'] = parsed_el['PublicIdentifier']
         item['version'] = parsed_el['RevisionId']
+def parse_news_management(self, item, tree):
 
-    def parse_news_management(self, item, tree):
         parsed_el = self.parse_elements(tree.find('NewsItem/NewsManagement'))
         item['urgency'] = parsed_el['Urgency']['FormalName']
         item['versioncreated'] = self.datetime(parsed_el['ThisRevisionCreated'])
@@ -116,3 +122,28 @@ class NewsMLOneParser(Parser):
         item['dateline'] = parsed_el.get('DateLine', '')
         item['slugline'] = parsed_el.get('SlugLine', '')
         item['byline'] = parsed_el.get('ByLine', '')
+
+            return True
+
+        def format_subjects(self, subjects):
+        """
+        Maps the ingested Subject Codes to their corresponding names as per IPTC Specification.
+        :returns [{"qcode": "01001000", "name": "archaeology"}, {"qcode": "01002000", "name": "architecture"}]
+        """
+
+        formatted_subjects = []
+
+        def is_not_formatted(qcode):
+            for formatted_subject in formatted_subjects:
+                if formatted_subject['qcode'] == qcode:
+                    return False
+
+            return True
+
+        for subject in subjects:
+            formal_name = subject.get('FormalName')
+            if formal_name and is_not_formatted(formal_name):
+                formatted_subjects.append({'qcode': formal_name, 'name': subject_codes.get(formal_name, '')})
+
+        return formatted_subjects
+

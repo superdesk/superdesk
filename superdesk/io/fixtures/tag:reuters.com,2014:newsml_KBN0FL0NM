@@ -102,6 +102,13 @@
         <by>By Marwan Makdisi</by>
         <creditline>Reuters</creditline>
         <description role="descRole:caption">US-SYRIA-CRISIS-ASSAD:Confident Assad launches new term in stronger position</description>
+        <genre>
+            <name xml:lang="en-GB">Politics</name>
+            <name xml:lang="fr">politique</name>
+        </genre>
+        <genre>
+            <name xml:lang="en-GB">Elections</name>
+        </genre>
       </contentMeta>
       <groupSet root="root">
         <group id="root" role="grpRole:NEP">

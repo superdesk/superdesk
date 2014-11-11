@@ -3,10 +3,13 @@ import datetime
 from superdesk.etree import etree
 from .iptc import subject_codes
 from superdesk.io import Parser
+import logging
 
 XMLNS = 'http://iptc.org/std/nar/2006-10-01/'
 XHTML = 'http://www.w3.org/1999/xhtml'
 CLASS_PACKAGE = 'composite'
+
+logger = logging.getLogger("NewsMLTwoParser")
 
 
 class NewsMLTwoParser(Parser):
@@ -86,6 +89,13 @@ class NewsMLTwoParser(Parser):
                 item['original_source'] = info_source.get('literal')
                 break
 
+        item['genre'] = []
+        for genre_el in meta.findall(self.qname('genre')):
+            for name_el in genre_el.findall(self.qname('name')):
+                lang = name_el.get(self.qname("lang", ns='xml'))
+                if lang and lang.startswith('en'):
+                    item['genre'].append(name_el.text)
+
     def parse_content_subject(self, tree, item):
         """Parse subj type subjects into subject list."""
         item['subject'] = []
@@ -94,11 +104,11 @@ class NewsMLTwoParser(Parser):
             if len(qcode_parts) == 2 and qcode_parts[0] == 'subj':
                 try:
                     item['subject'].append({
-                        'code': qcode_parts[1],
+                        'qcode': qcode_parts[1],
                         'name': subject_codes[qcode_parts[1]]
                     })
                 except KeyError:
-                    print("Subject code '%s' not found" % qcode_parts[1])
+                    logger.error("Subject code '%s' not found" % qcode_parts[1])
 
     def parse_content_place(self, tree, item):
         """Parse subject with type="cptType:5" into place list."""
@@ -183,6 +193,9 @@ class NewsMLTwoParser(Parser):
     def qname(self, tag, ns=None):
         if ns is None:
             ns = self.root.tag.rsplit('}')[0].lstrip('{')
+        elif ns is not None and ns == 'xml':
+            ns = 'http://www.w3.org/XML/1998/namespace'
+
         return str(etree.QName(ns, tag))
 
     def datetime(self, string):

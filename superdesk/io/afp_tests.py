@@ -39,15 +39,19 @@ class TestCase(unittest.TestCase):
         self.assertEquals(self.item.get('pubstatus'), 'Usable')
 
     def test_subjects(self):
-        self.assertEquals(len(self.item.get('subject')), 8)
-        self.assertIn({'cat': 'ECO', 'FormalName': '04011002'}, self.item.get('subject'))
-        self.assertIn({'cat': 'ECO', 'FormalName': '04016007'}, self.item.get('subject'))
-        self.assertIn({'cat': 'ECO', 'FormalName': '04000000'}, self.item.get('subject'))
-        self.assertIn({'cat': 'ECO', 'FormalName': '04016038'}, self.item.get('subject'))
-        self.assertIn({'cat': 'ECO', 'FormalName': '04011000'}, self.item.get('subject'))
+        self.assertEquals(len(self.item.get('subject')), 5)
+        self.assertIn({'name': 'automotive equipment', 'qcode': '04011002'}, self.item.get('subject'))
+        self.assertIn({'name': 'bankruptcy', 'qcode': '04016007'}, self.item.get('subject'))
+        self.assertIn({'name': 'economy, business and finance', 'qcode': '04000000'}, self.item.get('subject'))
+        self.assertIn({'name': 'quarterly or semiannual financial statement', 'qcode': '04016038'},
+                      self.item.get('subject'))
+        self.assertIn({'name': 'manufacturing and engineering', 'qcode': '04011000'}, self.item.get('subject'))
 
     def test_usageterms(self):
         self.assertEquals(self.item.get('usageterms'), 'NO ARCHIVAL USE')
+
+    def test_genre(self):
+        self.assertListEqual(self.item.get('genre'), ['business', 'bankruptcy'])
 
 if __name__ == '__main__':
     unittest.main()

@@ -21,14 +21,17 @@ metadata_schema = {
     'version': {
         'type': 'integer'
     },
+
     'original_creator': Resource.rel('users', True),
     'version_creator': Resource.rel('users', True),
+
     'firstcreated': {
         'type': 'datetime'
     },
     'versioncreated': {
         'type': 'datetime'
     },
+
     'ingest_provider': Resource.rel('ingest_providers', True),
     'source': {     # The value is copied from the ingest_providers vocabulary
         'type': 'string'
@@ -39,9 +42,21 @@ metadata_schema = {
     'ingest_provider_sequence': {
         'type': 'string'
     },
+
     'usageterms': {
         'type': 'string'
     },
+
+    'anpa_category': {
+        'type': 'string'
+    },
+    'subject': {
+        'type': 'list'
+    },
+    'genre': {
+        'type': 'list'
+    },
+
     'type': {
         'type': 'string',
         'required': True,
@@ -58,9 +73,6 @@ metadata_schema = {
         'type': 'string'
     },
     'place': {
-        'type': 'list'
-    },
-    'subject': {
         'type': 'list'
     },
     'byline': {
@@ -92,9 +104,6 @@ metadata_schema = {
         'type': 'integer'
     },
     'groups': {
-        'type': 'list'
-    },
-    'keywords': {
         'type': 'list'
     },
     'body_html': {

@@ -1,27 +1,26 @@
-'''
+"""
 Created on May 23, 2014
 
 @author: Ioan v. Pocol
-'''
+"""
+
+import traceback
 
 from celery.canvas import chord
-import flask
+from celery.result import AsyncResult
+from flask.globals import current_app as app
+from celery.exceptions import Ignore
+from celery import states
+from celery.utils.log import get_task_logger
 
 import superdesk
 from superdesk.utc import utc, utcnow
 from superdesk.celery_app import celery, finish_task_for_progress,\
     finish_subtask_from_progress, add_subtask_to_progress
-from celery.result import AsyncResult
-from flask.globals import current_app as app
 from superdesk.upload import url_for_media
-from superdesk.media.media_operations import download_file_from_url,\
-    process_file
+from superdesk.media.media_operations import download_file_from_url, process_file
 from superdesk.resource import Resource
-from celery.exceptions import Ignore
-from celery import states
-from .common import facets
-import traceback
-from celery.utils.log import get_task_logger
+from .common import facets, get_user
 from superdesk.services import BaseService
 
 
@@ -240,8 +239,7 @@ class ArchiveIngestService(BaseService):
                 # doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
                 superdesk.get_resource_service('archive').post([doc])
 
-            task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'),
-                                      str(getattr(flask.g, 'user', {}).get('_id')))
+            task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), str(get_user().get('_id')))
 
             doc['task_id'] = task.id
             if task.state not in ('PROGRESS', states.SUCCESS, states.FAILURE) and not task.result:

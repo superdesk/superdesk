@@ -37,6 +37,16 @@ def update_provider(provider):
     push_notification('ingest:update')
 
 
+def process_anpa_category(item):
+    anpa_categories = superdesk.get_resource_service('vocabularies').find_one(req=None, _id='categories')
+    if anpa_categories:
+        for anpa_category in anpa_categories['items']:
+            if anpa_category['is_active'] is True \
+                    and item['anpa-category']['qcode'].lower() == anpa_category['value'].lower():
+                item['anpa-category'] = {'qcode': item['anpa-category']['qcode'], 'name': anpa_category['name']}
+                break
+
+
 def ingest_items(provider, items):
         start = utcnow()
         ingested_count = provider.get('ingested_count', 0)
@@ -53,6 +63,9 @@ def ingest_items(provider, items):
 
             item['ingest_provider'] = str(provider['_id'])
             item.setdefault('source', provider.get('source', ''))
+
+            if 'anpa-category' in item:
+                process_anpa_category(item)
 
             old_item = superdesk.get_resource_service('ingest').find_one(_id=item['guid'], req=None)
             if old_item:

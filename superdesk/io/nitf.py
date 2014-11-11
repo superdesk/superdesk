@@ -72,11 +72,14 @@ class NITFParser(Parser):
 
             if attribute_name == 'anpa-keyword':
                 item['slugline'] = elem.get('content')
-            if attribute_name == 'anpa-sequence':
+            elif attribute_name == 'anpa-sequence':
                 item['ingest_provider_sequence'] = elem.get('content')
+            elif attribute_name == 'anpa-category':
+                item['anpa-category'] = {'qcode': elem.get('content'), 'name': ''}
             if attribute_name == 'anpa-wordcount':
                 item['word_count'] = elem.get('content')
-            if attribute_name == 'anpa-takekey':
+
+                        if attribute_name == 'anpa-takekey':
                 item['anpa_take_key'] = elem.get('content')
             if attribute_name == 'anpa-format':
                 anpa_format = elem.get('content').lower() if elem.get('content') is not None else 'x'
@@ -93,6 +96,6 @@ class NITFParser(Parser):
                     })
 
             if len(subjects):
-                subjects[-1]['code'] = qcode
+                subjects[-1]['qcode'] = qcode
 
         return subjects

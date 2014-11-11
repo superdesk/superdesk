@@ -2,7 +2,7 @@
 import os
 import unittest
 from superdesk.etree import etree
-from .nitf import NITFParser
+from superdesk.io.nitf import NITFParser
 
 
 class TestCase(unittest.TestCase):
@@ -23,7 +23,7 @@ class TestCase(unittest.TestCase):
     def test_subjects(self):
         self.assertEquals(len(self.item.get('subject')), 2)
         self.assertIn({'name': 'Justice'}, self.item.get('subject'))
-        self.assertIn({'code': '02003000', 'name': 'Police'}, self.item.get('subject'))
+        self.assertIn({'qcode': '02003000', 'name': 'Police'}, self.item.get('subject'))
 
     def test_guid(self):
         self.assertEquals(self.item.get('guid'), 'AAP.115314987.5417374')
@@ -60,6 +60,9 @@ class TestCase(unittest.TestCase):
 
     def test_ingest_provider_sequence(self):
         self.assertEquals(self.item.get('ingest_provider_sequence'), '1747')
+
+    def test_anpa_category(self):
+        self.assertEquals(self.item.get('anpa-category')['qcode'], 'a')
 
 if __name__ == '__main__':
     unittest.main()
