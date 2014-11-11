@@ -19,13 +19,14 @@ class NewsMLOneParser(Parser):
         if parsed_el is not None:
             item['ingest_provider_sequence'] = parsed_el.text
 
-        item['NewsIdentifier'] = self.parse_elements(tree.find('NewsItem/Identification/NewsIdentifier'))
-        item['NewsManagement'] = self.parse_elements(tree.find('NewsItem/NewsManagement'))
-        item['NewsLines'] = self.parse_elements(tree.find('NewsItem/NewsComponent/NewsLines'))
-        item['DescriptiveMetadata'] = self.parse_multivalued_elements(
-            tree.find('NewsItem/NewsComponent/DescriptiveMetadata'))
-        item['located'] = self.parse_attributes_as_dictionary(
-            tree.find('NewsItem/NewsComponent/DescriptiveMetadata/Location'))
+        self.parse_news_identifier(item, tree)
+        self.parse_newslines(item, tree)
+        self.parse_news_management(item, tree)
+
+        parsed_el = tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/Language')
+        if parsed_el is not None:
+            language = self.parse_attributes_as_dictionary(parsed_el)
+            item['language'] = language[0]['FormalName'] if len(language) else ''
 
         keywords = tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/Property')
         item['keywords'] = self.parse_attribute_values(keywords, 'Keyword')
@@ -35,12 +36,18 @@ class NewsMLOneParser(Parser):
         subjects += tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/SubjectCode/Subject')
 
         item['Subjects'] = self.parse_attributes_as_dictionary(subjects)
-        item['ContentItem'] = self.parse_attributes_as_dictionary(
-            tree.find('NewsItem/NewsComponent/ContentItem'))
+
+        # item['ContentItem'] = self.parse_attributes_as_dictionary(
+        #    tree.find('NewsItem/NewsComponent/ContentItem'))
         # item['Content'] = etree.tostring(
         # tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'))
+
         item['body_html'] = etree.tostring(
             tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'))
+
+        parsed_el = tree.findall('NewsItem/NewsComponent/ContentItem/Characteristics/Property')
+        characteristics = self.parse_attribute_values(parsed_el, 'Words')
+        item['word_count'] = characteristics[0] if len(characteristics) else None
 
         parsed_el = tree.find('NewsItem/NewsComponent/RightsMetadata/UsageRights/UsageType')
         if parsed_el is not None:
@@ -85,18 +92,27 @@ class NewsMLOneParser(Parser):
         return datetime.datetime.strptime(string, '%Y%m%dT%H%M%S+0000')
 
     def populate_fields(self, item):
-        item['guid'] = item['NewsIdentifier']['PublicIdentifier']
         item['type'] = 'text'
-        item['urgency'] = item['NewsManagement']['Urgency']['FormalName']
-        item['version'] = item['NewsIdentifier']['RevisionId']
-        item['versioncreated'] = self.datetime(item['NewsManagement']['ThisRevisionCreated'])
-        item['firstcreated'] = self.datetime(item['NewsManagement']['FirstCreated'])
-        item['pubstatus'] = item['NewsManagement']['Status']['FormalName']
         item['subject'] = item['Subjects']
-
-        if 'HeadLine' in item['NewsLines']:
-            item['headline'] = item['NewsLines']['HeadLine']
-        elif item['NewsManagement']['NewsItemType']['FormalName'] == 'Alert':
-            item['headline'] = 'Alert'
-
         return item
+
+    def parse_news_identifier(self, item, tree):
+        parsed_el = self.parse_elements(tree.find('NewsItem/Identification/NewsIdentifier'))
+        item['guid'] = parsed_el['PublicIdentifier']
+        item['version'] = parsed_el['RevisionId']
+
+    def parse_news_management(self, item, tree):
+        parsed_el = self.parse_elements(tree.find('NewsItem/NewsManagement'))
+        item['urgency'] = parsed_el['Urgency']['FormalName']
+        item['versioncreated'] = self.datetime(parsed_el['ThisRevisionCreated'])
+        item['firstcreated'] = self.datetime(parsed_el['FirstCreated'])
+        item['pubstatus'] = parsed_el['Status']['FormalName']
+        # if parsed_el['NewsItemType']['FormalName'] == 'Alert':
+        #    parsed_el['headline'] = 'Alert'
+
+    def parse_newslines(self, item, tree):
+        parsed_el = self.parse_elements(tree.find('NewsItem/NewsComponent/NewsLines'))
+        item['headline'] = parsed_el.get('HeadLine', '')
+        item['dateline'] = parsed_el.get('DateLine', '')
+        item['slugline'] = parsed_el.get('SlugLine', '')
+        item['byline'] = parsed_el.get('ByLine', '')

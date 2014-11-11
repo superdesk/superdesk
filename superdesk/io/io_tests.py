@@ -33,12 +33,14 @@ class TextParserTest(ItemTest):
         self.assertEquals("text", self.item.get('type'))
         self.assertEquals("2013-03-01T15:09:04", self.item.get('versioncreated').isoformat())
         self.assertEquals("2013-03-01T15:09:04", self.item.get('firstcreated').isoformat())
+        self.assertEquals("Editorial Note", self.item.get('ednote'))
 
     def test_parse_content_meta(self):
         self.assertEquals('3', self.item.get('urgency'))
         self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ", self.item["slugline"])
         self.assertEquals("Soccer-Smiling Benitez pleads for support after midweek outburst", self.item["headline"])
-        self.assertEquals("Reuters", self.item["creditline"])
+        # self.assertEquals("Reuters", self.item["creditline"])
+        self.assertEquals("Bangalore", self.item["dateline"])
         self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ:Soccer-Smiling Benitez pleads for support after midweek outburst", self.item.get('description_text'))  # noqa
 
     # def test_parse_rights_info(self):
@@ -47,6 +49,7 @@ class TextParserTest(ItemTest):
 
     def test_content_set(self):
         self.assertEquals("<p>By Toby Davis</p>", self.item.get('body_html'))
+        self.assertEquals("569", self.item.get('word_count'))
 
     def test_language(self):
         self.assertEquals('en', self.item.get('language'))
