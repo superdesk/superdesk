@@ -1,1 +1,39 @@
-<div sd-searchbar></div>
+<div class="flat-searchbar advanced-searchbar dropdown" ng-class="{extended: flags.extended}">
+    <div class="search-handler">
+        <label for="search-input" class="trigger-icon" ng-click="flags.extended = !flags.extended"></label>
+        <input id="search-input"
+        	type="text"
+        	placeholder="{{ 'Search'|translate }}"
+        	ng-keyup="searchOnEnter($event)"
+        	ng-model="query" 
+        	tabindex="1">
+    </div>
+    
+    <button class="dropdown-toggle" tabindex="2">
+    	<b class="caret"></b>
+    </button>
+    
+    <button ng-click="search()" class="trigger pull-left" tabindex="3" translate>Go!</button>
+    
+    <div class="separator-handler"></div>
+    
+    <div class="dropdown-menu" ng-click="$event.stopPropagation();" >
+    	<button class="close" ng-click="focusOnSearch();"><i class="icon-close-small"></i></button>
+		<div class="content">
+			<form>
+				<fieldset>
+					<div class="field">
+						<label for="search-headline">Headline</label>
+						<input type="text" id="search-headline" ng-model="headline" tabindex="4">
+					</div>
+					<div class="field">
+						<label for="search-slugline">Slugline</label>
+						<input type="text" id="search-slugline" ng-model="slugline" tabindex="5">
+					</div>
+				</fieldset>
+			</form>
+			
+			<button class="trigger small" ng-click="search()" tabindex="6" translate>Go!</button>
+		</div>
+    </div>
+</div>

@@ -152,11 +152,57 @@
         /**
          * Item search component
          */
-        .directive('sdItemSearchbar', function() {
+        .directive('sdItemSearchbar', ['$location', function($location) {
             return {
-                templateUrl: 'scripts/superdesk-search/views/item-searchbar.html'
+                scope: true,
+                templateUrl: 'scripts/superdesk-search/views/item-searchbar.html',
+                link: function(scope, elem) {
+                    var ENTER = 13;
+
+                    var input = elem.find('#search-input');
+                    var toggle = elem.find('.dropdown-toggle');
+                    var dropdown = elem.find('.dropdown');
+
+                    var params = $location.search();
+                    scope.query = params.q;
+                    scope.flags = {extended: !!scope.query};
+
+                    function updateParam() {
+                        $location.search('q', scope.query || null);
+                        $location.search('page', null);
+                    }
+
+                    scope.search = function() {
+                        updateParam();
+                        scope.focusOnSearch();
+                    };
+
+                    scope.searchOnEnter = function($event) {
+                        if ($event.keyCode === ENTER) {
+                            scope.search();
+                            $event.stopPropagation();
+                        }
+                    };
+
+                    scope.focusOnSearch = function() {
+                        if (_popupOpen()) {
+                           toggle.click();
+                        }
+                        input.focus();
+                    };
+
+                    toggle.on('click', function() {
+                        if (_popupOpen()) {
+                            dropdown.find('.dropdown-menu input').first().focus();
+                        }
+                    });
+
+                    function _popupOpen() {
+                        return dropdown.hasClass('open');
+                    }
+                }
             };
-        })
+        }])
 
         /**
          * Item sort component

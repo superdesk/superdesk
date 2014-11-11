@@ -1,0 +1,79 @@
+// search.less
+// Styling for search page, and search functionalities
+// ----------------------------------------------------------------------------------------
+@import 'mixins.less';
+@import 'variables.less';
+
+
+// parametric search box
+.advanced-searchbar {
+
+	form {
+		.clearfix();
+	}
+
+	.trigger {
+		border: 0;
+		background: @sd-blue;
+		color: @white;
+		height: @nav-height - 1;
+		padding: 0 15px;
+		display: none;
+		&:focus {
+			.box-shadow(inset 0 0 5px darken(@sd-blue, 20%));
+		}
+		&.small {
+			height: 28px;
+		}
+	}
+
+	.dropdown-toggle {
+		display: none;
+		float: left;
+		height: @nav-height - 1;
+		margin: 0px 0 0 -32px;
+		padding: 0 10px;
+		&:focus {
+			background: #f0f0f0;
+
+		}
+	}
+	&.extended {
+		.trigger {
+			display: block;
+		}
+		.dropdown-toggle {
+			display: block;
+		}
+	}
+
+	&.open {
+		.dropdown-toggle {
+			display: none;
+		}
+	}
+
+	.dropdown-menu {
+		&:before {
+			display: none;
+		}
+		margin-top: 0;
+		width: 500px;
+		height: 300px;
+		.box-shadow(0 3px 5px 0 #aaa);
+		.border-radius(0px);
+
+		button, a {
+			display: inline-block;
+			width: auto;
+		}
+		.close {
+			padding: 0 5px;
+			float: right;
+		}
+
+		.content {
+			padding: 10px;
+		}
+	}
+}
