@@ -3,13 +3,11 @@
 var ScreenShotReporter = require('protractor-screenshot-reporter');
 
 exports.config = {
+    baseUrl: 'https://master.sd-test.sourcefabric.org',
     params: {
-
-        baseUrl: 'https://master.sd-test.sourcefabric.org',
         baseBackendUrl: 'https://master.sd-test.sourcefabric.org/api/',
         username: 'admin',
         password: 'admin'
-
     },
     specs: ['spec/setup.js', 'spec/matchers.js', 'spec/**/*[Ss]pec.js'],
     capabilities: {

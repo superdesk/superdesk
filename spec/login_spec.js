@@ -1,8 +1,6 @@
-
-var gotoUri = require('./helpers/browser').gotoUri;
 var Login = require('./helpers/pages').login;
 
-var pp = protractor.getInstance().params;
+var ptor = protractor.getInstance();
 
 describe('login', function() {
     'use strict';
@@ -10,10 +8,7 @@ describe('login', function() {
     var modal;
 
     beforeEach(function() {
-        browser.executeScript('sessionStorage.clear();localStorage.clear();');
-        gotoUri('/#/');
         modal = new Login();
-        protractor.getInstance().waitForAngular();
     });
 
     it('form renders modal on load', function() {
@@ -23,7 +18,7 @@ describe('login', function() {
     it('user can log in', function() {
         modal.login('admin', 'admin');
         expect(modal.btn).not.toBeDisplayed();
-        expect(browser.getCurrentUrl()).toBe(pp.baseUrl + '/#/workspace');
+        expect(browser.getCurrentUrl()).toBe(ptor.baseUrl + '/#/workspace');
         element(by.css('button.current-user')).click();
         expect(element(by.css('.user-info .displayname')).getText()).toBe('admin');
     });
@@ -44,7 +39,7 @@ describe('login', function() {
     it('unknown user can\'t log in', function() {
         modal.login('foo', 'bar');
         expect(modal.btn).toBeDisplayed();
-        expect(browser.getCurrentUrl()).not.toBe(pp.baseUrl + '/#/workspace');
+        expect(browser.getCurrentUrl()).not.toBe(ptor.baseUrl + '/#/workspace');
         expect(modal.error).toBeDisplayed();
     });
 

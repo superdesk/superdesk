@@ -4,8 +4,7 @@
 
 var request = require('request');
 
-var utils = require('./utils');
-var constructUrl = utils.constructUrl;
+var constructUrl = require('./utils').constructUrl;
 
 exports.getBackendUrl = getBackendUrl;
 exports.backendRequest = backendRequest;
