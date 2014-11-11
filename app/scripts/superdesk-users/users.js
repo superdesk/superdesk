@@ -725,7 +725,7 @@
                             scope.onsave({user: scope.origUser});
 
                             if (scope.user._id === session.identity._id) {
-                                session.updateIdentity(scope.user);
+                                session.updateIdentity(scope.origUser);
                             }
 
                         }, function(response) {

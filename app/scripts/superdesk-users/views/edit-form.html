@@ -16,7 +16,7 @@
         <div class="header-info">
             <h2>{{ user.display_name }}</h2>
             <h5>{{ user.username }}</h5>
-            <div class="active" ng-if="!profile" tooltip="{{ _active ? 'Disable user' : 'Enable user' | translate }}" tooltip-placement="left">
+            <div class="active" ng-if="!profile && user._id && !dirty" tooltip="{{ _active ? 'Disable user' : 'Enable user' | translate }}" tooltip-placement="left">
               <span sd-switch ng-model="_active" ng-click="toggleStatus(_active)"></span>
             </div>
         </div>
