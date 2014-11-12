@@ -25,7 +25,7 @@ class TaskResource(Resource):
     item_url = item_url
     schema = {
         'slugline': metadata_schema['slugline'],
-        'description_text': metadata_schema['description_text'],
+        'description_text': metadata_schema['description'],
         'type': metadata_schema['type'],
         'planning_item': Resource.rel('planning', True, type='string'),
         'task': {

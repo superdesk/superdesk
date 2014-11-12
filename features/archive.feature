@@ -94,13 +94,14 @@ Feature: News Items Archive
 
         When we patch latest
         """
-        {"headline": "flower", "byline": "foo", "description_text": "flower desc"}
+        {"headline": "flower", "byline": "foo", "description": "flower desc"}
         """
 
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"_items": [{"headline": "flower", "byline": "foo", "description_text": "flower desc"}]}
+        {"_items": [{"headline": "flower", "byline": "foo", "description": "flower desc",
+                     "pubstatus": "Usable", "language": "en"}]}
         """
 
     @auth
@@ -115,12 +116,12 @@ Feature: News Items Archive
         Then original rendition is updated with link to file having mimetype "audio/ogg"
         When we patch latest
         """
-        {"headline": "green", "byline": "foo", "description_text": "green music"}
+        {"headline": "green", "byline": "foo", "description": "green music"}
         """
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"_items": [{"headline": "green", "byline": "foo", "description_text": "green music"}]}
+        {"_items": [{"headline": "green", "byline": "foo", "description": "green music"}]}
         """
 
     @auth
@@ -135,12 +136,12 @@ Feature: News Items Archive
         Then original rendition is updated with link to file having mimetype "video/mp4"
         When we patch latest
         """
-        {"headline": "week @ nasa", "byline": "foo", "description_text": "nasa video"}
+        {"headline": "week @ nasa", "byline": "foo", "description": "nasa video"}
         """
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"_items": [{"headline": "week @ nasa", "byline": "foo", "description_text": "nasa video"}]}
+        {"_items": [{"headline": "week @ nasa", "byline": "foo", "description": "nasa video"}]}
         """
 
     @auth
