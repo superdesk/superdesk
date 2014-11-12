@@ -225,13 +225,14 @@ define([
                 }
             };
         }])
-        .directive('sdMediaMetadata', ['api', 'userList', function(api, userList) {
+        .directive('sdMediaMetadata', ['userList', function(userList) {
             return {
                 scope: {
                     item: '='
                 },
                 templateUrl: 'scripts/superdesk-archive/views/metadata-view.html',
                 link: function(scope, elem) {
+
                     scope.$watch('item', reloadData);
 
                     function reloadData() {
@@ -249,6 +250,22 @@ define([
                             });
                         }
                     }
+                }
+            };
+        }])
+        .directive('sdMetaIngest', ['ingestSources', function(ingestSources) {
+            var promise = ingestSources.initialize();
+            return {
+                scope: {
+                    provider: '='
+                },
+                template: '{{name}}',
+                link: function(scope) {
+                    promise.then(function() {
+                        if (scope.provider) {
+                            scope.name = ingestSources.providersLookup[scope.provider].name;
+                        }
+                    });
                 }
             };
         }])

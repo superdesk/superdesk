@@ -1,15 +1,15 @@
 <div class="metadata-view">
     <dl ng-if="item.guid">
         <dt translate>GUID</dt>
-        <dd> {{ item.guid }}</dd>
+        <dd>{{ item.guid }}</dd>
     </dl>
     <dl ng-if="item.unique_name">
         <dt translate>Unique</dt>
-        <dd> {{ item.unique_name }}</dd>
+        <dd>{{ item.unique_name }}</dd>
     </dl>
     <dl ng-if="item._version">
         <dt translate>Version</dt>
-        <dd> {{ item._version }}</dd>
+        <dd>{{ item._version }}</dd>
     </dl>
 
     <dl ng-if="item.firstcreated">
@@ -22,99 +22,99 @@
     </dl>
     <dl ng-if="original_creator">
         <dt translate>Original creator</dt>
-        <dd> {{ original_creator }}</dd>
+        <dd>{{ original_creator }}</dd>
     </dl>
     <dl ng-if="version_creator">
         <dt translate>Version creator</dt>
-        <dd> {{ version_creator }}</dd>
+        <dd>{{ version_creator }}</dd>
     </dl>
 
     <!-- ingest details -->
     <dl ng-if="item.original_source">
         <dt translate>Original source</dt>
-        <dd> {{ item.original_source }}</dd>
+        <dd>{{ item.original_source }}</dd>
     </dl>
-    <dl ng-if="item.provider">
+    <dl ng-if="item.ingest_provider">
         <dt translate>Ingest provider</dt>
-        <dd> {{ item.provider }}</dd>
+        <dd sd-meta-ingest data-provider="item.ingest_provider"></dd>
     </dl>
     <dl ng-if="item.ingest_provider_sequence">
         <dt translate>Ingest provider sequence</dt>
-        <dd> {{ item.ingest_provider_sequence }}</dd>
+        <dd>{{ item.ingest_provider_sequence }}</dd>
     </dl>
 
     <!-- copyright details details -->
     <dl ng-if="item.copyrightholder">
         <dt translate>Copyright holder</dt>
-        <dd> {{ item.copyrightholder }}</dd>
+        <dd>{{ item.copyrightholder }}</dd>
     </dl>
     <dl ng-if="item.copyrightnotice">
         <dt translate>Copyright notice</dt>
-        <dd> {{ item.copyrightnotice }}</dd>
+        <dd>{{ item.copyrightnotice }}</dd>
     </dl>
     <dl ng-if="item.usageterms">
         <dt translate>usageterms</dt>
-        <dd> {{ item.usageterms }}</dd>
+        <dd>{{ item.usageterms }}</dd>
     </dl>
 
     <!-- category details -->
     <dl ng-if="item.anpa_category">
         <dt translate>ANPA category</dt>
-        <dd> {{ item.anpa_category }}</dd>
+        <dd>{{ item.anpa_category }}</dd>
     </dl>
     <dl ng-if="item.subject">
         <dt translate>Subject</dt>
-        <dd> {{ item.subject | mergeWords}}</dd>
+        <dd>{{ item.subject | mergeWords}}</dd>
     </dl>
     <dl ng-if="item.genre">
         <dt translate>Genre</dt>
-        <dd> {{ item.genre }}</dd>
+        <dd>{{ item.genre }}</dd>
     </dl>
 
     <!-- Story details -->
     <dl ng-if="item.language">
         <dt translate>Language</dt>
-        <dd> {{ item.language }}</dd>
+        <dd>{{ item.language }}</dd>
     </dl>
     <dl ng-if="item.anpa_take_key">
         <dt translate>ANPA take key</dt>
-        <dd> {{ item.anpa_take_key }}</dd>
+        <dd>{{ item.anpa_take_key }}</dd>
     </dl>
     <dl ng-if="item.keywords">
         <dt translate>Keywords</dt>
-        <dd> {{ item.keywords }}</dd>
+        <dd>{{ item.keywords }}</dd>
     </dl>
     <dl ng-if="item.word_count">
         <dt translate>Word Count</dt>
-        <dd> {{ item.word_count }}</dd>
+        <dd>{{ item.word_count }}</dd>
     </dl>
     <dl ng-if="item.priority">
         <dt translate>Priority</dt>
-        <dd> {{ item.priority }}</dd>
+        <dd>{{ item.priority }}</dd>
     </dl>
     <dl ng-if="item.urgency">
         <dt translate>Urgency</dt>
-        <dd> {{ item.urgency }}</dd>
+        <dd>{{ item.urgency }}</dd>
     </dl>
     <dl ng-if="item.pubstatus">
         <dt translate>PubStatus</dt>
-        <dd> {{ item.pubstatus }}</dd>
+        <dd>{{ item.pubstatus }}</dd>
     </dl>
     <dl ng-if="item.signal">
         <dt translate>Signal</dt>
-        <dd> {{ item.signal }}</dd>
+        <dd>{{ item.signal }}</dd>
     </dl>
     <dl ng-if="item.bydlne">
         <dt translate>Byline</dt>
-        <dd> {{ item.byline }}</dd>
+        <dd>{{ item.byline }}</dd>
     </dl>
     <dl ng-if="item.expiry">
         <dt translate>Expiry</dt>
-        <dd> {{ item.expiry }}</dd>
+        <dd>{{ item.expiry }}</dd>
     </dl>
     <dl ng-if="item.located">
         <dt translate>Location</dt>
-        <dd> {{ item.located }}</dd>
+        <dd>{{ item.located }}</dd>
     </dl>
 
     <!-- file specific data -->

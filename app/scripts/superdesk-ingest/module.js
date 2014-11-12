@@ -31,6 +31,40 @@ define([
         }
     });
 
+    IngestProviderService.$inject = ['api', '$q'];
+    function IngestProviderService(api, $q) {
+
+        var service = {
+            providers: null,
+            providersLookup: {},
+            fetched: null,
+            fetchProviders: function() {
+                var self = this;
+                return api.ingestProviders.query().then(function(result) {
+                    self.providers = result._items;
+                });
+            },
+            generateLookup: function() {
+                var self = this;
+
+                this.providersLookup = _.indexBy(self.providers, '_id');
+
+                return $q.when();
+            },
+            initialize: function() {
+                if (!this.fetched) {
+
+                    this.fetched = this.fetchProviders()
+                        .then(angular.bind(this, this.generateLookup));
+                }
+
+                return this.fetched;
+            }
+        };
+        return service;
+    }
+    app.service('ingestSources', IngestProviderService);
+
     app.config(['superdeskProvider', function(superdesk) {
         superdesk
             .activity('/workspace/ingest', {

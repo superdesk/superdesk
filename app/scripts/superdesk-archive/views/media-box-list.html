@@ -23,7 +23,7 @@
     </div>
     <div class="line">
         <div class="takekey" ng-if="item.takekey">{{ item.anpa_take_key }}</div>
-        <div class="provider" ng-if="item.provider">{{ item.provider }}</div>
+        <div class="provider" ng-if="item.ingest_provider" sd-meta-ingest data-provider="item.ingest_provider"></div>
     </div>
 </div>
 
