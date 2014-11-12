@@ -1,7 +1,7 @@
 import os
 import unittest
+import elasticsearch
 from app import get_app
-from pyelasticsearch import ElasticSearch
 from base64 import b64encode
 from flask import json
 from superdesk.notification_mock import setup_notification_mock, teardown_notification_mock
@@ -9,13 +9,15 @@ from superdesk import get_resource_service
 from settings import LDAP_SERVER
 from unittest.mock import patch
 from apps.auth.ldap.ldap import ADAuth
+from eve_elastic import get_es, get_indices
 
 test_user = {'username': 'test_user', 'password': 'test_password', 'is_active': True, 'needs_activation': False}
 
 
 def get_test_settings():
     test_settings = {}
-    test_settings['ELASTICSEARCH_INDEX'] = 'sptests'
+    test_settings['ELASTICSEARCH_URL'] = 'http://localhost:9200'
+    test_settings['ELASTICSEARCH_INDEX'] = 'sptest'
     test_settings['MONGO_DBNAME'] = 'sptests'
     test_settings['LEGAL_ARCHIVE_DBNAME'] = 'sptests_legal'
     test_settings['DEBUG'] = True
@@ -27,16 +29,17 @@ def get_test_settings():
     return test_settings
 
 
-def drop_elastic(settings):
-    try:
-        es = ElasticSearch(settings['ELASTICSEARCH_URL'])
-        es.delete_index(settings['ELASTICSEARCH_INDEX'])
-    except:
-        pass
+def drop_elastic(app):
+    with app.app_context():
+        try:
+            es = get_es(app.config['ELASTICSEARCH_URL'])
+            get_indices(es).delete(app.config['ELASTICSEARCH_INDEX'])
+        except elasticsearch.exceptions.NotFoundError:
+            pass
 
 
 def drop_mongo(app):
-    with app.test_request_context(app.config['URL_PREFIX']):
+    with app.app_context():
         try:
             app.data.mongo.driver.cx.drop_database(app.config['MONGO_DBNAME'])
             app.data.mongo.driver.cx.drop_database(app.config['LEGAL_ARCHIVE_DBNAME'])
@@ -49,9 +52,12 @@ def setup(context=None, config=None):
     if config:
         app_config.update(config)
 
-    drop_elastic(app_config)
     app = get_app(app_config)
+    drop_elastic(app)
     drop_mongo(app)
+
+    # create index again after dropping it
+    app.data.elastic.init_app(app)
 
     if context:
         context.app = app

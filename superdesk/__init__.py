@@ -8,6 +8,8 @@ from .datalayer import SuperdeskDataLayer  # noqa
 from werkzeug.exceptions import HTTPException
 from eve.utils import config  # noqa
 from .eve_backend import EveBackend
+from .services import BaseService as Service  # noqa
+from .resource import Resource  # noqa
 
 
 API_NAME = 'Superdesk API'

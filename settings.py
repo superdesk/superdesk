@@ -98,7 +98,8 @@ INSTALLED_APPS = [
     'apps.groups',
     'apps.prepopulate',
     'apps.vocabularies',
-    'apps.legal_archive'
+    'apps.legal_archive',
+    'apps.search',
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']
