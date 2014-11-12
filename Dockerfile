@@ -16,6 +16,7 @@ ADD requirements.txt /tmp/requirements.txt
 RUN pip install -U -r /tmp/requirements.txt
 
 ENV C_FORCE_ROOT "False"
+ENV CELERY_ALWAYS_EAGER "False"
 
 # setup the environment
 ADD . /opt/superdesk

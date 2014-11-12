@@ -76,6 +76,12 @@ To create user you can run that command (it will start container instance for co
 fig run web python3 manage.py users:create -u admin -p admin -e "admin@example.com" --admin=true
 ```
 
+To rebuild environment(ie changes to environemnt or dependencies):
+
+```sh
+fig build
+```
+
 For more commandline magic go to their docs: http://www.fig.sh/cli.html
 
 ## Running Docker containers with Vagrant
