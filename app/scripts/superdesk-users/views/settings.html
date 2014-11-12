@@ -6,6 +6,8 @@
         </li>
         <li ng-class="{active: !rolesTab}">
             <button ng-click="rolesTab = false">Privileges</button>
+                                <input type="text" class="fullwidth-input" placeholder="{{ 'Role Name'|translate }}" ng-model="editRole.name" required sd-role-unique data-unique-field="name">
+                                <div ng-show="roleForm.name.$error.unique" sd-valid-error translate>sorry, this role name already exists.</div>
         </li>
     </ul>
     

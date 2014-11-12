@@ -28,5 +28,43 @@ define([
                     scope.currentRoute = $route.current;
                 }
             };
+        }])
+        .directive('sdValidError', function() {
+            return {
+                link: function (scope, element) {
+                    element.addClass('validation-error');
+                }
+            };
+        })
+        .directive('sdRoleUnique', ['api', '$q', function(api, $q) {
+            return {
+                require: 'ngModel',
+                scope: {},
+                link: function (scope, element, attrs, ctrl) {
+
+                    /**
+                     * Test if given value is unique for seleted field
+                     */
+                    function testUnique(modelValue, viewValue) {
+                        var value = modelValue || viewValue;
+                        if (value && attrs.uniqueField) {
+                            var criteria = {where: {}};
+                            criteria.where[attrs.uniqueField] = value;
+                            return api.roles.query(criteria)
+                                .then(function(roles) {
+                                    if (roles._items.length) {
+                                        return $q.reject(roles);
+                                    }
+                                    return roles;
+                                });
+                        }
+
+                        // mark as ok
+                        return $q.when();
+                    }
+
+                    ctrl.$asyncValidators.unique = testUnique;
+                }
+            };
         }]);
 });
