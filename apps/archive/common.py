@@ -104,6 +104,18 @@ facets = {
     'versioncreated': {'date_histogram': {'field': 'versioncreated', 'interval': 'hour'}},
 }
 
+aggregations = {
+    'type': {'terms': {'field': 'type'}},
+    'desk': {'terms': {'field': 'task.desk'}},
+    'stage': {'terms': {'field': 'task.stage'}},
+    'category': {'terms': {'field': 'category'}},
+    'originator': {'terms': {'field': 'originator'}},
+    'spiked': {'terms': {'field': 'is_spiked'}},
+    'day': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-24H'}]}},
+    'week': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-1w'}]}},
+    'month': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-1M'}]}},
+}
+
 
 def on_create_media_archive():
     push_notification('media_archive', created=1)
