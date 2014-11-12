@@ -14,15 +14,17 @@ class SearchService(superdesk.Service):
         return json.loads(args.get('source')) if args.get('source') else {}
 
     def get(self, req, lookup):
-        """Run elastic search agains on multiple doc types.
-
-        TODO(petr): post-process results and call fetch callbackes per type.
-        """
+        """Run elastic search agains on multiple doc types."""
         elastic = app.data.elastic
         query = self._get_query(req)
         types = ['ingest', 'archive']
         hits = elastic.es.search(body=query, index=elastic.index, doc_type=types)
-        return elastic._parse_hits(hits, 'ingest')  # any resource here will do
+        docs = elastic._parse_hits(hits, 'ingest')  # any resource here will do
+        for resource in types:
+            response = {app.config['ITEMS']: [doc for doc in docs if doc['_type'] == resource]}
+            getattr(app, 'on_fetched_resource')(resource, response)
+            getattr(app, 'on_fetched_resource_%s' % resource)(response)
+        return docs
 
 
 class SearchResource(superdesk.Resource):
