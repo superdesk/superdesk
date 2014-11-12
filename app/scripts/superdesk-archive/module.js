@@ -78,7 +78,7 @@ define([
                     controller: ['spike', 'data', function spikeActivity(spike, data) {
                         return spike.spike(data.item);
                     }],
-                    filters: [{action: superdesk.ACTION_EDIT, type: 'archive'}]
+                    filters: [{action: 'list', type: 'archive'}]
                 })
                 .activity('unspike', {
                     label: gettext('Unspike Item'),
@@ -86,7 +86,7 @@ define([
                     controller: ['spike', 'data', function unspikeActivity(spike, data) {
                         return spike.unspike(data.item);
                     }],
-                    filters: [{action: superdesk.ACTION_EDIT, type: 'spike'}]
+                    filters: [{action: 'list', type: 'spike'}]
                 });
         }])
 

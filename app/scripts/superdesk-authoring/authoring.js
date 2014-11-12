@@ -530,7 +530,7 @@
                         superdesk.intent('author', 'article', data.item);
 	                }],
 	            	filters: [
-	                    {action: superdesk.ACTION_EDIT, type: 'archive'}
+	                    {action: 'list', type: 'archive'}
 	                ]
 	            });
         }]);

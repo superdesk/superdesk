@@ -10,6 +10,7 @@ define([
     'use strict';
 
     var app = angular.module('superdesk.ingest', [
+        'superdesk.search',
         'superdesk.dashboard',
         'superdesk.widgets.ingest',
         'superdesk.widgets.ingeststats',
@@ -130,7 +131,7 @@ define([
                     });
                 }],
                 filters: [
-                    {action: 'archive', type: 'ingest'}
+                    {action: 'list', type: 'ingest'}
                 ]
             });
     }]);
