@@ -45,7 +45,9 @@ define([
 
                 scope.$watch('step.current', function(step) {
                     if (step === 'general') {
-                        scope.edit(scope.desk.edit);
+                    	if (scope.desk._id) {
+                    		scope.edit(scope.desk.edit);
+                    	}
                         scope.message = null;
                     }
                 });
@@ -82,7 +84,6 @@ define([
 
                 scope.$watch('step.current', function(step, previous) {
                     if (step === 'stages') {
-
                         scope.editStage = null;
                         scope.stages = [];
                         scope.newStage = {
@@ -218,7 +219,9 @@ define([
                                 break;
                             case ENTER:
                                 event.preventDefault();
-                                scope.choose(scope.selected);
+                                if (getSelectedIndex() > 0) {
+                                	scope.choose(scope.selected);
+                                }
                                 break;
                         }
                     });
