@@ -739,6 +739,16 @@ def step_impl_then_get_facets(context, keys):
         assert_in(key, facets)
 
 
+@then('we get aggregations "{keys}"')
+def step_impl_then_get_aggs(context, keys):
+    assert_200(context.response)
+    expect_json_contains(context.response, '_aggregations')
+    data = get_json_data(context.response)
+    aggs = data['_aggregations']
+    for key in keys.split(','):
+        assert_in(key, aggs)
+
+
 @then('the file is stored localy')
 def step_impl_then_file(context):
     assert_200(context.response)
