@@ -6,42 +6,8 @@ define(['lodash'], function(_) {
         var self = this;
 
         var lastQueryParams = {};
-        var savedView;
-
-        preferencesService.get('archive:view').then(function(result) {
-            savedView = result.view;
-            $scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
-        });
 
         $scope.selected = {};
-
-        $scope.setView = function setView(view) {
-
-            var update = {
-                'archive:view': {
-                    'allowed': [
-                        'mgrid',
-                        'compact'
-                    ],
-                    'category': 'archive',
-                    'view': view || 'mgrid',
-                    'default': 'mgrid',
-                    'label': 'Users archive view format',
-                    'type': 'string'
-                }
-            };
-
-            preferencesService.update(update, 'archive:view').then(function() {
-                    $scope.view = view || 'mgrid';
-                }, function(response) {
-                    notify.error(gettext('User preference could not be saved...'));
-                });
-        };
-
-        $scope.preview = function preview(item) {
-            $scope.selected.preview = item;
-            $location.search('_id', item ? item._id : null);
-        };
 
         $scope.openLightbox = function openLightbox() {
             $scope.selected.view = $scope.selected.preview;

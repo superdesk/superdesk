@@ -36,12 +36,12 @@
         this.sortOptions = sortOptions;
         this.toggleSortDir = toggleSortDir;
 
+        var cache = {};
+
         /**
          * Single query instance
-         *
-         * @param {string} q Query string query
          */
-        function Query(q) {
+        function Query() {
             var size = 25,
                 filters = [];
 
@@ -62,19 +62,25 @@
              * Get criteria for given query
              */
             this.getCriteria = function getCriteria() {
+                var search = $location.search();
                 var sort = getSort();
                 var criteria = {
                     query: {filtered: {filter: {and: filters}}},
                     sort: [_.zipObject([sort.field], [sort.dir])]
                 };
 
-                var params = $location.search();
-                paginate(criteria, params);
+                paginate(criteria, search);
 
-                if (q) {
-                    criteria.query.filtered.query = {query_string: {query: q}};
+                if (search.q) {
+                    criteria.query.filtered.query = {query_string: {query: search.q}};
                 }
 
+                if (angular.equals(criteria, cache.criteria)) {
+                    return cache.criteria;
+                }
+
+                cache.search = search;
+                cache.criteria = criteria;
                 return criteria;
             };
 
@@ -98,16 +104,6 @@
                 return this;
             };
 
-            /**
-             * Set query string query
-             *
-             * @param {string} _q
-             */
-            this.q = function setQ(_q) {
-                q = _q || null;
-                return this;
-            };
-
             // do base filtering
             if ($location.search().spike) {
                 this.filter({term: {is_spiked: true}});
@@ -126,19 +122,27 @@
         };
     }
 
-    function SearchController($scope, api, search) {
+    function SearchController($scope, $location, api, search) {
         function getQuery() {
             return search.query().getCriteria();
         }
 
-        function refresh() {
-            api.query('search', {source: getQuery()}).then(function(result) {
+        function refresh(criteria) {
+            api.query('search', {source: criteria}).then(function(result) {
                 $scope.items = result;
             });
         }
 
-        $scope.$on('$routeUpdate', refresh);
-        refresh();
+        var query = getQuery();
+        $scope.$on('$routeUpdate', function() {
+            var next = getQuery();
+            if (next !== query) {
+                refresh(next);
+                query = next;
+            }
+        });
+
+        refresh(query);
     }
 
     angular.module('superdesk.search', ['superdesk.api', 'superdesk.activity'])
@@ -159,11 +163,46 @@
         /**
          * Item list with sidebar preview
          */
-        .directive('sdSearchResults', function() {
-            return {
-                templateUrl: 'scripts/superdesk-search/views/search-results.html'
+        .directive('sdSearchResults', ['$location', 'preferencesService', function($location, preferencesService) {
+            var update = {
+                'archive:view': {
+                    'allowed': [
+                        'mgrid',
+                        'compact'
+                    ],
+                    'category': 'archive',
+                    'view': 'mgrid',
+                    'default': 'mgrid',
+                    'label': 'Users archive view format',
+                    'type': 'string'
+                }
             };
-        })
+
+            return {
+                templateUrl: 'scripts/superdesk-search/views/search-results.html',
+                link: function(scope) {
+
+                    scope.selected = scope.selected || {};
+                    scope.preview = function preview(item) {
+                        scope.selected.preview = item;
+                        $location.search('_id', item ? item._id : null);
+                    };
+
+                    scope.setview = function setView(view) {
+                        update['archive:view'].view = view || 'mgrid';
+                        preferencesService.update(update, 'archive:view').then(function() {
+                            scope.view = view || 'mgrid';
+                        });
+                    };
+
+                    var savedView;
+                    preferencesService.get('archive:view').then(function(result) {
+                        savedView = result.view;
+                        scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
+                    });
+                }
+            };
+        }])
 
         /**
          * Item search component

@@ -18,7 +18,7 @@ define([
             });
         };
 
-        $scope.$watchCollection(function() {
+        $scope.$watchCollection(function getSearchWithoutId() {
             return _.omit($location.search(), '_id');
         }, angular.bind(this, function searchUpdated(search) {
             var query = this.getQuery(search);

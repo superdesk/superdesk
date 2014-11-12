@@ -13,13 +13,11 @@ describe('search service', function() {
         expect(criteria.size).toBe(25);
     }));
 
-    it('can create query string query', inject(function(search) {
-        var query = search.query('test');
-        var criteria = query.getCriteria();
+    it('can create query string query', inject(function($location, $rootScope, search) {
+        $location.search('q', 'test');
+        $rootScope.$digest();
+        var criteria = search.query().getCriteria();
         expect(criteria.query.filtered.query.query_string.query).toBe('test');
-
-        criteria = search.query().q('foo').getCriteria();
-        expect(criteria.query.filtered.query.query_string.query).toBe('foo');
     }));
 
     it('can set size', inject(function(search) {
@@ -36,5 +34,13 @@ describe('search service', function() {
         search.toggleSortDir();
         $rootScope.$digest();
         expect(search.getSort()).toEqual({label: 'News Value', field: 'urgency', dir: 'asc'});
+    }));
+
+    it('can be watched for changes', inject(function($location, search, $rootScope) {
+        var criteria = search.query().getCriteria();
+        expect(criteria).toBe(search.query().getCriteria());
+        $location.search('q', 'test');
+        $rootScope.$digest();
+        expect(criteria).not.toBe(search.query().getCriteria());
     }));
 });
