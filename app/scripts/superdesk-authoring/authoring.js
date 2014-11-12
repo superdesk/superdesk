@@ -303,6 +303,16 @@
         $scope.viewSendTo = false;
         $scope.stage = null;
 
+        // These values should come from preferences.
+        $scope.sluglineSoftLimit = 26;
+        $scope.sluglineHardLimit = 40;
+        $scope.headlineSoftLimit = 42;
+        $scope.headlineHardLimit = 70;
+        $scope.abstractSoftLimit = 160;
+        $scope.abstractHardLimit = 200;
+
+        $scope.charLimitHit = false;
+
         if (item.task && item.task.stage) {
             api('stages').getById(item.task.stage)
             .then(function(result) {
@@ -323,6 +333,7 @@
             stopWatch(); // stop watch if any
             stopWatch = $scope.$watchGroup([
                 'item.headline',
+                'item.abstract',
                 'item.slugline',
                 'item.body_html',
                 'item.abstract',
@@ -347,6 +358,20 @@
                 }
             });
         }
+
+        $scope.checkLimit = function() {
+            $scope.charLimitHit = false;
+            _.each({
+                'slugline': $scope.sluglineSoftLimit,
+                'headline': $scope.headlineSoftLimit,
+                'abstract': $scope.abstractSoftLimit
+            }, function(limit, field) {
+                if ($scope.item[field] && $scope.item[field].length > limit) {
+                    $scope.charLimitHit = true;
+                    return false;
+                }
+            });
+        };
 
         /**
          * Create a new version
@@ -426,6 +451,66 @@
                 if (newW < maxW) {
                     p.outerWidth(newW);
                 }
+            }
+        };
+    }
+
+    var cleanHtml = function(data) {
+        return data.replace(/<\/?[^>]+>/gi, '').replace('&nbsp;', ' ');
+    };
+
+    CharacterCount.$inject = [];
+    function CharacterCount() {
+        return {
+            scope: {
+                item: '=',
+                limit: '=',
+                limitCallback: '=',
+                html: '@'
+            },
+            template: '<span ng-class="{error: limitHit}">{{numChars}} <span translate>characters</span></span>',
+            link: function characterCountLink(scope, elem, attrs) {
+                scope.html = scope.html || false;
+                scope.numChars = 0;
+                scope.limitHit = false;
+
+                scope.$watch('item', function() {
+                    var input = scope.item || '';
+                    input = scope.html ? cleanHtml(input) : input;
+
+                    scope.numChars = input.length || 0;
+                    if (scope.limit && (
+                        (scope.numChars > scope.limit && scope.limitHit === false) ||
+                        (scope.numChars <= scope.limit && scope.limitHit === true)
+                    )) {
+                        scope.limitHit = !scope.limitHit;
+                        if (typeof scope.limitCallback === 'function') {
+                            scope.limitCallback();
+                        }
+                    }
+                });
+            }
+        };
+    }
+
+    WordCount.$inject = [];
+    function WordCount() {
+        return {
+            scope: {
+                item: '=',
+                html: '@'
+            },
+            template: '<span>{{numWords}} <span translate>words</span></span>',
+            link: function wordCountLink(scope, elem, attrs) {
+                scope.html = scope.html || false;
+                scope.numWords = 0;
+
+                scope.$watch('item', function() {
+                    var input = scope.item || '';
+                    input = scope.html ? cleanHtml(input) : input;
+
+                    scope.numWords = _.compact(input.split(/\s+/)).length || 0;
+                });
             }
         };
     }
@@ -530,6 +615,8 @@
 
         .directive('sdDashboardCard', DashboardCard)
         .directive('sdSendItem', SendItem)
+        .directive('sdCharacterCount', CharacterCount)
+        .directive('sdWordCount', WordCount)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
