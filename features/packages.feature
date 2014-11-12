@@ -7,24 +7,23 @@ Feature: Packages
         Then we get list with 0 items
 
     @auth
-    Scenario: Create new package without associated content
+    Scenario: Create new package without groups
         Given empty "packages"
         When we post to "/packages"
         """
         {
         "guid": "tag:example.com,0000:newsml_BRE9A605",
-        "associations": []
+        "groups": []
         }
         """
         Then we get error 400
         """
         {
             "_error": {"code": 400, "message": "Insertion failure: 1 document(s) contain(s) error(s)"},
-            "_issues": {"associations": {"minlength": 1}},
+            "_issues": {"groups": {"minlength": 1}},
             "_status": "ERR"
         }
         """
-
     
     @auth
     Scenario: Create new package with text content
@@ -36,11 +35,18 @@ Feature: Packages
         When we post to "/packages" with success
         """
         {
-            "associations": [
+            "groups": [
                 {
-                    "headline": "test package with text",
-                    "itemRef": "/archive/#ARCHIVE_ID#",
-                    "slugline": "awesome article"
+                    "group": {
+                        "associations": [
+                            {
+                                "headline": "test package with text",
+                                "itemRef": "/archive/#ARCHIVE_ID#",
+                                "slugline": "awesome article"
+                            }
+                        ],
+                        "role": "main"
+                    }
                 }
             ],
             "guid": "tag:example.com,0000:newsml_BRE9A605"
@@ -52,17 +58,21 @@ Feature: Packages
             {
                 "_items": [
                     {
-                        "associations": [
+                        "groups": [
                             {
-                                "guid": "#ARCHIVE_ID#",
-                                "headline": "test package with text",
-                                "itemRef": "/archive/#ARCHIVE_ID#",
-                                "slugline": "awesome article",
-                                "type": "text"
+                                "group": {
+                                    "associations": [
+                                        {
+                                            "headline": "test package with text",
+                                            "itemRef": "/archive/#ARCHIVE_ID#",
+                                            "slugline": "awesome article"
+                                        }
+                                    ],
+                                    "role": "main"
+                                }
                             }
                         ],
-                        "guid": "tag:example.com,0000:newsml_BRE9A605",
-                        "type": "composite"
+                        "guid": "tag:example.com,0000:newsml_BRE9A605"
                     }
                 ]
             }
@@ -75,11 +85,18 @@ Feature: Packages
         When we post to "/packages" with success
         """
         {
-            "associations": [
+            "groups": [
                 {
-                    "headline": "test package with pic",
-                    "itemRef": "/archive/#ARCHIVE_MEDIA_ID#",
-                    "slugline": "awesome picture"
+                    "group": {
+                        "associations": [
+                            {
+                                "headline": "test package with pic",
+                                "itemRef": "/archive/#ARCHIVE_MEDIA_ID#",
+                                "slugline": "awesome picture"
+                            }
+                        ],
+                        "role": "main"
+                    }
                 }
             ]
         }
@@ -90,16 +107,20 @@ Feature: Packages
             {
                 "_items": [
                     {
-                        "associations": [
+                        "groups": [
                             {
-                                "guid": "#ARCHIVE_MEDIA_ID#",
-                                "headline": "test package with pic",
-                                "itemRef": "/archive/#ARCHIVE_MEDIA_ID#",
-                                "slugline": "awesome picture",
-                                "type": "picture"
+                                "group": {
+                                    "associations": [
+                                        {
+                                            "headline": "test package with pic",
+                                            "itemRef": "/archive/#ARCHIVE_MEDIA_ID#",
+                                            "slugline": "awesome picture"
+                                        }
+                                    ],
+                                    "role": "main"
+                                }
                             }
-                        ],
-                        "type": "composite"
+                        ]
                     }
                 ]
             }
@@ -116,16 +137,23 @@ Feature: Packages
         When we post to "/packages" with success
         """
         {
-            "associations": [
+            "groups": [
                 {
-                    "headline": "test package with pic",
-                    "itemRef": "/archive/#ARCHIVE_MEDIA_ID#",
-                    "slugline": "awesome picture"
-                },
-                {
-                    "headline": "test package with text",
-                    "itemRef": "/archive/#ARCHIVE_ID#",
-                    "slugline": "awesome article"
+                    "group": {
+                        "associations": [
+                            {
+                                "headline": "test package with pic",
+                                "itemRef": "/archive/#ARCHIVE_MEDIA_ID#",
+                                "slugline": "awesome picture"
+                            },
+                            {
+                                "headline": "test package with text",
+                                "itemRef": "/archive/#ARCHIVE_ID#",
+                                "slugline": "awesome article"
+                            }
+                        ],
+                        "role": "main"
+                    }
                 }
             ]
         }
@@ -136,22 +164,25 @@ Feature: Packages
             {
                 "_items": [
                     {
-                        "associations": [
+                        "groups": [
                             {
-                                "guid": "#ARCHIVE_MEDIA_ID#",
-                                "headline": "test package with pic",
-                                "itemRef": "/archive/#ARCHIVE_MEDIA_ID#",
-                                "slugline": "awesome picture",
-                                "type": "picture"
-                            },
-                            {
-                                "headline": "test package with text",
-                                "itemRef": "/archive/#ARCHIVE_ID#",
-                                "slugline": "awesome article",
-                                "type": "text"
+                                "group": {
+                                    "associations": [
+                                        {
+                                            "headline": "test package with pic",
+                                            "itemRef": "/archive/#ARCHIVE_MEDIA_ID#",
+                                            "slugline": "awesome picture"
+                                        },
+                                        {
+                                            "headline": "test package with text",
+                                            "itemRef": "/archive/#ARCHIVE_ID#",
+                                            "slugline": "awesome article"
+                                        }
+                                    ],
+                                    "role": "main"
+                                }
                             }
-                        ],
-                        "type": "composite"
+                        ]
                     }
                 ]
             }
@@ -163,19 +194,25 @@ Feature: Packages
         When we post to "/packages"
         """
         {
-            "associations": [
+            "groups": [
                 {
-                    "headline": "test package with text",
-                    "itemRef": "/archive/#ARCHIVE_ID#",
-                    "slugline": "awesome article"
-                },
-                {
-                    "headline": "test package with text",
-                    "itemRef": "/archive/#ARCHIVE_ID#",
-                    "slugline": "awesome article"
+                    "group": {
+                        "associations": [
+                            {
+                                "headline": "test package with pic",
+                                "itemRef": "/archive/#ARCHIVE_ID#",
+                                "slugline": "awesome picture"
+                            },
+                            {
+                                "headline": "test package with text",
+                                "itemRef": "/archive/#ARCHIVE_ID#",
+                                "slugline": "awesome article"
+                            }
+                        ],
+                        "role": "main"
+                    }
                 }
-            ],
-            "guid": "tag:example.com,0000:newsml_BRE9A605"
+            ]
         }
         """
         Then we get error 400
@@ -196,11 +233,18 @@ Feature: Packages
         """
         {
             "guid": "tag:example.com,0000:newsml_BRE9A605",
-            "associations": [
+            "groups": [
                 {
-                    "headline": "test package with text",
-                    "itemRef": "/archive/#ARCHIVE_ID#",
-                    "slugline": "awesome article"
+                    "group": {
+                        "associations": [
+                            {
+                                "headline": "test package with text",
+                                "itemRef": "/archive/#ARCHIVE_ID#",
+                                "slugline": "awesome article"
+                            }
+                        ],
+                        "role": "main"
+                    }
                 }
             ]
         }
@@ -208,16 +252,23 @@ Feature: Packages
         When we post to "/packages" with success
         """
         {
-            "associations": [
+            "groups": [
                 {
-                    "headline": "test package with text",
-                    "itemRef": "/archive/#ARCHIVE_ID#",
-                    "slugline": "awesome article"
-                },
-                {
-                    "headline": "test package with text",
-                    "itemRef": "/packages/tag:example.com,0000:newsml_BRE9A605",
-                    "slugline": "awesome circular article"
+                    "group": {
+                        "associations": [
+                            {
+                                "headline": "test package with text",
+                                "itemRef": "/archive/#ARCHIVE_ID#",
+                                "slugline": "awesome article"
+                            },
+                            {
+                                "headline": "test package with text",
+                                "itemRef": "/packages/tag:example.com,0000:newsml_BRE9A605",
+                                "slugline": "awesome circular article"
+                            }
+                        ],
+                        "role": "main story"
+                    }
                 }
             ]
         }
@@ -225,18 +276,25 @@ Feature: Packages
         And we patch "/packages/tag:example.com,0000:newsml_BRE9A605"
         """
         {
-            "associations": [
+            "groups": [
                 {
-                    "headline": "test package with text",
-                    "itemRef": "/archive/#ARCHIVE_ID#",
-                    "slugline": "awesome article"
-                },
-                {
-                    "headline": "test package with text",
-                    "itemRef": "/packages/#PACKAGES_ID#",
-                    "slugline": "awesome circular article"
+                    "group": {
+                        "associations": [
+                            {
+                                "headline": "test package with text",
+                                "itemRef": "/archive/#ARCHIVE_ID#",
+                                "slugline": "awesome article"
+                            },
+                            {
+                                "headline": "test package with text",
+                                "itemRef": "/packages/#PACKAGES_ID#",
+                                "slugline": "awesome circular article"
+                            }
+                        ]
+                    }
                 }
-            ]
+            ],
+            "guid": "tag:example.com,0000:newsml_BRE9A605"
         }
         """
         Then we get error 400
@@ -259,41 +317,9 @@ Feature: Packages
         When we post to "/packages" with success
         """
         {
-            "associations": [
+            "groups": [
                 {
-                    "headline": "test package with text",
-                    "itemRef": "/archive/#ARCHIVE_ID#",
-                    "slugline": "awesome article"
-                }
-            ]
-        }
-        """
-        Then we get new resource
-        """
-        {
-            "associations": [
-                {
-                    "headline": "test package with text",
-                    "itemRef": "/archive/#ARCHIVE_ID#",
-                    "slugline": "awesome article"
-                }
-            ],
-            "type": "composite"
-        }
-        """
-        And we get latest
-        When we get "/archive"
-        Then we get list with 2 items
-            """
-            {
-                "_items": [
-                    {
-                        "guid": "#ARCHIVE_ID#",
-                        "headline": "test",
-                        "linked_in_packages": [{"package": "#PACKAGES_ID#"}],
-                        "type": "text"
-                    },
-                    {
+                    "group": {
                         "associations": [
                             {
                                 "headline": "test package with text",
@@ -301,11 +327,67 @@ Feature: Packages
                                 "slugline": "awesome article"
                             }
                         ],
-                        "type": "composite"
+                        "role": "main"
                     }
-                ]
-            }
-            """
+                }
+            ],
+            "guid": "tag:example.com,0000:newsml_BRE9A605"
+        }
+        """
+        Then we get new resource
+        """
+        {
+            "groups": [
+                {
+                    "group": {
+                        "associations": [
+                            {
+                                "headline": "test package with text",
+                                "itemRef": "/archive/#ARCHIVE_ID#",
+                                "slugline": "awesome article"
+                            }
+                        ],
+                        "role": "main"
+                    }
+                }
+            ],
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
+            "type": "composite"
+        }
+        """
+        And we get latest
+        When we get "/archive"
+        Then we get list with 2 items
+        """
+        {
+            "_items": [
+                {
+                    "guid": "#ARCHIVE_ID#",
+                    "headline": "test",
+                    "linked_in_packages": [{"package": "#PACKAGES_ID#"}],
+                    "type": "text"
+                },
+                {
+                    "groups": [
+                        {
+                            "group": {
+                                "associations": [
+                                    {
+                                        "headline": "test package with text",
+                                        "itemRef": "/archive/#ARCHIVE_ID#",
+                                        "slugline": "awesome article"
+                                    }
+                                ],
+                                "role": "main"
+                            }
+                        }
+                    ],
+                    "guid": "tag:example.com,0000:newsml_BRE9A605",
+                    "type": "composite"
+                }
+            ]
+        }
+        """
         
     @auth
     Scenario: Patch created package
@@ -318,11 +400,18 @@ Feature: Packages
         When we post to "/packages" with success
         """
         {
-            "associations": [
+            "groups": [
                 {
-                    "headline": "test package with text",
-                    "itemRef": "/archive/#ARCHIVE_ID#",
-                    "slugline": "awesome article"
+                    "group": {
+                        "associations": [
+                            {
+                                "headline": "test package with text",
+                                "itemRef": "/archive/#ARCHIVE_ID#",
+                                "slugline": "awesome article"
+                            }
+                        ],
+                        "role": "main"
+                    }
                 }
             ]
         }
@@ -330,16 +419,23 @@ Feature: Packages
         And we patch latest
         """
         {
-            "associations": [
+            "groups": [
                 {
-                    "headline": "test package with pic",
-                    "itemRef": "/archive/#ARCHIVE_MEDIA_ID#",
-                    "slugline": "awesome picture"
-                },
-                {
-                    "headline": "test package with text",
-                    "itemRef": "/archive/#ARCHIVE_ID#",
-                    "slugline": "awesome article"
+                    "group": {
+                        "associations": [
+                            {
+                                "headline": "test package with pic",
+                                "itemRef": "/archive/#ARCHIVE_MEDIA_ID#",
+                                "slugline": "awesome picture"
+                            },
+                            {
+                                "headline": "test package with text",
+                                "itemRef": "/archive/#ARCHIVE_ID#",
+                                "slugline": "awesome article"
+                            }
+                        ],
+                        "role": "main"
+                    }
                 }
             ]
         }
@@ -347,19 +443,23 @@ Feature: Packages
         Then we get existing resource
         """
         {
-            "associations": [
+            "groups": [
                 {
-                    "guid": "#ARCHIVE_MEDIA_ID#",
-                    "headline": "test package with pic",
-                    "itemRef": "/archive/#ARCHIVE_MEDIA_ID#",
-                    "slugline": "awesome picture",
-                    "type": "picture"
-                },
-                {
-                    "headline": "test package with text",
-                    "itemRef": "/archive/#ARCHIVE_ID#",
-                    "slugline": "awesome article",
-                    "type": "text"
+                    "group": {
+                        "associations": [
+                            {
+                                "headline": "test package with pic",
+                                "itemRef": "/archive/#ARCHIVE_MEDIA_ID#",
+                                "slugline": "awesome picture"
+                            },
+                            {
+                                "headline": "test package with text",
+                                "itemRef": "/archive/#ARCHIVE_ID#",
+                                "slugline": "awesome article"
+                            }
+                        ],
+                        "role": "main"
+                    }
                 }
             ],
             "type": "composite"
@@ -376,41 +476,26 @@ Feature: Packages
         When we post to "/packages" with success
         """
         {
-            "associations": [
+            "groups": [
                 {
-                    "headline": "test package with text",
-                    "itemRef": "/archive/#ARCHIVE_ID#",
-                    "slugline": "awesome article"
+                    "group": {
+                        "associations": [
+                            {
+                                "headline": "test package with text",
+                                "itemRef": "/archive/#ARCHIVE_ID#",
+                                "slugline": "awesome article"
+                            }
+                        ],
+                        "role": "main"
+                    }
                 }
             ]
-        }
-        """
-        Then we get new resource
-        """
-        {
-            "associations": [
-                {
-                    "headline": "test package with text",
-                    "itemRef": "/archive/#ARCHIVE_ID#",
-                    "slugline": "awesome article"
-                }
-            ],
-            "type": "composite"
         }
         """
         When we delete latest
         Then we get deleted response
         When we get "/archive"
         Then we get list with 1 items
-            """
-            {
-                "_items": [
-                    {
-                    "headline": "test",
-                    "linked_in_packages": [],
-                    "guid": "#ARCHIVE_ID#",
-                    "type": "text"
-                    }
-                ]
-            }
-            """
+        """
+        {"_items": [{"guid": "#ARCHIVE_ID#", "headline": "test", "linked_in_packages": [], "type": "text"}]}
+        """

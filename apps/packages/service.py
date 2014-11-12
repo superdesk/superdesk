@@ -20,32 +20,33 @@ class PackageService(BaseService):
         self.check_package_associations(docs)
 
     def on_created(self, docs):
-        for (doc, assoc) in [(doc, assoc) for doc in docs for assoc in doc.get(ASSOCIATIONS, [])]:
+        for (doc, assoc) in [(doc, assoc) for doc in docs
+                             for assoc in self._get_associations(doc)]:
             self.update_link(doc[config.ID_FIELD], assoc)
 
     def on_update(self, updates, original):
-        associations = updates.get(ASSOCIATIONS, [])
+        associations = self._get_associations(updates)
         self.check_for_duplicates(original, associations)
         for assoc in associations:
             self.extract_default_association_data(original, assoc)
 
     def on_updated(self, updates, original):
-        for assoc in updates.get(ASSOCIATIONS, []):
+        for assoc in self._get_associations(updates):
             self.update_link(original[config.ID_FIELD], assoc)
 
     def on_deleted(self, doc):
-        for assoc in doc.get(ASSOCIATIONS, []):
+        for assoc in self._get_associations(doc):
             self.update_link(doc[config.ID_FIELD], assoc, delete=True)
 
     def check_package_associations(self, docs):
-        for doc in docs:
-            associations = doc.get(ASSOCIATIONS, [])
+        for (doc, group) in [(doc, group['group']) for doc in docs for group in doc.get('groups', [])]:
+            associations = group.get(ASSOCIATIONS, [])
             if len(associations) == 0:
                 raise SuperdeskError(message='No content associated with the package.')
 
             self.check_for_duplicates(doc, associations)
             for assoc in associations:
-                self.extract_default_association_data(doc, assoc)
+                self.extract_default_association_data(group, assoc)
 
     def extract_default_association_data(self, package, assoc):
         item, item_id, endpoint = self.get_associated_item(assoc)
@@ -85,3 +86,7 @@ class PackageService(BaseService):
     def check_for_circular_reference(self, package, item_id):
         if any(d for d in package.get(LINKED_IN_PACKAGES, []) if d['package'] == item_id):
             raise ValidationError('Trying to create a circular reference to: ' + item_id)
+
+    def _get_associations(self, doc):
+        return [assoc for group in doc.get('groups', [])
+                for assoc in group['group'].get(ASSOCIATIONS, [])]

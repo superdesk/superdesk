@@ -27,28 +27,46 @@ class PackageResource(Resource):
             'readonly': True,
             'default': 'composite'
         },
-        ASSOCIATIONS: {
+        'groups': {
             'type': 'list',
-            'required': True,
             'minlength': 1,
             'schema': {
                 'type': 'dict',
                 'schema': {
-                    ITEM_REF: {'type': 'string'},
-                    'guid': {
-                        'type': 'string',
-                        'readonly': True
-                    },
-                    'version': {
-                        'type': 'string',
-                        'readonly': True
-                    },
-                    'type': {
-                        'type': 'string',
-                        'readonly': True
-                    },
-                    'slugline': {'type': 'string'},
-                    'headline': {'type': 'string'},
+                    'group': {
+                        'role': {
+                            'type': 'string',
+                            'required': True
+                        },
+                        'id': {
+                            'type': 'string'
+                        },
+                        ASSOCIATIONS: {
+                            'type': 'list',
+                            'required': True,
+                            'minlength': 1,
+                            'schema': {
+                                'type': 'dict',
+                                'schema': {
+                                    ITEM_REF: {'type': 'string'},
+                                    'guid': {
+                                        'type': 'string',
+                                        'readonly': True
+                                    },
+                                    'version': {
+                                        'type': 'string',
+                                        'readonly': True
+                                    },
+                                    'type': {
+                                        'type': 'string',
+                                        'readonly': True
+                                    },
+                                    'slugline': {'type': 'string'},
+                                    'headline': {'type': 'string'},
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
