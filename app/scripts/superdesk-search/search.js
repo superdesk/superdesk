@@ -145,6 +145,7 @@
         function refresh(criteria) {
             api.query('search', criteria).then(function(result) {
                 $scope.items = result;
+                console.log("items", $scope.items);
             });
         }
 
@@ -166,14 +167,67 @@
         /**
          * Item filters sidebar
          */
-        .directive('sdSearchFacets', function() {
+        .directive('sdSearchFacets', [ '$location', function($location){
             return {
+                estrict: 'A',
                 templateUrl: 'scripts/superdesk-search/views/search-facets.html',
-                link: function(scope) {
+                replace: true,
+                scope: {
+                    items: '='
+                },
+                link: function(scope, element, attrs) {
                     scope.sTab = true;
+                    scope.typeList = ['text', 'audio', 'video', 'picture', 'graphic', 'composite'];
+                    scope.typeCount = {};
+                    scope.typeDisplay = {};
+
+                    
+                    _.each(scope.typeList, function(type) {
+                        scope.typeCount[type] = 0;
+                        scope.typeDisplay[type] = true;
+                    });
+
+                    console.log("sdSearchFacets items:", scope.items);
+
+                    var search = $location.search();
+                    if (search.type) {
+                        var type = JSON.parse(search.type);
+                        _.forEach(type, function(term) {
+                            scope.typeDisplay[term] = true;
+                        });
+                    }
+
+                    scope.$watchCollection('items', function() {
+
+                        if(scope.items && scope.items._aggregations !== undefined) {
+                            _.forEach(scope.items._aggregations.type.buckets, function(type) {
+                                scope.typeCount[type.key] = type.doc_count;
+                            })
+                        }
+
+                       
+                    });
+
+                    scope.$watch('typeDisplay', function() {
+                        setContenttypeFilter();
+                    }, true);
+
+                    var setContenttypeFilter = function() {
+                        var contenttype = [];
+                        _.each(scope.typeDisplay, function(value, key) {
+                            if (value) {
+                                contenttype.push(key);
+                            }
+                        });
+                        if (contenttype.length === 0 || contenttype.length === scope.typeList.length) {
+                            $location.search('type', null);
+                        } else {
+                            $location.search('type', JSON.stringify(contenttype));
+                        }
+                    };
                 }
             };
-        })
+        }])
 
         /**
          * Item list with sidebar preview

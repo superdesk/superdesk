@@ -135,7 +135,7 @@
             return function BaseWidgetConfigController($scope) {
                 $scope.fetchProviders = function() {
                     $scope.api.query({source: {size: 0}}).then(function(items) {
-                        $scope.availableProviders = ['all'].concat(_.pluck(items._facets.provider.terms, 'term'));
+                        $scope.availableProviders = ['all'].concat(_.pluck(items._aggregations.originator.buckets, 'key'));
                     });
                 };
 

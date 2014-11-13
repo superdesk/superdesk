@@ -10,8 +10,68 @@
         <div class="doopen" ng-click="sidebarstick = false"><i class="icon-backward-thin"></i></div>
     </div>
     <div class="content" ng-if="sTab">
+       
         <div sd-toggle-box data-title="{{ 'Content type' | translate }}" data-open="true">
-            <div sd-filter-contenttype data-items="items"></div>
+            <ul class="filter-contenttype selectionlist">
+                <li ng-repeat="t in typeList">
+                    <i class="filetype-icon-{{t}}"></i>
+                    <span class="term">{{ t | translate }} <i>({{ typeCount[t] }})</i></span>
+                    <input type="checkbox" ng-model="typeDisplay[t]">
+                </li>
+            </ul>
+        </div>
+
+        <div sd-toggle-box data-title="{{ 'Desks' | translate }}" data-open="true">
+            <ul class="filter-contenttype selectionlist">
+                <li ng-repeat="b in items._aggregations.desk.buckets">
+                    <span class="term">{{ b.key | translate }} <i>({{ b.doc_count }})</i></span>
+                    <input type="checkbox" ng-model="itemDisplay[t]">
+                </li>
+            </ul>
+        </div>
+
+        <div sd-toggle-box data-title="{{ 'Source' | translate }}" data-open="true">
+            <ul class="filter-contenttype selectionlist">
+                <li ng-repeat="b in items._aggregations.originator.buckets">
+                    <span class="term">{{ b.key | translate }} <i>({{ b.doc_count }})</i></span>
+                    <input type="checkbox" ng-model="itemDisplay[t]">
+                </li>
+            </ul>
+        </div>
+
+        <div sd-toggle-box data-title="{{ 'Category' | translate }}" data-open="true">
+            <ul class="filter-contenttype selectionlist">
+                <li ng-repeat="b in items._aggregations.category.buckets">
+                    <span class="term">{{ b.key | translate }} <i>({{ b.doc_count }})</i></span>
+                    <input type="checkbox" ng-model="itemDisplay[t]">
+                </li>
+            </ul>
+        </div>
+
+        <div sd-toggle-box data-title="{{ 'Spiked' | translate }}" data-open="true">
+            <ul class="filter-contenttype selectionlist">
+                <li ng-repeat="b in items._aggregations.spiked.buckets">
+                    <span class="term">Spiked<i>({{ b.doc_count }})</i></span>
+                    <input type="checkbox" ng-model="itemDisplay[t]">
+                </li>
+            </ul>
+        </div>
+
+        <div sd-toggle-box data-title="{{ 'Dates' | translate }}" data-open="true">
+            <ul class="filter-contenttype selectionlist">
+                <li ng-repeat="b in items._aggregations.day.buckets">
+                    <span class="term">Last Day<i>({{ b.doc_count }})</i></span>
+                    <input type="checkbox" ng-model="itemDisplay[t]">
+                </li>
+                <li ng-repeat="b in items._aggregations.week.buckets">
+                    <span class="term">Last Week<i>({{ b.doc_count }})</i></span>
+                    <input type="checkbox" ng-model="itemDisplay[t]">
+                </li>
+                <li ng-repeat="b in items._aggregations.month.buckets">
+                    <span class="term">Last Month<i>({{ b.doc_count }})</i></span>
+                    <input type="checkbox" ng-model="itemDisplay[t]">
+                </li>
+            </ul>
         </div>
         
         <div class="info-tab filter-general">

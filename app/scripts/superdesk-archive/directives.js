@@ -412,60 +412,6 @@ define([
                 }
             };
         }])
-        .directive('sdFilterContenttype', [ '$location', function($location) {
-            return {
-                restrict: 'A',
-                templateUrl: require.toUrl('./views/filter-contenttype.html'),
-                replace: true,
-                scope: {
-                    items: '='
-                },
-                link: function(scope, element, attrs) {
-
-                    scope.typeList = ['text', 'audio', 'video', 'picture', 'graphic', 'composite'];
-                    scope.itemCount = {};
-                    scope.itemDisplay = {};
-                    _.each(scope.typeList, function(type) {
-                        scope.itemCount[type] = 0;
-                        scope.itemDisplay[type] = true;
-                    });
-
-                    var search = $location.search();
-                    if (search.type) {
-                        var type = JSON.parse(search.type);
-                        _.forEach(type, function(term) {
-                            scope.itemDisplay[term] = true;
-                        });
-                    }
-
-                    scope.$watchCollection('items', function() {
-                        if (scope.items && scope.items._facets !== undefined) {
-                            _.forEach(scope.items._facets.type.terms, function(type) {
-                                scope.itemCount[type.term] = type.count;
-                            });
-                        }
-                    });
-
-                    scope.$watch('itemDisplay', function() {
-                        setContenttypeFilter();
-                    }, true);
-
-                    var setContenttypeFilter = function() {
-                        var contenttype = [];
-                        _.each(scope.itemDisplay, function(value, key) {
-                            if (value) {
-                                contenttype.push(key);
-                            }
-                        });
-                        if (contenttype.length === 0 || contenttype.length === scope.typeList.length) {
-                            $location.search('type', null);
-                        } else {
-                            $location.search('type', JSON.stringify(contenttype));
-                        }
-                    };
-                }
-            };
-        }])
         .directive('sdGridLayout', function() {
             return {
                 templateUrl: 'scripts/superdesk-items-common/views/grid-layout.html',

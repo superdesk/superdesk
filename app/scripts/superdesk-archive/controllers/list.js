@@ -41,6 +41,7 @@ define([
             resource.query(criteria).then(function(items) {
                 $scope.loading = false;
                 $scope.items = items;
+                console.log("archive list.js items:", items);
             }, function() {
                 $scope.loading = false;
             });

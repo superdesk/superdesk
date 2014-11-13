@@ -15,6 +15,7 @@ define([
         this.fetchItems = function(criteria) {
             api.ingest.query(criteria).then(function(items) {
                 $scope.items = items;
+                console.log("ingest list.js items:", items);
             });
         };
 
