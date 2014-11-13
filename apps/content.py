@@ -53,8 +53,16 @@ metadata_schema = {
 
     # Category Details
     'anpa-category': {
-        'type': 'string'
+        'type': 'dict',
+        'mapping': {
+            'type': 'object',
+            'properties': {
+                'qcode': {'type': 'string'},
+                'name': {'type': 'string', 'index': 'not_analyzed'}
+            }
+        }
     },
+
     'subject': {
         'type': 'list'
     },

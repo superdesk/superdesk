@@ -38,7 +38,7 @@ Feature: Ingest
 
         When we get "/ingest"
         Then we get list with 1 items
-        And we get aggregations "type,desk,stage,category,originator,spiked,day,week,month"
+        And we get aggregations "type,desk,stage,category,source,spiked,day,week,month"
 
 
     @auth
