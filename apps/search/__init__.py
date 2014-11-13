@@ -9,15 +9,25 @@ class SearchService(superdesk.Service):
     It can search ingest/content/archive/spike at the same time.
     """
 
+    available_repos = ('ingest', 'archive')
+    default_repos = ['ingest', 'archive']
+
     def _get_query(self, req):
+        """Get elastic query."""
         args = getattr(req, 'args', {})
         return json.loads(args.get('source')) if args.get('source') else {}
+
+    def _get_types(self, req):
+        """Get document types for the given query."""
+        args = getattr(req, 'args', {})
+        repos = args.get('repo', ','.join(self.default_repos)).split(',')
+        return [repo for repo in repos if repo in self.available_repos]
 
     def get(self, req, lookup):
         """Run elastic search agains on multiple doc types."""
         elastic = app.data.elastic
         query = self._get_query(req)
-        types = ['ingest', 'archive']
+        types = self._get_types(req)
         hits = elastic.es.search(body=query, index=elastic.index, doc_type=types)
         docs = elastic._parse_hits(hits, 'ingest')  # any resource here will do
         for resource in types:
