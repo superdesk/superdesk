@@ -45,6 +45,8 @@
                 <video controls="controls" sd-sources data-renditions="item.renditions"></video>
             </div>
 
+            <div class="text abstract" ng-show="item.abstract" sd-html-preview="item.abstract"></div>
+
             <div class="text" ng-show="item.body_html" sd-html-preview="item.body_html"></div>
 
             <div class="composite-preview" ng-if="item.type === 'composite'">
