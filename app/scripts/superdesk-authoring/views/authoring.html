@@ -32,17 +32,17 @@
                 		<fieldset class="horizontal span-3">
                 			<div class="field">
                 				<label translate>Keyword</label>
-                				<input type="text" ng-model="item.slugline" ng-if="_editable"></input>
+                				<input type="text" ng-model="item.slugline" ng-if="_editable">
                 				<div ng-if="!_editable">{{item.slugline}}</div>
                 			</div>
                 			<div class="field">
                 				<label translate>Take key</label>
-                				<input type="text" ng-model="item.anpa_take_key" ng-if="_editable"></input>
+                				<input type="text" ng-model="item.anpa_take_key" ng-if="_editable">
                 				<div ng-if="!_editable">{{item.anpa_take_key}}</div>
                 			</div>
                 			<div class="field">
                 				<label translate>Unique name</label>
-                				<input type="text" ng-model="item.unique_name" ng-if="_editable"></input>
+                				<input type="text" ng-model="item.unique_name" ng-if="_editable">
                 				<div ng-if="!_editable">{{item.slugline}}</div>
                 			</div>
                 		</fieldset>
@@ -71,5 +71,5 @@
 		</div>
 	</section>
 
-	<div sd-send-item data-item="item" data-view="viewSendTo" data-before-send="save" ng-if="viewSendTo"></div>
+	<div sd-send-item data-item="item" data-view="viewSendTo" data-before-send="save"></div>
 </div>

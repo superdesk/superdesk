@@ -1,6 +1,7 @@
 <div class="send-to-pane" ng-class="{show: view}" sd-click-close>
     <header>
-        <h3 translate>Send to</h3>
+        <h3 translate ng-if="desk">Send to</h3>
+        <h3 translate ng-if="!desk">Submit to</h3>
         <div class="close" ng-click="view = !view"><i class="icon-close-small icon-white"></i></div>
     </header>
     <div class="content">
