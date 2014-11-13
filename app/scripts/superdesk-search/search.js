@@ -173,21 +173,28 @@
                 templateUrl: 'scripts/superdesk-search/views/search-facets.html',
                 replace: true,
                 scope: {
-                    items: '='
+                    items: '=',
+                    desk: '='
                 },
                 link: function(scope, element, attrs) {
                     scope.sTab = true;
-                    scope.typeList = ['text', 'audio', 'video', 'picture', 'graphic', 'composite'];
-                    scope.typeCount = {};
-                    scope.typeDisplay = {};
+                    scope.aggregations = {
+                        'type': {},
+                        'desk': {},
+                        'stage': {},
+                        'date': {},
+                        'source': {},
+                        'category': {},
+                        'spiked':{}
+                    };
 
+                    scope.selectedFacets = {};
                     
-                    _.each(scope.typeList, function(type) {
+/*                    _.each(scope.typeList, function(type) {
                         scope.typeCount[type] = 0;
                         scope.typeDisplay[type] = true;
                     });
 
-                    console.log("sdSearchFacets items:", scope.items);
 
                     var search = $location.search();
                     if (search.type) {
@@ -195,35 +202,82 @@
                         _.forEach(type, function(term) {
                             scope.typeDisplay[term] = true;
                         });
-                    }
+                    }*/
 
                     scope.$watchCollection('items', function() {
 
+                        console.log("sdSearchFacets items:", scope.items);
+                        //console.log("sdSearchFacets selectedDesk:", scope.desk);
                         if(scope.items && scope.items._aggregations !== undefined) {
+                            
                             _.forEach(scope.items._aggregations.type.buckets, function(type) {
-                                scope.typeCount[type.key] = type.doc_count;
+                                scope.aggregations.type[type.key] = type.doc_count;
                             })
+                            
+                            _.forEach(scope.items._aggregations.category.buckets, function(cat) {
+                                scope.aggregations.category[cat.key] = cat.doc_count;
+                            })
+
+                            _.forEach(scope.items._aggregations.originator.buckets, function(origin) {
+                                scopeaggregations.source[origin.key] = origin.doc_count;
+                            })
+
+                            _.forEach(scope.items._aggregations.day.buckets, function(day) {
+                                scope.aggregations.date["Last Day"] = day.doc_count;
+                            })
+
+                            _.forEach(scope.items._aggregations.week.buckets, function(week) {
+                                scope.aggregations.date["Last Week"] = week.doc_count;
+                            })
+
+                            _.forEach(scope.items._aggregations.month.buckets, function(month) {
+                                scope.aggregations.date["Last Month"] = month.doc_count;
+                            })
+
+                            //if(!scope.desk) {
+                                _.forEach(scope.items._aggregations.desk.buckets, function(desk) {
+                                    scope.aggregations.desk[desk.key] = desk.doc_count;
+                                }) 
+                            //}
+
+                            if(scope.desk) {
+                                _.forEach(scope.items._aggregations.stage.buckets, function(stage) {
+                                    scope.aggregations.stage[stage.key] = stage.doc_count;
+                                }) 
+                            }
+
+                            console.log("scope.aggregations:", scope.aggregations);
+
                         }
 
                        
                     });
 
-                    scope.$watch('typeDisplay', function() {
-                        setContenttypeFilter();
-                    }, true);
+                    scope.setFilter = function(type, key) {
+                        console.log("setContenttypeFilter", type, key)
+                        scope.selectedFacets[type] = key;
 
-                    var setContenttypeFilter = function() {
-                        var contenttype = [];
-                        _.each(scope.typeDisplay, function(value, key) {
-                            if (value) {
-                                contenttype.push(key);
-                            }
-                        });
-                        if (contenttype.length === 0 || contenttype.length === scope.typeList.length) {
-                            $location.search('type', null);
+                        if (scope.aggregations[type] && key) {
+                            $location.search(type, JSON.stringify([key]));
                         } else {
-                            $location.search('type', JSON.stringify(contenttype));
+                            $location.search(type, null);
                         }
+                    };
+
+                    scope.removeFilter = function(type, key) {
+                        var search = $location.search();
+                        if (search[type]) {
+                            var keys = JSON.parse(search[type]);
+                            keys.splice(keys.indexOf(key), 1);
+                            if(keys.length > 0)
+                            {
+                                $location.search(type, JSON.stringify(keys));
+                            }
+                            else {
+                                $location.search(type, null);
+                            }
+                        }
+                        delete scope.selectedFacets[type];
                     };
                 }
             };
