@@ -72,7 +72,10 @@
                 paginate(criteria, search);
 
                 if (search.q) {
-                    criteria.query.filtered.query = {query_string: {query: search.q}};
+                    criteria.query.filtered.query = {query_string: {
+                        query: search.q,
+                        lenient: false
+                    }};
                 }
 
                 if (angular.equals(criteria, cache.criteria)) {
@@ -234,6 +237,8 @@
                     scope.query = params.q;
                     scope.flags = {extended: !!scope.query};
 
+                    scope.meta = {};
+
                     function getActiveRepos() {
                         var repos = [];
                         angular.forEach(scope.repo, function(val, key) {
@@ -245,10 +250,22 @@
                         return repos.length ? repos.join(',') : null;
                     }
 
+                    function getQuery() {
+                        var metas = [];
+                        angular.forEach(scope.meta, function(val, key) {
+                            if (val) {
+                                metas.push(key + ':(' + val + ')');
+                            }
+                        });
+                        return metas.length ? metas.join(' ') : scope.query || null;
+                    }
+
                     function updateParam() {
-                        $location.search('q', scope.query || null);
+                        $location.search('q', getQuery() || null);
                         $location.search('page', null);
                         $location.search('repo', getActiveRepos());
+                        scope.query = $location.search().q;
+                        scope.meta = {};
                     }
 
                     scope.search = function() {
