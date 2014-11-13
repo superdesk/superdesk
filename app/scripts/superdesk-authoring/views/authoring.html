@@ -23,33 +23,47 @@
 	</div>
 
 	<section class="main-section" ng-class="{'auth-sendto': viewSendTo}">
-		<div sd-authoring-widgets data-item="item">
+		<div sd-authoring-widgets data-item="item" ng-class="{'widget-active': active}">
 
 		    <div class="main-article-container" ng-click="viewSendTo = false;">
 
                 <article class="main-article" ng-if="item._id" ng-class="{preview: !_editable}">
-                    <section class="article-keyword">
-                        <header>
-                            <span class="edit-label" translate>Keyword</span>
-                        </header>
-                        <input type="text" class="keyword" ng-model="item.slugline" ng-if="_editable"></input>
-                    </section>
-
-		            <section class="article-title">
-		                <header>
-		                    <span class="edit-label" translate>Headline</span>
-		                </header>
-		                <textarea class="title" sd-auto-height ng-model="item.headline" ng-if="_editable"></textarea>
-		                <div class="title" ng-if="!_editable">{{item.headline}}</div>
-		            </section>
-
-		            <section class="article-full-text">
-		                <header>
-		                    <span class="edit-label" translate>Body</span> 
-		                </header>
-	                    <div sd-text-editor class="text-editor" ng-model="item.body_html" ng-if="_editable"></div>
-	                    <div class="text-editor" sd-html-preview="item.body_html" ng-if="!_editable"></div>
-		            </section>
+                	<form>
+                		<fieldset class="horizontal span-3">
+                			<div class="field">
+                				<label translate>Keyword</label>
+                				<input type="text" ng-model="item.slugline" ng-if="_editable"></input>
+                				<div ng-if="!_editable">{{item.slugline}}</div>
+                			</div>
+                			<div class="field">
+                				<label translate>Take key</label>
+                				<input type="text" ng-model="item.anpa_take_key" ng-if="_editable"></input>
+                				<div ng-if="!_editable">{{item.anpa_take_key}}</div>
+                			</div>
+                			<div class="field">
+                				<label translate>Unique name</label>
+                				<input type="text" ng-model="item.unique_name" ng-if="_editable"></input>
+                				<div ng-if="!_editable">{{item.slugline}}</div>
+                			</div>
+                		</fieldset>
+                		<fieldset>
+                			<div class="field" >
+                				<label translate>Headline</label>
+                				<textarea class="headline" sd-auto-height ng-model="item.headline" ng-if="_editable"></textarea>
+			                	<div class="headline" ng-if="!_editable">{{item.headline}}</div>
+                			</div>
+                			<div class="field" class="abstract">
+                				<label translate>Abstract</label>
+                				<textarea class="abstract" sd-auto-height ng-model="item.abstract" ng-if="_editable"></textarea>
+			                	<div class="abstract" ng-if="!_editable">{{item.abstract}}</div>
+                			</div>
+                			<div class="field">
+                				<label translate>Body</label>
+                				<div sd-text-editor class="text-editor" ng-model="item.body_html" ng-if="_editable"></div>
+		                    	<div class="text-editor" sd-html-preview="item.body_html" ng-if="!_editable"></div>
+                			</div>
+                		</fieldset>
+		            </form>
 		        </article>
 		    </div>
 

@@ -317,7 +317,19 @@
             stopWatch = $scope.$watchGroup([
                 'item.headline',
                 'item.slugline',
-                'item.body_html'
+                'item.body_html',
+                'item.abstract',
+                'item.anpa_take_key',
+                'item.unique_name',
+                'item.urgency',
+                'item.byline',
+                'item.priority',
+                'item.anpa_category',
+                'item.ednote',
+                'item.usageterms',
+                'item.subject',
+                'item.genre',
+                'item[\'anpa-category\']'
             ], function(changes) {
                 $scope.dirty = isDirty();
                 if ($scope.dirty && authoring.isEditable(item)) {

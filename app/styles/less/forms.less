@@ -659,6 +659,29 @@ form {
           }
         }
     }
+    &.horizontal {
+      .clearfix();
+      .field {
+        float: left;
+      }
+      &[class*=" span-"] {
+        .field {
+          .border-box();
+          padding: 0 3%;
+          &:first-child {
+            padding-left: 0;
+          }
+          &:last-child {
+            padding-right: 0;
+          }
+        }
+      }
+      &.span-2 .field {width: 50%;}
+      &.span-3 .field {width: 33.33%;}
+      &.span-4 .field {width: 25%;}
+      &.span-5 .field {width: 20%;}
+
+    }
   }
 }
 
