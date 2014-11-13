@@ -1,4 +1,5 @@
 from superdesk.resource import Resource
+LINKED_IN_PACKAGES = 'linked_in_packages'
 
 
 metadata_schema = {
@@ -97,6 +98,9 @@ metadata_schema = {
     'urgency': {
         'type': 'integer'
     },
+    'abstract': {
+        'type': 'string'
+    },
     'pubstatus': {
         'type': 'string',
         'allowed': ['Usable', 'Withhold', 'Canceled'],
@@ -158,14 +162,30 @@ metadata_schema = {
     'creditline': {
         'type': 'string'
     },
+    LINKED_IN_PACKAGES: {
+        'type': 'list',
+        'readonly': True,
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                'package': Resource.rel('packages', True)
+            }
+        }
+    },
 
     # Task and Lock Details
     'task_id': {
         'type': 'string'
     },
-    'lock_user': Resource.rel('users', True),
+    'lock_user': Resource.rel('users', embeddable=True),
     'lock_time': {
         'type': 'datetime'
     },
-    'lock_session': Resource.rel('auth', True),
+    'lock_session': Resource.rel('auth', embeddable=True),
+    'is_spiked': {
+        'type': 'boolean'
+    },
+    'expiry': {
+        'type': 'datetime'
+    }
 }
