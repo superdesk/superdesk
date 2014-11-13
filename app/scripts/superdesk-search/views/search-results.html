@@ -3,7 +3,7 @@
         <header>
             <div class="pull-left fitler-trigger" ng-click="sidebarstick = true" ng-class="{hidden: sidebarstick === true}"><i class="icon-filter-large"></i></div>
 
-            <div sd-item-searchbar class="pull-left"></div>
+            <div sd-item-searchbar data-repo="repo" class="pull-left"></div>
             <div sd-item-sortbar class="pull-left"></div>
 
             <div class="view-select pull-right">
@@ -21,12 +21,10 @@
                     data-select="preview(item)"
                     data-extras="{view: view, activity: {type: spike ? 'spike' : type, action: 'list'}, api: api}">
                     <div sd-media-box 
-                        ng-if="type === 'archive'"
                         data-item="item" 
                         class="{{view}}-view" 
                         data-cursor="view !== 'mgrid'">
                     </div>
-                    <div sd-media-box ng-if="type !== 'archive'"></div>
                 </div>
             </div>
         </div>

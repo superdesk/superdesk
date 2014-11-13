@@ -31,8 +31,20 @@
 						<input type="text" id="search-slugline" ng-model="slugline" tabindex="5">
 					</div>
 				</fieldset>
+                <fieldset ng-if="repo">
+                    <legend translate>Collection</legend>
+                    <ul>
+                        <li>
+                            <input class="pull-left" type="checkbox" id="ingest-collection" ng-model="repo.ingest" ng-checked="repo.ingest">
+                            <label for="ingest-collection" translate>Ingest</label>
+                        </li>
+                        <li>
+                            <input class="pull-left" type="checkbox" id="archive-collection" ng-model="repo.archive" ng-checked="repo.archive">
+                            <label for="archive-collection" translate>Archive</label>
+                        </li>
+                    </ul>
+                </fieldset>
 			</form>
-			
 			<button class="trigger small" ng-click="search()" tabindex="6" translate>Go!</button>
 		</div>
     </div>

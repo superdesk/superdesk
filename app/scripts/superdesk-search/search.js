@@ -61,7 +61,7 @@
             /**
              * Get criteria for given query
              */
-            this.getCriteria = function getCriteria() {
+            this.getCriteria = function getCriteria(withSource) {
                 var search = $location.search();
                 var sort = getSort();
                 var criteria = {
@@ -77,6 +77,13 @@
 
                 if (angular.equals(criteria, cache.criteria)) {
                     return cache.criteria;
+                }
+
+                if (withSource) {
+                    criteria = {source: criteria};
+                    if (search.repo) {
+                        criteria.repo = search.repo;
+                    }
                 }
 
                 cache.search = search;
@@ -123,12 +130,17 @@
     }
 
     function SearchController($scope, $location, api, search) {
+        $scope.repo = {
+            ingest: true,
+            archive: true
+        };
+
         function getQuery() {
-            return search.query().getCriteria();
+            return search.query().getCriteria(true);
         }
 
         function refresh(criteria) {
-            api.query('search', {source: criteria}).then(function(result) {
+            api.query('search', criteria).then(function(result) {
                 $scope.items = result;
             });
         }
@@ -209,7 +221,7 @@
          */
         .directive('sdItemSearchbar', ['$location', function($location) {
             return {
-                scope: true,
+                scope: {repo: '='},
                 templateUrl: 'scripts/superdesk-search/views/item-searchbar.html',
                 link: function(scope, elem) {
                     var ENTER = 13;
@@ -222,9 +234,21 @@
                     scope.query = params.q;
                     scope.flags = {extended: !!scope.query};
 
+                    function getActiveRepos() {
+                        var repos = [];
+                        angular.forEach(scope.repo, function(val, key) {
+                            if (val) {
+                                repos.push(key);
+                            }
+                        });
+
+                        return repos.length ? repos.join(',') : null;
+                    }
+
                     function updateParam() {
                         $location.search('q', scope.query || null);
                         $location.search('page', null);
+                        $location.search('repo', getActiveRepos());
                     }
 
                     scope.search = function() {
