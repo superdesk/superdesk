@@ -94,5 +94,16 @@ define([
             $rootScope.$apply();
             expect(nextSession.identity.name).toBe('baz');
         }));
+
+        it('can return identity after session start', inject(function(session, $rootScope) {
+            session.start(SESSION, {name: 'bar'});
+            $rootScope.$digest();
+
+            var success = jasmine.createSpy('success');
+            session.getIdentity().then(success);
+
+            $rootScope.$digest();
+            expect(success).toHaveBeenCalled();
+        }));
     });
 });

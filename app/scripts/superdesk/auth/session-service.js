@@ -23,6 +23,10 @@ define(['lodash'], function(_) {
          * @returns {object} promise
          */
         this.getIdentity = function() {
+            if (this.identity) {
+                return $q.when(this.identity);
+            }
+
             defer = defer ? defer : $q.defer();
             return defer.promise;
         };
