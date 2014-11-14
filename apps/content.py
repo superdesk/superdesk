@@ -132,6 +132,9 @@ metadata_schema = {
     },
 
     # Media Related
+    'media': {
+        'type': 'file'
+    },
     'mimetype': {
         'type': 'string'
     },
