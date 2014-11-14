@@ -98,9 +98,6 @@ metadata_schema = {
     'urgency': {
         'type': 'integer'
     },
-    'abstract': {
-        'type': 'string'
-    },
     'pubstatus': {
         'type': 'string',
         'allowed': ['Usable', 'Withhold', 'Canceled'],
