@@ -23,7 +23,7 @@ define(['lodash'], function(_) {
          * @returns {object} promise
          */
         this.getIdentity = function() {
-            if (this.identity) {
+            if (this.identity && this.token) {
                 return $q.when(this.identity);
             }
 
