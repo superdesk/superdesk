@@ -729,16 +729,6 @@ def step_impl_then_get_picture(context):
     expect_json_contains(context.response, 'picture_url')
 
 
-@then('we get facets "{keys}"')
-def step_impl_then_get_facets(context, keys):
-    assert_200(context.response)
-    expect_json_contains(context.response, '_facets')
-    data = get_json_data(context.response)
-    facets = data['_facets']
-    for key in keys.split(','):
-        assert_in(key, facets)
-
-
 @then('we get aggregations "{keys}"')
 def step_impl_then_get_aggs(context, keys):
     assert_200(context.response)
