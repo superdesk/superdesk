@@ -1,5 +1,5 @@
 
-var openUrl = require('./utils').open;
+var openUrl = require('./helpers/utils').open;
 
 describe('Media Archive', function() {
     'use strict';
