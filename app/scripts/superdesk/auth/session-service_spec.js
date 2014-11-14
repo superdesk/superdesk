@@ -105,5 +105,19 @@ define([
             $rootScope.$digest();
             expect(success).toHaveBeenCalled();
         }));
+
+        it('should not resolve identity after expiry', inject(function(session, $rootScope) {
+            session.start(SESSION, {name: 'bar'});
+            $rootScope.$digest();
+
+            session.expire();
+            $rootScope.$digest();
+
+            var success = jasmine.createSpy('success');
+            session.getIdentity().then(success);
+
+            $rootScope.$digest();
+            expect(success).not.toHaveBeenCalled();
+        }));
     });
 });
