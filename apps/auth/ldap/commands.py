@@ -2,7 +2,7 @@ import logging
 from flask import current_app as app
 from apps.auth.errors import NotFoundAuthError
 import superdesk
-from .ldap import ADAuth
+from .ldap import ADAuth, add_default_values
 from superdesk.utc import utcnow
 
 
@@ -48,17 +48,15 @@ class ImportUserProfileFromADCommand(superdesk.Command):
 
         # Check if User Profile already exists in Mongo
         user = superdesk.get_resource_service('users').find_one(username=username, req=None)
-        user_data[app.config['LAST_UPDATED']] = utcnow()
+        timestamp = utcnow()
 
         if user:
+            user_data[app.config['LAST_UPDATED']] = timestamp
             superdesk.get_resource_service('users').patch(user.get('_id'), user_data)
-            return user_data
         else:
-            user_data[app.config['DATE_CREATED']] = user_data[app.config['LAST_UPDATED']]
-            user_data['username'] = username
-            user_data['user_type'] = user_type
-            user_data['is_active'] = True
+            add_default_values(user_data, username, user_type=user_type, DATE_CREATED=timestamp, LAST_UPDATED=timestamp)
             superdesk.get_resource_service('users').post([user_data])
-            return user_data
+
+        return user_data
 
 superdesk.command('users:copyfromad', ImportUserProfileFromADCommand())

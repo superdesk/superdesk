@@ -148,15 +148,15 @@ class ADAuthService(AuthService):
 
         if profile_to_be_created:
             user = superdesk.get_resource_service('users').find_one(username=profile_to_import, req=None)
+            timestamp = utcnow()
 
             if not user:
-                user_data['username'] = profile_to_import
-                user_data['is_active'] = True
-                user_data[app.config['DATE_CREATED']] = user_data[app.config['LAST_UPDATED']] = utcnow()
-
+                add_default_values(user_data, profile_to_import,
+                                   user_type=None if 'user_type' not in user_data else user_data['user_type'],
+                                   DATE_CREATED=timestamp, LAST_UPDATED=timestamp)
                 superdesk.get_resource_service('users').post([user_data])
             else:
-                user_data[app.config['LAST_UPDATED']] = utcnow()
+                user_data[app.config['LAST_UPDATED']] = timestamp
                 superdesk.get_resource_service('users').patch(user.get('_id'), user_data)
 
             user = superdesk.get_resource_service('users').find_one(username=profile_to_import, req=None)
@@ -172,15 +172,25 @@ class ImportUserProfileService(BaseService):
     """
     def on_create(self, docs):
         doc = docs[0]
-        doc['profile_to_be_created'] = 'false'
-        time_stamp = doc[app.config['LAST_UPDATED']]
-        profile_to_import = doc['profile_to_import']
 
+        timestamp = doc[app.config['LAST_UPDATED']]
         doc = get_resource_service('auth').authenticate(doc)
 
-        doc[app.config['LAST_UPDATED']] = doc[app.config['DATE_CREATED']] = time_stamp
-        doc['username'] = profile_to_import
-        doc['is_active'] = True
-        doc['user_type'] = 'user'
+        add_default_values(doc, doc['profile_to_import'],
+                           user_type=None if 'user_type' not in doc else doc['user_type'],
+                           DATE_CREATED=timestamp, LAST_UPDATED=timestamp,
+                           profile_to_be_created='false')
 
         docs[0] = doc
+
+
+def add_default_values(doc, user_name, user_type, **kwargs):
+    """
+    Adds user_name, user_type, is_active: True, needs_activation: False and the values passed to **kwargs to doc.
+    """
+
+    doc['username'] = user_name
+    doc['user_type'] = 'user' if user_type is None else user_type
+    doc['is_active'] = True
+    doc['needs_activation'] = False
+    doc.update(**kwargs)
