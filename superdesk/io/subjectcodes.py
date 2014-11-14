@@ -14,7 +14,7 @@ def get_subjectcodes():
 
     items = []
     for code in sorted(subject_codes):
-        items.append({'code': code, 'name': subject_codes[code]})
+        items.append({'qcode': code, 'name': subject_codes[code]})
 
     return send_response(None, ({'_items': items}, datetime(2012, 7, 10), None, 200))
 
