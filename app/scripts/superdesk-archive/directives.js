@@ -378,40 +378,7 @@ define([
                 }
             };
         }])
-        .directive('sdFilterUrgency', ['$location', function($location) {
-            return {
-                scope: true,
-                link: function($scope, element, attrs) {
-
-                    $scope.urgency = {
-                        min: $location.search().urgency_min || 1,
-                        max: $location.search().urgency_max || 5
-                    };
-
-                    function handleUrgency(urgency) {
-                        var min = Math.round(urgency.min);
-                        var max = Math.round(urgency.max);
-                        if (min !== 1 || max !== 5) {
-                            var urgency_norm = {
-                                min: min,
-                                max: max
-                            };
-                            $location.search('urgency_min', urgency_norm.min);
-                            $location.search('urgency_max', urgency_norm.max);
-                        } else {
-                            $location.search('urgency_min', null);
-                            $location.search('urgency_max', null);
-                        }
-                    }
-
-                    var handleUrgencyWrap = _.throttle(handleUrgency, 2000);
-
-                    $scope.$watchCollection('urgency', function(newVal) {
-                        handleUrgencyWrap(newVal);
-                    });
-                }
-            };
-        }])
+        
         .directive('sdGridLayout', function() {
             return {
                 templateUrl: 'scripts/superdesk-items-common/views/grid-layout.html',

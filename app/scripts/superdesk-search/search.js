@@ -161,13 +161,13 @@
         refresh(query);
     }
 
-    angular.module('superdesk.search', ['superdesk.api', 'superdesk.activity'])
+    angular.module('superdesk.search', ['superdesk.api', 'superdesk.activity', 'superdesk.desks'])
         .service('search', SearchService)
 
         /**
          * Item filters sidebar
          */
-        .directive('sdSearchFacets', [ '$location', function($location){
+        .directive('sdSearchFacets', [ '$location', 'desks', function($location, desks){
             return {
                 estrict: 'A',
                 templateUrl: 'scripts/superdesk-search/views/search-facets.html',
@@ -178,75 +178,100 @@
                 },
                 link: function(scope, element, attrs) {
                     scope.sTab = true;
-                    scope.aggregations = {
-                        'type': {},
-                        'desk': {},
-                        'stage': {},
-                        'date': {},
-                        'source': {},
-                        'category': {},
-                        'spiked':{}
-                    };
-
+                    scope.aggregations = {};
                     scope.selectedFacets = {};
-                    
-/*                    _.each(scope.typeList, function(type) {
-                        scope.typeCount[type] = 0;
-                        scope.typeDisplay[type] = true;
-                    });
+                    scope.keyword;
+
+                    var initAggregations = function () {
+                        scope.aggregations = {
+                            'type': {},
+                            'desk': {},
+                            'stage': {},
+                            'date': {},
+                            'source': {},
+                            'category': {},
+                            'spiked':{}
+                        };
+                    }
 
 
-                    var search = $location.search();
-                    if (search.type) {
-                        var type = JSON.parse(search.type);
-                        _.forEach(type, function(term) {
-                            scope.typeDisplay[term] = true;
+                    var initSelectedFacets = function () {
+                        var search = $location.search();
+                        _.forEach(search, function(type, key) {
+                            if (key != 'q' ) {
+                                scope.selectedFacets[key] = JSON.parse(type)[0];
+                            }
                         });
-                    }*/
+                    }();
 
                     scope.$watchCollection('items', function() {
 
-                        console.log("sdSearchFacets items:", scope.items);
-                        //console.log("sdSearchFacets selectedDesk:", scope.desk);
+                        initAggregations();
+
+                        var search = $location.search();
+                        if (scope.keyword != search.q)
+                        {
+                            scope.selectedFacets = {};
+                        }
+
                         if(scope.items && scope.items._aggregations !== undefined) {
                             
+                            console.log("scope.selectedFacets:", scope.selectedFacets);
+
                             _.forEach(scope.items._aggregations.type.buckets, function(type) {
-                                scope.aggregations.type[type.key] = type.doc_count;
+                                if (!scope.selectedFacets["type"] || scope.selectedFacets["type"] != type.key) { 
+                                    scope.aggregations.type[type.key] = type.doc_count;
+                                }
                             })
                             
                             _.forEach(scope.items._aggregations.category.buckets, function(cat) {
                                 scope.aggregations.category[cat.key] = cat.doc_count;
                             })
 
-                            _.forEach(scope.items._aggregations.originator.buckets, function(origin) {
-                                scopeaggregations.source[origin.key] = origin.doc_count;
+                            _.forEach(scope.items._aggregations.source.buckets, function(source) {
+                                scopeaggregations.source[source.key] = source.doc_count;
                             })
 
                             _.forEach(scope.items._aggregations.day.buckets, function(day) {
-                                scope.aggregations.date["Last Day"] = day.doc_count;
+                                if (day.doc_count > 0) {
+                                    scope.aggregations.date["Last Day"] = day.doc_count;
+                                }
                             })
 
                             _.forEach(scope.items._aggregations.week.buckets, function(week) {
-                                scope.aggregations.date["Last Week"] = week.doc_count;
+                                if (week.doc_count > 0) {
+                                    scope.aggregations.date["Last Week"] = week.doc_count;
+                                }
                             })
 
                             _.forEach(scope.items._aggregations.month.buckets, function(month) {
-                                scope.aggregations.date["Last Month"] = month.doc_count;
+                                if (month.doc_count > 0) {
+                                    scope.aggregations.date["Last Month"] = month.doc_count;
+                                }
                             })
 
                             //if(!scope.desk) {
                                 _.forEach(scope.items._aggregations.desk.buckets, function(desk) {
-                                    scope.aggregations.desk[desk.key] = desk.doc_count;
+                                    scope.aggregations.desk[desks.deskLookup[desk.key].name] = desk.doc_count;
                                 }) 
                             //}
 
-                            if(scope.desk) {
+                            //if(scope.desk) {
                                 _.forEach(scope.items._aggregations.stage.buckets, function(stage) {
-                                    scope.aggregations.stage[stage.key] = stage.doc_count;
-                                }) 
-                            }
+                                    _.forEach(desks.deskStages[desks.activeDeskId], function(deskStage) {
+                                        if (deskStage._id == stage.key) {
+                                            scope.aggregations.stage[deskStage.name] = stage.doc_count;
+                                        }
+                                    });
+                                })
+                            //}
 
                             console.log("scope.aggregations:", scope.aggregations);
+                            //console.log("desks.deskLookup2:", desks.deskLookup);
+                            //console.log("desks.deskStages2:", desks.deskStages);
+                            //console.log("desks.stages:", desks.stages);
+                            console.log("scope.selectedFacets:", scope.selectedFacets);
+                            
 
                         }
 
@@ -257,7 +282,7 @@
                         console.log("setContenttypeFilter", type, key)
                         scope.selectedFacets[type] = key;
 
-                        if (scope.aggregations[type] && key) {
+                        if (!scope.isEmpty(type) && key) {
                             $location.search(type, JSON.stringify([key]));
                         } else {
                             $location.search(type, null);
@@ -279,6 +304,58 @@
                         }
                         delete scope.selectedFacets[type];
                     };
+
+                    scope.isEmpty = function(type) {
+                        return _.isEmpty(scope.aggregations[type]);
+                    }
+                }
+            };
+        }])
+        /**
+         * Urgency Filter
+         */
+        .directive('sdFilterUrgency', ['$location', function($location) {
+            return {
+                scope: true,
+                link: function($scope, element, attrs) {
+
+
+                    $scope.urgency = {
+                        min: "1",
+                        max: "X"
+                    };
+
+/*                    $scope.urgency = {
+                        min: $location.search().urgency_min || 1,
+                        max: $location.search().urgency_max || 5
+                    };*/
+                    
+                    console.log("sdFilterUrgency entered:", $scope.urgency);
+
+                    function handleUrgency(urgency) {
+                        var min = Math.round(urgency.min);
+                        var max = Math.round(urgency.max);
+                        if (min !== 1 || max !== 5) {
+                            var urgency_norm = {
+                                min: min,
+                                max: max
+                            };
+                            $location.search('urgency_min', urgency_norm.min);
+                            $location.search('urgency_max', urgency_norm.max);
+                        } else {
+                            $location.search('urgency_min', null);
+                            $location.search('urgency_max', null);
+                        }
+
+                        console.log("handleUrgency entered:", $scope.urgency);
+
+                    }
+
+                    var handleUrgencyWrap = _.throttle(handleUrgency, 2000);
+
+                    $scope.$watchCollection('urgency', function(newVal) {
+                        //handleUrgencyWrap(newVal);
+                    });
                 }
             };
         }])

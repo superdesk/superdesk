@@ -59,6 +59,8 @@ define(['lodash'], function(_) {
                 query.filter({terms: type});
             }
 
+            console.log("baselist urgency:", params.urgency_min, params.urgency_max)
+
             if (params.urgency_min || params.urgency_max) {
                 params.urgency_min = params.urgency_min || 1;
                 params.urgency_max = params.urgency_max || 5;

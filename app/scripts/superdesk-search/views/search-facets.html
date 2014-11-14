@@ -28,10 +28,18 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Desks' | translate }}" data-open="true">
+        <div sd-toggle-box data-title="{{ 'Desks' | translate }}" ng-hide="isEmpty('desk')" data-open="true">
             <ul class="filter-contenttype selectionlist">
                 <li ng-repeat="(key,value) in aggregations.desk">
                     <a href ng-click="setFilter('desk', key)">{{key | translate}} <i>({{ value }})</i></a>
+                </li>
+            </ul>
+        </div>
+
+        <div sd-toggle-box data-title="{{ 'Stages' | translate }}" ng-hide="isEmpty('stage')" data-open="true">
+            <ul class="filter-contenttype selectionlist">
+                <li ng-repeat="(key,value) in aggregations.stage">
+                    <a href ng-click="setFilter('stage', key)">{{key | translate}} <i>({{ value }})</i></a>
                 </li>
             </ul>
         </div>
@@ -44,7 +52,7 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Categories' | translate }}" data-open="true">
+        <div sd-toggle-box data-title="{{ 'Categories' | translate }}" ng-hide="isEmpty('category')" data-open="true">
             <ul class="filter-contenttype selectionlist">
                 <li ng-repeat="(key,value) in aggregations.category">
                     <a href ng-click="setFilter('category', key)">{{key | translate}} <i>({{ value }})</i></a>
@@ -52,7 +60,7 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Spiked' | translate }}" data-open="true">
+        <div sd-toggle-box data-title="{{ 'Spiked' | translate }}" ng-hide="isEmpty('spiked')" data-open="true">
             <ul class="filter-contenttype selectionlist">
                 <li ng-repeat="(key,value) in aggregations.spiked">
                     <a href ng-click="setFilter('spike', key)">Spiked <i>({{ value }})</i></a>
@@ -72,9 +80,9 @@
             <form>
             <ul class="metadata">
                 <li>
-                    <div class="lbl" translate>Urgency</div>
+                    <div class="lbl" translate>Urgency AAB</div>
                     <div class="data urgency-data" sd-filter-urgency>
-                        <slider floor="1" ceiling="5" precision="0" ng-model-low="urgency.min" ng-model-high="urgency.max" class="sd-slider urgency-slider"></slider>
+                        <slider floor="1" ceiling="5" precision="1" ng-model-low="urgency.min" ng-model-high="urgency.max" class="sd-slider urgency-slider"></slider>
                         <div class="urgency-range">{{urgency.min}} - {{urgency.max}}</div>
                     </div>
                 </li>
@@ -95,14 +103,6 @@
                     </ul>
                 </li>
                 
-                <li>
-                    <div class="lbl">
-                        <span translate>Source</span>
-                    </div>
-                    <div class="data data-provider">
-                        <div class="dropdown source-select" sd-provider-menu data-items="items"></div>
-                    </div>
-                </li>
             </ul>
             </form>
         </div>
