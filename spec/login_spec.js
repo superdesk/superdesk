@@ -27,8 +27,7 @@ describe('login', function() {
         modal.login('admin', 'admin');
         element(by.css('button.current-user')).click();
         element(by.buttonText('SIGN OUT')).click();
-
-        //protractor.getInstance().sleep(2000); // it reloads page @TODO: remove it?
+        protractor.getInstance().sleep(2000); // it reloads page
         protractor.getInstance().waitForAngular();
 
         expect(modal.btn).toBeDisplayed();

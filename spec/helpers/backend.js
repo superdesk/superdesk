@@ -2,7 +2,8 @@
 
 /*global protractor */
 
-var request = require('request');
+var request = require('request'),
+    bt = require('btoa');
 
 var constructUrl = require('./utils').constructUrl;
 
@@ -54,6 +55,6 @@ function backendRequestAuth (params, callback) {
     if (!params.headers) {
         params.headers = {};
     }
-    params.headers.Authorization = token;
+    params.headers.authorization = 'Basic ' + bt(token + ':');
     exports.backendRequest(params, callback);
 }

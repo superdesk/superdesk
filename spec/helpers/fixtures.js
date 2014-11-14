@@ -9,9 +9,7 @@ function resetApp(callback) {
         uri: '/prepopulate',
         method: 'POST',
         json: {
-            'Name': 'default',
-            'ApplyOnDatabase': true,
-            'ApplyOnFiles': true
+            'profile': 'app_prepopulate_data'
         }
     }, function(e, r, j) {
         callback(e, r, j);

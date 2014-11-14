@@ -8,7 +8,7 @@ describe('Media Archive', function() {
 
         beforeEach(openUrl('/#/workspace/content'));
 
-        it('should display list of media items', function() {
+        xit('should display list of media items', function() {
             element(by.binding('selectedDesk')).click();
             element(by.repeater('desk in desks').row(1)).click();
             expect(element.all(by.repeater('item in items')).count()).toBe(3);

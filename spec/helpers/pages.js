@@ -1,6 +1,7 @@
 'use strict';
 
 exports.login = LoginModal;
+var params = protractor.getInstance().params;
 
 function LoginModal() {
     this.username = element(by.model('username'));
@@ -9,6 +10,8 @@ function LoginModal() {
     this.error = element(by.css('p.error'));
 
     this.login = function(username, password) {
+        username = username || params.username;
+        password = password || params.password;
         this.username.clear();
         this.username.sendKeys(username);
         this.password.sendKeys(password);

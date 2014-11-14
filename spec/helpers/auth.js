@@ -26,7 +26,8 @@ function getToken(callback) {
                 throw new Error(error);
             }
             if (!json.token) {
-                throw new Error(json);
+                console.log(json);
+                throw new Error('Auth failed');
             }
             pp.token = json.token;
             callback(error, response, json);
