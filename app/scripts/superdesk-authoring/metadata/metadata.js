@@ -32,23 +32,22 @@ function MetadataListEditingDirective() {
 			scope.selectedTerm = '';
 
 			scope.searchTerms = function(term) {
-				console.log(scope.list);
-		        if (!term) {
-		            scope.terms = [];
-		        } else {
-		            scope.terms = _.filter(scope.list, function(t) {
-		                return ((t.name.toLowerCase().indexOf(term.toLowerCase()) !== -1) &&
-		                    !_.find(scope.item[scope.field], {qcode: t.qcode}));
-		            });
-		        }
+				if (!term) {
+					scope.terms = [];
+				} else {
+					scope.terms = _.filter(scope.list, function(t) {
+					return ((t.name.toLowerCase().indexOf(term.toLowerCase()) !== -1) &&
+					!_.find(scope.item[scope.field], {qcode: t.qcode}));
+					});
+				}
 
-		        return scope.terms;
-		    };
+				return scope.terms;
+			};
 
-		    scope.selectTerm = function(term) {
-		        if (term) {
+			scope.selectTerm = function(term) {
+				if (term) {
 
-		        	//instead of simple push, extend the item[field] in order to trigger dirty $watch
+					//instead of simple push, extend the item[field] in order to trigger dirty $watch
 					var t = _.clone(scope.item[scope.field]) || [];
 					t.push(term);
 
@@ -58,18 +57,18 @@ function MetadataListEditingDirective() {
 					_.extend(scope.item, o);
 
 					scope.selectedTerm = '';
-		        }
-		    };
+				}
+			};
 
-		    scope.removeTerm = function(term) {
-		    	var temp = _.without(scope.item[scope.field], term);
+			scope.removeTerm = function(term) {
+				var temp = _.without(scope.item[scope.field], term);
 
-		    	//build object
-		    	var o = {};
+				//build object
+				var o = {};
 				o[scope.field] = temp;
 
-		    	_.extend(scope.item, o);
-		    };
+				_.extend(scope.item, o);
+			};
 		}
 	};
 }
