@@ -39,7 +39,6 @@ define([
         .directive('sdRoleUnique', ['api', '$q', function(api, $q) {
             return {
                 require: 'ngModel',
-                scope: {},
                 link: function (scope, element, attrs, ctrl) {
 
                     /**
@@ -47,9 +46,11 @@ define([
                      */
                     function testUnique(modelValue, viewValue) {
                         var value = modelValue || viewValue;
-                        if (value && attrs.uniqueField) {
-                            var criteria = {where: {}};
-                            criteria.where[attrs.uniqueField] = value;
+                        if (value) {
+                            var criteria = {where: {'name': value}};
+                            if (scope.editRole != null && scope.editRole._id != null) {
+                                criteria.where._id = {'$ne': scope.editRole._id};
+                            }
                             return api.roles.query(criteria)
                                 .then(function(roles) {
                                     if (roles._items.length) {
