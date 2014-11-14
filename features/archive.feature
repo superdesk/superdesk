@@ -212,3 +212,36 @@ Feature: News Items Archive
        	And we get version 3
        	When we get "/archive/xyz?version=all"
         Then we get list with 3 items
+
+	@auth
+	Scenario: Update text item with Metadata
+	    Given the "archive"
+	    """
+        [{"type":"text", "headline": "test1", "_id": "xyz", "original_creator": "abc"}]
+        """
+        When we patch given
+        """
+        {"word_count" : "6", "keywords" : ["Test"], "urgency" : "4", "byline" : "By Line", "language": "en",
+         "dateline" : "Sydney, Aus (Nov 12, 2014) AAP - ", "genre" : ["Test"],
+         "anpa-category" :
+            {
+                "qcode" : "A",
+                "name" : "Australian News"
+            },
+         "subject" : [
+            {
+                "qcode" : "11007000",
+                "name" : "human rights"
+            },
+            {
+                "qcode" : "11014000",
+                "name" : "treaty and international organisation-DEPRECATED"
+            }
+         ]}
+        """
+        Then we get updated response
+        """
+        { "headline": "test1", "pubstatus" : "Usable", "byline" : "By Line", "word_count" : "6",
+          "dateline" : "Sydney, Aus (Nov 12, 2014) AAP - ", "genre" : ["Test"]}
+        """
+        And we get version 2

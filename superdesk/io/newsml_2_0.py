@@ -75,7 +75,7 @@ class NewsMLTwoParser(Parser):
         parse_meta_item_text('name', 'dateline', meta.find(self.qname('located')))
 
         try:
-            item['description_text'] = meta.find(self.qname('description')).text
+            item['description'] = meta.find(self.qname('description')).text
         except AttributeError:
             pass
 

@@ -25,9 +25,8 @@ metadata_schema = {
     },
 
     # Audit Information
-    'original_creator': Resource.rel('users', True),
-    'version_creator': Resource.rel('users', True),
-
+    'original_creator': Resource.rel('users'),
+    'version_creator': Resource.rel('users'),
     'firstcreated': {
         'type': 'datetime'
     },
@@ -36,7 +35,7 @@ metadata_schema = {
     },
 
     # Ingest Details
-    'ingest_provider': Resource.rel('ingest_providers', True),
+    'ingest_provider': Resource.rel('ingest_providers'),
     'source': {     # The value is copied from the ingest_providers vocabulary
         'type': 'string'
     },
@@ -54,7 +53,7 @@ metadata_schema = {
 
     # Category Details
     'anpa-category': {
-        'type': 'string'
+        'type': 'dict'
     },
     'subject': {
         'type': 'list'
@@ -97,9 +96,6 @@ metadata_schema = {
     },
     'urgency': {
         'type': 'integer'
-    },
-    'abstract': {
-        'type': 'string'
     },
     'pubstatus': {
         'type': 'string',
@@ -168,7 +164,7 @@ metadata_schema = {
         'schema': {
             'type': 'dict',
             'schema': {
-                'package': Resource.rel('packages', True)
+                'package': Resource.rel('packages')
             }
         }
     },
@@ -177,15 +173,9 @@ metadata_schema = {
     'task_id': {
         'type': 'string'
     },
-    'lock_user': Resource.rel('users', embeddable=True),
+    'lock_user': Resource.rel('users'),
     'lock_time': {
         'type': 'datetime'
     },
-    'lock_session': Resource.rel('auth', embeddable=True),
-    'is_spiked': {
-        'type': 'boolean'
-    },
-    'expiry': {
-        'type': 'datetime'
-    }
+    'lock_session': Resource.rel('auth')
 }
