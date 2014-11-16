@@ -212,12 +212,11 @@
                         if (scope.keyword != search.q)
                         {
                             scope.selectedFacets = {};
+                            scope.keyword = search.q;
                         }
 
                         if(scope.items && scope.items._aggregations !== undefined) {
                             
-                            console.log("scope.selectedFacets:", scope.selectedFacets);
-
                             _.forEach(scope.items._aggregations.type.buckets, function(type) {
                                 if (!scope.selectedFacets["type"] || scope.selectedFacets["type"] != type.key) { 
                                     scope.aggregations.type[type.key] = type.doc_count;
@@ -266,11 +265,8 @@
                                 })
                             //}
 
-                            console.log("scope.aggregations:", scope.aggregations);
-                            //console.log("desks.deskLookup2:", desks.deskLookup);
-                            //console.log("desks.deskStages2:", desks.deskStages);
-                            //console.log("desks.stages:", desks.stages);
-                            console.log("scope.selectedFacets:", scope.selectedFacets);
+                            //console.log("scope.aggregations:", scope.aggregations);
+                            //console.log("scope.selectedFacets:", scope.selectedFacets);
                             
 
                         }
@@ -322,7 +318,7 @@
 
                     $scope.urgency = {
                         min: "1",
-                        max: "X"
+                        max: "5"
                     };
 
 /*                    $scope.urgency = {
@@ -330,7 +326,6 @@
                         max: $location.search().urgency_max || 5
                     };*/
                     
-                    console.log("sdFilterUrgency entered:", $scope.urgency);
 
                     function handleUrgency(urgency) {
                         var min = Math.round(urgency.min);
@@ -346,8 +341,6 @@
                             $location.search('urgency_min', null);
                             $location.search('urgency_max', null);
                         }
-
-                        console.log("handleUrgency entered:", $scope.urgency);
 
                     }
 
@@ -446,8 +439,8 @@
                     }
 
                     function updateParam() {
+                        $location.$$search = {};
                         $location.search('q', getQuery() || null);
-                        $location.search('page', null);
                         $location.search('repo', getActiveRepos());
                         scope.query = $location.search().q;
                         scope.meta = {};
