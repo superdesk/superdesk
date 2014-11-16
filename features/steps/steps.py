@@ -241,6 +241,10 @@ def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
 def step_impl_when_post_url(context, url):
     data = apply_placeholders(context, context.text)
     context.response = context.client.post(get_prefixed_url(context.app, url), data=data, headers=context.headers)
+    store_placeholder(context, url)
+
+
+def store_placeholder(context, url):
     if context.response.status_code in (200, 201):
         item = json.loads(context.response.get_data())
         if item['_status'] == 'OK' and item.get('_id'):
@@ -281,6 +285,16 @@ def when_we_get_url(context, url):
     context.response = context.client.get(get_prefixed_url(context.app, url), headers=headers)
 
 
+@then('we get latest')
+def steo_impl_we_get_latest(context):
+    data = get_json_data(context.response)
+    href = get_self_href(data, context)
+    headers = if_match(context, data.get('_etag'))
+    href = get_prefixed_url(context.app, href)
+    context.response = context.client.get(href, headers=headers)
+    assert_200(context.response)
+
+
 @when('we find for "{resource}" the id as "{name}" by "{search_criteria}"')
 def when_we_find_for_resource_the_id_as_name_by_search_criteria(context, resource, name, search_criteria):
     url = '/' + resource + '?where=' + search_criteria
@@ -299,7 +313,8 @@ def step_impl_when_delete_url(context, url):
     res = get_res(url, context)
     href = get_self_href(res, context)
     headers = if_match(context, res.get('_etag'))
-    context.response = context.client.delete(get_prefixed_url(context.app, href), headers=headers)
+    href = get_prefixed_url(context.app, href)
+    context.response = context.client.delete(href, headers=headers)
 
 
 @when('we delete latest')
@@ -307,7 +322,8 @@ def when_we_delete_it(context):
     res = get_json_data(context.response)
     href = get_self_href(res, context)
     headers = if_match(context, res.get('_etag'))
-    context.response = context.client.delete(get_prefixed_url(context.app, href), headers=headers)
+    href = get_prefixed_url(context.app, href)
+    context.response = context.client.delete(href, headers=headers)
 
 
 @when('we patch "{url}"')
@@ -323,10 +339,10 @@ def step_impl_when_patch_url(context, url):
 @when('we patch latest')
 def step_impl_when_patch_again(context):
     data = get_json_data(context.response)
-    href = get_self_href(data, context)
+    href = get_prefixed_url(context.app, get_self_href(data, context))
     headers = if_match(context, data.get('_etag'))
     data2 = apply_placeholders(context, context.text)
-    context.response = context.client.patch(get_prefixed_url(context.app, href), data=data2, headers=headers)
+    context.response = context.client.patch(href, data=data2, headers=headers)
     if context.response.status_code in (200, 201):
         item = json.loads(context.response.get_data())
         if item['_status'] == 'OK' and item.get('_id'):
@@ -376,8 +392,10 @@ def upload_file(context, dest, filename, crop_data=None):
             data.update(crop_data)
         headers = [('Content-Type', 'multipart/form-data')]
         headers = unique_headers(headers, context.headers)
-        context.response = context.client.post(get_prefixed_url(context.app, dest), data=data, headers=headers)
+        url = get_prefixed_url(context.app, dest)
+        context.response = context.client.post(url, data=data, headers=headers)
         assert_ok(context.response)
+        store_placeholder(context, url)
 
 
 @when('we upload a file from URL')
@@ -828,7 +846,6 @@ def start_reset_password_for_user(context):
     headers = unique_headers(headers, context.headers)
     context.response = context.client.post(get_prefixed_url(context.app, '/reset_user_password'),
                                            data=data, headers=headers)
-    print(context.response.get_data())
 
 
 @then('we fail to reset password for user')

@@ -18,7 +18,7 @@ def apply_placeholders(placeholders, text):
 
 def prepopulate_data(file_name):
     placeholders = {}
-    file = os.path.join(os.path.abspath(os.path.dirname(__file__)), file_name)
+    file = os.path.join(superdesk.app.config.get('APP_ABSPATH'), 'apps', 'prepopulate', file_name)
     with open(file, 'rt') as app_prepopulation:
         json_data = json.loads(app_prepopulation.read())
         for item in json_data:

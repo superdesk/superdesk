@@ -1,4 +1,5 @@
 from superdesk.resource import Resource
+LINKED_IN_PACKAGES = 'linked_in_packages'
 
 
 metadata_schema = {
@@ -24,9 +25,8 @@ metadata_schema = {
     },
 
     # Audit Information
-    'original_creator': Resource.rel('users', True),
-    'version_creator': Resource.rel('users', True),
-
+    'original_creator': Resource.rel('users'),
+    'version_creator': Resource.rel('users'),
     'firstcreated': {
         'type': 'datetime'
     },
@@ -35,7 +35,7 @@ metadata_schema = {
     },
 
     # Ingest Details
-    'ingest_provider': Resource.rel('ingest_providers', True),
+    'ingest_provider': Resource.rel('ingest_providers'),
     'source': {     # The value is copied from the ingest_providers vocabulary
         'type': 'string'
     },
@@ -140,6 +140,9 @@ metadata_schema = {
     },
 
     # Media Related
+    'media': {
+        'type': 'file'
+    },
     'mimetype': {
         'type': 'string'
     },
@@ -166,14 +169,24 @@ metadata_schema = {
     'creditline': {
         'type': 'string'
     },
+    LINKED_IN_PACKAGES: {
+        'type': 'list',
+        'readonly': True,
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                'package': Resource.rel('packages')
+            }
+        }
+    },
 
     # Task and Lock Details
     'task_id': {
         'type': 'string'
     },
-    'lock_user': Resource.rel('users', True),
+    'lock_user': Resource.rel('users'),
     'lock_time': {
         'type': 'datetime'
     },
-    'lock_session': Resource.rel('auth', True),
+    'lock_session': Resource.rel('auth')
 }

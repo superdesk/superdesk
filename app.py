@@ -29,6 +29,8 @@ def get_app(config=None):
     if config is None:
         config = {}
 
+    config['APP_ABSPATH'] = os.path.abspath(os.path.dirname(__file__))
+
     for key in dir(settings):
         if key.isupper():
             config.setdefault(key, getattr(settings, key))

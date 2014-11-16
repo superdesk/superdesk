@@ -152,7 +152,8 @@ def archive_item(self, guid, provider_id, user, task_id=None):
         for group in item.get('groups', []):
             for ref in group.get('refs', []):
                 if 'residRef' in ref:
-                    doc = {'guid': ref.get('residRef'), 'ingest_provider': provider_id,
+                    resid_ref = ref.get('residRef')
+                    doc = {'guid': resid_ref, 'ingest_provider': provider_id,
                            'user': user, 'task_id': crt_task_id}
 
                     archived_doc = superdesk.get_resource_service('archive').find_one(req=None, guid=doc.get('guid'))
@@ -169,7 +170,7 @@ def archive_item(self, guid, provider_id, user, task_id=None):
                         continue
 
                     mark_ingest_as_archived(doc.get('guid'))
-                    tasks.append(archive_item.s(ref['residRef'], provider.get('_id'), user, task_id))
+                    tasks.append(archive_item.s(resid_ref, provider.get('_id'), user, task_id))
 
         for rendition in item.get('renditions', {}).values():
             href = service_provider.prepare_href(rendition['href'])
@@ -224,6 +225,16 @@ class ArchiveIngestResource(Resource):
 
 class ArchiveIngestService(BaseService):
 
+    def _copy_from_ingest_doc(self, doc, ingest_doc):
+        """
+        As the name suggests this method copies some of the values from ingest_doc.
+        """
+
+        doc.setdefault('_id', doc.get('guid'))
+        # doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
+        doc.setdefault('unique_id', ingest_doc.get('unique_id'))
+        doc.setdefault('unique_name', ingest_doc.get('unique_name'))
+
     def create(self, docs, **kwargs):
         for doc in docs:
             ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=doc.get('guid'))
@@ -235,8 +246,7 @@ class ArchiveIngestService(BaseService):
 
             archived_doc = superdesk.get_resource_service('archive').find_one(req=None, guid=doc.get('guid'))
             if not archived_doc:
-                doc.setdefault('_id', doc.get('guid'))
-                # doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
+                self._copy_from_ingest_doc(doc, ingest_doc)
                 superdesk.get_resource_service('archive').post([doc])
 
             task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), str(get_user().get('_id')))

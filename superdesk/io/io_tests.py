@@ -41,7 +41,7 @@ class TextParserTest(ItemTest):
         self.assertEquals("Soccer-Smiling Benitez pleads for support after midweek outburst", self.item["headline"])
         # self.assertEquals("Reuters", self.item["creditline"])
         self.assertEquals("Bangalore", self.item["dateline"])
-        self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ:Soccer-Smiling Benitez pleads for support after midweek outburst", self.item.get('description_text'))  # noqa
+        self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ:Soccer-Smiling Benitez pleads for support after midweek outburst", self.item.get('description'))  # noqa
 
     # def test_parse_rights_info(self):
     #     self.assertEquals("Thomson Reuters", self.item.get('copyrightholder'))
