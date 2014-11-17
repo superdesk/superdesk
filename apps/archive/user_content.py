@@ -10,9 +10,7 @@ class UserContentResource(Resource):
     item_url = ArchiveResource.item_url
     url = 'users/<regex("[a-f0-9]{24}"):original_creator>/content'
     schema = ArchiveResource.schema
-    datasource = {'source': 'archive',
-                    'aggregations': aggregations,
-                 }
+    datasource = {'source': 'archive', 'aggregations': aggregations}
     resource_methods = ['GET', 'POST']
     item_methods = ['GET', 'PATCH', 'DELETE']
     resource_title = endpoint_name
