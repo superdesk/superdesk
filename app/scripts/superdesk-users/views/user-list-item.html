@@ -3,6 +3,8 @@
         <img sd-user-avatar data-src="user.picture_url">
     </figure>
 
+    <span class="admin-label" ng-if="user.user_type == 'administrator'" translate>admin</span>
+
     <div class="row-wrapper" sd-col-width>
         <div class="name">
         	<span class="disabled-label" ng-if="!_active" translate>disabled</span>

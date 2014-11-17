@@ -26,6 +26,20 @@
 	margin-right: 10px;
 }
 
+.admin-label {
+	background: @sd-blue;
+	color: @white;
+	font-size: 10px;
+	.text-semibold();
+	height: 13px;
+	line-height: 13px;
+	padding: 0 2px;
+	.border-radius(2px);
+	position: absolute;
+	top: 7px;
+	left: 23px;
+}
+
 .users-table {	//main list styles
 	
 	border-top: 2px solid #d7d7d7;
@@ -455,6 +469,14 @@
 		width: 260px;
 		&.shifted {
 			top: 170px;
+		}
+	}
+
+	.user_type {
+		input {
+			.box-shadow(none);
+			width: auto !important;
+			margin-left: 5px !important;
 		}
 	}
 
