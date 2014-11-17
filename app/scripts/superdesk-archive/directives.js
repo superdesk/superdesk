@@ -378,7 +378,7 @@ define([
                 }
             };
         }])
-        
+
         .directive('sdGridLayout', function() {
             return {
                 templateUrl: 'scripts/superdesk-items-common/views/grid-layout.html',

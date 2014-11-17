@@ -145,7 +145,6 @@
         function refresh(criteria) {
             api.query('search', criteria).then(function(result) {
                 $scope.items = result;
-                console.log("items", $scope.items);
             });
         }
 
@@ -167,7 +166,7 @@
         /**
          * Item filters sidebar
          */
-        .directive('sdSearchFacets', [ '$location', 'desks', function($location, desks){
+        .directive('sdSearchFacets', [ '$location', 'desks',  function($location, desks) {
             return {
                 estrict: 'A',
                 templateUrl: 'scripts/superdesk-search/views/search-facets.html',
@@ -180,7 +179,7 @@
                     scope.sTab = true;
                     scope.aggregations = {};
                     scope.selectedFacets = {};
-                    scope.keyword;
+                    scope.keyword = null;
 
                     var initAggregations = function () {
                         scope.aggregations = {
@@ -192,90 +191,98 @@
                             'category': {},
                             'spiked':{}
                         };
-                    }
-
+                    };
 
                     var initSelectedFacets = function () {
                         var search = $location.search();
                         _.forEach(search, function(type, key) {
-                            if (key != 'q' ) {
+                            if (key !== 'q' && key !== 'repo' && key !== 'page') {
                                 scope.selectedFacets[key] = JSON.parse(type)[0];
                             }
                         });
-                    }();
+                    };
+
+                    initSelectedFacets();
 
                     scope.$watchCollection('items', function() {
 
                         initAggregations();
 
                         var search = $location.search();
-                        if (scope.keyword != search.q)
+                        if (scope.keyword !== search.q)
                         {
                             scope.selectedFacets = {};
                             scope.keyword = search.q;
                         }
 
-                        if(scope.items && scope.items._aggregations !== undefined) {
-                            
+                        if (scope.items && scope.items._aggregations !== undefined) {
+
                             _.forEach(scope.items._aggregations.type.buckets, function(type) {
-                                if (!scope.selectedFacets["type"] || scope.selectedFacets["type"] != type.key) { 
+                                if (!scope.selectedFacets.type || scope.selectedFacets.type !== type.key) {
                                     scope.aggregations.type[type.key] = type.doc_count;
                                 }
-                            })
-                            
+                            });
+
                             _.forEach(scope.items._aggregations.category.buckets, function(cat) {
-                                scope.aggregations.category[cat.key] = cat.doc_count;
-                            })
+                                if (!scope.selectedFacets.category || scope.selectedFacets.category !== cat.key) {
+                                    scope.aggregations.category[cat.key] = cat.doc_count;
+                                }
+                            });
 
                             _.forEach(scope.items._aggregations.source.buckets, function(source) {
-                                scopeaggregations.source[source.key] = source.doc_count;
-                            })
+                                if (!scope.selectedFacets.source || scope.selectedFacets.source !== source.key) {
+                                    scope.aggregations.source[source.key] = source.doc_count;
+                                }
+                            });
 
                             _.forEach(scope.items._aggregations.day.buckets, function(day) {
-                                if (day.doc_count > 0) {
-                                    scope.aggregations.date["Last Day"] = day.doc_count;
+                                if (!scope.selectedFacets.date || scope.selectedFacets.date !== 'Last Day') {
+                                    if (day.doc_count > 0) {
+                                        scope.aggregations.date['Last Day'] = day.doc_count;
+                                    }
                                 }
-                            })
+                            });
 
                             _.forEach(scope.items._aggregations.week.buckets, function(week) {
-                                if (week.doc_count > 0) {
-                                    scope.aggregations.date["Last Week"] = week.doc_count;
+                                if (!scope.selectedFacets.date || scope.selectedFacets.date !== 'Last Week') {
+                                    if (week.doc_count > 0) {
+                                        scope.aggregations.date['Last Week'] = week.doc_count;
+                                    }
                                 }
-                            })
+                            });
 
                             _.forEach(scope.items._aggregations.month.buckets, function(month) {
-                                if (month.doc_count > 0) {
-                                    scope.aggregations.date["Last Month"] = month.doc_count;
+                                if (!scope.selectedFacets.date || scope.selectedFacets.date !== 'Last Month') {
+                                    if (month.doc_count > 0) {
+                                        scope.aggregations.date['Last Month'] = month.doc_count;
+                                    }
                                 }
-                            })
+                            });
 
-                            //if(!scope.desk) {
+                            if (!scope.desk) {
                                 _.forEach(scope.items._aggregations.desk.buckets, function(desk) {
-                                    scope.aggregations.desk[desks.deskLookup[desk.key].name] = desk.doc_count;
-                                }) 
-                            //}
+                                    if (!scope.selectedFacets.desk || scope.selectedFacets.desk !== desks.deskLookup[desk.key].name) {
+                                        scope.aggregations.desk[desks.deskLookup[desk.key].name] = desk.doc_count;
+                                    }
+                                }) ;
+                            }
 
-                            //if(scope.desk) {
+                            if (scope.desk) {
                                 _.forEach(scope.items._aggregations.stage.buckets, function(stage) {
                                     _.forEach(desks.deskStages[desks.activeDeskId], function(deskStage) {
-                                        if (deskStage._id == stage.key) {
-                                            scope.aggregations.stage[deskStage.name] = stage.doc_count;
+                                        if (!scope.selectedFacets.stage || scope.selectedFacets.stage !== deskStage.name) {
+                                            if (deskStage._id === stage.key) {
+                                                scope.aggregations.stage[deskStage.name] = stage.doc_count;
+                                            }
                                         }
                                     });
-                                })
-                            //}
-
-                            //console.log("scope.aggregations:", scope.aggregations);
-                            //console.log("scope.selectedFacets:", scope.selectedFacets);
-                            
-
+                                });
+                            }
                         }
-
-                       
                     });
 
                     scope.setFilter = function(type, key) {
-                        console.log("setContenttypeFilter", type, key)
+
                         scope.selectedFacets[type] = key;
 
                         if (!scope.isEmpty(type) && key) {
@@ -285,25 +292,60 @@
                         }
                     };
 
-                    scope.removeFilter = function(type, key) {
-                        var search = $location.search();
-                        if (search[type]) {
-                            var keys = JSON.parse(search[type]);
-                            keys.splice(keys.indexOf(key), 1);
-                            if(keys.length > 0)
-                            {
-                                $location.search(type, JSON.stringify(keys));
-                            }
-                            else {
-                                $location.search(type, null);
-                            }
+                    scope.setDateFilter = function(key) {
+                        scope.selectedFacets.date = key;
+                        var d = new Date();
+
+                        if (key === 'Last Day') {
+                            d.setDate(d.getDate() - 1);
+                            $location.search('after', scope.format(d));
+                        } else if (key === 'Last Week'){
+                            d.setDate(d.getDate() - 7);
+                             $location.search('after', scope.format(d));
+                        } else if (key === 'Last Month'){
+                            d.setDate(d.getDate() - 30);
+                             $location.search('after', scope.format(d));
+                        } else {
+                            $location.search('after', null);
                         }
-                        delete scope.selectedFacets[type];
+                    };
+
+                    scope.removeFilter = function(type, key) {
+                        if (key.indexOf('Last') >= 0) {
+                            scope.removeDateFilter(key);
+                        } else {
+                            var search = $location.search();
+                            if (search[type]) {
+                                var keys = JSON.parse(search[type]);
+                                keys.splice(keys.indexOf(key), 1);
+                                if (keys.length > 0)
+                                {
+                                    $location.search(type, JSON.stringify(keys));
+                                } else {
+                                    $location.search(type, null);
+                                }
+                            }
+                            delete scope.selectedFacets[type];
+                        }
+                    };
+
+                    scope.removeDateFilter = function(key) {
+
+                        var search = $location.search();
+                        if (search.after) {
+                            $location.search('after', null);
+                        }
+
+                        delete scope.selectedFacets.date;
                     };
 
                     scope.isEmpty = function(type) {
                         return _.isEmpty(scope.aggregations[type]);
-                    }
+                    };
+
+                    scope.format = function (date) {
+                        return date ? moment(date).format('YYYY-MM-DD') : null; // jshint ignore:line
+                    };
                 }
             };
         }])
@@ -315,17 +357,15 @@
                 scope: true,
                 link: function($scope, element, attrs) {
 
-
                     $scope.urgency = {
-                        min: "1",
-                        max: "5"
+                        min: '1',
+                        max: '5'
                     };
 
-/*                    $scope.urgency = {
+                    /*  $scope.urgency = {
                         min: $location.search().urgency_min || 1,
                         max: $location.search().urgency_max || 5
                     };*/
-                    
 
                     function handleUrgency(urgency) {
                         var min = Math.round(urgency.min);
@@ -347,7 +387,7 @@
                     var handleUrgencyWrap = _.throttle(handleUrgency, 2000);
 
                     $scope.$watchCollection('urgency', function(newVal) {
-                        //handleUrgencyWrap(newVal);
+                        handleUrgencyWrap(newVal);
                     });
                 }
             };

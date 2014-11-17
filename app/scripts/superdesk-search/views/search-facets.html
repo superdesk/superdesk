@@ -71,7 +71,7 @@
         <div sd-toggle-box data-title="{{ 'Dates' | translate }}" data-open="true">
             <ul class="filter-contenttype selectionlist">
                 <li ng-repeat="(key,value) in aggregations.date">
-                    <a href ng-click="setFilter(key, key)">{{key}} <i>({{ value }})</i></a>
+                    <a href ng-click="setDateFilter(key)">{{key}} <i>({{ value }})</i></a>
                 </li>
             </ul>
         </div>
