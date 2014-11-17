@@ -1,3 +1,4 @@
+
 class InvalidFilter(Exception):
     def __init__(self, filter, operation):
         self.filter = filter

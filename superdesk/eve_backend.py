@@ -1,6 +1,8 @@
 
 import logging
 from flask import current_app as app
+from eve.utils import document_etag
+from superdesk.utc import utcnow
 
 
 log = logging.getLogger(__name__)
@@ -26,6 +28,14 @@ class EveBackend():
             return backend.find(endpoint_name, req, lookup)
 
     def create(self, endpoint_name, docs, **kwargs):
+        """Insert documents into given collection.
+
+        :param endpoint_name: api resource name
+        :param docs: list of docs to be inserted
+        """
+        for doc in docs:
+            doc.setdefault(app.config['ETAG'], document_etag(doc))
+
         backend = self._backend(endpoint_name)
         ids = backend.insert(endpoint_name, docs, **kwargs)
         search_backend = self._lookup_backend(endpoint_name)
@@ -34,13 +44,25 @@ class EveBackend():
         return ids
 
     def update(self, endpoint_name, id, updates):
+        """Update document with given id.
+
+        :param endpoint_name: api resource name
+        :param id: document id
+        :param updates: changes made to document
+        """
+        # change etag on update so following request will refetch it
+        updates.setdefault(app.config['LAST_UPDATED'], utcnow())
+        updates.setdefault(app.config['ETAG'], document_etag(updates))
+
         backend = self._backend(endpoint_name)
         res = backend.update(endpoint_name, id, updates)
+
         search_backend = self._lookup_backend(endpoint_name)
         if search_backend is not None:
             doc = backend.find_one(endpoint_name, req=None, _id=id)
             doc.update(updates)
             search_backend.update(endpoint_name, id, doc)
+
         return res
 
     def replace(self, endpoint_name, id, document):
