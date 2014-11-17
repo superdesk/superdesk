@@ -16,7 +16,7 @@ def populate_vocabularies(json_data):
         if service.find_one(_id=id_name, req=None):
             service.put(id_name, item)
         else:
-            service.post(item)
+            service.post([item])
 
 
 def process_vocabularies(filepath):
