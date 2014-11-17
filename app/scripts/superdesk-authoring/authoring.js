@@ -336,7 +336,10 @@
                 'item.usageterms',
                 'item.subject',
                 'item.genre',
-                'item[\'anpa-category\']'
+                'item[\'anpa-category\']',
+                'item.dateline',
+                'item.located',
+                'item.place'
             ], function(changes) {
                 $scope.dirty = isDirty();
                 if ($scope.dirty && authoring.isEditable(item)) {

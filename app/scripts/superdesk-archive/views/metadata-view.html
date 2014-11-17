@@ -53,7 +53,7 @@
         <dd>{{ item.copyrightnotice }}</dd>
     </dl>
     <dl ng-if="item.usageterms">
-        <dt translate>usageterms</dt>
+        <dt translate>Usageterms</dt>
         <dd>{{ item.usageterms }}</dd>
     </dl>
 
@@ -70,6 +70,19 @@
         <dt translate>Genre</dt>
         <dd>{{ item.genre }}</dd>
     </dl>
+    <dl ng-if="item.place">
+        <dt translate>Place</dt>
+        <dd>{{ item.place | mergeWords}}</dd>
+    </dl>
+        <dl ng-if="item.dateline">
+        <dt translate>Dateline</dt>
+        <dd>{{ item.dateline }}</dd>
+    </dl>
+        <dl ng-if="item.located">
+        <dt translate>Located</dt>
+        <dd>{{ item.located }}</dd>
+    </dl>
+
 
     <!-- Story details -->
     <dl ng-if="item.language">

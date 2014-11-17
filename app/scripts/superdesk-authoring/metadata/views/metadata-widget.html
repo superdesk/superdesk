@@ -20,14 +20,14 @@
 		</li>
 		<li>
 			<label translate>Urgency</label>
-			<div class="data" ng-if="metadata.priority">
-				<select ng-model="item.urgency" ng-disabled="!_editable" ng-options="o.qcode as o.name for o in metadata.newsvalues"></select>
+			<div class="data visible small" ng-if="metadata.priority">
+				<div sd-meta-dropdown data-list="metadata.newsvalues" data-item="item.urgency" data-disabled="!_editable" data-field="qcode"></div>
 			</div>
 		</li>
 		<li>
 			<label translate>Priority</label>
-			<div class="data" ng-if="metadata.priority">
-				<select ng-model="item.priority" ng-disabled="!_editable" ng-options="o.qcode as o.name for o in metadata.priority"></select>
+			<div class="data visible small" ng-if="metadata.priority">
+				<div sd-meta-dropdown data-list="metadata.priority" data-item="item.priority" data-disabled="!_editable" data-field="qcode"></div>
 			</div>
 		</li>
 		<li class="terms-box">
@@ -40,8 +40,8 @@
 		</li>
 		<li>
 			<label translate>ANPA category</label>
-			<div class="data">
-				<select ng-model="item['anpa-category']" ng-disabled="!_editable" ng-options="o.qcode as (o.qcode + ' - ' + o.name) for o in metadata.categories"></select>
+			<div class="data visible" ng-if="metadata.categories">
+				<div sd-meta-dropdown data-list="metadata.categories" data-item="item['anpa-category']" data-disabled="!_editable"></div>
 			</div>
 		</li>
 		<li class="terms-box">
@@ -58,6 +58,22 @@
 			<label translate>Editorial note</label>
 			<div class="data">
 				<textarea sd-auto-height ng-model="item.ednote" ng-disabled="!_editable"></textarea>
+			</div>
+		</li>
+		<li class="terms-box">
+			<label translate>Place</label>
+			<div sd-meta-terms data-item="item" data-field="place" data-list="metadata.placecodes" data-disabled="!_editable"></div>
+		</li>
+		<li>
+			<label translate>Located</label>
+			<div class="data">
+				<input type="text" ng-model="item.located" ng-disabled="!_editable">
+			</div>
+		</li>
+		<li>
+			<label translate>Dateline</label>
+			<div class="data">
+				<input type="text" ng-model="item.dateline" ng-disabled="!_editable">
 			</div>
 		</li>
 		<li ng-if="item.copyrightholder">

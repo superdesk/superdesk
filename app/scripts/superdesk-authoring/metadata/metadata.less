@@ -61,11 +61,55 @@
 				&.visible {
 					overflow: visible;
 				}
+				.dropdown {
+					margin-right: -5px;
+					.dropdown-toggle {
+						display: inline-block;
+						max-width: 100%;
+						min-width: 40px;
+						.border-box();
+						height: 28px;
+						margin-top: -5px;
+						border-radius: 2px;
+						border: 1px solid #f8f8f8;
+						padding: 4px 10px;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						&:hover {
+							cursor: pointer;
+						}
+					}
+					.dropdown-menu {
+						&:before {
+							display: none;
+						}
+						margin: 0;
+						margin-top: -5px;
+						.border-box();
+						.border-radius(0);
+						max-width: @tabpane-width - 40px;
+						button {
+							overflow: hidden;
+							text-overflow: ellipsis;
+						}
+					}
+				}
+				&.small {
+					.dropdown {
+						.dropdown-toggle {
+							width: 40px;
+						}
+						.dropdown-menu	{
+							width: 50px;
+							min-width: 0;
+						}
+					}
+				}
 			}
 
 			&:hover {
 				.data {
-					input, select {
+					input, select, .dropdown-toggle {
 						background: #fff;
 						border-color: #d0d0d0 !important;  
 					}
@@ -106,6 +150,7 @@
 		.terms {
 			.user-select(none);
 			clear: both;
+			float: right;
 			padding-top: 10px;
 			.clearfix();
 			li {

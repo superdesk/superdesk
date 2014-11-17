@@ -16,6 +16,24 @@ function MetadataCtrl($scope, desks, metadata, $filter) {
 	});
 }
 
+MetadataDropdownDirective.$inject = [];
+function MetadataDropdownDirective() {
+	return {
+		scope: {
+			list: '=',
+			disabled: '=',
+			item: '=',
+			field: '@'
+		},
+		templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-dropdown.html',
+		link: function(scope) {
+			scope.select = function(item) {
+				scope.item = scope.field ? item[scope.field] : item;
+			};
+		}
+	};
+}
+
 MetadataListEditingDirective.$inject = [];
 function MetadataListEditingDirective() {
 	return {
@@ -175,6 +193,23 @@ var metadataMock = [
 				name: 'Wrapup'
 			}
 		]
+	},
+	{
+		_id: 'placecodes',
+		_items: [
+			{
+				qcode: '12345',
+				name: 'Sydney, AU'
+			},
+			{
+				qcode: '54321',
+				name: 'Belgrade, SR'
+			},
+			{
+				qcode: '00987',
+				name: 'Prague, CZ'
+			}
+		]
 	}
 ];
 angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
@@ -191,5 +226,6 @@ angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
 	.controller('MetadataWidgetCtrl', MetadataCtrl)
 	.service('metadata', MetadataService)
 	.directive('sdMetaTerms', MetadataListEditingDirective)
+	.directive('sdMetaDropdown', MetadataDropdownDirective)
 	.value('metadataMock', metadataMock);
 })();
