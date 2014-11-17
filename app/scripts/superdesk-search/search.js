@@ -189,6 +189,7 @@
                             'date': {},
                             'source': {},
                             'category': {},
+                            'urgency': {},
                             'spiked':{}
                         };
                     };
@@ -226,6 +227,12 @@
                             _.forEach(scope.items._aggregations.category.buckets, function(cat) {
                                 if (!scope.selectedFacets.category || scope.selectedFacets.category !== cat.key) {
                                     scope.aggregations.category[cat.key] = cat.doc_count;
+                                }
+                            });
+
+                            _.forEach(scope.items._aggregations.urgency.buckets, function(urgency) {
+                                if (!scope.selectedFacets.urgency || scope.selectedFacets.urgency !== urgency.key) {
+                                    scope.aggregations.urgency[urgency.key] = urgency.doc_count;
                                 }
                             });
 

@@ -14,7 +14,7 @@
         <div>
             <ul class="filter-contenttype selectionlist">
                 <li ng-repeat="(type,key) in selectedFacets">
-                    <a href ng-click="removeFilter(type, key)">X {{key}}</a>
+                    <a href ng-click="removeFilter(type, key)">X  {{type}}: {{key}}</a>
                 </li>
             </ul>
         </div>
@@ -60,6 +60,14 @@
             </ul>
         </div>
 
+        <div sd-toggle-box data-title="{{ 'Urgency' | translate }}" ng-hide="isEmpty('urgency')" data-open="true">
+            <ul class="filter-contenttype selectionlist">
+                <li ng-repeat="(key,value) in aggregations.urgency">
+                    <a href ng-click="setFilter('urgency', key)">Urgency: {{key | translate}} <i>({{ value }})</i></a>
+                </li>
+            </ul>
+        </div>
+
         <div sd-toggle-box data-title="{{ 'Spiked' | translate }}" ng-hide="isEmpty('spiked')" data-open="true">
             <ul class="filter-contenttype selectionlist">
                 <li ng-repeat="(key,value) in aggregations.spiked">
@@ -79,13 +87,6 @@
         <div class="info-tab filter-general">
             <form>
             <ul class="metadata">
-                <li>
-                    <div class="lbl" translate>Urgency AAB</div>
-                    <div class="data urgency-data" sd-filter-urgency>
-                        <slider floor="1" ceiling="5" precision="1" ng-model-low="urgency.min" ng-model-high="urgency.max" class="sd-slider urgency-slider"></slider>
-                        <div class="urgency-range">{{urgency.min}} - {{urgency.max}}</div>
-                    </div>
-                </li>
                 <li class="sublist">
                     <ul sd-date-range data-lte="lte" data-gte="gte">
                         <li>
