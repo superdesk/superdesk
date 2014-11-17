@@ -210,7 +210,7 @@
                         initAggregations();
 
                         var search = $location.search();
-                        if (scope.keyword !== search.q)
+                        if (search.q && scope.keyword !== search.q)
                         {
                             scope.selectedFacets = {};
                             scope.keyword = search.q;
