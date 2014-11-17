@@ -155,6 +155,14 @@ describe('authoring', function() {
             expect(done).toHaveBeenCalled();
         }));
 
+        it('can unlocks on close editable item without changes made', inject(function(authoring, confirm, lock, $rootScope) {
+            expect(authoring.isEditable(item)).toBe(true);
+            authoring.close(item, {}, false);
+            $rootScope.$digest();
+            expect(confirm.confirm).not.toHaveBeenCalled();
+            expect(lock.unlock).toHaveBeenCalled();
+        }));
+
         it('confirms if an item is dirty and saves', inject(function(authoring, confirm, lock, workqueue, $q, $rootScope) {
             var diff = {test: 1};
             authoring.close(item, diff, true);

@@ -95,27 +95,33 @@
         /**
          * Close an item
          *
+         *   and save it if dirty, unlock if editable, and remove from work queue at all times
+         *
          * @param {Object} item Destination.
          * @param {Object} diff Changes.
          * @param {boolean} isDirty $scope dirty status.
          */
         this.close = function closeAuthoring(item, diff, isDirty) {
-            if (isDirty && this.isEditable(item)) {
-                return confirm.confirm()
-                    .then(angular.bind(this, function save() {
-                        return this.save(item, diff);
-                    }), function() { // ignore saving
-                        return $q.when();
-                    })
-                    .then(function unlock() {
-                        return lock.unlock(item);
-                    })
-                    .then(function removeFromWorkqueue() {
-                        return workqueue.remove(item);
-                    });
+            var promise = $q.when();
+
+            if (this.isEditable(item)) {
+                if (isDirty) {
+                    promise = confirm.confirm()
+                        .then(angular.bind(this, function save() {
+                            return this.save(item, diff);
+                        }), function() { // ignore saving
+                            return $q.when();
+                        });
+                }
+
+                promise = promise.then(function unlock() {
+                    return lock.unlock(item);
+                });
             }
 
-            return $q.when(workqueue.remove(item));
+            return promise.then(function removeFromWorkqueue(res) {
+                return workqueue.remove(item);
+            });
         };
 
         /**
@@ -289,7 +295,8 @@
     ];
 
     function AuthoringController($scope, superdesk, workqueue, notify, gettext, desks, item, authoring, api) {
-        var stopWatch = angular.noop;
+        var stopWatch = angular.noop,
+            _closing;
 
         $scope.workqueue = workqueue.all();
         $scope.dirty = false;
@@ -358,6 +365,8 @@
          * Close an item - unlock and remove from workqueue
          */
         $scope.close = function() {
+            stopWatch();
+            _closing = true;
             authoring.close(item, $scope.item, $scope.dirty).then(function() {
                 superdesk.intent('author', 'dashboard');
             });
@@ -396,7 +405,7 @@
         $scope.closePreview();
 
         $scope.$on('item:unlock', function(_e, data) {
-            if ($scope.item._id === data.item) {
+            if ($scope.item._id === data.item && !_closing) {
                 stopWatch();
                 authoring.unlock(item, data.user);
                 $scope._editable = false;
