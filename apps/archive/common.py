@@ -102,6 +102,7 @@ aggregations = {
     'category': {'terms': {'field': 'anpa-category.name'}},
     'source': {'terms': {'field': 'source'}},
     'spiked': {'terms': {'field': 'is_spiked'}},
+    'urgency': {'terms': {'field': 'urgency'}},
     'day': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-24H'}]}},
     'week': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-1w'}]}},
     'month': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-1M'}]}},
