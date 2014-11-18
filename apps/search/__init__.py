@@ -1,6 +1,7 @@
 
-from flask import current_app as app, json
 import superdesk
+from flask import current_app as app, json
+from apps.archive.common import aggregations
 
 
 class SearchService(superdesk.Service):
@@ -28,6 +29,7 @@ class SearchService(superdesk.Service):
         elastic = app.data.elastic
         query = self._get_query(req)
         types = self._get_types(req)
+        query['aggs'] = aggregations
         hits = elastic.es.search(body=query, index=elastic.index, doc_type=types)
         docs = elastic._parse_hits(hits, 'ingest')  # any resource here will do
         for resource in types:
