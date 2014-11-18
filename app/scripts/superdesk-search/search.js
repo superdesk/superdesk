@@ -137,7 +137,7 @@
             ingest: true,
             archive: true
         };
-        $scope.context = "search";
+        $scope.context = 'search';
 
         function getQuery() {
             return search.query().getCriteria(true);
@@ -464,7 +464,6 @@
                     scope.flags = {extended: !!scope.query};
 
                     scope.meta = {};
-                    console.log("sdItemSearchbar", scope.repo);
 
                     function getActiveRepos() {
                         var repos = [];
