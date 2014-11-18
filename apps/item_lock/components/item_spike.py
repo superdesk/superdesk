@@ -11,6 +11,28 @@ IS_SPIKED = 'is_spiked'
 EXPIRY = 'expiry'
 
 
+def get_unspike_updates(doc):
+    """Generate changes for a given doc to unspike it.
+
+    :param doc: document to unspike
+    """
+    updates = {
+        IS_SPIKED: None,
+        EXPIRY: None,
+    }
+
+    desk_id = doc.get('task', {}).get('desk')
+    if desk_id:
+        desk = app.data.find_one('desks', None, _id=desk_id)
+        updates['task'] = {
+            'desk': str(desk_id),
+            'stage': str(desk['incoming_stage']) if desk_id else None,
+            'user': None
+        }
+
+    return updates
+
+
 class ItemSpike(BaseComponent):
     def __init__(self, app):
         self.app = app
@@ -42,6 +64,6 @@ class ItemSpike(BaseComponent):
         item_model = get_model(ItemModel)
         item = item_model.find_one(filter)
         if item:
-            updates = {IS_SPIKED: None, EXPIRY: None}
+            updates = get_unspike_updates(item)
             item_model.update(filter, updates)
             push_notification('item:unspike', item=str(filter.get('_id')), user=str(user))
