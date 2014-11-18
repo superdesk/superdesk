@@ -1,13 +1,13 @@
 <div>
     <div class="header">
-        <div class="icon" ng-click="sidebarstick = !sidebarstick">
+        <div class="icon" ng-click="flags.facets = !flags.facets">
             <i class="icon-filter-large"></i>
         </div>
         <ul>
             <li ng-class="{active: sTab}" ng-click="sTab = true" translate>Filters</li>
             <li ng-class="{active: !sTab}" ng-click="sTab = false" translate>Views</li>
         </ul>
-        <div class="doopen" ng-click="sidebarstick = false"><i class="icon-backward-thin"></i></div>
+        <div class="doopen" ng-click="flags.facets = false"><i class="icon-backward-thin"></i></div>
     </div>
     <div class="content" ng-if="sTab">
        

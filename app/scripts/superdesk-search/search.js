@@ -167,15 +167,16 @@
          * Item filters sidebar
          */
         .directive('sdSearchFacets', [ '$location', 'desks',  function($location, desks) {
+            desks.initialize();
             return {
-                estrict: 'A',
+                require: '^sdSearchContainer',
                 templateUrl: 'scripts/superdesk-search/views/search-facets.html',
-                replace: true,
                 scope: {
                     items: '=',
                     desk: '='
                 },
-                link: function(scope, element, attrs) {
+                link: function(scope, element, attrs, controller) {
+                    scope.flags = controller.flags;
                     scope.sTab = true;
                     scope.aggregations = {};
                     scope.selectedFacets = {};
@@ -205,7 +206,7 @@
 
                     initSelectedFacets();
 
-                    scope.$watchCollection('items', function() {
+                    scope.$watch('items', function() {
 
                         initAggregations();
 
@@ -419,10 +420,12 @@
             };
 
             return {
+                require: '^sdSearchContainer',
                 templateUrl: 'scripts/superdesk-search/views/search-results.html',
-                link: function(scope) {
-
+                link: function(scope, elem, attr, controller) {
+                    scope.flags = controller.flags;
                     scope.selected = scope.selected || {};
+
                     scope.preview = function preview(item) {
                         scope.selected.preview = item;
                         $location.search('_id', item ? item._id : null);
@@ -550,6 +553,14 @@
                     scope.$on('$routeUpdate', getActive);
                     getActive();
                 }
+            };
+        })
+
+        .directive('sdSearchContainer', function() {
+            return {
+                controller: ['$scope', function SearchContainerController($scope) {
+                    this.flags = $scope.flags || {};
+                }]
             };
         })
 
