@@ -33,6 +33,13 @@ define([
             $location.search('_id', null);
         };
 
+        $scope.stageSelect = function(stage) {
+            if ($scope.spike) {
+                $scope.toggleSpike();
+            }
+            $scope.stages.select(stage);
+        };
+
         $scope.openUpload = function openUpload() {
             superdesk.intent('upload', 'media').then(function(items) {
                 // todo: put somewhere else

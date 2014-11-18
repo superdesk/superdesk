@@ -1,4 +1,4 @@
 <ul class="stages-list">
-	<li ng-click="stages.select()" ng-class="{active: !stages.selected}" class="stageclr-default"><a href="" translate>any</a></li>
-    <li ng-repeat="stage in stages.stages" ng-click="stages.select(stage)" ng-class="{active: stage == stages.selected}" class="stageclr-{{$index % 7}}"><a href="">{{ stage.name }}</a></li>
+	<li ng-click="stageSelect()" ng-class="{active: !stages.selected && !spike}" class="stageclr-default"><a href="" translate>any</a></li>
+    <li ng-repeat="stage in stages.stages" ng-click="stageSelect(stage)" ng-class="{active: stage == stages.selected && !spike}" class="stageclr-{{$index % 7}}"><a href="">{{ stage.name }}</a></li>
 </ul>
