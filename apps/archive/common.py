@@ -95,13 +95,17 @@ item_url = 'regex("[\w,.:_-]+")'
 
 extra_response_fields = ['guid', 'headline', 'firstcreated', 'versioncreated', 'archived']
 
-facets = {
+aggregations = {
     'type': {'terms': {'field': 'type'}},
+    'desk': {'terms': {'field': 'task.desk'}},
+    'stage': {'terms': {'field': 'task.stage'}},
+    'category': {'terms': {'field': 'anpa-category.name'}},
     'source': {'terms': {'field': 'source'}},
+    'spiked': {'terms': {'field': 'is_spiked'}},
     'urgency': {'terms': {'field': 'urgency'}},
-    'subject': {'terms': {'field': 'subject.name'}},
-    'place': {'terms': {'field': 'place.name'}},
-    'versioncreated': {'date_histogram': {'field': 'versioncreated', 'interval': 'hour'}},
+    'day': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-24H'}]}},
+    'week': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-1w'}]}},
+    'month': {'date_range': {'field': 'firstcreated', 'format': 'dd-MM-yyy HH:mm:ss', 'ranges': [{'from': 'now-1M'}]}},
 }
 
 

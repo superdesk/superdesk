@@ -222,7 +222,7 @@ Feature: News Items Archive
         When we patch given
         """
         {"word_count" : "6", "keywords" : ["Test"], "urgency" : "4", "byline" : "By Line", "language": "en",
-         "dateline" : "Sydney, Aus (Nov 12, 2014) AAP - ", "genre" : ["Test"],
+         "dateline" : "Sydney, Aus (Nov 12, 2014) AAP - ", "genre" : [{"name": "Test"}],
          "anpa-category" :
             {
                 "qcode" : "A",

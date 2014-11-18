@@ -9,7 +9,7 @@ Feature: Ingest
 
 
     @auth
-    Scenario: List ingest with items
+    Scenario: List ingest with items for aggregates
         Given "ingest"
             """
             [{
@@ -22,7 +22,7 @@ Feature: Ingest
 
         When we get "/ingest"
         Then we get list with 1 items
-        And we get facets "type,source,urgency,subject,place"
+        And we get aggregations "type,desk,urgency,stage,category,source,spiked,day,week,month"
 
 
     @auth

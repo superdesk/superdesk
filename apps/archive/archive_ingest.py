@@ -20,7 +20,7 @@ from superdesk.celery_app import celery, finish_task_for_progress,\
 from superdesk.upload import url_for_media
 from superdesk.media.media_operations import download_file_from_url, process_file
 from superdesk.resource import Resource
-from .common import facets, get_user
+from .common import get_user, aggregations
 from superdesk.services import BaseService
 
 
@@ -205,7 +205,7 @@ class ArchiveIngestResource(Resource):
     item_methods = ['GET']
     datasource = {
         'search_backend': 'elastic',
-        'facets': facets
+        'aggregations': aggregations,
     }
     additional_lookup = {
         'url': 'regex("[\w-]+")',

@@ -1,5 +1,5 @@
 from superdesk.resource import Resource
-from .common import extra_response_fields, item_url, facets
+from .common import extra_response_fields, item_url, aggregations
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from .common import get_user
 from flask import current_app as app
@@ -55,7 +55,7 @@ class ArchiveResource(Resource):
     item_url = item_url
     datasource = {
         'search_backend': 'elastic',
-        'facets': facets,
+        'aggregations': aggregations,
         'projection': {
             'old_version': 0,
             'last_version': 0

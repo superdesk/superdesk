@@ -51,7 +51,8 @@ class TestCase(unittest.TestCase):
         self.assertEquals(self.item.get('usageterms'), 'NO ARCHIVAL USE')
 
     def test_genre(self):
-        self.assertListEqual(self.item.get('genre'), ['business', 'bankruptcy'])
+        self.assertIn({'name': 'business'}, self.item.get('genre'))
+        self.assertIn({'name': 'bankruptcy'}, self.item.get('genre'))
 
 if __name__ == '__main__':
     unittest.main()

@@ -58,7 +58,7 @@ class NewsMLOneParser(Parser):
         if parsed_el is not None:
             item['genre'] = []
             for el in parsed_el:
-                item['genre'].append(el.get('FormalName'))
+                item['genre'].append({'name': el.get('FormalName')})
 
         return self.populate_fields(item)
 
