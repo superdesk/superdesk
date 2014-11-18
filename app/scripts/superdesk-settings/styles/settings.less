@@ -4,9 +4,9 @@
 @import 'mixins.less';
 @import 'variables.less';
 
-.settingsPage {
+.settings-page {
 	position: absolute;
-	top: @topspace + @subnav-height;
+	top: @topspace;
 	bottom: 0;
 	left: 0;
 	right: 0;
@@ -68,6 +68,10 @@
 						width: 600px;
 						padding: 10px 0 10px 20px;
 						.border-box();
+						&.full-width {
+							width: 100%;
+							padding-right: 10px;
+						}
 					}
 					h2 {
 						font-size: 16px;
@@ -428,7 +432,10 @@
 
 	.new-role-modal {
 		width: 299px;
-		margin: 0 -19px 20px -20px;
+		position: absolute;
+		top: 0;
+		left: 50%;
+		margin-left: -150px;
 		.content {
 			.field {
 				margin-bottom: 10px;
@@ -535,3 +542,92 @@
 // 		}
 // 	}
 // }
+
+
+// User roles - NEW
+// -------------------------------------
+
+@roles-border: 1px solid #f0f0f0;
+
+.user-roles {
+	max-width: none !important;
+	width: auto !important;
+	right: 0;
+	left: 0;
+
+	.roles-list {
+		
+		.action-line {
+			display: table-row;	
+			&:hover {
+				background: #f8f8f8;
+			}
+		}
+		.td {
+			display: table-cell;
+			border-bottom: @roles-border;
+			text-align: center;
+			border-left: @roles-border;
+			.user-select(none);
+		}
+		.name {
+			border-left: 0;
+			text-align: left;
+			padding: 10px 40px 10px 10px;
+			text-transform: uppercase;
+			.text-semibold();
+			font-size: 10px;
+			white-space: nowrap;
+			color: #666;
+		}
+		.blank {
+			width: 100%;
+			border-bottom: @roles-border;
+			text-align: left;
+		}
+
+		.initial {
+			background: #e0e0e0;
+			&:hover {
+				background: #e0e0e0;
+			}
+			.td {
+				font-size: 13px;
+				white-space: nowrap;
+				border-top: @roles-border;
+				border-color: #d8d8d8 !important;
+				.dropdown {
+					.dropdown-toggle {
+						padding: 10px 15px 10px 10px;
+						&:hover {
+							cursor: pointer;
+							background: #eee;
+						}
+					}
+					.dropdown-menu {
+						margin-top: 0;
+						border-radius: 0;
+						margin-right: -1px;
+						min-width: 0;
+						width: 120px;
+						&:before {
+							display: none;
+						}
+					}
+					&.open {
+						.dropdown-toggle {
+							background: #fff !important;
+						}
+					}
+				}
+			}
+			.create-role {
+				padding: 10px;
+				position: absolute;
+				background: none;
+				border: 0;
+			}
+		}
+
+	}
+}

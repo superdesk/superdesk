@@ -362,18 +362,53 @@
     UserRolesController.$inject = ['$scope', 'api', 'modal', 'gettext', 'notify'];
     function UserRolesController($scope, api, modal, gettext, notify) {
 
+
+        $scope.actions = [
+            {
+                _id: '1',
+                name: 'publish story'
+            },
+            {
+                _id: '2',
+                name: 'edit text'
+            },
+            {
+                _id: '3',
+                name: 'move item'
+            },
+            {
+                _id: '4',
+                name: 'send to desk'
+            },
+            {
+                _id: '5',
+                name: 'create story'
+            },
+            {
+                _id: '6',
+                name: 'delete from database'
+            }
+        ];
+
+        $scope.dirty = false;
+        $scope.$watch('roles', function(newVal, oldVal) {
+            if (!oldVal) {
+                return
+            }
+            $scope.dirty = true;
+        }, true);
+
+        $scope.saveAll = function() {
+            $scope.dirty = false;
+        };
+
         var _orig;
-        $scope.selectedRole = null;
         $scope.editRole = null;
 
         api('roles').query()
         .then(function(result) {
             $scope.roles = result._items;
         });
-
-        $scope.select = function(role) {
-            $scope.selectedRole = role;
-        };
 
         $scope.edit = function(role) {
             $scope.editRole = _.create(role);
@@ -385,7 +420,7 @@
             api('roles').save(_orig, role)
             .then(function() {
                 if (_new) {
-                    $scope.roles.unshift(_orig);
+                    $scope.roles.push(_orig);
                 }
                 $scope.cancel();
             }, function(response) {
