@@ -137,6 +137,7 @@
             ingest: true,
             archive: true
         };
+        $scope.context = "search";
 
         function getQuery() {
             return search.query().getCriteria(true);
@@ -449,7 +450,7 @@
          */
         .directive('sdItemSearchbar', ['$location', function($location) {
             return {
-                scope: {repo: '='},
+                scope: {repo: '=', context: '='},
                 templateUrl: 'scripts/superdesk-search/views/item-searchbar.html',
                 link: function(scope, elem) {
                     var ENTER = 13;
@@ -463,6 +464,7 @@
                     scope.flags = {extended: !!scope.query};
 
                     scope.meta = {};
+                    console.log("sdItemSearchbar", scope.repo);
 
                     function getActiveRepos() {
                         var repos = [];

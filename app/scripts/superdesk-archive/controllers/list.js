@@ -20,6 +20,10 @@ define([
         $scope.stages = new StagesCtrl($scope);
         $scope.content = new ContentCtrl($scope);
         $scope.type = 'archive';
+        $scope.repo = {
+            ingest: false,
+            archive: true
+        };
         $scope.loading = false;
         $scope.spike = !!$location.search().spike;
 
