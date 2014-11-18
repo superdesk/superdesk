@@ -29,10 +29,7 @@
 
         <div class="core-content">
 
-            <dl ng-if="item.is_spiked">
-                <dt translate>expires:</dt>
-                <dd class="label label-warning">{{ item.expiry | reldate }}</dd>
-            </dl>
+            <p ng-if="item.is_spiked" class="alert alert-warning expires"><span translate>expires</span> {{ item.expiry | reldate }}</p>
             
             <!-- item rendition -->
             <div class="picture-preview" sd-item-rendition data-item="item" data-rendition="viewImage"></div>

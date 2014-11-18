@@ -160,7 +160,7 @@ define([
                 })
                 .activity('unspike', {
                     label: gettext('Unspike Item'),
-                    icon: 'remove',
+                    icon: 'revert',
                     controller: ['spike', 'data', function unspikeActivity(spike, data) {
                         return spike.unspike(data.item);
                     }],

@@ -443,7 +443,7 @@
 		.border-box();
 		padding-left:3px; 
 		&:hover {
-			background: #f4f4f4 !important;
+			background-color: #f4f4f4 !important;
 			border-bottom-color: #e0e0e0;
 			border-right: 2px solid #f4f4f4;
 			cursor: pointer;
@@ -471,14 +471,6 @@
 			.box-shadow(0 0 1px 0 darken(@sd-blue,20%));
 			background: @sd-blue;
 		}
-		&.archived {
-			background: #f2f2f2;
-			h5 {
-				background: url('../../images/checkmark-big-full.png') no-repeat right 50%;
-				background-size: 51px;
-			}
-		}
-
 
 		.type-icon {
 			text-align: center;
@@ -553,6 +545,17 @@
 			.provider {
 				color: #686b6c;
 				float: left;
+				margin-right: 20px;
+			}
+			.expires {
+				float: right;
+				background: @errorBackground;
+				color: @errorText;
+				font-size: 10px;
+				line-height: 15px;
+				padding: 0 5px;
+				border-radius: 3px;
+				margin-top: 4px;
 			}
 			time {
 				position: absolute;
@@ -585,13 +588,10 @@
 		}
 
 		&.archived {
-			background: @sd-background;
+			background: @sd-background url('../../images/checkmark-big-full.png') no-repeat 70% 50%;
+			background-size: 36px;
 			.box-shadow(inset 0 2px 0 0px #f2f2f2);
 			border-right: 2px solid @sd-background;
-			h5 {
-				background: url('../../images/checkmark-big-full.png') no-repeat right 50%;
-				background-size: 36px;
-			}
 			&.active {
 				border-right: 2px solid #d8d8d8 !important;
 			}
@@ -630,18 +630,18 @@
 .mlist-view, .compact-view  {
 	.active {
 		.media-box {
-			background: #eff7fa !important;
+			background-color: #eff7fa !important;
 			border-right: 2px solid #d8d8d8 !important;
 			&:hover {
 				.item-functions {
-					background: #eff7fa;
+					background-color: #eff7fa;
 					.item-field {
 						&:hover {
-							background: #d6e8ef;
+							background-color: #d6e8ef;
 						}
 						&.disabled {
 							&:hover {
-								background: #d6e8ef;
+								background-color: #d6e8ef;
 							}
 						}
 					}
