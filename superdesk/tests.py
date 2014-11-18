@@ -90,7 +90,8 @@ def setup_db_user(context, user):
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
         original_password = user['password']
         user['user_type'] = 'administrator'
-        get_resource_service('users').post([user])
+        if not get_resource_service('users').find_one(username=user['username'], req=None):
+            get_resource_service('users').post([user])
         user['password'] = original_password
 
         auth_data = json.dumps({'username': user['username'], 'password': user['password']})
