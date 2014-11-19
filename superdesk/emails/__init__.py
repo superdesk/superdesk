@@ -19,8 +19,10 @@ def send_activate_account_email(doc):
     url = '{}/#/reset-password?token={}'.format(client_url, doc['token'])
     hours = activate_ttl * 24
     subject = render_template("account_created_subject.txt", app_name=app_name)
-    text_body = render_template("account_created.txt", app_name=app_name, expires=hours, url=url)
-    html_body = render_template("account_created.html", app_name=app_name, expires=hours, url=url)
+    text_body = render_template("account_created.txt", app_name=app_name,
+                                username=doc['username'], expires=hours, url=url)
+    html_body = render_template("account_created.html", app_name=app_name,
+                                username=doc['username'], expires=hours, url=url)
     send_email.delay(subject=subject, sender=admins[0], recipients=[doc['email']],
                      text_body=text_body, html_body=html_body)
 
