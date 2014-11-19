@@ -74,7 +74,8 @@
                 if (search.q) {
                     criteria.query.filtered.query = {query_string: {
                         query: search.q,
-                        lenient: false
+                        lenient: false,
+                        default_operator: 'AND'
                     }};
                 }
 
