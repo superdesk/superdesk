@@ -9,6 +9,10 @@ define([
         $injector.invoke(BaseListController, this, {$scope: $scope});
 
         $scope.type = 'ingest';
+        $scope.repo = {
+            ingest: true,
+            archive: false
+        };
         $scope.api = api.ingest;
         $rootScope.currentModule = 'ingest';
 

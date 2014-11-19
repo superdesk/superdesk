@@ -22,6 +22,10 @@
 		<div class="content">
 			<form>
 				<fieldset>
+                    <div class="field">
+                        <label for="search-guid">Unique ID</label>
+                        <input type="text" id="search-guid" ng-model="meta.guid" tabindex="4">
+                    </div>
 					<div class="field">
 						<label for="search-headline">Headline</label>
 						<input type="text" id="search-headline" ng-model="meta.headline" tabindex="4">
@@ -30,8 +34,24 @@
 						<label for="search-slugline">Slugline</label>
 						<input type="text" id="search-slugline" ng-model="meta.slugline" tabindex="5">
 					</div>
+                    <div class="field">
+                        <label for="search-storyname">Story Name</label>
+                        <input type="text" id="search-storyname" ng-model="meta.unique_name" tabindex="4">
+                    </div>
+                    <div class="field">
+                        <label for="search-storytext">Story Text</label>
+                        <input type="text" id="search-storytext" ng-model="meta.body_html" tabindex="4">
+                    </div>
+                    <div class="field">
+                        <label for="search-subject">Subject</label>
+                        <input type="text" id="search-subject" ng-model="meta.subject.name" tabindex="4">
+                    </div>
+                    <div class="field" ng-if="repo.archive">
+                        <label for="search-creator">Creator</label>
+                        <input type="text" id="search-creator" ng-model="meta.original_creator" tabindex="6">
+                    </div>
 				</fieldset>
-                <fieldset ng-if="repo">
+                <fieldset ng-if="context">
                     <legend translate>Collection</legend>
                     <ul>
                         <li>

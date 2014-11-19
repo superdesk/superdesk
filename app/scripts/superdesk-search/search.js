@@ -74,7 +74,8 @@
                 if (search.q) {
                     criteria.query.filtered.query = {query_string: {
                         query: search.q,
-                        lenient: false
+                        lenient: false,
+                        default_operator: 'AND'
                     }};
                 }
 
@@ -137,6 +138,7 @@
             ingest: true,
             archive: true
         };
+        $scope.context = 'search';
 
         function getQuery() {
             return search.query().getCriteria(true);
@@ -197,8 +199,9 @@
 
                     var initSelectedFacets = function () {
                         var search = $location.search();
+                        scope.keyword = search.q;
                         _.forEach(search, function(type, key) {
-                            if (key !== 'q' && key !== 'repo' && key !== 'page') {
+                            if (key !== 'q' && key !== 'repo' && key !== 'page' && key !== '_id') {
                                 scope.selectedFacets[key] = JSON.parse(type)[0];
                             }
                         });
@@ -267,7 +270,7 @@
                                 }
                             });
 
-                            if (!scope.desk) {
+                            if (scope.desk) {
                                 _.forEach(scope.items._aggregations.desk.buckets, function(desk) {
                                     if (!scope.selectedFacets.desk || scope.selectedFacets.desk !== desks.deskLookup[desk.key].name) {
                                         scope.aggregations.desk[desks.deskLookup[desk.key].name] = desk.doc_count;
@@ -400,12 +403,33 @@
             };
         }])
 
+        .directive('sdSearchWithin', ['$location', function($location) {
+                      return {
+                scope: {},
+                templateUrl: 'scripts/superdesk-search/views/search-within.html',
+                link: function(scope, elem) {
+                    scope.searchWithin = function() {
+                        if (scope.within) {
+                            var params = $location.search();
+                            if (params.q) {
+                                scope.query = params.q + ' ' + scope.within;
+                            } else {
+                                scope.query = scope.within;
+                            }
+                            $location.search('q', scope.query|| null);
+                            scope.within = null;
+                        }
+                    };
+                }
+            };
+        }])
+
         /**
          * Item search component
          */
         .directive('sdItemSearchbar', ['$location', function($location) {
             return {
-                scope: {repo: '='},
+                scope: {repo: '=', context: '='},
                 templateUrl: 'scripts/superdesk-search/views/item-searchbar.html',
                 link: function(scope, elem) {
                     var ENTER = 13;
@@ -414,11 +438,25 @@
                     var toggle = elem.find('.dropdown-toggle');
                     var dropdown = elem.find('.dropdown');
 
-                    var params = $location.search();
-                    scope.query = params.q;
-                    scope.flags = {extended: !!scope.query};
+                    function init() {
+                        var params = $location.search();
+                        scope.query = params.q;
+                        scope.flags = {extended: !!scope.query};
+                        scope.meta = {};
 
-                    scope.meta = {};
+                        if (params.repo) {
+                            scope.repo.archive = params.repo.indexOf('archive') >= 0;
+                            scope.repo.ingest = params.repo.indexOf('ingest') >= 0;
+                        }
+                    }
+
+                    init();
+
+                    scope.$on('$locationChangeSuccess', function() {
+                        if (scope.query !== $location.search().q) {
+                            init();
+                        }
+                    });
 
                     function getActiveRepos() {
                         var repos = [];
@@ -431,11 +469,32 @@
                         return repos.length ? repos.join(',') : null;
                     }
 
+                    function getFirstKey(data) {
+                        for (var prop in data) {
+                            if (data.hasOwnProperty(prop)) {
+                                return prop;
+                            }
+                        }
+                    }
+
                     function getQuery() {
                         var metas = [];
                         angular.forEach(scope.meta, function(val, key) {
-                            if (val) {
-                                metas.push(key + ':(' + val + ')');
+                            if (key === '_all') {
+                                metas.push(val.join(' '));
+                            } else {
+                                if (val) {
+                                    if (typeof(val) === 'string'){
+                                        if (val) {
+                                            metas.push(key + ':(' + val + ')');
+                                        }
+                                    } else {
+                                        var subkey = getFirstKey(val);
+                                        if (val[subkey]) {
+                                            metas.push(key + '.' + subkey + ':(' + val[subkey] + ')');
+                                        }
+                                    }
+                                }
                             }
                         });
                         return metas.length ? metas.join(' ') : scope.query || null;
@@ -447,6 +506,32 @@
                         $location.search('repo', getActiveRepos());
                         scope.query = $location.search().q;
                         scope.meta = {};
+                    }
+
+                    function parseFields() {
+                        scope.meta = {};
+                        if (scope.query) {
+                           angular.forEach(scope.query.split(' '), function(val) {
+                                if (val.indexOf(':') >= 0) {
+                                    var meta = val.split(':')[0];
+                                    var value = val.split(':')[1].replace('(', '').replace(')', '');
+
+                                    if (meta.indexOf('.') >= 0) {
+                                        var submeta = meta.split('.')[0];
+                                        var subvalue = meta.split('.')[1];
+                                        scope.meta[submeta] = {};
+                                        scope.meta[submeta][subvalue] = value;
+                                    } else {
+                                        scope.meta[meta] = value;
+                                    }
+                                } else {
+                                    if (!scope.meta._all) {
+                                        scope.meta._all = [];
+                                    }
+                                    scope.meta._all.push(val);
+                                }
+                            });
+                        }
                     }
 
                     scope.search = function() {
@@ -470,7 +555,10 @@
 
                     toggle.on('click', function() {
                         if (_popupOpen()) {
-                            dropdown.find('.dropdown-menu input').first().focus();
+                            scope.$apply(function() {
+                                dropdown.find('.dropdown-menu input').first().focus();
+                                parseFields();
+                            });
                         }
                     });
 
