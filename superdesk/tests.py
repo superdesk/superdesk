@@ -6,7 +6,7 @@ from base64 import b64encode
 from flask import json
 from superdesk.notification_mock import setup_notification_mock, teardown_notification_mock
 from superdesk import get_resource_service
-from settings import LDAP_SERVER
+from settings import LDAP_SERVER, ELASTICSEARCH_URL
 from unittest.mock import patch
 from apps.auth.ldap.ldap import ADAuth
 from eve_elastic import get_es, get_indices
@@ -16,7 +16,7 @@ test_user = {'username': 'test_user', 'password': 'test_password', 'is_active': 
 
 def get_test_settings():
     test_settings = {}
-    test_settings['ELASTICSEARCH_URL'] = 'http://localhost:9200'
+    test_settings['ELASTICSEARCH_URL'] = ELASTICSEARCH_URL
     test_settings['ELASTICSEARCH_INDEX'] = 'sptest'
     test_settings['MONGO_DBNAME'] = 'sptests'
     test_settings['LEGAL_ARCHIVE_DBNAME'] = 'sptests_legal'
