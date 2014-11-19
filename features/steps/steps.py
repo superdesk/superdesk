@@ -160,6 +160,9 @@ def step_impl_given_(context, resource):
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
         get_resource_service(resource).delete_action()
         items = [parse(item, resource) for item in json.loads(data)]
+        if resource in ('users', '/users'):
+            for item in items:
+                item.setdefault('needs_activation', False)
         get_resource_service(resource).post(items)
         context.data = items
         context.resource = resource
@@ -240,6 +243,10 @@ def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
 @when('we post to "{url}"')
 def step_impl_when_post_url(context, url):
     data = apply_placeholders(context, context.text)
+    if url in ('/users', 'users'):
+        user = json.loads(data)
+        user.setdefault('needs_activation', False)
+        data = json.dumps(user)
     context.response = context.client.post(get_prefixed_url(context.app, url), data=data, headers=context.headers)
     store_placeholder(context, url)
 
