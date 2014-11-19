@@ -87,6 +87,7 @@ class DBUsersService(UsersService):
                 id = resetService.store_reset_password_token(tokenDoc, doc['email'], activate_ttl, doc['_id'])
                 if not id:
                     raise SuperdeskError('Failed to send account activation email.')
+                tokenDoc.update({'username': doc['username']})
                 send_activate_account_email(tokenDoc)
 
     def on_update(self, updates, user):
