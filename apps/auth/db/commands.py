@@ -32,6 +32,7 @@ class CreateUserCommand(superdesk.Command):
             'email': email,
             'user_type': user_type,
             'is_active': is_admin,
+            'needs_activation': not is_admin,
             app.config['LAST_UPDATED']: utcnow(),
         }
 
