@@ -83,7 +83,7 @@ class UsersResource(Resource):
         'user_type': {
             'type': 'string',
             'allowed': ['user', 'manager', 'administrator'],
-            'default': 'user',
+            'default': 'administrator',
             'required': True
         },
         'is_active': {
