@@ -198,6 +198,7 @@
 
                     var initSelectedFacets = function () {
                         var search = $location.search();
+                        scope.keyword = search.q;
                         _.forEach(search, function(type, key) {
                             if (key !== 'q' && key !== 'repo' && key !== 'page' && key !== '_id') {
                                 scope.selectedFacets[key] = JSON.parse(type)[0];
@@ -448,6 +449,27 @@
             };
         }])
 
+        .directive('sdSearchWithin', ['$location', function($location){
+                      return {
+                scope: {},
+                templateUrl: 'scripts/superdesk-search/views/search-within.html',
+                link: function(scope, elem) {
+                    scope.searchWithin = function() {
+                        if(scope.within) {
+                            var params = $location.search();
+                            if(params.q) {
+                                scope.query = params.q + ' ' + scope.within;
+                            } else {
+                                scope.query = scope.within;
+                            }
+                            $location.search('q', scope.query|| null);
+                            scope.within = null;  
+                        }
+                    };
+                }
+            };
+        }])  
+
         /**
          * Item search component
          */
@@ -462,15 +484,25 @@
                     var toggle = elem.find('.dropdown-toggle');
                     var dropdown = elem.find('.dropdown');
 
-                    var params = $location.search();
-                    scope.query = params.q;
-                    scope.flags = {extended: !!scope.query};
-                    scope.meta = {};
+                    function init() {
+                        var params = $location.search();
+                        scope.query = params.q;
+                        scope.flags = {extended: !!scope.query};
+                        scope.meta = {};
 
-                    if (params.repo) {
-                        scope.repo.archive = params.repo.indexOf('archive') >= 0;
-                        scope.repo.ingest = params.repo.indexOf('ingest') >= 0;
+                        if (params.repo) {
+                            scope.repo.archive = params.repo.indexOf('archive') >= 0;
+                            scope.repo.ingest = params.repo.indexOf('ingest') >= 0;
+                        }
                     }
+
+                    init();
+
+                    scope.$on('$locationChangeSuccess', function(){
+                        if (scope.query !== $location.search().q) {
+                            init();
+                        }
+                    });
 
                     function getActiveRepos() {
                         var repos = [];
@@ -494,20 +526,24 @@
                     function getQuery() {
                         var metas = [];
                         angular.forEach(scope.meta, function(val, key) {
-                            if (val) {
-                                if (typeof(val) === 'string'){
-                                    if (val) {
-                                        metas.push(key + ':(' + val + ')');
-                                    }
-                                } else {
-                                    var subkey = getFirstKey(val);
-                                    if (val[subkey]) {
-                                        metas.push(key + '.' + subkey + ':(' + val[subkey] + ')');
+                            if (key === '_all') {
+                                metas.push(val.join(' '));
+                            } else {
+                                if (val) {
+                                    if (typeof(val) === 'string'){
+                                        if (val) {
+                                            metas.push(key + ':(' + val + ')');
+                                        }
+                                    } else {
+                                        var subkey = getFirstKey(val);
+                                        if (val[subkey]) {
+                                            metas.push(key + '.' + subkey + ':(' + val[subkey] + ')');
+                                        }
                                     }
                                 }
                             }
                         });
-                        return metas.length > 1 ? metas.join(' AND ') : metas[0] || null;
+                        return metas.length ? metas.join(' ') : scope.query || null;
                     }
 
                     function updateParam() {
@@ -522,7 +558,7 @@
                         scope.meta = {};
                         if (scope.query) {
                            angular.forEach(scope.query.split(' '), function(val) {
-                                if (val !== 'AND') {
+                                if (val.indexOf(':') >= 0) {
                                     var meta = val.split(':')[0];
                                     var value = val.split(':')[1].replace('(', '').replace(')', '');
 
@@ -534,6 +570,11 @@
                                     } else {
                                         scope.meta[meta] = value;
                                     }
+                                } else {
+                                    if(!scope.meta['_all']) {
+                                        scope.meta['_all'] = [];
+                                    }
+                                    scope.meta['_all'].push(val);
                                 }
                             });
                         }
