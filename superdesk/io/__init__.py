@@ -10,7 +10,6 @@ providers = {}
 allowed_providers = []
 logger = logging.getLogger(__name__)
 
-from .commands.remove_expired_content import RemoveExpiredContent
 from .commands.update_ingest import UpdateIngest
 from .commands.add_provider import AddProvider  # NOQA
 
@@ -31,10 +30,6 @@ def register_provider(type, provider):
 
 @celery.task()
 def fetch_ingest():
-    try:
-        RemoveExpiredContent().run()
-    except Exception as ex:
-        logger.error(ex)
     UpdateIngest().run()
 
 
