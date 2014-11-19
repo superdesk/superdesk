@@ -198,7 +198,7 @@
                     var initSelectedFacets = function () {
                         var search = $location.search();
                         _.forEach(search, function(type, key) {
-                            if (key !== 'q' && key !== 'repo' && key !== 'page') {
+                            if (key !== 'q' && key !== 'repo' && key !== 'page' && key !== '_id') {
                                 scope.selectedFacets[key] = JSON.parse(type)[0];
                             }
                         });
@@ -267,7 +267,7 @@
                                 }
                             });
 
-                            if (!scope.desk) {
+                            if (scope.desk) {
                                 _.forEach(scope.items._aggregations.desk.buckets, function(desk) {
                                     if (!scope.selectedFacets.desk || scope.selectedFacets.desk !== desks.deskLookup[desk.key].name) {
                                         scope.aggregations.desk[desks.deskLookup[desk.key].name] = desk.doc_count;
@@ -462,8 +462,12 @@
                     var params = $location.search();
                     scope.query = params.q;
                     scope.flags = {extended: !!scope.query};
-
                     scope.meta = {};
+
+                    if (params.repo) {
+                        scope.repo.archive = params.repo.indexOf('archive') >= 0;
+                        scope.repo.ingest = params.repo.indexOf('ingest') >= 0;
+                    }
 
                     function getActiveRepos() {
                         var repos = [];
@@ -476,14 +480,31 @@
                         return repos.length ? repos.join(',') : null;
                     }
 
+                    function getFirstKey(data) {
+                        for (var prop in data) {
+                            if (data.hasOwnProperty(prop)) {
+                                return prop;
+                            }
+                        }
+                    }
+
                     function getQuery() {
                         var metas = [];
                         angular.forEach(scope.meta, function(val, key) {
                             if (val) {
-                                metas.push(key + ':(' + val + ')');
+                                if (typeof(val) === 'string'){
+                                    if (val) {
+                                        metas.push(key + ':(' + val + ')');
+                                    }
+                                } else {
+                                    var subkey = getFirstKey(val);
+                                    if (val[subkey]) {
+                                        metas.push(key + '.' + subkey + ':(' + val[subkey] + ')');
+                                    }
+                                }
                             }
                         });
-                        return metas.length ? metas.join(' ') : scope.query || null;
+                        return metas.length > 1 ? metas.join(' AND ') : metas[0] || null;
                     }
 
                     function updateParam() {
@@ -492,6 +513,27 @@
                         $location.search('repo', getActiveRepos());
                         scope.query = $location.search().q;
                         scope.meta = {};
+                    }
+
+                    function parseFields() {
+                        scope.meta = {};
+                        if (scope.query) {
+                           angular.forEach(scope.query.split(' '), function(val) {
+                                if (val !== 'AND') {
+                                    var meta = val.split(':')[0];
+                                    var value = val.split(':')[1].replace('(', '').replace(')', '');
+
+                                    if (meta.indexOf('.') >= 0) {
+                                        var submeta = meta.split('.')[0];
+                                        var subvalue = meta.split('.')[1];
+                                        scope.meta[submeta] = {};
+                                        scope.meta[submeta][subvalue] = value;
+                                    } else {
+                                        scope.meta[meta] = value;
+                                    }
+                                }
+                            });
+                        }
                     }
 
                     scope.search = function() {
@@ -515,7 +557,10 @@
 
                     toggle.on('click', function() {
                         if (_popupOpen()) {
-                            dropdown.find('.dropdown-menu input').first().focus();
+                            scope.$apply(function() {
+                                dropdown.find('.dropdown-menu input').first().focus();
+                                parseFields();
+                            });
                         }
                     });
 

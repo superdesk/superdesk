@@ -22,6 +22,10 @@
 		<div class="content">
 			<form>
 				<fieldset>
+                    <div class="field">
+                        <label for="search-guid">Unique ID</label>
+                        <input type="text" id="search-guid" ng-model="meta.guid" tabindex="4">
+                    </div>
 					<div class="field">
 						<label for="search-headline">Headline</label>
 						<input type="text" id="search-headline" ng-model="meta.headline" tabindex="4">
@@ -32,39 +36,19 @@
 					</div>
                     <div class="field">
                         <label for="search-storyname">Story Name</label>
-                        <input type="text" id="search-storyname" ng-model="meta.storyname" tabindex="4">
+                        <input type="text" id="search-storyname" ng-model="meta.unique_name" tabindex="4">
                     </div>
                     <div class="field">
                         <label for="search-storytext">Story Text</label>
-                        <input type="text" id="search-storytext" ng-model="meta.storytext" tabindex="4">
+                        <input type="text" id="search-storytext" ng-model="meta.body_html" tabindex="4">
                     </div>
                     <div class="field">
                         <label for="search-subject">Subject</label>
-                        <input type="text" id="search-subject" ng-model="meta.subject" tabindex="4">
+                        <input type="text" id="search-subject" ng-model="meta.subject.name" tabindex="4">
                     </div>
                     <div class="field" ng-if="repo.archive">
                         <label for="search-creator">Creator</label>
-                        <input type="text" id="search-creator" ng-model="meta.creator" tabindex="6">
-                    </div>
-                    <div class="field">
-                        <label for="search-category">Category</label>
-                        <select id="search-category" ng-model="meta.category" ng-options="category.name for category in categories"></select>
-                    </div>
-                    <div class="field">
-                        <label for="search-source">Source</label>
-                        <select id="search-source" ng-model="meta.source" ng-options="source.name for source in sources"></select>
-                    </div>
-                    <div class="field" ng-if="repo.archive">
-                        <label for="search-desk">Desk</label>
-                        <select id="search-desk" ng-model="meta.desk" ng-options="desk.name for desk in desks"></select>
-                    </div>
-                    <div class="field" ng-if="meta.desk">
-                        <label for="search-stage">Stage</label>
-                        <select id="search-stage" ng-model="meta.stage" ng-options="stage.name for stage in stages"></select>
-                    </div>
-                    <div class="field" ng-if="repo.archive">
-                        <label for="search-spiked">Include Spiked Content</label>
-                        <input type="checkbox" ng-model="meta.includeSpiked">
+                        <input type="text" id="search-creator" ng-model="meta.original_creator" tabindex="6">
                     </div>
 				</fieldset>
                 <fieldset ng-if="context">
