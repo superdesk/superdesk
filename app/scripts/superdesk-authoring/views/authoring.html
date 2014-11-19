@@ -13,7 +13,7 @@
 
     	    <button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()"
                 ng-show="_editable"
-                ng-disabled="!dirty && !item._autosave"
+                ng-disabled="(!dirty && !item._autosave) || charLimitHit"
                 translate>Save</button>
 
 	    	<button class="navbtn navbtn-hover" ng-show="_editable" ng-click="viewSendTo = !viewSendTo">
@@ -32,7 +32,8 @@
                 		<fieldset class="horizontal span-3">
                 			<div class="field">
                 				<label translate>Keyword</label>
-                				<input type="text" ng-model="item.slugline" ng-if="_editable">
+                                <span sd-character-count data-item="item.slugline" data-limit="sluglineSoftLimit" data-limit-callback="checkLimit"></span>
+                				<input type="text" maxlength="{{sluglineHardLimit}}" ng-model="item.slugline" ng-if="_editable">
                 				<div ng-if="!_editable">{{item.slugline}}</div>
                 			</div>
                 			<div class="field">
@@ -49,16 +50,21 @@
                 		<fieldset>
                 			<div class="field" >
                 				<label translate>Headline</label>
-                				<textarea class="headline" sd-auto-height ng-model="item.headline" ng-if="_editable"></textarea>
+                                <span sd-character-count data-item="item.headline" data-limit="headlineSoftLimit" data-limit-callback="checkLimit"></span>
+                				<textarea class="headline" maxlength="{{headlineHardLimit}}" sd-auto-height ng-model="item.headline" ng-if="_editable"></textarea>
 			                	<div class="headline" ng-if="!_editable">{{item.headline}}</div>
                 			</div>
                 			<div class="field" class="abstract">
                 				<label translate>Abstract</label>
-                				<textarea class="abstract" sd-auto-height ng-model="item.abstract" ng-if="_editable"></textarea>
+                                <span sd-character-count data-item="item.abstract" data-limit="abstractSoftLimit" data-limit-callback="checkLimit"></span>
+                                <span sd-word-count data-item="item.abstract"></span>
+                				<textarea class="abstract" maxlength="{{abstractHardLimit}}" sd-auto-height ng-model="item.abstract" ng-if="_editable"></textarea>
 			                	<div class="abstract" ng-if="!_editable">{{item.abstract}}</div>
                 			</div>
                 			<div class="field">
                 				<label translate>Body</label>
+                                <span sd-character-count data-item="item.body_html" data-html="true"></span>
+                                <span sd-word-count data-item="item.body_html" data-html="true"></span>
                 				<div sd-text-editor class="text-editor" ng-model="item.body_html" ng-if="_editable"></div>
 		                    	<div class="text-editor" sd-html-preview="item.body_html" ng-if="!_editable"></div>
                 			</div>
