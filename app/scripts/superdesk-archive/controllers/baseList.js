@@ -60,7 +60,11 @@ define(['lodash'], function(_) {
             }
 
             if (params.urgency) {
-                query.filter({term: {urgency: params.urgency}});
+                query.filter({term: {urgency: JSON.parse(params.urgency)}});
+            }
+
+            if (params.category) {
+                query.filter({term: {'anpa-category.name': JSON.parse(params.category)}});
             }
 
             return query.getCriteria();

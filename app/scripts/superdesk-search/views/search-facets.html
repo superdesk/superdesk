@@ -44,7 +44,7 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Sources' | translate }}" data-open="true">
+        <div sd-toggle-box data-title="{{ 'Sources' | translate }}" ng-hide="isEmpty('source')" data-open="true">
             <ul class="filter-contenttype selectionlist">
                 <li ng-repeat="(key,value) in aggregations.source">
                     <a href ng-click="setFilter('source', key)">{{key | translate}} <i>({{ value }})</i></a>

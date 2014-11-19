@@ -225,7 +225,7 @@
                             });
 
                             _.forEach(scope.items._aggregations.category.buckets, function(cat) {
-                                if (!scope.selectedFacets.category || scope.selectedFacets.category !== cat.key) {
+                                if ((!scope.selectedFacets.category || scope.selectedFacets.category !== cat.key) && cat.key !== '') {
                                     scope.aggregations.category[cat.key] = cat.doc_count;
                                 }
                             });
@@ -301,17 +301,13 @@
 
                     scope.setDateFilter = function(key) {
                         scope.selectedFacets.date = key;
-                        var d = new Date();
 
                         if (key === 'Last Day') {
-                            d.setDate(d.getDate() - 1);
-                            $location.search('after', scope.format(d));
+                            $location.search('after', 'now-24H');
                         } else if (key === 'Last Week'){
-                            d.setDate(d.getDate() - 7);
-                             $location.search('after', scope.format(d));
+                             $location.search('after', 'now-1w');
                         } else if (key === 'Last Month'){
-                            d.setDate(d.getDate() - 30);
-                             $location.search('after', scope.format(d));
+                             $location.search('after', 'now-1M');
                         } else {
                             $location.search('after', null);
                         }
@@ -353,49 +349,6 @@
                     scope.format = function (date) {
                         return date ? moment(date).format('YYYY-MM-DD') : null; // jshint ignore:line
                     };
-                }
-            };
-        }])
-        /**
-         * Urgency Filter
-         */
-        .directive('sdFilterUrgency', ['$location', function($location) {
-            return {
-                scope: true,
-                link: function($scope, element, attrs) {
-
-                    $scope.urgency = {
-                        min: '1',
-                        max: '5'
-                    };
-
-                    /*  $scope.urgency = {
-                        min: $location.search().urgency_min || 1,
-                        max: $location.search().urgency_max || 5
-                    };*/
-
-                    function handleUrgency(urgency) {
-                        var min = Math.round(urgency.min);
-                        var max = Math.round(urgency.max);
-                        if (min !== 1 || max !== 5) {
-                            var urgency_norm = {
-                                min: min,
-                                max: max
-                            };
-                            $location.search('urgency_min', urgency_norm.min);
-                            $location.search('urgency_max', urgency_norm.max);
-                        } else {
-                            $location.search('urgency_min', null);
-                            $location.search('urgency_max', null);
-                        }
-
-                    }
-
-                    var handleUrgencyWrap = _.throttle(handleUrgency, 2000);
-
-                    $scope.$watchCollection('urgency', function(newVal) {
-                        handleUrgencyWrap(newVal);
-                    });
                 }
             };
         }])
