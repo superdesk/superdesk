@@ -251,6 +251,28 @@ define([
         };
     }
 
+    DatepickerDirective.$inject = [];
+    function DatepickerDirective() {
+        return {
+            restrict: 'A',
+            require: 'ngModel',
+            link: function (scope, element, attrs, ngModelCtrl) {
+                $(function() {
+                    element.datepicker({
+                        dateFormat:'dd/mm/yy',
+                        prevText: '<i class="icon-chevron-left-thin icon-white"></i>',
+                        nextText: '<i class="icon-chevron-right-thin icon-white"></i>',
+                        onSelect:function (date) {
+                            scope.$apply(function () {
+                                ngModelCtrl.$setViewValue(date);
+                            });
+                        }
+                    });
+                });
+            }
+        };
+    }
+
     return angular.module('superdesk.ui', [])
 
         .directive('sdShadow', ShadowDirective)
@@ -262,5 +284,6 @@ define([
         .directive('sdWizardStep', WizardStepDirective)
         .directive('sdCreateBtn', CreateButtonDirective)
         .directive('sdAutofocus', AutofocusDirective)
-        .directive('sdAutoexpand', AutoexpandDirective);
+        .directive('sdAutoexpand', AutoexpandDirective)
+        .directive('sdDatepicker', DatepickerDirective);
 });
