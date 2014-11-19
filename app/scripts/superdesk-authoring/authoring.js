@@ -468,7 +468,7 @@
                 limitCallback: '=',
                 html: '@'
             },
-            template: '<span ng-class="{error: limitHit}">{{numChars}} <span translate>characters</span></span>',
+            template: '<span class="char-count" ng-class="{error: limitHit}">{{numChars}} <span translate>characters</span></span>',
             link: function characterCountLink(scope, elem, attrs) {
                 scope.html = scope.html || false;
                 scope.numChars = 0;
@@ -500,7 +500,7 @@
                 item: '=',
                 html: '@'
             },
-            template: '<span>{{numWords}} <span translate>words</span></span>',
+            template: '<span class="char-count">{{numWords}} <span translate>words</span></span>',
             link: function wordCountLink(scope, elem, attrs) {
                 scope.html = scope.html || false;
                 scope.numWords = 0;
