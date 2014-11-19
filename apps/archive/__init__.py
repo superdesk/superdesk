@@ -95,6 +95,9 @@ def init_app(app):
     register_component(ItemAutosave(app))
     register_model(ItemAutosaveModel(EveProxy(superdesk.get_backend())))
 
+    superdesk.privilege(name='ingest', label='Ingest', description='User can view content in ingest and fetch it.')
+    superdesk.privilege(name='archive', label='Archive', description='User can see the published content.')
+
 
 @celery.task()
 def spike_purge():
