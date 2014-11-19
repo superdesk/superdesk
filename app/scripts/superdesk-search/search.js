@@ -449,26 +449,26 @@
             };
         }])
 
-        .directive('sdSearchWithin', ['$location', function($location){
+        .directive('sdSearchWithin', ['$location', function($location) {
                       return {
                 scope: {},
                 templateUrl: 'scripts/superdesk-search/views/search-within.html',
                 link: function(scope, elem) {
                     scope.searchWithin = function() {
-                        if(scope.within) {
+                        if (scope.within) {
                             var params = $location.search();
-                            if(params.q) {
+                            if (params.q) {
                                 scope.query = params.q + ' ' + scope.within;
                             } else {
                                 scope.query = scope.within;
                             }
                             $location.search('q', scope.query|| null);
-                            scope.within = null;  
+                            scope.within = null;
                         }
                     };
                 }
             };
-        }])  
+        }])
 
         /**
          * Item search component
@@ -498,7 +498,7 @@
 
                     init();
 
-                    scope.$on('$locationChangeSuccess', function(){
+                    scope.$on('$locationChangeSuccess', function() {
                         if (scope.query !== $location.search().q) {
                             init();
                         }
@@ -571,10 +571,10 @@
                                         scope.meta[meta] = value;
                                     }
                                 } else {
-                                    if(!scope.meta['_all']) {
-                                        scope.meta['_all'] = [];
+                                    if (!scope.meta._all) {
+                                        scope.meta._all = [];
                                     }
-                                    scope.meta['_all'].push(val);
+                                    scope.meta._all.push(val);
                                 }
                             });
                         }
