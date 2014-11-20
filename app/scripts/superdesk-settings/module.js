@@ -21,7 +21,10 @@ define([
                 transclude: true,
                 templateUrl: require.toUrl('./views/settings-view.html'),
                 link: function(scope, elem, attrs) {
-                    scope.settings = _.values(_.where(superdesk.activities, {category: superdesk.MENU_SETTINGS}));
+                    superdesk.getMenu(superdesk.MENU_SETTINGS).then(function(menu) {
+                        scope.settings = menu;
+                    });
+
                     scope.currentRoute = $route.current;
                 }
             };

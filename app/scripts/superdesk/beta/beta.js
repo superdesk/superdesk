@@ -6,8 +6,8 @@ define(['angular', 'jquery'], function(angular, $) {
     /**
      * Superdesk service for enabling/disabling beta preview in app
      */
-    module.service('betaService', ['$window', '$rootScope', '$q', 'preferencesService', 'notify',
-        function($window, $rootScope, $q, preferencesService, notify) {
+    module.service('betaService', ['$window', '$rootScope', '$q', 'preferencesService',
+        function($window, $rootScope, $q, preferencesService) {
 
         $rootScope.beta = null;
 
@@ -25,9 +25,7 @@ define(['angular', 'jquery'], function(angular, $) {
             preferencesService.update(update, 'feature:preview').then(function() {
                     $rootScope.beta = !$rootScope.beta;
                     $window.location.reload();
-                }, function(response) {
-                    notify.error(gettext('User preference could not be saved...'));
-            });
+                });
         };
 
         this.isBeta = function() {

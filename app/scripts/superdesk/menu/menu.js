@@ -28,18 +28,12 @@
 
                     scope.currentRoute = null;
                     scope.flags = ctrl.flags;
+                    scope.menu = [];
 
-                    function filterMenu() {
-                        var filter = {category: superdesk.MENU_MAIN};
-
-                        if (!scope.beta) {
-                            filter.beta = false;
-                        }
-
-                        scope.menu = _.values(_.where(superdesk.activities, filter));
-                    }
-
-                    scope.$watch('beta', filterMenu);
+                    superdesk.getMenu(superdesk.MENU_MAIN).then(function(menu) {
+                        scope.menu = menu;
+                        setActiveMenuItem($route.current);
+                    });
 
                     scope.toggleMenu = function() {
                         ctrl.flags.menu = !ctrl.flags.menu;
