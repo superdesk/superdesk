@@ -1,3 +1,14 @@
 [
-{"resource":"users", "data":{"username":"admin_other", "first_name":"first name other", "last_name":"last name other", "password":"admin_other", "user_type": "administrator", "email": "a@a_other.com"}}
+    {
+        "data": {
+            "email": "a@a_other.com",
+            "first_name": "first name other",
+            "last_name": "last name other",
+            "needs_activation": false,
+            "password": "admin_other",
+            "user_type": "administrator",
+            "username": "admin_other"
+        },
+        "resource": "users"
+    }
 ]

@@ -1,5 +1,21 @@
 [
-{"resource":"users", "id_name":"-id user admin-", "data":{"username":"admin", "first_name":"first name", "last_name":"last name", "password":"admin", "user_type": "administrator", "email": "a@a.com"}},
-{"resource":"desks", "username":"admin", "data":{"name": "Sports Desk", "members": [{"user": "-id user admin-"}]}},
-{"resource":"roles", "data":{"name": "Editor", "permissions": {"ingest": {"read": 1}}}}
+    {
+        "data": {
+            "email": "a@a.com",
+            "first_name": "first name",
+            "last_name": "last name",
+            "needs_activation": false,
+            "password": "admin",
+            "user_type": "administrator",
+            "username": "admin"
+        },
+        "id_name": "-id user admin-",
+        "resource": "users"
+    },
+    {
+        "data": {"members": [{"user": "-id user admin-"}], "name": "Sports Desk"},
+        "resource": "desks",
+        "username": "admin"
+    },
+    {"data": {"name": "Editor", "permissions": {"ingest": {"read": 1}}}, "resource": "roles"}
 ]
