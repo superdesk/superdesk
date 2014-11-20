@@ -10,6 +10,7 @@ from eve.utils import config  # noqa
 from .eve_backend import EveBackend
 from .services import BaseService as Service  # noqa
 from .resource import Resource  # noqa
+from .privilege import privilege  # noqa
 
 
 API_NAME = 'Superdesk API'
@@ -17,7 +18,6 @@ VERSION = (0, 0, 1)
 DOMAIN = {}
 COMMANDS = {}
 BLUEPRINTS = []
-PRIVILEGES = {}
 app_components = dict()
 app_models = dict()
 resources = dict()
@@ -105,23 +105,6 @@ def blueprint(blueprint, **kwargs):
 def get_backend():
     """Returns the available backend, this will be changed in a factory if needed."""
     return eve_backend
-
-
-def privilege(**kwargs):
-    """Register privilege.
-
-    Privilege properties:
-    - name
-    - label
-    - description
-    - category
-    """
-    PRIVILEGES[kwargs['name']] = kwargs
-
-
-def get_privilege_list():
-    """Get list of all registered privileges."""
-    return [v for v in PRIVILEGES.values()]
 
 
 def get_resource_service(resource_name):

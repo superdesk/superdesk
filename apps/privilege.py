@@ -1,13 +1,14 @@
 
 import superdesk
 from superdesk.utils import ListCursor
+from superdesk.privilege import get_privilege_list
 
 
 class PrivilegeService(superdesk.Service):
 
     def get(self, req, lookup):
         """Return all registered privileges."""
-        return ListCursor(superdesk.get_privilege_list())
+        return ListCursor(get_privilege_list())
 
 
 class PrivilegeResource(superdesk.Resource):
