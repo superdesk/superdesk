@@ -362,14 +362,12 @@
     UserRolesController.$inject = ['$scope', 'api', 'modal', 'gettext', 'notify', '$q'];
     function UserRolesController($scope, api, modal, gettext, notify, $q) {
 
-        var _orig, stopWatch = angular.noop;
+        var _orig;
         $scope.editRole = null;
-        $scope.dirty = false;   //dirty checking for changes in permissions
 
         api('roles').query()
         .then(function(result) {
             $scope.roles = result._items;
-            startWatch();
         });
 
         api('privileges').query().
@@ -377,20 +375,8 @@
             $scope.privileges = result._items;
         });
 
-        function startWatch() {
-            stopWatch();
-            stopWatch = $scope.$watch('roles', function(newVal, oldVal) {
-                if (newVal === oldVal) {
-                    return;
-                }
-                $scope.dirty = true;
-            }, true);
-        }
-
-        $scope.saveAll = function() {
+        $scope.saveAll = function(rolesForm) {
             var promises = [];
-
-            stopWatch();
 
             _.each($scope.roles, function(role) {
                 promises.push(api.save('roles', role, _.pick(role, 'permissions'))
@@ -402,10 +388,8 @@
 
             $q.all(promises).then(function() {
                 notify.success(gettext('Privileges updated.'));
-                $scope.dirty = false;
-                startWatch();
+                rolesForm.$setPristine();
             }, function() {
-                startWatch();
                 notify.success(gettext('Error. Privileges not updated.'));
             });
         };
@@ -413,7 +397,6 @@
         $scope.edit = function(role) {
             $scope.editRole = _.create(role);
             _orig = role;
-            stopWatch();
         };
 
         $scope.save = function(role) {
@@ -427,21 +410,17 @@
                     notify.success(gettext('User role updated.'));
                 }
                 $scope.cancel();
-                startWatch();
             }, function(response) {
                 if (response.status === 400 && typeof(response.data._issues.name) !== 'undefined' &&
-                response.data._issues.name.unique === 1)
-                {
+                response.data._issues.name.unique === 1) {
                     notify.error(gettext('I\'m sorry but a role with that name already exists.'));
                 } else {
-                    if (typeof(response.data._issues['validator exception']) !== 'undefined')
-                    {
-                        notify.error(response.data._issues['validator exception']);
-                    } else {
-                    notify.error(gettext('I\'m sorry but there was an error when saving the role.'));
+                    if (typeof(response.data._issues['validator exception']) !== 'undefined') {
+                            notify.error(response.data._issues['validator exception']);
+                        } else {
+                        notify.error(gettext('I\'m sorry but there was an error when saving the role.'));
+                    }
                 }
-                }
-                startWatch();
             });
         };
 
@@ -450,15 +429,12 @@
         };
 
         $scope.remove = function(role) {
-            stopWatch();
             confirm().then(function() {
                 api('roles').remove(role)
                 .then(function(result) {
                     _.remove($scope.roles, role);
-                    startWatch();
                 }, function(response) {
                     console.log(response);
-                    startWatch();
                 });
             });
         };

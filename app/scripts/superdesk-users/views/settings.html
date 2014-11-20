@@ -1,8 +1,9 @@
 <div sd-settings-view>
+    <form name="rolesForm">
 	<div class="header">
 		<div class="container full-width">
 			<h2 translate>User Roles</h2>
-			<button class="btn btn-info pull-right" ng-click="saveAll()" ng-disabled="!dirty" translate>Save</button>
+			<button class="btn btn-info pull-right" ng-click="saveAll(rolesForm)" ng-disabled="!rolesForm.$dirty" translate>Save</button>
 		</div>
 	</div>
 	<div class="settings-tab-content user-roles">
@@ -86,4 +87,5 @@
 			</div>
 		</div> -->
 	</div>
+    </form>
 </div>
