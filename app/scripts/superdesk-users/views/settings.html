@@ -23,10 +23,10 @@
 					<button class="create-role" ng-click="edit({})"><i class="icon-plus-small"></i> {{ :: 'Create Role' | translate }}</button>
 				</div>
 			</div>
-			<div ng-repeat="action in actions" class="action-line">
-				<div class="td name">{{action.name}}</div>
+			<div ng-repeat="p in privileges | orderBy:name" class="action-line">
+				<div class="td name">{{p.label}}</div>
 				<div ng-repeat="role in roles" class="td role-field">
-					<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="role.permissions[action._id]">
+					<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="role.permissions[p.name]">
 				</div>
 				<div class="td blank"></div>
 			</div>
