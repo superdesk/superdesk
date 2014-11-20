@@ -10,8 +10,11 @@ log = logging.getLogger(__name__)
 
 class EveBackend():
     def find_one(self, endpoint_name, req, **lookup):
-        backend = self._lookup_backend(endpoint_name, fallback=True)
-        return backend.find_one(endpoint_name, req=req, **lookup)
+        backend = self._backend(endpoint_name)
+        search_backend = self._lookup_backend(endpoint_name, fallback=True)
+        if search_backend:
+            item = search_backend.find_one(endpoint_name, req=req, **lookup)
+        return item or backend.find_one(endpoint_name, req=req, **lookup)
 
     def find_one_in_base_backend(self, endpoint_name, req, **lookup):
         backend = self._backend(endpoint_name)
