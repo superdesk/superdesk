@@ -35,38 +35,6 @@ define(['lodash'], function(_) {
                 }
             }
 
-            if (params.before || params.after) {
-                var range = {versioncreated: {}};
-                if (params.before) {
-                    range.versioncreated.lte = params.before;
-                }
-
-                if (params.after) {
-                    range.versioncreated.gte = params.after;
-                }
-
-                query.filter({range: range});
-            }
-
-            if (params.provider) {
-                query.filter({term: {provider: params.provider}});
-            }
-
-            if (params.type) {
-                var type = {
-                    type: JSON.parse(params.type)
-                };
-                query.filter({terms: type});
-            }
-
-            if (params.urgency) {
-                query.filter({term: {urgency: JSON.parse(params.urgency)}});
-            }
-
-            if (params.category) {
-                query.filter({term: {'anpa-category.name': JSON.parse(params.category)}});
-            }
-
             return query.getCriteria();
         };
 
