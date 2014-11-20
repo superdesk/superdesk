@@ -33,7 +33,7 @@
         <div sd-toggle-box data-title="{{ 'Desks' | translate }}" ng-hide="isEmpty('desk')" data-open="true">
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.desk">
-                    <button ng-click="setFilter('desk', key)">{{key | translate}} <i>{{ value }}</i></button>
+                    <button ng-click="setFilter('desk', value.id)">{{key | translate}} <i>{{ value.count }}</i></button>
                 </li>
             </ul>
         </div>
@@ -41,7 +41,7 @@
         <div sd-toggle-box data-title="{{ 'Stages' | translate }}" ng-hide="isEmpty('stage')" data-open="true" >
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.stage">
-                    <button ng-click="setFilter('stage', key)">{{key | translate}} <i>{{ value }}</i></button>
+                    <button ng-click="setFilter('stage', value.id)">{{key | translate}} <i>{{ value.count }}</i></button>
                 </li>
             </ul>
         </div>

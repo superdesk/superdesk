@@ -58,6 +58,49 @@
                 query.from = (page - 1) * query.size;
             }
 
+            function buildFilters(params, query) {
+
+                if (params.before || params.after) {
+                    var range = {versioncreated: {}};
+                    if (params.before) {
+                        range.versioncreated.lte = params.before;
+                    }
+
+                    if (params.after) {
+                        range.versioncreated.gte = params.after;
+                    }
+
+                    query.filter({range: range});
+                }
+
+                if (params.provider) {
+                    query.filter({term: {provider: params.provider}});
+                }
+
+                if (params.type) {
+                    var type = {
+                        type: JSON.parse(params.type)
+                    };
+                    query.filter({terms: type});
+                }
+
+                if (params.urgency) {
+                    query.filter({term: {urgency: JSON.parse(params.urgency)}});
+                }
+
+                if (params.category) {
+                    query.filter({term: {'anpa-category.name': JSON.parse(params.category)}});
+                }
+
+                if (params.desk) {
+                    query.filter({term: {'task.desk': JSON.parse(params.desk)}});
+                }
+
+                if (params.stage) {
+                    query.filter({term: {'task.stage': JSON.parse(params.stage)}});
+                }
+            }
+
             /**
              * Get criteria for given query
              */
@@ -121,6 +164,8 @@
             } else {
                 this.filter({not: {term: {is_spiked: true}}});
             }
+
+            buildFilters($location.search(), this);
         }
 
         /**
@@ -168,7 +213,7 @@
         /**
          * Item filters sidebar
          */
-        .directive('sdSearchFacets', [ '$location', 'desks',  function($location, desks) {
+        .directive('sdSearchFacets', ['$location', 'desks',  function($location, desks) {
             desks.initialize();
             return {
                 require: '^sdSearchContainer',
@@ -198,12 +243,25 @@
                     };
 
                     var initSelectedFacets = function () {
-                        var search = $location.search();
-                        scope.keyword = search.q;
-                        _.forEach(search, function(type, key) {
-                            if (key !== 'q' && key !== 'repo' && key !== 'page' && key !== '_id') {
-                                scope.selectedFacets[key] = JSON.parse(type)[0];
-                            }
+                        desks.initialize().then(function(result) {
+                            var search = $location.search();
+                            scope.keyword = search.q;
+                            _.forEach(search, function(type, key) {
+                                if (key !== 'q' && key !== 'repo' && key !== 'page' && key !== '_id') {
+                                    if (key === 'desk') {
+                                        scope.selectedFacets[key] = desks.deskLookup[JSON.parse(type)[0]].name;
+                                    } else if (key === 'stage') {
+                                        var stageid = type;
+                                        _.forEach(desks.deskStages[desks.activeDeskId], function(deskStage) {
+                                            if (deskStage._id === JSON.parse(stageid)[0]) {
+                                                scope.selectedFacets[key] = deskStage.name;
+                                            }
+                                        });
+                                    } else {
+                                        scope.selectedFacets[key] = JSON.parse(type)[0];
+                                    }
+                                }
+                            });
                         });
                     };
 
@@ -270,31 +328,50 @@
                                 }
                             });
 
-                            if (scope.desk) {
-                                _.forEach(scope.items._aggregations.desk.buckets, function(desk) {
-                                    if (!scope.selectedFacets.desk || scope.selectedFacets.desk !== desks.deskLookup[desk.key].name) {
-                                        scope.aggregations.desk[desks.deskLookup[desk.key].name] = desk.doc_count;
-                                    }
-                                }) ;
-                            }
-
-                            if (scope.desk) {
-                                _.forEach(scope.items._aggregations.stage.buckets, function(stage) {
-                                    _.forEach(desks.deskStages[desks.activeDeskId], function(deskStage) {
-                                        if (!scope.selectedFacets.stage || scope.selectedFacets.stage !== deskStage.name) {
-                                            if (deskStage._id === stage.key) {
-                                                scope.aggregations.stage[deskStage.name] = stage.doc_count;
-                                            }
+                            desks.initialize().then(function(result) {
+                                if (!scope.desk) {
+                                    _.forEach(scope.items._aggregations.desk.buckets, function(desk) {
+                                        if (!scope.selectedFacets.desk || scope.selectedFacets.desk !== desks.deskLookup[desk.key].name) {
+                                            scope.aggregations.desk[desks.deskLookup[desk.key].name] = {
+                                                count: desk.doc_count,
+                                                id: desk.key
+                                            };
                                         }
+                                    }) ;
+                                }
+
+                                if (scope.desk) {
+                                    _.forEach(scope.items._aggregations.stage.buckets, function(stage) {
+                                        _.forEach(desks.deskStages[scope.desk._id], function(deskStage) {
+                                            if (!scope.selectedFacets.stage || scope.selectedFacets.stage !== deskStage.name) {
+                                                if (deskStage._id === stage.key) {
+                                                    scope.aggregations.stage[deskStage.name] = {count: stage.doc_count, id: stage.key};
+                                                }
+                                            }
+                                        });
                                     });
-                                });
-                            }
+                                }
+                            });
                         }
                     });
 
+                    var setSelectedFacets = function(type, key) {
+                        if (type === 'desk') {
+                            scope.selectedFacets[type] = desks.deskLookup[key].name;
+                        } else if (type === 'stage') {
+                            _.forEach(desks.deskStages[desks.activeDeskId], function(deskStage) {
+                                if (deskStage._id === key) {
+                                    scope.selectedFacets[type] = deskStage.name;
+                                }
+                            });
+                        } else {
+                            scope.selectedFacets[type] = key;
+                        }
+                    };
+
                     scope.setFilter = function(type, key) {
 
-                        scope.selectedFacets[type] = key;
+                        setSelectedFacets(type, key);
 
                         if (!scope.isEmpty(type) && key) {
                             $location.search(type, JSON.stringify([key]));
