@@ -3,6 +3,7 @@ import logging
 from flask import current_app as app
 from eve.utils import document_etag
 from superdesk.utc import utcnow
+from .elastic_sync_backend import create
 
 
 log = logging.getLogger(__name__)
@@ -14,7 +15,11 @@ class EveBackend():
         search_backend = self._lookup_backend(endpoint_name, fallback=True)
         if search_backend:
             item = search_backend.find_one(endpoint_name, req=req, **lookup)
-        return item or backend.find_one(endpoint_name, req=req, **lookup)
+        if search_backend and item is None:
+            item = backend.find_one(endpoint_name, req=req, **lookup)
+            if item:
+                create(endpoint_name, [item])
+        return item
 
     def find_one_in_base_backend(self, endpoint_name, req, **lookup):
         backend = self._backend(endpoint_name)
