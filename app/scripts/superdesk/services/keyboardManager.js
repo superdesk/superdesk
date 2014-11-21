@@ -100,7 +100,7 @@ define(['angular', 'lodash'], function(angular, _) {
         this.keyboardEvent = {};
 
         // Add a new keyboard combination shortcut
-        this.bind = function (label, callback, opt) {
+        this.bind = function bind(label, callback, opt) {
             var fct, elt, code, k;
             // Initialize opt object
             opt = angular.extend({}, defaultOpt, opt);
@@ -240,7 +240,7 @@ define(['angular', 'lodash'], function(angular, _) {
             }
         };
 
-        this.push = function(label, callback, options) {
+        this.push = function push(label, callback, options) {
             var e = this.keyboardEvent[label.toLowerCase()];
             if (e) {
                 stack.push(e);
@@ -250,7 +250,7 @@ define(['angular', 'lodash'], function(angular, _) {
             this.bind(label, callback, options);
         };
 
-        this.pop = function(label) {
+        this.pop = function pop(label) {
             this.unbind(label);
             var index = _.findLastIndex(stack, {label: label.toLowerCase()});
             if (index !== -1) {
@@ -260,7 +260,7 @@ define(['angular', 'lodash'], function(angular, _) {
         };
 
         // Remove the shortcut - just specify the shortcut and I will remove the binding
-        this.unbind = function (label) {
+        this.unbind = function unbind(label) {
             label = label.toLowerCase();
             var binding = this.keyboardEvent[label];
             delete(this.keyboardEvent[label]);

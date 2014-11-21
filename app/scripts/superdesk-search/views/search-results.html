@@ -13,19 +13,13 @@
             <div sd-pagination data-items="items" data-limit="25"></div>
         </header>
         <div class="content">
-            <div class="loading-indicator" ng-show="loading">{{:: 'loading' | translate }}</div>
-            <div sd-shadow>
-                <div
-                    sd-list-view
-                    data-items="items._items"
-                    data-select="preview(item)"
-                    data-extras="{view: view, activity: {type: spike ? 'spike' : type, action: 'list'}, api: api}">
-                    <div sd-media-box 
-                        data-item="item" 
-                        class="{{view}}-view" 
-                        data-cursor="view !== 'mgrid'">
-                    </div>
-                </div>
+            <div class="loading-indicator" ng-show="loading" translate>loading</div>
+            <div sd-shadow sd-updown data-items="items._items" data-select="preview(item)">
+                <ul class="list-view" ng-init="extras={view: view, activity: {type: spike ? 'spike' : type, action: 'list'}, api: api}">
+                    <li ng-repeat="item in items._items" class="list-item-view" ng-class="{active: item === selected.preview}" ng-click="preview(item)">
+                        <div class="mlist-view"><div sd-media-box class="media-box"></div></div>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

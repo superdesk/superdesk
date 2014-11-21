@@ -195,16 +195,18 @@
             });
         }
 
-        var query = getQuery();
+        var _id = $location.search()._id || null;
         $scope.$on('$routeUpdate', function() {
-            var next = getQuery();
-            if (next !== query) {
+            var newId = $location.search()._id || null;
+            if (newId === _id) {
+                var next = getQuery();
                 refresh(next);
-                query = next;
+            } else {
+                _id = newId;
             }
         });
 
-        refresh(query);
+        refresh(getQuery());
     }
 
     angular.module('superdesk.search', ['superdesk.api', 'superdesk.activity', 'superdesk.desks'])

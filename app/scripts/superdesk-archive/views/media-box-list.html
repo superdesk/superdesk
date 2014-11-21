@@ -1,4 +1,4 @@
-<div class="archiving-progress" style="width:{{item.archivingProgress}}%" ng-show="!item.archived && item.archiving"></div>
+<div class="archiving-progress" style="width:{{item.archivingProgress}}%" ng-if="!item.archived && item.archiving"></div>
 
 <span class="state-border"></span>
 
@@ -19,7 +19,7 @@
 <div class="item-info">
     <div class="line">
         <div class="headline"><span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span>{{ item.headline || item.type }}</div>
-        <time datetime="{{ item.versioncreated }}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time>
+        <time sd-datetime data-date="item.versioncreated"></time>
     </div>
     <div class="line">
         <div class="takekey" ng-if="item.takekey">{{ item.anpa_take_key }}</div>
@@ -31,7 +31,7 @@
     <div class="action">
         <ul ng-if="extras.activity" class="item-functions"
             sd-activity-list
-            data-data="{item: item, list: items, index: $index}"
+            data-item="item"
             data-type="{{extras.activity.type || item._type}}"
             data-action="{{extras.activity.action}}">
         </ul>
