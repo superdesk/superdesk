@@ -1,6 +1,6 @@
 """Superdesk IO"""
 from abc import ABCMeta, abstractmethod
-
+import superdesk
 import logging
 
 from superdesk.celery_app import celery
@@ -26,6 +26,9 @@ def init_app(app):
 def register_provider(type, provider):
     providers[type] = provider
     allowed_providers.append(type)
+
+
+superdesk.privilege(name='ingest_providers', label='Ingest Channels', description='User can maintain Ingest Channels.')
 
 
 @celery.task()

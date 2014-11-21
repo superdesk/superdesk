@@ -37,6 +37,9 @@ def init_app(app):
     UserDesksResource(endpoint_name, app=app, service=service)
 
 
+superdesk.privilege(name='desks', label='Desk Management', description='User can manage desks.')
+
+
 class DesksResource(Resource):
     schema = desks_schema
     datasource = {'default_sort': [('created', -1)]}

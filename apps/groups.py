@@ -13,6 +13,9 @@ def init_app(app):
     UserGroupsResource(endpoint_name, app=app, service=service)
 
 
+superdesk.privilege(name='groups', label='Groups Management', description='User can edit unique name.')
+
+
 class GroupsResource(Resource):
 
     schema = {

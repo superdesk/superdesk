@@ -15,3 +15,7 @@ def init_app(app):
     endpoint_name = 'roles'
     service = RolesService(endpoint_name, backend=superdesk.get_backend())
     RolesResource(endpoint_name, app=app, service=service)
+
+
+superdesk.privilege(name='users', label='User Management', description='User can manage users.')
+superdesk.privilege(name='roles', label='Roles Management', description='User can manage roles.')
