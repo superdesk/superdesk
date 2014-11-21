@@ -90,6 +90,11 @@
                   <input type="checkbox" ng-true-value="'administrator'" ng-false-value="'user'" ng-model="user.user_type" name="user_type" id="user_type">
                 </div>
 
+                <div sd-info-item class="user_role">
+                  <label for="user_role" translate>role</label>
+                  <select ng-model="user.role" name="user_role" id="user_role" ng-options="role._id as role.name for role in roles"></select>
+                </div>
+
                 <div sd-info-item>
                   <label for="phone" translate>phone number</label>
                   <input type="text" name="phone" id="phone" ng-model="user.phone" ng-pattern="phonePattern" ng-readonly="user._readonly">
