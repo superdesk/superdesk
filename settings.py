@@ -1,12 +1,23 @@
+import os
 from datetime import timedelta
 import json
-
-from superdesk.utils import env
 
 try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse
+
+
+def env(variable, fallback_value=None):
+    env_value = os.environ.get(variable, '')
+    if len(env_value) == 0:
+        return fallback_value
+    else:
+        if env_value == "__EMPTY__":
+            return ''
+        else:
+            return env_value
+
 
 XML = False
 IF_MATCH = True

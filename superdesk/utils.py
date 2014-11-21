@@ -1,4 +1,3 @@
-import os
 import string
 import random
 import bcrypt
@@ -45,14 +44,3 @@ class ListCursor(object):
 
     def extra(self, response):
         pass
-
-
-def env(variable, fallback_value=None):
-    env_value = os.environ.get(variable, '')
-    if len(env_value) == 0:
-        return fallback_value
-    else:
-        if env_value == "__EMPTY__":
-            return ''
-        else:
-            return env_value
