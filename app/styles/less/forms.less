@@ -631,8 +631,11 @@ input{
 
 form {
   fieldset {
+    .clearfix();
     .field {
         margin-bottom: 20px;
+        width: 100%;
+        .border-box();
         label {
           font-size: 11px;
           .text-bold();
@@ -640,12 +643,14 @@ form {
           text-transform: uppercase;
           height: 18px;
         }
-        &.row {
+        &.inline {
           label {
             .text-normal();
             font-size: 13px;
             text-transform: none;
             color: @grayDark;
+            white-space: nowrap;
+            padding-left: 20px;
             span {
               color: #a0a0a0;
             }
@@ -654,10 +659,27 @@ form {
             float: left;
             margin-top: 2px;
           }
-          + .field.row {
-            margin-top: -5px;
-          }
         }
+    }
+    &.span-auto {
+      .field {
+        width: auto;
+        float: left;
+        padding-right: 30px;
+      }
+    }
+    &.span-2 {
+      .field {
+        width: 50%;
+        float: left;
+        &:last-child {
+          padding-left: 5%;
+        }
+        &:first-child {
+          padding-left: 0;
+          padding-right: 5%;
+        }
+      }
     }
   }
 }

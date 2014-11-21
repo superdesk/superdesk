@@ -181,7 +181,6 @@
 	}
 }
 
-@searchbar-width : @generic-searchbar;
 .flat-searchbar {
 	float: left;
 	.search-handler {
@@ -194,7 +193,7 @@
 		.transition(all 0.3s ease);
 		input {
 			height: 28px;
-			line-height: 28px;
+			line-height: 100%;
 			font-size: 14px;
 			border: 0 !important;
 			width: 0;
@@ -238,7 +237,7 @@
 	&.extended {
 		.search-handler {
 			input {
-				width: @searchbar-width;
+				width: 320px;
 				padding: 0 6px;
 			}
 			background: #fff;

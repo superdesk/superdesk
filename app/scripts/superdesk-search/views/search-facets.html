@@ -22,7 +22,7 @@
         <div sd-search-within></div>
 
 
-        <div sd-toggle-box data-title="{{ 'Content types' | translate }}" data-open="true">
+        <div sd-toggle-box data-title="{{ 'Content types' | translate }}" ng-hide="isEmpty('type')" data-open="true">
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.type">
                     <button ng-click="setFilter('type', key)"><i class="filetype-icon-{{key}}"></i>{{ key | translate}} <i>{{ value }}</i></button>

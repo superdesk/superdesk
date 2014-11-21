@@ -510,6 +510,7 @@
                 templateUrl: 'scripts/superdesk-search/views/item-searchbar.html',
                 link: function(scope, elem) {
                     var ENTER = 13;
+                    var ESC = 27;
 
                     var input = elem.find('#search-input');
                     var toggle = elem.find('.dropdown-toggle');
@@ -518,7 +519,7 @@
                     function init() {
                         var params = $location.search();
                         scope.query = params.q;
-                        scope.flags = {extended: !!scope.query};
+                        scope.flags = false;
                         scope.meta = {};
 
                         if (params.repo) {
@@ -614,12 +615,16 @@
                     scope.search = function() {
                         updateParam();
                         scope.focusOnSearch();
+                        _closeSearch();
                     };
 
                     scope.searchOnEnter = function($event) {
                         if ($event.keyCode === ENTER) {
                             scope.search();
                             $event.stopPropagation();
+                        }
+                        if ($event.keyCode === ESC) {
+                            _closeSearch();
                         }
                     };
 
@@ -633,7 +638,7 @@
                     toggle.on('click', function() {
                         if (_popupOpen()) {
                             scope.$apply(function() {
-                                dropdown.find('.dropdown-menu input').first().focus();
+                                dropdown.find('.dropdown-menu input[type="text"]').first().focus();
                                 parseFields();
                             });
                         }
@@ -641,6 +646,10 @@
 
                     function _popupOpen() {
                         return dropdown.hasClass('open');
+                    }
+
+                    function _closeSearch() {
+                        scope.flags.extended = false;
                     }
                 }
             };
