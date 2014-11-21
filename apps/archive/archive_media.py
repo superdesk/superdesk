@@ -15,9 +15,8 @@ from .common import on_create_media_archive, on_update_media_archive, on_delete_
 from superdesk.activity import add_activity
 from apps.content import metadata_schema
 from superdesk.services import BaseService
+from .archive import SOURCE as ARCHIVE
 
-
-SOURCE = 'archive'
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +26,7 @@ class ArchiveMediaVersionsResource(ArchiveVersionsResource):
     Resource class for versions of archive_media
     """
 
-    datasource = {'source': SOURCE + '_versions'}
+    datasource = {'source': ARCHIVE + '_versions'}
 
 
 class ArchiveMediaResource(Resource):
@@ -38,7 +37,7 @@ class ArchiveMediaResource(Resource):
 
     schema.update(metadata_schema)
 
-    datasource = {'source': SOURCE}
+    datasource = {'source': ARCHIVE}
 
     resource_methods = ['POST']
     item_methods = ['PATCH', 'GET', 'DELETE']

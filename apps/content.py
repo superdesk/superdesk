@@ -211,10 +211,17 @@ metadata_schema = {
     # Task and Lock Details
     'task_id': {
         'type': 'string',
-        'mapping': not_analyzed
+        'mapping': not_analyzed,
+        'versioned': False
     },
 
     'lock_user': Resource.rel('users'),
-    'lock_time': {'type': 'datetime'},
+    'lock_time': {
+        'type': 'datetime',
+        'versioned': False
+    },
     'lock_session': Resource.rel('auth')
 }
+
+metadata_schema['lock_user']['versioned'] = False
+metadata_schema['lock_session']['versioned'] = False

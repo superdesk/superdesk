@@ -17,6 +17,9 @@ from apps.common.models.base_model import InvalidEtag
 from apps.legal_archive.components.legal_archive_proxy import LegalArchiveProxy
 
 
+SOURCE = 'archive'
+
+
 def get_subject(doc1, doc2=None):
     for key in ('headline', 'subject', 'slugline'):
         value = doc1.get(key)
@@ -70,6 +73,9 @@ class ArchiveService(BaseService):
 
     def on_create(self, docs):
         on_create_item(docs)
+
+        for doc in docs:
+            doc['version_creator'] = doc['original_creator']
 
     def on_created(self, docs):
         on_create_media_archive()

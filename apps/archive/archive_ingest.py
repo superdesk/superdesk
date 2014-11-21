@@ -8,6 +8,9 @@ import traceback
 
 from celery.canvas import chord
 from celery.result import AsyncResult
+from celery.signals import task_postrun
+from eve.versioning import insert_versioning_documents
+import flask
 from flask.globals import current_app as app
 from celery.exceptions import Ignore
 from celery import states
@@ -22,6 +25,7 @@ from superdesk.media.media_operations import download_file_from_url, process_fil
 from superdesk.resource import Resource
 from .common import get_user, aggregations
 from superdesk.services import BaseService
+from .archive import SOURCE as ARCHIVE
 
 
 logger = get_task_logger(__name__)
@@ -40,7 +44,7 @@ def raise_fail(task_id, message):
 
 
 def import_rendition(guid, rendition_name, href, extract_metadata):
-    archive = superdesk.get_resource_service('archive').find_one(req=None, guid=guid)
+    archive = superdesk.get_resource_service(ARCHIVE).find_one(req=None, guid=guid)
     if not archive:
         msg = 'No document found in the media archive with this ID: %s' % guid
         raise superdesk.SuperdeskError(payload=msg)
@@ -62,7 +66,7 @@ def import_rendition(guid, rendition_name, href, extract_metadata):
     # perform partial update
     updates['renditions.' + rendition_name + '.href'] = url_for_media(file_guid)
     updates['renditions.' + rendition_name + '.media'] = file_guid
-    result = superdesk.get_resource_service('archive').patch(guid, updates=updates)
+    result = superdesk.get_resource_service(ARCHIVE).patch(guid, updates=updates)
 
     return result
 
@@ -93,6 +97,15 @@ def archive_rendition(self, task_id, guid, name, href):
 def update_item(result, is_main_task, task_id, guid):
     if is_main_task:
         update_status(*finish_task_for_progress(task_id))
+
+
+def remove_unwanted(doc):
+    """
+    As the name suggests this function removes unwanted attributes from doc to make an entry in Mongo and Elastic.
+    """
+
+    if '_type' in doc:
+        del doc['_type']
 
 
 @celery.task(bind=True, max_retries=3)
@@ -146,25 +159,32 @@ def archive_item(self, guid, provider_id, user, task_id=None):
         if not old_item:
             item['created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
             item['updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
-        superdesk.get_resource_service('archive').patch(guid, item)
+
+        '''
+        Necessary because flask.g.user is None while fetching packages the for grouped items or
+        while patching in archive collection. Without this version_creator is set None which doesn't make sense.
+        '''
+        flask.g.user = user
+        remove_unwanted(item)
+        superdesk.get_resource_service(ARCHIVE).patch(guid, item)
 
         tasks = []
         for group in item.get('groups', []):
             for ref in group.get('refs', []):
                 if 'residRef' in ref:
                     resid_ref = ref.get('residRef')
-                    doc = {'guid': resid_ref, 'ingest_provider': provider_id,
-                           'user': user, 'task_id': crt_task_id}
+                    doc = {'guid': resid_ref, 'ingest_provider': provider_id, 'task_id': crt_task_id}
 
-                    archived_doc = superdesk.get_resource_service('archive').find_one(req=None, guid=doc.get('guid'))
+                    archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, guid=doc.get('guid'))
                     # check if task already started
                     if not archived_doc:
                         doc.setdefault('_id', doc.get('guid'))
-                        superdesk.get_resource_service('archive').post([doc])
+                        superdesk.get_resource_service(ARCHIVE).post([doc])
                     elif archived_doc.get('task_id') == crt_task_id:
                         # it is a retry so continue
                         archived_doc.update(doc)
-                        superdesk.get_resource_service('archive').patch(archived_doc.get('_id'), archived_doc)
+                        remove_unwanted(archived_doc)
+                        superdesk.get_resource_service(ARCHIVE).patch(archived_doc.get('_id'), archived_doc)
                     else:
                         # there is a cyclic dependency, skip it
                         continue
@@ -188,11 +208,31 @@ def archive_item(self, guid, provider_id, user, task_id=None):
         logger.error(traceback.format_exc())
 
 
+@task_postrun.connect(sender=archive_item)
+def insert_into_versions(task_id, task, retval, state, args, **kwargs):
+    """
+    Since the request is handled by Celery we need to manually persist the initial version into versions collection.
+    If the ingest content is of type composite/package then archive_item creates sub-tasks, that's the reason
+    the function is decorated with task_postrun()
+    """
+
+    archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=args[0])
+    remove_unwanted(archived_doc)
+
+    if 'task_id' not in archived_doc:
+        updates = superdesk.get_resource_service(ARCHIVE).patch(args[0], {"task_id": task_id})
+        archived_doc.update(updates)
+
+    if app.config['VERSION'] in archived_doc:
+        insert_versioning_documents(ARCHIVE, archived_doc)
+
+
 def mark_ingest_as_archived(guid=None, ingest_doc=None):
     """
     Updates the ingest document as archived. If guid is not None then first searches the collection for the document
     and if found updates the same as archived.
     """
+
     if guid is not None:
         ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=guid)
 
@@ -230,10 +270,11 @@ class ArchiveIngestService(BaseService):
         As the name suggests this method copies some of the values from ingest_doc.
         """
 
-        doc.setdefault('_id', doc.get('guid'))
         # doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
+        doc.setdefault('_id', doc.get('guid'))
         doc.setdefault('unique_id', ingest_doc.get('unique_id'))
         doc.setdefault('unique_name', ingest_doc.get('unique_name'))
+        doc.setdefault('type', ingest_doc['type'] if 'type' in ingest_doc else '')
 
     def create(self, docs, **kwargs):
         for doc in docs:
@@ -244,18 +285,18 @@ class ArchiveIngestService(BaseService):
 
             mark_ingest_as_archived(ingest_doc=ingest_doc)
 
-            archived_doc = superdesk.get_resource_service('archive').find_one(req=None, guid=doc.get('guid'))
+            archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, guid=doc.get('guid'))
             if not archived_doc:
                 self._copy_from_ingest_doc(doc, ingest_doc)
-                superdesk.get_resource_service('archive').post([doc])
+                superdesk.get_resource_service(ARCHIVE).post([doc])
 
-            task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), str(get_user().get('_id')))
+            task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), get_user())
 
             doc['task_id'] = task.id
             if task.state not in ('PROGRESS', states.SUCCESS, states.FAILURE) and not task.result:
                 update_status(task.id, 0, 0)
 
-            superdesk.get_resource_service('archive').patch(doc.get('guid'), {"task_id": task.id})
+            # superdesk.get_resource_service(ARCHIVE).patch(doc.get('guid'), {"task_id": task.id})
 
         return [doc.get('guid') for doc in docs]
 

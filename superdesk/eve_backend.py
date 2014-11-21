@@ -63,7 +63,7 @@ class EveBackend():
             doc.update(updates)
             search_backend.update(endpoint_name, id, doc)
 
-        return res
+        return res if res is not None else updates
 
     def replace(self, endpoint_name, id, document):
         backend = self._backend(endpoint_name)
