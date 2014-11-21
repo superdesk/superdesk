@@ -47,7 +47,7 @@ class ListCursor(object):
         pass
 
 
-def env(variable, fallback_value):
+def env(variable, fallback_value=None):
     env_value = os.environ.get(variable, '')
     if len(env_value) == 0:
         return fallback_value
