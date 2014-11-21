@@ -15,9 +15,9 @@
         <div class="content">
             <div class="loading-indicator" ng-show="loading" translate>loading</div>
             <div sd-shadow sd-updown data-items="items._items" data-select="preview(item)">
-                <ul class="list-view" ng-init="extras={view: view, activity: {type: spike ? 'spike' : type, action: 'list'}, api: api}">
+                <ul class="{{view}}-view list-view" ng-init="extras={view: view, activity: {type: spike ? 'spike' : type, action: 'list'}, api: api}">
                     <li ng-repeat="item in items._items" class="list-item-view" ng-class="{active: item === selected.preview}" ng-click="preview(item)">
-                        <div class="mlist-view"><div sd-media-box class="media-box"></div></div>
+                        <div sd-media-box></div>
                     </li>
                 </ul>
             </div>
