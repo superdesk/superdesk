@@ -3,30 +3,37 @@ define([
 ], function(_) {
     'use strict';
 
-    return ['superdesk', function(superdesk) {
+    return ['superdesk', 'activityService', function(superdesk, activityService) {
         return {
             scope: {
-                data: '=',
+                item: '=',
                 type: '@',
                 action: '@',
-                done: '='
+                done: '&'
             },
-            template: '<li ng-repeat="activity in activities" sd-activity-item></li>',
+            templateUrl: 'scripts/superdesk/activity/views/activity-list.html',
             link: function(scope, elem, attrs) {
                 var intent = {
                     action: scope.action
                 };
 
-                if (!scope.type && scope.data.href) { // guess item type by self href
-                    //intent.type = scope.data._links.self.href.split('/')[1];
-                    intent.type = scope.data.href.split('/')[1];
-                } else if (scope.type) {
+                if (scope.type) {
                     intent.type = scope.type;
                 } else {
                     return;
                 }
 
                 scope.activities = superdesk.findActivities(intent);
+
+                scope.run = function runActivity(activity, e) {
+                    e.stopPropagation();
+                    activityService.start(activity, {data: {item: scope.item}})
+                        .then(function() {
+                            if (typeof scope.done === 'function') {
+                                scope.done(scope.data);
+                            }
+                        });
+                };
             }
         };
     }];

@@ -950,9 +950,6 @@
                         scope.selected = user;
                     };
 
-                    scope.$watch('users', function(users) {
-                    });
-
                     function getSelectedIndex() {
                         return _.findIndex(scope.users, scope.selected);
                     }

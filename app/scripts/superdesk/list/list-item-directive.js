@@ -4,8 +4,11 @@ define([], function() {
     return function ListItemDirectiveFactory() {
         return {
             link: function(scope, element, attrs, controller, $transclude) {
+                var itemScope;
+
                 scope.$watch('item', function() {
-                    var itemScope = scope.$parent.$parent.$new();
+                    destroyItemScope();
+                    itemScope = scope.$parent.$parent.$new();
                     itemScope.item = scope.item;
                     itemScope.items = scope.items;
                     itemScope.extras = scope.extras;
@@ -15,6 +18,14 @@ define([], function() {
                         element.append(clone);
                     });
                 });
+
+                scope.$on('$destroy', destroyItemScope);
+
+                function destroyItemScope() {
+                    if (itemScope) {
+                        itemScope.$destroy();
+                    }
+                }
             }
         };
     };
