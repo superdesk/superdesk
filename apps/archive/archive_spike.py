@@ -20,7 +20,7 @@ class ArchiveSpikeResource(Resource):
     datasource = {'source': 'archive'}
     resource_methods = ['POST', 'DELETE']
     resource_title = endpoint_name
-    privileges = {'archive.spike': 'POST', 'archive.unspike': 'DELETE'}
+    privileges = {'POST': 'archive.spike', 'DELETE': 'archive.unspike'}
 
 
 class ArchiveSpikeService(BaseService):
