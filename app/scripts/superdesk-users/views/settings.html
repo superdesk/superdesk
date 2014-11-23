@@ -1,5 +1,5 @@
 <div sd-settings-view>
-    <form name="rolesForm">
+    
 	<div class="header">
 		<div class="container full-width">
 			<h2 translate>User Roles</h2>
@@ -7,32 +7,33 @@
 		</div>
 	</div>
 	<div class="settings-tab-content user-roles">
-		<div class="roles-list" ng-if="roles">
-			
-			<div class="action-line initial">
-				<div class="td name"></div>
-				<div ng-repeat="role in roles" class="td role-field">
-					<div class="dropdown">
-						<div class="dropdown-toggle">{{role.name}} <b class="caret"></b></div>
-						<ul class="dropdown-menu pull-right">
-							<li><button ng-click="edit(role)" trnaslate>Edit</button></li>
-							<li><button ng-click="remove(role)" trnaslate>Delete</button></li>
-						</ul>
+		<form name="rolesForm">
+			<div class="roles-list" ng-if="roles">
+				
+				<div class="action-line initial">
+					<div class="td name"></div>
+					<div ng-repeat="role in roles" class="td role-field">
+						<div class="dropdown">
+							<div class="dropdown-toggle">{{role.name}} <b class="caret"></b></div>
+							<ul class="dropdown-menu pull-right">
+								<li><button ng-click="edit(role)" trnaslate>Edit</button></li>
+								<li><button ng-click="remove(role)" trnaslate>Delete</button></li>
+							</ul>
+						</div>
+					</div>
+					<div class="td blank">
+						<button class="create-role" ng-click="edit({})"><i class="icon-plus-small"></i> {{ :: 'Create Role' | translate }}</button>
 					</div>
 				</div>
-				<div class="td blank">
-					<button class="create-role" ng-click="edit({})"><i class="icon-plus-small"></i> {{ :: 'Create Role' | translate }}</button>
+				<div ng-repeat="p in privileges | orderBy:name" class="action-line">
+					<div class="td name">{{p.label}}</div>
+					<div ng-repeat="role in roles" class="td role-field">
+						<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="role.permissions[p.name]">
+					</div>
+					<div class="td blank"></div>
 				</div>
 			</div>
-			<div ng-repeat="p in privileges | orderBy:name" class="action-line">
-				<div class="td name">{{p.label}}</div>
-				<div ng-repeat="role in roles" class="td role-field">
-					<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="role.permissions[p.name]">
-				</div>
-				<div class="td blank"></div>
-			</div>
-		</div>
-
+		</form>
 		<div class="new-role-modal mini-modal" ng-if="editRole">
 			<div class="title" ng-show="editRole._id" translate>Edit Role</div>
 			<div class="title" ng-show="!editRole._id" translate>New Role</div>
@@ -87,5 +88,5 @@
 			</div>
 		</div> -->
 	</div>
-    </form>
+    
 </div>

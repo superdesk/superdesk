@@ -19,13 +19,14 @@
             </header>
             <div class="content">
                 <div sd-shadow>
+                    <div class="alert alert-error" ng-if="roles && isEmpty(roles)" translate>No user roles defined!</div>
                     <div class="users-table">
                         <ul class="table-header">
                             <li>
                                 <div class="row-wrapper">
                                     <div class="name" sd-sort data-label="{{ 'Full name' | translate }}" data-field="full_name"></div>
                                     <div class="username" sd-sort data-label="{{ 'Username' | translate }}" data-field="username"></div>
-                                    <div class="role" ng-show translate>Role</div>
+                                    <div class="role" translate>Role</div>
                                     <div class="email" sd-sort data-label="{{ 'Email' | translate }}" data-field="email"></div>
                                     <div class="created" sd-sort data-label="{{ 'Created' | translate }}" data-field="_created"></div>
                                 </div>
@@ -36,6 +37,7 @@
 
                         <ul class="table-newest"
                             sd-user-list
+                            data-roles="roles"
                             data-users="createdUsers"
                             data-selected="selected.user"
                             data-done="afterDelete"
@@ -44,6 +46,7 @@
 
                         <ul class="table-body"
                             sd-user-list
+                            data-roles="roles"
                             data-users="users._items"
                             data-selected="selected.user"
                             data-done="afterDelete"
