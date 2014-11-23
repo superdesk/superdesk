@@ -296,8 +296,6 @@ class ArchiveIngestService(BaseService):
             if task.state not in ('PROGRESS', states.SUCCESS, states.FAILURE) and not task.result:
                 update_status(task.id, 0, 0)
 
-            # superdesk.get_resource_service(ARCHIVE).patch(doc.get('guid'), {"task_id": task.id})
-
         return [doc.get('guid') for doc in docs]
 
     def update(self, id, updates):
