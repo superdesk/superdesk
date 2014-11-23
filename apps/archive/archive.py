@@ -15,6 +15,7 @@ from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
 from apps.legal_archive.components.legal_archive_proxy import LegalArchiveProxy
+from copy import copy
 
 
 SOURCE = 'archive'
@@ -81,7 +82,7 @@ class ArchiveService(BaseService):
         on_create_media_archive()
         get_component(LegalArchiveProxy).create(docs)
         for doc in docs:
-            add_activity('added new item {{ type }} about {{ subject }}',
+            add_activity('added new item {{ type }} about {{ subject }}', item=doc,
                          type=doc['type'], subject=get_subject(doc))
 
     def on_update(self, updates, original):
@@ -109,8 +110,10 @@ class ArchiveService(BaseService):
         on_update_media_archive()
 
         if '_version' in updates:
+            updated = copy(original)
+            updated.update(updates)
             add_activity('created new version {{ version }} for item {{ type }} about {{ subject }}',
-                         version=updates['_version'], subject=get_subject(updates, original))
+                         item=updated, version=updates['_version'], subject=get_subject(updates, original))
 
     def on_replace(self, document, original):
         user = get_user()
@@ -139,7 +142,7 @@ class ArchiveService(BaseService):
 
     def on_deleted(self, doc):
         on_delete_media_archive()
-        add_activity('removed item {{ type }} about {{ subject }}',
+        add_activity('removed item {{ type }} about {{ subject }}', item=doc,
                      type=doc['type'], subject=get_subject(doc))
 
     def replace(self, id, document):

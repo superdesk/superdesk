@@ -30,7 +30,8 @@ class UsersService(BaseService):
     def on_created(self, docs):
         for user_doc in docs:
             self.update_user_defaults(user_doc)
-            add_activity('created user {{user}}', user=user_doc.get('display_name', user_doc.get('username')))
+            add_activity('created user {{user}}',
+                         user=user_doc.get('display_name', user_doc.get('username')))
 
     def on_updated(self, updates, user):
         self.handle_status_changed(updates, user)
