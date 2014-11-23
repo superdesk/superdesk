@@ -29,24 +29,24 @@ define([
 
                     var match = _.find(scope.items, {_id: itemId});
                     if (match) {
-                        scope.clickItem(match);
+                        clickItem(match);
                     }
                 }
 
                 function move(diff) {
                     return function() {
                         if (scope.items) {
-                            var index = _.indexOf(scope.items, scope.selected);
+                            var index = _.findIndex(scope.items, {_id: $location.search()._id});
                             if (index === -1) { // selected not in current items, select first
-                                return scope.clickItem(_.first(scope.items));
+                                return clickItem(_.first(scope.items));
                             }
 
                             var nextIndex = _.max([0, _.min([scope.items.length - 1, index + diff])]);
                             if (nextIndex < 0) {
-                                return scope.clickItem(_.last(scope.items));
+                                return clickItem(_.last(scope.items));
                             }
 
-                            return scope.clickItem(scope.items[nextIndex]);
+                            return clickItem(scope.items[nextIndex]);
                         }
                     };
                 }
@@ -60,13 +60,12 @@ define([
                 onKey('down', move(DOWN));
                 onKey('right', move(DOWN));
 
-                scope.clickItem = function(item, $event) {
-                    scope.selected = item;
+                function clickItem(item, $event) {
                     scope.select({item: item});
                     if ($event) {
                         $event.stopPropagation();
                     }
-                };
+                }
 
                 scope.$watch('items', function() {
                     fetchSelectedItem($location.search()._id);
