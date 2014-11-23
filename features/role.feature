@@ -7,21 +7,6 @@ Feature: Role Resource
         Then we get list with 0 items
 
     @auth
-    Scenario: Create a new child role
-        Given "roles"
-            """
-            [{"_id": "528de7b03b80a13eefc5e610", "name": "Administrator"}]
-            """
-
-        When we post to "/roles"
-            """
-            {"name": "Editor", "extends": "528de7b03b80a13eefc5e610"}
-            """
-
-        And we get "/roles"
-        Then we get list with 2 items
-
-    @auth
     Scenario: Set permissions for given role
         Given "roles"
             """
@@ -66,22 +51,6 @@ Feature: Role Resource
         And we have "Subscriber" role
         And we have "user" as type of user
         When we get user profile
-        Then we get response code 200
-
-
-    @auth
-    Scenario: Inherit permissions from extended roles
-        Given "roles"
-            """
-            [
-                {"name": "Journalist", "permissions": {"ingest": {"read": 1}}},
-                {"name": "Editor"}
-            ]
-            """
-
-        And role "Editor" extends "Journalist"
-        And we have "Editor" role
-        When we get "/ingest"
         Then we get response code 200
 
     @auth
@@ -149,31 +118,28 @@ Feature: Role Resource
         Then we get response code 400
 
     @auth
-    Scenario: A Role cannot extend its self
+    Scenario: Can not delete default role
         Given "roles"
-          """
-          [{"name": "BIG"}]
-          """
+            """
+            [{"name": "This is a default role", "is_default": true }]
+            """
 
-        When we patch "/roles/#ROLES_ID#"
-          """
-          { "extends": "#ROLES_ID#"}
-          """
+        When we delete "/roles/#ROLES_ID#"
 
         Then we get response code 400
 
     @auth
-    Scenario: A Role can not inherit from its self
-        Given "roles"
-        """
-        [{"name": "A"}]
-        """
-
-        When we post to "/roles"
-        """
-        [{"name": "B", "extends": "#ROLES_ID#"}]
-        """
-
-        When role "A" extends "B"
-
-        Then we get response code 400
+    Scenario: Only one default
+      Given "roles"
+            """
+            [{"name": "A", "is_default": true }]
+            """
+      When we post to "/roles"
+            """
+            [{"name": "B", "is_default": true }]
+            """
+      When we get "/roles/#ROLES_ID#"
+      Then we get existing resource
+      """
+        {"is_default": true}
+       """

@@ -1,14 +1,14 @@
+import logging
+
+from flask import current_app as app
+
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_DELETE
 from superdesk.services import BaseService
 from superdesk.utils import is_hashed, get_hash
 from superdesk import get_resource_service, SuperdeskError
-from flask import current_app as app
 from superdesk.emails import send_user_status_changed_email, send_activate_account_email
 from superdesk.utc import utcnow
-from eve.validation import ValidationError
-
-import logging
-
+import superdesk
 
 logger = logging.getLogger(__name__)
 
@@ -144,14 +144,25 @@ class ADUsersService(UsersService):
 class RolesService(BaseService):
 
     def on_update(self, updates, original):
-        if updates.get('extends'):
-            if updates.get('extends') == original.get('_id'):
-                raise ValidationError('A role can not extend its self')
-            self.check_parents(original.get('_id'), updates.get('extends'))
+        if updates.get('is_default'):
+            # if we are updating the role that is already default that is OK
+            if original.get('is_default'):
+                return
+            self.remove_old_default()
 
-    def check_parents(self, myid, parentid):
-        parent = self.find_one(req=None, _id=parentid)
-        if parent:
-            if parent['_id'] == myid:
-                raise ValidationError('Circular role inheritance')
-            self.check_parents(myid, parent.get('extends'))
+    def on_create(self, docs):
+        for doc in docs:
+            # if this new one is default need to remove the old default
+            if doc.get('is_default'):
+                self.remove_old_default()
+
+    def on_delete(self, docs):
+        if docs.get('is_default'):
+            raise superdesk.SuperdeskError('Cannot delete the default role')
+
+    def remove_old_default(self):
+        # see of there is already a default role and set it to no longer default
+        old = self.find_one(req=None, is_default=True)
+        # make it no longer default
+        if old:
+            get_resource_service('roles').update(old.get('_id'), {"is_default": False})

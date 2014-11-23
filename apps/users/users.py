@@ -13,11 +13,11 @@ class RolesResource(Resource):
         'description': {
             'type': 'string'
         },
-        'extends': {
-            'type': 'objectid'
-        },
         'permissions': {
             'type': 'dict'
+        },
+        'is_default': {
+            'type': 'boolean'
         }
     }
     datasource = {
