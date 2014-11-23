@@ -13,7 +13,7 @@ class RolesResource(Resource):
         'description': {
             'type': 'string'
         },
-        'permissions': {
+        'privileges': {
             'type': 'dict'
         },
         'is_default': {
@@ -73,16 +73,14 @@ class UsersResource(Resource):
             'type': 'string',
         },
         'avatar': Resource.rel('upload', True),
-        'roles': {
-            'type': 'list'
-        },
-        'preferences': {'type': 'dict'},
+        'role': Resource.rel('roles', True),
+        'privileges': {'type': 'dict'},
         'workspace': {
             'type': 'dict'
         },
         'user_type': {
             'type': 'string',
-            'allowed': ['user', 'manager', 'administrator'],
+            'allowed': ['user', 'administrator'],
             'default': 'administrator',
             'required': True
         },

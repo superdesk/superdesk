@@ -7,7 +7,7 @@ Feature: Role Resource
         Then we get list with 0 items
 
     @auth
-    Scenario: Set permissions for given role
+    Scenario: Set privileges to a given role
         Given "roles"
             """
             [{"name": "Admin"}]
@@ -15,11 +15,11 @@ Feature: Role Resource
 
         When we patch given
             """
-            {"permissions": {"ingest": {"read": 1}, "archive": {"write": 1}}}
+            {"privileges": {"ingest": {"read": 1}, "archive": {"write": 1}}}
             """
 
         And we get given
-        Then we get "permissions"
+        Then we get "privileges"
 
     @auth
     Scenario: Check permissions on read with role
@@ -36,7 +36,7 @@ Feature: Role Resource
     Scenario: Check permissions on read with role and permissions
         Given "roles"
             """
-            [{"name": "Editor", "permissions": {"ingest": {"read": 1}}}]
+            [{"name": "Editor", "privileges": {"ingest": {"read": 1}}}]
             """
         And we have "Editor" role
         When we get "/ingest"
@@ -81,7 +81,7 @@ Feature: Role Resource
     Scenario: Users can write to resources if they have permission
         Given "roles"
             """
-            [{"name": "Pool Subs", "permissions": {"desks": {"write": 1}}}]
+            [{"name": "Pool Subs", "privileges": {"desks": {"write": 1}}}]
             """
         And we have "Pool Subs" role
         And we have "user" as type of user
@@ -130,16 +130,17 @@ Feature: Role Resource
 
     @auth
     Scenario: Only one default
-      Given "roles"
+        Given "roles"
             """
             [{"name": "A", "is_default": true }]
             """
-      When we post to "/roles"
+
+        When we post to "/roles"
             """
             [{"name": "B", "is_default": true }]
             """
-      When we get "/roles/#ROLES_ID#"
-      Then we get existing resource
-      """
-        {"is_default": true}
-       """
+        When we get "/roles/#ROLES_ID#"
+        Then we get existing resource
+            """
+            {"is_default": true}
+            """

@@ -6,6 +6,7 @@ from behave import given, when, then  # @UnresolvedImport
 from flask import json
 from eve.methods.common import parse
 from superdesk import default_user_preferences, get_resource_service, utc
+from eve.io.mongo import MongoJSONEncoder
 
 from wooper.general import fail_and_print_body, apply_path,\
     parse_json_response
@@ -214,7 +215,7 @@ def step_impl_given_config(context):
 def step_impl_given_role(context, role_name):
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
         role = get_resource_service('roles').find_one(name=role_name, req=None)
-        data = json.dumps({'roles': [str(role['_id'])]})
+        data = MongoJSONEncoder().encode({'role': role.get('_id')})
     response = patch_current_user(context, data)
     assert_ok(response)
 

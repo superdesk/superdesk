@@ -50,6 +50,12 @@ class UsersService(BaseService):
     def on_deleted(self, doc):
         add_activity(ACTIVITY_DELETE, 'removed user {{user}}', user=doc.get('display_name', doc.get('username')))
 
+    def find_one(self, req, **lookup):
+        doc = super().find_one(req, **lookup)
+        if (doc is not None):
+            self.set_privileges(doc)
+        return doc
+
     def on_fetched(self, document):
         for doc in document['_items']:
             self.update_user_defaults(doc)
@@ -64,6 +70,13 @@ class UsersService(BaseService):
 
     def user_is_active(self, doc):
         return doc.get('is_active', False)
+
+    def set_privileges(self, doc):
+        role_id = doc.get('role', {})
+        if role_id != {}:
+            role = get_resource_service('roles').find_one(_id=role_id, req=None)
+            role_privileges = role.get('privileges', {})
+            doc['active_privileges'] = dict(list(role_privileges.items()) + list(doc.get('privileges', {}).items()))
 
 
 class DBUsersService(UsersService):

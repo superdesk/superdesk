@@ -88,26 +88,15 @@ class SuperdeskTokenAuth(TokenAuth):
         if user_type == 'administrator':
             return True
 
-        # Only administrators can write to those resources in this list
-        if resource in {'users', 'roles', 'sessions'}:
-            raise ForbiddenError()
-
         # users should be able to change only their preferences
         if resource == 'preferences':
             session = get_resource_service('preferences').find_one(_id=request.view_args.get('_id'), req=None)
             return user['_id'] == session.get("user")
 
-        # Get the list of roles belonging to this user
-        roles = user.get('roles')
-        if roles is not None:
-            for role_id in roles:
-                # check the permissions for each role
-                while role_id:
-                    role = get_resource_service('roles').find_one(_id=role_id, req=None) or {}
-                    perm = role.get('permissions', {})
-                    if perm.get(resource, {}).get(perm_method, False):
-                        return True
-                    role_id = role.get('extends')
+        # Get the list of privileges belonging to this user
+        privileges = user.get('active_privileges', {})
+        if privileges.get(resource, {}).get(perm_method, False):
+            return True
 
         # If we didn't return True so far then user is not authorized
         raise ForbiddenError()
