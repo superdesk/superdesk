@@ -1,6 +1,5 @@
 Feature: User Activity
 
-    @wip
     @auth
     Scenario: User activity
          When we post to "/users"
@@ -24,7 +23,6 @@ Feature: User Activity
          	{"_items": [{"data": {"user": "foo"}, "message": "removed user {{user}}"}]}
          	"""
 
-    @wip
     @auth
     Scenario: Image archive activity
         Given empty "archive"
@@ -35,3 +33,37 @@ Feature: User Activity
          	"""
          	{"_items": [{"data": {"renditions": {}, "name": "image/jpeg"}, "message": "uploaded media {{ name }}"}]}
          	"""
+
+	@auth
+	Scenario: Filter activity by desk
+		Given empty "activity"
+		Given "desks"
+		"""
+		[{"name": "test_desk1"}]
+		"""
+		Given "stages"
+		"""
+        [{"name": "first stage", "desk": "#DESKS_ID#"}]
+		"""
+        Given "archive"
+        """
+        [{"guid": "tag:example.com,0000:newsml_BRE9A605"}]
+        """
+
+        When we patch "/tasks/tag:example.com,0000:newsml_BRE9A605"
+        """
+        {"task":{"user":"#USER_ID#","stage":"#STAGES_ID#","desk":"#DESKS_ID#"}}
+        """
+        Then we get existing resource
+        """
+        {"task":{"user":"#USER_ID#","stage":"#STAGES_ID#","desk":"#DESKS_ID#"}}
+        """
+
+        When we get "/activity?where={"desk": "#DESKS_ID#"}"
+        Then we get existing resource
+        """
+        {"_items": [{"user":"#USER_ID#", "item":"tag:example.com,0000:newsml_BRE9A605", "desk":"#DESKS_ID#"}]}
+        """
+
+        When we get "/activity?where={"desk": "invalid_desk_id"}"
+        Then we get list with 0 items
