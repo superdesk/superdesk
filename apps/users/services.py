@@ -41,6 +41,7 @@ class UsersService(BaseService):
     def on_create(self, docs):
         for user_doc in docs:
             user_doc.setdefault('display_name', get_display_name(user_doc))
+            user_doc['role'] = get_resource_service('roles').get_default_role_id()
 
     def on_created(self, docs):
         for user_doc in docs:
@@ -94,8 +95,8 @@ class UsersService(BaseService):
         if is_admin(user):
             user['active_privileges'] = get_admin_privileges()
             return
-        role_id = user.get('role', {})
-        if role_id != {}:
+        role_id = user.get('role', None)
+        if role_id:
             role = get_resource_service('roles').find_one(_id=role_id, req=None)
             if role:
                 role_privileges = role.get('privileges', {})
@@ -204,7 +205,11 @@ class RolesService(BaseService):
 
     def remove_old_default(self):
         # see of there is already a default role and set it to no longer default
-        old = self.find_one(req=None, is_default=True)
+        role_id = self.get_default_role_id()
         # make it no longer default
-        if old:
-            get_resource_service('roles').update(old.get('_id'), {"is_default": False})
+        if role_id:
+            get_resource_service('roles').update(role_id, {"is_default": False})
+
+    def get_default_role_id(self):
+        role = self.find_one(req=None, is_default=True)
+        return role.get('_id') if role is not None else None
