@@ -197,6 +197,10 @@ class RolesService(BaseService):
     def on_delete(self, docs):
         if docs.get('is_default'):
             raise superdesk.SuperdeskError('Cannot delete the default role')
+        # check if there are any users in the role
+        user = get_resource_service('users').find_one(req=None, role=docs.get('_id'))
+        if user:
+            raise superdesk.SuperdeskError('Cannot delete the role, it still has users in it!')
 
     def remove_old_default(self):
         # see of there is already a default role and set it to no longer default

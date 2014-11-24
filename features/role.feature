@@ -144,3 +144,16 @@ Feature: Role Resource
             """
             {"is_default": true}
             """
+
+    @auth
+    Scenario: Cannot delete a role that has users in it
+        Given "roles"
+            """
+            [{"name": "A" }]
+            """
+        Given "users"
+            """
+            [{"username": "foo", "first_name": "Foo", "last_name": "Bar", "email": "foo@bar.org", "is_active": true, "role": "#ROLES_ID#"}]
+            """
+        When we delete "/roles/#ROLES_ID#"
+        Then we get response code 400
