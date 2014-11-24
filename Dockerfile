@@ -6,9 +6,9 @@ FROM ubuntu:trusty
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     python3 python3-dev python3-pip \
-    build-essential libffi-dev libjpeg8-dev \
-    git mercurial && \
-    pip3 install -U pip distribute
+    build-essential libffi-dev git mercurial \
+    libtiff5-dev libjpeg8-dev zlib1g-dev \
+    libfreetype6-dev liblcms2-dev libwebp-dev
 
 # setup the environment
 WORKDIR /opt/superdesk/
@@ -19,7 +19,7 @@ ENV C_FORCE_ROOT "False"
 
 # install dependencies
 ADD requirements.txt /tmp/requirements.txt
-RUN pip install -U -r /tmp/requirements.txt
+RUN pip3 install -U -r /tmp/requirements.txt
 
 # copy application source code
 ADD . /opt/superdesk
