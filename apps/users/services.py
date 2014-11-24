@@ -1,4 +1,5 @@
 import logging
+import superdesk
 
 from flask import current_app as app
 
@@ -8,7 +9,8 @@ from superdesk.utils import is_hashed, get_hash
 from superdesk import get_resource_service, SuperdeskError
 from superdesk.emails import send_user_status_changed_email, send_activate_account_email
 from superdesk.utc import utcnow
-import superdesk
+from superdesk.privilege import get_privilege_list
+
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +21,19 @@ def get_display_name(user):
         return display_name.strip()
     else:
         return user.get('username')
+
+
+def is_admin(user):
+    """Test if given user is admin.
+
+    :param user
+    """
+    return user.get('user_type', 'user') == 'administrator'
+
+
+def get_admin_privileges():
+    """Get privileges for admin user."""
+    return dict.fromkeys([p['name'] for p in get_privilege_list()], 1)
 
 
 class UsersService(BaseService):
@@ -71,12 +86,22 @@ class UsersService(BaseService):
     def user_is_active(self, doc):
         return doc.get('is_active', False)
 
-    def set_privileges(self, doc):
-        role_id = doc.get('role', {})
+    def set_privileges(self, user):
+        """Resolve privileges for given user.
+
+        :param user
+        """
+        if is_admin(user):
+            user['active_privileges'] = get_admin_privileges()
+            return
+        role_id = user.get('role', {})
         if role_id != {}:
             role = get_resource_service('roles').find_one(_id=role_id, req=None)
-            role_privileges = role.get('privileges', {})
-            doc['active_privileges'] = dict(list(role_privileges.items()) + list(doc.get('privileges', {}).items()))
+            if role:
+                role_privileges = role.get('privileges', {})
+                user['active_privileges'] = dict(
+                    list(role_privileges.items()) + list(user.get('privileges', {}).items())
+                )
 
 
 class DBUsersService(UsersService):

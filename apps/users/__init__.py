@@ -1,6 +1,6 @@
 from settings import LDAP_SERVER
 from .users import RolesResource, UsersResource
-from .services import ADUsersService, DBUsersService, RolesService
+from .services import ADUsersService, DBUsersService, RolesService, is_admin  # noqa
 import superdesk
 
 
