@@ -1,14 +1,14 @@
 <ul class="top-links">
-    <li ng-class="{selected: currentRoute.href == '/workspace/tasks'}">
-        <a href="#/workspace/tasks" sd-beta translate>Tasks</a>
+    <li ng-class="{selected: currentRoute.href == '/workspace/tasks'}" sd-beta ng-if="privileges.tasks">
+        <a href="#/workspace/tasks" translate>Tasks</a>
     </li>
-    <li ng-class="{selected: currentRoute.href == '/workspace/ingest'}">
+    <li ng-class="{selected: currentRoute.href == '/workspace/ingest'}" ng-if="privileges.ingest">
         <a href="#/workspace/ingest" translate>Ingest</a>
     </li>
-    <li ng-class="{selected: currentRoute.href == '/workspace/content'}">
+    <li ng-class="{selected: currentRoute.href == '/workspace/content'}" ng-if="privileges.content">
         <a href="#/workspace/content" translate>Content</a>
     </li>
-    <li ng-class="{selected: currentRoute.href == '/workspace/stream'}">
-        <a href="#/workspace/stream" sd-beta translate>Activity Stream</a>
+    <li ng-class="{selected: currentRoute.href == '/workspace/stream'}" sd-beta>
+        <a href="#/workspace/stream" translate>Stream</a>
     </li>
 </ul>

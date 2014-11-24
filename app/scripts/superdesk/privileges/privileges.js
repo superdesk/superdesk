@@ -2,9 +2,11 @@
 
 'use strict';
 
-function PrivilegesService() {
+PrivilegesService.$inject = ['$rootScope'];
+function PrivilegesService($rootScope) {
 
-    this.privileges = {};
+    this.privileges = {ingest: 1, content: 1};
+    $rootScope.privileges = this.privileges;
 
     /**
      * Check if current user has given privileges
