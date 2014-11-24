@@ -384,7 +384,7 @@
             var promises = [];
 
             _.each($scope.roles, function(role) {
-                promises.push(api.save('roles', role, _.pick(role, 'permissions'))
+                promises.push(api.save('roles', role, _.pick(role, 'privileges'))
                 .then(function(result) {
                 }, function(error) {
                     console.log(error);

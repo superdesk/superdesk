@@ -7,8 +7,8 @@
 		<ul class="fieldset">
 			<li class="field" ng-repeat="p in privileges | orderBy:name">
 				<label>{{ p.label }}</label>
-				<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="role.permissions[p.name]" ng-disabled="true" ng-if="role.permissions[p.name]">
-				<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="user.privileges[p.name]" ng-if="!role.permissions[p.name]">
+				<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="role.privileges[p.name]" ng-disabled="true" ng-if="role.privileges[p.name]">
+				<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="user.privileges[p.name]" ng-if="!role.privileges[p.name]">
 			</li>
 		</ul>
 	</div>
