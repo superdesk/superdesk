@@ -1,3 +1,4 @@
+
 from superdesk.io.tests import setup_providers, teardown_providers
 from superdesk.tests import setup
 from unittest import TestCase
