@@ -18,7 +18,7 @@ class RolesResource(Resource):
         },
         'is_default': {
             'type': 'boolean'
-        }
+        },
     }
     datasource = {
         'default_sort': [('_created', -1)]
@@ -91,7 +91,10 @@ class UsersResource(Resource):
         'needs_activation': {
             'type': 'boolean',
             'default': True
-        }
+        },
+        'privileges': {
+            'type': 'dict'
+        },
     }
 
     extra_response_fields = [
