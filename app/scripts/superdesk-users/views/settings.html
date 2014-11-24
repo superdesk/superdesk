@@ -1,92 +1,17 @@
-<div sd-settings-view>
+<div sd-settings-view ng-init="rolesTab = true">
+
+	<ul class="nav nav-tabs" >
+        <li ng-class="{active: rolesTab}" class="active">
+            <button ng-click="rolesTab = true">Roles</button>
+        </li>
+        <li ng-class="{active: !rolesTab}">
+            <button ng-click="rolesTab = false">Privileges</button>
+        </li>
+    </ul>
     
-	<div class="header">
-		<div class="container full-width">
-			<h2 translate>User Roles</h2>
-			<button class="btn btn-info pull-right" ng-click="saveAll(rolesForm)" ng-disabled="!rolesForm.$dirty" translate>Save</button>
-		</div>
-	</div>
-	<div class="settings-tab-content user-roles">
-		<form name="rolesForm">
-			<div class="roles-list" ng-if="roles">
-				
-				<div class="action-line initial">
-					<div class="td name"></div>
-					<div ng-repeat="role in roles" class="td role-field">
-						<div class="dropdown">
-							<div class="dropdown-toggle">{{role.name}} <b class="caret"></b></div>
-							<ul class="dropdown-menu pull-right">
-								<li><button ng-click="edit(role)" translate>Edit</button></li>
-								<li><button ng-click="remove(role)" translate>Delete</button></li>
-							</ul>
-						</div>
-					</div>
-					<div class="td blank">
-						<button class="create-role" ng-click="edit({})"><i class="icon-plus-small"></i> {{ :: 'Create Role' | translate }}</button>
-					</div>
-				</div>
-				<div ng-repeat="p in privileges | orderBy:name" class="action-line">
-					<div class="td name">{{p.label}}</div>
-					<div ng-repeat="role in roles" class="td role-field">
-						<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="role.privileges[p.name]">
-					</div>
-					<div class="td blank"></div>
-				</div>
-			</div>
-		</form>
-		<div class="new-role-modal mini-modal" ng-if="editRole">
-			<div class="title" ng-show="editRole._id" translate>Edit Role</div>
-			<div class="title" ng-show="!editRole._id" translate>New Role</div>
-			<div class="close" ng-click="cancel()">
-				<i class="icon-close-small"></i>
-			</div>
-			<div class="content">
-				<form name="roleForm">
-					<div class="field">
-						<input type="text" class="fullwidth-input" placeholder="{{ 'Role Name'|translate }}" ng-model="editRole.name" required>
-					</div>
-					<div class="field">
-						<textarea sd-auto-height class="fullwidth-input" placeholder="{{ 'Role Description'|translate }}" ng-model="editRole.description"></textarea>
-					</div>
-				</form>
-			</div>
-			<div class="footer">
-				<button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
-				<button class="btn btn-primary" ng-click="save(editRole)" ng-disabled="!roleForm.$valid" translate>Ok</button>
-			</div>
-		</div>
-		<!-- <div class="splitter">
-			<div class="column-left">
-				<div class="header">
-					<div class="title" translate>Roles</div>
-					<button href="" class="btn btn-info pull-right" ng-click="edit({})">
-						<i class="icon-plus-small icon-white"></i>
-					</button>
-				</div>
-				
-				<ul class="user-roles-list">
-					<li ng-repeat="role in roles"  ng-class="{active: selectedRole._id === role._id}">
-						<div class="header" ng-click="select(role)">
-							<div class="name">{{role.name}}</div>
-							<div class="actions">
-								<button ng-click="edit(role)"><i class="icon-pencil"></i></button>
-								<button ng-click="remove(role)"><i class="icon-trash"></i></button>  
-							</div>
-						</div>
-						<div class="description" ng-if="role.description">{{role.description}}</div>
-					</li>
-					<li ng-show="!roles.length" class="alert alert-info" translate>No roles created yet.</li>
-				</ul>
-			</div>
-			<div class="column-right">
-				<div class="header">
-					<div class="title" translate>permissions</div>
-				</div>
-				<div class="preview-box" ng-show="selectedRole">
-					
-				</div>
-			</div>
-		</div> -->
-	</div>
+    <div class="settings-tab-content user-roles">
+    	<div sd-user-roles ng-if="rolesTab"></div>
+    	<div sd-roles-privileges ng-if="!rolesTab"></div>
+    </div>
     
 </div>

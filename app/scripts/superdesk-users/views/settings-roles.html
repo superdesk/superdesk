@@ -1,0 +1,62 @@
+<div class="splitter">
+	<div class="column-left">
+		<div class="header">
+			<div class="title" translate>Roles</div>
+			<button href="" class="btn btn-info pull-right" ng-click="edit({})">
+				<i class="icon-plus-small icon-white"></i>
+			</button>
+		</div>
+
+		<ul class="user-roles-list">
+			<li ng-repeat="role in roles">
+				<div class="header">
+					<div class="name">{{role.name}}<span class="label default" ng-if="role.is_default" translate>default</span></div>
+
+					<div class="actions">
+						<button ng-click="edit(role)"><i class="icon-pencil"></i></button>
+						<button ng-click="remove(role)"><i class="icon-trash"></i></button>  
+					</div>
+				</div>
+				<div class="description" ng-if="role.description">{{role.description}}</div>
+			</li>
+			<li ng-show="!roles.length" class="alert alert-info" translate>No roles created yet.</li>
+		</ul>
+
+		<div class="new-role-modal mini-modal" ng-if="editRole">
+			<div class="title" ng-show="editRole._id" translate>Edit Role</div>
+			<div class="title" ng-show="!editRole._id" translate>New Role</div>
+			<div class="close" ng-click="cancel()">
+				<i class="icon-close-small"></i>
+			</div>
+			<div class="content">
+				<form name="roleForm">
+					<fieldset>
+						<div class="field">
+							<input type="text" class="fullwidth-input" placeholder="{{ 'Role Name'|translate }}" ng-model="editRole.name" required>
+						</div>
+						<div class="field">
+							<textarea sd-auto-height class="fullwidth-input" placeholder="{{ 'Role Description'|translate }}" ng-model="editRole.description"></textarea>
+						</div>
+						<div class="field row">
+							<input type="checkbox" name="is_default" id="is_default" ng-model="editRole.is_default">
+							<label for="is_default" translate>Default</label>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+			<div class="footer">
+				<button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
+				<button class="btn btn-primary" ng-click="save(editRole)" ng-disabled="!roleForm.$valid" translate>Ok</button>
+			</div>
+		</div>
+
+	</div>
+<!-- 	<div class="column-right">
+		<div class="header">
+			<div class="title" translate>permissions</div>
+		</div>
+		<div class="preview-box" ng-show="selectedRole">
+			
+		</div>
+	</div> -->
+</div>

@@ -81,6 +81,10 @@
 						line-height: @nav-height - 20;
 					}
 				}
+				.nav-tabs {
+					border-bottom: 1px solid #f0f0f0;
+					padding-left: 10px;
+				}
 				.settings-tab-content {
 					.shadow-list-holder {
 						padding-right: 20px;
@@ -316,9 +320,22 @@
 }
 
 
-/*  user roles */
+
+
+// User roles - NEW
+// -------------------------------------
+
+@roles-border: 1px solid #f0f0f0;
+
 .user-roles {
-	padding-right: 0 !important;
+	max-width: none !important;
+	width: auto !important;
+	right: 0;
+	left: 0;
+
+
+	// ROLES TAB
+	
 	.splitter {
 		position: absolute;
 		left: 0; top: 0;
@@ -366,6 +383,7 @@
 			}
 		}
 	}
+
 	.user-roles-list {
 		padding-top: 20px;
 		> li {
@@ -445,190 +463,82 @@
 			}
 		}
 	}
-	// .preview-box {
-	// 	position: absolute;
-	// 	left: 0;right: 0;top: 0;bottom: 0;
-	// 	overflow: hidden;
-	// 	.preview-header {
-	// 		position: absolute;
-	// 		top: 0;
-	// 		left:0 ;right: 0;
-	// 		border: 1px solid #e8e8e8;
-	// 		height: 39px;
-	// 		.close-preview {
-	// 			margin-top: 11px;
-	// 			margin-right: 10px;
-	// 			.opacity(40);
-	// 			&:hover {
-	// 				.opacity(60);
-	// 				cursor: pointer;
-	// 			}
-	// 		}
-	// 		.title {
-	// 			display: inline-block;
-	// 			width: 250px;
-	// 			margin: 10px 0 0 20px;  
-	// 			border: 0;
-	// 			font-size: 14px;
-	// 			.text-semibold();
-	// 			.inherit-info {
-	// 				margin-left: 10px;
-	// 				font-size: 11px;
-	// 				color: #666;
-	// 				.text-normal();
-	// 				i {
-	// 					color: #787878;
-	// 					font-style: normal;
-	// 					margin-right: 5px;
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// 	.preview-body {
-	// 		position: absolute;
-	// 		top: 40px;
-	// 		left:0 ;right: 0;
-	// 		bottom: 0;
-	// 		overflow-y: auto; overflow-x:hidden;
-	// 	}
-	// }
-}
-// .permission-list {
-// 	padding: 20px;
-// 	background: #f4f4f4;
-// 	border:1px solid #e8e8e8;
-// 	ul {
-// 		li {
-// 			font-size: 13px;
-// 			margin-bottom: 10px;
-// 			margin-left: 7px;
-// 			i {
-// 				.opacity(70);
-// 				vertical-align: middle;
-// 				margin-top: -3px;
-// 				margin-left: -19px;
-// 				margin-right: 5px;
-// 			}
-// 			span {
-// 				color: #787878;
-// 				font-size: 11px;
-// 				vertical-align: top;
-// 				margin-left: 5px;
-// 			}
-// 			&.disable {
-// 				i {
-// 					.opacity(30);
-// 				}
-// 			}
-// 		}
-// 	}
-// }
 
-// .permissions-box {
-// 	border: 1px solid #d0d0d0;
-// 	height: 230px;
-// 	.box-sizing(border-box);
-// 	overflow-y: auto;
-// 	.permission-list {
-// 		background:#fff;
-// 		border: 0;
-// 		li {
-// 			i {
-// 				margin-left: 0;
-// 			}
-// 			input {
-// 				margin-right: 5px;
-// 			}
-// 		}
-// 	}
-// }
+	.label.default {
+		font-size: 10px;
+		font-weight: normal;
+		padding: 0px 5px;
+		line-height: 12px;
+		margin-left: 5px;
+	}
 
+	// PRIVILEGES TAB
 
-// User roles - NEW
-// -------------------------------------
+	.privileges {
 
-@roles-border: 1px solid #f0f0f0;
-
-.user-roles {
-	max-width: none !important;
-	width: auto !important;
-	right: 0;
-	left: 0;
-
-	.roles-list {
-		
-		.action-line {
-			display: table-row;	
-			&:hover {
-				background: #f8f8f8;
-			}
-		}
-		.td {
-			display: table-cell;
-			border-bottom: @roles-border;
-			text-align: center;
-			border-left: @roles-border;
-			.user-select(none);
-		}
-		.name {
-			border-left: 0;
-			text-align: left;
-			padding: 10px 40px 10px 10px;
-			text-transform: uppercase;
-			.text-semibold();
-			font-size: 10px;
-			white-space: nowrap;
-			color: #666;
-		}
-		.blank {
-			width: 100%;
-			border-bottom: @roles-border;
-			text-align: left;
-			height: 38px;
+		> .header {
+			padding: 10px;
+			height: 28px;
 		}
 
-		.initial {
-			background: #e0e0e0;
-			&:hover {
-				background: #e0e0e0;
-			}
-			.td {
-				font-size: 13px;
-				white-space: nowrap;
-				border-top: @roles-border;
-				border-color: #d8d8d8 !important;
-				.dropdown {
-					.dropdown-toggle {
-						padding: 10px 15px 10px 10px;
-						&:hover {
-							cursor: pointer;
-							background: #eee;
-						}
-					}
-					.dropdown-menu {
-						margin-top: 0;
-						border-radius: 0;
-						margin-right: -1px;
-						min-width: 0;
-						width: 120px;
-						&:before {
-							display: none;
-						}
-					}
-					&.open {
-						.dropdown-toggle {
-							background: #fff !important;
-						}
-					}
+		.roles-list {
+			
+			.action-line {
+				display: table-row;	
+				&:hover {
+					background: #f8f8f8;
 				}
 			}
-			.create-role {
-				padding: 10px;
-				position: absolute;
-				background: none;
-				border: 0;
+			.td {
+				display: table-cell;
+				border-bottom: @roles-border;
+				text-align: center;
+				border-left: @roles-border;
+				.user-select(none);
 			}
-		}
+			.name {
+				border-left: 0;
+				text-align: left;
+				padding: 10px 40px 10px 10px;
+				text-transform: uppercase;
+				.text-semibold();
+				font-size: 10px;
+				white-space: nowrap;
+				color: #666;
+			}
+			.blank {
+				width: 100%;
+				border-bottom: @roles-border;
+				text-align: left;
+			}
 
+			.initial {
+				background: #e0e0e0;
+				.label {
+					position: absolute;
+					top: 1px;
+					right: 2px;
+					line-height: 10px;
+				}
+				&:hover {
+					background: #e0e0e0;
+				}
+				.td {
+					font-size: 13px;
+					white-space: nowrap;
+					border-top: @roles-border;
+					border-color: #d8d8d8 !important;
+					padding: 10px;
+					position: relative;
+				}
+				.create-role {
+					padding: 10px;
+					position: absolute;
+					background: none;
+					border: 0;
+				}
+			}
+
+		}
 	}
 }
