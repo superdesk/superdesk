@@ -894,7 +894,7 @@
                 }
             };
         }])
-        .directive('sdUserPrivileges', ['api', function(api) {
+        .directive('sdUserPrivileges', ['api', 'gettext', 'notify', function(api, gettext, notify) {
             return {
                 scope: {
                     user: '='
@@ -913,8 +913,13 @@
                     });
 
                     scope.save = function(userPrivileges) {
-                        //do the save
-                        console.log(scope.user.privileges);
+                        api.save('users', scope.user, _.pick(scope.user, 'privileges'))
+                        .then(function(result) {
+                            notify.success(gettext('Privileges updated.'));
+                        }, function(error) {
+                            notify.error(gettext('Privileges not updated.'));
+                            console.log(error);
+                        });
                         userPrivileges.$setPristine();
                     };
                 }
