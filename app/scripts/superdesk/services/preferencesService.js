@@ -8,6 +8,7 @@ define(['angular', 'lodash'], function(angular, _) {
 
             var USER_PREFERENCES = 'user_preferences',
                 SESSION_PREFERENCES = 'session_preferences',
+                ACTIVE_PRIVILEGES = 'active_privileges',
                 PREFERENCES = 'preferences',
                 userPreferences = ['feature:preview', 'archive:view', 'email:notification', 'workqueue:items'],
                 api,
@@ -40,6 +41,18 @@ define(['angular', 'lodash'], function(angular, _) {
             this.remove = function() {
                 storage.removeItem(PREFERENCES);
                 original_preferences = null;
+            };
+
+            this.getPrivileges = function(key) {
+                return this.get().then(function() {
+                    var preferences = loadLocally();
+
+                    if (!key){
+                        return $q.when(preferences[ACTIVE_PRIVILEGES]);
+                    } else {
+                        return $q.when(preferences[ACTIVE_PRIVILEGES][key]);
+                    }
+                });
             };
 
             function getPreferences(sessionId, key){
