@@ -9,6 +9,7 @@ from eve.utils import parse_request
 _preferences_key = 'preferences'
 _user_preferences_key = 'user_preferences'
 _session_preferences_key = 'session_preferences'
+_privileges_key = 'active_privileges'
 
 
 def init_app(app):
@@ -21,7 +22,8 @@ class PreferencesResource(Resource):
     datasource = {'source': 'auth', 'projection': {'session_preferences': 1, 'user': 1}}
     schema = {
         _session_preferences_key: {'type': 'dict', 'required': True},
-        _user_preferences_key: {'type': 'dict', 'required': True}
+        _user_preferences_key: {'type': 'dict', 'required': True},
+        _privileges_key: {'type': 'dict'}
     }
     resource_methods = []
     item_methods = ['GET', 'PATCH']
@@ -86,6 +88,7 @@ class PreferencesService(BaseService):
         session_doc = super().find_one(req, **lookup)
         user_doc = get_resource_service('users').find_one(req=None, _id=session_doc['user'])
         self.enhance_document_with_default_prefs(session_doc, user_doc)
+        self.enhance_document_with_user_privileges(session_doc, user_doc)
         if req is None:
             req = parse_request('auth')
             session_doc['_etag'] = req.if_match
@@ -107,6 +110,9 @@ class PreferencesService(BaseService):
         available = dict(superdesk.default_session_preferences)
         available.update(orig_session_prefs)
         session_doc[_session_preferences_key] = available
+
+    def enhance_document_with_user_privileges(self, session_doc, user_doc):
+        session_doc[_privileges_key] = user_doc.get(_privileges_key, {})
 
     def enhance_document_with_default_user_prefs(self, user_doc):
         orig_user_prefs = user_doc.get(_preferences_key, {})
