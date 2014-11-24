@@ -36,8 +36,6 @@
         this.sortOptions = sortOptions;
         this.toggleSortDir = toggleSortDir;
 
-        var cache = {};
-
         /**
          * Single query instance
          */
@@ -122,10 +120,6 @@
                     }};
                 }
 
-                if (angular.equals(criteria, cache.criteria)) {
-                    return cache.criteria;
-                }
-
                 if (withSource) {
                     criteria = {source: criteria};
                     if (search.repo) {
@@ -133,8 +127,6 @@
                     }
                 }
 
-                cache.search = search;
-                cache.criteria = criteria;
                 return criteria;
             };
 
@@ -179,34 +171,24 @@
     }
 
     function SearchController($scope, $location, api, search) {
+
+        $scope.context = 'search';
+
         $scope.repo = {
             ingest: true,
             archive: true
         };
-        $scope.context = 'search';
 
-        function getQuery() {
-            return search.query().getCriteria(true);
-        }
-
-        function refresh(criteria) {
+        function refresh() {
+            var criteria = search.query().getCriteria(true);
             api.query('search', criteria).then(function(result) {
                 $scope.items = result;
             });
         }
 
-        var _id = $location.search()._id || null;
-        $scope.$on('$routeUpdate', function() {
-            var newId = $location.search()._id || null;
-            if (newId === _id) {
-                var next = getQuery();
-                refresh(next);
-            } else {
-                _id = newId;
-            }
-        });
-
-        refresh(getQuery());
+        $scope.$watch(function getSearchParams() {
+            return _.omit($location.search(), '_id');
+        }, refresh, true);
     }
 
     angular.module('superdesk.search', ['superdesk.api', 'superdesk.activity', 'superdesk.desks'])
@@ -483,7 +465,7 @@
         }])
 
         .directive('sdSearchWithin', ['$location', function($location) {
-                      return {
+            return {
                 scope: {},
                 templateUrl: 'scripts/superdesk-search/views/search-within.html',
                 link: function(scope, elem) {

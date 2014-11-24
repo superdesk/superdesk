@@ -113,7 +113,7 @@
                 };
 
                 $scope.isPinned = function(item) {
-                    return !!pinnedList[item._id];
+                    return item && pinnedList[item._id];
                 };
 
                 var save = function(pinnedItems) {

@@ -38,9 +38,9 @@ describe('search service', function() {
 
     it('can be watched for changes', inject(function($location, search, $rootScope) {
         var criteria = search.query().getCriteria();
-        expect(criteria).toBe(search.query().getCriteria());
+        expect(criteria).toEqual(search.query().getCriteria());
         $location.search('q', 'test');
         $rootScope.$digest();
-        expect(criteria).not.toBe(search.query().getCriteria());
+        expect(criteria).not.toEqual(search.query().getCriteria());
     }));
 });

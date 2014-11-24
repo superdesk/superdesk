@@ -14,6 +14,8 @@ define([
 
     mod.directive('sdUpdown', ['$location', 'keyboardManager', function($location, keyboardManager) {
         return {
+            transclude: true,
+            template: '<div ng-transclude></div>',
             scope: {
                 'items': '=',
                 'select': '&'

@@ -47,7 +47,7 @@
 <div class="action">
     <ul ng-if="extras.activity" class="item-functions"
         sd-activity-list
-        data-data="{item: item, list: items, index: $index}"
+        data-item="item"
         data-type="{{extras.activity.type || item._type}}"
         data-action="{{extras.activity.action}}">
     </ul>
