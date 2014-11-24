@@ -170,6 +170,7 @@
         };
     }
 
+    SearchController.$inject = ['$scope', '$location', 'api', 'search'];
     function SearchController($scope, $location, api, search) {
 
         $scope.context = 'search';
@@ -642,7 +643,7 @@
         /**
          * Item sort component
          */
-        .directive('sdItemSortbar', function($location, search) {
+        .directive('sdItemSortbar', ['$location', 'search', function sortBarDirective($location, search) {
             return {
                 scope: {},
                 templateUrl: 'scripts/superdesk-search/views/item-sortbar.html',
@@ -665,7 +666,7 @@
                     getActive();
                 }
             };
-        })
+        }])
 
         .directive('sdSearchContainer', function() {
             return {
