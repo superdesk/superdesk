@@ -14,7 +14,7 @@ def create_delayed(endpoint_name, docs, **kwargs):
     :param docs: list of docs to be inserted
     """
 
-    search_backend = app.data._lookup_backend(endpoint_name)
+    search_backend = app.data._search_backend(endpoint_name)
     if not search_backend:
         return
 
