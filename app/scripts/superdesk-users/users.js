@@ -174,11 +174,8 @@
 
         api('roles').query().then(function(result) {
             $scope.roles = _.indexBy(result._items, '_id');
+            $scope.noRolesWarning = result._items.length === 0;
         });
-
-        $scope.isEmpty = function(object) {
-            return _.isEmpty(object);
-        };
 
         $scope.preview = function(user) {
             $scope.selected.user = user;

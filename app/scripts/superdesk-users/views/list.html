@@ -19,7 +19,7 @@
             </header>
             <div class="content">
                 <div sd-shadow>
-                    <div class="alert alert-error" ng-if="roles && isEmpty(roles)" translate>No user roles defined!</div>
+                    <div class="alert alert-error" ng-if="noRolesWarning" translate>No user roles defined!</div>
                     <div class="users-table">
                         <ul class="table-header">
                             <li>
