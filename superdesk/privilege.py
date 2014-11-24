@@ -12,6 +12,7 @@ def privilege(**kwargs):
     - description
     - category
     """
+    kwargs['name'] = kwargs['name'].replace('.', ':')
     _privileges[kwargs['name']] = kwargs
 
 

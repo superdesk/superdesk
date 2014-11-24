@@ -15,3 +15,8 @@ class PrivilegeTestCase(TestCase):
         self.assertIn('archive', _privileges)
 
         self.assertEqual(2, len(get_privilege_list()))
+
+    def test_privilege_name_has_no_dots(self):
+        privilege(name='test.')
+        self.assertNotIn('test.', _privileges)
+        self.assertIn('test:', _privileges)
