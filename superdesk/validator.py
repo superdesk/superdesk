@@ -1,15 +1,12 @@
 import re
-import json
 
 from bson import ObjectId
 
 from eve.io.mongo import Validator
-from eve.utils import config, ParsedRequest
-from eve_elastic.elastic import Elastic
+from eve.utils import config
 from werkzeug.datastructures import FileStorage
 
 import superdesk
-from superdesk import get_backend
 
 
 ERROR_PATTERN = {'pattern': 1}
@@ -46,28 +43,15 @@ class SuperdeskValidator(Validator):
         """Validate unique with custom error msg."""
 
         if not self.resource.endswith("autosave") and unique:
-            backend = get_backend()._lookup_backend(self.resource)
+            query = {field: value}
+            if self._id:
+                try:
+                    query[config.ID_FIELD] = {'$ne': ObjectId(self._id)}
+                except:
+                    query[config.ID_FIELD] = {'$ne': self._id}
 
-            if isinstance(backend, Elastic) and self._id:
-                query = {"query": {"filtered": {"query": {"match": {field: value}},
-                                                "filter": {"bool": {"must_not": {"term": {"_id": self._id}}}}}}}
-
-                req = ParsedRequest()
-                req.args = {'source': json.dumps(query)}
-                docs = superdesk.get_resource_service(self.resource).get(req=req, lookup=None)
-
-                if docs.count():
-                    self._error(field, ERROR_UNIQUE)
-            else:
-                query = {field: value}
-                if self._id:
-                    try:
-                        query[config.ID_FIELD] = {'$ne': ObjectId(self._id)}
-                    except:
-                        query[config.ID_FIELD] = {'$ne': self._id}
-
-                if superdesk.get_resource_service(self.resource).find_one(req=None, **query):
-                    self._error(field, ERROR_UNIQUE)
+            if superdesk.get_resource_service(self.resource).find_one_in_base_backend(req=None, **query):
+                self._error(field, ERROR_UNIQUE)
 
     def _validate_iunique(self, unique, field, value):
         """Validate uniqueness ignoring case.MONGODB USE ONLY"""
