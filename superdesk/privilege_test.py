@@ -1,4 +1,5 @@
 
+from nose.tools import raises
 from .tests import TestCase
 from superdesk.privilege import privilege, get_privilege_list, _privileges
 
@@ -16,7 +17,6 @@ class PrivilegeTestCase(TestCase):
 
         self.assertEqual(2, len(get_privilege_list()))
 
+    @raises(Exception)
     def test_privilege_name_has_no_dots(self):
         privilege(name='test.')
-        self.assertNotIn('test.', _privileges)
-        self.assertIn('test:', _privileges)

@@ -3,8 +3,14 @@
 _privileges = {}
 
 
+class PrivilegeNameError(Exception):
+    pass
+
+
 def privilege(**kwargs):
     """Register privilege.
+
+    Privilege name must not contain "."
 
     Privilege properties:
     - name
@@ -12,7 +18,8 @@ def privilege(**kwargs):
     - description
     - category
     """
-    kwargs['name'] = kwargs['name'].replace('.', ':')
+    if '.' in kwargs['name']:
+        raise PrivilegeNameError('"." is not supported in privilege name "%s"' % kwargs['name'])
     _privileges[kwargs['name']] = kwargs
 
 
