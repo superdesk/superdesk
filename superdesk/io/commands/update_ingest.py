@@ -79,3 +79,4 @@ def ingest_items(provider, items):
             '_updated': start,
             'ingested_count': ingested_count
         })
+        return ingested_count

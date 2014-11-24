@@ -92,7 +92,7 @@ class BaseService():
         if config.IF_MATCH:
             resolve_document_etag(updated)
             updates[config.ETAG] = updated[config.ETAG]
-        updates[config.LAST_UPDATED] = utcnow()
+        updates.setdefault(config.LAST_UPDATED, utcnow())
         res = self.update(id, updates)
         self.on_updated(updates, original)
         return res
