@@ -863,7 +863,32 @@
                 }
             };
         }])
+        .directive('sdUserPrivileges', ['api', function(api) {
+            return {
+                scope: {
+                    user: '='
+                },
+                templateUrl: 'scripts/superdesk-users/views/user-privileges.html',
+                link: function(scope) {
+                    api('privileges').query().
+                    then(function(result) {
+                        scope.privileges = result._items;
+                    });
 
+                    api('roles').getById(scope.user.role).then(function(role) {
+                        scope.role = role;
+                    }, function(error) {
+                        console.log(error);
+                    });
+
+                    scope.save = function(userPrivileges) {
+                        //do the save
+                        console.log(scope.user.privileges);
+                        userPrivileges.$setPristine();
+                    };
+                }
+            };
+        }])
         .directive('sdChangePassword', ['users', 'notify', 'gettext', function(users, notify, gettext) {
             return {
                 link: function(scope, element) {

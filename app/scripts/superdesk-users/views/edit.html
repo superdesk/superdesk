@@ -11,20 +11,24 @@
 
 <section class="main-section user-profile-page">
 	<div class="form-content">
-		<div class="user-details-pane" ng-init="overview = true">
+		<div class="user-details-pane" ng-init="selectedTab = 'overview'">
 			<header>
 		        <ul class="nav nav-tabs">
-		            <li ng-class="{active: overview}" ng-click="overview = true">
+		            <li ng-class="{active: selectedTab === 'overview'}" ng-click="selectedTab = 'overview'">
 		                <button translate>Overview</button>
 		            </li>
-		            <li ng-class="{active: !overview}" ng-click="overview = false" ng-show="profile">
+		            <li ng-class="{active: selectedTab === 'preferences'}" ng-click="$parent.selectedTab = 'preferences'" ng-if="profile">
 		                <button translate>Preferences</button>
+		            </li>
+		            <li ng-class="{active: selectedTab === 'privileges'}" ng-click="selectedTab = 'privileges'">
+		                <button translate>Privileges</button>
 		            </li>
 		        </ul>
 		    </header>
 		    <div class="content">
-		    	<div sd-user-edit data-user="user" ng-if="overview"></div>
-		    	<div sd-user-preferences ng-if="!overview"></div>
+		    	<div sd-user-edit data-user="user" ng-if="selectedTab === 'overview'"></div>
+		    	<div sd-user-preferences ng-if="selectedTab === 'preferences'"></div>
+		    	<div sd-user-privileges data-user="user" ng-if="selectedTab === 'privileges'"></div>
 		    </div>
 		</div>
 	</div>
