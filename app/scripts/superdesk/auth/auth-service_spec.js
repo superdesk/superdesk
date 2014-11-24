@@ -9,7 +9,7 @@ define([
         SESSION = 'sess',
         USERNAME = 'foo';
 
-    beforeEach(module('superdesk.services.preferencesService'));
+    beforeEach(module('superdesk.preferences'));
 
     beforeEach(function() {
         module(StorageService.name);

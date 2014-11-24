@@ -1,7 +1,7 @@
 define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
-    return angular.module('superdesk.services.preferencesService', ['superdesk.notify'])
+    return angular.module('superdesk.preferences', ['superdesk.notify'])
 
         .service('preferencesService', ['$injector', '$rootScope', '$q', 'storage', 'session', 'notify', 'gettext',
             function PreferencesService($injector, $rootScope, $q, storage, session, notify, gettext) {
@@ -43,7 +43,7 @@ define(['angular', 'lodash'], function(angular, _) {
                 original_preferences = null;
             };
 
-            this.getPrivileges = function(key) {
+            this.getPrivileges = function getPrivileges(key) {
                 return this.get().then(function() {
                     var preferences = loadLocally();
 
