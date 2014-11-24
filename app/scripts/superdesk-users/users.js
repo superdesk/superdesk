@@ -369,6 +369,7 @@
             link: function(scope) {
                 var _orig = null;
                 scope.editRole = null;
+                scope.defaultRole = null;
 
                 api('roles').query()
                 .then(function(result) {
@@ -378,6 +379,7 @@
                 scope.edit = function(role) {
                     scope.editRole = _.create(role);
                     _orig = role;
+                    scope.defaultRole = role.is_default ? true : false;
                 };
 
                 scope.save = function(role) {

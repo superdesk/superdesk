@@ -38,7 +38,7 @@
 							<textarea sd-auto-height class="fullwidth-input" placeholder="{{ 'Role Description'|translate }}" ng-model="editRole.description"></textarea>
 						</div>
 						<div class="field row">
-							<input type="checkbox" name="is_default" id="is_default" ng-model="editRole.is_default">
+							<input type="checkbox" ng-disabled="defaultRole" name="is_default" id="is_default" ng-model="editRole.is_default">
 							<label for="is_default" translate>Default</label>
 						</div>
 					</fieldset>
