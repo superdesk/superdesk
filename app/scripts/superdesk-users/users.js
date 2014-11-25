@@ -632,7 +632,8 @@
                             type: 'user'
                         },
                         {action: 'list', type: 'user'}
-                    ]
+                    ],
+                    privileges: {users: 1}
                 })
                 .activity('/users/:_id', {
                     label: gettext('Users profile'),
@@ -640,14 +641,16 @@
                     controller: 'UserEditController',
                     templateUrl: asset.templateUrl('superdesk-users/views/edit.html'),
                     resolve: {user: UserResolver},
-                    filters: [{action: 'detail', type: 'user'}]
+                    filters: [{action: 'detail', type: 'user'}],
+                    privileges: {users: 1}
                 })
                 .activity('/settings/user-roles', {
                     label: gettext('User Roles'),
                     templateUrl: asset.templateUrl('superdesk-users/views/settings.html'),
                     controller: UserRolesController,
                     category: superdesk.MENU_SETTINGS,
-                    priority: -500
+                    priority: -500,
+                    privileges: {roles: 1}
                 })
                 .activity('delete/user', {
                     label: gettext('Delete user'),
@@ -659,7 +662,8 @@
                             action: superdesk.ACTION_EDIT,
                             type: 'user'
                         }
-                    ]
+                    ],
+                    privileges: {users: 1}
                 })
                 .activity('edit.avatar', {
                     label: gettext('Change avatar'),

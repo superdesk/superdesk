@@ -23,7 +23,7 @@ define([
                     templateUrl: require.toUrl('./views/main.html'),
                     controller: require('./controllers/main'),
                     category: superdesk.MENU_MAIN,
-                    beta: true
+                    privileges: {desks: 1}
                 })
 
                 .activity('/settings/desks', {
@@ -32,7 +32,7 @@ define([
                     templateUrl: require.toUrl('./views/settings.html'),
                     category: superdesk.MENU_SETTINGS,
                     priority: -800,
-                    beta: true
+                    privileges: {desks: 1}
                 });
         }])
         .config(['apiProvider', function(apiProvider) {

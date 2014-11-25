@@ -14,7 +14,8 @@
                     templateUrl: 'scripts/superdesk-groups/views/settings.html',
                     category: superdesk.MENU_SETTINGS,
                     priority: -800,
-                    beta: true
+                    beta: true,
+                    privileges: {groups: 1}
                 });
         }])
         .config(['apiProvider', function(apiProvider) {

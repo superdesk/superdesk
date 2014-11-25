@@ -6,5 +6,5 @@
 <div class="item-locked" ng-if="lockbyme">
     <span class="lock-sign"><i class="icon-lock-red"></i></span>
    	<span class="text"><em>Locked by you in another browser</em></span>
-    <button class="btn btn-light pull-left" ng-click="unlock()">Unlock</button>
+    <button class="btn btn-light pull-left" ng-click="unlock()" ng-if="privileges.unlock">Unlock</button>
 </div>
