@@ -102,6 +102,7 @@ def init_app(app):
     superdesk.privilege(name='archive:metadata:uniquename', label='Edit Unique Name',
                         description='User can edit unique name.')
     superdesk.privilege(name='archive:unlock', label='Unlock content', description='User can unlock content.')
+    superdesk.privilege(name='archive:ingest_move', label='Move Content To Desk', description='Move Content to a Desk.')
 
 
 @celery.task()

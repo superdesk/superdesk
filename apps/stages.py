@@ -41,6 +41,8 @@ class StagesResource(Resource):
         }
     }
 
+    privileges = {'POST': 'desks', 'DELETE': 'desks', 'PATCH': 'desks'}
+
 
 class StagesService(BaseService):
 

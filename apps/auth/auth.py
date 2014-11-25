@@ -56,14 +56,6 @@ class AuthResource(Resource):
 class SuperdeskTokenAuth(TokenAuth):
     """Superdesk Token Auth"""
 
-    method_map = {
-        'get': 'read',
-        'put': 'write',
-        'patch': 'write',
-        'post': 'write',
-        'delete': 'write',
-    }
-
     def check_permissions(self, resource, method, user):
         if not user:
             return True
@@ -77,22 +69,22 @@ class SuperdeskTokenAuth(TokenAuth):
                 return True
 
         # We allow all reads
-        perm_method = self.method_map[method.lower()]
-        if perm_method is 'read':
+        if method == 'GET':
             return True
-
-        # Read the user type
-        user_type = user.get('user_type')
 
         # users should be able to change only their preferences
         if resource == 'preferences':
             session = get_resource_service('preferences').find_one(_id=request.view_args.get('_id'), req=None)
             return user['_id'] == session.get("user")
 
+        # if resource is prepopulate then allow all
+        if resource == 'prepopulate':
+            return True
+
         # Get the list of privileges belonging to this user
         get_resource_service('users').set_privileges(user, flask.g.role)
         privileges = user.get('active_privileges', {})
-        resource_privilege = get_resource_privileges(resource).get(perm_method, None)
+        resource_privilege = get_resource_privileges(resource).get(method, None)
         if resource_privilege:
             if privileges.get(resource_privilege, False):
                 return True

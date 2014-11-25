@@ -23,6 +23,7 @@ class RolesResource(Resource):
     datasource = {
         'default_sort': [('_created', -1)]
     }
+    privileges = {'POST': 'roles', 'DELETE': 'roles', 'PATCH': 'roles'}
 
 
 class UsersResource(Resource):
@@ -113,3 +114,5 @@ class UsersResource(Resource):
             'password': 0
         }
     }
+
+    privileges = {'POST': 'users', 'DELETE': 'users', 'PATCH': 'users'}

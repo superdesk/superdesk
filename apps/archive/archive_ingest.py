@@ -261,6 +261,7 @@ class ArchiveIngestResource(Resource):
             'required': False,
         }
     }
+    privileges = {'POST': 'archive:ingest_move'}
 
 
 class ArchiveIngestService(BaseService):

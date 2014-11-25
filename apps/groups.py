@@ -38,6 +38,7 @@ class GroupsResource(Resource):
         }
     }
     datasource = {'default_sort': [('created', -1)]}
+    privileges = {'POST': 'groups', 'DELETE': 'groups', 'PATCH': 'groups'}
 
 
 class UserGroupsResource(Resource):

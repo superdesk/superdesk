@@ -15,7 +15,7 @@ Feature: Role Resource
 
         When we patch given
             """
-            {"privileges": {"ingest": {"read": 1}, "archive": {"write": 1}}}
+            {"privileges": {"ingest":  1, "archive": 1}}
             """
 
         And we get given
@@ -36,7 +36,7 @@ Feature: Role Resource
     Scenario: Check permissions on read with role and permissions
         Given "roles"
             """
-            [{"name": "Editor", "privileges": {"ingest": {"read": 1}}}]
+            [{"name": "Editor", "privileges": {"ingest": 1}}]
             """
         And we have "Editor" role
         When we get "/ingest"
@@ -81,7 +81,7 @@ Feature: Role Resource
     Scenario: Users can write to resources if they have permission
         Given "roles"
             """
-            [{"name": "Pool Subs", "privileges": {"desks": {"write": 1}}}]
+            [{"name": "Pool Subs", "privileges": {"desks": 1}}]
             """
         And we have "Pool Subs" role
         And we have "user" as type of user
