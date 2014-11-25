@@ -302,6 +302,7 @@
         $scope.dirty = false;
         $scope.viewSendTo = false;
         $scope.stage = null;
+        $scope.theme = null;
 
         // These values should come from preferences.
         $scope.sluglineSoftLimit = 26;
@@ -520,6 +521,32 @@
         };
     }
 
+    ThemeSelect.$inject = ['storage'];
+    function ThemeSelect(storage) {
+        var THEME_KEY = 'authoring:theme';
+
+        return {
+            scope: {
+                theme: '='
+            },
+            templateUrl: 'scripts/superdesk-authoring/views/theme-select.html',
+            link: function themeSelectLink(scope, elem, attrs) {
+                scope.theme = storage.getItem(THEME_KEY);
+                scope.themes = [
+                    'theme01',
+                    'theme02',
+                    'theme03',
+                    'theme04'
+                ];
+
+                scope.selectTheme = function(theme) {
+                    scope.theme = theme;
+                    storage.setItem(THEME_KEY, theme);
+                };
+            }
+        };
+    }
+
     SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify'];
     function SendItem($q, superdesk, api, desks, notify) {
         return {
@@ -622,6 +649,7 @@
         .directive('sdSendItem', SendItem)
         .directive('sdCharacterCount', CharacterCount)
         .directive('sdWordCount', WordCount)
+        .directive('sdThemeSelect', ThemeSelect)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk

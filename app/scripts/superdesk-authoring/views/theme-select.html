@@ -1,0 +1,19 @@
+<div>
+    <div class="dropdown desk-select">
+        <button class="dropdown-toggle">
+            <span>{{'Theme'|translate}}:</span>
+            <span>{{theme || 'Default'|translate}}</span>
+            <b class="caret"></b>
+        </button>
+        <div class="dropdown-menu">
+            <ul>
+                <li>
+                    <button ng-click="selectTheme(null)"><span translate>Default</span></button>
+                </li>
+                <li ng-repeat="theme in themes">
+                    <button ng-click="selectTheme(theme)">{{theme}}</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

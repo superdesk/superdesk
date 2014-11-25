@@ -9,6 +9,7 @@
 	    </div>
 
 	    <div class="button-stack right-stack">
+            <span sd-theme-select data-theme="theme"></span>
 	    	<button class="btn btn-medium pull-left" ng-click="close()" translate>Close</button>
 
     	    <button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()"
@@ -25,9 +26,10 @@
 	<section class="main-section" ng-class="{'auth-sendto': viewSendTo}">
 		<div sd-authoring-widgets data-item="item" ng-class="{'widget-active': active}">
 
-		    <div class="main-article-container" ng-click="viewSendTo = false;">
+		    <
+            <div class="main-article-container" ng-click="viewSendTo = false;">
 
-                <article class="main-article" ng-if="item._id" ng-class="{preview: !_editable}">
+                <article class="main-article {{theme}}" ng-if="item._id" ng-class="{preview: !_editable}">
                 	<form>
                 		<fieldset>
                 			<div class="field">
