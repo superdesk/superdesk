@@ -219,7 +219,7 @@ define([
                                 break;
                             case ENTER:
                                 event.preventDefault();
-                                if (getSelectedIndex() > 0) {
+                                if (getSelectedIndex() >= 0) {
                                 	scope.choose(scope.selected);
                                 }
                                 break;
