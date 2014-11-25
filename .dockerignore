@@ -2,3 +2,4 @@
 env/
 start_container.sh
 .vagrant/
+*.pyc
