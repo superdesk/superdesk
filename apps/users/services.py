@@ -68,8 +68,6 @@ class UsersService(BaseService):
 
     def find_one(self, req, **lookup):
         doc = super().find_one(req, **lookup)
-        if (doc is not None):
-            self.set_privileges(doc)
         return doc
 
     def on_fetched(self, document):
@@ -87,7 +85,14 @@ class UsersService(BaseService):
     def user_is_active(self, doc):
         return doc.get('is_active', False)
 
-    def set_privileges(self, user):
+    def get_role(self, user):
+        if user:
+            role_id = user.get('role', None)
+            if role_id:
+                return get_resource_service('roles').find_one(_id=role_id, req=None)
+        return None
+
+    def set_privileges(self, user, role):
         """Resolve privileges for given user.
 
         :param user
@@ -95,14 +100,13 @@ class UsersService(BaseService):
         if is_admin(user):
             user['active_privileges'] = get_admin_privileges()
             return
-        role_id = user.get('role', None)
-        if role_id:
-            role = get_resource_service('roles').find_one(_id=role_id, req=None)
-            if role:
-                role_privileges = role.get('privileges', {})
-                user['active_privileges'] = dict(
-                    list(role_privileges.items()) + list(user.get('privileges', {}).items())
-                )
+        if role:
+            role_privileges = role.get('privileges', {})
+            user['active_privileges'] = dict(
+                list(role_privileges.items()) + list(user.get('privileges', {}).items())
+            )
+        else:
+            user['active_privileges'] = user.get('privileges', {})
 
 
 class DBUsersService(UsersService):

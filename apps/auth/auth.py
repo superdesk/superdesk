@@ -4,7 +4,7 @@ from flask import current_app as app, request
 import flask
 from apps.auth.errors import AuthRequiredError, ForbiddenError
 from superdesk.resource import Resource
-from superdesk import get_resource_service
+from superdesk import get_resource_service, get_resource_privileges
 
 
 logger = logging.getLogger(__name__)
@@ -84,19 +84,18 @@ class SuperdeskTokenAuth(TokenAuth):
         # Read the user type
         user_type = user.get('user_type')
 
-        # We allow all writes to administrators
-        if user_type == 'administrator':
-            return True
-
         # users should be able to change only their preferences
         if resource == 'preferences':
             session = get_resource_service('preferences').find_one(_id=request.view_args.get('_id'), req=None)
             return user['_id'] == session.get("user")
 
         # Get the list of privileges belonging to this user
+        get_resource_service('users').set_privileges(user, flask.g.role)
         privileges = user.get('active_privileges', {})
-        if privileges.get(resource, {}).get(perm_method, False):
-            return True
+        resource_privilege = get_resource_privileges(resource).get(perm_method, None)
+        if resource_privilege:
+            if privileges.get(resource_privilege, False):
+                return True
 
         # If we didn't return True so far then user is not authorized
         raise ForbiddenError()
@@ -107,6 +106,7 @@ class SuperdeskTokenAuth(TokenAuth):
         if auth_token:
             user_id = str(auth_token['user'])
             flask.g.user = get_resource_service('users').find_one(req=None, _id=user_id)
+            flask.g.role = get_resource_service('users').get_role(flask.g.user)
             flask.g.auth = auth_token
             return self.check_permissions(resource, method, flask.g.user)
 
