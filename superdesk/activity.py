@@ -97,6 +97,7 @@ class ActivityResource(Resource):
     resource_methods = ['GET']
     item_methods = ['GET', 'PATCH']
     schema = {
+        'name': {'type': 'string'},
         'message': {'type': 'string'},
         'data': {'type': 'dict'},
         'read': {'type': 'dict'},
@@ -117,7 +118,12 @@ class ActivityResource(Resource):
     })
 
 
-def add_activity(msg, item=None, notify=None, **data):
+ACTIVITY_CREATE = 'create'
+ACTIVITY_UPDATE = 'update'
+ACTIVITY_DELETE = 'delete'
+
+
+def add_activity(activity_name, msg, item=None, notify=None, **data):
     """Add an activity into activity log.
 
     This will became part of current user activity log.
@@ -125,6 +131,7 @@ def add_activity(msg, item=None, notify=None, **data):
     If there is someone set to be notified it will make it into his notifications box.
     """
     activity = {
+        'name': activity_name,
         'message': msg,
         'data': data,
     }

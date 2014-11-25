@@ -7,7 +7,7 @@ from apps.archive.common import on_create_item, item_url
 from superdesk.services import BaseService
 from apps.content import metadata_schema
 import superdesk
-from superdesk.activity import add_activity
+from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE
 from apps.archive.archive import get_subject
 from copy import copy
 
@@ -84,7 +84,7 @@ class TasksService(BaseService):
         push_notification(self.datasource, created=1)
         for doc in docs:
             if doc.get('task') and doc['task'].get('desk'):
-                add_activity('added new task {{ subject }} of type {{ type }}', item=doc,
+                add_activity(ACTIVITY_CREATE, 'added new task {{ subject }} of type {{ type }}', item=doc,
                              subject=get_subject(doc), type=doc['type'])
 
     def on_update(self, updates, original):
@@ -95,7 +95,7 @@ class TasksService(BaseService):
         updated = copy(original)
         updated.update(updates)
         if updated.get('task') and updated['task'].get('desk'):
-            add_activity('updated task {{ subject }} for item {{ type }}',
+            add_activity(ACTIVITY_UPDATE, 'updated task {{ subject }} for item {{ type }}',
                          item=updated, subject=get_subject(updated))
 
     def on_deleted(self, doc):

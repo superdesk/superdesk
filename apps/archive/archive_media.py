@@ -86,7 +86,7 @@ class ArchiveMediaService(BaseService):
                 if not doc.get('_import', None):
                     set_original_creator(doc)
 
-                add_activity('uploaded media {{ name }}', item=doc,
+                add_activity('upload', 'uploaded media {{ name }}', item=doc,
                              name=doc.get('headline', doc.get('mimetype')),
                              renditions=doc.get('renditions'))
 
