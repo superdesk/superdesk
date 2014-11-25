@@ -92,11 +92,13 @@ class DBUsersService(UsersService):
 
     def on_update(self, updates, user):
         if updates.get('first_name') or updates.get('last_name'):
-            updated_user = {'first_name': updates.get('first_name', ''),
-                            'last_name': updates.get('last_name', ''),
+            updated_user = {'first_name': user.get('first_name', ''),
+                            'last_name': user.get('last_name', ''),
                             'username': user.get('username', '')}
-            updated_user.setdefault('first_name', user.get('first_name', ''))
-            updated_user.setdefault('last_name', user.get('last_name', ''))
+            if updates.get('first_name'):
+                updated_user['first_name'] = updates.get('first_name')
+            if updates.get('last_name'):
+                updated_user['last_name'] = updates.get('last_name')
             updates['display_name'] = get_display_name(updated_user)
 
     def update_password(self, user_id, password):

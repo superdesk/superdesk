@@ -109,6 +109,39 @@ Feature: User Resource
 
         Then the field "display_name" value is "Testing"
 
+    
+    @auth
+    @dbauth
+    Scenario: Update user first name
+        Given "users"
+            """
+            [{"username": "foo", "email": "foo@bar.org", "first_name": "first", "last_name": "last", "is_active": true}]
+            """
+
+        When we patch "/users/foo"
+            """
+            {"first_name": "Testing"}
+            """
+
+        Then the field "display_name" value is "Testing last"
+    
+    
+    @auth
+    @dbauth
+    Scenario: Update user last name
+        Given "users"
+            """
+            [{"username": "foo", "email": "foo@bar.org", "first_name": "first", "last_name": "last", "is_active": true}]
+            """
+
+        When we patch "/users/foo"
+            """
+            {"last_name": "Testing"}
+            """
+
+        Then the field "display_name" value is "first Testing"
+        
+        
     @auth
     Scenario: Change user status
         Given "users"
