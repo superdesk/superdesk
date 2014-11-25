@@ -1,53 +1,55 @@
 <div>
     <div class="content-container">
 
-        <div class="composite-nav" ng-if="item.type === 'composite'">
+        <div class="composite-nav" ng-if="selected.preview.type === 'composite'">
            <div class="top">
                <span><i class="filetype-icon-large-composite"></i> {{ 'Package preview' | translate }}</span>
            </div> 
         </div>
 
         <div class="action-menu">
-            <button ng-click="display()" class="fullscreen">
+            <button ng-click="openLightbox()" class="fullscreen">
                 <i class="icon-fullscreen"></i>
             </button>
             <div class="dropdown dropdown-big">
                 <button class="dropdown-toggle condensed"><i class="icon-dots-vertical"></i></button>
                 <div class="dropdown-menu pull-right"
                         sd-activity-list
-                        data-data="{item: item}"
-                        data-type="{{ type }}">
+                        data-item="selected.preview"
+                        data-type="{{ spike ? 'spike' : type }}">
                 </div>
             </div>
         </div>
 
-        <div sd-item-lock data-item="item"></div>
+        <div sd-item-lock data-item="selected.preview"></div>
 
-        <p class="title" ng-if="item.headline" ng-class="{condensed: !lock}">{{ item.headline }}</p>
+        <p class="title" ng-if="selected.preview.headline" ng-class="{condensed: !lock}">{{ selected.preview.headline }}</p>
 
-        <p class="nav-space" ng-if="!item.headline && !lock"></p>
+        <p class="nav-space" ng-if="!selected.preview.headline && !lock"></p>
 
         <div class="core-content">
 
-            <p ng-if="item.is_spiked" class="alert alert-warning expires"><span translate>expires</span> {{ item.expiry | reldate }}</p>
+			<p ng-if="selected.preview.is_spiked" class="alert alert-warning expires">
+                <span translate>expires</span> <time sd-datetime data-date="selected.preview.expiry"></time>
+			</p>
             
             <!-- item rendition -->
-            <div class="picture-preview" sd-item-rendition data-item="item" data-rendition="viewImage"></div>
+            <div class="picture-preview" sd-item-rendition data-item="selected.preview" data-rendition="viewImage"></div>
             
-            <div ng-if="item.type == 'audio'">
-                <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
+            <div ng-if="selected.preview.type == 'audio'">
+                <audio controls="controls" sd-sources data-renditions="selected.preview.renditions"></audio>
             </div>
 
-            <div ng-if="item.type == 'video'">
-                <video controls="controls" sd-sources data-renditions="item.renditions"></video>
+            <div ng-if="selected.preview.type == 'video'">
+                <video controls="controls" sd-sources data-renditions="selected.preview.renditions"></video>
             </div>
 
-            <div class="text abstract" ng-show="item.abstract" sd-html-preview="item.abstract"></div>
+            <div class="text abstract" ng-show="selected.preview.abstract" sd-html-preview="selected.preview.abstract"></div>
 
-            <div class="text" ng-show="item.body_html" sd-html-preview="item.body_html"></div>
+            <div class="text" ng-show="selected.preview.body_html" sd-html-preview="selected.preview.body_html"></div>
 
-            <div class="composite-preview" ng-if="item.type === 'composite'">
-                <div sd-package data-item="item"></div>
+            <div class="composite-preview" ng-if="selected.preview.type === 'composite'">
+                <div sd-package data-item="selected.preview"></div>
             </div>
         </div>
     </div>

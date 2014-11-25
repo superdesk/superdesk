@@ -28,10 +28,10 @@
         <header>
             <ul class="nav nav-tabs">
                 <li ng-class="{active: contenttab}">
-                    <button ng-click="contenttab = true"><span translate>content</span></button>
+                    <button ng-click="contenttab = true"><span translate>Content</span></button>
                 </li>
                 <li ng-class="{active: !contenttab}">
-                    <button ng-click="contenttab = false"><span translate>metadata</span></button>
+                    <button ng-click="contenttab = false"><span translate>Metadata</span></button>
                 </li>
             </ul>
             <button ng-click="preview(null)" class="close-preview">
@@ -39,7 +39,7 @@
             </button>
         </header>
         <div class="content" ng-if="selected.preview">
-            <div ng-if="contenttab" sd-media-preview data-item="selected.preview" data-display="openlightbox()" data-type="{{ spike ? 'spike' : type }}"></div>
+            <div ng-if="contenttab" sd-media-preview></div>
             <div ng-if="!contenttab" sd-media-metadata data-item="selected.preview"></div>
         </div>
     </div>

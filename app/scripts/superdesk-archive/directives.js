@@ -146,21 +146,14 @@ define([
                 }
             };
         }])
-        .directive('sdMediaPreview', ['api', function(api) {
+        .directive('sdMediaPreview', [function() {
             return {
-                replace: true,
-                templateUrl: require.toUrl('./views/preview.html'),
-                scope: {
-                    item: '=',
-                    display: '&',
-                    type: '@'
-                }
+                templateUrl: 'scripts/superdesk-archive/views/preview.html'
             };
         }])
         .directive('sdMediaView', ['keyboardManager', 'api', function(keyboardManager, api) {
             return {
-                replace: true,
-                templateUrl: require.toUrl('./views/media-view.html'),
+                templateUrl: 'scripts/superdesk-archive/views/media-view.html',
                 scope: {
                     items: '=',
                     item: '=',
