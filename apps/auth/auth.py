@@ -68,8 +68,8 @@ class SuperdeskTokenAuth(TokenAuth):
             else:
                 return True
 
-        # We allow all reads
-        if method == 'GET':
+        # We allow all reads or if resource is prepopulate then allow all
+        if method == 'GET' or resource == 'prepopulate':
             return True
 
         # users should be able to change only their preferences
@@ -77,17 +77,12 @@ class SuperdeskTokenAuth(TokenAuth):
             session = get_resource_service('preferences').find_one(_id=request.view_args.get('_id'), req=None)
             return user['_id'] == session.get("user")
 
-        # if resource is prepopulate then allow all
-        if resource == 'prepopulate':
-            return True
-
         # Get the list of privileges belonging to this user
         get_resource_service('users').set_privileges(user, flask.g.role)
         privileges = user.get('active_privileges', {})
-        resource_privilege = get_resource_privileges(resource).get(method, None)
-        if resource_privilege:
-            if privileges.get(resource_privilege, False):
-                return True
+        resource_privileges = get_resource_privileges(resource).get(method, None)
+        if privileges.get(resource_privileges, False):
+            return True
 
         # If we didn't return True so far then user is not authorized
         raise ForbiddenError()
