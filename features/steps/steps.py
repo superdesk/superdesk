@@ -20,6 +20,7 @@ from wooper.assertions import (
 from urllib.parse import urlparse
 from os.path import basename
 from superdesk.tests import test_user, get_prefixed_url
+from re import findall
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 
@@ -136,15 +137,24 @@ def set_placeholder(context, name, value):
     old_p = getattr(context, 'placeholders', None)
     if not old_p:
         context.placeholders = dict()
-    context.placeholders['#%s#' % name] = value
+    context.placeholders[name] = value
 
 
 def apply_placeholders(context, text):
-    placeholders = getattr(context, 'placeholders', None)
-    if not placeholders:
-        return text
-    for tag, value in placeholders.items():
-        text = text.replace(tag, value)
+    placeholders = getattr(context, 'placeholders', {})
+    for placeholder in findall('#([^#]+)#', text):
+        if placeholder not in placeholders:
+            resource_name, field_name = placeholder.lower().split('_')
+            if field_name == 'id':
+                field_name = '_%s' % field_name
+            resource = getattr(context, resource_name, None)
+            if resource and field_name in resource:
+                value = str(resource[field_name])
+            else:
+                continue
+        else:
+            value = placeholders[placeholder]
+        text = text.replace('#%s#' % placeholder, value)
     return text
 
 

@@ -38,7 +38,7 @@ def get_users(usernames):
 def notify_mentioned_users(docs, origin):
     for doc in docs:
         mentioned_users = doc.get('mentioned_users', {}).values()
-        add_activity('', type='comment', item=str(doc.get('item')),
+        add_activity('notify', '', type='comment', item=doc,
                      comment=doc.get('text'), comment_id=str(doc.get('_id')),
                      notify=mentioned_users)
         send_email_to_mentioned_users(doc, mentioned_users, origin)

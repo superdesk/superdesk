@@ -6,6 +6,7 @@ from superdesk.notification import push_notification
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 import superdesk
+from bson.objectid import ObjectId
 
 log = logging.getLogger(__name__)
 
@@ -96,11 +97,13 @@ class ActivityResource(Resource):
     resource_methods = ['GET']
     item_methods = ['GET', 'PATCH']
     schema = {
+        'name': {'type': 'string'},
         'message': {'type': 'string'},
         'data': {'type': 'dict'},
         'read': {'type': 'dict'},
         'item': Resource.rel('archive', type='string'),
         'user': Resource.rel('users'),
+        'desk': Resource.rel('desks')
     }
     exclude = {endpoint_name, 'notification'}
     datasource = {
@@ -115,7 +118,12 @@ class ActivityResource(Resource):
     })
 
 
-def add_activity(msg, item=None, notify=None, **data):
+ACTIVITY_CREATE = 'create'
+ACTIVITY_UPDATE = 'update'
+ACTIVITY_DELETE = 'delete'
+
+
+def add_activity(activity_name, msg, item=None, notify=None, **data):
     """Add an activity into activity log.
 
     This will became part of current user activity log.
@@ -123,6 +131,7 @@ def add_activity(msg, item=None, notify=None, **data):
     If there is someone set to be notified it will make it into his notifications box.
     """
     activity = {
+        'name': activity_name,
         'message': msg,
         'data': data,
     }
@@ -137,7 +146,9 @@ def add_activity(msg, item=None, notify=None, **data):
         activity['read'] = {}
 
     if item:
-        activity['item'] = str(item)
+        activity['item'] = str(item.get('guid'))
+        if item.get('task') and item['task'].get('desk'):
+            activity['desk'] = ObjectId(item['task']['desk'])
 
     superdesk.get_resource_service(ActivityResource.endpoint_name).post([activity])
     push_notification(ActivityResource.endpoint_name, _dest=activity['read'])

@@ -7,7 +7,8 @@ from werkzeug.exceptions import NotFound
 from superdesk import SuperdeskError, get_resource_service
 from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
-from superdesk.activity import add_activity
+from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE,\
+    ACTIVITY_DELETE
 from eve.utils import parse_request, config
 from superdesk.services import BaseService
 from apps.content import metadata_schema
@@ -15,6 +16,7 @@ from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
 from apps.legal_archive.components.legal_archive_proxy import LegalArchiveProxy
+from copy import copy
 
 
 SOURCE = 'archive'
@@ -81,7 +83,7 @@ class ArchiveService(BaseService):
         on_create_media_archive()
         get_component(LegalArchiveProxy).create(docs)
         for doc in docs:
-            add_activity('added new item {{ type }} about {{ subject }}',
+            add_activity(ACTIVITY_CREATE, 'added new item {{ type }} about {{ subject }}', item=doc,
                          type=doc['type'], subject=get_subject(doc))
 
     def on_update(self, updates, original):
@@ -109,8 +111,10 @@ class ArchiveService(BaseService):
         on_update_media_archive()
 
         if '_version' in updates:
-            add_activity('created new version {{ version }} for item {{ type }} about {{ subject }}',
-                         version=updates['_version'], subject=get_subject(updates, original))
+            updated = copy(original)
+            updated.update(updates)
+            add_activity(ACTIVITY_UPDATE, 'created new version {{ version }} for item {{ type }} about {{ subject }}',
+                         item=updated, version=updates['_version'], subject=get_subject(updates, original))
 
     def on_replace(self, document, original):
         user = get_user()
@@ -139,7 +143,7 @@ class ArchiveService(BaseService):
 
     def on_deleted(self, doc):
         on_delete_media_archive()
-        add_activity('removed item {{ type }} about {{ subject }}',
+        add_activity(ACTIVITY_DELETE, 'removed item {{ type }} about {{ subject }}', item=doc,
                      type=doc['type'], subject=get_subject(doc))
 
     def replace(self, id, document):
