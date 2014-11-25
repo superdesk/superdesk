@@ -4,11 +4,12 @@ FROM ubuntu:trusty
 # install python3 and build dependencies for c modules
 # update pip and distribute
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    python3 python3-dev python3-pip \
-    build-essential libffi-dev git mercurial \
-    libtiff5-dev libjpeg8-dev zlib1g-dev \
-    libfreetype6-dev liblcms2-dev libwebp-dev
+DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+python3 python3-dev python3-pip \
+build-essential libffi-dev git mercurial \
+libtiff5-dev libjpeg8-dev zlib1g-dev \
+libfreetype6-dev liblcms2-dev libwebp-dev \
+curl
 
 # setup the environment
 WORKDIR /opt/superdesk/

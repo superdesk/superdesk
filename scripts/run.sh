@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+cd $(readlink -e $(dirname "$0")/../)
 
 # setup virtual env
 [ ! -f ./env/bin/activate ] && (
@@ -16,5 +17,4 @@ pip install -U -r requirements.txt
 pip install -U gunicorn
 
 # run
-python ws.py
-python app.py
+honcho start

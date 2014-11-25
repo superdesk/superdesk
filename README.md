@@ -70,7 +70,7 @@ So after running this command server will start listening on `localhost:5000` fo
 $ fig up
 ```
 
-To create user you can run that command (it will start container instance for command execution):
+To create user you can run that command (it will start container instance for command execution and start depended service if needed):
 
 ```sh
 fig run web python3 manage.py users:create -u admin -p admin -e "admin@example.com" --admin=true
