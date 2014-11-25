@@ -1,3 +1,10 @@
 <div ng-controller="PackagesWidgetCtrl">
-
+    <div class="dropdown create-package">
+        <div class="dropdown-toggle btn btn-full"><i class="icon-plus"></i> {{:: 'Create package' | translate }}</div>
+        <ul class="dropdown-menu">
+            <li ng-repeat="t in itemTypes">
+                <button ng-click="create(t.name)"><i class="filetype-icon-large-{{t.name}}"></i><span translate>{{ t.label }}</span></button>
+            </li>
+        </ul>
+    </div>
 </div>

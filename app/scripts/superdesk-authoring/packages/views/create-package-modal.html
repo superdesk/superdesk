@@ -1,0 +1,17 @@
+<div class="modal-header">
+    <h3 class="pull-left">Add items to package</h3>
+    <button type="button" class="close" ng-click="cancel()" ng-hide="saving"><i class="icon-close-small"></i></button>
+</div>
+<div class="modal-body">
+    <section sd-search-container class="archive main-section" ng-class="{'sidebar-open': flags.facets}">
+        <div sd-search-facets class="archive-sidebar" data-items="items" data-desk="selectedDesk"></div>
+        <div sd-search-results class="archive-content"></div>
+    </section>
+    <section class="placebar"></section>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-info" ng-click="save()" translate>Ok</button>
+    <button class="btn" ng-click="cancel()" translate>Cancel</button>
+</div>
+            
