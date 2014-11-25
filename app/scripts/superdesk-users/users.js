@@ -369,7 +369,6 @@
             link: function(scope) {
                 var _orig = null;
                 scope.editRole = null;
-                scope.defaultRole = null;
 
                 api('roles').query()
                 .then(function(result) {
@@ -379,7 +378,7 @@
                 scope.edit = function(role) {
                     scope.editRole = _.create(role);
                     _orig = role;
-                    scope.defaultRole = role.is_default ? true : false;
+                    scope.defaultRole = role.is_default;
                 };
 
                 scope.save = function(role) {
@@ -393,13 +392,7 @@
                             notify.success(gettext('User role updated.'));
                         }
                         if (role.is_default) {
-                                _.each(scope.roles, function(r) {
-                                if (r._id !== role._id && r.is_default) {
-                                    api('roles').getById(r._id).then(function(result) {
-                                        _.extend(r, {_etag: result._etag, is_default: false});
-                                    });
-                                }
-                            });
+                            updatePreviousDefault(role);
                         }
                         scope.cancel();
                     }, function(response) {
@@ -426,10 +419,29 @@
                         .then(function(result) {
                             _.remove(scope.roles, role);
                         }, function(response) {
-                            console.log(response);
+                            if (response.status === 400) {
+                                notify.error(gettext('Role cannot be deleted. Still has assinged users.'));
+                            } else {
+                                notify.error(gettext('There is an error. Role cannot be deleted.'));
+                            }
                         });
                     });
                 };
+
+                function updatePreviousDefault(role) {
+
+                    //find previous role with flag 'default'
+                    var previous = _.find(scope.roles, function(r) {
+                      return r._id !== role._id && r.is_default;
+                    });
+
+                    // update it
+                    if (previous) {
+                        api('roles').getById(previous._id).then(function(result) {
+                            _.extend(previous, {_etag: result._etag, is_default: false});
+                        });
+                    }
+                }
 
                 function confirm() {
                     return modal.confirm(gettext('Are you sure you want to delete user role?'));
