@@ -1,9 +1,11 @@
-
 import re
+
 from bson import ObjectId
+
 from eve.io.mongo import Validator
 from eve.utils import config
 from werkzeug.datastructures import FileStorage
+
 import superdesk
 
 
@@ -40,7 +42,7 @@ class SuperdeskValidator(Validator):
     def _validate_unique(self, unique, field, value):
         """Validate unique with custom error msg."""
 
-        if unique:
+        if not self.resource.endswith("autosave") and unique:
             query = {field: value}
             if self._id:
                 try:
@@ -48,7 +50,7 @@ class SuperdeskValidator(Validator):
                 except:
                     query[config.ID_FIELD] = {'$ne': self._id}
 
-            if superdesk.get_resource_service(self.resource).find_one(req=None, **query):
+            if superdesk.get_resource_service(self.resource).find_one_in_base_backend(req=None, **query):
                 self._error(field, ERROR_UNIQUE)
 
     def _validate_iunique(self, unique, field, value):

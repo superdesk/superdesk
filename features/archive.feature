@@ -245,3 +245,20 @@ Feature: News Items Archive
           "dateline" : "Sydney, Aus (Nov 12, 2014) AAP - ", "genre" : ["Test"]}
         """
         And we get version 2
+
+	@auth
+	Scenario: Unique Name should be unique
+	    Given the "archive"
+	    """
+        [{"type":"text", "headline": "test1", "_id": "xyz", "original_creator": "abc"},
+         {"type":"text", "headline": "test1", "_id": "abc", "original_creator": "abc"}]
+        """
+        When we patch "/archive/xyz"
+        """
+        {"unique_name": "unique_xyz"}
+        """
+        And we patch "/archive/abc"
+        """
+        {"unique_name": "unique_xyz"}
+        """
+        Then we get response code 400

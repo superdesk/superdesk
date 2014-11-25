@@ -70,6 +70,10 @@ class BaseService():
         res = self.backend.find_one(self.datasource, req=req, **lookup)
         return res
 
+    def find_one_in_base_backend(self, req, **lookup):
+        res = self.backend.find_one_in_base_backend(self.datasource, req=req, **lookup)
+        return res
+
     def get(self, req, lookup):
         if req is None:
             req = ParsedRequest()
