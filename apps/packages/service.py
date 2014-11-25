@@ -5,7 +5,9 @@ from superdesk.services import BaseService
 from superdesk import SuperdeskError, get_resource_service
 from apps.archive.common import on_create_item
 from apps.content import LINKED_IN_PACKAGES
-from .resource import ASSOCIATIONS, ITEM_REF
+ASSOCIATIONS = 'refs'
+ITEM_REF = 'residRef'
+ID_REF = 'idRef'
 
 
 class PackageService(BaseService):
@@ -39,7 +41,7 @@ class PackageService(BaseService):
             self.update_link(doc[config.ID_FIELD], assoc, delete=True)
 
     def check_package_associations(self, docs):
-        for (doc, group) in [(doc, group['group']) for doc in docs for group in doc.get('groups', [])]:
+        for (doc, group) in [(doc, group) for doc in docs for group in doc.get('groups', [])]:
             associations = group.get(ASSOCIATIONS, [])
             if len(associations) == 0:
                 raise SuperdeskError(message='No content associated with the package.')
@@ -49,6 +51,9 @@ class PackageService(BaseService):
                 self.extract_default_association_data(group, assoc)
 
     def extract_default_association_data(self, package, assoc):
+        if assoc.get(ID_REF):
+            return
+
         item, item_id, endpoint = self.get_associated_item(assoc)
         self.check_for_circular_reference(package, item_id)
         assoc['guid'] = item.get('guid', item_id)
@@ -62,6 +67,9 @@ class PackageService(BaseService):
         return item, item_id, endpoint
 
     def update_link(self, package_id, assoc, delete=False):
+        if assoc.get(ID_REF):
+            return
+
         item, item_id, endpoint = self.get_associated_item(assoc)
         two_way_links = [d for d in item.get(LINKED_IN_PACKAGES, []) if not d['package'] == package_id]
 
@@ -75,7 +83,7 @@ class PackageService(BaseService):
     def check_for_duplicates(self, package, associations):
         counter = Counter()
         package_id = package[config.ID_FIELD]
-        for itemRef in [assoc[ITEM_REF] for assoc in associations]:
+        for itemRef in [assoc[ITEM_REF] for assoc in associations if assoc.get(ITEM_REF)]:
             if itemRef == package_id:
                 raise SuperdeskError(message='Trying to self reference as an association.')
             counter[itemRef] += 1
@@ -89,4 +97,4 @@ class PackageService(BaseService):
 
     def _get_associations(self, doc):
         return [assoc for group in doc.get('groups', [])
-                for assoc in group['group'].get(ASSOCIATIONS, [])]
+                for assoc in group.get(ASSOCIATIONS, [])]
