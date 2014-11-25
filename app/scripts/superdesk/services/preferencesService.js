@@ -43,15 +43,10 @@ define(['angular', 'lodash'], function(angular, _) {
                 original_preferences = null;
             };
 
-            this.getPrivileges = function getPrivileges(key) {
+            this.getPrivileges = function getPrivileges() {
                 return this.get().then(function() {
                     var preferences = loadLocally();
-
-                    if (!key){
-                        return $q.when(preferences[ACTIVE_PRIVILEGES]);
-                    } else {
-                        return $q.when(preferences[ACTIVE_PRIVILEGES][key]);
-                    }
+                    return preferences[ACTIVE_PRIVILEGES] || {};
                 });
             };
 

@@ -16,10 +16,7 @@ describe('privileges', function() {
     }));
 
     it('reads privileges via preferences', inject(function(privileges, $rootScope) {
-        var success = jasmine.createSpy('success');
-        privileges.load().then(success);
         $rootScope.$digest();
-        expect(success).toHaveBeenCalled();
         expect(privileges.privileges.tests).toBe(1);
     }));
 });

@@ -175,31 +175,5 @@ define([
 			expect(storage.getItem('preferences').active_privileges.privilege1).toBe(1);
 
 		}));
-
-		it('can get an active privilege', inject(function(api, $rootScope) {
-
-			expect(storage.getItem('preferences')).toBe(null);
-			$rootScope.sessionId = 1;
-			preferencesService.get();
-
-            $rootScope.$digest();
-			preferencesService.getPrivileges('privilege2').then(function(privilege) {
-				expect(privilege).toBe(0);
-			});
-			$rootScope.$digest();
-		}));
-
-		it('can get an non existing active privilege', inject(function(api, $rootScope) {
-
-			expect(storage.getItem('preferences')).toBe(null);
-			$rootScope.sessionId = 1;
-			preferencesService.get();
-
-            $rootScope.$digest();
-			preferencesService.getPrivileges('privilege3').then(function(privilege) {
-				expect(privilege).toBe(undefined);
-			});
-			$rootScope.$digest();
-		}));
     });
 });

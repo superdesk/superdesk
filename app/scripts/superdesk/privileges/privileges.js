@@ -40,12 +40,8 @@ function PrivilegesService($rootScope, $q, preferencesService) {
         return _privileges;
     };
 
-    /**
-     * Load user privileges
-     */
-    this.load = function load() {
-        return preferencesService.getPrivileges().then(this.setUserPrivileges);
-    };
+    // start loading when used for first time
+    this.loaded = preferencesService.getPrivileges().then(this.setUserPrivileges);
 }
 
 angular.module('superdesk.privileges', ['superdesk.preferences'])
