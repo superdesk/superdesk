@@ -95,14 +95,13 @@ def init_app(app):
     register_component(ItemAutosave(app))
     register_model(ItemAutosaveModel(EveProxy(superdesk.get_backend())))
 
+    superdesk.privilege(name='archive', label='Archive', description='User can view the published content.')
     superdesk.privilege(name='ingest', label='Ingest', description='User can view content in ingest and fetch it.')
-    superdesk.privilege(name='archive', label='Archive', description='User can see the published content.')
-    superdesk.privilege(name='archive:spike', label='Spike', description='User can spike content.')
-    superdesk.privilege(name='archive:unspike', label='Un Spike', description='User can un-spike content.')
-    superdesk.privilege(name='archive:metadata:uniquename', label='Edit Unique Name',
-                        description='User can edit unique name.')
-    superdesk.privilege(name='archive:unlock', label='Unlock content', description='User can unlock content.')
-    superdesk.privilege(name='archive:ingest_move', label='Move Content To Desk', description='Move Content to a Desk.')
+    superdesk.privilege(name='spike', label='Spike', description='User can spike content.')
+    superdesk.privilege(name='unspike', label='Un Spike', description='User can un-spike content.')
+    superdesk.privilege(name='unlock', label='Unlock content', description='User can unlock content.')
+    superdesk.privilege(name='metadata_uniquename', label='Edit Unique Name', description='User can edit unique name.')
+    superdesk.privilege(name='ingest_move', label='Move Content To Desk', description='Move Content to a Desk.')
 
 
 @celery.task()
