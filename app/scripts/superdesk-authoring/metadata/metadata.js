@@ -189,15 +189,16 @@ var staticMetadata = [
 	}
 ];
 angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
-	.config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
-		authoringWidgetsProvider
-			.widget('metadata', {
-				icon: 'info',
-				label: gettext('Info'),
-				template: 'scripts/superdesk-authoring/metadata/views/metadata-widget.html',
-				order: 1
-			});
-	}])
+    .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
+        authoringWidgetsProvider
+            .widget('metadata', {
+                icon: 'info',
+                label: gettext('Info'),
+                template: 'scripts/superdesk-authoring/metadata/views/metadata-widget.html',
+                order: 1,
+                side: 'right'
+            });
+    }])
 
 	.controller('MetadataWidgetCtrl', MetadataCtrl)
 	.service('metadata', MetadataService)
