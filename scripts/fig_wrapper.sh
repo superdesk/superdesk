@@ -14,5 +14,5 @@ done
 echo "All services are started :3"
 
 cd $(readlink -e $(dirname "$0")/../) &&
-honcho start &&
+"$@" &&
 exit 0

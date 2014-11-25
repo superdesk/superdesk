@@ -6,7 +6,7 @@ elastic:
   image: dockerfile/elasticsearch
 web:
   build: .
-  command: sh /opt/superdesk/scripts/honcho_wrapper.sh
+  command: sh /opt/superdesk/scripts/fig_wrapper.sh honcho start
   links:
    - db
    - redis
