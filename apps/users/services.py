@@ -41,7 +41,8 @@ class UsersService(BaseService):
     def on_create(self, docs):
         for user_doc in docs:
             user_doc.setdefault('display_name', get_display_name(user_doc))
-            user_doc['role'] = get_resource_service('roles').get_default_role_id()
+            if not user_doc.get('role', None):
+                user_doc['role'] = get_resource_service('roles').get_default_role_id()
 
     def on_created(self, docs):
         for user_doc in docs:
