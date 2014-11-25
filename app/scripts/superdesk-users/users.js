@@ -151,6 +151,13 @@
 
         };
 
+        /**
+         * Clear user cache
+         */
+        userservice.clearCache = function() {
+        	cache.removeAll();
+        };
+
         function buildKey(key, page, perPage) {
             return key + '_' + page + '_' + perPage;
         }
@@ -393,7 +400,7 @@
                     notify.error(gettext('I\'m sorry but there was an error when saving the role.'));
                 }
                 }
-            });
+            });        	console.log('Clear user cache');
         };
 
         $scope.cancel = function() {
@@ -672,8 +679,9 @@
             };
         }])
 
-        .directive('sdUserEdit', ['api', 'gettext', 'notify', 'users', 'session', '$location', '$route', 'superdesk', 'features', 'asset',
-        function(api, gettext, notify, users, session, $location, $route, superdesk, features, asset) {
+        .directive('sdUserEdit', ['api', 'gettext', 'notify', 'users', 'userList', 'session', '$location',
+                                  '$route', 'superdesk', 'features', 'asset',
+        function(api, gettext, notify, users, userList, session, $location, $route, superdesk, features, asset) {
 
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/edit-form.html'),
@@ -720,6 +728,7 @@
                     scope.save = function() {
                         scope.error = null;
                         notify.info(gettext('saving..'));
+
                         return users.save(scope.origUser, scope.user)
                         .then(function(response) {
                             scope.origUser = response;
@@ -731,6 +740,8 @@
                             if (scope.user._id === session.identity._id) {
                                 session.updateIdentity(scope.origUser);
                             }
+
+                            userList.clearCache();
 
                         }, function(response) {
                             notify.pop();
