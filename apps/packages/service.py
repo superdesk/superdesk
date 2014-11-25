@@ -60,7 +60,8 @@ class PackageService(BaseService):
         assoc['type'] = item.get('type')
 
     def get_associated_item(self, assoc):
-        endpoint, item_id = assoc[ITEM_REF].split('/')[-2:]
+        endpoint = assoc.get('location', 'archive')
+        item_id = assoc[ITEM_REF]
         item = get_resource_service(endpoint).find_one(req=None, _id=item_id)
         if not item:
             raise SuperdeskError(message='Invalid item reference: ' + assoc['itemRef'])
