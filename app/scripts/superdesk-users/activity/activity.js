@@ -4,7 +4,7 @@
     angular.module('superdesk.users.activity', ['superdesk.users', 'superdesk.dashboard.widgets', 'superdesk.asset'])
         .config(['widgetsProvider', 'assetProvider', function(widgets, asset) {
             widgets.widget('activity', {
-                label: 'Activity Log',
+                label: 'Activity Stream',
                 multiple: true,
                 max_sizex: 2,
                 max_sizey: 2,
@@ -14,7 +14,7 @@
                 template: asset.templateUrl('superdesk-users/activity/widget-activity.html'),
                 configurationTemplate: asset.templateUrl('superdesk-users/activity/configuration.html'),
                 configuration: {maxItems: 5},
-                description: 'Activity log widget'
+                description: 'Activity stream widget'
             });
         }]).controller('ActivityController', ['$scope', 'profileService',
         function ($scope, profileService) {
