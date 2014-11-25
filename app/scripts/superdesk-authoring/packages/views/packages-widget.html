@@ -1,17 +1,17 @@
 <div ng-controller="PackagesWidgetCtrl">
-    <div class="preview-pane content-item-preview" ng-init="contenttab = true" ng-if="selected.preview">
-        <div class="content" ng-if="selected.preview">
-            <div ng-if="contenttab" sd-media-preview></div>
-            <div ng-if="!contenttab" sd-media-metadata data-item="selected.preview"></div>
-        </div>
-    </div>
-
     <div class="dropdown create-package">
-        <div class="dropdown-toggle btn btn-full"><i class="icon-plus"></i> {{:: 'Create package' | translate }}</div>
+        <div class="dropdown-toggle btn btn-full"><i class="icon-plus"></i><span ng-hide="selected.preview">{{:: 'Create package' | translate }}</span></div>
         <ul class="dropdown-menu">
             <li ng-repeat="t in itemTypes">
-                <button ng-click="create(t.name)"><i class="filetype-icon-large-{{t.name}}"></i><span translate>{{ t.label | uppercase }}</span></button>
+                <button ng-click="create(t)"><i class="filetype-icon-large-{{t.icon}}"></i><span translate>{{ t.label | uppercase }}</span></button>
             </li>
         </ul>
+    </div>
+    <div class="package-preview">
+        <div class="preview-pane content-item-preview" style="margin-top:10px;" ng-if="selected.preview">
+            <div class="content">
+                <div sd-media-preview></div>
+            </div>
+        </div>
     </div>
 </div>

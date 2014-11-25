@@ -7,7 +7,7 @@
         this.item_package = null;
 
         this.fetch = function(item) {
-            if (item.linked_in_packages == null){
+            if (item.linked_in_packages == null) {
                 $log.info('PackageService.fetch(), item not included in any package, item: ' + item);
                 this.item_package = null;
                 return $q.when(null);
@@ -23,7 +23,7 @@
             return api.packages.save(new_package);
         };
 
-        this.createPackageFromItem = function createPackageFromItem(item) {
+        this.createPackageFromItem = function createPackageFromItem(item, idRef) {
             var new_package = {
                 headline: item.headline || '',
                 slugline: item.slugline || '',
@@ -31,21 +31,19 @@
                 groups: [
                     {
                     role: 'grpRole:NEP',
-                    refs: [{idRef: 'main'}],
+                    refs: [{idRef: idRef}],
                     id: 'root'
                 },
                 {
-                    refs: [
-                        {
+                    refs: [{
                         headline: item.headline || '',
-                        residRef: '/archive/' + item._id,
+                        residRef: item._id,
+                        location: 'archive',
                         slugline: item.slugline || ''
-                    }
-                    ],
-                    id: 'main',
+                    }],
+                    id: idRef,
                     role: 'grpRole:Main'
-                }
-                ]
+                }]
             };
 
             return this.save(new_package);
@@ -55,46 +53,44 @@
     PackagesCtrl.$inject = ['$scope', 'packagesService', 'superdesk'];
     function PackagesCtrl($scope, packagesService, superdesk) {
         $scope.selected = {};
+        $scope.contenttab = true;
         $scope.$watch('item._id', reload);
 
         $scope.itemTypes = [
             {
-                name: 'text',
+                icon: 'text',
                 label: 'Story'
             },
             {
-                name: 'text',
+                icon: 'text',
                 label: 'Sidebar'
             },
             {
-                name: 'text',
+                icon: 'text',
                 label: 'Fact box'
             },
             {
-                name: 'picture',
+                icon: 'picture',
                 label: 'Image'
             },
             {
-                name: 'video',
+                icon: 'video',
                 label: 'Video'
             },
             {
-                name: 'audio',
+                icon: 'audio',
                 label: 'Audio'
             }
         ];
 
         $scope.create = function(type) {
-            if ($scope.item_package == null) {
-                packagesService.createPackageFromItem($scope.item)
+            if ($scope.selected.preview == null) {
+                packagesService.createPackageFromItem($scope.item, type.label)
                 .then(function(new_package) {
                     $scope.selected.preview = new_package;
-                    superdesk.intent('create', 'package', {type: type}).then(function(val) {
-                        //do the things in the sidebar when modal get closed
-                    });
                 });
             } else {
-                superdesk.intent('create', 'package', {type: type}).then(function(val) {
+                superdesk.intent('create', 'package', {type: type.icon}).then(function(val) {
                     //do the things in the sidebar when modal get closed
                 });
             }
@@ -107,8 +103,6 @@
                 });
             }
         }
-
-        reload();
     }
 
     AddToPackageController.$inject = ['$scope', 'api'];

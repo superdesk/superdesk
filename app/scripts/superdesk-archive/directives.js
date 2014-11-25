@@ -137,7 +137,7 @@ define([
                 link: function(scope, elem) {
                     scope.data = null;
                     scope.error = null;
-                    scope.type = scope.item.itemClass.split(':')[1];
+                    scope.type = scope.item.type || scope.item.itemClass.split(':')[1];
                     if (scope.type !== 'text' && scope.type !== 'composite' && $rootScope.currentModule) {
                         api[$rootScope.currentModule].getById(scope.item.residRef)
                         .then(function(result) {
