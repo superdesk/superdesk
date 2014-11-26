@@ -53,6 +53,7 @@
     PackagesCtrl.$inject = ['$scope', 'packagesService', 'superdesk'];
     function PackagesCtrl($scope, packagesService, superdesk) {
         $scope.selected = {};
+        $scope.selected.hide_menu = true;
         $scope.contenttab = true;
         $scope.$watch('item._id', reload);
 
@@ -91,6 +92,7 @@
                 });
             } else {
                 superdesk.intent('create', 'package', {type: type.icon}).then(function(val) {
+                    console.log(val);
                     //do the things in the sidebar when modal get closed
                 });
             }
@@ -98,9 +100,14 @@
 
         function reload() {
             if ($scope.item) {
-                packagesService.fetch($scope.item).then(function() {
-                    $scope.selected.preview = packagesService.item_package;
-                });
+                if ($scope.item.type === 'composite'){
+                    $scope.selected.preview = $scope.item;
+                    packagesService.item_package = $scope.item;
+                } else {
+                    packagesService.fetch($scope.item).then(function() {
+                        $scope.selected.preview = packagesService.item_package;
+                    });
+                }
             }
         }
     }
@@ -117,8 +124,10 @@
         };
 
         $scope.save = function() {
-            //do the saving
-            $scope.resolve();
+            //TODO: make the selection work
+            var selected = _.filter($scope.items, function(item) { return item._selected === true; });
+            selected = selected.length > 0 ? selected[0] : $scope.items._items[0];
+            $scope.resolve(selected);
         };
     }
 
