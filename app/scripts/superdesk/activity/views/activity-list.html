@@ -1,0 +1,6 @@
+<li ng-repeat="activity in activities" class="item-field" ng-click="run(activity, $event)">
+    <button>
+        <i class="icon-{{ :: activity.icon }}" ng-show=":: activity.icon"></i>
+        <span>{{ :: activity.label | translate }}</span>
+    </button>
+</li>

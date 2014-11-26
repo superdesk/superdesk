@@ -12,6 +12,72 @@ define([
     mod.directive('sdSearchbar', require('./searchbar-directive'));
     mod.directive('sdListItem', require('./list-item-directive'));
 
+    mod.directive('sdUpdown', ['$location', 'keyboardManager', function($location, keyboardManager) {
+        return {
+            transclude: true,
+            template: '<div ng-transclude></div>',
+            scope: {
+                'items': '=',
+                'select': '&'
+            },
+            link: function(scope, elem, attrs) {
+                var UP = -1,
+                    DOWN = 1;
+
+                function fetchSelectedItem(itemId) {
+                    if (!itemId) {
+                        return;
+                    }
+
+                    var match = _.find(scope.items, {_id: itemId});
+                    if (match) {
+                        clickItem(match);
+                    }
+                }
+
+                function move(diff) {
+                    return function() {
+                        if (scope.items) {
+                            var index = _.findIndex(scope.items, {_id: $location.search()._id});
+                            if (index === -1) { // selected not in current items, select first
+                                return clickItem(_.first(scope.items));
+                            }
+
+                            var nextIndex = _.max([0, _.min([scope.items.length - 1, index + diff])]);
+                            if (nextIndex < 0) {
+                                return clickItem(_.last(scope.items));
+                            }
+
+                            return clickItem(scope.items[nextIndex]);
+                        }
+                    };
+                }
+
+                function onKey(dir, callback) {
+                    keyboardManager.bind(dir, callback);
+                }
+
+                onKey('up', move(UP));
+                onKey('left', move(UP));
+                onKey('down', move(DOWN));
+                onKey('right', move(DOWN));
+
+                function clickItem(item, $event) {
+                    scope.select({item: item});
+                    if ($event) {
+                        $event.stopPropagation();
+                    }
+                }
+
+                scope.$watch('items', function() {
+                    fetchSelectedItem($location.search()._id);
+                    elem.find('.list-view').focus();
+                });
+            }
+
+        };
+    }]);
+
     /**
      * sdPagination inserts pagination controls for a given data set.
      *

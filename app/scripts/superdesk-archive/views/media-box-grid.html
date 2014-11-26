@@ -42,11 +42,13 @@
      {{ item.pubstatus | translate }}
 </div>
 
+<div class="status-label" ng-show="item._type">{{ item._type }}</div>
+
 <div class="action">
-    <ul ng-if="extras.activityFilter" class="item-functions"
+    <ul ng-if="extras.activity" class="item-functions"
         sd-activity-list
-        data-data="{item: item, list: items, index: $index}"
-        data-type="{{extras.activityFilter.type}}"
-        data-action="{{extras.activityFilter.action}}">
+        data-item="item"
+        data-type="{{extras.activity.type || item._type}}"
+        data-action="{{extras.activity.action}}">
     </ul>
 </div>

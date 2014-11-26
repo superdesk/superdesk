@@ -193,7 +193,7 @@
 		.transition(all 0.3s ease);
 		input {
 			height: 28px;
-			line-height: 28px;
+			line-height: 100%;
 			font-size: 14px;
 			border: 0 !important;
 			width: 0;
@@ -234,7 +234,7 @@
 		}
 	}
 
-	&.open {
+	&.extended {
 		.search-handler {
 			input {
 				width: 320px;
@@ -874,6 +874,28 @@
 }
 
 
+// Sortbar input
+// --------------------------------------------------
+.sortbar {
+	.lab {
+		margin-right: 10px;
+		line-height: 22px;
+	}
+	.dropdown-toggle {
+		color: #808080;
+	}
+	.direction {
+		margin-left: 5px;
+		background: none;
+		border: 0;
+		.opacity(60);
+	}
+}
+header .sortbar {
+	margin: 10px;
+	border-right: 1px solid #dfdfdf;
+	padding: 3px 10px;
+}
 
 // Selection list
 // ---------------------------------------------

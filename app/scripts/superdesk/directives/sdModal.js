@@ -16,13 +16,20 @@ define([
             return {
                 replace: true,
                 transclude: true,
-                template: '<div class="modal fade">' +
-                        '<div class="modal-dialog" ng-if="model"><div class="modal-content" ng-transclude></div></div>' +
-                    '</div>',
+                template: [
+                    '<div class="modal fade">',
+                    '<div class="modal-dialog" ng-if="model"><div class="modal-content" ng-transclude></div></div>',
+                    '</div>'].join(''),
                 scope: {model: '='},
                 link: function(scope, element, attrs) {
                     scope.$watch('model', function(model) {
                         $(element).modal(model ? 'show' : 'hide');
+                    });
+
+                    scope.$on('$destroy', function() {
+                        $(element).modal('hide');
+                        // backdrop stays there sometimes. we have to remove it manually
+                        angular.element(document.body).find('.modal-backdrop').remove();
                     });
                 }
             };

@@ -9,6 +9,10 @@ define([
         $injector.invoke(BaseListController, this, {$scope: $scope});
 
         $scope.type = 'ingest';
+        $scope.repo = {
+            ingest: true,
+            archive: false
+        };
         $scope.api = api.ingest;
         $rootScope.currentModule = 'ingest';
 
@@ -18,7 +22,7 @@ define([
             });
         };
 
-        $scope.$watchCollection(function() {
+        $scope.$watchCollection(function getSearchWithoutId() {
             return _.omit($location.search(), '_id');
         }, angular.bind(this, function searchUpdated(search) {
             var query = this.getQuery(search);

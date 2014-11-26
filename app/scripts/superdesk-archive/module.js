@@ -8,84 +8,6 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    ContentQueryBuilder.$inject = ['$location'];
-    function ContentQueryBuilder($location) {
-
-        /**
-         * Single query instance
-         *
-         * @param {string} q Query string query
-         */
-        function Query(q) {
-            var size = 25;
-            var sort = [{versioncreated: 'desc'}];
-            var filters = [];
-
-            /**
-             * Get criteria for given query
-             */
-            this.getCriteria = function getCriteria() {
-                var criteria = {
-                    query: {filtered: {filter: {and: filters}}},
-                    size: size,
-                    sort: sort
-                };
-
-                if (q) {
-                    criteria.query.filtered.query = {query_string: {query: q}};
-                }
-
-                return criteria;
-            };
-
-            /**
-             * Add filter to query
-             *
-             * @param {Object} filter
-             */
-            this.filter = function addFilter(filter) {
-                filters.push(filter);
-                return this;
-            };
-
-            /**
-             * Set size
-             *
-             * @param {number} _size
-             */
-            this.size = function setSize(_size) {
-                size = _size != null ? _size : size;
-                return this;
-            };
-
-            /**
-             * Set query string query
-             *
-             * @param {string} _q
-             */
-            this.q = function setQ(_q) {
-                q = _q || null;
-                return this;
-            };
-
-            // do base filtering
-            if ($location.search().spike) {
-                this.filter({term: {is_spiked: true}});
-            } else {
-                this.filter({not: {term: {is_spiked: true}}});
-            }
-        }
-
-        /**
-         * Start creating a new query
-         *
-         * @param {string} q
-         */
-        this.query = function createQuery(q) {
-            return new Query(q);
-        };
-    }
-
     SpikeService.$inject = ['$location', 'api', 'notify', 'gettext'];
     function SpikeService($location, api, notify, gettext) {
         var RESOURCE = 'archive_spike';
@@ -120,13 +42,13 @@ define([
     }
 
     return angular.module('superdesk.archive', [
+        'superdesk.search',
         require('./directives').name,
         'superdesk.dashboard',
         'superdesk.widgets.archive'
         ])
 
         .service('spike', SpikeService)
-        .service('contentQuery', ContentQueryBuilder)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
@@ -156,7 +78,7 @@ define([
                     controller: ['spike', 'data', function spikeActivity(spike, data) {
                         return spike.spike(data.item);
                     }],
-                    filters: [{action: superdesk.ACTION_EDIT, type: 'archive'}]
+                    filters: [{action: 'list', type: 'archive'}]
                 })
                 .activity('unspike', {
                     label: gettext('Unspike Item'),
@@ -164,7 +86,7 @@ define([
                     controller: ['spike', 'data', function unspikeActivity(spike, data) {
                         return spike.unspike(data.item);
                     }],
-                    filters: [{action: superdesk.ACTION_EDIT, type: 'spike'}]
+                    filters: [{action: 'list', type: 'spike'}]
                 });
         }])
 
@@ -188,5 +110,14 @@ define([
                 }
             });
         }])
+
+        /**
+         * Edit item view
+         */
+        .directive('sdEditView', function() {
+            return {
+                templateUrl: 'scripts/superdesk-archive/views/edit-view.html'
+            };
+        })
         ;
 });

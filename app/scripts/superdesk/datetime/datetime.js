@@ -20,7 +20,7 @@ define([
         return {
             scope: {date: '='},
             link: function datetimeLink(scope, elem) {
-                scope.$watch('date', function (date) {
+                scope.$watch('date', function watchDate(date) {
                     if (date) {
                         renderDate(date, elem);
                     }

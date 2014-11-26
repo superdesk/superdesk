@@ -1,6 +1,6 @@
-<div class="flat-searchbar" ng-class="{open: flags.open}">
+<div class="flat-searchbar" ng-class="{extended: flags.extended}">
     <div class="search-handler">
-        <label for="search-input" class="trigger-icon" ng-click="flags.open = !flags.open"></label>
+        <label for="search-input" class="trigger-icon" ng-click="flags.extended = !flags.extended"></label>
         <input id="search-input" type="text" placeholder="{{ 'Search'|translate }}" ng-model="search">
         <button class="search-close" ng-click="close()" ng-class="{'visible': search}"><i class="icon-close-small"></i></button>
     </div>

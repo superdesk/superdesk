@@ -1,5 +1,5 @@
 <div class="notification-pane" ng-class="{show: flags.notifications}">
-    <div class="header">
+    <div class="header" ng-if="flags.notifications">
         <figure class="avatar medium">
             <img sd-user-avatar data-src="currentUser.picture_url">
         </figure>
@@ -12,8 +12,8 @@
             <button ng-click="logout()" translate>Sign out</button>
         </div>
     </div>
-    <div class="content">
-        <section class="module" ng-if="flags.notifications" >
+    <div class="content" ng-if="flags.notifications">
+        <section class="module">
             <header class="title" translate>Notifications</header>
             <div class="notification-list">
                 <ul>
@@ -22,7 +22,7 @@
                             <img sd-user-avatar data-src="notification.user.picture_url" />
                         </figure>
                         <div class="content">
-                            <span class="date">{{ notification._created|reldate }}</span>
+                            <time sd-datetime data-date="notification._created"></time>
                             <p class="text"><b>{{ notification.user.display_name || notification.user.username }}</b> <span translate>commented on</span> <i><a ng-href="#/authoring/{{ notification.item.guid }}?_id={{ notification.item.guid }}&comments={{ notification.data.comment_id }}" title="{{ notification.item.headline }}">{{ notification.item.slugline || notification.item.headline }}</a></i>:<br>{{ notification.data.comment }}</p>
                         </div>
                     </li>

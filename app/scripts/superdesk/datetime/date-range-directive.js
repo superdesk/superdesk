@@ -1,9 +1,5 @@
-define(['moment'], function(moment) {
+define([], function() {
     'use strict';
-
-    function format(date) {
-        return date ? moment(date).format('YYYY-MM-DD') : null;
-    }
 
 	/**
      * Show date range picker on element
@@ -31,11 +27,23 @@ define(['moment'], function(moment) {
                 scope.gte = search.after ? new Date(search.after) : null;
 
                 scope.$watch('lte', function(lte) {
-                    $location.search('before', format(lte));
+                    if (lte) {
+                        var d = new Date(lte);
+                        d.setHours(24, 0, 0, 0);
+                        $location.search('before', d.toISOString());
+                    } else {
+                        $location.search('before', null);
+                    }
                 });
 
                 scope.$watch('gte', function(gte) {
-                    $location.search('after', format(gte));
+                    if (gte) {
+                        var d = new Date(gte);
+                        d.setHours(0, 0, 0, 0);
+                        $location.search('after', d.toISOString());
+                    } else {
+                        $location.search('after', null);
+                    }
                 });
 			}
         };

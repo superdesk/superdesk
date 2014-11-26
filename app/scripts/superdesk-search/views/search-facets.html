@@ -1,0 +1,110 @@
+<div>
+    <div class="header">
+        <div class="icon" ng-click="flags.facets = !flags.facets">
+            <i class="icon-filter-large"></i>
+        </div>
+        <ul>
+            <li ng-class="{active: sTab}" ng-click="sTab = true" translate>Filters</li>
+            <li ng-class="{active: !sTab}" ng-click="sTab = false" translate>Views</li>
+        </ul>
+        <div class="doopen" ng-click="flags.facets = false"><i class="icon-backward-thin"></i></div>
+    </div>
+    <div class="content" ng-if="sTab">
+
+        <div class="selected-filters">
+            <ul>
+                <li ng-repeat="(type,key) in selectedFacets">
+                    <div><span>{{type}}:</span>{{key}}<button ng-click="removeFilter(type, key)"><i class="icon-close-small icon-white"></i></button></div>
+                </li>
+            </ul>
+        </div>
+
+        <div sd-search-within></div>
+
+
+        <div sd-toggle-box data-title="{{ 'Content types' | translate }}" ng-hide="isEmpty('type')" data-open="true">
+            <ul class="filter-box">
+                <li ng-repeat="(key,value) in aggregations.type">
+                    <button ng-click="setFilter('type', key)"><i class="filetype-icon-{{key}}"></i>{{ key | translate}} <i>{{ value }}</i></button>
+                </li>
+            </ul>
+        </div>
+
+        <div sd-toggle-box data-title="{{ 'Desks' | translate }}" ng-hide="isEmpty('desk')" data-open="true">
+            <ul class="filter-box">
+                <li ng-repeat="(key,value) in aggregations.desk">
+                    <button ng-click="setFilter('desk', value.id)">{{key | translate}} <i>{{ value.count }}</i></button>
+                </li>
+            </ul>
+        </div>
+
+        <div sd-toggle-box data-title="{{ 'Stages' | translate }}" ng-hide="isEmpty('stage')" data-open="true" >
+            <ul class="filter-box">
+                <li ng-repeat="(key,value) in aggregations.stage">
+                    <button ng-click="setFilter('stage', value.id)">{{key | translate}} <i>{{ value.count }}</i></button>
+                </li>
+            </ul>
+        </div>
+
+        <div sd-toggle-box data-title="{{ 'Sources' | translate }}" ng-hide="isEmpty('source')" data-open="true">
+            <ul class="filter-box">
+                <li ng-repeat="(key,value) in aggregations.source">
+                    <button ng-click="setFilter('source', key)">{{key | translate}} <i>{{ value }}</i></button>
+                </li>
+            </ul>
+        </div>
+
+        <div sd-toggle-box data-title="{{ 'Categories' | translate }}" ng-hide="isEmpty('category')" data-open="true">
+            <ul class="filter-box">
+                <li ng-repeat="(key,value) in aggregations.category">
+                    <button ng-click="setFilter('category', key)">{{key | translate}} <i>{{ value }}</i></button>
+                </li>
+            </ul>
+        </div>
+
+        <div sd-toggle-box data-title="{{ 'Urgency' | translate }}" ng-hide="isEmpty('urgency')" data-open="true">
+            <ul class="filter-box">
+                <li ng-repeat="(key,value) in aggregations.urgency">
+                    <button ng-click="setFilter('urgency', key)">Urgency: {{key | translate}} <i>{{ value }}</i></button>
+                </li>
+            </ul>
+        </div>
+
+        <div sd-toggle-box data-title="{{ 'Spiked' | translate }}" ng-hide="isEmpty('spiked')" data-open="true">
+            <ul class="filter-box">
+                <li ng-repeat="(key,value) in aggregations.spiked">
+                    <button ng-click="setFilter('spike', key)">Spiked <i>{{ value }}</i></button>
+                </li>
+            </ul>
+        </div>
+
+        <div sd-toggle-box data-title="{{ 'Dates' | translate }}" data-open="true">
+            <ul class="filter-box">
+                <li ng-repeat="(key,value) in aggregations.date">
+                    <button ng-click="setDateFilter(key)">{{key}} <i>{{ value }}</i></button>
+                </li>
+            </ul>
+        </div>
+
+        <div sd-toggle-box data-title="{{ 'Dates' | translate }}" data-open="true">
+            <ul class="date-filter" sd-date-range data-lte="lte" data-gte="gte">
+                <li>
+                    <label for="created_before" translate>Created before</label>
+                    <input id="created_before" type="date" ng-model="lte">
+                   
+                </li>
+                <li>
+                    <label for="created_after" translate>Created after</label>
+                    <input id="created_after" type="date" ng-model="gte">
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="content views" ng-if="!sTab">
+        <div class="header">
+            <button class="btn pull-right" ng-disabled="!views.selected" ng-click="views.select()" translate>Clear</button>
+            <button class="btn btn-info" ng-click="views.create()"><i class="icon-plus-small icon-white"></i> {{ :: 'Create' | translate }}</button>
+        </div>
+        <div class="list" sd-desk-views></div>
+    </div>
+</div>

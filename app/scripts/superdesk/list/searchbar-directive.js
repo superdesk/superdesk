@@ -9,7 +9,7 @@ define(['require'], function(require) {
                 var input = elem.find('#search-input');
                 var params = $location.search();
                 scope.search = params.q;
-                scope.flags = {open: !!scope.search};
+                scope.flags = {extended: !!scope.search};
 
                 var updateParam = _.debounce(function() {
                     scope.$apply(function() {

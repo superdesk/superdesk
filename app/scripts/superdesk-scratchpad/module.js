@@ -18,7 +18,7 @@ define([
                     scratchpad.addItem(data.item);
                 }],
                 filters: [
-                    {action: 'addScratchpad', type: 'archive'}
+                    {action: 'list', type: 'archive'}
                 ]
             })
             .activity('remove.scratchpad', {
