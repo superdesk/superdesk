@@ -3,13 +3,25 @@
 	    <button class="btn btn-info pull-right" ng-disabled="!userPrivileges.$dirty" ng-click="save(userPrivileges)" translate>Save</button>
 	</div>
 	<div class="privileges form-flat"> 
-		<div class="title">User privileges</div>
-		<ul class="fieldset">
-			<li class="field clearfix" ng-repeat="p in privileges | orderBy:name">
-				<label class="pull-left">{{ p.label }}</label>
-				<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="role.privileges[p.name]" ng-disabled="true" ng-if="role.privileges[p.name]">
-				<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="user.privileges[p.name]" ng-if="!role.privileges[p.name]">
-			</li>
-		</ul>
+		<div class="roles-list">
+			<div class="action-line initial">
+				<div class="td name"></div>
+				<div class="td role-field" translate>User</div>
+				<div class="td role-field" translate>Role</div>
+				<div class="td blank"></div>
+			</div>
+			<div ng-repeat="p in privileges | orderBy:name" class="action-line">
+				<div class="td name">{{ p.label }}</div>
+				<div class="td role-field">
+					<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="user.privileges[p.name]"
+						ng-if="!role.privileges[p.name]">
+					<input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="role.privileges[p.name]"
+						ng-disabled="true"
+						ng-if="role.privileges[p.name]">
+				</div>
+				<div class="td"><span ng-if="role.privileges[p.name]" class="label">{{ role.name }}</span></div>
+				<div class="td blank"></div>
+			</div>
+		</div>
 	</div>
 </form>

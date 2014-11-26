@@ -471,74 +471,78 @@
 		line-height: 12px;
 		margin-left: 5px;
 	}
+}
 
-	// PRIVILEGES TAB
+// PRIVILEGES TAB
 
-	.privileges {
+.privileges {
 
-		> .header {
+	> .header {
+		padding: 10px;
+		height: 28px;
+	}
+
+	.roles-list {
+		.action-line {
+			display: table-row;
+			&:hover {
+				background: #f8f8f8;
+			}
+		}
+		.td {
+			display: table-cell;
 			padding: 10px;
-			height: 28px;
+			border-bottom: @roles-border;
+			text-align: center;
+			border-left: @roles-border;
+			white-space: nowrap;
+			.user-select(none);
+			.label {
+				font-size: 80%;
+			}
+		}
+		.name {
+			border-left: 0;
+			text-align: left;
+			padding: 10px 40px 10px 10px;
+			text-transform: uppercase;
+			.text-semibold();
+			font-size: 10px;
+			white-space: nowrap;
+			color: #666;
+		}
+		.blank {
+			width: 100%;
+			border-bottom: @roles-border;
+			text-align: left;
 		}
 
-		.roles-list {
-			
-			.action-line {
-				display: table-row;	
-				&:hover {
-					background: #f8f8f8;
-				}
+		.initial {
+			background: #e0e0e0;
+			.label {
+				position: absolute;
+				top: 1px;
+				right: 2px;
+				line-height: 10px;
+			}
+			&:hover {
+				background: #e0e0e0;
 			}
 			.td {
-				display: table-cell;
-				border-bottom: @roles-border;
-				text-align: center;
-				border-left: @roles-border;
-				.user-select(none);
-			}
-			.name {
-				border-left: 0;
-				text-align: left;
-				padding: 10px 40px 10px 10px;
-				text-transform: uppercase;
-				.text-semibold();
-				font-size: 10px;
+				font-size: 13px;
 				white-space: nowrap;
-				color: #666;
+				border-top: @roles-border;
+				border-color: #d8d8d8 !important;
+				padding: 10px;
+				position: relative;
 			}
-			.blank {
-				width: 100%;
-				border-bottom: @roles-border;
-				text-align: left;
+			.create-role {
+				padding: 10px;
+				position: absolute;
+				background: none;
+				border: 0;
 			}
-
-			.initial {
-				background: #e0e0e0;
-				.label {
-					position: absolute;
-					top: 1px;
-					right: 2px;
-					line-height: 10px;
-				}
-				&:hover {
-					background: #e0e0e0;
-				}
-				.td {
-					font-size: 13px;
-					white-space: nowrap;
-					border-top: @roles-border;
-					border-color: #d8d8d8 !important;
-					padding: 10px;
-					position: relative;
-				}
-				.create-role {
-					padding: 10px;
-					position: absolute;
-					background: none;
-					border: 0;
-				}
-			}
-
 		}
+
 	}
 }
