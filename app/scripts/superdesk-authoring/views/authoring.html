@@ -29,25 +29,13 @@
 
                 <article class="main-article" ng-if="item._id" ng-class="{preview: !_editable}">
                 	<form>
-                		<fieldset class="horizontal span-3">
+                		<fieldset>
                 			<div class="field">
                 				<label translate>Keyword</label>
                                 <span sd-character-count data-item="item.slugline" data-limit="sluglineSoftLimit" data-limit-callback="checkLimit"></span>
-                				<input type="text" maxlength="{{sluglineHardLimit}}" ng-model="item.slugline" ng-if="_editable">
+                				<input type="text" class="keyword" maxlength="{{sluglineHardLimit}}" ng-model="item.slugline" ng-if="_editable">
                 				<div ng-if="!_editable">{{item.slugline}}</div>
                 			</div>
-                			<div class="field">
-                				<label translate>Take key</label>
-                				<input type="text" ng-model="item.anpa_take_key" ng-if="_editable">
-                				<div ng-if="!_editable">{{item.anpa_take_key}}</div>
-                			</div>
-                			<div class="field">
-                				<label translate>Unique name</label>
-                				<input type="text" ng-model="item.unique_name" ng-if="_editable">
-                				<div ng-if="!_editable">{{item.slugline}}</div>
-                			</div>
-                		</fieldset>
-                		<fieldset>
                 			<div class="field" >
                 				<label translate>Headline</label>
                                 <span sd-character-count data-item="item.headline" data-limit="headlineSoftLimit" data-limit-callback="checkLimit"></span>

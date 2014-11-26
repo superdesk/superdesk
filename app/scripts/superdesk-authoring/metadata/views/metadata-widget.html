@@ -1,7 +1,23 @@
 <div class="metadata" ng-controller="MetadataWidgetCtrl">
 	<ul class="basic-list">
+		<li class="auto">
+			<label translate>GUID</label>
+			<div class="data">{{item.guid}}</div>
+		</li>
 		<li>
-			<label>By</label>
+			<label translate>Take key</label>
+			<div class="data">
+				<input type="text" ng-model="item.anpa_take_key" ng-disabled="!_editable">
+			</div>
+		</li>
+		<li>
+			<label translate>Unique name</label>
+			<div class="data">
+				<input type="text" ng-model="item.unique_name" ng-disabled="!_editable">
+			</div>
+		</li>
+		<li>
+			<label translate>By</label>
 			<div class="data">
 				<input type="text" ng-model="item.byline" ng-disabled="!_editable">
 			</div>

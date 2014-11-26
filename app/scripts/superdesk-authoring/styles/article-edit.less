@@ -4,9 +4,7 @@
 @import 'mixins.less';
 @import 'variables.less';
 
-@main-article-padding-side : 30px;
 @send-to-pane-width: 445px;
-
 
 .auth-screen {
 	position: absolute;
@@ -114,98 +112,6 @@
 	top: 40px !important;
 }
 
-.text-editor {
-	line-height:20px;
-	min-height: 300px;
-	border: 1px solid #e0e0e0;
-	padding: 5px;
-	&:focus {
-		outline:none;
-	}
-	p {
-		padding: 0 !important;
-		margin-bottom: 10px !important;
-		font-size:13px !important;
-		line-height:20px !important;
-	}
-}
-
-
-.main-article {
-	width:auto;
-	background: @white;
-	border: 1px solid #cacaca;
-	border-width:0 1px;
-	position:relative;
-	z-index:1;
-	padding:10px @main-article-padding-side @bottom-view-padding;
-	margin:0 auto;
-	min-height:100%;
-	.box-sizing(border-box);
-	max-width: 960px;
-
-	.field label {
-		.text-normal();
-		background: #d0d0d0;
-		.border-radius(2px);
-		color: #fff;
-		display: inline-block;
-		padding: 0 5px;
-		font-size: 10px;
-		line-height: 15px;
-		height: 15px;
-	}
-	.headline {
-		font-size:22px;
-	}
-	textarea.headline {
-		height: 40px;
-		padding: 6px;
-		line-height: 28px;
-	}
-
-	.text-editor, .headline, .abstract, input {
-		border-color: #f4f4f4 !important;
-	}
-
-	.text-editor:hover, .headline:hover, .abstract:hover, input:hover {
-		border-color: #d0d0d0 !important;
-	}
-
-	.text-editor:focus, .headline:focus, .abstract:focus, input:focus{
-		.box-shadow(none) !important;
-		border-color: #bbb !important;
-	}
-
-	.char-count {
-		font-size: 11px;
-		font-style: italic;
-		color: #666;
-		margin-left: 5px;
-		&.error {
-			font-weight: bold;
-			color: #D33C30;
-		}
-	}
-
-	&.preview {
-		.text-editor {
-			border-color: #fff !important;
-		}
-	}
-
-	.abstract {
-		font-size:14px;
-		line-height:24px;
-	}
-
-	figure img {
-		max-width: 100%;
-		float:left;
-		margin: 10px 20px 10px 0;
-	}
-	
-}
 
 // Opened articles
 // -------------------------------------------------

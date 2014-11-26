@@ -342,7 +342,6 @@
                 'item.urgency',
                 'item.byline',
                 'item.priority',
-                'item.anpa_category',
                 'item.ednote',
                 'item.usageterms',
                 'item.subject',
