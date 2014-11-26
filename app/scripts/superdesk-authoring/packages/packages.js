@@ -4,23 +4,16 @@
 
     PackagesService.$inject = ['api', '$log', '$q'];
     function PackagesService(api, $log, $q) {
-        this.item_package = null;
 
         this.fetch = function(item) {
             if (item.linked_in_packages == null) {
                 $log.info('PackageService.fetch(), item not included in any package, item: ' + item);
-                this.item_package = null;
                 return $q.when(null);
             }
             var id = item.linked_in_packages[0]['package'];
             return api.find('packages', id).then(angular.bind(this, function(result) {
-                this.item_package = result;
                 return $q.when(result);
             }));
-        };
-
-        this.save = function(new_package) {
-            return api.packages.save(new_package);
         };
 
         this.createPackageFromItem = function createPackageFromItem(item, idRef) {
@@ -39,14 +32,40 @@
                         headline: item.headline || '',
                         residRef: item._id,
                         location: 'archive',
-                        slugline: item.slugline || ''
+                        slugline: item.slugline || '',
+                        renditions: item.renditions
                     }],
                     id: idRef,
                     role: 'grpRole:Main'
                 }]
             };
 
-            return this.save(new_package);
+            return api.packages.save(new_package);
+        };
+
+        this.addItemToPackage = function addToPackage(currentPackage, item, idRef) {
+            var patch = _.pick(currentPackage, 'groups');
+            var rootGroup = _.find(patch.groups, function(group) { return group.id === 'root'; });
+            var newId = this.generateNewId(rootGroup.refs, idRef);
+            rootGroup.refs.push({idRef: newId});
+            patch.groups.push({
+                    refs: [{
+                        headline: item.headline || '',
+                        residRef: item._id,
+                        location: 'archive',
+                        slugline: item.slugline || '',
+                        renditions: item.renditions
+                    }],
+                    id: newId,
+                    role: 'grpRole:' + newId
+                });
+            return api.packages.save(currentPackage, patch);
+        };
+
+        this.generateNewId = function generateNewId(refs, idRef) {
+            var filter = function(ref) { return (ref.idRef.toLowerCase().indexOf(idRef.toLowerCase())) === 0 ? 'found' : 'none'; };
+            var counts = _.countBy(refs, filter);
+            return idRef + '-' + counts.found;
         };
     }
 
@@ -93,7 +112,10 @@
             } else {
                 superdesk.intent('create', 'package', {type: type.icon}).then(function(val) {
                     console.log(val);
-                    //do the things in the sidebar when modal get closed
+                    packagesService.addItemToPackage($scope.selected.preview, val, type.label)
+                    .then(function(updatedPackage) {
+                        $scope.selected.preview = updatedPackage;
+                    });
                 });
             }
         };
@@ -102,10 +124,9 @@
             if ($scope.item) {
                 if ($scope.item.type === 'composite'){
                     $scope.selected.preview = $scope.item;
-                    packagesService.item_package = $scope.item;
                 } else {
-                    packagesService.fetch($scope.item).then(function() {
-                        $scope.selected.preview = packagesService.item_package;
+                    packagesService.fetch($scope.item).then(function(item_package) {
+                        $scope.selected.preview = item_package;
                     });
                 }
             }
@@ -125,8 +146,7 @@
 
         $scope.save = function() {
             //TODO: make the selection work
-            var selected = _.filter($scope.items, function(item) { return item._selected === true; });
-            selected = selected.length > 0 ? selected[0] : $scope.items._items[0];
+            var selected = _.sample($scope.items._items);
             $scope.resolve(selected);
         };
     }
