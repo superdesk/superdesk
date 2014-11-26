@@ -332,6 +332,7 @@
      */
     UserDeleteCommand.$inject = ['api', 'data', '$q', 'notify', 'gettext'];
     function UserDeleteCommand(api, data, $q, notify, gettext) {
+    	data = data.item;
         return api.users.remove(data.item).then(function(response) {
             data.list.splice(data.index, 1);
         }, function(response) {
