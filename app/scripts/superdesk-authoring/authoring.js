@@ -302,7 +302,6 @@
         $scope.dirty = false;
         $scope.viewSendTo = false;
         $scope.stage = null;
-        $scope.theme = null;
 
         // These values should come from preferences.
         $scope.sluglineSoftLimit = 26;
@@ -521,28 +520,81 @@
         };
     }
 
-    ThemeSelect.$inject = ['storage'];
-    function ThemeSelect(storage) {
+    AuthoringThemesService.$inject = ['storage'];
+    function AuthoringThemesService(storage) {
+
+        var service = {};
+
         var THEME_KEY = 'authoring:theme';
+        var THEME_DEFAULT = 'default-normal';
+
+        service.availableThemes = [
+            {
+                cssClass: '',
+                label: 'Default Theme normal',
+                key: 'default-normal'
+            },
+            {
+                cssClass: 'large-text',
+                label: 'Default Theme large',
+                key: 'default-large'
+            },
+            {
+                cssClass: 'dark-theme',
+                label: 'Dark Theme normal',
+                key: 'dark-normal'
+            },
+            {
+                cssClass: 'dark-theme large-text',
+                label: 'Dark Theme large',
+                key: 'dark-large'
+            },
+            {
+                cssClass: 'natural-theme',
+                label: 'Natural Theme normal',
+                key: 'natural-normal'
+            },
+            {
+                cssClass: 'natural-theme large-text',
+                label: 'Natural Theme large',
+                key: 'natural-large'
+            }
+        ];
+
+        service.defaultTheme = 'default-normal';
+
+        service.save = function(theme) {
+            storage.setItem(THEME_KEY, theme.key);
+        };
+
+        service.get = function() {
+            var _default = storage.getItem(THEME_KEY) || THEME_DEFAULT;
+            return _.find(service.availableThemes, {key: _default});
+        };
+
+        return service;
+    }
+
+    ThemeSelectDirective.$inject = ['authThemes'];
+    function ThemeSelectDirective(authThemes) {
 
         return {
-            scope: {
-                theme: '='
-            },
             templateUrl: 'scripts/superdesk-authoring/views/theme-select.html',
-            link: function themeSelectLink(scope, elem, attrs) {
-                scope.theme = storage.getItem(THEME_KEY);
-                scope.themes = [
-                    'theme01',
-                    'theme02',
-                    'theme03',
-                    'theme04'
-                ];
+            link: function themeSelectLink(scope, elem) {
 
-                scope.selectTheme = function(theme) {
+                scope.themes = authThemes.availableThemes;
+                scope.theme = authThemes.get();
+                applyTheme();
+
+                scope.changeTheme = function(theme) {
                     scope.theme = theme;
-                    storage.setItem(THEME_KEY, theme);
+                    authThemes.save(theme);
+                    applyTheme();
                 };
+
+                function applyTheme() {
+                    elem.closest('#theme-container').attr('class', scope.theme.cssClass);
+                }
             }
         };
     }
@@ -644,12 +696,13 @@
         .service('autosave', AutosaveService)
         .service('confirm', ConfirmDirtyService)
         .service('lock', LockService)
+        .service('authThemes', AuthoringThemesService)
 
         .directive('sdDashboardCard', DashboardCard)
         .directive('sdSendItem', SendItem)
         .directive('sdCharacterCount', CharacterCount)
         .directive('sdWordCount', WordCount)
-        .directive('sdThemeSelect', ThemeSelect)
+        .directive('sdThemeSelect', ThemeSelectDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
