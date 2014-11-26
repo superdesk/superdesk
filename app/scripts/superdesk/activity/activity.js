@@ -237,14 +237,16 @@ define([
                  * @param {string} category
                  */
                 getMenu: function getMenu(category) {
-                    var menu = [];
-                    angular.forEach(activities, function(activity) {
-                        if (activity.category === category && isAllowed(activity)) {
-                            menu.push(activity);
-                        }
-                    });
+                    return privileges.loaded.then(function() {
+                        var menu = [];
+                        angular.forEach(activities, function(activity) {
+                            if (activity.category === category && isAllowed(activity)) {
+                                menu.push(activity);
+                            }
+                        });
 
-                    return $q.when(menu);
+                        return menu;
+                    });
                 }
             }, constans);
         }];

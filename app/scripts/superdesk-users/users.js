@@ -757,9 +757,9 @@
             };
         }])
 
-        .directive('sdUserEdit', ['api', 'gettext', 'notify', 'users', 'userList', 'session', '$location',
-                                  '$route', 'superdesk', 'features', 'asset',
-        function(api, gettext, notify, users, userList, session, $location, $route, superdesk, features, asset) {
+        .directive('sdUserEdit', ['api', 'gettext', 'notify', 'users', 'userList', 'session',
+            '$location', '$route', 'superdesk', 'features', 'asset', 'privileges',
+        function(api, gettext, notify, users, userList, session, $location, $route, superdesk, features, asset, privileges) {
 
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/edit-form.html'),
@@ -770,6 +770,7 @@
                     onupdate: '&'
                 },
                 link: function(scope, elem) {
+                    scope.privileges = privileges.privileges;
                     scope.features = features;
                     scope.usernamePattern = users.usernamePattern;
                     scope.phonePattern = users.phonePattern;

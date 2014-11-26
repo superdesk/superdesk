@@ -1,6 +1,6 @@
 <div class="subnav">
 	
-	<div class="button-stack">
+	<div class="button-stack" ng-if="privileges.users">
         <a class="navbtn navbtn-info navbtn-hover" href="" ng-click="intent('list', 'user')">
             <i class="svg-icon-left inverse"></i> <span class="title" translate>Back to Users list</span>
         </a>
@@ -20,7 +20,7 @@
 		            <li ng-class="{active: selectedTab === 'preferences'}" ng-click="$parent.selectedTab = 'preferences'" ng-if="profile">
 		                <button translate>Preferences</button>
 		            </li>
-		            <li ng-class="{active: selectedTab === 'privileges'}" ng-click="selectedTab = 'privileges'">
+		            <li ng-class="{active: selectedTab === 'privileges'}" ng-click="$parent.selectedTab = 'privileges'" ng-if="privileges.users">
 		                <button translate>Privileges</button>
 		            </li>
 		        </ul>
@@ -28,7 +28,7 @@
 		    <div class="content">
 		    	<div sd-user-edit data-user="user" ng-if="selectedTab === 'overview'"></div>
 		    	<div sd-user-preferences ng-if="selectedTab === 'preferences'"></div>
-		    	<div sd-user-privileges data-user="user" ng-if="selectedTab === 'privileges'"></div>
+		    	<div sd-user-privileges data-user="user" ng-if="selectedTab === 'privileges' && privileges.users"></div>
 		    </div>
 		</div>
 	</div>

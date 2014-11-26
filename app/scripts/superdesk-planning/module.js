@@ -301,7 +301,8 @@ define([
                     templateUrl: 'scripts/superdesk-planning/views/planning.html',
                     category: superdesk.MENU_MAIN,
                     reloadOnSearch: false,
-                    filters: []
+                    filters: [],
+                    privileges: {planning: 1}
                 });
         }]);
 });
