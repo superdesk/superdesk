@@ -1,10 +1,12 @@
+import superdesk
+from flask import current_app as app
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_backend
 from eve.validation import ValidationError
-import superdesk
 from superdesk import get_resource_service
-from eve.utils import parse_request
+from eve.utils import parse_request, document_etag
+from superdesk.utils import last_updated
 
 _preferences_key = 'preferences'
 _user_preferences_key = 'user_preferences'
@@ -92,6 +94,8 @@ class PreferencesService(BaseService):
         if req is None:
             req = parse_request('auth')
             session_doc['_etag'] = req.if_match
+        else:
+            session_doc['_etag'] = document_etag(session_doc)
         return session_doc
 
     def get(self, req, lookup):
@@ -115,6 +119,9 @@ class PreferencesService(BaseService):
         role_doc = get_resource_service('users').get_role(user_doc)
         get_resource_service('users').set_privileges(user_doc, role_doc)
         session_doc[_privileges_key] = user_doc.get(_privileges_key, {})
+        # set last_updated to max for session/user/role so that client will fetch changes
+        # after a change to any of those
+        session_doc[app.config['LAST_UPDATED']] = last_updated(session_doc, user_doc, role_doc)
 
     def enhance_document_with_default_user_prefs(self, user_doc):
         orig_user_prefs = user_doc.get(_preferences_key, {})

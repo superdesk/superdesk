@@ -2,6 +2,14 @@ import string
 import random
 import bcrypt
 from importlib import import_module
+from flask import current_app as app
+from .utc import utcnow
+
+
+def last_updated(*docs):
+    """Get last last updated date for all given docs."""
+    dates = [d.get(app.config['LAST_UPDATED']) for d in docs if d and d.get(app.config['LAST_UPDATED'])]
+    return max(dates) if dates else utcnow()
 
 
 def get_random_string(length=12):

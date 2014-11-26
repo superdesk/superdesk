@@ -113,4 +113,3 @@ Feature: User preferences
       "session_preferences": {"desk:items": [123]
       }}
       """
-
