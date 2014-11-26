@@ -45,7 +45,7 @@ define([
 
                 scope.$watch('step.current', function(step) {
                     if (step === 'general') {
-                    	if (scope.desk._id) {
+                    	if (scope.desk.edit && scope.desk.edit._id) {
                     		scope.edit(scope.desk.edit);
                     	}
                         scope.message = null;
@@ -219,7 +219,7 @@ define([
                                 break;
                             case ENTER:
                                 event.preventDefault();
-                                if (getSelectedIndex() > 0) {
+                                if (getSelectedIndex() >= 0) {
                                 	scope.choose(scope.selected);
                                 }
                                 break;
@@ -252,9 +252,9 @@ define([
                         scope.message = null;
 
                         if (scope.desk.edit && scope.desk.edit._id) {
-                            desks.initialize().then(function() {
-                                scope.deskMembers = desks.deskMembers[scope.desk.edit._id] || [];
-                                scope.users = desks.users._items;
+                        	desks.fetchUsers().then(function(result) {
+                        		scope.users = desks.users._items;
+                            	scope.deskMembers = desks.deskMembers[scope.desk.edit._id] || [];
                                 generateSearchList();
                             });
                         } else {
@@ -264,7 +264,7 @@ define([
                 });
 
                 function generateSearchList() {
-                    scope.membersToSelect = _.difference(scope.users, scope.deskMembers);
+                    scope.membersToSelect = _.filter(scope.users, function(obj) { return !_.findWhere(scope.deskMembers, obj); });
                 }
 
                 scope.add = function(user) {

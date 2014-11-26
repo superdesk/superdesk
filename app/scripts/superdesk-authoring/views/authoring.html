@@ -23,11 +23,13 @@
 	</div>
 
 	<section class="main-section" ng-class="{'auth-sendto': viewSendTo}">
+
 		<div sd-authoring-widgets data-item="item" ng-class="{'widget-active': active}">
 
-		    <div class="main-article-container" ng-click="viewSendTo = false;">
-
+            <div class="main-article-container" ng-click="viewSendTo = false;">
+                <div id="theme-container">
                 <article class="main-article" ng-if="item._id" ng-class="{preview: !_editable}">
+                    <span sd-theme-select></span>
                 	<form>
                 		<fieldset>
                 			<div class="field">
@@ -59,6 +61,7 @@
                 		</fieldset>
 		            </form>
 		        </article>
+                </div>
 		    </div>
 
 		    <div sd-workqueue data-active="item" data-update="articleSwitch()" data-close="close()"></div>

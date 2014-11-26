@@ -151,6 +151,13 @@
 
         };
 
+        /**
+         * Clear user cache
+         */
+        userservice.clearCache = function() {
+        	cache.removeAll();
+        };
+
         function buildKey(key, page, perPage) {
             return key + '_' + page + '_' + perPage;
         }
@@ -325,6 +332,7 @@
      */
     UserDeleteCommand.$inject = ['api', 'data', '$q', 'notify', 'gettext'];
     function UserDeleteCommand(api, data, $q, notify, gettext) {
+    	data = data.item;
         return api.users.remove(data.item).then(function(response) {
             data.list.splice(data.index, 1);
         }, function(response) {
@@ -672,8 +680,9 @@
             };
         }])
 
-        .directive('sdUserEdit', ['api', 'gettext', 'notify', 'users', 'session', '$location', '$route', 'superdesk', 'features', 'asset',
-        function(api, gettext, notify, users, session, $location, $route, superdesk, features, asset) {
+        .directive('sdUserEdit', ['api', 'gettext', 'notify', 'users', 'userList', 'session', '$location',
+                                  '$route', 'superdesk', 'features', 'asset',
+        function(api, gettext, notify, users, userList, session, $location, $route, superdesk, features, asset) {
 
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/edit-form.html'),
@@ -720,6 +729,7 @@
                     scope.save = function() {
                         scope.error = null;
                         notify.info(gettext('saving..'));
+
                         return users.save(scope.origUser, scope.user)
                         .then(function(response) {
                             scope.origUser = response;
@@ -731,6 +741,8 @@
                             if (scope.user._id === session.identity._id) {
                                 session.updateIdentity(scope.origUser);
                             }
+
+                            userList.clearCache();
 
                         }, function(response) {
                             notify.pop();
