@@ -112,6 +112,8 @@ class PreferencesService(BaseService):
         session_doc[_session_preferences_key] = available
 
     def enhance_document_with_user_privileges(self, session_doc, user_doc):
+        role_doc = get_resource_service('users').get_role(user_doc)
+        get_resource_service('users').set_privileges(user_doc, role_doc)
         session_doc[_privileges_key] = user_doc.get(_privileges_key, {})
 
     def enhance_document_with_default_user_prefs(self, user_doc):
