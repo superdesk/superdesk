@@ -400,7 +400,7 @@
                     notify.error(gettext('I\'m sorry but there was an error when saving the role.'));
                 }
                 }
-            });        	console.log('Clear user cache');
+            });
         };
 
         $scope.cancel = function() {
