@@ -180,7 +180,7 @@ Feature: User preferences
       Then we get existing resource
       """
       {"user": "#USERS_ID#",
-      "active_privileges": {"archive:spike": 1},
+      "active_privileges": {"spike": 1},
       "user_preferences": {"feature:preview":
       {
       "type": "bool",
