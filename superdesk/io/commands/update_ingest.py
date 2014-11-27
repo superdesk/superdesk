@@ -58,9 +58,6 @@ def ingest_items(provider, items):
         for item in items:
             item.setdefault('_id', item['guid'])
 
-            item.setdefault(config.DATE_CREATED, utcnow())
-            item.setdefault(config.LAST_UPDATED, utcnow())
-
             item['ingest_provider'] = str(provider['_id'])
             item.setdefault('source', provider.get('source', ''))
 
@@ -76,7 +73,6 @@ def ingest_items(provider, items):
                 superdesk.get_resource_service('ingest').post([item])
 
         superdesk.get_resource_service('ingest_providers').patch(provider['_id'], {
-            '_updated': start,
             'ingested_count': ingested_count
         })
         return ingested_count

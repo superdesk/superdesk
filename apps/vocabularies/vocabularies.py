@@ -27,17 +27,7 @@ class VocabulariesResource(Resource):
 
 
 class VocabulariesService(BaseService):
-    def on_create(self, docs):
-        documents = docs
-        if isinstance(docs, dict):
-            documents = [docs]
-
-        for document in documents:
-            document[app.config['DATE_CREATED']] = document[app.config['LAST_UPDATED']] = utcnow()
-
-        logger.info("Creating new vocabulary")
-
     def on_replace(self, document, original):
         document[app.config['LAST_UPDATED']] = utcnow()
-        document[app.config['DATE_CREATED']] = original[app.config['DATE_CREATED']]
+        document[app.config['DATE_CREATED']] = original[app.config['DATE_CREATED']] if original else utcnow()
         logger.info("updating vocabulary", document["_id"])

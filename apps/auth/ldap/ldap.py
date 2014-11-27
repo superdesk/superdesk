@@ -148,15 +148,12 @@ class ADAuthService(AuthService):
 
         if profile_to_be_created:
             user = superdesk.get_resource_service('users').find_one(username=profile_to_import, req=None)
-            timestamp = utcnow()
 
             if not user:
                 add_default_values(user_data, profile_to_import,
-                                   user_type=None if 'user_type' not in user_data else user_data['user_type'],
-                                   DATE_CREATED=timestamp, LAST_UPDATED=timestamp)
+                                   user_type=None if 'user_type' not in user_data else user_data['user_type'])
                 superdesk.get_resource_service('users').post([user_data])
             else:
-                user_data[app.config['LAST_UPDATED']] = timestamp
                 superdesk.get_resource_service('users').patch(user.get('_id'), user_data)
 
             user = superdesk.get_resource_service('users').find_one(username=profile_to_import, req=None)
@@ -172,13 +169,9 @@ class ImportUserProfileService(BaseService):
     """
     def on_create(self, docs):
         doc = docs[0]
-
-        timestamp = doc[app.config['LAST_UPDATED']]
         doc = get_resource_service('auth').authenticate(doc)
-
         add_default_values(doc, doc['profile_to_import'],
                            user_type=None if 'user_type' not in doc else doc['user_type'],
-                           DATE_CREATED=timestamp, LAST_UPDATED=timestamp,
                            profile_to_be_created='false')
 
         docs[0] = doc
