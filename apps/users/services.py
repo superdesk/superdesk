@@ -1,3 +1,4 @@
+import flask
 import logging
 import superdesk
 
@@ -10,6 +11,7 @@ from superdesk import get_resource_service, SuperdeskError
 from superdesk.emails import send_user_status_changed_email, send_activate_account_email
 from superdesk.utc import utcnow
 from superdesk.privilege import get_privilege_list
+from apps.auth.errors import ForbiddenError
 
 
 logger = logging.getLogger(__name__)
@@ -36,6 +38,43 @@ def get_admin_privileges():
     return dict.fromkeys([p['name'] for p in get_privilege_list()], 1)
 
 
+def get_privileges(user, role):
+    """Get privileges for given user and role.
+
+    :param user
+    :param role
+    """
+    if is_admin(user):
+        return get_admin_privileges()
+
+    if role:
+        role_privileges = role.get('privileges', {})
+        return dict(
+            list(role_privileges.items()) + list(user.get('privileges', {}).items())
+        )
+
+    return user.get('privileges', {})
+
+
+def current_user_has_privilege(privilege):
+    """Test if current user has given privilege.
+
+    In case there is no current user we assume it's system (via worker/manage.py)
+    and let it pass.
+
+    :param privilege
+    """
+    if not getattr(flask.g, 'user', None):  # no user - worker can do it
+        return True
+    privileges = get_privileges(flask.g.user, getattr(flask.g, 'role', None))
+    return privileges.get(privilege, False)
+
+
+def is_sensitive_update(updates):
+    """Test if given update is sensitive and might change user privileges."""
+    return 'role' in updates or 'privileges' in updates or 'user_type' in updates
+
+
 class UsersService(BaseService):
 
     def on_create(self, docs):
@@ -52,6 +91,11 @@ class UsersService(BaseService):
 
     def on_updated(self, updates, user):
         self.handle_status_changed(updates, user)
+
+    def update(self, id, updates):
+        if is_sensitive_update(updates) and not current_user_has_privilege('users'):
+            raise ForbiddenError()
+        return super().update(id, updates)
 
     def handle_status_changed(self, updates, user):
         status = updates.get('is_active', None)
@@ -90,20 +134,7 @@ class UsersService(BaseService):
         return None
 
     def set_privileges(self, user, role):
-        """Resolve privileges for given user.
-
-        :param user
-        """
-        if is_admin(user):
-            user['active_privileges'] = get_admin_privileges()
-            return
-        if role:
-            role_privileges = role.get('privileges', {})
-            user['active_privileges'] = dict(
-                list(role_privileges.items()) + list(user.get('privileges', {}).items())
-            )
-        else:
-            user['active_privileges'] = user.get('privileges', {})
+        user['active_privileges'] = get_privileges(user, role)
 
 
 class DBUsersService(UsersService):
