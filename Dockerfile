@@ -20,7 +20,7 @@ ENV C_FORCE_ROOT "False"
 
 # install dependencies
 ADD requirements.txt /tmp/requirements.txt
-RUN pip3 install -U -r /tmp/requirements.txt
+RUN cd /tmp && pip3 install -U -r /tmp/requirements.txt
 
 # copy application source code
 ADD . /opt/superdesk
