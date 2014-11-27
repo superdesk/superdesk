@@ -494,11 +494,19 @@
                 templateUrl: 'scripts/superdesk-search/views/search-results.html',
                 link: function(scope, elem, attr, controller) {
                     scope.simple = (attr.simple === undefined) ? false : true;
+                    var multiSelectable = (attr.multiSelectable === undefined) ? false : true;
 
                     scope.flags = controller.flags;
                     scope.selected = scope.selected || {};
 
                     scope.preview = function preview(item) {
+                        if (multiSelectable) {
+                            if (_.findIndex(scope.selectedList, {_id: item._id}) === -1) {
+                                scope.selectedList.push(item);
+                            } else {
+                                _.remove(scope.selectedList, {_id: item._id});
+                            }
+                        }
                         scope.selected.preview = item;
                         $location.search('_id', item ? item._id : null);
                     };
