@@ -63,7 +63,7 @@ class SuperdeskTokenAuth(TokenAuth):
         # is the operation against the user record of the current user
         if request.view_args.get('_id') == str(user['_id']):
             # no user is allowed to delete their own user
-            if method.lower() == 'delete':
+            if method.lower() in('delete', 'put'):
                 raise ForbiddenError
             else:
                 return True
