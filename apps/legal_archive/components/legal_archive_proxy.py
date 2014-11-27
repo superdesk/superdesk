@@ -1,5 +1,5 @@
 from apps.common.components.base_component import BaseComponent
-from apps.legal_archive.tasks import archive_item, update_item
+from apps.legal_archive.tasks import update_legal_archive
 
 
 class LegalArchiveProxy(BaseComponent):
@@ -11,7 +11,7 @@ class LegalArchiveProxy(BaseComponent):
         return 'legal_archive_proxy'
 
     def create(self, items):
-        return archive_item.delay(items)
+        return update_legal_archive.delay([item['_id'] for item in items])
 
     def update(self, original, updates):
-        return update_item.delay(original, updates)
+        return update_legal_archive.delay([original['_id']])
