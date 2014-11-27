@@ -20,7 +20,7 @@ class SearchServiceTestCase(TestCase):
         super().setUp()
         with self.app.app_context():
             self.app.data.insert('ingest', [{}])
-            self.app.data.insert('archive', [{}])
+            self.app.data.insert('archive', [{'task': {'desk': 1}}])
             init_app(self.app)
             self.app.on_fetched_resource += resource_listener
             self.app.on_fetched_resource_ingest += ingest_listener
@@ -44,3 +44,9 @@ class SearchServiceTestCase(TestCase):
             docs = self.app.data.find('search', req, None)
             self.assertEquals(1, docs.count())
             self.assertEquals('ingest', docs[0]['_type'])
+
+    def test_it_filters_out_private_content(self):
+        with self.app.app_context():
+            self.app.data.insert('archive', [{'task': {'desk': None}}, {'task': {}}])
+            cursor = self.app.data.find('search', None, None)
+            self.assertEquals(2, cursor.count())

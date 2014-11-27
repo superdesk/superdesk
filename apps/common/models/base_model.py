@@ -136,14 +136,14 @@ class BaseModel():
         @param doc: dict
         '''
         self.validate(doc)
-        orig = self.find(filter)
-        if orig.count() != 1:
+        orig = self.find_one(filter)
+        if not orig:
             raise InvalidFilter(filter, 'update')
         if etag:
             self.validate_etag(orig, etag)
-        self.on_update(doc, orig[0])
+        self.on_update(doc, orig)
         res = self.data_layer.update(self.resource, filter, doc)
-        self.on_updated(doc, orig[0])
+        self.on_updated(doc, orig)
         return res
 
     def replace(self, filter, doc, etag=None):

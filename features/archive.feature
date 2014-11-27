@@ -159,13 +159,23 @@ Feature: News Items Archive
         Then we get deleted response
 
     @auth
-    Scenario: Browse content
+    Scenario: Browse private content
         Given the "archive"
         """
-        [{"type":"text", "headline": "test1", "guid": "testid1", "original_creator": "abc"}, {"type":"text", "headline": "test2", "guid": "testid2", "original_creator": "abc"}]
+        [{"type":"text", "headline": "test1", "guid": "testid1"},
+         {"type":"text", "headline": "test2", "guid": "testid2"}]
         """
         When we get "/archive"
-        Then we get list with 2 items
+        Then we get list with 0 items
+
+    @auth
+    Scenario: Browse public content
+        Given "archive"
+            """
+            [{"guid": "testid1", "task": {"desk": "5374ce0a3b80a15fd8072403"}}]
+            """
+        When we get "/archive"
+        Then we get list with 1 items
 
     @auth
     @ticket-sd-360
@@ -262,3 +272,13 @@ Feature: News Items Archive
         {"unique_name": "unique_xyz"}
         """
         Then we get response code 400
+
+    @wip
+    @auth
+    Scenario: Hide private content
+        Given "archive"
+            """
+            [{"guid": "1"}]
+            """
+        When we get "/archive"
+        Then we get list with 0 items

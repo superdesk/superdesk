@@ -32,7 +32,8 @@ class ArchiveMediaVersionsResource(ArchiveVersionsResource):
 class ArchiveMediaResource(Resource):
     endpoint_name = ARCHIVE_MEDIA
     schema = {
-        'upload_id': {'type': 'string'}
+        'upload_id': {'type': 'string'},
+        'task': {'type': 'dict'},
     }
 
     schema.update(metadata_schema)
