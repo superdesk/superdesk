@@ -1,6 +1,6 @@
 <div
     class="media-box media-{{item.type}}"
-    ng-class="{selected: item._id === selected._id, archived: item.archived, locked: isLocked}"
+    ng-class="{selected: item._id === selected._id, multiSelected: isInSelectedList(item), archived: item.archived, locked: isLocked}"
     ng-include="itemTemplate"
 >
 </div>

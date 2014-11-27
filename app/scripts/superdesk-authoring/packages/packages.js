@@ -42,12 +42,15 @@
             return api.packages.save(new_package);
         };
 
-        this.addItemToPackage = function addToPackage(currentPackage, item, idRef) {
+        this.addItemsToPackage = function addToPackage(currentPackage, items, idRef) {
+            var self = this;
+
             var patch = _.pick(currentPackage, 'groups');
             var rootGroup = _.find(patch.groups, function(group) { return group.id === 'root'; });
-            var newId = this.generateNewId(rootGroup.refs, idRef);
-            rootGroup.refs.push({idRef: newId});
-            patch.groups.push({
+            _.forEach(items, function(item) {
+                var newId = self.generateNewId(rootGroup.refs, idRef);
+                rootGroup.refs.push({idRef: newId});
+                patch.groups.push({
                     refs: [{
                         headline: item.headline || '',
                         residRef: item._id,
@@ -58,6 +61,7 @@
                     id: newId,
                     role: 'grpRole:' + newId
                 });
+            });
             return api.packages.save(currentPackage, patch);
         };
 
@@ -109,8 +113,8 @@
                     $scope.selected.preview = new_package;
                 });
             } else {
-                superdesk.intent('create', 'package', {type: type.icon}).then(function(val) {
-                    packagesService.addItemToPackage($scope.selected.preview, val, type.label)
+                superdesk.intent('create', 'package', {type: type.icon}).then(function(items) {
+                    packagesService.addItemsToPackage($scope.selected.preview, items, type.label)
                     .then(function(updatedPackage) {
                         $scope.selected.preview = updatedPackage;
                     });
@@ -134,9 +138,15 @@
     AddToPackageController.$inject = ['$scope', 'api'];
     function AddToPackageController($scope, api) {
 
+        $scope.selectedList = [];
+
         api.archive.query().then(function(result) {
             $scope.items = result;
         });
+
+        $scope.isInSelectedList = function(item) {
+            return _.findIndex($scope.selectedList, {_id: item._id}) !== -1;
+        };
 
         $scope.cancel = function() {
             $scope.reject();
@@ -144,8 +154,8 @@
 
         $scope.save = function() {
             //TODO: make the selection work
-            var selected = _.sample($scope.items._items);
-            $scope.resolve(selected);
+            //var selected = _.sample($scope.items._items);
+            $scope.resolve($scope.selectedList);
         };
     }
 

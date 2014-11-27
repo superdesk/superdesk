@@ -5,9 +5,9 @@
 <div class="modal-body">
     <section sd-search-container class="archive main-section" ng-class="{'sidebar-open': flags.facets}">
         <div sd-search-facets class="archive-sidebar" data-items="items" data-desk="selectedDesk"></div>
-        <div sd-search-results data-simple class="archive-content"></div>
+        <div sd-search-results data-simple data-multi-selectable class="archive-content"></div>
     </section>
-    <section class="placebar"></section>
+    <section class="placebar">{{selectedList}}</section>
 </div>
 
 <div class="modal-footer">
