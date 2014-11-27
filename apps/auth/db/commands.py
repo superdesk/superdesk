@@ -1,7 +1,6 @@
 import logging
 from flask import current_app as app, json
 import superdesk
-from superdesk.utc import utcnow
 from superdesk.utils import get_hash, is_hashed
 
 
@@ -32,8 +31,7 @@ class CreateUserCommand(superdesk.Command):
             'email': email,
             'user_type': user_type,
             'is_active': is_admin,
-            'needs_activation': not is_admin,
-            app.config['LAST_UPDATED']: utcnow(),
+            'needs_activation': not is_admin
         }
 
         with app.test_request_context('/users', method='POST'):
@@ -49,7 +47,6 @@ class CreateUserCommand(superdesk.Command):
                 return userdata
             else:
                 logger.info('creating user %s' % (userdata))
-                userdata[app.config['DATE_CREATED']] = userdata[app.config['LAST_UPDATED']]
                 superdesk.get_resource_service('users').post([userdata])
 
             logger.info('user saved %s' % (userdata))

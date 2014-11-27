@@ -43,6 +43,7 @@ class EveBackend():
         """
         for doc in docs:
             doc.setdefault(app.config['ETAG'], document_etag(doc))
+            self.set_default_dates(doc)
 
         backend = self._backend(endpoint_name)
         ids = backend.insert(endpoint_name, docs, **kwargs)
@@ -105,3 +106,8 @@ class EveBackend():
         if backend is None and fallback:
             backend = app.data._backend(endpoint_name)
         return backend
+
+    def set_default_dates(self, doc):
+        now = utcnow()
+        doc.setdefault(app.config['DATE_CREATED'], now)
+        doc.setdefault(app.config['LAST_UPDATED'], now)

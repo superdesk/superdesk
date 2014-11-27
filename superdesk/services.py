@@ -3,7 +3,6 @@ from flask import current_app as app
 from eve.defaults import resolve_default_values
 from eve.utils import ParsedRequest, config
 from eve.methods.common import resolve_document_etag
-from superdesk.utc import utcnow
 
 
 log = logging.getLogger(__name__)
@@ -96,7 +95,6 @@ class BaseService():
         if config.IF_MATCH:
             resolve_document_etag(updated)
             updates[config.ETAG] = updated[config.ETAG]
-        updates.setdefault(config.LAST_UPDATED, utcnow())
         res = self.update(id, updates)
         self.on_updated(updates, original)
         return res

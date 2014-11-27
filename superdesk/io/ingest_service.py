@@ -17,5 +17,5 @@ class IngestService():
         :return:
         """
 
-        item['_created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
-        item['_updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
+        item['firstcreated'] = utc.localize(item['firstcreated'])
+        item['versioncreated'] = utc.localize(item['versioncreated'])

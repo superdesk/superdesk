@@ -45,9 +45,9 @@ class AAPIngestService(FileIngestService):
                         with open(os.path.join(self.path, filename), 'r') as f:
                             item = self.parser.parse_message(etree.fromstring(f.read()))
 
-                            item['_created'] = item['firstcreated'] \
+                            item['firstcreated'] \
                                 = normalize_date(item.get('firstcreated'), self.tz)
-                            item['_updated'] = item['versioncreated'] \
+                            item['versioncreated'] \
                                 = normalize_date(item.get('versioncreated'), self.tz)
 
                             self.move_file(self.path, filename, success=True)
