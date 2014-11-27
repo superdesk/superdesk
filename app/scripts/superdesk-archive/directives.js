@@ -289,6 +289,7 @@ define([
                 restrict: 'A',
                 templateUrl: require.toUrl('./views/media-box.html'),
                 link: function(scope, element, attrs) {
+                    scope.simple = (attrs.simple === undefined) ? false : true;
 
                     scope.$watch('view', function(view) {
                         switch (view) {
