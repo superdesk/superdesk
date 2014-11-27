@@ -17,10 +17,33 @@
 			</div>
 		</li>
 		<li>
+			<label translate>Type</label>
+			<div class="data" ng-if="texttypes.indexOf(item.type) < 0">{{item.type}}</div>
+			<div class="data" ng-if="texttypes.indexOf(item.type) > -1">
+				<select ng-model="item.type" ng-options="t as t for t in texttypes"></select>
+			</div>
+		</li>
+		<li>
 			<label translate>By</label>
 			<div class="data">
 				<input type="text" ng-model="item.byline" ng-disabled="!_editable">
 			</div>
+		</li>
+		<li ng-if="item.original_source">
+			<label translate>Original source</label>
+			<div class="data">{{ item.original_source}}</div>
+		</li>
+		<li ng-if="item.ingest_provider">
+			<label translate>Ingest provider</label>
+			<div class="data" sd-meta-ingest data-provider="item.ingest_provider"></div>
+		</li>
+		<li ng-if="item.ingest_provider_sequence">
+			<label translate>Provider sequence</label>
+			<div class="data">{{item.ingest_provider_sequence}}</div>
+		</li>
+		<li ng-if="item.pubstatus">
+			<label translate>Pubstatus</label>
+			<div class="data">{{item.pubstatus}}</div>
 		</li>
 		<li ng-if="item.firstcreated">
 			<label translate>First created</label>
@@ -36,8 +59,8 @@
 		</li>
 		<li>
 			<label translate>Urgency</label>
-			<div class="data visible small" ng-if="metadata.priority">
-				<div sd-meta-dropdown data-list="metadata.newsvalues" data-item="item.urgency" data-disabled="!_editable" data-field="qcode"></div>
+			<div class="data visible small" ng-if="metadata.newsvalue">
+				<div sd-meta-dropdown data-list="metadata.newsvalue" data-item="item.urgency" data-disabled="!_editable" data-field="qcode"></div>
 			</div>
 		</li>
 		<li>
@@ -48,11 +71,7 @@
 		</li>
 		<li class="terms-box">
 			<label translate>Subject</label>
-			<div sd-meta-terms data-item="item" data-field="subject" data-list="metadata.subjectcodes" data-disabled="!_editable"></div>
-		</li>
-		<li>
-			<label translate>Type</label>
-			<div class="data">{{item.type}}</div>
+			<div sd-meta-terms data-item="item" data-field="subject" data-unique="qcode" data-list="metadata.subjectcodes" data-disabled="!_editable"></div>
 		</li>
 		<li>
 			<label translate>ANPA category</label>
@@ -62,7 +81,7 @@
 		</li>
 		<li class="terms-box">
 			<label translate>Genre</label>
-			<div sd-meta-terms data-item="item" data-field="genre" data-list="metadata.genre" data-disabled="!_editable"></div>
+			<div sd-meta-terms data-item="item" data-field="genre" data-unique="value" data-list="metadata.genre" data-disabled="!_editable" data-postprocessing="processGenre()"></div>
 		</li>
 		<li>
 			<label translate>Usageterms</label>
@@ -78,7 +97,7 @@
 		</li>
 		<li class="terms-box">
 			<label translate>Place</label>
-			<div sd-meta-terms data-item="item" data-field="place" data-list="metadata.placecodes" data-disabled="!_editable"></div>
+			<div sd-meta-terms data-item="item" data-field="place" data-unique="value" data-list="metadata.locators" data-disabled="!_editable"></div>
 		</li>
 		<li>
 			<label translate>Located</label>
@@ -90,6 +109,12 @@
 			<label translate>Dateline</label>
 			<div class="data">
 				<input type="text" ng-model="item.dateline" ng-disabled="!_editable">
+			</div>
+		</li>
+		<li>
+			<label translate>Language</label>
+			<div class="data">
+				<input type="text" ng-model="item.language" ng-disabled="!_editable">
 			</div>
 		</li>
 		<li ng-if="item.copyrightholder">

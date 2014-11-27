@@ -14,6 +14,14 @@ function MetadataCtrl($scope, desks, metadata, $filter) {
 	metadata.initialize().then(function() {
 		$scope.metadata = metadata.values;
 	});
+
+	$scope.texttypes = ['text', 'preformatted'];
+
+	$scope.processGenre = function() {
+		$scope.item.genre = _.map($scope.item.genre, function(g) {
+			return _.pick(g, 'name');
+		});
+	};
 }
 
 MetadataDropdownDirective.$inject = [];
@@ -34,28 +42,43 @@ function MetadataDropdownDirective() {
 	};
 }
 
+/**
+ * Wraping  'sd-typeahead' directive for editing of metadata list attributes
+ *
+ * @param {Object} item - specify the content item itself
+ * @param {String} field - specify the (metadata) filed under the item which will be edited
+ * @param {Boolean} disabled - whether component should be disabled for editing or not
+ * @param {Array} list - list of available values that can be added
+ * @param {String} unique - specify the name of the field, in list item which is unique (qcode, value...)
+ *
+ */
 MetadataListEditingDirective.$inject = [];
 function MetadataListEditingDirective() {
 	return {
 		scope: {
 			item: '=',
-			disabled: '=',
 			field: '@',
-			list: '='
+			disabled: '=',
+			list: '=',
+			unique: '@',
+			postprocessing: '&'
 		},
 		templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-terms.html',
 		link: function(scope) {
 
 			scope.terms = [];
 			scope.selectedTerm = '';
+			var uniqueField = scope.unique || 'qcode';
 
 			scope.searchTerms = function(term) {
 				if (!term) {
 					scope.terms = [];
 				} else {
 					scope.terms = _.filter(scope.list, function(t) {
+					var searchObj = {};
+					searchObj[uniqueField] = t[uniqueField];
 					return ((t.name.toLowerCase().indexOf(term.toLowerCase()) !== -1) &&
-					!_.find(scope.item[scope.field], {qcode: t.qcode}));
+					!_.find(scope.item[scope.field], searchObj));
 					});
 				}
 
@@ -75,6 +98,8 @@ function MetadataListEditingDirective() {
 					_.extend(scope.item, o);
 
 					scope.selectedTerm = '';
+
+					scope.postprocessing();
 				}
 			};
 
@@ -91,8 +116,8 @@ function MetadataListEditingDirective() {
 	};
 }
 
-MetadataService.$inject = ['api', '$q', 'metadataMock'];
-function MetadataService(api, $q, metadataMock) {
+MetadataService.$inject = ['api', '$q', 'staticMetadata'];
+function MetadataService(api, $q, staticMetadata) {
 
 	var service = {
 		values: {},
@@ -100,10 +125,18 @@ function MetadataService(api, $q, metadataMock) {
 		fetchMetadataValues: function() {
 			var self = this;
 
-			_.each(metadataMock, function(val) {
-				self.values[val._id] = val._items;
+			return api('vocabularies').query().then(function(result) {
+				_.each(result._items, function(vocabulary) {
+					self.values[vocabulary._id] = vocabulary.items;
+				});
 			});
+		},
+		fetchStaticMetadata: function() {
+			var self = this;
 
+			_.each(staticMetadata, function(source) {
+				self.values[source._id] = source.items;
+			});
 			return $q.when();
 		},
 		fetchSubjectcodes: function(code) {
@@ -115,6 +148,7 @@ function MetadataService(api, $q, metadataMock) {
 		initialize: function() {
 			if (!this.loaded) {
 				this.loaded = this.fetchMetadataValues()
+					.then(angular.bind(this, this.fetchStaticMetadata))
 					.then(angular.bind(this, this.fetchSubjectcodes));
 			}
 			return this.loaded;
@@ -124,45 +158,11 @@ function MetadataService(api, $q, metadataMock) {
 	return service;
 }
 
-//just for mocking purpose - will be replcaed by API call
-var metadataMock = [
-	{
-		_id: 'categories',
-		_items: [
-			{
-				name: 'Domestic, non-Washington, general news item',
-				qcode: 'A'
-			},
-			{
-				name: 'Special Events. National tabular election items',
-				qcode: 'B'
-			},
-			{
-				name: 'International news, including United Nations and undated roundups keyed to foreign events',
-				qcode: 'I'
-			}
-		]
-	},
-	{
-		_id: 'newsvalues',
-		_items: [
-			{
-				name: '1',
-				qcode: 1
-			},
-			{
-				name: '2',
-				qcode: 2
-			},
-			{
-				name: '3',
-				qcode: 3
-			}
-		]
-	},
+//hardcoded metadata values
+var staticMetadata = [
 	{
 		_id: 'priority',
-		_items: [
+		items: [
 			{
 				name: 'B',
 				qcode: 'B'
@@ -174,40 +174,18 @@ var metadataMock = [
 			{
 				name: 'F',
 				qcode: 'F'
-			}
-		]
-	},
-	{
-		_id: 'genre',
-		_items: [
-			{
-				qcode: 'exclusive',
-				name: 'Exclusive'
 			},
 			{
-				qcode: 'profile',
-				name: 'Profile'
+				name: 'R',
+				qcode: 'R'
 			},
 			{
-				qcode: 'wrapup',
-				name: 'Wrapup'
-			}
-		]
-	},
-	{
-		_id: 'placecodes',
-		_items: [
-			{
-				qcode: '12345',
-				name: 'Sydney, AU'
+				name: 'U',
+				qcode: 'U'
 			},
 			{
-				qcode: '54321',
-				name: 'Belgrade, SR'
-			},
-			{
-				qcode: '00987',
-				name: 'Prague, CZ'
+				name: 'Z',
+				qcode: 'Z'
 			}
 		]
 	}
@@ -227,5 +205,5 @@ angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
 	.service('metadata', MetadataService)
 	.directive('sdMetaTerms', MetadataListEditingDirective)
 	.directive('sdMetaDropdown', MetadataDropdownDirective)
-	.value('metadataMock', metadataMock);
+	.value('staticMetadata', staticMetadata);
 })();
