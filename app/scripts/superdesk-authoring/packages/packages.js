@@ -2,12 +2,11 @@
 
     'use strict';
 
-    PackagesService.$inject = ['api', '$log', '$q'];
-    function PackagesService(api, $log, $q) {
+    PackagesService.$inject = ['api', '$q'];
+    function PackagesService(api, $q) {
 
         this.fetch = function(item) {
             if (item.linked_in_packages == null) {
-                $log.info('PackageService.fetch(), item not included in any package, item: ' + item);
                 return $q.when(null);
             }
             var id = item.linked_in_packages[0]['package'];
@@ -65,7 +64,7 @@
         this.generateNewId = function generateNewId(refs, idRef) {
             var filter = function(ref) { return (ref.idRef.toLowerCase().indexOf(idRef.toLowerCase())) === 0 ? 'found' : 'none'; };
             var counts = _.countBy(refs, filter);
-            return idRef + '-' + counts.found;
+            return counts.found ? (idRef + '-' + counts.found) : idRef;
         };
     }
 
@@ -111,7 +110,6 @@
                 });
             } else {
                 superdesk.intent('create', 'package', {type: type.icon}).then(function(val) {
-                    console.log(val);
                     packagesService.addItemToPackage($scope.selected.preview, val, type.label)
                     .then(function(updatedPackage) {
                         $scope.selected.preview = updatedPackage;

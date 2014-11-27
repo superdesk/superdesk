@@ -87,7 +87,7 @@ define([
                     setitem: '&'
                 },
                 link: function(scope, elem) {
-                    scope.$watch('item', function() {
+                    scope.$watchGroup(['item', 'item.groups'], function() {
                         if (scope.item !== null) {
                             scope.tree = solveRefs(
                                 _.find(scope.item.groups, {id: 'root'}),
