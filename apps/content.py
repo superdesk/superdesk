@@ -86,7 +86,6 @@ metadata_schema = {
         'type': 'list',
         'mapping': {
             'properties': {
-                'qcode': not_analyzed,
                 'name': not_analyzed
             }
         }
