@@ -493,6 +493,8 @@
                 require: '^sdSearchContainer',
                 templateUrl: 'scripts/superdesk-search/views/search-results.html',
                 link: function(scope, elem, attr, controller) {
+                    scope.simple = (attr.simple === undefined) ? false : true;
+
                     scope.flags = controller.flags;
                     scope.selected = scope.selected || {};
 
