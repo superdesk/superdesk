@@ -7,6 +7,10 @@
         <dt translate>Unique</dt>
         <dd>{{ item.unique_name }}</dd>
     </dl>
+    <dl>
+        <dt translate>Type</dt>
+        <dd>{{ item.type }}</dd>
+    </dl>
     <dl ng-if="item._version">
         <dt translate>Version</dt>
         <dd>{{ item._version }}</dd>
@@ -60,7 +64,7 @@
     <!-- category details -->
     <dl ng-if="item.anpa_category">
         <dt translate>ANPA category</dt>
-        <dd>{{ item.anpa_category }}</dd>
+        <dd>{{ item['anpa-category'] }}</dd>
     </dl>
     <dl ng-if="item.subject">
         <dt translate>Subject</dt>
