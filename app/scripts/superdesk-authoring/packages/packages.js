@@ -15,6 +15,20 @@
             }));
         };
 
+        this.getGroupFor = function (item, idRef) {
+            return {
+                refs: [{
+                    headline: item.headline || '',
+                    residRef: item._id,
+                    location: 'archive',
+                    slugline: item.slugline || '',
+                    renditions: item.renditions || {}
+                }],
+                id: idRef,
+                role: 'grpRole:' + idRef
+            };
+        };
+
         this.createPackageFromItem = function createPackageFromItem(item, idRef) {
             var new_package = {
                 headline: item.headline || '',
@@ -25,18 +39,9 @@
                     role: 'grpRole:NEP',
                     refs: [{idRef: idRef}],
                     id: 'root'
-                },
-                {
-                    refs: [{
-                        headline: item.headline || '',
-                        residRef: item._id,
-                        location: 'archive',
-                        slugline: item.slugline || '',
-                        renditions: item.renditions
-                    }],
-                    id: idRef,
-                    role: 'grpRole:Main'
-                }]
+                    },
+                    this.getGroupFor(item, idRef)
+                ]
             };
 
             return api.packages.save(new_package);
@@ -50,17 +55,7 @@
             _.forEach(items, function(item) {
                 var newId = self.generateNewId(rootGroup.refs, idRef);
                 rootGroup.refs.push({idRef: newId});
-                patch.groups.push({
-                    refs: [{
-                        headline: item.headline || '',
-                        residRef: item._id,
-                        location: 'archive',
-                        slugline: item.slugline || '',
-                        renditions: item.renditions
-                    }],
-                    id: newId,
-                    role: 'grpRole:' + newId
-                });
+                patch.groups.push(self.getGroupFor(item, newId));
             });
             return api.packages.save(currentPackage, patch);
         };
