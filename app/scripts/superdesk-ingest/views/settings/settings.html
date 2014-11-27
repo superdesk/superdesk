@@ -13,7 +13,6 @@
             <li ng-repeat="provider in providers._items" class="clearfix">
 
                 <h6>{{ provider.name }}</h6>
-                <span class="label ingest-count " ng-class="provider.ingested_count ? 'label-info' : 'label-warning'" title="{{ 'Ingested items count'|translate }}">{{ provider.ingested_count || 0 }}</span>
                 <div class="last-updated" ng-show="provider.ingested_count">
                     <span translate>Last updated</span> {{ provider._updated|reldate }}
                 </div>
