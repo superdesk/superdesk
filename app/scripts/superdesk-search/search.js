@@ -86,6 +86,10 @@
                     query.filter({term: {urgency: JSON.parse(params.urgency)}});
                 }
 
+                if (params.source) {
+                    query.filter({term: {source: JSON.parse(params.source)}});
+                }
+
                 if (params.category) {
                     query.filter({term: {'anpa-category.name': JSON.parse(params.category)}});
                 }
