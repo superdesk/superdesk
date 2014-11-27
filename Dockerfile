@@ -16,6 +16,7 @@ WORKDIR /opt/superdesk/
 CMD ["honcho", "start"]
 EXPOSE 5000
 EXPOSE 5100
+ENV PYTHONUNBUFFERED 1
 ENV C_FORCE_ROOT "False"
 
 # install dependencies
