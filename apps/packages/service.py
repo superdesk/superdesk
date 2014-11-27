@@ -44,7 +44,8 @@ class PackageService(BaseService):
         for (doc, group) in [(doc, group) for doc in docs for group in doc.get('groups', [])]:
             associations = group.get(ASSOCIATIONS, [])
             if len(associations) == 0:
-                raise SuperdeskError(message='No content associated with the package.')
+                message = 'No content associated with the package.'
+                raise SuperdeskError(message=message)
 
             self.check_for_duplicates(doc, associations)
             for assoc in associations:
@@ -64,7 +65,8 @@ class PackageService(BaseService):
         item_id = assoc[ITEM_REF]
         item = get_resource_service(endpoint).find_one(req=None, _id=item_id)
         if not item:
-            raise SuperdeskError(message='Invalid item reference: ' + assoc['itemRef'])
+            message = 'Invalid item reference: ' + assoc['itemRef']
+            raise SuperdeskError(message=message)
         return item, item_id, endpoint
 
     def update_link(self, package_id, assoc, delete=False):
@@ -77,24 +79,26 @@ class PackageService(BaseService):
         if not delete:
             two_way_links.append({'package': package_id})
 
-        item[LINKED_IN_PACKAGES] = two_way_links
-        del item[config.ID_FIELD]
-        get_resource_service(endpoint).patch(item_id, item)
+        updates = {LINKED_IN_PACKAGES: two_way_links}
+        get_resource_service(endpoint).patch(item_id, updates)
 
     def check_for_duplicates(self, package, associations):
         counter = Counter()
         package_id = package[config.ID_FIELD]
         for itemRef in [assoc[ITEM_REF] for assoc in associations if assoc.get(ITEM_REF)]:
             if itemRef == package_id:
-                raise SuperdeskError(message='Trying to self reference as an association.')
+                message = 'Trying to self reference as an association.'
+                raise SuperdeskError(message=message)
             counter[itemRef] += 1
 
         if any(itemRef for itemRef, value in counter.items() if value > 1):
-            raise SuperdeskError(message='Content associated multiple times')
+            message = 'Content associated multiple times'
+            raise SuperdeskError(message=message)
 
     def check_for_circular_reference(self, package, item_id):
         if any(d for d in package.get(LINKED_IN_PACKAGES, []) if d['package'] == item_id):
-            raise ValidationError('Trying to create a circular reference to: ' + item_id)
+            message = 'Trying to create a circular reference to: ' + item_id
+            raise ValidationError(message)
 
     def _get_associations(self, doc):
         return [assoc for group in doc.get('groups', [])
