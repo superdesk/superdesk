@@ -3,7 +3,6 @@ from flask import current_app as app
 from apps.auth.errors import NotFoundAuthError
 import superdesk
 from .ldap import ADAuth, add_default_values
-from superdesk.utc import utcnow
 
 
 logger = logging.getLogger(__name__)

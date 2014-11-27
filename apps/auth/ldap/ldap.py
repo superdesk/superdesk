@@ -5,7 +5,6 @@ from apps.auth.service import AuthService
 from superdesk import get_resource_service
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from superdesk.utc import utcnow
 from flask import current_app as app
 import superdesk
 

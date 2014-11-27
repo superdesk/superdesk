@@ -1,7 +1,6 @@
 from _datetime import datetime
 import logging
 import superdesk
-from superdesk.utc import utcnow
 from superdesk.notification import push_notification
 from superdesk.io import providers
 from superdesk.celery_app import celery
@@ -48,7 +47,6 @@ def process_anpa_category(item):
 
 
 def ingest_items(provider, items):
-        start = utcnow()
         ingested_count = provider.get('ingested_count', 0)
 
         # TODO: Hate to do this but there is no alternative, might be a bug in Pymongo

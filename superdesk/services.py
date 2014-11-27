@@ -3,7 +3,6 @@ from flask import current_app as app
 from eve.defaults import resolve_default_values
 from eve.utils import ParsedRequest, config
 from eve.methods.common import resolve_document_etag
-from superdesk.utc import utcnow
 
 
 log = logging.getLogger(__name__)

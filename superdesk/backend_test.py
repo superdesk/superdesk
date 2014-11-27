@@ -1,8 +1,8 @@
-
 from superdesk.tests import TestCase
 from superdesk import get_backend
 from superdesk.utc import utcnow
 from datetime import timedelta
+
 
 class BackendTestCase(TestCase):
 
@@ -18,7 +18,6 @@ class BackendTestCase(TestCase):
             self.assertNotEqual(doc_old[self.app.config['ETAG']],
                                 doc_new[self.app.config['ETAG']])
 
-
     def test_check_default_dates_on_create(self):
         backend = get_backend()
         item = {'name': 'foo'}
@@ -27,7 +26,6 @@ class BackendTestCase(TestCase):
             doc = backend.find_one('ingest', None, _id=ids[0])
             self.assertIn(self.app.config['DATE_CREATED'], doc)
             self.assertIn(self.app.config['LAST_UPDATED'], doc)
-
 
     def test_check_default_dates_on_create(self):
         backend = get_backend()

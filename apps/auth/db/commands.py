@@ -1,7 +1,6 @@
 import logging
 from flask import current_app as app, json
 import superdesk
-from superdesk.utc import utcnow
 from superdesk.utils import get_hash, is_hashed
 
 
