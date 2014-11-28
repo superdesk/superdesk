@@ -7,7 +7,11 @@
         <div sd-search-facets class="archive-sidebar" data-items="items" data-desk="selectedDesk"></div>
         <div sd-search-results data-simple data-multi-selectable class="archive-content"></div>
     </section>
-    <section class="placebar">{{selectedList}}</section>
+    <section class="placebar">
+        <div ng-repeat="item in selectedList">
+            {{item.headline}}
+        <div>
+    </section>
 </div>
 
 <div class="modal-footer">
