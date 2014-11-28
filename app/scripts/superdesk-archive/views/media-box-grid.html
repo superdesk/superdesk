@@ -28,8 +28,6 @@
         <dd><time datetime="{{ item.versioncreated }}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time></dd>
         <dt ng-show="item.is_spiked" translate>expires</dt>
         <dd ng-if="item.is_spiked"><time title="{{ item.expiry | date:'medium' }}">{{ item.expiry | reldate }}</time></dd>
-        <dt translate ng-show="item.subject">subject</dt>
-        <dd ng-show="item.subject" class="subject-line">{{ item.subject | mergeWords}}</dd>
     </dl>
 </div>
 
@@ -48,7 +46,7 @@
     <ul ng-if="extras.activity" class="item-functions"
         sd-activity-list
         data-item="item"
-        data-type="{{extras.activity.type || item._type}}"
+        data-type="{{ spike ? 'spike' : (type || item._type)}}"
         data-action="{{extras.activity.action}}">
     </ul>
 </div>
