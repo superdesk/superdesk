@@ -349,7 +349,9 @@
                 'item[\'anpa-category\']',
                 'item.dateline',
                 'item.located',
-                'item.place'
+                'item.place',
+                'item.language',
+                'item.type'
             ], function(changes) {
                 $scope.dirty = isDirty();
                 if ($scope.dirty && authoring.isEditable(item)) {
