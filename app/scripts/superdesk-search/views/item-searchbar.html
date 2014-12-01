@@ -45,9 +45,9 @@
                             </div>
                         </fieldset>
                         <fieldset class="span-2">
-                            <div class="field half">
-                                <label for="search-guid">Unique ID</label>
-                                <input type="text" id="search-guid" ng-model="meta.guid" tabindex="7">
+                            <div class="field">
+                                <label for="search-subject">Subject</label>
+                                <input type="text" id="search-subject" ng-model="meta.subject.name" tabindex="11">
                             </div>
         					<div class="field half">
         						<label for="search-slugline">Slugline</label>
@@ -65,10 +65,6 @@
                             </div>
                         </fieldset>
                         <fieldset class="span-2">
-                            <div class="field">
-                                <label for="search-subject">Subject</label>
-                                <input type="text" id="search-subject" ng-model="meta.subject.name" tabindex="11">
-                            </div>
                             <div class="field" ng-if="repo.archive">
                                 <label for="search-creator">Creator</label>
                                 <input type="text" id="search-creator" ng-model="meta.original_creator" tabindex="12">
