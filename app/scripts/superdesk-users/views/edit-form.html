@@ -8,7 +8,7 @@
         <figure class="avatar">
             <img sd-user-avatar data-src="user.picture_url" alt="{{ user.FullName }}">
         </figure>
-        <span class="disabled-label" ng-if="!_active" translate>disabled</span>
+        <span class="disabled-label" ng-if="user._id && !_active" translate>disabled</span>
         <a href="" class="change-photo" ng-click="editPicture()" translate>Change Photo</a>
     </div>
 
