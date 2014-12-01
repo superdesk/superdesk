@@ -178,7 +178,7 @@ Feature: User Resource
     Scenario: Create a user with default role
       Given "roles"
             """
-            [{"name": "A", "is_default": true, "_id":1 }]
+            [{"name": "A", "is_default": true, "_id":1}]
             """
       When we post to "/users"
             """
@@ -186,14 +186,14 @@ Feature: User Resource
             """
       Then we get new resource
             """
-            {"username": "foo", "display_name": "foo", "is_active": false, "role": 1, "needs_activation": true}
+            {"username": "foo", "display_name": "foo", "role": 1}
             """
 
     @auth
     Scenario: Create a user with no default role
       Given "roles"
             """
-            [{"name": "A", "is_default": false, "_id":1 }]
+            [{"name": "A", "is_default": false, "_id": 1}]
             """
       When we post to "/users"
             """
@@ -201,5 +201,5 @@ Feature: User Resource
             """
       Then we get new resource
             """
-            {"username": "foo", "display_name": "foo", "is_active": false, "role": null, "needs_activation": true}
+            {"username": "foo", "display_name": "foo", "role": null}
             """
