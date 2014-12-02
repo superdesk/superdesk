@@ -58,17 +58,30 @@
 
             function buildFilters(params, query) {
 
-                if (params.before || params.after) {
-                    var range = {versioncreated: {}};
-                    if (params.before) {
-                        range.versioncreated.lte = params.before;
+                if (params.beforefirstcreated || params.afterfirstcreated) {
+                    var range = {firstcreated: {}};
+                    if (params.beforefirstcreated) {
+                        range.firstcreated.lte = params.beforefirstcreated;
                     }
 
-                    if (params.after) {
-                        range.versioncreated.gte = params.after;
+                    if (params.afterfirstcreated) {
+                        range.firstcreated.gte = params.afterfirstcreated;
                     }
 
                     query.filter({range: range});
+                }
+
+                if (params.beforeversioncreated || params.afterversioncreated) {
+                    var vrange = {versioncreated: {}};
+                    if (params.beforeversioncreated) {
+                        vrange.versioncreated.lte = params.beforeversioncreated;
+                    }
+
+                    if (params.afterversioncreated) {
+                        vrange.versioncreated.gte = params.afterversioncreated;
+                    }
+
+                    query.filter({range: vrange});
                 }
 
                 if (params.provider) {
