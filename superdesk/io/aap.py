@@ -41,7 +41,7 @@ class AAPIngestService(FileIngestService):
                     filepath = os.path.join(self.path, filename)
                     stat = os.lstat(filepath)
                     last_updated = datetime.fromtimestamp(stat.st_mtime, tz=utc)
-                    if self.is_latest_content(last_updated, provider.get('updated')):
+                    if self.is_latest_content(last_updated, provider.get('last_updated')):
                         with open(os.path.join(self.path, filename), 'r') as f:
                             item = self.parser.parse_message(etree.fromstring(f.read()))
 
