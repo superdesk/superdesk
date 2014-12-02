@@ -263,11 +263,10 @@
                         });
                     };
 
-                    initSelectedFacets();
-
                     scope.$watch('items', function() {
 
                         initAggregations();
+                        initSelectedFacets();
 
                         var search = $location.search();
                         if (search.q && scope.keyword !== search.q)
