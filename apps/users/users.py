@@ -13,16 +13,17 @@ class RolesResource(Resource):
         'description': {
             'type': 'string'
         },
-        'extends': {
-            'type': 'objectid'
-        },
-        'permissions': {
+        'privileges': {
             'type': 'dict'
-        }
+        },
+        'is_default': {
+            'type': 'boolean'
+        },
     }
     datasource = {
         'default_sort': [('_created', -1)]
     }
+    privileges = {'POST': 'roles', 'DELETE': 'roles', 'PATCH': 'roles'}
 
 
 class UsersResource(Resource):
@@ -73,17 +74,15 @@ class UsersResource(Resource):
             'type': 'string',
         },
         'avatar': Resource.rel('upload', True),
-        'roles': {
-            'type': 'list'
-        },
-        'preferences': {'type': 'dict'},
+        'role': Resource.rel('roles', True),
+        'privileges': {'type': 'dict'},
         'workspace': {
             'type': 'dict'
         },
         'user_type': {
             'type': 'string',
-            'allowed': ['user', 'manager', 'administrator'],
-            'default': 'administrator',
+            'allowed': ['user', 'administrator'],
+            'default': 'user',
             'required': True
         },
         'is_active': {
@@ -93,7 +92,10 @@ class UsersResource(Resource):
         'needs_activation': {
             'type': 'boolean',
             'default': True
-        }
+        },
+        'privileges': {
+            'type': 'dict'
+        },
     }
 
     extra_response_fields = [
@@ -112,3 +114,5 @@ class UsersResource(Resource):
             'password': 0
         }
     }
+
+    privileges = {'POST': 'users', 'DELETE': 'users', 'PATCH': 'users'}

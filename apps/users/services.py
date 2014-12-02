@@ -1,13 +1,17 @@
+import flask
+import logging
+import superdesk
+
+from flask import current_app as app
+
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_DELETE
 from superdesk.services import BaseService
 from superdesk.utils import is_hashed, get_hash
 from superdesk import get_resource_service, SuperdeskError
-from flask import current_app as app
 from superdesk.emails import send_user_status_changed_email, send_activate_account_email
 from superdesk.utc import utcnow
-from eve.validation import ValidationError
-
-import logging
+from superdesk.privilege import get_privilege_list
+from apps.auth.errors import ForbiddenError
 
 
 logger = logging.getLogger(__name__)
@@ -21,11 +25,63 @@ def get_display_name(user):
         return user.get('username')
 
 
+def is_admin(user):
+    """Test if given user is admin.
+
+    :param user
+    """
+    return user.get('user_type', 'user') == 'administrator'
+
+
+def get_admin_privileges():
+    """Get privileges for admin user."""
+    return dict.fromkeys([p['name'] for p in get_privilege_list()], 1)
+
+
+def get_privileges(user, role):
+    """Get privileges for given user and role.
+
+    :param user
+    :param role
+    """
+    if is_admin(user):
+        return get_admin_privileges()
+
+    if role:
+        role_privileges = role.get('privileges', {})
+        return dict(
+            list(role_privileges.items()) + list(user.get('privileges', {}).items())
+        )
+
+    return user.get('privileges', {})
+
+
+def current_user_has_privilege(privilege):
+    """Test if current user has given privilege.
+
+    In case there is no current user we assume it's system (via worker/manage.py)
+    and let it pass.
+
+    :param privilege
+    """
+    if not getattr(flask.g, 'user', None):  # no user - worker can do it
+        return True
+    privileges = get_privileges(flask.g.user, getattr(flask.g, 'role', None))
+    return privileges.get(privilege, False)
+
+
+def is_sensitive_update(updates):
+    """Test if given update is sensitive and might change user privileges."""
+    return 'role' in updates or 'privileges' in updates or 'user_type' in updates
+
+
 class UsersService(BaseService):
 
     def on_create(self, docs):
         for user_doc in docs:
             user_doc.setdefault('display_name', get_display_name(user_doc))
+            if not user_doc.get('role', None):
+                user_doc['role'] = get_resource_service('roles').get_default_role_id()
 
     def on_created(self, docs):
         for user_doc in docs:
@@ -35,6 +91,11 @@ class UsersService(BaseService):
 
     def on_updated(self, updates, user):
         self.handle_status_changed(updates, user)
+
+    def update(self, id, updates):
+        if is_sensitive_update(updates) and not current_user_has_privilege('users'):
+            raise ForbiddenError()
+        return super().update(id, updates)
 
     def handle_status_changed(self, updates, user):
         status = updates.get('is_active', None)
@@ -64,6 +125,16 @@ class UsersService(BaseService):
 
     def user_is_active(self, doc):
         return doc.get('is_active', False)
+
+    def get_role(self, user):
+        if user:
+            role_id = user.get('role', None)
+            if role_id:
+                return get_resource_service('roles').find_one(_id=role_id, req=None)
+        return None
+
+    def set_privileges(self, user, role):
+        user['active_privileges'] = get_privileges(user, role)
 
 
 class DBUsersService(UsersService):
@@ -144,14 +215,33 @@ class ADUsersService(UsersService):
 class RolesService(BaseService):
 
     def on_update(self, updates, original):
-        if updates.get('extends'):
-            if updates.get('extends') == original.get('_id'):
-                raise ValidationError('A role can not extend its self')
-            self.check_parents(original.get('_id'), updates.get('extends'))
+        if updates.get('is_default'):
+            # if we are updating the role that is already default that is OK
+            if original.get('is_default'):
+                return
+            self.remove_old_default()
 
-    def check_parents(self, myid, parentid):
-        parent = self.find_one(req=None, _id=parentid)
-        if parent:
-            if parent['_id'] == myid:
-                raise ValidationError('Circular role inheritance')
-            self.check_parents(myid, parent.get('extends'))
+    def on_create(self, docs):
+        for doc in docs:
+            # if this new one is default need to remove the old default
+            if doc.get('is_default'):
+                self.remove_old_default()
+
+    def on_delete(self, docs):
+        if docs.get('is_default'):
+            raise superdesk.SuperdeskError('Cannot delete the default role')
+        # check if there are any users in the role
+        user = get_resource_service('users').find_one(req=None, role=docs.get('_id'))
+        if user:
+            raise superdesk.SuperdeskError('Cannot delete the role, it still has users in it!')
+
+    def remove_old_default(self):
+        # see of there is already a default role and set it to no longer default
+        role_id = self.get_default_role_id()
+        # make it no longer default
+        if role_id:
+            get_resource_service('roles').update(role_id, {"is_default": False})
+
+    def get_default_role_id(self):
+        role = self.find_one(req=None, is_default=True)
+        return role.get('_id') if role is not None else None

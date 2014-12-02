@@ -112,7 +112,8 @@ INSTALLED_APPS = [
     'apps.vocabularies',
     'apps.legal_archive',
     'apps.search',
-    'apps.packages'
+    'apps.packages',
+    'apps.privilege',
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']

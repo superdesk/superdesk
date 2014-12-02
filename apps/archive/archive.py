@@ -37,6 +37,7 @@ class ArchiveVersionsResource(Resource):
     item_url = item_url
     resource_methods = []
     internal_resource = True
+    privileges = {'PATCH': 'archive'}
 
 
 class ArchiveVersionsService(BaseService):
@@ -67,8 +68,10 @@ class ArchiveResource(Resource):
         },
         'default_sort': [('_updated', -1)],
     }
-    resource_methods = ['GET', 'POST', 'DELETE']
+    resource_methods = ['GET', 'POST']
+    item_methods = ['GET', 'PATCH', 'PUT']
     versioning = True
+    privileges = {'POST': 'archive', 'PATCH': 'archive', 'PUT': 'archive'}
 
 
 class ArchiveService(BaseService):
@@ -189,6 +192,7 @@ class AutoSaveResource(Resource):
     resource_methods = ['POST']
     item_methods = ['GET', 'PUT', 'PATCH']
     resource_title = endpoint_name
+    privileges = {'POST': 'archive', 'PATCH': 'archive', 'PUT': 'archive'}
 
 
 class ArchiveSaveService(BaseService):

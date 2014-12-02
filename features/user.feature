@@ -173,3 +173,33 @@ Feature: User Resource
             """
             {"username": "foo", "workspace": {}}
             """
+
+    @auth
+    Scenario: Create a user with default role
+      Given "roles"
+            """
+            [{"name": "A", "is_default": true, "_id":1}]
+            """
+      When we post to "/users"
+            """
+            {"username": "foo", "password": "barbar", "email": "foo@bar.com"}
+            """
+      Then we get new resource
+            """
+            {"username": "foo", "display_name": "foo", "role": 1}
+            """
+
+    @auth
+    Scenario: Create a user with no default role
+      Given "roles"
+            """
+            [{"name": "A", "is_default": false, "_id": 1}]
+            """
+      When we post to "/users"
+            """
+            {"username": "foo", "password": "barbar", "email": "foo@bar.com"}
+            """
+      Then we get new resource
+            """
+            {"username": "foo", "display_name": "foo", "role": null}
+            """

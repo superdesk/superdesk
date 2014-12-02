@@ -60,6 +60,7 @@ class UploadResource(Resource):
     }
     item_methods = ['GET', 'DELETE']
     resource_methods = ['GET', 'POST']
+    privileges = {'POST': 'archive', 'DELETE': 'archive'}
 
 
 class UploadService(BaseService):

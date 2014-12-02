@@ -34,7 +34,7 @@ Feature: Prepopulate
         When we get "/roles"
         Then we get list with 1 items
         """
-        {"_items": [{"name": "Editor", "permissions": {"ingest": {"read": 1}}}]}
+        {"_items": [{"name": "Editor", "privileges": {"ingest": {"read": 1}}}]}
         """        
         
 	@auth

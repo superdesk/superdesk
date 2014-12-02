@@ -37,3 +37,5 @@ class IngestProviderResource(Resource):
             'required': True,
         }
     }
+
+    privileges = {'POST': 'ingest_providers', 'PATCH': 'ingest_providers', 'DELETE': 'ingest_providers'}

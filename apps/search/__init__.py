@@ -2,6 +2,8 @@
 import superdesk
 from flask import current_app as app, json
 from apps.archive.common import aggregations
+from flask import current_app as app, json
+from apps.archive.common import aggregations
 
 
 class SearchService(superdesk.Service):
@@ -16,7 +18,9 @@ class SearchService(superdesk.Service):
     def _get_query(self, req):
         """Get elastic query."""
         args = getattr(req, 'args', {})
-        return json.loads(args.get('source')) if args.get('source') else {}
+        query = json.loads(args.get('source')) if args.get('source') else {}
+        query['aggs'] = aggregations
+        return query
 
     def _get_types(self, req):
         """Get document types for the given query."""

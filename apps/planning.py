@@ -41,6 +41,7 @@ class PlanningResource(Resource):
     item_url = 'regex("[\w,.:-]+")'
     datasource = {'search_backend': 'elastic'}
     resource_methods = ['GET', 'POST']
+    privileges = {'POST': 'planning', 'PATCH': 'planning'}
 
 
 class PlanningService(BaseService):
@@ -56,3 +57,8 @@ class PlanningService(BaseService):
 
     def on_deleted(self, doc):
         push_notification('planning', deleted=1)
+
+
+superdesk.privilege(name='planning',
+                    label='Planning Management',
+                    description='User can plan and cover.')

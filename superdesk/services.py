@@ -15,7 +15,7 @@ class BaseService():
     '''
     datasource = None
 
-    def __init__(self, datasource, backend):
+    def __init__(self, datasource=None, backend=None):
         self.backend = backend
         self.datasource = datasource
 

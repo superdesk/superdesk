@@ -48,6 +48,8 @@ class ContentViewResource(Resource):
         }
     }
 
+    privileges = {'POST': 'archive', 'PATCH': 'archive', 'PUT': 'archive', 'DELETE': 'archive'}
+
 
 class ContentViewService(BaseService):
 

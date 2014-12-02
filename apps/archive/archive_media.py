@@ -43,6 +43,7 @@ class ArchiveMediaResource(Resource):
     item_methods = ['PATCH', 'GET', 'DELETE']
     item_url = item_url
     versioning = True
+    privileges = {'POST': 'archive', 'PATCH': 'archive', 'DELETE': 'archive'}
 
 
 class ArchiveMediaService(BaseService):

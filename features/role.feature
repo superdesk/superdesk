@@ -7,22 +7,7 @@ Feature: Role Resource
         Then we get list with 0 items
 
     @auth
-    Scenario: Create a new child role
-        Given "roles"
-            """
-            [{"_id": "528de7b03b80a13eefc5e610", "name": "Administrator"}]
-            """
-
-        When we post to "/roles"
-            """
-            {"name": "Editor", "extends": "528de7b03b80a13eefc5e610"}
-            """
-
-        And we get "/roles"
-        Then we get list with 2 items
-
-    @auth
-    Scenario: Set permissions for given role
+    Scenario: Set privileges to a given role
         Given "roles"
             """
             [{"name": "Admin"}]
@@ -30,11 +15,11 @@ Feature: Role Resource
 
         When we patch given
             """
-            {"permissions": {"ingest": {"read": 1}, "archive": {"write": 1}}}
+            {"privileges": {"ingest":  1, "archive": 1}}
             """
 
         And we get given
-        Then we get "permissions"
+        Then we get "privileges"
 
     @auth
     Scenario: Check permissions on read with role
@@ -51,7 +36,7 @@ Feature: Role Resource
     Scenario: Check permissions on read with role and permissions
         Given "roles"
             """
-            [{"name": "Editor", "permissions": {"ingest": {"read": 1}}}]
+            [{"name": "Editor", "privileges": {"ingest": 1}}]
             """
         And we have "Editor" role
         When we get "/ingest"
@@ -66,22 +51,6 @@ Feature: Role Resource
         And we have "Subscriber" role
         And we have "user" as type of user
         When we get user profile
-        Then we get response code 200
-
-
-    @auth
-    Scenario: Inherit permissions from extended roles
-        Given "roles"
-            """
-            [
-                {"name": "Journalist", "permissions": {"ingest": {"read": 1}}},
-                {"name": "Editor"}
-            ]
-            """
-
-        And role "Editor" extends "Journalist"
-        And we have "Editor" role
-        When we get "/ingest"
         Then we get response code 200
 
     @auth
@@ -112,7 +81,7 @@ Feature: Role Resource
     Scenario: Users can write to resources if they have permission
         Given "roles"
             """
-            [{"name": "Pool Subs", "permissions": {"desks": {"write": 1}}}]
+            [{"name": "Pool Subs", "privileges": {"desks": 1}}]
             """
         And we have "Pool Subs" role
         And we have "user" as type of user
@@ -149,31 +118,42 @@ Feature: Role Resource
         Then we get response code 400
 
     @auth
-    Scenario: A Role cannot extend its self
+    Scenario: Can not delete default role
         Given "roles"
-          """
-          [{"name": "BIG"}]
-          """
+            """
+            [{"name": "This is a default role", "is_default": true }]
+            """
 
-        When we patch "/roles/#ROLES_ID#"
-          """
-          { "extends": "#ROLES_ID#"}
-          """
+        When we delete "/roles/#ROLES_ID#"
 
         Then we get response code 400
 
     @auth
-    Scenario: A Role can not inherit from its self
+    Scenario: Only one default
         Given "roles"
-        """
-        [{"name": "A"}]
-        """
+            """
+            [{"name": "A", "is_default": true }]
+            """
 
         When we post to "/roles"
-        """
-        [{"name": "B", "extends": "#ROLES_ID#"}]
-        """
+            """
+            [{"name": "B", "is_default": true }]
+            """
+        When we get "/roles/#ROLES_ID#"
+        Then we get existing resource
+            """
+            {"is_default": true}
+            """
 
-        When role "A" extends "B"
-
+    @auth
+    Scenario: Cannot delete a role that has users in it
+        Given "roles"
+            """
+            [{"name": "A" }]
+            """
+        Given "users"
+            """
+            [{"username": "foo", "first_name": "Foo", "last_name": "Bar", "email": "foo@bar.org", "is_active": true, "role": "#ROLES_ID#"}]
+            """
+        When we delete "/roles/#ROLES_ID#"
         Then we get response code 400

@@ -4,7 +4,7 @@ from flask import current_app as app, request
 import flask
 from apps.auth.errors import AuthRequiredError, ForbiddenError
 from superdesk.resource import Resource
-from superdesk import get_resource_service
+from superdesk import get_resource_service, get_resource_privileges
 
 
 logger = logging.getLogger(__name__)
@@ -56,14 +56,6 @@ class AuthResource(Resource):
 class SuperdeskTokenAuth(TokenAuth):
     """Superdesk Token Auth"""
 
-    method_map = {
-        'get': 'read',
-        'put': 'write',
-        'patch': 'write',
-        'post': 'write',
-        'delete': 'write',
-    }
-
     def check_permissions(self, resource, method, user):
         if not user:
             return True
@@ -71,43 +63,26 @@ class SuperdeskTokenAuth(TokenAuth):
         # is the operation against the user record of the current user
         if request.view_args.get('_id') == str(user['_id']):
             # no user is allowed to delete their own user
-            if method.lower() == 'delete':
+            if method.lower() in('delete', 'put'):
                 raise ForbiddenError
             else:
                 return True
 
-        # We allow all reads
-        perm_method = self.method_map[method.lower()]
-        if perm_method is 'read':
+        # We allow all reads or if resource is prepopulate then allow all
+        if method == 'GET' or resource == 'prepopulate':
             return True
-
-        # Read the user type
-        user_type = user.get('user_type')
-
-        # We allow all writes to administrators
-        if user_type == 'administrator':
-            return True
-
-        # Only administrators can write to those resources in this list
-        if resource in {'users', 'roles', 'sessions'}:
-            raise ForbiddenError()
 
         # users should be able to change only their preferences
         if resource == 'preferences':
             session = get_resource_service('preferences').find_one(_id=request.view_args.get('_id'), req=None)
             return user['_id'] == session.get("user")
 
-        # Get the list of roles belonging to this user
-        roles = user.get('roles')
-        if roles is not None:
-            for role_id in roles:
-                # check the permissions for each role
-                while role_id:
-                    role = get_resource_service('roles').find_one(_id=role_id, req=None) or {}
-                    perm = role.get('permissions', {})
-                    if perm.get(resource, {}).get(perm_method, False):
-                        return True
-                    role_id = role.get('extends')
+        # Get the list of privileges belonging to this user
+        get_resource_service('users').set_privileges(user, flask.g.role)
+        privileges = user.get('active_privileges', {})
+        resource_privileges = get_resource_privileges(resource).get(method, None)
+        if privileges.get(resource_privileges, False):
+            return True
 
         # If we didn't return True so far then user is not authorized
         raise ForbiddenError()
@@ -118,6 +93,7 @@ class SuperdeskTokenAuth(TokenAuth):
         if auth_token:
             user_id = str(auth_token['user'])
             flask.g.user = get_resource_service('users').find_one(req=None, _id=user_id)
+            flask.g.role = get_resource_service('users').get_role(flask.g.user)
             flask.g.auth = auth_token
             return self.check_permissions(resource, method, flask.g.user)
 
