@@ -13,10 +13,9 @@
             <li ng-repeat="provider in providers._items" class="clearfix">
 
                 <h6>{{ provider.name }}</h6>
-                <div class="last-updated" ng-show="provider.ingested_count">
+                <div class="last-updated">
                     <span translate>Last updated</span> {{ provider._updated|reldate }}
                 </div>
-           
                 <div class="dropdown pull-right">
                     <a href="" class="dropdown-toggle"><i class="icon-settings"></i> <b class="caret"></b></a>
                     <ul class="dropdown-menu pull-right">
@@ -25,7 +24,7 @@
                     </ul>
                 </div>
 
-                <a class="pull-right link" ng-href="#/workspace/ingest/?ingest_provider={{provider._id}}" translate><i class="icon-external"></i> {{ 'Go to Items' | translate}}</a>
+                <a class="pull-right link" ng-href="#/workspace/ingest/?source={{provider.source | quotedString}}" translate><i class="icon-external"></i> {{ 'Go to Items' | translate}}</a>
 
             </li>
         </ul>
@@ -33,8 +32,8 @@
 
     <div sd-modal-view data-model="provider">
         <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
-            <h3 translate ng-show="provider._id">Edit Source {{ origProvider.name }}</h3>
-            <h3 translate ng-hide="provider._id">Add New Source</h3>
+            <h3 translate ng-show="provider._id">{{'Edit Source' | translate}} {{ origProvider.name }}</h3>
+            <h3 translate ng-hide="provider._id" translate>Add New Source</h3>
         </div>
 
         <div class="modal-body">

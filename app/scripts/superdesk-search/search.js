@@ -84,10 +84,6 @@
                     query.filter({range: vrange});
                 }
 
-                if (params.provider) {
-                    query.filter({term: {provider: params.provider}});
-                }
-
                 if (params.type) {
                     var type = {
                         type: JSON.parse(params.type)
