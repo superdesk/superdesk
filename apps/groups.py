@@ -13,6 +13,9 @@ def init_app(app):
     UserGroupsResource(endpoint_name, app=app, service=service)
 
 
+superdesk.privilege(name='groups', label='Groups Management', description='User can edit unique name.')
+
+
 class GroupsResource(Resource):
 
     schema = {
@@ -35,6 +38,7 @@ class GroupsResource(Resource):
         }
     }
     datasource = {'default_sort': [('created', -1)]}
+    privileges = {'POST': 'groups', 'DELETE': 'groups', 'PATCH': 'groups'}
 
 
 class UserGroupsResource(Resource):

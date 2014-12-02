@@ -493,9 +493,9 @@ Feature: Packages
         }
         """
         When we delete latest
-        Then we get deleted response
+        Then we get response code 405
         When we get "/archive"
-        Then we get list with 1 items
+        Then we get list with 2 items
         """
         {"_items": [{"guid": "#ARCHIVE_ID#", "headline": "test", "linked_in_packages": [], "type": "text"}]}
         """

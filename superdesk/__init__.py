@@ -10,6 +10,7 @@ from eve.utils import config  # noqa
 from .eve_backend import EveBackend
 from .services import BaseService as Service  # noqa
 from .resource import Resource  # noqa
+from .privilege import privilege  # noqa
 
 
 API_NAME = 'Superdesk API'
@@ -108,6 +109,11 @@ def get_backend():
 
 def get_resource_service(resource_name):
     return resources[resource_name].service
+
+
+def get_resource_privileges(resource_name):
+    attr = getattr(resources[resource_name], 'privileges', {})
+    return attr
 
 
 def register_default_user_preference(preference_name, preference):

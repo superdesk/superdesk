@@ -17,7 +17,7 @@ class PackageResource(Resource):
         'elastic_filter': {'term': {'archive.type': 'composite'}}  # eve-elastic specific filter
     }
     item_url = item_url
-    item_methods = ['GET', 'PATCH', 'DELETE']
+    item_methods = ['GET', 'PATCH']
 
     schema = {}
     schema.update(metadata_schema)
@@ -74,3 +74,5 @@ class PackageResource(Resource):
             'type': 'string'
         }
     })
+
+    privileges = {'POST': 'archive', 'PATCH': 'archive'}

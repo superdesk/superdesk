@@ -28,6 +28,7 @@ class CoverageResource(Resource):
     }
 
     datasource = {'default_sort': [('_created', -1)]}
+    privileges = {'POST': 'planning', 'PATCH': 'planning', 'DELETE': 'planning'}
 
 
 class CoverageService(BaseService):

@@ -17,5 +17,5 @@
         "resource": "desks",
         "username": "admin"
     },
-    {"data": {"name": "Editor", "permissions": {"ingest": {"read": 1}}}, "resource": "roles"}
+    {"data": {"name": "Editor", "privileges": {"ingest": {"read": 1}}}, "resource": "roles"}
 ]

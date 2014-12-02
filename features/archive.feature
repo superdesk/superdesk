@@ -176,7 +176,7 @@ Feature: News Items Archive
         [{"guid": "-abcde1234567890", "type": "text"}]
         """
         And we delete latest
-        Then we get deleted response
+        Then we get response code 405
 
     @auth
     Scenario: Create new text item

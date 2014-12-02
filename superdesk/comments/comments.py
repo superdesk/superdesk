@@ -26,6 +26,7 @@ class CommentsResource(Resource):
     schema = comments_schema
     resource_methods = ['GET', 'POST', 'DELETE']
     datasource = {'default_sort': [('_created', -1)]}
+    privileges = {'POST': 'archive', 'DELETE': 'archive'}
 
 
 class CommentsService(BaseService):

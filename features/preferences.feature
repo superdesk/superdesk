@@ -114,3 +114,79 @@ Feature: User preferences
       }}
       """
 
+    @auth
+    Scenario: Get active privileges from user with preferences
+      Given we have sessions "/sessions"
+
+      When we patch "/users/#USERS_ID#"
+            """
+            {"user_type": "user", "privileges": {"archive:spike": 1}}
+            """
+
+      When we get "/preferences/#SESSION_ID#"
+      Then we get existing resource
+      """
+      {"user": "#USERS_ID#",
+      "active_privileges": {"archive:spike": 1},
+      "user_preferences": {"feature:preview":
+      {
+      "type": "bool",
+      "enabled": false,
+      "default": false,
+      "label": "Enable Feature Preview",
+      "category": "feature"
+      }}}
+      """
+
+     @auth
+    Scenario: Get active privileges from user and role with preferences
+      Given we have sessions "/sessions"
+
+      Given "roles"
+            """
+            [{"name": "A" , "privileges": {"fungi": 1}}]
+            """
+
+      When we patch "/users/#USERS_ID#"
+            """
+            {"role": "#ROLES_ID#", "user_type": "user", "privileges": {"archive:spike": 1}}
+            """
+
+      When we get "/preferences/#SESSION_ID#"
+      Then we get existing resource
+      """
+      {"user": "#USERS_ID#",
+      "active_privileges": {"fungi": 1, "archive:spike": 1},
+      "user_preferences": {"feature:preview":
+      {
+      "type": "bool",
+      "enabled": false,
+      "default": false,
+      "label": "Enable Feature Preview",
+      "category": "feature"
+      }}}
+      """
+
+    @auth
+    Scenario: Get all active privileges from administrator with preferences
+      Given we have sessions "/sessions"
+
+      When we patch "/users/#USERS_ID#"
+            """
+            {"role": "#ROLES_ID#", "user_type": "administrator", "privileges": {}}
+            """
+
+      When we get "/preferences/#SESSION_ID#"
+      Then we get existing resource
+      """
+      {"user": "#USERS_ID#",
+      "active_privileges": {"spike": 1},
+      "user_preferences": {"feature:preview":
+      {
+      "type": "bool",
+      "enabled": false,
+      "default": false,
+      "label": "Enable Feature Preview",
+      "category": "feature"
+      }}}
+      """

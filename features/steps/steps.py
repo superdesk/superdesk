@@ -6,6 +6,7 @@ from behave import given, when, then  # @UnresolvedImport
 from flask import json
 from eve.methods.common import parse
 from superdesk import default_user_preferences, get_resource_service, utc
+from eve.io.mongo import MongoJSONEncoder
 
 from wooper.general import fail_and_print_body, apply_path,\
     parse_json_response
@@ -214,7 +215,7 @@ def step_impl_given_config(context):
 def step_impl_given_role(context, role_name):
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
         role = get_resource_service('roles').find_one(name=role_name, req=None)
-        data = json.dumps({'roles': [str(role['_id'])]})
+        data = MongoJSONEncoder().encode({'role': role.get('_id')})
     response = patch_current_user(context, data)
     assert_ok(response)
 
@@ -225,14 +226,6 @@ def step_impl_given_user_type(context, user_type):
         data = json.dumps({'user_type': user_type})
     response = patch_current_user(context, data)
     assert_ok(response)
-
-
-@given('role "{extending_name}" extends "{extended_name}"')
-def step_impl_given_role_extends(context, extending_name, extended_name):
-    with context.app.test_request_context(context.app.config['URL_PREFIX']):
-        extended = get_resource_service('roles').find_one(name=extended_name, req=None)
-        extending = get_resource_service('roles').find_one(name=extending_name, req=None)
-        get_resource_service('roles').patch(extending['_id'], {'extends': extended['_id']})
 
 
 @when('we post to auth')
@@ -327,6 +320,7 @@ def when_we_find_for_resource_the_id_as_name_by_search_criteria(context, resourc
 
 @when('we delete "{url}"')
 def step_impl_when_delete_url(context, url):
+    url = apply_placeholders(context, url)
     res = get_res(url, context)
     href = get_self_href(res, context)
     headers = if_match(context, res.get('_etag'))
@@ -1060,14 +1054,3 @@ def step_get_activation_email(context):
     url = urlparse(words[words.index("to") + 1])
     token = url.fragment.split('token=')[-1]
     assert token
-
-
-@when('role "{extending_name}" extends "{extended_name}"')
-def step_role_extends(context, extending_name, extended_name):
-    with context.app.test_request_context(context.app.config['URL_PREFIX']):
-        extended = get_resource_service('roles').find_one(name=extended_name, req=None)
-        extending = get_resource_service('roles').find_one(name=extending_name, req=None)
-        headers = if_match(context, extending.get('_etag'))
-        data = json.dumps({'extends': str(extended['_id'])})
-        context.response = context.client.patch(get_prefixed_url(context.app, '/roles/%s' % extending['_id']),
-                                                data=data, headers=headers)
