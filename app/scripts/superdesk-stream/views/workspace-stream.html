@@ -3,13 +3,10 @@
 	<div class="button-stack">
     	
     	<div class="navbtn dropdown" dropdown>
-    		<button class="dropdown-toggle" dropdown-toggle>My Activity Stream <b class="caret"></b></button>
+    		<button class="dropdown-toggle">{{ selectionName }}<b class="caret"></b></button>
 			<ul class="dropdown-menu">
-				<li><a href="">My Activity Stream</a></li>
-				<li><a href="">News Activity Stream</a></li>
-				<li><a href="">Sports Activity Stream</a></li>
-				<li><a href="">Finance Activity Stream</a></li>
-				<li><a href="">Photo Activity Stream</a></li>
+				<li ng-click="select(null)" ng-class="{selected: selectedDesk === null}"><a href="" translate>My Activity</a></li>
+				<li ng-repeat="desk in desks" ng-click="select(desk)" ng-class="{selected: desk === selectedDesk}"><a href="">{{ desk.name }}</a></li>
 			</ul>
     	</div>
     
@@ -20,27 +17,16 @@
 
 	<div class="activity-container">
 		<div class="activity-log">
-			<ul class="activity-list card-list">
-				<li class="activity with-date"><div class="date"><span>10. June</span></div>
+			<ul class="activity-list card-list" ng-controller="StreamController">
+				<li class="activity with-date" ng-repeat="activity in activities"><div class="date"><span>{{ activity._created | reldate}}</span></div>
 	                <div>
 	                    <figure class="avatar">
 	                        <img sd-user-avatar data-src="user.picture_url">
 	                    </figure>
 	                    <div class="activity-content">
-	                        <p><b>Vladimir Stefanović</b> aproved article <i>“Ganz besonders, diese Elsässer”</i></p>
+	                        <p><b>{{ activity.user.display_name }} </b>{{ activity.display_message }}</p>
 	                    </div>
-	                    <div class="activity-date "><time datetime="2014-06-10T08:05:56.858Z" title="Tuesday, June 10 2014 10:05 AM" >a few seconds ago</time></div>
-	                </div>
-	            </li>
-	            <li class="activity">
-	                <div>
-	                    <figure class="avatar">
-	                        <img sd-user-avatar data-src="user.picture_url">
-	                    </figure>
-	                    <div class="activity-content">
-	                        <p><b>admin</b> created desks</p>
-	                    </div>
-	                    <div class="activity-date "><time datetime="2014-06-10T08:05:56.858Z" title="Tuesday, June 10 2014 10:05 AM" >a few seconds ago</time></div>
+	                    <div class="activity-date "><time datetime="{{ activity._created }}" title="{{ activity._created | reldate}}" >{{ activity._created | reldate}}</time></div>
 	                </div>
 	            </li>
 	            <li class="activity with-date"><div class="date"><span>09. June</span></div>

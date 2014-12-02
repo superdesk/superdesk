@@ -41,11 +41,5 @@ define([
             priority: -1000,
             category: superdesk.MENU_MAIN
         });
-        superdesk.activity('/workspace/stream', {
-            label: gettext('Workspace'),
-            templateUrl: require.toUrl('./views/workspace-stream.html'),
-            topTemplateUrl: require.toUrl('./views/workspace-topnav.html'),
-            beta: true
-        });
     }]);
 });
