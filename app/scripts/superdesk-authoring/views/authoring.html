@@ -47,13 +47,11 @@
                 			<div class="field" class="abstract">
                 				<label translate>Abstract</label>
                                 <span sd-character-count data-item="item.abstract" data-limit="abstractSoftLimit" data-limit-callback="checkLimit"></span>
-                                <span sd-word-count data-item="item.abstract"></span>
-                				<textarea class="abstract" maxlength="{{abstractHardLimit}}" sd-auto-height ng-model="item.abstract" ng-if="_editable"></textarea>
+                                <textarea class="abstract" maxlength="{{abstractHardLimit}}" sd-auto-height ng-model="item.abstract" ng-if="_editable"></textarea>
 			                	<div class="abstract" ng-if="!_editable">{{item.abstract}}</div>
                 			</div>
                 			<div class="field">
                 				<label translate>Body</label>
-                                <span sd-character-count data-item="item.body_html" data-html="true"></span>
                                 <span sd-word-count data-item="item.body_html" data-html="true"></span>
                 				<div sd-text-editor class="text-editor" ng-model="item.body_html" ng-if="_editable"></div>
 		                    	<div class="text-editor" sd-html-preview="item.body_html" ng-if="!_editable"></div>
