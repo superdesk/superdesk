@@ -17,12 +17,6 @@ define([
         require('./directives').name
     ]);
 
-    app.filter('quotedString', function(){
-       return function(val) {
-           return '%5B%22' + val + '%22%5D';
-       }
-    });
-
     app.value('providerTypes', {
         aap: {
             label: 'AAP',

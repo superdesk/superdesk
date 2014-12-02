@@ -24,7 +24,7 @@
                     </ul>
                 </div>
 
-                <a class="pull-right link" ng-href="#/workspace/ingest/?source={{provider.source | quotedString}}" translate><i class="icon-external"></i> {{ 'Go to Items' | translate}}</a>
+                <a class="pull-right link" ng-href="#/workspace/ingest/?source={{'[%22' + provider.source + '%22]'}}" translate><i class="icon-external"></i> {{ 'Go to Items' | translate}}</a>
 
             </li>
         </ul>
