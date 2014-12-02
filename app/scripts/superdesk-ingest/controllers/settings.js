@@ -1,8 +1,8 @@
 define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
-    return ['$scope', 'providerTypes', 'gettext', 'notify', 'api',
-        function($scope, providerTypes, gettext, notify, api) {
+    return ['$scope', 'providerTypes', 'gettext', 'notify', 'api', '$location',
+        function($scope, providerTypes, gettext, notify, api, $location) {
 
             $scope.origProvider = null;
             $scope.provider = null;
@@ -44,6 +44,10 @@ define(['angular', 'lodash'], function(angular, _) {
                     }
                     $scope.cancel();
                 });
+            };
+
+            $scope.gotoIngest = function(source) {
+                $location.path('/workspace/ingest').search('source', angular.toJson([source]));
             };
         }];
 });
