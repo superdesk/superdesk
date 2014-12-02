@@ -46,3 +46,15 @@ class UpdateIngestTest(TestCase):
             # check that item is synced in elastic
             elastic_item = self.app.data._search_backend('ingest').find_one('ingest', _id=ids[0], req=None)
             self.assertIsNotNone(elastic_item)
+
+    def test_ingest_provider_state(self):
+        with self.app.app_context():
+            provider_name = 'reuters'
+            provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+            provider_service = self.provider_services[provider.get('type')]
+            self.assertFalse(provider_service.is_provider_closed(provider))
+
+            provider_name = 'aap_closed'
+            provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+            provider_service = self.provider_services[provider.get('type')]
+            self.assertTrue(provider_service.is_provider_closed(provider))

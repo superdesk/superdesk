@@ -1,7 +1,7 @@
 from superdesk.tests import TestCase
 from superdesk import get_backend
 from superdesk.utc import utcnow
-from datetime import timedelta, datetime
+from datetime import timedelta
 
 
 class BackendTestCase(TestCase):

@@ -54,6 +54,8 @@ class ReutersIngestService(IngestService):
 
     def update(self, provider):
         """Service update call."""
+        if self.is_provider_closed(provider):
+            return
 
         self.provider = provider
         updated = utcnow()

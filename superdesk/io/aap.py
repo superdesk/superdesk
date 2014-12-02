@@ -30,6 +30,8 @@ class AAPIngestService(FileIngestService):
         return href
 
     def update(self, provider):
+        if self.is_provider_closed(provider):
+            return
         self.provider = provider
         self.path = provider.get('config', {}).get('path', None)
         if not self.path:
