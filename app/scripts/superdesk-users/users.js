@@ -172,6 +172,11 @@
         $scope.selected = {user: null};
         $scope.createdUsers = [];
 
+        api('roles').query().then(function(result) {
+            $scope.roles = _.indexBy(result._items, '_id');
+            $scope.noRolesWarning = result._items.length === 0;
+        });
+
         $scope.preview = function(user) {
             $scope.selected.user = user;
         };
@@ -356,73 +361,138 @@
             });
     }
 
+    UserRolesDirective.$inject = ['api', 'gettext', 'notify', 'modal'];
+    function UserRolesDirective(api, gettext, notify, modal) {
+        return {
+            scope: true,
+            templateUrl: 'scripts/superdesk-users/views/settings-roles.html',
+            link: function(scope) {
+                var _orig = null;
+                scope.editRole = null;
+
+                api('roles').query()
+                .then(function(result) {
+                    scope.roles = result._items;
+                });
+
+                scope.edit = function(role) {
+                    scope.editRole = _.create(role);
+                    _orig = role;
+                    scope.defaultRole = role.is_default;
+                };
+
+                scope.save = function(role) {
+                    var _new = role._id ? false : true;
+                    api('roles').save(_orig, role)
+                    .then(function() {
+                        if (_new) {
+                            scope.roles.push(_orig);
+                            notify.success(gettext('User role created.'));
+                        } else {
+                            notify.success(gettext('User role updated.'));
+                        }
+                        if (role.is_default) {
+                            updatePreviousDefault(role);
+                        }
+                        scope.cancel();
+                    }, function(response) {
+                        if (response.status === 400 && typeof(response.data._issues.name) !== 'undefined' &&
+                        response.data._issues.name.unique === 1) {
+                            notify.error(gettext('I\'m sorry but a role with that name already exists.'));
+                        } else {
+                            if (typeof(response.data._issues['validator exception']) !== 'undefined') {
+                                    notify.error(response.data._issues['validator exception']);
+                                } else {
+                                notify.error(gettext('I\'m sorry but there was an error when saving the role.'));
+                            }
+                        }
+                    });
+                };
+
+                scope.cancel = function() {
+                    scope.editRole = null;
+                };
+
+                scope.remove = function(role) {
+                    confirm().then(function() {
+                        api('roles').remove(role)
+                        .then(function(result) {
+                            _.remove(scope.roles, role);
+                        }, function(response) {
+                            if (response.status === 400) {
+                                notify.error(gettext('Role cannot be deleted. Still has assinged users.'));
+                            } else {
+                                notify.error(gettext('There is an error. Role cannot be deleted.'));
+                            }
+                        });
+                    });
+                };
+
+                function updatePreviousDefault(role) {
+
+                    //find previous role with flag 'default'
+                    var previous = _.find(scope.roles, function(r) {
+                      return r._id !== role._id && r.is_default;
+                    });
+
+                    // update it
+                    if (previous) {
+                        api('roles').getById(previous._id).then(function(result) {
+                            _.extend(previous, {_etag: result._etag, is_default: false});
+                        });
+                    }
+                }
+
+                function confirm() {
+                    return modal.confirm(gettext('Are you sure you want to delete user role?'));
+                }
+            }
+        };
+    }
+
+    RolesPrivilegesDirective.$inject = ['api', 'gettext', 'notify', '$q'];
+    function RolesPrivilegesDirective(api, gettext, notify, $q) {
+        return {
+            scope: true,
+            templateUrl: 'scripts/superdesk-users/views/settings-privileges.html',
+            link: function(scope) {
+
+                api('roles').query()
+                .then(function(result) {
+                    scope.roles = result._items;
+                });
+
+                api('privileges').query().
+                then(function(result) {
+                    scope.privileges = result._items;
+                });
+
+                scope.saveAll = function(rolesForm) {
+                    var promises = [];
+
+                    _.each(scope.roles, function(role) {
+                        promises.push(api.save('roles', role, _.pick(role, 'privileges'))
+                        .then(function(result) {
+                        }, function(error) {
+                            console.log(error);
+                        }));
+                    });
+
+                    $q.all(promises).then(function() {
+                        notify.success(gettext('Privileges updated.'));
+                        rolesForm.$setPristine();
+                    }, function() {
+                        notify.success(gettext('Error. Privileges not updated.'));
+                    });
+                };
+            }
+        };
+    }
     /**
      * User roles controller - settings page
      */
-    UserRolesController.$inject = ['$scope', 'api', 'modal', 'gettext', 'notify'];
-    function UserRolesController($scope, api, modal, gettext, notify) {
-
-        var _orig;
-        $scope.selectedRole = null;
-        $scope.editRole = null;
-
-        api('roles').query()
-        .then(function(result) {
-            $scope.roles = result._items;
-        });
-
-        $scope.select = function(role) {
-            $scope.selectedRole = role;
-        };
-
-        $scope.edit = function(role) {
-            $scope.editRole = _.create(role);
-            _orig = role;
-        };
-
-        $scope.save = function(role) {
-            var _new = role._id ? false : true;
-            api('roles').save(_orig, role)
-            .then(function() {
-                if (_new) {
-                    $scope.roles.unshift(_orig);
-                }
-                $scope.cancel();
-            }, function(response) {
-                if (response.status === 400 && typeof(response.data._issues.name) !== 'undefined' &&
-                response.data._issues.name.unique === 1)
-                {
-                        notify.error(gettext('I\'m sorry but a role with that name already exists.'));
-                } else {
-                    if (typeof(response.data._issues['validator exception']) !== 'undefined')
-                    {
-                        notify.error(response.data._issues['validator exception']);
-                    } else {
-                    notify.error(gettext('I\'m sorry but there was an error when saving the role.'));
-                }
-                }
-            });
-        };
-
-        $scope.cancel = function() {
-            $scope.editRole = null;
-        };
-
-        $scope.remove = function(role) {
-            confirm().then(function() {
-                api('roles').remove(role)
-                .then(function(result) {
-                    _.remove($scope.roles, role);
-                }, function(response) {
-                    console.log(response);
-                });
-            });
-        };
-
-        function confirm() {
-            return modal.confirm(gettext('Are you sure you want to delete user role?'));
-        }
-
+    UserRolesController.$inject = ['$scope'];
+    function UserRolesController($scope) {
     }
 
     return angular.module('superdesk.users', [
@@ -562,7 +632,8 @@
                             type: 'user'
                         },
                         {action: 'list', type: 'user'}
-                    ]
+                    ],
+                    privileges: {users: 1}
                 })
                 .activity('/users/:_id', {
                     label: gettext('Users profile'),
@@ -570,14 +641,16 @@
                     controller: 'UserEditController',
                     templateUrl: asset.templateUrl('superdesk-users/views/edit.html'),
                     resolve: {user: UserResolver},
-                    filters: [{action: 'detail', type: 'user'}]
+                    filters: [{action: 'detail', type: 'user'}],
+                    privileges: {users: 1}
                 })
                 .activity('/settings/user-roles', {
                     label: gettext('User Roles'),
                     templateUrl: asset.templateUrl('superdesk-users/views/settings.html'),
                     controller: UserRolesController,
                     category: superdesk.MENU_SETTINGS,
-                    priority: -500
+                    priority: -500,
+                    privileges: {roles: 1}
                 })
                 .activity('delete/user', {
                     label: gettext('Delete user'),
@@ -589,7 +662,8 @@
                             action: superdesk.ACTION_EDIT,
                             type: 'user'
                         }
-                    ]
+                    ],
+                    privileges: {users: 1}
                 })
                 .activity('edit.avatar', {
                     label: gettext('Change avatar'),
@@ -637,6 +711,9 @@
             }]);
         }])
 
+        .directive('sdUserRoles', UserRolesDirective)
+        .directive('sdRolesPrivileges', RolesPrivilegesDirective)
+
         .directive('sdInfoItem', function() {
             return {
                 link: function (scope, element) {
@@ -680,9 +757,9 @@
             };
         }])
 
-        .directive('sdUserEdit', ['api', 'gettext', 'notify', 'users', 'userList', 'session', '$location',
-                                  '$route', 'superdesk', 'features', 'asset',
-        function(api, gettext, notify, users, userList, session, $location, $route, superdesk, features, asset) {
+        .directive('sdUserEdit', ['api', 'gettext', 'notify', 'users', 'userList', 'session',
+            '$location', '$route', 'superdesk', 'features', 'asset', 'privileges',
+        function(api, gettext, notify, users, userList, session, $location, $route, superdesk, features, asset, privileges) {
 
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/edit-form.html'),
@@ -693,6 +770,7 @@
                     onupdate: '&'
                 },
                 link: function(scope, elem) {
+                    scope.privileges = privileges.privileges;
                     scope.features = features;
                     scope.usernamePattern = users.usernamePattern;
                     scope.phonePattern = users.phonePattern;
@@ -835,7 +913,37 @@
                 }
             };
         }])
+        .directive('sdUserPrivileges', ['api', 'gettext', 'notify', function(api, gettext, notify) {
+            return {
+                scope: {
+                    user: '='
+                },
+                templateUrl: 'scripts/superdesk-users/views/user-privileges.html',
+                link: function(scope) {
+                    api('privileges').query().
+                    then(function(result) {
+                        scope.privileges = result._items;
+                    });
 
+                    api('roles').getById(scope.user.role).then(function(role) {
+                        scope.role = role;
+                    }, function(error) {
+                        console.log(error);
+                    });
+
+                    scope.save = function(userPrivileges) {
+                        api.save('users', scope.user, _.pick(scope.user, 'privileges'))
+                        .then(function(result) {
+                            notify.success(gettext('Privileges updated.'));
+                        }, function(error) {
+                            notify.error(gettext('Privileges not updated.'));
+                            console.log(error);
+                        });
+                        userPrivileges.$setPristine();
+                    };
+                }
+            };
+        }])
         .directive('sdChangePassword', ['users', 'notify', 'gettext', function(users, notify, gettext) {
             return {
                 link: function(scope, element) {
@@ -948,6 +1056,7 @@
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/user-list-item.html'),
                 scope: {
+                    roles: '=',
                     users: '=',
                     selected: '=',
                     done: '='

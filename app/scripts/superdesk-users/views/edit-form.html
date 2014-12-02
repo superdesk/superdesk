@@ -85,12 +85,12 @@
                   <div ng-show="userForm.email.$error.unique || error.email.unique" sd-valid-error translate>sorry, a user with this email already exists</div>
                 </div>
 
-                <div sd-info-item class="user_type">
+                <div sd-info-item class="user_type" ng-if="privileges.users">
                   <label for="user_type" translate>administrator</label>
                   <input type="checkbox" ng-true-value="'administrator'" ng-false-value="'user'" ng-model="user.user_type" name="user_type" id="user_type">
                 </div>
 
-                <div sd-info-item class="user_role">
+                <div sd-info-item class="user_role" ng-if="privileges.users">
                   <label for="user_role" translate>role</label>
                   <select ng-model="user.role" name="user_role" id="user_role" ng-options="role._id as role.name for role in roles"></select>
                 </div>

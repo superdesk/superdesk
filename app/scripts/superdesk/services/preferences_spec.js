@@ -13,6 +13,7 @@ define([
         	storage,
         	preferencesService,
         	test_preferences = {
+        		'active_privileges': {'privilege1':1, 'privilege2':0},
         		'user_preferences': {
 				    'archive:view': {
 				      'default': 'mgrid',
@@ -157,6 +158,21 @@ define([
 			preferencesService.remove();
 
 			expect(storage.getItem('preferences')).toBe(null);
+
+		}));
+
+		it('can get all active privileges', inject(function(api, $rootScope) {
+
+			expect(storage.getItem('preferences')).toBe(null);
+			$rootScope.sessionId = 1;
+			preferencesService.get();
+
+            $rootScope.$digest();
+			preferencesService.getPrivileges();
+
+			$rootScope.$digest();
+
+			expect(storage.getItem('preferences').active_privileges.privilege1).toBe(1);
 
 		}));
     });

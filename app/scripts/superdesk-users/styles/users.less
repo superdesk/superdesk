@@ -23,7 +23,7 @@
 	line-height: 13px;
 	padding: 0 8px;
 	.border-radius(2px);
-	margin-right: 10px;
+	margin-left: 10px;
 }
 
 .admin-label {
@@ -99,20 +99,21 @@
 					.box-sizing(border-box);
 					> div {
 						color: @sd-text;
-						display: inline-block;
+						float: left;
 						overflow: hidden;
 						text-overflow: ellipsis;
 						white-space: nowrap;
 						.box-sizing(border-box);
 						padding: 0 5px;
+						height: 30px;
 						&.name, &.email {
 							color: @sd-blue-text;
 						}
 						//user columns width
-						&.name { width: 23%; }
+						&.name { width: 28%; }
 						&.role { width: 16%; }
 						&.username { width: 14%; }
-						&.email { width: 35%; }
+						&.email { width: 30%; }
 						&.created { width: 12%; }
 					}
 				}

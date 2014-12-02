@@ -1,13 +1,14 @@
 define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
-    return angular.module('superdesk.services.preferencesService', [])
+    return angular.module('superdesk.preferences', ['superdesk.notify'])
 
-        .service('preferencesService', ['$injector', '$rootScope', '$q', 'storage', 'session',
-            function($injector, $rootScope, $q, storage, session) {
+        .service('preferencesService', ['$injector', '$rootScope', '$q', 'storage', 'session', 'notify', 'gettext',
+            function PreferencesService($injector, $rootScope, $q, storage, session, notify, gettext) {
 
             var USER_PREFERENCES = 'user_preferences',
                 SESSION_PREFERENCES = 'session_preferences',
+                ACTIVE_PRIVILEGES = 'active_privileges',
                 PREFERENCES = 'preferences',
                 userPreferences = ['feature:preview', 'archive:view', 'email:notification', 'workqueue:items'],
                 api,
@@ -40,6 +41,13 @@ define(['angular', 'lodash'], function(angular, _) {
             this.remove = function() {
                 storage.removeItem(PREFERENCES);
                 original_preferences = null;
+            };
+
+            this.getPrivileges = function getPrivileges() {
+                return this.get().then(function() {
+                    var preferences = loadLocally();
+                    return preferences[ACTIVE_PRIVILEGES] || {};
+                });
             };
 
             function getPreferences(sessionId, key){
@@ -109,14 +117,12 @@ define(['angular', 'lodash'], function(angular, _) {
 
                 return api('preferences').save(original_prefs, user_updates)
                     .then(function(result) {
-                                saveLocally(result, type, key);
-                                return result;
-                            },
-                            function(response) {
-                                console.log('patch err response:', response);
-                                return response;
-                        });
-
+                        saveLocally(result, type, key);
+                        return result;
+                    }, function(response) {
+                        console.error(response);
+                        notify.error(gettext('User preference could not be saved...'));
+                    });
             }
 
             $rootScope.$watch(function() {

@@ -46,7 +46,7 @@ define([
         require('./directives').name,
         'superdesk.dashboard',
         'superdesk.widgets.archive'
-        ])
+    ])
 
         .service('spike', SpikeService)
 
@@ -60,7 +60,8 @@ define([
                     topTemplateUrl: require.toUrl('../superdesk-dashboard/views/workspace-topnav.html'),
                     filters: [
                         {action: 'view', type: 'content'}
-                    ]
+                    ],
+                    privileges: {archive: 1}
                 })
                 .activity('upload.media', {
                     label: gettext('Upload media'),
@@ -70,7 +71,8 @@ define([
                     templateUrl: require.toUrl('./views/upload.html'),
                     filters: [
                         {action: 'upload', type: 'media'}
-                    ]
+                    ],
+                    privileges: {archive: 1}
                 })
                 .activity('spike', {
                     label: gettext('Spike Item'),
@@ -78,7 +80,8 @@ define([
                     controller: ['spike', 'data', function spikeActivity(spike, data) {
                         return spike.spike(data.item);
                     }],
-                    filters: [{action: 'list', type: 'archive'}]
+                    filters: [{action: 'list', type: 'archive'}],
+                    privileges: {spike: 1}
                 })
                 .activity('unspike', {
                     label: gettext('Unspike Item'),
@@ -86,7 +89,8 @@ define([
                     controller: ['spike', 'data', function unspikeActivity(spike, data) {
                         return spike.unspike(data.item);
                     }],
-                    filters: [{action: 'list', type: 'spike'}]
+                    filters: [{action: 'list', type: 'spike'}],
+                    privileges: {unspike: 1}
                 });
         }])
 

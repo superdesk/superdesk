@@ -7,7 +7,7 @@ describe('authoring', function() {
     var USER = 'user:1';
     var item = {guid: GUID};
 
-    beforeEach(module('superdesk.services.preferencesService'));
+    beforeEach(module('superdesk.preferences'));
     beforeEach(module('superdesk.authoring'));
     beforeEach(module('superdesk.auth'));
     beforeEach(module('superdesk.mocks'));

@@ -28,7 +28,7 @@
 
         <div class="navbtn toggle-list" sd-desk-stages ng-if="stages.stages.length"></div>
 
-        <div class="navbtn toggle-list" ng-if="type === 'archive'">
+        <div class="navbtn toggle-list" ng-if="type === 'archive' && privileges.unspike">
             <ul class="stages-list">
                 <li class="stageclr-default" ng-class="{active: spike}"><a href="" ng-click="toggleSpike()" translate>Spiked</a></li>
             </ul>

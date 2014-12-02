@@ -29,6 +29,7 @@ tests.push('superdesk/services/modalService');
 tests.push('superdesk/services/preferencesService');
 tests.push('superdesk/features/features');
 tests.push('superdesk/services/asset');
+tests.push('superdesk/privileges/privileges');
 
 // apps
 tests.push('superdesk-authoring/authoring');
@@ -56,6 +57,7 @@ tests.push('superdesk-archive/module');
 tests.push('bower_components/ment.io/dist/mentio');
 tests.push('angular-gettext');
 tests.push('angular-ui');
+tests.push('angular-route');
 
 requirejs.config({
     baseUrl: '/base/app/scripts',

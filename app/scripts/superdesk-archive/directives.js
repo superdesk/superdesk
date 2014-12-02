@@ -6,11 +6,14 @@ define([
     'use strict';
 
     return angular.module('superdesk.archive.directives', ['superdesk.authoring'])
-        .directive('sdItemLock', ['api', 'lock', function(api, lock) {
+        .directive('sdItemLock', ['api', 'lock', 'privileges', function(api, lock, privileges) {
             return {
                 templateUrl: 'scripts/superdesk-archive/views/item-lock.html',
                 scope: {item: '='},
                 link: function(scope) {
+
+                    scope.privileges = privileges.privileges;
+
                     scope.$watch('item.lock_user', function() {
                         scope.lock = null;
                         scope.lockbyme = null;

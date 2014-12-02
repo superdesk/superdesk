@@ -1,9 +1,5 @@
 <div>
-    <div class="subnav">
-        <h3 class="page-nav-title" translate>Settings</h3>
-    </div>
-
-    <div class="settingsPage">
+    <div class="settings-page">
         <div class="tabbable">
             <ul class="nav-tabs nav-stacked">
                 <li ng-repeat="item in settings | orderBy:'priority'" ng-class="{active: currentRoute._id === item._id}"><a ng-href="#{{ item.href }}">{{ item.label }}</a></li>

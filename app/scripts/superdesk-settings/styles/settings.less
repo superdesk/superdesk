@@ -4,9 +4,9 @@
 @import 'mixins.less';
 @import 'variables.less';
 
-.settingsPage {
+.settings-page {
 	position: absolute;
-	top: @topspace + @subnav-height;
+	top: @topspace;
 	bottom: 0;
 	left: 0;
 	right: 0;
@@ -59,7 +59,7 @@
 			width: auto;
 			.tab-pane {
 				display: block;
-				> .header {
+				> .header, > form .header {
 					height: @nav-height;
 					.border-box();
 					width: 100%;
@@ -68,6 +68,10 @@
 						width: 600px;
 						padding: 10px 0 10px 20px;
 						.border-box();
+						&.full-width {
+							width: 100%;
+							padding-right: 10px;
+						}
 					}
 					h2 {
 						font-size: 16px;
@@ -76,6 +80,10 @@
 						float: left;
 						line-height: @nav-height - 20;
 					}
+				}
+				.nav-tabs {
+					border-bottom: 1px solid #f0f0f0;
+					padding-left: 10px;
 				}
 				.settings-tab-content {
 					.shadow-list-holder {
@@ -310,9 +318,22 @@
 }
 
 
-/*  user roles */
+
+
+// User roles - NEW
+// -------------------------------------
+
+@roles-border: 1px solid #f0f0f0;
+
 .user-roles {
-	padding-right: 0 !important;
+	max-width: none !important;
+	width: auto !important;
+	right: 0;
+	left: 0;
+
+
+	// ROLES TAB
+	
 	.splitter {
 		position: absolute;
 		left: 0; top: 0;
@@ -360,6 +381,7 @@
 			}
 		}
 	}
+
 	.user-roles-list {
 		padding-top: 20px;
 		> li {
@@ -426,7 +448,10 @@
 
 	.new-role-modal {
 		width: 299px;
-		margin: 0 -19px 20px -20px;
+		position: absolute;
+		top: 0;
+		left: 50%;
+		margin-left: -150px;
 		.content {
 			.field {
 				margin-bottom: 10px;
@@ -436,100 +461,86 @@
 			}
 		}
 	}
-	// .preview-box {
-	// 	position: absolute;
-	// 	left: 0;right: 0;top: 0;bottom: 0;
-	// 	overflow: hidden;
-	// 	.preview-header {
-	// 		position: absolute;
-	// 		top: 0;
-	// 		left:0 ;right: 0;
-	// 		border: 1px solid #e8e8e8;
-	// 		height: 39px;
-	// 		.close-preview {
-	// 			margin-top: 11px;
-	// 			margin-right: 10px;
-	// 			.opacity(40);
-	// 			&:hover {
-	// 				.opacity(60);
-	// 				cursor: pointer;
-	// 			}
-	// 		}
-	// 		.title {
-	// 			display: inline-block;
-	// 			width: 250px;
-	// 			margin: 10px 0 0 20px;  
-	// 			border: 0;
-	// 			font-size: 14px;
-	// 			.text-semibold();
-	// 			.inherit-info {
-	// 				margin-left: 10px;
-	// 				font-size: 11px;
-	// 				color: #666;
-	// 				.text-normal();
-	// 				i {
-	// 					color: #787878;
-	// 					font-style: normal;
-	// 					margin-right: 5px;
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// 	.preview-body {
-	// 		position: absolute;
-	// 		top: 40px;
-	// 		left:0 ;right: 0;
-	// 		bottom: 0;
-	// 		overflow-y: auto; overflow-x:hidden;
-	// 	}
-	// }
-}
-// .permission-list {
-// 	padding: 20px;
-// 	background: #f4f4f4;
-// 	border:1px solid #e8e8e8;
-// 	ul {
-// 		li {
-// 			font-size: 13px;
-// 			margin-bottom: 10px;
-// 			margin-left: 7px;
-// 			i {
-// 				.opacity(70);
-// 				vertical-align: middle;
-// 				margin-top: -3px;
-// 				margin-left: -19px;
-// 				margin-right: 5px;
-// 			}
-// 			span {
-// 				color: #787878;
-// 				font-size: 11px;
-// 				vertical-align: top;
-// 				margin-left: 5px;
-// 			}
-// 			&.disable {
-// 				i {
-// 					.opacity(30);
-// 				}
-// 			}
-// 		}
-// 	}
-// }
 
-// .permissions-box {
-// 	border: 1px solid #d0d0d0;
-// 	height: 230px;
-// 	.box-sizing(border-box);
-// 	overflow-y: auto;
-// 	.permission-list {
-// 		background:#fff;
-// 		border: 0;
-// 		li {
-// 			i {
-// 				margin-left: 0;
-// 			}
-// 			input {
-// 				margin-right: 5px;
-// 			}
-// 		}
-// 	}
-// }
+	.label.default {
+		font-size: 10px;
+		font-weight: normal;
+		padding: 0px 5px;
+		line-height: 12px;
+		margin-left: 5px;
+	}
+}
+
+// PRIVILEGES TAB
+
+.privileges {
+
+	> .header {
+		padding: 10px;
+		height: 28px;
+	}
+
+	.roles-list {
+		.action-line {
+			display: table-row;
+			&:hover {
+				background: #f8f8f8;
+			}
+		}
+		.td {
+			display: table-cell;
+			padding: 10px;
+			border-bottom: @roles-border;
+			text-align: center;
+			border-left: @roles-border;
+			white-space: nowrap;
+			.user-select(none);
+			.label {
+				font-size: 80%;
+			}
+		}
+		.name {
+			border-left: 0;
+			text-align: left;
+			padding: 10px 40px 10px 10px;
+			text-transform: uppercase;
+			.text-semibold();
+			font-size: 10px;
+			white-space: nowrap;
+			color: #666;
+		}
+		.blank {
+			width: 100%;
+			border-bottom: @roles-border;
+			text-align: left;
+		}
+
+		.initial {
+			background: #e0e0e0;
+			.label {
+				position: absolute;
+				top: 1px;
+				right: 2px;
+				line-height: 10px;
+			}
+			&:hover {
+				background: #e0e0e0;
+			}
+			.td {
+				font-size: 13px;
+				white-space: nowrap;
+				border-top: @roles-border;
+				border-color: #d8d8d8 !important;
+				padding: 10px;
+				position: relative;
+			}
+			.create-role {
+				padding: 10px;
+				position: absolute;
+				background: none;
+				border: 0;
+			}
+		}
+
+	}
+}
