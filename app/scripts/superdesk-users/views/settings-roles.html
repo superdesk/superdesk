@@ -14,7 +14,7 @@
 
 					<div class="actions">
 						<button ng-click="edit(role)"><i class="icon-pencil"></i></button>
-						<button ng-click="remove(role)"><i class="icon-trash"></i></button>  
+						<button ng-click="remove(role)"><i class="icon-trash"></i></button>
 					</div>
 				</div>
 				<div class="description" ng-if="role.description">{{role.description}}</div>
@@ -32,7 +32,8 @@
 				<form name="roleForm">
 					<fieldset>
 						<div class="field">
-							<input type="text" class="fullwidth-input" placeholder="{{ 'Role Name'|translate }}" ng-model="editRole.name" required>
+                            <input type="text" class="fullwidth-input" placeholder="{{ 'Role Name'|translate }}" ng-model="editRole.name" required sd-role-unique>
+                            <div ng-show="roleForm.$error.unique" sd-valid-error translate>sorry, this role name already exists.</div>
 						</div>
 						<div class="field">
 							<textarea sd-auto-height class="fullwidth-input" placeholder="{{ 'Role Description'|translate }}" ng-model="editRole.description"></textarea>

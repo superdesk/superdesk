@@ -836,6 +836,9 @@
                                     scope.error = response.data._issues;
                                     for (var field in response.data._issues) {
                                         if (scope.userForm[field]) {
+                                            if (scope.error[field]) {
+                                                scope.error[field].format = true;
+                                            }
                                             for (var constraint in response.data._issues[field]) {
                                                 if (response.data._issues[field][constraint]) {
                                                     scope.userForm[field].$setValidity(constraint, false);
