@@ -150,9 +150,9 @@ ACTIVATE_ACCOUNT_TOKEN_TIME_TO_LIVE = int(env('ACTIVATE_TTL', 7))
 MAIL_SERVER = env('MAIL_SERVER', 'smtp.googlemail.com')
 MAIL_PORT = int(env('MAIL_PORT', 465))
 MAIL_USE_TLS = json.loads(env('MAIL_USE_TLS', 'False').lower())
-MAIL_USE_SSL = json.loads(env('MAIL_USE_SSL', 'True').lower())
+MAIL_USE_SSL = json.loads(env('MAIL_USE_SSL', 'False').lower())
 MAIL_USERNAME = env('MAIL_USERNAME', 'admin@sourcefabric.org')
-MAIL_PASSWORD = env('MAIL_PASSWORD', 'admin-test')
+MAIL_PASSWORD = env('MAIL_PASSWORD', '')
 ADMINS = [MAIL_USERNAME]
 
 # LDAP settings
