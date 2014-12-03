@@ -21,5 +21,8 @@
     "jquery-ui": "1.11.2",
     "medium-editor": "1.9.4",
     "ment.io": "0.9.14"
+  },
+  "resolutions": {
+    "angular": "1.3.4"
   }
 }
