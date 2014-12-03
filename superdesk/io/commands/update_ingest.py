@@ -20,7 +20,7 @@ class UpdateIngest(superdesk.Command):
         for provider in superdesk.get_resource_service('ingest_providers').get(req=None, lookup={}):
             if (not provider_type or provider_type == provider.get('type')) and not provider.get('is_closed', False):
                 try:
-                    update_provider(provider)
+                    update_provider.delay(provider)
                 except Exception as err:
                     logger.exception(err)
 
