@@ -1,24 +1,16 @@
 <div class="subnav">
 
 	<div class="button-stack">
-    	
-    	<div class="navbtn dropdown" dropdown>
-    		<button class="dropdown-toggle">{{ selectionName }}<b class="caret"></b></button>
-			<ul class="dropdown-menu">
-				<li ng-click="select(null)" ng-class="{selected: selectedDesk === null}"><a href="" translate>My Activity</a></li>
-				<li ng-repeat="desk in desks" ng-click="select(desk)" ng-class="{selected: desk === selectedDesk}"><a href="">{{ desk.name }}</a></li>
-			</ul>
-    	</div>
-    
+		<div class="navbtn dropdown" sd-user-desks data-desk="desk"></div>
     </div>
 
 </div>
 <section class="main-section workspace-stream">
-
 	<div class="activity-container">
 		<div class="activity-log">
-			<ul class="activity-list card-list" ng-controller="StreamController">
-				<li class="activity with-date" ng-repeat="activity in activities"><div class="date"><span>{{ activity._created | reldate}}</span></div>
+			<ul class="activity-list card-list">
+				<li class="activity with-date" ng-repeat="activity in activities._items">
+					<div class="date" ng-show="showDateHeader(activity)"><span>{{ activity._created | reldate }}</span></div>
 	                <div>
 	                    <figure class="avatar">
 	                        <img sd-user-avatar data-src="user.picture_url">
@@ -26,7 +18,7 @@
 	                    <div class="activity-content">
 	                        <p><b>{{ activity.user.display_name }} </b>{{ activity.display_message }}</p>
 	                    </div>
-	                    <div class="activity-date "><time datetime="{{ activity._created }}" title="{{ activity._created | reldate}}" >{{ activity._created | reldate}}</time></div>
+	                    <div class="activity-date "><time datetime="{{ activity._created }}" title="{{ activity._created | reldate}}" >{{ activity._created | reldate }}</time></div>
 	                </div>
 	            </li>
 	            <li class="activity with-date"><div class="date"><span>09. June</span></div>

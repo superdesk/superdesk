@@ -5,55 +5,52 @@
         'superdesk.activity',
         'superdesk.asset'
     ]);
-    app.controller('StreamController', ['$scope', 'api', '$rootScope', function($scope, api, $rootScope) {
-        $scope.selectedDesk = null;
-        $scope.selectionName = 'My Activity';
-        $scope.selectedDeskId = null;
 
-        console.log('root', $rootScope);
 
-        api('desks').query().then(function(result) {
-            console.log('got desks', $scope.desks);
-            $scope.desks = result._items;
-        });
-        console.log('desks', $scope.desks);
+    app.controller('StreamController', ['$scope', 'api', '$rootScope', 'desks', function($scope, api, $rootScope, desks) {
+        $scope.desk = null;
+        $scope.activities = null;
 
-        $scope.select = function(desk) {
-            console.log('selection name', $scope.selectionName, $scope.selectedDeskId);
-            $scope.selectedDesk = desk;
-            $scope.selectedDeskId = null;
-            if ($scope.selectedDesk !== null) {
-                $scope.selectionName = desk.name;
-                $scope.selectedDeskId = $scope.selectedDesk._id;
-            } else {
-                $scope.selectionName = 'My Activity';
+        $scope.showDateHeader = function(activity) {
+            $scope.currentDate = new Date($scope.activities._items[activity.index]._created);
+            if (activity.index == 0) {
+                return true;
+            };
+            var previousDate = new Date($scope.activities._items[activity.index-1]._created);
+            return previousDate.getYear() != $scope.currentDate.getYear()
+                || previousDate.getMonth() != $scope.currentDate.getMonth()
+                || previousDate.getDate() != $scope.currentDate.getDate();
+        };
+
+        var fetchActivities = function() {
+            var filter = {embedded: {user: 1}};
+            if ($scope.desk) {
+                filter.where = {desk: $scope.desk._id}
             }
-            console.log('selection name', $scope.selectionName, $scope.selectedDeskId);
 
-            api('activity').query({embedded:{'user':1}, where:{'desk':$scope.selectedDeskId}})
+            api('activity').query(filter)
             .then(function(result) {
-                $scope.activities = [];
                 result._items.forEach(function(activity, index, array) {
                     activity.display_message = activity.message;
                     for (var tag in activity.data) {
-                        var tagRegex = new RegExp('{{\\s*'+tag+'\\s*}}', 'gi');
-                        activity.display_message = activity.display_message.replace(tagRegex, activity.data[tag]);
-                    }
-                    $scope.activities.push(activity);
+                        if (activity.data.hasOwnProperty(tag)) {
+                            var tagRegex = new RegExp('{{\\s*'+tag+'\\s*}}', 'gi');
+                            activity.display_message = activity.display_message.replace(tagRegex, activity.data[tag]);
+                            activity.index = index;
+                        }
+                    };
                 });
-                console.log('activities', $scope.activities);
+                $scope.activities = result;
             });
         };
 
-        var reload = function() {
-            $scope.select($scope.selectedDesk);
-        };
-
-        $rootScope.$on('activity', function(_e, extras) {
-            reload();
+        $scope.$watch('desk', function() {
+            fetchActivities();
         });
 
-        reload();
+        $rootScope.$on('activity', function(_e, extras) {
+            fetchActivities();
+        });
     }])
     .config(['superdeskProvider', 'assetProvider', 'gettext', function(superdesk, asset, gettext) {
         superdesk.activity('/workspace/stream', {
