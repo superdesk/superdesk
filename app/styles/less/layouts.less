@@ -114,15 +114,17 @@ a:hover {
 	.transition(right ease 0.2s);
 	.list-pane, .preview-pane {
 		> header {
-			height: 48px;
+			height: @nav-height;
 			.border-box();
 			border-bottom: 1px solid #dfdfdf;
+			position: absolute;
+			left: 0; right: 0; top: 0;
 		}
 		> .content {
 			position: absolute;
-			top: 48px;
+			top: @nav-height;
 			left: 0; right: 0; bottom: 0;
-			
+			overflow: auto;
 		}
 	}
 	.list-pane {
