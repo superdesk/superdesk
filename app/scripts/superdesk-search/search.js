@@ -518,8 +518,7 @@
                     var ESC = 27;
 
                     var input = elem.find('#search-input');
-                    var toggle = elem.find('.dropdown-toggle');
-                    var dropdown = elem.find('.dropdown');
+                    scope.advancedOpen = false;
 
                     function init() {
                         var params = $location.search();
@@ -619,8 +618,7 @@
 
                     scope.search = function() {
                         updateParam();
-                        scope.focusOnSearch();
-                        _closeSearch();
+                        _closeSearchPopup();
                     };
 
                     scope.searchOnEnter = function($event) {
@@ -629,31 +627,25 @@
                             $event.stopPropagation();
                         }
                         if ($event.keyCode === ESC) {
-                            _closeSearch();
+                            _closeSearchPopup();
                         }
                     };
 
                     scope.focusOnSearch = function() {
-                        if (_popupOpen()) {
-                           toggle.click();
+                        if (scope.advancedOpen) {
+                           scope.toggle();
                         }
                         input.focus();
                     };
 
-                    toggle.on('click', function() {
-                        if (_popupOpen()) {
-                            scope.$apply(function() {
-                                dropdown.find('.dropdown-menu input[type="text"]').first().focus();
-                                parseFields();
-                            });
+                    scope.toggle = function() {
+                        scope.advancedOpen = !scope.advancedOpen;
+                        if (scope.advancedOpen) {
+                            parseFields();
                         }
-                    });
+                    };
 
-                    function _popupOpen() {
-                        return dropdown.hasClass('open');
-                    }
-
-                    function _closeSearch() {
+                    function _closeSearchPopup() {
                         scope.flags.extended = false;
                     }
                 }

@@ -15,8 +15,8 @@
 			<div class="desk-config" ng-repeat="desk in desks._items">
 				<div class="desk-header clearfix">
 					<h6 class="pull-left">{{ desk.name }}</h6>
-					<div class="dropdown pull-right">
-                      <button class="dropdown-toggle"><i class="icon-settings"></i> <b class="caret"></b></button>
+					<div class="dropdown pull-right" dropdown>
+                      <button class="dropdown-toggle" dropdown-toggle><i class="icon-settings"></i> <b class="caret"></b></button>
                       <ul class="dropdown-menu pull-right">
                         <li><button ng-click="openDesk('general', desk)"><i class="icon-pencil"></i> {{'Edit Desk' | translate}}</button></li>
                         <li><button ng-click="remove(desk)"><i class="icon-trash"></i> {{'Delete Desk' | translate }}</button></li>

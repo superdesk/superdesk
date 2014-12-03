@@ -5,8 +5,8 @@
         <div class="close" ng-click="view = !view"><i class="icon-close-small icon-white"></i></div>
     </header>
     <div class="content">
-        <div class="dropdown desk-select">
-            <button class="dropdown-toggle">
+        <div class="dropdown desk-select" dropdown>
+            <button class="dropdown-toggle" dropdown-toggle>
                 <span ng-show="!desk" translate>Select desk</span>
                 <span ng-show="desk">{{desk.name}}</span>
                 <b class="caret white"></b>

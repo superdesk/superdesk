@@ -16,8 +16,8 @@
                 <div class="last-updated">
                     <span translate>Last updated</span> {{ provider._updated|reldate }}
                 </div>
-                <div class="dropdown pull-right">
-                    <a href="" class="dropdown-toggle"><i class="icon-settings"></i> <b class="caret"></b></a>
+                <div class="dropdown pull-right" dropdown>
+                    <a href="" class="dropdown-toggle" dropdown-toggle><i class="icon-settings"></i> <b class="caret"></b></a>
                     <ul class="dropdown-menu pull-right">
                         <li><a href="" ng-click="edit(provider)"><i class="icon-pencil"></i> {{ 'Edit source' | translate}}</a></li>
                         <li><a href="" ng-click="remove(provider)" sd-confirm="{{ 'Please confirm you want to remove source.'|translate }}"><i class="icon-trash"></i> {{ 'Delete source' | translate}}</a></li>

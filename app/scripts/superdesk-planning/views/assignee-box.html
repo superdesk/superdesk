@@ -20,8 +20,8 @@
 			</div>
 		</div>
 		<div class="dropdown-content" ng-show="open" ng-click=" $event.stopPropagation();">
-			<div class="dropdown desk-select">
-				<button class="dropdown-toggle">
+			<div class="dropdown desk-select" dropdown>
+				<button class="dropdown-toggle" dropdown-toggle>
 					<span ng-show="!desk.name" translate>Select desk</span>
 					<span ng-show="desk.name">{{desk.name}}</span>
 					<b class="caret"></b>
