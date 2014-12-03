@@ -26,15 +26,6 @@ def setup_providers(context):
         result = superdesk.get_resource_service('ingest_providers').post([provider])
         context.providers['reuters'] = result[0]
         context.provider_services['reuters'] = ReutersIngestService()
-
-        provider = {'name': 'aap_closed',
-                    'type': 'aap',
-                    'source': 'aap',
-                    'is_closed': True,
-                    'config': {'path': '/'}
-                    }
-        result = superdesk.get_resource_service('ingest_providers').post([provider])
-        context.providers['aap_closed'] = result[0]
         context.provider_services['aap'] = AAPIngestService()
 
 

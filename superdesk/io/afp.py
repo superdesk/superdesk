@@ -21,9 +21,7 @@ class AFPIngestService(FileIngestService):
     def __init__(self):
         self.parser = NewsMLOneParser()
 
-    def update(self, provider):
-        if self.is_provider_closed(provider):
-            return
+    def _update(self, provider):
         self.provider = provider
         self.path = provider.get('config', {}).get('path', None)
         if not self.path:

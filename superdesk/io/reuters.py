@@ -52,10 +52,8 @@ class ReutersIngestService(IngestService):
             self.token = get_token(self.provider, update=True)
         return self.token
 
-    def update(self, provider):
+    def _update(self, provider):
         """Service update call."""
-        if self.is_provider_closed(provider):
-            return
 
         self.provider = provider
         updated = utcnow()

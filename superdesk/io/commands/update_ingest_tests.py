@@ -1,12 +1,11 @@
-
 from superdesk.io.tests import setup_providers, teardown_providers
 from superdesk.tests import setup
 from unittest import TestCase
 from superdesk import get_resource_service
+from superdesk.io.ingest_service import IngestProviderClosedError
 
 
 class UpdateIngestTest(TestCase):
-
     def setUp(self):
         setup(context=self)
         setup_providers(self)
@@ -47,14 +46,16 @@ class UpdateIngestTest(TestCase):
             elastic_item = self.app.data._search_backend('ingest').find_one('ingest', _id=ids[0], req=None)
             self.assertIsNotNone(elastic_item)
 
-    def test_ingest_provider_state(self):
-        with self.app.app_context():
-            provider_name = 'reuters'
-            provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
-            provider_service = self.provider_services[provider.get('type')]
-            self.assertFalse(provider_service.is_provider_closed(provider))
+    def test_ingest_provider_closed_raises_exception(self):
+        provider = {
+            'name': 'aap',
+            'type': 'aap',
+            'is_closed': True,
+            'source': 'aap',
+            'config': {
+                'path': '/'
+            }
+        }
 
-            provider_name = 'aap_closed'
-            provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
-            provider_service = self.provider_services[provider.get('type')]
-            self.assertTrue(provider_service.is_provider_closed(provider))
+        aap = self.provider_services[provider.get('type')]
+        self.assertRaises(IngestProviderClosedError, aap.update, provider)

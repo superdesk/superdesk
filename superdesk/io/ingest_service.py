@@ -1,7 +1,13 @@
 from superdesk.utc import utc
 import logging
+from superdesk import SuperdeskError
 
 logger = logging.getLogger(__name__)
+
+
+class IngestProviderClosedError(SuperdeskError):
+    status_code = 500
+    payload = {}
 
 
 class IngestService():
@@ -10,8 +16,14 @@ class IngestService():
     def get_items(self, guid):
         raise LookupError()
 
+    def _update(self, provider):
+        raise NotImplementedError()
+
     def update(self, provider):
-        NotImplementedError()
+        if provider.get('is_closed', False):
+            raise IngestProviderClosedError(message='Ingest Provider %s is closed' % provider.get('name', ''))
+        else:
+            self._update(provider)
 
     def add_timestamps(self, item):
         """
@@ -22,10 +34,3 @@ class IngestService():
 
         item['firstcreated'] = utc.localize(item['firstcreated'])
         item['versioncreated'] = utc.localize(item['versioncreated'])
-
-    def is_provider_closed(self, provider):
-        if provider.get('is_closed', False):
-            logger.warning('Ingest Provider %s is closed' % provider.get("name", ""))
-            return True
-        else:
-            return False
