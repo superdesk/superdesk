@@ -8,6 +8,7 @@ describe('login', function() {
     var modal;
 
     beforeEach(function() {
+        browser.get('/');
         modal = new Login();
     });
 
