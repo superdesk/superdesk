@@ -1,6 +1,7 @@
 from .commands.update_ingest import ingest_items
 from .reuters_mock import setup_reuters_mock, teardown_reuters_mock
 from .reuters import ReutersIngestService
+from .aap import AAPIngestService
 import superdesk
 
 
@@ -16,6 +17,7 @@ def setup_providers(context):
         provider = {'name': 'reuters',
                     'type': 'reuters',
                     'source': 'reuters',
+                    'is_closed': False,
                     'config': {'username': app.config['REUTERS_USERNAME'],
                                'password': app.config['REUTERS_PASSWORD']
                                }
@@ -24,6 +26,7 @@ def setup_providers(context):
         result = superdesk.get_resource_service('ingest_providers').post([provider])
         context.providers['reuters'] = result[0]
         context.provider_services['reuters'] = ReutersIngestService()
+        context.provider_services['aap'] = AAPIngestService()
 
 
 def teardown_providers(context):

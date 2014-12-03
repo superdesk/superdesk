@@ -29,10 +29,10 @@ class BackendTestCase(TestCase):
 
     def test_check_default_dates_on_create(self):
         backend = get_backend()
-        now = utcnow() + timedelta(minutes=-1)
+        past = (utcnow() + timedelta(seconds=-2)).replace(microsecond=0)
         item = {'name': 'foo',
-                self.app.config['DATE_CREATED']: now,
-                self.app.config['LAST_UPDATED']: now}
+                self.app.config['DATE_CREATED']: past,
+                self.app.config['LAST_UPDATED']: past}
         updates = {'name': 'bar'}
         with self.app.app_context():
             ids = backend.create('ingest', [item])
@@ -41,12 +41,7 @@ class BackendTestCase(TestCase):
             doc_new = backend.find_one('ingest', None, _id=ids[0])
             date1 = doc_old[self.app.config['LAST_UPDATED']]
             date2 = doc_new[self.app.config['LAST_UPDATED']]
-            self.assertNotEqual(date1.minute, date2.minute)
+            self.assertGreaterEqual(date2, date1)
             date1 = doc_old[self.app.config['DATE_CREATED']]
             date2 = doc_new[self.app.config['DATE_CREATED']]
-            self.assertEqual(date1.year, date2.year)
-            self.assertEqual(date1.month, date2.month)
-            self.assertEqual(date1.day, date2.day)
-            self.assertEqual(date1.hour, date2.hour)
-            self.assertEqual(date1.minute, date2.minute)
-            self.assertEqual(date1.second, date2.second)
+            self.assertEqual(date1, date2)

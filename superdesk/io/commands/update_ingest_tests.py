@@ -1,12 +1,11 @@
-
 from superdesk.io.tests import setup_providers, teardown_providers
 from superdesk.tests import setup
 from unittest import TestCase
 from superdesk import get_resource_service
+from superdesk.io.ingest_service import IngestProviderClosedError
 
 
 class UpdateIngestTest(TestCase):
-
     def setUp(self):
         setup(context=self)
         setup_providers(self)
@@ -46,3 +45,17 @@ class UpdateIngestTest(TestCase):
             # check that item is synced in elastic
             elastic_item = self.app.data._search_backend('ingest').find_one('ingest', _id=ids[0], req=None)
             self.assertIsNotNone(elastic_item)
+
+    def test_ingest_provider_closed_raises_exception(self):
+        provider = {
+            'name': 'aap',
+            'type': 'aap',
+            'is_closed': True,
+            'source': 'aap',
+            'config': {
+                'path': '/'
+            }
+        }
+
+        aap = self.provider_services[provider.get('type')]
+        self.assertRaises(IngestProviderClosedError, aap.update, provider)

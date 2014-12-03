@@ -35,6 +35,10 @@ class IngestProviderResource(Resource):
         'source': {
             'type': 'string',
             'required': True,
+        },
+        'is_closed': {
+            'type': 'boolean',
+            'default': False
         }
     }
 

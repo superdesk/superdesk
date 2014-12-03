@@ -29,7 +29,7 @@ class AAPIngestService(FileIngestService):
     def prepare_href(self, href):
         return href
 
-    def update(self, provider):
+    def _update(self, provider):
         self.provider = provider
         self.path = provider.get('config', {}).get('path', None)
         if not self.path:

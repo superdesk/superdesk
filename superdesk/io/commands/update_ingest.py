@@ -18,7 +18,7 @@ class UpdateIngest(superdesk.Command):
 
     def run(self, provider_type=None):
         for provider in superdesk.get_resource_service('ingest_providers').get(req=None, lookup={}):
-            if not provider_type or provider_type == provider.get('type'):
+            if (not provider_type or provider_type == provider.get('type')) and not provider.get('is_closed', False):
                 try:
                     update_provider.delay(provider)
                 except Exception as err:

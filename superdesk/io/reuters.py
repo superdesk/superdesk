@@ -52,7 +52,7 @@ class ReutersIngestService(IngestService):
             self.token = get_token(self.provider, update=True)
         return self.token
 
-    def update(self, provider):
+    def _update(self, provider):
         """Service update call."""
 
         self.provider = provider
