@@ -22,12 +22,15 @@ define([
             });
         };
 
+        var update = angular.bind(this, function searchUpdated() {
+            var query = this.getQuery($location.search());
+            this.fetchItems({source: query});
+        });
+
+        $scope.$on('ingest:update', update);
         $scope.$watchCollection(function getSearchWithoutId() {
             return _.omit($location.search(), '_id');
-        }, angular.bind(this, function searchUpdated(search) {
-            var query = this.getQuery(search);
-            this.fetchItems({source: query});
-        }));
+        }, update);
     }
 
     return IngestListController;

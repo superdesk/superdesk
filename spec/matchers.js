@@ -17,7 +17,7 @@ beforeEach(function() {
             });
 
             return this.actual.isDisplayed().then(function(isDisplayed) {
-                return isDisplayed === true;
+                return isDisplayed;
             });
         }
     });
