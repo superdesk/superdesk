@@ -39,7 +39,8 @@ class IngestProviderResource(Resource):
         'is_closed': {
             'type': 'boolean',
             'default': False
-        }
+        },
+        'rule_set': Resource.rel('rule_sets')
     }
 
     privileges = {'POST': 'ingest_providers', 'PATCH': 'ingest_providers', 'DELETE': 'ingest_providers'}

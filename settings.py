@@ -114,6 +114,7 @@ INSTALLED_APPS = [
     'apps.search',
     'apps.packages',
     'apps.privilege',
+    'apps.rule_sets'
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']
