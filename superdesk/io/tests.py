@@ -14,8 +14,8 @@ def setup_providers(context):
         rule_sets = {'name': 'reuters_rule_sets',
                      'rules': [
                          {"old": "@", "new": ""},
-                     ]
-        }
+                     ]}
+
         result = superdesk.get_resource_service('rule_sets').post([rule_sets])
 
         app.config['REUTERS_USERNAME'] = 'no_username'
@@ -24,9 +24,7 @@ def setup_providers(context):
         providers = [
             {'name': 'reuters', 'type': 'reuters', 'source': 'reuters', 'is_closed': False, 'rule_set': result[0],
              'config': {'username': app.config['REUTERS_USERNAME'],
-                        'password': app.config['REUTERS_PASSWORD']
-             }
-            },
+                        'password': app.config['REUTERS_PASSWORD']}},
             {'name': 'AAP', 'type': 'aap', 'source': 'AAP Ingest', 'is_closed': False}
         ]
 

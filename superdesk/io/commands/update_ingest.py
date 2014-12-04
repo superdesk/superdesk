@@ -59,7 +59,7 @@ def apply_rule_set(item, provider):
     if 'rule_set' in provider and provider['rule_set']:
         rule_set = superdesk.get_resource_service('rule_sets').find_one(_id=provider['rule_set'], req=None)
 
-        if rule_set:
+        if rule_set and 'body_html' in item:
             body = item['body_html']
 
             for rule in rule_set['rules']:
