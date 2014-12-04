@@ -1,3 +1,4 @@
+from superdesk.io.commands.update_ingest import apply_rule_set
 from superdesk.io.tests import setup_providers, teardown_providers
 from superdesk.tests import setup
 from unittest import TestCase
@@ -13,12 +14,18 @@ class UpdateIngestTest(TestCase):
     def tearDown(self):
         teardown_providers(self)
 
+    def _get_provider(self, provider_name):
+        return get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+
+    def _get_provider_service(self, provider):
+        return self.provider_services[provider.get('type')]
+
     def test_ingest_items(self):
         provider_name = 'reuters'
         guid = 'tag:reuters.com,2014:newsml_KBN0FL0NM'
         with self.app.app_context():
-            provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
-            provider_service = self.provider_services[provider.get('type')]
+            provider = self._get_provider(provider_name)
+            provider_service = self._get_provider_service(provider)
             provider_service.provider = provider
             items = provider_service.fetch_ingest(guid)
             items.extend(provider_service.fetch_ingest(guid))
@@ -30,8 +37,8 @@ class UpdateIngestTest(TestCase):
         provider_name = 'reuters'
         guid = 'tag:reuters.com,2014:newsml_KBN0FL0NM'
         with self.app.app_context():
-            provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
-            provider_service = self.provider_services[provider.get('type')]
+            provider = self._get_provider(provider_name)
+            provider_service = self._get_provider_service(provider)
             provider_service.provider = provider
             item = provider_service.fetch_ingest(guid)[0]
             # insert in mongo
@@ -57,5 +64,18 @@ class UpdateIngestTest(TestCase):
             }
         }
 
-        aap = self.provider_services[provider.get('type')]
+        aap = self._get_provider_service(provider)
         self.assertRaises(IngestProviderClosedError, aap.update, provider)
+
+    def test_apply_rule_set(self):
+        with self.app.app_context():
+            item = {'body_html': '@@body@@'}
+
+            provider_name = 'reuters'
+            provider = self._get_provider(provider_name)
+            self.assertEquals('body', apply_rule_set(item, provider)['body_html'])
+
+            item = {'body_html': '@@body@@'}
+            provider_name = 'AAP'
+            provider = self._get_provider(provider_name)
+            self.assertEquals('@@body@@', apply_rule_set(item, provider)['body_html'])

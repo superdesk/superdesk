@@ -11,19 +11,26 @@ def setup_providers(context):
     context.provider_services = {}
     context.ingest_items = ingest_items
     with app.test_request_context(app.config['URL_PREFIX']):
+        rule_sets = {'name': 'reuters_rule_sets',
+                     'rules': [
+                         {"old": "@", "new": ""},
+                     ]
+        }
+        result = superdesk.get_resource_service('rule_sets').post([rule_sets])
+
         app.config['REUTERS_USERNAME'] = 'no_username'
         app.config['REUTERS_PASSWORD'] = 'no_password'
         setup_reuters_mock(context)
-        provider = {'name': 'reuters',
-                    'type': 'reuters',
-                    'source': 'reuters',
-                    'is_closed': False,
-                    'config': {'username': app.config['REUTERS_USERNAME'],
-                               'password': app.config['REUTERS_PASSWORD']
-                               }
-                    }
+        providers = [
+            {'name': 'reuters', 'type': 'reuters', 'source': 'reuters', 'is_closed': False, 'rule_set': result[0],
+             'config': {'username': app.config['REUTERS_USERNAME'],
+                        'password': app.config['REUTERS_PASSWORD']
+             }
+            },
+            {'name': 'AAP', 'type': 'aap', 'source': 'AAP Ingest', 'is_closed': False}
+        ]
 
-        result = superdesk.get_resource_service('ingest_providers').post([provider])
+        result = superdesk.get_resource_service('ingest_providers').post(providers)
         context.providers['reuters'] = result[0]
         context.provider_services['reuters'] = ReutersIngestService()
         context.provider_services['aap'] = AAPIngestService()

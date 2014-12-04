@@ -46,6 +46,30 @@ def process_anpa_category(item):
                 break
 
 
+def apply_rule_set(item, provider):
+    """
+    Applies rules set on the item to be ingested into the system. If there's no rule set then the item will
+    be returned without any change.
+
+    :param item: Item to be ingested
+    :param provider: provider object from whom the item was received
+    :return: item
+    """
+
+    if 'rule_set' in provider and provider['rule_set']:
+        rule_set = superdesk.get_resource_service('rule_sets').find_one(_id=provider['rule_set'], req=None)
+
+        if rule_set:
+            body = item['body_html']
+
+            for rule in rule_set['rules']:
+                body = body.replace(rule['old'], rule['new'])
+
+            item['body_html'] = body
+
+    return item
+
+
 def ingest_items(provider, items):
         ingested_count = provider.get('ingested_count', 0)
 
@@ -61,6 +85,8 @@ def ingest_items(provider, items):
 
             if 'anpa-category' in item:
                 process_anpa_category(item)
+
+            apply_rule_set(item, provider)
 
             old_item = superdesk.get_resource_service('ingest').find_one(_id=item['guid'], req=None)
             if old_item:
