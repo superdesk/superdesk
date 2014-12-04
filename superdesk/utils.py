@@ -59,25 +59,13 @@ def get_sorted_files(path, sort_by=FileSortAttributes.name, sort_order=SortOrder
     # get the files
     files = [file for file in os.listdir(path) if os.path.isfile(os.path.join(path, file))]
     if sort_by == FileSortAttributes.name:
-        if sort_order == SortOrder.asc:
-            files.sort(reverse=False)
-        else:
-            files.sort(reverse=True)
+        files.sort(reverse=(sort_order == SortOrder.desc))
     elif sort_by == FileSortAttributes.created:
-        if sort_order == SortOrder.asc:
-            files.sort(key=lambda file: os.path.getctime(os.path.join(path, file)), reverse=False)
-        else:
-            files.sort(key=lambda file: os.path.getctime(os.path.join(path, file)), reverse=True)
+        files.sort(key=lambda file: os.path.getctime(os.path.join(path, file)), reverse=(sort_order == SortOrder.desc))
     elif sort_by == FileSortAttributes.modified:
-        if sort_order == SortOrder.asc:
-            files.sort(key=lambda file: os.path.getmtime(os.path.join(path, file)), reverse=False)
-        else:
-            files.sort(key=lambda file: os.path.getmtime(os.path.join(path, file)), reverse=True)
+        files.sort(key=lambda file: os.path.getmtime(os.path.join(path, file)), reverse=(sort_order == SortOrder.desc))
     else:
-        if sort_order == SortOrder.asc:
-            files.sort(reverse=False)
-        else:
-            files.sort(reverse=True)
+        files.sort(reverse=(sort_order == SortOrder.desc))
 
     return files
 
