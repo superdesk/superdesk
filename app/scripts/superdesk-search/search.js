@@ -250,26 +250,34 @@
                         };
                     };
 
+                    var nonFacetKeys = {
+                        '_id': 1,
+                        'q': 1,
+                        'repo': 1,
+                        'page': 1,
+                        'beforeversioncreated': 1,
+                        'afterversioncreated': 1,
+                        'beforefirstcreated': 1,
+                        'afterfirstcreated': 1,
+                        'after': 1
+                    };
+
                     var initSelectedFacets = function () {
                         desks.initialize().then(function(result) {
                             var search = $location.search();
                             scope.keyword = search.q;
                             _.forEach(search, function(type, key) {
-                                var nonFacetkeys = ['q', 'repo', 'page', '_id', 'beforeversioncreated',
-                                    'afterversioncreated', 'beforefirstcreated', 'afterfirstcreated', 'after'];
-                                if (nonFacetkeys.indexOf(key) === -1) {
-                                    if (key === 'desk') {
-                                        scope.selectedFacets[key] = desks.deskLookup[JSON.parse(type)[0]].name;
-                                    } else if (key === 'stage') {
-                                        var stageid = type;
-                                        _.forEach(desks.deskStages[desks.activeDeskId], function(deskStage) {
-                                            if (deskStage._id === JSON.parse(stageid)[0]) {
-                                                scope.selectedFacets[key] = deskStage.name;
-                                            }
-                                        });
-                                    } else {
-                                        scope.selectedFacets[key] = JSON.parse(type)[0];
-                                    }
+                                if (key === 'desk') {
+                                    scope.selectedFacets[key] = desks.deskLookup[JSON.parse(type)[0]].name;
+                                } else if (key === 'stage') {
+                                    var stageid = type;
+                                    _.forEach(desks.deskStages[desks.activeDeskId], function(deskStage) {
+                                        if (deskStage._id === JSON.parse(stageid)[0]) {
+                                            scope.selectedFacets[key] = deskStage.name;
+                                        }
+                                    });
+                                } else if (!nonFacetKeys[key]) {
+                                    scope.selectedFacets[key] = JSON.parse(type)[0];
                                 }
                             });
                         });
