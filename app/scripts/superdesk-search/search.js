@@ -255,10 +255,9 @@
                             var search = $location.search();
                             scope.keyword = search.q;
                             _.forEach(search, function(type, key) {
-                                if (key !== 'q' && key !== 'repo' && key !== 'page' && key !== '_id' &&
-                                    key !== 'beforeversioncreated' && key !== 'afterversioncreated' &&
-                                    key !== 'beforefirstcreated' && key !== 'afterfirstcreated' &&
-                                    key !== 'after') {
+                                var nonFacetkeys = ['q', 'repo', 'page', '_id', 'beforeversioncreated',
+                                    'afterversioncreated', 'beforefirstcreated', 'afterfirstcreated', 'after'];
+                                if (nonFacetkeys.indexOf(key) === -1) {
                                     if (key === 'desk') {
                                         scope.selectedFacets[key] = desks.deskLookup[JSON.parse(type)[0]].name;
                                     } else if (key === 'stage') {
