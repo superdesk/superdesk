@@ -33,17 +33,19 @@ Feature: News Items Archive
 
         And we patch latest
         """
-        {"headline": "TEST 3"}
+        {"headline": "TEST 3", "body_html": "<p>some content</p>"}
         """
 
         Then we get updated response
+            """
+            {"word_count": 2}
+            """
         And we get version 3
         And we get etag matching "/archive/xyz"
 
         When we get "/archive/xyz?version=all"
         Then we get list with 3 items
 
-    @wip
     @auth
     Scenario: Update item and keep version
         Given "archive"
@@ -193,11 +195,11 @@ Feature: News Items Archive
         Given empty "archive"
         When we post to "/archive"
         """
-        [{"type": "text"}]
+        [{"type": "text", "body_html": "<p>content</p>"}]
         """
         Then we get new resource
         """
-        {"_id": "", "guid": "", "type": "text", "original_creator": ""}
+        {"_id": "", "guid": "", "type": "text", "original_creator": "", "word_count": 1}
         """
 
 	@auth
@@ -217,7 +219,7 @@ Feature: News Items Archive
         """
         Then we get updated response
         """
-        {"headline": "test3", "version_creator":"def"}
+        {"headline": "test3", "version_creator": "#USERS_ID#"}
         """
        	And we get version 3
        	When we get "/archive/xyz?version=all"
@@ -251,8 +253,8 @@ Feature: News Items Archive
         """
         Then we get updated response
         """
-        { "headline": "test1", "pubstatus" : "Usable", "byline" : "By Line", "word_count" : "6",
-          "dateline" : "Sydney, Aus (Nov 12, 2014) AAP - ", "genre" : ["Test"]}
+        { "headline": "test1", "pubstatus" : "Usable", "byline" : "By Line",
+          "dateline" : "Sydney, Aus (Nov 12, 2014) AAP - ", "genre": [{"name": "Test"}]}
         """
         And we get version 2
 
