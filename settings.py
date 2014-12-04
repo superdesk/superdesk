@@ -67,18 +67,22 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['pickle', 'json']  # it's using pickle when in eager mode
 
 CELERYBEAT_SCHEDULE = {
-    'fetch_ingest': {
-        'task': 'superdesk.io.fetch_ingest',
+    'ingest:update': {
+        'task': 'superdesk.io.update_ingest',
         # there is internal schedule for updates per provider,
         # so this is mininal interval when an update can occur
         'schedule': timedelta(seconds=10),
         'options': {'expires': 19}
     },
-    'auth_session_purge': {
+    'ingest:gc': {
+        'task': 'superdesk.io.gc_ingest',
+        'schedule': timedelta(minutes=60),
+    },
+    'session:gc': {
         'task': 'apps.auth.session_purge',
         'schedule': timedelta(minutes=30)
     },
-    'spike_purge': {
+    'spike:gc': {
         'task': 'apps.archive.spike_purge',
         'schedule': timedelta(minutes=60)
     }

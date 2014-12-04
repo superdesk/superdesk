@@ -33,9 +33,13 @@ superdesk.privilege(name='ingest_providers', label='Ingest Channels', descriptio
 
 
 @celery.task()
-def fetch_ingest():
-    RemoveExpiredContent().run()
+def update_ingest():
     UpdateIngest().run()
+
+
+@celery.task()
+def gc_ingest():
+    RemoveExpiredContent().run()
 
 
 class Parser:
