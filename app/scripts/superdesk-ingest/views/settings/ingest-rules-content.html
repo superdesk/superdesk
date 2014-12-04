@@ -23,7 +23,7 @@
     </div>
 </div>
 
-<div sd-modal-view data-model="editRuleset">
+<div sd-modal-view data-model="editRuleset" class="ruleset-modal">
     <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
         <h3 translate ng-show="editRuleset._id" translate>Edit Rule set</h3>
         <h3 translate ng-hide="editRuleset._id" translate>Add New Rule Set</h3>
@@ -31,11 +31,33 @@
 
     <div class="modal-body">
         <form name="rulesetForm">
-            <fieldset>
-                <div class="field">
-                    <input type="text" class="fullwidth-input" placeholder="{{ 'Rule set name'|translate }}" ng-model="editRuleset.name" required>
+            <div class="split-content">
+                <header>
+                    
+                    <input type="text" class="input-xlarge" placeholder="{{ 'Rule set name'|translate }}" ng-model="editRuleset.name" required>
+                    <button class="btn btn-info pull-right" ng-disabled="!rulesetForm.$valid" ng-click="addRule()"><i class="icon-plus-small icon-white"></i> {{:: 'Add rule' | translate}}</button>
+                </header>
+                <div class="content">
+                    <ul sd-sortrules class="rule-list">
+                        <li ng-repeat="rule in editRuleset.rules">
+                            <div class="order">#{{$index}}</div>
+                            <fieldset class="span-2">
+                                <div class="field">
+                                    <input type="text" placeholder="old" ng-model="rule.old">
+                                </div>
+                                <div class="field">
+                                    <input type="text" placeholder="new" ng-model="rule.new">
+                                </div>
+                            </fieldset>
+                            <div class="actions">
+                                <button ng-click="removeRule(rule)"><i class="icon-trash"></i></button>
+                            </div>
+                        </li>
+                    </ul>
+                    <p ng-if="!editRuleset.rules">No rules defined in a set.</p>
                 </div>
-            </fieldset>
+            </div>
+            
         </form>
     </div>
 

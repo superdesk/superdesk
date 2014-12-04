@@ -261,10 +261,8 @@ define([
                     .then(function() {
                         if (_new) {
                             scope.ruleset.push(_orig);
-                            notify.success(gettext('Rule set created.'));
-                        } else {
-                            notify.success(gettext('Rule set updated.'));
                         }
+                        notify.success(gettext('Rule set saved.'));
                         scope.cancel();
                     }, function(response) {
                         notify.error(gettext('I\'m sorry but there was an error when saving the rule set.'));
@@ -289,6 +287,37 @@ define([
                 function confirm() {
                     return modal.confirm(gettext('Are you sure you want to delete rule set?'));
                 }
+
+                scope.removeRule = function(rule) {
+                    _.remove(scope.editRuleset.rules, rule);
+                };
+
+                scope.addRule = function() {
+                    if (!scope.editRuleset.rules) {
+                        scope.editRuleset.rules = [];
+                    }
+                    scope.editRuleset.rules.push({old: null, 'new': null});
+                };
+            }
+        };
+    }
+
+    function SortRulesDirectives() {
+        return {
+            link:function(scope, element) {
+                element.sortable({
+                    items: 'li',
+                    connectWith: '.rule-list',
+                    cursor: 'move',
+                    start: function(event, ui) {
+                        ui.item.data('start', ui.item.index());
+                    },
+                    stop: function(event, ui) {
+                        var start = ui.item.data('start'), end = ui.item.index();
+                        scope.editRuleset.rules.splice(end, 0, scope.editRuleset.rules.splice(start, 1)[0]);
+                        scope.$apply();
+                    }
+                });
             }
         };
     }
@@ -297,7 +326,8 @@ define([
         .service('ingestSources', IngestProviderService)
         .directive('sdIngestSourcesContent', IngestSourcesContent)
         .directive('sdIngestRulesContent', IngestRulesContent)
-        .directive('sdPieChartDashboard', PieChartDashboardDirective);
+        .directive('sdPieChartDashboard', PieChartDashboardDirective)
+        .directive('sdSortrules', SortRulesDirectives);
 
     app.config(['superdeskProvider', function(superdesk) {
         superdesk

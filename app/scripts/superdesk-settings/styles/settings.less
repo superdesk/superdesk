@@ -324,3 +324,45 @@
 		}
 	}
 }
+
+
+// Ruleset settings
+// -------------------------------------
+
+.ruleset-modal {
+	margin-top: -300px;
+	.modal-body {
+		height: 400px;
+		max-height: 400px;
+	}
+	.rule-list {
+
+		>li {
+			position: relative;
+			.order {
+				position: absolute;
+				left: 0; 
+				top: 0;
+				line-height: 28px;
+				color: #aaa;
+			}
+			.actions {
+				position: absolute;
+				right: 0; top: 0;
+				button {
+					border: 0;
+					background: none;
+				}
+			}
+			fieldset {
+				padding: 0 40px;
+				.field:first-child {
+					padding-right: 3%;
+				}
+				.field:last-child {
+					padding-left: 3%;
+				}
+			}
+		}
+	}
+}
