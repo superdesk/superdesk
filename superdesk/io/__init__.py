@@ -10,6 +10,7 @@ providers = {}
 allowed_providers = []
 logger = logging.getLogger(__name__)
 
+from .commands.remove_expired_content import RemoveExpiredContent
 from .commands.update_ingest import UpdateIngest
 from .commands.add_provider import AddProvider  # NOQA
 
@@ -33,6 +34,7 @@ superdesk.privilege(name='ingest_providers', label='Ingest Channels', descriptio
 
 @celery.task()
 def fetch_ingest():
+    RemoveExpiredContent().run()
     UpdateIngest().run()
 
 
