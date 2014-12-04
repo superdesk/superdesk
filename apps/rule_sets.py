@@ -12,6 +12,9 @@ class RuleSetsResource(Resource):
     schema = {
         'name': {
             'type': 'string',
+            'iunique': True,
+            'required': True,
+            'minlength': 1
         },
         'rules': {
             'type': 'list'
@@ -24,16 +27,12 @@ class RuleSetsResource(Resource):
     privileges = {'POST': 'rule_sets', 'DELETE': 'rule_sets', 'PATCH': 'rule_sets'}
 
 
-class RuleSetsService(BaseService):
-    pass
-
-
 def init_app(app):
     endpoint_name = 'rule_sets'
-    service = RuleSetsService(endpoint_name, backend=get_backend())
+    service = BaseService(endpoint_name, backend=get_backend())
     RuleSetsResource(endpoint_name, app=app, service=service)
 
 
 superdesk.privilege(name='rule_sets',
-                    label='String Replace Rule Management',
-                    description='User can setup string replace rules for ingest content.')
+                    label='Transformation Rules Management',
+                    description='User can setup transformation rules for ingest content.')

@@ -48,6 +48,40 @@ Feature: Rule Sets Resource
             }
           ]
           """
-        When we delete "/roles/#RULE_SETID#"
-
+        When we delete "/rule_sets/#RULE_SETS_ID#"
         Then we get response code 200
+
+    @auth
+    Scenario: path rule_sets
+        Given "rule_sets"
+          """
+          [
+            {
+              "name": "set name",
+              "rules": [
+                {"old": "x", "new": "X"}
+              ]
+            }
+          ]
+          """
+        When we patch "/rule_sets/#RULE_SETS_ID#"
+          """
+            {
+              "rules": [
+                {"old": "x", "new": "X"},
+                {"old": "y", "new":"yt"}
+              ]
+            }
+          """
+        Then we get response code 200
+        When we get "/rule_sets/#RULE_SETS_ID#"
+        Then we get existing resource
+        """
+              {
+                "name": "set name",
+                "rules": [
+                  {"old": "x", "new": "X"},
+                  {"old": "y", "new":"yt"}
+                ]
+              }
+        """
