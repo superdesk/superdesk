@@ -62,10 +62,10 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Urgency' | translate }}" ng-hide="isEmpty('urgency')" data-open="true">
+        <div sd-toggle-box data-title="{{ 'News Value' | translate }}" ng-hide="isEmpty('urgency')" data-open="true">
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.urgency">
-                    <button ng-click="setFilter('urgency', key)">Urgency: {{key | translate}} <i>{{ value }}</i></button>
+                    <button ng-click="setFilter('urgency', key)">News Value: {{key | translate}} <i>{{ value }}</i></button>
                 </li>
             </ul>
         </div>
