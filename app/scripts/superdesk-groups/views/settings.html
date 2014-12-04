@@ -1,32 +1,27 @@
 <div sd-settings-view>
-	<div class="header">
-		<div class="container">
+
+	<div class="split-content">
+		<div class="header">
 			<h2 translate>Group management</h2>
 			<button class="btn btn-info pull-right" ng-click="openGroup('general')">
 		        <i class="icon-plus-sign icon-white"></i> {{ :: 'Add New Group' | translate }}
 		    </button>
 		</div>
-	</div>
-	
-
-    
-    <div class="settings-tab-content group-settings">
-    	<div sd-shadow>
-			<div class="group-config" ng-repeat="group in groups._items">
-				<div class="group-header clearfix">
-					<h6 class="pull-left">{{ group.name }}</h6>
-					<div class="dropdown pull-right" dropdown>
-                      <button class="dropdown-toggle" dropdown-toggle><i class="icon-settings"></i> <b class="caret"></b></button>
-                      <ul class="dropdown-menu pull-right">
-                        <li><button ng-click="openGroup('general', group)"><i class="icon-pencil"></i> {{ :: 'Edit Group' | translate}}</button></li>
-                        <li><button ng-click="remove(group)"><i class="icon-trash"></i> {{ :: 'Delete Group' | translate }}</button></li>
-                      </ul>
-                  	</div>
-				</div>
+	    
+	    <div class="content group-settings">
+	    	<div sd-shadow>
+				<ul class="pills-list group-list" >
+					<li ng-repeat="group in groups._items">
+						<h6 class="pull-left">{{ group.name }}</h6>
+						<div class="actions">
+							<button ng-click="openGroup('general', group)" title="{{:: 'Edit group' | translate }}"><i class="icon-pencil"></i></button>
+							<button ng-click="remove(group)" title="{{:: 'Remove group' | translate }}"><i class="icon-trash"></i></button>
+						</div>
+					</li>
+				</ul>
 			</div>
-		</div>
+	    </div>
     </div>
-
 
     <div sd-modal-view data-model="modalActive" class="add-group-popup responsive-popup hide" >
     

@@ -1,31 +1,30 @@
 <div sd-settings-view>
-	<div class="header">
-		<div class="container">
+
+	<div class="split-content">
+
+		<div class="header">
 			<h2 translate>Desk management</h2>
 			<button class="btn btn-info pull-right" ng-click="openDesk('general')">
 		        <i class="icon-plus-sign icon-white"></i> {{ 'Add New Desk' | translate }}
 		    </button>
 		</div>
-	</div>
-	
+		
+	    <div class="content desk-settings">
+	    	<div sd-shadow>
+	    		<ul class="pills-list desk-list">
+					<li ng-repeat="desk in desks._items">
+					
+						<h6 class="pull-left">{{ desk.name }}</h6>
 
-    
-    <div class="settings-tab-content desk-settings">
-    	<div sd-shadow>
-			<div class="desk-config" ng-repeat="desk in desks._items">
-				<div class="desk-header clearfix">
-					<h6 class="pull-left">{{ desk.name }}</h6>
-					<div class="dropdown pull-right" dropdown>
-                      <button class="dropdown-toggle" dropdown-toggle><i class="icon-settings"></i> <b class="caret"></b></button>
-                      <ul class="dropdown-menu pull-right">
-                        <li><button ng-click="openDesk('general', desk)"><i class="icon-pencil"></i> {{'Edit Desk' | translate}}</button></li>
-                        <li><button ng-click="remove(desk)"><i class="icon-trash"></i> {{'Delete Desk' | translate }}</button></li>
-                      </ul>
-                  	</div>
-				</div>
+						<div class="actions">
+							<button ng-click="openDesk('general', desk)" title="{{:: 'Edit desk' | translate }}"><i class="icon-pencil"></i></button>
+							<button ng-click="remove(desk)" title="{{:: 'Remove desk' | translate }}"><i class="icon-trash"></i></button>
+						</div>
+	                </li>
+				</ul>
 			</div>
-		</div>
-    </div>
+	    </div>
+	</div>
 
 
     <div sd-modal-view data-model="modalActive" class="add-desk-popup responsive-popup hide" >

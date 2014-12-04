@@ -199,6 +199,25 @@ a:hover {
 	}
 }
 
+// Split content
+// ------------------------------------
+.split-content {
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: 0;
+	> .nav, > .header, > header {
+		position: absolute;
+		top: 0; left: 0; right: 0;
+		height: @nav-height;
+		border-bottom: 1px solid #f0f0f0;
+		.border-box();
+	}
+	> .content {
+		position: absolute;
+		top: @nav-height; left: 0; right: 0; bottom: 0;
+		overflow: auto;
+		padding: 20px;
+	}
+}
 
 
 // Tablist and tabpanes

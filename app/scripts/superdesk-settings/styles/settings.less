@@ -11,9 +11,10 @@
 	left: 0;
 	right: 0;
 	background: #fff;
-	.tabbable {
+	.tabbable.outer {
 		height: 100%;
-		.nav-stacked {
+		//left stack menu
+		> .nav-stacked {
 			width: 180px;
 			position: absolute;
 			bottom: 0; top:0;
@@ -22,7 +23,7 @@
 			background: @sd-background;
 			border-right: 1px solid #ddd;
 			.box-shadow(inset -3px 0 8px -3px rgba(0,0,0,0.1));
-			>li {
+			> li {
 				>a {
 					border: 1px solid #eee;
 					border-width: 1px 0;
@@ -51,171 +52,29 @@
 				}
 			}
 		}
-		.tab-content {
+		//main tab content
+		.tab-content.outer {
 			position: absolute;
 			bottom: 0; top:0;
 			left:180px;right: 0;
 			display: block;
 			width: auto;
-			.tab-pane {
+			.tab-pane.outer {
 				display: block;
-				> .header, > form .header {
-					height: @nav-height;
-					.border-box();
-					width: 100%;
-					border-bottom: 1px solid #f0f0f0;
-					.container {
-						width: 600px;
-						padding: 10px 0 10px 20px;
-						.border-box();
-						&.full-width {
-							width: 100%;
-							padding-right: 10px;
+				.split-content {
+					> .nav, > .header, > header, > form .header {
+						border-bottom: 1px solid #f0f0f0;
+						padding: 10px;
+						h2 {
+							font-size: 16px;
+							color: @sd-text;
+							font-weight: bold;
+							float: left;
+							line-height: @nav-height - 20;
 						}
 					}
-					h2 {
-						font-size: 16px;
-						color: @sd-text;
-						font-weight: bold;
-						float: left;
-						line-height: @nav-height - 20;
-					}
-				}
-				.nav-tabs {
-					border-bottom: 1px solid #f0f0f0;
-					padding-left: 10px;
-				}
-				.settings-tab-content {
-					.shadow-list-holder {
-						padding-right: 20px;
-					}
-					width: 600px;
-					max-width: 600px;
-					position: absolute;
-					bottom: @scratchpad-closed;
-					top: @nav-height;
-					overflow: auto;
-				}
-			}
-		}
-	}
-
-	.settings-module {
-		position: relative;
-		margin: 20px 0 50px; 
-		header {
-			border-top: 1px solid #f1f1f1;
-			h6 {
-				font-size: 16px;
-				height: 20px;
-				background: #fff;
-				float: left;
-				color: #484848;
-				padding-right: 10px;
-				margin-top: -12px;
-				text-transform: none;
-				> i {
-					margin-top: 3px;
-				}
-				&:hover {
-					cursor: pointer;
-				}
-				.user-select(none);
-			}
-			.last-updated {
-				float: left;
-				background: #fff;
-				font-size: 11px;
-				color: #777;
-				padding: 0 10px;
-				margin-top: -10px;
-				margin-left: 15px;
-				span {
-					color: #aaa;
-				}
-			}
-			.count-selected {
-				float: left;
-				background: #fff;
-				padding: 0 10px;
-				margin-top: -7px;
-				height: 14px;
-				span {
-					display: inline-block;
-					vertical-align: top;
-					padding: 3px 5px;
-					background: #959595;
-					line-height: 8px;
-					font-size: 10px;
-					color: #fff;
-					.border-radius(2px); 
-				}
-			}
-		}
-		.content {
-			padding-top: 20px;
-			> .dropdown {
-				position: absolute;
-				top: -9px;
-				right: 0;
-				background: #fff;
-				padding-left: 8px;
-			}
-			label {
-				color: #666;
-				font-size: 14px;
-				margin-top:20px;
-				&:first {
-					margin-top:5px;
-				}
-				&.small {
-					font-size: 12px;
-					color: #9e9e9e;
-					margin-top: 5px; 
-				}
-			}
-			input {
-				max-width: 400px;
-			}
-			select {
-				max-width: 200px;
-			}
-			.row-fields {
-				min-height: 20px;
-				margin-bottom: 10px; 
-				.s-toggle-custom, .sd-checkbox, label {
-					float: left;
-				}
-				.small {
-					margin-right: 30px; 
-					margin-bottom: 0;
-				}
-				.sf-toggle-custom, .sd-checkbox {
-					margin-right: 10px; 
-					margin-top: 5px; 
-				}
-				&.row-inverse {
-					.small {
-						margin-right: 10px; 
-					}
-					.sf-toggle-custom, .sd-checkbox {
-						margin-right: 30px; 
-						margin-top: 5px; 
-					}
-				}
-			}
-			.settings-column {
-	
-				.column {
-					margin-right: 20px; 
-					float: left;
-					.row-fields {
-						width: 100%;
-					}
-				}
-				&.two-column {
-					.column {
-						width: 240px;
+					> .nav  {
+						padding: 0;
 					}
 				}
 			}
@@ -223,36 +82,69 @@
 	}
 }
 
-.selection-list {
-	margin: 0;
-	padding: 0;
-	list-style-type: none;
+.pills-list {
 	> li {
+		.user-select(none);
 		background: #f4f4f4;
 		margin-bottom: 6px;
-		.border-radius(2px);
+		.border-radius(3px);
 		padding: 6px 8px;
+		height: 18px;
+		color: #444;
+		position: relative;
 		&:hover {
 			background: #e8e8e8;
 		}
-		&.selected {
-			background: #ecfae8;
-			&:hover {
-				background: #d3f3ca;
+		&.active {
+			background: @sd-blue;
+			color: #fff !important;
+			.box-shadow(inset 0 2px 0 darken(@sd-blue, 10%));
+		}
+		.dropdown {
+			margin-top: -3px;
+		}
+		.actions {
+			display: none;
+			position: absolute;
+			top: 0px;
+			right: 0px;
+			button {
+				border: 0;
+				height: 30px;
+				width: 30px;
+				background: rgba( 0, 0, 0, 0.1);
+				text-align: center;
+				display: block;
+				float: left;
+				&:last-child {
+					.border-radius(0 3px 3px 0);
+				}
+				&:hover {
+					cursor: pointer;
+					background: rgba( 0, 0, 0, 0.05);
+				}
+				i {
+					margin-top: -2px;
+				}
+			}
+		}
+		&:hover {
+			.actions {
+				display: block !important;
 			}
 		}
 	}
 }
-/* providers */
+
+// Ingest sources
+// -------------------------------------
+
 .provider-list {
-	margin-top: 20px;
-	margin-left: 20px;
+	max-width: 600px;
 	> li {
-		height: 18px;
 		h6 {
 			font-weight: normal;
 			float: left;
-			color: #444;
 			font-size: 14px;
 			line-height: 18px;
 		}
@@ -273,10 +165,6 @@
 			margin-right: 15px;
 			font-size: 12px;
 		}
-		.dropdown {
-			margin-top: -3px;
-		}
-
 	}
 }
 
@@ -320,128 +208,25 @@
 
 
 
-// User roles - NEW
+// User roles
 // -------------------------------------
 
 @roles-border: 1px solid #f0f0f0;
 
 .user-roles {
-	max-width: none !important;
-	width: auto !important;
-	right: 0;
-	left: 0;
-
 
 	// ROLES TAB
 	
-	.splitter {
-		position: absolute;
-		left: 0; top: 0;
-		right: 0; bottom: 0;
-		overflow: hidden;
-		.column-left, .column-right {
-			width: 50%;
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			overflow: auto;
-			.border-box();
-			padding: 0 20px 20px 20px;
-			> .header {
-				height: @nav-height;
-				padding: 10px 0;
-				.border-box();
-				.title {
-					float: left;
-					text-transform: uppercase;
-					font-size: 11px;
-					.text-semibold();
-					color: @grayLight;
-					line-height: @nav-height - 20;
-				}
-			}
-		}
-		.column-right {
-			right: 0;
-			left: auto;
-			background: @sd-background;
-		}
-		.column-left > .header {
-			.btn {
-				width: 22px;
-				height: 22px;
-				.border-radius(50%);
-				padding: 0;
-				line-height: 22px;
-				margin-top: 3px;
-				i {
-					margin-right: 0;
-				}
-			}
-		}
-	}
-
 	.user-roles-list {
-		padding-top: 20px;
-		> li {
-			position: relative;
-			&:hover {
-				.actions {
-					display: block !important;
-				}
-			}
-		}
-		.actions {
-			display: none;
-			position: absolute;
-			top: 0px;
-			right: 0px;
-			button {
-				border: 0;
-				height: 28px;
-				width: 28px;
-				background: rgba( 0, 0, 0, 0.1);
-				text-align: center;
-				display: block;
-				float: left;
-				&:last-child {
-					.border-radius(0 3px 3px 0);
-				}
-				&:hover {
-					cursor: pointer;
-					background: rgba( 0, 0, 0, 0.05);
-				}
-			}
-		}
+		max-width: 400px;		
 		.name {
-			background: #f4f4f4;
-			padding: 5px 10px;
 			font-size: 13px;
-			margin-bottom: 5px;
-			.border-radius(3px);
-			min-height: 18px;
-			list-style-type: none;
-			&:hover {
-				background: #e8e8e8;
-				cursor:pointer;
-			}
 		}
 		.description {
 			display: none;
 			padding: 0px 10px 15px;
 			color: #787878;
 			font-style: italic;
-		}
-		.active {
-			.name {
-				background: @sd-blue;
-				color: #fff;
-				.box-shadow(inset 0 2px 0 darken(@sd-blue, 10%));
-			}
-			.description {
-				display: block;
-			}
 		}
 
 	}
@@ -469,78 +254,73 @@
 		line-height: 12px;
 		margin-left: 5px;
 	}
-}
 
-// PRIVILEGES TAB
+	// PRIVILEGES TAB
 
-.privileges {
+	.privileges {
 
-	> .header {
-		padding: 10px;
-		height: 28px;
-	}
-
-	.roles-list {
-		.action-line {
-			display: table-row;
-			&:hover {
-				background: #f8f8f8;
-			}
-		}
-		.td {
-			display: table-cell;
-			padding: 10px;
-			border-bottom: @roles-border;
-			text-align: center;
-			border-left: @roles-border;
-			white-space: nowrap;
-			.user-select(none);
-			.label {
-				font-size: 80%;
-			}
-		}
-		.name {
-			border-left: 0;
-			text-align: left;
-			padding: 10px 40px 10px 10px;
-			text-transform: uppercase;
-			.text-semibold();
-			font-size: 10px;
-			white-space: nowrap;
-			color: #666;
-		}
-		.blank {
-			width: 100%;
-			border-bottom: @roles-border;
-			text-align: left;
-		}
-
-		.initial {
-			background: #e0e0e0;
-			.label {
-				position: absolute;
-				top: 1px;
-				right: 2px;
-				line-height: 10px;
-			}
-			&:hover {
-				background: #e0e0e0;
+		.roles-list {
+			.action-line {
+				display: table-row;
+				&:hover {
+					background: #f8f8f8;
+				}
 			}
 			.td {
-				font-size: 13px;
+				display: table-cell;
+				padding: 10px;
+				border-bottom: @roles-border;
+				text-align: center;
+				border-left: @roles-border;
 				white-space: nowrap;
-				border-top: @roles-border;
-				border-color: #d8d8d8 !important;
-				padding: 10px;
-				position: relative;
+				.user-select(none);
+				.label {
+					font-size: 80%;
+				}
 			}
-			.create-role {
-				padding: 10px;
-				position: absolute;
-				background: none;
-				border: 0;
+			.name {
+				border-left: 0;
+				text-align: left;
+				padding: 10px 40px 10px 10px;
+				text-transform: uppercase;
+				.text-semibold();
+				font-size: 10px;
+				white-space: nowrap;
+				color: #666;
 			}
-		}
+			.blank {
+				width: 100%;
+				border-bottom: @roles-border;
+				text-align: left;
+			}
 
+			.initial {
+				background: #e0e0e0;
+				.label {
+					position: absolute;
+					top: 1px;
+					right: 2px;
+					line-height: 10px;
+				}
+				&:hover {
+					background: #e0e0e0;
+				}
+				.td {
+					font-size: 13px;
+					white-space: nowrap;
+					border-top: @roles-border;
+					border-color: #d8d8d8 !important;
+					padding: 10px;
+					position: relative;
+				}
+				.create-role {
+					padding: 10px;
+					position: absolute;
+					background: none;
+					border: 0;
+				}
+			}
+
+		}
 	}
 }
