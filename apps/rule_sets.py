@@ -11,14 +11,13 @@ logger = logging.getLogger(__name__)
 class RuleSetsResource(Resource):
     schema = {
         'name': {
-        'type': 'string',
-        'iunique': True,
-        'required': True,
+            'type': 'string',
         },
         'rules': {
-            'type': list
+            'type': 'list'
         }
     }
+
     datasource = {
         'default_sort': [('name', 1)]
     }
