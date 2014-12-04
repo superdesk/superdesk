@@ -5,6 +5,7 @@ import logging
 from datetime import datetime
 from .newsml_1_2 import NewsMLOneParser
 from superdesk.io.file_ingest_service import FileIngestService
+from superdesk.utils import get_sorted_files, FileSortAttributes
 from ..utc import utc
 from ..etree import etree
 from superdesk.notification import push_notification
@@ -27,7 +28,7 @@ class AFPIngestService(FileIngestService):
         if not self.path:
             return
 
-        for filename in os.listdir(self.path):
+        for filename in get_sorted_files(self.path, sort_by=FileSortAttributes.created):
             try:
                 if os.path.isfile(os.path.join(self.path, filename)):
                     filepath = os.path.join(self.path, filename)

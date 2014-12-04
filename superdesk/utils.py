@@ -1,9 +1,28 @@
+import os
 import string
 import random
 import bcrypt
+from enum import Enum
 from importlib import import_module
 from flask import current_app as app
 from .utc import utcnow
+
+
+class FileSortAttributes(Enum):
+    """
+    Enum defining the File Story Attributes.
+    """
+    name = 1
+    created = 2
+    modified = 3
+
+
+class SortOrder(Enum):
+    """
+    Enum defining the sort order.
+    """
+    asc = 1
+    desc = 2
 
 
 def last_updated(*docs):
@@ -26,6 +45,41 @@ def import_by_path(path):
 def get_hash(input_str, salt):
     hashed = bcrypt.hashpw(input_str.encode('UTF-8'), bcrypt.gensalt(salt))
     return hashed.decode('UTF-8')
+
+
+def get_sorted_files(path, sort_by=FileSortAttributes.name, sort_order=SortOrder.asc):
+    """
+    Get the list of files based on the sort order.
+    Sort is allowed on name, created and modified datetime
+    :param path: directory path
+    :param sort_by: "name", "created", "modified"
+    :param sort_order: "asc" - ascending, "desc" - descending
+    :return: list of files from the path
+    """
+    # get the files
+    files = [file for file in os.listdir(path) if os.path.isfile(os.path.join(path, file))]
+    if sort_by == FileSortAttributes.name:
+        if sort_order == SortOrder.asc:
+            files.sort(reverse=False)
+        else:
+            files.sort(reverse=True)
+    elif sort_by == FileSortAttributes.created:
+        if sort_order == SortOrder.asc:
+            files.sort(key=lambda file: os.path.getctime(os.path.join(path, file)), reverse=False)
+        else:
+            files.sort(key=lambda file: os.path.getctime(os.path.join(path, file)), reverse=True)
+    elif sort_by == FileSortAttributes.modified:
+        if sort_order == SortOrder.asc:
+            files.sort(key=lambda file: os.path.getmtime(os.path.join(path, file)), reverse=False)
+        else:
+            files.sort(key=lambda file: os.path.getmtime(os.path.join(path, file)), reverse=True)
+    else:
+        if sort_order == SortOrder.asc:
+            files.sort(reverse=False)
+        else:
+            files.sort(reverse=True)
+
+    return files
 
 
 def is_hashed(input_str):

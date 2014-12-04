@@ -1,7 +1,6 @@
 
 import os
 import logging
-
 from datetime import datetime
 from .nitf import NITFParser
 from superdesk.io.file_ingest_service import FileIngestService
@@ -9,6 +8,7 @@ from superdesk.utc import utc, timezone
 from superdesk.notification import push_notification
 from superdesk.io import register_provider
 from ..etree import etree
+from superdesk.utils import get_sorted_files, FileSortAttributes
 
 
 logger = logging.getLogger(__name__)
@@ -35,7 +35,7 @@ class AAPIngestService(FileIngestService):
         if not self.path:
             return
 
-        for filename in os.listdir(self.path):
+        for filename in get_sorted_files(self.path, sort_by=FileSortAttributes.created):
             try:
                 if os.path.isfile(os.path.join(self.path, filename)):
                     filepath = os.path.join(self.path, filename)
