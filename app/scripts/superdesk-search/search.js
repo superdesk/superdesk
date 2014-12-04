@@ -84,6 +84,13 @@
                     query.filter({range: vrange});
                 }
 
+                if (params.after)
+                {
+                    var facetrange = {firstcreated: {}};
+                    facetrange.firstcreated.gte = params.after;
+                    query.filter({range: facetrange});
+                }
+
                 if (params.type) {
                     var type = {
                         type: JSON.parse(params.type)
@@ -245,7 +252,10 @@
                             var search = $location.search();
                             scope.keyword = search.q;
                             _.forEach(search, function(type, key) {
-                                if (key !== 'q' && key !== 'repo' && key !== 'page' && key !== '_id') {
+                                if (key !== 'q' && key !== 'repo' && key !== 'page' && key !== '_id' &&
+                                    key !== 'beforeversioncreated' && key !== 'afterversioncreated' &&
+                                    key !== 'beforefirstcreated' && key !== 'afterfirstcreated' &&
+                                    key !== 'after') {
                                     if (key === 'desk') {
                                         scope.selectedFacets[key] = desks.deskLookup[JSON.parse(type)[0]].name;
                                     } else if (key === 'stage') {
