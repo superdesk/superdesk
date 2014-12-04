@@ -8,7 +8,6 @@ import traceback
 
 from celery.canvas import chord
 from celery.result import AsyncResult
-from celery.signals import task_postrun
 from eve.versioning import insert_versioning_documents
 import flask
 from flask.globals import current_app as app
@@ -95,6 +94,7 @@ def archive_rendition(self, task_id, guid, name, href):
 
 @celery.task()
 def update_item(result, is_main_task, task_id, guid):
+    insert_into_versions(guid, task_id)
     if is_main_task:
         update_status(*finish_task_for_progress(task_id))
 
@@ -202,25 +202,25 @@ def archive_item(self, guid, provider_id, user, task_id=None):
         update_status(*finish_subtask_from_progress(task_id))
         if tasks:
             chord((task for task in tasks), update_item.s(crt_task_id == task_id, task_id, guid)).delay()
-        elif task_id == crt_task_id:
-            update_status(*finish_task_for_progress(task_id))
+        else:
+            insert_into_versions(guid, task_id)
+            if task_id == crt_task_id:
+                update_status(*finish_task_for_progress(task_id))
     except Exception:
         logger.error(traceback.format_exc())
 
 
-@task_postrun.connect(sender=archive_item)
-def insert_into_versions(task_id, task, retval, state, args, **kwargs):
+def insert_into_versions(guid, task_id):
     """
     Since the request is handled by Celery we need to manually persist the initial version into versions collection.
-    If the ingest content is of type composite/package then archive_item creates sub-tasks, that's the reason
-    the function is decorated with task_postrun()
+    If the ingest content is of type composite/package then archive_item creates sub-tasks
     """
 
-    archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=args[0])
+    archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=guid)
     remove_unwanted(archived_doc)
 
     if 'task_id' not in archived_doc:
-        updates = superdesk.get_resource_service(ARCHIVE).patch(args[0], {"task_id": task_id})
+        updates = superdesk.get_resource_service(ARCHIVE).patch(guid, {"task_id": task_id})
         archived_doc.update(updates)
 
     if app.config['VERSION'] in archived_doc:
