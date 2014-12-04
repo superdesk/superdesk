@@ -7,12 +7,16 @@ tzinfo = getattr(datetime, 'tzinfo', object)
 
 
 def utcnow():
-    """Get tz aware datetime object"""
+    """Get tz aware datetime object.
 
+    Remove microseconds which can't be persisted by mongo so we have
+    the values consistent in both mongo and elastic.
+    """
     if hasattr(datetime.datetime, 'now'):
-        return datetime.datetime.now(tz=utc)
+        now = datetime.datetime.now(tz=utc)
     else:
-        return datetime.datetime.utcnow()
+        now = datetime.datetime.utcnow()
+    return now.replace(microsecond=0)
 
 
 def get_date(date_or_string):

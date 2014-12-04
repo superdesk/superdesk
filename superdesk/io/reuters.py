@@ -47,25 +47,24 @@ class ReutersIngestService(IngestService):
 
     def get_token(self):
         """Get reuters token once for an update run."""
-
         if not self.token:
             self.token = get_token(self.provider, update=True)
         return self.token
 
     def _update(self, provider):
         """Service update call."""
-
         self.provider = provider
         updated = utcnow()
 
-        last_updated = provider.get('_updated')
-        if not last_updated or last_updated < updated + datetime.timedelta(days=-7):
-            last_updated = updated + datetime.timedelta(hours=-24)
+        last_updated = provider.get('last_updated')
+        if not last_updated or last_updated < updated - datetime.timedelta(days=7):
+            last_updated = updated - datetime.timedelta(hours=1)
 
         for channel in self.get_channels():
             for guid in self.get_ids(channel, last_updated, updated):
                 items = self.fetch_ingest(guid)
-                yield items
+                if items:
+                    yield items
 
     def fetch_ingest(self, guid):
         items = self.get_items(guid)
@@ -96,7 +95,6 @@ class ReutersIngestService(IngestService):
 
     def get_ids(self, channel, last_updated, updated):
         """Get ids of documents which should be updated."""
-
         ids = []
         payload = {'channel': channel, 'fieldsRef': 'id'}
         payload['dateRange'] = "%s-%s" % (self.format_date(last_updated), self.format_date(updated))
@@ -107,7 +105,6 @@ class ReutersIngestService(IngestService):
 
     def get_channels(self):
         """Get subscribed channels."""
-
         channels = []
         tree = self.get_tree('channels')
         for channel in tree.findall('channelInformation'):
@@ -116,7 +113,6 @@ class ReutersIngestService(IngestService):
 
     def get_tree(self, endpoint, payload=None):
         """Get xml response for given API endpoint and payload."""
-
         if payload is None:
             payload = {}
         payload['token'] = self.get_token()

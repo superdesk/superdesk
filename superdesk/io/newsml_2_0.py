@@ -108,7 +108,7 @@ class NewsMLTwoParser(Parser):
                         'name': subject_codes[qcode_parts[1]]
                     })
                 except KeyError:
-                    logger.error("Subject code '%s' not found" % qcode_parts[1])
+                    logger.debug("Subject code '%s' not found" % qcode_parts[1])
 
     def parse_content_place(self, tree, item):
         """Parse subject with type="cptType:5" into place list."""

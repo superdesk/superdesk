@@ -1,8 +1,23 @@
-from superdesk.io.tests import setup_providers, teardown_providers
-from superdesk.tests import setup
+
 from unittest import TestCase
+from datetime import timedelta
 from superdesk import get_resource_service
+from superdesk.utc import utcnow
+from superdesk.tests import setup
+from superdesk.io import register_provider
+from superdesk.io.tests import setup_providers, teardown_providers
+from superdesk.io.ingest_service import IngestService
+from superdesk.io.commands.update_ingest import is_scheduled, update_provider
 from superdesk.io.ingest_service import IngestProviderClosedError
+
+
+class TestProviderService(IngestService):
+
+    def update(self, provider):
+        return []
+
+
+register_provider('test', TestProviderService())
 
 
 class UpdateIngestTest(TestCase):
@@ -23,8 +38,7 @@ class UpdateIngestTest(TestCase):
             items = provider_service.fetch_ingest(guid)
             items.extend(provider_service.fetch_ingest(guid))
             self.assertEquals(12, len(items))
-            ingested_count = self.ingest_items(provider, items)
-            self.assertEquals(6, ingested_count)
+            self.ingest_items(provider, items)
 
     def test_ingest_item_sync_if_missing_from_elastic(self):
         provider_name = 'reuters'
@@ -59,3 +73,24 @@ class UpdateIngestTest(TestCase):
 
         aap = self.provider_services[provider.get('type')]
         self.assertRaises(IngestProviderClosedError, aap.update, provider)
+
+    def test_is_scheduled(self):
+        self.assertTrue(is_scheduled({}), 'for first time it should run')
+        self.assertFalse(is_scheduled({'last_updated': utcnow()}), 'then it should wait default time 5m')
+        self.assertTrue(is_scheduled({'last_updated': utcnow() - timedelta(minutes=6)}), 'after 5m it should run again')
+        self.assertFalse(is_scheduled({
+            'last_updated': utcnow() - timedelta(minutes=6),
+            'update_schedule': {'minutes': 10}
+        }), 'or wait if provider has specific schedule')
+        self.assertTrue(is_scheduled({
+            'last_updated': utcnow() - timedelta(minutes=11),
+            'update_schedule': {'minutes': 10}
+        }), 'and run eventually')
+
+    def test_change_last_updated(self):
+        with self.app.app_context():
+            ids = self.app.data.insert('ingest_providers', [{'type': 'test', '_etag': 'test'}])
+            update_provider(str(ids[0]))
+            provider = self.app.data.find_one('ingest_providers', req=None, _id=ids[0])
+            self.assertGreaterEqual(utcnow(), provider.get('last_updated'))
+            self.assertEqual('test', provider.get('_etag'))
