@@ -1,6 +1,6 @@
 <div ng-controller="PackagesWidgetCtrl">
-    <div class="dropdown create-package">
-        <div class="dropdown-toggle btn btn-full"><i class="icon-plus"></i><span ng-hide="selected.preview">{{:: 'Create package' | translate }}</span></div>
+    <div class="dropdown create-package" dropdown>
+        <div class="dropdown-toggle btn btn-full" dropdown-toggle><i class="icon-plus"></i><span ng-hide="selected.preview">{{:: 'Create package' | translate }}</span></div>
         <ul class="dropdown-menu">
             <li ng-repeat="t in itemTypes">
                 <button ng-click="create(t)"><i class="filetype-icon-large-{{t.icon}}"></i><span translate>{{ t.label | uppercase }}</span></button>
