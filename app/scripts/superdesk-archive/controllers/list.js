@@ -68,6 +68,14 @@ define([
             self.refresh(true);
         }
 
+        $scope.$on('task:stage', function(_e, data) {
+        	if ($scope.stages.selected &&
+        	    ($scope.stages.selected._id === data.new_stage ||
+        	     $scope.stages.selected._id === data.old_stage)) {
+        		refreshItems();
+        	}
+        });
+
         $scope.$on('media_archive', refreshItems);
         $scope.$on('item:spike', refreshItems);
         $scope.$on('item:unspike', refreshItems);
