@@ -50,6 +50,7 @@ class IngestProviderResource(Resource):
             }
         },
         'last_updated': {'type': 'datetime'},
+        'rule_set': Resource.rel('rule_sets'),
     }
 
     privileges = {'POST': 'ingest_providers', 'PATCH': 'ingest_providers', 'DELETE': 'ingest_providers'}

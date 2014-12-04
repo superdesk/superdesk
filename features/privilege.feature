@@ -3,7 +3,7 @@ Feature: Privilege
     @auth
     Scenario: Get list of all privileges
         When we get "/privileges"
-        Then we get list with 14 items
+        Then we get list with 10+ items
             """
             {"_items": [{"name": "ingest"}, {"name": "archive"}]}
             """

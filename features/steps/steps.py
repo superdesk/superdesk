@@ -457,8 +457,13 @@ def step_impl_then_get_error(context, code):
 @then('we get list with {total_count} items')
 def step_impl_then_get_list(context, total_count):
     assert_200(context.response)
-    expect_json_length(context.response, int(total_count), path='_items')
-    if total_count == 0 or not context.text:
+    data = get_json_data(context.response)
+    int_count = int(total_count.replace('+', ''))
+    if '+' in total_count:
+        assert int_count <= data['_meta']['total']
+    else:
+        assert int_count == data['_meta']['total']
+    if int_count == 0 or not context.text:
         return
     test_json(context)
 
