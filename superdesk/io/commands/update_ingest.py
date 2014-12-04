@@ -2,6 +2,7 @@ import logging
 import superdesk
 from superdesk.notification import push_notification
 from superdesk.io import providers
+from superdesk.io.ingest_provider_model import DAYS_TO_KEEP
 from superdesk.celery_app import celery
 from eve.utils import config
 from superdesk.utc import utcnow
@@ -49,6 +50,12 @@ def is_closed(provider):
     return provider.get('is_closed', False)
 
 
+def filter_expired_items(provider, items):
+    days_to_keep_content = provider.get('days_to_keep', DAYS_TO_KEEP)
+    expiration_date = utcnow() - timedelta(days=days_to_keep_content)
+    return [item for item in items if item.get('versioncreated', utcnow()) > expiration_date]
+
+
 class UpdateIngest(superdesk.Command):
     """Update ingest providers."""
 
@@ -73,6 +80,7 @@ def update_provider(provider_id):
     })
     for items in providers[provider.get('type')].update(provider):
         ingest_items(provider, items)
+    logger.info('Provider {0} updated'.format(provider_id))
     push_notification('ingest:update')
 
 
@@ -87,7 +95,7 @@ def process_anpa_category(item):
 
 
 def ingest_items(provider, items):
-    for item in items:
+    for item in filter_expired_items(provider, items):
         item.setdefault('_id', item['guid'])
 
         item['ingest_provider'] = str(provider['_id'])

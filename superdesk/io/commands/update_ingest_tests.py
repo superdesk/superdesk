@@ -7,7 +7,7 @@ from superdesk.tests import setup
 from superdesk.io import register_provider
 from superdesk.io.tests import setup_providers, teardown_providers
 from superdesk.io.ingest_service import IngestService
-from superdesk.io.commands.update_ingest import is_scheduled, update_provider
+from superdesk.io.commands.update_ingest import is_scheduled, update_provider, filter_expired_items
 from superdesk.io.ingest_service import IngestProviderClosedError
 
 
@@ -94,3 +94,15 @@ class UpdateIngestTest(TestCase):
             provider = self.app.data.find_one('ingest_providers', req=None, _id=ids[0])
             self.assertGreaterEqual(utcnow(), provider.get('last_updated'))
             self.assertEqual('test', provider.get('_etag'))
+
+    def test_filter_expired_items(self):
+        provider_name = 'reuters'
+        guid = 'tag:reuters.com,2014:newsml_KBN0FL0NM'
+        with self.app.app_context():
+            provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+            provider_service = self.provider_services[provider.get('type')]
+            provider_service.provider = provider
+            items = provider_service.fetch_ingest(guid)
+            for item in items[:3]:
+                item['versioncreated'] = utcnow()
+            self.assertEqual(3, len(filter_expired_items(provider, items)))

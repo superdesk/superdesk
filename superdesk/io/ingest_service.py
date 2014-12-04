@@ -23,7 +23,7 @@ class IngestService():
         if provider.get('is_closed', False):
             raise IngestProviderClosedError(message='Ingest Provider %s is closed' % provider.get('name', ''))
         else:
-            self._update(provider)
+            return self._update(provider) or []
 
     def add_timestamps(self, item):
         """

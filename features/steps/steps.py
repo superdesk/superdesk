@@ -6,6 +6,7 @@ from behave import given, when, then  # @UnresolvedImport
 from flask import json
 from eve.methods.common import parse
 from superdesk import default_user_preferences, get_resource_service, utc
+from superdesk.utc import utcnow
 from eve.io.mongo import MongoJSONEncoder
 
 from wooper.general import fail_and_print_body, apply_path,\
@@ -240,7 +241,10 @@ def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
         provider_service = context.provider_services[provider.get('type')]
         provider_service.provider = provider
-        context.ingest_items(provider, provider_service.fetch_ingest(guid))
+        items = provider_service.fetch_ingest(guid)
+        for item in items:
+            item['versioncreated'] = utcnow()
+        context.ingest_items(provider, items)
 
 
 @when('we post to "{url}"')
