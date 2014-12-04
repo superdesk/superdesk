@@ -111,7 +111,8 @@ metadata_schema = {
         'type': 'string'
     },
     'slugline': {
-        'type': 'string'
+        'type': 'string',
+        'mapping': not_analyzed
     },
     'anpa_take_key': {
         'type': 'string'
