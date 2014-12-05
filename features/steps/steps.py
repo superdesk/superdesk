@@ -1063,3 +1063,8 @@ def step_get_activation_email(context):
     url = urlparse(words[words.index("to") + 1])
     token = url.fragment.split('token=')[-1]
     assert token
+
+
+@then('we set elastic limit')
+def step_set_limit(context):
+    context.app.settings['MAX_SEARCH_DEPTH'] = 1
