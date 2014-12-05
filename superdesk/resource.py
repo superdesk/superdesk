@@ -111,9 +111,10 @@ class Resource():
         superdesk.resources[self.endpoint_name] = self
 
     @staticmethod
-    def rel(resource, embeddable=True, required=False, type='objectid'):
+    def rel(resource, embeddable=True, required=False, type='objectid', nullable=False):
         return {
             'type': type,
             'required': required,
+            'nullable': nullable,
             'data_relation': {'resource': resource, 'field': '_id', 'embeddable': embeddable}
         }
