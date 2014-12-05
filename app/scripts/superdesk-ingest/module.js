@@ -260,7 +260,7 @@ define([
                     api('rule_sets').save(_orig, ruleset)
                     .then(function() {
                         if (_new) {
-                            scope.ruleset.push(_orig);
+                            scope.rulesets.push(_orig);
                         }
                         notify.success(gettext('Rule set saved.'));
                         scope.cancel();
@@ -298,6 +298,10 @@ define([
                     }
                     scope.editRuleset.rules.push({old: null, 'new': null});
                 };
+
+                scope.reorder = function(start, end) {
+                    scope.editRuleset.rules.splice(end, 0, scope.editRuleset.rules.splice(start, 1)[0]);
+                };
             }
         };
     }
@@ -314,7 +318,7 @@ define([
                     },
                     stop: function(event, ui) {
                         var start = ui.item.data('start'), end = ui.item.index();
-                        scope.editRuleset.rules.splice(end, 0, scope.editRuleset.rules.splice(start, 1)[0]);
+                        scope.reorder(start, end);
                         scope.$apply();
                     }
                 });

@@ -33,7 +33,6 @@
         <form name="rulesetForm">
             <div class="split-content">
                 <header>
-                    
                     <input type="text" class="input-xlarge" placeholder="{{ 'Rule set name'|translate }}" ng-model="editRuleset.name" required>
                     <button class="btn btn-info pull-right" ng-disabled="!rulesetForm.$valid" ng-click="addRule()"><i class="icon-plus-small icon-white"></i> {{:: 'Add rule' | translate}}</button>
                 </header>
@@ -43,10 +42,10 @@
                             <div class="order">#{{$index}}</div>
                             <fieldset class="span-2">
                                 <div class="field">
-                                    <input type="text" placeholder="old" ng-model="rule.old">
+                                    <input type="text" placeholder="old" ng-model="rule.old" required>
                                 </div>
                                 <div class="field">
-                                    <input type="text" placeholder="new" ng-model="rule.new">
+                                    <input type="text" placeholder="new" ng-model="rule.new" required>
                                 </div>
                             </fieldset>
                             <div class="actions">
@@ -54,7 +53,7 @@
                             </div>
                         </li>
                     </ul>
-                    <p ng-if="!editRuleset.rules">No rules defined in a set.</p>
+                    <p ng-if="!editRuleset.rules" translate>No rules defined in a set.</p>
                 </div>
             </div>
             

@@ -82,72 +82,12 @@
 	}
 }
 
-.pills-list {
-	> li {
-		.user-select(none);
-		background: #f4f4f4;
-		margin-bottom: 6px;
-		.border-radius(3px);
-		padding: 6px 8px;
-		height: 18px;
-		color: #444;
-		position: relative;
-		&:hover {
-			background: #e8e8e8;
-		}
-		&.active {
-			background: @sd-blue;
-			color: #fff !important;
-			.box-shadow(inset 0 2px 0 darken(@sd-blue, 10%));
-		}
-		.dropdown {
-			margin-top: -3px;
-		}
-		.actions {
-			display: none;
-			position: absolute;
-			top: 0px;
-			right: 0px;
-			button {
-				border: 0;
-				height: 30px;
-				width: 30px;
-				background: rgba( 0, 0, 0, 0.1);
-				text-align: center;
-				display: block;
-				float: left;
-				&:last-child {
-					.border-radius(0 3px 3px 0);
-				}
-				&:hover {
-					cursor: pointer;
-					background: rgba( 0, 0, 0, 0.05);
-				}
-				i {
-					margin-top: -2px;
-				}
-			}
-		}
-		&:hover {
-			.actions {
-				display: block !important;
-			}
-		}
-	}
-}
-
 // Ingest sources
 // -------------------------------------
 
 .provider-list {
-	max-width: 600px;
+
 	> li {
-		h6 {
-			font-weight: normal;
-			float: left;
-			font-size: 14px;
-			line-height: 18px;
-		}
 		.ingest-count {
 			float: left;
 			margin-top: 1px;
@@ -217,20 +157,6 @@
 
 	// ROLES TAB
 	
-	.user-roles-list {
-		max-width: 400px;		
-		.name {
-			font-size: 13px;
-		}
-		.description {
-			display: none;
-			padding: 0px 10px 15px;
-			color: #787878;
-			font-style: italic;
-		}
-
-	}
-
 	.new-role-modal {
 		width: 299px;
 		position: absolute;

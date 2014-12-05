@@ -6,12 +6,12 @@
 				<i class="icon-plus-sign icon-white"></i> {{:: 'Add New Role' | translate}}
 			</button>
 	</div>
-	<div class="content">
+	<div class="content user-roles">
 
-		<ul class="pills-list user-roles-list">
+		<ul class="pills-list">
 			<li ng-repeat="role in roles">
 				<div class="header">
-					<div class="name">{{role.name}}<span class="label default" ng-if="role.is_default" translate>default</span></div>
+					<h6>{{role.name}}<span class="label default" ng-if="role.is_default" translate>default</span></h6>
 
 					<div class="actions">
 						<button ng-click="edit(role)" title="{{:: 'Edit role' | translate }}"><i class="icon-pencil"></i></button>

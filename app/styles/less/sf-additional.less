@@ -1000,6 +1000,72 @@ header .sortbar {
 	}
 }
 
+
+// Pils list
+// ---------------------------------------------
+.pills-list {
+	max-width: 450px;
+	> li {
+		.user-select(none);
+		background: #f4f4f4;
+		margin-bottom: 6px;
+		.border-radius(3px);
+		padding: 6px 8px;
+		height: 18px;
+		color: #444;
+		position: relative;
+		&:hover {
+			background: #e8e8e8;
+		}
+		&.active {
+			background: @sd-blue;
+			color: #fff !important;
+			.box-shadow(inset 0 2px 0 darken(@sd-blue, 10%));
+		}
+		.dropdown {
+			margin-top: -3px;
+		}
+		.actions {
+			display: none;
+			position: absolute;
+			top: 0px;
+			right: 0px;
+			button {
+				border: 0;
+				height: 30px;
+				width: 30px;
+				background: rgba( 0, 0, 0, 0.1);
+				text-align: center;
+				display: block;
+				float: left;
+				&:last-child {
+					.border-radius(0 3px 3px 0);
+				}
+				&:hover {
+					cursor: pointer;
+					background: rgba( 0, 0, 0, 0.05);
+				}
+				i {
+					margin-top: -2px;
+				}
+			}
+		}
+		h6 {
+			text-transform: uppercase;
+			font-size: 13px;
+			color: @sd-text;
+			.text-normal();
+			float: left;
+		}
+		&:hover {
+			.actions {
+				display: block !important;
+			}
+		}
+	}
+}
+
+
 // Activiites
 // ---------------------------------------------
 .item-field {
