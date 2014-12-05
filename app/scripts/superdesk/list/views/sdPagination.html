@@ -1,4 +1,19 @@
 <div class="pull-right sd-pagination" ng-if="total">
+    <div class="page-info pull-left">
+        <select ng-model="pagesize" ng-change="setLimit(pagesize)">
+            <option value="">Page Size</option>
+            <option value=10>10</option>
+            <option value=20>20</option>
+            <option value=30>30</option>
+            <option value=40>40</option>
+            <option value=50>50</option>
+            <option value=60>60</option>
+            <option value=70>70</option>
+            <option value=80>80</option>
+            <option value=90>90</option>
+            <option value=100>100</option>
+        </select>
+    </div>
     <div class="btn-group pull-right">
         <button class="btn btn-light" ng-disabled="page <= 1" ng-click="setPage(0)">
     		<i class="icon-backward-thin"></i>
@@ -16,6 +31,7 @@
         	<i class="icon-forward-thin"></i>
         </button>
     </div>
+   <!--  <em class="page-info pull-right" ng-show="page <= lastPage">{{ from }}-{{pagesize}} {{ 'of'|translate }} {{ total }}</em> -->
 
     <em class="page-info pull-right" ng-show="page <= lastPage">{{ from }}-{{ to }} {{ 'of'|translate }} {{ total }}</em>
 </div>

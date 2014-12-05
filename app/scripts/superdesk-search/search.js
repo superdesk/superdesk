@@ -55,7 +55,8 @@
              */
             function paginate(query, params) {
                 var page = params.page || 1;
-                query.size = size;
+                var pagesize = parseInt(params.max_results) || 25;
+                query.size = pagesize;
                 query.from = (page - 1) * query.size;
             }
 

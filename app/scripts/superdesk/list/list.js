@@ -92,16 +92,16 @@ define([
         return {
             templateUrl: require.toUrl('./views/sdPagination.html'),
             scope: {
-                items: '=',
-                limit: '='
+                items: '='  //,limit: '='
             },
-            link: function(scope, element, attrs) {
+            link: function(scope, element, attrs) { 
 
-                scope.$watch('items._meta', function(meta) {
+                scope.$watch('items._meta', function(meta) { 
                     scope.total = 0;
-                    if (meta) {
+                    if (meta) { 
                         scope.total = meta.total;
                         scope.page = $location.search().page || 1;
+                        scope.limit = parseInt($location.search().max_results) || 25;
                         scope.lastPage = scope.limit ? Math.ceil(scope.total / scope.limit) : scope.page;
                         scope.from = (scope.page - 1) * scope.limit + 1;
                         scope.to = Math.min(scope.total, scope.from + scope.limit - 1);
@@ -115,6 +115,13 @@ define([
                  */
                 scope.setPage = function(page) {
                     $location.search('page', page > 1 ? page : null);
+                };
+                /*
+                * Set page size limit
+                *@param {integer} page
+                */
+                scope.setLimit = function(pagesize){
+                     $location.search('max_results', pagesize != null ? pagesize : 25);
                 };
             }
         };
