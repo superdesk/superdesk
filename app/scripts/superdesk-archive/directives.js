@@ -154,6 +154,14 @@ define([
                 templateUrl: 'scripts/superdesk-archive/views/preview.html'
             };
         }])
+        .directive('sdMediaPreviewWidget', [function() {
+            return {
+                scope: {
+                    item: '='
+                },
+                templateUrl: 'scripts/superdesk-archive/archive-widget/item-preview.html'
+            };
+        }])
         .directive('sdMediaView', ['keyboardManager', 'api', function(keyboardManager, api) {
             return {
                 templateUrl: 'scripts/superdesk-archive/views/media-view.html',
