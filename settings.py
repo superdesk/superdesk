@@ -74,10 +74,10 @@ CELERYBEAT_SCHEDULE = {
         'schedule': timedelta(seconds=10),
         'options': {'expires': 19}
     },
-    'ingest:gc': {
-        'task': 'superdesk.io.gc_ingest',
-        'schedule': timedelta(minutes=60),
-    },
+    #    'ingest:gc': {
+    # 'task': 'superdesk.io.gc_ingest',
+    # 'schedule': timedelta(minutes=60),
+    #    },
     'session:gc': {
         'task': 'apps.auth.session_purge',
         'schedule': timedelta(minutes=30)
