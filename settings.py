@@ -192,3 +192,9 @@ SESSION_EXPIRY_MINUTES = 240
 
 # The number of minutes before spiked items purged
 SPIKE_EXPIRY_MINUTES = 300
+
+# This setting can be used to apply a limit on the elastic search queries, it is a limit per shard.
+# A value of -1 indicates that no limit will be applied.
+# If for example the elastic has 5 shards and you wish to limit the number of search results to 1000 then set the value
+# to 200 (1000/5).
+MAX_SEARCH_DEPTH = -1
