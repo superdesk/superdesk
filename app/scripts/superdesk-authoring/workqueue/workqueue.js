@@ -110,33 +110,14 @@ function WorkqueueService(storage, preferencesService, notify) {
     };
 }
 
-WorkqueueCtrl.$inject = ['$scope', 'workqueue', 'superdesk', 'ContentCtrl'];
-function WorkqueueCtrl($scope, workqueue, superdesk, ContentCtrl) {
-    $scope.workqueue = workqueue.all();
+WorkqueueCtrl.$inject = ['$scope', 'ContentCtrl'];
+function WorkqueueCtrl($scope, ContentCtrl) {
+
     $scope.content = new ContentCtrl();
-
-    $scope.openItem = function(article) {
-        if ($scope.active) {
-            $scope.update();
-        }
-        workqueue.setActive(article);
-        superdesk.intent('author', 'article', article);
-    };
-
-    $scope.openDashboard = function() {
-        superdesk.intent('author', 'dashboard');
-    };
-
-    $scope.closeItem = function(item) {
-        if ($scope.active && $scope.active._id === item._id) {
-            $scope.close();
-        } else {
-            workqueue.remove(item);
-        }
-    };
 }
 
-function WorkqueueListDirective() {
+WorkqueueListDirective.$inject = ['workqueue', 'superdesk'];
+function WorkqueueListDirective(workqueue, superdesk) {
     return {
         templateUrl: 'scripts/superdesk-authoring/views/opened-articles.html',
         scope: {
@@ -144,7 +125,29 @@ function WorkqueueListDirective() {
             update: '&',
             close: '&'
         },
-        controller: WorkqueueCtrl
+        link: function(scope) {
+            scope.workqueue = workqueue.all();
+
+            scope.openItem = function(article) {
+                if (scope.active) {
+                    scope.update();
+                }
+                workqueue.setActive(article);
+                superdesk.intent('author', 'article', article);
+            };
+
+            scope.openDashboard = function() {
+                superdesk.intent('author', 'dashboard');
+            };
+
+            scope.closeItem = function(item) {
+                if (scope.active && scope.active._id === item._id) {
+                    scope.close();
+                } else {
+                    workqueue.remove(item);
+                }
+            };
+        }
     };
 }
 
