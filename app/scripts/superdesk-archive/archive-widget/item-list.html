@@ -47,12 +47,12 @@
 
 <div class="preview" ng-class="{wrap: !selected}">
     <div class="nav">
-        <button class="backlink" href="" ng-click="selected = null" translate>Back</button>
+        <button class="backlink" href="" ng-click="view(null)" translate>Back</button>
         <button class="open pull-right" ng-click="go(selected)"><i class="icon-expand"></i> {{ 'Open' | translate }}</button>
     </div>
     <div class="content-item-preview">
         <div class="content">
-            <div sd-media-preview data-item="selected"></div>
+            <div sd-media-preview-widget data-item="selected"></div>
         </div>
     </div>
 </div>

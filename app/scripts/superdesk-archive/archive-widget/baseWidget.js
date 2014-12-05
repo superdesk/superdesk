@@ -50,7 +50,7 @@
                     }
 
                     if (item.subject && item.subject.length) {
-                        filters.push({terms: {'subject.code': _.pluck(item.subject, 'code')}});
+                        filters.push({terms: {'subject.qcode': _.pluck(item.subject, 'qcode')}});
                     }
 
                     return filters;
@@ -135,7 +135,7 @@
             return function BaseWidgetConfigController($scope) {
                 $scope.fetchProviders = function() {
                     $scope.api.query({source: {size: 0}}).then(function(items) {
-                        $scope.availableProviders = ['all'].concat(_.pluck(items._aggregations.originator.buckets, 'key'));
+                        $scope.availableProviders = ['all'].concat(_.pluck(items._aggregations.source.buckets, 'key'));
                     });
                 };
 
