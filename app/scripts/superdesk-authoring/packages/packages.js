@@ -29,7 +29,18 @@
             };
         };
 
-        this.createPackageFromItem = function createPackageFromItem(item, idRef) {
+        this.getReferenceFor = function (item) {
+            return {
+                headline: item.headline || '',
+                residRef: item._id,
+                location: 'archive',
+                slugline: item.slugline || '',
+                renditions: item.renditions || {}
+            };
+        };
+
+        this.createPackageFromItem = function createPackageFromItem(item) {
+            var idRef = 'main';
             var new_package = {
                 headline: item.headline || '',
                 slugline: item.slugline || '',
@@ -47,13 +58,25 @@
             return api.packages.save(new_package);
         };
 
-        this.addItemsToPackage = function addToPackage(currentPackage, items, idRef) {
+        this.addItemsToMainPackage = function addToPackage(currentPackage, items) {
+            var self = this;
+            var idRef = 'main';
+
+            var patch = _.pick(currentPackage, 'groups');
+            var mainGroup = _.find(patch.groups, function(group) { return group.id === idRef; });
+            _.forEach(items, function(item) {
+                mainGroup.refs.push(self.getReferenceFor(item));
+            });
+            return api.packages.save(currentPackage, patch);
+        };
+
+        this.addItemsToPackage = function addToPackage(currentPackage, items, groupId) {
             var self = this;
 
             var patch = _.pick(currentPackage, 'groups');
             var rootGroup = _.find(patch.groups, function(group) { return group.id === 'root'; });
             _.forEach(items, function(item) {
-                var newId = self.generateNewId(rootGroup.refs, idRef);
+                var newId = self.generateNewId(rootGroup.refs, groupId);
                 rootGroup.refs.push({idRef: newId});
                 patch.groups.push(self.getGroupFor(item, newId));
             });
@@ -80,14 +103,6 @@
                 label: 'Story'
             },
             {
-                icon: 'text',
-                label: 'Sidebar'
-            },
-            {
-                icon: 'text',
-                label: 'Fact box'
-            },
-            {
                 icon: 'picture',
                 label: 'Image'
             },
@@ -103,13 +118,13 @@
 
         $scope.create = function(type) {
             if ($scope.selected.preview == null) {
-                packagesService.createPackageFromItem($scope.item, type.label)
+                packagesService.createPackageFromItem($scope.item)
                 .then(function(new_package) {
                     $scope.selected.preview = new_package;
                 });
             } else {
                 superdesk.intent('create', 'package', {type: type.icon}).then(function(items) {
-                    packagesService.addItemsToPackage($scope.selected.preview, items, type.label)
+                    packagesService.addItemsToMainPackage($scope.selected.preview, items)
                     .then(function(updatedPackage) {
                         $scope.selected.preview = updatedPackage;
                     });
