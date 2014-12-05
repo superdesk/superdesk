@@ -1,3 +1,4 @@
+
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_backend

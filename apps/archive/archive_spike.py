@@ -70,3 +70,17 @@ class ArchiveRemoveExpiredSpikes(superdesk.Command):
         return superdesk.json.dumps(query)
 
 superdesk.command('archive:spike', ArchiveRemoveExpiredSpikes())
+
+superdesk.workflow_state('spiked')
+
+superdesk.workflow_action(
+    name='spike',
+    exclude_states=['spiked', 'published', 'killed'],
+    privileges=['spike'],
+)
+
+superdesk.workflow_action(
+    name='unspike',
+    include_states=['spiked'],
+    privileges=['unspike']
+)
