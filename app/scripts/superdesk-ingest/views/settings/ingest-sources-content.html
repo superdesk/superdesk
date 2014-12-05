@@ -68,6 +68,13 @@
                     <div ng-include="types[provider.type].templateUrl"></div>
                 </div>
 
+                <div class="field">
+                    <label for="ruleset" translate>Ruleset</label>
+                    <select ng-model="provider.rule_set" ng-options="r._id as r.name for r in rulesets">
+                        <option value=""></option>
+                    </select>
+                </div>
+
             </fieldset>
 
         </form>

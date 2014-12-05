@@ -200,6 +200,10 @@ define([
                         });
                 }
 
+                api('rule_sets').query().then(function(result) {
+                    $scope.rulesets = result._items;
+                });
+
                 $scope.remove = function(provider) {
                     api.ingestProviders.remove(provider)
                     .then(function() {
