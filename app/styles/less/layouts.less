@@ -100,7 +100,7 @@ a:hover {
 	z-index: 1;
 	.border-box();
 	padding: 10px;
-	.transition(all ease 0.2s);
+	.transition(all ease 0.35s);
 	border-bottom: 1px solid #dfdfdf;
 	&.show {
 		top: -48px;
@@ -124,7 +124,6 @@ a:hover {
 			position: absolute;
 			top: @nav-height;
 			left: 0; right: 0; bottom: 0;
-			overflow: auto;
 		}
 	}
 	.list-pane {
@@ -144,6 +143,9 @@ a:hover {
 		}
 		> header {
 			background-color:@sd-background;
+		}
+		> .content {
+			overflow: auto;
 		}
 	}
 	.preview-pane {
