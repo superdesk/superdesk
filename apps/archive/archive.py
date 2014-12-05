@@ -1,5 +1,6 @@
 
 import flask
+from superdesk.io import get_word_count
 from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, aggregations
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
@@ -94,6 +95,15 @@ class ArchiveResource(Resource):
     privileges = {'POST': 'archive', 'PATCH': 'archive', 'PUT': 'archive'}
 
 
+def update_word_count(doc):
+    """Update word count if there was change in content.
+
+    :param doc: created/udpated document
+    """
+    if doc.get('body_html'):
+        doc.setdefault('word_count', get_word_count(doc.get('body_html')))
+
+
 class ArchiveService(BaseService):
 
     def on_create(self, docs):
@@ -101,6 +111,7 @@ class ArchiveService(BaseService):
 
         for doc in docs:
             doc['version_creator'] = doc['original_creator']
+            update_word_count(doc)
 
     def on_created(self, docs):
         on_create_media_archive()
@@ -124,6 +135,7 @@ class ArchiveService(BaseService):
 
         updates['versioncreated'] = utcnow()
         updates['version_creator'] = str_user_id
+        update_word_count(updates)
 
         if force_unlock:
             del updates['force_unlock']

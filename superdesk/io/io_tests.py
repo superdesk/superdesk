@@ -1,9 +1,21 @@
 import os
-import unittest
-from superdesk.etree import etree
 import test
+import unittest
 
+from superdesk.etree import etree
 from superdesk.io import newsml_2_0
+from superdesk.io import get_word_count
+
+
+class UtilsTest(unittest.TestCase):
+
+    def test_get_word_count(self):
+        self.assertEqual(2, get_word_count('plain text'), 'plain text')
+        self.assertEqual(2, get_word_count('<p> html text </p>'), 'paragraph')
+
+        self.assertEqual(22, get_word_count(
+            '<doc><p xml:lang="en-US">The weather was superb today in Norfolk, Virginia. Made me want to take\n'
+            'out my boat, manufactured by the <org value="acm" idsrc="iptc.org">Acme Boat Company</org>.</p></doc>'))
 
 
 class ItemTest(unittest.TestCase):

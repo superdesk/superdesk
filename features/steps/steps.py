@@ -32,7 +32,6 @@ def test_json(context):
         response_data = json.loads(context.response.get_data())
     except Exception:
         fail_and_print_body(context.response, 'response is not valid json')
-
     context_data = json.loads(apply_placeholders(context, context.text))
     assert_equal(json_match(context_data, response_data), True,
                  msg=str(context_data) + '\n != \n' + str(response_data))
@@ -493,6 +492,8 @@ def step_impl_then_get_code(context, code):
 @then('we get updated response')
 def step_impl_then_get_updated(context):
     assert_ok(context.response)
+    if context.text:
+        test_json(context)
 
 
 @then('we get "{key}" in "{url}"')
@@ -890,6 +891,7 @@ def we_reset_password_for_user(context):
 def when_we_switch_user(context):
     user = {'username': 'test-user-2', 'password': 'pwd', 'is_active': True, 'needs_activation': False}
     tests.setup_auth_user(context, user)
+    set_placeholder(context, 'USERS_ID', str(context.user['_id']))
 
 
 @when('we setup test user')

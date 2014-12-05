@@ -105,7 +105,7 @@ metadata_schema = {
         'mapping': not_analyzed
     },
     'abstract': {
-        'type': 'string'
+        'type': 'string',
     },
     'headline': {
         'type': 'string'
@@ -118,7 +118,8 @@ metadata_schema = {
         'type': 'string'
     },
     'keywords': {
-        'type': 'list'
+        'type': 'list',
+        'mapping': not_analyzed
     },
     'word_count': {
         'type': 'integer'
