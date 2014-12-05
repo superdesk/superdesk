@@ -92,7 +92,12 @@ class TasksService(BaseService):
         self.update_times(updates)
 
     def on_updated(self, updates, original):
-        push_notification(self.datasource, updated=1)
+        new_stage = updates.get('task', {}).get('stage', '')
+        old_stage = original.get('task', {}).get('stage', '')
+        if new_stage != old_stage:
+            push_notification('task:stage', new_stage=str(new_stage), old_stage=str(old_stage))
+        else:
+            push_notification(self.datasource, updated=1)
         updated = copy(original)
         updated.update(updates)
         if updated.get('task') and updated['task'].get('desk'):
