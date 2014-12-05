@@ -1,3 +1,5 @@
+
+import superdesk
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_backend
@@ -19,3 +21,18 @@ class SpikesResource(Resource):
         'elastic_filter': {'term': {'is_spiked': True}}
     }
     resource_methods = ['GET']
+
+
+superdesk.workflow_state('spiked')
+
+superdesk.workflow_action(
+    name='spike',
+    exclude_states=['spiked', 'published', 'killed'],
+    privileges=['spike'],
+)
+
+superdesk.workflow_action(
+    name='unspike',
+    include_states=['spiked'],
+    privileges=['unspike']
+)
