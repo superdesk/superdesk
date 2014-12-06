@@ -19,6 +19,7 @@ from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
 from apps.legal_archive.components.legal_archive_proxy import LegalArchiveProxy
 from copy import copy
+import superdesk
 
 
 SOURCE = 'archive'
@@ -226,3 +227,54 @@ class ArchiveSaveService(BaseService):
         except InvalidEtag:
             raise SuperdeskError('Client and server etags don\'t match', 412)
         return [docs[0]['_id']]
+
+
+superdesk.workflow_state('fetched')
+superdesk.workflow_state('routed')
+superdesk.workflow_state('in-progress')
+superdesk.workflow_state('subbed')
+superdesk.workflow_state('submitted')
+superdesk.workflow_state('published')
+superdesk.workflow_state('killed')
+
+superdesk.workflow_action(
+    name='fetch',
+    include_states=['ingested'],
+    privileges=['archive']
+)
+
+superdesk.workflow_action(
+    name='fetch-as',
+    include_states=['ingested'],
+    privileges=['archive']
+)
+
+superdesk.workflow_action(
+    name='save',
+    exclude_states=['ingested, draft, published, killed'],
+    privileges=['archive']
+)
+
+superdesk.workflow_action(
+    name='sub-edit',
+    exclude_states=['ingested, draft, published, killed'],
+    privileges=['archive']
+)
+
+superdesk.workflow_action(
+    name='move',
+    exclude_states=['ingested, published, killed'],
+    privileges=['archive']
+)
+
+superdesk.workflow_action(
+    name='publish',
+    include_states=['draft, subbed'],
+    privileges=['archive']
+)
+
+superdesk.workflow_action(
+    name='kill',
+    include_states=['published'],
+    privileges=['archive']
+)

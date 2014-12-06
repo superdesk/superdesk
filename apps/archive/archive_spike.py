@@ -16,6 +16,8 @@ logger = logging.getLogger(__name__)
 class ArchiveSpikeResource(Resource):
     endpoint_name = 'archive_spike'
     url = 'archive/<{0}:item_id>/spike'.format(item_url)
+    # we may need to re-visit this field as it is redundant now
+    # but we still need the expiry field for spiked items
     schema = {'is_spiked': {'type': 'boolean'}}
     datasource = {'source': 'archive'}
     resource_methods = ['POST', 'DELETE']

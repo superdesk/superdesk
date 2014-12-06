@@ -14,6 +14,7 @@ import superdesk
 from apps.common.components.utils import register_component
 from apps.item_lock.components.item_lock import ItemLock
 from apps.item_lock.components.item_spike import ItemSpike
+from apps.item_lock.components.item_hold import ItemHold
 from apps.common.models.utils import register_model
 from apps.item_lock.models.item import ItemModel
 from apps.common.models.io.eve_proxy import EveProxy
@@ -91,6 +92,7 @@ def init_app(app):
     from apps.item_autosave.models.item_autosave import ItemAutosaveModel
     register_component(ItemLock(app))
     register_component(ItemSpike(app))
+    register_component(ItemHold(app))
     register_model(ItemModel(EveProxy(superdesk.get_backend())))
     register_component(ItemAutosave(app))
     register_model(ItemAutosaveModel(EveProxy(superdesk.get_backend())))

@@ -324,3 +324,11 @@ class ArchiveIngestService(BaseService):
         except Exception:
             msg = 'No progress information is available for task_id: %s' % task_id
             raise superdesk.SuperdeskError(payload=msg)
+
+
+superdesk.workflow_state('ingested')
+
+# I think we can find the action useful when we produce the history
+superdesk.workflow_action(
+    name='ingest'
+)
