@@ -35,7 +35,7 @@ class ArchiveHoldService(BaseService):
         get_component(ItemHold).restore({'_id': item_id}, user['_id'])
 
 
-superdesk.workflow_state('on-hold')
+superdesk.workflow_state('on_hold')
 
 superdesk.workflow_action(
     name='hold',
@@ -45,6 +45,6 @@ superdesk.workflow_action(
 
 superdesk.workflow_action(
     name='restore',
-    include_states=['on-hold'],
+    include_states=['on_hold'],
     privileges=['restore']
 )

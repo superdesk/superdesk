@@ -326,8 +326,22 @@ class ArchiveIngestService(BaseService):
             raise superdesk.SuperdeskError(payload=msg)
 
 
-superdesk.workflow_state('ingested')
+superdesk.workflow_state('fetched')
+superdesk.workflow_state('routed')
 
 superdesk.workflow_action(
-    name='ingest'
+    name='fetch_from_ingest',
+    include_states=['ingested'],
+    privileges=['archive']
+)
+
+superdesk.workflow_action(
+    name='fetch_as_from_ingest',
+    include_states=['ingested'],
+    privileges=['archive']
+)
+
+superdesk.workflow_action(
+    name='route',
+    include_states=['ingested']
 )

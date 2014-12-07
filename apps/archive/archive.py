@@ -229,39 +229,24 @@ class ArchiveSaveService(BaseService):
         return [docs[0]['_id']]
 
 
-superdesk.workflow_state('fetched')
-superdesk.workflow_state('routed')
-superdesk.workflow_state('in-progress')
+superdesk.workflow_state('in_progress')
 superdesk.workflow_state('subbed')
 superdesk.workflow_state('submitted')
 
-
-superdesk.workflow_action(
-    name='fetch-from-ingest',
-    include_states=['ingested'],
-    privileges=['archive']
-)
-
-superdesk.workflow_action(
-    name='fetch-as-from-ingest',
-    include_states=['ingested'],
-    privileges=['archive']
-)
-
 superdesk.workflow_action(
     name='save',
-    exclude_states=['ingested, published, killed'],
+    exclude_states=['ingested', 'published', 'killed'],
     privileges=['archive']
 )
 
 superdesk.workflow_action(
-    name='sub-edit',
-    exclude_states=['ingested, draft, published, killed'],
+    name='sub_edit',
+    exclude_states=['ingested', 'draft', 'published', 'killed'],
     privileges=['archive']
 )
 
 superdesk.workflow_action(
     name='move',
-    exclude_states=['ingested, spiked, on-hold, published, killed'],
+    exclude_states=['ingested', 'spiked', 'on-hold', 'published', 'killed'],
     privileges=['archive']
 )
