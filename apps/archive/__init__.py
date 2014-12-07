@@ -105,6 +105,12 @@ def init_app(app):
     superdesk.privilege(name='metadata_uniquename', label='Edit Unique Name', description='User can edit unique name.')
     superdesk.privilege(name='ingest_move', label='Move Content To Desk', description='Move Content to a Desk.')
 
+    superdesk.privilege(name='publish', label='Publish', description='Publish a content')
+    superdesk.privilege(name='kill', label='Kill', description='Kill a published content')
+    superdesk.privilege(name='correction', label='Correction', description='Correction to a published content')
+    superdesk.privilege(name='hold', label='Hold', description='Hold a content')
+    superdesk.privilege(name='restore', label='Restore', description='Restore a hold a content')
+
 
 @celery.task()
 def spike_purge():

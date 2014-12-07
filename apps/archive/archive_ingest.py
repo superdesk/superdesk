@@ -332,13 +332,13 @@ superdesk.workflow_state('routed')
 superdesk.workflow_action(
     name='fetch_from_ingest',
     include_states=['ingested'],
-    privileges=['archive']
+    privileges=['ingest_move']
 )
 
 superdesk.workflow_action(
     name='fetch_as_from_ingest',
     include_states=['ingested'],
-    privileges=['archive']
+    privileges=['ingest_move']
 )
 
 superdesk.workflow_action(
