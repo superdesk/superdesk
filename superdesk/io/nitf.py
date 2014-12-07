@@ -44,7 +44,7 @@ def get_keywords(docdata):
 def get_content(tree):
     elements = []
     for elem in tree.find('body/body.content'):
-        elements.append(etree.tostring(elem, encoding='UTF-8').decode('utf-8'))
+        elements.append(etree.tostring(elem, encoding='unicode'))
     return ''.join(elements)
 
 
