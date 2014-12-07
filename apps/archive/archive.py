@@ -238,20 +238,20 @@ superdesk.workflow_state('published')
 superdesk.workflow_state('killed')
 
 superdesk.workflow_action(
-    name='fetch',
+    name='fetch-from-ingest',
     include_states=['ingested'],
     privileges=['archive']
 )
 
 superdesk.workflow_action(
-    name='fetch-as',
+    name='fetch-as-from-ingest',
     include_states=['ingested'],
     privileges=['archive']
 )
 
 superdesk.workflow_action(
     name='save',
-    exclude_states=['ingested, draft, published, killed'],
+    exclude_states=['ingested, published, killed'],
     privileges=['archive']
 )
 
@@ -263,7 +263,7 @@ superdesk.workflow_action(
 
 superdesk.workflow_action(
     name='move',
-    exclude_states=['ingested, published, killed'],
+    exclude_states=['ingested, spiked, on-hold, published, killed'],
     privileges=['archive']
 )
 
