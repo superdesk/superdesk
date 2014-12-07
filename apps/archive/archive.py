@@ -234,8 +234,7 @@ superdesk.workflow_state('routed')
 superdesk.workflow_state('in-progress')
 superdesk.workflow_state('subbed')
 superdesk.workflow_state('submitted')
-superdesk.workflow_state('published')
-superdesk.workflow_state('killed')
+
 
 superdesk.workflow_action(
     name='fetch-from-ingest',
@@ -264,17 +263,5 @@ superdesk.workflow_action(
 superdesk.workflow_action(
     name='move',
     exclude_states=['ingested, spiked, on-hold, published, killed'],
-    privileges=['archive']
-)
-
-superdesk.workflow_action(
-    name='publish',
-    include_states=['draft, subbed'],
-    privileges=['archive']
-)
-
-superdesk.workflow_action(
-    name='kill',
-    include_states=['published'],
     privileges=['archive']
 )
