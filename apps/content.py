@@ -1,9 +1,10 @@
+
+import superdesk
 from superdesk.resource import Resource
+
 LINKED_IN_PACKAGES = 'linked_in_packages'
 
-
 not_analyzed = {'type': 'string', 'index': 'not_analyzed'}
-
 
 metadata_schema = {
     # Identifiers
@@ -129,6 +130,11 @@ metadata_schema = {
     },
     'urgency': {
         'type': 'integer'
+    },
+    'state': {
+        'type': 'string',
+        'allowed': superdesk.allowed_workflow_states,
+        'mapping': not_analyzed,
     },
     'pubstatus': {
         'type': 'string',
