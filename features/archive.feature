@@ -16,7 +16,7 @@ Feature: News Items Archive
         When we get "/archive/tag:example.com,0000:newsml_BRE9A605"
         Then we get existing resource
         """
-        {"guid": "tag:example.com,0000:newsml_BRE9A605"}
+        {"guid": "tag:example.com,0000:newsml_BRE9A605", "state": "Draft"}
         """
 
     @auth
@@ -87,7 +87,7 @@ Feature: News Items Archive
         When we upload a file "bike.jpg" to "archive_media"
         Then we get new resource
         """
-        {"guid": "", "firstcreated": "", "versioncreated": ""}
+        {"guid": "", "firstcreated": "", "versioncreated": "", "state": "Draft"}
         """
         And we get "bike.jpg" metadata
         And we get "picture" renditions
@@ -101,7 +101,7 @@ Feature: News Items Archive
         Then we get list with 1 items
         """
         {"_items": [{"headline": "flower", "byline": "foo", "description": "flower desc",
-                     "pubstatus": "Usable", "language": "en"}]}
+                     "pubstatus": "Usable", "language": "en", "state": "Draft"}]}
         """
 
     @auth
@@ -110,7 +110,7 @@ Feature: News Items Archive
         When we upload a file "green.ogg" to "archive_media"
         Then we get new resource
         """
-        {"guid": ""}
+        {"guid": "", "state": "Draft"}
         """
         And we get "green.ogg" metadata
         Then original rendition is updated with link to file having mimetype "audio/ogg"
@@ -121,7 +121,7 @@ Feature: News Items Archive
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"_items": [{"headline": "green", "byline": "foo", "description": "green music"}]}
+        {"_items": [{"headline": "green", "byline": "foo", "description": "green music", "state": "Draft"}]}
         """
 
     @auth
@@ -130,7 +130,7 @@ Feature: News Items Archive
         When we upload a file "this_week_nasa.mp4" to "archive_media"
         Then we get new resource
         """
-        {"guid": ""}
+        {"guid": "", "state": "Draft"}
         """
         And we get "this_week_nasa.mp4" metadata
         Then original rendition is updated with link to file having mimetype "video/mp4"
@@ -141,7 +141,7 @@ Feature: News Items Archive
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"_items": [{"headline": "week @ nasa", "byline": "foo", "description": "nasa video"}]}
+        {"_items": [{"headline": "week @ nasa", "byline": "foo", "description": "nasa video", "state": "Draft"}]}
         """
 
     @auth

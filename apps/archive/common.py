@@ -3,7 +3,7 @@ from uuid import uuid4
 
 import flask
 from superdesk.celery_app import update_key
-
+from eve.utils import config
 from superdesk.utc import utcnow
 from settings import SERVER_DOMAIN
 from superdesk import SuperdeskError
@@ -42,6 +42,9 @@ def on_create_item(docs):
 
         if 'unique_id' not in doc:
             generate_unique_id_and_name(doc)
+
+        if config.CONTENT_STATE not in doc:
+            doc[config.CONTENT_STATE] = 'Draft'
 
         doc.setdefault('_id', doc['guid'])
 
