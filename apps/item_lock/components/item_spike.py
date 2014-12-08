@@ -8,7 +8,6 @@ from superdesk import app, get_resource_service, SuperdeskError
 
 
 EXPIRY = 'expiry'
-STATE = 'state'
 REVERT_STATE = 'revert_state'
 
 
@@ -55,7 +54,8 @@ class ItemSpike(BaseComponent):
                     desk = get_resource_service('desks').find_one(_id=item["task"]["desk"], req=None)
                     expiry_minutes = desk.get('spike_expiry', expiry_minutes)
 
-            updates = {STATE: 'spiked', EXPIRY: get_expiry_date(expiry_minutes), REVERT_STATE: item.get(STATE, None)}
+            updates = {app.config['CONTENT_STATE']: 'spiked', EXPIRY: get_expiry_date(expiry_minutes),
+                       REVERT_STATE: item.get(app.config['CONTENT_STATE'], None)}
             item_model.update(filter, updates)
             push_notification('item:spike', item=str(item.get('_id')), user=str(user))
         else:
