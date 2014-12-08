@@ -4,7 +4,23 @@
     var CONTENT_FIELDS_DEFAULTS = {
         headline: '',
         slugline: '',
-        body_html: ''
+        body_html: '',
+        'abstract': '',
+        anpa_take_key: '',
+        unique_name: '',
+        type: '',
+        byline: '',
+        urgency: 0,
+        priority: '',
+        subject: [],
+        'anpa-category': {},
+        genre: [],
+        usageterms: '',
+        ednote: '',
+        place: [],
+        located: '',
+        dateline: '',
+        language: ''
     };
 
     /**
