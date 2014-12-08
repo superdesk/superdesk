@@ -1,5 +1,14 @@
 <div ng-controller="PackagesWidgetCtrl">
-    <div class="create-package">
-        <div class="btn btn-full" ng-click="create()" ><i class="icon-plus"></i><span>{{:: 'Create package' | translate }}</span></div>
+<div class="create-package" ng-if="!selected.preview">
+    <div class="btn btn-full" ng-click="create()" ><i class="icon-plus"></i><span>{{:: 'Create package' | translate }}</span></div>
+</div>
+<div class="packaging widget-content" ng-if="selected.preview">
+    <div class="package-preview">
+        <div class="preview-pane content-item-preview" style="margin-top:10px;">
+            <div class="content">
+                <div sd-media-preview></div>
+            </div>
+        </div>
     </div>
+</div>
 </div>

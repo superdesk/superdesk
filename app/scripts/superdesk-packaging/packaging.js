@@ -112,6 +112,7 @@
     PackagingCtrl.$inject = ['$scope', 'packagesService', 'superdesk', '$route'];
     function PackagingCtrl($scope, packagesService, superdesk, $route) {
         $scope.selected = {};
+        $scope.item = null;
         $scope.selected.hide_menu = true;
         $scope.contenttab = true;
 
@@ -138,21 +139,16 @@
             packagesService.fetch($route.current.params._id).
                 then(function(fetched_package) {
                 $scope.selected.preview = fetched_package;
+                $scope.item = fetched_package;
             });
         }
-
-        $scope.createEmpty = function createEmptyPackage() {
-            packagesService.createEmptyPackage()
-            .then(function(new_package) {
-                $scope.selected.preview = new_package;
-            });
-        };
 
         $scope.append = function(type) {
             superdesk.intent('append', 'package', {type: type.icon}).then(function(items) {
                 packagesService.addItemsToMainPackage($scope.selected.preview, items)
                 .then(function(updatedPackage) {
                     $scope.selected.preview = updatedPackage;
+                    $scope.item = updatedPackage;
                 });
             });
         };

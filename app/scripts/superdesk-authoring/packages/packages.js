@@ -4,7 +4,6 @@
 
     PackagesCtrl.$inject = ['$scope', 'superdesk'];
     function PackagesCtrl($scope, superdesk) {
-        $scope.selected = {};
         $scope.selected.hide_menu = true;
         $scope.contenttab = true;
 
