@@ -56,6 +56,4 @@ class TestCase(unittest.TestCase):
 
     def test_content_is_text(self):
         self.assertIsInstance(self.item.get('body_html'), type(''))
-
-if __name__ == '__main__':
-    unittest.main()
+        self.assertNotRegex(self.item.get('body_html'), '<body.content>')

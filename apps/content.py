@@ -157,6 +157,9 @@ metadata_schema = {
     'body_html': {
         'type': 'string'
     },
+    'body_text': {
+        'type': 'string'
+    },
     'dateline': {
         'type': 'string'
     },

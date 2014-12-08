@@ -45,7 +45,7 @@ class NewsMLOneParser(Parser):
 
         item['body_html'] = etree.tostring(
             tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'),
-            encoding='unicode')
+            encoding='unicode').replace('<body.content>', '').replace('</body.content>', '')
 
         parsed_el = tree.findall('NewsItem/NewsComponent/ContentItem/Characteristics/Property')
         characteristics = self.parse_attribute_values(parsed_el, 'Words')
