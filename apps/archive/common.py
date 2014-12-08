@@ -43,9 +43,7 @@ def on_create_item(docs):
         if 'unique_id' not in doc:
             generate_unique_id_and_name(doc)
 
-        if config.CONTENT_STATE not in doc:
-            doc[config.CONTENT_STATE] = 'Draft'
-
+        doc.setdefault(config.CONTENT_STATE, 'draft')
         doc.setdefault('_id', doc['guid'])
 
 

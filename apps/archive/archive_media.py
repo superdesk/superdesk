@@ -88,8 +88,7 @@ class ArchiveMediaService(BaseService):
                 if not doc.get('_import', None):
                     set_original_creator(doc)
 
-                if config.CONTENT_STATE not in doc:
-                    doc[config.CONTENT_STATE] = 'Draft'
+                doc.setdefault(config.CONTENT_STATE, 'draft')
 
                 add_activity('upload', 'uploaded media {{ name }}', item=doc,
                              name=doc.get('headline', doc.get('mimetype')),
