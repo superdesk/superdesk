@@ -1,0 +1,21 @@
+<div ng-controller="PackagingController">
+    <div class="create-package" ng-hide="selected.preview">
+        <div class="btn btn-full" ng-click="create(null)" ><i class="icon-plus"></i><span>{{:: 'Create package' | translate }}</span></div>
+    </div>
+
+    <div class="dropdown create-package" dropdown ng-show="selected.preview">
+        <div class="dropdown-toggle btn btn-full" dropdown-toggle><i class="icon-plus"></i></div>
+        <ul class="dropdown-menu">
+            <li ng-repeat="t in itemTypes">
+                <button ng-click="append(t)"><i class="filetype-icon-large-{{t.icon}}"></i><span translate>{{ t.label | uppercase }}</span></button>
+            </li>
+        </ul>
+    </div>
+    <div class="package-preview">
+        <div class="preview-pane content-item-preview" style="margin-top:10px;" ng-if="selected.preview">
+            <div class="content">
+                <div sd-media-preview></div>
+            </div>
+        </div>
+    </div>
+</div>
