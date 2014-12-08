@@ -5,6 +5,7 @@ from .archive_lock import custom_hateoas
 from superdesk.services import BaseService
 from apps.common.components.utils import get_component
 from apps.item_lock.components.item_spike import ItemSpike
+from apps.content import metadata_schema
 import superdesk
 from eve.utils import ParsedRequest, date_to_str
 from superdesk.utc import utcnow
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 class ArchiveSpikeResource(Resource):
     endpoint_name = 'archive_spike'
     url = 'archive/<{0}:item_id>/spike'.format(item_url)
-    schema = {'state': {'string': 'spiked'}}
+    schema = metadata_schema
     datasource = {'source': 'archive'}
     resource_methods = ['POST', 'DELETE']
     resource_title = endpoint_name
