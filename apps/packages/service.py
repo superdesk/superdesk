@@ -43,9 +43,6 @@ class PackageService(BaseService):
     def check_package_associations(self, docs):
         for (doc, group) in [(doc, group) for doc in docs for group in doc.get('groups', [])]:
             associations = group.get(ASSOCIATIONS, [])
-            if len(associations) == 0:
-                message = 'No content associated with the package.'
-                raise SuperdeskError(message=message)
 
             self.check_for_duplicates(doc, associations)
             for assoc in associations:
