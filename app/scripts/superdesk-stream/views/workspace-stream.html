@@ -21,20 +21,9 @@
 	                    <div class="activity-date "><time datetime="{{ activity._created }}" title="{{ activity._created | reldate}}" >{{ activity._created | reldate }}</time></div>
 	                </div>
 	            </li>
-	            <li class="activity with-date"><div class="date"><span>09. June</span></div>
-	                <div>
-	                    <figure class="avatar">
-	                        <img sd-user-avatar data-src="user.picture_url" >
-	                    </figure>
-	                    <div class="activity-content">
-	                        <p><b>admin</b> created desks</p>
-	                    </div>
-	                    <div class="activity-date "><time datetime="2014-06-10T08:05:56.858Z" title="Tuesday, June 10 2014 10:05 AM" >one day ago</time></div>
-	                </div>
-	            </li>
 			</ul>
 		</div>
-		<button class="btn activity-load-more" translate>Load more</button>
+		<button class="btn activity-load-more" translate ng-click="loadMore()" ng-show="activities._meta.total > max_results">Load more</button>
 	</div>
 
 	<div sd-workqueue></div>
