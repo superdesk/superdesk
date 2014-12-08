@@ -45,7 +45,8 @@
     "grunt-contrib-concat": "^0.5.0",
     "grunt-contrib-uglify": "^0.6.0",
     "request": "^2.47.0",
-    "jasmine-reporters": "^1.0.1"
+    "jasmine-reporters": "^1.0.1",
+    "karma-phantomjs-launcher": "^0.1.4"
   },
   "scripts": {
     "test": "grunt ci:travis"

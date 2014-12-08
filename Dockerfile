@@ -2,7 +2,9 @@
 FROM dockerfile/nodejs
 
 # install system-wide dependencies
-RUN npm -g install grunt-cli protractor bower && webdriver-manager update
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y libfreetype6 libfontconfig && \
+    npm -g install grunt-cli bower
 
 # setup the environment
 WORKDIR	/opt/superdesk-client/
