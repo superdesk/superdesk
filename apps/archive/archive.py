@@ -117,7 +117,8 @@ class ArchiveService(BaseService):
             updated = copy(original)
             updated.update(updates)
             add_activity(ACTIVITY_UPDATE, 'created new version {{ version }} for item {{ type }} about {{ subject }}',
-                         item=updated, version=updates['_version'], subject=get_subject(updates, original))
+                         item=updated, version=updates['_version'], subject=get_subject(updates, original),
+                         type=updated['type'])
 
     def on_replace(self, document, original):
         user = get_user()
