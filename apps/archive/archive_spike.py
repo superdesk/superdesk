@@ -8,6 +8,7 @@ from apps.item_lock.components.item_spike import ItemSpike
 import superdesk
 from eve.utils import ParsedRequest, date_to_str
 from superdesk.utc import utcnow
+from eve.versioning import insert_versioning_documents
 import logging
 
 logger = logging.getLogger(__name__)
@@ -30,6 +31,7 @@ class ArchiveSpikeService(BaseService):
     def create(self, docs, **kwargs):
         user = get_user(required=True)
         item_id = request.view_args['item_id']
+        self.increment_version(item_id)
         item = get_component(ItemSpike).spike({'_id': item_id}, user['_id'])
         build_custom_hateoas(custom_hateoas, item)
         return [item['_id']]
@@ -37,7 +39,12 @@ class ArchiveSpikeService(BaseService):
     def delete(self, lookup):
         user = get_user(required=True)
         item_id = request.view_args['item_id']
+        self.increment_version(item_id)
         get_component(ItemSpike).unspike({'_id': item_id}, user['_id'])
+
+    def increment_version(self, id):
+        doc = superdesk.get_resource_service('archive').find_one(req=None, _id=id)
+        insert_versioning_documents('archive', doc)
 
 
 class ArchiveRemoveExpiredSpikes(superdesk.Command):

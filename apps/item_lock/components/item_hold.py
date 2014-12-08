@@ -35,7 +35,7 @@ class ItemHold(BaseComponent):
     def name(cls):
         return 'item_hold'
 
-    def spike(self, filter, user):
+    def hold(self, filter, user):
         item_model = get_model(ItemModel)
         item = item_model.find_one(filter)
         if item and can_lock(item, user):
