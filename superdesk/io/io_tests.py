@@ -60,8 +60,9 @@ class TextParserTest(ItemTest):
     #     self.assertEquals("(c) Copyright Thomson Reuters 2013. Click For Restrictions - http://about.reuters.com/fulllegal.asp", self.item.get('copyrightnotice'))  # noqa
 
     def test_content_set(self):
-        self.assertEquals("<p>By Toby Davis</p>", self.item.get('body_html'))
-        self.assertEquals("569", self.item.get('word_count'))
+        self.assertEqual("<p>By Toby Davis</p>", self.item.get('body_html'))
+        self.assertEqual(569, self.item.get('word_count'))
+        self.assertIsInstance(self.item.get('body_html'), type(''))
 
     def test_language(self):
         self.assertEquals('en', self.item.get('language'))

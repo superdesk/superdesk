@@ -54,5 +54,8 @@ class TestCase(unittest.TestCase):
         self.assertIn({'name': 'business'}, self.item.get('genre'))
         self.assertIn({'name': 'bankruptcy'}, self.item.get('genre'))
 
+    def test_content_is_text(self):
+        self.assertIsInstance(self.item.get('body_html'), type(''))
+
 if __name__ == '__main__':
     unittest.main()
