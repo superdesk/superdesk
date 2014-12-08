@@ -8,6 +8,7 @@ import traceback
 
 from celery.canvas import chord
 from celery.result import AsyncResult
+from eve.utils import config
 from eve.versioning import insert_versioning_documents
 import flask
 from flask.globals import current_app as app
@@ -166,6 +167,7 @@ def archive_item(self, guid, provider_id, user, task_id=None):
         '''
         flask.g.user = user
         remove_unwanted(item)
+        item[config.CONTENT_STATE] = 'fetched'
         superdesk.get_resource_service(ARCHIVE).patch(guid, item)
 
         tasks = []
