@@ -30,8 +30,13 @@
                 });
 
                 $scope.versions = result;
-                $scope.selected = $scope.item._autosave ? $scope.item._autosave : lastVersion();
                 $scope.last = lastVersion();
+
+                if ($scope.item._autosave) {
+                    $scope.selected = $scope.item._autosave;
+                } else {
+                    $scope.openVersion($scope.last);
+                }
 
             });
         }

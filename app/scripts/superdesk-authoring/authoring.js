@@ -1,7 +1,11 @@
 (function() {
     'use strict';
 
-    var CONTENT_FIELDS = ['headline', 'slugline', 'body_html'];
+    var CONTENT_FIELDS_DEFAULTS = {
+        headline: '',
+        slugline: '',
+        body_html: ''
+    };
 
     /**
      * Extend content of dest
@@ -10,7 +14,18 @@
      * @param {Object} src
      */
     function extendItem(dest, src) {
-        angular.extend(dest, _.pick(src, CONTENT_FIELDS));
+        angular.extend(dest, _.pick(src, _.keys(CONTENT_FIELDS_DEFAULTS)));
+    }
+
+    /**
+     * Extend content of dest by forcing 'default' values
+     * if the value doesn't exist in src
+     *
+     * @param {Object} dest
+     * @param {Object} src
+     */
+    function forcedExtend(dest, src) {
+        angular.extend(dest, _.defaults(_.pick(src, _.keys(CONTENT_FIELDS_DEFAULTS)), CONTENT_FIELDS_DEFAULTS));
     }
 
     AutosaveService.$inject = ['$q', '$timeout', 'api'];
@@ -412,7 +427,7 @@
          */
         $scope.preview = function(version) {
             stopWatch();
-            extendItem($scope.item, version);
+            forcedExtend($scope.item, version);
             $scope._editable = false;
         };
 
@@ -420,7 +435,7 @@
          * Revert item to given version
          */
         $scope.revert = function(version) {
-            extendItem($scope.item, version);
+            forcedExtend($scope.item, version);
             return $scope.save();
         };
 
