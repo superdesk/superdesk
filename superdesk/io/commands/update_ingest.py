@@ -17,6 +17,13 @@ LAST_UPDATED = 'last_updated'
 logger = logging.getLogger(__name__)
 
 
+superdesk.workflow_state('ingested')
+
+superdesk.workflow_action(
+    name='ingest'
+)
+
+
 def is_valid_type(provider, provider_type_filter=None):
     """Test if given provider has valid type and should be updated.
 
@@ -135,6 +142,7 @@ def ingest_items(provider, items):
             superdesk.get_resource_service('ingest').put(item['guid'], item)
         else:
             item[config.VERSION] = 1
+            item[config.CONTENT_STATE] = 'ingested'
             try:
                 superdesk.get_resource_service('ingest').post([item])
             except HTTPException:
