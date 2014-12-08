@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class ArchiveSpikeResource(Resource):
     endpoint_name = 'archive_spike'
     url = 'archive/<{0}:item_id>/spike'.format(item_url)
-    schema = {'is_spiked': {'type': 'boolean'}}
+    schema = {'state': {'string': 'spiked'}}
     datasource = {'source': 'archive'}
     resource_methods = ['POST', 'DELETE']
     resource_title = endpoint_name
@@ -63,7 +63,7 @@ class ArchiveRemoveExpiredSpikes(superdesk.Command):
     def get_query_for_expired_items(self, now):
         query = {'and':
                  [
-                     {'term': {'is_spiked': True}},
+                     {'term': {'state': 'spiked'}},
                      {'range': {'expiry': {'lte': now}}},
                  ]
                  }

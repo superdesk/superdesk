@@ -1,16 +1,17 @@
 
 from superdesk.tests import TestCase
-from .item_spike import get_unspike_updates, IS_SPIKED, EXPIRY
+from .item_spike import get_unspike_updates, REVERT_STATE, EXPIRY, STATE
 
 
 class SpikeTestCase(TestCase):
 
     def test_unspike_my_content(self):
         with self.app.app_context():
-            item = {'guid': 'test'}
+            item = {'guid': 'test', 'revert_state': 'draft'}
             updates = get_unspike_updates(item)
-            self.assertIsNone(updates[IS_SPIKED])
+            self.assertIsNone(updates[REVERT_STATE])
             self.assertIsNone(updates[EXPIRY])
+            self.assertEquals(updates[STATE], 'draft')
 
     def test_unspike_workflow_item(self):
         with self.app.app_context():

@@ -5,12 +5,12 @@ Feature: Content Spiking
         Given empty "archive"
         Given "archive"
             """
-            [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
+            [{"_id": "item-1", "guid": "item-1", "headline": "test", "state": "draft"}]
             """
 
         When we post to "/archive/item-1/spike"
             """
-            {"is_spiked": true}
+            {"state": "spiked"}
             """
         Then we get OK response
         And we get spiked content "item-1"
@@ -39,7 +39,7 @@ Feature: Content Spiking
             """
         When we post to "/archive/item-1/spike"
             """
-            {"is_spiked": true}
+            {"state": "spiked"}
             """
         Then we get OK response
         And we get spiked content "item-1"
@@ -52,12 +52,12 @@ Feature: Content Spiking
         Given we have "administrator" as type of user
         Given "archive"
             """
-            [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
+            [{"_id": "item-1", "guid": "item-1", "headline": "test", "state": "draft"}]
             """
 
         When we post to "/archive/item-1/spike"
             """
-            {"is_spiked": true}
+            {"state": "spiked"}
             """
 
         And we unspike "/archive/item-1"

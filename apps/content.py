@@ -136,6 +136,12 @@ metadata_schema = {
         'allowed': superdesk.allowed_workflow_states,
         'mapping': not_analyzed,
     },
+    # The previous state the item was in before for example being spiked, when unspiked it will revert to this state
+    'revert_state': {
+        'type': 'string',
+        'allowed': superdesk.allowed_workflow_states,
+        'mapping': not_analyzed,
+    },
     'pubstatus': {
         'type': 'string',
         'allowed': ['Usable', 'Withhold', 'Canceled'],
@@ -164,9 +170,6 @@ metadata_schema = {
     },
     'dateline': {
         'type': 'string'
-    },
-    'is_spiked': {
-        'type': 'boolean'
     },
     'expiry': {
         'type': 'datetime'

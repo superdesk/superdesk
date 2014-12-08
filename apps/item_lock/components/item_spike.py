@@ -7,8 +7,9 @@ from apps.common.models.utils import get_model
 from superdesk import app, get_resource_service, SuperdeskError
 
 
-IS_SPIKED = 'is_spiked'
 EXPIRY = 'expiry'
+STATE = 'state'
+REVERT_STATE = 'revert_state'
 
 
 def get_unspike_updates(doc):
@@ -17,9 +18,11 @@ def get_unspike_updates(doc):
     :param doc: document to unspike
     """
     updates = {
-        IS_SPIKED: None,
-        EXPIRY: None,
+        REVERT_STATE: None,
+        EXPIRY: None
     }
+
+    updates['state'] = doc.get('revert_state')
 
     desk_id = doc.get('task', {}).get('desk')
     if desk_id:
@@ -52,7 +55,7 @@ class ItemSpike(BaseComponent):
                     desk = get_resource_service('desks').find_one(_id=item["task"]["desk"], req=None)
                     expiry_minutes = desk.get('spike_expiry', expiry_minutes)
 
-            updates = {IS_SPIKED: True, EXPIRY: get_expiry_date(expiry_minutes)}
+            updates = {STATE: 'spiked', EXPIRY: get_expiry_date(expiry_minutes), REVERT_STATE: item.get(STATE, None)}
             item_model.update(filter, updates)
             push_notification('item:spike', item=str(item.get('_id')), user=str(user))
         else:
