@@ -55,7 +55,7 @@ define([
         }
     }
 
-    return angular.module('superdesk.auth', ['superdesk.features'])
+    return angular.module('superdesk.auth', ['superdesk.features', 'superdesk.activity'])
         .service('auth', require('./auth-service'))
         .service('session', require('./session-service'))
         .service('authAdapter', require('./basic-auth-adapter'))
