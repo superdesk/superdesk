@@ -6,8 +6,9 @@ define([
 
     describe('Preferences Service', function() {
 
-    	beforeEach(module(preferencesServiceSpec.name));
-    	beforeEach(module(storageSpec.name));
+        beforeEach(module(preferencesServiceSpec.name));
+        beforeEach(module(storageSpec.name));
+        beforeEach(module('superdesk.api'));
 
         var $q,
         	storage,
@@ -61,19 +62,9 @@ define([
             }
         };
 
-		beforeEach(module(function($provide) {
-	        $provide.service('api', function($q) {
-	            return function(resource) {
-	                return {
-	                    getById: function() {
-	                        return $q.when(test_preferences);
-	                    },
-	                    save: function(o, u) {
-	                    	return $q.when({'user_preferences': update});
-	                    }
-	                };
-	            };
-	        });
+        beforeEach(inject(function(api, $q) {
+            spyOn(api, 'find').and.returnValue($q.when(test_preferences));
+            spyOn(api, 'save').and.returnValue($q.when({'user_preferences': update}));
 	    }));
 
 	    beforeEach(inject(function($injector, session, api) {
@@ -99,6 +90,7 @@ define([
 			expect(preferences).not.toBe(null);
 			expect(preferences).not.toBe(undefined);
 			expect(storage.getItem('preferences')).not.toBe(null);
+            expect(api.find).toHaveBeenCalledWith('preferences', 1);
 
 		}));
 

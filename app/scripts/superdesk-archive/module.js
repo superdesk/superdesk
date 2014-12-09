@@ -10,7 +10,8 @@ define([
 
     SpikeService.$inject = ['$location', 'api', 'notify', 'gettext'];
     function SpikeService($location, api, notify, gettext) {
-        var RESOURCE = 'archive_spike';
+        var SPIKE_RESOURCE = 'archive_spike',
+            UNSPIKE_RESOURCE = 'archive_unspike';
 
         /**
          * Spike given item.
@@ -18,7 +19,7 @@ define([
          * @param {Object} item
          */
         this.spike = function spike(item) {
-            return api.save(RESOURCE, {is_spiked: true}, null, item)
+            return api.update(SPIKE_RESOURCE, item, {state: 'spiked'})
                 .then(function() {
                     if ($location.search()._id === item._id) {
                         $location.search('_id', null);
@@ -35,9 +36,10 @@ define([
          * @param {Object} item
          */
         this.unspike = function unspike(item) {
-            return api.remove(item, null, RESOURCE).then(function() {
-                notify.success(gettext('Item was unspiked.'));
-            });
+            return api.update(UNSPIKE_RESOURCE, item, {})
+                .then(function() {
+                    notify.success(gettext('Item was unspiked.'));
+                });
         };
     }
 

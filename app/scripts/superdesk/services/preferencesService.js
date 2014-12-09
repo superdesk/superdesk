@@ -57,7 +57,7 @@ define(['angular', 'lodash'], function(angular, _) {
                     return $q.reject();
                 }
 
-                return api('preferences').getById(sessionId).then(function(preferences) {
+                return api.find('preferences', sessionId).then(function(preferences) {
                     saveLocally(preferences);
                     return processPreferences(preferences, key);
                 });
@@ -115,7 +115,7 @@ define(['angular', 'lodash'], function(angular, _) {
 
                 if (!api) { api = $injector.get('api'); }
 
-                return api('preferences').save(original_prefs, user_updates)
+                return api.save('preferences', original_prefs, user_updates)
                     .then(function(result) {
                         saveLocally(result, type, key);
                         return result;

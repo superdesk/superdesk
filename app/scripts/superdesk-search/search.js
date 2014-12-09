@@ -179,9 +179,9 @@
 
             // do base filtering
             if ($location.search().spike) {
-                this.filter({term: {is_spiked: true}});
+                this.filter({term: {state: 'spiked'}});
             } else {
-                this.filter({not: {term: {is_spiked: true}}});
+                this.filter({not: {term: {state: 'spiked'}}});
             }
 
             buildFilters($location.search(), this);
