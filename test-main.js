@@ -58,6 +58,7 @@ tests.push('bower_components/ment.io/dist/mentio');
 tests.push('angular-gettext');
 tests.push('angular-ui');
 tests.push('angular-route');
+tests.push('moment');
 
 requirejs.config({
     baseUrl: '/base/app/scripts',

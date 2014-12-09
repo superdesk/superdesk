@@ -7,14 +7,12 @@ function TasksService(desks, $rootScope, api) {
 
     this.save = function(orig, task) {
         if (task.task.due_time) {
-            task.task.due_date = new Date(
-                task.task.due_date.getFullYear(),
-                task.task.due_date.getMonth(),
-                task.task.due_date.getDate(),
-                task.task.due_time.getHours(),
-                task.task.due_time.getMinutes(),
-                task.task.due_time.getSeconds()
-            );
+            task.task.due_date =
+                moment(task.task.due_date)
+                .set('hour', task.task.due_time.getHours())
+                .set('minute', task.task.due_time.getMinutes())
+                .set('second', task.task.due_time.getSeconds())
+                .utc();
         }
         delete task.task.due_time;
         if (!task.task.user) {
@@ -82,7 +80,7 @@ function TasksController($scope, api, notify, desks, tasks, StagesCtrl) {
         $scope.newTask = {
             task: {
                 desk: desks.getCurrentDeskId(),
-                due_date: new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+                due_date: moment().utc().format(),
                 due_time: new Date(null, null, null, 12, 0, 0)
             }
         };
@@ -156,7 +154,7 @@ function TaskPreviewDirective(tasks, desks, notify) {
                 scope.editmode = false;
                 scope.task = _.create(scope.item);
                 scope.task_details = _.extend({}, scope.item.task);
-                scope.task_details.due_date = new Date(scope.item.task.due_date);
+                scope.task_details.due_date = moment(scope.item.task.due_date).utc().format();
                 scope.task_details.due_time = new Date(scope.item.task.due_date);
                 _orig = scope.item;
             };
@@ -227,7 +225,7 @@ function DeskStagesDirective() {
     };
 }
 
-angular.module('superdesk.workspace.tasks', [])
+ angular.module('superdesk.workspace.tasks', [])
 
 .factory('StagesCtrl', StagesCtrlFactory)
 

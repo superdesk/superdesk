@@ -46,8 +46,9 @@
 								<div class="title">{{ item.slugline }}</div>
 							</div>
 		                	<div class="info">
+
 		                		<ul class="task-labels clearfix">
-									<li><i class="icon-desk-time"></i> <time sd-datetime data-date="item.task.due_date"></time></li>
+									<li ng-if="item.task.due_date"><i class="icon-desk-time"></i> <time sd-datetime data-date="item.task.due_date"></time></li>
 								</ul>
 		                	</div>
                             <div class="action">
@@ -102,7 +103,7 @@
 	       		<div class="break"></div>
 				<label translate>Due</label>
 				<div class="clear field">
-					<input type="date" ng-model="newTask.task.due_date" tabindex="4">
+					<div sd-datepicker ng-model="newTask.task.due_date"></div>
 				</div>
 				<div class="field">
 					<input type="time" ng-model="newTask.task.due_time" tabindex="5">
