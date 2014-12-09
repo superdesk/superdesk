@@ -1,7 +1,7 @@
 <div class="auth-screen">
 	<div class="subnav" ng-class="{'auth-sendto': viewSendTo}">
 	    <div class="page-title-wrapper clearfix pull-left">
-	    	<button class="stage stageclr-1 pull-left" ng-show="stage">{{stage.name}}</button>
+	    	<button class="stage stage-label pull-left" ng-show="stage">{{stage.name}}</button>
 	    	<span class="lock-info pull-left" ng-show="item._locked"><i class="icon-lock-red"></i></span>
             <h3 class="page-nav-title" ng-show="item.headline">{{ item.headline }}</h3>
 	    	<h3 class="page-nav-title" ng-show="!item.headline" translate>Untitled</h3>

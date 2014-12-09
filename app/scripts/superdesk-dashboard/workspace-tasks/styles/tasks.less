@@ -269,57 +269,6 @@ TASK PAGE
 // stages styling
 // ---------------------------------------------
 
-.stage-color(@color) {
-	a, button {
-		background: #fff;
-		border-color: rgba(red(@color), green(@color), blue(@color), 0.6) !important;
-		color: hsl(hue(@color), saturation(@color), lightness(@color)-10%) !important;
-		&:hover {
-			border-color: @color !important;
-			.box-shadow(0px 1px 3px 0px rgba(0,0,0,0.3));
-		}
-	} 
-	&.active {
-		a {
-			background: @color !important;
-			border-color: @color !important;
-			border-top: 0 !important;
-			color: #fff !important;
-			.box-shadow(inset 0 2px 0px hsl(hue(@color), saturation(@color), lightness(@color)-10%)) !important;
-			&:hover {
-				background: @color !important;
-			}
-		}
-	}
-}
-
-//color classes
-.stageclr-0 {
-	.stage-color(@stage-color-0);
-}
-.stageclr-1 {
-	.stage-color(@stage-color-1);
-}
-.stageclr-2 {
-	.stage-color(@stage-color-2);
-}
-.stageclr-3 {
-	.stage-color(@stage-color-3);
-}
-.stageclr-4 {
-	.stage-color(@stage-color-4);
-}
-.stageclr-5 {
-	.stage-color(@stage-color-5);
-}
-.stageclr-6 {
-	.stage-color(@stage-color-6);
-}
-.stageclr-default {
-	.stage-color(@stage-color-default);
-}
-
-
 .stages-list {
 	li {
 		margin: 7px 15px 0 0 !important;
@@ -330,6 +279,30 @@ TASK PAGE
 			border: 1px solid #d7d7d7;
 			&:hover {
 				background: #fff !important;
+			}
+		}
+	}
+}
+
+.stage-label {
+	a, button {
+		background: #fff;
+		border-color: #d7d7d7 !important;
+		color: #333 !important;
+		&:hover {
+			border-color: #505050 !important;
+			.box-shadow(0px 1px 3px 0px rgba(0,0,0,0.3));
+		}
+	} 
+	&.active {
+		a {
+			background: #505050 !important;
+			border-color: #505050 !important;
+			border-top: 0 !important;
+			color: #fff !important;
+			.box-shadow(inset 0 2px 0px darken(#505050, 10%)) !important;
+			&:hover {
+				background: #505050 !important;
 			}
 		}
 	}
