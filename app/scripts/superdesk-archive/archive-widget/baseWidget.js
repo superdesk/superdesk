@@ -58,6 +58,7 @@
 
                 function getSearchCriteria(config) {
                     var query = search.query(config.search || null);
+
                     query.size(config.size || 10);
 
                     if (config.provider && config.provider !== 'all') {
@@ -73,7 +74,7 @@
                         }
                     }
 
-                    return query.getCriteria();
+                    return query.getCriteria(true);
                 }
 
                 function processItems() {
@@ -82,7 +83,7 @@
 
                 function _refresh() {
                     var criteria = getSearchCriteria(config);
-                    $scope.api.query({source: criteria}).then(function(items) {
+                    $scope.api.query(criteria).then(function(items) {
                         $scope.items = items;
                         processItems();
                     });
