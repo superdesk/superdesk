@@ -31,16 +31,16 @@ class ArchiveSpikeService(BaseService):
     def create(self, docs, **kwargs):
         user = get_user(required=True)
         item_id = request.view_args['item_id']
-        self.increment_version(item_id)
         item = get_component(ItemSpike).spike({'_id': item_id}, user['_id'])
+        self.increment_version(item_id)
         build_custom_hateoas(custom_hateoas, item)
         return [item['_id']]
 
     def delete(self, lookup):
         user = get_user(required=True)
         item_id = request.view_args['item_id']
-        self.increment_version(item_id)
         get_component(ItemSpike).unspike({'_id': item_id}, user['_id'])
+        self.increment_version(item_id)
 
     def increment_version(self, id):
         doc = superdesk.get_resource_service('archive').find_one(req=None, _id=id)
