@@ -1,7 +1,6 @@
 import logging
 
-from eve.versioning import resolve_document_version, insert_versioning_documents
-from flask import request, current_app as app
+from flask import current_app as app
 from eve.utils import ParsedRequest, date_to_str
 
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
@@ -17,6 +16,10 @@ from superdesk.utc import utcnow, get_expiry_date
 logger = logging.getLogger(__name__)
 
 
+EXPIRY = 'expiry'
+REVERT_STATE = 'revert_state'
+
+
 class ArchiveSpikeResource(ArchiveResource):
     endpoint_name = 'archive_spike'
     resource_title = endpoint_name
@@ -26,13 +29,23 @@ class ArchiveSpikeResource(ArchiveResource):
     item_url = item_url
 
     resource_methods = []
-    item_methods = ['PATCH', 'DELETE']
+    item_methods = ['PATCH']
 
-    privileges = {'PATCH': 'spike', 'DELETE': 'unspike'}
+    privileges = {'PATCH': 'spike'}
 
 
-EXPIRY = 'expiry'
-REVERT_STATE = 'revert_state'
+class ArchiveUnspikeResource(ArchiveResource):
+    endpoint_name = 'archive_unspike'
+    resource_title = endpoint_name
+    datasource = {'source': ARCHIVE}
+
+    url = "archive/unspike"
+    item_url = item_url
+
+    resource_methods = []
+    item_methods = ['PATCH']
+
+    privileges = {'PATCH': 'unspike'}
 
 
 class ArchiveSpikeService(BaseService):
@@ -57,18 +70,20 @@ class ArchiveSpikeService(BaseService):
         # build_custom_hateoas(custom_hateoas, item)
         return item
 
-    def delete(self, lookup):
+
+class ArchiveUnspikeService(BaseService):
+
+    def update(self, id, updates):
         user = get_user(required=True)
-        item_id = request.view_args['_id']
 
-        item = get_resource_service(ARCHIVE).find_one(req=None, _id=item_id)
-        updates = get_unspike_updates(item)
-        resolve_document_version(updates, ARCHIVE, 'DELETE', item)
-        self.backend.update(self.datasource, item_id, updates)
+        item = get_resource_service(ARCHIVE).find_one(req=None, _id=id)
+        updates.update(get_unspike_updates(item))
 
-        item = get_resource_service(ARCHIVE).find_one(req=None, _id=item_id)
-        insert_versioning_documents(ARCHIVE, item)
-        push_notification('item:unspike', item=str(filter.get('_id')), user=str(user))
+        self.backend.update(self.datasource, id, updates)
+        item = get_resource_service(ARCHIVE).find_one(req=None, _id=id)
+
+        push_notification('item:unspike', item=str(id), user=str(user))
+        return item
 
 
 class ArchiveRemoveExpiredSpikes(superdesk.Command):

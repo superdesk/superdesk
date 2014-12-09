@@ -8,7 +8,7 @@ from .archive_ingest import ArchiveIngestResource, ArchiveIngestService
 from .item_comments import ItemCommentsResource, ItemCommentsSubResource, ItemCommentsService, ItemCommentsSubService
 from .user_content import UserContentResource, UserContentService
 from .archive_lock import ArchiveLockResource, ArchiveUnlockResource, ArchiveLockService, ArchiveUnlockService
-from .archive_spike import ArchiveSpikeResource, ArchiveSpikeService
+from .archive_spike import ArchiveUnspikeResource, ArchiveSpikeService, ArchiveSpikeResource, ArchiveUnspikeService
 from .content_view import ContentViewResource, ContentViewItemsResource, ContentViewService, ContentViewItemsService
 import superdesk
 from apps.common.components.utils import register_component
@@ -70,6 +70,10 @@ def init_app(app):
     endpoint_name = 'archive_spike'
     service = ArchiveSpikeService(endpoint_name, backend=superdesk.get_backend())
     ArchiveSpikeResource(endpoint_name, app=app, service=service)
+
+    endpoint_name = 'archive_unspike'
+    service = ArchiveUnspikeService(endpoint_name, backend=superdesk.get_backend())
+    ArchiveUnspikeResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'user_content'
     service = UserContentService(endpoint_name, backend=superdesk.get_backend())
