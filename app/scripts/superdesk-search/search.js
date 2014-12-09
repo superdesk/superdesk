@@ -43,7 +43,8 @@
          * Single query instance
          */
         function Query() {
-            var size = 25,
+            var DEFAULT_SIZE = 25,
+                size,
                 filters = [];
 
             /**
@@ -55,7 +56,7 @@
              */
             function paginate(query, params) {
                 var page = params.page || 1;
-                var pagesize = Number(localStorage.getItem('pagesize')) || Number(params.max_results) || size;
+                var pagesize = size || Number(localStorage.getItem('pagesize')) || Number(params.max_results) || DEFAULT_SIZE;
                 query.size = pagesize;
                 query.from = (page - 1) * query.size;
             }
