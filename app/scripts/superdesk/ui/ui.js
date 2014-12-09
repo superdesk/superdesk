@@ -1,8 +1,9 @@
 define([
     'angular',
     'require',
+    'moment',
     './autoheight-directive'
-], function(angular, require) {
+], function(angular, require, moment) {
     'use strict';
 
     /**
@@ -251,24 +252,213 @@ define([
         };
     }
 
-    DatepickerDirective.$inject = [];
+    function DatepickerWrapper() {
+        return {
+            transclude: true,
+            templateUrl: 'scripts/superdesk/ui/views/datepicker-wrapper.html',
+            link:function (scope, element) {
+                element.bind('click', function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                });
+            }
+        };
+    }
+
+    /**
+     * Datepicker directive
+     *
+     * Expects: UTC string or UTC time object
+     * Returns: UTC string if input is valid or NULL if it's not
+     *
+     * Usage:
+     * <div sd-datepicker ng-model="date"></div>
+     *
+     * More improvements TODO:
+     *     > accept min and max date
+     *     > date format as parameter
+     *     > keep time not reseting it
+     */
+
     function DatepickerDirective() {
         return {
-            restrict: 'A',
+            scope: {
+                dt: '=ngModel'
+            },
+            templateUrl: 'scripts/superdesk/ui/views/sd-datepicker.html'
+        };
+    }
+
+    DatepickerInnerDirective.$inject = ['$compile', '$document'];
+    function DatepickerInnerDirective($compile, $document) {
+        var popupTpl =
+        '<div sd-datepicker-wrapper ng-model="date" ng-change="dateSelection()">' +
+            '<div datepicker format-day="d" show-weeks="false"></div>' +
+        '</div>';
+
+        return {
             require: 'ngModel',
-            link: function (scope, element, attrs, ngModelCtrl) {
-                $(function() {
-                    element.datepicker({
-                        dateFormat:'dd/mm/yy',
-                        prevText: '<i class="icon-chevron-left-thin icon-white"></i>',
-                        nextText: '<i class="icon-chevron-right-thin icon-white"></i>',
-                        onSelect:function (date) {
-                            scope.$apply(function () {
-                                ngModelCtrl.$setViewValue(date);
-                            });
+            scope: {
+                open: '=opened'
+            },
+            link: function (scope, element, attrs, ctrl) {
+
+                var VIEW_FORMAT = 'DD/MM/YYYY';
+                var popup = angular.element(popupTpl);
+
+                ctrl.$parsers.unshift(function parseDate(viewValue) {
+
+                    if (!viewValue) {
+                        ctrl.$setValidity('date', true);
+                        return null;
+                    } else {
+                        if (viewValue.dpdate) {
+                            ctrl.$setValidity('date', true);
+                            return moment.utc(viewValue.dpdate).format();
+                        } else {
+                            //value validation
+                            var pattern = /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19\d{2}|[2-9]\d{3})$/;
+                            var regex = new RegExp(pattern);
+
+                            if (regex.test(viewValue)) {
+                                if (moment(viewValue, VIEW_FORMAT).isValid()) {
+                                    ctrl.$setValidity('date', true);
+                                    return moment(viewValue, VIEW_FORMAT).utc().format();
+                                } else {
+                                    //value cannot be converted
+                                    ctrl.$setValidity('date', false);
+                                    return null;
+                                }
+                            } else {
+                                //regex not passing
+                                ctrl.$setValidity('date', false);
+                                return null;
+                            }
                         }
-                    });
+                    }
                 });
+
+                scope.dateSelection = function(dt) {
+                    if (angular.isDefined(dt)) {
+                        //if one of predefined dates is selected (today, tomorrow...)
+                        scope.date = dt;
+                    }
+                    ctrl.$setViewValue({dpdate: scope.date, viewdate: moment(scope.date).format(VIEW_FORMAT)});
+                    ctrl.$render();
+                    scope.open = false;
+                    element[0].focus();
+                };
+
+                //select one of predefined dates
+                scope.select = function(offset) {
+                    var day = moment().startOf('day').add(offset, 'days');
+                    scope.dateSelection(day);
+                };
+
+                ctrl.$render = function() {
+                    element.val(ctrl.$viewValue.viewdate);  //set the view
+                    scope.date = ctrl.$viewValue.dpdate;    //set datepicker model
+                };
+
+                //handle model changes
+                ctrl.$formatters.unshift(function dateFormatter(modelValue) {
+
+                    var dpdate,
+                        viewdate = 'Invalid Date';
+
+                    if (modelValue) {
+                        if (moment(modelValue).isValid()) {
+                            //formatter pass fine
+                            dpdate = moment.utc(modelValue).toDate();
+                            viewdate = moment(modelValue).format(VIEW_FORMAT);
+                        }
+                    } else {
+                        viewdate = '';
+                    }
+
+                    return {
+                        dpdate: dpdate,
+                        viewdate: viewdate
+                    };
+                });
+
+                var closeOnClick = function(event) {
+                    var trigBtn = element.parent().find('button');
+                    var trigIcn = trigBtn.find('i');
+                    if (scope.open && event.target !== trigBtn[0] && event.target !== trigIcn[0]) {
+                        scope.$apply(function() {
+                            scope.open = false;
+                        });
+                    }
+                };
+
+                scope.$watch('open', function(value) {
+                    if (value) {
+                        setPosition();
+                        scope.$broadcast('datepicker.focus');
+                        $document.bind('click', closeOnClick);
+                    } else {
+                        $document.unbind('click', closeOnClick);
+                    }
+                });
+
+                function setPosition() {
+                    //taking care of screen size and responsiveness
+                    var tolerance = 10;
+                    var dpHeight = 270, dpWidth = 260;
+                    var elOffset = element.offset();
+                    var elHeight = element.outerHeight();
+                    var docHeight = $document.height();
+                    var docWidth = $document.width();
+
+                    var position = {top: 0, left:0};
+
+                    if ((elOffset.top + elHeight + dpHeight + tolerance) > docHeight) {
+                        position.top = elOffset.top - dpHeight;
+                    } else {
+                        position.top = elOffset.top + elHeight;
+                    }
+
+                    if ((elOffset.left + dpWidth + tolerance) > docWidth) {
+                        position.left = docWidth - tolerance - dpWidth;
+                    } else {
+                        position.left = elOffset.left;
+                    }
+                    $popupWrapper.offset(position);
+                }
+
+                var keydown = function(e) {
+                    scope.keydown(e);
+                };
+                element.bind('keydown', keydown);
+
+                scope.keydown = function(evt) {
+                    if (evt.which === 27) {
+                        evt.preventDefault();
+                        evt.stopPropagation();
+                        scope.close();
+                    } else {
+                        if (evt.which === 40 && !scope.open) {
+                            scope.open = true;
+                        }
+                    }
+                };
+
+                scope.close = function() {
+                    scope.open = false;
+                    element[0].focus();
+                };
+
+                var $popupWrapper = $compile(popup)(scope);
+                popup.remove();
+                $document.find('body').append($popupWrapper);
+
+                scope.$on('$destroy', function() {
+                    $popupWrapper.remove();
+                    element.unbind('keydown', keydown);
+                    $document.unbind('click', closeOnClick);
+                });
+
             }
         };
     }
@@ -285,5 +475,7 @@ define([
         .directive('sdCreateBtn', CreateButtonDirective)
         .directive('sdAutofocus', AutofocusDirective)
         .directive('sdAutoexpand', AutoexpandDirective)
+        .directive('sdDatepickerInner', DatepickerInnerDirective)
+        .directive('sdDatepickerWrapper', DatepickerWrapper)
         .directive('sdDatepicker', DatepickerDirective);
 });
