@@ -1,8 +1,12 @@
-
 'use strict';
 
 exports.login = login;
 exports.open = openUrl;
+
+// construct url from uri and base url
+exports.constructUrl = function(base, uri) {
+    return base.replace(/\/$/, '') + uri;
+};
 
 var LoginModal = require('./pages').login;
 

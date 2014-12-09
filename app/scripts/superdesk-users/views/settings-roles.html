@@ -1,25 +1,25 @@
-<div class="splitter">
-	<div class="column-left">
-		<div class="header">
-			<div class="title" translate>Roles</div>
-			<button href="" class="btn btn-info pull-right" ng-click="edit({})">
-				<i class="icon-plus-small icon-white"></i>
-			</button>
-		</div>
+<div class="split-content">
 
-		<ul class="user-roles-list">
+	<div class="header">
+			<h2 translate>User Roles</h2>
+			<button class="btn btn-info pull-right" ng-click="edit({})">
+				<i class="icon-plus-sign icon-white"></i> {{:: 'Add New Role' | translate}}
+			</button>
+	</div>
+	<div class="content user-roles">
+
+		<ul class="pills-list">
 			<li ng-repeat="role in roles">
 				<div class="header">
-					<div class="name">{{role.name}}<span class="label default" ng-if="role.is_default" translate>default</span></div>
+					<h6>{{role.name}}<span class="label default" ng-if="role.is_default" translate>default</span></h6>
 
 					<div class="actions">
-						<button ng-click="edit(role)"><i class="icon-pencil"></i></button>
-						<button ng-click="remove(role)"><i class="icon-trash"></i></button>
+						<button ng-click="edit(role)" title="{{:: 'Edit role' | translate }}"><i class="icon-pencil"></i></button>
+						<button ng-click="remove(role)" title="{{:: 'Remove role' | translate }}"><i class="icon-trash"></i></button>
 					</div>
 				</div>
-				<div class="description" ng-if="role.description">{{role.description}}</div>
 			</li>
-			<li ng-show="!roles.length" class="alert alert-info" translate>No roles created yet.</li>
+			<div ng-show="!roles.length" class="alert alert-info" translate>No roles created yet.</div>
 		</ul>
 
 		<div class="new-role-modal mini-modal" ng-if="editRole">
@@ -52,12 +52,4 @@
 		</div>
 
 	</div>
-<!-- 	<div class="column-right">
-		<div class="header">
-			<div class="title" translate>permissions</div>
-		</div>
-		<div class="preview-box" ng-show="selectedRole">
-			
-		</div>
-	</div> -->
 </div>

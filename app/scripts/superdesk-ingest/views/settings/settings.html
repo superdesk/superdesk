@@ -1,73 +1,18 @@
-<div sd-settings-view>
-    <div class="header">
-        <div class="container">
-            <h2 translate>Sources</h2>
-            <button class="btn btn-info pull-right" ng-click="edit()">
-                <i class="icon-plus-sign icon-white"></i> <span translate>Add New Source</span>
-            </button>
-        </div>
-    </div>
-    <div class="settings-tab-content ">
-        <ul class="selection-list provider-list">
+<div sd-settings-view ng-init="sourcesTab = true">
 
-            <li ng-repeat="provider in providers._items" class="clearfix">
-
-                <h6>{{ provider.name }}</h6>
-                <div class="last-updated">
-                    <span translate>Last updated</span> {{ provider._updated|reldate }}
-                </div>
-                <div class="dropdown pull-right" dropdown>
-                    <a href="" class="dropdown-toggle" dropdown-toggle><i class="icon-settings"></i> <b class="caret"></b></a>
-                    <ul class="dropdown-menu pull-right">
-                        <li><a href="" ng-click="edit(provider)"><i class="icon-pencil"></i> {{ 'Edit source' | translate}}</a></li>
-                        <li><a href="" ng-click="remove(provider)" sd-confirm="{{ 'Please confirm you want to remove source.'|translate }}"><i class="icon-trash"></i> {{ 'Delete source' | translate}}</a></li>
-                    </ul>
-                </div>
-
-                <a class="pull-right link" href="" ng-click="gotoIngest(provider.source)"><i class="icon-external"></i> {{ 'Go to Items' | translate}}</a>
-
+    <div class="split-content">
+        <ul class="nav nav-tabs">
+            <li ng-class="{active: sourcesTab}">
+                <button ng-click="sourcesTab = true" translate>Sources</button>
             </li>
-        </ul>
-    </div>
-
-    <div sd-modal-view data-model="provider">
-        <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
-            <h3 translate ng-show="provider._id" translate>Edit Source "{{ origProvider.name }}"</h3>
-            <h3 translate ng-hide="provider._id" translate>Add New Source</h3>
-        </div>
-
-        <div class="modal-body">
-            <form name="editForm" ng-submit="save()">
-                
-                <fieldset>
-                    
-                    <div class="field">
-                        <label for="provider-type" translate>Source Type</label>
-                        <select id="provider-type" required ng-model="provider.type" ng-options="key as val.label for (key, val) in types"></select>
-                    </div>
-
-                    <div class="field">
-                        <label for="provider-name" translate>Provider Name</label>
-                        <input type="text" id="provider-name" ng-model="provider.name" required>
-                    </div>
-
-                    <div class="field">
-                        <label for="source-name" translate>Source Name</label>
-                        <input type="text" id="source-name" ng-model="provider.source" required>
-                    </div>
-
-                    <div class="field credentials">
-                        <div ng-include="types[provider.type].templateUrl"></div>
-                    </div>
-
-                </fieldset>
-
-            </form>
-        </div>
-
-        <div class="modal-footer">
-            <button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
-            <button class="btn btn-primary" ng-click="save()" ng-disabled="!editForm.$valid" translate>Save</button>
+            <li ng-class="{active: !sourcesTab}">
+                <button ng-click="sourcesTab = false" translate>Rule sets</button>
+            </li>
+        </ul>  
+        
+        <div class="content">
+            <div ng-if="sourcesTab" sd-ingest-sources-content></div>
+            <div ng-if="!sourcesTab" sd-ingest-rules-content></div>
         </div>
     </div>
 </div>

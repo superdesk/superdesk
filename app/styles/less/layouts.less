@@ -100,7 +100,7 @@ a:hover {
 	z-index: 1;
 	.border-box();
 	padding: 10px;
-	.transition(all ease 0.2s);
+	.transition(all ease 0.35s);
 	border-bottom: 1px solid #dfdfdf;
 	&.show {
 		top: -48px;
@@ -124,7 +124,6 @@ a:hover {
 			position: absolute;
 			top: @nav-height;
 			left: 0; right: 0; bottom: 0;
-			overflow: auto;
 		}
 	}
 	.list-pane {
@@ -144,6 +143,9 @@ a:hover {
 		}
 		> header {
 			background-color:@sd-background;
+		}
+		> .content {
+			overflow: auto;
 		}
 	}
 	.preview-pane {
@@ -197,6 +199,26 @@ a:hover {
 	}
 }
 
+// Split content
+// ------------------------------------
+.split-content {
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: 0;
+	> .nav, > .header, > header {
+		position: absolute;
+		top: 0; left: 0; right: 0;
+		height: @nav-height;
+		border-bottom: 1px solid #f0f0f0;
+		.border-box();
+	}
+	> .content {
+		position: absolute;
+		top: @nav-height; left: 0; right: 0; bottom: 0;
+		overflow: auto;
+		overflow-x: hidden;
+		padding: 20px;
+	}
+}
 
 
 // Tablist and tabpanes
@@ -386,6 +408,9 @@ a:hover {
 				color:#f8f8f8;
 				padding: 10px;
 				.text-light();
+			}
+			.notification-list {
+				right: 0; left: 0;
 			}
 		}
 	}

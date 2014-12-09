@@ -1,5 +1,6 @@
+var Login = require('./helpers/pages').login;
 
-var Login = require('./pages').login;
+var ptor = protractor.getInstance();
 
 describe('login', function() {
     'use strict';
@@ -7,29 +8,26 @@ describe('login', function() {
     var modal;
 
     beforeEach(function() {
-        browser.get('/#/');
-        browser.executeScript('sessionStorage.clear();localStorage.clear();');
-        browser.get('/#/');
+        browser.get('/');
         modal = new Login();
-        protractor.getInstance().waitForAngular();
     });
 
-    it('renders modal on load', function() {
+    it('form renders modal on load', function() {
         expect(modal.btn).toBeDisplayed();
     });
 
-    xit('can login', function() {
+    it('user can log in', function() {
         modal.login('admin', 'admin');
         expect(modal.btn).not.toBeDisplayed();
-        expect(browser.getCurrentUrl()).toBe('http://localhost:9090/#/workspace');
-        expect(element(by.binding('display_name')).getText()).toBe('John Doe');
+        expect(browser.getCurrentUrl()).toBe(ptor.baseUrl + '/#/workspace');
+        element(by.css('button.current-user')).click();
+        expect(element(by.css('.user-info .displayname')).getText()).toBe('admin');
     });
 
-    xit('can logout', function() {
+    it('user can log out', function() {
         modal.login('admin', 'admin');
-        element(by.binding('display_name')).click();
+        element(by.css('button.current-user')).click();
         element(by.buttonText('SIGN OUT')).click();
-
         protractor.getInstance().sleep(2000); // it reloads page
         protractor.getInstance().waitForAngular();
 
@@ -37,4 +35,12 @@ describe('login', function() {
         expect(modal.username).toBeDisplayed();
         expect(modal.username.getAttribute('value')).toBe('');
     });
+
+    it('unknown user can\'t log in', function() {
+        modal.login('foo', 'bar');
+        expect(modal.btn).toBeDisplayed();
+        expect(browser.getCurrentUrl()).not.toBe(ptor.baseUrl + '/#/workspace');
+        expect(modal.error).toBeDisplayed();
+    });
+
 });
