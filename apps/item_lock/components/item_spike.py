@@ -8,6 +8,7 @@ from superdesk import app, get_resource_service, SuperdeskError
 
 
 IS_SPIKED = 'is_spiked'
+VERSION = '_version'
 EXPIRY = 'expiry'
 
 
@@ -16,7 +17,9 @@ def get_unspike_updates(doc):
 
     :param doc: document to unspike
     """
+    version = int(doc['_version']) + 1
     updates = {
+        VERSION: version,
         IS_SPIKED: None,
         EXPIRY: None,
     }
@@ -52,7 +55,8 @@ class ItemSpike(BaseComponent):
                     desk = get_resource_service('desks').find_one(_id=item["task"]["desk"], req=None)
                     expiry_minutes = desk.get('spike_expiry', expiry_minutes)
 
-            updates = {IS_SPIKED: True, EXPIRY: get_expiry_date(expiry_minutes)}
+            version = int(item['_version']) + 1
+            updates = {VERSION: version, IS_SPIKED: True, EXPIRY: get_expiry_date(expiry_minutes)}
             item_model.update(filter, updates)
             push_notification('item:spike', item=str(item.get('_id')), user=str(user))
         else:

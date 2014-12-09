@@ -324,3 +324,24 @@ class ArchiveIngestService(BaseService):
         except Exception:
             msg = 'No progress information is available for task_id: %s' % task_id
             raise superdesk.SuperdeskError(payload=msg)
+
+
+superdesk.workflow_state('fetched')
+superdesk.workflow_state('routed')
+
+superdesk.workflow_action(
+    name='fetch_from_ingest',
+    include_states=['ingested'],
+    privileges=['ingest_move']
+)
+
+superdesk.workflow_action(
+    name='fetch_as_from_ingest',
+    include_states=['ingested'],
+    privileges=['ingest_move']
+)
+
+superdesk.workflow_action(
+    name='route',
+    include_states=['ingested']
+)
