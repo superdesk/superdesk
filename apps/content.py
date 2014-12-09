@@ -58,7 +58,8 @@ metadata_schema = {
     # Copyright Information
     'usageterms': {
         'type': 'string',
-        'mapping': not_analyzed
+        'mapping': not_analyzed,
+        'nullable': True,
     },
 
     # Category Details
@@ -102,10 +103,12 @@ metadata_schema = {
     'language': {
         'type': 'string',
         'default': 'en',
-        'mapping': not_analyzed
+        'mapping': not_analyzed,
+        'nullable': True,
     },
     'abstract': {
         'type': 'string',
+        'nullable': True,
     },
     'headline': {
         'type': 'string'
@@ -115,7 +118,8 @@ metadata_schema = {
         'mapping': not_analyzed
     },
     'anpa_take_key': {
-        'type': 'string'
+        'type': 'string',
+        'nullable': True,
     },
     'keywords': {
         'type': 'list',
@@ -126,10 +130,12 @@ metadata_schema = {
     },
     'priority': {
         'type': 'string',
-        'mapping': not_analyzed
+        'mapping': not_analyzed,
+        'nullable': True,
     },
     'urgency': {
-        'type': 'integer'
+        'type': 'integer',
+        'nullable': True,
     },
     'pubstatus': {
         'type': 'string',
@@ -142,10 +148,12 @@ metadata_schema = {
         'mapping': not_analyzed
     },
     'byline': {
-        'type': 'string'
+        'type': 'string',
+        'nullable': True,
     },
     'ednote': {
-        'type': 'string'
+        'type': 'string',
+        'nullable': True,
     },
     'description': {
         'type': 'string',
@@ -155,10 +163,12 @@ metadata_schema = {
         'type': 'list'
     },
     'body_html': {
-        'type': 'string'
+        'type': 'string',
+        'nullable': True,
     },
     'body_text': {
-        'type': 'string'
+        'type': 'string',
+        'nullable': True,
     },
     'dateline': {
         'type': 'string'
@@ -196,10 +206,15 @@ metadata_schema = {
         'type': 'list'
     },
     'located': {
-        'type': 'string'
+        'type': 'string',
+        'nullable': True,
     },
     'creditline': {
         'type': 'string'
+    },
+    'dateline': {
+        'type': 'string',
+        'nullable': True,
     },
     LINKED_IN_PACKAGES: {
         'type': 'list',
