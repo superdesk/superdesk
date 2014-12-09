@@ -16,12 +16,7 @@ def get_unspike_updates(doc):
 
     :param doc: document to unspike
     """
-    updates = {
-        REVERT_STATE: None,
-        EXPIRY: None
-    }
-
-    updates['state'] = doc.get('revert_state')
+    updates = {REVERT_STATE: None, EXPIRY: None, 'state': doc.get('revert_state')}
 
     desk_id = doc.get('task', {}).get('desk')
     if desk_id:

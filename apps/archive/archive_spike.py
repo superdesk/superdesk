@@ -1,42 +1,74 @@
-from flask import request
-from superdesk.resource import Resource, build_custom_hateoas
-from .common import get_user, item_url
-from .archive_lock import custom_hateoas
-from superdesk.services import BaseService
-from apps.common.components.utils import get_component
-from apps.item_lock.components.item_spike import ItemSpike
-from apps.content import metadata_schema
-import superdesk
-from eve.utils import ParsedRequest, date_to_str
-from superdesk.utc import utcnow
 import logging
+
+from eve.versioning import resolve_document_version, insert_versioning_documents
+from flask import request, current_app as app
+from eve.utils import ParsedRequest, date_to_str
+
+from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
+from superdesk import get_resource_service
+from superdesk.notification import push_notification
+from .common import get_user, item_url
+from superdesk.services import BaseService
+from apps.item_lock.components.item_spike import get_unspike_updates
+import superdesk
+from superdesk.utc import utcnow, get_expiry_date
+
 
 logger = logging.getLogger(__name__)
 
 
-class ArchiveSpikeResource(Resource):
+class ArchiveSpikeResource(ArchiveResource):
     endpoint_name = 'archive_spike'
-    url = 'archive/<{0}:item_id>/spike'.format(item_url)
-    schema = metadata_schema
-    datasource = {'source': 'archive'}
-    resource_methods = ['POST', 'DELETE']
     resource_title = endpoint_name
-    privileges = {'POST': 'spike', 'DELETE': 'unspike'}
+    datasource = {'source': ARCHIVE}
+
+    url = "archive/spike"
+    item_url = item_url
+
+    resource_methods = []
+    item_methods = ['PATCH', 'DELETE']
+
+    privileges = {'PATCH': 'spike', 'DELETE': 'unspike'}
+
+
+EXPIRY = 'expiry'
+REVERT_STATE = 'revert_state'
 
 
 class ArchiveSpikeService(BaseService):
 
-    def create(self, docs, **kwargs):
+    def update(self, id, updates):
         user = get_user(required=True)
-        item_id = request.view_args['item_id']
-        item = get_component(ItemSpike).spike({'_id': item_id}, user['_id'])
-        build_custom_hateoas(custom_hateoas, item)
-        return [item['_id']]
+
+        item = get_resource_service(ARCHIVE).find_one(req=None, _id=id)
+        expiry_minutes = app.settings['SPIKE_EXPIRY_MINUTES']
+
+        # check if item is in a desk. If it's then use the desks spike_expiry
+        if 'task' in item and 'desk' in item['task']:
+            desk = get_resource_service('desks').find_one(_id=item['task']['desk'], req=None)
+            expiry_minutes = desk.get('spike_expiry', expiry_minutes)
+
+        updates[EXPIRY] = get_expiry_date(expiry_minutes)
+        updates[REVERT_STATE] = item.get(app.config['CONTENT_STATE'], None)
+
+        item = self.backend.update(self.datasource, id, updates)
+        push_notification('item:spike', item=str(item.get('_id')), user=str(user))
+
+        # build_custom_hateoas(custom_hateoas, item)
+        return item
 
     def delete(self, lookup):
         user = get_user(required=True)
-        item_id = request.view_args['item_id']
-        get_component(ItemSpike).unspike({'_id': item_id}, user['_id'])
+        item_id = request.view_args['_id']
+
+        item = get_resource_service(ARCHIVE).find_one(req=None, _id=item_id)
+        updates = get_unspike_updates(item)
+        resolve_document_version(updates, ARCHIVE, 'DELETE', item)
+        self.backend.update(self.datasource, item_id, updates)
+
+        item = get_resource_service(ARCHIVE).find_one(req=None, _id=item_id)
+        insert_versioning_documents(ARCHIVE, item)
+        push_notification('item:unspike', item=str(filter.get('_id')), user=str(user))
 
 
 class ArchiveRemoveExpiredSpikes(superdesk.Command):
