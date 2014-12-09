@@ -1,16 +1,28 @@
 from collections import Counter
 from eve.utils import ParsedRequest, config
 from eve.validation import ValidationError
-from superdesk.services import BaseService
 from superdesk import SuperdeskError, get_resource_service
-from apps.archive.common import on_create_item
+from apps.archive import ArchiveService
 from apps.content import LINKED_IN_PACKAGES
+from apps.archive import ArchiveVersionsService
+import logging
+
 ASSOCIATIONS = 'refs'
 ITEM_REF = 'residRef'
 ID_REF = 'idRef'
 
+logger = logging.getLogger(__name__)
 
-class PackageService(BaseService):
+
+class PackagesVersionsService(ArchiveVersionsService):
+
+    def get(self, req, lookup):
+        if req is None:
+            req = ParsedRequest()
+        return self.backend.get('archive_versions', req=req, lookup=lookup)
+
+
+class PackageService(ArchiveService):
 
     def get(self, req, lookup):
         if req is None:
@@ -18,25 +30,29 @@ class PackageService(BaseService):
         return self.backend.get('packages', req=req, lookup=lookup)
 
     def on_create(self, docs):
-        on_create_item(docs)
+        super().on_create(docs)
         self.check_package_associations(docs)
 
     def on_created(self, docs):
+        super().on_created(docs)
         for (doc, assoc) in [(doc, assoc) for doc in docs
                              for assoc in self._get_associations(doc)]:
             self.update_link(doc[config.ID_FIELD], assoc)
 
     def on_update(self, updates, original):
+        super().on_update(updates, original)
         associations = self._get_associations(updates)
         self.check_for_duplicates(original, associations)
         for assoc in associations:
             self.extract_default_association_data(original, assoc)
 
     def on_updated(self, updates, original):
+        super().on_updated(updates, original)
         for assoc in self._get_associations(updates):
             self.update_link(original[config.ID_FIELD], assoc)
 
     def on_deleted(self, doc):
+        super().on_deleted(doc)
         for assoc in self._get_associations(doc):
             self.update_link(doc[config.ID_FIELD], assoc, delete=True)
 

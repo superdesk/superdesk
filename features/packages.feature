@@ -403,7 +403,8 @@ Feature: Packages
                     ],
                     "role": "main"
                 }
-            ]
+            ],
+            "guid": "tag:example.com,0000:newsml_BRE9A605"
         }
         """
         And we patch latest
@@ -433,6 +434,7 @@ Feature: Packages
         Then we get existing resource
         """
         {
+            "_id": "tag:example.com,0000:newsml_BRE9A605",
             "groups": [
                 {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
                 {
@@ -452,9 +454,14 @@ Feature: Packages
                     "role": "main"
                 }
             ],
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
             "type": "composite"
         }
         """
+        And we get version 2
+       	When we get "/packages/tag:example.com,0000:newsml_BRE9A605?version=all"
+        Then we get list with 2 items
+
 
     @auth
     Scenario: Delete created package
