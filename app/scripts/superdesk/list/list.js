@@ -92,16 +92,17 @@ define([
         return {
             templateUrl: require.toUrl('./views/sdPagination.html'),
             scope: {
-                items: '='  //,limit: '='
+                items: '='
             },
-            link: function(scope, element, attrs) { 
-
-                scope.$watch('items._meta', function(meta) { 
+            link: function(scope, element, attrs) {
+                var size = 25;
+                scope.pgsizes = [25, 50, 100];
+                scope.$watch('items._meta', function(meta) {
                     scope.total = 0;
-                    if (meta) { 
+                    if (meta) {
                         scope.total = meta.total;
                         scope.page = $location.search().page || 1;
-                        scope.limit = parseInt($location.search().max_results) || 25;
+                        scope.limit = Number(localStorage.getItem('pagesize')) || Number($location.search().max_results) || size;
                         scope.lastPage = scope.limit ? Math.ceil(scope.total / scope.limit) : scope.page;
                         scope.from = (scope.page - 1) * scope.limit + 1;
                         scope.to = Math.min(scope.total, scope.from + scope.limit - 1);
@@ -117,11 +118,13 @@ define([
                     $location.search('page', page > 1 ? page : null);
                 };
                 /*
-                * Set page size limit
+                * Set custom page size limit
                 *@param {integer} page
                 */
-                scope.setLimit = function(pagesize){
-                     $location.search('max_results', pagesize != null ? pagesize : 25);
+                scope.setLimit = function(pagesize) {
+                     localStorage.setItem('pagesize', pagesize);
+                     scope.setPage(0);
+                     $location.search('max_results', pagesize != null ? pagesize : size);
                 };
             }
         };

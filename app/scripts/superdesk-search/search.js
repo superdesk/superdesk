@@ -55,7 +55,7 @@
              */
             function paginate(query, params) {
                 var page = params.page || 1;
-                var pagesize = parseInt(params.max_results) || 25;
+                var pagesize = Number(localStorage.getItem('pagesize')) || Number(params.max_results) || size;
                 query.size = pagesize;
                 query.from = (page - 1) * query.size;
             }
