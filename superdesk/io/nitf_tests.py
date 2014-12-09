@@ -57,6 +57,7 @@ class AAPTestCase(NITFTestCase):
         text = "<p>   1A) More extreme weather forecast over the next few days the <br />fire situation is likely"
         self.assertIn(text, self.item.get('body_html'))
         self.assertIsInstance(self.item.get('body_html'), type(''))
+        self.assertNotIn('<body.content>', self.item.get('body_html'))
 
     def test_pubstatus(self):
         self.assertEqual('usable', self.item.get('pubstatus'))
