@@ -8,7 +8,6 @@ from superdesk import get_resource_service
 from superdesk.notification import push_notification
 from .common import get_user, item_url
 from superdesk.services import BaseService
-from apps.item_lock.components.item_spike import get_unspike_updates
 import superdesk
 from superdesk.utc import utcnow, get_expiry_date
 
@@ -73,11 +72,29 @@ class ArchiveSpikeService(BaseService):
 
 class ArchiveUnspikeService(BaseService):
 
+    def get_unspike_updates(self, doc):
+        """Generate changes for a given doc to unspike it.
+
+        :param doc: document to unspike
+        """
+        updates = {REVERT_STATE: None, EXPIRY: None, 'state': doc.get(REVERT_STATE)}
+
+        desk_id = doc.get('task', {}).get('desk')
+        if desk_id:
+            desk = app.data.find_one('desks', None, _id=desk_id)
+            updates['task'] = {
+                'desk': str(desk_id),
+                'stage': str(desk['incoming_stage']) if desk_id else None,
+                'user': None
+            }
+
+        return updates
+
     def update(self, id, updates):
         user = get_user(required=True)
 
         item = get_resource_service(ARCHIVE).find_one(req=None, _id=id)
-        updates.update(get_unspike_updates(item))
+        updates.update(self.get_unspike_updates(item))
 
         self.backend.update(self.datasource, id, updates)
         item = get_resource_service(ARCHIVE).find_one(req=None, _id=id)
