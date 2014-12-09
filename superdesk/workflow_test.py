@@ -31,3 +31,22 @@ class WorkflowTestCase(tests.TestCase):
         self.assertNotIn('spike', names(superdesk.get_workflow_actions(state='spiked')))
         self.assertIn('unspike', names(superdesk.get_workflow_actions(state='spiked')))
         self.assertNotIn('unspike', names(superdesk.get_workflow_actions(state='draft')))
+
+    def test_is_workflow_action_valid(self):
+        superdesk.workflow_action(
+            name='test_spike',
+            exclude_states=['spiked', 'published', 'killed'],
+            privileges=['spike']
+        )
+
+        superdesk.workflow_action(
+            name='test_on_hold',
+            exclude_states=['spiked', 'published', 'killed', 'on_hold'],
+            privileges=['on_hold']
+        )
+
+        self.assertTrue(superdesk.is_workflow_state_transition_valid('test_spike', 'in_progress'))
+        self.assertFalse(superdesk.is_workflow_state_transition_valid('test_spike', 'spiked'))
+        self.assertTrue(superdesk.is_workflow_state_transition_valid('test_on_hold', 'routed'))
+        self.assertTrue(superdesk.is_workflow_state_transition_valid('test_on_hold', 'fetched'))
+        self.assertFalse(superdesk.is_workflow_state_transition_valid('test_on_hold', 'published'))
