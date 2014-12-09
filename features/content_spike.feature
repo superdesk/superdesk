@@ -5,7 +5,7 @@ Feature: Content Spiking
         Given empty "archive"
         Given "archive"
             """
-            [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
+            [{"_id": "item-1", "guid": "item-1", "headline": "test", "_version": 1}]
             """
 
         When we post to "/archive/item-1/spike"
@@ -14,6 +14,7 @@ Feature: Content Spiking
             """
         Then we get OK response
         And we get spiked content "item-1"
+        And we get version 2
         And we get global spike expiry
 
 
@@ -35,7 +36,7 @@ Feature: Content Spiking
             """
         Given "archive"
             """
-            [{"_id": "item-1", "guid": "item-1", "headline": "test", "task":{"desk":"#DESKS_ID#", "stage" :"#STAGES_ID#"}}]
+            [{"_id": "item-1", "guid": "item-1", "_version": 1, "headline": "test", "task":{"desk":"#DESKS_ID#", "stage" :"#STAGES_ID#"}}]
             """
         When we post to "/archive/item-1/spike"
             """
@@ -43,6 +44,7 @@ Feature: Content Spiking
             """
         Then we get OK response
         And we get spiked content "item-1"
+        And we get version 2
         And we get desk spike expiry after "60"
 
 
@@ -52,7 +54,7 @@ Feature: Content Spiking
         Given we have "administrator" as type of user
         Given "archive"
             """
-            [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
+            [{"_id": "item-1", "guid": "item-1", "_version": 1, "headline": "test"}]
             """
 
         When we post to "/archive/item-1/spike"
@@ -63,3 +65,4 @@ Feature: Content Spiking
         And we unspike "/archive/item-1"
 
         Then we get unspiked content "item-1"
+        And we get version 3

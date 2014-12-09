@@ -8,6 +8,7 @@ from apps.item_lock.components.item_spike import ItemSpike
 import superdesk
 from eve.utils import ParsedRequest, date_to_str
 from superdesk.utc import utcnow
+from eve.versioning import insert_versioning_documents
 import logging
 
 logger = logging.getLogger(__name__)
@@ -16,6 +17,8 @@ logger = logging.getLogger(__name__)
 class ArchiveSpikeResource(Resource):
     endpoint_name = 'archive_spike'
     url = 'archive/<{0}:item_id>/spike'.format(item_url)
+    # we may need to re-visit this field as it is redundant now
+    # but we still need the expiry field for spiked items
     schema = {'is_spiked': {'type': 'boolean'}}
     datasource = {'source': 'archive'}
     resource_methods = ['POST', 'DELETE']
@@ -29,6 +32,7 @@ class ArchiveSpikeService(BaseService):
         user = get_user(required=True)
         item_id = request.view_args['item_id']
         item = get_component(ItemSpike).spike({'_id': item_id}, user['_id'])
+        self.increment_version(item_id)
         build_custom_hateoas(custom_hateoas, item)
         return [item['_id']]
 
@@ -36,6 +40,11 @@ class ArchiveSpikeService(BaseService):
         user = get_user(required=True)
         item_id = request.view_args['item_id']
         get_component(ItemSpike).unspike({'_id': item_id}, user['_id'])
+        self.increment_version(item_id)
+
+    def increment_version(self, id):
+        doc = superdesk.get_resource_service('archive').find_one(req=None, _id=id)
+        insert_versioning_documents('archive', doc)
 
 
 class ArchiveRemoveExpiredSpikes(superdesk.Command):
@@ -76,7 +85,7 @@ superdesk.workflow_state('spiked')
 superdesk.workflow_action(
     name='spike',
     exclude_states=['spiked', 'published', 'killed'],
-    privileges=['spike'],
+    privileges=['spike']
 )
 
 superdesk.workflow_action(

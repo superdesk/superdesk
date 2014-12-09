@@ -5,7 +5,7 @@ actions = []
 allowed_workflow_states = []
 
 __all__ = ['workflow_state', 'get_workflow_states', 'allowed_workflow_states',
-           'workflow_action', 'get_workflow_actions']
+           'workflow_action', 'get_workflow_actions', 'is_workflow_state_transition_valid']
 
 
 def workflow_action(name, include_states=None, exclude_states=None, privileges=None):
@@ -53,6 +53,11 @@ def workflow_state(name):
     """
     allowed_workflow_states.append(name)
     states.append({'name': name})
+
+
+def is_workflow_state_transition_valid(action_name, state):
+    # assumption here is that there is no duplicate actions.
+    return action_name in [action['name'] for action in get_workflow_actions(state)]
 
 
 def get_workflow_states():
