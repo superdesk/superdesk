@@ -7,8 +7,8 @@
             <div sd-item-sortbar class="pull-left"></div>
 
             <div class="view-select pull-right">
-                <button title="{{ 'switch to grid view' | translate}}" ng-show="view !== 'mgrid'"><i class="icon-th" ng-click="setview('mgrid')"></i></button>
-                <button title="{{ 'switch to list view' | translate}}" ng-show="view !== 'compact'"><i class="icon-th-list" ng-click="setview('compact')"></i></button>
+                <button title="{{ 'switch to grid view' | translate}}" ng-show="view !== 'mgrid'" ng-click="setview('mgrid')"><i class="icon-th"></i></button>
+                <button title="{{ 'switch to list view' | translate}}" ng-show="view !== 'compact'" ng-click="setview('compact')"><i class="icon-th-list"></i></button>
             </div>
             <div sd-pagination data-items="items" data-limit="25"></div>
         </header>
