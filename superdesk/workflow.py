@@ -57,14 +57,7 @@ def workflow_state(name):
 
 def is_workflow_state_transition_valid(action_name, state):
     # assumption here is that there is no duplicate actions.
-    action_list = [action for action in get_workflow_actions(state) if action['name'] == action_name]
-    if action_list:
-        action = action_list[0]
-        include_state_valid = state in action['include_states'] if action['include_states'] else True
-        exclude_state_valid = state not in action['exclude_states'] if action['exclude_states'] else True
-        return include_state_valid and exclude_state_valid
-    else:
-        return False
+    return action_name in [action['name'] for action in get_workflow_actions(state)]
 
 
 def get_workflow_states():
