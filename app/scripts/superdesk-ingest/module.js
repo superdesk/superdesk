@@ -256,6 +256,7 @@ define([
 
                scope.edit = function(ruleset) {
                     scope.editRuleset = _.create(ruleset);
+                    scope.editRuleset.rules = ruleset.rules || [];
                     _orig = ruleset;
                 };
 
