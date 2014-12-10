@@ -1,3 +1,4 @@
+@wip
 Feature: Rule Sets Resource
 
     @auth
@@ -50,6 +51,20 @@ Feature: Rule Sets Resource
           """
         When we delete "/rule_sets/#RULE_SETS_ID#"
         Then we get response code 200
+
+    @auth
+    Scenario: Delete rule_sets when in use
+      Given "rule_sets"
+        """
+        [{"name": "set name"}]
+        """
+      Given "ingest_providers"
+        """
+        [{"name": "test", "type": "reuters", "rule_set": "#RULE_SETS_ID#"}]
+        """
+
+      When we delete "/rule_sets/#RULE_SETS_ID#"
+      Then we get response code 400
 
     @auth
     Scenario: path rule_sets
