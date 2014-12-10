@@ -21,11 +21,13 @@
             </div>
         </div>
 
-        <div sd-item-lock data-item="selected.preview"></div>
+        <div class="clearfix" sd-item-lock data-item="selected.preview"></div>
 
         <p class="title" ng-if="selected.preview.headline" ng-class="{condensed: !lock}">{{ selected.preview.headline }}</p>
 
         <p class="nav-space" ng-if="!selected.preview.headline && !lock"></p>
+        
+        <div class="state-label state-{{selected.preview.state}}">{{selected.preview.state}}</div>
 
         <div class="core-content">
 

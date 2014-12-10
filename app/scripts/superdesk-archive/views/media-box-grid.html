@@ -34,13 +34,7 @@
 <span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
 <span class="urgency-label"><i class="urgency-icon-{{item.urgency}}"></i></span>
 
-<div class="status-label"
-     ng-class="{'label-canceled': item.pubstatus=='canceled'}"
-     ng-show="item.pubstatus && item.pubstatus!='usable'">
-     {{ item.pubstatus | translate }}
-</div>
-
-<div class="status-label" ng-show="item._type">{{ item._type }}</div>
+<div class="state-label state-{{item.state}}">{{item.state}}</div>
 
 <div class="action">
     <ul ng-if="extras.activity" class="item-functions"
