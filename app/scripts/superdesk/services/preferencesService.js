@@ -1,7 +1,7 @@
 define(['angular', 'lodash'], function(angular, _) {
     'use strict';
 
-    return angular.module('superdesk.preferences', ['superdesk.notify', 'superdesk.services.storage', 'superdesk.auth'])
+    return angular.module('superdesk.preferences', ['superdesk.notify', 'superdesk.services.storage', 'superdesk.session'])
 
         .service('preferencesService', ['$injector', '$rootScope', '$q', 'storage', 'session', 'notify', 'gettext',
             function PreferencesService($injector, $rootScope, $q, storage, session, notify, gettext) {
