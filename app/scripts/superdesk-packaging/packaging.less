@@ -4,7 +4,35 @@
 @import 'mixins.less';
 @import 'variables.less';
 
-packaging {
+.packaging-screen {
+	position: absolute;
+	top: 0; right: 0; left: 0; bottom: 0;
+	.main-section {
+        top: 45px; right: 0; left: 0; bottom: 0;
+        .transition(all ease 0.3s);
+	}
+}
+.package-edit-container {
+	position: absolute;
+	top:0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow: hidden;
+}
+
+
+.widget-active .main-package-container {
+	left: @tablist-width + @tabpane-width;
+}
+
+.main-package-container {
+	position: absolute;
+	top:0;
+	left: @tablist-width;
+	right: @tablist-width;
+	bottom: 0;
+	overflow-y: auto;
 
 	.widget-content {
 		padding-top: 20px;
@@ -17,12 +45,11 @@ packaging {
 		[class*="filetype-icon-large"] {
 			zoom: 0.6;
 			.opacity(60);
-			margin-right: 10px;
+			margin-right: 60px;
 		}
 		.dropdown-menu {
 			margin-top: -3px;
 			left: 20px; right: 20px;
-            max-width:400px;
 			&:before {
 				display: none;
 			}
