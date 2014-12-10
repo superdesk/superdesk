@@ -33,7 +33,7 @@ Feature: News Items Archive
 
         And we patch latest
         """
-        {"headline": "TEST 3"}
+        {"headline": "TEST 3", "state": "in_progress"}
         """
 
         Then we get updated response
@@ -58,7 +58,7 @@ Feature: News Items Archive
 
         And we post to "archive/item-1/autosave"
         """
-        {"headline": "another one"}
+        {"headline": "another one", "state": "in_progress"}
         """
 
         And we get "archive/item-1"
@@ -75,7 +75,6 @@ Feature: News Items Archive
         {"headline": "TEST 2", "urgency": 2}
         """
 		And we restore version 1
-
         Then we get version 3
         And the field "headline" value is "test"
 
@@ -91,17 +90,15 @@ Feature: News Items Archive
         """
         And we get "bike.jpg" metadata
         And we get "picture" renditions
-
         When we patch latest
         """
         {"headline": "flower", "byline": "foo", "description": "flower desc"}
         """
-
         When we get "/archive"
         Then we get list with 1 items
         """
         {"_items": [{"headline": "flower", "byline": "foo", "description": "flower desc",
-                     "pubstatus": "Usable", "language": "en", "state": "draft"}]}
+                     "pubstatus": "Usable", "language": "en", "state": "in_progress"}]}
         """
 
     @auth
@@ -121,7 +118,7 @@ Feature: News Items Archive
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"_items": [{"headline": "green", "byline": "foo", "description": "green music", "state": "draft"}]}
+        {"_items": [{"headline": "green", "byline": "foo", "description": "green music", "state": "in_progress"}]}
         """
 
     @auth
@@ -141,7 +138,7 @@ Feature: News Items Archive
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"_items": [{"headline": "week @ nasa", "byline": "foo", "description": "nasa video", "state": "draft"}]}
+        {"_items": [{"headline": "week @ nasa", "byline": "foo", "description": "nasa video", "state": "in_progress"}]}
         """
 
     @auth

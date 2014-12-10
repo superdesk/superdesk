@@ -6,7 +6,7 @@ from .common import on_create_item, on_create_media_archive, on_update_media_arc
 from .common import get_user
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
-from superdesk import SuperdeskError, get_resource_service
+from superdesk import SuperdeskError, get_resource_service, InvalidStateTransitionError
 from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE,\
@@ -20,6 +20,7 @@ from apps.common.models.base_model import InvalidEtag
 from apps.legal_archive.components.legal_archive_proxy import LegalArchiveProxy
 from copy import copy
 import superdesk
+from superdesk.workflow import is_workflow_state_transition_valid
 
 
 SOURCE = 'archive'
@@ -111,6 +112,12 @@ class ArchiveService(BaseService):
                          type=doc['type'], subject=get_subject(doc))
 
     def on_update(self, updates, original):
+        if original[config.CONTENT_STATE] != 'in_progress':
+            if not is_workflow_state_transition_valid('save', original[config.CONTENT_STATE]):
+                raise InvalidStateTransitionError()
+            else:
+                updates[config.CONTENT_STATE] = 'in_progress'
+
         user = get_user()
         lock_user = original.get('lock_user', None)
         force_unlock = updates.get('force_unlock', False)
@@ -230,21 +237,13 @@ class ArchiveSaveService(BaseService):
 
 
 superdesk.workflow_state('in_progress')
-superdesk.workflow_state('subbed')
-superdesk.workflow_state('submitted')
-
 superdesk.workflow_action(
     name='save',
-    exclude_states=['ingested', 'published', 'killed'],
+    include_states=['draft', 'fetched', 'routed', 'submitted'],
     privileges=['archive']
 )
 
-superdesk.workflow_action(
-    name='sub_edit',
-    exclude_states=['ingested', 'draft', 'published', 'killed'],
-    privileges=['archive']
-)
-
+superdesk.workflow_state('submitted')
 superdesk.workflow_action(
     name='move',
     exclude_states=['ingested', 'spiked', 'on-hold', 'published', 'killed'],
