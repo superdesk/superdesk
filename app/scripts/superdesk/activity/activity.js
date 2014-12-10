@@ -81,7 +81,7 @@ define([
                 auth: true,
                 features: {},
                 privileges: {},
-                condition: function(item) {return true;},
+                condition: function(item) {return true;}
             }, activityData);
 
             var actionless = _.find(activity.filters, function(filter) {
