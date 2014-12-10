@@ -10,6 +10,7 @@ define(['angular', 'lodash'], function(angular, _) {
                 SESSION_PREFERENCES = 'session_preferences',
                 ACTIVE_PRIVILEGES = 'active_privileges',
                 PREFERENCES = 'preferences',
+                ACTIONS = 'allowed_actions',
                 userPreferences = ['feature:preview', 'archive:view', 'email:notification', 'workqueue:items'],
                 api,
                 original_preferences = null;
@@ -47,6 +48,13 @@ define(['angular', 'lodash'], function(angular, _) {
                 return this.get().then(function() {
                     var preferences = loadLocally();
                     return preferences[ACTIVE_PRIVILEGES] || {};
+                });
+            };
+
+            this.getActions = function getActions() {
+                 return this.get().then(function() {
+                    var preferences = loadLocally();
+                    return preferences[ACTIONS] || [];
                 });
             };
 

@@ -406,7 +406,7 @@ define([
                 filters: [
                     {action: 'list', type: 'ingest'}
                 ],
-                privileges: {ingest_move: 1}
+                action: 'fetch_as_from_ingest'
             });
     }]);
 

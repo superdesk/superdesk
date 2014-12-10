@@ -83,7 +83,7 @@ define([
                         return spike.spike(data.item);
                     }],
                     filters: [{action: 'list', type: 'archive'}],
-                    privileges: {spike: 1}
+                    action: 'spike'
                 })
                 .activity('unspike', {
                     label: gettext('Unspike Item'),
@@ -92,7 +92,7 @@ define([
                         return spike.unspike(data.item);
                     }],
                     filters: [{action: 'list', type: 'spike'}],
-                    privileges: {unspike: 1}
+                    action: 'unspike'
                 });
         }])
 
