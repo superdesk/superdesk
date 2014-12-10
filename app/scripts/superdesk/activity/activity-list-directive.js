@@ -23,7 +23,7 @@ define([
                     return;
                 }
 
-                scope.activities = _.filter(superdesk.findActivities(intent), function(activity) {
+                scope.activities = _.filter(superdesk.findActivities(intent, scope.item), function(activity) {
                     return workflowService.isActionAllowed(scope.item, activity.action);
                 });
 
