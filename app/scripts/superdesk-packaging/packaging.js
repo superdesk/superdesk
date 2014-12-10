@@ -223,7 +223,10 @@
             }],
             filters: [
                 {action: 'list', type: 'archive'}
-            ]
+            ],
+            condition: function(item) {
+                return item.type === 'composite';
+            }
         })
         .activity('append.package', {
             label: gettext('Add items to package'),

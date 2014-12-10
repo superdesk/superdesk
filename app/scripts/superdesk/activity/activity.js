@@ -65,6 +65,7 @@ define([
          *    - `reloadOnSearch` - `{bool=false}` - $route.reloadOnSearch param.
          *    - `auth` - `{bool=true}` - does activity require authenticated user?
          *    - `features` - `{Object}` - map of features this activity requires.
+         *    - `condition` - `{Function}` - method used to check if the activity is enabled for a specific item.
          *
          * @returns {Object} self
          */
@@ -79,7 +80,8 @@ define([
                 reloadOnSearch: false,
                 auth: true,
                 features: {},
-                privileges: {}
+                privileges: {},
+                condition: function(item) {return true;},
             }, activityData);
 
             var actionless = _.find(activity.filters, function(filter) {
@@ -188,7 +190,7 @@ define([
                 /**
                  * Find all available activities for given intent
                  */
-                findActivities: function(intent) {
+                findActivities: function(intent, item) {
                     var criteria = {};
                     if (intent.action) {
                         criteria.action = intent.action;
@@ -197,7 +199,7 @@ define([
                         criteria.type = intent.type;
                     }
                     return _.filter(this.activities, function(activity) {
-                        return _.find(activity.filters, criteria) && isAllowed(activity);
+                        return _.find(activity.filters, criteria) && isAllowed(activity) && activity.condition(item);
                     });
                 },
 
