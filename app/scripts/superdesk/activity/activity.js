@@ -198,9 +198,10 @@ define([
                     if (intent.type) {
                         criteria.type = intent.type;
                     }
-                    return _.filter(this.activities, function(activity) {
+
+                    return _.sortBy(_.filter(this.activities, function(activity) {
                         return _.find(activity.filters, criteria) && isAllowed(activity) && activity.condition(item);
-                    });
+                    }), 'priority').reverse();
                 },
 
                 /**

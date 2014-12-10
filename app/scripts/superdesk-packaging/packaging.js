@@ -217,7 +217,8 @@
         })
         .activity('edit.package', {
             label: gettext('Edit package'),
-            icon: 'filetype-icon-composite',
+            priority: 10,
+            icon: 'pencil',
             controller: ['data', '$location', 'superdesk', function(data, $location, superdesk) {
                 superdesk.intent('author', 'package', data.item);
             }],

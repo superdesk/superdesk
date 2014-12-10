@@ -772,6 +772,7 @@
 	            })
 	            .activity('edit.text', {
 	            	label: gettext('Edit item'),
+                    priority: 10,
 	            	icon: 'pencil',
 	            	controller: ['data', '$location', 'workqueue', 'superdesk', function(data, $location, workqueue, superdesk) {
 	            		workqueue.add(data.item);
