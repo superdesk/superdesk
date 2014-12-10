@@ -110,14 +110,39 @@ function WorkqueueService(storage, preferencesService, notify) {
     };
 }
 
-WorkqueueCtrl.$inject = ['$scope', 'ContentCtrl'];
-function WorkqueueCtrl($scope, ContentCtrl) {
+ArticleDashboardCtrl.$inject = ['$scope', 'ContentCtrl'];
+function ArticleDashboardCtrl($scope, ContentCtrl) {
 
     $scope.content = new ContentCtrl();
 }
 
-WorkqueueListDirective.$inject = ['workqueue', 'superdesk'];
-function WorkqueueListDirective(workqueue, superdesk) {
+WorkqueueCtrl.$inject = ['$scope', 'workqueue', 'superdesk'];
+function WorkqueueCtrl($scope, workqueue, superdesk) {
+
+    $scope.workqueue = workqueue.all();
+
+    $scope.openItem = function(article) {
+        if ($scope.active) {
+            $scope.update();
+        }
+        workqueue.setActive(article);
+        superdesk.intent('author', 'article', article);
+    };
+
+    $scope.openDashboard = function() {
+        superdesk.intent('author', 'dashboard');
+    };
+
+    $scope.closeItem = function(item) {
+        if ($scope.active && $scope.active._id === item._id) {
+            $scope.close();
+        } else {
+            workqueue.remove(item);
+        }
+    };
+}
+
+function WorkqueueListDirective() {
     return {
         templateUrl: 'scripts/superdesk-authoring/views/opened-articles.html',
         scope: {
@@ -125,35 +150,21 @@ function WorkqueueListDirective(workqueue, superdesk) {
             update: '&',
             close: '&'
         },
-        link: function(scope) {
-            scope.workqueue = workqueue.all();
+        controller: WorkqueueCtrl
+    };
+}
 
-            scope.openItem = function(article) {
-                if (scope.active) {
-                    scope.update();
-                }
-                workqueue.setActive(article);
-                superdesk.intent('author', 'article', article);
-            };
-
-            scope.openDashboard = function() {
-                superdesk.intent('author', 'dashboard');
-            };
-
-            scope.closeItem = function(item) {
-                if (scope.active && scope.active._id === item._id) {
-                    scope.close();
-                } else {
-                    workqueue.remove(item);
-                }
-            };
-        }
+function ArticleDashboardDirective() {
+    return {
+        templateUrl: 'scripts/superdesk-authoring/views/dashboard-articles.html',
+        controller: WorkqueueCtrl
     };
 }
 
 angular.module('superdesk.authoring.workqueue', ['superdesk.activity'])
     .service('workqueue', WorkqueueService)
     .directive('sdWorkqueue', WorkqueueListDirective)
+    .directive('sdDashboardArticles', ArticleDashboardDirective)
 
     .config(['superdeskProvider', function(superdesk) {
         superdesk
@@ -162,7 +173,7 @@ angular.module('superdesk.authoring.workqueue', ['superdesk.activity'])
                 templateUrl: 'scripts/superdesk-authoring/views/dashboard.html',
                 topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
                 beta: true,
-                controller: WorkqueueCtrl,
+                controller: ArticleDashboardCtrl,
                 category: superdesk.MENU_MAIN,
                 filters: [{action: 'author', type: 'dashboard'}]
             });
