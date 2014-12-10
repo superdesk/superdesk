@@ -44,6 +44,27 @@ def get_workflow_actions(state=None):
         return [action for action in actions if is_go(action, state)]
 
 
+def get_privileged_actions(privileges):
+    """ Get the actions that are within the privileged list
+    :param privileges:
+    :return: list of allowed actions
+    """
+    allowed_action = []
+    for action in actions:
+        # only add the action if it has some privileges
+        add = len(action['privileges']) > 0
+        for action_privilege in action['privileges']:
+            if action_privilege not in privileges.keys():
+                add = False
+            else:
+                # make sure the privilege is allowed
+                if not privileges[action_privilege] == 1:
+                    add = False
+        if add:
+            allowed_action.append(action)
+    return allowed_action
+
+
 def workflow_state(name):
     """Register new workflow state.
 
