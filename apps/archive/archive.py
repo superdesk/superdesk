@@ -112,10 +112,11 @@ class ArchiveService(BaseService):
                          type=doc['type'], subject=get_subject(doc))
 
     def on_update(self, updates, original):
-        if original[config.CONTENT_STATE] != 'in_progress':
-            if not is_workflow_state_transition_valid('save', original[config.CONTENT_STATE]):
+        original_state = original[config.CONTENT_STATE]
+        if original_state != 'ingested' and original_state != 'in_progress':
+            if not is_workflow_state_transition_valid('save', original_state):
                 raise InvalidStateTransitionError()
-            else:
+            elif self._is_req_for_save(updates):
                 updates[config.CONTENT_STATE] = 'in_progress'
 
         user = get_user()
@@ -192,7 +193,7 @@ class ArchiveService(BaseService):
         if old is None:
             raise SuperdeskError(payload='Invalid version %s' % old_version)
 
-        curr = get_resource_service('archive').find_one(req=None, _id=item_id)
+        curr = get_resource_service(SOURCE).find_one(req=None, _id=item_id)
         if curr is None:
             raise SuperdeskError(payload='Invalid item id %s' % item_id)
 
@@ -208,6 +209,20 @@ class ArchiveService(BaseService):
         del doc['last_version']
         doc.update(old)
         return res
+
+    def _is_req_for_save(self, doc):
+        """
+        Patch of /api/archive is being used in multiple places. This method differentiates from the patch
+        triggered by user or not.
+        """
+
+        if 'req_for_save' in doc:
+            req_for_save = doc['req_for_save']
+            del doc['req_for_save']
+
+            return req_for_save == 'true'
+
+        return True
 
 
 class AutoSaveResource(Resource):

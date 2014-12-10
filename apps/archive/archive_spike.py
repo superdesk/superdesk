@@ -115,7 +115,7 @@ class ArchiveRemoveExpiredSpikes(superdesk.Command):
         while items.count() > 0:
             for item in items:
                 logger.info('deleting {} expiry: {} now:{}'.format(item['_id'], item['expiry'], now))
-                superdesk.get_resource_service('archive').delete_action({'_id': str(item['_id'])})
+                superdesk.get_resource_service(ARCHIVE).delete_action({'_id': str(item['_id'])})
             items = self.get_expired_items(now)
 
     def get_expired_items(self, now):
@@ -123,7 +123,7 @@ class ArchiveRemoveExpiredSpikes(superdesk.Command):
         req = ParsedRequest()
         req.max_results = 100
         req.args = {'filter': query_filter}
-        return superdesk.get_resource_service('archive').get(req, None)
+        return superdesk.get_resource_service(ARCHIVE).get(req, None)
 
     def get_query_for_expired_items(self, now):
         query = {'and':

@@ -4,14 +4,12 @@ Feature: Archive Ingest
     Scenario: Move item into archive - tag not on ingest
         Given empty "archive"
 		And empty "ingest"
-
         When we post to "/archive_ingest"
         """
         {
         "guid": "not_on_ingest_tag"
         }
         """
-
         Then we get error 400
 		"""
 		{"_message": "", "_issues": "Fail to found ingest item with guid: not_on_ingest_tag", "_status": "ERR"}
@@ -25,14 +23,12 @@ Feature: Archive Ingest
         """
         [{"guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401", "state": "ingested"}]
         """
-
         When we post to "/archive_ingest"
         """
         {
         "guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401"
         }
         """
-
         Then we get archive ingest result
         """
         {"state": "FAILURE",  "error": "For ingest with guid= tag:reuters.com,0000:newsml_GM1EA6A1P8401, failed to retrieve provider with _id=None"}
@@ -54,7 +50,6 @@ Feature: Archive Ingest
         }
         """
         And we get "/archive/tag:reuters.com,0000:newsml_GM1EA7M13RP01"
-
         Then we get existing resource
 		"""
 		{"renditions": {
@@ -84,20 +79,15 @@ Feature: Archive Ingest
     @auth
     @provider
     Scenario: Move package into archive - check progress status
-        Given empty "archive"
-        And ingest from "reuters"
-        """
-        [{"guid": "tag:reuters.com,2014:newsml_KBN0FL0NM", "state": "ingested"}]
-        """
-
-        When we post to "/archive_ingest"
+    	Given empty "ingest"
+    	When we fetch from "reuters" ingest "tag:reuters.com,2014:newsml_KBN0FL0NM"
+        And we post to "/archive_ingest"
         """
         {
         "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM"
         }
         """
         And we get "/archive/tag:reuters.com,2014:newsml_KBN0FL0NM"
-
         Then we get existing resource
 		"""
 		{"task_id": ""}
@@ -110,13 +100,9 @@ Feature: Archive Ingest
     @auth
     @provider
     Scenario: Move package into archive - check items
-        Given empty "archive"
-        And ingest from "reuters"
-        """
-        [{"guid": "tag:reuters.com,2014:newsml_KBN0FL0NM", "state": "ingested"}]
-        """
-
-        When we post to "/archive_ingest"
+    	Given empty "ingest"
+    	When we fetch from "reuters" ingest "tag:reuters.com,2014:newsml_KBN0FL0NM"
+        And we post to "/archive_ingest"
         """
         {
         "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM"
@@ -194,16 +180,13 @@ Feature: Archive Ingest
           "state": "ingested"
         }]
         """
-
         When we post to "/archive_ingest"
         """
         {
         "guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"
         }
         """
-
         And we get "/archive/tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"
-
         Then we get existing resource
 		"""
 		{"renditions": {
@@ -218,7 +201,6 @@ Feature: Archive Ingest
 		 "state": "fetched"}
   		"""
   		And we get rendition "stream" with mimetype "audio/mpeg"
-
         And we get archive ingest result
         """
         {"state": "PROGRESS",  "current": 2, "total": 2}
