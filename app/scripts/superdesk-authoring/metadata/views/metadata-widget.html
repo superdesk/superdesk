@@ -17,6 +17,12 @@
 			</div>
 		</li>
 		<li>
+			<label translate>State</label>
+			<div class="data">
+				<div class="state-label state-{{item.state}}">{{item.state}}</div>
+			</div>
+		</li>
+		<li>
 			<label translate>Type</label>
 			<div class="data" ng-if="texttypes.indexOf(item.type) < 0">{{item.type}}</div>
 			<div class="data" ng-if="texttypes.indexOf(item.type) > -1">
