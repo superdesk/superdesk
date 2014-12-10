@@ -15,8 +15,6 @@ function MetadataCtrl($scope, desks, metadata, $filter) {
 		$scope.metadata = metadata.values;
 	});
 
-	$scope.texttypes = ['text', 'preformatted'];
-
 	$scope.processGenre = function() {
 		$scope.item.genre = _.map($scope.item.genre, function(g) {
 			return _.pick(g, 'name');

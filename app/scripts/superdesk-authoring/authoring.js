@@ -4,23 +4,21 @@
     var CONTENT_FIELDS_DEFAULTS = {
         headline: '',
         slugline: '',
-        body_html: '',
-        'abstract': '',
-        anpa_take_key: '',
-        unique_name: '',
-        type: '',
-        byline: '',
-        urgency: 0,
-        priority: '',
+        body_html: null,
+        'abstract': null,
+        anpa_take_key: null,
+        byline: null,
+        urgency: null,
+        priority: null,
         subject: [],
         'anpa-category': {},
         genre: [],
-        usageterms: '',
-        ednote: '',
+        usageterms: null,
+        ednote: null,
         place: [],
-        located: '',
+        located: null,
         dateline: '',
-        language: ''
+        language: null
     };
 
     /**
@@ -41,7 +39,19 @@
      * @param {Object} src
      */
     function forcedExtend(dest, src) {
-        angular.extend(dest, _.defaults(_.pick(src, _.keys(CONTENT_FIELDS_DEFAULTS)), CONTENT_FIELDS_DEFAULTS));
+        _.each(CONTENT_FIELDS_DEFAULTS, function(value, key) {
+            if (dest[key]) {
+                if (src[key]) {
+                    dest[key] = src[key];
+                } else {
+                    dest[key] = value;
+                }
+            } else {
+                if (src[key]) {
+                    dest[key] = src[key];
+                }
+            }
+        });
     }
 
     AutosaveService.$inject = ['$q', '$timeout', 'api'];

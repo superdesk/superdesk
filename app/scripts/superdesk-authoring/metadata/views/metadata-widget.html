@@ -18,10 +18,7 @@
 		</li>
 		<li>
 			<label translate>Type</label>
-			<div class="data" ng-if="texttypes.indexOf(item.type) < 0">{{item.type}}</div>
-			<div class="data" ng-if="texttypes.indexOf(item.type) > -1">
-				<select ng-model="item.type" ng-options="t as t for t in texttypes"></select>
-			</div>
+			<div class="data">{{item.type}}</div>
 		</li>
 		<li>
 			<label translate>By</label>
