@@ -17,6 +17,7 @@ from celery import states
 from celery.utils.log import get_task_logger
 
 import superdesk
+from superdesk import SuperdeskError, InvalidStateTransitionError
 from superdesk.utc import utc, utcnow
 from superdesk.celery_app import celery, finish_task_for_progress,\
     finish_subtask_from_progress, add_subtask_to_progress
@@ -26,6 +27,7 @@ from superdesk.resource import Resource
 from .common import get_user, aggregations
 from superdesk.services import BaseService
 from .archive import SOURCE as ARCHIVE
+from superdesk.workflow import is_workflow_state_transition_valid
 
 
 logger = get_task_logger(__name__)
@@ -47,11 +49,11 @@ def import_rendition(guid, rendition_name, href, extract_metadata):
     archive = superdesk.get_resource_service(ARCHIVE).find_one(req=None, guid=guid)
     if not archive:
         msg = 'No document found in the media archive with this ID: %s' % guid
-        raise superdesk.SuperdeskError(payload=msg)
+        raise SuperdeskError(payload=msg)
 
     if rendition_name not in archive['renditions']:
         payload = 'Invalid rendition name %s' % rendition_name
-        raise superdesk.SuperdeskError(payload=payload)
+        raise SuperdeskError(payload=payload)
 
     updates = {}
     metadata = None
@@ -284,7 +286,10 @@ class ArchiveIngestService(BaseService):
             ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=doc.get('guid'))
             if not ingest_doc:
                 msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
-                raise superdesk.SuperdeskError(payload=msg)
+                raise SuperdeskError(payload=msg)
+
+            if not is_workflow_state_transition_valid('fetch_as_from_ingest', ingest_doc[config.CONTENT_STATE]):
+                raise InvalidStateTransitionError()
 
             mark_ingest_as_archived(ingest_doc=ingest_doc)
 
@@ -325,24 +330,17 @@ class ArchiveIngestService(BaseService):
             return doc
         except Exception:
             msg = 'No progress information is available for task_id: %s' % task_id
-            raise superdesk.SuperdeskError(payload=msg)
+            raise SuperdeskError(payload=msg)
 
 
 superdesk.workflow_state('fetched')
-superdesk.workflow_state('routed')
-
-superdesk.workflow_action(
-    name='fetch_from_ingest',
-    include_states=['ingested'],
-    privileges=['ingest_move']
-)
-
 superdesk.workflow_action(
     name='fetch_as_from_ingest',
     include_states=['ingested'],
-    privileges=['ingest_move']
+    privileges=['archive', 'ingest_move']
 )
 
+superdesk.workflow_state('routed')
 superdesk.workflow_action(
     name='route',
     include_states=['ingested']

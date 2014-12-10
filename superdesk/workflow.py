@@ -1,5 +1,3 @@
-
-
 states = []
 actions = []
 allowed_workflow_states = []
@@ -56,10 +54,18 @@ def workflow_state(name):
 
 
 def is_workflow_state_transition_valid(action_name, state):
-    # assumption here is that there is no duplicate actions.
+    """
+    Checks if the state transition is valid or not. It's assumed that there are no duplicate actions.
+
+    :param action_name: Action Name as defined while registering Workflow Action.
+    :param state: Current State of the content
+    :return: true if valid, False otherwise.
+    """
+
     return action_name in [action['name'] for action in get_workflow_actions(state)]
 
 
 def get_workflow_states():
     """Get list of all registered workflow states."""
+
     return states

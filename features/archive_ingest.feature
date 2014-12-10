@@ -1,6 +1,6 @@
 Feature: Archive Ingest
 
-@auth
+    @auth
     Scenario: Move item into archive - tag not on ingest
         Given empty "archive"
 		And empty "ingest"
@@ -23,7 +23,7 @@ Feature: Archive Ingest
         Given empty "archive"
         And "ingest"
         """
-        [{"guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401"}]
+        [{"guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401", "state": "ingested"}]
         """
 
         When we post to "/archive_ingest"
@@ -38,14 +38,13 @@ Feature: Archive Ingest
         {"state": "FAILURE",  "error": "For ingest with guid= tag:reuters.com,0000:newsml_GM1EA6A1P8401, failed to retrieve provider with _id=None"}
         """
 
-        		
     @auth
     @provider
     Scenario: Move item into archive - success
         Given empty "archive"
         And ingest from "reuters"
         """
-        [{"guid": "tag:reuters.com,0000:newsml_GM1EA7M13RP01"}]
+        [{"guid": "tag:reuters.com,0000:newsml_GM1EA7M13RP01", "state": "ingested"}]
         """
 
         When we post to "/archive_ingest" with success
@@ -74,21 +73,21 @@ Feature: Archive Ingest
 	            "rendition": "baseImage",
 	            "residRef": "tag:reuters.com,0000:binary_GM1EA7M13RP01-BASEIMAGE"
 	        }},
-		 "task_id": ""}  
+		 "task_id": "",
+		 "state": "fetched"}
   		"""
         And we get archive ingest result
         """
         {"state": "PROGRESS",  "current": 4, "total": 4}
         """
 
-            
     @auth
     @provider
     Scenario: Move package into archive - check progress status
         Given empty "archive"
         And ingest from "reuters"
         """
-        [{"guid": "tag:reuters.com,2014:newsml_KBN0FL0NM"}]
+        [{"guid": "tag:reuters.com,2014:newsml_KBN0FL0NM", "state": "ingested"}]
         """
 
         When we post to "/archive_ingest"
@@ -101,14 +100,12 @@ Feature: Archive Ingest
 
         Then we get existing resource
 		"""
-		{"task_id": ""}  
+		{"task_id": ""}
   		"""
         And we get archive ingest result
         """
         {"state": "PROGRESS",  "current": 18, "total": 18}
         """
-
-
 
     @auth
     @provider
@@ -116,7 +113,7 @@ Feature: Archive Ingest
         Given empty "archive"
         And ingest from "reuters"
         """
-        [{"guid": "tag:reuters.com,2014:newsml_KBN0FL0NM"}]
+        [{"guid": "tag:reuters.com,2014:newsml_KBN0FL0NM", "state": "ingested"}]
         """
 
         When we post to "/archive_ingest"
@@ -131,7 +128,8 @@ Feature: Archive Ingest
 		{
 		    "_items": [{
 		        "type": "picture",
-		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS"
+		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS",
+		        "state": "fetched"
 		    }, {
 		        "type": "composite",
 		        "groups": [{
@@ -154,24 +152,28 @@ Feature: Archive Ingest
 		                "residRef": "tag:reuters.com,2014:newsml_KBN0FL0ZP"
 		            }]
 		        }],
-		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM"
+		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM",
+		        "state": "fetched"
 		    }, {
 		        "type": "picture",
-		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT"
+		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT",
+		        "state": "fetched"
 		    }, {
 		        "type": "text",
-		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0ZP"
+		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0ZP",
+		        "state": "fetched"
 		    }, {
 		        "type": "picture",
-		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M"
+		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M",
+		        "state": "fetched"
 		    }, {
 		        "type": "text",
-		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NN"
+		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NN",
+		        "state": "fetched"
 		    }]
-		} 
+		}
 		"""
-        
-        
+
     @auth
     @provider
     Scenario: Move audio item into archive - success
@@ -188,7 +190,8 @@ Feature: Archive Ingest
                 "sizeinbytes": 602548
             }
           },
-          "guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"
+          "guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E",
+          "state": "ingested"
         }]
         """
 
@@ -198,9 +201,9 @@ Feature: Archive Ingest
         "guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"
         }
         """
-        
+
         And we get "/archive/tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"
-      
+
         Then we get existing resource
 		"""
 		{"renditions": {
@@ -211,11 +214,12 @@ Feature: Archive Ingest
                 "sizeinbytes": 602548
             }
         },
-		 "task_id": ""}  
+		 "task_id": "",
+		 "state": "fetched"}
   		"""
   		And we get rendition "stream" with mimetype "audio/mpeg"
-  		
+
         And we get archive ingest result
         """
         {"state": "PROGRESS",  "current": 2, "total": 2}
-        """     
+        """

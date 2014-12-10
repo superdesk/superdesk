@@ -124,3 +124,10 @@ def register_default_user_preference(preference_name, preference):
 
 def register_default_session_preference(preference_name, preference):
     default_session_preferences[preference_name] = preference
+
+
+class InvalidStateTransitionError(SuperdeskError):
+    """Exception raised if workflow transition is invalid."""
+
+    def __init__(self, message='Workflow transition is invalid.', status_code=None, payload=None):
+        super().__init__(message, status_code, payload)
