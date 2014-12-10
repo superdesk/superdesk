@@ -215,6 +215,7 @@ define([
                     $scope.origProvider = provider || {};
                     $scope.provider = _.create($scope.origProvider);
                     $scope.provider.update_schedule = $scope.origProvider.update_schedule || DEFAULT_SCHEDULE;
+                    $scope.offProvider = provider.is_closed;
                 };
 
                 $scope.cancel = function() {

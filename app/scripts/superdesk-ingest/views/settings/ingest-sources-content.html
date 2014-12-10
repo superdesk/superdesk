@@ -8,19 +8,18 @@
     
     <div class="content">
         <ul class="pills-list provider-list">
-
             <li ng-repeat="provider in providers._items" class="clearfix">
-
-                <h6>{{ provider.name }}</h6>
-                <div class="last-updated" ng-if="provider.last_updated">
-                    <span translate>Last updated</span> {{ provider.last_updated | reldate }}
+                <div class="header">
+                    <h6>{{ provider.name }}<span class="label offProvider" ng-if="provider.is_closed" translate>off</span></h6>
+                    <div class="last-updated" ng-if="provider.last_updated">
+                        <span translate>Last updated</span> {{ provider.last_updated | reldate }}
+                    </div>
+                    <div class="actions"> 
+                        <button ng-click="gotoIngest(provider.source)" title="{{:: 'Go to items' | translate }}"><i class="icon-external"></i></a>
+                        <button ng-click="edit(provider)" title="{{:: 'Edit source' | translate }}"><i class="icon-pencil"></i></button>
+                        <button ng-click="remove(provider)" title="{{:: 'Remove source' | translate }}" sd-confirm="{{ 'Please confirm you want to remove source.'|translate }}"><i class="icon-trash"></i></button>
+                    </div>
                 </div>
-                <div class="actions">
-                    <button ng-click="gotoIngest(provider.source)" title="{{:: 'Go to items' | translate }}"><i class="icon-external"></i></a>
-                    <button ng-click="edit(provider)" title="{{:: 'Edit source' | translate }}"><i class="icon-pencil"></i></button>
-                    <button ng-click="remove(provider)" title="{{:: 'Remove source' | translate }}" sd-confirm="{{ 'Please confirm you want to remove source.'|translate }}"><i class="icon-trash"></i></button>
-                </div>               
-
             </li>
         </ul>
     </div>
@@ -36,7 +35,10 @@
         <form name="editForm" ng-submit="save()">
             
             <fieldset>
-                
+                <div class="field inline">
+                    <input type="checkbox" ng-checked="offProvider" name="is_closed" id="is_closed" ng-model="provider.is_closed">
+                    <label for="is_closed" translate>OFF</label></input>
+                </div>
                 <div class="field">
                     <label for="provider-type" translate>Source Type</label>
                     <select id="provider-type" required ng-model="provider.type" ng-options="key as val.label for (key, val) in types"></select>
