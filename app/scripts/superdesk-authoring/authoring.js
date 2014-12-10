@@ -779,7 +779,10 @@
 	                }],
 	            	filters: [
 	                    {action: 'list', type: 'archive'}
-	                ]
+	                ],
+                    condition: function(item) {
+                        return item.type !== 'composite';
+                    }
 	            });
         }]);
 })();
