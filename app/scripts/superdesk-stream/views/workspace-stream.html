@@ -1,7 +1,7 @@
 <div class="subnav">
 
 	<div class="button-stack">
-		<div class="navbtn dropdown" sd-user-desks data-desk="desk"></div>
+		<div class="navbtn dropdown" dropdown sd-user-desks data-desk="desk"></div>
     </div>
 
 </div>
@@ -9,7 +9,7 @@
 	<div class="activity-container">
 		<div class="activity-log">
 			<ul class="activity-list card-list">
-				<li class="activity with-date" ng-repeat="activity in activities._items">
+				<li class="activity" ng-class="{'with-date': showDateHeader(activity)}" ng-repeat="activity in activities._items">
 					<div class="date" ng-show="showDateHeader(activity)"><span>{{ activity._created | reldate }}</span></div>
 	                <div>
 	                    <figure class="avatar">
@@ -25,7 +25,6 @@
 		</div>
 		<button class="btn activity-load-more" translate ng-click="loadMore()" ng-show="activities._meta.total > max_results">Load more</button>
 	</div>
-
-	<div sd-workqueue></div>
 	
 </section>
+<div sd-workqueue></div>
