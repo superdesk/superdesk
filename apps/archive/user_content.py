@@ -31,12 +31,12 @@ superdesk.workflow_state('draft')
 
 superdesk.workflow_action(
     name='fetch_from_content',
-    include_states=['fetched', 'routed', 'submitted', 'in-progress', 'subbed'],
+    include_states=['fetched', 'routed', 'submitted', 'in-progress'],
     privileges=['archive']
 )
 
 superdesk.workflow_action(
     name='fetch_as_from_content',
-    include_states=['fetched', 'routed', 'submitted', 'in-progress', 'subbed'],
+    include_states=['fetched', 'routed', 'submitted', 'in-progress'],
     privileges=['archive']
 )

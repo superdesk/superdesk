@@ -27,7 +27,7 @@ superdesk.workflow_state('corrected')
 
 superdesk.workflow_action(
     name='publish',
-    include_states=['draft', 'subbed'],
+    include_states=['draft'],
     privileges=['publish']
 )
 
