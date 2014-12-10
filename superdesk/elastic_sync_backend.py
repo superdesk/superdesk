@@ -1,24 +1,27 @@
-from superdesk.celery_app import celery
 from flask import current_app as app
 from eve.utils import document_etag
 
+import superdesk
+from superdesk.celery_app import celery
 
-def create(endpoint_name, docs, **kwargs):
-    create_delayed.delay(endpoint_name, docs, **kwargs)
+
+def sync(resource, id):
+    sync_delayed.delay(resource, str(id))
 
 
 @celery.task
-def create_delayed(endpoint_name, docs, **kwargs):
-    """Insert documents into given collection.
-    :param endpoint_name: api resource name
-    :param docs: list of docs to be inserted
+def sync_delayed(resource, id):
+    """Sync document by given resource and id.
+
+    :param resource: resource name
+    :param id: id of document to be synced
     """
+    backend = superdesk.get_backend()
+    search_backend = backend._lookup_backend(resource)
 
-    search_backend = app.data._search_backend(endpoint_name)
-    if not search_backend:
-        return
-
-    for doc in docs:
+    doc = backend.find_one_in_base_backend(resource, req=None, _id=id)
+    if doc:
         doc.setdefault(app.config['ETAG'], document_etag(doc))
-
-    search_backend.insert(endpoint_name, docs, **kwargs)
+        search_backend.insert(resource, [doc])
+    else:
+        search_backend.remove(resource, _id=id)
