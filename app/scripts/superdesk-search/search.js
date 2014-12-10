@@ -219,7 +219,7 @@
 
     angular.module('superdesk.search', ['superdesk.api', 'superdesk.activity', 'superdesk.desks'])
         .service('search', SearchService)
-        .filter('FacetLabels', function($filter) {
+        .filter('FacetLabels', function() {
             return function(input) {
                 if (input.toUpperCase() === 'URGENCY') {
                     return 'News Value';
