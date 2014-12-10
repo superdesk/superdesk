@@ -55,9 +55,11 @@ define([
         }
     }
 
-    return angular.module('superdesk.auth', ['superdesk.features', 'superdesk.activity'])
+    angular.module('superdesk.session', [])
+        .service('session', require('./session-service'));
+
+    return angular.module('superdesk.auth', ['superdesk.features', 'superdesk.activity', 'superdesk.session'])
         .service('auth', require('./auth-service'))
-        .service('session', require('./session-service'))
         .service('authAdapter', require('./basic-auth-adapter'))
         .directive('sdLoginModal', require('./login-modal-directive'))
         .config(['$httpProvider', 'superdeskProvider', function($httpProvider, superdesk) {
