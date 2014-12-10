@@ -30,10 +30,22 @@
                     scope.flags = ctrl.flags;
                     scope.menu = [];
 
-                    superdesk.getMenu(superdesk.MENU_MAIN).then(function(menu) {
-                        scope.menu = menu;
-                        setActiveMenuItem($route.current);
-                    });
+                    superdesk.getMenu(superdesk.MENU_MAIN)
+                        .then(filterSettingsIfEmpty)
+                        .then(function(menu) {
+                            scope.menu = menu;
+                            setActiveMenuItem($route.current);
+                        });
+
+                    function filterSettingsIfEmpty(menu) {
+                        return superdesk.getMenu(superdesk.MENU_SETTINGS).then(function(settingsMenu) {
+                            if (!settingsMenu.length) {
+                                _.remove(menu, {_settings: 1});
+                            }
+
+                            return menu;
+                        });
+                    }
 
                     scope.toggleMenu = function() {
                         ctrl.flags.menu = !ctrl.flags.menu;
