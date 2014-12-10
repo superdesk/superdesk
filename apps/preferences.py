@@ -7,11 +7,13 @@ from eve.validation import ValidationError
 from superdesk import get_resource_service
 from eve.utils import parse_request, document_etag
 from superdesk.utils import last_updated
+from superdesk.workflow import get_privileged_actions
 
 _preferences_key = 'preferences'
 _user_preferences_key = 'user_preferences'
 _session_preferences_key = 'session_preferences'
 _privileges_key = 'active_privileges'
+_action_key = 'allowed_actions'
 
 
 def init_app(app):
@@ -25,7 +27,8 @@ class PreferencesResource(Resource):
     schema = {
         _session_preferences_key: {'type': 'dict', 'required': True},
         _user_preferences_key: {'type': 'dict', 'required': True},
-        _privileges_key: {'type': 'dict'}
+        _privileges_key: {'type': 'dict'},
+        _action_key: {'type': 'list'}
     }
     resource_methods = []
     item_methods = ['GET', 'PATCH']
@@ -91,6 +94,7 @@ class PreferencesService(BaseService):
         user_doc = get_resource_service('users').find_one(req=None, _id=session_doc['user'])
         self.enhance_document_with_default_prefs(session_doc, user_doc)
         self.enhance_document_with_user_privileges(session_doc, user_doc)
+        session_doc[_action_key] = get_privileged_actions(session_doc[_privileges_key])
         if req is None:
             req = parse_request('auth')
             session_doc['_etag'] = req.if_match
