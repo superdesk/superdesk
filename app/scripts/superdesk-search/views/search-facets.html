@@ -78,7 +78,7 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Dates' | translate }}" data-open="true">
+        <div sd-toggle-box data-title="{{ 'Dates' | translate }}" ng-hide="isEmpty('date')" data-open="true">
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.date">
                     <button ng-click="setDateFilter(key)">{{key}} <i>{{ value }}</i></button>
