@@ -6,7 +6,8 @@ define([
    'use strict';
 
     return angular.module('superdesk.workflow', [])
-        .service('workflowService',  ['preferencesService', function(preferencesService) {
+        .run(['workflowService', angular.noop]) // make sure it's loaded
+        .service('workflowService',  ['preferencesService', '$rootScope', function(preferencesService, $rootScope) {
             var _actions = [];
             this.isActionAllowed = function isActionAllowed(item, actionName) {
 
@@ -27,10 +28,13 @@ define([
                 return false;
             };
 
-            this.setActions = function setActions(actions) {
-              _actions = actions;
+            this.setActions = function (actions) {
+                _actions = actions;
             };
 
             preferencesService.getActions().then(this.setActions);
+
+            $rootScope.isActionAllowed = angular.bind(this, this.isActionAllowed);
+
     }]);
 });

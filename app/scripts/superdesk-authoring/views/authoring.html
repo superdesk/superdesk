@@ -17,7 +17,8 @@
                 ng-disabled="(!dirty && !item._autosave) || charLimitHit"
                 translate>Save</button>
 
-	    	<button class="navbtn navbtn-hover" ng-show="_editable" ng-click="viewSendTo = !viewSendTo">
+	    	<button ng-show="_editable && isActionAllowed(item, 'move')"
+                class="navbtn navbtn-hover" ng-click="viewSendTo = !viewSendTo">
 	            <i class="svg-icon-sendto"></i>
 	        </button>
         </div>

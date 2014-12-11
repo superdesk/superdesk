@@ -7,7 +7,7 @@ define([
 
         beforeEach(module(workflowServiceSpec.name));
 
-        beforeEach(inject(function(preferencesService, $q) {
+        beforeEach(inject(function(preferencesService, $q, workflowService) {
             var actions = [
                 {
                     name: 'spike',
@@ -20,11 +20,11 @@ define([
                     privileges: ['ingest_move']
                 }
             ];
-            spyOn(preferencesService, 'getActions').and.returnValue($q.when(actions));
+
+            workflowService.setActions(actions);
         }));
 
         it('can perform actions', inject(function(workflowService, $rootScope) {
-            $rootScope.$digest();
             expect(workflowService.isActionAllowed({state: 'fetched'}, 'spike')).toBe(true);
             expect(workflowService.isActionAllowed({state: 'spiked'}, 'spike')).toBe(false);
             expect(workflowService.isActionAllowed({state: 'ingested'}, 'fetch_as_from_ingest')).toBe(true);
