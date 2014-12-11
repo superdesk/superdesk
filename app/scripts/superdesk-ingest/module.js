@@ -364,49 +364,12 @@ define([
             .activity('archive', {
                 label: gettext('Fetch'),
                 icon: 'archive',
-                controller: ['$timeout', 'api', 'data', function($timeout, api, data) {
-                    var checkProgress = function(taskId, callback) {
-                        var progress = 0;
-                        api.archiveIngest.getById(taskId)
-                        .then(function(result) {
-                            if (result.state === 'SUCCESS') {
-                                callback(100);
-                            } else if (result.state === 'FAILURE') {
-                                callback(null);
-                            } else if (result.state === 'PROGRESS') {
-                                var newProgress = Math.floor(parseInt(result.current || 0, 10) * 100 / parseInt(result.total, 10));
-                                if (progress !== newProgress) {
-                                    progress = newProgress;
-                                    callback(progress);
-                                }
-                                if (progress !== 100) {
-                                    $timeout(function() {
-                                        checkProgress(taskId, callback);
-                                    }, 1000);
-                                }
-                            }
-                        });
-                    };
-
+                controller: ['api', 'data', function(api, data) {
                     api.archiveIngest.create({
                         guid: data.item.guid
                     })
                     .then(function(archiveItem) {
-                        data.item.archiving = true;
-                        data.item.archivingProgress = 0;
-                        checkProgress(archiveItem.task_id, function(progress) {
-                            if (progress === 100) {
-                                data.item.archiving = false;
-                                data.item.archived = true;
-                            } else if (progress === null) {
-                                data.item.archiving = false;
-                                data.item.archiveError = true;
-                                progress = 0;
-                            }
-                            data.item.archivingProgress = progress;
-                        });
-                    }, function(response) {
-                        data.item.archiveError = true;
+                        data.item.task_id = archiveItem.task_id;
                     });
                 }],
                 filters: [
