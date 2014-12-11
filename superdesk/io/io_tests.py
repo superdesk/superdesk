@@ -1,9 +1,21 @@
 import os
-import unittest
-from superdesk.etree import etree
 import test
+import unittest
 
+from superdesk.etree import etree
 from superdesk.io import newsml_2_0
+from superdesk.io import get_word_count
+
+
+class UtilsTest(unittest.TestCase):
+
+    def test_get_word_count(self):
+        self.assertEqual(2, get_word_count('plain text'), 'plain text')
+        self.assertEqual(2, get_word_count('<p> html text </p>'), 'paragraph')
+
+        self.assertEqual(22, get_word_count(
+            '<doc><p xml:lang="en-US">The weather was superb today in Norfolk, Virginia. Made me want to take\n'
+            'out my boat, manufactured by the <org value="acm" idsrc="iptc.org">Acme Boat Company</org>.</p></doc>'))
 
 
 class ItemTest(unittest.TestCase):
@@ -48,8 +60,9 @@ class TextParserTest(ItemTest):
     #     self.assertEquals("(c) Copyright Thomson Reuters 2013. Click For Restrictions - http://about.reuters.com/fulllegal.asp", self.item.get('copyrightnotice'))  # noqa
 
     def test_content_set(self):
-        self.assertEquals("<p>By Toby Davis</p>", self.item.get('body_html'))
-        self.assertEquals("569", self.item.get('word_count'))
+        self.assertEqual("<p>By Toby Davis</p>", self.item.get('body_html'))
+        self.assertEqual(569, self.item.get('word_count'))
+        self.assertIsInstance(self.item.get('body_html'), type(''))
 
     def test_language(self):
         self.assertEquals('en', self.item.get('language'))

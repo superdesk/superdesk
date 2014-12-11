@@ -41,7 +41,11 @@ class SearchService(superdesk.Service):
         query = self._get_query(req)
         types = self._get_types(req)
         query['aggs'] = aggregations
-        set_filters(query, self.private_filters)
+        # if the system has a setting value for the maximum search depth then apply the filter
+        if not app.settings['MAX_SEARCH_DEPTH'] == -1:
+            set_filters(query, self.private_filters + [{'limit': {'value': app.settings['MAX_SEARCH_DEPTH']}}])
+        else:
+            set_filters(query, self.private_filters)
         hits = elastic.es.search(body=query, index=elastic.index, doc_type=types)
         docs = elastic._parse_hits(hits, 'ingest')  # any resource here will do
         for resource in types:

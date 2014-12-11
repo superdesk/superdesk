@@ -3,6 +3,7 @@ import superdesk
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_backend
+from superdesk import SuperdeskError
 
 
 logger = logging.getLogger(__name__)
@@ -27,9 +28,16 @@ class RuleSetsResource(Resource):
     privileges = {'POST': 'rule_sets', 'DELETE': 'rule_sets', 'PATCH': 'rule_sets'}
 
 
+class RuleSetsService(BaseService):
+
+    def on_delete(self, doc):
+        if self.backend.find_one('ingest_providers', req=None, rule_set=doc['_id']):
+            raise SuperdeskError('rule set is in use')
+
+
 def init_app(app):
     endpoint_name = 'rule_sets'
-    service = BaseService(endpoint_name, backend=get_backend())
+    service = RuleSetsService(endpoint_name, backend=get_backend())
     RuleSetsResource(endpoint_name, app=app, service=service)
 
 

@@ -59,7 +59,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
 
     def broadcast(self, msg, author):
         """Broadcast msg to all clients but author."""
-        log('broadcasting "{}"'.format(msg.decode('utf8')))
+        log('broadcasting "{0}"'.format(msg.decode('utf8')))
 
         for c in self.clients:
             if c.state == c.STATE_CLOSED:

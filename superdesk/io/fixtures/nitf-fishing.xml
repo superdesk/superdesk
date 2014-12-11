@@ -1,0 +1,216 @@
+<?xml version="1.0"?>
+<!--
+-->
+<!DOCTYPE nitf SYSTEM "../dtd/nitf-3-2.dtd">
+<nitf>
+<head>
+	<title>Norfolk Weather and Tide Updates</title>
+	<tobject tobject.type="news">
+		<tobject.property
+			tobject.property.type="feature"
+			/>
+		<tobject.subject
+			tobject.subject.refnum="17000000"
+			tobject.subject.type="Weather"
+			/>
+		<tobject.subject
+			tobject.subject.refnum="17004000"
+			tobject.subject.matter="Statistics"
+			/>
+		<tobject.subject
+			tobject.subject.refnum="04001002"
+			tobject.subject.detail="Fishing Industry"
+			/>
+	</tobject>
+	<!-- this article is an update of a previous release -->
+	<docdata
+		management-status="canceled"
+		management-doc-idref="iptc.321656141.a"
+		management-idref-status="canceled"
+		>
+		<!-- the document id, which should be unique per publisher -->
+		<doc-id
+			id-string="iptc.321656141.b"
+			/>
+		<!-- event location: where events in this document took place -->
+		<evloc
+			city="Norfolk"
+			state-prov="VA"
+			iso-cc="US"
+			/>
+		<!-- delivery list: which agencies moved this article -->
+		<del-list>
+			<from-src
+				src-name="iptc.org"
+				level-number="1"
+				/>
+			<from-src
+				src-name="xmlteam.com"
+				level-number="2"
+				/>
+		</del-list>
+		<!-- urgency of 1 = most urgent -->
+		<urgency
+			ed-urg="3"
+			/>
+		<!-- fixture: a consistent name for this type of article -->
+		<fixture
+			fix-id="tide-update"
+			/>
+		<!-- date.issue: when the document was sent to a receiver -->
+		<date.issue
+			norm="20020225T143000-0500"
+			/>
+		<!-- date.release: when the receiver may publish that content. 
+		used in conjunction with management-status attribute of docdata -->
+		<date.release
+			norm="20020226T093000-0500"
+			/>
+		<!-- date.expire: when the publisher no longer wants the receiver to publish the article -->
+		<date.expire
+			norm="20120226T093000-0500"
+			/>
+		<!-- doc-scope: regions that may be interested in the article -->
+		<doc-scope
+			scope="Midlantic States"
+			/>
+		<!-- series: indicates whether this document is part of an ongoing series. 
+		Generally not used when du-key is also used. -->
+		<series
+			series.name="Tide Forecasts"
+			series.part="5"
+			series.totalpart="0"
+			/>
+		<!-- dynamic use key -->
+		<du-key
+			key="ongoing-winter-tide-updates"
+			generation="14"
+			version="1"
+			/>
+		<!-- ed-msg: a message for editors -->
+		<ed-msg
+			info="Today begins an expanded format of this popular column."
+			msg-type="announcement"
+			/>
+		<doc.copyright
+			year="2002"
+			holder="International Press Telecommunications Council"
+			/>
+
+		<doc.rights
+			owner="International Press Telecommunications Council"
+			limitations="online"
+			/>
+
+		<key-list>
+			<keyword key="fishing"/>
+			<keyword key="lures"/>
+			<keyword key="tides"/>
+		</key-list>
+
+		<identified-content>
+			<location
+				location-code="23602"
+				code-source="zipcodes.usps.gov"
+				>
+			</location>
+		</identified-content>
+	</docdata>
+	<pubdata
+		type="web"
+		name="nitf.org"
+		date.publication="20020226T000000-0500"
+		volume="XIX"
+		number="3"
+		issue="2"
+		ex-ref="http://www.iptc.org/getEdition/volume=XIX/number=3/issue=2/doc-id=iptc.321656141.b"
+		/>
+	<revision-history
+		name="Alan Karben"
+		function="writer-author"
+		norm="20020220T090000-0500"
+		comment="Original creation of story."
+		/>
+	<revision-history
+		name="Stewart Kilometers"
+		function="editor"
+		norm="20020222T110000-0500"
+		comment="Punched up the copy."
+		/>
+</head>
+<body>
+	<body.head>
+		<hedline>
+			<hl1>Weather and Tide Updates for Norfolk</hl1>
+			<hl2>A sample, fictitious NITF article</hl2>
+		</hedline>
+		<note noteclass="editorsnote" type="npa"><body.content><p>This sample article was created completely from scratch in order to
+		illustrate various features of NITF.
+		Parts of it are somewhat contrived, in order to illustrate as much
+		of the DTD as possible.</p></body.content></note>
+		<byline>
+			By <person>Alan Karben</person>
+			<byttl>NITF Network News Online</byttl>
+		</byline>
+		<distributor>
+			<org idsrc="OTC:BB" value="XML">XML Team Solutions, Inc.</org>
+		</distributor>
+		<dateline>
+			<location>
+				<city city-code="newportnews">Newport News</city>, 
+				<state state-code="va">VA</state>
+			</location>
+		</dateline>
+		<abstract>
+			<p>Superb weather in Norfolk today. Tides coming in and out as per usual.
+			</p>
+		</abstract>
+	</body.head>
+	<body.content>
+		<media media-type="image" style="align:right">
+			<media-reference
+				mime-type="image/jpeg"
+				source="high-tide.jpg"
+				alternate-text="The tides are high."
+				height="185"
+				width="278"
+				>
+			</media-reference>
+			<media-caption>
+				The tides, captured on film late yesterday.
+			</media-caption>
+			<media-producer>
+				Karben
+			</media-producer>
+		</media>
+		<p xml:lang="en-US">The weather was superb today in Norfolk, Virginia. Made me want to take
+		out my boat, manufactured by the <org value="acm" idsrc="iptc.org">Acme Boat Company</org>.</p>
+		<p>Tides in Norfolk are running normal today. This weeks article highlights many of
+		this week's fishing issues, and also presents a reference table of tide times.</p>
+		<hl2>The Tides are High</hl2>
+		<p>As can be seen from the table below, the shores of Oceanview again present the
+		brightest spots for fishermen and sandcastle-builders alike.</p>
+		<p>Based on these tide tables, I believe you can see that this weekend stands to be
+		an excellent one for small- or large-scale fishing exhibitions.</p>
+		<block>
+			<hl2>Local Nooks</hl2>
+			<p>There are many local nooks that fishing fans may want to keep a special eye one.
+			</p>
+			<ul>
+			<li><em>Deer Creek:</em> This area has proven to be a bass-lover's haven. Wilt Monthaven reports
+			that examples of bass over 30 inches long have been reeled-in by both the casual
+			and the professional angler.</li>
+			<li><em>Fox Run:</em> A bit more difficult, logistically, to navigate. However, the reports
+			of Sturgeon in this area have put it on the fishing map for the first time
+			since 1996.</li>
+			<li><em>Pheasant Hollow:</em> If you don't mind the crowds, this old favorite has come through
+			this year. More fish than you can shake a stick at. Or a rod at.</li>
+			</ul>
+		</block>
+		<p>Happy fishing everybody!</p>
+	</body.content>
+	<body.end>
+		<tagline>Stewart Klometers contributed to this article.</tagline>
+	</body.end>
+</body>
+</nitf>

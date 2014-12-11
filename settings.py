@@ -66,6 +66,7 @@ CELERY_ALWAYS_EAGER = (env('CELERY_ALWAYS_EAGER', False) == 'True')
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['pickle', 'json']  # it's using pickle when in eager mode
 
+CELERYBEAT_SCHEDULE_FILENAME = env('CELERYBEAT_SCHEDULE_FILENAME', './celerybeatschedule.db')
 CELERYBEAT_SCHEDULE = {
     'ingest:update': {
         'task': 'superdesk.io.update_ingest',
@@ -74,10 +75,10 @@ CELERYBEAT_SCHEDULE = {
         'schedule': timedelta(seconds=10),
         'options': {'expires': 19}
     },
-    'ingest:gc': {
-        'task': 'superdesk.io.gc_ingest',
-        'schedule': timedelta(minutes=60),
-    },
+    #    'ingest:gc': {
+    # 'task': 'superdesk.io.gc_ingest',
+    # 'schedule': timedelta(minutes=60),
+    #    },
     'session:gc': {
         'task': 'apps.auth.session_purge',
         'schedule': timedelta(minutes=30)
@@ -192,3 +193,9 @@ SESSION_EXPIRY_MINUTES = 240
 
 # The number of minutes before spiked items purged
 SPIKE_EXPIRY_MINUTES = 300
+
+# This setting can be used to apply a limit on the elastic search queries, it is a limit per shard.
+# A value of -1 indicates that no limit will be applied.
+# If for example the elastic has 5 shards and you wish to limit the number of search results to 1000 then set the value
+# to 200 (1000/5).
+MAX_SEARCH_DEPTH = -1

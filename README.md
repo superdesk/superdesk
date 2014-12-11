@@ -79,7 +79,7 @@ fig run web python3 manage.py users:create -u admin -p admin -e "admin@example.c
 To rebuild environment(ie changes to environemnt or dependencies):
 
 ```sh
-fig build ; and rm -f ./celerybeat.pid ; and fig up
+fig build && fig up
 ```
 
 For more commandline magic go to their docs: http://www.fig.sh/cli.html

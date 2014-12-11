@@ -157,12 +157,12 @@ class NewsMLTwoParser(Parser):
         item['renditions'] = {}
         for content in tree.find(self.qname('contentSet')):
             if content.tag == self.qname('inlineXML'):
-                item['word_count'] = content.attrib['wordcount']
+                item['word_count'] = int(content.attrib['wordcount'])
                 content = self.parse_inline_content(content)
                 item['body_html'] = content.get('content')
             elif content.tag == self.qname('inlineData'):
                 item['body_html'] = content.text
-                item['word_count'] = content.attrib['wordcount']
+                item['word_count'] = int(content.attrib['wordcount'])
             else:
                 rendition = self.parse_remote_content(content)
                 item['renditions'][rendition['rendition']] = rendition
