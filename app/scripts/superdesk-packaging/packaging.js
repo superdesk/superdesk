@@ -114,6 +114,7 @@
         $scope.selected = {};
         $scope.item = null;
         $scope.selected.hide_menu = true;
+        $scope.selected.hide_header = true;
         $scope.contenttab = true;
 
         $scope.itemTypes = [

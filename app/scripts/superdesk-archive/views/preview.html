@@ -1,7 +1,7 @@
 <div>
     <div class="content-container">
 
-        <div class="composite-nav" ng-if="selected.preview.type === 'composite'">
+        <div class="composite-nav" ng-if="selected.preview.type === 'composite' && !selected.hide_header">
            <div class="top">
                <span><i class="filetype-icon-large-composite"></i> {{ 'Package preview' | translate }}</span>
            </div> 
@@ -25,7 +25,7 @@
 
         <p class="title" ng-if="selected.preview.headline" ng-class="{condensed: !lock}">{{ selected.preview.headline }}</p>
 
-        <p class="nav-space" ng-if="!selected.preview.headline && !lock"></p>
+        <p class="nav-space" ng-if="!selected.preview.headline && !lock && !selected.hide_header"></p>
         
         <div class="state-label state-{{selected.preview.state}}">{{selected.preview.state}}</div>
 
