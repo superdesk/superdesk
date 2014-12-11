@@ -128,7 +128,7 @@ class ArchiveService(BaseService):
             if not is_workflow_state_transition_valid('save', original_state):
                 raise InvalidStateTransitionError()
             elif self._is_req_for_save(updates):
-                if original.get('task.desk', None) is None:
+                if original.get('task', {}).get('desk', None) is None:
                     # content is on workspace
                     if original_state != 'draft':
                         updates[config.CONTENT_STATE] = 'draft'
