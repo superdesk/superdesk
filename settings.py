@@ -1,6 +1,8 @@
 import os
-from datetime import timedelta
 import json
+
+from datetime import timedelta
+from celery.schedules import crontab
 
 try:
     from urllib.parse import urlparse
@@ -72,20 +74,20 @@ CELERYBEAT_SCHEDULE = {
         'task': 'superdesk.io.update_ingest',
         # there is internal schedule for updates per provider,
         # so this is mininal interval when an update can occur
-        'schedule': timedelta(seconds=10),
-        'options': {'expires': 19}
+        'schedule': timedelta(seconds=30),
+        'options': {'expires': 59}
     },
-    #    'ingest:gc': {
-    # 'task': 'superdesk.io.gc_ingest',
-    # 'schedule': timedelta(minutes=60),
-    #    },
+    # 'ingest:gc': {
+    #    'task': 'superdesk.io.gc_ingest',
+    #    'schedule': crontab(minute=10),
+    # },
     'session:gc': {
         'task': 'apps.auth.session_purge',
-        'schedule': timedelta(minutes=30)
+        'schedule': crontab(minute=20)
     },
     'spike:gc': {
         'task': 'apps.archive.spike_purge',
-        'schedule': timedelta(minutes=60)
+        'schedule': crontab(minute=30)
     }
 }
 
