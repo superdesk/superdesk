@@ -501,7 +501,7 @@ Profile page styles
 	left: 20px;
 	right: 0;
 	top: 0;
-	bottom: 0;
+	bottom:  @scratchpad-closed + 20;
 	padding: 20px 40px 0;
 	background-color: @background-main;
 	overflow-x: hidden;
@@ -593,7 +593,7 @@ Profile page styles
 }
 
 .user-profile-page {
-	
+	overflow: auto;
 	.form-content {
 		position: absolute;
 		top: 0; left: 0; bottom: 0;
@@ -619,7 +619,8 @@ Profile page styles
 			position: absolute;
 			top: 48px;
 			left: 0; right: 0; bottom: 0;
-			padding: 20px;
+			padding: 20px 20px @scratchpad-closed;
+			overflow: auto;
 		}
 	}
 
