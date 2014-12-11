@@ -261,16 +261,17 @@
                         };
                     };
 
-                    var nonFacetKeys = {
-                        '_id': 1,
-                        'q': 1,
-                        'repo': 1,
-                        'page': 1,
-                        'beforeversioncreated': 1,
-                        'afterversioncreated': 1,
-                        'beforefirstcreated': 1,
-                        'afterfirstcreated': 1,
-                        'after': 1
+                    var FacetKeys = {
+                        'type': 1,
+                        'category': 1,
+                        'urgency': 1,
+                        'source': 1,
+                        'day': 1,
+                        'week': 1,
+                        'month': 1,
+                        'desk': 1,
+                        'stage':1,
+                        'state':1
                     };
 
                     var initSelectedFacets = function () {
@@ -287,7 +288,7 @@
                                             scope.selectedFacets[key] = deskStage.name;
                                         }
                                     });
-                                } else if (!nonFacetKeys[key]) {
+                                } else if (FacetKeys[key]) {
                                     scope.selectedFacets[key] = JSON.parse(type)[0];
                                 }
                             });
