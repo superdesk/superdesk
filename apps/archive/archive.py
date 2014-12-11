@@ -122,7 +122,8 @@ class ArchiveService(BaseService):
             add_activity(ACTIVITY_CREATE, 'added new item {{ type }} about {{ subject }}', item=doc,
                          type=doc['type'], subject=get_subject(doc))
 
-    def update_state(self, original, original_state, updates):
+    def update_state(self, original, updates):
+        original_state = original[config.CONTENT_STATE]
         if original_state != 'ingested' and original_state != 'in_progress':
             if not is_workflow_state_transition_valid('save', original_state):
                 raise InvalidStateTransitionError()
@@ -136,8 +137,7 @@ class ArchiveService(BaseService):
                     updates[config.CONTENT_STATE] = 'in_progress'
 
     def on_update(self, updates, original):
-        original_state = original[config.CONTENT_STATE]
-        self.update_state(original, original_state, updates)
+        self.update_state(original, updates)
 
         user = get_user()
         lock_user = original.get('lock_user', None)
