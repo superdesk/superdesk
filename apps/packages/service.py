@@ -79,6 +79,7 @@ class PackageService(ArchiveService):
         item = get_resource_service(endpoint).find_one(req=None, _id=item_id)
         if not item:
             message = 'Invalid item reference: ' + assoc['itemRef']
+            logger.error(message)
             raise SuperdeskError(message=message)
         return item, item_id, endpoint
 
@@ -101,16 +102,19 @@ class PackageService(ArchiveService):
         for itemRef in [assoc[ITEM_REF] for assoc in associations if assoc.get(ITEM_REF)]:
             if itemRef == package_id:
                 message = 'Trying to self reference as an association.'
+                logger.error(message)
                 raise SuperdeskError(message=message)
             counter[itemRef] += 1
 
         if any(itemRef for itemRef, value in counter.items() if value > 1):
             message = 'Content associated multiple times'
+            logger.error(message)
             raise SuperdeskError(message=message)
 
     def check_for_circular_reference(self, package, item_id):
         if any(d for d in package.get(LINKED_IN_PACKAGES, []) if d['package'] == item_id):
             message = 'Trying to create a circular reference to: ' + item_id
+            logger.error(message)
             raise ValidationError(message)
 
     def _get_associations(self, doc):
