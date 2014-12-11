@@ -683,6 +683,12 @@
         };
     }
 
+    function ContentCreateDirective() {
+        return {
+            templateUrl: 'scripts/superdesk-authoring/views/sd-content-create.html'
+        };
+    }
+
     return angular.module('superdesk.authoring', [
             'superdesk.editor',
             'superdesk.activity',
@@ -705,6 +711,7 @@
         .directive('sdCharacterCount', CharacterCount)
         .directive('sdWordCount', WordCount)
         .directive('sdThemeSelect', ThemeSelectDirective)
+        .directive('sdContentCreate', ContentCreateDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk

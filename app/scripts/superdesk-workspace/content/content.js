@@ -7,8 +7,8 @@ function ContentCtrlFactory(api, superdesk, workqueue) {
         /**
          * Create an item and start editing it
          */
-        this.create = function() {
-            var item = {type: 'text'};
+        this.create = function(type) {
+            var item = {type: type || 'text'};
             api('archive')
                 .save(item)
                 .then(function() {
