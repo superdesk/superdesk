@@ -106,6 +106,15 @@ def update_word_count(doc):
         doc.setdefault('word_count', get_word_count(doc.get('body_html')))
 
 
+def remove_unwanted(doc):
+    """
+    As the name suggests this function removes unwanted attributes from doc to make an entry in Mongo and Elastic.
+    """
+
+    if '_type' in doc:
+        del doc['_type']
+
+
 class ArchiveService(BaseService):
 
     def on_create(self, docs):
@@ -113,6 +122,7 @@ class ArchiveService(BaseService):
 
         for doc in docs:
             doc['version_creator'] = doc['original_creator']
+            remove_unwanted(doc)
             update_word_count(doc)
 
     def on_created(self, docs):
@@ -137,6 +147,7 @@ class ArchiveService(BaseService):
                     updates[config.CONTENT_STATE] = 'in_progress'
 
     def on_update(self, updates, original):
+        remove_unwanted(updates)
         self.update_state(original, updates)
 
         user = get_user()
@@ -171,6 +182,7 @@ class ArchiveService(BaseService):
                          type=updated['type'])
 
     def on_replace(self, document, original):
+        remove_unwanted(document)
         user = get_user()
         lock_user = original.get('lock_user', None)
         force_unlock = document.get('force_unlock', False)
@@ -187,7 +199,8 @@ class ArchiveService(BaseService):
         on_update_media_archive()
 
     def on_delete(self, doc):
-        '''Delete associated binary files.'''
+        """Delete associated binary files."""
+
         if doc and doc.get('renditions'):
             for _name, ref in doc['renditions'].items():
                 try:
@@ -226,7 +239,10 @@ class ArchiveService(BaseService):
         del old['_id_document']
 
         resolve_document_version(old, 'archive', 'PATCH', curr)
+
+        remove_unwanted(old)
         res = super().replace(id=item_id, document=old)
+
         del doc['old_version']
         del doc['last_version']
         doc.update(old)

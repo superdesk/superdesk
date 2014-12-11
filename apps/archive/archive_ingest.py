@@ -106,15 +106,6 @@ def update_item(result, is_main_task, task_id, guid):
         update_status(*finish_task_for_progress(task_id))
 
 
-def remove_unwanted(doc):
-    """
-    As the name suggests this function removes unwanted attributes from doc to make an entry in Mongo and Elastic.
-    """
-
-    if '_type' in doc:
-        del doc['_type']
-
-
 @celery.task(bind=True, max_retries=3)
 def archive_item(self, guid, provider_id, user, task_id=None):
     try:
@@ -172,7 +163,6 @@ def archive_item(self, guid, provider_id, user, task_id=None):
         while patching in archive collection. Without this version_creator is set None which doesn't make sense.
         '''
         flask.g.user = user
-        remove_unwanted(item)
         item[config.CONTENT_STATE] = 'fetched'
         superdesk.get_resource_service(ARCHIVE).patch(guid, item)
 
@@ -196,7 +186,6 @@ def archive_item(self, guid, provider_id, user, task_id=None):
                     elif archived_doc.get('task_id') == crt_task_id:
                         # it is a retry so continue
                         archived_doc.update(doc)
-                        remove_unwanted(archived_doc)
                         archived_doc['req_for_save'] = 'false'
                         superdesk.get_resource_service(ARCHIVE).patch(archived_doc.get('_id'), archived_doc)
                     else:
@@ -231,7 +220,6 @@ def insert_into_versions(guid, task_id):
     """
 
     archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=guid)
-    remove_unwanted(archived_doc)
 
     if 'task_id' not in archived_doc:
         updates = superdesk.get_resource_service(ARCHIVE).patch(guid, {"task_id": task_id, 'req_for_save': 'false'})
