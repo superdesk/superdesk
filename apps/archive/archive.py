@@ -122,13 +122,22 @@ class ArchiveService(BaseService):
             add_activity(ACTIVITY_CREATE, 'added new item {{ type }} about {{ subject }}', item=doc,
                          type=doc['type'], subject=get_subject(doc))
 
-    def on_update(self, updates, original):
+    def update_state(self, original, updates):
         original_state = original[config.CONTENT_STATE]
         if original_state != 'ingested' and original_state != 'in_progress':
             if not is_workflow_state_transition_valid('save', original_state):
                 raise InvalidStateTransitionError()
             elif self._is_req_for_save(updates):
-                updates[config.CONTENT_STATE] = 'in_progress'
+                if original.get('task.desk', None) is None:
+                    # content is on workspace
+                    if original_state != 'draft':
+                        updates[config.CONTENT_STATE] = 'draft'
+                else:
+                    # content is on a desk
+                    updates[config.CONTENT_STATE] = 'in_progress'
+
+    def on_update(self, updates, original):
+        self.update_state(original, updates)
 
         user = get_user()
         lock_user = original.get('lock_user', None)
