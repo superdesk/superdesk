@@ -1,9 +1,13 @@
+
+from eve.utils import config
+
 states = []
 actions = []
 allowed_workflow_states = []
 
 __all__ = ['workflow_state', 'get_workflow_states', 'allowed_workflow_states',
-           'workflow_action', 'get_workflow_actions', 'is_workflow_state_transition_valid']
+           'workflow_action', 'get_workflow_actions', 'is_workflow_state_transition_valid',
+           'set_default_state']
 
 
 def workflow_action(name, include_states=None, exclude_states=None, privileges=None):
@@ -82,11 +86,18 @@ def is_workflow_state_transition_valid(action_name, state):
     :param state: Current State of the content
     :return: true if valid, False otherwise.
     """
-
     return action_name in [action['name'] for action in get_workflow_actions(state)]
 
 
 def get_workflow_states():
     """Get list of all registered workflow states."""
-
     return states
+
+
+def set_default_state(doc, state):
+    """Sets default state for given doc.
+
+    :param doc: item
+    :param state: state to be set as default
+    """
+    doc.setdefault(config.CONTENT_STATE, state)
