@@ -270,6 +270,7 @@
                         'afterversioncreated': 1,
                         'beforefirstcreated': 1,
                         'afterfirstcreated': 1,
+                        'max_results':1,
                         'after': 1
                     };
 
