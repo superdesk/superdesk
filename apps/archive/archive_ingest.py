@@ -28,6 +28,7 @@ from .common import get_user, aggregations
 from superdesk.services import BaseService
 from .archive import SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
+from superdesk.notification import push_notification
 
 
 logger = get_task_logger(__name__)
@@ -36,7 +37,9 @@ logger = get_task_logger(__name__)
 def update_status(task_id, current, total):
     if current is None:
         current = 0
-    archive_item.update_state(task_id, state='PROGRESS', meta={'current': int(current), 'total': int(total)})
+    progress = {'current': int(current), 'total': int(total)}
+    archive_item.update_state(task_id, state='PROGRESS', meta=progress)
+    push_notification('task:progress', task=task_id, progress=progress)
 
 
 def raise_fail(task_id, message):
