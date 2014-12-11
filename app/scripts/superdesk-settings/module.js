@@ -30,6 +30,22 @@ define([
                 }
             };
         }])
+        .directive('sdDateParam', ['$location', function($location) {
+            return {
+                scope: true,
+                link: function(scope, elem, attrs) {
+
+                    var search = $location.search();
+                    if (search[attrs.location]) {
+                        scope.date = search[attrs.location];
+                    }
+
+                    scope.$watch('date', function(date) {
+                        $location.search(attrs.location, date);
+                    });
+                }
+            };
+        }])
         .directive('sdValidError', function() {
             return {
                 link: function (scope, element) {

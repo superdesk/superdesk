@@ -87,26 +87,24 @@
         </div>
 
         <div sd-toggle-box data-title="{{ 'Dates' | translate }}" data-open="true">
-            <ul class="date-filter" sd-date-range data-field="firstcreated" data-lte="lte" data-gte="gte">
-                <li>
+            <ul class="date-filter">
+                <li sd-date-param data-location="beforefirstcreated">
                     <label for="created_before" translate>Created before</label>
-                    <input id="created_before" type="date" ng-model="lte">
-                   
+                   <div sd-datepicker ng-model="date"></div>
                 </li>
-                <li>
+                <li sd-date-param data-location="afterfirstcreated">
                     <label for="created_after" translate>Created after</label>
-                    <input id="created_after" type="date" ng-model="gte">
+                    <div sd-datepicker ng-model="date"></div>
                 </li>
             </ul>
-            <ul class="date-filter" sd-date-range data-field="versioncreated" data-lte="modlte" data-gte="modgte">
-                <li>
+            <ul class="date-filter">
+                <li sd-date-param data-location="beforeversioncreated">
                     <label for="modified_before" translate>Modified before</label>
-                    <input id="modified_before" type="date" ng-model="modlte">
-                   
+                    <div sd-datepicker ng-model="date"></div>
                 </li>
-                <li>
+                <li sd-date-param data-location="versioncreated">
                     <label for="modified_after" translate>Modified after</label>
-                    <input id="modified_after" type="date" ng-model="modgte">
+                    <div sd-datepicker ng-model="date"></div>
                 </li>
             </ul>
         </div>
