@@ -14,7 +14,7 @@
         <div class="selected-filters">
             <ul>
                 <li ng-repeat="(type,key) in selectedFacets">
-                    <div><span>{{type}}:</span>{{key}}<button ng-click="removeFilter(type, key)"><i class="icon-close-small icon-white"></i></button></div>
+                    <div><span>{{type| FacetLabels}}:</span>{{key}}<button ng-click="removeFilter(type, key)"><i class="icon-close-small icon-white"></i></button></div>
                 </li>
             </ul>
         </div>
@@ -62,7 +62,7 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'News Value' | translate }}" ng-hide="isEmpty('urgency')" data-open="true">
+        <div sd-toggle-box data-title="{{ 'Urgency' | FacetLabels }}" ng-hide="isEmpty('urgency')" data-open="true">
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.urgency">
                     <button ng-click="setFilter('urgency', key)">News Value: {{key | translate}} <i>{{ value }}</i></button>

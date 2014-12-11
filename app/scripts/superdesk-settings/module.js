@@ -12,7 +12,8 @@ define([
                 controller: angular.noop,
                 templateUrl: require.toUrl('./views/main.html'),
                 category: superdesk.MENU_MAIN,
-                priority: 1000
+                priority: 1000,
+                _settings: 1
             });
         }])
         .directive('sdSettingsView', ['$route', 'superdesk', function($route, superdesk) {

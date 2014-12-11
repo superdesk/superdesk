@@ -8,19 +8,18 @@
     
     <div class="content">
         <ul class="pills-list provider-list">
-
             <li ng-repeat="provider in providers._items" class="clearfix">
-
-                <h6>{{ provider.name }}</h6>
-                <div class="last-updated" ng-if="provider.last_updated">
-                    <span translate>Last updated</span> {{ provider.last_updated | reldate }}
+                <div class="header">
+                    <h6>{{ provider.name }}<span class="label offProvider" ng-if="provider.is_closed" translate>closed</span></h6>
+                    <div class="last-updated" ng-if="provider.last_updated">
+                        <span translate>Last updated</span> {{ provider.last_updated | reldate }}
+                    </div>
+                    <div class="actions"> 
+                        <button ng-click="gotoIngest(provider.source)" title="{{:: 'Go to items' | translate }}"><i class="icon-external"></i></a>
+                        <button ng-click="edit(provider)" title="{{:: 'Edit source' | translate }}"><i class="icon-pencil"></i></button>
+                        <button ng-click="remove(provider)" title="{{:: 'Remove source' | translate }}" sd-confirm="{{ 'Please confirm you want to remove source.'|translate }}"><i class="icon-trash"></i></button>
+                    </div>
                 </div>
-                <div class="actions">
-                    <button ng-click="gotoIngest(provider.source)" title="{{:: 'Go to items' | translate }}"><i class="icon-external"></i></a>
-                    <button ng-click="edit(provider)" title="{{:: 'Edit source' | translate }}"><i class="icon-pencil"></i></button>
-                    <button ng-click="remove(provider)" title="{{:: 'Remove source' | translate }}" sd-confirm="{{ 'Please confirm you want to remove source.'|translate }}"><i class="icon-trash"></i></button>
-                </div>               
-
             </li>
         </ul>
     </div>
@@ -34,9 +33,11 @@
 
     <div class="modal-body">
         <form name="editForm" ng-submit="save()">
-            
             <fieldset>
-                
+                <div class="field">
+                    <label translate>Closed</label>
+                    <span sd-switch ng-model="provider.is_closed" ng-click="provider.is_closed != provider.is_closed"></span>
+                </div>
                 <div class="field">
                     <label for="provider-type" translate>Source Type</label>
                     <select id="provider-type" required ng-model="provider.type" ng-options="key as val.label for (key, val) in types"></select>
@@ -57,11 +58,11 @@
                         <select id="schedule-minutes" class="input-mini"
                             ng-model="provider.update_schedule.minutes"
                             ng-options="min as min for min in minutes"
-                        ></select> <span translate>minutes</span>
+                        ></select> <span translate>min</span>
                         <select class="input-mini"
                             ng-model="provider.update_schedule.seconds"
                             ng-options="sec as sec for sec in seconds"
-                        ></select> <span translate>seconds</span>
+                        ></select> <span translate>sec</span>
                 </div>
 
                 <div class="field credentials">

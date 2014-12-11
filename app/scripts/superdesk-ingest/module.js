@@ -215,6 +215,7 @@ define([
                     $scope.origProvider = provider || {};
                     $scope.provider = _.create($scope.origProvider);
                     $scope.provider.update_schedule = $scope.origProvider.update_schedule || DEFAULT_SCHEDULE;
+                    $scope.offProvider = provider.is_closed;
                 };
 
                 $scope.cancel = function() {
@@ -256,6 +257,7 @@ define([
 
                scope.edit = function(ruleset) {
                     scope.editRuleset = _.create(ruleset);
+                    scope.editRuleset.rules = ruleset.rules || [];
                     _orig = ruleset;
                 };
 
@@ -283,7 +285,11 @@ define([
                         .then(function(result) {
                             _.remove(scope.rulesets, ruleset);
                         }, function(response) {
-                            notify.error(gettext('There is an error. Rule set cannot be deleted.'));
+                            if (response.status === 400) {
+                                notify.error(gettext('Rule set is applied to channel(s). It cannot be deleted.'));
+                            } else {
+                                notify.error(gettext('There is an error. Rule set cannot be deleted.'));
+                            }
                         });
                     });
                 };
