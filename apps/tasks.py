@@ -48,7 +48,7 @@ class TaskResource(Resource):
             }
         }
     }
-    privileges = {'POST': 'workflow', 'PATCH': 'workflow', 'DELETE': 'workflow'}
+    privileges = {'POST': 'tasks', 'PATCH': 'tasks', 'DELETE': 'tasks'}
 
 
 class TasksService(BaseService):
@@ -92,7 +92,12 @@ class TasksService(BaseService):
         self.update_times(updates)
 
     def on_updated(self, updates, original):
-        push_notification(self.datasource, updated=1)
+        new_stage = updates.get('task', {}).get('stage', '')
+        old_stage = original.get('task', {}).get('stage', '')
+        if new_stage != old_stage:
+            push_notification('task:stage', new_stage=str(new_stage), old_stage=str(old_stage))
+        else:
+            push_notification(self.datasource, updated=1)
         updated = copy(original)
         updated.update(updates)
         if updated.get('task') and updated['task'].get('desk'):
@@ -109,6 +114,6 @@ class TasksService(BaseService):
         del item['_id']
         return self.patch(item_id, item)
 
-superdesk.privilege(name='workflow',
-                    label='Workflow Management',
-                    description='User can change the state of an item within the workflow.')
+superdesk.privilege(name='tasks',
+                    label='Tasks Management',
+                    description='User can manage tasks.')
