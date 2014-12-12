@@ -3,7 +3,7 @@ define([
 ], function(_) {
     'use strict';
 
-    return ['superdesk', 'activityService', 'workflowService', function(superdesk, activityService, workflowService) {
+    return ['superdesk', 'activityService', 'workflowService', 'asset', function(superdesk, activityService, workflowService, asset) {
         return {
             scope: {
                 item: '=',
@@ -11,7 +11,7 @@ define([
                 action: '@',
                 done: '&'
             },
-            templateUrl: 'scripts/superdesk/activity/views/activity-list.html',
+            templateUrl: asset.templateUrl('superdesk/activity/views/activity-list.html'),
             link: function(scope, elem, attrs) {
                 var intent = {
                     action: scope.action
