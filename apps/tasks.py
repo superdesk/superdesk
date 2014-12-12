@@ -1,4 +1,6 @@
 from eve.utils import ParsedRequest
+from eve.versioning import resolve_document_version
+from apps.archive.common import insert_into_versions
 from superdesk.resource import Resource
 from superdesk import InvalidStateTransitionError
 from superdesk.notification import push_notification
@@ -12,6 +14,7 @@ from apps.archive.archive import get_subject
 from superdesk.workflow import is_workflow_state_transition_valid
 from copy import copy
 from eve.utils import config
+from apps.archive.archive import SOURCE as ARCHIVE
 
 
 def init_app(app):
@@ -69,24 +72,35 @@ class TasksService(BaseService):
         if status == 'done':
             task.setdefault('finished_at', utcnow())
 
-    def update_state(self, updated, original):
-            # check if the desk has changed
-            # then the action is move
-            if str(updated.get('task', {}).get('desk', '')) != \
-                    original.get('task', {}).get('desk', ''):
+    def __is_assigned_to_a_desk(self, doc):
+        """
+        Returns True if the 'doc' is being submitted to a desk. False otherwise.
+        """
 
+        return doc.get('task') and doc['task'].get('desk')
+
+    def __is_content_moved_from_desk(self, doc):
+        """
+        Returns True if the 'doc' is being moved from a desk. False otherwise.
+        """
+        return doc.get('task', {}).get('desk', None) is None
+
+    def __is_content_assigned_to_new_desk(self, original, updates):
+        """
+        Checks if the content is assigned to a new desk.
+        :return: True if the content is being moved to a new desk. False otherwise.
+        """
+        return original.get('task', {}).get('desk', '') != str(updates.get('task', {}).get('desk', ''))
+
+    def __update_state(self, updates, original):
+            if self.__is_content_assigned_to_new_desk(original, updates):
                 # check if the preconditions for the action are in place
                 original_state = original[config.CONTENT_STATE]
                 if not is_workflow_state_transition_valid('move', original_state):
                     raise InvalidStateTransitionError()
 
-                # check if destination is a desk or workspace
-                if updated.get('task', {}).get('desk', None) is None:
-                    # moving to workspace
-                    updated[config.CONTENT_STATE] = 'draft'
-                else:
-                    # moving the desk
-                    updated[config.CONTENT_STATE] = 'submitted'
+                updates[config.CONTENT_STATE] = 'draft' if self.__is_content_moved_from_desk(updates) else 'submitted'
+                resolve_document_version(updates, ARCHIVE, 'PATCH', original)
 
     def update_stage(self, doc):
         task = doc.get('task', {})
@@ -99,19 +113,22 @@ class TasksService(BaseService):
     def on_create(self, docs):
         on_create_item(docs)
         for doc in docs:
+            resolve_document_version(doc, ARCHIVE, 'POST')
             self.update_times(doc)
             self.update_stage(doc)
 
     def on_created(self, docs):
         push_notification(self.datasource, created=1)
         for doc in docs:
-            if doc.get('task') and doc['task'].get('desk'):
+            insert_into_versions(doc['_id'])
+            if self.__is_assigned_to_a_desk(doc):
                 add_activity(ACTIVITY_CREATE, 'added new task {{ subject }} of type {{ type }}', item=doc,
                              subject=get_subject(doc), type=doc['type'])
 
     def on_update(self, updates, original):
-        self.update_state(updates, original)
         self.update_times(updates)
+        if self.__is_assigned_to_a_desk(updates):
+            self.__update_state(updates, original)
 
     def on_updated(self, updates, original):
         new_stage = updates.get('task', {}).get('stage', '')
@@ -122,7 +139,12 @@ class TasksService(BaseService):
             push_notification(self.datasource, updated=1)
         updated = copy(original)
         updated.update(updates)
-        if updated.get('task') and updated['task'].get('desk'):
+
+        if self.__is_assigned_to_a_desk(updated):
+
+            if self.__is_content_assigned_to_new_desk(original, updates):
+                insert_into_versions(original['_id'])
+
             add_activity(ACTIVITY_UPDATE, 'updated task {{ subject }} for item {{ type }}',
                          item=updated, subject=get_subject(updated))
 
@@ -130,11 +152,7 @@ class TasksService(BaseService):
         push_notification(self.datasource, deleted=1)
 
     def assign_user(self, item_id, user):
-        item = self.find_one(req=None, _id=item_id)
-        item['task'] = item.get('task', {})
-        item['task']['user'] = user
-        del item['_id']
-        return self.patch(item_id, item)
+        return self.patch(item_id, {'task': user})
 
 superdesk.privilege(name='tasks',
                     label='Tasks Management',
