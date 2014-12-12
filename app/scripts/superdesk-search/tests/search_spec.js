@@ -8,7 +8,7 @@ describe('search service', function() {
         var query = search.query();
         var criteria = query.getCriteria();
         var filters = criteria.query.filtered.filter.and;
-        expect(filters).toContain({not: {term: {is_spiked: true}}});
+        expect(filters).toContain({not: {term: {state: 'spiked'}}});
         expect(criteria.sort).toEqual([{versioncreated: 'desc'}]);
         expect(criteria.size).toBe(25);
     }));

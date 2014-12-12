@@ -9,6 +9,8 @@
 
         <p class="title" ng-if="item.headline">{{ item.headline }}</p>
 
+        <div class="state-label state-{{item.state}}">{{item.state}}</div>
+
         <div class="core-content">
 
 			<p ng-if="item.is_spiked" class="alert alert-warning expires">

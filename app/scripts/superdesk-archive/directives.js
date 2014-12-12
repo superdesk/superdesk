@@ -321,6 +321,17 @@ define([
                             scope.$digest();
                         }
                     });
+
+                    scope.$on('task:progress', function(_e, data) {
+                        if (data.task === scope.item.task_id) {
+                            if (data.progress.total === 0) {
+                                scope._progress = 10;
+                            } else {
+                                scope._progress = Math.min(100, Math.round(100.0 * data.progress.current / data.progress.total));
+                            }
+                            scope.$digest();
+                        }
+                    });
                 }
             };
         }])

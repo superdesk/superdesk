@@ -202,6 +202,23 @@ define([
             };
 
             /**
+             * Update item via given resource
+             *
+             * @param {string} resource
+             * @param {Object} item
+             * @param {Object} updates
+             * @param {Object} params
+             */
+            api.update = function apiUpdate(resource, item, updates) {
+                return http({
+                    method: 'PATCH',
+                    url: getResourceUrl(resource, null, item._id),
+                    data: updates,
+                    headers: getHeaders(item)
+                });
+            };
+
+            /**
              * Query qiven resource
              *
              * @param {string} resource
@@ -211,8 +228,8 @@ define([
                 return api(resource).query(query);
             };
 
-            function getResourceUrl(resource, item) {
-                return api(resource, item).url();
+            function getResourceUrl(resource, item, id) {
+                return api(resource, item).url(id);
             }
 
             /**

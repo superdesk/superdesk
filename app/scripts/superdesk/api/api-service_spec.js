@@ -440,5 +440,12 @@ define([
             api.get(USER_PATH);
             $httpBackend.flush();
         }));
+
+        it('can update given resource', inject(function(api, $httpBackend) {
+            var data = {name: 'foo'};
+            $httpBackend.expectPATCH(USER_URL, data).respond(200);
+            api.update('users', {_id: 1}, data);
+            $httpBackend.flush();
+        }));
     });
 });

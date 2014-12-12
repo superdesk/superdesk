@@ -10,6 +10,7 @@ define(['angular', 'lodash'], function(angular, _) {
                 SESSION_PREFERENCES = 'session_preferences',
                 ACTIVE_PRIVILEGES = 'active_privileges',
                 PREFERENCES = 'preferences',
+                ACTIONS = 'allowed_actions',
                 userPreferences = ['feature:preview', 'archive:view', 'email:notification', 'workqueue:items'],
                 api,
                 original_preferences = null;
@@ -50,6 +51,13 @@ define(['angular', 'lodash'], function(angular, _) {
                 });
             };
 
+            this.getActions = function getActions() {
+                 return this.get().then(function() {
+                    var preferences = loadLocally();
+                    return preferences[ACTIONS] || [];
+                });
+            };
+
             function getPreferences(sessionId, key){
                 if (!api) { api = $injector.get('api'); }
 
@@ -57,7 +65,7 @@ define(['angular', 'lodash'], function(angular, _) {
                     return $q.reject();
                 }
 
-                return api('preferences').getById(sessionId).then(function(preferences) {
+                return api.find('preferences', sessionId).then(function(preferences) {
                     saveLocally(preferences);
                     return processPreferences(preferences, key);
                 });
@@ -115,7 +123,7 @@ define(['angular', 'lodash'], function(angular, _) {
 
                 if (!api) { api = $injector.get('api'); }
 
-                return api('preferences').save(original_prefs, user_updates)
+                return api.save('preferences', original_prefs, user_updates)
                     .then(function(result) {
                         saveLocally(result, type, key);
                         return result;

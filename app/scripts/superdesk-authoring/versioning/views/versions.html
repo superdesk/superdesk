@@ -18,6 +18,7 @@
             <h6 ng-class="{'no-title': !version.headline }">{{ version.headline || ('Untitled' | translate) }}</h6>
             <div class="footer">
             	<em>{{ 'version' | translate }}: {{ version._version || 1 }}</em>
+                <div class="state-label state-{{version.state}}">{{version.state}}</div>
 	            <button class="btn btn-light btn-mini pull-right"
                     ng-show="canRevert && !$first"
                     ng-click="revert(version)"

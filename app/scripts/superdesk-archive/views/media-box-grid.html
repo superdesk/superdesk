@@ -1,4 +1,4 @@
-<div class="archiving-progress" style="width:{{item.archivingProgress}}%" ng-show="!item.archived && item.archiving"></div>
+<div class="archiving-progress" style="width:{{ _progress }}%" ng-if="_progress"></div>
 
 <div class="error-box" ng-show="item.archiveError">
     <p class="message">There was an <b>error</b> archiving this item</p>
@@ -34,13 +34,7 @@
 <span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
 <span class="urgency-label"><i class="urgency-icon-{{item.urgency}}"></i></span>
 
-<div class="status-label"
-     ng-class="{'label-canceled': item.pubstatus=='canceled'}"
-     ng-show="item.pubstatus && item.pubstatus!='usable'">
-     {{ item.pubstatus | translate }}
-</div>
-
-<div class="status-label" ng-show="item._type">{{ item._type }}</div>
+<div class="state-label state-{{item.state}}">{{item.state}}</div>
 
 <div class="action">
     <ul ng-if="extras.activity" class="item-functions"

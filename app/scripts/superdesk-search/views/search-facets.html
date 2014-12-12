@@ -70,15 +70,15 @@
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Spiked' | translate }}" ng-hide="isEmpty('spiked')" data-open="true">
+        <div sd-toggle-box data-title="{{ 'States' | translate }}" ng-hide="isEmpty('state')" data-open="true">
             <ul class="filter-box">
-                <li ng-repeat="(key,value) in aggregations.spiked">
-                    <button ng-click="setFilter('spike', key)">Spiked <i>{{ value }}</i></button>
+                <li ng-repeat="(key,value) in aggregations.state">
+                    <button ng-click="setFilter('state', key)">{{key | translate}} <i>{{ value }}</i></button>
                 </li>
             </ul>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Dates' | translate }}" data-open="true">
+        <div sd-toggle-box data-title="{{ 'Dates' | translate }}" ng-hide="isEmpty('date')" data-open="true">
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.date">
                     <button ng-click="setDateFilter(key)">{{key}} <i>{{ value }}</i></button>

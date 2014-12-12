@@ -122,6 +122,10 @@
                 if (params.stage) {
                     query.filter({term: {'task.stage': JSON.parse(params.stage)}});
                 }
+
+                if (params.state) {
+                    query.filter({term: {'state': JSON.parse(params.state)}});
+                }
             }
 
             /**
@@ -177,9 +181,9 @@
 
             // do base filtering
             if ($location.search().spike) {
-                this.filter({term: {is_spiked: true}});
+                this.filter({term: {state: 'spiked'}});
             } else {
-                this.filter({not: {term: {is_spiked: true}}});
+                this.filter({not: {term: {state: 'spiked'}}});
             }
 
             buildFilters($location.search(), this);
@@ -257,7 +261,7 @@
                             'source': {},
                             'category': {},
                             'urgency': {},
-                            'spiked':{}
+                            'state':{}
                         };
                     };
 
@@ -329,6 +333,12 @@
                                 _.forEach(scope.items._aggregations.source.buckets, function(source) {
                                     if (!scope.selectedFacets.source || scope.selectedFacets.source !== source.key) {
                                         scope.aggregations.source[source.key] = source.doc_count;
+                                    }
+                                });
+
+                                _.forEach(scope.items._aggregations.state.buckets, function(state) {
+                                    if (!scope.selectedFacets.state || scope.selectedFacets.state !== state.key) {
+                                        scope.aggregations.state[state.key] = state.doc_count;
                                     }
                                 });
 

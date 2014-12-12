@@ -3,7 +3,7 @@ define([
 ], function(_) {
     'use strict';
 
-    return ['superdesk', 'activityService', function(superdesk, activityService) {
+    return ['superdesk', 'activityService', 'workflowService', function(superdesk, activityService, workflowService) {
         return {
             scope: {
                 item: '=',
@@ -23,7 +23,9 @@ define([
                     return;
                 }
 
-                scope.activities = superdesk.findActivities(intent);
+                scope.activities = _.filter(superdesk.findActivities(intent), function(activity) {
+                    return workflowService.isActionAllowed(scope.item, activity.action);
+                });
 
                 scope.run = function runActivity(activity, e) {
                     e.stopPropagation();
