@@ -23,6 +23,22 @@ def init_app(app):
     TaskResource(endpoint_name, app=app, service=service)
 
 
+def send_to(doc, desk=None, stage=None):
+    """Send item to given desk and stage.
+
+    :param doc: item to be sent
+    :param desk: id of desk where item should be sent
+    :param stage: optional stage within the desk
+    """
+    task = doc.get('task', {})
+    task.setdefault('desk', desk)
+    task.setdefault('stage', stage)
+    if desk and not stage:
+        desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk)
+        task['stage'] = desk.get('incoming_stage') if desk else stage
+    doc['task'] = task
+
+
 class TaskResource(Resource):
     datasource = {
         'source': 'archive',
@@ -106,9 +122,7 @@ class TasksService(BaseService):
         task = doc.get('task', {})
         desk_id = task.get('desk', None)
         stage_id = task.get('stage', None)
-        if desk_id and not stage_id:
-            desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
-            task['stage'] = desk['incoming_stage']
+        send_to(doc, desk_id, stage_id)
 
     def on_create(self, docs):
         on_create_item(docs)

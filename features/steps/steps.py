@@ -461,7 +461,7 @@ def step_impl_then_get_list(context, total_count):
     if '+' in total_count:
         assert int_count <= data['_meta']['total']
     else:
-        assert int_count == data['_meta']['total']
+        assert int_count == data['_meta']['total'], 'got %d' % (data['_meta']['total'])
     if int_count == 0 or not context.text:
         return
     test_json(context)
