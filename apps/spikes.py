@@ -1,3 +1,4 @@
+
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_backend
@@ -16,6 +17,6 @@ class SpikesResource(Resource):
         'source': 'archive',
         'search_backend': 'elastic',
         'default_sort': [('expiry', -1)],
-        'elastic_filter': {'term': {'is_spiked': True}}
+        'elastic_filter': {'term': {'state': 'spiked'}}
     }
     resource_methods = ['GET']

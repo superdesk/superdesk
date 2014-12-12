@@ -1,6 +1,6 @@
 from eve.utils import ParsedRequest
-
 from superdesk.resource import Resource
+from superdesk import InvalidStateTransitionError
 from superdesk.notification import push_notification
 from superdesk.utc import utcnow
 from apps.archive.common import on_create_item, item_url
@@ -9,7 +9,9 @@ from apps.content import metadata_schema
 import superdesk
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE
 from apps.archive.archive import get_subject
+from superdesk.workflow import is_workflow_state_transition_valid
 from copy import copy
+from eve.utils import config
 
 
 def init_app(app):
@@ -67,6 +69,25 @@ class TasksService(BaseService):
         if status == 'done':
             task.setdefault('finished_at', utcnow())
 
+    def update_state(self, updated, original):
+            # check if the desk has changed
+            # then the action is move
+            if str(updated.get('task', {}).get('desk', '')) != \
+                    original.get('task', {}).get('desk', ''):
+
+                # check if the preconditions for the action are in place
+                original_state = original[config.CONTENT_STATE]
+                if not is_workflow_state_transition_valid('move', original_state):
+                    raise InvalidStateTransitionError()
+
+                # check if destination is a desk or workspace
+                if updated.get('task', {}).get('desk', None) is None:
+                    # moving to workspace
+                    updated[config.CONTENT_STATE] = 'draft'
+                else:
+                    # moving the desk
+                    updated[config.CONTENT_STATE] = 'submitted'
+
     def update_stage(self, doc):
         task = doc.get('task', {})
         desk_id = task.get('desk', None)
@@ -89,6 +110,7 @@ class TasksService(BaseService):
                              subject=get_subject(doc), type=doc['type'])
 
     def on_update(self, updates, original):
+        self.update_state(updates, original)
         self.update_times(updates)
 
     def on_updated(self, updates, original):

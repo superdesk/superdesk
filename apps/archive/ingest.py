@@ -1,8 +1,7 @@
 from superdesk.resource import Resource
-from .common import extra_response_fields, item_url, aggregations
-from .common import on_create_item
 from superdesk.services import BaseService
 from apps.content import metadata_schema
+from .common import extra_response_fields, item_url, aggregations, on_create_item
 
 
 class IngestResource(Resource):

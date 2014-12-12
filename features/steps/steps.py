@@ -938,11 +938,21 @@ def get_default_prefs(context):
     assert_equal(response_data['user_preferences'], default_user_preferences)
 
 
-@when('we unspike "{url}"')
-def step_impl_when_unspike_url(context, url):
-    res = get_res(url, context)
+@when('we spike "{item_id}"')
+def step_impl_when_spike_url(context, item_id):
+    res = get_res('/archive/' + item_id, context)
     headers = if_match(context, res.get('_etag'))
-    context.response = context.client.delete(get_prefixed_url(context.app, url + "/spike"), headers=headers)
+
+    context.response = context.client.patch(get_prefixed_url(context.app, '/archive/spike/' + item_id),
+                                            data='{"state": "spiked"}', headers=headers)
+
+
+@when('we unspike "{item_id}"')
+def step_impl_when_unspike_url(context, item_id):
+    res = get_res('/archive/' + item_id, context)
+    headers = if_match(context, res.get('_etag'))
+    context.response = context.client.patch(get_prefixed_url(context.app, '/archive/unspike/' + item_id),
+                                            data='{}', headers=headers)
 
 
 @then('we get spiked content "{id}"')
@@ -951,7 +961,7 @@ def get_spiked_content(context, id):
     when_we_get_url(context, url)
     assert_200(context.response)
     response_data = json.loads(context.response.get_data())
-    assert_equal(response_data['is_spiked'], True)
+    assert_equal(response_data['state'], 'spiked')
 
 
 @then('we get unspiked content "{id}"')
@@ -960,7 +970,7 @@ def get_unspiked_content(context, id):
     when_we_get_url(context, url)
     assert_200(context.response)
     response_data = json.loads(context.response.get_data())
-    assert_equal(response_data['is_spiked'], None)
+    assert_equal(response_data['state'], 'draft')
     # Tolga Akin (05/11/14)
     # Expiry value doesn't get set to None properly in Elastic.
     # Discussed with Petr so we'll look into this later

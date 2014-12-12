@@ -16,7 +16,7 @@ Feature: News Items Archive
         When we get "/archive/tag:example.com,0000:newsml_BRE9A605"
         Then we get existing resource
         """
-        {"guid": "tag:example.com,0000:newsml_BRE9A605"}
+        {"guid": "tag:example.com,0000:newsml_BRE9A605", "state": "draft"}
         """
 
     @auth
@@ -33,7 +33,7 @@ Feature: News Items Archive
 
         And we patch latest
         """
-        {"headline": "TEST 3", "body_html": "<p>some content</p>"}
+        {"headline": "TEST 3", "state": "in_progress", "body_html": "<p>some content</p>"}
         """
 
         Then we get updated response
@@ -60,7 +60,7 @@ Feature: News Items Archive
 
         And we post to "archive/item-1/autosave"
         """
-        {"headline": "another one"}
+        {"headline": "another one", "state": "in_progress"}
         """
 
         And we get "archive/item-1"
@@ -77,7 +77,6 @@ Feature: News Items Archive
         {"headline": "TEST 2", "urgency": 2}
         """
 		And we restore version 1
-
         Then we get version 3
         And the field "headline" value is "test"
 
@@ -89,21 +88,19 @@ Feature: News Items Archive
         When we upload a file "bike.jpg" to "archive_media"
         Then we get new resource
         """
-        {"guid": "", "firstcreated": "", "versioncreated": ""}
+        {"guid": "", "firstcreated": "", "versioncreated": "", "state": "draft"}
         """
         And we get "bike.jpg" metadata
         And we get "picture" renditions
-
         When we patch latest
         """
         {"headline": "flower", "byline": "foo", "description": "flower desc"}
         """
-
         When we get "/archive"
         Then we get list with 1 items
         """
         {"_items": [{"headline": "flower", "byline": "foo", "description": "flower desc",
-                     "pubstatus": "Usable", "language": "en"}]}
+                     "pubstatus": "Usable", "language": "en", "state": "in_progress"}]}
         """
 
     @auth
@@ -112,7 +109,7 @@ Feature: News Items Archive
         When we upload a file "green.ogg" to "archive_media"
         Then we get new resource
         """
-        {"guid": ""}
+        {"guid": "", "state": "draft"}
         """
         And we get "green.ogg" metadata
         Then original rendition is updated with link to file having mimetype "audio/ogg"
@@ -123,7 +120,7 @@ Feature: News Items Archive
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"_items": [{"headline": "green", "byline": "foo", "description": "green music"}]}
+        {"_items": [{"headline": "green", "byline": "foo", "description": "green music", "state": "in_progress"}]}
         """
 
     @auth
@@ -132,7 +129,7 @@ Feature: News Items Archive
         When we upload a file "this_week_nasa.mp4" to "archive_media"
         Then we get new resource
         """
-        {"guid": ""}
+        {"guid": "", "state": "draft"}
         """
         And we get "this_week_nasa.mp4" metadata
         Then original rendition is updated with link to file having mimetype "video/mp4"
@@ -143,7 +140,7 @@ Feature: News Items Archive
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"_items": [{"headline": "week @ nasa", "byline": "foo", "description": "nasa video"}]}
+        {"_items": [{"headline": "week @ nasa", "byline": "foo", "description": "nasa video", "state": "in_progress"}]}
         """
 
     @auth

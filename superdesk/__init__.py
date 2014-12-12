@@ -3,14 +3,16 @@
 import logging
 from flask import abort, json, Blueprint, current_app as app  # noqa
 from flask.ext.script import Command as BaseCommand, Option  # noqa @UnresolvedImport
-from eve.methods.common import document_link  # noqa
-from .datalayer import SuperdeskDataLayer  # noqa
 from werkzeug.exceptions import HTTPException
 from eve.utils import config  # noqa
+from eve.methods.common import document_link  # noqa
+
 from .eve_backend import EveBackend
+from .datalayer import SuperdeskDataLayer  # noqa
 from .services import BaseService as Service  # noqa
 from .resource import Resource  # noqa
 from .privilege import privilege  # noqa
+from .workflow import *  # noqa
 
 
 API_NAME = 'Superdesk API'
@@ -122,3 +124,10 @@ def register_default_user_preference(preference_name, preference):
 
 def register_default_session_preference(preference_name, preference):
     default_session_preferences[preference_name] = preference
+
+
+class InvalidStateTransitionError(SuperdeskError):
+    """Exception raised if workflow transition is invalid."""
+
+    def __init__(self, message='Workflow transition is invalid.', status_code=None, payload=None):
+        super().__init__(message, status_code, payload)

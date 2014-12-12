@@ -30,6 +30,7 @@ def get_app(config=None):
         config = {}
 
     config['APP_ABSPATH'] = os.path.abspath(os.path.dirname(__file__))
+    config['CONTENT_STATE'] = 'state'
 
     for key in dir(settings):
         if key.isupper():
@@ -104,11 +105,14 @@ def get_app(config=None):
 
 if __name__ == '__main__':
 
+    import multiprocessing
+
     debug = True
-    port = int(os.environ.get('PORT', '5000'))
     host = '0.0.0.0'
+    port = int(os.environ.get('PORT', '5000'))
+    workers = multiprocessing.cpu_count() * 2 + 1
     superdesk.logger.setLevel(logging.INFO)
     superdesk.logger.addHandler(logging.StreamHandler())
 
     app = get_app()
-    app.run(host=host, port=port, debug=debug, use_reloader=debug)
+    app.run(host=host, port=port, debug=debug, use_reloader=debug, processes=workers)

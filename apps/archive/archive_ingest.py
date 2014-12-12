@@ -8,6 +8,7 @@ import traceback
 
 from celery.canvas import chord
 from celery.result import AsyncResult
+from eve.utils import config
 from eve.versioning import insert_versioning_documents
 import flask
 from flask.globals import current_app as app
@@ -16,6 +17,7 @@ from celery import states
 from celery.utils.log import get_task_logger
 
 import superdesk
+from superdesk import SuperdeskError, InvalidStateTransitionError
 from superdesk.utc import utc, utcnow
 from superdesk.celery_app import celery, finish_task_for_progress,\
     finish_subtask_from_progress, add_subtask_to_progress
@@ -25,6 +27,8 @@ from superdesk.resource import Resource
 from .common import get_user, aggregations
 from superdesk.services import BaseService
 from .archive import SOURCE as ARCHIVE
+from superdesk.workflow import is_workflow_state_transition_valid
+from superdesk.notification import push_notification
 
 
 logger = get_task_logger(__name__)
@@ -33,7 +37,9 @@ logger = get_task_logger(__name__)
 def update_status(task_id, current, total):
     if current is None:
         current = 0
-    archive_item.update_state(task_id, state='PROGRESS', meta={'current': int(current), 'total': int(total)})
+    progress = {'current': int(current), 'total': int(total)}
+    archive_item.update_state(task_id, state='PROGRESS', meta=progress)
+    push_notification('task:progress', task=task_id, progress=progress)
 
 
 def raise_fail(task_id, message):
@@ -46,11 +52,11 @@ def import_rendition(guid, rendition_name, href, extract_metadata):
     archive = superdesk.get_resource_service(ARCHIVE).find_one(req=None, guid=guid)
     if not archive:
         msg = 'No document found in the media archive with this ID: %s' % guid
-        raise superdesk.SuperdeskError(payload=msg)
+        raise SuperdeskError(payload=msg)
 
     if rendition_name not in archive['renditions']:
         payload = 'Invalid rendition name %s' % rendition_name
-        raise superdesk.SuperdeskError(payload=payload)
+        raise SuperdeskError(payload=payload)
 
     updates = {}
     metadata = None
@@ -65,6 +71,7 @@ def import_rendition(guid, rendition_name, href, extract_metadata):
     # perform partial update
     updates['renditions.' + rendition_name + '.href'] = url_for_media(file_guid)
     updates['renditions.' + rendition_name + '.media'] = file_guid
+    updates['req_for_save'] = 'false'
     result = superdesk.get_resource_service(ARCHIVE).patch(guid, updates=updates)
 
     return result
@@ -166,6 +173,7 @@ def archive_item(self, guid, provider_id, user, task_id=None):
         '''
         flask.g.user = user
         remove_unwanted(item)
+        item[config.CONTENT_STATE] = 'fetched'
         superdesk.get_resource_service(ARCHIVE).patch(guid, item)
 
         tasks = []
@@ -174,16 +182,22 @@ def archive_item(self, guid, provider_id, user, task_id=None):
                 if 'residRef' in ref:
                     resid_ref = ref.get('residRef')
                     doc = {'guid': resid_ref, 'ingest_provider': provider_id, 'task_id': crt_task_id}
+                    archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, guid=resid_ref)
 
-                    archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, guid=doc.get('guid'))
-                    # check if task already started
-                    if not archived_doc:
-                        doc.setdefault('_id', doc.get('guid'))
+                    if not archived_doc:  # Check if task already started
+                        '''
+                        We need to fetch the sub-documents from DB. Otherwise metadata attributes like unique_id,
+                        unique_name, state, type will be re-defined rather than copying from ingest doc.
+                        '''
+                        resid_ref_doc = superdesk.get_resource_service('ingest').find_one(req=None, guid=resid_ref)
+                        copy_from_ingest_doc(doc, resid_ref_doc)
+
                         superdesk.get_resource_service(ARCHIVE).post([doc])
                     elif archived_doc.get('task_id') == crt_task_id:
                         # it is a retry so continue
                         archived_doc.update(doc)
                         remove_unwanted(archived_doc)
+                        archived_doc['req_for_save'] = 'false'
                         superdesk.get_resource_service(ARCHIVE).patch(archived_doc.get('_id'), archived_doc)
                     else:
                         # there is a cyclic dependency, skip it
@@ -220,7 +234,7 @@ def insert_into_versions(guid, task_id):
     remove_unwanted(archived_doc)
 
     if 'task_id' not in archived_doc:
-        updates = superdesk.get_resource_service(ARCHIVE).patch(guid, {"task_id": task_id})
+        updates = superdesk.get_resource_service(ARCHIVE).patch(guid, {"task_id": task_id, 'req_for_save': 'false'})
         archived_doc.update(updates)
 
     if app.config['VERSION'] in archived_doc:
@@ -238,6 +252,22 @@ def mark_ingest_as_archived(guid=None, ingest_doc=None):
 
     if ingest_doc:
         superdesk.get_resource_service('ingest').patch(ingest_doc.get('_id'), {'archived': utcnow()})
+
+
+def copy_from_ingest_doc(dest_doc, source_doc):
+    """
+    As the name suggests this method copies some of the values from ingest_doc.
+
+    :param dest_doc: doc which gets persisted into archive collection
+    :param source_doc: doc which is fetched from ingest collection
+    """
+
+    # doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
+    dest_doc.setdefault('_id', dest_doc.get('guid'))
+    dest_doc.setdefault('unique_id', source_doc.get('unique_id'))
+    dest_doc.setdefault('unique_name', source_doc.get('unique_name'))
+    dest_doc.setdefault('type', source_doc['type'] if 'type' in source_doc else '')
+    dest_doc.setdefault(config.CONTENT_STATE, source_doc[config.CONTENT_STATE])
 
 
 class ArchiveIngestResource(Resource):
@@ -266,29 +296,21 @@ class ArchiveIngestResource(Resource):
 
 class ArchiveIngestService(BaseService):
 
-    def _copy_from_ingest_doc(self, doc, ingest_doc):
-        """
-        As the name suggests this method copies some of the values from ingest_doc.
-        """
-
-        # doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
-        doc.setdefault('_id', doc.get('guid'))
-        doc.setdefault('unique_id', ingest_doc.get('unique_id'))
-        doc.setdefault('unique_name', ingest_doc.get('unique_name'))
-        doc.setdefault('type', ingest_doc['type'] if 'type' in ingest_doc else '')
-
     def create(self, docs, **kwargs):
         for doc in docs:
             ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=doc.get('guid'))
             if not ingest_doc:
                 msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
-                raise superdesk.SuperdeskError(payload=msg)
+                raise SuperdeskError(payload=msg)
+
+            if not is_workflow_state_transition_valid('fetch_as_from_ingest', ingest_doc[config.CONTENT_STATE]):
+                raise InvalidStateTransitionError()
 
             mark_ingest_as_archived(ingest_doc=ingest_doc)
 
             archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, guid=doc.get('guid'))
             if not archived_doc:
-                self._copy_from_ingest_doc(doc, ingest_doc)
+                copy_from_ingest_doc(doc, ingest_doc)
                 superdesk.get_resource_service(ARCHIVE).post([doc])
 
             task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), get_user())
@@ -323,4 +345,18 @@ class ArchiveIngestService(BaseService):
             return doc
         except Exception:
             msg = 'No progress information is available for task_id: %s' % task_id
-            raise superdesk.SuperdeskError(payload=msg)
+            raise SuperdeskError(payload=msg)
+
+
+superdesk.workflow_state('fetched')
+superdesk.workflow_action(
+    name='fetch_as_from_ingest',
+    include_states=['ingested'],
+    privileges=['archive', 'ingest_move']
+)
+
+superdesk.workflow_state('routed')
+superdesk.workflow_action(
+    name='route',
+    include_states=['ingested']
+)

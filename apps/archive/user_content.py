@@ -3,6 +3,7 @@ from superdesk.resource import Resource, build_custom_hateoas
 from superdesk.services import BaseService
 from .common import aggregations
 from .archive import ArchiveResource
+import superdesk
 
 
 class UserContentResource(Resource):
@@ -24,3 +25,18 @@ class UserContentService(BaseService):
         for doc in docs:
             build_custom_hateoas(self.custom_hateoas, doc)
         return docs
+
+
+superdesk.workflow_state('draft')
+
+superdesk.workflow_action(
+    name='fetch_from_content',
+    include_states=['fetched', 'routed', 'submitted', 'in-progress'],
+    privileges=['archive']
+)
+
+superdesk.workflow_action(
+    name='fetch_as_from_content',
+    include_states=['fetched', 'routed', 'submitted', 'in-progress'],
+    privileges=['archive']
+)

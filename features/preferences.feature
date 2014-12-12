@@ -149,14 +149,14 @@ Feature: User preferences
 
       When we patch "/users/#USERS_ID#"
             """
-            {"role": "#ROLES_ID#", "user_type": "user", "privileges": {"archive:spike": 1}}
+            {"role": "#ROLES_ID#", "user_type": "user", "privileges": {"spike": 1}}
             """
 
       When we get "/preferences/#SESSION_ID#"
       Then we get existing resource
       """
       {"user": "#USERS_ID#",
-      "active_privileges": {"fungi": 1, "archive:spike": 1},
+      "active_privileges": {"fungi": 1, "spike": 1},
       "user_preferences": {"feature:preview":
       {
       "type": "bool",
@@ -164,7 +164,10 @@ Feature: User preferences
       "default": false,
       "label": "Enable Feature Preview",
       "category": "feature"
-      }}}
+      }},
+      "allowed_actions": [{"privileges": ["spike"], "include_states": [], "exclude_states": ["spiked",
+      "published", "killed"], "name": "spike"}]
+      }
       """
 
     @auth
@@ -188,5 +191,8 @@ Feature: User preferences
       "default": false,
       "label": "Enable Feature Preview",
       "category": "feature"
-      }}}
+      }},
+      "allowed_actions": [{"privileges": ["spike"], "include_states": [], "exclude_states": ["spiked",
+      "published", "killed"], "name": "spike"}]
+      }
       """

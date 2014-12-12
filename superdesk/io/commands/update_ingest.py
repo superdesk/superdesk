@@ -9,12 +9,21 @@ from superdesk.utc import utcnow
 from datetime import timedelta
 from flask import current_app as app
 from werkzeug.exceptions import HTTPException
+from superdesk.workflow import set_default_state
 
 
 UPDATE_SCHEDULE_DEFAULT = {'minutes': 5}
 LAST_UPDATED = 'last_updated'
+STATE_INGESTED = 'ingested'
 
 logger = logging.getLogger(__name__)
+
+
+superdesk.workflow_state(STATE_INGESTED)
+
+superdesk.workflow_action(
+    name='ingest'
+)
 
 
 def is_valid_type(provider, provider_type_filter=None):
@@ -124,6 +133,7 @@ def ingest_items(provider, items):
 
         item['ingest_provider'] = str(provider['_id'])
         item.setdefault('source', provider.get('source', ''))
+        set_default_state(item, STATE_INGESTED)
 
         if 'anpa-category' in item:
             process_anpa_category(item)

@@ -7,7 +7,7 @@ from .common import on_create_item, on_create_media_archive, on_update_media_arc
 from .common import get_user
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
-from superdesk import SuperdeskError, get_resource_service
+from superdesk import SuperdeskError, get_resource_service, InvalidStateTransitionError
 from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE,\
@@ -20,6 +20,8 @@ from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
 from apps.legal_archive.components.legal_archive_proxy import LegalArchiveProxy
 from copy import copy
+import superdesk
+from superdesk.workflow import is_workflow_state_transition_valid
 
 
 SOURCE = 'archive'
@@ -120,7 +122,23 @@ class ArchiveService(BaseService):
             add_activity(ACTIVITY_CREATE, 'added new item {{ type }} about {{ subject }}', item=doc,
                          type=doc['type'], subject=get_subject(doc))
 
+    def update_state(self, original, updates):
+        original_state = original[config.CONTENT_STATE]
+        if original_state != 'ingested' and original_state != 'in_progress':
+            if not is_workflow_state_transition_valid('save', original_state):
+                raise InvalidStateTransitionError()
+            elif self._is_req_for_save(updates):
+                if original.get('task', {}).get('desk', None) is None:
+                    # content is on workspace
+                    if original_state != 'draft':
+                        updates[config.CONTENT_STATE] = 'draft'
+                else:
+                    # content is on a desk
+                    updates[config.CONTENT_STATE] = 'in_progress'
+
     def on_update(self, updates, original):
+        self.update_state(original, updates)
+
         user = get_user()
         lock_user = original.get('lock_user', None)
         force_unlock = updates.get('force_unlock', False)
@@ -197,7 +215,7 @@ class ArchiveService(BaseService):
         if old is None:
             raise SuperdeskError(payload='Invalid version %s' % old_version)
 
-        curr = get_resource_service('archive').find_one(req=None, _id=item_id)
+        curr = get_resource_service(SOURCE).find_one(req=None, _id=item_id)
         if curr is None:
             raise SuperdeskError(payload='Invalid item id %s' % item_id)
 
@@ -213,6 +231,20 @@ class ArchiveService(BaseService):
         del doc['last_version']
         doc.update(old)
         return res
+
+    def _is_req_for_save(self, doc):
+        """
+        Patch of /api/archive is being used in multiple places. This method differentiates from the patch
+        triggered by user or not.
+        """
+
+        if 'req_for_save' in doc:
+            req_for_save = doc['req_for_save']
+            del doc['req_for_save']
+
+            return req_for_save == 'true'
+
+        return True
 
 
 class AutoSaveResource(Resource):
@@ -239,3 +271,18 @@ class ArchiveSaveService(BaseService):
         except InvalidEtag:
             raise SuperdeskError('Client and server etags don\'t match', 412)
         return [docs[0]['_id']]
+
+
+superdesk.workflow_state('in_progress')
+superdesk.workflow_action(
+    name='save',
+    include_states=['draft', 'fetched', 'routed', 'submitted'],
+    privileges=['archive']
+)
+
+superdesk.workflow_state('submitted')
+superdesk.workflow_action(
+    name='move',
+    exclude_states=['ingested', 'spiked', 'on-hold', 'published', 'killed'],
+    privileges=['archive']
+)

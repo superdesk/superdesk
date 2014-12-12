@@ -22,7 +22,7 @@ Feature: Ingest
 
         When we get "/ingest"
         Then we get list with 1 items
-        And we get aggregations "type,desk,urgency,stage,category,source,spiked,day,week,month"
+        And we get aggregations "type,desk,urgency,stage,category,source,state,day,week,month"
 
 
     @auth
@@ -36,10 +36,12 @@ Feature: Ingest
 		{
 		    "_items": [{
 		        "type": "picture",
-		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS"
+		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS",
+		        "state":"ingested"
 		    }, {
 		        "type": "composite",
 		        "usageterms": "NO ARCHIVAL USE",
+		        "state":"ingested",
 		        "groups": [{
 		            "refs": [{
 		                "itemClass": "icls:text",
@@ -63,16 +65,20 @@ Feature: Ingest
 		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM"
 		    }, {
 		        "type": "picture",
-		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT"
+		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT",
+		        "state":"ingested"
 		    }, {
 		        "type": "text",
-		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0ZP"
+		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0ZP",
+		        "state":"ingested"
 		    }, {
 		        "type": "picture",
-		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M"
+		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M",
+		        "state":"ingested"
 		    }, {
 		        "type": "text",
-		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NN"
+		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NN",
+		        "state":"ingested"
 		    }]
 		} 
   		"""
