@@ -1,8 +1,9 @@
+SOURCE = 'archive'
 
 import flask
 from superdesk.io import get_word_count
 from superdesk.resource import Resource
-from .common import extra_response_fields, item_url, aggregations
+from .common import extra_response_fields, item_url, aggregations, remove_unwanted
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from .common import get_user
 from flask import current_app as app
@@ -10,8 +11,7 @@ from werkzeug.exceptions import NotFound
 from superdesk import SuperdeskError, get_resource_service, InvalidStateTransitionError
 from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
-from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE,\
-    ACTIVITY_DELETE
+from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, ACTIVITY_DELETE
 from eve.utils import parse_request, config
 from superdesk.services import BaseService
 from apps.content import metadata_schema
@@ -22,9 +22,6 @@ from apps.legal_archive.components.legal_archive_proxy import LegalArchiveProxy
 from copy import copy
 import superdesk
 from superdesk.workflow import is_workflow_state_transition_valid
-
-
-SOURCE = 'archive'
 
 
 def get_subject(doc1, doc2=None):
@@ -113,6 +110,7 @@ class ArchiveService(BaseService):
 
         for doc in docs:
             doc['version_creator'] = doc['original_creator']
+            remove_unwanted(doc)
             update_word_count(doc)
 
     def on_created(self, docs):
@@ -137,6 +135,7 @@ class ArchiveService(BaseService):
                     updates[config.CONTENT_STATE] = 'in_progress'
 
     def on_update(self, updates, original):
+        remove_unwanted(updates)
         self.update_state(original, updates)
 
         user = get_user()
@@ -171,6 +170,7 @@ class ArchiveService(BaseService):
                          type=updated['type'])
 
     def on_replace(self, document, original):
+        remove_unwanted(document)
         user = get_user()
         lock_user = original.get('lock_user', None)
         force_unlock = document.get('force_unlock', False)
@@ -187,7 +187,8 @@ class ArchiveService(BaseService):
         on_update_media_archive()
 
     def on_delete(self, doc):
-        '''Delete associated binary files.'''
+        """Delete associated binary files."""
+
         if doc and doc.get('renditions'):
             for _name, ref in doc['renditions'].items():
                 try:
@@ -226,7 +227,10 @@ class ArchiveService(BaseService):
         del old['_id_document']
 
         resolve_document_version(old, 'archive', 'PATCH', curr)
+
+        remove_unwanted(old)
         res = super().replace(id=item_id, document=old)
+
         del doc['old_version']
         del doc['last_version']
         doc.update(old)

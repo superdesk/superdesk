@@ -2,14 +2,17 @@ from datetime import datetime
 from uuid import uuid4
 
 import flask
+from flask import current_app as app
+from eve.versioning import insert_versioning_documents
+
 from superdesk.celery_app import update_key
 from superdesk.utc import utcnow
 from settings import SERVER_DOMAIN
-from superdesk import SuperdeskError
+from superdesk import SuperdeskError, get_resource_service
 from superdesk.notification import push_notification
 from superdesk.workflow import set_default_state
 import superdesk
-
+from apps.archive.archive import SOURCE as ARCHIVE
 
 GUID_TAG = 'tag'
 GUID_NEWSML = 'newsml'
@@ -138,3 +141,34 @@ def generate_unique_id_and_name(item):
             raise IdentifierGenerationError()
     except Exception as e:
         raise IdentifierGenerationError() from e
+
+
+def insert_into_versions(guid, task_id=None):
+    """
+    There are some scenarios where the requests are not handled by eve. In those scenarios superdesk should be able to
+    manually manage versions. Below are some scenarios:
+
+    1.  When user fetches a content from ingest collection the request is delegated to a Celery Task. This gets complex
+        when content is of type composite/package, in this case Celery task creates sub-tasks for each item in the
+        package.
+    2.  When user submits content to a desk the request is handled by /tasks API.
+    """
+
+    doc_in_archive_collection = get_resource_service(ARCHIVE).find_one(req=None, _id=guid)
+    remove_unwanted(doc_in_archive_collection)
+
+    if task_id is not None and 'task_id' not in doc_in_archive_collection:
+        updates = get_resource_service(ARCHIVE).patch(guid, {"task_id": task_id, 'req_for_save': 'false'})
+        doc_in_archive_collection.update(updates)
+
+    if app.config['VERSION'] in doc_in_archive_collection:
+        insert_versioning_documents(ARCHIVE, doc_in_archive_collection)
+
+
+def remove_unwanted(doc):
+    """
+    As the name suggests this function removes unwanted attributes from doc to make an entry in Mongo and Elastic.
+    """
+
+    if '_type' in doc:
+        del doc['_type']
