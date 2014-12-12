@@ -9,12 +9,12 @@ import traceback
 from celery.canvas import chord
 from celery.result import AsyncResult
 from eve.utils import config
-from eve.versioning import insert_versioning_documents
 import flask
 from flask.globals import current_app as app
 from celery.exceptions import Ignore
 from celery import states
 from celery.utils.log import get_task_logger
+from apps.archive.common import insert_into_versions
 
 import superdesk
 from superdesk import SuperdeskError, InvalidStateTransitionError
@@ -211,22 +211,6 @@ def archive_item(self, guid, provider_id, user, task_id=None):
                 update_status(*finish_task_for_progress(task_id))
     except Exception:
         logger.error(traceback.format_exc())
-
-
-def insert_into_versions(guid, task_id):
-    """
-    Since the request is handled by Celery we need to manually persist the initial version into versions collection.
-    If the ingest content is of type composite/package then archive_item creates sub-tasks
-    """
-
-    archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=guid)
-
-    if 'task_id' not in archived_doc:
-        updates = superdesk.get_resource_service(ARCHIVE).patch(guid, {"task_id": task_id, 'req_for_save': 'false'})
-        archived_doc.update(updates)
-
-    if app.config['VERSION'] in archived_doc:
-        insert_versioning_documents(ARCHIVE, archived_doc)
 
 
 def mark_ingest_as_archived(guid=None, ingest_doc=None):

@@ -1,8 +1,9 @@
+SOURCE = 'archive'
 
 import flask
 from superdesk.io import get_word_count
 from superdesk.resource import Resource
-from .common import extra_response_fields, item_url, aggregations
+from .common import extra_response_fields, item_url, aggregations, remove_unwanted
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from .common import get_user
 from flask import current_app as app
@@ -10,8 +11,7 @@ from werkzeug.exceptions import NotFound
 from superdesk import SuperdeskError, get_resource_service, InvalidStateTransitionError
 from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
-from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE,\
-    ACTIVITY_DELETE
+from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, ACTIVITY_DELETE
 from eve.utils import parse_request, config
 from superdesk.services import BaseService
 from apps.content import metadata_schema
@@ -22,9 +22,6 @@ from apps.legal_archive.components.legal_archive_proxy import LegalArchiveProxy
 from copy import copy
 import superdesk
 from superdesk.workflow import is_workflow_state_transition_valid
-
-
-SOURCE = 'archive'
 
 
 def get_subject(doc1, doc2=None):
@@ -104,15 +101,6 @@ def update_word_count(doc):
     """
     if doc.get('body_html'):
         doc.setdefault('word_count', get_word_count(doc.get('body_html')))
-
-
-def remove_unwanted(doc):
-    """
-    As the name suggests this function removes unwanted attributes from doc to make an entry in Mongo and Elastic.
-    """
-
-    if '_type' in doc:
-        del doc['_type']
 
 
 class ArchiveService(BaseService):

@@ -32,7 +32,13 @@ class ItemLock(BaseComponent):
             self.app.on_item_lock(item, user)
             updates = {LOCK_USER: user, LOCK_SESSION: session, 'lock_time': utcnow()}
             item_model.update(filter, updates)
-            superdesk.get_resource_service('tasks').assign_user(item['_id'], user)
+
+            if 'task' in item and 'user' in item['task']:
+                item['task']['user'] = user
+            else:
+                item['task'] = {'user': user}
+
+            superdesk.get_resource_service('tasks').assign_user(item['_id'], item['task'])
             self.app.on_item_locked(item, user)
             push_notification('item:lock', item=str(item.get('_id')), user=str(user))
         else:
