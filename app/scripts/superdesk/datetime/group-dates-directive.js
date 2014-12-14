@@ -37,8 +37,7 @@ define(['moment'], function(moment) {
                         } else {
                         	fdate = date.format(DISPLAY_DATE_FORMAT);
                         }
-                    	element.prepend('<div class="group-date"><span class="day">' + fday +
-                    			'</span><span class="date">' + fdate + '</span></div>');
+                    	element.prepend('<div class="date"><span>' + fday + fdate + '</span></div>');
                         element.addClass('with-date');
                         lastDate = date;
                     }

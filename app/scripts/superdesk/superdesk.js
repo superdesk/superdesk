@@ -6,7 +6,6 @@ define([
     'angular-route',
     'angular-resource',
     'angular-file-upload',
-    'angular-slider',
 
     './activity/activity',
     './analytics/analytics',
@@ -18,7 +17,6 @@ define([
     './elastic/elastic',
     './error/error',
     './list/list',
-    './menu/menu',
     './notification/notification',
     './notify/notify',
     './upload/upload',
@@ -35,7 +33,6 @@ define([
         'ngResource',
         'ui.bootstrap',
         'angularFileUpload',
-        'uiSlider',
 
         require('./activity/activity').name,
         require('./analytics/analytics').name,
@@ -47,11 +44,12 @@ define([
         require('./elastic/elastic').name,
         require('./error/error').name,
         require('./list/list').name,
-        require('./menu/menu').name,
         require('./notify/notify').name,
         require('./notification/notification').name,
         require('./upload/upload').name,
-        require('./ui/ui').name
+        require('./ui/ui').name,
+
+        'superdesk.menu'
     ];
 
     modules.push(require('./filters').name);

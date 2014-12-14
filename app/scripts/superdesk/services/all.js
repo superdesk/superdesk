@@ -3,12 +3,14 @@ define([
     './data',
     './translate',
     './storage',
+    './preferencesService',
     './permissionsService',
     './keyboardManager',
     './entity',
     './server',
     './dragDropService',
-    './modalService'
+    './modalService',
+    './workflowService'
 ], function(require) {
     'use strict';
 
@@ -21,6 +23,8 @@ define([
         require('./keyboardManager').name,
         require('./permissionsService').name,
         require('./storage').name,
-        require('./translate').name
+        require('./preferencesService').name,
+        require('./translate').name,
+        require('./workflowService').name
     ];
 });

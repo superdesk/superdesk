@@ -1,21 +1,33 @@
 
-var openUrl = require('./utils').open;
+var post = require('./helpers/fixtures').post;
+var openUrl = require('./helpers/utils').open;
+
+var ptor = protractor.getInstance();
 
 describe('USERS', function() {
     'use strict';
+
+    beforeEach(function(done) {
+        post({
+            uri: '/users',
+            json: {
+                'first_name': 'foo',
+                'last_name': 'bar',
+                'username': 'spam',
+                'email': 'foo@bar.com'
+            }
+        }, done);
+    });
 
     describe('profile:', function() {
 
         beforeEach(openUrl('/#/profile'));
 
         it('can render user profile', function() {
-            expect($('img[sd-user-picture').getAttribute('src'))
-                .toBe('http://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=200');
-            expect(bindingValue('{{ user.username }}')).toBe('john');
-            expect(modelValue('user.first_name')).toBe('John');
-            expect(modelValue('user.last_name')).toBe('Doe');
-            expect(modelValue('user.email')).toBe('john.doe@email.com');
-            //expect(modelValue('user.phone')).toBe('0123456789');
+            expect(bindingValue('user.username')).toBe('admin');
+            expect(modelValue('user.first_name')).toBe('first name');
+            expect(modelValue('user.last_name')).toBe('last name');
+            expect(modelValue('user.email')).toBe('a@a.com');
         });
     });
 
@@ -27,7 +39,7 @@ describe('USERS', function() {
                 expect(users.length).toBe(2);
             });
 
-            expect(element(by.repeater('user in users').row(0).column('username')).getText()).toBe('john');
+            expect(element(by.repeater('user in users').row(0).column('username')).getText()).toBe('admin');
         });
 
         it('can delete user', function() {
@@ -35,20 +47,21 @@ describe('USERS', function() {
                 activity = element.all(by.repeater('activity'));
 
             expect(activity.count()).toBe(2);
-            user.first().click();
+            user.get(1).click();
 
             expect($('.preview-pane').evaluate('selected.user')).not.toBe(null);
 
-            activity.first().click();
+            var deleteButton = activity.get(1);
+            ptor.actions()
+                .mouseMove(deleteButton)
+                .perform();
+            deleteButton.click();
 
-            expect(element(by.binding('{{bodyText}}')).getText())
+            expect(element(by.binding('bodyText')).getText())
                 .toBe('Please confirm you want to delete a user.');
             element(by.buttonText('OK')).click();
 
-            // it reloads the list after delete which will on apiary return 2 items again..
-            expect(element.all(by.repeater('user')).count()).toBe(2);
-
-            // but there should be no preview
+            expect(element.all(by.repeater('user')).count()).toBe(1);
             expect($('.preview-pane').evaluate('selected.user')).toBe(null);
         });
     });
@@ -58,37 +71,41 @@ describe('USERS', function() {
 
         it('can open user detail', function() {
             element(by.repeater('user in users').row(0).column('username')).click();
-            expect(modelValue('user.display_name')).toBe('John Doe');
-            $('.preview-pane > .actions > a.btn').click();
-            expect(browser.getCurrentUrl()).toBe('http://localhost:9090/#/users/2');
-            expect($('.page-nav-title').getText()).toBe('Users Profile: John Doe');
+            expect(modelValue('user.display_name')).toBe('first name last name');
+            $('#open-user-profile').click();
+            expect($('.page-nav-title').getText()).toBe('Users Profile: first name last name');
         });
 
     });
 
     describe('user edit:', function() {
-        beforeEach(openUrl('/#/users/2'));
+        beforeEach(function(done) {
+            openUrl('/#/users/')();
+            element(by.repeater('user in users').row(1).column('username')).click();
+            $('#open-user-profile').click();
+            done();
+        });
 
         it('can enable/disable buttons based on form status', function() {
-            var buttonSave = element(by.buttonText('Save'));
-            var buttonCancel = element(by.buttonText('Cancel'));
+            var buttonSave = element(by.id('save-edit-btn'));
+            var buttonCancel = element(by.id('cancel-edit-btn'));
             var inputFirstName = element(by.model('user.first_name'));
 
-            expect(buttonSave.getAttribute('disabled')).toBe('true');
-            expect(buttonCancel.getAttribute('disabled')).toBe('true');
+            expect(buttonSave.isEnabled()).toBe(false);
+            expect(buttonCancel.isEnabled()).toBe(false);
 
             inputFirstName.sendKeys('X');
-            expect(inputFirstName.getAttribute('value')).toBe('JohnX');
+            expect(inputFirstName.getAttribute('value')).toBe('fooX');
 
-            expect(buttonSave.getAttribute('disabled')).toBe(null);
-            expect(buttonCancel.getAttribute('disabled')).toBe(null);
+            expect(buttonSave.isEnabled()).toBe(true);
+            expect(buttonCancel.isEnabled()).toBe(true);
 
             inputFirstName.clear();
-            inputFirstName.sendKeys('John');
-            expect(inputFirstName.getAttribute('value')).toBe('John');
+            inputFirstName.sendKeys('foo');
+            expect(inputFirstName.getAttribute('value')).toBe('foo');
 
-            expect(buttonSave.getAttribute('disabled')).toBe('true');
-            expect(buttonCancel.getAttribute('disabled')).toBe('true');
+            expect(buttonSave.isEnabled()).toBe(false);
+            expect(buttonCancel.isEnabled()).toBe(false);
         });
 
         it('can validate phone number', function() {

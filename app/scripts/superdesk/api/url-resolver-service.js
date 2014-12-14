@@ -4,7 +4,11 @@ define([], function() {
     URLResolver.$inject = ['$http', '$q', 'config'];
     function URLResolver($http, $q, config) {
 
-        var links;
+        var _links, baseUrl = config.server.url;
+
+        function basejoin(path) {
+            return baseUrl + path;
+        }
 
         /**
          * Get url for given resource
@@ -13,8 +17,8 @@ define([], function() {
          * @returns Promise
          */
         this.resource = function(resource) {
-            return getResourceLinks().then(function() {
-                return links[resource] ? links[resource] : $q.reject(resource);
+            return this.links().then(function() {
+                return _links[resource] ? _links[resource] : $q.reject({status: 404, resource: resource});
             });
         };
 
@@ -25,35 +29,45 @@ define([], function() {
          * @returns {String}
          */
         this.item = function(item) {
-            return item; // noop - items should have full urls now
+            return basejoin(item);
         };
 
         /**
-         * Get resource links via root url
+         * Get resource links
+         */
+        this.links = function() {
+            if (_links) {
+                return $q.when(_links);
+            }
+
+            return fetchResourceLinks();
+        };
+
+        /**
+         * Fetch resource links via root url
          *
          * @returns {Promise}
          */
-        function getResourceLinks() {
-
-            if (links != null) {
-                return $q.when(links);
+        function fetchResourceLinks() {
+            if (!baseUrl) {
+                return $q.reject();
             }
 
             return $http({
                 method: 'GET',
-                url: config.server.url
+                url: baseUrl
             }).then(function(response) {
-                links = {};
+                _links = {};
 
                 if (response.status === 200) {
                     _.each(response.data._links.child, function(link) {
-                        links[link.title] = link.href;
+                        _links[link.title] = basejoin(link.href);
                     });
                 } else {
                     $q.reject(response);
                 }
 
-                return links;
+                return _links;
             });
         }
     }

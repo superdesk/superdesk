@@ -1,16 +1,12 @@
 <div>
-    <div class="subnav subnav-fixed">
-        <h3 class="page-nav-title" translate>Settings</h3>
-    </div>
-
-    <div class="settingsPage">
-        <div class="tabbable">
+    <div class="settings-page">
+        <div class="tabbable outer">
             <ul class="nav-tabs nav-stacked">
                 <li ng-repeat="item in settings | orderBy:'priority'" ng-class="{active: currentRoute._id === item._id}"><a ng-href="#{{ item.href }}">{{ item.label }}</a></li>
             </ul>
             <div>
-                <div class="tab-content">
-                    <div class="tab-pane" ng-transclude></div>
+                <div class="tab-content outer">
+                    <div class="tab-pane outer" ng-transclude></div>
                 </div>
             </div>
         </div>

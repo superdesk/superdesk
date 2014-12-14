@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # prepare server
-grunt build --server='http://superdesk.apiary.io'
+grunt build
 grunt connect:build &
 sleep 1
 

@@ -1,76 +1,45 @@
-define(['./module', 'angular'], function(DashboardModule, angular) {
-    'use strict';
+'use strict';
 
-    var USER_URL = 'user_url/1';
+describe('dashboard', function() {
 
-    describe('dashboard', function() {
+    var USER_URL = '/users/1';
+    var USER = {
+        _links: {self: {href: USER_URL}},
+        _etag: '1'
+    };
 
-        beforeEach(module(function($provide) {
+    beforeEach(module('templates'));
+    beforeEach(module('superdesk.dashboard'));
 
-            $provide.service('session', function() {
-                this.identity = {
-                    _links: {self: {href: USER_URL}}
-                };
-            });
+    beforeEach(inject(function(session) {
+        session.start({}, USER);
+    }));
 
-            $provide.provider('superdesk', function() {
-                var _activity = {};
-                this.activity = function(id, activity) {
-                    _activity[id] = activity;
-                };
+    it('can load user widgets', inject(function(workspace, api, $rootScope, $q) {
+        spyOn(api, 'get').and.returnValue($q.when(USER));
 
-                this.$get = function() {
-                    return {activity: _activity};
-                };
-            });
+        var widgets;
+        workspace.load().then(function(_widgets) {
+            widgets = _widgets.widgets;
+        });
 
-        }));
+        $rootScope.$digest();
+        expect(api.get).toHaveBeenCalledWith(USER_URL);
+        expect(widgets.length).toBe(0);
+    }));
 
-        beforeEach(module('superdesk.dashboard'));
+    it('can add widget to user workspace', inject(function(workspace, api, $rootScope, $q) {
 
-        function getWidget() {
-            var widget;
-            inject(function(widgets) {
-                widget = {_id: widgets[0]._id, row: 1, col: 1, sizex: 1, sizey: 1, configuration: widgets[0].configuration};
-            });
-            return widget;
-        }
+        var user = angular.extend(USER, {_etag: '2'});
 
-        function getScope(widgets) {
-            var scope;
-            inject(function(superdesk, $controller, $rootScope, $httpBackend) {
-                scope = $rootScope.$new(true);
-                $httpBackend.expectGET(USER_URL).respond(widgets ? {workspace: {widgets: widgets}} : {});
-                $controller(superdesk.activity['/workspace'].controller, {$scope: scope});
-                $httpBackend.flush();
-            });
+        spyOn(api, 'get').and.returnValue($q.when(user));
+        spyOn(api, 'save').and.returnValue($q.when(USER));
 
-            return scope;
-        }
+        workspace.load();
+        $rootScope.$digest();
+        workspace.save();
+        $rootScope.$digest();
 
-        it('can render load user widgets', inject(function() {
-            var scope = getScope();
-            expect(scope.userWidgets.length).toBe(0);
-            expect(scope.availableWidgets.length).toBe(1);
-        }));
-
-        it('can add widget to user workspace', inject(function($httpBackend) {
-            var scope = getScope();
-
-            $httpBackend.expectPATCH(USER_URL, {workspace: {widgets: [getWidget()]}}).respond({});
-
-            scope.addWidget(scope.availableWidgets[0]);
-
-            $httpBackend.flush();
-
-            expect(scope.userWidgets.length).toBe(1);
-            expect(scope.availableWidgets.length).toBe(1);
-        }));
-
-        it('can load stored widgets', inject(function() {
-            var scope = getScope([getWidget()]);
-            expect(scope.userWidgets.length).toBe(1);
-            expect(scope.userWidgets[0].label).toBe(scope.availableWidgets[0].label);
-        }));
-    });
+        expect(api.save).toHaveBeenCalledWith('users', user, {workspace: {widgets: []}});
+    }));
 });

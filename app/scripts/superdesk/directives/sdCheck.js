@@ -2,7 +2,7 @@ define(['angular'], function(angular) {
     'use strict';
 
     var render = function(element, value) {
-        element.toggleClass('sf-checked', !!value);
+        element.toggleClass('checked', !!value);
         element.attr('checked', !!value);
     };
 
@@ -20,7 +20,7 @@ define(['angular'], function(angular) {
             return {
                 require: 'ngModel',
                 replace: true,
-                template: '<span class="sf-checkbox-custom"></span>',
+                template: '<span class="sd-checkbox"></span>',
                 link: function($scope, element, attrs, ngModel) {
                     ngModel.$render = function() {
                         render(element, ngModel.$viewValue);
@@ -57,7 +57,7 @@ define(['angular'], function(angular) {
             return {
                 require: 'ngModel',
                 replace: true,
-                template: '<span class="sf-checkbox-custom"></span>',
+                template: '<span class="sd-checkbox"></span>',
                 link: function($scope, element, attrs, ngModel) {
                     var checked = false;
                     if (attrs.checkAttribute !== undefined) {
@@ -95,23 +95,20 @@ define(['angular'], function(angular) {
          *
          * Params:
          * @scope {boolean} ngModel - model for checkbox value
-         * @scope {string} mode - optional, use 'onoff' to get labels in switch box
          */
         .directive('sdSwitch', function() {
             return {
                 require: 'ngModel',
                 replace: true,
                 template: [
-                    '<span class="sf-toggle-custom" ng-class="{\'on-off-toggle\': isOnOff }">',
-                    '<span class="sf-toggle-custom-inner"></span>',
+                    '<span class="sd-toggle">',
+                    '<span class="inner"></span>',
                     '</span>'
                 ].join(''),
                 link: function($scope, element, attrs, ngModel) {
                     ngModel.$render = function() {
                         render(element, ngModel.$viewValue);
                     };
-
-                    $scope.isOnOff = (attrs.mode === 'onoff');
 
                     $scope.$watch(attrs.ngModel, function() {
                         render(element, ngModel.$viewValue);

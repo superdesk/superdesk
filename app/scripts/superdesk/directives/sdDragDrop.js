@@ -47,16 +47,28 @@ define([
          * @scope {object} item - data to be carried.
          *
          * @scope {string} container - css selector to attach dragged item to.
+         *
+         * @scope {boolean} cursor - enable/disable stucking drag object to cursor
          */
         .directive('sdDraggable', ['dragDropService', function(dragDropService) {
             return {
-                scope: {item: '=', container: '='},
+                scope: {item: '=', container: '=', cursor: '='},
                 link: function(scope, element, attrs) {
                     element.draggable({
                         helper: 'clone',
                         appendTo: scope.container,
                         start: function(event, ui) {
                             dragDropService.item = scope.item;
+                        }
+                    });
+                    scope.$watch('cursor', function(val) {
+                        if (val) {
+                            element.draggable('option', 'cursorAt', {
+                                left: 5,
+                                top: 5
+                            });
+                        } else {
+                            element.draggable('option', 'cursorAt', false);
                         }
                     });
                 }

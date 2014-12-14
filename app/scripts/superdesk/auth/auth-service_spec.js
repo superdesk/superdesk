@@ -9,6 +9,8 @@ define([
         SESSION = 'sess',
         USERNAME = 'foo';
 
+    beforeEach(module('superdesk.preferences'));
+
     beforeEach(function() {
         module(StorageService.name);
         module(function($provide) {
@@ -18,7 +20,7 @@ define([
                         return $q.when({username: USERNAME});
                     }
                 };
-            });
+           });
             $provide.service('auth', AuthService);
             $provide.service('session', SessionService);
             $provide.service('authAdapter', AuthAdapterMock);
@@ -26,8 +28,9 @@ define([
     });
 
     describe('auth service', function() {
-        beforeEach(inject(function(session) {
+        beforeEach(inject(function(session, preferencesService, $q) {
             session.clear();
+            spyOn(preferencesService, 'get').and.returnValue($q.when({}));
         }));
 
         it('can login', inject(function(auth, session, $httpBackend, $rootScope) {

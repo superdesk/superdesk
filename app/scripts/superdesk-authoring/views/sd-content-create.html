@@ -1,0 +1,16 @@
+<li>
+    <button ng-click="content.create()">
+        <i class="icon-plus-small icon-round icon-white"></i> {{ :: 'Plain text' | translate }}
+    </button>
+</li>
+<li>
+    <button ng-click="content.create('preformatted')">
+        <i class="icon-plus-small icon-round icon-white"></i> {{ :: 'Preformatted' | translate }}
+    </button>
+</li>
+<li class="divider" ng-if="openUpload"></li>
+<li ng-if="openUpload">
+    <button ng-click="openUpload()">
+        <i class="icon-upload-blue"></i> {{ :: 'UPLOAD' | translate }}
+    </button>
+</li>

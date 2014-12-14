@@ -1,0 +1,230 @@
+// themes.less
+// Styling for authoring screen editor
+// ----------------------------------------------------------------------------------------
+@import 'mixins.less';
+@import 'variables.less';
+
+@main-article-padding : 42px 60px @bottom-view-padding+120;
+
+// Themes color config
+// dark
+@dark-theme-bg: rgba(34, 34, 34, 1);
+@dark-theme-text: rgba(170, 204, 209, 1); 
+
+//natural
+@natural-theme-bg: rgba(244, 241, 227, 1);
+@natural-theme-text: rgba(51, 51, 51, 1);
+
+
+
+
+.dark-theme() {
+	background: @dark-theme-bg;
+	color: @dark-theme-text !important;
+}
+
+.natural-theme() {
+	background: @natural-theme-bg;
+	color: @natural-theme-text !important;
+}
+
+.main-article {
+	width:auto;
+	background: @white;
+	border: 1px solid #cacaca;
+	border-width:0 1px;
+	position:relative;
+	z-index:1;
+	padding: @main-article-padding;
+	margin:0 auto;
+	min-height:100%;
+	.box-sizing(border-box);
+	max-width: 960px;
+
+	.theme-select {
+		position: absolute;
+		top: 5px;
+		right: 10px;
+		.dropdown-menu {
+			min-width: 200px;
+			button {
+				.border-radius(3px);
+				margin-bottom: 6px;
+				border: 1px solid #e9e9e9;
+				i {
+					float: right;
+					margin: 0;
+				}
+				&.large-text {
+					font-size: 15px;
+				}
+				&.dark-theme {
+					border: 0;
+					.dark-theme();
+					i {
+						background-image: url(@iconWhiteSpritePath);
+					}
+				}
+				&.natural-theme {
+					border: 0;
+					.natural-theme();
+				}
+			}
+		}
+	}
+
+	//labels
+	.field label {
+		.text-normal();
+		background: rgba(0, 0, 0, 0.2);
+		.border-radius(2px);
+		color: #fff;
+		display: inline-block;
+		padding: 0 5px;
+		font-size: 10px;
+		line-height: 15px;
+		height: 15px;
+	}
+
+	// inputs
+	.text-editor {
+		min-height: 300px;
+		border: 1px solid #e0e0e0;
+		padding: 5px;
+		&:focus {
+			outline:none;
+		}
+	}
+
+	.text-editor, .headline, .abstract, input {
+		border-color: transparent !important;
+		background-color: transparent !important;
+	}
+
+	.text-editor:hover, .headline:hover, .abstract:hover, input:hover {
+		border-color: rgba(150, 150, 150, 0.25) !important;
+	}
+
+	.text-editor:focus, .headline:focus, .abstract:focus, input:focus {
+		.box-shadow(none) !important;
+		border-color: rgba(94, 169, 200, 0.4) !important;
+	}
+
+	&.preview {
+		.text-editor {
+			border-color: #fff !important;
+		}
+	}
+
+
+	// character and word counting
+
+	.char-count {
+		font-size: 11px;
+		font-style: italic;
+		color: rgba(120, 120, 120, 1);
+		margin-left: 5px;
+		float: right;
+		.opacity(0);
+		.transition(all ease 0.2s);
+		&.error {
+			font-weight: bold;
+			color: #D33C30;
+		}
+	}
+	&:hover {
+		.char-count {
+			.opacity(100);
+		}
+	}
+
+	
+	// images
+
+	figure img {
+		max-width: 100%;
+		float:left;
+		margin: 10px 20px 10px 0;
+	}
+
+
+	// text styles
+	
+	color: rgba(51, 51, 51, 1);
+	.text-editor, .headline, .abstract, input {
+		color: rgba(51, 51, 51, 1) !important;
+	}
+	.keyword {
+		font-size: 13px;
+		font-weight: 600;
+		text-transform: uppercase;
+	}
+	.headline {
+		font-size:28px;
+		line-height: 120%;
+		font-weight: 600;
+	}
+	textarea.headline {
+		height: 40px;
+		padding: 6px;
+	}
+
+	.abstract {
+		font-size:16px;
+		line-height: 150%;
+		font-style: italic;
+	}
+
+	.text-editor {
+		font-size:16px !important;
+		line-height: 150% !important;
+		p {
+			padding: 0 !important;
+			margin-bottom: 10px !important;
+			font-size:16px !important;
+			line-height: 150% !important;
+		}
+	}
+}
+
+//themes
+.large-text {
+	.main-article {
+		.abstract {
+			font-size: 18px;
+		}
+		.text-editor {
+			font-size: 18px !important;
+			p {
+				font-size: 18px !important;
+			}
+		}
+	}
+}
+
+
+.dark-theme {
+	.main-article {
+		.theme-select {
+			.dropdown-toggle i {
+				background-image: url(@iconWhiteSpritePath);
+			}
+		}
+		.dark-theme();
+
+		.text-editor, .headline, .abstract, input {
+			color: @dark-theme-text !important;
+		}
+	}
+}
+
+.natural-theme {
+	.main-article {
+		
+		.natural-theme();
+
+		.text-editor, .headline, .abstract, input {
+			color: @natural-theme-text !important;
+		}
+	}
+}

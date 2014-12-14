@@ -5,7 +5,56 @@ define([
 ], function(_, angular, require) {
     'use strict';
 
-    return angular.module('superdesk.archive.directives', [])
+    return angular.module('superdesk.archive.directives', ['superdesk.authoring'])
+        .directive('sdItemLock', ['api', 'lock', 'privileges', function(api, lock, privileges) {
+            return {
+                templateUrl: 'scripts/superdesk-archive/views/item-lock.html',
+                scope: {item: '='},
+                link: function(scope) {
+
+                    scope.privileges = privileges.privileges;
+
+                    scope.$watch('item.lock_user', function() {
+                        scope.lock = null;
+                        scope.lockbyme = null;
+                        if (scope.item && lock.isLocked(scope.item)) {
+                            api('users').getById(scope.item.lock_user).then(function(user) {
+                                scope.lock = {user: user};
+                            });
+                        }
+                        if (scope.item && lock.isLockedByMe(scope.item))
+                        {
+                            scope.lock = null;
+                            scope.lockbyme = true;
+                        }
+                    });
+
+                    scope.unlock = function() {
+                        lock.unlock(scope.item).then(function() {
+                            scope.item.lock_user = null;
+                            scope.item.lock_sesssion = null;
+                            scope.lock = null;
+                            scope.isLocked = false;
+                        });
+                    };
+
+                    scope.$on('item:lock', function(_e, data) {
+                        if (scope.item && scope.item._id === data.item) {
+                            scope.item.lock_user = data.user;
+                            scope.$digest();
+                        }
+                    });
+
+                    scope.$on('item:unlock', function(_e, data) {
+                        if (scope.item && scope.item._id === data.item) {
+                            scope.item.lock_user = null;
+                            scope.item.lock_session = null;
+                            scope.$digest();
+                        }
+                    });
+                }
+            };
+        }])
         .directive('sdInlineMeta', function() {
             return {
                 templateUrl: require.toUrl('./views/inline-meta.html'),
@@ -100,20 +149,26 @@ define([
                 }
             };
         }])
-        .directive('sdMediaPreview', ['api', function(api) {
+        .directive('sdMediaPreview', [function() {
             return {
-                replace: true,
-                templateUrl: require.toUrl('./views/preview.html'),
-                scope: {item: '='}
+                templateUrl: 'scripts/superdesk-archive/views/preview.html'
+            };
+        }])
+        .directive('sdMediaPreviewWidget', [function() {
+            return {
+                scope: {
+                    item: '='
+                },
+                templateUrl: 'scripts/superdesk-archive/archive-widget/item-preview.html'
             };
         }])
         .directive('sdMediaView', ['keyboardManager', 'api', function(keyboardManager, api) {
             return {
-                replace: true,
-                templateUrl: require.toUrl('./views/media-view.html'),
+                templateUrl: 'scripts/superdesk-archive/views/media-view.html',
                 scope: {
                     items: '=',
-                    item: '='
+                    item: '=',
+                    close: '&'
                 },
                 link: function(scope, elem) {
 
@@ -174,6 +229,50 @@ define([
                 }
             };
         }])
+        .directive('sdMediaMetadata', ['userList', function(userList) {
+            return {
+                scope: {
+                    item: '='
+                },
+                templateUrl: 'scripts/superdesk-archive/views/metadata-view.html',
+                link: function(scope, elem) {
+
+                    scope.$watch('item', reloadData);
+
+                    function reloadData() {
+                        scope.original_creator = null;
+                        scope.version_creator = null;
+
+                        if (scope.item.original_creator) {
+                            userList.getUser(scope.item.original_creator).then(function(user) {
+                                scope.original_creator = user.display_name;
+                            });
+                        }
+                        if (scope.item.version_creator) {
+                            userList.getUser(scope.item.version_creator).then(function(user) {
+                                scope.version_creator = user.display_name;
+                            });
+                        }
+                    }
+                }
+            };
+        }])
+        .directive('sdMetaIngest', ['ingestSources', function(ingestSources) {
+            var promise = ingestSources.initialize();
+            return {
+                scope: {
+                    provider: '='
+                },
+                template: '{{name}}',
+                link: function(scope) {
+                    promise.then(function() {
+                        if (scope.provider) {
+                            scope.name = ingestSources.providersLookup[scope.provider].name;
+                        }
+                    });
+                }
+            };
+        }])
         .directive('sdSingleItem', [ function() {
 
             return {
@@ -182,27 +281,16 @@ define([
                 scope: {
                     item: '=',
                     contents: '='
-                },
-                link: function(scope, elem) {
-
                 }
             };
         }])
-        .directive('sdSidebarLayout', ['$location', '$filter', function($location, $filter) {
-            return {
-                transclude: true,
-                templateUrl: require.toUrl('./views/sidebar.html')
-            };
-        }])
-        .directive('sdMediaBox', function() {
+        .directive('sdMediaBox', ['lock', function(lock) {
             return {
                 restrict: 'A',
                 templateUrl: require.toUrl('./views/media-box.html'),
                 link: function(scope, element, attrs) {
-                    if (!scope.activityFilter && scope.extras) {
-                        scope.activityFilter = scope.extras.activityFilter;
-                    }
-                    scope.$watch('extras.view', function(view) {
+
+                    scope.$watch('view', function(view) {
                         switch (view) {
                         case 'mlist':
                         case 'compact':
@@ -212,9 +300,41 @@ define([
                             scope.itemTemplate = require.toUrl('./views/media-box-grid.html');
                         }
                     });
+
+                    scope.$watch('item', function(item) {
+                        scope.isLocked = item && (lock.isLocked(item) || lock.isLockedByMe(item));
+                    });
+
+                    scope.$on('item:lock', function(_e, data) {
+                        if (scope.item && scope.item._id === data.item) {
+                            scope.isLocked = true;
+                            scope.item.lock_user = data.user;
+                            scope.$digest();
+                        }
+                    });
+
+                    scope.$on('item:unlock', function(_e, data) {
+                        if (scope.item && scope.item._id === data.item) {
+                            scope.isLocked = false;
+                            scope.item.lock_user = null;
+                            scope.item.lock_session = null;
+                            scope.$digest();
+                        }
+                    });
+
+                    scope.$on('task:progress', function(_e, data) {
+                        if (data.task === scope.item.task_id) {
+                            if (data.progress.total === 0) {
+                                scope._progress = 10;
+                            } else {
+                                scope._progress = Math.min(100, Math.round(100.0 * data.progress.current / data.progress.total));
+                            }
+                            scope.$digest();
+                        }
+                    });
                 }
             };
-        })
+        }])
         .directive('sdItemRendition', function() {
             return {
                 templateUrl: require.toUrl('./views/item-rendition.html'),
@@ -229,10 +349,11 @@ define([
                                 if (oldImg.length) {
                                     oldImg.replaceWith(img);
                                 } else {
-                                    figure.prepend(img);
+                                    figure.html(img);
                                 }
                             };
 
+                            img.onerror = function() {};
                             img.src = href;
                         }
                     });
@@ -272,128 +393,7 @@ define([
                 }
             };
         }])
-        .directive('sdToggleBox', function() {
-            return {
-                templateUrl: require.toUrl('./views/toggleBox.html'),
-                replace: true,
-                transclude: true,
-                scope: true,
-                link: function($scope, element, attrs) {
-                    $scope.title = attrs.title;
-                    $scope.isOpen = attrs.open === 'true';
-                    $scope.icon = attrs.icon;
-                    $scope.toggleModule = function() {
-                        $scope.isOpen = !$scope.isOpen;
-                    };
-                }
-            };
-        })
-        .directive('sdFilterUrgency', ['$location', function($location) {
-            return {
-                scope: true,
-                link: function($scope, element, attrs) {
 
-                    $scope.urgency = {
-                        min: $location.search().urgency_min || 1,
-                        max: $location.search().urgency_max || 5
-                    };
-
-                    function handleUrgency(urgency) {
-                        var min = Math.round(urgency.min);
-                        var max = Math.round(urgency.max);
-                        if (min !== 1 || max !== 5) {
-                            var urgency_norm = {
-                                min: min,
-                                max: max
-                            };
-                            $location.search('urgency_min', urgency_norm.min);
-                            $location.search('urgency_max', urgency_norm.max);
-                        } else {
-                            $location.search('urgency_min', null);
-                            $location.search('urgency_max', null);
-                        }
-                    }
-
-                    var handleUrgencyWrap = _.throttle(handleUrgency, 2000);
-
-                    $scope.$watchCollection('urgency', function(newVal) {
-                        handleUrgencyWrap(newVal);
-                    });
-                }
-            };
-        }])
-        .directive('sdFilterContenttype', [ '$location', function($location) {
-            return {
-                restrict: 'A',
-                templateUrl: require.toUrl('./views/filter-contenttype.html'),
-                replace: true,
-                scope: {
-                    items: '='
-                },
-                link: function(scope, element, attrs) {
-
-                    scope.contenttype = [
-                        {
-                            term: 'text',
-                            checked: false,
-                            count: 0
-                        },
-                        {
-                            term: 'audio',
-                            checked: false,
-                            count: 0
-                        },
-                        {
-                            term: 'video',
-                            checked: false,
-                            count: 0
-                        },
-                        {
-                            term: 'picture',
-                            checked: false,
-                            count: 0
-                        },
-                        {
-                            term: 'graphic',
-                            checked: false,
-                            count: 0
-                        },
-                        {
-                            term: 'composite',
-                            checked: false,
-                            count: 0
-                        }
-                    ];
-
-                    var search = $location.search();
-                    if (search.type) {
-                        var type = JSON.parse(search.type);
-                        _.forEach(type, function(term) {
-                            _.extend(_.first(_.where(scope.contenttype, {term: term})), {checked: true});
-                        });
-                    }
-
-                    scope.$watchCollection('items', function() {
-                        if (scope.items && scope.items._facets !== undefined) {
-                            _.forEach(scope.items._facets.type.terms, function(type) {
-                                _.extend(_.first(_.where(scope.contenttype, {term: type.term})), type);
-                            });
-                        }
-                    });
-
-                    scope.setContenttypeFilter = function() {
-                        var contenttype = _.map(_.where(scope.contenttype, {'checked': true}), function(t) {
-                            return t.term;
-                        });
-                        if (contenttype.length === 0) {
-                            $location.search('type', null);
-                        } else {
-                            $location.search('type', JSON.stringify(contenttype));
-                        }
-                    };
-                }
-            };
-        }])
         .directive('sdGridLayout', function() {
             return {
                 templateUrl: 'scripts/superdesk-items-common/views/grid-layout.html',

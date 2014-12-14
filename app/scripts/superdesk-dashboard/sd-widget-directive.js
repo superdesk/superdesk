@@ -18,6 +18,7 @@ define([
             templateUrl: require.toUrl('./views/widget.html'),
             restrict: 'A',
             replace: true,
+            transclude: true,
             scope: {widget: '='},
             link: function(scope, element, attrs) {
                 scope.openConfiguration = function() {

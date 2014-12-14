@@ -23,10 +23,6 @@ define(['require', 'lodash'], function(require, _) {
                     var match = _.find(scope.items, {_id: itemId});
                     if (match) {
                         scope.clickItem(match);
-                    } else if ((!scope.selected || itemId !== scope.selected._id) && scope.extras.api) {
-                        scope.extras.api.getById(itemId).then(function(item) {
-                            scope.clickItem(item);
-                        });
                     }
                 }
 
@@ -57,9 +53,12 @@ define(['require', 'lodash'], function(require, _) {
                 onKey('down', move(DOWN));
                 onKey('right', move(DOWN));
 
-                scope.clickItem = function(item) {
+                scope.clickItem = function(item, $event) {
                     scope.selected = item;
                     scope.select({item: item});
+                    if ($event) {
+                        $event.stopPropagation();
+                    }
                 };
 
                 scope.$watch('items', function() {

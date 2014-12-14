@@ -25,7 +25,7 @@ define([
                 .expectPOST(LOGIN_URL, {username: username, password: password})
                     .respond({token: session, user: '1'});
 
-            spyOn(urls, 'resource').andReturn($q.when(LOGIN_URL));
+            spyOn(urls, 'resource').and.returnValue($q.when(LOGIN_URL));
 
             var identity;
             authAdapter.authenticate(username, password).then(function(_identity) {
@@ -41,7 +41,7 @@ define([
         it('can reject on failed auth', inject(function(authAdapter, urls, $q, $httpBackend) {
             var resolved = false, rejected = false;
 
-            spyOn(urls, 'resource').andReturn($q.when(LOGIN_URL));
+            spyOn(urls, 'resource').and.returnValue($q.when(LOGIN_URL));
 
             $httpBackend.expectPOST(LOGIN_URL).respond(400);
 

@@ -1,10 +1,14 @@
 define([
     'angular',
-    'require'
-], function(angular, require) {
+    'require',
+    'superdesk-archive/archive-widget/baseWidget'
+], function(angular, require, BaseWidget) {
     'use strict';
 
-    angular.module('superdesk.widgets.ingest', [])
+    angular.module('superdesk.widgets.ingest', [
+        'superdesk.widgets.base',
+        'superdesk.authoring.widgets'
+    ])
         .config(['widgetsProvider', function(widgets) {
             widgets.widget('ingest', {
                 label: 'Ingest',
@@ -21,59 +25,26 @@ define([
                 description: 'Ingest widget'
             });
         }])
-        .controller('IngestController', ['$location', '$scope', '$timeout', 'superdesk', 'api', 'es',
-        function ($location, $scope, $timeout, superdesk, api, es) {
-            var timeoutId;
-
-            function refresh(config) {
-                var params = {
-                    q: config.search || undefined,
-                    size: config.maxItems
-                };
-                var filters = [];
-                if (config.provider && config.provider !== 'all') {
-                    filters.push({term: {provider: config.provider}});
-                }
-                var criteria = es(params, filters);
-
-                api.ingest.query({source: criteria}).then(function(items) {
-                    $scope.items = items;
-                    timeoutId = $timeout(function() {
-                        refresh(config);
-                    }, config.updateInterval * 1000 * 60);
-                });
-            }
-
-            $scope.$watch('widget.configuration', function(config) {
-                if (timeoutId) {
-                    $timeout.cancel(timeoutId);
-                }
-
-                if (config) {
-                    refresh(config);
-                }
-            }, true);
-
-            $scope.view = function(item) {
-                //superdesk.intent(superdesk.ACTION_VIEW, 'ingest', item);
-                $location.path('/ingest');
-                $location.search('_id', item._id);
-            };
-
-            $scope.$on('$destroy', function() {
-                $timeout.cancel(timeoutId);
+        .config(['authoringWidgetsProvider', function(authoringWidgets) {
+            authoringWidgets.widget('ingest', {
+                label: gettext('Ingest'),
+                icon: 'ingest',
+                template: require.toUrl('./widget-ingest.html')
             });
         }])
-        .controller('IngestConfigController', ['$scope', 'superdesk', 'api',
-        function ($scope, superdesk, api) {
-            api.ingest.query({source: {size: 0}}).then(function(items) {
-                $scope.availableProviders = ['all'].concat(_.pluck(items._facets.provider.terms, 'term'));
-            });
+        .controller('IngestController', ['$scope', 'api', 'BaseWidgetController',
+        function ($scope, api, BaseWidgetController) {
+            $scope.type = 'ingestWidget';
+            $scope.api = api.ingest;
 
-            $scope.notIn = function(haystack) {
-                return function(needle) {
-                    return haystack.indexOf(needle) === -1;
-                };
-            };
+            BaseWidgetController.call(this, $scope);
+        }])
+        .controller('IngestConfigController', ['$scope', 'api', 'BaseWidgetConfigController',
+        function ($scope, api, BaseWidgetConfigController) {
+            $scope.api = api.ingest;
+
+            BaseWidgetConfigController.call(this, $scope);
+
+            $scope.fetchProviders();
         }]);
 });

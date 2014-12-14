@@ -1,4 +1,4 @@
-<div class="subnav subnav-fixed">
+<div class="subnav">
 	<h3 class="page-nav-title" translate>Workspace</h3>
 
 	<div class="button-stack right-stack">
@@ -10,17 +10,15 @@
             <i class="svg-icon-ok inverse"></i> <span class="title" translate>Save</span>
         </button>
 
-        <button class="navbtn navbtn-info" href="" ng-disabled="flags.edit" ng-click="flags.add = true">
-            <i class="svg-icon-add inverse"></i> <span class="title" translate>Add widget</span>
-        </button>
+        <button class="navbtn sd-create-btn" ng-disabled="flags.edit" ng-click="flags.add = true"></button>
     </div>
 </div>
 
 <!-- widgetbox -->
 <div ng-if="flags.add">
 	<div>
-	    <div class="backdrop"></div>
-	    <div class="widget-select modal">
+	    <div class="modal-backdrop fade in"></div>
+	    <div class="widget-select modal fade in">
 	        <div class="modal-dialog">
 	            <div class="modal-content">
 	                <div class="modal-header">
@@ -29,11 +27,11 @@
 	                </div>
 	                <div ng-if="!selectedWidget">
 	                    <div class="modal-body">
-	                        <div class="popup-subnav subnav">
+	                        <div class="popup-subnav">
 	                            <label translate>Category: </label>
-	                            <div class="dropdown">
-	                                <a href="#" class="dropdown-toggle">All <b class="caret"></b></a>
-	                                <ul class="dropdown-menu sf-dropdown-simple">
+	                            <div class="dropdown" dropdown>
+	                                <a href="#" class="dropdown-toggle" dropdown-toggle>All <b class="caret"></b></a>
+	                                <ul class="dropdown-menu plain-menu">
 	                                    <li translate>Article widgets</li>
 	                                    <li translate>Desk widgets</li>
 	                                    <li translate>Social widgets</li>
@@ -43,16 +41,18 @@
 	                                </ul>
 	                            </div>
 	                        </div>
-	                        <ul class="widget-list">
-	                            <li ng-repeat="widget in availableWidgets" ng-click="selectWidget(widget)">
-	                                <div class="thumbnail">
-	                                    <img ng-src="{{ widget.thumbnail }}">
-	                                </div>
-	                                <div class="title">
-	                                    {{ widget.label }}
-	                                </div>
-	                            </li>
-	                        </ul>
+	                        <div class="modal-screen">
+	                        	<ul class="widget-list">
+		                            <li ng-repeat="widget in availableWidgets" ng-click="selectWidget(widget)">
+		                                <div class="thumbnail">
+		                                    <img ng-src="{{ widget.thumbnail }}">
+		                                </div>
+		                                <div class="title">
+		                                    {{ widget.label }}
+		                                </div>
+		                            </li>
+		                        </ul>
+	                        </div>  
 	                    </div>
 
 	                    <div class="modal-footer">
@@ -66,17 +66,19 @@
 
 	                <div class="widget-detail" ng-if="selectedWidget">
 	                    <div class="modal-body">
-	                        <div class="popup-subnav subnav">
+	                        <div class="popup-subnav">
 	                            <a href="" class="backlink" ng-click="selectWidget()" translate>Back to overview</a>
 	                        </div>
-	                        <div class="thumbnail-box">
-	                            <img ng-src="{{ selectedWidget.thumbnail }}">
-	                        </div>
-	                        <div class="title">
-	                            {{ selectedWidget.label }}
-	                        </div>
-	                        <div class="description">
-	                            {{ selectedWidget.description }}
+	                        <div class="modal-screen">
+	                        	<div class="thumbnail-box">
+		                            <img ng-src="{{ selectedWidget.thumbnail }}">
+		                        </div>
+		                        <div class="title">
+		                            {{ selectedWidget.label }}
+		                        </div>
+		                        <div class="description">
+		                            {{ selectedWidget.description }}
+		                        </div>
 	                        </div>
 	                    </div>
 
@@ -100,3 +102,4 @@
 		<div class="empty-dashboard loading" ng-show="userWidgets === undefind" translate>Loading..</div>
 	</div>
 </div>
+<div sd-workqueue></div>

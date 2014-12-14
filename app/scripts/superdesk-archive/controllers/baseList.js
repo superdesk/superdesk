@@ -1,86 +1,49 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    BaseListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'es'];
-    function BaseListController($scope, $location, superdesk, api, es) {
+    BaseListController.$inject = ['$scope', '$location', 'superdesk', 'api', 'search', 'desks', 'preferencesService', 'notify'];
+    function BaseListController($scope, $location, superdesk, api, search, desks, preferencesService, notify) {
         var self = this;
 
-        $scope.view = 'mgrid';
+        var lastQueryParams = {};
+
         $scope.selected = {};
 
-        $scope.preview = function(item) {
-            $scope.selected.preview = item;
-            $location.search('_id', item ? item._id : null);
+        $scope.openLightbox = function openLightbox() {
+            $scope.selected.view = $scope.selected.preview;
         };
 
-        $scope.display = function(item) {
-            $scope.selected.view = item;
+        $scope.closeLightbox = function closeLightbox() {
+            $scope.selected.view = null;
         };
 
-        $scope.$watchCollection(function() {
-            return _.omit($location.search(), '_id');
-        }, function(search) {
-            var query = self.getQuery(search);
-            self.fetchItems({source: query});
-        });
-
-        $scope.$watchCollection(function() {
-            return $location.search();
-        }, function(search) {
-            if (!search._id) {
+        $scope.$on('$routeUpdate', function(e, data) {
+            if (!$location.search()._id) {
                 $scope.selected.preview = null;
             }
         });
 
-        this.buildFilters = function(params) {
-            var filters = [];
+        this.buildQuery = function(params, filterDesk) {
 
-            if (params.before || params.after) {
-                var range = {versioncreated: {}};
-                if (params.before) {
-                    range.versioncreated.lte = params.before;
+            var query = search.query(params.q || null);
+
+            if (filterDesk) {
+                if (desks.getCurrentStageId()) {
+                    query.filter({term: {'task.stage': desks.getCurrentStageId()}});
+                } else if (desks.getCurrentDeskId()) {
+                    query.filter({term: {'task.desk': desks.getCurrentDeskId()}});
                 }
-
-                if (params.after) {
-                    range.versioncreated.gte = params.after;
-                }
-
-                filters.push({range: range});
             }
 
-            if (params.provider) {
-                var provider = {
-                    provider: params.provider
-                };
-                filters.push({term: provider});
-            }
-
-            if (params.type) {
-                var type = {
-                    type: JSON.parse(params.type)
-                };
-                filters.push({terms: type});
-            }
-
-            if (params.urgency_min || params.urgency_max) {
-                params.urgency_min = params.urgency_min || 1;
-                params.urgency_max = params.urgency_max || 5;
-                var urgency = {
-                    urgency: {
-                        gte: params.urgency_min,
-                        lte: params.urgency_max
-                    }
-                };
-                filters.push({range: urgency});
-            }
-
-            return filters;
+            return query.getCriteria();
         };
 
-        this.getQuery = function(params) {
-            var filters = this.buildFilters(params);
-            var query = es(params, filters);
-            query.sort = [{versioncreated: 'desc'}];
+        this.getQuery = function getQuery(params, filterDesk) {
+            if (!_.isEqual(_.omit(params, 'page'), _.omit(lastQueryParams, 'page'))) {
+                $location.search('page', null);
+            }
+            var query = this.buildQuery(params, filterDesk);
+            lastQueryParams = params;
             return query;
         };
 
@@ -88,8 +51,8 @@ define(['lodash'], function(_) {
             console.log('no api defined');
         };
 
-        this.refresh = function() {
-        	var query = self.getQuery(_.omit($location.search(), '_id'));
+        this.refresh = function refresh(filterDesk) {
+        	var query = self.getQuery(_.omit($location.search(), '_id'), filterDesk);
             self.fetchItems({source: query});
         };
     }

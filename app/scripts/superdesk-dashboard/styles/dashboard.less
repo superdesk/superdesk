@@ -3,7 +3,6 @@
 // ----------------------------------------------------------------------------------------
 @import 'mixins.less';
 @import 'variables.less';
-@import 'superdesk-base-template.less';
 
 .dashboard-container {
 	position: absolute;
@@ -11,8 +10,9 @@
 	right: 0; 
 	bottom: 0;
 	top: @topspace + @subnav-height;
-	.content {
-		padding: 0 20px 20px 0;
+	overflow-y: auto;
+	> .content {
+		padding: 0 20px 20px+@bottom-view-padding 0;
 	}
 	.empty-dashboard {
 		position: absolute;
@@ -193,7 +193,6 @@ Widgets styles
 		border: 1px solid #ccc;
 		margin-right: 30px;
 		margin-bottom: 30px;
-		.gradientBar(#fff,#e0e0e0);
 		.border-radius(3px);
 		.title {
 			text-align: center;
@@ -220,63 +219,8 @@ Widgets styles
 }
 
 
-.workspace-subnav {
-	.subnav-level2();
-}
 
-/*
----------------------------------------------
-TASK PAGE
----------------------------------------------
-*/
-.workspace-subnav {
-	button {
-		border:0;
-		background: none;
-	}
-	.switch-view {
-		float: left;
-		margin-right: 30px;
-		button {
-			display: inline-block;
-			.border-radius(3px);
-			height: 30px;
-			.box-sizing(border-box);
-			padding: 0 10px;
-			line-height: 30px;
-			color: #4f4f4f;
-			text-decoration: none;
-			text-transform: uppercase;
-			font-size: 12px;
-			&:hover {
-				background: #e4e4e4;
-			}
-			&.active {
-				background: #ddd;	
-				color: #000;
-				.box-shadow(inset 0 2px 0 #ccc);
-			}
-		}
-	}
-	.flat-tabs {
-		float: left;
-		margin: -10px 0;
-		height: 50px;
-		button {
-			height: 49px;
-			.box-sizing(border-box);
-			text-transform: uppercase;
-			padding: 0 3px;
-			margin-right: 20px;
-			font-size: 12px;
-			color: #767676;
-			&.active {
-				color: #000;
-				border-bottom: 3px solid @sd-color-blue;
-			}
-		}
-	}	
-}
+
 .workspace-stream {
 	
 }
@@ -288,6 +232,46 @@ CONTENT PAGE
 ---------------------------------------------
 */
 
+.views-settings.dropdown {
+	.dropdown-menu {
+		padding-bottom: 0 !important;
+		li {
+			text-transform: uppercase;
+			span i {
+				float: right;
+				display: none;
+				margin-right: 0;
+			}
+			.full {
+				padding-left:20px;
+				text-transform: uppercase;
+			}
+			&:hover {
+				span i {
+					display: inline-block;
+				}
+			}
+			.svg-icon-add {
+				margin-top: -4px;
+			}	
+		}
+	}
+}
+
+.add-view-modal {
+	top: 20px !important;
+	bottom: 20px !important;
+	width: 450px;
+	margin: 0 0 0 -225px;
+	left: 50% !important;
+	position: absolute;
+	.modal-body {
+		background: #f8f8f8;
+	}
+	.subnav {
+		
+	}
+}
 
 /*
 ---------------------------------------------
@@ -295,7 +279,8 @@ STREAM PAGE
 ---------------------------------------------
 */
 .workspace-stream {
-	padding: 40px 35px !important;
+	padding: 40px 35px @bottom-view-padding !important;
+	overflow: auto;
 	.activity-container {
 		width: 500px;
 	}
@@ -483,19 +468,7 @@ Add new widget modal
 				display: inline-block;
 			}
 		}
-		.backlink {
-			background: url('../../images/back-arrow.png') no-repeat 5px 2px;
-			padding-left: 25px;
-			text-decoration: none;
-			color: #444;
-		 	margin-top: 5px;
-		 	display: inline-block;
-		 	.transition(all ease 0.2s);
-		 	&:hover {
-		 		background-position: 0 2px;
-		 		color: #222;
-		 	}
-		}
+		
 	}
 	.modal-footer {
 		.center {

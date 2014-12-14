@@ -39,15 +39,11 @@
 
 		.form-handler {
 			width: 240px;
-			.avatar-handler {
+			.avatar {
 				width: 160px;
 				height: 160px;
 				margin: 0 auto 35px;
-				.border-radius(80px);
-				overflow: hidden;
-				background-size: cover;
-				background-position: center;
-				
+				float: none;				
 			}
 			form {
 				.inputs {
@@ -91,6 +87,13 @@
 				margin-bottom: 20px;
 				i {
 					vertical-align: sub;
+				}
+			}
+			.validation-info {
+				margin: -10px 0 10px;
+				span {
+					color: #f4c78b;
+					font-size: 12px;
 				}
 			}
 			.error-handler {

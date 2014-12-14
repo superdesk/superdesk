@@ -31,7 +31,8 @@ define(['angular'], function(angular) {
                     search: '&',
                     select: '&',
                     items: '=',
-                    term: '='
+                    term: '=',
+                    disabled: '='
                 },
                 controller: ['$scope', function($scope) {
                     $scope.items = [];

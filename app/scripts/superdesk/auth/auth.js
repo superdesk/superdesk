@@ -11,7 +11,6 @@ define([
 
     ResetPassworController.$inject = ['$scope', '$location', 'api', 'notify', 'gettext'];
     function ResetPassworController($scope, $location, api, notify, gettext) {
-        $scope.flowStep = 1;
         $scope.isSending = false;
         $scope.isReseting = false;
 
@@ -23,32 +22,44 @@ define([
         };
 
         $scope.sendToken = function() {
+        	$scope.sendTokenError = null;
             api.resetPassword.create({email: $scope.email})
             .then(function(result) {
-                notify.success(gettext('Token sent. Please check your email inbox.'));
+                notify.success(gettext('Link sent. Please check your email inbox.'));
                 $scope.flowStep = 2;
-            }, function(result) {
-                notify.error(gettext('There was a problem. Token is not sent.'));
+            }, function(rejection) {
+            	$scope.sendTokenError = rejection.status;
             });
             resetForm();
         };
         $scope.resetPassword = function() {
+        	$scope.setPasswordError = null;
             api.resetPassword.create({token: $scope.token, password: $scope.password})
             .then(function(result) {
                 notify.success(gettext('Password is changed. You can login using your new password.'));
-                $location.path('/');
-            }, function(result) {
-                notify.error(gettext('Token is invalid. Password is not changed.'));
+                $location.path('/').search({});
+            }, function(rejection) {
+            	$scope.setPasswordError = rejection.status;
             });
             resetForm();
         };
 
         resetForm();
+
+        var query = $location.search();
+        if (query.token) {
+            $scope.token = query.token;
+            $scope.flowStep = 3;
+        } else {
+            $scope.flowStep = 1;
+        }
     }
 
-    return angular.module('superdesk.auth', [])
+    angular.module('superdesk.session', [])
+        .service('session', require('./session-service'));
+
+    return angular.module('superdesk.auth', ['superdesk.features', 'superdesk.activity', 'superdesk.session'])
         .service('auth', require('./auth-service'))
-        .service('session', require('./session-service'))
         .service('authAdapter', require('./basic-auth-adapter'))
         .directive('sdLoginModal', require('./login-modal-directive'))
         .config(['$httpProvider', 'superdeskProvider', function($httpProvider, superdesk) {
@@ -90,20 +101,22 @@ define([
             };
 
             // populate current user
-            $rootScope.$watch(function() {
+            $rootScope.$watch(function watchSessionIdentity() {
                 return session.identity;
             }, function (identity) {
                 $rootScope.currentUser = session.identity;
             });
 
             // set auth header
-            $rootScope.$watch(function() {
+            $rootScope.$watch(function watchSessionToken() {
                 return session.token;
             }, function(token) {
                 if (token) {
                     $http.defaults.headers.common.Authorization = token;
+                    $rootScope.sessionId = session.sessionId;
                 } else {
                     delete $http.defaults.headers.common.Authorization;
+                    $rootScope.sessionId = null;
                 }
             });
 
@@ -113,16 +126,13 @@ define([
                 if (!session.token && $rootScope.requiredLogin) {
                     session.getIdentity().then(function() {
                         $http.defaults.headers.common.Authorization = session.token;
-                        $route.reload();
                     });
                     e.preventDefault();
                 }
             });
 
             function requiresLogin(route) {
-                var nextRoute = route || {};
-                return nextRoute.auth || false;
+                return route ? route.auth : false;
             }
-
         }]);
 });

@@ -26,7 +26,7 @@ define([
             expect(session.identity).toBe(null);
         }));
 
-        it('can be started', inject(function (session) {
+        it('can be started', inject(function (session, $q) {
             session.start(SESSION, {name: 'user'});
             expect(session.token).toBe(SESSION.token);
             expect(session.identity.name).toBe('user');
@@ -93,6 +93,31 @@ define([
             var nextSession = $injector.instantiate(SessionService);
             $rootScope.$apply();
             expect(nextSession.identity.name).toBe('baz');
+        }));
+
+        it('can return identity after session start', inject(function(session, $rootScope) {
+            session.start(SESSION, {name: 'bar'});
+            $rootScope.$digest();
+
+            var success = jasmine.createSpy('success');
+            session.getIdentity().then(success);
+
+            $rootScope.$digest();
+            expect(success).toHaveBeenCalled();
+        }));
+
+        it('should not resolve identity after expiry', inject(function(session, $rootScope) {
+            session.start(SESSION, {name: 'bar'});
+            $rootScope.$digest();
+
+            session.expire();
+            $rootScope.$digest();
+
+            var success = jasmine.createSpy('success');
+            session.getIdentity().then(success);
+
+            $rootScope.$digest();
+            expect(success).not.toHaveBeenCalled();
         }));
     });
 });

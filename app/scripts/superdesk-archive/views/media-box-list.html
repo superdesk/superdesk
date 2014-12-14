@@ -1,36 +1,42 @@
-<div class="loading-status" ng-show="!item.archived && item.archiving"></div>
+<div class="archiving-progress" style="width:{{ _progress }}%" ng-if="_progress"></div>
 
 <span class="state-border"></span>
 
-<div class="list-field">
+<div class="list-field urgency">
     <i class="urgency-icon-{{item.urgency}}"></i>
 </div>
 
-<div class="media-info">
-    <div class="list-field type-icon">
-        <i class="filetype-icon-{{item.type}}"></i>
-        <span class="output-item-label  label-{{item.urgency}}" ng-show="extras.view == 'mlist'">{{ item.urgency }}</span>
+<div class="list-field type-icon">
+    <i class="filetype-icon-{{item.type}}"></i>
+    <span class="output-item-label label-{{item.urgency}}">{{ item.urgency }}</span>
+</div>
+
+<div class="list-field word-count-box">
+    <span class="word-count">{{ item.word_count }}</span>
+    <span class="signal" ng-if="item.signal">{{ item.signal }}</span>
+</div>
+
+<div class="item-info">
+    <div class="line">
+        <div class="state-label state-{{item.state}}">{{item.state}}</div>
+        <div class="headline"><span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span>{{ item.headline || item.type }}</div>
+        <time sd-datetime data-date="item.versioncreated"></time>
     </div>
-    <div class="list-field" ng-show="extras.view == 'compact'"><span class="output-item-label label-{{item.urgency}}">{{ item.urgency }}</span></div>
+    <div class="line">
+        <div class="takekey" ng-if="item.anpa_take_key">{{ item.anpa_take_key }}</div>
+        <div class="category" ng-if="item['anpa-category'].name">{{ item['anpa-category'].name }}</div>
+        <div class="provider" ng-if="item.ingest_provider" sd-meta-ingest data-provider="item.ingest_provider"></div>
+        <div class="expires" ng-if="item.is_spiked"><span translate>expires</span> {{ item.expiry | reldate }}</div>
+    </div>
+</div>
 
-    <h5 class="list-field" ng-class="{'no-border': extras.view == 'compact'}" ng-click="preview(item,$index)">
-        <div class="item-provider" ng-show="extras.view == 'compact'">{{ item.provider }}</div>
-        <div class="main-title">
-            <div class="status-label"
-                 ng-class="{'label-canceled': item.pubstatus=='canceled'}"
-                 ng-show="item.pubstatustatus && item.pubstatus!='usable'">
-                 {{ item.pubstatus | translate }}
-            </div>
-            {{ item.headline || item.type }}
-        </div>
-        <div class="meta-data-field" ng-show="extras.view == 'mlist'">
-            <div class="item-provider">{{ item.provider }}</div>
-            <span ng-show="item.subject">//</span> {{ item.subject | mergeWords}}
-        </div>
-    </h5>
-
-    <div class="item-right list-field">
-        <time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time>
-        <div class="item-functions" sd-activity-list data-data="{item: item, list: items, index: $index}" data-type="{{extras.type}}"></div>
+<div class="item-right list-field">
+    <div class="action">
+        <ul ng-if="extras.activity" class="item-functions"
+            sd-activity-list
+            data-item="item"
+            data-type="{{ spike ? 'spike' : (type || item._type)}}"
+            data-action="{{extras.activity.action}}">
+        </ul>
     </div>
 </div>

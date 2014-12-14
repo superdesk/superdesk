@@ -1,38 +1,96 @@
 define([
-    'lodash',
+    'angular',
     './baseList'
-], function(_, BaseListController) {
+], function(angular, BaseListController) {
     'use strict';
 
-    ArchiveListController.$inject = ['$scope', '$injector', 'superdesk', 'api', '$rootScope'];
-    function ArchiveListController($scope, $injector, superdesk, api, $rootScope) {
+    ArchiveListController.$inject = [
+        '$scope', '$injector', '$location',
+        'superdesk', 'session', 'api', 'ViewsCtrl', 'ContentCtrl', 'StagesCtrl'
+    ];
+    function ArchiveListController($scope, $injector, $location, superdesk, session, api, ViewsCtrl, ContentCtrl, StagesCtrl) {
+
+        var resource;
+        var self = this;
+
         $injector.invoke(BaseListController, this, {$scope: $scope});
 
-        $scope.createdMedia = {
-            items: []
-        };
-
+        $scope.currentModule = 'archive';
+        $scope.views = new ViewsCtrl($scope);
+        $scope.stages = new StagesCtrl($scope);
+        $scope.content = new ContentCtrl($scope);
         $scope.type = 'archive';
-        $scope.api = api.ingest;
+        $scope.repo = {
+            ingest: false,
+            archive: true
+        };
+        $scope.loading = false;
+        $scope.spike = !!$location.search().spike;
 
-        $rootScope.currentModule = 'archive';
-
-        $scope.openUpload = function() {
-            superdesk.intent('upload', 'media').then(function(items) {
-                // todo: put somewhere else
-                $scope.createdMedia.items.unshift.apply($scope.createdMedia.items, items);
-            });
+        $scope.toggleSpike = function toggleSpike() {
+            $scope.spike = !$scope.spike;
+            $location.search('spike', $scope.spike ? 1 : null);
+            $location.search('_id', null);
         };
 
-        this.fetchItems = function(criteria) {
-    		api.archive.query(criteria).then(function(items) {
+        $scope.stageSelect = function(stage) {
+            if ($scope.spike) {
+                $scope.toggleSpike();
+            }
+            $scope.stages.select(stage);
+        };
+
+        $scope.openUpload = function openUpload() {
+            superdesk.intent('upload', 'media');
+        };
+
+        this.fetchItems = function fetchItems(criteria) {
+            if (resource == null) {
+                return;
+            }
+            $scope.loading = true;
+            resource.query(criteria).then(function(items) {
+                $scope.loading = false;
                 $scope.items = items;
-                $scope.createdMedia = {
-                    items: []
-                };
+            }, function() {
+                $scope.loading = false;
             });
         };
-        $scope.$on('changes in media_archive', this.refresh);
+
+        var refreshItems = _.debounce(_refresh, 100);
+
+        function _refresh() {
+            if ($scope.selectedDesk) {
+                resource = api('archive');
+            } else {
+                resource = api('user_content', session.identity);
+            }
+            self.refresh(true);
+        }
+
+        $scope.$on('task:stage', function(_e, data) {
+        	if ($scope.stages.selected &&
+        	    ($scope.stages.selected._id === data.new_stage ||
+        	     $scope.stages.selected._id === data.old_stage)) {
+        		refreshItems();
+        	}
+        });
+
+        $scope.$on('media_archive', refreshItems);
+        $scope.$on('item:spike', refreshItems);
+        $scope.$on('item:unspike', refreshItems);
+        $scope.$watchGroup(['stages.selected', 'selectedDesk'], refreshItems);
+
+        // reload on route change if there is still the same _id
+        var oldQuery = _.omit($location.search(), '_id');
+        $scope.$on('$routeUpdate', function(e, route) {
+            var query = _.omit($location.search(), '_id');
+            if (!angular.equals(oldQuery, query)) {
+                refreshItems();
+            }
+
+            oldQuery = query;
+        });
     }
 
     return ArchiveListController;

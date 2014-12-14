@@ -1,13 +1,8 @@
-define([
-    './superdesk-service',
-    './activity',
-    'angular-route'
-], function(superdeskProvider) {
+(function() {
     'use strict';
 
     describe('Superdesk service', function() {
         var provider;
-        var isBeta = false;
         var intent = {action: 'testAction', type: 'testType'};
         var testWidget = {testData: 123};
         var testPane = {testData: 123};
@@ -16,26 +11,31 @@ define([
             controller: function() {
                 return 'test';
             },
-            filters: [intent]
+            filters: [intent],
+            category: 'superdesk.menu.main'
         };
 
-        beforeEach(function() {
-            module('ngRoute');
-            module('superdesk.activity');
-            module(function($provide) {
-                $provide.service('gettext', function() {});
-                $provide.service('modal', function() {});
-                $provide.service('betaService', function() {
-                    this.isBeta = function() { return isBeta; };
-                });
-                $provide.service('DataAdapter', function() {});
-
-                provider = $provide.provider('superdesk', superdeskProvider);
+        angular.module('superdesk.activity.test', ['superdesk.activity'])
+            .config(function(superdeskProvider) {
+                provider = superdeskProvider;
                 provider.widget('testWidget', testWidget);
                 provider.pane('testPane', testPane);
                 provider.activity('testActivity', testActivity);
+                provider.activity('missingFeatureActivity', {
+                    category: superdeskProvider.MENU_MAIN,
+                    features: {missing: 1},
+                    filters: [{action: 'test', type: 'features'}]
+                });
+                provider.activity('missingPrivilegeActivity', {
+                    category: superdeskProvider.MENU_MAIN,
+                    privileges: {missing: 1},
+                    filters: [{action: 'test', type: 'privileges'}]
+                });
             });
-        });
+
+        beforeEach(module('superdesk.activity'));
+        beforeEach(module('superdesk.activity.test'));
+        beforeEach(module('superdesk.mocks'));
 
         it('exists', inject(function(superdesk) {
             expect(superdesk).toBeDefined();
@@ -93,5 +93,30 @@ define([
             expect(success[0].label).toBe('test');
             expect(failure.length).toBe(0);
         }));
+
+        it('can check features required by activity', inject(function(superdesk, features) {
+            var list = superdesk.findActivities({type: 'features', action: 'test'});
+            expect(list.length).toBe(0);
+        }));
+
+        it('can filter activities based on privileges', inject(function(superdesk, privileges) {
+            var list = superdesk.findActivities({type: 'privileges', action: 'test'});
+            expect(list.length).toBe(0);
+
+            privileges.setUserPrivileges({missing: 1});
+            list = superdesk.findActivities({type: 'privileges', action: 'test'});
+            expect(list.length).toBe(1);
+        }));
+
+        it('can get main menu and filter out based on features/permissions', inject(function(superdesk, $rootScope) {
+
+            var menu;
+            superdesk.getMenu(superdesk.MENU_MAIN).then(function(_menu) {
+                menu = _menu;
+            });
+
+            $rootScope.$digest();
+            expect(menu.length).toBe(1);
+        }));
     });
-});
+})();

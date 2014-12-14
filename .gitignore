@@ -1,8 +1,10 @@
+/app/scripts/.project
 /npm-debug.log
 /.settings
 /.project
 node_modules
 dist
+*.swp
 .tmp
 .sass-cache
 app/scripts/bower_components
@@ -13,3 +15,7 @@ screenshots/
 coverage/
 Thumbs.db
 test-results.xml
+.idea/
+.vagrant/
+.bower.json
+e2e-test-results/

@@ -1,13 +1,24 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    WorkspaceService.$inject = ['session', '$http'];
-    function WorkspaceService(session, $http) {
+    WorkspaceService.$inject = ['session', 'api'];
+    function WorkspaceService(session, api) {
+
+        var _user;
 
         function filter(widgets) {
             return _.map(widgets, function(widget) {
                 return _.pick(widget, ['_id', 'sizex', 'sizey', 'col', 'row', 'configuration']);
             });
+        }
+
+        function cacheUser(user) {
+            _user = user;
+            return user;
+        }
+
+        function getUser() {
+            return _user || session.identity;
         }
 
         /**
@@ -18,9 +29,9 @@ define(['lodash'], function(_) {
          */
         this.load = function(widgets) {
 
-            var parseWidgets = _.bind(function(response) {
+            var parseWidgets = _.bind(function(user) {
                 var allWidgets = _.indexBy(widgets, '_id');
-                var userWidgets = (response.data.workspace || {widgets: []}).widgets;
+                var userWidgets = (user.workspace || {widgets: []}).widgets;
                 this.widgets = _.map(userWidgets, function(widget) {
                     return _.defaults(widget, allWidgets[widget._id]);
                 });
@@ -28,18 +39,17 @@ define(['lodash'], function(_) {
                 return this;
             }, this);
 
-            return $http.get(session.identity._links.self.href).then(parseWidgets);
+            return api.get(session.identity._links.self.href)
+                .then(cacheUser)
+                .then(parseWidgets);
         };
 
         /**
          * Save widgets to server
          */
         this.save = function(widgets) {
-            return $http({
-                method: 'PATCH',
-                url: session.identity._links.self.href,
-                data: {workspace: {widgets: filter(widgets || this.widgets)}}
-            });
+            return api.save('users', getUser(), {workspace: {widgets: filter(widgets || this.widgets)}})
+                .then(cacheUser);
         };
     }
 

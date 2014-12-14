@@ -46,16 +46,23 @@ define([
 
             $scope.configuration.zones = $scope.configuration.zones || [];
         }])
-        .controller('WorldClockController', ['$scope', '$timeout', 'tzdata',
-        function ($scope, $timeout, tzdata) {
+        .controller('WorldClockController', ['$scope', '$interval', 'tzdata',
+        function ($scope, $interval, tzdata) {
+
+            var interval, INTERVAL_DELAY = 500;
+
             function updateUTC() {
                 $scope.utc = moment();
-                $timeout(updateUTC, 1000);
+                $scope.$digest();
             }
 
             tzdata.get(function(data) {
                 moment.tz.add(data);
-                updateUTC();
+            });
+
+            interval = $interval(updateUTC, INTERVAL_DELAY, 0, false);
+            $scope.$on('$destroy', function stopTimeout() {
+                $interval.cancel(interval);
             });
         }])
         /**

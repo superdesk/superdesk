@@ -1,4 +1,4 @@
-<div class="archiving-progress" style="width:{{item.archivingProgress}}%" ng-show="!item.archived && item.archiving"></div>
+<div class="archiving-progress" style="width:{{ _progress }}%" ng-if="_progress"></div>
 
 <div class="error-box" ng-show="item.archiveError">
     <p class="message">There was an <b>error</b> archiving this item</p>
@@ -23,28 +23,24 @@
 
     <dl>
         <dt class="source"><span translate>source:</span></dt>
-        <dd class="provider">&nbsp;{{ item.provider }}</dd>
-        <dt translate>created</dt>
-        <dd><time datetime="{{ item.firstcreated }}" title="{{ item.firstcreated|date:'medium' }}">{{ item.firstcreated|reldate }}</time></dd>
-        <dt translate ng-show="item.subject">subject</dt>
-        <dd ng-show="item.subject" class="subject-line">{{ item.subject | mergeWords}}</dd>
+        <dd class="provider" sd-meta-ingest data-provider="item.ingest_provider"></dd>
+        <dt translate>updated</dt>
+        <dd><time datetime="{{ item.versioncreated }}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time></dd>
+        <dt ng-show="item.is_spiked" translate>expires</dt>
+        <dd ng-if="item.is_spiked"><time title="{{ item.expiry | date:'medium' }}">{{ item.expiry | reldate }}</time></dd>
     </dl>
 </div>
 
 <span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
 <span class="urgency-label"><i class="urgency-icon-{{item.urgency}}"></i></span>
 
-<div class="status-label"
-     ng-class="{'label-canceled': item.pubstatus=='canceled'}"
-     ng-show="item.pubstatus && item.pubstatus!='usable'">
-     {{ item.pubstatus | translate }}
-</div>
+<div class="state-label state-{{item.state}}">{{item.state}}</div>
 
 <div class="action">
-    <ul ng-if="activityFilter" class="item-functions"
+    <ul ng-if="extras.activity" class="item-functions"
         sd-activity-list
-        data-data="{item: item, list: items, index: $index}"
-        data-type="{{activityFilter.type}}"
-        data-action="{{activityFilter.action}}">
+        data-item="item"
+        data-type="{{ spike ? 'spike' : (type || item._type)}}"
+        data-action="{{extras.activity.action}}">
     </ul>
 </div>

@@ -1,50 +1,3 @@
-/*
-.tabpane {
-  position:fixed;
-  width:@tabpane-width;
-  top:@subnav-height + @topspace;
-  bottom:0;
-  background: @tabpane-background;
-  border-color:@tabpane-border;
-  border-style: solid;
-  z-index:10;
-  .box-sizing(border-box);
-  .transition( all 0.3s ease);
-    &.left-tabpane {
-      left:-@tabpane-width;
-      border-width: 0 3px 0 0;
-      .box-shadow(2px 0px 8px 0px rgba(50,50,50,.35));
-      
-      &.open-tabpane {
-        left:@tablist-width;
-      }
-    }
-    &.right-tabpane {
-      right:-@tabpane-width;
-      border-width: 0 0 0 3px;
-       .box-shadow(-2px 0px 8px 0px rgba(40,50,50,.35));
-       &.open-tabpane {
-         right:@tablist-width;
-       }
-    }
-    .tabcontent {
-      padding:@tabcontent-padding;
-      padding-bottom: @tabcontent-padding + 30px; //because of scratchpad
-      .box-sizing(border-box);
-      position: absolute;
-      bottom: 0;
-      top: 0;
-      left:1px;
-      right:1px;
-      overflow: hidden;
-    }
-}
-*/
-
-
-
-
-
 
 /*
 [draggable] {
@@ -256,9 +209,9 @@ button:focus {
   .navbar-fixed-top {
     display:none;
   }
-    .main-background-container {
+    #main-container {
     background:#fff;
-      .subnav-fixed {
+      .subnav {
         display:none;
       }
       .editor-toolbar-placeholder {
@@ -334,87 +287,33 @@ button:focus {
 
 /* tabs */
 
-
-/* INFO tab */
-
-/*
-.info-tab {
-
-  .header {
-    height: 40px;
-    margin-bottom: 10px;
-    .wordcount {
-      float: left;
-      .text-light();
-      font-size: 32px;
-      color: #575757;
-      line-height: 36px;
-      span {
-        font-size: 11px;
-        color: #a1a1a1;
-        margin-left: 5px; 
-      }
-    }
-    .data {
-      
-      float: right;
-
-      p {
-        font-size: 12px;
-         color: #777676;
-         margin:0;
-         text-align: right;
-         span {
-          color:  #208fbd;
-         } 
-      }
-    }
-  }
-  
-  .metadata {
-    &.top-border {
-      border-top: 1px dotted #ddd;
-      margin-bottom: 30px;
-    }
-    > li, .sublist > ul > li {
-      padding: 10px 0;
-      border-bottom: 1px dotted #ddd;
-      text-align: right;
-      height: 18px;
-      line-height: 18px;
-      .lbl, label {
-        float: left;
-      }
-      .data {
-        float: right;
-        margin-top: -5px;
-        padding-top: 5px;
-        padding-right: 5px;
-        width: 190px;
-        height: 27px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        input {
-          margin-top: -5px;
-          margin-right: -5px;
-          text-align: right;
-          border-color: #f4f4f4 !important;
-          background: #f4f4f4;
-          font-size: 13px;
-          &:focus {
-            background: #fff;
-            border-color: #d0d0d0 !important;  
+/*  INFO TAB 
+    &.subject-data {
+        .data {
+          overflow: visible !important;
+        }
+        min-height: 18px;
+        height: auto !important;
+        .subject-container {
+          clear: both;
+          > ul {
+            text-align: left;
+            > li {
+              display: inline-block;
+              background: #e0e0e0;
+              .border-radius(3px);
+              margin: 8px 8px 0 0;
+              padding: 3px 8px;
+              &:hover {
+                background: #d0d0d0;
+                cursor: pointer;
+              }
+            }
           }
         }
       }
-      &:hover {
-        .data input {
-          background: #fff;
-          border-color: #d0d0d0 !important;  
-        }
-      }
-      .urgency-data {
+
+    .urgency-data {
         width: 200px;
         .urgency-slider {
           float: left;
@@ -444,58 +343,6 @@ button:focus {
           }
         }
       }
-      &.subject-data {
-        .data {
-          overflow: visible !important;
-        }
-        min-height: 18px;
-        height: auto !important;
-        .subject-container {
-          clear: both;
-          > ul {
-            text-align: left;
-            > li {
-              display: inline-block;
-              background: #e0e0e0;
-              .border-radius(3px);
-              margin: 8px 8px 0 0;
-              padding: 3px 8px;
-              &:hover {
-                background: #d0d0d0;
-                cursor: pointer;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-
-  .subject-terms {
-    .clearfix();
-    li {
-      background: #e8e8e8;
-      line-height: 26px;
-      height: 26px;
-      padding: 0 6px;
-      .border-radius(3px);
-      margin: 0 5px 5px 0;
-      float: left;
-      i {
-        vertical-align: sub;
-        margin-left: 5px;
-        .opacity(40);
-      }
-      &:hover {
-        cursor: pointer;
-        background: #e0e0e0;
-        i {
-          .opacity(70);
-        }
-      }
-    }
-  }
-}
 
 
 
@@ -942,13 +789,7 @@ button:focus {
 //  INTER/INTRA DESK NOTIFICATION TAB 
 
 .notification-tab {
-  .notification-list-box {
-    position: absolute;
-    top:20px;
-    bottom: 83px;
-    left:10px;
-    right:10px;
-  }
+  
 
   .notification-write-box {
     position: absolute;

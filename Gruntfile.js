@@ -12,6 +12,7 @@ module.exports = function (grunt) {
         appDir: 'app',
         tmpDir: '.tmp',
         distDir: 'dist',
+        bowerDir: 'bower',
         poDir: 'po',
         livereloadPort: 35729
     };
@@ -32,10 +33,13 @@ module.exports = function (grunt) {
     grunt.registerTask('ci:travis', ['karma:travis', 'hint']);
     grunt.registerTask('bamboo', ['karma:bamboo']);
 
-    grunt.registerTask('server', ['clean', 'style', 'template:test', 'connect:dev', 'open:test', 'watch']);
-    grunt.registerTask('server:mock', ['clean', 'style', 'template:mock', 'connect:mock', 'open:mock', 'watch']);
-    grunt.registerTask('server:e2e', ['clean', 'style', 'template:mock', 'connect:test', 'watch']);
+    grunt.registerTask('server', ['clean', 'style', 'template:test', 'connect:test', 'open:test', 'watch']);
+    grunt.registerTask('server:e2e', ['clean', 'style', 'template:mock', 'connect:mock', 'watch']);
 
+    grunt.registerTask('bower', [
+        'build',
+        'copy:bower'
+    ]);
     grunt.registerTask('build', [
         'clean',
         'less:dev',
@@ -44,7 +48,8 @@ module.exports = function (grunt) {
         'requirejs', // must go after concat
         'uglify',
         'cssmin',
-        'copy',
+        'copy:assets',
+        'copy:js',
         'template:test',
         'nggettext_compile',
         'filerev',

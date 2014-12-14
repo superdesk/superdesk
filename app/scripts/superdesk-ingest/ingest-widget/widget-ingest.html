@@ -1,23 +1,2 @@
-<div ng-controller="IngestController">
-    <div class="ingest-list"
-        sd-list-view
-        data-items="items._items"
-        data-select="view(item)"
-        data-extras="widget">
-        <div class="urgency-{{ item.urgency}}">
-            <ul class="top-line clearfix">
-                <li><span class="type-icon filetype-icon-{{item.type}}"></span><span class="urgency-label">{{ item.urgency }}</span></li>
-                <li>{{ item.versioncreated | reldate }}</li>
-                <li ng-show="item.byline"><em translate>by</em>{{ item.byline }}</li>
-                <li ng-show="item.provider && extras.sizex > 1"><em translate>source</em>{{ item.provider }}</li>
-            </ul>
-
-            <div class="main-line clearfix">
-                <figure class="media" ng-if="item.renditions.thumbnail">
-                    <img ng-src="{{ item.renditions.thumbnail.href }}" title="{{ item.description }}" />
-                </figure>
-                <h5 title="{{ item.headline }}">{{ item.headline }}</h5>
-            </div>
-        </div>
-    </div>
-</div>
+<div ng-controller="IngestController" ng-init="extras=widget"
+    ng-include="'scripts/superdesk-archive/archive-widget/item-list.html'"></div>
