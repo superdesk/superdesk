@@ -1,7 +1,11 @@
 from superdesk.resource import Resource
 from superdesk.services import BaseService
+from superdesk.workflow import set_default_state
 from apps.content import metadata_schema
 from .common import extra_response_fields, item_url, aggregations, on_create_item
+
+
+STATE_INGESTED = 'ingested'
 
 
 class IngestResource(Resource):
@@ -21,5 +25,8 @@ class IngestResource(Resource):
 
 class IngestService(BaseService):
 
-    def on_create(self, docs):
-        on_create_item(docs)
+    def create(self, docs):
+        for doc in docs:
+            set_default_state(doc, STATE_INGESTED)
+        on_create_item(docs)  # do it after setting the state otherwise it will make it draft
+        return super().create(docs)
