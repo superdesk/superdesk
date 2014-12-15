@@ -115,15 +115,5 @@ define([
                     rel: 'archive_media'
                 }
             });
-        }])
-
-        /**
-         * Edit item view
-         */
-        .directive('sdEditView', function() {
-            return {
-                templateUrl: 'scripts/superdesk-archive/views/edit-view.html'
-            };
-        })
-        ;
+        }]);
 });

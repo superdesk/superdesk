@@ -738,6 +738,7 @@
 
                     scope.select = function(view) {
                         scope.selected = view;
+                        $location.search(view.filter.query);
                     };
 
                     scope.edit = function() {
