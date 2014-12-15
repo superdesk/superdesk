@@ -146,7 +146,7 @@ def add_activity(activity_name, msg, item=None, notify=None, **data):
         activity['read'] = {}
 
     if item:
-        activity['item'] = str(item.get('guid'))
+        activity['item'] = str(item.get('guid', item.get('_id')))
         if item.get('task') and item['task'].get('desk'):
             activity['desk'] = ObjectId(item['task']['desk'])
 

@@ -31,6 +31,11 @@ Feature: Ingest Provider
         "config": {"username": "foo", "password": "bar"}
         }]}
 	    """
+        When we get "/activity/"
+        Then we get existing resource
+         """
+         {"_items": [{"data": {"name": "reuters 4"}, "message": "created Ingest Channel {{name}}"}]}
+         """
 
     @auth
     Scenario: Update ingest_provider
@@ -54,6 +59,11 @@ Feature: Ingest Provider
         {"name":"the test of the test ingest_provider modified"}
         """
         Then we get updated response
+        When we get "/activity/"
+        Then we get existing resource
+         """
+         {"_items": [{"data": {"name": "the test of the test ingest_provider modified"}, "message": "updated Ingest Channel {{name}}"}]}
+         """
 
     @auth
     Scenario: Delete ingest_provider
@@ -70,3 +80,8 @@ Feature: Ingest Provider
 	    """
         And we delete latest
         Then we get deleted response
+        When we get "/activity/"
+        Then we get existing resource
+         """
+         {"_items": [{"data": {"name": "reuters 4"}, "message": "deleted Ingest Channel {{name}}"}]}
+         """

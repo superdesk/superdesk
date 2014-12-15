@@ -1,6 +1,9 @@
-
 from superdesk.resource import Resource
+from superdesk.services import BaseService
 from superdesk.io import allowed_providers
+from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_DELETE, ACTIVITY_UPDATE
+from superdesk import get_resource_service
+
 
 DAYS_TO_KEEP = 2
 
@@ -54,3 +57,31 @@ class IngestProviderResource(Resource):
     }
 
     privileges = {'POST': 'ingest_providers', 'PATCH': 'ingest_providers', 'DELETE': 'ingest_providers'}
+
+
+class IngestProviderService(BaseService):
+
+    def _get_administrators(self):
+        return get_resource_service('users').get(req=None, lookup={'user_type': 'administrator'})
+
+    def on_created(self, docs):
+        for doc in docs:
+            add_activity(ACTIVITY_CREATE, 'created Ingest Channel {{name}}', item=doc,
+                         notify=[user.get('_id') for user in self._get_administrators()],
+                         name=doc.get('name'))
+
+    def on_updated(self, updates, original):
+        add_activity(ACTIVITY_UPDATE, 'updated Ingest Channel {{name}}', item=original,
+                     notify=[user['_id'] for user in self._get_administrators()],
+                     name=updates.get('name', original.get('name')))
+
+        if updates.get('is_closed'):
+            add_activity(ACTIVITY_UPDATE, '{{status}} Ingest Channel {{name}}', item=original,
+                         notify=[user.get('_id') for user in self._get_administrators()],
+                         name=updates.get('name', original.get('name')),
+                         status='closed' if updates.get('is_closed') else 'opened')
+
+    def on_deleted(self, doc):
+        add_activity(ACTIVITY_DELETE, 'deleted Ingest Channel {{name}}', item=doc,
+                     notify=[user.get('_id') for user in self._get_administrators()],
+                     name=doc.get('name'))
