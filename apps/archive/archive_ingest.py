@@ -15,7 +15,7 @@ from flask.globals import current_app as app
 from celery.exceptions import Ignore
 from celery import states
 from celery.utils.log import get_task_logger
-from apps.archive.common import insert_into_versions
+from apps.archive.common import insert_into_versions, remove_unwanted
 from apps.tasks import send_to
 
 from superdesk import SuperdeskError, InvalidStateTransitionError
@@ -165,7 +165,8 @@ def archive_item(self, guid, provider_id, user, task_id=None):
         # Necessary because flask.g.user is None while fetching packages the for grouped items or
         # while patching in archive collection. Without this version_creator is set None which doesn't make sense.
         flask.g.user = user
-        item[config.CONTENT_STATE] = 'fetched'
+        item[config.CONTENT_STATE] = STATE_FETCHED
+        remove_unwanted(item)
         superdesk.get_resource_service(ARCHIVE).update(guid, item)
 
         tasks = []
@@ -236,7 +237,7 @@ def create_from_ingest_doc(dest_doc, source_doc):
     """
     for key, val in source_doc.items():
         dest_doc.setdefault(key, val)
-    dest_doc['user'] = getattr(flask.g, 'user', {}).get('_id')
+
     dest_doc[config.CONTENT_STATE] = STATE_FETCHED
 
 
