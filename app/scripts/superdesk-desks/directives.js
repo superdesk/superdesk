@@ -159,8 +159,12 @@ define([
                     api('stages').remove(stage)
                     .then(function(result) {
                         _.remove(scope.stages, stage);
-                    }, function(result) {
-                        scope.message = gettext('There was a problem, stage was not deleted.');
+                    }, function(data, status, headers, config) {
+                        if (data.data._message) {
+                            scope.message = gettext(data.data._message);
+                        } else {
+                            scope.message = gettext('There was a problem, stage was not deleted.');
+                        }
                     });
                 };
             }
