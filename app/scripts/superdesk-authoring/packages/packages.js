@@ -7,7 +7,7 @@
         $scope.contenttab = true;
 
         $scope.create = function() {
-            superdesk.intent('create', 'package', {item: $scope.item});
+            superdesk.intent('create', 'package', {items: [$scope.item]});
         };
     }
 

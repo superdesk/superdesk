@@ -39,22 +39,26 @@
             };
         };
 
-        this.createPackageFromItem = function createPackageFromItem(item) {
+        this.createPackageFromItems = function createPackageFromItems(items) {
+            var self = this;
             var idRef = 'main';
+            var item = items[0];
             var new_package = {
                 headline: item.headline || '',
                 slugline: item.slugline || '',
                 description: item.description || '',
-                groups: [
-                    {
-                    role: 'grpRole:NEP',
-                    refs: [{idRef: idRef}],
-                    id: 'root'
-                },
-                this.getGroupFor(item, idRef)
-                ]
+                state: 'draft'
             };
+            var groups = [{
+                role: 'grpRole:NEP',
+                refs: [{idRef: idRef}],
+                id: 'root'
+            }];
+            _.forEach(items, function(item) {
+                groups.push(self.getGroupFor(item, idRef));
+            });
 
+            new_package.groups = groups;
             return api.packages.save(new_package);
         };
 
@@ -193,7 +197,7 @@
             label: gettext('Create package'),
             controller: ['data', '$location', 'packagesService', 'superdesk', function(data, $location, packagesService, superdesk) {
                 if (data) {
-                    packagesService.createPackageFromItem(data.item).then(
+                    packagesService.createPackageFromItems(data.items).then(
                         function(new_package) {
                         superdesk.intent('author', 'package', new_package);
                     });

@@ -138,8 +138,8 @@ define([
                     scope.data = null;
                     scope.error = null;
                     scope.type = scope.item.type || scope.item.itemClass.split(':')[1];
-                    if (scope.type !== 'text' && scope.type !== 'composite' && $rootScope.currentModule) {
-                        api[$rootScope.currentModule].getById(scope.item.residRef)
+                    if (scope.type !== 'text' && scope.type !== 'composite' && scope.item.location) {
+                        api[scope.item.location].getById(scope.item.residRef)
                         .then(function(result) {
                             scope.data = result;
                         }, function(response) {
