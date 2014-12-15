@@ -164,6 +164,14 @@ Feature: Stages
         """
         {"name": "Sports Desk", "incoming_stage": "#STAGES_ID#"}
         """
+        When we post to "tasks"
+	    """
+        [{"slugline": "first task", "type": "text", "task": {"desk":"#DESKS_ID#", "stage" :"0"}}]
+	    """
+        When we post to "archive"
+        """
+        [{"type": "text"}]
+        """
         When we delete "/stages/#STAGES_ID#"
         Then we get response code 200
 
