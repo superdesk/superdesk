@@ -205,3 +205,23 @@ Feature: Archive Ingest
         """
         {"state": "PROGRESS",  "current": 2, "total": 2}
         """
+
+    @auth
+    @provider
+    Scenario: Fetch item into specific desk
+        Given empty "archive"
+        Given "desks"
+            """
+            [{"name": "Sports"}]
+            """
+        And ingest from "reuters"
+            """
+            [{"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"}]
+            """
+        When we post to "/archive_ingest"
+            """
+            {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "desk": "#DESKS_ID#"}
+            """
+        Then we get new resource
+        When we get "/archive?q=#DESKS_ID#"
+        Then we get list with 1 items
