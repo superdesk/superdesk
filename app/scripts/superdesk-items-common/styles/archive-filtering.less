@@ -208,7 +208,7 @@
 					display: block;
 					padding: 10px 15px 10px 20px;
 					border-bottom: 1px solid #ddd;
-					.edit {
+					.delete {
 						float: right;
 						border: 0;
 						background: 0;
@@ -217,7 +217,7 @@
 					&:hover {
 						cursor: pointer;
 						background: #f8f8f8;
-						.edit {
+						.delete {
 							display: block;
 						}
 					}
@@ -225,6 +225,12 @@
 						background: @sd-hover;
 					}
 				}
+			}
+		}
+		.edit-saved-searches {
+			.content {
+				position: static;
+				padding: 0;
 			}
 		}
 	}

@@ -720,6 +720,60 @@
             };
         }])
 
+        .directive('sdSavedSearches', ['api', 'session', '$location', 'notify', 'gettext',
+        function(api, session, $location, notify, gettext) {
+            return {
+                templateUrl: 'scripts/superdesk-search/views/saved-searches.html',
+                scope: {},
+                link: function(scope) {
+
+                    var resource = api('content_view');
+                    scope.selected = null;
+                    scope.editSearch = null;
+
+                    resource.query({where: {user: session.identity._id}})
+                    .then(function(views) {
+                        scope.views = views._items;
+                    });
+
+                    scope.select = function(view) {
+                        scope.selected = view;
+                    };
+
+                    scope.edit = function() {
+                        scope.editSearch = {};
+                    };
+
+                    scope.cancel = function() {
+                        scope.editSearch = null;
+                    };
+
+                    scope.save = function(editSearch) {
+
+                        editSearch.filter = {query: $location.search()};
+
+                        resource.save({}, editSearch)
+                        .then(function(result) {
+                            notify.success(gettext('Saved search created'));
+                            scope.cancel();
+                            scope.views.push(result);
+                        }, function() {
+                            notify.error(gettext('Error. Saved search not created.'));
+                        });
+                    };
+
+                    scope.remove = function(view) {
+                        resource.remove(view).then(function() {
+                            notify.success(gettext('Saved search removed'));
+                            _.remove(scope.views, {_id: view._id});
+                        }, function() {
+                            notify.error(gettext('Error. Saved search not deleted.'));
+                        });
+                    };
+                }
+            };
+        }])
+
         .directive('sdSearchContainer', function() {
             return {
                 controller: ['$scope', function SearchContainerController($scope) {

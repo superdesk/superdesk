@@ -4,8 +4,8 @@
             <i class="icon-filter-large"></i>
         </div>
         <ul>
-            <li ng-class="{active: sTab}" ng-click="sTab = true" translate>Filters</li>
-            <li ng-class="{active: !sTab}" ng-click="sTab = false" translate>Views</li>
+            <li ng-class="{active: sTab}" ng-click="sTab = true" translate>Facets</li>
+            <li ng-class="{active: !sTab}" ng-click="sTab = false" translate>Saved</li>
         </ul>
         <div class="doopen" ng-click="flags.facets = false"><i class="icon-backward-thin"></i></div>
     </div>
@@ -110,10 +110,6 @@
         </div>
     </div>
     <div class="content views" ng-if="!sTab">
-        <div class="header">
-            <button class="btn pull-right" ng-disabled="!views.selected" ng-click="views.select()" translate>Clear</button>
-            <button class="btn btn-info" ng-click="views.create()"><i class="icon-plus-small icon-white"></i> {{ :: 'Create' | translate }}</button>
-        </div>
-        <div class="list" sd-desk-views></div>
+        <div sd-saved-searches></div>
     </div>
 </div>
