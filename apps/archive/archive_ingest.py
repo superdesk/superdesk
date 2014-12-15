@@ -4,19 +4,20 @@ Created on May 23, 2014
 @author: Ioan v. Pocol
 """
 
+import flask
 import traceback
+import superdesk
 
 from celery.canvas import chord
 from celery.result import AsyncResult
 from eve.utils import config
-import flask
 from flask.globals import current_app as app
 from celery.exceptions import Ignore
 from celery import states
 from celery.utils.log import get_task_logger
-from apps.archive.common import insert_into_versions
+from apps.archive.common import insert_into_versions, remove_unwanted
+from apps.tasks import send_to
 
-import superdesk
 from superdesk import SuperdeskError, InvalidStateTransitionError
 from superdesk.utc import utc, utcnow
 from superdesk.celery_app import celery, finish_task_for_progress,\
@@ -24,11 +25,14 @@ from superdesk.celery_app import celery, finish_task_for_progress,\
 from superdesk.upload import url_for_media
 from superdesk.media.media_operations import download_file_from_url, process_file
 from superdesk.resource import Resource
-from .common import get_user, aggregations
+from .common import get_user
 from superdesk.services import BaseService
 from .archive import SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 from superdesk.notification import push_notification
+
+
+STATE_FETCHED = 'fetched'
 
 
 logger = get_task_logger(__name__)
@@ -158,13 +162,12 @@ def archive_item(self, guid, provider_id, user, task_id=None):
             item['created'] = item['firstcreated'] = utc.localize(item['firstcreated'])
             item['updated'] = item['versioncreated'] = utc.localize(item['versioncreated'])
 
-        '''
-        Necessary because flask.g.user is None while fetching packages the for grouped items or
-        while patching in archive collection. Without this version_creator is set None which doesn't make sense.
-        '''
+        # Necessary because flask.g.user is None while fetching packages the for grouped items or
+        # while patching in archive collection. Without this version_creator is set None which doesn't make sense.
         flask.g.user = user
-        item[config.CONTENT_STATE] = 'fetched'
-        superdesk.get_resource_service(ARCHIVE).patch(guid, item)
+        item[config.CONTENT_STATE] = STATE_FETCHED
+        remove_unwanted(item)
+        superdesk.get_resource_service(ARCHIVE).update(guid, item)
 
         tasks = []
         for group in item.get('groups', []):
@@ -180,7 +183,7 @@ def archive_item(self, guid, provider_id, user, task_id=None):
                         unique_name, state, type will be re-defined rather than copying from ingest doc.
                         '''
                         resid_ref_doc = superdesk.get_resource_service('ingest').find_one(req=None, guid=resid_ref)
-                        copy_from_ingest_doc(doc, resid_ref_doc)
+                        create_from_ingest_doc(doc, resid_ref_doc)
 
                         superdesk.get_resource_service(ARCHIVE).post([doc])
                     elif archived_doc.get('task_id') == crt_task_id:
@@ -226,42 +229,29 @@ def mark_ingest_as_archived(guid=None, ingest_doc=None):
         superdesk.get_resource_service('ingest').patch(ingest_doc.get('_id'), {'archived': utcnow()})
 
 
-def copy_from_ingest_doc(dest_doc, source_doc):
-    """
-    As the name suggests this method copies some of the values from ingest_doc.
+def create_from_ingest_doc(dest_doc, source_doc):
+    """Create a new archive item using values from given source doc.
 
     :param dest_doc: doc which gets persisted into archive collection
     :param source_doc: doc which is fetched from ingest collection
     """
+    for key, val in source_doc.items():
+        dest_doc.setdefault(key, val)
 
-    # doc.setdefault('user', str(getattr(flask.g, 'user', {}).get('_id')))
-    dest_doc.setdefault('_id', dest_doc.get('guid'))
-    dest_doc.setdefault('unique_id', source_doc.get('unique_id'))
-    dest_doc.setdefault('unique_name', source_doc.get('unique_name'))
-    dest_doc.setdefault('type', source_doc['type'] if 'type' in source_doc else '')
-    dest_doc.setdefault(config.CONTENT_STATE, source_doc[config.CONTENT_STATE])
+    dest_doc[config.CONTENT_STATE] = STATE_FETCHED
 
 
 class ArchiveIngestResource(Resource):
     resource_methods = ['POST']
     item_methods = ['GET']
-    datasource = {
-        'search_backend': 'elastic',
-        'aggregations': aggregations,
-    }
     additional_lookup = {
         'url': 'regex("[\w-]+")',
         'field': 'task_id'
     }
     schema = {
-        'guid': {
-            'type': 'string',
-            'required': True,
-        },
-        'task_id': {
-            'type': 'string',
-            'required': False,
-        }
+        'guid': {'type': 'string', 'required': True},
+        'desk': Resource.rel('desks', False, nullable=True),
+        'task_id': {'type': 'string', 'required': False},
     }
     privileges = {'POST': 'ingest_move'}
 
@@ -280,9 +270,10 @@ class ArchiveIngestService(BaseService):
 
             mark_ingest_as_archived(ingest_doc=ingest_doc)
 
-            archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, guid=doc.get('guid'))
+            archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=doc.get('guid'))
             if not archived_doc:
-                copy_from_ingest_doc(doc, ingest_doc)
+                create_from_ingest_doc(doc, ingest_doc)
+                send_to(doc, doc.get('desk'))
                 superdesk.get_resource_service(ARCHIVE).post([doc])
 
             task = archive_item.delay(doc.get('guid'), ingest_doc.get('ingest_provider'), get_user())
@@ -320,7 +311,8 @@ class ArchiveIngestService(BaseService):
             raise SuperdeskError(payload=msg)
 
 
-superdesk.workflow_state('fetched')
+superdesk.workflow_state(STATE_FETCHED)
+
 superdesk.workflow_action(
     name='fetch_as_from_ingest',
     include_states=['ingested'],

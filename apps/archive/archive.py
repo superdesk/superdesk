@@ -121,7 +121,7 @@ class ArchiveService(BaseService):
                          type=doc['type'], subject=get_subject(doc))
 
     def update_state(self, original, updates):
-        original_state = original[config.CONTENT_STATE]
+        original_state = original.get(config.CONTENT_STATE)
         if original_state != 'ingested' and original_state != 'in_progress':
             if not is_workflow_state_transition_valid('save', original_state):
                 raise InvalidStateTransitionError()
