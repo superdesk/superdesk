@@ -147,3 +147,56 @@ Feature: Stages
         {"_items": [{"slugline": "first task", "type": "text", "task": {"desk": "#DESKS_ID#", "stage": "#STAGES_ID#"}}]}
 	    """
 
+        @auth
+    Scenario: Can delete empty stage
+        Given empty "desks"
+        Given empty "archive"
+        Given empty "tasks"
+        Given empty "stages"
+        When we post to "/stages"
+        """
+        {
+        "name": "show my content",
+        "description": "Show content items created by the current logged user"
+        }
+        """
+        When we post to "desks"
+        """
+        {"name": "Sports Desk", "incoming_stage": "#STAGES_ID#"}
+        """
+        When we delete "/stages/#STAGES_ID#"
+        Then we get response code 200
+
+    @auth
+    Scenario: Cannot delete stage if there are documents
+        Given empty "desks"
+        Given empty "archive"
+        Given empty "tasks"
+        Given empty "stages"
+        When we post to "/stages"
+        """
+        {
+        "name": "show my content",
+        "description": "Show content items created by the current logged user"
+        }
+        """
+        When we post to "desks"
+        """
+        {"name": "Sports Desk", "incoming_stage": "#STAGES_ID#"}
+        """
+        When we post to "tasks"
+	    """
+        [{"slugline": "first task", "type": "text", "task": {"desk":"#DESKS_ID#", "stage" :"#STAGES_ID#"}}]
+	    """
+        When we post to "archive"
+        """
+        [{"type": "text"}]
+        """
+        And we get "/tasks"
+        Then we get list with 1 items
+	    """
+        {"_items": [{"slugline": "first task", "type": "text", "task": {"desk": "#DESKS_ID#", "stage": "#STAGES_ID#"}}]}
+	    """
+
+        When we delete "/stages/#STAGES_ID#"
+        Then we get response code 400
