@@ -1,6 +1,7 @@
 from flask.ext.mail import Message
 from superdesk.celery_app import celery
-from flask import current_app as app, render_template
+from flask import current_app as app, render_template, render_template_string
+import superdesk
 
 
 @celery.task(bind=True, max_retries=3)
@@ -61,3 +62,15 @@ def send_user_mentioned_email(recipients, user_name, doc, url):
     html_body = render_template("user_mention.html", text=doc['text'], username=user_name, link=url, app_name=app_name)
     send_email.delay(subject=subject, sender=admins[0], recipients=recipients,
                      text_body=text_body, html_body=html_body)
+
+
+def send_activity_emails(activity, recipients):
+    admins = app.config['ADMINS']
+    app_name = app.config['APPLICATION_NAME']
+    notification = render_template_string(activity.get('message'), **activity.get('data'))
+    text_body = render_template("notification.txt", notification=notification, app_name=app_name)
+    html_body = render_template("notification.html", notification=notification, app_name=app_name)
+    subject = render_template("notification_subject.txt", notification=notification)
+    send_email.delay(subject=subject, sender=admins[0], recipients=recipients,
+                     text_body=text_body, html_body=html_body)
+

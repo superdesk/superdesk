@@ -1,7 +1,8 @@
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.io import allowed_providers
-from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_DELETE, ACTIVITY_UPDATE
+from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_EVENT, \
+    ACTIVITY_DELETE, ACTIVITY_UPDATE, notify_and_add_activity
 from superdesk import get_resource_service
 
 
@@ -66,22 +67,23 @@ class IngestProviderService(BaseService):
 
     def on_created(self, docs):
         for doc in docs:
-            add_activity(ACTIVITY_CREATE, 'created Ingest Channel {{name}}', item=doc,
-                         notify=[user.get('_id') for user in self._get_administrators()],
-                         name=doc.get('name'))
+            notify_and_add_activity(ACTIVITY_CREATE, 'created Ingest Channel {{name}}', item=doc,
+                                    user_list=self._get_administrators(),
+                                    name=doc.get('name'))
 
     def on_updated(self, updates, original):
-        add_activity(ACTIVITY_UPDATE, 'updated Ingest Channel {{name}}', item=original,
-                     notify=[user['_id'] for user in self._get_administrators()],
-                     name=updates.get('name', original.get('name')))
+        if 'is_closed' not in updates.keys():
+            notify_and_add_activity(ACTIVITY_UPDATE, 'updated Ingest Channel {{name}}', item=original,
+                                    user_list=self._get_administrators(),
+                                    name=updates.get('name', original.get('name')))
 
-        if updates.get('is_closed'):
-            add_activity(ACTIVITY_UPDATE, '{{status}} Ingest Channel {{name}}', item=original,
-                         notify=[user.get('_id') for user in self._get_administrators()],
-                         name=updates.get('name', original.get('name')),
-                         status='closed' if updates.get('is_closed') else 'opened')
+        if updates.get('is_closed') and updates.get('is_closed') != original.get('is_closed'):
+            notify_and_add_activity(ACTIVITY_EVENT, '{{status}} Ingest Channel {{name}}', item=original,
+                                    user_list=self._get_administrators(),
+                                    name=updates.get('name', original.get('name')),
+                                    status='closed' if updates.get('is_closed') else 'opened')
 
     def on_deleted(self, doc):
-        add_activity(ACTIVITY_DELETE, 'deleted Ingest Channel {{name}}', item=doc,
-                     notify=[user.get('_id') for user in self._get_administrators()],
-                     name=doc.get('name'))
+        notify_and_add_activity(ACTIVITY_DELETE, 'deleted Ingest Channel {{name}}', item=doc,
+                                user_list=self._get_administrators(),
+                                name=doc.get('name'))

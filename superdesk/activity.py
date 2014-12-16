@@ -1,12 +1,11 @@
-
 import logging
-from flask import g
-
+from flask import g, current_app as app, render_template_string
 from superdesk.notification import push_notification
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 import superdesk
 from bson.objectid import ObjectId
+from superdesk.emails import send_activity_emails
 
 log = logging.getLogger(__name__)
 
@@ -38,7 +37,6 @@ class AuditResource(Resource):
 
 
 class AuditService(BaseService):
-
     def on_generic_inserted(self, resource, docs):
         if resource in AuditResource.exclude:
             return
@@ -121,6 +119,7 @@ class ActivityResource(Resource):
 ACTIVITY_CREATE = 'create'
 ACTIVITY_UPDATE = 'update'
 ACTIVITY_DELETE = 'delete'
+ACTIVITY_EVENT = 'event'
 
 
 def add_activity(activity_name, msg, item=None, notify=None, **data):
@@ -152,3 +151,20 @@ def add_activity(activity_name, msg, item=None, notify=None, **data):
 
     superdesk.get_resource_service(ActivityResource.endpoint_name).post([activity])
     push_notification(ActivityResource.endpoint_name, _dest=activity['read'])
+
+
+def notify_and_add_activity(activity_name, msg, item=None, user_list=None, **data):
+    if user_list:
+        users = [user for user in user_list]
+        add_activity(activity_name, msg=msg, item=item, notify=[user.get("_id") for user in users], data=data)
+        recipients = [user.get('email') for user in users if
+                      user.get('preferences', {}).get('email:notification', {}).get('enabled', {})]
+        user = getattr(g, 'user', None)
+        activity = {
+            'name': activity_name,
+            'message': user.get('display_name') + ' ' + msg if user else msg,
+            'data': data,
+        }
+        send_activity_emails(activity=activity, recipients=recipients)
+    else:
+        add_activity(activity_name, msg=msg, item=item, notify=None, data=data)
