@@ -8,7 +8,8 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "description": "Show content items created by the current logged user"
+        "description": "Show content items created by the current logged user",
+        "task_status": "todo"
         }
         """
 
@@ -16,7 +17,8 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "description": "Show content items created by the current logged user"
+        "description": "Show content items created by the current logged user",
+        "task_status": "todo"
         }
         """
 

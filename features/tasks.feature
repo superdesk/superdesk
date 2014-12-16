@@ -143,6 +143,40 @@ Feature: Tasks
 
 
     @auth
+    Scenario: Update task status on stage change
+        Given empty "tasks"
+        Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "Desk1"}]
+        """
+        When we post to "stages"
+        """
+        [{"name": "Test Stage", "desk": "#DESKS_ID#", "task_status": "done"}]
+        """
+        When we post to "users"
+        """
+        {"username": "foo", "email": "foo@bar.com"}
+        """
+        When we post to "tasks"
+	    """
+        [{"slugline": "first task", "type": "text", "task": {"user": "#USERS_ID#"}}]
+	    """
+        Then we get existing resource
+        """
+        {"task": {"status": "todo"}}
+        """
+        When we patch latest
+        """
+        {"task": {"user": "#USERS_ID#", "desk": "#DESKS_ID#", "stage": "#STAGES_ID#"}}
+        """
+        Then we get existing resource
+        """
+        {"task": {"status": "done"}}
+        """
+
+
+    @auth
     Scenario: Delete task
         Given empty "tasks"
         When we post to "users"

@@ -1,8 +1,9 @@
 import logging
+import superdesk
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from eve.utils import ParsedRequest
-import superdesk
+from apps.tasks import task_statuses
 
 
 logger = logging.getLogger(__name__)
@@ -29,6 +30,10 @@ class StagesResource(Resource):
             'type': 'boolean',
             'required': True,
             'default': False
+        },
+        'task_status': {
+            'type': 'string',
+            'allowed': task_statuses
         },
         'desk': Resource.rel('desks', embeddable=True),
         'outgoing': {
