@@ -1,6 +1,7 @@
 import logging
 from superdesk.resource import Resource
 from superdesk.services import BaseService
+from eve.utils import ParsedRequest
 import superdesk
 
 
@@ -53,3 +54,15 @@ class StagesService(BaseService):
                 desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
                 if desk:
                     raise superdesk.SuperdeskError('Deleting default stages is not allowed.')
+        else:
+            # check if the stage has any documents in it
+            items = self.get_stage_documents(str(doc['_id']))
+            if items.count() > 0:
+                # cannot delete
+                raise superdesk.SuperdeskError('Only empty stages can be deleted.')
+
+    def get_stage_documents(self, stage_id):
+        query_filter = superdesk.json.dumps({'term': {'task.stage': stage_id}})
+        req = ParsedRequest()
+        req.args = {'filter': query_filter}
+        return superdesk.get_resource_service('archive').get(req, None)
