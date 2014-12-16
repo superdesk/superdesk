@@ -2,6 +2,7 @@ import superdesk
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.comments import CommentsService, CommentsResource, comments_schema
+from superdesk.errors import SuperdeskApiError
 
 
 comments_schema = dict(comments_schema)
@@ -32,7 +33,7 @@ class ItemCommentsSubService(BaseService):
         item = superdesk.get_resource_service('archive').find_one(req=None, _id=item_id)
         if not item:
             msg = 'Invalid content item ID provided: %s' % item_id
-            raise superdesk.SuperdeskError(payload=msg)
+            raise SuperdeskApiError(payload=msg)
 
     def get(self, req, lookup):
         self.check_item_valid(lookup.get('item'))

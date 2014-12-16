@@ -23,6 +23,7 @@ from eve.auth import TokenAuth
 from superdesk.storage.desk_media_storage import SuperdeskGridFSMediaStorage
 from superdesk.validator import SuperdeskValidator
 from raven.contrib.flask import Sentry
+from superdesk.errors import SuperdeskError, SuperdeskApiError
 
 
 logger = logging.getLogger('superdesk')
@@ -73,7 +74,7 @@ def get_app(config=None):
 
     app.mail = Mail(app)
 
-    @app.errorhandler(superdesk.SuperdeskError)
+    @app.errorhandler(SuperdeskError)
     def client_error_handler(error):
         """Return json error response.
 
@@ -86,7 +87,7 @@ def get_app(config=None):
         """Log server errors."""
         app.sentry.captureException()
         logger.exception(error)
-        return_error = superdesk.SuperdeskError(status_code=500)
+        return_error = SuperdeskApiError(status_code=500)
         return client_error_handler(return_error)
 
     init_celery(app)

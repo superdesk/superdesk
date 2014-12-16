@@ -20,30 +20,17 @@ from eve.versioning import insert_versioning_documents
 from superdesk.celery_app import update_key
 from superdesk.utc import utcnow
 from settings import SERVER_DOMAIN
-from superdesk import SuperdeskError, get_resource_service
+from superdesk import get_resource_service
 from superdesk.notification import push_notification
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
+from superdesk.errors import SuperdeskError, IdentifierGenerationError
 
 GUID_TAG = 'tag'
 GUID_NEWSML = 'newsml'
 ARCHIVE_MEDIA = 'archive_media'
 
-
-class InvalidFileType(SuperdeskError):
-    """Exception raised when receiving a file type that is not supported."""
-
-    def __init__(self, type=None):
-        super().__init__('Invalid file type %s' % type, payload={})
-
-
-class IdentifierGenerationError(SuperdeskError):
-    """Exception raised if failed to generate unique_id."""
-
-    status_code = 500
-    payload = {'unique_id': 1}
-    message = "Failed to generate unique_id"
 
 
 def on_create_item(docs):
@@ -87,7 +74,7 @@ def generate_guid(**hints):
 def get_user(required=False):
     user = flask.g.get('user', {})
     if '_id' not in user and required:
-        raise superdesk.SuperdeskError(payload='Invalid user.')
+        raise SuperdeskError(payload='Invalid user.')
     return user
 
 
