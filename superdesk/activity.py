@@ -1,5 +1,5 @@
 import logging
-from flask import g, current_app as app, render_template_string
+from flask import g
 from superdesk.notification import push_notification
 from superdesk.resource import Resource
 from superdesk.services import BaseService

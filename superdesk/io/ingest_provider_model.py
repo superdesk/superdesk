@@ -1,7 +1,7 @@
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.io import allowed_providers
-from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_EVENT, \
+from superdesk.activity import ACTIVITY_CREATE, ACTIVITY_EVENT, \
     ACTIVITY_DELETE, ACTIVITY_UPDATE, notify_and_add_activity
 from superdesk import get_resource_service
 

@@ -1,7 +1,6 @@
 from flask.ext.mail import Message
 from superdesk.celery_app import celery
 from flask import current_app as app, render_template, render_template_string
-import superdesk
 
 
 @celery.task(bind=True, max_retries=3)
@@ -73,4 +72,3 @@ def send_activity_emails(activity, recipients):
     subject = render_template("notification_subject.txt", notification=notification)
     send_email.delay(subject=subject, sender=admins[0], recipients=recipients,
                      text_body=text_body, html_body=html_body)
-
