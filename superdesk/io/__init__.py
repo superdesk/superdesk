@@ -2,11 +2,11 @@
 import logging
 import superdesk
 
-from abc import ABCMeta, abstractmethod
 from superdesk.celery_app import celery
 from superdesk.etree import etree, ParseError
 
 
+parsers = []
 providers = {}
 allowed_providers = []
 logger = logging.getLogger(__name__)
@@ -51,9 +51,6 @@ def get_word_count(html):
         return get_text_word_count(html)
 
 
-superdesk.privilege(name='ingest_providers', label='Ingest Channels', description='User can maintain Ingest Channels.')
-
-
 @celery.task()
 def update_ingest():
     UpdateIngest().run()
@@ -64,15 +61,41 @@ def gc_ingest():
     RemoveExpiredContent().run()
 
 
-class Parser:
-    """
-    Parent Class for all types of Parsers like News ML 1.2, News ML G2, NITF,...
-    """
-    __metaclass__ = ABCMeta
+class ParserRegistry(type):
+    """Registry metaclass for parsers."""
 
-    @abstractmethod
-    def parse_message(self, xml_doc):
-        """
-        Parses the ingest XML and extracts the relevant elements/attributes values from the XML.
-        Sub-classes must override.
-        """
+    def __init__(cls, name, bases, attrs):
+        """Register sub-classes of Parser class when defined."""
+        super(ParserRegistry, cls).__init__(name, bases, attrs)
+        if name != 'Parser':
+            parsers.append(cls())
+
+
+class Parser(metaclass=ParserRegistry):
+    """Base Parser class for all types of Parsers like News ML 1.2, News ML G2, NITF, etc."""
+
+    def parse_message(self, xml):
+        """Parse the ingest XML and extracts the relevant elements/attributes values from the XML."""
+        raise NotImplementedError()
+
+    def can_parse(self, xml):
+        """Test if parser can parse given xml."""
+        raise NotImplementedError()
+
+
+def get_xml_parser(etree):
+    """Get parser for given xml.
+
+    :param etree: parsed xml
+    """
+    for parser in parsers:
+        if parser.can_parse(etree):
+            return parser
+
+
+# must be imported for registration
+import superdesk.io.nitf
+import superdesk.io.newsml_2_0
+import superdesk.io.newsml_1_2
+
+superdesk.privilege(name='ingest_providers', label='Ingest Channels', description='User can maintain Ingest Channels.')

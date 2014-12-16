@@ -15,6 +15,9 @@ logger = logging.getLogger("NewsMLTwoParser")
 class NewsMLTwoParser(Parser):
     """NewsMl xml 2.0 parser"""
 
+    def can_parse(self, xml):
+        return xml.tag.endswith('newsMessage')
+
     def parse_message(self, tree):
         """Parse NewsMessage."""
         items = []

@@ -1,10 +1,19 @@
 import os
-import test
 import unittest
 
 from superdesk.etree import etree
-from superdesk.io import newsml_2_0
 from superdesk.io import get_word_count
+from superdesk.io import get_xml_parser
+
+from .newsml_1_2 import NewsMLOneParser
+from .newsml_2_0 import NewsMLTwoParser
+from .nitf import NITFParser
+
+
+def get_etree(filename):
+    dirname = os.path.dirname(os.path.realpath(__file__))
+    with open(os.path.join(dirname, 'fixtures', filename)) as f:
+        return etree.fromstring(f.read().encode('utf-8'))
 
 
 class UtilsTest(unittest.TestCase):
@@ -17,16 +26,24 @@ class UtilsTest(unittest.TestCase):
             '<doc><p xml:lang="en-US">The weather was superb today in Norfolk, Virginia. Made me want to take\n'
             'out my boat, manufactured by the <org value="acm" idsrc="iptc.org">Acme Boat Company</org>.</p></doc>'))
 
+    def test_get_xml_parser_newsmlg2(self):
+        etree = get_etree('snep.xml')
+        self.assertIsInstance(get_xml_parser(etree), NewsMLTwoParser)
+
+    def test_get_xml_parser_nitf(self):
+        etree = get_etree('nitf-fishing.xml')
+        self.assertIsInstance(get_xml_parser(etree), NITFParser)
+
+    def test_get_xml_parser_newsml12(self):
+        etree = get_etree('afp.xml')
+        self.assertIsInstance(get_xml_parser(etree), NewsMLOneParser)
+
 
 class ItemTest(unittest.TestCase):
 
     def setUpFixture(self, filename):
-        dirname = os.path.dirname(os.path.realpath(__file__))
-        fixture = os.path.join(dirname, 'fixtures', filename)
-        with open(fixture) as f:
-            self.tree = etree.fromstring(f.read().encode('utf-8'))
-        parser = newsml_2_0.NewsMLTwoParser()
-        self.item = parser.parse_message(self.tree)[0]
+        self.tree = get_etree(filename)
+        self.item = get_xml_parser(self.tree).parse_message(self.tree)[0]
 
 
 class TextParserTest(ItemTest):
@@ -125,7 +142,3 @@ class SNEPParserTest(ItemTest):
         self.assertEquals("application/vnd.iptc.g2.packageitem+xml", ref.get('contentType'))
         self.assertEquals("icls:composite", ref.get('itemClass'))
         self.assertEquals("At least 15 killed on Kenya coast on election day", ref.get('headline'))
-
-if __name__ == '__main__':
-    test.drop_db()
-    unittest.main()
