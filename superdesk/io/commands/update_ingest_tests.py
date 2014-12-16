@@ -125,3 +125,15 @@ class UpdateIngestTest(TestCase):
             provider_name = 'AAP'
             provider = self._get_provider(provider_name)
             self.assertEquals('@@body@@', apply_rule_set(item, provider)['body_html'])
+
+    def test_all_ingested_items_have_sequence(self):
+        provider_name = 'reuters'
+        guid = 'tag:reuters.com,2014:newsml_KBN0FL0NM'
+        with self.app.app_context():
+            provider = self._get_provider(provider_name)
+            provider_service = self._get_provider_service(provider)
+            provider_service.provider = provider
+            item = provider_service.fetch_ingest(guid)[0]
+            get_resource_service("ingest").set_ingest_provider_sequence(item, provider)
+
+            self.assertIsNotNone(item['ingest_provider_sequence'])

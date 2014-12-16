@@ -37,11 +37,13 @@ Feature: Ingest
 		    "_items": [{
 		        "type": "picture",
 		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS",
-		        "state":"ingested"
+		        "state":"ingested",
+		        "ingest_provider_sequence" : "4"
 		    }, {
 		        "type": "composite",
 		        "usageterms": "NO ARCHIVAL USE",
 		        "state":"ingested",
+		        "ingest_provider_sequence": "1",
 		        "groups": [{
 		            "refs": [{
 		                "itemClass": "icls:text",
@@ -66,19 +68,50 @@ Feature: Ingest
 		    }, {
 		        "type": "picture",
 		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT",
-		        "state":"ingested"
+		        "state":"ingested",
+		        "ingest_provider_sequence" : "3"
 		    }, {
 		        "type": "text",
 		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0ZP",
-		        "state":"ingested"
+		        "state":"ingested",
+		        "ingest_provider_sequence" : "2"
 		    }, {
 		        "type": "picture",
 		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M",
-		        "state":"ingested"
+		        "state":"ingested",
+		        "ingest_provider_sequence" : "5"
 		    }, {
 		        "type": "text",
 		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NN",
-		        "state":"ingested"
+		        "state":"ingested",
+		        "ingest_provider_sequence" : "6"
 		    }]
 		} 
+  		"""
+
+    @auth
+    @provider
+    Scenario: Check if Ingest Provider Sequence Number is per channel
+    	Given empty "ingest"
+    	When we fetch from "reuters" ingest "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS"
+        And we fetch from "AAP" ingest "aap.xml"
+        And we get "/ingest/tag:reuters.com,2014:newsml_LYNXMPEA6F0MS"
+        Then we get existing resource
+		"""
+		{
+          "type": "picture",
+          "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS",
+          "state":"ingested",
+          "ingest_provider_sequence" : "1"
+		}
+  		"""
+        When we get "/ingest/AAP.115314987.5417374"
+        Then we get existing resource
+		"""
+		{
+          "type": "text",
+          "guid": "AAP.115314987.5417374",
+          "state":"ingested",
+          "ingest_provider_sequence" : "1747"
+		}
   		"""
