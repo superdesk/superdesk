@@ -63,7 +63,7 @@ class IngestProviderResource(Resource):
 class IngestProviderService(BaseService):
 
     def _get_administrators(self):
-        return get_resource_service('users').get(req=None, lookup={'user_type': 'administrator'})
+        return list(get_resource_service('users').get(req=None, lookup={'user_type': 'administrator'}))
 
     def on_created(self, docs):
         for doc in docs:
