@@ -1,5 +1,8 @@
 module.exports = {
-    dev: {
-        path: 'http://<%= connect.options.hostname %>:<%= connect.options.port %>'
+    test: {
+        path: 'http://localhost:<%= connect.options.port %>'
+    },
+    mock: {
+        path: 'http://localhost:<%= connect.mock.options.port %>'
     }
 };

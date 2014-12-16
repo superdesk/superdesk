@@ -33,7 +33,7 @@ define(['angular'], function(angular) {
      * @param {object} role - role object as returned from server.
      *
      */
-    angular.module('superdesk.services')
+    return angular.module('superdesk.services.permissions', [])
         .service('permissionsService', ['$q', '$rootScope', 'em', function($q, $rootScope, em) {
 
             this.isUserAllowed = function(permissions, user) {

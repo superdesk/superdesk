@@ -1,0 +1,15 @@
+<div>
+
+    <div ng-repeat="(childId, childData) in item" ng-if="childId !== '_items'">
+        <div sd-package-item-proxy data-id="childId" data-item="childData" data-setitem="setitem({selected: selected})"></div>
+    </div>
+
+    <div ng-if="item._items.length" sd-toggle-box data-title="{{id}}" data-open="true">
+        <ul>
+            <li ng-repeat="child in item._items">
+                <div sd-package-ref data-item="child" data-setitem="setitem({selected: selected})"></div>
+            </li>
+        </ul>
+    </div>
+
+</div>

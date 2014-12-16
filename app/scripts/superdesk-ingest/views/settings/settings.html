@@ -1,0 +1,18 @@
+<div sd-settings-view ng-init="sourcesTab = true">
+
+    <div class="split-content">
+        <ul class="nav nav-tabs">
+            <li ng-class="{active: sourcesTab}">
+                <button ng-click="sourcesTab = true" translate>Sources</button>
+            </li>
+            <li ng-class="{active: !sourcesTab}">
+                <button ng-click="sourcesTab = false" translate>Rule sets</button>
+            </li>
+        </ul>  
+        
+        <div class="content">
+            <div ng-if="sourcesTab" sd-ingest-sources-content></div>
+            <div ng-if="!sourcesTab" sd-ingest-rules-content></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,8 @@
+<div class="toggle-box" ng-class="{'hidden': !isOpen}">
+	<header ng-click="toggleModule()">
+		<i class="icon-chevron-right chevron"></i>
+		<i class="box-icon {{icon}}"></i>
+		<h6>{{title}}</h6>
+	</header>
+	<div class="toggle-content" ng-if="isOpen" ng-transclude></div>
+</div>

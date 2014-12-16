@@ -1,0 +1,11 @@
+<div class="workqueue-list">
+	<ul class="card-list">
+		<li ng-repeat="article in workqueue | orderBy:null:true" ng-click="openItem(article)" sd-dashboard-card>
+			<span class="close" ng-click="closeItem(article)"><i class="icon-close-small"></i></span>
+			<div class="title" ng-show="article.headline">{{ article.headline }}</div>
+			<div class="title" ng-show="!article.headline">{{ 'Untitled' | translate }}</div>
+			<div class="created" sd-reldate-complex ng-model="article.versioncreated"></div>
+			<div class="state-label state-{{article.state}}">{{article.state}}</div>
+		</li>
+	</ul>
+</div>

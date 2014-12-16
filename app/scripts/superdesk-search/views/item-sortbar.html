@@ -1,0 +1,17 @@
+<div class="sortbar pull-left">
+	<span class="lab pull-left" translate>Sort:</span>
+	<div class="dropdown pull-left" dropdown>
+	    <button class="dropdown-toggle" dropdown-toggle>{{ active.label }} <b class="caret"></b>
+	    </button>
+	    <ul class="dropdown-menu">
+	        <li ng-repeat="option in sortOptions" ng-class="{active: option === selected}">
+	            <a href="" ng-click="sort(option.field)">{{ option.label }}</a>
+	        </li>
+	    </ul>
+	</div>
+	<button ng-click="toggleDir()" class="pull-left direction" title="{{active.dir}}">
+    	<i class="icon-ascending" ng-if="active.dir === 'asc'"></i>
+    	<i class="icon-descending" ng-if="active.dir === 'desc'"></i>
+    </button>
+</div>
+

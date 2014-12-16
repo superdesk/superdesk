@@ -1,0 +1,86 @@
+// group.less
+// Styling for the superdesk group module
+// ----------------------------------------------------------------------------------------
+@import 'mixins.less';
+@import 'variables.less';
+
+
+/* 	============================ 
+		GROUP CONFIG
+	============================ */
+
+/* Group create/edit popup */
+
+.add-group-popup {
+	top: 100px!important;
+	bottom: 100px!important;
+	width: 630px;
+	margin: 0 0 0 -315px;
+	left: 50%!important;
+	.modal-body {
+		bottom: 0;
+		.modal-screen {
+			top: 48px;
+		}
+	}
+	.people-stage {
+		.header {
+			height: 50px;
+			.search-result {
+				position: absolute;
+				left: 40px; right: 40px;
+				top: 51px; bottom: 80px;
+				overflow: auto;
+				border: 1px solid #ddd;
+				background: #fff;
+				padding: 10px;
+				z-index: 1;
+			}
+		}
+		.content {
+			position: absolute;
+			left: 20px; right: 20px;
+			top: 70px; bottom: 80px;
+			overflow: auto;
+		}
+		.member-list {
+			ul {
+				> li {
+					position: relative;
+					float: left;
+					margin: 5px;
+					border: 1px solid #fff;
+					.border-radius(5px);
+					padding: 15px 10px;
+					width: 115px;
+					.avatar {
+						display: block;
+						width: 84px;
+						height: 84px;
+						float: none;
+						margin: 0 auto 10px;
+					}
+					.name {
+						text-align: center;
+					}
+					i {
+						position: absolute;
+						right: 10px; top: 10px;
+						display: none;
+						.opacity(60);
+						&:hover {
+							.opacity(100);
+							cursor: pointer;
+						}
+					}
+					&:hover {
+						i {
+							display: block;
+						}
+						border-color: #e0e0e0;
+					}
+				}
+			}
+		}
+	}
+}

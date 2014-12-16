@@ -4,22 +4,7 @@ define([
 ], function($, angular) {
     'use strict';
 
-    angular.module('superdesk.directives')
-        .directive('sdModal', function() {
-            return {
-                link: function(scope, element, attrs) {
-                    var show = false;
-                    if ('ngShow' in attrs) {
-                        show = !!scope.$eval(attrs.ngShow);
-                    }
-
-                    $(element).addClass('modal fade');
-                    $(element).modal({
-                        show: show
-                    });
-                }
-            };
-        })
+    return angular.module('superdesk.directives.modal', [])
         /**
          * Modal View directive
          *
@@ -31,14 +16,20 @@ define([
             return {
                 replace: true,
                 transclude: true,
-                template: '<div class="modal fade"><div class="modal-dialog"><div class="modal-content" ng-transclude></div></div></div>',
-                scope: {
-                    model: '='
-                },
+                template: [
+                    '<div class="modal fade">',
+                    '<div class="modal-dialog" ng-if="model"><div class="modal-content" ng-transclude></div></div>',
+                    '</div>'].join(''),
+                scope: {model: '='},
                 link: function(scope, element, attrs) {
-                    $(element).modal({show: !!scope.model});
                     scope.$watch('model', function(model) {
                         $(element).modal(model ? 'show' : 'hide');
+                    });
+
+                    scope.$on('$destroy', function() {
+                        $(element).modal('hide');
+                        // backdrop stays there sometimes. we have to remove it manually
+                        angular.element(document.body).find('.modal-backdrop').remove();
                     });
                 }
             };

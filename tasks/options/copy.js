@@ -6,24 +6,38 @@ module.exports = {
             cwd: '<%= appDir %>',
             dest: '<%= distDir %>',
             src: [
-                '.htaccess',
-                '*.{ico,txt}',
                 'images/**/*',
                 'styles/css/*.css',
                 'scripts/**/*.{html,css,jpg,jpeg,png,gif,json}',
-                'template/**/*.html',
                 'scripts/bower_components/requirejs/require.js'
             ]
         }]
     },
-    components: {
+    js: {
         files: [{
             expand: true,
             dot: true,
             cwd: '<%= appDir %>',
-            dest: '<%= tmpDir %>',
+            dest: '<%= distDir %>',
             src: [
+                'scripts/config.js',
                 'scripts/bower_components/**/*.js'
+            ]
+        }]
+    },
+    bower: {
+        files: [{
+            expand: true,
+            dot: true,
+            cwd: '<%= distDir %>',
+            dest: '<%= bowerDir %>',
+            src: [
+                'images/**',
+                'styles/css/bootstrap.css',
+                'styles/css/app.css',
+                'scripts/vendor.js',
+                'scripts/superdesk-core.js',
+                'scripts/superdesk.js'
             ]
         }]
     }

@@ -1,135 +1,119 @@
 define([
     'angular',
     'require',
-    'view',
-    './controllers/archive',
-    './controllers/edit'
-], function(angular, require, view) {
+    './controllers/list',
+    './controllers/upload',
+    './archive-widget/archive',
+    './directives'
+], function(angular, require) {
     'use strict';
 
-    var app = angular.module('superdesk.archive', []);
+    SpikeService.$inject = ['$location', 'api', 'notify', 'gettext'];
+    function SpikeService($location, api, notify, gettext) {
+        var SPIKE_RESOURCE = 'archive_spike',
+            UNSPIKE_RESOURCE = 'archive_unspike';
 
-    app.config(['superdeskProvider', function(superdesk) {
-        superdesk
-            .permission('archive/write', {
-                label: gettext('Manage archive'),
-                permissions: {archive: {write: true}}
-            })
-            .permission('archive/read', {
-                label: gettext('Read archive'),
-                permissions: {archive: {read: true}}
-            });
-    }]);
-
-    app.config(['superdeskProvider', function(superdesk) {
-        superdesk
-            .activity('/archive', {
-                label: gettext('Archive'),
-                priority: -700,
-                templateUrl: view('archive.html', app),
-                controller: require('./controllers/archive'),
-                category: superdesk.MENU_MAIN,
-                reloadOnSearch: false
-            })
-            .activity('/edit', {
-                templateUrl: view('edit.html', app),
-                controller: require('./controllers/edit'),
-                filters: [
-                    {action: 'edit', type: 'archive'}
-                ]
-            })
-            .activity('start-edit', {
-                label: gettext('Edit'),
-                icon: 'edit',
-                controller: ['workqueue', 'data', 'resolve', function(queue, data, resolve) {
-                    queue.add(data);
-                    resolve(data);
-                }],
-                filters: [{action: 'list', type: 'archive'}]
-            })
-            .activity('archive', {
-                label: gettext('Archive'),
-                icon: 'archive',
-                controller: ['em', 'superdesk', 'data', 'resolve', function(em, superdesk, data, resolve) {
-                    if (!data.archived) {
-                        em.create('archive', data).then(function(item) {
-                            delete data.archiving;
-                            data.archived = item.archived;
-                            resolve(item);
-                        });
-
-                        data.archiving = true; // set after create not to send it as part of data
-                    } else {
-                        superdesk.data('archive').find(data._id).then(function(item) {
-                            resolve(item);
-                        });
+        /**
+         * Spike given item.
+         *
+         * @param {Object} item
+         */
+        this.spike = function spike(item) {
+            return api.update(SPIKE_RESOURCE, item, {state: 'spiked'})
+                .then(function() {
+                    if ($location.search()._id === item._id) {
+                        $location.search('_id', null);
                     }
-                }],
-                filters: [
-                    {action: 'archive', type: 'ingest'}
-                ]
-            })
-            .activity('fetch', {
-                label: gettext('Fetch'),
-                icon: 'expand',
-                controller: ['data', 'workqueue', 'superdesk', 'resolve', function(data, queue, superdesk, resolve) {
-                    var edit = function() {
-                        superdesk.intent('archive', 'ingest', data).then(function(item) {
-                            queue.add(item);
-                            resolve(item);
-                        });
-                    };
-
-                    if (data.archived) {
-                        edit();
-                    } else {
-                        superdesk.intent('fetch', 'ingest', data).then(edit);
-                    }
-                }],
-                filters: [
-                    {action: 'list', type: 'ingest'}
-                ]
-            })
-            .activity('fetch-article', {
-                label: gettext('as Article'),
-                controller: ['data', 'resolve', function(data, resolve) {
-                    console.log('fetch as article');
-                    resolve(data);
-                }],
-                filters: [
-                    {action: 'fetch', type: 'ingest'}
-                ]
-            })
-            .activity('fetch-factbox', {
-                label: gettext('as Factbox'),
-                controller: ['data', 'resolve', function(data, resolve) {
-                    console.log('fetch as factbox', data);
-                    resolve(data);
-                }],
-                filters: [
-                    {action: 'fetch', type: 'ingest'}
-                ]
-            })
-            .activity('fetch-sidebar', {
-                label: gettext('as Sidebar'),
-                controller: ['data', 'resolve', function(data, resolve) {
-                    console.log('fetch as sidebar', data);
-                    resolve(data);
-                }],
-                filters: [
-                    {action: 'fetch', type: 'ingest'}
-                ]
-            });
-    }]);
-
-    /**
-     * Subjectcodes loader
-     */
-    app.service('subjectcodes', ['superdesk', function(superdesk) {
-        this.load = function() {
-            return superdesk.data('subjectcodes').query().then(function(codes) {
-                return codes._items;
-            });
+                    notify.success(gettext('Item was spiked.'));
+                }, function(response) {
+                    notify.error(gettext('I\'m sorry but can\'t delete the archive item right now.'));
+                });
         };
-    }]);
+
+        /**
+         * Unspike given item.
+         *
+         * @param {Object} item
+         */
+        this.unspike = function unspike(item) {
+            return api.update(UNSPIKE_RESOURCE, item, {})
+                .then(function() {
+                    notify.success(gettext('Item was unspiked.'));
+                });
+        };
+    }
+
+    return angular.module('superdesk.archive', [
+        'superdesk.search',
+        require('./directives').name,
+        'superdesk.dashboard',
+        'superdesk.widgets.archive'
+    ])
+
+        .service('spike', SpikeService)
+
+        .config(['superdeskProvider', function(superdesk) {
+            superdesk
+                .activity('/workspace/content', {
+                    label: gettext('Workspace'),
+                    priority: 100,
+                    controller: require('./controllers/list'),
+                    templateUrl: require.toUrl('./views/list.html'),
+                    topTemplateUrl: require.toUrl('../superdesk-dashboard/views/workspace-topnav.html'),
+                    filters: [
+                        {action: 'view', type: 'content'}
+                    ],
+                    privileges: {archive: 1}
+                })
+                .activity('upload.media', {
+                    label: gettext('Upload media'),
+                    modal: true,
+                    cssClass: 'upload-media responsive-popup',
+                    controller: require('./controllers/upload'),
+                    templateUrl: require.toUrl('./views/upload.html'),
+                    filters: [
+                        {action: 'upload', type: 'media'}
+                    ],
+                    privileges: {archive: 1}
+                })
+                .activity('spike', {
+                    label: gettext('Spike Item'),
+                    icon: 'remove',
+                    controller: ['spike', 'data', function spikeActivity(spike, data) {
+                        return spike.spike(data.item);
+                    }],
+                    filters: [{action: 'list', type: 'archive'}],
+                    action: 'spike'
+                })
+                .activity('unspike', {
+                    label: gettext('Unspike Item'),
+                    icon: 'revert',
+                    controller: ['spike', 'data', function unspikeActivity(spike, data) {
+                        return spike.unspike(data.item);
+                    }],
+                    filters: [{action: 'list', type: 'spike'}],
+                    action: 'unspike'
+                });
+        }])
+
+        .config(['apiProvider', function(apiProvider) {
+            apiProvider.api('notification', {
+                type: 'http',
+                backend: {
+                    rel: 'notification'
+                }
+            });
+            apiProvider.api('archive', {
+                type: 'http',
+                backend: {
+                    rel: 'archive'
+                }
+            });
+            apiProvider.api('archiveMedia', {
+                type: 'http',
+                backend: {
+                    rel: 'archive_media'
+                }
+            });
+        }]);
 });

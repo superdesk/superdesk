@@ -1,0 +1,40 @@
+<div>
+    <div class="content-container">
+
+        <div class="composite-nav" ng-if="item.type === 'composite'">
+           <div class="top">
+               <span><i class="filetype-icon-large-composite"></i> {{ 'Package preview' | translate }}</span>
+           </div> 
+        </div>
+
+        <p class="title" ng-if="item.headline">{{ item.headline }}</p>
+
+        <div class="state-label state-{{item.state}}">{{item.state}}</div>
+
+        <div class="core-content">
+
+			<p ng-if="item.is_spiked" class="alert alert-warning expires">
+                <span translate>expires</span> <time sd-datetime data-date="item.expiry"></time>
+			</p>
+            
+            <!-- item rendition -->
+            <div class="picture-preview" sd-item-rendition data-item="item" data-rendition="viewImage"></div>
+            
+            <div ng-if="item.type == 'audio'">
+                <audio controls="controls" sd-sources data-renditions="item.renditions"></audio>
+            </div>
+
+            <div ng-if="item.type == 'video'">
+                <video controls="controls" sd-sources data-renditions="item.renditions"></video>
+            </div>
+
+            <div class="text abstract" ng-show="item.abstract" sd-html-preview="item.abstract"></div>
+
+            <div class="text" ng-show="item.body_html" sd-html-preview="item.body_html"></div>
+
+            <div class="composite-preview" ng-if="item.type === 'composite'">
+                <div sd-package data-item="item"></div>
+            </div>
+        </div>
+    </div>
+</div>

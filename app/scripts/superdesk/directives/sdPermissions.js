@@ -1,10 +1,7 @@
-define([
-    'jquery',
-    'angular'
-], function($, angular) {
+define(['angular'], function(angular) {
     'use strict';
 
-    angular.module('superdesk.directives')
+    return angular.module('superdesk.permissions.directives', [])
         /**
          * sdPermissions checks if user has specified permissions and assigns
          * to specified model to use in displaying/hiding/disabling elements.

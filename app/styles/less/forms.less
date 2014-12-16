@@ -8,7 +8,7 @@
 
 // Make all forms have space below them
 form {
-  margin: 0 0 @baseLineHeight;
+  margin: 0;
 }
 
 fieldset {
@@ -29,11 +29,18 @@ legend {
   border: 0;
   border-bottom: 1px solid #EEE;
 
-  // Small
+  // Small legend 
+  &.small {
+    margin-bottom: 10px;
+  }
+  
+  //small text
   small {
     font-size: @baseLineHeight * .75;
     color: @grayLight;
   }
+
+
 }
 
 
@@ -242,24 +249,6 @@ input,textarea,select {
 .input-large      { width: 210px; }
 .input-xlarge     { width: 270px; }
 .input-xxlarge    { width: 530px; }
-
-// Grid style input sizes
-input[class*="span"],
-select[class*="span"],
-textarea[class*="span"],
-.uneditable-input {
-  float: none;
-  margin-left: 0;
-}
-
-
-
-// GRID SIZING FOR INPUTS
-// ----------------------
-
-#grid > .input (@gridColumnWidth, @gridGutterWidth);
-
-
 
 
 // DISABLED STATE
@@ -565,8 +554,13 @@ legend + .control-group {
 
 /* SUPERDESK overrides */
 
-input[type="text"], 
+
+input[type="text"],
+input[type="date"],input[type="datetime"],input[type="datetime-local"],input[type="time"],
+input[type="number"],input[type="range"],
+input[type="url"], 
 input[type="password"],
+input[type="email"],
 textarea, select {
   .box-sizing(border-box);
   line-height:15px;
@@ -581,6 +575,8 @@ textarea, select {
   outline:none !important;
   .box-shadow(inset 0 0 0 #000) !important;
   .box-shadow(none) !important;
+  -moz-appearance: none !important;
+  background: #fff;
   &:focus {
     .box-shadow(0px 0px 5px 0px #d0d0d0) !important; 
     border-color: #b8b8b8 !important;
@@ -588,8 +584,12 @@ textarea, select {
   }
 }
 
-input[type="text"], 
+input[type="text"],
+input[type="date"],input[type="datetime"],input[type="datetime-local"],input[type="time"],
+input[type="number"],input[type="range"],
+input[type="url"],  
 input[type="password"],
+input[type="email"],
 select{
   height: 27px;
 }
@@ -626,5 +626,212 @@ input{
     background: url(../../images/date-field.png) no-repeat right center #fff;
     .reset-bootstrap-effects;
     padding:0 30px 0 5px;
+  }
+}
+
+form {
+  fieldset {
+    .clearfix();
+    .field {
+        margin-bottom: 20px;
+        width: 100%;
+        .border-box();
+        label {
+          font-size: 11px;
+          .text-bold();
+          color: #a0a0a0;
+          text-transform: uppercase;
+          height: 18px;
+        }
+        &.inline {
+          label {
+            .text-normal();
+            font-size: 13px;
+            text-transform: none;
+            color: @grayDark;
+            white-space: nowrap;
+            padding-left: 20px;
+            span {
+              color: #a0a0a0;
+            }
+          }
+          input, .sd-checkbox, .sd-toggle {
+            float: left;
+            margin-top: 2px;
+          }
+        }
+    }
+    &.horizontal {
+      .clearfix();
+      .field {
+        float: left;
+      }
+      &[class*=" span-"] {
+        .field {
+          .border-box();
+          padding: 0 3%;
+          &:first-child {
+            padding-left: 0;
+          }
+          &:last-child {
+            padding-right: 0;
+          }
+        }
+      }
+      &.span-2 .field {width: 50%;}
+      &.span-3 .field {width: 33.33%;}
+      &.span-4 .field {width: 25%;}
+      &.span-5 .field {width: 20%;}
+    }
+    &.span-auto {
+      .field {
+        width: auto;
+        float: left;
+        padding-right: 30px;
+      }
+    }
+    &.span-2 {
+      .field {
+        width: 50%;
+        float: left;
+        &:last-child {
+          padding-left: 5%;
+        }
+        &:first-child {
+          padding-left: 0;
+          padding-right: 5%;
+        }
+      }
+    }
+  }
+}
+
+form.flat, .form-flat {
+  
+  .title {
+      padding: 0 10px 10px 0;
+      color: @sd-text;
+      font-size: 16px;
+      line-height: 22px;
+  }
+
+  .required-info {
+    display: none;
+    font-size: 11px;
+    color: #999;
+    float: right;
+  }
+
+  fieldset, .fieldset {
+    margin-bottom: 20px;
+    position: relative;
+
+    legend, .legend {  
+      padding: 0;
+      color: @sd-text;
+      font-size: 12px;
+      text-transform: uppercase;
+      .text-semibold();
+      padding: 10px 0;
+      margin-top: 20px;
+    }
+
+    .item {
+      width: 100%;
+      font-size: 13px;
+      color: @sd-text;
+      position: relative;
+      .box-sizing(border-box);
+      height: auto;
+      line-height: 24px;
+      border-top: 1px dotted #ddd;
+      padding: 5px 2px;
+
+      &:last-child {
+        border-bottom: 1px dotted #ddd;
+      }
+
+      .required-asteriks {
+        font-size: 12px;
+        color: #999;
+        position: absolute;
+        right: 0;
+        top: 8px;
+      }
+      label {
+        color: @sd-text;
+        min-width: 100px;
+        margin-right: 10px;
+        display: inline-block;
+      }
+      a {
+        color: @sd-blue-text;
+      }
+      .info-value {
+        display: inline-block;
+        vertical-align: middle;
+        .sdselect-btn {
+          float: left;
+          color: @sd-text;
+          width: auto;
+          .caret {
+            margin-left: 5px;
+          }
+        }
+      }
+      .sd-toggle, .sd-checkbox {
+        float: right;
+        margin-top: 5px;
+      }
+      &.password {
+        .info-value {
+        -webkit-text-security: disc;
+          .info-editable {
+            -webkit-text-security: disc;
+          }
+        }
+        .change-btn {
+          &:hover {
+        cursor: pointer;
+          }
+        }
+      }
+      p.info-editable {
+        margin: 0;
+      }
+      .info-editable {
+        width: 275px;
+        border: 0 !important;
+        font-size: 13px;
+        text-overflow: ellipsis;
+        margin-left: -6px; 
+        background: none;
+        color: #000 !important;
+        &:focus {
+          .box-shadow(0 0 0 0 #000) !important;
+          text-decoration: underline;
+        }
+      }
+      textarea.info-editable {
+        height: 150px;
+        width: 100%;
+        max-width: 100%;
+        line-height: 18px;
+        margin-left: 0; 
+      }
+      select.info-editable {
+        padding: 0 !important;
+        border: 1px solid #d0d0d0 !important;
+        &:focus {
+          text-decoration: none !important;
+        }
+      }
+    }
+
+    &.label-light {
+      label {
+        color: #a0a0a0;
+      }
+    }
   }
 }

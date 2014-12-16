@@ -1,0 +1,11 @@
+<form>
+	<input type="text" ng-model="search" class="searchbar searchbar-large">
+</form>
+<div class="search-result" ng-show="search">
+	<ul class="users-list-embed">
+		<li ng-repeat="user in filteredUsers" ng-class="{active: user === selected}" ng-click="choose(user)">
+			<figure class="avatar small"><img sd-user-avatar data-src="user.picture_url"></figure>
+			<div class="name">{{user.display_name}}</div>
+		</li>
+	</ul>
+</div>

@@ -1,21 +1,8 @@
-<div class="profile-activity">
-	<div class="activity-header">
-		<h6 translate>Activity Log</h6>
+<div class="profile-activity-container">
+	<div class="profile-activity">
+		<div class="activity-header">
+			<h6 translate>Activity Stream</h6>
+		</div>
+		<div sd-activity></div>
 	</div>
-	<div class="activity-log">
-		<ul>
-			<li ng-repeat="activity in activityFeed._items" class="activity" ng-model="activity" sd-group-dates="created">
-                <div>
-                    <figure>
-                        <img sd-user-picture data-src="user.picture_url" width="42" height="42">
-                    </figure>
-                    <div class="activity-content">
-                        <p><b>{{ activity.user.display_name || activity.user.username }}</b>: {{ activity.action }} {{ activity.extra.headline || activity.extra.slugline || activity.resource }}</p>
-                    </div>
-                    <div class="activity-date" sd-reldate ng-model="activity.created"></div>
-                </div>
-            </li>
-		</ul>
-	</div>
-	<button class="btn load-more" translate ng-click="loadMore()" ng-show="activityFeed._links.next">Load more</button>
 </div>

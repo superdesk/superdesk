@@ -1,15 +1,30 @@
 module.exports = {
     options: {
-        livereload: '<%= livereloadPort %>',
+        livereload: '<%= livereloadPort %>'
     },
-    css: {
+    less: {
+        tasks: ['style'],
         files: [
-            '<%= appDir %>/{,*/}*.html',
-            '{<%= tmpDir %>,<%= appDir %>}/styles/css/custom.css',
-            '{<%= tmpDir %>,<%= appDir %>}/styles/{,*/}*.less',
-            '{<%= tmpDir %>,<%= appDir %>}/{,*/}*.js',
-            '<%= appDir %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
-        ],
-        tasks: ['less']
+            '<%= appDir %>/styles/{,*/}*.less',
+            '<%= appDir %>/scripts/superdesk/**/*.less',
+            '<%= appDir %>/scripts/superdesk-*/**/*.less'
+        ]
+    },
+    code: {
+        options: {livereload: true},
+        tasks: ['hint'],
+        files: ['<%= appDir %>/scripts/**/*.js']
+    },
+    assets: {
+        options: {livereload: true},
+        files: [
+            '<%= appDir %>/styles/**/*.css',
+            '<%= appDir %>/scripts/**/*.html'
+        ]
+    },
+    index: {
+        options: {livereload: true},
+        tasks: ['template'],
+        files: ['<%= appDir %>/index.html']
     }
 };

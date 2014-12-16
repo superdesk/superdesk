@@ -1,17 +1,16 @@
-<div class="scratchpad mobile-hide" sd-droppable data-update="drop">
-
-    <div class="header" ng-class="{'opened': !status, 'closed': status}">
-        <div class="title">SCRATCHPAD</div>
-        <div class="info"><span class="badge">{{items.length}}</span> <span translate>items</span></div>
-        <a class="scratchpad-openclose pull-right" href="" ng-click="status = !status"></a>   
+<div id="scratchpad" sd-droppable data-update="drop" ng-class="{opened: flags['scratchpad-open'], left: flags['menu']}">
+    <div class="header">
+        <div class="title" translate>SCRATCHPAD</div>
+        <div class="info">{{ items.length }} {{ :: 'items' | translate}}</span></div>
+        <button class="trigger pull-right" ng-click="toggle()">
+            <i class="svg-icon-top inverse"></i>
+        </button>
     </div>
-    <div class="content" style="height: 260px;" ng-show="status">
-
-        <div class="grid-view" sd-sortable data-update="sort" data-placeholder="'media-box'">
+    <div class="content" ng-if="flags['scratchpad-open']">
+        <div sd-sortable data-update="sort" data-placeholder="'media-box'" class="scratchpad-items">
             <div ng-repeat="item in items" data-index="{{$index}}" style="float: left;">
                 <div sd-media-box></div>
             </div>
         </div>
-
     </div>
 </div>

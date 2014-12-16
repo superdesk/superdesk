@@ -1,0 +1,11 @@
+<button class="dropdown-toggle" dropdown-toggle>
+   {{ selected || 'Show all' | translate}} 
+    <span class="caret"></span>
+</button>
+<ul class="dropdown-menu pull-right">
+    <li ng-repeat="provider in items._facets.provider.terms"><a href="" ng-click="setProvider(provider.term)">{{ provider.term }} <i>({{ provider.count }})</i></a></li>
+    <li class="divider" ng-show="selected"></li>
+    <li ng-show="selected">
+        <a href="" ng-click="setProvider(null)" translate>Show All</a>
+    </li>
+</ul>
