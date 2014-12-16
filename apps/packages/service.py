@@ -31,6 +31,7 @@ class PackageService(ArchiveService):
 
     def on_create(self, docs):
         super().on_create(docs)
+        self.check_root_group(docs)
         self.check_package_associations(docs)
 
     def on_created(self, docs):
@@ -56,10 +57,52 @@ class PackageService(ArchiveService):
         for assoc in self._get_associations(doc):
             self.update_link(doc[config.ID_FIELD], assoc, delete=True)
 
+    def check_root_group(self, docs):
+        for groups in [doc.get('groups') for doc in docs if doc.get('groups')]:
+            self.check_all_groups_have_id_set(groups)
+            root_groups = [group for group in groups if group.get('id') == 'root']
+
+            if len(root_groups) == 0:
+                message = 'Root group is missing.'
+                logger.error(message)
+                raise SuperdeskError(message=message)
+
+            if len(root_groups) > 1:
+                message = 'Only one root group is allowed.'
+                logger.error(message)
+                raise SuperdeskError(message=message)
+
+            self.check_that_all_groups_are_referenced_in_root(root_groups[0], groups)
+
+    def check_all_groups_have_id_set(self, groups):
+        if any(group for group in groups if not group.get('id')):
+            message = 'Group is missing id.'
+            logger.error(message)
+            raise SuperdeskError(message=message)
+
+    def check_that_all_groups_are_referenced_in_root(self, root, groups):
+        rest = [group.get('id') for group in groups if group.get('id') != 'root']
+        refs = [ref.get('idRef') for ref in root.get('refs', [])]
+
+        rest_counter = Counter(rest)
+        if any(id for id, value in rest_counter.items() if value > 1):
+            message = '{id} group is added multiple times.'.format(id=id)
+            logger.error(message)
+            raise SuperdeskError(message=message)
+
+        if len(rest) != len(refs):
+            message = 'The number of groups and of referenced groups in the root group do not match.'
+            logger.error(message)
+            raise SuperdeskError(message=message)
+
+        if len(set(rest).intersection(refs)) != len(refs):
+            message = 'Not all groups are referenced in the root group.'
+            logger.error(message)
+            raise SuperdeskError(message=message)
+
     def check_package_associations(self, docs):
         for (doc, group) in [(doc, group) for doc in docs for group in doc.get('groups', [])]:
             associations = group.get(ASSOCIATIONS, [])
-
             self.check_for_duplicates(doc, associations)
             for assoc in associations:
                 self.extract_default_association_data(group, assoc)

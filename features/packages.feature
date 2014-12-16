@@ -192,7 +192,9 @@ Feature: Packages
         """
         {
             "groups": [
+                {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
                 {
+                    "id": "main",
                     "refs": [
                         {
                             "headline": "test package with pic",
@@ -377,6 +379,145 @@ Feature: Packages
                 }
             ]
         }
+        """
+
+    @auth
+    Scenario: Fail on creating new package with missing root group
+        Given empty "packages"
+        When we post to "archive"
+        """
+        [{"headline": "test"}]
+        """
+        When we post to "/packages"
+        """
+        {
+            "groups": [
+                {
+                    "id": "main",
+                    "refs": [
+                        {
+                            "headline": "test package with text",
+                            "residRef": "#ARCHIVE_ID#",
+                            "slugline": "awesome article"
+                        }
+                    ],
+                    "role": "grpRole:Main"
+                }
+            ],
+            "guid": "tag:example.com,0000:newsml_BRE9A605"
+        }
+        """
+        Then we get error 400
+        """
+        {"_message": "Root group is missing.", "_status": "ERR"}
+        """
+
+    @auth
+    Scenario: Fail on creating new package with duplicated root group
+        Given empty "packages"
+        When we post to "archive"
+        """
+        [{"headline": "test"}]
+        """
+        When we post to "/packages"
+        """
+        {
+            "groups": [
+                {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
+                {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
+                {
+                    "id": "main",
+                    "refs": [
+                        {
+                            "headline": "test package with text",
+                            "residRef": "#ARCHIVE_ID#",
+                            "slugline": "awesome article"
+                        }
+                    ],
+                    "role": "grpRole:Main"
+                }
+            ],
+            "guid": "tag:example.com,0000:newsml_BRE9A605"
+        }
+        """
+        Then we get error 400
+        """
+        {"_message": "Only one root group is allowed.", "_status": "ERR"}
+        """
+
+    @auth
+    Scenario: Fail on creating new package with missing group referenced in root
+        Given empty "packages"
+        When we post to "archive"
+        """
+        [{"headline": "test"}]
+        """
+        When we post to "/packages"
+        """
+        {
+            "groups": [
+                {"id": "root", "refs": [{"idRef": "main"}, {"idRef": "sidebar"}], "role": "grpRole:NEP"},
+                {
+                    "id": "main",
+                    "refs": [
+                        {
+                            "headline": "test package with text",
+                            "residRef": "#ARCHIVE_ID#",
+                            "slugline": "awesome article"
+                        }
+                    ],
+                    "role": "grpRole:Main"
+                }
+            ],
+            "guid": "tag:example.com,0000:newsml_BRE9A605"
+        }
+        """
+        Then we get error 400
+        """
+        {"_message": "The number of groups and of referenced groups in the root group do not match.", "_status": "ERR"}
+        """
+
+    @auth
+    Scenario: Fail on creating new package with group not referenced in root
+        Given empty "packages"
+        When we post to "archive"
+        """
+        [{"headline": "test"}]
+        """
+        When we post to "/packages"
+        """
+        {
+            "groups": [
+                {"id": "root", "refs": [{"idRef": "main"}, {"idRef": "sidebar"}], "role": "grpRole:NEP"},
+                {
+                    "id": "main",
+                    "refs": [
+                        {
+                            "headline": "test package with text",
+                            "residRef": "#ARCHIVE_ID#",
+                            "slugline": "awesome article"
+                        }
+                    ],
+                    "role": "grpRole:Main"
+                },
+                {
+                    "id": "story",
+                    "refs": [
+                        {
+                            "headline": "test package with text",
+                            "residRef": "#ARCHIVE_ID#",
+                            "slugline": "awesome article"
+                        }
+                    ],
+                    "role": "grpRole:Story"
+                }
+            ],
+            "guid": "tag:example.com,0000:newsml_BRE9A605"
+        }
+        """
+        Then we get error 400
+        """
+        {"_message": "Not all groups are referenced in the root group.", "_status": "ERR"}
         """
 
     @auth
