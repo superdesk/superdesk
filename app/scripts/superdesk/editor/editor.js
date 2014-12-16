@@ -4,7 +4,7 @@
 angular.module('superdesk.editor', [])
     .directive('sdTextEditor', function() {
         var config = {
-            buttons: ['bold', 'italic', 'underline', 'quote']
+            buttons: ['bold', 'italic', 'underline', 'quote', 'anchor']
         };
 
         return {
