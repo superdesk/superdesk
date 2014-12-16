@@ -15,7 +15,7 @@ from flask.globals import current_app as app
 from celery.exceptions import Ignore
 from celery import states
 from celery.utils.log import get_task_logger
-from apps.archive.common import insert_into_versions, remove_unwanted
+from apps.archive.common import insert_into_versions, remove_unwanted, set_original_creator
 from apps.tasks import send_to
 
 from superdesk import SuperdeskError, InvalidStateTransitionError
@@ -110,6 +110,21 @@ def update_item(result, is_main_task, task_id, guid):
         update_status(*finish_task_for_progress(task_id))
 
 
+def _update_archive(guid, item):
+    """
+    Assigns a State to the content, removes unwanted attributes, sets the original creator and updates the item in
+    archive collection.
+
+    :param guid:
+    :param item: from ingest collection
+    """
+
+    item[config.CONTENT_STATE] = STATE_FETCHED
+    remove_unwanted(item)
+    set_original_creator(item)
+    superdesk.get_resource_service(ARCHIVE).update(guid, item)
+
+
 @celery.task(bind=True, max_retries=3)
 def archive_item(self, guid, provider_id, user, task_id=None):
     try:
@@ -165,9 +180,7 @@ def archive_item(self, guid, provider_id, user, task_id=None):
         # Necessary because flask.g.user is None while fetching packages the for grouped items or
         # while patching in archive collection. Without this version_creator is set None which doesn't make sense.
         flask.g.user = user
-        item[config.CONTENT_STATE] = STATE_FETCHED
-        remove_unwanted(item)
-        superdesk.get_resource_service(ARCHIVE).update(guid, item)
+        _update_archive(guid, item)
 
         tasks = []
         for group in item.get('groups', []):

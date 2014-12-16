@@ -170,5 +170,7 @@ def remove_unwanted(doc):
     As the name suggests this function removes unwanted attributes from doc to make an entry in Mongo and Elastic.
     """
 
-    if '_type' in doc:
-        del doc['_type']
+    # _type attribute comes when queried against Elastic and desk comes while fetching an item from ingest
+    for attr in ['_type', 'desk']:
+        if attr in doc:
+            del doc[attr]
