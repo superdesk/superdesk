@@ -1,12 +1,7 @@
 
-import logging
 from flask import current_app as app
 from eve.utils import document_etag
 from superdesk.utc import utcnow
-from .elastic_sync_backend import sync
-
-
-log = logging.getLogger(__name__)
 
 
 class EveBackend():
@@ -18,7 +13,7 @@ class EveBackend():
         if search_backend and item is None:
             item = backend.find_one(endpoint_name, req=req, **lookup)
             if item:
-                sync(endpoint_name, item['_id'])
+                search_backend.insert(endpoint_name, [item])
         return item
 
     def find_one_in_base_backend(self, endpoint_name, req, **lookup):
@@ -87,11 +82,7 @@ class EveBackend():
         res = backend.remove(endpoint_name, lookup)
         search_backend = self._lookup_backend(endpoint_name)
         if search_backend is not None:
-            try:
-                search_backend.remove(endpoint_name, lookup)
-            except ValueError as ex:
-                log.error(ex)
-                pass
+            search_backend.remove(endpoint_name, lookup)
         return res
 
     def _datasource(self, endpoint_name):
