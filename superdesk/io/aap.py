@@ -32,8 +32,9 @@ class AAPIngestService(FileIngestService):
     def _update(self, provider):
         self.provider = provider
         self.path = provider.get('config', {}).get('path', None)
+
         if not self.path:
-            return
+            return []
 
         for filename in get_sorted_files(self.path, sort_by=FileSortAttributes.created):
             try:
@@ -64,7 +65,7 @@ class AAPIngestService(FileIngestService):
         path = provider.get('config', {}).get('path', None)
 
         if not path:
-            return
+            return []
 
         with open(os.path.join(path, filename), 'r') as f:
             item = self.parser.parse_message(etree.fromstring(f.read()))

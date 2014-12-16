@@ -145,7 +145,7 @@ def ingest_items(provider, items):
 
         ingest_service = superdesk.get_resource_service('ingest')
 
-        if 'ingest_provider_sequence' not in item or not item.get('ingest_provider_sequence', None):
+        if item.get('ingest_provider_sequence') is None:
             ingest_service.set_ingest_provider_sequence(item, provider)
 
         old_item = ingest_service.find_one(_id=item['guid'], req=None)
@@ -155,8 +155,8 @@ def ingest_items(provider, items):
             item[config.VERSION] = 1
             try:
                 ingest_service.post([item])
-            except HTTPException:
-                # there was a conflict in mongo
+            except HTTPException as e:
+                logger.error("Exception while persisting item in ingest collection", e)
                 ingest_service.put(item['guid'], item)
 
 

@@ -41,7 +41,8 @@ class IngestService(BaseService):
         :param provider: ingest_provider object, used to build the key name of sequence
         """
 
-        sequence_key_name = (provider.get('type') + "_" + str(provider.get('_id')) + "_" + 'ingest_seq').lower()
+        sequence_key_name = "{provider_type}_{provider_id}_ingest_seq".format(provider_type=provider.get('type'),
+                                                                              provider_id=str(provider.get('_id')))
         sequence_number = update_key(sequence_key_name, flag=True)
         item['ingest_provider_sequence'] = str(sequence_number)
 
