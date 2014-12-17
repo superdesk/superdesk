@@ -161,7 +161,8 @@ def notify_and_add_activity(activity_name, msg, item=None, user_list=None, **dat
                  notify=[user.get("_id") for user in user_list] if user_list else None, **data)
     if user_list:
         recipients = [user.get('email') for user in user_list if
-                      user.get('preferences', {}).get('email:notification', {}).get('enabled', {})]
+                      superdesk.get_resource_service('preferences').
+                      email_notification_is_enabled(preferences=user.get('preferences', {}))]
         user = getattr(g, 'user', None)
         activity = {
             'name': activity_name,

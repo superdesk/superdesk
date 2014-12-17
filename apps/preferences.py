@@ -9,6 +9,7 @@ from eve.utils import parse_request, document_etag
 from superdesk.utils import last_updated
 from superdesk.workflow import get_privileged_actions
 
+
 _preferences_key = 'preferences'
 _user_preferences_key = 'user_preferences'
 _session_preferences_key = 'session_preferences'
@@ -134,13 +135,21 @@ class PreferencesService(BaseService):
         user_doc[_user_preferences_key] = available
 
     def get_user_preference(self, user_id):
+        """
+        This function returns preferences for the user.
+        """
         doc = get_resource_service('users').find_one(req=None, _id=user_id)
         self.enhance_document_with_default_user_prefs(user_doc=doc)
         prefs = doc.get(_user_preferences_key, {})
         return prefs
 
-    def email_notification_is_enabled(self, user_id):
-        send_email = self.get_user_preference(user_id).get('email:notification', {})
+    def email_notification_is_enabled(self, user_id=None, preferences=None):
+        """
+        This function checks if email notification is enabled or not based on the preferences.
+        """
+        if user_id:
+            preferences = self.get_user_preference(user_id)
+        send_email = preferences.get('email:notification', {}) if isinstance(preferences, dict) else {}
         return send_email and send_email.get('enabled', False)
 
     def update(self, id, updates):
