@@ -7,18 +7,15 @@ from superdesk.utc import utcnow
 class EveBackend():
     def find_one(self, endpoint_name, req, **lookup):
         backend = self._backend(endpoint_name)
+        item = backend.find_one(endpoint_name, req=req, **lookup)
         search_backend = self._lookup_backend(endpoint_name, fallback=True)
         if search_backend:
-            item = search_backend.find_one(endpoint_name, req=req, **lookup)
-        if search_backend and item is None:
-            item = backend.find_one(endpoint_name, req=req, **lookup)
-            if item:
+            item_search = search_backend.find_one(endpoint_name, req=req, **lookup)
+            if item is None:
+                item = item_search
+            elif item_search is None:
                 search_backend.insert(endpoint_name, [item])
         return item
-
-    def find_one_in_base_backend(self, endpoint_name, req, **lookup):
-        backend = self._backend(endpoint_name)
-        return backend.find_one(endpoint_name, req=req, **lookup)
 
     def get(self, endpoint_name, req, lookup):
         backend = self._lookup_backend(endpoint_name, fallback=True)
