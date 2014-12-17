@@ -117,10 +117,19 @@ def finish_task_for_progress(task_id):
     return _update_subtask_progress(task_id, done=True)
 
 
+def get_redis():
+    """
+    Constructs Redis Client object.
+    :return: Redis Client object
+    """
+
+    return redis.from_url(app.config['REDIS_URL'])
+
+
 def update_key(key, flag=False, db=None):
 
     if db is None:
-        db = redis.from_url(app.config['REDIS_URL'])
+        db = get_redis()
 
     if flag:
         crt_value = db.incr(key)
@@ -152,3 +161,17 @@ def _update_subtask_progress(task_id, current=None, total=None, done=None):
         redis_db.delete(done_key)
 
     return task_id, crt_current, crt_total
+
+
+def set_key(key, value=0, db=None):
+    """
+    Sets the value of a key in Redis
+    :param key: Name of the Key
+    :param value: Value to be set
+    :param db: if None the Redis db object is constructed again
+    """
+
+    if db is None:
+        db = get_redis()
+
+    db.set(key, value)

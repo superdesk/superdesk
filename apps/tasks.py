@@ -2,7 +2,7 @@ from eve.utils import ParsedRequest
 from eve.versioning import resolve_document_version
 from apps.archive.common import insert_into_versions
 from superdesk.resource import Resource
-from superdesk import InvalidStateTransitionError
+from superdesk import InvalidStateTransitionError, SuperdeskError
 from superdesk.notification import push_notification
 from superdesk.utc import utcnow
 from apps.archive.common import on_create_item, item_url
@@ -15,6 +15,10 @@ from superdesk.workflow import is_workflow_state_transition_valid
 from copy import copy
 from eve.utils import config
 from apps.archive.archive import SOURCE as ARCHIVE
+from superdesk import get_resource_service
+
+
+task_statuses = ['todo', 'in-progress', 'done']
 
 
 def init_app(app):
@@ -23,7 +27,7 @@ def init_app(app):
     TaskResource(endpoint_name, app=app, service=service)
 
 
-def send_to(doc, desk=None, stage=None):
+def send_to(doc, desk_id=None, stage_id=None):
     """Send item to given desk and stage.
 
     :param doc: item to be sent
@@ -31,11 +35,19 @@ def send_to(doc, desk=None, stage=None):
     :param stage: optional stage within the desk
     """
     task = doc.get('task', {})
-    task.setdefault('desk', desk)
-    task.setdefault('stage', stage)
-    if desk and not stage:
-        desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk)
-        task['stage'] = desk.get('incoming_stage') if desk else stage
+    task.setdefault('desk', desk_id)
+    task.setdefault('stage', stage_id)
+    if desk_id and not stage_id:
+        desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
+        if not desk:
+            raise SuperdeskError('Invalid desk identifier %s' % desk_id, 400)
+        task['stage'] = desk.get('incoming_stage')
+    if task['stage']:
+        stage = get_resource_service('stages').find_one(req=None, _id=task['stage'])
+        if not stage:
+            raise SuperdeskError('Invalid stage identifier %s' % task['stage'], 400)
+        if stage.get('task_status'):
+            doc['task']['status'] = stage['task_status']
     doc['task'] = task
 
 
@@ -57,7 +69,7 @@ class TaskResource(Resource):
             'schema': {
                 'status': {
                     'type': 'string',
-                    'allowed': ['todo', 'in-progress', 'done'],
+                    'allowed': task_statuses,
                     'default': 'todo'
                 },
                 'due_date': {'type': 'datetime'},
@@ -143,6 +155,14 @@ class TasksService(BaseService):
         self.update_times(updates)
         if self.__is_assigned_to_a_desk(updates):
             self.__update_state(updates, original)
+        new_stage_id = updates.get('task', {}).get('stage', '')
+        old_stage_id = original.get('task', {}).get('stage', '')
+        if new_stage_id and new_stage_id != old_stage_id:
+            new_stage = get_resource_service('stages').find_one(req=None, _id=new_stage_id)
+            if not new_stage:
+                raise SuperdeskError('Invalid stage identifier %s' % new_stage, 400)
+            if new_stage.get('task_status'):
+                updates['task']['status'] = new_stage['task_status']
 
     def on_updated(self, updates, original):
         new_stage = updates.get('task', {}).get('stage', '')
@@ -160,7 +180,7 @@ class TasksService(BaseService):
                 insert_into_versions(original['_id'])
 
             add_activity(ACTIVITY_UPDATE, 'updated task {{ subject }} for item {{ type }}',
-                         item=updated, subject=get_subject(updated))
+                         item=updated, subject=get_subject(updated), type=updated['type'])
 
     def on_deleted(self, doc):
         push_notification(self.datasource, deleted=1)

@@ -240,7 +240,12 @@ def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
         provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
         provider_service = context.provider_services[provider.get('type')]
         provider_service.provider = provider
-        items = provider_service.fetch_ingest(guid)
+
+        if provider.get('type') == 'aap':
+            items = provider_service.parse_file(guid, provider)
+        else:
+            items = provider_service.fetch_ingest(guid)
+
         for item in items:
             item['versioncreated'] = utcnow()
         context.ingest_items(provider, items)

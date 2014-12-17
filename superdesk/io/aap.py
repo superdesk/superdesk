@@ -32,17 +32,18 @@ class AAPIngestService(FileIngestService):
     def _update(self, provider):
         self.provider = provider
         self.path = provider.get('config', {}).get('path', None)
+
         if not self.path:
-            return
+            return []
 
         for filename in get_sorted_files(self.path, sort_by=FileSortAttributes.created):
             try:
-                if os.path.isfile(os.path.join(self.path, filename)):
-                    filepath = os.path.join(self.path, filename)
+                filepath = os.path.join(self.path, filename)
+                if os.path.isfile(filepath):
                     stat = os.lstat(filepath)
                     last_updated = datetime.fromtimestamp(stat.st_mtime, tz=utc)
                     if self.is_latest_content(last_updated, provider.get('last_updated')):
-                        with open(os.path.join(self.path, filename), 'r') as f:
+                        with open(filepath, 'r') as f:
                             item = self.parser.parse_message(etree.fromstring(f.read()))
 
                             item['firstcreated'] \
@@ -59,5 +60,19 @@ class AAPIngestService(FileIngestService):
                 self.move_file(self.path, filename, success=False)
 
         push_notification('ingest:update')
+
+    def parse_file(self, filename, provider):
+        path = provider.get('config', {}).get('path', None)
+
+        if not path:
+            return []
+
+        with open(os.path.join(path, filename), 'r') as f:
+            item = self.parser.parse_message(etree.fromstring(f.read()))
+
+            item['firstcreated'] = normalize_date(item.get('firstcreated'), self.tz)
+            item['versioncreated'] = normalize_date(item.get('versioncreated'), self.tz)
+
+        return [item]
 
 register_provider(PROVIDER, AAPIngestService())

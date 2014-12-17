@@ -1,20 +1,23 @@
 import logging
+from datetime import timedelta
+
+from eve.utils import config
+from flask import current_app as app
+from werkzeug.exceptions import HTTPException
+
 import superdesk
 from superdesk.notification import push_notification
 from superdesk.io import providers
 from superdesk.io.ingest_provider_model import DAYS_TO_KEEP
 from superdesk.celery_app import celery
-from eve.utils import config
 from superdesk.utc import utcnow
-from datetime import timedelta
-from flask import current_app as app
-from werkzeug.exceptions import HTTPException
 from superdesk.workflow import set_default_state
 
 
 UPDATE_SCHEDULE_DEFAULT = {'minutes': 5}
 LAST_UPDATED = 'last_updated'
 STATE_INGESTED = 'ingested'
+
 
 logger = logging.getLogger(__name__)
 
@@ -140,16 +143,21 @@ def ingest_items(provider, items):
 
         apply_rule_set(item, provider)
 
-        old_item = superdesk.get_resource_service('ingest').find_one(_id=item['guid'], req=None)
+        ingest_service = superdesk.get_resource_service('ingest')
+
+        if item.get('ingest_provider_sequence') is None:
+            ingest_service.set_ingest_provider_sequence(item, provider)
+
+        old_item = ingest_service.find_one(_id=item['guid'], req=None)
         if old_item:
-            superdesk.get_resource_service('ingest').put(item['guid'], item)
+            ingest_service.put(item['guid'], item)
         else:
             item[config.VERSION] = 1
             try:
-                superdesk.get_resource_service('ingest').post([item])
-            except HTTPException:
-                # there was a conflict in mongo
-                superdesk.get_resource_service('ingest').put(item['guid'], item)
+                ingest_service.post([item])
+            except HTTPException as e:
+                logger.error("Exception while persisting item in ingest collection", e)
+                ingest_service.put(item['guid'], item)
 
 
 superdesk.command('ingest:update', UpdateIngest())

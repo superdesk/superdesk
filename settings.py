@@ -201,3 +201,6 @@ SPIKE_EXPIRY_MINUTES = 300
 # If for example the elastic has 5 shards and you wish to limit the number of search results to 1000 then set the value
 # to 200 (1000/5).
 MAX_SEARCH_DEPTH = -1
+
+# Defines the maximum value of Ingest Sequence Number after which the value will start from 1
+MAX_VALUE_OF_INGEST_SEQUENCE = 9999
