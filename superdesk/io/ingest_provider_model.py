@@ -69,22 +69,22 @@ class IngestProviderService(BaseService):
     def on_created(self, docs):
         for doc in docs:
             notify_and_add_activity(ACTIVITY_CREATE, 'created Ingest Channel {{name}}', item=doc,
-                                    user_list=self.user_service.get_user_by_user_type('administrator'),
+                                    user_list=self.user_service.get_users_by_user_type('administrator'),
                                     name=doc.get('name'))
 
     def on_updated(self, updates, original):
         if 'is_closed' not in updates:
             notify_and_add_activity(ACTIVITY_UPDATE, 'updated Ingest Channel {{name}}', item=original,
-                                    user_list=self.user_service.get_user_by_user_type('administrator'),
+                                    user_list=self.user_service.get_users_by_user_type('administrator'),
                                     name=updates.get('name', original.get('name')))
 
         if updates.get('is_closed') and updates.get('is_closed') != original.get('is_closed'):
             notify_and_add_activity(ACTIVITY_EVENT, '{{status}} Ingest Channel {{name}}', item=original,
-                                    user_list=self.user_service.get_user_by_user_type('administrator'),
+                                    user_list=self.user_service.get_users_by_user_type('administrator'),
                                     name=updates.get('name', original.get('name')),
                                     status='closed' if updates.get('is_closed') else 'opened')
 
     def on_deleted(self, doc):
         notify_and_add_activity(ACTIVITY_DELETE, 'deleted Ingest Channel {{name}}', item=doc,
-                                user_list=self.user_service.get_user_by_user_type('administrator'),
+                                user_list=self.user_service.get_users_by_user_type('administrator'),
                                 name=doc.get('name'))

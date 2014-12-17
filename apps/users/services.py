@@ -136,7 +136,7 @@ class UsersService(BaseService):
     def set_privileges(self, user, role):
         user['active_privileges'] = get_privileges(user, role)
 
-    def get_user_by_user_type(self, user_type='user'):
+    def get_users_by_user_type(self, user_type='user'):
         return list(self.get(req=None, lookup={'user_type': user_type}))
 
 
