@@ -2,6 +2,7 @@ import logging
 import superdesk
 from superdesk.resource import Resource
 from superdesk.services import BaseService
+from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
 
 
@@ -37,7 +38,7 @@ class ChangePasswordService(BaseService):
                 get_resource_service('auth').authenticate({'username': username, 'password': doc['old_password']})
             except Exception:
                 payload = 'The provided old password is not correct.'
-                raise superdesk.SuperdeskError(payload=payload)
+                raise SuperdeskApiError.unauthorizedError(payload=payload)
 
             user = superdesk.get_resource_service('users').find_one(req=None, username=username)
             superdesk.get_resource_service('users').update_password(user['_id'], doc['new_password'])

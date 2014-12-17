@@ -66,7 +66,7 @@ Feature: Role Resource
             """
             {"name": "Sub Editor"}
             """
-        Then we get response code 403
+        Then we get response code 401
 
     @auth
     Scenario: Administrators can write to users and roles
@@ -103,7 +103,7 @@ Feature: Role Resource
             """
             {"name": "Sub Editing Desk"}
             """
-        Then we get response code 403
+        Then we get response code 401
 
     @auth
     Scenario: Role names are unique case insensitive
@@ -126,7 +126,7 @@ Feature: Role Resource
 
         When we delete "/roles/#ROLES_ID#"
 
-        Then we get response code 400
+        Then we get response code 403
 
     @auth
     Scenario: Only one default
@@ -156,4 +156,4 @@ Feature: Role Resource
             [{"username": "foo", "first_name": "Foo", "last_name": "Bar", "email": "foo@bar.org", "is_active": true, "role": "#ROLES_ID#"}]
             """
         When we delete "/roles/#ROLES_ID#"
-        Then we get response code 400
+        Then we get response code 403

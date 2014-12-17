@@ -2,8 +2,9 @@ import logging
 from eve.auth import TokenAuth
 from flask import current_app as app, request
 import flask
-from apps.auth.errors import AuthRequiredError, ForbiddenError
 from superdesk.resource import Resource
+from superdesk import get_resource_service, get_resource_privileges
+from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service, get_resource_privileges, get_intrinsic_privileges
 
 
@@ -86,7 +87,7 @@ class SuperdeskTokenAuth(TokenAuth):
             authorized = get_resource_service(resource).is_authorized(user_id=request.view_args.get('_id'))
 
             if not authorized:
-                raise ForbiddenError()
+                raise SuperdeskApiError.forbiddenError()
 
             return authorized
 
@@ -97,7 +98,7 @@ class SuperdeskTokenAuth(TokenAuth):
             return True
 
         # Step 5:
-        raise ForbiddenError()
+        raise SuperdeskApiError.forbiddenError()
 
     def check_auth(self, token, allowed_roles, resource, method):
         """Check if given token is valid"""
@@ -119,4 +120,4 @@ class SuperdeskTokenAuth(TokenAuth):
 
     def authenticate(self):
         """ Returns 401 response with CORS headers."""
-        raise AuthRequiredError()
+        raise SuperdeskApiError.unauthorizedError()

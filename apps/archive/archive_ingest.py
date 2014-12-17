@@ -18,7 +18,8 @@ from celery.utils.log import get_task_logger
 from apps.archive.common import insert_into_versions, remove_unwanted, set_original_creator
 from apps.tasks import send_to
 
-from superdesk import SuperdeskError, InvalidStateTransitionError
+import superdesk
+from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.utc import utc, utcnow
 from superdesk.celery_app import celery, finish_task_for_progress,\
     finish_subtask_from_progress, add_subtask_to_progress
@@ -56,11 +57,11 @@ def import_rendition(guid, rendition_name, href, extract_metadata):
     archive = superdesk.get_resource_service(ARCHIVE).find_one(req=None, guid=guid)
     if not archive:
         msg = 'No document found in the media archive with this ID: %s' % guid
-        raise SuperdeskError(payload=msg)
+        raise SuperdeskApiError.notFoundError(payload=msg)
 
     if rendition_name not in archive['renditions']:
         payload = 'Invalid rendition name %s' % rendition_name
-        raise SuperdeskError(payload=payload)
+        raise SuperdeskApiError.notFoundError(payload=payload)
 
     updates = {}
     metadata = None
@@ -277,7 +278,7 @@ class ArchiveIngestService(BaseService):
             ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=doc.get('guid'))
             if not ingest_doc:
                 msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
-                raise SuperdeskError(payload=msg)
+                raise SuperdeskApiError.notFoundError(payload=msg)
 
             if not is_workflow_state_transition_valid('fetch_as_from_ingest', ingest_doc[config.CONTENT_STATE]):
                 raise InvalidStateTransitionError()
@@ -322,7 +323,7 @@ class ArchiveIngestService(BaseService):
             return doc
         except Exception:
             msg = 'No progress information is available for task_id: %s' % task_id
-            raise SuperdeskError(payload=msg)
+            raise SuperdeskApiError.notFoundError(payload=msg)
 
 
 superdesk.workflow_state(STATE_FETCHED)

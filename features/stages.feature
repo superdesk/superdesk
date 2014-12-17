@@ -209,4 +209,5 @@ Feature: Stages
 	    """
 
         When we delete "/stages/#STAGES_ID#"
-        Then we get response code 400
+
+        Then we get response code 403

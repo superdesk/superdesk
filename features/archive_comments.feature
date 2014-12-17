@@ -73,7 +73,7 @@ Feature: News Items Archive Comments
         """
         [{"text": "test comment", "item": "xyz", "user": "#USERS_ID#"}]
         """
-        Then we get error 400
+        Then we get error 403
         """
         {"_status": "ERR", "_issues": "Commenting on behalf of someone else is prohibited.", "_message": ""}
         """
@@ -90,7 +90,7 @@ Feature: News Items Archive Comments
         [{"text": "test comment", "item": "xyz"}]
         """
         And we get "/archive/wrong_id/comments"
-        Then we get error 400
+        Then we get error 404
         """
         {"_message": "", "_issues": "Invalid content item ID provided: wrong_id", "_status": "ERR"}
         """

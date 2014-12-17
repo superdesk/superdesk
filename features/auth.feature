@@ -47,7 +47,7 @@ Feature: Authentication
         """
         [{"username": "foo", "old_password": "wrong", "new_password": "new"}]
         """
-        Then we get error 400
+        Then we get error 401
         """
         {"_message": "", "_issues": "The provided old password is not correct.", "_status": "ERR"}
         """        
@@ -100,7 +100,7 @@ Feature: Authentication
             {"username": "foo", "password": "xyz"}
             """
 
-        Then we get error 400
+        Then we get error 401
             """
             {"_status": "ERR", "_issues": {"credentials": 1}}
             """
@@ -132,7 +132,7 @@ Feature: Authentication
             {"username": "x", "password": "y"}
             """
 
-        Then we get error 400
+        Then we get error 401
             """
             {"_status": "ERR", "_issues": {"credentials": 1}}
             """

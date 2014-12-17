@@ -1,7 +1,7 @@
 ''' Amazon media storage module'''
 from eve.io.media import MediaStorage
 import tinys3
-from superdesk import SuperdeskError
+from superdesk.errors import SuperdeskApiError
 import logging
 import json
 from io import BytesIO
@@ -50,7 +50,7 @@ class AmazonMediaStorage(MediaStorage):
         rv = self.conn.get_bucket_objects(bucket=bucket, extra_params=params)
         if rv.status_code not in (200, 201):
             message = 'Retrieving the list of files from bucket %s failed' % bucket
-            raise SuperdeskError(payload=message)
+            raise SuperdeskApiError.internalError(payload=message)
         content = rv.content.decode('UTF-8')
         return content
 
@@ -86,7 +86,7 @@ class AmazonMediaStorage(MediaStorage):
         res = self.conn.update_metadata(key, metadata, bucket=self.container_name)
         if res.status_code not in (200, 201):
             payload = 'Updating metadata for file %s failed' % key
-            raise SuperdeskError(payload=payload)
+            raise SuperdeskApiError.internalError(payload=payload)
 
     def transform_metadata_to_amazon_format(self, metadata):
         if not metadata:
@@ -115,7 +115,7 @@ class AmazonMediaStorage(MediaStorage):
             res = self.conn.upload(filename, content, self.container_name, content_type=content_type,
                                    headers=file_metadata)
             if res.status_code not in (200, 201):
-                raise SuperdeskError(payload='Uploading file to amazon S3 failed')
+                raise SuperdeskApiError.internalError(payload='Uploading file to amazon S3 failed')
             return filename
         except Exception as ex:
             logger.exception(ex)
@@ -140,7 +140,7 @@ class AmazonMediaStorage(MediaStorage):
             obj = self.conn.get(id_or_filename, self.container_name)
             if obj.status_code not in (200, 201) and raise_error:
                 message = 'Retrieving file %s from amazon failed' % id_or_filename
-                raise SuperdeskError(payload=message)
+                raise SuperdeskApiError.internalError(payload=message)
             return (True, obj)
         except Exception as ex:
             if raise_error:

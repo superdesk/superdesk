@@ -1,13 +1,8 @@
 from superdesk.utc import utc
 import logging
-from superdesk import SuperdeskError
+from superdesk.errors import SuperdeskApiError
 
 logger = logging.getLogger(__name__)
-
-
-class IngestProviderClosedError(SuperdeskError):
-    status_code = 500
-    payload = {}
 
 
 class IngestService():
@@ -21,7 +16,7 @@ class IngestService():
 
     def update(self, provider):
         if provider.get('is_closed', False):
-            raise IngestProviderClosedError(message='Ingest Provider %s is closed' % provider.get('name', ''))
+            raise SuperdeskApiError.internalError(message='Ingest Provider is closed', payload='')
         else:
             return self._update(provider) or []
 

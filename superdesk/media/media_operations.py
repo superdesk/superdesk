@@ -14,13 +14,13 @@ import magic
 import hashlib
 import logging
 import requests
-import superdesk
 from io import BytesIO
 from PIL import Image
 from flask import json
 from .image import get_meta
 from .video import get_meta as video_meta
 import base64
+from superdesk.errors import SuperdeskApiError
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ def download_file_from_url(url):
     rv = requests.get(url)
     if rv.status_code not in (200, 201):
         payload = 'Failed to retrieve file from URL: %s' % url
-        raise superdesk.SuperdeskError(payload=payload)
+        raise SuperdeskApiError.internalError(payload=payload)
 
     mime = magic.from_buffer(rv.content, mime=True).decode('UTF-8')
     ext = mime.split('/')[1]

@@ -64,7 +64,7 @@ Feature: Rule Sets Resource
         """
 
       When we delete "/rule_sets/#RULE_SETS_ID#"
-      Then we get response code 400
+      Then we get response code 403
 
     @auth
     Scenario: path rule_sets

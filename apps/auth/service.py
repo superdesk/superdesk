@@ -1,5 +1,5 @@
 from superdesk import utils as utils
-from apps.auth.errors import UserInactiveError
+from superdesk.errors import UserInactiveError
 from superdesk.services import BaseService
 
 

@@ -44,37 +44,6 @@ class Command(BaseCommand):
             return self.run(*args, **kwargs)
 
 
-class SuperdeskError(ValidationError):
-    """Base error class for superdesk."""
-
-    # default error status code
-    status_code = 400
-
-    def __init__(self, message=None, status_code=None, payload=None):
-        """
-        :param message: a human readable error description
-        :param status_code: response status code
-        :param payload: a dict with request issues
-        """
-        ValidationError.__init__(self, message)
-        self.message = message
-
-        if status_code:
-            self.status_code = status_code
-
-        if payload:
-            self.payload = payload
-
-    def to_dict(self):
-        """Create dict for json response."""
-        rv = {}
-        rv[app.config['STATUS']] = app.config['STATUS_ERR']
-        rv['_message'] = self.message or ''
-        if hasattr(self, 'payload'):
-            rv[app.config['ISSUES']] = self.payload
-        return rv
-
-
 def get_headers(self, environ=None):
     """Fix CORS for abort responses.
 
@@ -125,10 +94,3 @@ def register_default_user_preference(preference_name, preference):
 
 def register_default_session_preference(preference_name, preference):
     default_session_preferences[preference_name] = preference
-
-
-class InvalidStateTransitionError(SuperdeskError):
-    """Exception raised if workflow transition is invalid."""
-
-    def __init__(self, message='Workflow transition is invalid.', status_code=None, payload=None):
-        super().__init__(message, status_code, payload)

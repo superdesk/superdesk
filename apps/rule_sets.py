@@ -3,7 +3,7 @@ import superdesk
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_backend
-from superdesk import SuperdeskError
+from superdesk.errors import SuperdeskApiError
 
 
 logger = logging.getLogger(__name__)
@@ -43,7 +43,7 @@ class RuleSetsService(BaseService):
 
     def on_delete(self, doc):
         if self.backend.find_one('ingest_providers', req=None, rule_set=doc['_id']):
-            raise SuperdeskError('rule set is in use')
+            raise SuperdeskApiError.forbiddenError('rule set is in use')
 
 
 def init_app(app):

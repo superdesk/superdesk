@@ -10,7 +10,7 @@
 
 
 from ..models.item import ItemModel
-from superdesk import SuperdeskError
+from superdesk.errors import SuperdeskApiError
 from superdesk.utc import utcnow
 from superdesk.notification import push_notification
 from apps.common.components.base_component import BaseComponent
@@ -53,7 +53,7 @@ class ItemLock(BaseComponent):
             self.app.on_item_locked(item, user)
             push_notification('item:lock', item=str(item.get('_id')), user=str(user))
         else:
-            raise SuperdeskError('Item locked by another user')
+            raise SuperdeskApiError.forbiddenError(payload='Item locked by another user')
         item = item_model.find_one(filter)
         return item
 

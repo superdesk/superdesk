@@ -1,12 +1,12 @@
 import logging
 from ldap3 import Server, Connection, SEARCH_SCOPE_WHOLE_SUBTREE, LDAPException
-from apps.auth.errors import AuthError, NotFoundAuthError
 from apps.auth.service import AuthService
 from superdesk import get_resource_service
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from flask import current_app as app
 import superdesk
+from superdesk.errors import SuperdeskApiError, CredentialsAuthError
 
 logger = logging.getLogger(__name__)
 
@@ -116,8 +116,7 @@ class ADAuth:
 
                 return response
         except LDAPException as e:
-            logger.error("Exception occurred. Login failed for user {}".format(username), e)
-            raise AuthError()
+            raise CredentialsAuthError(credentials={'username': username, 'password': password}, error=e)
 
 
 class ADAuthService(AuthService):
@@ -142,8 +141,9 @@ class ADAuthService(AuthService):
 
         user_data = ad_auth.authenticate_and_fetch_profile(username, password, username_for_profile=profile_to_import)
         if len(user_data) == 0:
-            raise NotFoundAuthError(message='No user has been found in AD', status_code=404,
-                                    payload={'profile_to_import': 1})
+            raise SuperdeskApiError.notFoundError(
+                message='No user has been found in AD',
+                payload={'profile_to_import': 1})
 
         if profile_to_be_created:
             user = superdesk.get_resource_service('users').find_one(username=profile_to_import, req=None)

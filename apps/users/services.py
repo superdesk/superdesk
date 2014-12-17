@@ -1,17 +1,18 @@
 import flask
 import logging
-import superdesk
-
 from flask import current_app as app
-
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_DELETE
 from superdesk.services import BaseService
 from superdesk.utils import is_hashed, get_hash
+<<<<<<< HEAD
 from superdesk import get_resource_service, SuperdeskError, get_resource_privileges
+=======
+from superdesk import get_resource_service
+>>>>>>> [SD-1297] Refactoring API (HTTP) errors
 from superdesk.emails import send_user_status_changed_email, send_activate_account_email
 from superdesk.utc import utcnow
 from superdesk.privilege import get_privilege_list
-from apps.auth.errors import ForbiddenError
+from superdesk.errors import SuperdeskApiError, UserInactiveError
 
 
 logger = logging.getLogger(__name__)
@@ -100,7 +101,7 @@ class UsersService(BaseService):
 
     def update(self, id, updates):
         if is_sensitive_update(updates) and not current_user_has_privilege('users'):
-            raise ForbiddenError()
+            raise SuperdeskApiError.forbiddenError()
         return super().update(id, updates)
 
     def on_updated(self, updates, user):
@@ -182,7 +183,7 @@ class DBUsersService(UsersService):
                 tokenDoc = {'user': doc['_id'], 'email': doc['email']}
                 id = resetService.store_reset_password_token(tokenDoc, doc['email'], activate_ttl, doc['_id'])
                 if not id:
-                    raise SuperdeskError('Failed to send account activation email.')
+                    raise SuperdeskApiError.internalError('Failed to send account activation email.')
                 tokenDoc.update({'username': doc['username']})
                 send_activate_account_email(tokenDoc)
 
@@ -206,10 +207,10 @@ class DBUsersService(UsersService):
         user = self.find_one(req=None, _id=user_id)
 
         if not user:
-            raise SuperdeskError(payload='Invalid user.')
+            raise SuperdeskApiError.unauthorizedError(payload='User not found')
 
         if not self.user_is_active(user):
-            raise SuperdeskError(status_code=403, message='Updating password is forbidden.')
+            raise UserInactiveError()
 
         updates = {}
         updates['password'] = get_hash(password, app.config.get('BCRYPT_GENSALT_WORK_FACTOR', 12))
@@ -254,11 +255,11 @@ class RolesService(BaseService):
 
     def on_delete(self, docs):
         if docs.get('is_default'):
-            raise superdesk.SuperdeskError('Cannot delete the default role')
+            raise SuperdeskApiError.forbiddenError('Cannot delete the default role')
         # check if there are any users in the role
         user = get_resource_service('users').find_one(req=None, role=docs.get('_id'))
         if user:
-            raise superdesk.SuperdeskError('Cannot delete the role, it still has users in it!')
+            raise SuperdeskApiError.forbiddenError('Cannot delete the role, it still has users in it!')
 
     def remove_old_default(self):
         # see of there is already a default role and set it to no longer default

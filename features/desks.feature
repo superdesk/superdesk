@@ -25,7 +25,7 @@ Feature: Desks
             """
         When we get the default incoming stage
         And we delete latest
-        Then we get error 400
+        Then we get error 403
         """
         {"_status": "ERR", "_message": "Deleting default stages is not allowed."}
         """

@@ -10,7 +10,12 @@ from .common import on_create_item, on_create_media_archive, on_update_media_arc
 from .common import get_user
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
+<<<<<<< HEAD
 from superdesk import SuperdeskError, get_resource_service
+=======
+from superdesk import get_resource_service
+from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
+>>>>>>> [SD-1297] Refactoring API (HTTP) errors
 from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, ACTIVITY_DELETE
@@ -145,7 +150,7 @@ class ArchiveService(BaseService):
 
         str_user_id = str(user.get('_id'))
         if lock_user and str(lock_user) != str_user_id and not force_unlock:
-            raise SuperdeskError(payload='The item was locked by another user')
+            raise SuperdeskApiError.forbiddenError(payload='The item was locked by another user')
 
         updates['versioncreated'] = utcnow()
         updates['version_creator'] = str_user_id
@@ -173,7 +178,7 @@ class ArchiveService(BaseService):
         force_unlock = document.get('force_unlock', False)
         user_id = str(user.get('_id'))
         if lock_user and str(lock_user) != user_id and not force_unlock:
-            raise SuperdeskError(payload='The item was locked by another user')
+            raise SuperdeskApiError.forbiddenError(payload='The item was locked by another user')
         document['versioncreated'] = utcnow()
         document['version_creator'] = user_id
         if force_unlock:
@@ -211,14 +216,14 @@ class ArchiveService(BaseService):
 
         old = get_resource_service('archive_versions').find_one(req=None, _id_document=item_id, _version=old_version)
         if old is None:
-            raise SuperdeskError(payload='Invalid version %s' % old_version)
+            raise SuperdeskApiError.notFoundError(payload='Invalid version %s' % old_version)
 
         curr = get_resource_service(SOURCE).find_one(req=None, _id=item_id)
         if curr is None:
-            raise SuperdeskError(payload='Invalid item id %s' % item_id)
+            raise SuperdeskApiError.notFoundError(payload='Invalid item id %s' % item_id)
 
         if curr[config.VERSION] != last_version:
-            raise SuperdeskError(payload='Invalid last version %s' % last_version)
+            raise SuperdeskApiError.preconditionFailedError(payload='Invalid last version %s' % last_version)
         old['_id'] = old['_id_document']
         old['_updated'] = old['versioncreated'] = utcnow()
         del old['_id_document']
@@ -265,12 +270,12 @@ class ArchiveSaveService(BaseService):
 
     def create(self, docs, **kwargs):
         if not docs:
-            raise SuperdeskError('Content is missing', 400)
+            raise SuperdeskApiError.notFoundError('Content is missing', 400)
         req = parse_request(self.datasource)
         try:
             get_component(ItemAutosave).autosave(docs[0]['_id'], docs[0], get_user(required=True), req.if_match)
         except InvalidEtag:
-            raise SuperdeskError('Client and server etags don\'t match', 412)
+            raise SuperdeskApiError.preconditionFailedError('Client and server etags don\'t match', 412)
         return [docs[0]['_id']]
 
 

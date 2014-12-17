@@ -10,7 +10,7 @@ Feature: Archive Ingest
         "guid": "not_on_ingest_tag"
         }
         """
-        Then we get error 400
+        Then we get error 404
 		"""
 		{"_message": "", "_issues": "Fail to found ingest item with guid: not_on_ingest_tag", "_status": "ERR"}
 		"""

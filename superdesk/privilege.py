@@ -1,11 +1,8 @@
 """Privileges registry."""
+from .errors import PrivilegeNameError
 
 _privileges = {}
 _intrinsic_privileges = {}
-
-
-class PrivilegeNameError(Exception):
-    pass
 
 
 def privilege(**kwargs):

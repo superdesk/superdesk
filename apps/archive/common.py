@@ -25,12 +25,11 @@ from superdesk.notification import push_notification
 from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
-from superdesk.errors import SuperdeskError, IdentifierGenerationError
+from superdesk.errors import SuperdeskApiError, IdentifierGenerationError
 
 GUID_TAG = 'tag'
 GUID_NEWSML = 'newsml'
 ARCHIVE_MEDIA = 'archive_media'
-
 
 
 def on_create_item(docs):
@@ -74,7 +73,7 @@ def generate_guid(**hints):
 def get_user(required=False):
     user = flask.g.get('user', {})
     if '_id' not in user and required:
-        raise SuperdeskError(payload='Invalid user.')
+        raise SuperdeskApiError.notFoundError(payload='Invalid user.')
     return user
 
 

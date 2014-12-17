@@ -1,14 +1,15 @@
 
 from unittest import TestCase
 from datetime import timedelta
+from nose.tools import assert_raises
 from superdesk import get_resource_service
 from superdesk.utc import utcnow
 from superdesk.tests import setup
+from superdesk.errors import SuperdeskApiError
 from superdesk.io import register_provider
 from superdesk.io.tests import setup_providers, teardown_providers
 from superdesk.io.ingest_service import IngestService
 from superdesk.io.commands.update_ingest import is_scheduled, update_provider, filter_expired_items, apply_rule_set
-from superdesk.io.ingest_service import IngestProviderClosedError
 
 
 class TestProviderService(IngestService):
@@ -77,8 +78,11 @@ class UpdateIngestTest(TestCase):
             }
         }
 
-        aap = self._get_provider_service(provider)
-        self.assertRaises(IngestProviderClosedError, aap.update, provider)
+        with assert_raises(SuperdeskApiError) as error_context:
+            aap = self._get_provider_service(provider)
+            aap.update(provider)
+        ex = error_context.exception
+        self.assertTrue(ex.status_code == 500)
 
     def test_is_scheduled(self):
         self.assertTrue(is_scheduled({}), 'for first time it should run')

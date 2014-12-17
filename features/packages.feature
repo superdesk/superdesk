@@ -212,7 +212,7 @@ Feature: Packages
             ]
         }
         """
-        Then we get error 400
+        Then we get error 403
         """
         {"_message": "Content associated multiple times", "_status": "ERR"}
         """

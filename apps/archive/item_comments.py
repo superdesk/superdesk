@@ -33,7 +33,7 @@ class ItemCommentsSubService(BaseService):
         item = superdesk.get_resource_service('archive').find_one(req=None, _id=item_id)
         if not item:
             msg = 'Invalid content item ID provided: %s' % item_id
-            raise SuperdeskApiError(payload=msg)
+            raise SuperdeskApiError.notFoundError(payload=msg)
 
     def get(self, req, lookup):
         self.check_item_valid(lookup.get('item'))

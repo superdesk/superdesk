@@ -7,6 +7,7 @@ from superdesk.services import BaseService
 from superdesk.utc import utcnow
 from superdesk.utils import get_random_string
 from superdesk.emails import send_reset_password_email
+from superdesk.errors import SuperdeskApiError
 
 
 logger = logging.getLogger(__name__)
@@ -52,7 +53,8 @@ class ResetPasswordService(BaseService):
                 return self.reset_password(doc)
             if email:
                 return self.initialize_reset_password(doc, email)
-            raise superdesk.SuperdeskError(payload='Invalid request.')
+
+            raise SuperdeskApiError.badRequestError(payload='Either key:password or email must be provided')
 
     def store_reset_password_token(self, doc, email, days_alive, user_id):
         token_ttl = app.config['RESET_PASSWORD_TOKEN_TIME_TO_LIVE']
@@ -71,11 +73,11 @@ class ResetPasswordService(BaseService):
         user = superdesk.get_resource_service('users').find_one(req=None, email=email)
         if not user:
             logger.warning('User password reset triggered with invalid email: %s' % email)
-            raise superdesk.SuperdeskError(status_code=400, message='Created')
+            raise SuperdeskApiError.unauthorizedError(payload='Invalid email')
 
         if not user.get('is_active', False):
             logger.warning('User password reset triggered for an inactive user')
-            raise superdesk.SuperdeskError(status_code=403, message='Created')
+            raise SuperdeskApiError.forbiddenError(payload='User not active')
 
         ids = self.store_reset_password_token(doc, email, token_ttl, user['_id'])
         send_reset_password_email(doc)
@@ -89,13 +91,13 @@ class ResetPasswordService(BaseService):
         reset_request = superdesk.get_resource_service('active_tokens').find_one(req=None, token=key)
         if not reset_request:
             logger.warning('Invalid token received: %s' % key)
-            raise superdesk.SuperdeskError(status_code=400, message='Created')
+            raise SuperdeskApiError.unauthorizedError(payload='Invalid token received')
 
         user_id = reset_request['user']
         user = superdesk.get_resource_service('users').find_one(req=None, _id=user_id)
         if not user.get('is_active'):
             logger.warning('Try to set password for an inactive user')
-            raise superdesk.SuperdeskError(status_code=403, message='Created')
+            raise SuperdeskApiError.forbiddenError(payload='User not active')
 
         superdesk.get_resource_service('users').update_password(user_id, password)
         self.remove_all_tokens_for_email(reset_request['email'])

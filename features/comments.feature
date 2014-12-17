@@ -40,7 +40,7 @@ Feature: Default Comments
         """
         [{"text": "test comment", "item": "xyz", "user": "#USERS_ID#"}]
         """
-        Then we get error 400
+        Then we get error 403
         """
         {"_status": "ERR", "_issues": "Commenting on behalf of someone else is prohibited.", "_message": ""}
         """

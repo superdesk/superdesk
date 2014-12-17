@@ -1,10 +1,10 @@
 
 import flask
 import superdesk
-from nose.tools import raises
+from nose.tools import assert_raises
 from superdesk.tests import TestCase
 from .services import UsersService
-from apps.auth.errors import ForbiddenError
+from superdesk.errors import SuperdeskApiError
 
 
 class PrivilegesTestCase(TestCase):
@@ -28,12 +28,14 @@ class PrivilegesTestCase(TestCase):
             self.assertEqual(user['active_privileges']['users'], 1)
             self.assertEqual(user['active_privileges']['archive'], 1)
 
-    @raises(ForbiddenError)
     def test_user_can_not_change_his_role(self):
-        with self.app.app_context():
-            flask.g.user = {'user_type': 'user'}
-            ids = self.service.create([{'name': 'user'}])
-            self.service.update(ids[0], {'role': '1'})
+        with assert_raises(SuperdeskApiError) as error_context:
+            with self.app.app_context():
+                flask.g.user = {'user_type': 'user'}
+                ids = self.service.create([{'name': 'user'}])
+                self.service.update(ids[0], {'role': '1'})
+        ex = error_context.exception
+        self.assertTrue(ex.status_code == 403)
 
     def test_user_with_privilege_can_change_his_role(self):
         with self.app.app_context():

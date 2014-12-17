@@ -3,7 +3,8 @@ from .item_lock import can_lock
 from superdesk.notification import push_notification
 from apps.common.components.base_component import BaseComponent
 from apps.common.models.utils import get_model
-from superdesk import app, SuperdeskError
+from superdesk import app
+from superdesk.errors import SuperdeskApiError
 
 
 def get_restore_updates(doc):
@@ -43,7 +44,7 @@ class ItemHold(BaseComponent):
             item_model.update(filter, updates)
             push_notification('item:hold', item=str(item.get('_id')), user=str(user))
         else:
-            raise SuperdeskError("Item couldn't be hold. It is locked by another user")
+            raise SuperdeskApiError.forbiddenError(payload="Item couldn't be hold. It is locked by another user")
         item = item_model.find_one(filter)
         return item
 
