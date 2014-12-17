@@ -42,6 +42,7 @@ class PackageService(ArchiveService):
 
     def on_update(self, updates, original):
         super().on_update(updates, original)
+        self.check_root_group([updates])
         associations = self._get_associations(updates)
         self.check_for_duplicates(original, associations)
         for assoc in associations:

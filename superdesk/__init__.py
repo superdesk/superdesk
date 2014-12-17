@@ -13,6 +13,7 @@ from .services import BaseService as Service  # noqa
 from .resource import Resource  # noqa
 from .privilege import privilege  # noqa
 from .workflow import *  # noqa
+from eve.validation import ValidationError
 
 
 API_NAME = 'Superdesk API'
@@ -43,7 +44,7 @@ class Command(BaseCommand):
             return self.run(*args, **kwargs)
 
 
-class SuperdeskError(Exception):
+class SuperdeskError(ValidationError):
     """Base error class for superdesk."""
 
     # default error status code
@@ -55,7 +56,7 @@ class SuperdeskError(Exception):
         :param status_code: response status code
         :param payload: a dict with request issues
         """
-        Exception.__init__(self)
+        ValidationError.__init__(self, message)
         self.message = message
 
         if status_code:

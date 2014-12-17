@@ -519,6 +519,73 @@ Feature: Packages
         """
         {"_message": "Not all groups are referenced in the root group.", "_status": "ERR"}
         """
+    @auth
+    Scenario: Fail on patching created package with group not referenced in root
+        Given empty "packages"
+        When we post to "archive"
+        """
+        [{"headline": "test"}]
+        """
+        When we upload a file "bike.jpg" to "archive_media"
+        When we post to "/packages" with success
+        """
+        {
+            "groups": [
+                {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
+                {
+                    "id": "main",
+                    "refs": [
+                        {
+                            "headline": "test package with text",
+                            "residRef": "#ARCHIVE_ID#",
+                            "slugline": "awesome article"
+                        }
+                    ],
+                    "role": "main"
+                }
+            ],
+            "guid": "tag:example.com,0000:newsml_BRE9A605"
+        }
+        """
+        And we patch latest without assert
+        """
+        {
+            "groups": [
+                {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
+                {
+                    "id": "main",
+                    "refs": [
+                        {
+                            "headline": "test package with pic",
+                            "residRef": "#ARCHIVE_MEDIA_ID#",
+                            "slugline": "awesome picture"
+                        },
+                        {
+                            "headline": "test package with text",
+                            "residRef": "#ARCHIVE_ID#",
+                            "slugline": "awesome article"
+                        }
+                    ],
+                    "role": "main"
+                },
+                {
+                    "id": "story",
+                    "refs": [
+                        {
+                            "headline": "test package with text",
+                            "residRef": "#ARCHIVE_ID#",
+                            "slugline": "awesome article"
+                        }
+                    ],
+                    "role": "story"
+                }
+            ]
+        }
+        """
+        Then we get error 400
+        """
+        {"_issues": {"validator exception": "The number of groups and of referenced groups in the root group do not match."}, "_status": "ERR"}
+        """
 
     @auth
     Scenario: Patch created package
