@@ -248,13 +248,16 @@ def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
 
 @when('we post to "{url}"')
 def step_impl_when_post_url(context, url):
-    data = apply_placeholders(context, context.text)
-    if url in ('/users', 'users'):
-        user = json.loads(data)
-        user.setdefault('needs_activation', False)
-        data = json.dumps(user)
-    context.response = context.client.post(get_prefixed_url(context.app, url), data=data, headers=context.headers)
-    store_placeholder(context, url)
+    with context.app.mail.record_messages() as outbox:
+        data = apply_placeholders(context, context.text)
+        if url in ('/users', 'users'):
+            user = json.loads(data)
+            user.setdefault('needs_activation', False)
+            data = json.dumps(user)
+        context.response = context.client.post(get_prefixed_url(context.app, url),
+                                               data=data, headers=context.headers)
+        store_placeholder(context, url)
+        context.outbox = outbox
 
 
 def store_placeholder(context, url):
@@ -268,22 +271,27 @@ def store_placeholder(context, url):
 
 @when('we post to "{url}" with success')
 def step_impl_when_post_url_with_success(context, url):
-    data = apply_placeholders(context, context.text)
-    context.response = context.client.post(get_prefixed_url(context.app, url), data=data, headers=context.headers)
-    assert_ok(context.response)
-    item = json.loads(context.response.get_data())
-    if item.get('_id'):
-        parsed_url = urlparse(url)
-        name = basename(parsed_url.path)
-        set_placeholder(context, '%s_ID' % name.upper(), item['_id'])
+    with context.app.mail.record_messages() as outbox:
+        data = apply_placeholders(context, context.text)
+        context.response = context.client.post(get_prefixed_url(context.app, url),
+                                               data=data, headers=context.headers)
+        assert_ok(context.response)
+        item = json.loads(context.response.get_data())
+        if item.get('_id'):
+            parsed_url = urlparse(url)
+            name = basename(parsed_url.path)
+            set_placeholder(context, '%s_ID' % name.upper(), item['_id'])
+        context.outbox = outbox
 
 
 @when('we put to "{url}"')
 def step_impl_when_put_url(context, url):
-    data = apply_placeholders(context, context.text)
-    href = get_self_href(url)
-    context.response = context.client.put(get_prefixed_url(context.app, href), data=data, headers=context.headers)
-    assert_ok(context.response)
+    with context.app.mail.record_messages() as outbox:
+        data = apply_placeholders(context, context.text)
+        href = get_self_href(url)
+        context.response = context.client.put(get_prefixed_url(context.app, href), data=data, headers=context.headers)
+        assert_ok(context.response)
+        context.outbox = outbox
 
 
 @when('we get "{url}"')
@@ -323,53 +331,63 @@ def when_we_find_for_resource_the_id_as_name_by_search_criteria(context, resourc
 
 @when('we delete "{url}"')
 def step_impl_when_delete_url(context, url):
-    url = apply_placeholders(context, url)
-    res = get_res(url, context)
-    href = get_self_href(res, context)
-    headers = if_match(context, res.get('_etag'))
-    href = get_prefixed_url(context.app, href)
-    context.response = context.client.delete(href, headers=headers)
+    with context.app.mail.record_messages() as outbox:
+        url = apply_placeholders(context, url)
+        res = get_res(url, context)
+        href = get_self_href(res, context)
+        headers = if_match(context, res.get('_etag'))
+        href = get_prefixed_url(context.app, href)
+        context.response = context.client.delete(href, headers=headers)
+        context.outbox = outbox
 
 
 @when('we delete latest')
 def when_we_delete_it(context):
-    res = get_json_data(context.response)
-    href = get_self_href(res, context)
-    headers = if_match(context, res.get('_etag'))
-    href = get_prefixed_url(context.app, href)
-    context.response = context.client.delete(href, headers=headers)
+    with context.app.mail.record_messages() as outbox:
+        res = get_json_data(context.response)
+        href = get_self_href(res, context)
+        headers = if_match(context, res.get('_etag'))
+        href = get_prefixed_url(context.app, href)
+        context.response = context.client.delete(href, headers=headers)
+        context.email = outbox
 
 
 @when('we patch "{url}"')
 def step_impl_when_patch_url(context, url):
-    url = apply_placeholders(context, url)
-    res = get_res(url, context)
-    href = get_self_href(res, context)
-    headers = if_match(context, res.get('_etag'))
-    data = apply_placeholders(context, context.text)
-    context.response = context.client.patch(get_prefixed_url(context.app, href), data=data, headers=headers)
+    with context.app.mail.record_messages() as outbox:
+        url = apply_placeholders(context, url)
+        res = get_res(url, context)
+        href = get_self_href(res, context)
+        headers = if_match(context, res.get('_etag'))
+        data = apply_placeholders(context, context.text)
+        context.response = context.client.patch(get_prefixed_url(context.app, href), data=data, headers=headers)
+        context.outbox = outbox
 
 
 @when('we patch latest')
 def step_impl_when_patch_again(context):
-    data = get_json_data(context.response)
-    href = get_prefixed_url(context.app, get_self_href(data, context))
-    headers = if_match(context, data.get('_etag'))
-    data2 = apply_placeholders(context, context.text)
-    context.response = context.client.patch(href, data=data2, headers=headers)
-    if context.response.status_code in (200, 201):
-        item = json.loads(context.response.get_data())
-        if item['_status'] == 'OK' and item.get('_id'):
-            set_placeholder(context, '%s_ID' % href.upper(), item['_id'])
-    assert_ok(context.response)
+    with context.app.mail.record_messages() as outbox:
+        data = get_json_data(context.response)
+        href = get_prefixed_url(context.app, get_self_href(data, context))
+        headers = if_match(context, data.get('_etag'))
+        data2 = apply_placeholders(context, context.text)
+        context.response = context.client.patch(href, data=data2, headers=headers)
+        if context.response.status_code in (200, 201):
+            item = json.loads(context.response.get_data())
+            if item['_status'] == 'OK' and item.get('_id'):
+                set_placeholder(context, '%s_ID' % href.upper(), item['_id'])
+        assert_ok(context.response)
+        context.outbox = outbox
 
 
 @when('we patch given')
 def step_impl_when_patch(context):
-    href, etag = get_it(context)
-    headers = if_match(context, etag)
-    context.response = context.client.patch(get_prefixed_url(context.app, href), data=context.text, headers=headers)
-    assert_ok(context.response)
+    with context.app.mail.record_messages() as outbox:
+        href, etag = get_it(context)
+        headers = if_match(context, etag)
+        context.response = context.client.patch(get_prefixed_url(context.app, href), data=context.text, headers=headers)
+        assert_ok(context.response)
+        context.outbox = outbox
 
 
 @when('we get given')
@@ -1080,3 +1098,16 @@ def step_get_activation_email(context):
 @then('we set elastic limit')
 def step_set_limit(context):
     context.app.settings['MAX_SEARCH_DEPTH'] = 1
+
+
+@then('we get email')
+def step_we_get_email(context):
+    assert check_if_email_sent(context, context.text)
+
+
+def check_if_email_sent(context, body):
+    if context.outbox:
+        for email in context.outbox:
+            if body in email.body:
+                return True
+        return False

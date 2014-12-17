@@ -157,8 +157,9 @@ def notify_and_add_activity(activity_name, msg, item=None, user_list=None, **dat
     """
     this function will add the activity and notify via email.
     """
+    add_activity(activity_name, msg=msg, item=item,
+                 notify=[user.get("_id") for user in user_list] if user_list else None, **data)
     if user_list:
-        add_activity(activity_name, msg=msg, item=item, notify=[user.get("_id") for user in user_list], **data)
         recipients = [user.get('email') for user in user_list if
                       user.get('preferences', {}).get('email:notification', {}).get('enabled', {})]
         user = getattr(g, 'user', None)
@@ -167,6 +168,6 @@ def notify_and_add_activity(activity_name, msg, item=None, user_list=None, **dat
             'message': user.get('display_name') + ' ' + msg if user else msg,
             'data': data,
         }
-        send_activity_emails(activity=activity, recipients=recipients)
-    else:
-        add_activity(activity_name, msg=msg, item=item, notify=None, data=data)
+
+        if recipients:
+            send_activity_emails(activity=activity, recipients=recipients)
