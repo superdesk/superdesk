@@ -130,7 +130,7 @@ class ActivityService(BaseService):
             raise SuperdeskError('Can not determine user')
         user_id = str(user.get('_id'))
         if not (updates.get('read')[user_id] == 1 and original.get('read')[user_id] == 0):
-            raise SuperdeskError('Can set notification as read', 403)
+            raise SuperdeskError('Can not set notification as read', 403)
         for read_entry in updates.get('read'):
             if read_entry != user_id:
                 if updates.get('read')[read_entry] != original.get('read')[read_entry]:
