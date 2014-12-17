@@ -3,14 +3,6 @@
     <div sd-authoring-widgets data-item="item">
         <div class="main-package-container">
             <div class="package-edit-container">
-                <div class="dropdown create-package" dropdown ng-show="selected.preview">
-                    <div class="dropdown-toggle btn btn-full" dropdown-toggle><i class="icon-plus"></i></div>
-                    <ul class="dropdown-menu">
-                        <li ng-repeat="t in itemTypes">
-                            <button ng-click="append(t)"><i class="filetype-icon-large-{{t.icon}}"></i><span translate>{{ t.label | uppercase }}</span></button>
-                        </li>
-                    </ul>
-                </div>
                 <div class="package-preview">
                     <div class="preview-pane content-item-preview" style="margin-top:10px;" ng-if="selected.preview">
                         <div class="content">

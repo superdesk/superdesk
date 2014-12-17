@@ -14,7 +14,7 @@
 			<div ng-if="type === 'video'"><i class="filetype-icon-large-video"></i></div>
 		</div>
 
-		<div class="headline" ng-show="item.headline">{{item.headline}}</div>
+		<div class="headline" ng-show="item.headline">{{item.headline || item.description}}</div>
 		<div class="headline" ng-hide="item.headline" translate>Blank headline received</div>
 	</div>
 

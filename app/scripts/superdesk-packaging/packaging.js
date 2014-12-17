@@ -44,7 +44,7 @@
             var idRef = 'main';
             var item = items[0];
             var new_package = {
-                headline: item.headline || '',
+                headline: item.headline || item.description || '',
                 slugline: item.slugline || '',
                 description: item.description || '',
                 state: 'draft'
@@ -161,29 +161,6 @@
         fetch();
     }
 
-    AddToPackageCtrl.$inject = ['$scope', 'api'];
-    function AddToPackageCtrl($scope, api) {
-
-        $scope.selectedList = [];
-
-        api.archive.query().then(function(result) {
-            $scope.items = result;
-        });
-
-        $scope.isInSelectedList = function(item) {
-            return _.findIndex($scope.selectedList, {_id: item._id}) !== -1;
-        };
-
-        $scope.cancel = function() {
-            $scope.reject();
-        };
-
-        $scope.save = function() {
-            //TODO: make the selection work
-            $scope.resolve($scope.selectedList);
-        };
-    }
-
     var app = angular.module('superdesk.packaging', [
         'superdesk.activity',
         'superdesk.api'
@@ -233,14 +210,6 @@
             condition: function(item) {
                 return item.type === 'composite';
             }
-        })
-        .activity('append.package', {
-            label: gettext('Add items to package'),
-            modal: true,
-            cssClass: 'create-package-modal responsive-popup',
-            controller: AddToPackageCtrl,
-            templateUrl: 'scripts/superdesk-packaging/views/create-package-modal.html',
-            filters: [{action: 'append', type: 'package'}]
         });
     }])
     .config(['apiProvider', function(apiProvider) {
