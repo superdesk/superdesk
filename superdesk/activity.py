@@ -94,6 +94,7 @@ class ActivityResource(Resource):
     endpoint_name = 'activity'
     resource_methods = ['GET']
     item_methods = ['GET', 'PATCH']
+    privileges = {'GET': 'archive', 'PATCH': 'archive'}
     schema = {
         'name': {'type': 'string'},
         'message': {'type': 'string'},
