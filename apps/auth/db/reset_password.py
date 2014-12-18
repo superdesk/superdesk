@@ -73,7 +73,7 @@ class ResetPasswordService(BaseService):
         user = superdesk.get_resource_service('users').find_one(req=None, email=email)
         if not user:
             logger.warning('User password reset triggered with invalid email: %s' % email)
-            raise SuperdeskApiError.unauthorizedError(payload='Invalid email')
+            raise SuperdeskApiError.badRequestError(payload='Invalid email')
 
         if not user.get('is_active', False):
             logger.warning('User password reset triggered for an inactive user')
