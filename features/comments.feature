@@ -42,7 +42,7 @@ Feature: Default Comments
         """
         Then we get error 403
         """
-        {"_status": "ERR", "_issues": "Commenting on behalf of someone else is prohibited.", "_message": ""}
+        {"_status": "ERR", "_message": "Commenting on behalf of someone else is prohibited."}
         """
 
         

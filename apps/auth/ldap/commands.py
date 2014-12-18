@@ -43,7 +43,7 @@ class ImportUserProfileFromADCommand(superdesk.Command):
         user_data = ad_auth.authenticate_and_fetch_profile(ad_username, ad_password, username)
 
         if len(user_data) == 0:
-            raise SuperdeskApiError.notFoundError(payload='Username not found')
+            raise SuperdeskApiError.notFoundError('Username not found')
 
         # Check if User Profile already exists in Mongo
         user = superdesk.get_resource_service('users').find_one(username=username, req=None)

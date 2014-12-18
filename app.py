@@ -87,7 +87,7 @@ def get_app(config=None):
         """Log server errors."""
         app.sentry.captureException()
         logger.exception(error)
-        return_error = SuperdeskApiError(status_code=500)
+        return_error = SuperdeskApiError.internalError()
         return client_error_handler(return_error)
 
     init_celery(app)

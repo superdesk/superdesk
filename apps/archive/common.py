@@ -73,7 +73,7 @@ def generate_guid(**hints):
 def get_user(required=False):
     user = flask.g.get('user', {})
     if '_id' not in user and required:
-        raise SuperdeskApiError.notFoundError(payload='Invalid user.')
+        raise SuperdeskApiError.notFoundError('Invalid user.')
     return user
 
 

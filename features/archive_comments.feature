@@ -75,7 +75,7 @@ Feature: News Items Archive Comments
         """
         Then we get error 403
         """
-        {"_status": "ERR", "_issues": "Commenting on behalf of someone else is prohibited.", "_message": ""}
+        {"_status": "ERR", "_message": "Commenting on behalf of someone else is prohibited."}
         """
 
     @auth
@@ -92,7 +92,7 @@ Feature: News Items Archive Comments
         And we get "/archive/wrong_id/comments"
         Then we get error 404
         """
-        {"_message": "", "_issues": "Invalid content item ID provided: wrong_id", "_status": "ERR"}
+        {"_message": "Invalid content item ID provided: wrong_id", "_status": "ERR"}
         """
 
 

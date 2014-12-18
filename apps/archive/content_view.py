@@ -55,7 +55,7 @@ class ContentViewService(BaseService):
         try:
             superdesk.get_resource_service(location).get(req=parsed_request, lookup={})
         except Exception:
-            raise SuperdeskApiError.badRequestError(payload='Fail to validate the filter against %s.' % location)
+            raise SuperdeskApiError.badRequestError('Fail to validate the filter against %s.' % location)
 
     def process_and_validate(self, doc):
         if 'desks' in doc and not doc['desks']:
@@ -109,7 +109,7 @@ class ContentViewItemsService(BaseService):
         content_view_id = lookup['lookup']['content_view_id']
         view_items = superdesk.get_resource_service('content_view').find_one(req=None, _id=content_view_id)
         if not view_items:
-            raise SuperdeskApiError.notFoundError(payload='Invalid content view id.')
+            raise SuperdeskApiError.notFoundError('Invalid content view id.')
         additional_query = view_items.get('filter')
 
         query = None

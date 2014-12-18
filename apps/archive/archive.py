@@ -150,7 +150,7 @@ class ArchiveService(BaseService):
 
         str_user_id = str(user.get('_id'))
         if lock_user and str(lock_user) != str_user_id and not force_unlock:
-            raise SuperdeskApiError.forbiddenError(payload='The item was locked by another user')
+            raise SuperdeskApiError.forbiddenError('The item was locked by another user')
 
         updates['versioncreated'] = utcnow()
         updates['version_creator'] = str_user_id
@@ -178,7 +178,7 @@ class ArchiveService(BaseService):
         force_unlock = document.get('force_unlock', False)
         user_id = str(user.get('_id'))
         if lock_user and str(lock_user) != user_id and not force_unlock:
-            raise SuperdeskApiError.forbiddenError(payload='The item was locked by another user')
+            raise SuperdeskApiError.forbiddenError('The item was locked by another user')
         document['versioncreated'] = utcnow()
         document['version_creator'] = user_id
         if force_unlock:
@@ -216,14 +216,14 @@ class ArchiveService(BaseService):
 
         old = get_resource_service('archive_versions').find_one(req=None, _id_document=item_id, _version=old_version)
         if old is None:
-            raise SuperdeskApiError.notFoundError(payload='Invalid version %s' % old_version)
+            raise SuperdeskApiError.notFoundError('Invalid version %s' % old_version)
 
         curr = get_resource_service(SOURCE).find_one(req=None, _id=item_id)
         if curr is None:
-            raise SuperdeskApiError.notFoundError(payload='Invalid item id %s' % item_id)
+            raise SuperdeskApiError.notFoundError('Invalid item id %s' % item_id)
 
         if curr[config.VERSION] != last_version:
-            raise SuperdeskApiError.preconditionFailedError(payload='Invalid last version %s' % last_version)
+            raise SuperdeskApiError.preconditionFailedError('Invalid last version %s' % last_version)
         old['_id'] = old['_id_document']
         old['_updated'] = old['versioncreated'] = utcnow()
         del old['_id_document']

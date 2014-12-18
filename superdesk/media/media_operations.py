@@ -40,8 +40,7 @@ def get_file_name(file):
 def download_file_from_url(url):
     rv = requests.get(url)
     if rv.status_code not in (200, 201):
-        payload = 'Failed to retrieve file from URL: %s' % url
-        raise SuperdeskApiError.internalError(payload=payload)
+        raise SuperdeskApiError.internalError('Failed to retrieve file from URL: %s' % url)
 
     mime = magic.from_buffer(rv.content, mime=True).decode('UTF-8')
     ext = mime.split('/')[1]

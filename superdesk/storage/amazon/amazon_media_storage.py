@@ -50,7 +50,7 @@ class AmazonMediaStorage(MediaStorage):
         rv = self.conn.get_bucket_objects(bucket=bucket, extra_params=params)
         if rv.status_code not in (200, 201):
             message = 'Retrieving the list of files from bucket %s failed' % bucket
-            raise SuperdeskApiError.internalError(payload=message)
+            raise SuperdeskApiError.internalError(message)
         content = rv.content.decode('UTF-8')
         return content
 
@@ -115,7 +115,7 @@ class AmazonMediaStorage(MediaStorage):
             res = self.conn.upload(filename, content, self.container_name, content_type=content_type,
                                    headers=file_metadata)
             if res.status_code not in (200, 201):
-                raise SuperdeskApiError.internalError(payload='Uploading file to amazon S3 failed')
+                raise SuperdeskApiError.internalError('Uploading file to amazon S3 failed')
             return filename
         except Exception as ex:
             logger.exception(ex)
@@ -140,7 +140,7 @@ class AmazonMediaStorage(MediaStorage):
             obj = self.conn.get(id_or_filename, self.container_name)
             if obj.status_code not in (200, 201) and raise_error:
                 message = 'Retrieving file %s from amazon failed' % id_or_filename
-                raise SuperdeskApiError.internalError(payload=message)
+                raise SuperdeskApiError.internalError(message)
             return (True, obj)
         except Exception as ex:
             if raise_error:

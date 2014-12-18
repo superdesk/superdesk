@@ -49,7 +49,7 @@ Feature: Authentication
         """
         Then we get error 401
         """
-        {"_message": "", "_issues": "The provided old password is not correct.", "_status": "ERR"}
+        {"_message": "The provided old password is not correct.", "_status": "ERR"}
         """        
         
         

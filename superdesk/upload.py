@@ -31,7 +31,7 @@ def get_upload_as_data_uri(media_id):
     media_file = app.media.get(media_id)
     if media_file:
         return Response(media_file.read(), mimetype=media_file.content_type)
-    raise SuperdeskApiError.notFoundError(payload='File not found on media storage.')
+    raise SuperdeskApiError.notFoundError('File not found on media storage.')
 
 
 def url_for_media(media_id):
@@ -79,7 +79,7 @@ class UploadService(BaseService):
         for doc in docs:
             if doc.get('URL') and doc.get('media'):
                 message = 'Uploading file by URL and file stream in the same time is not supported.'
-                raise SuperdeskApiError.badRequestError(payload=message)
+                raise SuperdeskApiError.badRequestError(message)
 
             content = None
             filename = None
@@ -120,7 +120,7 @@ class UploadService(BaseService):
             logger.exception(io)
             for file_id in inserted:
                 delete_file_on_error(doc, file_id)
-            raise SuperdeskApiError.internalError(message='Generating renditions failed')
+            raise SuperdeskApiError.internalError('Generating renditions failed')
 
     def get_cropping_data(self, doc):
         if all([doc.get('CropTop', None) is not None, doc.get('CropLeft', None) is not None,

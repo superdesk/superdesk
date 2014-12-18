@@ -53,7 +53,7 @@ class ItemLock(BaseComponent):
             self.app.on_item_locked(item, user)
             push_notification('item:lock', item=str(item.get('_id')), user=str(user))
         else:
-            raise SuperdeskApiError.forbiddenError(payload='Item locked by another user')
+            raise SuperdeskApiError.forbiddenError('Item locked by another user')
         item = item_model.find_one(filter)
         return item
 

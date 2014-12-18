@@ -18,11 +18,11 @@ class ItemAutosave(BaseComponent):
         item_model = get_model(ItemModel)
         item = item_model.find_one({'_id': item_id})
         if item is None:
-            raise SuperdeskApiError.notFoundError(payload='Invalid item identifier')
+            raise SuperdeskApiError.notFoundError('Invalid item identifier')
 
         lock_user = item.get('lock_user', None)
         if lock_user and str(lock_user) != str(user['_id']):
-            raise SuperdeskApiError.forbiddenError(payload='The item was locked by another user')
+            raise SuperdeskApiError.forbiddenError('The item was locked by another user')
 
         autosave_model = get_model(ItemAutosaveModel)
         item.update(updates)

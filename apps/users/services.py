@@ -207,7 +207,7 @@ class DBUsersService(UsersService):
         user = self.find_one(req=None, _id=user_id)
 
         if not user:
-            raise SuperdeskApiError.unauthorizedError(payload='User not found')
+            raise SuperdeskApiError.unauthorizedError('User not found')
 
         if not self.user_is_active(user):
             raise UserInactiveError()

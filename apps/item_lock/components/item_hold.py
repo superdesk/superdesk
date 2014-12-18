@@ -44,7 +44,7 @@ class ItemHold(BaseComponent):
             item_model.update(filter, updates)
             push_notification('item:hold', item=str(item.get('_id')), user=str(user))
         else:
-            raise SuperdeskApiError.forbiddenError(payload="Item couldn't be hold. It is locked by another user")
+            raise SuperdeskApiError.forbiddenError("Item couldn't be hold. It is locked by another user")
         item = item_model.find_one(filter)
         return item
 

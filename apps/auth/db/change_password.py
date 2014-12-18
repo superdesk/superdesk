@@ -37,8 +37,7 @@ class ChangePasswordService(BaseService):
             try:
                 get_resource_service('auth').authenticate({'username': username, 'password': doc['old_password']})
             except Exception:
-                payload = 'The provided old password is not correct.'
-                raise SuperdeskApiError.unauthorizedError(payload=payload)
+                raise SuperdeskApiError.unauthorizedError('The provided old password is not correct.')
 
             user = superdesk.get_resource_service('users').find_one(req=None, username=username)
             superdesk.get_resource_service('users').update_password(user['_id'], doc['new_password'])

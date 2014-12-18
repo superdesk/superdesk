@@ -16,7 +16,7 @@ class IngestService():
 
     def update(self, provider):
         if provider.get('is_closed', False):
-            raise SuperdeskApiError.internalError(message='Ingest Provider is closed', payload='')
+            raise SuperdeskApiError.internalError('Ingest Provider is closed')
         else:
             return self._update(provider) or []
 
