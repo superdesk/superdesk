@@ -1129,4 +1129,3 @@ def then_we_get_activity(context):
         if item.get('_id'):
             set_placeholder(context, 'ACTIVITY_ID', item['_id'])
             set_placeholder(context, 'USERS_ID', item['user'])
-
