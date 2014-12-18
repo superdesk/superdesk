@@ -104,7 +104,9 @@ class UsersService(BaseService):
                 # remove active tokens
                 get_resource_service('auth').delete_action({'username': user.get('username')})
             # send email notification
-            send_email = get_resource_service('preferences').email_notification_is_enabled(user['_id'])
+            preferences_service = get_resource_service('preferences')
+            send_email = preferences_service.\
+                email_notification_is_enabled(user_id=user['_id'])
             if send_email:
                 send_user_status_changed_email([user['email']], status)
 
@@ -135,6 +137,9 @@ class UsersService(BaseService):
 
     def set_privileges(self, user, role):
         user['active_privileges'] = get_privileges(user, role)
+
+    def get_users_by_user_type(self, user_type='user'):
+        return list(self.get(req=None, lookup={'user_type': user_type}))
 
 
 class DBUsersService(UsersService):

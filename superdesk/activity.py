@@ -1,12 +1,11 @@
-
 import logging
 from flask import g
-
 from superdesk.notification import push_notification
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 import superdesk
 from bson.objectid import ObjectId
+from superdesk.emails import send_activity_emails
 
 log = logging.getLogger(__name__)
 
@@ -38,7 +37,6 @@ class AuditResource(Resource):
 
 
 class AuditService(BaseService):
-
     def on_generic_inserted(self, resource, docs):
         if resource in AuditResource.exclude:
             return
@@ -121,6 +119,7 @@ class ActivityResource(Resource):
 ACTIVITY_CREATE = 'create'
 ACTIVITY_UPDATE = 'update'
 ACTIVITY_DELETE = 'delete'
+ACTIVITY_EVENT = 'event'
 
 
 def add_activity(activity_name, msg, item=None, notify=None, **data):
@@ -146,9 +145,30 @@ def add_activity(activity_name, msg, item=None, notify=None, **data):
         activity['read'] = {}
 
     if item:
-        activity['item'] = str(item.get('guid'))
+        activity['item'] = str(item.get('guid', item.get('_id')))
         if item.get('task') and item['task'].get('desk'):
             activity['desk'] = ObjectId(item['task']['desk'])
 
     superdesk.get_resource_service(ActivityResource.endpoint_name).post([activity])
     push_notification(ActivityResource.endpoint_name, _dest=activity['read'])
+
+
+def notify_and_add_activity(activity_name, msg, item=None, user_list=None, **data):
+    """
+    this function will add the activity and notify via email.
+    """
+    add_activity(activity_name, msg=msg, item=item,
+                 notify=[user.get("_id") for user in user_list] if user_list else None, **data)
+    if user_list:
+        recipients = [user.get('email') for user in user_list if
+                      superdesk.get_resource_service('preferences').
+                      email_notification_is_enabled(preferences=user.get('preferences', {}))]
+        user = getattr(g, 'user', None)
+        activity = {
+            'name': activity_name,
+            'message': user.get('display_name') + ' ' + msg if user else msg,
+            'data': data,
+        }
+
+        if recipients:
+            send_activity_emails(activity=activity, recipients=recipients)

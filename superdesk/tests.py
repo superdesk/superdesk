@@ -11,7 +11,22 @@ from unittest.mock import patch
 from apps.auth.ldap.ldap import ADAuth
 from eve_elastic import get_es, get_indices
 
-test_user = {'username': 'test_user', 'password': 'test_password', 'is_active': True, 'needs_activation': False}
+test_user = {
+    'username': 'test_user',
+    'password': 'test_password',
+    'is_active': True,
+    'needs_activation': False,
+    'email': 'behave_test@sourcefabric.org',
+    'preferences': {
+        'email:notification': {
+            'label': 'Send notifications via email',
+            'type': 'bool',
+            'default': True,
+            'category': 'notifications',
+            'enabled': True}
+    }
+
+}
 
 
 def get_test_settings():
@@ -74,6 +89,7 @@ def setup_auth_user(context, user=None):
 def add_to_context(context, token, user):
     context.headers.append(('Authorization', b'basic ' + b64encode(token + b':')))
     context.user = user
+    context.placeholders = {'CONTEXT_USER_ID': str(user.get('_id'))}
 
 
 def get_prefixed_url(current_app, endpoint):
@@ -134,7 +150,6 @@ def teardown_notification(context):
 
 
 class TestCase(unittest.TestCase):
-
     def setUp(self):
         setup(self)
 

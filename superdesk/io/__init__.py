@@ -17,11 +17,11 @@ from .commands.add_provider import AddProvider  # NOQA
 
 
 def init_app(app):
-    from .ingest_provider_model import IngestProviderResource
-    from superdesk.services import BaseService
+    from .ingest_provider_model import IngestProviderResource, IngestProviderService
+    # from superdesk.services import BaseService
     import superdesk
     endpoint_name = 'ingest_providers'
-    service = BaseService(endpoint_name, backend=superdesk.get_backend())
+    service = IngestProviderService(endpoint_name, backend=superdesk.get_backend())
     IngestProviderResource(endpoint_name, app=app, service=service)
 
 
