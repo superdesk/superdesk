@@ -270,12 +270,12 @@ class ArchiveSaveService(BaseService):
 
     def create(self, docs, **kwargs):
         if not docs:
-            raise SuperdeskApiError.notFoundError('Content is missing', 400)
+            raise SuperdeskApiError.notFoundError('Content is missing')
         req = parse_request(self.datasource)
         try:
             get_component(ItemAutosave).autosave(docs[0]['_id'], docs[0], get_user(required=True), req.if_match)
         except InvalidEtag:
-            raise SuperdeskApiError.preconditionFailedError('Client and server etags don\'t match', 412)
+            raise SuperdeskApiError.preconditionFailedError('Client and server etags don\'t match')
         return [docs[0]['_id']]
 
 

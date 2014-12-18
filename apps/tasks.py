@@ -51,12 +51,12 @@ def send_to(doc, desk_id=None, stage_id=None):
     if desk_id and not stage_id:
         desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
         if not desk:
-            raise SuperdeskApiError.notFoundError('Invalid desk identifier %s' % desk_id, 400)
+            raise SuperdeskApiError.notFoundError('Invalid desk identifier %s' % desk_id)
         task['stage'] = desk.get('incoming_stage')
     if task['stage']:
         stage = get_resource_service('stages').find_one(req=None, _id=task['stage'])
         if not stage:
-            raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % task['stage'], 400)
+            raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % task['stage'])
         if stage.get('task_status'):
             doc['task']['status'] = stage['task_status']
     doc['task'] = task
@@ -164,7 +164,7 @@ class TasksService(BaseService):
         if new_stage_id and new_stage_id != old_stage_id:
             new_stage = get_resource_service('stages').find_one(req=None, _id=new_stage_id)
             if not new_stage:
-                raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % new_stage, 400)
+                raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % new_stage)
             if new_stage.get('task_status'):
                 updates['task']['status'] = new_stage['task_status']
 
