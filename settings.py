@@ -108,6 +108,7 @@ INSTALLED_APPS = [
     'superdesk.io.reuters',
     'superdesk.io.aap',
     'superdesk.io.afp',
+    'superdesk.io.ftp',
 
     'apps.archive',
     'apps.stages',

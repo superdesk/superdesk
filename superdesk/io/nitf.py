@@ -92,6 +92,9 @@ class NITFParser(Parser):
     NITF Parser
     """
 
+    def can_parse(self, xml):
+        return xml.tag == 'nitf'
+
     def parse_message(self, tree):
         item = {}
         docdata = tree.find('head/docdata')

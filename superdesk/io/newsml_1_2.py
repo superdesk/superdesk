@@ -2,10 +2,14 @@ import datetime
 from ..etree import etree
 from superdesk.io import Parser
 from superdesk.io.iptc import subject_codes
+from superdesk.utc import utc
 
 
 class NewsMLOneParser(Parser):
     """NewsMl xml 1.2 parser"""
+
+    def can_parse(self, xml):
+        return xml.tag == 'NewsML' and xml.get('Version', '') == '1.2'
 
     def parse_message(self, tree):
         """Parse NewsMessage."""
@@ -97,7 +101,10 @@ class NewsMLOneParser(Parser):
         return attributes
 
     def datetime(self, string):
-        return datetime.datetime.strptime(string, '%Y%m%dT%H%M%S+0000')
+        try:
+            return datetime.datetime.strptime(string, '%Y%m%dT%H%M%S+0000')
+        except ValueError:
+            return datetime.datetime.strptime(string, '%Y%m%dT%H%M%SZ').replace(tzinfo=utc)
 
     def populate_fields(self, item):
         item['type'] = 'text'

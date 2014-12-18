@@ -86,12 +86,20 @@ def update_provider(provider_id):
     """Update provider by given id."""
     last_updated = utcnow()
     provider = superdesk.get_resource_service('ingest_providers').find_one(req=None, _id=provider_id)
+
     superdesk.get_resource_service('ingest_providers').update(provider['_id'], {
         LAST_UPDATED: last_updated,
         app.config['ETAG']: provider.get(app.config['ETAG']),  # keep the etag
     })
+
     for items in providers[provider.get('type')].update(provider):
         ingest_items(provider, items)
+
+    superdesk.get_resource_service('ingest_providers').update(provider['_id'], {
+        'config': provider.get('config', {}),  # persist changes to config if any
+        app.config['ETAG']: provider.get(app.config['ETAG'])
+    })
+
     logger.info('Provider {0} updated'.format(provider_id))
     push_notification('ingest:update')
 
