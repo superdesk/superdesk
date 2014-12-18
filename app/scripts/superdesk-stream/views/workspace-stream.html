@@ -6,25 +6,6 @@
 
 </div>
 <section class="main-section workspace-stream">
-	<div class="activity-container">
-		<div class="activity-log">
-			<ul class="activity-list card-list">
-				<li class="activity" ng-class="{'with-date': showDateHeader(activity)}" ng-repeat="activity in activities._items">
-					<div class="date" ng-show="showDateHeader(activity)"><span>{{ activity._created | reldate }}</span></div>
-	                <div>
-	                    <figure class="avatar">
-	                        <img sd-user-avatar data-src="user.picture_url">
-	                    </figure>
-	                    <div class="activity-content">
-	                        <p><b>{{ activity.user.display_name }} </b>{{ activity.display_message }}</p>
-	                    </div>
-	                    <div class="activity-date "><time datetime="{{ activity._created }}" title="{{ activity._created | reldate}}" >{{ activity._created | reldate }}</time></div>
-	                </div>
-	            </li>
-			</ul>
-		</div>
-		<button class="btn activity-load-more" translate ng-click="loadMore()" ng-show="activities._meta.total > max_results">Load more</button>
-	</div>
-	
+	<div class="activity-container" sd-activity-stream data-activities="activities" load-More="loadMore()" data-max-results="max_results"></div>
 </section>
 <div sd-workqueue></div>

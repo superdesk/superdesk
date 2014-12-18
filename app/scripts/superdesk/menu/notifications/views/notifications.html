@@ -21,10 +21,14 @@
                         <figure class="avatar">
                             <img sd-user-avatar data-src="notification.user.picture_url" />
                         </figure>
-                        <div class="content">
+                        <div class="content" ng-if="notification.name == 'notify'">
                             <time sd-datetime data-date="notification._created"></time>
                             <p class="text"><b>{{ notification.user.display_name || notification.user.username }}</b> <span translate>commented on</span> <i><a ng-href="#/authoring/{{ notification.item.guid }}?_id={{ notification.item.guid }}&comments={{ notification.data.comment_id }}" title="{{ notification.item.headline }}">{{ notification.item.slugline || notification.item.headline }}</a></i>:<br>{{ notification.data.comment }}</p>
                         </div>
+                        <div class="content" ng-if="notification.name != 'notify'">
+                            <time sd-datetime data-date="notification._created"></time>
+                            <p class="text"><b>{{ notification.user.display_name || notification.user.username }}</b>: <span sd-activity-message data-activity="notification"></span></p>
+                        </div>                        
                     </li>
                     <div class="info" ng-show="notifications._items.length === 0" translate>All good so far.</div>
                     <div class="info" ng-show="notifications._items == null" translate>loading..</div>
