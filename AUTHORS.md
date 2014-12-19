@@ -1,8 +1,7 @@
 Superdesk-server is written and maintained by Sourcefabric and
 various contributors:
 
-The Superdesk team
-``````````````````
+#### The Superdesk team
 
 - Petr Jašek <petr.jasek@sourcefabric.org>
 - Adrian Magdas
@@ -11,8 +10,7 @@ The Superdesk team
 - Mugur Rus
 - Yauhen Kirylau
 
-Contributions
-`````````````
+#### Contributions
 
 - Andrew Marwood
 - Francesco Occhipinti
