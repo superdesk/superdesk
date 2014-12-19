@@ -19,7 +19,6 @@ from settings import DAYS_TO_KEEP
 
 
 logger = logging.getLogger(__name__)
-
 class IngestProviderResource(Resource):
     schema = {
         'name': {

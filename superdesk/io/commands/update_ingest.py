@@ -3,11 +3,11 @@ from datetime import timedelta
 
 from flask import current_app as app
 from werkzeug.exceptions import HTTPException
+from settings import DAYS_TO_KEEP
 
 import superdesk
 from superdesk.notification import push_notification
 from superdesk.io import providers
-from superdesk.io.ingest_provider_model import DAYS_TO_KEEP
 from superdesk.celery_app import celery
 from superdesk.utc import utcnow
 from superdesk.workflow import set_default_state
