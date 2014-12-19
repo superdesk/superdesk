@@ -3,7 +3,7 @@ various contributors:
 
 #### The Superdesk team
 
-- Petr Jašek <petr.jasek@sourcefabric.org>
+- [Petr Jašek](mailto:petr.jasek@sourcefabric.org)
 - Adrian Magdas
 - Anca Farcas
 - Ioan Pocol
