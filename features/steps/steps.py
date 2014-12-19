@@ -385,6 +385,15 @@ def step_impl_when_patch_again(context):
         context.outbox = outbox
 
 
+@when('we patch latest without assert')
+def step_impl_when_patch_without_assert(context):
+    data = get_json_data(context.response)
+    href = get_prefixed_url(context.app, get_self_href(data, context))
+    headers = if_match(context, data.get('_etag'))
+    data2 = apply_placeholders(context, context.text)
+    context.response = context.client.patch(href, data=data2, headers=headers)
+
+
 @when('we patch given')
 def step_impl_when_patch(context):
     with context.app.mail.record_messages() as outbox:

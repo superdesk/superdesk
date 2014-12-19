@@ -2,8 +2,19 @@
 from superdesk.resource import Resource
 from apps.content import metadata_schema
 from apps.archive.common import item_url
-ASSOCIATIONS = 'associations'
-ITEM_REF = 'itemRef'
+from apps.archive.archive import SOURCE as ARCHIVE
+from apps.archive import ArchiveVersionsResource
+
+
+class PackageVersionsResource(ArchiveVersionsResource):
+    """
+    Resource class for versions of archive_media
+    """
+
+    datasource = {
+        'source': ARCHIVE + '_versions',
+        'filter': {'type': 'composite'}
+    }
 
 
 class PackageResource(Resource):
@@ -11,7 +22,7 @@ class PackageResource(Resource):
     Package schema
     '''
     datasource = {
-        'source': 'archive',
+        'source': ARCHIVE,
         'default_sort': [('_updated', -1)],
         'filter': {'type': 'composite'},
         'elastic_filter': {'term': {'archive.type': 'composite'}}  # eve-elastic specific filter
@@ -29,50 +40,12 @@ class PackageResource(Resource):
         },
         'groups': {
             'type': 'list',
-            'minlength': 1,
-            'schema': {
-                'type': 'dict',
-                'schema': {
-                    'group': {
-                        'role': {
-                            'type': 'string',
-                            'required': True
-                        },
-                        'id': {
-                            'type': 'string'
-                        },
-                        ASSOCIATIONS: {
-                            'type': 'list',
-                            'required': True,
-                            'minlength': 1,
-                            'schema': {
-                                'type': 'dict',
-                                'schema': {
-                                    ITEM_REF: {'type': 'string'},
-                                    'guid': {
-                                        'type': 'string',
-                                        'readonly': True
-                                    },
-                                    'version': {
-                                        'type': 'string',
-                                        'readonly': True
-                                    },
-                                    'type': {
-                                        'type': 'string',
-                                        'readonly': True
-                                    },
-                                    'slugline': {'type': 'string'},
-                                    'headline': {'type': 'string'},
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            'minlength': 1
         },
         'profile': {
             'type': 'string'
         }
     })
 
+    versioning = True
     privileges = {'POST': 'archive', 'PATCH': 'archive'}
