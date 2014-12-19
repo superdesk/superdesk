@@ -67,3 +67,49 @@ Feature: User Activity
 
         When we get "/activity?where={"desk": "invalid_desk_id"}"
         Then we get list with 0 items
+
+    @auth
+    Scenario: Read notification by a user who is not meant to:
+        Given empty "comments"
+        When we post to "/users"
+        """
+        {"username": "joe", "display_name": "Joe Black", "email": "joe@black.com", "is_active": true}
+        """
+        When we mention user in comment for "/comments"
+        """
+        [{"text": "test comment @no_user with one user mention @joe", "item": "xyz"}]
+        """
+        Then we get activity
+        When we patch "/activity/#ACTIVITY_ID#"
+        """
+        {"read":{"#USERS_ID#":1}}
+        """
+        Then we get error 400
+
+    @auth
+    Scenario: Read notification successful :
+        Given empty "comments"
+        When we mention user in comment for "/comments"
+        """
+        [{"text": "test comment @no_user with one user mention @test_user", "item": "xyz"}]
+        """
+        Then we get activity
+        When we patch "/activity/#ACTIVITY_ID#"
+        """
+        {"read":{"#USERS_ID#":1}}
+        """
+        Then we get error 200
+
+    @auth
+    Scenario: Read notification attempt bad transition :
+        Given empty "comments"
+        When we mention user in comment for "/comments"
+        """
+        [{"text": "test comment @no_user with one user mention @test_user", "item": "xyz"}]
+        """
+        Then we get activity
+        When we patch "/activity/#ACTIVITY_ID#"
+        """
+        {"read":{"#USERS_ID#":0}}
+        """
+        Then we get error 400

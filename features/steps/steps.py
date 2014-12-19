@@ -1125,3 +1125,16 @@ def check_if_email_sent(context, body):
             if body in email.body:
                 return True
         return False
+
+
+@then('we get activity')
+def then_we_get_activity(context):
+    url = apply_placeholders(context, '/activity?where={"name": "notify"}')
+    context.response = context.client.get(get_prefixed_url(context.app, url), headers=context.headers)
+    if context.response.status_code == 200:
+        expect_json_length(context.response, 1, path='_items')
+        item = json.loads(context.response.get_data())
+        item = item['_items'][0]
+        if item.get('_id'):
+            set_placeholder(context, 'ACTIVITY_ID', item['_id'])
+            set_placeholder(context, 'USERS_ID', item['user'])

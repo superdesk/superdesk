@@ -72,6 +72,10 @@ class SuperdeskTokenAuth(TokenAuth):
         if method == 'GET' or resource == 'prepopulate':
             return True
 
+        # We allow a user to patch activities as they may be marking it as read
+        if method == 'PATCH' and resource == 'activity':
+            return True
+
         # users should be able to change only their preferences
         if resource == 'preferences':
             session = get_resource_service('preferences').find_one(_id=request.view_args.get('_id'), req=None)

@@ -3,6 +3,7 @@ from flask import g
 from superdesk.notification import push_notification
 from superdesk.resource import Resource
 from superdesk.services import BaseService
+from superdesk import SuperdeskError
 import superdesk
 from bson.objectid import ObjectId
 from superdesk.emails import send_activity_emails
@@ -12,7 +13,7 @@ log = logging.getLogger(__name__)
 
 def init_app(app):
     endpoint_name = 'activity'
-    service = BaseService(endpoint_name, backend=superdesk.get_backend())
+    service = ActivityService(endpoint_name, backend=superdesk.get_backend())
     ActivityResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'audit'
@@ -115,6 +116,34 @@ class ActivityResource(Resource):
         'category': 'notifications'
     })
 
+
+class ActivityService(BaseService):
+
+    def on_update(self, updates, original):
+        """ Called on the patch request to mark a activity/notification/comment as having been read and
+        nothing else
+        :param updates:
+        :param original:
+        :return:
+        """
+        user = getattr(g, 'user', None)
+        if not user:
+            raise SuperdeskError('Can not determine user', 400)
+        user_id = str(user.get('_id'))
+        # make sure that the user making the read notification is in the notification list
+        if user_id not in updates.get('read').keys():
+            raise SuperdeskError('User is not in the notification list', 400)
+        # make sure the transition is from not read to read
+        if not (updates.get('read')[user_id] == 1 and original.get('read')[user_id] == 0):
+            raise SuperdeskError('Can not set notification as read', 403)
+        # make sure that no other users are being marked as read
+        for read_entry in updates.get('read'):
+            if read_entry != user_id:
+                if updates.get('read')[read_entry] != original.get('read')[read_entry]:
+                    raise SuperdeskError('Can not set other users notification as read', 403)
+        # make sure that no other fields are being up dated just read and _updated
+        if len(updates) != 2:
+            raise SuperdeskError('Can not update', 400)
 
 ACTIVITY_CREATE = 'create'
 ACTIVITY_UPDATE = 'update'
