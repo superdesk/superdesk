@@ -1,8 +1,20 @@
-Superdesk-client is written and maintained by Sourcefabric and
+Superdesk-server is written and maintained by Sourcefabric and
 various contributors:
 
-- Petr Jašek <petr.jasek@sourcefabric.org>
-- Holman Romero
-- Mugur Rus
+#### The Superdesk team
+
+- [Petr Jašek](mailto:petr.jasek@sourcefabric.org)
 - Adrian Magdas
 - Anca Farcas
+- Ioan Pocol
+- Mugur Rus
+- Yauhen Kirylau
+
+#### Contributions
+
+- Andrew Marwood
+- Francesco Occhipinti
+- Gabriel Nistor
+- Kuna Siva
+- Mayur Dhamanwala
+- Tolga Akin
