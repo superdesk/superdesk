@@ -50,7 +50,7 @@ class SuperdeskValidator(Validator):
                 except:
                     query[config.ID_FIELD] = {'$ne': self._id}
 
-            if superdesk.get_resource_service(self.resource).find_one_in_base_backend(req=None, **query):
+            if superdesk.get_resource_service(self.resource).find_one(req=None, **query):
                 self._error(field, ERROR_UNIQUE)
 
     def _validate_iunique(self, unique, field, value):
