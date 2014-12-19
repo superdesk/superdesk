@@ -113,3 +113,27 @@ Feature: User Activity
         {"read":{"#USERS_ID#":0}}
         """
         Then we get error 400
+
+ 	@auth
+	Scenario: Verify if activity was created on archive operations
+		Given empty "activity"
+		Given empty "archive"
+        When we post to "/archive"
+        """
+        [{"guid": "some-global-unique-id", "type": "text"}]
+        """
+        And we patch "/archive/some-global-unique-id"
+        """
+        {"headline": "test"}
+        """
+        And we get "/activity"
+        Then we get list with 2 items
+        """
+        {"_items": [
+        		{"item": "some-global-unique-id",
+        		 "message": "added new {{ type }} item with empty header/title",
+        		 "data": {"type": "text", "subject": ""}},
+        		{"item": "some-global-unique-id",
+        		 "message": "created new version {{ version }} for item {{ type }} about \"{{ subject }}\"",
+        		 "data": {"version": 2, "type": "text", "subject": "test"}}]}
+        """
