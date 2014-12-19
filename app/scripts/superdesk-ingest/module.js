@@ -26,6 +26,10 @@ define([
         afp: {
             label: 'AFP',
             templateUrl: 'scripts/superdesk-ingest/views/settings/afpConfig.html'
+        },
+        ftp: {
+            label: 'FTP',
+            templateUrl: 'scripts/superdesk-ingest/views/settings/ftp-config.html'
         }
     });
 
