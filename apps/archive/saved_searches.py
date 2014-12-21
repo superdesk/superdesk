@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 class SavedSearchesResource(Resource):
-    endpoint_name = 'saved_searches'
+    endpoint_name = resource_title = 'saved_searches'
     schema = {
         'name': {
             'type': 'string',
