@@ -733,12 +733,11 @@
                 scope: {},
                 link: function(scope) {
 
-                    var resource = api('content_view');
+                    var resource = api('saved_searches', session.identity);
                     scope.selected = null;
                     scope.editSearch = null;
 
-                    resource.query({where: {user: session.identity._id}})
-                    .then(function(views) {
+                    resource.query().then(function(views) {
                         scope.views = views._items;
                     });
 
