@@ -13,23 +13,29 @@ Feature: Ingest Provider
         When we post to "ingest_providers"
 	    """
         [{
-        "type": "reuters",
-        "name": "reuters 4",
-        "source": "reuters",
-        "is_closed": false,
-        "config": {"username": "foo", "password": "bar"}
+          "type": "reuters",
+          "name": "reuters 4",
+          "source": "reuters",
+          "is_closed": false,
+          "config": {"username": "foo", "password": "bar"}
         }]
 	    """
         And we get "/ingest_providers"
         Then we get list with 1 items
 	    """
         {"_items": [{
-        "type": "reuters",
-        "name": "reuters 4",
-        "days_to_keep": 2,
-        "source": "reuters",
-        "is_closed": false,
-        "config": {"username": "foo", "password": "bar"}
+          "type": "reuters",
+          "name": "reuters 4",
+          "days_to_keep": 2,
+          "source": "reuters",
+          "is_closed": false,
+          "config": {"username": "foo", "password": "bar"},
+          "notifications": {
+              "on_update": true,
+              "on_error": true,
+              "on_close": true,
+              "on_open": true
+          }
         }]}
 	    """
         When we get "/activity/"

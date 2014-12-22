@@ -54,37 +54,63 @@ class IngestProviderResource(Resource):
             }
         },
         'last_updated': {'type': 'datetime'},
-        'rule_set': Resource.rel('rule_sets', nullable=True)
+        'rule_set': Resource.rel('rule_sets', nullable=True),
+        'notifications': {
+            'type': 'dict',
+            'schema': {
+                'on_update': {'type': 'boolean', 'default': True},
+                'on_close': {'type': 'boolean', 'default': True},
+                'on_open': {'type': 'boolean', 'default': True},
+                'on_error': {'type': 'boolean', 'default': True}
+            }
+        }
     }
 
     privileges = {'POST': 'ingest_providers', 'PATCH': 'ingest_providers', 'DELETE': 'ingest_providers'}
 
 
 class IngestProviderService(BaseService):
-
     def __init__(self, datasource=None, backend=None):
         super().__init__(datasource=datasource, backend=backend)
         self.user_service = get_resource_service('users')
 
+    def _get_administrators(self):
+        return self.user_service.get_users_by_user_type('administrator')
+
     def on_created(self, docs):
         for doc in docs:
             notify_and_add_activity(ACTIVITY_CREATE, 'created Ingest Channel {{name}}', item=doc,
-                                    user_list=self.user_service.get_users_by_user_type('administrator'),
+                                    user_list=self._get_administrators(),
                                     name=doc.get('name'))
 
     def on_updated(self, updates, original):
         if 'is_closed' not in updates:
+            do_notification = updates.get('notifications', {}).get('on_update',
+                                                                   original.get('notifications', {}).get('on_update'))
             notify_and_add_activity(ACTIVITY_UPDATE, 'updated Ingest Channel {{name}}', item=original,
-                                    user_list=self.user_service.get_users_by_user_type('administrator'),
+                                    user_list=self._get_administrators()
+                                    if do_notification else None,
                                     name=updates.get('name', original.get('name')))
 
-        if updates.get('is_closed') and updates.get('is_closed') != original.get('is_closed'):
+        if updates.get('is_closed') and (updates.get('is_closed', False) != original.get('is_closed')):
+            status = ''
+            do_notification = False
+            if updates.get('is_closed') and updates.get('notifications', {}). \
+                    get('on_close', original.get('notifications', {}).get('on_close')):
+                status = 'closed'
+                do_notification = True
+            elif updates.get('is_closed', False) and updates.get('notifications', {}). \
+                    get('on_open', original.get('notifications', {}).get('on_open')):
+                status = 'opened'
+                do_notification = True
+
             notify_and_add_activity(ACTIVITY_EVENT, '{{status}} Ingest Channel {{name}}', item=original,
-                                    user_list=self.user_service.get_users_by_user_type('administrator'),
+                                    user_list=self._get_administrators()
+                                    if do_notification else None,
                                     name=updates.get('name', original.get('name')),
-                                    status='closed' if updates.get('is_closed') else 'opened')
+                                    status=status)
 
     def on_deleted(self, doc):
         notify_and_add_activity(ACTIVITY_DELETE, 'deleted Ingest Channel {{name}}', item=doc,
-                                user_list=self.user_service.get_users_by_user_type('administrator'),
+                                user_list=self._get_administrators(),
                                 name=doc.get('name'))
