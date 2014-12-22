@@ -174,3 +174,14 @@ def remove_unwanted(doc):
     for attr in ['_type', 'desk']:
         if attr in doc:
             del doc[attr]
+
+
+def is_assigned_to_a_desk(doc):
+    """
+    Returns True if the 'doc' is being submitted to a desk. False otherwise.
+
+    :param doc: doc must be from archive collection
+    :return: True if the 'doc' is being submitted to a desk, else False.
+    """
+
+    return doc.get('task') and doc['task'].get('desk')

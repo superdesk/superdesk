@@ -8,7 +8,7 @@ from superdesk import get_resource_service
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
 from superdesk.utc import utcnow, get_expiry_date
-from .common import get_user, item_url
+from .common import get_user, item_url, is_assigned_to_a_desk
 
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 
@@ -56,7 +56,7 @@ class ArchiveSpikeService(BaseService):
         expiry_minutes = app.settings['SPIKE_EXPIRY_MINUTES']
 
         # check if item is in a desk. If it's then use the desks spike_expiry
-        if 'task' in item and 'desk' in item['task']:
+        if is_assigned_to_a_desk(item):
             desk = get_resource_service('desks').find_one(_id=item['task']['desk'], req=None)
             expiry_minutes = desk.get('spike_expiry', expiry_minutes)
 
@@ -66,7 +66,6 @@ class ArchiveSpikeService(BaseService):
         item = self.backend.update(self.datasource, id, updates)
         push_notification('item:spike', item=str(item.get('_id')), user=str(user))
 
-        # build_custom_hateoas(custom_hateoas, item)
         return item
 
 
