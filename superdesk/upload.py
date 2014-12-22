@@ -1,3 +1,13 @@
+# -*- coding: utf-8; -*-
+#
+# This file is part of Superdesk.
+#
+# Copyright 2013, 2014 Sourcefabric z.u. and contributors.
+#
+# For the full copyright and license information, please see the
+# AUTHORS and LICENSE files distributed with this source code, or
+# at https://www.sourcefabric.org/superdesk/license
+
 """Upload module"""
 import logging
 import superdesk
@@ -86,11 +96,12 @@ class UploadService(BaseService):
     def store_file(self, doc, content, filename, content_type):
         res = process_file_from_stream(content, filename=filename, content_type=content_type)
         file_name, content_type, metadata = res
-
         cropping_data = self.get_cropping_data(doc)
         _, out = crop_image(content, filename, cropping_data)
-        metadata['length'] = json.dumps(len(out.getvalue()))
-
+        # for heaviest files, `out` contains a BufferedRandom stream,
+        # then it's not possible to retrieve the length and `getvalue()` is not available
+        if hasattr(out, 'getvalue'):
+            metadata['length'] = json.dumps(len(out.getvalue()))
         try:
             logger.debug('Going to save media file with %s ' % file_name)
             out.seek(0)
@@ -100,7 +111,6 @@ class UploadService(BaseService):
             doc['filemeta'] = decode_metadata(metadata)
             inserted = [doc['media']]
             file_type = content_type.split('/')[0]
-
             rendition_spec = config.RENDITIONS['avatar']
             renditions = generate_renditions(out, doc['media'], inserted, file_type,
                                              content_type, rendition_spec, url_for_media)
