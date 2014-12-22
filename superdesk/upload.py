@@ -15,7 +15,7 @@ from eve.utils import config
 from superdesk import SuperdeskError
 from .resource import Resource
 from .services import BaseService
-from flask import url_for, Response, current_app as app, json
+from flask import url_for, Response, current_app as app
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from superdesk.media.media_operations import download_file_from_url, process_file_from_stream, \
     crop_image, decode_metadata, download_file_from_encoded_str
