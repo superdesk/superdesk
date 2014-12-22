@@ -1,3 +1,12 @@
+# -*- coding: utf-8; -*-
+#
+# This file is part of Superdesk.
+#
+# Copyright 2013, 2014 Sourcefabric z.u. and contributors.
+#
+# For the full copyright and license information, please see the
+# AUTHORS and LICENSE files distributed with this source code, or
+# at https://www.sourcefabric.org/superdesk/license
 
 import os
 import arrow
@@ -52,13 +61,14 @@ def download_file_from_encoded_str(encoded_str):
 def process_file_from_stream(content, filename=None, content_type=None):
     content_type = content_type or content.content_type
     content = BytesIO(content.read())
-
     if 'application/' in content_type:
         content_type = magic.from_buffer(content.getvalue(), mime=True).decode('UTF-8')
         content.seek(0)
-
     file_type, ext = content_type.split('/')
-    metadata = process_file(content, file_type)
+    try:
+        metadata = process_file(content, file_type)
+    except OSError: # error from PIL when image is supposed to be an image but is not.
+        raise superdesk.SuperdeskError('Failed to process file')
     file_name = get_file_name(content)
     content.seek(0)
     metadata = encode_metadata(metadata)
