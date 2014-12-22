@@ -1,7 +1,6 @@
 import logging
 from datetime import timedelta
 
-from eve.utils import config
 from flask import current_app as app
 from werkzeug.exceptions import HTTPException
 
@@ -160,7 +159,6 @@ def ingest_items(provider, items):
         if old_item:
             ingest_service.put(item['guid'], item)
         else:
-            item[config.VERSION] = 1
             try:
                 ingest_service.post([item])
             except HTTPException as e:

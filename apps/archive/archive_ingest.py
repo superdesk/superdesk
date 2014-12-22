@@ -251,6 +251,7 @@ def create_from_ingest_doc(dest_doc, source_doc):
     for key, val in source_doc.items():
         dest_doc.setdefault(key, val)
 
+    dest_doc[config.VERSION] = 1
     dest_doc[config.CONTENT_STATE] = STATE_FETCHED
 
 
