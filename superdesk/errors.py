@@ -1,6 +1,7 @@
 import logging
 from flask import current_app as app
 from flask import json
+from eve.validation import ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +14,7 @@ def get_registered_errors(self):
         }
 
 
-class SuperdeskError(Exception):
+class SuperdeskError(ValidationError):
     _codes = {}
     system_exception = None
 

@@ -173,15 +173,15 @@ def ingest_items(provider, items):
             if item.get('ingest_provider_sequence') is None:
                 ingest_service.set_ingest_provider_sequence(item, provider)
 
-		    old_item = ingest_service.find_one(_id=item['guid'], req=None)
-		    if old_item:
-		        ingest_service.put(item['guid'], item)
-		    else:
-		        try:
-		            ingest_service.post([item])
-		        except HTTPException as e:
-		            logger.error("Exception while persisting item in ingest collection", e)
-		            ingest_service.put(item['guid'], item)
+            old_item = ingest_service.find_one(_id=item['guid'], req=None)
+            if old_item:
+                ingest_service.put(item['guid'], item)
+            else:
+                try:
+                    ingest_service.post([item])
+                except HTTPException as e:
+                    logger.error("Exception while persisting item in ingest collection", e)
+                    ingest_service.put(item['guid'], item)
         except ProviderError:
             raise
         except Exception as ex:
