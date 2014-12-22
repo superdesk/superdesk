@@ -4,6 +4,7 @@ from superdesk.etree import etree
 from .iptc import subject_codes
 from superdesk.io import Parser
 import logging
+from superdesk.errors import ParserError
 
 XMLNS = 'http://iptc.org/std/nar/2006-10-01/'
 XHTML = 'http://www.w3.org/1999/xhtml'
@@ -21,12 +22,15 @@ class NewsMLTwoParser(Parser):
     def parse_message(self, tree):
         """Parse NewsMessage."""
         items = []
-        self.root = tree
-        for item_set in tree.findall(self.qname('itemSet')):
-            for item_tree in item_set:
-                item = self.parse_item(item_tree)
-                items.append(item)
-        return items
+        try:
+            self.root = tree
+            for item_set in tree.findall(self.qname('itemSet')):
+                for item_tree in item_set:
+                    item = self.parse_item(item_tree)
+                    items.append(item)
+            return items
+        except Exception as ex:
+            raise ParserError.newsmlTwoParserError(ex)
 
     def parse_item(self, tree):
         """Parse given xml"""

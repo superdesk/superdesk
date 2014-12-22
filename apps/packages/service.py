@@ -1,7 +1,8 @@
 from collections import Counter
 from eve.utils import ParsedRequest, config
 from eve.validation import ValidationError
-from superdesk import SuperdeskError, get_resource_service
+from superdesk.errors import SuperdeskApiError
+from superdesk import get_resource_service
 from apps.archive import ArchiveService
 from apps.content import LINKED_IN_PACKAGES
 from apps.archive import ArchiveVersionsService
@@ -66,12 +67,12 @@ class PackageService(ArchiveService):
             if len(root_groups) == 0:
                 message = 'Root group is missing.'
                 logger.error(message)
-                raise SuperdeskError.forbiddenError(message=message)
+                raise SuperdeskApiError.forbiddenError(message=message)
 
             if len(root_groups) > 1:
                 message = 'Only one root group is allowed.'
                 logger.error(message)
-                raise SuperdeskError.forbiddenError(message=message)
+                raise SuperdeskApiError.forbiddenError(message=message)
 
             self.check_that_all_groups_are_referenced_in_root(root_groups[0], groups)
 
@@ -79,7 +80,7 @@ class PackageService(ArchiveService):
         if any(group for group in groups if not group.get('id')):
             message = 'Group is missing id.'
             logger.error(message)
-            raise SuperdeskError.forbiddenError(message=message)
+            raise SuperdeskApiError.forbiddenError(message=message)
 
     def check_that_all_groups_are_referenced_in_root(self, root, groups):
         rest = [group.get('id') for group in groups if group.get('id') != 'root']
@@ -89,17 +90,17 @@ class PackageService(ArchiveService):
         if any(id for id, value in rest_counter.items() if value > 1):
             message = '{id} group is added multiple times.'.format(id=id)
             logger.error(message)
-            raise SuperdeskError.forbiddenError(message=message)
+            raise SuperdeskApiError.forbiddenError(message=message)
 
         if len(rest) != len(refs):
             message = 'The number of groups and of referenced groups in the root group do not match.'
             logger.error(message)
-            raise SuperdeskError.forbiddenError(message=message)
+            raise SuperdeskApiError.forbiddenError(message=message)
 
         if len(set(rest).intersection(refs)) != len(refs):
             message = 'Not all groups are referenced in the root group.'
             logger.error(message)
-            raise SuperdeskError.forbiddenError(message=message)
+            raise SuperdeskApiError.forbiddenError(message=message)
 
     def check_package_associations(self, docs):
         for (doc, group) in [(doc, group) for doc in docs for group in doc.get('groups', [])]:
@@ -124,7 +125,7 @@ class PackageService(ArchiveService):
         if not item:
             message = 'Invalid item reference: ' + assoc['itemRef']
             logger.error(message)
-            raise SuperdeskError.notFoundError(message=message)
+            raise SuperdeskApiError.notFoundError(message=message)
         return item, item_id, endpoint
 
     def update_link(self, package_id, assoc, delete=False):
@@ -147,13 +148,13 @@ class PackageService(ArchiveService):
             if itemRef == package_id:
                 message = 'Trying to self reference as an association.'
                 logger.error(message)
-                raise SuperdeskError.forbiddenError(message=message)
+                raise SuperdeskApiError.forbiddenError(message=message)
             counter[itemRef] += 1
 
         if any(itemRef for itemRef, value in counter.items() if value > 1):
             message = 'Content associated multiple times'
             logger.error(message)
-            raise SuperdeskError.forbiddenError(message=message)
+            raise SuperdeskApiError.forbiddenError(message=message)
 
     def check_for_circular_reference(self, package, item_id):
         if any(d for d in package.get(LINKED_IN_PACKAGES, []) if d['package'] == item_id):

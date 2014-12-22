@@ -43,8 +43,8 @@ class AFPIngestService(FileIngestService):
                             yield [item]
                     else:
                         self.move_file(self.path, filename, success=True)
-            except Exception as err:
-                logger.exception(err)
+            except Exception as ex:
+                logger.exception("Ingest Type: AFP - File: {} could not be processed".format(filename), ex)
                 self.move_file(self.path, filename, success=False)
 
         push_notification('ingest:update')

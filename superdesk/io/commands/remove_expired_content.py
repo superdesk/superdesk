@@ -5,6 +5,7 @@ from datetime import timedelta
 from superdesk.utc import utcnow
 from superdesk.notification import push_notification
 from superdesk.io.ingest_provider_model import DAYS_TO_KEEP
+from superdesk.errors import ProviderError
 
 
 logger = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ class RemoveExpiredContent(superdesk.Command):
                     remove_expired_data(provider)
                 except (Exception) as err:
                     logger.exception(err)
-                    pass
+                    raise ProviderError.expiredContentError(err)
                 finally:
                     push_notification('ingest:cleaned')
 

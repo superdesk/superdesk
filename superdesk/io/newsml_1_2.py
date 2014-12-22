@@ -2,6 +2,7 @@ import datetime
 from ..etree import etree
 from superdesk.io import Parser
 from superdesk.io.iptc import subject_codes
+from superdesk.errors import ParserError
 from superdesk.utc import utc
 
 
@@ -14,58 +15,61 @@ class NewsMLOneParser(Parser):
     def parse_message(self, tree):
         """Parse NewsMessage."""
         item = {}
-        self.root = tree
+        try:
+            self.root = tree
 
-        parsed_el = tree.find('NewsItem/NewsComponent/AdministrativeMetadata/Source')
-        if parsed_el is not None:
-            item['original_source'] = parsed_el.find('Party').get('FormalName', '')
+            parsed_el = tree.find('NewsItem/NewsComponent/AdministrativeMetadata/Source')
+            if parsed_el is not None:
+                item['original_source'] = parsed_el.find('Party').get('FormalName', '')
 
-        parsed_el = tree.find('NewsEnvelope/TransmissionId')
-        if parsed_el is not None:
-            item['ingest_provider_sequence'] = parsed_el.text
+            parsed_el = tree.find('NewsEnvelope/TransmissionId')
+            if parsed_el is not None:
+                item['ingest_provider_sequence'] = parsed_el.text
 
-        self.parse_news_identifier(item, tree)
-        self.parse_newslines(item, tree)
-        self.parse_news_management(item, tree)
+            self.parse_news_identifier(item, tree)
+            self.parse_newslines(item, tree)
+            self.parse_news_management(item, tree)
 
-        parsed_el = tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/Language')
-        if parsed_el is not None:
-            language = self.parse_attributes_as_dictionary(parsed_el)
-            item['language'] = language[0]['FormalName'] if len(language) else ''
+            parsed_el = tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/Language')
+            if parsed_el is not None:
+                language = self.parse_attributes_as_dictionary(parsed_el)
+                item['language'] = language[0]['FormalName'] if len(language) else ''
 
-        keywords = tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/Property')
-        item['keywords'] = self.parse_attribute_values(keywords, 'Keyword')
+            keywords = tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/Property')
+            item['keywords'] = self.parse_attribute_values(keywords, 'Keyword')
 
-        subjects = tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/SubjectCode/SubjectDetail')
-        subjects += tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/SubjectCode/SubjectMatter')
-        subjects += tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/SubjectCode/Subject')
+            subjects = tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/SubjectCode/SubjectDetail')
+            subjects += tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/SubjectCode/SubjectMatter')
+            subjects += tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/SubjectCode/Subject')
 
-        item['subject'] = self.format_subjects(subjects)
+            item['subject'] = self.format_subjects(subjects)
 
-        # item['ContentItem'] = self.parse_attributes_as_dictionary(
-        #    tree.find('NewsItem/NewsComponent/ContentItem'))
-        # item['Content'] = etree.tostring(
-        # tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'))
+            # item['ContentItem'] = self.parse_attributes_as_dictionary(
+            #    tree.find('NewsItem/NewsComponent/ContentItem'))
+            # item['Content'] = etree.tostring(
+            # tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'))
 
-        item['body_html'] = etree.tostring(
-            tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'),
-            encoding='unicode').replace('<body.content>', '').replace('</body.content>', '')
+            item['body_html'] = etree.tostring(
+                tree.find('NewsItem/NewsComponent/ContentItem/DataContent/nitf/body/body.content'),
+                encoding='unicode').replace('<body.content>', '').replace('</body.content>', '')
 
-        parsed_el = tree.findall('NewsItem/NewsComponent/ContentItem/Characteristics/Property')
-        characteristics = self.parse_attribute_values(parsed_el, 'Words')
-        item['word_count'] = characteristics[0] if len(characteristics) else None
+            parsed_el = tree.findall('NewsItem/NewsComponent/ContentItem/Characteristics/Property')
+            characteristics = self.parse_attribute_values(parsed_el, 'Words')
+            item['word_count'] = characteristics[0] if len(characteristics) else None
 
-        parsed_el = tree.find('NewsItem/NewsComponent/RightsMetadata/UsageRights/UsageType')
-        if parsed_el is not None:
-            item.setdefault('usageterms', parsed_el.text)
+            parsed_el = tree.find('NewsItem/NewsComponent/RightsMetadata/UsageRights/UsageType')
+            if parsed_el is not None:
+                item.setdefault('usageterms', parsed_el.text)
 
-        parsed_el = tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/Genre')
-        if parsed_el is not None:
-            item['genre'] = []
-            for el in parsed_el:
-                item['genre'].append({'name': el.get('FormalName')})
+            parsed_el = tree.findall('NewsItem/NewsComponent/DescriptiveMetadata/Genre')
+            if parsed_el is not None:
+                item['genre'] = []
+                for el in parsed_el:
+                    item['genre'].append({'name': el.get('FormalName')})
 
-        return self.populate_fields(item)
+            return self.populate_fields(item)
+        except Exception as ex:
+            raise ParserError.newsmlOneParserError(ex)
 
     def parse_elements(self, tree):
         items = {}

@@ -15,6 +15,7 @@ def get_registered_errors(self):
 
 class SuperdeskError(Exception):
     _codes = {}
+    system_exception = None
 
     def __init__(self, code):
         self.code = code
@@ -125,41 +126,137 @@ class InvalidStateTransitionError(SuperdeskApiError):
         super().__init__(message, status_code)
 
 
-class IngestApiError(SuperdeskError):
-    def __init__(self, code):
+class SuperdeskIngestError(SuperdeskError):
+    def __init__(self, code, exception, channel):
         self.code = code
+        self.message = self._codes.get(code, 'Unknown error')
+        self.system_exception = exception
+        self.channel = channel
 
+
+class ProviderError(SuperdeskIngestError):
     _codes = {
-        1101: "Error1 description.",
-        1102: "Error1 description",
-        1103: "Error1 description",
-        1104: "Error1 description"
-    }
-
-
-class IngestFtpError(SuperdeskError):
-    def __init__(self, code):
-        self.code = code
-
-    _codes = {
-        1101: "Error1 description.",
-        1102: "Error1 description",
-        1103: "Error1 description",
-        1104: "Error1 description"
+        2001: 'Provider could not be saved',
+        2002: 'Expired content could not be removed',
+        2003: 'Rule could not be applied',
+        2004: 'Ingest error',
+        2005: 'Anpa category error'
     }
 
     @classmethod
-    def credentialsError(cls):
-        return IngestFtpError(1101)
+    def providerAddError(cls, exception):
+        return ProviderError(2001, exception)
+
+    @classmethod
+    def expiredContentError(cls, exception):
+        return ProviderError(2002, exception)
+
+    @classmethod
+    def ruleError(cls, exception):
+        return ProviderError(2003, exception)
+
+    @classmethod
+    def ingestError(cls, exception):
+        return ProviderError(2004, exception)
+
+    @classmethod
+    def anpaError(cls, exception):
+        return ProviderError(2005, exception)
 
 
-class IngestFileError(SuperdeskError):
-    def __init__(self, code):
-        self.code = code
-
+class ParserError(SuperdeskIngestError):
     _codes = {
-        1101: "Error1 description.",
-        1102: "Error1 description",
-        1103: "Error1 description",
-        1104: "Error1 description"
+        1001: 'Message could not be parsed',
+        1002: 'Ingest file could not be parsed',
+        1003: 'ANPA file could not be parsed',
+        1004: 'NewsML1 input could not be processed',
+        1005: 'NewsML2 input could not be processed',
+        1006: 'NITF input could not be processed'
+    }
+
+    def __init__(self, code, exception, channel):
+        self.code = code
+        self.message = self._codes.get(code, 'Unknown error')
+        self.system_exception = exception
+        self.channel = channel
+
+    @classmethod
+    def parseMessageError(cls, exception):
+        return ParserError(1001, exception)
+
+    @classmethod
+    def parseFileError(cls, source, filename, exception):
+        logger.exception("Source Type: {} - File: {} could not be processed".format(source, filename))
+        return ParserError(1002, exception)
+
+    @classmethod
+    def anpaParseFileError(cls, filename, exception):
+        logger.exception("File: {} could not be processed".format(filename))
+        return ParserError(1003, exception)
+
+    @classmethod
+    def newsmlOneParserError(cls, exception):
+        logger.exception("NewsML1 input could not be processed")
+        return ParserError(1004, exception)
+
+    @classmethod
+    def newsmlTwoParserError(cls, exception):
+        logger.exception("NewsML2 input could not be processed")
+        return ParserError(1005, exception)
+
+    @classmethod
+    def nitfParserError(cls, exception):
+        logger.exception("File: {} could not be processed")
+        return ParserError(1006, exception)
+
+
+class IngestFileError(SuperdeskIngestError):
+    _codes = {
+        3001: 'Destination folder could not be created',
+        3002: 'Ingest file could not be copied'
+    }
+
+    @classmethod
+    def folderCreateError(cls, exception):
+        return IngestFileError(3001, exception)
+
+    @classmethod
+    def fileMoveError(cls, exception):
+        return IngestFileError(3002, exception)
+
+
+class IngestApiError(SuperdeskIngestError):
+    _codes = {
+        4000: "Unknown API ingest error",
+        4001: "API ingest connection has timed out.",
+        4002: "API ingest has too many redirects",
+        4003: "API ingest has request error",
+        4004: "API ingest Unicode Encode Error",
+        4005: 'API ingest xml parse error'
+    }
+
+    @classmethod
+    def apiTimeoutError(cls, exception):
+        return IngestApiError(4001, exception)
+
+    @classmethod
+    def apiRedirectError(cls, exception):
+        return IngestApiError(4002, exception)
+
+    @classmethod
+    def apiRequestError(cls, exception):
+        return IngestApiError(4003, exception)
+
+    @classmethod
+    def apiUnicodeError(cls, exception):
+        return IngestApiError(4004, exception)
+
+    @classmethod
+    def apiParseError(cls, exception):
+        return IngestApiError(4005, exception)
+
+
+class IngestFtpError(SuperdeskIngestError):
+    _codes = {
+        5000: "Unknown FTP ingest error"
     }

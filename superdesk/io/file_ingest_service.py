@@ -3,6 +3,7 @@ from datetime import timedelta
 import os
 import shutil
 from superdesk.utc import utcnow
+from superdesk.errors import IngestFileError
 
 
 class FileIngestService(IngestService):
@@ -18,11 +19,16 @@ class FileIngestService(IngestService):
                 os.makedirs(os.path.join(filepath, "_PROCESSED/"))
             if not os.path.exists(os.path.join(filepath, "_ERROR/")):
                 os.makedirs(os.path.join(filepath, "_ERROR/"))
+        except Exception as ex:
+            raise IngestFileError.folderCreateError(ex)
 
+        try:
             if success:
                 shutil.copy2(os.path.join(filepath, filename), os.path.join(filepath, "_PROCESSED/"))
             else:
                 shutil.copy2(os.path.join(filepath, filename), os.path.join(filepath, "_ERROR/"))
+        except Exception as ex:
+            raise IngestFileError.fileMoveError(ex)
         finally:
             os.remove(os.path.join(filepath, filename))
 

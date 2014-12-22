@@ -4,6 +4,7 @@ from datetime import datetime
 from superdesk.io import Parser
 from superdesk.io import get_word_count
 import xml.etree.ElementTree as etree
+from superdesk.errors import ParserError
 
 ITEM_CLASS_TEXT = 'text'
 ITEM_CLASS_PRE_FORMATTED = 'preformatted'
@@ -97,32 +98,35 @@ class NITFParser(Parser):
 
     def parse_message(self, tree):
         item = {}
-        docdata = tree.find('head/docdata')
-        # set the default type.
-        item['type'] = ITEM_CLASS_TEXT
-        item['guid'] = item['uri'] = docdata.find('doc-id').get('id-string')
-        item['urgency'] = docdata.find('urgency').get('ed-urg', '5')
-        item['pubstatus'] = docdata.attrib.get('management-status', 'usable')
-        item['firstcreated'] = get_norm_datetime(docdata.find('date.issue'))
-        item['versioncreated'] = get_norm_datetime(docdata.find('date.issue'))
-        item['expiry'] = get_norm_datetime(docdata.find('date.expire'))
-        item['subject'] = get_subjects(tree)
-        item['body_html'] = get_content(tree)
-        item['place'] = get_places(docdata)
-        item['keywords'] = get_keywords(docdata)
+        try:
+            docdata = tree.find('head/docdata')
+            # set the default type.
+            item['type'] = ITEM_CLASS_TEXT
+            item['guid'] = item['uri'] = docdata.find('doc-id').get('id-string')
+            item['urgency'] = docdata.find('urgency').get('ed-urg', '5')
+            item['pubstatus'] = docdata.attrib.get('management-status', 'usable')
+            item['firstcreated'] = get_norm_datetime(docdata.find('date.issue'))
+            item['versioncreated'] = get_norm_datetime(docdata.find('date.issue'))
+            item['expiry'] = get_norm_datetime(docdata.find('date.expire'))
+            item['subject'] = get_subjects(tree)
+            item['body_html'] = get_content(tree)
+            item['place'] = get_places(docdata)
+            item['keywords'] = get_keywords(docdata)
 
-        if docdata.find('ed-msg') is not None:
-            item['ednote'] = docdata.find('ed-msg').attrib.get('info')
+            if docdata.find('ed-msg') is not None:
+                item['ednote'] = docdata.find('ed-msg').attrib.get('info')
 
-        item['headline'] = tree.find('body/body.head/hedline/hl1').text
+            item['headline'] = tree.find('body/body.head/hedline/hl1').text
 
-        elem = tree.find('body/body.head/abstract')
-        item['abstract'] = elem.text if elem is not None else ''
+            elem = tree.find('body/body.head/abstract')
+            item['abstract'] = elem.text if elem is not None else ''
 
-        elem = tree.find('body/body.head/dateline/location/city')
-        item['dateline'] = elem.text if elem is not None else ''
-        item['byline'] = get_byline(tree)
+            elem = tree.find('body/body.head/dateline/location/city')
+            item['dateline'] = elem.text if elem is not None else ''
+            item['byline'] = get_byline(tree)
 
-        parse_meta(tree, item)
-        item.setdefault('word_count', get_word_count(item['body_html']))
-        return item
+            parse_meta(tree, item)
+            item.setdefault('word_count', get_word_count(item['body_html']))
+            return item
+        except Exception as ex:
+            raise ParserError.nitfParserError(ex)

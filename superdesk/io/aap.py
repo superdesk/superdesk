@@ -9,6 +9,7 @@ from superdesk.notification import push_notification
 from superdesk.io import register_provider
 from ..etree import etree
 from superdesk.utils import get_sorted_files, FileSortAttributes
+from superdesk.errors import ParserError
 
 
 logger = logging.getLogger(__name__)
@@ -55,24 +56,28 @@ class AAPIngestService(FileIngestService):
                             yield [item]
                     else:
                         self.move_file(self.path, filename, success=True)
-            except Exception as err:
-                logger.exception(err)
+            except:
+                logger.exception("Ingest Type: AAP - File: {0} could not be processed".format(filename))
                 self.move_file(self.path, filename, success=False)
 
         push_notification('ingest:update')
 
     def parse_file(self, filename, provider):
-        path = provider.get('config', {}).get('path', None)
+        try:
+            path = provider.get('config', {}).get('path', None)
 
-        if not path:
-            return []
+            if not path:
+                return []
 
-        with open(os.path.join(path, filename), 'r') as f:
-            item = self.parser.parse_message(etree.fromstring(f.read()))
+            with open(os.path.join(path, filename), 'r') as f:
+                item = self.parser.parse_message(etree.fromstring(f.read()))
 
-            item['firstcreated'] = normalize_date(item.get('firstcreated'), self.tz)
-            item['versioncreated'] = normalize_date(item.get('versioncreated'), self.tz)
+                item['firstcreated'] = normalize_date(item.get('firstcreated'), self.tz)
+                item['versioncreated'] = normalize_date(item.get('versioncreated'), self.tz)
 
-        return [item]
+            return [item]
+        except Exception as ex:
+            self.move_file(self.path, filename, success=False)
+            raise ParserError.parseFileError('AAP', filename, ex)
 
 register_provider(PROVIDER, AAPIngestService())

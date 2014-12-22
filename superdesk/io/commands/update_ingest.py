@@ -22,6 +22,7 @@ from superdesk.io import providers
 from superdesk.celery_app import celery
 from superdesk.utc import utcnow
 from superdesk.workflow import set_default_state
+from superdesk.errors import ProviderError
 
 
 UPDATE_SCHEDULE_DEFAULT = {'minutes': 5}
@@ -115,13 +116,16 @@ def update_provider(provider_id):
 
 
 def process_anpa_category(item):
-    anpa_categories = superdesk.get_resource_service('vocabularies').find_one(req=None, _id='categories')
-    if anpa_categories:
-        for anpa_category in anpa_categories['items']:
-            if anpa_category['is_active'] is True \
-                    and item['anpa-category']['qcode'].lower() == anpa_category['value'].lower():
-                item['anpa-category'] = {'qcode': item['anpa-category']['qcode'], 'name': anpa_category['name']}
-                break
+    try:
+        anpa_categories = superdesk.get_resource_service('vocabularies').find_one(req=None, _id='categories')
+        if anpa_categories:
+            for anpa_category in anpa_categories['items']:
+                if anpa_category['is_active'] is True \
+                        and item['anpa-category']['qcode'].lower() == anpa_category['value'].lower():
+                    item['anpa-category'] = {'qcode': item['anpa-category']['qcode'], 'name': anpa_category['name']}
+                    break
+    except Exception as ex:
+        raise ProviderError.anpaError(ex)
 
 
 def apply_rule_set(item, provider):
@@ -133,48 +137,54 @@ def apply_rule_set(item, provider):
     :param provider: provider object from whom the item was received
     :return: item
     """
+    try:
+        if 'rule_set' in provider and provider['rule_set']:
+            rule_set = superdesk.get_resource_service('rule_sets').find_one(_id=provider['rule_set'], req=None)
 
-    if 'rule_set' in provider and provider['rule_set']:
-        rule_set = superdesk.get_resource_service('rule_sets').find_one(_id=provider['rule_set'], req=None)
+            if rule_set and 'body_html' in item:
+                body = item['body_html']
 
-        if rule_set and 'body_html' in item:
-            body = item['body_html']
+                for rule in rule_set['rules']:
+                    body = body.replace(rule['old'], rule['new'])
 
-            for rule in rule_set['rules']:
-                body = body.replace(rule['old'], rule['new'])
+                item['body_html'] = body
 
-            item['body_html'] = body
-
-    return item
+        return item
+    except Exception as ex:
+        raise ProviderError.ruleError(ex)
 
 
 def ingest_items(provider, items):
     for item in filter_expired_items(provider, items):
-        item.setdefault('_id', item['guid'])
+        try:
+            item.setdefault('_id', item['guid'])
 
-        item['ingest_provider'] = str(provider['_id'])
-        item.setdefault('source', provider.get('source', ''))
-        set_default_state(item, STATE_INGESTED)
+            item['ingest_provider'] = str(provider['_id'])
+            item.setdefault('source', provider.get('source', ''))
+            set_default_state(item, STATE_INGESTED)
 
-        if 'anpa-category' in item:
-            process_anpa_category(item)
+            if 'anpa-category' in item:
+                process_anpa_category(item)
 
-        apply_rule_set(item, provider)
+            apply_rule_set(item, provider)
 
-        ingest_service = superdesk.get_resource_service('ingest')
+            ingest_service = superdesk.get_resource_service('ingest')
 
-        if item.get('ingest_provider_sequence') is None:
-            ingest_service.set_ingest_provider_sequence(item, provider)
+            if item.get('ingest_provider_sequence') is None:
+                ingest_service.set_ingest_provider_sequence(item, provider)
 
-        old_item = ingest_service.find_one(_id=item['guid'], req=None)
-        if old_item:
-            ingest_service.put(item['guid'], item)
-        else:
-            try:
-                ingest_service.post([item])
-            except HTTPException as e:
-                logger.error("Exception while persisting item in ingest collection", e)
-                ingest_service.put(item['guid'], item)
-
+		    old_item = ingest_service.find_one(_id=item['guid'], req=None)
+		    if old_item:
+		        ingest_service.put(item['guid'], item)
+		    else:
+		        try:
+		            ingest_service.post([item])
+		        except HTTPException as e:
+		            logger.error("Exception while persisting item in ingest collection", e)
+		            ingest_service.put(item['guid'], item)
+        except ProviderError:
+            raise
+        except Exception as ex:
+            raise ProviderError.ingestError(ex)
 
 superdesk.command('ingest:update', UpdateIngest())

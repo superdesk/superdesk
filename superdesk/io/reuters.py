@@ -10,10 +10,11 @@ from superdesk import get_resource_service
 from superdesk.io.ingest_service import IngestService
 
 from superdesk.utc import utcnow
-from superdesk.etree import etree
+from superdesk.etree import etree, ParseError
 from superdesk.io import register_provider
 from .newsml_2_0 import NewsMLTwoParser
 from .reuters_token import get_token
+from superdesk.errors import IngestApiError
 
 
 PROVIDER = 'reuters'
@@ -120,9 +121,18 @@ class ReutersIngestService(IngestService):
 
         try:
             response = requests.get(url, params=payload, timeout=21.0)
+        except requests.exceptions.Timeout as ex:
+            # Maybe set up for a retry, or continue in a retry loop
+            raise IngestApiError.apiTimeoutError(ex)
+        except requests.exceptions.TooManyRedirects as ex:
+            # Tell the user their URL was bad and try a different one
+            raise IngestApiError.apiRedirectError(ex)
+        except requests.exceptions.RequestException as ex:
+            # catastrophic error. bail.
+            raise IngestApiError.apiRequestError(ex)
         except Exception as error:
             traceback.print_exc()
-            raise error
+            raise IngestApiError(error)
 
         if response.status_code == 404:
             raise LookupError('Not found %s' % payload)
@@ -133,7 +143,13 @@ class ReutersIngestService(IngestService):
             return etree.fromstring(response.content)
         except UnicodeEncodeError as error:
             traceback.print_exc()
-            raise error
+            raise IngestApiError.apiUnicodeError(error)
+        except ParseError as error:
+            traceback.print_exc()
+            raise IngestApiError.apiParseError(error)
+        except Exception as error:
+            traceback.print_exc()
+            raise IngestApiError(error)
 
     def get_url(self, endpoint):
         """Get API url for given endpoint."""
