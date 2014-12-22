@@ -1,0 +1,26 @@
+<form name="newGroupForm">
+
+    <div class="modal-header">
+        <h3 class="pull-left">New group</h3>
+        <button type="button" class="close" ng-click="cancel()" ng-hide="saving"><i class="icon-close-small"></i></button>
+    </div>
+
+    <div class="modal-body">
+        <div class="content">
+            <div class="field">
+                <label for="group_name" translate>GROUP NAME</label>
+                <input id="group_name" name="group_name" placeholder="{{:: 'Group Name' | translate}}" type="text" ng-model="group_name" required>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <div class="foooter">
+            <button class="btn btn-medium" ng-click="cancel()" translate>Cancel</button>
+            <button class="btn btn-info btn-medium"
+                    ng-click="newGroupForm.$valid && save(group_name)"
+                    ng-disabled="newGroupForm.$invalid"
+                    translate>Save</button>
+        </div>
+    </div>
+</form>

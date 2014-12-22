@@ -81,27 +81,28 @@
             return api.packages.save(new_package);
         };
 
-        this.addItemsToMainPackage = function addToPackage(currentPackage, items) {
-            var self = this;
-            var idRef = 'main';
-
-            var patch = _.pick(currentPackage, 'groups');
-            var mainGroup = _.find(patch.groups, function(group) { return group.id === idRef; });
-            _.forEach(items, function(item) {
-                mainGroup.refs.push(self.getReferenceFor(item));
-            });
-            return api.packages.save(currentPackage, patch);
-        };
-
         this.addItemsToPackage = function addToPackage(currentPackage, items, groupId) {
             var self = this;
 
             var patch = _.pick(currentPackage, 'groups');
-            var rootGroup = _.find(patch.groups, function(group) { return group.id === 'root'; });
+            var targetGroup = _.find(patch.groups, function(group) { return group.id === groupId; });
             _.forEach(items, function(item) {
-                var newId = self.generateNewId(rootGroup.refs, groupId);
-                rootGroup.refs.push({idRef: newId});
-                patch.groups.push(self.getGroupFor(item, newId));
+                targetGroup.push(self.getReferenceFor(item));
+            });
+            return api.packages.save(currentPackage, patch);
+        };
+
+        this.addGroupToPackge = function addGroupToPackage(currentPackage, groupId) {
+            var self = this;
+
+            var patch = _.pick(currentPackage, 'groups');
+            var rootGroup = _.find(patch.groups, function(group) { return group.id === 'root'; });
+            var newId = self.generateNewId(rootGroup.refs, groupId);
+            rootGroup.refs.push({idRef: newId});
+            patch.groups.push({
+                refs: [],
+                id: newId,
+                role: 'grpRole:' + newId
             });
             return api.packages.save(currentPackage, patch);
         };
@@ -121,25 +122,6 @@
         $scope.selected.hide_header = true;
         $scope.contenttab = true;
 
-        $scope.itemTypes = [
-            {
-            icon: 'text',
-            label: 'Story'
-        },
-        {
-            icon: 'picture',
-            label: 'Image'
-        },
-        {
-            icon: 'video',
-            label: 'Video'
-        },
-        {
-            icon: 'audio',
-            label: 'Audio'
-        }
-        ];
-
         function fetch() {
             packagesService.fetch($route.current.params._id).
                 then(function(fetched_package) {
@@ -148,9 +130,9 @@
             });
         }
 
-        $scope.append = function(type) {
-            superdesk.intent('append', 'package', {type: type.icon}).then(function(items) {
-                packagesService.addItemsToMainPackage($scope.selected.preview, items)
+        $scope.createGroup = function() {
+            superdesk.intent('create', 'group').then(function(group_name) {
+                packagesService.addGroupToPackge($scope.selected.preview, group_name)
                 .then(function(updatedPackage) {
                     $scope.selected.preview = updatedPackage;
                     $scope.item = updatedPackage;
@@ -159,6 +141,19 @@
         };
 
         fetch();
+    }
+
+    CreateGroupCtrl.$inject = ['$scope', 'api'];
+    function CreateGroupCtrl($scope) {
+        $scope.group_name = null;
+
+        $scope.cancel = function() {
+            $scope.reject();
+        };
+
+        $scope.save = function saveGroup(name) {
+            $scope.resolve(name);
+        };
     }
 
     var app = angular.module('superdesk.packaging', [
@@ -210,6 +205,14 @@
             condition: function(item) {
                 return item.type === 'composite';
             }
+        })
+        .activity('create.group', {
+            label: gettext('Create new group'),
+            modal: true,
+            cssClass: 'create-group-modal responsive-popup',
+            controller: CreateGroupCtrl,
+            templateUrl: 'scripts/superdesk-packaging/views/create-group.html',
+            filters: [{action: 'create', type: 'group'}]
         });
     }])
     .config(['apiProvider', function(apiProvider) {

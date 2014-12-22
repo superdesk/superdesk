@@ -31,38 +31,32 @@
 
     .package-edit-container {
         position: absolute;
-        top:10px;
+        top: 0;
         left: 0;
         right: 0;
         bottom: 0;
         overflow: hidden;
 
-        .create-package {
-            padding-left: 10px;
-            padding-right: 10px;
-            [class*="filetype-icon-large"] {
-                zoom: 0.6;
-                .opacity(60);
-                margin-right: 60px;
-            }
-            .dropdown-menu {
-                margin-top: -3px;
-                left: 20px; right: 20px;
-                &:before {
-                    display: none;
-                }
-                li {
-                    float: left;
-                    width: 50%;
-                    margin-bottom: 10px;
-                }
-            }
+        .create-group {
+            margin-top: 10px;
         }
         .package-preview {
             position: absolute;
             left: 0; right: 0;
-            margin-top: 10px;
-            min-height: 600px;
+            top: 0;
+            min-height: 700px;
         }
     }
 }
+
+.create-group-modal {
+    width: 350px;
+    height: 200px;
+    transform: translate(0, 50%) !important;
+    -ms-transform: translate(0, 50%) !important; /* IE 9 */
+    -webkit-transform: translate(0, 50%) !important; /* Safari and Chrome */
+    .modal-body {
+        overflow: hidden;
+   }
+}
+
