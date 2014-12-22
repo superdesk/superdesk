@@ -98,10 +98,6 @@ class UploadService(BaseService):
         file_name, content_type, metadata = res
         cropping_data = self.get_cropping_data(doc)
         _, out = crop_image(content, filename, cropping_data)
-        # for heaviest files, `out` contains a BufferedRandom stream,
-        # then it's not possible to retrieve the length and `getvalue()` is not available
-        if hasattr(out, 'getvalue'):
-            metadata['length'] = json.dumps(len(out.getvalue()))
         try:
             logger.debug('Going to save media file with %s ' % file_name)
             out.seek(0)
