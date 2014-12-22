@@ -67,7 +67,7 @@ def process_file_from_stream(content, filename=None, content_type=None):
     file_type, ext = content_type.split('/')
     try:
         metadata = process_file(content, file_type)
-    except OSError: # error from PIL when image is supposed to be an image but is not.
+    except OSError:  # error from PIL when image is supposed to be an image but is not.
         raise superdesk.SuperdeskError('Failed to process file')
     file_name = get_file_name(content)
     content.seek(0)
