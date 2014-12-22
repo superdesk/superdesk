@@ -85,6 +85,27 @@ Feature: User preferences
       """
 
     @auth
+    Scenario: Update editor theme user preference settings
+      Given we have sessions "/sessions"
+
+      When we patch "/preferences/#SESSION_ID#"
+      """
+      {"user_preferences": {"editor:theme": {"theme": "railscast"}}}
+      """
+
+      When we get "/preferences/#SESSION_ID#"
+      Then we get existing resource
+      """
+      {"user": "#USERS_ID#", "user_preferences": {"editor:theme":
+      {
+      "type": "string",
+      "theme": "railscast",
+      "label": "Users article edit screen editor theme",
+      "category": "editor"
+      }}}
+      """
+
+    @auth
     Scenario: Update user preference settings - wrong preference
       Given we have sessions "/sessions"
 

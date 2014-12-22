@@ -51,6 +51,13 @@ class PreferencesResource(Resource):
         'category': 'archive'
     })
 
+    superdesk.register_default_user_preference('editor:theme', {
+        'type': 'string',
+        'theme': '',
+        'label': 'Users article edit screen editor theme',
+        'category': 'editor'
+    })
+
     superdesk.register_default_user_preference('workqueue:items', {
         'items': []
     })
