@@ -69,7 +69,8 @@ Feature: Archive Ingest
 	            "residRef": "tag:reuters.com,0000:binary_GM1EA7M13RP01-BASEIMAGE"
 	        }},
 		 "task_id": "",
-		 "state": "fetched"}
+		 "state": "fetched",
+		 "_version": 1}
   		"""
         And we get archive ingest result
         """
@@ -115,7 +116,8 @@ Feature: Archive Ingest
 		    "_items": [{
 		        "type": "picture",
 		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS",
-		        "state": "fetched"
+		        "state": "fetched",
+		        "_version": 1
 		    }, {
 		        "type": "composite",
 		        "groups": [{
@@ -139,23 +141,28 @@ Feature: Archive Ingest
 		            }]
 		        }],
 		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM",
-		        "state": "fetched"
+		        "state": "fetched",
+		        "_version": 1
 		    }, {
 		        "type": "picture",
 		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT",
-		        "state": "fetched"
+		        "state": "fetched",
+		        "_version": 1
 		    }, {
 		        "type": "text",
 		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0ZP",
-		        "state": "fetched"
+		        "state": "fetched",
+		        "_version": 1
 		    }, {
 		        "type": "picture",
 		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M",
-		        "state": "fetched"
+		        "state": "fetched",
+		        "_version": 1
 		    }, {
 		        "type": "text",
 		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NN",
-		        "state": "fetched"
+		        "state": "fetched",
+		        "_version": 1
 		    }]
 		}
 		"""
@@ -198,7 +205,8 @@ Feature: Archive Ingest
             }
         },
 		 "task_id": "",
-		 "state": "fetched"}
+		 "state": "fetched",
+		 "_version": 1}
   		"""
   		And we get rendition "stream" with mimetype "audio/mpeg"
         And we get archive ingest result
