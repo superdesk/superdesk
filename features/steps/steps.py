@@ -1,3 +1,12 @@
+# -*- coding: utf-8; -*-
+#
+# This file is part of Superdesk.
+#
+# Copyright 2013, 2014 Sourcefabric z.u. and contributors.
+#
+# For the full copyright and license information, please see the
+# AUTHORS and LICENSE files distributed with this source code, or
+# at https://www.sourcefabric.org/superdesk/license
 
 import os
 from datetime import datetime, timedelta
@@ -1117,6 +1126,11 @@ def step_set_limit(context):
 @then('we get email')
 def step_we_get_email(context):
     assert check_if_email_sent(context, context.text)
+
+
+@then('we get no email')
+def step_we_get_no_email(context):
+    assert len(context.outbox) == 0
 
 
 def check_if_email_sent(context, body):
