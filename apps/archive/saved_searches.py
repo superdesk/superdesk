@@ -75,6 +75,7 @@ class SavedSearchesService(BaseService):
         Builds a query which follows ElasticSearch syntax from Saved Search document.
         1. Converts {"name":"ball","filter": {"query":{"q":"ball","repo":"ingest"}}} to the below elastic query
         {
+            "name": "ball",
             "query": {
                 "filtered": {
                     "query": {
@@ -92,6 +93,7 @@ class SavedSearchesService(BaseService):
         {"name":"ball and text","filter":{"query":{"q":"ball","repo":"ingest","type":['text']}}}
         to the below elastic query
         {
+            "name": "ball",
             "query": {
                 "filtered": {
                     "filter": {"and": [{"terms": {"type": ["text"]}}]},
@@ -165,8 +167,8 @@ class SavedSearchesService(BaseService):
 
 class SavedSearchItemsResource(Resource):
     """
-    Since Eve doesn't more than one URL for a resource, this resource is being created to fetch items based on the
-    search string in the Saved Search document.
+    Since Eve doesn't support more than one URL for a resource, this resource is being created to fetch items based on
+    the search string in the Saved Search document.
     """
 
     endpoint_name = 'saved_search_items'
@@ -176,12 +178,10 @@ class SavedSearchItemsResource(Resource):
     url = 'saved_searches/<regex("[a-zA-Z0-9:\\-\\.]+"):saved_search_id>/items'
 
     resource_methods = ['GET']
+    item_methods = []
 
 
 class SavedSearchItemsService(SavedSearchesService):
-
-    custom_hateoas = {'self': {'title': 'Archive', 'href': '/{location}/{_id}'}}
-
     def get(self, req, **lookup):
         saved_search_id = lookup['lookup']['saved_search_id']
         saved_search = get_resource_service('saved_searches').find_one(req=None, _id=saved_search_id)
