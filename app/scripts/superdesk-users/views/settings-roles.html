@@ -22,7 +22,7 @@
 			<div ng-show="!roles.length" class="alert alert-info" translate>No roles created yet.</div>
 		</ul>
 
-		<div class="new-role-modal mini-modal" ng-if="editRole">
+		<div class="new-role-modal mini-modal inline" ng-if="editRole">
 			<div class="title" ng-show="editRole._id" translate>Edit Role</div>
 			<div class="title" ng-show="!editRole._id" translate>New Role</div>
 			<div class="close" ng-click="cancel()">

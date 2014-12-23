@@ -42,7 +42,7 @@
         /**
          * Single query instance
          */
-        function Query() {
+        function Query(q) {
             var DEFAULT_SIZE = 25,
                 size,
                 filters = [];
@@ -141,9 +141,9 @@
 
                 paginate(criteria, search);
 
-                if (search.q) {
+                if (search.q || q) {
                     criteria.query.filtered.query = {query_string: {
-                        query: search.q,
+                        query: search.q || q,
                         lenient: false,
                         default_operator: 'AND'
                     }};
@@ -493,7 +493,7 @@
                 require: '^sdSearchContainer',
                 templateUrl: 'scripts/superdesk-search/views/search-results.html',
                 link: function(scope, elem, attr, controller) {
-                    scope.simple = (attr.simple === undefined) ? false : true;
+
                     var multiSelectable = (attr.multiSelectable === undefined) ? false : true;
 
                     scope.flags = controller.flags;

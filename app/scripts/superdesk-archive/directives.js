@@ -88,7 +88,7 @@ define([
                 },
                 link: function(scope, elem) {
                     scope.$watchGroup(['item', 'item.groups'], function() {
-                        if (scope.item !== null) {
+                        if (scope.item && scope.item.groups) {
                             scope.tree = solveRefs(
                                 _.find(scope.item.groups, {id: 'root'}),
                                 scope.item.groups
@@ -289,7 +289,6 @@ define([
                 restrict: 'A',
                 templateUrl: require.toUrl('./views/media-box.html'),
                 link: function(scope, element, attrs) {
-                    scope.simple = (attrs.simple === undefined) ? false : true;
 
                     scope.$watch('view', function(view) {
                         switch (view) {
