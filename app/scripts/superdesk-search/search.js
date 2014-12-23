@@ -704,6 +704,12 @@
 
                     function getActive() {
                         scope.active = search.getSort();
+                        var srch = $location.search();
+                        if (srch.q && srch.q !== '') {
+                            scope.queryString = srch.q;
+                        } else {
+                            scope.queryString = null;
+                        }
                     }
 
                     scope.sort = function sort(field) {
