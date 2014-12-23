@@ -30,7 +30,10 @@
                     <i class="icon-plus-small icon-white"></i>{{:: 'Create New Group' | translate }}
                 </button>
             </div>
-            <div sd-package data-item="item"></div>
+            <div class="content">
+                <div class="title" ng-show="item.headline">{{ item.headline }}</div>
+                <div sd-package data-item="item" class="composite-preview"></div>
+            </div>
         </div>
     </div>
 </div>
