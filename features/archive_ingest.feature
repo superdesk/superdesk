@@ -233,3 +233,32 @@ Feature: Archive Ingest
         Then we get new resource
         When we get "/archive?q=#DESKS_ID#"
         Then we get list with 1 items
+
+    @auth
+    @provider
+    Scenario: Fetched item should have "in_progress" state when locked and edited
+        Given empty "archive"
+        And "desks"
+        """
+        [{"name": "Sports"}]
+        """
+        And ingest from "reuters"
+        """
+        [{"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"}]
+        """
+        When we post to "/archive_ingest"
+        """
+        {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "desk": "#DESKS_ID#"}
+        """
+        And we post to "/archive/tag:reuters.com,2014:newsml_LOVEA6M0L7U2E/lock"
+        """
+        {}
+        """
+        And we patch "/archive/tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"
+        """
+        {"headline": "test 2"}
+        """
+        Then we get existing resource
+        """
+        {"headline": "test 2", "state": "in_progress", "task": {"desk": "#DESKS_ID#"}}
+        """
