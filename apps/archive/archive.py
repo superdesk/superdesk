@@ -1,5 +1,3 @@
-from apps.auth.errors import ForbiddenError
-
 SOURCE = 'archive'
 
 import flask
@@ -10,12 +8,8 @@ from .common import on_create_item, on_create_media_archive, on_update_media_arc
 from .common import get_user
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
-<<<<<<< HEAD
-from superdesk import SuperdeskError, get_resource_service
-=======
 from superdesk import get_resource_service
-from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
->>>>>>> [SD-1297] Refactoring API (HTTP) errors
+from superdesk.errors import SuperdeskApiError
 from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, ACTIVITY_DELETE
@@ -134,7 +128,7 @@ class ArchiveService(BaseService):
         user = get_user()
 
         if 'unique_name' in updates and (user['active_privileges'].get('metadata_uniquename', 0) == 0):
-            raise ForbiddenError("Unauthorized to modify Unique Name")
+            raise SuperdeskApiError.forbiddenError("Unauthorized to modify Unique Name")
 
         remove_unwanted(updates)
 

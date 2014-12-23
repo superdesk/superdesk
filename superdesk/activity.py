@@ -138,18 +138,18 @@ class ActivityService(BaseService):
         # make sure that the user making the read notification is in the notification list
         if user_id not in updates.get('read').keys():
             raise SuperdeskApiError.forbiddenError('User is not in the notification list')
-        
-		# make sure the transition is from not read to read
+
+        # make sure the transition is from not read to read
         if not (updates.get('read')[user_id] == 1 and original.get('read')[user_id] == 0):
             raise SuperdeskApiError.forbiddenError('Can not set notification as read')
-        
-		# make sure that no other users are being marked as read
+
+        # make sure that no other users are being marked as read
         for read_entry in updates.get('read'):
             if read_entry != user_id:
                 if updates.get('read')[read_entry] != original.get('read')[read_entry]:
                     raise SuperdeskApiError.forbiddenError('Can not set other users notification as read')
-        
-		# make sure that no other fields are being up dated just read and _updated
+
+        # make sure that no other fields are being up dated just read and _updated
         if len(updates) != 2:
             raise SuperdeskApiError.forbiddenError('Can not update')
 

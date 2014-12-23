@@ -212,5 +212,5 @@ Feature: User Resource
         """
         Then we get error 400
         """
-        {"_issues": {"validator exception": "Insufficient privileges to change the role"}, "_status": "ERR"}
+        {"_status": "ERR", "_issues": {"validator exception": "403"}}
         """

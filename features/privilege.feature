@@ -15,7 +15,7 @@ Feature: Privilege
             """
             {"username": "foo"}
             """
-        Then we get response code 401
+        Then we get response code 403
 
     @auth
     Scenario: Post to a resource having role with required privilege

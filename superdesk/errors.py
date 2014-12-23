@@ -1,3 +1,14 @@
+# -*- coding: utf-8; -*-
+#
+# This file is part of Superdesk.
+#
+# Copyright 2013, 2014 Sourcefabric z.u. and contributors.
+#
+# For the full copyright and license information, please see the
+# AUTHORS and LICENSE files distributed with this source code, or
+# at https://www.sourcefabric.org/superdesk/license
+
+
 import logging
 from flask import current_app as app
 from flask import json
@@ -20,10 +31,10 @@ class SuperdeskError(ValidationError):
 
     def __init__(self, code):
         self.code = code
-        self.description = self._codes.get(code)
+        self.description = self._codes.get(code, 'Unknown error')
 
     def __str__(self):
-        return repr(self.code)
+        return "{} Error {} - {}".format(self.__class__.__name__, self.code, self.description)
 
 
 class SuperdeskApiError(SuperdeskError):
@@ -46,6 +57,8 @@ class SuperdeskApiError(SuperdeskError):
 
         if payload:
             self.payload = payload
+
+        logger.error("HTTP Exception {} has been raised: {}".format(status_code, message))
 
     def to_dict(self):
         """Create dict for json response."""
@@ -133,6 +146,10 @@ class SuperdeskIngestError(SuperdeskError):
         self.message = self._codes.get(code, 'Unknown error')
         self.system_exception = exception
         self.channel = channel
+        if channel:
+            logger.error("{}: {} on channel {}".format(self, exception, channel))
+        else:
+            logger.error("{}: {}".format(self, exception))
 
 
 class ProviderError(SuperdeskIngestError):
@@ -175,11 +192,10 @@ class ParserError(SuperdeskIngestError):
         1006: 'NITF input could not be processed'
     }
 
-    def __init__(self, code, exception, channel):
+    def __init__(self, code, exception):
         self.code = code
         self.message = self._codes.get(code, 'Unknown error')
         self.system_exception = exception
-        self.channel = channel
 
     @classmethod
     def parseMessageError(cls, exception):

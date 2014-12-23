@@ -12,13 +12,6 @@ import logging
 
 from flask import abort, current_app as app
 from eve.utils import config
-<<<<<<< HEAD
-=======
-from apps.archive import ArchiveVersionsResource
-from superdesk import is_workflow_state_transition_valid
-from superdesk.errors import InvalidStateTransitionError
->>>>>>> [SD-1297] Refactoring API (HTTP) errors
-
 from apps.archive import ArchiveVersionsResource
 from apps.archive.common import update_state
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata

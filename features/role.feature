@@ -66,7 +66,7 @@ Feature: Role Resource
             """
             {"name": "Sub Editor"}
             """
-        Then we get response code 401
+        Then we get response code 403
 
     @auth
     Scenario: Administrators can write to users and roles
@@ -103,7 +103,7 @@ Feature: Role Resource
             """
             {"name": "Sub Editing Desk"}
             """
-        Then we get response code 401
+        Then we get response code 403
 
     @auth
     Scenario: Role names are unique case insensitive

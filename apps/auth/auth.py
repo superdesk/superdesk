@@ -3,7 +3,6 @@ from eve.auth import TokenAuth
 from flask import current_app as app, request
 import flask
 from superdesk.resource import Resource
-from superdesk import get_resource_service, get_resource_privileges
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service, get_resource_privileges, get_intrinsic_privileges
 

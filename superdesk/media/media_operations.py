@@ -67,7 +67,7 @@ def process_file_from_stream(content, content_type=None):
     try:
         metadata = process_file(content, file_type)
     except OSError:  # error from PIL when image is supposed to be an image but is not.
-        raise superdesk.SuperdeskError('Failed to process file')
+        raise SuperdeskApiError.internalError('Failed to process file')
     file_name = get_file_name(content)
     content.seek(0)
     metadata = encode_metadata(metadata)

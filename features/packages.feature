@@ -407,7 +407,7 @@ Feature: Packages
             "guid": "tag:example.com,0000:newsml_BRE9A605"
         }
         """
-        Then we get error 400
+        Then we get error 403
         """
         {"_message": "Root group is missing.", "_status": "ERR"}
         """
@@ -440,7 +440,7 @@ Feature: Packages
             "guid": "tag:example.com,0000:newsml_BRE9A605"
         }
         """
-        Then we get error 400
+        Then we get error 403
         """
         {"_message": "Only one root group is allowed.", "_status": "ERR"}
         """
@@ -472,7 +472,7 @@ Feature: Packages
             "guid": "tag:example.com,0000:newsml_BRE9A605"
         }
         """
-        Then we get error 400
+        Then we get error 403
         """
         {"_message": "The number of groups and of referenced groups in the root group do not match.", "_status": "ERR"}
         """
@@ -515,7 +515,7 @@ Feature: Packages
             "guid": "tag:example.com,0000:newsml_BRE9A605"
         }
         """
-        Then we get error 400
+        Then we get error 403
         """
         {"_message": "Not all groups are referenced in the root group.", "_status": "ERR"}
         """
@@ -584,7 +584,7 @@ Feature: Packages
         """
         Then we get error 400
         """
-        {"_issues": {"validator exception": "The number of groups and of referenced groups in the root group do not match."}, "_status": "ERR"}
+        {"_status": "ERR", "_issues": {"validator exception": "403"}}
         """
 
     @auth

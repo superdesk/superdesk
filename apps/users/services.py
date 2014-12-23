@@ -4,11 +4,7 @@ from flask import current_app as app
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_DELETE
 from superdesk.services import BaseService
 from superdesk.utils import is_hashed, get_hash
-<<<<<<< HEAD
-from superdesk import get_resource_service, SuperdeskError, get_resource_privileges
-=======
-from superdesk import get_resource_service
->>>>>>> [SD-1297] Refactoring API (HTTP) errors
+from superdesk import get_resource_service, get_resource_privileges
 from superdesk.emails import send_user_status_changed_email, send_activate_account_email
 from superdesk.utc import utcnow
 from superdesk.privilege import get_privilege_list
@@ -97,7 +93,7 @@ class UsersService(BaseService):
 
         if 'role' in updates and 'active_privileges' in flask.g.user:
             if not get_resource_privileges('users')['PATCH'] in flask.g.user['active_privileges']:
-                raise ForbiddenError("Insufficient privileges to change the role")
+                raise SuperdeskApiError.forbiddenError("Insufficient privileges to change the role")
 
     def update(self, id, updates):
         if is_sensitive_update(updates) and not current_user_has_privilege('users'):
@@ -126,7 +122,7 @@ class UsersService(BaseService):
         """
 
         if 'user' in flask.g and str(lookup.get('_id')) == str(flask.g.user['_id']):
-            raise ForbiddenError("Not allowed to delete your own profile.")
+            raise SuperdeskApiError.forbiddenError("Not allowed to delete your own profile.")
 
         return super().delete(lookup)
 

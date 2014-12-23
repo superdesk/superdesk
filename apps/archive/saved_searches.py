@@ -16,9 +16,9 @@ from flask import request
 from eve.utils import ParsedRequest
 from eve_elastic.elastic import build_elastic_query
 
-from superdesk import Resource, get_resource_service, SuperdeskError
+from superdesk import Resource, get_resource_service
 from superdesk.services import BaseService
-
+from superdesk.errors import SuperdeskApiError
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +85,7 @@ class SavedSearchesService(BaseService):
         """
 
         if not doc['filter'].get('query'):
-            raise SuperdeskError(message='Fail to validate the filter.', status_code=400)
+            raise SuperdeskApiError.badRequestError('Fail to validate the filter.')
 
         location, elastic_query = self.get_location(doc), build_elastic_query(
             {k: v for k, v in doc['filter']['query'].items() if k != 'repo'})
@@ -106,7 +106,7 @@ class SavedSearchesService(BaseService):
             get_resource_service(index).get(req=parsed_request, lookup={})
         except Exception as e:
             logger.exception(e)
-            raise SuperdeskError(message='Fail to validate the filter against %s.' % index, status_code=400)
+            raise SuperdeskApiError.badRequestError('Fail to validate the filter against %s.' % index)
 
 
 class SavedSearchItemsResource(Resource):
@@ -131,7 +131,7 @@ class SavedSearchItemsService(SavedSearchesService):
         saved_search = get_resource_service('saved_searches').find_one(req=None, _id=saved_search_id)
 
         if not saved_search:
-            raise SuperdeskError(message="Invalid Saved Search", status_code=404)
+            raise SuperdeskApiError.notFoundError("Invalid Saved Search")
 
         return self.__process_and_fetch_documents(saved_search)
 
@@ -144,7 +144,7 @@ class SavedSearchItemsService(SavedSearchesService):
         """
 
         if not doc['filter'].get('query'):
-            raise SuperdeskError(message='Fail to validate the filter.', status_code=400)
+            raise SuperdeskApiError.badRequestError('Fail to validate the filter.')
 
         location, elastic_query = self.get_location(doc), build_elastic_query(
             {k: v for k, v in doc['filter']['query'].items() if k != 'repo'})
@@ -155,4 +155,4 @@ class SavedSearchItemsService(SavedSearchesService):
             return get_resource_service(location).get(req=parsed_request, lookup={})
         except Exception as e:
             logger.exception(e)
-            raise SuperdeskError(message='Fail to validate the filter against %s.' % location, status_code=400)
+            raise SuperdeskApiError.badRequestError('Fail to validate the filter against %s.' % location)
