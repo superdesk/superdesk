@@ -1,3 +1,14 @@
+# -*- coding: utf-8; -*-
+#
+# This file is part of Superdesk.
+#
+# Copyright 2013, 2014 Sourcefabric z.u. and contributors.
+#
+# For the full copyright and license information, please see the
+# AUTHORS and LICENSE files distributed with this source code, or
+# at https://www.sourcefabric.org/superdesk/license
+
+
 from datetime import datetime
 from uuid import uuid4
 
@@ -174,3 +185,14 @@ def remove_unwanted(doc):
     for attr in ['_type', 'desk']:
         if attr in doc:
             del doc[attr]
+
+
+def is_assigned_to_a_desk(doc):
+    """
+    Returns True if the 'doc' is being submitted to a desk. False otherwise.
+
+    :param doc: doc must be from archive collection
+    :return: True if the 'doc' is being submitted to a desk, else False.
+    """
+
+    return doc.get('task') and doc['task'].get('desk')

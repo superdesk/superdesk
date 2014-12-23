@@ -14,7 +14,6 @@ Feature: Content Spiking
         And we get version 2
         And we get global spike expiry
 
-
     @auth
     Scenario: Spike a desk content
         Given empty "desks"
@@ -40,6 +39,21 @@ Feature: Content Spiking
         And we get spiked content "item-1"
         And we get version 2
         And we get desk spike expiry after "60"
+
+    @auth
+    @provider
+    Scenario: Spike fetched content
+        Given empty "archive"
+        And ingest from "reuters"
+            """
+            [{"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"}]
+            """
+        When we post to "/archive_ingest"
+            """
+            {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"}
+            """
+        When we spike "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"
+        Then we get OK response
 
     @auth
     Scenario: Unspike a content

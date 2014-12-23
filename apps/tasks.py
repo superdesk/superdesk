@@ -1,6 +1,17 @@
+# -*- coding: utf-8; -*-
+#
+# This file is part of Superdesk.
+#
+# Copyright 2013, 2014 Sourcefabric z.u. and contributors.
+#
+# For the full copyright and license information, please see the
+# AUTHORS and LICENSE files distributed with this source code, or
+# at https://www.sourcefabric.org/superdesk/license
+
+
 from eve.utils import ParsedRequest
 from eve.versioning import resolve_document_version
-from apps.archive.common import insert_into_versions
+from apps.archive.common import insert_into_versions, is_assigned_to_a_desk
 from superdesk.resource import Resource
 from superdesk import InvalidStateTransitionError, SuperdeskError
 from superdesk.notification import push_notification
@@ -100,13 +111,6 @@ class TasksService(BaseService):
         if status == 'done':
             task.setdefault('finished_at', utcnow())
 
-    def __is_assigned_to_a_desk(self, doc):
-        """
-        Returns True if the 'doc' is being submitted to a desk. False otherwise.
-        """
-
-        return doc.get('task') and doc['task'].get('desk')
-
     def __is_content_moved_from_desk(self, doc):
         """
         Returns True if the 'doc' is being moved from a desk. False otherwise.
@@ -147,13 +151,13 @@ class TasksService(BaseService):
         push_notification(self.datasource, created=1)
         for doc in docs:
             insert_into_versions(doc['_id'])
-            if self.__is_assigned_to_a_desk(doc):
+            if is_assigned_to_a_desk(doc):
                 add_activity(ACTIVITY_CREATE, 'added new task {{ subject }} of type {{ type }}', item=doc,
                              subject=get_subject(doc), type=doc['type'])
 
     def on_update(self, updates, original):
         self.update_times(updates)
-        if self.__is_assigned_to_a_desk(updates):
+        if is_assigned_to_a_desk(updates):
             self.__update_state(updates, original)
         new_stage_id = updates.get('task', {}).get('stage', '')
         old_stage_id = original.get('task', {}).get('stage', '')
@@ -174,7 +178,7 @@ class TasksService(BaseService):
         updated = copy(original)
         updated.update(updates)
 
-        if self.__is_assigned_to_a_desk(updated):
+        if is_assigned_to_a_desk(updated):
 
             if self.__is_content_assigned_to_new_desk(original, updates):
                 insert_into_versions(original['_id'])
