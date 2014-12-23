@@ -18,8 +18,7 @@
             <div sd-shadow>
                 <ul class="{{view}}-view list-view">
                     <li ng-repeat="item in items._items" class="list-item-view" ng-class="{active: item === selected.preview}" ng-click="preview(item)">
-                        <div ng-if="simple" sd-media-box data-simple></div>
-                        <div ng-if="!simple" sd-media-box></div>
+                        <div sd-media-box></div>
                     </li>
                 </ul>
             </div>

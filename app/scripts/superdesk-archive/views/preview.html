@@ -7,7 +7,7 @@
            </div> 
         </div>
 
-        <div class="action-menu" ng-if="!selected.hide_menu">
+        <div class="action-menu">
             <button ng-click="openLightbox()" class="fullscreen">
                 <i class="icon-fullscreen"></i>
             </button>
@@ -25,12 +25,9 @@
 
         <p class="title" ng-if="selected.preview.headline" ng-class="{condensed: !lock}">{{ selected.preview.headline }}</p>
 
-        <p class="nav-space" ng-if="!selected.preview.headline && !lock && !selected.hide_header"></p>
+        <p class="nav-space" ng-if="!selected.preview.headline && !lock"></p>
         
         <div class="state-label state-{{selected.preview.state}}">{{selected.preview.state}}</div>
-        <div class="clearfix create-group" ng-show="selected.hide_header !== undefined">
-            <button class="btn btn-info" ng-click="createGroup()"><i class="icon-plus"></i><span translate>{{:: 'Create New Group' | uppercase }}</span></button>
-        </div>
 
         <div class="core-content">
 
