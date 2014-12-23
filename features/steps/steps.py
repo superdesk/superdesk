@@ -1119,6 +1119,11 @@ def step_we_get_email(context):
     assert check_if_email_sent(context, context.text)
 
 
+@then('we get no email')
+def step_we_get_no_email(context):
+    assert len(context.outbox) == 0
+
+
 def check_if_email_sent(context, body):
     if context.outbox:
         for email in context.outbox:
