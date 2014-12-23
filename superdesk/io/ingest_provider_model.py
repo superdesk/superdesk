@@ -20,6 +20,7 @@ from superdesk import get_resource_service
 DAYS_TO_KEEP = 2
 logger = logging.getLogger(__name__)
 
+
 class IngestProviderResource(Resource):
     schema = {
         'name': {
