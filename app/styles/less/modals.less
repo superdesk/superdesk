@@ -138,8 +138,14 @@
 	border: 1px solid #9ecbde;
 	.border-box();
 	.box-shadow(0 0 2px 0 #bbb);
-	position: relative;
 	background: #fff;
+	width: 300px;
+	margin-left: -150px;
+	&.inline {
+		position: relative;
+		width: auto;
+		margin-left: auto;
+	}
 	.title {
 		font-size: 11px;
 		.text-semibold();
