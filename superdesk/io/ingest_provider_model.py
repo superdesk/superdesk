@@ -8,6 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+import logging
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.io import allowed_providers
@@ -17,7 +18,7 @@ from superdesk import get_resource_service
 
 
 DAYS_TO_KEEP = 2
-
+logger = logging.getLogger(__name__)
 
 class IngestProviderResource(Resource):
     schema = {
@@ -93,6 +94,8 @@ class IngestProviderService(BaseService):
                                     user_list=self._get_administrators(),
                                     name=doc.get('name'))
 
+        logger.info("Created Ingest Channel. Data:{}".format(docs))
+
     def on_updated(self, updates, original):
         if 'is_closed' not in updates:
             do_notification = updates.get('notifications', {})\
@@ -121,7 +124,11 @@ class IngestProviderService(BaseService):
                                         name=updates.get('name', original.get('name')),
                                         status=status)
 
+        logger.info("Updated Ingest Channel. Data: {}".format(updates))
+
     def on_deleted(self, doc):
         notify_and_add_activity(ACTIVITY_DELETE, 'deleted Ingest Channel {{name}}', item=doc,
                                 user_list=self._get_administrators(),
                                 name=doc.get('name'))
+
+        logger.info("Deleted Ingest Channel. Data: {}".format(doc))
