@@ -5,58 +5,104 @@
 @import 'variables.less';
 
 .packaging-screen {
-	position: absolute;
-	top: 0; right: 0; left: 0; bottom: 0;
-	.main-section {
-        top: 45px; right: 0; left: 0; bottom: 0;
-        .transition(all ease 0.3s);
-	}
-}
-
-.widget-active .main-package-container {
-	left: @tablist-width + @tabpane-width;
-}
-
-.main-package-container {
-	position: absolute;
-	top:0;
-	left: @tablist-width;
-	right: @tablist-width;
-	bottom: 0;
-	overflow-y: auto;
-    padding-top: 20px;
-    padding-left: 20px;
-    padding-right: 20px;
-    background: @sd-background;
-
+    .content-items-container, 
     .package-edit-container {
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        overflow: hidden;
-
-        .create-group {
-            margin-top: 10px;
-        }
-        .package-preview {
+        top: 0; bottom: 0;
+        .border-box();
+        padding: 20px;
+    }
+    .content-items-container {
+        left: @tablist-width;
+        right: 50%;
+        .search-box {
             position: absolute;
-            left: 0; right: 0;
-            top: 0;
-            min-height: 700px;
+            left: 0; right: 0; top: 0;
+            height: 40px;
+            border-bottom: 1px solid #efefef;
+            background: #fff url(../../images/search-icon.png) no-repeat 15px 12px;
+            input {
+                position: absolute;
+                width: calc(~"100% - 80px");
+                height: 40px;
+                border: 0 !important;
+                left: 50px;
+                right: 30px;
+                top:0px;
+                &:focus {
+                    .box-shadow(none) !important;
+                }
+            }
+        }
+        .content-list {
+            position: absolute;
+            top: 60px;
+            bottom: @scratchpad-closed + 20px;
+            overflow: auto;
+            left: 20px; right: 10px;
+            > ul {
+                padding-right: 10px;
+                > li {
+                    position: relative;
+                    background: @white;
+                    border-bottom: 1px solid #ededed;
+                    .border-box();
+                    height: 32px;
+                    padding: 7px 10px;
+                    line-height: 12px;
+                    .item-functions {
+                        display: none;
+                        position: absolute;
+                        right: 0; top: 0;
+                        li {
+                            padding: 6px;
+                        }
+                    }
+                    &:hover {
+                        background: @sd-hover;
+                        cursor: pointer;
+                        padding-right: 40px;
+                        .item-functions {
+                            display: block;
+                        }
+                    }
+                    [class^="filetype-icon-"] {
+                        margin: -1px 4px 0 -4px;
+                        .opacity(80);
+                    }
+                    p {
+                        overflow: hidden;
+                        height: 18px;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                        margin-left: 0;
+                        .keyword {
+                            .text-semibold();
+                            text-transform: uppercase;
+                            color: #216278;
+                            margin-right: 10px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+	.package-edit-container {
+        right: @tablist-width;
+        border-left: 1px solid #ddd;
+        background: @white;
+        left: 50%;
+
+        > .header {
+            height: @nav-height;
+        }
+
+        .toggle-box h6 {
+            background: @white;
         }
     }
 }
 
-.create-group-modal {
-    width: 350px;
-    height: 200px;
-    transform: translate(0, 50%) !important;
-    -ms-transform: translate(0, 50%) !important; /* IE 9 */
-    -webkit-transform: translate(0, 50%) !important; /* Safari and Chrome */
-    .modal-body {
-        overflow: hidden;
-   }
+.package-group-modal {
+    position: absolute;
 }
-

@@ -1,3 +1,13 @@
+/**
+ * This file is part of Superdesk.
+ *
+ * Copyright 2013, 2014 Sourcefabric z.u. and contributors.
+ *
+ * For the full copyright and license information, please see the
+ * AUTHORS and LICENSE files distributed with this source code, or
+ * at https://www.sourcefabric.org/superdesk/license
+ */
+
 (function() {
 
     'use strict';
@@ -114,33 +124,40 @@
         };
     }
 
-    PackagingCtrl.$inject = ['$scope', 'packagesService', 'superdesk', '$route'];
-    function PackagingCtrl($scope, packagesService, superdesk, $route) {
-        $scope.selected = {};
-        $scope.item = null;
-        $scope.selected.hide_menu = true;
-        $scope.selected.hide_header = true;
-        $scope.contenttab = true;
+    PackagingCtrl.$inject = ['$scope', 'packagesService', 'superdesk', '$route', 'api', 'search'];
+    function PackagingCtrl($scope, packagesService, superdesk, $route, api, search) {
 
-        function fetch() {
+        function fetchItem() {
             packagesService.fetch($route.current.params._id).
                 then(function(fetched_package) {
-                $scope.selected.preview = fetched_package;
                 $scope.item = fetched_package;
+            });
+        }
+
+        function fetchContentItems(q) {
+            var query = search.query(q || null);
+            query.size(20);
+            api.archive.query(query.getCriteria(true))
+            .then(function(result) {
+                $scope.contentItems = result._items;
             });
         }
 
         $scope.createGroup = function() {
             superdesk.intent('create', 'group').then(function(group_name) {
-                packagesService.addGroupToPackge($scope.selected.preview, group_name)
+                packagesService.addGroupToPackge($scope.item, group_name)
                 .then(function(updatedPackage) {
-                    $scope.selected.preview = updatedPackage;
                     $scope.item = updatedPackage;
                 });
             });
         };
 
-        fetch();
+        $scope.refresh = function(form) {
+            fetchContentItems(form.query);
+        };
+
+        fetchItem();
+        fetchContentItems();
     }
 
     CreateGroupCtrl.$inject = ['$scope', 'api'];
@@ -154,6 +171,11 @@
         $scope.save = function saveGroup(name) {
             $scope.resolve(name);
         };
+    }
+
+    AddItemToPackage.$inject = [];
+    function AddItemToPackage() {
+
     }
 
     var app = angular.module('superdesk.packaging', [
@@ -209,10 +231,16 @@
         .activity('create.group', {
             label: gettext('Create new group'),
             modal: true,
-            cssClass: 'create-group-modal responsive-popup',
+            cssClass: 'mini-modal package-group-modal',
             controller: CreateGroupCtrl,
             templateUrl: 'scripts/superdesk-packaging/views/create-group.html',
             filters: [{action: 'create', type: 'group'}]
+        })
+        .activity('addto.package', {
+            label: gettext('Add to package'),
+            controller: AddItemToPackage,
+            filters: [{action: 'addto', type: 'package'}],
+            icon: 'plus-small'
         });
     }])
     .config(['apiProvider', function(apiProvider) {

@@ -4,7 +4,6 @@
 
     PackagesCtrl.$inject = ['$scope', 'superdesk'];
     function PackagesCtrl($scope, superdesk) {
-        $scope.contenttab = true;
 
         $scope.create = function() {
             superdesk.intent('create', 'package', {items: [$scope.item]});
