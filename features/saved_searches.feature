@@ -51,24 +51,6 @@ Feature: Saved Searches
         Then we get list with 1 items
 
     @auth
-    Scenario: Create a Saved Search without a description
-        Given empty "saved_searches"
-        When we post to "/users/#CONTEXT_USER_ID#/saved_searches"
-        """
-        {
-        "name": "cricket",
-        "filter": {"query": {"q": "cricket", "repo": "ingest"}}
-        }
-        """
-        Then we get new resource
-        """
-        {
-        "name": "cricket",
-        "filter": {"query": {"q": "cricket", "repo": "ingest"}}
-        }
-        """
-
-    @auth
     Scenario: Create a Saved Search without a name
         Given empty "saved_searches"
         When we post to "/users/#CONTEXT_USER_ID#/saved_searches"

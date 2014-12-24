@@ -14,6 +14,7 @@ import logging
 
 from flask import request
 from eve.utils import ParsedRequest
+from eve_elastic.elastic import build_elastic_query
 
 from superdesk import Resource, get_resource_service, SuperdeskError
 from superdesk.services import BaseService
@@ -59,6 +60,25 @@ class SavedSearchesService(BaseService):
         req.where = json.dumps(lookup)
         return super().get(req, lookup=None)
 
+    def init_request(self, elastic_query):
+        """
+        Initializes request object.
+        """
+
+        parsed_request = ParsedRequest()
+        parsed_request.args = {"source": json.dumps(elastic_query)}
+
+        return parsed_request
+
+    def get_location(self, doc):
+        """
+        Returns location from the doc object and deletes it so that it's not passed to elastic query
+        :param doc:
+        :return: location
+        """
+
+        return doc['filter']['query'].get('repo', 'archive')
+
     def __process_and_validate(self, doc):
         """
         Processes the Saved Search document and validates the saved search against ElasticSearch
@@ -67,76 +87,10 @@ class SavedSearchesService(BaseService):
         if not doc['filter'].get('query'):
             raise SuperdeskError(message='Fail to validate the filter.', status_code=400)
 
-        elastic_query, location = self.build_elastic_query(doc)
+        location, elastic_query = self.get_location(doc), build_elastic_query(
+            {k: v for k, v in doc['filter']['query'].items() if k != 'repo'})
+
         self.__validate_elastic_query(elastic_query, location)
-
-    def build_elastic_query(self, doc):
-        """
-        Builds a query which follows ElasticSearch syntax from Saved Search document.
-        1. Converts {"name":"ball","filter": {"query":{"q":"ball","repo":"ingest"}}} to the below elastic query
-        {
-            "name": "ball",
-            "query": {
-                "filtered": {
-                    "query": {
-                        "query_string": {
-                            "query": "cricket",
-                            "lenient": false,
-                            "default_operator": "AND"
-                        }
-                    }
-                }
-            }
-        }
-
-        2. Converts a faceted query
-        {"name":"ball and text","filter":{"query":{"q":"ball","repo":"ingest","type":['text']}}}
-        to the below elastic query
-        {
-            "name": "ball",
-            "query": {
-                "filtered": {
-                    "filter": {"and": [{"terms": {"type": ["text"]}}]},
-                    "query": {
-                        "query_string": {
-                            "query": "cricket",
-                            "lenient": false,
-                            "default_operator": "AND"
-                        }
-                    }
-                }
-            }
-        }
-
-        :param doc:
-        :returns ElasticSearch query and ElasticSearch index in which it needs to be searched
-        """
-
-        elastic_query, location, source_query = {"filtered": {}}, 'archive', doc['filter']['query']
-
-        for key in source_query.keys():
-            if key == 'repo':
-                location = source_query['repo']
-            elif key == 'q':
-                elastic_query['filtered']['query'] = {
-                    'query_string': {
-                        'query': source_query.get('q'),
-                        'lenient': False,
-                        'default_operator': 'AND'
-                    }
-                }
-            else:
-                if elastic_query['filtered'].get('filter') is None:
-                    elastic_query_filter = []
-                    elastic_query['filtered']['filter'] = {"and": elastic_query_filter}
-                else:
-                    elastic_query_filter = elastic_query['filtered']['filter']['and']
-
-                _value = source_query[key]
-                elastic_query_filter.append({"terms": {key: _value}}
-                                            if isinstance(_value, list) else {"term": {key: _value}})
-
-        return elastic_query, location
 
     def __validate_elastic_query(self, elastic_query, index):
         """
@@ -153,16 +107,6 @@ class SavedSearchesService(BaseService):
         except Exception as e:
             logger.exception(e)
             raise SuperdeskError(message='Fail to validate the filter against %s.' % index, status_code=400)
-
-    def init_request(self, elastic_query):
-        """
-        Initializes request object.
-        """
-
-        parsed_request = ParsedRequest()
-        parsed_request.args = {"source": json.dumps({"query": elastic_query})}
-
-        return parsed_request
 
 
 class SavedSearchItemsResource(Resource):
@@ -202,7 +146,8 @@ class SavedSearchItemsService(SavedSearchesService):
         if not doc['filter'].get('query'):
             raise SuperdeskError(message='Fail to validate the filter.', status_code=400)
 
-        elastic_query, location = self.build_elastic_query(doc)
+        location, elastic_query = self.get_location(doc), build_elastic_query(
+            {k: v for k, v in doc['filter']['query'].items() if k != 'repo'})
 
         parsed_request = self.init_request(elastic_query)
 
