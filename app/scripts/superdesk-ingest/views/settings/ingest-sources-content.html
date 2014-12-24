@@ -76,6 +76,24 @@
                     </select>
                 </div>
 
+                <div class="field">
+                    <div class="notification">
+                        <div class="header" translate>Notification Settings</div><br />
+                    </div>
+                    <label translate>Update</label>
+                    <span sd-switch ng-model="provider.notifications.on_update"></span>
+                    
+                    <label translate>Close</label>
+                    <span sd-switch ng-model="provider.notifications.on_close"></span>
+                    
+                    <label translate>Open</label>
+                    <span sd-switch ng-model="provider.notifications.on_open"></span>
+                    
+                    <label translate>Error</label>
+                    <span sd-switch ng-model="provider.notifications.on_error"></span>
+
+                </div>
+                
             </fieldset>
 
         </form>
