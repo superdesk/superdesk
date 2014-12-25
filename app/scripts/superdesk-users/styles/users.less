@@ -70,7 +70,7 @@
 
 		> li {
 			height: 40px;
-			border-bottom: 1px solid #d7d7d7;
+			border-bottom: 1px solid #ebebeb;
 			position: relative;
 			.avatar {
 					margin: 5px;
@@ -106,9 +106,14 @@
 						.box-sizing(border-box);
 						padding: 0 5px;
 						height: 30px;
-						&.name, &.email {
-							color: @sd-blue-text;
+						&.name {
+							font-weight: 600;
 						}
+						&.email {
+							color: @sd-blue-text;
+							font-weight: 300;
+						}
+						&.created {font-size: 11px; color: @grayLight;}
 						//user columns width
 						&.name { width: 28%; }
 						&.role { width: 16%; }
@@ -125,16 +130,17 @@
 			}
 			&.inactive .row-wrapper > div {
 				color: lighten(@sd-text, 60%);
-				&.name, &.email {
+				&.email {
 					color: lighten(@sd-blue-text, 30%);
 				}
 			}
 		}
 	}	
 	.table-header {
-		> li > div, .name, .email {
+		> li > div, .name, .email, .created {
 			color: #000 !important;
-			.text-semibold();
+			font-size: 13px !important;
+			.text-semibold() !important;
 		}
 		.sortable {
 			i {
