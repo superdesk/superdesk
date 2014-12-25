@@ -626,7 +626,13 @@ Profile page styles
 			top: 48px;
 			left: 0; right: 0; bottom: 0;
 			padding: 20px 20px @scratchpad-closed;
-			overflow: auto;
+
+			.inner-content {
+				position: absolute;
+				left: 20px; right: 20px; top: 20px;
+				bottom: @scratchpad-closed + 20px;
+				overflow: auto;
+			}
 		}
 	}
 

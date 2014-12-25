@@ -3,7 +3,7 @@
     <button class="btn btn-info pull-right" ng-disabled="!userPrefs.$dirty" ng-click="save()" translate>Save</button>
     <button class="btn pull-right" ng-click="cancel()" ng-disabled="!userPrefs.$dirty" translate>Cancel</button>
 </div>
-<div class="preferences form-flat"ng-init="val = true"> 
+<div class="preferences form-flat inner-content" ng-init="val = true"> 
 	<div class="title">User settings</div>
 	<ul>
 		<li class="fieldset" ng-repeat="p in preferences">
