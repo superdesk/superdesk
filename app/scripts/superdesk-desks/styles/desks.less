@@ -28,6 +28,17 @@
 @board10 : #d4cb24;
 
 
+.status-config-color(@color) {
+	@r: red(@color);
+	@g: green(@color);
+	@b: blue(@color);
+	background: rgba(@r, @g, @b, 25%);
+	color: rgb(@r, @g, @b);
+	&.active {
+		background: rgb(@r, @g, @b);
+		color: @white;
+	}
+}
 
 .main-desk-container {
 	width:auto;
@@ -1187,79 +1198,131 @@
 		}
 	}
 	.stages {
-		margin-top: 10px;
-		border-top: 1px solid #ccc;
+	
+		.col {
+			position: absolute;
+			.border-box();
+			top:10px;
+			bottom: 70px;
+			left: 0;
+			right: 50%;
+			padding: 10px 20px;
+			&:last-child {
+				left: 50%;
+				right: 0;
+				border-left: 1px solid #e0e0e0;
+			}
+		}
 
 		.header {
 			font-size: 11px;
 			font-weight: 700;
 			color: #a0a0a0;
 			text-transform: uppercase;
-			height: 18px;
-			margin-bottom: 10px;
-			padding-right: 10px;
-			background: #fff;
-			float: left;
-			margin-top: -10px;
+			margin-bottom: 20px;
 		}
-		.content {
-			padding-top: 20px; 
-		}
-		.stage {
-			width: 100px;
-			float: left;
-			min-height: 50px;
-			margin-right: 10px;
-			position: relative;
-			span {
-				display: block;
-				min-height: 18px;
-				line-height: 18px;
-				padding: 9px 5px;
-				background: @sd-blue;
-				color: #fff;
-				text-align: center;
-				word-break: break-all;
-				.border-radius(3px);
+
+		.add {
+			position: absolute;
+			padding: 0;
+			right: 20px; top: 10px;
+			height: 22px;
+			width: 22px;
+			.border-radius(50%);
+			line-height: 20px;
+			i {
+				margin: 0;
 			}
-			&.editable {
+		}
+
+		.stages-list {
+			.stage {
+				margin-bottom: 5px;
+				position: relative;
+				span {
+					display: block;
+					height: 29px;
+					line-height: 18px;
+					padding: 5px;
+					background: @white;
+					border: 1px solid #cecece;
+					.border-radius(3px);
+					.border-box();
+					cursor: default;
+				}
 				input {
-					height: 36px;
-					.border-radius(3px);          
-					padding-left: 5px;
-					padding-right: 5px;
-					text-align: center;
 					font-size: 13px;
+					border: 0 !important;
+					display: block;
+					background: rgba(255, 255, 255, 80%);
+					&:focus {
+						.box-shadow(none) !important;
+					}
+				}
+				button {
+					border: 0;
+					background: none;
+					padding: 4px 5px 6px;
+				}
+				.confirm {
+					position: absolute;
+					right: 0; top: 0;
+				}
+				&:hover {
+					span {
+						background: @sd-hover;
+					}
+					.actions {
+						display: block;
+					}
+				}
+				&.active {
+					span {
+						border-color: darken(@sd-blue, 5%);
+						background: @sd-blue !important;
+						color: #fff;
+					}
+				}
+				&.editable {
+					.box-shadow(0 0 2px 0 #ccc);
+					span {
+						padding: 0;
+					}
+				}
+				.actions {
+					display: none;
+					position: absolute;
+					top:0; right: 0;
+					
 				}
 			}
-			.remove {
-				display: none;
-				position: absolute;
-				width: 22px;
-				height: 22px;
-				background: url('../../images/round-close.png') no-repeat 0 0;
-				background-size: 22px;
-				top:-8px;
-				right: -6px;
+			&.edit-mode {
+				.stage:not(.editable) {
+					.opacity(30);
+				}
+			}
+		}
+		.status-list {
+			.status {
+				display: block;
+				.border-radius(3px);
+				.border-box();
+				margin-bottom: 5px;
+				height: 28px;
+				padding: 5px 10px;
+				text-transform: uppercase;
 				&:hover {
 					cursor: pointer;
 				}
-			}
-			&:hover {
-				.remove {
-					display: inline-block;
+				&.todo {
+					.status-config-color(@todo-color);
 				}
-			}
-		}
-		.add {
-			height: 36px;
-			width: 36px;
-			padding: 0;
-			line-height: 36px;
-			text-align: center;
-			float: left;
-			i {
-				margin-right: 0;
+				&.in-progress {
+					.status-config-color(@inprogress-color);
+				}
+				&.done {
+					.status-config-color(@done-color);
+				}
 			}
 		}
 	}
