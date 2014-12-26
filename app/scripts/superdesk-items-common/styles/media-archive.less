@@ -580,7 +580,7 @@
 		}
 		.item-right {
 			border-left: 0;
-			width: @rightfield-width;
+			min-width: @rightfield-width;
 			position: absolute;
 			right: 0;
 			top:0;
@@ -590,11 +590,11 @@
 				background: #f4f4f4;
 				position: absolute;
 				right: 0px; top:0px; bottom: 1px;
-				width: @rightfield-width;
+				min-width: @rightfield-width;
 				display: none;
 				.item-field {
 					height: 35px;
-					padding: 10px;
+					padding: 10px 20px;
 					button {
 						margin-top: 7px;
 					}			

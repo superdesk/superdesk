@@ -28,16 +28,16 @@
 
 .sd-widget {
 	background: #fff;
-	border: 1px solid #e0e0e0;
 	border-top:0;
-	.border-radius(3px);
+	.border-radius(2px);
+	.box-shadow (0 1px 4px 0 rgba(0,0,0,0.2));
 	width: 100%;
 	height: 100%;
 
 	.widget-line {
-		.border-radius(3px 3px 0 0);
+		.border-radius(1px 1px 0 0);
 		height: 3px;
-		background: #858585;
+		background: #444;
 	}
 	.widget-header {
 		height: 29px;
@@ -45,21 +45,20 @@
 		line-height: 29px;
 		position: relative;
 		.widget-icon {
-			background: #f8f8f8;
-			border-right:1px solid #e7e7e7;
-			width:29px; height: 29px;
+			width:34px; height: 29px;
 			text-align: center;
 			display: inline-block;
 			i {
 				vertical-align: middle;
-				.opacity(60);
+				.opacity(75);
+				margin-top: -3px;
 			}
 		}
 		.widget-title {
 			line-height: 29px;
-			color: #626262;
+			color: #333;
 			position: absolute;
-			left: 40px;
+			left: 34px;
 			right: 40px;
 			top:0;
 			bottom: 0;
@@ -70,6 +69,13 @@
 		position: absolute;
 		left:0; right: 0; bottom: 0; top:33px;
 		overflow-y: auto;
+		.activity-list.card-list>li {
+			.box-shadow(0 1px 0 0 rgba(0,0,0,.12));
+			.border-radius(0);
+			&:hover {
+				.box-shadow(0 1px 0 0 rgba(0,0,0,.12))!important;
+			}
+		}
 	}		
 	.widget-footer {
 		border-top: 1px solid #e7e7e7;
