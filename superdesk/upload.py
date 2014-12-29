@@ -94,10 +94,10 @@ class UploadService(BaseService):
             self.store_file(doc, content, filename, content_type)
 
     def store_file(self, doc, content, filename, content_type):
-        res = process_file_from_stream(content, filename=filename, content_type=content_type)
-        file_name, content_type, metadata = res
         cropping_data = self.get_cropping_data(doc)
         _, out = crop_image(content, filename, cropping_data)
+        res = process_file_from_stream(out, filename=filename, content_type=content_type)
+        file_name, content_type, metadata = res
         try:
             logger.debug('Going to save media file with %s ' % file_name)
             out.seek(0)
