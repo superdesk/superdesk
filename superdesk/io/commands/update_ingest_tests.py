@@ -44,7 +44,7 @@ class UpdateIngestTest(TestCase):
             items = provider_service.fetch_ingest(guid)
             items.extend(provider_service.fetch_ingest(guid))
             self.assertEquals(12, len(items))
-            self.ingest_items(provider, items)
+            self.ingest_items(items, provider)
 
     def test_ingest_item_sync_if_missing_from_elastic(self):
         provider_name = 'reuters'
@@ -95,9 +95,11 @@ class UpdateIngestTest(TestCase):
 
     def test_change_last_updated(self):
         with self.app.app_context():
-            ids = self.app.data.insert('ingest_providers', [{'type': 'test', '_etag': 'test'}])
-            update_provider(str(ids[0]))
-            provider = self.app.data.find_one('ingest_providers', req=None, _id=ids[0])
+            test_provider = {'type': 'test', '_etag': 'test'}
+            self.app.data.insert('ingest_providers', [test_provider])
+
+            update_provider(test_provider)
+            provider = self.app.data.find_one('ingest_providers', req=None, _id=test_provider['_id'])
             self.assertGreaterEqual(utcnow(), provider.get('last_updated'))
             self.assertEqual('test', provider.get('_etag'))
 
