@@ -95,9 +95,10 @@ class UploadService(BaseService):
 
     def store_file(self, doc, content, filename, content_type):
         cropping_data = self.get_cropping_data(doc)
-        _, out = crop_image(content, filename, cropping_data)
-        res = process_file_from_stream(out, filename=filename, content_type=content_type)
-        file_name, content_type, metadata = res
+        # crop the file if needed, can change the image size
+        was_cropped, out = crop_image(content, filename, cropping_data)
+        # retrieve file name and metadata from file. File length is available from the metadata
+        file_name, content_type, metadata = process_file_from_stream(out, filename=filename, content_type=content_type)
         try:
             logger.debug('Going to save media file with %s ' % file_name)
             out.seek(0)
