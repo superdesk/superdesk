@@ -1,6 +1,7 @@
 """Privileges registry."""
 
 _privileges = {}
+_intrinsic_privileges = {}
 
 
 class PrivilegeNameError(Exception):
@@ -26,3 +27,17 @@ def privilege(**kwargs):
 def get_privilege_list():
     """Get list of all registered privileges."""
     return [v for v in _privileges.values()]
+
+
+def intrinsic_privilege(resource_name, method=[]):
+    """
+    Registers intrinsic privileges.
+    """
+
+    _intrinsic_privileges[resource_name] = method
+
+
+def get_intrinsic_privileges():
+    """Get list of all registered intrinsic privileges."""
+
+    return _intrinsic_privileges

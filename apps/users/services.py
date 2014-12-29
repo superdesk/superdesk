@@ -7,7 +7,7 @@ from flask import current_app as app
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_DELETE
 from superdesk.services import BaseService
 from superdesk.utils import is_hashed, get_hash
-from superdesk import get_resource_service, SuperdeskError
+from superdesk import get_resource_service, SuperdeskError, get_resource_privileges
 from superdesk.emails import send_user_status_changed_email, send_activate_account_email
 from superdesk.utc import utcnow
 from superdesk.privilege import get_privilege_list
@@ -89,13 +89,22 @@ class UsersService(BaseService):
             add_activity(ACTIVITY_CREATE, 'created user {{user}}',
                          user=user_doc.get('display_name', user_doc.get('username')))
 
-    def on_updated(self, updates, user):
-        self.handle_status_changed(updates, user)
+    def on_update(self, updates, original):
+        """
+        Overriding the method to prevent a user without 'User Management' privilege from changing a role.
+        """
+
+        if 'role' in updates and 'active_privileges' in flask.g.user:
+            if not get_resource_privileges('users')['PATCH'] in flask.g.user['active_privileges']:
+                raise ForbiddenError("Insufficient privileges to change the role")
 
     def update(self, id, updates):
         if is_sensitive_update(updates) and not current_user_has_privilege('users'):
             raise ForbiddenError()
         return super().update(id, updates)
+
+    def on_updated(self, updates, user):
+        self.handle_status_changed(updates, user)
 
     def handle_status_changed(self, updates, user):
         status = updates.get('is_active', None)
@@ -109,6 +118,16 @@ class UsersService(BaseService):
                 email_notification_is_enabled(user_id=user['_id'])
             if send_email:
                 send_user_status_changed_email([user['email']], status)
+
+    def delete(self, lookup):
+        """
+        Overriding the method to prevent user deleting their own profile from the system.
+        """
+
+        if 'user' in flask.g and str(lookup.get('_id')) == str(flask.g.user['_id']):
+            raise ForbiddenError("Not allowed to delete your own profile.")
+
+        return super().delete(lookup)
 
     def on_deleted(self, doc):
         add_activity(ACTIVITY_DELETE, 'removed user {{user}}', user=doc.get('display_name', doc.get('username')))
@@ -141,6 +160,13 @@ class UsersService(BaseService):
     def get_users_by_user_type(self, user_type='user'):
         return list(self.get(req=None, lookup={'user_type': user_type}))
 
+    def is_authorized(self, **kwargs):
+        """
+        Overriding because of the use case: A user should be allowed to update their own profile.
+        """
+
+        return True
+
 
 class DBUsersService(UsersService):
     """
@@ -168,6 +194,7 @@ class DBUsersService(UsersService):
                 send_activate_account_email(tokenDoc)
 
     def on_update(self, updates, user):
+        super().on_update(updates, user)
         if updates.get('first_name') or updates.get('last_name'):
             updated_user = {'first_name': user.get('first_name', ''),
                             'last_name': user.get('last_name', ''),

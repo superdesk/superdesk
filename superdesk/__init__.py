@@ -11,7 +11,7 @@ from .eve_backend import EveBackend
 from .datalayer import SuperdeskDataLayer  # noqa
 from .services import BaseService as Service  # noqa
 from .resource import Resource  # noqa
-from .privilege import privilege  # noqa
+from .privilege import privilege, intrinsic_privilege, get_intrinsic_privileges  # noqa
 from .workflow import *  # noqa
 from eve.validation import ValidationError
 

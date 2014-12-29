@@ -1,11 +1,12 @@
+from flask import g, current_app as app
+from eve.validation import ValidationError
+from eve.utils import parse_request, document_etag
+
 import superdesk
-from flask import current_app as app
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_backend
-from eve.validation import ValidationError
 from superdesk import get_resource_service
-from eve.utils import parse_request, document_etag
 from superdesk.utils import last_updated
 from superdesk.workflow import get_privileged_actions
 
@@ -21,6 +22,8 @@ def init_app(app):
     endpoint_name = 'preferences'
     service = PreferencesService(endpoint_name, backend=get_backend())
     PreferencesResource(endpoint_name, app=app, service=service)
+
+    superdesk.intrinsic_privilege(resource_name=endpoint_name, method=['PATCH'])
 
 
 class PreferencesResource(Resource):
@@ -171,3 +174,17 @@ class PreferencesService(BaseService):
 
         res = self.backend.update(self.datasource, id, updates)
         return res
+
+    def is_authorized(self, **kwargs):
+        """
+        Returns False if logged-in user is trying to update other user's or session's privileges.
+
+        :param kwargs:
+        :return: True if authorized, False otherwise
+        """
+
+        if kwargs.get("user_id") is None:
+            return False
+
+        session = self.find_one(_id=kwargs.get("user_id"), req=None)
+        return str(g.user['_id']) == str(session.get("user"))
