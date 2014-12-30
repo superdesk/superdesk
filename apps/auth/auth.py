@@ -90,10 +90,6 @@ class SuperdeskTokenAuth(TokenAuth):
 
             return authorized
 
-        # We allow all reads or if resource is prepopulate then allow all
-        if method == 'GET' or resource == 'prepopulate':
-            return True
-
         # Step 4: User's privileges
         privileges = user.get('active_privileges', {})
         resource_privileges = get_resource_privileges(resource).get(method, None)
