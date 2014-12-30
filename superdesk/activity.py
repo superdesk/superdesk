@@ -19,9 +19,12 @@ def init_app(app):
     endpoint_name = 'audit'
     service = AuditService(endpoint_name, backend=superdesk.get_backend())
     AuditResource(endpoint_name, app=app, service=service)
+
     app.on_inserted += service.on_generic_inserted
     app.on_updated += service.on_generic_updated
     app.on_deleted_item += service.on_generic_deleted
+
+    superdesk.intrinsic_privilege(resource_name='activity', method=['PATCH'])
 
 
 class AuditResource(Resource):
@@ -129,21 +132,33 @@ class ActivityService(BaseService):
         user = getattr(g, 'user', None)
         if not user:
             raise SuperdeskError('Can not determine user', 400)
+
         user_id = str(user.get('_id'))
+
         # make sure that the user making the read notification is in the notification list
         if user_id not in updates.get('read').keys():
             raise SuperdeskError('User is not in the notification list', 400)
+
         # make sure the transition is from not read to read
         if not (updates.get('read')[user_id] == 1 and original.get('read')[user_id] == 0):
             raise SuperdeskError('Can not set notification as read', 403)
+
         # make sure that no other users are being marked as read
         for read_entry in updates.get('read'):
             if read_entry != user_id:
                 if updates.get('read')[read_entry] != original.get('read')[read_entry]:
                     raise SuperdeskError('Can not set other users notification as read', 403)
+
         # make sure that no other fields are being up dated just read and _updated
         if len(updates) != 2:
             raise SuperdeskError('Can not update', 400)
+
+    def is_authorized(self, **kwargs):
+        """
+        Overriding because of the use case: A user should be able to mark as read their own notifications.
+        """
+
+        return True
 
 ACTIVITY_CREATE = 'create'
 ACTIVITY_UPDATE = 'update'

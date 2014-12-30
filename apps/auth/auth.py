@@ -68,6 +68,8 @@ class SuperdeskTokenAuth(TokenAuth):
                 HTTP Method not allowed continue
             No intrinsic privileges continue
         4. User's Privileges
+            Get Resource Privileges and validate it against user's privileges. Return True if validation is successful.
+            Otherwise continue.
         5. If method didn't return True, then user is not authorized to perform the requested operation on the resource.
         """
 
@@ -90,10 +92,6 @@ class SuperdeskTokenAuth(TokenAuth):
 
         # We allow all reads or if resource is prepopulate then allow all
         if method == 'GET' or resource == 'prepopulate':
-            return True
-
-        # We allow a user to patch activities as they may be marking it as read
-        if method == 'PATCH' and resource == 'activity':
             return True
 
         # Step 4: User's privileges
