@@ -102,7 +102,7 @@
             return api.packages.save(currentPackage, patch);
         };
 
-        this.addGroupToPackge = function addGroupToPackage(currentPackage, groupId) {
+        this.addGroupToPackage = function addGroupToPackage(currentPackage, groupId) {
             var self = this;
 
             var patch = _.pick(currentPackage, 'groups');
@@ -145,10 +145,17 @@
 
         $scope.createGroup = function() {
             superdesk.intent('create', 'group').then(function(group_name) {
-                packagesService.addGroupToPackge($scope.item, group_name)
+                packagesService.addGroupToPackage($scope.item, group_name)
                 .then(function(updatedPackage) {
                     $scope.item = updatedPackage;
                 });
+            });
+        };
+
+        $scope.addToFirstGroup = function addToFirstGroup(item) {
+            packagesService.addItemsToPackage($scope.item, [item], $scope.item.groups[0])
+            .then(function(updatedPackage) {
+                $scope.item = updatedPackage;
             });
         };
 
@@ -162,8 +169,6 @@
 
     CreateGroupCtrl.$inject = ['$scope', 'api'];
     function CreateGroupCtrl($scope) {
-        $scope.group_name = null;
-
         $scope.cancel = function() {
             $scope.reject();
         };
@@ -171,11 +176,6 @@
         $scope.save = function saveGroup(name) {
             $scope.resolve(name);
         };
-    }
-
-    AddItemToPackage.$inject = [];
-    function AddItemToPackage() {
-
     }
 
     var app = angular.module('superdesk.packaging', [
@@ -238,7 +238,9 @@
         })
         .activity('addto.package', {
             label: gettext('Add to package'),
-            controller: AddItemToPackage,
+            controller: ['data', '$location', 'superdesk', function(data, $location, superdesk) {
+                superdesk.intent('author', 'package', data.item);
+            }],
             filters: [{action: 'addto', type: 'package'}],
             icon: 'plus-small'
         });
