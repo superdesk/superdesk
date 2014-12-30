@@ -186,21 +186,22 @@
 		min-height: @sfbox_minHeight;
 		min-width: @sfbox_minWidth;
 
-		border: 1px solid #d4d4d4;
-		border-width: 1px 1px 3px 1px; 
+		border: 1px solid rgba(0,0,0,0.3);
+		border-width: 0px 0px 3px 0px; 
 		margin: 1px 12px 10px 1px;
 
-		.border-radius(3px);
+		.border-radius(2px);
 		padding:@sfbox_sidepadding;
 		position:relative;
 		float:left;
 		display:block;
 		cursor:pointer;
 		background-color:#fff;
+		.box-shadow(0 1px 4px 0 rgba(0,0,0,0.2));
 		
 		&.archived {
 			background: #f2f2f2 url(../../images/checkmark-big.png) no-repeat bottom right;
-			.box-shadow-both(inset 0 2px 0 0 #e9e9e9, 0 0 0 2px #fff);
+			.box-shadow-both(0 1px 4px 0 rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.03));
 		}
 
 		&.error {
@@ -337,7 +338,7 @@
 		.type-icon {
 			position: absolute;
 			bottom: 4px;
-			left: 28px;
+			left: 5px;
 			.opacity(50);
 		}
 
@@ -353,8 +354,8 @@
 
 		.urgency-label {
 			position: absolute;
-			bottom: 6px;
-			left: 7px;
+			bottom: 5px;
+			left: 36px;
 		}
 
 		.state-label {
@@ -368,8 +369,16 @@
 
 .mgrid-view, #scratchpad {
 	.media-box {
+		.action {
+			overflow: hidden;
+			height:33px;
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			//display: none;
+		}
 		.media-box-generic;
-		
 		&.locked {
 			border-bottom-color: #e51c23 !important;
 		}
@@ -378,11 +387,10 @@
 			background: #fff;
 			position: absolute;
 			height: 32px;
-			border-top: 1px solid #ccc;
-			bottom: 0;
+			border-top: 1px solid rgba(0,0,0,0.1);
+			bottom: -32px;
 			left: 0;
 			right: 0;
-			display: none;
 			.item-field {
 				width: 31px;
 				height: 32px;
@@ -398,7 +406,8 @@
 		}
 		&:hover {
 			.item-functions {
-				display: block;
+				bottom: 0px;
+				transition: bottom 60ms ease-out;
 			}
 		}
 	}
@@ -450,7 +459,6 @@
 		padding-left:3px; 
 		&:hover {
 			background-color: #f4f4f4 !important;
-			border-bottom-color: #e0e0e0;
 			border-right: 2px solid #f4f4f4;
 			cursor: pointer;
 			.list-field {
@@ -614,7 +622,7 @@
 			//.box-shadow(inset 0 2px 0 0px #f2f2f2);
 			border-right: 2px solid @sd-background;
 			&.active {
-				border-right: 2px solid #d8d8d8 !important;
+				border-right: 2px solid rgba(94,169,200,0.75) !important;
 			}
 		}
 		
@@ -644,7 +652,7 @@
 	.active {
 		.media-box {
 			border-color: #787878;
-			.box-shadow(0 0 2px 1px #e0e0e0);
+			.box-shadow-both(0 0px 6px 1px rgba(0,0,0,0.75), 0 0 0 1px rgba(0,0,0,0.12));
 		}
 	}
 }
@@ -652,7 +660,7 @@
 	.active {
 		.media-box {
 			background-color: #eff7fa !important;
-			border-right: 2px solid #d8d8d8 !important;
+			border-right: 2px solid rgba(94,169,200,0.75) !important;
 			&:hover {
 				.item-functions {
 					background-color: #eff7fa;
