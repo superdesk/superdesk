@@ -24,6 +24,7 @@ def init_app(app):
     app.on_updated += service.on_generic_updated
     app.on_deleted_item += service.on_generic_deleted
 
+    # Registering with intrinsic privileges because: A user should be able to mark as read their own notifications.
     superdesk.intrinsic_privilege(resource_name='activity', method=['PATCH'])
 
 
@@ -153,12 +154,6 @@ class ActivityService(BaseService):
         if len(updates) != 2:
             raise SuperdeskError('Can not update', 400)
 
-    def is_authorized(self, **kwargs):
-        """
-        Overriding because of the use case: A user should be able to mark as read their own notifications.
-        """
-
-        return True
 
 ACTIVITY_CREATE = 'create'
 ACTIVITY_UPDATE = 'update'

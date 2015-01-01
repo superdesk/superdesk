@@ -19,4 +19,5 @@ def init_app(app):
     superdesk.privilege(name='users', label='User Management', description='User can manage users.')
     superdesk.privilege(name='roles', label='Roles Management', description='User can manage roles.')
 
+    # Registering with intrinsic privileges because: A user should be allowed to update their own profile.
     superdesk.intrinsic_privilege(resource_name='users', method=['PATCH'])

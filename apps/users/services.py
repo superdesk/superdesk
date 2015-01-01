@@ -160,13 +160,6 @@ class UsersService(BaseService):
     def get_users_by_user_type(self, user_type='user'):
         return list(self.get(req=None, lookup={'user_type': user_type}))
 
-    def is_authorized(self, **kwargs):
-        """
-        Overriding because of the use case: A user should be allowed to update their own profile.
-        """
-
-        return True
-
 
 class DBUsersService(UsersService):
     """

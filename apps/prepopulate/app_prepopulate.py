@@ -90,9 +90,6 @@ class PrepopulateService(BaseService):
             prepopulate_data(doc.get('profile') + '.json', get_default_user())
         return ['OK']
 
-    def is_authorized(self, **kwargs):
-        return True
-
 
 class AppPrepopulateCommand(superdesk.Command):
     def run(self):
