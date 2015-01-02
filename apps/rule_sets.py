@@ -30,6 +30,17 @@ class RuleSetsResource(Resource):
 
 class RuleSetsService(BaseService):
 
+    def update(self, id, updates):
+        """
+        Overriding to set the value of "new" attribute of rules to empty string if it's None.
+        """
+
+        for rule in updates.get('rules', {}):
+            if rule['new'] is None:
+                rule['new'] = ''
+
+        return super().update(id, updates)
+
     def on_delete(self, doc):
         if self.backend.find_one('ingest_providers', req=None, rule_set=doc['_id']):
             raise SuperdeskError('rule set is in use')
