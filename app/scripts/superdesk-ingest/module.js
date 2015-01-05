@@ -95,9 +95,12 @@ define([
         }, update);
     }
 
-    IngestSettingsController.$inject = ['$scope'];
-    function IngestSettingsController($scope) {
+    IngestSettingsController.$inject = ['$scope', 'privileges'];
+    function IngestSettingsController($scope, privileges) {
+        var user_privileges = privileges.privileges;
 
+        $scope.showIngest   = Boolean(user_privileges.ingest_providers);
+        $scope.showRuleset  = Boolean(user_privileges.rule_sets);
     }
 
     PieChartDashboardDirective.$inject = ['colorSchemes'];
