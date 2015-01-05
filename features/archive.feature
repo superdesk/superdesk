@@ -100,7 +100,7 @@ Feature: News Items Archive
         Then we get list with 1 items
         """
         {"_items": [{"headline": "flower", "byline": "foo", "description": "flower desc",
-                     "pubstatus": "Usable", "language": "en", "state": "in_progress"}]}
+                     "pubstatus": "Usable", "language": "en", "state": "draft"}]}
         """
 
     @auth
@@ -120,7 +120,7 @@ Feature: News Items Archive
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"_items": [{"headline": "green", "byline": "foo", "description": "green music", "state": "in_progress"}]}
+        {"_items": [{"headline": "green", "byline": "foo", "description": "green music", "state": "draft"}]}
         """
 
     @auth
@@ -140,7 +140,7 @@ Feature: News Items Archive
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"_items": [{"headline": "week @ nasa", "byline": "foo", "description": "nasa video", "state": "in_progress"}]}
+        {"_items": [{"headline": "week @ nasa", "byline": "foo", "description": "nasa video", "state": "draft"}]}
         """
 
     @auth
@@ -281,3 +281,40 @@ Feature: News Items Archive
             """
         When we get "/archive"
         Then we get list with 0 items
+
+    @wip
+    @auth
+    Scenario: State of an Uploaded Image, submitted to a desk when updated should change to in-progress
+        Given empty "archive"
+        And "desks"
+        """
+        [{"name": "Sports"}]
+        """
+        When we upload a file "bike.jpg" to "archive_media"
+        Then we get new resource
+        """
+        {"guid": "", "firstcreated": "", "versioncreated": "", "state": "draft"}
+        """
+        When we patch latest
+        """
+        {"headline": "flower", "byline": "foo", "description": "flower desc"}
+        """
+        When we get "/archive"
+        Then we get list with 1 items
+        """
+        {"_items": [{"headline": "flower", "byline": "foo", "description": "flower desc",
+                     "pubstatus": "Usable", "language": "en", "state": "draft"}]}
+        """
+        When we patch "/archive/#ARCHIVE_MEDIA_ID#"
+        """
+        {"task": {"desk": "#DESKS_ID#"}}
+        """
+        And we patch "/archive/#ARCHIVE_MEDIA_ID#"
+        """
+        {"headline": "FLOWER"}
+        """
+        And we get "/archive"
+        Then we get list with 1 items
+        """
+        {"_items": [{"state": "in_progress"}]}
+        """

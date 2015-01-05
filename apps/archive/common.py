@@ -11,6 +11,7 @@
 
 from datetime import datetime
 from uuid import uuid4
+from eve.utils import config
 
 import flask
 from flask import current_app as app
@@ -21,7 +22,7 @@ from superdesk.utc import utcnow
 from settings import SERVER_DOMAIN
 from superdesk import SuperdeskError, get_resource_service
 from superdesk.notification import push_notification
-from superdesk.workflow import set_default_state
+from superdesk.workflow import set_default_state, is_workflow_state_transition_valid
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
 
@@ -196,3 +197,18 @@ def is_assigned_to_a_desk(doc):
     """
 
     return doc.get('task') and doc['task'].get('desk')
+
+
+def update_state(original, updates):
+    """
+    Updates the 'updates' with a valid state if the state transition valid. If the content is in user's workspace and
+    original['state'] is not draft then updates['state'] is set to 'draft'. If the content is in a desk then the state
+    is changed to 'in-progress'.
+    """
+
+    original_state = original.get(config.CONTENT_STATE)
+    if original_state != 'ingested' and original_state != 'in_progress':
+        if not is_workflow_state_transition_valid('save', original_state):
+            raise superdesk.InvalidStateTransitionError()
+        elif is_assigned_to_a_desk(original):
+            updates[config.CONTENT_STATE] = 'in_progress'

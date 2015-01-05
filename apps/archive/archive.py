@@ -1,14 +1,16 @@
+from apps.auth.errors import ForbiddenError
+
 SOURCE = 'archive'
 
 import flask
 from superdesk.io import get_word_count
 from superdesk.resource import Resource
-from .common import extra_response_fields, item_url, aggregations, remove_unwanted
+from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from .common import get_user
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
-from superdesk import SuperdeskError, get_resource_service, InvalidStateTransitionError
+from superdesk import SuperdeskError, get_resource_service
 from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, ACTIVITY_DELETE
@@ -21,7 +23,6 @@ from apps.common.models.base_model import InvalidEtag
 from apps.legal_archive.components.legal_archive_proxy import LegalArchiveProxy
 from copy import copy
 import superdesk
-from superdesk.workflow import is_workflow_state_transition_valid
 
 
 def get_subject(doc1, doc2=None):
@@ -120,25 +121,17 @@ class ArchiveService(BaseService):
             add_activity(ACTIVITY_CREATE, 'added new item {{ type }} about {{ subject }}', item=doc,
                          type=doc['type'], subject=get_subject(doc))
 
-    def update_state(self, original, updates):
-        original_state = original.get(config.CONTENT_STATE)
-        if original_state != 'ingested' and original_state != 'in_progress':
-            if not is_workflow_state_transition_valid('save', original_state):
-                raise InvalidStateTransitionError()
-            elif self._is_req_for_save(updates):
-                if original.get('task', {}).get('desk', None) is None:
-                    # content is on workspace
-                    if original_state != 'draft':
-                        updates[config.CONTENT_STATE] = 'draft'
-                else:
-                    # content is on a desk
-                    updates[config.CONTENT_STATE] = 'in_progress'
-
     def on_update(self, updates, original):
-        remove_unwanted(updates)
-        self.update_state(original, updates)
-
         user = get_user()
+
+        if 'unique_name' in updates and (user['active_privileges'].get('metadata_uniquename', 0) == 0):
+            raise ForbiddenError("Unauthorized to modify Unique Name")
+
+        remove_unwanted(updates)
+
+        if self.__is_req_for_save(updates):
+            update_state(original, updates)
+
         lock_user = original.get('lock_user', None)
         force_unlock = updates.get('force_unlock', False)
 
@@ -236,7 +229,7 @@ class ArchiveService(BaseService):
         doc.update(old)
         return res
 
-    def _is_req_for_save(self, doc):
+    def __is_req_for_save(self, doc):
         """
         Patch of /api/archive is being used in multiple places. This method differentiates from the patch
         triggered by user or not.

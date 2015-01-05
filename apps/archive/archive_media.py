@@ -2,9 +2,9 @@ import logging
 
 from flask import abort, current_app as app
 from eve.utils import config
-from apps.archive import ArchiveVersionsResource
-from superdesk import is_workflow_state_transition_valid, InvalidStateTransitionError
 
+from apps.archive import ArchiveVersionsResource
+from apps.archive.common import update_state
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from superdesk.resource import Resource
@@ -53,11 +53,7 @@ class ArchiveMediaService(BaseService):
     type_av = {'image': 'picture', 'audio': 'audio', 'video': 'video'}
 
     def on_update(self, updates, original):
-        if original[config.CONTENT_STATE] != 'in_progress':
-            if not is_workflow_state_transition_valid('save', original[config.CONTENT_STATE]):
-                raise InvalidStateTransitionError()
-            else:
-                updates[config.CONTENT_STATE] = 'in_progress'
+        update_state(original, updates)
 
         on_update_media_archive()
 
