@@ -638,8 +638,8 @@ form {
         .border-box();
         label {
           font-size: 11px;
-          .text-bold();
-          color: #a0a0a0;
+          .text-semibold();
+          color: @grayLight;
           text-transform: uppercase;
           height: 18px;
         }
@@ -744,11 +744,11 @@ form.flat, .form-flat {
       .box-sizing(border-box);
       height: auto;
       line-height: 24px;
-      border-top: 1px dotted #ddd;
-      padding: 5px 2px;
+      //border-top: 1px dotted #ddd;
+      padding: 10px 2px;
 
       &:last-child {
-        border-bottom: 1px dotted #ddd;
+        //border-bottom: 1px dotted #ddd;
       }
 
       .required-asteriks {
@@ -801,15 +801,21 @@ form.flat, .form-flat {
       }
       .info-editable {
         width: 275px;
-        border: 0 !important;
+        border-color: rgba(0,0,0,0.10) !important;
+        border-width: 0 0 1px 0 !important;
+        border-radius: 0px !important;
         font-size: 13px;
         text-overflow: ellipsis;
         margin-left: -6px; 
         background: none;
         color: #000 !important;
+        &:hover {
+          border-color: rgba(0,0,0,0.25) !important;
+        }
         &:focus {
           .box-shadow(0 0 0 0 #000) !important;
-          text-decoration: underline;
+          border-color: rgba(94,169,200,1) !important;
+          border-width: 0 0 2px 0 !important;
         }
       }
       textarea.info-editable {
@@ -830,7 +836,10 @@ form.flat, .form-flat {
 
     &.label-light {
       label {
-        color: #a0a0a0;
+        color: @grayLight;
+        text-transform: uppercase;
+        font-size: 11px;
+        font-weight: 600;
       }
     }
   }

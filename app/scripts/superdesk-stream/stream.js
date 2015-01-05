@@ -31,23 +31,13 @@
         };
 
         var fetchActivities = function() {
-            var filter = {embedded: {user: 1}, max_results: $scope.max_results};
+            var filter = {embedded: {user: 1, item: 1}, max_results: $scope.max_results};
             if ($scope.desk) {
                 filter.where = {desk: $scope.desk._id};
             }
 
             api('activity').query(filter)
             .then(function(result) {
-                result._items.forEach(function(activity, index, array) {
-                    activity.display_message = activity.message;
-                    for (var tag in activity.data) {
-                        if (activity.data.hasOwnProperty(tag)) {
-                            var tagRegex = new RegExp('{{\\s*' + tag + '\\s*}}', 'gi');
-                            activity.display_message = activity.display_message.replace(tagRegex, activity.data[tag]);
-                            activity.index = index;
-                        }
-                    }
-                });
                 $scope.activities = result;
             });
         };
@@ -60,6 +50,39 @@
             fetchActivities();
         });
     }])
+
+    .directive('sdActivityStream', ['asset', function(asset) {
+       return {
+          scope: {
+            activities: '=',
+            max_results: '=maxResults',
+            loadMore: '&'
+          },
+          templateUrl: asset.templateUrl('superdesk-stream/views/activity-stream.html')
+       };
+    }])
+
+    .directive('sdActivityMessage', [function() {
+        return {
+            scope: {
+                activity: '='
+            },
+            template:'{{display_message}}',
+            link: function(scope, element, attrs) {
+               if (scope.activity.name !== 'notify') {
+                    scope.display_message = scope.activity.message;
+                    for (var tag in scope.activity.data) {
+                        if (scope.activity.data.hasOwnProperty(tag)) {
+                            var tagRegex = new RegExp('{{\\s*' + tag + '\\s*}}', 'gi');
+                            scope.display_message =
+                                scope.display_message.replace(tagRegex, scope.activity.data[tag]);
+                        }
+                    }
+               }
+            }
+        };
+    }])
+
     .config(['superdeskProvider', 'assetProvider', 'gettext', function(superdesk, asset, gettext) {
         superdesk.activity('/workspace/stream', {
             label: gettext('Workspace'),

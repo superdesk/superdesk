@@ -563,12 +563,12 @@
         };
     }
 
-    AuthoringThemesService.$inject = ['storage'];
-    function AuthoringThemesService(storage) {
+    AuthoringThemesService.$inject = ['storage', 'preferencesService'];
+    function AuthoringThemesService(storage, preferencesService) {
 
         var service = {};
 
-        var THEME_KEY = 'authoring:theme';
+        var THEME_KEY = 'editor:theme';
         var THEME_DEFAULT = 'default-normal';
 
         service.availableThemes = [
@@ -604,15 +604,19 @@
             }
         ];
 
-        service.defaultTheme = 'default-normal';
-
         service.save = function(theme) {
-            storage.setItem(THEME_KEY, theme.key);
+            var update = {};
+            update[THEME_KEY] = {
+                'theme': theme.key
+            };
+            preferencesService.update(update);
         };
 
         service.get = function() {
-            var _default = storage.getItem(THEME_KEY) || THEME_DEFAULT;
-            return _.find(service.availableThemes, {key: _default});
+            return preferencesService.get().then(function(result) {
+                var theme = result[THEME_KEY] ? result[THEME_KEY].theme : THEME_DEFAULT;
+                return _.find(service.availableThemes, {key: theme});
+            });
         };
 
         return service;
@@ -626,8 +630,10 @@
             link: function themeSelectLink(scope, elem) {
 
                 scope.themes = authThemes.availableThemes;
-                scope.theme = authThemes.get();
-                applyTheme();
+                authThemes.get().then(function(theme) {
+                    scope.theme = theme;
+                    applyTheme();
+                });
 
                 scope.changeTheme = function(theme) {
                     scope.theme = theme;

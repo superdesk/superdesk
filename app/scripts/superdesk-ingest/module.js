@@ -26,6 +26,10 @@ define([
         afp: {
             label: 'AFP',
             templateUrl: 'scripts/superdesk-ingest/views/settings/afpConfig.html'
+        },
+        ftp: {
+            label: 'FTP',
+            templateUrl: 'scripts/superdesk-ingest/views/settings/ftp-config.html'
         }
     });
 
@@ -364,12 +368,14 @@ define([
             .activity('archive', {
                 label: gettext('Fetch'),
                 icon: 'archive',
-                controller: ['api', 'data', function(api, data) {
+                controller: ['api', 'data', 'desks', function(api, data, desks) {
                     api.archiveIngest.create({
-                        guid: data.item.guid
+                        guid: data.item.guid,
+                        desk: desks.getCurrentDeskId()
                     })
                     .then(function(archiveItem) {
                         data.item.task_id = archiveItem.task_id;
+                        data.item.created = archiveItem.created;
                     });
                 }],
                 filters: [

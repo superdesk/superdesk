@@ -429,6 +429,12 @@
 
 	.list-item-view {
 		width: 100%;
+        .box-shadow(0 1px 4px 0 rgba(0,0,0,20%));
+        &:last-child {
+            .media-box {
+                border-bottom: none;
+            }
+        }
 		.panel-body {
 			display: block !important;
 			width: 100%;
@@ -568,11 +574,13 @@
 			time {
 				position: absolute;
 				top:0; right: 0;
+				font-size: 11px;
+				color: @grayLight;
 			}	
 		}
 		.item-right {
 			border-left: 0;
-			width: @rightfield-width;
+			min-width: @rightfield-width;
 			position: absolute;
 			right: 0;
 			top:0;
@@ -582,11 +590,11 @@
 				background: #f4f4f4;
 				position: absolute;
 				right: 0px; top:0px; bottom: 1px;
-				width: @rightfield-width;
+				min-width: @rightfield-width;
 				display: none;
 				.item-field {
 					height: 35px;
-					padding: 10px;
+					padding: 10px 20px;
 					button {
 						margin-top: 7px;
 					}			
@@ -598,7 +606,7 @@
 		&.archived {
 			background: @sd-background url('../../images/checkmark-big-full.png') no-repeat 70% 50%;
 			background-size: 36px;
-			.box-shadow(inset 0 2px 0 0px #f2f2f2);
+			//.box-shadow(inset 0 2px 0 0px #f2f2f2);
 			border-right: 2px solid @sd-background;
 			&.active {
 				border-right: 2px solid #d8d8d8 !important;

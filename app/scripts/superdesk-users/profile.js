@@ -8,7 +8,7 @@
             var q = {
                 where: {user: user._id},
                 sort: '[(\'_created\',-1)]',
-                embedded: {user: 1}
+                embedded: {user: 1, item: 1}
             };
 
             if (maxResults) {
@@ -25,7 +25,7 @@
         this.getUserActivityFiltered = function(maxResults, page) {
             var q = {
                 sort: '[(\'_created\',-1)]',
-                embedded: {user: 1}
+                embedded: {user: 1, item: 1}
             };
 
             if (maxResults) {
@@ -77,6 +77,7 @@
                 link: function(scope, element, attrs) {
                     var page = 1;
                     var maxResults = 5;
+                    scope.max_results = maxResults;
 
                     scope.$watch('user', function() {
                         profileService.getUserActivity(scope.user, maxResults).then(function(list) {
@@ -89,6 +90,7 @@
                         profileService.getUserActivity(scope.user, maxResults, page).then(function(next) {
                             Array.prototype.push.apply(scope.activityFeed._items, next._items);
                             scope.activityFeed._links = next._links;
+                            scope.max_results += maxResults;
                         });
                     };
                 }

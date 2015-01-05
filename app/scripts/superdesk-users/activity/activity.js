@@ -20,11 +20,13 @@
         function ($scope, profileService) {
         	var page = 1;
         	var current_config = null;
+            $scope.max_results = 0;
 
         	function refresh(config) {
         		current_config = config;
 	            profileService.getUserActivityFiltered(config.maxItems).then(function(list) {
 	            	$scope.activityFeed = list;
+                    $scope.max_results = parseInt(config.maxItems, 10);
 	            });
 
 	            $scope.loadMore = function() {
@@ -32,6 +34,7 @@
 	                profileService.getUserActivityFiltered(config.maxItems, page).then(function(next) {
 	                    Array.prototype.push.apply($scope.activityFeed._items, next._items);
 	                    $scope.activityFeed._links = next._links;
+                        $scope.max_results += parseInt(config.maxItems, 10);
 	                });
 	            };
         	}
