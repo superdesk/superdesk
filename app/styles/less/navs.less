@@ -37,8 +37,8 @@
 .nav-list > li > button {
 	margin-left:  -15px;
 	margin-right: -15px;
-	text-shadow: 0 1px 0 rgba(255,255,255,.5);
 }
+
 .nav-list > li > a, .nav-list > li > button, {
 	padding: 3px 15px;
 }
@@ -46,7 +46,6 @@
 .nav-list > .active > button,
 .nav-list > .active > a:hover {
 	color: @white;
-	text-shadow: 0 -1px 0 rgba(0,0,0,.2);
 	background-color: @linkColor;
 }
 .nav-list [class^="icon-"] {
@@ -124,6 +123,11 @@
 	border-bottom-color: @sd-blue;
 	cursor: default;
 	color: @grayDark;
+}
+
+.nav-tabs > li:first-child > a,
+.nav-tabs > li:first-child > button {
+	margin-left: 0;
 }
 
 // PILLS
@@ -351,10 +355,10 @@
 			font-size: 18px;
 			line-height: 28px;
 			float: left;
-			font-weight:400;
+			.text-normal();
 			span {
-				font-weight: 600;
 				color: #666;
+				.text-semibold();
 			}
 		}
 }

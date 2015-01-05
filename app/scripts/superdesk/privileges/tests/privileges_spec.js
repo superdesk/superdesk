@@ -2,6 +2,7 @@
 
 describe('privileges', function() {
 
+    beforeEach(module('superdesk.mocks'));
     beforeEach(module('superdesk.privileges'));
 
     beforeEach(inject(function(preferencesService, $q) {

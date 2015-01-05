@@ -1,3 +1,13 @@
+/**
+ * This file is part of Superdesk.
+ *
+ * Copyright 2013, 2014 Sourcefabric z.u. and contributors.
+ *
+ * For the full copyright and license information, please see the
+ * AUTHORS and LICENSE files distributed with this source code, or
+ * at https://www.sourcefabric.org/superdesk/license
+ */
+
 define([
     'require',
     'lodash',
@@ -27,12 +37,12 @@ define([
             }
         };
     }])
-    .directive('sdFocusInput', [function() {
+    .directive('sdFocusElement', [function() {
         return {
             link: function(scope, elem, attrs) {
                 elem.click(function() {
                     _.defer(function() {
-                        elem.parent().find('input').focus();
+                        angular.element(document.querySelector(attrs.target)).focus();
                     });
                 });
             }
@@ -80,16 +90,21 @@ define([
         return {
 
             link: function(scope, elem, attrs) {
-                scope.origEditName = null;
+
+                var orig = null;
+
+                scope.statuses = [
+                    {'_id': 'todo', 'name': 'To Do'},
+                    {'_id': 'in-progress', 'name': 'In Progress'},
+                    {'_id': 'done', 'name': 'Done'}
+                ];
 
                 scope.$watch('step.current', function(step, previous) {
                     if (step === 'stages') {
                         scope.editStage = null;
+                        orig = null;
                         scope.stages = [];
-                        scope.newStage = {
-                            show: false,
-                            model: null
-                        };
+                        scope.selected = null;
                         scope.message = null;
 
                         if (scope.desk.edit && scope.desk.edit._id) {
@@ -112,59 +127,63 @@ define([
                     WizardHandler.wizard('desks').next();
                 };
 
-                scope.saveOnEnter = function($event) {
-                    if ($event.keyCode === 13) {
-                        scope.message = gettext('Saving...');
-                        api('stages').save({}, {name: scope.newStage.model, desk: scope.desk.edit._id})
+                scope.edit = function(stage) {
+                    orig = stage;
+                    scope.editStage = _.create(stage);
+                };
+
+                scope.isActive = function(stage) {
+                    return scope.editStage && scope.editStage._id === stage._id;
+                };
+
+                scope.cancel = function() {
+                    scope.editStage = null;
+                };
+
+                scope.select = function(stage) {
+                    if (scope.editStage && scope.editStage._id !== stage._id) {
+                        return false;
+                    }
+                    scope.selected = stage;
+                };
+
+                scope.setStatus = function(status) {
+                    scope.editStage.task_status = status._id;
+                };
+
+                scope.save = function() {
+                    if (!orig._id) {
+                        _.extend(scope.editStage, {desk: scope.desk.edit._id});
+                        api('stages').save({}, scope.editStage)
                         .then(function(item) {
                             scope.stages.push(item);
-                            scope.newStage.model = null;
-                            scope.newStage.show = false;
-                            scope.message = gettext('Stage added successfully.');
+                            scope.editStage = null;
+                            scope.selected = item;
+                            scope.message = null;
                         }, function(response) {
                             scope.message = gettext('There was a problem, stage not added.');
                         });
-                        return false;
-                    }
-                };
-
-                scope.saveEditOnEnter = function($event) {
-                    if ($event.keyCode === 13) {
-                        scope.message = gettext('Saving...');
-                        api('stages').save(scope.editStage)
-                        .then(function(item) {
+                    } else {
+                        api('stages').save(orig, scope.editStage)
+                        .then(function() {
                             scope.editStage = null;
-                            scope.message = gettext('Stage saved successfully.');
+                            scope.message = null;
                         }, function(response) {
                             scope.message = gettext('There was a problem, stage was not saved.');
                         });
-                        return false;
                     }
-                };
-
-                scope.setEditStage = function(stage) {
-                    scope.origEditName = stage.name;
-                    scope.editStage = stage;
-                    scope.newStage.show = false;
-                };
-
-                scope.cancelEdit = function() {
-                    if (scope.editStage && scope.editStage.name) {
-                        scope.editStage.name = scope.origEditName;
-                    }
-                    scope.editStage = null;
                 };
 
                 scope.remove = function(stage) {
                     api('stages').remove(stage)
-                    .then(function(result) {
-                        _.remove(scope.stages, stage);
-                    }, function(data, status, headers, config) {
-                        if (data.data._message) {
-                            scope.message = gettext(data.data._message);
-                        } else {
-                            scope.message = gettext('There was a problem, stage was not deleted.');
+                    .then(function() {
+                        if (stage === scope.selected) {
+                            scope.selected = null;
                         }
+                        _.remove(scope.stages, stage);
+                        scope.message = null;
+                    }, function(result) {
+                        scope.message = gettext('There was a problem, stage was not deleted.');
                     });
                 };
             }

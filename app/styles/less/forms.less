@@ -374,7 +374,7 @@ select:focus:required:invalid {
     min-width: 16px;
     height: @baseLineHeight;
     padding: 4px 5px;
-    font-weight: normal;
+    .text-normal();
     line-height: @baseLineHeight;
     text-align: center;
     text-shadow: 0 1px 0 @white;
@@ -809,6 +809,8 @@ form.flat, .form-flat {
         margin-left: -6px; 
         background: none;
         color: #000 !important;
+        box-sizing: border-box;
+        margin-top: 0;
         &:hover {
           border-color: rgba(0,0,0,0.25) !important;
         }
@@ -816,6 +818,10 @@ form.flat, .form-flat {
           .box-shadow(0 0 0 0 #000) !important;
           border-color: rgba(94,169,200,1) !important;
           border-width: 0 0 2px 0 !important;
+          margin-top: 1px;
+          
+          
+
         }
       }
       textarea.info-editable {
@@ -839,7 +845,7 @@ form.flat, .form-flat {
         color: @grayLight;
         text-transform: uppercase;
         font-size: 11px;
-        font-weight: 600;
+        .text-semibold();
       }
     }
   }

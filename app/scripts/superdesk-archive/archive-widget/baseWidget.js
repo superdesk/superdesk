@@ -30,8 +30,7 @@
                     'widget.configuration.provider',
                     'widget.configuration.maxItems',
                     'query || widget.configuration.search',
-                    'item',
-                    'headline'
+                    'item'
                 ], function(vals) {
                     config = {
                         provider: vals[0],
@@ -69,8 +68,6 @@
                         var itemFilters = moreLikeThis(config.item);
                         if (itemFilters.length) {
                             query.filter({or: itemFilters});
-                        } else {
-                            query.q(config.item.headline || null);
                         }
                     }
 

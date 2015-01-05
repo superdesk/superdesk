@@ -44,7 +44,10 @@
 			color: #e51c23;
 			font-size: 14px;
 			line-height: 30px;
-			.text-semibold();
+			.text-light();
+			b {
+				.text-semibold();
+			}
 		}
 		.stage {
 			height: 28px;
@@ -63,9 +66,11 @@
 			}
 		}
 		.state-label {
-			font-size: 13px;
-			padding: 3px 10px;
-			margin-top: 4px;
+			font-size: 11px;
+			line-height: 12px;
+			padding: 4px 10px 3px;
+			margin-top: 5px;
+			margin-right: 20px;
 		}
 	}
 	&.auth-sendto {
@@ -449,3 +454,6 @@
 
 // }
 
+.text-editor-info {
+	font-size: 89%;
+}

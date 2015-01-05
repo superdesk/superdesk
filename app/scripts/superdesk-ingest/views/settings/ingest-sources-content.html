@@ -37,10 +37,12 @@
                     <tabset>
                             <tab heading="General" class="TabContent">
                                     <div class="field">
-                                        <label translate>Closed</label>
-                                        <span sd-switch ng-model="provider.is_closed" ng-click="provider.is_closed = !provider.is_closed"></span>
+                                        <label translate>Status</label>
+                                        <span tooltip="{{ providerSwitchOn ? 'Close' : 'Open'  | translate }}" tooltip-placement="right">
+                                            <span sd-switch ng-model="providerSwitchOn"></span>
+                                        </span>
                                     </div>
-                                    <div class="field">
+                                    <div class="field">                                        
                                         <label for="provider-type" translate>Source Type</label>
                                         <select id="provider-type" required ng-model="provider.type" ng-options="key as val.label for (key, val) in types"></select>
                                     </div>

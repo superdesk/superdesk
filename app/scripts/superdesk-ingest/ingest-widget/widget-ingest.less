@@ -35,7 +35,7 @@
 			margin:0;
 			list-style-type: none;
 			padding: 0;
-			overflow: auto;
+			overflow: hidden;
 			> li {
 				position: relative;
 				.item-block {
@@ -45,6 +45,8 @@
 				}
 				.dropdown {
 					position: absolute;
+					right: 0;
+					top: 8px;
 					right: 3px;
 					.dropdown-toggle {
 						background: none;
@@ -62,6 +64,7 @@
 						border-right: 1px solid #e7e7e7;
 						font-size: 11px;
 						color: #626262;
+						line-height: 21px;
 						em {
 							color: #aaa;
 							margin-right: 4px;
@@ -78,6 +81,7 @@
 						&:last-child {
 							border: 0;
 						}
+						time {color:#999;}
 					}
 				}
 				.main-line {

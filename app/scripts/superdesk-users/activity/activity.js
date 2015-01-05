@@ -14,7 +14,8 @@
                 template: asset.templateUrl('superdesk-users/activity/widget-activity.html'),
                 configurationTemplate: asset.templateUrl('superdesk-users/activity/configuration.html'),
                 configuration: {maxItems: 5},
-                description: 'Activity stream widget'
+                description: 'Activity stream widget',
+                icon: 'stream'
             });
         }]).controller('ActivityController', ['$scope', 'profileService',
         function ($scope, profileService) {

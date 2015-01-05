@@ -578,7 +578,7 @@
 				.activity-date {
 					padding-left: 45px;
 					font-size: 11px;
-					color: #949494;
+					color: #999;
 					margin-top: -5px; 
 				}
 
@@ -593,7 +593,7 @@
 						left: 0;
 						span {  
 							font-size: 12px;
-							color: #949494; 
+							color: #999; 
 							margin-top: -10px;
 							display: block;
 							float: left;
@@ -1216,14 +1216,16 @@ header .sortbar {
 }
 .state-label {
 	display: inline-block;
-	line-height: 13px;
+	line-height: 12px;
 	color: #fff;
-	font-size: 10px;
+	font-size: 9px;
+	letter-spacing: 0.08em;
 	text-transform: uppercase;
 	.border-radius(2px);
-	padding: 0 4px;
+	padding: 1px 5px 0;
 	float: left;
 	margin-right: 10px;
+	.text-normal();
 
 	&.state-draft {
 		.state-color(@state-color-default);

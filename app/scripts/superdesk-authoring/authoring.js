@@ -345,10 +345,10 @@
         $scope.stage = null;
 
         // These values should come from preferences.
-        $scope.sluglineSoftLimit = 26;
-        $scope.sluglineHardLimit = 40;
-        $scope.headlineSoftLimit = 42;
-        $scope.headlineHardLimit = 70;
+        $scope.sluglineSoftLimit = 24;
+        $scope.sluglineHardLimit = 24;
+        $scope.headlineSoftLimit = 64;
+        $scope.headlineHardLimit = 64;
         $scope.abstractSoftLimit = 160;
         $scope.abstractHardLimit = 200;
 
@@ -645,7 +645,7 @@
                 };
 
                 function applyTheme() {
-                    elem.closest('#theme-container').attr('class', scope.theme.cssClass);
+                    elem.closest('#theme-container').attr('class', scope.theme && scope.theme.cssClass);
                 }
             }
         };
