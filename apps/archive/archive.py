@@ -117,8 +117,12 @@ class ArchiveService(BaseService):
         on_create_media_archive()
         get_component(LegalArchiveProxy).create(docs)
         for doc in docs:
-            add_activity(ACTIVITY_CREATE, 'added new item {{ type }} about {{ subject }}', item=doc,
-                         type=doc['type'], subject=get_subject(doc))
+            subject = get_subject(doc)
+            if subject:
+                msg = 'added new {{ type }} item about "{{ subject }}"'
+            else:
+                msg = 'added new {{ type }} item with empty header/title'
+            add_activity(ACTIVITY_CREATE, msg, item=doc, type=doc['type'], subject=subject)
 
     def update_state(self, original, updates):
         original_state = original.get(config.CONTENT_STATE)
@@ -165,7 +169,7 @@ class ArchiveService(BaseService):
         if '_version' in updates:
             updated = copy(original)
             updated.update(updates)
-            add_activity(ACTIVITY_UPDATE, 'created new version {{ version }} for item {{ type }} about {{ subject }}',
+            add_activity(ACTIVITY_UPDATE, 'created new version {{ version }} for item {{ type }} about "{{ subject }}"',
                          item=updated, version=updates['_version'], subject=get_subject(updates, original),
                          type=updated['type'])
 
