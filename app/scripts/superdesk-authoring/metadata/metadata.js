@@ -3,8 +3,8 @@
 
 'use strict';
 
-MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter'];
-function MetadataCtrl($scope, desks, metadata, $filter) {
+MetadataCtrl.$inject = ['$scope', 'desks', 'metadata', '$filter', 'privileges'];
+function MetadataCtrl($scope, desks, metadata, $filter, privileges) {
 	desks.initialize()
 	.then(function() {
 		$scope.deskLookup = desks.deskLookup;
@@ -20,6 +20,8 @@ function MetadataCtrl($scope, desks, metadata, $filter) {
 			return _.pick(g, 'name');
 		});
 	};
+
+    $scope.unique_name_editable = Boolean(privileges.privileges.metadata_uniquename);
 }
 
 MetadataDropdownDirective.$inject = [];

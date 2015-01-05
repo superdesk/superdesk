@@ -427,10 +427,13 @@
                 startWatch();
                 return item;
     		}, function(response) {
-                if (angular.isDefined(response.data._issues) &&
-                    angular.isDefined(response.data._issues.unique_name) &&
-                    response.data._issues.unique_name.unique === 1) {
-                    notify.error(gettext('Error: Unique Name is not unique.'));
+                if (angular.isDefined(response.data._issues)) {
+                    if (angular.isDefined(response.data._issues.unique_name) &&
+                        response.data._issues.unique_name.unique === 1) {
+                        notify.error(gettext('Error: Unique Name is not unique.'));
+                    } else if (angular.isDefined(response.data._issues['validator exception'])) {
+                        notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                    }
                 } else {
                     notify.error(gettext('Error. Item not updated.'));
                 }

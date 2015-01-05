@@ -13,7 +13,7 @@
 		<li>
 			<label translate>Unique name</label>
 			<div class="data">
-				<input type="text" ng-model="item.unique_name" ng-disabled="!_editable">
+				<input type="text" ng-model="item.unique_name" ng-disabled="!_editable || !unique_name_editable">
 			</div>
 		</li>
 		<li>

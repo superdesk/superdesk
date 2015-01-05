@@ -95,9 +95,12 @@ define([
         }, update);
     }
 
-    IngestSettingsController.$inject = ['$scope'];
-    function IngestSettingsController($scope) {
+    IngestSettingsController.$inject = ['$scope', 'privileges'];
+    function IngestSettingsController($scope, privileges) {
+        var user_privileges = privileges.privileges;
 
+        $scope.showIngest   = Boolean(user_privileges.ingest_providers);
+        $scope.showRuleset  = Boolean(user_privileges.rule_sets);
     }
 
     PieChartDashboardDirective.$inject = ['colorSchemes'];
@@ -220,6 +223,7 @@ define([
                     $scope.provider = _.create($scope.origProvider);
                     $scope.provider.update_schedule = $scope.origProvider.update_schedule || DEFAULT_SCHEDULE;
                     $scope.offProvider = provider.is_closed;
+                    $scope.provider.notifications = $scope.origProvider.notifications;
                 };
 
                 $scope.cancel = function() {

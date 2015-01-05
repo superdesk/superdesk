@@ -2,10 +2,10 @@
 
     <div class="split-content">
         <ul class="nav nav-tabs">
-            <li ng-class="{active: sourcesTab}">
+            <li ng-class="{active: sourcesTab}" ng-show="showIngest">
                 <button ng-click="sourcesTab = true" translate>Sources</button>
             </li>
-            <li ng-class="{active: !sourcesTab}">
+            <li ng-class="{active: !sourcesTab}" ng-show="showRuleset">
                 <button ng-click="sourcesTab = false" translate>Rule sets</button>
             </li>
         </ul>  
