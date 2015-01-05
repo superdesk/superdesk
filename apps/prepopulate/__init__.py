@@ -9,3 +9,5 @@ def init_app(app):
         endpoint_name = 'prepopulate'
         service = PrepopulateService(endpoint_name, backend=superdesk.get_backend())
         PrepopulateResource(endpoint_name, app=app, service=service)
+
+        superdesk.intrinsic_privilege(resource_name=endpoint_name, method=['POST'])

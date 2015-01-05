@@ -4,7 +4,7 @@ from flask import current_app as app, request
 import flask
 from apps.auth.errors import AuthRequiredError, ForbiddenError
 from superdesk.resource import Resource
-from superdesk import get_resource_service, get_resource_privileges
+from superdesk import get_resource_service, get_resource_privileges, get_intrinsic_privileges
 
 
 logger = logging.getLogger(__name__)
@@ -57,38 +57,46 @@ class SuperdeskTokenAuth(TokenAuth):
     """Superdesk Token Auth"""
 
     def check_permissions(self, resource, method, user):
-        if not user:
+        """
+        1. If there's no user associated with the request or HTTP Method is GET then return True.
+        2. Get User's Privileges
+        3. Intrinsic Privileges:
+            Check if resource has intrinsic privileges.
+                If it has then check if HTTP Method is allowed.
+                    Return True if `is_authorized()` on the resource service returns True.
+                    Otherwise, raise ForbiddenError.
+                HTTP Method not allowed continue
+            No intrinsic privileges continue
+        4. User's Privileges
+            Get Resource Privileges and validate it against user's privileges. Return True if validation is successful.
+            Otherwise continue.
+        5. If method didn't return True, then user is not authorized to perform the requested operation on the resource.
+        """
+
+        # Step 1:
+        if method == 'GET' or not user:
             return True
 
-        # is the operation against the user record of the current user
-        if request.view_args.get('_id') == str(user['_id']):
-            # no user is allowed to delete their own user
-            if method.lower() in('delete', 'put'):
-                raise ForbiddenError
-            else:
-                return True
-
-        # We allow all reads or if resource is prepopulate then allow all
-        if method == 'GET' or resource == 'prepopulate':
-            return True
-
-        # We allow a user to patch activities as they may be marking it as read
-        if method == 'PATCH' and resource == 'activity':
-            return True
-
-        # users should be able to change only their preferences
-        if resource == 'preferences':
-            session = get_resource_service('preferences').find_one(_id=request.view_args.get('_id'), req=None)
-            return user['_id'] == session.get("user")
-
-        # Get the list of privileges belonging to this user
+        # Step 2: Get User's Privileges
         get_resource_service('users').set_privileges(user, flask.g.role)
+
+        # Step 3: Intrinsic Privileges
+        intrinsic_privileges = get_intrinsic_privileges()
+        if intrinsic_privileges.get(resource) and method in intrinsic_privileges[resource]:
+            authorized = get_resource_service(resource).is_authorized(user_id=request.view_args.get('_id'))
+
+            if not authorized:
+                raise ForbiddenError()
+
+            return authorized
+
+        # Step 4: User's privileges
         privileges = user.get('active_privileges', {})
         resource_privileges = get_resource_privileges(resource).get(method, None)
         if privileges.get(resource_privileges, False):
             return True
 
-        # If we didn't return True so far then user is not authorized
+        # Step 5:
         raise ForbiddenError()
 
     def check_auth(self, token, allowed_roles, resource, method):

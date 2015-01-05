@@ -89,7 +89,14 @@ def setup_auth_user(context, user=None):
 def add_to_context(context, token, user):
     context.headers.append(('Authorization', b'basic ' + b64encode(token + b':')))
     context.user = user
-    context.placeholders = {'CONTEXT_USER_ID': str(user.get('_id'))}
+    set_placeholder(context, 'CONTEXT_USER_ID', str(user.get('_id')))
+
+
+def set_placeholder(context, name, value):
+    old_p = getattr(context, 'placeholders', None)
+    if not old_p:
+        context.placeholders = dict()
+    context.placeholders[name] = value
 
 
 def get_prefixed_url(current_app, endpoint):
@@ -105,16 +112,19 @@ def setup_db_user(context, user):
     user = user or test_user
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
         original_password = user['password']
-        user['user_type'] = 'administrator'
+
+        if user.get('user_type') is None:
+            user['user_type'] = 'administrator'
+
         if not get_resource_service('users').find_one(username=user['username'], req=None):
             get_resource_service('users').post([user])
-        user['password'] = original_password
 
+        user['password'] = original_password
         auth_data = json.dumps({'username': user['username'], 'password': user['password']})
         auth_response = context.client.post(get_prefixed_url(context.app, '/auth'),
                                             data=auth_data, headers=context.headers)
-        token = json.loads(auth_response.get_data()).get('token').encode('ascii')
 
+        token = json.loads(auth_response.get_data()).get('token').encode('ascii')
         add_to_context(context, token, user)
 
 
@@ -128,7 +138,9 @@ def setup_ad_user(context, user):
     '''
     ad_user = ad_user.copy()
     ad_user['email'] = 'mock@mail.com.au'
-    ad_user['user_type'] = 'administrator'
+
+    if ad_user.get('user_type') is None:
+        ad_user['user_type'] = 'administrator'
 
     with patch.object(ADAuth, 'authenticate_and_fetch_profile', return_value=ad_user):
         auth_data = json.dumps({'username': ad_user['username'], 'password': ad_user['password']})

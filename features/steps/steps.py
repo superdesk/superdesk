@@ -31,7 +31,7 @@ from wooper.assertions import (
     assert_in, assert_equal)
 from urllib.parse import urlparse
 from os.path import basename
-from superdesk.tests import test_user, get_prefixed_url
+from superdesk.tests import test_user, get_prefixed_url, set_placeholder
 from re import findall
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
@@ -144,13 +144,6 @@ def patch_current_user(context, data):
     return response
 
 
-def set_placeholder(context, name, value):
-    old_p = getattr(context, 'placeholders', None)
-    if not old_p:
-        context.placeholders = dict()
-    context.placeholders[name] = value
-
-
 def apply_placeholders(context, text):
     placeholders = getattr(context, 'placeholders', {})
     for placeholder in findall('#([^#]+)#', text):
@@ -171,19 +164,23 @@ def apply_placeholders(context, text):
 
 @given('empty "{resource}"')
 def step_impl_given_empty(context, resource):
-    with context.app.test_request_context(context.app.config['URL_PREFIX']):
-        get_resource_service(resource).delete_action()
+    if not is_user_resource(resource):
+        with context.app.test_request_context(context.app.config['URL_PREFIX']):
+            get_resource_service(resource).delete_action()
 
 
 @given('"{resource}"')
 def step_impl_given_(context, resource):
     data = apply_placeholders(context, context.text)
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
-        get_resource_service(resource).delete_action()
+        if not is_user_resource(resource):
+            get_resource_service(resource).delete_action()
+
         items = [parse(item, resource) for item in json.loads(data)]
-        if resource in ('users', '/users'):
+        if is_user_resource(resource):
             for item in items:
                 item.setdefault('needs_activation', False)
+
         get_resource_service(resource).post(items)
         context.data = items
         context.resource = resource
@@ -194,7 +191,9 @@ def step_impl_given_(context, resource):
 @given('the "{resource}"')
 def step_impl_given_the(context, resource):
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
-        get_resource_service(resource).delete_action()
+        if not is_user_resource(resource):
+            get_resource_service(resource).delete_action()
+
         orig_items = {}
         items = [parse(item, resource) for item in json.loads(context.text)]
         get_resource_service(resource).post(items)
@@ -1155,3 +1154,17 @@ def then_we_get_activity(context):
         if item.get('_id'):
             set_placeholder(context, 'ACTIVITY_ID', item['_id'])
             set_placeholder(context, 'USERS_ID', item['user'])
+
+
+@given('we login as user "{username}" with password "{password}"')
+def when_we_switch_user(context, username, password):
+    user = {'username': username, 'password': password, 'is_active': True, 'needs_activation': False}
+
+    if context.text:
+        user.update(json.loads(context.text))
+
+    tests.setup_auth_user(context, user)
+
+
+def is_user_resource(resource):
+    return resource in ('users', '/users')
