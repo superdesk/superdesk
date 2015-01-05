@@ -16,10 +16,6 @@ function ContentCtrlFactory(api, superdesk, workqueue) {
                     superdesk.intent('author', 'article', item);
                 });
         };
-
-        this.createPackage = function() {
-            superdesk.intent('create', 'package');
-        };
     };
 }
 
