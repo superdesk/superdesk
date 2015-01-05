@@ -15,9 +15,9 @@ from superdesk.io import allowed_providers
 from superdesk.activity import ACTIVITY_CREATE, ACTIVITY_EVENT, \
     ACTIVITY_DELETE, ACTIVITY_UPDATE, notify_and_add_activity
 from superdesk import get_resource_service
+from settings import DAYS_TO_KEEP
 
 
-DAYS_TO_KEEP = 2
 logger = logging.getLogger(__name__)
 
 

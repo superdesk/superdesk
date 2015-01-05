@@ -8,6 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+
 import os
 from datetime import datetime, timedelta
 import superdesk.tests as tests
@@ -264,6 +265,8 @@ def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
 def step_impl_when_post_url(context, url):
     with context.app.mail.record_messages() as outbox:
         data = apply_placeholders(context, context.text)
+        url = apply_placeholders(context, url)
+
         if url in ('/users', 'users'):
             user = json.loads(data)
             user.setdefault('needs_activation', False)

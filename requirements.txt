@@ -1,6 +1,6 @@
 Cerberus==0.7.2
 Events==0.2.1
-Eve-Elastic==0.2.2
+Eve-Elastic==0.2.4
 Flask==0.10.1
 Flask-Mail==0.9.1
 Flask-PyMongo==0.3.0
