@@ -51,6 +51,10 @@
 									<textarea class="fullwidth-input" ng-model="desk.edit.description"></textarea>
 								</div>
 								<div class="field">
+									<label translate>Content expiry (minutes)</label>
+									<input type="number" class="fullwidth-input" ng-model="desk.edit.content_expiry" required> 
+								</div>
+								<div class="field">
 									<label translate>Spike expiry (minutes)</label>
 									<input type="number" class="fullwidth-input" ng-model="desk.edit.spike_expiry" required> 
 								</div>
@@ -111,15 +115,35 @@
 							</div>
 						</div>
 						<div class="col">
-							<div class="header" translate>Statuses</div>
-							<div class="content status-list" >
-								<div ng-repeat="status in statuses" ng-if="editStage">
-									<div class="status {{status._id}}" ng-click="setStatus(status)"								 
-										ng-class="{'active': status._id === editStage.task_status}">
-										{{ status.name }}
+							<div class="row">
+								<div class="header" translate>Statuses</div>
+								<div class="content status-list" >
+									<div ng-repeat="status in statuses" ng-if="editStage">
+										<div class="status {{status._id}}" ng-click="setStatus(status)"								 
+											ng-class="{'active': status._id === editStage.task_status}">
+											{{ status.name }}
+										</div>
 									</div>
+									<div class="status active {{selected.task_status}}" ng-if="!editStage && selected.task_status">{{ selected.task_status }}</div>
 								</div>
-								<div class="status active {{selected.task_status}}" ng-if="!editStage && selected.task_status">{{ selected.task_status }}</div>
+							</div>
+
+							<div class="row" ng-show="selected && !editStage">
+								<div class="header"  translate>Stage Details</div>
+								<label translate>Stage description: {{ selected.description}}</label>
+								<label translate>Content expiry: {{ selected.content_expiry}} (minutes)</label>
+							</div>
+
+							<div class="row" ng-if="editStage">
+								<div class="header"  translate>Stage Details</div>
+								<div class="field">
+									<label translate>Stage description</label>
+									<textarea class="fullwidth-input" ng-model="editStage.description"></textarea>
+								</div>
+								<div class="field">
+									<label translate>Content expiry (minutes)</label>
+									<input type="number" class="fullwidth-input" ng-model="editStage.content_expiry" required> 
+								</div>
 							</div>
 						</div>
 					</div>
