@@ -1,3 +1,13 @@
+# -*- coding: utf-8; -*-
+#
+# This file is part of Superdesk.
+#
+# Copyright 2013, 2014 Sourcefabric z.u. and contributors.
+#
+# For the full copyright and license information, please see the
+# AUTHORS and LICENSE files distributed with this source code, or
+# at https://www.sourcefabric.org/superdesk/license
+
 import logging
 
 from flask import abort, current_app as app
@@ -111,7 +121,7 @@ class ArchiveMediaService(BaseService):
             del doc['media_fetched']
         else:
             content = doc['media']
-            res = process_file_from_stream(content, filename=content.filename, content_type=content.mimetype)
+            res = process_file_from_stream(content, content_type=content.mimetype)
             file_name, content_type, metadata = res
             logger.debug('Going to save media file with %s ' % file_name)
             content.seek(0)

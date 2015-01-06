@@ -1,3 +1,13 @@
+# -*- coding: utf-8; -*-
+#
+# This file is part of Superdesk.
+#
+# Copyright 2013, 2014 Sourcefabric z.u. and contributors.
+#
+# For the full copyright and license information, please see the
+# AUTHORS and LICENSE files distributed with this source code, or
+# at https://www.sourcefabric.org/superdesk/license
+
 """Upload module"""
 import logging
 import superdesk
@@ -5,7 +15,7 @@ from eve.utils import config
 from superdesk import SuperdeskError
 from .resource import Resource
 from .services import BaseService
-from flask import url_for, Response, current_app as app, json
+from flask import url_for, Response, current_app as app
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from superdesk.media.media_operations import download_file_from_url, process_file_from_stream, \
     crop_image, decode_metadata, download_file_from_encoded_str
@@ -84,23 +94,24 @@ class UploadService(BaseService):
             self.store_file(doc, content, filename, content_type)
 
     def store_file(self, doc, content, filename, content_type):
-        res = process_file_from_stream(content, filename=filename, content_type=content_type)
-        file_name, content_type, metadata = res
-
-        cropping_data = self.get_cropping_data(doc)
-        _, out = crop_image(content, filename, cropping_data)
-        metadata['length'] = json.dumps(len(out.getvalue()))
-
+        # retrieve file name and metadata from file
+        file_name, content_type, metadata = process_file_from_stream(content, content_type=content_type)
+        # crop the file if needed, can change the image size
+        was_cropped, out = crop_image(content, filename, self.get_cropping_data(doc))
+        # the length in metadata could be updated if it was cropped
+        if was_cropped:
+            file_name, content_type, metadata_after_cropped = process_file_from_stream(out, content_type=content_type)
+            # when cropped, metadata are reseted. Then we update the previous metadata variable
+            metadata['length'] = metadata_after_cropped['length']
         try:
             logger.debug('Going to save media file with %s ' % file_name)
             out.seek(0)
-            id = app.media.put(out, filename=file_name, content_type=content_type, metadata=metadata)
-            doc['media'] = id
+            file_id = app.media.put(out, filename=file_name, content_type=content_type, metadata=metadata)
+            doc['media'] = file_id
             doc['mime_type'] = content_type
             doc['filemeta'] = decode_metadata(metadata)
             inserted = [doc['media']]
             file_type = content_type.split('/')[0]
-
             rendition_spec = config.RENDITIONS['avatar']
             renditions = generate_renditions(out, doc['media'], inserted, file_type,
                                              content_type, rendition_spec, url_for_media)
