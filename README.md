@@ -1,4 +1,4 @@
-# Superdesk Server [![Build Status](https://travis-ci.org/superdesk/superdesk-server.png?branch=master)](https://travis-ci.org/superdesk/superdesk-server)
+# Superdesk Server [![Build Status](https://travis-ci.org/superdesk/superdesk-server.png?branch=master)](https://travis-ci.org/superdesk/superdesk-server) [![Code Health](https://landscape.io/github/superdesk/superdesk-server/master/landscape.svg)](https://landscape.io/github/superdesk/superdesk-server/master)
 
 Superdesk Server provides a REST API server for [Superdesk project](https://wiki.sourcefabric.org/x/DgWX).
 It's a python app, built on top of [eve](http://python-eve.org/)/[flask](http://flask.pocoo.org/) framework.
