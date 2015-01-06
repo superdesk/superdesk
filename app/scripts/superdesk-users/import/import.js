@@ -1,6 +1,7 @@
 (function() {
 'use strict';
 
+UserImportService.$inject = ['api', '$q'];
 function UserImportService(api, $q) {
 
     function reject(key) {
@@ -21,6 +22,7 @@ function UserImportService(api, $q) {
     };
 }
 
+UserImportController.$inject = ['$scope', 'userImport'];
 function UserImportController($scope, userImport) {
 
     $scope.model = {};
