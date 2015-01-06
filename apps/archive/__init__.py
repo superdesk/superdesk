@@ -1,5 +1,3 @@
-"""Media archive module"""
-
 # -*- coding: utf-8; -*-
 #
 # This file is part of Superdesk.
@@ -11,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
+"""Media archive module"""
 import logging
 
 from .archive import ArchiveResource, ArchiveService, ArchiveVersionsResource, AutoSaveResource, \
