@@ -13,7 +13,7 @@
 import logging
 
 from .archive import ArchiveResource, ArchiveService, ArchiveVersionsResource, AutoSaveResource, \
-    ArchiveVersionsService, ArchiveSaveService
+    ArchiveVersionsService, ArchiveSaveService, ArchiveRemoveExpiredContent
 from .ingest import IngestResource, IngestService
 from .archive_media import ArchiveMediaResource, ArchiveMediaService, ArchiveMediaVersionsResource
 from .archive_ingest import ArchiveIngestResource, ArchiveIngestService
@@ -29,7 +29,6 @@ from apps.common.models.utils import register_model
 from apps.item_lock.models.item import ItemModel
 from apps.common.models.io.eve_proxy import EveProxy
 from superdesk.celery_app import celery
-from .archive_spike import ArchiveRemoveExpiredSpikes
 from .saved_searches import SavedSearchesService, SavedSearchesResource, \
     SavedSearchItemsResource, SavedSearchItemsService
 import logging

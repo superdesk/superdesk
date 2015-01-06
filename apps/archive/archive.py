@@ -33,7 +33,6 @@ from apps.common.models.base_model import InvalidEtag
 from apps.legal_archive.components.legal_archive_proxy import LegalArchiveProxy
 from copy import copy
 import superdesk
-from superdesk.workflow import is_workflow_state_transition_valid
 import logging
 
 logger = logging.getLogger(__name__)
