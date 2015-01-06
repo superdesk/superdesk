@@ -47,6 +47,9 @@ class StagesResource(Resource):
             'allowed': task_statuses
         },
         'desk': Resource.rel('desks', embeddable=True),
+        'content_expiry': {
+            'type': 'integer'
+        },
         'outgoing': {
             'type': 'list',
             'schema': {
