@@ -13,15 +13,16 @@ import logging
 import superdesk
 
 from flask import current_app as app
-from eve.utils import ParsedRequest, date_to_str
+
 
 from superdesk import get_resource_service
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
-from superdesk.utc import utcnow, get_expiry_date
+from superdesk.utc import get_expiry_date
 from .common import get_user, item_url, is_assigned_to_a_desk
 
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
+from apps.tasks import set_expiry
 
 
 logger = logging.getLogger(__name__)
@@ -97,6 +98,9 @@ class ArchiveUnspikeService(BaseService):
                 'stage': str(desk['incoming_stage']) if desk_id else None,
                 'user': None
             }
+            desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
+            stage = get_resource_service('stages').find_one(req=None, _id=desk['incoming_stage'])
+            updates['expiry'] = set_expiry(desk, stage)
 
         return updates
 
@@ -112,39 +116,6 @@ class ArchiveUnspikeService(BaseService):
         push_notification('item:unspike', item=str(id), user=str(user))
         return item
 
-
-class ArchiveRemoveExpiredSpikes(superdesk.Command):
-
-    def run(self):
-        self.remove_expired_spiked()
-
-    def remove_expired_spiked(self):
-        logger.info('Expiring spiked content')
-        now = date_to_str(utcnow())
-        items = self.get_expired_items(now)
-        while items.count() > 0:
-            for item in items:
-                logger.info('deleting {} expiry: {} now:{}'.format(item['_id'], item['expiry'], now))
-                superdesk.get_resource_service(ARCHIVE).delete_action({'_id': str(item['_id'])})
-            items = self.get_expired_items(now)
-
-    def get_expired_items(self, now):
-        query_filter = self.get_query_for_expired_items(now)
-        req = ParsedRequest()
-        req.max_results = 100
-        req.args = {'filter': query_filter}
-        return superdesk.get_resource_service(ARCHIVE).get(req, None)
-
-    def get_query_for_expired_items(self, now):
-        query = {'and':
-                 [
-                     {'term': {'state': 'spiked'}},
-                     {'range': {'expiry': {'lte': now}}},
-                 ]
-                 }
-        return superdesk.json.dumps(query)
-
-superdesk.command('archive:spike', ArchiveRemoveExpiredSpikes())
 
 superdesk.workflow_state('spiked')
 

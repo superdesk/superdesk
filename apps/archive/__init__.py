@@ -32,6 +32,7 @@ from superdesk.celery_app import celery
 from .archive_spike import ArchiveRemoveExpiredSpikes
 from .saved_searches import SavedSearchesService, SavedSearchesResource, \
     SavedSearchItemsResource, SavedSearchItemsService
+import logging
 
 
 logger = logging.getLogger(__name__)
@@ -129,5 +130,5 @@ def init_app(app):
 
 
 @celery.task()
-def spike_purge():
-    ArchiveRemoveExpiredSpikes().run()
+def content_purge():
+    ArchiveRemoveExpiredContent().run()

@@ -98,7 +98,7 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(minute=20)
     },
     'spike:gc': {
-        'task': 'apps.archive.spike_purge',
+        'task': 'apps.archive.content_purge',
         'schedule': crontab(minute=30)
     }
 }
@@ -208,6 +208,10 @@ SESSION_EXPIRY_MINUTES = 240
 
 # The number of minutes before spiked items purged
 SPIKE_EXPIRY_MINUTES = 300
+
+# The number of minutes before content items purged
+# akin.tolga 06/01/2014: using a large value (30 days) for the time being
+CONTENT_EXPIRY_MINUTES = 43200
 
 # This setting can be used to apply a limit on the elastic search queries, it is a limit per shard.
 # A value of -1 indicates that no limit will be applied.

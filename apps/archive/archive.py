@@ -24,7 +24,7 @@ from superdesk.errors import SuperdeskApiError
 from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, ACTIVITY_DELETE
-from eve.utils import parse_request, config
+from eve.utils import parse_request, config, ParsedRequest, date_to_str
 from superdesk.services import BaseService
 from apps.content import metadata_schema
 from apps.common.components.utils import get_component
@@ -33,6 +33,10 @@ from apps.common.models.base_model import InvalidEtag
 from apps.legal_archive.components.legal_archive_proxy import LegalArchiveProxy
 from copy import copy
 import superdesk
+from superdesk.workflow import is_workflow_state_transition_valid
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def get_subject(doc1, doc2=None):
@@ -283,6 +287,38 @@ class ArchiveSaveService(BaseService):
             raise SuperdeskApiError.preconditionFailedError('Client and server etags don\'t match')
         return [docs[0]['_id']]
 
+
+class ArchiveRemoveExpiredContent(superdesk.Command):
+
+    def run(self):
+        self.remove_expired_content()
+
+    def remove_expired_content(self):
+        logger.info('Removing expired content')
+        now = date_to_str(utcnow())
+        items = self.get_expired_items(now)
+        while items.count() > 0:
+            for item in items:
+                logger.info('deleting {} expiry: {} now:{}'.format(item['_id'], item['expiry'], now))
+                superdesk.get_resource_service('archive').delete_action({'_id': str(item['_id'])})
+            items = self.get_expired_items(now)
+
+    def get_expired_items(self, now):
+        query_filter = self.get_query_for_expired_items(now)
+        req = ParsedRequest()
+        req.max_results = 100
+        req.args = {'filter': query_filter}
+        return superdesk.get_resource_service('archive').get(req, None)
+
+    def get_query_for_expired_items(self, now):
+        query = {'and':
+                 [
+                     {'range': {'expiry': {'lte': now}}}
+                 ]
+                 }
+        return superdesk.json.dumps(query)
+
+superdesk.command('archive', ArchiveRemoveExpiredContent())
 
 superdesk.workflow_state('in_progress')
 superdesk.workflow_action(
