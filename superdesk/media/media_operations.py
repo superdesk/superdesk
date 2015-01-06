@@ -58,7 +58,7 @@ def download_file_from_encoded_str(encoded_str):
     return BytesIO(content), name, mime
 
 
-def process_file_from_stream(content, filename=None, content_type=None):
+def process_file_from_stream(content, content_type=None):
     content_type = content_type or content.content_type
     content = BytesIO(content.read())
     if 'application/' in content_type:
