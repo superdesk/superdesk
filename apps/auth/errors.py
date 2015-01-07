@@ -47,6 +47,10 @@ class UserInactiveError(ForbiddenError):
     message = 'Account suspended, access restricted.'
 
 
+class UserImportedError(superdesk.SuperdeskError):
+    payload = {'profile_to_import': 1}
+
+
 def raiseCredentialsAuthError(credentials):
     logger.warning("Login failure: %s" % json.dumps(credentials))
     raise CredentialsAuthError()

@@ -10,13 +10,16 @@
 
 import logging
 from ldap3 import Server, Connection, SEARCH_SCOPE_WHOLE_SUBTREE, LDAPException
+from apps.auth.errors import AuthError, NotFoundAuthError, ForbiddenError, UserImportedError
 from apps.auth.service import AuthService
+from apps.users.services import UsersService
 from superdesk import get_resource_service
 from superdesk.resource import Resource
-from superdesk.services import BaseService
 from flask import current_app as app
+import flask
 import superdesk
 from superdesk.errors import SuperdeskApiError, CredentialsAuthError
+
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +66,7 @@ class ImportUserProfileResource(Resource):
 
     item_methods = []
     resource_methods = ['POST']
+    privileges = {'POST': 'users'}
 
 
 class ADAuth:
@@ -131,6 +135,17 @@ class ADAuth:
 
 class ADAuthService(AuthService):
 
+    def on_create(self, docs):
+
+        user_service = get_resource_service('users')
+        for index, doc in enumerate(docs):
+            user = self.authenticate(doc)
+
+            if not user.get('_id'):
+                user_service.post([user])
+
+            self.set_auth_default(doc, user['_id'])
+
     def authenticate(self, credentials):
         """
         Authenticates the user against Active Directory
@@ -143,47 +158,46 @@ class ADAuthService(AuthService):
 
         username = credentials.get('username')
         password = credentials.get('password')
-        profile_to_import = credentials['profile_to_import'] if 'profile_to_import' in credentials else username
-
-        profile_to_be_created = True
-        if 'profile_to_be_created' in credentials and credentials['profile_to_be_created'] == 'false':
-            profile_to_be_created = False
+        profile_to_import = credentials.get('profile_to_import', username)
 
         user_data = ad_auth.authenticate_and_fetch_profile(username, password, username_for_profile=profile_to_import)
+
         if len(user_data) == 0:
             raise SuperdeskApiError.notFoundError(
                 message='No user has been found in AD',
                 payload={'profile_to_import': 1})
 
-        if profile_to_be_created:
-            user = superdesk.get_resource_service('users').find_one(username=profile_to_import, req=None)
+        user = superdesk.get_resource_service('users').find_one(username=profile_to_import, req=None)
 
-            if not user:
-                add_default_values(user_data, profile_to_import,
-                                   user_type=None if 'user_type' not in user_data else user_data['user_type'])
-                superdesk.get_resource_service('users').post([user_data])
-            else:
-                superdesk.get_resource_service('users').patch(user.get('_id'), user_data)
-
-            user = superdesk.get_resource_service('users').find_one(username=profile_to_import, req=None)
-        else:
+        if not user:
+            add_default_values(user_data, profile_to_import,
+                               user_type=None if 'user_type' not in user_data else user_data['user_type'])
             user = user_data
+        else:
+            superdesk.get_resource_service('users').patch(user.get('_id'), user_data)
+            user = superdesk.get_resource_service('users').find_one(username=profile_to_import, req=None)
 
         return user
 
 
-class ImportUserProfileService(BaseService):
+class ImportUserProfileService(UsersService):
     """
     Service Class for endpoint /import_profile
     """
     def on_create(self, docs):
-        doc = docs[0]
-        doc = get_resource_service('auth').authenticate(doc)
-        add_default_values(doc, doc['profile_to_import'],
-                           user_type=None if 'user_type' not in doc else doc['user_type'],
-                           profile_to_be_created='false')
+        for index, doc in enumerate(docs):
+            # ensuring the that logged in user is importing the profile.
+            if flask.g.user.get('username') != doc.get('username'):
+                raise ForbiddenError()
 
-        docs[0] = doc
+            user = get_resource_service('auth').authenticate(doc)
+
+            if user.get('_id'):
+                raise UserImportedError(message='User is already imported.')
+
+            docs[index] = user
+
+        super().on_create(docs)
 
 
 def add_default_values(doc, user_name, user_type, **kwargs):
