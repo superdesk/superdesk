@@ -129,6 +129,10 @@ Feature: Stages
         """
         {"name": "Sports Desk", "incoming_stage": "#STAGES_ID#"}
         """
+        When we patch "/stages/#STAGES_ID#"
+        """
+        {"desk":"#DESKS_ID#"}
+        """
         When we post to "tasks"
 	    """
         [{"slugline": "first task", "type": "text", "task": {"desk":"#DESKS_ID#", "stage" :"#STAGES_ID#"}}]
@@ -193,6 +197,10 @@ Feature: Stages
         When we post to "desks"
         """
         {"name": "Sports Desk", "incoming_stage": "#STAGES_ID#"}
+        """
+        When we patch "/stages/#STAGES_ID#"
+        """
+        {"desk":"#DESKS_ID#"}
         """
         When we post to "tasks"
 	    """

@@ -58,17 +58,16 @@ def send_to(doc, desk_id=None, stage_id=None):
         stage = get_resource_service('stages').find_one(req=None, _id=task['stage'])
     if task['stage']:
         stage = get_resource_service('stages').find_one(req=None, _id=task['stage'])
-        if stage.get('desk', None) is not None:
-            desk = superdesk.get_resource_service('desks').find_one(req=None, _id=stage['desk'])
+        desk = superdesk.get_resource_service('desks').find_one(req=None, _id=stage['desk'])
         if not stage:
             raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % task['stage'])
         if stage.get('task_status'):
             doc['task']['status'] = stage['task_status']
     doc['task'] = task
-    doc['expiry'] = set_expiry(desk, stage)
+    doc['expiry'] = set_expiry(app, desk, stage)
 
 
-def set_expiry(desk, stage):
+def set_expiry(app, desk, stage):
     expiry_minutes = app.settings['CONTENT_EXPIRY_MINUTES']
     if desk:
         expiry_minutes = desk.get('content_expiry', expiry_minutes)
@@ -180,7 +179,7 @@ class TasksService(BaseService):
         if new_stage_id and new_stage_id != old_stage_id:
             new_stage = get_resource_service('stages').find_one(req=None, _id=new_stage_id)
             desk = superdesk.get_resource_service('desks').find_one(req=None, _id=new_stage['desk'])
-            updates['expiry'] = set_expiry(desk, new_stage)
+            updates['expiry'] = set_expiry(app, desk, new_stage)
             if not new_stage:
                 raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % new_stage)
             if new_stage.get('task_status'):

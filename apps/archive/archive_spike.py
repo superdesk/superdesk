@@ -100,7 +100,7 @@ class ArchiveUnspikeService(BaseService):
             }
             desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
             stage = get_resource_service('stages').find_one(req=None, _id=desk['incoming_stage'])
-            updates['expiry'] = set_expiry(desk, stage)
+            updates['expiry'] = set_expiry(app, desk, stage)
 
         return updates
 

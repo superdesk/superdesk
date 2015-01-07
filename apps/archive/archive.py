@@ -317,7 +317,7 @@ class ArchiveRemoveExpiredContent(superdesk.Command):
                  }
         return superdesk.json.dumps(query)
 
-superdesk.command('archive', ArchiveRemoveExpiredContent())
+superdesk.command('archive:remove_expired', ArchiveRemoveExpiredContent())
 
 superdesk.workflow_state('in_progress')
 superdesk.workflow_action(
