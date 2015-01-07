@@ -14,9 +14,11 @@
 
     PackagesService.$inject = ['api', '$q'];
     function PackagesService(api, $q) {
+        var currentPackage = null;
 
         this.fetch = function(packageId) {
             return api.find('packages', packageId).then(angular.bind(this, function(result) {
+                currentPackage = result;
                 return $q.when(result);
             }));
         };
@@ -102,6 +104,20 @@
             return api.packages.save(currentPackage, patch);
         };
 
+        this.addItemsToDefaultGroup = function addToDefaultGroup(items) {
+            var self = this;
+
+            var patch = _.pick(currentPackage, 'groups');
+            var rootGroup = _.find(patch.groups, function(group) { return group.id === 'root'; });
+            var groupId = rootGroup.refs[0].idRef;
+
+            var targetGroup = _.find(patch.groups, function(group) { return group.id === groupId; });
+            _.forEach(items, function(item) {
+                targetGroup.refs.push(self.getReferenceFor(item));
+            });
+            return api.packages.save(currentPackage, patch);
+        };
+
         this.addGroupToPackage = function addGroupToPackage(currentPackage, groupId) {
             var self = this;
 
@@ -134,15 +150,6 @@
             });
         }
 
-        function fetchContentItems(q) {
-            var query = search.query(q || null);
-            query.size(20);
-            api.archive.query(query.getCriteria(true))
-            .then(function(result) {
-                $scope.contentItems = result._items;
-            });
-        }
-
         $scope.createGroup = function() {
             superdesk.intent('create', 'group').then(function(group_name) {
                 packagesService.addGroupToPackage($scope.item, group_name)
@@ -159,12 +166,31 @@
             });
         };
 
-        $scope.refresh = function(form) {
-            fetchContentItems(form.query);
-        };
-
         fetchItem();
+    }
+
+    SearchWidgetCtrl.$inject = ['$scope', 'superdesk', 'api', 'search'];
+    function SearchWidgetCtrl($scope, superdesk, api, search) {
+
+        function fetchContentItems(q) {
+            var query = search.query(q || null);
+            query.size(25);
+            api.archive.query(query.getCriteria(true))
+            .then(function(result) {
+                $scope.contentItems = result._items;
+            });
+        }
+
+        $scope.$watch('query', function(query) {
+            fetchContentItems(query);
+        });
+
         fetchContentItems();
+    }
+
+    AddToPackageCtrl.$inject = ['data', 'packagesService'];
+    function AddToPackageCtrl(data, packagesService) {
+        packagesService.addItemsToDefaultGroup([data.item]);
     }
 
     CreateGroupCtrl.$inject = ['$scope', 'api'];
@@ -238,9 +264,7 @@
         })
         .activity('addto.package', {
             label: gettext('Add to package'),
-            controller: ['data', '$location', 'superdesk', function(data, $location, superdesk) {
-                superdesk.intent('author', 'package', data.item);
-            }],
+            controller: AddToPackageCtrl,
             filters: [{action: 'addto', type: 'package'}],
             icon: 'plus-small'
         });
@@ -250,7 +274,17 @@
             type: 'http',
             backend: {rel: 'packages'}
         });
-    }]);
+    }])
+    .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
+        authoringWidgetsProvider
+            .widget('search', {
+                icon: 'search',
+                label: gettext('Search'),
+                template: 'scripts/superdesk-packaging/views/search.html',
+                side: 'left'
+            });
+    }])
+    .controller('SearchWidgetCtrl', SearchWidgetCtrl);
 
     return app;
 })();

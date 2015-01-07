@@ -3,27 +3,6 @@
 </div>
 <div class="packaging-screen main-section">
     <div sd-authoring-widgets data-item="item">
-        <div class="content-items-container">
-            <form name="searchForm" ng-submit="refresh(this)">
-                <div class="search-box">
-                    <input type="text" name="query" ng-model="query">
-                </div>
-                <div class="content-list">
-                    <ul>
-                        <li ng-repeat="item in contentItems">
-                            <i class="filetype-icon-{{item.type}}"></i>
-                            <p><span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span>{{item.headline || item.type}}</p>
-                            <ul class="item-functions"
-                                sd-activity-list
-                                data-item="item"
-                                data-type="package"
-                                data-action="addto">
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </form>
-        </div>
         <div class="package-edit-container">
             <div class="header">
                 <button class="btn btn-info" ng-click="createGroup()">
@@ -31,6 +10,7 @@
                 </button>
             </div>
             <div class="content">
+                <div class="keyword" ng-show="item.slugline">{{ item.slugline }}</div>
                 <div class="title" ng-show="item.headline">{{ item.headline }}</div>
                 <div sd-package data-item="item" class="composite-preview"></div>
             </div>

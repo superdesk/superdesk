@@ -1,0 +1,20 @@
+<div class="content-items-container" ng-controller="SearchWidgetCtrl">
+    <div class="search-box">
+        <input type="text" placeholder="{{ 'Search'|translate }}" ng-model="query">
+    </div>
+
+    <div class="content-list">
+        <ul>
+            <li ng-repeat="item in contentItems">
+                <i class="filetype-icon-{{item.type}}"></i>
+                <p><span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span>{{item.headline || item.type}}</p>
+                <ul class="item-functions"
+                    sd-activity-list
+                    data-item="item"
+                    data-type="package"
+                    data-action="addto">
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
