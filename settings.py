@@ -89,10 +89,10 @@ CELERYBEAT_SCHEDULE = {
         'schedule': timedelta(seconds=30),
         'options': {'expires': 59}
     },
-    # 'ingest:gc': {
-    #    'task': 'superdesk.io.gc_ingest',
-    #    'schedule': crontab(minute=10),
-    # },
+    'ingest:gc': {
+        'task': 'superdesk.io.gc_ingest',
+        'schedule': crontab(minute=10),
+    },
     'session:gc': {
         'task': 'apps.auth.session_purge',
         'schedule': crontab(minute=20)

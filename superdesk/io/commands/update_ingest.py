@@ -10,19 +10,20 @@
 
 
 import logging
-from datetime import timedelta
+import superdesk
 
 from flask import current_app as app
-from werkzeug.exceptions import HTTPException
 from settings import DAYS_TO_KEEP
+from datetime import timedelta
+from werkzeug.exceptions import HTTPException
 
-import superdesk
 from superdesk.notification import push_notification
 from superdesk.io import providers
 from superdesk.celery_app import celery
 from superdesk.utc import utcnow
 from superdesk.workflow import set_default_state
 from superdesk.errors import ProviderError
+from superdesk.stats import stats
 
 
 UPDATE_SCHEDULE_DEFAULT = {'minutes': 5}
@@ -105,6 +106,7 @@ def update_provider(provider_id):
 
     for items in providers[provider.get('type')].update(provider):
         ingest_items(provider, items)
+        stats.incr('ingest.ingested_items', len(items))
 
     superdesk.get_resource_service('ingest_providers').update(provider['_id'], {
         'config': provider.get('config', {}),  # persist changes to config if any
