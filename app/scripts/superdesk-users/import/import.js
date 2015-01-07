@@ -4,19 +4,23 @@
 UserImportService.$inject = ['api', '$q'];
 function UserImportService(api, $q) {
 
-    function reject(key) {
-        var errors = {};
-        errors[key] = 1;
-        return $q.reject(errors);
+    function reject(key, message){
+        var error = {};
+        error[key] = 1;
+        error.message = message;
+        return $q.reject(error);
     }
 
     this.importUser = function importUser(importUserData) {
         return api.save('import_profile', importUserData)
         .then(null, function handleErrorResponse(response) {
+            var data = response.data;
             if (response.status === 404) {
-                return reject('profile_to_import');
+                return reject('profile_to_import', data._message);
+            } else if (response.status === 400) {
+                return reject(data._issues.profile_to_import ? 'profile_to_import': 'credentials', data._message);
             } else {
-                return reject('credentials');
+                return reject('credentials', data._message);
             }
         });
     };
