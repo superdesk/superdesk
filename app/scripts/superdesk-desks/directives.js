@@ -130,6 +130,12 @@ define([
                 scope.edit = function(stage) {
                     orig = stage;
                     scope.editStage = _.create(stage);
+                    if (!scope.editStage.hasOwnProperty('_id') || scope.editStage._id === null) {
+                        var lastStage = _.last(scope.stages);
+                        if (lastStage) {
+                            scope.editStage.task_status = lastStage.task_status;
+                        }
+                    }
                 };
 
                 scope.isActive = function(stage) {
