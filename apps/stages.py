@@ -44,7 +44,12 @@ class StagesResource(Resource):
         },
         'task_status': {
             'type': 'string',
-            'allowed': task_statuses
+            'allowed': task_statuses,
+            'required': True
+        },
+        'desk_order': {
+            'type': 'integer',
+            'readonly': True
         },
         'desk': Resource.rel('desks', embeddable=True),
         'content_expiry': {
@@ -65,6 +70,19 @@ class StagesResource(Resource):
 
 
 class StagesService(BaseService):
+    def on_create(self, docs):
+        for doc in docs:
+            if not doc.get('desk'):
+                doc['desk_order'] = 1
+                continue
+            req = ParsedRequest()
+            req.sort = '-desk_order'
+            req.max_results = 1
+            prev_stage = self.get(req=req, lookup={'desk':doc['desk']})
+            if prev_stage.count() == 0:
+                doc['desk_order'] = 1;
+            else:
+                doc['desk_order'] = prev_stage[0]['desk_order'] + 1
 
     def on_delete(self, doc):
         if doc['default_incoming'] is True:

@@ -30,6 +30,7 @@ from superdesk import get_resource_service
 from flask import current_app as app
 
 task_statuses = ['todo', 'in-progress', 'done']
+default_status = 'todo'
 
 
 def init_app(app):
@@ -96,7 +97,7 @@ class TaskResource(Resource):
                 'status': {
                     'type': 'string',
                     'allowed': task_statuses,
-                    'default': 'todo'
+                    'default': default_status
                 },
                 'due_date': {'type': 'datetime'},
                 'started_at': {'type': 'datetime'},

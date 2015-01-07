@@ -46,14 +46,16 @@ Feature: Stages
         When we post to "/stages"
         """
         {
-        "name": "show my content"
+        "name": "show my content",
+        "task_status": "todo"
         }
         """
 
         Then we get new resource
         """
         {
-        "name": "show my content"
+        "name": "show my content",
+        "task_status": "todo"
         }
         """
 
@@ -71,7 +73,8 @@ Feature: Stages
         {
         "name": "show my content",
         "desk": "#DESKS_ID#",
-        "description": "Show content items created by the current logged user"
+        "description": "Show content items created by the current logged user",
+        "task_status": "todo"
         }
         """
 
@@ -80,7 +83,8 @@ Feature: Stages
         {
         "name": "show my content",
         "desk": "#DESKS_ID#",
-        "description": "Show content items created by the current logged user"
+        "description": "Show content items created by the current logged user",
+        "task_status": "todo"
         }
         """
 
@@ -92,7 +96,8 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "description": "Show content items created by the current logged user"
+        "description": "Show content items created by the current logged user",
+        "task_status": "todo"
         }
         """
 
@@ -100,7 +105,8 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "description": "Show content items created by the current logged user"
+        "description": "Show content items created by the current logged user",
+        "task_status": "todo"
         }
         """
         When we patch latest
@@ -122,7 +128,8 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "description": "Show content items created by the current logged user"
+        "description": "Show content items created by the current logged user",
+        "task_status": "todo"
         }
         """
         When we post to "desks"
@@ -163,7 +170,8 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "description": "Show content items created by the current logged user"
+        "description": "Show content items created by the current logged user",
+        "task_status": "todo"
         }
         """
         When we post to "desks"
@@ -191,7 +199,8 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "description": "Show content items created by the current logged user"
+        "description": "Show content items created by the current logged user",
+        "task_status": "todo"
         }
         """
         When we post to "desks"

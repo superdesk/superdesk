@@ -12,6 +12,7 @@ from superdesk.resource import Resource
 from bson.objectid import ObjectId
 from superdesk.services import BaseService
 import superdesk
+from apps.tasks import default_status
 
 desks_schema = {
     'name': {
@@ -64,7 +65,7 @@ class DesksService(BaseService):
     def create(self, docs, **kwargs):
         for doc in docs:
             if not doc.get('incoming_stage', None):
-                stage = {'name': 'New', 'default_incoming': True}
+                stage = {'name': 'New', 'default_incoming': True, 'desk_order': 1, 'task_status': default_status}
                 superdesk.get_resource_service('stages').post([stage])
                 doc['incoming_stage'] = stage.get('_id')
                 super().create([doc], **kwargs)
