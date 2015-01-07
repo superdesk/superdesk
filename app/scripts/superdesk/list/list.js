@@ -101,7 +101,17 @@ define([
                     scope.total = 0;
                     if (meta) {
                         scope.total = meta.total;
-                        scope.page = $location.search().page || 1;
+                       if (scope.page !== 'undefined')
+                        {
+                            if (scope.page !== $location.search().page) {
+                               scope.page = $location.search().page || 1;
+                            } else {
+                                scope.page = 1;
+                                scope.setPage(0);
+                            }
+                        } else {
+                            scope.page = $location.search().page || 1;
+                        }
                         scope.limit = Number(localStorage.getItem('pagesize')) || Number($location.search().max_results) || size;
                         scope.lastPage = scope.limit ? Math.ceil(scope.total / scope.limit) : scope.page;
                         scope.from = (scope.page - 1) * scope.limit + 1;
