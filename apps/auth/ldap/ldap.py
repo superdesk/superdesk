@@ -138,7 +138,7 @@ class ADAuthService(AuthService):
     def on_create(self, docs):
 
         user_service = get_resource_service('users')
-        for index, doc in enumerate(docs):
+        for doc in docs:
             user = self.authenticate(doc)
 
             if not user.get('_id'):

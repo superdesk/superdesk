@@ -27,7 +27,7 @@ class AuthService(BaseService):
 
             self.set_auth_default(doc, user['_id'])
 
-    def set_auth_default(self, doc, id):
-        doc['user'] = id
+    def set_auth_default(self, doc, user_id):
+        doc['user'] = user_id
         doc['token'] = utils.get_random_string(40)
         del doc['password']
