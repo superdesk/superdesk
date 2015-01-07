@@ -66,26 +66,60 @@
 
 			<div sd-wizard-step data-title="{{ 'Stages' | translate }}" data-code="stages">
 				<div sd-deskedit-stages>
-					<div class="content">
-						<div class="stages">
+					<div class="content stages">
+						<div class="col">
+							<a class="btn btn-info add" 
+								sd-focus-element data-target="#insert-stage"
+								ng-click="edit({}); selected = null"
+								ng-disabled="editStage">
+								<i class="icon-plus-small icon-white"></i>
+							</a>
 							<div class="header" translate>Work stages</div>
 							<div class="content">
-								<div class="stages-list clearfix">
+								<div class="stages-list clearfix" ng-class="{'edit-mode': editStage}">
 									<div ng-repeat="stage in stages">
-										<div class="stage" ng-class="{editable: editStage}">
-											<span ng-click="setEditStage(stage)" ng-if="editStage !== stage">{{ stage.name }}</span>
-											<span ng-if="editStage == stage">
-												<input type="text" ng-model="editStage.name" ng-keyup="saveEditOnEnter($event)" />	
+										<div class="stage" ng-click="select(stage)" 
+											ng-class="{active: selected === stage, editable: isActive(stage)}">
+											
+											<span ng-if="!isActive(stage)">{{ stage.name }}</span>
+											
+											<span ng-if="isActive(stage)">
+												<input type="text" id="edit-stage" ng-model="editStage.name" />
 											</span>
-											<i class="remove" ng-hide="stage.default_incoming" ng-click="remove(stage)"></i>
+											
+											<div class="actions" ng-if="!editStage">
+												<button ng-click="edit(stage)" sd-focus-element data-target="#edit-stage">
+													<i class="icon-pencil" ></i>
+												</button>
+												<button ng-if="!stage.default_incoming" ng-click="remove(stage)">
+													<i class="icon-trash"></i>
+												</button>
+											</div>
 										</div>
 									</div>
-									<div class="stage editable" ng-show="newStage.show">
-										<input type="text" ng-model="newStage.model" ng-keyup="saveOnEnter($event)" />	
+									<div class="stage editable" ng-show="editStage && !editStage._id">
+										<span>
+											<input type="text" id="insert-stage" ng-model="editStage.name" ng-keyup="handleEdit($event);" />
+										</span>
 									</div>
-									<a class="btn add" ng-hide="newStage.show" sd-focus-input ng-click="cancelEdit(); newStage.model = null; newStage.show = true" ><i class="icon-plus-small"></i></a>
 								</div>
+								<div ng-if="editStage">
+									<button class="btn" ng-click="cancel()" translate>Cancel</button> 
+						  			<button class="btn btn-primary" ng-click="save()" translate>Save</button>
+						  		</div>
 								<p ng-if="message">{{ message }}</p>
+							</div>
+						</div>
+						<div class="col">
+							<div class="header" translate>Statuses</div>
+							<div class="content status-list" >
+								<div ng-repeat="status in statuses" ng-if="editStage">
+									<div class="status {{status._id}}" ng-click="setStatus(status)"								 
+										ng-class="{'active': status._id === editStage.task_status}">
+										{{ status.name }}
+									</div>
+								</div>
+								<div class="status active {{selected.task_status}}" ng-if="!editStage && selected.task_status">{{ selected.task_status }}</div>
 							</div>
 						</div>
 					</div>

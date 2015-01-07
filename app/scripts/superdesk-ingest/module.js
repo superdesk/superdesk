@@ -222,7 +222,8 @@ define([
                     $scope.origProvider = provider || {};
                     $scope.provider = _.create($scope.origProvider);
                     $scope.provider.update_schedule = $scope.origProvider.update_schedule || DEFAULT_SCHEDULE;
-                    $scope.offProvider = provider.is_closed;
+                    $scope.providerSwitchOn = !$scope.origProvider.is_closed;
+                    $scope.provider.is_closed = $scope.providerSwitchOn;
                     $scope.provider.notifications = $scope.origProvider.notifications;
                 };
 
