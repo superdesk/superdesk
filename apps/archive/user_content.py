@@ -20,7 +20,11 @@ class UserContentResource(Resource):
     item_url = ArchiveResource.item_url
     url = 'users/<regex("[a-f0-9]{24}"):original_creator>/content'
     schema = ArchiveResource.schema
-    datasource = {'source': 'archive', 'aggregations': aggregations}
+    datasource = {
+        'source': 'archive',
+        'aggregations': aggregations,
+        'elastic_filter': {'not': {'exists': {'field': 'task.stage'}}}  # eve-elastic specific filter
+    }
     resource_methods = ['GET', 'POST']
     item_methods = ['GET', 'PATCH', 'DELETE']
     resource_title = endpoint_name
