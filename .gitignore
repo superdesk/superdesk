@@ -19,3 +19,5 @@ test-results.xml
 .vagrant/
 .bower.json
 e2e-test-results/
+*.sublime-workspace
+*.sublime-project
