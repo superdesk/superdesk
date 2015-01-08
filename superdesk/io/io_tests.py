@@ -76,7 +76,7 @@ class TextParserTest(ItemTest):
 
     def test_parse_content_meta(self):
         self.assertEquals('3', self.item.get('urgency'))
-        self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ", self.item["slugline"])
+        self.assertEquals("SOCCER-ENGLAND/CHELSEA-B", self.item["slugline"])
         self.assertEquals("Soccer-Smiling Benitez pleads for support after midweek outburst", self.item["headline"])
         # self.assertEquals("Reuters", self.item["creditline"])
         self.assertEquals("Bangalore", self.item["dateline"])
