@@ -56,6 +56,7 @@ class ItemTest(unittest.TestCase):
         self.tree = get_etree(filename)
         self.item = get_xml_parser(self.tree).parse_message(self.tree)[0]
 
+
 class ParserTest(ItemTest):
     def test_headline_trim(self):
         test_input = "Soccer-Smiling Benitez pleads for support after midweek outburst against opponent"
