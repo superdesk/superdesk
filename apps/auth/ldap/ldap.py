@@ -10,7 +10,6 @@
 
 import logging
 from ldap3 import Server, Connection, SEARCH_SCOPE_WHOLE_SUBTREE, LDAPException
-from apps.auth.errors import AuthError, NotFoundAuthError, ForbiddenError, UserImportedError
 from apps.auth.service import AuthService
 from apps.users.services import UsersService
 from superdesk import get_resource_service
@@ -188,12 +187,13 @@ class ImportUserProfileService(UsersService):
         for index, doc in enumerate(docs):
             # ensuring the that logged in user is importing the profile.
             if flask.g.user.get('username') != doc.get('username'):
-                raise ForbiddenError()
+                raise SuperdeskApiError.forbiddenError(message="Invalid Credentials.", payload={'credentials': 1})
 
             user = get_resource_service('auth').authenticate(doc)
 
             if user.get('_id'):
-                raise UserImportedError(message='User is already imported.')
+                raise SuperdeskApiError.badRequestError(message="User already exists in the system.",
+                                                        payload={'profile_to_import': 1})
 
             docs[index] = user
 
