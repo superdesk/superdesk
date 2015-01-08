@@ -4,7 +4,8 @@
 angular.module('superdesk.editor', [])
     .directive('sdTextEditor', function() {
         var config = {
-            buttons: ['bold', 'italic', 'underline', 'quote', 'anchor']
+            buttons: ['bold', 'italic', 'underline', 'quote', 'anchor'],
+            anchorInputPlaceholder: gettext('Paste or type a full link')
         };
 
         return {
