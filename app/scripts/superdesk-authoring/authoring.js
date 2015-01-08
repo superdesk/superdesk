@@ -645,7 +645,7 @@
                 };
 
                 function applyTheme() {
-                    elem.closest('#theme-container').attr('class', scope.theme.cssClass);
+                    elem.closest('#theme-container').attr('class', scope.theme && scope.theme.cssClass);
                 }
             }
         };
