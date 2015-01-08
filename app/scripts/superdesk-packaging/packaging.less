@@ -50,7 +50,11 @@
                     height: 32px;
                     padding: 7px 10px;
                     line-height: 12px;
+ 
+                    
+
                     .item-functions {
+
                         display: none;
                         position: absolute;
                         right: 0; top: 0;
@@ -93,13 +97,9 @@
         background: @white;
         left: 30%;
 
-        > .header {
-            height: @nav-height;
-        }
-
         > .content {
             position: absolute;
-            top: @nav-height;
+            top: 10px;
             left: 20px; right: 20px; 
             bottom: @scratchpad-closed + 20px;
             overflow: auto;
@@ -114,8 +114,17 @@
             background: @white;
         }
     }
-}
+    .dropdown-menu {
+        margin-top: -3px;
+        left: -120px; right: 0;
+        &:before {
+            display: none;
+        }
+        li {
+           float: left;
+           width: 60%;
+           margin-bottom: 10px;
+        }
+    }
 
-.package-group-modal {
-    position: absolute;
 }

@@ -93,50 +93,26 @@
             return api.packages.save(new_package);
         };
 
-        this.addItemsToPackage = function addToPackage(currentPackage, items, groupId) {
+        this.addItemsToPackage = function addToPackage(items, groupId) {
             var self = this;
 
-            var patch = _.pick(currentPackage, 'groups');
-            var targetGroup = _.find(patch.groups, function(group) { return group.id === groupId; });
-            _.forEach(items, function(item) {
-                targetGroup.push(self.getReferenceFor(item));
-            });
-            return api.packages.save(currentPackage, patch);
-        };
+            var patch = {groups: _.cloneDeep(currentPackage.groups)};
+            var targetGroup = _.find(patch.groups, function(group) { return group.id.toLowerCase() === groupId.toLowerCase(); });
 
-        this.addItemsToDefaultGroup = function addToDefaultGroup(items) {
-            var self = this;
-
-            var patch = _.pick(currentPackage, 'groups');
-            var rootGroup = _.find(patch.groups, function(group) { return group.id === 'root'; });
-            var groupId = rootGroup.refs[0].idRef;
-
-            var targetGroup = _.find(patch.groups, function(group) { return group.id === groupId; });
+            if (!targetGroup) {
+                var rootGroup = _.find(patch.groups, function(group) { return group.id === 'root'; });
+                rootGroup.refs.push({idRef: groupId});
+                targetGroup = {
+                    refs: [],
+                    id: groupId,
+                    role: 'grpRole:' + groupId
+                };
+                patch.groups.push(targetGroup);
+            }
             _.forEach(items, function(item) {
                 targetGroup.refs.push(self.getReferenceFor(item));
             });
             return api.packages.save(currentPackage, patch);
-        };
-
-        this.addGroupToPackage = function addGroupToPackage(currentPackage, groupId) {
-            var self = this;
-
-            var patch = _.pick(currentPackage, 'groups');
-            var rootGroup = _.find(patch.groups, function(group) { return group.id === 'root'; });
-            var newId = self.generateNewId(rootGroup.refs, groupId);
-            rootGroup.refs.push({idRef: newId});
-            patch.groups.push({
-                refs: [],
-                id: newId,
-                role: 'grpRole:' + newId
-            });
-            return api.packages.save(currentPackage, patch);
-        };
-
-        this.generateNewId = function generateNewId(refs, idRef) {
-            var filter = function(ref) { return (ref.idRef.toLowerCase().indexOf(idRef.toLowerCase())) === 0 ? 'found' : 'none'; };
-            var counts = _.countBy(refs, filter);
-            return counts.found ? (idRef + '-' + counts.found) : idRef;
         };
     }
 
@@ -150,27 +126,31 @@
             });
         }
 
-        $scope.createGroup = function() {
-            superdesk.intent('create', 'group').then(function(group_name) {
-                packagesService.addGroupToPackage($scope.item, group_name)
-                .then(function(updatedPackage) {
-                    $scope.item = updatedPackage;
-                });
-            });
-        };
-
-        $scope.addToFirstGroup = function addToFirstGroup(item) {
-            packagesService.addItemsToPackage($scope.item, [item], $scope.item.groups[0])
-            .then(function(updatedPackage) {
-                $scope.item = updatedPackage;
-            });
-        };
-
         fetchItem();
     }
 
-    SearchWidgetCtrl.$inject = ['$scope', 'superdesk', 'api', 'search'];
-    function SearchWidgetCtrl($scope, superdesk, api, search) {
+    SearchWidgetCtrl.$inject = ['$scope', 'packagesService', 'api', 'search'];
+    function SearchWidgetCtrl($scope, packagesService, api, search) {
+
+        $scope.itemTypes = [
+            {
+                icon: 'text',
+                label: 'Main'
+            },
+            {
+                icon: 'text',
+                label: 'Story'
+            },
+            {
+                icon: 'text',
+                label: 'Sidebar'
+
+            },
+            {
+                icon: 'text',
+                label: 'Fact box'
+            }
+        ];
 
         function fetchContentItems(q) {
             var query = search.query(q || null);
@@ -185,23 +165,11 @@
             fetchContentItems(query);
         });
 
+        $scope.addItemToGroup = function addItemsToGroup(groupId, item) {
+            packagesService.addItemsToPackage([item], groupId.label.toLowerCase());
+        };
+
         fetchContentItems();
-    }
-
-    AddToPackageCtrl.$inject = ['data', 'packagesService'];
-    function AddToPackageCtrl(data, packagesService) {
-        packagesService.addItemsToDefaultGroup([data.item]);
-    }
-
-    CreateGroupCtrl.$inject = ['$scope', 'api'];
-    function CreateGroupCtrl($scope) {
-        $scope.cancel = function() {
-            $scope.reject();
-        };
-
-        $scope.save = function saveGroup(name) {
-            $scope.resolve(name);
-        };
     }
 
     var app = angular.module('superdesk.packaging', [
@@ -253,20 +221,6 @@
             condition: function(item) {
                 return item.type === 'composite';
             }
-        })
-        .activity('create.group', {
-            label: gettext('Create new group'),
-            modal: true,
-            cssClass: 'mini-modal package-group-modal',
-            controller: CreateGroupCtrl,
-            templateUrl: 'scripts/superdesk-packaging/views/create-group.html',
-            filters: [{action: 'create', type: 'group'}]
-        })
-        .activity('addto.package', {
-            label: gettext('Add to package'),
-            controller: AddToPackageCtrl,
-            filters: [{action: 'addto', type: 'package'}],
-            icon: 'plus-small'
         });
     }])
     .config(['apiProvider', function(apiProvider) {
