@@ -257,7 +257,7 @@ def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
 
         for item in items:
             item['versioncreated'] = utcnow()
-        context.ingest_items(provider, items)
+        context.ingest_items(items, provider)
 
 
 @when('we post to "{url}"')

@@ -89,29 +89,31 @@ class UpdateIngest(superdesk.Command):
     def run(self, provider_type=None):
         for provider in superdesk.get_resource_service('ingest_providers').get(req=None, lookup={}):
             if is_valid_type(provider, provider_type) and is_scheduled(provider) and not is_closed(provider):
-                update_provider.delay(str(provider['_id']))
+                rule_set = None
+                if provider.get('rule_set'):
+                    rule_set = superdesk.get_resource_service('rule_sets').find_one(_id=provider['rule_set'], req=None)
+
+                update_provider.delay(provider, rule_set)
 
 
 @celery.task
-def update_provider(provider_id):
-    """Update provider by given id."""
-    last_updated = utcnow()
-    provider = superdesk.get_resource_service('ingest_providers').find_one(req=None, _id=provider_id)
+def update_provider(provider, rule_set=None):
+    """
+    Fetches items from ingest provider as per the configuration, ingests them into Superdesk and
+    updates the provider.
+    """
+
+    # Providing the _etag as system updates to the documents shouldn't override _etag.
 
     superdesk.get_resource_service('ingest_providers').update(provider['_id'], {
-        LAST_UPDATED: last_updated,
-        app.config['ETAG']: provider.get(app.config['ETAG']),  # keep the etag
-    })
-
-    for items in providers[provider.get('type')].update(provider):
-        ingest_items(provider, items)
-
-    superdesk.get_resource_service('ingest_providers').update(provider['_id'], {
-        'config': provider.get('config', {}),  # persist changes to config if any
+        LAST_UPDATED: utcnow(),
         app.config['ETAG']: provider.get(app.config['ETAG'])
     })
 
-    logger.info('Provider {0} updated'.format(provider_id))
+    for items in providers[provider.get('type')].update(provider):
+        ingest_items(items, provider, rule_set)
+
+    logger.info('Provider {0} updated'.format(provider['_id']))
     push_notification('ingest:update')
 
 
@@ -128,7 +130,7 @@ def process_anpa_category(item):
         raise ProviderError.anpaError(ex)
 
 
-def apply_rule_set(item, provider):
+def apply_rule_set(item, provider, rule_set=None):
     """
     Applies rules set on the item to be ingested into the system. If there's no rule set then the item will
     be returned without any change.
@@ -138,7 +140,7 @@ def apply_rule_set(item, provider):
     :return: item
     """
     try:
-        if 'rule_set' in provider and provider['rule_set']:
+        if rule_set is None and provider.get('rule_set') is not None:
             rule_set = superdesk.get_resource_service('rule_sets').find_one(_id=provider['rule_set'], req=None)
 
             if rule_set and 'body_html' in item:
@@ -154,7 +156,7 @@ def apply_rule_set(item, provider):
         raise ProviderError.ruleError(ex)
 
 
-def ingest_items(provider, items):
+def ingest_items(items, provider, rule_set=None):
     for item in filter_expired_items(provider, items):
         try:
             item.setdefault('_id', item['guid'])
@@ -166,7 +168,7 @@ def ingest_items(provider, items):
             if 'anpa-category' in item:
                 process_anpa_category(item)
 
-            apply_rule_set(item, provider)
+            apply_rule_set(item, provider, rule_set)
 
             ingest_service = superdesk.get_resource_service('ingest')
 
