@@ -51,14 +51,11 @@ def remove_expired_data(provider):
     expiration_date = utcnow() - timedelta(days=days_to_keep_content)
 
     items = get_expired_items(str(provider['_id']), expiration_date)
-    while items.count() > 0:
+    if items.count() > 0:
         for item in items:
             print('Removing item %s' % item['_id'])
             superdesk.get_resource_service('ingest').delete_action({'_id': str(item['_id'])})
-        stats.incr('ingest.expired_items', items.count())
-
-        items = get_expired_items(str(provider['_id']), expiration_date)
-
+    stats.incr('ingest.expired_items', items.count())
     print('Removed expired content for provider: %s' % provider['_id'])
 
 
@@ -71,10 +68,8 @@ def get_expired_items(provider_id, expiration_date):
 
 
 def get_query_for_expired_items(provider_id, expiration_date):
-    query = {'and':
-             [
-                 {'term': {'ingest.ingest_provider': provider_id}},
-                 {'range': {'ingest.versioncreated': {'lte': date_to_str(expiration_date)}}},
-             ]
-             }
+    query = {'and': [
+        {'term': {'ingest.ingest_provider': provider_id}},
+        {'range': {'ingest.versioncreated': {'lte': date_to_str(expiration_date)}}},
+    ]}
     return superdesk.json.dumps(query)

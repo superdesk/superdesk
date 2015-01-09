@@ -8,11 +8,9 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+from datetime import datetime
 from superdesk.utc import utc
-import logging
 from superdesk.errors import SuperdeskApiError
-
-logger = logging.getLogger(__name__)
 
 
 class IngestService():
@@ -25,7 +23,10 @@ class IngestService():
         raise NotImplementedError()
 
     def update(self, provider):
-        if provider.get('is_closed', False):
+        is_closed = provider.get('is_closed', False)
+        if isinstance(is_closed, datetime):
+            is_closed = False
+        if is_closed:
             raise SuperdeskApiError.internalError('Ingest Provider is closed')
         else:
             return self._update(provider) or []
