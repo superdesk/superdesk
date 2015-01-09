@@ -52,12 +52,11 @@
                                 <textarea class="abstract" maxlength="{{abstractHardLimit}}" sd-auto-height ng-model="item.abstract" ng-if="_editable"></textarea>
 			                	<div class="abstract" ng-if="!_editable">{{item.abstract}}</div>
                 			</div>
-                			<div class="field" ng-init="cursor={}">
+                			<div class="field">
                 				<label translate>Body</label>
                                 <span sd-word-count data-item="item.body_html" data-html="true"></span>
-                				<pre sd-text-editor class="text-editor" ng-model="item.body_html" ng-if="_editable" data-cursor="cursor"></pre>
-		                    	<div class="text-editor" sd-html-preview="item.body_html" ng-if="!_editable"></div>
-                                <code class="text-editor-info" ng-if="_editable && cursor.line"><small translate>Line: {{ cursor.line }}, Column: {{ cursor.column }}</small></code>
+                                <div sd-text-editor ng-model="item.body_html" ng-if="_editable" data-type="item.type"></div>
+                                <div class="text-editor" sd-html-preview="item.body_html" ng-if="!_editable"></div>
                 			</div>
                 		</fieldset>
 		            </form>
