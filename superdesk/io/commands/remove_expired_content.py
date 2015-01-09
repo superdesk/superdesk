@@ -16,6 +16,7 @@ from superdesk.utc import utcnow
 from superdesk.notification import push_notification
 from superdesk.io.ingest_provider_model import DAYS_TO_KEEP
 from superdesk.errors import ProviderError
+from superdesk.stats import stats
 
 
 logger = logging.getLogger(__name__)
@@ -54,6 +55,7 @@ def remove_expired_data(provider):
         for item in items:
             print('Removing item %s' % item['_id'])
             superdesk.get_resource_service('ingest').delete_action({'_id': str(item['_id'])})
+        stats.incr('ingest.expired_items', items.count())
 
         items = get_expired_items(str(provider['_id']), expiration_date)
 

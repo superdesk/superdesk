@@ -10,19 +10,20 @@
 
 
 import logging
-from datetime import timedelta
+import superdesk
 
 from flask import current_app as app
-from werkzeug.exceptions import HTTPException
 from settings import DAYS_TO_KEEP
+from datetime import timedelta
+from werkzeug.exceptions import HTTPException
 
-import superdesk
 from superdesk.notification import push_notification
 from superdesk.io import providers
 from superdesk.celery_app import celery
 from superdesk.utc import utcnow
 from superdesk.workflow import set_default_state
 from superdesk.errors import ProviderError
+from superdesk.stats import stats
 
 
 UPDATE_SCHEDULE_DEFAULT = {'minutes': 5}
@@ -102,16 +103,15 @@ def update_provider(provider, rule_set=None):
     Fetches items from ingest provider as per the configuration, ingests them into Superdesk and
     updates the provider.
     """
-
-    # Providing the _etag as system updates to the documents shouldn't override _etag.
-
     superdesk.get_resource_service('ingest_providers').update(provider['_id'], {
         LAST_UPDATED: utcnow(),
+        # Providing the _etag as system updates to the documents shouldn't override _etag.
         app.config['ETAG']: provider.get(app.config['ETAG'])
     })
 
     for items in providers[provider.get('type')].update(provider):
         ingest_items(items, provider, rule_set)
+        stats.incr('ingest.ingested_items', len(items))
 
     logger.info('Provider {0} updated'.format(provider['_id']))
     push_notification('ingest:update')
