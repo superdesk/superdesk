@@ -7,7 +7,8 @@ angular.module('superdesk.editor', [])
         var TEXT_TYPE = 3;
 
         var config = {
-            buttons: ['bold', 'italic', 'underline', 'quote', 'anchor']
+            buttons: ['bold', 'italic', 'underline', 'quote', 'anchor'],
+            anchorInputPlaceholder: gettext('Paste or type a full link')
         };
 
         /**
