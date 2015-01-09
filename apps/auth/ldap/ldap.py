@@ -189,7 +189,12 @@ class ImportUserProfileService(UsersService):
             if flask.g.user.get('username') != doc.get('username'):
                 raise SuperdeskApiError.forbiddenError(message="Invalid Credentials.", payload={'credentials': 1})
 
-            user = get_resource_service('auth').authenticate(doc)
+            try:
+                # authenticate on error sends 401 and the client is redirected to login.
+                # but in case import user profile from Active Directory 403 should be fine.
+                user = get_resource_service('auth').authenticate(doc)
+            except CredentialsAuthError as e:
+                raise SuperdeskApiError.forbiddenError(message="Invalid Credentials.", payload={'credentials': 1})
 
             if user.get('_id'):
                 raise SuperdeskApiError.badRequestError(message="User already exists in the system.",
