@@ -13,9 +13,10 @@ import re
 from datetime import datetime
 from superdesk.utc import utc
 from superdesk.errors import ParserError
+from superdesk.io import Parser
 
 
-class ANPAFileParser():
+class ANPAFileParser(Parser):
     """ANPA 1312 file parser"""
 
     def parse_file(self, filename):
@@ -64,14 +65,14 @@ class ANPAFileParser():
                 # content metadata
                 header_lines = [l.strip('^<= ') for l in text if l.startswith('^')]
                 if len(header_lines) > 3:
-                    item['headline'] = header_lines[1]
+                    item['headline'] = super().trim_headline(header_lines[1])
                     item['byline'] = header_lines[-2]
 
                 # slugline
                 if len(header_lines) > 1:
                     m = re.match('[A-Z]{2}-[A-Z]{2}--([a-z-0-9]+)', header_lines[0], flags=re.I)
                     if m:
-                        item['slugline'] = m.group(1)
+                        item['slugline'] = super().trim_slugline(m.group(1))
 
                 # ednote
                 for line in header_lines:

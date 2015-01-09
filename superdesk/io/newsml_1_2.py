@@ -140,9 +140,9 @@ class NewsMLOneParser(Parser):
 
     def parse_newslines(self, item, tree):
         parsed_el = self.parse_elements(tree.find('NewsItem/NewsComponent/NewsLines'))
-        item['headline'] = parsed_el.get('HeadLine', '')
+        item['headline'] = super().trim_headline(parsed_el.get('HeadLine', ''))
         item['dateline'] = parsed_el.get('DateLine', '')
-        item['slugline'] = parsed_el.get('SlugLine', '')
+        item['slugline'] = super().trim_slugline(parsed_el.get('SlugLine', ''))
         item['byline'] = parsed_el.get('ByLine', '')
 
         return True

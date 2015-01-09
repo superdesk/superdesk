@@ -91,6 +91,9 @@ class NewsMLTwoParser(Parser):
         parse_meta_item_text('by', 'byline')
         parse_meta_item_text('name', 'dateline', meta.find(self.qname('located')))
 
+        item['slugline'] = super().trim_slugline(item['slugline'])
+        item['headline'] = super().trim_headline(item['headline'])
+
         try:
             item['description'] = meta.find(self.qname('description')).text
         except AttributeError:
@@ -165,7 +168,7 @@ class NewsMLTwoParser(Parser):
                 ref['itemClass'] = tree.find(self.qname('itemClass')).attrib['qcode']
 
                 for headline in tree.findall(self.qname('headline')):
-                    ref['headline'] = headline.text
+                    ref['headline'] = super().trim_headline(headline.text)
 
                 refs.append(ref)
         return refs
