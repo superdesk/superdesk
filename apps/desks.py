@@ -86,6 +86,9 @@ class UserDesksService(BaseService):
 
     def get(self, req, lookup):
         if lookup.get('user_id'):
-            lookup["members.user"] = ObjectId(lookup['user_id'])
+            lookup['members.user'] = ObjectId(lookup['user_id'])
             del lookup['user_id']
         return super().get(req, lookup)
+
+    def is_member(self, user_id, desk_id):
+        return len(self.find_one({'members.user': object(user_id), '_id': ObjectId(desk_id)}, req=None)) > 0
