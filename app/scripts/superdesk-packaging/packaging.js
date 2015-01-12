@@ -133,6 +133,7 @@
     function SearchWidgetCtrl($scope, packagesService, api, search) {
 
         $scope.selected = null;
+        var packageItems = getPackageItems();
 
         $scope.itemTypes = [
             {
@@ -168,13 +169,37 @@
         });
 
         $scope.addItemToGroup = function addItemsToGroup(groupId, item) {
-            packagesService.addItemsToPackage([item], groupId.label.toLowerCase());
+            packagesService.addItemsToPackage([item], groupId.label.toLowerCase())
+            .then(function() {
+                packageItems = getPackageItems();
+            });
         };
 
         fetchContentItems();
 
         $scope.preview = function(item) {
             $scope.selected = item;
+        };
+
+        function getPackageItems() {
+            var items = [];
+            if ($scope.item.groups) {
+                _.each($scope.item.groups, function(group) {
+                    if (group.id !== 'root') {
+                        _.each(group.refs, function(item) {
+                            items.push(item.guid);
+                        });
+                    }
+                });
+            }
+            return items;
+        }
+
+        $scope.itemInPackage = function(item) {
+            if (_.indexOf(packageItems, item.guid) > -1) {
+                return true;
+            }
+            return false;
         };
     }
 
