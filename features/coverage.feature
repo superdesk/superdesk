@@ -16,12 +16,12 @@ Feature: Planning Item Coverages
         """
         When we post to "coverages"
 	    """
-	    [{"headline": "first coverage", "coverage_type": "story", "assigned_user": "#USERS_ID#"}]
+	    [{"headline": "first coverage", "coverage_type": "story", "assigned_user": "#users._id#"}]
 	    """
         And we get "/coverages"
         Then we get list with 1 items
 	    """
-	    {"_items": [{"headline": "first coverage", "coverage_type": "story", "assigned_user": "#USERS_ID#"}]}
+	    {"_items": [{"headline": "first coverage", "coverage_type": "story", "assigned_user": "#users._id#"}]}
 	    """
 
     @auth
@@ -54,7 +54,7 @@ Feature: Planning Item Coverages
         """
         And we patch latest
         """
-        {"ed_note": "second coverage modified", "assigned_desk":"#DESKS_ID#"}
+        {"ed_note": "second coverage modified", "assigned_desk":"#desks._id#"}
         """
         Then we get updated response
 
@@ -72,7 +72,7 @@ Feature: Planning Item Coverages
         """
         And we patch latest
         """
-        {"ed_note": "second coverage modified", "planning_item":"#PLANNING_ID#"}
+        {"ed_note": "second coverage modified", "planning_item":"#planning._id#"}
         """
         Then we get updated response
 

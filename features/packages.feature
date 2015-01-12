@@ -39,7 +39,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -62,7 +62,7 @@ Feature: Packages
                             "refs": [
                                 {
                                     "headline": "test package with text",
-                                    "residRef": "#ARCHIVE_ID#",
+                                    "residRef": "#archive._id#",
                                     "slugline": "awesome article"
                                 }
                             ],
@@ -89,7 +89,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with pic",
-                            "residRef": "#ARCHIVE_MEDIA_ID#",
+                            "residRef": "#archive_media._id#",
                             "slugline": "awesome picture"
                         }
                     ],
@@ -111,7 +111,7 @@ Feature: Packages
                             "refs": [
                                 {
                                     "headline": "test package with pic",
-                                    "residRef": "#ARCHIVE_MEDIA_ID#",
+                                    "residRef": "#archive_media._id#",
                                     "slugline": "awesome picture"
                                 }
                             ],
@@ -141,12 +141,12 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with pic",
-                            "residRef": "#ARCHIVE_MEDIA_ID#",
+                            "residRef": "#archive_media._id#",
                             "slugline": "awesome picture"
                         },
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -168,12 +168,12 @@ Feature: Packages
                             "refs": [
                                 {
                                     "headline": "test package with pic",
-                                    "residRef": "#ARCHIVE_MEDIA_ID#",
+                                    "residRef": "#archive_media._id#",
                                     "slugline": "awesome picture"
                                 },
                                 {
                                     "headline": "test package with text",
-                                    "residRef": "#ARCHIVE_ID#",
+                                    "residRef": "#archive._id#",
                                     "slugline": "awesome article"
                                 }
                             ],
@@ -198,12 +198,12 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with pic",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome picture"
                         },
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -233,7 +233,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -253,7 +253,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         },
                         {
@@ -277,12 +277,12 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         },
                         {
                             "headline": "test package with text",
-                            "residRef": "#PACKAGES_ID#",
+                            "residRef": "#packages._id#",
                             "slugline": "awesome circular article"
                         }
                     ]
@@ -294,7 +294,7 @@ Feature: Packages
         Then we get error 400
         """
         {
-            "_issues": {"validator exception": "Trying to create a circular reference to: #PACKAGES_ID#"},
+            "_issues": {"validator exception": "Trying to create a circular reference to: #packages._id#"},
             "_status": "ERR"
         }
         """
@@ -316,7 +316,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -336,7 +336,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -354,9 +354,9 @@ Feature: Packages
         {
             "_items": [
                 {
-                    "guid": "#ARCHIVE_ID#",
+                    "guid": "#archive._id#",
                     "headline": "test",
-                    "linked_in_packages": [{"package": "#PACKAGES_ID#"}],
+                    "linked_in_packages": [{"package": "#packages._id#"}],
                     "type": "text"
                 },
                 {
@@ -367,7 +367,7 @@ Feature: Packages
                             "refs": [
                                 {
                                     "headline": "test package with text",
-                                    "residRef": "#ARCHIVE_ID#",
+                                    "residRef": "#archive._id#",
                                     "slugline": "awesome article"
                                 }
                             ],
@@ -397,7 +397,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -430,7 +430,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -462,7 +462,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -494,7 +494,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -505,7 +505,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -537,7 +537,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -557,12 +557,12 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with pic",
-                            "residRef": "#ARCHIVE_MEDIA_ID#",
+                            "residRef": "#archive_media._id#",
                             "slugline": "awesome picture"
                         },
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -573,7 +573,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -605,7 +605,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -625,12 +625,12 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with pic",
-                            "residRef": "#ARCHIVE_MEDIA_ID#",
+                            "residRef": "#archive_media._id#",
                             "slugline": "awesome picture"
                         },
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -650,12 +650,12 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with pic",
-                            "residRef": "#ARCHIVE_MEDIA_ID#",
+                            "residRef": "#archive_media._id#",
                             "slugline": "awesome picture"
                         },
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -688,7 +688,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#ARCHIVE_ID#",
+                            "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
                     ],
@@ -702,5 +702,5 @@ Feature: Packages
         When we get "/archive"
         Then we get list with 2 items
         """
-        {"_items": [{"guid": "#ARCHIVE_ID#", "headline": "test", "linked_in_packages": [], "type": "text"}]}
+        {"_items": [{"guid": "#archive._id#", "headline": "test", "linked_in_packages": [], "type": "text"}]}
         """

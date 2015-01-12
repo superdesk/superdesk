@@ -228,10 +228,10 @@ Feature: Archive Ingest
             """
         When we post to "/archive_ingest"
             """
-            {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "desk": "#DESKS_ID#"}
+            {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
             """
         Then we get new resource
-        When we get "/archive?q=#DESKS_ID#"
+        When we get "/archive?q=#desks._id#"
         Then we get list with 1 items
 
     @auth
@@ -248,7 +248,7 @@ Feature: Archive Ingest
         """
         When we post to "/archive_ingest"
         """
-        {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "desk": "#DESKS_ID#"}
+        {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
         """
         And we post to "/archive/tag:reuters.com,2014:newsml_LOVEA6M0L7U2E/lock"
         """
@@ -260,5 +260,5 @@ Feature: Archive Ingest
         """
         Then we get existing resource
         """
-        {"headline": "test 2", "state": "in_progress", "task": {"desk": "#DESKS_ID#"}}
+        {"headline": "test 2", "state": "in_progress", "task": {"desk": "#desks._id#"}}
         """

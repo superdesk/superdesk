@@ -216,7 +216,7 @@ Feature: News Items Archive
         """
         Then we get updated response
         """
-        {"headline": "test3", "version_creator": "#USERS_ID#"}
+        {"headline": "test3", "version_creator": "#user._id#"}
         """
        	And we get version 3
        	When we get "/archive/xyz?version=all"
@@ -305,11 +305,11 @@ Feature: News Items Archive
         {"_items": [{"headline": "flower", "byline": "foo", "description": "flower desc",
                      "pubstatus": "Usable", "language": "en", "state": "draft"}]}
         """
-        When we patch "/archive/#ARCHIVE_MEDIA_ID#"
+        When we patch "/archive/#archive_media._id#"
         """
-        {"task": {"desk": "#DESKS_ID#"}}
+        {"task": {"desk": "#desks._id#"}}
         """
-        And we patch "/archive/#ARCHIVE_MEDIA_ID#"
+        And we patch "/archive/#archive_media._id#"
         """
         {"headline": "FLOWER"}
         """

@@ -30,6 +30,7 @@ from superdesk import get_resource_service
 from flask import current_app as app
 
 task_statuses = ['todo', 'in-progress', 'done']
+default_status = 'todo'
 
 
 def init_app(app):
@@ -62,6 +63,7 @@ def send_to(doc, desk_id=None, stage_id=None):
         if not stage:
             raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % task['stage'])
         if stage.get('task_status'):
+            doc['task'] = doc.get('task', {})
             doc['task']['status'] = stage['task_status']
     doc['task'] = task
     doc['expiry'] = set_expiry(app, desk, stage)
@@ -96,7 +98,7 @@ class TaskResource(Resource):
                 'status': {
                     'type': 'string',
                     'allowed': task_statuses,
-                    'default': 'todo'
+                    'default': default_status
                 },
                 'due_date': {'type': 'datetime'},
                 'started_at': {'type': 'datetime'},

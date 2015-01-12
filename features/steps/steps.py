@@ -148,9 +148,10 @@ def apply_placeholders(context, text):
     placeholders = getattr(context, 'placeholders', {})
     for placeholder in findall('#([^#]+)#', text):
         if placeholder not in placeholders:
-            resource_name, field_name = placeholder.lower().split('_')
-            if field_name == 'id':
-                field_name = '_%s' % field_name
+            try:
+                resource_name, field_name = placeholder.lower().split('.', maxsplit=1)
+            except:
+                continue
             resource = getattr(context, resource_name, None)
             if resource and field_name in resource:
                 value = str(resource[field_name])
@@ -160,6 +161,11 @@ def apply_placeholders(context, text):
             value = placeholders[placeholder]
         text = text.replace('#%s#' % placeholder, value)
     return text
+
+
+def get_resource_name(url):
+    parsed_url = urlparse(url)
+    return basename(parsed_url.path)
 
 
 @given('empty "{resource}"')
@@ -184,8 +190,7 @@ def step_impl_given_(context, resource):
         get_resource_service(resource).post(items)
         context.data = items
         context.resource = resource
-        for item in items:
-            set_placeholder(context, '{0}_ID'.format(resource.upper()), str(item['_id']))
+        setattr(context, resource, items[-1])
 
 
 @given('the "{resource}"')
@@ -280,9 +285,7 @@ def store_placeholder(context, url):
     if context.response.status_code in (200, 201):
         item = json.loads(context.response.get_data())
         if item['_status'] == 'OK' and item.get('_id'):
-            parsed_url = urlparse(url)
-            name = basename(parsed_url.path)
-            set_placeholder(context, '%s_ID' % name.upper(), item['_id'])
+            setattr(context, get_resource_name(url), item)
 
 
 @when('we post to "{url}" with success')
@@ -294,9 +297,7 @@ def step_impl_when_post_url_with_success(context, url):
         assert_ok(context.response)
         item = json.loads(context.response.get_data())
         if item.get('_id'):
-            parsed_url = urlparse(url)
-            name = basename(parsed_url.path)
-            set_placeholder(context, '%s_ID' % name.upper(), item['_id'])
+            setattr(context, get_resource_name(url), item)
         context.outbox = outbox
 
 
@@ -312,6 +313,7 @@ def step_impl_when_put_url(context, url):
 
 @when('we get "{url}"')
 def when_we_get_url(context, url):
+    url = apply_placeholders(context, url)
     headers = []
     if context.text:
         for line in context.text.split('\n'):
@@ -391,7 +393,7 @@ def step_impl_when_patch_again(context):
         if context.response.status_code in (200, 201):
             item = json.loads(context.response.get_data())
             if item['_status'] == 'OK' and item.get('_id'):
-                set_placeholder(context, '%s_ID' % href.upper(), item['_id'])
+                setattr(context, get_resource_name(href), item)
         assert_ok(context.response)
         context.outbox = outbox
 
@@ -1080,7 +1082,7 @@ def we_have_sessions_get_id(context, url):
     context.session_id = item['_items'][0]['_id']
     context.data = item
     set_placeholder(context, 'SESSION_ID', item['_items'][0]['_id'])
-    set_placeholder(context, 'USERS_ID', item['_items'][0]['user']['_id'])
+    setattr(context, 'users', item['_items'][0]['user'])
 
 
 @then('we get session by id')
@@ -1152,12 +1154,12 @@ def then_we_get_activity(context):
         item = json.loads(context.response.get_data())
         item = item['_items'][0]
         if item.get('_id'):
-            set_placeholder(context, 'ACTIVITY_ID', item['_id'])
+            setattr(context, 'activity', item)
             set_placeholder(context, 'USERS_ID', item['user'])
 
 
 @given('we login as user "{username}" with password "{password}"')
-def when_we_switch_user(context, username, password):
+def when_we_login_as_user(context, username, password):
     user = {'username': username, 'password': password, 'is_active': True, 'needs_activation': False}
 
     if context.text:

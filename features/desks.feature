@@ -16,12 +16,12 @@ Feature: Desks
             """
         When we post to "/desks"
             """
-            {"name": "Sports Desk", "members": [{"user": "#USERS_ID#"}]}
+            {"name": "Sports Desk", "members": [{"user": "#users._id#"}]}
             """
         And we get "/desks"
         Then we get list with 1 items
             """
-            {"_items": [{"name": "Sports Desk", "members": [{"user": "#USERS_ID#"}]}]}
+            {"_items": [{"name": "Sports Desk", "members": [{"user": "#users._id#"}]}]}
             """
         When we get the default incoming stage
         And we delete latest

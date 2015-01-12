@@ -16,17 +16,17 @@ Feature: Groups
         """
         When we post to "/groups"
         """
-        {"name": "Sports group", "members": [{"user": "#USERS_ID#"}]}
+        {"name": "Sports group", "members": [{"user": "#user._id#"}]}
         """
         And we get "/groups"
         Then we get list with 1 items
         """
-        {"_items": [{"name": "Sports group", "members": [{"user": "#USERS_ID#"}]}]}
+        {"_items": [{"name": "Sports group", "members": [{"user": "#user._id#"}]}]}
         """
-        When we get "/users/#USERS_ID#/groups"
+        When we get "/users/#user._id#/groups"
         Then we get list with 1 items
         """
-        {"_items": [{"name": "Sports group", "members": [{"user": "#USERS_ID#"}]}]}
+        {"_items": [{"name": "Sports group", "members": [{"user": "#user._id#"}]}]}
         """
 
 
@@ -43,7 +43,7 @@ Feature: Groups
         """
         And we patch latest
         """
-        {"name": "Sports group", "members": [{"user": "#USERS_ID#"}]}
+        {"name": "Sports group", "members": [{"user": "#user._id#"}]}
         """
         Then we get updated response
 
