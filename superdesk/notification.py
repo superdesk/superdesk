@@ -56,6 +56,7 @@ def push_notification(name, **kwargs):
     if app.notification_client is not None:
         try:
             app.notification_client.notify(event=name, extra=kwargs)
+        except AttributeError:
+            logger.info('Notification server is not initialized')
         except Exception as e:
-            logger.warn('Notification server is not initialized')
             logger.exception(e)
