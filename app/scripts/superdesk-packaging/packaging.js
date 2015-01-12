@@ -114,6 +114,28 @@
             });
             return api.packages.save(currentPackage, patch);
         };
+
+        this.removeItem = function removeItem(item) {
+            var patch = {groups: _.cloneDeep(currentPackage.groups)};
+
+            _.forEach(patch.groups, function(group) {
+                _.remove(group.refs, function(item_to_remove) {
+                    return item_to_remove._id === item._id;
+                });
+            });
+            _.remove(patch.groups, function(group) {
+                return group.id !== 'root' && group.refs.length === 0;
+            });
+
+            var rootGroup = _.find(patch.groups, function(group) { return group.id === 'root'; });
+            rootGroup.refs = [];
+            _.forEach(patch.groups, function(group) {
+                if (group.id !== 'root') {
+                    rootGroup.refs.push({idRef: group.id});
+                }
+            });
+            return api.packages.save(currentPackage, patch);
+        };
     }
 
     PackagingCtrl.$inject = ['$scope', 'packagesService', 'superdesk', '$route', 'api', 'search'];
@@ -125,6 +147,10 @@
                 $scope.item = fetched_package;
             });
         }
+
+        $scope.removeItem = function removeItem(item_to_remove) {
+            packagesService.removeItem(item_to_remove);
+        };
 
         fetchItem();
     }
