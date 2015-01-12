@@ -132,6 +132,8 @@
     SearchWidgetCtrl.$inject = ['$scope', 'packagesService', 'api', 'search'];
     function SearchWidgetCtrl($scope, packagesService, api, search) {
 
+        $scope.selected = null;
+
         $scope.itemTypes = [
             {
                 icon: 'text',
@@ -170,6 +172,10 @@
         };
 
         fetchContentItems();
+
+        $scope.preview = function(item) {
+            $scope.selected = item;
+        };
     }
 
     var app = angular.module('superdesk.packaging', [

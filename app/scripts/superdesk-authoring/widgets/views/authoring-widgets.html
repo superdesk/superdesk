@@ -9,7 +9,7 @@
         </ul>
     </div>
 
-    <div class="tabpane left-tabpane open-tabpane" ng-if="active.left">
+    <div class="tabpane left-tabpane open-tabpane widget-{{active.left._id}}" ng-if="active.left">
         <section class="tabcontent">
             <div sd-widget data-widget="active.left"><div ng-include="active.left.template"></div></div>
         </section>
@@ -25,7 +25,7 @@
         </ul>
     </div>
 
-    <div class="tabpane right-tabpane open-tabpane" ng-if="active.right">
+    <div class="tabpane right-tabpane open-tabpane widget-{{active.right._id}}" ng-if="active.right">
         <section class="tabcontent">
             <div sd-widget data-widget="active.right"><div ng-include="active.right.template"></div></div>
         </section>
