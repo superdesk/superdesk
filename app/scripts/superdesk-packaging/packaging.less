@@ -17,6 +17,7 @@
             width: auto;
             max-width: 800px;
             min-height: 100%;
+            max-height: 100%;
             margin: 0 auto;
             border: 1px solid #eee;
             border-width: 0 1px;
@@ -141,7 +142,6 @@
                     line-height: 12px;
                     border-right: 2px solid #fff;
                     .item-functions {
-
                         display: none;
                         position: absolute;
                         right: 0; top: 0;
@@ -192,6 +192,15 @@
                                 }
 
                             }
+                        }
+                    }
+                    
+                    &.added {
+                        background: #fafafa;
+                        border-right-color: #ddd;
+                        .opacity(50);
+                        &:hover {
+                            padding-right: 10px;
                         }
                     }
                     &.active {
