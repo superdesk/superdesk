@@ -16,7 +16,8 @@
 
 		<div class="headline" ng-show="item.headline">{{item.headline || item.description}}</div>
 		<div class="headline" ng-hide="item.headline" translate>Blank headline received</div>
-        <button ng-click="removeItem(item)"><i class="icon-minus-small"></i></button>
+        
+        <button ng-if="editmode" class="remove" ng-click="remove({item: item})"><i class="icon-close-small"></i></button>
 	</div>
 
     <div class="alert alert-error" ng-show="error" translate>Problems occured while fetching data.</div>

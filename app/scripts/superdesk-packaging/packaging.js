@@ -148,8 +148,8 @@
             });
         }
 
-        $scope.removeItem = function removeItem(item_to_remove) {
-            packagesService.removeItem(item_to_remove);
+        $scope.remove = function removeItem(obj) {
+            packagesService.removeItem(obj.item);
         };
 
         fetchItem();
@@ -241,7 +241,7 @@
                 function previewOnClick(event) {
                     if ($(event.target).closest('.group-select').length === 0) {
                         scope.$apply(function() {
-                            scope.preview(scope.item);
+                            scope.preview(scope.pitem);
                         });
                     }
                 }
