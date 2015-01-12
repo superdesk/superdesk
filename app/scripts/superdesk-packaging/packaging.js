@@ -119,8 +119,8 @@
             var patch = {groups: _.cloneDeep(currentPackage.groups)};
 
             _.forEach(patch.groups, function(group) {
-                _.remove(group.refs, function(item_to_remove) {
-                    return item_to_remove._id === item._id;
+                _.remove(group.refs, function(ref_item) {
+                    return ref_item.guid === item.guid;
                 });
             });
             _.remove(patch.groups, function(group) {
