@@ -5,6 +5,12 @@
 TasksService.$inject = ['desks', '$rootScope', 'api'];
 function TasksService(desks, $rootScope, api) {
 
+    this.statuses =  [
+        {'_id': 'todo', 'name': 'To Do'},
+        {'_id': 'in-progress', 'name': 'In Progress'},
+        {'_id': 'done', 'name': 'Done'}
+    ];
+
     this.save = function(orig, task) {
         if (task.task.due_time) {
             task.task.due_date =
@@ -25,20 +31,35 @@ function TasksService(desks, $rootScope, api) {
         });
     };
 
-    this.buildFilter = function() {
-        var filter;
-        if (desks.getCurrentStageId()) {
-            filter = {term: {'task.stage': desks.getCurrentStageId()}};
-        } else if (desks.getCurrentDeskId()) {
-            filter = {term: {'task.desk': desks.getCurrentDeskId()}};
+    this.buildFilter = function(status) {
+        var filters = [];
+        var self = this;
+
+        if (desks.getCurrentDeskId()) {
+            //desk filter
+            filters.push({term: {'task.desk': desks.getCurrentDeskId()}});
         } else {
-            filter = {term: {'task.user': $rootScope.currentUser._id}};
+            //user filter
+            filters.push({term: {'task.user': $rootScope.currentUser._id}});
         }
-        return filter;
+
+        //status filter
+        if (status) {
+            filters.push({term: {'task.status': status}});
+        } else {
+            var allStatuses = [];
+            _.each(self.statuses, function(s) {
+                allStatuses.push({term: {'task.status': s._id}});
+            });
+            filters.push({filter: {or: allStatuses}});
+        }
+
+        var and_filter = {and: filters};
+        return and_filter;
     };
 
-    this.fetch = function() {
-        var filter = this.buildFilter();
+    this.fetch = function(status) {
+        var filter = this.buildFilter(status);
 
         return api('tasks').query({
             source: {
@@ -50,13 +71,15 @@ function TasksService(desks, $rootScope, api) {
     };
 }
 
-TasksController.$inject = ['$scope', 'api', 'notify', 'desks', 'tasks', 'StagesCtrl'];
-function TasksController($scope, api, notify, desks, tasks, StagesCtrl) {
+TasksController.$inject = ['$scope', 'api', 'notify', 'desks', 'tasks'];
+function TasksController($scope, api, notify, desks, tasks) {
 
     $scope.selected = {};
     $scope.newTask = null;
     $scope.tasks = null;
-    $scope.stages = new StagesCtrl($scope);
+    $scope.view = 'kanban';
+    $scope.statuses = tasks.statuses;
+    $scope.activeStatus = $scope.statuses[0]._id;
 
     $scope.$watch(function() {
         return desks.getCurrentDeskId();
@@ -67,7 +90,7 @@ function TasksController($scope, api, notify, desks, tasks, StagesCtrl) {
     var fetchTasks = _.debounce(fetch, 300);
 
     function fetch() {
-        tasks.fetch().then(function(list) {
+        tasks.fetch($scope.activeStatus).then(function(list) {
             $scope.tasks = list;
         });
     }
@@ -99,16 +122,19 @@ function TasksController($scope, api, notify, desks, tasks, StagesCtrl) {
         $scope.newTask = null;
     };
 
-    desks.initialize().then(function() {
-        $scope.userLookup = desks.userLookup;
-        $scope.deskLookup = desks.deskLookup;
-    });
-
-    $scope.$watch('stages.selected', function(stage, stageOld) {
-        if (stage || stageOld) {
+    $scope.setView = function(view) {
+        if ($scope.view !== view) {
+            $scope.view = view;
             fetchTasks();
         }
-    });
+    };
+
+    $scope.selectStatus = function(status) {
+        if ($scope.activeStatus !== status) {
+            $scope.activeStatus = status;
+            fetchTasks();
+        }
+    };
 }
 
 TaskPreviewDirective.$inject = ['tasks', 'desks', 'notify'];
@@ -162,12 +188,34 @@ function TaskPreviewDirective(tasks, desks, notify) {
     };
 }
 
+TaskKanbanBoardDirective.$inject = [];
+function TaskKanbanBoardDirective() {
+    return {
+        templateUrl: 'scripts/superdesk-dashboard/workspace-tasks/views/kanban-board.html',
+        scope: {
+            items: '=',
+            status: '@',
+            title: '@',
+            selected: '='
+        },
+        link: function(scope) {
+            scope.preview = function(item) {
+                scope.selected.preview = item;
+            };
+        }
+    };
+}
+
 AssigneeViewDirective.$inject = ['desks'];
 function AssigneeViewDirective(desks) {
     var promise = desks.initialize();
     return {
         templateUrl: 'scripts/superdesk-dashboard/workspace-tasks/views/assignee-view.html',
-        scope: {task: '='},
+        scope: {
+            task: '=',
+            name: '=',
+            avatarSize: '@'
+        },
         link: function(scope) {
             promise.then(function setItemAssigne() {
                 var task = angular.extend({desk: null, user: null}, scope.task);
@@ -232,6 +280,7 @@ function DeskStagesDirective() {
 .directive('sdTaskPreview', TaskPreviewDirective)
 .directive('sdAssigneeView', AssigneeViewDirective)
 .directive('sdDeskStages', DeskStagesDirective)
+.directive('sdTaskKanbanBoard', TaskKanbanBoardDirective)
 
 .service('tasks', TasksService)
 

@@ -109,7 +109,7 @@
 								</div>
 								<div ng-if="editStage">
 									<button class="btn" ng-click="cancel()" translate>Cancel</button> 
-						  			<button class="btn btn-primary" ng-click="save()" translate>Save</button>
+						  			<button class="btn btn-primary" ng-click="save()" ng-disabled="!editStage.task_status" translate>Save</button>
 						  		</div>
 								<p ng-if="message">{{ message }}</p>
 							</div>

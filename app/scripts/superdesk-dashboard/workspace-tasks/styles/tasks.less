@@ -51,6 +51,7 @@ TASK PAGE
 			&.active {
 				button {
 					border-bottom: 3px solid @gray;
+					padding-bottom: 6px;
 					&.todo {
 						border-bottom-color: @todo-color;
 					}
@@ -84,6 +85,50 @@ TASK PAGE
 			}
 			&.done {
 				background: @done-color;
+			}
+		}
+	}
+	.board {
+		float: left;
+		width: 30%;
+		max-width: 400px;
+		margin-right: 20px;
+		header {
+			text-transform: uppercase;
+			font-size: 11px;
+			color: @sd-text;
+			line-height: 24px;
+			.text-semibold();
+			border-bottom: 4px solid @gray;
+			&.todo {
+				border-bottom-color: @todo-color;
+			}
+			&.in-progress {
+				border-bottom-color: @inprogress-color;
+			}
+			&.done {
+				border-bottom-color: @done-color;
+			}
+		}
+		.card-list {
+			> li {
+				margin-top: 5px;
+				background: #fff;
+				
+				padding: 5px;
+				min-height: 24px;
+				position: relative !important;
+				height: auto !important;
+
+				.title {
+					padding: 0 10px;
+					font-size: 13px;
+					line-height: 20px;
+					max-height: 40px;
+					overflow: hidden;
+					color: @sd-text;
+					min-height: 24px;
+				}
 			}
 		}
 	}
@@ -274,7 +319,7 @@ TASK PAGE
 		margin: 7px 15px 0 0 !important;
 		a {
 			height: 25px !important;
-			line-height: 23px !important;
+			line-height: 25px !important;
 			background: #fff !important;
 			border: 1px solid #d7d7d7;
 			&:hover {

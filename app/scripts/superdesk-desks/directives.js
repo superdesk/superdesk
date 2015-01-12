@@ -85,19 +85,15 @@ define([
             }
         };
     }])
-    .directive('sdDeskeditStages', ['gettext', 'api', 'WizardHandler',
-        function(gettext, api, WizardHandler) {
+    .directive('sdDeskeditStages', ['gettext', 'api', 'WizardHandler', 'tasks',
+        function(gettext, api, WizardHandler, tasks) {
         return {
 
             link: function(scope, elem, attrs) {
 
                 var orig = null;
 
-                scope.statuses = [
-                    {'_id': 'todo', 'name': 'To Do'},
-                    {'_id': 'in-progress', 'name': 'In Progress'},
-                    {'_id': 'done', 'name': 'Done'}
-                ];
+                scope.statuses = tasks.statuses;
 
                 scope.$watch('step.current', function(step, previous) {
                     if (step === 'stages') {
@@ -130,6 +126,12 @@ define([
                 scope.edit = function(stage) {
                     orig = stage;
                     scope.editStage = _.create(stage);
+                    if (!scope.editStage.hasOwnProperty('_id') || scope.editStage._id === null) {
+                        var lastStage = _.last(scope.stages);
+                        if (lastStage) {
+                            scope.editStage.task_status = lastStage.task_status;
+                        }
+                    }
                 };
 
                 scope.isActive = function(stage) {

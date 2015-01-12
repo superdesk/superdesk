@@ -61,6 +61,21 @@ describe('authoring', function() {
         expect(item._locked).toBe(false);
     }));
 
+    it('unlocks a locked item and locks by current user', inject(function(authoring, lock, $rootScope, $timeout, api, $q) {
+        spyOn(api, 'save').and.returnValue($q.when({}));
+
+        var lockedItem = {guid: GUID, _locked: true, lock_user: 'user:5'};
+        var $scope = startAuthoring(lockedItem);
+        $rootScope.$digest();
+
+        $scope.unlock();
+        $timeout.flush(5000);
+        $rootScope.$digest();
+
+        expect(lock.isLocked($scope.item)).toBe(false);
+        expect($scope.item.lock_user).toBe(USER);
+    }));
+
     it('can autosave and save an item', inject(function(api, $q, $timeout, $rootScope) {
         var $scope = startAuthoring(item),
             headline = 'test headline';

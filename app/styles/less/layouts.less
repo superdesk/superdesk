@@ -116,13 +116,14 @@ a:hover {
 		> header {
 			height: @nav-height;
 			.border-box();
-			border-bottom: 1px solid #dfdfdf;
+			//border-bottom: 1px solid #dfdfdf;
 			position: absolute;
 			left: 0; right: 0; top: 0;
+			.box-shadow(0 1px 0 0 rgba(0,0,0,0.1));
 		}
 		> .content {
 			position: absolute;
-			top: @nav-height;
+			top: @nav-height + 1;
 			left: 0; right: 0; bottom: 0;
 		}
 	}

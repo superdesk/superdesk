@@ -1,6 +1,6 @@
 <div>
-    <figure class="avatar"><img sd-user-avatar data-src="userPicture"></figure>
-    <div class="assignee-name">
+    <figure class="avatar {{avatarSize}}"><img sd-user-avatar data-src="userPicture"></figure>
+    <div class="assignee-name" ng-if="name">
         <span ng-show="task.desk">{{deskName}} / </span>
         <span ng-show="task.user">{{userName}}</span>
         <span ng-hide="task.user" translate>Unassigned</span>

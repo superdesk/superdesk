@@ -218,9 +218,9 @@
         /**
          * Lock an item
          */
-        this.lock = function lock(item) {
-            if (!item.lock_user) {
-                return api('archive_lock', item).save({}).then(function(lock) {
+        this.lock = function lock(item, force) {
+            if (!item.lock_user || force) {
+                return api.save('archive.lock', {}, {}, item).then(function(lock) {
                     _.extend(item, lock);
                     item._locked = false;
                     item.lock_user = session.identity._id;
@@ -332,12 +332,17 @@
         'desks',
         'item',
         'authoring',
-        'api'
+        'api',
+        'session',
+        'lock',
+        'privileges'
     ];
 
-    function AuthoringController($scope, superdesk, workqueue, notify, gettext, desks, item, authoring, api) {
+    function AuthoringController($scope, superdesk, workqueue, notify, gettext, desks, item, authoring, api, session, lock, privileges) {
         var stopWatch = angular.noop,
             _closing;
+
+        $scope.privileges = privileges.privileges;
 
         $scope.workqueue = workqueue.all();
         $scope.dirty = false;
@@ -478,6 +483,14 @@
             if ($scope._editable) {
                 startWatch();
             }
+        };
+
+        $scope.unlock = function() {
+            authoring.unlock($scope.item, session.identity._id);
+            lock.lock(item, true).then(function(result) {
+                $scope.item = result;
+                $scope._editable = true;
+            });
         };
 
         // init
