@@ -51,32 +51,42 @@ angular.module('superdesk.editor', [])
         }
 
         return {
-            scope: {cursor: '='},
+            scope: {type: '='},
             require: 'ngModel',
+            templateUrl: 'scripts/superdesk/editor/views/editor.html',
             link: function(scope, elem, attrs, ngModel) {
+
+                var editorElem;
+
                 function updateModel() {
                     scope.$apply(function editorModelUpdate() {
-                        ngModel.$setViewValue(elem.html());
+                        ngModel.$setViewValue(editorElem.html());
                     });
                 }
 
                 ngModel.$render = function() {
-                    elem.empty();
-                    elem.html(ngModel.$viewValue || '<p></p>'); // this p can use some css min-height
-                    this.editor = new window.MediumEditor(elem, config);
-                };
+                    editorElem = elem.find(scope.type === 'preformatted' ?  '.editor-type-text' : '.editor-type-html');
+                    editorElem.empty();
+                    editorElem.html(ngModel.$viewValue || '<p></p>');
+                    this.editor = new window.MediumEditor(editorElem, config);
 
-                elem.on('input', updateModel);
-                elem.on('blur', updateModel);
-                elem.on('keydown keyup click', function() {
-                    scope.$apply(function() {
-                        angular.extend(scope.cursor, getLineColumn());
+                    editorElem.on('input', updateModel);
+                    editorElem.on('blur', updateModel);
+
+                    if (scope.type === 'preformatted') {
+                        editorElem.on('keydown keyup click', function() {
+                            scope.$apply(function() {
+                                angular.extend(scope.cursor, getLineColumn());
+                            });
+                        });
+                    }
+
+                    scope.$on('$destroy', function() {
+                        editorElem.off();
                     });
-                });
 
-                scope.$on('$destroy', function() {
-                    elem.off();
-                });
+                    scope.cursor = {};
+                };
             }
         };
     });
