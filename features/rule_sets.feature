@@ -49,7 +49,7 @@ Feature: Rule Sets Resource
             }
           ]
           """
-        When we delete "/rule_sets/#RULE_SETS_ID#"
+        When we delete "/rule_sets/#rule_sets._id#"
         Then we get response code 200
 
     @auth
@@ -60,10 +60,10 @@ Feature: Rule Sets Resource
         """
       Given "ingest_providers"
         """
-        [{"name": "test", "type": "reuters", "rule_set": "#RULE_SETS_ID#"}]
+        [{"name": "test", "type": "reuters", "rule_set": "#rule_sets._id#"}]
         """
 
-      When we delete "/rule_sets/#RULE_SETS_ID#"
+      When we delete "/rule_sets/#rule_sets._id#"
       Then we get response code 403
 
     @auth
@@ -79,7 +79,7 @@ Feature: Rule Sets Resource
             }
           ]
           """
-        When we patch "/rule_sets/#RULE_SETS_ID#"
+        When we patch "/rule_sets/#rule_sets._id#"
           """
             {
               "rules": [
@@ -89,7 +89,7 @@ Feature: Rule Sets Resource
             }
           """
         Then we get response code 200
-        When we get "/rule_sets/#RULE_SETS_ID#"
+        When we get "/rule_sets/#rule_sets._id#"
         Then we get existing resource
         """
               {

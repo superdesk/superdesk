@@ -31,7 +31,7 @@ Feature: Saved Searches
         """
         {"username": "save_search", "display_name": "Joe Black", "email": "joe@black.com", "is_active": true}
         """
-        And we post to "/users/#USERS_ID#/saved_searches"
+        And we post to "/users/#users._id#/saved_searches"
         """
         {
         "name": "basket ball",
@@ -45,7 +45,7 @@ Feature: Saved Searches
         "filter": {"query": {"q": "cricket", "repo": "archive"}}
         }
         """
-        When we get "/users/#USERS_ID#/saved_searches"
+        When we get "/users/#users._id#/saved_searches"
         Then we get list with 1 items
         When we get "/users/#CONTEXT_USER_ID#/saved_searches"
         Then we get list with 1 items
@@ -126,7 +126,7 @@ Feature: Saved Searches
         }
         """
         Then we get response code 201
-        When we get "/users/#CONTEXT_USER_ID#/saved_searches/#SAVED_SEARCHES_ID#"
+        When we get "/users/#CONTEXT_USER_ID#/saved_searches/#saved_searches._id#"
         Then we get existing resource
         """
         {
@@ -134,7 +134,7 @@ Feature: Saved Searches
         "filter": {"query": {"q": "US", "repo": "ingest", "type": ["picture"]}}
         }
         """
-        When we get "/saved_searches/#SAVED_SEARCHES_ID#/items"
+        When we get "/saved_searches/#saved_searches._id#/items"
         Then we get list with 3 items
 		"""
 		{

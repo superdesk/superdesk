@@ -124,7 +124,7 @@ Feature: Role Resource
             [{"name": "This is a default role", "is_default": true }]
             """
 
-        When we delete "/roles/#ROLES_ID#"
+        When we delete "/roles/#roles._id#"
 
         Then we get response code 403
 
@@ -139,7 +139,7 @@ Feature: Role Resource
             """
             [{"name": "B", "is_default": true }]
             """
-        When we get "/roles/#ROLES_ID#"
+        When we get "/roles/#roles._id#"
         Then we get existing resource
             """
             {"is_default": true}
@@ -153,7 +153,7 @@ Feature: Role Resource
             """
         Given "users"
             """
-            [{"username": "foo", "first_name": "Foo", "last_name": "Bar", "email": "foo@bar.org", "is_active": true, "role": "#ROLES_ID#"}]
+            [{"username": "foo", "first_name": "Foo", "last_name": "Bar", "email": "foo@bar.org", "is_active": true, "role": "#roles._id#"}]
             """
-        When we delete "/roles/#ROLES_ID#"
+        When we delete "/roles/#roles._id#"
         Then we get response code 403

@@ -71,7 +71,7 @@ Feature: News Items Archive Comments
         """
         When we post to "/item_comments"
         """
-        [{"text": "test comment", "item": "xyz", "user": "#USERS_ID#"}]
+        [{"text": "test comment", "item": "xyz", "user": "#users._id#"}]
         """
         Then we get error 403
         """
@@ -134,7 +134,7 @@ Feature: News Items Archive Comments
         And we get "/item_comments"
         Then we get list with 1 items
         """
-        {"_items": [{"text": "test comment @no_user with one user mention @joe", "item": "xyz", "mentioned_users": {"joe": "#USERS_ID#"}}]}
+        {"_items": [{"text": "test comment @no_user with one user mention @joe", "item": "xyz", "mentioned_users": {"joe": "#users._id#"}}]}
         """ 
         When we get "/users/test_user"
         Then we get "_id"

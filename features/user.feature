@@ -188,11 +188,11 @@ Feature: User Resource
     @auth
     Scenario: A logged-in user can't delete themselves from the system
         Given we login as user "foo" with password "bar"
-        When we delete "/users/#USER_ID#"
+        When we delete "/users/#user._id#"
         Then we get error 403
 
     @auth
-    Scenario: A logged-in user can't change role
+    Scenario: A logged-in user can't change roleROLES_ID
         Given "roles"
         """
         [{"name": "A", "is_default": true}, {"name": "B"}]
@@ -208,7 +208,7 @@ Feature: User Resource
         """
         When we patch "/users/#CONTEXT_USER_ID#"
         """
-        {"role": "#ROLES_ID#"}
+        {"role": "#roles._id#"}
         """
         Then we get error 400
         """

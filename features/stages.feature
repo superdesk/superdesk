@@ -1,15 +1,31 @@
 Feature: Stages
 
     @auth
-    Scenario: Add stage
+    Scenario: Add stage and verify order
         Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "test_desk"}]
+        """
+
+        When we get "/stages/#desks.incoming_stage#"
+        Then we get existing resource
+        """
+        {
+        "name": "New",
+        "task_status": "todo",
+        "desk": "#desks._id#",
+        "desk_order": 1
+        }
+        """
 
         When we post to "/stages"
         """
         {
         "name": "show my content",
         "description": "Show content items created by the current logged user",
-        "task_status": "todo"
+        "task_status": "in-progress",
+        "desk": "#desks._id#"
         }
         """
 
@@ -18,7 +34,9 @@ Feature: Stages
         {
         "name": "show my content",
         "description": "Show content items created by the current logged user",
-        "task_status": "todo"
+        "task_status": "in-progress",
+        "desk": "#desks._id#",
+        "desk_order": 2
         }
         """
 
@@ -26,6 +44,10 @@ Feature: Stages
     @auth
     Scenario: Add stage - no name
         Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "test_desk"}]
+        """
 
         When we post to "/stages"
         """
@@ -36,18 +58,27 @@ Feature: Stages
 
         Then we get error 400
         """
-        {"_error": {"code": 400, "message": "Insertion failure: 1 document(s) contain(s) error(s)"}, "_issues": {"name": {"required": 1}}, "_status": "ERR"}
+        {
+        "_error": {"code": 400, "message": "Insertion failure: 1 document(s) contain(s) error(s)"},
+        "_issues": {"name": {"required": 1}, "task_status": {"required": 1}, "desk": {"required": 1}}, "_status": "ERR"
+        }
         """
 
 
     @auth
     Scenario: Add stage - no description
         Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "test_desk"}]
+        """
+
         When we post to "/stages"
         """
         {
         "name": "show my content",
-        "task_status": "todo"
+        "task_status": "todo",
+        "desk": "#desks._id#"
         }
         """
 
@@ -55,49 +86,28 @@ Feature: Stages
         """
         {
         "name": "show my content",
-        "task_status": "todo"
+        "task_status": "todo",
+        "desk": "#desks._id#",
+        "desk_order": 2
         }
         """
 
-    @auth
-    Scenario: Add stage - with desk
-        Given empty "stages"
-
-        When we post to "desks"
-        """
-        {"name": "Sports Desk"}
-        """
-
-        When we post to "/stages"
-        """
-        {
-        "name": "show my content",
-        "desk": "#DESKS_ID#",
-        "description": "Show content items created by the current logged user",
-        "task_status": "todo"
-        }
-        """
-
-        Then we get new resource
-        """
-        {
-        "name": "show my content",
-        "desk": "#DESKS_ID#",
-        "description": "Show content items created by the current logged user",
-        "task_status": "todo"
-        }
-        """
 
     @auth
     Scenario: Edit stage - modify description and name
         Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "test_desk"}]
+        """
 
         When we post to "/stages"
         """
         {
         "name": "show my content",
         "description": "Show content items created by the current logged user",
-        "task_status": "todo"
+        "task_status": "todo",
+        "desk": "#desks._id#"
         }
         """
 
@@ -106,9 +116,11 @@ Feature: Stages
         {
         "name": "show my content",
         "description": "Show content items created by the current logged user",
-        "task_status": "todo"
+        "task_status": "todo",
+        "desk": "#desks._id#"
         }
         """
+
         When we patch latest
         """
         {
@@ -116,115 +128,107 @@ Feature: Stages
         "name": "My stage"
         }
         """
+
         Then we get updated response
+
 
     @auth
     Scenario: Get tasks for stage
-        Given empty "desks"
         Given empty "archive"
         Given empty "tasks"
         Given empty "stages"
-        When we post to "/stages"
+        Given "desks"
         """
-        {
-        "name": "show my content",
-        "description": "Show content items created by the current logged user",
-        "task_status": "todo"
-        }
+        [{"name": "Sports Desk"}]
         """
-        When we post to "desks"
-        """
-        {"name": "Sports Desk", "incoming_stage": "#STAGES_ID#"}
-        """
-        When we patch "/stages/#STAGES_ID#"
-        """
-        {"desk":"#DESKS_ID#"}
-        """
+
         When we post to "tasks"
 	    """
-        [{"slugline": "first task", "type": "text", "task": {"desk":"#DESKS_ID#", "stage" :"#STAGES_ID#"}}]
+        [{"slugline": "first task", "type": "text", "task": {"desk":"#desks._id#", "stage" :"#desks.incoming_stage#"}}]
 	    """
         When we post to "archive"
         """
         [{"type": "text"}]
         """
         And we get "/tasks"
+
         Then we get list with 1 items
 	    """
-        {"_items": [{"slugline": "first task", "type": "text", "task": {"desk": "#DESKS_ID#", "stage": "#STAGES_ID#"}}]}
+        {"_items": [{"slugline": "first task", "type": "text", "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]}
 	    """
 
-        When we get "/tasks?where={"task.stage": "#STAGES_ID#"}"
+        When we get "/tasks?where={"task.stage": "#desks.incoming_stage#"}"
+
         Then we get list with 1 items
 	    """
-        {"_items": [{"slugline": "first task", "type": "text", "task": {"desk": "#DESKS_ID#", "stage": "#STAGES_ID#"}}]}
+        {"_items": [{"slugline": "first task", "type": "text", "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]}
 	    """
 
-        @auth
+
+    @auth
     Scenario: Can delete empty stage
-        Given empty "desks"
         Given empty "archive"
         Given empty "tasks"
         Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "Sports Desk"}]
+        """
+
         When we post to "/stages"
         """
         {
         "name": "show my content",
-        "description": "Show content items created by the current logged user",
-        "task_status": "todo"
+        "task_status": "todo",
+        "desk": "#desks._id#"
         }
         """
-        When we post to "desks"
-        """
-        {"name": "Sports Desk", "incoming_stage": "#STAGES_ID#"}
-        """
+
         When we post to "tasks"
 	    """
-        [{"slugline": "first task", "type": "text", "task": {"desk":"#DESKS_ID#", "stage" :"0"}}]
+        [{"slugline": "first task", "type": "text", "task": {"desk":"#desks._id#", "stage" :"#desks.incoming_stage#"}}]
 	    """
+	    Then we get new resource
         When we post to "archive"
         """
         [{"type": "text"}]
         """
-        When we delete "/stages/#STAGES_ID#"
+        When we delete "/stages/#stages._id#"
         Then we get response code 200
+
 
     @auth
     Scenario: Cannot delete stage if there are documents
-        Given empty "desks"
         Given empty "archive"
         Given empty "tasks"
         Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "Sports Desk"}]
+        """
+
         When we post to "/stages"
         """
         {
         "name": "show my content",
-        "description": "Show content items created by the current logged user",
-        "task_status": "todo"
+        "task_status": "todo",
+        "desk": "#desks._id#"
         }
         """
-        When we post to "desks"
+
+        When we patch "/stages/#stages._id#"
         """
-        {"name": "Sports Desk", "incoming_stage": "#STAGES_ID#"}
-        """
-        When we patch "/stages/#STAGES_ID#"
-        """
-        {"desk":"#DESKS_ID#"}
+        {"desk":"#desks._id#"}
         """
         When we post to "tasks"
 	    """
-        [{"slugline": "first task", "type": "text", "task": {"desk":"#DESKS_ID#", "stage" :"#STAGES_ID#"}}]
+        [{"slugline": "first task", "type": "text", "task": {"desk":"#desks._id#", "stage" :"#stages._id#"}}]
 	    """
+	    Then we get new resource
         When we post to "archive"
         """
         [{"type": "text"}]
         """
-        And we get "/tasks"
-        Then we get list with 1 items
-	    """
-        {"_items": [{"slugline": "first task", "type": "text", "task": {"desk": "#DESKS_ID#", "stage": "#STAGES_ID#"}}]}
-	    """
-
-        When we delete "/stages/#STAGES_ID#"
+        When we delete "/stages/#stages._id#"
 
         Then we get response code 403

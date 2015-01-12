@@ -6,7 +6,7 @@ Feature: User Activity
             """
             {"username": "foo", "password": "barbar", "email": "foo@bar.com", "is_active": true}
             """
-            
+
          Then we get response code 201
          When we get "/activity/"
          Then we get existing resource
@@ -43,7 +43,7 @@ Feature: User Activity
 		"""
 		Given "stages"
 		"""
-        [{"name": "first stage", "desk": "#DESKS_ID#"}]
+        [{"name": "first stage", "desk": "#desks._id#"}]
 		"""
         Given "archive"
         """
@@ -52,17 +52,17 @@ Feature: User Activity
 
         When we patch "/tasks/tag:example.com,0000:newsml_BRE9A605"
         """
-        {"task":{"user":"#USER_ID#","stage":"#STAGES_ID#","desk":"#DESKS_ID#"}}
+        {"task":{"user":"#user._id#","stage":"#stages._id#","desk":"#desks._id#"}}
         """
         Then we get existing resource
         """
-        {"task":{"user":"#USER_ID#","stage":"#STAGES_ID#","desk":"#DESKS_ID#"}}
+        {"task":{"user":"#user._id#","stage":"#stages._id#","desk":"#desks._id#"}}
         """
 
-        When we get "/activity?where={"desk": "#DESKS_ID#"}"
+        When we get "/activity?where={"desk": "#desks._id#"}"
         Then we get existing resource
         """
-        {"_items": [{"user":"#USER_ID#", "item":"tag:example.com,0000:newsml_BRE9A605", "desk":"#DESKS_ID#"}]}
+        {"_items": [{"user":"#user._id#", "item":"tag:example.com,0000:newsml_BRE9A605", "desk":"#desks._id#"}]}
         """
 
         When we get "/activity?where={"desk": "invalid_desk_id"}"
@@ -80,9 +80,9 @@ Feature: User Activity
         [{"text": "test comment @no_user with one user mention @joe", "item": "xyz"}]
         """
         Then we get activity
-        When we patch "/activity/#ACTIVITY_ID#"
+        When we patch "/activity/#activity._id#"
         """
-        {"read":{"#USERS_ID#":1}}
+        {"read":{"#users._id#":1}}
         """
         Then we get error 400
 
@@ -94,9 +94,9 @@ Feature: User Activity
         [{"text": "test comment @no_user with one user mention @test_user", "item": "xyz"}]
         """
         Then we get activity
-        When we patch "/activity/#ACTIVITY_ID#"
+        When we patch "/activity/#activity._id#"
         """
-        {"read":{"#USERS_ID#":1}}
+        {"read":{"#user._id#":1}}
         """
         Then we get error 200
 
@@ -108,9 +108,9 @@ Feature: User Activity
         [{"text": "test comment @no_user with one user mention @test_user", "item": "xyz"}]
         """
         Then we get activity
-        When we patch "/activity/#ACTIVITY_ID#"
+        When we patch "/activity/#activity._id#"
         """
-        {"read":{"#USERS_ID#":0}}
+        {"read":{"#users._id#":0}}
         """
         Then we get error 400
 

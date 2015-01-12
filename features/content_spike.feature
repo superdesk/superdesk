@@ -19,21 +19,14 @@ Feature: Content Spiking
         Given empty "desks"
         Given empty "archive"
         Given empty "stages"
-        When we post to "/stages"
-            """
-            {
-            "name": "show my content",
-            "description": "Show content items created by the current logged user"
-            }
-            """
-        And we post to "desks"
-            """
-            {"name": "Sports Desk", "incoming_stage": "#STAGES_ID#", "spike_expiry": 60}
-            """
+        Given "desks"
+        """
+        [{"name": "Sports Desk", "spike_expiry": 60}]
+        """
         Given "archive"
-            """
-            [{"_id": "item-1", "guid": "item-1", "_version": 1, "headline": "test", "task":{"desk":"#DESKS_ID#", "stage" :"#STAGES_ID#"}}]
-            """
+        """
+        [{"_id": "item-1", "guid": "item-1", "_version": 1, "headline": "test", "task":{"desk":"#desks._id#", "stage" :"#desks.incoming_stage#"}}]
+        """
         When we spike "item-1"
         Then we get OK response
         And we get spiked content "item-1"

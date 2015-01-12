@@ -29,7 +29,7 @@ Feature: User preferences
       When we get "/preferences/#SESSION_ID#"
       Then we get existing resource
       """
-      {"user": "#USERS_ID#", "user_preferences": {"archive:view":
+      {"user": "#users._id#", "user_preferences": {"archive:view":
       {
       "type": "string",
       "view": "compact",
@@ -51,7 +51,7 @@ Feature: User preferences
       When we get "/preferences/#SESSION_ID#"
       Then we get existing resource
       """
-      {"user": "#USERS_ID#", "user_preferences": {"feature:preview":
+      {"user": "#users._id#", "user_preferences": {"feature:preview":
       {
       "type": "bool",
       "enabled": true,
@@ -74,7 +74,7 @@ Feature: User preferences
       When we get "/preferences/#SESSION_ID#"
       Then we get existing resource
       """
-      {"user": "#USERS_ID#", "user_preferences": {"email:notification":
+      {"user": "#users._id#", "user_preferences": {"email:notification":
       {
       "type": "bool",
       "enabled": false,
@@ -96,7 +96,7 @@ Feature: User preferences
       When we get "/preferences/#SESSION_ID#"
       Then we get existing resource
       """
-      {"user": "#USERS_ID#", "user_preferences": {"editor:theme":
+      {"user": "#users._id#", "user_preferences": {"editor:theme":
       {
       "type": "string",
       "theme": "railscast",
@@ -139,7 +139,7 @@ Feature: User preferences
     Scenario: Get active privileges from user with preferences
       Given we have sessions "/sessions"
 
-      When we patch "/users/#USERS_ID#"
+      When we patch "/users/#users._id#"
             """
             {"user_type": "user", "privileges": {"archive:spike": 1}}
             """
@@ -147,7 +147,7 @@ Feature: User preferences
       When we get "/preferences/#SESSION_ID#"
       Then we get existing resource
       """
-      {"user": "#USERS_ID#",
+      {"user": "#users._id#",
       "active_privileges": {"archive:spike": 1},
       "user_preferences": {"feature:preview":
       {
@@ -168,15 +168,15 @@ Feature: User preferences
             [{"name": "A" , "privileges": {"fungi": 1}}]
             """
 
-      When we patch "/users/#USERS_ID#"
+      When we patch "/users/#users._id#"
             """
-            {"role": "#ROLES_ID#", "user_type": "user", "privileges": {"spike": 1}}
+            {"role": "#roles._id#", "user_type": "user", "privileges": {"spike": 1}}
             """
 
       When we get "/preferences/#SESSION_ID#"
       Then we get existing resource
       """
-      {"user": "#USERS_ID#",
+      {"user": "#users._id#",
       "active_privileges": {"fungi": 1, "spike": 1},
       "user_preferences": {"feature:preview":
       {
@@ -195,15 +195,15 @@ Feature: User preferences
     Scenario: Get all active privileges from administrator with preferences
       Given we have sessions "/sessions"
 
-      When we patch "/users/#USERS_ID#"
+      When we patch "/users/#users._id#"
             """
-            {"role": "#ROLES_ID#", "user_type": "administrator", "privileges": {}}
+            {"role": "#roles._id#", "user_type": "administrator", "privileges": {}}
             """
 
       When we get "/preferences/#SESSION_ID#"
       Then we get existing resource
       """
-      {"user": "#USERS_ID#",
+      {"user": "#users._id#",
       "active_privileges": {"spike": 1},
       "user_preferences": {"feature:preview":
       {

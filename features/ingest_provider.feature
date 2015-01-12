@@ -65,7 +65,7 @@ Feature: Ingest Provider
         "config": {"username": "foo", "password": "bar"}
         }]
 	    """
-        When we patch "/ingest_providers/#INGEST_PROVIDERS_ID#"
+        When we patch "/ingest_providers/#ingest_providers._id#"
         """
         {"name":"the test of the test ingest_provider modified"}
         """
@@ -101,7 +101,7 @@ Feature: Ingest Provider
         "config": {"username": "foo", "password": "bar"}
         }]
         """
-        When we delete "/ingest_providers/#INGEST_PROVIDERS_ID#"
+        When we delete "/ingest_providers/#ingest_providers._id#"
         Then we get deleted response
         When we get "/activity/"
         Then we get existing resource
@@ -137,7 +137,7 @@ Feature: Ingest Provider
         }
         }]
         """
-        When we patch "/ingest_providers/#INGEST_PROVIDERS_ID#"
+        When we patch "/ingest_providers/#ingest_providers._id#"
         """
         {"name":"the test of the test ingest_provider modified"}
         """
@@ -151,7 +151,7 @@ Feature: Ingest Provider
          {"_items": [{"data": {"name": "the test of the test ingest_provider modified"}, "message": "updated Ingest Channel {{name}}"}]}
         """
         Then we get no email
-        When we patch "/ingest_providers/#INGEST_PROVIDERS_ID#"
+        When we patch "/ingest_providers/#ingest_providers._id#"
         """
         {"is_closed": true}
         """
@@ -165,7 +165,7 @@ Feature: Ingest Provider
          {"_items": [{"data": {"name": "the test of the test ingest_provider modified", "status": "closed"}, "message": "{{status}} Ingest Channel {{name}}"}]}
         """
         Then we get no email
-        When we patch "/ingest_providers/#INGEST_PROVIDERS_ID#"
+        When we patch "/ingest_providers/#ingest_providers._id#"
         """
         {"is_closed": false}
         """

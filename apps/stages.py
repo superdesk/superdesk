@@ -51,7 +51,7 @@ class StagesResource(Resource):
             'type': 'integer',
             'readonly': True
         },
-        'desk': Resource.rel('desks', embeddable=True),
+        'desk': Resource.rel('desks', embeddable=True, required=True),
         'content_expiry': {
             'type': 'integer'
         },
@@ -78,9 +78,9 @@ class StagesService(BaseService):
             req = ParsedRequest()
             req.sort = '-desk_order'
             req.max_results = 1
-            prev_stage = self.get(req=req, lookup={'desk':doc['desk']})
+            prev_stage = self.get(req=req, lookup={'desk': doc['desk']})
             if prev_stage.count() == 0:
-                doc['desk_order'] = 1;
+                doc['desk_order'] = 1
             else:
                 doc['desk_order'] = prev_stage[0]['desk_order'] + 1
 

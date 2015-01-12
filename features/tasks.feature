@@ -17,7 +17,7 @@ Feature: Tasks
         """
         When we post to "tasks"
 	    """
-        [{"slugline": "first task", "type": "text", "task": {"desk":"#DESKS_ID#"}}]
+        [{"slugline": "first task", "type": "text", "task": {"desk":"#desks._id#"}}]
 	    """
         When we post to "archive"
         """
@@ -26,7 +26,7 @@ Feature: Tasks
         And we get "/tasks"
         Then we get list with 1 items
 	    """
-        {"_items": [{"slugline": "first task", "type": "text", "task": {"desk": "#DESKS_ID#"}}]}
+        {"_items": [{"slugline": "first task", "type": "text", "task": {"desk": "#desks._id#"}}]}
 	    """
 
     @auth
@@ -75,11 +75,11 @@ Feature: Tasks
         """
         When we post to "tasks"
 	    """
-        [{"slugline": "first task", "type": "text", "task": {"user": "#USERS_ID#"}}]
+        [{"slugline": "first task", "type": "text", "task": {"user": "#users._id#"}}]
 	    """
         And we patch latest
         """
-        {"description_text": "second task modified", "task": {"desk":"#DESKS_ID#"}}
+        {"description_text": "second task modified", "task": {"desk":"#desks._id#"}}
         """
         Then we get updated response
 
@@ -98,9 +98,9 @@ Feature: Tasks
 	    """
         [{"headline": "test"}]
 	    """
-        When we patch "/tasks/#ARCHIVE_ID#"
+        When we patch "/tasks/#archive._id#"
 	    """
-        {"slugline": "first task", "type": "text", "task": {"user": "#USERS_ID#"}}
+        {"slugline": "first task", "type": "text", "task": {"user": "#users._id#"}}
 	    """
         Then we get updated response
 
@@ -114,7 +114,7 @@ Feature: Tasks
         """
         When we post to "tasks"
 	    """
-        [{"slugline": "first task", "type": "text", "task": {"desk": "#DESKS_ID#"}}]
+        [{"slugline": "first task", "type": "text", "task": {"desk": "#desks._id#"}}]
 	    """
         Then we get stage filled in to default_incoming
 
@@ -133,11 +133,11 @@ Feature: Tasks
         """
         When we post to "tasks"
 	    """
-        [{"slugline": "first task", "type": "text", "task": {"user": "#USERS_ID#"}}]
+        [{"slugline": "first task", "type": "text", "task": {"user": "#users._id#"}}]
 	    """
         And we patch latest
         """
-        {"description_text": "second task modified", "planning_item":"#PLANNING_ID#"}
+        {"description_text": "second task modified", "planning_item":"#planning._id#"}
         """
         Then we get updated response
 
@@ -152,7 +152,7 @@ Feature: Tasks
         """
         When we post to "stages"
         """
-        [{"name": "Test Stage", "desk": "#DESKS_ID#", "task_status": "done"}]
+        [{"name": "Test Stage", "desk": "#desks._id#", "task_status": "done"}]
         """
         When we post to "users"
         """
@@ -160,7 +160,7 @@ Feature: Tasks
         """
         When we post to "tasks"
 	    """
-        [{"slugline": "first task", "type": "text", "task": {"user": "#USERS_ID#"}}]
+        [{"slugline": "first task", "type": "text", "task": {"user": "#users._id#"}}]
 	    """
         Then we get existing resource
         """
@@ -168,7 +168,7 @@ Feature: Tasks
         """
         When we patch latest
         """
-        {"task": {"user": "#USERS_ID#", "desk": "#DESKS_ID#", "stage": "#STAGES_ID#"}}
+        {"task": {"user": "#users._id#", "desk": "#desks._id#", "stage": "#stages._id#"}}
         """
         Then we get existing resource
         """
@@ -185,7 +185,7 @@ Feature: Tasks
         """
         When we post to "tasks"
 	    """
-        [{"slugline": "first task", "type": "text", "task": {"user": "#USERS_ID#"}}]
+        [{"slugline": "first task", "type": "text", "task": {"user": "#users._id#"}}]
 	    """
         And we delete latest
         Then we get deleted response
