@@ -10,15 +10,19 @@
         
         <div class="content-list">
             <ul>
-                <li ng-repeat="item in contentItems" ng-class="{active: item === selected, added: itemInPackage(item)}" sd-widget-prevent-preview>
-                    <i class="filetype-icon-{{item.type}}"></i>
-                    <p><span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span>{{item.headline || item.type}}</p>
-                    <ul class="item-functions" ng-if="!itemInPackage(item)">
+                <li ng-repeat="pitem in contentItems" 
+                    ng-class="{active: pitem === selected, added: itemInPackage(pitem)}"
+                    ng-if="pitem._id !== item._id"
+                    sd-widget-prevent-preview
+                    >
+                    <i class="filetype-icon-{{pitem.type}}"></i>
+                    <p><span class="keyword" ng-if="pitem.slugline">{{ pitem.slugline }}</span>{{pitem.headline || pitem.type}}</p>
+                    <ul class="item-functions" ng-if="!itemInPackage(pitem)">
                         <li class="dropdown group-select" dropdown>
                             <div class="dropdown-toggle" dropdown-toggle><i class="icon-plus-small"></i></div>
                             <ul class="dropdown-menu pull-right">
                                 <li ng-repeat="t in itemTypes">
-                                    <button ng-click="addItemToGroup(t, item);"><span translate>{{ t.label | uppercase  }}</span></button>
+                                    <button ng-click="addItemToGroup(t, pitem);"><span translate>{{ t.label | uppercase  }}</span></button>
                                 </li>
                             </ul>
                         </li>
