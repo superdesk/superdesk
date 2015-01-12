@@ -14,7 +14,6 @@ import logging
 import superdesk
 
 from superdesk.celery_app import celery
-from superdesk.etree import etree, ParseError
 
 
 parsers = []
@@ -39,27 +38,6 @@ def init_app(app):
 def register_provider(type, provider):
     providers[type] = provider
     allowed_providers.append(type)
-
-
-def get_text_word_count(text):
-    """Get word count for given plain text.
-
-    :param text: text string
-    """
-    return len(text.split())
-
-
-def get_word_count(html):
-    """Get word count for given html.
-
-    :param html: html string to count
-    """
-    try:
-        root = etree.fromstringlist('<doc>{0}</doc>'.format(html))
-        text = etree.tostring(root, encoding='unicode', method='text')
-        return get_text_word_count(text)
-    except ParseError:
-        return get_text_word_count(html)
 
 
 @celery.task()

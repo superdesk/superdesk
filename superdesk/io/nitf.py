@@ -7,12 +7,12 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+from superdesk.etree import get_word_count
 
 """Simple NITF parser"""
 
 from datetime import datetime
 from superdesk.io import Parser
-from superdesk.io import get_word_count
 import xml.etree.ElementTree as etree
 from superdesk.errors import ParserError
 

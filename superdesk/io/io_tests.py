@@ -11,8 +11,7 @@
 import os
 import unittest
 
-from superdesk.etree import etree
-from superdesk.io import get_word_count
+from superdesk.etree import etree, get_word_count
 from superdesk.io import get_xml_parser
 
 from .newsml_1_2 import NewsMLOneParser

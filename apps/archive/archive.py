@@ -12,7 +12,6 @@
 SOURCE = 'archive'
 
 import flask
-from superdesk.io import get_word_count
 from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
@@ -31,6 +30,7 @@ from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
 from apps.legal_archive.components.legal_archive_proxy import LegalArchiveProxy
+from superdesk.etree import get_word_count
 from copy import copy
 import superdesk
 import logging
