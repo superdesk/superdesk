@@ -75,9 +75,12 @@ def is_closed(provider):
 
 
 def filter_expired_items(provider, items):
-    days_to_keep_content = provider.get('days_to_keep', DAYS_TO_KEEP)
-    expiration_date = utcnow() - timedelta(days=days_to_keep_content)
-    return [item for item in items if item.get('versioncreated', utcnow()) > expiration_date]
+    try:
+        days_to_keep_content = provider.get('days_to_keep', DAYS_TO_KEEP)
+        expiration_date = utcnow() - timedelta(days=days_to_keep_content)
+        return [item for item in items if item.get('versioncreated', utcnow()) > expiration_date]
+    except Exception as ex:
+        raise ProviderError.providerFilterExpiredContentError(ex, provider.get('name'))
 
 
 class UpdateIngest(superdesk.Command):
@@ -176,6 +179,7 @@ def ingest_items(items, provider, rule_set=None):
                 ingest_service.set_ingest_provider_sequence(item, provider)
 
             old_item = ingest_service.find_one(_id=item['guid'], req=None)
+
             if old_item:
                 ingest_service.put(item['guid'], item)
             else:
@@ -187,6 +191,6 @@ def ingest_items(items, provider, rule_set=None):
         except ProviderError:
             raise
         except Exception as ex:
-            raise ProviderError.ingestError(ex)
+            raise ProviderError.ingestError(ex, provider.get('name'))
 
 superdesk.command('ingest:update', UpdateIngest())

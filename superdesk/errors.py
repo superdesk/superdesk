@@ -31,10 +31,10 @@ class SuperdeskError(ValidationError):
 
     def __init__(self, code):
         self.code = code
-        self.description = self._codes.get(code, 'Unknown error')
+        self.message = self._codes.get(code, 'Unknown error')
 
     def __str__(self):
-        return "{} Error {} - {}".format(self.__class__.__name__, self.code, self.description)
+        return "{} Error {} - {}".format(self.__class__.__name__, self.code, self.message)
 
 
 class SuperdeskApiError(SuperdeskError):
@@ -141,9 +141,8 @@ class InvalidStateTransitionError(SuperdeskApiError):
 
 
 class SuperdeskIngestError(SuperdeskError):
-    def __init__(self, code, exception, channel):
-        self.code = code
-        self.message = self._codes.get(code, 'Unknown error')
+    def __init__(self, code, exception, channel=None):
+        super().__init__(code)
         self.system_exception = exception
         self.channel = channel
         if channel:
@@ -158,7 +157,8 @@ class ProviderError(SuperdeskIngestError):
         2002: 'Expired content could not be removed',
         2003: 'Rule could not be applied',
         2004: 'Ingest error',
-        2005: 'Anpa category error'
+        2005: 'Anpa category error',
+        2006: 'Expired content could not be filtered'
     }
 
     @classmethod
@@ -174,12 +174,16 @@ class ProviderError(SuperdeskIngestError):
         return ProviderError(2003, exception)
 
     @classmethod
-    def ingestError(cls, exception):
-        return ProviderError(2004, exception)
+    def ingestError(cls, exception, channel):
+        return ProviderError(2004, exception, channel)
 
     @classmethod
     def anpaError(cls, exception):
         return ProviderError(2005, exception)
+
+    @classmethod
+    def providerFilterExpiredContentError(cls, exception):
+        return ProviderError(2006, exception)
 
 
 class ParserError(SuperdeskIngestError):
@@ -193,8 +197,7 @@ class ParserError(SuperdeskIngestError):
     }
 
     def __init__(self, code, exception):
-        self.code = code
-        self.message = self._codes.get(code, 'Unknown error')
+        super().__init__(code)
         self.system_exception = exception
 
     @classmethod
