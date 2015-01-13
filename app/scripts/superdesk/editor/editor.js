@@ -18,9 +18,9 @@ angular.module('superdesk.editor', [])
             var lines = 0;
             var p = node.previousSibling;
             while (p) {
-                if (p.childNodes[0].nodeType === TEXT_TYPE) {
+                if (p.childNodes.length && p.childNodes[0].nodeType === TEXT_TYPE) {
                     lines += p.childNodes[0].wholeText.split('\n').length;
-                } else {
+                } else if (p.childNodes.length) {
                     lines += 1; // empty paragraph
                 }
                 p = p.previousSibling;
