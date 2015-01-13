@@ -220,7 +220,7 @@
          */
         this.lock = function lock(item, force) {
             if (!item.lock_user || force) {
-                return api.save('archive.lock', {}, {}, item).then(function(lock) {
+                return api.save('archive_lock', {}, {}, item).then(function(lock) {
                     _.extend(item, lock);
                     item._locked = false;
                     item.lock_user = session.identity._id;
@@ -488,8 +488,10 @@
         $scope.unlock = function() {
             authoring.unlock($scope.item, session.identity._id);
             lock.lock(item, true).then(function(result) {
-                $scope.item = result;
+                extendItem($scope.item, result);
+                $scope.item.lock_user = result.lock_user;
                 $scope._editable = true;
+                startWatch();
             });
         };
 
