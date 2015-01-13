@@ -1,6 +1,6 @@
 <div class="main-list" ng-class="{wrap: selected}" >
     <div class="search-box">
-        <input type="text" placeholder="{{ 'Search'|translate }}" ng-model="query" class="searchbar">
+        <input type="text" placeholder="{{ 'Search'|translate }}" ng-model="query" class="searchbar" ng-keyup="searchOnEnter(query, $event)">
     </div>
 
     <div class="ingest-list-holder">
