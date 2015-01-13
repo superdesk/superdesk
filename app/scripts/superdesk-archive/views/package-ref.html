@@ -14,9 +14,23 @@
 			<div ng-if="type === 'video'"><i class="filetype-icon-large-video"></i></div>
 		</div>
 
-		<div class="headline" ng-show="item.headline">{{item.headline || item.description}}</div>
-		<div class="headline" ng-hide="item.headline" translate>Blank headline received</div>
-        
+        <div class="headline" ng-if="type !== 'composite'">
+            <a ng-href="#/authoring/{{ item.guid }}?_id={{ item.guid }}" title="{{ item.headline }}">
+                <div ng-show="item.headline">
+                    {{ item.headline || item.description | uppercase}}
+                </div>
+                <div ng-hide="item.headline" translate>Blank headline received</div>
+            </a>
+        </div>
+        <div class="headline" ng-if="type === 'composite'">
+            <a ng-href="#/packaging/{{ item.guid }}" title="{{ item.headline }}">
+                <div ng-show="item.headline">
+                    {{ item.headline || item.description | uppercase}}
+                </div>
+                <div ng-hide="item.headline" translate>Blank headline received</div>
+            </a>
+        </div>
+
         <button ng-if="editmode" class="remove" ng-click="remove({item: item})"><i class="icon-close-small"></i></button>
 	</div>
 
