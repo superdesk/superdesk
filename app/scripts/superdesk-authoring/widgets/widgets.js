@@ -28,6 +28,10 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets) {
         $scope.active[widget.side] = $scope.active[widget.side] === widget ? null : widget;
     };
 
+    $scope.closeWidget = function() {
+        $scope.activate(null);
+    };
+
     // activate widget based on query string
     angular.forEach($scope.widgets, function(widget) {
         if ($routeParams[widget._id]) {

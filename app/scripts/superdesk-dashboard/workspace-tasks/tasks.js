@@ -51,7 +51,7 @@ function TasksService(desks, $rootScope, api) {
             _.each(self.statuses, function(s) {
                 allStatuses.push({term: {'task.status': s._id}});
             });
-            filters.push({filter: {or: allStatuses}});
+            filters.push({or: allStatuses});
         }
 
         var and_filter = {and: filters};
@@ -74,10 +74,12 @@ function TasksService(desks, $rootScope, api) {
 TasksController.$inject = ['$scope', 'api', 'notify', 'desks', 'tasks'];
 function TasksController($scope, api, notify, desks, tasks) {
 
+    var KANBAN_VIEW = 'kanban';
+
     $scope.selected = {};
     $scope.newTask = null;
     $scope.tasks = null;
-    $scope.view = 'kanban';
+    $scope.view = KANBAN_VIEW;
     $scope.statuses = tasks.statuses;
     $scope.activeStatus = $scope.statuses[0]._id;
 
@@ -90,7 +92,8 @@ function TasksController($scope, api, notify, desks, tasks) {
     var fetchTasks = _.debounce(fetch, 300);
 
     function fetch() {
-        tasks.fetch($scope.activeStatus).then(function(list) {
+        var status = $scope.view === KANBAN_VIEW ? null : $scope.activeStatus;
+        tasks.fetch(status).then(function(list) {
             $scope.tasks = list;
         });
     }
@@ -125,6 +128,7 @@ function TasksController($scope, api, notify, desks, tasks) {
     $scope.setView = function(view) {
         if ($scope.view !== view) {
             $scope.view = view;
+            $scope.tasks = null;
             fetchTasks();
         }
     };
@@ -132,6 +136,7 @@ function TasksController($scope, api, notify, desks, tasks) {
     $scope.selectStatus = function(status) {
         if ($scope.activeStatus !== status) {
             $scope.activeStatus = status;
+            $scope.tasks = null;
             fetchTasks();
         }
     };
