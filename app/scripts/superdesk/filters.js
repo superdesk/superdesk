@@ -58,6 +58,25 @@ define([
                 return $filter('filter')(filtered, fields);
             };
         }])
+        .filter('menuGroup', function() {
+            return function(input) {
+
+                if (!input || !input.category || !input.label) {
+                    return '#/';
+                }
+
+                switch (input.category) {
+                    case 'superdesk.menu.main':
+                    case '/workspace':
+                    case '/authoring':
+                        return '#/' + input.label.toLowerCase().replace(' ', '-');
+                    case 'superdesk.menu.settings':
+                        return '#/settings/' + input.label.toLowerCase().replace(' ', '-');
+                    default:
+                        return '#/';
+                }
+            };
+        })
         .filter('dateString', ['$filter', function($filter) {
             return function(input) {
                 if (input !== null) {
