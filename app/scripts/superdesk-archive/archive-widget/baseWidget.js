@@ -11,6 +11,15 @@
                 var config;
                 var refresh = _.debounce(_refresh, 1000);
                 var pinnedList = {};
+                var ENTER = 13;
+
+                $scope.query = null;
+                $scope.searchOnEnter = function(query, $event) {
+                    if ($event.keyCode === ENTER) {
+                        $scope.query = query;
+                        $event.stopPropagation();
+                    }
+                };
 
                 $scope.selected = null;
                 preferencesService.get('pinned:items').then(function(result) {
@@ -49,7 +58,8 @@
                     }
 
                     if (item.subject && item.subject.length) {
-                        filters.push({terms: {'subject.qcode': _.pluck(item.subject, 'qcode')}});
+                        var subjects = _.pluck(item.subject, 'qcode');
+                        filters.push({terms: {'subject.qcode': _.difference(subjects, [undefined])}});
                     }
 
                     return filters;
