@@ -17,13 +17,13 @@
         var currentPackage = null;
 
         this.fetch = function(packageId) {
-            return api.find('packages', packageId).then(angular.bind(this, function(result) {
+            return api.find('packages', packageId).then(function(result) {
                 currentPackage = result;
-                return $q.when(result);
-            }));
+                return result;
+            });
         };
 
-        this.getGroupFor = function (item, idRef) {
+        function getGroupFor(item, idRef) {
             var refs = [];
             if (item) {
                 refs.push({
@@ -39,9 +39,9 @@
                 id: idRef,
                 role: 'grpRole:' + idRef
             };
-        };
+        }
 
-        this.getReferenceFor = function (item) {
+        function getReferenceFor(item) {
             return {
                 headline: item.headline || '',
                 residRef: item._id,
@@ -49,10 +49,9 @@
                 slugline: item.slugline || '',
                 renditions: item.renditions || {}
             };
-        };
+        }
 
         this.createPackageFromItems = function createPackageFromItems(items) {
-            var self = this;
             var idRef = 'main';
             var item = items[0];
             var new_package = {
@@ -67,7 +66,7 @@
                 id: 'root'
             }];
             _.forEach(items, function(item) {
-                groups.push(self.getGroupFor(item, idRef));
+                groups.push(getGroupFor(item, idRef));
             });
 
             new_package.groups = groups;
@@ -86,7 +85,7 @@
                     refs: [{idRef: idRef}],
                     id: 'root'
                 },
-                this.getGroupFor(null, idRef)
+                getGroupFor(null, idRef)
                 ]
             };
 
@@ -94,8 +93,6 @@
         };
 
         this.addItemsToPackage = function addToPackage(items, groupId) {
-            var self = this;
-
             var patch = {groups: _.cloneDeep(currentPackage.groups)};
             var targetGroup = _.find(patch.groups, function(group) { return group.id.toLowerCase() === groupId.toLowerCase(); });
 
@@ -110,7 +107,7 @@
                 patch.groups.push(targetGroup);
             }
             _.forEach(items, function(item) {
-                targetGroup.refs.push(self.getReferenceFor(item));
+                targetGroup.refs.push(getReferenceFor(item));
             });
             return api.packages.save(currentPackage, patch);
         };
@@ -222,10 +219,7 @@
         }
 
         $scope.itemInPackage = function(item) {
-            if (_.indexOf(packageItems, item.guid) > -1) {
-                return true;
-            }
-            return false;
+            return _.indexOf(packageItems, item.guid) > -1;
         };
     }
 
