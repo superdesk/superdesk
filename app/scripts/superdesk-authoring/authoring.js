@@ -358,6 +358,7 @@
         $scope.abstractHardLimit = 200;
 
         $scope.charLimitHit = false;
+        $scope.charLimitHitField = {};
 
         if (item.task && item.task.stage) {
             api('stages').getById(item.task.stage)
@@ -413,9 +414,10 @@
                 'headline': $scope.headlineSoftLimit,
                 'abstract': $scope.abstractSoftLimit
             }, function(limit, field) {
+                $scope.charLimitHitField[field] = false;
                 if ($scope.item[field] && $scope.item[field].length > limit) {
+                    $scope.charLimitHitField[field] = true;
                     $scope.charLimitHit = true;
-                    return false;
                 }
             });
         };
