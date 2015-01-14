@@ -28,7 +28,6 @@ define([
         $routeProvider.when('/', {redirectTo: '/workspace'});
 
         angular.extend(this, constans);
-
         /**
          * Register widget.
          *
@@ -267,12 +266,56 @@ define([
 
     module.provider('superdesk', SuperdeskProvider);
 
-    module.service('activityService', ['$location', '$injector', '$q', '$timeout', 'gettext', 'modal',
-    function($location, $injector, $q, $timeout, gettext, modal) {
-
+    module.service('activityService', ['$location', '$injector', '$q', '$timeout', 'gettext', 'modal', 'referrer',
+    function($location, $injector, $q, $timeout, gettext, modal, referrer) {
         var activityStack = [];
         this.activityStack = activityStack;
 
+        /**
+         * Serving for the purpose of setting referrer url via referrer service, also setting url in localStorage. which is utilized to
+         * get last working screen on authoring page if referrer url is unidentified
+         * direct link(i.e from notification pane)
+         *
+         * @param {Object} currentRoute
+         * @param {Object} previousRoute
+         * @returns {string}
+         */
+        this.setReferrer = function(currentRoute, previousRoute) {
+            if (currentRoute && previousRoute) {
+                if ((currentRoute.$$route !== undefined) && (previousRoute.$$route !== undefined)) {
+                    if (currentRoute.$$route.originalPath === '/') {
+                    referrer.setReferrerUrl('/workspace');
+                    localStorage.setItem('referrerUrl', '/workspace');
+                } else {
+                        if (currentRoute.$$route.originalPath === '/authoring/:_id') {
+                            if (previousRoute.$$route.originalPath !== '/authoring/:_id') {
+                                referrer.setReferrerUrl(prepareUrl(previousRoute));
+                                localStorage.setItem('referrerUrl', referrer.getReferrerUrl());
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        /**
+         * Prepares complete Referrer Url from previous route href and querystring params(if exist),
+         * e.g /workspace/content?q=test$repo=archive
+         *
+         * @param {Object} refRoute
+         * @returns {string}
+         */
+        function prepareUrl(refRoute) {
+            var completeUrl;
+            if (refRoute) {
+                completeUrl = refRoute.$$route.originalPath;
+                    if (!angular.equals({}, refRoute.params)) {
+                        completeUrl = completeUrl + '?';
+                        completeUrl = completeUrl + decodeURIComponent($.param(refRoute.params));
+                    }
+            }
+            return completeUrl;
+        }
         /**
          * Expand path using given locals, eg. with /users/:Id and locals {Id: 2} returns /users/2
          *
@@ -285,7 +328,6 @@ define([
                 return locals[key] ? locals[key] : match;
             });
         }
-
         /**
          * Start given activity
          *
@@ -358,17 +400,34 @@ define([
         };
     }]);
 
+    /**
+     * set/get the referrer Url
+     */
+    module.service('referrer', function() {
+         var referrerURL;
+         this.setReferrerUrl = function(refURL) {
+           referrerURL = refURL;
+         };
+
+         this.getReferrerUrl = function() {
+            return referrerURL;
+         };
+    });
+
     // reject modal on route change
     // todo(petr): what about blocking route change as long as it is opened?
     module.run(['$rootScope', 'activityService', function($rootScope, activityService) {
         $rootScope.$on('$routeChangeStart', function() {
-            if (activityService.activityStack.length) {
+        if (activityService.activityStack.length) {
                 var item = activityService.activityStack.pop();
                 item.defer.reject();
             }
         });
-    }]);
 
+        $rootScope.$on('$routeChangeSuccess',  function(ev, currentRoute, previousRoute) {
+            activityService.setReferrer(currentRoute, previousRoute);
+        });
+    }]);
     module.directive('sdActivityList', require('./activity-list-directive'));
     module.directive('sdActivityItem', require('./activity-item-directive'));
     module.directive('sdActivityChooser', require('./activity-chooser-directive'));

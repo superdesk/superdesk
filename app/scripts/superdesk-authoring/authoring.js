@@ -335,10 +335,13 @@
         'api',
         'session',
         'lock',
-        'privileges'
+        'privileges',
+        '$location',
+        'referrer'
     ];
 
-    function AuthoringController($scope, superdesk, workqueue, notify, gettext, desks, item, authoring, api, session, lock, privileges) {
+    function AuthoringController($scope, superdesk, workqueue, notify, gettext, desks, item, authoring, api, session, lock, privileges,
+        $location, referrer) {
         var stopWatch = angular.noop,
             _closing;
 
@@ -359,6 +362,14 @@
 
         $scope.charLimitHit = false;
         $scope.charLimitHitField = {};
+
+        if (typeof (referrer.getReferrerUrl()) === 'undefined' || (referrer.getReferrerUrl()) === null){
+            if (typeof (localStorage.getItem('referrerUrl')) !== 'undefined' || (localStorage.getItem('referrerUrl')) !== null){
+                $scope.referrerUrl = localStorage.getItem('referrerUrl');
+            }
+        } else {
+            $scope.referrerUrl = referrer.getReferrerUrl();
+        }
 
         if (item.task && item.task.stage) {
             api('stages').getById(item.task.stage)
@@ -432,6 +443,11 @@
                 $scope.item = _.create(item);
                 notify.success(gettext('Item updated.'));
                 startWatch();
+                if (typeof ($scope.referrerUrl) === 'undefined' || $scope.referrerUrl === null){
+                    superdesk.intent('author', 'dashboard');
+                } else {
+                    $location.url($scope.referrerUrl);
+                }
                 return item;
     		}, function(response) {
                 if (angular.isDefined(response.data._issues)) {
@@ -454,7 +470,11 @@
             stopWatch();
             _closing = true;
             authoring.close(item, $scope.item, $scope.dirty).then(function() {
-                superdesk.intent('author', 'dashboard');
+                if (typeof ($scope.referrerUrl) === 'undefined' || $scope.referrerUrl === null) {
+                    superdesk.intent('author', 'dashboard');
+                } else {
+                    $location.url($scope.referrerUrl);
+                }
             });
         };
 
@@ -668,8 +688,8 @@
         };
     }
 
-    SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify'];
-    function SendItem($q, superdesk, api, desks, notify) {
+    SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify', '$location'];
+    function SendItem($q, superdesk, api, desks, notify, $location) {
         return {
             scope: {
                 item: '=',
@@ -738,13 +758,22 @@
                     scope.beforeSend()
                     .then(function(result) {
 		    			scope.task._etag = result._etag;
-                        api.save('tasks', scope.task, data).then(gotoDashboard);
+                        api.save('tasks', scope.task, data).then(gotoPreviousScreen);
                     });
                 }
 
                 function gotoDashboard() {
-                    notify.success(gettext('Item sent.'));
                     superdesk.intent('author', 'dashboard');
+                }
+
+                function gotoPreviousScreen($scope) {
+                    notify.success(gettext('Item sent.'));
+                    if (typeof (scope.$parent.referrerUrl) === 'undefined' || scope.$parent.referrerUrl === null) {
+                        gotoDashboard();
+                    } else {
+                        $location.url(scope.$parent.referrerUrl);
+                    }
+
                 }
             }
         };
