@@ -533,10 +533,10 @@
             scope: {
                 item: '=',
                 limit: '=',
-                limitCallback: '=',
+                limitCallback: '&',
                 html: '@'
             },
-            template: '<span class="char-count" ng-class="{error: limitHit}">{{numChars}} <span translate>characters</span></span>',
+            template: '<span class="char-count" ng-class="{error: limitHit}" translate>{{numChars}} characters</span>',
             link: function characterCountLink(scope, elem, attrs) {
                 scope.html = scope.html || false;
                 scope.numChars = 0;
