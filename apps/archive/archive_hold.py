@@ -10,7 +10,7 @@
 
 from flask import request
 from superdesk.resource import Resource, build_custom_hateoas
-from .common import get_user, item_url
+from .common import get_user, item_url, get_auth
 from .archive_lock import custom_hateoas
 from superdesk.services import BaseService
 from apps.common.components.utils import get_component
@@ -34,8 +34,9 @@ class ArchiveHoldService(BaseService):
 
     def create(self, docs, **kwargs):
         user = get_user(required=True)
+        auth = get_auth()
         item_id = request.view_args['item_id']
-        item = get_component(ItemHold).hold({'_id': item_id}, user['_id'])
+        item = get_component(ItemHold).hold({'_id': item_id}, user['_id'], auth['_id'])
         build_custom_hateoas(custom_hateoas, item)
         return [item['_id']]
 

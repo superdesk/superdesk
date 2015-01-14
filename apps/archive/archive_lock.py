@@ -33,7 +33,7 @@ class ArchiveLockResource(Resource):
     datasource = {'source': 'archive'}
     resource_methods = ['GET', 'POST']
     resource_title = endpoint_name
-    privileges = {'POST': 'unlock'}
+    privileges = {'POST': 'archive'}
 
 
 class ArchiveLockService(BaseService):
@@ -53,7 +53,6 @@ class ArchiveUnlockResource(Resource):
     datasource = {'source': 'archive'}
     resource_methods = ['GET', 'POST']
     resource_title = endpoint_name
-    privileges = {'POST': 'unlock'}
 
 
 class ArchiveUnlockService(BaseService):
