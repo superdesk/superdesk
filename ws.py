@@ -78,13 +78,16 @@ class BroadcastServerFactory(WebSocketServerFactory):
         for c in self.clients:
             if c.peer is not author:
                 c.sendMessage(msg)
-        log('msg sent to {0} client(s)'.format(len(self.clients) - 1))
+        log('msg sent to {0} client(s)'.format(len(self.clients)))
 
 
 def send_heartbeat(server, loop):
     yield from asyncio.sleep(beat_delay)
     while loop.is_running():
-        server.broadcast(json.dumps({'heartbeat': 'ping'}).encode('utf8'), None)
+        server.broadcast(json.dumps({
+            'data': 'ping',
+            'from': os.environ.get('SUPERDESK_URL')
+        }).encode('utf8'), None)
         yield from asyncio.sleep(beat_delay)
 
 
