@@ -94,7 +94,7 @@ class ItemLock(BaseComponent):
 
         if can_user_edit:
             if item.get(LOCK_USER):
-                if item.get(LOCK_USER, '') == user_id and item.get(LOCK_SESSION) != session_id:
+                if str(item.get(LOCK_USER, '')) == str(user_id) and item.get(LOCK_SESSION) != session_id:
                     return False, 'Item is locked by you in another session.'
                 else:
                     return False, 'Item is locked by another user.'
@@ -110,7 +110,7 @@ class ItemLock(BaseComponent):
         can_user_edit, error_message = superdesk.get_resource_service('archive').can_edit(item, user_id)
 
         if can_user_edit:
-            if not (item.get(LOCK_USER) == user_id or
+            if not (str(item.get(LOCK_USER, '')) == str(user_id) or
                     (current_user_has_privilege('archive') and current_user_has_privilege('unlock'))):
                 return False, 'You don\'t have permissions to unlock an item.'
         else:
