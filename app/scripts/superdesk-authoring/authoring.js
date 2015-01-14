@@ -783,6 +783,7 @@
         .config(['superdeskProvider', function(superdesk) {
             superdesk
                 .activity('authoring', {
+                    category: '/authoring',
                     when: '/authoring/:_id',
                 	label: gettext('Authoring'),
 	                templateUrl: 'scripts/superdesk-authoring/views/authoring.html',

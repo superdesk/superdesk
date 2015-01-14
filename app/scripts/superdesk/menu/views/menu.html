@@ -4,7 +4,7 @@
         <button class="collapse-nav pull-left" ng-click="toggleMenu()">
           <i class="icon-collapse"></i>
         </button>
-        <button class="main-link pull-left" translate>{{ currentRoute.label }}</button>
+        <a class="main-link pull-left" translate ng-href="{{currentRoute | menuGroup}}">{{ currentRoute.label }}</a>
         <span class="top-nav pull-left" ng-include="currentRoute.topTemplateUrl"></span>
       </div>
 
