@@ -25,7 +25,7 @@ Feature: Packages
     @auth
     Scenario: Create new package with text content
         Given empty "packages"
-        When we post to "archive"
+        When we post to "archive" with success
         """
         [{"headline": "test"}]
         """

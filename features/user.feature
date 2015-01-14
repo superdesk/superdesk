@@ -85,7 +85,7 @@ Feature: User Resource
         """
         When we switch user
         And we delete "/users/foo"
-        Then we get response code 200
+        Then we get response code 204
 
     @auth
     @dbauth

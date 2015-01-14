@@ -93,7 +93,7 @@ def get_res(url, context):
 
 def assert_200(response):
     """Assert we get status code 200."""
-    expect_status_in(response, (200, 201))
+    expect_status_in(response, (200, 201, 204))
 
 
 def assert_404(response):

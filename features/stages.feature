@@ -194,7 +194,7 @@ Feature: Stages
         [{"type": "text"}]
         """
         When we delete "/stages/#stages._id#"
-        Then we get response code 200
+        Then we get response code 204
 
 
     @auth

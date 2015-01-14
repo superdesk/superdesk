@@ -50,7 +50,7 @@ Feature: Rule Sets Resource
           ]
           """
         When we delete "/rule_sets/#rule_sets._id#"
-        Then we get response code 200
+        Then we get response code 204
 
     @auth
     Scenario: Delete rule_sets when in use
