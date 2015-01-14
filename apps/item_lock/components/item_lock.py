@@ -16,6 +16,7 @@ from superdesk.utc import utcnow
 from superdesk.notification import push_notification
 from apps.common.components.base_component import BaseComponent
 from apps.common.models.utils import get_model
+from apps.users.services import current_user_has_privilege
 import superdesk
 
 
@@ -23,7 +24,6 @@ LOCK_USER = 'lock_user'
 LOCK_SESSION = 'lock_session'
 STATUS = '_status'
 TASK = 'task'
-USER = 'user'
 
 
 class ItemLock(BaseComponent):
@@ -34,75 +34,86 @@ class ItemLock(BaseComponent):
     def name(cls):
         return 'item_lock'
 
-    def lock(self, filter, user, session, etag):
+    def lock(self, item_filter, user_id, session_id, etag):
         item_model = get_model(ItemModel)
-        item = item_model.find_one(filter)
-        if not item:
-            raise SuperdeskApiError.notFoundError(message="Item not found.")
+        item = item_model.find_one(item_filter)
 
-        can_user_lock, error_message = self.can_lock(item, user, session)
+        if not item:
+            raise SuperdeskApiError.notFoundError()
+
+        can_user_lock, error_message = self.can_lock(item, user_id, session_id)
 
         if can_user_lock:
-            self.app.on_item_lock(item, user)
-            updates = {LOCK_USER: user, LOCK_SESSION: session, 'lock_time': utcnow()}
-            item_model.update(filter, updates)
+            self.app.on_item_lock(item, user_id)
+            updates = {LOCK_USER: user_id, LOCK_SESSION: session_id, 'lock_time': utcnow()}
+            item_model.update(item_filter, updates)
 
             if item.get(TASK):
-                item[TASK]['user'] = user
+                item[TASK]['user'] = user_id
             else:
-                item[TASK] = {'user': user}
+                item[TASK] = {'user': user_id}
 
             superdesk.get_resource_service('tasks').assign_user(item[config.ID_FIELD], item[TASK])
-            self.app.on_item_locked(item, user)
-            push_notification('item:lock', item=str(item.get(config.ID_FIELD)), user=str(user))
+            self.app.on_item_locked(item, user_id)
+            push_notification('item:lock', item=str(item.get(config.ID_FIELD)), user=str(user_id))
         else:
-            raise SuperdeskApiError.forbiddenError(error_message)
+            raise SuperdeskApiError.forbiddenError(message=error_message)
 
-        item = item_model.find_one(filter)
+        item = item_model.find_one(item_filter)
         return item
 
-    def unlock(self, filter, user, session, etag):
+    def unlock(self, item_filter, user_id, session_id, etag):
         item_model = get_model(ItemModel)
-        item = item_model.find_one(filter)
-        if item:
-            self.app.on_item_unlock(item, user)
+        item = item_model.find_one(item_filter)
+
+        if not item:
+            raise SuperdeskApiError.notFoundError()
+
+        if not item.get(LOCK_USER):
+            raise SuperdeskApiError.badRequestError(message="Item is not locked.")
+
+        can_user_unlock, error_message = self.can_unlock(item, user_id)
+
+        if can_user_unlock:
+            self.app.on_item_unlock(item, user_id)
             updates = {LOCK_USER: None, LOCK_SESSION: None, 'lock_time': None, 'force_unlock': True}
-            item_model.update(filter, updates)
-            self.app.on_item_unlocked(item, user)
-            push_notification('item:unlock', item=str(filter.get(config.ID_FIELD)), user=str(user))
-        item = item_model.find_one(filter)
+            item_model.update(item_filter, updates)
+            self.app.on_item_unlocked(item, user_id)
+            push_notification('item:unlock', item=str(item_filter.get(config.ID_FIELD)), user=str(user_id))
+        else:
+            raise SuperdeskApiError.forbiddenError(message=error_message)
+
+        item = item_model.find_one(item_filter)
         return item
 
     def can_lock(self, item, user_id, session_id):
         """
-        Function checks whether user can lock the item or not.
-        :param item: Content item.
-        :param user_id: user id performing the lock.
-        :param session_id: session id.
-        :return: if can lock then True else (False, 'error message').
+        Function checks whether user can lock the item or not. If not then raises exception.
         """
-        # TODO: modify this function when read only permissions for stages are implemented.
-        if item.get(LOCK_USER):
-            if item.get(LOCK_USER) == user_id:
-                if item.get(LOCK_SESSION) == session_id:
-                    return False, 'Item is locked already locked by you.'
-                else:
+        can_user_edit, error_message = superdesk.get_resource_service('archive').can_edit(item, user_id)
+
+        if can_user_edit:
+            if item.get(LOCK_USER):
+                if item.get(LOCK_USER, '') == user_id and item.get(LOCK_SESSION) != session_id:
                     return False, 'Item is locked by you in another session.'
-            else:
-                return False, 'Item is locked by another user.'
-
-        item_location = item.get(TASK)
-
-        if not item_location:
-            return True, ''
-
-        if item_location.get('desk'):
-            if superdesk.get_resource_service('user_desks').is_member(user_id, item_location.get('desk')):
-                return True, ''
-            else:
-                return False, 'User is not a member of the desk.'
+                else:
+                    return False, 'Item is locked by another user.'
         else:
-            if not item_location.get('user', '') == user_id:
-                return False, 'Item belongs to another user.'
+            return False, error_message
+
+        return True, ''
+
+    def can_unlock(self, item, user_id):
+        """
+        Function checks whether user can unlock the item or not.
+        """
+        can_user_edit, error_message = superdesk.get_resource_service('archive').can_edit(item, user_id)
+
+        if can_user_edit:
+            if not (item.get(LOCK_USER) == user_id or
+                    (current_user_has_privilege('archive') and current_user_has_privilege('unlock'))):
+                return False, 'You don\'t have permissions to unlock an item.'
+        else:
+            return False, error_message
 
         return True, ''

@@ -127,7 +127,8 @@ def init_app(app):
     superdesk.privilege(name='hold', label='Hold', description='Hold a content')
     superdesk.privilege(name='restore', label='Restore', description='Restore a hold a content')
 
-    # superdesk.intrinsic_privilege(ArchiveLockResource.endpoint_name, method=['POST'])
+    superdesk.intrinsic_privilege(ArchiveUnlockResource.endpoint_name, method=['POST'])
+
 
 @celery.task()
 def content_purge():

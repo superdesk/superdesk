@@ -7,12 +7,12 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
-
 from ..models.item import ItemModel
-from .item_lock import can_lock
 from superdesk.notification import push_notification
 from apps.common.components.base_component import BaseComponent
 from apps.common.models.utils import get_model
+from apps.common.components.utils import get_component
+from .item_lock import ItemLock
 from superdesk import app
 from superdesk.errors import SuperdeskApiError
 
@@ -46,22 +46,30 @@ class ItemHold(BaseComponent):
     def name(cls):
         return 'item_hold'
 
-    def hold(self, filter, user):
+    def hold(self, filter, user_id, session):
         item_model = get_model(ItemModel)
         item = item_model.find_one(filter)
-        if item and can_lock(item, user):
+        if not item:
+            raise SuperdeskApiError.notFoundError()
+
+        can_user_lock, error_message = get_component(ItemLock).can_lock(item, user_id, session)
+
+        if can_user_lock:
             updates = {'state': 'on-hold'}
             item_model.update(filter, updates)
-            push_notification('item:hold', item=str(item.get('_id')), user=str(user))
+            push_notification('item:hold', item=str(item.get('_id')), user=str(user_id))
         else:
-            raise SuperdeskApiError.forbiddenError("Item couldn't be hold. It is locked by another user")
+            raise SuperdeskApiError.forbiddenError(message=error_message)
+
         item = item_model.find_one(filter)
         return item
 
-    def restore(self, filter, user):
+    def restore(self, filter, user_id):
         item_model = get_model(ItemModel)
         item = item_model.find_one(filter)
-        if item:
-            updates = get_restore_updates(item)
-            item_model.update(filter, updates)
-            push_notification('item:restore', item=str(filter.get('_id')), user=str(user))
+        if not item:
+            raise SuperdeskApiError.notFoundError()
+
+        updates = get_restore_updates(item)
+        item_model.update(filter, updates)
+        push_notification('item:restore', item=str(filter.get('_id')), user=str(user_id))

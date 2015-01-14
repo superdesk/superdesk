@@ -7,6 +7,7 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+from apps.users.services import current_user_has_privilege
 
 
 SOURCE = 'archive'
@@ -246,6 +247,28 @@ class ArchiveService(BaseService):
         doc.update(old)
         return res
 
+    def can_edit(self, item, user_id):
+        """
+        Determines if the user can edit the item or not.
+        """
+        # TODO: modify this function when read only permissions for stages are implemented
+        # TODO: and Content state related checking.
+
+        if not current_user_has_privilege('archive'):
+            return False, 'User does not have sufficient permissions.'
+
+        item_location = item.get('task')
+
+        if item_location:
+            if item_location.get('desk'):
+                if not superdesk.get_resource_service('user_desks').is_member(user_id, item_location.get('desk')):
+                    return False, 'User is not a member of the desk.'
+            else:
+                if not item_location.get('user') == user_id:
+                    return False, 'Item belongs to another user.'
+
+        return True, ''
+
     def __is_req_for_save(self, doc):
         """
         Patch of /api/archive is being used in multiple places. This method differentiates from the patch
@@ -317,8 +340,8 @@ class ArchiveRemoveExpiredContent(superdesk.Command):
                  }
         return superdesk.json.dumps(query)
 
-superdesk.command('archive:remove_expired', ArchiveRemoveExpiredContent())
 
+superdesk.command('archive:remove_expired', ArchiveRemoveExpiredContent())
 superdesk.workflow_state('in_progress')
 superdesk.workflow_action(
     name='save',
