@@ -762,6 +762,7 @@
             'superdesk.authoring.comments',
             'superdesk.authoring.versions',
             'superdesk.authoring.workqueue',
+            'superdesk.authoring.find-replace',
             'superdesk.desks'
         ])
 
