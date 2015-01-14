@@ -263,8 +263,8 @@ class ArchiveService(BaseService):
             if item_location.get('desk'):
                 if not superdesk.get_resource_service('user_desks').is_member(user_id, item_location.get('desk')):
                     return False, 'User is not a member of the desk.'
-            else:
-                if not str(item_location.get('user', '')) == str(user_id):
+            elif item_location.get('user'):
+                if not str(item_location.get('user')) == str(user_id):
                     return False, 'Item belongs to another user.'
 
         return True, ''

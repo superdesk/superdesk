@@ -94,10 +94,11 @@ class ItemLock(BaseComponent):
 
         if can_user_edit:
             if item.get(LOCK_USER):
-                if str(item.get(LOCK_USER, '')) == str(user_id) and item.get(LOCK_SESSION) != session_id:
+                if str(item.get(LOCK_USER, '')) == str(user_id) and str(item.get(LOCK_SESSION)) != str(session_id):
                     return False, 'Item is locked by you in another session.'
                 else:
-                    return False, 'Item is locked by another user.'
+                    if str(item.get(LOCK_USER, '')) != str(user_id):
+                        return False, 'Item is locked by another user.'
         else:
             return False, error_message
 
