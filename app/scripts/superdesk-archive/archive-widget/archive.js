@@ -29,7 +29,8 @@ define([
             authoringWidgets.widget('archive', {
                 label: gettext('Archive'),
                 icon: 'archive',
-                template: require.toUrl('./widget-archive.html')
+                template: require.toUrl('./widget-archive.html'),
+                side: 'left'
             });
         }])
         .controller('ArchiveController', ['$scope', 'api', 'BaseWidgetController',

@@ -1,0 +1,14 @@
+<div class="subnav">
+
+</div>
+<div class="packaging-screen main-section">
+    <div sd-authoring-widgets data-item="item">
+        <div class="package-edit-container">
+            <div class="content">
+                <div class="keyword" ng-show="item.slugline">{{ item.slugline }}</div>
+                <div class="title" ng-show="item.headline">{{ item.headline }}</div>
+                <div sd-package data-item="item" class="composite-preview" data-remove="remove({item: item})" data-editmode="true"></div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -119,7 +119,7 @@
 </form>
 
 
-<div sd-reset-password class="password-popup mini-modal" ng-if="features.reset_user_password && show.reset_password && user._id" ng-class="{shifted : error}">
+<div sd-reset-password class="password-popup mini-modal inline" ng-if="features.reset_user_password && show.reset_password && user._id" ng-class="{shifted : error}">
     <div class="title">Reset password</div>
     <div class="close" ng-click="show.reset_password = false">
       <i class="icon-close-small"></i>
@@ -134,7 +134,7 @@
 </div>
 
 
-<div sd-change-password class="password-popup mini-modal" ng-if="features.reset_user_password && show.change_password && user._id" ng-class="{shifted : error}">
+<div sd-change-password class="password-popup mini-modal inline" ng-if="features.reset_user_password && show.change_password && user._id" ng-class="{shifted : error}">
     <div class="title">Change password</div>
     <div class="close" ng-click="show.change_password = false">
       <i class="icon-close-small"></i>

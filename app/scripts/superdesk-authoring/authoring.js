@@ -762,6 +762,7 @@
             'superdesk.authoring.comments',
             'superdesk.authoring.versions',
             'superdesk.authoring.workqueue',
+            'superdesk.authoring.packages',
             'superdesk.authoring.find-replace',
             'superdesk.desks'
         ])
@@ -796,6 +797,7 @@
 	            })
 	            .activity('edit.text', {
 	            	label: gettext('Edit item'),
+                    priority: 10,
 	            	icon: 'pencil',
 	            	controller: ['data', '$location', 'workqueue', 'superdesk', function(data, $location, workqueue, superdesk) {
 	            		workqueue.add(data.item);
@@ -803,7 +805,10 @@
 	                }],
 	            	filters: [
 	                    {action: 'list', type: 'archive'}
-	                ]
+	                ],
+                    condition: function(item) {
+                        return item.type !== 'composite';
+                    }
 	            });
         }]);
 })();

@@ -29,7 +29,8 @@ define([
             authoringWidgets.widget('ingest', {
                 label: gettext('Ingest'),
                 icon: 'ingest',
-                template: require.toUrl('./widget-ingest.html')
+                template: require.toUrl('./widget-ingest.html'),
+                side: 'left'
             });
         }])
         .controller('IngestController', ['$scope', 'api', 'BaseWidgetController',

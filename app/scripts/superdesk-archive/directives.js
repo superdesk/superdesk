@@ -84,11 +84,13 @@ define([
                 templateUrl: require.toUrl('./views/package.html'),
                 scope: {
                     item: '=',
-                    setitem: '&'
+                    setitem: '&',
+                    remove: '&',
+                    editmode: '='
                 },
                 link: function(scope, elem) {
-                    scope.$watch('item', function() {
-                        if (scope.item !== null) {
+                    scope.$watchGroup(['item', 'item.groups'], function() {
+                        if (scope.item && scope.item.groups) {
                             scope.tree = solveRefs(
                                 _.find(scope.item.groups, {id: 'root'}),
                                 scope.item.groups
@@ -105,21 +107,31 @@ define([
                 scope: {
                     id: '=',
                     item: '=',
-                    setitem: '&'
+                    setitem: '&',
+                    remove: '&',
+                    editmode: '='
                 },
                 link: function(scope, elem) {
                 }
             };
         }])
         .directive('sdPackageItemProxy', ['$compile', function($compile) {
-            var template = '<div sd-package-item data-id="id" data-item="item" data-setitem="setitem({selected: selected})"></div>';
+            var template =
+                '<div sd-package-item data-id="id"' +
+                    ' data-item="item"' +
+                    ' data-setitem="setitem({selected: selected})"' +
+                    ' data-remove="remove({item: item})"' +
+                    ' data-editmode="editmode">' +
+                '</div>';
 
             return {
                 replace: true,
                 scope: {
                     id: '=',
                     item: '=',
-                    setitem: '&'
+                    setitem: '&',
+                    remove: '&',
+                    editmode: '='
                 },
                 link: function(scope, elem) {
                     elem.append($compile(template)(scope));
@@ -132,14 +144,16 @@ define([
                 templateUrl: require.toUrl('./views/package-ref.html'),
                 scope: {
                     item: '=',
-                    setitem: '&'
+                    setitem: '&',
+                    remove: '&',
+                    editmode: '='
                 },
                 link: function(scope, elem) {
                     scope.data = null;
                     scope.error = null;
-                    scope.type = scope.item.itemClass.split(':')[1];
-                    if (scope.type !== 'text' && scope.type !== 'composite' && $rootScope.currentModule) {
-                        api[$rootScope.currentModule].getById(scope.item.residRef)
+                    scope.type = scope.item.type || scope.item.itemClass.split(':')[1];
+                    if (scope.type !== 'text' && scope.type !== 'composite' && scope.item.location) {
+                        api[scope.item.location].getById(scope.item.residRef)
                         .then(function(result) {
                             scope.data = result;
                         }, function(response) {

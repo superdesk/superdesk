@@ -94,7 +94,8 @@ angular.module('superdesk.authoring.versions', [])
             .widget('versions', {
                 icon: 'revision',
                 label: gettext('Versions'),
-                template: 'scripts/superdesk-authoring/versioning/views/versions.html'
+                template: 'scripts/superdesk-authoring/versioning/views/versions.html',
+                side: 'right'
             });
     }])
 
