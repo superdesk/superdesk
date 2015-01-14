@@ -196,12 +196,16 @@ angular.module('superdesk.editor', [])
         /**
          * Get number of lines for all p nodes before given node withing same parent.
          */
-        function getLinesBeforeNode(node) {
+        function getLinesBeforeNode(p) {
+
+            function getLineCount(text) {
+                return text.split('\n').length;
+            }
+
             var lines = 0;
-            var p = node.previousSibling;
             while (p) {
                 if (p.childNodes.length && p.childNodes[0].nodeType === TEXT_TYPE) {
-                    lines += p.childNodes[0].wholeText.split('\n').length;
+                    lines += getLineCount(p.childNodes[0].wholeText);
                 } else if (p.childNodes.length) {
                     lines += 1; // empty paragraph
                 }
@@ -215,20 +219,32 @@ angular.module('superdesk.editor', [])
          * Get line/column coordinates for given cursor position.
          */
         function getLineColumn() {
-            var text, lines, linesBefore;
-            var selection = window.getSelection();
+            var column, lines,
+                selection = window.getSelection();
             if (selection.anchorNode.nodeType === TEXT_TYPE) {
-                text = selection.anchorNode.wholeText.substring(0, selection.anchorOffset);
-                lines = text.split('\n');
-                linesBefore = getLinesBeforeNode(selection.anchorNode.parentNode);
+                var text = selection.anchorNode.wholeText.substring(0, selection.anchorOffset);
+                var node = selection.anchorNode;
+                column = text.length + 1;
+                while (node.nodeName !== 'P') {
+                    if (node.previousSibling) {
+                        column += node.previousSibling.wholeText ?
+                            node.previousSibling.wholeText.length :
+                            node.previousSibling.textContent.length;
+                        node = node.previousSibling;
+                    } else {
+                        node = node.parentNode;
+                    }
+                }
+
+                lines = 0 + getLinesBeforeNode(node);
             } else {
-                text = '';
-                lines = [text];
-                linesBefore = getLinesBeforeNode(selection.anchorNode);
+                lines = 0 + getLinesBeforeNode(selection.anchorNode);
+                column = 1;
             }
+
             return {
-                line: lines.length + linesBefore,
-                column: lines[lines.length - 1].length + 1
+                line: lines,
+                column: column
             };
         }
 
@@ -253,13 +269,13 @@ angular.module('superdesk.editor', [])
                 ngModel.$render = function renderEditor() {
                     editorElem = elem.find(scope.type === 'preformatted' ?  '.editor-type-text' : '.editor-type-html');
                     editorElem.empty();
-                    editorElem.html(ngModel.$viewValue || '<p></p>');
+                    editorElem.html(ngModel.$viewValue || '<p><br></p>');
 
                     editor.elem = editorElem[0];
                     editor.editor = new window.MediumEditor(editor.elem, config);
 
-                    editorElem.on('input', updateModel);
                     editorElem.on('blur', updateModel);
+                    editorElem.on('input', updateModel);
 
                     if (scope.type === 'preformatted') {
                         editorElem.on('keydown keyup click', function() {
