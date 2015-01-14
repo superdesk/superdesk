@@ -556,6 +556,34 @@
             };
         }])
 
+        .directive('sdItemContainer', ['$location', '$filter', 'desks', 'api', function($location, $filter, desks, api) {
+            return {
+                scope: {
+                    item: '='
+                },
+                templateUrl: 'scripts/superdesk-search/views/item-container.html',
+                replace: true,
+                link: function(scope, elem) {
+
+                    if (!scope.item.task) {
+                        return;
+                    }
+
+                    if (scope.item.task.desk) {
+                        desks.initialize().then(function() {
+                            scope.item.container = 'on ' + desks.deskLookup[scope.item.task.desk].name ;
+                        });
+                    } else if (scope.item.task.user) {
+                        api.find('users', scope.item.task.user).then(function(user) {
+                            scope.item.container = ' with ' + $filter('username')(user);
+                        });
+                    } else {
+                        scope.item.container = 'location:unkown';
+                    }
+                }
+            };
+        }])
+
         /**
          * Item search component
          */

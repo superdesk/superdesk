@@ -19,7 +19,9 @@
 <div class="item-info">
     <div class="line">
         <div class="state-label state-{{item.state}}">{{item.state}}</div>
-        <div class="headline"><span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span>{{ item.headline || item.type }}</div>
+        <div class="headline"><span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span>{{ item.headline || item.type }}
+            <sd-item-container data-item="item" />
+        </div>
         <time sd-datetime data-date="item.versioncreated"></time>
     </div>
     <div class="line">
