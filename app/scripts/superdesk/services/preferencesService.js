@@ -11,7 +11,12 @@ define(['angular', 'lodash'], function(angular, _) {
                 ACTIVE_PRIVILEGES = 'active_privileges',
                 PREFERENCES = 'preferences',
                 ACTIONS = 'allowed_actions',
-                userPreferences = ['feature:preview', 'archive:view', 'email:notification', 'workqueue:items'],
+                userPreferences = {
+                    'feature:preview': 1,
+                    'archive:view': 1,
+                    'email:notification': 1,
+                    'workqueue:items': 1
+                },
                 api,
                 original_preferences = null;
 
@@ -58,7 +63,7 @@ define(['angular', 'lodash'], function(angular, _) {
                 });
             };
 
-            function getPreferences(sessionId, key){
+            function getPreferences(sessionId, key) {
                 if (!api) { api = $injector.get('api'); }
 
                 if (!sessionId) {
@@ -72,10 +77,9 @@ define(['angular', 'lodash'], function(angular, _) {
             }
 
             function processPreferences(preferences, key){
-
-                if (!key){
+                if (!key) {
                     return preferences[USER_PREFERENCES];
-                } else if (userPreferences.indexOf(key) >= 0) {
+                } else if (userPreferences[key]) {
                     return preferences[USER_PREFERENCES][key];
                 } else {
                     return preferences[SESSION_PREFERENCES][key];
@@ -108,7 +112,7 @@ define(['angular', 'lodash'], function(angular, _) {
             this.update = function(updates, key) {
                 if (!key){
                     return updatePreferences(USER_PREFERENCES, updates);
-                } else if (userPreferences.indexOf(key) >= 0) {
+                } else if (userPreferences[key]) {
                     return updatePreferences(USER_PREFERENCES, updates, key);
                 } else {
                     return updatePreferences(SESSION_PREFERENCES, updates, key);
