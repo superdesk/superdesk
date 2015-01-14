@@ -61,6 +61,7 @@ Feature: Content Autosave
         When we get "/archive_autosave/item-1"
         Then we get error 404
 
+
     @auth
     Scenario: Clean autosave on item save
         Given empty "archive_autosave"
