@@ -1,4 +1,4 @@
-Cerberus==0.7.2
+Cerberus==0.8
 Events==0.2.1
 Eve-Elastic==0.2.4
 Flask==0.10.1
@@ -16,10 +16,10 @@ bcrypt==1.0.2
 blinker==1.3
 celery[redis]==3.1.17
 elasticsearch==1.2.0
-flake8==2.2.3
+flake8==2.3.0
 honcho==0.5.0
 itsdangerous==0.24
-mccabe==0.2.1
+mccabe==0.3
 nose==1.3.4
 parse==1.6.4
 pep8==1.5.7
@@ -30,13 +30,13 @@ python-magic==0.4.6
 pytz==2014.4
 raven[flask]==5.0.0
 requests==2.3.0
-simplejson==3.6.3
+simplejson==3.6.5
 six==1.7.3
 statsd==3.0.1
 httmock==1.2.2
 python3-ldap==0.9.5.3
 
-git+git://github.com/superdesk/eve@develop#egg=Eve==0.5-dev
+git+git://github.com/superdesk/eve@upstream-nk#egg=Eve==0.6-dev
 git+git://github.com/actionless/behave@master#egg=behave
 git+git://github.com/amagdas/tinys3@list-buckets#egg=tinys3
 git+git://github.com/actionless/wooper@0.1.0#egg=wooper==0.1.0

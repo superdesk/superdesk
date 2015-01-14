@@ -15,7 +15,7 @@ Feature: User Activity
          	"""
          	
          When we delete "/users/foo"
-         Then we get response code 200
+         Then we get response code 204
          
          When we get "/activity/"
          Then we get existing resource

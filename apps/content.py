@@ -106,7 +106,6 @@ metadata_schema = {
     # Story Metadata
     'type': {
         'type': 'string',
-        'required': True,
         'allowed': ['text', 'preformatted', 'audio', 'video', 'picture', 'graphic', 'composite'],
         'default': 'text',
         'mapping': not_analyzed

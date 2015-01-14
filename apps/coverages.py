@@ -27,7 +27,6 @@ class CoverageResource(Resource):
             'type': 'string',
             'allowed': ['story', 'photo', 'video', 'graphics', 'live-blogging'],
             'default': 'story',
-            'required': True
         },
         'ed_note': {'type': 'string'},
         'scheduled': {'type': 'datetime'},

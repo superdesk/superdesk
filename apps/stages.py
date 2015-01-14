@@ -39,7 +39,6 @@ class StagesResource(Resource):
         },
         'default_incoming': {
             'type': 'boolean',
-            'required': True,
             'default': False
         },
         'task_status': {

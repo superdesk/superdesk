@@ -41,10 +41,9 @@ PAGINATION_LIMIT = 200
 APPLICATION_NAME = env('APP_NAME', 'Superdesk')
 server_url = urlparse(env('SUPERDESK_URL', 'http://localhost:5000/api'))
 CLIENT_URL = env('SUPERDESK_CLIENT_URL', 'http://localhost:9000')
-URL_PROTOCOL = server_url.scheme or None
-SERVER_NAME = server_url.netloc or None
 URL_PREFIX = server_url.path.lstrip('/') or ''
 VALIDATION_ERROR_STATUS = 400
+JSON_SORT_KEYS = True
 
 CACHE_CONTROL = 'max-age=0, no-cache'
 

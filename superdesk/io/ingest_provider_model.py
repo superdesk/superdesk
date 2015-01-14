@@ -34,7 +34,6 @@ class IngestProviderResource(Resource):
         },
         'days_to_keep': {
             'type': 'integer',
-            'required': True,
             'default': DAYS_TO_KEEP
         },
         'config': {
