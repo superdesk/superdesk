@@ -29,9 +29,20 @@ module.exports = function (grunt) {
 
     grunt.registerTask('test', ['karma:unit']);
     grunt.registerTask('hint', ['jshint', 'jscs']);
+    grunt.registerTask('hint:docs', ['jshint:docs', 'jscs:docs']);
     grunt.registerTask('ci', ['test', 'hint']);
     grunt.registerTask('ci:travis', ['karma:travis', 'hint']);
     grunt.registerTask('bamboo', ['karma:bamboo']);
+
+    grunt.registerTask('docs', [
+        'clean',
+        'less:docs',
+        'cssmin',
+        'template:docs',
+        'connect:test',
+        'open:docs',
+        'watch'
+    ]);
 
     grunt.registerTask('server', ['clean', 'style', 'template:test', 'connect:test', 'open:test', 'watch']);
     grunt.registerTask('server:e2e', ['clean', 'style', 'template:mock', 'connect:mock', 'watch']);
