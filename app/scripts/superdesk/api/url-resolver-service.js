@@ -7,7 +7,7 @@ define([], function() {
         var _links, baseUrl = config.server.url;
 
         function basejoin(path) {
-            return baseUrl + path;
+            return baseUrl + (path.indexOf('/') === 0 ? path : ('/' + path));
         }
 
         /**
