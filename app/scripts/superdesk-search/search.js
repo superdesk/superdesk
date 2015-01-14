@@ -556,13 +556,12 @@
             };
         }])
 
-        .directive('sdItemContainer', ['$location', '$filter', 'desks', 'api', function($location, $filter, desks, api) {
+        .directive('sdItemContainer', ['$filter', 'desks', 'api', function($filter, desks, api) {
             return {
                 scope: {
                     item: '='
                 },
-                templateUrl: 'scripts/superdesk-search/views/item-container.html',
-                replace: true,
+                template: '{{item.container}}',
                 link: function(scope, elem) {
 
                     if (!scope.item.task) {
@@ -571,12 +570,10 @@
 
                     if (scope.item.task.desk) {
                         desks.initialize().then(function() {
-                            scope.item.container = 'on ' + desks.deskLookup[scope.item.task.desk].name ;
+                            scope.item.container = 'desk:' + desks.deskLookup[scope.item.task.desk].name ;
                         });
                     } else if (scope.item.task.user) {
-                        api.find('users', scope.item.task.user).then(function(user) {
-                            scope.item.container = ' with ' + $filter('username')(user);
-                        });
+                        scope.item.container = 'location:workspace';
                     } else {
                         scope.item.container = 'location:unkown';
                     }

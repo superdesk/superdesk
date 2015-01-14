@@ -11,7 +11,7 @@
 
 <div class="media"  ng-show="item.type == 'text' || item.type == 'composite'">
     <small title="{{ item.headline }}">{{ item.headline }}</small>
-    <sd-item-container data-item="item" />
+    <span sd-item-container data-item="item" class="container"></span>
 </div>
 
 <div class="media" ng-show="item.type == 'audio' || item.type == 'video'">
