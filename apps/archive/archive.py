@@ -26,6 +26,7 @@ from eve.versioning import resolve_document_version
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, ACTIVITY_DELETE
 from eve.utils import parse_request, config, ParsedRequest, date_to_str
 from superdesk.services import BaseService
+from apps.users.services import is_admin
 from apps.content import metadata_schema
 from apps.common.components.utils import get_component
 from apps.item_autosave.components.item_autosave import ItemAutosave
@@ -142,7 +143,8 @@ class ArchiveService(BaseService):
     def on_update(self, updates, original):
         user = get_user()
 
-        if 'unique_name' in updates and (user['active_privileges'].get('metadata_uniquename', 0) == 0):
+        if 'unique_name' in updates and not is_admin(user) \
+                and (user['active_privileges'].get('metadata_uniquename', 0) == 0):
             raise SuperdeskApiError.forbiddenError("Unauthorized to modify Unique Name")
 
         remove_unwanted(updates)
