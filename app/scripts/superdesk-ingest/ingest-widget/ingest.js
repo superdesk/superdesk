@@ -30,7 +30,8 @@ define([
                 label: gettext('Ingest'),
                 icon: 'ingest',
                 template: require.toUrl('./widget-ingest.html'),
-                side: 'left'
+                side: 'left',
+                display: {authoring: true, packages: false}
             });
         }])
         .controller('IngestController', ['$scope', 'api', 'BaseWidgetController',

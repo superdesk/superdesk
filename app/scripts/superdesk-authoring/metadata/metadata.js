@@ -198,7 +198,8 @@ angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
                 label: gettext('Info'),
                 template: 'scripts/superdesk-authoring/metadata/views/metadata-widget.html',
                 order: 1,
-                side: 'right'
+                side: 'right',
+                display: {authoring: true, packages: true}
             });
     }])
 

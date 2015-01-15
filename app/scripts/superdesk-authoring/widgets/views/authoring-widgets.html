@@ -7,7 +7,9 @@
     }">
     <div class="tablist left-tablist" ng-if="item">
         <ul class="navigation-tabs">
-            <li ng-repeat="widget in widgets | filter:{side: 'left'}  | orderBy:'order'" ng-class="{active: widget === active.left}">
+            <li ng-repeat="widget in widgets | orderBy:'order'"
+                ng-if="widget.side==='left' && widget.display[widget_target]"
+                ng-class="{active: widget === active.left}">
                 <button class="btn" type="submit" ng-click="activate(widget)">
                     <i class="big-icon-{{ widget.icon }}" title="{{ widget.label }}"></i>
                 </button>
@@ -23,7 +25,9 @@
 
     <div class="tablist right-tablist" ng-if="item">
         <ul class="navigation-tabs">
-            <li ng-repeat="widget in widgets | filter:{side: 'right'} | orderBy:'order'" ng-class="{active: widget === active.right}">
+            <li ng-repeat="widget in widgets | orderBy:'order'"
+                ng-if="widget.side==='right' && widget.display[widget_target]"
+                ng-class="{active: widget === active.right}">
                 <button class="btn" type="submit" ng-click="activate(widget)">
                     <i class="big-icon-{{ widget.icon }}" title="{{ widget.label }}"></i>
                 </button>

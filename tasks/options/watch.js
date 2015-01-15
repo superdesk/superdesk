@@ -25,6 +25,23 @@ module.exports = {
     index: {
         options: {livereload: true},
         tasks: ['template'],
-        files: ['<%= appDir %>/index.html']
+        files: ['<%= appDir %>/index.html', '<%= appDir %>/docs.html']
+    },
+    less_docs: {
+        options: {livereload: true},
+        tasks: ['less:docs'],
+        files: [
+            '<%= appDir %>/docs/**/*.less'
+        ]
+    },
+    code_docs: {
+        options: {livereload: true},
+        tasks: ['hint:docs'],
+        files: ['<%= appDir %>/docs/**/*.js']
+    },
+    html_docs: {
+        options: {livereload: true},
+        tasks: [],
+        files: ['<%= appDir %>/docs/**/*.html']
     }
 };

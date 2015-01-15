@@ -39,6 +39,9 @@ module.exports = function(grunt) {
         test: {
             options: data('https://master.sd-test.sourcefabric.org/api'),
             files: files
+        },
+        docs: {
+            files: {'<%= distDir %>/docs.html': '<%= appDir %>/docs.html'}
         }
     };
 };

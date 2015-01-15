@@ -359,6 +359,7 @@
         $scope.dirty = false;
         $scope.viewSendTo = false;
         $scope.stage = null;
+        $scope.widget_target = 'authoring';
 
         // These values should come from preferences.
         $scope.sluglineSoftLimit = 24;

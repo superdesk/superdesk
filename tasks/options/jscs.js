@@ -8,5 +8,6 @@ files.push(['!**/piwik-tracking.js']);
 
 module.exports = {
     options: {config: '.jscs.json'},
-    all: {src: files}
+    all: {src: files},
+    docs: {src: ['<%= appDir %>/docs/**/*.js']}
 };
