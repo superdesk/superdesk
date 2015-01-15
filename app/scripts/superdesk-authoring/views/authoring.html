@@ -10,7 +10,6 @@
 	    </div>
 
 	    <div class="button-stack right-stack">
-            <button class="btn btn-medium pull-left" ng-click="createPackage(item)" translate>{{:: 'Create package' }}</button>
             <button class="btn btn-medium pull-left" ng-if="item._locked && can_unlock()" ng-click="unlock()" translate>Unlock</button>
             <button class="btn btn-medium pull-left" ng-click="close()" translate>Close</button>
 
@@ -18,6 +17,11 @@
                 ng-show="_editable"
                 ng-disabled="(!dirty && !item._autosave) || charLimitHit"
                 translate>Save</button>
+
+            <div class="navbtn dropdown strict pull-left" dropdown>
+                <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
+                <ul class="dropdown-menu pull-right" sd-content-create></ul>
+            </div>
 
 	    	<button ng-show="_editable && isActionAllowed(item, 'move')"
                 class="navbtn navbtn-hover" ng-click="viewSendTo = !viewSendTo">

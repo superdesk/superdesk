@@ -17,8 +17,12 @@ function ContentCtrlFactory(api, superdesk, workqueue) {
                 });
         };
 
-        this.createPackage = function() {
-            superdesk.intent('create', 'package');
+        this.createPackage = function createPackage(current_item) {
+            if (current_item) {
+                superdesk.intent('create', 'package', {items: [current_item]});
+            } else {
+                superdesk.intent('create', 'package');
+            }
         };
     };
 }

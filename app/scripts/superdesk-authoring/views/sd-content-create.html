@@ -11,7 +11,10 @@
 <li class="divider"></li>
 <li>
     <button ng-click="content.createPackage()">
-        <i class="filetype-icon-composite"></i> {{ :: 'Package' | translate }}
+        <i class="icon-plus-small icon-round icon-white"></i> {{ :: 'Empty Package' | translate }}
+    </button>
+    <button ng-click="content.createPackage(item)" ng-if="item">
+        <i class="icon-plus-small icon-round icon-white"></i> {{ :: 'Package current item' | translate }}
     </button>
 </li>
 <li class="divider" ng-if="openUpload"></li>

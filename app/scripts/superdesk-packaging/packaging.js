@@ -135,10 +135,11 @@
         };
     }
 
-    PackagingCtrl.$inject = ['$scope', 'packagesService', 'superdesk', '$route', 'api', 'search'];
-    function PackagingCtrl($scope, packagesService, superdesk, $route, api, search) {
+    PackagingCtrl.$inject = ['$scope', 'packagesService', 'superdesk', '$route', 'api', 'search', 'ContentCtrl'];
+    function PackagingCtrl($scope, packagesService, superdesk, $route, api, search, ContentCtrl) {
 
         $scope.widget_target = 'packages';
+        $scope.content = new ContentCtrl($scope);
 
         function fetchItem() {
             packagesService.fetch($route.current.params._id).
@@ -149,10 +150,6 @@
 
         $scope.remove = function removeItem(obj) {
             packagesService.removeItem(obj.item);
-        };
-
-        $scope.createPackage = function createPackage(current_item) {
-            superdesk.intent('create', 'package', {items: [current_item]});
         };
 
         fetchItem();
