@@ -246,6 +246,7 @@ describe('lock service', function() {
 
     var user = {_id: 'user'};
     var sess = {_id: 'sess'};
+    var another_user = {_id: 'another_user'};
 
     beforeEach(inject(function(session) {
         session.start(sess, user);
@@ -258,10 +259,28 @@ describe('lock service', function() {
 
     it('can detect lock by same user and different session', inject(function(lock) {
         expect(lock.isLocked({lock_user: 'user'})).toBe(false);
-        expect(lock.isLocked({lock_user: 'user', lock_session: 'othersess'})).toBe(true);
+        expect(lock.isLocked({lock_user: 'user', lock_session: 'other_sess'})).toBe(true);
     }));
 
     it('can use lock_user dict', inject(function(lock) {
         expect(lock.isLocked({lock_user: {_id: 'user'}})).toBe(false);
+    }));
+
+    it('can unlock the item if user has unlock privileges', inject(function(lock, privileges, $rootScope) {
+        privileges.setUserPrivileges({unlock: 1});
+        $rootScope.$digest();
+        // testing if the user can unlock its own content.
+        expect(lock.can_unlock({lock_user: user._id})).toBe(true);
+        expect(lock.can_unlock({lock_user: user._id, lock_session: 'another_session'})).toBe(true);
+        expect(lock.can_unlock({lock_user: another_user._id, lock_session: 'another_session'})).toBe(1);
+    }));
+
+    it('can unlock the item if user has no unlock privileges', inject(function(lock, privileges, $rootScope) {
+        privileges.setUserPrivileges({unlock: 0});
+        $rootScope.$digest();
+        // testing if the user can unlock its own content.
+        expect(lock.can_unlock({lock_user: user._id})).toBe(true);
+        expect(lock.can_unlock({lock_user: user._id, lock_session: 'another_session'})).toBe(true);
+        expect(lock.can_unlock({lock_user: another_user._id, lock_session: 'another_session'})).toBe(0);
     }));
 });

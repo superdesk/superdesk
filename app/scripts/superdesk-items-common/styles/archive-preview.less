@@ -6,128 +6,6 @@
 
 
 // SIDE PREVIEW
-
-//package preview
-.composite-preview {
-	.toggle-box {
-		margin-bottom: 20px;
-		header {
-			&:before {
-				left: 45px;
-			}
-			.box-icon {
-				display: none;
-			}
-			h6 {
-				background: #fff;
-				padding-left: 0;
-			}
-		}
-	}
-	.loading {
-		width: 40px;
-		height: 40px;
-		background: #f0f0f0 url(../../images/loading-large.gif) center center no-repeat;
-	}
-	.alert-error {
-		margin-top: 5px;
-		font-size: 12px;
-		padding: 4px 6px;
-	}
-	.item {
-		margin-bottom: 15px;
-		position: relative;
-	}
-	.info {
-		.clearfix();
-	}
-	.headline a {
-		font-size: 14px;
-		color: #000;
-	}
-	.text, .composite {
-		.border-radius(5px);
-		border: 1px solid #efefef;
-		background: #fafafa;
-		padding: 10px;
-		.clearfix();
-		.icons-holder {
-			float: left;
-			margin-right: 20px;
-			.clearfix();
-			i {
-				zoom: 0.5;
-				.opacity(50);
-			}
-		}
-	}
-	.remove {
-		background: none;
-		border: 0;
-		position: absolute;
-		right: 10px;
-		top: 10px;
-	}
-	.holder {
-		width: 120px;
-		.border-radius(2px);
-		overflow: hidden;
-		height: 80px;
-		background: #f0f0f0;
-		float: left;
-		margin-right: 20px;
-		.loading {
-			margin: 20px 0 0 40px;
-		}
-		.error-icon {
-			.opacity(50);
-			height: 80px;
-			line-height: 80px;
-			text-align: center;
-			i {
-				vertical-align: middle;
-				zoom: 0.7;
-			}
-		}
-	}
-	.picture {
-		figure {
-			width: 100%;
-			img {
-				max-width: 100%;
-				height: auto;
-			}
-		}
-		.headline {
-			max-height: 74px;
-			overflow: hidden;
-		}
-	}
-
-	.video {
-		.holder{
-			line-height: 80px;
-			text-align: center;
-			i {
-				vertical-align: middle;
-				.opacity(50);
-			}
-		}
-		.headline {
-			max-height: 74px;
-			overflow: hidden;
-		}
-	}
-	.audio {
-		.holder {
-			background: #fff;
-			width: 100%;
-			height: auto;
-		}
-	}
-}
-
-
 .content-item-preview {
 	
 	.content {
@@ -162,12 +40,11 @@
 			time {
 				.text-semibold();
 				position: relative;
-				top:0; right: 0;
+				top:-7px; right: 0;
 				font-size: 11px;
 				color: @grayLight;
 				padding-left: 38px;
-				display: block;
-				line-height: 12px;
+				display: inline-block;
 			}	
 			.text {
 				.text-semibold();
@@ -181,6 +58,9 @@
 				.border-radius(0 14px 14px 0);
 				padding-left: 15px;
 				border-left: 1px solid #fff;
+			}
+			.locked-content {
+				.clearfix();
 			}
 			&:hover {
 				background: @sd-background;
@@ -283,6 +163,117 @@
 				font-style: italic;
 				margin-bottom: 10px;
 				line-height: 22px;
+			}
+			.composite-preview {
+				.toggle-box {
+					margin-bottom: 20px;
+					header {
+						&:before {
+							left: 45px;
+						}
+						.box-icon {
+							display: none;
+						}
+						h6 {
+							background: #fff;
+							padding-left: 0;
+						}
+					}
+				}
+				.loading {
+					width: 40px;
+					height: 40px;
+					background: #f0f0f0 url(../../images/loading-large.gif) center center no-repeat;
+				}
+				.alert-error {
+					margin-top: 5px;
+					font-size: 12px;
+					padding: 4px 6px;
+				}
+				.item {
+					margin-bottom: 15px;
+				}
+				.info {
+					.clearfix();
+				}
+				.headline {
+					font-size: 14px;
+					color: #000;
+				}
+				.text, .composite {
+					.border-radius(5px);
+					border: 1px solid #efefef;
+					background: #fafafa;
+					padding: 10px;
+					.clearfix();
+					.icons-holder {
+						float: left;
+						margin-right: 20px;
+						.clearfix();
+						i {
+							zoom: 0.5;
+							.opacity(50);
+						}
+					}
+					
+				}
+				.holder {
+					width: 120px;
+					.border-radius(2px);
+					overflow: hidden;
+					height: 80px;
+					background: #f0f0f0;
+					float: left;
+					margin-right: 20px;
+					.loading {
+						margin: 20px 0 0 40px;
+					}
+					.error-icon {
+						.opacity(50);
+						height: 80px;
+						line-height: 80px;
+						text-align: center;
+						i {
+							vertical-align: middle;
+							zoom: 0.7;
+						}
+					}
+				}
+				.picture {
+					figure {
+						width: 100%;
+						img {
+							max-width: 100%;
+							height: auto;
+						}
+					}
+					.headline {
+						max-height: 74px;
+						overflow: hidden;
+					}
+				}
+
+				.video {
+					.holder{
+						line-height: 80px;
+						text-align: center;
+						i {
+							vertical-align: middle;
+							.opacity(50);
+						}
+					}
+					.headline {
+						max-height: 74px;
+						overflow: hidden;
+					}
+				}
+				.audio {
+					.holder {
+						background: #fff;
+						width: 100%;
+						height: auto;
+					}
+				}
 			}
 		}
 	}

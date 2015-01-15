@@ -212,8 +212,8 @@
         };
     }
 
-    LockService.$inject = ['$q', 'api', 'session'];
-    function LockService($q, api, session) {
+    LockService.$inject = ['$q', 'api', 'session', 'privileges'];
+    function LockService($q, api, session, privileges) {
 
         /**
          * Lock an item
@@ -276,6 +276,17 @@
         */
         this.isLockedByMe = function isLockedByMe(item) {
             return item.lock_user && item.lock_user === session.identity._id && item.lock_session !== session.sessionId;
+        };
+
+        /**
+        * can unlock the item or not.
+        */
+        this.can_unlock = function can_unlock(item) {
+            if (this.isLockedByMe(item)) {
+                return true;
+            } else {
+                return privileges.privileges.unlock;
+            }
         };
     }
 
@@ -485,6 +496,13 @@
             if ($scope._editable) {
                 startWatch();
             }
+        };
+
+        /**
+         * Checks if the item can be unlocked or not.
+         */
+        $scope.can_unlock = function() {
+            return lock.can_unlock($scope.item);
         };
 
         $scope.unlock = function() {
