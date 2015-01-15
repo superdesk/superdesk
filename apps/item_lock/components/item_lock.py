@@ -55,7 +55,9 @@ class ItemLock(BaseComponent):
 
             superdesk.get_resource_service('tasks').assign_user(item[config.ID_FIELD], item[TASK])
             self.app.on_item_locked(item, user_id)
-            push_notification('item:lock', item=str(item.get(config.ID_FIELD)), user=str(user_id))
+            push_notification('item:lock', item=str(item.get(config.ID_FIELD)),
+                              user=str(user_id), lock_time=updates['lock_time'],
+                              lock_session=str(session_id))
         else:
             raise SuperdeskApiError.forbiddenError(message=error_message)
 
