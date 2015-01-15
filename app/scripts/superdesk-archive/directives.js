@@ -12,35 +12,42 @@ define([
                 scope: {item: '='},
                 link: function(scope) {
 
-                    scope.privileges = privileges.privileges;
+                    init();
 
-                    scope.$watch('item.lock_user', function() {
-                        scope.lock = null;
-                        scope.lockbyme = null;
+                    scope.$watch('item.lock_session', function() {
+                        init();
+
                         if (scope.item && lock.isLocked(scope.item)) {
                             api('users').getById(scope.item.lock_user).then(function(user) {
-                                scope.lock = {user: user};
+                                scope.lock.user = user;
+                                scope.lock.lockbyme = lock.isLockedByMe(scope.item);
                             });
                         }
-                        if (scope.item && lock.isLockedByMe(scope.item))
-                        {
-                            scope.lock = null;
-                            scope.lockbyme = true;
-                        }
                     });
+
+                    function init() {
+                        scope.privileges = privileges.privileges;
+                        scope.lock = {user: null, lockbyme: false};
+                    }
 
                     scope.unlock = function() {
                         lock.unlock(scope.item).then(function() {
                             scope.item.lock_user = null;
-                            scope.item.lock_sesssion = null;
+                            scope.item.lock_session = null;
                             scope.lock = null;
                             scope.isLocked = false;
                         });
                     };
 
+                    scope.can_unlock = function() {
+                        return lock.can_unlock(scope.item);
+                    };
+
                     scope.$on('item:lock', function(_e, data) {
                         if (scope.item && scope.item._id === data.item) {
                             scope.item.lock_user = data.user;
+                            scope.item.lock_time = data.lock_time;
+                            scope.item.lock_session = data.lock_session;
                             scope.$digest();
                         }
                     });
@@ -303,6 +310,7 @@ define([
                 restrict: 'A',
                 templateUrl: require.toUrl('./views/media-box.html'),
                 link: function(scope, element, attrs) {
+                    scope.lock = {isLocked: false};
 
                     scope.$watch('view', function(view) {
                         switch (view) {
@@ -316,22 +324,25 @@ define([
                     });
 
                     scope.$watch('item', function(item) {
-                        scope.isLocked = item && (lock.isLocked(item) || lock.isLockedByMe(item));
+                        scope.lock.isLocked = item && (lock.isLocked(item) || lock.isLockedByMe(item));
                     });
 
                     scope.$on('item:lock', function(_e, data) {
                         if (scope.item && scope.item._id === data.item) {
-                            scope.isLocked = true;
+                            scope.lock.isLocked = true;
                             scope.item.lock_user = data.user;
+                            scope.item.lock_session = data.lock_session;
+                            scope.item.lock_time = data.lock_time;
                             scope.$digest();
                         }
                     });
 
                     scope.$on('item:unlock', function(_e, data) {
                         if (scope.item && scope.item._id === data.item) {
-                            scope.isLocked = false;
+                            scope.lock.isLocked = false;
                             scope.item.lock_user = null;
                             scope.item.lock_session = null;
+                            scope.item.lock_time = null;
                             scope.$digest();
                         }
                     });
