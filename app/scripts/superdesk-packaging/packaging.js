@@ -304,7 +304,7 @@
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
             .widget('search', {
-                icon: 'search',
+                icon: 'desk',
                 label: gettext('Search'),
                 template: 'scripts/superdesk-packaging/views/search.html',
                 side: 'left'
