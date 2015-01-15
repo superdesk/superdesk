@@ -29,9 +29,8 @@
 
 		<div sd-authoring-widgets data-item="item">
 
-            <div class="main-article-container" ng-click="viewSendTo = false;">
-                <div id="theme-container">
-                <article class="main-article" ng-if="item._id" ng-class="{preview: !_editable}">
+            <div class="page-content-container" ng-click="viewSendTo = false;">
+                <article id="theme-container" ng-if="item._id" ng-class="{preview: !_editable}">
                     <span sd-theme-select></span>
                 	<form>
                 		<fieldset>
@@ -62,7 +61,6 @@
                 		</fieldset>
 		            </form>
 		        </article>
-                </div>
 		    </div>
 
 		    <div sd-workqueue data-active="item" data-update="articleSwitch()" data-close="close()"></div>

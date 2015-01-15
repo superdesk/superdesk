@@ -16,8 +16,6 @@
 @natural-theme-text: rgba(51, 51, 51, 1);
 
 
-
-
 .dark-theme() {
 	background: @dark-theme-bg;
 	color: @dark-theme-text !important;
@@ -194,7 +192,7 @@
 
 //themes
 .large-text {
-	.main-article {
+	&.main-article {
 		.abstract {
 			font-size: 18px;
 		}
@@ -209,7 +207,7 @@
 
 
 .dark-theme {
-	.main-article {
+	&.main-article {
 		.theme-select {
 			.dropdown-toggle i {
 				background-image: url(@iconWhiteSpritePath);
@@ -224,7 +222,7 @@
 }
 
 .natural-theme {
-	.main-article {
+	&.main-article {
 		
 		.natural-theme();
 
