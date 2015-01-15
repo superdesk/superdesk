@@ -15,7 +15,7 @@
 
     	    <button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()"
                 ng-show="_editable"
-                ng-disabled="(!dirty && !item._autosave) || charLimitHit"
+                ng-disabled="!dirty && !item._autosave"
                 translate>Save</button>
 
 	    	<button ng-show="_editable && isActionAllowed(item, 'move')"
@@ -37,19 +37,34 @@
                 			<div class="field">
                 				<label translate>Keyword</label>
                                 <span sd-character-count data-item="item.slugline" data-limit="sluglineSoftLimit" data-limit-callback="checkLimit"></span>
-                                <input type="text" class="keyword" ng-class="{'limit-error': charLimitHitField['slugline']}" maxlength="{{sluglineHardLimit}}" ng-model="item.slugline" ng-if="_editable" ng-trim="false">
+                                <input type="text"
+                                    class="keyword"
+                                    ng-class="{'limit-error': item.slugline.length > sluglineSoftLimit}"
+                                    ng-model="item.slugline"
+                                    ng-if="_editable"
+                                    ng-trim="false">
                 				<div ng-if="!_editable">{{item.slugline}}</div>
                 			</div>
                 			<div class="field" >
                 				<label translate>Headline</label>
                                 <span sd-character-count data-item="item.headline" data-limit="headlineSoftLimit" data-limit-callback="checkLimit"></span>
-                                <textarea class="headline" ng-class="{'limit-error': charLimitHitField['headline']}" maxlength="{{headlineHardLimit}}" sd-auto-height ng-model="item.headline" ng-if="_editable" ng-trim="false"></textarea>
+                                <textarea class="headline"
+                                    ng-class="{'limit-error': item.headline.length > headlineSoftLimit}"
+                                    sd-auto-height
+                                    ng-model="item.headline"
+                                    ng-if="_editable"
+                                    ng-trim="false"></textarea>
 			                	<div class="headline" ng-if="!_editable">{{item.headline}}</div>
                 			</div>
                 			<div class="field" class="abstract">
                 				<label translate>Abstract</label>
                                 <span sd-character-count data-item="item.abstract" data-limit="abstractSoftLimit" data-limit-callback="checkLimit"></span>
-                                <textarea class="abstract" ng-class="{'limit-error': charLimitHitField['abstract']}" maxlength="{{abstractHardLimit}}" sd-auto-height ng-model="item.abstract" ng-if="_editable" ng-trim="false"></textarea>
+                                <textarea class="abstract"
+                                    ng-class="{'limit-error': item.abstract.length > abstractSoftLimit}"
+                                    sd-auto-height
+                                    ng-model="item.abstract"
+                                    ng-if="_editable"
+                                    ng-trim="false"></textarea>
 			                	<div class="abstract" ng-if="!_editable">{{item.abstract}}</div>
                 			</div>
                 			<div class="field">

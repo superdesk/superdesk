@@ -362,11 +362,8 @@
 
         // These values should come from preferences.
         $scope.sluglineSoftLimit = 24;
-        $scope.sluglineHardLimit = 24;
         $scope.headlineSoftLimit = 64;
-        $scope.headlineHardLimit = 64;
         $scope.abstractSoftLimit = 160;
-        $scope.abstractHardLimit = 200;
 
         $scope.charLimitHit = false;
         $scope.charLimitHitField = {};
@@ -554,7 +551,7 @@
                 limitCallback: '&',
                 html: '@'
             },
-            template: '<span class="char-count" ng-class="{error: limitHit}" translate>{{numChars}} characters</span>',
+            template: '<span class="char-count" ng-class="{error: limitHit}" translate>{{numChars}}/{{ limit }} characters </span>',
             link: function characterCountLink(scope, elem, attrs) {
                 scope.html = scope.html || false;
                 scope.numChars = 0;
