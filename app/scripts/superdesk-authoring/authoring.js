@@ -346,14 +346,17 @@
         'api',
         'session',
         'lock',
-        'privileges'
+        'privileges',
+        'ContentCtrl'
     ];
 
-    function AuthoringController($scope, superdesk, workqueue, notify, gettext, desks, item, authoring, api, session, lock, privileges) {
+    function AuthoringController($scope, superdesk, workqueue, notify, gettext,
+                                 desks, item, authoring, api, session, lock, privileges, ContentCtrl) {
         var stopWatch = angular.noop,
             _closing;
 
         $scope.privileges = privileges.privileges;
+        $scope.content = new ContentCtrl($scope);
 
         $scope.workqueue = workqueue.all();
         $scope.dirty = false;
@@ -523,6 +526,7 @@
                 $scope._editable = false;
             }
         });
+
     }
 
     function DashboardCard() {
