@@ -272,6 +272,48 @@ Feature: News Items Archive
         """
         Then we get response code 400
 
+	@auth
+	Scenario: Unique Name can be updated by administrator
+	    Given the "archive"
+	    """
+        [{"type":"text", "headline": "test1", "_id": "xyz", "original_creator": "abc"},
+         {"type":"text", "headline": "test1", "_id": "abc", "original_creator": "abc"}]
+        """
+        When we patch "/archive/xyz"
+        """
+        {"unique_name": "unique_xyz"}
+        """
+        Then we get response code 200
+
+	@auth
+	Scenario: Unique Name can be updated only be user has privileges
+	    Given the "archive"
+	    """
+        [{"type":"text", "headline": "test1", "_id": "xyz", "original_creator": "abc"},
+         {"type":"text", "headline": "test1", "_id": "abc", "original_creator": "abc"}]
+        """
+        When we patch "/users/#CONTEXT_USER_ID#"
+        """
+        {"user_type": "user", "privileges": {"metadata_uniquename": 0, "archive": 1, "unlock": 1, "tasks": 1}}
+        """
+        Then we get response code 200
+        When we patch "/archive/xyz"
+        """
+        {"unique_name": "unique_xyz"}
+        """
+        Then we get response code 400
+        When we setup test user
+        When we patch "/users/#CONTEXT_USER_ID#"
+        """
+        {"user_type": "user", "privileges": {"metadata_uniquename": 1, "archive": 1, "unlock": 1, "tasks": 1}}
+        """
+        Then we get response code 200
+        When we patch "/archive/xyz"
+        """
+        {"unique_name": "unique_xyz"}
+        """
+        Then we get response code 200
+
     @wip
     @auth
     Scenario: Hide private content
