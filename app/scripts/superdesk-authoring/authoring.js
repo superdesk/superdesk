@@ -526,6 +526,10 @@
                 $scope._editable = false;
             }
         });
+
+        $scope.createPackage = function createPackage(current_item) {
+            superdesk.intent('create', 'package', {items: [current_item]});
+        };
     }
 
     function DashboardCard() {

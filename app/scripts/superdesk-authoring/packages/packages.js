@@ -5,9 +5,6 @@
     PackagesCtrl.$inject = ['$scope', 'superdesk'];
     function PackagesCtrl($scope, superdesk) {
 
-        $scope.create = function() {
-            superdesk.intent('create', 'package', {items: [$scope.item]});
-        };
     }
 
     return angular.module('superdesk.authoring.packages', ['superdesk.authoring.widgets'])
@@ -18,7 +15,7 @@
             label: gettext('Packages'),
             template: 'scripts/superdesk-authoring/packages/views/packages-widget.html',
             side: 'right',
-            display: {authoring: true, packages: false}
+            display: {authoring: true, packages: true}
         });
     }])
     .controller('PackagesWidgetCtrl', PackagesCtrl);
