@@ -63,3 +63,8 @@ For trivial changes you can ommit JIRA ref or Description or both: ```Fix typo i
 
 You can test your code before sending a PR via: ```grunt ci```
 
+### UI Components Documentation
+
+While running dev server, you can access documentation page on localhost:9000/docs.html. 
+
+Running documentation separately is possible through: ```grunt docs```.
