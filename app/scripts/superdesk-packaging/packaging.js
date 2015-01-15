@@ -156,7 +156,7 @@
     function SearchWidgetCtrl($scope, packagesService, api, search) {
 
         $scope.selected = null;
-        var packageItems = getPackageItems();
+        var packageItems = null;
 
         $scope.itemTypes = [
             {
@@ -191,10 +191,14 @@
             fetchContentItems(query);
         });
 
+        $scope.$watch('item.groups', function() {
+            getPackageItems();
+        }, true);
+
         $scope.addItemToGroup = function addItemsToGroup(groupId, item) {
             packagesService.addItemsToPackage([item], groupId.label.toLowerCase())
             .then(function() {
-                packageItems = getPackageItems();
+                getPackageItems();
             });
         };
 
@@ -215,7 +219,7 @@
                     }
                 });
             }
-            return items;
+            packageItems = items;
         }
 
         $scope.itemInPackage = function(item) {
