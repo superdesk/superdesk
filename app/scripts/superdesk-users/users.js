@@ -1111,7 +1111,7 @@
             };
         }])
 
-        .directive('sdUserMentio', ['mentioUtil', 'api', 'userList', 'asset', function(mentioUtil, api, userList, asset) {
+        .directive('sdUserMentio', ['userList', 'asset', function(userList, asset) {
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/mentions.html'),
                 link: function(scope, elem) {

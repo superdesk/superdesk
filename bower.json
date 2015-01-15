@@ -7,11 +7,11 @@
     "bootstrap": "3.1.0",
     "momentjs": "2.8.4",
     "moment-timezone": "0.2.5",
-    "angular": "1.3.8",
-    "angular-resource": "1.3.8",
-    "angular-route": "1.3.8",
-    "angular-mocks": "1.3.8",
-    "angular-gettext": "1.1.4",
+    "angular": "1.3.9",
+    "angular-resource": "1.3.9",
+    "angular-route": "1.3.9",
+    "angular-mocks": "1.3.9",
+    "angular-gettext": "2.0.1",
     "angular-bootstrap": "0.12.0",
     "gridster": "0.2.1",
     "d3": "3.4.13",
@@ -20,9 +20,9 @@
     "raven-js": "1.1.11",
     "jquery-ui": "1.11.2",
     "medium-editor": "2.0.0",
-    "ment.io": "0.9.14"
+    "ment.io": "0.9.22"
   },
   "resolutions": {
-    "angular": "1.3.8"
+    "angular": "1.3.9"
   }
 }
