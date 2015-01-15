@@ -363,13 +363,7 @@
         $scope.charLimitHit = false;
         $scope.charLimitHitField = {};
 
-        if (typeof (referrer.getReferrerUrl()) === 'undefined' || (referrer.getReferrerUrl()) === null){
-            if (typeof (localStorage.getItem('referrerUrl')) !== 'undefined' || (localStorage.getItem('referrerUrl')) !== null){
-                $scope.referrerUrl = localStorage.getItem('referrerUrl');
-            }
-        } else {
-            $scope.referrerUrl = referrer.getReferrerUrl();
-        }
+        $scope.referrerUrl = referrer.getReferrerUrl();
 
         if (item.task && item.task.stage) {
             api('stages').getById(item.task.stage)
@@ -443,11 +437,7 @@
                 $scope.item = _.create(item);
                 notify.success(gettext('Item updated.'));
                 startWatch();
-                if (typeof ($scope.referrerUrl) === 'undefined' || $scope.referrerUrl === null){
-                    superdesk.intent('author', 'dashboard');
-                } else {
-                    $location.url($scope.referrerUrl);
-                }
+                $location.url($scope.referrerUrl);
                 return item;
     		}, function(response) {
                 if (angular.isDefined(response.data._issues)) {
@@ -470,11 +460,7 @@
             stopWatch();
             _closing = true;
             authoring.close(item, $scope.item, $scope.dirty).then(function() {
-                if (typeof ($scope.referrerUrl) === 'undefined' || $scope.referrerUrl === null) {
-                    superdesk.intent('author', 'dashboard');
-                } else {
-                    $location.url($scope.referrerUrl);
-                }
+                $location.url($scope.referrerUrl);
             });
         };
 
@@ -762,18 +748,9 @@
                     });
                 }
 
-                function gotoDashboard() {
-                    superdesk.intent('author', 'dashboard');
-                }
-
                 function gotoPreviousScreen($scope) {
                     notify.success(gettext('Item sent.'));
-                    if (typeof (scope.$parent.referrerUrl) === 'undefined' || scope.$parent.referrerUrl === null) {
-                        gotoDashboard();
-                    } else {
-                        $location.url(scope.$parent.referrerUrl);
-                    }
-
+                    $location.url(scope.$parent.referrerUrl);
                 }
             }
         };
