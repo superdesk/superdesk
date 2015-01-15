@@ -17,7 +17,8 @@
             icon: 'package',
             label: gettext('Packages'),
             template: 'scripts/superdesk-authoring/packages/views/packages-widget.html',
-            side: 'right'
+            side: 'right',
+            display: {authoring: true, packages: false}
         });
     }])
     .controller('PackagesWidgetCtrl', PackagesCtrl);

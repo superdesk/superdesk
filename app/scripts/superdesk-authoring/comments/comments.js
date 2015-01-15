@@ -123,7 +123,8 @@ angular.module('superdesk.authoring.comments', ['superdesk.authoring.widgets', '
                 icon: 'comments',
                 label: gettext('Comments'),
                 template: 'scripts/superdesk-authoring/comments/views/comments-widget.html',
-                side: 'right'
+                side: 'right',
+                display: {authoring: true, packages: true}
             });
     }])
 

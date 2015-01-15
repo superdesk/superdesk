@@ -138,6 +138,8 @@
     PackagingCtrl.$inject = ['$scope', 'packagesService', 'superdesk', '$route', 'api', 'search'];
     function PackagingCtrl($scope, packagesService, superdesk, $route, api, search) {
 
+        $scope.widget_target = 'packages';
+
         function fetchItem() {
             packagesService.fetch($route.current.params._id).
                 then(function(fetched_package) {
@@ -312,7 +314,8 @@
                 label: gettext('Search'),
                 template: 'scripts/superdesk-packaging/views/search.html',
                 side: 'left',
-                extended: true
+                extended: true,
+                display: {authoring: true, packages: true}
             });
     }])
     .controller('SearchWidgetCtrl', SearchWidgetCtrl);
