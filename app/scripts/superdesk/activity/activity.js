@@ -266,8 +266,8 @@ define([
 
     module.provider('superdesk', SuperdeskProvider);
 
-    module.service('activityService', ['$location', '$injector', '$q', '$timeout', 'gettext', 'modal', 'referrer',
-    function($location, $injector, $q, $timeout, gettext, modal, referrer) {
+    module.service('activityService', ['$location', '$injector', '$q', '$timeout', 'gettext', 'modal',
+    function($location, $injector, $q, $timeout, gettext, modal) {
         var activityStack = [];
         this.activityStack = activityStack;
 
