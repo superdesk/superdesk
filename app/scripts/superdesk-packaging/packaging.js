@@ -307,7 +307,8 @@
                 icon: 'desk',
                 label: gettext('Search'),
                 template: 'scripts/superdesk-packaging/views/search.html',
-                side: 'left'
+                side: 'left',
+                extended: true
             });
     }])
     .controller('SearchWidgetCtrl', SearchWidgetCtrl);

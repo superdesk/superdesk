@@ -6,13 +6,8 @@
 
 .packaging-screen {
 
-	.package-edit-container {
-        position: absolute;
-        top: 0; bottom: 0;
-        .border-box();
-        left: @tablist-width;
-        right: @tablist-width;
-
+	.page-content-container {
+        
         > .content {
             width: auto;
             max-width: 800px;
@@ -39,10 +34,11 @@
 }
 
 
+
 // Search widget
 // -------------------------------------------------
 
-@search-widget-width: 460px;
+@search-widget-width: @tabpane-extended-width;
 @search-widget-preview-width: 440px;
 
 //widget tabpane

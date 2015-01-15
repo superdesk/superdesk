@@ -649,6 +649,8 @@
             templateUrl: 'scripts/superdesk-authoring/views/theme-select.html',
             link: function themeSelectLink(scope, elem) {
 
+                var DEFAULT_CLASS = 'main-article';
+
                 scope.themes = authThemes.availableThemes;
                 authThemes.get().then(function(theme) {
                     scope.theme = theme;
@@ -662,7 +664,9 @@
                 };
 
                 function applyTheme() {
-                    elem.closest('#theme-container').attr('class', scope.theme && scope.theme.cssClass);
+                    elem.closest('#theme-container')
+                        .attr('class', DEFAULT_CLASS)
+                        .addClass(scope.theme && scope.theme.cssClass);
                 }
             }
         };

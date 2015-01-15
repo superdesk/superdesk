@@ -1,4 +1,10 @@
-<div class="article-edit-container">
+<div class="widget-wrapper" 
+    ng-class="{
+        'active-left': active.left,
+        'left-extended': active.left.extended,
+        'active-right': active.right,
+        'right-extended': active.right.extended
+    }">
     <div class="tablist left-tablist" ng-if="item">
         <ul class="navigation-tabs">
             <li ng-repeat="widget in widgets | filter:{side: 'left'}  | orderBy:'order'" ng-class="{active: widget === active.left}">
