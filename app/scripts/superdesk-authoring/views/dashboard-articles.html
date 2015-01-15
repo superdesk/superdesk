@@ -6,6 +6,7 @@
 			<div class="title" ng-show="!article.headline">{{ 'Untitled' | translate }}</div>
 			<div class="created" sd-reldate-complex ng-model="article.versioncreated"></div>
 			<div class="state-label state-{{article.state}}">{{article.state}}</div>
+			<span sd-item-container data-item="article" class="container"></span>
 		</li>
 	</ul>
 </div>
