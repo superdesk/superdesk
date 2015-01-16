@@ -84,9 +84,15 @@ define([
             });
         };
 
+        var oldQuery = _.omit($location.search(), '_id');
         var update = angular.bind(this, function searchUpdated() {
+            var newquery = _.omit($location.search(), '_id');
+            if (!_.isEqual(_.omit(newquery, 'page'), _.omit(oldQuery, 'page'))) {
+                $location.search('page', null);
+            }
             var query = this.getQuery($location.search());
             this.fetchItems({source: query});
+            oldQuery = newquery;
         });
 
         $scope.$on('ingest:update', update);

@@ -210,12 +210,20 @@
         };
 
         function refresh() {
+            var query = _.omit($location.search(), '_id');
+            if (!_.isEqual(_.omit(query, 'page'), _.omit(oldQuery, 'page'))) {
+                $location.search('page', null);
+            }
+
             var criteria = search.query().getCriteria(true);
             api.query('search', criteria).then(function(result) {
                 $scope.items = result;
             });
+
+            oldQuery =  query;
         }
 
+        var oldQuery = _.omit($location.search(), '_id');
         $scope.$watch(function getSearchParams() {
             return _.omit($location.search(), '_id');
         }, refresh, true);

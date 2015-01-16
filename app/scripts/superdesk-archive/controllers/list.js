@@ -33,6 +33,7 @@ define([
         };
 
         $scope.stageSelect = function(stage) {
+            initpage();
             if ($scope.spike) {
                 $scope.toggleSpike();
             }
@@ -80,6 +81,10 @@ define([
         $scope.$on('item:unspike', refreshItems);
         $scope.$watchGroup(['stages.selected', 'selectedDesk'], refreshItems);
 
+        $scope.$watch('selectedDesk', initpage);
+        function initpage() {
+            $location.search('page', null);
+        }
         // reload on route change if there is still the same _id
         var oldQuery = _.omit($location.search(), '_id');
         $scope.$on('$routeUpdate', function(e, route) {
@@ -87,7 +92,6 @@ define([
             if (!angular.equals(oldQuery, query)) {
                 refreshItems();
             }
-
             oldQuery = query;
         });
     }
