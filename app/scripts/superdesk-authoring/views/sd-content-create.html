@@ -13,7 +13,9 @@
     <button ng-click="content.createPackage()">
         <i class="icon-plus-small icon-round icon-white"></i> {{ :: 'Empty Package' | translate }}
     </button>
-    <button ng-click="content.createPackage(item)" ng-if="item">
+</li>
+<li ng-if="item">    
+    <button ng-click="content.createPackage(item)">
         <i class="icon-plus-small icon-round icon-white"></i> {{ :: 'Package current item' | translate }}
     </button>
 </li>
