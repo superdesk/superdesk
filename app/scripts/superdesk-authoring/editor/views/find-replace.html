@@ -1,9 +1,11 @@
-<div ng-controller="findReplace">
+<div>
     <form>
-    <fieldset>
+    <fieldset sd-find-replace>
         <div class="form-group field">
             <label for="find-replace-what" translate>Find</label>
-            <input type="text" class="form-control" id="find-replace-what" ng-model="from" ng-model-options="{debounce: 500}">
+            <input type="text" class="form-control" id="find-replace-what"
+                ng-model="from"
+                ng-model-options="{debounce: 500}">
         </div>
         <div class="form-group field">
             <label for="find-replace-with" translate>Replace with</label>
@@ -19,6 +21,10 @@
             <button class="btn btn-default" ng-click="replace()" ng-disabled="!from" translate>Replace</button>
             <button class="btn btn-default" ng-click="replaceAll()" ng-disabled="!from" translate>Replace All</button>
         </div>
+
+        <div class="field clearfix"></div>
+
+        <button class="btn btn-default" ng-click="closeWidget(widget)" translate>Done</button>
     </fieldset>
     </form>
 </div>

@@ -11,41 +11,55 @@
 
 'use strict';
 
-FindReplaceController.$inject = ['$scope', 'editor'];
-function FindReplaceController($scope, editor) {
+FindReplaceDirective.$inject = ['$timeout', '$rootScope', 'editor'];
+/**
+ * using directive here so that it can return focus
+ */
+function FindReplaceDirective($timeout, $rootScope, editor) {
+    return {
+        controller: function($scope) {
+        },
+        link: function(scope, elem) {
+            scope.to = '';
+            scope.from = '';
 
-    $scope.to = '';
-    $scope.from = '';
+            scope.next = function() {
+                editor.command.next();
+            };
 
-    $scope.next = function() {
-        editor.command.next();
+            scope.prev = function() {
+                editor.command.prev();
+            };
+
+            scope.replace = function() {
+                editor.command.replace(scope.to || '');
+            };
+
+            scope.replaceAll = function() {
+                editor.command.replaceAll(scope.to || '');
+                scope.closeWidget(scope.widget);
+            };
+
+            scope.$watch('from', function(needle) {
+                editor.command.find(needle);
+
+                // return focus to input - just focus() doesn't work here for some reason
+                var input = document.getElementById('find-replace-what');
+                input.focus();
+                input.select();
+                document.getSelection().collapseToEnd();
+            });
+
+            editor.startCommand();
+            scope.$on('$destroy', function() {
+                editor.stopCommand();
+            });
+        }
     };
-
-    $scope.prev = function() {
-        editor.command.prev();
-    };
-
-    $scope.replace = function() {
-        editor.command.replace($scope.to || '');
-    };
-
-    $scope.replaceAll = function() {
-        editor.command.replaceAll($scope.to || '');
-        $scope.closeWidget();
-    };
-
-    $scope.$watch('from', function(needle) {
-        editor.command.find(needle);
-    });
-
-    editor.startCommand();
-    $scope.$on('$destroy', function() {
-        editor.stopCommand();
-    });
 }
 
 angular.module('superdesk.authoring.find-replace', ['superdesk.editor', 'superdesk.authoring.widgets'])
-    .controller('findReplace', FindReplaceController)
+    .directive('sdFindReplace', FindReplaceDirective)
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
             .widget('find-replace', {
