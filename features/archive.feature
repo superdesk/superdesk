@@ -286,7 +286,7 @@ Feature: News Items Archive
         Then we get response code 200
 
 	@auth
-	Scenario: Unique Name can be updated only be user has privileges
+	Scenario: Unique Name can be updated by be user has privileges
 	    Given the "archive"
 	    """
         [{"type":"text", "headline": "test1", "_id": "xyz", "original_creator": "abc"},
@@ -294,7 +294,7 @@ Feature: News Items Archive
         """
         When we patch "/users/#CONTEXT_USER_ID#"
         """
-        {"user_type": "user", "privileges": {"metadata_uniquename": 0, "archive": 1, "unlock": 1, "tasks": 1}}
+        {"user_type": "user", "privileges": {"metadata_uniquename": 0, "archive": 1, "unlock": 1, "tasks": 1, "users": 1}}
         """
         Then we get response code 200
         When we patch "/archive/xyz"
@@ -305,7 +305,7 @@ Feature: News Items Archive
         When we setup test user
         When we patch "/users/#CONTEXT_USER_ID#"
         """
-        {"user_type": "user", "privileges": {"metadata_uniquename": 1, "archive": 1, "unlock": 1, "tasks": 1}}
+        {"user_type": "user", "privileges": {"metadata_uniquename": 1, "archive": 1, "unlock": 1, "tasks": 1, "users": 1}}
         """
         Then we get response code 200
         When we patch "/archive/xyz"
