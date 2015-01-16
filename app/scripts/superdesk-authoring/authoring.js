@@ -367,13 +367,12 @@
         $scope.stage = null;
         $scope.widget_target = 'authoring';
 
-        // These values should come from preferences.
-        $scope.sluglineSoftLimit = 24;
-        $scope.headlineSoftLimit = 64;
-        $scope.abstractSoftLimit = 160;
-
-        $scope.charLimitHit = false;
-        $scope.charLimitHitField = {};
+        // TODO These values should come from preferences.
+        $scope.limits = {
+            slugline: 24,
+            headline: 64,
+            'abstract': 160
+        };
 
         $scope.referrerUrl = referrer.getReferrerUrl();
 
@@ -423,21 +422,6 @@
                 }
             });
         }
-
-        $scope.checkLimit = function() {
-            $scope.charLimitHit = false;
-            _.each({
-                'slugline': $scope.sluglineSoftLimit,
-                'headline': $scope.headlineSoftLimit,
-                'abstract': $scope.abstractSoftLimit
-            }, function(limit, field) {
-                $scope.charLimitHitField[field] = false;
-                if ($scope.item[field] && $scope.item[field].length > limit) {
-                    $scope.charLimitHitField[field] = true;
-                    $scope.charLimitHit = true;
-                }
-            });
-        };
 
         /**
          * Create a new version
@@ -559,29 +543,16 @@
             scope: {
                 item: '=',
                 limit: '=',
-                limitCallback: '&',
                 html: '@'
             },
-            template: '<span class="char-count" ng-class="{error: limitHit}" translate>{{numChars}}/{{ limit }} characters </span>',
+            template: '<span class="char-count" ng-class="{error: numChars > limit}" translate>{{numChars}}/{{ limit }} characters </span>',
             link: function characterCountLink(scope, elem, attrs) {
                 scope.html = scope.html || false;
                 scope.numChars = 0;
-                scope.limitHit = false;
-
                 scope.$watch('item', function() {
                     var input = scope.item || '';
                     input = scope.html ? cleanHtml(input) : input;
-
                     scope.numChars = input.length || 0;
-                    if (scope.limit && (
-                        (scope.numChars > scope.limit && scope.limitHit === false) ||
-                        (scope.numChars <= scope.limit && scope.limitHit === true)
-                    )) {
-                        scope.limitHit = !scope.limitHit;
-                        if (typeof scope.limitCallback === 'function') {
-                            scope.limitCallback();
-                        }
-                    }
                 });
             }
         };
