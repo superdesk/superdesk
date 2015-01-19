@@ -198,3 +198,5 @@ def update_state(original, updates):
             raise superdesk.InvalidStateTransitionError()
         elif is_assigned_to_a_desk(original):
             updates[config.CONTENT_STATE] = 'in_progress'
+        elif not is_assigned_to_a_desk(original):
+            updates[config.CONTENT_STATE] = 'draft'
