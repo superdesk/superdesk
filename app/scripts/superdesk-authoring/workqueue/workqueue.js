@@ -126,7 +126,7 @@ function WorkqueueCtrl($scope, workqueue, superdesk) {
             $scope.update();
         }
         workqueue.setActive(article);
-        superdesk.intent('author', 'article', article);
+        superdesk.intent('author', article.type === 'composite' ? 'package' : 'article', article);
     };
 
     $scope.openDashboard = function() {

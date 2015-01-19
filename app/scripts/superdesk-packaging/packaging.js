@@ -262,22 +262,25 @@
         superdesk
         .activity('create.package', {
             label: gettext('Create package'),
-            controller: ['data', '$location', 'packagesService', 'superdesk', function(data, $location, packagesService, superdesk) {
-                if (data) {
-                    packagesService.createPackageFromItems(data.items).then(
-                        function(new_package) {
-                        superdesk.intent('author', 'package', new_package);
-                    });
-                } else {
-                    packagesService.createEmptyPackage().then(
-                        function(new_package) {
-                        superdesk.intent('author', 'package', new_package);
-                    });
-                }
-            }],
-            filters: [
-                {action: 'create', type: 'package'}
-            ]
+            controller: ['data', '$location', 'packagesService', 'superdesk', 'workqueue',
+                function(data, $location, packagesService, superdesk, workqueue) {
+                    if (data) {
+                        packagesService.createPackageFromItems(data.items).then(
+                            function(new_package) {
+                            workqueue.add(new_package);
+                            superdesk.intent('author', 'package', new_package);
+                        });
+                    } else {
+                        packagesService.createEmptyPackage().then(
+                            function(new_package) {
+                            workqueue.add(new_package);
+                            superdesk.intent('author', 'package', new_package);
+                        });
+                    }
+                }],
+                filters: [
+                    {action: 'create', type: 'package'}
+                ]
         })
         .activity('packaging', {
             when: '/packaging/:_id',
@@ -291,7 +294,8 @@
             label: gettext('Edit package'),
             priority: 10,
             icon: 'pencil',
-            controller: ['data', '$location', 'superdesk', function(data, $location, superdesk) {
+            controller: ['data', '$location', 'superdesk', 'workqueue', function(data, $location, superdesk, workqueue) {
+                workqueue.add(data.item);
                 superdesk.intent('author', 'package', data.item);
             }],
             filters: [
