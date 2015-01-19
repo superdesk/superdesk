@@ -21,17 +21,27 @@ function EditorService() {
         this.readOnly = false;
     };
 
+    function preventEditing(event) {
+        event.preventDefault();
+        return false;
+    }
+
+    this.disableEditorToolbar = function disableEditorToolbar() {
+        this.editor.toolbar.classList.add('ng-hide');
+    };
+
+    this.enableEditorToolbar = function enableEditorToolbar() {
+        this.editor.toolbar.classList.remove('ng-hide');
+    };
+
     /**
      * Start a command for an active editor
      */
     this.startCommand = function() {
         this.readOnly = true;
         this.command = new FindReplaceCommand(this.elem);
-        // prevent edits while command is active
-        angular.element(this.elem).on('keydown', function(event) {
-            event.preventDefault();
-            return false;
-        });
+        angular.element(this.elem).on('keydown', preventEditing);
+        this.disableEditorToolbar();
     };
 
     /**
@@ -41,9 +51,12 @@ function EditorService() {
         this.command.finish();
         this.command = null;
         this.readOnly = false;
-        // stop preventing edits
-        angular.element(this.elem).off('keydown');
-        // trigger a blur on elem to trigger a save
+        angular.element(this.elem).off('keydown', preventEditing);
+        this.enableEditorToolbar();
+        this.triggerModelUpdate();
+    };
+
+    this.triggerModelUpdate = function() {
         _.defer(function(elem) {
             angular.element(elem).blur();
         }, this.elem);

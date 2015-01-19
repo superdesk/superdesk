@@ -22,14 +22,15 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets) {
         left: null,
         right: null
     };
+
     $scope.widgets = authoringWidgets;
 
     $scope.activate = function(widget) {
         $scope.active[widget.side] = $scope.active[widget.side] === widget ? null : widget;
     };
 
-    $scope.closeWidget = function() {
-        $scope.activate(null);
+    $scope.closeWidget = function(widget) {
+        $scope.active[widget.side] = null;
     };
 
     // activate widget based on query string
