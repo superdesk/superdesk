@@ -63,7 +63,7 @@ angular.module('superdesk.authoring.find-replace', ['superdesk.editor', 'superde
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
         authoringWidgetsProvider
             .widget('find-replace', {
-                icon: 'search',
+                icon: 'find-replace',
                 label: gettext('Find and Replace'),
                 template: 'scripts/superdesk-authoring/editor/views/find-replace.html',
                 side: 'right',
