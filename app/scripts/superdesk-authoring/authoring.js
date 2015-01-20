@@ -433,7 +433,6 @@
                 $scope.item = _.create(item);
                 notify.success(gettext('Item updated.'));
                 startWatch();
-                $location.url($scope.referrerUrl);
                 return item;
     		}, function(response) {
                 if (angular.isDefined(response.data._issues)) {
