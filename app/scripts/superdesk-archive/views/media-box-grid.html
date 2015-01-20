@@ -9,7 +9,7 @@
 
 <div sd-item-rendition data-item="item" data-rendition="thumbnail"></div>
 
-<div class="media"  ng-show="item.type == 'text' || item.type == 'composite'">
+<div class="media"  ng-show="item.type == 'text' || item.type == 'composite' || item.type == 'preformatted'">
     <small title="{{ item.headline }}">{{ item.headline }}</small>
     <span sd-item-container data-item="item" class="container"></span>
 </div>
