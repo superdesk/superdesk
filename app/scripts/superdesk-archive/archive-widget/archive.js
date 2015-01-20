@@ -11,7 +11,7 @@ define([
     ])
         .config(['widgetsProvider', function(widgets) {
             widgets.widget('archive', {
-                label: 'Archive',
+                label: 'Content',
                 multiple: true,
                 icon: 'archive',
                 max_sizex: 2,
@@ -22,12 +22,12 @@ define([
                 template: require.toUrl('./widget-archive.html'),
                 configurationTemplate: require.toUrl('./configuration.html'),
                 configuration: {maxItems: 10, provider: 'all', search: '', updateInterval: 5},
-                description: 'Archive widget'
+                description: 'Content widget'
             });
         }])
         .config(['authoringWidgetsProvider', function(authoringWidgets) {
             authoringWidgets.widget('archive', {
-                label: gettext('Archive'),
+                label: gettext('Content'),
                 icon: 'archive',
                 template: require.toUrl('./widget-archive.html'),
                 side: 'left',
