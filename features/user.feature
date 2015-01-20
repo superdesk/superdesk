@@ -214,3 +214,45 @@ Feature: User Resource
         """
         {"_status": "ERR", "_issues": {"validator exception": "403"}}
         """
+
+    @auth
+    Scenario: User gets invisible stages
+        Given empty "users"
+        Given empty "desks"
+        Given empty "stages"
+        When we post to "users"
+        """
+        {"username": "foo", "email": "foo@bar.com", "is_active": true}
+        """
+        Given "desks"
+        """
+        [{"name": "Sports Desk", "members": [{"user": "#users._id#"}]}]
+        """
+        When we post to "desks"
+        """
+        [{"name": "News Desk"}]
+        """
+        And we post to "/stages"
+        """
+        {
+        "name": "invisible1",
+        "task_status": "todo",
+        "desk": "#desks._id#",
+        "is_visible" : false
+        }
+        """
+
+        When we post to "/stages"
+        """
+        {
+        "name": "invisible2",
+        "task_status": "todo",
+        "desk": "#desks._id#",
+        "is_visible" : false
+        }
+        """
+
+        Then we get two invisible stages for user
+        """
+        {"user": "#users._id#"}
+        """

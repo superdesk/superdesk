@@ -232,3 +232,71 @@ Feature: Stages
         When we delete "/stages/#stages._id#"
 
         Then we get response code 403
+
+
+    @auth
+    Scenario: Get invisible stages
+        Given empty "archive"
+        Given empty "tasks"
+        Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "Sports Desk"}]
+        """
+
+        When we post to "/stages"
+        """
+        {
+        "name": "invisible1",
+        "task_status": "todo",
+        "desk": "#desks._id#",
+        "is_visible" : false
+        }
+        """
+
+        When we post to "/stages"
+        """
+        {
+        "name": "invisible2",
+        "task_status": "todo",
+        "desk": "#desks._id#",
+        "is_visible" : false
+        }
+        """
+
+
+        Then we get two invisible stages
+
+
+    @auth
+    Scenario: Get visible stages
+        Given empty "archive"
+        Given empty "tasks"
+        Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "Sports Desk"}]
+        """
+
+        When we post to "/stages"
+        """
+        {
+        "name": "invisible1",
+        "task_status": "todo",
+        "desk": "#desks._id#",
+        "is_visible" : false
+        }
+        """
+
+        When we post to "/stages"
+        """
+        {
+        "name": "invisible2",
+        "task_status": "todo",
+        "desk": "#desks._id#",
+        "is_visible" : true
+        }
+        """
+
+
+        Then we get two visible stages

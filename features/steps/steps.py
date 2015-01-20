@@ -1170,3 +1170,25 @@ def when_we_login_as_user(context, username, password):
 
 def is_user_resource(resource):
     return resource in ('users', '/users')
+
+
+@then('we get two invisible stages')
+def when_we_get_invisible_stages(context):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        stages = get_resource_service('stages').get_invisible_stages()
+        assert len(stages) == 2
+
+
+@then('we get two visible stages')
+def when_we_get_visible_stages(context):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        stages = get_resource_service('stages').get_visible_stages()
+        assert len(stages) == 2
+
+
+@then('we get two invisible stages for user')
+def when_we_get_invisible_stages(context):
+    data = json.loads(apply_placeholders(context, context.text))
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        stages = get_resource_service('users').get_invisible_stages(data['user'])
+        assert len(stages) == 2
