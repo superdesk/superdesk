@@ -91,8 +91,8 @@ class NewsMLTwoParser(Parser):
         parse_meta_item_text('by', 'byline')
         parse_meta_item_text('name', 'dateline', meta.find(self.qname('located')))
 
-        item['slugline'] = super().trim_slugline(item['slugline'])
-        item['headline'] = super().trim_headline(item['headline'])
+        item['slugline'] = super().trim_slugline(item.get('slugline', ''))
+        item['headline'] = super().trim_headline(item.get('headline', ''))
 
         try:
             item['description'] = meta.find(self.qname('description')).text
