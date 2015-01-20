@@ -287,7 +287,7 @@ define([
                 template: '{{name}}',
                 link: function(scope) {
                     promise.then(function() {
-                        if (scope.provider) {
+                        if (scope.provider && scope.provider in ingestSources.providersLookup) {
                             scope.name = ingestSources.providersLookup[scope.provider].name;
                         }
                     });
