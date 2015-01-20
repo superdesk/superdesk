@@ -37,7 +37,6 @@ function FindReplaceDirective($timeout, $rootScope, editor) {
 
             scope.replaceAll = function() {
                 editor.command.replaceAll(scope.to || '');
-                scope.closeWidget(scope.widget);
             };
 
             scope.$watch('from', function(needle) {
