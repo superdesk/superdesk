@@ -54,6 +54,10 @@ class StagesResource(Resource):
         'content_expiry': {
             'type': 'integer'
         },
+        'is_visible': {
+            'type': 'boolean',
+            'default': True
+        },
         'outgoing': {
             'type': 'list',
             'schema': {
@@ -102,3 +106,9 @@ class StagesService(BaseService):
         req = ParsedRequest()
         req.args = {'filter': query_filter}
         return superdesk.get_resource_service('archive').get(req, None)
+
+    def get_invisible_stages(self):
+        return list(self.get(req=None, lookup={'is_visible': False}))
+
+    def get_visible_stages(self):
+        return list(self.get(req=None, lookup={'is_visible': True}))
