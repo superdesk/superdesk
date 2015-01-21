@@ -1027,6 +1027,16 @@ def get_global_spike_expiry(context):
     get_desk_spike_expiry(context, context.app.config['SPIKE_EXPIRY_MINUTES'])
 
 
+@then('we get global content expiry')
+def get_global_content_expiry(context):
+    get_desk_spike_expiry(context, context.app.config['CONTENT_EXPIRY_MINUTES'])
+
+
+@then('we get desk content expiry')
+def get_desk_content_expiry(context):
+    get_desk_spike_expiry(context, 10)
+
+
 @then('we get desk spike expiry after "{test_minutes}"')
 def get_desk_spike_expiry(context, test_minutes):
     response_data = json.loads(context.response.get_data())

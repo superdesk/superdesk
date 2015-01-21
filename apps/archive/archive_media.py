@@ -20,7 +20,7 @@ from superdesk.resource import Resource
 from superdesk.upload import url_for_media
 from superdesk.utc import utcnow
 from .common import item_url, update_dates_for, generate_guid, GUID_TAG, ARCHIVE_MEDIA, set_original_creator, \
-    generate_unique_id_and_name
+    generate_unique_id_and_name, set_item_expiry
 from .common import on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from superdesk.activity import add_activity
 from apps.content import metadata_schema
@@ -89,6 +89,7 @@ class ArchiveMediaService(BaseService):
                 doc['type'] = self.type_av.get(file_type)
                 doc[config.VERSION] = 1
                 doc['versioncreated'] = utcnow()
+                set_item_expiry({}, doc)
 
                 rendition_spec = config.RENDITIONS['picture']
                 renditions = generate_renditions(file, doc['media'], inserted, file_type,

@@ -18,7 +18,7 @@ from flask import current_app as app
 from eve.versioning import insert_versioning_documents
 
 from superdesk.celery_app import update_key
-from superdesk.utc import utcnow
+from superdesk.utc import utcnow, get_expiry_date
 from settings import SERVER_DOMAIN
 from superdesk import get_resource_service
 from superdesk.notification import push_notification
@@ -183,6 +183,51 @@ def is_assigned_to_a_desk(doc):
     """
 
     return doc.get('task') and doc['task'].get('desk')
+
+
+def get_item_expiry(app, desk, stage):
+    expiry_minutes = app.settings['CONTENT_EXPIRY_MINUTES']
+    if desk:
+        expiry_minutes = desk.get('content_expiry', expiry_minutes)
+    if stage:
+        expiry_minutes = stage.get('content_expiry', expiry_minutes)
+
+    return get_expiry_date(expiry_minutes)
+
+
+def get_expiry(desk_id=None, stage_id=None):
+
+    desk = stage = None
+    if desk_id:
+        desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
+
+        if not desk:
+            raise SuperdeskApiError.notFoundError('Invalid desk identifier %s' % desk_id)
+
+        if not stage_id:
+            stage = get_resource_service('stages').find_one(req=None, _id=desk['incoming_stage'])
+
+            if not stage:
+                raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % stage_id)
+
+    if stage_id:
+        stage = get_resource_service('stages').find_one(req=None, _id=stage_id)
+
+        if not stage:
+                raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % stage_id)
+
+    return get_item_expiry(app=app, desk=desk, stage=stage)
+
+
+def set_item_expiry(update, original):
+    task = update.get('task', original.get('task', {}))
+    desk_id = task.get('desk', None)
+    stage_id = task.get('stage', None)
+
+    if update == {}:
+        original['expiry'] = get_expiry(desk_id, stage_id)
+    else:
+        update['expiry'] = get_expiry(desk_id, stage_id)
 
 
 def update_state(original, updates):

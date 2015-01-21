@@ -14,7 +14,7 @@ SOURCE = 'archive'
 
 import flask
 from superdesk.resource import Resource
-from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state
+from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry
 from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
 from .common import get_user
 from flask import current_app as app
@@ -128,6 +128,7 @@ class ArchiveService(BaseService):
             doc['version_creator'] = doc['original_creator']
             remove_unwanted(doc)
             update_word_count(doc)
+            set_item_expiry({}, doc)
 
     def on_created(self, docs):
         on_create_media_archive()
@@ -164,6 +165,7 @@ class ArchiveService(BaseService):
             raise SuperdeskApiError.forbiddenError('The item was locked by another user')
 
         updates['versioncreated'] = utcnow()
+        set_item_expiry(updates, original)
         updates['version_creator'] = str_user_id
         update_word_count(updates)
 
@@ -191,6 +193,7 @@ class ArchiveService(BaseService):
         if lock_user and str(lock_user) != user_id and not force_unlock:
             raise SuperdeskApiError.forbiddenError('The item was locked by another user')
         document['versioncreated'] = utcnow()
+        set_item_expiry(document, original)
         document['version_creator'] = user_id
         if force_unlock:
             del document['force_unlock']
@@ -237,6 +240,7 @@ class ArchiveService(BaseService):
             raise SuperdeskApiError.preconditionFailedError('Invalid last version %s' % last_version)
         old['_id'] = old['_id_document']
         old['_updated'] = old['versioncreated'] = utcnow()
+        set_item_expiry(old, doc)
         del old['_id_document']
 
         resolve_document_version(old, 'archive', 'PATCH', curr)

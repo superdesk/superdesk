@@ -22,7 +22,7 @@ from superdesk.utc import get_expiry_date
 from .common import get_user, item_url, is_assigned_to_a_desk
 
 from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
-from apps.tasks import set_expiry
+from apps.tasks import get_expiry
 
 
 logger = logging.getLogger(__name__)
@@ -98,10 +98,8 @@ class ArchiveUnspikeService(BaseService):
                 'stage': str(desk['incoming_stage']) if desk_id else None,
                 'user': None
             }
-            desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
-            stage = get_resource_service('stages').find_one(req=None, _id=desk['incoming_stage'])
-            updates['expiry'] = set_expiry(app, desk, stage)
 
+        updates['expiry'] = get_expiry(desk_id=desk_id)
         return updates
 
     def update(self, id, updates):

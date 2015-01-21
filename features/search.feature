@@ -11,9 +11,13 @@ Feature: Search Feature
 
     @auth
     Scenario: Can search archive
+        Given "desks"
+        """
+        [{"name": "Sports Desk", "spike_expiry": 60, "content_expiry":10}]
+        """
         Given "archive"
             """
-            [{"guid": "1", "task": {"desk": "5472718f3b80a10df7b489fb"}}]
+            [{"guid": "1", "task": {"desk": "#desks._id#"}}]
             """
         When we get "/search"
         Then we get list with 1 items
@@ -29,47 +33,51 @@ Feature: Search Feature
 
     @auth
     Scenario: Can limit search to 1 result per shard
+        Given "desks"
+        """
+        [{"name": "Sports Desk", "spike_expiry": 60, "content_expiry":10}]
+        """
         Given "archive"
             """
-            [{"guid": "1", "task": {"desk": "5472718f3b80a10df7b489fb"}}]
+            [{"guid": "1", "task": {"desk": "#desks._id#"}}]
             """
         When we post to "/archive"
             """
-            [{"guid": "2", "task": {"desk": "5472718f3b80a10df7b489fb"}}]
+            [{"guid": "2", "task": {"desk": "#desks._id#"}}]
             """
         When we post to "/archive"
             """
-            [{"guid": "3", "task": {"desk": "5472718f3b80a10df7b489fb"}}]
+            [{"guid": "3", "task": {"desk": "#desks._id#"}}]
             """
 
         When we post to "/archive"
             """
-            [{"guid": "4", "task": {"desk": "5472718f3b80a10df7b489fb"}}]
+            [{"guid": "4", "task": {"desk": "#desks._id#"}}]
             """
 
         When we post to "/archive"
             """
-            [{"guid": "5", "task": {"desk": "5472718f3b80a10df7b489fb"}}]
+            [{"guid": "5", "task": {"desk": "#desks._id#"}}]
             """
 
         When we post to "/archive"
             """
-            [{"guid": "6", "task": {"desk": "5472718f3b80a10df7b489fb"}}]
+            [{"guid": "6", "task": {"desk": "#desks._id#"}}]
             """
 
         When we post to "/archive"
             """
-            [{"guid": "7", "task": {"desk": "5472718f3b80a10df7b489fb"}}]
+            [{"guid": "7", "task": {"desk": "#desks._id#"}}]
             """
 
         When we post to "/archive"
             """
-            [{"guid": "8", "task": {"desk": "5472718f3b80a10df7b489fb"}}]
+            [{"guid": "8", "task": {"desk": "#desks._id#"}}]
             """
 
         When we post to "/archive"
             """
-            [{"guid": "9", "task": {"desk": "5472718f3b80a10df7b489fb"}}]
+            [{"guid": "9", "task": {"desk": "#desks._id#"}}]
             """
 
         Then we set elastic limit

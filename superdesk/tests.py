@@ -51,6 +51,7 @@ def get_test_settings():
     test_settings['SUPERDESK_TESTING'] = True
     test_settings['BCRYPT_GENSALT_WORK_FACTOR'] = 4
     test_settings['CELERY_ALWAYS_EAGER'] = 'True'
+    test_settings['CONTENT_EXPIRY_MINUTES'] = 99
 
     return test_settings
 

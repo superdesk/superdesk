@@ -64,6 +64,7 @@ Feature: News Items Archive
         """
 
         And we get "archive/item-1"
+        Then we get global content expiry
         Then we get version 2
 
 	@auth
@@ -78,6 +79,7 @@ Feature: News Items Archive
         """
 		And we restore version 1
         Then we get version 3
+        Then we get global content expiry
         And the field "headline" value is "test"
 
 
@@ -169,12 +171,19 @@ Feature: News Items Archive
 
     @auth
     Scenario: Browse public content
+        Given "desks"
+        """
+        [{"name": "Sports Desk", "spike_expiry": 60, "content_expiry":10}]
+        """
         Given "archive"
             """
-            [{"guid": "testid1", "task": {"desk": "5374ce0a3b80a15fd8072403"}}]
+            [{"_id": "testid1", "guid": "testid1", "task": {"desk": "#desks._id#"}}]
             """
         When we get "/archive"
         Then we get list with 1 items
+
+        When we get "archive/testid1"
+        Then we get desk content expiry
 
     @auth
     @ticket-sd-360
