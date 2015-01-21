@@ -572,18 +572,14 @@
                 template: '{{item.container}}',
                 link: function(scope, elem) {
 
-                    if (!scope.item.task) {
-                        return;
-                    }
-
-                    if (scope.item.task.desk) {
-                        desks.initialize().then(function() {
-                            scope.item.container = 'desk:' + desks.deskLookup[scope.item.task.desk].name ;
-                        });
-                    } else if (scope.item.task.user) {
-                        scope.item.container = 'location:workspace';
-                    } else {
-                        scope.item.container = 'location:unkown';
+                    if (scope.item._type !== 'ingest') {
+                        if (scope.item.task && scope.item.task.desk) {
+                            desks.initialize().then(function() {
+                                scope.item.container = 'desk:' + desks.deskLookup[scope.item.task.desk].name ;
+                            });
+                        } else {
+                            scope.item.container = 'location:workspace';
+                        }
                     }
                 }
             };
