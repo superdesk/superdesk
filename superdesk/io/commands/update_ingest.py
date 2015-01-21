@@ -80,8 +80,7 @@ def filter_expired_items(provider, items):
         expiration_date = utcnow() - timedelta(days=days_to_keep_content)
         return [item for item in items if item.get('versioncreated', utcnow()) > expiration_date]
     except Exception as ex:
-        raise ProviderError.providerFilterExpiredContentError(ex, provider.get('name'))
-
+        raise ProviderError.providerFilterExpiredContentError(ex)
 
 class UpdateIngest(superdesk.Command):
     """Update ingest providers."""
