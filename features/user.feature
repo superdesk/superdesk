@@ -252,7 +252,7 @@ Feature: User Resource
         }
         """
 
-        Then we get two invisible stages for user
+        Then we get 2 invisible stages for user
         """
         {"user": "#users._id#"}
         """

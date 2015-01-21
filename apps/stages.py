@@ -107,8 +107,17 @@ class StagesService(BaseService):
         req.args = {'filter': query_filter}
         return superdesk.get_resource_service('archive').get(req, None)
 
-    def get_invisible_stages(self):
-        return list(self.get(req=None, lookup={'is_visible': False}))
+    def get_stages_by_visibility(self, is_visible=False, user_desk_ids=[]):
+        """
+        returns a list of stages for a user.
+        """
+        if is_visible:
+            lookup = {'$or': [{'is_visible': True}]}
+            if user_desk_ids:
+                lookup['$or'].append({'desk': {'$in': user_desk_ids}})
+        else:
+            lookup = {'is_visible': False}
+            if user_desk_ids:
+                lookup['desk'] = {'$nin': user_desk_ids}
 
-    def get_visible_stages(self):
-        return list(self.get(req=None, lookup={'is_visible': True}))
+        return list(self.get(req=None, lookup=lookup))

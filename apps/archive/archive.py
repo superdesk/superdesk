@@ -57,12 +57,19 @@ def private_content_filter():
     """
     user = getattr(flask.g, 'user', None)
     if user:
-        return {'or': [
+        stages = get_resource_service('users').get_invisible_stages_ids(user.get('_id'))
+
+        private_filter = {'or': [
             {'exists': {'field': 'task.desk'}},
             {'term': {'task.user': str(user['_id'])}},
             {'term': {'version_creator': str(user['_id'])}},
             {'term': {'original_creator': str(user['_id'])}},
         ]}
+
+        if stages:
+            private_filter['and'] = [{'not': {'terms': {'task.stage': stages}}}]
+
+        return private_filter
 
 
 class ArchiveVersionsResource(Resource):
@@ -75,7 +82,6 @@ class ArchiveVersionsResource(Resource):
 
 
 class ArchiveVersionsService(BaseService):
-
     def on_create(self, docs):
         for doc in docs:
             doc['versioncreated'] = utcnow()
@@ -120,7 +126,6 @@ def update_word_count(doc):
 
 
 class ArchiveService(BaseService):
-
     def on_create(self, docs):
         on_create_item(docs)
 
@@ -218,11 +223,18 @@ class ArchiveService(BaseService):
         return self.restore_version(id, document) or \
             super().replace(id, document)
 
+    def find_one(self, req, **lookup):
+        item = super().find_one(req, **lookup)
+        if item and str(item.get('task', {}).get('stage', '')) in \
+                get_resource_service('users').get_invisible_stages_ids(get_user().get('_id')):
+            raise SuperdeskApiError.forbiddenError("User does not have permissions to read the item.")
+        return item
+
     def restore_version(self, id, doc):
         item_id = id
         old_version = int(doc.get('old_version', 0))
         last_version = int(doc.get('last_version', 0))
-        if(not all([item_id, old_version, last_version])):
+        if (not all([item_id, old_version, last_version])):
             return None
 
         old = get_resource_service('archive_versions').find_one(req=None, _id_document=item_id, _version=old_version)
@@ -300,7 +312,6 @@ class AutoSaveResource(Resource):
 
 
 class ArchiveSaveService(BaseService):
-
     def create(self, docs, **kwargs):
         if not docs:
             raise SuperdeskApiError.notFoundError('Content is missing')
@@ -313,7 +324,6 @@ class ArchiveSaveService(BaseService):
 
 
 class ArchiveRemoveExpiredContent(superdesk.Command):
-
     def run(self):
         self.remove_expired_content()
 

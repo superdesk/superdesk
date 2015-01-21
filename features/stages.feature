@@ -265,7 +265,7 @@ Feature: Stages
         """
 
 
-        Then we get two invisible stages
+        Then we get 2 invisible stages
 
 
     @auth
@@ -299,4 +299,4 @@ Feature: Stages
         """
 
 
-        Then we get two visible stages
+        Then we get 2 visible stages

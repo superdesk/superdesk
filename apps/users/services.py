@@ -83,10 +83,9 @@ def is_sensitive_update(updates):
 
 
 def get_invisible_stages(user):
-    user_desks = list(get_resource_service('user_desks').get(req=None, lookup={'user_id': user['_id']}))
+    user_desks = get_resource_service('user_desks').get(req=None, lookup={'user_id': user['_id']})
     user_desk_ids = [d['_id'] for d in user_desks]
-    invisible_stages = get_resource_service('stages').get_invisible_stages()
-    return [s for s in invisible_stages if s['desk'] not in user_desk_ids]
+    return get_resource_service('stages').get_stages_by_visibility(False, user_desk_ids)
 
 
 class UsersService(BaseService):
@@ -176,7 +175,10 @@ class UsersService(BaseService):
 
     def get_invisible_stages(self, user_id):
         user = self.find_one(_id=user_id, req=None)
-        return get_invisible_stages(user)
+        return get_invisible_stages(user) if user and user.get('_id') else []
+
+    def get_invisible_stages_ids(self, user_id):
+        return [str(stage['_id']) for stage in self.get_invisible_stages(user_id)]
 
 
 class DBUsersService(UsersService):
