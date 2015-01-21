@@ -27,11 +27,15 @@ function EditorService() {
     }
 
     this.disableEditorToolbar = function disableEditorToolbar() {
-        this.editor.toolbar.classList.add('ng-hide');
+        if (this.editor) {
+            this.editor.toolbar.classList.add('ng-hide');
+        }
     };
 
     this.enableEditorToolbar = function enableEditorToolbar() {
-        this.editor.toolbar.classList.remove('ng-hide');
+        if (this.editor) {
+            this.editor.toolbar.classList.remove('ng-hide');
+        }
     };
 
     /**

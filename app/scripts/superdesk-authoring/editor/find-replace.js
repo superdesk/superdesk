@@ -40,13 +40,11 @@ function FindReplaceDirective($timeout, $rootScope, editor) {
             };
 
             scope.$watch('from', function(needle) {
+                var input = document.getElementById('find-replace-what'),
+                    selectionStart = input.selectionStart,
+                    selectionEnd = input.selectionEnd;
                 editor.command.find(needle);
-
-                // return focus to input - just focus() doesn't work here for some reason
-                var input = document.getElementById('find-replace-what');
-                input.focus();
-                input.select();
-                document.getSelection().collapseToEnd();
+                input.setSelectionRange(selectionStart, selectionEnd);
             });
 
             editor.startCommand();
