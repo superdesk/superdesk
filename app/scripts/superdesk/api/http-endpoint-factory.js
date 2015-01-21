@@ -125,6 +125,10 @@ define(['lodash'], function(_) {
                     return key === '_links' || key === '_id' || key === '_created' || key === '_updated';
                 });
             }
+            if (diff && diff._etag) {
+                item._etag = diff._etag;
+            }
+
             var url = item._links.self.href;
             return http({
                 method: 'PATCH',

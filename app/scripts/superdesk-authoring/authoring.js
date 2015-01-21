@@ -28,7 +28,7 @@
      * @param {Object} src
      */
     function extendItem(dest, src) {
-        angular.extend(dest, _.pick(src, _.keys(CONTENT_FIELDS_DEFAULTS)));
+        return angular.extend(dest, _.pick(src, _.keys(CONTENT_FIELDS_DEFAULTS)));
     }
 
     /**
@@ -183,8 +183,13 @@
          */
         this.save = function saveAuthoring(item, diff) {
             autosave.stop();
+            if (diff && diff._etag) {
+                item._etag = diff._etag;
+            }
+            diff = extendItem({}, diff);
             return api.save('archive', item, diff).then(function(_item) {
                 item._autosave = null;
+                item._locked = lock.isLocked(item);
                 workqueue.update(item);
                 return item;
             });
@@ -208,6 +213,7 @@
         this.unlock = function unlock(item, userId) {
             autosave.stop();
             item.lock_user = null;
+            item._locked = true;
             confirm.unlock(userId);
         };
     }
@@ -496,12 +502,15 @@
         };
 
         $scope.unlock = function() {
-            authoring.unlock($scope.item, session.identity._id);
-            lock.lock(item, true).then(function(result) {
-                extendItem($scope.item, result);
-                $scope.item.lock_user = result.lock_user;
-                $scope._editable = true;
-                startWatch();
+            lock.unlock($scope.item).then(function(unlocked_item) {
+                extendItem($scope.item, unlocked_item);
+                lock.lock(unlocked_item, true).then(function(result) {
+                    extendItem($scope.item, result);
+                    $scope.item.lock_user = result.lock_user;
+                    $scope.item._locked = result._locked;
+                    $scope._editable = true;
+                    startWatch();
+                });
             });
         };
 
@@ -513,9 +522,9 @@
                 stopWatch();
                 authoring.unlock(item, data.user);
                 $scope._editable = false;
+                $scope.item._locked = true;
             }
         });
-
     }
 
     function DashboardCard() {

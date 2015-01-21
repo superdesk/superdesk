@@ -107,10 +107,15 @@ define([
              * Save an item
              */
             Resource.prototype.save = function(item, diff, params) {
+
+                if (diff && diff._etag) {
+                    item._etag = diff._etag;
+                }
+
                 return http({
                     method: item._links ? 'PATCH' : 'POST',
                     url: item._links ? urls.item(item._links.self.href) : this.url(),
-                    data: diff ? diff : clean(item, !!!item._links),
+                    data: diff ? clean(diff) : clean(item, !!!item._links),
                     params: params,
                     headers: getHeaders(item)
                 }).then(function(data) {
