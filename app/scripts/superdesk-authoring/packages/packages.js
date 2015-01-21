@@ -10,17 +10,17 @@
             var query = search.query(null);
             var filter = [];
             _.forEach($scope.item.linked_in_packages, function(packageRef) {
-                filter.push({'term': {'guid': packageRef['package']}});
+                filter.push(packageRef['package']);
             });
 
-            query.size(25).filter({'or': filter});
+            query.size(25).filter({'terms': {'guid': filter}});
             api.archive.query(query.getCriteria(true))
             .then(function(result) {
                 $scope.contentItems = result._items;
             });
         }
 
-        if ($scope.item && $scope.item.linked_in_packages.length > 0) {
+        if ($scope.item && $scope.item.linked_in_packages && $scope.item.linked_in_packages.length > 0) {
             fetchPackages();
         }
     }
