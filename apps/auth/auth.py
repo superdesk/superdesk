@@ -15,6 +15,7 @@ import flask
 from superdesk.resource import Resource
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service, get_resource_privileges, get_intrinsic_privileges
+import superdesk
 
 
 logger = logging.getLogger(__name__)
@@ -57,10 +58,13 @@ class AuthResource(Resource):
         },
         'user': Resource.rel('users', True)
     }
-    resource_methods = ['POST']
+    resource_methods = ['POST', 'DELETE']
     item_methods = ['GET', 'DELETE']
-    public_methods = ['POST']
+    public_methods = ['POST', 'DELETE']
     extra_response_fields = ['user', 'token', 'username']
+
+
+superdesk.intrinsic_privilege('auth', method=['DELETE'])
 
 
 class SuperdeskTokenAuth(TokenAuth):

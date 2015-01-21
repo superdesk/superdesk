@@ -19,7 +19,6 @@ from apps.common.models.utils import get_model
 from apps.users.services import current_user_has_privilege
 import superdesk
 
-
 LOCK_USER = 'lock_user'
 LOCK_SESSION = 'lock_session'
 STATUS = '_status'
@@ -87,6 +86,14 @@ class ItemLock(BaseComponent):
 
         item = item_model.find_one(item_filter)
         return item
+
+    def unlock_session(self, user_id, session_id):
+        item_model = get_model(ItemModel)
+        items = item_model.find({'lock_session': session_id})
+
+        for item in items:
+            print('unlocking item id {} from session {}'.format(item['_id'], session_id))
+            self.unlock({'_id': item['_id']}, user_id, session_id, None)
 
     def can_lock(self, item, user_id, session_id):
         """
