@@ -36,7 +36,32 @@
 
             <div class="page-content-container" ng-click="viewSendTo = false;">
                 <article id="theme-container" ng-if="item._id" ng-class="{preview: !_editable}">
-                    <span sd-theme-select></span>
+                    <div class="dropdown pull-right" dropdown>
+                        <button class="dropdown-toggle" dropdown-toggle>
+                            <span translate>Mode: </span>
+                            <span ng-show="proofread" translate>Proofread</span>
+                            <span ng-show="!proofread" translate>Normal</span>
+                        </button>
+                        <div class="dropdown-menu pull-right">
+                            <ul>
+                                <li>
+                                    <button ng-click="proofread = false">
+                                        <span translate>Normal</span>
+                                        <i class="icon-ok" ng-show="!proofread"></i>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button ng-click="proofread = true">
+                                        <span translate>Proofread</span>
+                                        <i class="icon-ok" ng-show="proofread"></i>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <span sd-theme-select ng-if="proofread" data-key="proofreadTheme"></span>
+                    <span sd-theme-select ng-if="!proofread" data-key="theme"></span>
                 	<form>
                 		<fieldset>
                 			<div class="field" ng-class="{'limit-error': item.slugline.length > limits.slugline}">
