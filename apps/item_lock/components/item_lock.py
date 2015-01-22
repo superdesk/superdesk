@@ -28,6 +28,7 @@ TASK = 'task'
 class ItemLock(BaseComponent):
     def __init__(self, app):
         self.app = app
+        self.app.on_session_end += self.on_session_end
 
     @classmethod
     def name(cls):
@@ -92,7 +93,6 @@ class ItemLock(BaseComponent):
         items = item_model.find({'lock_session': session_id})
 
         for item in items:
-            print('unlocking item id {} from session {}'.format(item['_id'], session_id))
             self.unlock({'_id': item['_id']}, user_id, session_id, None)
 
     def can_lock(self, item, user_id, session_id):
@@ -127,3 +127,6 @@ class ItemLock(BaseComponent):
             return False, error_message
 
         return True, ''
+
+    def on_session_end(self, user_id, session_id):
+        self.unlock_session(user_id, session_id)

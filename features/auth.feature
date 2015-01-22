@@ -16,7 +16,7 @@ Feature: Authentication
         And we get "user"
         And we get no "password"
 
-	
+
 	Scenario: Change user password with success
         Given "users"
         """
@@ -35,7 +35,7 @@ Feature: Authentication
         Then we get "token"
         And we get "user"
         And we get no "password"
-        
+
 
 	Scenario: Change user password with wrong old password
         Given "users"
@@ -50,9 +50,9 @@ Feature: Authentication
         Then we get error 401
         """
         {"_message": "The provided old password is not correct.", "_status": "ERR"}
-        """        
-        
-        
+        """
+
+
 	Scenario: Reset password existing user
         Given "users"
         """
@@ -88,7 +88,7 @@ Feature: Authentication
             """
 
         Then we fail to reset password for user
- 
+
     Scenario: Authenticate with wrong password returns error
         Given "users"
             """
@@ -149,3 +149,39 @@ Feature: Authentication
             """
 
         And we get "Access-Control-Allow-Origin" header
+
+    Scenario: user logs in and out
+        Given "users"
+            """
+            [{"username": "foo", "password": "bar", "email": "foo@bar.org", "is_active": true}]
+            """
+
+        When we post to auth
+            """
+            {"username": "foo", "password": "bar"}
+            """
+        When we delete latest
+        Then we get response code 204
+
+    Scenario: user logs in locks content and logs out
+        Given "users"
+            """
+            [{"username": "foo", "password": "bar", "email": "foo@bar.org", "is_active": true}]
+            """
+        When we post to auth
+        """
+        {"username": "foo", "password": "bar"}
+        """
+        Given "archive"
+        """
+        [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
+        """
+        When we post to "/archive/item-1/lock"
+        """
+        {}
+        """
+        When we delete "/auth/#AUTH_ID#"
+        """
+        {}
+        """
+        Then we get response code 204

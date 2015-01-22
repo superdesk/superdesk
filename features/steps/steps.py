@@ -18,6 +18,7 @@ from eve.methods.common import parse
 from superdesk import default_user_preferences, get_resource_service, utc
 from superdesk.utc import utcnow
 from eve.io.mongo import MongoJSONEncoder
+from base64 import b64encode
 
 from wooper.general import fail_and_print_body, apply_path,\
     parse_json_response
@@ -246,6 +247,12 @@ def step_impl_given_user_type(context, user_type):
 def step_impl_when_auth(context):
     data = context.text
     context.response = context.client.post(get_prefixed_url(context.app, '/auth'), data=data, headers=context.headers)
+    if context.response.status_code == 200 or context.response.status_code == 201:
+        item = json.loads(context.response.get_data())
+        if item.get('_id'):
+            set_placeholder(context, 'AUTH_ID', item['_id'])
+        context.headers.append(('Authorization', b'basic ' + b64encode(item['token'].encode('ascii') + b':')))
+        context.user = item['user']
 
 
 @when('we fetch from "{provider_name}" ingest "{guid}"')

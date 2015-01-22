@@ -12,8 +12,7 @@ import bcrypt
 from apps.auth.service import AuthService
 from superdesk import get_resource_service
 from superdesk.errors import CredentialsAuthError
-from apps.common.components.utils import get_component
-from apps.item_lock.components.item_lock import ItemLock
+from flask import current_app as app
 
 
 class DbAuthService(AuthService):
@@ -43,17 +42,5 @@ class DbAuthService(AuthService):
         :param doc: A deleted auth doc AKA a session
         :return:
         '''
-        print('deleting locks for session {}'.format(doc['_id']))
-        # need to relinquish all locks for this session
-        get_component(ItemLock).unlock_session(doc['user'], doc['_id'])
-
-    def delete_all(self, query):
-        '''
-        :param query: a query that will find all sessions (auth records) that match the query
-        :return:
-        '''
-        print('delete sessions matching {}'.format(query))
-        sessions = get_resource_service('auth').get(req=None, lookup=query)
-        for session in sessions:
-            print('session {}'.format(session['_id']))
-            get_resource_service('auth').delete_action({'_id': str(session['_id'])})
+        # notify that the session has ended
+        app.on_session_end(doc['user'], doc['_id'])
