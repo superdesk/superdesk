@@ -373,6 +373,8 @@
         $scope.stage = null;
         $scope.widget_target = 'authoring';
 
+        $scope.proofread = false;
+
         // TODO These values should come from preferences.
         $scope.limits = {
             slugline: 24,
@@ -593,7 +595,7 @@
 
         var service = {};
 
-        var THEME_KEY = 'editor:theme';
+        var PREFERENCES_KEY = 'editor:theme';
         var THEME_DEFAULT = 'default-normal';
 
         service.availableThemes = [
@@ -629,17 +631,16 @@
             }
         ];
 
-        service.save = function(theme) {
-            var update = {};
-            update[THEME_KEY] = {
-                'theme': theme.key
-            };
-            preferencesService.update(update);
+        service.save = function(key, theme) {
+            return preferencesService.get().then(function(result) {
+                result[PREFERENCES_KEY][key] = theme.key;
+                return preferencesService.update(result);
+            });
         };
 
-        service.get = function() {
+        service.get = function(key) {
             return preferencesService.get().then(function(result) {
-                var theme = result[THEME_KEY] ? result[THEME_KEY].theme : THEME_DEFAULT;
+                var theme = result[PREFERENCES_KEY] && result[PREFERENCES_KEY][key] ? result[PREFERENCES_KEY][key] : THEME_DEFAULT;
                 return _.find(service.availableThemes, {key: theme});
             });
         };
@@ -652,19 +653,22 @@
 
         return {
             templateUrl: 'scripts/superdesk-authoring/views/theme-select.html',
+            scope: {
+                key: '@'
+            },
             link: function themeSelectLink(scope, elem) {
 
                 var DEFAULT_CLASS = 'main-article';
 
                 scope.themes = authThemes.availableThemes;
-                authThemes.get().then(function(theme) {
+                authThemes.get(scope.key).then(function(theme) {
                     scope.theme = theme;
                     applyTheme();
                 });
 
                 scope.changeTheme = function(theme) {
                     scope.theme = theme;
-                    authThemes.save(theme);
+                    authThemes.save(scope.key, theme);
                     applyTheme();
                 };
 
