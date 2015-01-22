@@ -19,7 +19,7 @@
                     <p><span class="keyword" ng-if="pitem.slugline">{{ pitem.slugline }}</span>{{pitem.headline || pitem.type}}</p>
                     <ul class="item-functions" ng-if="!itemInPackage(pitem)">
                         <li class="dropdown group-select" dropdown>
-                            <div class="dropdown-toggle" dropdown-toggle><i class="icon-plus-small"></i></div>
+                            <div class="dropdown-toggle" dropdown-toggle><i class="icon-package-plus"></i></div>
                             <ul class="dropdown-menu pull-right">
                                 <li ng-repeat="t in itemTypes">
                                     <button ng-click="addItemToGroup(t, pitem);"><span translate>{{ t.label | uppercase  }}</span></button>
