@@ -82,6 +82,7 @@ def filter_expired_items(provider, items):
     except Exception as ex:
         raise ProviderError.providerFilterExpiredContentError(ex)
 
+
 class UpdateIngest(superdesk.Command):
     """Update ingest providers."""
 
