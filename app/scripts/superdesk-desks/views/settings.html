@@ -51,12 +51,18 @@
 									<textarea class="fullwidth-input" ng-model="desk.edit.description"></textarea>
 								</div>
 								<div class="field">
-									<label translate>Content expiry (minutes)</label>
-									<input type="number" class="fullwidth-input" ng-model="desk.edit.content_expiry" required> 
+									<label translate>Content expiry</label>
+									<input type="number" class="input-mini" ng-model="ContentExpiry.Hours" min ="0" required>
+									<span translate>hr</span>
+                                    <input type="number" class="input-mini" ng-model="ContentExpiry.Minutes" min ="0" required>
+                                    <span translate>min</span>
 								</div>
 								<div class="field">
-									<label translate>Spike expiry (minutes)</label>
-									<input type="number" class="fullwidth-input" ng-model="desk.edit.spike_expiry" required> 
+									<label translate>Spike expiry</label>
+									<input type="number" class="input-mini" ng-model="SpikeExpiry.Hours" min ="0" required>
+									<span translate>hr</span>
+									<input type="number" class="input-mini" ng-model="SpikeExpiry.Minutes" min ="0" required>
+                                    <span translate>min</span>
 								</div>
 							</fieldset>
 							<p ng-if="message">{{ message }}</p>
@@ -131,7 +137,10 @@
 							<div class="row" ng-show="selected && !editStage">
 								<div class="header"  translate>Stage Details</div>
 								<label translate>Stage description: {{ selected.description}}</label>
-								<label translate>Content expiry: {{ selected.content_expiry}} (minutes)</label>
+								<label translate>Content expiry: 
+									{{ ContentExpiry.Hours}} <span translate>hr</span>
+									{{ ContentExpiry.Minutes}} <span translate>min</span>
+								</label>
 							</div>
 
 							<div class="row" ng-if="editStage">
@@ -141,8 +150,11 @@
 									<textarea class="fullwidth-input" ng-model="editStage.description"></textarea>
 								</div>
 								<div class="field">
-									<label translate>Content expiry (minutes)</label>
-									<input type="number" class="fullwidth-input" ng-model="editStage.content_expiry" required> 
+									<label translate>Content expiry</label>
+									<input type="number" class="input-mini" ng-model="ContentExpiry.Hours" min ="0" required>
+									<span translate>hr</span>
+									<input type="number" class="input-mini" ng-model="ContentExpiry.Minutes" min ="0" required>
+									<span translate>min</span>
 								</div>
 							</div>
 						</div>

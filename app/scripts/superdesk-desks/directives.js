@@ -52,22 +52,34 @@ define([
         return {
 
             link: function(scope, elem, attrs) {
+                scope.ContentExpiry = {
+                    Hours: 0,
+                    Minutes: 0
+                };
+                scope.SpikeExpiry = {
+                    Hours: 0,
+                    Minutes: 0
+                };
 
                 scope.$watch('step.current', function(step) {
                     if (step === 'general') {
-                    	if (scope.desk.edit && scope.desk.edit._id) {
-                    		scope.edit(scope.desk.edit);
-                    	}
+                        if (scope.desk.edit && scope.desk.edit._id) {
+                            scope.edit(scope.desk.edit);
+                        }
                         scope.message = null;
                     }
                 });
 
                 scope.edit = function(desk) {
+                    scope.ContentExpiry = scope.setContentExpiryHoursMins(desk);
+                    scope.SpikeExpiry = scope.setSpikeExpiryHoursMins(desk);
                     scope.desk.edit = _.create(desk);
                 };
 
                 scope.save = function(desk) {
                     scope.message = gettext('Saving...');
+                    scope.desk.edit.content_expiry = scope.getTotalExpiryMinutes(scope.ContentExpiry);
+                    scope.desk.edit.spike_expiry = scope.getTotalExpiryMinutes(scope.SpikeExpiry);
                     var _new = desk._id ? false : true;
                     api.desks.save(scope.desk.edit, desk).then(function() {
                         if (_new) {
@@ -94,6 +106,11 @@ define([
                 var orig = null;
 
                 scope.statuses = tasks.statuses;
+
+                scope.ContentExpiry = {
+                    Hours: 0,
+                    Minutes: 0
+                };
 
                 scope.$watch('step.current', function(step, previous) {
                     if (step === 'stages') {
@@ -124,6 +141,7 @@ define([
                 };
 
                 scope.edit = function(stage) {
+                    scope.ContentExpiry = scope.setContentExpiryHoursMins(stage);
                     orig = stage;
                     scope.editStage = _.create(stage);
                     if (!scope.editStage.hasOwnProperty('_id') || scope.editStage._id === null) {
@@ -147,6 +165,7 @@ define([
                         return false;
                     }
                     scope.selected = stage;
+                    scope.ContentExpiry = scope.setContentExpiryHoursMins(stage);
                 };
 
                 scope.setStatus = function(status) {
@@ -154,6 +173,7 @@ define([
                 };
 
                 scope.save = function() {
+                    scope.editStage.content_expiry = scope.getTotalExpiryMinutes(scope.ContentExpiry);
                     if (!orig._id) {
                         _.extend(scope.editStage, {desk: scope.desk.edit._id});
                         api('stages').save({}, scope.editStage)
@@ -245,7 +265,7 @@ define([
                             case ENTER:
                                 event.preventDefault();
                                 if (getSelectedIndex() >= 0) {
-                                	scope.choose(scope.selected);
+                                    scope.choose(scope.selected);
                                 }
                                 break;
                         }
@@ -277,9 +297,9 @@ define([
                         scope.message = null;
 
                         if (scope.desk.edit && scope.desk.edit._id) {
-                        	desks.fetchUsers().then(function(result) {
-                        		scope.users = desks.users._items;
-                            	scope.deskMembers = desks.deskMembers[scope.desk.edit._id] || [];
+                            desks.fetchUsers().then(function(result) {
+                                scope.users = desks.users._items;
+                                scope.deskMembers = desks.deskMembers[scope.desk.edit._id] || [];
                                 generateSearchList();
                             });
                         } else {
