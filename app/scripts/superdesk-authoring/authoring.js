@@ -355,12 +355,13 @@
         'privileges',
         'ContentCtrl',
         '$location',
-        'referrer'
+        'referrer',
+        '$timeout'
     ];
 
     function AuthoringController($scope, superdesk, workqueue, notify, gettext,
                                  desks, item, authoring, api, session, lock, privileges,
-                                 ContentCtrl, $location, referrer) {
+                                 ContentCtrl, $location, referrer, $timeout) {
         var stopWatch = angular.noop,
             _closing;
 
@@ -502,16 +503,25 @@
         $scope.can_unlock = function() {
             return lock.can_unlock($scope.item);
         };
+        $scope.save_enabled = function() {
+            return $scope.dirty || $scope.item._autosave != null;
+        };
 
         $scope.unlock = function() {
             lock.unlock($scope.item).then(function(unlocked_item) {
-                extendItem($scope.item, unlocked_item);
                 lock.lock(unlocked_item, true).then(function(result) {
                     extendItem($scope.item, result);
-                    $scope.item.lock_user = result.lock_user;
-                    $scope.item._locked = result._locked;
-                    $scope._editable = true;
                     startWatch();
+
+                    //The current $digest cycle will mark $scope.dirty = true.
+                    //We need to postpone this code block for the next cycle.
+                    $timeout(function() {
+                        $scope.item.lock_user = result.lock_user;
+                        $scope.item._locked = result._locked;
+                        $scope._editable = true;
+                        $scope.dirty = false;
+                        $scope.item._autosave = null;
+                    });
                 });
             });
         };
