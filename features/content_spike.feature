@@ -80,4 +80,4 @@ Feature: Content Spiking
         And we unspike "item-1"
         Then we get unspiked content "item-1"
         And we get version 3
-        And we get desk content expiry
+        And we get content expiry 10

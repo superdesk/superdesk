@@ -183,7 +183,7 @@ Feature: News Items Archive
         Then we get list with 1 items
 
         When we get "archive/testid1"
-        Then we get desk content expiry
+        Then we get content expiry 10
 
     @auth
     @ticket-sd-360

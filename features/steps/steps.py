@@ -1032,9 +1032,9 @@ def get_global_content_expiry(context):
     get_desk_spike_expiry(context, context.app.config['CONTENT_EXPIRY_MINUTES'])
 
 
-@then('we get desk content expiry')
-def get_desk_content_expiry(context):
-    get_desk_spike_expiry(context, 10)
+@then('we get content expiry {minutes}')
+def get_content_expiry(context, minutes):
+    get_desk_spike_expiry(context, int(minutes))
 
 
 @then('we get desk spike expiry after "{test_minutes}"')
