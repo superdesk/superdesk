@@ -87,7 +87,7 @@ class StagesService(BaseService):
             if prev_stage.count() == 0:
                 doc['desk_order'] = 1
             else:
-                doc['desk_order'] = prev_stage[0]['desk_order'] + 1
+                doc['desk_order'] = prev_stage[0].get('desk_order', 1) + 1
 
     def on_delete(self, doc):
         if doc['default_incoming'] is True:

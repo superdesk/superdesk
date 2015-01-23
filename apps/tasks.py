@@ -28,7 +28,7 @@ from eve.utils import config
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk import get_resource_service
 
-task_statuses = ['todo', 'in-progress', 'done']
+task_statuses = ['todo', 'in_progress', 'done']
 default_status = 'todo'
 
 
@@ -108,7 +108,7 @@ class TasksService(BaseService):
     def update_times(self, doc):
         task = doc.get('task', {})
         status = task.get('status', None)
-        if status == 'in-progress':
+        if status == 'in_progress':
             task.setdefault('started_at', utcnow())
 
         if status == 'done':
@@ -128,14 +128,14 @@ class TasksService(BaseService):
         return original.get('task', {}).get('desk', '') != str(updates.get('task', {}).get('desk', ''))
 
     def __update_state(self, updates, original):
-            if self.__is_content_assigned_to_new_desk(original, updates):
-                # check if the preconditions for the action are in place
-                original_state = original[config.CONTENT_STATE]
-                if not is_workflow_state_transition_valid('move', original_state):
-                    raise InvalidStateTransitionError()
+        if self.__is_content_assigned_to_new_desk(original, updates):
+            # check if the preconditions for the action are in place
+            original_state = original[config.CONTENT_STATE]
+            if not is_workflow_state_transition_valid('move', original_state):
+                raise InvalidStateTransitionError()
 
-                updates[config.CONTENT_STATE] = 'draft' if self.__is_content_moved_from_desk(updates) else 'submitted'
-                resolve_document_version(updates, ARCHIVE, 'PATCH', original)
+            updates[config.CONTENT_STATE] = 'draft' if self.__is_content_moved_from_desk(updates) else 'submitted'
+            resolve_document_version(updates, ARCHIVE, 'PATCH', original)
 
     def update_stage(self, doc):
         task = doc.get('task', {})

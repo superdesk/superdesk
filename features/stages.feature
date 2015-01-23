@@ -24,7 +24,7 @@ Feature: Stages
         {
         "name": "show my content",
         "description": "Show content items created by the current logged user",
-        "task_status": "in-progress",
+        "task_status": "in_progress",
         "desk": "#desks._id#"
         }
         """
@@ -34,7 +34,7 @@ Feature: Stages
         {
         "name": "show my content",
         "description": "Show content items created by the current logged user",
-        "task_status": "in-progress",
+        "task_status": "in_progress",
         "desk": "#desks._id#",
         "desk_order": 2
         }
