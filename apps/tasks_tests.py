@@ -9,7 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from superdesk.tests import TestCase
-from apps.tasks import set_expiry
+from apps.archive.common import get_item_expiry
 from app import get_app
 from superdesk.utc import get_expiry_date
 
@@ -28,14 +28,14 @@ class TasksTestCase(TestCase):
         return test_settings
 
     def test_get_global_content_expiry(self):
-        calculated_minutes = set_expiry(self.app, None, None)
+        calculated_minutes = get_item_expiry(self.app, None, None)
         reference_minutes = get_expiry_date(99)
         self.assertEquals(calculated_minutes.hour, reference_minutes.hour)
         self.assertEquals(calculated_minutes.minute, reference_minutes.minute)
 
     def test_get_desk_content_expiry(self):
         desk = {"content_expiry": 50}
-        calculated_minutes = set_expiry(self.app, desk, None)
+        calculated_minutes = get_item_expiry(self.app, desk, None)
         reference_minutes = get_expiry_date(50)
         self.assertEquals(calculated_minutes.hour, reference_minutes.hour)
         self.assertEquals(calculated_minutes.minute, reference_minutes.minute)
@@ -43,7 +43,7 @@ class TasksTestCase(TestCase):
     def test_get_stage_content_expiry(self):
         desk = {"content_expiry": 50}
         stage = {"content_expiry": 10}
-        calculated_minutes = set_expiry(self.app, desk, stage)
+        calculated_minutes = get_item_expiry(self.app, desk, stage)
         reference_minutes = get_expiry_date(10)
         self.assertEquals(calculated_minutes.hour, reference_minutes.hour)
         self.assertEquals(calculated_minutes.minute, reference_minutes.minute)

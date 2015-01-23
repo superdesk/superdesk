@@ -61,3 +61,23 @@ Feature: Content Spiking
         And we unspike "item-1"
         Then we get unspiked content "item-1"
         And we get version 3
+        And we get global content expiry
+
+    @auth
+    Scenario: Unspike a desk content
+        Given empty "desks"
+        Given empty "archive"
+        Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "Sports Desk", "spike_expiry": 60, "content_expiry":10}]
+        """
+        Given "archive"
+        """
+        [{"_id": "item-1", "guid": "item-1", "_version": 1, "headline": "test", "task":{"desk":"#desks._id#", "stage" :"#desks.incoming_stage#"}}]
+        """
+        When we spike "item-1"
+        And we unspike "item-1"
+        Then we get unspiked content "item-1"
+        And we get version 3
+        And we get content expiry 10

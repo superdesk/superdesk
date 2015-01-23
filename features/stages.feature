@@ -133,6 +133,43 @@ Feature: Stages
 
 
     @auth
+    Scenario: Edit stage - modify expiry
+        Given empty "archive"
+        Given empty "tasks"
+        Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "Sports Desk"}]
+        """
+
+        When we post to "/stages"
+        """
+        {
+        "name": "update expiry",
+        "task_status": "todo",
+        "desk": "#desks._id#",
+        "content_expiry": 10
+        }
+        """
+
+        Given "archive"
+            """
+            [{"_id": "testid1", "guid": "testid1", "task": {"desk": "#desks._id#", "stage" :"#stages._id#"}}]
+            """
+
+        When we get "archive/testid1"
+        Then we get content expiry 10
+
+        When we patch "/stages/#stages._id#"
+        """
+        {"content_expiry":20 }
+        """
+
+        When we get "archive/testid1"
+        Then we get content expiry 20
+
+
+    @auth
     Scenario: Get tasks for stage
         Given empty "archive"
         Given empty "tasks"

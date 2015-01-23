@@ -15,7 +15,9 @@ from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError
 from eve.utils import ParsedRequest
 from apps.tasks import task_statuses
-
+from superdesk.utc import get_expiry_date
+from apps.common.models.utils import get_model
+from apps.item_lock.models.item import ItemModel
 
 logger = logging.getLogger(__name__)
 
@@ -100,6 +102,15 @@ class StagesService(BaseService):
             if items.count() > 0:
                 # cannot delete
                 raise SuperdeskApiError.forbiddenError(message='Only empty stages can be deleted.')
+
+    def on_update(self, updates, original):
+        super().on_update(updates, original)
+        if updates.get('content_expiry', None):
+            docs = self.get_stage_documents(str(original['_id']))
+            for doc in docs:
+                expiry = get_expiry_date(updates['content_expiry'], doc['versioncreated'])
+                item_model = get_model(ItemModel)
+                item_model.update({'_id': doc['_id']}, {'expiry': expiry})
 
     def get_stage_documents(self, stage_id):
         query_filter = superdesk.json.dumps({'term': {'task.stage': stage_id}})

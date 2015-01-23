@@ -34,5 +34,11 @@ def get_date(date_or_string):
         return arrow.get(date_or_string).datetime
 
 
-def get_expiry_date(minutes):
-    return utcnow() + datetime.timedelta(minutes=minutes)
+def get_expiry_date(minutes, offset=None):
+    if offset:
+        if type(offset) is not datetime:
+            return offset + datetime.timedelta(minutes=minutes)
+        else:
+            raise TypeError('offset must be a datetime.date, not a %s' % type(offset))
+    else:
+        return utcnow() + datetime.timedelta(minutes=minutes)

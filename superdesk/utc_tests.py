@@ -13,6 +13,8 @@ from datetime import datetime, timedelta
 from superdesk.tests import TestCase
 from superdesk.utc import get_date, utcnow, get_expiry_date
 from pytz import utc, timezone # flake8: noqa
+from nose.tools import assert_raises
+
 
 
 class UTCTestCase(TestCase):
@@ -43,3 +45,19 @@ class UTCTestCase(TestCase):
         self.assertEqual(date1.hour, date2.hour)
         self.assertEqual(date1.minute, date2.minute)
         self.assertEqual(date1.second, date2.second)
+
+    def test_get_expiry_date_with_offset(self):
+        offset = utcnow() + timedelta(minutes=10)
+        date1 = offset + timedelta(minutes=5)
+        date2 = get_expiry_date(minutes=5, offset=offset)
+        self.assertEqual(date1.year, date2.year)
+        self.assertEqual(date1.month, date2.month)
+        self.assertEqual(date1.day, date2.day)
+        self.assertEqual(date1.hour, date2.hour)
+        self.assertEqual(date1.minute, date2.minute)
+        self.assertEqual(date1.second, date2.second)
+
+    def test_get_expiry_date_bad_offset_raises_error(self):
+        with assert_raises(TypeError) as error_context:
+            offset = '01.02.2013 13:30'
+            get_expiry_date(minutes=5, offset=offset)
