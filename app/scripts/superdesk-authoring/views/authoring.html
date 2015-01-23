@@ -15,7 +15,7 @@
 
     	    <button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()"
                 ng-show="_editable"
-                ng-disabled="!dirty && !item._autosave"
+                ng-disabled="!save_enabled()"
                 translate>Save</button>
 
             <div class="navbtn dropdown strict pull-left" dropdown>
