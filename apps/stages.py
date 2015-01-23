@@ -54,6 +54,10 @@ class StagesResource(Resource):
         'content_expiry': {
             'type': 'integer'
         },
+        'is_visible': {
+            'type': 'boolean',
+            'default': True
+        },
         'outgoing': {
             'type': 'list',
             'schema': {
@@ -102,3 +106,18 @@ class StagesService(BaseService):
         req = ParsedRequest()
         req.args = {'filter': query_filter}
         return superdesk.get_resource_service('archive').get(req, None)
+
+    def get_stages_by_visibility(self, is_visible=False, user_desk_ids=[]):
+        """
+        returns a list of stages for a user.
+        """
+        if is_visible:
+            lookup = {'$or': [{'is_visible': True}]}
+            if user_desk_ids:
+                lookup['$or'].append({'desk': {'$in': user_desk_ids}})
+        else:
+            lookup = {'is_visible': False}
+            if user_desk_ids:
+                lookup['desk'] = {'$nin': user_desk_ids}
+
+        return list(self.get(req=None, lookup=lookup))

@@ -82,6 +82,12 @@ def is_sensitive_update(updates):
     return 'role' in updates or 'privileges' in updates or 'user_type' in updates
 
 
+def get_invisible_stages(user):
+    user_desks = get_resource_service('user_desks').get(req=None, lookup={'user_id': user['_id']})
+    user_desk_ids = [d['_id'] for d in user_desks]
+    return get_resource_service('stages').get_stages_by_visibility(False, user_desk_ids)
+
+
 class UsersService(BaseService):
 
     def on_create(self, docs):
@@ -166,6 +172,13 @@ class UsersService(BaseService):
 
     def get_users_by_user_type(self, user_type='user'):
         return list(self.get(req=None, lookup={'user_type': user_type}))
+
+    def get_invisible_stages(self, user_id):
+        user = self.find_one(_id=user_id, req=None)
+        return get_invisible_stages(user) if user and user.get('_id') else []
+
+    def get_invisible_stages_ids(self, user_id):
+        return [str(stage['_id']) for stage in self.get_invisible_stages(user_id)]
 
 
 class DBUsersService(UsersService):
