@@ -263,7 +263,6 @@ define([
             };
 
             angular.forEach(apis, function(config, apiName) {
-                console.warn('deprecated api endpoint', apiName);
                 var service = config.service || _.noop;
                 service.prototype = new endpoints[config.type](apiName, config.backend);
                 api[apiName] = $injector.instantiate(service, {resource: service.prototype});

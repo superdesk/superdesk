@@ -140,11 +140,10 @@ describe('authoring', function() {
 
         var confirmDefer;
 
-        beforeEach(inject(function(confirm, lock, workqueue, $q) {
+        beforeEach(inject(function(confirm, lock, $q) {
             confirmDefer = $q.defer();
             spyOn(confirm, 'confirm').and.returnValue(confirmDefer.promise);
             spyOn(lock, 'unlock').and.returnValue($q.when());
-            spyOn(workqueue, 'remove');
         }));
 
         xit('can open an item', function() {
@@ -160,14 +159,13 @@ describe('authoring', function() {
             expect(authoring.isEditable({lock_user: session.identity._id, lock_session: session.sessionId})).toBe(true);
         }));
 
-        it('can close a read-only item', inject(function(authoring, confirm, lock, workqueue, $rootScope) {
+        it('can close a read-only item', inject(function(authoring, confirm, lock, $rootScope) {
             var done = jasmine.createSpy('done') ;
             authoring.close({}).then(done);
             $rootScope.$digest();
 
             expect(confirm.confirm).not.toHaveBeenCalled();
             expect(lock.unlock).not.toHaveBeenCalled();
-            expect(workqueue.remove).toHaveBeenCalled();
             expect(done).toHaveBeenCalled();
         }));
 
@@ -179,14 +177,13 @@ describe('authoring', function() {
             expect(lock.unlock).toHaveBeenCalled();
         }));
 
-        it('confirms if an item is dirty and saves', inject(function(authoring, confirm, lock, workqueue, $q, $rootScope) {
+        it('confirms if an item is dirty and saves', inject(function(authoring, confirm, lock, $q, $rootScope) {
             var diff = {test: 1};
             authoring.close(item, diff, true);
             $rootScope.$digest();
 
             expect(confirm.confirm).toHaveBeenCalled();
             expect(lock.unlock).not.toHaveBeenCalled();
-            expect(workqueue.remove).not.toHaveBeenCalled();
 
             spyOn(authoring, 'save').and.returnValue($q.when());
             confirmDefer.resolve();
@@ -194,7 +191,6 @@ describe('authoring', function() {
 
             expect(authoring.save).toHaveBeenCalledWith(item, diff);
             expect(lock.unlock).toHaveBeenCalled();
-            expect(workqueue.remove).toHaveBeenCalled();
         }));
 
         it('can unlock an item', inject(function(authoring, session, confirm, autosave) {

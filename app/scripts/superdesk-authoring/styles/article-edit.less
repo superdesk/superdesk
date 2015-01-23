@@ -136,23 +136,24 @@
 			font-size: 13px;
 			.text-light();
 			max-width: 250px;
-			text-overflow: ellipsis;
-			white-space: nowrap;
 			border-right: 1px solid #333;
-			overflow: hidden;
 			position: relative;
 			line-height: 30px;
 			.close {
+				color: #fff;
+				border: none;
+				background: none;
 				position: absolute;
 				right: 5px;
 				top: 5px;
+				padding: 0;
 			}
 			a {
 				display: block;
-			}
-			&:hover {
-				cursor: pointer;
-				a {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				&:hover {
 					color: #fff;
 				}
 			}
