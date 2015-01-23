@@ -262,8 +262,8 @@
         superdesk
         .activity('create.package', {
             label: gettext('Create package'),
-            controller: ['data', '$location', 'packagesService', 'superdesk', 'workqueue',
-                function(data, $location, packagesService, superdesk, workqueue) {
+            controller: ['data', 'packagesService', 'superdesk', 'workqueue',
+                function(data, packagesService, superdesk, workqueue) {
                     if (data) {
                         packagesService.createPackageFromItems(data.items).then(
                             function(new_package) {
@@ -294,7 +294,7 @@
             label: gettext('Edit package'),
             priority: 10,
             icon: 'pencil',
-            controller: ['data', '$location', 'superdesk', 'workqueue', function(data, $location, superdesk, workqueue) {
+            controller: ['data', 'superdesk', 'workqueue', function(data, superdesk, workqueue) {
                 workqueue.add(data.item);
                 superdesk.intent('author', 'package', data.item);
             }],
@@ -304,7 +304,22 @@
             condition: function(item) {
                 return item.type === 'composite';
             }
+        })
+        .activity('package.item', {
+            label: gettext('Package item'),
+            priority: 5,
+            icon: 'archive',
+            controller: ['data', 'packagesService', 'superdesk', function(data, packagesService, superdesk) {
+                packagesService.createPackageFromItems([data.item]).then(
+                        function(new_package) {
+                        superdesk.intent('author', 'package', new_package);
+                    });
+            }],
+            filters: [
+                {action: 'list', type: 'archive'}
+            ]
         });
+
     }])
     .config(['apiProvider', function(apiProvider) {
         apiProvider.api('packages', {
