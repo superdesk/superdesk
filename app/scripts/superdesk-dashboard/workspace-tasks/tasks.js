@@ -7,7 +7,7 @@ function TasksService(desks, $rootScope, api) {
 
     this.statuses =  [
         {'_id': 'todo', 'name': 'To Do'},
-        {'_id': 'in-progress', 'name': 'In Progress'},
+        {'_id': 'in_progress', 'name': 'In Progress'},
         {'_id': 'done', 'name': 'Done'}
     ];
 
