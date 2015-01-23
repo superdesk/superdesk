@@ -28,6 +28,10 @@ define([
                 });
 
                 scope.run = function runActivity(activity, e) {
+                    if (scope.$root.link(activity._id, scope.item)) {
+                        return; // don't try to run it, just let it change url
+                    }
+
                     e.stopPropagation();
                     activityService.start(activity, {data: {item: scope.item}})
                         .then(function() {

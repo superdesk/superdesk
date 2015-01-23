@@ -292,6 +292,7 @@
         })
         .activity('edit.package', {
             label: gettext('Edit package'),
+            href: '/packaging/:_id',
             priority: 10,
             icon: 'pencil',
             controller: ['data', 'superdesk', 'workqueue', function(data, superdesk, workqueue) {

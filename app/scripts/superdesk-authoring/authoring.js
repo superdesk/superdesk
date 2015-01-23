@@ -813,15 +813,14 @@
 	            })
 	            .activity('edit.text', {
 	            	label: gettext('Edit item'),
+                    href: '/authoring/:_id',
                     priority: 10,
 	            	icon: 'pencil',
 	            	controller: ['data', '$location', 'workqueue', 'superdesk', function(data, $location, workqueue, superdesk) {
 	            		workqueue.add(data.item);
                         superdesk.intent('author', 'article', data.item);
 	                }],
-	            	filters: [
-	                    {action: 'list', type: 'archive'}
-	                ],
+                    filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
                         return item.type !== 'composite';
                     }

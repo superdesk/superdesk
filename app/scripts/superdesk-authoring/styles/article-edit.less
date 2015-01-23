@@ -147,23 +147,27 @@
 				right: 5px;
 				top: 5px;
 			}
+			a {
+				display: block;
+			}
 			&:hover {
 				cursor: pointer;
-				color: #fff;
-				.close {
-
+				a {
+					color: #fff;
 				}
 			}
 			&:active {
 				background: #444;
 			}
 			&.active {
-				color: #fff;
 				background: darken(@sd-blue,10%) !important;
 				margin-top: -1px;
 				padding-top: 1px;
 				&:hover {
 					cursor: default;
+				}
+				a {
+					color: #fff;
 				}
 			}
 			

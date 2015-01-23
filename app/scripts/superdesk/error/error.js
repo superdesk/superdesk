@@ -4,26 +4,21 @@ define([
 ], function(angular, Raven) {
     'use strict';
 
-    var app = angular.module('superdesk.error', []),
-        ravenIsActive = false;
+    var app = angular.module('superdesk.error', []);
 
     app.config(['config', '$httpProvider', function(config, $httpProvider) {
         if (config.raven && config.raven.dsn) {
             Raven.config(config.raven.dsn, {logger: 'javascript-client'}).install();
             $httpProvider.interceptors.push(ErrorHttpInterceptorFactory);
-            ravenIsActive = true;
+
+            app.factory('$exceptionHandler', function () {
+                return function errorCatcherHandler(exception, cause) {
+                    Raven.captureException(exception, {tags: {component: 'ui'}, extra: exception});
+                    throw exception;
+                };
+            });
         }
     }]);
-
-    app.factory('$exceptionHandler', function () {
-        return function errorCatcherHandler(exception, cause) {
-            if (ravenIsActive) {
-                Raven.captureException(exception, {tags: {component: 'ui'}, extra: exception});
-            }
-
-            throw exception;
-        };
-    });
 
     ErrorHttpInterceptorFactory.$inject = ['$q'];
     function ErrorHttpInterceptorFactory($q) {
