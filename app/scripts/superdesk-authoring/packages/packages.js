@@ -2,9 +2,27 @@
 
     'use strict';
 
-    PackagesCtrl.$inject = ['$scope', 'superdesk'];
-    function PackagesCtrl($scope, superdesk) {
+    PackagesCtrl.$inject = ['$scope', 'superdesk', 'api', 'search'];
+    function PackagesCtrl($scope, superdesk, api, search) {
+        $scope.contentItems = [];
 
+        function fetchPackages() {
+            var query = search.query(null);
+            var filter = [];
+            _.forEach($scope.item.linked_in_packages, function(packageRef) {
+                filter.push(packageRef['package']);
+            });
+
+            query.size(25).filter({'terms': {'guid': filter}});
+            api.archive.query(query.getCriteria(true))
+            .then(function(result) {
+                $scope.contentItems = result._items;
+            });
+        }
+
+        if ($scope.item && $scope.item.linked_in_packages && $scope.item.linked_in_packages.length > 0) {
+            fetchPackages();
+        }
     }
 
     return angular.module('superdesk.authoring.packages', ['superdesk.authoring.widgets'])

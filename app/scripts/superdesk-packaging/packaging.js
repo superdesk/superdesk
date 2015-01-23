@@ -335,7 +335,7 @@
                 template: 'scripts/superdesk-packaging/views/search.html',
                 side: 'left',
                 extended: true,
-                display: {authoring: true, packages: true}
+                display: {authoring: false, packages: true}
             });
     }])
     .controller('SearchWidgetCtrl', SearchWidgetCtrl);

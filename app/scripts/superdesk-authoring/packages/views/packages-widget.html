@@ -1,2 +1,21 @@
 <div ng-controller="PackagesWidgetCtrl">
+    <div class="packages-content">
+        <ul>
+            <li ng-repeat="pitem in contentItems" 
+                ng-if="pitem._id !== item._id">
+                <div class="package-preview">
+                    <i class="filetype-icon-composite"></i>
+                    <p><span class="keyword" ng-if="pitem.slugline">{{ pitem.slugline }}</span></p>
+                    <div class="title" ng-show="pitem.headline">
+                        <a ng-href="#/packaging/{{ pitem.guid }}" title="{{ pitem.headline }}">
+                            <div ng-show="pitem.headline">
+                                {{ pitem.headline || pitem.description | uppercase}}
+                            </div>
+                            <div ng-hide="pitem.headline" translate>Blank headline received</div>
+                        </a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
 </div>
