@@ -12,6 +12,7 @@ import bcrypt
 from apps.auth.service import AuthService
 from superdesk import get_resource_service
 from superdesk.errors import CredentialsAuthError
+from flask import g, current_app as app
 
 
 class DbAuthService(AuthService):
@@ -35,3 +36,18 @@ class DbAuthService(AuthService):
             raise CredentialsAuthError(credentials)
 
         return user
+
+    def on_deleted(self, doc):
+        '''
+        :param doc: A deleted auth doc AKA a session
+        :return:
+        '''
+        # notify that the session has ended
+        app.on_session_end(doc['user'], doc['_id'])
+
+    def is_authorized(self, **kwargs):
+        if kwargs.get("user_id") is None:
+            return False
+
+        auth = self.find_one(_id=kwargs.get("user_id"), req=None)
+        return str(g.auth['_id']) == str(auth.get("_id"))

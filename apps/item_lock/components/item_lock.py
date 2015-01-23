@@ -19,7 +19,6 @@ from apps.common.models.utils import get_model
 from apps.users.services import current_user_has_privilege
 import superdesk
 
-
 LOCK_USER = 'lock_user'
 LOCK_SESSION = 'lock_session'
 STATUS = '_status'
@@ -29,6 +28,7 @@ TASK = 'task'
 class ItemLock(BaseComponent):
     def __init__(self, app):
         self.app = app
+        self.app.on_session_end += self.on_session_end
 
     @classmethod
     def name(cls):
@@ -88,6 +88,13 @@ class ItemLock(BaseComponent):
         item = item_model.find_one(item_filter)
         return item
 
+    def unlock_session(self, user_id, session_id):
+        item_model = get_model(ItemModel)
+        items = item_model.find({'lock_session': session_id})
+
+        for item in items:
+            self.unlock({'_id': item['_id']}, user_id, session_id, None)
+
     def can_lock(self, item, user_id, session_id):
         """
         Function checks whether user can lock the item or not. If not then raises exception.
@@ -120,3 +127,6 @@ class ItemLock(BaseComponent):
             return False, error_message
 
         return True, ''
+
+    def on_session_end(self, user_id, session_id):
+        self.unlock_session(user_id, session_id)
