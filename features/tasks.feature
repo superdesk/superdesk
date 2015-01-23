@@ -33,7 +33,7 @@ Feature: Tasks
     Scenario: Update task description
         Given "tasks"
         """
-        [{"slugline": "testtask", "task": {"status": "in-progress"}}]
+        [{"slugline": "testtask", "task": {"status": "in_progress"}}]
         """
         When we patch given
         """
@@ -49,7 +49,7 @@ Feature: Tasks
     Scenario: Update multiple task description
         Given "tasks"
         """
-        [{"slugline": "testtask", "task": {"status": "in-progress"}}]
+        [{"slugline": "testtask", "task": {"status": "in_progress"}}]
         """
         When we patch given
         """
