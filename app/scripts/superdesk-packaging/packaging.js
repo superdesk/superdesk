@@ -308,7 +308,7 @@
         .activity('package.item', {
             label: gettext('Package item'),
             priority: 5,
-            icon: 'archive',
+            icon: 'package-plus',
             controller: ['data', 'packagesService', 'superdesk', function(data, packagesService, superdesk) {
                 packagesService.createPackageFromItems([data.item]).then(
                         function(new_package) {
