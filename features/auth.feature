@@ -163,10 +163,10 @@ Feature: Authentication
         When we delete latest
         Then we get response code 204
 
-    Scenario: user logs in locks content and logs out
+    Scenario: user logs in locks content and logs out logs in again and the content is no longer locked
         Given "users"
             """
-            [{"username": "foo", "password": "bar", "email": "foo@bar.org", "is_active": true}]
+            [{"username": "foo", "password": "bar", "email": "foo@bar.org", "is_active": true, "user_type": "administrator"}]
             """
         When we post to auth
         """
@@ -185,3 +185,11 @@ Feature: Authentication
         {}
         """
         Then we get response code 204
+        When we post to auth
+        """
+        {"username": "foo", "password": "bar"}
+        """
+        When we get "/archive"
+        Then item "item-1" is unlocked
+
+
