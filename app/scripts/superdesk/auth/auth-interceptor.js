@@ -1,4 +1,4 @@
-define([], function() {
+define(['lodash'], function(_) {
     'use strict';
 
     /**
@@ -26,8 +26,12 @@ define([], function() {
                 return response;
             },
             responseError: function(response) {
+
                 if (response.status === 401) {
-                    return handleAuthExpired(response);
+
+                    if (!(((response.data || {})._issues || {}).credentials)) {
+                        return handleAuthExpired(response);
+                    }
                 }
 
                 return $q.reject(response);

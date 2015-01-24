@@ -23,7 +23,7 @@ define([], function() {
                         }, function(rejection) {
                             scope.isLoading = false;
                             scope.loginError = rejection.status;
-                            if (scope.loginError === 400) {
+                            if (scope.loginError === 401) {
                                 scope.password = null;
                             }
                         });
