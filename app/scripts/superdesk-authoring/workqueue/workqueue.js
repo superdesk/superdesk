@@ -55,10 +55,15 @@ function WorkqueueCtrl($scope, $route, workqueue, superdesk, lock) {
     $scope.workqueue = workqueue;
     updateWorkqueue();
 
+    var activeRoutes = {
+        authoring: 1,
+        packaging: 1
+    };
+
     function updateWorkqueue() {
         workqueue.fetch().then(function() {
             $scope.active = null;
-            if ($route.current._id === 'authoring') {
+            if (activeRoutes[$route.current._id]) {
                 $scope.active = _.find(workqueue.items, {_id: $route.current.params._id});
             }
         });
@@ -70,7 +75,7 @@ function WorkqueueCtrl($scope, $route, workqueue, superdesk, lock) {
 
     $scope.closeItem = function(item) {
         if ($scope.active && $scope.active._id === item._id) {
-            $scope.close();
+            $scope.close(item);
         } else {
             lock.unlock(item).then(updateWorkqueue);
         }
@@ -79,7 +84,6 @@ function WorkqueueCtrl($scope, $route, workqueue, superdesk, lock) {
     $scope.$on('item:lock', updateWorkqueue);
     $scope.$on('item:unlock', updateWorkqueue);
     $scope.$on('media_archive', function(e, data) {
-        console.log(data);
         workqueue.updateItem(data.item);
     });
 }

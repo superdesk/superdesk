@@ -135,8 +135,8 @@
         };
     }
 
-    PackagingCtrl.$inject = ['$scope', 'packagesService', 'superdesk', '$route', 'api', 'search', 'ContentCtrl'];
-    function PackagingCtrl($scope, packagesService, superdesk, $route, api, search, ContentCtrl) {
+    PackagingCtrl.$inject = ['$scope', 'packagesService', 'superdesk', '$route', 'api', 'search', 'lock', 'ContentCtrl'];
+    function PackagingCtrl($scope, packagesService, superdesk, $route, api, search, lock, ContentCtrl) {
 
         $scope.widget_target = 'packages';
         $scope.content = new ContentCtrl($scope);
@@ -145,11 +145,16 @@
             packagesService.fetch($route.current.params._id).
                 then(function(fetched_package) {
                 $scope.item = fetched_package;
+                lock.lock($scope.item);
             });
         }
 
         $scope.remove = function removeItem(obj) {
             packagesService.removeItem(obj.item);
+        };
+
+        $scope.close = function closePackage() {
+            lock.unlock($scope.item);
         };
 
         fetchItem();
