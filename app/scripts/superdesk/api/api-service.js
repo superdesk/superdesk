@@ -115,7 +115,7 @@ define([
                 return http({
                     method: item._links ? 'PATCH' : 'POST',
                     url: item._links ? urls.item(item._links.self.href) : this.url(),
-                    data: diff ? clean(diff) : clean(item, !!!item._links),
+                    data: diff ? clean(diff, !item._links) : clean(item, !item._links),
                     params: params,
                     headers: getHeaders(item)
                 }).then(function(data) {

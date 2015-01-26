@@ -234,6 +234,17 @@ define([
                 },
 
                 /**
+                 * Get a link for given activity
+                 *
+                 * @param {string} activity
+                 * @param {Object} data
+                 * @returns {string}
+                 */
+                link: function getSuperdeskLink(activity, data) {
+                    return activityService.getLink(this.activity(activity), data);
+                },
+
+                /**
                  * Get activities based on menu category
                  *
                  * @param {string} category
@@ -279,10 +290,25 @@ define([
          * @returns {string}
          */
         function getPath(activity, locals) {
-            return activity.when.replace(/:([_a-zA-Z0-9]+)/, function(match, key) {
-                return locals[key] ? locals[key] : match;
-            });
+            if (activity.href[0] === '/') { // trigger route
+                var matchAll = true,
+                    path = activity.href.replace(/:([_a-zA-Z0-9]+)/, function(match, key) {
+                        matchAll = matchAll && locals[key];
+                        return locals[key] ? locals[key] : match;
+                    });
+                return matchAll ? path : null;
+            }
         }
+
+        /**
+         * Get URL for given activity
+         *
+         * @param {Object} activity
+         * @param {Object} locals
+         * @returns {string}
+         */
+        this.getLink = getPath;
+
         /**
          * Start given activity
          *
@@ -292,8 +318,9 @@ define([
          */
         this.start = function startActivity(activity, locals) {
             function execute(activity, locals) {
-                if (activity.when[0] === '/') { // trigger route
-                    $location.path(getPath(activity, locals.data));
+                var path = getPath(activity, locals && locals.data);
+                if (path) { // trigger route
+                    $location.path(path);
                     return $q.when(locals);
                 }
 
@@ -329,6 +356,11 @@ define([
 
         $rootScope.intent = function() {
             return superdesk.intent.apply(superdesk, arguments);
+        };
+
+        $rootScope.link = function() {
+            var path = superdesk.link.apply(superdesk, arguments);
+            return path ? '#' + path : null;
         };
     }]);
 

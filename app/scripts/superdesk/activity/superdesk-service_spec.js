@@ -7,25 +7,28 @@
         var testWidget = {testData: 123};
         var testPane = {testData: 123};
         var testActivity = {
-            label: 'test',
-            controller: function() {
-                return 'test';
-            },
-            filters: [intent],
-            category: 'superdesk.menu.main'
-        };
+                label: 'test',
+                controller: function() {
+                    return 'test';
+                },
+                filters: [intent],
+                category: 'superdesk.menu.main'
+            };
 
         angular.module('superdesk.activity.test', ['superdesk.activity'])
             .config(function(superdeskProvider) {
                 provider = superdeskProvider;
                 provider.widget('testWidget', testWidget);
                 provider.pane('testPane', testPane);
+
                 provider.activity('testActivity', testActivity);
+
                 provider.activity('missingFeatureActivity', {
                     category: superdeskProvider.MENU_MAIN,
                     features: {missing: 1},
                     filters: [{action: 'test', type: 'features'}]
                 });
+
                 provider.activity('missingPrivilegeActivity', {
                     category: superdeskProvider.MENU_MAIN,
                     privileges: {missing: 1},
@@ -117,6 +120,12 @@
 
             $rootScope.$digest();
             expect(menu.length).toBe(1);
+        }));
+
+        it('can get link for given activity', inject(function(activityService) {
+            var routeActivity = {href: '/test/:_id'};
+            expect(activityService.getLink(routeActivity, {})).toBe(null);
+            expect(activityService.getLink(routeActivity, {_id: 1})).toBe('/test/1');
         }));
     });
 })();
