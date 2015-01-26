@@ -49,9 +49,8 @@ Feature: Authentication
         """
         Then we get error 401
         """
-        {"_message": "The provided old password is not correct.", "_status": "ERR"}
+        {"_issues": {"credentials": 1}}
         """
-
 
 	Scenario: Reset password existing user
         Given "users"
