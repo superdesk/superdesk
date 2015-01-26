@@ -447,5 +447,15 @@ define([
             api.update('users', {_id: 1}, data);
             $httpBackend.flush();
         }));
+
+        it('can clean diff data for update', inject(function(api, $httpBackend) {
+            var user = {_links: {self: {href: USER_PATH}}, username: 'foo'};
+            var diff = Object.create(user);
+            diff.last_name = false;
+
+            $httpBackend.expectPATCH(USER_URL, {last_name: false}).respond(200, {});
+            api.save('users', user, diff);
+            $httpBackend.flush();
+        }));
     });
 });

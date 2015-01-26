@@ -52,11 +52,22 @@ define([
              * Remove keys prefixed with '_'
              */
             function clean(data, keepId) {
-                var fields = ['_updated', '_created', '_etag', '_links'];
-                if (!keepId) {
-                    fields.push('_id');
-                }
-                return _.omit(data, fields);
+                var blacklist = {
+                        _updated: 1,
+                        _created: 1,
+                        _etag: 1,
+                        _links: 1,
+                        _id: keepId ? 0 : 1
+                    },
+                    cleanData = {};
+
+                angular.forEach(data, function(val, key) {
+                    if (!blacklist[key]) {
+                        cleanData[key] = val;
+                    }
+                });
+
+                return cleanData;
             }
 
             /**
@@ -251,6 +262,7 @@ define([
             };
 
             angular.forEach(apis, function(config, apiName) {
+                console.warn('deprecated api endpoint', apiName);
                 var service = config.service || _.noop;
                 service.prototype = new endpoints[config.type](apiName, config.backend);
                 api[apiName] = $injector.instantiate(service, {resource: service.prototype});
