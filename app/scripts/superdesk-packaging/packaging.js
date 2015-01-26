@@ -284,6 +284,7 @@
         })
         .activity('packaging', {
             when: '/packaging/:_id',
+            href: '/packaging/:_id',
             label: gettext('Packaging'),
             templateUrl: 'scripts/superdesk-packaging/views/packaging.html',
             topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',

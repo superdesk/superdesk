@@ -809,6 +809,7 @@
             superdesk
                 .activity('authoring', {
                     category: '/authoring',
+                    href: '/authoring/:_id',
                     when: '/authoring/:_id',
                 	label: gettext('Authoring'),
 	                templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
