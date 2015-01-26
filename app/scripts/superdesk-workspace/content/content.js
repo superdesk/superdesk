@@ -46,6 +46,10 @@ function ContentCtrlFactory(api, superdesk) {
                 superdesk.intent('create', 'package');
             }
         };
+
+        this.createHighlight = function createHighlight(highlight_config) {
+            superdesk.intent('create', 'highlight', highlight_config);
+        };
     };
 }
 
