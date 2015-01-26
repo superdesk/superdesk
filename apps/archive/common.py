@@ -115,8 +115,8 @@ def on_create_media_archive():
     push_notification('media_archive', created=1)
 
 
-def on_update_media_archive():
-    push_notification('media_archive', updated=1)
+def on_update_media_archive(item=None):
+    push_notification('media_archive', updated=1, item=item)
 
 
 def on_delete_media_archive():

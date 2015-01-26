@@ -180,7 +180,7 @@ class ArchiveService(BaseService):
     def on_updated(self, updates, original):
         get_component(ItemAutosave).clear(original['_id'])
         get_component(LegalArchiveProxy).update(original, updates)
-        on_update_media_archive()
+        on_update_media_archive(item=original['_id'])
 
         if '_version' in updates:
             updated = copy(original)
@@ -205,7 +205,7 @@ class ArchiveService(BaseService):
 
     def on_replaced(self, document, original):
         get_component(ItemAutosave).clear(original['_id'])
-        on_update_media_archive()
+        on_update_media_archive(item=original['_id'])
 
     def on_delete(self, doc):
         """Delete associated binary files."""
