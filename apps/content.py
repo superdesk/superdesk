@@ -244,6 +244,7 @@ metadata_schema = {
             }
         }
     },
+    'highlight': Resource.rel('highlights'),
 
     # Task and Lock Details
     'task_id': {
