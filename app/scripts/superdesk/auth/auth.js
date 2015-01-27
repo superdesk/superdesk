@@ -79,11 +79,17 @@ define([
                     rel: 'reset_user_password'
                 }
             });
+            apiProvider.api('auth', {
+                type: 'http',
+                backend: {
+                    rel: 'auth'
+                }
+            });
         }])
 
         // watch session token, identity
-        .run(['$rootScope', '$route', '$location', '$http', '$window', 'session',
-        function($rootScope, $route, $location, $http, $window, session) {
+        .run(['$rootScope', '$route', '$location', '$http', '$window', 'session', 'api',
+        function($rootScope, $route, $location, $http, $window, session, api) {
 
             $rootScope.logout = function() {
 
@@ -92,12 +98,9 @@ define([
                     $window.location.replace('/'); // reset page for new user
                 }
 
-                var sessionHref = session.getSessionHref();
-                if (sessionHref) {
-                    $http['delete'](sessionHref).then(replace, replace);
-                } else {
-                    replace();
-                }
+                api.auth.getById(session.sessionId).then(function (sessionData) {
+                    api.auth.remove(sessionData).then(replace, replace);
+                });
             };
 
             // populate current user
