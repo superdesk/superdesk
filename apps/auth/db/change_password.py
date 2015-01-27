@@ -12,7 +12,7 @@ import logging
 import superdesk
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from superdesk.errors import SuperdeskApiError
+from superdesk.errors import CredentialsAuthError
 from superdesk import get_resource_service
 
 
@@ -44,10 +44,11 @@ class ChangePasswordService(BaseService):
     def create(self, docs, **kwargs):
         for doc in docs:
             username = doc['username']
+            credentials = {'username': username, 'password': doc['old_password']}
             try:
-                get_resource_service('auth').authenticate({'username': username, 'password': doc['old_password']})
-            except Exception:
-                raise SuperdeskApiError.unauthorizedError('The provided old password is not correct.')
+                get_resource_service('auth').authenticate(credentials)
+            except Exception as e:
+                raise CredentialsAuthError(credentials=credentials, error=e)
 
             user = superdesk.get_resource_service('users').find_one(req=None, username=username)
             superdesk.get_resource_service('users').update_password(user['_id'], doc['new_password'])
