@@ -124,7 +124,7 @@ define(['lodash'], function(_) {
                 item._etag = diff._etag;
             }
 
-            var keys = ['_links', '_id', '_created', '_updated', '_etag'];
+            var keys = ['_status', '_links', '_id', '_created', '_updated', '_etag'];
             diff = _.omit(diff == null ? item: diff, keys);
 
             var url = item._links.self.href;
