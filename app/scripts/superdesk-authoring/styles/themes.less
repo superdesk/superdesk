@@ -4,7 +4,7 @@
 @import 'mixins.less';
 @import 'variables.less';
 
-@main-article-padding : 42px 60px @bottom-view-padding+120;
+@main-article-padding : 60px 60px @bottom-view-padding+120;
 
 // Themes color config
 // dark
@@ -37,11 +37,26 @@
 	margin:0 auto;
 	min-height:100%;
 	.box-sizing(border-box);
-	max-width: 960px;
+	max-width: 900px;
+
+	.proofread-toggle {
+		position: absolute;
+		top: 12px;
+		right: 46px;
+		color: #666;
+		height:23px;
+		padding: 4px 12px;
+		font-size: 11px;
+		letter-spacing: 0.06em;
+
+		.button-lable {
+			color:#999;
+		}
+	}
 
 	.theme-select {
 		position: absolute;
-		top: 5px;
+		top: 10px;
 		right: 10px;
 		.dropdown-menu {
 			min-width: 200px;
