@@ -106,6 +106,7 @@ define([
                         scope.lastPage = scope.limit ? Math.ceil(scope.total / scope.limit) : scope.page;
                         scope.from = (scope.page - 1) * scope.limit + 1;
                         scope.to = Math.min(scope.total, scope.from + scope.limit - 1);
+                        window.scrollTo(0, 0);
                     }
                 });
 
