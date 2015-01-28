@@ -55,6 +55,7 @@
             if (_.isObject(defaults)) {
                 return _.merge(item, defaults);
             }
+            return item;
         }
 
         this.createPackageFromItems = function createPackageFromItems(items, defaults) {
@@ -275,18 +276,16 @@
         superdesk
         .activity('create.package', {
             label: gettext('Create package'),
-            controller: ['data', 'packagesService', 'superdesk', 'workqueue',
-                function(data, packagesService, superdesk, workqueue) {
+            controller: ['data', 'packagesService', 'superdesk',
+                function(data, packagesService, superdesk) {
                     if (data && data.items) {
                         packagesService.createPackageFromItems(data.items, data.defaults).then(
                             function(new_package) {
-                            workqueue.add(new_package);
                             superdesk.intent('author', 'package', new_package);
                         });
                     } else {
                         packagesService.createEmptyPackage(data.defaults).then(
                             function(new_package) {
-                            workqueue.add(new_package);
                             superdesk.intent('author', 'package', new_package);
                         });
                     }
@@ -309,8 +308,7 @@
             href: '/packaging/:_id',
             priority: 10,
             icon: 'pencil',
-            controller: ['data', 'superdesk', 'workqueue', function(data, superdesk, workqueue) {
-                workqueue.add(data.item);
+            controller: ['data', 'superdesk', function(data, superdesk) {
                 superdesk.intent('author', 'package', data.item);
             }],
             filters: [
