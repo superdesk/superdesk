@@ -6,6 +6,7 @@ node_modules
 dist
 *.swp
 *.swo
+*.swn
 .tmp
 .sass-cache
 app/scripts/bower_components

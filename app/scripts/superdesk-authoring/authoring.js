@@ -64,7 +64,7 @@
          * Open an item
          */
         this.open = function openAutosave(item) {
-            if (item._locked) {
+            if (item._locked || item.read_only) {
                 // no way to get autosave
                 return $q.when(item);
             }
@@ -122,8 +122,9 @@
          *
          * @param {string} _id Item _id.
          */
-        this.open = function openAuthoring(_id) {
+        this.open = function openAuthoring(_id, read_only) {
             return api.find('archive', _id, {embedded: {lock_user: 1}}).then(function _lock(item) {
+                item._editable = !read_only;
                 return lock.lock(item);
             }).then(function _autosave(item) {
                 return autosave.open(item);
@@ -210,6 +211,19 @@
             item._locked = true;
             confirm.unlock(userId);
         };
+
+        /**
+         * Lock an item - callback for item:lock event
+         *
+         * @param {Object} item
+         * @param {string} userId
+         */
+        this.lock = function lock(item, userId) {
+            autosave.stop();
+            item.lock_user = null;
+            item._locked = true;
+            confirm.lock(userId);
+        };
     }
 
     LockService.$inject = ['$q', 'api', 'session', 'privileges'];
@@ -219,7 +233,7 @@
          * Lock an item
          */
         this.lock = function lock(item, force) {
-            if (!item.lock_user || force) {
+            if ((!item.lock_user && item._editable) || force) {
                 return api.save('archive_lock', {}, {}, item).then(function(lock) {
                     _.extend(item, lock);
                     item._locked = false;
@@ -332,6 +346,19 @@
                 return modal.confirm(msg, gettext('Item Unlocked'), gettext('OK'), false);
             });
         };
+
+        /**
+         * Make user aware that an item was locked
+         *
+         * @param {string} userId Id of user who locked an item.
+         */
+        this.lock = function lock(userId) {
+            api.find('users', userId).then(function(user) {
+                var msg = gettext('This item was locked by <b>{{ user }}</b>.').
+                    replace('{{ user }}', $filter('username')(user));
+                return modal.confirm(msg, gettext('Item locked'), gettext('OK'), false);
+            });
+        };
     }
 
     AuthoringController.$inject = [
@@ -364,6 +391,7 @@
         $scope.dirty = false;
         $scope.viewSendTo = false;
         $scope.stage = null;
+        $scope._editable = item._editable;
         $scope.widget_target = 'authoring';
 
         $scope.proofread = false;
@@ -499,33 +527,50 @@
             return $scope.dirty || $scope.item._autosave != null;
         };
 
+        function updateEditorState (result) {
+            extendItem($scope.item, result);
+            startWatch();
+
+            //The current $digest cycle will mark $scope.dirty = true.
+            //We need to postpone this code block for the next cycle.
+            $timeout(function() {
+                $scope.item.lock_user = result.lock_user;
+                $scope.item._locked = result._locked;
+                $scope._editable = $scope.item._editable = true;
+                $scope.dirty = false;
+                $scope.item._autosave = null;
+            }, 200);
+        }
+
         $scope.unlock = function() {
             lock.unlock($scope.item).then(function(unlocked_item) {
-                lock.lock(unlocked_item, true).then(function(result) {
-                    extendItem($scope.item, result);
-                    startWatch();
-
-                    //The current $digest cycle will mark $scope.dirty = true.
-                    //We need to postpone this code block for the next cycle.
-                    $timeout(function() {
-                        $scope.item.lock_user = result.lock_user;
-                        $scope.item._locked = result._locked;
-                        $scope._editable = true;
-                        $scope.dirty = false;
-                        $scope.item._autosave = null;
-                    });
-                });
+                lock.lock(unlocked_item, true).then(updateEditorState);
             });
+        };
+
+        $scope.lock = function() {
+            superdesk.intent('author', 'article', item);
         };
 
         // init
         $scope.closePreview();
 
+        $scope.$on('item:lock', function(_e, data) {
+            if ($scope.item._id === data.item && !_closing &&
+                session.sessionId !== data.lock_session) {
+                authoring.lock(item, data.user);
+                $scope._editable = $scope.item._editable = false;
+                $scope.item._locked = true;
+                stopWatch();
+            }
+        });
+
         $scope.$on('item:unlock', function(_e, data) {
-            if ($scope.item._id === data.item && !_closing) {
+            if ($scope.item._id === data.item && !_closing &&
+                session.sessionId !== data.lock_session) {
                 stopWatch();
                 authoring.unlock(item, data.user);
-                $scope._editable = false;
+                $scope._editable = $scope.item._editable = false;
                 $scope.item._locked = true;
             }
         });
@@ -817,21 +862,49 @@
 	                filters: [{action: 'author', type: 'article'}],
                     resolve: {
                         item: ['$route', 'authoring', function($route, authoring) {
-                            return authoring.open($route.current.params._id);
+                            return authoring.open($route.current.params._id, false);
                         }]
                     }
 	            })
-	            .activity('edit.text', {
+                .activity('edit.text', {
 	            	label: gettext('Edit item'),
                     href: '/authoring/:_id',
                     priority: 10,
 	            	icon: 'pencil',
-                    controller: ['data', '$location', 'superdesk', function(data, $location, superdesk) {
+                    controller: ['data', 'superdesk', function(data, superdesk) {
                         superdesk.intent('author', 'article', data.item);
 	                }],
                     filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
                         return item.type !== 'composite';
+                    }
+	            })
+	            .activity('view.text', {
+	            	label: gettext('View item'),
+                    priority: 2000,
+	            	icon: 'fullscreen',
+	            	controller: ['data', 'workqueue', 'superdesk', function(data, workqueue, superdesk) {
+	            		workqueue.add(data.item);
+                        superdesk.intent('read_only', 'content_article', data.item);
+	                }],
+                    filters: [{action: 'list', type: 'archive'}],
+                    condition: function(item) {
+                        return item.type !== 'composite';
+                    }
+	            })
+                .activity('read_only.content_article', {
+                    category: '/authoring',
+                    href: '/authoring/:_id/view',
+                    when: '/authoring/:_id/view',
+                	label: gettext('Authoring Read Only'),
+	                templateUrl: 'scripts/superdesk-authoring/views/authoring.html',
+                    topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
+	                controller: AuthoringController,
+	                filters: [{action: 'read_only', type: 'content_article'}],
+                    resolve: {
+                        item: ['$route', 'authoring', function($route, authoring) {
+                            return authoring.open($route.current.params._id, true);
+                        }]
                     }
 	            });
         }]);
