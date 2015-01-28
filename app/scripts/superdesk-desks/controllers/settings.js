@@ -36,12 +36,12 @@ define(['angular', 'lodash'], function(angular, _) {
                 });
             };
 
-            $scope.getExpiryHours = function(inputMin) {
-                return parseInt(inputMin / 60, 10);
-            };
-            $scope.getExpiryMinutes = function(inputMin) {
-                return parseInt(inputMin % 60, 10);
-            };
+            function getExpiryHours(inputMin) {
+                return Math.floor(inputMin / 60);
+            }
+            function getExpiryMinutes(inputMin) {
+                return Math.floor(inputMin % 60);
+            }
             $scope.getTotalExpiryMinutes = function(contentExpiry) {
                 return (contentExpiry.Hours * 60) + contentExpiry.Minutes;
             };
@@ -51,9 +51,9 @@ define(['angular', 'lodash'], function(angular, _) {
                     Hours: 0,
                     Minutes: 0
                 };
-                if (typeof (container.content_expiry) !== 'undefined' && (container.content_expiry) !== null) {
-                    objContentExpiry.Hours = $scope.getExpiryHours(container.content_expiry);
-                    objContentExpiry.Minutes = $scope.getExpiryMinutes(container.content_expiry);
+                if (container.content_expiry != null) {
+                    objContentExpiry.Hours = getExpiryHours(container.content_expiry);
+                    objContentExpiry.Minutes = getExpiryMinutes(container.content_expiry);
                 }
                 return objContentExpiry;
             };
@@ -64,9 +64,9 @@ define(['angular', 'lodash'], function(angular, _) {
                     Minutes: 0
                 };
 
-                if (typeof (container.content_expiry) !== 'undefined' && (container.spike_expiry) !== null) {
-                    objSpikeExpiry.Hours = $scope.getExpiryHours(container.spike_expiry);
-                    objSpikeExpiry.Minutes = $scope.getExpiryMinutes(container.spike_expiry);
+                if (container.spike_expiry != null) {
+                    objSpikeExpiry.Hours = getExpiryHours(container.spike_expiry);
+                    objSpikeExpiry.Minutes = getExpiryMinutes(container.spike_expiry);
                 }
                 return objSpikeExpiry;
             };
