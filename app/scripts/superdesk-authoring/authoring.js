@@ -829,7 +829,6 @@
             'superdesk.authoring.metadata',
             'superdesk.authoring.comments',
             'superdesk.authoring.versions',
-            'superdesk.authoring.workqueue',
             'superdesk.authoring.packages',
             'superdesk.authoring.find-replace',
             'superdesk.desks'
@@ -883,8 +882,7 @@
 	            	label: gettext('View item'),
                     priority: 2000,
 	            	icon: 'fullscreen',
-	            	controller: ['data', 'workqueue', 'superdesk', function(data, workqueue, superdesk) {
-	            		workqueue.add(data.item);
+	            	controller: ['data', 'superdesk', function(data, superdesk) {
                         superdesk.intent('read_only', 'content_article', data.item);
 	                }],
                     filters: [{action: 'list', type: 'archive'}],

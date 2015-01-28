@@ -1,8 +1,8 @@
 (function() {
 'use strict';
 
-ContentCtrlFactory.$inject = ['api', 'superdesk', 'workqueue', 'desks'];
-function ContentCtrlFactory(api, superdesk, workqueue) {
+ContentCtrlFactory.$inject = ['api', 'superdesk'];
+function ContentCtrlFactory(api, superdesk) {
     return function ContentCtrl($scope) {
         $scope.highlight_configs = [];
 
@@ -33,7 +33,6 @@ function ContentCtrlFactory(api, superdesk, workqueue) {
             api('archive')
                 .save(item)
                 .then(function() {
-                    workqueue.add(item);
                     superdesk.intent('author', 'article', item);
                 });
         };

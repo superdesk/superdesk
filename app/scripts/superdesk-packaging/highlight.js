@@ -35,8 +35,8 @@
         superdesk
         .activity('create.highlight', {
             label: gettext('Create highlight'),
-            controller: ['data', '$location', 'highlightsService', 'superdesk',
-                function(data, $location, highlightsService, superdesk) {
+            controller: ['data', 'highlightsService', 'superdesk',
+                function(data, highlightsService, superdesk) {
                     highlightsService.createEmptyHighlight(data).then(
                         function(new_package) {
                             superdesk.intent('author', 'package', new_package);
