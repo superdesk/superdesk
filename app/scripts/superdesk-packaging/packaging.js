@@ -51,13 +51,7 @@
             };
         }
 
-        function setDefaults(item, defaults) {
-            if (_.isObject(defaults)) {
-                return _.merge(item, defaults);
-            }
-        }
-
-        this.createPackageFromItems = function createPackageFromItems(items, defaults) {
+        this.createPackageFromItems = function createPackageFromItems(items) {
             var idRef = 'main';
             var item = items[0];
             var new_package = {
@@ -74,13 +68,12 @@
             _.forEach(items, function(item) {
                 groups.push(getGroupFor(item, idRef));
             });
-            new_package = setDefaults(new_package, defaults);
 
             new_package.groups = groups;
             return api.packages.save(new_package);
         };
 
-        this.createEmptyPackage = function createEmptyPackage(defaults) {
+        this.createEmptyPackage = function createEmptyPackage() {
             var idRef = 'main';
             var new_package = {
                 headline: '',
@@ -95,7 +88,6 @@
                 getGroupFor(null, idRef)
                 ]
             };
-            new_package = setDefaults(new_package, defaults);
 
             return api.packages.save(new_package);
         };
@@ -272,14 +264,14 @@
             label: gettext('Create package'),
             controller: ['data', 'packagesService', 'superdesk', 'workqueue',
                 function(data, packagesService, superdesk, workqueue) {
-                    if (data && data.items) {
-                        packagesService.createPackageFromItems(data.items, data.defaults).then(
+                    if (data) {
+                        packagesService.createPackageFromItems(data.items).then(
                             function(new_package) {
                             workqueue.add(new_package);
                             superdesk.intent('author', 'package', new_package);
                         });
                     } else {
-                        packagesService.createEmptyPackage(data.defaults).then(
+                        packagesService.createEmptyPackage().then(
                             function(new_package) {
                             workqueue.add(new_package);
                             superdesk.intent('author', 'package', new_package);

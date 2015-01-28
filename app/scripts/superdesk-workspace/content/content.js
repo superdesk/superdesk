@@ -1,30 +1,9 @@
 (function() {
 'use strict';
 
-ContentCtrlFactory.$inject = ['api', 'superdesk', 'workqueue', 'desks'];
+ContentCtrlFactory.$inject = ['api', 'superdesk', 'workqueue'];
 function ContentCtrlFactory(api, superdesk, workqueue) {
     return function ContentCtrl($scope) {
-        $scope.highlight_configs = [];
-
-        $scope.hasHighlights = function() {
-            return _.size($scope.highlight_configs) > 0;
-        };
-
-        function fetchHighlights(desk) {
-            api('highlights').query({where: {'desks': desk._id}})
-            .then(function(result) {
-                $scope.highlight_configs = result._items;
-            });
-        }
-
-        $scope.$watch('selectedDesk', function(desk) {
-            if (desk) {
-                fetchHighlights(desk);
-            } else {
-                $scope.highlight_configs = [];
-            }
-        });
-
         /**
          * Create an item and start editing it
          */
@@ -44,10 +23,6 @@ function ContentCtrlFactory(api, superdesk, workqueue) {
             } else {
                 superdesk.intent('create', 'package');
             }
-        };
-
-        this.createHighlight = function createHighlight(highlight_config) {
-            superdesk.intent('create', 'highlight', highlight_config);
         };
     };
 }
