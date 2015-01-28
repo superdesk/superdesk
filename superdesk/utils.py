@@ -9,9 +9,8 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import os
-import string
-import random
 import bcrypt
+from uuid import uuid4
 from enum import Enum
 from importlib import import_module
 from flask import current_app as app
@@ -42,8 +41,7 @@ def last_updated(*docs):
 
 
 def get_random_string(length=12):
-    chars = string.ascii_letters + string.digits
-    return ''.join([random.choice(chars) for i in range(length)])
+    return str(uuid4())
 
 
 def import_by_path(path):

@@ -81,7 +81,8 @@ class ItemLock(BaseComponent):
             updates = {LOCK_USER: None, LOCK_SESSION: None, 'lock_time': None, 'force_unlock': True}
             item_model.update(item_filter, updates)
             self.app.on_item_unlocked(item, user_id)
-            push_notification('item:unlock', item=str(item_filter.get(config.ID_FIELD)), user=str(user_id))
+            push_notification('item:unlock', item=str(item_filter.get(config.ID_FIELD)), user=str(user_id),
+                              lock_session=str(session_id))
         else:
             raise SuperdeskApiError.forbiddenError(message=error_message)
 
