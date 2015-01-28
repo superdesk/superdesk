@@ -114,8 +114,8 @@
         };
     }
 
-    AuthoringService.$inject = ['$q', 'api', 'lock', 'autosave', 'workqueue', 'confirm'];
-    function AuthoringService($q, api, lock, autosave, workqueue, confirm) {
+    AuthoringService.$inject = ['$q', 'api', 'lock', 'autosave', 'confirm'];
+    function AuthoringService($q, api, lock, autosave, confirm) {
 
         /**
          * Open an item for editing
@@ -127,9 +127,6 @@
                 return lock.lock(item);
             }).then(function _autosave(item) {
                 return autosave.open(item);
-            }).then(function _workqueue(item) {
-                workqueue.setActive(item);
-                return item;
             });
         };
 
@@ -160,9 +157,7 @@
                 });
             }
 
-            return promise.then(function removeFromWorkqueue(res) {
-                return workqueue.remove(item);
-            });
+            return promise;
         };
 
         /**
@@ -190,7 +185,6 @@
             return api.save('archive', item, diff).then(function(_item) {
                 item._autosave = null;
                 item._locked = lock.isLocked(item);
-                workqueue.update(item);
                 return item;
             });
         };
@@ -343,7 +337,6 @@
     AuthoringController.$inject = [
         '$scope',
         'superdesk',
-        'workqueue',
         'notify',
         'gettext',
         'desks',
@@ -359,7 +352,7 @@
         '$timeout'
     ];
 
-    function AuthoringController($scope, superdesk, workqueue, notify, gettext,
+    function AuthoringController($scope, superdesk, notify, gettext,
                                  desks, item, authoring, api, session, lock, privileges,
                                  ContentCtrl, $location, referrer, $timeout) {
         var stopWatch = angular.noop,
@@ -368,7 +361,6 @@
         $scope.privileges = privileges.privileges;
         $scope.content = new ContentCtrl($scope);
 
-        $scope.workqueue = workqueue.all();
         $scope.dirty = false;
         $scope.viewSendTo = false;
         $scope.stage = null;
@@ -458,7 +450,7 @@
     	};
 
         /**
-         * Close an item - unlock and remove from workqueue
+         * Close an item - unlock
          */
         $scope.close = function() {
             stopWatch();
@@ -827,8 +819,7 @@
                     href: '/authoring/:_id',
                     priority: 10,
 	            	icon: 'pencil',
-	            	controller: ['data', '$location', 'workqueue', 'superdesk', function(data, $location, workqueue, superdesk) {
-	            		workqueue.add(data.item);
+                    controller: ['data', '$location', 'superdesk', function(data, $location, superdesk) {
                         superdesk.intent('author', 'article', data.item);
 	                }],
                     filters: [{action: 'list', type: 'archive'}],

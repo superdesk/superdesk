@@ -30,6 +30,7 @@ tests.push('superdesk/services/preferencesService');
 tests.push('superdesk/features/features');
 tests.push('superdesk/services/asset');
 tests.push('superdesk/privileges/privileges');
+tests.push('superdesk/notification/notification');
 
 // apps
 tests.push('superdesk-authoring/authoring');

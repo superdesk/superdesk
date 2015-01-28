@@ -1,133 +1,73 @@
-(function() {
+/**
+ * This file is part of Superdesk.
+ *
+ * Copyright 2015 Sourcefabric z.u. and contributors.
+ *
+ * For the full copyright and license information, please see the
+ * AUTHORS and LICENSE files distributed with this source code, or
+ * at https://www.sourcefabric.org/superdesk/license
+ */
+ (function() {
 
 'use strict';
 
-WorkqueueService.$inject = ['storage', 'preferencesService', 'notify'];
-function WorkqueueService(storage, preferencesService, notify) {
-    /**
-     * Set items for further work, in next step of the workflow.
-     */
-    var queue = [];
-    preferencesService.get('workqueue:items').then(function(result) {
-        queue = result.items;
-    });
+WorkqueueService.$inject = ['session', 'api'];
+function WorkqueueService(session, api) {
 
-    this.length = 0;
-    this.active = null;
+    this.items = [];
 
     /**
-     * Add an item into queue
-     *
-     * it checks if item is in queue already and if yes it will move it to the very end
-     *
-     * @param {Object} item
+     * Get all items locked by current user
      */
-    this.add = function(item) {
-        _.remove(queue, {_id: item._id});
-        queue.unshift(item);
-        this.length = queue.length;
-        this.active = item;
-        this.save();
-        return this;
+    this.fetch = function() {
+        return session.getIdentity()
+            .then(angular.bind(this, function(identity) {
+                return api.query('archive', {source: {filter: {term: {lock_user: identity._id}}}})
+                    .then(angular.bind(this, function(res) {
+                        this.items = null;
+                        this.items = res._items || [];
+                        return this.items;
+                    }));
+            }));
     };
 
     /**
-     * Update item in a queue
+     * Update given item
      */
-    this.update = function(item) {
-        if (item) {
-            var base = this.find({_id: item._id});
-            queue[_.indexOf(queue, base)] = _.extend(base, item);
-            this.save();
+    this.updateItem = function(itemId) {
+        var old = _.find(this.items, {_id: itemId});
+        if (old) {
+            return api.find('archive', itemId).then(function(item) {
+                return angular.extend(old, item);
+            });
         }
-    };
-
-    /**
-     * Get first item
-     */
-    this.first = function() {
-        return _.first(queue);
-    };
-
-    /**
-     * Get all items from queue
-     */
-    this.all = function() {
-        return queue;
-    };
-
-    /**
-     * Save queue to local storage
-     */
-    this.save = function() {
-
-        var update = {
-            'workqueue:items': {
-                'items': queue
-            }
-        };
-
-        preferencesService.update(update, 'workqueue:items').then(function() {
-                //nothing to do
-            }, function(response) {
-                notify.error(gettext('User preference could not be saved...'));
-        });
-    };
-
-    /**
-     * Find item by given criteria
-     */
-    this.find = function(criteria) {
-        return _.find(queue, criteria);
-    };
-
-    /**
-     * Set given item as active
-     */
-    this.setActive = function(item) {
-        if (!item) {
-            this.active = null;
-        } else {
-            this.active = this.find({_id: item._id});
-        }
-    };
-
-    /**
-     * Get '_id' of active item or null if it's not defined
-     */
-    this.getActive = function() {
-        return this.active ? this.active._id : null;
-    };
-
-    /**
-     * Remove given item from queue
-     */
-    this.remove = function(item) {
-        _.remove(queue, {_id: item._id});
-        this.length = queue.length;
-        this.save();
-        this.active = null;
     };
 }
 
 ArticleDashboardCtrl.$inject = ['$scope', 'ContentCtrl'];
 function ArticleDashboardCtrl($scope, ContentCtrl) {
-
     $scope.content = new ContentCtrl();
 }
 
-WorkqueueCtrl.$inject = ['$scope', 'workqueue', 'superdesk'];
-function WorkqueueCtrl($scope, workqueue, superdesk) {
+WorkqueueCtrl.$inject = ['$scope', '$route', 'workqueue', 'superdesk', 'lock'];
+function WorkqueueCtrl($scope, $route, workqueue, superdesk, lock) {
 
-    $scope.workqueue = workqueue.all();
+    $scope.workqueue = workqueue;
+    updateWorkqueue();
 
-    $scope.openItem = function(article) {
-        if ($scope.active) {
-            $scope.update();
-        }
-        workqueue.setActive(article);
-        superdesk.intent('author', article.type === 'composite' ? 'package' : 'article', article);
+    var activeRoutes = {
+        authoring: 1,
+        packaging: 1
     };
+
+    function updateWorkqueue() {
+        workqueue.fetch().then(function() {
+            $scope.active = null;
+            if (activeRoutes[$route.current._id]) {
+                $scope.active = _.find(workqueue.items, {_id: $route.current.params._id});
+            }
+        });
+    }
 
     $scope.openDashboard = function() {
         superdesk.intent('author', 'dashboard');
@@ -135,21 +75,22 @@ function WorkqueueCtrl($scope, workqueue, superdesk) {
 
     $scope.closeItem = function(item) {
         if ($scope.active && $scope.active._id === item._id) {
-            $scope.close();
+            $scope.close(item);
         } else {
-            workqueue.remove(item);
+            lock.unlock(item).then(updateWorkqueue);
         }
     };
+
+    $scope.$on('item:lock', updateWorkqueue);
+    $scope.$on('item:unlock', updateWorkqueue);
+    $scope.$on('media_archive', function(e, data) {
+        workqueue.updateItem(data.item);
+    });
 }
 
 function WorkqueueListDirective() {
     return {
         templateUrl: 'scripts/superdesk-authoring/views/opened-articles.html',
-        scope: {
-            active: '=',
-            update: '&',
-            close: '&'
-        },
         controller: WorkqueueCtrl
     };
 }
@@ -161,7 +102,7 @@ function ArticleDashboardDirective() {
     };
 }
 
-angular.module('superdesk.authoring.workqueue', ['superdesk.activity'])
+angular.module('superdesk.authoring.workqueue', ['superdesk.activity', 'superdesk.notification'])
     .service('workqueue', WorkqueueService)
     .directive('sdWorkqueue', WorkqueueListDirective)
     .directive('sdDashboardArticles', ArticleDashboardDirective)

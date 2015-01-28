@@ -17,7 +17,6 @@ define([
     './elastic/elastic',
     './error/error',
     './list/list',
-    './notification/notification',
     './notify/notify',
     './upload/upload',
     './ui/ui',
@@ -45,7 +44,6 @@ define([
         require('./error/error').name,
         require('./list/list').name,
         require('./notify/notify').name,
-        require('./notification/notification').name,
         require('./upload/upload').name,
         require('./ui/ui').name,
 

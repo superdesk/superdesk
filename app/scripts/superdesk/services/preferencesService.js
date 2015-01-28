@@ -18,7 +18,13 @@ define(['angular', 'lodash'], function(angular, _) {
                     'workqueue:items': 1
                 },
                 api,
-                original_preferences = null;
+                original_preferences = null,
+                defaultPreferences = {};
+
+            defaultPreferences[USER_PREFERENCES] = {};
+            defaultPreferences[SESSION_PREFERENCES] = {};
+            defaultPreferences[ACTIVE_PRIVILEGES] = {};
+            defaultPreferences[ACTIONS] = {};
 
             function saveLocally(preferences, type, key) {
 
@@ -71,6 +77,7 @@ define(['angular', 'lodash'], function(angular, _) {
                 }
 
                 return api.find('preferences', sessionId).then(function(preferences) {
+                    _.defaults(preferences, defaultPreferences);
                     saveLocally(preferences);
                     return processPreferences(preferences, key);
                 });
