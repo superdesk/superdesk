@@ -845,12 +845,6 @@
         };
     }
 
-    function HighlightCreateDirective() {
-        return {
-            templateUrl: 'scripts/superdesk-authoring/views/sd-highlight-create.html'
-        };
-    }
-
     return angular.module('superdesk.authoring', [
             'superdesk.editor',
             'superdesk.activity',
@@ -876,7 +870,6 @@
         .directive('sdWordCount', WordCount)
         .directive('sdThemeSelect', ThemeSelectDirective)
         .directive('sdContentCreate', ContentCreateDirective)
-        .directive('sdHighlightCreate', HighlightCreateDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk

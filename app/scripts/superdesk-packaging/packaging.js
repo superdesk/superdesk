@@ -75,13 +75,12 @@
             _.forEach(items, function(item) {
                 groups.push(getGroupFor(item, idRef));
             });
-            new_package = setDefaults(new_package, defaults);
 
             new_package.groups = groups;
             return api.packages.save(new_package);
         };
 
-        this.createEmptyPackage = function createEmptyPackage(defaults) {
+        this.createEmptyPackage = function createEmptyPackage() {
             var idRef = 'main';
             var new_package = {
                 headline: '',
@@ -96,7 +95,6 @@
                 getGroupFor(null, idRef)
                 ]
             };
-            new_package = setDefaults(new_package, defaults);
 
             return api.packages.save(new_package);
         };
