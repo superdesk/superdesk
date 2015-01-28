@@ -24,6 +24,9 @@ from superdesk.utc import utcnow
 from superdesk.workflow import set_default_state
 from superdesk.errors import ProviderError
 from superdesk.stats import stats
+from superdesk.upload import url_for_media
+from superdesk.media.media_operations import download_file_from_url, process_file
+from superdesk.media.renditions import generate_renditions
 
 
 UPDATE_SCHEDULE_DEFAULT = {'minutes': 5}
@@ -97,7 +100,7 @@ class UpdateIngest(superdesk.Command):
                 if provider.get('rule_set'):
                     rule_set = superdesk.get_resource_service('rule_sets').find_one(_id=provider['rule_set'], req=None)
 
-                update_provider.delay(provider, rule_set)
+                update_provider(provider, rule_set)
 
 
 @celery.task
@@ -160,7 +163,9 @@ def apply_rule_set(item, provider, rule_set=None):
 
 
 def ingest_items(items, provider, rule_set=None):
-    for item in filter_expired_items(provider, items):
+    all_items = filter_expired_items(provider, items)
+
+    for item in all_items:
         try:
             item.setdefault('_id', item['guid'])
 
@@ -178,6 +183,11 @@ def ingest_items(items, provider, rule_set=None):
             if item.get('ingest_provider_sequence') is None:
                 ingest_service.set_ingest_provider_sequence(item, provider)
 
+            baseImageRend = item.get('renditions', {}).get('baseImage')
+            if baseImageRend:
+                href = providers[provider.get('type')].prepare_href(baseImageRend['href'])
+                update_renditions(item, href)
+
             old_item = ingest_service.find_one(_id=item['guid'], req=None)
 
             if old_item:
@@ -192,5 +202,28 @@ def ingest_items(items, provider, rule_set=None):
             raise
         except Exception as ex:
             raise ProviderError.ingestError(ex, provider.get('name'))
+
+
+def update_renditions(item, href):
+    inserted = []
+    try:
+        content, filename, content_type = download_file_from_url(href)
+        file_type, ext = content_type.split('/')
+        metadata = process_file(content, file_type)
+        file_guid = app.media.put(content, filename, content_type, metadata)
+        inserted.append(file_guid)
+
+        rendition_spec = app.config.get('RENDITIONS', {}).get('picture', {})
+        renditions = generate_renditions(content, file_guid, inserted, file_type,
+                                         content_type, rendition_spec, url_for_media)
+        item['renditions'] = renditions
+        item['mimetype'] = content_type
+        item['filemeta'] = metadata
+    except Exception as io:
+        logger.exception(io)
+        for file_id in inserted:
+            app.media.delete(file_id)
+        raise
+
 
 superdesk.command('ingest:update', UpdateIngest())
