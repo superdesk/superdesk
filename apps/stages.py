@@ -10,6 +10,7 @@
 
 import logging
 import superdesk
+from flask import current_app as app
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError
@@ -83,6 +84,8 @@ class StagesService(BaseService):
             req.sort = '-desk_order'
             req.max_results = 1
             prev_stage = self.get(req=req, lookup={'desk': doc['desk']})
+            if doc.get('content_expiry', 0) == 0:
+                doc['content_expiry'] = app.settings['CONTENT_EXPIRY_MINUTES']
             if prev_stage.count() == 0:
                 doc['desk_order'] = 1
             else:
@@ -103,6 +106,8 @@ class StagesService(BaseService):
                 raise SuperdeskApiError.forbiddenError(message='Only empty stages can be deleted.')
 
     def on_update(self, updates, original):
+        if updates.get('content_expiry') == 0:
+            updates['content_expiry'] = app.settings['CONTENT_EXPIRY_MINUTES']
         super().on_update(updates, original)
         if updates.get('content_expiry', None):
             docs = self.get_stage_documents(str(original['_id']))
