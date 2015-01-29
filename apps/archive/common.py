@@ -185,10 +185,8 @@ def is_assigned_to_a_desk(doc):
     return doc.get('task') and doc['task'].get('desk')
 
 
-def get_item_expiry(app, desk, stage):
+def get_item_expiry(app, stage):
     expiry_minutes = app.settings['CONTENT_EXPIRY_MINUTES']
-    if desk:
-        expiry_minutes = desk.get('content_expiry', expiry_minutes)
     if stage:
         expiry_minutes = stage.get('content_expiry', expiry_minutes)
 
@@ -197,7 +195,7 @@ def get_item_expiry(app, desk, stage):
 
 def get_expiry(desk_id=None, stage_id=None):
 
-    desk = stage = None
+    stage = None
     if desk_id:
         desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
 
@@ -216,7 +214,7 @@ def get_expiry(desk_id=None, stage_id=None):
         if not stage:
                 raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % stage_id)
 
-    return get_item_expiry(app=app, desk=desk, stage=stage)
+    return get_item_expiry(app=app, stage=stage)
 
 
 def set_item_expiry(update, original):

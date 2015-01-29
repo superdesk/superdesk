@@ -70,7 +70,7 @@ Feature: Content Spiking
         Given empty "stages"
         Given "desks"
         """
-        [{"name": "Sports Desk", "spike_expiry": 60, "content_expiry":10}]
+        [{"name": "Sports Desk", "spike_expiry": 60}]
         """
         Given "archive"
         """
@@ -80,4 +80,4 @@ Feature: Content Spiking
         And we unspike "item-1"
         Then we get unspiked content "item-1"
         And we get version 3
-        And we get content expiry 10
+        And we get global content expiry
