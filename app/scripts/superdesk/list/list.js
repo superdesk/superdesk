@@ -12,7 +12,7 @@ define([
     mod.directive('sdSearchbar', require('./searchbar-directive'));
     mod.directive('sdListItem', require('./list-item-directive'));
 
-    mod.directive('sdUpdown', ['$location', 'keyboardManager', function($location, keyboardManager) {
+    mod.directive('sdUpdown', ['$location', 'keyboardManager', '$anchorScroll', function($location, keyboardManager, $anchorScroll) {
         return {
             transclude: true,
             template: '<div ng-transclude></div>',
@@ -34,7 +34,10 @@ define([
                         clickItem(match);
                     }
                 }
-
+                function scrollList(id) {
+                   $location.hash(id);
+                   $anchorScroll();
+                }
                 function move(diff) {
                     return function() {
                         if (scope.items) {
@@ -42,11 +45,11 @@ define([
                             if (index === -1) { // selected not in current items, select first
                                 return clickItem(_.first(scope.items));
                             }
-
                             var nextIndex = _.max([0, _.min([scope.items.length - 1, index + diff])]);
                             if (nextIndex < 0) {
                                 return clickItem(_.last(scope.items));
                             }
+                            scrollList(scope.items[nextIndex]._id);
 
                             return clickItem(scope.items[nextIndex]);
                         }
@@ -67,6 +70,7 @@ define([
                     if ($event) {
                         $event.stopPropagation();
                     }
+
                 }
 
                 scope.$watch('items', function() {
