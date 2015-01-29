@@ -180,16 +180,17 @@ define([
                         .then(function(item) {
                             scope.stages.push(item);
                             scope.editStage = null;
-                            scope.selected = item;
+                            scope.select(item);
                             scope.message = null;
                         }, function(response) {
                             scope.message = gettext('There was a problem, stage not added.');
                         });
                     } else {
                         api('stages').save(orig, scope.editStage)
-                        .then(function() {
+                        .then(function(item) {
                             scope.editStage = null;
                             scope.message = null;
+                            scope.select(item);
                         }, function(response) {
                             scope.message = gettext('There was a problem, stage was not saved.');
                         });
