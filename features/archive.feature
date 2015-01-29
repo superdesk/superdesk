@@ -173,7 +173,7 @@ Feature: News Items Archive
     Scenario: Browse public content
         Given "desks"
         """
-        [{"name": "Sports Desk", "spike_expiry": 60, "content_expiry":10}]
+        [{"name": "Sports Desk", "spike_expiry": 60}]
         """
         Given "archive"
             """
@@ -183,7 +183,7 @@ Feature: News Items Archive
         Then we get list with 1 items
 
         When we get "archive/testid1"
-        Then we get content expiry 10
+        Then we get global content expiry
 
     @auth
     @ticket-sd-360
