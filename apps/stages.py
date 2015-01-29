@@ -36,8 +36,7 @@ class StagesResource(Resource):
             'minlength': 1
         },
         'description': {
-            'type': 'string',
-            'minlength': 1
+            'type': 'string'
         },
         'default_incoming': {
             'type': 'boolean',
