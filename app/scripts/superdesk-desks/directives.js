@@ -52,10 +52,6 @@ define([
         return {
 
             link: function(scope, elem, attrs) {
-                scope.ContentExpiry = {
-                    Hours: 0,
-                    Minutes: 0
-                };
                 scope.SpikeExpiry = {
                     Hours: 0,
                     Minutes: 0
@@ -71,14 +67,12 @@ define([
                 });
 
                 scope.edit = function(desk) {
-                    scope.ContentExpiry = scope.setContentExpiryHoursMins(desk);
                     scope.SpikeExpiry = scope.setSpikeExpiryHoursMins(desk);
                     scope.desk.edit = _.create(desk);
                 };
 
                 scope.save = function(desk) {
                     scope.message = gettext('Saving...');
-                    scope.desk.edit.content_expiry = scope.getTotalExpiryMinutes(scope.ContentExpiry);
                     scope.desk.edit.spike_expiry = scope.getTotalExpiryMinutes(scope.SpikeExpiry);
                     var _new = desk._id ? false : true;
                     api.desks.save(scope.desk.edit, desk).then(function() {
