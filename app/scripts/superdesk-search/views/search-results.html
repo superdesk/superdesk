@@ -15,7 +15,7 @@
         </header>
         <div class="content" sd-updown data-items="items._items" data-select="preview(item)">
             <div class="loading-indicator" ng-show="loading" translate>loading</div>
-            <div sd-shadow">
+            <div sd-shadow>
                 <ul class="{{view}}-view list-view">
                     <li ng-repeat="item in items._items" id="{{item._id}}" class="list-item-view" ng-class="{active: item === selected.preview}" ng-click="preview(item)">
                         <div sd-media-box></div>
