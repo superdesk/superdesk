@@ -38,11 +38,7 @@ Feature: Archive Ingest
     @provider
     Scenario: Move item into archive - success
         Given empty "archive"
-        And ingest from "reuters"
-        """
-        [{"guid": "tag:reuters.com,0000:newsml_GM1EA7M13RP01", "state": "ingested"}]
-        """
-
+    	When we fetch from "reuters" ingest "tag:reuters.com,0000:newsml_GM1EA7M13RP01"
         When we post to "/archive_ingest" with success
         """
         {
@@ -52,51 +48,15 @@ Feature: Archive Ingest
         And we get "/archive/tag:reuters.com,0000:newsml_GM1EA7M13RP01"
         Then we get existing resource
 		"""
-		{"renditions": {
-	        "viewImage": {
-	            "sizeinbytes": 190880,
-	            "rendition": "viewImage",
-	            "residRef": "tag:reuters.com,0000:binary_GM1EA7M13RP01-VIEWIMAGE"
-	        },
-	        "thumbnail": {
-	            "sizeinbytes": 16418,
-	            "rendition": "thumbnail",
-	            "residRef": "tag:reuters.com,0000:binary_GM1EA7M13RP01-THUMBNAIL"
-	        },
-	        "baseImage": {
-	            "sizeinbytes": 726349,
-	            "rendition": "baseImage",
-	            "residRef": "tag:reuters.com,0000:binary_GM1EA7M13RP01-BASEIMAGE"
-	        }},
-		 "task_id": "",
-		 "state": "fetched",
-		 "_version": 1}
-  		"""
-        And we get archive ingest result
-        """
-        {"state": "PROGRESS",  "current": 4, "total": 4}
-        """
-
-    @auth
-    @provider
-    Scenario: Move package into archive - check progress status
-    	Given empty "ingest"
-    	When we fetch from "reuters" ingest "tag:reuters.com,2014:newsml_KBN0FL0NM"
-        And we post to "/archive_ingest"
-        """
         {
-        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM"
+            "renditions": {
+                "baseImage": {"height": 845, "mimetype": "image/jpeg", "width": 1400},
+                "original": {"height": 2113, "mimetype": "image/jpeg", "width": 3500},
+                "thumbnail": {"height": 120, "mimetype": "image/jpeg", "width": 198},
+                "viewImage": {"height": 386, "mimetype": "image/jpeg", "width": 640}
+            }
         }
-        """
-        And we get "/archive/tag:reuters.com,2014:newsml_KBN0FL0NM"
-        Then we get existing resource
-		"""
-		{"task_id": ""}
   		"""
-        And we get archive ingest result
-        """
-        {"state": "PROGRESS",  "current": 18, "total": 18}
-        """
 
     @auth
     @provider
@@ -113,106 +73,47 @@ Feature: Archive Ingest
         Then we get existing resource
 		"""
 		{
-		    "_items": [{
-		        "type": "picture",
-		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS",
-		        "state": "fetched",
-		        "_version": 1
-		    }, {
-		        "type": "composite",
-		        "groups": [{
-		            "refs": [{
-		                "itemClass": "icls:text",
-		                "residRef": "tag:reuters.com,2014:newsml_KBN0FL0NN"
-		            }, {
-		                "itemClass": "icls:picture",
-		                "residRef": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M"
-		            }, {
-		                "itemClass": "icls:picture",
-		                "residRef": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS"
-		            }, {
-		                "itemClass": "icls:picture",
-		                "residRef": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT"
-		            }]
-		        }, {
-		            "refs": [{
-		                "itemClass": "icls:text",
-		                "residRef": "tag:reuters.com,2014:newsml_KBN0FL0ZP"
-		            }]
-		        }],
-		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM",
-		        "state": "fetched",
-		        "_version": 1
-		    }, {
-		        "type": "picture",
-		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT",
-		        "state": "fetched",
-		        "_version": 1
-		    }, {
-		        "type": "text",
-		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0ZP",
-		        "state": "fetched",
-		        "_version": 1
-		    }, {
-		        "type": "picture",
-		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M",
-		        "state": "fetched",
-		        "_version": 1
-		    }, {
-		        "type": "text",
-		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NN",
-		        "state": "fetched",
-		        "_version": 1
-		    }]
-		}
-		"""
-
-    @auth
-    @provider
-    Scenario: Move audio item into archive - success
-        Given empty "archive"
-        And ingest from "reuters"
-        """
-        [{
-          "renditions": {
-            "stream": {
-                "mimetype": "audio/mpeg",
-                "residRef": "tag:reuters.com,0000:binary_LOVEA6M0L7U2E-STREAM:22.050:MP3",
-                "href": "http://content.reuters.com/auth-server/content/tag:reuters.com,2014:newsml_OV0TUFYV5:2/tag:reuters.com,0000:binary_LOVEA6M0L7U2E-STREAM:22.050:MP3?auth_token=token",
-                "rendition": "stream",
-                "sizeinbytes": 602548
-            }
-          },
-          "guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E",
-          "state": "ingested"
-        }]
-        """
-        When we post to "/archive_ingest"
-        """
-        {
-        "guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"
+            "_items": [
+                {
+                    "_version": 1,
+                    "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS",
+                    "state": "fetched",
+                    "type": "picture"
+                },
+                {
+                    "_version": 1,
+                    "groups": [
+                        {
+                            "refs": [
+                                {"itemClass": "icls:text", "residRef": "tag:reuters.com,2014:newsml_KBN0FL0NN"},
+                                {"itemClass": "icls:picture", "residRef": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M"},
+                                {"itemClass": "icls:picture", "residRef": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS"},
+                                {"itemClass": "icls:picture", "residRef": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT"}
+                            ]
+                        },
+                        {"refs": [{"itemClass": "icls:text", "residRef": "tag:reuters.com,2014:newsml_KBN0FL0ZP"}]}
+                    ],
+                    "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM",
+                    "state": "fetched",
+                    "type": "composite"
+                },
+                {
+                    "_version": 1,
+                    "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT",
+                    "state": "fetched",
+                    "type": "picture"
+                },
+                {"_version": 1, "guid": "tag:reuters.com,2014:newsml_KBN0FL0ZP", "state": "fetched", "type": "text"},
+                {
+                    "_version": 1,
+                    "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M",
+                    "state": "fetched",
+                    "type": "picture"
+                },
+                {"_version": 1, "guid": "tag:reuters.com,2014:newsml_KBN0FL0NN", "state": "fetched", "type": "text"}
+            ]
         }
-        """
-        And we get "/archive/tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"
-        Then we get existing resource
 		"""
-		{"renditions": {
-            "stream": {
-                "mimetype": "audio/mpeg",
-                "residRef": "tag:reuters.com,0000:binary_LOVEA6M0L7U2E-STREAM:22.050:MP3",
-                "rendition": "stream",
-                "sizeinbytes": 602548
-            }
-        },
-		 "task_id": "",
-		 "state": "fetched",
-		 "_version": 1}
-  		"""
-  		And we get rendition "stream" with mimetype "audio/mpeg"
-        And we get archive ingest result
-        """
-        {"state": "PROGRESS",  "current": 2, "total": 2}
-        """
 
     @auth
     @provider

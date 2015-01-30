@@ -57,10 +57,8 @@ class ArchiveIngestService(BaseService):
             if not archived_doc:
                 dest_doc = dict(ingest_doc)
                 dest_doc[config.VERSION] = 1
+                send_to(dest_doc, doc.get('desk'))
                 dest_doc[config.CONTENT_STATE] = STATE_FETCHED
-                send_to(dest_doc, dest_doc.get('desk'))
-                dest_doc['created'] = dest_doc['firstcreated']
-                dest_doc['updated'] = dest_doc['versioncreated']
                 remove_unwanted(dest_doc)
                 for ref in [ref for group in dest_doc.get('groups', [])
                             for ref in group.get('refs', []) if 'residRef' in ref]:

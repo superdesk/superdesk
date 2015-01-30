@@ -172,14 +172,17 @@ def ingest_items(items, provider, rule_set=None):
     for item in [doc for doc in all_items if doc.get('type') == 'composite']:
         for ref in [ref for group in item.get('groups', [])
                     for ref in group.get('refs', []) if 'residRef' in ref]:
-            ref.setdefault('renditions', items_dict.get(ref['residRef'], {}).get('renditions'))
             ref.setdefault('location', 'ingest')
+            itemRendition = items_dict.get(ref['residRef'], {}).get('renditions')
+            if itemRendition:
+                ref.setdefault('renditions', itemRendition)
         ingest_item(item, provider, rule_set)
 
 
 def ingest_item(item, provider, rule_set=None):
     try:
         item.setdefault('_id', item['guid'])
+        providers[provider.get('type')].provider = provider
 
         item['ingest_provider'] = str(provider['_id'])
         item.setdefault('source', provider.get('source', ''))
@@ -195,10 +198,12 @@ def ingest_item(item, provider, rule_set=None):
         if item.get('ingest_provider_sequence') is None:
             ingest_service.set_ingest_provider_sequence(item, provider)
 
-        baseImageRend = item.get('renditions', {}).get('baseImage')
-        if baseImageRend:
-            href = providers[provider.get('type')].prepare_href(baseImageRend['href'])
-            update_renditions(item, href)
+        rend = item.get('renditions', {})
+        if rend:
+            baseImageRend = rend.get('baseImage') or next(iter(rend.values()))
+            if baseImageRend:
+                href = providers[provider.get('type')].prepare_href(baseImageRend['href'])
+                update_renditions(item, href)
 
         old_item = ingest_service.find_one(_id=item['guid'], req=None)
 

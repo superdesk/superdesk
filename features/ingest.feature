@@ -1,4 +1,4 @@
-Feature: Ingest
+Feature: Fetch From Ingest
 
 
     @auth
@@ -34,59 +34,57 @@ Feature: Ingest
         Then we get existing resource
 		"""
 		{
-		    "_items": [{
-		        "type": "picture",
-		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS",
-		        "state":"ingested",
-		        "ingest_provider_sequence" : "4"
-		    }, {
-		        "type": "composite",
-		        "usageterms": "NO ARCHIVAL USE",
-		        "state":"ingested",
-		        "ingest_provider_sequence": "1",
-		        "groups": [{
-		            "refs": [{
-		                "itemClass": "icls:text",
-		                "residRef": "tag:reuters.com,2014:newsml_KBN0FL0NN"
-		            }, {
-		                "itemClass": "icls:picture",
-		                "residRef": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M"
-		            }, {
-		                "itemClass": "icls:picture",
-		                "residRef": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS"
-		            }, {
-		                "itemClass": "icls:picture",
-		                "residRef": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT"
-		            }]
-		        }, {
-		            "refs": [{
-		                "itemClass": "icls:text",
-		                "residRef": "tag:reuters.com,2014:newsml_KBN0FL0ZP"
-		            }]
-		        }],
-		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM"
-		    }, {
-		        "type": "picture",
-		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT",
-		        "state":"ingested",
-		        "ingest_provider_sequence" : "3"
-		    }, {
-		        "type": "text",
-		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0ZP",
-		        "state":"ingested",
-		        "ingest_provider_sequence" : "2"
-		    }, {
-		        "type": "picture",
-		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M",
-		        "state":"ingested",
-		        "ingest_provider_sequence" : "5"
-		    }, {
-		        "type": "text",
-		        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NN",
-		        "state":"ingested",
-		        "ingest_provider_sequence" : "6"
-		    }]
-		} 
+            "_items": [
+                {
+                    "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS",
+                    "ingest_provider_sequence": "3",
+                    "state": "ingested",
+                    "type": "picture"
+                },
+                {
+                    "groups": [
+                        {
+                            "refs": [
+                                {"itemClass": "icls:text", "residRef": "tag:reuters.com,2014:newsml_KBN0FL0NN"},
+                                {"itemClass": "icls:picture", "residRef": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M"},
+                                {"itemClass": "icls:picture", "residRef": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS"},
+                                {"itemClass": "icls:picture", "residRef": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT"}
+                            ]
+                        },
+                        {"refs": [{"itemClass": "icls:text", "residRef": "tag:reuters.com,2014:newsml_KBN0FL0ZP"}]}
+                    ],
+                    "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM",
+                    "ingest_provider_sequence": "6",
+                    "state": "ingested",
+                    "type": "composite",
+                    "usageterms": "NO ARCHIVAL USE"
+                },
+                {
+                    "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT",
+                    "ingest_provider_sequence": "2",
+                    "state": "ingested",
+                    "type": "picture"
+                },
+                {
+                    "guid": "tag:reuters.com,2014:newsml_KBN0FL0ZP",
+                    "ingest_provider_sequence": "1",
+                    "state": "ingested",
+                    "type": "text"
+                },
+                {
+                    "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M",
+                    "ingest_provider_sequence": "4",
+                    "state": "ingested",
+                    "type": "picture"
+                },
+                {
+                    "guid": "tag:reuters.com,2014:newsml_KBN0FL0NN",
+                    "ingest_provider_sequence": "5",
+                    "state": "ingested",
+                    "type": "text"
+                }
+            ]
+        } 
   		"""
 
     @auth
