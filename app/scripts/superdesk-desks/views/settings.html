@@ -83,9 +83,10 @@
 									<div ng-repeat="stage in stages">
 										<div class="stage" ng-click="select(stage)" 
 											ng-class="{active: selected === stage, editable: isActive(stage)}">
-											
-											<span ng-if="!isActive(stage)">{{ stage.name }}</span>
-											
+											<span ng-if="!isActive(stage)">{{ stage.name }}
+												<label class="label globalread" ng-if="!(stage.is_visible || stage.is_visible == null)">GLOBAL READ OFF</label>
+											</span>
+
 											<span ng-if="isActive(stage)">
 												<input type="text" id="edit-stage" ng-model="editStage.name" />
 											</span>
@@ -129,6 +130,9 @@
 
 							<div class="row" ng-show="selected && !editStage">
 								<div class="header"  translate>Stage Details</div>
+								<label translate>Global Read: <label class="label globalread">
+									{{(selected.is_visible == null || selected.is_visible) ? 'ON' : 'OFF'}}
+								</label></label>
 								<label translate>Stage description: {{ selected.description}}</label>
 								<label translate>Content expiry: 
 									{{ ContentExpiry.Hours}} <span translate>hr</span>
@@ -138,6 +142,10 @@
 
 							<div class="row" ng-if="editStage">
 								<div class="header"  translate>Stage Details</div>
+								<div class="field">
+									<label translate>Global Read</label>
+									<span sd-switch ng-model="editStage.is_visible"></span>
+								</div>
 								<div class="field">
 									<label translate>Stage description</label>
 									<textarea class="fullwidth-input" ng-model="editStage.description"></textarea>
