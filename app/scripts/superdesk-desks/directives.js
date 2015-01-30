@@ -52,10 +52,6 @@ define([
         return {
 
             link: function(scope, elem, attrs) {
-                scope.ContentExpiry = {
-                    Hours: 0,
-                    Minutes: 0
-                };
                 scope.SpikeExpiry = {
                     Hours: 0,
                     Minutes: 0
@@ -71,14 +67,12 @@ define([
                 });
 
                 scope.edit = function(desk) {
-                    scope.ContentExpiry = scope.setContentExpiryHoursMins(desk);
                     scope.SpikeExpiry = scope.setSpikeExpiryHoursMins(desk);
                     scope.desk.edit = _.create(desk);
                 };
 
                 scope.save = function(desk) {
                     scope.message = gettext('Saving...');
-                    scope.desk.edit.content_expiry = scope.getTotalExpiryMinutes(scope.ContentExpiry);
                     scope.desk.edit.spike_expiry = scope.getTotalExpiryMinutes(scope.SpikeExpiry);
                     var _new = desk._id ? false : true;
                     api.desks.save(scope.desk.edit, desk).then(function() {
@@ -180,16 +174,17 @@ define([
                         .then(function(item) {
                             scope.stages.push(item);
                             scope.editStage = null;
-                            scope.selected = item;
+                            scope.select(item);
                             scope.message = null;
                         }, function(response) {
                             scope.message = gettext('There was a problem, stage not added.');
                         });
                     } else {
                         api('stages').save(orig, scope.editStage)
-                        .then(function() {
+                        .then(function(item) {
                             scope.editStage = null;
                             scope.message = null;
+                            scope.select(item);
                         }, function(response) {
                             scope.message = gettext('There was a problem, stage was not saved.');
                         });
