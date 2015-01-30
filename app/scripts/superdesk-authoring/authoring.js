@@ -829,6 +829,7 @@
             'superdesk.authoring.metadata',
             'superdesk.authoring.comments',
             'superdesk.authoring.versions',
+            'superdesk.authoring.workqueue',
             'superdesk.authoring.packages',
             'superdesk.authoring.find-replace',
             'superdesk.desks'

@@ -2,8 +2,8 @@
 
 'use strict';
 
-    VersioningController.$inject = ['$scope', 'authoring', 'api', '$location', 'notify', 'workqueue', 'lock'];
-    function VersioningController($scope, authoring, api, $location, notify, workqueue, lock) {
+    VersioningController.$inject = ['$scope', 'authoring', 'api', 'notify', 'lock'];
+    function VersioningController($scope, authoring, api, notify, lock) {
 
         $scope.last = null;
         $scope.versions = null;
