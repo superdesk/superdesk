@@ -13,6 +13,7 @@
 import ssl
 import requests
 import superdesk
+import arrow
 from datetime import timedelta
 from requests.packages.urllib3.poolmanager import PoolManager
 from superdesk.etree import etree
@@ -21,7 +22,8 @@ from superdesk.utc import utcnow
 
 def is_valid_token(token):
     ttl = timedelta(hours=12)
-    return token.get('created') + ttl >= utcnow()
+    created = arrow.get(token.get('created')).datetime
+    return created + ttl >= utcnow()
 
 
 def update_provider_token(provider):
