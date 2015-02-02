@@ -17,6 +17,7 @@ from eve.validation import ValidationError
 logger = logging.getLogger(__name__)
 
 
+
 def get_registered_errors(self):
         return {
             'IngestApiError': IngestApiError._codes,
@@ -195,10 +196,6 @@ class ParserError(SuperdeskIngestError):
         1005: 'NewsML2 input could not be processed',
         1006: 'NITF input could not be processed'
     }
-
-    def __init__(self, code, exception):
-        super().__init__(code)
-        self.system_exception = exception
 
     @classmethod
     def parseMessageError(cls, exception):
