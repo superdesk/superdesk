@@ -4,7 +4,7 @@ require.config({
     paths: {
         d3: 'bower_components/d3/d3',
         jquery: 'bower_components/jquery/dist/jquery',
-        lodash: 'bower_components/lodash/dist/lodash',
+        lodash: 'bower_components/lodash/lodash',
         angular: 'bower_components/angular/angular',
         bootstrap: 'bower_components/bootstrap/dist/js/bootstrap',
         moment: 'bower_components/momentjs/moment',

@@ -78,7 +78,7 @@ requirejs.config({
         bootstrap: 'bower_components/bootstrap/js',
         angular: 'bower_components/angular/angular',
         moment: 'bower_components/momentjs/moment',
-        lodash: 'bower_components/lodash/dist/lodash',
+        lodash: 'bower_components/lodash/lodash',
         d3: 'bower_components/d3/d3',
         'angular-resource': 'bower_components/angular-resource/angular-resource',
         'angular-gettext': 'bower_components/angular-gettext/dist/angular-gettext',
