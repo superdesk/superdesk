@@ -41,6 +41,14 @@ metadata_schema = {
     'version': {
         'type': 'integer'
     },
+    'ingest_id': {
+        'type': 'string',
+        'mapping': not_analyzed
+    },
+    'family_id': {
+        'type': 'string',
+        'mapping': not_analyzed
+    },
 
     # Audit Information
     'original_creator': Resource.rel('users'),
