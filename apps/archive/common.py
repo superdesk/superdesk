@@ -47,6 +47,9 @@ def on_create_item(docs):
         set_default_state(doc, 'draft')
         doc.setdefault('_id', doc['guid'])
 
+        if not 'family_id' in doc:
+            doc['family_id'] = generate_guid(type=GUID_TAG)
+
 
 def on_duplicate_item(doc):
     """Make sure duplicated item has basic fields populated."""
