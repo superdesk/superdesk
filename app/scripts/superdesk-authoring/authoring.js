@@ -18,7 +18,10 @@
         place: [],
         located: null,
         dateline: '',
-        language: null
+        language: null,
+        lock_user: null,
+        lock_session: null,
+        lock_time: null
     };
 
     /**
@@ -84,7 +87,7 @@
         this.save = function saveAutosave(item, data) {
             this.stop();
             _timeout = $timeout(function() {
-                var diff = angular.extend({_id: item._id}, data);
+                var diff = extendItem({_id: item._id}, data);
                 return api.save(RESOURCE, {}, diff).then(function(_autosave) {
                     item._autosave = _autosave;
                     extendItem(item._autosave, data);
