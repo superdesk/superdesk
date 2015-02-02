@@ -132,7 +132,7 @@ Feature: Stages
         Then we get updated response
 
 
-    @auth
+    @auth @notification
     Scenario: Edit stage - modify expiry
         Given empty "archive"
         Given empty "tasks"
@@ -167,8 +167,12 @@ Feature: Stages
 
         When we get "archive/testid1"
         Then we get content expiry 20
+        Then we get notifications
+        """
+        [{"event": "stage:update", "extra": {"desk_id": "#desks._id#", "stage_id": "#stages._id#"}}]
+        """
 
-    @auth
+    @auth @notification
     Scenario: Edit stage - set 0 expiry
         Given empty "archive"
         Given empty "tasks"
@@ -203,6 +207,10 @@ Feature: Stages
 
         When we get "archive/testid1"
         Then we get content expiry 20
+        Then we get notifications
+        """
+        [{"event": "stage:update", "extra": {"desk_id": "#desks._id#", "stage_id": "#stages._id#"}}]
+        """
 
     @auth
     Scenario: Get tasks for stage
@@ -304,6 +312,36 @@ Feature: Stages
         When we delete "/stages/#stages._id#"
 
         Then we get response code 403
+
+    @auth
+    @notification
+    Scenario: Toggle stage invisibility for notification
+        Given empty "archive"
+        Given empty "tasks"
+        Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "Sports Desk"}]
+        """
+        When we post to "/stages"
+        """
+        {
+        "name": "stage visibility",
+        "task_status": "todo",
+        "desk": "#desks._id#",
+        "is_visible" : true
+        }
+        """
+        Then we get response code 201
+        When we patch "/stages/#stages._id#"
+        """
+        {"is_visible" : false}
+        """
+        Then we get response code 200
+        Then we get notifications
+        """
+        [{"event": "stage:update", "extra": {"desk_id": "#desks._id#", "stage_id": "#stages._id#"}}]
+        """
 
 
     @auth
