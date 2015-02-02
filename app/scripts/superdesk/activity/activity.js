@@ -445,7 +445,7 @@ define([
         function prepareUrl(refRoute) {
             var completeUrl;
             if (refRoute) {
-                completeUrl = refRoute.$$route.href.replace('/:_id','');
+                completeUrl = refRoute.$$route.href.replace('/:_id', '');
                     if (!_.isEqual({}, refRoute.pathParams)) {
                         completeUrl = completeUrl + '/' + refRoute.pathParams._id;
                     }
