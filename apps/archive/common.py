@@ -48,6 +48,16 @@ def on_create_item(docs):
         doc.setdefault('_id', doc['guid'])
 
 
+def on_duplicate_item(doc):
+    """Make sure duplicated item has basic fields populated."""
+    doc['guid'] = generate_guid(type=GUID_NEWSML)
+
+    if 'unique_id' not in doc:
+        generate_unique_id_and_name(doc)
+
+    doc.setdefault('_id', doc['guid'])
+
+
 def update_dates_for(doc):
     for item in ['firstcreated', 'versioncreated']:
         doc.setdefault(item, utcnow())
