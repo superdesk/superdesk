@@ -6,7 +6,8 @@
 	    	<span class="lock-info pull-left" ng-show="item._locked"><i class="icon-lock-red"></i></span>
             <h3 class="page-nav-title" ng-show="item.headline">{{ item.headline }}</h3>
 	    	<h3 class="page-nav-title" ng-show="!item.headline" translate>Untitled</h3>
-	    	<span class="lock-text pull-left" ng-show="item._locked" translate>This article is locked by <b>{{ item.lock_user | username }}</b></span>
+            <span class="lock-text pull-left" ng-show="item._locked && isLockedByMe()" translate>This article is locked by you in another session.</b></span>
+	    	<span class="lock-text pull-left" ng-show="item._locked && !isLockedByMe()" translate>This article is locked by <b>{{ item.lock_user | username }}</b></span>
 	    </div>
 
 	    <div class="button-stack right-stack">

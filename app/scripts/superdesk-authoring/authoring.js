@@ -18,7 +18,10 @@
         place: [],
         located: null,
         dateline: '',
-        language: null
+        language: null,
+        lock_user: null,
+        lock_session: null,
+        lock_time: null
     };
 
     /**
@@ -84,7 +87,7 @@
         this.save = function saveAutosave(item, data) {
             this.stop();
             _timeout = $timeout(function() {
-                var diff = angular.extend({_id: item._id}, data);
+                var diff = extendItem({_id: item._id}, data);
                 return api.save(RESOURCE, {}, diff).then(function(_autosave) {
                     item._autosave = _autosave;
                     extendItem(item._autosave, data);
@@ -142,7 +145,6 @@
          */
         this.close = function closeAuthoring(item, diff, isDirty) {
             var promise = $q.when();
-
             if (this.isEditable(item)) {
                 if (isDirty) {
                     promise = confirm.confirm()
@@ -207,8 +209,9 @@
          */
         this.unlock = function unlock(item, userId) {
             autosave.stop();
+            item.lock_session = null;
             item.lock_user = null;
-            item._locked = true;
+            item._locked = false;
             confirm.unlock(userId);
         };
 
@@ -220,9 +223,12 @@
          */
         this.lock = function lock(item, userId) {
             autosave.stop();
-            item.lock_user = null;
+            api.find('users', userId).then(function(user) {
+                item.lock_user = user;
+            }, function(rejection) {
+                item.lock_user = userId;
+            });
             item._locked = true;
-            confirm.lock(userId);
         };
     }
 
@@ -268,7 +274,7 @@
          * Test if an item is locked, it can be locked by other user or you in different session.
          */
         this.isLocked = function isLocked(item) {
-            var userId = item.lock_user && item.lock_user._id || item.lock_user;
+            var userId = getLockedUserId(item);
 
             if (!userId) {
                 return false;
@@ -285,11 +291,16 @@
             return false;
         };
 
+        function getLockedUserId(item) {
+            return item.lock_user && item.lock_user._id || item.lock_user;
+        }
+
         /**
         * Test is an item is locked by me in another session
         */
         this.isLockedByMe = function isLockedByMe(item) {
-            return item.lock_user && item.lock_user === session.identity._id && item.lock_session !== session.sessionId;
+            var userId = getLockedUserId(item);
+            return userId && userId === session.identity._id && item.lock_session !== session.sessionId;
         };
 
         /**
@@ -534,8 +545,9 @@
             //The current $digest cycle will mark $scope.dirty = true.
             //We need to postpone this code block for the next cycle.
             $timeout(function() {
-                $scope.item.lock_user = result.lock_user;
+                item.lock_user = $scope.item.lock_user = result.lock_user;
                 $scope.item._locked = result._locked;
+                item.lock_session = $scope.item.lock_session = result.lock_session;
                 $scope._editable = $scope.item._editable = true;
                 $scope.dirty = false;
                 $scope.item._autosave = null;
@@ -549,7 +561,16 @@
         };
 
         $scope.lock = function() {
-            superdesk.intent('author', 'article', item);
+            var path = $location.path();
+            if (path.indexOf('/view') < 0) {
+               lock.lock($scope.item, true).then(updateEditorState);
+            } else {
+                superdesk.intent('author', 'article', item);
+            }
+        };
+
+        $scope.isLockedByMe = function() {
+            return lock.isLockedByMe($scope.item);
         };
 
         // init
@@ -558,7 +579,7 @@
         $scope.$on('item:lock', function(_e, data) {
             if ($scope.item._id === data.item && !_closing &&
                 session.sessionId !== data.lock_session) {
-                authoring.lock(item, data.user);
+                authoring.lock($scope.item, data.user);
                 $scope._editable = $scope.item._editable = false;
                 $scope.item._locked = true;
                 stopWatch();
@@ -569,9 +590,11 @@
             if ($scope.item._id === data.item && !_closing &&
                 session.sessionId !== data.lock_session) {
                 stopWatch();
-                authoring.unlock(item, data.user);
+                authoring.unlock($scope.item, data.user);
                 $scope._editable = $scope.item._editable = false;
-                $scope.item._locked = true;
+                $scope.item._locked = false;
+                $scope.item.lock_session = null;
+                $scope.item.lock_user = null;
             }
         });
     }
