@@ -5,13 +5,12 @@
                 ng-if="pitem._id !== item._id">
                 <div class="package-preview">
                     <i class="filetype-icon-composite"></i>
-                    <p><span class="keyword" ng-if="pitem.slugline">{{ pitem.slugline }}</span></p>
-                    <div class="title" ng-show="pitem.headline">
-                        <a ng-href="#/packaging/{{ pitem.guid }}" title="{{ pitem.headline }}">
-                            <div ng-show="pitem.headline">
-                                {{ pitem.headline || pitem.description | uppercase}}
+                    <div class="title" ng-show="pitem.headline || pitem.slugline">
+                        <a ng-href="#/packaging/{{ pitem.guid }}" title="{{ pitem.headline || pitem.slugline}}">
+                            <div ng-show="pitem.headline || pitem.slugline">
+                                {{ pitem.headline || pitem.slugline | uppercase}}
                             </div>
-                            <div ng-hide="pitem.headline" translate>Blank headline received</div>
+                            <div ng-hide="pitem.headline || pitem.slugline" translate>Blank headline received</div>
                         </a>
                     </div>
                 </div>
