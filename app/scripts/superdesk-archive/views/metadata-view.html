@@ -131,7 +131,7 @@
     </dl>
     <dl ng-if="item.expiry">
         <dt translate>Expiry</dt>
-        <dd>{{ item.expiry }}</dd>
+        <dd sd-reldate-complex ng-model="item.expiry"></dd>
     </dl>
     <dl ng-if="item.located">
         <dt translate>Location</dt>
