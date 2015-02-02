@@ -407,8 +407,8 @@ define([
                     this.setReferrerUrl('/workspace');
                     localStorage.setItem('referrerUrl', '/workspace');
                 } else {
-                        if (currentRoute.$$route.originalPath === '/authoring/:_id') {
-                            if (previousRoute.$$route.originalPath !== '/authoring/:_id') {
+                        if (currentRoute.$$route.originalPath.indexOf('/authoring/:_id') >= 0) {
+                            if (previousRoute.$$route.originalPath.indexOf('/authoring/:_id') < 0) {
                                 this.setReferrerUrl(prepareUrl(previousRoute));
                                 localStorage.setItem('referrerUrl', this.getReferrerUrl());
                             }
@@ -445,7 +445,7 @@ define([
         function prepareUrl(refRoute) {
             var completeUrl;
             if (refRoute) {
-                completeUrl = refRoute.$$route.href;
+                completeUrl = refRoute.$$route.href.replace('/:_id', '');
                     if (!_.isEqual({}, refRoute.pathParams)) {
                         completeUrl = completeUrl + '/' + refRoute.pathParams._id;
                     }
