@@ -279,6 +279,38 @@ define([
                 }
             };
         }])
+        .directive('sdMediaRelated', ['familyService', function(familyService) {
+            return {
+                scope: {
+                    item: '='
+                },
+                templateUrl: 'scripts/superdesk-archive/views/related-view.html',
+                link: function(scope, elem) {
+                    scope.$watch('item', function() {
+                        familyService.fetchItems(scope.item)
+                        .then(function(items) {
+                            scope.relatedItems = items;
+                        });
+                    });
+                }
+            };
+        }])
+        .directive('sdFetchedDesks', ['familyService', function(familyService) {
+            return {
+                scope: {
+                    item: '='
+                },
+                templateUrl: 'scripts/superdesk-archive/views/fetched-desks.html',
+                link: function(scope, elem) {
+                    scope.$watch('item', function() {
+                        familyService.fetchDesks(scope.item)
+                        .then(function(desks) {
+                            scope.desks = desks;
+                        });
+                    });
+                }
+            };
+        }])
         .directive('sdMetaIngest', ['ingestSources', function(ingestSources) {
             var promise = ingestSources.initialize();
             return {
@@ -435,5 +467,41 @@ define([
                     };
                 }
             };
-        });
+        })
+
+        .service('familyService', ['api', 'desks', function(api, desks) {
+            this.fetchItems = function(item) {
+                return api('archive').query({
+                    source: {
+                        query: {
+                            filtered: {
+                                filter: {and: [{not: {term: {state: 'spiked'}}}]},
+                                query: {
+                                    query_string: {
+                                        query: 'family_id:(' + item.family_id + ')',
+                                        lenient: false,
+                                        default_operator: 'AND'
+                                    }
+                                }
+                            }
+                        },
+                        sort: [{versioncreated: 'desc'}],
+                        size: 100,
+                        from: 0
+                    }
+                });
+            };
+            this.fetchDesks = function(item) {
+                return this.fetchItems(item)
+                .then(function(items) {
+                    var deskList = [];
+                    _.each(items._items, function(i) {
+                        if (i.task && i.task.desk && desks.deskLookup[i.task.desk]) {
+                            deskList.push(desks.deskLookup[i.task.desk]);
+                        }
+                    });
+                    return deskList;
+                });
+            };
+        }]);
 });

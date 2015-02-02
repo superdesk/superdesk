@@ -28,6 +28,8 @@
         <dd class="provider" sd-meta-ingest data-provider="item.ingest_provider"></dd>
         <dt translate>updated</dt>
         <dd><time datetime="{{ item.versioncreated }}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time></dd>
+        <dt class="source"><span translate>fetched in:</span></dt>
+        <dd sd-fetched-desks data-item="item"></dd>
         <dt ng-show="item.is_spiked" translate>expires</dt>
         <dd ng-if="item.is_spiked"><time title="{{ item.expiry | date:'medium' }}">{{ item.expiry | reldate }}</time></dd>
     </dl>

@@ -1,0 +1,8 @@
+<span>
+	<span ng-if="desks.length">
+		<span ng-repeat="desk in desks"><a ng-href="">{{desk.title}}</a>{{$last ? '' : ', '}} </span>
+	</span>
+	<span ng-if="!desks.length">
+		<span translate>none</span>
+	</span>
+</span>

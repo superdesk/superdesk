@@ -1,0 +1,15 @@
+<div class="packages-content">
+    <ul>
+        <li ng-repeat="relatedItem in relatedItems._items" ng-if="relatedItem._id !== item._id">
+            <div class="package-preview">
+                <i class="filetype-icon-{{relatedItem.type}}"></i>
+                <p><span class="keyword" ng-if="relatedItem.slugline">{{ relatedItem.slugline }}</span></p>
+                <div class="title">
+                    <a ng-href="" title="{{ relatedItem.headline }}">
+						{{ relatedItem.headline || relatedItem.description | uppercase}}
+                    </a>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
