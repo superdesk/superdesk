@@ -1,5 +1,9 @@
 language: python
 
+env:
+    - TARGET=client
+    - TARGET=server
+
 python:
     - "3.3"
     - "3.4"
@@ -13,21 +17,43 @@ services:
     - redis-server
 
 before_install:
-    - npm install -g grunt-cli bower
+    - if [ "${TARGET}" = "client" ]; then
+        npm install -g grunt-cli bower
+        ;
+      fi
 
 install:
-    - cd server && pip install -r requirements.txt --use-mirrors && cd ..
-    - cd client && npm install && cd ..
-    - cd client && bower install --force-latest && cd ..
+    - if [ "${TARGET}" = "server" ]; then
+        cd server && pip install -r requirements.txt --use-mirrors && cd ..
+        ;
+      fi
+    - if [ "${TARGET}" = "client" ]; then
+        cd client &&
+        npm install &&
+        bower install --force-latest &&
+        cd ..
+        ;
+      fi
 
 script:
-    - cd server && nosetests && cd ..
-    - cd server && behave --format progress2 --logging-level ERROR && cd ..
-    - cd server && LDAP_SERVER="ldap://sourcefabric.org" LDAP_BASE_FILTER="OU=Superdesk Users,dc=sourcefabric,dc=org" behave --format progress2 --logging-level ERROR && cd ..
-    - cd server && flake8 && cd ..
-    - cd client && npm test && cd ..
+    - if [ "${TARGET}" = "server" ]; then
+        cd server &&
+        nosetests &&
+        behave --format progress2 --logging-level ERROR &&
+        LDAP_SERVER="ldap://sourcefabric.org" LDAP_BASE_FILTER="OU=Superdesk Users,dc=sourcefabric,dc=org" behave --format progress2 --logging-level ERROR &&
+        flake8 &&
+        cd ..
+        ;
+      fi
+    - if [ "${TARGET}" = "client" ]; then
+        cd client && npm test && cd ..
+        ;
+      fi
 
 after_success:
-    - cd client && grunt coveralls && cd ..
+    - if [ "${TARGET}" = "client" ]; then
+        cd client && grunt coveralls && cd ..
+        ;
+      fi
 
 sudo: false
