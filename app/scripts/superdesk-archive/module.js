@@ -93,6 +93,22 @@ define([
                     }],
                     filters: [{action: 'list', type: 'spike'}],
                     action: 'unspike'
+                })
+                .activity('archiveContent', {
+                    label: gettext('Fetch'),
+                    icon: 'archive',
+                    controller: ['api', 'data', 'desks', function(api, data, desks) {
+                        api.archiveIngest.create({
+                            guid: data.item.guid,
+                            desk: desks.getCurrentDeskId()
+                        })
+                        .then(function(archiveItem) {
+                            data.item.task_id = archiveItem.task_id;
+                            data.item.created = archiveItem.created;
+                        });
+                    }],
+                    filters: [{action: 'list', type: 'archive'}],
+                    action: 'fetch_as_from_content'
                 });
         }])
 
