@@ -1191,7 +1191,7 @@ def when_we_get_invisible_stages(context, no_of_stages):
 
 @then('we get {no_of_stages} visible stages')
 def when_we_get_visible_stages(context, no_of_stages):
-    we get'URL_PREFIX']):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
         stages = get_resource_service('stages').get_stages_by_visibility(is_visible=True)
         assert len(stages) == int(no_of_stages)
 
