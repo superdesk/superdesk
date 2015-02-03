@@ -1,0 +1,35 @@
+language: python
+
+python:
+    - "3.3"
+    - "3.4"
+
+node_js:
+    - "0.10"
+
+services:
+    - mongodb
+    - elasticsearch
+    - redis-server
+
+before_install:
+    - cd client && npm install -g grunt-cli bower
+
+before_script:
+    - cd client && npm install karma-phantomjs-launcher
+    - cd client && bower install --force-latest 
+
+install:
+    - cd server && pip install -r requirements.txt --use-mirrors
+
+script:
+    - cd server && nosetests
+    - cd server && behave
+    - cd server && LDAP_SERVER="ldap://sourcefabric.org" LDAP_BASE_FILTER="OU=Superdesk Users,dc=sourcefabric,dc=org" behave
+    - cd server && flake8
+    - cd client && npm test
+
+after_success:
+    - grunt coveralls
+
+sudo: false
