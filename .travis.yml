@@ -13,23 +13,23 @@ services:
     - redis-server
 
 before_install:
-    - cd client && npm install -g grunt-cli bower
+    - npm install -g grunt-cli bower
 
 before_script:
-    - cd client && npm install karma-phantomjs-launcher
-    - cd client && bower install --force-latest 
+    - cd client && npm install && cd ..
+    - cd client && bower install --force-latest && cd ..
 
 install:
-    - cd server && pip install -r requirements.txt --use-mirrors
+    - cd server && pip install -r requirements.txt --use-mirrors && cd ..
 
 script:
-    - cd server && nosetests
-    - cd server && behave
-    - cd server && LDAP_SERVER="ldap://sourcefabric.org" LDAP_BASE_FILTER="OU=Superdesk Users,dc=sourcefabric,dc=org" behave
-    - cd server && flake8
-    - cd client && npm test
+    - cd server && nosetests && cd ..
+    - cd server && behave --format progress2 --logging-level ERROR && cd ..
+    - cd server && LDAP_SERVER="ldap://sourcefabric.org" LDAP_BASE_FILTER="OU=Superdesk Users,dc=sourcefabric,dc=org" behave --format progress2 --logging-level ERROR && cd ..
+    - cd server && flake8 && cd ..
+    - cd client && npm test && cd ..
 
 after_success:
-    - grunt coveralls
+    - cd client && grunt coveralls && cd ..
 
 sudo: false
