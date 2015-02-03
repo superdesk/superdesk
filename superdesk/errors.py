@@ -196,10 +196,6 @@ class ParserError(SuperdeskIngestError):
         1006: 'NITF input could not be processed'
     }
 
-    def __init__(self, code, exception):
-        super().__init__(code)
-        self.system_exception = exception
-
     @classmethod
     def parseMessageError(cls, exception):
         return ParserError(1001, exception)
@@ -216,17 +212,14 @@ class ParserError(SuperdeskIngestError):
 
     @classmethod
     def newsmlOneParserError(cls, exception):
-        logger.exception("NewsML1 input could not be processed")
         return ParserError(1004, exception)
 
     @classmethod
     def newsmlTwoParserError(cls, exception):
-        logger.exception("NewsML2 input could not be processed")
         return ParserError(1005, exception)
 
     @classmethod
     def nitfParserError(cls, exception):
-        logger.exception("File: {} could not be processed")
         return ParserError(1006, exception)
 
 
