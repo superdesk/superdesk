@@ -744,12 +744,6 @@ def check_rendition(context, rendition_name):
 @then('we get archive ingest result')
 def step_impl_then_get_archive_ingest_result(context):
     assert_200(context.response)
-    expect_json_contains(context.response, 'task_id')
-    item = json.loads(context.response.get_data())
-    url = '/archive_ingest/%s' % (item['task_id'])
-    context.response = context.client.get(get_prefixed_url(context.app, url), headers=context.headers)
-    assert_200(context.response)
-    test_json(context)
 
 
 @then('we get "{key}"')
@@ -1204,7 +1198,7 @@ def when_we_get_visible_stages(context, no_of_stages):
 
 
 @then('we get {no_of_stages} invisible stages for user')
-def when_we_get_invisible_stages(context, no_of_stages):
+def when_we_get_invisible_stages_for_user(context, no_of_stages):
     data = json.loads(apply_placeholders(context, context.text))
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
         stages = get_resource_service('users').get_invisible_stages(data['user'])

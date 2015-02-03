@@ -55,6 +55,9 @@ def remove_expired_data(provider):
         for item in items:
             print('Removing item %s' % item['_id'])
             superdesk.get_resource_service('ingest').delete_action({'_id': str(item['_id'])})
+            for file_id in [rend.get('media') for rend in item.get('renditions', {}).values() if rend.get('media')]:
+                superdesk.app.media.delete(file_id)
+
     stats.incr('ingest.expired_items', items.count())
     print('Removed expired content for provider: %s' % provider['_id'])
 
