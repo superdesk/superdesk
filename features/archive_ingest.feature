@@ -77,6 +77,7 @@ Feature: Archive Ingest
                 {
                     "_version": 1,
                     "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS",
+                    "linked_in_packages": [{"package": "tag:reuters.com,2014:newsml_KBN0FL0NM"}],
                     "state": "fetched",
                     "type": "picture"
                 },
@@ -100,17 +101,31 @@ Feature: Archive Ingest
                 {
                     "_version": 1,
                     "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT",
+                    "linked_in_packages": [{"package": "tag:reuters.com,2014:newsml_KBN0FL0NM"}],
                     "state": "fetched",
                     "type": "picture"
                 },
-                {"_version": 1, "guid": "tag:reuters.com,2014:newsml_KBN0FL0ZP", "state": "fetched", "type": "text"},
+                {
+                    "_version": 1,
+                    "guid": "tag:reuters.com,2014:newsml_KBN0FL0ZP",
+                    "linked_in_packages": [{"package": "tag:reuters.com,2014:newsml_KBN0FL0NM"}],
+                    "state": "fetched",
+                    "type": "text"
+                },
                 {
                     "_version": 1,
                     "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M",
+                    "linked_in_packages": [{"package": "tag:reuters.com,2014:newsml_KBN0FL0NM"}],
                     "state": "fetched",
                     "type": "picture"
                 },
-                {"_version": 1, "guid": "tag:reuters.com,2014:newsml_KBN0FL0NN", "state": "fetched", "type": "text"}
+                {
+                    "_version": 1,
+                    "guid": "tag:reuters.com,2014:newsml_KBN0FL0NN",
+                    "linked_in_packages": [{"package": "tag:reuters.com,2014:newsml_KBN0FL0NM"}],
+                    "state": "fetched",
+                    "type": "text"
+                }
             ]
         }
 		"""
