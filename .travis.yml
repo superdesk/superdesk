@@ -15,12 +15,10 @@ services:
 before_install:
     - npm install -g grunt-cli bower
 
-before_script:
-    - cd client && npm install && cd ..
-    - cd client && bower install --force-latest && cd ..
-
 install:
     - cd server && pip install -r requirements.txt --use-mirrors && cd ..
+    - cd client && npm install && cd ..
+    - cd client && bower install --force-latest && cd ..
 
 script:
     - cd server && nosetests && cd ..
