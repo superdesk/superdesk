@@ -1,0 +1,52 @@
+<div class="login-screen" ng-show="active">
+    <div class="login-form-container">
+        <p ng-if="identity._id" class="session-error">{{ 'Your session has expired.'|translate }}<br />{{ 'Please log in again.'|translate }}</p>
+
+        <div class="logo-handler" ng-show="!identity.Avatar">
+            <img src="images/superdesk-icon-large.png" alt="Superdesk Logo">
+        </div>
+
+        <div class="form-handler">
+            <figure class="avatar" style="background-image:url('{{ identity.Avatar.href || 'images/avatar_200.png' }}')" ng-show="identity.Avatar"></figure>
+            <form name="loginForm" ng-submit="authenticate()">
+                <fieldset class="inputs">
+                    <input type="text" id="login-username" ng-model="username" placeholder="{{ 'username'|translate }}" class="fullwidth-input" ng-disabled="identity.Id" required />
+                    <input type="password" id="login-password" ng-model="password" placeholder="{{ 'password'|translate }}" class="fullwidth-input login-pass" required />
+                </fieldset>
+
+                <fieldset class="buttons">
+                    <button ng-disabled="isLoading" id="login-btn" type="submit" class="btn btn-green btn-medium">
+                        {{ 'Log In' | translate }}
+                        <div class="spinner" ng-show="isLoading">
+                          <div class="dot1"></div>
+                          <div class="dot2"></div>
+                        </div>
+                    </button>
+                </fieldset>
+            </form>            
+
+            <div class="error-handler" ng-switch on="loginError">
+                <p class="error" ng-switch-when="401" translate>Oops! Invalid Username or Password.<br />Please try again.</p>
+                <p class="error" ng-switch-when="403" translate>Sorry, but your account has been suspended.</p>
+                <p class="error" ng-show="loginError" ng-switch-default translate>Sorry, but can't reach the server now.<br />Please try again later.</p>
+
+                <div class="network-error red" ng-show="serverStatus == 1">
+                    <span class="icon-unplug"></span>
+                    <p translate>No server response so far.<br />Let me try again.</p>
+                </div>
+
+                <div class="network-error yellow" ng-show="serverStatus > 1">
+                    <span class="icon-unplug"></span>
+                    <p translate>Trying to reconnect...<br />Please wait.</p>
+                </div>
+                
+            </div>
+
+            <div class="links">
+                <a href="" ng-click="logout()" class="text" ng-show="identity.Id" translate>Sign in as a different user.</a>
+                <a href="/#/reset-password/" class="text" ng-show="features.reset_user_password" translate>Forgot password?</a>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,178 @@
+// REPEAT VARIABLES & MIXINS
+// -------------------------
+// Required since we compile the responsive stuff separately
+
+@import "variables.less"; // Modify this for custom colors, font-sizes, etc
+@import "mixins.less";
+
+
+// RESPONSIVE CLASSES
+// ------------------
+
+// Hide from screenreaders and browsers
+// Credit: HTML5 Boilerplate
+.hidden {
+  display: none;
+  visibility: hidden;
+}
+
+// Visibility utilities
+
+// For desktops
+.visible-phone     { display: none; }
+.visible-tablet    { display: none; }
+.visible-desktop   { display: block; }
+.hidden-phone      { display: block; }
+.hidden-tablet     { display: block; }
+.hidden-desktop    { display: none; }
+
+// Phones only
+@media (max-width: 767px) {
+  // Show
+  .visible-phone     { display: block; }
+  // Hide
+  .hidden-phone      { display: none; }
+  // Hide everything else
+  .hidden-desktop    { display: block; }
+  .visible-desktop   { display: none; }
+}
+
+// Tablets & small desktops only
+@media (min-width: 768px) and (max-width: 979px) {
+  // Show
+  .visible-tablet    { display: block; }
+  // Hide
+  .hidden-tablet     { display: none; }
+  // Hide everything else
+  .hidden-desktop    { display: block; }
+  .visible-desktop   { display: none; }
+}
+
+
+// UP TO LANDSCAPE PHONE
+// ---------------------
+
+@media (max-width: 480px) {
+
+  
+  // Remove the horizontal form styles
+  .form-horizontal .control-group > label {
+    float: none;
+    width: auto;
+    padding-top: 0;
+    text-align: left;
+  }
+  // Move over all input controls and content
+  .form-horizontal .controls {
+    margin-left: 0;
+  }
+  // Move the options list down to align with labels
+  .form-horizontal .control-list {
+    padding-top: 0; // has to be padding because margin collaspes
+  }
+  // Move over buttons in .form-actions to align with .controls
+  .form-horizontal .form-actions {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+
+  #main-container .subnav {
+    padding:5px !important;
+    height:@subnav-mobile-height !important;
+  }
+
+}
+
+// UP TO PORTRAIT PHONE
+// ---------------------
+@media screen and (max-width: 320px) { 
+  #main-container {
+    &.menu {
+      left: 260px !important;
+      right: -260px !important;
+      .subnav {
+        left: 260px !important;
+        right: -260px !important;
+      }
+    }
+  }
+}
+
+
+
+// LANDSCAPE PHONE TO SMALL DESKTOP & PORTRAIT TABLET
+// --------------------------------------------------
+
+@media (max-width: 767px) {
+
+ 
+  // FORM FIELDS
+  // -----------
+  // Make span* classes full width
+  input[class*="span"],
+  select[class*="span"],
+  textarea[class*="span"],
+  .uneditable-input {
+    .input-block-level();
+  }
+  // But don't let it screw up prepend/append inputs
+  .input-prepend input[class*="span"],
+  .input-append input[class*="span"] {
+    width: auto;
+  }
+
+}
+
+
+
+// PORTRAIT TABLET TO DEFAULT DESKTOP
+// ----------------------------------
+
+@media (min-width: 768px) and (max-width: 979px) {
+
+}
+
+
+
+// TABLETS AND BELOW
+// -----------------
+@media (max-width: 979px) {
+
+
+}
+
+
+// DEFAULT DESKTOP
+// ---------------
+
+@media (min-width: 980px) {
+  
+}
+
+
+
+// LARGE DESKTOP & UP
+// ------------------
+
+@media (min-width: 1200px) {
+
+
+}
+
+@media screen and (max-width: 1180px) {
+  #main-container {
+    &.menu {
+      right: -@sf-main-menu-width !important;
+      .subnav {
+        right: -@sf-main-menu-width !important;
+      }
+    }
+  }
+}
+
+
+
+
+
+

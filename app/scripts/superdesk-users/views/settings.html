@@ -1,0 +1,19 @@
+<div sd-settings-view ng-init="rolesTab = true">
+
+    <div class="split-content">
+        <ul class="nav nav-tabs">
+            <li ng-class="{active: rolesTab}">
+                <button ng-click="rolesTab = true" translate>Roles</button>
+            </li>
+            <li ng-class="{active: !rolesTab}">
+                <button ng-click="rolesTab = false" translate>Privileges</button>
+            </li>
+        </ul>
+        
+        <div class="content user-roles">
+            <div sd-user-roles ng-if="rolesTab"></div>
+            <div sd-roles-privileges ng-if="!rolesTab"></div>
+        </div>
+    </div>
+    
+</div>

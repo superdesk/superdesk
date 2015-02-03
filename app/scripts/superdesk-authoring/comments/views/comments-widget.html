@@ -1,0 +1,27 @@
+<div class="notification-list-box" ng-controller="CommentsWidgetCtrl">
+    <ul class="notification-list white">
+        <li ng-repeat="comment in comments" ng-class="{active: comment._id === active}">
+            <figure class="avatar">
+                <img sd-user-avatar data-src="comment.user.picture_url">
+            </figure>
+            <div class="content">
+                <div class="text" sd-comment-text data-comment="comment" data-name="{{comment.user.display_name || comment.user.username}}" data-text="{{comment.text}}"></div>
+                <span class="date" sd-reldate ng-model="comment._created"></span>
+            </div>
+        </li>
+
+        <li class="alert alert-info" ng-show="comments.length === 0" translate>No comments so far. Be the first..</li>
+        <li class="alert alert-info" ng-show="comments === null" translate>Loading..</li>
+    </ul>
+    <div class="add-comment">
+        <form name="commentsForm">
+            <div sd-user-mentio></div>
+            <textarea class="new-comment" sd-auto-height ng-model="text" mentio id="mentio-users" ng-keyup="saveOnEnter($event)"></textarea>
+            <div class="actions">
+                <div class="pull-left post"><input type="checkbox" ng-model="saveEnterFlag"> <span translate>Post on 'Enter'</span></div>
+                <button class="btn btn-info pull-right" ng-click="save()" ng-show="!saveEnterFlag" translate>Post</button>
+                <button class="btn pull-right" ng-click="cancel()" ng-show="!saveEnterFlag" translate>Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>

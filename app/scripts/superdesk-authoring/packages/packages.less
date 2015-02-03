@@ -1,0 +1,31 @@
+// packaging.less
+// Styling for making packages - editor widget
+// ----------------------------------------------------------------------------------------
+@import 'mixins.less';
+@import 'variables.less';
+
+.sd-widget.packages {
+
+    .packages-content {
+        padding-left: 10px;
+        padding-right: 10px;
+        background: @sd-background;
+        .package-preview {
+            margin-top: 5px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            border: 1px solid #efefef;
+            background: #fafafa;
+            padding: 5px;
+            .title {
+                padding-left: 5px;
+                padding-right: 5px;
+                .a {
+                    .text-semibold();
+                    font-size: 14px;
+                    color: #000;
+                }
+            }
+        }
+    }
+}

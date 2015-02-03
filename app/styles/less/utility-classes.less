@@ -1,0 +1,63 @@
+
+
+// Utility classes
+// -------------------------
+
+// Angular specific
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+	display: none !important;
+}
+
+// Quick floats
+.pull-right {
+	float: right;
+}
+.pull-left {
+	float: left;
+}
+
+// Toggling content
+.hide {
+	display: none;
+}
+.show {
+	display: block;
+}
+
+// Visibility
+.invisible {
+	visibility: hidden;
+}
+
+// Preview feature elements
+.beta-hide {
+	display: none !important;
+}
+
+.sd-blue {
+	color: @sd-blue;
+}
+// Blue text in input + blue placeholder
+.blue-text {
+	color: #419fc6 !important;
+	&::-webkit-input-placeholder {
+		color: #419fc6 !important;
+	}
+	&:-moz-placeholder {
+		color: #419fc6 !important;
+	}
+	&::-moz-placeholder {
+		color: #419fc6 !important;
+	}
+	&::-ms-input-placeholder {
+		color: #419fc6 !important;
+	}
+}
+
+// Remove background
+.no-bg {
+	background: none !important;
+	&:hover {
+		background: none !important;
+	}
+}
