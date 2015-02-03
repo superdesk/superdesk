@@ -13,11 +13,11 @@ services:
     - redis-server
 
 before_install:
-    - cd client && npm install -g grunt-cli bower && cd ..
+    - npm install -g grunt-cli bower
 
 before_script:
-    - cd client && npm install karma-phantomjs-launcher && cd ..
-    - cd client && bower install --force-latest  && cd ..
+    - cd client && npm install && cd ..
+    - cd client && bower install --force-latest && cd ..
 
 install:
     - cd server && pip install -r requirements.txt --use-mirrors && cd ..
