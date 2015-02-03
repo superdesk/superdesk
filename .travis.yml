@@ -24,8 +24,8 @@ install:
 
 script:
     - cd server && nosetests && cd ..
-    - cd server && behave && cd ..
-    - cd server && LDAP_SERVER="ldap://sourcefabric.org" LDAP_BASE_FILTER="OU=Superdesk Users,dc=sourcefabric,dc=org" behave && cd ..
+    - cd server && behave --format progress3 && cd ..
+    - cd server && LDAP_SERVER="ldap://sourcefabric.org" LDAP_BASE_FILTER="OU=Superdesk Users,dc=sourcefabric,dc=org" behave --format progress3 && cd ..
     - cd server && flake8 && cd ..
     - cd client && npm test && cd ..
 
