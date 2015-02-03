@@ -10,6 +10,27 @@ define([
 ], function(angular, require) {
     'use strict';
 
+    DeskDropdownDirective.$inject = ['desks', '$route'];
+    function DeskDropdownDirective(desks, $route) {
+        return {
+            templateUrl: 'scripts/superdesk-dashboard/views/desk-dropdown.html',
+            link: function(scope) {
+
+                scope.select = function selectDesk(desk) {
+                    desks.setCurrentDesk(desk);
+                    scope.selected = desk;
+                    $route.reload();
+                };
+
+                desks.fetchCurrentUserDesks()
+                    .then(function(userDesks) {
+                        scope.desks = userDesks;
+                        scope.selected = _.find(userDesks, {_id: desks.getCurrentDeskId()});
+                    });
+            }
+        };
+    }
+
     // to avoid circular dependency
     angular.module('superdesk.dashboard.widgets', []).
         provider('widgets', require('./widgets-provider'));
@@ -25,6 +46,7 @@ define([
 
     .service('workspace', require('./workspace-service'))
     .directive('sdWidget', require('./sd-widget-directive'))
+    .directive('sdDeskDropdown', DeskDropdownDirective)
 
     .filter('wcodeFilter', function() {
         return function(input, values) {
