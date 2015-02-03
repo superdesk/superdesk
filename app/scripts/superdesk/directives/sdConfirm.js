@@ -6,12 +6,12 @@ define(['angular'], function(angular) {
             return {
                 scope: {
                     msg: '@sdConfirm',
-                    action: '&ngClick'
+                    confirmAction: '&'
                 },
                 link: function(scope, element, attrs) {
                     element.click(function(e) {
                         if ($window.confirm(scope.msg)) {
-                            scope.action();
+                            scope.confirmAction();
                         }
                     });
                 }
