@@ -1,0 +1,155 @@
+# -*- coding: utf-8; -*-
+#
+# This file is part of Superdesk.
+#
+# Copyright 2013, 2014 Sourcefabric z.u. and contributors.
+#
+# For the full copyright and license information, please see the
+# AUTHORS and LICENSE files distributed with this source code, or
+# at https://www.sourcefabric.org/superdesk/license
+
+
+from unittest import TestCase
+from datetime import timedelta
+from nose.tools import assert_raises
+from superdesk import get_resource_service
+from superdesk.utc import utcnow
+from superdesk.tests import setup
+from superdesk.errors import SuperdeskApiError
+from superdesk.io import register_provider
+from superdesk.io.tests import setup_providers, teardown_providers
+from superdesk.io.ingest_service import IngestService
+from superdesk.io.commands.update_ingest import is_scheduled, update_provider, filter_expired_items, apply_rule_set
+
+
+class TestProviderService(IngestService):
+
+    def update(self, provider):
+        return []
+
+
+register_provider('test', TestProviderService())
+
+
+class UpdateIngestTest(TestCase):
+    def setUp(self):
+        setup(context=self)
+        setup_providers(self)
+
+    def tearDown(self):
+        teardown_providers(self)
+
+    def _get_provider(self, provider_name):
+        return get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+
+    def _get_provider_service(self, provider):
+        return self.provider_services[provider.get('type')]
+
+    def test_ingest_items(self):
+        provider_name = 'reuters'
+        guid = 'tag:reuters.com,2014:newsml_KBN0FL0NM'
+        with self.app.app_context():
+            provider = self._get_provider(provider_name)
+            provider_service = self._get_provider_service(provider)
+            provider_service.provider = provider
+            items = provider_service.fetch_ingest(guid)
+            items.extend(provider_service.fetch_ingest(guid))
+            self.assertEquals(12, len(items))
+            self.ingest_items(items, provider)
+
+    def test_ingest_item_sync_if_missing_from_elastic(self):
+        provider_name = 'reuters'
+        guid = 'tag:reuters.com,2014:newsml_KBN0FL0NM'
+        with self.app.app_context():
+            provider = self._get_provider(provider_name)
+            provider_service = self._get_provider_service(provider)
+            provider_service.provider = provider
+            item = provider_service.fetch_ingest(guid)[0]
+            # insert in mongo
+            ids = self.app.data._backend('ingest').insert('ingest', [item])
+            # check that item is not in elastic
+            elastic_item = self.app.data._search_backend('ingest').find_one('ingest', _id=ids[0], req=None)
+            self.assertIsNone(elastic_item)
+            # trigger sync by fetch
+            old_item = get_resource_service('ingest').find_one(_id=ids[0], req=None)
+            self.assertIsNotNone(old_item)
+            # check that item is synced in elastic
+            elastic_item = self.app.data._search_backend('ingest').find_one('ingest', _id=ids[0], req=None)
+            self.assertIsNotNone(elastic_item)
+
+    def test_ingest_provider_closed_raises_exception(self):
+        provider = {
+            'name': 'aap',
+            'type': 'aap',
+            'is_closed': True,
+            'source': 'aap',
+            'config': {
+                'path': '/'
+            }
+        }
+
+        with assert_raises(SuperdeskApiError) as error_context:
+            aap = self._get_provider_service(provider)
+            aap.update(provider)
+        ex = error_context.exception
+        self.assertTrue(ex.status_code == 500)
+
+    def test_is_scheduled(self):
+        self.assertTrue(is_scheduled({}), 'for first time it should run')
+        self.assertFalse(is_scheduled({'last_updated': utcnow()}), 'then it should wait default time 5m')
+        self.assertTrue(is_scheduled({'last_updated': utcnow() - timedelta(minutes=6)}), 'after 5m it should run again')
+        self.assertFalse(is_scheduled({
+            'last_updated': utcnow() - timedelta(minutes=6),
+            'update_schedule': {'minutes': 10}
+        }), 'or wait if provider has specific schedule')
+        self.assertTrue(is_scheduled({
+            'last_updated': utcnow() - timedelta(minutes=11),
+            'update_schedule': {'minutes': 10}
+        }), 'and run eventually')
+
+    def test_change_last_updated(self):
+        with self.app.app_context():
+            test_provider = {'type': 'test', '_etag': 'test'}
+            self.app.data.insert('ingest_providers', [test_provider])
+
+            update_provider(test_provider)
+            provider = self.app.data.find_one('ingest_providers', req=None, _id=test_provider['_id'])
+            self.assertGreaterEqual(utcnow(), provider.get('last_updated'))
+            self.assertEqual('test', provider.get('_etag'))
+
+    def test_filter_expired_items(self):
+        provider_name = 'reuters'
+        guid = 'tag:reuters.com,2014:newsml_KBN0FL0NM'
+        with self.app.app_context():
+            provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+            provider_service = self.provider_services[provider.get('type')]
+            provider_service.provider = provider
+            items = provider_service.fetch_ingest(guid)
+            for item in items[:3]:
+                item['versioncreated'] = utcnow()
+            self.assertEqual(3, len(filter_expired_items(provider, items)))
+
+    def test_apply_rule_set(self):
+        with self.app.app_context():
+            item = {'body_html': '@@body@@'}
+
+            provider_name = 'reuters'
+            provider = self._get_provider(provider_name)
+            self.assertEquals('body', apply_rule_set(item, provider)['body_html'])
+
+            item = {'body_html': '@@body@@'}
+            provider_name = 'AAP'
+            provider = self._get_provider(provider_name)
+            self.assertEquals('@@body@@', apply_rule_set(item, provider)['body_html'])
+
+    def test_all_ingested_items_have_sequence(self):
+        provider_name = 'reuters'
+        guid = 'tag:reuters.com,2014:newsml_KBN0FL0NM'
+        with self.app.app_context():
+            provider = self._get_provider(provider_name)
+            provider_service = self._get_provider_service(provider)
+            provider_service.provider = provider
+            item = provider_service.fetch_ingest(guid)[0]
+            get_resource_service("ingest").set_ingest_provider_sequence(item, provider)
+
+            self.assertIsNotNone(item['ingest_provider_sequence'])

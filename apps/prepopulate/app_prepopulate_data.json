@@ -1,0 +1,21 @@
+[
+    {
+        "data": {
+            "email": "a@a.com",
+            "first_name": "first name",
+            "last_name": "last name",
+            "needs_activation": false,
+            "password": "admin",
+            "user_type": "administrator",
+            "username": "admin"
+        },
+        "id_name": "-id user admin-",
+        "resource": "users"
+    },
+    {
+        "data": {"members": [{"user": "-id user admin-"}], "name": "Sports Desk"},
+        "resource": "desks",
+        "username": "admin"
+    },
+    {"data": {"name": "Editor", "privileges": {"ingest": {"read": 1}}}, "resource": "roles"}
+]

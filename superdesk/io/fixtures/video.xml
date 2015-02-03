@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SUMMARY:
+- Structure: NML2 NEP External
+- Based On: NML2 v2.10
+
+AUTHOR: thomsonreuters.com
+-->
+<!-- ========================================================= -->
+<newsMessage xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rtr="http://www.reuters.com/ns/2003/08/content" xmlns:x="http://www.w3.org/1999/xhtml">
+  <header>
+    <sent>2013-03-04T11:48:41.000Z</sent>
+    <sender>reuters.com</sender>
+    <transmitId>tag:reuters.com,2013:newsml_OVE933ZR4:1</transmitId>
+    <priority>4</priority>
+    <destination>NVO</destination>
+    <channel>VID</channel>
+  </header>
+  <itemSet>
+    <packageItem guid="tag:reuters.com,2013:newsml_OVE933ZR4" version="1" standard="NewsML-G2" standardversion="2.10" conformance="power">
+      <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml" />
+      <rightsInfo>
+        <copyrightHolder literal="Thomson Reuters" />
+        <copyrightNotice xml:lang="en">(c) Copyright Thomson Reuters 2013. Open For Restrictions - http://about.reuters.com/fulllegal.asp</copyrightNotice>
+        <usageTerms xml:lang="en">NONE</usageTerms>
+        <usageTerms role="usageRole:content" xml:lang="en">Online</usageTerms>
+      </rightsInfo>
+      <itemMeta>
+        <itemClass qcode="icls:composite" />
+        <provider literal="reuters.com" />
+        <versionCreated>2013-03-04T11:37:47.000Z</versionCreated>
+        <firstCreated>2013-03-04T11:37:47.000Z</firstCreated>
+        <pubStatus qcode="stat:usable" />
+        <role qcode="itemRole:N" />
+        <fileName>2013-03-04T114200Z_1_OVE933ZR4_RTRMADC_0_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.XML</fileName>
+        <generator versioninfo="00.00.01">Reuters Video Online</generator>
+        <profile versioninfo="00.00.01">NEP-External_ANP</profile>
+        <service qcode="svc:RTR_VID" />
+        <signal qcode="var:itemMod" />
+        <signal qcode="prodId:VID" />
+        <signal qcode="sic:ATOMIC" />
+        <signal qcode="pmt:video" />
+        <link rel="irel:derivedFrom" residref="tag:reuters.com,2013:newsml_WNE933ZR4" version="1" contenttype="application/vnd.iptc.g2.packageitem+xml" rtr:id="WNE933ZR4" rtr:type="idType:USN" />
+        <rtr:versionedId guid="tag:reuters.com,2013:newsml_OVE933ZR4:1" />
+      </itemMeta>
+      <contentMeta>
+        <urgency>4</urgency>
+        <located literal="No-Data-Available" type="cptType:5" xml:lang="en">
+          <name xml:lang="en">No-Data-Available</name>
+        </located>
+        <infoSource role="cRole:origProv" literal="Reuters" />
+        <infoSource role="cRole:source" literal="Reuters" />
+        <creator literal="Reuters" />
+        <contributor role="cRole:lastEd" literal="butcher" />
+        <exclAudience />
+        <altId type="idType:USN" rtr:isOriginal="1">OVE933ZR4</altId>
+        <altId type="idType:editNumber">1149</altId>
+        <altId type="idType:itemId">tag:reuters.com,2013:newsml_OVE933ZR4:1</altId>
+        <language tag="en" />
+        <genre literal="Current or spot news">
+          <name>Current or spot news</name>
+        </genre>
+        <subject qcode="ISLC:No-Data-Available" />
+        <subject qcode="rvnServiceCode:NO">
+          <name>NVO</name>
+        </subject>
+        <subject qcode="tvsc:TOP" />
+        <subject qcode="WNSFR:NVO" />
+        <slugline xml:lang="en" separator="-">VATICAN-CARDINALS ARRIVE ROUGH CUT (O)</slugline>
+        <headline xml:lang="en">Cardinals arrive for pre-conclave meeting</headline>
+        <dateline xml:lang="en">MARCH 04, 2013</dateline>
+        <by xml:lang="en">Reuters, MAR 04</by>
+        <description role="descRole:videoCaption" xml:lang="en">1149NO-VATICAN-CARDINALS_ARRIVE_ROUGH_CUT_O_</description>
+      </contentMeta>
+      <groupSet root="root">
+        <group role="grpRole:NEP" id="root">
+          <groupRef idref="main" />
+        </group>
+        <group role="grpRole:Main" id="main">
+          <itemRef residref="tag:reuters.com,2013:newsml_OVE933ZR5" contenttype="application/vnd.iptc.g2.newsitem+xml">
+            <itemClass qcode="icls:text" />
+            <provider literal="reuters.com" />
+            <pubStatus qcode="stat:usable" />
+            <role qcode="itemRole:N" />
+          </itemRef>
+          <itemRef residref="tag:reuters.com,2013:newsml_LOVE9230WHZNT" contenttype="application/vnd.iptc.g2.newsitem+xml">
+            <itemClass qcode="icls:audio" />
+            <provider literal="reuters.com" />
+            <pubStatus qcode="stat:usable" />
+            <role qcode="itemRole:N" />
+          </itemRef>
+          <itemRef residref="tag:reuters.com,2013:newsml_LOVE9230WHZNS" contenttype="application/vnd.iptc.g2.newsitem+xml">
+            <itemClass qcode="icls:video" />
+            <provider literal="reuters.com" />
+            <pubStatus qcode="stat:usable" />
+            <role qcode="itemRole:N" />
+          </itemRef>
+          <itemRef residref="tag:reuters.com,2013:newsml_LOVE9230WHZNR" contenttype="application/vnd.iptc.g2.newsitem+xml">
+            <itemClass qcode="icls:picture" />
+            <provider literal="reuters.com" />
+            <pubStatus qcode="stat:usable" />
+            <role qcode="itemRole:N" />
+          </itemRef>
+        </group>
+      </groupSet>
+    </packageItem>
+    <newsItem guid="tag:reuters.com,2013:newsml_OVE933ZR5" version="1" standard="NewsML-G2" standardversion="2.10" conformance="power">
+      <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml" />
+      <rightsInfo>
+        <copyrightHolder literal="Thomson Reuters" />
+        <copyrightNotice xml:lang="en">(c) Copyright Thomson Reuters 2013. Open For Restrictions - http://about.reuters.com/fulllegal.asp</copyrightNotice>
+      </rightsInfo>
+      <itemMeta>
+        <itemClass qcode="icls:text" />
+        <provider literal="reuters.com" />
+        <versionCreated>2013-03-04T11:37:47.000Z</versionCreated>
+        <firstCreated>2013-03-04T11:37:47.000Z</firstCreated>
+        <pubStatus qcode="stat:usable" />
+        <role qcode="itemRole:N" />
+        <fileName>2013-03-04T114200Z_1_OVE933ZR5_RTRMADT_0_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.XML</fileName>
+        <generator versioninfo="00.00.01">Reuters Video Online</generator>
+        <profile versioninfo="00.00.01">SNI-Text</profile>
+        <signal qcode="var:itemMod" />
+        <link rel="irel:derivedFrom" residref="tag:reuters.com,2013:newsml_WNE933ZR5" version="1" contenttype="application/vnd.iptc.g2.newsitem+xml" rtr:id="WNE933ZR5" rtr:type="idType:USN" />
+        <rtr:versionedId guid="tag:reuters.com,2013:newsml_OVE933ZR5:1" />
+      </itemMeta>
+      <contentMeta>
+        <urgency>4</urgency>
+        <located literal="No-Data-Available" type="cptType:5" xml:lang="en">
+          <name xml:lang="en">No-Data-Available</name>
+        </located>
+        <infoSource role="cRole:origProv" literal="Reuters" />
+        <infoSource role="cRole:source" literal="Reuters" />
+        <creator literal="Reuters" />
+        <altId type="idType:USN" rtr:isOriginal="1">OVE933ZR5</altId>
+        <altId type="idType:itemId">tag:reuters.com,2013:newsml_OVE933ZR5:1</altId>
+        <language tag="en" />
+        <slugline xml:lang="en" separator="-">VATICAN-CARDINALS ARRIVE ROUGH CUT (O)</slugline>
+        <headline xml:lang="en">Cardinals arrive for pre-conclave meeting</headline>
+        <dateline xml:lang="en">MARCH 04, 2013</dateline>
+        <by xml:lang="en">Reuters, MAR 04</by>
+        <description role="descRole:intro" xml:lang="en">Cardinals arrive at the Vatican to participate in pre-conclave talks, as the Roman Catholic Church prepares to elect its next pope. Rough Cut (no reporter narration).</description>
+        <description role="descRole:moreInfo" xml:lang="en" />
+      </contentMeta>
+      <contentSet>
+        <inlineXML contenttype="application/xhtml+xml" wordcount="121">
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <head>
+              <title />
+            </head>
+            <body>
+              <p>(ROUGH CUT ONLY - NO REPORTER NARRATION)</p>
+              <p>Preparations for electing the next Catholic pope began in earnest on Monday (March 4) as the College of Cardinals opened daily talks to discuss who may become the new pontiff.</p>
+              <p>The cardinals arrived at the Vatican in the early morning to take part in closed-door meetings.</p>
+              <p>They were also set to hold sessions later in the day in an effort to discuss as much as possible in a short time.</p>
+              <p>Vatican experts say the idea is to have the new pope elected during next week and officially installed several days later so he can preside over the Holy Week ceremonies starting with Palm Sunday on March 24 and culminating in Easter the following Sunday.</p>
+              <p />
+            </body>
+          </html>
+        </inlineXML>
+      </contentSet>
+    </newsItem>
+    <newsItem guid="tag:reuters.com,2013:newsml_LOVE9230WHZNS" version="1" standard="NewsML-G2" standardversion="2.10" conformance="power">
+      <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml" />
+      <rightsInfo>
+        <copyrightHolder literal="Thomson Reuters" />
+        <copyrightNotice xml:lang="en">(c) Copyright Thomson Reuters 2013. Open For Restrictions - http://about.reuters.com/fulllegal.asp</copyrightNotice>
+      </rightsInfo>
+      <itemMeta>
+        <itemClass qcode="icls:video" />
+        <provider literal="reuters.com" />
+        <versionCreated>2013-03-04T11:48:41.000Z</versionCreated>
+        <firstCreated>2013-03-04T11:37:47.000Z</firstCreated>
+        <pubStatus qcode="stat:usable" />
+        <role qcode="itemRole:N" />
+        <fileName>2013-03-04T114200Z_1_LOVE9230WHZNS_RTRMADV_0_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.XML</fileName>
+        <generator versioninfo="00.00.01">Reuters Video Online</generator>
+        <profile versioninfo="00.00.01">SNI-Video</profile>
+        <signal qcode="var:itemMod" />
+        <link rel="irel:derivedFrom" residref="tag:reuters.com,2013:newsml_LWNE9330WI000" version="1" contenttype="application/vnd.iptc.g2.newsitem+xml" rtr:id="LWNE9330WI000" rtr:type="idType:SID" />
+        <rtr:versionedId guid="tag:reuters.com,2013:newsml_LOVE9230WHZNS:1" />
+      </itemMeta>
+      <contentMeta>
+        <urgency>4</urgency>
+        <infoSource role="cRole:origProv" literal="Reuters" />
+        <infoSource role="cRole:source" literal="No-Data-Available" />
+        <creator literal="Reuters" />
+        <altId type="idType:SID" rtr:isOriginal="1">LOVE9230WHZNS</altId>
+        <altId type="idType:itemId">tag:reuters.com,2013:newsml_LOVE9230WHZNS:1</altId>
+        <language tag="en" />
+        <by xml:lang="en">No-Data-Available, MAR 04</by>
+        <description role="descRole:audio" xml:lang="en" />
+      </contentMeta>
+      <contentSet>
+        <remoteContent residref="tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:6756:16X9:MPG" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:6756:16X9:MPG" size="41949860" rendition="rend:stream:6756:16x9:mpg" contenttype="video/mpeg" format="fmt:mpeg" generated="2013-03-04T11:46:31.000Z" width="720" height="576" duration="41" audiobitrate="256000" audiosamplerate="48000" videoavgbitrate="6500000" videoaspectratio="16:9">
+          <rtr:altId type="idType:fileBIN">2013-03-04T114200Z_1_LOVE9230WHZNS_RTRMADV_STREAM-6756-16X9-MPG_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.MPG</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:6756:16X9:MPG</rtr:altLoc>
+        </remoteContent>
+        <remoteContent residref="tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:80:11X9:3G2" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:80:11X9:3G2" size="413988" rendition="rend:stream:80:11x9:3g2" contenttype="video/3gpp2" format="fmt:3gpp2MultimediaFile" generated="2013-03-04T11:47:12.000Z" width="176" height="144" duration="41" audiobitrate="12200" audiosamplerate="8000" videoavgbitrate="64000" videoaspectratio="11:9">
+          <rtr:altId type="idType:fileBIN">2013-03-04T114200Z_1_LOVE9230WHZNS_RTRMADV_STREAM-80-11X9-3G2_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.3G2</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:80:11X9:3G2</rtr:altLoc>
+        </remoteContent>
+        <remoteContent residref="tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:80:11X9:3GP" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:80:11X9:3GP" size="405383" rendition="rend:stream:80:11x9:3gp" contenttype="video/3gpp" format="fmt:3gppMultimediaFile" generated="2013-03-04T11:47:27.000Z" width="176" height="144" duration="41" audiobitrate="12200" audiosamplerate="8000" videoavgbitrate="64000" videoaspectratio="11:9">
+          <rtr:altId type="idType:fileBIN">2013-03-04T114200Z_1_LOVE9230WHZNS_RTRMADV_STREAM-80-11X9-3GP_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.3GP</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:80:11X9:3GP</rtr:altLoc>
+        </remoteContent>
+        <remoteContent residref="tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:300:16X9:MP4" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:300:16X9:MP4" size="1503241" rendition="rend:stream:300:16x9:mp4" contenttype="video/mpeg" format="fmt:H264/mpeg" generated="2013-03-04T11:47:29.000Z" width="384" height="216" duration="41" audiobitrate="32000" audiosamplerate="22050" videoavgbitrate="268000" videoaspectratio="16:9">
+          <rtr:altId type="idType:fileBIN">2013-03-04T114200Z_1_LOVE9230WHZNS_RTRMADV_STREAM-300-16X9-MP4_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.MP4</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:300:16X9:MP4</rtr:altLoc>
+        </remoteContent>
+        <remoteContent residref="tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:700:16X9:MP4" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:700:16X9:MP4" size="3494789" rendition="rend:stream:700:16x9:mp4" contenttype="video/mpeg" format="fmt:H264/mpeg" generated="2013-03-04T11:47:31.000Z" width="640" height="360" duration="41" audiobitrate="76000" audiosamplerate="44100" videoavgbitrate="624000" videoaspectratio="16:9">
+          <rtr:altId type="idType:fileBIN">2013-03-04T114200Z_1_LOVE9230WHZNS_RTRMADV_STREAM-700-16X9-MP4_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.MP4</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:700:16X9:MP4</rtr:altLoc>
+        </remoteContent>
+        <remoteContent residref="tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:2000:16X9:MP4" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:2000:16X9:MP4" size="9534791" rendition="rend:stream:2000:16x9:mp4" contenttype="video/mpeg" format="fmt:H264/mpeg" generated="2013-03-04T11:47:33.000Z" width="768" height="432" duration="41" audiobitrate="128000" audiosamplerate="44100" videoavgbitrate="1872000" videoaspectratio="16:9">
+          <rtr:altId type="idType:fileBIN">2013-03-04T114200Z_1_LOVE9230WHZNS_RTRMADV_STREAM-2000-16X9-MP4_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.MP4</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:2000:16X9:MP4</rtr:altLoc>
+        </remoteContent>
+        <remoteContent residref="tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:300:16X9:FLV" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:300:16X9:FLV" size="1643285" rendition="rend:stream:300:16x9:flv" contenttype="video/x-flv" format="fmt:flashVideo" generated="2013-03-04T11:48:00.000Z" width="384" height="216" duration="41" audiobitrate="32000" audiosamplerate="22050" videoavgbitrate="268000" videoaspectratio="16:9">
+          <rtr:altId type="idType:fileBIN">2013-03-04T114200Z_1_LOVE9230WHZNS_RTRMADV_STREAM-300-16X9-FLV_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.FLV</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:300:16X9:FLV</rtr:altLoc>
+        </remoteContent>
+        <remoteContent residref="tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:512:16X9:FLV" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:512:16X9:FLV" size="2761117" rendition="rend:stream:512:16x9:flv" contenttype="video/x-flv" format="fmt:flashVideo" generated="2013-03-04T11:48:16.000Z" width="512" height="288" duration="41" audiobitrate="48000" audiosamplerate="44100" videoavgbitrate="464000" videoaspectratio="16:9">
+          <rtr:altId type="idType:fileBIN">2013-03-04T114200Z_1_LOVE9230WHZNS_RTRMADV_STREAM-512-16X9-FLV_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.FLV</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:512:16X9:FLV</rtr:altLoc>
+        </remoteContent>
+        <remoteContent residref="tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:512:16X9:ASF" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:512:16X9:ASF" size="2738444" rendition="rend:stream:512:16x9:asf" contenttype="video/x-ms-asf" format="fmt:advancedStreamingFormat" generated="2013-03-04T11:48:28.000Z" width="512" height="288" duration="41" audiobitrate="32000" audiosamplerate="44100" videoavgbitrate="480000" videoaspectratio="16:9">
+          <rtr:altId type="idType:fileBIN">2013-03-04T114200Z_1_LOVE9230WHZNS_RTRMADV_STREAM-512-16X9-ASF_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.ASF</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:512:16X9:ASF</rtr:altLoc>
+        </remoteContent>
+        <remoteContent residref="tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:700:16X9:FLV" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:700:16X9:FLV" size="3752503" rendition="rend:stream:700:16x9:flv" contenttype="video/x-flv" format="fmt:flashVideo" generated="2013-03-04T11:48:31.000Z" width="576" height="324" duration="41" audiobitrate="96000" audiosamplerate="44100" videoavgbitrate="604000" videoaspectratio="16:9">
+          <rtr:altId type="idType:fileBIN">2013-03-04T114200Z_1_LOVE9230WHZNS_RTRMADV_STREAM-700-16X9-FLV_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.FLV</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:700:16X9:FLV</rtr:altLoc>
+        </remoteContent>
+        <remoteContent residref="tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:300:16X9:ASF" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:300:16X9:ASF" size="1640252" rendition="rend:stream:300:16x9:asf" contenttype="video/x-ms-asf" format="fmt:advancedStreamingFormat" generated="2013-03-04T11:48:41.000Z" width="384" height="216" duration="41" audiobitrate="32000" audiosamplerate="44100" videoavgbitrate="268000" videoaspectratio="16:9">
+          <rtr:altId type="idType:fileBIN">2013-03-04T114200Z_1_LOVE9230WHZNS_RTRMADV_STREAM-300-16X9-ASF_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.ASF</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNS-STREAM:300:16X9:ASF</rtr:altLoc>
+        </remoteContent>
+      </contentSet>
+    </newsItem>
+    <newsItem guid="tag:reuters.com,2013:newsml_LOVE9230WHZNT" version="1" standard="NewsML-G2" standardversion="2.10" conformance="power">
+      <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml" />
+      <rightsInfo>
+        <copyrightHolder literal="Thomson Reuters" />
+        <copyrightNotice xml:lang="en">(c) Copyright Thomson Reuters 2013. Open For Restrictions - http://about.reuters.com/fulllegal.asp</copyrightNotice>
+      </rightsInfo>
+      <itemMeta>
+        <itemClass qcode="icls:audio" />
+        <provider literal="reuters.com" />
+        <versionCreated>2013-03-04T11:47:26.000Z</versionCreated>
+        <firstCreated>2013-03-04T11:37:47.000Z</firstCreated>
+        <pubStatus qcode="stat:usable" />
+        <role qcode="itemRole:N" />
+        <fileName>2013-03-04T114200Z_1_LOVE9230WHZNT_RTRMADA_0_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.XML</fileName>
+        <generator versioninfo="00.00.01">Reuters Video Online</generator>
+        <profile versioninfo="00.00.01">SNI-Audio</profile>
+        <signal qcode="var:itemMod" />
+        <link rel="irel:derivedFrom" residref="tag:reuters.com,2013:newsml_LWNE9330WI000" version="1" contenttype="application/vnd.iptc.g2.newsitem+xml" rtr:id="LWNE9330WI000" rtr:type="idType:SID" />
+        <rtr:versionedId guid="tag:reuters.com,2013:newsml_LOVE9230WHZNT:1" />
+      </itemMeta>
+      <contentMeta>
+        <urgency>4</urgency>
+        <infoSource role="cRole:origProv" literal="Reuters" />
+        <creator literal="Reuters" />
+        <altId type="idType:SID" rtr:isOriginal="1">LOVE9230WHZNT</altId>
+        <altId type="idType:itemId">tag:reuters.com,2013:newsml_LOVE9230WHZNT:1</altId>
+        <language tag="en" />
+        <by xml:lang="en">No-Data-Available, MAR 04</by>
+      </contentMeta>
+      <contentSet>
+        <remoteContent residref="tag:reuters.com,0000:binary_LOVE9230WHZNT-STREAM:22.050:MP3" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNT-STREAM:22.050:MP3" size="292239" rendition="rend:stream:22.050:mp3" contenttype="audio/mpeg" format="fmt:mpeg" generated="2013-03-04T11:47:26.000Z" duration="41" audiobitrate="56000" audiosamplerate="22050">
+          <rtr:altId type="idType:fileBIN">2013-03-04T114200Z_1_LOVE9230WHZNT_RTRMADA_STREAM-22-050-MP3_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.MP3</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNT-STREAM:22.050:MP3</rtr:altLoc>
+        </remoteContent>
+      </contentSet>
+    </newsItem>
+    <newsItem guid="tag:reuters.com,2013:newsml_LOVE9230WHZNR" version="1" standard="NewsML-G2" standardversion="2.10" conformance="power">
+      <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml" />
+      <rightsInfo>
+        <copyrightHolder literal="Thomson Reuters" />
+        <copyrightNotice xml:lang="en">(c) Copyright Thomson Reuters 2013. Open For Restrictions - http://about.reuters.com/fulllegal.asp</copyrightNotice>
+      </rightsInfo>
+      <itemMeta>
+        <itemClass qcode="icls:picture" />
+        <provider literal="reuters.com" />
+        <versionCreated>2013-03-04T11:46:58.000Z</versionCreated>
+        <firstCreated>2013-03-04T11:37:47.000Z</firstCreated>
+        <pubStatus qcode="stat:usable" />
+        <role qcode="itemRole:N" />
+        <fileName>2013-03-04T114200Z_1_LOVE9230WHZNR_RTRMADP_0_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.XML</fileName>
+        <generator versioninfo="00.00.01">Reuters Video Online</generator>
+        <profile versioninfo="00.00.01">SNI-Picture</profile>
+        <signal qcode="var:itemMod" />
+        <link rel="irel:derivedFrom" residref="tag:reuters.com,2013:newsml_WNE933ZR5" version="1" contenttype="application/vnd.iptc.g2.newsitem+xml" rtr:id="WNE933ZR5" rtr:type="idType:USN" />
+        <link rel="irel:derivedFrom" residref="tag:reuters.com,2013:newsml_LWNE9330WI000" version="1" contenttype="application/vnd.iptc.g2.newsitem+xml" rtr:id="LWNE9330WI000" rtr:type="idType:SID" />
+        <rtr:versionedId guid="tag:reuters.com,2013:newsml_LOVE9230WHZNR:1" />
+      </itemMeta>
+      <contentMeta>
+        <urgency>4</urgency>
+        <infoSource role="cRole:origProv" literal="Reuters" />
+        <creator literal="Reuters" />
+        <altId type="idType:IID" rtr:isOriginal="1">LOVE9230WHZNR</altId>
+        <altId type="idType:itemId">tag:reuters.com,2013:newsml_LOVE9230WHZNR:1</altId>
+        <language tag="en" />
+        <by xml:lang="en">No-Data-Available, MAR 04</by>
+      </contentMeta>
+      <contentSet>
+        <remoteContent residref="tag:reuters.com,0000:binary_LOVE9230WHZNR-VIEWIMAGE:512X288" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNR-VIEWIMAGE:512X288" size="85603" rendition="rend:viewImage:512x288" contenttype="image/jpeg" format="fmt:jpegBaseline" generated="2013-03-04T11:46:57.000Z" width="512" height="288">
+          <rtr:altId type="idType:fileBIN">2013-03-04T114200Z_1_LOVE9230WHZNR_RTRMADP_VIEWIMAGE-512X288_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.JPG</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNR-VIEWIMAGE:512X288</rtr:altLoc>
+        </remoteContent>
+        <remoteContent residref="tag:reuters.com,0000:binary_LOVE9230WHZNR-BASEIMAGE:960X540" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNR-BASEIMAGE:960X540" size="225435" rendition="rend:baseImage:960x540" contenttype="image/jpeg" format="fmt:jpegBaseline" generated="2013-03-04T11:46:57.000Z" width="960" height="540">
+          <rtr:altId type="idType:fileBIN">2013-03-04T114200Z_1_LOVE9230WHZNR_RTRMADP_BASEIMAGE-960X540_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.JPG</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNR-BASEIMAGE:960X540</rtr:altLoc>
+        </remoteContent>
+        <remoteContent residref="tag:reuters.com,0000:binary_LOVE9230WHZNR-THUMBNAIL:160X90" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNR-THUMBNAIL:160X90" size="14109" rendition="rend:thumbnail:160x90" contenttype="image/jpeg" format="fmt:jpegBaseline" generated="2013-03-04T11:46:58.000Z" width="160" height="90">
+          <rtr:altId type="idType:fileBIN">2013-03-04T114200Z_1_LOVE9230WHZNR_RTRMADP_THUMBNAIL-160X90_VATICAN-CARDINALS-ARRIVE-ROUGH-CUT-O.JPG</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,2013:newsml_OVE933ZR4:1/tag:reuters.com,0000:binary_LOVE9230WHZNR-THUMBNAIL:160X90</rtr:altLoc>
+        </remoteContent>
+      </contentSet>
+    </newsItem>
+  </itemSet>
+</newsMessage>

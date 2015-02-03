@@ -1,0 +1,100 @@
+# -*- coding: utf-8; -*-
+#
+# This file is part of Superdesk.
+#
+# Copyright 2013, 2014 Sourcefabric z.u. and contributors.
+#
+# For the full copyright and license information, please see the
+# AUTHORS and LICENSE files distributed with this source code, or
+# at https://www.sourcefabric.org/superdesk/license
+
+
+"""Superdesk IO"""
+import logging
+import superdesk
+
+from superdesk.celery_app import celery
+
+
+parsers = []
+providers = {}
+allowed_providers = []
+logger = logging.getLogger(__name__)
+
+from .commands.remove_expired_content import RemoveExpiredContent
+from .commands.update_ingest import UpdateIngest
+from .commands.add_provider import AddProvider  # NOQA
+
+
+def init_app(app):
+    from .ingest_provider_model import IngestProviderResource, IngestProviderService
+    # from superdesk.services import BaseService
+    import superdesk
+    endpoint_name = 'ingest_providers'
+    service = IngestProviderService(endpoint_name, backend=superdesk.get_backend())
+    IngestProviderResource(endpoint_name, app=app, service=service)
+
+
+def register_provider(type, provider):
+    providers[type] = provider
+    allowed_providers.append(type)
+
+
+@celery.task()
+def update_ingest():
+    UpdateIngest().run()
+
+
+@celery.task()
+def gc_ingest():
+    RemoveExpiredContent().run()
+
+
+class ParserRegistry(type):
+    """Registry metaclass for parsers."""
+
+    def __init__(cls, name, bases, attrs):
+        """Register sub-classes of Parser class when defined."""
+        super(ParserRegistry, cls).__init__(name, bases, attrs)
+        if name != 'Parser':
+            parsers.append(cls())
+
+
+class Parser(metaclass=ParserRegistry):
+    """Base Parser class for all types of Parsers like News ML 1.2, News ML G2, NITF, etc."""
+
+    def parse_message(self, xml):
+        """Parse the ingest XML and extracts the relevant elements/attributes values from the XML."""
+        raise NotImplementedError()
+
+    def can_parse(self, xml):
+        """Test if parser can parse given xml."""
+        raise NotImplementedError()
+
+    def trim_headline(self, headline):
+        """Returns first 64 characters of a given headline"""
+        if headline:
+            return headline[:64]
+
+    def trim_slugline(self, slugline):
+        """Returns first 24 characters of a given slugline"""
+        if slugline:
+            return slugline[:24]
+
+
+def get_xml_parser(etree):
+    """Get parser for given xml.
+
+    :param etree: parsed xml
+    """
+    for parser in parsers:
+        if parser.can_parse(etree):
+            return parser
+
+
+# must be imported for registration
+import superdesk.io.nitf
+import superdesk.io.newsml_2_0
+import superdesk.io.newsml_1_2
+
+superdesk.privilege(name='ingest_providers', label='Ingest Channels', description='User can maintain Ingest Channels.')
