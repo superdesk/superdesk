@@ -17,7 +17,6 @@ from eve.validation import ValidationError
 logger = logging.getLogger(__name__)
 
 
-
 def get_registered_errors(self):
         return {
             'IngestApiError': IngestApiError._codes,
@@ -213,17 +212,14 @@ class ParserError(SuperdeskIngestError):
 
     @classmethod
     def newsmlOneParserError(cls, exception):
-        logger.exception("NewsML1 input could not be processed")
         return ParserError(1004, exception)
 
     @classmethod
     def newsmlTwoParserError(cls, exception):
-        logger.exception("NewsML2 input could not be processed")
         return ParserError(1005, exception)
 
     @classmethod
     def nitfParserError(cls, exception):
-        logger.exception("File: {} could not be processed")
         return ParserError(1006, exception)
 
 
