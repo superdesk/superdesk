@@ -11,6 +11,7 @@
 import logging
 import superdesk
 from flask import current_app as app
+from superdesk.notification import push_notification
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError
@@ -115,6 +116,11 @@ class StagesService(BaseService):
                 expiry = get_expiry_date(updates['content_expiry'], doc['versioncreated'])
                 item_model = get_model(ItemModel)
                 item_model.update({'_id': doc['_id']}, {'expiry': expiry})
+
+    def on_updated(self, updates, original):
+        if (updates.get('content_expiry', None) != original.get('content_expiry', None)) or \
+                (updates.get('is_visible', True) != original.get('is_visible', True)):
+            push_notification('stage:update', stage_id=str(original['_id']), desk_id=str(original['desk']))
 
     def get_stage_documents(self, stage_id):
         query_filter = superdesk.json.dumps({'term': {'task.stage': stage_id}})
