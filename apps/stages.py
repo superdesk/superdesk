@@ -118,9 +118,11 @@ class StagesService(BaseService):
                 item_model.update({'_id': doc['_id']}, {'expiry': expiry})
 
     def on_updated(self, updates, original):
-        if (updates.get('content_expiry', None) != original.get('content_expiry', None)) or \
-                (updates.get('is_visible', True) != original.get('is_visible', True)):
-            push_notification('stage:update', stage_id=str(original['_id']), desk_id=str(original['desk']))
+        if ('content_expiry' in updates and updates['content_expiry'] != original.get('content_expiry', None)) or \
+                ('is_visible' in updates and updates['is_visible'] != original.get('is_visible', True)):
+            push_notification('stage:update', stage_id=str(original['_id']),
+                              desk_id=str(original['desk']),
+                              is_visible=updates.get('is_visible', original.get('is_visible', True)))
 
     def get_stage_documents(self, stage_id):
         query_filter = superdesk.json.dumps({'term': {'task.stage': stage_id}})

@@ -169,7 +169,7 @@ Feature: Stages
         Then we get content expiry 20
         Then we get notifications
         """
-        [{"event": "stage:update", "extra": {"desk_id": "#desks._id#", "stage_id": "#stages._id#"}}]
+        [{"event": "stage:update", "extra": {"desk_id": "#desks._id#", "stage_id": "#stages._id#", "is_visible": true}}]
         """
 
     @auth @notification
@@ -209,7 +209,7 @@ Feature: Stages
         Then we get content expiry 20
         Then we get notifications
         """
-        [{"event": "stage:update", "extra": {"desk_id": "#desks._id#", "stage_id": "#stages._id#"}}]
+        [{"event": "stage:update", "extra": {"desk_id": "#desks._id#", "stage_id": "#stages._id#", "is_visible": true}}]
         """
 
     @auth
@@ -340,7 +340,7 @@ Feature: Stages
         Then we get response code 200
         Then we get notifications
         """
-        [{"event": "stage:update", "extra": {"desk_id": "#desks._id#", "stage_id": "#stages._id#"}}]
+        [{"event": "stage:update", "extra": {"desk_id": "#desks._id#", "stage_id": "#stages._id#", "is_visible": false}}]
         """
 
 
