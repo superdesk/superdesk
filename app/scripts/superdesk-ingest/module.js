@@ -384,7 +384,7 @@ define([
                     })
                     .then(function(archiveItem) {
                         data.item.task_id = archiveItem.task_id;
-                        data.item.created = archiveItem.created;
+                        data.item.archived = archiveItem.archived;
                     });
                 }],
                 filters: [
