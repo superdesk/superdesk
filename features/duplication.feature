@@ -80,6 +80,24 @@ Feature: Duplication
         		]}
         """
 
+<<<<<<< HEAD
+=======
+    @auth
+    Scenario: Duplicate a content item on the same desk
+        Given empty "archive"
+        Given "desks"
+        """
+        [{"name": "Sports"}]
+        """
+        Given "archive"
+        """
+        [{"guid": "tag:example.com,0000:newsml_BRE9A605", "task": {"desk": "#desks._id#"}}]
+        """
+        When we post to "/archive_ingest"
+        """
+        {"guid": "tag:example.com,0000:newsml_BRE9A605"}
+        """
+>>>>>>> (feat)Duplication work on tests
 
 
     @auth
