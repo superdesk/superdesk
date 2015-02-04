@@ -23,7 +23,7 @@ from apps.tasks import send_to
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.utc import utcnow
 from superdesk.resource import Resource
-from .common import get_user, generate_guid, generate_unique_id_and_name, GUID_NEWSML, GUID_TAG
+from .common import get_user, generate_guid, generate_unique_id_and_name, GUID_NEWSML
 from superdesk.services import BaseService
 from .archive import SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
@@ -54,13 +54,19 @@ def create_from_ingest_doc(dest_doc, source_doc):
 
     dest_doc[config.VERSION] = 1
     dest_doc[config.CONTENT_STATE] = STATE_FETCHED
+    dest_doc['ingest_id'] = source_doc['_id']
+    dest_doc[FAMILY_ID] = source_doc['_id']
 
-    dest_doc[FAMILY_ID] = generate_guid(type=GUID_TAG)
+
+def duplicate_from_ingest_doc(dest_doc, source_doc):
+    create_from_ingest_doc(dest_doc, source_doc)
     # generate a whole new id
     new_id = generate_guid(type=GUID_NEWSML)
     dest_doc['_id'] = new_id
     dest_doc['guid'] = new_id
+    # Save the id of the original
     dest_doc['ingest_id'] = source_doc['_id']
+    dest_doc[FAMILY_ID] = source_doc['_id']
     generate_unique_id_and_name(dest_doc)
 
 class ArchiveIngestService(BaseService):
@@ -69,13 +75,14 @@ class ArchiveIngestService(BaseService):
         for doc in docs:
             ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=doc.get('guid'))
             if not ingest_doc:
-                # all items that are in archive already should have a famil
-                if FAMILY_ID in doc:
-                    # call tolga's thing
-                    pass
-#                msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
-#                raise SuperdeskApiError.notFoundError(msg)
-
+                # see if it is in archive, if it is duplicate it
+                archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=doc.get('guid'))
+                if archived_doc:
+                    send_to(archived_doc, doc.get('desk'))
+                    superdesk.get_resource_service('archive').duplicate_item(archived_doc)
+                else:
+                    msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
+                    raise SuperdeskApiError.notFoundError(msg)
             else:
                 # We are fetching from ingest
                 if not is_workflow_state_transition_valid('fetch_as_from_ingest', ingest_doc[config.CONTENT_STATE]):

@@ -268,18 +268,20 @@ class ArchiveService(BaseService):
 
     def duplicate_item(self, original_doc):
         new_doc = original_doc.copy()
-        del new_doc['_id']
-        del new_doc['guid']
+        if '_id' in new_doc:
+            del new_doc['_id']
+        if 'guid' in new_doc:
+            del new_doc['guid']
         item_model = get_model(ItemModel)
         on_duplicate_item(new_doc)
         item_model.create([new_doc])
-        self.duplicate_versions(original_doc['_id'], new_doc['_id'])
+        self.duplicate_versions(original_doc['guid'], new_doc['guid'])
         if new_doc.get('state') != 'submitted':
-            get_resource_service('archive').patch(new_doc['_id'], {'state': 'submitted'})
+            get_resource_service('tasks').patch(new_doc['_id'], {'state': 'submitted'})
 
     def duplicate_versions(self, old_id, new_id):
         lookup = {}
-        lookup['_id_document'] = old_id
+        lookup['guid'] = old_id
         old_versions = get_resource_service('archive_versions').get(req=None, lookup=lookup)
 
         for old_version in old_versions:

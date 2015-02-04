@@ -1203,6 +1203,7 @@ def when_we_get_invisible_stages_for_user(context, no_of_stages):
         stages = get_resource_service('users').get_invisible_stages(data['user'])
         assert len(stages) == int(no_of_stages)
 
+
 @then('we get "{field_name}" populated')
 def then_field_is_populated(context, field_name):
     resp = parse_json_response(context.response)
