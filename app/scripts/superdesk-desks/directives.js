@@ -24,7 +24,7 @@ define([
             link: function(scope, elem, attrs) {
                 desks.fetchCurrentDesk().then(function(desk) {
                     scope.desk = desk;
-                    scope.selectedDesk = desk;
+                    scope.select(desk);
                 });
 
                 scope.select = function(desk) {
