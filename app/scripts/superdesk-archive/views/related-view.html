@@ -1,6 +1,6 @@
 <div class="packages-content">
     <ul>
-        <li ng-repeat="relatedItem in relatedItems._items" ng-if="relatedItem._id !== item._id">
+        <li ng-repeat="relatedItem in relatedItems._items">
             <div class="package-preview">
                 <i class="filetype-icon-{{relatedItem.type}}"></i>
                 <p><span class="keyword" ng-if="relatedItem.slugline">{{ relatedItem.slugline }}</span></p>

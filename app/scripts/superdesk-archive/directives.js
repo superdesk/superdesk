@@ -287,7 +287,7 @@ define([
                 templateUrl: 'scripts/superdesk-archive/views/related-view.html',
                 link: function(scope, elem) {
                     scope.$watch('item', function() {
-                        familyService.fetchItems(scope.item)
+                        familyService.fetchItems(scope.item.family_id, scope.item)
                         .then(function(items) {
                             scope.relatedItems = items;
                         });
@@ -303,7 +303,7 @@ define([
                 templateUrl: 'scripts/superdesk-archive/views/fetched-desks.html',
                 link: function(scope, elem) {
                     scope.$watch('item', function() {
-                        familyService.fetchDesks(scope.item)
+                        familyService.fetchDesks(scope.item, true)
                         .then(function(desks) {
                             scope.desks = desks;
                         });
@@ -470,29 +470,27 @@ define([
         })
 
         .service('familyService', ['api', 'desks', function(api, desks) {
-            this.fetchItems = function(item) {
+            this.fetchItems = function(familyId, excludeItem) {
+                var filter = [
+                    {not: {term: {state: 'spiked'}}},
+                    {term: {family_id: familyId}}
+                ];
+                if (excludeItem) {
+                    filter.push({not: {term: {_id: excludeItem._id}}});
+                }
                 return api('archive').query({
                     source: {
-                        query: {
-                            filtered: {
-                                filter: {and: [{not: {term: {state: 'spiked'}}}]},
-                                query: {
-                                    query_string: {
-                                        query: 'family_id:(' + item.family_id + ')',
-                                        lenient: false,
-                                        default_operator: 'AND'
-                                    }
-                                }
-                            }
-                        },
+                        query: {filtered: {filter: {
+                            and: filter
+                        }}},
                         sort: [{versioncreated: 'desc'}],
                         size: 100,
                         from: 0
                     }
                 });
             };
-            this.fetchDesks = function(item) {
-                return this.fetchItems(item)
+            this.fetchDesks = function(item, excludeSelf) {
+                return this.fetchItems(item.family_id, excludeSelf ? item : undefined)
                 .then(function(items) {
                     var deskList = [];
                     _.each(items._items, function(i) {
