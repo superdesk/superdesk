@@ -54,7 +54,7 @@ class ErrorsTestCase(TestCase):
     def test_raise_apiRequestError(self):
         with assert_raises(IngestApiError) as error_context:
             ex = Exception("Testing apiRequestError")
-            raise IngestApiError.apiRequestError(ex, self.provider.get('name'))
+            raise IngestApiError.apiRequestError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 4003)
         self.assertTrue(exception.message == "API ingest has request error")
@@ -68,7 +68,7 @@ class ErrorsTestCase(TestCase):
     def test_raise_apiTimeoutError(self):
         with assert_raises(IngestApiError) as error_context:
             ex = Exception("Testing apiTimeoutError")
-            raise IngestApiError.apiTimeoutError(ex, self.provider.get('name'))
+            raise IngestApiError.apiTimeoutError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 4001)
         self.assertTrue(exception.message == "API ingest connection has timed out.")
@@ -82,7 +82,7 @@ class ErrorsTestCase(TestCase):
     def test_raise_apiRedirectError(self):
         with assert_raises(IngestApiError) as error_context:
             ex = Exception("Testing apiRedirectError")
-            raise IngestApiError.apiRedirectError(ex, self.provider.get('name'))
+            raise IngestApiError.apiRedirectError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 4002)
         self.assertTrue(exception.message == "API ingest has too many redirects")
@@ -96,7 +96,7 @@ class ErrorsTestCase(TestCase):
     def test_raise_apiUnicodeError(self):
         with assert_raises(IngestApiError) as error_context:
             ex = Exception("Testing apiUnicodeError")
-            raise IngestApiError.apiUnicodeError(ex, self.provider.get('name'))
+            raise IngestApiError.apiUnicodeError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 4004)
         self.assertTrue(exception.message == "API ingest Unicode Encode Error")
@@ -110,7 +110,7 @@ class ErrorsTestCase(TestCase):
     def test_raise_apiParseError(self):
         with assert_raises(IngestApiError) as error_context:
             ex = Exception("Testing apiParseError")
-            raise IngestApiError.apiParseError(ex, self.provider.get('name'))
+            raise IngestApiError.apiParseError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 4005)
         self.assertTrue(exception.message == "API ingest xml parse error")
@@ -124,7 +124,7 @@ class ErrorsTestCase(TestCase):
     def test_raise_apiNotFoundError(self):
         with assert_raises(IngestApiError) as error_context:
             ex = Exception("Testing apiNotFoundError")
-            raise IngestApiError.apiNotFoundError(ex, self.provider.get('name'))
+            raise IngestApiError.apiNotFoundError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 4006)
         self.assertTrue(exception.message == "API service not found(404) error")
@@ -138,7 +138,7 @@ class ErrorsTestCase(TestCase):
     def test_raise_folderCreateError(self):
         with assert_raises(IngestFileError) as error_context:
             ex = Exception("Testing folderCreateError")
-            raise IngestFileError.folderCreateError(ex, self.provider.get('name'))
+            raise IngestFileError.folderCreateError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 3001)
         self.assertTrue(exception.message == "Destination folder could not be created")
@@ -152,7 +152,7 @@ class ErrorsTestCase(TestCase):
     def test_raise_fileMoveError(self):
         with assert_raises(IngestFileError) as error_context:
             ex = Exception("Testing fileMoveError")
-            raise IngestFileError.fileMoveError(ex, self.provider.get('name'))
+            raise IngestFileError.fileMoveError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 3002)
         self.assertTrue(exception.message == "Ingest file could not be copied")
@@ -166,7 +166,7 @@ class ErrorsTestCase(TestCase):
     def test_raise_parseMessageError(self):
         with assert_raises(ParserError) as error_context:
             ex = Exception("Testing parseMessageError")
-            raise ParserError.parseMessageError(ex, self.provider.get('name'))
+            raise ParserError.parseMessageError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 1001)
         self.assertTrue(exception.message == "Message could not be parsed")
@@ -183,7 +183,7 @@ class ErrorsTestCase(TestCase):
                 ex = Exception("Testing parseFileError")
                 raise ex
             except Exception:
-                raise ParserError.parseFileError('afp', 'test.txt', ex, self.provider.get('name'))
+                raise ParserError.parseFileError('afp', 'test.txt', ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 1002)
         self.assertTrue(exception.message == "Ingest file could not be parsed")
@@ -202,7 +202,7 @@ class ErrorsTestCase(TestCase):
                 ex = Exception("Testing newsmlOneParserError")
                 raise ex
             except Exception:
-                raise ParserError.newsmlOneParserError(ex, self.provider.get('name'))
+                raise ParserError.newsmlOneParserError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 1004)
         self.assertTrue(exception.message == "NewsML1 input could not be processed")
@@ -219,7 +219,7 @@ class ErrorsTestCase(TestCase):
                 ex = Exception("Testing newsmlTwoParserError")
                 raise ex
             except Exception:
-                raise ParserError.newsmlTwoParserError(ex, self.provider.get('name'))
+                raise ParserError.newsmlTwoParserError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 1005)
         self.assertTrue(exception.message == "NewsML2 input could not be processed")
@@ -236,7 +236,7 @@ class ErrorsTestCase(TestCase):
                 ex = Exception("Testing nitfParserError")
                 raise ex
             except Exception:
-                raise ParserError.nitfParserError(ex, self.provider.get('name'))
+                raise ParserError.nitfParserError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 1006)
         self.assertTrue(exception.message == "NITF input could not be processed")
@@ -253,7 +253,7 @@ class ErrorsTestCase(TestCase):
                 ex = Exception("Testing folderCreateError")
                 raise ex
             except Exception:
-                raise IngestFileError.folderCreateError(ex, self.provider.get('name'))
+                raise IngestFileError.folderCreateError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 3001)
         self.assertTrue(exception.message == "Destination folder could not be created")
@@ -270,7 +270,7 @@ class ErrorsTestCase(TestCase):
                 ex = Exception("Testing fileMoveError")
                 raise ex
             except Exception:
-                raise IngestFileError.fileMoveError(ex, self.provider.get('name'))
+                raise IngestFileError.fileMoveError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 3002)
         self.assertTrue(exception.message == "Ingest file could not be copied")
@@ -287,7 +287,7 @@ class ErrorsTestCase(TestCase):
                 ex = Exception("Testing providerAddError")
                 raise ex
             except Exception:
-                raise ProviderError.providerAddError(ex, self.provider.get('name'))
+                raise ProviderError.providerAddError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 2001)
         self.assertTrue(exception.message == "Provider could not be saved")
@@ -304,7 +304,7 @@ class ErrorsTestCase(TestCase):
                 ex = Exception("Testing expiredContentError")
                 raise ex
             except Exception:
-                raise ProviderError.expiredContentError(ex, self.provider.get('name'))
+                raise ProviderError.expiredContentError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 2002)
         self.assertTrue(exception.message == "Expired content could not be removed")
@@ -321,7 +321,7 @@ class ErrorsTestCase(TestCase):
                 ex = Exception("Testing ruleError")
                 raise ex
             except Exception:
-                raise ProviderError.ruleError(ex, self.provider.get('name'))
+                raise ProviderError.ruleError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 2003)
         self.assertTrue(exception.message == "Rule could not be applied")
@@ -338,17 +338,17 @@ class ErrorsTestCase(TestCase):
                 ex = Exception("Testing ingestError")
                 raise ex
             except Exception:
-                raise ProviderError.ingestError(ex, 'afp')
+                raise ProviderError.ingestError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 2004)
         self.assertTrue(exception.message == "Ingest error")
-        self.assertTrue(exception.channel == "afp")
+        self.assertTrue(exception.provider_name == "TestProvider")
         self.assertIsNotNone(exception.system_exception)
         self.assertEquals(exception.system_exception.args[0], "Testing ingestError")
         self.assertEqual(len(self.mock_logger_handler.messages['error']), 1)
         self.assertEqual(self.mock_logger_handler.messages['error'][0],
                          "ProviderError Error 2004 - Ingest error: "
-                         "Testing ingestError on channel afp")
+                         "Testing ingestError on channel TestProvider")
 
     def test_raise_anpaError(self):
         with assert_raises(ProviderError) as error_context:
@@ -356,7 +356,7 @@ class ErrorsTestCase(TestCase):
                 ex = Exception("Testing anpaError")
                 raise ex
             except Exception:
-                raise ProviderError.anpaError(ex, self.provider.get('name'))
+                raise ProviderError.anpaError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 2005)
         self.assertTrue(exception.message == "Anpa category error")
@@ -373,7 +373,7 @@ class ErrorsTestCase(TestCase):
                 ex = Exception("Testing providerFilterExpiredContentError")
                 raise ex
             except Exception:
-                raise ProviderError.providerFilterExpiredContentError(ex, self.provider.get('name'))
+                raise ProviderError.providerFilterExpiredContentError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 2006)
         self.assertTrue(exception.message == "Expired content could not be filtered")
@@ -390,7 +390,7 @@ class ErrorsTestCase(TestCase):
                 ex = Exception("Testing ftpError")
                 raise ex
             except Exception:
-                raise IngestFtpError.ftpError(ex, self.provider.get('name'))
+                raise IngestFtpError.ftpError(ex, self.provider)
         exception = error_context.exception
         self.assertTrue(exception.code == 5000)
         self.assertTrue(exception.message == "FTP ingest error")
@@ -407,7 +407,7 @@ class ErrorsTestCase(TestCase):
                 ex = Exception("Testing ftpUnknownParserError")
                 raise ex
             except Exception:
-                raise IngestFtpError.ftpUnknownParserError(ex, self.provider.get('name'), 'test.xml')
+                raise IngestFtpError.ftpUnknownParserError(ex, self.provider, 'test.xml')
         exception = error_context.exception
         self.assertTrue(exception.code == 5001)
         self.assertTrue(exception.message == "FTP parser could not be found")

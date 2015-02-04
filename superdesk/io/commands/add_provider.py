@@ -32,6 +32,6 @@ class AddProvider(superdesk.Command):
                     db['ingest_providers'].save(data)
                     return data
                 except Exception as ex:
-                    raise ProviderError.providerAddError(ex, data.get('name', ''))
+                    raise ProviderError.providerAddError(ex, data)
 
 superdesk.command('ingest:provider', AddProvider())

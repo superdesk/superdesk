@@ -77,13 +77,12 @@ class FTPService(IngestService):
                     parser = get_xml_parser(xml)
                     if not parser:
                         raise IngestFtpError.ftpUnknownParserError(Exception('Parser not found'),
-                                                                   provider.get('name'),
-                                                                   filename)
+                                                                   provider, filename)
                     items.append(parser.parse_message(xml, provider))
             return items
         except IngestFtpError:
             raise
         except Exception as ex:
-            raise IngestFtpError.ftpError(ex, provider.get('name'))
+            raise IngestFtpError.ftpError(ex, provider)
 
 register_provider('ftp', FTPService())

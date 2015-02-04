@@ -83,7 +83,7 @@ def filter_expired_items(provider, items):
         expiration_date = utcnow() - timedelta(days=days_to_keep_content)
         return [item for item in items if item.get('versioncreated', utcnow()) > expiration_date]
     except Exception as ex:
-        raise ProviderError.providerFilterExpiredContentError(ex, provider.get('name'))
+        raise ProviderError.providerFilterExpiredContentError(ex, provider)
 
 
 class UpdateIngest(superdesk.Command):
@@ -133,7 +133,7 @@ def process_anpa_category(item, provider):
                     item['anpa-category'] = {'qcode': item['anpa-category']['qcode'], 'name': anpa_category['name']}
                     break
     except Exception as ex:
-        raise ProviderError.anpaError(ex, provider.get('name'))
+        raise ProviderError.anpaError(ex, provider)
 
 
 def apply_rule_set(item, provider, rule_set=None):
@@ -159,7 +159,7 @@ def apply_rule_set(item, provider, rule_set=None):
 
         return item
     except Exception as ex:
-        raise ProviderError.ruleError(ex, provider.get('name'))
+        raise ProviderError.ruleError(ex, provider)
 
 
 def ingest_items(items, provider, rule_set=None):
@@ -218,7 +218,7 @@ def ingest_item(item, provider, rule_set=None):
     except ProviderError:
         raise
     except Exception as ex:
-        raise ProviderError.ingestError(ex, provider.get('name'))
+        raise ProviderError.ingestError(ex, provider)
 
 
 def update_renditions(item, href):

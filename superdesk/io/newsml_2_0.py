@@ -40,7 +40,7 @@ class NewsMLTwoParser(Parser):
                     items.append(item)
             return items
         except Exception as ex:
-            raise ParserError.newsmlTwoParserError(ex, provider.get('name'))
+            raise ParserError.newsmlTwoParserError(ex, provider)
 
     def parse_item(self, tree):
         """Parse given xml"""

@@ -79,7 +79,7 @@ class NewsMLOneParser(Parser):
 
             return self.populate_fields(item)
         except Exception as ex:
-            raise ParserError.newsmlOneParserError(ex, provider.get('name'))
+            raise ParserError.newsmlOneParserError(ex, provider)
 
     def parse_elements(self, tree):
         items = {}

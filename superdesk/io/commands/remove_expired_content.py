@@ -36,7 +36,7 @@ class RemoveExpiredContent(superdesk.Command):
                     remove_expired_data(provider)
                 except (Exception) as err:
                     logger.exception(err)
-                    raise ProviderError.expiredContentError(err, provider.get('name'))
+                    raise ProviderError.expiredContentError(err, provider)
                 finally:
                     push_notification('ingest:cleaned')
 

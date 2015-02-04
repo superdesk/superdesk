@@ -152,17 +152,18 @@ class InvalidStateTransitionError(SuperdeskApiError):
 
 
 class SuperdeskIngestError(SuperdeskError):
-    def __init__(self, code, exception, channel=None):
+    def __init__(self, code, exception, provider=None):
         super().__init__(code)
         self.system_exception = exception
-        self.channel = channel
+        self.provider_name = provider.get('name', 'Unknown provider') if provider else 'Unknown provider'
 
-        update_notifiers('error',
-                         'Error [%s] on ingest channel {{name}}: %s' % (code, exception),
-                         name=channel)
+        if provider.get('notifications', {}).get('on_error', True):
+            update_notifiers('error',
+                             'Error [%s] on ingest provider {{name}}: %s' % (code, exception),
+                             name=self.provider_name)
 
-        if channel:
-            logger.error("{}: {} on channel {}".format(self, exception, channel))
+        if provider:
+            logger.error("{}: {} on channel {}".format(self, exception, self.provider_name))
         else:
             logger.error("{}: {}".format(self, exception))
 
@@ -178,28 +179,28 @@ class ProviderError(SuperdeskIngestError):
     }
 
     @classmethod
-    def providerAddError(cls, exception, channel):
-        return ProviderError(2001, exception, channel)
+    def providerAddError(cls, exception, provider):
+        return ProviderError(2001, exception, provider)
 
     @classmethod
-    def expiredContentError(cls, exception, channel):
-        return ProviderError(2002, exception, channel)
+    def expiredContentError(cls, exception, provider):
+        return ProviderError(2002, exception, provider)
 
     @classmethod
-    def ruleError(cls, exception, channel):
-        return ProviderError(2003, exception, channel)
+    def ruleError(cls, exception, provider):
+        return ProviderError(2003, exception, provider)
 
     @classmethod
-    def ingestError(cls, exception, channel):
-        return ProviderError(2004, exception, channel)
+    def ingestError(cls, exception, provider):
+        return ProviderError(2004, exception, provider)
 
     @classmethod
-    def anpaError(cls, exception, channel):
-        return ProviderError(2005, exception, channel)
+    def anpaError(cls, exception, provider):
+        return ProviderError(2005, exception, provider)
 
     @classmethod
-    def providerFilterExpiredContentError(cls, exception, channel):
-        return ProviderError(2006, exception, channel)
+    def providerFilterExpiredContentError(cls, exception, provider):
+        return ProviderError(2006, exception, provider)
 
 
 class ParserError(SuperdeskIngestError):
@@ -213,13 +214,13 @@ class ParserError(SuperdeskIngestError):
     }
 
     @classmethod
-    def parseMessageError(cls, exception, channel):
-        return ParserError(1001, exception, channel)
+    def parseMessageError(cls, exception, provider):
+        return ParserError(1001, exception, provider)
 
     @classmethod
-    def parseFileError(cls, source, filename, exception, channel):
+    def parseFileError(cls, source, filename, exception, provider):
         logger.exception("Source Type: {} - File: {} could not be processed".format(source, filename))
-        return ParserError(1002, exception, channel)
+        return ParserError(1002, exception, provider)
 
     @classmethod
     def anpaParseFileError(cls, filename, exception):
@@ -227,16 +228,16 @@ class ParserError(SuperdeskIngestError):
         return ParserError(1003, exception)
 
     @classmethod
-    def newsmlOneParserError(cls, exception, channel):
-        return ParserError(1004, exception, channel)
+    def newsmlOneParserError(cls, exception, provider):
+        return ParserError(1004, exception, provider)
 
     @classmethod
-    def newsmlTwoParserError(cls, exception, channel):
-        return ParserError(1005, exception, channel)
+    def newsmlTwoParserError(cls, exception, provider):
+        return ParserError(1005, exception, provider)
 
     @classmethod
-    def nitfParserError(cls, exception, channel):
-        return ParserError(1006, exception, channel)
+    def nitfParserError(cls, exception, provider):
+        return ParserError(1006, exception, provider)
 
 
 class IngestFileError(SuperdeskIngestError):
@@ -246,12 +247,12 @@ class IngestFileError(SuperdeskIngestError):
     }
 
     @classmethod
-    def folderCreateError(cls, exception, channel):
-        return IngestFileError(3001, exception, channel)
+    def folderCreateError(cls, exception, provider):
+        return IngestFileError(3001, exception, provider)
 
     @classmethod
-    def fileMoveError(cls, exception, channel):
-        return IngestFileError(3002, exception, channel)
+    def fileMoveError(cls, exception, provider):
+        return IngestFileError(3002, exception, provider)
 
 
 class IngestApiError(SuperdeskIngestError):
@@ -266,28 +267,28 @@ class IngestApiError(SuperdeskIngestError):
     }
 
     @classmethod
-    def apiTimeoutError(cls, exception, channel):
-        return IngestApiError(4001, exception, channel)
+    def apiTimeoutError(cls, exception, provider):
+        return IngestApiError(4001, exception, provider)
 
     @classmethod
-    def apiRedirectError(cls, exception, channel):
-        return IngestApiError(4002, exception, channel)
+    def apiRedirectError(cls, exception, provider):
+        return IngestApiError(4002, exception, provider)
 
     @classmethod
-    def apiRequestError(cls, exception, channel):
-        return IngestApiError(4003, exception, channel)
+    def apiRequestError(cls, exception, provider):
+        return IngestApiError(4003, exception, provider)
 
     @classmethod
-    def apiUnicodeError(cls, exception, channel):
-        return IngestApiError(4004, exception, channel)
+    def apiUnicodeError(cls, exception, provider):
+        return IngestApiError(4004, exception, provider)
 
     @classmethod
-    def apiParseError(cls, exception, channel):
-        return IngestApiError(4005, exception, channel)
+    def apiParseError(cls, exception, provider):
+        return IngestApiError(4005, exception, provider)
 
     @classmethod
-    def apiNotFoundError(cls, exception, channel):
-        return IngestApiError(4006, exception, channel)
+    def apiNotFoundError(cls, exception, provider):
+        return IngestApiError(4006, exception, provider)
 
 
 class IngestFtpError(SuperdeskIngestError):
@@ -297,11 +298,12 @@ class IngestFtpError(SuperdeskIngestError):
     }
 
     @classmethod
-    def ftpError(cls, exception, channel):
-        return IngestFtpError(5000, exception, channel)
+    def ftpError(cls, exception, provider):
+        return IngestFtpError(5000, exception, provider)
 
     @classmethod
-    def ftpUnknownParserError(cls, exception, channel, filename):
-        logger.exception("Provider: {} - File: {} unknown file format. "
-                         "Parser couldn't be found.".format(channel, filename))
-        return IngestFtpError(5001, exception, channel)
+    def ftpUnknownParserError(cls, exception, provider, filename):
+        if provider:
+            logger.exception("Provider: {} - File: {} unknown file format. "
+                             "Parser couldn't be found.".format(provider.get('name', 'Unknown provider'), filename))
+        return IngestFtpError(5001, exception, provider)

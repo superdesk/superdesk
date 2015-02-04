@@ -69,12 +69,12 @@ class AAPIngestService(FileIngestService):
             except etreeParserError as ex:
                 logger.exception("Ingest Type: AAP - File: {0} could not be processed".format(filename))
                 self.move_file(self.path, filename, provider=provider, success=False)
-                raise ParserError.nitfParserError(ex, provider.get('name'))
+                raise ParserError.nitfParserError(ex, provider)
             except ParserError as ex:
                 self.move_file(self.path, filename, provider=provider, success=False)
             except Exception as ex:
                 self.move_file(self.path, filename, provider=provider, success=False)
-                raise ProviderError.ingestError(ex, provider.get('name'))
+                raise ProviderError.ingestError(ex, provider)
 
         push_notification('ingest:update')
 
@@ -94,6 +94,6 @@ class AAPIngestService(FileIngestService):
             return [item]
         except Exception as ex:
             self.move_file(self.path, filename, provider=provider, success=False)
-            raise ParserError.parseFileError('AAP', filename, ex, provider.get('name'))
+            raise ParserError.parseFileError('AAP', filename, ex, provider)
 
 register_provider(PROVIDER, AAPIngestService())

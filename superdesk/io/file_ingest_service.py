@@ -30,7 +30,7 @@ class FileIngestService(IngestService):
             if not os.path.exists(os.path.join(filepath, "_ERROR/")):
                 os.makedirs(os.path.join(filepath, "_ERROR/"))
         except Exception as ex:
-            raise IngestFileError.folderCreateError(ex, provider.get('name'))
+            raise IngestFileError.folderCreateError(ex, provider)
 
         try:
             if success:
@@ -38,7 +38,7 @@ class FileIngestService(IngestService):
             else:
                 shutil.copy2(os.path.join(filepath, filename), os.path.join(filepath, "_ERROR/"))
         except Exception as ex:
-            raise IngestFileError.fileMoveError(ex, provider.get('name'))
+            raise IngestFileError.fileMoveError(ex, provider)
         finally:
             os.remove(os.path.join(filepath, filename))
 

@@ -57,12 +57,12 @@ class AFPIngestService(FileIngestService):
             except etreeParserError as ex:
                 logger.exception("Ingest Type: AFP - File: {0} could not be processed".format(filename), ex)
                 self.move_file(self.path, filename, provider=provider, success=False)
-                raise ParserError.newsmlOneParserError(ex, provider.get('name'))
+                raise ParserError.newsmlOneParserError(ex, provider)
             except ParserError as ex:
                 self.move_file(self.path, filename, provider=provider, success=False)
             except Exception as ex:
                 self.move_file(self.path, filename, provider=provider, success=False)
-                raise ProviderError.ingestError(ex, provider.get('name'))
+                raise ProviderError.ingestError(ex, provider)
 
         push_notification('ingest:update')
 

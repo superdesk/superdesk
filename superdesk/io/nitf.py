@@ -139,4 +139,4 @@ class NITFParser(Parser):
             item.setdefault('word_count', get_word_count(item['body_html']))
             return item
         except Exception as ex:
-            raise ParserError.nitfParserError(ex, provider.get('name'))
+            raise ParserError.nitfParserError(ex, provider)
