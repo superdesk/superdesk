@@ -26,6 +26,7 @@ from superdesk.resource import Resource
 from superdesk.services import BaseService
 from .archive import SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
+from apps.content import LINKED_IN_PACKAGES, PACKAGE
 STATE_FETCHED = 'fetched'
 
 
@@ -51,7 +52,9 @@ class ArchiveIngestService(BaseService):
             if not is_workflow_state_transition_valid('fetch_as_from_ingest', ingest_doc[config.CONTENT_STATE]):
                 raise InvalidStateTransitionError()
 
-            superdesk.get_resource_service('ingest').patch(ingest_doc.get('_id'), {'archived': utcnow()})
+            archived = utcnow()
+            superdesk.get_resource_service('ingest').patch(ingest_doc.get('_id'), {'archived': archived})
+            doc['archived'] = archived
 
             archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=doc.get('guid'))
             if not archived_doc:
@@ -66,14 +69,23 @@ class ArchiveIngestService(BaseService):
                     ref['guid'] = ref['residRef']
 
                 set_original_creator(dest_doc)
+                if doc.get(PACKAGE):
+                    links = dest_doc.get(LINKED_IN_PACKAGES, [])
+                    links.append({PACKAGE: doc.get(PACKAGE)})
+                    dest_doc[LINKED_IN_PACKAGES] = links
                 superdesk.get_resource_service(ARCHIVE).post([dest_doc])
                 insert_into_versions(dest_doc.get('guid'))
                 desk = doc.get('desk')
-                refs = [{'guid': ref.get('residRef'), 'desk': desk}
+                refs = [{'guid': ref.get('residRef'), 'desk': desk, PACKAGE: dest_doc.get('_id')}
                         for group in dest_doc.get('groups', [])
                         for ref in group.get('refs', []) if 'residRef' in ref]
                 if refs:
                     self.create(refs)
+            else:
+                if doc.get(PACKAGE):
+                    links = archived_doc.get(LINKED_IN_PACKAGES, [])
+                    links.append({PACKAGE: doc.get(PACKAGE)})
+                    superdesk.get_resource_service(ARCHIVE).patch(archived_doc.get('_id'), {LINKED_IN_PACKAGES: links})
 
         return [doc.get('guid') for doc in docs]
 
