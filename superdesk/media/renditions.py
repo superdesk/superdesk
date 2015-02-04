@@ -86,8 +86,8 @@ def resize_image(content, format, size, keepProportions=True):
             new_width = int(width / y_ratio)
         size = (new_width, new_height)
 
-    resized = img.resize(size)
+    resized = img.resize(size, Image.ANTIALIAS)
     out = BytesIO()
-    resized.save(out, format)
+    resized.save(out, format, quality=85)
     out.seek(0)
     return out, new_width, new_height
