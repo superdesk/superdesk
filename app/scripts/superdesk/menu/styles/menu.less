@@ -101,8 +101,60 @@
 		float: left;
 	}
 
+	.dropdown {
+		float: left;
+		position: relative;
+
+		&.open {
+			.dropdown-toggle {
+				background-color: #fff;
+				color: #5aa1bf;
+				.caret {
+					border-top-color: #595959;
+				}
+			}
+		}
+
+		.name {
+			display: block;
+			float: left;
+			width: 100px;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			text-align: left;
+		}
+
+		.dropdown-toggle {
+			background-color: #5ea9c8;
+			color: #fff;
+			font-size: 12px;
+			text-transform: uppercase;
+			overflow: hidden;
+			height: 1%;
+		}
+
+		.dropdown-menu {
+			button {
+				background-color: #fff;
+				color: #626262;
+				border: none;
+				height: auto;
+				line-height: 1.3em;
+				margin: 0;
+				padding: 9px;
+
+				&:hover {
+					background-color: #deecf2;
+					color: #000;
+					border-radius: 3px;
+				}
+			}
+		}
+	}
+
 	.top-links {
-		.clearfix();
+		float: left;
 		> li {
 			float: left;
 			> a {
