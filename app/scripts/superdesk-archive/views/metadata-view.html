@@ -28,6 +28,10 @@
         <dt translate>Last updated</dt>
         <dd sd-reldate-complex ng-model="item.versioncreated"></dd>
     </dl>
+    <dl ng-if="item.expiry">
+        <dt translate>Expiry</dt>
+        <dd sd-reldate-complex ng-model="item.expiry"></dd>
+    </dl>
     <dl ng-if="original_creator">
         <dt translate>Original creator</dt>
         <dd>{{ original_creator }}</dd>
@@ -128,10 +132,6 @@
     <dl ng-if="item.bydlne">
         <dt translate>Byline</dt>
         <dd>{{ item.byline }}</dd>
-    </dl>
-    <dl ng-if="item.expiry">
-        <dt translate>Expiry</dt>
-        <dd sd-reldate-complex ng-model="item.expiry"></dd>
     </dl>
     <dl ng-if="item.located">
         <dt translate>Location</dt>
