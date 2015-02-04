@@ -75,12 +75,13 @@ define([
         })
         .directive('sdPackage', [function() {
             var solveRefs = function(item, groups) {
-                var tree = {_items: []};
+                var items = {childId: '_items', childData: []};
+                var tree = [items];
                 _.each(item.refs, function(ref) {
                     if (ref.idRef) {
-                        tree[ref.idRef] = solveRefs(_.find(groups, {id: ref.idRef}), groups);
+                        tree.push({childId: ref.idRef, childData: solveRefs(_.find(groups, {id: ref.idRef}), groups)});
                     } else if (ref.residRef) {
-                        tree._items.push(ref);
+                        items.childData.push(ref);
                     }
                 });
                 return tree;
