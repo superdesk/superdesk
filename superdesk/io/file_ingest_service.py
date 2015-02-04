@@ -18,7 +18,7 @@ from superdesk.errors import IngestFileError
 
 class FileIngestService(IngestService):
 
-    def move_file(self, filepath, filename, success=True):
+    def move_file(self, filepath, filename, provider, success=True):
         """
         Move the files from the current directory to the _Processed directory in successful
         else _Error if unsuccessful. Creates _Processed and _Error directory within current directory
@@ -30,7 +30,7 @@ class FileIngestService(IngestService):
             if not os.path.exists(os.path.join(filepath, "_ERROR/")):
                 os.makedirs(os.path.join(filepath, "_ERROR/"))
         except Exception as ex:
-            raise IngestFileError.folderCreateError(ex)
+            raise IngestFileError.folderCreateError(ex, provider.get('name'))
 
         try:
             if success:
@@ -38,7 +38,7 @@ class FileIngestService(IngestService):
             else:
                 shutil.copy2(os.path.join(filepath, filename), os.path.join(filepath, "_ERROR/"))
         except Exception as ex:
-            raise IngestFileError.fileMoveError(ex)
+            raise IngestFileError.fileMoveError(ex, provider.get('name'))
         finally:
             os.remove(os.path.join(filepath, filename))
 

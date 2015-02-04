@@ -20,9 +20,10 @@ class NITFTestCase(unittest.TestCase):
     def setUp(self):
         dirname = os.path.dirname(os.path.realpath(__file__))
         fixture = os.path.join(dirname, 'fixtures', self.filename)
+        provider = {'name': 'Test'}
         with open(fixture) as f:
             self.nitf = f.read()
-            self.item = NITFParser().parse_message(etree.fromstring(self.nitf))
+            self.item = NITFParser().parse_message(etree.fromstring(self.nitf), provider)
 
 
 class AAPTestCase(NITFTestCase):

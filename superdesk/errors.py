@@ -15,6 +15,17 @@ from flask import json
 from eve.validation import ValidationError
 
 logger = logging.getLogger(__name__)
+notifiers = []
+
+
+def add_notifier(notifier):
+    if notifier not in notifiers:
+        notifiers.append(notifier)
+
+
+def update_notifiers(*args, **kwargs):
+        for notifier in notifiers:
+            notifier(*args, **kwargs)
 
 
 def get_registered_errors(self):
@@ -145,6 +156,11 @@ class SuperdeskIngestError(SuperdeskError):
         super().__init__(code)
         self.system_exception = exception
         self.channel = channel
+
+        update_notifiers('error',
+                         'Error [%s] on ingest channel {{name}}: %s' % (code, exception),
+                         name=channel)
+
         if channel:
             logger.error("{}: {} on channel {}".format(self, exception, channel))
         else:
@@ -162,28 +178,28 @@ class ProviderError(SuperdeskIngestError):
     }
 
     @classmethod
-    def providerAddError(cls, exception):
-        return ProviderError(2001, exception)
+    def providerAddError(cls, exception, channel):
+        return ProviderError(2001, exception, channel)
 
     @classmethod
-    def expiredContentError(cls, exception):
-        return ProviderError(2002, exception)
+    def expiredContentError(cls, exception, channel):
+        return ProviderError(2002, exception, channel)
 
     @classmethod
-    def ruleError(cls, exception):
-        return ProviderError(2003, exception)
+    def ruleError(cls, exception, channel):
+        return ProviderError(2003, exception, channel)
 
     @classmethod
     def ingestError(cls, exception, channel):
         return ProviderError(2004, exception, channel)
 
     @classmethod
-    def anpaError(cls, exception):
-        return ProviderError(2005, exception)
+    def anpaError(cls, exception, channel):
+        return ProviderError(2005, exception, channel)
 
     @classmethod
-    def providerFilterExpiredContentError(cls, exception):
-        return ProviderError(2006, exception)
+    def providerFilterExpiredContentError(cls, exception, channel):
+        return ProviderError(2006, exception, channel)
 
 
 class ParserError(SuperdeskIngestError):
@@ -197,13 +213,13 @@ class ParserError(SuperdeskIngestError):
     }
 
     @classmethod
-    def parseMessageError(cls, exception):
-        return ParserError(1001, exception)
+    def parseMessageError(cls, exception, channel):
+        return ParserError(1001, exception, channel)
 
     @classmethod
-    def parseFileError(cls, source, filename, exception):
+    def parseFileError(cls, source, filename, exception, channel):
         logger.exception("Source Type: {} - File: {} could not be processed".format(source, filename))
-        return ParserError(1002, exception)
+        return ParserError(1002, exception, channel)
 
     @classmethod
     def anpaParseFileError(cls, filename, exception):
@@ -211,16 +227,16 @@ class ParserError(SuperdeskIngestError):
         return ParserError(1003, exception)
 
     @classmethod
-    def newsmlOneParserError(cls, exception):
-        return ParserError(1004, exception)
+    def newsmlOneParserError(cls, exception, channel):
+        return ParserError(1004, exception, channel)
 
     @classmethod
-    def newsmlTwoParserError(cls, exception):
-        return ParserError(1005, exception)
+    def newsmlTwoParserError(cls, exception, channel):
+        return ParserError(1005, exception, channel)
 
     @classmethod
-    def nitfParserError(cls, exception):
-        return ParserError(1006, exception)
+    def nitfParserError(cls, exception, channel):
+        return ParserError(1006, exception, channel)
 
 
 class IngestFileError(SuperdeskIngestError):
@@ -230,12 +246,12 @@ class IngestFileError(SuperdeskIngestError):
     }
 
     @classmethod
-    def folderCreateError(cls, exception):
-        return IngestFileError(3001, exception)
+    def folderCreateError(cls, exception, channel):
+        return IngestFileError(3001, exception, channel)
 
     @classmethod
-    def fileMoveError(cls, exception):
-        return IngestFileError(3002, exception)
+    def fileMoveError(cls, exception, channel):
+        return IngestFileError(3002, exception, channel)
 
 
 class IngestApiError(SuperdeskIngestError):
@@ -245,31 +261,47 @@ class IngestApiError(SuperdeskIngestError):
         4002: "API ingest has too many redirects",
         4003: "API ingest has request error",
         4004: "API ingest Unicode Encode Error",
-        4005: 'API ingest xml parse error'
+        4005: 'API ingest xml parse error',
+        4006: 'API service not found(404) error'
     }
 
     @classmethod
-    def apiTimeoutError(cls, exception):
-        return IngestApiError(4001, exception)
+    def apiTimeoutError(cls, exception, channel):
+        return IngestApiError(4001, exception, channel)
 
     @classmethod
-    def apiRedirectError(cls, exception):
-        return IngestApiError(4002, exception)
+    def apiRedirectError(cls, exception, channel):
+        return IngestApiError(4002, exception, channel)
 
     @classmethod
-    def apiRequestError(cls, exception):
-        return IngestApiError(4003, exception)
+    def apiRequestError(cls, exception, channel):
+        return IngestApiError(4003, exception, channel)
 
     @classmethod
-    def apiUnicodeError(cls, exception):
-        return IngestApiError(4004, exception)
+    def apiUnicodeError(cls, exception, channel):
+        return IngestApiError(4004, exception, channel)
 
     @classmethod
-    def apiParseError(cls, exception):
-        return IngestApiError(4005, exception)
+    def apiParseError(cls, exception, channel):
+        return IngestApiError(4005, exception, channel)
+
+    @classmethod
+    def apiNotFoundError(cls, exception, channel):
+        return IngestApiError(4006, exception, channel)
 
 
 class IngestFtpError(SuperdeskIngestError):
     _codes = {
-        5000: "Unknown FTP ingest error"
+        5000: "FTP ingest error",
+        5001: "FTP parser could not be found"
     }
+
+    @classmethod
+    def ftpError(cls, exception, channel):
+        return IngestFtpError(5000, exception, channel)
+
+    @classmethod
+    def ftpUnknownParserError(cls, exception, channel, filename):
+        logger.exception("Provider: {} - File: {} unknown file format. "
+                         "Parser couldn't be found.".format(channel, filename))
+        return IngestFtpError(5001, exception, channel)

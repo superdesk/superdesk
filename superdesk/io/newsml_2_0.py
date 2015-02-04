@@ -29,7 +29,7 @@ class NewsMLTwoParser(Parser):
     def can_parse(self, xml):
         return xml.tag.endswith('newsMessage')
 
-    def parse_message(self, tree):
+    def parse_message(self, tree, provider):
         """Parse NewsMessage."""
         items = []
         try:
@@ -40,7 +40,7 @@ class NewsMLTwoParser(Parser):
                     items.append(item)
             return items
         except Exception as ex:
-            raise ParserError.newsmlTwoParserError(ex)
+            raise ParserError.newsmlTwoParserError(ex, provider.get('name'))
 
     def parse_item(self, tree):
         """Parse given xml"""

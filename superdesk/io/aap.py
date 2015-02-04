@@ -17,9 +17,9 @@ from superdesk.io.file_ingest_service import FileIngestService
 from superdesk.utc import utc, timezone
 from superdesk.notification import push_notification
 from superdesk.io import register_provider
-from ..etree import etree
+from ..etree import etree, ParseError as etreeParserError
 from superdesk.utils import get_sorted_files, FileSortAttributes
-from superdesk.errors import ParserError
+from superdesk.errors import ParserError, ProviderError
 
 
 logger = logging.getLogger(__name__)
@@ -55,20 +55,26 @@ class AAPIngestService(FileIngestService):
                     last_updated = datetime.fromtimestamp(stat.st_mtime, tz=utc)
                     if self.is_latest_content(last_updated, provider.get('last_updated')):
                         with open(filepath, 'r') as f:
-                            item = self.parser.parse_message(etree.fromstring(f.read()))
+                            item = self.parser.parse_message(etree.fromstring(f.read()), provider)
 
                             item['firstcreated'] \
                                 = normalize_date(item.get('firstcreated'), self.tz)
                             item['versioncreated'] \
                                 = normalize_date(item.get('versioncreated'), self.tz)
 
-                            self.move_file(self.path, filename, success=True)
+                            self.move_file(self.path, filename, provider=provider, success=True)
                             yield [item]
                     else:
-                        self.move_file(self.path, filename, success=True)
-            except:
+                        self.move_file(self.path, filename, provider=provider, success=True)
+            except etreeParserError as ex:
                 logger.exception("Ingest Type: AAP - File: {0} could not be processed".format(filename))
-                self.move_file(self.path, filename, success=False)
+                self.move_file(self.path, filename, provider=provider, success=False)
+                raise ParserError.nitfParserError(ex, provider.get('name'))
+            except ParserError as ex:
+                self.move_file(self.path, filename, provider=provider, success=False)
+            except Exception as ex:
+                self.move_file(self.path, filename, provider=provider, success=False)
+                raise ProviderError.ingestError(ex, provider.get('name'))
 
         push_notification('ingest:update')
 
@@ -80,14 +86,14 @@ class AAPIngestService(FileIngestService):
                 return []
 
             with open(os.path.join(path, filename), 'r') as f:
-                item = self.parser.parse_message(etree.fromstring(f.read()))
+                item = self.parser.parse_message(etree.fromstring(f.read()), provider)
 
                 item['firstcreated'] = normalize_date(item.get('firstcreated'), self.tz)
                 item['versioncreated'] = normalize_date(item.get('versioncreated'), self.tz)
 
             return [item]
         except Exception as ex:
-            self.move_file(self.path, filename, success=False)
-            raise ParserError.parseFileError('AAP', filename, ex)
+            self.move_file(self.path, filename, provider=provider, success=False)
+            raise ParserError.parseFileError('AAP', filename, ex, provider.get('name'))
 
 register_provider(PROVIDER, AAPIngestService())

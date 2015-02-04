@@ -21,16 +21,17 @@ class AddProvider(superdesk.Command):
     }
 
     def run(self, provider=None):
-        try:
             if provider:
-                data = superdesk.json.loads(provider)
-                data.setdefault('name', data['type'])
-                data.setdefault('source', data['type'])
-                data.setdefault('days_to_keep', DAYS_TO_KEEP)
-                db = superdesk.get_db()
-                db['ingest_providers'].save(data)
-                return data
-        except Exception as ex:
-            raise ProviderError.providerAddError(ex)
+                try:
+                    data = {}
+                    data = superdesk.json.loads(provider)
+                    data.setdefault('name', data['type'])
+                    data.setdefault('source', data['type'])
+                    data.setdefault('days_to_keep', DAYS_TO_KEEP)
+                    db = superdesk.get_db()
+                    db['ingest_providers'].save(data)
+                    return data
+                except Exception as ex:
+                    raise ProviderError.providerAddError(ex, data.get('name', ''))
 
 superdesk.command('ingest:provider', AddProvider())

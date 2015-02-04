@@ -63,7 +63,7 @@ class ParserRegistry(type):
 class Parser(metaclass=ParserRegistry):
     """Base Parser class for all types of Parsers like News ML 1.2, News ML G2, NITF, etc."""
 
-    def parse_message(self, xml):
+    def parse_message(self, xml, provider):
         """Parse the ingest XML and extracts the relevant elements/attributes values from the XML."""
         raise NotImplementedError()
 
