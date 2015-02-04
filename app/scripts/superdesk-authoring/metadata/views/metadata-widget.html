@@ -56,6 +56,10 @@
 			<label translate>Last updated</label>
 			<div class="data" sd-reldate-complex ng-model="item.versioncreated"></div>
 		</li>
+		<li ng-if="item.expiry">
+			<label translate>Expiry</label>
+			<div class="data" sd-reldate-complex ng-model="item.expiry"></div>
+		</li>
 		<li ng-if="item.provider">
 			<label translate>Provider</label>
 			<div class="data" sd-meta-ingest data-provider="item.ingest_provider">{{ item.provider }}</div>
