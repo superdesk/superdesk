@@ -52,7 +52,9 @@ class ArchiveIngestService(BaseService):
             if not is_workflow_state_transition_valid('fetch_as_from_ingest', ingest_doc[config.CONTENT_STATE]):
                 raise InvalidStateTransitionError()
 
-            superdesk.get_resource_service('ingest').patch(ingest_doc.get('_id'), {'archived': utcnow()})
+            archived = utcnow()
+            superdesk.get_resource_service('ingest').patch(ingest_doc.get('_id'), {'archived': archived})
+            doc['archived'] = archived
 
             archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=doc.get('guid'))
             if not archived_doc:
