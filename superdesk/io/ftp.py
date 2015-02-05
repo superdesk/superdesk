@@ -72,7 +72,7 @@ class FTPService(IngestService):
                     dest = '%s/%s' % (config['dest_path'], filename)
 
                     try:
-                        with open(dest, 'wb') as f:
+                        with open(dest, 'xb') as f:
                             ftp.retrbinary('RETR %s' % filename, f.write)
                     except FileExistsError:
                         continue
