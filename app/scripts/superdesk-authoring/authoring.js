@@ -855,6 +855,7 @@
             'superdesk.authoring.workqueue',
             'superdesk.authoring.packages',
             'superdesk.authoring.find-replace',
+            'superdesk.authoring.multiedit',
             'superdesk.desks'
         ])
 

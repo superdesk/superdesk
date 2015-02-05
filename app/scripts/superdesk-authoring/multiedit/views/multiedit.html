@@ -1,0 +1,14 @@
+<div class="subnav">
+
+</div>
+<div class="multiedit-screen main-section">
+    <div class="boards-list">
+    	<div ng-repeat="board in screen" class="board" style="width:{{100 / screen.length}}%">
+    		<div sd-multiedit-article data-article="board.article"></div>
+    	</div>
+    </div>
+    <div class="boards-create">
+    	<i class="icon-plus"></i>
+    </div>
+</div>
+<div sd-workqueue></div>
