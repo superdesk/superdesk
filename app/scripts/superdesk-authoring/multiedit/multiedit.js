@@ -105,19 +105,21 @@
 		};
 	}
 
-	MultieditArticleDirective.$inject = [];
-	function MultieditArticleDirective() {
+	MultieditArticleDirective.$inject = ['authoring', 'session'];
+	function MultieditArticleDirective(authoring, session) {
 		return {
-			templateUrl: 'scripts/superdesk-authoring/multiedit/views/sd-multiedit-article.html',
-			scope: {
-				article: '='
-			},
+			template: '<div sd-article-edit></div>',
+			scope: {article: '='},
 			link: function(scope) {
-				//fetch article
+				authoring.open(scope.article).then(function(item) {
+					scope.item = _.create(item);
+					scope._editable = item.lock_user._id === session.identity._id;
+				});
 			}
 		};
 	}
-	angular.module('superdesk.authoring.multiedit', ['superdesk.activity'])
+
+	angular.module('superdesk.authoring.multiedit', ['superdesk.activity', 'superdesk.authoring'])
 		.service('multiEdit', MultieditService)
 		.directive('sdMultieditDropdown', MultieditDropdownDirective)
 		.directive('sdMultieditArticle', MultieditArticleDirective)

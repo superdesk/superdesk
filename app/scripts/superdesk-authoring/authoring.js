@@ -18,10 +18,7 @@
         place: [],
         located: null,
         dateline: '',
-        language: null,
-        lock_user: null,
-        lock_session: null,
-        lock_time: null
+        language: null
     };
 
     /**
@@ -61,7 +58,7 @@
     function AutosaveService($q, $timeout, api) {
         var RESOURCE = 'archive_autosave',
             AUTOSAVE_TIMEOUT = 3000,
-            _timeout;
+            timeouts = {};
 
         /**
          * Open an item
@@ -84,26 +81,27 @@
         /**
          * Autosave an item
          */
-        this.save = function saveAutosave(item, data) {
-            this.stop();
-            _timeout = $timeout(function() {
-                var diff = extendItem({_id: item._id}, data);
+        this.save = function saveAutosave(item) {
+            this.stop(item);
+            timeouts[item._id] = $timeout(function() {
+                var diff = extendItem({_id: item._id}, item);
                 return api.save(RESOURCE, {}, diff).then(function(_autosave) {
-                    item._autosave = _autosave;
-                    extendItem(item._autosave, data);
-                    extendItem(item, data);
+                    var orig = Object.getPrototypeOf(item);
+                    orig._autosave = _autosave;
+                    extendItem(orig._autosave, item);
+                    extendItem(orig, item);
                 });
             }, AUTOSAVE_TIMEOUT);
-            return _timeout;
+            return timeouts[item._id];
         };
 
         /**
          * Stop pending autosave
          */
-        this.stop = function stopAutosave() {
-            if (_timeout) {
-                $timeout.cancel(_timeout);
-                _timeout = null;
+        this.stop = function stopAutosave(item) {
+            if (timeouts[item._id]) {
+                $timeout.cancel(timeouts[item._id]);
+                timeouts[item._id] = null;
             }
         };
 
@@ -111,7 +109,7 @@
          * Drop autosave
          */
         this.drop = function dropAutosave(item) {
-            $timeout.cancel(_timeout);
+            this.stop(item);
             api(RESOURCE).remove(item._autosave);
             item._autosave = null;
         };
@@ -166,11 +164,10 @@
         /**
          * Autosave the changes
          *
-         * @param {Object} item Destination.
          * @param {Object} diff Changes.
          */
-        this.autosave = function autosaveAuthoring(item, diff) {
-            return autosave.save(item, diff);
+        this.autosave = function autosaveAuthoring(diff) {
+            return autosave.save(diff);
         };
 
         /**
@@ -180,7 +177,7 @@
          * @param {Object} diff Changes.
          */
         this.save = function saveAuthoring(item, diff) {
-            autosave.stop();
+            autosave.stop(item);
             if (diff && diff._etag) {
                 item._etag = diff._etag;
             }
@@ -208,7 +205,7 @@
          * @param {string} userId
          */
         this.unlock = function unlock(item, userId) {
-            autosave.stop();
+            autosave.stop(item);
             item.lock_session = null;
             item.lock_user = null;
             item._locked = false;
@@ -222,7 +219,7 @@
          * @param {string} userId
          */
         this.lock = function lock(item, userId) {
-            autosave.stop();
+            autosave.stop(item);
             api.find('users', userId).then(function(user) {
                 item.lock_user = user;
             }, function(rejection) {
@@ -393,8 +390,7 @@
     function AuthoringController($scope, superdesk, notify, gettext,
                                  desks, item, authoring, api, session, lock, privileges,
                                  ContentCtrl, $location, referrer, $timeout) {
-        var stopWatch = angular.noop,
-            _closing;
+        var _closing;
 
         $scope.privileges = privileges.privileges;
         $scope.content = new ContentCtrl($scope);
@@ -407,13 +403,6 @@
 
         $scope.proofread = false;
 
-        // TODO These values should come from preferences.
-        $scope.limits = {
-            slugline: 24,
-            headline: 64,
-            'abstract': 160
-        };
-
         $scope.referrerUrl = referrer.getReferrerUrl();
 
         if (item.task && item.task.stage) {
@@ -423,56 +412,14 @@
             });
         }
 
-        function startWatch() {
-            function isDirty() {
-                var dirty = false;
-                angular.forEach($scope.item, function(val, key) {
-                    dirty = dirty || val !== item[key];
-                });
-
-                return dirty;
-            }
-
-            stopWatch(); // stop watch if any
-            stopWatch = $scope.$watchGroup([
-                'item.headline',
-                'item.abstract',
-                'item.slugline',
-                'item.body_html',
-                'item.abstract',
-                'item.anpa_take_key',
-                'item.unique_name',
-                'item.urgency',
-                'item.byline',
-                'item.priority',
-                'item.ednote',
-                'item.usageterms',
-                'item.subject',
-                'item.genre',
-                'item[\'anpa-category\']',
-                'item.dateline',
-                'item.located',
-                'item.place',
-                'item.language',
-                'item.type'
-            ], function(changes) {
-                $scope.dirty = isDirty();
-                if ($scope.dirty && authoring.isEditable(item)) {
-                    authoring.autosave(item, $scope.item);
-                }
-            });
-        }
-
         /**
          * Create a new version
          */
     	$scope.save = function() {
-            stopWatch();
     		return authoring.save(item, $scope.item).then(function(res) {
                 $scope.dirty = false;
                 $scope.item = _.create(item);
                 notify.success(gettext('Item updated.'));
-                startWatch();
                 return item;
     		}, function(response) {
                 if (angular.isDefined(response.data._issues)) {
@@ -492,7 +439,6 @@
          * Close an item - unlock
          */
         $scope.close = function() {
-            stopWatch();
             _closing = true;
             authoring.close(item, $scope.item, $scope.dirty).then(function() {
                 $location.url($scope.referrerUrl);
@@ -503,7 +449,6 @@
          * Preview different version of an item
          */
         $scope.preview = function(version) {
-            stopWatch();
             forcedExtend($scope.item, version);
             $scope._editable = false;
         };
@@ -523,9 +468,6 @@
             $scope.item = _.create(item);
             extendItem($scope.item, item._autosave || {});
             $scope._editable = authoring.isEditable(item);
-            if ($scope._editable) {
-                startWatch();
-            }
         };
 
         /**
@@ -540,7 +482,6 @@
 
         function updateEditorState (result) {
             extendItem($scope.item, result);
-            startWatch();
 
             //The current $digest cycle will mark $scope.dirty = true.
             //We need to postpone this code block for the next cycle.
@@ -573,6 +514,11 @@
             return lock.isLockedByMe($scope.item);
         };
 
+        $scope.autosave = function(item) {
+            $scope.dirty = true;
+            return authoring.autosave(item);
+        };
+
         // init
         $scope.closePreview();
 
@@ -582,14 +528,12 @@
                 authoring.lock($scope.item, data.user);
                 $scope._editable = $scope.item._editable = false;
                 $scope.item._locked = true;
-                stopWatch();
             }
         });
 
         $scope.$on('item:unlock', function(_e, data) {
             if ($scope.item._id === data.item && !_closing &&
                 session.sessionId !== data.lock_session) {
-                stopWatch();
                 authoring.unlock($scope.item, data.user);
                 $scope._editable = $scope.item._editable = false;
                 $scope.item._locked = false;
@@ -723,12 +667,10 @@
 
         return {
             templateUrl: 'scripts/superdesk-authoring/views/theme-select.html',
-            scope: {
-                key: '@'
-            },
+            scope: {key: '@'},
             link: function themeSelectLink(scope, elem) {
 
-                var DEFAULT_CLASS = 'main-article';
+                var DEFAULT_CLASS = 'main-article theme-container';
 
                 scope.themes = authThemes.availableThemes;
                 authThemes.get(scope.key).then(function(theme) {
@@ -743,7 +685,7 @@
                 };
 
                 function applyTheme() {
-                    elem.closest('#theme-container')
+                    elem.closest('.theme-container')
                         .attr('class', DEFAULT_CLASS)
                         .addClass(scope.theme && scope.theme.cssClass);
                 }
@@ -845,6 +787,28 @@
         };
     }
 
+    ArticleEditDirective.$inject = ['autosave'];
+    function ArticleEditDirective(autosave) {
+        // TODO(petr): These values should come from preferences.
+        var limits = {
+            slugline: 24,
+            headline: 64,
+            'abstract': 160
+        };
+
+        return {
+            templateUrl: 'scripts/superdesk-authoring/views/article-edit.html',
+            link: function(scope) {
+                scope.limits = limits;
+
+                scope.autosave = function(item) {
+                    scope.dirty = true;
+                    autosave.save(item);
+                };
+            }
+        };
+    }
+
     return angular.module('superdesk.authoring', [
             'superdesk.editor',
             'superdesk.activity',
@@ -855,7 +819,6 @@
             'superdesk.authoring.workqueue',
             'superdesk.authoring.packages',
             'superdesk.authoring.find-replace',
-            'superdesk.authoring.multiedit',
             'superdesk.desks'
         ])
 
@@ -872,6 +835,7 @@
         .directive('sdThemeSelect', ThemeSelectDirective)
         .directive('sdContentCreate', ContentCreateDirective)
         .directive('sdHighlightCreate', HighlightCreateDirective)
+        .directive('sdArticleEdit', ArticleEditDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk

@@ -31,12 +31,14 @@ function MetadataDropdownDirective() {
 			list: '=',
 			disabled: '=',
 			item: '=',
-			field: '@'
+			field: '@',
+			change: '&'
 		},
 		templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-dropdown.html',
 		link: function(scope) {
 			scope.select = function(item) {
 				scope.item = scope.field ? item[scope.field] : item;
+				scope.change({item: scope.item});
 			};
 		}
 	};
@@ -61,7 +63,8 @@ function MetadataListEditingDirective() {
 			disabled: '=',
 			list: '=',
 			unique: '@',
-			postprocessing: '&'
+			postprocessing: '&',
+			change: '&'
 		},
 		templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-terms.html',
 		link: function(scope) {
@@ -100,6 +103,7 @@ function MetadataListEditingDirective() {
 					scope.selectedTerm = '';
 
 					scope.postprocessing();
+					scope.change({item: scope.item});
 				}
 			};
 
@@ -111,6 +115,8 @@ function MetadataListEditingDirective() {
 				o[scope.field] = temp;
 
 				_.extend(scope.item, o);
+
+				scope.change({item: scope.item});
 			};
 		}
 	};

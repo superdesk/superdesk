@@ -86,7 +86,7 @@ describe('authoring', function() {
 
         // edit
         $scope.item.headline = headline;
-        $rootScope.$digest();
+        $scope.autosave($scope.item);
         expect($scope.dirty).toBe(true);
 
         // autosave
@@ -226,14 +226,34 @@ describe('autosave', function() {
 
     it('can create an autosave', inject(function(autosave, api, $q, $timeout, $rootScope) {
         var item = {_id: 1, _etag: 'x'};
+        var edit = Object.create(item);
+        edit.headline = 'test';
         spyOn(api, 'save').and.returnValue($q.when({_id: 2}));
-        autosave.save(item, {headline: 'test'});
+        autosave.save(edit);
         $rootScope.$digest();
         expect(api.save).not.toHaveBeenCalled();
         $timeout.flush(5000);
         expect(api.save).toHaveBeenCalledWith('archive_autosave', {}, {_id: 1, headline: 'test'});
         expect(item._autosave._id).toBe(2);
         expect(item.headline).toBe('test');
+    }));
+
+    it('can save multiple items', inject(function(autosave, api, $q, $timeout, $rootScope) {
+        var item1 = {_id: 1, _etag: '1'},
+            item2 = {_id: 2, _etag: '2'};
+        spyOn(api, 'save').and.returnValue($q.when({}));
+
+        autosave.save(_.create(item1));
+        $timeout.flush(1500);
+
+        autosave.save(_.create(item2));
+        $timeout.flush(2500);
+
+        expect(api.save).toHaveBeenCalled();
+        expect(api.save.calls.count()).toBe(1);
+
+        $timeout.flush(5000);
+        expect(api.save.calls.count()).toBe(2);
     }));
 });
 
