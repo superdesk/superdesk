@@ -18,10 +18,7 @@
         place: [],
         located: null,
         dateline: '',
-        language: null,
-        lock_user: null,
-        lock_session: null,
-        lock_time: null
+        language: null
     };
 
     /**
@@ -496,6 +493,13 @@
             _closing = true;
             authoring.close(item, $scope.item, $scope.dirty).then(function() {
                 $location.url($scope.referrerUrl);
+            });
+        };
+
+        $scope.beforeSend = function() {
+            return $scope.save()
+            .then(function() {
+                return lock.unlock(item);
             });
         };
 
