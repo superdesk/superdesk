@@ -34,8 +34,6 @@ STATE_FETCHED = 'fetched'
 FAMILY_ID = 'family_id'
 INGEST_ID = 'ingest_id'
 
-logger = get_task_logger(__name__)
-
 class ArchiveIngestResource(Resource):
     resource_methods = ['POST']
     item_methods = []
