@@ -8,7 +8,7 @@
                 </figure>
                 <span ng-if="activity.name != 'notify'">
                    	<div class="activity-content">
-                        <p><b>{{ activity.user.display_name }} </b><span sd-activity-message data-activity="activity"></span></p>
+                        <p><b>{{ activity.user.display_name || 'System' }} </b><span sd-activity-message data-activity="activity"></span></p>
                     </div>
                 	<div class="activity-date "><time datetime="{{ activity._created }}" title="{{ activity._created | reldate}}" >{{ activity._created | reldate }}</time></div>
                 </span>
