@@ -23,15 +23,13 @@ from apps.tasks import send_to
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.utc import utcnow
 from superdesk.resource import Resource
-from .common import get_user, generate_guid, generate_unique_id_and_name, GUID_NEWSML
+from .common import get_user, generate_guid, generate_unique_id_and_name, GUID_TAG
 from superdesk.services import BaseService
 from .archive import SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 from apps.content import LINKED_IN_PACKAGES, PACKAGE
 STATE_FETCHED = 'fetched'
 FAMILY_ID = 'family_id'
-
-logger = get_task_logger(__name__)
 
 class ArchiveIngestResource(Resource):
     resource_methods = ['POST']
@@ -88,16 +86,24 @@ class ArchiveIngestService(BaseService):
                 if not is_workflow_state_transition_valid('fetch_as_from_ingest', ingest_doc[config.CONTENT_STATE]):
                     raise InvalidStateTransitionError()
 
-            archived = utcnow()
-            superdesk.get_resource_service('ingest').patch(ingest_doc.get('_id'), {'archived': archived})
-            doc['archived'] = archived
+                archived = utcnow()
+                superdesk.get_resource_service('ingest').patch(ingest_doc.get('_id'), {'archived': archived})
+                doc['archived'] = archived
 
-            archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=doc.get('guid'))
-            if not archived_doc:
+                archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=doc.get('guid'))
                 dest_doc = dict(ingest_doc)
+                # if the doc is already in the archive we create a duplicate instance
+                if archived_doc:
+                    new_id = generate_guid(type=GUID_TAG)
+                    dest_doc['_id'] = new_id
+                    dest_doc['guid'] = new_id
+                    generate_unique_id_and_name(dest_doc)
+
                 dest_doc[config.VERSION] = 1
                 send_to(dest_doc, doc.get('desk'))
                 dest_doc[config.CONTENT_STATE] = STATE_FETCHED
+                dest_doc['ingest_id'] = ingest_doc['_id']
+                dest_doc[FAMILY_ID] = ingest_doc['_id']
                 remove_unwanted(dest_doc)
                 for ref in [ref for group in dest_doc.get('groups', [])
                             for ref in group.get('refs', []) if 'residRef' in ref]:
@@ -117,11 +123,6 @@ class ArchiveIngestService(BaseService):
                         for ref in group.get('refs', []) if 'residRef' in ref]
                 if refs:
                     self.create(refs)
-            else:
-                if doc.get(PACKAGE):
-                    links = archived_doc.get(LINKED_IN_PACKAGES, [])
-                    links.append({PACKAGE: doc.get(PACKAGE)})
-                    superdesk.get_resource_service(ARCHIVE).patch(archived_doc.get('_id'), {LINKED_IN_PACKAGES: links})
 
         return [doc.get('guid') for doc in docs]
 
