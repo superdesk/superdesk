@@ -54,10 +54,14 @@ class FTPService(IngestService):
         try:
             with ftplib.FTP(config.get('host')) as ftp:
                 ftp.login(config.get('username'), config.get('password'))
+                ftp.set_pasv(False)
                 ftp.cwd(config.get('path', ''))
 
                 for filename, facts in ftp.mlsd():
-                    if not filename.endswith(self.FILE_SUFFIX):
+                    if facts['type'] != 'file':
+                        continue
+
+                    if not filename.lower().endswith(self.FILE_SUFFIX):
                         continue
 
                     if last_updated:
@@ -68,7 +72,7 @@ class FTPService(IngestService):
                     dest = '%s/%s' % (config['dest_path'], filename)
 
                     try:
-                        with open(dest, 'xb') as f:
+                        with open(dest, 'wb') as f:
                             ftp.retrbinary('RETR %s' % filename, f.write)
                     except FileExistsError:
                         continue
