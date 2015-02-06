@@ -105,16 +105,25 @@
 		};
 	}
 
-	MultieditArticleDirective.$inject = ['authoring', 'session'];
-	function MultieditArticleDirective(authoring, session) {
+	MultieditArticleDirective.$inject = ['authoring'];
+	function MultieditArticleDirective(authoring) {
 		return {
 			template: '<div sd-article-edit></div>',
 			scope: {article: '='},
 			link: function(scope) {
 				authoring.open(scope.article).then(function(item) {
 					scope.item = _.create(item);
-					scope._editable = item.lock_user._id === session.identity._id;
+					scope._editable = authoring.isEditable(item);
 				});
+
+                scope.autosave = function(item) {
+                    scope.dirty = true;
+                    authoring.autosave(item);
+                };
+
+				scope.save = function(item) {
+					return authoring.save(item);
+				};
 			}
 		};
 	}

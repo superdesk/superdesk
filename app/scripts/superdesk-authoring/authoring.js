@@ -137,24 +137,23 @@
          *
          *   and save it if dirty, unlock if editable, and remove from work queue at all times
          *
-         * @param {Object} item Destination.
-         * @param {Object} diff Changes.
+         * @param {Object} diff Edits.
          * @param {boolean} isDirty $scope dirty status.
          */
-        this.close = function closeAuthoring(item, diff, isDirty) {
+        this.close = function closeAuthoring(diff, isDirty) {
             var promise = $q.when();
-            if (this.isEditable(item)) {
+            if (this.isEditable(diff)) {
                 if (isDirty) {
                     promise = confirm.confirm()
                         .then(angular.bind(this, function save() {
-                            return this.save(item, diff);
+                            return this.save(diff);
                         }), function() { // ignore saving
                             return $q.when();
                         });
                 }
 
                 promise = promise.then(function unlock() {
-                    return lock.unlock(item);
+                    return lock.unlock(diff);
                 });
             }
 
@@ -164,24 +163,20 @@
         /**
          * Autosave the changes
          *
-         * @param {Object} diff Changes.
+         * @param {Object} item
          */
-        this.autosave = function autosaveAuthoring(diff) {
-            return autosave.save(diff);
+        this.autosave = function autosaveAuthoring(item) {
+            return autosave.save(item);
         };
 
         /**
          * Save the item
          *
-         * @param {Object} item Destination.
-         * @param {Object} diff Changes.
+         * @param {Object} item
          */
-        this.save = function saveAuthoring(item, diff) {
+        this.save = function saveAuthoring(item) {
+            var diff = extendItem({}, item);
             autosave.stop(item);
-            if (diff && diff._etag) {
-                item._etag = diff._etag;
-            }
-            diff = extendItem({}, diff);
             return api.save('archive', item, diff).then(function(_item) {
                 item._autosave = null;
                 item._locked = lock.isLocked(item);
@@ -416,7 +411,8 @@
          * Create a new version
          */
     	$scope.save = function() {
-    		return authoring.save(item, $scope.item).then(function(res) {
+    		return authoring.save($scope.item).then(function(res) {
+                item = res;
                 $scope.dirty = false;
                 $scope.item = _.create(item);
                 notify.success(gettext('Item updated.'));
@@ -477,7 +473,7 @@
             return lock.can_unlock($scope.item);
         };
         $scope.save_enabled = function() {
-            return $scope.dirty || $scope.item._autosave != null;
+            return $scope.dirty || $scope.item._autosave;
         };
 
         function updateEditorState (result) {
@@ -801,10 +797,6 @@
             link: function(scope) {
                 scope.limits = limits;
 
-                scope.autosave = function(item) {
-                    scope.dirty = true;
-                    autosave.save(item);
-                };
             }
         };
     }

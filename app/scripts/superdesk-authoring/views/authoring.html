@@ -15,7 +15,8 @@
             <button class="btn btn-medium pull-left" ng-show="!_editable && !item._locked" ng-click="lock()" translate>Lock</button>
             <button class="btn btn-medium pull-left" ng-click="close()" translate>Close</button>
 
-    	    <button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()"
+    	    <button class="btn btn-medium btn-info pull-left" type="submit"
+                ng-click="save(item)"
                 ng-show="_editable"
                 ng-disabled="!save_enabled()"
                 translate>Save</button>

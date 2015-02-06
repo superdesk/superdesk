@@ -119,7 +119,7 @@ describe('authoring', function() {
         $rootScope.$digest();
 
         $timeout.flush(5000);
-        expect($scope.item._autosave).toBe(null);
+        expect($scope.item._autosave).toBeNull();
     }));
 
     /**
@@ -146,14 +146,6 @@ describe('authoring', function() {
             spyOn(lock, 'unlock').and.returnValue($q.when());
         }));
 
-        xit('can open an item', function() {
-
-        });
-
-        xit('can save an item', function() {
-
-        });
-
         it('can check if an item is editable', inject(function(authoring, session) {
             expect(authoring.isEditable({})).toBe(false);
             expect(authoring.isEditable({lock_user: session.identity._id, lock_session: session.sessionId})).toBe(true);
@@ -171,15 +163,17 @@ describe('authoring', function() {
 
         it('can unlocks on close editable item without changes made', inject(function(authoring, confirm, lock, $rootScope) {
             expect(authoring.isEditable(item)).toBe(true);
-            authoring.close(item, {}, false);
+            authoring.close(item, false);
             $rootScope.$digest();
             expect(confirm.confirm).not.toHaveBeenCalled();
             expect(lock.unlock).toHaveBeenCalled();
         }));
 
         it('confirms if an item is dirty and saves', inject(function(authoring, confirm, lock, $q, $rootScope) {
-            var diff = {test: 1};
-            authoring.close(item, diff, true);
+            var edit = Object.create(item);
+            edit.headline = 'test';
+
+            authoring.close(edit, true);
             $rootScope.$digest();
 
             expect(confirm.confirm).toHaveBeenCalled();
@@ -189,7 +183,7 @@ describe('authoring', function() {
             confirmDefer.resolve();
             $rootScope.$digest();
 
-            expect(authoring.save).toHaveBeenCalledWith(item, diff);
+            expect(authoring.save).toHaveBeenCalledWith(edit);
             expect(lock.unlock).toHaveBeenCalled();
         }));
 

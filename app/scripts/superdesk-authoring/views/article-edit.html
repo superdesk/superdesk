@@ -1,7 +1,8 @@
 <article class="theme-container" ng-class="{preview: !_editable}">
 
-	<button class="btn btn-medium btn-info pull-right"
+	<button class="btn btn-medium btn-info btn-save"
 		type="button"
+        ng-click="save(item)"
 		translate>Save</button>
 
     <button class="proofread-toggle btn btn-light" ng-click="proofread = !proofread">
