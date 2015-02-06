@@ -210,7 +210,8 @@ class ParserError(SuperdeskIngestError):
         1003: 'ANPA file could not be parsed',
         1004: 'NewsML1 input could not be processed',
         1005: 'NewsML2 input could not be processed',
-        1006: 'NITF input could not be processed'
+        1006: 'NITF input could not be processed',
+        1007: 'WENN input could not be processed'
     }
 
     @classmethod
@@ -238,6 +239,10 @@ class ParserError(SuperdeskIngestError):
     @classmethod
     def nitfParserError(cls, exception, provider):
         return ParserError(1006, exception, provider)
+
+    @classmethod
+    def wennParserError(cls, exception):
+        return ParserError(1007, exception)
 
 
 class IngestFileError(SuperdeskIngestError):

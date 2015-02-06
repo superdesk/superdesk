@@ -11,8 +11,8 @@
 
 """Superdesk IO"""
 import logging
+from ..etree import etree
 import superdesk
-
 from superdesk.celery_app import celery
 
 
@@ -80,6 +80,14 @@ class Parser(metaclass=ParserRegistry):
         """Returns first 24 characters of a given slugline"""
         if slugline:
             return slugline[:24]
+
+    def qname(self, tag, ns=None):
+        if ns is None:
+            ns = self.root.tag.rsplit('}')[0].lstrip('{')
+        elif ns is not None and ns == 'xml':
+            ns = 'http://www.w3.org/XML/1998/namespace'
+
+        return str(etree.QName(ns, tag))
 
 
 def get_xml_parser(etree):
