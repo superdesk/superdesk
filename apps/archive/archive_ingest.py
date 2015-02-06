@@ -101,7 +101,6 @@ class ArchiveIngestService(BaseService):
 
                 push_notification('item:fetch', item=str(ingest_doc.get('_id')))
 
-
         return [doc.get('guid') for doc in docs]
 
 
