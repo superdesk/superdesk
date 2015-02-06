@@ -16,7 +16,7 @@ import flask
 from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry
 from .common import on_create_item, on_duplicate_item, on_create_media_archive, \
-    on_update_media_archive, on_delete_media_archive
+    on_update_media_archive, on_delete_media_archive, generate_unique_id_and_name
 from .common import get_user
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
@@ -268,26 +268,27 @@ class ArchiveService(BaseService):
 
     def duplicate_item(self, original_doc):
         new_doc = original_doc.copy()
-        if '_id' in new_doc:
-            del new_doc['_id']
-        if 'guid' in new_doc:
-            del new_doc['guid']
+        del new_doc['_id']
+        del new_doc['guid']
+        generate_unique_id_and_name(new_doc)
         item_model = get_model(ItemModel)
         on_duplicate_item(new_doc)
         item_model.create([new_doc])
-        self.duplicate_versions(original_doc['guid'], new_doc['guid'])
+        self.duplicate_versions(original_doc['guid'], new_doc)
         if new_doc.get('state') != 'submitted':
             get_resource_service('tasks').patch(new_doc['_id'], {'state': 'submitted'})
 
-    def duplicate_versions(self, old_id, new_id):
+    def duplicate_versions(self, old_id, new_doc):
         lookup = {}
         lookup['guid'] = old_id
         old_versions = get_resource_service('archive_versions').get(req=None, lookup=lookup)
 
         for old_version in old_versions:
-            old_version['_id_document'] = str(new_id)
+            old_version['_id_document'] = new_doc['_id']
             del old_version['_id']
-            old_version['guid'] = str(new_id)
+            old_version['guid'] = new_doc['guid']
+            old_version['unique_name'] = new_doc['unique_name']
+            old_version['unique_id'] = new_doc['unique_id']
             old_version['versioncreated'] = utcnow()
             get_resource_service('archive_versions').post([old_version])
 

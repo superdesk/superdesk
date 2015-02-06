@@ -44,6 +44,9 @@ def on_create_item(docs):
         if 'unique_id' not in doc:
             generate_unique_id_and_name(doc)
 
+        if 'family_id' not in doc:
+            doc['family_id'] = doc['guid']
+
         set_default_state(doc, 'draft')
         doc.setdefault('_id', doc['guid'])
 
