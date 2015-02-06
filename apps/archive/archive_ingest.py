@@ -28,6 +28,7 @@ from superdesk.services import BaseService
 from .archive import SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 from apps.content import LINKED_IN_PACKAGES, PACKAGE
+from superdesk.notification import push_notification
 STATE_FETCHED = 'fetched'
 FAMILY_ID = 'family_id'
 INGEST_ID = 'ingest_id'
@@ -68,12 +69,10 @@ class ArchiveIngestService(BaseService):
 
                 archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=doc.get('guid'))
                 dest_doc = dict(ingest_doc)
-                # if the doc is already in the archive we create a duplicate instance
-                if archived_doc:
-                    new_id = generate_guid(type=GUID_TAG)
-                    dest_doc['_id'] = new_id
-                    dest_doc['guid'] = new_id
-                    generate_unique_id_and_name(dest_doc)
+                new_id = generate_guid(type=GUID_TAG)
+                dest_doc['_id'] = new_id
+                dest_doc['guid'] = new_id
+                generate_unique_id_and_name(dest_doc)
 
                 dest_doc[config.VERSION] = 1
                 send_to(dest_doc, doc.get('desk'))
@@ -99,6 +98,9 @@ class ArchiveIngestService(BaseService):
                         for ref in group.get('refs', []) if 'residRef' in ref]
                 if refs:
                     self.create(refs)
+
+                push_notification('item:fetch', item=str(ingest_doc.get('_id')))
+
 
         return [doc.get('guid') for doc in docs]
 
