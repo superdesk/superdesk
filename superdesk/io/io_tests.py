@@ -53,7 +53,8 @@ class ItemTest(unittest.TestCase):
 
     def setUpFixture(self, filename):
         self.tree = get_etree(filename)
-        self.item = get_xml_parser(self.tree).parse_message(self.tree)[0]
+        provider = {'name': 'Test'}
+        self.item = get_xml_parser(self.tree).parse_message(self.tree, provider)[0]
 
 
 class ParserTest(ItemTest):

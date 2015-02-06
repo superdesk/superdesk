@@ -106,7 +106,7 @@ class NITFParser(Parser):
     def can_parse(self, xml):
         return xml.tag == 'nitf'
 
-    def parse_message(self, tree):
+    def parse_message(self, tree, provider):
         item = {}
         try:
             docdata = tree.find('head/docdata')
@@ -139,4 +139,4 @@ class NITFParser(Parser):
             item.setdefault('word_count', get_word_count(item['body_html']))
             return item
         except Exception as ex:
-            raise ParserError.nitfParserError(ex)
+            raise ParserError.nitfParserError(ex, provider)

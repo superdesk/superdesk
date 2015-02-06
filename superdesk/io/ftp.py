@@ -16,6 +16,7 @@ from superdesk.utc import utc
 from superdesk.etree import etree
 from superdesk.io import get_xml_parser, register_provider
 from .ingest_service import IngestService
+from superdesk.errors import IngestFtpError
 
 try:
     from urllib.parse import urlparse
@@ -50,30 +51,42 @@ class FTPService(IngestService):
             config['dest_path'] = tempfile.mkdtemp(prefix='superdesk_ingest_')
 
         items = []
-        with ftplib.FTP(config.get('host')) as ftp:
-            ftp.login(config.get('username'), config.get('password'))
-            ftp.cwd(config.get('path', ''))
+        try:
+            with ftplib.FTP(config.get('host')) as ftp:
+                ftp.login(config.get('username'), config.get('password'))
+                ftp.set_pasv(False)
+                ftp.cwd(config.get('path', ''))
 
-            for filename, facts in ftp.mlsd():
-                if not filename.endswith(self.FILE_SUFFIX):
-                    continue
-
-                if last_updated:
-                    item_last_updated = datetime.strptime(facts['modify'], self.DATE_FORMAT).replace(tzinfo=utc)
-                    if item_last_updated < last_updated:
+                for filename, facts in ftp.mlsd():
+                    if facts['type'] != 'file':
                         continue
 
-                dest = '%s/%s' % (config['dest_path'], filename)
+                    if not filename.lower().endswith(self.FILE_SUFFIX):
+                        continue
 
-                try:
-                    with open(dest, 'xb') as f:
-                        ftp.retrbinary('RETR %s' % filename, f.write)
-                except FileExistsError:
-                    continue
+                    if last_updated:
+                        item_last_updated = datetime.strptime(facts['modify'], self.DATE_FORMAT).replace(tzinfo=utc)
+                        if item_last_updated < last_updated:
+                            continue
 
-                xml = etree.parse(dest).getroot()
-                items.append(get_xml_parser(xml).parse_message(xml))
-        return items
+                    dest = '%s/%s' % (config['dest_path'], filename)
 
+                    try:
+                        with open(dest, 'xb') as f:
+                            ftp.retrbinary('RETR %s' % filename, f.write)
+                    except FileExistsError:
+                        continue
+
+                    xml = etree.parse(dest).getroot()
+                    parser = get_xml_parser(xml)
+                    if not parser:
+                        raise IngestFtpError.ftpUnknownParserError(Exception('Parser not found'),
+                                                                   provider, filename)
+                    items.append(parser.parse_message(xml, provider))
+            return items
+        except IngestFtpError:
+            raise
+        except Exception as ex:
+            raise IngestFtpError.ftpError(ex, provider)
 
 register_provider('ftp', FTPService())

@@ -13,7 +13,7 @@ from flask import g
 from superdesk.notification import push_notification
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from superdesk.errors import SuperdeskApiError
+from superdesk.errors import SuperdeskApiError, add_notifier
 import superdesk
 from bson.objectid import ObjectId
 from superdesk.emails import send_activity_emails
@@ -168,6 +168,7 @@ ACTIVITY_CREATE = 'create'
 ACTIVITY_UPDATE = 'update'
 ACTIVITY_DELETE = 'delete'
 ACTIVITY_EVENT = 'event'
+ACTIVITY_ERROR = 'error'
 
 
 def add_activity(activity_name, msg, item=None, notify=None, **data):
@@ -205,18 +206,32 @@ def notify_and_add_activity(activity_name, msg, item=None, user_list=None, **dat
     """
     this function will add the activity and notify via email.
     """
+
+    if not user_list and activity_name == ACTIVITY_ERROR:
+        user_list = superdesk.get_resource_service('users').get_users_by_user_type('administrator')
+
     add_activity(activity_name, msg=msg, item=item,
                  notify=[user.get("_id") for user in user_list] if user_list else None, **data)
     if user_list:
         recipients = [user.get('email') for user in user_list if
                       superdesk.get_resource_service('preferences').
                       email_notification_is_enabled(preferences=user.get('preferences', {}))]
-        user = getattr(g, 'user', None)
-        activity = {
-            'name': activity_name,
-            'message': user.get('display_name') + ' ' + msg if user else msg,
-            'data': data,
-        }
+
+        if activity_name != ACTIVITY_ERROR:
+            current_user = getattr(g, 'user', None)
+            activity = {
+                'name': activity_name,
+                'message': current_user.get('display_name') + ' ' + msg if current_user else msg,
+                'data': data,
+            }
+        else:
+            activity = {
+                'name': activity_name,
+                'message': 'System ' + msg,
+                'data': data,
+            }
 
         if recipients:
             send_activity_emails(activity=activity, recipients=recipients)
+
+add_notifier(notify_and_add_activity)
