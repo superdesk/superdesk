@@ -303,7 +303,7 @@ define([
                 templateUrl: 'scripts/superdesk-archive/views/fetched-desks.html',
                 link: function(scope, elem) {
                     scope.$watch('item', function() {
-                        familyService.fetchDesks(scope.item, true)
+                        familyService.fetchDesks(scope.item, false)
                         .then(function(desks) {
                             scope.desks = desks;
                         });
