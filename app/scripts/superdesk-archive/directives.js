@@ -287,7 +287,7 @@ define([
                 templateUrl: 'scripts/superdesk-archive/views/related-view.html',
                 link: function(scope, elem) {
                     scope.$watch('item', function() {
-                        familyService.fetchItems(scope.item.family_id, scope.item)
+                        familyService.fetchItems(scope.item.family_id || scope.item._id, scope.item)
                         .then(function(items) {
                             scope.relatedItems = items;
                         });
