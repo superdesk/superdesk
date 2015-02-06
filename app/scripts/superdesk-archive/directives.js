@@ -490,12 +490,18 @@ define([
                 });
             };
             this.fetchDesks = function(item, excludeSelf) {
-                return this.fetchItems(item.family_id, excludeSelf ? item : undefined)
+                return this.fetchItems(item.family_id || item._id, excludeSelf ? item : undefined)
                 .then(function(items) {
                     var deskList = [];
+                    var deskIdList = [];
                     _.each(items._items, function(i) {
                         if (i.task && i.task.desk && desks.deskLookup[i.task.desk]) {
-                            deskList.push(desks.deskLookup[i.task.desk]);
+                            if (deskIdList.indexOf(i.task.desk) < 0) {
+                                deskList.push({'desk': desks.deskLookup[i.task.desk], 'count': 1});
+                                deskIdList.push(i.task.desk);
+                            } else {
+                                deskList[deskIdList.indexOf(i.task.desk)].count += 1;
+                            }
                         }
                     });
                     return deskList;

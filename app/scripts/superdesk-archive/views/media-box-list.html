@@ -24,7 +24,6 @@
             {{ item.headline || item.type }}
             <span sd-item-container data-item="item" class="container"></span>
         </div>
-        <div ng-if="type !== 'archive'"><span translate>fetched in:</span><span sd-fetched-desks data-item="item"></span></div>
         <time sd-datetime data-date="item.versioncreated"></time>
     </div>
     <div class="line">
@@ -32,6 +31,7 @@
         <div class="category" ng-if="item['anpa-category'].name">{{ item['anpa-category'].name }}</div>
         <div class="provider" ng-if="item.ingest_provider" sd-meta-ingest data-provider="item.ingest_provider"></div>
         <div class="expires" ng-if="item.is_spiked"><span translate>expires</span> {{ item.expiry | reldate }}</div>
+        <div ng-if="type !== 'archive'"><div sd-fetched-desks data-item="item"></div></div>
     </div>
 </div>
 
