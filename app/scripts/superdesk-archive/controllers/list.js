@@ -77,6 +77,7 @@ define([
         });
 
         $scope.$on('media_archive', refreshItems);
+        $scope.$on('item:fetch', refreshItems);
         $scope.$on('item:spike', refreshItems);
         $scope.$on('item:unspike', refreshItems);
         $scope.$watchGroup(['stages.selected', 'selected.desk'], refreshItems);
