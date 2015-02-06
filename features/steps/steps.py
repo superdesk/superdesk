@@ -993,6 +993,17 @@ def step_impl_when_spike_url(context, item_id):
                                             data='{"state": "spiked"}', headers=headers)
 
 
+@when('we spike fetched item')
+def step_impl_when_spike_fetched_item(context):
+    data = json.loads(apply_placeholders(context, context.text))
+    item_id = data["_id"]
+    res = get_res('/archive/' + item_id, context)
+    headers = if_match(context, res.get('_etag'))
+
+    context.response = context.client.patch(get_prefixed_url(context.app, '/archive/spike/' + item_id),
+                                            data='{"state": "spiked"}', headers=headers)
+
+
 @when('we unspike "{item_id}"')
 def step_impl_when_unspike_url(context, item_id):
     res = get_res('/archive/' + item_id, context)

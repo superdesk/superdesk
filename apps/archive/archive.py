@@ -277,6 +277,7 @@ class ArchiveService(BaseService):
         self.duplicate_versions(original_doc['guid'], new_doc)
         if new_doc.get('state') != 'submitted':
             get_resource_service('tasks').patch(new_doc['_id'], {'state': 'submitted'})
+        return new_doc['guid']
 
     def duplicate_versions(self, old_id, new_doc):
         lookup = {}

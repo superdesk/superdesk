@@ -80,24 +80,7 @@ Feature: Duplication
         		]}
         """
 
-    @auth
-    Scenario: Duplicate a content item on the same desk
-        Given empty "archive"
-        Given "desks"
-        """
-        [{"name": "Sports"}]
-        """
-        Given "archive"
-        """
-        [{"guid": "tag:example.com,0000:newsml_BRE9A605", "task": {"desk": "#desks._id#"}}]
-        """
-        When we post to "/archive_ingest"
-        """
-        {"guid": "tag:example.com,0000:newsml_BRE9A605"}
-        """
 
-        When we get "/archive?q=#desks._id#"
-        Then we get list with 2 items
 
     @auth
     Scenario: Duplicate a content with history for a submitted item
@@ -171,17 +154,4 @@ Feature: Duplication
 
         Then we get "_id"
         When we get "/archive/#_id#?version=all"
-        Then we get list with 3 items
-
-#    @auth
-#    Scenario: Duplicated versions are identical
-#
-#    @auth
-#    Scenario: Duplicated item fields are identical
-#
-#    @auth
-#    Scenario: Create a new archive item with family id populated
-#
-#    @auth
-#    Scenario: Search the duplicated items
-#    - search with family_id:xxx to return all related items
+        Then we get list with 4 items

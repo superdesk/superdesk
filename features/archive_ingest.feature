@@ -45,7 +45,8 @@ Feature: Archive Ingest
         "guid": "tag:reuters.com,0000:newsml_GM1EA7M13RP01"
         }
         """
-        And we get "/archive/tag:reuters.com,0000:newsml_GM1EA7M13RP01"
+        Then we get "_id"
+        When we get "/archive/#_id#"
         Then we get existing resource
 		"""
         {
@@ -166,11 +167,12 @@ Feature: Archive Ingest
         """
         {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
         """
-        And we post to "/archive/tag:reuters.com,2014:newsml_LOVEA6M0L7U2E/lock"
+        Then we get "_id"
+        When we post to "/archive/#_id#/lock"
         """
         {}
         """
-        And we patch "/archive/tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"
+        And we patch "/archive/#_id#"
         """
         {"headline": "test 2"}
         """

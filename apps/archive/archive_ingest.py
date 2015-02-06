@@ -47,6 +47,7 @@ class ArchiveIngestResource(Resource):
 class ArchiveIngestService(BaseService):
 
     def create(self, docs, **kwargs):
+        new_guids = []
         for doc in docs:
             ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=doc.get('guid'))
             if not ingest_doc:
@@ -54,7 +55,8 @@ class ArchiveIngestService(BaseService):
                 archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=doc.get('guid'))
                 if archived_doc:
                     send_to(archived_doc, doc.get('desk'))
-                    superdesk.get_resource_service('archive').duplicate_item(archived_doc)
+                    new_guid = superdesk.get_resource_service('archive').duplicate_item(archived_doc)
+                    new_guids.append(new_guid)
                 else:
                     msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
                     raise SuperdeskApiError.notFoundError(msg)
@@ -67,9 +69,9 @@ class ArchiveIngestService(BaseService):
                 superdesk.get_resource_service('ingest').patch(ingest_doc.get('_id'), {'archived': archived})
                 doc['archived'] = archived
 
-                archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=doc.get('guid'))
                 dest_doc = dict(ingest_doc)
                 new_id = generate_guid(type=GUID_TAG)
+                new_guids.append(new_id)
                 dest_doc['_id'] = new_id
                 dest_doc['guid'] = new_id
                 generate_unique_id_and_name(dest_doc)
@@ -101,7 +103,7 @@ class ArchiveIngestService(BaseService):
 
                 push_notification('item:fetch', item=str(ingest_doc.get('_id')))
 
-        return [doc.get('guid') for doc in docs]
+        return new_guids
 
 
 superdesk.workflow_state(STATE_FETCHED)
