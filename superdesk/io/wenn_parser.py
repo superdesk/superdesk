@@ -29,7 +29,7 @@ class WENNParser(Parser):
         return xml.tag == self.qname('feed', self.ATOM_NS) and \
             len(xml.findall(self.qname('NewsManagement', self.WENN_NM_NS))) > 0
 
-    def parse_message(self, tree):
+    def parse_message(self, tree, provider):
         itemList = []
         try:
             for entry in tree.findall(self.qname('entry', self.ATOM_NS)):
@@ -42,7 +42,7 @@ class WENNParser(Parser):
             return itemList
 
         except Exception as ex:
-            raise ParserError.wennParserError(ex)
+            raise ParserError.wennParserError(ex, provider)
 
     def set_item_defaults(self, item):
         item['type'] = 'text'

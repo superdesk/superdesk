@@ -23,10 +23,11 @@ class WENNTestCase(unittest.TestCase):
     def setUp(self):
         dirname = os.path.dirname(os.path.realpath(__file__))
         fixture = os.path.join(dirname, 'fixtures', self.filename)
+        provider = {'name': 'Wenn'}
         with open(fixture) as f:
             self.file = f.read()
             etree.fromstring(self.file)
-            self.items = WENNParser().parse_message(etree.fromstring(self.file))
+            self.items = WENNParser().parse_message(etree.fromstring(self.file), provider)
 
     def test_items_counts(self):
         self.assertEqual(len(self.items), 2)

@@ -241,8 +241,8 @@ class ParserError(SuperdeskIngestError):
         return ParserError(1006, exception, provider)
 
     @classmethod
-    def wennParserError(cls, exception):
-        return ParserError(1007, exception)
+    def wennParserError(cls, exception, provider):
+        return ParserError(1007, exception, provider)
 
 
 class IngestFileError(SuperdeskIngestError):
