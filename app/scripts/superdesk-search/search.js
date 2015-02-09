@@ -586,6 +586,104 @@
         }])
 
         /**
+         * Open Item dialog
+         */
+        .directive('sdItemGlobalsearch', ['superdesk', 'session', '$location', 'search', 'api', 'notify', 'gettext', 'keyboardManager',
+            function(superdesk, session, $location, search, api, notify, gettext, keyboardManager) {
+            return {
+                scope: {repo: '=', context: '='},
+                templateUrl: 'scripts/superdesk-search/views/item-globalsearch.html',
+                link: function(scope, elem) {
+
+                    var ENTER = 13;
+                    var ESC = 27;
+                    scope.meta = {};
+                    scope.flags = {enabled: false};
+                    var opt = {global: true};
+                    keyboardManager.bind('ctrl+0', function() {
+                        scope.flags.enabled = true;
+                    }, opt);
+                    keyboardManager.bind('esc', function() {
+                        scope.flags.enabled = false;
+                    }, opt);
+
+                    function reset() {
+                        scope.meta.unique_name = '';
+                    }
+
+                    function openItem(items) {
+                        if (items.length > 0) {
+                            reset();
+                            scope.flags.enabled = false;
+                            if (items[0].type === 'composite') {
+                                superdesk.intent('author', 'package', items[0]);
+                            } else {
+                                superdesk.intent('author', 'article', items[0]);
+                            }
+                        } else {
+                            notify.error(gettext('Item not found...'));
+                            scope.flags.enabled = true;
+                        }
+                    }
+                    function searchUserContent(criteria) {
+                           var resource = api('user_content', session.identity);
+                           resource.query(criteria).then(function(result) {
+                                    openItem(result._items);
+                            }, function(response) {
+                                scope.message = gettext('There was a problem, item can not open.');
+                            });
+                    }
+                    function fetchItem() {
+                        var filter = [
+                            {not: {term: {state: 'spiked'}}},
+                            {term: {unique_name: scope.meta.unique_name}}
+                        ];
+                        var criteria = {
+                                            repo: 'ingest,archive',
+                                            source: {
+                                            query: {filtered: {filter: {
+                                                and: filter
+                                            }}}
+                                         }
+                        };
+                        api.query('search', criteria).then(function(result) {
+                                scope.items = result._items;
+                                if (scope.items.length > 0) {
+                                    openItem(scope.items);
+                                    reset();
+                                } else {
+                                    searchUserContent(criteria);
+                                }
+                        }, function(response) {
+                            scope.message = gettext('There was a problem, item can not open.');
+                        });
+                    }
+
+                    scope.search = function() {
+                        fetchItem();
+                    };
+                    scope.openOnEnter = function($event) {
+                        if ($event.keyCode === ENTER) {
+                            scope.search();
+                            $event.stopPropagation();
+                        }
+                        if ($event.keyCode === ESC) {
+                            _closeDialog();
+                        }
+                    };
+
+                    scope.close = function() {
+                        _closeDialog();
+                    };
+
+                    function _closeDialog() {
+                        reset();
+                        scope.flags.enabled = false;
+                    }
+                }
+            };
+        }])
+        /**
          * Item search component
          */
         .directive('sdItemSearchbar', ['$location', function($location) {
