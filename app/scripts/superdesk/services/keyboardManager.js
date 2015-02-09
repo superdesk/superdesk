@@ -7,7 +7,9 @@ define(['angular', 'lodash'], function(angular, _) {
     .run(['$rootScope', 'keyboardManager', function($rootScope, kb) {
         $rootScope.$on('$routeChangeStart', function() {
             angular.forEach(kb.keyboardEvent, function(e, key) {
-                kb.unbind(key);
+                if (!e.opt.global) {
+                    kb.unbind(key);
+                }
             });
         });
     }])
@@ -19,7 +21,8 @@ define(['angular', 'lodash'], function(angular, _) {
                 'propagate':        false,
                 'inputDisabled':    true,
                 'target':           $window.document,
-                'keyCode':          false
+                'keyCode':          false,
+                'global':           false
             },
             shift_nums = {
                 '`': '~',

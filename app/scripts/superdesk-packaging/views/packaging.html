@@ -10,9 +10,13 @@
     <div sd-authoring-widgets data-item="item">
         <div class="page-content-container">
             <div class="content">
-                <div class="keyword" ng-show="item.slugline">{{ item.slugline }}</div>
-                <div class="title" ng-show="item.headline">{{ item.headline }}</div>
+                <header class="package-header">
+                    <figure><i class="filetype-icon-large-composite"></i></figure>
+                    <div class="keyword" ng-show="item.slugline">{{ item.slugline }}</div>
+                    <div class="title" ng-show="item.headline">{{ item.headline }}</div>
+                </header>
                 <div sd-package data-item="item" class="composite-preview" data-remove="remove({item: item})" data-editmode="true"></div>
+
             </div>
         </div>
         <div sd-workqueue data-active="item" data-update="articleSwitch()" data-close="close()"></div>

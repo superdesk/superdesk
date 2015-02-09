@@ -441,6 +441,13 @@
             });
         };
 
+        $scope.beforeSend = function() {
+            return $scope.save()
+            .then(function() {
+                return lock.unlock(item);
+            });
+        };
+
         /**
          * Preview different version of an item
          */
@@ -521,9 +528,11 @@
         $scope.$on('item:lock', function(_e, data) {
             if ($scope.item._id === data.item && !_closing &&
                 session.sessionId !== data.lock_session) {
-                authoring.lock($scope.item, data.user);
-                $scope._editable = $scope.item._editable = false;
-                $scope.item._locked = true;
+                var path = $location.path();
+                if (path.indexOf('/view') < 0) {
+                   authoring.lock($scope.item, data.user);
+                   $location.url($scope.referrerUrl);
+                }
             }
         });
 

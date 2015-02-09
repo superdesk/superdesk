@@ -287,10 +287,13 @@ define([
                 },
                 template: '{{name}}',
                 link: function(scope) {
-                    promise.then(function() {
-                        if (scope.provider && scope.provider in ingestSources.providersLookup) {
-                            scope.name = ingestSources.providersLookup[scope.provider].name;
-                        }
+                    scope.$watch('provider', function() {
+                        scope.name = '';
+                        promise.then(function() {
+                            if (scope.provider && scope.provider in ingestSources.providersLookup) {
+                                scope.name = ingestSources.providersLookup[scope.provider].name;
+                            }
+                        });
                     });
                 }
             };

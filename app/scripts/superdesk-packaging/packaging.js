@@ -284,7 +284,8 @@
                             superdesk.intent('author', 'package', new_package);
                         });
                     } else {
-                        packagesService.createEmptyPackage(data.defaults).then(
+                        var defaultData = data && data.defaults ? data.defaults : {};
+                        packagesService.createEmptyPackage(defaultData).then(
                             function(new_package) {
                             superdesk.intent('author', 'package', new_package);
                         });
@@ -323,8 +324,7 @@
             priority: 5,
             icon: 'package-plus',
             controller: ['data', 'packagesService', 'superdesk', function(data, packagesService, superdesk) {
-                packagesService.createPackageFromItems([data.item]).then(
-                        function(new_package) {
+                packagesService.createPackageFromItems([data.item]).then(function(new_package) {
                         superdesk.intent('author', 'package', new_package);
                     });
             }],
