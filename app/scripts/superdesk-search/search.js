@@ -611,12 +611,6 @@
                         scope.meta.unique_name = '';
                     }
 
-                    scope.$watch('flags.enable', function() {
-                        if (scope.flags.enabled) {
-                            reset();
-                        }
-                    });
-
                     function openItem(items) {
                         if (items.length > 0) {
                             reset();
