@@ -103,3 +103,5 @@ def register_default_user_preference(preference_name, preference):
 
 def register_default_session_preference(preference_name, preference):
     default_session_preferences[preference_name] = preference
+
+from .commands import *  # noqa

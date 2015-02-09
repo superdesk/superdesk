@@ -24,7 +24,7 @@ from superdesk.errors import SuperdeskApiError
 from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, ACTIVITY_DELETE
-from eve.utils import parse_request, config, ParsedRequest, date_to_str
+from eve.utils import parse_request, config
 from superdesk.services import BaseService
 from apps.users.services import is_admin
 from apps.content import metadata_schema
@@ -326,38 +326,6 @@ class ArchiveSaveService(BaseService):
             raise SuperdeskApiError.preconditionFailedError('Client and server etags don\'t match')
         return [docs[0]['_id']]
 
-
-class ArchiveRemoveExpiredContent(superdesk.Command):
-    def run(self):
-        self.remove_expired_content()
-
-    def remove_expired_content(self):
-        logger.info('Removing expired content')
-        now = date_to_str(utcnow())
-        items = self.get_expired_items(now)
-        while items.count() > 0:
-            for item in items:
-                logger.info('deleting {} expiry: {} now:{}'.format(item['_id'], item['expiry'], now))
-                superdesk.get_resource_service('archive').delete_action({'_id': str(item['_id'])})
-            items = self.get_expired_items(now)
-
-    def get_expired_items(self, now):
-        query_filter = self.get_query_for_expired_items(now)
-        req = ParsedRequest()
-        req.max_results = 100
-        req.args = {'filter': query_filter}
-        return superdesk.get_resource_service('archive').get(req, None)
-
-    def get_query_for_expired_items(self, now):
-        query = {'and':
-                 [
-                     {'range': {'expiry': {'lte': now}}}
-                 ]
-                 }
-        return superdesk.json.dumps(query)
-
-
-superdesk.command('archive:remove_expired', ArchiveRemoveExpiredContent())
 superdesk.workflow_state('in_progress')
 superdesk.workflow_action(
     name='save',
