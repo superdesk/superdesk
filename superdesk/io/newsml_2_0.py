@@ -10,7 +10,6 @@
 
 
 import datetime
-from superdesk.etree import etree
 from .iptc import subject_codes
 from superdesk.io import Parser
 import logging
@@ -209,14 +208,6 @@ class NewsMLTwoParser(Parser):
         content['mimetype'] = tree.attrib['contenttype']
         content['href'] = tree.attrib.get('href', None)
         return content
-
-    def qname(self, tag, ns=None):
-        if ns is None:
-            ns = self.root.tag.rsplit('}')[0].lstrip('{')
-        elif ns is not None and ns == 'xml':
-            ns = 'http://www.w3.org/XML/1998/namespace'
-
-        return str(etree.QName(ns, tag))
 
     def datetime(self, string):
         return datetime.datetime.strptime(string, '%Y-%m-%dT%H:%M:%S.000Z')

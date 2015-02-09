@@ -1042,10 +1042,9 @@ def get_content_expiry(context, minutes):
 def get_desk_spike_expiry(context, test_minutes):
     response_data = json.loads(context.response.get_data())
     assert response_data['expiry']
-    response_expiry = datetime.strptime(response_data['expiry'], "%Y-%m-%dT%H:%M:%S+0000")
+    response_expiry = datetime.strptime(response_data['expiry'], "%Y-%m-%dT%H:%M:%S%z")
     expiry = utc.utcnow() + timedelta(minutes=int(test_minutes))
-    assert_equal(response_expiry.hour, expiry.hour)
-    assert_equal(response_expiry.minute, expiry.minute)
+    assert response_expiry <= expiry
 
 
 @when('we mention user in comment for "{url}"')
