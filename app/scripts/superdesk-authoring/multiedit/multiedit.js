@@ -56,6 +56,18 @@
 			storage.setItem(STORAGE_KEY, this.items);
 		};
 
+		this.edit = function(_id) {
+			this.items = _.union(this.items, [createBoard(_id)]);
+			this.updateItems();
+		};
+
+		this.remove = function(_id) {
+			this.items = _.filter(this.items, function(item) {
+				return item.article !== _id;
+			});
+			this.updateItems();
+		};
+
 		function createBoard(_id) {
 			return {article: _id};
 		}
@@ -63,9 +75,11 @@
 
 	MultieditController.$inject = ['$scope', 'multiEdit'];
 	function MultieditController($scope, multiEdit) {
-
-		$scope.screen = multiEdit.items;
-
+		$scope.$watch(function() {
+			return multiEdit.items;
+		}, function(items) {
+			$scope.boards = items;
+		});
 	}
 
 	MultieditDropdownDirective.$inject = ['workqueue', 'multiEdit', '$route'];
@@ -81,7 +95,7 @@
 					return workqueue.items;
 				}, function(items) {
 					scope.items = items;
-				}, true);
+				});
 
 				scope.toggle = function(_id) {
 					if (_id === scope.current) {
@@ -105,10 +119,10 @@
 		};
 	}
 
-	MultieditArticleDirective.$inject = ['authoring'];
-	function MultieditArticleDirective(authoring) {
+	MultieditArticleDirective.$inject = ['authoring', 'multiEdit'];
+	function MultieditArticleDirective(authoring, multiEdit) {
 		return {
-			template: '<div sd-article-edit></div>',
+			templateUrl: 'scripts/superdesk-authoring/multiedit/views/sd-multiedit-article.html',
 			scope: {article: '='},
 			link: function(scope) {
 				authoring.open(scope.article).then(function(item) {
@@ -123,6 +137,10 @@
 
 				scope.save = function(item) {
 					return authoring.save(item);
+				};
+
+				scope.remove = function(item) {
+					multiEdit.remove(item._id);
 				};
 			}
 		};

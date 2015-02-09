@@ -1,3 +1,14 @@
-<div class="article">
-	This is headline
-</div>
+<article class="main-article"><form name="articleEdit">
+    <div class="editbar">
+        <button class="btn btn-small btn-info pull-right"
+            type="button"
+            ng-click="save(item)"
+            ng-disabled="articleEdit.$pristine && !item._autosave"
+            translate>Save</button>
+        <button class="btn btn-small btn-light pull-right"
+            type="button"
+            ng-click="remove(item)"
+            translate>Remove Item</button>
+    </div>
+    <fieldset sd-article-edit></fieldset>
+</form></article>
