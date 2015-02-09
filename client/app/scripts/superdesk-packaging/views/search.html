@@ -1,0 +1,55 @@
+<div class="content-search" ng-class="{extended: selected}" ng-controller="SearchWidgetCtrl">
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" placeholder="{{ 'Search'|translate }}" ng-model="query">
+        </div>
+
+        <div class="filter-list">
+            
+        </div>
+        
+        <div class="content-list">
+            <ul>
+                <li ng-repeat="pitem in contentItems" 
+                    ng-class="{active: pitem === selected, added: itemInPackage(pitem)}"
+                    ng-if="pitem._id !== item._id"
+                    sd-widget-prevent-preview
+                    >
+                    <i class="filetype-icon-{{pitem.type}}"></i>
+                    <p><span class="keyword" ng-if="pitem.slugline">{{ pitem.slugline }}</span>{{pitem.headline || pitem.type}}</p>
+                    <ul class="item-functions" ng-if="!itemInPackage(pitem)">
+                        <li class="dropdown group-select" dropdown>
+                            <div class="dropdown-toggle" dropdown-toggle><i class="icon-package-plus"></i></div>
+                            <ul class="dropdown-menu pull-right">
+                                <li ng-repeat="t in itemTypes">
+                                    <button ng-click="addItemToGroup(t, pitem);"><span translate>{{ t.label | uppercase  }}</span></button>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="preview-container" ng-init="contenttab = true">
+        <header>
+            <ul class="nav nav-tabs">
+                <li ng-class="{active: contenttab}">
+                    <button ng-click="contenttab = true"><span translate>Content</span></button>
+                </li>
+                <li ng-class="{active: !contenttab}">
+                    <button ng-click="contenttab = false"><span translate>Metadata</span></button>
+                </li>
+            </ul>
+            <button ng-click="preview(null)" class="close-preview">
+                <i class="icon-close-small"></i>
+            </button>
+        </header>
+        <div class="content-item-preview" ng-if="selected">
+            <div class="content" ng-if="contenttab" sd-media-preview-widget data-item="selected"></div>
+            <div ng-if="!contenttab" sd-media-metadata data-item="selected"></div>
+        </div>
+
+    </div>
+</div>

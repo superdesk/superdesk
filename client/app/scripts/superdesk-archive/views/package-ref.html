@@ -1,0 +1,42 @@
+<div class="item {{type}}" ng-click="setitem({selected: item.residRef})">
+    <div class="info">
+	    <figure class="icons-holder" ng-if="type === 'composite' || type === 'text'">
+	    	<i class="filetype-icon-large-{{type}}"></i>
+	    </figure>
+	    
+		<div class="holder" ng-if="type !== 'composite' && type !== 'text'">
+			<div class="loading" ng-show="!data && !error"></div>
+			<div class="error-icon" ng-show="error">
+				<i class="filetype-icon-large-{{type}}"></i>
+			</div>
+			<div ng-if="type === 'picture'" sd-item-rendition data-item="data" data-rendition="thumbnail"></div>
+			<audio ng-if="type === 'audio'" controls="controls" sd-sources data-renditions="data.renditions" ng-show="data"></audio>
+			<div ng-if="type === 'video'"><i class="filetype-icon-large-video"></i></div>
+		</div>
+
+        <div ng-if="item.guid">
+            <div class="headline">
+                <a ng-href="#/{{type !== 'composite' ? 'authoring' : 'packaging'}}/{{ item.guid }}?_id={{ item.guid }}" title="{{ item.headline }}">
+                    <div ng-show="item.headline || item.slugline || item.description">
+                        {{ item.headline || item.slugline || item.description | uppercase}}
+                    </div>
+                    <div ng-hide="item.headline || item.slugline || item.description" translate>Blank headline received</div>
+                </a>
+            </div>
+        </div>
+
+        <div ng-if="!item.guid">
+            <div class="headline">
+                <div ng-show="item.headline || item.slugline || item.description">
+                    {{ item.headline || item.slugline  || item.description | uppercase}}
+                </div>
+                <div ng-hide="item.headline || item.slugline || item.description" translate>Blank headline received</div>
+            </div>
+        </div>
+
+        <button ng-if="editmode" class="remove" ng-click="remove({item: item})"><i class="icon-close-small"></i></button>
+	</div>
+
+    <div class="alert alert-error" ng-show="error" translate>Problems occured while fetching data.</div>
+
+</div>

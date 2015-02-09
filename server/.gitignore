@@ -1,0 +1,24 @@
+.env
+/.project
+/.pydevproject
+*.pyc
+*.swp
+*.swo
+*.pid
+.ropeproject
+static/*
+upload/*
+.coverage
+celerybeatschedule.db*
+# env
+*.egg*
+env/
+bin/
+lib/
+man/
+src/
+dist/
+build/
+include/
+.idea/
+.vagrant/

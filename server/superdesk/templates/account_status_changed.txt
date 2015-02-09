@@ -1,0 +1,4 @@
+Your {{app_name}} account is {{status}}.
+
+Regards,
+The {{app_name}} Team

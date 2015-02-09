@@ -1,0 +1,49 @@
+<div class="widget-wrapper" 
+    ng-class="{
+        'active-left': active.left,
+        'left-extended': active.left.extended,
+        'active-right': active.right,
+        'right-extended': active.right.extended
+    }">
+    <div class="tablist left-tablist" ng-if="item">
+        <ul class="navigation-tabs">
+            <li ng-repeat="widget in widgets | orderBy:'order'"
+                ng-if="widget.side==='left' && widget.display[widget_target]"
+                ng-class="{active: widget === active.left}">
+                <button class="btn" type="submit" ng-click="activate(widget)">
+                    <i class="big-icon-{{ widget.icon }}" title="{{ widget.label }}"></i>
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="tabpane left-tabpane open-tabpane widget-{{active.left._id}}" ng-if="active.left">
+        <section class="tabcontent" ng-init="widget=active.left">
+            <div sd-widget data-widget="active.left">
+                <div ng-include="active.left.template"></div>
+            </div>
+        </section>
+    </div>
+
+    <div class="tablist right-tablist" ng-if="item">
+        <ul class="navigation-tabs">
+            <li ng-repeat="widget in widgets | orderBy:'order'"
+                ng-if="widget.side==='right' && widget.display[widget_target]"
+                ng-class="{active: widget === active.right}">
+                <button class="btn" type="submit" ng-click="activate(widget)">
+                    <i class="big-icon-{{ widget.icon }}" title="{{ widget.label }}"></i>
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="tabpane right-tabpane open-tabpane widget-{{active.right._id}}" ng-if="active.right">
+        <section class="tabcontent" ng-init="widget=active.right">
+            <div sd-widget data-widget="active.right">
+                <div ng-include="active.right.template"></div>
+            </div>
+        </section>
+    </div>
+
+    <div ng-transclude></div>
+</div>

@@ -1,0 +1,23 @@
+<div class="subnav">
+    <h3 class="page-nav-title" translate>Desks</h3>
+</div>
+
+<section class="main-section">
+
+	<div class="main-desk-container">
+		
+		<div class="desk-content-container">
+			<div class="desk-horizontal-scroll"
+			    sd-list-view
+			    data-items="desks._items"
+			    style="width:{{ desks._items.length * 290 }}px">
+			    
+			    <div ng-include="'scripts/superdesk-desks/views/desk.html'"></div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</section>

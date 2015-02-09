@@ -1,0 +1,32 @@
+<li ng-repeat="user in users" ng-click="select(user)" ng-class="{selected: user === selected, 'inactive' : !user.is_active}">
+    <figure class="avatar">
+        <img sd-user-avatar data-src="user.picture_url">
+    </figure>
+
+    <span class="admin-label" ng-if="user.user_type == 'administrator'" translate>admin</span>
+
+    <div class="row-wrapper" sd-col-width>
+        <div class="name">
+        	{{ user.display_name }}
+            <span class="disabled-label" ng-if="!user.is_active" translate>disabled</span>
+            <span class="disabled-label" ng-if="user.needs_activation" translate>pending</span>
+        </div>
+        <div class="username">{{ user.username }}</div>
+        <div class="role">{{ roles[user.role].name }}</div>
+        <div class="email">{{ user.email }}</div>
+        <div class="created">{{ user._created | reldate}}</div>
+    </div>
+
+    <div class="action">
+        <ul class="item-functions"
+            sd-activity-list
+            data-item="{item: user, list: users, index: $index}"
+            data-type="user"
+            data-action="edit"
+            data-done="done">
+        </ul>
+    </div>
+</li>
+
+<li class="alert alert-info" ng-show="users.length == null"><p translate>Loading..</p></li>
+<li class="alert alert-info" ng-show="users.length == 0"><p translate>Oops! There are no items.</p></li>

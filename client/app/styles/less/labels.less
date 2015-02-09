@@ -1,0 +1,32 @@
+// LABELS
+// ------
+
+// Base
+.label {
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 13px;
+  color: @white;
+  vertical-align: middle;
+  white-space: nowrap;
+  background-color: @gray;
+  .border-radius(2px);
+  &.small {
+    font-size: 10px;
+  }
+  &.circle {
+    padding: 1px 5px;
+    .border-radius(50px);
+  }
+}
+
+// Hover state
+.label:hover {
+  text-decoration: none;
+}
+
+// Colors
+.label-info { 
+  background-color: darken(@sd-blue, 10%); 
+}

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SUMMARY:
+- Structure: NML2 NEP External
+- Based On: NML2 v2.10
+
+AUTHOR: thomsonreuters.com
+-->
+<!-- ========================================================= -->
+<newsMessage xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rtr="http://www.reuters.com/ns/2003/08/content" xmlns:x="http://www.w3.org/1999/xhtml">
+  <header>
+    <sent>2013-03-04T11:40:31.000Z</sent>
+    <sender>reuters.com</sender>
+    <transmitId>tag:reuters.com,0000:newsml_TRE7AA2CP:472094323</transmitId>
+    <priority>4</priority>
+    <destination>OUSTPM</destination>
+    <channel>TXT</channel>
+  </header>
+  <itemSet>
+    <packageItem guid="tag:reuters.com,0000:newsml_TRE7AA2CP" version="472094323" standard="NewsML-G2" standardversion="2.10" conformance="power" xml:lang="en-US">
+      <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml" />
+      <rightsInfo>
+        <copyrightHolder literal="Thomson Reuters" />
+        <copyrightNotice xml:lang="en-GB">(c) Copyright Thomson Reuters 2013. Check for restrictions at: http://about.reuters.com/fulllegal.asp</copyrightNotice>
+      </rightsInfo>
+      <itemMeta>
+        <itemClass qcode="icls:composite" rtr:msgType="R" />
+        <provider literal="reuters.com" />
+        <versionCreated>2013-03-04T11:40:31.000Z</versionCreated>
+        <firstCreated>2011-11-11T12:40:10.000Z</firstCreated>
+        <pubStatus qcode="stat:usable" />
+        <role qcode="itemRole:N" />
+        <fileName>2013-03-04T114031Z_59902_TRE7AA2CP_RTROPTT-LNK_0_OUSTPM-LINK.XML</fileName>
+        <generator versioninfo="00.02.00">MAD-OPT-PLUS-FH</generator>
+        <profile versioninfo="00.00.01">SNEP-External</profile>
+        <service qcode="svc:RTR_TNS" />
+        <title>OUSTPM Link List</title>
+        <signal qcode="prodId:TXT" />
+        <signal qcode="edStat:U" />
+        <signal qcode="pmt:composite" />
+        <rtr:versionedId guid="tag:reuters.com,0000:newsml_TRE7AA2CP:472094323" />
+      </itemMeta>
+      <contentMeta>
+        <urgency>4</urgency>
+        <located literal="Bangalore" type="cptType:5">
+          <name>Bangalore</name>
+          <facet qcode="geoProp:8" />
+          <broader qcode="N2:IND" type="cptType:5">
+            <name>India</name>
+            <facet qcode="geoProp:5" />
+          </broader>
+        </located>
+        <infoSource role="cRole:origProv" literal="Reuters" />
+        <infoSource role="cRole:source" literal="Reuters" />
+        <creator literal="Reuters" role="cRole:source" />
+        <altId type="idType:USN" rtr:isOriginal="1">TRE7AA2CP</altId>
+        <language tag="en-US" />
+        <subject qcode="MCC:a" />
+        <subject qcode="OCC:OLRLNK" />
+        <slugline separator="-">OUSTPM-LINK</slugline>
+        <headline>OUSTPM Link List</headline>
+        <dateline>2013-03-04 11:40:31 GMT+00:00</dateline>
+        <creditline>Reuters</creditline>
+        <description role="descRole:caption">OUSTPM-LINK:OUSTPM Link List</description>
+      </contentMeta>
+      <groupSet root="root">
+        <group role="grpRole:SNEP" id="root">
+          <groupRef idref="main" />
+        </group>
+        <group role="grpRole:Main" id="main">
+          <itemRef residref="tag:reuters.com,0000:newsml_BRE9220HA" version="15" contenttype="application/vnd.iptc.g2.packageitem+xml">
+            <itemClass qcode="icls:composite" />
+            <provider literal="reuters.com" />
+            <versionCreated>2013-03-04T11:40:22.000Z</versionCreated>
+            <pubStatus qcode="stat:usable" />
+            <role qcode="itemRole:N" />
+            <fileName>2013-03-04T114022Z_15_BRE9220HA_RTROPTC_0_US-KENYA-ELECTIONS.XML</fileName>
+            <altId type="idType:USN" rtr:isOriginal="1">BRE9220HA</altId>
+            <slugline separator="-">US-KENYA-ELECTIONS</slugline>
+            <headline>At least 15 killed on Kenya coast on election day</headline>
+          </itemRef>
+          <itemRef residref="tag:reuters.com,0000:newsml_BRE92300U" version="8" contenttype="application/vnd.iptc.g2.packageitem+xml">
+            <itemClass qcode="icls:composite" />
+            <provider literal="reuters.com" />
+            <versionCreated>2013-03-04T10:42:48.000Z</versionCreated>
+            <pubStatus qcode="stat:usable" />
+            <role qcode="itemRole:N" />
+            <fileName>2013-03-04T104248Z_8_BRE92300U_RTROPTC_0_US-JAPAN-ECONOMY-BOJ-KURODA.XML</fileName>
+            <altId type="idType:USN" rtr:isOriginal="1">BRE92300U</altId>
+            <slugline separator="-">US-JAPAN-ECONOMY-BOJ-KURODA</slugline>
+            <headline>BOJ nominee Kuroda sets out aggressive policy ideas</headline>
+          </itemRef>
+          <itemRef residref="tag:reuters.com,0000:newsml_BRE92306X" version="5" contenttype="application/vnd.iptc.g2.packageitem+xml">
+            <itemClass qcode="icls:composite" />
+            <provider literal="reuters.com" />
+            <versionCreated>2013-03-04T11:05:21.000Z</versionCreated>
+            <pubStatus qcode="stat:usable" />
+            <role qcode="itemRole:N" />
+            <fileName>2013-03-04T110521Z_5_BRE92306X_RTROPTC_0_US-IRAN-NUCLEAR-USA.XML</fileName>
+            <altId type="idType:USN" rtr:isOriginal="1">BRE92306X</altId>
+            <slugline separator="-">US-IRAN-NUCLEAR-USA</slugline>
+            <headline>Kerry says finite amount of time for Iran nuclear talks</headline>
+          </itemRef>
+          <itemRef residref="tag:reuters.com,0000:newsml_BRE923004" version="4" contenttype="application/vnd.iptc.g2.packageitem+xml">
+            <itemClass qcode="icls:composite" />
+            <provider literal="reuters.com" />
+            <versionCreated>2013-03-04T09:29:40.000Z</versionCreated>
+            <pubStatus qcode="stat:usable" />
+            <role qcode="itemRole:N" />
+            <fileName>2013-03-04T092940Z_4_BRE923004_RTROPTC_0_US-HSBC-EARNINGS.XML</fileName>
+            <altId type="idType:USN" rtr:isOriginal="1">BRE923004</altId>
+            <slugline separator="-">US-HSBC-EARNINGS</slugline>
+            <headline>HSBC to lift dividend after 2012 profit dips</headline>
+          </itemRef>
+          <itemRef residref="tag:reuters.com,0000:newsml_BRE922085" version="7" contenttype="application/vnd.iptc.g2.packageitem+xml">
+            <itemClass qcode="icls:composite" />
+            <provider literal="reuters.com" />
+            <versionCreated>2013-03-04T11:15:44.000Z</versionCreated>
+            <pubStatus qcode="stat:usable" />
+            <role qcode="itemRole:N" />
+            <fileName>2013-03-04T111544Z_7_BRE922085_RTROPTC_0_US-POPE-SUCCESSION.XML</fileName>
+            <altId type="idType:USN" rtr:isOriginal="1">BRE922085</altId>
+            <slugline separator="-">US-POPE-SUCCESSION</slugline>
+            <headline>Papal vote preparations begin in earnest at Vatican</headline>
+          </itemRef>
+          <itemRef residref="tag:reuters.com,0000:newsml_BRE92306M" version="3" contenttype="application/vnd.iptc.g2.packageitem+xml">
+            <itemClass qcode="icls:composite" />
+            <provider literal="reuters.com" />
+            <versionCreated>2013-03-04T10:34:56.000Z</versionCreated>
+            <pubStatus qcode="stat:usable" />
+            <role qcode="itemRole:N" />
+            <fileName>2013-03-04T103456Z_3_BRE92306M_RTROPTC_0_US-ITALY-VOTE.XML</fileName>
+            <altId type="idType:USN" rtr:isOriginal="1">BRE92306M</altId>
+            <slugline separator="-">US-ITALY-VOTE</slugline>
+            <headline>Prospect of new Italy vote heightens</headline>
+          </itemRef>
+          <itemRef residref="tag:reuters.com,0000:newsml_BRE9230AQ" version="3" contenttype="application/vnd.iptc.g2.packageitem+xml">
+            <itemClass qcode="icls:composite" />
+            <provider literal="reuters.com" />
+            <versionCreated>2013-03-04T11:06:58.000Z</versionCreated>
+            <pubStatus qcode="stat:usable" />
+            <role qcode="itemRole:N" />
+            <fileName>2013-03-04T110658Z_3_BRE9230AQ_RTROPTC_0_US-BRAZIL-ROUSSEFF.XML</fileName>
+            <altId type="idType:USN" rtr:isOriginal="1">BRE9230AQ</altId>
+            <slugline separator="-">US-BRAZIL-ROUSSEFF</slugline>
+            <headline>Insight: Brazil's leftist president fights to win back business</headline>
+          </itemRef>
+          <itemRef residref="tag:reuters.com,0000:newsml_BRE92305E" version="3" contenttype="application/vnd.iptc.g2.packageitem+xml">
+            <itemClass qcode="icls:composite" />
+            <provider literal="reuters.com" />
+            <versionCreated>2013-03-04T11:20:03.000Z</versionCreated>
+            <pubStatus qcode="stat:usable" />
+            <role qcode="itemRole:N" />
+            <fileName>2013-03-04T112003Z_3_BRE92305E_RTROPTC_0_US-MALI-REBELS-FRANCE.XML</fileName>
+            <altId type="idType:USN" rtr:isOriginal="1">BRE92305E</altId>
+            <slugline separator="-">US-MALI-REBELS-FRANCE</slugline>
+            <headline>France says al Qaeda chief Abou Zeid "probably" killed</headline>
+          </itemRef>
+          <itemRef residref="tag:reuters.com,0000:newsml_BRE9220GK" version="6" contenttype="application/vnd.iptc.g2.packageitem+xml">
+            <itemClass qcode="icls:composite" />
+            <provider literal="reuters.com" />
+            <versionCreated>2013-03-04T10:35:33.000Z</versionCreated>
+            <pubStatus qcode="stat:usable" />
+            <role qcode="itemRole:N" />
+            <fileName>2013-03-04T103533Z_6_BRE9220GK_RTROPTC_0_US-CHINA-FACTIONS.XML</fileName>
+            <altId type="idType:USN" rtr:isOriginal="1">BRE9220GK</altId>
+            <slugline separator="-">US-CHINA-FACTIONS</slugline>
+            <headline>Analysis: China's next inner circle</headline>
+          </itemRef>
+          <itemRef residref="tag:reuters.com,0000:newsml_BRE91P0W6" version="60" contenttype="application/vnd.iptc.g2.packageitem+xml">
+            <itemClass qcode="icls:composite" />
+            <provider literal="reuters.com" />
+            <versionCreated>2013-03-04T06:49:29.000Z</versionCreated>
+            <pubStatus qcode="stat:usable" />
+            <role qcode="itemRole:N" />
+            <fileName>2013-03-04T064929Z_60_BRE91P0W6_RTROPTC_0_US-USA-FISCAL.XML</fileName>
+            <altId type="idType:USN" rtr:isOriginal="1">BRE91P0W6</altId>
+            <slugline separator="-">US-USA-FISCAL</slugline>
+            <headline>Obama renews offer to cut social safety nets</headline>
+          </itemRef>
+        </group>
+      </groupSet>
+    </packageItem>
+  </itemSet>
+</newsMessage>

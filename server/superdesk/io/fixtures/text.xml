@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SUMMARY:
+- Structure: NML2 SNI Text
+- Based On: NML2 v2.10
+
+AUTHOR: thomsonreuters.com
+-->
+<!-- ========================================================= -->
+<newsMessage xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rtr="http://www.reuters.com/ns/2003/08/content" xmlns:x="http://www.w3.org/1999/xhtml">
+  <header>
+    <sent>2013-03-01T15:09:04.000Z</sent>
+    <sender>reuters.com</sender>
+    <transmitId>tag:reuters.com,0000:newsml_L4N0BT5PJ:263518268</transmitId>
+    <priority>3</priority>
+    <destination>RBN</destination>
+    <destination>AFA</destination>
+    <destination>CSA</destination>
+    <destination>LBY</destination>
+    <destination>REULB</destination>
+    <destination>RSP</destination>
+    <destination>RWSA</destination>
+    <destination>UKI</destination>
+    <destination>RNP</destination>
+    <destination>DNP</destination>
+    <destination>PSP</destination>
+    <channel>TXT</channel>
+  </header>
+  <itemSet>
+    <newsItem guid="tag:reuters.com,0000:newsml_L4N0BT5PJ" version="263518268" standard="NewsML-G2" standardversion="2.10" conformance="power" xml:lang="en">
+      <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml" />
+      <rightsInfo>
+        <copyrightHolder literal="Thomson Reuters" />
+        <copyrightNotice xml:lang="en">(c) Copyright Thomson Reuters 2013. Click For Restrictions - http://about.reuters.com/fulllegal.asp</copyrightNotice>
+      </rightsInfo>
+      <itemMeta>
+        <itemClass qcode="icls:text" rtr:msgType="S" />
+        <provider literal="reuters.com" />
+        <versionCreated>2013-03-01T15:09:04.000Z</versionCreated>
+        <firstCreated>2013-03-01T15:09:04.000Z</firstCreated>
+        <pubStatus qcode="stat:usable" />
+        <role qcode="itemRole:N" />
+        <fileName>2013-03-01T150904Z_263518268_L4N0BT5PJ_RTRMADT_0_SOCCER-ENGLAND-CHELSEA-BENITEZ.XML</fileName>
+        <generator versioninfo="00.00.01">G3:IIM:FH</generator>
+        <profile versioninfo="00.00.01">SNI-Text</profile>
+        <service qcode="svc:RTR_TNS" />
+        <signal qcode="edStat:N" />
+        <signal qcode="prodId:TXT" />
+        <signal qcode="pmt:text" />
+        <rtr:versionedId guid="tag:reuters.com,0000:newsml_L4N0BT5PJ:263518268" />
+        <edNote>Editorial Note</edNote>
+      </itemMeta>
+      <contentMeta>
+        <urgency>3</urgency>
+        <infoSource role="cRole:origProv" literal="Reuters" />
+        <creator literal="Reuters" />
+        <altId type="idType:USN" rtr:isOriginal="1">L4N0BT5PJ</altId>
+        <altId type="idType:OTR">L4N0BT5PJ</altId>
+        <language tag="en" />
+        <subject qcode="MCC:SPO" />
+        <subject qcode="N2:ES" />
+        <subject qcode="N2:GB" />
+        <subject qcode="N2:SOCC" />
+        <subject qcode="N2:SPO" />
+        <subject qcode="N2:WEU" />
+        <subject qcode="N2:EUROP" />
+        <subject qcode="N2:EZC" />
+        <subject qcode="subj:15054000" />
+        <subject qcode="subj:15000000" />
+        <subject qcode="a1312cat:s" />
+        <subject qcode="MCCL:SPO" />
+        <slugline separator="-">SOCCER-ENGLAND/CHELSEA-BENITEZ</slugline>
+        <headline>Soccer-Smiling Benitez pleads for support after midweek outburst against opponent</headline>
+        <creditline>Reuters</creditline>
+        <description role="descRole:caption">SOCCER-ENGLAND/CHELSEA-BENITEZ:Soccer-Smiling Benitez pleads for support after midweek outburst</description>
+        <located literal="Bangalore" type="cptType:5">
+          <name>Bangalore</name>
+          <facet qcode="geoProp:8"/>
+          <broader qcode="N2:IND" type="cptType:5">
+            <name>India</name>
+            <facet qcode="geoProp:5"/>
+          </broader>
+        </located>
+      </contentMeta>
+      <contentSet>
+        <inlineXML contenttype="application/xhtml+html" wordcount="569">
+          <html xmlns="http://www.w3.org/1999/xhtml">
+            <head>
+              <title />
+            </head>
+            <body>
+              <p>By Toby Davis</p>
+            </body>
+          </html>
+        </inlineXML>
+      </contentSet>
+    </newsItem>
+  </itemSet>
+</newsMessage>

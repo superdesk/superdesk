@@ -1,0 +1,14 @@
+[
+    {
+        "data": {
+            "email": "a@a_other.com",
+            "first_name": "first name other",
+            "last_name": "last name other",
+            "needs_activation": false,
+            "password": "admin_other",
+            "user_type": "administrator",
+            "username": "admin_other"
+        },
+        "resource": "users"
+    }
+]

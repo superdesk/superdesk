@@ -1,0 +1,36 @@
+<div ng-controller="ArchiveConfigController" class="widget-config">
+    <form class="form-horizontal">
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label">{{'Search term'|translate}}</label>
+                <div class="controls">
+                    <input ng-model="configuration.search"  type="text" class="input-large">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">{{'Number of items'|translate}}</label>
+                <div class="controls">
+                    <select ng-model="configuration.maxItems" class="input-mini">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">{{'Source'|translate}}</label>
+                <div class="controls">
+                    <span class="btn-group">
+                        <button ng-repeat="provider in availableProviders" type="button" class="btn btn-default" ng-class="{'active': configuration.provider === provider}" ng-click="configuration.provider = provider;">{{provider}}</button>
+                    </span>
+                </div>
+            </div>
+
+        </fieldset>
+        
+    </form>
+
+</div>

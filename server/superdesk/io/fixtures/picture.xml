@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+SUMMARY:
+- Structure: NML2 SNI Picture
+- Based On: NML2 v2.10
+
+AUTHOR: thomsonreuters.com
+-->
+<!-- ========================================================= -->
+<newsMessage xmlns="http://iptc.org/std/nar/2006-10-01/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rtr="http://www.reuters.com/ns/2003/08/content" xmlns:x="http://www.w3.org/1999/xhtml">
+  <header>
+    <sent>2013-03-04T11:14:13.000Z</sent>
+    <sender>reuters.com</sender>
+    <transmitId>tag:reuters.com,0000:newsml_GM1E9341HD701:360624134</transmitId>
+    <priority>4</priority>
+    <destination>MEDWAS</destination>
+    <destination>MEDLON</destination>
+    <destination>MEDTOR</destination>
+    <destination>RONL</destination>
+    <destination>AONL</destination>
+    <destination>ASIA</destination>
+    <destination>APC</destination>
+    <destination>USA</destination>
+    <destination>CAN</destination>
+    <destination>SAM</destination>
+    <channel>PIX</channel>
+  </header>
+  <itemSet>
+    <newsItem guid="tag:reuters.com,0000:newsml_GM1E9341HD701" version="360624134" standard="NewsML-G2" standardversion="2.10" conformance="power" xml:lang="en">
+      <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml" />
+      <rightsInfo>
+        <copyrightHolder literal="Thomson Reuters" />
+        <copyrightNotice xml:lang="en">(c) Copyright Thomson Reuters 2013. Click For Restrictions - http://about.reuters.com/fulllegal.asp</copyrightNotice>
+      </rightsInfo>
+      <itemMeta>
+        <itemClass qcode="icls:picture" rtr:msgType="S" />
+        <provider literal="reuters.com" />
+        <versionCreated>2013-03-04T11:14:13.000Z</versionCreated>
+        <firstCreated>2013-03-04T11:14:13.000Z</firstCreated>
+        <pubStatus qcode="stat:usable" />
+        <role qcode="itemRole:N" />
+        <fileName>2013-03-04T111413Z_360624134_GM1E9341HD701_RTRMADP_0_KENYA-ELECTIONS.XML</fileName>
+        <generator versioninfo="00.00.01">G3:IIM:FH</generator>
+        <profile versioninfo="00.00.01">SNI-Picture</profile>
+        <service qcode="svc:RTR_PIX" />
+        <signal qcode="edStat:N" />
+        <signal qcode="prodId:PIX" />
+        <signal qcode="var:binMod" />
+        <signal qcode="pmt:picture" />
+        <link rel="irel:processedFrom" residref="tag:reuters.com,0000:newsml_GF2E9340T4U01" rtr:id="GF2E9340T4U01" />
+        <rtr:versionedId guid="tag:reuters.com,0000:newsml_GM1E9341HD701:360624134" />
+      </itemMeta>
+      <contentMeta>
+        <urgency>4</urgency>
+        <infoSource role="cRole:origProv" literal="REUTERS" />
+        <infoSource role="cRole:source" qcode="photCode:X01390" />
+        <infoSource role="cRole:phot" qcode="photCode:X01390" />
+        <creator qcode="photCode:X01390" role="cRole:phot" />
+        <contributor role="cRole:capWriter" literal="MDJ/" />
+        <altId type="idType:IID" rtr:isOriginal="1">GM1E9341HD701</altId>
+        <altId type="idType:OTR">MDJ10</altId>
+        <language tag="en" />
+        <subject qcode="MCC:I" />
+        <subject qcode="N2:POL" />
+        <subject qcode="N2:VOTE" />
+        <subject qcode="subj:11000000" />
+        <subject qcode="subj:11003000" />
+        <subject literal="NAIROBI" type="cptType:5">
+          <name>NAIROBI</name>
+          <facet qcode="geoProp:8" />
+          <broader qcode="N2:KEN" type="cptType:5">
+            <name>Kenya</name>
+            <facet qcode="geoProp:5" />
+          </broader>
+        </subject>
+        <slugline separator="-">KENYA-ELECTIONS/</slugline>
+        <headline>A woman casts her ballot inside a polling station in Kenya's town of Gatundu</headline>
+        <by>MARKO DJURICA</by>
+        <creditline>REUTERS</creditline>
+        <description role="descRole:caption">A woman casts her ballot inside a polling station in Kenya's town of Gatundu March 4, 2013. Polling stations opened up to Kenyans on Monday for a tense presidential election that will test whether the east African nation can repair its damaged reputation after the tribal blood-letting that followed a 2007 poll.    REUTERS/Marko Djurica (KENYA - Tags: POLITICS ELECTIONS)</description>
+      </contentMeta>
+      <contentSet>
+        <remoteContent residref="tag:reuters.com,0000:binary_GM1E9341HD701-BASEIMAGE" href="http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1E9341HD701:360624134/tag:reuters.com,0000:binary_GM1E9341HD701-BASEIMAGE" size="772617" rendition="rend:baseImage" contenttype="image/jpeg" format="fmt:jpegBaseline" generator="G3:IIM:FH:BaseImageGenerator" width="3500" height="2284" rtr:formatVersion="1">
+          <rtr:altId type="idType:fileBIN" contentType="image/jpeg">2013-03-04T111413Z_360624134_GM1E9341HD701_RTRMADP_3_KENYA-ELECTIONS.JPG</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1E9341HD701:360624134/tag:reuters.com,0000:binary_GM1E9341HD701-BASEIMAGE</rtr:altLoc>
+        </remoteContent>
+        <remoteContent residref="tag:reuters.com,0000:binary_GM1E9341HD701-THUMBNAIL" href="http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1E9341HD701:360624134/tag:reuters.com,0000:binary_GM1E9341HD701-THUMBNAIL" size="16148" rendition="rend:thumbnail" contenttype="image/jpeg" format="fmt:jpegBaseline" generator="VALID:DERIVE_RENDS" width="150" height="97" rtr:formatVersion="1">
+          <rtr:altId type="idType:fileBIN" isPresent="1">2013-03-04T111413Z_360624134_GM1E9341HD701_RTRMADP_1_KENYA-ELECTIONS.JPG</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1E9341HD701:360624134/tag:reuters.com,0000:binary_GM1E9341HD701-THUMBNAIL</rtr:altLoc>
+        </remoteContent>
+        <remoteContent residref="tag:reuters.com,0000:binary_GM1E9341HD701-VIEWIMAGE" href="http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1E9341HD701:360624134/tag:reuters.com,0000:binary_GM1E9341HD701-VIEWIMAGE" size="170597" rendition="rend:viewImage" contenttype="image/jpeg" format="fmt:jpegBaseline" generator="VALID:DERIVE_RENDS" width="640" height="417" rtr:formatVersion="1">
+          <rtr:altId type="idType:fileBIN" isPresent="1">2013-03-04T111413Z_360624134_GM1E9341HD701_RTRMADP_2_KENYA-ELECTIONS.JPG</rtr:altId>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1E9341HD701:360624134/tag:reuters.com,0000:binary_GM1E9341HD701-VIEWIMAGE</rtr:altLoc>
+        </remoteContent>
+      </contentSet>
+    </newsItem>
+  </itemSet>
+</newsMessage>

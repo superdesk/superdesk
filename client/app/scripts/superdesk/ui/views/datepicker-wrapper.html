@@ -1,0 +1,14 @@
+<div class="datepicker-wrapper" ng-show="open" ng-keydown="keydown($event)">
+	<div class="datepicker-additional">
+		<table>
+			<tbody>
+				<tr>
+					<td><button class="btn btn-mini" ng-click="select(0)" tranlsate>Today</button></td>
+					<td><button class="btn btn-mini" ng-click="select(1)" tranlsate>Tomorrow</button></td>
+					<td><button class="btn btn-mini" ng-click="select(2)" tranlsate>In 2 days</button></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="datepicker-core" ng-transclude></div>
+</div>
