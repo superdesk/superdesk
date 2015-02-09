@@ -119,15 +119,20 @@
 		};
 	}
 
-	MultieditArticleDirective.$inject = ['authoring', 'multiEdit'];
-	function MultieditArticleDirective(authoring, multiEdit) {
+	MultieditArticleDirective.$inject = ['authoring', 'multiEdit', '$timeout'];
+	function MultieditArticleDirective(authoring, multiEdit, $timeout) {
 		return {
 			templateUrl: 'scripts/superdesk-authoring/multiedit/views/sd-multiedit-article.html',
-			scope: {article: '='},
-			link: function(scope) {
+			scope: {article: '=', focus: '='},
+			link: function(scope, elem) {
 				authoring.open(scope.article).then(function(item) {
 					scope.item = _.create(item);
 					scope._editable = authoring.isEditable(item);
+					if (scope.focus) {
+						$timeout(function() {
+							elem.children().focus();
+						}, 0, false);
+					}
 				});
 
                 scope.autosave = function(item) {

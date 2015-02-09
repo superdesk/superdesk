@@ -15,8 +15,8 @@
 .buttonStates(@background:@btnDefaultColor, @color: @sd-text) {
 	color: @color;
 	background-color: @background;
-	&:hover {
-		background-color: multiply(@background,rgba(0,0,0,10%));
+	&:hover, &:focus {
+		ba	ckground-color: multiply(@background,rgba(0,0,0,10%));
 		.box-shadow(0 1px 2px 0 rgba(0,0,0,30%));
 		text-decoration: none;
 		color: @color;
@@ -88,7 +88,7 @@
 
 .btn-light {
 	background-color: transparent;
-	&:hover {
+	&:hover, &:focus {
 		background-color: rgba(152,152,152,0.15);
 		.box-shadow(none);
 	}

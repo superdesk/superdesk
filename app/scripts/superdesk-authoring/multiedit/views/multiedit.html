@@ -5,7 +5,7 @@
     	<div ng-repeat="board in boards track by board.article"
             class="board"
             style="width:{{ 100 / boards.length }}%">
-    		<div sd-multiedit-article data-article="board.article"></div>
+    		<div sd-multiedit-article data-article="board.article" data-focus="$first"></div>
     	</div>
     </div>
     <div class="boards-create">
