@@ -19,15 +19,20 @@ import superdesk
 class RebuildElasticIndex(superdesk.Command):
     def run(self):
         index_name = superdesk.app.config['ELASTICSEARCH_INDEX']
+        print('Starting index rebuilding for index: ', index_name)
         try:
             es = get_es(superdesk.app.config['ELASTICSEARCH_URL'])
             clone_name = index_name + '-' + get_random_string()
-            print('Starting index rebuilding for index: ' + index_name)
+            print('Creating index: ', clone_name)
+            get_indices(es).create(clone_name)
+            print('Putting mapping for index: ', clone_name)
+            superdesk.app.data.elastic.put_mapping(superdesk.app, clone_name)
+            print('Starting index rebuilding.')
             reindex(es, index_name, clone_name)
             print('Finished index rebuilding.')
-            print('Deleting index: ' + index_name)
+            print('Deleting index: ', index_name)
             get_indices(es).delete(index_name)
-            print('Creating alias: ' + index_name)
+            print('Creating alias: ', index_name)
             get_indices(es).put_alias(index_name, clone_name)
             print('Alias created.')
         except elasticsearch.exceptions.NotFoundError as nfe:
