@@ -77,8 +77,7 @@ Feature: Archive Ingest
             "_items": [
                 {
                     "_version": 1,
-                    "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS",
-                    "linked_in_packages": [{"package": "tag:reuters.com,2014:newsml_KBN0FL0NM"}],
+                    "linked_in_packages": [{}],
                     "state": "fetched",
                     "type": "picture"
                 },
@@ -87,43 +86,38 @@ Feature: Archive Ingest
                     "groups": [
                         {
                             "refs": [
-                                {"itemClass": "icls:text", "residRef": "tag:reuters.com,2014:newsml_KBN0FL0NN"},
-                                {"itemClass": "icls:picture", "residRef": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M"},
-                                {"itemClass": "icls:picture", "residRef": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS"},
-                                {"itemClass": "icls:picture", "residRef": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT"}
+                                {"itemClass": "icls:text"},
+                                {"itemClass": "icls:picture"},
+                                {"itemClass": "icls:picture"},
+                                {"itemClass": "icls:picture"}
                             ]
                         },
-                        {"refs": [{"itemClass": "icls:text", "residRef": "tag:reuters.com,2014:newsml_KBN0FL0ZP"}]}
+                        {"refs": [{"itemClass": "icls:text"}]}
                     ],
-                    "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM",
                     "state": "fetched",
                     "type": "composite"
                 },
                 {
                     "_version": 1,
-                    "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT",
-                    "linked_in_packages": [{"package": "tag:reuters.com,2014:newsml_KBN0FL0NM"}],
+                    "linked_in_packages": [{}],
                     "state": "fetched",
                     "type": "picture"
                 },
                 {
                     "_version": 1,
-                    "guid": "tag:reuters.com,2014:newsml_KBN0FL0ZP",
-                    "linked_in_packages": [{"package": "tag:reuters.com,2014:newsml_KBN0FL0NM"}],
+                    "linked_in_packages": [{}],
                     "state": "fetched",
                     "type": "text"
                 },
                 {
                     "_version": 1,
-                    "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M",
-                    "linked_in_packages": [{"package": "tag:reuters.com,2014:newsml_KBN0FL0NM"}],
+                    "linked_in_packages": [{}],
                     "state": "fetched",
                     "type": "picture"
                 },
                 {
                     "_version": 1,
-                    "guid": "tag:reuters.com,2014:newsml_KBN0FL0NN",
-                    "linked_in_packages": [{"package": "tag:reuters.com,2014:newsml_KBN0FL0NM"}],
+                    "linked_in_packages": [{}],
                     "state": "fetched",
                     "type": "text"
                 }
