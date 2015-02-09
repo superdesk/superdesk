@@ -600,7 +600,7 @@
                     scope.meta = {};
                     scope.flags = {enabled: false};
                     var opt = {global: true};
-                    keyboardManager.bind('ctrl+shift', function() {
+                    keyboardManager.bind('ctrl+0', function() {
                         scope.flags.enabled = true;
                     }, opt);
                     keyboardManager.bind('esc', function() {
