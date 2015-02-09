@@ -38,7 +38,7 @@ from copy import copy
 import superdesk
 import logging
 from apps.common.models.utils import get_model
-from ..item_lock.models.item import ItemModel
+from apps.item_lock.models.item import ItemModel
 
 logger = logging.getLogger(__name__)
 
@@ -293,10 +293,10 @@ class ArchiveService(BaseService):
         return new_doc['guid']
 
     def duplicate_versions(self, old_id, new_doc):
-        lookup = {}
-        lookup['guid'] = old_id
+        lookup = {'guid': old_id}
         old_versions = get_resource_service('archive_versions').get(req=None, lookup=lookup)
 
+        new_versions = []
         for old_version in old_versions:
             old_version['_id_document'] = new_doc['_id']
             del old_version['_id']
@@ -304,7 +304,9 @@ class ArchiveService(BaseService):
             old_version['unique_name'] = new_doc['unique_name']
             old_version['unique_id'] = new_doc['unique_id']
             old_version['versioncreated'] = utcnow()
-            get_resource_service('archive_versions').post([old_version])
+            new_versions.append(old_version)
+
+        get_resource_service('archive_versions').post(new_versions)
 
     def can_edit(self, item, user_id):
         """
