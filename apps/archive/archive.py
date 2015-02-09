@@ -272,8 +272,10 @@ class ArchiveService(BaseService):
                 if groups.get('id') != 'root':
                     associations = groups.get('refs', [])
                     for assoc in associations:
-                        item, item_id, endpoint = superdesk.get_resource_service('packages').get_associated_item(assoc)
-                        assoc['residRef'] = assoc['guid'] = self.duplicate_content(item)
+                        if assoc.get('residRef'):
+                            item, item_id, endpoint = \
+                                superdesk.get_resource_service('packages').get_associated_item(assoc)
+                            assoc['residRef'] = assoc['guid'] = self.duplicate_content(item)
 
         return self.duplicate_item(original_doc)
 
