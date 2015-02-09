@@ -80,7 +80,7 @@ class ArchiveIngestService(BaseService):
                 archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=doc.get('guid'))
                 if archived_doc:
                     send_to(archived_doc, doc.get('desk'))
-                    new_guid = superdesk.get_resource_service('archive').duplicate_item(archived_doc)
+                    new_guid = superdesk.get_resource_service('archive').duplicate_content(archived_doc)
                     new_guids.append(new_guid)
                 else:
                     msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
@@ -126,14 +126,21 @@ class ArchiveIngestService(BaseService):
                     links = dest_doc.get(LINKED_IN_PACKAGES, [])
                     links.append({PACKAGE: doc.get(PACKAGE)})
                     dest_doc[LINKED_IN_PACKAGES] = links
-                superdesk.get_resource_service(ARCHIVE).post([dest_doc])
-                insert_into_versions(dest_doc.get('guid'))
+
                 desk = doc.get('desk')
                 refs = [{'guid': ref.get('residRef'), 'desk': desk, PACKAGE: dest_doc.get('_id')}
                         for group in dest_doc.get('groups', [])
                         for ref in group.get('refs', []) if 'residRef' in ref]
                 if refs:
-                    self.create(refs)
+                    new_ref_guids = self.create(refs)
+                    count = 0
+                    for ref in [ref for group in dest_doc.get('groups', [])
+                                for ref in group.get('refs', []) if 'residRef' in ref]:
+                        ref['residRef'] = ref['guid'] = new_ref_guids[count]
+                        count += 1
+
+                superdesk.get_resource_service(ARCHIVE).post([dest_doc])
+                insert_into_versions(dest_doc.get('guid'))
 
                 push_notification('item:fetch', item=str(ingest_doc.get('_id')))
 

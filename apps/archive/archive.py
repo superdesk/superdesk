@@ -266,6 +266,17 @@ class ArchiveService(BaseService):
         doc.update(old)
         return res
 
+    def duplicate_content(self, original_doc):
+        if original_doc.get('type', '') == 'composite':
+            for groups in original_doc.get('groups'):
+                if groups.get('id') != 'root':
+                    associations = groups.get('refs', [])
+                    for assoc in associations:
+                        item, item_id, endpoint = superdesk.get_resource_service('packages').get_associated_item(assoc)
+                        assoc['residRef'] = assoc['guid'] = self.duplicate_content(item)
+
+        return self.duplicate_item(original_doc)
+
     def duplicate_item(self, original_doc):
         new_doc = original_doc.copy()
         del new_doc['_id']
