@@ -24,7 +24,6 @@ from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.utc import utcnow
 from superdesk.resource import Resource
 from .common import generate_guid, generate_unique_id_and_name, GUID_TAG
-from .common import get_user, generate_guid, generate_unique_id_and_name, GUID_NEWSML, GUID_TAG
 from superdesk.services import BaseService
 from .archive import SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
@@ -33,6 +32,7 @@ from superdesk.notification import push_notification
 STATE_FETCHED = 'fetched'
 FAMILY_ID = 'family_id'
 INGEST_ID = 'ingest_id'
+
 
 class ArchiveIngestResource(Resource):
     resource_methods = ['POST']
@@ -44,30 +44,6 @@ class ArchiveIngestResource(Resource):
     privileges = {'POST': 'ingest_move'}
 
 
-def create_from_ingest_doc(dest_doc, source_doc):
-    """Create a new archive item using values from given source doc.
-
-    :param dest_doc: doc which gets persisted into archive collection
-    :param source_doc: doc which is fetched from ingest collection
-    """
-    for key, val in source_doc.items():
-        dest_doc.setdefault(key, val)
-
-    dest_doc[config.VERSION] = 1
-    dest_doc[config.CONTENT_STATE] = STATE_FETCHED
-    dest_doc['ingest_id'] = source_doc['_id']
-    dest_doc[FAMILY_ID] = source_doc['_id']
-
-    dest_doc[FAMILY_ID] = generate_guid(type=GUID_TAG)
-    # generate a whole new id
-    new_id = generate_guid(type=GUID_NEWSML)
-    dest_doc['_id'] = new_id
-    dest_doc['guid'] = new_id
-    # Save the id of the original
-    dest_doc['ingest_id'] = source_doc['_id']
-    dest_doc[FAMILY_ID] = source_doc['_id']
-    generate_unique_id_and_name(dest_doc)
-
 class ArchiveIngestService(BaseService):
 
     def create(self, docs, **kwargs):
@@ -75,7 +51,6 @@ class ArchiveIngestService(BaseService):
         for doc in docs:
             ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=doc.get('guid'))
             if not ingest_doc:
-<<<<<<< HEAD
                 # see if it is in archive, if it is duplicate it
                 archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=doc.get('guid'))
                 if archived_doc:
@@ -85,15 +60,6 @@ class ArchiveIngestService(BaseService):
                 else:
                     msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
                     raise SuperdeskApiError.notFoundError(msg)
-=======
-                # all items that are in archive already should have a famil
-                if FAMILY_ID in doc:
-                    # call tolga's thing
-                    pass
-#                msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
-#                raise SuperdeskApiError.notFoundError(msg)
-
->>>>>>> (feat)Duplication multiple fetch from ingest
             else:
                 # We are fetching from ingest
                 if not is_workflow_state_transition_valid('fetch_as_from_ingest', ingest_doc[config.CONTENT_STATE]):

@@ -80,24 +80,6 @@ Feature: Duplication
         		]}
         """
 
-<<<<<<< HEAD
-=======
-    @auth
-    Scenario: Duplicate a content item on the same desk
-        Given empty "archive"
-        Given "desks"
-        """
-        [{"name": "Sports"}]
-        """
-        Given "archive"
-        """
-        [{"guid": "tag:example.com,0000:newsml_BRE9A605", "task": {"desk": "#desks._id#"}}]
-        """
-        When we post to "/archive_ingest"
-        """
-        {"guid": "tag:example.com,0000:newsml_BRE9A605"}
-        """
->>>>>>> (feat)Duplication work on tests
 
 
     @auth
@@ -131,6 +113,56 @@ Feature: Duplication
           {"task": {"desk": "#desks._id#", "user": "#CONTEXT_USER_ID#"}}
         """
         When we post to "/archive_ingest"
+        """
+        {"guid": "123", "desk": "#desks._id#"}
+        """
+
+        Then we get "_id"
+        When we get "/archive/#_id#?version=all"
+        Then we get list with 4 items
+
+    @auth
+    Scenario: Duplicate a content with history for a non-submitted item
+        Given empty "archive"
+        Given "desks"
+        """
+        [{"name": "Sports"}]
+        """
+        Given "archive"
+	    """
+        [{"type":"text", "headline": "test1", "guid": "123", "original_creator": "abc", "state": "draft"}]
+        """
+        When we patch given
+        """
+        {"headline": "test2"}
+        """
+        And we patch latest
+        """
+        {"headline": "test3"}
+        """
+        Then we get updated response
+        """
+        {"headline": "test3"}
+        """
+       	And we get version 3
+       	When we get "/archive/123?version=all"
+        Then we get list with 3 items
+        When we post to "/archive_ingest"
+        """
+        {"guid": "123", "desk": "#desks._id#"}
+        """
+
+        Then we get "_id"
+        When we get "/archive/#_id#?version=all"
+        Then we get list with 4 items
+
+    @auth
+    @provider
+    Scenario: Duplicate a composite item and expect the twice the number of items as the original
+    	Given empty "ingest"
+        Given empty "archive"
+    	When we fetch from "reuters" ingest "tag:reuters.com,2014:newsml_KBN0FL0NM"
+        And we post to "/archive_ingest"
         """
         {
         "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM"
