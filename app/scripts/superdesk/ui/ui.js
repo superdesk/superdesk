@@ -320,8 +320,8 @@ define([
 		};
 	}
 
-	DatepickerInnerDirective.$inject = ['$compile', '$document', 'popupService'];
-	function DatepickerInnerDirective($compile, $document, popupService) {
+	DatepickerInnerDirective.$inject = ['$compile', '$document', 'popupService', 'datetimeHelper'];
+	function DatepickerInnerDirective($compile, $document, popupService, datetimeHelper) {
 		var popupTpl =
 		'<div sd-datepicker-wrapper ng-model="date" ng-change="dateSelection()">' +
 			'<div datepicker format-day="d" show-weeks="false"></div>' +
@@ -334,7 +334,10 @@ define([
 			},
 			link: function (scope, element, attrs, ctrl) {
 
-				var VIEW_FORMAT = 'DD/MM/YYYY';
+				var VIEW_FORMAT = 'DD/MM/YYYY',
+					ESC = 27,
+					DOWN_ARROW = 40;
+
 				var popup = angular.element(popupTpl);
 
 				ctrl.$parsers.unshift(function parseDate(viewValue) {
@@ -347,11 +350,7 @@ define([
 							ctrl.$setValidity('date', true);
 							return moment.utc(viewValue.dpdate).format();
 						} else {
-							//value validation
-							var pattern = /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19\d{2}|[2-9]\d{3})$/;
-							var regex = new RegExp(pattern);
-
-							if (regex.test(viewValue)) {
+							if (datetimeHelper.isValidDate(viewValue)) {
 								if (moment(viewValue, VIEW_FORMAT).isValid()) {
 									ctrl.$setValidity('date', true);
 									return moment(viewValue, VIEW_FORMAT).utc().format();
@@ -361,7 +360,7 @@ define([
 									return null;
 								}
 							} else {
-								//regex not passing
+								//input is not valid
 								ctrl.$setValidity('date', false);
 								return null;
 							}
@@ -376,8 +375,7 @@ define([
 					}
 					ctrl.$setViewValue({dpdate: scope.date, viewdate: moment(scope.date).format(VIEW_FORMAT)});
 					ctrl.$render();
-					scope.open = false;
-					element[0].focus();
+					scope.close();
 				};
 
 				//select one of predefined dates
@@ -439,12 +437,12 @@ define([
 				element.bind('keydown', keydown);
 
 				scope.keydown = function(evt) {
-					if (evt.which === 27) {
+					if (evt.which === ESC) {
 						evt.preventDefault();
 						evt.stopPropagation();
 						scope.close();
 					} else {
-						if (evt.which === 40 && !scope.open) {
+						if (evt.which === DOWN_ARROW && !scope.open) {
 							scope.open = true;
 						}
 					}
@@ -480,8 +478,8 @@ define([
 		};
 	}
 
-	TimepickerInnerDirective.$inject = ['$compile', '$document', 'popupService'];
-	function TimepickerInnerDirective($compile, $document, popupService) {
+	TimepickerInnerDirective.$inject = ['$compile', '$document', 'popupService', 'datetimeHelper'];
+	function TimepickerInnerDirective($compile, $document, popupService, datetimeHelper) {
 		var popupTpl = '<div sd-timepicker-popup ' +
 			'data-open="open" data-time="time" data-select="timeSelection({time: time})" data-keydown="keydown(e)">' +
 			'</div>';
@@ -492,41 +490,17 @@ define([
 			require: 'ngModel',
 			link: function(scope, element, attrs, ctrl) {
 
+				var TIME_FORMAT = 'HH:mm:ss',
+					ESC = 27,
+					DOWN_ARROW = 40;
 				var popup = angular.element(popupTpl);
-
-				function isValidTime(value) {
-					var colonCount = 0;
-					var hh, mm, ss;
-
-					for (var i = 0; i < value.length; i++) {
-						var ch = value.substring(i, i + 1);
-						if (((ch < '0') || (ch > '9')) && (ch !== ':')) {
-							return false;
-						}
-						if (ch === ':') { colonCount++; }
-					}
-
-					if (colonCount !== 2) {return false;}
-
-					hh = value.substring(0, value.indexOf(':'));
-					if (hh.length !== 2 || (parseFloat(hh) < 0) || (parseFloat(hh) > 23)) {return false;}
-
-					mm = value.substring(value.indexOf(':') + 1, value.lastIndexOf(':'));
-					if (mm.length !== 2 || (parseFloat(mm) < 0) || (parseFloat(mm) > 59)) {return false;}
-
-					ss = value.substring(value.lastIndexOf(':') + 1, value.length);
-					if (ss.length !== 2 || (parseFloat(ss) < 0) || (parseFloat(ss) > 59)) {return false;}
-
-					return true;
-				}
 
 				function viewFormat(time) {
 					//convert from utc time to local time
-					return moment(time, 'HH:mm:ss').add(moment().utcOffset(), 'minutes').format('HH:mm:ss');
+					return moment(time, TIME_FORMAT).add(moment().utcOffset(), 'minutes').format(TIME_FORMAT);
 				}
 
 				ctrl.$parsers.unshift(function parseDate(viewValue) {
-					console.log('parser called. viewValue = ', viewValue);
 					if (!viewValue) {
 					    ctrl.$setValidity('time', true);
 					    return null;
@@ -536,9 +510,9 @@ define([
 					        return viewValue.tptime;
 					    } else {
 					        //value validation
-					        if (isValidTime(viewValue)) {
+					        if (datetimeHelper.isValidTime(viewValue)) {
 					            ctrl.$setValidity('time', true);
-					            scope.time = moment(viewValue, 'HH:mm:ss').utc().format('HH:mm:ss');
+					            scope.time = moment(viewValue, TIME_FORMAT).utc().format(TIME_FORMAT);
 					            return scope.time;
 					        } else {
 					            //regex not passing
@@ -560,21 +534,18 @@ define([
 				};
 
 				ctrl.$render = function() {
-					console.log('rendered called > ', ctrl.$modelValue, ctrl.$viewValue);
 					element.val(ctrl.$viewValue.viewtime);  //set the view
 					scope.time = ctrl.$viewValue.tptime;    //set timepicker model
 				};
 
 				//handle model changes
 				ctrl.$formatters.unshift(function dateFormatter(modelValue) {
-					console.log('formatter called. modelValue = ', modelValue);
 					var tptime,
 						viewtime = 'Invalid Time';
 
 					if (modelValue) {
-						if (isValidTime(modelValue)) {
+						if (datetimeHelper.isValidTime(modelValue)) {
 							//formatter pass fine
-							console.log('formater > time valid');
 							tptime = modelValue;
 							viewtime =  viewFormat(modelValue);
 						}
@@ -614,12 +585,12 @@ define([
 				element.bind('keydown', keydown);
 
 				scope.keydown = function(evt) {
-					if (evt.which === 27) {
+					if (evt.which === ESC) {
 						evt.preventDefault();
 						evt.stopPropagation();
 						scope.close();
 					} else {
-						if (evt.which === 40 && !scope.open) {
+						if (evt.which === DOWN_ARROW && !scope.open) {
 							scope.open = true;
 						}
 					}
@@ -653,6 +624,8 @@ define([
 			},
 			link: function(scope, element) {
 
+				var TIME_FORMAT = 'HH:mm:ss';
+
 				var POPUP = '.timepicker-popup';
 
 				var focusElement = function() {
@@ -675,7 +648,7 @@ define([
 					var local;
 					if (newVal) {
 						//convert from utc to local
-						local = moment(newVal, 'HH:mm:ss').add(moment().utcOffset(), 'minutes');
+						local = moment(newVal, TIME_FORMAT).add(moment().utcOffset(), 'minutes');
 					} else {
 						local = moment();
 					}
@@ -687,12 +660,12 @@ define([
 				scope.submit = function(offset) {
 					var local, utc_time;
 					if (offset) {
-						local = moment().add(offset, 'minutes').format('HH:mm:ss');
+						local = moment().add(offset, 'minutes').format(TIME_FORMAT);
 					} else {
 						local = scope.hour + ':' + scope.minute + ':' + scope.second;
 					}
 					//convert from local to utc
-					utc_time = moment(local, 'HH:mm:ss').utc().format('HH:mm:ss');
+					utc_time = moment(local, TIME_FORMAT).utc().format(TIME_FORMAT);
 					scope.select({time: utc_time});
 				};
 
@@ -710,6 +683,51 @@ define([
 			}
 			return input;
 		};
+	}
+
+	DateTimeHelperService.$inject = [];
+	function DateTimeHelperService() {
+
+		this.isValidTime = function(value) {
+			//checking if the given value is a time in a format 'hh:mm:ss'
+			var colonCount = 0;
+			var hh, mm, ss;
+
+			for (var i = 0; i < value.length; i++) {
+				var ch = value.substring(i, i + 1);
+				if (((ch < '0') || (ch > '9')) && (ch !== ':')) {
+					return false;
+				}
+				if (ch === ':') { colonCount++; }
+			}
+
+			if (colonCount !== 2) {return false;}
+
+			hh = value.substring(0, value.indexOf(':'));
+			if (hh.length !== 2 || (parseFloat(hh) < 0) || (parseFloat(hh) > 23)) {return false;}
+
+			mm = value.substring(value.indexOf(':') + 1, value.lastIndexOf(':'));
+			if (mm.length !== 2 || (parseFloat(mm) < 0) || (parseFloat(mm) > 59)) {return false;}
+
+			ss = value.substring(value.lastIndexOf(':') + 1, value.length);
+			if (ss.length !== 2 || (parseFloat(ss) < 0) || (parseFloat(ss) > 59)) {return false;}
+
+			return true;
+		};
+
+		this.isValidDate = function(value) {
+			//checking if the given value is a date in a format '31/01/2000'
+			var pattern = /^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(19\d{2}|[2-9]\d{3})$/;
+			var regex = new RegExp(pattern);
+			return regex.test(value);
+		};
+
+		this.mergeDateTime = function(date, time) {
+	        var date_str = moment(date).format('YYYY-MM-DD');
+	        var time_str = moment(time, 'HH:mm:ss').add(moment().utcOffset(), 'minute').format('HH:mm:ss');
+	        var merge_str = date_str + ' ' + time_str;
+	        return moment(merge_str, 'YYYY-MM-DD HH:mm:ss').utc();
+	    };
 	}
 
 	return angular.module('superdesk.ui', [])
@@ -731,5 +749,6 @@ define([
 		.directive('sdTimepickerPopup', TimepickerPopupDirective)
 		.directive('sdTimepicker', TimepickerDirective)
 		.service('popupService', PopupService)
+		.service('datetimeHelper', DateTimeHelperService)
 		.filter('leadingZero', LeadingZeroFilter);
 });
