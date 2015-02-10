@@ -112,6 +112,8 @@ class PreferencesService(BaseService):
 
     def find_one(self, req, **lookup):
         session_doc = super().find_one(req, **lookup)
+        if not session_doc:  # fetching old session preferences using new session
+            return
         user_doc = get_resource_service('users').find_one(req=None, _id=session_doc['user'])
         self.enhance_document_with_default_prefs(session_doc, user_doc)
         self.enhance_document_with_user_privileges(session_doc, user_doc)
