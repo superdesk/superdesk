@@ -260,9 +260,20 @@
 			}
 		}
 		&.media-picture {
-			
+			.text {
+			    display: none;
+			    position: absolute;
+			    left: 0;
+			    bottom: 0;
+				width: @sfbox_minWidth;
+				height:@sfbox_mediaHeight;
+			    background: rgba(192,192,192,0.9);    
+			}
+			.media:hover .text {
+			    display: block
+			}
 		}
-		&.media-text,&.media-preformatted,&.media-composite {
+		&.media-text,&.media-preformatted,&.media-composite,&.media-picture {
 			.media {
 				max-width: @sfbox_minWidth;
 				font-size: 12px;
