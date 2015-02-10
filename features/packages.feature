@@ -670,6 +670,54 @@ Feature: Packages
        	When we get "/packages/tag:example.com,0000:newsml_BRE9A605?version=all"
         Then we get list with 2 items
 
+    @auth
+    Scenario: When removing a link from the package, item.linked_in_packages gets updated
+        Given empty "packages"
+        When we post to "archive"
+        """
+        [{"guid": "tag:example.com,0000:newsml_BRE9A679", "headline": "test"}]
+        """
+        When we upload a file "bike.jpg" to "archive_media"
+        When we post to "/packages" with success
+        """
+        {
+            "groups": [
+                {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
+                {
+                    "id": "main",
+                    "refs": [
+                        {
+                            "headline": "test package with text",
+                            "residRef": "#archive._id#",
+                            "slugline": "awesome article"
+                        }
+                    ],
+                    "role": "main"
+                }
+            ],
+            "guid": "tag:example.com,0000:newsml_BRE9A605"
+        }
+        """
+        And we patch latest
+        """
+        {"groups": [{"id": "root", "refs": [], "role": "grpRole:NEP"}]}
+        """
+        Then we get existing resource
+        """
+        {
+            "_id": "tag:example.com,0000:newsml_BRE9A605",
+            "groups": [{"id": "root", "refs": [], "role": "grpRole:NEP"}],
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
+            "type": "composite"
+        }
+        """
+        And we get version 2
+        When we get "/archive/tag:example.com,0000:newsml_BRE9A679"
+        Then we get existing resource
+        """
+        {"headline": "test", "linked_in_packages": []}
+        """
+
 
     @auth
     Scenario: Delete created package
