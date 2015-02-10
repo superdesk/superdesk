@@ -13,7 +13,7 @@ from superdesk.tests import TestCase
 from eve.utils import date_to_str
 from . import init_app
 from superdesk.utc import get_expiry_date, utcnow
-from .archive import ArchiveRemoveExpiredContent
+from .commands import ArchiveRemoveExpiredContent
 
 
 class ArchiveRemoveExpiredContentTestCase(TestCase):
