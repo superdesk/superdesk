@@ -3,6 +3,7 @@ language: python
 env:
     - TARGET=client
     - TARGET=server
+    - TARGET=server_ldap
 
 python:
     - "3.4"
@@ -17,42 +18,46 @@ services:
 
 before_install:
     - if [ "${TARGET}" = "client" ]; then
-        npm install -g grunt-cli bower
-        ;
+        npm install -g grunt-cli bower ;
       fi
 
 install:
-    - if [ "${TARGET}" = "server" ]; then
-        cd server && pip install -r requirements.txt --use-mirrors && cd ..
-        ;
+    - if [ "${TARGET}" = "server" ] || [ "${TARGET}" = "server_ldap" ]; then
+        cd server &&
+        pip install -r requirements.txt --use-mirrors &&
+        cd .. ;
       fi
     - if [ "${TARGET}" = "client" ]; then
-        cd client &&
-        npm install &&
-        bower install --force-latest &&
-        cd ..
-        ;
+        cd client && npm install && cd .. ;
+      fi
+    - if [ "${TARGET}" = "client" ]; then
+        cd client && bower install && cd .. ;
       fi
 
 script:
     - if [ "${TARGET}" = "server" ]; then
+        cd server && nosetests && cd .. ;
+      fi
+    - if [ "${TARGET}" = "server" ]; then
         cd server &&
-        nosetests &&
         behave --format progress2 --logging-level ERROR &&
+        cd .. ;
+      fi
+    - if [ "${TARGET}" = "server_ldap" ]; then
+        cd server &&
         LDAP_SERVER="ldap://sourcefabric.org" LDAP_BASE_FILTER="OU=Superdesk Users,dc=sourcefabric,dc=org" behave --format progress2 --logging-level ERROR &&
-        flake8 &&
-        cd ..
-        ;
+        cd .. ;
+      fi
+    - if [ "${TARGET}" = "server" ]; then
+        cd server && flake8 && cd .. ;
       fi
     - if [ "${TARGET}" = "client" ]; then
-        cd client && npm test && cd ..
-        ;
+        cd client && npm test && cd .. ;
       fi
 
 after_success:
     - if [ "${TARGET}" = "client" ]; then
-        cd client && grunt coveralls && cd ..
-        ;
+        cd client && grunt coveralls && cd .. ;
       fi
 
 sudo: false
