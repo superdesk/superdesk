@@ -2,8 +2,8 @@
 
 'use strict';
 
-TasksService.$inject = ['desks', '$rootScope', 'api'];
-function TasksService(desks, $rootScope, api) {
+TasksService.$inject = ['desks', '$rootScope', 'api', 'datetimeHelper'];
+function TasksService(desks, $rootScope, api, datetimeHelper) {
 
     this.statuses =  [
         {'_id': 'todo', 'name': 'To Do'},
@@ -13,12 +13,7 @@ function TasksService(desks, $rootScope, api) {
 
     this.save = function(orig, task) {
         if (task.task.due_time) {
-            task.task.due_date =
-                moment(task.task.due_date)
-                .set('hour', task.task.due_time.getHours())
-                .set('minute', task.task.due_time.getMinutes())
-                .set('second', task.task.due_time.getSeconds())
-                .utc();
+            task.task.due_date = datetimeHelper.mergeDateTime(task.task.due_date, task.task.due_time).format();
         }
         delete task.task.due_time;
         if (!task.task.user) {
@@ -107,7 +102,7 @@ function TasksController($scope, api, notify, desks, tasks) {
             task: {
                 desk: desks.getCurrentDeskId(),
                 due_date: moment().utc().format(),
-                due_time: new Date(null, null, null, 12, 0, 0)
+                due_time: moment().utc().format('HH:mm:ss')
             }
         };
     };
@@ -186,7 +181,7 @@ function TaskPreviewDirective(tasks, desks, notify) {
                 scope.task = _.create(scope.item);
                 scope.task_details = _.extend({}, scope.item.task);
                 scope.task_details.due_date = moment(scope.item.task.due_date).utc().format();
-                scope.task_details.due_time = new Date(scope.item.task.due_date);
+                scope.task_details.due_time = moment(scope.item.task.due_date).utc().format('HH:mm:ss');
                 _orig = scope.item;
             };
         }
