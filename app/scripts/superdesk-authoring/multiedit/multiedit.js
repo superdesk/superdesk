@@ -24,6 +24,10 @@
 		var saved = storage.getItem(STORAGE_KEY);
 		this.items = saved === null ? [] : saved;
 
+		this.minBoards = function() {
+			return MIN_BOARDS;
+		};
+
 		this.create = function(_ids) {
 			var self = this;
 			self.items = [];
@@ -46,6 +50,7 @@
 		this.close = function(item) {
 			this.items = [];
 			this.updateItems();
+			superdesk.intent('author', 'dashboard');
 		};
 
 		this.open = function() {
@@ -56,16 +61,25 @@
 			storage.setItem(STORAGE_KEY, this.items);
 		};
 
-		this.edit = function(_id) {
-			this.items = _.union(this.items, [createBoard(_id)]);
+		this.edit = function(_id, board) {
+			if (!this.items[board]) {
+				this.items[board] = createBoard(_id);
+			} else {
+				this.items[board].article = _id;
+			}
 			this.updateItems();
 		};
 
 		this.remove = function(_id) {
-			this.items = _.filter(this.items, function(item) {
-				return item.article !== _id;
-			});
+			_.extend(_.find(this.items, {article: _id}), {article: null});
 			this.updateItems();
+		};
+
+		this.close = function(board) {
+			if (this.items.length > MIN_BOARDS) {
+				this.items.splice(board, 1);
+				this.updateItems();
+			}
 		};
 
 		function createBoard(_id) {
@@ -75,11 +89,18 @@
 
 	MultieditController.$inject = ['$scope', 'multiEdit'];
 	function MultieditController($scope, multiEdit) {
+
 		$scope.$watch(function() {
 			return multiEdit.items;
 		}, function(items) {
 			$scope.boards = items;
 		});
+
+		$scope.minBoards = multiEdit.minBoards();
+
+		$scope.closeBoard = function(board) {
+			multiEdit.close(board);
+		};
 	}
 
 	MultieditDropdownDirective.$inject = ['workqueue', 'multiEdit', '$route'];
@@ -119,21 +140,70 @@
 		};
 	}
 
+	MultieditDropdownInnerDirective.$inject = ['workqueue', 'multiEdit'];
+	function MultieditDropdownInnerDirective(workqueue, multiEdit) {
+		return {
+			templateUrl: 'scripts/superdesk-authoring/multiedit/views/sd-multiedit-inner-dropdown.html',
+			link: function(scope, elem, attrs) {
+
+				var workqueueItems = [],
+					multieditItems = [];
+
+				scope.$watch(function () {
+					return multiEdit.items;
+				}, function(items) {
+					multieditItems = _.map(multiEdit.items, function(board) {
+						return board.article;
+					});
+					filter();
+				}, true);
+
+				scope.$watch(function () {
+					return workqueue.items;
+				}, function(items) {
+					workqueueItems = items;
+					filter();
+				});
+
+				function filter() {
+					scope.items = _.filter(workqueueItems, function(item) {
+						return _.indexOf(multieditItems, item._id) === -1;
+					});
+				}
+
+				scope.open = function(_id) {
+					multiEdit.edit(_id, attrs.board);
+				};
+			}
+		};
+	}
+
 	MultieditArticleDirective.$inject = ['authoring', 'multiEdit', '$timeout'];
 	function MultieditArticleDirective(authoring, multiEdit, $timeout) {
 		return {
 			templateUrl: 'scripts/superdesk-authoring/multiedit/views/sd-multiedit-article.html',
 			scope: {article: '=', focus: '='},
 			link: function(scope, elem) {
-				authoring.open(scope.article).then(function(item) {
-					scope.item = _.create(item);
-					scope._editable = authoring.isEditable(item);
-					if (scope.focus) {
-						$timeout(function() {
-							elem.children().focus();
-						}, 0, false);
+
+				scope.$watch('article', function(newVal, oldVal) {
+					if (newVal && newVal !== oldVal) {
+						openItem();
 					}
 				});
+
+				function openItem() {
+					authoring.open(scope.article).then(function(item) {
+						scope.item = _.create(item);
+						scope._editable = authoring.isEditable(item);
+						if (scope.focus) {
+							$timeout(function() {
+								elem.children().focus();
+							}, 0, false);
+						}
+					});
+				}
+
+				openItem();
 
                 scope.autosave = function(item) {
                     scope.dirty = true;
@@ -151,10 +221,45 @@
 		};
 	}
 
+	MultieditFloatMenuDirective.$inject = ['$document'];
+	function MultieditFloatMenuDirective($document) {
+		return {
+			link: function(scope, elem) {
+
+				var open = false;
+
+				elem.bind('click', function(event) {
+					if (!open) {
+						event.preventDefault();
+	                    event.stopPropagation();
+
+	                    $('#multiedit-float').css({top: event.pageY, left: event.pageX - 270}).show();
+					} else {
+						$('#multiedit-float').hide();
+					}
+					open = !open;
+                });
+
+                $document.bind('click', closeOnClick);
+
+                scope.$on('$destroy', function() {
+                    $document.unbind('click', closeOnClick);
+                });
+
+                function closeOnClick() {
+                	open = false;
+                	$('#multiedit-float').hide();
+                }
+			}
+		};
+	}
+
 	angular.module('superdesk.authoring.multiedit', ['superdesk.activity', 'superdesk.authoring'])
 		.service('multiEdit', MultieditService)
 		.directive('sdMultieditDropdown', MultieditDropdownDirective)
+		.directive('sdMultieditInnerDropdown', MultieditDropdownInnerDirective)
 		.directive('sdMultieditArticle', MultieditArticleDirective)
+		.directive('sdMultieditFloatMenu', MultieditFloatMenuDirective)
 
 		.config(['superdeskProvider', function(superdesk) {
 			superdesk

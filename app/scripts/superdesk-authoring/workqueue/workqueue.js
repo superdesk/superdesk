@@ -55,6 +55,8 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
     $scope.workqueue = workqueue;
     $scope.multiEdit = multiEdit;
 
+    $scope.isMultiedit = $route.current._id === 'multiedit';
+
     updateWorkqueue();
 
     var activeRoutes = {

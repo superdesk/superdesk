@@ -285,37 +285,37 @@
 // Multiedit dropdown
 // -------------------------------------------------
 
+.multiedit-menu {
+	max-height: 400px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	margin-right: 4px;
+	li button {
+		max-width: 300px;
+		padding-right: 20px !important;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		position: relative;
+		width: 100% !important;
+		i {
+			position: absolute;
+			right: -5px;
+			top: 9px;
+		}
+		&.disabled {
+			background: #f0f0f0;
+			i {
+				.opacity(20);
+			}
+		}
+	}
+}
 .multiedit-dropdown {
 	.dropdown-toggle {
 		width: 48px;
 		padding: 0 !important;
 	}
 	.dropdown-menu {
-		.item-list {
-			max-height: 400px;
-			overflow: auto;
-			margin-right: 4px;
-			li button {
-				max-width: 300px;
-				padding-right: 20px !important;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				position: relative;
-				width: 100% !important;
-				i {
-					position: absolute;
-					right: -5px;
-					top: 9px;
-				}
-				&.disabled {
-					background: #f0f0f0;
-					i {
-						.opacity(20);
-					}
-				}
-			}
-		}
-		
 		.fieldset {
 			border-top: 1px solid #dedede;
 			margin-top: 10px;
