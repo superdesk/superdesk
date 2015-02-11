@@ -78,7 +78,7 @@ class DesksService(BaseService):
             push_notification(self.notification_key, created=1, desk_id=str(doc.get('_id')))
 
     def on_deleted(self, doc):
-            push_notification(self.notification_key, deleted=1, desk_id=str(doc.get('_id')))
+        push_notification(self.notification_key, deleted=1, desk_id=str(doc.get('_id')))
 
     def on_updated(self, updates, original):
         push_notification(self.notification_key, updated=1, desk_id=str(original.get('_id')))
