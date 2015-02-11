@@ -23,15 +23,13 @@ from apps.tasks import send_to
 from superdesk.errors import SuperdeskApiError, InvalidStateTransitionError
 from superdesk.utc import utcnow
 from superdesk.resource import Resource
-from .common import generate_guid, generate_unique_id_and_name, GUID_TAG
+from .common import generate_guid, generate_unique_id_and_name, GUID_TAG, FAMILY_ID, INGEST_ID
 from superdesk.services import BaseService
 from .archive import SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 from apps.content import LINKED_IN_PACKAGES, PACKAGE
 from superdesk.notification import push_notification
 STATE_FETCHED = 'fetched'
-FAMILY_ID = 'family_id'
-INGEST_ID = 'ingest_id'
 
 
 class ArchiveIngestResource(Resource):

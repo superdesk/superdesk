@@ -30,6 +30,8 @@ from superdesk.errors import SuperdeskApiError, IdentifierGenerationError
 GUID_TAG = 'tag'
 GUID_NEWSML = 'newsml'
 ARCHIVE_MEDIA = 'archive_media'
+FAMILY_ID = 'family_id'
+INGEST_ID = 'ingest_id'
 
 
 def on_create_item(docs):

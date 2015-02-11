@@ -305,8 +305,8 @@ class ArchiveService(BaseService):
             old_version['unique_id'] = new_doc['unique_id']
             old_version['versioncreated'] = utcnow()
             new_versions.append(old_version)
-
-        get_resource_service('archive_versions').post(new_versions)
+        if new_versions:
+            get_resource_service('archive_versions').post(new_versions)
 
     def can_edit(self, item, user_id):
         """
