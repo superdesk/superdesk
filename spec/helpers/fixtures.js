@@ -2,7 +2,7 @@
 
 var backendRequestAuth = require('./backend').backendRequestAuth;
 var getToken = require('./auth').getToken;
-var pp = protractor.getInstance().params;
+var pp = browser.params;
 
 exports.resetApp = resetApp;
 exports.post = post;
