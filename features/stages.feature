@@ -1,6 +1,7 @@
 Feature: Stages
 
     @auth
+    @notification
     Scenario: Add stage and verify order
         Given empty "stages"
         Given "desks"
@@ -19,6 +20,7 @@ Feature: Stages
         }
         """
 
+
         When we post to "/stages"
         """
         {
@@ -27,6 +29,11 @@ Feature: Stages
         "task_status": "in_progress",
         "desk": "#desks._id#"
         }
+        """
+
+        Then we get notifications
+        """
+        [{"event": "stage", "extra": {"created": 1, "desk_id": "#desks._id#", "stage_id": "#stages._id#", "is_visible": true}}]
         """
 
         Then we get new resource
@@ -169,7 +176,7 @@ Feature: Stages
         Then we get content expiry 20
         Then we get notifications
         """
-        [{"event": "stage:update", "extra": {"desk_id": "#desks._id#", "stage_id": "#stages._id#", "is_visible": true}}]
+        [{"event": "stage", "extra": {"updated": 1, "desk_id": "#desks._id#", "stage_id": "#stages._id#", "is_visible": true}}]
         """
 
     @auth @notification
@@ -209,7 +216,7 @@ Feature: Stages
         Then we get content expiry 20
         Then we get notifications
         """
-        [{"event": "stage:update", "extra": {"desk_id": "#desks._id#", "stage_id": "#stages._id#", "is_visible": true}}]
+        [{"event": "stage", "extra": {"created": 1, "desk_id": "#desks._id#", "stage_id": "#stages._id#", "is_visible": true}}]
         """
 
     @auth
@@ -246,6 +253,7 @@ Feature: Stages
 
 
     @auth
+    @notification
     Scenario: Can delete empty stage
         Given empty "archive"
         Given empty "tasks"
@@ -275,6 +283,10 @@ Feature: Stages
         """
         When we delete "/stages/#stages._id#"
         Then we get response code 204
+        Then we get notifications
+        """
+        [{"event": "stage", "extra": {"deleted": 1}}]
+        """
 
 
     @auth
@@ -340,7 +352,7 @@ Feature: Stages
         Then we get response code 200
         Then we get notifications
         """
-        [{"event": "stage:update", "extra": {"desk_id": "#desks._id#", "stage_id": "#stages._id#", "is_visible": false}}]
+        [{"event": "stage", "extra": {"updated": 1, "desk_id": "#desks._id#", "stage_id": "#stages._id#", "is_visible": false}}]
         """
 
 

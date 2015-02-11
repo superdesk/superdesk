@@ -7,6 +7,7 @@ Feature: Desks
         Then we get list with 0 items
 
     @auth
+    @notification
     Scenario: Create new desk
         Given empty "users"
         Given empty "desks"
@@ -23,6 +24,10 @@ Feature: Desks
             """
             {"_items": [{"name": "Sports Desk", "members": [{"user": "#users._id#"}]}]}
             """
+        Then we get notifications
+            """
+            [{"event": "desk", "extra": {"created": 1, "desk_id": "#desks._id#"}}]
+            """
         When we get the default incoming stage
         And we delete latest
         Then we get error 403
@@ -31,6 +36,7 @@ Feature: Desks
         """
 
 	@auth
+    @notification
 	Scenario: Update desk
 	    Given empty "desks"
 		When we post to "/desks"
@@ -42,8 +48,13 @@ Feature: Desks
             {"name": "Sports Desk modified"}
              """
 		Then we get updated response
+        Then we get notifications
+            """
+            [{"event": "desk", "extra": {"updated": 1, "desk_id": "#desks._id#"}}]
+            """
 
 	@auth
+    @notification
 	Scenario: Delete desk
 		Given "desks"
 			"""
@@ -54,4 +65,8 @@ Feature: Desks
             [{"name": "test_desk2"}]
             """
         And we delete latest
+        Then we get notifications
+        """
+        [{"event": "desk", "extra": {"deleted": 1, "desk_id": "#desks._id#"}}]
+        """
         Then we get deleted response
