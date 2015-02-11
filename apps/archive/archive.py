@@ -54,22 +54,23 @@ def private_content_filter():
 
     As private we treat items where user is creator, last version creator,
     or has the item assigned to him atm.
+
+    Also filter out content of stages not visible to current user (if any).
     """
     user = getattr(flask.g, 'user', None)
     if user:
-        stages = get_resource_service('users').get_invisible_stages_ids(user.get('_id'))
-
-        private_filter = {'or': [
+        private_filter = {'should': [
             {'exists': {'field': 'task.desk'}},
             {'term': {'task.user': str(user['_id'])}},
             {'term': {'version_creator': str(user['_id'])}},
             {'term': {'original_creator': str(user['_id'])}},
         ]}
 
+        stages = get_resource_service('users').get_invisible_stages_ids(user.get('_id'))
         if stages:
-            private_filter['and'] = [{'not': {'terms': {'task.stage': stages}}}]
+            private_filter['must_not'] = [{'terms': {'task.stage': stages}}]
 
-        return private_filter
+        return {'bool': private_filter}
 
 
 class ArchiveVersionsResource(Resource):
