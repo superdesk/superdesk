@@ -178,8 +178,11 @@
 
                     function errorMessage(response) {
                         if (response.data && response.data._issues && response.data._issues.name && response.data._issues.name.unique) {
-                            scope.message =
-                            gettext('Group with name "' + scope.group.edit.name + '" is already exist, group not created/updated.');
+                            scope.message = gettext(
+                                'Group with name "' +
+                                scope.group.edit.name +
+                                '" already exists, group not created/updated.'
+                            );
                         } else {
                             scope.message = gettext('There was a problem, group not created/updated.');
                         }

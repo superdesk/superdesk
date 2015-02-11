@@ -87,8 +87,11 @@ define([
 
                 function errorMessage(response) {
                     if (response.data && response.data._issues && response.data._issues.name && response.data._issues.name.unique) {
-                        scope.message =
-                        gettext('Desk with name "' + scope.desk.edit.name + '" is already exist, desk not created/updated.');
+                        scope.message = gettext(
+                            'Desk with name "' +
+                            scope.desk.edit.name +
+                            '" already exists, desk not created/updated.'
+                        );
                     } else {
                         scope.message = gettext('There was a problem, desk not created/updated.');
                     }
