@@ -61,7 +61,11 @@ class PackageService(ArchiveService):
 
     def on_updated(self, updates, original):
         super().on_updated(updates, original)
-        for assoc in self._get_associations(updates):
+        toAdd = {assoc.get(ITEM_REF): assoc for assoc in self._get_associations(updates)}
+        toRemove = [assoc for assoc in self._get_associations(original) if assoc.get(ITEM_REF) not in toAdd]
+        for assoc in toRemove:
+            self.update_link(original[config.ID_FIELD], assoc, delete=True)
+        for assoc in toAdd.values():
             self.update_link(original[config.ID_FIELD], assoc)
 
     def on_deleted(self, doc):
@@ -139,6 +143,7 @@ class PackageService(ArchiveService):
         return item, item_id, endpoint
 
     def update_link(self, package_id, assoc, delete=False):
+        # skip root node
         if assoc.get(ID_REF):
             return
 
