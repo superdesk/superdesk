@@ -993,6 +993,17 @@ def step_impl_when_spike_url(context, item_id):
                                             data='{"state": "spiked"}', headers=headers)
 
 
+@when('we spike fetched item')
+def step_impl_when_spike_fetched_item(context):
+    data = json.loads(apply_placeholders(context, context.text))
+    item_id = data["_id"]
+    res = get_res('/archive/' + item_id, context)
+    headers = if_match(context, res.get('_etag'))
+
+    context.response = context.client.patch(get_prefixed_url(context.app, '/archive/spike/' + item_id),
+                                            data='{"state": "spiked"}', headers=headers)
+
+
 @when('we unspike "{item_id}"')
 def step_impl_when_unspike_url(context, item_id):
     res = get_res('/archive/' + item_id, context)
@@ -1202,3 +1213,9 @@ def when_we_get_invisible_stages_for_user(context, no_of_stages):
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
         stages = get_resource_service('users').get_invisible_stages(data['user'])
         assert len(stages) == int(no_of_stages)
+
+
+@then('we get "{field_name}" populated')
+def then_field_is_populated(context, field_name):
+    resp = parse_json_response(context.response)
+    assert resp[field_name].get('user', None) is not None, 'item is not populated'

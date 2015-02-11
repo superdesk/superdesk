@@ -15,7 +15,8 @@ SOURCE = 'archive'
 import flask
 from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry
-from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
+from .common import on_create_item, on_duplicate_item, on_create_media_archive, \
+    on_update_media_archive, on_delete_media_archive, generate_unique_id_and_name
 from .common import get_user
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
@@ -36,6 +37,8 @@ from superdesk.etree import get_word_count
 from copy import copy
 import superdesk
 import logging
+from apps.common.models.utils import get_model
+from apps.item_lock.models.item import ItemModel
 
 logger = logging.getLogger(__name__)
 
@@ -83,9 +86,7 @@ class ArchiveVersionsResource(Resource):
 
 
 class ArchiveVersionsService(BaseService):
-    def on_create(self, docs):
-        for doc in docs:
-            doc['versioncreated'] = utcnow()
+    pass
 
 
 class ArchiveResource(Resource):
@@ -265,6 +266,48 @@ class ArchiveService(BaseService):
         del doc['last_version']
         doc.update(old)
         return res
+
+    def duplicate_content(self, original_doc):
+        if original_doc.get('type', '') == 'composite':
+            for groups in original_doc.get('groups'):
+                if groups.get('id') != 'root':
+                    associations = groups.get('refs', [])
+                    for assoc in associations:
+                        if assoc.get('residRef'):
+                            item, item_id, endpoint = \
+                                superdesk.get_resource_service('packages').get_associated_item(assoc)
+                            assoc['residRef'] = assoc['guid'] = self.duplicate_content(item)
+
+        return self.duplicate_item(original_doc)
+
+    def duplicate_item(self, original_doc):
+        new_doc = original_doc.copy()
+        del new_doc['_id']
+        del new_doc['guid']
+        generate_unique_id_and_name(new_doc)
+        item_model = get_model(ItemModel)
+        on_duplicate_item(new_doc)
+        item_model.create([new_doc])
+        self.duplicate_versions(original_doc['guid'], new_doc)
+        if new_doc.get('state') != 'submitted':
+            get_resource_service('tasks').patch(new_doc['_id'], {'state': 'submitted'})
+        return new_doc['guid']
+
+    def duplicate_versions(self, old_id, new_doc):
+        lookup = {'guid': old_id}
+        old_versions = get_resource_service('archive_versions').get(req=None, lookup=lookup)
+
+        new_versions = []
+        for old_version in old_versions:
+            old_version['_id_document'] = new_doc['_id']
+            del old_version['_id']
+            old_version['guid'] = new_doc['guid']
+            old_version['unique_name'] = new_doc['unique_name']
+            old_version['unique_id'] = new_doc['unique_id']
+            old_version['versioncreated'] = utcnow()
+            new_versions.append(old_version)
+        if new_versions:
+            get_resource_service('archive_versions').post(new_versions)
 
     def can_edit(self, item, user_id):
         """

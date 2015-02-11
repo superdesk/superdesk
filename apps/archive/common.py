@@ -30,6 +30,8 @@ from superdesk.errors import SuperdeskApiError, IdentifierGenerationError
 GUID_TAG = 'tag'
 GUID_NEWSML = 'newsml'
 ARCHIVE_MEDIA = 'archive_media'
+FAMILY_ID = 'family_id'
+INGEST_ID = 'ingest_id'
 
 
 def on_create_item(docs):
@@ -44,8 +46,21 @@ def on_create_item(docs):
         if 'unique_id' not in doc:
             generate_unique_id_and_name(doc)
 
+        if 'family_id' not in doc:
+            doc['family_id'] = doc['guid']
+
         set_default_state(doc, 'draft')
         doc.setdefault('_id', doc['guid'])
+
+
+def on_duplicate_item(doc):
+    """Make sure duplicated item has basic fields populated."""
+    doc['guid'] = generate_guid(type=GUID_NEWSML)
+
+    if 'unique_id' not in doc:
+        generate_unique_id_and_name(doc)
+
+    doc.setdefault('_id', doc['guid'])
 
 
 def update_dates_for(doc):
