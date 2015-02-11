@@ -71,16 +71,6 @@ class Parser(metaclass=ParserRegistry):
         """Test if parser can parse given xml."""
         raise NotImplementedError()
 
-    def trim_headline(self, headline):
-        """Returns first 64 characters of a given headline"""
-        if headline:
-            return headline[:64]
-
-    def trim_slugline(self, slugline):
-        """Returns first 24 characters of a given slugline"""
-        if slugline:
-            return slugline[:24]
-
     def qname(self, tag, ns=None):
         if ns is None:
             ns = self.root.tag.rsplit('}')[0].lstrip('{')
