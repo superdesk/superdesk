@@ -295,6 +295,13 @@
 		padding: 20px 20px @bottom-view-padding;
 		overflow: auto;
 	}
+
+	.related-item-view {
+		position: absolute;
+		top:0; left: 0; right: 0; bottom: 0;
+		padding: 20px 20px @bottom-view-padding;
+		overflow: auto;
+	}
 }
 
 .metadata-view {
@@ -320,6 +327,22 @@
 	}
 }
 
+.related-item-view {
+	.related-item {
+		margin-top : 15px;
+		border-bottom: 1px solid #ebebeb;
+		
+		.item {
+			margin: 5px 5px 0px 0px;
+		}
+
+		.container {
+			.text-semibold();
+			color: #216678;
+			margin-left: 10px;
+		}
+	}
+}
 
 
 /* ====================================== */
