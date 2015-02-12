@@ -28,6 +28,7 @@ define([
 
         $scope.toggleSpike = function toggleSpike() {
             $scope.spike = !$scope.spike;
+            $scope.stages.select(null);
             $location.search('spike', $scope.spike ? 1 : null);
             $location.search('_id', null);
         };
