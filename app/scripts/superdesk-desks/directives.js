@@ -144,6 +144,10 @@ define([
                 };
 
                 scope.edit = function(stage) {
+                    if (stage.is_visible == null) {
+                        stage.is_visible = true;
+                    }
+
                     scope.ContentExpiry = scope.setContentExpiryHoursMins(stage);
                     orig = stage;
                     scope.editStage = _.create(stage);
