@@ -21,7 +21,7 @@
 		color:#fff;
 		font-size: 10px;
 		.box-sizing(border-box);
-		line-height: 16px;
+		line-height: 17px;
 		vertical-align: top;
 		visibility: hidden;
 		&.label-1 {
@@ -288,7 +288,7 @@
 			}
 			.container {
 				.text-semibold();
-				color: #216678;
+				color: #444;
 				margin-left: 6px;
 			}
 		}
@@ -513,7 +513,7 @@
 		.type-icon {
 			text-align: center;
 			i {
-				.opacity(60);
+				.opacity(50);
 				width: 24px;
 				padding-left: 0;
 				margin-left: 0;
@@ -581,12 +581,14 @@
 			}
 			.keyword {
 				.text-semibold();
-				color: #216278;
+				color: @sd-keyword;
+				text-transform: uppercase;
+				font-size: 12px;
 				margin-right: 20px;
 			}
 			.container {
 				.text-semibold();
-				color: #216678;
+				color: #444;
 				margin-left: 20px;
 			}
 			.takekey {
