@@ -210,8 +210,14 @@
                     authoring.autosave(item);
                 };
 
-				scope.save = function(item) {
-					return authoring.save(item);
+				scope.save = function(item, form) {
+					return authoring.save(item).then(function(res) {
+						if (form) {
+							form.$setPristine();
+						}
+
+						return res;
+					});
 				};
 
 				scope.remove = function(item) {
