@@ -237,9 +237,8 @@
 				elem.bind('click', function(event) {
 					if (!open) {
 						event.preventDefault();
-	                    event.stopPropagation();
-
-	                    $('#multiedit-float').css({top: event.pageY, left: event.pageX - 270}).show();
+                    	event.stopPropagation();
+			        	$('#multiedit-float').css(getPosition(event.pageX, event.pageY)).show();
 					} else {
 						$('#multiedit-float').hide();
 					}
@@ -255,6 +254,22 @@
                 function closeOnClick() {
                 	open = false;
                 	$('#multiedit-float').hide();
+                }
+
+                function getPosition(crdL, crdT) {
+                	var docHeight = $document.height();
+					var docWidth = $document.width();
+                	var position = {
+						right: docWidth - crdL
+					};
+					if ((docHeight - crdT) < 400) {
+						position.bottom = docHeight - crdT;
+						position.top = 'auto';
+					} else {
+						position.top = crdT;
+						position.bottom = 'auto';
+					}
+					return position;
                 }
 			}
 		};
