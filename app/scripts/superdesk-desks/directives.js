@@ -144,6 +144,10 @@ define([
                 };
 
                 scope.edit = function(stage) {
+                    if (stage.is_visible === undefined) {
+                        stage.is_visible = true;
+                    }
+
                     scope.ContentExpiry = scope.setContentExpiryHoursMins(stage);
                     orig = stage;
                     scope.editStage = _.create(stage);
@@ -154,6 +158,7 @@ define([
                         }
                     }
                 };
+
 
                 scope.isActive = function(stage) {
                     return scope.editStage && scope.editStage._id === stage._id;
