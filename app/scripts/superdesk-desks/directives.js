@@ -159,7 +159,6 @@ define([
                     }
                 };
 
-
                 scope.isActive = function(stage) {
                     return scope.editStage && scope.editStage._id === stage._id;
                 };
