@@ -393,6 +393,13 @@ define([
                             scope.$digest();
                         }
                     });
+
+                    scope.clickAction =  function clickAction(item) {
+                        if (typeof scope.preview === 'function') {
+                            return scope.preview(item);
+                        }
+                        return false;
+                    };
                 }
             };
         }])
