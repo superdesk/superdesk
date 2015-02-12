@@ -144,7 +144,7 @@ define([
                 };
 
                 scope.edit = function(stage) {
-                    if (stage.is_visible === undefined) {
+                    if (stage.is_visible == null) {
                         stage.is_visible = true;
                     }
 
