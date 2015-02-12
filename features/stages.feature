@@ -47,6 +47,51 @@ Feature: Stages
         }
         """
 
+    @auth
+    Scenario: Stage name must be unique.
+        Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "test_desk"}]
+        """
+
+        When we get "/stages/#desks.incoming_stage#"
+        Then we get existing resource
+        """
+        {
+        "name": "New",
+        "task_status": "todo",
+        "desk": "#desks._id#",
+        "desk_order": 1
+        }
+        """
+        When we post to "/stages"
+        """
+        {
+        "name": "new",
+        "description": "Show content items created by the current logged user",
+        "task_status": "in_progress",
+        "desk": "#desks._id#"
+        }
+        """
+        Then we get response code 400
+        When we post to "/stages"
+        """
+        {
+        "name": "newer",
+        "description": "Show content items created by the current logged user",
+        "task_status": "in_progress",
+        "desk": "#desks._id#"
+        }
+        """
+        Then we get OK response
+        When we patch "/stages/#stages._id#"
+        """
+        {
+        "name": "new"
+        }
+        """
+        Then we get response code 400
 
     @auth
     Scenario: Add stage - no name
