@@ -18,7 +18,7 @@ from superdesk.notification import push_notification
 desks_schema = {
     'name': {
         'type': 'string',
-        'unique': True,
+        'iunique': True,
         'required': True,
     },
     'description': {

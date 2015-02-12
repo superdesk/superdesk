@@ -35,7 +35,8 @@ class StagesResource(Resource):
         'name': {
             'type': 'string',
             'required': True,
-            'minlength': 1
+            'minlength': 1,
+            'iunique_per_parent': 'desk'
         },
         'description': {
             'type': 'string'
