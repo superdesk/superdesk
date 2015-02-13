@@ -2,8 +2,6 @@
 var post = require('./helpers/fixtures').post;
 var openUrl = require('./helpers/utils').open;
 
-var ptor = protractor.getInstance();
-
 describe('USERS', function() {
     'use strict';
 
@@ -35,34 +33,28 @@ describe('USERS', function() {
         beforeEach(openUrl('/#/users'));
 
         it('can list users', function() {
-            element.all(by.repeater('user in users')).then(function(users) {
-                expect(users.length).toBe(2);
-            });
-
-            expect(element(by.repeater('user in users').row(0).column('username')).getText()).toBe('admin');
+            expect(element.all(by.repeater('user in users')).count()).toBe(3);
+            expect(element(by.repeater('user in users').row(0).column('username')).getText()).toBe('test_user');
         });
 
         it('can delete user', function() {
-            var user = element.all(by.repeater('user')),
-                activity = element.all(by.repeater('activity'));
+            var user = element.all(by.repeater('users')).first(),
+                activity = user.all(by.repeater('activities')).first();
 
-            expect(activity.count()).toBe(2);
-            user.get(1).click();
-
+            user.click();
             expect($('.preview-pane').evaluate('selected.user')).not.toBe(null);
 
-            var deleteButton = activity.get(1);
-            ptor.actions()
-                .mouseMove(deleteButton)
+            browser.actions()
+                .mouseMove(activity)
                 .perform();
-            deleteButton.click();
+            activity.click();
 
-            expect(element(by.binding('bodyText')).getText())
+            var modal = element(by.css('.modal-dialog'));
+            expect(modal.element(by.binding('bodyText')).getText())
                 .toBe('Please confirm you want to delete a user.');
-            element(by.buttonText('OK')).click();
+            modal.element(by.partialButtonText('OK')).click();
 
-            expect(element.all(by.repeater('user')).count()).toBe(1);
-            expect($('.preview-pane').evaluate('selected.user')).toBe(null);
+            expect(element.all(by.repeater('users')).count()).toBe(2);
         });
     });
 
@@ -70,7 +62,7 @@ describe('USERS', function() {
         beforeEach(openUrl('/#/users'));
 
         it('can open user detail', function() {
-            element(by.repeater('user in users').row(0).column('username')).click();
+            element.all(by.repeater('users')).first().click();
             expect(modelValue('user.display_name')).toBe('first name last name');
             $('#open-user-profile').click();
             expect($('.page-nav-title').getText()).toBe('Users Profile: first name last name');
@@ -95,39 +87,17 @@ describe('USERS', function() {
             expect(buttonCancel.isEnabled()).toBe(false);
 
             inputFirstName.sendKeys('X');
-            expect(inputFirstName.getAttribute('value')).toBe('fooX');
+            expect(inputFirstName.getAttribute('value')).toBe('first nameX');
 
             expect(buttonSave.isEnabled()).toBe(true);
             expect(buttonCancel.isEnabled()).toBe(true);
 
             inputFirstName.clear();
-            inputFirstName.sendKeys('foo');
-            expect(inputFirstName.getAttribute('value')).toBe('foo');
+            inputFirstName.sendKeys('first name');
+            expect(inputFirstName.getAttribute('value')).toBe('first name');
 
             expect(buttonSave.isEnabled()).toBe(false);
             expect(buttonCancel.isEnabled()).toBe(false);
-        });
-
-        it('can validate phone number', function() {
-            var input = element(by.model('user.phone')),
-                msg = $('[ng-show^="userForm.phone.$error"]');
-
-            expect(msg.isDisplayed()).toBe(false);
-
-            input.clear();
-            expect(input.getAttribute('value')).toBe('');
-
-            expect(msg.isDisplayed()).toBe(false);
-
-            input.sendKeys('1234');
-            expect(input.getAttribute('value')).toBe('1234');
-
-            expect(msg.isDisplayed()).toBe(true);
-
-            input.clear();
-            expect(input.getAttribute('value')).toBe('');
-
-            expect(msg.isDisplayed()).toBe(false);
         });
     });
 

@@ -64,6 +64,7 @@
     <script src="scripts/superdesk-authoring/workqueue/workqueue.js"></script>
     <script src="scripts/superdesk-authoring/packages/packages.js"></script>
     <script src="scripts/superdesk-authoring/editor/find-replace.js"></script>
+    <script src="scripts/superdesk-authoring/multiedit/multiedit.js"></script>
     <script src="scripts/superdesk-search/search.js"></script>
     <script src="scripts/superdesk-stream/stream.js"></script>
     <script src="scripts/superdesk-packaging/packaging.js"></script>
@@ -87,10 +88,11 @@
             'superdesk.planning',
             'superdesk.archive',
             'superdesk.ingest',
-            'superdesk.scratchpad',
+            //'superdesk.scratchpad',
             'superdesk.desks',
             'superdesk.groups',
             'superdesk.authoring',
+            'superdesk.authoring.multiedit',
             'superdesk.packaging',
             'superdesk.editor',
             'superdesk.notification',
@@ -109,7 +111,7 @@
             'superdesk-planning/module',
             'superdesk-archive/module',
             'superdesk-ingest/module',
-            'superdesk-scratchpad/module',
+            //'superdesk-scratchpad/module',
             'superdesk-desks/module'
         ], function(bootstrap) {
             bootstrap(config, modules);

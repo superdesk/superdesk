@@ -19,8 +19,9 @@ class TestCase(unittest.TestCase):
     def setUp(self):
         dirname = os.path.dirname(os.path.realpath(__file__))
         fixture = os.path.join(dirname, 'fixtures', 'afp.xml')
+        provider = {'name': 'Test'}
         with open(fixture) as f:
-            self.item = NewsMLOneParser().parse_message(etree.fromstring(f.read()))
+            self.item = NewsMLOneParser().parse_message(etree.fromstring(f.read()), provider)
 
     def test_headline(self):
         self.assertEquals(self.item.get('headline'), 'Sweden court accepts receivership for Saab carmaker')

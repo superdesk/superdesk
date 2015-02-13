@@ -31,6 +31,7 @@ tests.push('superdesk/features/features');
 tests.push('superdesk/services/asset');
 tests.push('superdesk/privileges/privileges');
 tests.push('superdesk/notification/notification');
+tests.push('superdesk/ui/ui');
 
 // apps
 tests.push('superdesk-authoring/authoring');
@@ -42,6 +43,7 @@ tests.push('superdesk-authoring/versioning/versions');
 tests.push('superdesk-authoring/packages/packages');
 tests.push('superdesk-packaging/packaging');
 tests.push('superdesk-authoring/editor/find-replace');
+tests.push('superdesk-authoring/multiedit/multiedit');
 tests.push('superdesk-workspace/content/content');
 tests.push('superdesk-desks/module');
 tests.push('superdesk-groups/groups');

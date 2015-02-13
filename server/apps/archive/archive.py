@@ -15,7 +15,8 @@ SOURCE = 'archive'
 import flask
 from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry
-from .common import on_create_item, on_create_media_archive, on_update_media_archive, on_delete_media_archive
+from .common import on_create_item, on_duplicate_item, on_create_media_archive, \
+    on_update_media_archive, on_delete_media_archive, generate_unique_id_and_name
 from .common import get_user
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
@@ -24,7 +25,7 @@ from superdesk.errors import SuperdeskApiError
 from superdesk.utc import utcnow
 from eve.versioning import resolve_document_version
 from superdesk.activity import add_activity, ACTIVITY_CREATE, ACTIVITY_UPDATE, ACTIVITY_DELETE
-from eve.utils import parse_request, config, ParsedRequest, date_to_str
+from eve.utils import parse_request, config
 from superdesk.services import BaseService
 from apps.users.services import is_admin
 from apps.content import metadata_schema
@@ -36,6 +37,8 @@ from superdesk.etree import get_word_count
 from copy import copy
 import superdesk
 import logging
+from apps.common.models.utils import get_model
+from apps.item_lock.models.item import ItemModel
 
 logger = logging.getLogger(__name__)
 
@@ -54,22 +57,23 @@ def private_content_filter():
 
     As private we treat items where user is creator, last version creator,
     or has the item assigned to him atm.
+
+    Also filter out content of stages not visible to current user (if any).
     """
     user = getattr(flask.g, 'user', None)
     if user:
-        stages = get_resource_service('users').get_invisible_stages_ids(user.get('_id'))
-
-        private_filter = {'or': [
+        private_filter = {'should': [
             {'exists': {'field': 'task.desk'}},
             {'term': {'task.user': str(user['_id'])}},
             {'term': {'version_creator': str(user['_id'])}},
             {'term': {'original_creator': str(user['_id'])}},
         ]}
 
+        stages = get_resource_service('users').get_invisible_stages_ids(user.get('_id'))
         if stages:
-            private_filter['and'] = [{'not': {'terms': {'task.stage': stages}}}]
+            private_filter['must_not'] = [{'terms': {'task.stage': stages}}]
 
-        return private_filter
+        return {'bool': private_filter}
 
 
 class ArchiveVersionsResource(Resource):
@@ -82,9 +86,7 @@ class ArchiveVersionsResource(Resource):
 
 
 class ArchiveVersionsService(BaseService):
-    def on_create(self, docs):
-        for doc in docs:
-            doc['versioncreated'] = utcnow()
+    pass
 
 
 class ArchiveResource(Resource):
@@ -265,6 +267,48 @@ class ArchiveService(BaseService):
         doc.update(old)
         return res
 
+    def duplicate_content(self, original_doc):
+        if original_doc.get('type', '') == 'composite':
+            for groups in original_doc.get('groups'):
+                if groups.get('id') != 'root':
+                    associations = groups.get('refs', [])
+                    for assoc in associations:
+                        if assoc.get('residRef'):
+                            item, item_id, endpoint = \
+                                superdesk.get_resource_service('packages').get_associated_item(assoc)
+                            assoc['residRef'] = assoc['guid'] = self.duplicate_content(item)
+
+        return self.duplicate_item(original_doc)
+
+    def duplicate_item(self, original_doc):
+        new_doc = original_doc.copy()
+        del new_doc['_id']
+        del new_doc['guid']
+        generate_unique_id_and_name(new_doc)
+        item_model = get_model(ItemModel)
+        on_duplicate_item(new_doc)
+        item_model.create([new_doc])
+        self.duplicate_versions(original_doc['guid'], new_doc)
+        if new_doc.get('state') != 'submitted':
+            get_resource_service('tasks').patch(new_doc['_id'], {'state': 'submitted'})
+        return new_doc['guid']
+
+    def duplicate_versions(self, old_id, new_doc):
+        lookup = {'guid': old_id}
+        old_versions = get_resource_service('archive_versions').get(req=None, lookup=lookup)
+
+        new_versions = []
+        for old_version in old_versions:
+            old_version['_id_document'] = new_doc['_id']
+            del old_version['_id']
+            old_version['guid'] = new_doc['guid']
+            old_version['unique_name'] = new_doc['unique_name']
+            old_version['unique_id'] = new_doc['unique_id']
+            old_version['versioncreated'] = utcnow()
+            new_versions.append(old_version)
+        if new_versions:
+            get_resource_service('archive_versions').post(new_versions)
+
     def can_edit(self, item, user_id):
         """
         Determines if the user can edit the item or not.
@@ -326,38 +370,6 @@ class ArchiveSaveService(BaseService):
             raise SuperdeskApiError.preconditionFailedError('Client and server etags don\'t match')
         return [docs[0]['_id']]
 
-
-class ArchiveRemoveExpiredContent(superdesk.Command):
-    def run(self):
-        self.remove_expired_content()
-
-    def remove_expired_content(self):
-        logger.info('Removing expired content')
-        now = date_to_str(utcnow())
-        items = self.get_expired_items(now)
-        while items.count() > 0:
-            for item in items:
-                logger.info('deleting {} expiry: {} now:{}'.format(item['_id'], item['expiry'], now))
-                superdesk.get_resource_service('archive').delete_action({'_id': str(item['_id'])})
-            items = self.get_expired_items(now)
-
-    def get_expired_items(self, now):
-        query_filter = self.get_query_for_expired_items(now)
-        req = ParsedRequest()
-        req.max_results = 100
-        req.args = {'filter': query_filter}
-        return superdesk.get_resource_service('archive').get(req, None)
-
-    def get_query_for_expired_items(self, now):
-        query = {'and':
-                 [
-                     {'range': {'expiry': {'lte': now}}}
-                 ]
-                 }
-        return superdesk.json.dumps(query)
-
-
-superdesk.command('archive:remove_expired', ArchiveRemoveExpiredContent())
 superdesk.workflow_state('in_progress')
 superdesk.workflow_action(
     name='save',

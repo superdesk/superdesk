@@ -9,6 +9,10 @@ Feature: User preferences
         {"_error": {"message": "The method is not allowed for the requested URL.", "code": 405}, "_status": "ERR"}
         """
 
+    @auth
+    Scenario: Fetch old preferences using new session
+      When we get "/preferences/54d876dc102454a053a6d786"
+      Then we get error 404
 
     @auth
     Scenario: Create new preference

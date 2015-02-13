@@ -1,0 +1,29 @@
+<div class="timepicker-popup" ng-show="open" ng-keydown="keydown({e: $event})" tabindex="0">
+	<div class="timepicker-additional">
+		<table>
+			<tbody>
+				<tr>
+					<td><button class="btn btn-mini" ng-click="submit(30)" tranlsate>in 30 min</button></td>
+					<td><button class="btn btn-mini" ng-click="submit(60)" tranlsate>in 1 h</button></td>
+					<td><button class="btn btn-mini" ng-click="submit(120)" tranlsate>in 2 h</button></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="timepicker-core">
+		<div class="select-area">
+			<div class="header" translate>Hours</div>
+			<ul>
+				<li ng-repeat="h in hours" ng-click="$parent.hour = h" ng-class="{active: hour === h}">{{h | leadingZero}}</li>
+			</ul>
+		</div>
+		<div class="select-area">
+			<div class="header" translate>Minutes</div>
+			<ul>
+				<li ng-repeat="m in minutes" ng-click="$parent.minute = m" ng-class="{active: minute === m}">{{m | leadingZero}}</li>
+			</ul>
+		</div>
+		<button class="btn btn-info btn-small pull-right" ng-click="submit()" translate>Confirm</button>
+		<button class="btn btn-small pull-right" ng-click="cancel()" translate>Cancel</button>
+	</div>
+</div>

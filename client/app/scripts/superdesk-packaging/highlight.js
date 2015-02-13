@@ -15,8 +15,8 @@
     function HighlightsService(api, $q, packagesService) {
         this.createEmptyHighlight = function createEmptyHighlight(highlight) {
             var pkg_defaults = {
-                headline: highlight.name,
-                highlight: highlight._id
+                headline: highlight.name || '',
+                highlight: highlight._id || ''
             };
 
             return packagesService.createEmptyPackage(pkg_defaults);
@@ -37,10 +37,14 @@
             label: gettext('Create highlight'),
             controller: ['data', 'highlightsService', 'superdesk',
                 function(data, highlightsService, superdesk) {
-                    highlightsService.createEmptyHighlight(data).then(
-                        function(new_package) {
+                    if (data) {
+                        highlightsService.createEmptyHighlight(data).then(
+                            function(new_package) {
                             superdesk.intent('author', 'package', new_package);
-                    });
+                        });
+                    } else {
+                        superdesk.intent('create', 'package');
+                    }
             }],
             filters: [
                 {action: 'create', type: 'highlight'}

@@ -49,10 +49,14 @@ function ArticleDashboardCtrl($scope, ContentCtrl) {
     $scope.content = new ContentCtrl();
 }
 
-WorkqueueCtrl.$inject = ['$scope', '$route', 'workqueue', 'superdesk', 'lock'];
-function WorkqueueCtrl($scope, $route, workqueue, superdesk, lock) {
+WorkqueueCtrl.$inject = ['$scope', '$route', 'workqueue', 'multiEdit', 'superdesk', 'lock'];
+function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
 
     $scope.workqueue = workqueue;
+    $scope.multiEdit = multiEdit;
+
+    $scope.isMultiedit = $route.current._id === 'multiedit';
+
     updateWorkqueue();
 
     var activeRoutes = {
@@ -86,6 +90,14 @@ function WorkqueueCtrl($scope, $route, workqueue, superdesk, lock) {
     $scope.$on('media_archive', function(e, data) {
         workqueue.updateItem(data.item);
     });
+
+    $scope.openMulti = function() {
+        multiEdit.open();
+    };
+
+    $scope.closeMulti = function() {
+        multiEdit.close();
+    };
 }
 
 function WorkqueueListDirective() {

@@ -3,11 +3,13 @@
 
 <div id="main-container" ng-class="flags" ng-view></div>
 
-<div sd-scratchpad></div>
+<!--<div sd-scratchpad></div>-->
 <div sd-activity-modal></div>
 <div sd-login-modal></div>
 <div sd-notify></div>
 <div sd-activity-chooser></div>
+
+<div sd-item-globalsearch data-repo="repo" data-context="context" class="pull-left"></div>
 
 <div class="hard-error" ng-if="serverStatus">
     <div class="alert alert-error" translate>Superdesk is experiencing network connection issues:/</div>

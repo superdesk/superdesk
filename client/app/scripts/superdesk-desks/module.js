@@ -1,17 +1,90 @@
 define([
-    'angular',
     'require',
-    'lodash',
-    './resources',
-    './controllers/main',
-    './controllers/settings',
     './directives'
-], function(angular, require, _) {
+], function(require) {
     'use strict';
+
+    DeskListController.$inject = ['$scope', 'api'];
+    function DeskListController($scope, api) {
+        api.desks.query()
+            .then(function(desks) {
+                $scope.desks = desks;
+            });
+    }
+
+    DeskSettingsController.$inject = ['$scope', 'gettext', 'notify', 'desks', 'WizardHandler'];
+    function DeskSettingsController ($scope, gettext, notify, desks, WizardHandler) {
+        $scope.modalActive = false;
+        $scope.step = {
+            current: null
+        };
+        $scope.desk = {
+            edit: null
+        };
+        $scope.desks = {};
+
+        desks.initialize()
+        .then(function() {
+            $scope.desks = desks.desks;
+        });
+
+        $scope.openDesk = function(step, desk) {
+            $scope.desk.edit = desk;
+            $scope.modalActive = true;
+            $scope.step.current = step;
+        };
+
+        $scope.cancel = function() {
+            $scope.modalActive = false;
+            $scope.step.current = null;
+            $scope.desk.edit = null;
+        };
+
+        $scope.remove = function(desk) {
+            desks.remove(desk).then(function() {
+                _.remove($scope.desks._items, desk);
+                notify.success(gettext('Desk deleted.'), 3000);
+            });
+        };
+
+        function getExpiryHours(inputMin) {
+            return Math.floor(inputMin / 60);
+        }
+        function getExpiryMinutes(inputMin) {
+            return Math.floor(inputMin % 60);
+        }
+        $scope.getTotalExpiryMinutes = function(contentExpiry) {
+            return (contentExpiry.Hours * 60) + contentExpiry.Minutes;
+        };
+
+        $scope.setContentExpiryHoursMins = function(container) {
+            var objContentExpiry = {
+                Hours: 0,
+                Minutes: 0
+            };
+            if (container.content_expiry != null) {
+                objContentExpiry.Hours = getExpiryHours(container.content_expiry);
+                objContentExpiry.Minutes = getExpiryMinutes(container.content_expiry);
+            }
+            return objContentExpiry;
+        };
+
+        $scope.setSpikeExpiryHoursMins = function(container) {
+            var objSpikeExpiry = {
+                Hours: 0,
+                Minutes: 0
+            };
+
+            if (container.spike_expiry != null) {
+                objSpikeExpiry.Hours = getExpiryHours(container.spike_expiry);
+                objSpikeExpiry.Minutes = getExpiryMinutes(container.spike_expiry);
+            }
+            return objSpikeExpiry;
+        };
+    }
 
     var app = angular.module('superdesk.desks', [
         'superdesk.users',
-        'superdesk.desks.resources',
         'superdesk.desks.directives'
     ]);
 
@@ -21,14 +94,14 @@ define([
                 .activity('/desks/', {
                     label: gettext('Desks'),
                     templateUrl: require.toUrl('./views/main.html'),
-                    controller: require('./controllers/main'),
+                    controller: DeskListController,
                     category: superdesk.MENU_MAIN,
                     privileges: {desks: 1}
                 })
 
                 .activity('/settings/desks', {
                     label: gettext('Desks'),
-                    controller: require('./controllers/settings'),
+                    controller: DeskSettingsController,
                     templateUrl: require.toUrl('./views/settings.html'),
                     category: superdesk.MENU_SETTINGS,
                     priority: -800,
@@ -43,8 +116,10 @@ define([
                 }
             });
         }])
-        .factory('desks', ['$q', 'api', 'preferencesService', 'userList', 'notify',
-            function($q, api, preferencesService, userList, notify) {
+        .factory('desks', ['$q', 'api', 'preferencesService', 'userList', 'notify', 'session',
+            function($q, api, preferencesService, userList, notify, session) {
+
+                var userDesks, userDesksPromise;
 
             var desksService = {
                 desks: null,
@@ -110,8 +185,30 @@ define([
                     return $q.when();
                 },
                 fetchUserDesks: function(user) {
-                    return api.users.getByUrl(user._links.self.href + '/desks');
+                    return api.get(user._links.self.href + '/desks')
+                        .then(function(response) {
+                            return response._items;
+                        });
                 },
+
+                fetchCurrentUserDesks: function() {
+                    if (userDesks) {
+                        return $q.when(userDesks);
+                    }
+
+                    if (!userDesksPromise) {
+                        userDesksPromise = this.fetchCurrentDeskId() // make sure there will be current desk
+                            .then(angular.bind(session, session.getIdentity))
+                            .then(angular.bind(this, this.fetchUserDesks))
+                            .then(function(desks) {
+                                userDesks = desks;
+                                return desks;
+                            });
+                    }
+
+                    return userDesksPromise;
+                },
+
                 fetchCurrentDeskId: function() {
                     var self = this;
                     return preferencesService.get('desk:items').then(function(result) {
@@ -173,8 +270,24 @@ define([
                     }
 
                     return this.loading;
+                },
+                save: function(dest, diff) {
+                    return api.save('desks', dest, diff)
+                        .then(reset);
+                },
+                remove: function(desk) {
+                    return api.remove(desk)
+                        .then(reset);
                 }
             };
+
+            function reset(res) {
+                userDesks = null;
+                userDesksPromise = null;
+                desksService.loading = null;
+                return res;
+            }
+
             return desksService;
         }]);
 

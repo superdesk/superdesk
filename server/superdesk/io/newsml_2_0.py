@@ -10,7 +10,6 @@
 
 
 import datetime
-from superdesk.etree import etree
 from .iptc import subject_codes
 from superdesk.io import Parser
 import logging
@@ -29,7 +28,7 @@ class NewsMLTwoParser(Parser):
     def can_parse(self, xml):
         return xml.tag.endswith('newsMessage')
 
-    def parse_message(self, tree):
+    def parse_message(self, tree, provider):
         """Parse NewsMessage."""
         items = []
         try:
@@ -40,7 +39,7 @@ class NewsMLTwoParser(Parser):
                     items.append(item)
             return items
         except Exception as ex:
-            raise ParserError.newsmlTwoParserError(ex)
+            raise ParserError.newsmlTwoParserError(ex, provider)
 
     def parse_item(self, tree):
         """Parse given xml"""
@@ -91,8 +90,8 @@ class NewsMLTwoParser(Parser):
         parse_meta_item_text('by', 'byline')
         parse_meta_item_text('name', 'dateline', meta.find(self.qname('located')))
 
-        item['slugline'] = super().trim_slugline(item.get('slugline', ''))
-        item['headline'] = super().trim_headline(item.get('headline', ''))
+        item['slugline'] = item.get('slugline', '')
+        item['headline'] = item.get('headline', '')
 
         try:
             item['description'] = meta.find(self.qname('description')).text
@@ -168,7 +167,7 @@ class NewsMLTwoParser(Parser):
                 ref['itemClass'] = tree.find(self.qname('itemClass')).attrib['qcode']
 
                 for headline in tree.findall(self.qname('headline')):
-                    ref['headline'] = super().trim_headline(headline.text)
+                    ref['headline'] = headline.text
 
                 refs.append(ref)
         return refs
@@ -209,14 +208,6 @@ class NewsMLTwoParser(Parser):
         content['mimetype'] = tree.attrib['contenttype']
         content['href'] = tree.attrib.get('href', None)
         return content
-
-    def qname(self, tag, ns=None):
-        if ns is None:
-            ns = self.root.tag.rsplit('}')[0].lstrip('{')
-        elif ns is not None and ns == 'xml':
-            ns = 'http://www.w3.org/XML/1998/namespace'
-
-        return str(etree.QName(ns, tag))
 
     def datetime(self, string):
         return datetime.datetime.strptime(string, '%Y-%m-%dT%H:%M:%S.000Z')

@@ -36,7 +36,7 @@ class RemoveExpiredContent(superdesk.Command):
                     remove_expired_data(provider)
                 except (Exception) as err:
                     logger.exception(err)
-                    raise ProviderError.expiredContentError(err)
+                    raise ProviderError.expiredContentError(err, provider)
                 finally:
                     push_notification('ingest:cleaned')
 
@@ -55,6 +55,11 @@ def remove_expired_data(provider):
         for item in items:
             print('Removing item %s' % item['_id'])
             superdesk.get_resource_service('ingest').delete_action({'_id': str(item['_id'])})
+            if not item.get('archived'):
+                for file_id in [rend.get('media') for rend in item.get('renditions', {}).values()
+                                if rend.get('media')]:
+                    superdesk.app.media.delete(file_id)
+
     stats.incr('ingest.expired_items', items.count())
     print('Removed expired content for provider: %s' % provider['_id'])
 

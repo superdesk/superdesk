@@ -13,6 +13,7 @@ import superdesk
 from superdesk.resource import Resource
 
 LINKED_IN_PACKAGES = 'linked_in_packages'
+PACKAGE = 'package'
 
 not_analyzed = {'type': 'string', 'index': 'not_analyzed'}
 
@@ -39,6 +40,14 @@ metadata_schema = {
     },
     'version': {
         'type': 'integer'
+    },
+    'ingest_id': {
+        'type': 'string',
+        'mapping': not_analyzed
+    },
+    'family_id': {
+        'type': 'string',
+        'mapping': not_analyzed
     },
 
     # Audit Information
@@ -240,7 +249,7 @@ metadata_schema = {
         'schema': {
             'type': 'dict',
             'schema': {
-                'package': Resource.rel('packages')
+                PACKAGE: Resource.rel('packages')
             }
         }
     },

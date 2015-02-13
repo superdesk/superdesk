@@ -348,7 +348,7 @@
 
 // Datepicker - wrapper for angular ui datepicker
 // ---------------------------------------------
-.datepicker-input {
+.datepicker-input, .timepicker-input {
 	position: relative;
 	width: auto;
 	min-width: 130px;
@@ -477,6 +477,66 @@
 						}
 						
 						
+					}
+				}
+			}
+		}
+	}
+}
+
+.timepicker-popup {
+	position: absolute;
+	top: 0; left: 0;
+	z-index: 2000;
+	background: #fff;
+	padding: 10px;
+	.box-shadow(0 0 5px 0 rgba(0,0,0,0.45));
+	.border-radius(3px);
+	width: 200px;
+	height: 310px;
+	.border-box();
+	.timepicker-additional {
+		margin-bottom: 5px;
+		table {
+			width: 100%;
+		}
+		.btn {
+			width: 100%;
+		}
+	}
+	.timepicker-core {
+		.select-area {
+			margin-top: 15px;
+			border-top: 1px solid #ddd;
+			.header {
+				margin-top: -10px;
+				float: left;
+				background: @white; 
+				text-transform: uppercase;
+				color: #adadad;
+				font-size: 11px;
+				padding-right: 10px;
+			}
+			ul {
+				padding-top: 15px;
+				.clearfix();
+				> li {
+					float: left;
+					.border-box();
+					width: 28px;
+					height: 28px;
+					line-height: 28px;
+					text-align: center;
+					margin: 0 2px 2px 0;
+					.user-select(none);
+					.border-radius(2px);
+					&:hover {
+						background: @sd-hover;
+						cursor: pointer;
+					}
+					&.active {
+						background: @sd-blue;
+						color: @white;
 					}
 				}
 			}

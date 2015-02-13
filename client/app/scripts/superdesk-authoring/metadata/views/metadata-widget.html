@@ -7,13 +7,13 @@
 		<li>
 			<label translate>Take key</label>
 			<div class="data">
-				<input type="text" ng-model="item.anpa_take_key" ng-disabled="!_editable">
+				<input type="text" ng-model="item.anpa_take_key" ng-change="autosave(item)" ng-disabled="!_editable">
 			</div>
 		</li>
 		<li>
 			<label translate>Unique name</label>
 			<div class="data">
-				<input type="text" ng-model="item.unique_name" ng-disabled="!_editable || !unique_name_editable">
+				<input type="text" ng-model="item.unique_name" ng-change="autosave(item)" ng-disabled="!_editable || !unique_name_editable">
 			</div>
 		</li>
 		<li>
@@ -29,7 +29,7 @@
 		<li>
 			<label translate>By</label>
 			<div class="data">
-				<input type="text" ng-model="item.byline" ng-disabled="!_editable">
+				<input type="text" ng-model="item.byline" ng-change="autosave(item)" ng-disabled="!_editable">
 			</div>
 		</li>
 		<li ng-if="item.original_source">
@@ -56,6 +56,10 @@
 			<label translate>Last updated</label>
 			<div class="data" sd-reldate-complex ng-model="item.versioncreated"></div>
 		</li>
+		<li ng-if="item.expiry">
+			<label translate>Expiry</label>
+			<div class="data" sd-reldate-complex ng-model="item.expiry"></div>
+		</li>
 		<li ng-if="item.provider">
 			<label translate>Provider</label>
 			<div class="data" sd-meta-ingest data-provider="item.ingest_provider">{{ item.provider }}</div>
@@ -63,61 +67,61 @@
 		<li>
 			<label translate>Urgency</label>
 			<div class="data visible small" ng-if="metadata.newsvalue">
-				<div sd-meta-dropdown data-list="metadata.newsvalue" data-item="item.urgency" data-disabled="!_editable" data-field="value"></div>
+				<div sd-meta-dropdown data-list="metadata.newsvalue" data-item="item.urgency" data-disabled="!_editable" data-field="value" data-change="autosave(item)"></div>
 			</div>
 		</li>
 		<li>
 			<label translate>Priority</label>
 			<div class="data visible small" ng-if="metadata.priority">
-				<div sd-meta-dropdown data-list="metadata.priority" data-item="item.priority" data-disabled="!_editable" data-field="qcode"></div>
+				<div sd-meta-dropdown data-list="metadata.priority" data-item="item.priority" data-disabled="!_editable" data-field="qcode" data-change="autosave(item)"></div>
 			</div>
 		</li>
 		<li class="terms-box">
 			<label translate>Subject</label>
-			<div sd-meta-terms data-item="item" data-field="subject" data-unique="qcode" data-list="metadata.subjectcodes" data-disabled="!_editable"></div>
+			<div sd-meta-terms data-item="item" data-field="subject" data-unique="qcode" data-list="metadata.subjectcodes" data-disabled="!_editable" data-change="autosave(item)"></div>
 		</li>
 		<li>
 			<label translate>ANPA category</label>
 			<div class="data visible" ng-if="metadata.categories">
-				<div sd-meta-dropdown data-list="metadata.categories" data-item="item['anpa-category']" data-disabled="!_editable"></div>
+				<div sd-meta-dropdown data-list="metadata.categories" data-item="item['anpa-category']" data-disabled="!_editable" data-change="autosave(item)"></div>
 			</div>
 		</li>
 		<li class="terms-box">
 			<label translate>Genre</label>
-			<div sd-meta-terms data-item="item" data-field="genre" data-unique="value" data-list="metadata.genre" data-disabled="!_editable" data-postprocessing="processGenre()"></div>
+			<div sd-meta-terms data-item="item" data-field="genre" data-unique="value" data-list="metadata.genre" data-disabled="!_editable" data-change="autosave(item)" data-postprocessing="processGenre()"></div>
 		</li>
 		<li>
 			<label translate>Usageterms</label>
 			<div class="data">
-				<input type="text" ng-model="item.usageterms" ng-disabled="!_editable">
+				<input type="text" ng-model="item.usageterms" ng-disabled="!_editable" ng-change="autosave(item)">
 			</div>
 		</li>
 		<li class="ednote">
 			<label translate>Editorial note</label>
 			<div class="data">
-				<textarea sd-auto-height ng-model="item.ednote" ng-disabled="!_editable"></textarea>
+				<textarea sd-auto-height ng-model="item.ednote" ng-disabled="!_editable" ng-change="autosave(item)"></textarea>
 			</div>
 		</li>
 		<li class="terms-box">
 			<label translate>Place</label>
-			<div sd-meta-terms data-item="item" data-field="place" data-unique="value" data-list="metadata.locators" data-disabled="!_editable"></div>
+			<div sd-meta-terms data-item="item" data-field="place" data-unique="value" data-change="autosave(item)" data-list="metadata.locators" data-disabled="!_editable"></div>
 		</li>
 		<li>
 			<label translate>Located</label>
 			<div class="data">
-				<input type="text" ng-model="item.located" ng-disabled="!_editable">
+				<input type="text" ng-model="item.located" ng-disabled="!_editable" data-change="autosave(item)">
 			</div>
 		</li>
 		<li>
 			<label translate>Dateline</label>
 			<div class="data">
-				<input type="text" ng-model="item.dateline" ng-disabled="!_editable">
+				<input type="text" ng-model="item.dateline" ng-disabled="!_editable" data-change="autosave(item)">
 			</div>
 		</li>
 		<li>
 			<label translate>Language</label>
 			<div class="data">
-				<input type="text" ng-model="item.language" ng-disabled="!_editable">
+				<input type="text" ng-model="item.language" ng-disabled="!_editable" data-change="autosave(item)">
 			</div>
 		</li>
 		<li ng-if="item.copyrightholder">

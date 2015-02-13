@@ -45,7 +45,11 @@ Feature: Content Spiking
             """
             {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"}
             """
-        When we spike "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"
+        Then we get "_id"
+        When we spike fetched item
+        """
+        {"_id": "#_id#"}
+        """
         Then we get OK response
 
     @auth

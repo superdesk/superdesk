@@ -1,7 +1,7 @@
 <div class="subnav">
 	<div class="button-stack right-stack">
 
-        <div class="navbtn dropdown" dropdown data-desk="selectedDesk" ng-if="type === 'archive' && selectedDesk && hasHighlights()">
+        <div class="navbtn dropdown" dropdown data-desk="selected.desk" ng-if="type === 'archive' && selected.desk && hasHighlights()">
             <button class="dropdown-toggle" dropdown-toggle translate>Create Highlight</button>
             <ul class="dropdown-menu" sd-highlight-create></ul>
         </div>
@@ -15,11 +15,11 @@
     </div>
 
     <div class="button-stack left-stack">
-        <div class="navbtn dropdown" dropdown sd-user-desks data-desk="selectedDesk"></div>
+        <div class="navbtn dropdown" sd-user-desks data-desk="selected.desk" ng-if="type !== 'ingest'"></div>
 
         <div class="navbtn toggle-list" sd-desk-stages ng-if="stages.stages.length"></div>
 
-        <div class="navbtn toggle-list" ng-if="type === 'archive' && privileges.unspike">
+        <div class="navbtn toggle-list" ng-if="type === 'archive'">
             <ul class="stages-list">
                 <li class="stage-label" ng-class="{active: spike}"><a href="" ng-click="toggleSpike()" translate>Spiked</a></li>
             </ul>
@@ -30,7 +30,7 @@
 <div sd-media-view data-item="selected.view" data-items="items._items" ng-if="selected.view" data-close="closeLightbox()"></div>
 
 <section sd-search-container class="archive main-section" ng-class="{'sidebar-open': flags.facets}">
-    <div sd-search-facets class="archive-sidebar" data-items="items" data-desk="selectedDesk"></div>
+    <div sd-search-facets class="archive-sidebar" data-items="items" data-desk="selected.desk"></div>
     <div sd-search-results class="archive-content"></div>
     <div sd-workqueue></div>
 </section>

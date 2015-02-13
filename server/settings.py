@@ -77,10 +77,11 @@ REDIS_URL = env('REDIS_URL', 'redis://localhost:6379')
 if env('REDIS_PORT'):
     REDIS_URL = env('REDIS_PORT').replace('tcp:', 'redis:')
 BROKER_URL = env('CELERY_BROKER_URL', REDIS_URL)
-CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND', REDIS_URL)
 CELERY_ALWAYS_EAGER = (env('CELERY_ALWAYS_EAGER', False) == 'True')
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['pickle', 'json']  # it's using pickle when in eager mode
+CELERY_IGNORE_RESULT = True
+CELERY_DISABLE_RATE_LIMITS = True
 
 CELERYBEAT_SCHEDULE_FILENAME = env('CELERYBEAT_SCHEDULE_FILENAME', './celerybeatschedule.db')
 CELERYBEAT_SCHEDULE = {

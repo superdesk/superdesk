@@ -93,12 +93,12 @@
 		clear: both;
 		font-weight: normal;
 		line-height: @baseLineHeight;
-		color: @dropdownLinkColor;
 		white-space: nowrap;
 	}
 
 	li {
 		> a, > button, > span {
+			color: @dropdownLinkColor;
 			background: none;
 			padding: 5px 7px;
 			> i[class^="icon-"], i[class*=" icon-"] {
@@ -271,6 +271,17 @@
 					background: @sd-blue;
 					color: #fff;
 				}
+			}
+		}
+		.fieldset {
+			button {
+				display: inline-block;
+				text-align: center;
+				width: auto;
+				min-width: 50px;
+				clear: none;
+				margin-right: 10px;
+				float: right;
 			}
 		}
 	}

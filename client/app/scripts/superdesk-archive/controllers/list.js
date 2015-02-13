@@ -28,6 +28,7 @@ define([
 
         $scope.toggleSpike = function toggleSpike() {
             $scope.spike = !$scope.spike;
+            $scope.stages.select(null);
             $location.search('spike', $scope.spike ? 1 : null);
             $location.search('_id', null);
         };
@@ -60,7 +61,7 @@ define([
         var refreshItems = _.debounce(_refresh, 100);
 
         function _refresh() {
-            if ($scope.selectedDesk) {
+            if ($scope.selected.desk) {
                 resource = api('archive');
             } else {
                 resource = api('user_content', session.identity);
@@ -77,14 +78,16 @@ define([
         });
 
         $scope.$on('media_archive', refreshItems);
+        $scope.$on('item:fetch', refreshItems);
         $scope.$on('item:spike', refreshItems);
         $scope.$on('item:unspike', refreshItems);
-        $scope.$watchGroup(['stages.selected', 'selectedDesk'], refreshItems);
+        $scope.$watchGroup(['stages.selected', 'selected.desk'], refreshItems);
 
-        $scope.$watch('selectedDesk', initpage);
+        $scope.$watch('selected.desk', initpage);
         function initpage() {
             $location.search('page', null);
         }
+
         // reload on route change if there is still the same _id
         var oldQuery = _.omit($location.search(), '_id');
         $scope.$on('$routeUpdate', function(e, route) {

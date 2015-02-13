@@ -35,7 +35,8 @@ class StagesResource(Resource):
         'name': {
             'type': 'string',
             'required': True,
-            'minlength': 1
+            'minlength': 1,
+            'iunique_per_parent': 'desk'
         },
         'description': {
             'type': 'string'
@@ -76,6 +77,8 @@ class StagesResource(Resource):
 
 
 class StagesService(BaseService):
+    notification_key = 'stage'
+
     def on_create(self, docs):
         for doc in docs:
             if not doc.get('desk'):
@@ -92,6 +95,12 @@ class StagesService(BaseService):
             else:
                 doc['desk_order'] = prev_stage[0].get('desk_order', 1) + 1
 
+    def on_created(self, docs):
+        for doc in docs:
+            if 'desk' in doc:
+                push_notification(self.notification_key, created=1, stage_id=str(doc.get('_id')),
+                                  desk_id=str(doc.get('desk')), is_visible=doc.get('is_visible', True))
+
     def on_delete(self, doc):
         if doc['default_incoming'] is True:
             desk_id = doc.get('desk', None)
@@ -106,6 +115,9 @@ class StagesService(BaseService):
                 # cannot delete
                 raise SuperdeskApiError.forbiddenError(message='Only empty stages can be deleted.')
 
+    def on_deleted(self, doc):
+        push_notification(self.notification_key, deleted=1, stage_id=str(doc.get('_id')), desk_id=str(doc.get('desk')))
+
     def on_update(self, updates, original):
         if updates.get('content_expiry') == 0:
             updates['content_expiry'] = app.settings['CONTENT_EXPIRY_MINUTES']
@@ -118,9 +130,11 @@ class StagesService(BaseService):
                 item_model.update({'_id': doc['_id']}, {'expiry': expiry})
 
     def on_updated(self, updates, original):
-        if (updates.get('content_expiry', None) != original.get('content_expiry', None)) or \
-                (updates.get('is_visible', True) != original.get('is_visible', True)):
-            push_notification('stage:update', stage_id=str(original['_id']), desk_id=str(original['desk']))
+        if ('content_expiry' in updates and updates['content_expiry'] != original.get('content_expiry', None)) or \
+                ('is_visible' in updates and updates['is_visible'] != original.get('is_visible', True)):
+            push_notification(self.notification_key, updated=1, stage_id=str(original['_id']),
+                              desk_id=str(original['desk']),
+                              is_visible=updates.get('is_visible', original.get('is_visible', True)))
 
     def get_stage_documents(self, stage_id):
         query_filter = superdesk.json.dumps({'term': {'task.stage': stage_id}})

@@ -13,9 +13,10 @@ import logging
 import superdesk
 from eve.utils import config
 from superdesk.errors import SuperdeskApiError
+from werkzeug.wsgi import wrap_file
 from .resource import Resource
 from .services import BaseService
-from flask import url_for, Response, current_app as app
+from flask import url_for, request, current_app as app
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from superdesk.media.media_operations import download_file_from_url, process_file_from_stream, \
     crop_image, decode_metadata, download_file_from_encoded_str
@@ -24,13 +25,26 @@ from superdesk.media.media_operations import download_file_from_url, process_fil
 bp = superdesk.Blueprint('upload_raw', __name__)
 superdesk.blueprint(bp)
 logger = logging.getLogger(__name__)
+cache_for = 3600 * 24 * 30  # 30d cache
 
 
 @bp.route('/upload/<path:media_id>/raw', methods=['GET'])
 def get_upload_as_data_uri(media_id):
     media_file = app.media.get(media_id)
     if media_file:
-        return Response(media_file.read(), mimetype=media_file.content_type)
+        data = wrap_file(request.environ, media_file, buffer_size=1024 * 256)
+        response = app.response_class(
+            data,
+            mimetype=media_file.content_type,
+            direct_passthrough=True)
+        response.content_length = media_file.length
+        response.last_modified = media_file.upload_date
+        response.set_etag(media_file.md5)
+        response.cache_control.max_age = cache_for
+        response.cache_control.s_max_age = cache_for
+        response.cache_control.public = True
+        response.make_conditional(request)
+        return response
     raise SuperdeskApiError.notFoundError('File not found on media storage.')
 
 

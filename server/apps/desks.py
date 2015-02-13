@@ -13,11 +13,12 @@ from bson.objectid import ObjectId
 from superdesk.services import BaseService
 import superdesk
 from apps.tasks import default_status
+from superdesk.notification import push_notification
 
 desks_schema = {
     'name': {
         'type': 'string',
-        'unique': True,
+        'iunique': True,
         'required': True,
     },
     'description': {
@@ -58,6 +59,7 @@ class DesksResource(Resource):
 
 
 class DesksService(BaseService):
+    notification_key = 'desk'
 
     def create(self, docs, **kwargs):
         for doc in docs:
@@ -70,6 +72,16 @@ class DesksService(BaseService):
             else:
                 super().create([doc], **kwargs)
         return [doc['_id'] for doc in docs]
+
+    def on_created(self, docs):
+        for doc in docs:
+            push_notification(self.notification_key, created=1, desk_id=str(doc.get('_id')))
+
+    def on_deleted(self, doc):
+        push_notification(self.notification_key, deleted=1, desk_id=str(doc.get('_id')))
+
+    def on_updated(self, updates, original):
+        push_notification(self.notification_key, updated=1, desk_id=str(original.get('_id')))
 
 
 class UserDesksResource(Resource):

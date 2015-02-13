@@ -1,17 +1,10 @@
-<button ng-show="desks" class="dropdown-toggle" dropdown-toggle>
-	<span ng-show="selectedDesk">{{ selectedDesk.name }}</span>
-	<span ng-show="!selectedDesk && tasks" translate>My tasks</span>
-    <span ng-show="!selectedDesk && !tasks" translate>My content</span>
-	<b class="caret"></b>
+<button ng-if="desk" class="dropdown-toggle" data-toggle="dropdown">
+	<span ng-show="selectedDesk">{{ desk.name }}</span>
+    <span ng-hide="selectedDesk" translate>Personal</span>
+	<span class="caret"></span>
 </button>
-<ul class="dropdown-menu">
-    <li ng-show="selectedDesk">
-    	<a href="" ng-click="select()" ng-switch="deskLabel">
-    		<span ng-switch-when="tasks" translate>My tasks</span>
-    		<span ng-switch-default translate>My content</span>
-    	</a>
-    </li>
-    <li ng-repeat="desk in desks track by desk._id">
-        <a href="" ng-click="select(desk)">{{ desk.name }}</a>
-    </li>
+
+<ul class="dropdown-menu" role="menu">
+    <li ng-show="selectedDesk"><button ng-click="select()" translate>Personal</button></li>
+    <li ng-hide="selectedDesk"><button ng-click="select(desk)">{{ desk.name }}</button></li>
 </ul>

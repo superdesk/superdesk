@@ -12,7 +12,7 @@
 """Superdesk IO"""
 import logging
 import superdesk
-
+from superdesk.etree import etree
 from superdesk.celery_app import celery
 
 
@@ -28,8 +28,6 @@ from .commands.add_provider import AddProvider  # NOQA
 
 def init_app(app):
     from .ingest_provider_model import IngestProviderResource, IngestProviderService
-    # from superdesk.services import BaseService
-    import superdesk
     endpoint_name = 'ingest_providers'
     service = IngestProviderService(endpoint_name, backend=superdesk.get_backend())
     IngestProviderResource(endpoint_name, app=app, service=service)
@@ -63,7 +61,7 @@ class ParserRegistry(type):
 class Parser(metaclass=ParserRegistry):
     """Base Parser class for all types of Parsers like News ML 1.2, News ML G2, NITF, etc."""
 
-    def parse_message(self, xml):
+    def parse_message(self, xml, provider):
         """Parse the ingest XML and extracts the relevant elements/attributes values from the XML."""
         raise NotImplementedError()
 
@@ -71,15 +69,13 @@ class Parser(metaclass=ParserRegistry):
         """Test if parser can parse given xml."""
         raise NotImplementedError()
 
-    def trim_headline(self, headline):
-        """Returns first 64 characters of a given headline"""
-        if headline:
-            return headline[:64]
+    def qname(self, tag, ns=None):
+        if ns is None:
+            ns = self.root.tag.rsplit('}')[0].lstrip('{')
+        elif ns is not None and ns == 'xml':
+            ns = 'http://www.w3.org/XML/1998/namespace'
 
-    def trim_slugline(self, slugline):
-        """Returns first 24 characters of a given slugline"""
-        if slugline:
-            return slugline[:24]
+        return str(etree.QName(ns, tag))
 
 
 def get_xml_parser(etree):
@@ -96,5 +92,6 @@ def get_xml_parser(etree):
 import superdesk.io.nitf
 import superdesk.io.newsml_2_0
 import superdesk.io.newsml_1_2
+import superdesk.io.wenn_parser
 
 superdesk.privilege(name='ingest_providers', label='Ingest Channels', description='User can maintain Ingest Channels.')

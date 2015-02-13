@@ -9,6 +9,8 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
+import superdesk.io.commands.update_ingest as ingest
+
 from unittest import TestCase
 from datetime import timedelta
 from nose.tools import assert_raises
@@ -19,7 +21,6 @@ from superdesk.errors import SuperdeskApiError
 from superdesk.io import register_provider
 from superdesk.io.tests import setup_providers, teardown_providers
 from superdesk.io.ingest_service import IngestService
-from superdesk.io.commands.update_ingest import is_scheduled, update_provider, filter_expired_items, apply_rule_set
 
 
 class TestProviderService(IngestService):
@@ -95,14 +96,14 @@ class UpdateIngestTest(TestCase):
         self.assertTrue(ex.status_code == 500)
 
     def test_is_scheduled(self):
-        self.assertTrue(is_scheduled({}), 'for first time it should run')
-        self.assertFalse(is_scheduled({'last_updated': utcnow()}), 'then it should wait default time 5m')
-        self.assertTrue(is_scheduled({'last_updated': utcnow() - timedelta(minutes=6)}), 'after 5m it should run again')
-        self.assertFalse(is_scheduled({
+        self.assertTrue(ingest.is_scheduled({}), 'run after create')
+        self.assertFalse(ingest.is_scheduled({'last_updated': utcnow()}), 'wait default time 5m')
+        self.assertTrue(ingest.is_scheduled({'last_updated': utcnow() - timedelta(minutes=6)}), 'run after 5m')
+        self.assertFalse(ingest.is_scheduled({
             'last_updated': utcnow() - timedelta(minutes=6),
             'update_schedule': {'minutes': 10}
         }), 'or wait if provider has specific schedule')
-        self.assertTrue(is_scheduled({
+        self.assertTrue(ingest.is_scheduled({
             'last_updated': utcnow() - timedelta(minutes=11),
             'update_schedule': {'minutes': 10}
         }), 'and run eventually')
@@ -112,7 +113,7 @@ class UpdateIngestTest(TestCase):
             test_provider = {'type': 'test', '_etag': 'test'}
             self.app.data.insert('ingest_providers', [test_provider])
 
-            update_provider(test_provider)
+            ingest.update_provider(test_provider)
             provider = self.app.data.find_one('ingest_providers', req=None, _id=test_provider['_id'])
             self.assertGreaterEqual(utcnow(), provider.get('last_updated'))
             self.assertEqual('test', provider.get('_etag'))
@@ -127,7 +128,7 @@ class UpdateIngestTest(TestCase):
             items = provider_service.fetch_ingest(guid)
             for item in items[:3]:
                 item['versioncreated'] = utcnow()
-            self.assertEqual(3, len(filter_expired_items(provider, items)))
+            self.assertEqual(3, len(ingest.filter_expired_items(provider, items)))
 
     def test_apply_rule_set(self):
         with self.app.app_context():
@@ -135,12 +136,12 @@ class UpdateIngestTest(TestCase):
 
             provider_name = 'reuters'
             provider = self._get_provider(provider_name)
-            self.assertEquals('body', apply_rule_set(item, provider)['body_html'])
+            self.assertEquals('body', ingest.apply_rule_set(item, provider)['body_html'])
 
             item = {'body_html': '@@body@@'}
             provider_name = 'AAP'
             provider = self._get_provider(provider_name)
-            self.assertEquals('@@body@@', apply_rule_set(item, provider)['body_html'])
+            self.assertEquals('@@body@@', ingest.apply_rule_set(item, provider)['body_html'])
 
     def test_all_ingested_items_have_sequence(self):
         provider_name = 'reuters'
@@ -153,3 +154,15 @@ class UpdateIngestTest(TestCase):
             get_resource_service("ingest").set_ingest_provider_sequence(item, provider)
 
             self.assertIsNotNone(item['ingest_provider_sequence'])
+
+    def test_get_task_ttl(self):
+        self.assertEquals(300, ingest.get_task_ttl({}))
+        provider = {'update_schedule': {'minutes': 10}}
+        self.assertEquals(600, ingest.get_task_ttl(provider))
+        provider['update_schedule']['hours'] = 1
+        provider['update_schedule']['minutes'] = 1
+        self.assertEquals(3660, ingest.get_task_ttl(provider))
+
+    def test_get_task_id(self):
+        provider = {'name': 'foo', '_id': 'abc'}
+        self.assertEquals('update-ingest-foo-abc', ingest.get_task_id(provider))

@@ -1,0 +1,29 @@
+<div class="subnav"></div>
+
+<div class="multiedit-screen main-section">
+    <div class="boards-list">
+    	<div ng-repeat="board in boards"
+            class="board"
+            style="width:{{ 100 / boards.length }}%">
+            <div class="navbtn dropdown" dropdown>
+                <button class="dropdown-toggle" dropdown-toggle><i class="icon-collapse"></i></button>
+                <div class="dropdown-menu">
+                    <ul class="multiedit-menu" sd-multiedit-inner-dropdown data-board="{{$index}}"></ul>
+                    <ul ng-if="boards.length > minBoards">
+                        <li class="divider"></li>
+                        <li><button ng-click="closeBoard($index)"><i class="icon-close-small"></i> {{ 'Remove panel' | translate }}</button></li>
+                    </ul>
+                </div>
+            </div>
+    		<div sd-multiedit-article data-article="board.article" data-focus="$first" class="board-article" ng-if="board.article"></div>
+    	</div>
+    </div>
+    <div class="boards-create" sd-multiedit-float-menu>
+    	<i class="icon-plus"></i>
+        <div class="navbtn dropdown multiedit-float">
+            <ul class="dropdown-menu multiedit-menu" id="multiedit-float" sd-multiedit-inner-dropdown data-board="{{boards.length}}"></ul>
+        </div>
+    </div>
+</div>
+
+<div sd-workqueue></div>

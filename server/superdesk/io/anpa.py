@@ -65,14 +65,14 @@ class ANPAFileParser(Parser):
                 # content metadata
                 header_lines = [l.strip('^<= ') for l in text if l.startswith('^')]
                 if len(header_lines) > 3:
-                    item['headline'] = super().trim_headline(header_lines[1])
+                    item['headline'] = header_lines[1]
                     item['byline'] = header_lines[-2]
 
                 # slugline
                 if len(header_lines) > 1:
                     m = re.match('[A-Z]{2}-[A-Z]{2}--([a-z-0-9]+)', header_lines[0], flags=re.I)
                     if m:
-                        item['slugline'] = super().trim_slugline(m.group(1))
+                        item['slugline'] = m.group(1)
 
                 # ednote
                 for line in header_lines:
