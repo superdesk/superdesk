@@ -6,9 +6,9 @@ TasksService.$inject = ['desks', '$rootScope', 'api', 'datetimeHelper'];
 function TasksService(desks, $rootScope, api, datetimeHelper) {
 
     this.statuses =  [
-        {'_id': 'todo', 'name': 'To Do'},
-        {'_id': 'in_progress', 'name': 'In Progress'},
-        {'_id': 'done', 'name': 'Done'}
+        {_id: 'todo', name: gettext('To Do')},
+        {_id: 'in_progress', name: gettext('In Progress')},
+        {_id: 'done', name: gettext('Done')}
     ];
 
     this.save = function(orig, task) {

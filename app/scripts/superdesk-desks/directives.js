@@ -151,7 +151,7 @@ define([
                     scope.ContentExpiry = scope.setContentExpiryHoursMins(stage);
                     orig = stage;
                     scope.editStage = _.create(stage);
-                    if (!scope.editStage.hasOwnProperty('_id') || scope.editStage._id === null) {
+                    if (!scope.editStage._id) {
                         var lastStage = _.last(scope.stages);
                         if (lastStage) {
                             scope.editStage.task_status = lastStage.task_status;

@@ -118,13 +118,17 @@
 							<div class="row">
 								<div class="header" translate>Statuses</div>
 								<div class="content status-list" >
-									<div ng-repeat="status in statuses" ng-if="editStage">
+									<div ng-repeat="status in statuses">
 										<div class="status {{status._id}}" ng-click="setStatus(status)"								 
-											ng-class="{'active': status._id === editStage.task_status}">
+											ng-class="{'active': status._id === editStage.task_status}"
+											ng-if="editStage">
 											{{ status.name }}
 										</div>
-									</div>
-									<div class="status active {{selected.task_status}}" ng-if="!editStage && selected.task_status">{{ selected.task_status }}</div>
+										<div class="status active {{selected.task_status}}" 
+											ng-if="!editStage && selected.task_status && selected.task_status === status._id">
+											{{ status.name }}
+										</div>
+									</div>							
 								</div>
 							</div>
 
