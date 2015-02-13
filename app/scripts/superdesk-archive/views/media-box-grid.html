@@ -1,43 +1,45 @@
 <div class="archiving-progress" style="width:{{ _progress }}%" ng-if="_progress"></div>
 
-<div class="error-box" ng-show="item.archiveError">
-    <p class="message">There was an <b>error</b> archiving this item</p>
-    <div class="buttons">
+<div ng-click="clickAction(item)">
+    <div class="error-box" ng-show="item.archiveError">
+        <p class="message">There was an <b>error</b> archiving this item</p>
+        <div class="buttons">
 
+        </div>
     </div>
+
+    <div class="media">
+        <div sd-item-rendition data-item="item" data-rendition="thumbnail"></div>
+        <span class="text">
+            <small title="{{ item.headline }}">{{ item.headline }}</small>
+            <span sd-item-container data-item="item" class="container"></span>
+        </span>
+    </div>  
+
+    <div class="media" ng-show="item.type == 'audio' || item.type == 'video'">
+        <i class="filetype-icon-large-{{ item.type}}"></i>
+    </div>
+
+    <div class="media-info">
+        <h5 ng-show="item.slugline">{{ item.slugline }}</h5>
+        <h5 ng-show="!item.slugline">{{ item.type | translate }}</h5>
+
+        <dl>
+            <dt class="source"><span translate>source:</span></dt>
+            <dd class="provider" sd-meta-ingest data-provider="item.ingest_provider"></dd>
+            <dt translate>updated</dt>
+            <dd><time datetime="{{ item.versioncreated }}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time></dd>
+            <dt ng-show="item.is_spiked" translate>expires</dt>
+            <dd ng-if="item.is_spiked"><time title="{{ item.expiry | date:'medium' }}">{{ item.expiry | reldate }}</time></dd>
+        </dl>
+        <div ng-if="type !== 'archive'" class="fetched-desk"><div sd-fetched-desks data-item="item"></div></div>
+    </div>
+
+    <span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
+    <span class="urgency-label"><i class="urgency-icon-{{item.urgency}}"></i></span>
+
+    <div class="state-label state-{{item.state}}">{{item.state}}</div>
 </div>
-
-<div class="media">
-    <div sd-item-rendition data-item="item" data-rendition="thumbnail"></div>
-    <span class="text">
-        <small title="{{ item.headline }}">{{ item.headline }}</small>
-        <span sd-item-container data-item="item" class="container"></span>
-    </span>
-</div>  
-
-<div class="media" ng-show="item.type == 'audio' || item.type == 'video'">
-    <i class="filetype-icon-large-{{ item.type}}"></i>
-</div>
-
-<div class="media-info">
-    <h5 ng-show="item.slugline">{{ item.slugline }}</h5>
-    <h5 ng-show="!item.slugline">{{ item.type | translate }}</h5>
-
-    <dl>
-        <dt class="source"><span translate>source:</span></dt>
-        <dd class="provider" sd-meta-ingest data-provider="item.ingest_provider"></dd>
-        <dt translate>updated</dt>
-        <dd><time datetime="{{ item.versioncreated }}" title="{{ item.versioncreated|date:'medium' }}">{{ item.versioncreated|reldate }}</time></dd>
-        <dt ng-show="item.is_spiked" translate>expires</dt>
-        <dd ng-if="item.is_spiked"><time title="{{ item.expiry | date:'medium' }}">{{ item.expiry | reldate }}</time></dd>
-    </dl>
-    <div ng-if="type !== 'archive'" class="fetched-desk"><div sd-fetched-desks data-item="item"></div></div>
-</div>
-
-<span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>
-<span class="urgency-label"><i class="urgency-icon-{{item.urgency}}"></i></span>
-
-<div class="state-label state-{{item.state}}">{{item.state}}</div>
 
 <div class="action">
     <ul ng-if="extras.activity" class="item-functions"
