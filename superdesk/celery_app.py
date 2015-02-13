@@ -67,6 +67,9 @@ def loads(s):
             cast_item(v)
 
     kwargs = o['kwargs']
+    if isinstance(kwargs, str):
+        o['kwargs'] = json.loads(kwargs)
+        kwargs = o['kwargs']
     for k, v in kwargs.items():
         if isinstance(v, str):
             kwargs[k] = try_cast(v)

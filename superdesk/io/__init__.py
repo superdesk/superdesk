@@ -11,8 +11,8 @@
 
 """Superdesk IO"""
 import logging
-from ..etree import etree
 import superdesk
+from superdesk.etree import etree
 from superdesk.celery_app import celery
 
 
@@ -28,8 +28,6 @@ from .commands.add_provider import AddProvider  # NOQA
 
 def init_app(app):
     from .ingest_provider_model import IngestProviderResource, IngestProviderService
-    # from superdesk.services import BaseService
-    import superdesk
     endpoint_name = 'ingest_providers'
     service = IngestProviderService(endpoint_name, backend=superdesk.get_backend())
     IngestProviderResource(endpoint_name, app=app, service=service)

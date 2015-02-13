@@ -33,3 +33,9 @@ class CeleryTestCase(TestCase):
         o = loads(s)
         self.assertEquals(o['args'][0]['_id'], self._id)
         self.assertIsInstance(o['args'][0]['_updated'], datetime)
+
+    def test_loads_kwargs(self):
+        s = b'''{"kwargs": "{}", "pid": 24998, "eta": null}'''
+        o = loads(s)
+        self.assertEquals({}, o['kwargs'])
+        self.assertIsNone(o['eta'])
