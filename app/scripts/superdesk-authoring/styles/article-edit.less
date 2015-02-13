@@ -19,7 +19,7 @@
 }
 
 .subnav {
-	.button-stack .btn {
+	.button-stack > .btn {
 		padding: 8px 25px;
 		height: 28px;
 	}
@@ -120,65 +120,79 @@
 // -------------------------------------------------
 
 .opened-articles {
-	position: absolute;
+	position: fixed;
 	min-height: @authoring-opened-articles;
 	left: 0; right: 0;
 	bottom: @scratchpad-closed;
 	background: rgba(0,0,0,0.85);
 	z-index: 25;
-	ul {
-		margin-left: 31px;
-			li {
-			.border-box();
-			float: left;
-			padding: 0 25px 0 15px;
+	ul > li {
+		.border-box();
+		padding: 0 25px 0 15px;
+		max-width: 250px;
+		position: relative;
+		line-height: 30px;
+		.close {
+			color: #fff;
+			border: none;
+			background: none;
+			position: absolute;
+			right: 5px;
+			top: 5px;
+			padding: 0;
+		}
+		.title {
+			display: block;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 			color: #8bcaf7;
 			font-size: 12px;
 			.text-light();
-			max-width: 250px;
-			border-right: 1px solid #333;
-			position: relative;
-			line-height: 30px;
-			.close {
+			&:hover {
 				color: #fff;
-				border: none;
-				background: none;
-				position: absolute;
-				right: 5px;
-				top: 5px;
-				padding: 0;
-			}
-			a {
-				display: block;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-				&:hover {
-					color: #fff;
-				}
-			}
-			&:active {
-				background: #444;
-			}
-			&.active {
-				background: darken(@sd-blue,10%) !important;
-				margin-top: -1px;
-				padding-top: 1px;
-				&:hover {
-					cursor: default;
-				}
-				a {
-					color: #fff;
-				}
-			}
-			
+				text-decoration: none;
+				cursor: pointer;
 			}
 		}
-		.quick-actions {
-			button {
-				background: none;
-				border: 0;
-				height: 30px;
+		&:active {
+			background: #444;
+		}
+		&.active {
+			background: darken(@sd-blue,10%) !important;
+			margin-top: -1px;
+			padding-top: 1px;
+			&:hover {
+				cursor: default;
+			}
+			.title {
+				color: #fff;
+			}
+		}
+	}
+	.list {
+		margin-left: 31px;
+		margin-right: 250px;
+		&.full-width {
+			margin-right: 0;
+		}
+		> li {
+			float: left;
+			border-right: 1px solid #333;	
+		}
+	}
+	.multiedit-item {
+		float: right;
+		> li {
+			border-left: 1px solid #333;
+			width: 250px;
+		}
+	}
+	.quick-actions {
+		button {
+			background: none;
+			border: 0;
+			height: 30px;
 			line-height: 30px;
 			width: 30px;
 			text-align: center;
@@ -186,11 +200,10 @@
 				cursor: pointer;
 				background: @sd-blue;
 			}
-			}
+		}
 		i {
 			margin: -5px 0 0 0;
 		}
-		
 	}
 }
 
@@ -269,6 +282,50 @@
 	}
 }
 
+// Multiedit dropdown
+// -------------------------------------------------
+
+.multiedit-menu {
+	max-height: 400px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	margin-right: 4px;
+	li button {
+		max-width: 300px;
+		padding-right: 20px !important;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		position: relative;
+		i {
+			position: absolute;
+			right: -5px;
+			top: 9px;
+		}
+		&.disabled {
+			background: #f0f0f0;
+			i {
+				.opacity(20);
+			}
+		}
+	}
+}
+.multiedit-dropdown {
+	.dropdown-toggle {
+		width: 48px;
+		padding: 0 !important;
+	}
+	.dropdown-menu {
+		.fieldset {
+			border-top: 1px solid #dedede;
+			margin-top: 10px;
+			height: 32px;
+			padding: 10px 10px 0;
+			button {
+				width: 100px;
+			}
+		}
+	}
+}
 
 // Publish pane
 // -------------------------------------------------

@@ -1,0 +1,6 @@
+<li ng-repeat="item in items">
+    <button ng-click="open(item._id);">
+        <span ng-show="item.headline">{{ item.headline }}</span>
+        <span ng-show="!item.headline">{{ :: 'Untitled' | translate }}</span>
+    </button>
+</li>

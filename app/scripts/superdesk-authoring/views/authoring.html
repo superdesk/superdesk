@@ -1,5 +1,7 @@
 <div class="auth-screen">
-	<div class="subnav" ng-class="{'auth-sendto': viewSendTo}">
+    <form name="articleEdit">
+
+    <div class="subnav" ng-class="{'auth-sendto': viewSendTo}">
 	    <div class="page-title-wrapper clearfix pull-left">
 	    	<button class="stage stage-label pull-left" ng-show="stage">{{stage.name}}</button>
             <div class="state-label state-{{item.state}}">{{item.state}}</div>
@@ -15,7 +17,8 @@
             <button class="btn btn-medium pull-left" ng-show="!_editable && !item._locked" ng-click="lock()" translate>Lock</button>
             <button class="btn btn-medium pull-left" ng-click="close()" translate>Close</button>
 
-    	    <button class="btn btn-medium btn-info pull-left" type="submit" ng-click="save()"
+    	    <button class="btn btn-medium btn-info pull-left" type="submit"
+                ng-click="save(item)"
                 ng-show="_editable"
                 ng-disabled="!save_enabled()"
                 translate>Save</button>
@@ -23,6 +26,13 @@
             <div class="navbtn dropdown strict pull-left" dropdown>
                 <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
                 <ul class="dropdown-menu pull-right" sd-content-create></ul>
+            </div>
+
+            <div class="navbtn dropdown strict multiedit-dropdown pull-left" dropdown>
+                <button class="dropdown-toggle" dropdown-toggle>
+                    <i class="big-icon-multiedit"></i>
+                </button>
+                <div class="dropdown-menu pull-right" sd-multiedit-dropdown></div>
             </div>
 
 	    	<button ng-show="_editable && isActionAllowed(item, 'move')"
@@ -33,12 +43,10 @@
 	</div>
 
 	<section class="main-section" ng-class="{'auth-sendto': viewSendTo}">
-
 		<div sd-authoring-widgets data-item="item">
-
-            <div class="page-content-container" ng-click="viewSendTo = false;">
-                <article id="theme-container" ng-if="item._id" ng-class="{preview: !_editable}">
-
+            <div class="page-content-container"
+                ng-click="viewSendTo = false;">
+                <article class="theme-container" ng-class="{preview: !_editable}">
                     <button class="proofread-toggle btn btn-light" ng-click="proofread = !proofread">
                         <span class="button-lable" translate>Mode: </span>
                         <span ng-show="proofread" translate>Proofread</span>
@@ -47,49 +55,10 @@
 
                     <span sd-theme-select ng-if="proofread" data-key="proofreadTheme"></span>
                     <span sd-theme-select ng-if="!proofread" data-key="theme"></span>
-                	<form>
-                		<fieldset>
-                			<div class="field" ng-class="{'limit-error': item.slugline.length > limits.slugline}">
-                				<label translate>Keyword</label>
-                                <span sd-character-count data-item="item.slugline" data-limit="limits.slugline"></span>
-                                <input type="text"
-                                    class="keyword"
-                                    ng-model="item.slugline"
-                                    ng-if="_editable"
-                                    ng-trim="false">
-                				<div ng-if="!_editable">{{item.slugline}}</div>
-                			</div>
-                			<div class="field" ng-class="{'limit-error': item.headline.length > limits.headline}">
-                				<label translate>Headline</label>
-                                <span sd-character-count data-item="item.headline" data-limit="limits.headline"></span>
-                                <textarea class="headline"
-                                    sd-auto-height
-                                    ng-model="item.headline"
-                                    ng-if="_editable"
-                                    ng-trim="false"></textarea>
-			                	<div class="headline" ng-if="!_editable">{{item.headline}}</div>
-                			</div>
-                			<div class="field" class="abstract" ng-class="{'limit-error': item.abstract.length > limits.abstract}">
-                				<label translate>Abstract</label>
-                                <span sd-character-count data-item="item.abstract" data-limit="limits.abstract"></span>
-                                <textarea class="abstract"
-                                    sd-auto-height
-                                    ng-model="item.abstract"
-                                    ng-if="_editable"
-                                    ng-trim="false"></textarea>
-			                	<div class="abstract" ng-if="!_editable">{{item.abstract}}</div>
-                			</div>
-                			<div class="field">
-                				<label translate>Body</label>
-                                <span sd-word-count data-item="item.body_html" data-html="true"></span>
-                                <div sd-text-editor ng-model="item.body_html" ng-if="_editable" data-type="item.type"></div>
-                                <div class="text-editor" sd-html-preview="item.body_html" ng-if="!_editable"></div>
-                			</div>
-                		</fieldset>
-		            </form>
-		        </article>
-		    </div>
 
+                    <fieldset sd-article-edit></fieldset>
+                </article>
+            </div>
 		    <div sd-workqueue data-active="item" data-update="articleSwitch()" data-close="close()"></div>
 		</div>
 	</section>
