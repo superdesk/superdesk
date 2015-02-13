@@ -11,11 +11,15 @@ describe('familyService', function() {
         desk3: {title: 'desk3'}
     };
 
+    beforeEach(module('superdesk.mocks'));
     beforeEach(module('superdesk.archive.directives'));
     beforeEach(module(function($provide) {
         $provide.service('api', function($q) {
             return function() {
                 return {
+                    find: function() {
+                        return $q.reject({});
+                    },
                     query: function(params) {
                         var familyId = params.source.query.filtered.filter.and[1].term.family_id;
                         var members = _.filter(items, {family_id: familyId});
