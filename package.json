@@ -38,7 +38,7 @@
     "karma-ng-html2js-preprocessor": "^0.1.0",
     "lodash": "^2.4.1",
     "karma-coverage": "^0.2.0",
-    "protractor": "~1.0.0",
+    "protractor": "~1.6.1",
     "protractor-screenshot-reporter": "^0.0.5",
     "karma-junit-reporter": "^0.2.2",
     "grunt-contrib-cssmin": "^0.11.0",

@@ -1,6 +1,6 @@
 'use strict';
 
-/*global beforeEach, afterEach */
+/* global beforeEach */
 
 var getToken = require('./helpers/auth').getToken;
 var resetApp = require('./helpers/fixtures').resetApp;
@@ -12,13 +12,10 @@ beforeEach(function(done) {
             browser.driver.getCurrentUrl().then(function(url) {
                 if (url.indexOf('data:') !== 0) {
                     browser.executeScript('sessionStorage.clear();localStorage.clear();');
-                    protractor.getInstance().waitForAngular();
+                    browser.waitForAngular();
                 }
                 done();
             });
         });
     });
 });
-
-// runs after every spec
-afterEach(function() {});
