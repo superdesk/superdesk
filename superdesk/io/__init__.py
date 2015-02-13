@@ -94,5 +94,6 @@ def get_xml_parser(etree):
 import superdesk.io.nitf
 import superdesk.io.newsml_2_0
 import superdesk.io.newsml_1_2
+import superdesk.io.wenn_parser
 
 superdesk.privilege(name='ingest_providers', label='Ingest Channels', description='User can maintain Ingest Channels.')
