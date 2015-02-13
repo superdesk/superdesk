@@ -22,7 +22,7 @@ class NewsMLOneParser(Parser):
     def can_parse(self, xml):
         return xml.tag == 'NewsML' and xml.get('Version', '') == '1.2'
 
-    def parse_message(self, tree):
+    def parse_message(self, tree, provider):
         """Parse NewsMessage."""
         item = {}
         try:
@@ -79,7 +79,7 @@ class NewsMLOneParser(Parser):
 
             return self.populate_fields(item)
         except Exception as ex:
-            raise ParserError.newsmlOneParserError(ex)
+            raise ParserError.newsmlOneParserError(ex, provider)
 
     def parse_elements(self, tree):
         items = {}
@@ -140,9 +140,9 @@ class NewsMLOneParser(Parser):
 
     def parse_newslines(self, item, tree):
         parsed_el = self.parse_elements(tree.find('NewsItem/NewsComponent/NewsLines'))
-        item['headline'] = super().trim_headline(parsed_el.get('HeadLine', ''))
+        item['headline'] = parsed_el.get('HeadLine', '')
         item['dateline'] = parsed_el.get('DateLine', '')
-        item['slugline'] = super().trim_slugline(parsed_el.get('SlugLine', ''))
+        item['slugline'] = parsed_el.get('SlugLine', '')
         item['byline'] = parsed_el.get('ByLine', '')
 
         return True

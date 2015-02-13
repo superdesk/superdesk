@@ -24,6 +24,9 @@ from superdesk.utc import utcnow
 from superdesk.workflow import set_default_state
 from superdesk.errors import ProviderError
 from superdesk.stats import stats
+from superdesk.upload import url_for_media
+from superdesk.media.media_operations import download_file_from_url, process_file
+from superdesk.media.renditions import generate_renditions
 
 
 UPDATE_SCHEDULE_DEFAULT = {'minutes': 5}
@@ -80,7 +83,21 @@ def filter_expired_items(provider, items):
         expiration_date = utcnow() - timedelta(days=days_to_keep_content)
         return [item for item in items if item.get('versioncreated', utcnow()) > expiration_date]
     except Exception as ex:
-        raise ProviderError.providerFilterExpiredContentError(ex)
+        raise ProviderError.providerFilterExpiredContentError(ex, provider)
+
+
+def get_provider_rule_set(provider):
+    if provider.get('rule_set'):
+        return superdesk.get_resource_service('rule_sets').find_one(_id=provider['rule_set'], req=None)
+
+
+def get_task_ttl(provider):
+    update_schedule = provider.get('update_schedule', UPDATE_SCHEDULE_DEFAULT)
+    return update_schedule.get('minutes', 0) * 60 + update_schedule.get('hours', 0) * 3600
+
+
+def get_task_id(provider):
+    return 'update-ingest-{0}-{1}'.format(provider.get('name'), provider.get('_id'))
 
 
 class UpdateIngest(superdesk.Command):
@@ -93,11 +110,14 @@ class UpdateIngest(superdesk.Command):
     def run(self, provider_type=None):
         for provider in superdesk.get_resource_service('ingest_providers').get(req=None, lookup={}):
             if is_valid_type(provider, provider_type) and is_scheduled(provider) and not is_closed(provider):
-                rule_set = None
-                if provider.get('rule_set'):
-                    rule_set = superdesk.get_resource_service('rule_sets').find_one(_id=provider['rule_set'], req=None)
-
-                update_provider.delay(provider, rule_set)
+                kwargs = {
+                    'provider': provider,
+                    'rule_set': get_provider_rule_set(provider)
+                }
+                update_provider.apply_async(
+                    task_id=get_task_id(provider),
+                    expires=get_task_ttl(provider),
+                    kwargs=kwargs)
 
 
 @celery.task
@@ -120,7 +140,7 @@ def update_provider(provider, rule_set=None):
     push_notification('ingest:update')
 
 
-def process_anpa_category(item):
+def process_anpa_category(item, provider):
     try:
         anpa_categories = superdesk.get_resource_service('vocabularies').find_one(req=None, _id='categories')
         if anpa_categories:
@@ -130,7 +150,7 @@ def process_anpa_category(item):
                     item['anpa-category'] = {'qcode': item['anpa-category']['qcode'], 'name': anpa_category['name']}
                     break
     except Exception as ex:
-        raise ProviderError.anpaError(ex)
+        raise ProviderError.anpaError(ex, provider)
 
 
 def apply_rule_set(item, provider, rule_set=None):
@@ -156,41 +176,88 @@ def apply_rule_set(item, provider, rule_set=None):
 
         return item
     except Exception as ex:
-        raise ProviderError.ruleError(ex)
+        raise ProviderError.ruleError(ex, provider)
 
 
 def ingest_items(items, provider, rule_set=None):
-    for item in filter_expired_items(provider, items):
-        try:
-            item.setdefault('_id', item['guid'])
+    all_items = filter_expired_items(provider, items)
+    items_dict = {doc['guid']: doc for doc in all_items}
 
-            item['ingest_provider'] = str(provider['_id'])
-            item.setdefault('source', provider.get('source', ''))
-            set_default_state(item, STATE_INGESTED)
+    for item in [doc for doc in all_items if doc.get('type') != 'composite']:
+        ingest_item(item, provider, rule_set)
 
-            if 'anpa-category' in item:
-                process_anpa_category(item)
+    for item in [doc for doc in all_items if doc.get('type') == 'composite']:
+        for ref in [ref for group in item.get('groups', [])
+                    for ref in group.get('refs', []) if 'residRef' in ref]:
+            ref.setdefault('location', 'ingest')
+            itemRendition = items_dict.get(ref['residRef'], {}).get('renditions')
+            if itemRendition:
+                ref.setdefault('renditions', itemRendition)
+        ingest_item(item, provider, rule_set)
 
-            apply_rule_set(item, provider, rule_set)
 
-            ingest_service = superdesk.get_resource_service('ingest')
+def ingest_item(item, provider, rule_set=None):
+    try:
+        item.setdefault('_id', item['guid'])
+        providers[provider.get('type')].provider = provider
 
-            if item.get('ingest_provider_sequence') is None:
-                ingest_service.set_ingest_provider_sequence(item, provider)
+        item['ingest_provider'] = str(provider['_id'])
+        item.setdefault('source', provider.get('source', ''))
+        set_default_state(item, STATE_INGESTED)
 
-            old_item = ingest_service.find_one(_id=item['guid'], req=None)
+        if 'anpa-category' in item:
+            process_anpa_category(item, provider)
 
-            if old_item:
+        apply_rule_set(item, provider, rule_set)
+
+        ingest_service = superdesk.get_resource_service('ingest')
+
+        if item.get('ingest_provider_sequence') is None:
+            ingest_service.set_ingest_provider_sequence(item, provider)
+
+        rend = item.get('renditions', {})
+        if rend:
+            baseImageRend = rend.get('baseImage') or next(iter(rend.values()))
+            if baseImageRend:
+                href = providers[provider.get('type')].prepare_href(baseImageRend['href'])
+                update_renditions(item, href)
+
+        old_item = ingest_service.find_one(_id=item['guid'], req=None)
+
+        if old_item:
+            ingest_service.put(item['guid'], item)
+        else:
+            try:
+                ingest_service.post([item])
+            except HTTPException as e:
+                logger.error("Exception while persisting item in ingest collection", e)
                 ingest_service.put(item['guid'], item)
-            else:
-                try:
-                    ingest_service.post([item])
-                except HTTPException as e:
-                    logger.error("Exception while persisting item in ingest collection", e)
-                    ingest_service.put(item['guid'], item)
-        except ProviderError:
-            raise
-        except Exception as ex:
-            raise ProviderError.ingestError(ex, provider.get('name'))
+    except ProviderError:
+        raise
+    except Exception as ex:
+        raise ProviderError.ingestError(ex, provider)
+
+
+def update_renditions(item, href):
+    inserted = []
+    try:
+        content, filename, content_type = download_file_from_url(href)
+        file_type, ext = content_type.split('/')
+        metadata = process_file(content, file_type)
+        file_guid = app.media.put(content, filename, content_type, metadata)
+        inserted.append(file_guid)
+
+        rendition_spec = app.config.get('RENDITIONS', {}).get('picture', {})
+        renditions = generate_renditions(content, file_guid, inserted, file_type,
+                                         content_type, rendition_spec, url_for_media)
+        item['renditions'] = renditions
+        item['mimetype'] = content_type
+        item['filemeta'] = metadata
+    except Exception as io:
+        logger.exception(io)
+        for file_id in inserted:
+            app.media.delete(file_id)
+        raise
+
 
 superdesk.command('ingest:update', UpdateIngest())

@@ -13,7 +13,8 @@
 import logging
 
 from .archive import ArchiveResource, ArchiveService, ArchiveVersionsResource, AutoSaveResource, \
-    ArchiveVersionsService, ArchiveSaveService, ArchiveRemoveExpiredContent
+    ArchiveVersionsService, ArchiveSaveService
+from .commands import ArchiveRemoveExpiredContent
 from .ingest import IngestResource, IngestService
 from .archive_media import ArchiveMediaResource, ArchiveMediaService, ArchiveMediaVersionsResource
 from .archive_ingest import ArchiveIngestResource, ArchiveIngestService

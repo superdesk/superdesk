@@ -17,7 +17,6 @@ from superdesk.io import get_xml_parser
 from .newsml_1_2 import NewsMLOneParser
 from .newsml_2_0 import NewsMLTwoParser
 from .nitf import NITFParser
-from superdesk.io import Parser
 
 
 def get_etree(filename):
@@ -53,31 +52,8 @@ class ItemTest(unittest.TestCase):
 
     def setUpFixture(self, filename):
         self.tree = get_etree(filename)
-        self.item = get_xml_parser(self.tree).parse_message(self.tree)[0]
-
-
-class ParserTest(ItemTest):
-    def test_headline_trim(self):
-        test_input = "Soccer-Smiling Benitez pleads for support after midweek outburst against opponent"
-        test_output = Parser().trim_headline(test_input)
-        self.assertEquals(test_output, "Soccer-Smiling Benitez pleads for support after midweek outburst")
-
-    def test_slugline_trim(self):
-        test_input = "Soccer-Smiling Benitez pleads for support after midweek outburst against opponent"
-        test_output = Parser().trim_slugline(test_input)
-        self.assertEquals(test_output, "Soccer-Smiling Benitez p")
-
-    def test_empty_and_none_trimming(self):
-        test_input = ""
-        test_output_headline = Parser().trim_headline(test_input)
-        test_output_slugline = Parser().trim_slugline(test_input)
-        self.assertIsNone(test_output_headline)
-        self.assertIsNone(test_output_slugline)
-        test_input = None
-        test_output_headline = Parser().trim_headline(test_input)
-        test_output_slugline = Parser().trim_slugline(test_input)
-        self.assertIsNone(test_output_headline)
-        self.assertIsNone(test_output_slugline)
+        provider = {'name': 'Test'}
+        self.item = get_xml_parser(self.tree).parse_message(self.tree, provider)[0]
 
 
 class TextParserTest(ItemTest):
@@ -100,8 +76,9 @@ class TextParserTest(ItemTest):
 
     def test_parse_content_meta(self):
         self.assertEquals('3', self.item.get('urgency'))
-        self.assertEquals("SOCCER-ENGLAND/CHELSEA-B", self.item["slugline"])
-        self.assertEquals("Soccer-Smiling Benitez pleads for support after midweek outburst", self.item["headline"])
+        self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ", self.item["slugline"])
+        self.assertEquals("Soccer-Smiling Benitez pleads for support "
+                          "after midweek outburst against opponent", self.item["headline"])
         # self.assertEquals("Reuters", self.item["creditline"])
         self.assertEquals("Bangalore", self.item["dateline"])
         self.assertEquals("SOCCER-ENGLAND/CHELSEA-BENITEZ:Soccer-Smiling Benitez pleads for support after midweek outburst", self.item.get('description'))  # noqa

@@ -84,7 +84,7 @@ def parse_meta(tree, item):
         attribute_name = elem.get('name')
 
         if attribute_name == 'anpa-keyword':
-            item['slugline'] = Parser().trim_slugline(elem.get('content'))
+            item['slugline'] = elem.get('content')
         elif attribute_name == 'anpa-sequence':
             item['ingest_provider_sequence'] = elem.get('content')
         elif attribute_name == 'anpa-category':
@@ -106,7 +106,7 @@ class NITFParser(Parser):
     def can_parse(self, xml):
         return xml.tag == 'nitf'
 
-    def parse_message(self, tree):
+    def parse_message(self, tree, provider):
         item = {}
         try:
             docdata = tree.find('head/docdata')
@@ -126,7 +126,7 @@ class NITFParser(Parser):
             if docdata.find('ed-msg') is not None:
                 item['ednote'] = docdata.find('ed-msg').attrib.get('info')
 
-            item['headline'] = super().trim_headline(tree.find('body/body.head/hedline/hl1').text)
+            item['headline'] = tree.find('body/body.head/hedline/hl1').text
 
             elem = tree.find('body/body.head/abstract')
             item['abstract'] = elem.text if elem is not None else ''
@@ -139,4 +139,4 @@ class NITFParser(Parser):
             item.setdefault('word_count', get_word_count(item['body_html']))
             return item
         except Exception as ex:
-            raise ParserError.nitfParserError(ex)
+            raise ParserError.nitfParserError(ex, provider)

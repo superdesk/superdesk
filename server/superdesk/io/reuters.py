@@ -16,7 +16,6 @@ from urllib.parse import urlparse, urlunparse
 
 import requests
 
-from superdesk import get_resource_service
 from superdesk.io.ingest_service import IngestService
 
 from superdesk.utc import utcnow
@@ -28,22 +27,6 @@ from superdesk.errors import IngestApiError
 
 
 PROVIDER = 'reuters'
-
-
-def _on_read_ingest(docs):
-    provider = get_resource_service('ingest_providers').find_one(type=PROVIDER, req=None)
-    if not provider:
-        return
-
-    for doc in docs['_items']:
-        if str(doc.get('ingest_provider')) == str(provider['_id']):
-            for i, rendition in doc.get('renditions', {}).items():
-                rendition['href'] = '%s?auth_token=%s' % (rendition['href'], get_token(provider))
-
-
-def init_app(app):
-    app.on_fetched_resource_ingest -= _on_read_ingest
-    app.on_fetched_resource_ingest += _on_read_ingest
 
 
 class ReutersIngestService(IngestService):
@@ -101,7 +84,7 @@ class ReutersIngestService(IngestService):
         """Parse item message and return given items."""
         payload = {'id': guid}
         tree = self.get_tree('item', payload)
-        items = self.parser.parse_message(tree)
+        items = self.parser.parse_message(tree, self.provider)
         return items
 
     def get_ids(self, channel, last_updated, updated):
@@ -133,19 +116,19 @@ class ReutersIngestService(IngestService):
             response = requests.get(url, params=payload, timeout=21.0)
         except requests.exceptions.Timeout as ex:
             # Maybe set up for a retry, or continue in a retry loop
-            raise IngestApiError.apiTimeoutError(ex)
+            raise IngestApiError.apiTimeoutError(ex, self.provider)
         except requests.exceptions.TooManyRedirects as ex:
             # Tell the user their URL was bad and try a different one
-            raise IngestApiError.apiRedirectError(ex)
+            raise IngestApiError.apiRedirectError(ex, self.provider)
         except requests.exceptions.RequestException as ex:
             # catastrophic error. bail.
-            raise IngestApiError.apiRequestError(ex)
+            raise IngestApiError.apiRequestError(ex, self.provider)
         except Exception as error:
             traceback.print_exc()
-            raise IngestApiError(error)
+            raise IngestApiError(error, self.provider)
 
         if response.status_code == 404:
-            raise LookupError('Not found %s' % payload)
+            raise IngestApiError.apiNotFoundError(LookupError('Not found %s' % payload), self.provider)
 
         try:
             # workaround for httmock lib
@@ -153,13 +136,13 @@ class ReutersIngestService(IngestService):
             return etree.fromstring(response.content)
         except UnicodeEncodeError as error:
             traceback.print_exc()
-            raise IngestApiError.apiUnicodeError(error)
+            raise IngestApiError.apiUnicodeError(error, self.provider)
         except ParseError as error:
             traceback.print_exc()
-            raise IngestApiError.apiParseError(error)
+            raise IngestApiError.apiParseError(error, self.provider)
         except Exception as error:
             traceback.print_exc()
-            raise IngestApiError(error)
+            raise IngestApiError(error, self.provider)
 
     def get_url(self, endpoint):
         """Get API url for given endpoint."""

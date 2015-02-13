@@ -67,7 +67,23 @@ class SuperdeskValidator(Validator):
         """Validate uniqueness ignoring case.MONGODB USE ONLY"""
 
         if unique:
-            query = {field: re.compile(value, re.IGNORECASE)}
+            query = {field: re.compile(value.strip(), re.IGNORECASE)}
+
+            if superdesk.get_resource_service(self.resource).find_one(req=None, **query):
+                self._error(field, ERROR_UNIQUE)
+
+    def _validate_iunique_per_parent(self, parent_field, field, value):
+        """Validate uniqueness ignoring case.MONGODB USE ONLY"""
+        original = self._original_document or {}
+        update = self.document or {}
+
+        if original and original.get(field) == value:
+            return
+
+        parent_field_value = update.get(parent_field, original.get(parent_field))
+
+        if parent_field:
+            query = {field: re.compile(value.strip(), re.IGNORECASE), parent_field: parent_field_value}
 
             if superdesk.get_resource_service(self.resource).find_one(req=None, **query):
                 self._error(field, ERROR_UNIQUE)
