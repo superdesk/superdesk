@@ -1,0 +1,18 @@
+<div class="related-item-view">
+    <ul>
+        <li ng-repeat="relatedItem in relatedItems._items">
+            <div class="related-item">
+                <i class="filetype-icon-{{relatedItem.type}}"></i>
+                <span class="state-label state-{{relatedItem.state}}">{{ relatedItem.state }}</span>
+                <span class="keyword" ng-if="relatedItem.slugline">{{ relatedItem.slugline }}</span>
+                <span class="keyword" ng-if="relatedItem.slugline">{{ relatedItem.slugline }}</span>
+                <span sd-item-container data-item="relatedItem" class="container"></span>
+                <div class="item">
+                    <a ng-href="" title="{{ relatedItem.headline }}">
+						{{ relatedItem.headline || relatedItem.description | uppercase}}
+                    </a>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>

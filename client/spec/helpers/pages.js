@@ -1,7 +1,7 @@
 'use strict';
 
 exports.login = LoginModal;
-var params = protractor.getInstance().params;
+var params = browser.params;
 
 function LoginModal() {
     this.username = element(by.model('username'));

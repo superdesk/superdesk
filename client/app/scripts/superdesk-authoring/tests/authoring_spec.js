@@ -86,7 +86,7 @@ describe('authoring', function() {
 
         // edit
         $scope.item.headline = headline;
-        $rootScope.$digest();
+        $scope.autosave($scope.item);
         expect($scope.dirty).toBe(true);
 
         // autosave
@@ -119,7 +119,7 @@ describe('authoring', function() {
         $rootScope.$digest();
 
         $timeout.flush(5000);
-        expect($scope.item._autosave).toBe(null);
+        expect($scope.item._autosave).toBeNull();
     }));
 
     /**
@@ -146,14 +146,6 @@ describe('authoring', function() {
             spyOn(lock, 'unlock').and.returnValue($q.when());
         }));
 
-        xit('can open an item', function() {
-
-        });
-
-        xit('can save an item', function() {
-
-        });
-
         it('can check if an item is editable', inject(function(authoring, session) {
             expect(authoring.isEditable({})).toBe(false);
             expect(authoring.isEditable({lock_user: session.identity._id, lock_session: session.sessionId})).toBe(true);
@@ -171,15 +163,17 @@ describe('authoring', function() {
 
         it('can unlocks on close editable item without changes made', inject(function(authoring, confirm, lock, $rootScope) {
             expect(authoring.isEditable(item)).toBe(true);
-            authoring.close(item, {}, false);
+            authoring.close(item, false);
             $rootScope.$digest();
             expect(confirm.confirm).not.toHaveBeenCalled();
             expect(lock.unlock).toHaveBeenCalled();
         }));
 
         it('confirms if an item is dirty and saves', inject(function(authoring, confirm, lock, $q, $rootScope) {
-            var diff = {test: 1};
-            authoring.close(item, diff, true);
+            var edit = Object.create(item);
+            edit.headline = 'test';
+
+            authoring.close(edit, true);
             $rootScope.$digest();
 
             expect(confirm.confirm).toHaveBeenCalled();
@@ -189,7 +183,7 @@ describe('authoring', function() {
             confirmDefer.resolve();
             $rootScope.$digest();
 
-            expect(authoring.save).toHaveBeenCalledWith(item, diff);
+            expect(authoring.save).toHaveBeenCalledWith(edit);
             expect(lock.unlock).toHaveBeenCalled();
         }));
 
@@ -226,14 +220,34 @@ describe('autosave', function() {
 
     it('can create an autosave', inject(function(autosave, api, $q, $timeout, $rootScope) {
         var item = {_id: 1, _etag: 'x'};
+        var edit = Object.create(item);
+        edit.headline = 'test';
         spyOn(api, 'save').and.returnValue($q.when({_id: 2}));
-        autosave.save(item, {headline: 'test'});
+        autosave.save(edit);
         $rootScope.$digest();
         expect(api.save).not.toHaveBeenCalled();
         $timeout.flush(5000);
         expect(api.save).toHaveBeenCalledWith('archive_autosave', {}, {_id: 1, headline: 'test'});
         expect(item._autosave._id).toBe(2);
         expect(item.headline).toBe('test');
+    }));
+
+    it('can save multiple items', inject(function(autosave, api, $q, $timeout, $rootScope) {
+        var item1 = {_id: 1, _etag: '1'},
+            item2 = {_id: 2, _etag: '2'};
+        spyOn(api, 'save').and.returnValue($q.when({}));
+
+        autosave.save(_.create(item1));
+        $timeout.flush(1500);
+
+        autosave.save(_.create(item2));
+        $timeout.flush(2500);
+
+        expect(api.save).toHaveBeenCalled();
+        expect(api.save.calls.count()).toBe(1);
+
+        $timeout.flush(5000);
+        expect(api.save.calls.count()).toBe(2);
     }));
 });
 

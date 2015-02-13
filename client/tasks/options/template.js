@@ -29,11 +29,10 @@ module.exports = function(grunt) {
     }
 
     var files = {'<%= distDir %>/index.html': '<%= appDir %>/index.html'};
-    var APIARY_URL = process.env.APIARY_URL || 'http://superdesk.apiary.io';
 
     return {
         mock: {
-            options: data(APIARY_URL, true),
+            options: data('http://localhost:5000/api', true),
             files: files
         },
         test: {

@@ -18,7 +18,7 @@
             <div class="headline">
                 <a ng-href="#/{{type !== 'composite' ? 'authoring' : 'packaging'}}/{{ item.guid }}?_id={{ item.guid }}" title="{{ item.headline }}">
                     <div ng-show="item.headline || item.slugline || item.description">
-                        {{ item.headline || item.slugline || item.description | uppercase}}
+                        {{ item.headline || item.slugline || item.description}}
                     </div>
                     <div ng-hide="item.headline || item.slugline || item.description" translate>Blank headline received</div>
                 </a>
@@ -28,7 +28,7 @@
         <div ng-if="!item.guid">
             <div class="headline">
                 <div ng-show="item.headline || item.slugline || item.description">
-                    {{ item.headline || item.slugline  || item.description | uppercase}}
+                    {{ item.headline || item.slugline  || item.description}}
                 </div>
                 <div ng-hide="item.headline || item.slugline || item.description" translate>Blank headline received</div>
             </div>

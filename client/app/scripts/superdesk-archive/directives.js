@@ -75,12 +75,13 @@ define([
         })
         .directive('sdPackage', [function() {
             var solveRefs = function(item, groups) {
-                var tree = {_items: []};
+                var items = {childId: '_items', childData: []};
+                var tree = [items];
                 _.each(item.refs, function(ref) {
                     if (ref.idRef) {
-                        tree[ref.idRef] = solveRefs(_.find(groups, {id: ref.idRef}), groups);
+                        tree.push({childId: ref.idRef, childData: solveRefs(_.find(groups, {id: ref.idRef}), groups)});
                     } else if (ref.residRef) {
-                        tree._items.push(ref);
+                        items.childData.push(ref);
                     }
                 });
                 return tree;
@@ -278,6 +279,38 @@ define([
                 }
             };
         }])
+        .directive('sdMediaRelated', ['familyService', function(familyService) {
+            return {
+                scope: {
+                    item: '='
+                },
+                templateUrl: 'scripts/superdesk-archive/views/related-view.html',
+                link: function(scope, elem) {
+                    scope.$watch('item', function() {
+                        familyService.fetchItems(scope.item.family_id || scope.item._id, scope.item)
+                        .then(function(items) {
+                            scope.relatedItems = items;
+                        });
+                    });
+                }
+            };
+        }])
+        .directive('sdFetchedDesks', ['familyService', function(familyService) {
+            return {
+                scope: {
+                    item: '='
+                },
+                templateUrl: 'scripts/superdesk-archive/views/fetched-desks.html',
+                link: function(scope, elem) {
+                    scope.$watch('item', function() {
+                        familyService.fetchDesks(scope.item, false)
+                        .then(function(desks) {
+                            scope.desks = desks;
+                        });
+                    });
+                }
+            };
+        }])
         .directive('sdMetaIngest', ['ingestSources', function(ingestSources) {
             var promise = ingestSources.initialize();
             return {
@@ -286,10 +319,13 @@ define([
                 },
                 template: '{{name}}',
                 link: function(scope) {
-                    promise.then(function() {
-                        if (scope.provider && scope.provider in ingestSources.providersLookup) {
-                            scope.name = ingestSources.providersLookup[scope.provider].name;
-                        }
+                    scope.$watch('provider', function() {
+                        scope.name = '';
+                        promise.then(function() {
+                            if (scope.provider && scope.provider in ingestSources.providersLookup) {
+                                scope.name = ingestSources.providersLookup[scope.provider].name;
+                            }
+                        });
                     });
                 }
             };
@@ -357,6 +393,13 @@ define([
                             scope.$digest();
                         }
                     });
+
+                    scope.clickAction =  function clickAction(item) {
+                        if (typeof scope.preview === 'function') {
+                            return scope.preview(item);
+                        }
+                        return false;
+                    };
                 }
             };
         }])
@@ -431,5 +474,45 @@ define([
                     };
                 }
             };
-        });
+        })
+
+        .service('familyService', ['api', 'desks', function(api, desks) {
+            this.fetchItems = function(familyId, excludeItem) {
+                var filter = [
+                    {not: {term: {state: 'spiked'}}},
+                    {term: {family_id: familyId}}
+                ];
+                if (excludeItem) {
+                    filter.push({not: {term: {_id: excludeItem._id}}});
+                }
+                return api('archive').query({
+                    source: {
+                        query: {filtered: {filter: {
+                            and: filter
+                        }}},
+                        sort: [{versioncreated: 'desc'}],
+                        size: 100,
+                        from: 0
+                    }
+                });
+            };
+            this.fetchDesks = function(item, excludeSelf) {
+                return this.fetchItems(item.family_id || item._id, excludeSelf ? item : undefined)
+                .then(function(items) {
+                    var deskList = [];
+                    var deskIdList = [];
+                    _.each(items._items, function(i) {
+                        if (i.task && i.task.desk && desks.deskLookup[i.task.desk]) {
+                            if (deskIdList.indexOf(i.task.desk) < 0) {
+                                deskList.push({'desk': desks.deskLookup[i.task.desk], 'count': 1});
+                                deskIdList.push(i.task.desk);
+                            } else {
+                                deskList[deskIdList.indexOf(i.task.desk)].count += 1;
+                            }
+                        }
+                    });
+                    return deskList;
+                });
+            };
+        }]);
 });

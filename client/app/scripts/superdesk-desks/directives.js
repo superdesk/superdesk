@@ -17,22 +17,18 @@ define([
 
     var app = angular.module('superdesk.desks.directives', []);
     app
-    .directive('sdUserDesks', ['$rootScope', 'desks', function($rootScope, desks) {
+    .directive('sdUserDesks', ['desks', function(desks) {
         return {
-            scope: {
-                selectedDesk: '=desk',
-                deskLabel: '@'
-            },
+            scope: {selectedDesk: '=desk'},
             templateUrl: require.toUrl('./views/user-desks.html'),
             link: function(scope, elem, attrs) {
-                scope.tasks = scope.deskLabel === 'tasks' ? true : false;
-                desks.fetchUserDesks($rootScope.currentUser).then(function(userDesks) {
-                    scope.desks = userDesks._items;
-                    scope.selectedDesk = _.find(scope.desks, {_id: desks.getCurrentDeskId()});
+                desks.fetchCurrentDesk().then(function(desk) {
+                    scope.desk = desk;
+                    scope.select(desk);
                 });
+
                 scope.select = function(desk) {
                     scope.selectedDesk = desk;
-                    desks.setCurrentDesk(desk);
                 };
             }
         };
@@ -48,7 +44,7 @@ define([
             }
         };
     }])
-    .directive('sdDeskeditBasic', ['gettext', 'api', 'WizardHandler', function(gettext, api, WizardHandler) {
+    .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', function(gettext, desks, WizardHandler) {
         return {
 
             link: function(scope, elem, attrs) {
@@ -75,7 +71,7 @@ define([
                     scope.message = gettext('Saving...');
                     scope.desk.edit.spike_expiry = scope.getTotalExpiryMinutes(scope.SpikeExpiry);
                     var _new = desk._id ? false : true;
-                    api.desks.save(scope.desk.edit, desk).then(function() {
+                    desks.save(scope.desk.edit, desk).then(function() {
                         if (_new) {
                             scope.edit(scope.desk.edit);
                             scope.desks._items.unshift(scope.desk.edit);
@@ -85,9 +81,22 @@ define([
                         }
                         WizardHandler.wizard('desks').next();
                     }, function(response) {
-                        scope.message = gettext('There was a problem, desk not created/updated.');
+                        errorMessage(response);
                     });
                 };
+
+                function errorMessage(response) {
+                    if (response.data && response.data._issues && response.data._issues.name && response.data._issues.name.unique) {
+                        scope.message = gettext(
+                            'Desk with name "' +
+                            scope.desk.edit.name +
+                            '" already exists, desk not created/updated.'
+                        );
+                    } else {
+                        scope.message = gettext('There was a problem, desk not created/updated.');
+                    }
+                }
+
             }
         };
     }])
@@ -135,10 +144,14 @@ define([
                 };
 
                 scope.edit = function(stage) {
+                    if (stage.is_visible == null) {
+                        stage.is_visible = true;
+                    }
+
                     scope.ContentExpiry = scope.setContentExpiryHoursMins(stage);
                     orig = stage;
                     scope.editStage = _.create(stage);
-                    if (!scope.editStage.hasOwnProperty('_id') || scope.editStage._id === null) {
+                    if (!scope.editStage._id) {
                         var lastStage = _.last(scope.stages);
                         if (lastStage) {
                             scope.editStage.task_status = lastStage.task_status;
@@ -278,8 +291,8 @@ define([
             }
         };
     }])
-    .directive('sdDeskeditPeople', ['gettext', 'api', 'WizardHandler', 'desks', 'keyboardManager',
-        function(gettext, api, WizardHandler, desks, keyboardManager) {
+    .directive('sdDeskeditPeople', ['gettext', 'WizardHandler', 'desks',
+        function(gettext, WizardHandler, desks) {
         return {
             link: function(scope, elem, attrs) {
 
@@ -326,7 +339,7 @@ define([
                         return {user: obj._id};
                     });
 
-                    api.desks.save(scope.desk.edit, {members: members}).then(function(result) {
+                    desks.save(scope.desk.edit, {members: members}).then(function(result) {
                         _.extend(scope.desk.edit, result);
                         desks.deskMembers[scope.desk.edit._id] = scope.deskMembers;
                         var origDesk = desks.deskLookup[scope.desk.edit._id];

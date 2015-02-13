@@ -26,8 +26,14 @@
 	color: @natural-theme-text !important;
 }
 
+body, html {
+	height: 100%;
+}
+
 .main-article {
 	width:auto;
+	height: 100%;
+	overflow-y: scroll;
 	background: @white;
 	border: 1px solid #cacaca;
 	border-width:0 1px;
@@ -148,11 +154,20 @@
 			color: #D33C30;
 		}
 	}
-	&:hover {
+	&:hover, &:focus {
 		.char-count, .field label {
 			.opacity(100);
 		}
 
+	}
+
+	.field.limit-error {
+		.char-count {
+			.opacity(100);
+		}
+		input, textarea {
+			border-color: rgba(210, 60, 50, 0.15) !important;
+		} 
 	}
 
 	.field.limit-error input, .field.limit-error textarea {

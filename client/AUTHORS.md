@@ -11,6 +11,7 @@ various contributors:
 - Mugur Rus
 - Nikola Nikolic
 - Ozan Ozbek
+- Peter Lamut
 - Sava Tatic
 - Yauhen “actionless” Kirylau
 

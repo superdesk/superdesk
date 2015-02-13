@@ -27,7 +27,7 @@
                         </div>
                         <div class="content" ng-if="notification.name != 'notify'">
                             <time sd-datetime data-date="notification._created"></time>
-                            <p class="text"><b>{{ notification.user.display_name || notification.user.username }}</b>: <span sd-activity-message data-activity="notification"></span></p>
+                            <p class="text"><b>{{ notification.user.display_name || notification.user.username || "System" }}</b>: <span sd-activity-message data-activity="notification"></span></p>
                         </div>                        
                     </li>
                     <div class="info" ng-show="notifications._items.length === 0" translate>All good so far.</div>

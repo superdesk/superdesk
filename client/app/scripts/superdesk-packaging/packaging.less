@@ -14,23 +14,57 @@
             min-height: 100%;
             max-height: 100%;
             margin: 0 auto;
-            border: 1px solid #eee;
+            border: 1px solid #ebebeb;
             border-width: 0 1px;
-            background: @white;
-            padding: 20px 20px @scratchpad-closed + 20px;
+            background: #fcfcfc;
+            padding: 30px 60px @scratchpad-closed + 20px;
             .border-box();
             overflow: auto;
-            .title {
-                .text-semibold();
-                padding: 10px 0 15px;
-                font-size: 18px;
-            }
         }
 
         .toggle-box h6 {
+            background: #fcfcfc;
+        }
+
+        .item.picture {
             background: @white;
+            box-shadow: @block-shadow-depth-2;
+            padding: 10px;
+        }
+
+        .package-header {
+            margin-bottom: 30px;
+            position: relative;
+            min-height: 52px;
+            .title {
+                padding-left: 60px;
+                .text-semibold();
+                padding: 8px 0 0 65px;
+                font-size: 18px;
+            }
+            .keyword {
+                padding: 4px 0 0 65px;
+                text-transform: uppercase;
+                color: @sd-keyword;
+            }
+            figure {
+                background: #e2e2e2;
+                margin: 0;
+                height: 52px;
+                width: 52px;
+                border-radius: 50%;
+                position: absolute;
+                top:0;
+                left:0;
+                i {
+                    opacity: .65;
+                    display: block;
+                    margin: 14px auto;
+                }
+            }
         }
     }
+
 }
 
 
