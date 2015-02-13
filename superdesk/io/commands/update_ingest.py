@@ -91,6 +91,15 @@ def get_provider_rule_set(provider):
         return superdesk.get_resource_service('rule_sets').find_one(_id=provider['rule_set'], req=None)
 
 
+def get_task_ttl(provider):
+    update_schedule = provider.get('update_schedule', UPDATE_SCHEDULE_DEFAULT)
+    return update_schedule.get('minutes', 0) * 60 + update_schedule.get('hours', 0) * 3600
+
+
+def get_task_id(provider):
+    return 'update-ingest-{0}-{1}'.format(provider.get('name'), provider.get('_id'))
+
+
 class UpdateIngest(superdesk.Command):
     """Update ingest providers."""
 
@@ -101,7 +110,14 @@ class UpdateIngest(superdesk.Command):
     def run(self, provider_type=None):
         for provider in superdesk.get_resource_service('ingest_providers').get(req=None, lookup={}):
             if is_valid_type(provider, provider_type) and is_scheduled(provider) and not is_closed(provider):
-                update_provider.delay(provider, get_provider_rule_set(provider))
+                kwargs = {
+                    'provider': provider,
+                    'rule_set': get_provider_rule_set(provider)
+                }
+                update_provider.apply_async(
+                    task_id=get_task_id(provider),
+                    expires=get_task_ttl(provider),
+                    kwargs=kwargs)
 
 
 @celery.task

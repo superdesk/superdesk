@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 
+import os
 import ftplib
 import tempfile
 from datetime import datetime
@@ -30,7 +31,7 @@ class FTPService(IngestService):
     DATE_FORMAT = '%Y%m%d%H%M%S'
     FILE_SUFFIX = '.xml'
 
-    def configFromURL(self, url):
+    def config_from_url(self, url):
         """Parse given url into ftp config.
 
         :param url: url in form `ftp://username:password@host:port/dir`
@@ -43,6 +44,17 @@ class FTPService(IngestService):
             'path': url_parts.path.lstrip('/'),
         }
 
+    def _get_items(self, ftp):
+        """Get list of items from ftp.
+
+        First try using default passive mode, if that fails switch to active.
+        """
+        try:
+            return ftp.mlsd()
+        except (ftplib.error_proto):
+            ftp.set_pasv(False)
+            return ftp.mlsd()
+
     def _update(self, provider):
         config = provider.get('config', {})
         last_updated = provider.get('last_updated')
@@ -54,11 +66,11 @@ class FTPService(IngestService):
         try:
             with ftplib.FTP(config.get('host')) as ftp:
                 ftp.login(config.get('username'), config.get('password'))
-                ftp.set_pasv(False)
                 ftp.cwd(config.get('path', ''))
 
-                for filename, facts in ftp.mlsd():
-                    if facts['type'] != 'file':
+                items = self._get_items(ftp)
+                for filename, facts in items:
+                    if facts.get('type', '') != 'file':
                         continue
 
                     if not filename.lower().endswith(self.FILE_SUFFIX):
@@ -69,7 +81,7 @@ class FTPService(IngestService):
                         if item_last_updated < last_updated:
                             continue
 
-                    dest = '%s/%s' % (config['dest_path'], filename)
+                    dest = os.path.join(config['dest_path'], filename)
 
                     try:
                         with open(dest, 'xb') as f:
