@@ -18,7 +18,8 @@
         place: [],
         located: null,
         dateline: '',
-        language: null
+        language: null,
+        unique_name: ''
     };
 
     /**
