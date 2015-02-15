@@ -54,20 +54,24 @@ class SuperdeskValidator(Validator):
 
         if not self.resource.endswith("autosave") and unique:
             query = {field: value}
+            self._set_id_query(query)
+
+            if superdesk.get_resource_service(self.resource).find_one(req=None, **query):
+                self._error(field, ERROR_UNIQUE)
+
+    def _set_id_query(self, query):
             if self._id:
                 try:
                     query[config.ID_FIELD] = {'$ne': ObjectId(self._id)}
                 except:
                     query[config.ID_FIELD] = {'$ne': self._id}
 
-            if superdesk.get_resource_service(self.resource).find_one(req=None, **query):
-                self._error(field, ERROR_UNIQUE)
-
     def _validate_iunique(self, unique, field, value):
         """Validate uniqueness ignoring case.MONGODB USE ONLY"""
 
         if unique:
-            query = {field: re.compile(value.strip(), re.IGNORECASE)}
+            query = {field: re.compile('^{}$'.format(value.strip()), re.IGNORECASE)}
+            self._set_id_query(query)
 
             if superdesk.get_resource_service(self.resource).find_one(req=None, **query):
                 self._error(field, ERROR_UNIQUE)
@@ -77,13 +81,12 @@ class SuperdeskValidator(Validator):
         original = self._original_document or {}
         update = self.document or {}
 
-        if original and original.get(field) == value:
-            return
-
         parent_field_value = update.get(parent_field, original.get(parent_field))
 
         if parent_field:
-            query = {field: re.compile(value.strip(), re.IGNORECASE), parent_field: parent_field_value}
+            query = {field: re.compile('^{}$'.format(value.strip()),
+                                       re.IGNORECASE), parent_field: parent_field_value}
+            self._set_id_query(query)
 
             if superdesk.get_resource_service(self.resource).find_one(req=None, **query):
                 self._error(field, ERROR_UNIQUE)
