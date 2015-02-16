@@ -44,17 +44,6 @@ class FTPService(IngestService):
             'path': url_parts.path.lstrip('/'),
         }
 
-    def _get_items(self, ftp):
-        """Get list of items from ftp.
-
-        First try using default passive mode, if that fails switch to active.
-        """
-        try:
-            return ftp.mlsd()
-        except (ftplib.error_proto):
-            ftp.set_pasv(False)
-            return ftp.mlsd()
-
     def _update(self, provider):
         config = provider.get('config', {})
         last_updated = provider.get('last_updated')
@@ -67,9 +56,10 @@ class FTPService(IngestService):
             with ftplib.FTP(config.get('host')) as ftp:
                 ftp.login(config.get('username'), config.get('password'))
                 ftp.cwd(config.get('path', ''))
+                ftp.set_pasv(config.get('passive', False))
 
-                items = self._get_items(ftp)
-                for filename, facts in items:
+                items = []
+                for filename, facts in ftp.mlsd():
                     if facts.get('type', '') != 'file':
                         continue
 
