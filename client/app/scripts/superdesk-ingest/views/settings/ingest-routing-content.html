@@ -1,0 +1,133 @@
+<div class="split-content">
+    <div class="header">
+        <h2 translate>Ingest Routing Schemes</h2>
+        <button class="btn btn-info pull-right" ng-click="edit({})">
+            <i class="icon-plus-sign icon-white"></i> <span translate>Add New Routing Scheme</span>
+        </button>
+    </div>
+
+    <div class="content">
+        <ul class="pills-list ruleset-list">
+            <li ng-repeat="scheme in schemes">
+                <div class="header">
+                    <div class="name">{{scheme.name}}</div>
+
+                    <div class="actions">
+                        <button ng-click="edit(scheme)" title="{{:: 'Edit scheme' | translate }}"><i class="icon-pencil"></i></button>
+                        <button ng-click="remove(scheme)" title="{{:: 'Remove scheme' | translate }}"><i class="icon-trash"></i></button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div sd-modal-view data-model="editScheme" class="ruleset-modal" ng-hide="rule">
+    <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+        <h3 translate ng-show="editScheme._id" translate>Edit Scheme</h3>
+        <h3 translate ng-hide="editScheme._id" translate>Add New Scheme</h3>
+    </div>
+
+    <div class="modal-body">
+        <form name="schemeForm">
+            <div class="split-content">
+                <header>
+                    <input type="text" class="input-xlarge" placeholder="{{ 'Scheme name'|translate }}" ng-model="editScheme.name" required>
+                    <button class="btn btn-info pull-right" ng-disabled="!schemeForm.$valid" ng-click="addRule()"><i class="icon-plus-small icon-white"></i> {{:: 'Add rule' | translate}}</button>
+                </header>
+                <div class="content">
+                    <ul sd-sortrules class="rule-list">
+                        <li ng-repeat="rule in editScheme.rules">
+                            <div class="header">
+                                <div class="name">{{rule.name}}</div>
+
+                                <div class="actions">
+                                    <button ng-click="editRule(rule)" title="{{:: 'Edit rule' | translate }}"><i class="icon-pencil"></i></button>
+                                    <button ng-click="removeRule(rule)" title="{{:: 'Remove rule' | translate }}"><i class="icon-trash"></i></button>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <p ng-if="!editScheme.rules" translate>No rules defined in scheme.</p>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
+        <button class="btn btn-primary" ng-click="save(editScheme)" ng-disabled="!schemeForm.$valid" translate>Save</button>
+    </div>
+</div>
+
+<div sd-modal-view data-model="rule" class="ruleset-modal" ng-if="rule">
+    <div class="modal-header"> <a href="" class="close" ng-click="cancelRule()"><i class="icon-close-small"></i></a>
+        <h3 translate ng-show="::rule.name" translate>Edit Rule</h3>
+        <h3 translate ng-hide="::rule.name" translate>Add New Rule</h3>
+    </div>
+
+    <form name="ruleForm">
+        <header>
+            <input type="text" class="input-xlarge" placeholder="{{ 'Rule name'|translate }}" ng-model="rule.name" required>
+        </header>
+
+        <div class="modal-body">
+            <div class="split-content">
+                <ul class="nav nav-tabs" ng-init="ruleTab = 'filter'">
+                    <li ng-class="{active: ruleTab === 'filter'}">
+                        <button ng-click="ruleTab = 'filter'" translate>Filter</button>
+                    </li>
+                    <li ng-class="{active: ruleTab === 'action'}">
+                        <button ng-click="ruleTab = 'action'" translate>Action</button>
+                    </li>
+                    <li ng-class="{active: ruleTab === 'schedule'}">
+                        <button ng-click="ruleTab = 'schedule'" translate>Schedule</button>
+                    </li>
+                </ul>  
+                
+                <div class="content">
+                    <div ng-if="ruleTab === 'filter'">filter</div>
+                    <div ng-if="ruleTab === 'action'">
+                        <div>fetch in:
+                            <div ng-repeat="fetchAction in rule.actions.fetch">
+                                <div sd-deskstagepicker data-desk="fetchAction.desk" data-stage="fetchAction.stage"></div>
+                                <button ng-click="removeFetch(fetchAction)">remove</button>
+                            </div>
+                            new fetch action: <div sd-deskstagepicker data-desk="newFetch.desk" data-stage="newFetch.stage"></div>
+                            <button ng-click="addFetch()" ng-disabled="!newFetch.desk || !newFetch.stage">add</button>
+                        </div>
+                        <div>publish in:
+                            <div ng-repeat="publishAction in rule.actions.publish">
+                                <div sd-deskstagepicker data-desk="publishAction.desk" data-stage="publishAction.stage"></div>
+                                <button ng-click="removePublish(publishAction)">remove</button>
+                            </div>
+                            new publish action: <div sd-deskstagepicker data-desk="newPublish.desk" data-stage="newPublish.stage"></div>
+                            <button ng-click="addPublish()" ng-disabled="!newPublish.desk || !newPublish.stage">add</button>
+                        </div>
+                        exit <input type="checkbox" ng-model="rule.actions.exit">
+                    </div>
+                    <div ng-if="ruleTab === 'schedule'">
+                        <div ng-repeat="day in dayList">
+                            <input type="checkbox" ng-checked="isDayChecked(rule, day)" ng-click="toggleDay(rule, day)">{{dayLookup[day]|translate}}
+                        </div>
+                        start time: <div sd-timepicker-alt
+                            data-model="rule.schedule.hour_of_day_from"
+                            data-filter-in="convertIn"
+                            data-filter-out="convertOut"
+                        ></div>
+                        end time: <div sd-timepicker-alt
+                            data-model="rule.schedule.hour_of_day_to"
+                            data-filter-in="convertIn"
+                            data-filter-out="convertOut"
+                        ></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancelRule()" translate>Cancel</button>
+        <button class="btn btn-primary" ng-click="saveRule(rule)" ng-disabled="!ruleForm.$valid" translate>Save</button>
+    </div>
+</div>

@@ -107,6 +107,7 @@ define([
 
         $scope.showIngest   = Boolean(user_privileges.ingest_providers);
         $scope.showRuleset  = Boolean(user_privileges.rule_sets);
+        $scope.showRouting  = Boolean(user_privileges.routing) || true;
     }
 
     PieChartDashboardDirective.$inject = ['colorSchemes'];
@@ -268,7 +269,7 @@ define([
                     scope.rulesets = result._items;
                 });
 
-               scope.edit = function(ruleset) {
+                scope.edit = function(ruleset) {
                     scope.editRuleset = _.create(ruleset);
                     scope.editRuleset.rules = ruleset.rules || [];
                     _orig = ruleset;
@@ -329,6 +330,197 @@ define([
         };
     }
 
+    IngestRoutingContent.$inject = ['api', 'gettext', 'notify', 'modal'];
+    function IngestRoutingContent(api, gettext, notify, modal) {
+        return {
+            templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-content.html',
+            link: function(scope) {
+                var _orig = null;
+                scope.editScheme = null;
+                scope.rule = null;
+                scope.ruleIndex = null;
+                scope.newFetch = {};
+                scope.newPublish = {};
+
+                // mock
+                scope.schemes = [
+                    {_id: '123', name: 'test1', rules: []},
+                    {_id: '456', name: 'test2', rules: []}
+                ];
+                //
+
+                function confirm() {
+                    return modal.confirm(gettext('Are you sure you want to delete scheme?'));
+                }
+
+                scope.edit = function(scheme) {
+                    scope.editScheme = _.clone(scheme);
+                    scope.editScheme.rules = scope.editScheme.rules || [];
+                    _orig = scheme;
+                };
+
+                scope.save = function(scheme) {
+                    var _new = scheme._id ? false : true;
+                    /*
+                    api('rule_sets').save(_orig, ruleset)
+                    .then(function() {
+                        if (_new) {
+                            scope.rulesets.push(_orig);
+                        }
+                        notify.success(gettext('Rule set saved.'));
+                        scope.cancel();
+                    }, function(response) {
+                        notify.error(gettext('I\'m sorry but there was an error when saving the rule set.'));
+                    });
+                    */
+                    // mock
+                    if (_new) {
+                        scheme._id = _.random(1, 99999);
+                        scope.schemes.push(scheme);
+                    } else {
+                        var index = _.findIndex(scope.schemes, {_id: scheme._id});
+                        scope.schemes[index] = scheme;
+                    }
+                    notify.success(gettext('Scheme saved.'));
+                    scope.cancel();
+                    //
+                };
+
+                scope.cancel = function() {
+                    scope.editScheme = null;
+                };
+
+                scope.remove = function(scheme) {
+                    confirm().then(function() {
+                        /*
+                        api('rule_sets').remove(ruleset)
+                        .then(function(result) {
+                            _.remove(scope.rulesets, ruleset);
+                        }, function(response) {
+                            if (response.status === 400) {
+                                notify.error(gettext('Rule set is applied to channel(s). It cannot be deleted.'));
+                            } else {
+                                notify.error(gettext('There is an error. Rule set cannot be deleted.'));
+                            }
+                        });
+                        */
+                        // mock
+                        _.remove(scope.schemes, scheme);
+                        //
+                    });
+                };
+
+                scope.removeRule = function(rule) {
+                    _.remove(scope.editScheme.rules, rule);
+                };
+
+                scope.addRule = function() {
+                    var rule = {
+                        name: null,
+                        schedule: {
+                            day_of_week: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+                            hour_of_day_from: '0000',
+                            hour_of_day_to: '2355'
+                        },
+                        actions: {
+                            fetch: [],
+                            publish: [],
+                            exit: false
+                        }
+                    };
+                    scope.editRule(rule);
+                };
+
+                scope.editRule = function(rule) {
+                    scope.ruleIndex = _.findIndex(scope.editScheme.rules, rule);
+                    scope.rule = _.clone(rule);
+                };
+
+                scope.cancelRule = function() {
+                    scope.rule = null;
+                    scope.ruleIndex = null;
+                };
+
+                scope.saveRule = function(rule) {
+                    if (scope.ruleIndex === -1) {
+                        scope.editScheme.rules.push(rule);
+                    } else {
+                        scope.editScheme.rules[scope.ruleIndex] = rule;
+                    }
+                    scope.cancelRule();
+                };
+
+                scope.isDayChecked = function(rule, day) {
+                    return rule.schedule.day_of_week.indexOf(day) !== -1;
+                };
+
+                scope.toggleDay = function(rule, day) {
+                    if (scope.isDayChecked(rule, day)) {
+                        rule.schedule.day_of_week = _.without(rule.schedule.day_of_week, day);
+                    } else {
+                        rule.schedule.day_of_week.push(day);
+                    }
+                };
+
+                scope.convertIn = function(time) {
+                    return {
+                        hours: parseInt(time.substr(0, 2), 10),
+                        minutes: parseInt(time.substr(2, 2), 10)
+                    };
+                };
+
+                scope.convertOut = function(hours, minutes) {
+                    var h = hours.toString();
+                    var m = minutes.toString();
+                    if (h.length === 1) {
+                        h = '0' + h;
+                    }
+                    if (m.length === 1) {
+                        m = '0' + m;
+                    }
+                    return h + m;
+                };
+
+                scope.dayList = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+                scope.dayLookup = {
+                    MON: 'Monday',
+                    TUE: 'Tuesday',
+                    WED: 'Wednesday',
+                    THU: 'Thursday',
+                    FRI: 'Friday',
+                    SAT: 'Saturday',
+                    SUN: 'Sunday'
+                };
+
+                scope.addFetch = function() {
+                    if (scope.newFetch.desk && scope.newFetch.stage) {
+                        scope.rule.actions.fetch.push(scope.newFetch);
+                        scope.newFetch = {};
+                    }
+                };
+
+                scope.removeFetch = function(fetchAction) {
+                    _.remove(scope.rule.actions.fetch, function(f) {
+                        return f === fetchAction;
+                    });
+                };
+
+                scope.addPublish = function() {
+                    if (scope.newPublish.desk && scope.newPublish.stage) {
+                        scope.rule.actions.publish.push(scope.newPublish);
+                        scope.newPublish = {};
+                    }
+                };
+
+                scope.removePublish = function(publishAction) {
+                    _.remove(scope.rule.actions.publish, function(p) {
+                        return p === publishAction;
+                    });
+                };
+            }
+        };
+    }
+
     function SortRulesDirectives() {
         return {
             link:function(scope, element) {
@@ -353,6 +545,7 @@ define([
         .service('ingestSources', IngestProviderService)
         .directive('sdIngestSourcesContent', IngestSourcesContent)
         .directive('sdIngestRulesContent', IngestRulesContent)
+        .directive('sdIngestRoutingContent', IngestRoutingContent)
         .directive('sdPieChartDashboard', PieChartDashboardDirective)
         .directive('sdSortrules', SortRulesDirectives);
 
