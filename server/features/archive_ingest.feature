@@ -3,11 +3,15 @@ Feature: Archive Ingest
     @auth
     Scenario: Move item into archive - tag not on ingest
         Given empty "archive"
+        Given "desks"
+        """
+        [{"name": "Sports"}]
+        """
 		And empty "ingest"
         When we post to "/archive_ingest"
         """
         {
-        "guid": "not_on_ingest_tag"
+        "guid": "not_on_ingest_tag", "desk": "#desks._id#"
         }
         """
         Then we get error 404
@@ -19,6 +23,10 @@ Feature: Archive Ingest
     @auth
     Scenario: Move item into archive - no provider
         Given empty "archive"
+        Given "desks"
+        """
+        [{"name": "Sports"}]
+        """
         And "ingest"
         """
         [{"guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401", "state": "ingested"}]
@@ -26,7 +34,7 @@ Feature: Archive Ingest
         When we post to "/archive_ingest"
         """
         {
-        "guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401"
+        "guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401", "desk": "#desks._id#"
         }
         """
         Then we get archive ingest result
@@ -38,11 +46,15 @@ Feature: Archive Ingest
     @provider
     Scenario: Move item into archive - success
         Given empty "archive"
+        Given "desks"
+        """
+        [{"name": "Sports"}]
+        """
     	When we fetch from "reuters" ingest "tag:reuters.com,0000:newsml_GM1EA7M13RP01"
         When we post to "/archive_ingest" with success
         """
         {
-        "guid": "tag:reuters.com,0000:newsml_GM1EA7M13RP01"
+        "guid": "tag:reuters.com,0000:newsml_GM1EA7M13RP01", "desk": "#desks._id#"
         }
         """
         Then we get "_id"
@@ -61,13 +73,33 @@ Feature: Archive Ingest
 
     @auth
     @provider
+    Scenario: Move item into archive with no desk - fail
+        Given empty "archive"
+    	When we fetch from "reuters" ingest "tag:reuters.com,0000:newsml_GM1EA7M13RP01"
+        When we post to "/archive_ingest"
+        """
+        {
+        "guid": "tag:reuters.com,0000:newsml_GM1EA7M13RP01"
+        }
+        """
+        Then we get error 400
+		"""
+		{"_message": "Destination desk cannot be empty.", "_status": "ERR"}
+		"""
+
+    @auth
+    @provider
     Scenario: Move package into archive - check items
     	Given empty "ingest"
+    	Given "desks"
+        """
+        [{"name": "Sports"}]
+        """
     	When we fetch from "reuters" ingest "tag:reuters.com,2014:newsml_KBN0FL0NM"
         And we post to "/archive_ingest"
         """
         {
-        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM"
+        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM", "desk": "#desks._id#"
         }
         """
 		And we get "/archive"

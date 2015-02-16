@@ -37,13 +37,17 @@ Feature: Content Spiking
     @provider
     Scenario: Spike fetched content
         Given empty "archive"
+        Given "desks"
+        """
+        [{"name": "Sports Desk"}]
+        """
         And ingest from "reuters"
             """
             [{"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"}]
             """
         When we post to "/archive_ingest"
             """
-            {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"}
+            {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
             """
         Then we get "_id"
         When we spike fetched item

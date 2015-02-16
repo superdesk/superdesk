@@ -47,6 +47,10 @@ class ArchiveIngestService(BaseService):
     def create(self, docs, **kwargs):
         new_guids = []
         for doc in docs:
+            if not doc.get('desk'):
+                # if no desk is selected then it is bad request
+                raise SuperdeskApiError.badRequestError("Destination desk cannot be empty.")
+
             ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=doc.get('guid'))
             if not ingest_doc:
                 # see if it is in archive, if it is duplicate it
