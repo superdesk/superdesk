@@ -97,32 +97,32 @@ class IngestProviderService(BaseService):
         logger.info("Created Ingest Channel. Data:{}".format(docs))
 
     def on_updated(self, updates, original):
-        if 'is_closed' not in updates:
-            do_notification = updates.get('notifications', {})\
-                .get('on_update', original.get('notifications', {}).get('on_update', True))
-            notify_and_add_activity(ACTIVITY_UPDATE, 'updated Ingest Channel {{name}}', item=original,
+
+        do_notification = updates.get('notifications', {})\
+            .get('on_update', original.get('notifications', {}).get('on_update', True))
+        notify_and_add_activity(ACTIVITY_UPDATE, 'updated Ingest Channel {{name}}', item=original,
+                                user_list=self._get_administrators()
+                                if do_notification else None,
+                                name=updates.get('name', original.get('name')))
+
+        if updates.get('is_closed') != original.get('is_closed', False):
+            status = ''
+            do_notification = False
+
+            if updates.get('is_closed'):
+                status = 'closed'
+                do_notification = updates.get('notifications', {}). \
+                    get('on_close', original.get('notifications', {}).get('on_close', True))
+            elif not updates.get('is_closed'):
+                status = 'opened'
+                do_notification = updates.get('notifications', {}). \
+                    get('on_open', original.get('notifications', {}).get('on_open', True))
+
+            notify_and_add_activity(ACTIVITY_EVENT, '{{status}} Ingest Channel {{name}}', item=original,
                                     user_list=self._get_administrators()
                                     if do_notification else None,
-                                    name=updates.get('name', original.get('name')))
-        else:
-            if updates.get('is_closed') != original.get('is_closed', False):
-                status = ''
-                do_notification = False
-
-                if updates.get('is_closed'):
-                    status = 'closed'
-                    do_notification = updates.get('notifications', {}). \
-                        get('on_close', original.get('notifications', {}).get('on_close', True))
-                elif not updates.get('is_closed'):
-                    status = 'opened'
-                    do_notification = updates.get('notifications', {}). \
-                        get('on_open', original.get('notifications', {}).get('on_open', True))
-
-                notify_and_add_activity(ACTIVITY_EVENT, '{{status}} Ingest Channel {{name}}', item=original,
-                                        user_list=self._get_administrators()
-                                        if do_notification else None,
-                                        name=updates.get('name', original.get('name')),
-                                        status=status)
+                                    name=updates.get('name', original.get('name')),
+                                    status=status)
 
         logger.info("Updated Ingest Channel. Data: {}".format(updates))
 

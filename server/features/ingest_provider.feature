@@ -47,9 +47,12 @@ Feature: Ingest Provider
         """
         [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}}]
         """
-        Then we get email
+        Then we get emails
         """
-        created Ingest Channel reuters 4
+        [
+          {"body": "created Ingest Channel reuters 4"}
+        ]
+
         """
 
     @auth
@@ -82,9 +85,57 @@ Feature: Ingest Provider
         """
         [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}}]
         """
-        Then we get email
+        Then we get emails
         """
-        updated Ingest Channel the test of the test ingest_provider modified
+        [
+          {"body": "updated Ingest Channel the test of the test ingest_provider modified"}
+        ]
+
+        """
+
+    @auth
+    @notification
+    Scenario: Open/Close ingest_provider
+        Given "ingest_providers"
+	    """
+        [{
+        "type": "reuters",
+        "name": "reuters 4",
+        "source": "reuters",
+        "is_closed": false,
+        "config": {"username": "foo", "password": "bar"}
+        }]
+	    """
+        When we patch "/ingest_providers/#ingest_providers._id#"
+        """
+        {"is_closed": true}
+        """
+        Then we get updated response
+        """
+        {"is_closed": true}
+        """
+        When we get "/activity/"
+        Then we get existing resource
+         """
+         {"_items":
+            [
+              {"data": {"name": "reuters 4"}, "message": "updated Ingest Channel {{name}}"},
+              {"data": {"status": "closed", "name": "reuters 4"},
+                "message": "{{status}} Ingest Channel {{name}}"
+               }
+            ]
+         }
+         """
+        Then we get notifications
+        """
+        [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}}]
+        """
+        Then we get emails
+        """
+        [
+          {"body":"updated Ingest Channel reuters 4"},
+          {"body":"closed Ingest Channel reuters 4"}
+        ]
         """
 
     @auth
@@ -112,9 +163,12 @@ Feature: Ingest Provider
         """
         [{"event": "activity", "extra": {"_dest": {"#CONTEXT_USER_ID#": 0}}}]
         """
-        Then we get email
+        Then we get emails
         """
-        deleted Ingest Channel reuters 4
+        [
+          {"body": "deleted Ingest Channel reuters 4"}
+        ]
+
         """
 
     @auth
