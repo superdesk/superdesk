@@ -52,6 +52,17 @@ Feature: Authentication
         {"_issues": {"credentials": 1}}
         """
 
+	Scenario: Check reset password - expired token
+        Given "users"
+        """
+        [{"username": "foo", "password": "bar", "email": "foo@bar.org", "is_active": true}]
+        """
+
+        When we post to reset_password we get email with token
+        Then we can check if token is valid
+        And we update token to be expired
+        Then token is invalid
+ 
 	Scenario: Reset password existing user
         Given "users"
         """
@@ -59,7 +70,7 @@ Feature: Authentication
         """
 
         When we post to reset_password we get email with token
-        And we reset password for user
+        Then we reset password for user
 
     Scenario: Reset password disabled user
         Given "users"
