@@ -126,6 +126,7 @@ INSTALLED_APPS = [
     'superdesk.io.aap',
     'superdesk.io.afp',
     'superdesk.io.ftp',
+    'superdesk.io.rss',
 
     'apps.archive',
     'apps.stages',
