@@ -18,3 +18,7 @@
     <label for="ftp_dest_path" translate>Local Path</label>
     <input type="text" id="ftp_dest_path" placeholder="{{ :: 'Local Path'|translate }}" ng-model="provider.config.dest_path" required ng-change="$parent.setConfig(provider)">
 </div>
+<div class="field">
+    <label translate>Passive</label>
+    <span sd-switch ng-model="provider.config.passive"></span>
+</div>
