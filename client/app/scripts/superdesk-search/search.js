@@ -502,6 +502,9 @@
                 templateUrl: 'scripts/superdesk-search/views/search-results.html',
                 link: function(scope, elem, attr, controller) {
 
+                    var GRID_VIEW = 'mgrid',
+                        LIST_VIEW = 'compact';
+
                     var multiSelectable = (attr.multiSelectable === undefined) ? false : true;
 
                     scope.flags = controller.flags;
@@ -527,18 +530,27 @@
                         scope.selected.view = null;
                     };
 
-                    scope.setview = function setView(view) {
-                        update['archive:view'].view = view || 'mgrid';
-                        preferencesService.update(update, 'archive:view').then(function() {
-                            scope.view = view || 'mgrid';
-                        });
-                    };
+                    scope.setview = setView;
 
                     var savedView;
                     preferencesService.get('archive:view').then(function(result) {
                         savedView = result.view;
                         scope.view = (!!savedView && savedView !== 'undefined') ? savedView : 'mgrid';
                     });
+
+                    scope.$on('key:v', toggleView);
+
+                    function setView(view) {
+                        update['archive:view'].view = view || 'mgrid';
+                        preferencesService.update(update, 'archive:view').then(function() {
+                            scope.view = view || 'mgrid';
+                        });
+                    }
+
+                    function toggleView() {
+                        var nextView = scope.view === LIST_VIEW ? GRID_VIEW : LIST_VIEW;
+                        return setView(nextView);
+                    }
                 }
             };
         }])
@@ -686,7 +698,7 @@
         /**
          * Item search component
          */
-        .directive('sdItemSearchbar', ['$location', function($location) {
+        .directive('sdItemSearchbar', ['$location', '$timeout', function($location, $timeout) {
             return {
                 scope: {repo: '=', context: '='},
                 templateUrl: 'scripts/superdesk-search/views/item-searchbar.html',
@@ -821,6 +833,15 @@
                             parseFields();
                         }
                     };
+
+                    scope.$on('key:s', function openSearch() {
+                        scope.$apply(function() {
+                            scope.flags = {extended: true};
+                            $timeout(function() { // call focus when input will be visible
+                                input.focus();
+                            }, 0, false);
+                        });
+                    });
 
                     function _closeSearchPopup() {
                         scope.flags.extended = false;
