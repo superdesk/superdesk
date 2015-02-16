@@ -1,21 +1,34 @@
 <div class="field">
-    <label for="rss_url" translate>Host</label>
-    <input type="url" id="rss_url"
-        placeholder="{{:: 'RSS Feed URL'|translate }}"
-        ng-model="provider.config.url" required
-        ng-change="$parent.setConfig(provider)">
+  <label for="rss_url" translate>Host</label>
+  <input type="url" id="rss_url"
+      placeholder="{{:: 'RSS Feed URL'|translate }}"
+      ng-model="provider.config.url" required
+      ng-change="$parent.setConfig(provider)">
 </div>
+
 <div class="field">
+  <input type="checkbox" id="auth_required"
+      ng-model="provider.config.auth_required"
+      ng-change="$parent.setRssConfig(provider)"
+    ><label for="auth_required" translate>Requires Authentication</label>
+</div>
+
+<fieldset ng-show="provider.config.auth_required">
+  <legend translate>Authentication Info</legend>
+  <div class="field">
     <label for="feed_username" translate>Username</label>
     <input type="text" id="feed_username"
         placeholder="{{:: 'Username'|translate }}"
         ng-model="provider.config.username"
+        ng-required="provider.config.auth_required"
         ng-change="$parent.setConfig(provider)">
-</div>
-<div class="field">
+  </div>
+  <div class="field">
     <label for="feed_password" translate>Password</label>
     <input type="password" id="feed_password"
         placeholder="{{:: 'Password'|translate }}"
         ng-model="provider.config.password"
+        ng-required="provider.config.auth_required"
         ng-change="$parent.setConfig(provider)">
-</div>
+  </div>
+</fieldset>
