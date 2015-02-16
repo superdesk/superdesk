@@ -160,18 +160,22 @@ Feature: Duplication
     @provider
     Scenario: Duplicate a composite item and expect the twice the number of items as the original
     	Given empty "ingest"
+    	Given "desks"
+        """
+        [{"name": "Sports"}]
+        """
         Given empty "archive"
     	When we fetch from "reuters" ingest "tag:reuters.com,2014:newsml_KBN0FL0NM"
         And we post to "/archive_ingest"
         """
         {
-        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM"
+        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM", "desk": "#desks._id#"
         }
         """
         Then we get "_id"
         When we post to "/archive_ingest"
         """
-        {"guid": "#_id#"}
+        {"guid": "#_id#", "desk": "#desks._id#"}
         """
         When we get "/archive"
         Then we get list with 12 items
