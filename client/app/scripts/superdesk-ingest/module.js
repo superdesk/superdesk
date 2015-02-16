@@ -23,6 +23,10 @@ define([
             label: 'Reuters',
             templateUrl: 'scripts/superdesk-ingest/views/settings/reutersConfig.html'
         },
+        rss: {
+            label: 'RSS',
+            templateUrl: 'scripts/superdesk-ingest/views/settings/rssConfig.html'
+        },
         afp: {
             label: 'AFP',
             templateUrl: 'scripts/superdesk-ingest/views/settings/afpConfig.html'
