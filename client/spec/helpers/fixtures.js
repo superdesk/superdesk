@@ -15,6 +15,10 @@ function resetApp(callback) {
             'profile': 'app_prepopulate_data'
         }
     }, function(e, r, j) {
+        // @TODO: remove it
+        console.log(e);
+        console.log(j);
+        // </it>
         pp.token = null;
         callback(e, r, j);
     });

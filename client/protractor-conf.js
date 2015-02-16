@@ -11,7 +11,10 @@ exports.config = {
     },
     specs: ['spec/setup.js', 'spec/matchers.js', 'spec/**/*[Ss]pec.js'],
     capabilities: {
-        browserName: 'chrome'
+        browserName: 'chrome',
+        chromeOptions: {
+            args: ['--no-sandbox']
+        }
     },
     framework: 'jasmine',
     jasmineNodeOpts: {
