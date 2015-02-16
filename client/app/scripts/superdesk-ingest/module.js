@@ -244,6 +244,22 @@ define([
                     $scope.provider.config = provider.config;
                 };
 
+                /**
+                * Updates provider configuration object. It also clears the
+                * username and password fields, if authentication is not
+                * needed for an RSS source.
+                *
+                * @method setRssConfig
+                * @param {Object} provider ingest provider instance
+                */
+                $scope.setRssConfig = function(provider) {
+                    if (!provider.config.auth_required) {
+                        provider.config.username = null;
+                        provider.config.password = null;
+                    }
+                    $scope.provider.config = provider.config;
+                };
+
                 $scope.save = function() {
                     api.ingestProviders.save($scope.origProvider, $scope.provider)
                     .then(function() {

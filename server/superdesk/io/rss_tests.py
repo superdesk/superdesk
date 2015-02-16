@@ -150,10 +150,11 @@ class FetchDataMethodTestCase(RssIngestServiceTest):
         call_args = requests_get.call_args[0]
         self.assertEquals(call_args[0], 'http://news.com/rss')
 
-    def test_provides_auth_info_if_available(self):
+    def test_provides_auth_info_if_required(self):
         requests_get.return_value = MagicMock(ok=True)
         config = dict(
             url='http://news.com/rss',
+            auth_required=True,
             username='johndoe',
             password='secret')
 

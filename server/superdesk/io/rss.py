@@ -85,8 +85,11 @@ class RssIngestService(IngestService):
         """
         url = config['url']
 
-        username = config.get('username')
-        auth = (username, config.get('password')) if username else None
+        if config.get('auth_required', False):
+            auth = (config.get('username'), config.get('password'))
+        else:
+            auth = None
+
         response = requests.get(url, auth=auth)
 
         if response.ok:
@@ -119,4 +122,3 @@ class RssIngestService(IngestService):
 
 
 register_provider(PROVIDER, RssIngestService())
-
