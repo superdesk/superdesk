@@ -81,7 +81,7 @@ Feature: Desks
         Then we get OK response
 		When we post to "/desks"
 			 """
-            {"name": "Sports Desk"}
+            {"name": "sports desk"}
              """
 		Then we get response code 400
 		When we post to "/desks"
@@ -91,6 +91,6 @@ Feature: Desks
         Then we get OK response
 		When we patch "/desks/#desks._id#"
 			 """
-            {"name": "Sports Desk"}
+            {"name": "SportS DesK"}
              """
 		Then we get response code 400
