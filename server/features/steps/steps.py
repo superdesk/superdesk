@@ -1148,9 +1148,11 @@ def step_set_limit(context):
     context.app.settings['MAX_SEARCH_DEPTH'] = 1
 
 
-@then('we get email')
+@then('we get emails')
 def step_we_get_email(context):
-    assert check_if_email_sent(context, context.text)
+    data = json.loads(context.text)
+    for email in data:
+        assert check_if_email_sent(context, email['body'])
 
 
 @then('we get no email')
