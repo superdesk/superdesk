@@ -13,17 +13,31 @@ var LoginModal = require('./pages').login;
 // authenticate if needed
 function login() {
     var modal = new LoginModal();
-    modal.btn.isDisplayed().then(function(needLogin) {
-        if (needLogin) {
-            modal.login('admin', 'admin');
-        }
-    });
+    return modal.btn.isDisplayed()
+        .then(function(needLogin) {
+            if (needLogin) {
+                return modal.login('admin', 'admin');
+            }
+        });
+}
+
+// wait for login to finish
+function wait() {
+    return browser.sleep(100)
+        .then(function() {
+            return browser.waitForAngular();
+        });
 }
 
 // open url and authenticate
 function openUrl(url) {
-    return function() {
-        browser.get(url);
-        login();
+    return function(done) {
+        return browser.get('/')
+            .then(login)
+            .then(wait)
+            .then(function() {
+                return browser.get(url);
+            })
+            .then(done);
     };
 }

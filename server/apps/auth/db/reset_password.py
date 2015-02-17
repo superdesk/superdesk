@@ -27,6 +27,7 @@ reset_schema = {
     'email': {'type': 'email'},
     'token': {'type': 'string'},
     'password': {'type': 'string'},
+    'expire_time': {'type': 'datetime'},
     'user': Resource.rel('users', True)
 }
 
@@ -53,6 +54,14 @@ class ResetPasswordResource(Resource):
 
 class ResetPasswordService(BaseService):
 
+    def check_if_valid_token(self, token):
+        reset_request = superdesk.get_resource_service('active_tokens').find_one(req=None, token=token)
+        if not reset_request:
+            logger.warning('Invalid token received: %s' % token)
+            raise SuperdeskApiError.unauthorizedError('Invalid token received')
+
+        return reset_request
+
     def create(self, docs, **kwargs):
         for doc in docs:
             email = doc.get('email')
@@ -63,6 +72,9 @@ class ResetPasswordService(BaseService):
                 return self.reset_password(doc)
             if email:
                 return self.initialize_reset_password(doc, email)
+            if key:
+                token_req = self.check_if_valid_token(key)
+                return [token_req.get('_id')]
 
             raise SuperdeskApiError.badRequestError('Either key:password or email must be provided')
 
@@ -98,10 +110,7 @@ class ResetPasswordService(BaseService):
         key = doc.get('token')
         password = doc.get('password')
 
-        reset_request = superdesk.get_resource_service('active_tokens').find_one(req=None, token=key)
-        if not reset_request:
-            logger.warning('Invalid token received: %s' % key)
-            raise SuperdeskApiError.unauthorizedError('Invalid token received')
+        reset_request = self.check_if_valid_token(key)
 
         user_id = reset_request['user']
         user = superdesk.get_resource_service('users').find_one(req=None, _id=user_id)

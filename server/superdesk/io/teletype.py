@@ -32,7 +32,6 @@ class TeletypeIngestService(FileIngestService):
     def _update(self, provider):
         self.provider = provider
         self.path = provider.get('config', {}).get('path', None)
-
         if not self.path:
             logger.info('No path')
             return []
@@ -61,19 +60,5 @@ class TeletypeIngestService(FileIngestService):
                 raise ProviderError.ingestError(ex, provider)
 
         push_notification('ingest:update')
-
-    def parse_file(self, filename, provider):
-        try:
-            path = provider.get('config', {}).get('path', None)
-
-            if not path:
-                return []
-
-            item = self.parser.parse_file(os.path.join(path, filename))
-
-            return [item]
-        except Exception as ex:
-            self.move_file(self.path, filename, provider=provider, success=False)
-            raise ParserError.parseFileError('Teletype', filename, ex, provider)
 
 register_provider(PROVIDER, TeletypeIngestService())
