@@ -339,8 +339,6 @@ define([
                 scope.editScheme = null;
                 scope.rule = null;
                 scope.ruleIndex = null;
-                scope.newFetch = {};
-                scope.newPublish = {};
 
                 // mock
                 scope.schemes = [
@@ -417,15 +415,21 @@ define([
                 scope.addRule = function() {
                     var rule = {
                         name: null,
-                        schedule: {
-                            day_of_week: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
-                            hour_of_day_from: '0000',
-                            hour_of_day_to: '2355'
+                        filter: {
+                            type: [],
+                            headline: '',
+                            slugline: '',
+                            body: ''
                         },
                         actions: {
                             fetch: [],
                             publish: [],
                             exit: false
+                        },
+                        schedule: {
+                            day_of_week: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+                            hour_of_day_from: '0000',
+                            hour_of_day_to: '2355'
                         }
                     };
                     scope.editRule(rule);
@@ -448,6 +452,102 @@ define([
                         scope.editScheme.rules[scope.ruleIndex] = rule;
                     }
                     scope.cancelRule();
+                };
+            }
+        };
+    }
+
+    IngestRoutingFilter.$inject = [];
+    function IngestRoutingFilter() {
+        return {
+            scope: {rule: '='},
+            templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-filter.html',
+            link: function(scope) {
+                scope.typeList = [
+                    'text',
+                    'preformatted',
+                    'picture',
+                    'audio',
+                    'video',
+                    'composite'
+                ];
+                scope.typeLookup = {
+                    text: 'Text',
+                    preformatted: 'Preformatted text',
+                    picture: 'Picture',
+                    audio: 'Audio',
+                    video: 'Video',
+                    composite: 'Package'
+                };
+
+                scope.isTypeChecked = function(rule, type) {
+                    return rule.filter.type.indexOf(type) !== -1;
+                };
+
+                scope.toggleType = function(rule, type) {
+                    if (scope.isTypeChecked(rule, type)) {
+                        rule.filter.type = _.without(rule.filter.type, type);
+                    } else {
+                        rule.filter.type.push(type);
+                    }
+                };
+            }
+        };
+    }
+
+    IngestRoutingAction.$inject = [];
+    function IngestRoutingAction() {
+        return {
+            scope: {rule: '='},
+            templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-action.html',
+            link: function(scope) {
+                scope.newFetch = {};
+                scope.newPublish = {};
+
+                scope.addFetch = function() {
+                    if (scope.newFetch.desk && scope.newFetch.stage) {
+                        scope.rule.actions.fetch.push(scope.newFetch);
+                        scope.newFetch = {};
+                    }
+                };
+
+                scope.removeFetch = function(fetchAction) {
+                    _.remove(scope.rule.actions.fetch, function(f) {
+                        return f === fetchAction;
+                    });
+                };
+
+                scope.addPublish = function() {
+                    if (scope.newPublish.desk && scope.newPublish.stage) {
+                        scope.rule.actions.publish.push(scope.newPublish);
+                        scope.newPublish = {};
+                    }
+                };
+
+                scope.removePublish = function(publishAction) {
+                    _.remove(scope.rule.actions.publish, function(p) {
+                        return p === publishAction;
+                    });
+                };
+            }
+        };
+    }
+
+    IngestRoutingSchedule.$inject = [];
+    function IngestRoutingSchedule() {
+        return {
+            scope: {rule: '='},
+            templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-schedule.html',
+            link: function(scope) {
+                scope.dayList = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+                scope.dayLookup = {
+                    MON: 'Monday',
+                    TUE: 'Tuesday',
+                    WED: 'Wednesday',
+                    THU: 'Thursday',
+                    FRI: 'Friday',
+                    SAT: 'Saturday',
+                    SUN: 'Sunday'
                 };
 
                 scope.isDayChecked = function(rule, day) {
@@ -480,43 +580,6 @@ define([
                     }
                     return h + m;
                 };
-
-                scope.dayList = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
-                scope.dayLookup = {
-                    MON: 'Monday',
-                    TUE: 'Tuesday',
-                    WED: 'Wednesday',
-                    THU: 'Thursday',
-                    FRI: 'Friday',
-                    SAT: 'Saturday',
-                    SUN: 'Sunday'
-                };
-
-                scope.addFetch = function() {
-                    if (scope.newFetch.desk && scope.newFetch.stage) {
-                        scope.rule.actions.fetch.push(scope.newFetch);
-                        scope.newFetch = {};
-                    }
-                };
-
-                scope.removeFetch = function(fetchAction) {
-                    _.remove(scope.rule.actions.fetch, function(f) {
-                        return f === fetchAction;
-                    });
-                };
-
-                scope.addPublish = function() {
-                    if (scope.newPublish.desk && scope.newPublish.stage) {
-                        scope.rule.actions.publish.push(scope.newPublish);
-                        scope.newPublish = {};
-                    }
-                };
-
-                scope.removePublish = function(publishAction) {
-                    _.remove(scope.rule.actions.publish, function(p) {
-                        return p === publishAction;
-                    });
-                };
             }
         };
     }
@@ -546,6 +609,9 @@ define([
         .directive('sdIngestSourcesContent', IngestSourcesContent)
         .directive('sdIngestRulesContent', IngestRulesContent)
         .directive('sdIngestRoutingContent', IngestRoutingContent)
+        .directive('sdIngestRoutingFilter', IngestRoutingFilter)
+        .directive('sdIngestRoutingAction', IngestRoutingAction)
+        .directive('sdIngestRoutingSchedule', IngestRoutingSchedule)
         .directive('sdPieChartDashboard', PieChartDashboardDirective)
         .directive('sdSortrules', SortRulesDirectives);
 

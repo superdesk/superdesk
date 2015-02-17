@@ -1,0 +1,13 @@
+<div ng-repeat="day in dayList">
+    <input type="checkbox" ng-checked="isDayChecked(rule, day)" ng-click="toggleDay(rule, day)">{{dayLookup[day]|translate}}
+</div>
+start time: <div sd-timepicker-alt
+    data-model="rule.schedule.hour_of_day_from"
+    data-filter-in="convertIn"
+    data-filter-out="convertOut"
+></div>
+end time: <div sd-timepicker-alt
+    data-model="rule.schedule.hour_of_day_to"
+    data-filter-in="convertIn"
+    data-filter-out="convertOut"
+></div>

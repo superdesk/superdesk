@@ -1,0 +1,14 @@
+<div>item type:
+    <div ng-repeat="type in typeList">
+        <input type="checkbox" ng-checked="isTypeChecked(rule, type)" ng-click="toggleType(rule, type)">{{typeLookup[type]|translate}}
+    </div>
+</div>
+<div>headline:
+    <input ng-model="rule.filter.headline">
+</div>
+<div>keyword:
+    <input ng-model="rule.filter.slugline">
+</div>
+<div>body:
+    <input ng-model="rule.filter.body">
+</div>

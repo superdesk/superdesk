@@ -86,41 +86,9 @@
                 </ul>  
                 
                 <div class="content">
-                    <div ng-if="ruleTab === 'filter'">filter</div>
-                    <div ng-if="ruleTab === 'action'">
-                        <div>fetch in:
-                            <div ng-repeat="fetchAction in rule.actions.fetch">
-                                <div sd-deskstagepicker data-desk="fetchAction.desk" data-stage="fetchAction.stage"></div>
-                                <button ng-click="removeFetch(fetchAction)">remove</button>
-                            </div>
-                            new fetch action: <div sd-deskstagepicker data-desk="newFetch.desk" data-stage="newFetch.stage"></div>
-                            <button ng-click="addFetch()" ng-disabled="!newFetch.desk || !newFetch.stage">add</button>
-                        </div>
-                        <div>publish in:
-                            <div ng-repeat="publishAction in rule.actions.publish">
-                                <div sd-deskstagepicker data-desk="publishAction.desk" data-stage="publishAction.stage"></div>
-                                <button ng-click="removePublish(publishAction)">remove</button>
-                            </div>
-                            new publish action: <div sd-deskstagepicker data-desk="newPublish.desk" data-stage="newPublish.stage"></div>
-                            <button ng-click="addPublish()" ng-disabled="!newPublish.desk || !newPublish.stage">add</button>
-                        </div>
-                        exit <input type="checkbox" ng-model="rule.actions.exit">
-                    </div>
-                    <div ng-if="ruleTab === 'schedule'">
-                        <div ng-repeat="day in dayList">
-                            <input type="checkbox" ng-checked="isDayChecked(rule, day)" ng-click="toggleDay(rule, day)">{{dayLookup[day]|translate}}
-                        </div>
-                        start time: <div sd-timepicker-alt
-                            data-model="rule.schedule.hour_of_day_from"
-                            data-filter-in="convertIn"
-                            data-filter-out="convertOut"
-                        ></div>
-                        end time: <div sd-timepicker-alt
-                            data-model="rule.schedule.hour_of_day_to"
-                            data-filter-in="convertIn"
-                            data-filter-out="convertOut"
-                        ></div>
-                    </div>
+                    <div ng-if="ruleTab === 'filter'" sd-ingest-routing-filter data-rule="rule"></div>
+                    <div ng-if="ruleTab === 'action'" sd-ingest-routing-action data-rule="rule"></div>
+                    <div ng-if="ruleTab === 'schedule'" sd-ingest-routing-schedule data-rule="rule"></div>
                 </div>
             </div>
         </div>
