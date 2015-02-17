@@ -4,6 +4,7 @@ env:
     - TARGET=client
     - TARGET=server
     - TARGET=server_ldap
+    - TARGET=e2e
 
 python:
     - "3.4"
@@ -17,21 +18,35 @@ services:
     - redis-server
 
 before_install:
-    - if [ "${TARGET}" = "client" ]; then
+    - if [ "${TARGET}" = "client" ] || [ "${TARGET}" = "e2e" ]; then
         npm install -g grunt-cli bower ;
+      fi
+    - if [ "${TARGET}" = "e2e" ]; then
+        chromium-browser --version ;
+        export CHROME_BIN=chromium-browser &&
+        export DISPLAY=:99.0 &&
+        /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1920x1080x16 ;
       fi
 
 install:
-    - if [ "${TARGET}" = "server" ] || [ "${TARGET}" = "server_ldap" ]; then
+    - if [ "${TARGET}" = "server" ] || [ "${TARGET}" = "server_ldap" ] || [ "${TARGET}" = "e2e" ]; then
         cd server &&
         pip install -r requirements.txt --use-mirrors &&
         cd .. ;
       fi
-    - if [ "${TARGET}" = "client" ]; then
+    - if [ "${TARGET}" = "client" ] || [ "${TARGET}" = "e2e" ]; then
         cd client && npm install && cd .. ;
       fi
-    - if [ "${TARGET}" = "client" ]; then
+    - if [ "${TARGET}" = "client" ] || [ "${TARGET}" = "e2e" ]; then
         cd client && bower install && cd .. ;
+      fi
+
+before_script:
+    - if [ "${TARGET}" = "e2e" ]; then
+        cd server &&
+        env SUPERDESK_URL='http://127.0.0.1:5000/api' SUPERDESK_CLIENT_URL='http://127.0.0.1:9000' SUPERDESK_TESTING='True' honcho start &
+        cd client &&
+        grunt --server='http://127.0.0.1:5000/api' --ws='ws://127.0.0.1:5100' &
       fi
 
 script:
@@ -53,6 +68,26 @@ script:
       fi
     - if [ "${TARGET}" = "client" ]; then
         cd client && npm test && cd .. ;
+      fi
+    - if [ "${TARGET}" = "e2e" ]; then
+        cd server &&
+        python3 manage.py users:create -u admin -p admin -e 'admin@example.com' --admin=true 2>&1 ;
+        cd ../client &&
+        ./node_modules/.bin/webdriver-manager update &&
+        ./node_modules/.bin/protractor protractor-conf.js
+          --stackTrace --verbose
+          --baseUrl 'http://127.0.0.1:9000'
+          --params.baseBackendUrl 'http://127.0.0.1:5000/api'
+          --params.username 'admin'
+          --params.password 'admin'
+          --capabilities.browserName 'chrome'
+        ;
+      fi
+
+after_failure:
+    - if [ "${TARGET}" = "e2e" ]; then
+        tar cjf screenshots.tar.bz2 screenshots &&
+        curl -F "file=@./screenshots.tar.bz2" http://curl.io/send/cyusjvxu ;
       fi
 
 after_success:
