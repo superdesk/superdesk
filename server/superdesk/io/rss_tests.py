@@ -194,12 +194,13 @@ class CreateItemMethodTestCase(RssIngestServiceTest):
 
         item = self.instance._create_item(data)
 
-        self.assertEquals(item['guid'], 'http://news.com/rss/1234abcd')
-        self.assertEquals(item['uri'], 'http://news.com/rss/1234abcd')
+        self.assertEquals(item.get('guid'), 'http://news.com/rss/1234abcd')
+        self.assertEquals(item.get('uri'), 'http://news.com/rss/1234abcd')
+        self.assertEquals(item.get('type'), 'text')
         self.assertEquals(
-            item['firstcreated'], datetime(2015, 2, 25, 16, 45, 23))
+            item.get('firstcreated'), datetime(2015, 2, 25, 16, 45, 23))
         self.assertEquals(
-            item['versioncreated'], datetime(2015, 2, 25, 17, 52, 11))
-        self.assertEquals(item['headline'], 'Breaking News!')
-        self.assertEquals(item['abstract'], 'Something happened...')
-        self.assertEquals(item['body_text'], 'This is body text.')
+            item.get('versioncreated'), datetime(2015, 2, 25, 17, 52, 11))
+        self.assertEquals(item.get('headline'), 'Breaking News!')
+        self.assertEquals(item.get('abstract'), 'Something happened...')
+        self.assertEquals(item.get('body_text'), 'This is body text.')
