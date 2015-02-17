@@ -676,6 +676,40 @@ define([
 		};
 	}
 
+	function TimepickerAltDirective() {
+		return {
+			scope: {
+				model: '=',
+				filterIn: '=',
+				filterOut: '='
+			},
+			//templateUrl: 'scripts/superdesk/ui/views/sd-timepicker-alt.html',
+			template: 'hours: <select ng-model="hours" ng-change="update()"><option ng-repeat="h in range(0, 23)">{{h}}</option></select>' +
+				'minutes: <select ng-model="minutes" ng-change="update()"><option ng-repeat="m in range(0, 59, step)">{{m}}</option></select>',
+			link: function(scope) {
+				scope.step = 5;
+				scope.$watch('model', function() {
+					var result = scope.filterIn(scope.model);
+					scope.hours = result.hours;
+					scope.minutes = result.minutes;
+				});
+
+				scope.update = function() {
+					scope.model = scope.filterOut(scope.hours, scope.minutes);
+				};
+
+				scope.range = function(min, max, step) {
+					step = step || 1;
+					var range = [];
+					for (var i = min; i <= max; i = i + step) {
+						range.push(i);
+					}
+					return range;
+				};
+			}
+		};
+	}
+
 	function LeadingZeroFilter() {
 		return function(input) {
 			if (input < 10) {
@@ -748,6 +782,7 @@ define([
 		.directive('sdTimepickerInner', TimepickerInnerDirective)
 		.directive('sdTimepickerPopup', TimepickerPopupDirective)
 		.directive('sdTimepicker', TimepickerDirective)
+		.directive('sdTimepickerAlt', TimepickerAltDirective)
 		.service('popupService', PopupService)
 		.service('datetimeHelper', DateTimeHelperService)
 		.filter('leadingZero', LeadingZeroFilter);

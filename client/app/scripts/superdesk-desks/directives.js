@@ -351,5 +351,31 @@ define([
                 };
             }
         };
+    }])
+    .directive('sdDeskstagepicker', ['desks', function(desks) {
+        return {
+            scope: {
+                desk: '=',
+                stage: '='
+            },
+            template: '<select ng-model="desk"><option ng-repeat="d in desks" value="{{d._id}}" ng-selected="d._id === desk">{{d.name}}</option></select>' +
+                '<select ng-model="stage"><option ng-repeat="s in deskStages[desk]" value="{{s._id}}" ng-selected="s._id === stage">{{s.name}}</option></select>',
+            link: function(scope, elem, attrs) {
+                scope.desks = null;
+                scope.deskStages = null;
+
+                scope.$watchGroup(['desk', 'stage'], function() {
+                    if (!scope.desks || !scope.deskStages) {
+                        desks.initialize()
+                        .then(function() {
+                            scope.desks = desks.desks._items;
+                            scope.deskStages = desks.deskStages;
+                        });
+                    } else if (scope.desk && _.findIndex(scope.deskStages[scope.desk], {_id: scope.stage}) === -1) {
+                        scope.stage = null;
+                    }
+                });
+            }
+        };
     }]);
 });
