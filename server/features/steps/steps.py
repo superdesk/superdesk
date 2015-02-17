@@ -911,7 +911,8 @@ def we_update_token_to_expired(context):
         expiry = utc.utcnow() - timedelta(days=2)
         reset_request = get_resource_service('reset_user_password').find_one(req=None, token=context.token)
         reset_request['expire_time'] = expiry
-        get_resource_service('reset_user_password').patch(reset_request['_id'], reset_request)
+        id = reset_request.pop('_id')
+        get_resource_service('reset_user_password').patch(id, reset_request)
 
 
 @then('token is invalid')
