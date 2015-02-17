@@ -9,7 +9,8 @@ define([
                 item: '=',
                 type: '@',
                 action: '@',
-                done: '&'
+                done: '&',
+                single: '='
             },
             templateUrl: asset.templateUrl('superdesk/activity/views/activity-list.html'),
             link: function(scope, elem, attrs) {
@@ -32,7 +33,10 @@ define([
                         return; // don't try to run it, just let it change url
                     }
 
-                    e.stopPropagation();
+                    if (e != null) {
+                        e.stopPropagation();
+                    }
+
                     activityService.start(activity, {data: {item: scope.item}})
                         .then(function() {
                             if (typeof scope.done === 'function') {
@@ -40,6 +44,17 @@ define([
                             }
                         });
                 };
+
+                // register key shortcuts for single instance of activity list - in preview sidebar
+                if (scope.single) {
+                    angular.forEach(scope.activities, function(activity) {
+                        if (activity.key) {
+                            scope.$on('key:' + activity.key, function() {
+                                scope.run(activity);
+                            });
+                        }
+                    });
+                }
             }
         };
     }];
