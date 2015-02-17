@@ -317,3 +317,33 @@ class IngestFtpError(SuperdeskIngestError):
             logger.exception("Provider: {} - File: {} unknown file format. "
                              "Parser couldn't be found.".format(provider.get('name', 'Unknown provider'), filename))
         return IngestFtpError(5001, exception, provider)
+
+
+class IngestRssFeedError(SuperdeskIngestError):
+    """A class representing an RSS feed ingest error.
+
+    The class also contains factory methods for creating different types of
+    RSS feed error instances.
+    """
+    _codes = {
+        6000: "General RSS feed error",
+        6001: "RSS feed connection has timed out",
+        6002: "RSS feed not found (404)",
+        6003: "RSS feed authorization error",
+    }
+
+    @classmethod
+    def generalError(cls, exception, provider):
+        return cls(6000, exception, provider)
+
+    @classmethod
+    def timeoutError(cls, exception, provider):
+        return cls(6001, exception, provider)
+
+    @classmethod
+    def notFoundError(cls, exception, provider):
+        return cls(6002, exception, provider)
+
+    @classmethod
+    def authError(cls, exception, provider):
+        return cls(6003, exception, provider)

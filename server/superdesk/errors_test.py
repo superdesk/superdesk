@@ -420,3 +420,109 @@ class ErrorsTestCase(TestCase):
         self.assertEqual(self.mock_logger_handler.messages['error'][0],
                          "Provider: TestProvider - File: test.xml unknown file format. "
                          "Parser couldn't be found.")
+
+
+class RssIngestErrorsTestCase(ErrorsTestCase):
+    """Tests for the IngestRssFeedError class."""
+
+    def _get_target_class(self):
+        """Return a class under test.
+
+        If the class cannot be imported, make the test fail immediately.
+        """
+        try:
+            from superdesk.errors import IngestRssFeedError
+        except ImportError:
+            self.fail(
+                "Could not import class under test (IngestRssFeedError).")
+        else:
+            return IngestRssFeedError
+
+    def setUp(self):
+        super(RssIngestErrorsTestCase, self).setUp()
+        self.exc_class = self._get_target_class()
+
+    def test_raise_rss_ingest_general_error(self):
+        with assert_raises(self.exc_class) as error_context:
+            ex = Exception("Testing RSS general error")
+            raise self.exc_class.generalError(ex, self.provider)
+
+        exception = error_context.exception
+        self.assertEqual(exception.code, 6000)
+        self.assertEqual(exception.message, "General RSS feed error")
+        self.assertEqual(exception.provider_name, "TestProvider")
+
+        self.assertIsNotNone(exception.system_exception)
+        self.assertEqual(
+            exception.system_exception.args[0], "Testing RSS general error")
+
+        self.assertEqual(len(self.mock_logger_handler.messages['error']), 1)
+        self.assertEqual(
+            self.mock_logger_handler.messages['error'][0],
+            "IngestRssFeedError Error 6000 - General RSS feed error: "
+            "Testing RSS general error on channel TestProvider")
+
+    def test_raise_rss_timeout_error(self):
+        with assert_raises(self.exc_class) as error_context:
+            ex = Exception("Testing RSS timeout error")
+            raise self.exc_class.timeoutError(ex, self.provider)
+
+        exception = error_context.exception
+        self.assertEqual(exception.code, 6001)
+        self.assertEqual(
+            exception.message, "RSS feed connection has timed out")
+        self.assertEqual(exception.provider_name, "TestProvider")
+
+        self.assertIsNotNone(exception.system_exception)
+        self.assertEqual(
+            exception.system_exception.args[0], "Testing RSS timeout error")
+
+        self.assertEqual(len(self.mock_logger_handler.messages['error']), 1)
+        self.assertEqual(
+            self.mock_logger_handler.messages['error'][0],
+            "IngestRssFeedError Error 6001 - "
+            "RSS feed connection has timed out: "
+            "Testing RSS timeout error on channel TestProvider")
+
+    def test_raise_rss_not_found_error(self):
+        with assert_raises(self.exc_class) as error_context:
+            ex = Exception("Testing RSS not found error")
+            raise self.exc_class.notFoundError(ex, self.provider)
+
+        exception = error_context.exception
+        self.assertEqual(exception.code, 6002)
+        self.assertEqual(
+            exception.message, "RSS feed not found (404)")
+        self.assertEqual(exception.provider_name, "TestProvider")
+
+        self.assertIsNotNone(exception.system_exception)
+        self.assertEqual(
+            exception.system_exception.args[0], "Testing RSS not found error")
+
+        self.assertEqual(len(self.mock_logger_handler.messages['error']), 1)
+        self.assertEqual(
+            self.mock_logger_handler.messages['error'][0],
+            "IngestRssFeedError Error 6002 - RSS feed not found (404): "
+            "Testing RSS not found error on channel TestProvider")
+
+    def test_raise_rss_authorization_error(self):
+        with assert_raises(self.exc_class) as error_context:
+            ex = Exception("Testing RSS authorization error")
+            raise self.exc_class.authError(ex, self.provider)
+
+        exception = error_context.exception
+        self.assertEqual(exception.code, 6003)
+        self.assertEqual(
+            exception.message, "RSS feed authorization error")
+        self.assertEqual(exception.provider_name, "TestProvider")
+
+        self.assertIsNotNone(exception.system_exception)
+        self.assertEqual(
+            exception.system_exception.args[0],
+            "Testing RSS authorization error")
+
+        self.assertEqual(len(self.mock_logger_handler.messages['error']), 1)
+        self.assertEqual(
+            self.mock_logger_handler.messages['error'][0],
+            "IngestRssFeedError Error 6003 - RSS feed authorization error: "
+            "Testing RSS authorization error on channel TestProvider")
