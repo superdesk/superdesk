@@ -162,12 +162,15 @@ Feature: Routing Scheme and Routing Rules
           "name": "routing rule scheme 1",
           "rules": [{
             "name": "Sports Rule",
-            "filter": {}
+            "filter": {},
+            "actions": {
+                "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+            }
           }]
         }
       ]
       """
-      Then we get response code 400
+      Then we get response code 201
 
     @auth
     Scenario: Create an invalid Routing Scheme with a empty actions

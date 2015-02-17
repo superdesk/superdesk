@@ -9,13 +9,16 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
-
+from datetime import datetime
+from apps.rules.routing_rule_validator import RoutingRuleValidator
+from superdesk import get_resource_service
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.errors import SuperdeskApiError
 
 
 logger = logging.getLogger(__name__)
+STATE_ROUTED = 'routed'
 
 
 class RoutingRuleSchemeResource(Resource):
@@ -69,10 +72,10 @@ class RoutingRuleSchemeResource(Resource):
                             'allowed': ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
                         },
                         'hour_of_day_from': {
-                            'type': 'integer'
+                            'type': 'string'
                         },
                         'hour_of_day_to': {
-                            'type': 'integer'
+                            'type': 'string'
                         }
                     }
                 }
@@ -91,6 +94,7 @@ class RoutingRuleSchemeService(BaseService):
     """
     Service class for 'routing_schemes' endpoint.
     """
+    day_of_week = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
 
     def on_create(self, docs):
         """
@@ -128,6 +132,29 @@ class RoutingRuleSchemeService(BaseService):
         if self.backend.find_one('ingest_providers', req=None, routing_scheme=doc['_id']):
             raise SuperdeskApiError.forbiddenError('Routing Scheme is in use')
 
+    def apply_routing_scheme(self, ingest_item, provider, routing_scheme):
+        """
+        applies routing scheme and applies appropriate action (fetch, publish) to the item
+        :param item: ingest item to which routing scheme needs to applied.
+        :param provider: provider for which the routing scheme is applied.
+        :param routing_scheme: routing scheme.
+        """
+        rules = routing_scheme.get('rules', [])
+        if not rules:
+            logger.warning("Routing Scheme % for provider % has no rules configured." %
+                           (provider.get('name'), routing_scheme.get('name')))
+
+        for rule in self.get_scheduled_routing_rules(rules):
+            if RoutingRuleValidator().is_valid_rule(ingest_item, rule.get('filter', {})):
+                self.__fetch(ingest_item, rule.get('actions', {}).get('fetch', []))
+                self.__publish(ingest_item, rule.get('actions', {}).get('publish', []))
+                if rule.get('actions', {}).get('exit', False):
+                    break
+            else:
+                logger.info("Routing rule %s of Routing Scheme %s for Provider %s did not match for item %s" %
+                            (rule.get('name'), routing_scheme.get('name'),
+                             provider.get('name'), ingest_item.get('_id')))
+
     def __validate_routing_scheme(self, routing_scheme):
         """
         Validates routing scheme for the below:
@@ -155,8 +182,6 @@ class RoutingRuleSchemeService(BaseService):
 
             if routing_rule.get('name') is None:
                 raise SuperdeskApiError.badRequestError(message="A routing rule must have a name")
-            elif routing_rule.get('filter') is None or len(routing_rule.get('filter')) == 0:
-                raise SuperdeskApiError.badRequestError(message="A routing rule must have a filter")
             elif actions is None or len(actions) == 0 or (actions.get('fetch') is None and actions.get(
                     'publish') is None and actions.get('exit') is None):
                 raise SuperdeskApiError.badRequestError(message="A routing rule must have actions")
@@ -168,7 +193,6 @@ class RoutingRuleSchemeService(BaseService):
         """
         Checks if name of a routing rule is unique or not.
         """
-
         routing_rules = routing_scheme.get('rules', [])
 
         for routing_rule in routing_rules:
@@ -176,3 +200,58 @@ class RoutingRuleSchemeService(BaseService):
 
             if len(rules_with_same_name) > 1:
                 raise SuperdeskApiError.badRequestError("Rule Names must be unique within a scheme")
+
+    def get_scheduled_routing_rules(self, rules, current_datetime=datetime.now()):
+        """
+        Iterates rules list and returns the list of rules that are scheduled.
+        """
+        scheduled_rules = []
+        for rule in rules:
+            is_scheduled = True
+            schedule = rule.get('schedule', {})
+            if schedule:
+                from_time = current_datetime.replace(hour=int(schedule.get('hour_of_day_from', '0000')[:2]),
+                                                     minute=int(schedule.get('hour_of_day_from', '0000')[-2:]),
+                                                     second=0)
+                to_time = current_datetime.replace(hour=int(schedule.get('hour_of_day_from', '2359')[:2]),
+                                                   minute=int(schedule.get('hour_of_day_from', '2359')[-2:]),
+                                                   second=59)
+                if not ((self.day_of_week[current_datetime.weekday()] in schedule.get('day_of_week', []))
+                        and (from_time < current_datetime < to_time)):
+                    is_scheduled = False
+
+            if is_scheduled:
+                scheduled_rules.append(rule)
+
+        return scheduled_rules
+
+    def __fetch(self, ingest_item, destinations):
+        """
+        Fetch to item to the destinations
+        :param item: item to be fetched
+        :param destinations: list of desk and stage
+        """
+        archive_items = []
+        for destination in destinations:
+            try:
+                item_id = get_resource_service('archive_ingest') \
+                    .post([{'guid': ingest_item['guid'], 'desk': str(destination.get('desk')),
+                            'stage': str(destination.get('stage')), 'state': STATE_ROUTED}])[0]
+                archive_items.append(item_id)
+            except:
+                logger.exception("Failed to fetch item %s to desk %s" % (ingest_item['guid'], destination))
+
+        return archive_items
+
+    def __publish(self, ingest_item, destinations):
+        """
+        Fetches the item to the desk and then publishes the item.
+        :param item: item to be published
+        :param destinations: list of desk and stage
+        """
+        items_to_publish = self.__fetch(ingest_item, destinations)
+        for item in items_to_publish:
+            try:
+                get_resource_service('archive_publish').patch(item, {})
+            except:
+                logger.exception("Failed to publish item %s." % item)
