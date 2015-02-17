@@ -59,3 +59,28 @@ Feature: Groups
         """
         And we delete latest
         Then we get deleted response
+
+
+    @auth @test
+    Scenario: Unique name for group
+      Given empty "groups"
+      When we post to "/groups"
+      """
+      {"name": "Sports group"}
+      """
+      Then we get OK response
+      When we post to "/groups"
+      """
+      {"name": "sports GrouP"}
+      """
+      Then we get response code 400
+      When we post to "/groups"
+      """
+      {"name": "Sports Group users"}
+      """
+      Then we get OK response
+      When we patch "/groups/#groups._id#"
+      """
+      {"name": "sPorts GrouP"}
+      """
+      Then we get response code 400

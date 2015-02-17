@@ -143,7 +143,22 @@ Feature: Stages
         "desk_order": 2
         }
         """
-
+        When we patch "/stages/#stages._id#"
+        """
+        {
+        "name": "show my content",
+        "task_status": "in_progress",
+        "desk": "#desks._id#"
+        }
+        """
+        Then we get latest
+        """
+        {
+        "name": "show my content",
+        "task_status": "in_progress",
+        "desk": "#desks._id#"
+        }
+        """
 
     @auth
     Scenario: Edit stage - modify description and name

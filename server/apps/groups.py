@@ -31,7 +31,7 @@ class GroupsResource(Resource):
     schema = {
         'name': {
             'type': 'string',
-            'unique': True,
+            'iunique': True,
             'required': True,
         },
         'description': {
