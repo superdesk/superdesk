@@ -15,7 +15,7 @@ import requests
 from calendar import timegm
 from datetime import datetime
 
-from superdesk.errors import ProviderError
+from superdesk.errors import IngestRssFeedError, ParserError
 from superdesk.io import register_provider
 from superdesk.io.ingest_service import IngestService
 
@@ -35,23 +35,22 @@ class RssIngestService(IngestService):
     def _update(self, provider):
         """Check data provider for data updates and returns new items (if any).
 
-        TODO: list of exceptions raised
-        TODO: should return a list of lists...
-
         :param provider: data provider instance
         :return: a list containing a list of new content items
         :rtype: list
-        :raises ValueError: if the message_body exceeds 160 characters
+
+        :raises IngestRssFeedError: if data retrieval error occurs
+        :raises ParserError: if retrieved RSS data cannot be parsed
         """
         config = provider.get('config', {})
 
         try:
-            xml_data = self._fetch_data(config)
+            xml_data = self._fetch_data(config, provider)
             data = feedparser.parse(xml_data)
-        except Exception as ex:  # XXX: some "parse error"?
-            raise ProviderError.ingestError(ex, provider) from None
-        # and athentication error...
-        # XXX: some "data retrieval error" type?
+        except IngestRssFeedError:
+            raise
+        except Exception as ex:
+            raise ParserError.parseMessageError(ex, provider) from None
 
         # If provider last updated time is not available, set it to 1.1.1970
         # so that it will be recognized as "not up to date".
@@ -72,14 +71,16 @@ class RssIngestService(IngestService):
 
         return [new_items]
 
-    def _fetch_data(self, config):
+    def _fetch_data(self, config, provider):
         """Fetch the latest feed data.
 
-        TODO: list of exceptions raised
-
-        :param dict config: data provider configuration
+        :param dict config: RSS resource configuration
+        :param provider: data provider instance
         :return: fetched RSS data
         :rtype: str
+
+        :raises IngestRssFeedError: if fetching data fails for any reason
+            (e.g. authentication error, resource not found, etc.)
         """
         url = config['url']
 
@@ -93,10 +94,15 @@ class RssIngestService(IngestService):
         if response.ok:
             return response.content
         else:
-            # XXX: what exception type here? distinguish between login error
-            # and, e.g., network error?
-            # look at reuters ingest for ideas
-            raise Exception("Data retrieval error")
+            if response.status_code in (401, 403):
+                raise IngestRssFeedError.authError(
+                    Exception(response.reason), provider)
+            elif response.status_code == 404:
+                raise IngestRssFeedError.notFoundError(
+                    Exception(response.reason), provider)
+            else:
+                raise IngestRssFeedError.generalError(
+                    Exception(response.reason), provider)
 
     def _create_item(self, data):
         """Create a new content item from RSS feed data.
@@ -109,9 +115,9 @@ class RssIngestService(IngestService):
         item['guid'] = item['uri'] = data.get('guid')
         item['type'] = 'text'
         item['firstcreated'] = utcfromtimestamp(
-            timegm(data['published_parsed']))
+            timegm(data.get('published_parsed')))
         item['versioncreated'] = utcfromtimestamp(
-            timegm(data['updated_parsed']))
+            timegm(data.get('updated_parsed')))
         item['headline'] = data.get('title')
         item['abstract'] = data.get('summary')
         item['body_text'] = data.get('body_text')
