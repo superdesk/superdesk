@@ -15,6 +15,6 @@ function LoginModal() {
         this.username.clear();
         this.username.sendKeys(username);
         this.password.sendKeys(password);
-        this.btn.click();
+        return this.btn.click();
     };
 }

@@ -16,6 +16,7 @@ exports.config = {
             args: ['--no-sandbox']
         }
     },
+    allScriptsTimeout: 21000,
     framework: 'jasmine',
     jasmineNodeOpts: {
         showColors: true,
