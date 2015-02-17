@@ -110,7 +110,7 @@ class ArchiveIngestService(BaseService):
                 superdesk.get_resource_service(ARCHIVE).post([dest_doc])
                 insert_into_versions(dest_doc.get('guid'))
 
-                push_notification('item:fetch', item=str(ingest_doc.get('_id')))
+            push_notification('item:fetch', item=str(doc.get('_id')))
 
         return new_guids
 

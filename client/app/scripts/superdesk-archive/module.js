@@ -97,6 +97,7 @@ define([
                 .activity('archiveContent', {
                     label: gettext('Fetch'),
                     icon: 'archive',
+                    monitor: 'true',
                     controller: ['api', 'data', 'desks', function(api, data, desks) {
                         api.archiveIngest.create({
                             guid: data.item.guid,
@@ -105,6 +106,10 @@ define([
                         .then(function(archiveItem) {
                             data.item.task_id = archiveItem.task_id;
                             data.item.created = archiveItem.created;
+                            data.item.actioning = '';
+                        }, function(response) {
+                            data.item.error = response;
+                            data.item.actioning = '';
                         });
                     }],
                     filters: [{action: 'list', type: 'archive'}],
