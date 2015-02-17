@@ -70,8 +70,6 @@ class RssIngestService(IngestService):
                 self.add_timestamps(item)
                 new_items.append(item)
 
-        # XXX: need to send push_notification? reuters does not have it...
-        # push_notification('ingest:update')
         return [new_items]
 
     def _fetch_data(self, config):
@@ -107,9 +105,9 @@ class RssIngestService(IngestService):
         :return: created content item
         :rtype: dict
         """
-        # TODO: what keys should this item contain?
         item = dict()
         item['guid'] = item['uri'] = data.get('guid')
+        item['type'] = 'text'
         item['firstcreated'] = utcfromtimestamp(
             timegm(data['published_parsed']))
         item['versioncreated'] = utcfromtimestamp(
