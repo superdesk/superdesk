@@ -5,6 +5,7 @@ FROM dockerfile/nodejs
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y libfreetype6 libfontconfig nginx && \
     echo "\ndaemon off;" >> /etc/nginx/nginx.conf && \
+    rm /etc/nginx/sites-enabled/default && \
     npm -g install grunt-cli bower
 
 # setup the environment
