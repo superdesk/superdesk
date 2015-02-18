@@ -64,9 +64,7 @@ define([
                             _.extend(origDesk, scope.desk.edit);
                         }
                         WizardHandler.wizard('desks').next();
-                    }, function(response) {
-                        errorMessage(response);
-                    });
+                    }, errorMessage);
                 };
 
                 function errorMessage(response) {
@@ -173,20 +171,28 @@ define([
                             scope.editStage = null;
                             scope.select(item);
                             scope.message = null;
-                        }, function(response) {
-                            scope.message = gettext('There was a problem, stage not added.');
-                        });
+                        }, errorMessage);
                     } else {
                         api('stages').save(orig, scope.editStage)
                         .then(function(item) {
                             scope.editStage = null;
                             scope.message = null;
                             scope.select(item);
-                        }, function(response) {
-                            scope.message = gettext('There was a problem, stage was not saved.');
-                        });
+                        }, errorMessage);
                     }
                 };
+
+                function errorMessage(response) {
+                    if (response.data && response.data._issues && response.data._issues.name && response.data._issues.name.unique) {
+                        scope.message = gettext(
+                            'Stage with name "' +
+                            scope.editStage.name +
+                            '" already exists, stage not created/updated.'
+                        );
+                    } else {
+                        scope.message = gettext('There was a problem, desk not created/updated.');
+                    }
+                }
 
                 scope.remove = function(stage) {
                     api('stages').remove(stage)

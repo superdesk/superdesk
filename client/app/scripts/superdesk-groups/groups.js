@@ -171,9 +171,7 @@
                             }
 
                             WizardHandler.wizard('usergroups').next();
-                        }, function(response) {
-                            errorMessage(response);
-                        });
+                        }, errorMessage);
                     };
 
                     function errorMessage(response) {
