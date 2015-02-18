@@ -30,10 +30,6 @@ define([
         ftp: {
             label: 'FTP',
             templateUrl: 'scripts/superdesk-ingest/views/settings/ftp-config.html'
-        },
-        teletype: {
-            label: 'Teletype',
-            templateUrl: 'scripts/superdesk-ingest/views/settings/teletypeConfig.html'
         }
     });
 
