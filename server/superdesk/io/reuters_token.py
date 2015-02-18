@@ -54,7 +54,7 @@ def fetch_token_from_api(provider):
         'password': provider.get('config', {}).get('password', ''),
     }
 
-    response = session.get(url, params=payload, stream=False, verify=False)
+    response = session.get(url, params=payload, verify=False, timeout=30)
     # workaround for httmock lib
     # tree = etree.fromstring(response.text)
     tree = etree.fromstring(response.content)

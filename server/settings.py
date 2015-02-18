@@ -77,11 +77,13 @@ REDIS_URL = env('REDIS_URL', 'redis://localhost:6379')
 if env('REDIS_PORT'):
     REDIS_URL = env('REDIS_PORT').replace('tcp:', 'redis:')
 BROKER_URL = env('CELERY_BROKER_URL', REDIS_URL)
+CELERY_RESULT_BACKEND = BROKER_URL
 CELERY_ALWAYS_EAGER = (env('CELERY_ALWAYS_EAGER', False) == 'True')
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['pickle', 'json']  # it's using pickle when in eager mode
 CELERY_IGNORE_RESULT = True
 CELERY_DISABLE_RATE_LIMITS = True
+CELERYD_TASK_SOFT_TIME_LIMIT = 300
 
 CELERYBEAT_SCHEDULE_FILENAME = env('CELERYBEAT_SCHEDULE_FILENAME', './celerybeatschedule.db')
 CELERYBEAT_SCHEDULE = {
@@ -94,7 +96,7 @@ CELERYBEAT_SCHEDULE = {
     },
     'ingest:gc': {
         'task': 'superdesk.io.gc_ingest',
-        'schedule': crontab(minute=10),
+        'schedule': crontab(minute=5),
     },
     'session:gc': {
         'task': 'apps.auth.session_purge',

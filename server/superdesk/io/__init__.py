@@ -38,12 +38,12 @@ def register_provider(type, provider):
     allowed_providers.append(type)
 
 
-@celery.task()
+@celery.task(soft_time_limit=15)
 def update_ingest():
     UpdateIngest().run()
 
 
-@celery.task()
+@celery.task
 def gc_ingest():
     RemoveExpiredContent().run()
 
