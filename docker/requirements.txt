@@ -1,0 +1,11 @@
+# xvfb, chromium-browser, pip
+PyYAML==3.11
+dockerpty==0.3.2
+docopt==0.6.2
+requests==2.2.1
+six==1.8.0
+texttable==0.8.1
+websocket-client==0.11.0
+wsgiref==0.1.2
+
+docker-compose==1.1.0-rc1

@@ -10,8 +10,6 @@ static/*
 upload/*
 .coverage
 celerybeatschedule.db*
-# env
-*.egg*
 env/
 bin/
 lib/
