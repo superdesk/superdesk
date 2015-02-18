@@ -47,7 +47,7 @@
 			self.open();
 		};
 
-		this.close = function(item) {
+		this.exit = function(item) {
 			this.items = [];
 			this.updateItems();
 			superdesk.intent('author', 'dashboard');

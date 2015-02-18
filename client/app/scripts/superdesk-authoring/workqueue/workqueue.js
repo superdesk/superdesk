@@ -96,7 +96,7 @@ function WorkqueueCtrl($scope, $route, workqueue, multiEdit, superdesk, lock) {
     };
 
     $scope.closeMulti = function() {
-        multiEdit.close();
+        multiEdit.exit();
     };
 }
 
