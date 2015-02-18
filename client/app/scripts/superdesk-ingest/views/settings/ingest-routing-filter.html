@@ -1,6 +1,43 @@
-<div>item type:
-    <div ng-repeat="type in typeList">
-        <input type="checkbox" ng-checked="isTypeChecked(rule, type)" ng-click="toggleType(rule, type)">{{typeLookup[type]|translate}}
+<div>subject:
+    <span ng-repeat="subject in rule.filter.subject">
+        {{subject.name}}
+        <button ng-click="removeSubject(subject)">remove</button>
+    </span>
+    new subject:
+    <div sd-typeahead items="subjects" term="subjectTerm" search="searchSubjects(term)" select="selectSubject(item)">
+        <ul>
+            <li typeahead-item="s" ng-repeat="s in filteredSubjects">
+                <span ng-show="s.path">{{s.path}} / </span>{{s.name}}
+            </li>
+        </ul>
+    </div>
+</div>
+<div>category:
+    <span ng-repeat="category in rule.filter.category">
+        {{category.name}}
+        <button ng-click="removeCategory(category)">remove</button>
+    </span>
+    new category:
+    <div sd-typeahead items="categories" term="categoryTerm" search="searchCategories(term)" select="selectCategory(item)">
+        <ul>
+            <li typeahead-item="c" ng-repeat="c in filteredCategories">
+                {{c.name}}
+            </li>
+        </ul>
+    </div>
+</div>
+<div>genre:
+    <span ng-repeat="genre in rule.filter.genre">
+        {{genre}}
+        <button ng-click="removeGenre(genre)">remove</button>
+    </span>
+    new genre:
+    <div sd-typeahead items="genres" term="genreTerm" search="searchGenres(term)" select="selectGenre(item)">
+        <ul>
+            <li typeahead-item="g" ng-repeat="g in filteredGenres">
+                {{g.name}}
+            </li>
+        </ul>
     </div>
 </div>
 <div>headline:
@@ -11,4 +48,9 @@
 </div>
 <div>body:
     <input ng-model="rule.filter.body">
+</div>
+<div>item type:
+    <div ng-repeat="type in typeList">
+        <input type="checkbox" ng-checked="isTypeChecked(rule, type)" ng-click="toggleType(rule, type)">{{typeLookup[type]|translate}}
+    </div>
 </div>
