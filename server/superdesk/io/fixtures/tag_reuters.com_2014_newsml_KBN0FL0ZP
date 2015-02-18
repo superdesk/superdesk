@@ -3,7 +3,7 @@
   <header>
     <sent>2014-07-16T13:00:03.000Z</sent>
     <sender>reuters.com</sender>
-    <transmitId>tag:reuters.com,2014:newsml_KBN0FL0ZP:2</transmitId>
+    <transmitId>tag_reuters.com_2014_newsml_KBN0FL0ZP_2</transmitId>
     <priority>4</priority>
     <destination>OUSWDM</destination>
     <destination>OCATPM</destination>
@@ -13,7 +13,7 @@
     <channel>TXT</channel>
   </header>
   <itemSet>
-    <newsItem conformance="power" guid="tag:reuters.com,2014:newsml_KBN0FL0ZP" standard="NewsML-G2" standardversion="2.14" version="2" xml:lang="en-US">
+    <newsItem conformance="power" guid="tag_reuters.com_2014_newsml_KBN0FL0ZP" standard="NewsML-G2" standardversion="2.14" version="2" xml:lang="en-US">
       <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml"/>
       <rightsInfo>
         <copyrightHolder literal="Thomson Reuters"/>
@@ -53,8 +53,8 @@
         <signal qcode="prodId:TXT"/>
         <signal qcode="pmt:text"/>
         <signal qcode="var:itemMod"/>
-        <link contenttype="application/vnd.iptc.g2.newsitem+xml" rel="irel:derivedFrom" residref="tag:reuters.com,2014:newsml_L6N0PR2MC" rtr:id="L6N0PR2MC" rtr:type="idType:USN"/>
-        <rtr:versionedId guid="tag:reuters.com,2014:newsml_KBN0FL0ZP:2"/>
+        <link contenttype="application/vnd.iptc.g2.newsitem+xml" rel="irel:derivedFrom" residref="tag_reuters.com_2014_newsml_L6N0PR2MC" rtr:id="L6N0PR2MC" rtr:type="idType:USN"/>
+        <rtr:versionedId guid="tag_reuters.com_2014_newsml_KBN0FL0ZP_2"/>
       </itemMeta>
       <contentMeta>
         <urgency>4</urgency>

@@ -48,7 +48,7 @@ class UpdateIngestTest(TestCase):
 
     def test_ingest_items(self):
         provider_name = 'reuters'
-        guid = 'tag:reuters.com,2014:newsml_KBN0FL0NM'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
         with self.app.app_context():
             provider = self._get_provider(provider_name)
             provider_service = self._get_provider_service(provider)
@@ -60,7 +60,7 @@ class UpdateIngestTest(TestCase):
 
     def test_ingest_item_sync_if_missing_from_elastic(self):
         provider_name = 'reuters'
-        guid = 'tag:reuters.com,2014:newsml_KBN0FL0NM'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
         with self.app.app_context():
             provider = self._get_provider(provider_name)
             provider_service = self._get_provider_service(provider)
@@ -120,7 +120,7 @@ class UpdateIngestTest(TestCase):
 
     def test_filter_expired_items(self):
         provider_name = 'reuters'
-        guid = 'tag:reuters.com,2014:newsml_KBN0FL0NM'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
         with self.app.app_context():
             provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
             provider_service = self.provider_services[provider.get('type')]
@@ -145,7 +145,7 @@ class UpdateIngestTest(TestCase):
 
     def test_all_ingested_items_have_sequence(self):
         provider_name = 'reuters'
-        guid = 'tag:reuters.com,2014:newsml_KBN0FL0NM'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
         with self.app.app_context():
             provider = self._get_provider(provider_name)
             provider_service = self._get_provider_service(provider)

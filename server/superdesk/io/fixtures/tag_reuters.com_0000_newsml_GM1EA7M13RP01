@@ -11,7 +11,7 @@ AUTHOR: thomsonreuters.com
   <header>
     <sent>2014-07-22T06:20:12.000Z</sent>
     <sender>reuters.com</sender>
-    <transmitId>tag:reuters.com,0000:newsml_GM1EA7M13RP01:484616934</transmitId>
+    <transmitId>tag_reuters.com_0000_newsml_GM1EA7M13RP01_484616934</transmitId>
     <priority>4</priority>
     <destination>ENTP</destination>
     <destination>MEDWAS</destination>
@@ -27,7 +27,7 @@ AUTHOR: thomsonreuters.com
     <channel>PIX</channel>
   </header>
   <itemSet>
-    <newsItem guid="tag:reuters.com,0000:newsml_GM1EA7M13RP01" version="484616934" standard="NewsML-G2" standardversion="2.10" conformance="power" xml:lang="en">
+    <newsItem guid="tag_reuters.com_0000_newsml_GM1EA7M13RP01" version="484616934" standard="NewsML-G2" standardversion="2.10" conformance="power" xml:lang="en">
       <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml"/>
       <rightsInfo>
         <copyrightHolder literal="Thomson Reuters"/>
@@ -54,8 +54,8 @@ AUTHOR: thomsonreuters.com
         <signal qcode="prodId:PIX"/>
         <signal qcode="var:binMod"/>
         <signal qcode="pmt:picture"/>
-        <link rel="irel:processedFrom" residref="tag:reuters.com,0000:newsml_GF2EA7M0GIR01" rtr:id="GF2EA7M0GIR01"/>
-        <rtr:versionedId guid="tag:reuters.com,0000:newsml_GM1EA7M13RP01:484616934"/>
+        <link rel="irel:processedFrom" residref="tag_reuters.com_0000_newsml_GF2EA7M0GIR01" rtr:id="GF2EA7M0GIR01"/>
+        <rtr:versionedId guid="tag_reuters.com_0000_newsml_GM1EA7M13RP01_484616934"/>
       </itemMeta>
       <contentMeta>
         <urgency>4</urgency>
@@ -90,17 +90,17 @@ AUTHOR: thomsonreuters.com
         <description role="descRole:caption">Cast member Vin Diesel arrives at the premiere of "Guardians of the Galaxy" in Hollywood, California July 21, 2014. The movie opens in the U.S. on August 1. REUTERS/Mario Anzuoni  (UNITED STATES - Tags: ENTERTAINMENT)</description>
       </contentMeta>
       <contentSet>
-        <remoteContent residref="tag:reuters.com,0000:binary_GM1EA7M13RP01-BASEIMAGE" href="http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1EA7M13RP01:484616934/tag:reuters.com,0000:binary_GM1EA7M13RP01-BASEIMAGE" size="726349" rendition="rend:baseImage" contenttype="image/jpeg" format="fmt:jpegBaseline" generator="G3:IIM:FH:BaseImageGenerator" width="3500" height="2113" rtr:formatVersion="1">
+        <remoteContent residref="tag_reuters.com_0000_binary_GM1EA7M13RP01-BASEIMAGE" href="http://content.reuters.com/auth-server/content/tag_reuters.com_0000_newsml_GM1EA7M13RP01_484616934/tag_reuters.com_0000_binary_GM1EA7M13RP01-BASEIMAGE" size="726349" rendition="rend:baseImage" contenttype="image/jpeg" format="fmt:jpegBaseline" generator="G3:IIM:FH:BaseImageGenerator" width="3500" height="2113" rtr:formatVersion="1">
           <rtr:altId type="idType:fileBIN" contentType="image/jpeg">2014-07-22T062012Z_484616934_GM1EA7M13RP01_RTRMADP_3_USA-ENTERTAINMENT.JPG</rtr:altId>
-          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1EA7M13RP01:484616934/tag:reuters.com,0000:binary_GM1EA7M13RP01-BASEIMAGE</rtr:altLoc>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag_reuters.com_0000_newsml_GM1EA7M13RP01_484616934/tag_reuters.com_0000_binary_GM1EA7M13RP01-BASEIMAGE</rtr:altLoc>
         </remoteContent>
-        <remoteContent residref="tag:reuters.com,0000:binary_GM1EA7M13RP01-VIEWIMAGE" href="http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1EA7M13RP01:484616934/tag:reuters.com,0000:binary_GM1EA7M13RP01-VIEWIMAGE" size="190880" rendition="rend:viewImage" contenttype="image/jpeg" format="fmt:jpegBaseline" generator="VALID:DERIVE_RENDS" width="640" height="386" rtr:formatVersion="1">
+        <remoteContent residref="tag_reuters.com_0000_binary_GM1EA7M13RP01-VIEWIMAGE" href="http://content.reuters.com/auth-server/content/tag_reuters.com_0000_newsml_GM1EA7M13RP01_484616934/tag_reuters.com_0000_binary_GM1EA7M13RP01-VIEWIMAGE" size="190880" rendition="rend:viewImage" contenttype="image/jpeg" format="fmt:jpegBaseline" generator="VALID:DERIVE_RENDS" width="640" height="386" rtr:formatVersion="1">
           <rtr:altId type="idType:fileBIN" isPresent="1">2014-07-22T062012Z_484616934_GM1EA7M13RP01_RTRMADP_2_USA-ENTERTAINMENT.JPG</rtr:altId>
-          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1EA7M13RP01:484616934/tag:reuters.com,0000:binary_GM1EA7M13RP01-VIEWIMAGE</rtr:altLoc>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag_reuters.com_0000_newsml_GM1EA7M13RP01_484616934/tag_reuters.com_0000_binary_GM1EA7M13RP01-VIEWIMAGE</rtr:altLoc>
         </remoteContent>
-        <remoteContent residref="tag:reuters.com,0000:binary_GM1EA7M13RP01-THUMBNAIL" href="http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1EA7M13RP01:484616934/tag:reuters.com,0000:binary_GM1EA7M13RP01-THUMBNAIL" size="16418" rendition="rend:thumbnail" contenttype="image/jpeg" format="fmt:jpegBaseline" generator="VALID:DERIVE_RENDS" width="150" height="90" rtr:formatVersion="1">
+        <remoteContent residref="tag_reuters.com_0000_binary_GM1EA7M13RP01-THUMBNAIL" href="http://content.reuters.com/auth-server/content/tag_reuters.com_0000_newsml_GM1EA7M13RP01_484616934/tag_reuters.com_0000_binary_GM1EA7M13RP01-THUMBNAIL" size="16418" rendition="rend:thumbnail" contenttype="image/jpeg" format="fmt:jpegBaseline" generator="VALID:DERIVE_RENDS" width="150" height="90" rtr:formatVersion="1">
           <rtr:altId type="idType:fileBIN" isPresent="1">2014-07-22T062012Z_484616934_GM1EA7M13RP01_RTRMADP_1_USA-ENTERTAINMENT.JPG</rtr:altId>
-          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag:reuters.com,0000:newsml_GM1EA7M13RP01:484616934/tag:reuters.com,0000:binary_GM1EA7M13RP01-THUMBNAIL</rtr:altLoc>
+          <rtr:altLoc type="locType:http" role="locRole:auth">http://content.reuters.com/auth-server/content/tag_reuters.com_0000_newsml_GM1EA7M13RP01_484616934/tag_reuters.com_0000_binary_GM1EA7M13RP01-THUMBNAIL</rtr:altLoc>
         </remoteContent>
       </contentSet>
     </newsItem>

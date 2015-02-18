@@ -10,15 +10,15 @@ Feature: Duplication
             """
         And ingest from "reuters"
             """
-            [{"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"}]
+            [{"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E"}]
             """
         When we post to "/archive_ingest"
             """
-            {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
+            {"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
             """
         And we post to "/archive_ingest"
             """
-            {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
+            {"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
             """
         Then we get new resource
         When we get "/archive?q=#desks._id#"
@@ -34,16 +34,16 @@ Feature: Duplication
             """
         And ingest from "reuters"
             """
-            [{"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"}]
+            [{"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E"}]
             """
         When we post to "/archive_ingest"
             """
-            {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
+            {"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
             """
         When we get "/archive"
         Then we get list with 1 items
         """
-        {"_items": [{"family_id": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "ingest_id": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"}]}
+        {"_items": [{"family_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", "ingest_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E"}]}
         """
 
     @auth
@@ -56,27 +56,27 @@ Feature: Duplication
             """
         And ingest from "reuters"
             """
-            [{"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"}]
+            [{"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E"}]
             """
         When we post to "/archive_ingest"
             """
-            {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
+            {"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
             """
         When we get "/archive"
         Then we get list with 1 items
             """
-            {"_items": [{"family_id": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "ingest_id": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"}]}
+            {"_items": [{"family_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", "ingest_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E"}]}
             """
         When we post to "/archive_ingest"
             """
-            {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
+            {"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
             """
         When we get "/archive?q=#desks._id#"
         Then we get list with 2 items
         """
         {"_items": [
-        		{"family_id": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"},
-        		{"family_id": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"}
+        		{"family_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E"},
+        		{"family_id": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E"}
         		]}
         """
 
@@ -165,11 +165,11 @@ Feature: Duplication
         [{"name": "Sports"}]
         """
         Given empty "archive"
-    	When we fetch from "reuters" ingest "tag:reuters.com,2014:newsml_KBN0FL0NM"
+    	When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM"
         And we post to "/archive_ingest"
         """
         {
-        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM", "desk": "#desks._id#"
+        "guid": "tag_reuters.com_2014_newsml_KBN0FL0NM", "desk": "#desks._id#"
         }
         """
         Then we get "_id"

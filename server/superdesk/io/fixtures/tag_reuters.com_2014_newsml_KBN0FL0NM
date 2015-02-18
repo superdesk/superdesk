@@ -3,7 +3,7 @@
   <header>
     <sent>2014-07-17T00:24:11.000Z</sent>
     <sender>reuters.com</sender>
-    <transmitId>tag:reuters.com,2014:newsml_KBN0FL0NM:10</transmitId>
+    <transmitId>tag_reuters.com_2014_newsml_KBN0FL0NM_10</transmitId>
     <priority>4</priority>
     <destination>OUSWDM</destination>
     <destination>OCATPM</destination>
@@ -13,7 +13,7 @@
     <channel>TXT</channel>
   </header>
   <itemSet>
-    <packageItem conformance="power" guid="tag:reuters.com,2014:newsml_KBN0FL0NM" standard="NewsML-G2" standardversion="2.14" version="10" xml:lang="en-US">
+    <packageItem conformance="power" guid="tag_reuters.com_2014_newsml_KBN0FL0NM" standard="NewsML-G2" standardversion="2.14" version="10" xml:lang="en-US">
       <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml"/>
       <rightsInfo>
         <copyrightHolder literal="Thomson Reuters"/>
@@ -47,7 +47,7 @@
         <signal qcode="edStat:U"/>
         <signal qcode="prodId:TXT"/>
         <signal qcode="pmt:composite"/>
-        <rtr:versionedId guid="tag:reuters.com,2014:newsml_KBN0FL0NM:10"/>
+        <rtr:versionedId guid="tag_reuters.com_2014_newsml_KBN0FL0NM_10"/>
       </itemMeta>
       <contentMeta>
         <urgency>4</urgency>
@@ -116,7 +116,7 @@
           <groupRef idref="sidebars"/>
         </group>
         <group id="main" role="grpRole:Main">
-          <itemRef contenttype="application/vnd.iptc.g2.newsitem+xml" residref="tag:reuters.com,2014:newsml_KBN0FL0NN" version="5">
+          <itemRef contenttype="application/vnd.iptc.g2.newsitem+xml" residref="tag_reuters.com_2014_newsml_KBN0FL0NN" version="5">
             <itemClass qcode="icls:text"/>
             <signal qcode="pmt:text"/>
             <provider literal="reuters.com"/>
@@ -129,7 +129,7 @@
             <slugline separator="-">US-SYRIA-CRISIS-ASSAD</slugline>
             <headline>Confident Assad launches new term in stronger position</headline>
           </itemRef>
-          <itemRef contenttype="application/vnd.iptc.g2.newsitem+xml" residref="tag:reuters.com,2014:newsml_LYNXMPEA6F13M" version="1">
+          <itemRef contenttype="application/vnd.iptc.g2.newsitem+xml" residref="tag_reuters.com_2014_newsml_LYNXMPEA6F13M" version="1">
             <itemClass qcode="icls:picture"/>
             <signal qcode="pmt:picture"/>
             <provider literal="reuters.com"/>
@@ -142,7 +142,7 @@
             <slugline separator="-">SYRIA-CRISIS-ASSAD</slugline>
             <headline>Syria's President Bashar al-Assad places his right hand on a Koran as he is sworn in for a new seven-year term, at al-Shaab presidential palace in Damascus</headline>
           </itemRef>
-          <itemRef contenttype="application/vnd.iptc.g2.newsitem+xml" residref="tag:reuters.com,2014:newsml_LYNXMPEA6F0MS" version="2">
+          <itemRef contenttype="application/vnd.iptc.g2.newsitem+xml" residref="tag_reuters.com_2014_newsml_LYNXMPEA6F0MS" version="2">
             <itemClass qcode="icls:picture"/>
             <signal qcode="pmt:picture"/>
             <provider literal="reuters.com"/>
@@ -155,7 +155,7 @@
             <slugline separator="-">SYRIA-CRISIS-ASSAD</slugline>
             <headline>Still image from video shows Syria's President Bashar al-Assad arriving to be sworn in for a new seven-year term at the presidential palace in Damascus</headline>
           </itemRef>
-          <itemRef contenttype="application/vnd.iptc.g2.newsitem+xml" residref="tag:reuters.com,2014:newsml_LYNXMPEA6F0MT" version="2">
+          <itemRef contenttype="application/vnd.iptc.g2.newsitem+xml" residref="tag_reuters.com_2014_newsml_LYNXMPEA6F0MT" version="2">
             <itemClass qcode="icls:picture"/>
             <signal qcode="pmt:picture"/>
             <provider literal="reuters.com"/>
@@ -173,7 +173,7 @@
           <groupRef idref="sidebars_0"/>
         </group>
         <group id="sidebars_0" role="grpRole:sidebars_0">
-          <itemRef contenttype="application/vnd.iptc.g2.newsitem+xml" residref="tag:reuters.com,2014:newsml_KBN0FL0ZP" version="2">
+          <itemRef contenttype="application/vnd.iptc.g2.newsitem+xml" residref="tag_reuters.com_2014_newsml_KBN0FL0ZP" version="2">
             <itemClass qcode="icls:text"/>
             <signal qcode="pmt:text"/>
             <provider literal="reuters.com"/>

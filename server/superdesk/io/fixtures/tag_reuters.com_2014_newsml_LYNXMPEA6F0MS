@@ -3,7 +3,7 @@
   <header>
     <sent>2014-07-16T13:00:03.000Z</sent>
     <sender>reuters.com</sender>
-    <transmitId>tag:reuters.com,2014:newsml_LYNXMPEA6F0MS:2</transmitId>
+    <transmitId>tag_reuters.com_2014_newsml_LYNXMPEA6F0MS_2</transmitId>
     <priority>4</priority>
     <destination>OUSWDM</destination>
     <destination>OCATPM</destination>
@@ -13,7 +13,7 @@
     <channel>PIX</channel>
   </header>
   <itemSet>
-    <newsItem conformance="power" guid="tag:reuters.com,2014:newsml_LYNXMPEA6F0MS" standard="NewsML-G2" standardversion="2.14" version="2" xml:lang="en-US">
+    <newsItem conformance="power" guid="tag_reuters.com_2014_newsml_LYNXMPEA6F0MS" standard="NewsML-G2" standardversion="2.14" version="2" xml:lang="en-US">
       <catalogRef href="http://www.iptc.org/std/catalog/catalog.IPTC-G2-Standards_3.xml"/>
       <rightsInfo>
         <copyrightHolder literal="Thomson Reuters"/>
@@ -47,8 +47,8 @@
         <signal qcode="prodId:PIX"/>
         <signal qcode="pmt:picture"/>
         <signal qcode="var:binMod"/>
-        <link contenttype="application/vnd.iptc.g2.newsitem+xml" rel="irel:processedFrom" residref="tag:reuters.com,0000:newsml_GM1EA7G1K4U01" rtr:id="GM1EA7G1K4U01" rtr:type="idType:IID"/>
-        <rtr:versionedId guid="tag:reuters.com,2014:newsml_LYNXMPEA6F0MS:2"/>
+        <link contenttype="application/vnd.iptc.g2.newsitem+xml" rel="irel:processedFrom" residref="tag_reuters.com_0000_newsml_GM1EA7G1K4U01" rtr:id="GM1EA7G1K4U01" rtr:type="idType:IID"/>
+        <rtr:versionedId guid="tag_reuters.com_2014_newsml_LYNXMPEA6F0MS_2"/>
       </itemMeta>
       <contentMeta>
         <urgency>4</urgency>
@@ -80,21 +80,21 @@
         <description role="descRole:caption">A still image taken from video shows Syria's President Bashar al-Assad arriving to be sworn in for a new seven-year term at the presidential palace in Damascus July 16, 2014.  REUTERS/Syria TV via Reuters TV </description>
       </contentMeta>
       <contentSet>
-        <remoteContent contenttype="image/jpeg" format="fmt:jpegBaseline" generator="G3:PEND:SyncMetadata" height="113" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2014:newsml_LYNXMPEA6F0MS:2/tag:reuters.com,2014:binary_LYNXMPEA6F0MS-THUMBNAIL" rendition="rend:thumbnail" residref="tag:reuters.com,2014:binary_LYNXMPEA6F0MS-THUMBNAIL" rtr:formatVersion="1" size="6597" width="150">
+        <remoteContent contenttype="image/jpeg" format="fmt:jpegBaseline" generator="G3:PEND:SyncMetadata" height="113" href="http://content.reuters.com/auth-server/content/tag_reuters.com_2014_newsml_LYNXMPEA6F0MS_2/tag_reuters.com_2014_binary_LYNXMPEA6F0MS-THUMBNAIL" rendition="rend:thumbnail" residref="tag_reuters.com_2014_binary_LYNXMPEA6F0MS-THUMBNAIL" rtr:formatVersion="1" size="6597" width="150">
           <rtr:altId contentType="image/jpeg" type="idType:fileBIN">2014-07-16T130003Z_2_LYNXMPEA6F0MS_RTROPTP_1_SYRIA-CRISIS-ASSAD.JPG</rtr:altId>
-          <rtr:altLoc role="locRole:auth" type="locType:http">http://content.reuters.com/auth-server/content/tag:reuters.com,2014:newsml_LYNXMPEA6F0MS:2/tag:reuters.com,2014:binary_LYNXMPEA6F0MS-THUMBNAIL</rtr:altLoc>
+          <rtr:altLoc role="locRole:auth" type="locType:http">http://content.reuters.com/auth-server/content/tag_reuters.com_2014_newsml_LYNXMPEA6F0MS_2/tag_reuters.com_2014_binary_LYNXMPEA6F0MS-THUMBNAIL</rtr:altLoc>
         </remoteContent>
-        <remoteContent contenttype="image/jpeg" format="fmt:jpegBaseline" generator="G3:PEND:SyncMetadata" height="339" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2014:newsml_LYNXMPEA6F0MS:2/tag:reuters.com,2014:binary_LYNXMPEA6F0MS-VIEWIMAGE" rendition="rend:viewImage" residref="tag:reuters.com,2014:binary_LYNXMPEA6F0MS-VIEWIMAGE" rtr:formatVersion="1" size="31599" width="450">
+        <remoteContent contenttype="image/jpeg" format="fmt:jpegBaseline" generator="G3:PEND:SyncMetadata" height="339" href="http://content.reuters.com/auth-server/content/tag_reuters.com_2014_newsml_LYNXMPEA6F0MS_2/tag_reuters.com_2014_binary_LYNXMPEA6F0MS-VIEWIMAGE" rendition="rend:viewImage" residref="tag_reuters.com_2014_binary_LYNXMPEA6F0MS-VIEWIMAGE" rtr:formatVersion="1" size="31599" width="450">
           <rtr:altId contentType="image/jpeg" type="idType:fileBIN">2014-07-16T130003Z_2_LYNXMPEA6F0MS_RTROPTP_2_SYRIA-CRISIS-ASSAD.JPG</rtr:altId>
-          <rtr:altLoc role="locRole:auth" type="locType:http">http://content.reuters.com/auth-server/content/tag:reuters.com,2014:newsml_LYNXMPEA6F0MS:2/tag:reuters.com,2014:binary_LYNXMPEA6F0MS-VIEWIMAGE</rtr:altLoc>
+          <rtr:altLoc role="locRole:auth" type="locType:http">http://content.reuters.com/auth-server/content/tag_reuters.com_2014_newsml_LYNXMPEA6F0MS_2/tag_reuters.com_2014_binary_LYNXMPEA6F0MS-VIEWIMAGE</rtr:altLoc>
         </remoteContent>
-        <remoteContent contenttype="image/jpeg" format="fmt:jpegBaseline" generator="G3:PEND:SyncMetadata" height="602" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2014:newsml_LYNXMPEA6F0MS:2/tag:reuters.com,2014:binary_LYNXMPEA6F0MS-BASEIMAGE" rendition="rend:baseImage" residref="tag:reuters.com,2014:binary_LYNXMPEA6F0MS-BASEIMAGE" rtr:formatVersion="1" size="69199" width="800">
+        <remoteContent contenttype="image/jpeg" format="fmt:jpegBaseline" generator="G3:PEND:SyncMetadata" height="602" href="http://content.reuters.com/auth-server/content/tag_reuters.com_2014_newsml_LYNXMPEA6F0MS_2/tag_reuters.com_2014_binary_LYNXMPEA6F0MS-BASEIMAGE" rendition="rend:baseImage" residref="tag_reuters.com_2014_binary_LYNXMPEA6F0MS-BASEIMAGE" rtr:formatVersion="1" size="69199" width="800">
           <rtr:altId contentType="image/jpeg" type="idType:fileBIN">2014-07-16T130003Z_2_LYNXMPEA6F0MS_RTROPTP_3_SYRIA-CRISIS-ASSAD.JPG</rtr:altId>
-          <rtr:altLoc role="locRole:auth" type="locType:http">http://content.reuters.com/auth-server/content/tag:reuters.com,2014:newsml_LYNXMPEA6F0MS:2/tag:reuters.com,2014:binary_LYNXMPEA6F0MS-BASEIMAGE</rtr:altLoc>
+          <rtr:altLoc role="locRole:auth" type="locType:http">http://content.reuters.com/auth-server/content/tag_reuters.com_2014_newsml_LYNXMPEA6F0MS_2/tag_reuters.com_2014_binary_LYNXMPEA6F0MS-BASEIMAGE</rtr:altLoc>
         </remoteContent>
-        <remoteContent contenttype="image/jpeg" format="fmt:jpegBaseline" generator="G3:IIM:FH:BaseImageGenerator" height="1128" href="http://content.reuters.com/auth-server/content/tag:reuters.com,2014:newsml_LYNXMPEA6F0MS:2/tag:reuters.com,2014:binary_LYNXMPEA6F0MS-FILEDIMAGE" rendition="rend:filedImage" residref="tag:reuters.com,2014:binary_LYNXMPEA6F0MS-FILEDIMAGE" rtr:formatVersion="1" size="588555" width="1500">
+        <remoteContent contenttype="image/jpeg" format="fmt:jpegBaseline" generator="G3:IIM:FH:BaseImageGenerator" height="1128" href="http://content.reuters.com/auth-server/content/tag_reuters.com_2014_newsml_LYNXMPEA6F0MS_2/tag_reuters.com_2014_binary_LYNXMPEA6F0MS-FILEDIMAGE" rendition="rend:filedImage" residref="tag_reuters.com_2014_binary_LYNXMPEA6F0MS-FILEDIMAGE" rtr:formatVersion="1" size="588555" width="1500">
           <rtr:altId contentType="image/jpeg" type="idType:fileBIN">2014-07-16T130003Z_2_LYNXMPEA6F0MS_RTROPTP_4_SYRIA-CRISIS-ASSAD.JPG</rtr:altId>
-          <rtr:altLoc role="locRole:auth" type="locType:http">http://content.reuters.com/auth-server/content/tag:reuters.com,2014:newsml_LYNXMPEA6F0MS:2/tag:reuters.com,2014:binary_LYNXMPEA6F0MS-FILEDIMAGE</rtr:altLoc>
+          <rtr:altLoc role="locRole:auth" type="locType:http">http://content.reuters.com/auth-server/content/tag_reuters.com_2014_newsml_LYNXMPEA6F0MS_2/tag_reuters.com_2014_binary_LYNXMPEA6F0MS-FILEDIMAGE</rtr:altLoc>
         </remoteContent>
       </contentSet>
     </newsItem>
