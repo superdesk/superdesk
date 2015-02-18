@@ -190,7 +190,7 @@ define([
                             '" already exists, stage not created/updated.'
                         );
                     } else {
-                        scope.message = gettext('There was a problem, desk not created/updated.');
+                        scope.message = gettext('There was a problem, stage not created/updated.');
                     }
                 }
 
