@@ -1221,3 +1221,13 @@ def when_we_get_invisible_stages_for_user(context, no_of_stages):
 def then_field_is_populated(context, field_name):
     resp = parse_json_response(context.response)
     assert resp[field_name].get('user', None) is not None, 'item is not populated'
+
+
+@when('we publish "{item_id}"')
+def step_impl_when_spike_url(context, item_id):
+    item_id = apply_placeholders(context, item_id)
+    res = get_res('/archive/' + item_id, context)
+    headers = if_match(context, res.get('_etag'))
+
+    context.response = context.client.patch(get_prefixed_url(context.app, '/archive/publish/' + item_id),
+                                            data='{"state": "published"}', headers=headers)

@@ -8,45 +8,77 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from superdesk.resource import Resource
-from .common import item_url
+import logging
+
+from flask import current_app as app
+from eve.utils import config
+
+from .common import item_url, get_user
+from superdesk.errors import InvalidStateTransitionError
+from superdesk.notification import push_notification
 from superdesk.services import BaseService
 import superdesk
-import logging
+from .archive import ArchiveResource, SOURCE as ARCHIVE
+from superdesk.workflow import is_workflow_state_transition_valid
+
 
 logger = logging.getLogger(__name__)
 
 
-class ArchivePublishResource(Resource):
+class ArchivePublishResource(ArchiveResource):
+    """
+    Resource class for "publish" endpoint.
+    """
+
     endpoint_name = 'archive_publish'
-    url = 'archive/<{0}:item_id>/publish'.format(item_url)
-    datasource = {'source': 'archive'}
-    resource_methods = ['POST', 'DELETE', 'PATCH']
     resource_title = endpoint_name
-    privileges = {'POST': 'publish', 'DELETE': 'kill', 'PATCH': 'correction'}
+    datasource = {'source': ARCHIVE}
+
+    url = "archive/publish"
+    item_url = item_url
+
+    resource_methods = []
+    item_methods = ['PATCH']
+
+    privileges = {'PATCH': 'publish'}
 
 
 class ArchivePublishService(BaseService):
-    pass
+    """
+    Service class for "publish" endpoint
+    """
+
+    def on_update(self, updates, original):
+        if not is_workflow_state_transition_valid('publish', original[app.config['CONTENT_STATE']]):
+            raise InvalidStateTransitionError()
+
+    def update(self, id, updates):
+
+        updates[config.CONTENT_STATE] = 'published'
+        user = get_user(required=True)
+
+        item = self.backend.update(self.datasource, id, updates)
+
+        push_notification('item:publish', item=str(item.get('_id')), user=str(user))
+
+        return item
 
 
 superdesk.workflow_state('published')
-superdesk.workflow_state('killed')
-superdesk.workflow_state('corrected')
-
-
 superdesk.workflow_action(
     name='publish',
-    include_states=['draft'],
+    include_states=['fetched', 'routed', 'submitted', 'in_progress'],
     privileges=['publish']
 )
 
+superdesk.workflow_state('killed')
 superdesk.workflow_action(
     name='kill',
     include_states=['published'],
     privileges=['kill']
 )
 
+superdesk.workflow_state('corrected')
 superdesk.workflow_action(
     name='correct',
     include_states=['published'],

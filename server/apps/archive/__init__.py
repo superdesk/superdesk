@@ -10,7 +10,6 @@
 
 
 """Media archive module"""
-import logging
 
 from .archive import ArchiveResource, ArchiveService, ArchiveVersionsResource, AutoSaveResource, \
     ArchiveVersionsService, ArchiveSaveService
@@ -22,6 +21,8 @@ from .item_comments import ItemCommentsResource, ItemCommentsSubResource, ItemCo
 from .user_content import UserContentResource, UserContentService
 from .archive_lock import ArchiveLockResource, ArchiveUnlockResource, ArchiveLockService, ArchiveUnlockService
 from .archive_spike import ArchiveUnspikeResource, ArchiveSpikeService, ArchiveSpikeResource, ArchiveUnspikeService
+from .archive_publish import ArchivePublishService, ArchivePublishResource
+
 import superdesk
 from apps.common.components.utils import register_component
 from apps.item_lock.components.item_lock import ItemLock
@@ -103,6 +104,10 @@ def init_app(app):
     endpoint_name = 'archive_autosave'
     service = ArchiveSaveService(endpoint_name, backend=superdesk.get_backend())
     AutoSaveResource(endpoint_name, app=app, service=service)
+
+    endpoint_name = 'archive_publish'
+    service = ArchivePublishService(endpoint_name, backend=superdesk.get_backend())
+    ArchivePublishResource(endpoint_name, app=app, service=service)
 
     from apps.item_autosave.components.item_autosave import ItemAutosave
     from apps.item_autosave.models.item_autosave import ItemAutosaveModel
