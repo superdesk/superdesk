@@ -5,12 +5,25 @@ define(['angular', 'lodash'], function(angular, _) {
 
     // unbind all keyboard shortcuts when switching route
     .run(['$rootScope', 'keyboardManager', function($rootScope, kb) {
+
         $rootScope.$on('$routeChangeStart', function() {
             angular.forEach(kb.keyboardEvent, function(e, key) {
                 if (!e.opt.global) {
                     kb.unbind(key);
                 }
             });
+        });
+    }])
+
+    /**
+     * Broadcast key:char events cought on body
+     */
+    .run(['$rootScope', '$document', function KeyEventBroadcast($rootScope, $document) {
+        $document.on('keydown', function(e) {
+            if (e.target === document.body) { // $document.body is empty when testing
+                var character = String.fromCharCode(e.which).toLowerCase();
+                $rootScope.$broadcast('key:' + character, e);
+            }
         });
     }])
 

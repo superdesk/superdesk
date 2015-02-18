@@ -390,7 +390,8 @@ define([
                 filters: [
                     {action: 'list', type: 'ingest'}
                 ],
-                action: 'fetch_as_from_ingest'
+                action: 'fetch_as_from_ingest',
+                key: 'f'
             });
     }]);
 

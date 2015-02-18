@@ -70,5 +70,17 @@ define([
 
             expect(from).toBe('1'); // no change
         });
+
+        it('can broadcast keydown events', inject(function($rootScope, $document) {
+            var handler = jasmine.createSpy('handler');
+            $rootScope.$on('key:t', handler);
+
+            var e = $.Event('keydown');
+            e.which = 't'.charCodeAt(0);
+            $(document.body).trigger(e);
+
+            $rootScope.$digest();
+            expect(handler).toHaveBeenCalled();
+        }));
     });
 });
