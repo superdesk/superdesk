@@ -116,7 +116,7 @@ Feature: Saved Searches
     @provider
     Scenario: Create a Saved Search and retrieve content
     	Given empty "ingest"
-        When we fetch from "reuters" ingest "tag:reuters.com,2014:newsml_KBN0FL0NM"
+        When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM"
         Given empty "saved_searches"
         When we post to "/users/#CONTEXT_USER_ID#/saved_searches"
         """
@@ -140,15 +140,15 @@ Feature: Saved Searches
 		{
 		    "_items": [{
 		        "type": "picture",
-		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MS",
+		        "guid": "tag_reuters.com_2014_newsml_LYNXMPEA6F0MS",
 		        "state": "ingested"
 		    }, {
 		        "type": "picture",
-		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F0MT",
+		        "guid": "tag_reuters.com_2014_newsml_LYNXMPEA6F0MT",
 		        "state": "ingested"
 		    }, {
 		        "type": "picture",
-		        "guid": "tag:reuters.com,2014:newsml_LYNXMPEA6F13M",
+		        "guid": "tag_reuters.com_2014_newsml_LYNXMPEA6F13M",
 		        "state": "ingested"
 		    }]
 		}
