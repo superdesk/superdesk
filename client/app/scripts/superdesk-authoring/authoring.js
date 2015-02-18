@@ -787,12 +787,6 @@
         };
     }
 
-    function HighlightCreateDirective() {
-        return {
-            templateUrl: 'scripts/superdesk-authoring/views/sd-highlight-create.html'
-        };
-    }
-
     ArticleEditDirective.$inject = ['autosave'];
     function ArticleEditDirective(autosave) {
         // TODO(petr): These values should come from preferences.
@@ -836,7 +830,6 @@
         .directive('sdWordCount', WordCount)
         .directive('sdThemeSelect', ThemeSelectDirective)
         .directive('sdContentCreate', ContentCreateDirective)
-        .directive('sdHighlightCreate', HighlightCreateDirective)
         .directive('sdArticleEdit', ArticleEditDirective)
 
         .config(['superdeskProvider', function(superdesk) {
