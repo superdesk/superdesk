@@ -11,7 +11,7 @@
     <div class="media" ng-show="item.type == 'text' || item.type == 'composite' || item.type == 'preformatted' || item.type == 'picture'">
         <div sd-item-rendition data-item="item" data-rendition="thumbnail"></div>
         <span class="text">
-            <small title="{{ item.headline }}">{{item.headline | truncateString: 90: "..."}}</small>
+            <small title="{{ item.headline }}">{{item.headline | truncateString: 90}}</small>
             <span sd-item-container data-item="item" class="container"></span>
         </span>
     </div>  

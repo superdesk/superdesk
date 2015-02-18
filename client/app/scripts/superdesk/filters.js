@@ -79,7 +79,7 @@ define([
         })
         .filter('truncateString', function() {
             return function(inputString, limit, postfix) {
-                return _.trunc(inputString, {'length': limit, 'omission': postfix});
+                return _.trunc(inputString, {'length': limit, 'omission': postfix || '...'});
             };
         })
         .filter('dateString', ['$filter', function($filter) {
