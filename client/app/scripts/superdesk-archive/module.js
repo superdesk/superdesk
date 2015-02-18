@@ -24,9 +24,10 @@ define([
                     if ($location.search()._id === item._id) {
                         $location.search('_id', null);
                     }
-                    item.actioning.spike = false;
                 }, function(response) {
                     item.error = response;
+                })
+                ['finally'](function() {
                     item.actioning.spike = false;
                 });
         };
@@ -39,9 +40,11 @@ define([
         this.unspike = function unspike(item) {
             return api.update(UNSPIKE_RESOURCE, item, {})
                 .then(function() {
-                    item.actioning.unspike = false;
+                    //nothing to do
                 }, function(response) {
                     item.error = response;
+                })
+                ['finally'](function() {
                     item.actioning.unspike = false;
                 });
         };
@@ -83,7 +86,7 @@ define([
                 .activity('spike', {
                     label: gettext('Spike Item'),
                     icon: 'remove',
-                    monitor: 'true',
+                    monitor: true,
                     controller: ['spike', 'data', function spikeActivity(spike, data) {
                         return spike.spike(data.item);
                     }],
@@ -93,7 +96,7 @@ define([
                 .activity('unspike', {
                     label: gettext('Unspike Item'),
                     icon: 'revert',
-                    monitor: 'true',
+                    monitor: true,
                     controller: ['spike', 'data', function unspikeActivity(spike, data) {
                         return spike.unspike(data.item);
                     }],
@@ -103,7 +106,7 @@ define([
                 .activity('archiveContent', {
                     label: gettext('Fetch'),
                     icon: 'archive',
-                    monitor: 'true',
+                    monitor: true,
                     controller: ['api', 'data', 'desks', function(api, data, desks) {
                         api.archiveIngest.create({
                             guid: data.item.guid,
@@ -112,9 +115,10 @@ define([
                         .then(function(archiveItem) {
                             data.item.task_id = archiveItem.task_id;
                             data.item.created = archiveItem.created;
-                            data.item.actioning.archiveContent = false;
                         }, function(response) {
                             data.item.error = response;
+                        })
+                        ['finally'](function() {
                             data.item.actioning.archiveContent = false;
                         });
                     }],

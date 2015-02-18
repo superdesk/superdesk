@@ -53,7 +53,7 @@ define([
                     }
 
 					if (activity.monitor) {
-                        scope.item.actioning = 'actioning';
+                        scope.item.actioning[activity._id] = true;
                     }
 
                     if (e != null) {
