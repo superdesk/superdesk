@@ -13,12 +13,12 @@ import logging
 from flask import current_app as app
 from eve.utils import config
 
-from .common import item_url, get_user
+from apps.archive.common import item_url, get_user
 from superdesk.errors import InvalidStateTransitionError
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
 import superdesk
-from .archive import ArchiveResource, SOURCE as ARCHIVE
+from apps.archive.archive import ArchiveResource, SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 
 

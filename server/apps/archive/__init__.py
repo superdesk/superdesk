@@ -11,6 +11,8 @@
 
 """Media archive module"""
 
+import logging
+
 from .archive import ArchiveResource, ArchiveService, ArchiveVersionsResource, AutoSaveResource, \
     ArchiveVersionsService, ArchiveSaveService
 from .commands import ArchiveRemoveExpiredContent
@@ -21,8 +23,6 @@ from .item_comments import ItemCommentsResource, ItemCommentsSubResource, ItemCo
 from .user_content import UserContentResource, UserContentService
 from .archive_lock import ArchiveLockResource, ArchiveUnlockResource, ArchiveLockService, ArchiveUnlockService
 from .archive_spike import ArchiveUnspikeResource, ArchiveSpikeService, ArchiveSpikeResource, ArchiveUnspikeService
-from .archive_publish import ArchivePublishService, ArchivePublishResource
-
 import superdesk
 from apps.common.components.utils import register_component
 from apps.item_lock.components.item_lock import ItemLock
@@ -33,7 +33,6 @@ from apps.common.models.io.eve_proxy import EveProxy
 from superdesk.celery_app import celery
 from .saved_searches import SavedSearchesService, SavedSearchesResource, \
     SavedSearchItemsResource, SavedSearchItemsService
-import logging
 
 
 logger = logging.getLogger(__name__)
@@ -105,10 +104,6 @@ def init_app(app):
     service = ArchiveSaveService(endpoint_name, backend=superdesk.get_backend())
     AutoSaveResource(endpoint_name, app=app, service=service)
 
-    endpoint_name = 'archive_publish'
-    service = ArchivePublishService(endpoint_name, backend=superdesk.get_backend())
-    ArchivePublishResource(endpoint_name, app=app, service=service)
-
     from apps.item_autosave.components.item_autosave import ItemAutosave
     from apps.item_autosave.models.item_autosave import ItemAutosaveModel
     register_component(ItemLock(app))
@@ -127,7 +122,6 @@ def init_app(app):
     superdesk.privilege(name='saved_searches', label='Manage Saved Searches',
                         description='User can manage Saved Searches')
 
-    superdesk.privilege(name='publish', label='Publish', description='Publish a content')
     superdesk.privilege(name='kill', label='Kill', description='Kill a published content')
     superdesk.privilege(name='correction', label='Correction', description='Correction to a published content')
     superdesk.privilege(name='hold', label='Hold', description='Hold a content')
