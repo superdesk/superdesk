@@ -51,7 +51,6 @@ frontend:
   command: sh -c "grunt build --server='http://127.0.0.1/api' --ws='ws://127.0.0.1/ws' && nginx"
   volumes:
    - ../results/client/unit:/opt/superdesk-client/unit-test-results
-   - ./sites-enabled:/etc/nginx/sites-enabled
   ports:
    - "443:443"
    - "80:80"
