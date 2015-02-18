@@ -24,9 +24,10 @@ define([
                     if ($location.search()._id === item._id) {
                         $location.search('_id', null);
                     }
-                    notify.success(gettext('Item was spiked.'));
+                    item.actioning.spike = false;
                 }, function(response) {
-                    notify.error(gettext('I\'m sorry but can\'t delete the archive item right now.'));
+                    item.error = response;
+                    item.actioning.spike = false;
                 });
         };
 
@@ -38,7 +39,10 @@ define([
         this.unspike = function unspike(item) {
             return api.update(UNSPIKE_RESOURCE, item, {})
                 .then(function() {
-                    notify.success(gettext('Item was unspiked.'));
+                    item.actioning.unspike = false;
+                }, function(response) {
+                    item.error = response;
+                    item.actioning.unspike = false;
                 });
         };
     }
@@ -79,6 +83,7 @@ define([
                 .activity('spike', {
                     label: gettext('Spike Item'),
                     icon: 'remove',
+                    monitor: 'true',
                     controller: ['spike', 'data', function spikeActivity(spike, data) {
                         return spike.spike(data.item);
                     }],
@@ -88,6 +93,7 @@ define([
                 .activity('unspike', {
                     label: gettext('Unspike Item'),
                     icon: 'revert',
+                    monitor: 'true',
                     controller: ['spike', 'data', function unspikeActivity(spike, data) {
                         return spike.unspike(data.item);
                     }],
@@ -106,10 +112,10 @@ define([
                         .then(function(archiveItem) {
                             data.item.task_id = archiveItem.task_id;
                             data.item.created = archiveItem.created;
-                            data.item.actioning = '';
+                            data.item.actioning.archiveContent = false;
                         }, function(response) {
                             data.item.error = response;
-                            data.item.actioning = '';
+                            data.item.actioning.archiveContent = false;
                         });
                     }],
                     filters: [{action: 'list', type: 'archive'}],

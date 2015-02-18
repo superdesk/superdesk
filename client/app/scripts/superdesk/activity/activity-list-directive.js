@@ -15,7 +15,7 @@ define([
             },
             templateUrl: asset.templateUrl('superdesk/activity/views/activity-list.html'),
             link: function(scope, elem, attrs) {
-                scope.item.actioning = '';
+                scope.item.actioning = {};
 
                 var intent = {
                     action: scope.action
@@ -30,13 +30,15 @@ define([
                 scope.activities = _.filter(superdesk.findActivities(intent, scope.item), function(activity) {
 
                     if (activity.monitor) {
+                        scope.item.actioning[activity._id] = false;
                         scope.$watch('item.actioning', function(newValue, oldValue) {
-                            if (scope.item.actioning === '') {
-                                    if (scope.item.error) {
+                            if (!scope.item.actioning[activity._id] && (newValue[activity._id] !== oldValue[activity._id])) {
+                                    if (scope.item.error && scope.item.error.data && scope.item.error.data._message) {
                                         notify.error(gettext(scope.item.error.data._message));
+                                        delete scope.item.error;
                                     }
                                 }
-                        });
+                        }, true);
                     }
 
                     return workflowService.isActionAllowed(scope.item, activity.action);
