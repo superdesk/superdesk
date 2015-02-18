@@ -28,7 +28,7 @@ utcfromtimestamp = datetime.utcfromtimestamp
 class RssIngestService(IngestService):
     """Ingest service for providing feeds received in RSS 2.0 format.
 
-    (NOTE: it should also work with other syndicated feeds fromats, too, since
+    (NOTE: it should also work with other syndicated feeds formats, too, since
     the underlying parser supports them, but for our needs RSS 2.0 is assumed)
     """
 
