@@ -27,23 +27,19 @@ class RssError(Exception):
         self.provider = provider
 
 
-class FakeIngestRssFeedError(Exception):
-    """Mocked factory for RSS ingest errors."""
+class FakeIngestApiError(Exception):
+    """Mocked factory for ingest API errors."""
 
     @classmethod
-    def generalError(cls, exception, provider):
+    def apiGeneralError(cls, exception, provider):
         return RssError('general_error', exception, provider)
 
     @classmethod
-    def timeoutError(cls, exception, provider):
-        return RssError('timeout_error', exception, provider)
-
-    @classmethod
-    def notFoundError(cls, exception, provider):
+    def apiNotFoundError(cls, exception, provider):
         return RssError('not_found_error', exception, provider)
 
     @classmethod
-    def authError(cls, exception, provider):
+    def apiAuthError(cls, exception, provider):
         return RssError('auth_error', exception, provider)
 
 
@@ -65,7 +61,7 @@ class RssIngestServiceTest(TestCase):
 
 
 @mock.patch('superdesk.io.rss.feedparser.parse', feed_parse)
-@mock.patch('superdesk.io.rss.IngestRssFeedError', FakeIngestRssFeedError)
+@mock.patch('superdesk.io.rss.IngestApiError', FakeIngestApiError)
 @mock.patch('superdesk.io.rss.ParserError.parseMessageError', FakeParseError)
 class UpdateMethodTestCase(RssIngestServiceTest):
     """Tests for the _update() method."""
@@ -86,9 +82,9 @@ class UpdateMethodTestCase(RssIngestServiceTest):
         self.instance._create_item = MagicMock(return_value={})
 
     def test_raises_ingest_error_if_fetching_data_fails(self):
-        self.instance._fetch_data.side_effect = FakeIngestRssFeedError
+        self.instance._fetch_data.side_effect = FakeIngestApiError
         try:
-            with self.assertRaises(FakeIngestRssFeedError):
+            with self.assertRaises(FakeIngestApiError):
                 self.instance._update({})
         except:
             self.fail('Expected exception type was not raised.')
@@ -162,7 +158,7 @@ class UpdateMethodTestCase(RssIngestServiceTest):
 
 
 @mock.patch('superdesk.io.rss.requests.get', requests_get)
-@mock.patch('superdesk.io.rss.IngestRssFeedError', FakeIngestRssFeedError)
+@mock.patch('superdesk.io.rss.IngestApiError', FakeIngestApiError)
 class FetchDataMethodTestCase(RssIngestServiceTest):
     """Tests for the _fetch_data() method."""
 

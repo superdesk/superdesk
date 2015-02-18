@@ -273,32 +273,41 @@ class IngestApiError(SuperdeskIngestError):
         4003: "API ingest has request error",
         4004: "API ingest Unicode Encode Error",
         4005: 'API ingest xml parse error',
-        4006: 'API service not found(404) error'
+        4006: 'API service not found(404) error',
+        4007: 'API authorization error',
     }
 
     @classmethod
+    def apiGeneralError(cls, exception, provider):
+        return cls(4000, exception, provider)
+
+    @classmethod
     def apiTimeoutError(cls, exception, provider):
-        return IngestApiError(4001, exception, provider)
+        return cls(4001, exception, provider)
 
     @classmethod
     def apiRedirectError(cls, exception, provider):
-        return IngestApiError(4002, exception, provider)
+        return cls(4002, exception, provider)
 
     @classmethod
     def apiRequestError(cls, exception, provider):
-        return IngestApiError(4003, exception, provider)
+        return cls(4003, exception, provider)
 
     @classmethod
     def apiUnicodeError(cls, exception, provider):
-        return IngestApiError(4004, exception, provider)
+        return cls(4004, exception, provider)
 
     @classmethod
     def apiParseError(cls, exception, provider):
-        return IngestApiError(4005, exception, provider)
+        return cls(4005, exception, provider)
 
     @classmethod
     def apiNotFoundError(cls, exception, provider):
-        return IngestApiError(4006, exception, provider)
+        return cls(4006, exception, provider)
+
+    @classmethod
+    def apiAuthError(cls, exception, provider):
+        return cls(4007, exception, provider)
 
 
 class IngestFtpError(SuperdeskIngestError):
@@ -317,33 +326,3 @@ class IngestFtpError(SuperdeskIngestError):
             logger.exception("Provider: {} - File: {} unknown file format. "
                              "Parser couldn't be found.".format(provider.get('name', 'Unknown provider'), filename))
         return IngestFtpError(5001, exception, provider)
-
-
-class IngestRssFeedError(SuperdeskIngestError):
-    """A class representing an RSS feed ingest error.
-
-    The class also contains factory methods for creating different types of
-    RSS feed error instances.
-    """
-    _codes = {
-        6000: "General RSS feed error",
-        6001: "RSS feed connection has timed out",
-        6002: "RSS feed not found (404)",
-        6003: "RSS feed authorization error",
-    }
-
-    @classmethod
-    def generalError(cls, exception, provider):
-        return cls(6000, exception, provider)
-
-    @classmethod
-    def timeoutError(cls, exception, provider):
-        return cls(6001, exception, provider)
-
-    @classmethod
-    def notFoundError(cls, exception, provider):
-        return cls(6002, exception, provider)
-
-    @classmethod
-    def authError(cls, exception, provider):
-        return cls(6003, exception, provider)

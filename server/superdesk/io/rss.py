@@ -15,7 +15,7 @@ import requests
 from calendar import timegm
 from datetime import datetime
 
-from superdesk.errors import IngestRssFeedError, ParserError
+from superdesk.errors import IngestApiError, ParserError
 from superdesk.io import register_provider
 from superdesk.io.ingest_service import IngestService
 
@@ -39,7 +39,7 @@ class RssIngestService(IngestService):
         :return: a list containing a list of new content items
         :rtype: list
 
-        :raises IngestRssFeedError: if data retrieval error occurs
+        :raises IngestApiError: if data retrieval error occurs
         :raises ParserError: if retrieved RSS data cannot be parsed
         """
         config = provider.get('config', {})
@@ -47,7 +47,7 @@ class RssIngestService(IngestService):
         try:
             xml_data = self._fetch_data(config, provider)
             data = feedparser.parse(xml_data)
-        except IngestRssFeedError:
+        except IngestApiError:
             raise
         except Exception as ex:
             raise ParserError.parseMessageError(ex, provider) from None
@@ -79,7 +79,7 @@ class RssIngestService(IngestService):
         :return: fetched RSS data
         :rtype: str
 
-        :raises IngestRssFeedError: if fetching data fails for any reason
+        :raises IngestApiError: if fetching data fails for any reason
             (e.g. authentication error, resource not found, etc.)
         """
         url = config['url']
@@ -95,13 +95,13 @@ class RssIngestService(IngestService):
             return response.content
         else:
             if response.status_code in (401, 403):
-                raise IngestRssFeedError.authError(
+                raise IngestApiError.apiAuthError(
                     Exception(response.reason), provider)
             elif response.status_code == 404:
-                raise IngestRssFeedError.notFoundError(
+                raise IngestApiError.apiNotFoundError(
                     Exception(response.reason), provider)
             else:
-                raise IngestRssFeedError.generalError(
+                raise IngestApiError.apiGeneralError(
                     Exception(response.reason), provider)
 
     def _create_item(self, data):
