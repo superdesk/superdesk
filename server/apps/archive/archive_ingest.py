@@ -73,7 +73,6 @@ class ArchiveIngestService(BaseService):
 
                 archived = utcnow()
                 superdesk.get_resource_service('ingest').patch(ingest_doc.get('_id'), {'archived': archived})
-                doc['archived'] = archived
 
                 dest_doc = dict(ingest_doc)
                 new_id = generate_guid(type=GUID_TAG)

@@ -184,7 +184,7 @@ def remove_unwanted(doc):
     """
 
     # _type attribute comes when queried against Elastic and desk comes while fetching an item from ingest
-    for attr in ['_type', 'desk']:
+    for attr in ['_type', 'desk', 'archived']:
         if attr in doc:
             del doc[attr]
 
