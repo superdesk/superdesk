@@ -51,19 +51,23 @@ class ArchiveIngestService(BaseService):
                 # if no desk is selected then it is bad request
                 raise SuperdeskApiError.badRequestError("Destination desk cannot be empty.")
 
-            ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=doc.get('guid'))
-            if not ingest_doc:
-                # see if it is in archive, if it is duplicate it
+            archived_doc = None
+
+            if not kwargs.get('ingest_only', False):
                 archived_doc = superdesk.get_resource_service(ARCHIVE).find_one(req=None, _id=doc.get('guid'))
-                if archived_doc:
-                    send_to(archived_doc, doc.get('desk'))
-                    new_guid = superdesk.get_resource_service('archive').duplicate_content(archived_doc)
-                    new_guids.append(new_guid)
-                else:
-                    msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
-                    raise SuperdeskApiError.notFoundError(msg)
+
+            if archived_doc:
+                # see if it is in archive, if it is duplicate it
+                send_to(archived_doc, doc.get('desk'))
+                new_guid = superdesk.get_resource_service('archive').duplicate_content(archived_doc)
+                new_guids.append(new_guid)
             else:
                 # We are fetching from ingest
+                ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=doc.get('guid'))
+                if not ingest_doc:
+                    msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
+                    raise SuperdeskApiError.notFoundError(msg)
+
                 if not is_workflow_state_transition_valid('fetch_as_from_ingest', ingest_doc[config.CONTENT_STATE]):
                     raise InvalidStateTransitionError()
 
@@ -100,7 +104,7 @@ class ArchiveIngestService(BaseService):
                         for group in dest_doc.get('groups', [])
                         for ref in group.get('refs', []) if 'residRef' in ref]
                 if refs:
-                    new_ref_guids = self.create(refs)
+                    new_ref_guids = self.create(refs, notify=False, ingest_only=True)
                     count = 0
                     for ref in [ref for group in dest_doc.get('groups', [])
                                 for ref in group.get('refs', []) if 'residRef' in ref]:
@@ -110,7 +114,8 @@ class ArchiveIngestService(BaseService):
                 superdesk.get_resource_service(ARCHIVE).post([dest_doc])
                 insert_into_versions(dest_doc.get('guid'))
 
-            push_notification('item:fetch', item=str(doc.get('_id')))
+        if(kwargs.get('notify', True)):
+            push_notification('item:fetch', fetched=1)
 
         return new_guids
 
