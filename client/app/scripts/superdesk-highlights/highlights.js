@@ -99,17 +99,20 @@
         	scope: {highlight_ids: '=highlights'},
             templateUrl: 'scripts/superdesk-highlights/views/highlights_title_directive.html',
             link: function(scope) {
-            	scope.title = '';
-            	if (scope.highlight_ids) {
-            		highlightsService.get().then(function(result) {
-                		var highlights = _.filter(result._items, function(highlight) {
-                			return scope.highlight_ids.indexOf(highlight._id) >= 0;
-                		});
-                		_.forEach(highlights, function(highlight) {
-	        				scope.title += highlight.name + '\n';
-                		});
-                	});
-            	}
+
+                scope.$watch('highlight_ids', function(_ids) {
+                    if (_ids) {
+                        scope.title = '';
+                        highlightsService.get().then(function(result) {
+                            var highlights = _.filter(result._items, function(highlight) {
+                                return _ids.indexOf(highlight._id) >= 0;
+                            });
+                            _.forEach(highlights, function(highlight) {
+                                scope.title += highlight.name + '\n';
+                            });
+                        });
+                    }
+                });
 
             	scope.getTitle = function getTitle() {
                 	return scope.title;
