@@ -28,7 +28,6 @@
     "docker",
     "scripts",
     "setup.py",
-    "client/bower",
     "client/docs",
     "client/scripts",
     "client/spec",
