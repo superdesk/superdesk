@@ -153,8 +153,14 @@ class PackageService(ArchiveService):
         if not delete:
             two_way_links.append({'package': package_id})
 
-        updates = {LINKED_IN_PACKAGES: two_way_links}
+        updates = self.get_item_update_data(item, two_way_links, delete)
         get_resource_service(endpoint).patch(item_id, updates)
+
+    """
+    Add extensibility point for item patch data.
+    """
+    def get_item_update_data(self, __item, links, delete):
+        return {LINKED_IN_PACKAGES: links}
 
     def check_for_duplicates(self, package, associations):
         counter = Counter()
