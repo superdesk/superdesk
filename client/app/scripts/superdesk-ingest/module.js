@@ -87,8 +87,8 @@ define([
             $scope.loading = true;
             api.ingest.query(criteria).then(function(items) {
                 $scope.items = items;
-                $scope.loading = false;
-            }, function(response) {
+            })
+            ['finally'](function() {
                 $scope.loading = false;
             });
         };
