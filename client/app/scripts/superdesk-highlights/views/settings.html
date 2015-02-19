@@ -1,0 +1,67 @@
+<div sd-settings-view>
+
+	<div class="split-content">
+
+		<div class="header">
+			<h2 translate>Highlights configurations</h2>
+			<button class="btn btn-info pull-right" ng-click="edit({})">
+		        <i class="icon-plus-sign icon-white"></i> {{ 'Create configuration' | translate }}
+		    </button>
+		</div>
+		
+	    <div class="content desk-settings">
+	    	<div sd-shadow>
+	    		<ul class="pills-list">
+					<li ng-repeat="config in configurations._items">
+					
+						<h6 class="pull-left">{{ config.name }}</h6>
+
+						<div class="actions">
+							<button ng-click="edit(config)" title="{{:: 'Edit configuration' | translate }}"><i class="icon-pencil"></i></button>
+							<button ng-click="remove(config)" title="{{:: 'Remove configuration' | translate }}"><i class="icon-trash"></i></button>
+						</div>
+	                </li>
+				</ul>
+			</div>
+	    </div>
+	</div>
+
+	<div sd-modal-view data-model="modalActive" class="highlights-config-popup responsive-popup hide" >
+    
+		<div class="modal-header"> 
+			<a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+			<h3 ng-show="!configEdit._id" translate>Create highlight configuration</h3>
+			<h3 ng-show="configEdit._id" translate>Edit highlight configuration</h3>
+		</div>
+		
+		<div class="modal-body">
+			<form name="highlightForm">
+				<fieldset>
+					<div class="field">
+						<label translate>Configuration name</label>
+						<input type="text" class="fullwidth-input" ng-model="configEdit.name" required> 
+					</div>
+					<div class="field">
+						<label translate>Assigned desks</label>
+						<div class="assigned-desks">
+							<ul>
+								<li ng-repeat="desk in assignedDesks">
+									<span sd-check ng-model="desk.included"></span>
+									<span class="text" ng-click="desk.included = !desk.included">{{desk.name}}</span>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</fieldset>
+				<p ng-if="message">{{ message }}</p>
+			</form>
+		</div>
+
+		<div class="modal-footer"> 
+		  	<button class="btn" ng-click="cancel()" translate>Cancel</button> 
+		  	<button class="btn btn-primary" ng-click="save()" ng-disabled="!highlightForm.$valid" translate>Save</button>
+		</div>
+	</div>
+
+
+</div>
