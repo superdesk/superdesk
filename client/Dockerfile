@@ -3,13 +3,17 @@ FROM dockerfile/nodejs
 
 # install system-wide dependencies
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y libfreetype6 libfontconfig && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y libfreetype6 libfontconfig nginx && \
+    echo "\ndaemon off;" >> /etc/nginx/nginx.conf && \
+    rm /etc/nginx/sites-enabled/default && \
     npm -g install grunt-cli bower
 
 # setup the environment
 WORKDIR	/opt/superdesk-client/
+COPY ./superdesk_vhost.conf /etc/nginx/sites-enabled/superdesk.conf
 EXPOSE	9000
-CMD ["grunt"]
+EXPOSE	80
+CMD ["sh", "-c" "grunt build && nginx"]
 
 # install app-wide dependencies
 COPY ./package.json /opt/superdesk-client/
