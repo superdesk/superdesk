@@ -172,7 +172,7 @@
 	.dropdown-menu {
 		top: auto;
 		bottom: 100%;
-		margin-bottom: 1px;
+		margin-bottom: 0;
 		&:before {
 			top: auto;
 			bottom:-16px;
@@ -292,3 +292,14 @@
 }
 
 
+.activity-dropdown {
+	.dropdown-menu {
+		.border-radius(0px);
+		border:0;
+		z-index: 1;
+		margin-top: -1px;
+		&:before {
+			display: none;
+		}
+	}
+}
