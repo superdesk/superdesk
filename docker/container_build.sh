@@ -69,7 +69,6 @@ echo "+++ new user has been created" &&
 (
 	cd $BAMBOO_DIR/client &&
 	sh $SCRIPT_DIR/run_e2e_tests.sh ;
-	ls -la $BAMBOO_DIR/client/
 	mv $BAMBOO_DIR/client/e2e-test-results $CLIENT_RESULTS_DIR/e2e
 	mv $BAMBOO_DIR/client/screenshots $SCREENSHOTS_DIR &&
 		echo "!!! Screenshots were saved to $SCREENSHOTS_DIR"
