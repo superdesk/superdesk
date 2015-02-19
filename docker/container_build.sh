@@ -60,7 +60,7 @@ docker-compose run backend ./scripts/fig_wrapper.sh behave --junit --junit-direc
 docker-compose run frontend bash -c "grunt bamboo && mv test-results.xml ./unit-test-results/" &&
 
 # create admin user:
-docker-compose run backend sh -c "./scripts/fig_wrapper.sh python3 manage.py users:create -u admin -p admin -e 'admin@example.com' --admin=true 2>&1 ; exit 0" &&
+docker-compose run backend ./scripts/fig_wrapper.sh python3 manage.py users:create -u admin -p admin -e 'admin@example.com' --admin=true &&
 echo "+++ new user has been created" &&
 
 # run e2e tests:
