@@ -1,8 +1,8 @@
 define(['lodash'], function(_) {
     'use strict';
 
-    WorkspaceController.$inject = ['$scope', 'widgets', 'workspace'];
-    function WorkspaceController($scope, widgets, workspace) {
+    WorkspaceController.$inject = ['$scope', 'widgets', 'workspace', 'ItemList'];
+    function WorkspaceController($scope, widgets, workspace, ItemList) {
 
         $scope.flags = $scope.flags || {};
         $scope.flags.loading = true;

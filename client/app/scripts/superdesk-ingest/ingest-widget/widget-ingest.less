@@ -6,30 +6,115 @@
 
 .sd-widget {
 	&.ingest, &.archive {
+		.widget-header {
+			z-index: 1;
+			background: @white;
+
+		}
 		.widget-content {
 			overflow-x: hidden;
+			top: 0;
 		}
+
+		.widget-mode {
+			float: right;
+			position: relative;
+			z-index: 1;
+			margin-right: 40px;
+			padding: 6px 0;
+			.text {
+				text-transform: uppercase;
+				font-size: 11px;
+				vertical-align: middle;
+				color: @grayLight;
+			}
+		}
+		
 		.search-box {
-			.searchbar {
-				border:0 !important;
-				height: 32px;
-				background-position: 8px 8px !important;
-				border-bottom: 1px solid #e0e0e0 !important;
-				.border-radius(0) !important;
-				.transition(all ease 0.2s);
-				&:focus {
-					.box-shadow(inset 0 1px 3px 0 rgba(0,0,0,0.1)) !important;
+            position: absolute;
+            left: 0; right: 0; top: 0;
+            height: @nav-height - 10px;
+            border-bottom: 1px solid #dcdcdc;
+            background: @white url(../../images/search-icon.png) no-repeat 10px 10px;
+            .border-box();
+            input {
+                position: absolute;
+                width: calc(~"100% - 38px");
+                height: @nav-height - 10px - 1;
+                border: 0 !important;
+                left: @nav-height - 10px;
+                right: 30px;
+                top:0px;
+                &:focus {
+                    .box-shadow(none) !important;
+                }
+            }
+            &.blank {
+                background: @white;
+            }
+            .text {
+            	font-size: 14px;
+            	font-style: italic;
+            	color: @gray;
+            	padding: 10px;
+            }
+            .more-actions {
+				position: absolute;
+				right: 0px;
+				top: 6px;
+			}
+        }
+			
+
+		.filter-box {
+			height: @nav-height - 10px;
+			position: absolute;
+			top: @nav-height - 10px;
+			left: 0; right: 0;
+			border-bottom: 1px solid #dcdcdc;
+			.border-box();
+			.btn {
+				margin: 5px 3px 0 0;
+				padding: 0 3px;
+				i {
+					padding-left: 23px;
+					.opacity(75);
 				}
 			}
-			input[type="text"]:focus {
-				//.box-shadow(none) !important;
+			.text {
+				margin-right: 10px;
+				float: left;
+				padding: 10px;
+				font-style: italic;
 			}
+		}
+
+		.pagination-box {
+			height: @nav-height - 10px;
+			position: absolute;
+			top: @nav-height - 10px;
+			left: 0; right: 0;
+			border-bottom: 1px solid #dcdcdc;
+			.border-box();
+			.sd-pagination {
+				padding: 5px 10px;
+			}
+			&.mode-detailed {
+				top: 2*(@nav-height - 10px);
+			}
+		}
+		
+		.pin-info {
+			font-size: 9px;
 		}
 		.ingest-list-holder {
 			position: absolute;
-			top:32px;
+			top: 2*(@nav-height - 10px);
 			left: 0; right: 0;
 			bottom: 0;
+			&.mode-detailed {
+				top: 3*(@nav-height - 10px);
+			}
 		}
 		.ingest-list {
 			margin:0;
@@ -121,6 +206,31 @@
 						.border-radius(3px);
 					}
 				}
+				&:first-child {
+					.pinned.pinned-instance {
+						margin-top: 10px;
+					}
+				}
+				.basic.item-block {
+					.content {
+						p {
+							padding-right: 15px;
+							i { 
+								margin-top: -2px;
+								height: 18px;
+								padding-left: 25px;
+								background-position-x: -3px;
+								.opacity(80);
+							}
+
+						}
+					}
+				}
+				.pin-info {
+					text-transform: uppercase;
+					font-size: 10px;
+					color: @grayLight;
+				}
 			}
 			.active {
 				.item-block {
@@ -130,7 +240,7 @@
 		}
 		.main-list {
 			position: absolute;
-			left: 0; right: 0; bottom: 0; top: 0;
+			left: 0; right: 0; bottom: 0; top: 33px;
 			width: 100%;
 			.transition(all ease 0.2s);
 			overflow: hidden;
@@ -144,7 +254,7 @@
 		}
 		.preview {
 			position: absolute;
-			left: 0; width: 100%; bottom: 0; top: 0;
+			left: 0; width: 100%; bottom: 0; top: 44px;
 			.transition(all ease 0.2s);
 			.nav {
 				height: 35px;
@@ -218,6 +328,26 @@
 				color: #000;
 				font-size: 13px;
 				line-height: 20px;
+			}
+		}
+	}
+}
+
+.tabpane {
+	&.widget-ingest, &.widget-archive {
+		.sd-widget {
+
+			.widget-mode {
+				margin: 0;
+				padding: 10px 5px;
+			}
+
+			.main-list {
+				top: 44px
+			}
+
+			.ingest-list-holder {
+				bottom: 60px;
 			}
 		}
 	}

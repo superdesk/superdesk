@@ -37,7 +37,22 @@ define([
         .controller('IngestController', ['$scope', 'api', 'BaseWidgetController',
         function ($scope, api, BaseWidgetController) {
             $scope.type = 'ingestWidget';
-            $scope.api = api.ingest;
+            $scope.itemListOptions = {
+                endpoint: 'search',
+                repo: 'ingest',
+                notStates: ['spiked'],
+                types: ['text', 'picture', 'audio', 'video', 'composite'],
+                page: 1
+            };
+            $scope.options = {
+                pinEnabled: true,
+                modeEnabled: true,
+                searchEnabled: true,
+                itemTypeEnabled: true,
+                mode: 'basic',
+                similar: false,
+                itemTypes: ['text', 'picture', 'audio', 'video', 'composite']
+            };
 
             BaseWidgetController.call(this, $scope);
         }])

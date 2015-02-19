@@ -21,7 +21,7 @@ define([
                 thumbnail: require.toUrl('./thumbnail.png'),
                 template: require.toUrl('./widget-archive.html'),
                 configurationTemplate: require.toUrl('./configuration.html'),
-                configuration: {maxItems: 10, provider: 'all', search: '', updateInterval: 5},
+                configuration: {maxItems: 10, provider: null, search: '', updateInterval: 5},
                 description: 'Content widget'
             });
         }])
@@ -34,10 +34,33 @@ define([
                 display: {authoring: true, packages: false}
             });
         }])
-        .controller('ArchiveController', ['$scope', 'api', 'BaseWidgetController',
-        function ($scope, api, BaseWidgetController) {
+        .controller('ArchiveController', ['$scope', 'api', 'BaseWidgetController', '$location',
+        function ($scope, api, BaseWidgetController, $location) {
             $scope.type = 'archiveWidget';
-            $scope.api = api.archive;
+            $scope.itemListOptions = {
+                endpoint: 'search',
+                repo: 'archive',
+                notStates: ['spiked'],
+                types: ['text', 'picture', 'audio', 'video', 'composite'],
+                page: 1
+            };
+            $scope.options = {
+                pinEnabled: true,
+                modeEnabled: true,
+                searchEnabled: true,
+                itemTypeEnabled: true,
+                mode: 'basic',
+                similar: false,
+                itemTypes: ['text', 'picture', 'audio', 'video', 'composite']
+            };
+            $scope.actions = {
+                open: {
+                    title: 'Open',
+                    method: function(item) {
+                        $location.path('/authoring/' + item._id + '/view');
+                    }
+                }
+            };
 
             BaseWidgetController.call(this, $scope);
         }])
