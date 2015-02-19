@@ -4,7 +4,8 @@ env:
     - TARGET=client
     - TARGET=server
     - TARGET=server_ldap
-    - TARGET=e2e
+    - TARGET=e2e_chrome
+    - TARGET=e2e_firefox
 
 python:
     - "3.4"
@@ -18,10 +19,10 @@ services:
     - redis-server
 
 before_install:
-    - if [ "${TARGET}" = "client" ] || [ "${TARGET}" = "e2e" ]; then
+    - if [ "${TARGET}" = "client" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         npm install -g grunt-cli bower ;
       fi
-    - if [ "${TARGET}" = "e2e" ]; then
+    - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         chromium-browser --version ;
         export CHROME_BIN=chromium-browser &&
         export DISPLAY=:99.0 &&
@@ -29,23 +30,23 @@ before_install:
       fi
 
 install:
-    - if [ "${TARGET}" = "server" ] || [ "${TARGET}" = "server_ldap" ] || [ "${TARGET}" = "e2e" ]; then
+    - if [ "${TARGET}" = "server" ] || [ "${TARGET}" = "server_ldap" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         cd server &&
         pip install -r requirements.txt --use-mirrors &&
         cd .. ;
       fi
-    - if [ "${TARGET}" = "client" ] || [ "${TARGET}" = "e2e" ]; then
+    - if [ "${TARGET}" = "client" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         cd client && npm install && cd .. ;
       fi
-    - if [ "${TARGET}" = "client" ] || [ "${TARGET}" = "e2e" ]; then
+    - if [ "${TARGET}" = "client" ] || [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         cd client && bower install && cd .. ;
       fi
-    - if [ "${TARGET}" = "e2e" ]; then
+    - if [ "${TARGET}" = "e2e_chrome" ]; then
         (cd client && npm install "actionless/protractor#1.6.1-old" );
       fi
 
 before_script:
-    - if [ "${TARGET}" = "e2e" ]; then
+    - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         cd server &&
         env SUPERDESK_URL='http://127.0.0.1:5000/api' SUPERDESK_CLIENT_URL='http://127.0.0.1:9000' SUPERDESK_TESTING='True' honcho start &
         cd client &&
@@ -72,7 +73,7 @@ script:
     - if [ "${TARGET}" = "client" ]; then
         cd client && npm test && cd .. ;
       fi
-    - if [ "${TARGET}" = "e2e" ]; then
+    - if [ "${TARGET}" != "${TARGET/e2e/}" ]; then
         cd server &&
         python3 manage.py users:create -u admin -p admin -e 'admin@example.com' --admin=true 2>&1 ;
         cd ../client &&
@@ -83,14 +84,8 @@ script:
           --params.baseBackendUrl 'http://127.0.0.1:5000/api'
           --params.username 'admin'
           --params.password 'admin'
-          --capabilities.browserName 'chrome'
+          --capabilities.browserName "${TARGET/e2e_/}"
         ;
-      fi
-
-after_failure:
-    - if [ "${TARGET}" = "e2e" ]; then
-        tar cjf screenshots.tar.bz2 screenshots &&
-        curl -F "file=@./screenshots.tar.bz2" http://curl.io/send/cyusjvxu ;
       fi
 
 after_success:
