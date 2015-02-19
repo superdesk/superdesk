@@ -26,12 +26,8 @@
     "**/.*",
     "server",
     "docker",
-    "scripts",
     "setup.py",
-    "client/docs",
-    "client/scripts",
-    "client/spec",
-    "client/tasks"
+    "client/docs"
   ],
   "resolutions": {
     "angular": "1.3.9"
