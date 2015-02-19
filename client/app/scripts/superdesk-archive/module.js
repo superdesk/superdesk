@@ -24,9 +24,11 @@ define([
                     if ($location.search()._id === item._id) {
                         $location.search('_id', null);
                     }
-                    notify.success(gettext('Item was spiked.'));
                 }, function(response) {
-                    notify.error(gettext('I\'m sorry but can\'t delete the archive item right now.'));
+                    item.error = response;
+                })
+                ['finally'](function() {
+                    item.actioning.spike = false;
                 });
         };
 
@@ -38,7 +40,12 @@ define([
         this.unspike = function unspike(item) {
             return api.update(UNSPIKE_RESOURCE, item, {})
                 .then(function() {
-                    notify.success(gettext('Item was unspiked.'));
+                    //nothing to do
+                }, function(response) {
+                    item.error = response;
+                })
+                ['finally'](function() {
+                    item.actioning.unspike = false;
                 });
         };
     }
@@ -79,6 +86,7 @@ define([
                 .activity('spike', {
                     label: gettext('Spike Item'),
                     icon: 'remove',
+                    monitor: true,
                     controller: ['spike', 'data', function spikeActivity(spike, data) {
                         return spike.spike(data.item);
                     }],
@@ -88,6 +96,7 @@ define([
                 .activity('unspike', {
                     label: gettext('Unspike Item'),
                     icon: 'revert',
+                    monitor: true,
                     controller: ['spike', 'data', function unspikeActivity(spike, data) {
                         return spike.unspike(data.item);
                     }],
@@ -97,6 +106,7 @@ define([
                 .activity('archiveContent', {
                     label: gettext('Fetch'),
                     icon: 'archive',
+                    monitor: true,
                     controller: ['api', 'data', 'desks', function(api, data, desks) {
                         api.archiveIngest.create({
                             guid: data.item.guid,
@@ -105,6 +115,11 @@ define([
                         .then(function(archiveItem) {
                             data.item.task_id = archiveItem.task_id;
                             data.item.created = archiveItem.created;
+                        }, function(response) {
+                            data.item.error = response;
+                        })
+                        ['finally'](function() {
+                            data.item.actioning.archiveContent = false;
                         });
                     }],
                     filters: [{action: 'list', type: 'archive'}],

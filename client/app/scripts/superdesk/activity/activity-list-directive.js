@@ -3,7 +3,8 @@ define([
 ], function(_) {
     'use strict';
 
-    return ['superdesk', 'activityService', 'workflowService', 'asset', function(superdesk, activityService, workflowService, asset) {
+    return ['superdesk', 'activityService', 'workflowService', 'asset', 'notify',
+    function(superdesk, activityService, workflowService, asset, notify) {
         return {
             scope: {
                 item: '=',
@@ -14,6 +15,8 @@ define([
             },
             templateUrl: asset.templateUrl('superdesk/activity/views/activity-list.html'),
             link: function(scope, elem, attrs) {
+                scope.item.actioning = {};
+
                 var intent = {
                     action: scope.action
                 };
@@ -25,12 +28,32 @@ define([
                 }
 
                 scope.activities = _.filter(superdesk.findActivities(intent, scope.item), function(activity) {
+
+                    if (activity.monitor) {
+                        scope.item.actioning[activity._id] = false;
+                        scope.$watch('item.actioning', function(newValue, oldValue) {
+                            if (scope.item.actioning &&
+                                !scope.item.actioning[activity._id] &&
+                                oldValue &&
+                                (newValue[activity._id] !== oldValue[activity._id])) {
+                                    if (scope.item.error && scope.item.error.data && scope.item.error.data._message) {
+                                        notify.error(gettext(scope.item.error.data._message));
+                                        delete scope.item.error;
+                                    }
+                                }
+                        }, true);
+                    }
+
                     return workflowService.isActionAllowed(scope.item, activity.action);
                 });
 
                 scope.run = function runActivity(activity, e) {
                     if (scope.$root.link(activity._id, scope.item)) {
                         return; // don't try to run it, just let it change url
+                    }
+
+					if (activity.monitor) {
+                        scope.item.actioning[activity._id] = true;
                     }
 
                     if (e != null) {
@@ -43,6 +66,7 @@ define([
                                 scope.done(scope.data);
                             }
                         });
+
                 };
 
                 // register key shortcuts for single instance of activity list - in preview sidebar

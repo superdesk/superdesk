@@ -75,6 +75,7 @@ define([
         $injector.invoke(BaseListController, this, {$scope: $scope});
 
         $scope.type = 'ingest';
+        $scope.loading = false;
         $scope.repo = {
             ingest: true,
             archive: false
@@ -83,8 +84,12 @@ define([
         $rootScope.currentModule = 'ingest';
 
         this.fetchItems = function(criteria) {
+            $scope.loading = true;
             api.ingest.query(criteria).then(function(items) {
                 $scope.items = items;
+            })
+            ['finally'](function() {
+                $scope.loading = false;
             });
         };
 
@@ -100,6 +105,7 @@ define([
         });
 
         $scope.$on('ingest:update', update);
+        $scope.$on('item:fetch', update);
         $scope.$watchCollection(function getSearchWithoutId() {
             return _.omit($location.search(), '_id');
         }, update);
@@ -381,6 +387,7 @@ define([
             .activity('archive', {
                 label: gettext('Fetch'),
                 icon: 'archive',
+                monitor: true,
                 controller: ['api', 'data', 'desks', function(api, data, desks) {
                     api.archiveIngest.create({
                         guid: data.item.guid,
@@ -389,6 +396,11 @@ define([
                     .then(function(archiveItem) {
                         data.item.task_id = archiveItem.task_id;
                         data.item.archived = archiveItem.archived;
+                    }, function(response) {
+                        data.item.error = response;
+                    })
+                    ['finally'](function() {
+                        data.item.actioning.archive = false;
                     });
                 }],
                 filters: [
