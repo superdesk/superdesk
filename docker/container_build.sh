@@ -35,7 +35,7 @@ mkdir -p $BAMBOO_DIR/data/db
 rm -r $BAMBOO_DIR/results/
 mkdir -p $SERVER_RESULTS_DIR/{unit,behave} &&
 mkdir -p $CLIENT_RESULTS_DIR/unit &&
-mkdir $SCREENSHOTS_DIR
+mkdir -p $SCREENSHOTS_DIR
 
 # copy files for client+nginx container
 cp $SCRIPT_DIR/Dockerfile_client $BAMBOO_DIR/client/Dockerfile
