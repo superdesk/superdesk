@@ -267,7 +267,7 @@
 				}
 			}
 			&:active {
-				button {
+				> button {
 					background: @sd-blue;
 					color: #fff;
 				}
@@ -291,7 +291,8 @@
 	padding: 0;
 }
 
-
+// Activity dropdowns
+// -------------------------------------------------
 .activity-dropdown {
 	.dropdown-menu {
 		.border-radius(0px);
@@ -300,6 +301,50 @@
 		margin-top: -1px;
 		&:before {
 			display: none;
+		}
+	}
+}
+
+// Nested dropdowns
+// -------------------------------------------------
+
+.dropdown {
+	&.open {
+		li > .dropdown {
+			float: none;
+			.dropdown-toggle {
+				margin: 0 10px;
+				min-width: 225px;
+				padding: 6px 10px;
+				line-height: 19px;
+				border-radius: 3px;
+				height: auto;
+				font-size: 13px;
+				text-align: left;
+				.box-shadow(none);
+				i {
+					margin-right: 10px;
+				}
+				&:hover {
+					background: @sd-hover;
+					cursor: default;
+				}
+			}
+			.dropdown-menu {
+				display: none;
+			}
+			&:hover {
+				.dropdown-menu {
+					display: block;
+					left: 100%;
+					right: auto;
+					top: 0;
+					&.right-submenu {
+						left: auto;
+						right: 100%;
+					}
+				}
+			}
 		}
 	}
 }
