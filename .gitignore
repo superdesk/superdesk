@@ -20,3 +20,7 @@ build/
 include/
 .idea/
 .vagrant/
+/client/.tern-project
+/server/.project
+/server/.pydevproject
+/server/.settings/org.eclipse.core.resources.prefs
