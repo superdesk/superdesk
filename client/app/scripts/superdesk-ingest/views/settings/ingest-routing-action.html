@@ -1,17 +1,20 @@
-<div>fetch in:
+<div><span translate>Fetch in</span>:
     <div ng-repeat="fetchAction in rule.actions.fetch">
         <div sd-deskstagepicker data-desk="fetchAction.desk" data-stage="fetchAction.stage"></div>
-        <button ng-click="removeFetch(fetchAction)">remove</button>
+        <button ng-click="removeFetch(fetchAction)" translate>Remove</button>
     </div>
-    new fetch action: <div sd-deskstagepicker data-desk="newFetch.desk" data-stage="newFetch.stage"></div>
-    <button ng-click="addFetch()" ng-disabled="!newFetch.desk || !newFetch.stage">add</button>
+    <span translate>New fetch action</span>:
+    <div sd-deskstagepicker data-desk="newFetch.desk" data-stage="newFetch.stage"></div>
+    <button ng-click="addFetch()" ng-disabled="!newFetch.desk || !newFetch.stage" translate>Add</button>
 </div>
-<div>publish in:
+<div><span translate>Publish in</span>:
     <div ng-repeat="publishAction in rule.actions.publish">
         <div sd-deskstagepicker data-desk="publishAction.desk" data-stage="publishAction.stage"></div>
-        <button ng-click="removePublish(publishAction)">remove</button>
+        <button ng-click="removePublish(publishAction)" translate>Remove</button>
     </div>
-    new publish action: <div sd-deskstagepicker data-desk="newPublish.desk" data-stage="newPublish.stage"></div>
-    <button ng-click="addPublish()" ng-disabled="!newPublish.desk || !newPublish.stage">add</button>
+    <span translate>new publish action</span>:
+    <div sd-deskstagepicker data-desk="newPublish.desk" data-stage="newPublish.stage"></div>
+    <button ng-click="addPublish()" ng-disabled="!newPublish.desk || !newPublish.stage" translate>Add</button>
 </div>
-exit <input type="checkbox" ng-model="rule.actions.exit">
+<span translate>Exit</span>
+<input type="checkbox" ng-model="rule.actions.exit">

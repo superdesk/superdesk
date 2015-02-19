@@ -103,9 +103,9 @@ define([
                     current = current + c.toString();
                     padded = _.padRight(current, 8, 0);
                     if (
+                        padded !== qcode &&
                         self.qcodeLookup[padded] &&
-                        path.indexOf(self.qcodeLookup[padded]) === -1 &&
-                        padded !== qcode
+                        path.indexOf(self.qcodeLookup[padded]) === -1
                     ) {
                         path.push(self.qcodeLookup[padded]);
                     }
@@ -165,7 +165,7 @@ define([
 
         $scope.showIngest   = Boolean(user_privileges.ingest_providers);
         $scope.showRuleset  = Boolean(user_privileges.rule_sets);
-        $scope.showRouting  = Boolean(user_privileges.routing) || true;
+        $scope.showRouting  = Boolean(user_privileges.routing_rules);
     }
 
     PieChartDashboardDirective.$inject = ['colorSchemes'];
@@ -501,6 +501,10 @@ define([
                     }
                     scope.cancelRule();
                 };
+
+                scope.reorder = function(start, end) {
+                    scope.editScheme.rules.splice(end, 0, scope.editScheme.rules.splice(start, 1)[0]);
+                };
             }
         };
     }
@@ -631,8 +635,8 @@ define([
         };
     }
 
-    IngestRoutingAction.$inject = [];
-    function IngestRoutingAction() {
+    IngestRoutingAction.$inject = ['desks'];
+    function IngestRoutingAction(desks) {
         return {
             scope: {rule: '='},
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-action.html',
@@ -742,7 +746,7 @@ define([
 
     app
         .service('ingestSources', IngestProviderService)
-        .service('subjectService', SubjectService)
+        .factory('subjectService', SubjectService)
         .directive('sdIngestSourcesContent', IngestSourcesContent)
         .directive('sdIngestRulesContent', IngestRulesContent)
         .directive('sdIngestRoutingContent', IngestRoutingContent)

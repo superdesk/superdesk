@@ -38,13 +38,18 @@
                 <div class="content">
                     <ul sd-sortrules class="rule-list">
                         <li ng-repeat="rule in editScheme.rules">
-                            <div class="header">
-                                <div class="name">{{rule.name}}</div>
-
-                                <div class="actions">
-                                    <button ng-click="editRule(rule)" title="{{:: 'Edit rule' | translate }}"><i class="icon-pencil"></i></button>
-                                    <button ng-click="removeRule(rule)" title="{{:: 'Remove rule' | translate }}"><i class="icon-trash"></i></button>
+                            <fieldset class="span-2">
+                                <div class="field">
+                                    {{rule.name}}
                                 </div>
+                            </fieldset>
+                            <div class="actions">
+                                <button ng-click="editRule(rule)" title="{{:: 'Edit rule' | translate }}">
+                                    <i class="icon-pencil"></i>
+                                </button>
+                                <button ng-click="removeRule(rule)" title="{{:: 'Remove rule' | translate }}">
+                                    <i class="icon-trash"></i>
+                                </button>
                             </div>
                         </li>
                     </ul>
@@ -67,25 +72,24 @@
     </div>
 
     <form name="ruleForm">
-        <header>
-            <input type="text" class="input-xlarge" placeholder="{{ 'Rule name'|translate }}" ng-model="rule.name" required>
-        </header>
-
         <div class="modal-body">
             <div class="split-content">
-                <ul class="nav nav-tabs" ng-init="ruleTab = 'filter'">
-                    <li ng-class="{active: ruleTab === 'filter'}">
-                        <button ng-click="ruleTab = 'filter'" translate>Filter</button>
-                    </li>
-                    <li ng-class="{active: ruleTab === 'action'}">
-                        <button ng-click="ruleTab = 'action'" translate>Action</button>
-                    </li>
-                    <li ng-class="{active: ruleTab === 'schedule'}">
-                        <button ng-click="ruleTab = 'schedule'" translate>Schedule</button>
-                    </li>
-                </ul>  
+                <header>
+                    <input type="text" class="input-xlarge" placeholder="{{ 'Rule name'|translate }}" ng-model="rule.name" required>
+                </header>
                 
                 <div class="content">
+                    <ul class="nav nav-tabs" ng-init="ruleTab = 'filter'">
+                        <li ng-class="{active: ruleTab === 'filter'}">
+                            <button ng-click="ruleTab = 'filter'" translate>Filter</button>
+                        </li>
+                        <li ng-class="{active: ruleTab === 'action'}">
+                            <button ng-click="ruleTab = 'action'" translate>Action</button>
+                        </li>
+                        <li ng-class="{active: ruleTab === 'schedule'}">
+                            <button ng-click="ruleTab = 'schedule'" translate>Schedule</button>
+                        </li>
+                    </ul>
                     <div ng-if="ruleTab === 'filter'" sd-ingest-routing-filter data-rule="rule"></div>
                     <div ng-if="ruleTab === 'action'" sd-ingest-routing-action data-rule="rule"></div>
                     <div ng-if="ruleTab === 'schedule'" sd-ingest-routing-schedule data-rule="rule"></div>

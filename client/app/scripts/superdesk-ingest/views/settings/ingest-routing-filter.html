@@ -1,56 +1,58 @@
-<div>subject:
-    <span ng-repeat="subject in rule.filter.subject">
-        {{subject.name}}
-        <button ng-click="removeSubject(subject)">remove</button>
-    </span>
-    new subject:
-    <div sd-typeahead items="subjects" term="subjectTerm" search="searchSubjects(term)" select="selectSubject(item)">
-        <ul>
-            <li typeahead-item="s" ng-repeat="s in filteredSubjects">
-                <span ng-show="s.path">{{s.path}} / </span>{{s.name}}
-            </li>
-        </ul>
+<div>
+    <div><span translate>Subjects</span>:
+        <span ng-repeat="subject in rule.filter.subject">
+            {{subject.name}}
+            <button ng-click="removeSubject(subject)">remove</button>
+        </span>
+        <span translate>New subject</span>:
+        <div sd-typeahead items="subjects" term="subjectTerm" search="searchSubjects(term)" select="selectSubject(item)">
+            <ul>
+                <li typeahead-item="s" ng-repeat="s in filteredSubjects">
+                    <span ng-show="s.path">{{s.path}} / </span>{{s.name}}
+                </li>
+            </ul>
+        </div>
     </div>
-</div>
-<div>category:
-    <span ng-repeat="category in rule.filter.category">
-        {{category.name}}
-        <button ng-click="removeCategory(category)">remove</button>
-    </span>
-    new category:
-    <div sd-typeahead items="categories" term="categoryTerm" search="searchCategories(term)" select="selectCategory(item)">
-        <ul>
-            <li typeahead-item="c" ng-repeat="c in filteredCategories">
-                {{c.name}}
-            </li>
-        </ul>
+    <div><span translate>category</span>:
+        <span ng-repeat="category in rule.filter.category">
+            {{category.name}}
+            <button ng-click="removeCategory(category)">remove</button>
+        </span>
+        <span translate>New category</span>:
+        <div sd-typeahead items="categories" term="categoryTerm" search="searchCategories(term)" select="selectCategory(item)">
+            <ul>
+                <li typeahead-item="c" ng-repeat="c in filteredCategories">
+                    {{c.name}}
+                </li>
+            </ul>
+        </div>
     </div>
-</div>
-<div>genre:
-    <span ng-repeat="genre in rule.filter.genre">
-        {{genre}}
-        <button ng-click="removeGenre(genre)">remove</button>
-    </span>
-    new genre:
-    <div sd-typeahead items="genres" term="genreTerm" search="searchGenres(term)" select="selectGenre(item)">
-        <ul>
-            <li typeahead-item="g" ng-repeat="g in filteredGenres">
-                {{g.name}}
-            </li>
-        </ul>
+    <div><span translate>Genres</span>:
+        <span ng-repeat="genre in rule.filter.genre">
+            {{genre}}
+            <button ng-click="removeGenre(genre)">remove</button>
+        </span>
+        <span translate>New genre</span>:
+        <div sd-typeahead items="genres" term="genreTerm" search="searchGenres(term)" select="selectGenre(item)">
+            <ul>
+                <li typeahead-item="g" ng-repeat="g in filteredGenres">
+                    {{g.name}}
+                </li>
+            </ul>
+        </div>
     </div>
-</div>
-<div>headline:
-    <input ng-model="rule.filter.headline">
-</div>
-<div>keyword:
-    <input ng-model="rule.filter.slugline">
-</div>
-<div>body:
-    <input ng-model="rule.filter.body">
-</div>
-<div>item type:
-    <div ng-repeat="type in typeList">
-        <input type="checkbox" ng-checked="isTypeChecked(rule, type)" ng-click="toggleType(rule, type)">{{typeLookup[type]|translate}}
+    <div><span translate>Headline</span>:
+        <input ng-model="rule.filter.headline">
+    </div>
+    <div><span translate>Keyword</span>:
+        <input ng-model="rule.filter.slugline">
+    </div>
+    <div><span translate>Body</span>:
+        <input ng-model="rule.filter.body">
+    </div>
+    <div><span translate>Item type</span>:
+        <div ng-repeat="type in typeList">
+            <input type="checkbox" ng-checked="isTypeChecked(rule, type)" ng-click="toggleType(rule, type)">{{typeLookup[type]|translate}}
+        </div>
     </div>
 </div>
