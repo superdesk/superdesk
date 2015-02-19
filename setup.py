@@ -13,9 +13,8 @@
 from setuptools import setup, find_packages
 import os
 
-ROOT_PATH = os.path.dirname(os.path.realpath(__file__))
-README_PATH = os.path.join(ROOT_PATH, 'README.md')
-LONG_DESCRIPTION = open(README_PATH).read()
+SOURCE_FOLDER  = 'server'
+LONG_DESCRIPTION = open(os.path.join(SOURCE_FOLDER, 'README.md')).read()
 
 setup(
     name='Superdesk-Server',
@@ -27,7 +26,8 @@ setup(
     url='https://github.com/superdesk/superdesk-server',
     license='GPLv3',
     platforms=['any'],
-    packages=find_packages(),
+    package_dir={'': SOURCE_FOLDER},
+    packages=find_packages(SOURCE_FOLDER),
     install_requires=[
         'Eve>=0.4',
         'Eve-Elastic>=0.1.13',
@@ -41,11 +41,11 @@ setup(
         'blinker>=1.3',
     ],
     scripts=[
-        os.path.join(ROOT_PATH, 'settings.py'),
-        os.path.join(ROOT_PATH, 'app.py'),
-        os.path.join(ROOT_PATH, 'wsgi.py'),
-        os.path.join(ROOT_PATH, 'ws.py'),
-        os.path.join(ROOT_PATH, 'manage.py')
+        os.path.join(SOURCE_FOLDER, 'settings.py'),
+        os.path.join(SOURCE_FOLDER, 'app.py'),
+        os.path.join(SOURCE_FOLDER, 'wsgi.py'),
+        os.path.join(SOURCE_FOLDER, 'ws.py'),
+        os.path.join(SOURCE_FOLDER, 'manage.py')
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
