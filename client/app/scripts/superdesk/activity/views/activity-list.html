@@ -3,7 +3,7 @@
         <i class="icon-{{ :: activity.icon }} {{!activity.monitor || !item.actioning[activity._id] || 'actioning'}}" ng-show=":: activity.icon"></i>
         <span>{{ :: activity.label | translate }}</span>
     </a>
-	<div ng-if=":: activity.dropdown" class="dropdown" dropdown>
+	<div ng-if=":: activity.dropdown" class="dropdown activity-dropdown" sd-dropdown-position dropdown>
 	    <a ng-href="{{ :: $root.link(activity._id, item) }}" class="dropdown-toggle" dropdown-toggle>
 		    <i class="icon-{{ :: activity.icon }}" ng-show=":: activity.icon"></i>
 	        <span>{{ :: activity.label | translate }}</span>
