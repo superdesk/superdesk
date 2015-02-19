@@ -10,10 +10,12 @@ SCRIPT_DIR=$(readlink -e $(dirname "$0")) &&
 cd $SCRIPT_DIR/../docker &&
 
 . ./docker-compose.yml.sh > ./docker-compose.yml &&
-echo '|=================================================================|' &&
-echo '|open in browser "http://localhost:80" after server will be ready |' &&
-echo '|                                                                 |' &&
-echo "|       if you can't log in you probably need to run              |" &&
-echo '|       "./docker-local-create-user.sh" first                     |' &&
-echo '|=================================================================|' &&
+echo '
+|=================================================================|
+|open in browser "http://localhost:80" after server will be ready |
+|                                                                 |
+|       if you can not log in you probably need to run            |
+|       "./docker-local-create-user.sh" first                     |
+|=================================================================|
+' &&
 docker-compose up
