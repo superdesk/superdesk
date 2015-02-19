@@ -14,7 +14,6 @@ import logging
 from datetime import datetime
 from superdesk.io.file_ingest_service import FileIngestService
 from superdesk.utc import utc
-from superdesk.notification import push_notification
 from superdesk.io import register_provider
 from superdesk.utils import get_sorted_files, FileSortAttributes
 from superdesk.errors import ParserError, ProviderError
@@ -59,8 +58,6 @@ class TeletypeIngestService(FileIngestService):
             except Exception as ex:
                 self.move_file(self.path, filename, provider=provider, success=False)
                 raise ProviderError.ingestError(ex, provider)
-
-        push_notification('ingest:update')
 
     def parse_file(self, filename, provider):
         try:
