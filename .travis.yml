@@ -38,7 +38,7 @@ install:
         cd client && npm install && cd .. ;
       fi
     - if [ "${TARGET}" = "client" ] || [ "${TARGET}" = "e2e" ]; then
-        cd client && bower install && cd .. ;
+        bower install;
       fi
     - if [ "${TARGET}" = "e2e" ]; then
         (cd client && npm install "actionless/protractor#1.6.1-old" );
