@@ -11,6 +11,9 @@ cd $SCRIPT_DIR/../docker &&
 
 . ./docker-compose.yml.sh > ./docker-compose.yml &&
 echo '|=================================================================|' &&
-echo '|open in browser "http://localhost:80" after server will be ready:|' &&
+echo '|open in browser "http://localhost:80" after server will be ready |' &&
+echo '|                                                                 |' &&
+echo "|       if you can't log in you probably need to run              |" &&
+echo '|       "./docker-local-create-user.sh" first                     |' &&
 echo '|=================================================================|' &&
 docker-compose up
