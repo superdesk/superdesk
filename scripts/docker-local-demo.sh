@@ -18,4 +18,5 @@ echo '
 |       "./docker-local-create-user.sh"                           |
 |=================================================================|
 ' &&
-docker-compose up
+docker-compose build &&
+docker-compose up --no-recreate
