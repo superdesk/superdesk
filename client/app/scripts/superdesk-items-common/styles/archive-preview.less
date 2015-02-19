@@ -222,8 +222,15 @@
 				padding: 14px;
 				float: left;
 			}
-			.dropdown {
+			.dropdown-big {
 				float: right;
+			}
+			.dropdown {
+				.dropdown-menu li {
+					> a, > button, .dropdown-toggle {
+						min-width: initial;
+					} 
+				}
 			}
 		}
 		.title {
