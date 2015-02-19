@@ -166,6 +166,81 @@
         };
     }
 
+    HighlightsSettingsController.$inject = ['$scope', 'highlightsService', 'desks', 'api', 'gettext', 'notify', 'modal'];
+    function HighlightsSettingsController($scope, highlightsService, desks, api, gettext, notify, modal) {
+
+        highlightsService.get().then(function(items) {
+            $scope.configurations = items;
+        });
+
+        desks.initialize().then(function() {
+            $scope.desks = desks.deskLookup;
+        });
+
+        $scope.configEdit = {};
+        $scope.modalActive = false;
+        var _config;
+
+        $scope.edit = function(config) {
+            $scope.modalActive = true;
+            $scope.configEdit = _.create(config);
+            $scope.assignedDesks = deskList(config.desks);
+            _config = config;
+        };
+
+        $scope.cancel = function() {
+            $scope.modalActive = false;
+        };
+
+        $scope.save = function() {
+            var _new = !_config._id;
+            $scope.configEdit.desks = assignedDesks();
+            api.highlights.save(_config, $scope.configEdit)
+            .then(function(item) {
+                $scope.message = null;
+                if (_new) {
+                    $scope.configurations._items.unshift(item);
+                }
+                highlightsService.clearCache();
+                $scope.modalActive = false;
+            }, function(result) {
+                $scope.message = gettext('There was a problem while saving configuration');
+            });
+        };
+
+        $scope.remove = function(config) {
+            modal.confirm(gettext('Are you sure you want to delete configuration?'))
+            .then(function() {
+                api.highlights.remove(config).then(function() {
+                    _.remove($scope.configurations._items, config);
+                    notify.success(gettext('Configuration deleted.'), 3000);
+                });
+            });
+        };
+
+        function deskList(arr) {
+            return _.map($scope.desks, function(d) {
+                return {
+                    _id: d._id,
+                    name: d.name,
+                    included: isIncluded(arr, d._id)
+                };
+            });
+        }
+
+        function isIncluded(arr, id) {
+            return _.findIndex(arr, function(c) { return c === id; }) > -1;
+        }
+
+        function assignedDesks() {
+            return _.map(_.filter($scope.assignedDesks, {included: true}),
+                function(desk) {
+                    return desk._id;
+                });
+        }
+
+    }
+
     var app = angular.module('superdesk.highlights', [
         'superdesk.desks',
         'superdesk.packaging',
@@ -186,10 +261,18 @@
             priority: 30,
         	icon: 'list-plus',
         	dropdown: true,
-        	templateUrl: require.toUrl('./superdesk-highlights/views/mark_highlights_dropdown.html'),
+        	templateUrl: 'scripts/superdesk-highlights/views/mark_highlights_dropdown.html',
         	filters: [
                 {action: 'list', type: 'archive'}
             ]
+        })
+        .activity('/settings/highlights', {
+            label: gettext('Highlights'),
+            controller: HighlightsSettingsController,
+            templateUrl: 'scripts/superdesk-highlights/views/settings.html',
+            category: superdesk.MENU_SETTINGS,
+            priority: -800,
+            privileges: {highlights: 1}
         });
     }])
     .config(['apiProvider', function(apiProvider) {
