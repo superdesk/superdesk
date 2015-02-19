@@ -38,7 +38,6 @@ mkdir -p $CLIENT_RESULTS_DIR/unit &&
 mkdir -p $SCREENSHOTS_DIR
 
 # copy files for client+nginx container
-cp $SCRIPT_DIR/Dockerfile_client $BAMBOO_DIR/client/Dockerfile
 cp $SCRIPT_DIR/superdesk_vhost.conf $BAMBOO_DIR/client/superdesk_vhost.conf
 
 # reset repo files' dates:
