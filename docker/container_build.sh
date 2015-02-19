@@ -11,6 +11,7 @@ SCRIPT_DIR=$(readlink -e $(dirname "$0"))
 BAMBOO_DIR=$(readlink -e $SCRIPT_DIR/..)
 SERVER_RESULTS_DIR=$BAMBOO_DIR/results/server
 CLIENT_RESULTS_DIR=$BAMBOO_DIR/results/client
+SCREENSHOTS_DIR=/opt/screenshots/$(date +%Y%m%d-%H%M%S)/
 
 # install script requirements
 virtualenv -p python2 $SCRIPT_DIR/env &&
@@ -34,6 +35,7 @@ mkdir -p $BAMBOO_DIR/data/db
 rm -r $BAMBOO_DIR/results/
 mkdir -p $SERVER_RESULTS_DIR/{unit,behave} &&
 mkdir -p $CLIENT_RESULTS_DIR/unit &&
+mkdir -p $SCREENSHOTS_DIR
 
 # copy files for client+nginx container
 cp $SCRIPT_DIR/Dockerfile_client $BAMBOO_DIR/client/Dockerfile
@@ -68,6 +70,8 @@ echo "+++ new user has been created" &&
 	cd $BAMBOO_DIR/client &&
 	sh $SCRIPT_DIR/run_e2e_tests.sh ;
 	mv $BAMBOO_DIR/client/e2e-test-results $CLIENT_RESULTS_DIR/e2e
+	mv $BAMBOO_DIR/client/screenshots $SCREENSHOTS_DIR &&
+		echo "!!! Screenshots were saved to $SCREENSHOTS_DIR"
 	true
 );
 CODE="$?"

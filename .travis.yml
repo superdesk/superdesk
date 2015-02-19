@@ -40,6 +40,9 @@ install:
     - if [ "${TARGET}" = "client" ] || [ "${TARGET}" = "e2e" ]; then
         cd client && bower install && cd .. ;
       fi
+    - if [ "${TARGET}" = "e2e" ]; then
+        (cd client && npm install "actionless/protractor#1.6.1-old" );
+      fi
 
 before_script:
     - if [ "${TARGET}" = "e2e" ]; then
