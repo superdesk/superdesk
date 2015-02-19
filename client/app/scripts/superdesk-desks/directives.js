@@ -69,15 +69,19 @@ define([
 
                 function errorMessage(response) {
                     if (response.data && response.data._issues && response.data._issues.name && response.data._issues.name.unique) {
-                        scope.message = gettext(
-                            'Desk with name "' +
-                            scope.desk.edit.name +
-                            '" already exists, desk not created/updated.'
-                        );
+                        scope._errorUniqueness = true;
                     } else {
-                        scope.message = gettext('There was a problem, desk not created/updated.');
+                        scope._error = true;
                     }
+                    scope.message = null;
                 }
+
+                scope.handleEdit = function($event) {
+                    if (scope._errorUniqueness || scope._error) {
+                        scope._errorUniqueness = null;
+                        scope._error = null;
+                    }
+                };
 
             }
         };
@@ -184,15 +188,19 @@ define([
 
                 function errorMessage(response) {
                     if (response.data && response.data._issues && response.data._issues.name && response.data._issues.name.unique) {
-                        scope.message = gettext(
-                            'Stage with name "' +
-                            scope.editStage.name +
-                            '" already exists, stage not created/updated.'
-                        );
+                        scope._errorUniqueness = true;
                     } else {
-                        scope.message = gettext('There was a problem, stage not created/updated.');
+                        scope._error = true;
                     }
+                    scope.message = null;
                 }
+
+                scope.handleEdit = function($event) {
+                    if (scope._errorUniqueness || scope._error) {
+                        scope._errorUniqueness = null;
+                        scope._error = null;
+                    }
+                };
 
                 scope.remove = function(stage) {
                     api('stages').remove(stage)

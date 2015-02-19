@@ -44,7 +44,7 @@
 							<fieldset>
 								<div class="field">
 									<label translate>Desk name</label>
-									<input type="text" class="fullwidth-input" ng-model="desk.edit.name" required> 
+									<input type="text" class="fullwidth-input" ng-model="desk.edit.name" ng-keyup="handleEdit($event);" required> 
 								</div>
 								<div class="field">
 									<label translate>Desk description {{test}}</label>
@@ -59,6 +59,8 @@
 								</div>
 							</fieldset>
 							<p ng-if="message">{{ message }}</p>
+							<span ng-show="_errorUniqueness" translate>Desk with name "{{ desk.edit.name }}" already exists.</span>
+							<span ng-show="_error" translate>There was a problem, desk not created/updated.</span>
 						</div>
 						<div class="modal-footer">
 						  	<button class="btn btn-primary" ng-click="save(desk.edit)" ng-disabled="!generalStep.$valid" translate>Next</button>
@@ -112,6 +114,8 @@
 						  			<button class="btn btn-primary" ng-click="save()" ng-disabled="!editStage.task_status" translate>Save</button>
 						  		</div>
 								<p ng-if="message">{{ message }}</p>
+								<p ng-show="_errorUniqueness" translate>Stage with name "{{ editStage.name }}"" already exists.</p>
+							<span ng-show="_error" translate>There was a problem, stage not created/updated.</span>
 							</div>
 						</div>
 						<div class="col">
