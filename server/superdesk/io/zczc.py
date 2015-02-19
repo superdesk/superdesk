@@ -37,9 +37,9 @@ class ZCZCParser(Parser):
     # +IPTC Subject Reference Number as defined in the SubjectReference.ini file
     IPTC = '+'
 
-    # Posible alues for formsat
-    TEXT = 'T'
-    TABULAR = 'X'
+    # Posible values for formsat
+    TEXT = 'X'
+    TABULAR = 'T'
 
     header_map = {KEYWORD: 'slugline', TAKEKEY: 'anpa_take_key',
                   HEADLINE: 'headline', SERVICELEVEL: None}
