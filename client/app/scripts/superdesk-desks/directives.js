@@ -17,22 +17,6 @@ define([
 
     var app = angular.module('superdesk.desks.directives', []);
     app
-    .directive('sdUserDesks', ['desks', function(desks) {
-        return {
-            scope: {selectedDesk: '=desk'},
-            templateUrl: require.toUrl('./views/user-desks.html'),
-            link: function(scope, elem, attrs) {
-                desks.fetchCurrentDesk().then(function(desk) {
-                    scope.desk = desk;
-                    scope.select(desk);
-                });
-
-                scope.select = function(desk) {
-                    scope.selectedDesk = desk;
-                };
-            }
-        };
-    }])
     .directive('sdFocusElement', [function() {
         return {
             link: function(scope, elem, attrs) {
