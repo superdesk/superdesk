@@ -684,8 +684,10 @@ define([
 				filterOut: '='
 			},
 			//templateUrl: 'scripts/superdesk/ui/views/sd-timepicker-alt.html',
-			template: 'hours: <select ng-model="hours" ng-change="update()"><option ng-repeat="h in range(0, 23)">{{h}}</option></select>' +
-				'minutes: <select ng-model="minutes" ng-change="update()"><option ng-repeat="m in range(0, 59, step)">{{m}}</option></select>',
+			template:   'hours: <select ng-model="hours" ng-change="update()">' +
+                        '<option ng-repeat="h in range(0, 23)">{{h}}</option></select>' +
+				        'minutes: <select ng-model="minutes" ng-change="update()">' +
+                        '<option ng-repeat="m in range(0, 59, step)">{{m}}</option></select>',
 			link: function(scope) {
 				scope.step = 5;
 				scope.$watch('model', function() {

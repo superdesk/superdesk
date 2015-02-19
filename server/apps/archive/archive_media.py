@@ -13,15 +13,14 @@ import logging
 from flask import abort, current_app as app
 from eve.utils import config
 from apps.archive import ArchiveVersionsResource
-from apps.archive.common import update_state
 from superdesk.media.media_operations import process_file_from_stream, decode_metadata
 from superdesk.media.renditions import generate_renditions, delete_file_on_error
 from superdesk.resource import Resource
 from superdesk.upload import url_for_media
 from superdesk.utc import utcnow
 from .common import item_url, update_dates_for, generate_guid, GUID_TAG, ARCHIVE_MEDIA, set_original_creator, \
-    generate_unique_id_and_name, set_item_expiry
-from .common import on_create_media_archive, on_update_media_archive, on_delete_media_archive
+    generate_unique_id_and_name, set_item_expiry, is_update_allowed, update_state, on_create_media_archive, \
+    on_update_media_archive, on_delete_media_archive
 from superdesk.activity import add_activity
 from apps.content import metadata_schema
 from superdesk.services import BaseService
@@ -62,6 +61,7 @@ class ArchiveMediaService(BaseService):
     type_av = {'image': 'picture', 'audio': 'audio', 'video': 'video'}
 
     def on_update(self, updates, original):
+        is_update_allowed(original)
         update_state(original, updates)
 
         on_update_media_archive()

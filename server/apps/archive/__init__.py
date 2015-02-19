@@ -10,6 +10,7 @@
 
 
 """Media archive module"""
+
 import logging
 
 from .archive import ArchiveResource, ArchiveService, ArchiveVersionsResource, AutoSaveResource, \
@@ -32,7 +33,6 @@ from apps.common.models.io.eve_proxy import EveProxy
 from superdesk.celery_app import celery
 from .saved_searches import SavedSearchesService, SavedSearchesResource, \
     SavedSearchItemsResource, SavedSearchItemsService
-import logging
 
 
 logger = logging.getLogger(__name__)
@@ -122,7 +122,6 @@ def init_app(app):
     superdesk.privilege(name='saved_searches', label='Manage Saved Searches',
                         description='User can manage Saved Searches')
 
-    superdesk.privilege(name='publish', label='Publish', description='Publish a content')
     superdesk.privilege(name='kill', label='Kill', description='Kill a published content')
     superdesk.privilege(name='correction', label='Correction', description='Correction to a published content')
     superdesk.privilege(name='hold', label='Hold', description='Hold a content')
