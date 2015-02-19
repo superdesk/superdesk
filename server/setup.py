@@ -13,7 +13,8 @@
 from setuptools import setup, find_packages
 import os
 
-README_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'README.md')
+ROOT_PATH = os.path.dirname(os.path.realpath(__file__))
+README_PATH = os.path.join(ROOT_PATH, 'README.md')
 LONG_DESCRIPTION = open(README_PATH).read()
 
 setup(
@@ -39,7 +40,13 @@ setup(
         'bcrypt>=1.0.2',
         'blinker>=1.3',
     ],
-    scripts=['settings.py', 'app.py', 'wsgi.py', 'ws.py', 'manage.py'],
+    scripts=[
+        os.path.join(ROOT_PATH, 'settings.py'),
+        os.path.join(ROOT_PATH, 'app.py'),
+        os.path.join(ROOT_PATH, 'wsgi.py'),
+        os.path.join(ROOT_PATH, 'ws.py'),
+        os.path.join(ROOT_PATH, 'manage.py')
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
