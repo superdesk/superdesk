@@ -17,5 +17,49 @@
         "resource": "desks",
         "username": "admin"
     },
-    {"data": {"name": "Editor", "privileges": {"ingest": {"read": 1}}}, "resource": "roles"}
+    {"data": {"name": "Editor", "privileges": {"ingest": {"read": 1}}}, "resource": "roles"},
+
+    {
+        "resource": "archive",
+        "username": "admin",
+        "data": {
+            "headline": "item1",
+            "type": "text",
+            "guid": "item1",
+            "versioncreated": "2015-01-03T10:10:10+0000",
+            "original_creator": "-id user admin-"
+        }
+    },
+    {
+        "resource": "archive",
+        "username": "admin",
+        "data": {
+            "headline": "item2",
+            "type": "text",
+            "guid": "item2",
+            "versioncreated": "2015-01-02T10:10:10+0000",
+            "original_creator": "-id user admin-"
+        }
+    },
+    {
+        "resource": "archive",
+        "username": "admin",
+        "data": {
+            "headline": "item3",
+            "type": "text",
+            "guid": "item3",
+            "versioncreated": "2015-01-01T10:10:10+0000",
+            "original_creator": "-id user admin-"
+        }
+    },
+
+    {
+        "resource": "ingest",
+        "data": {
+            "headline": "ingest1",
+            "type": "text",
+            "guid": "ingest1",
+            "versioncreated": "NOW()"
+        }
+    }
 ]
