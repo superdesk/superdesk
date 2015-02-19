@@ -15,7 +15,7 @@ echo '
 |open in browser "http://localhost:80" after server will be ready |
 |                                                                 |
 |       if you can not log in you probably need to run            |
-|       "./docker-local-create-user.sh" first                     |
+|       "./docker-local-create-user.sh"                           |
 |=================================================================|
 ' &&
 docker-compose up
