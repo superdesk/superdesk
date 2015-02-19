@@ -11,8 +11,10 @@
 
 
 from setuptools import setup, find_packages
+import os
 
-LONG_DESCRIPTION = open('README.md').read()
+SOURCE_FOLDER  = 'server'
+LONG_DESCRIPTION = open(os.path.join(SOURCE_FOLDER, 'README.md')).read()
 
 setup(
     name='Superdesk-Server',
@@ -24,7 +26,8 @@ setup(
     url='https://github.com/superdesk/superdesk-server',
     license='GPLv3',
     platforms=['any'],
-    packages=find_packages(),
+    package_dir={'': SOURCE_FOLDER},
+    packages=find_packages(SOURCE_FOLDER),
     install_requires=[
         'Eve>=0.4',
         'Eve-Elastic>=0.1.13',
@@ -37,7 +40,13 @@ setup(
         'bcrypt>=1.0.2',
         'blinker>=1.3',
     ],
-    scripts=['settings.py', 'app.py', 'wsgi.py', 'ws.py', 'manage.py'],
+    scripts=[
+        os.path.join(SOURCE_FOLDER, 'settings.py'),
+        os.path.join(SOURCE_FOLDER, 'app.py'),
+        os.path.join(SOURCE_FOLDER, 'wsgi.py'),
+        os.path.join(SOURCE_FOLDER, 'ws.py'),
+        os.path.join(SOURCE_FOLDER, 'manage.py')
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
