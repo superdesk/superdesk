@@ -254,6 +254,29 @@ define([
 		};
 	}
 
+	DropdownPositionDirective.$inject = ['$document'];
+	function DropdownPositionDirective($document) {
+		return {
+			link: function(scope, element) {
+
+				var tolerance = 250;
+
+				element.bind('click', function(event) {
+					if (closeToBottom(event)) {
+						element.addClass('dropup');
+					} else {
+						element.removeClass('dropup');
+					}
+				});
+
+				function closeToBottom(e) {
+					var docHeight = $document.height();
+					return e.pageY > docHeight - tolerance;
+				}
+			}
+		};
+	}
+
 	PopupService.$inject = ['$document'];
 	function PopupService($document) {
 		var service = {};
@@ -810,5 +833,6 @@ define([
 		.directive('sdTimepickerAlt', TimepickerAltDirective)
 		.service('popupService', PopupService)
 		.service('datetimeHelper', DateTimeHelperService)
-		.filter('leadingZero', LeadingZeroFilter);
+		.filter('leadingZero', LeadingZeroFilter)
+		.directive('sdDropdownPosition', DropdownPositionDirective);
 });
