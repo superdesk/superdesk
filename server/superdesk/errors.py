@@ -211,7 +211,8 @@ class ParserError(SuperdeskIngestError):
         1004: 'NewsML1 input could not be processed',
         1005: 'NewsML2 input could not be processed',
         1006: 'NITF input could not be processed',
-        1007: 'WENN input could not be processed'
+        1007: 'WENN input could not be processed',
+        1008: 'ZCZC input could not be processed'
     }
 
     @classmethod
@@ -243,6 +244,10 @@ class ParserError(SuperdeskIngestError):
     @classmethod
     def wennParserError(cls, exception, provider):
         return ParserError(1007, exception, provider)
+
+    @classmethod
+    def ZCZCParserError(cls, exception, provider):
+        return ParserError(1008, exception, provider)
 
 
 class IngestFileError(SuperdeskIngestError):
