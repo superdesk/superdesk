@@ -96,7 +96,7 @@ CELERYBEAT_SCHEDULE = {
     },
     'ingest:gc': {
         'task': 'superdesk.io.gc_ingest',
-        'schedule': crontab(minute=5),
+        'schedule': timedelta(minutes=5),
     },
     'session:gc': {
         'task': 'apps.auth.session_purge',

@@ -9,13 +9,14 @@ var resetApp = require('./helpers/fixtures').resetApp;
 beforeEach(function(done) {
     getToken(function() {
         resetApp(function() {
-            browser.driver.getCurrentUrl().then(function(url) {
-                if (url.indexOf('http') === 0) {
-                    browser.executeScript('sessionStorage.clear();localStorage.clear();');
-                    browser.waitForAngular();
-                }
-                done();
-            });
+            browser.driver.getCurrentUrl()
+                .then(function(url) {
+                    if (url.indexOf('http') === 0) {
+                        browser.executeScript('sessionStorage.clear();localStorage.clear();');
+                        return browser.waitForAngular();
+                    }
+                })
+                .then(done);
         });
     });
 });

@@ -8,15 +8,18 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-import json
 import os
+import json
+import flask
+import superdesk
 
 from superdesk import get_resource_service
-import superdesk
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk.tests import drop_elastic, drop_mongo
-import flask
+from superdesk.utc import utcnow
+from eve.utils import date_to_str
+from flask import current_app as app
 
 
 def apply_placeholders(placeholders, text):
@@ -44,7 +47,7 @@ def get_default_user():
 
 
 def prepopulate_data(file_name, default_user):
-    placeholders = {}
+    placeholders = {'NOW()': date_to_str(utcnow())}
     users = {default_user['username']: default_user['password']}
     default_username = default_user['username']
     file = os.path.join(superdesk.app.config.get('APP_ABSPATH'), 'apps', 'prepopulate', file_name)
@@ -58,14 +61,15 @@ def prepopulate_data(file_name, default_user):
             text = json.dumps(item.get('data', None))
             text = apply_placeholders(placeholders, text)
             data = json.loads(text)
+            if item.get('resource'):
+                app.data.mongo._mongotize(data, item.get('resource'))
             if item.get('resource', None) == 'users':
                 users.update({data['username']: data['password']})
-            try:
-                ids = service.post([data])
-                if id_name:
-                    placeholders[id_name] = str(ids[0])
-            except Exception as e:
-                print('Exception:', e)
+            ids = service.post([data])
+            if not ids:
+                raise Exception()
+            if id_name:
+                placeholders[id_name] = str(ids[0])
 
 
 prepopulate_schema = {
