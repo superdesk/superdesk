@@ -74,7 +74,8 @@ class IngestProviderResource(Resource):
                 'on_open': {'type': 'boolean', 'default': True},
                 'on_error': {'type': 'boolean', 'default': True}
             }
-        }
+        },
+        'routing_scheme': Resource.rel('routing_schemes', nullable=True)
     }
 
     privileges = {'POST': 'ingest_providers', 'PATCH': 'ingest_providers', 'DELETE': 'ingest_providers'}

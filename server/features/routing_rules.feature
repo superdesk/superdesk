@@ -334,3 +334,37 @@ Feature: Routing Scheme and Routing Rules
       Then we get response code 201
       When we delete "/routing_schemes/#routing_schemes._id#"
       Then we get response code 204
+
+
+    @auth @test
+    Scenario: Delete routing scheme when in use
+      Given empty "desks"
+      When we post to "/desks"
+        """
+        {"name": "Sports"}
+        """
+      And we post to "/routing_schemes"
+        """
+        [
+          {
+            "name": "routing rule scheme 1",
+            "rules": [
+              {
+                "name": "Sports Rule",
+                "filter": {
+                    "category": [{"name": "Overseas Sport", "qcode": "S"}]
+                    },
+                "actions": {
+                    "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+                    }
+              }
+            ]
+          }
+        ]
+        """
+      And we post to "ingest_providers"
+        """
+        [{"name": "test", "type": "reuters", "source": "reuters", "routing_scheme": "#routing_schemes._id#"}]
+        """
+      When we delete "/routing_schemes/#routing_schemes._id#"
+      Then we get response code 403
