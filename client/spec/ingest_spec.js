@@ -9,9 +9,9 @@ describe('Ingest', function() {
     it('can fetch with keyboard', function() {
 
         // select a desk
-        element(by.partialButtonText('PERSONAL')).click();
-        element(by.buttonText('Sports Desk')).click();
-        expect(element.all(by.repeater('items._items')).count()).toBe(1);
+        // element(by.partialButtonText('PERSONAL')).click();
+        // element(by.buttonText('Sports Desk')).click();
+        // expect(element.all(by.repeater('items._items')).count()).toBe(1);
 
         // select & fetch item
         var body = $('body');
