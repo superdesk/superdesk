@@ -758,8 +758,9 @@
         }])
 
         .directive('sdUserEdit', ['api', 'gettext', 'notify', 'users', 'userList', 'session',
-            '$location', '$route', 'superdesk', 'features', 'asset', 'privileges',
-        function(api, gettext, notify, users, userList, session, $location, $route, superdesk, features, asset, privileges) {
+            '$location', '$route', 'superdesk', 'features', 'asset', 'privileges', 'desks',
+        function(api, gettext, notify, users, userList, session, $location, $route, superdesk, features,
+                 asset, privileges, desks) {
 
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/edit-form.html'),
@@ -867,6 +868,10 @@
                         scope._active = users.isActive(user);
                         scope._pending = users.isPending(user);
                         scope.profile = scope.user._id === session.identity._id;
+
+                        desks.fetchUserDesks(user).then(function(response) {
+                            scope.userDesks = response._items;
+                        });
                     }
                 }
             };

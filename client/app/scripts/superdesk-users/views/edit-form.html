@@ -98,6 +98,11 @@
                   <select ng-model="user.role" name="user_role" id="user_role" ng-options="role._id as role.name for role in roles"></select>
                 </div>
 
+                <div sd-info-item class="user_role">
+                  <label for="user_default_desk" translate>Default Desk</label>
+                  <select ng-model="user.desk" name="user_default_desk" id="user_default_desk" ng-options="desk._id as desk.name for desk in userDesks"></select>
+                </div>
+
                 <div sd-info-item>
                   <label for="phone" translate>phone number</label>
                   <input type="text" name="phone" id="phone" ng-model="user.phone" ng-pattern="phonePattern" ng-readonly="user._readonly">
