@@ -2,26 +2,57 @@
 
 'use strict';
 
-MacrosController.$inject = ['$scope', 'api', 'autosave'];
-function MacrosController($scope, api, autosave) {
+MacrosService.$inject = ['api', 'autosave'];
+function MacrosService(api, autosave) {
+    this.get = function() {
+        return api.query('macros')
+            .then(angular.bind(this, function(macros) {
+                this.macros = macros._items;
+                return this.macros;
+            }));
+    };
 
-    api.query('macros').then(function(macros) {
-        $scope.macros = macros._items;
+    this.setupShortcuts = function ($scope) {
+        this.get().then(function(macros) {
+            angular.forEach(macros, function(macro) {
+                if (macro.shortcut) {
+                    $scope.$on('key:ctrl:' + macro.shortcut, function() {
+                        triggerMacro(macro, $scope.item);
+                    });
+                }
+            });
+        });
+    };
+
+    this.call = triggerMacro;
+
+    function triggerMacro(macro, item) {
+        api.save('macros', {
+            macro: macro.name,
+            item: _.omit(item) // get all the properties as shallow copy
+        }).then(function(res) {
+            angular.extend(item, res.item);
+            autosave.save(item);
+            return item;
+        });
+    }
+}
+
+MacrosController.$inject = ['$scope', 'macros'];
+function MacrosController($scope, macros) {
+
+    macros.get().then(function() {
+        $scope.macros = macros.macros;
     });
 
     $scope.call = function(macro) {
-        api.save('macros', {
-            macro: macro.name,
-            item: _.omit($scope.item) // get all the properties as shallow copy
-        }).then(function(res) {
-            angular.extend($scope.item, res.item);
-            autosave.save($scope.item);
-        });
+        return macros.call(macro, $scope.item);
     };
 }
 
-angular.module('superdesk.authoring.macros', ['superdesk.authoring'])
+angular.module('superdesk.authoring.macros', [])
 
+    .service('macros', MacrosService)
     .controller('Macros', MacrosController)
 
     .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {

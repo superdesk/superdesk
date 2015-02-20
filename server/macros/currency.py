@@ -13,7 +13,7 @@ def get_rate():
     try:
         r = requests.get('http://rate-exchange.appspot.com/currency?from=USD&to=AUD', timeout=5)
         return float(r.json()['rate'])
-    except (Exception) as e:
+    except Exception:
         return USD_TO_AUD
 
 

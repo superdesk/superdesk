@@ -13,7 +13,6 @@ import superdesk
 
 from superdesk.utils import ListCursor
 from superdesk.macros import macros
-from eve.utils import config
 
 
 def get_public_props(item):
