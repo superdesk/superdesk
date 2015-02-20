@@ -18,3 +18,11 @@ Feature: Macros
             """
             {"item": {"body_html": "$12"}}
             """
+
+    @auth
+    Scenario: Return an error when triggering unknown macro
+        When we post to "/macros"
+            """
+            {"macro": "this does not exist!", "item": {"body_html": "test"}}
+            """
+        Then we get response code 400
