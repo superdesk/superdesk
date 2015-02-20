@@ -208,7 +208,7 @@ define([
 
                 fetchCurrentDeskId: function() {
                     var self = this;
-                    return preferencesService.get('desk:items').then(function(result) {
+                    return preferencesService.get('desk:last_worked').then(function(result) {
                         if (result && result.length > 0) {
                             self.activeDeskId = result[0];
                         }
