@@ -73,4 +73,18 @@ class TeletypeIngestService(FileIngestService):
             self.move_file(self.path, filename, provider=provider, success=False)
             raise ParserError.parseFileError('Teletype', filename, ex, provider)
 
+    def parse_file(self, filename, provider):
+        try:
+            path = provider.get('config', {}).get('path', None)
+
+            if not path:
+                return []
+
+            item = self.parser.parse_file(os.path.join(path, filename), provider)
+
+            return [item]
+        except Exception as ex:
+            raise ParserError.parseFileError('Teletype', filename, ex, provider)
+
+
 register_provider(PROVIDER, TeletypeIngestService())
