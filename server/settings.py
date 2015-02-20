@@ -144,7 +144,10 @@ INSTALLED_APPS = [
     'apps.packages',
     'apps.privilege',
     'apps.rule_sets',
-    'apps.highlights'
+    'apps.highlights',
+    'apps.macros',
+
+    'macros.currency',
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']
