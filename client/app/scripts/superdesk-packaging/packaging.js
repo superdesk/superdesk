@@ -145,14 +145,23 @@
 
         $scope.selected = null;
         $scope.multiSelected = [];
+        $scope.query = null;
+        $scope.highlight = null;
 
         var packageItems = null;
+        var init = false;
 
         $scope.groupList = packages.groupList;
 
-        function fetchContentItems(q) {
-            var query = search.query(q || null);
+        function fetchContentItems() {
+        	if (!init) {
+        		return;
+        	}
+            var query = search.query($scope.query);
             query.size(25);
+            if ($scope.highlight) {
+            	query.filter({term: {'highlights': $scope.highlight.toString()}});
+            }
             api.archive.query(query.getCriteria(true))
             .then(function(result) {
                 $scope.contentItems = result._items;
@@ -160,7 +169,16 @@
         }
 
         $scope.$watch('query', function(query) {
-            fetchContentItems(query);
+            fetchContentItems();
+        });
+
+        $scope.$watch('highlight', function(highlight) {
+            fetchContentItems();
+        });
+
+        $scope.$watch('item', function(item) {
+            $scope.highlight = item.highlight;
+            init = true;
         });
 
         $scope.$watch('item.groups', function() {
@@ -170,8 +188,6 @@
         $scope.addItemToGroup = function addItemsToGroup(group, item) {
             packages.addItemsToPackage($scope.item, group, [item]);
         };
-
-        fetchContentItems();
 
         $scope.preview = function(item) {
             $scope.selected = item;

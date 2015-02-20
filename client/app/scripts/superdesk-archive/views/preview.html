@@ -31,6 +31,10 @@
         
         <div class="state-label state-{{selected.preview.state}}">{{selected.preview.state}}</div>
 
+		<div ng-show="selected.preview.highlights">
+			<div sd-highlights-title data-highlights="selected.preview.highlights"></div>
+		</div>
+
         <div class="core-content">
 
 			<p ng-if="selected.preview.is_spiked" class="alert alert-warning expires">
