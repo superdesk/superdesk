@@ -273,32 +273,41 @@ class IngestApiError(SuperdeskIngestError):
         4003: "API ingest has request error",
         4004: "API ingest Unicode Encode Error",
         4005: 'API ingest xml parse error',
-        4006: 'API service not found(404) error'
+        4006: 'API service not found(404) error',
+        4007: 'API authorization error',
     }
 
     @classmethod
+    def apiGeneralError(cls, exception, provider):
+        return cls(4000, exception, provider)
+
+    @classmethod
     def apiTimeoutError(cls, exception, provider):
-        return IngestApiError(4001, exception, provider)
+        return cls(4001, exception, provider)
 
     @classmethod
     def apiRedirectError(cls, exception, provider):
-        return IngestApiError(4002, exception, provider)
+        return cls(4002, exception, provider)
 
     @classmethod
     def apiRequestError(cls, exception, provider):
-        return IngestApiError(4003, exception, provider)
+        return cls(4003, exception, provider)
 
     @classmethod
     def apiUnicodeError(cls, exception, provider):
-        return IngestApiError(4004, exception, provider)
+        return cls(4004, exception, provider)
 
     @classmethod
     def apiParseError(cls, exception, provider):
-        return IngestApiError(4005, exception, provider)
+        return cls(4005, exception, provider)
 
     @classmethod
     def apiNotFoundError(cls, exception, provider):
-        return IngestApiError(4006, exception, provider)
+        return cls(4006, exception, provider)
+
+    @classmethod
+    def apiAuthError(cls, exception, provider):
+        return cls(4007, exception, provider)
 
 
 class IngestFtpError(SuperdeskIngestError):
