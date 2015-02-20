@@ -10,8 +10,8 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    DeskDropdownDirective.$inject = ['desks', '$route'];
-    function DeskDropdownDirective(desks, $route) {
+    DeskDropdownDirective.$inject = ['desks', '$route', 'preferencesService'];
+    function DeskDropdownDirective(desks, $route, preferencesService) {
         return {
             templateUrl: 'scripts/superdesk-dashboard/views/desk-dropdown.html',
             link: function(scope) {
@@ -24,8 +24,23 @@ define([
 
                 desks.fetchCurrentUserDesks()
                     .then(function(userDesks) {
-                        scope.desks = userDesks;
-                        scope.selected = _.find(userDesks, {_id: desks.getCurrentDeskId()});
+                        scope.userDesks = userDesks._items;
+
+                        var currentDeskId = desks.getCurrentDeskId();
+                        if (!currentDeskId) {
+                            preferencesService.get('desk:last_worked').then(
+                                function(desk) {
+                                    if (desk !== '') {
+                                        scope.selected = _.find(scope.userDesks, {_id: desk});
+                                    } else {
+                                        scope.select(scope.userDesks[0]);
+                                    }
+                            },  function() {
+                                    scope.select(scope.userDesks[0]);
+                            });
+                        } else {
+                            scope.selected = _.find(scope.userDesks, {_id: currentDeskId});
+                        }
                     });
             }
         };

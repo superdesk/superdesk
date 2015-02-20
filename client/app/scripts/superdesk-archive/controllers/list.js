@@ -28,7 +28,7 @@ define([
 
         desks.fetchCurrentUserDesks()
         .then(function(userDesks) {
-            $scope.selected.desk = _.find(userDesks, {_id: desks.getCurrentDeskId()});
+            $scope.selected.desk = _.find(userDesks._items, {_id: desks.getCurrentDeskId()});
         });
 
         $scope.toggleSpike = function toggleSpike() {

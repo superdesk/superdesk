@@ -11,6 +11,8 @@ describe('Content', function() {
     }
 
     it('can navigate with keyboard', function() {
+        element(by.partialButtonText('SPORTS DESK')).click();
+        element(by.buttonText('Personal')).click();
         expect(element.all(by.repeater('items._items')).count()).toBe(3);
 
         var body = $('body');
@@ -37,6 +39,8 @@ describe('Content', function() {
     });
 
     it('can toggle view with v', function() {
+        element(by.partialButtonText('SPORTS DESK')).click();
+        element(by.buttonText('Personal')).click();
         var body = $('body');
         expect(element.all(by.css('.state-border')).count()).toBe(0);
         body.sendKeys('v');
