@@ -12,8 +12,8 @@
 
     'use strict';
 
-    PackagesService.$inject = ['api', '$q'];
-    function PackagesService(api, $q) {
+    PackagesService.$inject = ['api', '$q', 'lock'];
+    function PackagesService(api, $q, lock) {
         var currentPackage = null;
 
         this.fetch = function(packageId) {
@@ -144,17 +144,24 @@
         };
     }
 
-    PackagingCtrl.$inject = ['$scope', 'packagesService', 'superdesk', '$route', 'api', 'search', 'lock', 'ContentCtrl'];
-    function PackagingCtrl($scope, packagesService, superdesk, $route, api, search, lock, ContentCtrl) {
+    PackagingCtrl.$inject = ['$scope', 'packagesService', 'superdesk', '$route', 'api',
+        'search', 'lock', 'ContentCtrl', '$location', 'referrer'];
+    function PackagingCtrl($scope, packagesService, superdesk, $route, api, search,
+        lock, ContentCtrl, $location, referrer) {
 
         $scope.widget_target = 'packages';
         $scope.content = new ContentCtrl($scope);
+        $scope.referrerUrl = referrer.getReferrerUrl();
 
         function fetchItem() {
             packagesService.fetch($route.current.params._id).
                 then(function(fetched_package) {
                 $scope.item = fetched_package;
-                lock.lock($scope.item);
+                $scope.item._locked = lock.isLocked($scope.item);
+                if (!$scope.item._locked) {
+                    lock.lock($scope.item, true);
+                }
+                $scope.editmode = !$scope.item._locked;
             });
         }
 
@@ -163,7 +170,28 @@
         };
 
         $scope.close = function closePackage() {
-            lock.unlock($scope.item);
+            if (!$scope.item._locked) {
+                lock.unlock($scope.item);
+            }
+            $location.url($scope.referrerUrl);
+        };
+
+        $scope.isLocked = function isLocked(item) {
+            return lock.isLocked(item);
+        };
+
+        $scope.unlock = function() {
+            lock.unlock($scope.item).then(function(unlocked_item) {
+                lock.lock(unlocked_item, true);
+            });
+        };
+
+        $scope.can_unlock = function() {
+            return lock.can_unlock($scope.item);
+        };
+
+        $scope.isLockedByMe = function() {
+            return lock.isLockedByMe($scope.item);
         };
 
         fetchItem();
