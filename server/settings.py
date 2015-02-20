@@ -141,7 +141,8 @@ INSTALLED_APPS = [
     'apps.packages',
     'apps.privilege',
     'apps.rules',
-    'apps.highlights'
+    'apps.highlights',
+    'apps.publish'
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']

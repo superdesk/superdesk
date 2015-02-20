@@ -258,3 +258,14 @@ def update_state(original, updates):
             updates[config.CONTENT_STATE] = 'in_progress'
         elif not is_assigned_to_a_desk(original):
             updates[config.CONTENT_STATE] = 'draft'
+
+
+def is_update_allowed(archive_doc):
+    """
+    Checks if the archive_doc is valid to be updated. If invalid then the method raises ForbiddenError.
+    For instance, a published item shouldn't be allowed to update.
+    """
+
+    state = archive_doc.get(config.CONTENT_STATE)
+    if state in ['published']:
+        raise SuperdeskApiError.forbiddenError("Item isn't in a valid state to be updated.")

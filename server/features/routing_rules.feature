@@ -58,6 +58,54 @@ Feature: Routing Scheme and Routing Rules
       """
 
     @auth
+    Scenario: A Routing Scheme must have a unique name
+      Given empty "desks"
+      When we post to "/desks"
+      """
+      {"name": "Sports", "members": [{"user": "#users._id#"}]}
+      """
+      And we post to "/routing_schemes"
+      """
+      [
+        {
+          "name": "routing rule scheme 1",
+          "rules": [
+            {
+              "name": "Sports Rule",
+              "filter": {
+                "category": [{"name": "Overseas Sport", "qcode": "S"}]
+              },
+              "actions": {
+                "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+              }
+            }
+          ]
+        }
+      ]
+      """
+      Then we get response code 201
+      When we post to "/routing_schemes"
+      """
+      [
+        {
+          "name": "ROUTING rule scheme 1",
+          "rules": [
+            {
+              "name": "Sports Rule",
+              "filter": {
+                "category": [{"name": "Overseas Sport", "qcode": "S"}]
+              },
+              "actions": {
+                "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+              }
+            }
+          ]
+        }
+      ]
+      """
+      Then we get response code 400
+
+    @auth
     Scenario: Create an invalid Routing Scheme with no rules
       Given empty "routing_schemes"
       When we post to "/routing_schemes"
