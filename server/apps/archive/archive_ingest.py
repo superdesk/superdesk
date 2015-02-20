@@ -8,12 +8,6 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-"""
-Created on May 23, 2014
-
-@author: Ioan v. Pocol
-"""
-
 import superdesk
 
 from eve.utils import config
@@ -47,10 +41,6 @@ class ArchiveIngestService(BaseService):
     def create(self, docs, **kwargs):
         new_guids = []
         for doc in docs:
-            if not doc.get('desk'):
-                # if no desk is selected then it is bad request
-                raise SuperdeskApiError.badRequestError("Destination desk cannot be empty.")
-
             archived_doc = None
 
             if not kwargs.get('ingest_only', False):
@@ -58,7 +48,8 @@ class ArchiveIngestService(BaseService):
 
             if archived_doc:
                 # see if it is in archive, if it is duplicate it
-                send_to(archived_doc, doc.get('desk'))
+                if doc.get('desk'):
+                    send_to(archived_doc, doc.get('desk'))
                 new_guid = superdesk.get_resource_service('archive').duplicate_content(archived_doc)
                 new_guids.append(new_guid)
             else:
@@ -82,7 +73,8 @@ class ArchiveIngestService(BaseService):
                 generate_unique_id_and_name(dest_doc)
 
                 dest_doc[config.VERSION] = 1
-                send_to(dest_doc, doc.get('desk'))
+                if doc.get('desk'):
+                    send_to(dest_doc, doc.get('desk'))
                 dest_doc[config.CONTENT_STATE] = STATE_FETCHED
                 dest_doc[INGEST_ID] = ingest_doc['_id']
                 dest_doc[FAMILY_ID] = ingest_doc['_id']

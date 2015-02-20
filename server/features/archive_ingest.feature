@@ -73,19 +73,28 @@ Feature: Archive Ingest
 
     @auth
     @provider
-    Scenario: Move item into archive with no desk - fail
+    Scenario: Move item into archive with no desk
         Given empty "archive"
     	When we fetch from "reuters" ingest "tag_reuters.com_0000_newsml_GM1EA7M13RP01"
-        When we post to "/archive_ingest"
+        When we post to "/archive_ingest" with success
         """
         {
         "guid": "tag_reuters.com_0000_newsml_GM1EA7M13RP01"
         }
         """
-        Then we get error 400
+        Then we get "_id"
+        When we get "/archive/#_id#"
+        Then we get existing resource
 		"""
-		{"_message": "Destination desk cannot be empty.", "_status": "ERR"}
-		"""
+        {
+            "renditions": {
+                "baseImage": {"height": 845, "mimetype": "image/jpeg", "width": 1400},
+                "original": {"height": 2113, "mimetype": "image/jpeg", "width": 3500},
+                "thumbnail": {"height": 120, "mimetype": "image/jpeg", "width": 198},
+                "viewImage": {"height": 386, "mimetype": "image/jpeg", "width": 640}
+            }
+        }
+  		"""
 
     @auth
     @provider
