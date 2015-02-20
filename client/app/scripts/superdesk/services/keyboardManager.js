@@ -21,8 +21,9 @@ define(['angular', 'lodash'], function(angular, _) {
     .run(['$rootScope', '$document', function KeyEventBroadcast($rootScope, $document) {
         $document.on('keydown', function(e) {
             if (e.target === document.body) { // $document.body is empty when testing
-                var character = String.fromCharCode(e.which).toLowerCase();
-                $rootScope.$broadcast('key:' + character, e);
+                var character = String.fromCharCode(e.which).toLowerCase(),
+                    modifier = e.ctrlKey || e.metaKey ? 'ctrl:' : '';
+                $rootScope.$broadcast('key:' + modifier + character, e);
             }
         });
     }])

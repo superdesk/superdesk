@@ -380,12 +380,13 @@
         'ContentCtrl',
         '$location',
         'referrer',
+        'macros',
         '$timeout'
     ];
 
     function AuthoringController($scope, superdesk, notify, gettext,
                                  desks, item, authoring, api, session, lock, privileges,
-                                 ContentCtrl, $location, referrer, $timeout) {
+                                 ContentCtrl, $location, referrer, macros, $timeout) {
         var _closing;
 
         $scope.privileges = privileges.privileges;
@@ -551,6 +552,8 @@
                 $scope.item.lock_user = null;
             }
         });
+
+        macros.setupShortcuts($scope);
     }
 
     function DashboardCard() {
@@ -825,6 +828,7 @@
             'superdesk.authoring.workqueue',
             'superdesk.authoring.packages',
             'superdesk.authoring.find-replace',
+            'superdesk.authoring.macros',
             'superdesk.desks'
         ])
 
