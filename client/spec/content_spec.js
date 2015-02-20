@@ -10,11 +10,13 @@ describe('Content', function() {
         return element(by.binding('selected.preview.headline')).getText();
     }
 
-    it('can navigate with keyboard', function() {
+    beforeEach(function() {
         element(by.partialButtonText('SPORTS DESK')).click();
-        element(by.buttonText('Personal')).click();
+        element(by.buttonText('PERSONAL')).click();
         expect(element.all(by.repeater('items._items')).count()).toBe(3);
+    });
 
+    it('can navigate with keyboard', function() {
         var body = $('body');
         body.sendKeys(protractor.Key.UP);
         expect(selectedHeadline()).toBe('item1');
@@ -39,8 +41,6 @@ describe('Content', function() {
     });
 
     it('can toggle view with v', function() {
-        element(by.partialButtonText('SPORTS DESK')).click();
-        element(by.buttonText('Personal')).click();
         var body = $('body');
         expect(element.all(by.css('.state-border')).count()).toBe(0);
         body.sendKeys('v');
