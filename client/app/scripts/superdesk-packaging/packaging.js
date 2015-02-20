@@ -12,8 +12,8 @@
 
     'use strict';
 
-    PackagesService.$inject = ['api', '$q', 'lock'];
-    function PackagesService(api, $q, lock) {
+    PackagesService.$inject = ['api', '$q'];
+    function PackagesService(api, $q) {
         var currentPackage = null;
 
         this.fetch = function(packageId) {
@@ -145,9 +145,10 @@
     }
 
     PackagingCtrl.$inject = ['$scope', 'packagesService', 'superdesk', '$route', 'api',
-        'search', 'lock', 'ContentCtrl', '$location', 'referrer'];
+        'search', 'lock', 'ContentCtrl', '$location', 'referrer', 'session'];
     function PackagingCtrl($scope, packagesService, superdesk, $route, api, search,
-        lock, ContentCtrl, $location, referrer) {
+        lock, ContentCtrl, $location, referrer, session) {
+        var _closing;
 
         $scope.widget_target = 'packages';
         $scope.content = new ContentCtrl($scope);
@@ -159,9 +160,12 @@
                 $scope.item = fetched_package;
                 $scope.item._locked = lock.isLocked($scope.item);
                 if (!$scope.item._locked) {
-                    lock.lock($scope.item, true);
+                    lock.lock($scope.item, true).then(function(locked_item) {
+                        $scope.editmode = true;
+                    });
+                } else {
+                    $scope.editmode = false;
                 }
-                $scope.editmode = !$scope.item._locked;
             });
         }
 
@@ -170,6 +174,7 @@
         };
 
         $scope.close = function closePackage() {
+            _closing = true;
             if (!$scope.item._locked) {
                 lock.unlock($scope.item);
             }
@@ -182,7 +187,9 @@
 
         $scope.unlock = function() {
             lock.unlock($scope.item).then(function(unlocked_item) {
-                lock.lock(unlocked_item, true);
+                lock.lock(unlocked_item, true).then(function(unlocked_item) {
+                    $scope.editmode = true;
+                });
             });
         };
 
@@ -193,6 +200,13 @@
         $scope.isLockedByMe = function() {
             return lock.isLockedByMe($scope.item);
         };
+
+        $scope.$on('item:lock', function(_e, data) {
+            if ($scope.item._id === data.item && !_closing &&
+                session.sessionId !== data.lock_session) {
+                fetchItem();
+            }
+        });
 
         fetchItem();
     }
