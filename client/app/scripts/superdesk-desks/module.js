@@ -185,10 +185,7 @@ define([
                     return $q.when();
                 },
                 fetchUserDesks: function(user) {
-                    return api.get(user._links.self.href + '/desks')
-                        .then(function(response) {
-                            return response._items;
-                        });
+                    return api.get(user._links.self.href + '/desks');
                 },
 
                 fetchCurrentUserDesks: function() {
@@ -211,7 +208,7 @@ define([
 
                 fetchCurrentDeskId: function() {
                     var self = this;
-                    return preferencesService.get('desk:items').then(function(result) {
+                    return preferencesService.get('desk:last_worked').then(function(result) {
                         if (result && result.length > 0) {
                             self.activeDeskId = result[0];
                         }
@@ -230,7 +227,7 @@ define([
                 },
                 setCurrentDeskId: function(deskId) {
                     this.activeDeskId = deskId;
-                    preferencesService.update({'desk:items': [deskId]}, 'desk:items').then(function() {
+                    preferencesService.update({'desk:last_worked': [deskId]}, 'desk:last_worked').then(function() {
                             //nothing to do
                         }, function(response) {
                             notify.error(gettext('Session preference could not be saved...'));

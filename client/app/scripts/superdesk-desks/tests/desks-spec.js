@@ -14,7 +14,7 @@ describe('desks service', function() {
 
 		var userDesks;
 		desks.fetchCurrentUserDesks().then(function(_userDesks) {
-			userDesks = _userDesks;
+			userDesks = _userDesks._items;
 		});
 
 		$rootScope.$apply();

@@ -76,6 +76,7 @@ class PreferencesResource(Resource):
     })
 
     superdesk.register_default_session_preference('scratchpad:items', [])
+    superdesk.register_default_session_preference('desk:last_worked', '')
     superdesk.register_default_session_preference('desk:items', [])
     superdesk.register_default_session_preference('stage:items', [])
     superdesk.register_default_session_preference('pinned:items', [])
@@ -140,6 +141,10 @@ class PreferencesService(BaseService):
         orig_session_prefs = session_doc.get(_session_preferences_key, {})
         available = dict(superdesk.default_session_preferences)
         available.update(orig_session_prefs)
+
+        if available.get('desk:last_worked') == '' and user_doc.get('desk'):
+            available['desk:last_worked'] = user_doc.get('desk')
+
         session_doc[_session_preferences_key] = available
 
     def enhance_document_with_user_privileges(self, session_doc, user_doc):

@@ -102,9 +102,7 @@ class UsersResource(Resource):
             'type': 'boolean',
             'default': True
         },
-        'privileges': {
-            'type': 'dict'
-        },
+        'desk': Resource.rel('desks')  # Default desk of the user, which would be selected when logged-in.
     }
 
     extra_response_fields = [
@@ -115,7 +113,8 @@ class UsersResource(Resource):
         'picture_url',
         'avatar',
         'is_active',
-        'needs_activation'
+        'needs_activation',
+        'desk'
     ]
 
     datasource = {
