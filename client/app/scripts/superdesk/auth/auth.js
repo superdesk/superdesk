@@ -48,7 +48,7 @@ define([
 
         var query = $location.search();
         if (query.token) {
-            api.resetPassword.create({token: $scope.token})
+            api.resetPassword.create({token: query.token})
             .then(function(result) {
                 $scope.token = query.token;
                 $scope.flowStep = 3;
