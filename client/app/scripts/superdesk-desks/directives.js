@@ -358,11 +358,7 @@ define([
                 desk: '=',
                 stage: '='
             },
-            template: '<select ng-model="desk">' +
-                '<option ng-repeat="d in desks" value="{{d._id}}" ng-selected="d._id === desk">{{d.name}}</option>' +
-                '</select><select ng-model="stage">' +
-                '<option ng-repeat="s in deskStages[desk]" value="{{s._id}}" ng-selected="s._id === stage">{{s.name}}' +
-                '</option></select>',
+            templateUrl: 'scripts/superdesk-desks/views/deskstagepicker.html',
             link: function(scope, elem, attrs) {
                 scope.desks = null;
                 scope.deskStages = null;
