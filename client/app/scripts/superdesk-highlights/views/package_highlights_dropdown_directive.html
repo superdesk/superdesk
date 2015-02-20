@@ -1,0 +1,8 @@
+<div ng-show="highlights" ng-if="hasHighlights()">
+    <button class="dropdown-toggle" dropdown-toggle translate><i class="svg-icon-create-list"></i></button>
+    <ul class="dropdown-menu pull-right">
+		<li ng-repeat="h in highlights"> 
+		    <button ng-click="createHighlight(h);">{{ h.name | uppercase  }}</button>
+		</li>
+	</ul>
+</div>
