@@ -51,6 +51,28 @@ class ErrorsTestCase(TestCase):
         errors.notifiers = []
         self.provider = {'name': 'TestProvider'}
 
+    def test_raise_apiGeneralError(self):
+        with assert_raises(IngestApiError) as error_context:
+            ex = Exception("Testing general API error")
+            raise IngestApiError.apiGeneralError(ex, self.provider)
+
+        exception = error_context.exception
+        self.assertEqual(exception.code, 4000)
+        self.assertEqual(
+            exception.message, "Unknown API ingest error")
+        self.assertEqual(exception.provider_name, "TestProvider")
+
+        self.assertIsNotNone(exception.system_exception)
+        self.assertEqual(
+            exception.system_exception.args[0],
+            "Testing general API error")
+
+        self.assertEqual(len(self.mock_logger_handler.messages['error']), 1)
+        self.assertEqual(
+            self.mock_logger_handler.messages['error'][0],
+            "IngestApiError Error 4000 - Unknown API ingest error: "
+            "Testing general API error on channel TestProvider")
+
     def test_raise_apiRequestError(self):
         with assert_raises(IngestApiError) as error_context:
             ex = Exception("Testing apiRequestError")
@@ -134,6 +156,28 @@ class ErrorsTestCase(TestCase):
         self.assertEqual(self.mock_logger_handler.messages['error'][0],
                          "IngestApiError Error 4006 - API service not found(404) error: "
                          "Testing apiNotFoundError on channel TestProvider")
+
+    def test_raise_apiAuthError(self):
+        with assert_raises(IngestApiError) as error_context:
+            ex = Exception("Testing API authorization error")
+            raise IngestApiError.apiAuthError(ex, self.provider)
+
+        exception = error_context.exception
+        self.assertEqual(exception.code, 4007)
+        self.assertEqual(
+            exception.message, "API authorization error")
+        self.assertEqual(exception.provider_name, "TestProvider")
+
+        self.assertIsNotNone(exception.system_exception)
+        self.assertEqual(
+            exception.system_exception.args[0],
+            "Testing API authorization error")
+
+        self.assertEqual(len(self.mock_logger_handler.messages['error']), 1)
+        self.assertEqual(
+            self.mock_logger_handler.messages['error'][0],
+            "IngestApiError Error 4007 - API authorization error: "
+            "Testing API authorization error on channel TestProvider")
 
     def test_raise_folderCreateError(self):
         with assert_raises(IngestFileError) as error_context:

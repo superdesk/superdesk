@@ -10,6 +10,7 @@ data/
 static/*
 upload/*
 .coverage
+cover
 celerybeatschedule.db*
 env/
 bin/
