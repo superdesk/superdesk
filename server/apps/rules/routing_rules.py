@@ -184,27 +184,32 @@ class RoutingRuleSchemeService(BaseService):
             elif actions is None or len(actions) == 0 or (actions.get('fetch') is None and actions.get(
                     'publish') is None and actions.get('exit') is None):
                 raise SuperdeskApiError.badRequestError(message="A routing rule must have actions")
-            elif schedule is not None and (len(schedule) == 0 or (schedule.get('day_of_week') is None or len(
-                    schedule.get('day_of_week', [])) == 0)):
-                raise SuperdeskApiError.badRequestError(message="Schedule when defined can't be empty.")
-            elif not self.__validate_schedule(schedule):
-                raise SuperdeskApiError.badRequestError(message="Invalid schedule.")
+            else:
+                self.__validate_schedule(schedule)
 
     def __validate_schedule(self, schedule):
-        schedule = schedule or {}
+        if schedule is not None and (len(schedule) == 0 or (schedule.get('day_of_week') is None
+                                                            or len(schedule.get('day_of_week', [])) == 0)):
+                raise SuperdeskApiError.badRequestError(message="Schedule when defined can't be empty.")
+
         if schedule:
             day_of_week = [str(week_day).upper() for week_day in schedule.get('day_of_week', [])]
             if not (len(set(day_of_week) & set(self.day_of_week)) == len(day_of_week)):
-                return False
+                raise SuperdeskApiError.badRequestError(message="Invalid values for day of week.")
 
             if schedule.get('hour_of_day_from') or schedule.get('hour_of_day_to'):
                 try:
-                    return datetime.strptime(schedule.get('hour_of_day_from'), '%H%M') < \
-                        datetime.strptime(schedule.get('hour_of_day_to'), '%H%M')
+                    from_time = datetime.strptime(schedule.get('hour_of_day_from'), '%H%M')
                 except:
-                    return False
+                    raise SuperdeskApiError.badRequestError(message="Invalid value for from time.")
 
-        return True
+                try:
+                    to_time = datetime.strptime(schedule.get('hour_of_day_to'), '%H%M')
+                except:
+                    raise SuperdeskApiError.badRequestError(message="Invalid value for to time.")
+
+                if from_time > to_time:
+                    raise SuperdeskApiError.badRequestError(message="From time should be less than To Time.")
 
     def __check_if_rule_name_is_unique(self, routing_scheme):
         """
