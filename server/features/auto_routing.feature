@@ -89,7 +89,7 @@ Feature: Auto Routing
         }
         """
 
-    @auth @provider
+    @auth @provider @test
     Scenario: Package is routed automatically
         Given empty "desks"
         When we post to "/desks"
@@ -120,7 +120,7 @@ Feature: Auto Routing
         ]
         """
         Then we get response code 201
-        When we fetch from "reuters" ingest "tag:reuters.com,2014:newsml_KBN0FL0NM" using routing_scheme
+        When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM" using routing_scheme
         """
         #routing_schemes._id#
         """
@@ -128,7 +128,7 @@ Feature: Auto Routing
         """
         {
           "routing_scheme": "#routing_schemes._id#",
-          "ingest": "tag:reuters.com,2014:newsml_KBN0FL0NM"
+          "ingest": "tag_reuters.com_2014_newsml_KBN0FL0NM"
         }
         """
 

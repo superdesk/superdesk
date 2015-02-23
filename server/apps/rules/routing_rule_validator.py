@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class RoutingRuleValidator():
 
     def is_valid_rule(self, item, rule_filter):
-        if not filter:
+        if not rule_filter:
             return True
 
         return (
