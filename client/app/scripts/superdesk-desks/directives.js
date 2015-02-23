@@ -335,5 +335,30 @@ define([
                 };
             }
         };
+    }])
+    .directive('sdDeskstagepicker', ['desks', function(desks) {
+        return {
+            scope: {
+                desk: '=',
+                stage: '='
+            },
+            templateUrl: 'scripts/superdesk-desks/views/deskstagepicker.html',
+            link: function(scope, elem, attrs) {
+                scope.desks = null;
+                scope.deskStages = null;
+
+                scope.$watchGroup(['desk', 'stage'], function() {
+                    if (!scope.desks || !scope.deskStages) {
+                        desks.initialize()
+                        .then(function() {
+                            scope.desks = desks.desks._items;
+                            scope.deskStages = desks.deskStages;
+                        });
+                    } else if (scope.desk && _.findIndex(scope.deskStages[scope.desk], {_id: scope.stage}) === -1) {
+                        scope.stage = null;
+                    }
+                });
+            }
+        };
     }]);
 });

@@ -9,10 +9,9 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
-import superdesk
+
 from superdesk.resource import Resource
 from superdesk.services import BaseService
-from superdesk import get_backend
 from superdesk.errors import SuperdeskApiError
 
 
@@ -54,14 +53,3 @@ class RuleSetsService(BaseService):
     def on_delete(self, doc):
         if self.backend.find_one('ingest_providers', req=None, rule_set=doc['_id']):
             raise SuperdeskApiError.forbiddenError('rule set is in use')
-
-
-def init_app(app):
-    endpoint_name = 'rule_sets'
-    service = RuleSetsService(endpoint_name, backend=get_backend())
-    RuleSetsResource(endpoint_name, app=app, service=service)
-
-
-superdesk.privilege(name='rule_sets',
-                    label='Transformation Rules Management',
-                    description='User can setup transformation rules for ingest content.')
