@@ -53,14 +53,10 @@ class ArchivePublishService(BaseService):
             raise InvalidStateTransitionError()
 
     def update(self, id, updates):
-
         updates[config.CONTENT_STATE] = 'published'
-        user = get_user(required=True)
-
+        user = get_user()
         item = self.backend.update(self.datasource, id, updates)
-
         push_notification('item:publish', item=str(item.get('_id')), user=str(user))
-
         return item
 
 

@@ -82,8 +82,8 @@ class ArchiveIngestService(BaseService):
                 generate_unique_id_and_name(dest_doc)
 
                 dest_doc[config.VERSION] = 1
-                send_to(dest_doc, doc.get('desk'))
-                dest_doc[config.CONTENT_STATE] = STATE_FETCHED
+                send_to(dest_doc, doc.get('desk'), doc.get('stage'))
+                dest_doc[config.CONTENT_STATE] = doc.get('state', STATE_FETCHED)
                 dest_doc[INGEST_ID] = ingest_doc['_id']
                 dest_doc[FAMILY_ID] = ingest_doc['_id']
                 remove_unwanted(dest_doc)

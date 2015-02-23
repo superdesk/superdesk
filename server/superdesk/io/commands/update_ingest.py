@@ -91,6 +91,11 @@ def get_provider_rule_set(provider):
         return superdesk.get_resource_service('rule_sets').find_one(_id=provider['rule_set'], req=None)
 
 
+def get_provider_routing_scheme(provider):
+    if provider.get('routing_scheme'):
+        return superdesk.get_resource_service('routing_schemes').find_one(_id=provider['routing_scheme'], req=None)
+
+
 def get_task_ttl(provider):
     update_schedule = provider.get('update_schedule', UPDATE_SCHEDULE_DEFAULT)
     return update_schedule.get('minutes', 0) * 60 + update_schedule.get('hours', 0) * 3600
@@ -112,7 +117,8 @@ class UpdateIngest(superdesk.Command):
             if is_valid_type(provider, provider_type) and is_scheduled(provider) and not is_closed(provider):
                 kwargs = {
                     'provider': provider,
-                    'rule_set': get_provider_rule_set(provider)
+                    'rule_set': get_provider_rule_set(provider),
+                    'routing_scheme': get_provider_routing_scheme(provider)
                 }
                 update_provider.apply_async(
                     expires=get_task_ttl(provider),
@@ -120,7 +126,7 @@ class UpdateIngest(superdesk.Command):
 
 
 @celery.task(soft_time_limit=1800)
-def update_provider(provider, rule_set=None):
+def update_provider(provider, rule_set=None, routing_scheme=None):
     """
     Fetches items from ingest provider as per the configuration, ingests them into Superdesk and
     updates the provider.
@@ -132,7 +138,7 @@ def update_provider(provider, rule_set=None):
     })
 
     for items in providers[provider.get('type')].update(provider):
-        ingest_items(items, provider, rule_set)
+        ingest_items(items, provider, rule_set, routing_scheme)
         stats.incr('ingest.ingested_items', len(items))
 
     logger.info('Provider {0} updated'.format(provider['_id']))
@@ -178,12 +184,18 @@ def apply_rule_set(item, provider, rule_set=None):
         raise ProviderError.ruleError(ex, provider)
 
 
-def ingest_items(items, provider, rule_set=None):
+def ingest_items(items, provider, rule_set=None, routing_scheme=None):
     all_items = filter_expired_items(provider, items)
     items_dict = {doc['guid']: doc for doc in all_items}
+    items_in_package = []
+
+    for item in [doc for doc in all_items if doc.get('type') == 'composite']:
+        items_in_package = [ref['residRef'] for group in item.get('groups', [])
+                            for ref in group.get('refs', []) if 'residRef' in ref]
 
     for item in [doc for doc in all_items if doc.get('type') != 'composite']:
-        ingest_item(item, provider, rule_set)
+        ingest_item(item, provider, rule_set,
+                    routing_scheme=routing_scheme if not item['guid'] in items_in_package else None)
 
     for item in [doc for doc in all_items if doc.get('type') == 'composite']:
         for ref in [ref for group in item.get('groups', [])
@@ -192,10 +204,10 @@ def ingest_items(items, provider, rule_set=None):
             itemRendition = items_dict.get(ref['residRef'], {}).get('renditions')
             if itemRendition:
                 ref.setdefault('renditions', itemRendition)
-        ingest_item(item, provider, rule_set)
+        ingest_item(item, provider, rule_set, routing_scheme)
 
 
-def ingest_item(item, provider, rule_set=None):
+def ingest_item(item, provider, rule_set=None, routing_scheme=None):
     try:
         item.setdefault('_id', item['guid'])
         providers[provider.get('type')].provider = provider
@@ -231,6 +243,12 @@ def ingest_item(item, provider, rule_set=None):
             except HTTPException as e:
                 logger.error("Exception while persisting item in ingest collection", e)
                 ingest_service.put(item['guid'], item)
+
+        if routing_scheme:
+            superdesk.get_resource_service('routing_schemes')\
+                .apply_routing_scheme(ingest_service.find_one(_id=item['guid'], req=None),
+                                      provider, routing_scheme)
+
     except ProviderError:
         raise
     except Exception as ex:
