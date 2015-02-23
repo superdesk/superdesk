@@ -48,9 +48,16 @@ class Command(BaseCommand):
     That's the reason we are inheriting the Flask-Script's Command to overcome this issue.
     """
 
-    def __call__(self, app=None, *args, **kwargs):
-        with app.app_context():
-            return self.run(*args, **kwargs)
+    def __call__(self, _app=None, *args, **kwargs):
+        try:
+            with app.app_context():
+                res = self.run(*args, **kwargs)
+                print('Command finished with: ', res)
+                return 0
+        except Exception as ex:
+            print('Uhoh, an exception occured while running the command...')
+            logger.exception(ex)
+            return 1
 
 
 def get_headers(self, environ=None):

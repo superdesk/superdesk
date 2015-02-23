@@ -21,9 +21,9 @@
         <div class="line">
             <div class="state-label state-{{item.state}}">{{item.state}}</div>
             <div class="headline">
-                <span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span>
-                {{ item.headline || item.type }}
-                <span sd-item-container data-item="item" class="container"></span>
+                <span class="keyword" title="{{ item.slugline }}" ng-if="item.slugline">{{ item.slugline | truncateString: 40}}</span>
+                <span title="{{ item.headline }}">{{ item.headline | truncateString: 90 || item.type }}</span> 
+                <span sd-item-container data-item="item" title="{{ item.container }}" class="container"></span>
             </div>
             <time sd-datetime data-date="item.versioncreated"></time>
         </div>
@@ -37,7 +37,7 @@
     </div>
 </div>
 
-<div class="item-right list-field">
+<div class="item-right list-field" ng-if="focused">
     <div class="action">
         <ul ng-if="extras.activity" class="item-functions"
             sd-activity-list

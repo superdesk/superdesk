@@ -895,6 +895,37 @@ def we_post_to_reset_password(context):
         context.token = token
 
 
+@then('we can check if token is valid')
+def we_can_check_token_is_valid(context):
+    data = {'token': context.token}
+    headers = [('Content-Type', 'multipart/form-data')]
+    headers = unique_headers(headers, context.headers)
+    context.response = context.client.post(get_prefixed_url(context.app, '/reset_user_password'),
+                                           data=data, headers=headers)
+    expect_status_in(context.response, (200, 201))
+
+
+@then('we update token to be expired')
+def we_update_token_to_expired(context):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        expiry = utc.utcnow() - timedelta(days=2)
+        reset_request = get_resource_service('reset_user_password').find_one(req=None, token=context.token)
+        reset_request['expire_time'] = expiry
+        id = reset_request.pop('_id')
+        get_resource_service('reset_user_password').patch(id, reset_request)
+
+
+@then('token is invalid')
+def check_token_invalid(context):
+    data = {'token': context.token}
+    headers = [('Content-Type', 'multipart/form-data')]
+    headers = unique_headers(headers, context.headers)
+    context.response = context.client.post(get_prefixed_url(context.app, '/reset_user_password'),
+                                           data=data, headers=headers)
+    print(context.response.get_data())
+    expect_status_in(context.response, (403, 401))
+
+
 @when('we post to reset_password we do not get email with token')
 def we_post_to_reset_password_it_fails(context):
     data = {'email': 'foo@bar.org'}
@@ -921,7 +952,7 @@ def we_fail_to_reset_password_for_user(context):
     step_impl_then_get_error(context, 403)
 
 
-@when('we reset password for user')
+@then('we reset password for user')
 def we_reset_password_for_user(context):
     start_reset_password_for_user(context)
     expect_status_in(context.response, (200, 201))

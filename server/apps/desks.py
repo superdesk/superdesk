@@ -87,7 +87,7 @@ class DesksService(BaseService):
 class UserDesksResource(Resource):
     url = 'users/<regex("[a-f0-9]{24}"):user_id>/desks'
     schema = desks_schema
-    datasource = {'source': 'desks'}
+    datasource = {'source': 'desks', 'default_sort': [('name', 1)]}
     resource_methods = ['GET']
 
 

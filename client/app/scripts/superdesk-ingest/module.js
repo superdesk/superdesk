@@ -23,6 +23,10 @@ define([
             label: 'Reuters',
             templateUrl: 'scripts/superdesk-ingest/views/settings/reutersConfig.html'
         },
+        rss: {
+            label: 'RSS',
+            templateUrl: 'scripts/superdesk-ingest/views/settings/rssConfig.html'
+        },
         afp: {
             label: 'AFP',
             templateUrl: 'scripts/superdesk-ingest/views/settings/afpConfig.html'
@@ -30,6 +34,10 @@ define([
         ftp: {
             label: 'FTP',
             templateUrl: 'scripts/superdesk-ingest/views/settings/ftp-config.html'
+        },
+        teletype: {
+            label: 'Teletype',
+            templateUrl: 'scripts/superdesk-ingest/views/settings/teletypeConfig.html'
         }
     });
 
@@ -129,6 +137,7 @@ define([
         $injector.invoke(BaseListController, this, {$scope: $scope});
 
         $scope.type = 'ingest';
+        $scope.loading = false;
         $scope.repo = {
             ingest: true,
             archive: false
@@ -137,8 +146,12 @@ define([
         $rootScope.currentModule = 'ingest';
 
         this.fetchItems = function(criteria) {
+            $scope.loading = true;
             api.ingest.query(criteria).then(function(items) {
                 $scope.items = items;
+            })
+            ['finally'](function() {
+                $scope.loading = false;
             });
         };
 
@@ -154,6 +167,7 @@ define([
         });
 
         $scope.$on('ingest:update', update);
+        $scope.$on('item:fetch', update);
         $scope.$watchCollection(function getSearchWithoutId() {
             return _.omit($location.search(), '_id');
         }, update);
@@ -296,6 +310,22 @@ define([
                 };
 
                 $scope.setConfig = function(provider) {
+                    $scope.provider.config = provider.config;
+                };
+
+                /**
+                * Updates provider configuration object. It also clears the
+                * username and password fields, if authentication is not
+                * needed for an RSS source.
+                *
+                * @method setRssConfig
+                * @param {Object} provider ingest provider instance
+                */
+                $scope.setRssConfig = function(provider) {
+                    if (!provider.config.auth_required) {
+                        provider.config.username = null;
+                        provider.config.password = null;
+                    }
                     $scope.provider.config = provider.config;
                 };
 
@@ -777,6 +807,7 @@ define([
             .activity('archive', {
                 label: gettext('Fetch'),
                 icon: 'archive',
+                monitor: true,
                 controller: ['api', 'data', 'desks', function(api, data, desks) {
                     api.archiveIngest.create({
                         guid: data.item.guid,
@@ -785,12 +816,18 @@ define([
                     .then(function(archiveItem) {
                         data.item.task_id = archiveItem.task_id;
                         data.item.archived = archiveItem.archived;
+                    }, function(response) {
+                        data.item.error = response;
+                    })
+                    ['finally'](function() {
+                        data.item.actioning.archive = false;
                     });
                 }],
                 filters: [
                     {action: 'list', type: 'ingest'}
                 ],
-                action: 'fetch_as_from_ingest'
+                action: 'fetch_as_from_ingest',
+                key: 'f'
             });
     }]);
 

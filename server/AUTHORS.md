@@ -8,6 +8,7 @@ various contributors:
 - Anca Farcas
 - Ioan Pocol
 - Mugur Rus
+- Peter Lamut
 - Yauhen Kirylau
 
 #### Contributions

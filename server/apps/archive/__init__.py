@@ -130,6 +130,6 @@ def init_app(app):
     superdesk.intrinsic_privilege(ArchiveUnlockResource.endpoint_name, method=['POST'])
 
 
-@celery.task()
+@celery.task
 def content_purge():
     ArchiveRemoveExpiredContent().run()

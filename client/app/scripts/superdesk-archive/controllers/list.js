@@ -6,9 +6,9 @@ define([
 
     ArchiveListController.$inject = [
         '$scope', '$injector', '$location',
-        'superdesk', 'session', 'api', 'ContentCtrl', 'StagesCtrl'
+        'superdesk', 'session', 'api', 'desks', 'ContentCtrl', 'StagesCtrl'
     ];
-    function ArchiveListController($scope, $injector, $location, superdesk, session, api, ContentCtrl, StagesCtrl) {
+    function ArchiveListController($scope, $injector, $location, superdesk, session, api, desks, ContentCtrl, StagesCtrl) {
 
         var resource;
         var self = this;
@@ -25,6 +25,11 @@ define([
         };
         $scope.loading = false;
         $scope.spike = !!$location.search().spike;
+
+        desks.fetchCurrentUserDesks()
+        .then(function(userDesks) {
+            $scope.selected.desk = _.find(userDesks._items, {_id: desks.getCurrentDeskId()});
+        });
 
         $scope.toggleSpike = function toggleSpike() {
             $scope.spike = !$scope.spike;

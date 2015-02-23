@@ -48,8 +48,14 @@ define([
 
         var query = $location.search();
         if (query.token) {
-            $scope.token = query.token;
-            $scope.flowStep = 3;
+            api.resetPassword.create({token: query.token})
+            .then(function(result) {
+                $scope.token = query.token;
+                $scope.flowStep = 3;
+            }, function(rejection) {
+                $scope.setPasswordError = rejection.status;
+                $scope.flowStep = 1;
+            });
         } else {
             $scope.flowStep = 1;
         }

@@ -29,17 +29,17 @@ Feature: Archive Ingest
         """
         And "ingest"
         """
-        [{"guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401", "state": "ingested"}]
+        [{"guid": "tag_reuters.com_0000_newsml_GM1EA6A1P8401", "state": "ingested"}]
         """
         When we post to "/archive_ingest"
         """
         {
-        "guid": "tag:reuters.com,0000:newsml_GM1EA6A1P8401", "desk": "#desks._id#"
+        "guid": "tag_reuters.com_0000_newsml_GM1EA6A1P8401", "desk": "#desks._id#"
         }
         """
         Then we get archive ingest result
         """
-        {"state": "FAILURE",  "error": "For ingest with guid= tag:reuters.com,0000:newsml_GM1EA6A1P8401, failed to retrieve provider with _id=None"}
+        {"state": "FAILURE",  "error": "For ingest with guid= tag_reuters.com_0000_newsml_GM1EA6A1P8401, failed to retrieve provider with _id=None"}
         """
 
     @auth
@@ -50,11 +50,11 @@ Feature: Archive Ingest
         """
         [{"name": "Sports"}]
         """
-    	When we fetch from "reuters" ingest "tag:reuters.com,0000:newsml_GM1EA7M13RP01"
+    	When we fetch from "reuters" ingest "tag_reuters.com_0000_newsml_GM1EA7M13RP01"
         When we post to "/archive_ingest" with success
         """
         {
-        "guid": "tag:reuters.com,0000:newsml_GM1EA7M13RP01", "desk": "#desks._id#"
+        "guid": "tag_reuters.com_0000_newsml_GM1EA7M13RP01", "desk": "#desks._id#"
         }
         """
         Then we get "_id"
@@ -75,11 +75,11 @@ Feature: Archive Ingest
     @provider
     Scenario: Move item into archive with no desk - fail
         Given empty "archive"
-    	When we fetch from "reuters" ingest "tag:reuters.com,0000:newsml_GM1EA7M13RP01"
+    	When we fetch from "reuters" ingest "tag_reuters.com_0000_newsml_GM1EA7M13RP01"
         When we post to "/archive_ingest"
         """
         {
-        "guid": "tag:reuters.com,0000:newsml_GM1EA7M13RP01"
+        "guid": "tag_reuters.com_0000_newsml_GM1EA7M13RP01"
         }
         """
         Then we get error 400
@@ -95,11 +95,11 @@ Feature: Archive Ingest
         """
         [{"name": "Sports"}]
         """
-    	When we fetch from "reuters" ingest "tag:reuters.com,2014:newsml_KBN0FL0NM"
+    	When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM"
         And we post to "/archive_ingest"
         """
         {
-        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM", "desk": "#desks._id#"
+        "guid": "tag_reuters.com_2014_newsml_KBN0FL0NM", "desk": "#desks._id#"
         }
         """
 		And we get "/archive"
@@ -167,11 +167,11 @@ Feature: Archive Ingest
             """
         And ingest from "reuters"
             """
-            [{"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"}]
+            [{"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E"}]
             """
         When we post to "/archive_ingest"
             """
-            {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
+            {"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
             """
         Then we get new resource
         When we get "/archive?q=#desks._id#"
@@ -187,11 +187,11 @@ Feature: Archive Ingest
         """
         And ingest from "reuters"
         """
-        [{"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E"}]
+        [{"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E"}]
         """
         When we post to "/archive_ingest"
         """
-        {"guid": "tag:reuters.com,2014:newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
+        {"guid": "tag_reuters.com_2014_newsml_LOVEA6M0L7U2E", "desk": "#desks._id#"}
         """
         Then we get "_id"
         When we post to "/archive/#_id#/lock"

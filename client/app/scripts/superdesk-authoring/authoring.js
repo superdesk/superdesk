@@ -437,7 +437,7 @@
          */
         $scope.close = function() {
             _closing = true;
-            authoring.close(item, $scope.item, $scope.dirty).then(function() {
+            authoring.close(item, $scope.dirty).then(function() {
                 $location.url($scope.referrerUrl);
             });
         };

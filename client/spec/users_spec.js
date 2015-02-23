@@ -71,11 +71,10 @@ describe('USERS', function() {
     });
 
     describe('user edit:', function() {
-        beforeEach(function(done) {
-            openUrl('/#/users/')();
+        beforeEach(openUrl('/#/users'));
+        beforeEach(function() {
             element(by.repeater('user in users').row(1).column('username')).click();
             $('#open-user-profile').click();
-            done();
         });
 
         it('can enable/disable buttons based on form status', function() {

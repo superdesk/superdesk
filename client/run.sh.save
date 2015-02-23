@@ -1,0 +1,2 @@
+#!/bin/bash
+grunt server --server="https://master.sd-test.sourcefabric.org/api" --ws="ws:"#!/bin/bash

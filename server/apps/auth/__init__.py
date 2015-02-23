@@ -33,7 +33,7 @@ def init_app(app):
     SessionsResource(endpoint_name, app=app, service=service)
 
 
-@celery.task()
+@celery.task
 def session_purge():
     try:
         RemoveExpiredSessions().run()

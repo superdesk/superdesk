@@ -19,17 +19,18 @@ module.exports = {
         options: {livereload: true},
         files: [
             '<%= appDir %>/styles/**/*.css',
-            '<%= appDir %>/scripts/**/*.html'
+            '<%= appDir %>/scripts/**/*.html',
+            '<%= appDir %>/docs/**/*.html'
         ]
     },
     index: {
         options: {livereload: true},
         tasks: ['template'],
-        files: ['<%= appDir %>/index.html', '<%= appDir %>/docs.html']
+        files: ['<%= appDir %>/index.html']
     },
     less_docs: {
         options: {livereload: true},
-        tasks: ['less:docs'],
+        tasks: ['less:docs', 'cssmin'],
         files: [
             '<%= appDir %>/docs/**/*.less'
         ]
@@ -41,7 +42,7 @@ module.exports = {
     },
     html_docs: {
         options: {livereload: true},
-        tasks: [],
-        files: ['<%= appDir %>/docs/**/*.html']
+        tasks: ['template:docs'],
+        files: ['<%= appDir %>/docs.html']
     }
 };

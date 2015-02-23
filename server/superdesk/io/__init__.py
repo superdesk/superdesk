@@ -38,12 +38,12 @@ def register_provider(type, provider):
     allowed_providers.append(type)
 
 
-@celery.task()
+@celery.task(soft_time_limit=15)
 def update_ingest():
     UpdateIngest().run()
 
 
-@celery.task()
+@celery.task
 def gc_ingest():
     RemoveExpiredContent().run()
 
@@ -93,5 +93,6 @@ import superdesk.io.nitf
 import superdesk.io.newsml_2_0
 import superdesk.io.newsml_1_2
 import superdesk.io.wenn_parser
+import superdesk.io.teletype
 
 superdesk.privilege(name='ingest_providers', label='Ingest Channels', description='User can maintain Ingest Channels.')

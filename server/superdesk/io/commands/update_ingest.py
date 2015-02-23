@@ -115,12 +115,11 @@ class UpdateIngest(superdesk.Command):
                     'rule_set': get_provider_rule_set(provider)
                 }
                 update_provider.apply_async(
-                    task_id=get_task_id(provider),
                     expires=get_task_ttl(provider),
                     kwargs=kwargs)
 
 
-@celery.task
+@celery.task(soft_time_limit=1800)
 def update_provider(provider, rule_set=None):
     """
     Fetches items from ingest provider as per the configuration, ingests them into Superdesk and
