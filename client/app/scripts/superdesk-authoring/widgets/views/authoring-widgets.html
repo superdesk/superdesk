@@ -5,7 +5,7 @@
         'active-right': active.right,
         'right-extended': active.right.extended
     }">
-    <div class="tablist left-tablist" ng-if="item && editmode">
+    <div class="tablist left-tablist" ng-if="item">
         <ul class="navigation-tabs">
             <li ng-repeat="widget in widgets | orderBy:'order'"
                 ng-if="widget.side==='left' && widget.display[widget_target]"

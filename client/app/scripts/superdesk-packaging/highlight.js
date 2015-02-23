@@ -11,15 +11,15 @@
 (function() {
     'use strict';
 
-    HighlightsService.$inject = ['api', '$q', 'packagesService'];
-    function HighlightsService(api, $q, packagesService) {
+    HighlightsService.$inject = ['api', '$q', 'packages'];
+    function HighlightsService(api, $q, packages) {
         this.createEmptyHighlight = function createEmptyHighlight(highlight) {
             var pkg_defaults = {
                 headline: highlight.name || '',
                 highlight: highlight._id || ''
             };
 
-            return packagesService.createEmptyPackage(pkg_defaults);
+            return packages.createEmptyPackage(pkg_defaults);
         };
     }
 
@@ -38,8 +38,8 @@
             controller: ['data', 'highlightsService', 'superdesk',
                 function(data, highlightsService, superdesk) {
                     if (data) {
-                        highlightsService.createEmptyHighlight(data).then(
-                            function(new_package) {
+                        highlightsService.createEmptyHighlight(data)
+                        .then(function(new_package) {
                             superdesk.intent('author', 'package', new_package);
                         });
                     } else {

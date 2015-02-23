@@ -42,9 +42,12 @@
 	.info {
 		.clearfix();
 	}
-	.headline a {
-		font-size: 14px;
-		color: #000;
+	.item-headline {
+		padding-right: 30px;
+		> div, > a {
+			font-size: 14px;
+			color: #000;
+		}
 	}
 	.text, .composite {
 		.border-radius(2px);
@@ -61,13 +64,6 @@
 				.opacity(50);
 			}
 		}
-	}
-	.remove {
-		background: none;
-		border: 0;
-		position: absolute;
-		right: 10px;
-		top: 10px;
 	}
 	.holder {
 		width: 120px;
@@ -99,7 +95,7 @@
 				height: auto;
 			}
 		}
-		.headline {
+		.item-headline {
 			max-height: 74px;
 			overflow: hidden;
 		}
@@ -114,7 +110,7 @@
 				.opacity(50);
 			}
 		}
-		.headline {
+		.item-headline {
 			max-height: 74px;
 			overflow: hidden;
 		}
