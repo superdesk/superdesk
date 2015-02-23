@@ -677,24 +677,41 @@ define([
 	}
 
 	function TimepickerAltDirective() {
+		var convertIn = function(time) {
+            return {
+                hours: parseInt(time.substr(0, 2), 10),
+                minutes: parseInt(time.substr(2, 2), 10)
+            };
+        };
+
+        var convertOut = function(hours, minutes) {
+            var h = hours.toString();
+            var m = minutes.toString();
+            if (h.length === 1) {
+                h = '0' + h;
+            }
+            if (m.length === 1) {
+                m = '0' + m;
+            }
+            return h + m;
+        };
+
 		return {
 			scope: {
-				model: '=',
-				filterIn: '=',
-				filterOut: '='
+				model: '='
 			},
 			templateUrl: 'scripts/superdesk/ui/views/sd-timepicker-alt.html',
 			link: function(scope) {
+				scope.open = false;
 				scope.step = 5;
+				scope.hours = 0;
+				scope.minutes = 0;
+
 				scope.$watch('model', function() {
-					var result = scope.filterIn(scope.model);
+					var result = convertIn(scope.model);
 					scope.hours = result.hours;
 					scope.minutes = result.minutes;
 				});
-
-				scope.update = function() {
-					scope.model = scope.filterOut(scope.hours, scope.minutes);
-				};
 
 				scope.range = function(min, max, step) {
 					step = step || 1;
@@ -703,6 +720,11 @@ define([
 						range.push(i);
 					}
 					return range;
+				};
+
+				scope.submit = function() {
+					scope.model = convertOut(scope.hours, scope.minutes);
+					scope.open = false;
 				};
 			}
 		};

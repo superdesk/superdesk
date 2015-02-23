@@ -673,6 +673,14 @@ define([
             link: function(scope) {
                 scope.newFetch = {};
                 scope.newPublish = {};
+                scope.deskLookup = {};
+                scope.stageLookup = {};
+
+                desks.initialize()
+                .then(function() {
+                    scope.deskLookup = desks.deskLookup;
+                    scope.stageLookup = desks.stageLookup;
+                });
 
                 scope.addFetch = function() {
                     if (scope.newFetch.desk && scope.newFetch.stage) {
@@ -730,25 +738,6 @@ define([
                     } else {
                         rule.schedule.day_of_week.push(day);
                     }
-                };
-
-                scope.convertIn = function(time) {
-                    return {
-                        hours: parseInt(time.substr(0, 2), 10),
-                        minutes: parseInt(time.substr(2, 2), 10)
-                    };
-                };
-
-                scope.convertOut = function(hours, minutes) {
-                    var h = hours.toString();
-                    var m = minutes.toString();
-                    if (h.length === 1) {
-                        h = '0' + h;
-                    }
-                    if (m.length === 1) {
-                        m = '0' + m;
-                    }
-                    return h + m;
                 };
             }
         };

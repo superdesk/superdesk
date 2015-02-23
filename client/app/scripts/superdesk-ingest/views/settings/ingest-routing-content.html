@@ -36,20 +36,18 @@
                     <button class="btn btn-info pull-right" ng-disabled="!schemeForm.$valid" ng-click="addRule()"><i class="icon-plus-small icon-white"></i> {{:: 'Add rule' | translate}}</button>
                 </header>
                 <div class="content">
-                    <ul sd-sortrules class="rule-list">
-                        <li ng-repeat="rule in editScheme.rules">
-                            <fieldset class="span-2">
-                                <div class="field">
-                                    {{rule.name}}
+                    <ul sd-sortrules class="pills-list rule-list">
+                        <li ng-repeat="rule in editScheme.rules" class="clearfix">
+                            <div class="header">
+                                <h6>{{rule.name}}</h6>
+                                <div class="actions">
+                                    <button ng-click="editRule(rule)" title="{{:: 'Edit rule' | translate }}">
+                                        <i class="icon-pencil"></i>
+                                    </button>
+                                    <button ng-click="removeRule(rule)" title="{{:: 'Remove rule' | translate }}">
+                                        <i class="icon-trash"></i>
+                                    </button>
                                 </div>
-                            </fieldset>
-                            <div class="actions">
-                                <button ng-click="editRule(rule)" title="{{:: 'Edit rule' | translate }}">
-                                    <i class="icon-pencil"></i>
-                                </button>
-                                <button ng-click="removeRule(rule)" title="{{:: 'Remove rule' | translate }}">
-                                    <i class="icon-trash"></i>
-                                </button>
                             </div>
                         </li>
                     </ul>
@@ -67,34 +65,32 @@
 
 <div sd-modal-view data-model="rule" class="ruleset-modal" ng-if="rule">
     <div class="modal-header"> <a href="" class="close" ng-click="cancelRule()"><i class="icon-close-small"></i></a>
-        <h3 translate ng-show="::rule.name" translate>Edit Rule</h3>
-        <h3 translate ng-hide="::rule.name" translate>Add New Rule</h3>
+        <h3 translate>
+            <span ng-show="::rule.name" translate>Edit Rule</span>
+            <span ng-hide="::rule.name" translate>Add New Rule</span>
+            <span>
+                <input type="text" class="input-xlarge" placeholder="{{ 'Rule name'|translate }}" ng-model="rule.name" required>
+            </span>
+        </h3>
     </div>
 
     <form name="ruleForm">
         <div class="modal-body">
-            <div class="split-content">
-                <header>
-                    <input type="text" class="input-xlarge" placeholder="{{ 'Rule name'|translate }}" ng-model="rule.name" required>
-                </header>
-                
-                <div class="content">
-                    <ul class="nav nav-tabs" ng-init="ruleTab = 'filter'">
-                        <li ng-class="{active: ruleTab === 'filter'}">
-                            <button ng-click="ruleTab = 'filter'" translate>Filter</button>
-                        </li>
-                        <li ng-class="{active: ruleTab === 'action'}">
-                            <button ng-click="ruleTab = 'action'" translate>Action</button>
-                        </li>
-                        <li ng-class="{active: ruleTab === 'schedule'}">
-                            <button ng-click="ruleTab = 'schedule'" translate>Schedule</button>
-                        </li>
-                    </ul>
-                    <div ng-if="ruleTab === 'filter'" sd-ingest-routing-filter data-rule="rule"></div>
-                    <div ng-if="ruleTab === 'action'" sd-ingest-routing-action data-rule="rule"></div>
-                    <div ng-if="ruleTab === 'schedule'" sd-ingest-routing-schedule data-rule="rule"></div>
+            <fieldset>
+                <div class="popup-subnav">
+                    <tabset>
+                        <tab heading="Filter" class="TabContent">
+                            <div sd-ingest-routing-filter data-rule="rule"></div>
+                        </tab>
+                        <tab heading="Action" class="TabContent">
+                            <div sd-ingest-routing-action data-rule="rule"></div>
+                        </tab>
+                        <tab heading="Schedule" class="TabContent">
+                            <div sd-ingest-routing-schedule data-rule="rule"></div>
+                        </tab>
+                    </tabset>
                 </div>
-            </div>
+            </fieldset>
         </div>
     </form>
 
