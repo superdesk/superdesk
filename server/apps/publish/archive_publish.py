@@ -10,11 +10,12 @@
 
 import logging
 
+from eve.versioning import resolve_document_version
 from flask import current_app as app
-from eve.utils import config
+from eve.utils import config, document_etag
 
-from apps.archive.common import item_url, get_user
-from superdesk.errors import InvalidStateTransitionError
+from apps.archive.common import item_url, get_user, insert_into_versions
+from superdesk.errors import InvalidStateTransitionError, SuperdeskApiError
 from superdesk.notification import push_notification
 from superdesk.services import BaseService
 import superdesk
@@ -53,11 +54,49 @@ class ArchivePublishService(BaseService):
             raise InvalidStateTransitionError()
 
     def update(self, id, updates):
-        updates[config.CONTENT_STATE] = 'published'
-        user = get_user()
-        item = self.backend.update(self.datasource, id, updates)
-        push_notification('item:publish', item=str(item.get('_id')), user=str(user))
-        return item
+        archived_item = super().find_one(req=None, _id=id)
+        try:
+            if archived_item['type'] == 'composite':
+                self.__publish_package_items(archived_item, updates[config.LAST_UPDATED])
+            user = get_user()
+            updates[config.CONTENT_STATE] = 'published'
+            item = self.backend.update(self.datasource, id, updates)
+            push_notification('item:publish', item=str(item.get('_id')), user=str(user))
+            return item
+        except KeyError:
+            raise SuperdeskApiError.badRequestError(message="A non-existent content id is requested to publish")
+        except Exception as e:
+            logger.error("Something bad happened while publishing %s".format(id), e)
+            raise SuperdeskApiError.internalError(message="Failed to publish the item")
+
+    def __publish_package_items(self, package, last_updated):
+        """
+        Publishes items of a package recursively
+
+        :return: True if all the items of a package have been published successfully. False otherwise.
+        """
+
+        items = [ref.get('residRef') for group in package.get('groups', [])
+                 for ref in group.get('refs', []) if 'residRef' in ref]
+
+        if items:
+            for guid in items:
+                doc = super().find_one(req=None, _id=guid)
+                try:
+                    if doc['type'] == 'composite':
+                        self.__publish_package_items(doc)
+
+                    resolve_document_version(document=doc, resource=ARCHIVE, method='PATCH', latest_doc=doc)
+                    doc[config.CONTENT_STATE] = 'published'
+                    doc[config.LAST_UPDATED] = last_updated
+                    doc[config.ETAG] = document_etag(doc)
+                    self.backend.update(self.datasource, guid, {config.CONTENT_STATE: doc[config.CONTENT_STATE],
+                                                                config.ETAG: doc[config.ETAG],
+                                                                config.VERSION: doc[config.VERSION],
+                                                                config.LAST_UPDATED: doc[config.LAST_UPDATED]})
+                    insert_into_versions(doc=doc)
+                except KeyError:
+                    raise SuperdeskApiError.badRequestError("A non-existent content id is requested to publish")
 
 
 superdesk.workflow_state('published')
