@@ -68,8 +68,7 @@ class RoutingRuleSchemeResource(Resource):
                     'type': 'dict',
                     'schema': {
                         'day_of_week': {
-                            'type': 'list',
-                            'allowed': ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
+                            'type': 'list'
                         },
                         'hour_of_day_from': {
                             'type': 'string'
@@ -144,7 +143,7 @@ class RoutingRuleSchemeService(BaseService):
             logger.warning("Routing Scheme % for provider % has no rules configured." %
                            (provider.get('name'), routing_scheme.get('name')))
 
-        for rule in self.get_scheduled_routing_rules(rules):
+        for rule in self.__get_scheduled_routing_rules(rules):
             if RoutingRuleValidator().is_valid_rule(ingest_item, rule.get('filter', {})):
                 self.__fetch(ingest_item, rule.get('actions', {}).get('fetch', []))
                 self.__publish(ingest_item, rule.get('actions', {}).get('publish', []))
@@ -188,6 +187,24 @@ class RoutingRuleSchemeService(BaseService):
             elif schedule is not None and (len(schedule) == 0 or (schedule.get('day_of_week') is None or len(
                     schedule.get('day_of_week', [])) == 0)):
                 raise SuperdeskApiError.badRequestError(message="Schedule when defined can't be empty.")
+            elif not self.__validate_schedule(schedule):
+                raise SuperdeskApiError.badRequestError(message="Invalid schedule.")
+
+    def __validate_schedule(self, schedule):
+        schedule = schedule or {}
+        if schedule:
+            day_of_week = [str(week_day).upper() for week_day in schedule.get('day_of_week', [])]
+            if not (len(set(day_of_week) & set(self.day_of_week)) == len(day_of_week)):
+                return False
+
+            if schedule.get('hour_of_day_from') or schedule.get('hour_of_day_to'):
+                try:
+                    return datetime.strptime(schedule.get('hour_of_day_from'), '%H%M') < \
+                        datetime.strptime(schedule.get('hour_of_day_to'), '%H%M')
+                except:
+                    return False
+
+        return True
 
     def __check_if_rule_name_is_unique(self, routing_scheme):
         """
@@ -201,7 +218,7 @@ class RoutingRuleSchemeService(BaseService):
             if len(rules_with_same_name) > 1:
                 raise SuperdeskApiError.badRequestError("Rule Names must be unique within a scheme")
 
-    def get_scheduled_routing_rules(self, rules, current_datetime=datetime.now()):
+    def __get_scheduled_routing_rules(self, rules, current_datetime=datetime.now()):
         """
         Iterates rules list and returns the list of rules that are scheduled.
         """
