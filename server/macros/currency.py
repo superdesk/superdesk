@@ -18,7 +18,7 @@ def get_rate():
 
 
 def usd_to_aud(item):
-    """Converts USD to AUD"""
+    """Convert USD to AUD."""
 
     rate = get_rate()
 

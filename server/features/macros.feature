@@ -1,3 +1,4 @@
+@wip
 Feature: Macros
 
     @auth
@@ -5,7 +6,7 @@ Feature: Macros
         When we get "/macros"
         Then we get list with 1+ items
             """
-            {"_items": [{"name": "usd_to_aud", "label": "Convert USD to AUD", "shortcut": "c"}]}
+            {"_items": [{"name": "usd_to_aud", "label": "Convert USD to AUD", "description": "Convert USD to AUD.", "shortcut": "c"}]}
             """
 
     @auth

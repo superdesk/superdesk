@@ -19,10 +19,6 @@ def get_public_props(item):
     return {k: v for k, v in item.items() if k != 'callback'}
 
 
-def get_macro(name):
-    return [macro for macro in macros if macro['name'] == name][0]
-
-
 class MacrosService(superdesk.Service):
 
     def get(self, req, lookup):
@@ -32,7 +28,7 @@ class MacrosService(superdesk.Service):
     def create(self, docs, **kwargs):
         ids = []
         for doc in docs:
-            macro = get_macro(doc['macro'])
+            macro = macros.find(doc['macro'])
             doc['item'] = macro['callback'](doc.get('item'))
             ids.append(macro['name'])
         return ids
@@ -47,7 +43,7 @@ class MacrosResource(superdesk.Resource):
         'macro': {
             'type': 'string',
             'required': True,
-            'allowed': (macro['name'] for macro in macros)
+            'allowed': macros
         },
         'item': {
             'type': 'dict',

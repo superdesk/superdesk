@@ -127,6 +127,7 @@ INSTALLED_APPS = [
     'superdesk.io.afp',
     'superdesk.io.ftp',
     'superdesk.io.rss',
+    'superdesk.macros',
 
     'apps.archive',
     'apps.stages',
@@ -146,8 +147,6 @@ INSTALLED_APPS = [
     'apps.rule_sets',
     'apps.highlights',
     'apps.macros',
-
-    'macros.currency',
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']
@@ -233,3 +232,8 @@ MAX_SEARCH_DEPTH = -1
 MAX_VALUE_OF_INGEST_SEQUENCE = 9999
 
 DAYS_TO_KEEP = int(env('INGEST_ARTICLES_TTL', '2'))
+
+MACROS_PATH = env('MACROS_PATH', os.path.join(
+    os.path.dirname(os.path.realpath(__file__)),
+    'macros'
+))
