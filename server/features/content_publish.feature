@@ -57,11 +57,11 @@ Feature: Content Publishing
         """
         [{"name": "Sports"}]
         """
-    	When we fetch from "reuters" ingest "tag:reuters.com,2014:newsml_KBN0FL0NM"
+    	When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM"
         And we post to "/archive_ingest"
         """
         {
-        "guid": "tag:reuters.com,2014:newsml_KBN0FL0NM", "desk": "#desks._id#"
+        "guid": "tag_reuters.com_2014_newsml_KBN0FL0NM", "desk": "#desks._id#"
         }
         """
 		And we get "/archive"
