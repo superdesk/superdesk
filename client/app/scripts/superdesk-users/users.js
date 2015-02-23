@@ -84,7 +84,6 @@
         var cache = $cacheFactory('userList');
 
         var DEFAULT_CACHE_KEY = '_nosearch';
-        var DEFAULT_QUEUE_KEY = '_queue'
         var DEFAULT_PAGE = 1;
         var DEFAULT_PER_PAGE = 20;
 
@@ -135,7 +134,7 @@
          * @returns {Promise}
          */
         userservice.getUser = function(id) {
-            return api('users').getById(id, {}, {cache: true});
+            return api('users').getById(id, undefined, true);
         };
 
         /**
