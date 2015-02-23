@@ -11,8 +11,8 @@
 
 from datetime import datetime
 from uuid import uuid4
-from eve.utils import config
 
+from eve.utils import config
 import flask
 from flask import current_app as app
 from eve.versioning import insert_versioning_documents
@@ -26,6 +26,7 @@ from superdesk.workflow import set_default_state, is_workflow_state_transition_v
 import superdesk
 from apps.archive.archive import SOURCE as ARCHIVE
 from superdesk.errors import SuperdeskApiError, IdentifierGenerationError
+
 
 GUID_TAG = 'tag'
 GUID_NEWSML = 'newsml'
@@ -156,24 +157,27 @@ def generate_unique_id_and_name(item):
         raise IdentifierGenerationError() from e
 
 
-def insert_into_versions(guid, task_id=None):
+def insert_into_versions(guid=None, doc=None):
     """
     There are some scenarios where the requests are not handled by eve. In those scenarios superdesk should be able to
     manually manage versions. Below are some scenarios:
 
-    1.  When user fetches a content from ingest collection the request is delegated to a Celery Task. This gets complex
-        when content is of type composite/package, in this case Celery task creates sub-tasks for each item in the
-        package.
+    1.  When user fetches a content from ingest collection the request is handled by archive_ingest API which doesn't
+        extend from ArchiveResource.
     2.  When user submits content to a desk the request is handled by /tasks API.
+    3.  When user publishes a package the items of the package also needs to be published. The publishing of items
+        in the package is not handled by eve.
     """
 
-    doc_in_archive_collection = get_resource_service(ARCHIVE).find_one(req=None, _id=guid)
+    if guid:
+        doc_in_archive_collection = get_resource_service(ARCHIVE).find_one(req=None, _id=guid)
+    else:
+        doc_in_archive_collection = doc
+
+    if not doc_in_archive_collection:
+        raise SuperdeskApiError.badRequestError(message='Document not found in archive collection')
+
     remove_unwanted(doc_in_archive_collection)
-
-    if task_id is not None and 'task_id' not in doc_in_archive_collection:
-        updates = get_resource_service(ARCHIVE).patch(guid, {"task_id": task_id, 'req_for_save': 'false'})
-        doc_in_archive_collection.update(updates)
-
     if app.config['VERSION'] in doc_in_archive_collection:
         insert_versioning_documents(ARCHIVE, doc_in_archive_collection)
 

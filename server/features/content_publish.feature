@@ -48,3 +48,67 @@ Feature: Content Publishing
       {"headline": "updating a published item"}
       """
       Then we get response code 400
+
+    @auth
+    @provider
+    Scenario: Publish a package
+    	Given empty "ingest"
+    	And "desks"
+        """
+        [{"name": "Sports"}]
+        """
+    	When we fetch from "reuters" ingest "tag_reuters.com_2014_newsml_KBN0FL0NM"
+        And we post to "/archive_ingest"
+        """
+        {
+        "guid": "tag_reuters.com_2014_newsml_KBN0FL0NM", "desk": "#desks._id#"
+        }
+        """
+		And we get "/archive"
+        Then we get list with 6 items
+        When we publish "#archive_ingest._id#"
+        Then we get OK response
+		When we get "/archive"
+        Then we get existing resource
+		"""
+		{
+            "_items": [
+                {
+                    "_version": 2,
+                    "state": "published"
+                },
+                {
+                    "_version": 2,
+                    "groups": [
+                        {
+                            "refs": [
+                                {"itemClass": "icls:text"},
+                                {"itemClass": "icls:picture"},
+                                {"itemClass": "icls:picture"},
+                                {"itemClass": "icls:picture"}
+                            ]
+                        },
+                        {"refs": [{"itemClass": "icls:text"}]}
+                    ],
+                    "state": "published",
+                    "type": "composite"
+                },
+                {
+                    "_version": 2,
+                    "state": "published"
+                },
+                {
+                    "_version": 2,
+                    "state": "published"
+                },
+                {
+                    "_version": 2,
+                    "state": "published"
+                },
+                {
+                    "_version": 2,
+                    "state": "published"
+                }
+            ]
+        }
+		"""
