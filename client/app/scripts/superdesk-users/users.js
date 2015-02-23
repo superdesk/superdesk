@@ -84,6 +84,7 @@
         var cache = $cacheFactory('userList');
 
         var DEFAULT_CACHE_KEY = '_nosearch';
+        var DEFAULT_QUEUE_KEY = '_queue'
         var DEFAULT_PAGE = 1;
         var DEFAULT_PER_PAGE = 20;
 
@@ -134,21 +135,27 @@
          * @returns {Promise}
          */
         userservice.getUser = function(id) {
-            var default_cache = buildKey(DEFAULT_CACHE_KEY, DEFAULT_PAGE);
+            var default_cache = buildKey(DEFAULT_CACHE_KEY, id, 1),
+                queue_cache = buildKey(DEFAULT_QUEUE_KEY, id, 1);
 
-            var value = cache.get(default_cache);
-            if (value) {
-                var user = _.find(value._items, {_id: id});
-                if (user) {
-                    return $q.when(user);
-                }
+            var user = cache.get(default_cache);
+            if (user) {
+                return $q.when(user);
             }
 
-            return api('users').getById(id)
-            .then(function(result) {
-                return result;
-            });
-
+            var queue = cache.get(queue_cache);
+            if (!queue) {
+                queue = api('users').getById(id)
+                .then(function(result) {
+                    cache.put(default_cache, result);
+                    cache.remove(queue_cache);
+                    return result;
+                }, function() {
+                    cache.remove(queue_cache);
+                });
+                cache.put(queue_cache, queue);
+            }
+            return queue;
         };
 
         /**
