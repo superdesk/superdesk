@@ -42,6 +42,7 @@ def setup_providers(context):
 
         result = superdesk.get_resource_service('ingest_providers').post(providers)
         context.providers['reuters'] = result[0]
+        context.providers['aap'] = result[1]
         context.provider_services['reuters'] = ReutersIngestService()
         context.provider_services['aap'] = AAPIngestService()
 

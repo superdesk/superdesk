@@ -162,12 +162,15 @@ Feature: Routing Scheme and Routing Rules
           "name": "routing rule scheme 1",
           "rules": [{
             "name": "Sports Rule",
-            "filter": {}
+            "filter": {},
+            "actions": {
+                "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+            }
           }]
         }
       ]
       """
-      Then we get response code 400
+      Then we get response code 201
 
     @auth
     Scenario: Create an invalid Routing Scheme with a empty actions
@@ -188,6 +191,140 @@ Feature: Routing Scheme and Routing Rules
       ]
       """
       Then we get response code 400
+
+
+    @auth @test
+    Scenario: Create an invalid Routing Scheme with an invalid schedule
+      Given empty "routing_schemes"
+      Given empty "desks"
+      When we post to "/desks"
+      """
+      {"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}
+      """
+      Then we get response code 201
+      When we post to "/routing_schemes"
+      """
+      [
+        {
+          "name": "routing rule scheme 1",
+          "rules": [
+            {
+              "name": "Sports Rule",
+              "filter": {
+                "category": [{"name": "Overseas Sport", "qcode": "S"}]
+              },
+              "actions": {
+                "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+              },
+              "schedule": {
+                "day_of_week": ["ddd", "TUE"]
+              }
+            }
+          ]
+        }
+      ]
+      """
+      Then we get response code 400
+      When we post to "/routing_schemes"
+      """
+      [
+        {
+          "name": "routing rule scheme 1",
+          "rules": [
+            {
+              "name": "Sports Rule",
+              "filter": {
+                "category": [{"name": "Overseas Sport", "qcode": "S"}]
+              },
+              "actions": {
+                "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+              },
+              "schedule": {
+                "day_of_week": ["FRI", "TUE"],
+                "hour_of_day_from": "ddd",
+                "hour_of_day_to": "0040"
+              }
+            }
+          ]
+        }
+      ]
+      """
+      Then we get response code 400
+      When we post to "/routing_schemes"
+      """
+      [
+        {
+          "name": "routing rule scheme 1",
+          "rules": [
+            {
+              "name": "Sports Rule",
+              "filter": {
+                "category": [{"name": "Overseas Sport", "qcode": "S"}]
+              },
+              "actions": {
+                "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+              },
+              "schedule": {
+                "day_of_week": ["FRI", "TUE"],
+                "hour_of_day_from": "",
+                "hour_of_day_to": "0040"
+              }
+            }
+          ]
+        }
+      ]
+      """
+      Then we get response code 400
+      When we post to "/routing_schemes"
+      """
+      [
+        {
+          "name": "routing rule scheme 1",
+          "rules": [
+            {
+              "name": "Sports Rule",
+              "filter": {
+                "category": [{"name": "Overseas Sport", "qcode": "S"}]
+              },
+              "actions": {
+                "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+              },
+              "schedule": {
+                "day_of_week": ["FRI", "TUE"],
+                "hour_of_day_from": "0600",
+                "hour_of_day_to": "0400"
+              }
+            }
+          ]
+        }
+      ]
+      """
+      Then we get response code 400
+      When we post to "/routing_schemes"
+      """
+      [
+        {
+          "name": "routing rule scheme 1",
+          "rules": [
+            {
+              "name": "Sports Rule",
+              "filter": {
+                "category": [{"name": "Overseas Sport", "qcode": "S"}]
+              },
+              "actions": {
+                "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+              },
+              "schedule": {
+                "day_of_week": ["FRI", "TUE"],
+                "hour_of_day_from": "0400",
+                "hour_of_day_to": "0600"
+              }
+            }
+          ]
+        }
+      ]
+      """
+      Then we get response code 201
 
     @auth
     Scenario: Create an invalid Routing Scheme with a empty schedule
@@ -336,7 +473,7 @@ Feature: Routing Scheme and Routing Rules
       Then we get response code 204
 
 
-    @auth @test
+    @auth
     Scenario: Delete routing scheme when in use
       Given empty "desks"
       When we post to "/desks"
