@@ -12,12 +12,12 @@ describe('login', function() {
     });
 
     it('form renders modal on load', function() {
-        expect(modal.btn).toBeDisplayed();
+        expect(modal.btn.isDisplayed()).toBe(true);
     });
 
     it('user can log in', function() {
         modal.login('admin', 'admin');
-        expect(modal.btn).not.toBeDisplayed();
+        expect(modal.btn.isDisplayed()).toBe(false);
         expect(browser.getCurrentUrl()).toBe(browser.baseUrl + '/#/workspace');
         element(by.css('button.current-user')).click();
         expect(element(by.css('.user-info .displayname')).getText()).toBe('admin');
@@ -30,16 +30,16 @@ describe('login', function() {
         browser.sleep(2000); // it reloads page
         browser.waitForAngular();
 
-        expect(modal.btn).toBeDisplayed();
-        expect(modal.username).toBeDisplayed();
+        expect(modal.btn.isDisplayed()).toBe(true);
+        expect(modal.username.isDisplayed()).toBe(true);
         expect(modal.username.getAttribute('value')).toBe('');
     });
 
     it('unknown user can\'t log in', function() {
         modal.login('foo', 'bar');
-        expect(modal.btn).toBeDisplayed();
+        expect(modal.btn.isDisplayed()).toBe(true);
         expect(browser.getCurrentUrl()).not.toBe(browser.baseUrl + '/#/workspace');
-        expect(modal.error).toBeDisplayed();
+        expect(modal.error.isDisplayed()).toBe(true);
     });
 
 });

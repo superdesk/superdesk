@@ -49,6 +49,8 @@ describe('USERS', function() {
                 .perform();
             activity.click();
 
+            browser.sleep(200); // let the modal animation finish
+
             var modal = element(by.css('.modal-dialog'));
             expect(modal.element(by.binding('bodyText')).getText())
                 .toBe('Please confirm you want to delete a user.');

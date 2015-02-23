@@ -23,7 +23,7 @@ function login() {
 
 // wait for login to finish
 function wait() {
-    return browser.sleep(100)
+    return browser.sleep(200)
         .then(function() {
             return browser.waitForAngular();
         });
