@@ -24,9 +24,19 @@ def get_subjectcodes():
 
     items = []
     for code in sorted(subject_codes):
-        items.append({'qcode': code, 'name': subject_codes[code]})
+        items.append({'qcode': code, 'name': subject_codes[code], 'parent': get_parent_code(code)})
 
     response_data = {'_items': items, '_meta': {'total': len(items)}}
     return send_response(None, (response_data, datetime(2012, 7, 10), None, 200))
+
+
+def get_parent_code(code):
+    parent_code = None
+    if code[-3:] != '000':
+        parent_code = code[:5] + '000'
+    elif code[2:5] != '000':
+        parent_code = code[:2] + '000000'
+
+    return parent_code
 
 superdesk.blueprint(bp)
