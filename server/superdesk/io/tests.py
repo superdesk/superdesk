@@ -13,6 +13,7 @@ from .commands.update_ingest import ingest_items
 from .reuters_mock import setup_reuters_mock, teardown_reuters_mock
 from .reuters import ReutersIngestService
 from .aap import AAPIngestService
+from .teletype import TeletypeIngestService
 import superdesk
 
 
@@ -37,6 +38,8 @@ def setup_providers(context):
              'config': {'username': app.config['REUTERS_USERNAME'],
                         'password': app.config['REUTERS_PASSWORD']}},
             {'name': 'AAP', 'type': 'aap', 'source': 'AAP Ingest', 'is_closed': False,
+             'config': {'path': os.path.join(os.path.abspath(os.path.dirname(__file__)), 'fixtures')}},
+            {'name': 'teletype', 'type': 'teletype', 'source': 'AAP Teletype', 'is_closed': False,
              'config': {'path': os.path.join(os.path.abspath(os.path.dirname(__file__)), 'fixtures')}}
         ]
 
@@ -44,6 +47,7 @@ def setup_providers(context):
         context.providers['reuters'] = result[0]
         context.provider_services['reuters'] = ReutersIngestService()
         context.provider_services['aap'] = AAPIngestService()
+        context.provider_services['teletype'] = TeletypeIngestService()
 
 
 def teardown_providers(context):
