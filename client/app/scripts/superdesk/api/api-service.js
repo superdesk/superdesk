@@ -152,11 +152,13 @@ define([
             /**
              * Query resource
              */
-            Resource.prototype.query = function(params) {
+            Resource.prototype.query = function(params, options) {
+                _.defaults(options, {cache: false});
                 return http({
                     method: 'GET',
                     url: this.url(),
-                    params: params
+                    params: params,
+                    cache: options.cache
                 });
             };
 
@@ -165,11 +167,13 @@ define([
              *
              * @param {String} _id
              */
-            Resource.prototype.getById = function(_id, params) {
+            Resource.prototype.getById = function(_id, params, options) {
+                _.defaults(options, {cache: false});
                 return http({
                     method: 'GET',
                     url: this.url(_id),
-                    params: params
+                    params: params,
+                    cache: options.cache
                 });
             };
 

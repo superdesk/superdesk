@@ -135,27 +135,7 @@
          * @returns {Promise}
          */
         userservice.getUser = function(id) {
-            var default_cache = buildKey(DEFAULT_CACHE_KEY, id, 1),
-                queue_cache = buildKey(DEFAULT_QUEUE_KEY, id, 1);
-
-            var user = cache.get(default_cache);
-            if (user) {
-                return $q.when(user);
-            }
-
-            var queue = cache.get(queue_cache);
-            if (!queue) {
-                queue = api('users').getById(id)
-                .then(function(result) {
-                    cache.put(default_cache, result);
-                    cache.remove(queue_cache);
-                    return result;
-                }, function() {
-                    cache.remove(queue_cache);
-                });
-                cache.put(queue_cache, queue);
-            }
-            return queue;
+            return api('users').getById(id, {}, {cache: true});
         };
 
         /**
