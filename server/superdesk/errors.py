@@ -175,7 +175,8 @@ class ProviderError(SuperdeskIngestError):
         2003: 'Rule could not be applied',
         2004: 'Ingest error',
         2005: 'Anpa category error',
-        2006: 'Expired content could not be filtered'
+        2006: 'Expired content could not be filtered',
+        2007: 'IPTC processing error'
     }
 
     @classmethod
@@ -201,6 +202,10 @@ class ProviderError(SuperdeskIngestError):
     @classmethod
     def providerFilterExpiredContentError(cls, exception, provider):
         return ProviderError(2006, exception, provider)
+
+    @classmethod
+    def iptcError(cls, exception, provider):
+        return ProviderError(2007, exception, provider)
 
 
 class ParserError(SuperdeskIngestError):

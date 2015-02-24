@@ -276,7 +276,7 @@ def fetch_from_provider(context, provider_name, guid, routing_scheme=None):
     provider_service = context.provider_services[provider.get('type')]
     provider_service.provider = provider
 
-    if provider.get('type') == 'aap':
+    if provider.get('type') == 'aap' or provider.get('type') == 'teletype':
         items = provider_service.parse_file(guid, provider)
     else:
         items = provider_service.fetch_ingest(guid)

@@ -27,6 +27,7 @@ from superdesk.stats import stats
 from superdesk.upload import url_for_media
 from superdesk.media.media_operations import download_file_from_url, process_file
 from superdesk.media.renditions import generate_renditions
+from superdesk.io.iptc import subject_codes
 
 
 UPDATE_SCHEDULE_DEFAULT = {'minutes': 5}
@@ -158,6 +159,35 @@ def process_anpa_category(item, provider):
         raise ProviderError.anpaError(ex, provider)
 
 
+def process_iptc_codes(item, provider):
+    """
+    Ensures that the higher level IPTC codes are present by inserting them if missing, for example
+    if given 15039001 (Formula One) make sure that 15039000 (motor racing) and 15000000 (sport) are there as well
+
+    :param item: A story item
+    :return: A story item with possible expanded subjects
+    """
+    try:
+        def iptc_already_exists(code):
+            for entry in item['subject']:
+                if 'qcode' in entry and code == entry['qcode']:
+                    return True
+            return False
+
+        for subject in item['subject']:
+            if 'qcode' in subject and len(subject['qcode']) == 8:
+
+                top_qcode = subject['qcode'][:2] + '000000'
+                if not iptc_already_exists(top_qcode):
+                    item['subject'].append({'qcode': top_qcode, 'name': subject_codes[top_qcode]})
+
+                mid_qcode = subject['qcode'][:5] + '000'
+                if not iptc_already_exists(mid_qcode):
+                    item['subject'].append({'qcode': mid_qcode, 'name': subject_codes[mid_qcode]})
+    except Exception as ex:
+        raise ProviderError.iptcError(ex, provider)
+
+
 def apply_rule_set(item, provider, rule_set=None):
     """
     Applies rules set on the item to be ingested into the system. If there's no rule set then the item will
@@ -218,6 +248,9 @@ def ingest_item(item, provider, rule_set=None, routing_scheme=None):
 
         if 'anpa-category' in item:
             process_anpa_category(item, provider)
+
+        if 'subject' in item:
+            process_iptc_codes(item, provider)
 
         apply_rule_set(item, provider, rule_set)
 

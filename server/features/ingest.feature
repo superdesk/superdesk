@@ -84,7 +84,7 @@ Feature: Fetch From Ingest
                     "type": "text"
                 }
             ]
-        } 
+        }
   		"""
 
     @auth
@@ -111,5 +111,36 @@ Feature: Fetch From Ingest
           "guid": "AAP.115314987.5417374",
           "state":"ingested",
           "ingest_provider_sequence" : "1747"
+		}
+  		"""
+
+    @auth
+    @provider
+    Scenario: Test iptc code expansion
+        Given empty "ingest"
+        When we fetch from "teletype" ingest "Standings__2014_14_635535729050675896.tst"
+        And we get "/ingest"
+        Then we get existing resource
+		"""
+		{
+		"_items": [
+		  {
+		    "type": "text",
+		    "subject" : [
+              {
+                  "name" : "Formula One",
+                  "qcode" : "15039001"
+              },
+              {
+                  "name" : "sport",
+                  "qcode" : "15000000"
+              },
+              {
+                  "name" : "motor racing",
+                  "qcode" : "15039000"
+              }
+              ]
+		  }
+		  ]
 		}
   		"""
