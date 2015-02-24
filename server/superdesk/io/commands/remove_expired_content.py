@@ -14,7 +14,7 @@ from eve.utils import ParsedRequest, date_to_str
 from datetime import timedelta
 from superdesk.utc import utcnow
 from superdesk.notification import push_notification
-from superdesk.io.ingest_provider_model import DAYS_TO_KEEP
+from superdesk.io.ingest_provider_model import INGEST_EXPIRY_MINUTES
 from superdesk.errors import ProviderError
 from superdesk.stats import stats
 
@@ -47,8 +47,8 @@ superdesk.command('ingest:clean_expired', RemoveExpiredContent())
 def remove_expired_data(provider):
     """Remove expired data for provider"""
     print('Removing expired content for provider: %s' % provider['_id'])
-    days_to_keep_content = provider.get('days_to_keep', DAYS_TO_KEEP)
-    expiration_date = utcnow() - timedelta(days=days_to_keep_content)
+    minutes_to_keep_content = provider.get('content_expiry', INGEST_EXPIRY_MINUTES)
+    expiration_date = utcnow() - timedelta(minutes=minutes_to_keep_content)
 
     items = get_expired_items(str(provider['_id']), expiration_date)
     if items.count() > 0:

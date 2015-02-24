@@ -15,7 +15,7 @@ from superdesk.io import allowed_providers
 from superdesk.activity import ACTIVITY_CREATE, ACTIVITY_EVENT, \
     ACTIVITY_DELETE, ACTIVITY_UPDATE, notify_and_add_activity
 from superdesk import get_resource_service
-from settings import DAYS_TO_KEEP
+from settings import INGEST_EXPIRY_MINUTES
 
 
 logger = logging.getLogger(__name__)
@@ -32,9 +32,9 @@ class IngestProviderResource(Resource):
             'required': True,
             'allowed': allowed_providers
         },
-        'days_to_keep': {
+        'content_expiry': {
             'type': 'integer',
-            'default': DAYS_TO_KEEP
+            'default': INGEST_EXPIRY_MINUTES
         },
         'config': {
             'type': 'dict'
