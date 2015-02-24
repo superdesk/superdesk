@@ -126,6 +126,7 @@ define([
                 users: null,
                 stages: null,
                 deskLookup: {},
+                stageLookup: {},
                 userLookup: {},
                 deskMembers: {},
                 deskStages: {},
@@ -160,6 +161,9 @@ define([
                     return api('stages').query({max_results: 500})
                     .then(function(result) {
                         self.stages = result;
+                        _.each(result._items, function(stage) {
+                            self.stageLookup[stage._id] = stage;
+                        });
                     });
                 },
                 generateDeskMembers: function() {

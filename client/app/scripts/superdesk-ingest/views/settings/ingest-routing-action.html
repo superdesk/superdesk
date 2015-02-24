@@ -1,20 +1,38 @@
-<div><span translate>Fetch in</span>:
-    <div ng-repeat="fetchAction in rule.actions.fetch">
-        <div sd-deskstagepicker data-desk="fetchAction.desk" data-stage="fetchAction.stage"></div>
-        <button ng-click="removeFetch(fetchAction)" translate>Remove</button>
-    </div>
-    <span translate>New fetch action</span>:
-    <div sd-deskstagepicker data-desk="newFetch.desk" data-stage="newFetch.stage"></div>
-    <button ng-click="addFetch()" ng-disabled="!newFetch.desk || !newFetch.stage" translate>Add</button>
+<div class="field">
+    <label translate>Fetch</label>
+    <ul class="pills-list ruleset-list">
+        <li ng-repeat="fetchAction in rule.actions.fetch">
+            <div class="name">{{deskLookup[fetchAction.desk].name}} / {{stageLookup[fetchAction.stage].name}}</div>
+            <div class="actions">
+                <button ng-click="removeFetch(fetchAction)" title="{{:: 'Remove fetch action' | translate }}"><i class="icon-trash"></i></button>
+            </div>
+        </li>
+    </ul>
+    <div style="clear: both"></div>
+    <button class="btn" ng-hide="showNewFetch" ng-click="showNewFetch = true;" translate>New fetch action</button>
+    <div ng-show="showNewFetch" sd-deskstagepicker data-desk="newFetch.desk" data-stage="newFetch.stage"></div>
+    <button ng-show="showNewFetch" class="btn" ng-click="addFetch();showNewFetch = false" ng-disabled="!newFetch.desk || !newFetch.stage" translate>Add</button>
+    <button ng-show="showNewFetch" class="btn" ng-click="showNewFetch = false" translate>Cancel</button>
 </div>
-<div><span translate>Publish in</span>:
-    <div ng-repeat="publishAction in rule.actions.publish">
-        <div sd-deskstagepicker data-desk="publishAction.desk" data-stage="publishAction.stage"></div>
-        <button ng-click="removePublish(publishAction)" translate>Remove</button>
-    </div>
-    <span translate>new publish action</span>:
-    <div sd-deskstagepicker data-desk="newPublish.desk" data-stage="newPublish.stage"></div>
-    <button ng-click="addPublish()" ng-disabled="!newPublish.desk || !newPublish.stage" translate>Add</button>
+
+<div class="field">
+    <label translate>Publish</label>
+    <ul class="pills-list ruleset-list">
+        <li ng-repeat="publishAction in rule.actions.publish">
+            <div class="name">{{deskLookup[publishAction.desk].name}} / {{stageLookup[publishAction.stage].name}}</div>
+            <div class="actions">
+                <button ng-click="removePublish(publishAction)" title="{{:: 'Remove publish action' | translate }}"><i class="icon-trash"></i></button>
+            </div>
+        </li>
+    </ul>
+    <div style="clear: both"></div>
+    <button class="btn" ng-hide="showNewPublish" ng-click="showNewPublish = true;" translate>New publish action</button>
+    <div ng-show="showNewPublish" sd-deskstagepicker data-desk="newPublish.desk" data-stage="newPublish.stage"></div>
+    <button ng-show="showNewPublish" class="btn" ng-click="addPublish();showNewPublish = false" ng-disabled="!newPublish.desk || !newPublish.stage" translate>Add</button>
+    <button ng-show="showNewPublish" class="btn" ng-click="showNewPublish = false" translate>Cancel</button>
 </div>
-<span translate>Exit</span>
-<input type="checkbox" ng-model="rule.actions.exit">
+
+<div class="field">
+    <label translate>Exit</label>
+    <input type="checkbox" ng-model="rule.actions.exit">
+</div>

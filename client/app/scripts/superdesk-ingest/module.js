@@ -93,32 +93,19 @@ define([
                 var self = this;
 
                 _.each(this.rawSubjects._items, function(item) {
-                    self.qcodeLookup[item.qcode] = item.name;
+                    self.qcodeLookup[item.qcode] = item;
                 });
                 _.each(this.rawSubjects._items, function(item) {
-                    self.subjects.push({qcode: item.qcode, name: item.name, path: self.getPath(item.qcode)});
+                    self.subjects.push({qcode: item.qcode, name: item.name, path: self.getPath(item)});
                 });
 
                 return this.subjects;
             },
-            getPath: function(qcode) {
-                var self = this;
-
-                var path = [];
-                var current = '';
-                var padded;
-                _.each(qcode, function(c) {
-                    current = current + c.toString();
-                    padded = _.padRight(current, 8, 0);
-                    if (
-                        padded !== qcode &&
-                        self.qcodeLookup[padded] &&
-                        path.indexOf(self.qcodeLookup[padded]) === -1
-                    ) {
-                        path.push(self.qcodeLookup[padded]);
-                    }
-                });
-                path = path.join(' / ');
+            getPath: function(item) {
+                var path = '';
+                if (item.parent) {
+                    path = this.getPath(this.qcodeLookup[item.parent]) + this.qcodeLookup[item.parent].name + ' / ';
+                }
                 return path;
             },
             initialize: function() {
@@ -673,6 +660,14 @@ define([
             link: function(scope) {
                 scope.newFetch = {};
                 scope.newPublish = {};
+                scope.deskLookup = {};
+                scope.stageLookup = {};
+
+                desks.initialize()
+                .then(function() {
+                    scope.deskLookup = desks.deskLookup;
+                    scope.stageLookup = desks.stageLookup;
+                });
 
                 scope.addFetch = function() {
                     if (scope.newFetch.desk && scope.newFetch.stage) {
@@ -730,25 +725,6 @@ define([
                     } else {
                         rule.schedule.day_of_week.push(day);
                     }
-                };
-
-                scope.convertIn = function(time) {
-                    return {
-                        hours: parseInt(time.substr(0, 2), 10),
-                        minutes: parseInt(time.substr(2, 2), 10)
-                    };
-                };
-
-                scope.convertOut = function(hours, minutes) {
-                    var h = hours.toString();
-                    var m = minutes.toString();
-                    if (h.length === 1) {
-                        h = '0' + h;
-                    }
-                    if (m.length === 1) {
-                        m = '0' + m;
-                    }
-                    return h + m;
                 };
             }
         };
