@@ -50,13 +50,14 @@
 									<label translate>Desk description {{test}}</label>
 									<textarea class="fullwidth-input" ng-model="desk.edit.description"></textarea>
 								</div>
-								<div class="field">
+								<!-- <div class="field">
 									<label translate>Spike expiry</label>
 									<input type="number" class="input-mini" ng-model="SpikeExpiry.Hours" min ="0" required>
 									<span translate>hr</span>
 									<input type="number" class="input-mini" ng-model="SpikeExpiry.Minutes" min ="0" required>
                                     <span translate>min</span>
-								</div>
+								</div> -->
+								<div sd-content-expiry data-item="desk.edit" data-preview="false" data-expiryfield="spike_expiry"></div>
 							</fieldset>
 							<p ng-if="message">{{ message }}</p>
 							<span ng-show="_errorUniqueness" translate>Desk with name "{{ desk.edit.name }}" already exists.</span>
@@ -136,16 +137,17 @@
 								</div>
 							</div>
 
-							<div class="row" ng-show="selected && !editStage">
+							<div class="row" ng-if="selected && !editStage">
 								<div class="header"  translate>Stage Details</div>
 								<label translate>Global Read: <label class="label globalread">
 									{{(selected.is_visible == null || selected.is_visible) ? 'ON' : 'OFF'}}
 								</label></label>
 								<label translate>Stage description: {{ selected.description}}</label>
-								<label translate>Content expiry: 
+								<!-- <label translate>Content expiry: 
 									{{ ContentExpiry.Hours}} <span translate>hr</span>
 									{{ ContentExpiry.Minutes}} <span translate>min</span>
-								</label>
+								</label> -->
+								<div sd-content-expiry data-item="selected" data-preview="true" data-expiryfield="content_expiry"></div>
 							</div>
 
 							<div class="row" ng-if="editStage">
@@ -158,13 +160,14 @@
 									<label translate>Stage description</label>
 									<textarea class="fullwidth-input" ng-model="editStage.description"></textarea>
 								</div>
-								<div class="field">
+<!-- 								<div class="field">
 									<label translate>Content expiry</label>
 									<input type="number" class="input-mini" ng-model="ContentExpiry.Hours" min ="0" required>
 									<span translate>hr</span>
 									<input type="number" class="input-mini" ng-model="ContentExpiry.Minutes" min ="0" required>
 									<span translate>min</span>
-								</div>
+								</div> -->
+								<div sd-content-expiry data-item="editStage" data-preview="false" data-expiryfield="content_expiry"></div>
 							</div>
 						</div>
 					</div>

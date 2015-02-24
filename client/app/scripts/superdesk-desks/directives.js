@@ -28,14 +28,59 @@ define([
             }
         };
     }])
+    .directive('sdContentExpiry', [function() {
+        return {
+            templateUrl: 'scripts/superdesk-desks/views/content-expiry.html',
+            transclude:true,
+            scope: {
+              item : "=",
+              preview: "="
+            },
+            link: function(scope, elem, attrs) {
+                
+                var expiryfield = attrs.expiryfield;
+
+                scope.$watch('item', function() {
+                    scope.item.ContentExpiry = setContentExpiryHoursMins(scope.item);
+
+                    /*scope.$watch('item.ContentExpiry', function(oldValue, newValue) {
+                        if(oldValue !== newValue) {
+                            scope.item.content_expiry = scope.getTotalExpiryMinutes(scope.item.ContentExpiry);
+                        }
+                    }, true);*/
+                });
+
+                function getExpiryHours(inputMin) {
+                    return Math.floor(inputMin / 60);
+                }
+                
+                function getExpiryMinutes(inputMin) {
+                    return Math.floor(inputMin % 60);
+                }
+                
+                var getTotalExpiryMinutes = function(contentExpiry) {
+                    return (contentExpiry.Hours * 60) + contentExpiry.Minutes;
+                };
+
+                var setContentExpiryHoursMins = function(item) {
+                    var objContentExpiry = {
+                        Hours: 0,
+                        Minutes: 0
+                    };
+                    
+                    if (item[expiryfield] != null) {
+                        objContentExpiry.Hours = getExpiryHours(item[expiryfield]);
+                        objContentExpiry.Minutes = getExpiryMinutes(item[expiryfield]);
+                    }
+                    return objContentExpiry;
+                };
+            }
+        }
+    }])
     .directive('sdDeskeditBasic', ['gettext', 'desks', 'WizardHandler', function(gettext, desks, WizardHandler) {
         return {
 
             link: function(scope, elem, attrs) {
-                scope.SpikeExpiry = {
-                    Hours: 0,
-                    Minutes: 0
-                };
 
                 scope.$watch('step.current', function(step) {
                     if (step === 'general') {
@@ -47,13 +92,15 @@ define([
                 });
 
                 scope.edit = function(desk) {
-                    scope.SpikeExpiry = scope.setSpikeExpiryHoursMins(desk);
+                    //scope.SpikeExpiry = scope.setSpikeExpiryHoursMins(desk);
                     scope.desk.edit = _.create(desk);
                 };
 
                 scope.save = function(desk) {
                     scope.message = gettext('Saving...');
-                    scope.desk.edit.spike_expiry = scope.getTotalExpiryMinutes(scope.SpikeExpiry);
+                    scope.desk.edit.spike_expiry = scope.getTotalExpiryMinutes(scope.desk.edit.ContentExpiry);
+                    delete scope.desk.edit.ContentExpiry;
+
                     var _new = desk._id ? false : true;
                     desks.save(scope.desk.edit, desk).then(function() {
                         if (_new) {
@@ -134,7 +181,7 @@ define([
                         stage.is_visible = true;
                     }
 
-                    scope.ContentExpiry = scope.setContentExpiryHoursMins(stage);
+                    //scope.ContentExpiry = scope.setContentExpiryHoursMins(stage);
                     orig = stage;
                     scope.editStage = _.create(stage);
                     if (!scope.editStage._id) {
@@ -157,8 +204,9 @@ define([
                     if (scope.editStage && scope.editStage._id !== stage._id) {
                         return false;
                     }
+
                     scope.selected = stage;
-                    scope.ContentExpiry = scope.setContentExpiryHoursMins(stage);
+                    //scope.ContentExpiry = scope.setContentExpiryHoursMins(stage);
                 };
 
                 scope.setStatus = function(status) {
@@ -166,7 +214,8 @@ define([
                 };
 
                 scope.save = function() {
-                    scope.editStage.content_expiry = scope.getTotalExpiryMinutes(scope.ContentExpiry);
+                    scope.editStage.content_expiry = scope.getTotalExpiryMinutes(scope.editStage.ContentExpiry);
+                    delete scope.editStage.ContentExpiry;
                     if (!orig._id) {
                         _.extend(scope.editStage, {desk: scope.desk.edit._id});
                         api('stages').save({}, scope.editStage)

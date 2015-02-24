@@ -57,7 +57,7 @@ define([
             return (contentExpiry.Hours * 60) + contentExpiry.Minutes;
         };
 
-        $scope.setContentExpiryHoursMins = function(container) {
+/*        $scope.setContentExpiryHoursMins = function(container) {
             var objContentExpiry = {
                 Hours: 0,
                 Minutes: 0
@@ -67,7 +67,7 @@ define([
                 objContentExpiry.Minutes = getExpiryMinutes(container.content_expiry);
             }
             return objContentExpiry;
-        };
+        };*/
 
         $scope.setSpikeExpiryHoursMins = function(container) {
             var objSpikeExpiry = {
