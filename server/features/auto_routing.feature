@@ -230,7 +230,7 @@ Feature: Auto Routing
           "ingest": "AAP.0.6703189"
         }
         """
-        Then the ingest item is not routed based on routing scheme and rule "Finance Rule 1"
+        Then the ingest item is routed based on routing scheme and rule "Finance Rule 1"
         """
         {
           "routing_scheme": "#routing_schemes._id#",
