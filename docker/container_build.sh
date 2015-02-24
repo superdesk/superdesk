@@ -39,7 +39,7 @@ mkdir -p $SCREENSHOTS_DIR
 
 # reset repo files' dates:
 cd $BAMBOO_DIR
-find -print0 ./ | grep -vzZ .git/ | xargs -0 touch -t 200001010000.00
+find ./ -print0 | grep -vzZ .git/ | xargs -0 touch -t 200001010000.00
 
 # build container:
 cd $SCRIPT_DIR &&
