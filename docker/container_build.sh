@@ -39,9 +39,9 @@ mkdir -p $SCREENSHOTS_DIR
 
 # reset repo files' dates:
 cd $BAMBOO_DIR/server/
-find ./ | grep -v .git/ | xargs touch -t 200001010000.00
+find -print0 ./ | grep -vzZ .git/ | xargs -0 touch -t 200001010000.00
 cd $BAMBOO_DIR/client/
-find ./ | grep -v .git/ | xargs touch -t 200001010000.00
+find -print0 ./ | grep -vzZ .git/ | xargs -0 touch -t 200001010000.00
 
 # build container:
 cd $SCRIPT_DIR &&
