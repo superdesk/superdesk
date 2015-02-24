@@ -15,20 +15,25 @@ fieldset {
   padding: 0;
   margin: 0;
   border: 0;
+  &.separated {
+    border:1px solid #d0d0d0;
+    border-width: 1px 0;
+    padding-bottom: 10px;
+  }
 }
 
 // Groups of fields with labels on top (legends)
 legend {
   display: block;
-  width: 100%;
-  padding: 0;
-  margin-bottom: 27px;
-  font-size: 17px;
+  padding: 0 6px 0 0;
+  margin-bottom: 20px;
+  font-size: 12px;
   line-height: 31px;
-  color: #333;
+  color: #666;
   border: 0;
-  border-bottom: 1px solid #EEE;
-
+  text-transform: uppercase;
+  font-weight: 500;
+  background-color: transparent;
   // Small legend 
   &.small {
     margin-bottom: 10px;
@@ -39,9 +44,8 @@ legend {
     font-size: @baseLineHeight * .75;
     color: @grayLight;
   }
-
-
 }
+
 
 
 // Set font for forms
@@ -80,7 +84,7 @@ select,
   line-height: @baseLineHeight;
   color: @gray;
   border: 1px solid @inputBorder;
-  .border-radius(3px);
+  .border-radius(2px);
 }
 .uneditable-textarea {
   width: auto;
@@ -102,12 +106,17 @@ input[type="radio"] {
   height: auto;
   padding: 0;
   margin: 3px 0;
-  *margin-top: 0; /* IE7 */
+  display: inline-block;
   line-height: normal;
   cursor: pointer;
   .border-radius(0);
   border: 0 \9; /* IE9 and down */
 }
+label {
+  input[type="checkbox"], input[type="radio"] {
+    margin-right: 10px;
+  }
+} 
 input[type="image"] {
   border: 0;
 }
@@ -135,7 +144,6 @@ input[type="submit"] {
 select,
 input[type="file"] {
   height: 28px; /* In IE7, the height of the select element cannot be changed by height, only font-size */
-  *margin-top: 4px; /* For IE7, add top margin to align select with labels */
   line-height: 28px;
 }
 
@@ -595,7 +603,6 @@ select{
 }
 
 select {
-  margin: 2px;
   padding: 4px;
 }
 
