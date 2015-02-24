@@ -26,7 +26,7 @@
     <div ng-show="showNewSubject" sd-typeahead items="subjects" term="subjectTerm" search="searchSubjects(term)" select="selectSubject(item);showNewSubject = false">
         <ul>
             <li typeahead-item="s" ng-repeat="s in filteredSubjects">
-                <span ng-show="s.path">{{s.path}} / </span>{{s.name}}
+                <span ng-show="s.path">{{s.path}} </span>{{s.name}}
             </li>
         </ul>
     </div>

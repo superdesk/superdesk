@@ -93,32 +93,19 @@ define([
                 var self = this;
 
                 _.each(this.rawSubjects._items, function(item) {
-                    self.qcodeLookup[item.qcode] = item.name;
+                    self.qcodeLookup[item.qcode] = item;
                 });
                 _.each(this.rawSubjects._items, function(item) {
-                    self.subjects.push({qcode: item.qcode, name: item.name, path: self.getPath(item.qcode)});
+                    self.subjects.push({qcode: item.qcode, name: item.name, path: self.getPath(item)});
                 });
 
                 return this.subjects;
             },
-            getPath: function(qcode) {
-                var self = this;
-
-                var path = [];
-                var current = '';
-                var padded;
-                _.each(qcode, function(c) {
-                    current = current + c.toString();
-                    padded = _.padRight(current, 8, 0);
-                    if (
-                        padded !== qcode &&
-                        self.qcodeLookup[padded] &&
-                        path.indexOf(self.qcodeLookup[padded]) === -1
-                    ) {
-                        path.push(self.qcodeLookup[padded]);
-                    }
-                });
-                path = path.join(' / ');
+            getPath: function(item) {
+                var path = '';
+                if (item.parent) {
+                    path = this.getPath(this.qcodeLookup[item.parent]) + this.qcodeLookup[item.parent].name + ' / ';
+                }
                 return path;
             },
             initialize: function() {

@@ -677,6 +677,8 @@ define([
 	}
 
 	function TimepickerAltDirective() {
+		var STEP = 5;
+
 		var convertIn = function(time) {
             return {
                 hours: parseInt(time.substr(0, 2), 10),
@@ -696,6 +698,15 @@ define([
             return h + m;
         };
 
+        var range = function(min, max, step) {
+			step = step || 1;
+			var range = [];
+			for (var i = min; i <= max; i = i + step) {
+				range.push(i);
+			}
+			return range;
+		};
+
 		return {
 			scope: {
 				model: '='
@@ -703,24 +714,16 @@ define([
 			templateUrl: 'scripts/superdesk/ui/views/sd-timepicker-alt.html',
 			link: function(scope) {
 				scope.open = false;
-				scope.step = 5;
 				scope.hours = 0;
 				scope.minutes = 0;
+				scope.hoursRange = range(0, 23);
+				scope.minutesRange = range(0, 59, STEP);
 
 				scope.$watch('model', function() {
 					var result = convertIn(scope.model);
 					scope.hours = result.hours;
 					scope.minutes = result.minutes;
 				});
-
-				scope.range = function(min, max, step) {
-					step = step || 1;
-					var range = [];
-					for (var i = min; i <= max; i = i + step) {
-						range.push(i);
-					}
-					return range;
-				};
 
 				scope.submit = function() {
 					scope.model = convertOut(scope.hours, scope.minutes);
