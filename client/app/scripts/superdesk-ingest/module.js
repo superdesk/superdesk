@@ -271,6 +271,8 @@ define([
                 };
 
                 $scope.save = function() {
+                    $scope.provider.content_expiry = ($scope.provider.ContentExpiry.Hours * 60) + $scope.provider.ContentExpiry.Minutes;
+                    delete $scope.provider.ContentExpiry;
                     api.ingestProviders.save($scope.origProvider, $scope.provider)
                     .then(function() {
                         notify.success(gettext('Provider saved!'));
