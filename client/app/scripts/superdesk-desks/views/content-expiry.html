@@ -1,11 +1,11 @@
-<label translate ng-if="preview">Content expiry By Directive: 
-	{{ item.ContentExpiry.Hours}} <span translate>hr</span>
-	{{ item.ContentExpiry.Minutes}} <span translate>min</span>
+<label translate ng-if="preview">{{ContentExpiry.Header}}
+	{{ ContentExpiry.Hours}} <span translate>hr</span>
+	{{ ContentExpiry.Minutes}} <span translate>min</span>
 </label>
 <div class="field" ng-if="!preview">
-    <label translate>Content expiry By Directive</label>
-    <input type="number" class="input-mini" ng-model="item.ContentExpiry.Hours" min ="0" required>
+    <label translate>{{ContentExpiry.Header}}</label>
+    <input type="number" class="input-mini" ng-model="ContentExpiry.Hours" min ="0" required>
     <span translate>hr</span>
-    <input type="number" class="input-mini" ng-model="item.ContentExpiry.Minutes" min ="0" required>
+    <input type="number" class="input-mini" ng-model="ContentExpiry.Minutes" min ="0" required>
     <span translate>min</span>
 </div>
