@@ -1,16 +1,15 @@
 
-var openUrl = require('./helpers/utils').open;
+'use strict';
+
+var openUrl = require('./helpers/utils').open,
+    workspace = require('./helpers/pages').workspace;
 
 describe('Ingest', function() {
-    'use strict';
 
     beforeEach(openUrl('/#/workspace/ingest'));
 
     it('can fetch with keyboard', function() {
-
-        // select a desk
-        // element(by.partialButtonText('PERSONAL')).click();
-        // element(by.buttonText('Sports Desk')).click();
+        workspace.openDesk();
         expect(element.all(by.repeater('items._items')).count()).toBe(1);
 
         // select & fetch item
@@ -20,6 +19,7 @@ describe('Ingest', function() {
 
         // go to content and see it there
         browser.get('/#/workspace/content');
-        expect(element.all(by.repeater('items._items')).count()).toBe(1);
+        workspace.openDesk();
+        expect(element.all(by.repeater('item in items')).count()).toBe(1);
     });
 });
