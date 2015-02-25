@@ -46,7 +46,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('server', ['clean', 'style', 'template:test', 'connect:test', 'open:test', 'watch']);
     grunt.registerTask('server:e2e', ['clean', 'style', 'template:mock', 'connect:mock', 'watch']);
-    grunt.registerTask('server:travis', ['clean', 'style', 'template:mock', 'connect:travis']);
+    grunt.registerTask('server:travis', ['clean', 'style', 'template:travis', 'connect:travis']);
 
     grunt.registerTask('bower', [
         'build',
