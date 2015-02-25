@@ -162,6 +162,29 @@
         };
 
         /**
+         * Publish an item
+         *
+         *   and save it if dirty
+         *
+         * @param {Object} diff Edits.
+         * @param {boolean} isDirty $scope dirty status.
+         */
+        this.publish = function publishAuthoring(diff, isDirty) {
+            var promise = $q.when();
+            if (this.isEditable(diff)) {
+                if (isDirty) {
+                    promise = confirm.confirmPublish()
+                        .then(angular.bind(this, function save() {
+                            return this.save(diff);
+                        }), function() { // cancel
+                            return false;
+                        });
+                }
+            }
+
+            return promise;
+        };
+        /**
          * Autosave the changes
          *
          * @param {Object} item
@@ -338,6 +361,18 @@
             );
         };
 
+         /**
+         * In case $scope is dirty ask user if he want's to save changes and publish.
+         */
+        this.confirmPublish = function confirmPublish() {
+            return modal.confirm(
+                gettext('There are some unsaved changes, do you want to save it and publish now?'),
+                gettext('Save changes?'),
+                gettext('Save and publish'),
+                gettext('Cancel')
+            );
+        };
+
         /**
          * Make user aware that an item was unlocked
          *
@@ -440,6 +475,30 @@
             authoring.close(item, $scope.dirty).then(function() {
                 $location.url($scope.referrerUrl);
             });
+        };
+
+        function publishItem() {
+            return api.update('archive_publish', item, {state: 'published'}).then(function(result) {
+                    notify.success(gettext('Item updated.'));
+                    $scope.item = result;
+                    $scope.dirty = false;
+                }, function(response) {
+                    notify.error(gettext('Error. Item not updated.'));
+                });
+        }
+        $scope.publish = function() {
+            if ($scope.dirty) { // save & publish dialog
+                authoring.publish(item, $scope.dirty)
+                .then(function(res) {
+                    if (res) {
+                        publishItem();
+                    }
+                }, function(response) {
+                    notify.error(gettext('Error. Item not updated.'));
+                });
+            } else {
+                publishItem();
+            }
         };
 
         $scope.beforeSend = function() {
@@ -865,8 +924,8 @@
                         superdesk.intent('author', 'article', data.item);
 	                }],
                     filters: [{action: 'list', type: 'archive'}],
-                    condition: function(item) {
-                        return item.type !== 'composite';
+                    condition: function(item) { //console.log(item);
+                        return item.type !== 'composite' && item.state !== 'published';
                     }
 	            })
 	            .activity('view.text', {
