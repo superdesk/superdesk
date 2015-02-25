@@ -277,6 +277,10 @@ define([
                     $scope.rulesets = result._items;
                 });
 
+                api('routing_schemes').query().then(function(result) {
+                    $scope.routingScheme = result._items;
+                });
+
                 $scope.remove = function(provider) {
                     api.ingestProviders.remove(provider)
                     .then(function() {
