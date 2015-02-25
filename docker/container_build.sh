@@ -28,13 +28,14 @@ cd $SCRIPT_DIR &&
 docker-compose stop;
 docker-compose kill;
 docker-compose rm --force;
-rm -r $BAMBOO_DIR/data/db
-mkdir -p $BAMBOO_DIR/data/db
+rm -r $BAMBOO_DIR/data/
+mkdir -p $BAMBOO_DIR/data/{mongodb,elastic,redis}
 
 # cleanup tests' results:
 rm -r $BAMBOO_DIR/results/
 mkdir -p $SERVER_RESULTS_DIR/{unit,behave} &&
 mkdir -p $CLIENT_RESULTS_DIR/unit &&
+rm -r $SCREENSHOTS_DIR
 mkdir -p $SCREENSHOTS_DIR
 
 # reset repo files' dates:
