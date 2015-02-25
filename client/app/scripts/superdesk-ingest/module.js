@@ -278,7 +278,7 @@ define([
                 });
 
                 api('routing_schemes').query().then(function(result) {
-                    $scope.routingscheme = result._items;
+                    $scope.routingScheme = result._items;
                 });
 
                 $scope.remove = function(provider) {
