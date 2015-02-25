@@ -235,8 +235,8 @@ class RoutingRuleSchemeService(BaseService):
                 from_time = current_datetime.replace(hour=int(schedule.get('hour_of_day_from', '0000')[:2]),
                                                      minute=int(schedule.get('hour_of_day_from', '0000')[-2:]),
                                                      second=0)
-                to_time = current_datetime.replace(hour=int(schedule.get('hour_of_day_from', '2359')[:2]),
-                                                   minute=int(schedule.get('hour_of_day_from', '2359')[-2:]),
+                to_time = current_datetime.replace(hour=int(schedule.get('hour_of_day_to', '2359')[:2]),
+                                                   minute=int(schedule.get('hour_of_day_to', '2359')[-2:]),
                                                    second=59)
                 if not ((self.day_of_week[current_datetime.weekday()] in schedule.get('day_of_week', []))
                         and (from_time < current_datetime < to_time)):
