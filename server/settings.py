@@ -237,5 +237,3 @@ MAX_SEARCH_DEPTH = -1
 
 # Defines the maximum value of Ingest Sequence Number after which the value will start from 1
 MAX_VALUE_OF_INGEST_SEQUENCE = 9999
-
-DAYS_TO_KEEP = int(env('INGEST_ARTICLES_TTL', '2'))
