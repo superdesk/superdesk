@@ -209,16 +209,16 @@ define([
                 fetchCurrentDeskId: function() {
                     var self = this;
                     return preferencesService.get('desk:last_worked').then(function(result) {
-                        if (result && result.length > 0) {
-                            self.activeDeskId = result[0];
+                        if (angular.isDefined(result)) {
+                            self.activeDeskId = result;
                         }
                     });
                 },
                 fetchCurrentStageId: function() {
                     var self = this;
                     return preferencesService.get('stage:items').then(function(result) {
-                        if (result && result.length > 0) {
-                            self.activeStageId = result[0];
+                        if (angular.isDefined(result)) {
+                            self.activeDeskId = result;
                         }
                     });
                 },
