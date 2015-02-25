@@ -5,8 +5,6 @@
         .factory('BaseWidgetController', ['$location', '$timeout', 'superdesk', 'search', 'preferencesService', 'notify', 'ItemList',
         function BaseWidgetControllerFactory($location, $timeout, superdesk, search, preferencesService, notify, ItemList) {
 
-            var INGEST_EVENT = 'ingest:update';
-
             return function BaseWidgetController($scope) {
                 $scope.actions = $scope.actions || {};
                 $scope.$watch('widget.configuration', function() {

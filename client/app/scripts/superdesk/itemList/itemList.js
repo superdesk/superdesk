@@ -11,7 +11,7 @@ var DEFAULT_OPTIONS = {
 
 angular.module('superdesk.itemList', [])
 .service('itemListService', ['api', function(api) {
-    var getQuery = function(options) {
+    function getQuery(options) {
         var query = {source: {query: {filtered: {}}}};
         // process filter aliases and shortcuts
         if (options.sortField && options.sortDirection) {
@@ -65,12 +65,16 @@ angular.module('superdesk.itemList', [])
             query.source.query.filtered.filter.and.push({or: stateQuery});
         }
         // process creation date
-        _.each(['creationDate', 'modificationDate'], function(field) {
+        var dateKeys = {creationDate: 'firstcreated', modificationDate: 'versioncreated'};
+        var dateQuery = null;
+        _.each(dateKeys, function(key, field) {
             if (options[field + 'Before'] || options[field + 'After']) {
-                query.source.query.filtered.filter.and.push({range: {firstcreated: {
+                dateQuery = {};
+                dateQuery[key] = {
                     lte: options[field + 'Before'] || undefined,
                     gte: options[field + 'After'] || undefined
-                }}});
+                };
+                query.source.query.filtered.filter.and.push({range: dateQuery});
             }
         });
         // process provider, source, urgency
@@ -121,9 +125,10 @@ angular.module('superdesk.itemList', [])
         }
 
         return query;
-    };
+    }
+
     this.fetch = function(options) {
-        options = _.extend(DEFAULT_OPTIONS, options);
+        options = _.extend({}, DEFAULT_OPTIONS, options);
         var query = getQuery(options);
         return api(options.endpoint, options.endpointParam || undefined)
             .query(query)
@@ -175,7 +180,7 @@ angular.module('superdesk.itemList', [])
         return ItemList;
     }];
 })
-.directive('sdItemListWidget', ['ItemList', 'preferencesService', function(ItemList, preferencesService) {
+.directive('sdItemListWidget', ['ItemList', 'preferencesService', 'notify', function(ItemList, preferencesService, notify) {
     return {
         scope: {
             options: '=',
@@ -191,7 +196,7 @@ angular.module('superdesk.itemList', [])
 
             var pinnedList = {};
             var itemList = new ItemList();
-            
+
             itemList.addListener(function() {
                 scope.maxPage = itemList.maxPage;
                 scope.items = itemList.result;
