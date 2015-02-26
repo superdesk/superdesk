@@ -1308,7 +1308,6 @@ def then_ingest_item_is_routed_based_on_routing_scheme(context, rule_name):
 
 
 def validate_routed_item(context, rule_name, is_routed):
-
     def validate_rule(action, state):
         for destination in rule.get('actions', {}).get(action, []):
             query = {
@@ -1320,16 +1319,14 @@ def validate_routed_item(context, rule_name, is_routed):
                 ]
             }
 
-            req = ParsedRequest()
-            req.max_results = 100
-            req.args = {'filter': json.dumps(query)}
-            item = list(get_resource_service('archive').get(lookup=None, req=req))
+            item = get_archive_items(query)
 
             if is_routed:
                 assert item[0]['ingest_id'] == data['ingest']
                 assert item[0]['task']['desk'] == destination['desk']
                 assert item[0]['task']['stage'] == destination['stage']
                 assert item[0]['state'] == state
+                assert_items_in_package(item[0], state)
             else:
                 assert len(item) == 0
 
@@ -1365,3 +1362,23 @@ def when_we_schedule_the_routing_scheme(context, scheme_id):
                                                 data=json.dumps({'rules': res.get('rules', [])}),
                                                 headers=headers)
         assert_200(context.response)
+
+
+def get_archive_items(query):
+    req = ParsedRequest()
+    req.max_results = 100
+    req.args = {'filter': json.dumps(query)}
+    return list(get_resource_service('archive').get(lookup=None, req=req))
+
+
+def assert_items_in_package(item, state):
+    if item.get('groups'):
+        terms = [{'term': {'_id': ref.get('residRef')}}
+                 for ref in [ref for group in item.get('groups', [])
+                             for ref in group.get('refs', []) if 'residRef' in ref]]
+
+        query = {'or': terms}
+        items = get_archive_items(query)
+        assert len(items) == len(terms)
+        for item in items:
+            assert item.get('state') == state
