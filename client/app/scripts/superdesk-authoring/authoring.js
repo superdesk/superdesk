@@ -397,6 +397,8 @@
         $scope._editable = item._editable;
         $scope.widget_target = 'authoring';
 
+        $scope.sending = false;
+
         $scope.proofread = false;
 
         $scope.referrerUrl = referrer.getReferrerUrl();
@@ -443,9 +445,11 @@
         };
 
         $scope.beforeSend = function() {
+            $scope.sending = true;
             return $scope.save()
             .then(function() {
-                return lock.unlock(item);
+                var p = lock.unlock(item);
+                return p;
             });
         };
 
