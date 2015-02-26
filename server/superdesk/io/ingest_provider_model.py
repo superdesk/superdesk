@@ -15,7 +15,7 @@ from superdesk.io import allowed_providers
 from superdesk.activity import ACTIVITY_CREATE, ACTIVITY_EVENT, \
     ACTIVITY_DELETE, ACTIVITY_UPDATE, notify_and_add_activity
 from superdesk import get_resource_service
-from settings import DAYS_TO_KEEP
+from settings import INGEST_EXPIRY_MINUTES
 
 
 logger = logging.getLogger(__name__)
@@ -32,9 +32,9 @@ class IngestProviderResource(Resource):
             'required': True,
             'allowed': allowed_providers
         },
-        'days_to_keep': {
+        'content_expiry': {
             'type': 'integer',
-            'default': DAYS_TO_KEEP
+            'default': INGEST_EXPIRY_MINUTES
         },
         'config': {
             'type': 'dict'
@@ -88,6 +88,11 @@ class IngestProviderService(BaseService):
     def _get_administrators(self):
         return self.user_service.get_users_by_user_type('administrator')
 
+    def on_create(self, docs):
+        for doc in docs:
+            if doc.get('content_expiry', 0) == 0:
+                doc['content_expiry'] = INGEST_EXPIRY_MINUTES
+
     def on_created(self, docs):
         for doc in docs:
             notify_and_add_activity(ACTIVITY_CREATE, 'created Ingest Channel {{name}}', item=doc,
@@ -95,6 +100,10 @@ class IngestProviderService(BaseService):
                                     name=doc.get('name'))
 
         logger.info("Created Ingest Channel. Data:{}".format(docs))
+
+    def on_update(self, updates, original):
+        if updates.get('content_expiry') == 0:
+            updates['content_expiry'] = INGEST_EXPIRY_MINUTES
 
     def on_updated(self, updates, original):
 

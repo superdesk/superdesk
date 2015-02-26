@@ -225,6 +225,10 @@ SPIKE_EXPIRY_MINUTES = 300
 # akin.tolga 06/01/2014: using a large value (30 days) for the time being
 CONTENT_EXPIRY_MINUTES = 43200
 
+# The number of minutes before ingest items purged
+# 2880 = 2 days in minutes
+INGEST_EXPIRY_MINUTES = 2880
+
 # This setting can be used to apply a limit on the elastic search queries, it is a limit per shard.
 # A value of -1 indicates that no limit will be applied.
 # If for example the elastic has 5 shards and you wish to limit the number of search results to 1000 then set the value
@@ -233,5 +237,3 @@ MAX_SEARCH_DEPTH = -1
 
 # Defines the maximum value of Ingest Sequence Number after which the value will start from 1
 MAX_VALUE_OF_INGEST_SEQUENCE = 9999
-
-DAYS_TO_KEEP = int(env('INGEST_ARTICLES_TTL', '2'))

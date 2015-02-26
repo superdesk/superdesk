@@ -24,7 +24,7 @@ def setup_provider(token, hours):
         'name': PROVIDER,
         'type': PROVIDER,
         'source': PROVIDER,
-        'days_to_keep': 2,
+        'content_expiry': 2880,
         'token': {
             'token': token,
             'created': utcnow() - timedelta(hours=hours),

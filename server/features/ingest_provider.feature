@@ -26,7 +26,7 @@ Feature: Ingest Provider
         {"_items": [{
           "type": "reuters",
           "name": "reuters 4",
-          "days_to_keep": 2,
+          "content_expiry": 2880,
           "source": "reuters",
           "is_closed": false,
           "config": {"username": "foo", "password": "bar"},
