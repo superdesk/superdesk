@@ -2,7 +2,7 @@
 var post = require('./helpers/fixtures').post;
 var openUrl = require('./helpers/utils').open;
 
-describe('USERS', function() {
+describe('Users', function() {
     'use strict';
 
     beforeEach(function(done) {
