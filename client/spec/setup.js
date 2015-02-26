@@ -20,3 +20,12 @@ beforeEach(function(done) {
         });
     });
 });
+
+// show browser log
+afterEach(function() {
+    browser.manage().logs().get('browser').then(function(browserLog) {
+        if (browserLog.length) {
+            console.log('log: ' + require('util').inspect(browserLog));
+        }
+    });
+});
