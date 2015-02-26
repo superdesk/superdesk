@@ -99,7 +99,8 @@ class ArchiveIngestService(BaseService):
                     dest_doc[LINKED_IN_PACKAGES] = links
 
                 desk = doc.get('desk')
-                refs = [{'guid': ref.get('residRef'), 'desk': desk, PACKAGE: dest_doc.get('_id')}
+                refs = [{'guid': ref.get('residRef'), 'desk': desk,
+                         PACKAGE: dest_doc.get('_id'), 'state': doc.get('state', STATE_FETCHED)}
                         for group in dest_doc.get('groups', [])
                         for ref in group.get('refs', []) if 'residRef' in ref]
                 if refs:
