@@ -10,6 +10,14 @@ module.exports = function(grunt) {
             livereload: '<%= livereloadPort %>'
         },
         test: {options: {base: base}},
+        travis: {
+            options: {
+                base: base,
+                keepalive: true,
+                livereload: false,
+                port: 9000
+            }
+        },
         mock: {
             options: {
                 base: base,

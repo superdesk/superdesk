@@ -35,6 +35,10 @@ module.exports = function(grunt) {
             options: data('http://localhost:5000/api', true),
             files: files
         },
+        travis: {
+            options: data('http://localhost:5000/api'),
+            files: files
+        },
         test: {
             options: data('https://master.sd-test.sourcefabric.org/api'),
             files: files

@@ -1,8 +1,10 @@
 
-var openUrl = require('./helpers/utils').open;
+'use strict';
+
+var openUrl = require('./helpers/utils').open,
+    workspace = require('./helpers/pages').workspace;
 
 describe('Content', function() {
-    'use strict';
 
     beforeEach(openUrl('/#/workspace/content'));
 
@@ -11,8 +13,7 @@ describe('Content', function() {
     }
 
     beforeEach(function() {
-        element(by.partialButtonText('SPORTS DESK')).click();
-        element(by.buttonText('PERSONAL')).click();
+        workspace.openPersonal();
         expect(element.all(by.repeater('items._items')).count()).toBe(3);
     });
 
@@ -41,7 +42,16 @@ describe('Content', function() {
     });
 
     it('can toggle view with v', function() {
-        var body = $('body');
+        var body = $('body'),
+            gridBtn = element.all(by.css('.view-select button')).first();
+
+        // reset to grid view first
+        gridBtn.isDisplayed().then(function(isList) {
+            if (isList) {
+                gridBtn.click();
+            }
+        });
+
         expect(element.all(by.css('.state-border')).count()).toBe(0);
         body.sendKeys('v');
         expect(element.all(by.css('.state-border')).count()).toBe(3);

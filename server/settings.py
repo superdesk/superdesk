@@ -45,6 +45,9 @@ CLIENT_URL = env('SUPERDESK_CLIENT_URL', 'http://localhost:9000')
 URL_PROTOCOL = server_url.scheme or None
 SERVER_NAME = server_url.netloc or None
 URL_PREFIX = server_url.path.lstrip('/') or ''
+if SERVER_NAME.endswith(':80'):
+    SERVER_NAME = SERVER_NAME[:-3]
+
 VALIDATION_ERROR_STATUS = 400
 JSON_SORT_KEYS = True
 
