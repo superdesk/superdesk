@@ -6,13 +6,12 @@ var openUrl = require('./helpers/utils').open,
 
 describe('Content', function() {
 
-    beforeEach(openUrl('/#/workspace/content'));
-
     function selectedHeadline() {
         return element(by.binding('selected.preview.headline')).getText();
     }
 
     beforeEach(function() {
+        openUrl('/#/workspace/content')();
         workspace.openPersonal();
         expect(element.all(by.repeater('items._items')).count()).toBe(3);
     });
