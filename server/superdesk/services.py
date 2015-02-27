@@ -63,12 +63,12 @@ class BaseService():
         ids = self.backend.create(self.datasource, docs, **kwargs)
         return ids
 
-    def update(self, id, updates):
-        res = self.backend.update(self.datasource, id, updates)
+    def update(self, id, updates, original):
+        res = self.backend.update(self.datasource, id, updates, original)
         return res
 
-    def replace(self, id, document):
-        res = self.backend.replace(self.datasource, id, document)
+    def replace(self, id, document, original):
+        res = self.backend.replace(self.datasource, id, document, original)
         return res
 
     def delete(self, lookup):
@@ -88,7 +88,7 @@ class BaseService():
         for doc in docs:
             resolve_default_values(doc, app.config['DOMAIN'][self.datasource]['defaults'])
         self.on_create(docs)
-        resolve_document_etag(docs)
+        resolve_document_etag(docs, self.datasource)
         ids = self.create(docs, **kwargs)
         self.on_created(docs)
         return ids
@@ -99,9 +99,9 @@ class BaseService():
         self.on_update(updates, original)
         updated.update(updates)
         if config.IF_MATCH:
-            resolve_document_etag(updated)
+            resolve_document_etag(updated, self.datasource)
             updates[config.ETAG] = updated[config.ETAG]
-        res = self.update(id, updates)
+        res = self.update(id, updates, original)
         self.on_updated(updates, original)
         return res
 
@@ -109,8 +109,8 @@ class BaseService():
         resolve_default_values(document, app.config['DOMAIN'][self.datasource]['defaults'])
         original = self.find_one(req=None, _id=id)
         self.on_replace(document, original)
-        resolve_document_etag(document)
-        res = self.replace(id, document)
+        resolve_document_etag(document, self.datasource)
+        res = self.replace(id, document, original)
         self.on_replaced(document, original)
         return res
 

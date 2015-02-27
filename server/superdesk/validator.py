@@ -26,6 +26,13 @@ ERROR_REQUIRED = {'required': 1}
 
 
 class SuperdeskValidator(Validator):
+
+    def _validate_mapping(self, field, value):
+        pass
+
+    def _validate_index(self, field, value):
+        pass
+
     def _validate_type_phone_number(self, field, value):
         """ Enables validation for `phone_number` schema attribute.
             :param field: field name.
