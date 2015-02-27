@@ -46,7 +46,7 @@
     <div class="ingest-list-holder" ng-class="{'mode-detailed': options.mode === 'detailed'}">
         <div sd-shadow>
             <ul class="ingest-list list-view">
-                <li ng-repeat="item in items._items track by $index" class="list-item-view">
+                <li ng-repeat="item in processedItems track by $index" class="list-item-view">
                     <div class="dropdown more-actions" dropdown>
                         <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
                         <div class="dropdown-menu pull-right">

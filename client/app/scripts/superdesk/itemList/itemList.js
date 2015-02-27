@@ -180,7 +180,89 @@ angular.module('superdesk.itemList', [])
         return ItemList;
     }];
 })
-.directive('sdItemListWidget', ['ItemList', 'preferencesService', 'notify', function(ItemList, preferencesService, notify) {
+.factory('itemPinService', ['preferencesService', function(preferencesService) {
+    var PREF_KEY = 'pinned:items';
+
+    var itemPinService = {
+        items: null,
+        listeners: {ingest: [], archive: []},
+        load: function() {
+            var self = this;
+
+            return preferencesService.get(PREF_KEY)
+            .then(function(result) {
+                self.items = result;
+            }).then(function() {
+                self.updateListeners();
+            });
+        },
+        save: function() {
+            var self = this;
+
+            this.items = _.uniq(this.items, function(item) {return item._id});
+            var update = {};
+            update[PREF_KEY] = this.items;
+            return preferencesService.update(update, PREF_KEY)
+            .then(function() {
+                self.updateListeners();
+            });
+        },
+        get: function(type) {
+            return _.filter(this.items, {_type: type});
+        },
+        add: function(type, item) {
+            var self = this;
+
+            item._type = type;
+            this.load()
+            .then(function() {
+                self.items.push(item);
+                return self.save();
+            })
+            .then(function() {
+                self.updateListeners();
+            });
+        },
+        remove: function(item) {
+            var self = this;
+
+            this.load()
+            .then(function() {
+                _.remove(self.items, {_id: item._id});
+                return self.save();
+            })
+            .then(function() {
+                self.updateListeners();
+            });
+        },
+        isPinned: function(type, item) {
+            return !!_.find(this.items, {_type: type, _id: item._id});
+        },
+        addListener: function(type, listener) {
+            this.listeners[type].push(listener);
+            listener(this.get(type));
+        },
+        removeListener: function(type, listener) {
+            _.remove(this.listeners[type], function(i) {
+                return i === listener;
+            });
+        },
+        updateListeners: function() {
+            var self = this;
+
+            _.each(this.listeners, function(listeners, type) {
+                _.each(listeners, function(listener) {
+                    listener(self.get(type));
+                });
+            });
+        }
+    };
+    itemPinService.load();
+
+    return itemPinService;
+}])
+.directive('sdItemListWidget', ['ItemList', 'notify', 'itemPinService',
+function(ItemList, notify, itemPinService) {
     return {
         scope: {
             options: '=',
@@ -190,29 +272,12 @@ angular.module('superdesk.itemList', [])
         templateUrl: 'scripts/superdesk/itemList/views/item-list-widget.html',
         link: function(scope, element, attrs) {
             scope.items = null;
+            scope.processedItems = null;
             scope.maxPage = 1;
             scope.pinnedItems = [];
             scope.selected = null;
 
-            var pinnedList = {};
             var itemList = new ItemList();
-
-            itemList.addListener(function() {
-                scope.maxPage = itemList.maxPage;
-                scope.items = itemList.result;
-                processItems();
-            });
-
-            scope.$watch('itemListOptions', function() {
-                itemList.setOptions(scope.itemListOptions);
-                refresh();
-            }, true);
-
-            scope.$watch('options', function() {
-                if (scope.options.pinEnabled) {
-                    loadPinned();
-                }
-            }, true);
 
             var _refresh = function() {
                 itemList.fetch();
@@ -236,50 +301,45 @@ angular.module('superdesk.itemList', [])
             };
 
             scope.pin = function(item) {
-                var newItem = _.cloneDeep(item);
-                newItem.pinnedInstance = true;
-                scope.pinnedItems.push(newItem);
-                scope.pinnedItems = _.uniq(scope.pinnedItems, '_id');
-                pinnedList[item._id] = true;
-                savePinned(scope.pinnedItems);
+                itemPinService.add(scope.options.pinMode, _.clone(item));
             };
 
             scope.unpin = function(item) {
-                _.remove(scope.pinnedItems, {_id: item._id});
-                pinnedList[item._id] = false;
-                savePinned(scope.pinnedItems);
+                itemPinService.remove(item);
             };
 
             scope.isPinned = function(item) {
-                return item && pinnedList[item._id];
-            };
-
-            var savePinned = function() {
-                preferencesService.update({
-                    'pinned:items': scope.pinnedItems
-                }, 'pinned:items')
-                .then(function() {
-                    processItems();
-                }, function(response) {
-                    notify.error(gettext('Session preference could not be saved...'));
-                });
-            };
-
-            var loadPinned = function() {
-                preferencesService.get('pinned:items')
-                .then(function(result) {
-                    scope.pinnedItems = result;
-                    _.each(scope.pinnedItems, function(item) {
-                        pinnedList[item._id] = true;
-                    });
-                });
+                return itemPinService.isPinned(scope.options.pinMode, item);
             };
 
             var processItems = function() {
-                if (scope.options.pinEnabled && scope.items) {
-                    scope.items._items = scope.pinnedItems.concat(scope.items._items);
+                if (scope.items) {
+                    if (scope.options.pinEnabled) {
+                        scope.processedItems = scope.pinnedItems.concat(scope.items._items);
+                    } else {
+                        scope.processedItems = scope.items._items;
+                    }
                 }
             };
+
+            itemList.addListener(function() {
+                scope.maxPage = itemList.maxPage;
+                scope.items = itemList.result;
+                processItems();
+            });
+
+            itemPinService.addListener(scope.options.pinMode, function(pinnedItems) {
+                scope.pinnedItems = pinnedItems;
+                _.each(scope.pinnedItems, function(item) {
+                    item.pinnedInstance = true;
+                });
+                processItems();
+            });
+
+            scope.$watch('itemListOptions', function() {
+                itemList.setOptions(scope.itemListOptions);
+                refresh();
+            }, true);
         }
     };
 }]);

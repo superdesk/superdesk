@@ -50,6 +50,7 @@ define([
                 searchEnabled: true,
                 itemTypeEnabled: true,
                 mode: 'basic',
+                pinMode: 'archive',
                 similar: false,
                 itemTypes: ['text', 'picture', 'audio', 'video', 'composite']
             };
