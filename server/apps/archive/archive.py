@@ -259,12 +259,12 @@ class ArchiveService(BaseService):
         resolve_document_version(old, 'archive', 'PATCH', curr)
 
         remove_unwanted(old)
-        res = super().replace(id=item_id, document=old, original=curr)
+        super().replace(id=item_id, document=old, original=curr)
 
         del doc['old_version']
         del doc['last_version']
         doc.update(old)
-        return res
+        return item_id
 
     def duplicate_content(self, original_doc):
         if original_doc.get('type', '') == 'composite':
