@@ -224,9 +224,8 @@ class ArchiveService(BaseService):
         add_activity(ACTIVITY_DELETE, 'removed item {{ type }} about {{ subject }}', item=doc,
                      type=doc['type'], subject=get_subject(doc))
 
-    def replace(self, id, document):
-        return self.restore_version(id, document) or \
-            super().replace(id, document)
+    def replace(self, id, document, original):
+        return self.restore_version(id, document, original) or super().replace(id, document, original)
 
     def find_one(self, req, **lookup):
         item = super().find_one(req, **lookup)
@@ -235,7 +234,7 @@ class ArchiveService(BaseService):
             raise SuperdeskApiError.forbiddenError("User does not have permissions to read the item.")
         return item
 
-    def restore_version(self, id, doc):
+    def restore_version(self, id, doc, original):
         item_id = id
         old_version = int(doc.get('old_version', 0))
         last_version = int(doc.get('last_version', 0))
@@ -260,7 +259,7 @@ class ArchiveService(BaseService):
         resolve_document_version(old, 'archive', 'PATCH', curr)
 
         remove_unwanted(old)
-        res = super().replace(id=item_id, document=old)
+        res = super().replace(id=item_id, document=old, original=curr)
 
         del doc['old_version']
         del doc['last_version']

@@ -285,7 +285,8 @@ class RolesService(BaseService):
         role_id = self.get_default_role_id()
         # make it no longer default
         if role_id:
-            get_resource_service('roles').update(role_id, {"is_default": False})
+            role = self.find_one(req=None, is_default=True)
+            get_resource_service('roles').update(role_id, {"is_default": False}, role)
 
     def get_default_role_id(self):
         role = self.find_one(req=None, is_default=True)

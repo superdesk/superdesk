@@ -179,17 +179,17 @@ class PreferencesService(BaseService):
         send_email = preferences.get('email:notification', {}) if isinstance(preferences, dict) else {}
         return send_email and send_email.get('enabled', False)
 
-    def update(self, id, updates):
+    def update(self, id, updates, original):
 
         if updates.get(_user_preferences_key) is not None:
             # update User
             user_doc = get_resource_service('auth').find_one(req=None, _id=id)
             user_preference = {}
             user_preference['preferences'] = updates.get('user_preferences')
-            get_resource_service('users').update(user_doc['user'], user_preference)
+            get_resource_service('users').update(user_doc['user'], user_preference, original)
             del updates[_user_preferences_key]
 
-        res = self.backend.update(self.datasource, id, updates)
+        res = self.backend.update(self.datasource, id, updates, original)
         return res
 
     def is_authorized(self, **kwargs):

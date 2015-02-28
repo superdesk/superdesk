@@ -61,7 +61,7 @@ class ArchiveUnspikeResource(ArchiveResource):
 
 class ArchiveSpikeService(BaseService):
 
-    def update(self, id, updates):
+    def update(self, id, updates, original):
         user = get_user(required=True)
 
         item = get_resource_service(ARCHIVE).find_one(req=None, _id=id)
@@ -75,7 +75,7 @@ class ArchiveSpikeService(BaseService):
         updates[EXPIRY] = get_expiry_date(expiry_minutes)
         updates[REVERT_STATE] = item.get(app.config['CONTENT_STATE'], None)
 
-        item = self.backend.update(self.datasource, id, updates)
+        item = self.backend.update(self.datasource, id, updates, original)
         push_notification('item:spike', item=str(item.get('_id')), user=str(user))
 
         return item
@@ -102,13 +102,13 @@ class ArchiveUnspikeService(BaseService):
         updates['expiry'] = get_expiry(desk_id=desk_id)
         return updates
 
-    def update(self, id, updates):
+    def update(self, id, updates, original):
         user = get_user(required=True)
 
         item = get_resource_service(ARCHIVE).find_one(req=None, _id=id)
         updates.update(self.get_unspike_updates(item))
 
-        self.backend.update(self.datasource, id, updates)
+        self.backend.update(self.datasource, id, updates, original)
         item = get_resource_service(ARCHIVE).find_one(req=None, _id=id)
 
         push_notification('item:unspike', item=str(id), user=str(user))

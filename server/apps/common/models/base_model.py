@@ -169,7 +169,7 @@ class BaseModel():
         if etag:
             self.validate_etag(orig, etag)
         self.on_update(doc, orig[0])
-        res = self.data_layer.replace(self.resource, filter, doc)
+        res = self.data_layer.replace(self.resource, filter, doc, orig)
         self.on_updated(doc, orig[0])
         return res
 

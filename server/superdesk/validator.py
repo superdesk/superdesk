@@ -27,7 +27,7 @@ ERROR_REQUIRED = {'required': 1}
 
 class SuperdeskValidator(Validator):
 
-    def _validate_mapping(self, field, value):
+    def _validate_mapping(self, mapping, field, value):
         pass
 
     def _validate_index(self, field, value):
