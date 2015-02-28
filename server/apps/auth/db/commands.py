@@ -9,6 +9,7 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import logging
+from base64 import b64encode
 from flask import current_app as app, json
 import superdesk
 from superdesk.utils import get_hash, is_hashed
@@ -76,5 +77,27 @@ class HashUserPasswordsCommand(superdesk.Command):
                 superdesk.get_resource_service('users').patch(user_id, updates=updates)
 
 
+class GetAuthTokenCommand(superdesk.Command):
+
+    option_list = (
+        superdesk.Option('--username', '-u', dest='username', required=True),
+        superdesk.Option('--password', '-p', dest='password', required=True)
+    )
+
+    def run(self, username, password):
+        credentials = {
+            'username': username,
+            'password': password
+        }
+        service = superdesk.get_resource_service('auth')
+        id = str(service.post([credentials])[0])
+        creds = service.find_one(req=None, _id=id)
+        token = creds.get('token').encode('ascii')
+        encoded_token = b'basic ' + b64encode(token + b':')
+        print('Generated token: ', encoded_token)
+        return encoded_token
+
+
 superdesk.command('users:create', CreateUserCommand())
 superdesk.command('users:hash_passwords', HashUserPasswordsCommand())
+superdesk.command('users:get_auth_token', GetAuthTokenCommand())
