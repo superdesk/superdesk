@@ -199,7 +199,7 @@ angular.module('superdesk.itemList', [])
         save: function() {
             var self = this;
 
-            this.items = _.uniq(this.items, function(item) {return item._id});
+            this.items = _.uniq(this.items, function(item) {return item._id;});
             var update = {};
             update[PREF_KEY] = this.items;
             return preferencesService.update(update, PREF_KEY)
@@ -322,18 +322,24 @@ function(ItemList, notify, itemPinService) {
                 }
             };
 
-            itemList.addListener(function() {
+            var itemListListener = function() {
                 scope.maxPage = itemList.maxPage;
                 scope.items = itemList.result;
                 processItems();
-            });
-
-            itemPinService.addListener(scope.options.pinMode, function(pinnedItems) {
+            };
+            var pinListener = function(pinnedItems) {
                 scope.pinnedItems = pinnedItems;
                 _.each(scope.pinnedItems, function(item) {
                     item.pinnedInstance = true;
                 });
                 processItems();
+            };
+
+            itemList.addListener(itemListListener);
+            itemPinService.addListener(scope.options.pinMode, pinListener);
+            scope.$on('$destroy', function() {
+                itemList.removeListener(itemListListener);
+                itemPinService.removeListener(pinListener);
             });
 
             scope.$watch('itemListOptions', function() {
