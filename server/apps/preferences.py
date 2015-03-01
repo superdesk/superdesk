@@ -189,7 +189,9 @@ class PreferencesService(BaseService):
             get_resource_service('users').update(user_doc['user'], user_preference, original)
             del updates[_user_preferences_key]
 
-        res = self.backend.update(self.datasource, id, updates, original)
+        # fetch the original doc as we custom implemented find_one
+        mongo_obj = super().find_one(req=None, _id=id)
+        res = self.backend.update(self.datasource, id, updates, mongo_obj)
         return res
 
     def is_authorized(self, **kwargs):
