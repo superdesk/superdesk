@@ -134,21 +134,7 @@
          * @returns {Promise}
          */
         userservice.getUser = function(id) {
-            var default_cache = buildKey(DEFAULT_CACHE_KEY, DEFAULT_PAGE);
-
-            var value = cache.get(default_cache);
-            if (value) {
-                var user = _.find(value._items, {_id: id});
-                if (user) {
-                    return $q.when(user);
-                }
-            }
-
-            return api('users').getById(id)
-            .then(function(result) {
-                return result;
-            });
-
+            return api('users').getById(id, undefined, true);
         };
 
         /**

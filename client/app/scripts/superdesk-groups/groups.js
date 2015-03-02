@@ -171,22 +171,23 @@
                             }
 
                             WizardHandler.wizard('usergroups').next();
-                        }, function(response) {
-                            errorMessage(response);
-                        });
+                        }, errorMessage);
                     };
 
                     function errorMessage(response) {
                         if (response.data && response.data._issues && response.data._issues.name && response.data._issues.name.unique) {
-                            scope.message = gettext(
-                                'Group with name "' +
-                                scope.group.edit.name +
-                                '" already exists, group not created/updated.'
-                            );
+                            scope._errorUniqueness = true;
                         } else {
-                            scope.message = gettext('There was a problem, group not created/updated.');
+                            scope._error = true;
                         }
+                        scope.message = null;
                     }
+                    scope.handleEdit = function($event) {
+                        if (scope._errorUniqueness || scope._error) {
+                            scope._errorUniqueness = null;
+                            scope._error = null;
+                        }
+                    };
                 }
             };
         }

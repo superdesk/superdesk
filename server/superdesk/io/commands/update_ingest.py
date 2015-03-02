@@ -13,7 +13,7 @@ import logging
 import superdesk
 
 from flask import current_app as app
-from settings import DAYS_TO_KEEP
+from settings import INGEST_EXPIRY_MINUTES
 from datetime import timedelta
 from werkzeug.exceptions import HTTPException
 
@@ -80,8 +80,8 @@ def is_closed(provider):
 
 def filter_expired_items(provider, items):
     try:
-        days_to_keep_content = provider.get('days_to_keep', DAYS_TO_KEEP)
-        expiration_date = utcnow() - timedelta(days=days_to_keep_content)
+        minutes_to_keep_content = provider.get('content_expiry', INGEST_EXPIRY_MINUTES)
+        expiration_date = utcnow() - timedelta(minutes=minutes_to_keep_content)
         return [item for item in items if item.get('versioncreated', utcnow()) > expiration_date]
     except Exception as ex:
         raise ProviderError.providerFilterExpiredContentError(ex, provider)
