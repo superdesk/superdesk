@@ -55,6 +55,29 @@ define(['lodash'], function(_) {
         }
 
         /**
+         * Remove keys prefixed with '_'
+         */
+        function clean(data, keepId) {
+            var blacklist = {
+                    _status: 1,
+                    _updated: 1,
+                    _created: 1,
+                    _etag: 1,
+                    _links: 1,
+                    _id: keepId ? 0 : 1
+                },
+                cleanData = {};
+
+            angular.forEach(data, function(val, key) {
+                if (!blacklist[key]) {
+                    cleanData[key] = val;
+                }
+            });
+
+            return cleanData;
+        }
+
+        /**
          * Http Endpoint
          */
         function HttpEndpoint(name, config) {
@@ -124,14 +147,11 @@ define(['lodash'], function(_) {
                 item._etag = diff._etag;
             }
 
-            var keys = ['_status', '_links', '_id', '_created', '_updated', '_etag'];
-            diff = _.omit(diff == null ? item: diff, keys);
-
             var url = item._links.self.href;
             return http({
                 method: 'PATCH',
                 url: urls.item(url),
-                data: diff,
+                data: clean(diff, !item._links),
                 headers: getHeaders(this, item)
             }).then(function(response) {
                 _.extend(item, response.data);
