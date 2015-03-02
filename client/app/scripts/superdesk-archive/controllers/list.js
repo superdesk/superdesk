@@ -66,7 +66,7 @@ define([
         var refreshItems = _.debounce(_refresh, 100);
 
         function _refresh() {
-            if ($scope.selected.desk) {
+            if ($scope.selected.desk || desks.activeDeskId) {
                 resource = api('archive');
             } else {
                 resource = api('user_content', session.identity);
