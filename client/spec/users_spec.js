@@ -39,7 +39,7 @@ describe('Users', function() {
 
         it('can delete user', function() {
             var user = element.all(by.repeater('users')).first(),
-                activity = user.all(by.repeater('activities')).first();
+                activity = user.element(by.className('icon-trash'));
 
             user.click();
             expect($('.preview-pane').evaluate('selected.user')).not.toBe(null);

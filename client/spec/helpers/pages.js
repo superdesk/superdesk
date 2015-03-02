@@ -3,6 +3,8 @@
 
 exports.login = LoginModal;
 exports.workspace = new Workspace();
+exports.content = new Content();
+exports.editArticle = new EditArticle();
 
 function LoginModal() {
     this.username = element(by.model('username'));
@@ -21,29 +23,70 @@ function LoginModal() {
 }
 
 function Workspace() {
+	this.getDesk = function(name) {
+		var desks = element.all(by.repeater('desk in userDesks'));
+		return desks.all(by.css('[option="' + name.toUpperCase() + '"]'));
+	};
 
-    function switchDesk(toPersonal) {
+    this.switchToDesk = function(desk) {
+    	var selectedDesk = element(by.id('selected-desk'));
+    	var personal = element(by.css('[option="PERSONAL"]'));
+    	var getDesk = this.getDesk;
 
-        var selectedDesk = element(by.id('selected-desk'));
+		browser.wait(function() {
+			return selectedDesk.isPresent();
+		});
 
-        browser.wait(function() {
-            return selectedDesk.isPresent();
-        });
+		selectedDesk.getText().then(function(text) {
+			if (text.toUpperCase() !== desk.toUpperCase()) {
+				selectedDesk.click();
+				if (desk.toUpperCase() === 'PERSONAL') {
+					personal.click();
+				} else {
+			    	getDesk(desk).click();
+				}
+			}
+		});
+    };
+}
 
-        selectedDesk.getText().then(function(text) {
-            var isPersonal = text === 'PERSONAL';
-            if (isPersonal !== toPersonal) {
-                selectedDesk.click();
-                element(by.id('select-desk-menu')).all(by.tagName('button')).last().click();
+function Content() {
+    this.setListView = function() {
+    	var list = element(by.css('[title="switch to list view"]'));
+    	list.isDisplayed().then(function(isVisible) {
+            if (isVisible) {
+            	list.click();
             }
         });
-    }
-
-    this.openPersonal = function() {
-        return switchDesk(true);
     };
+    this.setGridView = function() {
+    	var grid = element(by.css('[title="switch to grid view"]'));
+    	grid.then(function(isVisible) {
+            if (isVisible) {
+            	grid.click();
+            }
+        });
+    };
+    this.getItem = function(item) {
+    	return element.all(by.repeater('items._items')).get(item);
+    };
+    this.actionOnItem = function(action, item) {
+    	var crtItem = this.getItem(item);
+    	browser.actions().mouseMove(crtItem).perform();
+    	crtItem.element(by.css('[title="' + action + '"]')).click();
+    };
+    this.checkMarkedForHighlight = function(highlight, item) {
+    	var crtItem = this.getItem(item);
+    	expect(crtItem.element(by.className('icon-star-color')).isDisplayed()).toBeTruthy();
+    	expect(crtItem.element(by.className('icon-star-color')).getAttribute('tooltip')).toContain(highlight);
+    };
+}
 
-    this.openDesk = function() {
-        return switchDesk(false);
+function EditArticle() {
+    this.markAction = function() {
+    	element(by.className('svg-icon-add-to-list')).click();
+    };
+    this.closeAction = function() {
+    	element(by.css('[ng-click="close()"]')).click();
     };
 }

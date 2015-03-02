@@ -20,7 +20,22 @@ Feature: Highlights
         {"_items": [{"name": "highlight1", "desks": ["#desks._id#"]}]}
         """
         
-        
+    @auth
+    Scenario: Create duplicate highlight
+        Given "desks"
+		"""
+		[{"name": "desk1"}]
+		"""	
+        When we post to "highlights"
+        """
+        {"name": "highlight1", "desks": ["#desks._id#"]}
+        """
+        When we post to "highlights"
+        """
+        {"name": "Highlight1", "desks": ["#desks._id#"]}
+        """
+        Then we get response code 400
+            
     @auth
     Scenario: Update highlight
         Given "desks"
