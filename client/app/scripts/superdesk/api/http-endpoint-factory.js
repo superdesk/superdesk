@@ -92,10 +92,11 @@ define(['lodash'], function(_) {
          * @param {string} url
          * @returns {Promise}
          */
-        HttpEndpoint.prototype.getByUrl = function(url) {
+        HttpEndpoint.prototype.getByUrl = function(url, cache) {
             return http({
                 method: 'GET',
-                url: urls.item(url)
+                url: urls.item(url),
+                cache: cache
             }).then(function(response) {
                 return response.data;
             });
@@ -107,12 +108,13 @@ define(['lodash'], function(_) {
          * @param {string} id
          * @returns {Promise}
          */
-        HttpEndpoint.prototype.getById = function(id) {
+        HttpEndpoint.prototype.getById = function(id, cache) {
             return getUrl(this).then(_.bind(function(resourceUrl) {
                 var url = resourceUrl.replace(/\/+$/, '') + '/' + id;
                 return http({
                     method: 'GET',
-                    url: url
+                    url: url,
+                    cache: cache
                 }).then(function(response) {
                     return response.data;
                 });
@@ -124,12 +126,13 @@ define(['lodash'], function(_) {
          *
          * @param {Object} params
          */
-        HttpEndpoint.prototype.query = function(params) {
+        HttpEndpoint.prototype.query = function(params, cache) {
             return http({
                 method: 'GET',
                 params: params,
                 url: getUrl(this),
-                headers: getHeaders(this)
+                headers: getHeaders(this),
+                cache: cache
             }).then(function(response) {
                 return response.data;
             });
