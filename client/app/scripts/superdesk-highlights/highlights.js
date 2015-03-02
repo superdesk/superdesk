@@ -15,8 +15,8 @@
     /**
      * Service for highlights with caching.
      */
-    HighlightsService.$inject = ['api', '$q', '$cacheFactory', 'packagesService'];
-    function HighlightsService(api, $q, $cacheFactory, packagesService) {
+    HighlightsService.$inject = ['api', '$q', '$cacheFactory'];
+    function HighlightsService(api, $q, $cacheFactory) {
     	var service = {};
         var cache = $cacheFactory('highlightList');
 
@@ -65,12 +65,12 @@
          * Create empty highlight package
          */
         service.createEmptyHighlight = function createEmptyHighlight(highlight) {
-            var pkg_defaults = {
-                headline: highlight.name,
-                highlight: highlight._id
-            };
-
-            return packagesService.createEmptyPackage(pkg_defaults);
+//            var pkg_defaults = {
+//                headline: highlight.name,
+//                highlight: highlight._id
+//            };
+//
+//            return packagesService.createEmptyPackage(pkg_defaults);
         };
 
         return service;
@@ -185,6 +185,7 @@
         var _config;
 
         $scope.edit = function(config) {
+        	$scope.message = null;
             $scope.modalActive = true;
             $scope.configEdit = _.create(config);
             $scope.assignedDesks = deskList(config.desks);
@@ -206,9 +207,19 @@
                 }
                 highlightsService.clearCache();
                 $scope.modalActive = false;
-            }, function(result) {
-                $scope.message = gettext('There was a problem while saving configuration');
+            }, function(response) {
+                errorMessage(response);
             });
+
+            function errorMessage(response) {
+                if (response.data && response.data._issues && response.data._issues.name && response.data._issues.name.unique) {
+                    $scope.message = gettext(
+                        'Highlight configuration with the same name already exists.'
+                    );
+                } else {
+                    $scope.message = gettext('There was a problem while saving highlights configuration');
+                }
+            }
         };
 
         $scope.remove = function(config) {
