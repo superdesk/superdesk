@@ -10,14 +10,14 @@
             <li ng-repeat="widget in widgets | orderBy:'order'"
                 ng-if="widget.side==='left' && widget.display[widget_target]"
                 ng-class="{active: widget === active.left}">
-                <button class="btn" type="submit" ng-click="activate(widget)">
+                <button class="btn" type="submit" ng-click="activate(widget)" ng-disabled="widget.needUnlock && item._locked">
                     <i class="big-icon-{{ widget.icon }}" title="{{ widget.label }}"></i>
                 </button>
             </li>
         </ul>
     </div>
 
-    <div class="tabpane left-tabpane open-tabpane widget-{{active.left._id}}" ng-if="active.left">
+    <div class="tabpane left-tabpane open-tabpane widget-{{active.left._id}}" ng-if="active.left && (!active.left.needUnlock || !item._locked)">
         <section class="tabcontent" ng-init="widget=active.left">
             <div sd-widget data-widget="active.left">
                 <div ng-include="active.left.template"></div>
@@ -30,14 +30,14 @@
             <li ng-repeat="widget in widgets | orderBy:'order'"
                 ng-if="widget.side==='right' && widget.display[widget_target]"
                 ng-class="{active: widget === active.right}">
-                <button class="btn" type="submit" ng-click="activate(widget)">
+                <button class="btn" type="submit" ng-click="activate(widget)" ng-disabled="widget.needUnlock && item._locked">
                     <i class="big-icon-{{ widget.icon }}" title="{{ widget.label }}"></i>
                 </button>
             </li>
         </ul>
     </div>
 
-    <div class="tabpane right-tabpane open-tabpane widget-{{active.right._id}}" ng-if="active.right">
+    <div class="tabpane right-tabpane open-tabpane widget-{{active.right._id}}" ng-if="active.right && (!active.right.needUnlock || !item._locked)">
         <section class="tabcontent" ng-init="widget=active.right">
             <div sd-widget data-widget="active.right">
                 <div ng-include="active.right.template"></div>
