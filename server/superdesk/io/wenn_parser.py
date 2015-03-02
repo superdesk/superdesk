@@ -49,7 +49,7 @@ class WENNParser(Parser):
         item['urgency'] = '5'
         item['pubstatus'] = 'Usable'
         item['anpa-category'] = {'qcode': 'e'}
-        item['subject'] = {'qcode': '01000000', 'name': 'Arts & Entertainment'}
+        item['subject'] = {'qcode': '01000000', 'name': 'arts, culture and entertainment'}
 
     def parse_news_management(self, item, entry):
         news_mgmt_el = entry.find(self.qname('NewsManagement', self.WENN_NM_NS))
@@ -67,6 +67,10 @@ class WENNParser(Parser):
             item['headline'] = self.get_elem_content(content_mgmt_el.find(self.qname('title', self.WENN_CM_NS)))
             item['abstract'] = self.get_elem_content(
                 content_mgmt_el.find(self.qname('first_line', self.WENN_CM_NS)))
+            item['keywords'] = [element.attrib.get('value') for element in
+                                content_mgmt_el.findall(self.qname('tags', self.WENN_CM_NS) + '/' +
+                                                        self.qname('tag', self.WENN_CM_NS))
+                                if element.attrib.get('value')]
 
     def get_elem_content(self, elem):
         return elem.text if elem is not None else ''

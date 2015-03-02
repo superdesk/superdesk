@@ -40,7 +40,7 @@
 							<fieldset>
 								<div class="field">
 									<label translate>Group name</label>
-									<input type="text" class="fullwidth-input" ng-model="group.edit.name" required> 
+									<input type="text" class="fullwidth-input" ng-model="group.edit.name" ng-keyup="handleEdit($event);" required> 
 								</div>
 								<div class="field">
 									<label translate>Group description</label>
@@ -48,6 +48,8 @@
 								</div>
 							</fieldset>
 							<p ng-if="message">{{ message }}</p>
+							<span ng-show="_errorUniqueness" translate>Group with name "{{ group.edit.name }}" already exists.</span>
+							<span ng-show="_error" translate>There was a problem, group not created/updated.</span>
 						</div>
 						<div class="modal-footer">
 						  	<button class="btn btn-primary" ng-click="save(group.edit)" ng-disabled="!generalStep.$valid" translate>Next</button>

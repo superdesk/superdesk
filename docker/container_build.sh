@@ -28,20 +28,19 @@ cd $SCRIPT_DIR &&
 docker-compose stop;
 docker-compose kill;
 docker-compose rm --force;
-rm -r $BAMBOO_DIR/data/db
-mkdir -p $BAMBOO_DIR/data/db
+rm -r $BAMBOO_DIR/data/
+mkdir -p $BAMBOO_DIR/data/{mongodb,elastic,redis}
 
 # cleanup tests' results:
 rm -r $BAMBOO_DIR/results/
 mkdir -p $SERVER_RESULTS_DIR/{unit,behave} &&
 mkdir -p $CLIENT_RESULTS_DIR/unit &&
+rm -r $SCREENSHOTS_DIR
 mkdir -p $SCREENSHOTS_DIR
 
 # reset repo files' dates:
-cd $BAMBOO_DIR/server/
-find ./ | grep -v .git/ | xargs touch -t 200001010000.00
-cd $BAMBOO_DIR/client/
-find ./ | grep -v .git/ | xargs touch -t 200001010000.00
+cd $BAMBOO_DIR
+find ./ -print0 | grep -vzZ .git/ | xargs -0 touch -t 200001010000.00
 
 # build container:
 cd $SCRIPT_DIR &&
@@ -52,7 +51,7 @@ docker-compose up -d &&
 docker-compose run backend ./scripts/fig_wrapper.sh nosetests -sv --with-xunit --xunit-file=./results-unit/unit.xml &&
 
 # run backend behavior tests:
-docker-compose run backend ./scripts/fig_wrapper.sh behave --junit --junit-directory ./results-behave/ &&
+docker-compose run backend ./scripts/fig_wrapper.sh behave --junit --junit-directory ./results-behave/  --format progress2 --logging-level ERROR &&
 
 # run frontend unit tests:
 docker-compose run frontend bash -c "grunt bamboo && mv test-results.xml ./unit-test-results/" &&

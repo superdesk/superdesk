@@ -170,7 +170,10 @@
 			}
 			.field {
 				padding-left: 10px;
-				float:left; 
+				float:left;
+				.field {
+					padding-left: 0 !important;
+				} 
 			}
 		}
 	}
@@ -223,7 +226,7 @@
 		}
 		.td {
 			display: table-cell;
-			padding: 10px;
+			padding: 10px 16px;
 			border-bottom: @roles-border;
 			text-align: center;
 			border-left: @roles-border;
@@ -239,7 +242,7 @@
 			padding: 10px 40px 10px 10px;
 			text-transform: uppercase;
 			.text-semibold();
-			font-size: 10px;
+			font-size: 11px;
 			white-space: nowrap;
 			color: #666;
 		}
@@ -250,22 +253,28 @@
 		}
 
 		.initial {
-			background: #e0e0e0;
+			background: #f2f2f2;
 			.label {
 				position: absolute;
-				top: 1px;
-				right: 2px;
-				line-height: 10px;
+				top: -6px;
+				left: 17%;
+				text-transform: uppercase;
+				font-weight: normal;
+				font-size: 9px;
+				line-height: 11px;
+				height: 13px;
+				letter-spacing: 0.1em;
+				box-sizing:border-box;
 			}
 			&:hover {
-				background: #e0e0e0;
+				background: #eaeaea;
 			}
 			.td {
 				font-size: 13px;
 				white-space: nowrap;
 				border-top: @roles-border;
-				border-color: #d8d8d8 !important;
-				padding: 10px;
+				border-color: #e5e5e5 !important;
+				padding: 10px 16px;
 				position: relative;
 			}
 			.create-role {

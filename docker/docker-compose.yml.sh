@@ -1,25 +1,29 @@
 cat <<EOF
-db:
+mongodb:
   image: dockerfile/mongodb
   volumes:
-   - ../data/db:/data/db
+   - ../data/mongodb:/data/db
 
 redis:
   image: dockerfile/redis
+  volumes:
+   - ../data/redis:/data
 
 elastic:
   image: dockerfile/elasticsearch
+  volumes:
+   - ../data/elastic:/data
 
 backend:
   build: ../server
   command: sh /opt/superdesk/scripts/fig_wrapper.sh honcho start
   links:
-   - db
+   - mongodb
    - redis
    - elastic
   environment:
-   - MONGOLAB_URI=mongodb://db:27017/test
-   - LEGAL_ARCHIVEDB_PORT=mongodb://db:27017
+   - MONGOLAB_URI=mongodb://mongodb:27017/test
+   - LEGAL_ARCHIVEDB_PORT=mongodb://mongodb:27017
    - ELASTICSEARCH_URL=http://elastic:9200
    - ELASTICSEARCH_INDEX
    - CELERY_BROKER_URL=redis://redis:6379/1

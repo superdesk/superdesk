@@ -50,7 +50,7 @@ before_script:
         cd server &&
         env SUPERDESK_URL='http://127.0.0.1:5000/api' SUPERDESK_CLIENT_URL='http://127.0.0.1:9000' SUPERDESK_TESTING='True' honcho start &
         cd client &&
-        grunt --server='http://127.0.0.1:5000/api' --ws='ws://127.0.0.1:5100' &
+        grunt server:travis --server='http://127.0.0.1:5000/api' --ws='ws://127.0.0.1:5100' &
       fi
 
 script:

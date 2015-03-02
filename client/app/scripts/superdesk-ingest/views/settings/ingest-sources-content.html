@@ -36,7 +36,7 @@
                 <div class="popup-subnav">
                     <tabset>
                             <tab heading="General" class="TabContent">
-                                    <div class="field">
+                                    <div class="field field-horizontal">
                                         <label translate>Status</label>
                                         <span tooltip="{{ providerSwitchOn ? 'Close' : 'Open'  | translate }}" tooltip-placement="right">
                                             <span sd-switch-inverted ng-model="provider.is_closed"></span>
@@ -80,7 +80,7 @@
                                         </select>
                                     </div>
 
-                                     <div class="field">
+                                    <div class="field">
                                         <label for="routing" translate>Routing Scheme</label>
                                         <select ng-model="provider.routing_scheme" ng-options="rs._id as rs.name for rs in routingScheme">
                                             <option value=""></option>
@@ -88,16 +88,19 @@
                                     </div>                                   
                             </tab>
                             <tab heading="Notification" class="TabContent">
-                                <div class="field">
+                                <div class="field field-horizontal">
                                     <label translate>Update</label>
                                     <span sd-switch ng-model="provider.notifications.on_update"></span>
-                                    
+                                </div>
+                                <div class="field field-horizontal">  
                                     <label translate>Close</label>
                                     <span sd-switch ng-model="provider.notifications.on_close"></span>
-                                    
+                                </div>
+                                <div class="field field-horizontal">
                                     <label translate>Open</label>
                                     <span sd-switch ng-model="provider.notifications.on_open"></span>
-                                    
+                                </div>
+                                <div class="field field-horizontal">
                                     <label translate>Error</label>
                                     <span sd-switch ng-model="provider.notifications.on_error"></span>
                                 </div>

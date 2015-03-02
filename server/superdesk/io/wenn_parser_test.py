@@ -72,3 +72,8 @@ class WENNTestCase(unittest.TestCase):
     def test_guid(self):
         self.assertEqual(self.items[0].get('guid'), '1369426')
         self.assertEqual(self.items[1].get('guid'), '1369417')
+
+    def test_keywords(self):
+        self.assertListEqual(self.items[0].get('keywords'), ['Suge Knight', 'Tmz.Com', 'Compton'])
+        self.assertListEqual(self.items[1].get('keywords'),
+                             ['Jagged Edge', 'Where The Party At', 'Usmagazine.Com', 'Kyle Norman'])

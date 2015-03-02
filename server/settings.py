@@ -45,6 +45,9 @@ CLIENT_URL = env('SUPERDESK_CLIENT_URL', 'http://localhost:9000')
 URL_PROTOCOL = server_url.scheme or None
 SERVER_NAME = server_url.netloc or None
 URL_PREFIX = server_url.path.lstrip('/') or ''
+if SERVER_NAME.endswith(':80'):
+    SERVER_NAME = SERVER_NAME[:-3]
+
 VALIDATION_ERROR_STATUS = 400
 JSON_SORT_KEYS = True
 
@@ -84,6 +87,8 @@ CELERY_ACCEPT_CONTENT = ['pickle', 'json']  # it's using pickle when in eager mo
 CELERY_IGNORE_RESULT = True
 CELERY_DISABLE_RATE_LIMITS = True
 CELERYD_TASK_SOFT_TIME_LIMIT = 300
+CELERYD_LOG_FORMAT = '%(message)s level=%(levelname)s process=%(processName)s'
+CELERYD_TASK_LOG_FORMAT = ' '.join([CELERYD_LOG_FORMAT, 'task=%(task_name)s task_id=%(task_id)s'])
 
 CELERYBEAT_SCHEDULE_FILENAME = env('CELERYBEAT_SCHEDULE_FILENAME', './celerybeatschedule.db')
 CELERYBEAT_SCHEDULE = {
@@ -221,6 +226,10 @@ SPIKE_EXPIRY_MINUTES = 300
 # akin.tolga 06/01/2014: using a large value (30 days) for the time being
 CONTENT_EXPIRY_MINUTES = 43200
 
+# The number of minutes before ingest items purged
+# 2880 = 2 days in minutes
+INGEST_EXPIRY_MINUTES = 2880
+
 # This setting can be used to apply a limit on the elastic search queries, it is a limit per shard.
 # A value of -1 indicates that no limit will be applied.
 # If for example the elastic has 5 shards and you wish to limit the number of search results to 1000 then set the value
@@ -229,5 +238,3 @@ MAX_SEARCH_DEPTH = -1
 
 # Defines the maximum value of Ingest Sequence Number after which the value will start from 1
 MAX_VALUE_OF_INGEST_SEQUENCE = 9999
-
-DAYS_TO_KEEP = int(env('INGEST_ARTICLES_TTL', '2'))
