@@ -4,6 +4,7 @@
 module.exports = new Content();
 
 function Content() {
+
     this.setListView = function() {
         var list = element(by.css('[title="switch to list view"]'));
         return list.isDisplayed().then(function(isVisible) {
@@ -12,6 +13,7 @@ function Content() {
             }
         });
     };
+
     this.setGridView = function() {
         var grid = element(by.css('[title="switch to grid view"]'));
         return grid.then(function(isVisible) {
@@ -20,9 +22,11 @@ function Content() {
             }
         });
     };
+
     this.getItem = function(item) {
         return element.all(by.repeater('items._items')).get(item);
     };
+
     this.actionOnItem = function(action, item) {
         var crtItem;
         return this.getItem(item)
@@ -34,5 +38,11 @@ function Content() {
                     .element(by.css('[title="' + action + '"]'))
                     .click();
             });
+    };
+
+    this.checkMarkedForHighlight = function(highlight, item) {
+    	var crtItem = this.getItem(item);
+    	expect(crtItem.element(by.className('icon-star-color')).isDisplayed()).toBeTruthy();
+    	expect(crtItem.element(by.className('icon-star-color')).getAttribute('tooltip')).toContain(highlight);
     };
 }
