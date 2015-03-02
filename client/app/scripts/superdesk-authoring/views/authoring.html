@@ -23,6 +23,12 @@
                 ng-disabled="!save_enabled()"
                 translate>Save</button>
 
+                <button class="btn btn-medium btn-info pull-left" type="submit"
+                ng-click="publish()"
+                ng-if = "item.task.desk"
+                ng-disabled="item.state ==='published'"
+                translate>Publish</button>
+
             <div class="navbtn dropdown strict pull-left" dropdown>
                 <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
                 <ul class="dropdown-menu pull-right" sd-content-create></ul>
