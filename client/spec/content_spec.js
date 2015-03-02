@@ -19,19 +19,19 @@ describe('Content', function() {
     it('can navigate with keyboard', function() {
         var body = $('body');
         body.sendKeys(protractor.Key.UP);
-        expect(selectedHeadline()).toBe('item1');
+        expect(selectedHeadline()).toBe('package1');
 
         body.sendKeys(protractor.Key.DOWN);
-        expect(selectedHeadline()).toBe('item2');
+        expect(selectedHeadline()).toBe('item1');
 
         body.sendKeys(protractor.Key.RIGHT);
         expect(selectedHeadline()).toBe('item5');
 
         body.sendKeys(protractor.Key.LEFT);
-        expect(selectedHeadline()).toBe('item2');
+        expect(selectedHeadline()).toBe('item1');
 
         body.sendKeys(protractor.Key.UP);
-        expect(selectedHeadline()).toBe('item1');
+        expect(selectedHeadline()).toBe('package1');
     });
 
     it('can open search with s', function() {
