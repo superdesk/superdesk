@@ -9,6 +9,7 @@ class HighlightsResource(Resource):
     schema = {
         'name': {
             'type': 'string',
+            'iunique': True,
             'required': True
         },
         'desks': {
