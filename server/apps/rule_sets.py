@@ -40,7 +40,7 @@ class RuleSetsResource(Resource):
 
 class RuleSetsService(BaseService):
 
-    def update(self, id, updates):
+    def update(self, id, updates, original):
         """
         Overriding to set the value of "new" attribute of rules to empty string if it's None.
         """
@@ -49,7 +49,7 @@ class RuleSetsService(BaseService):
             if rule['new'] is None:
                 rule['new'] = ''
 
-        return super().update(id, updates)
+        return super().update(id, updates, original)
 
     def on_delete(self, doc):
         if self.backend.find_one('ingest_providers', req=None, rule_set=doc['_id']):

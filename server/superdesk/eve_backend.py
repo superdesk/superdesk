@@ -48,13 +48,13 @@ class EveBackend():
             self.set_default_dates(doc)
 
         backend = self._backend(endpoint_name)
-        ids = backend.insert(endpoint_name, docs, **kwargs)
+        ids = backend.insert(endpoint_name, docs)
         search_backend = self._lookup_backend(endpoint_name)
         if search_backend:
             search_backend.insert(endpoint_name, docs, **kwargs)
         return ids
 
-    def update(self, endpoint_name, id, updates):
+    def update(self, endpoint_name, id, updates, original):
         """Update document with given id.
 
         :param endpoint_name: api resource name
@@ -66,7 +66,7 @@ class EveBackend():
         updates.setdefault(app.config['ETAG'], document_etag(updates))
 
         backend = self._backend(endpoint_name)
-        res = backend.update(endpoint_name, id, updates)
+        res = backend.update(endpoint_name, id, updates, original)
 
         search_backend = self._lookup_backend(endpoint_name)
         if search_backend is not None:
@@ -75,9 +75,9 @@ class EveBackend():
 
         return res if res is not None else updates
 
-    def replace(self, endpoint_name, id, document):
+    def replace(self, endpoint_name, id, document, original):
         backend = self._backend(endpoint_name)
-        res = backend.replace(endpoint_name, id, document)
+        res = backend.replace(endpoint_name, id, document, original)
 
         search_backend = self._lookup_backend(endpoint_name)
         if search_backend is not None:

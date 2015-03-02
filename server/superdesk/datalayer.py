@@ -53,8 +53,8 @@ class SuperdeskDataLayer(DataLayer):
     def insert(self, resource, docs, **kwargs):
         return superdesk.get_resource_service(resource).create(docs, **kwargs)
 
-    def update(self, resource, id_, updates):
-        return superdesk.get_resource_service(resource).update(id=id_, updates=updates)
+    def update(self, resource, id_, updates, original):
+        return superdesk.get_resource_service(resource).update(id=id_, updates=updates, original=original)
 
     def update_all(self, resource, query, updates):
         datasource = self._datasource(resource)
@@ -62,8 +62,8 @@ class SuperdeskDataLayer(DataLayer):
         collection = driver.db[datasource[0]]
         return collection.update(query, {'$set': updates}, multi=True)
 
-    def replace(self, resource, id_, document):
-        return superdesk.get_resource_service(resource).replace(id=id_, document=document)
+    def replace(self, resource, id_, document, original):
+        return superdesk.get_resource_service(resource).replace(id=id_, document=document, original=original)
 
     def remove(self, resource, lookup=None):
         if lookup is None:
