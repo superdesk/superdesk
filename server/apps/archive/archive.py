@@ -39,6 +39,7 @@ import superdesk
 import logging
 from apps.common.models.utils import get_model
 from apps.item_lock.models.item import ItemModel
+from .archive_composite import PackageService
 
 logger = logging.getLogger(__name__)
 
@@ -99,6 +100,7 @@ class ArchiveResource(Resource):
         },
         'task': {'type': 'dict'}
     }
+
     schema.update(metadata_schema)
     extra_response_fields = extra_response_fields
     item_url = item_url
@@ -128,6 +130,8 @@ def update_word_count(doc):
 
 
 class ArchiveService(BaseService):
+    packageService = PackageService()
+
     def on_create(self, docs):
         on_create_item(docs)
 
@@ -136,6 +140,10 @@ class ArchiveService(BaseService):
             remove_unwanted(doc)
             update_word_count(doc)
             set_item_expiry({}, doc)
+
+        packages = [doc for doc in docs if doc['type'] == 'composite']
+        if packages:
+            self.packageService.on_create(packages)
 
     def on_created(self, docs):
         on_create_media_archive()
@@ -147,6 +155,10 @@ class ArchiveService(BaseService):
             else:
                 msg = 'added new {{ type }} item with empty header/title'
             add_activity(ACTIVITY_CREATE, msg, item=doc, type=doc['type'], subject=subject)
+
+        packages = [doc for doc in docs if doc['type'] == 'composite']
+        if packages:
+            self.packageService.on_created(packages)
 
     def on_update(self, updates, original):
         user = get_user()
@@ -179,6 +191,9 @@ class ArchiveService(BaseService):
         if force_unlock:
             del updates['force_unlock']
 
+        if original['type'] == 'composite':
+            self.packageService.on_update(updates, original)
+
     def on_updated(self, updates, original):
         get_component(ItemAutosave).clear(original['_id'])
         get_component(LegalArchiveProxy).update(original, updates)
@@ -190,6 +205,9 @@ class ArchiveService(BaseService):
             add_activity(ACTIVITY_UPDATE, 'created new version {{ version }} for item {{ type }} about "{{ subject }}"',
                          item=updated, version=updates['_version'], subject=get_subject(updates, original),
                          type=updated['type'])
+
+        if original['type'] == 'composite':
+            self.packageService.on_updated(updates, original)
 
     def on_replace(self, document, original):
         remove_unwanted(document)
@@ -223,6 +241,9 @@ class ArchiveService(BaseService):
         on_delete_media_archive()
         add_activity(ACTIVITY_DELETE, 'removed item {{ type }} about {{ subject }}', item=doc,
                      type=doc['type'], subject=get_subject(doc))
+
+        if doc['type'] == 'composite':
+            self.packageService.on_deleted(doc)
 
     def replace(self, id, document, original):
         return self.restore_version(id, document, original) or super().replace(id, document, original)

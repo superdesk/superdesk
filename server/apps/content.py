@@ -190,7 +190,8 @@ metadata_schema = {
         'nullable': True
     },
     'groups': {
-        'type': 'list'
+        'type': 'list',
+        'minlength': 1
     },
     'body_html': {
         'type': 'string',

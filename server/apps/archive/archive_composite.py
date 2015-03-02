@@ -9,13 +9,11 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from collections import Counter
-from eve.utils import ParsedRequest, config
+from eve.utils import config
 from eve.validation import ValidationError
 from superdesk.errors import SuperdeskApiError
 from superdesk import get_resource_service
-from apps.archive import ArchiveService
 from apps.content import LINKED_IN_PACKAGES
-from apps.archive import ArchiveVersionsService
 import logging
 
 ASSOCIATIONS = 'refs'
@@ -25,34 +23,18 @@ ID_REF = 'idRef'
 logger = logging.getLogger(__name__)
 
 
-class PackagesVersionsService(ArchiveVersionsService):
-
-    def get(self, req, lookup):
-        if req is None:
-            req = ParsedRequest()
-        return self.backend.get('archive_versions', req=req, lookup=lookup)
-
-
-class PackageService(ArchiveService):
-
-    def get(self, req, lookup):
-        if req is None:
-            req = ParsedRequest()
-        return self.backend.get('packages', req=req, lookup=lookup)
+class PackageService():
 
     def on_create(self, docs):
-        super().on_create(docs)
         self.check_root_group(docs)
         self.check_package_associations(docs)
 
     def on_created(self, docs):
-        super().on_created(docs)
         for (doc, assoc) in [(doc, assoc) for doc in docs
                              for assoc in self._get_associations(doc)]:
             self.update_link(doc[config.ID_FIELD], assoc)
 
     def on_update(self, updates, original):
-        super().on_update(updates, original)
         self.check_root_group([updates])
         associations = self._get_associations(updates)
         self.check_for_duplicates(original, associations)
@@ -60,7 +42,6 @@ class PackageService(ArchiveService):
             self.extract_default_association_data(original, assoc)
 
     def on_updated(self, updates, original):
-        super().on_updated(updates, original)
         toAdd = {assoc.get(ITEM_REF): assoc for assoc in self._get_associations(updates)}
         toRemove = [assoc for assoc in self._get_associations(original) if assoc.get(ITEM_REF) not in toAdd]
         for assoc in toRemove:
@@ -69,7 +50,6 @@ class PackageService(ArchiveService):
             self.update_link(original[config.ID_FIELD], assoc)
 
     def on_deleted(self, doc):
-        super().on_deleted(doc)
         for assoc in self._get_associations(doc):
             self.update_link(doc[config.ID_FIELD], assoc, delete=True)
 

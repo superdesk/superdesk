@@ -1,17 +1,11 @@
 Feature: Packages
 
     @auth
-    Scenario: Empty packages list
-        Given empty "packages"
-        When we get "/packages"
-        Then we get list with 0 items
-
-    @auth
     Scenario: Create new package without groups
-        Given empty "packages"
-        When we post to "/packages"
+        Given empty "archive"
+        When we post to "archive"
         """
-        {"groups": [], "guid": "tag:example.com,0000:newsml_BRE9A605"}
+        {"groups": [], "guid": "tag:example.com,0000:newsml_BRE9A605", "type": "composite"}
         """
         Then we get error 400
         """
@@ -24,12 +18,12 @@ Feature: Packages
 
     @auth
     Scenario: Create new package with text content
-        Given empty "packages"
+        Given empty "archive"
         When we post to "archive" with success
         """
-        [{"headline": "test"}]
+        [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
         """
-        When we post to "/packages" with success
+        When we post to "archive" with success
         """
         {
             "groups": [
@@ -39,17 +33,18 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#archive._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A606",
                             "slugline": "awesome article"
                         }
                     ],
                     "role": "grpRole:Main"
                 }
             ],
-            "guid": "tag:example.com,0000:newsml_BRE9A605"
+            "guid": "tag:example.com,0000:newsml_BRE9A605",
+            "type": "composite"
         }
         """
-        And we get "/packages"
+        And we get "archive?source={"query":{"filtered":{"filter":{"and":[{"terms":{"type":["composite"]}}]}}}}"
         Then we get list with 1 items
         """
         {
@@ -62,7 +57,7 @@ Feature: Packages
                             "refs": [
                                 {
                                     "headline": "test package with text",
-                                    "residRef": "#archive._id#",
+                                    "residRef": "tag:example.com,0000:newsml_BRE9A606",
                                     "slugline": "awesome article"
                                 }
                             ],
@@ -77,9 +72,9 @@ Feature: Packages
 
     @auth
     Scenario: Create new package with image content
-        Given empty "packages"
+        Given empty "archive"
         When we upload a file "bike.jpg" to "archive_media"
-        When we post to "/packages" with success
+        When we post to "archive" with success
         """
         {
             "groups": [
@@ -95,10 +90,11 @@ Feature: Packages
                     ],
                     "role": "main"
                 }
-            ]
+            ],
+            "type": "composite"
         }
         """
-        And we get "/packages"
+        And we get "archive?source={"query":{"filtered":{"filter":{"and":[{"not":{"term":{"state":"spiked"}}},{"terms":{"type":["composite"]}}]}}}}"
         Then we get list with 1 items
         """
         {
@@ -125,13 +121,13 @@ Feature: Packages
 
     @auth
     Scenario: Create package with image and text
-        Given empty "packages"
+        Given empty "archive"
         When we upload a file "bike.jpg" to "archive_media"
         When we post to "archive"
         """
-        [{"headline": "test"}]
+        [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
         """
-        When we post to "/packages" with success
+        When we post to "archive" with success
         """
         {
             "groups": [
@@ -146,16 +142,17 @@ Feature: Packages
                         },
                         {
                             "headline": "test package with text",
-                            "residRef": "#archive._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A606",
                             "slugline": "awesome article"
                         }
                     ],
                     "role": "main"
                 }
-            ]
+            ],
+            "type": "composite"
         }
         """
-        And we get "/packages"
+        And we get "archive?source={"query":{"filtered":{"filter":{"and":[{"not":{"term":{"state":"spiked"}}},{"terms":{"type":["composite"]}}]}}}}"
         Then we get list with 1 items
         """
         {
@@ -173,7 +170,7 @@ Feature: Packages
                                 },
                                 {
                                     "headline": "test package with text",
-                                    "residRef": "#archive._id#",
+                                    "residRef": "tag:example.com,0000:newsml_BRE9A606",
                                     "slugline": "awesome article"
                                 }
                             ],
@@ -187,10 +184,11 @@ Feature: Packages
 
     @auth
     Scenario: Fail on creating new package with duplicated content
-        Given empty "packages"
-        When we post to "/packages"
+        Given empty "archive"
+        When we post to "archive"
         """
         {
+            "type": "composite",
             "groups": [
                 {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
                 {
@@ -221,11 +219,12 @@ Feature: Packages
     Scenario: Fail on creating package with circular reference
         When we post to "archive"
         """
-        [{"headline": "test"}]
+        [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
         """
-        When we post to "/packages" with success
+        When we post to "archive" with success
         """
         {
+            "type": "composite",
             "groups": [
                 {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
                 {
@@ -233,7 +232,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#archive._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A606",
                             "slugline": "awesome article"
                         }
                     ],
@@ -243,9 +242,11 @@ Feature: Packages
             "guid": "tag:example.com,0000:newsml_BRE9A605"
         }
         """
-        When we post to "/packages" with success
+        When we post to "archive" with success
         """
         {
+            "type": "composite",
+            "guid": "tag:example.com,0000:newsml_BRE9A604",
             "groups": [
                 {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
                 {
@@ -253,7 +254,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#archive._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A606",
                             "slugline": "awesome article"
                         },
                         {
@@ -267,7 +268,7 @@ Feature: Packages
             ]
         }
         """
-        And we patch "/packages/tag:example.com,0000:newsml_BRE9A605"
+        And we patch "/archive/tag:example.com,0000:newsml_BRE9A605"
         """
         {
             "groups": [
@@ -277,12 +278,12 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#archive._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A606",
                             "slugline": "awesome article"
                         },
                         {
                             "headline": "test package with text",
-                            "residRef": "#packages._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A604",
                             "slugline": "awesome circular article"
                         }
                     ]
@@ -294,21 +295,22 @@ Feature: Packages
         Then we get error 400
         """
         {
-            "_issues": {"validator exception": "Trying to create a circular reference to: #packages._id#"},
+            "_issues": {"validator exception": "Trying to create a circular reference to: tag:example.com,0000:newsml_BRE9A604"},
             "_status": "ERR"
         }
         """
 
     @auth
     Scenario: Retrieve created package
-        Given empty "packages"
+        Given empty "archive"
         When we post to "archive"
         """
-        [{"headline": "test"}]
+        [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
         """
-        When we post to "/packages" with success
+        When we post to "archive" with success
         """
         {
+            "type": "composite",
             "groups": [
                 {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
                 {
@@ -316,7 +318,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#archive._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A606",
                             "slugline": "awesome article"
                         }
                     ],
@@ -336,7 +338,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#archive._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A606",
                             "slugline": "awesome article"
                         }
                     ],
@@ -348,15 +350,15 @@ Feature: Packages
         }
         """
         And we get latest
-        When we get "/archive"
+        When we get "archive"
         Then we get list with 2 items
         """
         {
             "_items": [
                 {
-                    "guid": "#archive._id#",
+                    "guid": "tag:example.com,0000:newsml_BRE9A606",
                     "headline": "test",
-                    "linked_in_packages": [{"package": "#packages._id#"}],
+                    "linked_in_packages": [{"package": "tag:example.com,0000:newsml_BRE9A605"}],
                     "type": "text"
                 },
                 {
@@ -367,7 +369,7 @@ Feature: Packages
                             "refs": [
                                 {
                                     "headline": "test package with text",
-                                    "residRef": "#archive._id#",
+                                    "residRef": "tag:example.com,0000:newsml_BRE9A606",
                                     "slugline": "awesome article"
                                 }
                             ],
@@ -383,14 +385,15 @@ Feature: Packages
 
     @auth
     Scenario: Fail on creating new package with missing root group
-        Given empty "packages"
+        Given empty "archive"
         When we post to "archive"
         """
         [{"headline": "test"}]
         """
-        When we post to "/packages"
+        When we post to "archive"
         """
         {
+            "type": "composite",
             "groups": [
                 {
                     "id": "main",
@@ -414,14 +417,15 @@ Feature: Packages
 
     @auth
     Scenario: Fail on creating new package with duplicated root group
-        Given empty "packages"
+        Given empty "archive"
         When we post to "archive"
         """
         [{"headline": "test"}]
         """
-        When we post to "/packages"
+        When we post to "archive"
         """
         {
+            "type": "composite",
             "groups": [
                 {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
                 {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
@@ -447,14 +451,15 @@ Feature: Packages
 
     @auth
     Scenario: Fail on creating new package with missing group referenced in root
-        Given empty "packages"
+        Given empty "archive"
         When we post to "archive"
         """
         [{"headline": "test"}]
         """
-        When we post to "/packages"
+        When we post to "archive"
         """
         {
+            "type": "composite",
             "groups": [
                 {"id": "root", "refs": [{"idRef": "main"}, {"idRef": "sidebar"}], "role": "grpRole:NEP"},
                 {
@@ -479,14 +484,15 @@ Feature: Packages
 
     @auth
     Scenario: Fail on creating new package with group not referenced in root
-        Given empty "packages"
+        Given empty "archive"
         When we post to "archive"
         """
         [{"headline": "test"}]
         """
-        When we post to "/packages"
+        When we post to "archive"
         """
         {
+            "type": "composite",
             "groups": [
                 {"id": "root", "refs": [{"idRef": "main"}, {"idRef": "sidebar"}], "role": "grpRole:NEP"},
                 {
@@ -519,17 +525,19 @@ Feature: Packages
         """
         {"_message": "Not all groups are referenced in the root group.", "_status": "ERR"}
         """
+
     @auth
     Scenario: Fail on patching created package with group not referenced in root
-        Given empty "packages"
+        Given empty "archive"
         When we post to "archive"
         """
-        [{"headline": "test"}]
+        [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
         """
         When we upload a file "bike.jpg" to "archive_media"
-        When we post to "/packages" with success
+        When we post to "archive" with success
         """
         {
+            "type": "composite",
             "groups": [
                 {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
                 {
@@ -537,6 +545,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A606",
                             "residRef": "#archive._id#",
                             "slugline": "awesome article"
                         }
@@ -562,7 +571,7 @@ Feature: Packages
                         },
                         {
                             "headline": "test package with text",
-                            "residRef": "#archive._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A606",
                             "slugline": "awesome article"
                         }
                     ],
@@ -573,7 +582,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#archive._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A606",
                             "slugline": "awesome article"
                         }
                     ],
@@ -589,15 +598,16 @@ Feature: Packages
 
     @auth
     Scenario: Patch created package
-        Given empty "packages"
+        Given empty "archive"
         When we post to "archive"
         """
-        [{"headline": "test"}]
+        [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A606"}]
         """
         When we upload a file "bike.jpg" to "archive_media"
-        When we post to "/packages" with success
+        When we post to "archive" with success
         """
         {
+            "type": "composite",
             "groups": [
                 {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
                 {
@@ -605,7 +615,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#archive._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A606",
                             "slugline": "awesome article"
                         }
                     ],
@@ -630,7 +640,7 @@ Feature: Packages
                         },
                         {
                             "headline": "test package with text",
-                            "residRef": "#archive._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A606",
                             "slugline": "awesome article"
                         }
                     ],
@@ -655,7 +665,7 @@ Feature: Packages
                         },
                         {
                             "headline": "test package with text",
-                            "residRef": "#archive._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A606",
                             "slugline": "awesome article"
                         }
                     ],
@@ -667,20 +677,21 @@ Feature: Packages
         }
         """
         And we get version 2
-       	When we get "/packages/tag:example.com,0000:newsml_BRE9A605?version=all"
+       	When we get "/archive/tag:example.com,0000:newsml_BRE9A605?version=all"
         Then we get list with 2 items
 
     @auth
     Scenario: When removing a link from the package, item.linked_in_packages gets updated
-        Given empty "packages"
+        Given empty "archive"
         When we post to "archive"
         """
         [{"guid": "tag:example.com,0000:newsml_BRE9A679", "headline": "test"}]
         """
         When we upload a file "bike.jpg" to "archive_media"
-        When we post to "/packages" with success
+        When we post to "archive" with success
         """
         {
+            "type": "composite",
             "groups": [
                 {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
                 {
@@ -688,7 +699,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#archive._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A679",
                             "slugline": "awesome article"
                         }
                     ],
@@ -721,14 +732,16 @@ Feature: Packages
 
     @auth
     Scenario: Delete created package
-        Given empty "packages"
+        Given empty "archive"
         When we post to "archive"
         """
-        [{"headline": "test"}]
+        [{"headline": "test", "guid": "tag:example.com,0000:newsml_BRE9A679"}]
         """
-        When we post to "/packages" with success
+        When we post to "archive" with success
         """
         {
+            "type": "composite",
+            "guid": "tag:example.com,0000:newsml_BRE9A678",
             "groups": [
                 {"id": "root", "refs": [{"idRef": "main"}], "role": "grpRole:NEP"},
                 {
@@ -736,7 +749,7 @@ Feature: Packages
                     "refs": [
                         {
                             "headline": "test package with text",
-                            "residRef": "#archive._id#",
+                            "residRef": "tag:example.com,0000:newsml_BRE9A679",
                             "slugline": "awesome article"
                         }
                     ],
@@ -745,10 +758,10 @@ Feature: Packages
             ]
         }
         """
-        When we delete latest
+        When we delete "/archive/tag:example.com,0000:newsml_BRE9A678"
         Then we get response code 405
-        When we get "/archive"
+        When we get "archive"
         Then we get list with 2 items
         """
-        {"_items": [{"guid": "#archive._id#", "headline": "test", "linked_in_packages": [], "type": "text"}]}
+        {"_items": [{"guid": "tag:example.com,0000:newsml_BRE9A679", "headline": "test", "linked_in_packages": [], "type": "text"}]}
         """
