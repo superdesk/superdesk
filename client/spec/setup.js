@@ -10,8 +10,15 @@ beforeEach(function(done) {
 	browser.driver.manage().window().setSize(1280, 800);
     getToken(function() {
         resetApp(function() {
-            browser.get('/').then(function() {
-                return browser.executeScript('sessionStorage.clear();localStorage.clear();');
+            browser.driver.get(browser.baseUrl)
+            .then(function() {
+                return browser.driver.executeScript('sessionStorage.clear();localStorage.clear();');
+            }).then(function() {
+                return browser.driver.wait(function() {
+                    return browser.driver.executeScript('return window.superdeskIsReady || false');
+                });
+            }).then(function () {
+                return browser.waitForAngular();
             }).then(done);
         });
     });
