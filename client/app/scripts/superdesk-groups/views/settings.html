@@ -38,6 +38,7 @@
 					<form name="generalStep">
 						<div class="content">
 							<fieldset>
+								<span class="float-right" sd-character-count data-item="group.edit.name" data-limit="limits.group"></span>
 								<div class="field">
 									<label translate>Group name</label>
 									<input type="text" class="fullwidth-input" ng-model="group.edit.name" ng-keyup="handleEdit($event);" required> 
@@ -49,10 +50,11 @@
 							</fieldset>
 							<p ng-if="message">{{ message }}</p>
 							<span ng-show="_errorUniqueness" translate>Group with name "{{ group.edit.name }}" already exists.</span>
+							<p ng-show="_errorLimits" translate>Character limit exceeded, group can not be created/updated.</p>
 							<span ng-show="_error" translate>There was a problem, group not created/updated.</span>
 						</div>
 						<div class="modal-footer">
-						  	<button class="btn btn-primary" ng-click="save(group.edit)" ng-disabled="!generalStep.$valid" translate>Next</button>
+						  	<button class="btn btn-primary" ng-click="save(group.edit)" ng-disabled="!generalStep.$valid || _errorLimits" translate>Next</button>
 						</div>
 					</form>
 				</div>
