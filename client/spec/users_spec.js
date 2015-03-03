@@ -90,6 +90,7 @@ describe('Users', function() {
             inputFirstName.sendKeys('X');
             expect(inputFirstName.getAttribute('value')).toBe('first nameX');
 
+            browser.sleep(200);
             expect(buttonSave.isEnabled()).toBe(true);
             expect(buttonCancel.isEnabled()).toBe(true);
 
@@ -97,6 +98,7 @@ describe('Users', function() {
             inputFirstName.sendKeys('first name');
             expect(inputFirstName.getAttribute('value')).toBe('first name');
 
+            browser.sleep(200);
             expect(buttonSave.isEnabled()).toBe(false);
             expect(buttonCancel.isEnabled()).toBe(false);
         });

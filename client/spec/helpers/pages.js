@@ -7,7 +7,7 @@ exports.workspace = new Workspace();
 function LoginModal() {
     this.username = element(by.model('username'));
     this.password = element(by.model('password'));
-    this.btn = element(by.css('#login-btn'));
+    this.btn = element(by.id('login-btn'));
     this.error = element(by.css('p.error'));
 
     this.login = function(username, password) {
@@ -23,8 +23,10 @@ function LoginModal() {
 function Workspace() {
 
     function switchDesk(toPersonal) {
-        expect(element(by.buttonText('PERSONAL')).isPresent()).toBe(true);
-        expect(element(by.buttonText('SPORTS DESK')).isPresent()).toBe(true);
+        browser.wait(function() {
+            return element(by.buttonText('PERSONAL')).isPresent();
+        });
+
         element(by.buttonText('PERSONAL')).isDisplayed().then(function(isPersonal) {
             if (isPersonal && !toPersonal) {
                 element(by.partialButtonText('PERSONAL')).click();

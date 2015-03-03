@@ -1,5 +1,5 @@
-<li ng-repeat="activity in activities" class="item-field" ng-click="run(activity, $event)">
-    <a title="{{ :: activity.label | translate }}" ng-href="{{ :: $root.link(activity._id, item) }}" >
+<li ng-repeat="activity in activities" class="item-field activity-{{ activity._id }}" ng-click="run(activity, $event)">
+    <a title="{{ :: activity.label | translate }}" ng-href="{{ :: $root.link(activity._id, item) }}">
         <i class="icon-{{ :: activity.icon }} {{!activity.monitor || !item.actioning[activity._id] || 'actioning'}}" ng-show=":: activity.icon"></i>
         <span>{{ :: activity.label | translate }}</span>
     </a>

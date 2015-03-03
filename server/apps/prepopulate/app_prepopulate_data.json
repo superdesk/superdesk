@@ -15,7 +15,8 @@
     {
         "data": {"members": [{"user": "-id user admin-"}], "name": "Sports Desk"},
         "resource": "desks",
-        "username": "admin"
+        "username": "admin",
+        "id_name": "-id sports desk-"
     },
     {"data": {"name": "Editor", "privileges": {"ingest": {"read": 1}}}, "resource": "roles"},
 

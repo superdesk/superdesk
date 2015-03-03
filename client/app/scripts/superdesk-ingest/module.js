@@ -419,7 +419,7 @@ define([
                     })
                     .then(function(archiveItem) {
                         data.item.task_id = archiveItem.task_id;
-                        data.item.archived = archiveItem.archived;
+                        data.item.archived = archiveItem._created;
                     }, function(response) {
                         data.item.error = response;
                     })

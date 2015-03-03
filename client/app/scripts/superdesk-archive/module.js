@@ -103,7 +103,7 @@ define([
                     filters: [{action: 'list', type: 'spike'}],
                     action: 'unspike'
                 })
-                .activity('archiveContent', {
+                .activity('archive-content', {
                     label: gettext('Fetch'),
                     icon: 'archive',
                     monitor: true,
