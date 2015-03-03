@@ -242,7 +242,4 @@ MAX_VALUE_OF_INGEST_SEQUENCE = 9999
 
 DAYS_TO_KEEP = int(env('INGEST_ARTICLES_TTL', '2'))
 
-MACROS_PATH = env('MACROS_PATH', os.path.join(
-    os.path.dirname(os.path.realpath(__file__)),
-    'macros'
-))
+MACROS_MODULE = env('MACROS_MODULE', 'macros')

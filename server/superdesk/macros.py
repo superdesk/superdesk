@@ -1,71 +1,80 @@
+# -*- coding: utf-8; -*-
+#
+# This file is part of Superdesk.
+#
+# Copyright 2015 Sourcefabric z.u. and contributors.
+#
+# For the full copyright and license information, please see the
+# AUTHORS and LICENSE files distributed with this source code, or
+# at https://www.sourcefabric.org/superdesk/license
 
 import inspect
-import pkgutil
 import importlib
 
 from flask import current_app as app
-from superdesk import logger
 
 
-modules = {}
+def load_macros():
+    """Import macros modules.
 
-
-def load_modules():
-    """Import all modules within configured MACROS_PATH directory.
-
-    If module was imported before it will be reloaded.
+    If module was imported before it will reload it.
     """
-    path = app.config['MACROS_PATH']
-    logger.info('loading macros from "%s"' % path)
-    for loader, name, is_pkg in pkgutil.iter_modules([path]):
-        if name.endswith('test'):
-            continue
-        if not modules.get(name):
-            modules[name] = loader.find_module(name).load_module(name)
-        else:
-            modules[name] = importlib.reload(modules[name])
+    try:
+        module = app.config['MACROS_MODULE']
+        importlib.import_module(module)
+    except ImportError:
+        pass
 
 
 class MacroRegister():
     """Dynamic macros registry.
 
-    Will look for new macros whenever macros are iterated.
-
-    Also supports `name in macros` check.
+    Will look for new macros whenever macros are used.
     """
 
     def __init__(self):
         self.macros = []
 
     def __iter__(self):
-        """for macro in macros"""
+        """Implement for macro in macros."""
         self.index = -1
-        load_modules()
+        load_macros()
         return self
 
     def __next__(self):
-        """for macro in macros"""
+        """Implement for macro in macros."""
         self.index += 1
         try:
             return self.macros[self.index]
         except IndexError:
             raise StopIteration
 
-    def __len__(self):
-        """len(macros)"""
-        return len(self.macros)
-
     def __contains__(self, name):
-        """'name' in macros"""
-        load_modules()
+        """Implement 'name' in macros.
+
+        :param name: macro name
+        """
+        load_macros()
         return self.find(name) is not None
 
     def find(self, name):
+        """Find a macro by given macro name.
+
+        :param name: macro name
+        """
         for macro in self.macros:
             if macro.get('name') == name:
                 return macro
 
     def register(self, **kwargs):
+        """Register a new macro.
+
+        :param name: unique macro name, used to identify macro
+        :param label: macro label, used by client when listing macros 
+        :param callback: macro callback implementing functionality, should use **kwargs to be able to handle new params
+        :param shortcut: default client shortcut (witch ctrl)
+        :param description: macro description, using callback doctext as default
+        """
         kwargs.setdefault('description', inspect.getdoc(kwargs.get('callback')))
         self.macros.append(kwargs)
 
@@ -74,5 +83,5 @@ macros = MacroRegister()
 
 
 def register(**kwargs):
-    """Register a macro."""
+    """Alias for macro.register."""
     macros.register(**kwargs)

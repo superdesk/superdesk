@@ -17,7 +17,7 @@ def get_rate():
         return USD_TO_AUD
 
 
-def usd_to_aud(item):
+def usd_to_aud(item, **kwargs):
     """Convert USD to AUD."""
 
     rate = get_rate()
