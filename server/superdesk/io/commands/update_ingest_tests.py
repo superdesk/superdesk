@@ -58,6 +58,19 @@ class UpdateIngestTest(TestCase):
             self.assertEquals(12, len(items))
             self.ingest_items(items, provider)
 
+    def test_ingest_item_expiry(self):
+        provider_name = 'reuters'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
+        with self.app.app_context():
+            provider = self._get_provider(provider_name)
+            provider_service = self._get_provider_service(provider)
+            provider_service.provider = provider
+            items = provider_service.fetch_ingest(guid)
+            self.assertIsNone(items[1].get('expiry'))
+            items[1]['versioncreated'] = utcnow()
+            self.ingest_items([items[1]], provider)
+            self.assertIsNotNone(items[1].get('expiry'))
+
     def test_ingest_item_sync_if_missing_from_elastic(self):
         provider_name = 'reuters'
         guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'

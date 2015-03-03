@@ -20,7 +20,7 @@ from werkzeug.exceptions import HTTPException
 from superdesk.notification import push_notification
 from superdesk.io import providers
 from superdesk.celery_app import celery
-from superdesk.utc import utcnow
+from superdesk.utc import utcnow, get_expiry_date
 from superdesk.workflow import set_default_state
 from superdesk.errors import ProviderError
 from superdesk.stats import stats
@@ -233,6 +233,7 @@ def ingest_item(item, provider, rule_set=None):
         item['ingest_provider'] = str(provider['_id'])
         item.setdefault('source', provider.get('source', ''))
         set_default_state(item, STATE_INGESTED)
+        item['expiry'] = get_expiry_date(provider.get('content_expiry', INGEST_EXPIRY_MINUTES), item['versioncreated'])
 
         if 'anpa-category' in item:
             process_anpa_category(item, provider)
