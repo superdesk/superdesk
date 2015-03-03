@@ -11,12 +11,12 @@ SCRIPT_DIR=$(readlink -e $(dirname "$0"))
 BAMBOO_DIR=$(readlink -e $SCRIPT_DIR/..)
 SERVER_RESULTS_DIR=$BAMBOO_DIR/results/server
 CLIENT_RESULTS_DIR=$BAMBOO_DIR/results/client
-SCREENSHOTS_DIR=/opt/screenshots/$(date +%Y%m%d-%H%M%S)/
+SCREENSHOTS_DIR=/opt/screenshots/$INSTANCE/$(date +%Y%m%d-%H%M%S)/
 
 # install script requirements
 virtualenv -p python2 $SCRIPT_DIR/env &&
 . $SCRIPT_DIR/env/bin/activate &&
-pip install -r $SCRIPT_DIR/requirements.txt || exit 1
+pip install -q -r $SCRIPT_DIR/requirements.txt || exit 1
 
 
 export COMPOSE_PROJECT_NAME=build_$INSTANCE
@@ -28,14 +28,14 @@ cd $SCRIPT_DIR &&
 docker-compose stop;
 docker-compose kill;
 docker-compose rm --force;
-rm -r $BAMBOO_DIR/data/
+sudo rm -r $BAMBOO_DIR/data/
 mkdir -p $BAMBOO_DIR/data/{mongodb,elastic,redis}
 
 # cleanup tests' results:
-rm -r $BAMBOO_DIR/results/
+sudo rm -r $BAMBOO_DIR/results/
 mkdir -p $SERVER_RESULTS_DIR/{unit,behave} &&
 mkdir -p $CLIENT_RESULTS_DIR/unit &&
-rm -r $SCREENSHOTS_DIR
+sudo rm -r $SCREENSHOTS_DIR
 mkdir -p $SCREENSHOTS_DIR
 
 # reset repo files' dates:

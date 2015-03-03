@@ -36,13 +36,11 @@
                 .then(angular.bind(this, function(response) {
                     this._items = response._items;
                     this.unread = 0;
+                    var identity = session.identity || {};
                     _.each(this._items, function(item) {
-                        try {
-                            item._unread = !item.read[session.identity._id];
-                            this.unread += item._unread ? 1 : 0;
-                        } catch (err) {
-                            // .read not set
-                        }
+                        var read = item.read || {};
+                        item._unread = !read[identity._id];
+                        this.unread += item._unread ? 1 : 0;
                     }, this);
                 }));
         };
@@ -60,20 +58,18 @@
 
         function isCurrentUser(extras) {
             var dest = extras._dest || {};
-            return !dest[session.identity._id];
+            return session.identity && !dest[session.identity._id];
         }
 
         var reload = angular.bind(this, this.reload);
-
-        // reload on activity notification
-        $rootScope.$on('activity', function(_e, extras) {
-            if (isCurrentUser(extras)) {
-                $timeout(reload, UPDATE_TIMEOUT);
-            }
+        session.getIdentity().then(function() {
+            $timeout(reload, INIT_TIMEOUT, false);
+            $rootScope.$on('activity', function(_e, extras) {
+                if (isCurrentUser(extras)) {
+                    $timeout(reload, UPDATE_TIMEOUT, false);
+                }
+            });
         });
-
-        // init
-        $timeout(reload, INIT_TIMEOUT);
     }
 
     /**

@@ -7,16 +7,12 @@ var resetApp = require('./helpers/fixtures').resetApp;
 
 // runs before every spec
 beforeEach(function(done) {
+	browser.driver.manage().window().setSize(1280, 800);
     getToken(function() {
         resetApp(function() {
-            browser.driver.getCurrentUrl()
-                .then(function(url) {
-                    if (url.indexOf('http') === 0) {
-                        browser.executeScript('sessionStorage.clear();localStorage.clear();');
-                        return browser.waitForAngular();
-                    }
-                })
-                .then(done);
+            browser.get('/').then(function() {
+                return browser.executeScript('sessionStorage.clear();localStorage.clear();');
+            }).then(done);
         });
     });
 });

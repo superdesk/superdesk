@@ -23,6 +23,8 @@ function LoginModal() {
 function Workspace() {
 
     function switchDesk(toPersonal) {
+        expect(element(by.buttonText('PERSONAL')).isPresent()).toBe(true);
+        expect(element(by.buttonText('SPORTS DESK')).isPresent()).toBe(true);
         element(by.buttonText('PERSONAL')).isDisplayed().then(function(isPersonal) {
             if (isPersonal && !toPersonal) {
                 element(by.partialButtonText('PERSONAL')).click();

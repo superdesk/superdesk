@@ -558,7 +558,7 @@
             }
 
             function triggerClose() {
-                popover.status = $timeout(hide, holdInterval);
+                popover.status = $timeout(hide, holdInterval, false);
             }
 
             //build template
@@ -734,7 +734,7 @@
                 link: function(scope, element, attrs) {
                     $timeout(function() {
                         $('.user-details-pane').addClass('open');
-                    });
+                    }, 0, false);
 
                     scope.closePane = function() {
                         $('.user-details-pane').removeClass('open');
