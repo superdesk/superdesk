@@ -183,7 +183,7 @@ define([
                     var self = this;
                     return preferencesService.get('stage:items').then(function(result) {
                         if (angular.isDefined(result)) {
-                            self.activeDeskId = result;
+                            self.activeStageId = angular.isArray(result) ? result[0] : result;
                         }
                     });
                 },
@@ -192,7 +192,7 @@ define([
                 },
                 setCurrentDeskId: function(deskId) {
                     this.activeDeskId = deskId;
-                    preferencesService.update({'desk:last_worked': [deskId]}, 'desk:last_worked').then(function() {
+                    preferencesService.update({'desk:last_worked': deskId}, 'desk:last_worked').then(function() {
                             //nothing to do
                         }, function(response) {
                             notify.error(gettext('Session preference could not be saved...'));
