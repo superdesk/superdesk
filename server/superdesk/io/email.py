@@ -12,6 +12,7 @@ import imaplib
 from .ingest_service import IngestService
 from superdesk.io import register_provider
 from superdesk.upload import url_for_media
+from superdesk.errors import IngestEmailError
 
 from superdesk.io.rfc822 import rfc822Parser
 
@@ -24,30 +25,33 @@ class EmailReaderService(IngestService):
         self.parser = rfc822Parser()
 
     def _update(self, provider):
-        server = provider.get('config', {}).get('server', None)
-        if not server:
-            server = ''
-        port = provider.get('config', {}).get('port', None)
-        if not port:
-            port = 993
+        config = provider.get('config', {})
+        server = config.get('server', '')
+        port = int(config.get('port', 993))
 
-        Imap = imaplib.IMAP4_SSL(host=server, port=port)
         try:
-            Imap.login(provider.get('config', {}).get('user', None), provider.get('config', {}).get('password', None))
-        except imaplib.IMAP4.error:
-            return
+            imap = imaplib.IMAP4_SSL(host=server, port=port)
+            try:
+                imap.login(config.get('user', None), config.get('password', None))
+            except imaplib.IMAP4.error:
+                raise IngestEmailError.emailLoginError(imaplib.IMAP4.error, provider)
 
-        rv, data = Imap.select(provider.get('config', {}).get('mailbox', None), readonly=False)
-        if rv == 'OK':
-            rv, data = Imap.search(None, provider.get('config', {}).get('filter', None))
+            rv, data = imap.select(config.get('mailbox', None), readonly=False)
             if rv == 'OK':
-                new_items = []
-                for num in data[0].split():
-                    rv, data = Imap.fetch(num, '(RFC822)')
-                    if rv == 'OK':
-                        new_items.append(self.parser.parse_email(data))
-            Imap.close()
-        Imap.logout()
+                rv, data = imap.search(None, config.get('filter', None))
+                if rv == 'OK':
+                    new_items = []
+                    for num in data[0].split():
+                        rv, data = imap.fetch(num, '(RFC822)')
+                        if rv == 'OK':
+                            try:
+                                new_items.append(self.parser.parse_email(data))
+                            except Exception as ex:
+                                raise IngestEmailError.emailParseError(ex, provider)
+                imap.close()
+            imap.logout()
+        except Exception as ex:
+            raise IngestEmailError.emailError(ex, provider)
         return new_items
 
     def prepare_href(self, href):

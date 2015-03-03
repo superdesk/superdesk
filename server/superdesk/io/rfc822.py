@@ -33,12 +33,7 @@ class rfc822Parser(Parser):
         item['type'] = 'text'
         item['versioncreated'] = utcnow()
 
-        # create a composite item in case the email has attachments we wish to associate with the email
-        comp_item = dict()
-        comp_item['type'] = 'composite'
-        comp_item['guid'] = generate_guid(type=GUID_TAG)
-        comp_item['versioncreated'] = utcnow()
-        comp_item['groups'] = []
+        comp_item = None
 
         # a list to keep the references to the attachments
         refs = []
@@ -57,17 +52,6 @@ class rfc822Parser(Parser):
                     dt = datetime.datetime.utcfromtimestamp(email.utils.mktime_tz(date_tuple))
                     dt = dt.replace(tzinfo=timezone('utc'))
                     item['firstcreated'] = dt
-
-                comp_item['headline'] = msg['subject']
-
-                # create a reference to the item that stores the body of the email
-                item_ref = {}
-                item_ref['guid'] = item['guid']
-                item_ref['residRef'] = item['guid']
-                item_ref['headline'] = msg['subject']
-                item_ref['location'] = 'ingest'
-                item_ref['itemClass'] = 'icls:text'
-                refs.append(item_ref)
 
                 # this will loop through all the available multiparts in mail
                 for part in msg.walk():
@@ -98,6 +82,25 @@ class rfc822Parser(Parser):
                                                              content_type=content_type, metadata=metadata)
                         renditions = {'baseImage': {'href': image_id}}
 
+                        # if we have not got a composite item then create one
+                        if not comp_item:
+                            comp_item = dict()
+                            comp_item['type'] = 'composite'
+                            comp_item['guid'] = generate_guid(type=GUID_TAG)
+                            comp_item['versioncreated'] = utcnow()
+                            comp_item['groups'] = []
+                            comp_item['headline'] = msg['subject']
+                            comp_item['groups'] = []
+
+                            # create a reference to the item that stores the body of the email
+                            item_ref = {}
+                            item_ref['guid'] = item['guid']
+                            item_ref['residRef'] = item['guid']
+                            item_ref['headline'] = msg['subject']
+                            item_ref['location'] = 'ingest'
+                            item_ref['itemClass'] = 'icls:text'
+                            refs.append(item_ref)
+
                         media_item = dict()
                         media_item['guid'] = generate_guid(type=GUID_TAG)
                         media_item['type'] = 'picture'
@@ -118,8 +121,6 @@ class rfc822Parser(Parser):
                         media_ref['location'] = 'ingest'
                         media_ref['itemClass'] = 'icls:picture'
                         refs.append(media_ref)
-                        groups = []
-                        comp_item['groups'] = groups
 
         if html_body is not None:
             item['body_html'] = html_body
@@ -127,8 +128,8 @@ class rfc822Parser(Parser):
             item['body_html'] = text_body
             item['type'] = 'preformatted'
 
-        # if there is more than 1 ref then it because we added an image
-        if len(refs) > 1:
+        # if there is composite item then add the main group and references
+        if comp_item:
             grefs = {}
             grefs['refs'] = [{'idRef': 'main'}]
             grefs['id'] = 'root'
