@@ -23,7 +23,7 @@ class BackendTestCase(TestCase):
         with self.app.app_context():
             ids = backend.create('ingest', [item])
             doc_old = backend.find_one('ingest', None, _id=ids[0])
-            backend.update('ingest', ids[0], updates)
+            backend.update('ingest', ids[0], updates, doc_old)
             doc_new = backend.find_one('ingest', None, _id=ids[0])
             self.assertNotEqual(doc_old[self.app.config['ETAG']],
                                 doc_new[self.app.config['ETAG']])
@@ -37,7 +37,7 @@ class BackendTestCase(TestCase):
             self.assertIn(self.app.config['DATE_CREATED'], doc)
             self.assertIn(self.app.config['LAST_UPDATED'], doc)
 
-    def test_check_default_dates_on_create(self):
+    def test_check_default_dates_on_update(self):
         backend = get_backend()
         past = (utcnow() + timedelta(seconds=-2)).replace(microsecond=0)
         item = {'name': 'foo',
@@ -47,7 +47,7 @@ class BackendTestCase(TestCase):
         with self.app.app_context():
             ids = backend.create('ingest', [item])
             doc_old = backend.find_one('ingest', None, _id=ids[0])
-            backend.update('ingest', ids[0], updates)
+            backend.update('ingest', ids[0], updates, doc_old)
             doc_new = backend.find_one('ingest', None, _id=ids[0])
             date1 = doc_old[self.app.config['LAST_UPDATED']]
             date2 = doc_new[self.app.config['LAST_UPDATED']]

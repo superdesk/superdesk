@@ -19,7 +19,7 @@ class HighlightsService(BaseService):
         proposedItems = service.get(req=req, lookup=None)
         for item in proposedItems:
             updates = item.get('highlights').remove(highlights_id)
-            service.update(item['_id'], {'highlights': updates})
+            service.update(item['_id'], {'highlights': updates}, item)
 
 
 class MarkedForHighlightsService(BaseService):
@@ -35,5 +35,5 @@ class MarkedForHighlightsService(BaseService):
             if doc['highlights'] not in item.get('highlights', []):
                 updates = item.get('highlights', [])
                 updates.append(doc['highlights'])
-                service.update(item['_id'], {'highlights': updates})
+                service.update(item['_id'], {'highlights': updates}, item)
         return ids

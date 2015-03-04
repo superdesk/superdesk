@@ -1,7 +1,7 @@
 
 var Login = require('./helpers/pages').login;
 
-describe('login', function() {
+describe('Login', function() {
     'use strict';
 
     var modal;
@@ -27,9 +27,8 @@ describe('login', function() {
         modal.login('admin', 'admin');
         element(by.css('button.current-user')).click();
         element(by.buttonText('SIGN OUT')).click();
-        browser.sleep(2000); // it reloads page
-        browser.waitForAngular();
-
+        browser.get('/');
+        modal = new Login();
         expect(modal.btn.isDisplayed()).toBe(true);
         expect(modal.username.isDisplayed()).toBe(true);
         expect(modal.username.getAttribute('value')).toBe('');
@@ -41,5 +40,4 @@ describe('login', function() {
         expect(browser.getCurrentUrl()).not.toBe(browser.baseUrl + '/#/workspace');
         expect(modal.error.isDisplayed()).toBe(true);
     });
-
 });

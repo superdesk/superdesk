@@ -136,7 +136,7 @@ def update_provider(provider, rule_set=None, routing_scheme=None):
         LAST_UPDATED: utcnow(),
         # Providing the _etag as system updates to the documents shouldn't override _etag.
         app.config['ETAG']: provider.get(app.config['ETAG'])
-    })
+    }, provider)
 
     for items in providers[provider.get('type')].update(provider):
         ingest_items(items, provider, rule_set, routing_scheme)

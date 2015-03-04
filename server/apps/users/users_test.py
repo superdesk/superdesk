@@ -43,7 +43,8 @@ class PrivilegesTestCase(TestCase):
             with self.app.app_context():
                 flask.g.user = {'user_type': 'user'}
                 ids = self.service.create([{'name': 'user'}])
-                self.service.update(ids[0], {'role': '1'})
+                doc_old = self.service.find_one(None, _id=ids[0])
+                self.service.update(ids[0], {'role': '1'}, doc_old)
         ex = error_context.exception
         self.assertTrue(ex.status_code == 403)
 
@@ -51,5 +52,6 @@ class PrivilegesTestCase(TestCase):
         with self.app.app_context():
             flask.g.user = {'user_type': 'administrator'}
             ids = self.service.create([{'name': 'user', 'user_type': 'administrator'}])
-            self.service.update(ids[0], {'role': '1'})
+            doc_old = self.service.find_one(None, _id=ids[0])
+            self.service.update(ids[0], {'role': '1'}, doc_old)
             self.assertIsNotNone(self.service.find_one(req=None, role='1'))

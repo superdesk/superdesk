@@ -52,7 +52,8 @@ class BaseProxy(DataLayer):
         _id = doc.get(ID_FIELD, None)
         if ID_FIELD in doc:
             del doc[ID_FIELD]
-        res = getattr(self.data_layer, method)(resource, filter[ID_FIELD], doc)
+        original = self.find_one(resource, filter, None)
+        res = getattr(self.data_layer, method)(resource, filter[ID_FIELD], doc, original)
         if _id is not None:
             doc[ID_FIELD] = _id
         return res

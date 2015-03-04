@@ -16,13 +16,13 @@ exports.config = {
             args: ['--no-sandbox']
         }
     },
-    allScriptsTimeout: 21000,
+    directConnect: true,
+    restartBrowserBetweenTests: process.env.bamboo_working_directory || false, // any bamboo env var will do
     framework: 'jasmine',
     jasmineNodeOpts: {
         showColors: true,
         isVerbose: true,
-        includeStackTrace: true,
-        defaultTimeoutInterval: 30000
+        includeStackTrace: true
     },
     /* global jasmine */
     onPrepare: function() {
@@ -38,5 +38,19 @@ exports.config = {
         jasmine.getEnv().addReporter(
             new jasmine.JUnitXmlReporter('e2e-test-results', true, true)
         );
+
+        function Reporter() {
+            var printLogs = require('./spec/helpers/utils').printLogs;
+            this.reportSpecResults = function(spec) {
+                if (!spec.results().passed()) {
+                    browser.getCurrentUrl().then(function(url) {
+                        console.log('url: ' + url);
+                    });
+                    printLogs('fail');
+                }
+            };
+        }
+
+        jasmine.getEnv().addReporter(new Reporter());
     }
 };

@@ -111,10 +111,10 @@ class UsersService(BaseService):
             if not get_resource_privileges('users')['PATCH'] in flask.g.user['active_privileges']:
                 raise SuperdeskApiError.forbiddenError("Insufficient privileges to change the role")
 
-    def update(self, id, updates):
+    def update(self, id, updates, original):
         if is_sensitive_update(updates) and not current_user_has_privilege('users'):
             raise SuperdeskApiError.forbiddenError()
-        return super().update(id, updates)
+        return super().update(id, updates, original)
 
     def on_updated(self, updates, user):
         self.handle_status_changed(updates, user)
@@ -285,7 +285,8 @@ class RolesService(BaseService):
         role_id = self.get_default_role_id()
         # make it no longer default
         if role_id:
-            get_resource_service('roles').update(role_id, {"is_default": False})
+            role = self.find_one(req=None, is_default=True)
+            get_resource_service('roles').update(role_id, {"is_default": False}, role)
 
     def get_default_role_id(self):
         role = self.find_one(req=None, is_default=True)

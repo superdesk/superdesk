@@ -13,6 +13,7 @@
         subject: [],
         'anpa-category': {},
         genre: [],
+        groups: [],
         usageterms: null,
         ednote: null,
         place: [],
@@ -119,6 +120,12 @@
     AuthoringService.$inject = ['$q', 'api', 'lock', 'autosave', 'confirm'];
     function AuthoringService($q, api, lock, autosave, confirm) {
 
+        this.limits = {
+            slugline: 24,
+            headline: 64,
+            'abstract': 160
+        };
+
         /**
          * Open an item for editing
          *
@@ -178,7 +185,8 @@
         this.save = function saveAuthoring(item) {
             var diff = extendItem({}, item);
             autosave.stop(item);
-            return api.save('archive', item, diff).then(function(_item) {
+            var endpoint = item.type === 'composite' ? 'packages' : 'archive';
+            return api.save(endpoint, item, diff).then(function(_item) {
                 item._autosave = null;
                 item._locked = lock.isLocked(item);
                 return item;
@@ -365,13 +373,23 @@
         };
     }
 
-    AuthoringController.$inject = [
-        '$scope',
+    AuthoringController.$inject = ['$scope', 'item'];
+    function AuthoringController($scope, item) {
+        $scope.origItem = item;
+
+        $scope.widget_target = 'authoring';
+
+        $scope.intentFilter = {
+            action: 'author',
+            type: 'article'
+        };
+    }
+
+    AuthoringDirective.$inject = [
         'superdesk',
         'notify',
         'gettext',
         'desks',
-        'item',
         'authoring',
         'api',
         'session',
@@ -382,175 +400,176 @@
         'referrer',
         '$timeout'
     ];
-
-    function AuthoringController($scope, superdesk, notify, gettext,
-                                 desks, item, authoring, api, session, lock, privileges,
+    function AuthoringDirective(superdesk, notify, gettext,
+                                 desks, authoring, api, session, lock, privileges,
                                  ContentCtrl, $location, referrer, $timeout) {
-        var _closing;
+        return {
+            link: function($scope) {
 
-        $scope.privileges = privileges.privileges;
-        $scope.content = new ContentCtrl($scope);
+                var _closing;
 
-        $scope.dirty = false;
-        $scope.viewSendTo = false;
-        $scope.stage = null;
-        $scope._editable = item._editable;
-        $scope.widget_target = 'authoring';
+                $scope.privileges = privileges.privileges;
+                $scope.content = new ContentCtrl($scope);
 
-        $scope.sending = false;
-
-        $scope.proofread = false;
-
-        $scope.referrerUrl = referrer.getReferrerUrl();
-
-        if (item.task && item.task.stage) {
-            api('stages').getById(item.task.stage)
-            .then(function(result) {
-                $scope.stage = result;
-            });
-        }
-
-        /**
-         * Create a new version
-         */
-    	$scope.save = function() {
-    		return authoring.save($scope.item).then(function(res) {
-                item = res;
                 $scope.dirty = false;
-                $scope.item = _.create(item);
-                notify.success(gettext('Item updated.'));
-                return item;
-    		}, function(response) {
-                if (angular.isDefined(response.data._issues)) {
-                    if (angular.isDefined(response.data._issues.unique_name) &&
-                        response.data._issues.unique_name.unique === 1) {
-                        notify.error(gettext('Error: Unique Name is not unique.'));
-                    } else if (angular.isDefined(response.data._issues['validator exception'])) {
-                        notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                $scope.viewSendTo = false;
+                $scope.stage = null;
+                $scope._editable = $scope.origItem._editable;
+
+                $scope.proofread = false;
+
+                $scope.referrerUrl = referrer.getReferrerUrl();
+
+                if ($scope.origItem.task && $scope.origItem.task.stage) {
+                    api('stages').getById($scope.origItem.task.stage)
+                    .then(function(result) {
+                        $scope.stage = result;
+                    });
+                }
+
+                /**
+                 * Create a new version
+                 */
+            	$scope.save = function() {
+            		return authoring.save($scope.item).then(function(res) {
+                        $scope.origItem = res;
+                        $scope.dirty = false;
+                        $scope.item = _.create($scope.origItem);
+                        notify.success(gettext('Item updated.'));
+                        return $scope.origItem;
+            		}, function(response) {
+                        if (angular.isDefined(response.data._issues)) {
+                            if (angular.isDefined(response.data._issues.unique_name) &&
+                                response.data._issues.unique_name.unique === 1) {
+                                notify.error(gettext('Error: Unique Name is not unique.'));
+                            } else if (angular.isDefined(response.data._issues['validator exception'])) {
+                                notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                            }
+                        } else {
+                            notify.error(gettext('Error. Item not updated.'));
+                        }
+            		});
+            	};
+
+                /**
+                 * Close an item - unlock
+                 */
+                $scope.close = function() {
+                    _closing = true;
+                    authoring.close($scope.origItem, $scope.dirty).then(function() {
+                        $location.url($scope.referrerUrl);
+                    });
+                };
+
+                $scope.beforeSend = function() {
+					$scope.sending = true;
+                    return $scope.save()
+                    .then(function() {
+                        var p = lock.unlock($scope.origItem);
+                		return p;
+                    });
+                };
+
+                /**
+                 * Preview different version of an item
+                 */
+                $scope.preview = function(version) {
+                    forcedExtend($scope.item, version);
+                    $scope._editable = false;
+                };
+
+                /**
+                 * Revert item to given version
+                 */
+                $scope.revert = function(version) {
+                    forcedExtend($scope.item, version);
+                    return $scope.save();
+                };
+
+                /**
+                 * Close preview and start working again
+                 */
+                $scope.closePreview = function() {
+                    $scope.item = _.create($scope.origItem);
+                    extendItem($scope.item, $scope.origItem._autosave || {});
+                    $scope._editable = authoring.isEditable($scope.origItem);
+                };
+
+                /**
+                 * Checks if the item can be unlocked or not.
+                 */
+                $scope.can_unlock = function() {
+                    return lock.can_unlock($scope.item);
+                };
+                $scope.save_enabled = function() {
+                    return $scope.dirty || $scope.item._autosave;
+                };
+
+                function updateEditorState (result) {
+                    extendItem($scope.item, result);
+
+                    //The current $digest cycle will mark $scope.dirty = true.
+                    //We need to postpone this code block for the next cycle.
+                    $timeout(function() {
+                        $scope.origItem.lock_user = $scope.item.lock_user = result.lock_user;
+                        $scope.item._locked = result._locked;
+                        $scope.origItem.lock_session = $scope.item.lock_session = result.lock_session;
+                        $scope._editable = $scope.item._editable = true;
+                        $scope.dirty = false;
+                        $scope.item._autosave = null;
+                    }, 200);
+                }
+
+                $scope.unlock = function() {
+                    lock.unlock($scope.item).then(function(unlocked_item) {
+                        lock.lock(unlocked_item, true).then(updateEditorState);
+                    });
+                };
+
+                $scope.lock = function() {
+                    var path = $location.path();
+                    if (path.indexOf('/view') < 0) {
+                       lock.lock($scope.item, true).then(updateEditorState);
+                    } else {
+                        superdesk.intent($scope.intentFilter.action, $scope.intentFilter.type, $scope.origItem);
                     }
-                } else {
-                    notify.error(gettext('Error. Item not updated.'));
-                }
-    		});
-    	};
+                };
 
-        /**
-         * Close an item - unlock
-         */
-        $scope.close = function() {
-            _closing = true;
-            authoring.close(item, $scope.dirty).then(function() {
-                $location.url($scope.referrerUrl);
-            });
-        };
+                $scope.isLockedByMe = function() {
+                    return lock.isLockedByMe($scope.item);
+                };
 
-        $scope.beforeSend = function() {
-            $scope.sending = true;
-            return $scope.save()
-            .then(function() {
-                var p = lock.unlock(item);
-                return p;
-            });
-        };
+                $scope.autosave = function(item) {
+                    $scope.dirty = true;
+                    return authoring.autosave(item);
+                };
 
-        /**
-         * Preview different version of an item
-         */
-        $scope.preview = function(version) {
-            forcedExtend($scope.item, version);
-            $scope._editable = false;
-        };
+                // init
+                $scope.closePreview();
 
-        /**
-         * Revert item to given version
-         */
-        $scope.revert = function(version) {
-            forcedExtend($scope.item, version);
-            return $scope.save();
-        };
+                $scope.$on('item:lock', function(_e, data) {
+                    if ($scope.item._id === data.item && !_closing &&
+                        session.sessionId !== data.lock_session) {
+                        var path = $location.path();
+                        if (path.indexOf('/view') < 0) {
+                           authoring.lock($scope.item, data.user);
+                           $location.url($scope.referrerUrl);
+                        }
+                    }
+                });
 
-        /**
-         * Close preview and start working again
-         */
-        $scope.closePreview = function() {
-            $scope.item = _.create(item);
-            extendItem($scope.item, item._autosave || {});
-            $scope._editable = authoring.isEditable(item);
-        };
-
-        /**
-         * Checks if the item can be unlocked or not.
-         */
-        $scope.can_unlock = function() {
-            return lock.can_unlock($scope.item);
-        };
-        $scope.save_enabled = function() {
-            return $scope.dirty || $scope.item._autosave;
-        };
-
-        function updateEditorState (result) {
-            extendItem($scope.item, result);
-
-            //The current $digest cycle will mark $scope.dirty = true.
-            //We need to postpone this code block for the next cycle.
-            $timeout(function() {
-                item.lock_user = $scope.item.lock_user = result.lock_user;
-                $scope.item._locked = result._locked;
-                item.lock_session = $scope.item.lock_session = result.lock_session;
-                $scope._editable = $scope.item._editable = true;
-                $scope.dirty = false;
-                $scope.item._autosave = null;
-            }, 200);
-        }
-
-        $scope.unlock = function() {
-            lock.unlock($scope.item).then(function(unlocked_item) {
-                lock.lock(unlocked_item, true).then(updateEditorState);
-            });
-        };
-
-        $scope.lock = function() {
-            var path = $location.path();
-            if (path.indexOf('/view') < 0) {
-               lock.lock($scope.item, true).then(updateEditorState);
-            } else {
-                superdesk.intent('author', 'article', item);
+                $scope.$on('item:unlock', function(_e, data) {
+                    if ($scope.item._id === data.item && !_closing &&
+                        session.sessionId !== data.lock_session) {
+                        authoring.unlock($scope.item, data.user);
+                        $scope._editable = $scope.item._editable = false;
+                        $scope.item._locked = false;
+                        $scope.item.lock_session = null;
+                        $scope.item.lock_user = null;
+                    }
+                });
             }
         };
-
-        $scope.isLockedByMe = function() {
-            return lock.isLockedByMe($scope.item);
-        };
-
-        $scope.autosave = function(item) {
-            $scope.dirty = true;
-            return authoring.autosave(item);
-        };
-
-        // init
-        $scope.closePreview();
-
-        $scope.$on('item:lock', function(_e, data) {
-            if ($scope.item._id === data.item && !_closing &&
-                session.sessionId !== data.lock_session) {
-                var path = $location.path();
-                if (path.indexOf('/view') < 0) {
-                   authoring.lock($scope.item, data.user);
-                   $location.url($scope.referrerUrl);
-                }
-            }
-        });
-
-        $scope.$on('item:unlock', function(_e, data) {
-            if ($scope.item._id === data.item && !_closing &&
-                session.sessionId !== data.lock_session) {
-                authoring.unlock($scope.item, data.user);
-                $scope._editable = $scope.item._editable = false;
-                $scope.item._locked = false;
-                $scope.item.lock_session = null;
-                $scope.item.lock_user = null;
-            }
-        });
     }
 
     function DashboardCard() {
@@ -797,20 +816,12 @@
         };
     }
 
-    ArticleEditDirective.$inject = ['autosave'];
-    function ArticleEditDirective(autosave) {
-        // TODO(petr): These values should come from preferences.
-        var limits = {
-            slugline: 24,
-            headline: 64,
-            'abstract': 160
-        };
-
+    ArticleEditDirective.$inject = ['autosave', 'authoring'];
+    function ArticleEditDirective(autosave, authoring) {
         return {
             templateUrl: 'scripts/superdesk-authoring/views/article-edit.html',
             link: function(scope) {
-                scope.limits = limits;
-
+                scope.limits = authoring.limits;
             }
         };
     }
@@ -842,6 +853,7 @@
         .directive('sdContentCreate', ContentCreateDirective)
         .directive('sdHighlightCreate', HighlightCreateDirective)
         .directive('sdArticleEdit', ArticleEditDirective)
+        .directive('sdAuthoring', AuthoringDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk

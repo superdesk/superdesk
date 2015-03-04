@@ -31,6 +31,7 @@ tests.push('superdesk/features/features');
 tests.push('superdesk/services/asset');
 tests.push('superdesk/privileges/privileges');
 tests.push('superdesk/notification/notification');
+tests.push('superdesk/itemList/itemList');
 tests.push('superdesk/ui/ui');
 
 // apps

@@ -7,7 +7,7 @@ is scaleable to suit news organizations of any size.
 
 ### Installation
 
-You can use docker to install the app and its required services - mongodb, elasticsearch and redis.
+Use [docker-compose](http://fig.sh "") and the config from `docker` folder or build docker images manually from `Dockerfile`'s from `client` and `server` folders accordingly.
 
 ##### install docker
 

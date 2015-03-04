@@ -26,7 +26,9 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets) {
     $scope.widgets = authoringWidgets;
 
     $scope.activate = function(widget) {
-        $scope.active[widget.side] = $scope.active[widget.side] === widget ? null : widget;
+        if (!widget.needUnlock || !$scope.item._locked) {
+            $scope.active[widget.side] = $scope.active[widget.side] === widget ? null : widget;
+        }
     };
 
     $scope.closeWidget = function(widget) {
@@ -38,6 +40,17 @@ function WidgetsManagerCtrl($scope, $routeParams, authoringWidgets) {
         if ($routeParams[widget._id]) {
             $scope.activate(widget);
         }
+    });
+
+    $scope.$watch('item._locked', function() {
+        var widget;
+        _.each(['left', 'right'], function(side) {
+            if ($scope.active[side]) {
+                widget = $scope.active[side];
+                $scope.closeWidget(widget);
+                $scope.activate(widget);
+            }
+        });
     });
 }
 

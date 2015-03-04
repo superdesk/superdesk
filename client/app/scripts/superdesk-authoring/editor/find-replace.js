@@ -64,6 +64,7 @@ angular.module('superdesk.authoring.find-replace', ['superdesk.editor', 'superde
                 label: gettext('Find and Replace'),
                 template: 'scripts/superdesk-authoring/editor/views/find-replace.html',
                 side: 'right',
+                needUnlock: true,
                 display: {authoring: true, packages: false}
             });
     }]);

@@ -135,5 +135,19 @@ define([
         };
     }]);
 
+    // Alternative sdPagination, doesn't use $location.
+    // Should replace sdPagination.
+    mod.directive('sdPaginationAlt', [function() {
+        return {
+            templateUrl: require.toUrl('./views/sdPaginationAlt.html'),
+            scope: {
+                page: '=',
+                maxPage: '='
+            },
+            link: function(scope, element, attrs) {
+            }
+        };
+    }]);
+
     return mod;
 });
