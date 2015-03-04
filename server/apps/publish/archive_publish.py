@@ -8,12 +8,13 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+
 import logging
 
 from eve.versioning import resolve_document_version
 from flask import current_app as app
 from eve.utils import config, document_etag
-
+from copy import copy
 from apps.archive.common import item_url, get_user, insert_into_versions
 from superdesk.errors import InvalidStateTransitionError, SuperdeskApiError
 from superdesk.notification import push_notification
@@ -53,14 +54,14 @@ class ArchivePublishService(BaseService):
         if not is_workflow_state_transition_valid('publish', original[app.config['CONTENT_STATE']]):
             raise InvalidStateTransitionError()
 
-    def update(self, id, updates):
+    def update(self, id, updates, original):
         archived_item = super().find_one(req=None, _id=id)
         try:
             if archived_item['type'] == 'composite':
                 self.__publish_package_items(archived_item, updates[config.LAST_UPDATED])
             user = get_user()
             updates[config.CONTENT_STATE] = 'published'
-            item = self.backend.update(self.datasource, id, updates)
+            item = self.backend.update(self.datasource, id, updates, original)
             push_notification('item:publish', item=str(item.get('_id')), user=str(user))
             return item
         except KeyError:
@@ -82,6 +83,7 @@ class ArchivePublishService(BaseService):
         if items:
             for guid in items:
                 doc = super().find_one(req=None, _id=guid)
+                original = copy(doc)
                 try:
                     if doc['type'] == 'composite':
                         self.__publish_package_items(doc)
@@ -93,7 +95,8 @@ class ArchivePublishService(BaseService):
                     self.backend.update(self.datasource, guid, {config.CONTENT_STATE: doc[config.CONTENT_STATE],
                                                                 config.ETAG: doc[config.ETAG],
                                                                 config.VERSION: doc[config.VERSION],
-                                                                config.LAST_UPDATED: doc[config.LAST_UPDATED]})
+                                                                config.LAST_UPDATED: doc[config.LAST_UPDATED]},
+                                        original)
                     insert_into_versions(doc=doc)
                 except KeyError:
                     raise SuperdeskApiError.badRequestError("A non-existent content id is requested to publish")

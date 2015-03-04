@@ -36,45 +36,54 @@ class RoutingRuleSchemeResource(Resource):
         'rules': {
             'type': 'list',
             'schema': {
-                'name': {
-                    'type': 'string'
-                },
-                'filter': {
-                    'type': 'dict'
-                },
-                'actions': {
-                    'type': 'dict',
-                    'schema': {
-                        'fetch': {
-                            'type': 'list',
-                            'schema': {
-                                'desk': Resource.rel('desks', True),
-                                'stage': Resource.rel('stages', True)
+                'type': 'dict',
+                'schema': {
+                    'name': {
+                        'type': 'string'
+                    },
+                    'filter': {
+                        'type': 'dict'
+                    },
+                    'actions': {
+                        'type': 'dict',
+                        'schema': {
+                            'fetch': {
+                                'type': 'list',
+                                'schema': {
+                                    'type': 'dict',
+                                    'schema': {
+                                        'desk': Resource.rel('desks', True),
+                                        'stage': Resource.rel('stages', True)
+                                    }
+                                }
+                            },
+                            'publish': {
+                                'type': 'list',
+                                'schema': {
+                                    'type': 'dict',
+                                    'schema': {
+                                        'desk': Resource.rel('desks', True),
+                                        'stage': Resource.rel('stages', True)
+                                    }
+                                }
+                            },
+                            'exit': {
+                                'type': 'boolean'
                             }
-                        },
-                        'publish': {
-                            'type': 'list',
-                            'schema': {
-                                'desk': Resource.rel('desks', True),
-                                'stage': Resource.rel('stages', True)
-                            }
-                        },
-                        'exit': {
-                            'type': 'boolean'
                         }
-                    }
-                },
-                'schedule': {
-                    'type': 'dict',
-                    'schema': {
-                        'day_of_week': {
-                            'type': 'list'
-                        },
-                        'hour_of_day_from': {
-                            'type': 'string'
-                        },
-                        'hour_of_day_to': {
-                            'type': 'string'
+                    },
+                    'schedule': {
+                        'type': 'dict',
+                        'schema': {
+                            'day_of_week': {
+                                'type': 'list'
+                            },
+                            'hour_of_day_from': {
+                                'type': 'string'
+                            },
+                            'hour_of_day_to': {
+                                'type': 'string'
+                            }
                         }
                     }
                 }
