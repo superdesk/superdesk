@@ -269,6 +269,7 @@ def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
 
         for item in items:
             item['versioncreated'] = utcnow()
+            item['expiry'] = utcnow() + timedelta(minutes=20)
         context.ingest_items(items, provider)
 
 

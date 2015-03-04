@@ -73,8 +73,16 @@ def get_expired_items(provider_id, expiration_date):
 
 
 def get_query_for_expired_items(provider_id, expiration_date):
+    """Find all ingest items with given provider id and
+    (expiry is past or
+    (no expiry assigned and versioncreated is less then calculated expiry date))"""
     query = {'and': [
         {'term': {'ingest.ingest_provider': provider_id}},
-        {'range': {'ingest.versioncreated': {'lte': date_to_str(expiration_date)}}},
+        {'or': [
+            {'range': {'ingest.expiry': {'lte': date_to_str(utcnow())}}},
+            {'and': [{'missing': {'field': 'ingest.expiry'}},
+                     {'range': {'ingest.versioncreated': {'lte': date_to_str(expiration_date)}}}]},
+        ]},
     ]}
+
     return superdesk.json.dumps(query)
