@@ -11,7 +11,7 @@ Feature: Routing Scheme and Routing Rules
       Given empty "desks"
       When we post to "/desks"
       """
-      {"name": "Sports", "members": [{"user": "#users._id#"}]}
+      {"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}
       """
       And we post to "/routing_schemes"
       """
@@ -62,7 +62,7 @@ Feature: Routing Scheme and Routing Rules
       Given empty "desks"
       When we post to "/desks"
       """
-      {"name": "Sports", "members": [{"user": "#users._id#"}]}
+      {"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}
       """
       And we post to "/routing_schemes"
       """
@@ -121,7 +121,11 @@ Feature: Routing Scheme and Routing Rules
 
     @auth
     Scenario: Create an invalid Routing Scheme with rules having same name
-      Given empty "routing_schemes"
+      Given empty "desks"
+      When we post to "/desks"
+      """
+      {"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}
+      """
       When we post to "/routing_schemes"
       """
       [
@@ -152,9 +156,14 @@ Feature: Routing Scheme and Routing Rules
       """
       Then we get response code 400
 
-    @auth
-    Scenario: Create an invalid Routing Scheme with an empty filter
-      Given empty "routing_schemes"
+
+    @auth @test
+    Scenario: Create an valid Routing Scheme with an empty filter
+      Given empty "desks"
+      When we post to "/desks"
+      """
+      {"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}
+      """
       When we post to "/routing_schemes"
       """
       [
@@ -193,7 +202,7 @@ Feature: Routing Scheme and Routing Rules
       Then we get response code 400
 
 
-    @auth @test
+    @auth
     Scenario: Create an invalid Routing Scheme with an invalid schedule
       Given empty "routing_schemes"
       Given empty "desks"
@@ -328,15 +337,10 @@ Feature: Routing Scheme and Routing Rules
 
     @auth
     Scenario: Create an invalid Routing Scheme with a empty schedule
-      Given empty "users"
-      And empty "desks"
-      When we post to "users"
+      Given empty "desks"
+      When we post to "/desks"
       """
-      {"username": "foo", "email": "foo@bar.com", "is_active": true}
-      """
-      And we post to "/desks"
-      """
-      {"name": "Sports", "members": [{"user": "#users._id#"}]}
+      {"name": "Sports", "members": [{"user": "#CONTEXT_USER_ID#"}]}
       """
       And we post to "/routing_schemes"
       """

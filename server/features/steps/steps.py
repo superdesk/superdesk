@@ -1312,9 +1312,9 @@ def validate_routed_item(context, rule_name, is_routed):
         for destination in rule.get('actions', {}).get(action, []):
             query = {
                 'and': [
-                    {'term': {'ingest_id': data['ingest']}},
-                    {'term': {'task.desk': destination['desk']}},
-                    {'term': {'task.stage': destination['stage']}},
+                    {'term': {'ingest_id': str(data['ingest'])}},
+                    {'term': {'task.desk': str(destination['desk'])}},
+                    {'term': {'task.stage': str(destination['stage'])}},
                     {'term': {'state': state}}
                 ]
             }
@@ -1323,8 +1323,8 @@ def validate_routed_item(context, rule_name, is_routed):
 
             if is_routed:
                 assert item[0]['ingest_id'] == data['ingest']
-                assert item[0]['task']['desk'] == destination['desk']
-                assert item[0]['task']['stage'] == destination['stage']
+                assert item[0]['task']['desk'] == str(destination['desk'])
+                assert item[0]['task']['stage'] == str(destination['stage'])
                 assert item[0]['state'] == state
                 assert_items_in_package(item[0], state)
             else:

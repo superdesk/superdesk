@@ -1,6 +1,6 @@
 Feature: Auto Routing
 
-    @auth @provider
+    @auth @provider @test
     Scenario: Content is fetched based on subject metadata
         Given empty "desks"
         When we post to "/desks"
