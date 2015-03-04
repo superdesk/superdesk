@@ -12,8 +12,8 @@
 
     'use strict';
 
-    PackagesService.$inject = ['api', '$q'];
-    function PackagesService(api, $q) {
+    PackagesService.$inject = ['api', '$q', 'lock'];
+    function PackagesService(api, $q, lock) {
 
         this.groupList = ['main', 'story', 'sidebars', 'fact box'];
 
@@ -89,6 +89,18 @@
             });
              _.extend(current, {groups: origGroups});
         };
+        this.publish = function publish(item) {
+            return api.update('archive_publish', item, {})
+            .then(function(result) {
+                return lock.unlock(result)
+                    .then(function(result) {
+                        return result;
+                    });
+            }, function(response) {
+                //notify.error(gettext('Error. Item not updated.'));
+            });
+
+        };
 
         function getGroupFor(item, idRef) {
             var refs = [];
@@ -127,8 +139,8 @@
         }
     }
 
-    PackagingController.$inject = ['$scope', 'item', 'packages'];
-    function PackagingController($scope, item, packages) {
+    PackagingController.$inject = ['$scope', 'item', 'packages', '$location', 'notify'];
+    function PackagingController($scope, item, packages, $location, notify) {
         $scope.origItem = item;
 
         $scope.widget_target = 'packages';
@@ -137,6 +149,22 @@
             action: 'author',
             type: 'package'
         };
+
+        $scope.publish = function() {
+            publishItem($scope.item);
+            $location.url($scope.referrerUrl);
+        };
+
+        function publishItem(item) {
+            packages.publish(item)
+            .then(function(res) {
+                if (res) {
+                    notify.success(gettext('package published.'));
+                }
+            }, function(response) {
+                notify.error(gettext('Error. package not published.'));
+            });
+        }
 
     }
 
@@ -243,6 +271,7 @@
             templateUrl: 'scripts/superdesk-packaging/views/sd-package-edit.html',
             link: function(scope) {
                 scope.limits = authoring.limits;
+                scope._editable = scope.origItem._editable;
             }
         };
     }

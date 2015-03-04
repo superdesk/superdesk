@@ -144,6 +144,7 @@ describe('authoring', function() {
         beforeEach(inject(function(confirm, lock, $q) {
             confirmDefer = $q.defer();
             spyOn(confirm, 'confirm').and.returnValue(confirmDefer.promise);
+            spyOn(confirm, 'confirmPublish').and.returnValue(confirmDefer.promise);
             spyOn(lock, 'unlock').and.returnValue($q.when());
         }));
 
@@ -198,6 +199,42 @@ describe('authoring', function() {
             expect(confirm.unlock).toHaveBeenCalled();
             expect(autosave.stop).toHaveBeenCalled();
         }));
+        it('can publish items', inject(function(authoring, api, $q) {
+            var item = {_id: 1, state: 'submitted'};
+            spyOn(api, 'update').and.returnValue($q.when());
+            authoring.publish(item);
+            expect(api.update).toHaveBeenCalledWith('archive_publish', item, {});
+        }));
+
+        //*
+        it('confirms if an item is dirty and saves and publish', inject(function(authoring, api, confirm, lock, $q, $rootScope) {
+            var edit = Object.create(item);
+            _.extend(edit, {
+                _id: 1,
+                headline: 'test',
+                lock_user: 'user:1',
+                state: 'submitted'
+            });
+
+            authoring.publishConfirmation(edit, true);
+            $rootScope.$digest();
+
+            expect(confirm.confirmPublish).toHaveBeenCalled();
+            expect(lock.unlock).not.toHaveBeenCalled();
+
+            spyOn(authoring, 'save').and.returnValue($q.when());
+            confirmDefer.resolve();
+            $rootScope.$digest();
+
+            expect(authoring.save).toHaveBeenCalledWith(edit);
+
+            spyOn(api, 'update').and.returnValue($q.when(_.extend({}, edit, {})));
+            authoring.publish(edit);
+            $rootScope.$digest();
+            expect(api.update).toHaveBeenCalledWith('archive_publish', edit, {});
+            expect(lock.unlock).toHaveBeenCalled();
+        }));
+        //*/
     });
 });
 
