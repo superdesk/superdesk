@@ -118,7 +118,7 @@ Feature: User Activity
 	Scenario: Verify if activity was created on archive operations
 		Given empty "activity"
 		Given empty "archive"
-        When we post to "/archive"
+        When we post to "/archive" with success
         """
         [{"guid": "some-global-unique-id", "type": "text"}]
         """

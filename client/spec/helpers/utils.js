@@ -2,6 +2,7 @@
 
 exports.login = login;
 exports.open = openUrl;
+exports.printLogs = printLogs;
 
 // construct url from uri and base url
 exports.constructUrl = function(base, uri) {
@@ -23,7 +24,7 @@ function login() {
 
 // wait for login to finish
 function wait() {
-    return browser.sleep(200)
+    return browser.sleep(500)
         .then(function() {
             return browser.waitForAngular();
         });
@@ -31,13 +32,22 @@ function wait() {
 
 // open url and authenticate
 function openUrl(url) {
-    return function(done) {
+    return function() {
         return browser.get('/')
+            .then(wait)
             .then(login)
             .then(wait)
             .then(function() {
                 return browser.get(url);
-            })
-            .then(done);
+            });
     };
+}
+
+function printLogs(prefix) {
+    prefix = prefix ? (prefix + ' ') : '';
+    return browser.manage().logs().get('browser').then(function(browserLog) {
+        if (browserLog.length) {
+            console.log(prefix + 'log: ' + require('util').inspect(browserLog));
+        }
+    });
 }

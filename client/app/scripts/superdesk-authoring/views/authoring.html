@@ -1,6 +1,5 @@
-<div class="auth-screen">
-    <form name="articleEdit">
-
+<div sd-authoring class="auth-screen">
+    
     <div class="subnav" ng-class="{'auth-sendto': viewSendTo}">
 	    <div class="page-title-wrapper clearfix pull-left">
 	    	<button class="stage stage-label pull-left" ng-show="stage">{{stage.name}}</button>
@@ -8,7 +7,7 @@
 	    	<span class="lock-info pull-left" ng-show="item._locked"><i class="icon-lock-red"></i></span>
             <h3 class="page-nav-title" ng-show="item.headline">{{ item.headline }}</h3>
 	    	<h3 class="page-nav-title" ng-show="!item.headline" translate>Untitled</h3>
-            <span class="lock-text pull-left" ng-show="item._locked && isLockedByMe()" translate>This article is locked by you in another session.</b></span>
+            <span class="lock-text pull-left" ng-show="item._locked && isLockedByMe()" translate>This article is locked by you in another session.</span>
 	    	<span class="lock-text pull-left" ng-show="item._locked && !isLockedByMe()" translate>This article is locked by <b>{{ item.lock_user | username }}</b></span>
 	    </div>
 

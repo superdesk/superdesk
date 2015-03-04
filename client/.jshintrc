@@ -38,7 +38,8 @@
     "by": false,
     "protractor": false,
     "jasmine": false,
-    "spyOn": false
+    "spyOn": false,
+    "JSON": false
   },
   "forin": true,
   "noempty": true,

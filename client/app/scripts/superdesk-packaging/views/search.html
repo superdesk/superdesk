@@ -5,24 +5,35 @@
         </div>
 
         <div class="filter-list">
-            
+            <div class="dropdown group-select pull-right" ng-if="multiSelected.length" dropdown>
+                <div class="btn dropdown-toggle" dropdown-toggle><i class="icon-package-plus"></i> {{'Add items' | translate}}</div>
+                <ul class="dropdown-menu pull-right">
+                    <li ng-repeat="t in groupList">
+                        <button ng-click="addMultiItemsToGroup(t);" translate>{{ t | uppercase  }}</button>
+                    </li>
+                </ul>
+            </div>
         </div>
         
         <div class="content-list">
             <ul>
                 <li ng-repeat="pitem in contentItems" 
-                    ng-class="{active: pitem === selected, added: itemInPackage(pitem)}"
+                    ng-class="{active: pitem === selected, added: itemInPackage(pitem), 'multi-select': pitem.multi}"
                     ng-if="pitem._id !== item._id"
                     sd-widget-prevent-preview
                     >
-                    <i class="filetype-icon-{{pitem.type}}"></i>
+                    <div class="select-box">
+                        <i class="filetype-icon-{{pitem.type}}"></i>
+                        <span ng-if="!itemInPackage(pitem)" ng-click="addToSelected(pitem)" class="select" sd-check ng-model="pitem.multi"></span>
+                    </div>
+                    
                     <p><span class="keyword" ng-if="pitem.slugline">{{ pitem.slugline }}</span>{{pitem.headline || pitem.type}}</p>
-                    <ul class="item-functions" ng-if="!itemInPackage(pitem)">
+                    <ul class="item-functions" ng-if="!itemInPackage(pitem) && !pitem.multi">
                         <li class="dropdown group-select" dropdown>
                             <div class="dropdown-toggle" dropdown-toggle><i class="icon-package-plus"></i></div>
                             <ul class="dropdown-menu pull-right">
-                                <li ng-repeat="t in itemTypes">
-                                    <button ng-click="addItemToGroup(t, pitem);"><span translate>{{ t.label | uppercase  }}</span></button>
+                                <li ng-repeat="t in groupList">
+                                    <button ng-click="addItemToGroup(t, pitem);">{{ t | uppercase  }}</button>
                                 </li>
                             </ul>
                         </li>
@@ -36,10 +47,10 @@
         <header>
             <ul class="nav nav-tabs">
                 <li ng-class="{active: contenttab}">
-                    <button ng-click="contenttab = true"><span translate>Content</span></button>
+                    <button ng-click="contenttab = true">Content</button>
                 </li>
                 <li ng-class="{active: !contenttab}">
-                    <button ng-click="contenttab = false"><span translate>Metadata</span></button>
+                    <button ng-click="contenttab = false">Metadata</button>
                 </li>
             </ul>
             <button ng-click="preview(null)" class="close-preview">

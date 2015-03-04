@@ -128,9 +128,10 @@ describe('authoring', function() {
     function startAuthoring(item) {
         var $scope;
 
-        inject(function($rootScope, $controller, superdesk) {
+        inject(function($rootScope, $controller, superdesk, $compile) {
             $scope = $rootScope.$new();
             $controller(superdesk.activity('authoring').controller, {item: item, $scope: $scope});
+            $compile(angular.element('<div sd-authoring></div>'))($scope);
         });
 
         return $scope;

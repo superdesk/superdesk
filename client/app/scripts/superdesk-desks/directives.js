@@ -15,6 +15,11 @@ define([
 ], function(require, _, angular) {
     'use strict';
 
+    var limits = {
+        stage: 15,
+        desk: 40
+    };
+
     var app = angular.module('superdesk.desks.directives', []);
     app
     .directive('sdFocusElement', [function() {
@@ -83,6 +88,8 @@ define([
 
             link: function(scope, elem, attrs) {
 
+                scope.limits = limits;
+
                 scope.$watch('step.current', function(step) {
                     if (step === 'general') {
                         if (scope.desk.edit && scope.desk.edit._id) {
@@ -121,10 +128,18 @@ define([
                     scope.message = null;
                 }
 
-                scope.handleEdit = function($event) {
-                    if (scope._errorUniqueness || scope._error) {
+                function clearErrorMessages() {
+                    if (scope._errorUniqueness || scope._error || scope._errorLimits) {
                         scope._errorUniqueness = null;
                         scope._error = null;
+                        scope._errorLimits = null;
+                    }
+                }
+
+                scope.handleEdit = function($event) {
+                    clearErrorMessages();
+                    if (scope.desk.edit.name != null) {
+                        scope._errorLimits = scope.desk.edit.name.length > scope.limits.desk ? true : null;
                     }
                 };
 
@@ -138,6 +153,8 @@ define([
             link: function(scope, elem, attrs) {
 
                 var orig = null;
+
+                scope.limits = limits;
 
                 scope.statuses = tasks.statuses;
 
@@ -190,6 +207,7 @@ define([
 
                 scope.cancel = function() {
                     scope.editStage = null;
+                    clearErrorMessages();
                 };
 
                 scope.select = function(stage) {
@@ -234,11 +252,19 @@ define([
                 }
 
                 scope.handleEdit = function($event) {
-                    if (scope._errorUniqueness || scope._error) {
-                        scope._errorUniqueness = null;
-                        scope._error = null;
+                    clearErrorMessages();
+                    if (scope.editStage.name != null) {
+                        scope._errorLimits = scope.editStage.name.length > scope.limits.stage ? true : null;
                     }
                 };
+
+                function clearErrorMessages() {
+                    if (scope._errorUniqueness || scope._error || scope._errorLimits) {
+                        scope._errorUniqueness = null;
+                        scope._error = null;
+                        scope._errorLimits = null;
+                    }
+                }
 
                 scope.remove = function(stage) {
                     api('stages').remove(stage)
