@@ -206,7 +206,6 @@ describe('authoring', function() {
             expect(api.update).toHaveBeenCalledWith('archive_publish', item, {});
         }));
 
-        //*
         it('confirms if an item is dirty and saves and publish', inject(function(authoring, api, confirm, lock, $q, $rootScope) {
             var edit = Object.create(item);
             _.extend(edit, {
@@ -234,7 +233,6 @@ describe('authoring', function() {
             expect(api.update).toHaveBeenCalledWith('archive_publish', edit, {});
             expect(lock.unlock).toHaveBeenCalled();
         }));
-        //*/
     });
 });
 

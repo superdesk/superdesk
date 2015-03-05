@@ -89,18 +89,6 @@
             });
              _.extend(current, {groups: origGroups});
         };
-        this.publish = function publish(item) {
-            return api.update('archive_publish', item, {})
-            .then(function(result) {
-                return lock.unlock(result)
-                    .then(function(result) {
-                        return result;
-                    });
-            }, function(response) {
-                //notify.error(gettext('Error. Item not updated.'));
-            });
-
-        };
 
         function getGroupFor(item, idRef) {
             var refs = [];
@@ -149,23 +137,6 @@
             action: 'author',
             type: 'package'
         };
-
-        $scope.publish = function() {
-            publishItem($scope.item);
-            $location.url($scope.referrerUrl);
-        };
-
-        function publishItem(item) {
-            packages.publish(item)
-            .then(function(res) {
-                if (res) {
-                    notify.success(gettext('package published.'));
-                }
-            }, function(response) {
-                notify.error(gettext('Error. package not published.'));
-            });
-        }
-
     }
 
     SearchWidgetCtrl.$inject = ['$scope', 'packages', 'api', 'search'];
@@ -549,7 +520,7 @@
                 }],
                 filters: [{action: 'list', type: 'archive'}],
                 condition: function(item) {
-                    return item.type === 'composite';
+                    return item.type === 'composite' && item.state !== 'published';
                 }
             })
             .activity('view.package', {
