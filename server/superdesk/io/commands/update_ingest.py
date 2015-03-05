@@ -20,7 +20,7 @@ from werkzeug.exceptions import HTTPException
 from superdesk.notification import push_notification
 from superdesk.io import providers
 from superdesk.celery_app import celery
-from superdesk.utc import utcnow
+from superdesk.utc import utcnow, get_expiry_date
 from superdesk.workflow import set_default_state
 from superdesk.errors import ProviderError
 from superdesk.stats import stats
@@ -28,7 +28,6 @@ from superdesk.upload import url_for_media
 from superdesk.media.media_operations import download_file_from_url, process_file
 from superdesk.media.renditions import generate_renditions
 from superdesk.io.iptc import subject_codes
-
 
 UPDATE_SCHEDULE_DEFAULT = {'minutes': 5}
 LAST_UPDATED = 'last_updated'
@@ -79,10 +78,15 @@ def is_closed(provider):
 
 
 def filter_expired_items(provider, items):
+    def filter(item):
+        expiry = item.get('expiry', item['versioncreated'] + delta)
+        if expiry.tzinfo:
+            return expiry > utcnow()
+        return False
+
     try:
-        minutes_to_keep_content = provider.get('content_expiry', INGEST_EXPIRY_MINUTES)
-        expiration_date = utcnow() - timedelta(minutes=minutes_to_keep_content)
-        return [item for item in items if item.get('versioncreated', utcnow()) > expiration_date]
+        delta = timedelta(minutes=provider.get('content_expiry', INGEST_EXPIRY_MINUTES))
+        return [item for item in items if filter(item)]
     except Exception as ex:
         raise ProviderError.providerFilterExpiredContentError(ex, provider)
 
@@ -233,6 +237,8 @@ def ingest_item(item, provider, rule_set=None):
         item['ingest_provider'] = str(provider['_id'])
         item.setdefault('source', provider.get('source', ''))
         set_default_state(item, STATE_INGESTED)
+        item['expiry'] = get_expiry_date(provider.get('content_expiry', INGEST_EXPIRY_MINUTES),
+                                         item.get('versioncreated'))
 
         if 'anpa-category' in item:
             process_anpa_category(item, provider)
