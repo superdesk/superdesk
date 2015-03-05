@@ -331,3 +331,23 @@ class IngestFtpError(SuperdeskIngestError):
             logger.exception("Provider: {} - File: {} unknown file format. "
                              "Parser couldn't be found.".format(provider.get('name', 'Unknown provider'), filename))
         return IngestFtpError(5001, exception, provider)
+
+
+class IngestEmailError(SuperdeskIngestError):
+    _codes = {
+        6000: "Email authentication failure",
+        6001: "Email parse error",
+        6002: "Email ingest error"
+    }
+
+    @classmethod
+    def emailLoginError(cls, exception, provider):
+        return IngestEmailError(6000, exception, provider)
+
+    @classmethod
+    def emailParseError(cls, exception, provider):
+        return IngestEmailError(6001, exception, provider)
+
+    @classmethod
+    def emailError(cls, exception, provider):
+        return IngestEmailError(6002, exception, provider)

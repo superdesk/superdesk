@@ -38,6 +38,10 @@ define([
         teletype: {
             label: 'Teletype',
             templateUrl: 'scripts/superdesk-ingest/views/settings/teletypeConfig.html'
+        },
+        email: {
+            label: 'Email',
+            templateUrl: 'scripts/superdesk-ingest/views/settings/emailConfig.html'
         }
     });
 
