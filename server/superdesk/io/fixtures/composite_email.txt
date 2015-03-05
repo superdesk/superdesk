@@ -1,23 +1,23 @@
                                                                                                                                                                                                                                                                
-Delivered-To: editorial@aap.com.au
-Received: by 10.112.126.34 with SMTP id mv2csp239152lbb;
+Delivered-To: test@a.com.au
+Received: by 11.112.126.34 with SMTP id mv2csp239152lbb;
         Mon, 2 Mar 2015 16:27:38 -0800 (PST)
-X-Received: by 10.181.8.75 with SMTP id di11mr40790196wid.26.1425342458160;
+X-Received: by 11.181.8.75 with SMTP id di11mr40790196wid.26.1425342458160;
         Mon, 02 Mar 2015 16:27:38 -0800 (PST)
-Return-Path: <amarwood@aap.com.au>
+Return-Path: <a@a.com.au>
 Received: from mail-wg0-x234.google.com (mail-wg0-x234.google.com. [2a00:1450:400c:c00::234])
         by mx.google.com with ESMTPS id v1si9982wij.87.2015.03.02.16.27.37
-        for <editorial@aap.com.au>
+        for <test@a.com.au>
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Mon, 02 Mar 2015 16:27:37 -0800 (PST)
-Received-SPF: pass (google.com: domain of amarwood@aap.com.au designates 2a00:1450:400c:c00::234 as permitted sender) client-ip=2a00:1450:400c:c00::234;
+Received-SPF: pass (google.com: domain of a@a.com.au designates 2a00:1450:400c:c00::234 as permitted sender) client-ip=2a00:1450:400c:c00::234;
 Authentication-Results: mx.google.com;
-       spf=pass (google.com: domain of amarwood@aap.com.au designates 2a00:1450:400c:c00::234 as permitted sender) smtp.mail=amarwood@aap.com.au;
-       dkim=pass header.i=@aap.com.au
+       spf=pass (google.com: domain of a@a.com.au designates 2a00:1450:400c:c00::234 as permitted sender) smtp.mail=a@a.com.au;
+       dkim=pass header.i=@a.com.au
 Received: by wggz12 with SMTP id z12so36903692wgg.2
-        for <editorial@aap.com.au>; Mon, 02 Mar 2015 16:27:37 -0800 (PST)
+        for <test@a.com.au>; Mon, 02 Mar 2015 16:27:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=aap.com.au; s=google;
+        d=a.com.au; s=google;
         h=mime-version:date:message-id:subject:from:to:content-type;
         bh=KFG2JeJAIOeqwM/TGBl/hz/s3d4ZYS4Jk/4H9TsQxzs=;
         b=Ik9hb3+7FW+4d8HzRSz4HuGE2HS9Epnej+Qw2DUOYvjAHT0JbzsktDI8wEhL6U50DF
@@ -36,14 +36,14 @@ X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
          y7MQ==
 X-Gm-Message-State: ALoCoQmZxDuN97O6Wb4uQj1Gg7txY4PyFU0bERWarhoi1HZ1fr0uHhw6dJwShCxCZ3nX3GJVBwAI
 MIME-Version: 1.0
-X-Received: by 10.180.74.39 with SMTP id q7mr39816680wiv.73.1425342457148;
+X-Received: by 12.180.74.39 with SMTP id q7mr39816680wiv.73.1425342457148;
  Mon, 02 Mar 2015 16:27:37 -0800 (PST)
-Received: by 10.194.58.145 with HTTP; Mon, 2 Mar 2015 16:27:36 -0800 (PST)
+Received: by 13.194.58.145 with HTTP; Mon, 2 Mar 2015 16:27:36 -0800 (PST)
 Date: Tue, 3 Mar 2015 11:27:36 +1100
 Message-ID: <CAHU3GgXVH0V6YjX=9KX0=_tjWw6=UReXia5cxNq1BVpo1wqCjQ@mail.gmail.com>
 Subject: single image test
-From: Andrew Marwood <amarwood@aap.com.au>
-To: AAP Editorial <editorial@aap.com.au>
+From: someone <a@a.com.au>
+To: test <test@a.com.au>
 Content-Type: multipart/mixed; boundary=f46d04374abfd7c75c051057660b
 
 --f46d04374abfd7c75c051057660b
@@ -54,43 +54,13 @@ Content-Type: text/plain; charset=UTF-8
 
 this is a test of a single image
 
--- 
-
-*Andrew Marwood | *Senior Analyst Programmer
-
-
-*Australian Associated Press*
-Level 5, 3 Rider Boulevard, Rhodes NSW 2138, Australia
-PO Box 3411, Rhodes NSW 2138, Australia
-*T *+61 2 9322 8594  *F *+61 2 9322 8086
-amarwood@aap.com.au | www.aap.com.au
+--
 
 --f46d04374abfd7c7550510576609
 Content-Type: text/html; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr">this is a test of a single image<br clear=3D"all"><div><br=
-></div>-- <br><div class=3D"gmail_signature"><br>
-<span style=3D"color:#000000"><span style=3D"font-size:12px"><span style=3D=
-"font-family:arial,helvetica,sans-serif"><strong>Andrew=C2=A0Marwood |=C2=
-=A0</strong>Senior Analyst Programmer</span></span></span><br>
-<br>
-<img alt=3D"" src=3D"http://www.aap.com.au/signature/s2/AAP-Signature.gif" =
-style=3D"width:97px;height:40px"><br>
-<span style=3D"color:#696969"><span style=3D"font-size:11px"><span style=3D=
-"font-family:arial,helvetica,sans-serif"><strong>Australian Associated Pres=
-s</strong><br>
-Level 5, 3 Rider Boulevard, Rhodes NSW 2138, Australia<br>PO Box 3411, Rhod=
-es NSW 2138, Australia<br>
-<strong>T=C2=A0</strong>+61 2 9322 8594 =C2=A0<strong>F=C2=A0</strong>+61 2=
- 9322 8086<br>
-<span style=3D"color:#696969"><span style=3D"font-size:11px"><span style=3D=
-"font-family:arial,helvetica,sans-serif"><a href=3D"mailto:amarwood@aap.com=
-.au" target=3D"_blank">amarwood@aap.com.au</a>=C2=A0|=C2=A0<a href=3D"http:=
-//www.aap.com.au" target=3D"_blank">www.aap.com.au</a></span></span></span>=
-<br>
-<br></span></span></span></div>
-</div>
+<div dir=3D"ltr">this is a test of a single image<br clear=3D"all"><div>
 
 --f46d04374abfd7c7550510576609--
 --f46d04374abfd7c75c051057660b
