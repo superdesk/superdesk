@@ -8,7 +8,7 @@ describe('Fetch', function() {
 
     beforeEach(openUrl('/#/workspace/content'));
 
-    xit('can fetch from ingest and desk', function() {
+    it('can fetch from ingest and desk', function() {
         workspace.openDesk();
 
         var deskCount;

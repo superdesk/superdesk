@@ -8,7 +8,7 @@ describe('Spike', function() {
 
     beforeEach(openUrl('/#/workspace/content'));
 
-    xit('can spike item', function() {
+    it('can spike item', function() {
         workspace.openPersonal();
 
         var personalCount;
@@ -25,7 +25,7 @@ describe('Spike', function() {
         browser.sleep(200);
         element(by.css('.action-menu .activity-spike')).click();
 
-        // check that there are more items than before
+        // check that there are less items than before
         browser.wait(function() {
             return element.all(by.repeater('items._items')).count().then(function(count) {
                 return count < personalCount;
