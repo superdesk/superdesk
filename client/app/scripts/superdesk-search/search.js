@@ -588,7 +588,9 @@
                     if (scope.item._type !== 'ingest') {
                         if (scope.item.task && scope.item.task.desk) {
                             desks.initialize().then(function() {
-                                scope.item.container = 'desk:' + desks.deskLookup[scope.item.task.desk].name ;
+                                if (desks.deskLookup[scope.item.task.desk]) {
+                                    scope.item.container = 'desk:' + desks.deskLookup[scope.item.task.desk].name ;
+                                }                                
                             });
                         } else {
                             scope.item.container = 'location:workspace';

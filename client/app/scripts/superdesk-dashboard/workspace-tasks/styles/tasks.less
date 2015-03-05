@@ -314,14 +314,30 @@ TASK PAGE
 // stages styling
 // ---------------------------------------------
 
+
+.desk-stages {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: @nav-height;
+	right: 2*@nav-height;
+	
+}
 .stages-list {
+	float: none;
 	li {
-		margin: 7px 10px 0 0 !important;
+		.border-box();
+		margin: 7px 0 0 0 !important;
+		padding-right: 10px;
 		a {
+			display: block !important;
 			height: 25px !important;
 			line-height: 25px !important;
 			background: #fff !important;
 			border: 1px solid #d7d7d7;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 			&:hover {
 				background: #fff !important;
 			}
