@@ -12,8 +12,8 @@
 
     'use strict';
 
-    PackagesService.$inject = ['api', '$q', 'lock'];
-    function PackagesService(api, $q, lock) {
+    PackagesService.$inject = ['api', '$q'];
+    function PackagesService(api, $q) {
 
         this.groupList = ['main', 'story', 'sidebars', 'fact box'];
 
@@ -127,8 +127,8 @@
         }
     }
 
-    PackagingController.$inject = ['$scope', 'item', 'packages', '$location', 'notify'];
-    function PackagingController($scope, item, packages, $location, notify) {
+    PackagingController.$inject = ['$scope', 'item', 'packages', '$location'];
+    function PackagingController($scope, item, packages, $location) {
         $scope.origItem = item;
 
         $scope.widget_target = 'packages';
