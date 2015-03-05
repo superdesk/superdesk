@@ -573,10 +573,14 @@
                 label: gettext('Package item'),
                 priority: 5,
                 icon: 'package-plus',
-                controller: ['data', 'packages', 'superdesk', function(data, packages, superdesk) {
+                controller: ['data', 'packages', 'superdesk', 'notify', 'gettext', function(data, packages, superdesk, notify, gettext) {
                     packages.createPackageFromItems([data.item])
                     .then(function(new_package) {
                         superdesk.intent('author', 'package', new_package);
+                    }, function(response) {
+                        if (response.status === 403 && response.data && response.data._message) {
+                            notify.error(gettext(response.data._message), 3000);
+                        }
                     });
                 }],
                 filters: [
