@@ -590,7 +590,7 @@
                             desks.initialize().then(function() {
                                 if (desks.deskLookup[scope.item.task.desk]) {
                                     scope.item.container = 'desk:' + desks.deskLookup[scope.item.task.desk].name ;
-                                }                                
+                                }
                             });
                         } else {
                             scope.item.container = 'location:workspace';
