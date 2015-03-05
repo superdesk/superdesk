@@ -12,8 +12,8 @@ define([
             });
     }
 
-    DeskSettingsController.$inject = ['$scope', 'gettext', 'notify', 'desks', 'WizardHandler'];
-    function DeskSettingsController ($scope, gettext, notify, desks, WizardHandler) {
+    DeskSettingsController.$inject = ['$scope', 'gettext', 'notify', 'desks', 'WizardHandler', 'modal'];
+    function DeskSettingsController ($scope, gettext, notify, desks, WizardHandler, modal) {
         $scope.modalActive = false;
         $scope.step = {
             current: null
@@ -41,10 +41,14 @@ define([
         };
 
         $scope.remove = function(desk) {
-            desks.remove(desk).then(function() {
-                _.remove($scope.desks._items, desk);
-                notify.success(gettext('Desk deleted.'), 3000);
-            });
+            modal.confirm(gettext('Please confirm you want to delete desk.')).then(
+                function runConfirmed() {
+                    desks.remove(desk).then(function() {
+                        _.remove($scope.desks._items, desk);
+                        notify.success(gettext('Desk deleted.'), 3000);
+                    });
+                }
+            );
         };
     }
 
@@ -183,7 +187,7 @@ define([
                     var self = this;
                     return preferencesService.get('stage:items').then(function(result) {
                         if (angular.isDefined(result)) {
-                            self.activeDeskId = result;
+                            self.activeStageId = angular.isArray(result) ? result[0] : result;
                         }
                     });
                 },
@@ -192,7 +196,7 @@ define([
                 },
                 setCurrentDeskId: function(deskId) {
                     this.activeDeskId = deskId;
-                    preferencesService.update({'desk:last_worked': [deskId]}, 'desk:last_worked').then(function() {
+                    preferencesService.update({'desk:last_worked': deskId}, 'desk:last_worked').then(function() {
                             //nothing to do
                         }, function(response) {
                             notify.error(gettext('Session preference could not be saved...'));

@@ -54,6 +54,10 @@ define([
                 });
 
                 scope.$watch('ContentExpiry', function() {
+                    if (!scope.item) {
+                        scope.item = {};
+                    }
+
                     scope.item[expiryfield] = getTotalExpiryMinutes(scope.ContentExpiry);
                 }, true);
 
@@ -75,7 +79,7 @@ define([
                         scope.ContentExpiry.Header = 'Spike Expiry';
                     }
 
-                    if (item[expiryfield] != null) {
+                    if (item && item[expiryfield] != null) {
                         scope.ContentExpiry.Hours = getExpiryHours(item[expiryfield]);
                         scope.ContentExpiry.Minutes = getExpiryMinutes(item[expiryfield]);
                     }
