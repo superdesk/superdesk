@@ -70,7 +70,7 @@ class MacroRegister():
         """Register a new macro.
 
         :param name: unique macro name, used to identify macro
-        :param label: macro label, used by client when listing macros 
+        :param label: macro label, used by client when listing macros
         :param callback: macro callback implementing functionality, should use **kwargs to be able to handle new params
         :param shortcut: default client shortcut (witch ctrl)
         :param description: macro description, using callback doctext as default
