@@ -4,12 +4,14 @@
             <a ng-href="{{ $root.link('edit.text', article) }}">
     			<div class="title" ng-show="article.headline">{{ article.headline }}</div>
     			<div class="title" ng-show="!article.headline">{{ 'Untitled' | translate }}</div>
-    			<div class="created" sd-reldate-complex ng-model="article.versioncreated"></div>
-                <div class="subInfo">
-                    <div class="type-icon">
-                        <i title = "{{article.type}}" class="filetype-icon-{{article.type}}"></i>
+                <div>
+                    <div class="created" sd-reldate-complex ng-model="article.versioncreated"></div>
+                    <div class="subInfo">
+                        <div class="type-icon">
+                            <i title = "{{article.type}}" class="filetype-icon-{{article.type}}"></i>
+                        </div>
+                        <div class="state-label state-{{article.state}}">{{article.state}}</div>
                     </div>
-                    <div class="state-label state-{{article.state}}">{{article.state}}</div>
                 </div>                    
     			<span sd-item-container data-item="article" class="container"></span>
             </a>
