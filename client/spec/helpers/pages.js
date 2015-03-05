@@ -23,19 +23,18 @@ function LoginModal() {
 function Workspace() {
 
     function switchDesk(toPersonal) {
+
+        var selectedDesk = element(by.id('selected-desk'));
+
         browser.wait(function() {
-            return element(by.buttonText('PERSONAL')).isPresent();
+            return selectedDesk.isPresent();
         });
 
-        element(by.buttonText('PERSONAL')).isDisplayed().then(function(isPersonal) {
-            if (isPersonal && !toPersonal) {
-                element(by.partialButtonText('PERSONAL')).click();
-                element(by.partialButtonText('SPORTS DESK')).click();
-                console.log('switching to desk');
-            } else if (!isPersonal && toPersonal) {
-                element(by.partialButtonText('SPORTS DESK')).click();
-                element(by.partialButtonText('PERSONAL')).click();
-                console.log('switching to personal');
+        selectedDesk.getText().then(function(text) {
+            var isPersonal = text === 'PERSONAL';
+            if (isPersonal !== toPersonal) {
+                selectedDesk.click();
+                element(by.id('select-desk-menu')).all(by.tagName('button')).last().click();
             }
         });
     }
