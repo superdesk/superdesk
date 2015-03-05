@@ -20,15 +20,33 @@ class rfc822TestCase(TestCase):
 
     def setUp(self):
         setup(context=self)
-        dirname = os.path.dirname(os.path.realpath(__file__))
-        fixture = os.path.join(dirname, 'fixtures', self.filename)
-        with open(fixture, mode='rb') as f:
-            bytes = f.read()
-        parser = rfc822Parser()
-        self.items = parser.parse_email([(1, bytes)])
+        with self.app.app_context():
+            dirname = os.path.dirname(os.path.realpath(__file__))
+            fixture = os.path.join(dirname, 'fixtures', self.filename)
+            with open(fixture, mode='rb') as f:
+                bytes = f.read()
+            parser = rfc822Parser()
+            self.items = parser.parse_email([(1, bytes)])
 
     def test_headline(self):
         self.assertEqual(self.items[0]['headline'], 'Test message 1234')
 
     def test_body(self):
         self.assertEquals(self.items[0]['body_html'].strip(), '<div dir="ltr">body text<br clear="all"><div>')
+
+
+class rfc822ComplexTestCase(TestCase):
+    filename = 'composite_email.txt'
+
+    def setUp(self):
+        setup(context=self)
+        with self.app.app_context():
+            dirname = os.path.dirname(os.path.realpath(__file__))
+            fixture = os.path.join(dirname, 'fixtures', self.filename)
+            with open(fixture, mode='rb') as f:
+                bytes = f.read()
+            parser = rfc822Parser()
+            self.items = parser.parse_email([(1, bytes)])
+
+    def test_composite(self):
+        self.assertEqual(len(self.items), 3)
