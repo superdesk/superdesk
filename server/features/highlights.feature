@@ -142,4 +142,36 @@ Feature: Highlights
         {"_items": [{"headline": "test", "highlights": []}]}
         """
 
-		
+    @auth
+    Scenario: Generate text item from highlights
+        Given "desks"
+        """
+        [{"name": "desk1"}]
+        """
+        Given "archive"
+        """
+        [
+            {"_id": "item1", "type": "text", "headline": "item1", "body_html": "<p>item1 first</p><p>item1 second</p>", "task": {"desk": "#desks._id#"}},
+            {"_id": "item2", "type": "text", "headline": "item2", "body_html": "<p>item2 first</p><p>item2 second</p>", "task": {"desk": "#desks._id#"}},
+            {"_id": "package", "type": "composite", "headline": "highlights", "groups": [{
+                "id": "main",
+                "refs": [
+                    {"residRef": "item1"},
+                    {"residRef": "item2"}
+                ]
+            }], "task": {"desk": "#desks._id#"}}
+        ]
+        """ 
+
+        When we post to "generate_highlights"
+        """
+        {"package": "package"}
+        """
+
+        Then we get new resource
+        """
+        {"type": "text", "headline": "highlights", "body_html": "<h2>item1</h2>\n<p>item1 first</p>\n<h2>item2</h2>\n<p>item2 first</p>"}
+        """
+
+        When we get "/archive"
+        Then we get list with 4 items
