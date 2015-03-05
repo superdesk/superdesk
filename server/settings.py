@@ -132,6 +132,7 @@ INSTALLED_APPS = [
     'superdesk.io.afp',
     'superdesk.io.ftp',
     'superdesk.io.rss',
+    'superdesk.macros',
 
     'apps.archive',
     'apps.stages',
@@ -149,7 +150,8 @@ INSTALLED_APPS = [
     'apps.packages',
     'apps.privilege',
     'apps.rule_sets',
-    'apps.highlights'
+    'apps.highlights',
+    'apps.macros',
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']
@@ -237,3 +239,7 @@ MAX_SEARCH_DEPTH = -1
 
 # Defines the maximum value of Ingest Sequence Number after which the value will start from 1
 MAX_VALUE_OF_INGEST_SEQUENCE = 9999
+
+DAYS_TO_KEEP = int(env('INGEST_ARTICLES_TTL', '2'))
+
+MACROS_MODULE = env('MACROS_MODULE', 'macros')

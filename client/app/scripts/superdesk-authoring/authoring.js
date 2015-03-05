@@ -398,14 +398,14 @@
         'ContentCtrl',
         '$location',
         'referrer',
+        'macros',
         '$timeout'
     ];
     function AuthoringDirective(superdesk, notify, gettext,
                                  desks, authoring, api, session, lock, privileges,
-                                 ContentCtrl, $location, referrer, $timeout) {
+                                 ContentCtrl, $location, referrer, macros, $timeout) {
         return {
             link: function($scope) {
-
                 var _closing;
 
                 $scope.privileges = privileges.privileges;
@@ -568,6 +568,8 @@
                         $scope.item.lock_user = null;
                     }
                 });
+
+                macros.setupShortcuts($scope);
             }
         };
     }
@@ -836,6 +838,7 @@
             'superdesk.authoring.workqueue',
             'superdesk.authoring.packages',
             'superdesk.authoring.find-replace',
+            'superdesk.authoring.macros',
             'superdesk.desks'
         ])
 

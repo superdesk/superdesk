@@ -512,7 +512,7 @@ def step_impl_then_get_list(context, total_count):
     data = get_json_data(context.response)
     int_count = int(total_count.replace('+', ''))
     if '+' in total_count:
-        assert int_count <= data['_meta']['total']
+        assert int_count <= data['_meta']['total'], '%d items is not enough' % data['_meta']['total']
     else:
         assert int_count == data['_meta']['total'], 'got %d' % (data['_meta']['total'])
     if int_count == 0 or not context.text:
