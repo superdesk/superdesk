@@ -149,7 +149,7 @@
 
                     var limits =
                         {
-                            group: 60
+                            group: 40
                     };
 
                     scope.limits = limits;
