@@ -244,7 +244,7 @@
         /**
          * Item filters sidebar
          */
-        .directive('sdSearchFacets', ['$location', 'desks',  function($location, desks) {
+        .directive('sdSearchFacets', ['$location', 'desks', 'privileges',  function($location, desks, privileges) {
             desks.initialize();
             return {
                 require: '^sdSearchContainer',
@@ -259,6 +259,7 @@
                     scope.aggregations = {};
                     scope.selectedFacets = {};
                     scope.keyword = null;
+                    scope.privileges = privileges.privileges;
 
                     var initAggregations = function () {
                         scope.aggregations = {

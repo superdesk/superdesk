@@ -855,9 +855,11 @@
                         scope._pending = users.isPending(user);
                         scope.profile = scope.user._id === session.identity._id;
 
-                        desks.fetchUserDesks(user).then(function(response) {
-                            scope.userDesks = response._items;
-                        });
+                        if (angular.isDefined(user) && angular.isDefined(user._links)) {
+                            desks.fetchUserDesks(user).then(function(response) {
+                                scope.userDesks = response._items;
+                            });
+                        }
                     }
                 }
             };
