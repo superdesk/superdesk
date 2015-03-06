@@ -150,6 +150,10 @@ define(['lodash'], function(_) {
                 item._etag = diff._etag;
             }
 
+            if (!diff) {
+                diff = angular.extend({}, item);
+            }
+
             var url = item._links.self.href;
             return http({
                 method: 'PATCH',
