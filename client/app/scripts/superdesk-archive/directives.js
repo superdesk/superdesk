@@ -204,11 +204,13 @@ define([
                 },
                 templateUrl: 'scripts/superdesk-archive/views/fetched-desks.html',
                 link: function(scope, elem) {
-                    scope.$watch('item', function() {
-                        familyService.fetchDesks(scope.item, false)
-                        .then(function(desks) {
-                            scope.desks = desks;
-                        });
+                    scope.$watchGroup(['item', 'item.archived'], function() {
+                        if (scope.item) {
+                            familyService.fetchDesks(scope.item, false)
+                                .then(function(desks) {
+                                    scope.desks = desks;
+                                });
+                        }
                     });
                 }
             };
