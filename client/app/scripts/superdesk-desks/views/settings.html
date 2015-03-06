@@ -32,7 +32,7 @@
 		<div class="modal-header"> 
 			<a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
 			<h3 ng-show="!desk.edit._id" translate>Add New Desk</h3>
-			<h3 ng-show="desk.edit._id" translate>Edit Desk</h3>
+			<h3 ng-show="desk.edit._id" translate>Edit "{{desk.edit.name}}" Desk</h3>
 		</div>
 		
 		<div class="modal-body" sd-wizard data-name="desks" data-current-step="step.current" data-finish="cancel()">
