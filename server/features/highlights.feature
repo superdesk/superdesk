@@ -142,6 +142,7 @@ Feature: Highlights
         {"_items": [{"headline": "test", "highlights": []}]}
         """
 
+    @wip
     @auth
     Scenario: Generate text item from highlights
         Given "desks"
@@ -173,8 +174,17 @@ Feature: Highlights
 
         Then we get new resource
         """
-        {"type": "text", "headline": "highlights", "body_html": "<h2>item1</h2>\n<p>item1 first</p>\n<h2>item2</h2>\n<p>item2 first</p>"}
+        {"_id": "", "type": "text", "headline": "highlights", "body_html": "<h2>item1</h2>\n<p>item1 first</p>\n<h2>item2</h2>\n<p>item2 first</p>"}
         """
 
         When we get "/archive"
         Then we get list with 4 items
+
+        When we post to "generate_highlights"
+        """
+        {"package": "package", "preview": true}
+        """
+        Then we get new resource
+        """
+        {"type": "text"}
+        """
