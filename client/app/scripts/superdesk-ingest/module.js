@@ -42,6 +42,10 @@ define([
         email: {
             label: 'Email',
             templateUrl: 'scripts/superdesk-ingest/views/settings/emailConfig.html'
+        },
+        dpa: {
+            label: 'DPA',
+            templateUrl: 'scripts/superdesk-ingest/views/settings/aapConfig.html'
         }
     });
 
