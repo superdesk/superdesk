@@ -1,19 +1,27 @@
-<div class="field">
-    <label translate>Days</label>
-    <div class="filter-box">
-        <button class="btn btn-light pull-left" 
-            ng-repeat="day in dayList" 
-            ng-click="toggleDay(rule, day)"
-            ng-class="{active: isDayChecked(rule, day)}">
-            {{dayLookup[day]|translate}}
-        </button>
+<div class="content rules push-down">
+    <div class="row clearfix">
+        <div class="field">
+            <label translate>Days</label>
+            <div class="filter-box day-filter-box">
+                <button class="btn btn-light pull-left" 
+                    ng-repeat="day in dayList" 
+                    ng-click="toggleDay(rule, day)"
+                    ng-class="{active: isDayChecked(rule, day)}">
+                        {{dayLookup[day]|translate}}
+                </button>
+            </div>
+        </div>
     </div>
-    <div style="clear: both"></div>
-</div>
-
-<div class="field">
-    <label translate>Time</label>
-    Start: <span sd-timepicker-alt data-model="rule.schedule.hour_of_day_from"></span>
-    End: <span sd-timepicker-alt data-model="rule.schedule.hour_of_day_to"></span>
-    <div style="clear: both"></div>
+    <div class="row">
+        <div class="field">
+            <label translate>Start Time</label>
+            <span sd-timepicker-alt data-model="rule.schedule.hour_of_day_from"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="field">
+            <label translate>End Time</label>
+            <span sd-timepicker-alt data-model="rule.schedule.hour_of_day_to"></span>
+        </div>
+    </div>
 </div>
