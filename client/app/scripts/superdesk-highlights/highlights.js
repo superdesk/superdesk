@@ -15,8 +15,8 @@
     /**
      * Service for highlights with caching.
      */
-    HighlightsService.$inject = ['api', '$q', '$cacheFactory'];
-    function HighlightsService(api, $q, $cacheFactory) {
+    HighlightsService.$inject = ['api', '$q', '$cacheFactory', 'packages'];
+    function HighlightsService(api, $q, $cacheFactory, packages) {
     	var service = {};
         var cache = $cacheFactory('highlightList');
 
@@ -65,12 +65,12 @@
          * Create empty highlight package
          */
         service.createEmptyHighlight = function createEmptyHighlight(highlight) {
-//            var pkg_defaults = {
-//                headline: highlight.name,
-//                highlight: highlight._id
-//            };
-//
-//            return packagesService.createEmptyPackage(pkg_defaults);
+           var pkg_defaults = {
+               headline: highlight.name,
+               highlight: highlight._id
+           };
+
+           return packages.createEmptyPackage(pkg_defaults);
         };
 
         return service;
@@ -152,9 +152,9 @@
             link: function(scope) {
 
                 scope.createHighlight = function createHighlight(highlight) {
-                	highlightsService.createEmptyHighlight(highlight).then(
-                        function(new_package) {
-                            superdesk.intent('author', 'package', new_package);
+                	highlightsService.createEmptyHighlight(highlight)
+                    .then(function(new_package) {
+                        superdesk.intent('author', 'package', new_package);
                     });
                 };
 
@@ -297,6 +297,10 @@
         apiProvider.api('markForHighlights', {
             type: 'http',
             backend: {rel: 'marked_for_highlights'}
+        });
+        apiProvider.api('generate_highlights', {
+            type: 'http',
+            backend: {rel: 'generate_highlights'}
         });
     }]);
 
