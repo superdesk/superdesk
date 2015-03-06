@@ -40,37 +40,18 @@ define([
                     ta.value = '';
                     ta.value = text;
 
-                    var appendText = attrs.msdElastic,
-                        append = appendText === '\\n' ? '\n' : appendText,
-                        $win = angular.element($window),
-                        mirrorStyle = 'position: absolute; top: -999px; right: auto; bottom: auto; left: 0 ;' +
+                    var $win = angular.element($window),
+                        mirrorStyle,
+                        mirrorStyle_basic = 'position: absolute; top: -999px; right: auto; bottom: auto; left: 0 ;' +
                                       'overflow: hidden; -webkit-box-sizing: content-box;' +
                                       '-moz-box-sizing: content-box; box-sizing: content-box;' +
                                       'min-height: 0 !important; height: 0 !important; padding: 0;' +
                                       'word-wrap: break-word; border: 0;',
-                        $mirror = angular.element('<textarea tabindex="-1" class="sdAutoHeight" ' +
-                                                  'style="' + mirrorStyle + '"/>').data('elastic', true),
+                        $mirror = angular.element('<textarea tabindex="-1" ' +
+                                                  'style="' + mirrorStyle_basic + '"/>').attr('elastic', true),
                         mirror = $mirror[0],
-                        taStyle = getComputedStyle(ta),
-                        borderBox = taStyle.getPropertyValue('box-sizing') === 'border-box' ||
-                                    taStyle.getPropertyValue('-moz-box-sizing') === 'border-box' ||
-                                    taStyle.getPropertyValue('-webkit-box-sizing') === 'border-box',
-                        boxOuter = !borderBox ? {width: 0, height: 0} : {
-                                      width:  parseInt(taStyle.getPropertyValue('border-right-width'), 10) +
-                                              parseInt(taStyle.getPropertyValue('padding-right'), 10) +
-                                              parseInt(taStyle.getPropertyValue('padding-left'), 10) +
-                                              parseInt(taStyle.getPropertyValue('border-left-width'), 10),
-                                      height: parseInt(taStyle.getPropertyValue('border-top-width'), 10) +
-                                              parseInt(taStyle.getPropertyValue('padding-top'), 10) +
-                                              parseInt(taStyle.getPropertyValue('padding-bottom'), 10) +
-                                              parseInt(taStyle.getPropertyValue('border-bottom-width'), 10)
-                                    },
-                        minHeightValue = parseInt(taStyle.getPropertyValue('min-height'), 10),
-                        heightValue = parseInt(taStyle.getPropertyValue('height'), 10),
-                        minHeight = Math.max(minHeightValue, heightValue) - boxOuter.height,
-                        maxHeight = parseInt(taStyle.getPropertyValue('max-height'), 10),
-                        mirrored,
-                        active,
+                        taStyle, borderBox, boxOuter, minHeightValue, heightValue,
+                        minHeight, maxHeight, mirrored, active,
                         copyStyle = ['font-family',
                                      'font-size',
                                      'font-weight',
@@ -82,12 +63,9 @@ define([
                                      'text-indent'];
 
                     // exit if elastic already applied (or is the mirror element)
-                    if ($ta.data('elastic')) {
+                    if ($ta.attr('elastic')) {
                       return;
                     }
-
-                    // Opera returns max-height of -1 if not set
-                    maxHeight = maxHeight && maxHeight > 0 ? maxHeight : 9e4;
 
                     // append mirror to the DOM
                     if (mirror.parentNode !== document.body) {
@@ -97,23 +75,46 @@ define([
                     // set resize and apply elastic
                     $ta.css({
                       'resize': 'none'
-                    }).data('elastic', true);
+                    });
+                    $ta.attr('elastic', true);
 
                     /*
                      * methods
                      */
-
                     function initMirror() {
                       mirrored = ta;
-                      // copy the essential styles from the textarea to the mirror
-                      taStyle = getComputedStyle(ta);
+                      taStyle = $window.getComputedStyle(ta);
+                      borderBox = taStyle.getPropertyValue('box-sizing') === 'border-box' ||
+                                  taStyle.getPropertyValue('-moz-box-sizing') === 'border-box' ||
+                                  taStyle.getPropertyValue('-webkit-box-sizing') === 'border-box';
+                      boxOuter = !borderBox ? {width: 0, height: 0} : {
+                        width:  parseInt(taStyle.getPropertyValue('border-right-width'), 10) +
+                                parseInt(taStyle.getPropertyValue('padding-right'), 10) +
+                                parseInt(taStyle.getPropertyValue('padding-left'), 10) +
+                                parseInt(taStyle.getPropertyValue('border-left-width'), 10),
+                        height: parseInt(taStyle.getPropertyValue('border-top-width'), 10) +
+                                parseInt(taStyle.getPropertyValue('padding-top'), 10) +
+                                parseInt(taStyle.getPropertyValue('padding-bottom'), 10) +
+                                parseInt(taStyle.getPropertyValue('border-bottom-width'), 10)
+                      };
+                      minHeightValue = parseInt(taStyle.getPropertyValue('min-height'), 10);
+                      heightValue = parseInt(taStyle.getPropertyValue('height'), 10);
+                      minHeight = Math.max(minHeightValue, heightValue) - boxOuter.height;
+                      maxHeight = parseInt(taStyle.getPropertyValue('max-height'), 10);
+                    }
+
+                    function setMirrorStyle() {
+                      taStyle = $window.getComputedStyle(ta);
+                      mirrorStyle = mirrorStyle_basic;
                       angular.forEach(copyStyle, function(val) {
-                        mirrorStyle += val + ':' + taStyle.getPropertyValue(val) + ';';
+                        mirrorStyle += val + ':' + taStyle[val] + ';';
                       });
+
                       mirror.setAttribute('style', mirrorStyle);
                     }
 
                     function adjust() {
+
                       var taHeight,
                           taComputedStyleWidth,
                           mirrorHeight,
@@ -124,16 +125,18 @@ define([
                         initMirror();
                       }
 
+                      setMirrorStyle();
+
                       // active flag prevents actions in function from calling adjust again
                       if (!active) {
                         active = true;
 
-                        mirror.value = ta.value + append; // optional whitespace to improve animation
+                        mirror.value = ta.value; // optional whitespace to improve animation
                         mirror.style.overflowY = ta.style.overflowY;
 
                         taHeight = ta.style.height === '' ? 'auto' : parseInt(ta.style.height, 10);
 
-                        taComputedStyleWidth = getComputedStyle(ta).getPropertyValue('width');
+                        taComputedStyleWidth = $window.getComputedStyle(ta).getPropertyValue('width');
 
                         // ensure getComputedStyle has returned a readable 'used value' pixel width
                         if (taComputedStyleWidth.substr(taComputedStyleWidth.length - 2, 2) === 'px') {
@@ -156,7 +159,6 @@ define([
 
                         if (taHeight !== mirrorHeight) {
                           ta.style.height = mirrorHeight + 'px';
-                          scope.$emit('elastic:resize', $ta);
                         }
 
                         // small delay to prevent an infinite loop
@@ -187,7 +189,11 @@ define([
 
                     scope.$watch(function() {
                       return ngModel.$modelValue;
-                    }, forceAdjust);
+                    }, function(newval, oldval) {
+                      if (newval !== oldval) {
+                        forceAdjust();
+                      }
+                    });
 
                     _.defer(adjust);
 
