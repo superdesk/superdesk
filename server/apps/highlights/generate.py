@@ -24,6 +24,7 @@ class GenerateHighlightsService(superdesk.Service):
             doc['slugline'] = package.get('slugline')
             doc['byline'] = package.get('byline')
             doc['task'] = package.get('task')
+            doc['family_id'] = package.get('guid')
 
             body = []
             for group in package.get('groups', []):
@@ -35,12 +36,10 @@ class GenerateHighlightsService(superdesk.Service):
                         body.append(str(soup.p))
             doc['body_html'] = '\n'.join(body)
 
-            if preview:
-                ids.append('')
-            else:
-                ids.append(service.create([doc], **kwargs))
-
-        return ids
+        if preview:
+            return ['' for doc in docs]
+        else:
+            return service.post(docs, **kwargs)
 
 
 class GenerateHighlightsResource(superdesk.Resource):
