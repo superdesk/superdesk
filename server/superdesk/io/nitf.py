@@ -15,6 +15,7 @@ from datetime import datetime
 from superdesk.io import Parser
 import xml.etree.ElementTree as etree
 from superdesk.errors import ParserError
+from superdesk.utc import utc
 
 ITEM_CLASS_TEXT = 'text'
 ITEM_CLASS_PRE_FORMATTED = 'preformatted'
@@ -62,10 +63,13 @@ def get_content(tree):
 def get_norm_datetime(tree):
     if tree is None:
         return
+
     try:
-        return datetime.strptime(tree.attrib['norm'], '%Y%m%dT%H%M%S')
+        value = datetime.strptime(tree.attrib['norm'], '%Y%m%dT%H%M%S')
     except ValueError:
-        return datetime.strptime(tree.attrib['norm'], '%Y%m%dT%H%M%S%z')
+        value = datetime.strptime(tree.attrib['norm'], '%Y%m%dT%H%M%S%z')
+
+    return utc.normalize(value) if value.tzinfo else value
 
 
 def get_byline(tree):
