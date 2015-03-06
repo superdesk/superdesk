@@ -28,10 +28,11 @@ class GenerateHighlightsService(superdesk.Service):
             body = []
             for group in package.get('groups', []):
                 for ref in group.get('refs', []):
-                    item = service.find_one(req=None, _id=ref['residRef'])
-                    body.append('<h2>%s</h2>' % item.get('headline', ''))
-                    soup = BeautifulSoup(item.get('body_html', ''))
-                    body.append(str(soup.p))
+                    if 'residRef' in ref:
+                        item = service.find_one(req=None, _id=ref.get('residRef'))
+                        body.append('<h2>%s</h2>' % item.get('headline', ''))
+                        soup = BeautifulSoup(item.get('body_html', ''))
+                        body.append(str(soup.p))
             doc['body_html'] = '\n'.join(body)
 
             if preview:
