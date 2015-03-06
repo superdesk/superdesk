@@ -142,8 +142,8 @@
 
     }
 
-    PackagingController.$inject = ['$scope', 'item', 'packages', '$location'];
-    function PackagingController($scope, item, packages, $location) {
+    PackagingController.$inject = ['$scope', 'item', 'packages', 'api', 'modal', 'notify', 'gettext', 'superdesk'];
+    function PackagingController($scope, item, packages, api, modal, notify, gettext, superdesk) {
         $scope.origItem = item;
 
         $scope.widget_target = 'packages';
@@ -152,6 +152,31 @@
             action: 'author',
             type: 'package'
         };
+
+        //Highlights related functionality
+
+        $scope.highlight = !!item.highlight;
+
+        $scope.exportHighlight = function(item) {
+            if ($scope.save_enabled()) {
+                modal.confirm(gettext('You have unsaved changes, do you want to continue.'))
+                    .then(function() {
+                        _exportHighlight(item._id);
+                    }
+                );
+            } else {
+                _exportHighlight(item._id);
+            }
+        };
+
+        function _exportHighlight(_id) {
+            api.save('generate_highlights', {}, {'package': _id})
+            .then(function(item) {
+                superdesk.intent('author', 'article', item);
+            }, function(response) {
+                notify.error(gettext('Error creating highlight.'));
+            });
+        }
     }
 
     SearchWidgetCtrl.$inject = ['$scope', 'packages', 'api', 'search'];
