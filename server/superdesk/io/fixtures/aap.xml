@@ -17,11 +17,11 @@
         <docdata>
             <doc-id id-string="AAP.115314987.5417374" />
             <urgency ed-urg="5" />
-            <date.issue norm="20131020T192751" />
-            <date.release norm="20131020T192751" />
-            <date.expire norm="20131119T192751" />
+            <date.issue norm="20131020T192751+1100" />
+            <date.release norm="20131020T192751+1100" />
+            <date.expire norm="20131119T192751+1100" />
             <doc.copyright year="2013" holder="Australian Associated Press" />
-            <doc.rights owner="AAP" startdate="20131020T013500" enddate="20131103T013500" agent="AAP" geography="Australia" type="A non-exclusive, non-transferable right to display and/or store the document in accordance with the AAP Information Supply Agreement between Australian Associated Press Pty Limited and the direct recipient of this document from Australian Associated Press Pty Limited." limitations="The direct recipient of this document from Australian Associated Press Pty Limited must comply with the limitations specified in the AAP Information Supply Agreement between Australian Associated Press Pty Limited and that recipient including, without limitation, not permitting deep hyperlinking to the document, framing of the document on a web site, posting the document to Usenet newsgroups or facilitating such actions." />
+            <doc.rights owner="AAP" startdate="20131020T013500+1100" enddate="20131103T013500+1100" agent="AAP" geography="Australia" type="A non-exclusive, non-transferable right to display and/or store the document in accordance with the AAP Information Supply Agreement between Australian Associated Press Pty Limited and the direct recipient of this document from Australian Associated Press Pty Limited." limitations="The direct recipient of this document from Australian Associated Press Pty Limited must comply with the limitations specified in the AAP Information Supply Agreement between Australian Associated Press Pty Limited and that recipient including, without limitation, not permitting deep hyperlinking to the document, framing of the document on a web site, posting the document to Usenet newsgroups or facilitating such actions." />
         </docdata>
     </head>
     <body>
