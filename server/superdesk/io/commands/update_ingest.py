@@ -78,7 +78,7 @@ def is_closed(provider):
 
 
 def filter_expired_items(provider, items):
-    def filter(item):
+    def is_not_expired(item):
         expiry = item.get('expiry', item['versioncreated'] + delta)
         if expiry.tzinfo:
             return expiry > utcnow()
@@ -86,7 +86,7 @@ def filter_expired_items(provider, items):
 
     try:
         delta = timedelta(minutes=provider.get('content_expiry', INGEST_EXPIRY_MINUTES))
-        return [item for item in items if filter(item)]
+        return [item for item in items if is_not_expired(item)]
     except Exception as ex:
         raise ProviderError.providerFilterExpiredContentError(ex, provider)
 
