@@ -1,5 +1,5 @@
 <ul ng-show="highlights">
 	<li ng-repeat="h in highlights"> 
-	    <a href="" ng-click="mark_item(h);">{{ h.name | uppercase  }}</a>
+	    <a href="" option="{{ h.name | uppercase  }}" ng-click="mark_item(h);">{{ h.name | uppercase  }}</a>
 	</li>
 </ul>
