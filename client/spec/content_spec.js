@@ -12,8 +12,8 @@ describe('Content', function() {
 
     beforeEach(function() {
         openUrl('/#/workspace/content')();
-        workspace.openPersonal();
-        expect(element.all(by.repeater('items._items')).count()).toBe(3);
+        workspace.switchToDesk('PERSONAL');
+        expect(element.all(by.repeater('items._items')).count()).toBe(6);
     });
 
     it('can navigate with keyboard', function() {
@@ -25,7 +25,7 @@ describe('Content', function() {
         expect(selectedHeadline()).toBe('item2');
 
         body.sendKeys(protractor.Key.RIGHT);
-        expect(selectedHeadline()).toBe('item3');
+        expect(selectedHeadline()).toBe('item5');
 
         body.sendKeys(protractor.Key.LEFT);
         expect(selectedHeadline()).toBe('item2');
@@ -53,7 +53,7 @@ describe('Content', function() {
 
         expect(element.all(by.css('.state-border')).count()).toBe(0);
         body.sendKeys('v');
-        expect(element.all(by.css('.state-border')).count()).toBe(3);
+        expect(element.all(by.css('.state-border')).count()).toBe(6);
         body.sendKeys('v');
         expect(element.all(by.css('.state-border')).count()).toBe(0);
     });

@@ -26,9 +26,10 @@ Feature: Prepopulate
         
         When we find for "users" the id as "user_admin" by "{"username": "admin"}"
         And we get "/desks"
-        Then we get list with 1 items
+        Then we get list with 2 items
         """
-        {"_items": [{"members": [{"user": "#user_admin#"}], "name": "Sports Desk"}]}
+        {"_items": [{"members": [{"user": "#user_admin#"}], "name": "Sports Desk"},
+                    {"members": [{"user": "#user_admin#"}], "name": "Politic Desk"}]}
         """ 
         
         When we get "/roles"

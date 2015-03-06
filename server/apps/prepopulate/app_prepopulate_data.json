@@ -1,4 +1,5 @@
 [
+    
     {
         "data": {
             "email": "a@a.com",
@@ -12,14 +13,26 @@
         "id_name": "-id user admin-",
         "resource": "users"
     },
+    
     {
         "data": {"members": [{"user": "-id user admin-"}], "name": "Sports Desk"},
         "resource": "desks",
         "username": "admin",
-        "id_name": "-id sports desk-"
+        "id_name": "-id desk Sport Desks-"
     },
-    {"data": {"name": "Editor", "privileges": {"ingest": {"read": 1}}}, "resource": "roles"},
-
+    
+    {
+        "data": {"members": [{"user": "-id user admin-"}], "name": "Politic Desk"},
+        "resource": "desks",
+        "username": "admin",
+        "id_name": "-id desk Politic Desks-"
+    },
+    
+    {
+    	"data": {"name": "Editor", "privileges": {"ingest": {"read": 1}}}, 
+    	"resource": "roles"
+    },
+    
     {
         "resource": "archive",
         "username": "admin",
@@ -31,6 +44,7 @@
             "original_creator": "-id user admin-"
         }
     },
+    
     {
         "resource": "archive",
         "username": "admin",
@@ -42,6 +56,7 @@
             "original_creator": "-id user admin-"
         }
     },
+    
     {
         "resource": "archive",
         "username": "admin",
@@ -50,10 +65,61 @@
             "type": "text",
             "guid": "item3",
             "versioncreated": "2015-01-01T10:10:10+0000",
-            "original_creator": "-id user admin-"
+            "original_creator": "-id user admin-",
+            "task" : {
+		        "desk" : "-id desk Sport Desks-",
+		        "user" : "-id user admin-"
+		    }
         }
     },
 
+	    {
+        "resource": "archive",
+        "username": "admin",
+        "data": {
+            "headline": "item4",
+            "type": "text",
+            "guid": "item4",
+            "versioncreated": "2015-01-01T10:10:10+0000",
+            "original_creator": "-id user admin-",
+            "task" : {
+		        "desk" : "-id desk Sport Desks-",
+		        "user" : "-id user admin-"
+		    }
+        }
+    },
+    
+        {
+        "resource": "archive",
+        "username": "admin",
+        "data": {
+            "headline": "item5",
+            "type": "text",
+            "guid": "item5",
+            "versioncreated": "2015-01-01T10:10:10+0000",
+            "original_creator": "-id user admin-",
+            "task" : {
+		        "desk" : "-id desk Politic Desks-",
+		        "user" : "-id user admin-"
+		    }
+        }
+    },
+    
+        {
+        "resource": "archive",
+        "username": "admin",
+        "data": {
+            "headline": "item6",
+            "type": "text",
+            "guid": "item6",
+            "versioncreated": "2015-01-01T10:10:10+0000",
+            "original_creator": "-id user admin-",
+            "task" : {
+		        "desk" : "-id desk Politic Desks-",
+		        "user" : "-id user admin-"
+		    }
+        }
+    },
     {
         "resource": "ingest",
         "data": {
@@ -63,4 +129,5 @@
             "versioncreated": "NOW()"
         }
     }
+    
 ]
