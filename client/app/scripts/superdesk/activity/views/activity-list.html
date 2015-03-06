@@ -4,7 +4,7 @@
         <span>{{ :: activity.label | translate }}</span>
     </a>
 	<div ng-if=":: activity.dropdown" class="dropdown activity-dropdown" sd-dropdown-position dropdown>
-	    <a ng-href="{{ :: $root.link(activity._id, item) }}" class="dropdown-toggle" dropdown-toggle>
+	    <a title="{{ :: activity.label | translate }}" ng-href="{{ :: $root.link(activity._id, item) }}" class="dropdown-toggle" dropdown-toggle>
 		    <i class="icon-{{ :: activity.icon }}" ng-show=":: activity.icon"></i>
 	        <span>{{ :: activity.label | translate }}</span>
 	    </a>
