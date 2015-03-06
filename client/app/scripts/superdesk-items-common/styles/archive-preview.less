@@ -325,18 +325,39 @@
 
 .related-item-view {
 	.related-item {
-		margin-top : 15px;
+		margin-top : 16px;
 		border-bottom: 1px solid #ebebeb;
+		padding-bottom: 16px;
 		
 		.item {
 			margin: 5px 5px 0px 0px;
 		}
-
 		.container {
 			.text-semibold();
-			color: #216678;
-			margin-left: 10px;
+			color: #444;
+			margin-right: 16px;
 		}
+		.keyword {
+			.text-semibold();
+			color: @sd-keyword;
+			text-transform: uppercase;
+			font-size: 12px;
+			margin-right: 16px;
+		}
+		.type-icon {
+			opacity: 0.5;
+			height: 16px;
+			width: 16px;
+			padding-left: 0;
+			margin-right: 12px;
+		}
+		.headline {
+			color: #686b6c;
+
+		}
+	}
+	li:first-child .related-item {
+		margin-top: 6px;
 	}
 }
 
