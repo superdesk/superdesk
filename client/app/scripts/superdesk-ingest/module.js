@@ -466,11 +466,6 @@ define([
                                 notify.error(gettext('There is an error. Routing scheme cannot be deleted.'));
                             }
                         });
-                        /*
-                        // mock
-                        _.remove(scope.schemes, scheme);
-                        //
-                        */
                     });
                 };
 
@@ -530,6 +525,42 @@ define([
         };
     }
 
+    var typeLookup = {
+        text: 'Text',
+        preformatted: 'Preformatted text',
+        picture: 'Picture',
+        audio: 'Audio',
+        video: 'Video',
+        composite: 'Package'
+    };
+
+    var dayLookup = {
+        MON: 'Monday',
+        TUE: 'Tuesday',
+        WED: 'Wednesday',
+        THU: 'Thursday',
+        FRI: 'Friday',
+        SAT: 'Saturday',
+        SUN: 'Sunday'
+    };
+
+    IngestRoutingGeneral.$inject = ['desks'];
+    function IngestRoutingGeneral(desks) {
+        return {
+            scope: {rule: '='},
+            templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-general.html',
+            link: function(scope) {
+                scope.typeLookup = typeLookup;
+                scope.dayLookup = dayLookup;
+                desks.initialize()
+                .then(function() {
+                    scope.deskLookup = desks.deskLookup;
+                    scope.stageLookup = desks.stageLookup;
+                });
+            }
+        };
+    }
+
     IngestRoutingFilter.$inject = ['api', 'subjectService'];
     function IngestRoutingFilter(api, subjectService) {
         return {
@@ -544,14 +575,7 @@ define([
                     'video',
                     'composite'
                 ];
-                scope.typeLookup = {
-                    text: 'Text',
-                    preformatted: 'Preformatted text',
-                    picture: 'Picture',
-                    audio: 'Audio',
-                    video: 'Video',
-                    composite: 'Package'
-                };
+                scope.typeLookup = typeLookup;
                 scope.subjects = [];
                 scope.subjectTerm = '';
                 scope.filteredSubjects = [];
@@ -709,15 +733,7 @@ define([
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-schedule.html',
             link: function(scope) {
                 scope.dayList = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
-                scope.dayLookup = {
-                    MON: 'Monday',
-                    TUE: 'Tuesday',
-                    WED: 'Wednesday',
-                    THU: 'Thursday',
-                    FRI: 'Friday',
-                    SAT: 'Saturday',
-                    SUN: 'Sunday'
-                };
+                scope.dayLookup = dayLookup;
 
                 scope.isDayChecked = function(rule, day) {
                     return rule.schedule.day_of_week.indexOf(day) !== -1;
@@ -754,17 +770,28 @@ define([
         };
     }
 
+    function InsertFilter() {
+        return function(input, location, addition) {
+            location = location || input.length;
+            addition = addition || '';
+
+            return input.substr(0, location) + addition + input.substr(location);
+        };
+    }
+
     app
         .service('ingestSources', IngestProviderService)
         .factory('subjectService', SubjectService)
         .directive('sdIngestSourcesContent', IngestSourcesContent)
         .directive('sdIngestRulesContent', IngestRulesContent)
         .directive('sdIngestRoutingContent', IngestRoutingContent)
+        .directive('sdIngestRoutingGeneral', IngestRoutingGeneral)
         .directive('sdIngestRoutingFilter', IngestRoutingFilter)
         .directive('sdIngestRoutingAction', IngestRoutingAction)
         .directive('sdIngestRoutingSchedule', IngestRoutingSchedule)
         .directive('sdPieChartDashboard', PieChartDashboardDirective)
-        .directive('sdSortrules', SortRulesDirectives);
+        .directive('sdSortrules', SortRulesDirectives)
+        .filter('insert', InsertFilter);
 
     app.config(['superdeskProvider', function(superdesk) {
         superdesk

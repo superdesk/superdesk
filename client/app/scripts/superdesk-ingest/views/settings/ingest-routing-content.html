@@ -21,81 +21,71 @@
         </ul>
     </div>
 </div>
-
-<div sd-modal-view data-model="editScheme" class="ruleset-modal" ng-hide="rule">
-    <div class="modal-header"> <a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
+<div sd-modal-view data-model="editScheme" class="add-scheme-popup responsive-popup hide">
+    <div class="modal-header">
+        <a href="" class="close" ng-click="cancel()">
+            <i class="icon-close-small"></i>
+        </a>
         <h3 translate ng-show="editScheme._id" translate>Edit Scheme</h3>
         <h3 translate ng-hide="editScheme._id" translate>Add New Scheme</h3>
     </div>
-
     <div class="modal-body">
         <form name="schemeForm">
-            <div class="split-content">
-                <header>
-                    <input type="text" class="input-xlarge" placeholder="{{ 'Scheme name'|translate }}" ng-model="editScheme.name" required>
-                    <button class="btn btn-info pull-right" ng-disabled="!schemeForm.$valid" ng-click="addRule()"><i class="icon-plus-small icon-white"></i> {{:: 'Add rule' | translate}}</button>
-                </header>
-                <div class="content">
-                    <ul sd-sortrules class="pills-list rule-list">
-                        <li ng-repeat="rule in editScheme.rules" class="clearfix">
-                            <div class="header">
-                                <h6>{{rule.name}}</h6>
-                                <div class="actions">
-                                    <button ng-click="editRule(rule)" title="{{:: 'Edit rule' | translate }}">
-                                        <i class="icon-pencil"></i>
-                                    </button>
-                                    <button ng-click="removeRule(rule)" title="{{:: 'Remove rule' | translate }}">
-                                        <i class="icon-trash"></i>
-                                    </button>
-                                </div>
+            <div class="content">
+                <fieldset>
+                    <div class="field">
+                        <label translate>Scheme name</label>
+                        <input type="text" class="fullwidth-input" placeholder="{{ 'Scheme name'|translate }}" ng-model="editScheme.name" required>
+                    </div>
+                    <div class="content rules">
+                        <div class="col">
+                            <div class="field">
+                                <label translate>Scheme rules</label>
                             </div>
-                        </li>
-                    </ul>
-                    <p ng-if="!editScheme.rules" translate>No rules defined in scheme.</p>
-                </div>
+                            <ul sd-sortrules class="pills-list rule-list">
+                                <li ng-repeat="rule in editScheme.rules" class="clearfix" ng-click="editRule(rule)">
+                                    <div class="header">
+                                        <h6>{{rule.name}}</h6>
+                                    </div>
+                                </li>
+                            </ul>
+                            <button class="btn btn-info" ng-click="addRule()" style="width: 100%;">
+                                <i class="icon-plus-sign icon-white"></i> <span translate>Add New Rule</span>
+                            </button>
+                        </div>
+                        <div class="col double">
+                            <div ng-if="rule">
+                                <div class="field">
+                                    <div class="popup-subnav">
+                                        <ul class="nav nav-tabs" ng-init="tab = 'general'">
+                                            <li ng-class="{active: tab === 'general'}">
+                                                <button ng-click="tab = 'general'" translate>General</button>
+                                            </li>
+                                            <li ng-class="{active: tab === 'filter'}">
+                                                <button ng-click="tab = 'filter'" translate>Filter</button>
+                                            </li>
+                                            <li ng-class="{active: tab === 'action'}">
+                                                <button ng-click="tab = 'action'" translate>Action</button>
+                                            </li>
+                                            <li ng-class="{active: tab === 'schedule'}">
+                                                <button ng-click="tab = 'schedule'" translate>Schedule</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div sd-ingest-routing-general ng-if="tab === 'general'" data-rule="rule"></div>
+                                <div sd-ingest-routing-filter ng-if="tab === 'filter'" data-rule="rule"></div>
+                                <div sd-ingest-routing-action ng-if="tab === 'action'" data-rule="rule"></div>
+                                <div sd-ingest-routing-schedule ng-if="tab === 'schedule'" data-rule="rule"></div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
             </div>
         </form>
     </div>
-
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="cancel()" translate>Cancel</button>
         <button class="btn btn-primary" ng-click="save(editScheme)" ng-disabled="!schemeForm.$valid || !editScheme.rules.length" translate>Save</button>
-    </div>
-</div>
-
-<div sd-modal-view data-model="rule" class="ruleset-modal" ng-if="rule">
-    <div class="modal-header"> <a href="" class="close" ng-click="cancelRule()"><i class="icon-close-small"></i></a>
-        <h3 translate>
-            <span ng-show="::rule.name" translate>Edit Rule</span>
-            <span ng-hide="::rule.name" translate>Add New Rule</span>
-            <span>
-                <input type="text" class="input-xlarge" placeholder="{{ 'Rule name'|translate }}" ng-model="rule.name" required>
-            </span>
-        </h3>
-    </div>
-
-    <form name="ruleForm">
-        <div class="modal-body">
-            <fieldset>
-                <div class="popup-subnav">
-                    <tabset>
-                        <tab heading="Filter" class="TabContent">
-                            <div sd-ingest-routing-filter data-rule="rule"></div>
-                        </tab>
-                        <tab heading="Action" class="TabContent">
-                            <div sd-ingest-routing-action data-rule="rule"></div>
-                        </tab>
-                        <tab heading="Schedule" class="TabContent">
-                            <div sd-ingest-routing-schedule data-rule="rule"></div>
-                        </tab>
-                    </tabset>
-                </div>
-            </fieldset>
-        </div>
-    </form>
-
-    <div class="modal-footer">
-        <button class="btn btn-default" ng-click="cancelRule()" translate>Cancel</button>
-        <button class="btn btn-primary" ng-click="saveRule(rule)" ng-disabled="!ruleForm.$valid" translate>Save</button>
     </div>
 </div>
