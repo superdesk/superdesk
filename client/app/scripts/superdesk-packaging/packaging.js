@@ -153,7 +153,7 @@
         $scope.groupList = packages.groupList;
 
         function fetchContentItems(q) {
-            var query = search.query(q || null);
+            var query = search.query({q: q});
             query.size(25);
             api.archive.query(query.getCriteria(true))
             .then(function(result) {

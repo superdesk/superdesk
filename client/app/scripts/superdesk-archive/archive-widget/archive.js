@@ -21,7 +21,7 @@ define([
                 thumbnail: require.toUrl('./thumbnail.png'),
                 template: require.toUrl('./widget-archive.html'),
                 configurationTemplate: require.toUrl('./configuration.html'),
-                configuration: {maxItems: 10, provider: null, search: '', updateInterval: 5},
+                configuration: {maxItems: 10, savedSearch: null, updateInterval: 5},
                 description: 'Content widget'
             });
         }])
@@ -64,13 +64,5 @@ define([
             };
 
             BaseWidgetController.call(this, $scope);
-        }])
-        .controller('ArchiveConfigController', ['$scope', 'api', 'BaseWidgetConfigController',
-        function ($scope, api, BaseWidgetConfigController) {
-            $scope.api = api.archive;
-
-            BaseWidgetConfigController.call(this, $scope);
-
-            $scope.fetchProviders();
         }]);
 });

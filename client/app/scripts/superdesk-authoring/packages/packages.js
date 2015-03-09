@@ -2,12 +2,12 @@
 
     'use strict';
 
-    PackagesCtrl.$inject = ['$scope', 'superdesk', 'api', 'search'];
-    function PackagesCtrl($scope, superdesk, api, search) {
+    PackagesCtrl.$inject = ['$scope', '$location', 'superdesk', 'api', 'search'];
+    function PackagesCtrl($scope, $location, superdesk, api, search) {
         $scope.contentItems = [];
 
         function fetchPackages() {
-            var query = search.query(null);
+            var query = search.query($location.search());
             var filter = [];
             _.forEach($scope.item.linked_in_packages, function(packageRef) {
                 filter.push(packageRef['package']);

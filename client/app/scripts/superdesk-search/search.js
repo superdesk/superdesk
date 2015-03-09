@@ -42,10 +42,14 @@
         /**
          * Single query instance
          */
-        function Query(q) {
+        function Query(params) {
             var DEFAULT_SIZE = 25,
                 size,
                 filters = [];
+
+            if (params == null) {
+                params = {};
+            }
 
             /**
              * Set from/size for given query and params
@@ -132,7 +136,7 @@
              * Get criteria for given query
              */
             this.getCriteria = function getCriteria(withSource) {
-                var search = $location.search();
+                var search = params;
                 var sort = getSort();
                 var criteria = {
                     query: {filtered: {filter: {and: filters}}},
@@ -141,9 +145,9 @@
 
                 paginate(criteria, search);
 
-                if (search.q || q) {
+                if (search.q) {
                     criteria.query.filtered.query = {query_string: {
-                        query: search.q || q,
+                        query: search.q,
                         lenient: false,
                         default_operator: 'AND'
                     }};
@@ -180,22 +184,22 @@
             };
 
             // do base filtering
-            if ($location.search().spike) {
+            if (params.spike) {
                 this.filter({term: {state: 'spiked'}});
             } else {
                 this.filter({not: {term: {state: 'spiked'}}});
             }
 
-            buildFilters($location.search(), this);
+            buildFilters(params, this);
         }
 
         /**
          * Start creating a new query
          *
-         * @param {string} q
+         * @param {Object} params
          */
-        this.query = function createQuery(q) {
-            return new Query(q);
+        this.query = function createQuery(params) {
+            return new Query(params);
         };
     }
 
@@ -215,7 +219,7 @@
                 $location.search('page', null);
             }
 
-            var criteria = search.query().getCriteria(true);
+            var criteria = search.query($location.search()).getCriteria(true);
             api.query('search', criteria).then(function(result) {
                 $scope.items = result;
             });
@@ -883,6 +887,16 @@
 
                     scope.$on('$routeUpdate', getActive);
                     getActive();
+                }
+            };
+        }])
+
+        .directive('sdSavedSearchSelect', ['api', 'session', function SavedSearchSelectDirective(api, session) {
+            return {
+                link: function(scope) {
+                    api.query('saved_searches', {}, session.identity).then(function(res) {
+                        scope.searches = res._items;
+                    });
                 }
             };
         }])
