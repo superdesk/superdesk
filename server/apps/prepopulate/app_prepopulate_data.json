@@ -130,7 +130,7 @@
         }
     },
     {
-    	"resource": "packages",
+    	"resource": "archive",
     	"username": "admin",
     	"data": {
     		"headline": "package1",

@@ -18,7 +18,7 @@
         this.groupList = ['main', 'story', 'sidebars', 'fact box'];
 
         this.fetch = function fetch(_id) {
-            return api.find('packages', _id).then(function(result) {
+            return api.find('archive', _id).then(function(result) {
                 return result;
             });
         };
@@ -30,7 +30,8 @@
                 headline: item.headline || item.description || '',
                 slugline: item.slugline || '',
                 description: item.description || '',
-                state: 'draft'
+                state: 'draft',
+                type: 'composite'
             };
             var groups = [{
                 role: 'grpRole:NEP',
@@ -42,7 +43,7 @@
             });
             new_package = setDefaults(new_package, defaults);
             new_package.groups = groups;
-            return api.packages.save(new_package);
+            return api.archive.save(new_package);
         };
 
         this.createEmptyPackage = function createEmptyPackage(defaults) {
@@ -51,6 +52,7 @@
                 headline: '',
                 slugline: '',
                 description: '',
+                type: 'composite',
                 groups: [
                     {
                         role: 'grpRole:NEP',
@@ -62,7 +64,7 @@
             };
             new_package = setDefaults(new_package, defaults);
 
-            return api.packages.save(new_package);
+            return api.archive.save(new_package);
 
         };
 
@@ -589,9 +591,9 @@
             });
         }])
         .config(['apiProvider', function(apiProvider) {
-            apiProvider.api('packages', {
+            apiProvider.api('archive', {
                 type: 'http',
-                backend: {rel: 'packages'}
+                backend: {rel: 'archive'}
             });
         }])
         .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {

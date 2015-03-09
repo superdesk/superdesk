@@ -8,8 +8,8 @@ describe('Content', function() {
 
     beforeEach(function() {
         openUrl('/#/workspace/content')();
-        workspace.openPersonal();
-        expect(element.all(by.repeater('items._items')).count()).toBe(4);
+        workspace.switchToDesk('PERSONAL');
+        expect(element.all(by.repeater('items._items')).count()).toBe(7);
     });
 
     it('increment package version', function() {
