@@ -3,18 +3,13 @@ Hi there,
 Someone created for you a {{app_name}} user account with username {{username}}. 
 Please go to {{url}} and complete your profile.
 
-This link expires after {{expires}} hours.
+This link expires after {{expires}} hour(s).
 
 Please ignore this email if you think your {{app_name}} account was created in error.
 
 Thanks,
 The {{app_name}} Team
 
-{{app_name}} is developed by Sourcefabric.
+{{app_name}} is developed by Sourcefabric and the {{app_name}} community.
 
-Sourcefabric GmbH / Prinzessinnenstr. 20 / 10969 Berlin
-+49 (0) 30 616 29 281
-contact@sourcefabric.org
-Register: Amtsgericht Charlottenburg / HRB 149568 B
-Managing Director: Sava Tatić, Fabienne Riener
-VAT: DE288649893
+http://sourcefabric.org
