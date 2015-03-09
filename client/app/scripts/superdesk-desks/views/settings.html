@@ -168,7 +168,7 @@
 			<div sd-wizard-step data-title="{{ 'People' | translate }}" data-code="people">
 				<div sd-deskedit-people>
 					<div class="content people-stage" >
-						<div class="header" sd-user-select-list data-users="membersToSelect" data-onchoose="add(user)"></div>
+						<div class="header" sd-user-select-list data-exclude="deskMembers" data-onchoose="add(user)"></div>
 						<div class="content">
 							<p ng-if="message">{{ message }}</p>
 							<div class="member-list clearfix">

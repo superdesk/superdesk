@@ -285,10 +285,10 @@ define([
             }
         };
     }])
-    .directive('sdUserSelectList', ['$filter', function($filter) {
+    .directive('sdUserSelectList', ['$filter', 'api', function($filter, api) {
         return {
             scope: {
-                users: '=',
+                exclude: '=',
                 onchoose: '&'
             },
             templateUrl: 'scripts/superdesk-desks/views/user-select.html',
@@ -298,16 +298,38 @@ define([
 
                 scope.selected = null;
                 scope.search = null;
-                scope.filteredUsers = [];
+                scope.users = {};
+                scope.exclude = [];
 
-                scope.$watchGroup(['search', 'users'], function() {
-                    scope.filteredUsers = $filter('filter')(scope.users, scope.search);
-                    scope.selected = null;
+                var _refresh = function() {
+                    scope.users = {};
+                    return api('users').query({where: JSON.stringify({
+                        '$or': [
+                            {username: {'$regex': scope.search, '$options': '-i'}},
+                            {first_name: {'$regex': scope.search, '$options': '-i'}},
+                            {last_name: {'$regex': scope.search, '$options': '-i'}},
+                            {email: {'$regex': scope.search, '$options': '-i'}}
+                        ]
+                    })})
+                    .then(function(result) {
+                        scope.users = result;
+                        scope.users._items = _.filter(scope.users._items, function(item) {
+                            return _.findIndex(scope.exclude, {_id: item._id}) === -1;
+                        });
+                        scope.selected = null;
+                    });
+                };
+                var refresh = _.debounce(_refresh, 1000);
+
+                scope.$watch('search', function() {
+                    if (scope.search) {
+                        refresh();
+                    }
                 });
 
                 function getSelectedIndex() {
                     if (scope.selected) {
-                        return _.findIndex(scope.filteredUsers, scope.selected);
+                        return _.findIndex(scope.users._items, scope.selected);
                     } else {
                         return -1;
                     }
@@ -316,13 +338,13 @@ define([
                 function previous() {
                     var selectedIndex = getSelectedIndex();
                     if (selectedIndex > 0) {
-                        scope.select(scope.filteredUsers[_.max([0, selectedIndex - 1])]);
+                        scope.select(scope.users._items[_.max([0, selectedIndex - 1])]);
                     }
                 }
 
                 function next() {
                     var selectedIndex = getSelectedIndex();
-                    scope.select(scope.filteredUsers[_.min([scope.filteredUsers.length - 1, selectedIndex + 1])]);
+                    scope.select(scope.users._items[_.min([scope.users._items.length - 1, selectedIndex + 1])]);
                 }
 
                 elem.bind('keydown keypress', function(event) {
@@ -366,15 +388,12 @@ define([
                     if (step === 'people') {
                         scope.search = null;
                         scope.deskMembers = [];
-                        scope.users = [];
-                        scope.membersToSelect = [];
                         scope.message = null;
 
                         if (scope.desk.edit && scope.desk.edit._id) {
                             desks.fetchUsers().then(function(result) {
                                 scope.users = desks.users._items;
                                 scope.deskMembers = desks.deskMembers[scope.desk.edit._id] || [];
-                                generateSearchList();
                             });
                         } else {
                             WizardHandler.wizard('desks').goTo(previous);
@@ -382,18 +401,12 @@ define([
                     }
                 });
 
-                function generateSearchList() {
-                    scope.membersToSelect = _.filter(scope.users, function(obj) { return !_.findWhere(scope.deskMembers, obj); });
-                }
-
                 scope.add = function(user) {
                     scope.deskMembers.push(user);
-                    generateSearchList();
                 };
 
                 scope.remove = function(user) {
                     _.remove(scope.deskMembers, user);
-                    generateSearchList();
                 };
 
                 scope.previous = function() {
