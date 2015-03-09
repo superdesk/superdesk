@@ -12,12 +12,12 @@
         
         <div ng-if="options.similar" class="text" translate>Displaying similar items</div>
         
-        <div class="dropdown more-actions" dropdown>
+        <div class="dropdown more-actions" dropdown ng-if="options.item">
             <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
             <div class="dropdown-menu pull-right">
                 <ul>
                     <li>
-                        <button ng-click="options.similar = !options.similar">
+                        <button ng-if="options.item" ng-click="options.similar = !options.similar">
                             <i ng-if="options.similar" class="icon-ok"></i> {{'Display similar' | translate }}
                         </button>
                     </li>
