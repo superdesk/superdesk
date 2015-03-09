@@ -170,7 +170,7 @@
         };
 
         function _exportHighlight(_id) {
-            api.save('generate_highlights', {}, {'package': _id})
+            api.generate_highlights.save({}, {'package': _id})
             .then(function(item) {
                 superdesk.intent('author', 'article', item);
             }, function(response) {
