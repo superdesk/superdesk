@@ -198,8 +198,7 @@
             }
 
             autosave.stop(item);
-            var endpoint = item.type === 'composite' ? 'packages' : 'archive';
-            return api.save(endpoint, item, diff).then(function(_item) {
+            return api.save('archive', item, diff).then(function(_item) {
                 item._autosave = null;
                 item._locked = lock.isLocked(item);
                 return item;

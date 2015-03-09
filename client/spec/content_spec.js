@@ -13,25 +13,25 @@ describe('Content', function() {
     beforeEach(function() {
         openUrl('/#/workspace/content')();
         workspace.switchToDesk('PERSONAL');
-        expect(element.all(by.repeater('items._items')).count()).toBe(6);
+        expect(element.all(by.repeater('items._items')).count()).toBe(7);
     });
 
     it('can navigate with keyboard', function() {
         var body = $('body');
         body.sendKeys(protractor.Key.UP);
-        expect(selectedHeadline()).toBe('item1');
+        expect(selectedHeadline()).toBe('package1');
 
         body.sendKeys(protractor.Key.DOWN);
-        expect(selectedHeadline()).toBe('item2');
+        expect(selectedHeadline()).toBe('item1');
 
         body.sendKeys(protractor.Key.RIGHT);
-        expect(selectedHeadline()).toBe('item5');
-
-        body.sendKeys(protractor.Key.LEFT);
         expect(selectedHeadline()).toBe('item2');
 
-        body.sendKeys(protractor.Key.UP);
+        body.sendKeys(protractor.Key.LEFT);
         expect(selectedHeadline()).toBe('item1');
+
+        body.sendKeys(protractor.Key.UP);
+        expect(selectedHeadline()).toBe('package1');
     });
 
     it('can open search with s', function() {
@@ -53,7 +53,7 @@ describe('Content', function() {
 
         expect(element.all(by.css('.state-border')).count()).toBe(0);
         body.sendKeys('v');
-        expect(element.all(by.css('.state-border')).count()).toBe(6);
+        expect(element.all(by.css('.state-border')).count()).toBe(7);
         body.sendKeys('v');
         expect(element.all(by.css('.state-border')).count()).toBe(0);
     });
