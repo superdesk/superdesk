@@ -607,6 +607,7 @@
             superdesk
                 .activity('/users/', {
                     label: gettext('Users'),
+                    description: gettext('Find your colleagues'),
                     priority: 100,
                     controller: UserListController,
                     templateUrl: asset.templateUrl('superdesk-users/views/list.html'),

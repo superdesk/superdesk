@@ -62,6 +62,7 @@ define([
             superdesk
                 .activity('/desks/', {
                     label: gettext('Desks'),
+                    description: gettext('Navigate through the newsroom'),
                     templateUrl: require.toUrl('./views/main.html'),
                     controller: DeskListController,
                     category: superdesk.MENU_MAIN,

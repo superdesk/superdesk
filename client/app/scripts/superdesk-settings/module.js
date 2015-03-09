@@ -9,6 +9,7 @@ define([
         .config(['superdeskProvider', function(superdesk) {
             superdesk.activity('/settings', {
                 label: gettext('Settings'),
+                description: gettext('Do some admin chores'),
                 controller: angular.noop,
                 templateUrl: require.toUrl('./views/main.html'),
                 category: superdesk.MENU_MAIN,

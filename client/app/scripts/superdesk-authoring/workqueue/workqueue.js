@@ -123,6 +123,7 @@ angular.module('superdesk.authoring.workqueue', ['superdesk.activity', 'superdes
         superdesk
             .activity('/authoring/', {
                 label: gettext('Authoring'),
+                description: gettext('Create articles'),
                 templateUrl: 'scripts/superdesk-authoring/views/dashboard.html',
                 topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
                 beta: true,
