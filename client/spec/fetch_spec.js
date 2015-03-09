@@ -23,6 +23,7 @@ describe('Fetch', function() {
         // go to content and see it there
         browser.get('/#/workspace/content');
         workspace.switchToDesk('SPORTS DESK');
+        content.setListView();
         expect(element.all(by.repeater('items._items')).count()).toBe(3);
     });
 
@@ -37,6 +38,7 @@ describe('Fetch', function() {
 
         browser.get('/#/workspace/content');
         workspace.switchToDesk('SPORTS DESK');
+        content.setListView();
         expect(element.all(by.repeater('items._items')).count()).toBe(3);
     });
 
@@ -63,7 +65,7 @@ describe('Fetch', function() {
         expect(element.all(by.repeater('items._items')).count()).toBe(4);
     });
 
-    it('can fetch from ingest with menu', function() {
+    it('can fetch from content with menu', function() {
         workspace.switchToDesk('SPORTS DESK');
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
 
@@ -73,6 +75,7 @@ describe('Fetch', function() {
         content.actionOnItem('Fetch', 0);
         browser.get('/#/workspace/content');
         workspace.switchToDesk('SPORTS DESK');
+        content.setListView();
         expect(element.all(by.repeater('items._items')).count()).toBe(3);
 
         content.setListView();
