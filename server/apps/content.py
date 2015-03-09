@@ -250,7 +250,7 @@ metadata_schema = {
         'schema': {
             'type': 'dict',
             'schema': {
-                PACKAGE: Resource.rel('packages')
+                PACKAGE: Resource.rel('archive')
             }
         }
     },

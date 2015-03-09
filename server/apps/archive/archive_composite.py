@@ -78,7 +78,8 @@ class PackageService():
 
     def check_that_all_groups_are_referenced_in_root(self, root, groups):
         rest = [group.get('id') for group in groups if group.get('id') != 'root']
-        refs = [ref.get('idRef') for ref in root.get('refs', [])]
+        refs = [ref.get('idRef') for group in groups for ref in group.get('refs', [])
+                if ref.get('idRef')]
 
         rest_counter = Counter(rest)
         if any(id for id, value in rest_counter.items() if value > 1):
@@ -140,7 +141,7 @@ class PackageService():
     Add extensibility point for item patch data.
     """
     def get_item_update_data(self, __item, links, delete):
-        return {LINKED_IN_PACKAGES: links}
+        return {LINKED_IN_PACKAGES: links, 'req_for_save': 'false'}
 
     def check_for_duplicates(self, package, associations):
         counter = Counter()
