@@ -295,6 +295,7 @@ define([
             superdesk
                 .activity('/planning/', {
                     label: gettext('Planning'),
+                    description: gettext('Think ahead'),
                     priority: 100,
                     beta: true,
                     controller: PlanningDashboardController,

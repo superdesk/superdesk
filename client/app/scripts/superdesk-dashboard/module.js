@@ -80,6 +80,7 @@ define([
     .config(['superdeskProvider', function(superdesk) {
         superdesk.activity('/workspace', {
             label: gettext('Workspace'),
+            description: gettext('Customize your widgets and views'),
             controller: require('./workspace-controller'),
             templateUrl: require.toUrl('./views/workspace.html'),
             topTemplateUrl: require.toUrl('./views/workspace-topnav.html'),

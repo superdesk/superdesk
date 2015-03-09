@@ -951,6 +951,7 @@
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk.activity('/search', {
+                description: gettext('Find live and archived content'),
                 beta: 1,
                 priority: 200,
                 category: superdesk.MENU_MAIN,
