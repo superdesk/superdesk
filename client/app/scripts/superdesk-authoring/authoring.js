@@ -180,10 +180,23 @@
         /**
          * Save the item
          *
+         * @param {Object} origItem
          * @param {Object} item
          */
-        this.save = function saveAuthoring(item) {
+        this.save = function saveAuthoring(origItem, item) {
             var diff = extendItem({}, item);
+
+            // Finding if all the keys are dirty for real
+            if (angular.isDefined(origItem)) {
+                var keysInDiff = _.keys(diff);
+                for (var i = 0; i < keysInDiff.length; i++) {
+                    var keyName = keysInDiff[i];
+                    if (_.isEqual(diff[keyName], origItem[keyName])) {
+                        delete diff[keyName];
+                    }
+                }
+            }
+
             autosave.stop(item);
             var endpoint = item.type === 'composite' ? 'packages' : 'archive';
             return api.save(endpoint, item, diff).then(function(_item) {
@@ -431,7 +444,7 @@
                  * Create a new version
                  */
             	$scope.save = function() {
-            		return authoring.save($scope.item).then(function(res) {
+            		return authoring.save($scope.origItem, $scope.item).then(function(res) {
                         $scope.origItem = res;
                         $scope.dirty = false;
                         $scope.item = _.create($scope.origItem);
