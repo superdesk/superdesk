@@ -12,7 +12,7 @@ describe('Content', function() {
         expect(element.all(by.repeater('items._items')).count()).toBe(7);
     });
 
-    it('increment package version', function() {
+    xit('increment package version', function() {
         var packageItem = element.all(by.repeater('items._items')).first().element(by.className('type-icon'));
 
         // Edit package
