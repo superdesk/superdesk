@@ -27,7 +27,6 @@ from .common import generate_guid, generate_unique_id_and_name, GUID_TAG, FAMILY
 from superdesk.services import BaseService
 from .archive import SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
-from apps.content import LINKED_IN_PACKAGES, PACKAGE
 from superdesk.notification import push_notification
 STATE_FETCHED = 'fetched'
 
@@ -87,29 +86,10 @@ class ArchiveIngestService(BaseService):
                 dest_doc[INGEST_ID] = ingest_doc['_id']
                 dest_doc[FAMILY_ID] = ingest_doc['_id']
                 remove_unwanted(dest_doc)
-                for ref in [ref for group in dest_doc.get('groups', [])
-                            for ref in group.get('refs', []) if 'residRef' in ref]:
-                    ref['location'] = ARCHIVE
-                    ref['guid'] = ref['residRef']
-
                 set_original_creator(dest_doc)
-                if doc.get(PACKAGE):
-                    links = dest_doc.get(LINKED_IN_PACKAGES, [])
-                    links.append({PACKAGE: doc.get(PACKAGE)})
-                    dest_doc[LINKED_IN_PACKAGES] = links
 
                 desk = doc.get('desk')
-                refs = [{'guid': ref.get('residRef'), 'desk': desk, PACKAGE: dest_doc.get('_id')}
-                        for group in dest_doc.get('groups', [])
-                        for ref in group.get('refs', []) if 'residRef' in ref]
-                if refs:
-                    new_ref_guids = self.create(refs, notify=False, ingest_only=True)
-                    count = 0
-                    for ref in [ref for group in dest_doc.get('groups', [])
-                                for ref in group.get('refs', []) if 'residRef' in ref]:
-                        ref['residRef'] = ref['guid'] = new_ref_guids[count]
-                        count += 1
-
+                self.archive_references(dest_doc, desk)
                 superdesk.get_resource_service(ARCHIVE).post([dest_doc])
                 insert_into_versions(dest_doc.get('guid'))
 
@@ -117,6 +97,23 @@ class ArchiveIngestService(BaseService):
             push_notification('item:fetch', fetched=1)
 
         return new_guids
+
+    def archive_references(self, dest_doc, desk):
+        for ref in [ref for group in dest_doc.get('groups', [])
+                    for ref in group.get('refs', []) if 'residRef' in ref]:
+            ref['location'] = ARCHIVE
+            ref['guid'] = ref['residRef']
+
+        refs = [{'guid': ref.get('residRef'), 'desk': desk}
+                for group in dest_doc.get('groups', [])
+                for ref in group.get('refs', []) if 'residRef' in ref]
+        if refs:
+            new_ref_guids = self.create(refs, notify=False, ingest_only=True)
+            count = 0
+            for ref in [ref for group in dest_doc.get('groups', [])
+                        for ref in group.get('refs', []) if 'residRef' in ref]:
+                ref['residRef'] = ref['guid'] = new_ref_guids[count]
+                count += 1
 
 
 superdesk.workflow_state(STATE_FETCHED)

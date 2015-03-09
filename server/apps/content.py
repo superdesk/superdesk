@@ -190,7 +190,8 @@ metadata_schema = {
         'nullable': True
     },
     'groups': {
-        'type': 'list'
+        'type': 'list',
+        'minlength': 1
     },
     'body_html': {
         'type': 'string',
@@ -249,7 +250,7 @@ metadata_schema = {
         'schema': {
             'type': 'dict',
             'schema': {
-                PACKAGE: Resource.rel('packages')
+                PACKAGE: Resource.rel('archive')
             }
         }
     },
