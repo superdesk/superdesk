@@ -103,6 +103,7 @@ class rfc822Parser(Parser):
 
                         media_item = dict()
                         media_item['guid'] = generate_guid(type=GUID_TAG)
+                        media_item['versioncreated'] = utcnow()
                         media_item['type'] = 'picture'
                         media_item['renditions'] = renditions
                         media_item['mimetype'] = content_type
