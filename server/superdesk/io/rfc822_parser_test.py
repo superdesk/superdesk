@@ -50,3 +50,5 @@ class rfc822ComplexTestCase(TestCase):
 
     def test_composite(self):
         self.assertEqual(len(self.items), 3)
+        for item in self.items:
+            self.assertIn('versioncreated', item)

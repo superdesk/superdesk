@@ -11,6 +11,7 @@
 from superdesk.io import Parser
 from superdesk.errors import ParserError
 from .iptc import subject_codes
+from superdesk.utc import utcnow
 import uuid
 
 
@@ -95,3 +96,4 @@ class ZCZCParser(Parser):
         item['type'] = 'text'
         item['urgency'] = '5'
         item['pubstatus'] = 'Usable'
+        item['versioncreated'] = utcnow()
