@@ -81,7 +81,7 @@ class SuperdeskApiError(SuperdeskError):
         return rv
 
     def __str__(self):
-        return repr(self.status_code)
+        return "{}: {}".format(repr(self.status_code), self.message)
 
     @classmethod
     def badRequestError(cls, message=None, payload=None):

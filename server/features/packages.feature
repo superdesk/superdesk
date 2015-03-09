@@ -584,7 +584,7 @@ Feature: Packages
         """
         Then we get error 400
         """
-        {"_status": "ERR", "_issues": {"validator exception": "403"}}
+        {"_status": "ERR", "_issues": {"validator exception": "403: The number of groups and of referenced groups in the root group do not match."}}
         """
 
     @auth
