@@ -6,16 +6,23 @@
         function BaseWidgetControllerFactory($location, $timeout, superdesk, search, preferencesService, notify, ItemList) {
 
             return function BaseWidgetController($scope) {
+                $scope.options = $scope.options || {};
+                $scope.itemListOptions = $scope.itemListOptions || {};
                 $scope.actions = $scope.actions || {};
                 $scope.$watch('widget.configuration', function() {
-                    $scope.itemListOptions.search = $scope.widget.configuration.search;
-                    $scope.itemListOptions.pageSize = $scope.widget.configuration.maxItems;
-                    if ($scope.widget.configuration.provider === 'all') {
-                        $scope.itemListOptions.provider = null;
-                    } else {
-                        $scope.itemListOptions.provider = $scope.widget.configuration.provider;
+                    if ($scope.widget.configuration) {
+                        $scope.itemListOptions.search = $scope.widget.configuration.search;
+                        $scope.itemListOptions.pageSize = $scope.widget.configuration.maxItems;
+                        if ($scope.widget.configuration.provider === 'all') {
+                            $scope.itemListOptions.provider = null;
+                        } else {
+                            $scope.itemListOptions.provider = $scope.widget.configuration.provider;
+                        }
                     }
                 }, true);
+                if ($scope.item) {
+                    $scope.options.item = $scope.item;
+                }
             };
         }])
         .factory('BaseWidgetConfigController', [

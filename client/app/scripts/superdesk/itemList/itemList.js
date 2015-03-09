@@ -277,6 +277,8 @@ function(ItemList, notify, itemPinService) {
             scope.pinnedItems = [];
             scope.selected = null;
 
+            var oldSearch = null;
+
             var itemList = new ItemList();
 
             var _refresh = function() {
@@ -346,6 +348,15 @@ function(ItemList, notify, itemPinService) {
                 itemList.setOptions(scope.itemListOptions);
                 refresh();
             }, true);
+
+            scope.$watch('options.similar', function() {
+                if (scope.options.similar && scope.options.item) {
+                    oldSearch = scope.itemListOptions.search;
+                    scope.itemListOptions.search = scope.options.item.slugline;
+                } else {
+                    scope.itemListOptions.search = oldSearch || null;
+                }
+            });
         }
     };
 }]);
