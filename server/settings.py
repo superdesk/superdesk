@@ -147,7 +147,6 @@ INSTALLED_APPS = [
     'apps.vocabularies',
     'apps.legal_archive',
     'apps.search',
-    'apps.packages',
     'apps.privilege',
     'apps.rule_sets',
     'apps.highlights',

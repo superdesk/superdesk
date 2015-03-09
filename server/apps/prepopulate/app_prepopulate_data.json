@@ -128,6 +128,18 @@
             "guid": "ingest1",
             "versioncreated": "NOW()"
         }
+    },
+    {
+    	"resource": "archive",
+    	"username": "admin",
+    	"data": {
+    		"headline": "package1",
+    		"type": "composite",
+    		"guid": "package1",
+            "versioncreated": "NOW()",
+            "original_creator": "-id user admin-",
+	    	"groups": [{"id": "root", "refs": [{"idRef": "main"}]}, {"id": "main", "refs": []}]
+    	}
     }
     
 ]

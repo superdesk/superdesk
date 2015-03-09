@@ -102,7 +102,7 @@ Feature: Archive Ingest
         "guid": "tag_reuters.com_2014_newsml_KBN0FL0NM", "desk": "#desks._id#"
         }
         """
-		And we get "/archive"
+		And we get "archive"
         Then we get existing resource
 		"""
 		{
