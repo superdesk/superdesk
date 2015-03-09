@@ -10,8 +10,6 @@ class GenerateHighlightsService(superdesk.Service):
         If doc.preview is True it won't save the item, only return.
         """
         service = superdesk.get_resource_service('archive')
-
-        ids = []
         for doc in docs:
             preview = doc.get('preview', False)
             package = service.find_one(req=None, _id=doc['package'])
