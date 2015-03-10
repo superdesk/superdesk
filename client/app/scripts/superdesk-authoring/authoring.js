@@ -155,7 +155,8 @@
                     promise = confirm.confirm()
                         .then(angular.bind(this, function save() {
                             return this.save(diff);
-                        }), function() { // ignore saving
+                        }), function(response) { // ignore saving
+                            console.log(response);
                             return $q.when();
                         });
                 }
@@ -354,7 +355,8 @@
                 gettext('There are some unsaved changes, do you want to save it now?'),
                 gettext('Save changes?'),
                 gettext('Save'),
-                gettext('Ignore')
+                gettext('Ignore'),
+                gettext('Cancel')
             );
         };
 
