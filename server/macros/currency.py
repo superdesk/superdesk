@@ -1,4 +1,5 @@
 
+import os
 import re
 import requests
 
@@ -21,6 +22,8 @@ def usd_to_aud(item, **kwargs):
     """Convert USD to AUD."""
 
     rate = get_rate()
+    if os.environ.get('BEHAVE_TESTING'):
+        rate = USD_TO_AUD
 
     def convert(match):
         usd = float(match.group(1))
