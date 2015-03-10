@@ -23,7 +23,11 @@ class MacrosService(superdesk.Service):
 
     def get(self, req, lookup):
         """Return all registered macros."""
-        return ListCursor([get_public_props(macro) for macro in macros])
+        desk = getattr(req, 'args', {}).get('desk')
+        if desk:
+            return ListCursor([get_public_props(macro) for macro in macros if desk in macro.get('desks', []) or macro.get('desks') is None])
+        else:
+            return ListCursor([get_public_props(macro) for macro in macros if macro.get('desks') is None])
 
     def create(self, docs, **kwargs):
         ids = []

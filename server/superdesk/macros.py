@@ -10,7 +10,8 @@
 
 import inspect
 import importlib
-
+import sys
+import imp
 from flask import current_app as app
 
 
@@ -21,6 +22,13 @@ def load_macros():
     """
     try:
         module = app.config['MACROS_MODULE']
+        already_imported = sorted(sys.modules.keys())
+        for t in already_imported:
+            if t == module:
+                m = sys.modules[t]
+                imp.reload(m)
+                return
+
         importlib.import_module(module)
     except ImportError:
         pass
@@ -76,6 +84,7 @@ class MacroRegister():
         :param description: macro description, using callback doctext as default
         """
         kwargs.setdefault('description', inspect.getdoc(kwargs.get('callback')))
+        self.macros = [macro for macro in self.macros if macro['name'] != kwargs.get('name')]
         self.macros.append(kwargs)
 
 
