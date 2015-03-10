@@ -1,50 +1,10 @@
 <div sd-authoring class="auth-screen">
+    <div sd-authoring-topbar></div>
     
-    <div class="subnav" ng-class="{'auth-sendto': flags.viewSendTo}">
-	    <div class="page-title-wrapper clearfix pull-left">
-	    	<button class="stage stage-label pull-left" ng-show="stage">{{stage.name}}</button>
-            <div class="state-label state-{{item.state}}">{{item.state}}</div>
-	    	<span class="lock-info pull-left" ng-show="item._locked"><i class="icon-lock-red"></i></span>
-            <h3 class="page-nav-title" ng-show="item.headline">{{ item.headline }}</h3>
-	    	<h3 class="page-nav-title" ng-show="!item.headline" translate>Untitled</h3>
-            <span class="lock-text pull-left" ng-show="item._locked && isLockedByMe()" translate>This article is locked by you in another session.</span>
-	    	<span class="lock-text pull-left" ng-show="item._locked && !isLockedByMe()" translate>This article is locked by <b>{{ item.lock_user | username }}</b></span>
-	    </div>
-
-	    <div class="button-stack right-stack">
-            <button class="btn btn-medium pull-left" ng-if="!sending && item._locked && can_unlock()" ng-click="unlock()" translate>Unlock</button>
-            <button class="btn btn-medium pull-left" ng-show="!sending && !_editable && !item._locked" ng-click="lock()" translate>Lock</button>
-            <button class="btn btn-medium pull-left" ng-click="close()" translate>Close</button>
-
-    	    <button class="btn btn-medium btn-info pull-left" type="submit"
-                ng-click="save(item)"
-                ng-show="_editable"
-                ng-disabled="!save_enabled()"
-                translate>Save</button>
-
-            <div class="navbtn dropdown strict pull-left" dropdown>
-                <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
-                <ul class="dropdown-menu pull-right" sd-content-create></ul>
-            </div>
-
-            <div class="navbtn dropdown strict multiedit-dropdown pull-left" dropdown>
-                <button class="dropdown-toggle" dropdown-toggle>
-                    <i class="big-icon-multiedit"></i>
-                </button>
-                <div class="dropdown-menu pull-right" sd-multiedit-dropdown></div>
-            </div>
-
-	    	<button ng-show="privileges.tasks == 1 && _editable && isActionAllowed(item, 'move')"
-                class="navbtn navbtn-hover" ng-click="flags.viewSendTo = !flags.viewSendTo">
-	            <i class="svg-icon-sendto"></i>
-	        </button>
-        </div>
-	</div>
-
-	<section class="main-section" ng-class="{'auth-sendto': flags.viewSendTo}">
+	<section class="main-section" ng-class="{'auth-sendto': views.send}">
 		<div sd-authoring-widgets data-item="item">
             <div class="page-content-container"
-                ng-click="flags.viewSendTo = false;">
+                ng-click="views.send = false">
                 <article class="theme-container" ng-class="{preview: !_editable}">
                     <button class="proofread-toggle btn btn-light" ng-click="proofread = !proofread">
                         <span class="button-lable" translate>Mode: </span>
@@ -62,11 +22,5 @@
 		</div>
 	</section>
 
-    <div ng-if="flags.viewSendTo">
-	   <div sd-send-item
-            data-item="item"
-            data-view="flags.viewSendTo"
-            data-before-send="beforeSend">
-        </div>
-    </div>
+    <div sd-authoring-sidebar></div>
 </div>

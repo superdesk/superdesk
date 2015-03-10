@@ -425,7 +425,7 @@
                 $scope.content = new ContentCtrl($scope);
 
                 $scope.dirty = false;
-                $scope.flags = {viewSendTo: false};
+                $scope.views = {send: false};
                 $scope.stage = null;
                 $scope._editable = $scope.origItem._editable;
 
@@ -585,6 +585,14 @@
                 macros.setupShortcuts($scope);
             }
         };
+    }
+
+    function AuthoringTopbarDirective() {
+        return {templateUrl: 'scripts/superdesk-authoring/views/authoring-topbar.html'};
+    }
+
+    function AuthoringSidebarDirective() {
+        return {templateUrl: 'scripts/superdesk-authoring/views/authoring-sidebar.html'};
     }
 
     function DashboardCard() {
@@ -859,6 +867,8 @@
         .directive('sdHighlightCreate', HighlightCreateDirective)
         .directive('sdArticleEdit', ArticleEditDirective)
         .directive('sdAuthoring', AuthoringDirective)
+        .directive('sdAuthoringTopbar', AuthoringTopbarDirective)
+        .directive('sdAuthoringSidebar', AuthoringSidebarDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
@@ -875,7 +885,8 @@
                         item: ['$route', 'authoring', function($route, authoring) {
                             return authoring.open($route.current.params._id, false);
                         }]
-                    }
+                    },
+                   authoring: true
 	            })
                 .activity('edit.text', {
 	            	label: gettext('Edit item'),

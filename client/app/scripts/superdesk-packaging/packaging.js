@@ -524,7 +524,8 @@
                     item: ['$route', 'authoring', function($route, authoring) {
                         return authoring.open($route.current.params._id, false);
                     }]
-                }
+                },
+                authoring: true
             })
             .activity('edit.package', {
                 label: gettext('Edit package'),
