@@ -152,21 +152,39 @@ Feature: Highlights
         Given "archive"
         """
         [
-            {"_id": "item1", "type": "text", "headline": "item1", "body_html": "<p>item1 first</p><p>item1 second</p>", "task": {"desk": "#desks._id#"}},
-            {"_id": "item2", "type": "text", "headline": "item2", "body_html": "<p>item2 first</p><p>item2 second</p>", "task": {"desk": "#desks._id#"}},
-            {"_id": "package", "type": "composite", "headline": "highlights", "groups": [
-                {"id": "root", "refs": [{"idRef": "main"}]},
-                {
-                    "id": "main",
-                    "refs": [
-                        {"residRef": "item1"},
-                        {"residRef": "item2"}
-                    ]
-                }
-            ], "task": {"desk": "#desks._id#"}}
+            {"guid": "item1", "type": "text", "headline": "item1", "body_html": "<p>item1 first</p><p>item1 second</p>", "task": {"desk": "#desks._id#"}},
+            {"guid": "item2", "type": "text", "headline": "item2", "body_html": "<p>item2 first</p><p>item2 second</p>", "task": {"desk": "#desks._id#"}}
         ]
         """ 
-
+		When we post to "archive"
+		"""
+		{   "guid": "package",
+		    "type": "composite",
+		    "headline": "highlights",
+		    "groups": [{
+		        "id": "root",
+		        "refs": [{
+		            "idRef": "main"
+		        }]
+		    }, {
+		        "id": "main",
+		        "refs": [{
+		            "residRef": "item1"
+		        }, {
+		            "residRef": "item2"
+		        }]
+		    }],
+		    "task": {
+		        "desk": "#desks._id#"
+		    }
+		}
+		"""
+		
+        Then we get new resource
+        """
+        {"_id": "", "type": "composite", "headline": "highlights"}
+        """
+			
         When we post to "generate_highlights"
         """
         {"package": "package"}
