@@ -455,5 +455,16 @@ define([
                 });
             }
         };
+    }])
+    .directive('sdDeskMacros', ['macros', function (macros) {
+        return {
+            link: function(scope) {
+                if (scope.desk && scope.desk.edit) {
+                    macros.getByDesk(scope.desk.edit.name).then(function(macros) {
+                        scope.macros = macros;
+                    });
+                }
+            }
+        };
     }]);
 });

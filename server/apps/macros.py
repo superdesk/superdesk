@@ -26,7 +26,7 @@ class MacrosService(superdesk.Service):
         desk = getattr(req, 'args', {}).get('desk')
         if desk:
             return ListCursor([get_public_props(macro) for macro in macros
-                               if desk in macro.get('desks', [])
+                               if desk.upper() in macro.get('desks', [])
                                or macro.get('desks') is None])
         else:
             return ListCursor([get_public_props(macro) for macro in macros])
