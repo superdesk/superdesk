@@ -324,7 +324,12 @@
                 scope.reorder = function(start, end) {
                     var src = _.find(scope.list, {id: start.group});
                     var dest = _.find(scope.list, {id: end.group});
-                    dest.items.splice(end.index, 0, src.items.splice(start.index, 1)[0]);
+                    if (start.index !== end.index || start.group !== end.group) {
+                        dest.items.splice(end.index, 0, src.items.splice(start.index, 1)[0]);
+                    } else {
+                        //just change the address
+                        dest.items = _.cloneDeep(dest.items);
+                    }
                 };
 
                 scope.$watch('list', function(newVal, oldVal) {
@@ -345,7 +350,17 @@
                 element.sortable({
                     items: '.package-edit-items li',
                     cursor: 'move',
-                    containment: '.package-edit',
+                    containment: '.package-edit-container',
+                    tolerance: 'pointer',
+                    placeholder: {
+                        element: function(current) {
+                            var height = current.height() - 40;
+                            return $('<li class="placeholder" style="height:' + height + 'px"></li>')[0];
+                        },
+                        update: function() {
+                            return;
+                        }
+                    },
                     start: function(event, ui) {
                         ui.item.data('start_index', ui.item.parent().find('li.sort-item').index(ui.item));
                         ui.item.data('start_group', ui.item.parent().data('group'));
@@ -365,7 +380,6 @@
                             scope.reorder(start, end);
                             scope.$apply();
                         }
-
                     },
                     update: function(event, ui) {
                         updated = true;

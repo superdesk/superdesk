@@ -54,11 +54,15 @@
 
 }
 
+.placeholder {
+    margin: 20px 0;
+}
 .package-edit {
+    padding: 10px 0 100px;
     > li {
-        margin-bottom: 20px;
+        margin: 0;
+        padding: 0;
         .group-info {
-            margin-bottom: 20px;
             position: relative;
             &:before {
                 content: " ";
@@ -82,8 +86,29 @@
         }
     }
     .package-edit-items {
+        min-height: 80px;
+        .fake {
+            div {
+                padding: 10px 0;
+            }
+        }
+        > li:not(.placeholder):not(.fake):first-child {
+            .item-container {
+                margin-top: 30px;
+            }
+            margin-top: -15px;
+        }
+        > li.fake:first-child {
+            div {
+                padding: 40px 0;
+            }
+        }
         .item-container {
+            margin: 10px 0;
             position: relative;
+            .item {
+                margin: 0;
+            }
             .remove {
                 background: none;
                 border: 0;
@@ -91,9 +116,6 @@
                 right: 10px;
                 top: 10px;
             }
-        }
-        .fake {
-            min-height: 25px;
         }
     }
 }
