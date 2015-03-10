@@ -208,7 +208,7 @@
 	.label.default {
 		font-size: 10px;
 		font-weight: normal;
-		padding: 0px 5px;
+		padding: 10px 15px;
 		line-height: 12px;
 		margin-left: 5px;
 	}
@@ -216,7 +216,10 @@
 // PRIVILEGES SETTINGS
 
 .privileges-settings {
-
+	.horizontal {
+		padding-top:5px;
+    	overflow: auto;
+	}
 	.roles-list {
 		.action-line {
 			display: table-row;
@@ -226,11 +229,12 @@
 		}
 		.td {
 			display: table-cell;
+    		min-width:80px;
 			padding: 10px 16px;
 			border-bottom: @roles-border;
 			text-align: center;
 			border-left: @roles-border;
-			white-space: nowrap;
+			word-wrap: break-word;
 			.user-select(none);
 			.label {
 				font-size: 80%;
@@ -271,7 +275,8 @@
 			}
 			.td {
 				font-size: 13px;
-				white-space: nowrap;
+				width: 100px;
+				word-wrap: break-word;
 				border-top: @roles-border;
 				border-color: #e5e5e5 !important;
 				padding: 10px 16px;

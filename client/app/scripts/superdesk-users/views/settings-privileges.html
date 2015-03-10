@@ -1,12 +1,11 @@
 <div class="split-content">
-	
 	<div class="header">
 		<h2 translate>Roles privileges</h2>
 		<button class="btn btn-info pull-right" ng-click="saveAll(rolesForm)" ng-disabled="!rolesForm.$dirty" translate>Save</button>
 	</div>
-	
 	<div class="content privileges-settings">
-		<form name="rolesForm">
+		<div class="horizontal">
+			<form name="rolesForm">
 			<div class="roles-list" ng-if="roles">
 				
 				<div class="action-line initial">
@@ -14,7 +13,7 @@
 					<div ng-repeat="role in roles" class="td role-field">
 						{{role.name}}<span class="label default" ng-if="role.is_default">default</span>
 					</div>
-					<div class="td blank"></div>
+					
 				</div>
 				<div ng-repeat="p in privileges | orderBy:name" class="action-line">
 					<div class="td name">{{p.label}}</div>
@@ -24,7 +23,7 @@
 					<div class="td blank"></div>
 				</div>
 			</div>
-		</form>
+			</form>
+		</div>
 	</div>
-	
 </div>
