@@ -155,8 +155,7 @@
                     promise = confirm.confirm()
                         .then(angular.bind(this, function save() {
                             return this.save(diff);
-                        }), function(response) { // ignore saving
-                            console.log(response);
+                        }), function() { // ignore saving
                             return $q.when();
                         });
                 }
