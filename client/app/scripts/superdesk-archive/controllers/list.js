@@ -97,6 +97,7 @@ define([
         $scope.$on('item:updated', refreshItems);
         $scope.$on('item:replaced', refreshItems);
         $scope.$on('item:deleted', refreshItems);
+        $scope.$on('item:mark', refreshItems);
         $scope.$on('item:spike', refreshItems);
         $scope.$on('item:unspike', reset);
 
