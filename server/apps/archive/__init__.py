@@ -118,7 +118,7 @@ def init_app(app):
     superdesk.privilege(name='unspike', label='Un Spike', description='User can un-spike content.')
     superdesk.privilege(name='unlock', label='Unlock content', description='User can unlock content.')
     superdesk.privilege(name='metadata_uniquename', label='Edit Unique Name', description='User can edit unique name.')
-    superdesk.privilege(name='ingest_move', label='Move Content To Desk', description='Move Content to a Desk.')
+    superdesk.privilege(name='ingest_move', label='Fetch Content To a Desk', description='Fetch Content to a Desk.')
     superdesk.privilege(name='saved_searches', label='Manage Saved Searches',
                         description='User can manage Saved Searches')
 
