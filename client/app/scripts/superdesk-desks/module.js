@@ -245,6 +245,16 @@ define([
                 remove: function(desk) {
                     return api.remove(desk)
                         .then(reset);
+                },
+                /**
+                 * Get current desk for given item
+                 *
+                 * @param {Object} item
+                 */
+                getItemDesk: function(item) {
+                    if (item.task && item.task.desk) {
+                        return this.deskLookup[item.task.desk] || null;
+                    }
                 }
             };
 
