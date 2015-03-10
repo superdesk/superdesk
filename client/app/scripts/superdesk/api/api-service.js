@@ -244,8 +244,8 @@ define([
              * @param {string} resource
              * @param {Object} query
              */
-            api.query = function apiQuery(resource, query) {
-                return api(resource).query(query);
+            api.query = function apiQuery(resource, query, parent) {
+                return api(resource, parent).query(query);
             };
 
             function getResourceUrl(resource, item, id) {

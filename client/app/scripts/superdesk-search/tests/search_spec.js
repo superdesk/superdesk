@@ -13,10 +13,8 @@ describe('search service', function() {
         expect(criteria.size).toBe(25);
     }));
 
-    it('can create query string query', inject(function($location, $rootScope, search) {
-        $location.search('q', 'test');
-        $rootScope.$digest();
-        var criteria = search.query().getCriteria();
+    it('can create query string query', inject(function($rootScope, search) {
+        var criteria = search.query({q: 'test'}).getCriteria();
         expect(criteria.query.filtered.query.query_string.query).toBe('test');
     }));
 
@@ -36,11 +34,9 @@ describe('search service', function() {
         expect(search.getSort()).toEqual({label: 'News Value', field: 'urgency', dir: 'asc'});
     }));
 
-    it('can be watched for changes', inject(function($location, search, $rootScope) {
+    it('can be watched for changes', inject(function(search, $rootScope) {
         var criteria = search.query().getCriteria();
         expect(criteria).toEqual(search.query().getCriteria());
-        $location.search('q', 'test');
-        $rootScope.$digest();
-        expect(criteria).not.toEqual(search.query().getCriteria());
+        expect(criteria).not.toEqual(search.query({q: 'test'}).getCriteria());
     }));
 });
