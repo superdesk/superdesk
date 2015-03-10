@@ -354,7 +354,8 @@
                 gettext('There are some unsaved changes, do you want to save it now?'),
                 gettext('Save changes?'),
                 gettext('Save'),
-                gettext('Ignore')
+                gettext('Ignore'),
+                gettext('Cancel')
             );
         };
 
