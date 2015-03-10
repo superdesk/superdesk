@@ -63,7 +63,7 @@ describe('Fetch', function() {
         expect(element.all(by.repeater('items._items')).count()).toBe(4);
     });
 
-    it('can fetch from ingest with menu', function() {
+    it('can fetch from content with menu', function() {
         workspace.switchToDesk('SPORTS DESK');
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
 

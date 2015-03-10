@@ -9,7 +9,7 @@ describe('Content', function() {
         openUrl('/#/workspace/content')();
         workspace.switchToDesk('PERSONAL');
         content.setListView();
-        expect(element.all(by.repeater('items._items')).count()).toBe(7);
+        expect(element.all(by.repeater('items._items')).count()).toBe(3);
     });
 
     it('increment package version', function() {

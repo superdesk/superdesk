@@ -210,35 +210,4 @@ describe('mark for highlights in a desk:', function() {
     });
 });
 
-describe('mark for highlights in PERSONAL:', function() {
-	var highlights = new Highlights();
-    beforeEach(openUrl('/#/workspace/content'));
-
-    it('mark for highlights in list view', function() {
-    	workspace.switchToDesk('PERSONAL');
-    	content.setListView();
-    	content.actionOnItem('Mark item', 0);
-    	expect(highlights.getHighlights().count()).toBe(4);
-    	highlights.selectHighlight('Highlight one');
-    	workspace.switchToDesk('SPORTS DESK');
-    	workspace.switchToDesk('PERSONAL');
-    	content.setListView();
-    	content.checkMarkedForHighlight('Highlight one', 0);
-    });
-
-    it('mark for highlights in edit article screen', function() {
-    	workspace.switchToDesk('PERSONAL');
-    	content.setListView();
-    	content.actionOnItem('Edit item', 0);
-    	editArticle.markAction();
-    	expect(highlights.getHighlights().count()).toBe(4);
-    	highlights.selectHighlight('Highlight one');
-    	editArticle.closeAction();
-    	workspace.switchToDesk('SPORTS DESK');
-    	workspace.switchToDesk('PERSONAL');
-    	content.setListView();
-    	content.checkMarkedForHighlight('Highlight one', 0);
-    });
-});
-
 });
