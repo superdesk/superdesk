@@ -395,17 +395,14 @@
 	}
 
 
-
 .mgrid-view, #scratchpad {
 	.media-box {
 		.action {
-			overflow: hidden;
 			height:33px;
 			position: absolute;
 			left: 0;
 			right: 0;
 			bottom: 0;
-			//display: none;
 		}
 		.media-box-generic;
 		&.locked {
@@ -417,7 +414,7 @@
 			position: absolute;
 			height: 32px;
 			border-top: 1px solid rgba(0,0,0,0.1);
-			bottom: -32px;
+			bottom: 0;
 			left: 0;
 			right: 0;
 			.item-field {
@@ -448,12 +445,6 @@
 				}
 			}
 			
-		}
-		&:hover {
-			.item-functions {
-				bottom: 0px;
-				transition: bottom 60ms ease-out;
-			}
 		}
 	}
 }
