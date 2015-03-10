@@ -89,6 +89,7 @@
 
                 scope.mark_item = function mark_item(highlight) {
                 	highlightsService.mark_item(highlight._id, scope.item._id);
+                	scope.$root.$broadcast('item:mark');
                 };
 
             	highlightsService.get(desks.activeDeskId).then(function(result) {
