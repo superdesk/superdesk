@@ -39,5 +39,5 @@ macros.register(
     label='Convert USD to AUD',
     shortcut='c',
     callback=usd_to_aud,
-    desks=['SPORTS DESK']
+    desks=['SPORTS DESK', 'POLITICS']
 )
