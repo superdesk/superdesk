@@ -23,7 +23,7 @@ class UserContentResource(Resource):
     datasource = {
         'source': 'archive',
         'aggregations': aggregations,
-        'elastic_filter': {'not': {'exists': {'field': 'task.stage'}}}  # eve-elastic specific filter
+        'elastic_filter': {'not': {'exists': {'field': 'task.desk'}}}  # eve-elastic specific filter
     }
     resource_methods = ['GET', 'POST']
     item_methods = ['GET', 'PATCH', 'DELETE']
