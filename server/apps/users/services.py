@@ -109,11 +109,13 @@ class UsersService(BaseService):
 
         if 'role' in updates and 'active_privileges' in flask.g.user:
             if not get_resource_privileges('users')['PATCH'] in flask.g.user['active_privileges']:
-                raise SuperdeskApiError.forbiddenError("Insufficient privileges to change the role")
+                raise SuperdeskApiError.forbiddenError(message="Insufficient privileges to change the role")
+        if 'role' in updates or 'privileges' in updates:
+            get_resource_service('preferences').on_update(updates, original)
 
     def update(self, id, updates, original):
         if is_sensitive_update(updates) and not current_user_has_privilege('users'):
-            raise SuperdeskApiError.forbiddenError()
+            raise SuperdeskApiError.forbiddenError(message='Current user has no privilege to edit users')
         return super().update(id, updates, original)
 
     def on_updated(self, updates, user):
