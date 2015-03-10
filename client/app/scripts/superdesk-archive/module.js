@@ -94,7 +94,10 @@ define([
                         });
                     }],
                     filters: [{action: 'list', type: 'archive'}],
-                    action: 'spike'
+                    action: 'spike',
+                    condition: function(item) {
+                        return item.lock_user === null || angular.isUndefined(item.lock_user);
+                    }
                 })
                 .activity('unspike', {
                     label: gettext('Unspike Item'),
@@ -130,7 +133,10 @@ define([
                         });
                     }],
                     filters: [{action: 'list', type: 'archive'}],
-                    action: 'fetch_as_from_content'
+                    action: 'fetch_as_from_content',
+                    condition: function(item) {
+                        return item.lock_user === null || angular.isUndefined(item.lock_user);
+                    }
                 });
         }])
 
