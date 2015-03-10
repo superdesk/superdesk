@@ -8,6 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+import os
 from superdesk import tests
 from superdesk.io.tests import setup_providers, teardown_providers
 from settings import LDAP_SERVER
@@ -19,6 +20,7 @@ readonly_fields = ['display_name', 'password', 'phone', 'first_name', 'last_name
 
 def before_all(context):
     tests.setup(context)
+    os.environ['BEHAVE_TESTING'] = '1'
 
 
 def before_feature(context, feature):
