@@ -425,7 +425,7 @@
                 $scope.content = new ContentCtrl($scope);
 
                 $scope.dirty = false;
-                $scope.viewSendTo = false;
+                $scope.flags = {viewSendTo: false};
                 $scope.stage = null;
                 $scope._editable = $scope.origItem._editable;
 
@@ -750,58 +750,47 @@
                 scope.desk = null;
                 scope.desks = null;
                 scope.stages = null;
-
                 scope.beforeSend = scope._beforeSend || $q.when;
 
-                var fetchDesks = function() {
+                scope.selectDesk = function(desk) {
+                    scope.desk = desk;
+                    scope.selectedStage = null;
+                    fetchStages();
+                };
+
+                scope.selectStage = function(stage) {
+                    scope.selectedStage = stage;
+                };
+
+                scope.send = function send() {
+                    save({
+                        task: _.extend(scope.task.task, {
+                            desk: scope.desk._id,
+                            stage: scope.selectedStage._id || scope.desk.incoming_stage
+                        })
+                    });
+                };
+
+                scope.$watch('item', fetchDesks);
+
+                function fetchDesks() {
                     return api.find('tasks', scope.item._id)
-                    .then(function(_task) {
-                        scope.task = _task;
-                    })
-                    .then(function() {
-                        desks.initialize()
-                        .then(function() {
+                        .then(function(_task) {
+                            scope.task = _task;
+                        }).then(function() {
+                            return desks.initialize();
+                        }).then(function() {
                             scope.desks = desks.desks;
-                            if (scope.item.task && scope.item.task.desk) {
-                                scope.desk = desks.deskLookup[scope.item.task.desk];
-                            }
-                        });
-                    });
-                };
+                            scope.desk = desks.getItemDesk(scope.item);
+                        }).then(fetchStages);
+                }
 
-                var fetchStages = function() {
-                    desks.initialize()
-                    .then(function() {
-                        scope.desks = desks.desks;
-                        if (scope.item.task && scope.item.task.desk) {
-                            scope.desk = desks.deskLookup[scope.item.task.desk];
-                        }
-                        if (scope.desk) {
-                        	scope.stages = desks.deskStages[scope.desk._id];
-                        }
-                    });
-                };
-
-                scope.$watch('item', function() {
-                    fetchDesks()
-                    .then(function() {
-                        fetchStages();
-                    });
-                });
-
-                scope.sendToDesk = function sendToDesk(desk) {
-                    save({task: _.extend(
-                        scope.task.task,
-                        {desk: desk._id, stage: desk.incoming_stage || null}
-                    )});
-                };
-
-                scope.sendToStage = function sendToStage(stage) {
-                    save({task: _.extend(
-                        scope.task.task,
-                        {stage: stage._id}
-                    )});
-                };
+                function fetchStages() {
+                    if (scope.desk) {
+                        scope.stages = desks.deskStages[scope.desk._id];
+                        scope.selectedStage = _.find(scope.stages, {_id: scope.desk.incoming_stage});
+                    }
+                }
 
                 function save(data) {
                     scope.beforeSend()
