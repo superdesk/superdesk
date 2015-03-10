@@ -33,7 +33,12 @@
             } else {
                 var criteria = {};
                 if (desk) {
-                	criteria = {where: {'desks': desk}};
+                	criteria = {where: {'$or': [
+                	                            {'desks': desk},
+                	                            {'desks': {'$size': 0}}
+                	                           ]
+                	                    }
+                	            };
                 }
 
                 return api('highlights').query(criteria)
@@ -278,7 +283,8 @@
         	templateUrl: 'scripts/superdesk-highlights/views/mark_highlights_dropdown.html',
         	filters: [
                 {action: 'list', type: 'archive'}
-            ]
+            ],
+            condition: function(item) {return item.task && item.task.desk;}
         })
         .activity('/settings/highlights', {
             label: gettext('Highlights'),
