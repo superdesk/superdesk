@@ -13,7 +13,7 @@
 					<div ng-repeat="role in roles" class="td role-field">
 						{{role.name}}<span class="label default" ng-if="role.is_default">default</span>
 					</div>
-					
+					<div class="td blank"></div>
 				</div>
 				<div ng-repeat="p in privileges | orderBy:name" class="action-line">
 					<div class="td name">{{p.label}}</div>
