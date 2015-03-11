@@ -53,7 +53,8 @@ class RoutingRuleSchemeResource(Resource):
                                     'type': 'dict',
                                     'schema': {
                                         'desk': Resource.rel('desks', True),
-                                        'stage': Resource.rel('stages', True)
+                                        'stage': Resource.rel('stages', True),
+                                        'macro': {'type': 'string'}
                                     }
                                 }
                             },
@@ -63,7 +64,8 @@ class RoutingRuleSchemeResource(Resource):
                                     'type': 'dict',
                                     'schema': {
                                         'desk': Resource.rel('desks', True),
-                                        'stage': Resource.rel('stages', True)
+                                        'stage': Resource.rel('stages', True),
+                                        'macro': {'type': 'string'}
                                     }
                                 }
                             },
