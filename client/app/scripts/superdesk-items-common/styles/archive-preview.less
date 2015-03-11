@@ -454,6 +454,7 @@
 		background: @lightbox-bg !important;
 		margin: 0 !important;
 		width: auto !important;
+		overflow: hidden;
 	}
 
 	.lightbox-right {
@@ -548,11 +549,34 @@
 			position: absolute;
 			right: 0; top: 0; bottom:0; left:0;
 			text-align: center;
-			img {
-				max-width: 100%;
-				height: auto!important;
-				max-height: 100%;
+			> .rendition {
+				position: absolute;
+				right: 0; top: 0; bottom:0; left:0;
+				> figure {
+					position: absolute;
+					right: 0; top: 0; bottom:0; left:0;
+					display: flex;
+					align-items: center;
+					justify-content: space-around;
+				}
+				img {
+					max-width: 100%;
+					max-height: auto;
+					height: auto !important;
+				}
+				&.portrait {
+					> figure {
+						display: block;
+						
+					}
+					img {
+						max-height: 100%;
+						width: auto !important;
+					}
+				}
 			}
+
+			
 		}
 		.condensed-preview, .navigation {
 			position: absolute;

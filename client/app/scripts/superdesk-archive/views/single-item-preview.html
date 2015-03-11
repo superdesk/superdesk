@@ -8,8 +8,8 @@
             </div>
 
              <!-- picture preview -->
-            <div class="full-preview" ng-if="item.type == 'picture'">
-                <div sd-item-rendition data-item="item" data-rendition="baseImage"></div>
+            <div class="full-preview" ng-if="item.type == 'picture'" sd-ratio-calc>
+                <div class="rendition" sd-item-rendition data-item="item" data-ratio="ratio" data-rendition="baseImage"></div>
             </div>
             
             <!-- text preview -->
