@@ -10,8 +10,8 @@ define([
 ], function(angular, require) {
     'use strict';
 
-    DeskDropdownDirective.$inject = ['desks', '$route', 'preferencesService'];
-    function DeskDropdownDirective(desks, $route, preferencesService) {
+    DeskDropdownDirective.$inject = ['desks', '$route', 'preferencesService', '$location'];
+    function DeskDropdownDirective(desks, $route, preferencesService, $location) {
         return {
             templateUrl: 'scripts/superdesk-dashboard/views/desk-dropdown.html',
             link: function(scope) {
@@ -23,6 +23,10 @@ define([
 
                     desks.setCurrentDesk(desk);
                     scope.selected = desk;
+
+                    if (angular.isDefined(desk) && desk._id === 'personal') {
+                       $location.path('/workspace/content') ;
+                    }
 
                     if (reloadRoute) {
                         $route.reload();
