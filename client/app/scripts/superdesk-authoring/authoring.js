@@ -309,11 +309,11 @@
         }
 
         /**
-        * Test is an item is locked by me in another session
+        * Test if an item is locked by me in another session
         */
         this.isLockedByMe = function isLockedByMe(item) {
             var userId = getLockedUserId(item);
-            return userId && userId === session.identity._id && item.lock_session !== session.sessionId;
+            return userId && userId === session.identity._id;
         };
 
         /**
