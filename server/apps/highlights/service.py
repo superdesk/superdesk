@@ -2,6 +2,7 @@ from superdesk import get_resource_service
 from superdesk.services import BaseService
 from eve.utils import ParsedRequest
 import json
+from superdesk.notification import push_notification
 
 
 def init_parsed_request(elastic_query):
@@ -36,4 +37,5 @@ class MarkedForHighlightsService(BaseService):
                 updates = item.get('highlights', [])
                 updates.append(doc['highlights'])
                 service.update(item['_id'], {'highlights': updates}, item)
+            push_notification('item:mark', marked=1)
         return ids
