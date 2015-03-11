@@ -95,6 +95,7 @@ class UsersService(BaseService):
             user_doc.setdefault('display_name', get_display_name(user_doc))
             if not user_doc.get('role', None):
                 user_doc['role'] = get_resource_service('roles').get_default_role_id()
+            get_resource_service('preferences').set_user_initial_prefs(user_doc)
 
     def on_created(self, docs):
         for user_doc in docs:

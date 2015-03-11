@@ -13,76 +13,80 @@ from apps.preferences import PreferencesService
 
 
 class Preference_Tests(TestCase):
-    _default_user_settings = {
-        "archive:view": {
-            "default": "mgrid",
-            "label": "Users archive view format",
-            "type": "string",
-            "category": "archive",
-            "allowed": [
-                "mgrid",
-                "compact"
-            ],
-            "view": "mgrid"
-        },
-        "feature:preview": {
-            "category": "feature",
-            "default": 'false',
-            "type": "bool",
-            "enabled": 'false',
-            "label": "Andrew"
-        },
-        "email:notification": {
-            "category": "notifications",
-            "default": 'true',
-            "type": "bool",
-            "enabled": 'true',
-            "label": "Send Hello"
-        }
-    }
-
-    _default_session_settings = {
-        "desk:items": [],
-        "stage:items": [],
-        "pinned:items": [],
-        "scratchpad:items": []
-    }
-
-    _session_update = {
-        "session_preferences": {
-            "scratchpad:items": [123]
-        }
-    }
-
-    _user_update = {
-        "user_preferences": {
+    def setUp(self):
+        self._default_user_settings = {
             "archive:view": {
-                "label": "Testing user preferences"
+                "default": "mgrid",
+                "label": "Users archive view format",
+                "type": "string",
+                "category": "archive",
+                "allowed": [
+                    "mgrid",
+                    "compact"
+                ],
+                "view": "mgrid"
+            },
+            "feature:preview": {
+                "category": "feature",
+                "default": 'false',
+                "type": "bool",
+                "enabled": 'false',
+                "label": "Andrew"
+            },
+            "email:notification": {
+                "category": "notifications",
+                "default": 'true',
+                "type": "bool",
+                "enabled": 'true',
+                "label": "Send Hello"
             }
         }
-    }
 
-    def test_setting_partial_session_preferences_with_empty_existing(self):
-        update = self._session_update
-        PreferencesService.partial_update(self, update, {}, self._default_session_settings, "session_preferences")
-        self.assertListEqual(update["session_preferences"]["scratchpad:items"], [123])
-
-    def test_setting_partial_session_preferences_with_existing(self):
-        existing_session_settings = {
+        self._default_session_settings = {
             "desk:items": [],
             "stage:items": [],
-            "pinned:items": ['a', 'b', 'c'],
+            "pinned:items": [],
             "scratchpad:items": []
         }
 
+        self._session_update = {
+            "session_preferences": {
+                "scratchpad:items": [123]
+            }
+        }
+
+        self._user_update = {
+            "user_preferences": {
+                "archive:view": {
+                    "label": "Testing user preferences"
+                }
+            }
+        }
+
+    def test_setting_partial_session_preferences_with_empty_existing(self):
         update = self._session_update
-        PreferencesService.partial_update(self, update, existing_session_settings,
-                                          self._default_session_settings, "session_preferences")
-        self.assertListEqual(update["session_preferences"]["scratchpad:items"], [123])
+        existing_session_settings = {"1234": {}}
+
+        PreferencesService.update_session_prefs(self, update, existing_session_settings, '1234')
+        self.assertListEqual(update["session_preferences"]["1234"]["scratchpad:items"], [123])
+
+    def test_setting_partial_session_preferences_with_existing(self):
+        existing_session_settings = {"1234":
+                                     {
+                                         "desk:items": [],
+                                         "stage:items": [],
+                                         "pinned:items": ['a', 'b', 'c'],
+                                         "scratchpad:items": []
+                                     }
+                                     }
+
+        update = self._session_update
+        PreferencesService.update_session_prefs(self, update, existing_session_settings, '1234')
+        self.assertListEqual(update["session_preferences"]["1234"]["scratchpad:items"], [123])
 
     def test_setting_partial_user_preferences_with_existing(self):
         update = self._user_update
-        PreferencesService.partial_update(self, update, {}, self._default_user_settings, "user_preferences")
+        PreferencesService.update_user_prefs(self, update, {})
         self.assertEqual(update["user_preferences"]["archive:view"]["label"], "Testing user preferences")
 
     def test_setting_partial_user_preferences_with_empty_existing(self):
@@ -101,6 +105,5 @@ class Preference_Tests(TestCase):
             }
         }
 
-        PreferencesService.partial_update(self, update, existing_user_settings,
-                                          self._default_user_settings, "user_preferences")
+        PreferencesService.update_user_prefs(self, update, existing_user_settings)
         self.assertEqual(update["user_preferences"]["archive:view"]["label"], "Testing user preferences")

@@ -41,7 +41,8 @@ class PreferencesResource(Resource):
             _session_preferences_key: 1,
             _user_preferences_key: 1,
             _privileges_key: 1,
-            _action_key: 1
+            _action_key: 1,
+            '_etag': 1
         }
     }
     schema = {
@@ -112,6 +113,16 @@ class PreferencesService(BaseService):
 
         self.backend.update(self.datasource, user_id, updates, user_doc)
 
+    def set_user_initial_prefs(self, user_doc):
+        if _user_preferences_key not in user_doc:
+            orig_user_prefs = user_doc.get(_preferences_key, {})
+            available = dict(superdesk.default_user_preferences)
+            available.update(orig_user_prefs)
+            user_doc[_user_preferences_key] = available
+
+        self.enhance_document_with_user_privileges(user_doc)
+        user_doc[_action_key] = get_privileged_actions(user_doc[_privileges_key])
+
     def find_one(self, req, **lookup):
         session = get_resource_service('sessions').find_one(req=None, _id=lookup['_id'])
         _id = session['user'] if session else lookup['_id']
@@ -130,16 +141,14 @@ class PreferencesService(BaseService):
         existing_user_preferences = original.get(_user_preferences_key, {}).copy()
         existing_session_preferences = original.get(_session_preferences_key, {}).copy()
 
-        user_prefs = updates.get(_user_preferences_key)
-        if user_prefs is not None:
-            # check if the input is validated against the default values
-            for k in ((k for k, v in user_prefs.items() if k not in superdesk.default_user_preferences)):
-                raise ValidationError('Invalid preference: %s' % k)
-
-            existing_user_preferences.update(user_prefs)
-            updates[_user_preferences_key] = existing_user_preferences
-
+        self.update_user_prefs(updates, existing_user_preferences)
         session_id = request.view_args['_id']
+        self.update_session_prefs(updates, existing_session_preferences, session_id)
+
+        self.enhance_document_with_user_privileges(updates)
+        updates[_action_key] = get_privileged_actions(updates[_privileges_key])
+
+    def update_session_prefs(self, updates, existing_session_preferences, session_id):
         session_prefs = updates.get(_session_preferences_key)
         if session_prefs is not None:
             for k in ((k for k, v in session_prefs.items() if k not in superdesk.default_session_preferences)):
@@ -148,8 +157,15 @@ class PreferencesService(BaseService):
             existing_session_preferences[session_id].update(session_prefs)
             updates[_session_preferences_key] = existing_session_preferences
 
-        self.enhance_document_with_user_privileges(updates)
-        updates[_action_key] = get_privileged_actions(updates[_privileges_key])
+    def update_user_prefs(self, updates, existing_user_preferences):
+        user_prefs = updates.get(_user_preferences_key)
+        if user_prefs is not None:
+            # check if the input is validated against the default values
+            for k in ((k for k, v in user_prefs.items() if k not in superdesk.default_user_preferences)):
+                raise ValidationError('Invalid preference: %s' % k)
+
+            existing_user_preferences.update(user_prefs)
+            updates[_user_preferences_key] = existing_user_preferences
 
     def update(self, id, updates, original):
         session = get_resource_service('sessions').find_one(req=None, _id=original['_id'])
@@ -180,7 +196,6 @@ class PreferencesService(BaseService):
         This function returns preferences for the user.
         """
         doc = get_resource_service('users').find_one(req=None, _id=user_id)
-        self.enhance_document_with_default_user_prefs(user_doc=doc)
         prefs = doc.get(_user_preferences_key, {})
         return prefs
 
