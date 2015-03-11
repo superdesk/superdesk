@@ -34,10 +34,13 @@ class MacrosService(superdesk.Service):
     def create(self, docs, **kwargs):
         ids = []
         for doc in docs:
-            macro = macros.find(doc['macro'])
-            doc['item'] = macro['callback'](doc.get('item'))
-            ids.append(macro['name'])
+            doc['item'] = self.execute_macro(doc['item'], doc['macro'])
+            ids.append(doc['macro'])
         return ids
+
+    def execute_macro(self, doc, macro_name):
+        macro = macros.find(macro_name)
+        return macro['callback'](doc)
 
 
 class MacrosResource(superdesk.Resource):

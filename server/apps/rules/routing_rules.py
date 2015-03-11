@@ -267,6 +267,9 @@ class RoutingRuleSchemeService(BaseService):
         archive_items = []
         for destination in destinations:
             try:
+                if destination.get('macro'):
+                    ingest_item = get_resource_service('macros').execute_macro(ingest_item, destination.get('macro'))
+
                 item_id = get_resource_service('archive_ingest') \
                     .post([{'guid': ingest_item['guid'], 'desk': str(destination.get('desk')),
                             'stage': str(destination.get('stage')), 'state': STATE_ROUTED}])[0]
