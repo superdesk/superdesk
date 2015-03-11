@@ -9,7 +9,7 @@
             </label>
             <ul class="pills-list ruleset-list clearfix">
                 <li class="pill-small pull-left" ng-repeat="fetchAction in rule.actions.fetch">
-                    <div class="name right-pad">{{deskLookup[fetchAction.desk].name}} / {{stageLookup[fetchAction.stage].name}}</div>
+                    <div class="name right-pad">{{deskLookup[fetchAction.desk].name}} / {{stageLookup[fetchAction.stage].name}} / {{macroLookup[fetchAction.macro].label}}</div>
                     <div class="actions">
                         <button ng-click="removeFetch(fetchAction)" title="{{:: 'Remove fetch action' | translate }}"><i class="icon-trash"></i></button>
                     </div>
@@ -30,7 +30,7 @@
             </label>
             <ul class="pills-list ruleset-list clearfix">
                 <li class="pill-small pull-left" ng-repeat="publishAction in rule.actions.publish">
-                    <div class="name right-pad">{{deskLookup[publishAction.desk].name}} / {{stageLookup[publishAction.stage].name}}</div>
+                    <div class="name right-pad">{{deskLookup[publishAction.desk].name}} / {{stageLookup[publishAction.stage].name}} / {{macroLookup[publishAction.macro].label}}</div>
                     <div class="actions">
                         <button ng-click="removePublish(publishAction)" title="{{:: 'Remove publish action' | translate }}"><i class="icon-trash"></i></button>
                     </div>
