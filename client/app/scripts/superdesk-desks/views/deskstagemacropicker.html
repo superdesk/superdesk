@@ -4,3 +4,6 @@
 <select ng-model="stage">
     <option ng-repeat="s in deskStages[desk]" value="{{s._id}}" ng-selected="s._id === stage">{{s.name}}</option>
 </select>
+<select ng-model="macro">
+    <option ng-repeat="m in deskMacros" value="{{m.name}}" ng-selected="m.name === macro">{{m.label}}</option>
+</select>

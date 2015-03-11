@@ -438,7 +438,7 @@ define([
                 stage: '=',
                 macro: '='
             },
-            templateUrl: 'scripts/superdesk-desks/views/deskstagepicker.html',
+            templateUrl: 'scripts/superdesk-desks/views/deskstagemacropicker.html',
             link: function(scope, elem, attrs) {
                 scope.desks = null;
                 scope.deskStages = null;

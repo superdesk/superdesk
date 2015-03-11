@@ -262,7 +262,6 @@ def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
         fetch_from_provider(context, provider_name, guid)
 
 
-
 @when('we fetch from "{provider_name}" ingest "{guid}" using routing_scheme')
 def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
