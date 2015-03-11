@@ -1,12 +1,11 @@
 <div class="split-content">
-	
 	<div class="header">
 		<h2 translate>Roles privileges</h2>
 		<button class="btn btn-info pull-right" ng-click="saveAll(rolesForm)" ng-disabled="!rolesForm.$dirty" translate>Save</button>
 	</div>
-	
 	<div class="content privileges-settings">
-		<form name="rolesForm">
+		<div class="horizontal">
+			<form name="rolesForm">
 			<div class="roles-list" ng-if="roles">
 				
 				<div class="action-line initial">
@@ -24,7 +23,7 @@
 					<div class="td blank"></div>
 				</div>
 			</div>
-		</form>
+			</form>
+		</div>
 	</div>
-	
 </div>

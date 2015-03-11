@@ -94,5 +94,7 @@ import superdesk.io.newsml_2_0
 import superdesk.io.newsml_1_2
 import superdesk.io.wenn_parser
 import superdesk.io.teletype
+import superdesk.io.email
+import superdesk.io.dpa
 
 superdesk.privilege(name='ingest_providers', label='Ingest Channels', description='User can maintain Ingest Channels.')

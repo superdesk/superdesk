@@ -404,26 +404,24 @@ define([
             if (currentRoute && previousRoute) {
                 if ((currentRoute.$$route !== undefined) && (previousRoute.$$route !== undefined)) {
                     if (currentRoute.$$route.originalPath === '/') {
-                    this.setReferrerUrl('/workspace');
-                    localStorage.setItem('referrerUrl', '/workspace');
-                } else {
-                        if (currentRoute.$$route.originalPath.indexOf('/authoring/:_id') >= 0) {
-                            if (previousRoute.$$route.originalPath.indexOf('/authoring/:_id') < 0) {
-                                this.setReferrerUrl(prepareUrl(previousRoute));
-                                localStorage.setItem('referrerUrl', this.getReferrerUrl());
-                            }
+                        this.setReferrerUrl('/workspace');
+                        localStorage.setItem('referrerUrl', '/workspace');
+                    } else {
+                        if (currentRoute.$$route.authoring && !previousRoute.$$route.authoring) {
+                            this.setReferrerUrl(prepareUrl(previousRoute));
+                            localStorage.setItem('referrerUrl', this.getReferrerUrl());
                         }
                     }
                 }
             }
         };
 
-         var referrerURL;
-         this.setReferrerUrl = function(refURL) {
-           referrerURL = refURL;
-         };
+        var referrerURL;
+        this.setReferrerUrl = function(refURL) {
+            referrerURL = refURL;
+        };
 
-         this.getReferrerUrl = function() {
+        this.getReferrerUrl = function() {
             if (typeof (referrerURL) === 'undefined' || (referrerURL) === null) {
                 if (typeof (localStorage.getItem('referrerUrl')) === 'undefined' || (localStorage.getItem('referrerUrl')) === null){
                     this.setReferrerUrl('/workspace');
@@ -433,7 +431,7 @@ define([
             }
 
             return referrerURL;
-         };
+        };
 
          /**
          * Prepares complete Referrer Url from previous route href and querystring params(if exist),

@@ -192,7 +192,7 @@ Feature: User Resource
         Then we get error 403
 
     @auth
-    Scenario: A logged-in user can't change roleROLES_ID
+    Scenario: A logged-in user can't change role
         Given "roles"
         """
         [{"name": "A", "is_default": true}, {"name": "B"}]
@@ -212,7 +212,7 @@ Feature: User Resource
         """
         Then we get error 400
         """
-        {"_status": "ERR", "_issues": {"validator exception": "403"}}
+        {"_status": "ERR", "_issues": {"validator exception": "403: Insufficient privileges to change the role"}}
         """
 
     @auth

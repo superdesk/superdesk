@@ -38,6 +38,14 @@ define([
         teletype: {
             label: 'Teletype',
             templateUrl: 'scripts/superdesk-ingest/views/settings/teletypeConfig.html'
+        },
+        email: {
+            label: 'Email',
+            templateUrl: 'scripts/superdesk-ingest/views/settings/emailConfig.html'
+        },
+        dpa: {
+            label: 'DPA',
+            templateUrl: 'scripts/superdesk-ingest/views/settings/aapConfig.html'
         }
     });
 
@@ -205,7 +213,7 @@ define([
 
                     var sort = attrs.sort || null;
                     var pie = d3.layout.pie()
-                        .value(function(d) { return d.count; })
+                        .value(function(d) { return d.doc_count; })
                         .sort(sort ? function(a, b) { return d3.ascending(a[sort], b[sort]); } : null);
 
                     var svg = d3.select(appendTarget).append('svg')
@@ -214,16 +222,15 @@ define([
                         .append('g')
                         .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
-                    scope.$watchCollection('[ terms, colors]', function(newData) {
-
-                        if (newData[0] !== undefined) {
+                    scope.$watchGroup(['terms', 'colors'], function renderData(newData) {
+                        if (newData[0] != null) {
 
                             if (newData[1] !== null) {
                                 colorScheme = colorsData.schemes[_.findKey(colorsData.schemes, {name: newData[1]})];
                             }
 
                             var colorScale = d3.scale.ordinal()
-                                    .range(colorScheme.charts);
+                                .range(colorScheme.charts);
 
                             svg.selectAll('.arc').remove();
 
@@ -234,13 +241,13 @@ define([
 
                             g.append('path')
                                 .attr('d', arc)
-                                .style('fill', function(d) { return colorScale(d.data.term); });
+                                .style('fill', function(d) { return colorScale(d.data.key); });
 
                             g.append('text')
                                 .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
                                 .style('text-anchor', 'middle')
                                 .style('fill', colorScheme.text)
-                                .text(function(d) { return d.data.term; });
+                                .text(function(d) { return d.data.key; });
                         }
 
                     });
@@ -816,7 +823,7 @@ define([
                     })
                     .then(function(archiveItem) {
                         data.item.task_id = archiveItem.task_id;
-                        data.item.archived = archiveItem.archived;
+                        data.item.archived = archiveItem._created;
                     }, function(response) {
                         data.item.error = response;
                     })

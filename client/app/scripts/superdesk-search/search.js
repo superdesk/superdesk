@@ -42,10 +42,14 @@
         /**
          * Single query instance
          */
-        function Query(q) {
+        function Query(params) {
             var DEFAULT_SIZE = 25,
                 size,
                 filters = [];
+
+            if (params == null) {
+                params = {};
+            }
 
             /**
              * Set from/size for given query and params
@@ -132,7 +136,7 @@
              * Get criteria for given query
              */
             this.getCriteria = function getCriteria(withSource) {
-                var search = $location.search();
+                var search = params;
                 var sort = getSort();
                 var criteria = {
                     query: {filtered: {filter: {and: filters}}},
@@ -141,9 +145,9 @@
 
                 paginate(criteria, search);
 
-                if (search.q || q) {
+                if (search.q) {
                     criteria.query.filtered.query = {query_string: {
-                        query: search.q || q,
+                        query: search.q,
                         lenient: false,
                         default_operator: 'AND'
                     }};
@@ -180,22 +184,22 @@
             };
 
             // do base filtering
-            if ($location.search().spike) {
+            if (params.spike) {
                 this.filter({term: {state: 'spiked'}});
             } else {
                 this.filter({not: {term: {state: 'spiked'}}});
             }
 
-            buildFilters($location.search(), this);
+            buildFilters(params, this);
         }
 
         /**
          * Start creating a new query
          *
-         * @param {string} q
+         * @param {Object} params
          */
-        this.query = function createQuery(q) {
-            return new Query(q);
+        this.query = function createQuery(params) {
+            return new Query(params);
         };
     }
 
@@ -215,7 +219,7 @@
                 $location.search('page', null);
             }
 
-            var criteria = search.query().getCriteria(true);
+            var criteria = search.query($location.search()).getCriteria(true);
             api.query('search', criteria).then(function(result) {
                 $scope.items = result;
             });
@@ -244,7 +248,7 @@
         /**
          * Item filters sidebar
          */
-        .directive('sdSearchFacets', ['$location', 'desks',  function($location, desks) {
+        .directive('sdSearchFacets', ['$location', 'desks', 'privileges',  function($location, desks, privileges) {
             desks.initialize();
             return {
                 require: '^sdSearchContainer',
@@ -259,6 +263,7 @@
                     scope.aggregations = {};
                     scope.selectedFacets = {};
                     scope.keyword = null;
+                    scope.privileges = privileges.privileges;
 
                     var initAggregations = function () {
                         scope.aggregations = {
@@ -587,7 +592,9 @@
                     if (scope.item._type !== 'ingest') {
                         if (scope.item.task && scope.item.task.desk) {
                             desks.initialize().then(function() {
-                                scope.item.container = 'desk:' + desks.deskLookup[scope.item.task.desk].name ;
+                                if (desks.deskLookup[scope.item.task.desk]) {
+                                    scope.item.container = 'desk:' + desks.deskLookup[scope.item.task.desk].name ;
+                                }
                             });
                         } else {
                             scope.item.container = 'location:workspace';
@@ -884,6 +891,16 @@
             };
         }])
 
+        .directive('sdSavedSearchSelect', ['api', 'session', function SavedSearchSelectDirective(api, session) {
+            return {
+                link: function(scope) {
+                    api.query('saved_searches', {}, session.identity).then(function(res) {
+                        scope.searches = res._items;
+                    });
+                }
+            };
+        }])
+
         .directive('sdSavedSearches', ['api', 'session', '$location', 'notify', 'gettext',
         function(api, session, $location, notify, gettext) {
             return {
@@ -948,6 +965,7 @@
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk.activity('/search', {
+                description: gettext('Find live and archived content'),
                 beta: 1,
                 priority: 200,
                 category: superdesk.MENU_MAIN,

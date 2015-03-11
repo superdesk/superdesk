@@ -82,5 +82,18 @@ define([
             $rootScope.$digest();
             expect(handler).toHaveBeenCalled();
         }));
+
+        it('can broadcast ctrl+key events', inject(function($rootScope, $document) {
+            var handler = jasmine.createSpy('handler');
+            $rootScope.$on('key:ctrl:t', handler);
+
+            var e = $.Event('keydown');
+            e.which = 't'.charCodeAt(0);
+            e.ctrlKey = true;
+            $(document.body).trigger(e);
+
+            $rootScope.$digest();
+            expect(handler).toHaveBeenCalled();
+        }));
     });
 });

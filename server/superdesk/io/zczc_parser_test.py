@@ -30,3 +30,6 @@ class ZCZCTestCase(unittest.TestCase):
 
     def test_subject(self):
         self.assertEqual(self.items.get('subject')[0]['qcode'], '15039001')
+
+    def test_version_created(self):
+        self.assertIn('versioncreated', self.items)

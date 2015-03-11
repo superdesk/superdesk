@@ -149,7 +149,7 @@
 
                     var limits =
                         {
-                            group: 60
+                            group: 40
                     };
 
                     scope.limits = limits;
@@ -216,14 +216,12 @@
                             scope.search = null;
                             scope.groupMembers = [];
                             scope.users = [];
-                            scope.membersToSelect = [];
                             scope.message = null;
 
                             if (scope.group.edit && scope.group.edit._id) {
                                 groups.initialize().then(function() {
                                     scope.groupMembers = groups.groupMembers[scope.group.edit._id] || [];
                                     scope.users = groups.users._items;
-                                    generateSearchList();
                                 });
                             } else {
                                 WizardHandler.wizard('usergroups').goTo(previous);
@@ -231,18 +229,12 @@
                         }
                     });
 
-                    function generateSearchList() {
-                        scope.membersToSelect = _.difference(scope.users, scope.groupMembers);
-                    }
-
                     scope.add = function(user) {
                         scope.groupMembers.push(user);
-                        generateSearchList();
                     };
 
                     scope.remove = function(user) {
                         _.remove(scope.groupMembers, user);
-                        generateSearchList();
                     };
 
                     scope.previous = function() {

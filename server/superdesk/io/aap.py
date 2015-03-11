@@ -26,10 +26,6 @@ logger = logging.getLogger(__name__)
 PROVIDER = 'aap'
 
 
-def normalize_date(naive, tz):
-    return utc.normalize(tz.localize(naive))
-
-
 class AAPIngestService(FileIngestService):
     """AAP Ingest Service"""
 
@@ -56,12 +52,6 @@ class AAPIngestService(FileIngestService):
                     if self.is_latest_content(last_updated, provider.get('last_updated')):
                         with open(filepath, 'r') as f:
                             item = self.parser.parse_message(etree.fromstring(f.read()), provider)
-
-                            item['firstcreated'] \
-                                = normalize_date(item.get('firstcreated'), self.tz)
-                            item['versioncreated'] \
-                                = normalize_date(item.get('versioncreated'), self.tz)
-
                             self.move_file(self.path, filename, provider=provider, success=True)
                             yield [item]
                     else:
@@ -80,16 +70,13 @@ class AAPIngestService(FileIngestService):
 
     def parse_file(self, filename, provider):
         try:
-            path = provider.get('config', {}).get('path', None)
+            self.path = provider.get('config', {}).get('path', None)
 
-            if not path:
+            if not self.path:
                 return []
 
-            with open(os.path.join(path, filename), 'r') as f:
+            with open(os.path.join(self.path, filename), 'r') as f:
                 item = self.parser.parse_message(etree.fromstring(f.read()), provider)
-
-                item['firstcreated'] = normalize_date(item.get('firstcreated'), self.tz)
-                item['versioncreated'] = normalize_date(item.get('versioncreated'), self.tz)
 
             return [item]
         except Exception as ex:

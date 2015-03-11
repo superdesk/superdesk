@@ -16,10 +16,17 @@ define([
             templateUrl: 'scripts/superdesk-dashboard/views/desk-dropdown.html',
             link: function(scope) {
 
-                scope.select = function selectDesk(desk) {
+                scope.select = function selectDesk(desk, reloadRoute) {
+                    if (angular.isUndefined(reloadRoute)) {
+                        reloadRoute = true;
+                    }
+
                     desks.setCurrentDesk(desk);
                     scope.selected = desk;
-                    $route.reload();
+
+                    if (reloadRoute) {
+                        $route.reload();
+                    }
                 };
 
                 desks.fetchCurrentUserDesks()
@@ -31,15 +38,15 @@ define([
                             preferencesService.get('desk:last_worked').then(
                                 function(desk) {
                                     if (desk !== '') {
-                                        scope.selected = _.find(scope.userDesks, {_id: desk});
+                                        scope.select(_.find(scope.userDesks, {_id: desk}), false);
                                     } else {
-                                        scope.select(scope.userDesks[0]);
+                                        scope.select(scope.userDesks[0], false);
                                     }
                             },  function() {
-                                    scope.select(scope.userDesks[0]);
+                                    scope.select(scope.userDesks[0], false);
                             });
                         } else {
-                            scope.selected = _.find(scope.userDesks, {_id: currentDeskId});
+                            scope.select(_.find(scope.userDesks, {_id: currentDeskId}), false);
                         }
                     });
             }
@@ -73,6 +80,7 @@ define([
     .config(['superdeskProvider', function(superdesk) {
         superdesk.activity('/workspace', {
             label: gettext('Workspace'),
+            description: gettext('Customize your widgets and views'),
             controller: require('./workspace-controller'),
             templateUrl: require.toUrl('./views/workspace.html'),
             topTemplateUrl: require.toUrl('./views/workspace-topnav.html'),

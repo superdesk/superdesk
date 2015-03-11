@@ -32,7 +32,7 @@
             <dt ng-show="item.is_spiked" translate>expires</dt>
             <dd ng-if="item.is_spiked"><time title="{{ item.expiry | date:'medium' }}">{{ item.expiry | reldate }}</time></dd>
         </dl>
-        <div ng-if="type !== 'archive'" class="fetched-desk"><div sd-fetched-desks data-item="item"></div></div>
+        <div ng-if="item.archived" class="fetched-desk"><div sd-fetched-desks data-item="item"></div></div>
     </div>
 
     <span class="type-icon"><i class="filetype-icon-{{item.type}}"></i></span>

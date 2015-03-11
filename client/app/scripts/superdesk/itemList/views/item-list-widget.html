@@ -8,17 +8,20 @@
 
     <div class="search-box" ng-class="{blank: similar}" ng-show="options.searchEnabled">
         
-        <input type="text" placeholder="{{ 'Search'|translate }}" ng-model="itemListOptions.search" ng-show="!options.similar">
+        <input type="text" placeholder="{{ :: 'Search' | translate }}"
+            ng-show="!options.similar"
+            ng-model="itemListOptions.search"
+            ng-model-options="{debounce: 500}">
         
         <div ng-if="options.similar" class="text" translate>Displaying similar items</div>
         
-        <div class="dropdown more-actions" dropdown>
+        <div class="dropdown more-actions" dropdown ng-if="options.item">
             <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
             <div class="dropdown-menu pull-right">
                 <ul>
                     <li>
-                        <button ng-click="options.similar = !options.similar">
-                            <i ng-if="options.similar" class="icon-ok"></i> {{'Display similar' | translate }}
+                        <button ng-if="options.item" ng-click="options.similar = !options.similar">
+                            <i ng-if="options.similar" class="icon-ok"></i> {{ :: 'Display similar' | translate }}
                         </button>
                     </li>
                 </ul>
@@ -50,7 +53,7 @@
                     <div class="dropdown more-actions" dropdown>
                         <button class="dropdown-toggle" dropdown-toggle><i class="icon-dots-vertical"></i></button>
                         <div class="dropdown-menu pull-right">
-                            <span class="pin-info" ng-show="options.pinEnabled && item.pinnedInstance">{{'pinned from' | translate}} {{item._type}}</span>
+                            <span class="pin-info" ng-show="options.pinEnabled && item.pinnedInstance">{{ :: 'pinned from' | translate }} {{item._type}}</span>
                             <ul>
                                 <li ng-show="options.pinEnabled"><button ng-show="!isPinned(item)" ng-click="pin(item)">
                                     <i class="icon-pin"></i> {{ :: 'Pin' | translate }}</button>
@@ -66,7 +69,7 @@
                         ng-class="{pinned: options.pinEnabled && isPinned(item), 'pinned-instance': options.pinEnabled && item.pinnedInstance}"
                         ng-click="view(item)">
                         <div class="content">
-                            <p><i class="filetype-icon-{{item.type}}"></i><span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span>{{item.headline || item.type}}</p>
+                            <p><i class="filetype-icon-{{item.type}}"></i><span class="keyword" ng-if="item.slugline">{{ item.slugline }}</span> {{item.headline || item.type}}</p>
                         </div>
                     </div>
                     <div ng-if="options.mode === 'detailed'" class="item-block urgency-{{ item.urgency }}" 

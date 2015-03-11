@@ -214,13 +214,25 @@
         /**
          * Save the item
          *
+         * @param {Object} origItem
          * @param {Object} item
          */
-        this.save = function saveAuthoring(item) {
+        this.save = function saveAuthoring(origItem, item) {
             var diff = extendItem({}, item);
+
+            // Finding if all the keys are dirty for real
+            if (angular.isDefined(origItem)) {
+                var keysInDiff = _.keys(diff);
+                for (var i = 0; i < keysInDiff.length; i++) {
+                    var keyName = keysInDiff[i];
+                    if (_.isEqual(diff[keyName], origItem[keyName])) {
+                        delete diff[keyName];
+                    }
+                }
+            }
+
             autosave.stop(item);
-            var endpoint = item.type === 'composite' ? 'packages' : 'archive';
-            return api.save(endpoint, item, diff).then(function(_item) {
+            return api.save('archive', item, diff).then(function(_item) {
                 item._autosave = null;
                 item._locked = lock.isLocked(item);
                 return item;
@@ -376,7 +388,8 @@
                 gettext('There are some unsaved changes, do you want to save it now?'),
                 gettext('Save changes?'),
                 gettext('Save'),
-                gettext('Ignore')
+                gettext('Ignore'),
+                gettext('Cancel')
             );
         };
 
@@ -444,21 +457,21 @@
         'ContentCtrl',
         '$location',
         'referrer',
+        'macros',
         '$timeout'
     ];
     function AuthoringDirective(superdesk, notify, gettext,
                                  desks, authoring, api, session, lock, privileges,
-                                 ContentCtrl, $location, referrer, $timeout) {
+                                 ContentCtrl, $location, referrer, macros, $timeout) {
         return {
             link: function($scope) {
-
                 var _closing;
 
                 $scope.privileges = privileges.privileges;
                 $scope.content = new ContentCtrl($scope);
 
                 $scope.dirty = false;
-                $scope.viewSendTo = false;
+                $scope.views = {send: false};
                 $scope.stage = null;
                 $scope._editable = $scope.origItem._editable;
 
@@ -477,7 +490,7 @@
                  * Create a new version
                  */
             	$scope.save = function() {
-            		return authoring.save($scope.item).then(function(res) {
+            		return authoring.save($scope.origItem, $scope.item).then(function(res) {
                         $scope.origItem = res;
                         $scope.dirty = false;
                         $scope.item = _.create($scope.origItem);
@@ -644,8 +657,18 @@
                         $scope.item.lock_user = null;
                     }
                 });
+
+                macros.setupShortcuts($scope);
             }
         };
+    }
+
+    function AuthoringTopbarDirective() {
+        return {templateUrl: 'scripts/superdesk-authoring/views/authoring-topbar.html'};
+    }
+
+    function AuthoringSidebarDirective() {
+        return {templateUrl: 'scripts/superdesk-authoring/views/authoring-sidebar.html'};
     }
 
     function DashboardCard() {
@@ -811,58 +834,47 @@
                 scope.desk = null;
                 scope.desks = null;
                 scope.stages = null;
-
                 scope.beforeSend = scope._beforeSend || $q.when;
 
-                var fetchDesks = function() {
+                scope.selectDesk = function(desk) {
+                    scope.desk = desk;
+                    scope.selectedStage = null;
+                    fetchStages();
+                };
+
+                scope.selectStage = function(stage) {
+                    scope.selectedStage = stage;
+                };
+
+                scope.send = function send() {
+                    save({
+                        task: _.extend(scope.task.task, {
+                            desk: scope.desk._id,
+                            stage: scope.selectedStage._id || scope.desk.incoming_stage
+                        })
+                    });
+                };
+
+                scope.$watch('item', fetchDesks);
+
+                function fetchDesks() {
                     return api.find('tasks', scope.item._id)
-                    .then(function(_task) {
-                        scope.task = _task;
-                    })
-                    .then(function() {
-                        desks.initialize()
-                        .then(function() {
+                        .then(function(_task) {
+                            scope.task = _task;
+                        }).then(function() {
+                            return desks.initialize();
+                        }).then(function() {
                             scope.desks = desks.desks;
-                            if (scope.item.task && scope.item.task.desk) {
-                                scope.desk = desks.deskLookup[scope.item.task.desk];
-                            }
-                        });
-                    });
-                };
+                            scope.desk = desks.getItemDesk(scope.item);
+                        }).then(fetchStages);
+                }
 
-                var fetchStages = function() {
-                    desks.initialize()
-                    .then(function() {
-                        scope.desks = desks.desks;
-                        if (scope.item.task && scope.item.task.desk) {
-                            scope.desk = desks.deskLookup[scope.item.task.desk];
-                        }
-                        if (scope.desk) {
-                        	scope.stages = desks.deskStages[scope.desk._id];
-                        }
-                    });
-                };
-
-                scope.$watch('item', function() {
-                    fetchDesks()
-                    .then(function() {
-                        fetchStages();
-                    });
-                });
-
-                scope.sendToDesk = function sendToDesk(desk) {
-                    save({task: _.extend(
-                        scope.task.task,
-                        {desk: desk._id, stage: desk.incoming_stage || null}
-                    )});
-                };
-
-                scope.sendToStage = function sendToStage(stage) {
-                    save({task: _.extend(
-                        scope.task.task,
-                        {stage: stage._id}
-                    )});
-                };
+                function fetchStages() {
+                    if (scope.desk) {
+                        scope.stages = desks.deskStages[scope.desk._id];
+                        scope.selectedStage = _.find(scope.stages, {_id: scope.desk.incoming_stage});
+                    }
+                }
 
                 function save(data) {
                     scope.beforeSend()
@@ -912,6 +924,7 @@
             'superdesk.authoring.workqueue',
             'superdesk.authoring.packages',
             'superdesk.authoring.find-replace',
+            'superdesk.authoring.macros',
             'superdesk.desks'
         ])
 
@@ -930,6 +943,8 @@
         .directive('sdHighlightCreate', HighlightCreateDirective)
         .directive('sdArticleEdit', ArticleEditDirective)
         .directive('sdAuthoring', AuthoringDirective)
+        .directive('sdAuthoringTopbar', AuthoringTopbarDirective)
+        .directive('sdAuthoringSidebar', AuthoringSidebarDirective)
 
         .config(['superdeskProvider', function(superdesk) {
             superdesk
@@ -946,7 +961,8 @@
                         item: ['$route', 'authoring', function($route, authoring) {
                             return authoring.open($route.current.params._id, false);
                         }]
-                    }
+                    },
+                   authoring: true
 	            })
                 .activity('edit.text', {
 	            	label: gettext('Edit item'),

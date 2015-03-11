@@ -1,5 +1,7 @@
 language: python
 
+sudo: false
+
 env:
     - TARGET=client
     - TARGET=server
@@ -10,8 +12,9 @@ env:
 python:
     - "3.4"
 
-node_js:
-    - "0.10"
+matrix:
+    allow_failures:
+        - env: TARGET=e2e_firefox
 
 services:
     - mongodb
@@ -96,5 +99,3 @@ after_success:
     - if [ "${TARGET}" = "client" ]; then
         cd client && grunt coveralls && cd .. ;
       fi
-
-sudo: false
