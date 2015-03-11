@@ -130,10 +130,8 @@ def update_provider(provider, rule_set=None):
     Fetches items from ingest provider as per the configuration, ingests them into Superdesk and
     updates the provider.
     """
-    superdesk.get_resource_service('ingest_providers').update(provider['_id'], {
+    superdesk.get_resource_service('ingest_providers').system_update(provider['_id'], {
         LAST_UPDATED: utcnow(),
-        # Providing the _etag as system updates to the documents shouldn't override _etag.
-        app.config['ETAG']: provider.get(app.config['ETAG'])
     }, provider)
 
     for items in providers[provider.get('type')].update(provider):
