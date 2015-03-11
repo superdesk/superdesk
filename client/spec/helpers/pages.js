@@ -71,33 +71,33 @@ function Authoring() {
     	browserManager.getElement()(by.css('[ng-click="close()"]')).click();
     };
     this.save = function () {
-    	element(by.css('[ng-click="save(item)"]')).click();
+    	browserManager.getElement()(by.css('[ng-click="save(item)"]')).click();
     };
     this.showSearch = function () {
-    	element(by.id('Search')).click();
+    	browserManager.getElement()(by.id('Search')).click();
     };
     this.showVersions = function () {
-    	element(by.css('[title="Versions"]')).click();
+    	browserManager.getElement()(by.css('[title="Versions"]')).click();
     };
 
     this.getSearchItem = function (item) {
-    	return element.all(by.repeater('pitem in contentItems')).get(item);
+    	return browserManager.getElement().all(by.repeater('pitem in contentItems')).get(item);
     };
     this.addToGroup = function (item, group) {
     	var crtItem = this.getSearchItem(item);
-    	browser.actions().mouseMove(crtItem).perform();
+    	browserManager.getBrowser().actions().mouseMove(crtItem).perform();
     	crtItem.element(by.css('[title="Add to package"]')).click();
     	var groups = crtItem.all(by.repeater('t in groupList'));
     	groups.all(by.css('[option="' + group.toUpperCase() + '"]')).click();
     };
     this.addMultiToGroup = function (group) {
-    	var addButton = element(by.css('[class="icon-package-plus"]'));
+    	var addButton = browserManager.getElement()(by.css('[class="icon-package-plus"]'));
     	addButton.click();
-    	var groups = element(by.repeater('t in groupList'));
+    	var groups = browserManager.getElement()(by.repeater('t in groupList'));
     	groups.all(by.css('[option="' + group.toUpperCase() + '"]')).click();
     };
     this.getGroupItems = function (group) {
-    	return element(by.id(group.toUpperCase())).all(by.repeater('item in group.items'));
+    	return browserManager.getElement()(by.id(group.toUpperCase())).all(by.repeater('item in group.items'));
     };
     this.getGroupItem = function (group, item) {
     	return this.getGroupItems(group).get(item);
@@ -106,7 +106,7 @@ function Authoring() {
     	var src = this.getGroupItem(srcGroup, scrItem).element(by.css('[class="info"]'));
     	var dst = this.getGroupItem(dstGroup, dstItem).element(by.css('[class="info"]'));
 
-    	browser.actions().
+    	browserManager.getBrowser().actions().
         mouseMove(src.getWebElement(), {x: 0, y: 0}).
         mouseDown().
         mouseMove(dst.getWebElement(), {x: 0, y: 0}).
@@ -115,7 +115,7 @@ function Authoring() {
     };
     this.selectSearchItem = function (item) {
     	var crtItem = this.getSearchItem(item);
-    	browser.actions().
+    	browserManager.getBrowser().actions().
         mouseMove(crtItem.element(by.tagName('i')).getWebElement()).
         perform();
     	crtItem.element(by.css('[ng-click="addToSelected(pitem)"]')).click();

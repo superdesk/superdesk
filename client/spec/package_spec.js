@@ -1,13 +1,22 @@
 var openUrl = require('./helpers/utils').open,
     workspace = require('./helpers/pages').workspace,
     content = require('./helpers/pages').content,
-    authoring = require('./helpers/pages').authoring;
+    authoring = require('./helpers/pages').authoring,
+    browserManager = require('./helpers/utils').browserManager;
 
 describe('Content', function() {
     'use strict';
 
     beforeEach(function() {
         openUrl('/#/workspace/content')();
+    });
+
+    afterEach(function() {
+        var currBrowser = browserManager.getBrowser();
+        if (currBrowser !== browser) {
+            browserManager.setBrowser(browser);
+            currBrowser.close();
+        }
     });
 
     it('increment package version', function() {
@@ -66,5 +75,22 @@ describe('Content', function() {
         authoring.selectSearchItem(2);
         authoring.addMultiToGroup('MAIN');
         expect(authoring.getGroupItems('MAIN').count()).toBe(3);
+    });
+
+    it ('package close button', function() {
+        workspace.switchToDesk('Personal');
+        content.setListView();
+        content.actionOnItem('Edit package', 0);
+
+        var browser2 = browser.forkNewDriverInstance(true, true);
+        browserManager.setBrowser(browser2);
+        openUrl('/#/packaging/package1')();
+
+        // // Close the package in the first browser
+        element(by.css('[ng-click="close()"]')).click();
+
+        browser2.sleep(200);
+        var header = browser2.element(by.binding('headerText'));
+        expect(header.getText()).toBe('Item Unlocked');
     });
 });
