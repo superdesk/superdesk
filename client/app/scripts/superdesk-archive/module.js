@@ -87,34 +87,44 @@ define([
                     label: gettext('Spike Item'),
                     icon: 'remove',
                     monitor: true,
-                    controller: ['spike', 'data', function spikeActivity(spike, data) {
-                        return spike.spike(data.item);
+                    controller: ['spike', 'data', '$rootScope', function spikeActivity(spike, data, $rootScope) {
+                        return spike.spike(data.item).then(function(item) {
+                            $rootScope.$broadcast('item:spike');
+                            return item;
+                        });
                     }],
                     filters: [{action: 'list', type: 'archive'}],
-                    action: 'spike'
+                    action: 'spike',
+                    condition: function(item) {
+                        return item.lock_user === null || angular.isUndefined(item.lock_user);
+                    }
                 })
                 .activity('unspike', {
                     label: gettext('Unspike Item'),
                     icon: 'revert',
                     monitor: true,
-                    controller: ['spike', 'data', function unspikeActivity(spike, data) {
-                        return spike.unspike(data.item);
+                    controller: ['spike', 'data', '$rootScope', function unspikeActivity(spike, data, $rootScope) {
+                        return spike.unspike(data.item).then(function(item) {
+                            $rootScope.$broadcast('item:unspike');
+                            return item;
+                        });
                     }],
                     filters: [{action: 'list', type: 'spike'}],
                     action: 'unspike'
                 })
-                .activity('archiveContent', {
+                .activity('archive-content', {
                     label: gettext('Fetch'),
                     icon: 'archive',
                     monitor: true,
-                    controller: ['api', 'data', 'desks', function(api, data, desks) {
+                    controller: ['api', 'data', 'desks', '$rootScope', function(api, data, desks, $rootScope) {
                         api.archiveIngest.create({
                             guid: data.item.guid,
                             desk: desks.getCurrentDeskId()
                         })
                         .then(function(archiveItem) {
                             data.item.task_id = archiveItem.task_id;
-                            data.item.created = archiveItem.created;
+                            data.item.created = archiveItem._created;
+                            $rootScope.$broadcast('item:fetch');
                         }, function(response) {
                             data.item.error = response;
                         })
@@ -123,7 +133,10 @@ define([
                         });
                     }],
                     filters: [{action: 'list', type: 'archive'}],
-                    action: 'fetch_as_from_content'
+                    action: 'fetch_as_from_content',
+                    condition: function(item) {
+                        return item.lock_user === null || angular.isUndefined(item.lock_user);
+                    }
                 });
         }])
 

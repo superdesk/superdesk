@@ -21,6 +21,7 @@ from superdesk.errors import SuperdeskApiError
 from superdesk.io import register_provider
 from superdesk.io.tests import setup_providers, teardown_providers
 from superdesk.io.ingest_service import IngestService
+from superdesk.io.commands.remove_expired_content import get_expired_items
 
 
 class TestProviderService(IngestService):
@@ -57,6 +58,19 @@ class UpdateIngestTest(TestCase):
             items.extend(provider_service.fetch_ingest(guid))
             self.assertEquals(12, len(items))
             self.ingest_items(items, provider)
+
+    def test_ingest_item_expiry(self):
+        provider_name = 'reuters'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
+        with self.app.app_context():
+            provider = self._get_provider(provider_name)
+            provider_service = self._get_provider_service(provider)
+            provider_service.provider = provider
+            items = provider_service.fetch_ingest(guid)
+            self.assertIsNone(items[1].get('expiry'))
+            items[1]['versioncreated'] = utcnow()
+            self.ingest_items([items[1]], provider)
+            self.assertIsNotNone(items[1].get('expiry'))
 
     def test_ingest_item_sync_if_missing_from_elastic(self):
         provider_name = 'reuters'
@@ -126,9 +140,40 @@ class UpdateIngestTest(TestCase):
             provider_service = self.provider_services[provider.get('type')]
             provider_service.provider = provider
             items = provider_service.fetch_ingest(guid)
-            for item in items[:3]:
-                item['versioncreated'] = utcnow()
-            self.assertEqual(3, len(ingest.filter_expired_items(provider, items)))
+            for item in items[:4]:
+                item['expiry'] = utcnow() + timedelta(minutes=11)
+            self.assertEqual(4, len(ingest.filter_expired_items(provider, items)))
+
+    def test_filter_expired_items_with_no_expiry(self):
+        provider_name = 'reuters'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
+        with self.app.app_context():
+            provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+            provider_service = self.provider_services[provider.get('type')]
+            provider_service.provider = provider
+            items = provider_service.fetch_ingest(guid)
+            self.assertEqual(0, len(ingest.filter_expired_items(provider, items)))
+
+    def test_query_getting_expired_content(self):
+        provider_name = 'reuters'
+        guid = 'tag_reuters.com_2014_newsml_KBN0FL0NM'
+        with self.app.app_context():
+            provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+            provider_service = self.provider_services[provider.get('type')]
+            provider_service.provider = provider
+
+            items = provider_service.fetch_ingest(guid)
+            for item in items:
+                item['ingest_provider'] = str(provider['_id'])
+
+            items[0]['expiry'] = utcnow() - timedelta(minutes=11)
+            items[1]['expiry'] = utcnow() + timedelta(minutes=11)
+            items[2]['expiry'] = utcnow() + timedelta(minutes=11)
+            items[5]['versioncreated'] = utcnow() + timedelta(minutes=11)
+
+            self.app.data.insert('ingest', items)
+            expiredItems = get_expired_items(str(provider['_id']), utcnow() - timedelta(minutes=2880))
+            self.assertEquals(3, expiredItems.count())
 
     def test_apply_rule_set(self):
         with self.app.app_context():

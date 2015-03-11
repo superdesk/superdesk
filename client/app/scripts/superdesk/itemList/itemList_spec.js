@@ -5,7 +5,7 @@ describe('itemListService', function() {
     beforeEach(module('superdesk.itemList'));
     beforeEach(module(function($provide) {
         $provide.service('api', function($q) {
-            return function(endpoint, endpointParam) {
+            return function ApiService(endpoint, endpointParam) {
                 return {
                     query: function(params) {
                         params._endpoint = endpoint;
@@ -220,6 +220,23 @@ describe('itemListService', function() {
                 lenient: false,
                 default_operator: 'OR'
             }
+        });
+    }));
+
+    it('can query with saved search', inject(function($rootScope, itemListService, api, $q) {
+        var params;
+        api.get = angular.noop;
+        spyOn(api, 'get').and.returnValue($q.when({filter: {query: {type: '["text"]'}}}));
+        itemListService.fetch({
+            savedSearch: {_links: {self: {href: 'url'}}}
+        }).then(function(_params) {
+            params = _params;
+        });
+
+        $rootScope.$digest();
+
+        expect(params.source.query.filtered.filter.and).toContain({
+            terms: {type: ['text']}
         });
     }));
 });

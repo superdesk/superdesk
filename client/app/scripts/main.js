@@ -36,6 +36,7 @@ define('main', [
         var body = angular.element('body');
         body.ready(function() {
             angular.bootstrap(body, apps);
+            window.superdeskIsReady = true;
         });
     };
 });

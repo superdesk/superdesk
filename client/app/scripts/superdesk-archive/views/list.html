@@ -9,19 +9,10 @@
             <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
             <ul class="dropdown-menu pull-right" sd-content-create></ul>
         </div>
-        <button class="navbtn">
-        	<i class="svg-icon-right"></i>
-        </button>
     </div>
 
-    <div class="button-stack left-stack">
+    <div class="desk-stages">
         <div class="navbtn toggle-list" sd-desk-stages ng-if="stages.stages.length"></div>
-
-        <div class="navbtn toggle-list" ng-if="type === 'archive'">
-            <ul class="stages-list">
-                <li class="stage-label" ng-class="{active: spike}"><a href="" ng-click="toggleSpike()" translate>Spiked</a></li>
-            </ul>
-        </div>
     </div>
 </div>
 

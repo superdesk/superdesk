@@ -32,7 +32,7 @@
 		<div class="modal-header"> 
 			<a href="" class="close" ng-click="cancel()"><i class="icon-close-small"></i></a>
 			<h3 ng-show="!desk.edit._id" translate>Add New Desk</h3>
-			<h3 ng-show="desk.edit._id" translate>Edit Desk</h3>
+			<h3 ng-show="desk.edit._id" translate>Edit "{{desk.edit.name}}" Desk</h3>
 		</div>
 		
 		<div class="modal-body" sd-wizard data-name="desks" data-current-step="step.current" data-finish="cancel()">
@@ -168,7 +168,7 @@
 			<div sd-wizard-step data-title="{{ 'People' | translate }}" data-code="people">
 				<div sd-deskedit-people>
 					<div class="content people-stage" >
-						<div class="header" sd-user-select-list data-users="membersToSelect" data-onchoose="add(user)"></div>
+						<div class="header" sd-user-select-list data-exclude="deskMembers" data-onchoose="add(user)"></div>
 						<div class="content">
 							<p ng-if="message">{{ message }}</p>
 							<div class="member-list clearfix">

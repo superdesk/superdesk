@@ -61,8 +61,8 @@ class AAPTestCase(NITFTestCase):
         self.assertEqual(self.item.get('abstract'), 'The main stories on today\'s 1900 ABC TV news')
 
     def test_dates(self):
-        self.assertEqual(self.item.get('firstcreated').isoformat(), '2013-10-20T19:27:51')
-        self.assertEqual(self.item.get('versioncreated').isoformat(), '2013-10-20T19:27:51')
+        self.assertEqual(self.item.get('firstcreated').isoformat(), '2013-10-20T08:27:51+00:00')
+        self.assertEqual(self.item.get('versioncreated').isoformat(), '2013-10-20T08:27:51+00:00')
 
     def test_content(self):
         text = "<p>   1A) More extreme weather forecast over the next few days the <br />fire situation is likely"
@@ -106,7 +106,7 @@ class IPTCExampleTestCase(NITFTestCase):
         self.assertEqual('US', places[0]['code'])
 
     def test_expiry(self):
-        self.assertEqual('2012-02-26T09:30:00-05:00', self.item.get('expiry').isoformat())
+        self.assertEqual('2012-02-26T14:30:00+00:00', self.item.get('expiry').isoformat())
 
     def test_keywords(self):
         self.assertIn('fishing', self.item.get('keywords'))

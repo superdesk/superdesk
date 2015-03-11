@@ -197,5 +197,5 @@ class TasksService(BaseService):
         return self.patch(item_id, {'task': user})
 
 superdesk.privilege(name='tasks',
-                    label='Tasks Management',
-                    description='User can manage tasks.')
+                    label='Move Content to another desk',
+                    description='Move Content to another desk')

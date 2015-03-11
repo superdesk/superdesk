@@ -26,12 +26,17 @@ describe('Login', function() {
     it('user can log out', function() {
         modal.login('admin', 'admin');
         element(by.css('button.current-user')).click();
+
+        // wait for sidebar animation to finish
+        browser.wait(function() {
+            return element(by.buttonText('SIGN OUT')).isDisplayed();
+        });
+
         element(by.buttonText('SIGN OUT')).click();
-        browser.get('/');
-        modal = new Login();
-        expect(modal.btn.isDisplayed()).toBe(true);
-        expect(modal.username.isDisplayed()).toBe(true);
-        expect(modal.username.getAttribute('value')).toBe('');
+
+        browser.wait(function() {
+            return browser.driver.isElementPresent(by.id('login-btn'));
+        }, 5000);
     });
 
     it('unknown user can\'t log in', function() {

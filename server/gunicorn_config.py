@@ -7,3 +7,5 @@ workers = multiprocessing.cpu_count() * 2 + 1
 
 accesslog = '-'
 access_log_format = '%(r)s\nstatus=%(s)s time=%(T)ss bytes=%(b)s pid=%(p)s remote=%(h)s referer=%(f)s'
+
+reload = 'SUPERDESK_RELOAD' in os.environ

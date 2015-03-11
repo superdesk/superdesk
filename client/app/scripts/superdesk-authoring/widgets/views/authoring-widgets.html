@@ -10,7 +10,7 @@
             <li ng-repeat="widget in widgets | orderBy:'order'"
                 ng-if="widget.side==='left' && widget.display[widget_target]"
                 ng-class="{active: widget === active.left}">
-                <button class="btn" type="submit" ng-click="activate(widget)" ng-disabled="widget.needUnlock && item._locked">
+                <button class="btn" type="submit" ng-click="activate(widget)" ng-disabled="widget.needUnlock && item._locked" id="{{ widget.label }}">
                     <i class="big-icon-{{ widget.icon }}" title="{{ widget.label }}"></i>
                 </button>
             </li>

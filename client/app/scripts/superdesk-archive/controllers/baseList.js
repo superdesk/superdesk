@@ -25,7 +25,7 @@ define(['lodash'], function(_) {
 
         this.buildQuery = function(params, filterDesk) {
 
-            var query = search.query(params.q || null);
+            var query = search.query(params);
 
             if (filterDesk) {
                 if (desks.getCurrentStageId()) {

@@ -249,6 +249,8 @@
 			color: #888;
 			font-size: 12px;
 			width: 80%;
+			height:14%;
+			float:left;
 		}
 		.text {
 			font-size: 12px;
@@ -275,7 +277,7 @@
 		.subInfo {
 			position: absolute;
 			right: 15px;
-			bottom: 5px;
+			bottom: 1px;
 			float: right;
 		}
 		.container {
@@ -295,7 +297,7 @@
 	overflow-x: hidden;
 	margin-right: 4px;
 	li button {
-		max-width: 300px;
+		width: 300px !important;
 		padding-right: 20px !important;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -311,6 +313,9 @@
 				.opacity(20);
 			}
 		}
+	}
+	li .msg {
+		padding: 0 20px;
 	}
 }
 .multiedit-dropdown {
@@ -376,53 +381,95 @@
 					margin-top: 8px;
 				}
 			}
+			.dropdown-menu ul {
+				max-height: 290px;
+				overflow: auto;
+			}
 		}
-		.destination-list {
+		.btn-list {
+			height: 1%;
+			overflow: hidden;
+			margin-bottom: 30px;
 			li {
-				width: (@send-to-pane-width - 55)/2;
-				background: #496773;
-				padding: 10px 15px;
 				float: left;
-				color: #fff;
-				.border-box();
-				margin-bottom: 15px;
-				position: relative;
-				.border-radius(3px);
+				width: (@send-to-pane-width - 55)/2;
+				padding: 0;
+				padding: 0 0 15px;
+
 				&:nth-child(2n) {
 					margin-left: 15px; 
 				}
-				&:hover {
-					cursor: pointer;
-					background: #5ea9c8;
-				}
 
-				&.active, &:active {
-					&:after {
-						content: "";
-						position: absolute;
-						background: url(../../images/checkmark-big-full.png) no-repeat;
-						background-size: 42px;
-						background-position: 0 -2px;
-						.opacity(30);
-						top: 0;
-						width: 42px;
-						bottom: 0;
-						right: 8px;
+				button {
+					width: 100%;
+					padding: 10px 15px;
+					color: #fff;
+					background: #496773;
+					.border-box();
+					position: relative;
+					border: none;
+					.border-radius(3px);
+					&:hover {
+						cursor: pointer;
+						background: #5ea9c8;
 					}
-				}
-				&.active {
-					background: #5ea9c8;
-					.box-shadow-both(inset 0 3px 0 0 rgba(0,0,0,0.2), 0 1px 2px 0 rgba(0,0,0,0.4));
-				}
-				&:active {
-					background: darken(#5ea9c8, 5%);
-					.box-shadow(inset 0 2px 2px 0 rgba(0, 0, 0, 0.2));
-					&:after {
-						.opacity(10);
+
+					&.active, &:active {
+						&:after {
+							content: "";
+							position: absolute;
+							background: url(../../images/checkmark-big-full.png) no-repeat;
+							background-size: 42px;
+							background-position: 0 -2px;
+							.opacity(30);
+							top: 0;
+							width: 42px;
+							bottom: 0;
+							right: 8px;
+						}
+					}
+					&.active {
+						background: #5ea9c8;
+						.box-shadow-both(inset 0 3px 0 0 rgba(0,0,0,0.2), 0 1px 2px 0 rgba(0,0,0,0.4));
+					}
+					&:active {
+						background: darken(#5ea9c8, 5%);
+						.box-shadow(inset 0 2px 2px 0 rgba(0, 0, 0, 0.2));
+						&:after {
+							.opacity(10);
+						}
+					}
+
+					&.active:disabled {
+						opacity: 0.8;
+					}
+
+					&.cancel {
+						background: #4f4f4f;
+						&:hover { background: #333; }
+					}
+
+					&.save {
+						background: #5ea9c8;
 					}
 				}
 			}
 		}
+	}
+}
+
+.widget {
+	padding: 12px;
+
+	h3 {
+		margin-bottom: 0.5em;
+	}
+
+	.link-list .btn {
+		display: block;
+		width: 100%;
+		background-color: #fff;
+		color: #626262;
 	}
 }
 

@@ -1,39 +1,9 @@
-<div sd-authoring>
-    <div class="subnav">
-        <div class="clearfix pull-left">
-            <div class="state-label state-{{item.state}}">{{item.state}}</div>
-            <span class="lock-info pull-left" ng-show="item._locked"><i class="icon-lock-red"></i></span>
-            <span class="lock-text pull-left" ng-show="item._locked && isLockedByMe()" translate>This article is locked by you in another session.</span>
-            <span class="lock-text pull-left" ng-show="item._locked && !isLockedByMe()" translate>This article is locked by <b>{{ item.lock_user | username }}</b></span>
-        </div>
-        <div class="button-stack right-stack">
-            <button class="btn btn-medium pull-left" ng-if="item._locked && can_unlock() && item.state !== 'published'" ng-click="unlock()" translate>Unlock</button>
-            <button class="btn btn-medium pull-left" ng-show="!_editable && !item._locked && item.state !== 'published'" ng-click="lock() && item.state !== 'published'"" translate>Lock</button>
-            <button class="btn btn-medium pull-left" ng-click="close()" translate>Close</button>
-
-            <button class="btn btn-medium btn-info pull-left" type="submit"
-                ng-click="save(item)"
-                ng-show="_editable"
-                ng-disabled="!save_enabled()"
-                translate>Save</button>
-
-            <button class="btn btn-medium btn-info pull-left" type="submit"
-                ng-click="publish()"
-                ng-if = "item.task.desk"
-                ng-disabled="item.state ==='published'"
-                ng-show="item.state !=='published'"
-                translate>Publish</button>
-
-            <div class="navbtn dropdown strict pull-left" dropdown>
-                <button class="dropdown-toggle sd-create-btn" dropdown-toggle></button>
-                <ul class="dropdown-menu pull-right" sd-content-create></ul>
-            </div>
-
-        </div>
-    </div>
-    <div class="packaging-screen main-section">
+<div sd-authoring class="auth-screen">
+    <div sd-authoring-topbar></div>
+    <div class="packaging-screen main-section" ng-class="{'auth-sendto': views.send}">
         <div sd-authoring-widgets data-item="item">
-            <div class="page-content-container">
+            <div class="page-content-container"
+                ng-click="views.send = false">
                 <div class="content main-article">                    
                     <div sd-package-edit></div>
                 </div>
@@ -41,4 +11,6 @@
             <div sd-workqueue data-active="item" data-update="articleSwitch()" data-close="close()"></div>
         </div>
     </div>
+
+    <div sd-authoring-sidebar></div>
 </div>

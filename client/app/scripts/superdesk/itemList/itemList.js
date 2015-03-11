@@ -9,8 +9,8 @@ var DEFAULT_OPTIONS = {
     sort: [{versioncreated: 'desc'}]
 };
 
-angular.module('superdesk.itemList', [])
-.service('itemListService', ['api', function(api) {
+angular.module('superdesk.itemList', ['superdesk.search'])
+.service('itemListService', ['api', '$q', 'search', function(api, $q, search) {
     function getQuery(options) {
         var query = {source: {query: {filtered: {}}}};
         // process filter aliases and shortcuts
@@ -33,7 +33,8 @@ angular.module('superdesk.itemList', [])
             options.modificationDateAfter ||
             options.provider ||
             options.source ||
-            options.urgency
+            options.urgency ||
+            options.savedSearch
         ) {
             query.source.query.filtered.filter = {and: []};
         }
@@ -109,6 +110,7 @@ angular.module('superdesk.itemList', [])
                 }
             };
         }
+
         // process search
         if (options.search) {
             var queryContentAny = [];
@@ -124,16 +126,25 @@ angular.module('superdesk.itemList', [])
             };
         }
 
+        // process saved search
+        if (options.savedSearch && options.savedSearch._links) {
+            return api.get(options.savedSearch._links.self.href).then(function(savedSearch) {
+                var criteria = search.query(savedSearch.filter.query).getCriteria();
+                query.source.query.filtered.filter.and = query.source.query.filtered.filter.and.concat(
+                    criteria.query.filtered.filter.and
+                );
+                return query;
+            });
+        }
+
         return query;
     }
 
     this.fetch = function(options) {
         options = _.extend({}, DEFAULT_OPTIONS, options);
-        var query = getQuery(options);
-        return api(options.endpoint, options.endpointParam || undefined)
-            .query(query)
-            .then(function(result) {
-                return result;
+        return $q.when(getQuery(options)).then(function(query) {
+            return api(options.endpoint, options.endpointParam || undefined)
+                .query(query);
             });
     };
 }])
@@ -277,6 +288,8 @@ function(ItemList, notify, itemPinService) {
             scope.pinnedItems = [];
             scope.selected = null;
 
+            var oldSearch = null;
+
             var itemList = new ItemList();
 
             var _refresh = function() {
@@ -346,6 +359,15 @@ function(ItemList, notify, itemPinService) {
                 itemList.setOptions(scope.itemListOptions);
                 refresh();
             }, true);
+
+            scope.$watch('options.similar', function() {
+                if (scope.options.similar && scope.options.item) {
+                    oldSearch = scope.itemListOptions.search;
+                    scope.itemListOptions.search = scope.options.item.slugline;
+                } else {
+                    scope.itemListOptions.search = oldSearch || null;
+                }
+            });
         }
     };
 }]);

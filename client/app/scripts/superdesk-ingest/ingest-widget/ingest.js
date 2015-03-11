@@ -20,8 +20,8 @@ define([
                 sizey: 2,
                 thumbnail: require.toUrl('./thumbnail.png'),
                 template: require.toUrl('./widget-ingest.html'),
-                configurationTemplate: require.toUrl('./configuration.html'),
-                configuration: {maxItems: 10, provider: 'all', search: '', updateInterval: 5},
+                configurationTemplate: 'scripts/superdesk-archive/archive-widget/configuration.html',
+                configuration: {maxItems: 10, savedSearch: null, updateInterval: 5},
                 description: 'Ingest widget'
             });
         }])
@@ -56,13 +56,5 @@ define([
             };
 
             BaseWidgetController.call(this, $scope);
-        }])
-        .controller('IngestConfigController', ['$scope', 'api', 'BaseWidgetConfigController',
-        function ($scope, api, BaseWidgetConfigController) {
-            $scope.api = api.ingest;
-
-            BaseWidgetConfigController.call(this, $scope);
-
-            $scope.fetchProviders();
         }]);
 });

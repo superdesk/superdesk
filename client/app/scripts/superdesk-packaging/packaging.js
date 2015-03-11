@@ -18,7 +18,7 @@
         this.groupList = ['main', 'story', 'sidebars', 'fact box'];
 
         this.fetch = function fetch(_id) {
-            return api.find('packages', _id).then(function(result) {
+            return api.find('archive', _id).then(function(result) {
                 return result;
             });
         };
@@ -30,7 +30,8 @@
                 headline: item.headline || item.description || '',
                 slugline: item.slugline || '',
                 description: item.description || '',
-                state: 'draft'
+                state: 'draft',
+                type: 'composite'
             };
             var groups = [{
                 role: 'grpRole:NEP',
@@ -42,7 +43,7 @@
             });
             new_package = setDefaults(new_package, defaults);
             new_package.groups = groups;
-            return api.packages.save(new_package);
+            return api.archive.save(new_package);
         };
 
         this.createEmptyPackage = function createEmptyPackage(defaults) {
@@ -51,6 +52,7 @@
                 headline: '',
                 slugline: '',
                 description: '',
+                type: 'composite',
                 groups: [
                     {
                         role: 'grpRole:NEP',
@@ -62,7 +64,7 @@
             };
             new_package = setDefaults(new_package, defaults);
 
-            return api.packages.save(new_package);
+            return api.archive.save(new_package);
 
         };
 
@@ -150,7 +152,7 @@
         $scope.groupList = packages.groupList;
 
         function fetchContentItems(q) {
-            var query = search.query(q || null);
+            var query = search.query({q: q});
             query.size(25);
             api.archive.query(query.getCriteria(true))
             .then(function(result) {
@@ -322,7 +324,12 @@
                 scope.reorder = function(start, end) {
                     var src = _.find(scope.list, {id: start.group});
                     var dest = _.find(scope.list, {id: end.group});
-                    dest.items.splice(end.index, 0, src.items.splice(start.index, 1)[0]);
+                    if (start.index !== end.index || start.group !== end.group) {
+                        dest.items.splice(end.index, 0, src.items.splice(start.index, 1)[0]);
+                    } else {
+                        //just change the address
+                        dest.items = _.cloneDeep(dest.items);
+                    }
                 };
 
                 scope.$watch('list', function(newVal, oldVal) {
@@ -343,7 +350,17 @@
                 element.sortable({
                     items: '.package-edit-items li',
                     cursor: 'move',
-                    containment: '.package-edit',
+                    containment: '.package-edit-container',
+                    tolerance: 'pointer',
+                    placeholder: {
+                        element: function(current) {
+                            var height = current.height() - 40;
+                            return $('<li class="placeholder" style="height:' + height + 'px"></li>')[0];
+                        },
+                        update: function() {
+                            return;
+                        }
+                    },
                     start: function(event, ui) {
                         ui.item.data('start_index', ui.item.parent().find('li.sort-item').index(ui.item));
                         ui.item.data('start_group', ui.item.parent().data('group'));
@@ -363,7 +380,6 @@
                             scope.reorder(start, end);
                             scope.$apply();
                         }
-
                     },
                     update: function(event, ui) {
                         updated = true;
@@ -508,7 +524,8 @@
                     item: ['$route', 'authoring', function($route, authoring) {
                         return authoring.open($route.current.params._id, false);
                     }]
-                }
+                },
+                authoring: true
             })
             .activity('edit.package', {
                 label: gettext('Edit package'),
@@ -573,10 +590,14 @@
                 label: gettext('Package item'),
                 priority: 5,
                 icon: 'package-plus',
-                controller: ['data', 'packages', 'superdesk', function(data, packages, superdesk) {
+                controller: ['data', 'packages', 'superdesk', 'notify', 'gettext', function(data, packages, superdesk, notify, gettext) {
                     packages.createPackageFromItems([data.item])
                     .then(function(new_package) {
                         superdesk.intent('author', 'package', new_package);
+                    }, function(response) {
+                        if (response.status === 403 && response.data && response.data._message) {
+                            notify.error(gettext(response.data._message), 3000);
+                        }
                     });
                 }],
                 filters: [
@@ -585,9 +606,9 @@
             });
         }])
         .config(['apiProvider', function(apiProvider) {
-            apiProvider.api('packages', {
+            apiProvider.api('archive', {
                 type: 'http',
-                backend: {rel: 'packages'}
+                backend: {rel: 'archive'}
             });
         }])
         .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {

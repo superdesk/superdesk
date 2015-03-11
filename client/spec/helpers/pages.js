@@ -3,11 +3,13 @@
 
 exports.login = LoginModal;
 exports.workspace = new Workspace();
+exports.content = new Content();
+exports.editArticle = new EditArticle();
 
 function LoginModal() {
     this.username = element(by.model('username'));
     this.password = element(by.model('password'));
-    this.btn = element(by.css('#login-btn'));
+    this.btn = element(by.id('login-btn'));
     this.error = element(by.css('p.error'));
 
     this.login = function(username, password) {
@@ -21,28 +23,65 @@ function LoginModal() {
 }
 
 function Workspace() {
+	this.getDesk = function(name) {
+		var desks = element.all(by.repeater('desk in userDesks'));
+		return desks.all(by.css('[option="' + name.toUpperCase() + '"]'));
+	};
 
-    function switchDesk(toPersonal) {
-        expect(element(by.buttonText('PERSONAL')).isPresent()).toBe(true);
-        expect(element(by.buttonText('SPORTS DESK')).isPresent()).toBe(true);
-        element(by.buttonText('PERSONAL')).isDisplayed().then(function(isPersonal) {
-            if (isPersonal && !toPersonal) {
-                element(by.partialButtonText('PERSONAL')).click();
-                element(by.partialButtonText('SPORTS DESK')).click();
-                console.log('switching to desk');
-            } else if (!isPersonal && toPersonal) {
-                element(by.partialButtonText('SPORTS DESK')).click();
-                element(by.partialButtonText('PERSONAL')).click();
-                console.log('switching to personal');
+    this.switchToDesk = function(desk) {
+    	var selectedDesk = element(by.id('selected-desk'));
+    	var personal = element(by.css('[option="PERSONAL"]'));
+    	var getDesk = this.getDesk;
+
+		browser.wait(function() {
+			return selectedDesk.isPresent();
+		});
+
+		selectedDesk.getText().then(function(text) {
+			if (text.toUpperCase() !== desk.toUpperCase()) {
+				selectedDesk.click();
+				if (desk.toUpperCase() === 'PERSONAL') {
+					personal.click();
+				} else {
+			    	getDesk(desk).click();
+				}
+			}
+		});
+    };
+}
+
+function Content() {
+    this.setListView = function() {
+    	var list = element(by.css('[title="switch to list view"]'));
+    	list.isDisplayed().then(function(isVisible) {
+            if (isVisible) {
+            	list.click();
             }
         });
-    }
-
-    this.openPersonal = function() {
-        return switchDesk(true);
     };
+    this.setGridView = function() {
+    	var grid = element(by.css('[title="switch to grid view"]'));
+    	grid.then(function(isVisible) {
+            if (isVisible) {
+            	grid.click();
+            }
+        });
+    };
+    this.getItem = function(item) {
+    	return element.all(by.repeater('items._items')).get(item);
+    };
+    this.actionOnItem = function(action, item) {
+    	var crtItem = this.getItem(item);
+    	browser.actions().mouseMove(crtItem).perform();
+    	crtItem.element(by.css('[title="' + action + '"]')).click();
+    };
+}
 
-    this.openDesk = function() {
-        return switchDesk(false);
+function EditArticle() {
+    this.markAction = function() {
+    	element(by.className('svg-icon-add-to-list')).click();
+    };
+    this.closeAction = function() {
+    	element(by.css('[ng-click="close()"]')).click();
     };
 }
