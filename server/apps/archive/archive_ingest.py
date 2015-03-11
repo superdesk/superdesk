@@ -88,9 +88,8 @@ class ArchiveIngestService(BaseService):
                 remove_unwanted(dest_doc)
                 set_original_creator(dest_doc)
 
-                desk = doc.get('desk')
-
-                self.archive_references(dest_doc, desk)
+                self.archive_references(dest_doc, doc.get('desk'),
+                                        doc.get('stage'), doc.get('state', STATE_FETCHED))
 
                 superdesk.get_resource_service(ARCHIVE).post([dest_doc])
                 insert_into_versions(dest_doc.get('guid'))
@@ -100,13 +99,13 @@ class ArchiveIngestService(BaseService):
 
         return new_guids
 
-    def archive_references(self, dest_doc, desk):
+    def archive_references(self, dest_doc, desk, stage, state):
         for ref in [ref for group in dest_doc.get('groups', [])
                     for ref in group.get('refs', []) if 'residRef' in ref]:
             ref['location'] = ARCHIVE
             ref['guid'] = ref['residRef']
 
-        refs = [{'guid': ref.get('residRef'), 'desk': desk}
+        refs = [{'guid': ref.get('residRef'), 'desk': desk, 'stage': stage, 'state': state}
                 for group in dest_doc.get('groups', [])
                 for ref in group.get('refs', []) if 'residRef' in ref]
         if refs:

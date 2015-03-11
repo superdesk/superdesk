@@ -284,7 +284,7 @@ def fetch_from_provider(context, provider_name, guid, routing_scheme=None):
     for item in items:
         item['versioncreated'] = utcnow()
         item['expiry'] = utcnow() + timedelta(minutes=20)
-    
+
     context.ingest_items(items, provider, rule_set=provider.get('rule_set'),
                          routing_scheme=provider.get('routing_scheme'))
 
@@ -1327,7 +1327,8 @@ def validate_routed_item(context, rule_name, is_routed):
                 assert item[0]['task']['desk'] == str(destination['desk'])
                 assert item[0]['task']['stage'] == str(destination['stage'])
                 assert item[0]['state'] == state
-                assert_items_in_package(item[0], state)
+                assert_items_in_package(item[0], state,
+                                        str(destination['desk']), str(destination['stage']))
             else:
                 assert len(item) == 0
 
@@ -1372,7 +1373,7 @@ def get_archive_items(query):
     return list(get_resource_service('archive').get(lookup=None, req=req))
 
 
-def assert_items_in_package(item, state):
+def assert_items_in_package(item, state, desk, stage):
     if item.get('groups'):
         terms = [{'term': {'_id': ref.get('residRef')}}
                  for ref in [ref for group in item.get('groups', [])
@@ -1383,3 +1384,5 @@ def assert_items_in_package(item, state):
         assert len(items) == len(terms)
         for item in items:
             assert item.get('state') == state
+            assert item.get('task', {}).get('desk') == desk
+            assert item.get('task', {}).get('stage') == stage
