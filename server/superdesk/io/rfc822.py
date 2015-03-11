@@ -18,6 +18,9 @@ from apps.archive.archive_media import generate_guid, GUID_TAG
 import io
 from flask import current_app as app
 import email
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class rfc822Parser(Parser):
@@ -57,12 +60,31 @@ class rfc822Parser(Parser):
                 for part in msg.walk():
                     if part.get_content_type() == "text/plain":
                         body = part.get_payload(decode=True)
-                        text_body = body.decode('utf-8')
-                        continue
+                        try:
+                            # if we don't know the charset just have a go!
+                            if part.get_content_charset() is None:
+                                text_body = body.decode()
+                            else:
+                                charset = part.get_content_charset()
+                                text_body = body.decode(charset)
+                            continue
+                        except Exception as ex:
+                            logger.exception("Exception parsing text body for {0} from {1}".format(msg['subject'],
+                                                                                                   msg['from']), ex)
+                            continue
                     if part.get_content_type() == "text/html":
                         body = part.get_payload(decode=True)
-                        html_body = body.decode('utf-8')
-                        continue
+                        try:
+                            if part.get_content_charset() is None:
+                                html_body = body.decode()
+                            else:
+                                charset = part.get_content_charset()
+                                html_body = body.decode(charset)
+                            continue
+                        except Exception as ex:
+                            logger.exception("Exception parsing text html for {0} from {1}".format(msg['subject'],
+                                                                                                   msg['from']), ex)
+                            continue
                     if part.get_content_maintype() == 'multipart':
                         continue
                     if part.get('Content-Disposition') is None:

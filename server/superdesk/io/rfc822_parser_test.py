@@ -52,3 +52,20 @@ class rfc822ComplexTestCase(TestCase):
         self.assertEqual(len(self.items), 3)
         for item in self.items:
             self.assertIn('versioncreated', item)
+
+
+class rfc822OddCharSet(TestCase):
+    filename = 'odd_charset_email.txt'
+
+    def setUp(self):
+        setup(context=self)
+        with self.app.app_context():
+            dirname = os.path.dirname(os.path.realpath(__file__))
+            fixture = os.path.join(dirname, 'fixtures', self.filename)
+            with open(fixture, mode='rb') as f:
+                bytes = f.read()
+            parser = rfc822Parser()
+            self.items = parser.parse_email([(1, bytes)])
+
+    def test_headline(self):
+        self.assertEqual(self.items[0]['headline'], 'Gol PGA')
