@@ -14,7 +14,7 @@ Feature: Macros
         When we get "/macros?desk=POLITICS"
         Then we get list with 2 items
             """
-            {"_items": [{"name": "mex_to_aud", "label": "Convert MEX to AUD", "description": "Convert MEX to AUD.", "shortcut": "c"}]}
+            {"_items": [{"name": "populate_abstract", "label": "Populate Abstract", "description": "Populate the abstract field with the first sentence of the body", "shortcut": "a"}]}
             """
 
     @auth

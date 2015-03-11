@@ -6,7 +6,7 @@ Use `superdesk.macros.macros.register` for registration.
 """
 import sys
 import imp
-macros = ['macros.currency', 'macros.currencymex']
+macros = ['macros.currency', 'macros.abstract_populator']
 
 try:
     already_imported = sorted(sys.modules.keys())
