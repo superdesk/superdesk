@@ -4,22 +4,10 @@ This module will get reloaded per request to be up to date.
 
 Use `superdesk.macros.macros.register` for registration.
 """
-import sys
-import imp
-macros = ['macros.currency', 'macros.abstract_populator']
+from superdesk.macros import load_module
 
-try:
-    already_imported = sorted(sys.modules.keys())
-    loaded = False
-    for t in already_imported:
-        if t in macros:
-            m = sys.modules[t]
-            imp.reload(m)
-            loaded = True
-            continue
+macros = ['macros.currency',
+          'macros.abstract_populator']
 
-    if not loaded:
-        for m in macros:
-            __import__(m)
-except Exception as ex:
-    pass
+for macro in macros:
+    load_module(macro)

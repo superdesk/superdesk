@@ -16,20 +16,22 @@ from flask import current_app as app
 
 
 def load_macros():
-    """Import macros modules.
+    module = app.config['MACROS_MODULE']
+    load_module(module)
 
-    If module was imported before it will reload it.
+
+def load_module(module):
+    """
+    It will load the given module
+    If the module is loaded before it will reload it
+    :param module: name of he module
     """
     try:
-        module = app.config['MACROS_MODULE']
-        already_imported = sorted(sys.modules.keys())
-        for t in already_imported:
-            if t == module:
-                m = sys.modules[t]
-                imp.reload(m)
-                return
-
-        importlib.import_module(module)
+        if module in sys.modules.keys():
+            m = sys.modules[module]
+            imp.reload(m)
+        else:
+            importlib.import_module(module)
     except ImportError:
         pass
 
