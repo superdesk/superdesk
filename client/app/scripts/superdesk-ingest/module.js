@@ -436,9 +436,16 @@ define([
                     _orig = scheme;
                 };
 
-                scope.save = function(scheme) {
-                    var _new = scheme._id ? false : true;
-                    api('routing_schemes').save(_orig, scheme)
+                scope.save = function() {
+                    if (scope.rule) {
+                        if (scope.ruleIndex === -1) {
+                            scope.editScheme.rules.push(scope.rule);
+                        } else {
+                            scope.editScheme.rules[scope.ruleIndex] = scope.rule;
+                        }
+                    }
+                    var _new = scope.editScheme._id ? false : true;
+                    api('routing_schemes').save(_orig, scope.editScheme)
                     .then(function() {
                         if (_new) {
                             scope.schemes.push(_orig);
@@ -452,6 +459,7 @@ define([
 
                 scope.cancel = function() {
                     scope.editScheme = null;
+                    scope.rule = null;
                 };
 
                 scope.remove = function(scheme) {
@@ -502,20 +510,6 @@ define([
                 scope.editRule = function(rule) {
                     scope.ruleIndex = _.findIndex(scope.editScheme.rules, rule);
                     scope.rule = _.clone(rule);
-                };
-
-                scope.cancelRule = function() {
-                    scope.rule = null;
-                    scope.ruleIndex = null;
-                };
-
-                scope.saveRule = function(rule) {
-                    if (scope.ruleIndex === -1) {
-                        scope.editScheme.rules.push(rule);
-                    } else {
-                        scope.editScheme.rules[scope.ruleIndex] = rule;
-                    }
-                    scope.cancelRule();
                 };
 
                 scope.reorder = function(start, end) {
