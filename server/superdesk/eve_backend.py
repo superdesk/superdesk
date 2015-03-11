@@ -60,11 +60,23 @@ class EveBackend():
         :param endpoint_name: api resource name
         :param id: document id
         :param updates: changes made to document
+        :param original: original document
         """
         # change etag on update so following request will refetch it
         updates.setdefault(app.config['LAST_UPDATED'], utcnow())
         updates.setdefault(app.config['ETAG'], document_etag(updates))
+        return self.system_update(endpoint_name, id, updates, original)
 
+    def system_update(self, endpoint_name, id, updates, original):
+        """Only update what is provided, without affecting etag/last_updated.
+
+        This is useful when you want to make some changes without affecting users.
+
+        :param endpoint_name: api resource name
+        :param id: document id
+        :param updates: changes made to document
+        :param original: original document
+        """
         backend = self._backend(endpoint_name)
         res = backend.update(endpoint_name, id, updates, original)
 

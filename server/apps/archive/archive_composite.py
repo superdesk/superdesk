@@ -134,11 +134,8 @@ class PackageService():
         if not delete:
             two_way_links.append({'package': package_id})
 
-        # do update without changing etag/last_modified
         updates = self.get_item_update_data(item, two_way_links, delete)
-        updates['_etag'] = item['_etag']
-        updates['_updated'] = item['_updated']
-        get_resource_service(endpoint).update(item_id, updates, item)
+        get_resource_service(endpoint).system_update(item_id, updates, item)
 
     """
     Add extensibility point for item patch data.
