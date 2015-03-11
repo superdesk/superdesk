@@ -485,6 +485,9 @@ define([
                 };
 
                 scope.removeRule = function(rule) {
+                    if (rule === scope.rule) {
+                        scope.rule = null;
+                    }
                     _.remove(scope.editScheme.rules, rule);
                 };
 
@@ -511,12 +514,12 @@ define([
                             hour_of_day_to: '2355'
                         }
                     };
+                    scope.editScheme.rules.push(rule);
                     scope.editRule(rule);
                 };
 
                 scope.editRule = function(rule) {
-                    scope.ruleIndex = _.findIndex(scope.editScheme.rules, rule);
-                    scope.rule = _.clone(rule);
+                    scope.rule = rule;
                 };
 
                 scope.reorder = function(start, end) {
@@ -548,7 +551,10 @@ define([
     IngestRoutingGeneral.$inject = ['desks'];
     function IngestRoutingGeneral(desks) {
         return {
-            scope: {rule: '='},
+            scope: {
+                rule: '=',
+                removeAction: '='
+            },
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-general.html',
             link: function(scope) {
                 scope.typeLookup = typeLookup;
@@ -558,6 +564,12 @@ define([
                     scope.deskLookup = desks.deskLookup;
                     scope.stageLookup = desks.stageLookup;
                 });
+
+                scope.remove = function() {
+                    if (typeof scope.removeAction === 'function') {
+                        return scope.removeAction(scope.rule);
+                    }
+                }
             }
         };
     }
@@ -658,7 +670,7 @@ define([
 
                 scope.removeGenre = function(genre) {
                     _.remove(scope.rule.filter.genre, function(g) {
-                        return g === genre.value;
+                        return g === genre;
                     });
                 };
 
