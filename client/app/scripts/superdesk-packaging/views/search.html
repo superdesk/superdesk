@@ -25,17 +25,20 @@
                         <i class="filetype-icon-{{pitem.type}}"></i>
                         <span ng-if="!itemInPackage(pitem)" ng-click="addToSelected(pitem)" class="select" sd-check ng-model="pitem.multi"></span>
                     </div>
-                    <p><span class="keyword" ng-if="pitem.slugline">{{ pitem.slugline }}</span>{{ pitem.headline || pitem.type }}</p>
-                    <div class="dropdown group-select" dropdown>
+
+                    <p><span class="keyword" ng-if="pitem.slugline">{{ pitem.slugline }}</span>{{pitem.headline || pitem.type}}</p>
+                    <ul class="item-functions" ng-if="!itemInPackage(pitem) && !pitem.multi">  
+                    <li class="dropdown group-select" dropdown>
 					    <button title="Add to package" class="dropdown-toggle" dropdown-toggle>
 						    <i class="icon-package-plus"></i>
 					    </button>
-					    <ul class="dropdown-menu">
+					    <ul class="dropdown-menu pull-right">
 				            <li ng-repeat="t in groupList">
                                 <button option="{{ t | uppercase  }}" ng-click="addItemToGroup(t, pitem);">{{ t | uppercase  }}</button>
                             </li>
 					    </ul>
-					</div>
+					</li>
+				   </ul>                
                 </li>
             </ul>
         </div>

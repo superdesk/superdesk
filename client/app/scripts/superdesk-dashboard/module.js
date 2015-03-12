@@ -21,7 +21,12 @@ define([
                         reloadRoute = true;
                     }
 
-                    desks.setCurrentDesk(desk);
+                    if (desk._id === 'personal') {
+                    	desks.setCurrentDesk('');
+                    } else {
+                    	desks.setCurrentDesk(desk);
+                    }
+
                     scope.selected = desk;
 
                     if (angular.isDefined(desk) && desk._id === 'personal') {
@@ -41,7 +46,7 @@ define([
                         if (!currentDeskId) {
                             preferencesService.get('desk:last_worked').then(
                                 function(desk) {
-                                    if (desk !== '') {
+                                    if (desk !== '' && desk !== 'personal') {
                                         scope.select(_.find(scope.userDesks, {_id: desk}), false);
                                     } else {
                                         scope.select(scope.userDesks[0], false);
