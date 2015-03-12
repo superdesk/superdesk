@@ -134,7 +134,8 @@ define([
                     });
 
                     scope.setPackageSingle = function(selected) {
-                        api.ingest.getById(selected)
+                        var repo = selected.location || 'ingest';
+                        api(repo).getById(selected.residRef)
                             .then(function(item) {
                                 scope.setSingleItem(item);
                             }, function(response) {
@@ -237,11 +238,11 @@ define([
         .directive('sdSingleItem', [ function() {
 
             return {
-                replace: true,
                 templateUrl: require.toUrl('./views/single-item-preview.html'),
                 scope: {
                     item: '=',
-                    contents: '='
+                    contents: '=',
+                    setitem: '&'
                 }
             };
         }])

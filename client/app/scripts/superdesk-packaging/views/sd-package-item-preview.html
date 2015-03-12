@@ -14,25 +14,17 @@
 			<div ng-if="type === 'video'"><i class="filetype-icon-large-video"></i></div>
 		</div>
 
-	    <div ng-if="item.guid">
-	        <div class="item-headline">
-	            <a ng-href="#/{{type !== 'composite' ? 'authoring' : 'packaging'}}/{{ item.guid }}?_id={{ item.guid }}" title="{{ item.headline }}">
-	                <div ng-show="item.headline || item.slugline || item.description">
-	                    {{ item.headline || item.slugline || item.description}}
-	                </div>
-	                <div ng-hide="item.headline || item.slugline || item.description" translate>Blank headline received</div>
-	            </a>
-	        </div>
-	    </div>
+        <div class="item-headline">
+            <div ng-show="item.headline || item.slugline || item.description">
+                {{ item.headline || item.slugline  || item.description}}
+            </div>
+            <div ng-hide="item.headline || item.slugline || item.description" translate>Blank headline received</div>
+        </div>
 
-	    <div ng-if="!item.guid">
-	        <div class="item-headline">
-	            <div ng-show="item.headline || item.slugline || item.description">
-	                {{ item.headline || item.slugline  || item.description}}
-	            </div>
-	            <div ng-hide="item.headline || item.slugline || item.description" translate>Blank headline received</div>
-	        </div>
-	    </div>
+        <a ng-href="#/{{type !== 'composite' ? 'authoring' : 'packaging'}}/{{ item.guid }}?_id={{ item.guid }}" 
+        	title="{{'Open item' | translate }}" ng-if="item.guid" ng-click="$event.stopPropagation();" class="open-item">
+            <i class="icon-external"></i>
+        </a>
 
 	    <div class="alert alert-error" ng-show="error" translate>Problems occured while fetching data.</div>
 	</div>
