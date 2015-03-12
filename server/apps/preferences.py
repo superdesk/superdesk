@@ -30,6 +30,8 @@ def init_app(app):
     endpoint_name = 'preferences'
     service = PreferencesService(endpoint_name, backend=get_backend())
     PreferencesResource(endpoint_name, app=app, service=service)
+    app.on_session_end -= service.on_session_end
+    app.on_session_end += service.on_session_end
 
     superdesk.intrinsic_privilege(resource_name=endpoint_name, method=['PATCH'])
 
@@ -91,6 +93,14 @@ class PreferencesResource(Resource):
 
 class PreferencesService(BaseService):
 
+    def on_session_end(self, user_id, session_id):
+        service = get_resource_service('users')
+        user_doc = service.find_one(req=None, _id=user_id)
+        session_prefs = user_doc.get(_session_preferences_key, {}).copy()
+        if session_id in session_prefs:
+            del session_prefs[session_id]
+            service.patch(user_id, session_prefs)
+
     def set_session_based_prefs(self, session_id, user_id):
         user_doc = get_resource_service('users').find_one(req=None, _id=user_id)
         updates = {}
@@ -133,7 +143,7 @@ class PreferencesService(BaseService):
 
     def on_fetched_item(self, doc):
         session_id = request.view_args['_id']
-        session_prefs = doc.get(_session_preferences_key, {})[session_id]
+        session_prefs = doc.get(_session_preferences_key, {}).get(session_id, {})
         doc[_session_preferences_key] = session_prefs
 
     def on_update(self, updates, original):
@@ -154,7 +164,9 @@ class PreferencesService(BaseService):
             for k in ((k for k, v in session_prefs.items() if k not in superdesk.default_session_preferences)):
                 raise ValidationError('Invalid preference: %s' % k)
 
-            existing_session_preferences[session_id].update(session_prefs)
+            existing = existing_session_preferences.get(session_id, {})
+            existing.update(session_prefs)
+            existing_session_preferences[session_id] = existing
             updates[_session_preferences_key] = existing_session_preferences
 
     def update_user_prefs(self, updates, existing_user_preferences):
@@ -169,8 +181,12 @@ class PreferencesService(BaseService):
 
     def update(self, id, updates, original):
         session = get_resource_service('sessions').find_one(req=None, _id=original['_id'])
-        original = self.backend.find_one(self.datasource, req=None, _id=session['user'])
-        return self.backend.update(self.datasource, original['_id'], updates, original)
+        original_unpatched = self.backend.find_one(self.datasource, req=None, _id=session['user'])
+        res = self.backend.update(self.datasource, original_unpatched['_id'], updates, original_unpatched)
+        # Return only the patched session prefs
+        session_prefs = updates.get(_session_preferences_key, {}).get(str(original['_id']), {})
+        updates[_session_preferences_key] = session_prefs
+        return res
 
     def enhance_document_with_default_prefs(self, session_doc, user_doc):
         orig_user_prefs = user_doc.get(_preferences_key, {})
@@ -220,5 +236,7 @@ class PreferencesService(BaseService):
             return False
 
         session = get_resource_service('sessions').find_one(req=None, _id=kwargs.get('user_id'))
+        if not session:
+            return False
         authorized = str(g.user['_id']) == str(session.get("user"))
         return authorized

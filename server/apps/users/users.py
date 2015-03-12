@@ -117,6 +117,8 @@ class UsersResource(Resource):
         'desk'
     ]
 
+    etag_ignore_fields = ['session_preferences']
+
     datasource = {
         'projection': {
             'password': 0

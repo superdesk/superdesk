@@ -149,6 +149,10 @@ Feature: User preferences
         """
         {"session_preferences": {"desk:items": [123]}}
         """
+        When we delete "/auth/#SESSION_ID#"
+        Given we login as user "test_user" with password "test_password"
+        When we get "/preferences/#SESSION_ID#"
+        Then we get error 404
 
     @auth
     Scenario: Get active privileges from user with preferences
