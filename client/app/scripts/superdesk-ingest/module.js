@@ -569,7 +569,7 @@ define([
                     if (typeof scope.removeAction === 'function') {
                         return scope.removeAction(scope.rule);
                     }
-                }
+                };
             }
         };
     }
