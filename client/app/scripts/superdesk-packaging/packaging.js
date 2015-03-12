@@ -171,6 +171,7 @@
 
         $scope.addItemToGroup = function addItemsToGroup(group, item) {
             packages.addItemsToPackage($scope.item, group, [item]);
+            $scope.autosave($scope.item);
         };
 
         fetchContentItems();
@@ -208,6 +209,7 @@
         $scope.addMultiItemsToGroup = function(group) {
             //add to group
             packages.addItemsToPackage($scope.item, group, $scope.multiSelected);
+            $scope.autosave($scope.item);
 
             //uncheck all
             _.each($scope.multiSelected, function(item) {
@@ -251,11 +253,10 @@
 
     function PackageItemsEditDirective() {
         return {
-            scope: {},
+            scope: false,
             require: 'ngModel',
             templateUrl: 'scripts/superdesk-packaging/views/sd-package-items-edit.html',
             link: function(scope, elem, attrs, ngModel) {
-
                 ngModel.$render = function() {
                     scope.list = ngModel.$viewValue;
                 };
@@ -319,6 +320,7 @@
                 scope.remove = function(group_id, residRef) {
                     var group = _.find(scope.list, {id: group_id});
                     _.remove(group.items, {residRef: residRef});
+                    autosave();
                 };
 
                 scope.reorder = function(start, end) {
@@ -330,13 +332,13 @@
                         //just change the address
                         dest.items = _.cloneDeep(dest.items);
                     }
+                    autosave();
                 };
 
-                scope.$watch('list', function(newVal, oldVal) {
-                    if (newVal !== oldVal) {
-                        ngModel.$setViewValue({list: scope.list});
-                    }
-                }, true);
+                function autosave() {
+                    ngModel.$setViewValue({list: scope.list});
+                    scope.autosave(scope.item);
+                }
             }
         };
     }
