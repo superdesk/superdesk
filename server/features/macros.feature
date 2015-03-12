@@ -18,6 +18,22 @@ Feature: Macros
             """
 
     @auth
+    @clean
+    Scenario: Get list of updated macros
+        Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "Politics"}]
+        """
+        Given we create a new macro "behave_macro.py"
+
+        When we get "/macros?desk=POLITICS"
+        Then we get list with 2+ items
+            """
+            {"_items": [{"name": "update_fields", "label": "Update Fields", "description": "Updates the abstract field", "shortcut": "w"}]}
+            """
+
+    @auth
     Scenario: Trigger macro via name
         When we post to "/macros"
             """

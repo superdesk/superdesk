@@ -12,6 +12,7 @@ import os
 from superdesk import tests
 from superdesk.io.tests import setup_providers, teardown_providers
 from settings import LDAP_SERVER
+from features.steps.steps import get_macro_path
 from flask import json
 
 
@@ -58,6 +59,12 @@ def after_scenario(context, scenario):
 
     if 'notification' in scenario.tags:
         tests.teardown_notification(context)
+
+    if 'clean' in scenario.tags:
+        try:
+            os.remove(get_macro_path('behave_macro.py'))
+        except:
+            pass
 
 
 def before_step(context, step):

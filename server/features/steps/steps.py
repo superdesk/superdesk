@@ -35,6 +35,7 @@ from os.path import basename
 from superdesk.tests import test_user, get_prefixed_url, set_placeholder
 from re import findall
 from eve.utils import ParsedRequest
+import shutil
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 
@@ -80,6 +81,11 @@ def json_match(context_data, response_data):
 def get_fixture_path(fixture):
     abspath = os.path.abspath(os.path.dirname(__file__))
     return os.path.join(abspath, 'fixtures', fixture)
+
+
+def get_macro_path(macro):
+    abspath = os.path.abspath("macros")
+    return os.path.join(abspath, macro)
 
 
 def get_self_href(resource, context):
@@ -254,6 +260,13 @@ def step_impl_when_auth(context):
             set_placeholder(context, 'AUTH_ID', item['_id'])
         context.headers.append(('Authorization', b'basic ' + b64encode(item['token'].encode('ascii') + b':')))
         context.user = item['user']
+
+
+@given('we create a new macro "{macro_name}"')
+def step_create_new_macro(context, macro_name):
+    src = get_fixture_path(macro_name)
+    dst = get_macro_path(macro_name)
+    shutil.copyfile(src, dst)
 
 
 @when('we fetch from "{provider_name}" ingest "{guid}"')
