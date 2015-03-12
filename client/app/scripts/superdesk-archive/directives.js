@@ -134,7 +134,8 @@ define([
                     });
 
                     scope.setPackageSingle = function(selected) {
-                        api.ingest.getById(selected)
+                        var repo = selected.location || 'ingest';
+                        api(repo).getById(selected.residRef)
                             .then(function(item) {
                                 scope.setSingleItem(item);
                             }, function(response) {
@@ -237,11 +238,11 @@ define([
         .directive('sdSingleItem', [ function() {
 
             return {
-                replace: true,
                 templateUrl: require.toUrl('./views/single-item-preview.html'),
                 scope: {
                     item: '=',
-                    contents: '='
+                    contents: '=',
+                    setitem: '&'
                 }
             };
         }])
@@ -310,7 +311,11 @@ define([
         .directive('sdItemRendition', function() {
             return {
                 templateUrl: require.toUrl('./views/item-rendition.html'),
-                scope: {item: '=', rendition: '@'},
+                scope: {
+                    item: '=',
+                    rendition: '@',
+                    ratio: '=?'
+                },
                 link: function(scope, elem) {
                     scope.$watch('item.renditions[rendition].href', function(href) {
                         var figure = elem.find('figure'),
@@ -323,15 +328,63 @@ define([
                                 } else {
                                     figure.html(img);
                                 }
+                                _calcRatio();
                             };
 
                             img.onerror = function() {};
                             img.src = href;
                         }
                     });
+
+                    var stopRatioWatch = scope.$watch('ratio', function(val) {
+                        if (val === undefined) {
+                            stopRatioWatch();
+                        }
+                        calcRatio();
+                    });
+
+                    var calcRatio = _.debounce(_calcRatio, 150);
+
+                    function _calcRatio() {
+                        var el = elem.find('figure');
+                        if (el && scope.ratio) {
+                            var img = el.find('img')[0];
+                            var ratio = img ? img.naturalWidth / img.naturalHeight : 1;
+                            if (scope.ratio > ratio) {
+                                el.parent().addClass('portrait');
+                            } else {
+                                el.parent().removeClass('portrait');
+                            }
+                        }
+                    }
                 }
             };
         })
+        .directive('sdRatioCalc', ['$window', function($window) {
+            return {
+                link: function(scope, elem) {
+
+                    var win = angular.element($window);
+
+                    calcRatio();
+
+                    function calcRatio() {
+                        scope.ratio = elem.outerWidth() / elem.outerHeight();
+                    }
+
+                    function ratioOnResize() {
+                        calcRatio();
+                        scope.$apply();
+                    }
+
+                    win.bind('resize', ratioOnResize);
+
+                    scope.$on('$destroy', function() {
+                        win.unbind('resize', ratioOnResize);
+                    });
+                }
+            };
+        }])
         .directive('sdHtmlPreview', ['$sce', function($sce) {
             return {
                 scope: {sdHtmlPreview: '='},
