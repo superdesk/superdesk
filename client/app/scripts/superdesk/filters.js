@@ -25,10 +25,13 @@ define([
             };
         }).
         filter('mergeWords', function() {
-            return function(array) {
+            return function(array, propertyName) {
                 var subjectMerged = [];
                 _.forEach(array, function(item) {
-                    subjectMerged.push(item.name);
+                    var value = (propertyName == null?item:item[propertyName]);
+                    if (value) {
+                        subjectMerged.push(value);
+                    }
                 });
 
                 return subjectMerged.join(', ');
