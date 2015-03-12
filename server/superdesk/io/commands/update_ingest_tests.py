@@ -213,10 +213,10 @@ class UpdateIngestTest(TestCase):
         self.assertEquals('update-ingest-foo-abc', ingest.get_task_id(provider))
 
     def test_is_idle(self):
-        provider = dict(idle_time=dict(hours=1, minutes=0, seconds=0))
+        provider = dict(idle_time=dict(hours=1, minutes=0))
         provider['last_item_update'] = utcnow()
         self.assertEquals(ingest.get_is_idle(provider), False)
         provider['idle_time']['hours'] = -1
         self.assertEquals(ingest.get_is_idle(provider), True)
-        provider['idle_time'] = dict(hours=0, minutes=0, seconds=0)
+        provider['idle_time'] = dict(hours=0, minutes=0)
         self.assertEquals(ingest.get_is_idle(provider), False)

@@ -34,7 +34,7 @@ UPDATE_SCHEDULE_DEFAULT = {'minutes': 5}
 LAST_UPDATED = 'last_updated'
 LAST_ITEM_UPDATE = 'last_item_update'
 STATE_INGESTED = 'ingested'
-IDLE_TIME_DEFAULT = {'hours': 0, 'minutes': 0, 'seconds': 0}
+IDLE_TIME_DEFAULT = {'hours': 0, 'minutes': 0}
 
 
 logger = logging.getLogger(__name__)
@@ -108,9 +108,8 @@ def get_is_idle(providor):
     last_item = providor.get(LAST_ITEM_UPDATE)
     idle_time = providor.get('idle_time', IDLE_TIME_DEFAULT)
     # there is an update time and the idle time is none zero
-    if last_item and (idle_time['hours'] != 0 or idle_time['minutes'] != 0 or idle_time['seconds'] != 0):
-        if utcnow() > last_item + timedelta(hours=idle_time['hours'], minutes=idle_time['minutes'],
-                                            seconds=idle_time['seconds']):
+    if last_item and (idle_time['hours'] != 0 or idle_time['minutes'] != 0):
+        if utcnow() > last_item + timedelta(hours=idle_time['hours'], minutes=idle_time['minutes']):
             return True
     return False
 

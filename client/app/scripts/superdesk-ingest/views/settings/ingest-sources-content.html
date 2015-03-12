@@ -70,7 +70,7 @@
                                     </div>
 
                                     <div class="field">
-                                            <label for="idle-hours" translate>Notify after idle for</label>
+                                            <label for="idle-hours" translate>Notify when idle for more than</label>
                                             <select id="idle-hours" class="input-mini"
                                                 ng-model="provider.idle_time.hours"
                                                 ng-options="hrs as hrs for hrs in hours"
@@ -79,10 +79,6 @@
                                                 ng-model="provider.idle_time.minutes"
                                                 ng-options="min as min for min in minutes"
                                             ></select> <span translate>min</span>
-                                            <select class="input-mini"
-                                                ng-model="provider.idle_time.seconds"
-                                                ng-options="sec as sec for sec in seconds"
-                                            ></select> <span translate>sec</span>
                                     </div>
 
                                     <div class="field credentials">

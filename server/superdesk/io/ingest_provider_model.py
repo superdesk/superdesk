@@ -69,7 +69,6 @@ class IngestProviderResource(Resource):
             'schema': {
                 'hours': {'type': 'integer'},
                 'minutes': {'type': 'integer'},
-                'seconds': {'type': 'integer'},
             }
         },
         'last_updated': {'type': 'datetime'},

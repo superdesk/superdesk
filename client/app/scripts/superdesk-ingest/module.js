@@ -217,7 +217,7 @@ define([
             link: function($scope) {
 
                 var DEFAULT_SCHEDULE = {minutes: 5, seconds: 0};
-                var DEFAULT_IDLE_TIME = {hours: 0, minutes: 0, seconds: 0};
+                var DEFAULT_IDLE_TIME = {hours: 0, minutes: 0};
 
                 $scope.provider = null;
                 $scope.origProvider = null;
