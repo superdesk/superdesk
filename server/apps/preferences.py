@@ -118,9 +118,6 @@ class PreferencesService(BaseService):
         session_prefs.setdefault(str(session_id), available)
         updates[_session_preferences_key] = session_prefs
 
-        self.enhance_document_with_user_privileges(updates)
-        updates[_action_key] = get_privileged_actions(updates[_privileges_key])
-
         self.backend.update(self.datasource, user_id, updates, user_doc)
 
     def set_user_initial_prefs(self, user_doc):
@@ -130,13 +127,10 @@ class PreferencesService(BaseService):
             available.update(orig_user_prefs)
             user_doc[_user_preferences_key] = available
 
-        self.enhance_document_with_user_privileges(user_doc)
-        user_doc[_action_key] = get_privileged_actions(user_doc[_privileges_key])
-
     def find_one(self, req, **lookup):
         session = get_resource_service('sessions').find_one(req=None, _id=lookup['_id'])
         _id = session['user'] if session else lookup['_id']
-        doc = super().find_one(req, _id=_id)
+        doc = get_resource_service('users').find_one(req, _id=_id)
         if doc:
             doc['_id'] = session['_id'] if session else _id
         return doc
@@ -146,6 +140,8 @@ class PreferencesService(BaseService):
         session_prefs = doc.get(_session_preferences_key, {}).get(session_id, {})
         doc[_session_preferences_key] = session_prefs
 
+        self.enhance_document_with_user_privileges(doc)
+
     def on_update(self, updates, original):
         # Beware, dragons ahead
         existing_user_preferences = original.get(_user_preferences_key, {}).copy()
@@ -154,9 +150,6 @@ class PreferencesService(BaseService):
         self.update_user_prefs(updates, existing_user_preferences)
         session_id = request.view_args['_id']
         self.update_session_prefs(updates, existing_session_preferences, session_id)
-
-        self.enhance_document_with_user_privileges(updates)
-        updates[_action_key] = get_privileged_actions(updates[_privileges_key])
 
     def update_session_prefs(self, updates, existing_session_preferences, session_id):
         session_prefs = updates.get(_session_preferences_key)
@@ -182,10 +175,15 @@ class PreferencesService(BaseService):
     def update(self, id, updates, original):
         session = get_resource_service('sessions').find_one(req=None, _id=original['_id'])
         original_unpatched = self.backend.find_one(self.datasource, req=None, _id=session['user'])
-        res = self.backend.update(self.datasource, original_unpatched['_id'], updates, original_unpatched)
+        updated = original_unpatched.copy()
+        updated.update(updates)
+        del updated['_id']
+        res = self.backend.update(self.datasource, original_unpatched['_id'], updated, original_unpatched)
+        updates.update(updated)
         # Return only the patched session prefs
         session_prefs = updates.get(_session_preferences_key, {}).get(str(original['_id']), {})
         updates[_session_preferences_key] = session_prefs
+        self.enhance_document_with_user_privileges(updates)
         return res
 
     def enhance_document_with_default_prefs(self, session_doc, user_doc):
@@ -206,6 +204,7 @@ class PreferencesService(BaseService):
     def enhance_document_with_user_privileges(self, user_doc):
         role_doc = get_resource_service('users').get_role(user_doc)
         get_resource_service('users').set_privileges(user_doc, role_doc)
+        user_doc[_action_key] = get_privileged_actions(user_doc[_privileges_key])
 
     def get_user_preference(self, user_id):
         """

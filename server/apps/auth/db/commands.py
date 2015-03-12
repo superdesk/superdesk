@@ -91,6 +91,7 @@ class GetAuthTokenCommand(superdesk.Command):
         }
         service = superdesk.get_resource_service('auth')
         id = str(service.post([credentials])[0])
+        print('Session ID:', id)
         creds = service.find_one(req=None, _id=id)
         token = creds.get('token').encode('ascii')
         encoded_token = b'basic ' + b64encode(token + b':')
