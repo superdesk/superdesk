@@ -1073,21 +1073,21 @@
 
                     scope.select = function(user) {
                         scope.selected = user;
-                        keyBinder();
+                        bindKeys();
                     };
                     scope.$watch('selected', function(selected) {
                        if (selected == null) {
-                            keyBinder();
+                            bindKeys();
                        }
                     });
 
-                    function keyBinder() {
-                        initializeKeyBinder();
+                    function bindKeys() {
+                        unbindKeys();
                         keyboardManager.bind('down', moveDown);
                         keyboardManager.bind('up', moveUp);
                     }
 
-                    function initializeKeyBinder() {
+                    function unbindKeys() {
                         keyboardManager.unbind('down');
                         keyboardManager.unbind('up');
                     }
