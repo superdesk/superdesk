@@ -72,7 +72,6 @@
             }
 
             return api.find(RESOURCE, item._id).then(function(autosave) {
-                extendItem(item, autosave);
                 item._autosave = autosave;
                 return item;
             }, function(err) {
@@ -88,10 +87,9 @@
             timeouts[item._id] = $timeout(function() {
                 var diff = extendItem({_id: item._id}, item);
                 return api.save(RESOURCE, {}, diff).then(function(_autosave) {
+                    extendItem(item, _autosave);
                     var orig = Object.getPrototypeOf(item);
                     orig._autosave = _autosave;
-                    extendItem(orig._autosave, item);
-                    extendItem(orig, item);
                 });
             }, AUTOSAVE_TIMEOUT);
             return timeouts[item._id];
@@ -504,7 +502,7 @@
                  */
                 $scope.closePreview = function() {
                     $scope.item = _.create($scope.origItem);
-                    extendItem($scope.item, $scope.origItem._autosave || {});
+                    extendItem($scope.item, $scope.item._autosave || {});
                     $scope._editable = authoring.isEditable($scope.origItem);
                 };
 
@@ -514,6 +512,7 @@
                 $scope.can_unlock = function() {
                     return lock.can_unlock($scope.item);
                 };
+
                 $scope.save_enabled = function() {
                     return $scope.dirty || $scope.item._autosave;
                 };

@@ -230,7 +230,8 @@ describe('autosave', function() {
         $timeout.flush(5000);
         expect(api.save).toHaveBeenCalledWith('archive_autosave', {}, {_id: 1, headline: 'test'});
         expect(item._autosave._id).toBe(2);
-        expect(item.headline).toBe('test');
+        expect(edit.headline).toBe('test');
+        expect(item.headline).not.toBe('test');
     }));
 
     it('can save multiple items', inject(function(autosave, api, $q, $timeout, $rootScope) {
