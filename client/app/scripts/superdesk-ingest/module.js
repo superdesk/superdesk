@@ -217,6 +217,7 @@ define([
             link: function($scope) {
 
                 var DEFAULT_SCHEDULE = {minutes: 5, seconds: 0};
+                var DEFAULT_IDLE_TIME = {hours: 0, minutes: 0};
 
                 $scope.provider = null;
                 $scope.origProvider = null;
@@ -224,6 +225,7 @@ define([
                 $scope.types = providerTypes;
                 $scope.minutes = [0, 1, 2, 3, 4, 5, 8, 10, 15, 30, 45];
                 $scope.seconds = [0, 5, 10, 15, 30, 45];
+                $scope.hours = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
 
                 fetchProviders();
 
@@ -249,6 +251,7 @@ define([
                     $scope.origProvider = provider || {};
                     $scope.provider = _.create($scope.origProvider);
                     $scope.provider.update_schedule = $scope.origProvider.update_schedule || DEFAULT_SCHEDULE;
+                    $scope.provider.idle_time = $scope.origProvider.idle_time || DEFAULT_IDLE_TIME;
                     $scope.provider.notifications = $scope.origProvider.notifications;
                 };
 

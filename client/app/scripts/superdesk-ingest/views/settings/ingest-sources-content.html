@@ -69,6 +69,18 @@
                                             ></select> <span translate>sec</span>
                                     </div>
 
+                                    <div class="field">
+                                            <label for="idle-hours" translate>Notify when idle for more than</label>
+                                            <select id="idle-hours" class="input-mini"
+                                                ng-model="provider.idle_time.hours"
+                                                ng-options="hrs as hrs for hrs in hours"
+                                            ></select> <span translate>hrs</span>       
+                                            <select id="idle-minutes" class="input-mini"
+                                                ng-model="provider.idle_time.minutes"
+                                                ng-options="min as min for min in minutes"
+                                            ></select> <span translate>min</span>
+                                    </div>
+
                                     <div class="field credentials">
                                         <div ng-include="types[provider.type].templateUrl"></div>
                                     </div>
