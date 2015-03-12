@@ -84,7 +84,6 @@ function MetadataListEditingDirective() {
 					!_.find(scope.item[scope.field], searchObj));
 					});
 				}
-
 				return scope.terms;
 			};
 
