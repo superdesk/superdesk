@@ -313,11 +313,14 @@
 				}
 			}
 		}
-
+		.media-info {
+			position: relative;
+		}
 		h5 {
 			position: absolute;
-			left: @sfbox_sidepadding+2;
-			right: @sfbox_sidepadding+2;
+			left: 0;
+			right: 0;
+			top: 0;
 			width:auto;
 			white-space:nowrap;
 			overflow:hidden;
@@ -326,14 +329,19 @@
 			font-size:11px;
 			color:#444;
 			text-transform: uppercase;
+			&.shifted {
+				left: 20px;
+			}
 		}
 		dl {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 20px;
 			.clearfix();
 			font-size:11px;
-			position:relative;
 			height:auto;
 			margin:0 2px;
-			padding-top: 20px;
 			dt {
 				width:auto;
 				float: left;
@@ -408,6 +416,13 @@
 		&.locked {
 			border-bottom-color: #e51c23 !important;
 		}
+
+		.highlights-title {
+			display: block;
+			float: left;
+			margin-top: -2px;
+		}
+
 		/* control buttons on the bottom */
 		.item-functions {
 			background: #fff;
