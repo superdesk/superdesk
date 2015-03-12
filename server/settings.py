@@ -243,5 +243,5 @@ DAYS_TO_KEEP = int(env('INGEST_ARTICLES_TTL', '2'))
 
 MACROS_MODULE = env('MACROS_MODULE', 'macros')
 
-WS_HOST = env('WSHOST', '127.0.0.1')
+WS_HOST = env('WSHOST', '0.0.0.0')
 WS_PORT = env('WSPORT', '5100')
