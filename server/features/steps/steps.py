@@ -44,7 +44,6 @@ def test_json(context):
     except Exception:
         fail_and_print_body(context.response, 'response is not valid json')
     context_data = json.loads(apply_placeholders(context, context.text))
-    print('Response:', response_data)
     assert_equal(json_match(context_data, response_data), True,
                  msg=str(context_data) + '\n != \n' + str(response_data))
 
