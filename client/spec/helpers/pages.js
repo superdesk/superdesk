@@ -83,7 +83,7 @@ function Content() {
 }
 
 function Authoring() {
-    this.markAction = function() {
+    this.markForHighlights = function() {
     	element(by.className('svg-icon-add-to-list')).click();
     };
     this.close = function() {
