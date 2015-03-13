@@ -143,16 +143,17 @@
          *
          *   and save it if dirty, unlock if editable, and remove from work queue at all times
          *
-         * @param {Object} diff Edits.
+         * @param {Object} diff
+         * @param {Object} orig
          * @param {boolean} isDirty $scope dirty status.
          */
-        this.close = function closeAuthoring(diff, isDirty) {
+        this.close = function closeAuthoring(diff, orig, isDirty) {
             var promise = $q.when();
             if (this.isEditable(diff)) {
                 if (isDirty) {
                     promise = confirm.confirm()
                         .then(angular.bind(this, function save() {
-                            return this.save(diff);
+                            return this.save(orig, diff);
                         }), function() { // ignore saving
                             return $q.when();
                         });
@@ -186,13 +187,11 @@
 
             // Finding if all the keys are dirty for real
             if (angular.isDefined(origItem)) {
-                var keysInDiff = _.keys(diff);
-                for (var i = 0; i < keysInDiff.length; i++) {
-                    var keyName = keysInDiff[i];
-                    if (_.isEqual(diff[keyName], origItem[keyName])) {
-                        delete diff[keyName];
+                angular.forEach(_.keys(diff), function(key) {
+                    if (_.isEqual(diff[key], origItem[key])) {
+                        delete diff[key];
                     }
-                }
+                });
             }
 
             autosave.stop(item);
@@ -467,7 +466,7 @@
                  */
                 $scope.close = function() {
                     _closing = true;
-                    authoring.close($scope.origItem, $scope.dirty).then(function() {
+                    authoring.close($scope.item, $scope.origItem, $scope.dirty).then(function() {
                         $location.url($scope.referrerUrl);
                     });
                 };

@@ -174,7 +174,7 @@ describe('authoring', function() {
             var edit = Object.create(item);
             edit.headline = 'test';
 
-            authoring.close(edit, true);
+            authoring.close(edit, item, true);
             $rootScope.$digest();
 
             expect(confirm.confirm).toHaveBeenCalled();
@@ -184,7 +184,7 @@ describe('authoring', function() {
             confirmDefer.resolve();
             $rootScope.$digest();
 
-            expect(authoring.save).toHaveBeenCalledWith(edit);
+            expect(authoring.save).toHaveBeenCalledWith(item, edit);
             expect(lock.unlock).toHaveBeenCalled();
         }));
 
