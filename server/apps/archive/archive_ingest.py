@@ -28,6 +28,7 @@ from superdesk.services import BaseService
 from .archive import SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 from superdesk.notification import push_notification
+from superdesk import get_resource_service
 STATE_FETCHED = 'fetched'
 
 
@@ -63,9 +64,14 @@ class ArchiveIngestService(BaseService):
             else:
                 # We are fetching from ingest
                 ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=doc.get('guid'))
+
                 if not ingest_doc:
                     msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
                     raise SuperdeskApiError.notFoundError(msg)
+
+                if doc.get('macro'):
+                    # there is a macro so transform it
+                    ingest_doc = get_resource_service('macros').execute_macro(ingest_doc, doc.get('macro'))
 
                 if not is_workflow_state_transition_valid('fetch_as_from_ingest', ingest_doc[config.CONTENT_STATE]):
                     raise InvalidStateTransitionError()

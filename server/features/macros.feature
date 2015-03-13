@@ -12,7 +12,7 @@ Feature: Macros
     @auth
     Scenario: Get list of all macros by desk
         When we get "/macros?desk=POLITICS"
-        Then we get list with 2 items
+        Then we get list with 2+ items
             """
             {"_items": [{"name": "populate_abstract", "label": "Populate Abstract", "description": "Populate the abstract field with the first sentence of the body", "shortcut": "a"}]}
             """

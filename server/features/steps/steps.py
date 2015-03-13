@@ -1315,13 +1315,19 @@ def then_ingest_item_is_routed_based_on_routing_scheme(context, rule_name):
         validate_routed_item(context, rule_name, True)
 
 
+@then('the ingest item is routed and transformed based on routing scheme and rule "{rule_name}"')
+def then_ingest_item_is_routed_transformed_based_on_routing_scheme(context, rule_name):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        validate_routed_item(context, rule_name, True, True)
+
+
 @then('the ingest item is not routed based on routing scheme and rule "{rule_name}"')
-def then_ingest_item_is_routed_based_on_routing_scheme(context, rule_name):
+def then_ingest_item_is_not_routed_based_on_routing_scheme(context, rule_name):
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
         validate_routed_item(context, rule_name, False)
 
 
-def validate_routed_item(context, rule_name, is_routed):
+def validate_routed_item(context, rule_name, is_routed, is_transformed=False):
     def validate_rule(action, state):
         for destination in rule.get('actions', {}).get(action, []):
             query = {
@@ -1340,6 +1346,10 @@ def validate_routed_item(context, rule_name, is_routed):
                 assert item[0]['task']['desk'] == str(destination['desk'])
                 assert item[0]['task']['stage'] == str(destination['stage'])
                 assert item[0]['state'] == state
+
+                if is_transformed:
+                    assert item[0]['abstract'] == 'Abstract has been updated'
+
                 assert_items_in_package(item[0], state,
                                         str(destination['desk']), str(destination['stage']))
             else:

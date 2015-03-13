@@ -72,6 +72,7 @@ class MacroRegister():
 
         :param name: macro name
         """
+        load_macros()
         for macro in self.macros:
             if macro.get('name') == name:
                 return macro
