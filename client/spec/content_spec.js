@@ -26,7 +26,7 @@ describe('Content', function() {
         expect(selectedHeadline()).toBe('item1');
 
         body.sendKeys(protractor.Key.RIGHT);
-        expect(selectedHeadline()).toBe('item5');
+        expect(selectedHeadline()).toBe('item2');
 
         body.sendKeys(protractor.Key.LEFT);
         expect(selectedHeadline()).toBe('item1');
