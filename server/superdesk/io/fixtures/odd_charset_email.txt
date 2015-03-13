@@ -63,7 +63,7 @@ Received: from [192.168.0.12] (cpe-23-243-23-41.socal.res.rr.com.
 From: Ben <benjamin.everill@a.com>
 Content-Type: multipart/alternative;
 	boundary="Apple-Mail=_AE919A27-F8A2-477D-8399-5C792C905091"
-Subject: Gol PGA
+Subject: =?windows-1252?Q?TravTalk’s_Special_for_TAAI_convention?=
 Message-ID: <7173E056-46C9-4D5A-A851-9FC2C587C691@gmail.com>
 Date: Tue, 10 Mar 2015 14:17:01 -0700
 To: <a_a@a.com.au>
