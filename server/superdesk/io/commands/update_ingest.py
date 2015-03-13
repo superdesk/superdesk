@@ -14,7 +14,7 @@ import superdesk
 
 from flask import current_app as app
 from settings import INGEST_EXPIRY_MINUTES
-from datetime import timedelta, timezone
+from datetime import timedelta, timezone, datetime
 from werkzeug.exceptions import HTTPException
 
 from superdesk.notification import push_notification
@@ -107,9 +107,17 @@ def get_task_ttl(provider):
 def get_is_idle(providor):
     last_item = providor.get(LAST_ITEM_UPDATE)
     idle_time = providor.get('idle_time', IDLE_TIME_DEFAULT)
+    if isinstance(idle_time['hours'], datetime):
+        idle_hours = 0
+    else:
+        idle_hours = idle_time['hours']
+    if isinstance(idle_time['minutes'], datetime):
+        idle_minutes = 0
+    else:
+        idle_minutes = idle_time['minutes']
     # there is an update time and the idle time is none zero
-    if last_item and (idle_time['hours'] != 0 or idle_time['minutes'] != 0):
-        if utcnow() > last_item + timedelta(hours=idle_time['hours'], minutes=idle_time['minutes']):
+    if last_item and (idle_hours != 0 or idle_minutes != 0):
+        if utcnow() > last_item + timedelta(hours=idle_hours, minutes=idle_minutes):
             return True
     return False
 
