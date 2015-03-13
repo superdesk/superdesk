@@ -63,7 +63,7 @@
                             <span class="title" translate>Fetch</span>:
                             <ul>
                                 <li ng-repeat="fetchAction in rule.actions.fetch">
-                                    - {{deskLookup[fetchAction.desk].name}} / {{stageLookup[fetchAction.stage].name}}
+                                    - {{deskLookup[fetchAction.desk].name}} / {{stageLookup[fetchAction.stage].name}} / {{macroLookup[fetchAction.macro].label}}
                                 </li>
                             </ul>
                         </div>

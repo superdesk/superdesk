@@ -313,3 +313,80 @@ Feature: Auto Routing
           "ingest": "AFP.121974877.6504909"
         }
         """
+
+    @auth @provider @clean
+    Scenario: Content is fetched and transformed different stages
+        Given empty "desks"
+        When we post to "/desks"
+        """
+          {
+            "name": "Politics", "members": [{"user": "#CONTEXT_USER_ID#"}]
+          }
+        """
+        Then we get response code 201
+        Given we create a new macro "behave_macro.py"
+        When we post to "/routing_schemes"
+        """
+        [
+          {
+            "name": "routing rule scheme 1",
+            "rules": [
+              {
+                "name": "Politics Rule 1",
+                "filter": {
+                  "subject": [{"qcode": "04000000"}]
+                },
+                "actions": {
+                  "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "macro": "update_fields"}],
+                  "exit": false
+                }
+              }
+            ]
+          }
+        ]
+        """
+        Then we get response code 201
+        When we post to "/stages"
+        """
+        [
+          {
+            "name": "Published",
+            "description": "Published Content",
+            "task_status": "in_progress",
+            "desk": "#desks._id#"
+          }
+        ]
+        """
+        When we patch routing scheme "/routing_schemes/#routing_schemes._id#"
+        """
+           {
+              "name": "Politics Rule 2",
+              "filter": {
+                "subject": [{"qcode": "04000000"}]
+              },
+              "actions": {
+                "fetch": [{"desk": "#desks._id#", "stage": "#stages._id#", "macro": "update_fields"}],
+                "exit": false
+              }
+           }
+        """
+        Then we get response code 200
+        When we schedule the routing scheme "#routing_schemes._id#"
+        When we fetch from "AAP" ingest "aap-finance.xml" using routing_scheme
+        """
+        #routing_schemes._id#
+        """
+        Then the ingest item is not routed based on routing scheme and rule "Politics Rule 1"
+        """
+        {
+          "routing_scheme": "#routing_schemes._id#",
+          "ingest": "AFP.121974877.6504909"
+        }
+        """
+        Then the ingest item is routed and transformed based on routing scheme and rule "Politics Rule 2"
+        """
+        {
+          "routing_scheme": "#routing_schemes._id#",
+          "ingest": "AFP.121974877.6504909"
+        }
+        """

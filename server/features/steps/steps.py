@@ -35,6 +35,7 @@ from os.path import basename
 from superdesk.tests import test_user, get_prefixed_url, set_placeholder
 from re import findall
 from eve.utils import ParsedRequest
+import shutil
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 
@@ -80,6 +81,11 @@ def json_match(context_data, response_data):
 def get_fixture_path(fixture):
     abspath = os.path.abspath(os.path.dirname(__file__))
     return os.path.join(abspath, 'fixtures', fixture)
+
+
+def get_macro_path(macro):
+    abspath = os.path.abspath("macros")
+    return os.path.join(abspath, macro)
 
 
 def get_self_href(resource, context):
@@ -254,6 +260,13 @@ def step_impl_when_auth(context):
             set_placeholder(context, 'AUTH_ID', item['_id'])
         context.headers.append(('Authorization', b'basic ' + b64encode(item['token'].encode('ascii') + b':')))
         context.user = item['user']
+
+
+@given('we create a new macro "{macro_name}"')
+def step_create_new_macro(context, macro_name):
+    src = get_fixture_path(macro_name)
+    dst = get_macro_path(macro_name)
+    shutil.copyfile(src, dst)
 
 
 @when('we fetch from "{provider_name}" ingest "{guid}"')
@@ -1302,13 +1315,19 @@ def then_ingest_item_is_routed_based_on_routing_scheme(context, rule_name):
         validate_routed_item(context, rule_name, True)
 
 
+@then('the ingest item is routed and transformed based on routing scheme and rule "{rule_name}"')
+def then_ingest_item_is_routed_transformed_based_on_routing_scheme(context, rule_name):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        validate_routed_item(context, rule_name, True, True)
+
+
 @then('the ingest item is not routed based on routing scheme and rule "{rule_name}"')
-def then_ingest_item_is_routed_based_on_routing_scheme(context, rule_name):
+def then_ingest_item_is_not_routed_based_on_routing_scheme(context, rule_name):
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
         validate_routed_item(context, rule_name, False)
 
 
-def validate_routed_item(context, rule_name, is_routed):
+def validate_routed_item(context, rule_name, is_routed, is_transformed=False):
     def validate_rule(action, state):
         for destination in rule.get('actions', {}).get(action, []):
             query = {
@@ -1327,6 +1346,10 @@ def validate_routed_item(context, rule_name, is_routed):
                 assert item[0]['task']['desk'] == str(destination['desk'])
                 assert item[0]['task']['stage'] == str(destination['stage'])
                 assert item[0]['state'] == state
+
+                if is_transformed:
+                    assert item[0]['abstract'] == 'Abstract has been updated'
+
                 assert_items_in_package(item[0], state,
                                         str(destination['desk']), str(destination['stage']))
             else:

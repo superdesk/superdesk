@@ -53,7 +53,8 @@ class RoutingRuleSchemeResource(Resource):
                                     'type': 'dict',
                                     'schema': {
                                         'desk': Resource.rel('desks', True),
-                                        'stage': Resource.rel('stages', True)
+                                        'stage': Resource.rel('stages', True),
+                                        'macro': {'type': 'string'}
                                     }
                                 }
                             },
@@ -63,7 +64,8 @@ class RoutingRuleSchemeResource(Resource):
                                     'type': 'dict',
                                     'schema': {
                                         'desk': Resource.rel('desks', True),
-                                        'stage': Resource.rel('stages', True)
+                                        'stage': Resource.rel('stages', True),
+                                        'macro': {'type': 'string'}
                                     }
                                 }
                             },
@@ -266,8 +268,11 @@ class RoutingRuleSchemeService(BaseService):
         for destination in destinations:
             try:
                 item_id = get_resource_service('archive_ingest') \
-                    .post([{'guid': ingest_item['guid'], 'desk': str(destination.get('desk')),
-                            'stage': str(destination.get('stage')), 'state': STATE_ROUTED}])[0]
+                    .post([{'guid': ingest_item['guid'],
+                            'desk': str(destination.get('desk')),
+                            'stage': str(destination.get('stage')),
+                            'state': STATE_ROUTED,
+                            'macro': destination.get('macro', None)}])[0]
                 archive_items.append(item_id)
             except:
                 logger.exception("Failed to fetch item %s to desk %s" % (ingest_item['guid'], destination))

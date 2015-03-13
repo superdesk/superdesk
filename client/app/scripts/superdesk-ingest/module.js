@@ -548,8 +548,8 @@ define([
         SUN: 'Sunday'
     };
 
-    IngestRoutingGeneral.$inject = ['desks'];
-    function IngestRoutingGeneral(desks) {
+    IngestRoutingGeneral.$inject = ['desks', 'macros'];
+    function IngestRoutingGeneral(desks, macros) {
         return {
             scope: {
                 rule: '=',
@@ -559,6 +559,8 @@ define([
             link: function(scope) {
                 scope.typeLookup = typeLookup;
                 scope.dayLookup = dayLookup;
+                scope.macroLookup = {};
+
                 desks.initialize()
                 .then(function() {
                     scope.deskLookup = desks.deskLookup;
@@ -570,6 +572,12 @@ define([
                         return scope.removeAction(scope.rule);
                     }
                 };
+
+                macros.get().then(function(macros) {
+                    _.transform(macros, function(lookup, macro, idx) {
+                        scope.macroLookup[macro.name] = macro;
+                    });
+                });
             }
         };
     }
@@ -693,8 +701,8 @@ define([
         };
     }
 
-    IngestRoutingAction.$inject = ['desks'];
-    function IngestRoutingAction(desks) {
+    IngestRoutingAction.$inject = ['desks', 'macros'];
+    function IngestRoutingAction(desks, macros) {
         return {
             scope: {rule: '='},
             templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-action.html',
@@ -703,11 +711,18 @@ define([
                 scope.newPublish = {};
                 scope.deskLookup = {};
                 scope.stageLookup = {};
+                scope.macroLookup = {};
 
                 desks.initialize()
                 .then(function() {
                     scope.deskLookup = desks.deskLookup;
                     scope.stageLookup = desks.stageLookup;
+                });
+
+                macros.get().then(function(macros) {
+                    _.transform(macros, function(lookup, macro, idx) {
+                        scope.macroLookup[macro.name] = macro;
+                    });
                 });
 
                 scope.addFetch = function() {

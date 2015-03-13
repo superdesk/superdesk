@@ -9,13 +9,13 @@
             </label>
             <ul class="pills-list ruleset-list clearfix">
                 <li class="pill-small pull-left" ng-repeat="fetchAction in rule.actions.fetch">
-                    <div class="name right-pad">{{deskLookup[fetchAction.desk].name}} / {{stageLookup[fetchAction.stage].name}}</div>
+                    <div class="name right-pad">{{deskLookup[fetchAction.desk].name}} / {{stageLookup[fetchAction.stage].name}} / {{macroLookup[fetchAction.macro].label}}</div>
                     <div class="actions">
                         <button ng-click="removeFetch(fetchAction)" title="{{:: 'Remove fetch action' | translate }}"><i class="icon-trash"></i></button>
                     </div>
                 </li>
             </ul>
-            <div ng-show="showNewFetch" sd-deskstagepicker data-desk="newFetch.desk" data-stage="newFetch.stage"></div>
+            <div ng-show="showNewFetch" sd-desk-stage-macro-picker data-desk="newFetch.desk" data-stage="newFetch.stage" data-macro="newFetch.macro"></div>
             <button ng-show="showNewFetch" class="btn" ng-click="addFetch();showNewFetch = false" ng-disabled="!newFetch.desk || !newFetch.stage" translate>Add</button>
             <button ng-show="showNewFetch" class="btn" ng-click="showNewFetch = false" translate>Cancel</button>
         </div>
@@ -30,13 +30,13 @@
             </label>
             <ul class="pills-list ruleset-list clearfix">
                 <li class="pill-small pull-left" ng-repeat="publishAction in rule.actions.publish">
-                    <div class="name right-pad">{{deskLookup[publishAction.desk].name}} / {{stageLookup[publishAction.stage].name}}</div>
+                    <div class="name right-pad">{{deskLookup[publishAction.desk].name}} / {{stageLookup[publishAction.stage].name}} / {{macroLookup[publishAction.macro].label}}</div>
                     <div class="actions">
                         <button ng-click="removePublish(publishAction)" title="{{:: 'Remove publish action' | translate }}"><i class="icon-trash"></i></button>
                     </div>
                 </li>
             </ul>
-            <div ng-show="showNewPublish" sd-deskstagepicker data-desk="newPublish.desk" data-stage="newPublish.stage"></div>
+            <div ng-show="showNewPublish" sd-desk-stage-macro-picker data-desk="newPublish.desk" data-stage="newPublish.stage"></div>
             <button ng-show="showNewPublish" class="btn" ng-click="addPublish();showNewPublish = false" ng-disabled="!newPublish.desk || !newPublish.stage" translate>Add</button>
             <button ng-show="showNewPublish" class="btn" ng-click="showNewPublish = false" translate>Cancel</button>
         </div>

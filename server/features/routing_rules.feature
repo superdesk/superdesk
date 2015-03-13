@@ -25,7 +25,7 @@ Feature: Routing Scheme and Routing Rules
                 "category": [{"name": "Overseas Sport", "qcode": "S"}]
               },
               "actions": {
-                "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+                "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "macro": "transform"}]
               }
             }
           ]
@@ -48,7 +48,7 @@ Feature: Routing Scheme and Routing Rules
                     "category": [{"name": "Overseas Sport", "qcode": "S"}]
                   },
                   "actions": {
-                    "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+                    "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "macro": "transform"}]
                   }
                 }
               ]
@@ -429,7 +429,7 @@ Feature: Routing Scheme and Routing Rules
               "category": [{"name": "Australian News", "qcode": "A"}]
             },
             "actions": {
-              "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}]
+              "fetch": [{"desk": "#desks._id#", "stage": "#desks.incoming_stage#", "macro": "transform"}]
             }
           },
           {
