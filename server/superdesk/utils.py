@@ -13,8 +13,6 @@ import bcrypt
 from uuid import uuid4
 from enum import Enum
 from importlib import import_module
-from flask import current_app as app
-from .utc import utcnow
 
 
 class FileSortAttributes(Enum):
@@ -32,12 +30,6 @@ class SortOrder(Enum):
     """
     asc = 1
     desc = 2
-
-
-def last_updated(*docs):
-    """Get last last updated date for all given docs."""
-    dates = [d.get(app.config['LAST_UPDATED']) for d in docs if d and d.get(app.config['LAST_UPDATED'])]
-    return max(dates) if dates else utcnow()
 
 
 def get_random_string(length=12):
