@@ -12,11 +12,7 @@ describe('Content', function() {
     });
 
     afterEach(function() {
-        var currBrowser = browserManager.getBrowser();
-        if (currBrowser !== browser) {
-            browserManager.setBrowser(browser);
-            currBrowser.close();
-        }
+        browserManager.setBrowser(browser);
     });
 
     it('increment package version', function() {
