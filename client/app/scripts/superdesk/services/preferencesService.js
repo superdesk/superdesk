@@ -126,7 +126,7 @@ define(['angular', 'lodash'], function(angular, _) {
                 }
             };
 
-            function updatePreferences (type, updates, key) {
+            function updatePreferences(type, updates, key) {
 
                 var original_prefs = _.cloneDeep(loadLocally());
                 var user_updates = {};
@@ -135,13 +135,13 @@ define(['angular', 'lodash'], function(angular, _) {
                 if (!api) { api = $injector.get('api'); }
 
                 return api.save('preferences', original_prefs, user_updates)
-                    .then(function(result) {
-                        saveLocally(result, type, key);
-                        return result;
-                    }, function(response) {
-                        console.error(response);
-                        notify.error(gettext('User preference could not be saved...'));
-                    });
+                .then(function(result) {
+                    saveLocally(result, type, key);
+                    return result;
+                }, function(response) {
+                    console.error(response);
+                    notify.error(gettext('User preference could not be saved...'));
+                });
             }
 
             $rootScope.$watch(function() {
