@@ -331,7 +331,9 @@ define([
                                 _calcRatio();
                             };
 
-                            img.onerror = function() {};
+                            img.onerror = function() {
+                                figure.html('');
+                            };
                             img.src = href;
                         }
                     });

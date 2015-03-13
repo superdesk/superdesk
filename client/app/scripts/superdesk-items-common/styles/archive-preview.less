@@ -566,8 +566,8 @@
 				}
 				img {
 					max-width: 100%;
-					max-height: auto;
 					height: auto !important;
+					flex: 0 1 100%; 
 				}
 				&.portrait {
 					> figure {
@@ -657,37 +657,44 @@
 
 			}
 		}
-		.condensed-preview, .navigation {
+		.condensed-preview, {
 			position: absolute;
 			right: 0; top: 0; bottom:0; left:0;
 		}
 		&.composite {
-			.condensed-preview, .navigation {
+			.condensed-preview, .navigation.left {
 				left : @lightbox-composite-condensed;
 			}
 			&.open {
-				.condensed-preview, .navigation {
+				.condensed-preview, .navigation.left {
 					left : @lightbox-composite-width;
 				}
 			}
 		}
 		.navigation {
+			position: absolute;
 			top: 50%;
 			height: 80px;
 			margin-top: -120px;
-			button {
-				padding: 12px 25px;
-				border: 0;
-				background: 0;
+			padding: 12px 25px;
+			border: 0;
+			background: 0;
+			&.left {
+				left: 0;
+			}
+			&.right {
+				right: 0;
+				left: auto;
+			}
+			i {
+				.opacity(40);
+			}
+			&:hover {
 				i {
-					.opacity(40);
-				}
-				&:hover {
-					i {
-						.opacity(100);
-					}
+					.opacity(100);
 				}
 			}
+			
 		}
 		.lightbox-caption {
 			background: rgba(0,0,0,0.7);

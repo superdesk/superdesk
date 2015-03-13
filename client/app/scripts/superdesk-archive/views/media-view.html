@@ -23,14 +23,13 @@
 
         <div sd-single-item data-item="singleItem" data-setitem="setPackageSingle(selected)"></div>
 
-        <div class="navigation">
-            <button class="pull-left" ng-click="prev()" ng-disabled="!prevEnabled" title="{{ 'previous' | translate }}">
-                <i class="arrow-icon-large-left"></i>
-            </button>
-            <button class="pull-right" ng-click="next()" ng-disabled="!nextEnabled" title="{{ 'next' | translate }}">
-                <i class="arrow-icon-large-right"></i>
-            </button>
-        </div>
+
+        <button class="navigation left" ng-click="prev()" ng-disabled="!prevEnabled" title="{{ 'previous' | translate }}">
+            <i class="arrow-icon-large-left"></i>
+        </button>
+        <button class="navigation right" ng-click="next()" ng-disabled="!nextEnabled" title="{{ 'next' | translate }}">
+            <i class="arrow-icon-large-right"></i>
+        </button>
 
     </section>
     <!-- end of preview pane -->
