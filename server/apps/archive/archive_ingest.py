@@ -69,12 +69,12 @@ class ArchiveIngestService(BaseService):
                     msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
                     raise SuperdeskApiError.notFoundError(msg)
 
+                if not is_workflow_state_transition_valid('fetch_as_from_ingest', ingest_doc[config.CONTENT_STATE]):
+                    raise InvalidStateTransitionError()
+
                 if doc.get('macro'):
                     # there is a macro so transform it
                     ingest_doc = get_resource_service('macros').execute_macro(ingest_doc, doc.get('macro'))
-
-                if not is_workflow_state_transition_valid('fetch_as_from_ingest', ingest_doc[config.CONTENT_STATE]):
-                    raise InvalidStateTransitionError()
 
                 archived = utcnow()
                 superdesk.get_resource_service('ingest').patch(ingest_doc.get('_id'), {'archived': archived})
