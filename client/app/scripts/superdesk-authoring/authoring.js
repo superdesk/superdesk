@@ -20,7 +20,8 @@
         located: null,
         dateline: '',
         language: null,
-        unique_name: ''
+        unique_name: '',
+        keywords: []
     };
 
     /**
