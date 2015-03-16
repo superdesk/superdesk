@@ -45,4 +45,8 @@ function Content() {
     	expect(crtItem.element(by.className('icon-star-color')).isDisplayed()).toBeTruthy();
     	expect(crtItem.element(by.className('icon-star-color')).getAttribute('tooltip')).toContain(highlight);
     };
+
+    this.getCount = function () {
+    	return element.all(by.repeater('items._items')).count();
+    };
 }

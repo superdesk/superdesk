@@ -22,15 +22,19 @@ function Authoring() {
     this.markAction = function() {
         return element(by.className('svg-icon-add-to-list')).click();
     };
+
     this.close = function() {
         return element(by.css('[ng-click="close()"]')).click();
     };
+
     this.save = function() {
         return element(by.css('[ng-click="save(item)"]')).click();
     };
+
     this.showSearch = function() {
         return element(by.id('Search')).click();
     };
+
     this.showVersions = function() {
         return element(by.css('[title="Versions"]')).click();
     };
@@ -38,6 +42,11 @@ function Authoring() {
     this.getSearchItem = function(item) {
         return element.all(by.repeater('pitem in contentItems')).get(item);
     };
+
+    this.getSearchItemCount = function () {
+    	return browserManager.getElement().all(by.repeater('pitem in contentItems')).count();
+    };
+
     this.addToGroup = function(item, group) {
         var crtItem = this.getSearchItem(item);
         browser.actions().mouseMove(crtItem).perform();
@@ -45,6 +54,7 @@ function Authoring() {
         var groups = crtItem.all(by.repeater('t in groupList'));
         return groups.all(by.css('[option="' + group.toUpperCase() + '"]')).click();
     };
+
     this.addMultiToGroup = function(group) {
         return element.all(by.css('[class="icon-package-plus"]')).first()
             .waitReady()
@@ -56,12 +66,15 @@ function Authoring() {
                     .click();
             });
     };
+
     this.getGroupItems = function(group) {
         return element(by.id(group.toUpperCase())).all(by.repeater('item in group.items'));
     };
+
     this.getGroupItem = function(group, item) {
         return this.getGroupItems(group).get(item);
     };
+
     this.moveToGroup = function(srcGroup, scrItem, dstGroup, dstItem) {
         var src = this.getGroupItem(srcGroup, scrItem).element(by.css('[class="info"]'));
         var dst = this.getGroupItem(dstGroup, dstItem).element(by.css('[class="info"]'));
@@ -80,6 +93,7 @@ function Authoring() {
                 });
         });
     };
+
     this.selectSearchItem = function(item) {
       var crtItem = this.getSearchItem(item);
       var icon = crtItem.element(by.tagName('i'));
@@ -90,5 +104,13 @@ function Authoring() {
       }).then(function() {
           crtItem.element(by.css('[ng-click="addToSelected(pitem)"]')).click();
       });
+    };
+
+    this.markForHighlights = function() {
+    	element(by.className('svg-icon-add-to-list')).click();
+    };
+
+    this.getSubnav = function() {
+    	return browserManager.getElement()(by.id('subnav'));
     };
 }
