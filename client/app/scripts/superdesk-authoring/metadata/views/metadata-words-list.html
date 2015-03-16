@@ -1,0 +1,8 @@
+<div class="term-editor data visible">
+    <input ng-model="term" type="text" ng-disabled="disabled" autocomplete="off" ng-keyup="selectTerm($event, term)"/>
+</div>
+<div class="terms" ng-if="item[field].length">
+    <ul>
+        <li ng-repeat="t in item[field]" ng-click="removeTerm(t)">{{ t }}</li>
+    </ul>
+</div>

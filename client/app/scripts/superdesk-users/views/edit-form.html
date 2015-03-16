@@ -95,7 +95,7 @@
 
                 <div sd-info-item class="user_role" ng-if="privileges.users">
                   <label for="user_role" translate>role</label>
-                  <select ng-model="user.role" name="user_role" id="user_role" ng-options="role._id as role.name for role in roles"></select>
+                  <select ng-focus="focused()" ng-model="user.role" name="user_role" id="user_role" ng-options="role._id as role.name for role in roles"></select>
                 </div>
 
                 <div sd-info-item class="user_role" ng-show="userDesks && userDesks.length > 0">

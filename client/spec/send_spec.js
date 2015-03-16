@@ -7,11 +7,11 @@ var openUrl = require('./helpers/utils').open,
 
 describe('Send To', function() {
 
-    beforeEach(openUrl('/#/workspace/content'));
+    beforeEach(function(done) {openUrl('/#/workspace/content').then(done);});
 
     it('can submit item to a desk', function() {
         workspace.switchToDesk('PERSONAL');
-        element.all(by.repeater('items._items')).first().click();
+        content.setListView();
         content.actionOnItem('Edit item', 1);
         element(by.id('send-to-btn')).click();
         browser.sleep(200);

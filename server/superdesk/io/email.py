@@ -45,9 +45,9 @@ class EmailReaderService(IngestService):
                         rv, data = imap.fetch(num, '(RFC822)')
                         if rv == 'OK':
                             try:
-                                new_items.append(self.parser.parse_email(data))
-                            except Exception as ex:
-                                raise IngestEmailError.emailParseError(ex, provider)
+                                new_items.append(self.parser.parse_email(data, provider))
+                            except IngestEmailError:
+                                continue
                 imap.close()
             imap.logout()
         except Exception as ex:

@@ -9,7 +9,7 @@
                 <div class="btn dropdown-toggle" dropdown-toggle><i class="icon-package-plus"></i> {{'Add items' | translate}}</div>
                 <ul class="dropdown-menu pull-right">
                     <li ng-repeat="t in groupList">
-                        <button ng-click="addMultiItemsToGroup(t);" translate>{{ t | uppercase  }}</button>
+                        <button option="{{ t | uppercase  }}" ng-click="addMultiItemsToGroup(t);" translate>{{ t | uppercase  }}</button>
                     </li>
                 </ul>
             </div>
@@ -20,24 +20,25 @@
                 <li ng-repeat="pitem in contentItems" 
                     ng-class="{active: pitem === selected, added: itemInPackage(pitem), 'multi-select': pitem.multi}"
                     ng-if="pitem._id !== item._id"
-                    sd-widget-prevent-preview
-                    >
+                    sd-widget-prevent-preview>
                     <div class="select-box">
                         <i class="filetype-icon-{{pitem.type}}"></i>
                         <span ng-if="!itemInPackage(pitem)" ng-click="addToSelected(pitem)" class="select" sd-check ng-model="pitem.multi"></span>
                     </div>
-                    
+
                     <p><span class="keyword" ng-if="pitem.slugline">{{ pitem.slugline }}</span>{{pitem.headline || pitem.type}}</p>
-                    <ul class="item-functions" ng-if="!itemInPackage(pitem) && !pitem.multi">
-                        <li class="dropdown group-select" dropdown>
-                            <div class="dropdown-toggle" dropdown-toggle><i class="icon-package-plus" id="Add-item"></i></div>
-                            <ul class="dropdown-menu pull-right">
-                                <li ng-repeat="t in groupList">
-                                    <button ng-click="addItemToGroup(t, pitem);">{{ t | uppercase  }}</button>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
+                    <ul class="item-functions" ng-if="!itemInPackage(pitem) && !pitem.multi">  
+                    <li class="dropdown group-select" dropdown>
+					    <button title="Add to package" class="dropdown-toggle" dropdown-toggle>
+						    <i class="icon-package-plus"></i>
+					    </button>
+					    <ul class="dropdown-menu pull-right">
+				            <li ng-repeat="t in groupList">
+                                <button option="{{ t | uppercase  }}" ng-click="addItemToGroup(t, pitem);">{{ t | uppercase  }}</button>
+                            </li>
+					    </ul>
+					</li>
+				   </ul>                
                 </li>
             </ul>
         </div>

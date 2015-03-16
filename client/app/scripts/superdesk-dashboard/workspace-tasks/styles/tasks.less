@@ -9,8 +9,58 @@
 TASK PAGE
 ---------------------------------------------
 */
+
+.task-labels {
+	list-style-type: none;
+	padding: 0;
+	margin: 5px 0 0;
+}
+
+.task-label , .task-labels > li {
+	float: left;
+	margin-right: 4px;
+	background: #eee;
+	.border-radius(3px);
+	height: 18px;
+	line-height: 18px;
+	color: #444;
+	padding: 2px 5px;
+	min-height: auto;
+	font-size: 10px;
+	i {
+		.opacity(70);
+	}
+	&.urgent {
+		background-color: #ba7474;
+	}
+	&.critical {
+		background-color: #8b0000;
+	}
+	&.done {
+		background-color: @done-color;
+	}
+}
+
+
+
 .task-list > header {
 	padding: 10px;
+	.card {
+		.header {
+			min-height: 24px;
+		}
+		.avatar {
+			margin-right: 10px;
+		}
+		.title {
+			padding: 3px 0;
+			line-height: 18px;
+			min-height: 18px;
+		}
+		.task-label {
+
+		}
+	}
 	button {
 		border:0;
 		background: none;
@@ -327,24 +377,6 @@ TASK PAGE
 }
 .stages-list {
 	float: none;
-	li {
-		.border-box();
-		margin: 7px 0 0 0 !important;
-		padding-right: 10px;
-		a {
-			display: block !important;
-			height: 25px !important;
-			line-height: 25px !important;
-			background: #fff !important;
-			border: 1px solid #d7d7d7;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			&:hover {
-				background: #fff !important;
-			}
-		}
-	}
 }
 
 .stage-label {
@@ -370,3 +402,112 @@ TASK PAGE
 		}
 	}
 }
+
+
+// Task comment list   *** UNUSED ***
+// ---------------------------------------------
+
+/*
+
+.add-comment-box {
+	width: 100%;
+	.box-sizing(border-box);
+	background: @background-main;
+	border: 1px solid #e1e1e1;
+	padding: 10px;
+	.border-radius(5px);
+	margin-bottom: 15px;
+	text-align: right;
+
+	textarea {
+		width: 100%;
+		min-width: 100%;
+		max-width: 100%;
+		min-height: 62px;
+		line-height: 20px;
+		.box-sizing(border-box);
+		.border-radius(3px);
+		padding: 10px;
+		border-color: #adadad;
+		.box-shadow(0px 1px 0px 0px #fff);  
+		.box-shadow(inset 0px 3px 6px -3px #a8a8a8);
+		font-size: 14px; 
+		color: #444;
+		text-align: left;
+	}
+
+	.btn {
+		margin-left: 5px;
+		margin-top: 10px;
+		display: none;
+	} 
+
+	&.focused {
+		.btn {
+			display: inline-block;
+		}
+	}
+
+}
+
+.comment-list {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	li {
+		padding-bottom: 15px;
+		margin-bottom: 8px;
+		position: relative;
+		.comment-info {
+			figure {
+				border: 1px solid #b9b9b9;
+				float: left;
+				margin-right: 10px;
+					img {
+						width: 30px;
+						height: 30px;
+					}
+			}
+			b { 
+				font-size: 12px;
+				display: block;
+				line-height: 14px; 
+				color: #007fb3;
+			}
+			time {
+				font-size: 11px;
+				color: #aeaeae;
+
+			}
+		}
+		.comment-text {
+			font-size: 13px;
+			color: #303030;
+			line-height: 18px;
+			border-top: 1px solid #ddd;
+			padding-top: 5px;
+			margin: 10px 0 3px 42px;
+			position: relative;
+			&:before {
+				content: " ";
+				width: 9px;
+				height: 9px;
+				position: absolute;
+				background: url(../../images/comment-ballon.png) no-repeat 0 0;
+				top: -9px;
+				left:15px;
+			}  
+		}
+		.action-menu {
+			.generic-inline-action-menu();
+		}
+		&:hover {
+			.action-menu {
+				display: block;
+			}
+		}
+	}
+
+}
+
+*/

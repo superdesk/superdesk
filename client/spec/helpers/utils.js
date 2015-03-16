@@ -3,6 +3,7 @@
 exports.login = login;
 exports.open = openUrl;
 exports.printLogs = printLogs;
+exports.waitForSuperdesk = waitForSuperdesk;
 
 // construct url from uri and base url
 exports.constructUrl = function(base, uri) {
@@ -22,25 +23,15 @@ function login() {
         });
 }
 
-// wait for login to finish
-function wait() {
-    return browser.sleep(500)
-        .then(function() {
-            return browser.waitForAngular();
-        });
-}
-
 // open url and authenticate
 function openUrl(url) {
-    return function() {
-        return browser.driver.get(browser.baseUrl)
-            .then(waitForSuperdesk)
-            .then(login)
-            .then(wait)
-            .then(function() {
-                return browser.get(url);
-            });
-    };
+    return browser.driver.get(browser.baseUrl)
+        .then(waitForSuperdesk)
+        .then(login)
+        .then(waitForSuperdesk)
+        .then(function() {
+            return browser.get(url);
+        }).then(waitForSuperdesk);
 }
 
 function printLogs(prefix) {
@@ -54,10 +45,57 @@ function printLogs(prefix) {
     });
 }
 
+var clientSideScripts = require('./../../node_modules/protractor/lib/clientsidescripts.js');
+function waitForAngular(opt_description) {
+  var description = opt_description ? ' - ' + opt_description : '';
+  var self = browser;
+  var restartCounter = 0;
+  var doWork = function() {
+    return self.executeAsyncScript_(
+      clientSideScripts.waitForAngular,
+      'Protractor.waitForAngular()' + description,
+      self.rootEl).
+      then(function(browserErr) {
+        if (browserErr) {
+          throw 'Error while waiting for Protractor to ' +
+                'sync with the page: ' + JSON.stringify(browserErr);
+        }
+    }).then(null, function(err) {
+      var timeout;
+      if (/asynchronous script timeout/.test(err.message)) {
+        // Timeout on Chrome
+        timeout = /-?[\d\.]*\ seconds/.exec(err.message);
+      } else if (/Timed out waiting for async script/.test(err.message)) {
+        // Timeout on Firefox
+        timeout = /-?[\d\.]*ms/.exec(err.message);
+      } else if (/Timed out waiting for an asynchronous script/.test(err.message)) {
+        // Timeout on Safari
+        timeout = /-?[\d\.]*\ ms/.exec(err.message);
+      }
+      if (timeout) {
+        console.log('WARNING: restarting waitForAngular');
+        console.log(err.message);
+        console.log(err);
+        restartCounter++;
+        if (false) {
+            return browser.sleep(500).then(doWork);
+        } else {
+            throw 'Timed out waiting for Protractor to synchronize with ' +
+                'the page after ' + timeout + '. Please see ' +
+                'https://github.com/angular/protractor/blob/master/docs/faq.md';
+        }
+      } else {
+        throw err;
+      }
+    });
+  };
+  return doWork();
+}
+
 function waitForSuperdesk() {
     return browser.driver.wait(function() {
         return browser.driver.executeScript('return window.superdeskIsReady || false');
-    }).then(function() {
-        return browser.waitForAngular();
+    }, 5000, '"window.superdeskIsReady" is not here').then(function() {
+        return waitForAngular();
     });
 }

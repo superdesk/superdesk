@@ -8,7 +8,7 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from superdesk import utils as utils
+from superdesk import utils as utils, get_resource_service
 from superdesk.errors import UserInactiveError
 from superdesk.services import BaseService
 
@@ -26,6 +26,10 @@ class AuthService(BaseService):
                 raise UserInactiveError()
 
             self.set_auth_default(doc, user['_id'])
+
+    def on_created(self, docs):
+        for doc in docs:
+            get_resource_service('preferences').set_session_based_prefs(doc['_id'], doc['user'])
 
     def set_auth_default(self, doc, user_id):
         doc['user'] = user_id

@@ -10,10 +10,11 @@ describe('Content', function() {
         return element(by.binding('selected.preview.headline')).getText();
     }
 
-    beforeEach(function() {
-        openUrl('/#/workspace/content')();
-        workspace.switchToDesk('PERSONAL');
-        expect(element.all(by.repeater('items._items')).count()).toBe(7);
+    beforeEach(function(done) {
+        openUrl('/#/workspace/content').then(function() {
+            workspace.switchToDesk('PERSONAL');
+        }).then(done);
+        expect(element.all(by.repeater('items._items')).count()).toBe(3);
     });
 
     it('can navigate with keyboard', function() {
@@ -53,7 +54,7 @@ describe('Content', function() {
 
         expect(element.all(by.css('.state-border')).count()).toBe(0);
         body.sendKeys('v');
-        expect(element.all(by.css('.state-border')).count()).toBe(7);
+        expect(element.all(by.css('.state-border')).count()).toBe(3);
         body.sendKeys('v');
         expect(element.all(by.css('.state-border')).count()).toBe(0);
     });

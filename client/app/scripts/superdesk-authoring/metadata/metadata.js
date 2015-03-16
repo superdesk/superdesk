@@ -44,6 +44,60 @@ function MetadataDropdownDirective() {
 	};
 }
 
+MetadataWordsListEditingDirective.$inject = [];
+function MetadataWordsListEditingDirective() {
+	return {
+		scope: {
+			item: '=',
+			field: '@',
+			disabled: '=',
+			list: '=',
+			change: '&'
+		},
+		templateUrl: 'scripts/superdesk-authoring/metadata/views/metadata-words-list.html',
+		link: function(scope) {
+
+			var ENTER = 13;
+
+			scope.selectTerm = function($event) {
+				if ($event.keyCode === ENTER && _.trim(scope.term) !== '') {
+
+					//instead of simple push, extend the item[field] in order to trigger dirty $watch
+					var t = _.clone(scope.item[scope.field]) || [];
+					var index = _.findIndex(t, function(word) {
+						return word.toLowerCase() === scope.term.toLowerCase();
+					});
+
+					if (index < 0) {
+						t.push(_.trim(scope.term));
+
+						//build object
+						var o = {};
+						o[scope.field] = t;
+						_.extend(scope.item, o);
+						scope.change({item: scope.item});
+					}
+
+					scope.term = '';
+				}
+			};
+
+			scope.removeTerm = function(term) {
+				var temp = _.without(scope.item[scope.field], term);
+
+				//build object
+				var o = {};
+				o[scope.field] = temp;
+
+				_.extend(scope.item, o);
+
+				scope.change({item: scope.item});
+			};
+
+		}
+	};
+}
+
 /**
  * Wraping  'sd-typeahead' directive for editing of metadata list attributes
  *
@@ -84,7 +138,6 @@ function MetadataListEditingDirective() {
 					!_.find(scope.item[scope.field], searchObj));
 					});
 				}
-
 				return scope.terms;
 			};
 
@@ -213,5 +266,6 @@ angular.module('superdesk.authoring.metadata', ['superdesk.authoring.widgets'])
 	.service('metadata', MetadataService)
 	.directive('sdMetaTerms', MetadataListEditingDirective)
 	.directive('sdMetaDropdown', MetadataDropdownDirective)
+	.directive('sdMetaWordsList', MetadataWordsListEditingDirective)
 	.value('staticMetadata', staticMetadata);
 })();

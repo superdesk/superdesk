@@ -10,8 +10,8 @@
 
 import superdesk
 
-from .app_prepopulate import PrepopulateService, \
-    PrepopulateResource
+from .app_prepopulate import PrepopulateService, PrepopulateResource
+from .app_initialize import AppInitializeWithDataCommand  # NOQA
 
 
 def init_app(app):

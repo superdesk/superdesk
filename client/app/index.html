@@ -57,6 +57,7 @@
     <!-- endbuild -->
 
     <!-- build:js scripts/superdesk.js -->
+    <script src="scripts/superdesk-desks/desks.js"></script>
     <script src="scripts/superdesk-authoring/authoring.js"></script>
     <script src="scripts/superdesk-authoring/widgets/widgets.js"></script>
     <script src="scripts/superdesk-authoring/comments/comments.js"></script>
@@ -113,9 +114,8 @@
             'superdesk-dashboard/module',
             'superdesk-planning/module',
             'superdesk-archive/module',
-            'superdesk-ingest/module',
+            'superdesk-ingest/module'
             //'superdesk-scratchpad/module',
-            'superdesk-desks/module'
         ], function(bootstrap) {
             bootstrap(config, modules);
         });
