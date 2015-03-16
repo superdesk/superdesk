@@ -21,8 +21,7 @@ describe('Content', function() {
         expect(element.all(by.css('[ng-click="openVersion(version)"]')).count()).toBe(2);
     });
 
-    xit('edit title and description', function() {
-    	//TODO: disabled until the save of packages is fixed
+    it('edit title and description', function() {
         workspace.switchToDesk('Personal');
         content.setListView();
         content.actionOnItem('Edit package', 0);
