@@ -687,7 +687,7 @@ Feature: Packages
         """
         [{"guid": "tag:example.com,0000:newsml_BRE9A679", "headline": "test"}]
         """
-        When we upload a file "bike.jpg" to "archive_media"
+        And we save etag
         When we post to "archive" with success
         """
         {
@@ -728,6 +728,7 @@ Feature: Packages
         """
         {"headline": "test", "linked_in_packages": []}
         """
+        And we get same etag
 
 
     @auth

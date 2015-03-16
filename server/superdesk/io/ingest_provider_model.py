@@ -64,7 +64,15 @@ class IngestProviderResource(Resource):
                 'seconds': {'type': 'integer'},
             }
         },
+        'idle_time': {
+            'type': 'dict',
+            'schema': {
+                'hours': {'type': 'integer'},
+                'minutes': {'type': 'integer'},
+            }
+        },
         'last_updated': {'type': 'datetime'},
+        'last_item_update': {'type': 'datetime'},
         'rule_set': Resource.rel('rule_sets', nullable=True),
         'notifications': {
             'type': 'dict',

@@ -13,50 +13,50 @@
 import logging
 import asyncio
 
-from flask import current_app as app
-from flask import json
 from datetime import datetime
+from flask import json, current_app as app
+from autobahn.asyncio.websocket import WebSocketClientProtocol
+from autobahn.asyncio.websocket import WebSocketClientFactory
+
+
+class Client(WebSocketClientProtocol):
+
+    def broadcast(self, **kwargs):
+        kwargs.setdefault('_created', datetime.utcnow().isoformat())
+        self.msg = json.dumps(kwargs).encode('utf8')
+        self.done = asyncio.Future()
+
+    def onOpen(self):
+        self.sendMessage(self.msg)
+        self.sendClose()
+        self.done.set_result(None)
 
 
 logger = logging.getLogger(__name__)
+factory = WebSocketClientFactory()
+factory.protocol = Client
 
 
-def init_app(app):
-    from autobahn.asyncio.websocket import WebSocketClientProtocol
-    from autobahn.asyncio.websocket import WebSocketClientFactory
-    from ws import host, port
+def send_message(**kwargs):
+    """Send a message via websockets.
 
-    class Client(WebSocketClientProtocol):
-
-        def __init__(self, *args):
-            WebSocketClientProtocol.__init__(self, *args)
-            self.opened = asyncio.Future()
-
-        def notify(self, **kwargs):
-            kwargs.setdefault('_created', datetime.utcnow().isoformat())
-            self.sendMessage(json.dumps(kwargs).encode('utf8'))
-
-        def onConnect(self, response):
-            self.opened.set_result(None)
-
-    factory = WebSocketClientFactory()
-    factory.protocol = Client
-    try:
-        loop = asyncio.get_event_loop()
-        coro = loop.create_connection(factory, host, port)
-        _transport, client = loop.run_until_complete(coro)
-        loop.run_until_complete(client.opened)
-        app.notification_client = client
-    except OSError:  # no ws server running
-        pass
+    It will open a new connection, send message and close it.
+    """
+    if app.notification_client:  # testing
+        app.notification_client.notify(**kwargs)
+    loop = asyncio.get_event_loop()
+    coro = loop.create_connection(factory, app.config['WS_HOST'], app.config['WS_PORT'])
+    transport, client = loop.run_until_complete(coro)
+    client.broadcast(**kwargs)
+    loop.run_until_complete(client.done)
 
 
 def push_notification(name, **kwargs):
-    logger.info('pushing event {0} ({1})'.format(name, json.dumps(kwargs)))
-    if app.notification_client is not None:
-        try:
-            app.notification_client.notify(event=name, extra=kwargs)
-        except AttributeError:
-            logger.info('Notification server is not initialized')
-        except Exception as e:
-            logger.exception(e)
+    """Push notification to clients.
+
+    :param name: event name
+    """
+    try:
+        send_message(event=name, extra=kwargs)
+    except OSError:
+        pass

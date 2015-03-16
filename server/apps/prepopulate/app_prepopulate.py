@@ -46,7 +46,7 @@ def get_default_user():
     return user
 
 
-def prepopulate_data(file_name, default_user):
+def prepopulate_data(file_name, default_user=get_default_user()):
     placeholders = {'NOW()': date_to_str(utcnow())}
     users = {default_user['username']: default_user['password']}
     default_username = default_user['username']
@@ -107,7 +107,10 @@ class PrepopulateService(BaseService):
 
 class AppPrepopulateCommand(superdesk.Command):
     def run(self):
-        prepopulate_data('app_prepopulate_data.json')
+        user = get_resource_service('users').find_one(username=get_default_user()['username'], req=None)
+        if not user:
+            get_resource_service('users').post([get_default_user()])
+        prepopulate_data('app_prepopulate_data.json', get_default_user())
 
 
 superdesk.command('app:prepopulate', AppPrepopulateCommand())

@@ -3,6 +3,7 @@
     <span sd-character-count data-item="item.slugline" data-limit="limits.slugline"></span>
     <input type="text"
         class="keyword"
+        id="keyword"
         ng-model="item.slugline"
         ng-change="autosave(item)"
         ng-if="_editable"
@@ -13,6 +14,7 @@
 	<label translate>Headline</label>
     <span sd-character-count data-item="item.headline" data-limit="limits.headline"></span>
     <textarea class="headline"
+        id="title"
         sd-auto-height
         ng-model="item.headline"
         ng-change="autosave(item)"

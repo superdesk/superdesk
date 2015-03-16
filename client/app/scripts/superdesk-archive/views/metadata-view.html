@@ -70,21 +70,21 @@
     </dl>
 
     <!-- category details -->
-    <dl ng-if="item.anpa_category">
+    <dl ng-if="item['anpa-category']">
         <dt translate>ANPA category</dt>
-        <dd>{{ item['anpa-category'] }}</dd>
+        <dd>{{ item['anpa-category'].name }}</dd>
     </dl>
-    <dl ng-if="item.subject">
+    <dl ng-if="item.subject && item.subject.length > 0">
         <dt translate>Subject</dt>
-        <dd>{{ item.subject | mergeWords}}</dd>
+        <dd>{{ item.subject | mergeWords:'name'}}</dd>
     </dl>
-    <dl ng-if="item.genre">
+    <dl ng-if="item.genre  && item.genre.length > 0">
         <dt translate>Genre</dt>
-        <dd>{{ item.genre }}</dd>
+        <dd>{{ item.genre | mergeWords:'name'}}</dd>
     </dl>
-    <dl ng-if="item.place">
+    <dl ng-if="item.place && item.place.length > 0">
         <dt translate>Place</dt>
-        <dd>{{ item.place | mergeWords}}</dd>
+        <dd>{{ item.place | mergeWords:'name'}}</dd>
     </dl>
         <dl ng-if="item.dateline">
         <dt translate>Dateline</dt>
@@ -105,9 +105,9 @@
         <dt translate>ANPA take key</dt>
         <dd>{{ item.anpa_take_key }}</dd>
     </dl>
-    <dl ng-if="item.keywords">
+    <dl ng-if="item.keywords && item.keywords.length > 0">
         <dt translate>Keywords</dt>
-        <dd>{{ item.keywords }}</dd>
+        <dd>{{ item.keywords | mergeWords}}</dd>
     </dl>
     <dl ng-if="item.word_count">
         <dt translate>Word Count</dt>

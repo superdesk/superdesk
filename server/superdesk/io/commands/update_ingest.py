@@ -14,10 +14,11 @@ import superdesk
 
 from flask import current_app as app
 from settings import INGEST_EXPIRY_MINUTES
-from datetime import timedelta
+from datetime import timedelta, timezone, datetime
 from werkzeug.exceptions import HTTPException
 
 from superdesk.notification import push_notification
+from superdesk.activity import ACTIVITY_EVENT, notify_and_add_activity
 from superdesk.io import providers
 from superdesk.celery_app import celery
 from superdesk.utc import utcnow, get_expiry_date
@@ -31,7 +32,9 @@ from superdesk.io.iptc import subject_codes
 
 UPDATE_SCHEDULE_DEFAULT = {'minutes': 5}
 LAST_UPDATED = 'last_updated'
+LAST_ITEM_UPDATE = 'last_item_update'
 STATE_INGESTED = 'ingested'
+IDLE_TIME_DEFAULT = {'hours': 0, 'minutes': 0}
 
 
 logger = logging.getLogger(__name__)
@@ -106,6 +109,24 @@ def get_task_ttl(provider):
     return update_schedule.get('minutes', 0) * 60 + update_schedule.get('hours', 0) * 3600
 
 
+def get_is_idle(providor):
+    last_item = providor.get(LAST_ITEM_UPDATE)
+    idle_time = providor.get('idle_time', IDLE_TIME_DEFAULT)
+    if isinstance(idle_time['hours'], datetime):
+        idle_hours = 0
+    else:
+        idle_hours = idle_time['hours']
+    if isinstance(idle_time['minutes'], datetime):
+        idle_minutes = 0
+    else:
+        idle_minutes = idle_time['minutes']
+    # there is an update time and the idle time is none zero
+    if last_item and (idle_hours != 0 or idle_minutes != 0):
+        if utcnow() > last_item + timedelta(hours=idle_hours, minutes=idle_minutes):
+            return True
+    return False
+
+
 def get_task_id(provider):
     return 'update-ingest-{0}-{1}'.format(provider.get('name'), provider.get('_id'))
 
@@ -136,15 +157,27 @@ def update_provider(provider, rule_set=None, routing_scheme=None):
     Fetches items from ingest provider as per the configuration, ingests them into Superdesk and
     updates the provider.
     """
-    superdesk.get_resource_service('ingest_providers').update(provider['_id'], {
+    update = {
         LAST_UPDATED: utcnow(),
         # Providing the _etag as system updates to the documents shouldn't override _etag.
         app.config['ETAG']: provider.get(app.config['ETAG'])
-    }, provider)
+    }
 
     for items in providers[provider.get('type')].update(provider):
         ingest_items(items, provider, rule_set, routing_scheme)
         stats.incr('ingest.ingested_items', len(items))
+        if items:
+            update[LAST_ITEM_UPDATE] = utcnow()
+
+    superdesk.get_resource_service('ingest_providers').update(provider['_id'], update, provider)
+
+    if LAST_ITEM_UPDATE not in update and get_is_idle(provider):
+        notify_and_add_activity(
+            ACTIVITY_EVENT,
+            'Provider {{name}} has gone strangely quiet. Last activity was on {{last}}',
+            user_list=superdesk.get_resource_service('ingest_providers')._get_administrators(),
+            name=provider.get('name'),
+            last=provider[LAST_ITEM_UPDATE].replace(tzinfo=timezone.utc).astimezone(tz=None).strftime("%c"))
 
     logger.info('Provider {0} updated'.format(provider['_id']))
     push_notification('ingest:update')

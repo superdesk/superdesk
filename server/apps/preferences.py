@@ -8,16 +8,14 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
-from flask import g, current_app as app
+from flask import g, request
 from eve.validation import ValidationError
-from eve.utils import parse_request, document_etag
 
 import superdesk
 from superdesk.resource import Resource
 from superdesk.services import BaseService
 from superdesk import get_backend
 from superdesk import get_resource_service
-from superdesk.utils import last_updated
 from superdesk.workflow import get_privileged_actions
 
 
@@ -32,12 +30,23 @@ def init_app(app):
     endpoint_name = 'preferences'
     service = PreferencesService(endpoint_name, backend=get_backend())
     PreferencesResource(endpoint_name, app=app, service=service)
+    app.on_session_end -= service.on_session_end
+    app.on_session_end += service.on_session_end
 
     superdesk.intrinsic_privilege(resource_name=endpoint_name, method=['PATCH'])
 
 
 class PreferencesResource(Resource):
-    datasource = {'source': 'auth', 'projection': {'session_preferences': 1, 'user': 1}}
+    datasource = {
+        'source': 'users',
+        'projection': {
+            _session_preferences_key: 1,
+            _user_preferences_key: 1,
+            _privileges_key: 1,
+            _action_key: 1,
+            '_etag': 1
+        }
+    }
     schema = {
         _session_preferences_key: {'type': 'dict', 'required': True},
         _user_preferences_key: {'type': 'dict', 'required': True},
@@ -84,53 +93,98 @@ class PreferencesResource(Resource):
 
 class PreferencesService(BaseService):
 
-    def on_update(self, updates, original):
-        existing_prefs = self.find_one(req=None, _id=original['_id'])
-        existing_user_preferences = existing_prefs.get(_user_preferences_key, {})
-        existing_session_preferences = existing_prefs.get(_session_preferences_key, {})
+    def on_session_end(self, user_id, session_id):
+        service = get_resource_service('users')
+        user_doc = service.find_one(req=None, _id=user_id)
+        session_prefs = user_doc.get(_session_preferences_key, {}).copy()
+        if session_id in session_prefs:
+            del session_prefs[session_id]
+            service.patch(user_id, session_prefs)
 
-        self.partial_update(updates, existing_user_preferences, superdesk.default_user_preferences,
-                            _user_preferences_key)
-        self.partial_update(updates, existing_session_preferences, superdesk.default_session_preferences,
-                            _session_preferences_key)
+    def set_session_based_prefs(self, session_id, user_id):
+        user_doc = get_resource_service('users').find_one(req=None, _id=user_id)
+        updates = {}
+        if _user_preferences_key not in user_doc:
+            orig_user_prefs = user_doc.get(_preferences_key, {})
+            available = dict(superdesk.default_user_preferences)
+            available.update(orig_user_prefs)
+            updates[_user_preferences_key] = available
 
-    def partial_update(self, updates, existing_preferences, default_preferences, key):
-        if updates.get(key) is not None:
-            prefs = updates.get(key, {})
+        session_prefs = user_doc.get(_session_preferences_key, {})
+        available = dict(superdesk.default_session_preferences)
+        if available.get('desk:last_worked') == '' and user_doc.get('desk'):
+            available['desk:last_worked'] = user_doc.get('desk')
 
-            # check if the input is validated against the default values
-            for k in ((k for k, v in prefs.items() if k not in default_preferences)):
-                raise ValidationError('Invalid preference: %s' % k)
+        session_prefs.setdefault(str(session_id), available)
+        updates[_session_preferences_key] = session_prefs
 
-            if key == _user_preferences_key:
-                for k in existing_preferences.keys():
-                    updates[key][k] = dict(list(existing_preferences.get(k, {}).items())
-                                           + list(prefs.get(k, {}).items()))
-            else:
-                for k in existing_preferences.keys():
-                    if prefs.get(k, []) == []:
-                        updates[key][k] = existing_preferences.get(k, [])
+        self.backend.update(self.datasource, user_id, updates, user_doc)
+
+    def set_user_initial_prefs(self, user_doc):
+        if _user_preferences_key not in user_doc:
+            orig_user_prefs = user_doc.get(_preferences_key, {})
+            available = dict(superdesk.default_user_preferences)
+            available.update(orig_user_prefs)
+            user_doc[_user_preferences_key] = available
 
     def find_one(self, req, **lookup):
-        session_doc = super().find_one(req, **lookup)
-        if not session_doc:  # fetching old session preferences using new session
-            return
-        user_doc = get_resource_service('users').find_one(req=None, _id=session_doc['user'])
-        self.enhance_document_with_default_prefs(session_doc, user_doc)
-        self.enhance_document_with_user_privileges(session_doc, user_doc)
-        session_doc[_action_key] = get_privileged_actions(session_doc[_privileges_key])
-        if req is None:
-            req = parse_request('auth')
-            session_doc['_etag'] = req.if_match
-        else:
-            session_doc['_etag'] = document_etag(session_doc)
-        return session_doc
+        session = get_resource_service('sessions').find_one(req=None, _id=lookup['_id'])
+        _id = session['user'] if session else lookup['_id']
+        doc = get_resource_service('users').find_one(req, _id=_id)
+        if doc:
+            doc['_id'] = session['_id'] if session else _id
+        return doc
 
-    def get(self, req, lookup):
-        docs = super().get(req, lookup)
-        for doc in docs:
-            self.enhance_document_with_default_prefs(doc)
-        return docs
+    def on_fetched_item(self, doc):
+        session_id = request.view_args['_id']
+        session_prefs = doc.get(_session_preferences_key, {}).get(session_id, {})
+        doc[_session_preferences_key] = session_prefs
+
+        self.enhance_document_with_user_privileges(doc)
+
+    def on_update(self, updates, original):
+        # Beware, dragons ahead
+        existing_user_preferences = original.get(_user_preferences_key, {}).copy()
+        existing_session_preferences = original.get(_session_preferences_key, {}).copy()
+
+        self.update_user_prefs(updates, existing_user_preferences)
+        session_id = request.view_args['_id']
+        self.update_session_prefs(updates, existing_session_preferences, session_id)
+
+    def update_session_prefs(self, updates, existing_session_preferences, session_id):
+        session_prefs = updates.get(_session_preferences_key)
+        if session_prefs is not None:
+            for k in ((k for k, v in session_prefs.items() if k not in superdesk.default_session_preferences)):
+                raise ValidationError('Invalid preference: %s' % k)
+
+            existing = existing_session_preferences.get(session_id, {})
+            existing.update(session_prefs)
+            existing_session_preferences[session_id] = existing
+            updates[_session_preferences_key] = existing_session_preferences
+
+    def update_user_prefs(self, updates, existing_user_preferences):
+        user_prefs = updates.get(_user_preferences_key)
+        if user_prefs is not None:
+            # check if the input is validated against the default values
+            for k in ((k for k, v in user_prefs.items() if k not in superdesk.default_user_preferences)):
+                raise ValidationError('Invalid preference: %s' % k)
+
+            existing_user_preferences.update(user_prefs)
+            updates[_user_preferences_key] = existing_user_preferences
+
+    def update(self, id, updates, original):
+        session = get_resource_service('sessions').find_one(req=None, _id=original['_id'])
+        original_unpatched = self.backend.find_one(self.datasource, req=None, _id=session['user'])
+        updated = original_unpatched.copy()
+        updated.update(updates)
+        del updated['_id']
+        res = self.backend.update(self.datasource, original_unpatched['_id'], updated, original_unpatched)
+        updates.update(updated)
+        # Return only the patched session prefs
+        session_prefs = updates.get(_session_preferences_key, {}).get(str(original['_id']), {})
+        updates[_session_preferences_key] = session_prefs
+        self.enhance_document_with_user_privileges(updates)
+        return res
 
     def enhance_document_with_default_prefs(self, session_doc, user_doc):
         orig_user_prefs = user_doc.get(_preferences_key, {})
@@ -147,26 +201,16 @@ class PreferencesService(BaseService):
 
         session_doc[_session_preferences_key] = available
 
-    def enhance_document_with_user_privileges(self, session_doc, user_doc):
+    def enhance_document_with_user_privileges(self, user_doc):
         role_doc = get_resource_service('users').get_role(user_doc)
         get_resource_service('users').set_privileges(user_doc, role_doc)
-        session_doc[_privileges_key] = user_doc.get(_privileges_key, {})
-        # set last_updated to max for session/user/role so that client will fetch changes
-        # after a change to any of those
-        session_doc[app.config['LAST_UPDATED']] = last_updated(session_doc, user_doc, role_doc)
-
-    def enhance_document_with_default_user_prefs(self, user_doc):
-        orig_user_prefs = user_doc.get(_preferences_key, {})
-        available = dict(superdesk.default_user_preferences)
-        available.update(orig_user_prefs)
-        user_doc[_user_preferences_key] = available
+        user_doc[_action_key] = get_privileged_actions(user_doc[_privileges_key])
 
     def get_user_preference(self, user_id):
         """
         This function returns preferences for the user.
         """
         doc = get_resource_service('users').find_one(req=None, _id=user_id)
-        self.enhance_document_with_default_user_prefs(user_doc=doc)
         prefs = doc.get(_user_preferences_key, {})
         return prefs
 
@@ -179,21 +223,6 @@ class PreferencesService(BaseService):
         send_email = preferences.get('email:notification', {}) if isinstance(preferences, dict) else {}
         return send_email and send_email.get('enabled', False)
 
-    def update(self, id, updates, original):
-
-        if updates.get(_user_preferences_key) is not None:
-            # update User
-            user_doc = get_resource_service('auth').find_one(req=None, _id=id)
-            user_preference = {}
-            user_preference['preferences'] = updates.get('user_preferences')
-            get_resource_service('users').update(user_doc['user'], user_preference, original)
-            del updates[_user_preferences_key]
-
-        # fetch the original doc as we custom implemented find_one
-        mongo_obj = super().find_one(req=None, _id=id)
-        res = self.backend.update(self.datasource, id, updates, mongo_obj)
-        return res
-
     def is_authorized(self, **kwargs):
         """
         Returns False if logged-in user is trying to update other user's or session's privileges.
@@ -205,5 +234,8 @@ class PreferencesService(BaseService):
         if kwargs.get("user_id") is None:
             return False
 
-        session = self.find_one(_id=kwargs.get("user_id"), req=None)
-        return str(g.user['_id']) == str(session.get("user"))
+        session = get_resource_service('sessions').find_one(req=None, _id=kwargs.get('user_id'))
+        if not session:
+            return False
+        authorized = str(g.user['_id']) == str(session.get("user"))
+        return authorized

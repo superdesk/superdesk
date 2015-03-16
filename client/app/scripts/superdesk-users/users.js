@@ -745,9 +745,9 @@
         }])
 
         .directive('sdUserEdit', ['api', 'gettext', 'notify', 'users', 'userList', 'session',
-            '$location', '$route', 'superdesk', 'features', 'asset', 'privileges', 'desks',
+            '$location', '$route', 'superdesk', 'features', 'asset', 'privileges', 'desks', 'keyboardManager',
         function(api, gettext, notify, users, userList, session, $location, $route, superdesk, features,
-                 asset, privileges, desks) {
+                 asset, privileges, desks, keyboardManager) {
 
             return {
                 templateUrl: asset.templateUrl('superdesk-users/views/edit-form.html'),
@@ -785,13 +785,16 @@
                             scope.oncancel();
                         }
                     };
+                    scope.focused = function() {
+                        keyboardManager.unbind('down');
+                        keyboardManager.unbind('up');
+                    };
 
                     scope.editPicture = function() {
                         superdesk.intent('edit', 'avatar', scope.user).then(function(avatar) {
                             scope.user.picture_url = avatar; // prevent replacing Avatar which would get into diff
                         });
                     };
-
                     scope.save = function() {
                         scope.error = null;
                         notify.info(gettext('saving..'));
@@ -1070,25 +1073,42 @@
 
                     scope.select = function(user) {
                         scope.selected = user;
+                        bindKeys();
                     };
-
-                    function getSelectedIndex() {
-                        return _.findIndex(scope.users, scope.selected);
-                    }
-
-                    keyboardManager.bind('up', function() {
-                        var selectedIndex = getSelectedIndex();
-                        if (selectedIndex !== -1) {
-                            scope.select(scope.users[_.max([0, selectedIndex - 1])]);
-                        }
+                    scope.$watch('selected', function(selected) {
+                       if (selected == null) {
+                            bindKeys();
+                       }
                     });
 
-                    keyboardManager.bind('down', function() {
+                    function bindKeys() {
+                        unbindKeys();
+                        keyboardManager.bind('down', moveDown);
+                        keyboardManager.bind('up', moveUp);
+                    }
+
+                    function unbindKeys() {
+                        keyboardManager.unbind('down');
+                        keyboardManager.unbind('up');
+                    }
+
+                    function moveDown() {
                         var selectedIndex = getSelectedIndex();
                         if (selectedIndex !== -1) {
                             scope.select(scope.users[_.min([scope.users.length - 1, selectedIndex + 1])]);
                         }
-                    });
+                    }
+
+                    function moveUp() {
+                        var selectedIndex = getSelectedIndex();
+                        if (selectedIndex !== -1) {
+                            scope.select(scope.users[_.max([0, selectedIndex - 1])]);
+                        }
+                    }
+
+                    function getSelectedIndex() {
+                        return _.findIndex(scope.users, scope.selected);
+                    }
                 }
             };
         }])
