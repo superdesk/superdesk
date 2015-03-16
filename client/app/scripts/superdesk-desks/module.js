@@ -220,8 +220,8 @@ define([
                 setCurrentDesk: function(desk) {
                     this.setCurrentDeskId(desk ? desk._id : null);
                 },
-                getCurrentDesk: function(desk) {
-                    return this.deskLookup[this.getCurrentDeskId()];
+                getCurrentDesk: function() {
+                    return this.deskLookup[this.getCurrentDeskId()] || null;
                 },
                 initialize: function() {
 

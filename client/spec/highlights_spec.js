@@ -5,10 +5,11 @@ var content = require('./helpers/pages').content;
 var authoring = require('./helpers/pages').authoring;
 
 var Highlights = function() {
+	'use strict';
+
     this.list = element.all(by.repeater('config in configurations._items'));
     this.name = element(by.model('configEdit.name'));
     this.desks = element.all(by.repeater('desk in assignedDesks'));
-    this.highlights = element.all(by.repeater('h in highlights'));
 
     this.get = function() {
   	  openUrl('/#/settings/highlights');
@@ -89,16 +90,25 @@ var Highlights = function() {
 		  element(by.css('[ng-click="cancel()"]')).click();
 	  };
 
-	  this.getHighlights = function() {
-		  return this.highlights.filter(function(elem, index) {
+	  this.getHighlights = function(elem) {
+		  return elem.all(by.repeater('h in highlights')).filter(function(elem, index) {
 			  return elem.getText().then(function(text) {
 				  return text;
 			  });
 		  });
 	  };
 
-	  this.selectHighlight = function(name) {
-		  this.highlights.all(by.css('[option="' + name.toUpperCase() + '"]')).click();
+	  this.selectHighlight = function(elem, name) {
+		  elem.all(by.repeater('h in highlights')).all(by.css('[option="' + name.toUpperCase() + '"]')).click();
+	  };
+
+	  this.createHighlightsPackage = function(highlight) {
+		  element(by.className('svg-icon-create-list')).click();
+		  this.selectHighlight(element(by.id('highlightPackage')), highlight);
+	  };
+	  this.switchHighlightFilter = function(name) {
+		  element(by.id('search-highlights')).element(by.className('icon-dots-vertical')).click();
+		  element(by.id('search-highlights')).element(by.css('[option="' + name.toUpperCase() + '"]')).click();
 	  };
   };
 
@@ -187,8 +197,8 @@ describe('HIGHLIGHTS', function() {
     	workspace.switchToDesk('SPORTS DESK');
     	content.setListView();
     	content.actionOnItem('Mark item', 0);
-    	expect(highlights.getHighlights().count()).toBe(2);
-    	highlights.selectHighlight('Highlight one');
+    	expect(highlights.getHighlights(content.getItem(0)).count()).toBe(2);
+    	highlights.selectHighlight(content.getItem(0), 'Highlight one');
     	workspace.switchToDesk('PERSONAL');
     	workspace.switchToDesk('SPORTS DESK');
     	content.setListView();
@@ -200,13 +210,55 @@ describe('HIGHLIGHTS', function() {
     	content.setListView();
     	content.actionOnItem('Edit item', 0);
     	authoring.markForHighlights();
-    	expect(highlights.getHighlights().count()).toBe(2);
-    	highlights.selectHighlight('Highlight one');
+    	expect(highlights.getHighlights(authoring.getSubnav()).count()).toBe(2);
+    	highlights.selectHighlight(authoring.getSubnav(), 'Highlight one');
     	authoring.close();
     	workspace.switchToDesk('PERSONAL');
     	workspace.switchToDesk('SPORTS DESK');
     	content.setListView();
     	content.checkMarkedForHighlight('Highlight one', 0);
+    });
+
+    it('create highlist package', function() {
+    	workspace.switchToDesk('PERSONAL');
+    	expect(content.getCount()).toBe(3);
+    	workspace.switchToDesk('SPORTS DESK');
+    	content.setListView();
+    	content.actionOnItem('Mark item', 0);
+    	highlights.selectHighlight(content.getItem(0), 'Highlight one');
+    	highlights.createHighlightsPackage('HIGHLIGHT ONE');
+    	authoring.showSearch();
+    	authoring.addToGroup(0, 'MAIN');
+    	authoring.save();
+    	authoring.close();
+    	workspace.switchToDesk('PERSONAL');
+    	expect(content.getCount()).toBe(4);
+    });
+
+    it('filter by highlights in highlist package', function() {
+    	workspace.switchToDesk('SPORTS DESK');
+    	content.setListView();
+    	content.actionOnItem('Mark item', 0);
+    	highlights.selectHighlight(content.getItem(0), 'Highlight one');
+
+    	workspace.switchToDesk('PERSONAL');
+    	workspace.switchToDesk('SPORTS DESK');
+    	content.setListView();
+    	content.actionOnItem('Mark item', 1);
+    	highlights.selectHighlight(content.getItem(1), 'Highlight one');
+
+    	workspace.switchToDesk('PERSONAL');
+    	workspace.switchToDesk('SPORTS DESK');
+    	content.setListView();
+    	content.actionOnItem('Mark item', 1);
+    	highlights.selectHighlight(content.getItem(1), 'Highlight two');
+
+    	highlights.createHighlightsPackage('HIGHLIGHT ONE');
+    	authoring.showSearch();
+    	expect(authoring.getSearchItemCount()).toBe(2);
+
+    	highlights.switchHighlightFilter('Highlight Two');
+    	expect(authoring.getSearchItemCount()).toBe(1);
     });
 });
 
