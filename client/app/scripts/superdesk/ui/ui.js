@@ -190,7 +190,8 @@ define([
 			templateUrl: 'scripts/superdesk/ui/views/wizardStep.html',
 			scope: {
 				title: '@',
-				code: '@'
+				code: '@',
+				disabled: '='
 			},
 			transclude: true,
 			require: '^sdWizard',
