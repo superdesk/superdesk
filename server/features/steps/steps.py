@@ -318,6 +318,20 @@ def step_impl_when_post_url(context, url):
         context.outbox = outbox
 
 
+def get_response_etag(response):
+    return json.loads(response.get_data())['_etag']
+
+
+@when('we save etag')
+def step_when_we_save_etag(context):
+    context.etag = get_response_etag(context.response)
+
+
+@then('we get same etag')
+def step_then_we_get_same_etag(context):
+    assert context.etag == get_response_etag(context.response), 'etags not matching'
+
+
 def store_placeholder(context, url):
     if context.response.status_code in (200, 201):
         item = json.loads(context.response.get_data())

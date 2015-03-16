@@ -201,21 +201,21 @@ define([
                 },
                 setCurrentDeskId: function(deskId) {
                     this.activeDeskId = deskId;
-                    preferencesService.update({'desk:last_worked': deskId}, 'desk:last_worked').then(function() {
-                            //nothing to do
-                        }, function(response) {
-                            notify.error(gettext('Session preference could not be saved...'));
-                    });
                 },
                 getCurrentStageId: function() {
                     return this.activeStageId;
                 },
                 setCurrentStageId: function(stageId) {
                     this.activeStageId = stageId;
-                    preferencesService.update({'stage:items': [stageId]}, 'stage:items').then(function() {
-                        //nothing to do
+                    preferencesService.update({'desk:last_worked': this.activeDeskId}, 'desk:last_worked').then(function() {
+                        // update the stage prefs
+                        preferencesService.update({'stage:items': [stageId]}, 'stage:items').then(function() {
+                            //nothing to do
                         }, function(response) {
                             notify.error(gettext('Session preference could not be saved...'));
+                        });
+                    }, function(response) {
+                        notify.error(gettext('Session preference could not be saved...'));
                     });
                 },
                 fetchCurrentDesk: function() {

@@ -72,7 +72,6 @@
             }
 
             return api.find(RESOURCE, item._id).then(function(autosave) {
-                extendItem(item, autosave);
                 item._autosave = autosave;
                 return item;
             }, function(err) {
@@ -88,10 +87,9 @@
             timeouts[item._id] = $timeout(function() {
                 var diff = extendItem({_id: item._id}, item);
                 return api.save(RESOURCE, {}, diff).then(function(_autosave) {
+                    extendItem(item, _autosave);
                     var orig = Object.getPrototypeOf(item);
                     orig._autosave = _autosave;
-                    extendItem(orig._autosave, item);
-                    extendItem(orig, item);
                 });
             }, AUTOSAVE_TIMEOUT);
             return timeouts[item._id];
@@ -145,16 +143,17 @@
          *
          *   and save it if dirty, unlock if editable, and remove from work queue at all times
          *
-         * @param {Object} diff Edits.
+         * @param {Object} diff
+         * @param {Object} orig
          * @param {boolean} isDirty $scope dirty status.
          */
-        this.close = function closeAuthoring(diff, isDirty) {
+        this.close = function closeAuthoring(diff, orig, isDirty) {
             var promise = $q.when();
             if (this.isEditable(diff)) {
                 if (isDirty) {
                     promise = confirm.confirm()
                         .then(angular.bind(this, function save() {
-                            return this.save(diff);
+                            return this.save(orig, diff);
                         }), function() { // ignore saving
                             return $q.when();
                         });
@@ -222,13 +221,11 @@
 
             // Finding if all the keys are dirty for real
             if (angular.isDefined(origItem)) {
-                var keysInDiff = _.keys(diff);
-                for (var i = 0; i < keysInDiff.length; i++) {
-                    var keyName = keysInDiff[i];
-                    if (_.isEqual(diff[keyName], origItem[keyName])) {
-                        delete diff[keyName];
+                angular.forEach(_.keys(diff), function(key) {
+                    if (_.isEqual(diff[key], origItem[key])) {
+                        delete diff[key];
                     }
-                }
+                });
             }
 
             autosave.stop(item);
@@ -343,11 +340,11 @@
         }
 
         /**
-        * Test is an item is locked by me in another session
+        * Test if an item is locked by me in another session
         */
         this.isLockedByMe = function isLockedByMe(item) {
             var userId = getLockedUserId(item);
-            return userId && userId === session.identity._id && item.lock_session !== session.sessionId;
+            return userId && userId === session.identity._id;
         };
 
         /**
@@ -545,7 +542,7 @@
                  */
                 $scope.close = function() {
                     _closing = true;
-                    authoring.close($scope.origItem, $scope.dirty).then(function() {
+                    authoring.close($scope.item, $scope.origItem, $scope.dirty).then(function() {
                         $location.url($scope.referrerUrl);
                     });
                 };
@@ -580,7 +577,7 @@
                  */
                 $scope.closePreview = function() {
                     $scope.item = _.create($scope.origItem);
-                    extendItem($scope.item, $scope.origItem._autosave || {});
+                    extendItem($scope.item, $scope.item._autosave || {});
                     $scope._editable = authoring.isEditable($scope.origItem);
                 };
 
@@ -590,6 +587,7 @@
                 $scope.can_unlock = function() {
                     return lock.can_unlock($scope.item);
                 };
+
                 $scope.save_enabled = function() {
                     return $scope.dirty || $scope.item._autosave;
                 };

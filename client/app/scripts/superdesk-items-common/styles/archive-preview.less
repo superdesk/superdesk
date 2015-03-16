@@ -44,10 +44,15 @@
 	}
 	.item-headline {
 		padding-right: 30px;
-		> div, > a {
+		> div {
 			font-size: 14px;
 			color: #000;
 		}
+	}
+	.open-item {
+		position: absolute;
+		right: 5px;
+		top: 5px;
 	}
 	.text, .composite {
 		.border-radius(2px);
@@ -124,14 +129,22 @@
 	}
 }
 
+.wrap {
+    white-space: pre-wrap;
+}
+
 .content-item-preview {
 	
 	.content {
 		.content-container {
 			position: absolute;
 			top:0; left: 0; right: 0; bottom: 0;
-			padding: 0 20px @bottom-view-padding;
+			//padding: 0 20px @bottom-view-padding;
+			padding: 0 20px 0;
 			overflow: auto;
+			.core-content {
+				margin-bottom: 80px;
+			}
 		}
 		.item-locked {
 			float: left;
@@ -446,6 +459,7 @@
 		background: @lightbox-bg !important;
 		margin: 0 !important;
 		width: auto !important;
+		overflow: hidden;
 	}
 
 	.lightbox-right {
@@ -540,43 +554,147 @@
 			position: absolute;
 			right: 0; top: 0; bottom:0; left:0;
 			text-align: center;
-			img {
-				max-width: 100%;
-				height: auto!important;
-				max-height: 100%;
+			> .rendition {
+				position: absolute;
+				right: 0; top: 0; bottom:0; left:0;
+				> figure {
+					position: absolute;
+					right: 0; top: 0; bottom:0; left:0;
+					display: flex;
+					align-items: center;
+					justify-content: space-around;
+				}
+				img {
+					max-width: 100%;
+					height: auto !important;
+					flex: 0 1 100%; 
+				}
+				&.portrait {
+					> figure {
+						display: block;
+					}
+					img {
+						max-height: 100%;
+						width: auto !important;
+					}
+				}
+			}
+
+			&.composite {
+				padding: 20px 20px 40px;
+				overflow: auto;
+				&::-webkit-scrollbar {
+					width:16px;
+					border-left:1px solid #282828;
+					background: #000;
+					border-right:1px solid #282828;
+				}
+
+				&::-webkit-scrollbar-thumb {
+					border-right: 1px solid #282828;
+					border-left: 1px solid #282828;
+					background: #383838;
+					box-shadow: inset 0 0 0 2px #000;
+				}
+				.item {
+					position: relative;
+					float: left;
+					width: 220px;
+					height: 150px;
+					.border-radius(3px);
+					overflow: hidden;
+					margin: 15px;
+					background: #3d3d3d;
+					.box-shadow(0 2px 0 0 #000);
+					.icons-holder {
+						i {
+							margin: -12px 0 0 -12px;
+							.opacity(20);
+						}
+					}
+					.item-headline {
+						padding: 15px;
+						text-align: left;
+						font-size: 14px;
+					}
+					&.picture {
+						.item-headline {
+							display: none;
+						}
+						img {
+							height: 150px;
+							width: auto;
+						}
+					}
+					&.text {
+						background: @white;
+						.icons-holder {
+							.opacity(50);
+						}
+					}
+					&.composite, &.audio {
+						.item-headline {
+							position: absolute;
+							bottom: 0;
+							left: 0;
+							right: 0;
+							color: #9a9a9a;
+							text-align: center;
+						}
+					}
+					.open-item {
+						display: none;
+						position: absolute;
+						right: 5px;
+						top: 5px;
+					}
+					&:hover {
+						.open-item {
+							display: block;
+						}
+					}
+				}
+
 			}
 		}
-		.condensed-preview, .navigation {
+		.condensed-preview, {
 			position: absolute;
 			right: 0; top: 0; bottom:0; left:0;
 		}
 		&.composite {
-			.condensed-preview, .navigation {
+			.condensed-preview, .navigation.left {
 				left : @lightbox-composite-condensed;
 			}
 			&.open {
-				.condensed-preview, .navigation {
+				.condensed-preview, .navigation.left {
 					left : @lightbox-composite-width;
 				}
 			}
 		}
 		.navigation {
+			position: absolute;
 			top: 50%;
 			height: 80px;
 			margin-top: -120px;
-			button {
-				padding: 12px 25px;
-				border: 0;
-				background: 0;
+			padding: 12px 25px;
+			border: 0;
+			background: 0;
+			&.left {
+				left: 0;
+			}
+			&.right {
+				right: 0;
+				left: auto;
+			}
+			i {
+				.opacity(40);
+			}
+			&:hover {
 				i {
-					.opacity(40);
-				}
-				&:hover {
-					i {
-						.opacity(100);
-					}
+					.opacity(100);
 				}
 			}
+			
 		}
 		.lightbox-caption {
 			background: rgba(0,0,0,0.7);
@@ -639,7 +757,7 @@
 			text-align: center;
 		}
 		.full-preview {
-			&.composite i {
+			&.composite .icons-holder i {
 				position: absolute;
 				top:50%; left: 50%;
 				margin: -70px 0 0 -20px;
@@ -659,17 +777,6 @@
 		top: 0; bottom: 0; left: 0;
 		z-index: 2;
 
-		&::-webkit-scrollbar {
-			width:16px;
-			border-left:1px solid #282828;
-		}
-		&::-webkit-scrollbar-thumb {
-			border-right: 3px solid #101010;
-			border-left: 1px solid #282828;
-			background: #383838;
-			box-shadow: inset 2px 0 0 0 #101010;
-		}
-
 		.toggle-composite {
 			width: 40px;
 			height: 43px;
@@ -683,7 +790,7 @@
 			i {
 				vertical-align: middle;
 				.opacity(60);
-				.rotate(0deg);
+				.rotate(-90deg);
 				.transition(all 0.2s ease);
 			}
 			&:hover {
@@ -692,11 +799,10 @@
 		}
 		&.open .toggle-composite {
 			i {
-				.rotate(180deg);
+				.rotate(90deg);
 			}
 		}
 
-		
 		.header {
 			background: #1e353f;
 			h5 {
@@ -726,6 +832,7 @@
 				white-space: nowrap;
 				padding: 0 20px 0 10px;
 				display: block;
+				cursor: pointer;
 			}
 			span {
 				float: left;
@@ -738,6 +845,28 @@
 			}
 		}
 
+		> .content {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 43px;
+			bottom: 0;
+			overflow: auto;
+
+			&::-webkit-scrollbar {
+				width:16px;
+				border-left:1px solid #282828;
+				background: #000;
+				border-right:1px solid #282828;
+			}
+
+			&::-webkit-scrollbar-thumb {
+				border-right: 1px solid #282828;
+				border-left: 1px solid #282828;
+				background: #383838;
+				box-shadow: inset 0 0 0 2px #000;
+			}
+		}
 		ul {
 			list-style-type: none;
 			margin:0; padding: 0;
@@ -746,6 +875,7 @@
 				border-bottom: 1px solid #272727;
 				height: 40px;
 				padding: 20px;
+				position: relative;
 				&:hover {
 					cursor: pointer;
 					background: rgba(98,176,208,0.2);
@@ -771,7 +901,7 @@
 					}
 				}
 
-				.headline {
+				.item-headline {
 					height: 40px;
 					overflow: hidden;
 					color: #dedede;
@@ -779,6 +909,19 @@
 					font-size: 14px;
 					.text-normal();
 					line-height: 21px;
+				}
+				.open-item {
+					position: absolute;
+					right: 0px;
+					top: 0px;
+					display: none;
+					background: #888;
+					padding: 2px 2px 2px 4px;
+				}
+				&:hover {
+					.open-item {
+						display: block;
+					}
 				}
 			}
 			.toggle-box > header {

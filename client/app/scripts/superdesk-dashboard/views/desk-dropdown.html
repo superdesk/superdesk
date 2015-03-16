@@ -1,6 +1,6 @@
 <button id="selected-desk" data-toggle="dropdown" class="dropdown-toggle pull-left">
-    <span class="name" ng-show="selected">{{ selected.name | uppercase }}</span>
-    <span class="name" ng-hide="selected" translate>PERSONAL</span>
+    <span class="name" ng-show="selected.name">{{ selected.name | uppercase }}</span>
+    <span class="name" ng-hide="selected.name" translate>PERSONAL</span>
     <span class="caret"></span>
 </button>
 
@@ -8,5 +8,5 @@
     <li ng-repeat="desk in userDesks track by desk._id" ng-if="desk !== selected">
         <button option="{{ desk.name | uppercase }}" ng-click="select(desk)">{{ desk.name | uppercase }}</button>
     </li>
-    <li ng-if="selected"><button option="PERSONAL" ng-click="select()" translate>PERSONAL</button></li>
+    <li ng-if="selected.name"><button option="PERSONAL" ng-click="select({'_id': 'personal'})" translate>PERSONAL</button></li>
 </ul>

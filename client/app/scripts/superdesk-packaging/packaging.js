@@ -170,6 +170,7 @@
 
         $scope.addItemToGroup = function addItemsToGroup(group, item) {
             packages.addItemsToPackage($scope.item, group, [item]);
+            $scope.autosave($scope.item);
         };
 
         fetchContentItems();
@@ -207,6 +208,7 @@
         $scope.addMultiItemsToGroup = function(group) {
             //add to group
             packages.addItemsToPackage($scope.item, group, $scope.multiSelected);
+            $scope.autosave($scope.item);
 
             //uncheck all
             _.each($scope.multiSelected, function(item) {
@@ -251,11 +253,10 @@
 
     function PackageItemsEditDirective() {
         return {
-            scope: {},
+            scope: false,
             require: 'ngModel',
             templateUrl: 'scripts/superdesk-packaging/views/sd-package-items-edit.html',
             link: function(scope, elem, attrs, ngModel) {
-
                 ngModel.$render = function() {
                     scope.list = ngModel.$viewValue;
                 };
@@ -319,6 +320,7 @@
                 scope.remove = function(group_id, residRef) {
                     var group = _.find(scope.list, {id: group_id});
                     _.remove(group.items, {residRef: residRef});
+                    autosave();
                 };
 
                 scope.reorder = function(start, end) {
@@ -330,13 +332,13 @@
                         //just change the address
                         dest.items = _.cloneDeep(dest.items);
                     }
+                    autosave();
                 };
 
-                scope.$watch('list', function(newVal, oldVal) {
-                    if (newVal !== oldVal) {
-                        ngModel.$setViewValue({list: scope.list});
-                    }
-                }, true);
+                function autosave() {
+                    ngModel.$setViewValue({list: scope.list});
+                    scope.autosave(scope.item);
+                }
             }
         };
     }
@@ -425,13 +427,13 @@
         };
 
         return {
-            replace: true,
             templateUrl: 'scripts/superdesk-packaging/views/sd-package.html',
             scope: {
                 item: '=',
                 setitem: '&'
             },
-            link: function(scope, elem) {
+            link: function(scope, elem, attrs) {
+                scope.mode = attrs.mode || 'tree';
                 scope.$watchGroup(['item', 'item.groups'], function() {
                     if (scope.item && scope.item.groups) {
                         scope.tree = solveRefs(
@@ -446,12 +448,12 @@
 
     function PackageItemDirective() {
         return {
-            replace: true,
             templateUrl: 'scripts/superdesk-packaging/views/sd-package-item.html',
             scope: {
                 id: '=',
                 item: '=',
-                setitem: '&'
+                setitem: '&',
+                mode: '='
             },
             link: function(scope, elem) {
             }
@@ -463,15 +465,16 @@
         var template =
             '<div sd-package-item data-id="id"' +
                 ' data-item="item"' +
-                ' data-setitem="setitem({selected: selected})">' +
+                ' data-setitem="setitem({selected: selected})"' +
+                ' data-mode="mode">' +
             '</div>';
 
         return {
-            replace: true,
             scope: {
                 id: '=',
                 item: '=',
-                setitem: '&'
+                setitem: '&',
+                mode: '='
             },
             link: function(scope, elem) {
                 elem.append($compile(template)(scope));
@@ -482,7 +485,6 @@
     PackageRefDirective.$inject = ['api', '$rootScope'];
     function PackageRefDirective(api, $rootScope) {
         return {
-            replace: true,
             templateUrl: 'scripts/superdesk-packaging/views/sd-package-ref.html',
             scope: {
                 item: '=',

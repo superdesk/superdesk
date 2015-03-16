@@ -1,0 +1,320 @@
+Delivered-To: a@gapps.a.com.au
+Received: by 10.112.126.34 with SMTP id mv2csp2380396lbb;
+        Tue, 10 Mar 2015 14:17:14 -0700 (PDT)
+X-Received: by 10.66.164.200 with SMTP id ys8mr70470634pab.130.1426022233340;
+        Tue, 10 Mar 2015 14:17:13 -0700 (PDT)
+Return-Path: <benjamin.everill@a.com>
+Received: from mail-edge-a.a.com.au (mail-edge-a.a.com.au. [203.4.189.30])
+        by mx.google.com with ESMTPS id fx3si2361163pdb.32.2015.03.10.14.17.12
+        for <a@gapps.a.com.au>
+        (version=TLSv1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 10 Mar 2015 14:17:13 -0700 (PDT)
+Received-SPF: softfail (google.com: domain of transitioning benjamin.everill@a.com does not designate 203.4.189.30 as permitted sender) client-ip=203.4.189.30;
+Authentication-Results: mx.google.com;
+       spf=softfail (google.com: domain of transitioning benjamin.everill@a.com does not designate 203.4.189.30 as permitted sender) smtp.mail=benjamin.everill@a.com;
+       dkim=neutral (body hash did not verify) header.i=@;
+       dmarc=fail (p=NONE dis=NONE) header.from=gmail.com
+Received: from mail-hub-cas-a.a.com.au (172.16.170.186) by
+ mail-edge-a.a.com.au (192.168.250.30) with Microsoft SMTP Server (TLS) id
+ 8.3.377.0; Wed, 11 Mar 2015 08:17:06 +1100
+Received: from mail-edge-a.a.com.au (192.168.250.30) by
+ mail-hub-cas-a.a.com.au (172.16.170.186) with Microsoft SMTP Server (TLS)
+ id 8.3.377.0; Wed, 11 Mar 2015 08:17:06 +1100
+Received: from mail-pd0-f182.google.com (209.85.192.182) by mail-a.mrg.com.au
+ (192.168.250.33) with Microsoft SMTP Server id 8.3.377.0; Wed, 11 Mar 2015
+ 08:17:05 +1100
+Received: by pdjy10 with SMTP id y10so5211165pdj.12        for
+ <a_a@a.com.au>; Tue, 10 Mar 2015 14:17:05 -0700 (PDT)
+X-Gm-Message-State: ALoCoQkq8yK4qdkoqNMjDpuBP5OD0HAXcSapvM6nYiR1UiBuBelU+x7II6G4ytO8JsxOT086kotskl1XIx9HLDsbUTfjCxWwLYocQMUr3L2XdukyblHPCRjyfN+pNNPdAQ4P3Fz5x5jf
+X-Received: by 10.66.136.48 with SMTP id px16mr33380992pab.89.1426022225429;
+        Tue, 10 Mar 2015 14:17:05 -0700 (PDT)
+X-Received: by 10.66.136.48 with SMTP id px16mr33380972pab.89.1426022225275;
+        Tue, 10 Mar 2015 14:17:05 -0700 (PDT)
+Received: from mail-pa0-x22c.google.com (mail-pa0-x22c.google.com.
+ [2607:f8b0:400e:c03::22c])        by mx.google.com with ESMTPS id
+ kk7si3026063pdb.151.2015.03.10.14.17.05        for <a_a@a.com.au>
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Mar 2015 14:17:05 -0700 (PDT)
+Received-SPF: Pass (mail-edge-a.a.com.au: domain of
+ benjamin.everill@a.com designates 209.85.192.182 as permitted sender)
+ receiver=mail-edge-a.a.com.au; client-ip=209.85.192.182;
+ helo=mail-pd0-f182.google.com;
+Received-SPF: pass (google.com: domain of benjamin.everill@a.com designates 2607:f8b0:400e:c03::22c as permitted sender) client-ip=2607:f8b0:400e:c03::22c;
+Received: by padbj1 with SMTP id bj1so5300015pad.12        for
+ <a_a@a.com.au>; Tue, 10 Mar 2015 14:17:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20120113;
+        h=from:content-type:subject:message-id:date:to:mime-version;
+        bh=TJEpG3X0we8SBCQSbhurRGV3XUA4GFeFsucvoUuQ1nU=;
+        b=SO8Yu8MvZJIE0hPxyDJ96bGLHg33RIrHdk0G+k9or8wCKEQ2LUeaKyiND5R5nkEfpH
+         rtWhbXQJmy8BoVzEl4PgObf9xQdB1DJPuyIzo5gocsUOju/Swg4RQmKS/OdG0jicf2PT
+         HajHUZc0Jq06Qm8noDYjy/o+ClOO4EOUMPCs1ghIazO3GraAcVsrF1us6Te+cGZIgXqY
+         HpO3aN4aMbwEuAymIGVk7YnyZnN2ZuW2Nl8amXOwp9kf4ON0wR6FuvFeTQYXVFHdR75N
+         iRO555pB2xrcoOCOwZ+bm/lqIZy0L1BTxbGVJSM77QsiF64ANGk2WrZrHZ+AKzCPeXUy
+         63Wg==
+X-Received: by 10.70.45.169 with SMTP id o9mr16523671pdm.81.1426022224729;
+        Tue, 10 Mar 2015 14:17:04 -0700 (PDT)
+Return-Path: <benjamin.everill@a.com>
+Received: from [192.168.0.12] (cpe-23-243-23-41.socal.res.rr.com.
+ [23.243.23.41])        by mx.google.com with ESMTPSA id
+ hk6sm2407588pdb.83.2015.03.10.14.17.02        for <a_a@a.com.au>
+        (version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);        Tue, 10
+ Mar 2015 14:17:03 -0700 (PDT)
+From: Ben <benjamin.everill@a.com>
+Content-Type: multipart/alternative;
+	boundary="Apple-Mail=_AE919A27-F8A2-477D-8399-5C792C905091"
+Subject: =?windows-1252?Q?TravTalk’s_Special_for_TAAI_convention?=
+Message-ID: <7173E056-46C9-4D5A-A851-9FC2C587C691@gmail.com>
+Date: Tue, 10 Mar 2015 14:17:01 -0700
+To: <a_a@a.com.au>
+MIME-Version: 1.0 (Mac OS X Mail 7.3 \(1878.6\))
+X-Mailer: Apple Mail (2.1878.6)
+
+--Apple-Mail=_AE919A27-F8A2-477D-8399-5C792C905091
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="Windows-1252"
+
+SDA
+
+Headline: Senden defends but Scott favourite
+
+Abstract: John Senden defends his Valspar Championship this week but countr=
+yman Adam Scott is getting the headlines.
+
+Gol PGA
+By Ben Everill
+
+LOS ANGELES, March 10 AAP =96 Adam Scott is hoping to live up to his favour=
+ite tag as he searches for more competitive reps in his Masters preparation=
+s.
+Scott lines up this week at Innisbrook Resort=92s Cooperhead course in Tamp=
+a as a short price favourite on the US PGA tour while countryman John Sende=
+n defends the title he won spectacularly last year.
+Scott, now world No.4 after a tie for fourth at the World Golf Championship=
+s Cadillac Championship last week in his return after a two-and-a-half mont=
+h layoff, is looking to reclaim the competitive edge he lost during his bre=
+ak.
+With his usual sublime shot making hardly missing a beat and his change to =
+a short putter for the first time in four years actually improving his putt=
+ing statistics the Queenslander says it=92s now all about getting his game =
+=91back nine Sunday=92 ready.
+The 2013 Masters champion wants to head to Magnolia Lane in a month confide=
+nt his game can compete under the gun.
+=93I think it's a good little stretch for me to challenge myself into a bit=
+ of form into Augusta,=94 Scott said as he also expects to play next week a=
+t the Arnold Palmer Invitational and, depending on how well he goes the fol=
+lowing week=92s Texas Open.
+=93I need to play. I need to be in that competitive form and last week was =
+a good chance but maybe lack of competition just didn't get me over the lin=
+e on the back nine.
+=93This week I'm going to have to stay patient, it's a little tighter golf =
+course and I=92ll just really have to rein it in and challenge the swing a =
+little bit.
+=93The next few weeks are about getting a bit of form going and hopefully b=
+e good for Augusta.=94
+Senden, who claimed his second career win a year ago, almost eight years af=
+ter the first, is quietly confident of a repeat effort.
+He has two runner-up finishes and the victory in his career at Innisbrook a=
+nd can also draw on the fact it was his short game, including a chip in on =
+the 16th on Sunday, that helped him seal the deal.
+=93It is exciting turning up and knowing I can get it done. I love the golf=
+ course, it is challenging and it asks you to bring your best, so I=92m exc=
+ited to be able to play knowing I don=92t need to fear it,=94 Senden said.
+=93It came down to believing in my short game and that belief helped me to =
+a career year. A lot of years I had been playing over here and striking it =
+so well but not getting enough from my game but I finally realised to switc=
+h on the belief across my game and know I can beat these guys
+=93For it to happen really solidified my thinking.=94
+While his tie for 31st at the WGC event last week might not look great on p=
+aper the reality is just one hole at Trump Doral derailed an otherwise impr=
+essive week.
+Senden was nine-over on the par three ninth in his four rounds but six unde=
+r on the remaining holes.
+Robert Allenby, Steven Bowditch, Marc Leishman, Greg Chalmers and Rod Pampl=
+ing are also in the field.
+AAP be/
+Ben Everill
+Golf Writer
+Australian Associated Press - US PGA Tour
+Ph USA: +1 310 699 0500
+Ph AUS: +61 2 8003 3164
+Twitter: @beneverill
+Skype: ben.everill
+
+
+
+
+________________________________
+This email may contain information that is confidential. If you receive an =
+email in error please delete it immediately.
+
+--Apple-Mail=_AE919A27-F8A2-477D-8399-5C792C905091
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/html; charset="windows-1252"
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DWindows-1=
+252">
+</head>
+<body style=3D"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-lin=
+e-break: after-white-space;">
+<!--[if gte mso 9]><xml>
+ <o:OfficeDocumentSettings>
+  <o:AllowPNG/>
+ </o:OfficeDocumentSettings>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:Zoom>0</w:Zoom>
+  <w:TrackMoves>false</w:TrackMoves>
+  <w:TrackFormatting/>
+  <w:PunctuationKerning/>
+  <w:DrawingGridHorizontalSpacing>18 pt</w:DrawingGridHorizontalSpacing>
+  <w:DrawingGridVerticalSpacing>18 pt</w:DrawingGridVerticalSpacing>
+  <w:DisplayHorizontalDrawingGridEvery>0</w:DisplayHorizontalDrawingGridEve=
+ry>
+  <w:DisplayVerticalDrawingGridEvery>0</w:DisplayVerticalDrawingGridEvery>
+  <w:ValidateAgainstSchemas/>
+  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:DontGrowAutofit/>
+   <w:DontAutofitConstrainedTables/>
+   <w:DontVertAlignInTxbx/>
+  </w:Compatibility>
+ </w:WordDocument>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:LatentStyles DefLockedState=3D"false" LatentStyleCount=3D"276">
+ </w:LatentStyles>
+</xml><![endif]--><!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-ascii-font-family:Cambria;
+	mso-ascii-theme-font:minor-latin;
+	mso-fareast-font-family:"Times New Roman";
+	mso-fareast-theme-font:minor-fareast;
+	mso-hansi-font-family:Cambria;
+	mso-hansi-theme-font:minor-latin;}
+</style>
+<![endif]--><!--StartFragment-->
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">SDA</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">&nbsp;</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">Headline: Senden defends but Sc=
+ott favourite</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">&nbsp;</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">Abstract: John Senden defends h=
+is Valspar Championship this week but countryman Adam Scott is getting the =
+headlines.</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">&nbsp;</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">Gol PGA</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">By Ben Everill</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">&nbsp;</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">LOS ANGELES, March 10 AAP =96 A=
+dam Scott is hoping to live up to his favourite tag as he searches for more=
+ competitive reps in his Masters preparations.
+</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">Scott lines up this week at Inn=
+isbrook Resort=92s Cooperhead course in Tampa as a short price favourite on=
+ the US PGA tour while countryman John Senden defends the title he won spec=
+tacularly last year.</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">Scott, now world No.4 after a t=
+ie for fourth at the World Golf Championships Cadillac Championship last we=
+ek in his return after a two-and-a-half month layoff, is looking to reclaim=
+ the competitive edge he lost during
+ his break.</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">With his usual sublime shot mak=
+ing hardly missing a beat and his change to a short putter for the first ti=
+me in four years actually improving his putting statistics the Queenslander=
+ says it=92s now all about getting his
+ game =91back nine Sunday=92 ready.</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">The 2013 Masters champion wants=
+ to head to Magnolia Lane in a month confident his game can compete under t=
+he gun.</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">=93</span><span lang=3D"EN-AU">=
+I think it's a good little stretch for me to challenge myself into a bit of=
+ form into Augusta,=94 Scott said as he also expects to play next week at t=
+he Arnold Palmer Invitational and, depending
+ on how well he goes the following week=92s Texas Open.<o:p></o:p></span></=
+p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">=93I need to play. I need to be=
+ in that competitive form and last week was a good chance but maybe lack of=
+ competition just didn't get me over the line on the back nine.<o:p></o:p><=
+/span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">=93This week I'm going to have =
+to stay patient, it's a little tighter golf course and I=92ll just really h=
+ave to rein it in and challenge the swing a little bit.&nbsp;
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">=93The next few weeks are about=
+ getting a bit of form going and hopefully be good for Augusta.=94<o:p></o:=
+p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">Senden, who claimed his second =
+career win a year ago, almost eight years after the first, is quietly confi=
+dent of a repeat effort.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">He has two runner-up finishes a=
+nd the victory in his career at Innisbrook and can also draw on the fact it=
+ was his short game, including a chip in on the 16<sup>th</sup> on Sunday, =
+that helped him seal the deal.<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">=93It is exciting turning up an=
+d knowing I can get it done. I love the golf course, it is challenging and =
+it asks you to bring your best, so I=92m excited to be able to play knowing=
+ I don=92t need to fear it,=94 Senden said.</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">=93It came down to believing in=
+ my short game and that belief helped me to a career year. A lot of years I=
+ had been playing over here and striking it so well but not getting enough =
+from my game but I finally realised to
+ switch on the belief across my game and know I can beat these guys </span>=
+</p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">=93For it to happen really soli=
+dified my thinking.=94</span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">While his tie for 31<sup>st</su=
+p> at the WGC event last week might not look great on paper the reality is =
+just one hole at Trump Doral derailed an otherwise impressive week.<o:p></o=
+:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">Senden was nine-over on the par=
+ three ninth in his four rounds but six under on the remaining holes.<o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">Robert Allenby, Steven Bowditch=
+, Marc Leishman, Greg Chalmers and Rod Pampling are also in the field.</spa=
+n></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-AU">AAP be/ </span></p>
+<!--EndFragment-->
+<div><span class=3D"Apple-style-span" style=3D"border-collapse: separate; b=
+order-spacing: 0px;">
+<div>
+<div>Ben Everill</div>
+<div>Golf Writer</div>
+<div>Australian Associated Press - US PGA Tour</div>
+<div>Ph USA: &#43;1 310 699 0500</div>
+<div>Ph AUS: &#43;61 2 8003 3164</div>
+<div>Twitter: @beneverill</div>
+<div>Skype: ben.everill</div>
+</div>
+<div><br>
+</div>
+</span><br class=3D"Apple-interchange-newline">
+</div>
+<br>
+<br>
+<hr>
+<font face=3D"Arial" color=3D"Gray" size=3D"1">This email may contain infor=
+mation that is confidential. If you receive an email in error please delete=
+ it immediately.<br>
+</font>
+</body>
+</html>
+
+--Apple-Mail=_AE919A27-F8A2-477D-8399-5C792C905091--
