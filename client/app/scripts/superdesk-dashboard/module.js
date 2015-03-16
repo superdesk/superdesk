@@ -46,7 +46,7 @@ define([
                         if (!currentDeskId) {
                             preferencesService.get('desk:last_worked').then(
                                 function(desk) {
-                                    if (desk !== '' && desk !== 'personal') {
+                                    if (desk && desk !== 'personal') {
                                         scope.select(_.find(scope.userDesks, {_id: desk}), false);
                                     } else {
                                         scope.select(scope.userDesks[0], false);
