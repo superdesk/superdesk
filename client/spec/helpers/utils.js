@@ -1,20 +1,18 @@
 'use strict';
 
-var browserManager = new BrowserManager();
-
 exports.login = LoginModal;
 exports.open = openUrl;
 exports.printLogs = printLogs;
-exports.browserManager = browserManager;
+exports.browserManager = new BrowserManager();
 
 // construct url from uri and base url
 exports.constructUrl = function(base, uri) {
     return base.replace(/\/$/, '') + uri;
 };
 
-function BrowserManager() {
-    var currBrowser = browser;
+var currBrowser = browser;
 
+function BrowserManager() {
     this.setBrowser = function(userBrowser) {
         currBrowser = userBrowser;
     };
@@ -27,6 +25,8 @@ function BrowserManager() {
         return currBrowser.element;
     };
 }
+
+var browserManager = new BrowserManager();
 
 function LoginModal() {
     var currBrowser = browserManager.getBrowser();
