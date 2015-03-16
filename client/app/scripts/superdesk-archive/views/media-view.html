@@ -10,26 +10,26 @@
             <span><i class="filetype-icon-large-composite icon-white"></i></span>
             <h5>{{ item.headline }}</h5>
         </div>
-        <ul ng-if="item.type === 'composite'">
-            <div sd-package data-item="item" data-setitem="setPackageSingle(selected)"></div>
-        </ul>
+        <div class="content">
+            <ul ng-if="item.type === 'composite'">
+                <div sd-package data-item="item" data-setitem="setPackageSingle(selected)"></div>
+            </ul>
+        </div>
     </div>
 
     
     <!-- preview pane -->
     <section class="lightbox-left" ng-class="{'composite' : item.type === 'composite', 'open' : compositeOpen}">
 
-        <div sd-single-item data-item="singleItem"></div>        
-        <div class="lightbox-caption">{{ item.headline }}</div>
+        <div sd-single-item data-item="singleItem" data-setitem="setPackageSingle(selected)"></div>
 
-        <div class="navigation">
-            <button class="pull-left" ng-click="prev()" ng-disabled="!prevEnabled" title="{{ 'previous' | translate }}">
-                <i class="arrow-icon-large-left"></i>
-            </button>
-            <button class="pull-right" ng-click="next()" ng-disabled="!nextEnabled" title="{{ 'next' | translate }}">
-                <i class="arrow-icon-large-right"></i>
-            </button>
-        </div>
+
+        <button class="navigation left" ng-click="prev()" ng-disabled="!prevEnabled" title="{{ 'previous' | translate }}">
+            <i class="arrow-icon-large-left"></i>
+        </button>
+        <button class="navigation right" ng-click="next()" ng-disabled="!nextEnabled" title="{{ 'next' | translate }}">
+            <i class="arrow-icon-large-right"></i>
+        </button>
 
     </section>
     <!-- end of preview pane -->

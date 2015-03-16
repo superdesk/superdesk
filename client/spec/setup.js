@@ -8,7 +8,8 @@ var waitForSuperdesk = require('./helpers/utils').waitForSuperdesk;
 
 // runs before every spec
 beforeEach(function(done) {
-	browser.driver.manage().window().setSize(1280, 800);
+    require('./helpers/waitReady.js');
+    browser.driver.manage().window().setSize(1280, 800);
     getToken(function() {
         resetApp(function() {
             browser.driver.get(browser.baseUrl)

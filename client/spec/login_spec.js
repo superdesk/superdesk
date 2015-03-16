@@ -1,4 +1,5 @@
 
+var waitForSuperdesk = require('./helpers/utils').waitForSuperdesk;
 var Login = require('./helpers/pages').login;
 
 describe('Login', function() {
@@ -6,9 +7,13 @@ describe('Login', function() {
 
     var modal;
 
-    beforeEach(function() {
-        browser.get('/');
-        modal = new Login();
+    beforeEach(function(done) {
+        browser.get('/').then(
+            waitForSuperdesk
+        ).then(function() {
+            modal = new Login();
+            done();
+        });
     });
 
     it('form renders modal on load', function() {
@@ -17,20 +22,26 @@ describe('Login', function() {
 
     it('user can log in', function() {
         modal.login('admin', 'admin');
+        waitForSuperdesk();
         expect(modal.btn.isDisplayed()).toBe(false);
         expect(browser.getCurrentUrl()).toBe(browser.baseUrl + '/#/workspace');
         element(by.css('button.current-user')).click();
-        expect(element(by.css('.user-info .displayname')).getText()).toBe('admin');
+        expect(
+            element(by.css('.user-info .displayname'))
+                .waitReady()
+                .then(function(elem) { return elem.getText(); })
+        ).toBe('admin');
     });
 
     it('user can log out', function() {
         modal.login('admin', 'admin');
+        waitForSuperdesk();
         element(by.css('button.current-user')).click();
 
         // wait for sidebar animation to finish
         browser.wait(function() {
             return element(by.buttonText('SIGN OUT')).isDisplayed();
-        });
+        }, 200);
 
         element(by.buttonText('SIGN OUT')).click();
 

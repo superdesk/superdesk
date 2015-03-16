@@ -118,7 +118,7 @@ class PackageService():
         item_id = assoc[ITEM_REF]
         item = get_resource_service(endpoint).find_one(req=None, _id=item_id)
         if not item:
-            message = 'Invalid item reference: ' + assoc['itemRef']
+            message = 'Invalid item reference: ' + assoc[ITEM_REF]
             logger.error(message)
             raise SuperdeskApiError.notFoundError(message=message)
         return item, item_id, endpoint
@@ -135,13 +135,13 @@ class PackageService():
             two_way_links.append({'package': package_id})
 
         updates = self.get_item_update_data(item, two_way_links, delete)
-        get_resource_service(endpoint).patch(item_id, updates)
+        get_resource_service(endpoint).system_update(item_id, updates, item)
 
     """
     Add extensibility point for item patch data.
     """
     def get_item_update_data(self, __item, links, delete):
-        return {LINKED_IN_PACKAGES: links, 'req_for_save': 'false'}
+        return {LINKED_IN_PACKAGES: links}
 
     def check_for_duplicates(self, package, associations):
         counter = Counter()

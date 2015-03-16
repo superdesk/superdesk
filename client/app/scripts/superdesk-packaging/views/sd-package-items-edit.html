@@ -4,7 +4,7 @@
 			<div class="group-info">
 				<h6>{{ group.id }}</h6>
 			</div>
-			<ul class="package-edit-items clearfix" data-group="{{group.id}}">
+			<ul id="{{ group.id | uppercase}}" class="package-edit-items clearfix" data-group="{{group.id}}">
 				<li class="sort-item clearfix" ng-repeat="item in group.items">
 					<div class="item-container">
 						<div sd-package-item-preview></div>

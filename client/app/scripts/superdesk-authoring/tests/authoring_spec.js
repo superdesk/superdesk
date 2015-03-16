@@ -175,7 +175,7 @@ describe('authoring', function() {
             var edit = Object.create(item);
             edit.headline = 'test';
 
-            authoring.close(edit, true);
+            authoring.close(edit, item, true);
             $rootScope.$digest();
 
             expect(confirm.confirm).toHaveBeenCalled();
@@ -185,7 +185,7 @@ describe('authoring', function() {
             confirmDefer.resolve();
             $rootScope.$digest();
 
-            expect(authoring.save).toHaveBeenCalledWith(edit);
+            expect(authoring.save).toHaveBeenCalledWith(item, edit);
             expect(lock.unlock).toHaveBeenCalled();
         }));
 
@@ -265,7 +265,8 @@ describe('autosave', function() {
         $timeout.flush(5000);
         expect(api.save).toHaveBeenCalledWith('archive_autosave', {}, {_id: 1, headline: 'test'});
         expect(item._autosave._id).toBe(2);
-        expect(item.headline).toBe('test');
+        expect(edit.headline).toBe('test');
+        expect(item.headline).not.toBe('test');
     }));
 
     it('can save multiple items', inject(function(autosave, api, $q, $timeout, $rootScope) {

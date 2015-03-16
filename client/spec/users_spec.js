@@ -1,4 +1,3 @@
-
 var post = require('./helpers/fixtures').post;
 var openUrl = require('./helpers/utils').open;
 
@@ -19,7 +18,7 @@ describe('Users', function() {
 
     describe('profile:', function() {
 
-        beforeEach(openUrl('/#/profile'));
+        beforeEach(function(done) {openUrl('/#/profile').then(done);});
 
         it('can render user profile', function() {
             expect(bindingValue('user.username')).toBe('admin');
@@ -30,7 +29,9 @@ describe('Users', function() {
     });
 
     describe('users list:', function() {
-        beforeEach(openUrl('/#/users'));
+        beforeEach(function(done) {
+            openUrl('/#/users').then(done);
+        });
 
         it('can list users', function() {
             expect(element.all(by.repeater('user in users')).count()).toBe(3);
@@ -41,42 +42,85 @@ describe('Users', function() {
             var user = element.all(by.repeater('users')).first(),
                 activity = user.element(by.className('icon-trash'));
 
-            user.click();
-            expect($('.preview-pane').evaluate('selected.user')).not.toBe(null);
+            user.waitReady()
+                .then(function(elem) {
+                  return browser.actions().mouseMove(elem).perform();
+                })
+                .then(function() {
+                  activity.waitReady().then(function(elem) { elem.click(); });
+                });
 
-            browser.actions()
-                .mouseMove(activity)
-                .perform();
-            activity.click();
-
-            browser.sleep(200); // let the modal animation finish
-
-            var modal = element(by.css('.modal-dialog'));
-            expect(modal.element(by.binding('bodyText')).getText())
-                .toBe('Please confirm you want to delete a user.');
-            modal.element(by.partialButtonText('OK')).click();
-
-            expect(element.all(by.repeater('users')).count()).toBe(2);
+            element(by.css('.modal-dialog')).waitReady().then(function(elem) {
+                browser.wait(function() {
+                    return elem.element(by.binding('bodyText'))
+                        .getText()
+                        .then(function(text) {
+                            if (text === 'Please confirm you want to delete a user.') {
+                                return true;
+                            }
+                        });
+                }, 5000);
+                return elem;
+            }).then(function(elem) {
+                browser.wait(function() {
+                    try {
+                        return elem.element(by.partialButtonText('OK'))
+                            .click()
+                            .then(function() { return true; });
+                    } catch (err) { console.log(err); }
+                }, 5000);
+            }).then(function() {
+                browser.wait(function() {
+                    return element.all(by.repeater('users'))
+                        .count()
+                        .then(function(c) {
+                            if (c === 2) {
+                                return true;
+                            }
+                        });
+                }, 5000);
+            });
         });
     });
 
     describe('user detail:', function() {
-        beforeEach(openUrl('/#/users'));
+        beforeEach(function(done) {openUrl('/#/users').then(done);});
 
         it('can open user detail', function() {
             element.all(by.repeater('users')).first().click();
-            expect(modelValue('user.display_name')).toBe('first name last name');
-            $('#open-user-profile').click();
-            expect($('.page-nav-title').getText()).toBe('Users Profile: first name last name');
+            expect(modelValue('user.display_name'))
+                .toBe('first name last name');
+            $('#open-user-profile').waitReady()
+                .then(function(elem) {
+                    elem.click();
+                });
+            var pageNavTitle = $('.page-nav-title');
+            browser.wait(function() {
+                return pageNavTitle.getText().then(function(text) {
+                    if (text.indexOf('Users Profile') === 0) {
+                        return true;
+                    }
+                });
+            }, 2000);
+            expect(pageNavTitle.getText())
+                .toBe('Users Profile: first name last name');
         });
 
     });
 
     describe('user edit:', function() {
-        beforeEach(openUrl('/#/users'));
-        beforeEach(function() {
-            element(by.repeater('user in users').row(1).column('username')).click();
-            $('#open-user-profile').click();
+        beforeEach(function(done) {
+            openUrl('/#/users').then(function() {
+                return element(by.repeater('user in users').row(1).column('username'))
+                    .waitReady();
+                }).then(function(elem) {
+                    return elem.click();
+                }).then(function() {
+                    return $('#open-user-profile')
+                        .waitReady();
+                }).then(function(elem) {
+                    return elem.click();
+                }).then(done);
         });
 
         it('can enable/disable buttons based on form status', function() {

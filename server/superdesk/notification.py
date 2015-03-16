@@ -24,7 +24,8 @@ logger = logging.getLogger(__name__)
 def init_app(app):
     from autobahn.asyncio.websocket import WebSocketClientProtocol
     from autobahn.asyncio.websocket import WebSocketClientFactory
-    from ws import host, port
+    host = app.config['WS_HOST']
+    port = app.config['WS_PORT']
 
     class Client(WebSocketClientProtocol):
 

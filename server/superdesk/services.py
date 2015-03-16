@@ -64,8 +64,10 @@ class BaseService():
         return ids
 
     def update(self, id, updates, original):
-        res = self.backend.update(self.datasource, id, updates, original)
-        return res
+        return self.backend.update(self.datasource, id, updates, original)
+
+    def system_update(self, id, updates, original):
+        return self.backend.system_update(self.datasource, id, updates, original)
 
     def replace(self, id, document, original):
         res = self.backend.replace(self.datasource, id, document, original)

@@ -21,11 +21,11 @@ from autobahn.asyncio.websocket import WebSocketServerFactory
 from app import get_app
 
 
-host = '0.0.0.0'
 beat_delay = 30
-port = int(os.environ.get('WSPORT', '5100'))
 logger = logging.getLogger(__name__)
 app = get_app()
+host = app.config['WS_HOST']
+port = app.config['WS_PORT']
 
 
 def log(msg):

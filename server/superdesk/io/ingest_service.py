@@ -8,9 +8,14 @@
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
 
+import logging
+
 from datetime import datetime
-from superdesk.utc import utc
+from superdesk.utc import utc, utcnow
 from superdesk.errors import SuperdeskApiError
+
+
+logger = logging.getLogger(__name__)
 
 
 class IngestService():
@@ -32,11 +37,17 @@ class IngestService():
             return self._update(provider) or []
 
     def add_timestamps(self, item):
-        """
-        Adds _created, firstcreated, versioncreated and _updated timestamps
-        :param item:
-        :return:
-        """
+        """Adds firstcreated and versioncreated timestamps
 
-        item['firstcreated'] = utc.localize(item['firstcreated'])
-        item['versioncreated'] = utc.localize(item['versioncreated'])
+        :param item:
+        """
+        item['firstcreated'] = utc.localize(item['firstcreated']) if item.get('firstcreated') else utcnow()
+        item['versioncreated'] = utc.localize(item['versioncreated']) if item.get('versioncreated') else utcnow()
+
+    def log_item_error(self, err, item, provider):
+        """TODO: put item into provider error basket."""
+        logger.warning('ingest error msg={} item={} provider={}'.format(
+            str(err),
+            item.get('guid'),
+            provider.get('name')
+        ))

@@ -5,6 +5,7 @@
             <span sd-character-count data-item="item.slugline" data-limit="limits.slugline"></span>
             <input type="text"
                 class="keyword"
+                id="keyword"
                 ng-model="item.slugline"
                 ng-change="autosave(item)"
                 ng-if="_editable"
@@ -16,6 +17,7 @@
             <span sd-character-count data-item="item.headline" data-limit="limits.headline"></span>
             <textarea
                 class="title"
+                id="title"
                 sd-auto-height
                 ng-model="item.headline"
                 ng-change="autosave(item)"
@@ -27,6 +29,6 @@
 </header>
 
 <div class="field composite-preview">
-    <div sd-package-items-edit ng-model="item.groups" ng-if="_editable" ng-change="autosave(item)"></div>
+    <div sd-package-items-edit ng-model="item.groups" ng-if="_editable"></div>
     <div sd-package data-item="item" class="composite-preview" ng-if="!_editable"></div>
 </div>

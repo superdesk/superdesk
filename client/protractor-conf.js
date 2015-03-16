@@ -1,6 +1,6 @@
 'use strict';
 
-var ScreenShotReporter = require('protractor-screenshot-reporter');
+//var ScreenShotReporter = require('protractor-screenshot-reporter');
 
 exports.config = {
     baseUrl: 'http://localhost:9090',
@@ -17,7 +17,6 @@ exports.config = {
         }
     },
     directConnect: true,
-    restartBrowserBetweenTests: process.env.bamboo_working_directory || false, // any bamboo env var will do
     framework: 'jasmine',
     jasmineNodeOpts: {
         showColors: true,
@@ -26,6 +25,7 @@ exports.config = {
     },
     /* global jasmine */
     onPrepare: function() {
+        /*
         jasmine.getEnv().addReporter(new ScreenShotReporter({
             baseDirectory: './screenshots',
             pathBuilder:
@@ -34,23 +34,10 @@ exports.config = {
                 },
             takeScreenShotsOnlyForFailedSpecs: true
         }));
+        */
         require('jasmine-reporters');
         jasmine.getEnv().addReporter(
             new jasmine.JUnitXmlReporter('e2e-test-results', true, true)
         );
-
-        function Reporter() {
-            var printLogs = require('./spec/helpers/utils').printLogs;
-            this.reportSpecResults = function(spec) {
-                if (!spec.results().passed()) {
-                    browser.getCurrentUrl().then(function(url) {
-                        console.log('url: ' + url);
-                    });
-                    printLogs('fail');
-                }
-            };
-        }
-
-        jasmine.getEnv().addReporter(new Reporter());
     }
 };

@@ -26,11 +26,6 @@ define([
         $scope.loading = false;
         $scope.spike = !!$location.search().spike;
 
-        desks.fetchCurrentUserDesks()
-        .then(function(userDesks) {
-            $scope.selected.desk = _.find(userDesks._items, {_id: desks.getCurrentDeskId()});
-        });
-
         $scope.toggleSpike = function toggleSpike() {
             $scope.spike = !$scope.spike;
             $scope.stages.select(null);
@@ -66,12 +61,27 @@ define([
         var refreshItems = _.debounce(_refresh, 100);
 
         function _refresh() {
-            if ($scope.selected.desk || desks.activeDeskId) {
+        	if (!$scope.selected.desk && desks.getCurrentDeskId()) {
+        		desks.fetchCurrentUserDesks()
+                .then(function(userDesks) {
+                    $scope.selected.desk = _.find(userDesks._items, {_id: desks.getCurrentDeskId()});
+                });
+        	}
+            if ($scope.selected.desk) {
                 resource = api('archive');
             } else {
                 resource = api('user_content', session.identity);
             }
             self.refresh(true);
+        }
+
+        function reset(event, data) {
+            if (data && data.item) {
+                if ($location.search()._id === data.item) {
+                    $location.search('_id', null);
+                }
+            }
+            refreshItems();
         }
 
         $scope.$on('task:stage', function(_e, data) {
@@ -85,7 +95,7 @@ define([
         $scope.$on('media_archive', refreshItems);
         $scope.$on('item:fetch', refreshItems);
         $scope.$on('item:spike', refreshItems);
-        $scope.$on('item:unspike', refreshItems);
+        $scope.$on('item:unspike', reset);
         $scope.$watchGroup(['stages.selected', 'selected.desk'], refreshItems);
 
         $scope.$watch('selected.desk', initpage);

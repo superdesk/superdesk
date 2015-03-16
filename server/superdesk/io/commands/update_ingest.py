@@ -14,10 +14,11 @@ import superdesk
 
 from flask import current_app as app
 from settings import INGEST_EXPIRY_MINUTES
-from datetime import timedelta
+from datetime import timedelta, timezone, datetime
 from werkzeug.exceptions import HTTPException
 
 from superdesk.notification import push_notification
+from superdesk.activity import ACTIVITY_EVENT, notify_and_add_activity
 from superdesk.io import providers
 from superdesk.celery_app import celery
 from superdesk.utc import utcnow, get_expiry_date
@@ -31,7 +32,9 @@ from superdesk.io.iptc import subject_codes
 
 UPDATE_SCHEDULE_DEFAULT = {'minutes': 5}
 LAST_UPDATED = 'last_updated'
+LAST_ITEM_UPDATE = 'last_item_update'
 STATE_INGESTED = 'ingested'
+IDLE_TIME_DEFAULT = {'hours': 0, 'minutes': 0}
 
 
 logger = logging.getLogger(__name__)
@@ -79,9 +82,10 @@ def is_closed(provider):
 
 def filter_expired_items(provider, items):
     def is_not_expired(item):
-        expiry = item.get('expiry', item['versioncreated'] + delta)
-        if expiry.tzinfo:
-            return expiry > utcnow()
+        if item.get('expiry') or item.get('versioncreated'):
+            expiry = item.get('expiry', item['versioncreated'] + delta)
+            if expiry.tzinfo:
+                return expiry > utcnow()
         return False
 
     try:
@@ -104,6 +108,24 @@ def get_provider_routing_scheme(provider):
 def get_task_ttl(provider):
     update_schedule = provider.get('update_schedule', UPDATE_SCHEDULE_DEFAULT)
     return update_schedule.get('minutes', 0) * 60 + update_schedule.get('hours', 0) * 3600
+
+
+def get_is_idle(providor):
+    last_item = providor.get(LAST_ITEM_UPDATE)
+    idle_time = providor.get('idle_time', IDLE_TIME_DEFAULT)
+    if isinstance(idle_time['hours'], datetime):
+        idle_hours = 0
+    else:
+        idle_hours = idle_time['hours']
+    if isinstance(idle_time['minutes'], datetime):
+        idle_minutes = 0
+    else:
+        idle_minutes = idle_time['minutes']
+    # there is an update time and the idle time is none zero
+    if last_item and (idle_hours != 0 or idle_minutes != 0):
+        if utcnow() > last_item + timedelta(hours=idle_hours, minutes=idle_minutes):
+            return True
+    return False
 
 
 def get_task_id(provider):
@@ -136,15 +158,27 @@ def update_provider(provider, rule_set=None, routing_scheme=None):
     Fetches items from ingest provider as per the configuration, ingests them into Superdesk and
     updates the provider.
     """
-    superdesk.get_resource_service('ingest_providers').update(provider['_id'], {
+    update = {
         LAST_UPDATED: utcnow(),
         # Providing the _etag as system updates to the documents shouldn't override _etag.
         app.config['ETAG']: provider.get(app.config['ETAG'])
-    }, provider)
+    }
 
     for items in providers[provider.get('type')].update(provider):
         ingest_items(items, provider, rule_set, routing_scheme)
         stats.incr('ingest.ingested_items', len(items))
+        if items:
+            update[LAST_ITEM_UPDATE] = utcnow()
+
+    superdesk.get_resource_service('ingest_providers').update(provider['_id'], update, provider)
+
+    if LAST_ITEM_UPDATE not in update and get_is_idle(provider):
+        notify_and_add_activity(
+            ACTIVITY_EVENT,
+            'Provider {{name}} has gone strangely quiet. Last activity was on {{last}}',
+            user_list=superdesk.get_resource_service('ingest_providers')._get_administrators(),
+            name=provider.get('name'),
+            last=provider[LAST_ITEM_UPDATE].replace(tzinfo=timezone.utc).astimezone(tz=None).strftime("%c"))
 
     logger.info('Provider {0} updated'.format(provider['_id']))
     push_notification('ingest:update')
@@ -242,56 +276,49 @@ def ingest_items(items, provider, rule_set=None, routing_scheme=None):
 
 
 def ingest_item(item, provider, rule_set=None, routing_scheme=None):
-    try:
-        item.setdefault('_id', item['guid'])
-        providers[provider.get('type')].provider = provider
+    item.setdefault('_id', item['guid'])
+    providers[provider.get('type')].provider = provider
 
-        item['ingest_provider'] = str(provider['_id'])
-        item.setdefault('source', provider.get('source', ''))
-        set_default_state(item, STATE_INGESTED)
-        item['expiry'] = get_expiry_date(provider.get('content_expiry', INGEST_EXPIRY_MINUTES),
-                                         item.get('versioncreated'))
+    item['ingest_provider'] = str(provider['_id'])
+    item.setdefault('source', provider.get('source', ''))
+    set_default_state(item, STATE_INGESTED)
+    item['expiry'] = get_expiry_date(provider.get('content_expiry', INGEST_EXPIRY_MINUTES),
+                                     item.get('versioncreated'))
 
-        if 'anpa-category' in item:
-            process_anpa_category(item, provider)
+    if 'anpa-category' in item:
+        process_anpa_category(item, provider)
 
-        if 'subject' in item:
-            process_iptc_codes(item, provider)
+    if 'subject' in item:
+        process_iptc_codes(item, provider)
 
-        apply_rule_set(item, provider, rule_set)
+    apply_rule_set(item, provider, rule_set)
 
-        ingest_service = superdesk.get_resource_service('ingest')
+    ingest_service = superdesk.get_resource_service('ingest')
 
-        if item.get('ingest_provider_sequence') is None:
-            ingest_service.set_ingest_provider_sequence(item, provider)
+    if item.get('ingest_provider_sequence') is None:
+        ingest_service.set_ingest_provider_sequence(item, provider)
 
-        rend = item.get('renditions', {})
-        if rend:
-            baseImageRend = rend.get('baseImage') or next(iter(rend.values()))
-            if baseImageRend:
-                href = providers[provider.get('type')].prepare_href(baseImageRend['href'])
-                update_renditions(item, href)
+    rend = item.get('renditions', {})
+    if rend:
+        baseImageRend = rend.get('baseImage') or next(iter(rend.values()))
+        if baseImageRend:
+            href = providers[provider.get('type')].prepare_href(baseImageRend['href'])
+            update_renditions(item, href)
 
-        old_item = ingest_service.find_one(_id=item['guid'], req=None)
+    old_item = ingest_service.find_one(_id=item['guid'], req=None)
 
-        if old_item:
+    if old_item:
+        ingest_service.put(item['guid'], item)
+    else:
+        try:
+            ingest_service.post([item])
+        except HTTPException as e:
+            logger.error("Exception while persisting item in ingest collection", e)
             ingest_service.put(item['guid'], item)
-        else:
-            try:
-                ingest_service.post([item])
-            except HTTPException as e:
-                logger.error("Exception while persisting item in ingest collection", e)
-                ingest_service.put(item['guid'], item)
 
-        if routing_scheme:
-            superdesk.get_resource_service('routing_schemes')\
-                .apply_routing_scheme(ingest_service.find_one(_id=item['guid'], req=None),
-                                      provider, routing_scheme)
-
-    except ProviderError:
-        raise
-    except Exception as ex:
-        raise ProviderError.ingestError(ex, provider)
+    if routing_scheme:
+        superdesk.get_resource_service('routing_schemes')\
+            .apply_routing_scheme(ingest_service.find_one(_id=item['guid'], req=None), provider, routing_scheme)
 
 
 def update_renditions(item, href):
