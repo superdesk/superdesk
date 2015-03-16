@@ -1,5 +1,6 @@
-<div class="pull-right sd-pagination">
-    <div class="btn-group pull-right">
+<div class="sd-pagination">
+    <em class="page-info" ng-show="page <= maxPage">{{'Page' | translate}} {{page}} {{'of' | translate}} {{maxPage}}</em>
+    <div class="btn-group">
         <button class="btn btn-light" ng-disabled="page <= 1" ng-click="page = 1">
             <i class="icon-backward-thin"></i>
         </button>
@@ -16,5 +17,5 @@
             <i class="icon-forward-thin"></i>
         </button>
     </div>
-    <em class="page-info pull-right" ng-show="page <= maxPage">{{'Page' | translate}} {{page}} {{'of' | translate}} {{maxPage}}</em>
+    
 </div>
