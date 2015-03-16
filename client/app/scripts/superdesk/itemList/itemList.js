@@ -272,8 +272,8 @@ angular.module('superdesk.itemList', ['superdesk.search'])
 
     return itemPinService;
 }])
-.directive('sdItemListWidget', ['ItemList', 'notify', 'itemPinService',
-function(ItemList, notify, itemPinService) {
+.directive('sdItemListWidget', ['ItemList', 'notify', 'itemPinService', 'gettext',
+function(ItemList, notify, itemPinService, gettext) {
     return {
         scope: {
             options: '=',
@@ -362,8 +362,13 @@ function(ItemList, notify, itemPinService) {
 
             scope.$watch('options.similar', function() {
                 if (scope.options.similar && scope.options.item) {
-                    oldSearch = scope.itemListOptions.search;
-                    scope.itemListOptions.search = scope.options.item.slugline;
+                    if (!scope.options.item.slugline) {
+                        notify.error(gettext('Error: Keywords required.'));
+                        scope.options.similar = false;
+                    } else {
+                        oldSearch = scope.itemListOptions.search;
+                        scope.itemListOptions.search = scope.options.item.slugline;
+                    }
                 } else {
                     scope.itemListOptions.search = oldSearch || null;
                 }
