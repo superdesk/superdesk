@@ -150,6 +150,13 @@ define([
             });
         };
 
+        this.fetchItem = function fetchItem(id) {
+            api.ingest.getById(id)
+            .then(function(item) {
+                $scope.selected.fetch = item;
+            });
+        };
+
         var oldQuery = _.omit($location.search(), '_id');
         var update = angular.bind(this, function searchUpdated() {
             var newquery = _.omit($location.search(), '_id');
@@ -846,6 +853,7 @@ define([
                 label: gettext('Fetch'),
                 icon: 'archive',
                 monitor: true,
+                /*
                 controller: ['api', 'data', 'desks', function(api, data, desks) {
                     api.archiveIngest.create({
                         guid: data.item.guid,
@@ -860,6 +868,10 @@ define([
                     ['finally'](function() {
                         data.item.actioning.archive = false;
                     });
+                }],
+                */
+                controller: ['$location', 'data', function($location, data) {
+                    $location.search('fetch', data.item._id);
                 }],
                 filters: [
                     {action: 'list', type: 'ingest'}

@@ -21,6 +21,11 @@ define(['lodash'], function(_) {
             if (!$location.search()._id) {
                 $scope.selected.preview = null;
             }
+            if ($location.search().fetch) {
+                console.log($location.search().fetch);
+                console.log(decodeURIComponent($location.search().fetch));
+                self.fetchItem(decodeURIComponent($location.search().fetch));
+            }
         });
 
         this.buildQuery = function(params, filterDesk) {
@@ -48,6 +53,10 @@ define(['lodash'], function(_) {
         };
 
         this.fetchItems = function(criteria) {
+            console.log('no api defined');
+        };
+
+        this.fetchItem = function(id) {
             console.log('no api defined');
         };
 
