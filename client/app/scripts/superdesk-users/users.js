@@ -87,8 +87,6 @@
         var DEFAULT_PAGE = 1;
         var DEFAULT_PER_PAGE = 20;
 
-        this.DEFAULT_PAGESIZE = 25;
-
         /**
          * Fetches and caches users, or returns from the cache.
          *
