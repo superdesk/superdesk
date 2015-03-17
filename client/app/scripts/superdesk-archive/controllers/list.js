@@ -61,7 +61,7 @@ define([
             if (resource == null) {
                 return;
             }
-            return resource.getById(id)
+            resource.getById(id)
             .then(function(item) {
                 $scope.selected.fetch = item;
             });
