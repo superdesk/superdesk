@@ -12,6 +12,9 @@ env:
 python:
     - "3.4"
 
+addons:
+    firefox: "35.0"
+
 matrix:
     allow_failures:
         - env: TARGET=e2e_firefox

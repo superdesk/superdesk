@@ -46,7 +46,7 @@ def get_default_user():
     return user
 
 
-def prepopulate_data(file_name, default_user=get_default_user()):
+def prepopulate_data(file_name, default_user):
     placeholders = {'NOW()': date_to_str(utcnow())}
     users = {default_user['username']: default_user['password']}
     default_username = default_user['username']
