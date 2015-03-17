@@ -846,6 +846,7 @@ define([
                 label: gettext('Fetch'),
                 icon: 'archive',
                 monitor: true,
+                /*
                 controller: ['api', 'data', 'desks', function(api, data, desks) {
                     api.archiveIngest.create({
                         guid: data.item.guid,
@@ -860,6 +861,10 @@ define([
                     ['finally'](function() {
                         data.item.actioning.archive = false;
                     });
+                }],
+                */
+                controller: ['$location', 'data', function($location, data) {
+                    $location.search('fetch', data.item._id);
                 }],
                 filters: [
                     {action: 'list', type: 'ingest'}
