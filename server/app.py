@@ -116,15 +116,10 @@ def get_app(config=None):
     return app
 
 if __name__ == '__main__':
-
-    import multiprocessing
-
     debug = True
     host = '0.0.0.0'
     port = int(os.environ.get('PORT', '5000'))
-    workers = multiprocessing.cpu_count() * 2 + 1
     superdesk.logger.setLevel(logging.INFO)
     superdesk.logger.addHandler(logging.StreamHandler())
-
     app = get_app()
-    app.run(host=host, port=port, debug=debug, use_reloader=debug, processes=workers)
+    app.run(host=host, port=port, debug=debug, use_reloader=debug)
