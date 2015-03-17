@@ -110,6 +110,9 @@ var Highlights = function() {
 		  element(by.id('search-highlights')).element(by.className('icon-dots-vertical')).click();
 		  element(by.id('search-highlights')).element(by.css('[option="' + name.toUpperCase() + '"]')).click();
 	  };
+	  this.exportHighlights = function() {
+		  element(by.id('export')).click();
+	  };
   };
 
 describe('HIGHLIGHTS', function() {
@@ -259,6 +262,36 @@ describe('HIGHLIGHTS', function() {
 
     	highlights.switchHighlightFilter('Highlight Two');
     	expect(authoring.getSearchItemCount()).toBe(1);
+    });
+
+    it('export highlist package', function() {
+    	workspace.switchToDesk('SPORTS DESK');
+    	content.setListView();
+    	content.actionOnItem('Mark item', 0);
+    	highlights.selectHighlight(content.getItem(0), 'Highlight one');
+
+    	workspace.switchToDesk('PERSONAL');
+    	content.setListView();
+        expect(content.getCount()).toBe(3);
+    	workspace.switchToDesk('SPORTS DESK');
+    	content.setListView();
+    	content.actionOnItem('Mark item', 1);
+    	highlights.selectHighlight(content.getItem(1), 'Highlight one');
+
+    	highlights.createHighlightsPackage('HIGHLIGHT ONE');
+    	authoring.showSearch();
+    	expect(authoring.getSearchItemCount()).toBe(2);
+
+    	authoring.addToGroup(0, 'MAIN');
+    	authoring.addToGroup(1, 'STORY');
+    	authoring.save();
+    	highlights.exportHighlights();
+    	authoring.save();
+        authoring.close();
+
+        workspace.switchToDesk('PERSONAL');
+        content.setListView();
+        expect(content.getCount()).toBe(5);
     });
 });
 

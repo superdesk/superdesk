@@ -81,7 +81,7 @@ function Content() {
     	expect(crtItem.element(by.className('icon-star-color')).getAttribute('tooltip')).toContain(highlight);
     };
     this.getCount = function () {
-    	return browserManager.getElement().all(by.repeater('items._items')).count();
+    	return element.all(by.repeater('items._items')).count();
     };
 }
 
@@ -90,7 +90,7 @@ function Authoring() {
     	element(by.className('svg-icon-add-to-list')).click();
     };
     this.getSubnav = function() {
-    	return browserManager.getElement()(by.id('subnav'));
+    	return element(by.id('subnav'));
     };
     this.close = function() {
     	element(by.css('[ng-click="close()"]')).click();
@@ -109,7 +109,7 @@ function Authoring() {
     	return element.all(by.repeater('pitem in contentItems')).get(item);
     };
     this.getSearchItemCount = function () {
-    	return browserManager.getElement().all(by.repeater('pitem in contentItems')).count();
+    	return element.all(by.repeater('pitem in contentItems')).count();
     };
     this.addToGroup = function (item, group) {
     	var crtItem = this.getSearchItem(item);

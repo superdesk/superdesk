@@ -7,7 +7,7 @@ env:
     - TARGET=server
     - TARGET=server_ldap
     - TARGET=e2e_chrome
-    - TARGET=e2e_firefox
+#    - TARGET=e2e_firefox
 
 python:
     - "3.4"
@@ -94,8 +94,12 @@ script:
           --capabilities.browserName "${TARGET/e2e_/}"
         ;
       fi
+      
+after_script:
+    - killall -9 python
 
 after_success:
     - if [ "${TARGET}" = "client" ]; then
         cd client && grunt coveralls && cd .. ;
       fi
+
