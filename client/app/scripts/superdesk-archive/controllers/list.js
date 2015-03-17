@@ -58,10 +58,17 @@ define([
             });
         };
 
-        function refreshItems() {
-            $timeout.cancel(timeout);
-            timeout = $timeout(_refresh, 100, false);
-        }
+        this.fetchItem = function fetchItem(id) {
+            if (resource == null) {
+                return;
+            }
+            resource.getById(id)
+            .then(function(item) {
+                $scope.selected.fetch = item;
+            });
+        };
+
+        var refreshItems = _.debounce(_refresh, 100);
 
         function _refresh() {
             if (desks.activeDeskId) {
@@ -117,9 +124,9 @@ define([
         });
 
         // reload on route change if there is still the same _id
-        var oldQuery = _.omit($location.search(), '_id');
+        var oldQuery = _.omit($location.search(), '_id', 'fetch');
         $scope.$on('$routeUpdate', function(e, route) {
-            var query = _.omit($location.search(), '_id');
+            var query = _.omit($location.search(), '_id', 'fetch');
             if (!angular.equals(oldQuery, query)) {
                 refreshItems();
             }
