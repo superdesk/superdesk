@@ -20,11 +20,14 @@ def populate(item, **kwargs):
     p = re.compile('(?i)(?<=[.?!])\\S+(?=[a-z])')
 
     # get the list of sentences of the body
-    sentences = p.split(item['body_html'])
+    if not item.get('body_html', None):
+        item['abstract'] = 'No body found to use for abstract...'
+    else:
+        sentences = p.split(item['body_html'])
 
-    # chop the first sentence to size for abstract (64)
-    if sentences and len(sentences) > 0:
-        item['abstract'] = sentences[0][:64]
+        # chop the first sentence to size for abstract (64)
+        if sentences and len(sentences) > 0:
+            item['abstract'] = sentences[0][:64]
 
     return item
 
