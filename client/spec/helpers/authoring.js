@@ -44,7 +44,7 @@ function Authoring() {
     };
 
     this.getSearchItemCount = function () {
-    	return browserManager.getElement().all(by.repeater('pitem in contentItems')).count();
+    	return element.all(by.repeater('pitem in contentItems')).count();
     };
 
     this.addToGroup = function(item, group) {
@@ -111,6 +111,6 @@ function Authoring() {
     };
 
     this.getSubnav = function() {
-    	return browserManager.getElement()(by.id('subnav'));
+    	return element(by.id('subnav'));
     };
 }
