@@ -1,23 +1,26 @@
 <div class="subnav">
-    <h3 class="page-nav-title" translate>Desks</h3>
+    <div class="navbtn toggle-list desk-tabs">
+    	<ul>
+	    	<li ng-repeat="v in views" ng-class="{active: v === view}">
+	    		<a href="" ng-click="setView(v)" translate>{{v}}</a>
+	    	</li>
+	    </ul>
+    </div>
 </div>
 
-<section class="main-section">
+<section class="main-section master-desk-view">
 
 	<div class="main-desk-container">
-		
-		<div class="desk-content-container">
-			<div class="desk-horizontal-scroll"
-			    sd-list-view
-			    data-items="desks._items"
-			    style="width:{{ desks._items.length * 290 }}px">
-			    
-			    <div ng-include="'scripts/superdesk-desks/views/desk.html'"></div>
 
-			</div>
-
+		<div class="desk-container" ng-if="view === 'content'" ng-repeat="desk in desks._items">
+			<div class="desk" ng-include="'scripts/superdesk-desks/views/desk.html'"></div>
 		</div>
 
+		<div class="desk-container" ng-if="view === 'tasks'">
+		</div>
+
+		<div class="desk-container" ng-if="view === 'users'">
+		</div>
 	</div>
 
 </section>

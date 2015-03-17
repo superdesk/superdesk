@@ -11,12 +11,51 @@
  (function() {
     'use strict';
 
-    DeskListController.$inject = ['$scope', 'api'];
-    function DeskListController($scope, api) {
-        api.desks.query()
-            .then(function(desks) {
-                $scope.desks = desks;
-            });
+    DeskListController.$inject = ['$scope', 'desks'];
+    function DeskListController($scope, desks) {
+
+        desks.initialize()
+        .then(function() {
+            $scope.desks = desks.desks;
+            $scope.deskStages = desks.deskStages;
+        });
+
+        $scope.views = ['content', 'tasks', 'users'];
+
+        $scope.view = $scope.views[0];
+
+        $scope.setView = function(view) {
+            $scope.view = view;
+        };
+
+    }
+
+    StageItemListDirective.$inject = ['search', 'api'];
+    function StageItemListDirective(search, api) {
+        return {
+            templateUrl: 'scripts/superdesk-desks/views/stage-item-list.html',
+            scope: {
+                stage: '=',
+                total: '='
+            },
+            link: function(scope, elem) {
+
+                var query = search.query({});
+                query.filter({term: {'task.stage': scope.stage}});
+                query.size(10);
+                var criteria = {source: query.getCriteria()};
+
+                scope.loading = true;
+
+                api('archive').query(criteria).then(function(items) {
+                    scope.loading = false;
+                    scope.items = items._items;
+                    scope.total = items._meta.total;
+                }, function() {
+                    scope.loading = false;
+                });
+            }
+        };
     }
 
     DeskSettingsController.$inject = ['$scope', 'gettext', 'notify', 'desks', 'WizardHandler', 'modal'];
@@ -72,7 +111,7 @@
         .config(['superdeskProvider', function(superdesk) {
             superdesk
                 .activity('/desks/', {
-                    label: gettext('Desks'),
+                    label: gettext('Master Desk'),
                     description: gettext('Navigate through the newsroom'),
                     templateUrl: 'scripts/superdesk-desks/views/main.html',
                     controller: DeskListController,
@@ -278,6 +317,7 @@
 
             return desksService;
         }])
+        .directive('sdStageItems', StageItemListDirective)
         .directive('sdFocusElement', [function() {
             return {
                 link: function(scope, elem, attrs) {

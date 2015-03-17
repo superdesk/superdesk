@@ -1,63 +1,17 @@
-<div class="desk-container">
-	<div class="desk-header">
-		{{ item.name }}
+<div class="desk-header">
+	<div class="desk-name pull-left">{{ desk.name }}</div>
+	<div class="desk-action pull-right" dropdown>
+		<button class="dropdown-toggle" dropdown-toggle><i class="icon-dots"></i></button>
 	</div>
-	<div class="desk">
-		<div class="add-assignment">
-			<i class="icon-plus-small"></i>
+</div>
+<div class="desk-content">
+	
+	<div class="stage" ng-repeat="stage in deskStages[desk._id]">
+		<div class="stage-header clearfix">
+			<div class="stage-name pull-left">{{stage.name}}</div>
+			<span class="label pull-right">{{total}}</span>
 		</div>
-		<section class="boardcolor-1">
-			<div class="board-info">
-				<span class="title">To do</span>
-				<span class="line"></span>
-			</div>
-			<ul class="assignments">
-				<li>
-					<figure class="avatar small"></figure>
-					<div class="assign-description">
-						Repudiandae sint et molestiae non recusandae
-					</div>
-					<ul class="assign-labels clearfix">
-						<li><i class="icon-desk-time"></i> Today at 18:50</li>
-						<li><i class="icon-desk-task"></i> 0/6</li>
-						<li><i class="icon-desk-comments"></i> 0</li>
-					</ul>
-				</li>
-				
-			</ul>
-		</section>
-		<section class="boardcolor-2">
-			<div class="board-info">
-				<span class="title">In progress</span>
-				<span class="line"></span>
-			</div>
-			<ul class="assignments">
-				<li>
-					<figure class="avatar small"></figure>
-					<div class="assign-description">
-						Quis autem vel eum iure reprehenderit
-					</div>
-					<ul class="assign-labels clearfix">
-						<li><i class="icon-desk-time"></i> Today at 11:08</li>
-						<li><i class="icon-desk-task"></i> 2/4</li>
-						<li><i class="icon-desk-comments"></i> 3</li>
-					</ul>
-				</li>
-				
-				<li>
-					<figure class="avatar small"></figure>
-					<div class="assign-description">
-						Sed ut perspiciatis unde omnis iste natus error sit voluptatem 
-					</div>
-					<ul class="assign-labels clearfix">
-						<li ><i class="icon-desk-time"></i> Today at 16:30</li>
-						<li><i class="icon-desk-task"></i> 2/3</li>
-						<li><i class="icon-desk-comments"></i> 8</li>
-					</ul>
-				</li>
-				
-				
-			</ul>
-		</section>
+		<div class="stage-content" sd-stage-items data-stage="stage._id" data-total="total"></div>
 	</div>
+
 </div>
