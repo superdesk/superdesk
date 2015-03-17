@@ -58,5 +58,14 @@
         </div>
     </div>
 
-    <div class="preview-pane content-item-preview" ng-if="selected.fetch" sd-send-item data-item="selected.fetch" data-view="selected.fetch" data-mode="{{type}}"></div>
+    <div class="preview-pane content-item-preview" ng-if="selected.fetch">
+        <header>
+        <button ng-click="closeFetch()" class="close-preview">
+                <i class="icon-close-small"></i>
+            </button>
+        </header>
+        <div class="content">
+            <div sd-media-fetch data-item="selected.fetch" data-type="type"></div>
+        </div>
+    </div>
 </div>
