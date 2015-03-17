@@ -51,8 +51,8 @@ def prepopulate_data(file_name, default_user=get_default_user()):
     users = {default_user['username']: default_user['password']}
     default_username = default_user['username']
     file = os.path.join(superdesk.app.config.get('APP_ABSPATH'), 'apps', 'prepopulate', file_name)
-    with open(file, 'rt') as app_prepopulation:
-        json_data = json.loads(app_prepopulation.read())
+    with open(file, 'rt', encoding='utf8') as app_prepopulation:
+        json_data = json.load(app_prepopulation)
         for item in json_data:
             service = get_resource_service(item.get('resource', None))
             username = item.get('username', None) or default_username
@@ -106,11 +106,17 @@ class PrepopulateService(BaseService):
 
 
 class AppPrepopulateCommand(superdesk.Command):
-    def run(self):
+
+    option_list = [
+        superdesk.Option('--file', '-f', dest='prepopulate_file', default='app_prepopulate_data.json')
+    ]
+
+
+    def run(self, prepopulate_file):
         user = get_resource_service('users').find_one(username=get_default_user()['username'], req=None)
         if not user:
             get_resource_service('users').post([get_default_user()])
-        prepopulate_data('app_prepopulate_data.json', get_default_user())
+        prepopulate_data(prepopulate_file, get_default_user())
 
 
 superdesk.command('app:prepopulate', AppPrepopulateCommand())
