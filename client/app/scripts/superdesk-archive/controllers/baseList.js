@@ -21,11 +21,7 @@ define(['lodash'], function(_) {
             if (!$location.search()._id) {
                 $scope.selected.preview = null;
             }
-            if ($location.search().fetch) {
-                console.log($location.search().fetch);
-                console.log(decodeURIComponent($location.search().fetch));
-                self.fetchItem(decodeURIComponent($location.search().fetch));
-            }
+            $scope.selected.fetch = $location.search().fetch || null;
         });
 
         this.buildQuery = function(params, filterDesk) {
