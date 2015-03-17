@@ -117,7 +117,8 @@ define([
                 .activity('archive-content', {
                     label: gettext('Fetch'),
                     icon: 'archive',
-                    monitor: true,
+                    //monitor: true,
+                    /*
                     controller: ['api', 'data', 'desks', '$rootScope', function(api, data, desks, $rootScope) {
                         api.archiveIngest.create({
                             guid: data.item.guid,
@@ -133,6 +134,10 @@ define([
                         ['finally'](function() {
                             data.item.actioning.archiveContent = false;
                         });
+                    }],
+                    */
+                    controller: ['$location', 'data', function($location, data) {
+                        $location.search('fetch', data.item._id);
                     }],
                     filters: [{action: 'list', type: 'archive'}],
                     action: 'fetch_as_from_content',
