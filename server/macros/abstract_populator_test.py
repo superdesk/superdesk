@@ -35,3 +35,8 @@ class AbstractPopulatorTestCase(unittest.TestCase):
         item = {'body_html': self.body}
         item = populate(item)
         self.assertEqual(item['abstract'], 'Fountain of Time, or simply Time, is a sculpture by Lorado Taft,')
+
+    def test_populate_without_body(self):
+        item = {}
+        item = populate(item)
+        self.assertEqual(item['abstract'], 'No body found to use for abstract...')
