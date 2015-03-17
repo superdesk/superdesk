@@ -11,7 +11,7 @@ describe('Send To', function() {
 
     it('can submit item to a desk', function() {
         workspace.switchToDesk('PERSONAL');
-        element.all(by.repeater('items._items')).first().click();
+        content.setListView();
         content.actionOnItem('Edit item', 1);
         element(by.id('send-to-btn')).click();
         browser.sleep(200);
