@@ -1,5 +1,5 @@
 
-var Login = require('./helpers/utils').login;
+var Login = require('./helpers/pages').login;
 
 describe('Login', function() {
     'use strict';
