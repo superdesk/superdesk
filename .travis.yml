@@ -94,6 +94,9 @@ script:
           --capabilities.browserName "${TARGET/e2e_/}"
         ;
       fi
+      
+after_script:
+    - killall -9 python
 
 after_success:
     - if [ "${TARGET}" = "client" ]; then
