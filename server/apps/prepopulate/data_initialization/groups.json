@@ -1,0 +1,28 @@
+[
+    {
+        "_id": "54f7bbb510245479d1ed55de",
+        "description": "This is where senior editorial staff keep documents and other stuff that has no business being in a CMS. It will eventually be used for group messaging/communications as well.",
+        "members": [
+            {"user": "54e64b011024542de640fee0"},
+            {"user": "54ed952410245479ccc38477"},
+            {"user": "54ed952410245479ccc3844c"},
+            {"user": "54ed94da10245479ccc383f7"},
+            {"user": "54ed94da10245479ccc383e1"},
+            {"user": "54ed94da10245479ccc383e2"}
+        ],
+        "name": "editorial management"
+    },
+    {
+        "_id": "54fe7a5610245489e9c69bb8",
+        "description": "Libel, defamation and similar shizzle.",
+        "members": [
+            {"user": "54ed952410245479ccc3845f"},
+            {"user": "54ed952410245479ccc38460"},
+            {"user": "54ed952410245479ccc38461"},
+            {"user": "54ed952410245479ccc3845c"},
+            {"user": "54ed952410245479ccc3845e"},
+            {"user": "54ed952410245479ccc3845d"}
+        ],
+        "name": "LEGAL"
+    }
+]
