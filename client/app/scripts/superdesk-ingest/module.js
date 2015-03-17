@@ -49,13 +49,14 @@ define([
         }
     });
 
-    IngestProviderService.$inject = ['api', '$q'];
-    function IngestProviderService(api, $q) {
+    IngestProviderService.$inject = ['api', '$q', 'preferencesService'];
+    function IngestProviderService(api, $q, preferencesService) {
 
         var service = {
             providers: null,
             providersLookup: {},
             fetched: null,
+            dashboard_providers: [],
             fetchProviders: function() {
                 var self = this;
                 return api.ingestProviders.query().then(function(result) {
@@ -77,6 +78,35 @@ define([
                 }
 
                 return this.fetched;
+            },
+            fetchDashboardProviders: function() {
+                var deferred = $q.defer();
+                var self = this;
+
+                self.fetchProviders().then(function () {
+                    var ingest_providers = self.providers;
+                    preferencesService.get('dashboard:ingest').then(function(user_ingest_providers) {
+                        if (!_.isArray(user_ingest_providers)) {
+                            user_ingest_providers = [];
+                        }
+
+                        _.forEach(ingest_providers, function(provider) {
+                            var user_provider = _.find(user_ingest_providers, function(item) {
+                                return item._id === provider._id;
+                            });
+
+                            provider.dashboard_enabled = user_provider? true: false;
+                            provider.log_messages = user_provider &&
+                                user_provider.log_messages? user_provider.log_messages: 'error';
+                        });
+                        self.dashboard_providers = ingest_providers;
+                        deferred.resolve(ingest_providers);
+                    }, function (error) {
+                        deferred.reject(error);
+                    });
+                });
+
+                return deferred.promise;
             }
         };
         return service;
@@ -125,6 +155,11 @@ define([
             }
         };
         return service;
+    }
+
+    IngestDashboardController.$inject = ['$scope', 'api', 'ingestSources'];
+    function IngestDashboardController($scope, $api, ingestSources) {
+
     }
 
     IngestListController.$inject = ['$scope', '$injector', '$location', 'api', '$rootScope'];
@@ -351,6 +386,42 @@ define([
             }
         };
     }
+
+    IngestUserDashboardDropDown.$inject = ['api', 'ingestSources', 'preferencesService', 'notify', 'gettext'];
+    function IngestUserDashboardDropDown (api, ingestSources, preferencesService, notify, gettext) {
+        return {
+            templateUrl: 'scripts/superdesk-ingest/views/dashboard/ingest-sources-list.html',
+            link: function (scope) {
+
+                scope.items = [];
+
+                function fetchItems() {
+                    ingestSources.fetchDashboardProviders().then(function() {
+                        scope.items = ingestSources.dashboard_providers;
+                    });
+                }
+
+                fetchItems();
+
+                scope.setUserPreferences = function() {
+                    var preferences = [];
+                    var update = {};
+
+                    _.forEach(_.filter(scope.items, {'dashboard_enabled': true}),
+                        function (item) { preferences.push(_.pick(item, ['_id', 'log_messages'])); });
+
+                    update['dashboard:ingest'] = preferences;
+                    preferencesService.update(update).then(function(result) {
+                        notify.success(gettext('Ingest Dashboard preferences successfully saved.'), 2000);
+                        fetchItems();
+                    }, function(error) {
+                        notify.error(gettext('Ingest Dashboard preferences could not be saved.'), 2000);
+                    });
+                };
+            }
+        };
+    }
+
 
     IngestRulesContent.$inject = ['api', 'gettext', 'notify', 'modal'];
     function IngestRulesContent(api, gettext, notify, modal) {
@@ -836,7 +907,9 @@ define([
         .directive('sdIngestRoutingSchedule', IngestRoutingSchedule)
         .directive('sdPieChartDashboard', PieChartDashboardDirective)
         .directive('sdSortrules', SortRulesDirectives)
-        .filter('insert', InsertFilter);
+        .directive('sdUserIngestSource', IngestUserDashboardDropDown);
+        .filter('insert', InsertFilter)
+
 
     app.config(['superdeskProvider', function(superdesk) {
         superdesk
@@ -867,6 +940,13 @@ define([
                 ],
                 action: 'fetch_as_from_ingest',
                 key: 'f'
+            })
+            .activity('/ingest_dashboard', {
+                label: gettext('Ingest Dashboard'),
+                templateUrl: 'scripts/superdesk-ingest/views/dashboard/dashboard.html',
+                controller: IngestDashboardController,
+                category: superdesk.MENU_MAIN,
+                privileges: {ingest_providers: 1}
             })
             .activity('archive', {
                 label: gettext('Fetch'),
