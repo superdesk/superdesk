@@ -65,10 +65,13 @@ class ReutersIngestService(IngestService):
         result_items = []
         while items:
             item = items.pop()
-            result_items.append(item)
-
             self.add_timestamps(item)
-            items.extend(self.fetch_assets(item))
+            try:
+                items.extend(self.fetch_assets(item))
+                result_items.append(item)
+            except LookupError as err:
+                self.log_item_error(err, item, self.provider)
+                return []
         return result_items
 
     def fetch_assets(self, item):
@@ -128,7 +131,7 @@ class ReutersIngestService(IngestService):
             raise IngestApiError(error, self.provider)
 
         if response.status_code == 404:
-            raise IngestApiError.apiNotFoundError(LookupError('Not found %s' % payload), self.provider)
+            LookupError('Not found %s' % payload)
 
         try:
             # workaround for httmock lib
