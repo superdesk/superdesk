@@ -111,7 +111,6 @@ class AppPrepopulateCommand(superdesk.Command):
         superdesk.Option('--file', '-f', dest='prepopulate_file', default='app_prepopulate_data.json')
     ]
 
-
     def run(self, prepopulate_file):
         user = get_resource_service('users').find_one(username=get_default_user()['username'], req=None)
         if not user:
