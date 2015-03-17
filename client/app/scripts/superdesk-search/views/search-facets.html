@@ -13,8 +13,10 @@
 
         <div class="selected-filters">
             <ul>
-                <li ng-repeat="(type,key) in selectedFacets">
-                    <div><span>{{type| FacetLabels}}:</span>{{key}}<button ng-click="removeFilter(type, key)"><i class="icon-close-small icon-white"></i></button></div>
+                <li ng-repeat="(type,keys) in selectedFacets">
+                    <div ng-repeat="key in keys">
+                        <span>{{type| FacetLabels}}:</span>{{key}}<button ng-click="removeFilter(type, key)"><i class="icon-close-small icon-white"></i></button>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -25,7 +27,10 @@
         <div sd-toggle-box data-title="{{ 'Content types' | translate }}" ng-hide="isEmpty('type')" data-open="true">
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.type">
-                    <button ng-click="setFilter('type', key)"><i class="filetype-icon-{{key}}"></i>{{ key | translate}} <i>{{ value }}</i></button>
+<!--                     <button ng-click="setFilter('type', key)"><i class="filetype-icon-{{key}}"></i>{{ key | translate}} <i>{{ value }}</i></button> -->
+                    <i class="filetype-icon-{{key}}"></i>
+                    <input type="checkbox" ng-checked="hasFilter('type',key)" ng-click="toggleFilter('type', key)">
+                    <span>{{ key | translate}} <i>{{ value }}</i></span>
                 </li>
             </ul>
         </div>
@@ -33,7 +38,8 @@
         <div sd-toggle-box data-title="{{ 'Desks' | translate }}" ng-hide="isEmpty('desk')" data-open="true">
             <ul class="filter-box">
                 <li ng-repeat="(key,value) in aggregations.desk">
-                    <button ng-click="setFilter('desk', value.id)">{{key | translate}} <i>{{ value.count }}</i></button>
+                    <!-- <button ng-click="setFilter('desk', value.id)">{{key | translate}} <i>{{ value.count }}</i></button> -->
+                    <input type="checkbox"><span>{{key | translate}} <i>{{ value.count }}</i></span>
                 </li>
             </ul>
         </div>

@@ -45,7 +45,8 @@
         function Query(params) {
             var DEFAULT_SIZE = 25,
                 size,
-                filters = [];
+                filters = [],
+                post_filters = [];
 
             if (params == null) {
                 params = {};
@@ -77,7 +78,7 @@
                         range.firstcreated.gte = params.afterfirstcreated;
                     }
 
-                    query.filter({range: range});
+                    query.post_filter({range: range});
                 }
 
                 if (params.beforeversioncreated || params.afterversioncreated) {
@@ -90,45 +91,45 @@
                         vrange.versioncreated.gte = params.afterversioncreated;
                     }
 
-                    query.filter({range: vrange});
+                    query.post_filter({range: vrange});
                 }
 
                 if (params.after)
                 {
                     var facetrange = {firstcreated: {}};
                     facetrange.firstcreated.gte = params.after;
-                    query.filter({range: facetrange});
+                    query.post_filter({range: facetrange});
                 }
 
                 if (params.type) {
                     var type = {
                         type: JSON.parse(params.type)
                     };
-                    query.filter({terms: type});
+                    query.post_filter({terms: type});
                 }
 
                 if (params.urgency) {
-                    query.filter({term: {urgency: JSON.parse(params.urgency)}});
+                    query.post_filter({term: {urgency: JSON.parse(params.urgency)}});
                 }
 
                 if (params.source) {
-                    query.filter({term: {source: JSON.parse(params.source)}});
+                    query.post_filter({term: {source: JSON.parse(params.source)}});
                 }
 
                 if (params.category) {
-                    query.filter({term: {'anpa-category.name': JSON.parse(params.category)}});
+                    query.post_filter({term: {'anpa-category.name': JSON.parse(params.category)}});
                 }
 
                 if (params.desk) {
-                    query.filter({term: {'task.desk': JSON.parse(params.desk)}});
+                    query.post_filter({term: {'task.desk': JSON.parse(params.desk)}});
                 }
 
                 if (params.stage) {
-                    query.filter({term: {'task.stage': JSON.parse(params.stage)}});
+                    query.post_filter({term: {'task.stage': JSON.parse(params.stage)}});
                 }
 
                 if (params.state) {
-                    query.filter({term: {'state': JSON.parse(params.state)}});
+                    query.post_filter({term: {'state': JSON.parse(params.state)}});
                 }
             }
 
@@ -142,6 +143,10 @@
                     query: {filtered: {filter: {and: filters}}},
                     sort: [_.zipObject([sort.field], [sort.dir])]
                 };
+
+                if (post_filters.length > 0) {
+                     criteria.post_filter = {'or': post_filters};
+                }
 
                 paginate(criteria, search);
 
@@ -170,6 +175,11 @@
              */
             this.filter = function addFilter(filter) {
                 filters.push(filter);
+                return this;
+            };
+
+            this.post_filter = function addPostFilter(filter) {
+                post_filters.push(filter);
                 return this;
             };
 
@@ -296,17 +306,18 @@
                             var search = $location.search();
                             scope.keyword = search.q;
                             _.forEach(search, function(type, key) {
+                                scope.selectedFacets[key] = [];
                                 if (key === 'desk') {
-                                    scope.selectedFacets[key] = desks.deskLookup[JSON.parse(type)[0]].name;
+                                    scope.selectedFacets[key].push(desks.deskLookup[JSON.parse(type)[0]].name);
                                 } else if (key === 'stage') {
                                     var stageid = type;
                                     _.forEach(desks.deskStages[desks.getCurrentDeskId()], function(deskStage) {
                                         if (deskStage._id === JSON.parse(stageid)[0]) {
-                                            scope.selectedFacets[key] = deskStage.name;
+                                            scope.selectedFacets[key].push(deskStage.name);
                                         }
                                     });
                                 } else if (FacetKeys[key]) {
-                                    scope.selectedFacets[key] = JSON.parse(type)[0];
+                                    scope.selectedFacets[key] = JSON.parse(type);
                                 }
                             });
                         });
@@ -406,17 +417,30 @@
                     });
 
                     var setSelectedFacets = function(type, key) {
+                        if (!scope.selectedFacets[type]) {
+                            scope.selectedFacets[type] = [];
+                        }
+
                         if (type === 'desk') {
-                            scope.selectedFacets[type] = desks.deskLookup[key].name;
+                            scope.selectedFacets[type].push(desks.deskLookup[key].name);
                         } else if (type === 'stage') {
                             _.forEach(desks.deskStages[desks.getCurrentDeskId()], function(deskStage) {
                                 if (deskStage._id === key) {
-                                    scope.selectedFacets[type] = deskStage.name;
+                                    scope.selectedFacets[type].push(deskStage.name);
                                 }
                             });
                         } else {
-                            scope.selectedFacets[type] = key;
+                            scope.selectedFacets[type].push(key);
                         }
+                    };
+
+                    scope.toggleFilter = function(type, key) {
+                        if (scope.hasFilter(type, key)) {
+                            scope.removeFilter(type, key);
+                        } else {
+                            scope.setFilter(type, key);
+                        }
+
                     };
 
                     scope.setFilter = function(type, key) {
@@ -424,14 +448,14 @@
                         setSelectedFacets(type, key);
 
                         if (!scope.isEmpty(type) && key) {
-                            $location.search(type, JSON.stringify([key]));
+                            $location.search(type, JSON.stringify(scope.selectedFacets[type]));
                         } else {
                             $location.search(type, null);
                         }
                     };
 
                     scope.setDateFilter = function(key) {
-                        scope.selectedFacets.date = key;
+                        scope.selectedFacets.date = [key];
 
                         if (key === 'Last Day') {
                             $location.search('after', 'now-24H');
@@ -479,6 +503,10 @@
 
                     scope.format = function (date) {
                         return date ? moment(date).format('YYYY-MM-DD') : null; // jshint ignore:line
+                    };
+
+                    scope.hasFilter = function(type, key) {
+                        return scope.selectedFacets[type] && scope.selectedFacets[type].indexOf(key) >= 0;
                     };
                 }
             };
