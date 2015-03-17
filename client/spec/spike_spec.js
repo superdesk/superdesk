@@ -7,7 +7,9 @@ var openUrl = require('./helpers/utils').open,
 
 describe('Spike', function() {
 
-    beforeEach(openUrl('/#/workspace/content'));
+    beforeEach(function(done) {
+        openUrl('/#/workspace/content').then(done);
+    });
 
     it('can spike item', function() {
         workspace.switchToDesk('PERSONAL');
