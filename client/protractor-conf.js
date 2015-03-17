@@ -1,6 +1,6 @@
 'use strict';
 
-var ScreenShotReporter = require('protractor-screenshot-reporter');
+//var ScreenShotReporter = require('protractor-screenshot-reporter');
 
 exports.config = {
     baseUrl: 'http://localhost:9090',
@@ -26,14 +26,14 @@ exports.config = {
     },
     /* global jasmine */
     onPrepare: function() {
-        jasmine.getEnv().addReporter(new ScreenShotReporter({
-            baseDirectory: './screenshots',
-            pathBuilder:
-                function pathBuilder(spec, descriptions, results, capabilities) {
-                    return results.passed() + '_' + descriptions.reverse().join('-');
-                },
-            takeScreenShotsOnlyForFailedSpecs: true
-        }));
+        /*jasmine.getEnv().addReporter(new ScreenShotReporter({*/
+            //baseDirectory: './screenshots',
+            //pathBuilder:
+                //function pathBuilder(spec, descriptions, results, capabilities) {
+                    //return results.passed() + '_' + descriptions.reverse().join('-');
+                //},
+            //takeScreenShotsOnlyForFailedSpecs: true
+        /*}));*/
         require('jasmine-reporters');
         jasmine.getEnv().addReporter(
             new jasmine.JUnitXmlReporter('e2e-test-results', true, true)

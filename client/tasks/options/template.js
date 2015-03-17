@@ -40,7 +40,7 @@ module.exports = function(grunt) {
             files: files
         },
         test: {
-            options: data('http://localhost:5000/api'),
+            options: data('https://master.sd-test.sourcefabric.org/api'),
             files: files
         },
         docs: {
