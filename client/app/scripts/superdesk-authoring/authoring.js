@@ -20,7 +20,8 @@
         located: null,
         dateline: '',
         language: null,
-        unique_name: ''
+        unique_name: '',
+        keywords: []
     };
 
     /**
@@ -978,7 +979,7 @@
 	            .activity('view.text', {
 	            	label: gettext('View item'),
                     priority: 2000,
-	            	icon: 'fullscreen',
+	            	icon: 'external',
 	            	controller: ['data', 'superdesk', function(data, superdesk) {
                         superdesk.intent('read_only', 'content_article', data.item);
 	                }],

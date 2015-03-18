@@ -50,7 +50,7 @@ class RssIngestService(IngestService):
         except IngestApiError:
             raise
         except Exception as ex:
-            raise ParserError.parseMessageError(ex, provider) from None
+            raise ParserError.parseMessageError(ex, provider)
 
         # If provider last updated time is not available, set it to 1.1.1970
         # so that it will be recognized as "not up to date".
@@ -114,10 +114,10 @@ class RssIngestService(IngestService):
         item = dict()
         item['guid'] = item['uri'] = data.get('guid')
         item['type'] = 'text'
-        item['firstcreated'] = utcfromtimestamp(
-            timegm(data.get('published_parsed')))
-        item['versioncreated'] = utcfromtimestamp(
-            timegm(data.get('updated_parsed')))
+        if data.get('updated_parsed'):
+            item['versioncreated'] = utcfromtimestamp(timegm(data.get('updated_parsed')))
+        if data.get('published_parsed') or data.get('updated_parsed'):
+            item['firstcreated'] = utcfromtimestamp(timegm(data.get('published_parsed', data.get('updated_parsed'))))
         item['headline'] = data.get('title')
         item['abstract'] = data.get('summary')
         item['body_text'] = data.get('body_text')
