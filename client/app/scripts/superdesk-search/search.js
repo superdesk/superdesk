@@ -438,7 +438,11 @@
                         if (scope.hasFilter(type, key)) {
                             scope.removeFilter(type, key);
                         } else {
-                            scope.setFilter(type, key);
+                            if(type === 'date') {
+                                scope.setDateFilter(key);
+                            } else {
+                                scope.setFilter(type, key);
+                            }
                         }
 
                     };
