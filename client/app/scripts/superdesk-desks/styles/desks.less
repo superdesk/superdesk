@@ -52,6 +52,7 @@
 .master-desk-view {
 	overflow: hidden;
 	padding-bottom: 0 !important;
+	z-index: auto;
 }
 
 .main-desk-container {
@@ -104,13 +105,12 @@
 		.desk-header {
 			position: absolute;
 			left: 0; right: 0; top:0;
-			overflow:hidden;
 			height: 25px;
 			line-height: 25px;
 			border-bottom: 5px solid #4d4d4d;
 			.desk-name {
 				text-transform: uppercase;
-				.text-semibold();
+				.text-bold();
 				&:hover {
 					cursor: default;
 				}
@@ -126,6 +126,7 @@
 			}
 			.desk-action {
 				.dropdown-toggle {
+					.opacity(60);
 					border: 0;
 					background: none;
 					vertical-align: baseline;

@@ -8,7 +8,7 @@
     </div>
 </div>
 
-<section class="main-section master-desk-view">
+<section class="main-section master-desk-view" sd-desk-config>
 
 	<div class="main-desk-container">
 
@@ -22,5 +22,13 @@
 		<div class="desk-container" ng-if="view === 'users'">
 		</div>
 	</div>
+
+	<div sd-desk-config-modal 
+		data-active="modalActive" 
+		data-desk="desk" 
+		data-desks="desks" 
+		data-step="step"
+		data-cancel="cancel()"
+	></div>
 
 </section>

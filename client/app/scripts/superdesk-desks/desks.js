@@ -45,6 +45,12 @@
             }
         };
 
+        $scope.$on('desks:refresh:stages', function(e, deskId) {
+            desks.refreshStages().then(function() {
+                $scope.deskStages[deskId] = desks.deskStages[deskId];
+            });
+        });
+
     }
 
     StageItemListDirective.$inject = ['search', 'api'];
@@ -74,9 +80,19 @@
             }
         };
     }
+    DeskSettingsController.$inject = ['$scope', 'desks'];
+    function DeskSettingsController($scope, desks) {
+        desks.initialize()
+        .then(function() {
+            $scope.desks = desks.desks;
+        });
+    }
 
-    DeskSettingsController.$inject = ['$scope', 'gettext', 'notify', 'desks', 'WizardHandler', 'modal'];
-    function DeskSettingsController ($scope, gettext, notify, desks, WizardHandler, modal) {
+    DeskConfigController.$inject = ['$scope', 'gettext', 'notify', 'desks', 'WizardHandler', 'modal'];
+    function DeskConfigController ($scope, gettext, notify, desks, WizardHandler, modal) {
+
+        //expecting $scope.desks to be defined
+
         $scope.modalActive = false;
         $scope.step = {
             current: null
@@ -84,12 +100,6 @@
         $scope.desk = {
             edit: null
         };
-        $scope.desks = {};
-
-        desks.initialize()
-        .then(function() {
-            $scope.desks = desks.desks;
-        });
 
         $scope.openDesk = function(step, desk) {
             $scope.desk.edit = desk;
@@ -313,6 +323,12 @@
                     return api.remove(desk)
                         .then(reset);
                 },
+                refreshStages: function() {
+                    return this.fetchStages().then(angular.bind(this, this.generateDeskStages));
+                },
+                refreshUsers: function() {
+                    return this.fetchUsers().then(angular.bind(this, this.generateDeskMembers));
+                },
                 /**
                  * Get current desk for given item
                  *
@@ -335,6 +351,27 @@
             return desksService;
         }])
         .directive('sdStageItems', StageItemListDirective)
+        .directive('sdDeskConfig', function() {
+            return {
+                controller: DeskConfigController
+            };
+        })
+        .directive('sdDeskConfigModal', function() {
+            return {
+                scope: {
+                    modalActive: '=active',
+                    desk: '=',
+                    step: '=',
+                    desks: '=',
+                    cancel: '&'
+                },
+                require: '^sdDeskConfig',
+                templateUrl: 'scripts/superdesk-desks/views/desk-config-modal.html',
+                link: function(scope, elem, attrs, ctrl) {
+
+                }
+            };
+        })
         .directive('sdFocusElement', [function() {
             return {
                 link: function(scope, elem, attrs) {
@@ -463,8 +500,8 @@
                 }
             };
         }])
-        .directive('sdDeskeditStages', ['gettext', 'api', 'WizardHandler', 'tasks',
-            function(gettext, api, WizardHandler, tasks) {
+        .directive('sdDeskeditStages', ['gettext', 'api', 'WizardHandler', 'tasks', '$rootScope',
+            function(gettext, api, WizardHandler, tasks, $rootScope) {
             return {
 
                 link: function(scope, elem, attrs) {
@@ -548,6 +585,7 @@
                                 scope.editStage = null;
                                 scope.select(item);
                                 scope.message = null;
+                                broadcastChange();
                             }, errorMessage);
                         } else {
                             api('stages').save(orig, scope.editStage)
@@ -555,6 +593,7 @@
                                 scope.editStage = null;
                                 scope.message = null;
                                 scope.select(item);
+                                broadcastChange();
                             }, errorMessage);
                         }
                     };
@@ -591,10 +630,15 @@
                             }
                             _.remove(scope.stages, stage);
                             scope.message = null;
+                            broadcastChange(stage._id);
                         }, function(result) {
                             scope.message = gettext('There was a problem, stage was not deleted.');
                         });
                     };
+
+                    function broadcastChange(stageId, action) {
+                        $rootScope.$broadcast('desks:refresh:stages', scope.desk.edit._id);
+                    }
                 }
             };
         }])
@@ -692,8 +736,8 @@
                 }
             };
         }])
-        .directive('sdDeskeditPeople', ['gettext', 'WizardHandler', 'desks',
-            function(gettext, WizardHandler, desks) {
+        .directive('sdDeskeditPeople', ['gettext', 'WizardHandler', 'desks',  '$rootScope',
+            function(gettext, WizardHandler, desks, $rootScope) {
             return {
                 link: function(scope, elem, attrs) {
 
