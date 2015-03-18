@@ -11,13 +11,19 @@
  (function() {
     'use strict';
 
-    DeskListController.$inject = ['$scope', 'desks'];
-    function DeskListController($scope, desks) {
+    DeskListController.$inject = ['$scope', 'desks', 'superdesk'];
+    function DeskListController($scope, desks, superdesk) {
+
+        var userDesks;
 
         desks.initialize()
         .then(function() {
             $scope.desks = desks.desks;
             $scope.deskStages = desks.deskStages;
+
+            desks.fetchCurrentUserDesks().then(function (desk_list) {
+                userDesks = desk_list._items;
+            });
         });
 
         $scope.views = ['content', 'tasks', 'users'];
@@ -26,6 +32,17 @@
 
         $scope.setView = function(view) {
             $scope.view = view;
+        };
+
+        $scope.isMemberOf = function(desk) {
+            return _.find(userDesks, {_id: desk._id});
+        };
+
+        $scope.openDeskView = function(desk) {
+            if ($scope.isMemberOf(desk)) {
+                desks.setCurrentDesk(desk);
+                superdesk.intent('view', 'content');
+            }
         };
 
     }

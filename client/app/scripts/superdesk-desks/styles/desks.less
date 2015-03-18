@@ -111,6 +111,18 @@
 			.desk-name {
 				text-transform: uppercase;
 				.text-semibold();
+				&:hover {
+					cursor: default;
+				}
+				.view {
+					margin-left: 10px;
+					.opacity(70);
+					i { margin-bottom: 3px; }
+					&:hover {
+						.opacity(100);
+						cursor:pointer;
+					}
+				}
 			}
 			.desk-action {
 				.dropdown-toggle {

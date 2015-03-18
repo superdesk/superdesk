@@ -1,5 +1,7 @@
 <div class="desk-header">
-	<div class="desk-name pull-left">{{ desk.name }}</div>
+	<div class="desk-name pull-left">{{ desk.name }} 
+		<span class="view" ng-if="isMemberOf(desk)" ng-click="openDeskView(desk)" title="{{ 'Open desk content' | translate}}"><i class="icon-external"></i></span>
+	</div>
 	<div class="desk-action pull-right" dropdown>
 		<button class="dropdown-toggle" dropdown-toggle><i class="icon-dots"></i></button>
 	</div>
