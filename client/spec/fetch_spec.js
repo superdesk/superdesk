@@ -36,15 +36,19 @@ describe('Fetch', function() {
     it('can fetch from ingest with menu', function() {
         workspace.switchToDesk('SPORTS DESK').then(content.setListView);
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
-        browser.get('/#/workspace/ingest');
-        workspace.switchToDesk('SPORTS DESK');
-        content.setListView();
-
-        content.actionOnItem('Fetch', 0);
-
-        browser.get('/#/workspace/content');
-        workspace.switchToDesk('SPORTS DESK');
-        content.setListView();
+        browser.get('/#/workspace/ingest').then(function() {
+            return workspace.switchToDesk('SPORTS DESK');
+        }).then(
+            content.setListView
+        ).then(function() {
+            return content.actionOnItem('Fetch', 0);
+        }).then(function() {
+            return browser.get('/#/workspace/content');
+        }).then(function() {
+            return workspace.switchToDesk('SPORTS DESK');
+        }).then(
+            content.setListView
+        );
         expect(element.all(by.repeater('items._items')).count()).toBe(3);
     });
 
