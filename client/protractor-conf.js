@@ -3,6 +3,7 @@
 //var ScreenShotReporter = require('protractor-screenshot-reporter');
 
 exports.config = {
+    allScriptsTimeout: 30000,
     baseUrl: 'http://localhost:9090',
     params: {
         baseBackendUrl: 'http://localhost:5000/api/',
