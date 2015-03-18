@@ -82,9 +82,10 @@ def is_closed(provider):
 
 def filter_expired_items(provider, items):
     def is_not_expired(item):
-        expiry = item.get('expiry', item['versioncreated'] + delta)
-        if expiry.tzinfo:
-            return expiry > utcnow()
+        if item.get('expiry') or item.get('versioncreated'):
+            expiry = item.get('expiry', item['versioncreated'] + delta)
+            if expiry.tzinfo:
+                return expiry > utcnow()
         return False
 
     try:

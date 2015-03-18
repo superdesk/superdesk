@@ -21,8 +21,8 @@ from autobahn.asyncio.websocket import WebSocketServerFactory
 from app import get_app
 
 
-logger = logging.getLogger(__name__)
 beat_delay = 30
+logger = logging.getLogger(__name__)
 app = get_app()
 host = app.config['WS_HOST']
 port = app.config['WS_PORT']
