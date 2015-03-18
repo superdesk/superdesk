@@ -122,7 +122,14 @@ class UserInactiveError(SuperdeskApiError):
     """User is inactive, access restricted"""
     status_code = 403
     payload = {'is_active': False}
-    message = 'Account suspended, access restricted.'
+    message = 'Account is inactive, access restricted.'
+
+
+class UserDisabledError(SuperdeskApiError):
+    """User is disabled, access restricted"""
+    status_code = 403
+    payload = {'is_enabled': False}
+    message = 'Account is disabled, access restricted.'
 
 
 class IdentifierGenerationError(SuperdeskApiError):
