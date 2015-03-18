@@ -11,8 +11,8 @@
  (function() {
     'use strict';
 
-    DeskListController.$inject = ['$scope', 'desks', 'superdesk'];
-    function DeskListController($scope, desks, superdesk) {
+    DeskListController.$inject = ['$scope', 'desks', 'superdesk', 'privileges'];
+    function DeskListController($scope, desks, superdesk, privileges) {
 
         var userDesks;
 
@@ -25,6 +25,8 @@
                 userDesks = desk_list._items;
             });
         });
+
+        $scope.privileges = privileges.privileges;
 
         $scope.views = ['content', 'tasks', 'users'];
 
@@ -39,10 +41,14 @@
         };
 
         $scope.openDeskView = function(desk) {
-            if ($scope.isMemberOf(desk)) {
-                desks.setCurrentDesk(desk);
-                superdesk.intent('view', 'content');
-            }
+            desks.setCurrentDesk(desk);
+            superdesk.intent('view', 'content');
+        };
+
+        $scope.openItem = function(item) {
+            desks.setCurrentDeskId(item.task.desk);
+            desks.setCurrentStageId(item.task.stage);
+            superdesk.intent('read_only', 'content_article', item);
         };
 
         $scope.$on('desks:refresh:stages', function(e, deskId) {
@@ -59,7 +65,9 @@
             templateUrl: 'scripts/superdesk-desks/views/stage-item-list.html',
             scope: {
                 stage: '=',
-                total: '='
+                total: '=',
+                allowed: '=',
+                open: '&'
             },
             link: function(scope, elem) {
 

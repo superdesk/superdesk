@@ -154,7 +154,6 @@
 			}
 			&::-webkit-scrollbar-thumb:hover {
 				background: #ccc;
-				// .box-shadow(inset 0px 0px 0px 3px @sd-background);
 			}
 
 			.stage {
@@ -197,12 +196,14 @@
 					.content-items {
 						min-height: 18px;
 						li {
+							cursor: default;
 							background: @white;
 							height: 32px;
 							line-height: 32px;
 							.border-box();
 							.box-shadow(0 1px 4px 0 rgba(0,0,0,.2));
 							border-left: 3px solid #d1d1d1;
+							position: relative;
 							&.locked {
 								border-left-color: #b70101;
 							}
@@ -231,6 +232,32 @@
 									  color: #216278;
 									  text-transform: uppercase;
 									  margin-right: 5px;
+								}
+							}
+							.action {
+								position: absolute;
+								right: 0; top: 0;
+								display: none;
+								
+								button {
+									background: @white;
+									height: 32px;
+									border: 0;
+									border-left: 1px solid #e0e0e0;
+									display: block;
+									float: left;
+									&:hover {
+										cursor: pointer;
+										background: #f0f0f0;
+									}
+								}
+							}
+							&.shifted:hover {
+								.text {
+									padding-right: 37px;
+								}
+								.action {
+									display: block;
 								}
 							}
 						}
