@@ -70,9 +70,16 @@ function Content() {
         return element.all(by.repeater('items._items')).get(item);
     };
     this.actionOnItem = function(action, item) {
-        var crtItem = this.getItem(item);
-        browser.actions().mouseMove(crtItem).perform();
-        crtItem.element(by.css('[title="' + action + '"]')).click();
+        var crtItem;
+        return this.getItem(item)
+            .waitReady().then(function(elem) {
+                crtItem = elem;
+                return browser.actions().mouseMove(crtItem).perform();
+            }).then(function() {
+                return crtItem
+                    .element(by.css('[title="' + action + '"]'))
+                    .click();
+            });
     };
 }
 
