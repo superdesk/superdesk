@@ -77,7 +77,7 @@ function waitForAngular(opt_description) {
         console.log(err.message);
         console.log(err);
         restartCounter++;
-        if (restartCounter < 10) {
+        if (false) {
             return browser.sleep(500).then(doWork);
         } else {
             throw 'Timed out waiting for Protractor to synchronize with ' +
