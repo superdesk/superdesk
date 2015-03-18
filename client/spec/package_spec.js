@@ -6,8 +6,8 @@ var openUrl = require('./helpers/utils').open,
 describe('Content', function() {
     'use strict';
 
-    beforeEach(function() {
-        openUrl('/#/workspace/content')();
+    beforeEach(function(done) {
+        openUrl('/#/workspace/content').then(done);
     });
 
     it('increment package version', function() {
@@ -42,9 +42,11 @@ describe('Content', function() {
     });
 
     it('reorder item on package', function() {
-        workspace.switchToDesk('Personal');
-        content.setListView();
-        content.actionOnItem('Edit package', 0);
+        workspace.switchToDesk('Personal').then(
+            content.setListView
+        ).then(function() {
+            content.actionOnItem('Edit package', 0);
+        });
         authoring.showSearch();
         authoring.addToGroup(0, 'MAIN');
         authoring.addToGroup(1, 'STORY');
@@ -57,9 +59,11 @@ describe('Content', function() {
     });
 
     it('add multiple items to package', function() {
-        workspace.switchToDesk('Personal');
-        content.setListView();
-        content.actionOnItem('Edit package', 0);
+        workspace.switchToDesk('Personal').then(
+            content.setListView
+        ).then(function() {
+            content.actionOnItem('Edit package', 0);
+        });
         authoring.showSearch();
         authoring.selectSearchItem(0);
         authoring.selectSearchItem(1);

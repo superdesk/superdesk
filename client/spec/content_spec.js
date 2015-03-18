@@ -10,9 +10,10 @@ describe('Content', function() {
         return element(by.binding('selected.preview.headline')).getText();
     }
 
-    beforeEach(function() {
-        openUrl('/#/workspace/content')();
-        workspace.switchToDesk('PERSONAL');
+    beforeEach(function(done) {
+        openUrl('/#/workspace/content').then(function() {
+            workspace.switchToDesk('PERSONAL');
+        }).then(done);
         expect(element.all(by.repeater('items._items')).count()).toBe(3);
     });
 

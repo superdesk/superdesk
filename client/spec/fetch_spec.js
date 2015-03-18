@@ -7,30 +7,34 @@ var openUrl = require('./helpers/utils').open,
 
 describe('Fetch', function() {
 
-    beforeEach(openUrl('/#/workspace/content'));
+    beforeEach(function(done) {openUrl('/#/workspace/content').then(done);});
 
     it('can fetch from ingest with keyboards', function() {
-        workspace.switchToDesk('SPORTS DESK');
-        content.setListView();
+        workspace.switchToDesk('SPORTS DESK').then(content.setListView);
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
-        browser.get('/#/workspace/ingest');
-        workspace.switchToDesk('SPORTS DESK');
 
-        // select & fetch item
-        var body = $('body');
-        body.sendKeys(protractor.Key.DOWN);
-        body.sendKeys('f');
-
-        // go to content and see it there
-        browser.get('/#/workspace/content');
-        workspace.switchToDesk('SPORTS DESK');
-        content.setListView();
+        var body;
+        browser.get('/#/workspace/ingest').then(function() {
+            return workspace.switchToDesk('SPORTS DESK');
+        }).then(function() {
+            // select & fetch item
+            body = $('body');
+            return body.sendKeys(protractor.Key.DOWN);
+        }).then(function() {
+            return body.sendKeys('f');
+        }).then(function() {
+            // go to content and see it there
+            return browser.get('/#/workspace/content');
+        }).then(function() {
+            return workspace.switchToDesk('SPORTS DESK');
+        }).then(
+            content.setListView
+        );
         expect(element.all(by.repeater('items._items')).count()).toBe(3);
     });
 
     it('can fetch from ingest with menu', function() {
-        workspace.switchToDesk('SPORTS DESK');
-        content.setListView();
+        workspace.switchToDesk('SPORTS DESK').then(content.setListView);
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
         browser.get('/#/workspace/ingest');
         workspace.switchToDesk('SPORTS DESK');
@@ -45,8 +49,7 @@ describe('Fetch', function() {
     });
 
     xit('can fetch from content with keyboards', function() {
-        workspace.switchToDesk('SPORTS DESK');
-        content.setListView();
+        workspace.switchToDesk('SPORTS DESK').then(content.setListView);
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
 
         browser.get('/#/workspace/ingest');
@@ -71,8 +74,7 @@ describe('Fetch', function() {
     });
 
     it('can fetch from content with menu', function() {
-        workspace.switchToDesk('SPORTS DESK');
-        content.setListView();
+        workspace.switchToDesk('SPORTS DESK').then(content.setListView);
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
 
         browser.get('/#/workspace/ingest');
