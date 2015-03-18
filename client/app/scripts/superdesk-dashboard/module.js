@@ -21,7 +21,7 @@ define([
                         reloadRoute = true;
                     }
 
-                    if (desk._id === 'personal') {
+                    if (!desk || desk._id === 'personal') {
                     	desks.setCurrentDesk('');
                     } else {
                     	desks.setCurrentDesk(desk);

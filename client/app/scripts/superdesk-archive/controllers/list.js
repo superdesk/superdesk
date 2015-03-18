@@ -26,11 +26,6 @@ define([
         $scope.loading = false;
         $scope.spike = !!$location.search().spike;
 
-        desks.fetchCurrentUserDesks()
-        .then(function(userDesks) {
-            $scope.selected.desk = _.find(userDesks._items, {_id: desks.getCurrentDeskId()});
-        });
-
         $scope.toggleSpike = function toggleSpike() {
             $scope.spike = !$scope.spike;
             $scope.stages.select(null);
@@ -66,7 +61,13 @@ define([
         var refreshItems = _.debounce(_refresh, 100);
 
         function _refresh() {
-            if ($scope.selected.desk || desks.activeDeskId) {
+        	if (!$scope.selected.desk && desks.getCurrentDeskId()) {
+        		desks.fetchCurrentUserDesks()
+                .then(function(userDesks) {
+                    $scope.selected.desk = _.find(userDesks._items, {_id: desks.getCurrentDeskId()});
+                });
+        	}
+            if ($scope.selected.desk) {
                 resource = api('archive');
             } else {
                 resource = api('user_content', session.identity);
