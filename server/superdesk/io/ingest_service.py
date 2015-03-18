@@ -11,7 +11,7 @@
 import logging
 
 from datetime import datetime
-from superdesk.utc import utc
+from superdesk.utc import utc, utcnow
 from superdesk.errors import SuperdeskApiError
 
 
@@ -37,12 +37,12 @@ class IngestService():
             return self._update(provider) or []
 
     def add_timestamps(self, item):
-        """Adds _created, firstcreated, versioncreated and _updated timestamps
+        """Adds firstcreated and versioncreated timestamps
 
         :param item:
         """
-        item['firstcreated'] = utc.localize(item['firstcreated'])
-        item['versioncreated'] = utc.localize(item['versioncreated'])
+        item['firstcreated'] = utc.localize(item['firstcreated']) if item.get('firstcreated') else utcnow()
+        item['versioncreated'] = utc.localize(item['versioncreated']) if item.get('versioncreated') else utcnow()
 
     def log_item_error(self, err, item, provider):
         """TODO: put item into provider error basket."""
