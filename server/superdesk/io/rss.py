@@ -120,7 +120,7 @@ class RssIngestService(IngestService):
             item['firstcreated'] = utcfromtimestamp(timegm(data.get('published_parsed', data.get('updated_parsed'))))
         item['headline'] = data.get('title')
         item['abstract'] = data.get('summary')
-        item['body_text'] = data.get('body_text')
+        item['body_html'] = data.get('body_text')
 
         return item
 
