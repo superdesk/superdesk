@@ -82,9 +82,10 @@ def is_closed(provider):
 
 def filter_expired_items(provider, items):
     def is_not_expired(item):
-        expiry = item.get('expiry', item['versioncreated'] + delta)
-        if expiry.tzinfo:
-            return expiry > utcnow()
+        if item.get('expiry') or item.get('versioncreated'):
+            expiry = item.get('expiry', item['versioncreated'] + delta)
+            if expiry.tzinfo:
+                return expiry > utcnow()
         return False
 
     try:
@@ -263,50 +264,45 @@ def ingest_items(items, provider, rule_set=None):
 
 
 def ingest_item(item, provider, rule_set=None):
-    try:
-        item.setdefault('_id', item['guid'])
-        providers[provider.get('type')].provider = provider
+    item.setdefault('_id', item['guid'])
+    providers[provider.get('type')].provider = provider
 
-        item['ingest_provider'] = str(provider['_id'])
-        item.setdefault('source', provider.get('source', ''))
-        set_default_state(item, STATE_INGESTED)
-        item['expiry'] = get_expiry_date(provider.get('content_expiry', INGEST_EXPIRY_MINUTES),
-                                         item.get('versioncreated'))
+    item['ingest_provider'] = str(provider['_id'])
+    item.setdefault('source', provider.get('source', ''))
+    set_default_state(item, STATE_INGESTED)
+    item['expiry'] = get_expiry_date(provider.get('content_expiry', INGEST_EXPIRY_MINUTES),
+                                     item.get('versioncreated'))
 
-        if 'anpa-category' in item:
-            process_anpa_category(item, provider)
+    if 'anpa-category' in item:
+        process_anpa_category(item, provider)
 
-        if 'subject' in item:
-            process_iptc_codes(item, provider)
+    if 'subject' in item:
+        process_iptc_codes(item, provider)
 
-        apply_rule_set(item, provider, rule_set)
+    apply_rule_set(item, provider, rule_set)
 
-        ingest_service = superdesk.get_resource_service('ingest')
+    ingest_service = superdesk.get_resource_service('ingest')
 
-        if item.get('ingest_provider_sequence') is None:
-            ingest_service.set_ingest_provider_sequence(item, provider)
+    if item.get('ingest_provider_sequence') is None:
+        ingest_service.set_ingest_provider_sequence(item, provider)
 
-        rend = item.get('renditions', {})
-        if rend:
-            baseImageRend = rend.get('baseImage') or next(iter(rend.values()))
-            if baseImageRend:
-                href = providers[provider.get('type')].prepare_href(baseImageRend['href'])
-                update_renditions(item, href)
+    rend = item.get('renditions', {})
+    if rend:
+        baseImageRend = rend.get('baseImage') or next(iter(rend.values()))
+        if baseImageRend:
+            href = providers[provider.get('type')].prepare_href(baseImageRend['href'])
+            update_renditions(item, href)
 
-        old_item = ingest_service.find_one(_id=item['guid'], req=None)
+    old_item = ingest_service.find_one(_id=item['guid'], req=None)
 
-        if old_item:
+    if old_item:
+        ingest_service.put(item['guid'], item)
+    else:
+        try:
+            ingest_service.post([item])
+        except HTTPException as e:
+            logger.error("Exception while persisting item in ingest collection", e)
             ingest_service.put(item['guid'], item)
-        else:
-            try:
-                ingest_service.post([item])
-            except HTTPException as e:
-                logger.error("Exception while persisting item in ingest collection", e)
-                ingest_service.put(item['guid'], item)
-    except ProviderError:
-        raise
-    except Exception as ex:
-        raise ProviderError.ingestError(ex, provider)
 
 
 def update_renditions(item, href):
