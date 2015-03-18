@@ -74,6 +74,15 @@ define([
             self.refresh(true);
         }
 
+        function reset(event, data) {
+            if (data && data.item) {
+                if ($location.search()._id === data.item) {
+                    $location.search('_id', null);
+                }
+            }
+            refreshItems();
+        }
+
         $scope.$on('task:stage', function(_e, data) {
         	if ($scope.stages.selected &&
         	    ($scope.stages.selected._id === data.new_stage ||
@@ -85,7 +94,7 @@ define([
         $scope.$on('media_archive', refreshItems);
         $scope.$on('item:fetch', refreshItems);
         $scope.$on('item:spike', refreshItems);
-        $scope.$on('item:unspike', refreshItems);
+        $scope.$on('item:unspike', reset);
         $scope.$watchGroup(['stages.selected', 'selected.desk'], refreshItems);
 
         $scope.$watch('selected.desk', initpage);
