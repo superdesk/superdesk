@@ -32,11 +32,9 @@ function Workspace() {
         var personal = element(by.css('[option="PERSONAL"]'));
         var getDesk = this.getDesk;
 
-        browser.wait(function() {
-            return selectedDesk.isPresent();
-        }, 2000);
-
-        return selectedDesk.getText().then(function(text) {
+        return selectedDesk.waitReady().then(function(elem) {
+            return elem.getText();
+        }).then(function(text) {
             if (text.toUpperCase() !== desk.toUpperCase()) {
                 selectedDesk.click();
                 if (desk.toUpperCase() === 'PERSONAL') {
