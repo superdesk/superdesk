@@ -56,7 +56,7 @@
 }
 
 .main-desk-container {
-	
+
 	position: absolute;
 	top: 0; left: 0; right: 0; bottom: 0;
 	display: flex;
@@ -71,6 +71,8 @@
 	padding: 20px;
 	.border-box();
 	
+	.user-select(none);
+
 	// horizontal scroll adjustment
 	&::-webkit-scrollbar {
 		width: 18px;
@@ -92,7 +94,7 @@
 
 
 	.desk-container {
-		flex: 0 0 25%;
+		flex: 0 0 20%;
 		.border-box();
 		position: relative;
 	}
@@ -167,6 +169,7 @@
 						text-transform: uppercase;
 						color: #777;
 						.text-semibold();
+						cursor: default;
 					}
 					.label {
 						height: 16px;
@@ -189,6 +192,7 @@
 					.no-items {
 						color: #bababa;
 						.text-semibold();
+						cursor: default;
 					}
 					.content-items {
 						min-height: 18px;
@@ -237,6 +241,18 @@
 	}
 }
 
+
+@media (max-width: 1560px) {
+	.main-desk-container .desk-container {
+		flex: 0 0 25%;
+	}
+}
+
+@media (max-width: 1180px) {
+	.main-desk-container .desk-container {
+		flex: 0 0 33%;
+	}
+}
 
 
 // Desk config
