@@ -4,8 +4,8 @@
     /**
      * Bussiness logic layer, should be used instead of resource
      */
-    UsersService.$inject = ['api', '$q'];
-    function UsersService(api, $q) {
+    UsersService.$inject = ['api', '$q', 'notify'];
+    function UsersService(api, $q, notify) {
 
         this.usernamePattern = /^[A-Za-z0-9_.'-]+$/;
         this.phonePattern = /^(?:(?:0?[1-9][0-9]{8})|(?:(?:\+|00)[1-9][0-9]{9,11}))$/;
@@ -23,6 +23,13 @@
                     angular.extend(user, data);
                     angular.extend(user, updates);
                     return user;
+                }, function(response) {
+                    if (angular.isDefined(response.data._issues) &&
+                            angular.isDefined(response.data._issues['validator exception'])) {
+                        notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                    } else {
+                        notify.error(gettext('Error. User Profile not updated.'));
+                    }
                 });
         };
 
@@ -319,15 +326,51 @@
     }
 
     /**
-     * Delete a user and remove it from list
+     * Enable user
      */
-    UserDeleteCommand.$inject = ['api', 'data', '$q', 'notify', 'gettext'];
-    function UserDeleteCommand(api, data, $q, notify, gettext) {
+    UserEnableCommand.$inject = ['api', 'data', '$q', 'notify', 'gettext', 'users', '$rootScope'];
+    function UserEnableCommand(api, data, $q, notify, gettext, users, $rootScope) {
+    	var user = data.item.item;
+
+        return users.save(user, {'is_enabled': true, 'is_active': true}).then(
+            function(response) {
+                $rootScope.$broadcast('user:updated', response);
+            },
+            function(response) {
+                if (angular.isDefined(response.data._issues) &&
+                    angular.isDefined(response.data._issues['validator exception'])) {
+                    notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                } else if (angular.isDefined(response.data._message)) {
+                    notify.error(gettext('Error: ' + response.data._message));
+                } else {
+                    notify.error(gettext('Error. User Profile cannot be enabled.'));
+                }
+            }
+        );
+    }
+
+    /**
+     * Disable user
+     */
+    UserDeleteCommand.$inject = ['api', 'data', '$q', 'notify', 'gettext', 'userList', '$rootScope'];
+    function UserDeleteCommand(api, data, $q, notify, gettext, userList, $rootScope) {
     	data = data.item;
-        return api.users.remove(data.item).then(function(response) {
-            data.list.splice(data.index, 1);
-        }, function(response) {
-            notify.error(gettext('I\'m sorry but can\'t delete the user right now.'));
+        return api.users.remove(data.item).then(
+            function(response) {
+                userList.getUser(data.item._id).then(function(response) {
+                    data.item = response;
+                    $rootScope.$broadcast('user:updated', response);
+                });
+            },
+            function(response) {
+                if (angular.isDefined(response.data._issues) &&
+                    angular.isDefined(response.data._issues['validator exception'])) {
+                    notify.error(gettext('Error: ' + response.data._issues['validator exception']));
+                } else if (angular.isDefined(response.data._message)) {
+                    notify.error(gettext('Error: ' + response.data._message));
+                } else {
+                    notify.error(gettext('Error. User Profile cannot be disabled.'));
+                }
         });
     }
 
@@ -640,9 +683,9 @@
                     privileges: {roles: 1}
                 })
                 .activity('delete/user', {
-                    label: gettext('Delete user'),
+                    label: gettext('Disable user'),
                     icon: 'trash',
-                    confirm: gettext('Please confirm you want to delete a user.'),
+                    confirm: gettext('Please confirm that you want to disable a user.'),
                     controller: UserDeleteCommand,
                     filters: [
                         {
@@ -650,6 +693,24 @@
                             type: 'user'
                         }
                     ],
+                    condition: function(data) {
+                        return data.item.is_enabled;
+                    },
+                    privileges: {users: 1}
+                })
+                .activity('restore/user', {
+                    label: gettext('Enable user'),
+                    icon: 'revert',
+                    controller: UserEnableCommand,
+                    filters: [
+                        {
+                            action: superdesk.ACTION_EDIT,
+                            type: 'user'
+                        }
+                    ],
+                    condition: function(data) {
+                        return !data.item.is_enabled;
+                    },
                     privileges: {users: 1}
                 })
                 .activity('edit.avatar', {
@@ -865,6 +926,10 @@
                             });
                         }
                     }
+
+                    scope.$on('user:updated', function(event, user) {
+                        resetUser(user);
+                    });
                 }
             };
         }])

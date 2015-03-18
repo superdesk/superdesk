@@ -132,12 +132,12 @@ Feature: User Resource
         """
         [{"username": "foo", "email": "foo@bar.co", "is_active": true}]
         """
-        When we change user status to "inactive" using "/users/foo"
+        When we change user status to "enabled but inactive" using "/users/foo"
         """
         {"is_active": false}
         """
         Then we get updated response
-        When we change user status to "active" using "/users/foo"
+        When we change user status to "enabled and active" using "/users/foo"
         """
         {"is_active": true}
         """
@@ -212,7 +212,7 @@ Feature: User Resource
         """
         Then we get error 400
         """
-        {"_status": "ERR", "_issues": {"validator exception": "403: Insufficient privileges to change the role"}}
+        {"_status": "ERR", "_issues": {"validator exception": "403: Insufficient privileges to update role/user_type/privileges"}}
         """
 
     @auth

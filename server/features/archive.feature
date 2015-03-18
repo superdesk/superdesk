@@ -281,7 +281,7 @@ Feature: News Items Archive
         Then we get response code 200
 
 	@auth
-	Scenario: Unique Name can be updated by be user has privileges
+	Scenario: Unique Name can be updated only by user having privileges
 	    Given the "archive"
 	    """
         [{"type":"text", "headline": "test1", "_id": "xyz", "original_creator": "abc"},

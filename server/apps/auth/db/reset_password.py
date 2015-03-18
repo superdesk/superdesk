@@ -97,6 +97,10 @@ class ResetPasswordService(BaseService):
             logger.warning('User password reset triggered with invalid email: %s' % email)
             raise SuperdeskApiError.badRequestError('Invalid email')
 
+        if not user.get('is_enabled', False):
+            logger.warning('User password reset triggered for an disabled user')
+            raise SuperdeskApiError.forbiddenError('User not enabled')
+
         if not user.get('is_active', False):
             logger.warning('User password reset triggered for an inactive user')
             raise SuperdeskApiError.forbiddenError('User not active')
