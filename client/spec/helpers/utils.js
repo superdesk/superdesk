@@ -10,6 +10,7 @@ exports.constructUrl = function(base, uri) {
     return base.replace(/\/$/, '') + uri;
 };
 
+var Q = require('q');
 var LoginModal = require('./pages').login;
 
 // authenticate if needed
@@ -31,7 +32,15 @@ function openUrl(url) {
         .then(waitForSuperdesk)
         .then(function() {
             return browser.get(url);
-        }).then(waitForSuperdesk);
+        }).then(waitForSuperdesk).then(
+            function() {
+                return Q.defer().resolve();
+            },
+            function(err) {
+                console.log('catched error from waitForSuperdesk in openUrl.');
+                return Q.defer().reject(err);
+            }
+    );
 }
 
 function printLogs(prefix) {
@@ -49,7 +58,6 @@ var clientSideScripts = require('./../../node_modules/protractor/lib/clientsides
 function waitForAngular(opt_description) {
   var description = opt_description ? ' - ' + opt_description : '';
   var self = browser;
-  var restartCounter = 0;
   var doWork = function() {
     return self.executeAsyncScript_(
       clientSideScripts.waitForAngular,
@@ -73,19 +81,12 @@ function waitForAngular(opt_description) {
         timeout = /-?[\d\.]*\ ms/.exec(err.message);
       }
       if (timeout) {
-        console.log('WARNING: restarting waitForAngular');
-        console.log(err.message);
-        console.log(err);
-        restartCounter++;
-        if (false) {
-            return browser.sleep(500).then(doWork);
-        } else {
-            throw 'Timed out waiting for Protractor to synchronize with ' +
-                'the page after ' + timeout + '. Please see ' +
-                'https://github.com/angular/protractor/blob/master/docs/faq.md';
-        }
+        return Q.defer().reject(err);
+        //throw 'Timed out waiting for Protractor to synchronize with ' +
+            //'the page after ' + timeout + '. Please see ' +
+            //'https://github.com/angular/protractor/blob/master/docs/faq.md';
       } else {
-        throw err;
+        return Q.defer().reject(err);
       }
     });
   };
@@ -97,5 +98,15 @@ function waitForSuperdesk() {
         return browser.driver.executeScript('return window.superdeskIsReady || false');
     }, 5000, '"window.superdeskIsReady" is not here').then(function() {
         return waitForAngular();
-    });
+    }).then(
+        function() {
+            return Q.defer().resolve();
+        },
+        function(err) {
+            console.log('catched error from waitForAngular in waitForSuperdesk:');
+            console.log(err);
+            console.log(err.message);
+            return Q.defer().reject(err);
+        }
+    );
 }
