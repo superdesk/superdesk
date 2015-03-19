@@ -827,8 +827,8 @@
         };
     }
 
-    SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify', '$location'];
-    function SendItem($q, superdesk, api, desks, notify, $location) {
+    SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify', '$location', 'macros', '$timeout'];
+    function SendItem($q, superdesk, api, desks, notify, $location, macros, $timeout) {
         return {
             scope: {
                 item: '=',
@@ -841,11 +841,13 @@
                 scope.desks = null;
                 scope.stages = null;
                 scope.beforeSend = scope._beforeSend || $q.when;
+                scope.macros = null;
 
                 scope.selectDesk = function(desk) {
                     scope.desk = desk;
                     scope.selectedStage = null;
                     fetchStages();
+                    fetchMacros();
                 };
 
                 scope.selectStage = function(stage) {
@@ -859,7 +861,30 @@
                         });
                 };
 
-                scope.$watch('item', fetchDesks);
+                scope.transform = function transform(macro) {
+                    notify.success(gettext('Applying Transformation...'));
+                    scope.loading = true;
+                    scope.currentMacro = macro.label;
+                    macros.call(macro, scope.item).then(function(result) {
+                        scope.loading = false;
+                        notify.success(gettext('Transformation applied.'));
+                        return result;
+                    }, function(response) {
+                        notify.error(gettext('Error. Transformation not applied.'));
+                    });
+                };
+
+                scope.$watch('item', function() {
+                    fetchDesks();
+                });
+
+                function fetchMacros() {
+                    if (scope.desk != null) {
+                            macros.getByDesk(scope.desk.name).then(function(_macros) {
+                            scope.macros = _macros;
+                        });
+                    }
+                }
 
                 function fetchDesks() {
                     return api.find('tasks', scope.item._id)
@@ -870,7 +895,7 @@
                         }).then(function() {
                             scope.desks = desks.desks;
                             scope.desk = desks.getItemDesk(scope.item);
-                        }).then(fetchStages);
+                        }).then(fetchStages).then(fetchMacros);
                 }
 
                 function fetchStages() {
@@ -977,8 +1002,8 @@
                 .activity('view.text', {
                     label: gettext('View item'),
                     priority: 2000,
-                    icon: 'external',
-                    controller: ['data', 'superdesk', function(data, superdesk) {
+	            	icon: 'fullscreen',
+	            	controller: ['data', 'superdesk', function(data, superdesk) {
                         superdesk.intent('read_only', 'content_article', data.item);
                     }],
                     filters: [{action: 'list', type: 'archive'}],
