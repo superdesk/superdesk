@@ -115,10 +115,15 @@ function Authoring() {
         return groups.all(by.css('[option="' + group.toUpperCase() + '"]')).click();
     };
     this.addMultiToGroup = function(group) {
-        var addButton = element(by.css('[class="icon-package-plus"]'));
-        addButton.click();
-        var groups = element(by.repeater('t in groupList'));
-        return groups.all(by.css('[option="' + group.toUpperCase() + '"]')).click();
+        return element(by.css('[class="icon-package-plus"]'))
+            .waitReady()
+            .then(function(elem) {
+                return elem.click();
+            }).then(function() {
+                var groups = element(by.repeater('t in groupList'));
+                return groups.all(by.css('[option="' + group.toUpperCase() + '"]'))
+                    .click();
+            });
     };
     this.getGroupItems = function(group) {
         return element(by.id(group.toUpperCase())).all(by.repeater('item in group.items'));
