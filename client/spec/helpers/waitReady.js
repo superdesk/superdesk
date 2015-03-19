@@ -12,7 +12,6 @@
 
 var ElementFinder = $('').constructor;
 
-
 ElementFinder.prototype.waitReady = function(opt_optStr) {
     var self = this;
     var specTimeoutMs = browser.allScriptsTimeout * 2;
