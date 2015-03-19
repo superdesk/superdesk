@@ -32,7 +32,7 @@ Feature: Desks
         And we delete latest
         Then we get error 403
         """
-        {"_status": "ERR", "_message": "Deleting default stages is not allowed."}
+        {"_status": "ERR", "_message": "Cannot delete a default stage."}
         """
 
 	@auth
