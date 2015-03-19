@@ -444,14 +444,22 @@
 						background: #5ea9c8;
 					}
 
-					&[disabled] {
+					&.actioning {
+						background-image: url("../../images/loading-large.gif");
+						background-repeat: no-repeat;
+	    				background-position: center;
+					}
+					&.actioning:disabled {
+						opacity: 0.5;
+					}
+					&:disabled {
 						&:not(.active) {
 							background: #496773 !important;
 						}
 						&:hover {
 							cursor: default;
 						}
-						.opacity(80);
+						opacity: 0.5;
 					}
 				}
 			}

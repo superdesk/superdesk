@@ -1,6 +1,6 @@
 <div class="send-to-pane" sd-click-close>
     <header>
-        <h3 translate ng-show="desk">Send to</h3>
+        <h3 translate ng-show="desk">Transform and Send</h3>
         <h3 translate ng-show="!desk">Submit to</h3>
         <div class="close" ng-click="view = !view"><i class="icon-close-small icon-white"></i></div>
     </header>
@@ -27,6 +27,20 @@
                     ng-click="selectStage(stage)">{{stage.name}}</button>
             </li>
         </ul>
+        <div>
+            <header>
+                <h3 translate ng-show="macros">Fetch As</h3>
+            </header>
+            <br />
+            <ul class="btn-list" ng-if="macros">
+                <li ng-repeat="macro in macros">
+                    <button 
+                        ng-class="{actioning: loading === true && currentMacro === macro.label}" 
+                        ng-disabled="loading === true"
+                        ng-click="transform(macro)">{{macro.label}}</button>
+                </li>
+            </ul>
+        </div>
         <ul class="btn-list">
             <li><button class="cancel" ng-click="view = !view" translate>cancel</button></li>
             <li><button class="send" ng-click="send()"
