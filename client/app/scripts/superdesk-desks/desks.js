@@ -191,10 +191,17 @@
         $scope.remove = function(desk) {
             modal.confirm(gettext('Please confirm you want to delete desk.')).then(
                 function runConfirmed() {
-                    desks.remove(desk).then(function() {
-                        _.remove($scope.desks._items, desk);
-                        notify.success(gettext('Desk deleted.'), 3000);
-                    });
+                    desks.remove(desk).then(
+                        function(response) {
+                            _.remove($scope.desks._items, desk);
+                            notify.success(gettext('Desk deleted.'), 3000);
+                        },
+                        function(response) {
+                            if (angular.isDefined(response.data._message)) {
+                                notify.error(gettext('Error: ' + response.data._message));
+                            }
+                        }
+                    );
                 }
             );
         };
