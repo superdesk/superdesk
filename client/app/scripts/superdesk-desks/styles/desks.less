@@ -169,6 +169,15 @@
 						color: #777;
 						.text-semibold();
 						cursor: default;
+						&.todo {
+							color: @todo-color;
+						}
+						&.in_progress {
+							color: @inprogress-color;
+						}
+						&.done {
+							color: @done-color;
+						}
 					}
 					.label {
 						height: 16px;
@@ -275,6 +284,14 @@
 			.action {
 				display: block;
 			}
+		}
+	}
+	&.content-tasks {
+		.avatar {
+			margin: 4px 10px 0 4px;
+		}
+		.text {
+
 		}
 	}
 }

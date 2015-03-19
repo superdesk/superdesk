@@ -11,8 +11,8 @@
  (function() {
     'use strict';
 
-    DeskListController.$inject = ['$scope', 'desks', 'superdesk', 'privileges'];
-    function DeskListController($scope, desks, superdesk, privileges) {
+    DeskListController.$inject = ['$scope', 'desks', 'superdesk', 'privileges', 'tasks'];
+    function DeskListController($scope, desks, superdesk, privileges, tasks) {
 
         var userDesks;
 
@@ -25,6 +25,8 @@
                 userDesks = desk_list._items;
             });
         });
+
+        $scope.statuses = tasks.statuses;
 
         $scope.privileges = privileges.privileges;
 
@@ -40,9 +42,9 @@
             return _.find(userDesks, {_id: desk._id});
         };
 
-        $scope.openDeskView = function(desk) {
+        $scope.openDeskView = function(desk, target) {
             desks.setCurrentDesk(desk);
-            superdesk.intent('view', 'content');
+            superdesk.intent('view', target);
         };
 
         $scope.$on('desks:refresh:stages', function(e, deskId) {
@@ -90,6 +92,42 @@
             }
         };
     }
+
+    TaskStatusItemsDirective.$inject = ['search', 'api', 'desks'];
+    function TaskStatusItemsDirective(search, api, desks) {
+        return {
+            templateUrl: 'scripts/superdesk-desks/views/task-status-items.html',
+            scope: {
+                status: '=',
+                desk: '=',
+                total: '='
+            },
+            link: function(scope, elem) {
+
+                scope.users = desks.userLookup;
+
+                var query = search.query({});
+                query.filter({and: [
+                    {term: {'task.status': scope.status}},
+                    {term: {'task.desk': scope.desk}}
+                ]});
+                query.size(10);
+                var criteria = {source: query.getCriteria()};
+
+                scope.loading = true;
+
+                api('archive').query(criteria).then(function(items) {
+                    scope.loading = false;
+                    scope.items = items._items;
+                    scope.total = items._meta.total;
+                }, function() {
+                    scope.loading = false;
+                });
+
+            }
+        };
+    }
+
     DeskSettingsController.$inject = ['$scope', 'desks'];
     function DeskSettingsController($scope, desks) {
         desks.initialize()
@@ -393,6 +431,7 @@
             return desksService;
         }])
         .directive('sdStageItems', StageItemListDirective)
+        .directive('sdTaskStatusItems', TaskStatusItemsDirective)
         .directive('sdDeskConfig', function() {
             return {
                 controller: DeskConfigController
