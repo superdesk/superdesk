@@ -286,4 +286,4 @@ class CreateItemMethodTestCase(RssIngestServiceTest):
             item.get('versioncreated'), datetime(2015, 2, 25, 17, 52, 11))
         self.assertEqual(item.get('headline'), 'Breaking News!')
         self.assertEqual(item.get('abstract'), 'Something happened...')
-        self.assertEqual(item.get('body_text'), 'This is body text.')
+        self.assertEqual(item.get('body_html'), 'This is body text.')
