@@ -507,14 +507,20 @@ def step_impl_when_upload_image(context, filename, dest):
 @when('we upload a binary file with cropping')
 def step_impl_when_upload_with_crop(context):
     data = {'CropTop': '0', 'CropLeft': '0', 'CropBottom': '333', 'CropRight': '333'}
-    upload_file(context, '/upload', 'bike.jpg', crop_data=data)
+    upload_file(context, '/upload', 'bike.jpg', data)
 
 
-def upload_file(context, dest, filename, crop_data=None):
+@when('upload a file "{file_name}" to "{destination}" with "{guid}"')
+def step_impl_when_upload_image_with_guid(context, file_name, destination, guid):
+    upload_file(context, destination, file_name, {'guid': guid})
+
+
+def upload_file(context, dest, filename, extra_data=None):
     with open(get_fixture_path(filename), 'rb') as f:
         data = {'media': f}
-        if crop_data:
-            data.update(crop_data)
+
+        if extra_data:
+            data.update(extra_data)
         headers = [('Content-Type', 'multipart/form-data')]
         headers = unique_headers(headers, context.headers)
         url = get_prefixed_url(context.app, dest)
@@ -744,30 +750,6 @@ def step_impl_then_get_rendition_with_mimetype(context, name, mimetype):
     assert isinstance(desc, dict), 'expected dict for rendition description'
     assert 'href' in desc, 'expected href in rendition description'
     we_can_fetch_a_file(context, desc['href'], mimetype)
-
-
-def import_rendition(context, rendition_name=None):
-    rv = parse_json_response(context.response)
-    headers = [('Content-Type', 'multipart/form-data')]
-    headers = unique_headers(headers, context.headers)
-    context._id = rv['_id']
-    context.renditions = rv['renditions']
-    data = {'media_archive_guid': rv['_id'], 'href': external_url}
-    if rendition_name:
-        data['rendition_name'] = rendition_name
-    context.response = context.client.post(get_prefixed_url(context.app, '/archive_media/import_media'),
-                                           data=data, headers=headers)
-    assert_200(context.response)
-
-
-@when('we import rendition from url')
-def import_rendition_from_url(context):
-    import_rendition(context)
-
-
-@when('we import thumbnail rendition from url')
-def import_thumbnail_rendition_from_url(context):
-    import_rendition(context, 'thumbnail')
 
 
 @when('we get updated media from archive')

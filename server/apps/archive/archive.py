@@ -16,8 +16,7 @@ import flask
 from superdesk.resource import Resource
 from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry, \
     is_update_allowed
-from .common import on_create_item, on_duplicate_item, on_create_media_archive, \
-    on_update_media_archive, on_delete_media_archive, generate_unique_id_and_name
+from .common import on_create_item, on_duplicate_item, generate_unique_id_and_name
 from .common import get_user
 from flask import current_app as app
 from werkzeug.exceptions import NotFound
@@ -41,6 +40,7 @@ import logging
 from apps.common.models.utils import get_model
 from apps.item_lock.models.item import ItemModel
 from .archive_composite import PackageService
+from .archive_media import ArchiveMediaService
 
 logger = logging.getLogger(__name__)
 
@@ -132,6 +132,7 @@ def update_word_count(doc):
 
 class ArchiveService(BaseService):
     packageService = PackageService()
+    mediaService = ArchiveMediaService()
 
     def on_create(self, docs):
         on_create_item(docs)
@@ -142,12 +143,13 @@ class ArchiveService(BaseService):
             update_word_count(doc)
             set_item_expiry({}, doc)
 
-        packages = [doc for doc in docs if doc['type'] == 'composite']
-        if packages:
-            self.packageService.on_create(packages)
+            if doc['type'] == 'composite':
+                self.packageService.on_create([doc])
+
+            if doc.get('media'):
+                self.mediaService.on_create([doc])
 
     def on_created(self, docs):
-        on_create_media_archive()
         get_component(LegalArchiveProxy).create(docs)
         for doc in docs:
             subject = get_subject(doc)
@@ -199,7 +201,6 @@ class ArchiveService(BaseService):
     def on_updated(self, updates, original):
         get_component(ItemAutosave).clear(original['_id'])
         get_component(LegalArchiveProxy).update(original, updates)
-        on_update_media_archive(item=original['_id'])
 
         if '_version' in updates:
             updated = copy(original)
@@ -227,25 +228,24 @@ class ArchiveService(BaseService):
 
     def on_replaced(self, document, original):
         get_component(ItemAutosave).clear(original['_id'])
-        on_update_media_archive(item=original['_id'])
+        add_activity(ACTIVITY_UPDATE, 'replaced item {{ type }} about {{ subject }}', item=original,
+                     type=original['type'], subject=get_subject(original))
 
     def on_delete(self, doc):
         """Delete associated binary files."""
-
         if doc and doc.get('renditions'):
-            for _name, ref in doc['renditions'].items():
+            for file_id in [rend.get('media') for rend in doc.get('renditions', {}).values()
+                            if rend.get('media')]:
                 try:
-                    app.media.delete(ref['media'])
-                except (KeyError, NotFound):
+                    app.media.delete(file_id)
+                except (NotFound):
                     pass
 
     def on_deleted(self, doc):
-        on_delete_media_archive()
-        add_activity(ACTIVITY_DELETE, 'removed item {{ type }} about {{ subject }}', item=doc,
-                     type=doc['type'], subject=get_subject(doc))
-
         if doc['type'] == 'composite':
             self.packageService.on_deleted(doc)
+        add_activity(ACTIVITY_DELETE, 'removed item {{ type }} about {{ subject }}', item=doc,
+                     type=doc['type'], subject=get_subject(doc))
 
     def replace(self, id, document, original):
         return self.restore_version(id, document, original) or super().replace(id, document, original)

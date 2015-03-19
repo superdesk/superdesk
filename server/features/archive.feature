@@ -87,7 +87,7 @@ Feature: News Items Archive
     @auth
     Scenario: Upload image into archive
         Given empty "archive"
-        When we upload a file "bike.jpg" to "archive_media"
+        When we upload a file "bike.jpg" to "archive"
         Then we get new resource
         """
         {"guid": "", "firstcreated": "", "versioncreated": "", "state": "draft"}
@@ -108,7 +108,7 @@ Feature: News Items Archive
     @auth
     Scenario: Upload audio file into archive
         Given empty "archive"
-        When we upload a file "green.ogg" to "archive_media"
+        When we upload a file "green.ogg" to "archive"
         Then we get new resource
         """
         {"guid": "", "state": "draft"}
@@ -128,7 +128,7 @@ Feature: News Items Archive
     @auth
     Scenario: Upload video file into archive
         Given empty "archive"
-        When we upload a file "this_week_nasa.mp4" to "archive_media"
+        When we upload a file "this_week_nasa.mp4" to "archive"
         Then we get new resource
         """
         {"guid": "", "state": "draft"}
@@ -144,20 +144,6 @@ Feature: News Items Archive
         """
         {"_items": [{"headline": "week @ nasa", "byline": "foo", "description": "nasa video", "state": "draft"}]}
         """
-
-    @auth
-    Scenario: Cancel audio upload
-        Given empty "archive"
-        When we upload a file "green.ogg" to "archive_media"
-        And we delete latest
-        Then we get deleted response
-
-    @auth
-    Scenario: Cancel upload
-        Given empty "archive"
-        When we upload a file "bike.jpg" to "archive_media"
-        And we delete latest
-        Then we get deleted response
 
     @auth
     Scenario: Browse private content
@@ -341,7 +327,7 @@ Feature: News Items Archive
         """
         [{"name": "Sports"}]
         """
-        When we upload a file "bike.jpg" to "archive_media"
+        When we upload a file "bike.jpg" to "archive"
         Then we get new resource
         """
         {"guid": "", "firstcreated": "", "versioncreated": "", "state": "draft"}
@@ -356,11 +342,11 @@ Feature: News Items Archive
         {"_items": [{"headline": "flower", "byline": "foo", "description": "flower desc",
                      "pubstatus": "Usable", "language": "en", "state": "draft"}]}
         """
-        When we patch "/archive/#archive_media._id#"
+        When we patch "/archive/#archive._id#"
         """
         {"task": {"desk": "#desks._id#"}}
         """
-        And we patch "/archive/#archive_media._id#"
+        And we patch "/archive/#archive._id#"
         """
         {"headline": "FLOWER"}
         """
