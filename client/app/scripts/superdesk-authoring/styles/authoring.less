@@ -452,6 +452,18 @@
 					&.save {
 						background: #5ea9c8;
 					}
+
+					&.actioning {
+						background-image: url("../../images/loading-large.gif");
+						background-repeat: no-repeat;
+	    				background-position: center;
+					}
+					&.actioning:disabled {
+						opacity: 0.5;
+					}
+					&:disabled {
+						opacity: 0.5;
+					}
 				}
 			}
 		}
