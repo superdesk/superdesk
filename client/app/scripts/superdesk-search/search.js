@@ -265,7 +265,9 @@
                 templateUrl: 'scripts/superdesk-search/views/search-facets.html',
                 scope: {
                     items: '=',
-                    desk: '='
+                    desk: '=',
+                    repo: '=',
+                    context: '='
                 },
                 link: function(scope, element, attrs, controller) {
                     scope.flags = controller.flags;
