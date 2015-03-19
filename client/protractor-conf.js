@@ -24,7 +24,7 @@ exports.config = {
         showColors: true,
         isVerbose: true,
         includeStackTrace: true,
-        defaultTimeoutInterval: 120000
+        defaultTimeoutInterval: 180000
     },
     /* global jasmine */
     onPrepare: function() {
