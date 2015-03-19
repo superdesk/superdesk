@@ -12,12 +12,18 @@ function LoginModal() {
     this.error = element(by.css('p.error'));
 
     this.login = function(username, password) {
+        var self = this;
         username = username || browser.params.username;
         password = password || browser.params.password;
-        this.username.clear();
-        this.username.sendKeys(username);
-        this.password.sendKeys(password);
-        return this.btn.click();
+        return self.username.waitReady().then(function() {
+            return self.username.clear();
+        }).then(function() {
+            return self.username.sendKeys(username);
+        }).then(function() {
+            return self.password.sendKeys(password);
+        }).then(function() {
+            return self.btn.click();
+        });
     };
 }
 
