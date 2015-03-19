@@ -17,7 +17,6 @@ exports.config = {
             args: ['--no-sandbox']
         }
     },
-    restartBrowserBetweenTests: process.env.bamboo_working_directory || false, // any bamboo env var will do
     directConnect: true,
     framework: 'jasmine',
     jasmineNodeOpts: {
