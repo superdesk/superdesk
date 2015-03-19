@@ -17,14 +17,13 @@ exports.config = {
             args: ['--no-sandbox']
         }
     },
-    restartBrowserBetweenTests: process.env.bamboo_working_directory || false, // any bamboo env var will do
     directConnect: true,
     framework: 'jasmine',
     jasmineNodeOpts: {
         showColors: true,
         isVerbose: true,
         includeStackTrace: true,
-        defaultTimeoutInterval: 180000
+        defaultTimeoutInterval: 120000
     },
     /* global jasmine */
     onPrepare: function() {
