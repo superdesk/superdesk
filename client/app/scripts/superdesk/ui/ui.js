@@ -677,6 +677,63 @@ define([
 		};
 	}
 
+	function TimepickerAltDirective() {
+		var STEP = 5;
+
+		var convertIn = function(time) {
+            return {
+                hours: parseInt(time.substr(0, 2), 10),
+                minutes: parseInt(time.substr(2, 2), 10)
+            };
+        };
+
+        var convertOut = function(hours, minutes) {
+            var h = hours.toString();
+            var m = minutes.toString();
+            if (h.length === 1) {
+                h = '0' + h;
+            }
+            if (m.length === 1) {
+                m = '0' + m;
+            }
+            return h + m;
+        };
+
+        var range = function(min, max, step) {
+			step = step || 1;
+			var range = [];
+			for (var i = min; i <= max; i = i + step) {
+				range.push(i);
+			}
+			return range;
+		};
+
+		return {
+			scope: {
+				model: '='
+			},
+			templateUrl: 'scripts/superdesk/ui/views/sd-timepicker-alt.html',
+			link: function(scope) {
+				scope.open = false;
+				scope.hours = 0;
+				scope.minutes = 0;
+				scope.hoursRange = range(0, 23);
+				scope.minutesRange = range(0, 59, STEP);
+
+				scope.$watch('model', function() {
+					var result = convertIn(scope.model);
+					scope.hours = result.hours;
+					scope.minutes = result.minutes;
+				});
+
+				scope.submit = function() {
+					scope.model = convertOut(scope.hours, scope.minutes);
+					scope.open = false;
+				};
+			}
+		};
+	}
+
 	function LeadingZeroFilter() {
 		return function(input) {
 			if (input < 10) {
@@ -749,6 +806,7 @@ define([
 		.directive('sdTimepickerInner', TimepickerInnerDirective)
 		.directive('sdTimepickerPopup', TimepickerPopupDirective)
 		.directive('sdTimepicker', TimepickerDirective)
+		.directive('sdTimepickerAlt', TimepickerAltDirective)
 		.service('popupService', PopupService)
 		.service('datetimeHelper', DateTimeHelperService)
 		.filter('leadingZero', LeadingZeroFilter);

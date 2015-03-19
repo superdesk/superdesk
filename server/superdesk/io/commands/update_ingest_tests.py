@@ -197,7 +197,6 @@ class UpdateIngestTest(TestCase):
             provider_service.provider = provider
             item = provider_service.fetch_ingest(guid)[0]
             get_resource_service("ingest").set_ingest_provider_sequence(item, provider)
-
             self.assertIsNotNone(item['ingest_provider_sequence'])
 
     def test_get_task_ttl(self):

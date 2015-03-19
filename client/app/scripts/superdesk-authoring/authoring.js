@@ -169,6 +169,40 @@
         };
 
         /**
+         * Publish an item
+         *
+         *   and save it if dirty
+         *
+         * @param {Object} diff Edits.
+         * @param {boolean} isDirty $scope dirty status.
+         */
+        this.publishConfirmation = function publishAuthoring(diff, isDirty) {
+            var promise = $q.when();
+            if (this.isEditable(diff) && isDirty) {
+                promise = confirm.confirmPublish()
+                    .then(angular.bind(this, function save() {
+                        return this.save(diff);
+                    }), function() { // cancel
+                        return false;
+                    });
+            }
+
+            return promise;
+        };
+        this.publish = function publish(item) {
+            return api.update('archive_publish', item, {})
+            .then(function(result) {
+                return lock.unlock(result)
+                    .then(function(result) {
+                        return result;
+                    });
+            }, function(response) {
+                //notify.error(gettext('Error. Item not updated.'));
+            });
+
+        };
+
+        /**
          * Autosave the changes
          *
          * @param {Object} item
@@ -358,6 +392,18 @@
         };
 
         /**
+         * In case $scope is dirty ask user if he want's to save changes and publish.
+         */
+        this.confirmPublish = function confirmPublish() {
+            return modal.confirm(
+                gettext('There are some unsaved changes, do you want to save it and publish now?'),
+                gettext('Save changes?'),
+                gettext('Save and publish'),
+                gettext('Cancel')
+            );
+        };
+
+        /**
          * Make user aware that an item was unlocked
          *
          * @param {string} userId Id of user who unlocked an item.
@@ -461,6 +507,36 @@
                         }
             		});
             	};
+
+                function publishItem(item) {
+                    authoring.publish(item)
+                    .then(function(res) {
+                        if (res) {
+                            notify.success(gettext('Item published.'));
+                            $scope.item = res;
+                            $scope.dirty = false;
+                        }
+                    }, function(response) {
+                        notify.error(gettext('Error. Item not published.'));
+                    });
+                }
+
+                $scope.publish = function() {
+                    if ($scope.dirty) { // save dialog & then publish if confirm
+                        authoring.publishConfirmation($scope.item, $scope.dirty)
+                        .then(function(res) {
+                            if (res) {
+                                publishItem(res);
+                                $location.url($scope.referrerUrl);
+                            }
+                        }, function(response) {
+                            notify.error(gettext('Error. Item not published.'));
+                        });
+                    } else { // Publish
+                        publishItem($scope.origItem);
+                        $location.url($scope.referrerUrl);
+                    }
+                };
 
                 /**
                  * Close an item - unlock
@@ -897,7 +973,7 @@
 	                }],
                     filters: [{action: 'list', type: 'archive'}],
                     condition: function(item) {
-                        return item.type !== 'composite';
+                        return item.type !== 'composite' && item.state !== 'published';
                     }
 	            })
 	            .activity('view.text', {

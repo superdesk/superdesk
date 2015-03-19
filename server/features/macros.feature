@@ -4,9 +4,33 @@ Feature: Macros
     @auth
     Scenario: Get list of all macros
         When we get "/macros"
-        Then we get list with 1+ items
+        Then we get list with 2+ items
             """
             {"_items": [{"name": "usd_to_aud", "label": "Convert USD to AUD", "description": "Convert USD to AUD.", "shortcut": "c"}]}
+            """
+
+    @auth
+    Scenario: Get list of all macros by desk
+        When we get "/macros?desk=POLITICS"
+        Then we get list with 2+ items
+            """
+            {"_items": [{"name": "populate_abstract", "label": "Populate Abstract", "description": "Populate the abstract field with the first sentence of the body", "shortcut": "a"}]}
+            """
+
+    @auth
+    @clean
+    Scenario: Get list of updated macros
+        Given empty "stages"
+        Given "desks"
+        """
+        [{"name": "Politics"}]
+        """
+        Given we create a new macro "behave_macro.py"
+
+        When we get "/macros?desk=POLITICS"
+        Then we get list with 2+ items
+            """
+            {"_items": [{"name": "update_fields", "label": "Update Fields", "description": "Updates the abstract field", "shortcut": "w"}]}
             """
 
     @auth

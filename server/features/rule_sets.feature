@@ -67,7 +67,7 @@ Feature: Rule Sets Resource
       Then we get response code 403
 
     @auth
-    Scenario: path rule_sets
+    Scenario: Patch rule_sets
         Given "rule_sets"
           """
           [

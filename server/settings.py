@@ -95,7 +95,7 @@ CELERYBEAT_SCHEDULE = {
     'ingest:update': {
         'task': 'superdesk.io.update_ingest',
         # there is internal schedule for updates per provider,
-        # so this is mininal interval when an update can occur
+        # so this is minimal interval when an update can occur
         'schedule': timedelta(seconds=30),
         'options': {'expires': 59}
     },
@@ -148,9 +148,10 @@ INSTALLED_APPS = [
     'apps.legal_archive',
     'apps.search',
     'apps.privilege',
-    'apps.rule_sets',
+    'apps.rules',
     'apps.highlights',
-    'apps.macros',
+    'apps.publish',
+    'apps.macros'
 ]
 
 RESOURCE_METHODS = ['GET', 'POST']

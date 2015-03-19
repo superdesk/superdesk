@@ -129,8 +129,8 @@
         }
     }
 
-    PackagingController.$inject = ['$scope', 'item', 'packages'];
-    function PackagingController($scope, item, packages) {
+    PackagingController.$inject = ['$scope', 'item', 'packages', '$location'];
+    function PackagingController($scope, item, packages, $location) {
         $scope.origItem = item;
 
         $scope.widget_target = 'packages';
@@ -139,7 +139,6 @@
             action: 'author',
             type: 'package'
         };
-
     }
 
     SearchWidgetCtrl.$inject = ['$scope', 'packages', 'api', 'search'];
@@ -247,6 +246,7 @@
             templateUrl: 'scripts/superdesk-packaging/views/sd-package-edit.html',
             link: function(scope) {
                 scope.limits = authoring.limits;
+                scope._editable = scope.origItem._editable;
             }
         };
     }
@@ -539,7 +539,7 @@
                 }],
                 filters: [{action: 'list', type: 'archive'}],
                 condition: function(item) {
-                    return item.type === 'composite';
+                    return item.type === 'composite' && item.state !== 'published';
                 }
             })
             .activity('view.package', {

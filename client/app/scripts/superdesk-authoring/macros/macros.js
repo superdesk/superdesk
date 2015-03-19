@@ -12,6 +12,14 @@ function MacrosService(api, autosave) {
             }));
     };
 
+     this.getByDesk = function(desk) {
+        return api.query('macros', {'desk': desk})
+            .then(angular.bind(this, function(macros) {
+                this.macros = macros._items;
+                return this.macros;
+            }));
+    };
+
     this.setupShortcuts = function ($scope) {
         this.get().then(function(macros) {
             angular.forEach(macros, function(macro) {

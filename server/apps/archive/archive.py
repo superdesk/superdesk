@@ -14,7 +14,8 @@ SOURCE = 'archive'
 
 import flask
 from superdesk.resource import Resource
-from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry
+from .common import extra_response_fields, item_url, aggregations, remove_unwanted, update_state, set_item_expiry, \
+    is_update_allowed
 from .common import on_create_item, on_duplicate_item, on_create_media_archive, \
     on_update_media_archive, on_delete_media_archive, generate_unique_id_and_name
 from .common import get_user
@@ -161,6 +162,7 @@ class ArchiveService(BaseService):
             self.packageService.on_created(packages)
 
     def on_update(self, updates, original):
+        is_update_allowed(original)
         user = get_user()
 
         if 'unique_name' in updates and not is_admin(user) \

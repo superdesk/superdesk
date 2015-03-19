@@ -28,6 +28,7 @@ from superdesk.services import BaseService
 from .archive import SOURCE as ARCHIVE
 from superdesk.workflow import is_workflow_state_transition_valid
 from superdesk.notification import push_notification
+from superdesk import get_resource_service
 STATE_FETCHED = 'fetched'
 
 
@@ -63,12 +64,17 @@ class ArchiveIngestService(BaseService):
             else:
                 # We are fetching from ingest
                 ingest_doc = superdesk.get_resource_service('ingest').find_one(req=None, _id=doc.get('guid'))
+
                 if not ingest_doc:
                     msg = 'Fail to found ingest item with guid: %s' % doc.get('guid')
                     raise SuperdeskApiError.notFoundError(msg)
 
                 if not is_workflow_state_transition_valid('fetch_as_from_ingest', ingest_doc[config.CONTENT_STATE]):
                     raise InvalidStateTransitionError()
+
+                if doc.get('macro'):
+                    # there is a macro so transform it
+                    ingest_doc = get_resource_service('macros').execute_macro(ingest_doc, doc.get('macro'))
 
                 archived = utcnow()
                 superdesk.get_resource_service('ingest').patch(ingest_doc.get('_id'), {'archived': archived})
@@ -81,15 +87,16 @@ class ArchiveIngestService(BaseService):
                 generate_unique_id_and_name(dest_doc)
 
                 dest_doc[config.VERSION] = 1
-                send_to(dest_doc, doc.get('desk'))
-                dest_doc[config.CONTENT_STATE] = STATE_FETCHED
+                send_to(dest_doc, doc.get('desk'), doc.get('stage'))
+                dest_doc[config.CONTENT_STATE] = doc.get('state', STATE_FETCHED)
                 dest_doc[INGEST_ID] = ingest_doc['_id']
                 dest_doc[FAMILY_ID] = ingest_doc['_id']
                 remove_unwanted(dest_doc)
                 set_original_creator(dest_doc)
 
-                desk = doc.get('desk')
-                self.archive_references(dest_doc, desk)
+                self.archive_references(dest_doc, doc.get('desk'),
+                                        doc.get('stage'), doc.get('state', STATE_FETCHED))
+
                 superdesk.get_resource_service(ARCHIVE).post([dest_doc])
                 insert_into_versions(dest_doc.get('guid'))
 
@@ -98,13 +105,13 @@ class ArchiveIngestService(BaseService):
 
         return new_guids
 
-    def archive_references(self, dest_doc, desk):
+    def archive_references(self, dest_doc, desk, stage, state):
         for ref in [ref for group in dest_doc.get('groups', [])
                     for ref in group.get('refs', []) if 'residRef' in ref]:
             ref['location'] = ARCHIVE
             ref['guid'] = ref['residRef']
 
-        refs = [{'guid': ref.get('residRef'), 'desk': desk}
+        refs = [{'guid': ref.get('residRef'), 'desk': desk, 'stage': stage, 'state': state}
                 for group in dest_doc.get('groups', [])
                 for ref in group.get('refs', []) if 'residRef' in ref]
         if refs:

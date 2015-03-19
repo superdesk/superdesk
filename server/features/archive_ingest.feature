@@ -88,7 +88,7 @@ Feature: Archive Ingest
 		"""
 
     @auth
-    @provider
+    @provider @test
     Scenario: Move package into archive - check items
     	Given empty "ingest"
     	Given "desks"

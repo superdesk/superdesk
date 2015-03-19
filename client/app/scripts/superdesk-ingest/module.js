@@ -82,6 +82,51 @@ define([
         return service;
     }
 
+    SubjectService.$inject = ['api'];
+    function SubjectService(api) {
+        var service = {
+            rawSubjects: null,
+            qcodeLookup: {},
+            subjects: [],
+            fetched: null,
+            fetchSubjects: function() {
+                var self = this;
+
+                return api.get('/subjectcodes')
+                .then(function(result) {
+                    self.rawSubjects = result;
+                });
+            },
+            process: function() {
+                var self = this;
+
+                _.each(this.rawSubjects._items, function(item) {
+                    self.qcodeLookup[item.qcode] = item;
+                });
+                _.each(this.rawSubjects._items, function(item) {
+                    self.subjects.push({qcode: item.qcode, name: item.name, path: self.getPath(item)});
+                });
+
+                return this.subjects;
+            },
+            getPath: function(item) {
+                var path = '';
+                if (item.parent) {
+                    path = this.getPath(this.qcodeLookup[item.parent]) + this.qcodeLookup[item.parent].name + ' / ';
+                }
+                return path;
+            },
+            initialize: function() {
+                if (!this.fetched) {
+                    this.fetched = this.fetchSubjects()
+                        .then(angular.bind(this, this.process));
+                }
+                return this.fetched;
+            }
+        };
+        return service;
+    }
+
     IngestListController.$inject = ['$scope', '$injector', '$location', 'api', '$rootScope'];
     function IngestListController($scope, $injector, $location, api, $rootScope) {
         $injector.invoke(BaseListController, this, {$scope: $scope});
@@ -129,6 +174,7 @@ define([
 
         $scope.showIngest   = Boolean(user_privileges.ingest_providers);
         $scope.showRuleset  = Boolean(user_privileges.rule_sets);
+        $scope.showRouting  = Boolean(user_privileges.routing_rules);
     }
 
     PieChartDashboardDirective.$inject = ['colorSchemes'];
@@ -240,6 +286,10 @@ define([
                     $scope.rulesets = result._items;
                 });
 
+                api('routing_schemes').query().then(function(result) {
+                    $scope.routingScheme = result._items;
+                });
+
                 $scope.remove = function(provider) {
                     api.ingestProviders.remove(provider)
                     .then(function() {
@@ -308,7 +358,7 @@ define([
                     scope.rulesets = result._items;
                 });
 
-               scope.edit = function(ruleset) {
+                scope.edit = function(ruleset) {
                     scope.editRuleset = _.create(ruleset);
                     scope.editRuleset.rules = ruleset.rules || [];
                     _orig = ruleset;
@@ -369,6 +419,368 @@ define([
         };
     }
 
+    IngestRoutingContent.$inject = ['api', 'gettext', 'notify', 'modal'];
+    function IngestRoutingContent(api, gettext, notify, modal) {
+        return {
+            templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-content.html',
+            link: function(scope) {
+                var _orig = null;
+                scope.editScheme = null;
+                scope.rule = null;
+                scope.ruleIndex = null;
+                scope.schemes = [];
+
+                api('routing_schemes')
+                .query()
+                .then(function(result) {
+                    scope.schemes = result._items;
+                });
+
+                function confirm() {
+                    return modal.confirm(gettext('Are you sure you want to delete scheme?'));
+                }
+
+                scope.edit = function(scheme) {
+                    scope.editScheme = _.clone(scheme);
+                    scope.editScheme.rules = scope.editScheme.rules || [];
+                    _orig = scheme;
+                };
+
+                scope.save = function() {
+                    if (scope.rule) {
+                        if (scope.ruleIndex === -1) {
+                            scope.editScheme.rules.push(scope.rule);
+                        } else {
+                            scope.editScheme.rules[scope.ruleIndex] = scope.rule;
+                        }
+                    }
+                    var _new = scope.editScheme._id ? false : true;
+                    api('routing_schemes').save(_orig, scope.editScheme)
+                    .then(function() {
+                        if (_new) {
+                            scope.schemes.push(_orig);
+                        }
+                        notify.success(gettext('Routing scheme saved.'));
+                        scope.cancel();
+                    }, function(response) {
+                        notify.error(gettext('I\'m sorry but there was an error when saving the routing scheme.'));
+                    });
+                };
+
+                scope.cancel = function() {
+                    scope.editScheme = null;
+                    scope.rule = null;
+                };
+
+                scope.remove = function(scheme) {
+                    confirm().then(function() {
+                        api('routing_schemes').remove(scheme)
+                        .then(function(result) {
+                            _.remove(scope.schemes, scheme);
+                        }, function(response) {
+                            if (response.status === 400) {
+                                notify.error(gettext('Routing scheme is applied to channel(s). It cannot be deleted.'));
+                            } else {
+                                notify.error(gettext('There is an error. Routing scheme cannot be deleted.'));
+                            }
+                        });
+                    });
+                };
+
+                scope.removeRule = function(rule) {
+                    if (rule === scope.rule) {
+                        scope.rule = null;
+                    }
+                    _.remove(scope.editScheme.rules, rule);
+                };
+
+                scope.addRule = function() {
+                    var rule = {
+                        name: null,
+                        filter: {
+                            type: [],
+                            headline: '',
+                            slugline: '',
+                            body: '',
+                            subject: [],
+                            category: [],
+                            genre: []
+                        },
+                        actions: {
+                            fetch: [],
+                            publish: [],
+                            exit: false
+                        },
+                        schedule: {
+                            day_of_week: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+                            hour_of_day_from: '0000',
+                            hour_of_day_to: '2355'
+                        }
+                    };
+                    scope.editScheme.rules.push(rule);
+                    scope.editRule(rule);
+                };
+
+                scope.editRule = function(rule) {
+                    scope.rule = rule;
+                };
+
+                scope.reorder = function(start, end) {
+                    scope.editScheme.rules.splice(end, 0, scope.editScheme.rules.splice(start, 1)[0]);
+                };
+            }
+        };
+    }
+
+    var typeLookup = {
+        text: 'Text',
+        preformatted: 'Preformatted text',
+        picture: 'Picture',
+        audio: 'Audio',
+        video: 'Video',
+        composite: 'Package'
+    };
+
+    var dayLookup = {
+        MON: 'Monday',
+        TUE: 'Tuesday',
+        WED: 'Wednesday',
+        THU: 'Thursday',
+        FRI: 'Friday',
+        SAT: 'Saturday',
+        SUN: 'Sunday'
+    };
+
+    IngestRoutingGeneral.$inject = ['desks', 'macros'];
+    function IngestRoutingGeneral(desks, macros) {
+        return {
+            scope: {
+                rule: '=',
+                removeAction: '='
+            },
+            templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-general.html',
+            link: function(scope) {
+                scope.typeLookup = typeLookup;
+                scope.dayLookup = dayLookup;
+                scope.macroLookup = {};
+
+                desks.initialize()
+                .then(function() {
+                    scope.deskLookup = desks.deskLookup;
+                    scope.stageLookup = desks.stageLookup;
+                });
+
+                scope.remove = function() {
+                    if (typeof scope.removeAction === 'function') {
+                        return scope.removeAction(scope.rule);
+                    }
+                };
+
+                macros.get().then(function(macros) {
+                    _.transform(macros, function(lookup, macro, idx) {
+                        scope.macroLookup[macro.name] = macro;
+                    });
+                });
+            }
+        };
+    }
+
+    IngestRoutingFilter.$inject = ['api', 'subjectService'];
+    function IngestRoutingFilter(api, subjectService) {
+        return {
+            scope: {rule: '='},
+            templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-filter.html',
+            link: function(scope) {
+                scope.typeList = [
+                    'text',
+                    'preformatted',
+                    'picture',
+                    'audio',
+                    'video',
+                    'composite'
+                ];
+                scope.typeLookup = typeLookup;
+                scope.subjects = [];
+                scope.subjectTerm = '';
+                scope.filteredSubjects = [];
+
+                scope.categories = [];
+                scope.categoryTerm = '';
+                scope.filteredCategories = [];
+
+                scope.genres = [];
+                scope.genreTerm = '';
+                scope.filteredGenres = [];
+
+                subjectService
+                .initialize()
+                .then(function(subjects) {
+                    scope.subjects = subjects;
+                });
+
+                api.get('vocabularies')
+                .then(function(result) {
+                    scope.categories = _.find(result._items, {_id: 'categories'}).items;
+                    scope.genres = _.find(result._items, {_id: 'genre'}).items;
+                });
+
+                scope.isTypeChecked = function(rule, type) {
+                    return rule.filter.type.indexOf(type) !== -1;
+                };
+
+                scope.toggleType = function(rule, type) {
+                    if (scope.isTypeChecked(rule, type)) {
+                        rule.filter.type = _.without(rule.filter.type, type);
+                    } else {
+                        rule.filter.type.push(type);
+                    }
+                };
+
+                scope.removeSubject = function(subject) {
+                    _.remove(scope.rule.filter.subject, function(s) {
+                        return s.qcode === subject.qcode;
+                    });
+                };
+
+                scope.selectSubject = function(item) {
+                    scope.rule.filter.subject.push({qcode: item.qcode, name: item.name});
+                    scope.subjectTerm = '';
+                };
+
+                scope.searchSubjects = function(term) {
+                    var regex = new RegExp(term, 'i');
+                    scope.filteredSubjects = _.filter(scope.subjects, function(subject) {
+                        return (
+                            regex.test(subject.name) &&
+                            _.findIndex(scope.rule.filter.subject, {qcode: subject.qcode}) === -1
+                        );
+                    });
+                };
+
+                scope.removeCategory = function(category) {
+                    _.remove(scope.rule.filter.category, function(c) {
+                        return c.qcode === category.qcode;
+                    });
+                };
+
+                scope.selectCategory = function(item) {
+                    scope.rule.filter.category.push({qcode: item.value, name: item.name});
+                    scope.categoryTerm = '';
+                };
+
+                scope.searchCategories = function(term) {
+                    var regex = new RegExp(term, 'i');
+                    scope.filteredCategories = _.filter(scope.categories, function(category) {
+                        return (
+                            regex.test(category.name) &&
+                            _.findIndex(scope.rule.filter.category, {qcode: category.value}) === -1 &&
+                            category.is_active === true
+                        );
+                    });
+                };
+
+                scope.removeGenre = function(genre) {
+                    _.remove(scope.rule.filter.genre, function(g) {
+                        return g === genre;
+                    });
+                };
+
+                scope.selectGenre = function(item) {
+                    scope.rule.filter.genre.push(item.value);
+                    scope.genreTerm = '';
+                };
+
+                scope.searchGenres = function(term) {
+                    var regex = new RegExp(term, 'i');
+                    scope.filteredGenres = _.filter(scope.genres, function(genre) {
+                        return (
+                            regex.test(genre.name) &&
+                            scope.rule.filter.genre.indexOf(genre.value) === -1 &&
+                            genre.is_active === true
+                        );
+                    });
+                };
+            }
+        };
+    }
+
+    IngestRoutingAction.$inject = ['desks', 'macros'];
+    function IngestRoutingAction(desks, macros) {
+        return {
+            scope: {rule: '='},
+            templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-action.html',
+            link: function(scope) {
+                scope.newFetch = {};
+                scope.newPublish = {};
+                scope.deskLookup = {};
+                scope.stageLookup = {};
+                scope.macroLookup = {};
+
+                desks.initialize()
+                .then(function() {
+                    scope.deskLookup = desks.deskLookup;
+                    scope.stageLookup = desks.stageLookup;
+                });
+
+                macros.get().then(function(macros) {
+                    _.transform(macros, function(lookup, macro, idx) {
+                        scope.macroLookup[macro.name] = macro;
+                    });
+                });
+
+                scope.addFetch = function() {
+                    if (scope.newFetch.desk && scope.newFetch.stage) {
+                        scope.rule.actions.fetch.push(scope.newFetch);
+                        scope.newFetch = {};
+                    }
+                };
+
+                scope.removeFetch = function(fetchAction) {
+                    _.remove(scope.rule.actions.fetch, function(f) {
+                        return f === fetchAction;
+                    });
+                };
+
+                scope.addPublish = function() {
+                    if (scope.newPublish.desk && scope.newPublish.stage) {
+                        scope.rule.actions.publish.push(scope.newPublish);
+                        scope.newPublish = {};
+                    }
+                };
+
+                scope.removePublish = function(publishAction) {
+                    _.remove(scope.rule.actions.publish, function(p) {
+                        return p === publishAction;
+                    });
+                };
+            }
+        };
+    }
+
+    IngestRoutingSchedule.$inject = [];
+    function IngestRoutingSchedule() {
+        return {
+            scope: {rule: '='},
+            templateUrl: 'scripts/superdesk-ingest/views/settings/ingest-routing-schedule.html',
+            link: function(scope) {
+                scope.dayList = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+                scope.dayLookup = dayLookup;
+
+                scope.isDayChecked = function(rule, day) {
+                    return rule.schedule.day_of_week.indexOf(day) !== -1;
+                };
+
+                scope.toggleDay = function(rule, day) {
+                    if (scope.isDayChecked(rule, day)) {
+                        rule.schedule.day_of_week = _.without(rule.schedule.day_of_week, day);
+                    } else {
+                        rule.schedule.day_of_week.push(day);
+                    }
+                };
+            }
+        };
+    }
+
     function SortRulesDirectives() {
         return {
             link:function(scope, element) {
@@ -389,12 +801,28 @@ define([
         };
     }
 
+    function InsertFilter() {
+        return function(input, location, addition) {
+            location = location || input.length;
+            addition = addition || '';
+
+            return input.substr(0, location) + addition + input.substr(location);
+        };
+    }
+
     app
         .service('ingestSources', IngestProviderService)
+        .factory('subjectService', SubjectService)
         .directive('sdIngestSourcesContent', IngestSourcesContent)
         .directive('sdIngestRulesContent', IngestRulesContent)
+        .directive('sdIngestRoutingContent', IngestRoutingContent)
+        .directive('sdIngestRoutingGeneral', IngestRoutingGeneral)
+        .directive('sdIngestRoutingFilter', IngestRoutingFilter)
+        .directive('sdIngestRoutingAction', IngestRoutingAction)
+        .directive('sdIngestRoutingSchedule', IngestRoutingSchedule)
         .directive('sdPieChartDashboard', PieChartDashboardDirective)
-        .directive('sdSortrules', SortRulesDirectives);
+        .directive('sdSortrules', SortRulesDirectives)
+        .filter('insert', InsertFilter);
 
     app.config(['superdeskProvider', function(superdesk) {
         superdesk

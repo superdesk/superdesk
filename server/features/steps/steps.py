@@ -20,7 +20,7 @@ from superdesk.utc import utcnow
 from eve.io.mongo import MongoJSONEncoder
 from base64 import b64encode
 
-from wooper.general import fail_and_print_body, apply_path,\
+from wooper.general import fail_and_print_body, apply_path, \
     parse_json_response
 from wooper.expect import (
     expect_status, expect_status_in,
@@ -34,6 +34,8 @@ from urllib.parse import urlparse
 from os.path import basename
 from superdesk.tests import test_user, get_prefixed_url, set_placeholder
 from re import findall
+from eve.utils import ParsedRequest
+import shutil
 
 external_url = 'http://thumbs.dreamstime.com/z/digital-nature-10485007.jpg'
 
@@ -79,6 +81,11 @@ def json_match(context_data, response_data):
 def get_fixture_path(fixture):
     abspath = os.path.abspath(os.path.dirname(__file__))
     return os.path.join(abspath, 'fixtures', fixture)
+
+
+def get_macro_path(macro):
+    abspath = os.path.abspath("macros")
+    return os.path.join(abspath, macro)
 
 
 def get_self_href(resource, context):
@@ -255,22 +262,44 @@ def step_impl_when_auth(context):
         context.user = item['user']
 
 
+@given('we create a new macro "{macro_name}"')
+def step_create_new_macro(context, macro_name):
+    src = get_fixture_path(macro_name)
+    dst = get_macro_path(macro_name)
+    shutil.copyfile(src, dst)
+
+
 @when('we fetch from "{provider_name}" ingest "{guid}"')
 def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
     with context.app.test_request_context(context.app.config['URL_PREFIX']):
-        provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
-        provider_service = context.provider_services[provider.get('type')]
-        provider_service.provider = provider
+        fetch_from_provider(context, provider_name, guid)
 
-        if provider.get('type') == 'aap' or provider.get('type') == 'teletype':
-            items = provider_service.parse_file(guid, provider)
-        else:
-            items = provider_service.fetch_ingest(guid)
 
-        for item in items:
-            item['versioncreated'] = utcnow()
-            item['expiry'] = utcnow() + timedelta(minutes=20)
-        context.ingest_items(items, provider)
+@when('we fetch from "{provider_name}" ingest "{guid}" using routing_scheme')
+def step_impl_fetch_from_provider_ingest(context, provider_name, guid):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        _id = apply_placeholders(context, context.text)
+        routing_scheme = get_resource_service('routing_schemes').find_one(_id=_id, req=None)
+        fetch_from_provider(context, provider_name, guid, routing_scheme)
+
+
+def fetch_from_provider(context, provider_name, guid, routing_scheme=None):
+    provider = get_resource_service('ingest_providers').find_one(name=provider_name, req=None)
+    provider['routing_scheme'] = routing_scheme
+    provider_service = context.provider_services[provider.get('type')]
+    provider_service.provider = provider
+
+    if provider.get('type') == 'aap' or provider.get('type') == 'teletype':
+        items = provider_service.parse_file(guid, provider)
+    else:
+        items = provider_service.fetch_ingest(guid)
+
+    for item in items:
+        item['versioncreated'] = utcnow()
+        item['expiry'] = utcnow() + timedelta(minutes=20)
+
+    context.ingest_items(items, provider, rule_set=provider.get('rule_set'),
+                         routing_scheme=provider.get('routing_scheme'))
 
 
 @when('we post to "{url}"')
@@ -427,6 +456,21 @@ def step_impl_when_patch_without_assert(context):
     headers = if_match(context, data.get('_etag'))
     data2 = apply_placeholders(context, context.text)
     context.response = context.client.patch(href, data=data2, headers=headers)
+
+
+@when('we patch routing scheme "{url}"')
+def step_impl_when_patch_routing_scheme(context, url):
+    with context.app.mail.record_messages() as outbox:
+        url = apply_placeholders(context, url)
+        res = get_res(url, context)
+        href = get_self_href(res, context)
+        headers = if_match(context, res.get('_etag'))
+        data = json.loads(apply_placeholders(context, context.text))
+        res.get('rules', []).append(data)
+        context.response = context.client.patch(get_prefixed_url(context.app, href),
+                                                data=json.dumps({'rules': res.get('rules', [])}),
+                                                headers=headers)
+        context.outbox = outbox
 
 
 @when('we patch given')
@@ -1267,3 +1311,115 @@ def when_we_get_invisible_stages_for_user(context, no_of_stages):
 def then_field_is_populated(context, field_name):
     resp = parse_json_response(context.response)
     assert resp[field_name].get('user', None) is not None, 'item is not populated'
+
+
+@when('we publish "{item_id}"')
+def step_impl_when_spike_url(context, item_id):
+    item_id = apply_placeholders(context, item_id)
+    res = get_res('/archive/' + item_id, context)
+    headers = if_match(context, res.get('_etag'))
+
+    context.response = context.client.patch(get_prefixed_url(context.app, '/archive/publish/' + item_id),
+                                            data='{"state": "published"}', headers=headers)
+
+
+@then('the ingest item is routed based on routing scheme and rule "{rule_name}"')
+def then_ingest_item_is_routed_based_on_routing_scheme(context, rule_name):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        validate_routed_item(context, rule_name, True)
+
+
+@then('the ingest item is routed and transformed based on routing scheme and rule "{rule_name}"')
+def then_ingest_item_is_routed_transformed_based_on_routing_scheme(context, rule_name):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        validate_routed_item(context, rule_name, True, True)
+
+
+@then('the ingest item is not routed based on routing scheme and rule "{rule_name}"')
+def then_ingest_item_is_not_routed_based_on_routing_scheme(context, rule_name):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        validate_routed_item(context, rule_name, False)
+
+
+def validate_routed_item(context, rule_name, is_routed, is_transformed=False):
+    def validate_rule(action, state):
+        for destination in rule.get('actions', {}).get(action, []):
+            query = {
+                'and': [
+                    {'term': {'ingest_id': str(data['ingest'])}},
+                    {'term': {'task.desk': str(destination['desk'])}},
+                    {'term': {'task.stage': str(destination['stage'])}},
+                    {'term': {'state': state}}
+                ]
+            }
+
+            item = get_archive_items(query)
+
+            if is_routed:
+                assert item[0]['ingest_id'] == data['ingest']
+                assert item[0]['task']['desk'] == str(destination['desk'])
+                assert item[0]['task']['stage'] == str(destination['stage'])
+                assert item[0]['state'] == state
+
+                if is_transformed:
+                    assert item[0]['abstract'] == 'Abstract has been updated'
+
+                assert_items_in_package(item[0], state,
+                                        str(destination['desk']), str(destination['stage']))
+            else:
+                assert len(item) == 0
+
+    data = json.loads(apply_placeholders(context, context.text))
+    scheme = get_resource_service('routing_schemes').find_one(_id=data['routing_scheme'], req=None)
+    rule = next((rule for rule in scheme['rules'] if rule['name'].lower() == rule_name.lower()), {})
+    validate_rule('fetch', 'routed')
+    validate_rule('publish', 'published')
+
+
+@when('we schedule the routing scheme "{scheme_id}"')
+def when_we_schedule_the_routing_scheme(context, scheme_id):
+    with context.app.test_request_context(context.app.config['URL_PREFIX']):
+        scheme_id = apply_placeholders(context, scheme_id)
+        url = apply_placeholders(context, 'routing_schemes/%s' % scheme_id)
+        res = get_res(url, context)
+        href = get_self_href(res, context)
+        headers = if_match(context, res.get('_etag'))
+        rule = res.get('rules')[0]
+        day_of_week = get_resource_service('routing_schemes').day_of_week
+        rule['schedule'] = {
+            'day_of_week': [day_of_week[(datetime.now() + timedelta(days=1)).weekday()],
+                            day_of_week[(datetime.now() + timedelta(days=2)).weekday()]],
+            'hour_of_day_from': '1600',
+            'hour_of_day_to': '2000'
+        }
+        rule = res.get('rules')[1]
+        rule['schedule'] = {
+            'day_of_week': [day_of_week[datetime.now().weekday()]]
+        }
+
+        context.response = context.client.patch(get_prefixed_url(context.app, href),
+                                                data=json.dumps({'rules': res.get('rules', [])}),
+                                                headers=headers)
+        assert_200(context.response)
+
+
+def get_archive_items(query):
+    req = ParsedRequest()
+    req.max_results = 100
+    req.args = {'filter': json.dumps(query)}
+    return list(get_resource_service('archive').get(lookup=None, req=req))
+
+
+def assert_items_in_package(item, state, desk, stage):
+    if item.get('groups'):
+        terms = [{'term': {'_id': ref.get('residRef')}}
+                 for ref in [ref for group in item.get('groups', [])
+                             for ref in group.get('refs', []) if 'residRef' in ref]]
+
+        query = {'or': terms}
+        items = get_archive_items(query)
+        assert len(items) == len(terms)
+        for item in items:
+            assert item.get('state') == state
+            assert item.get('task', {}).get('desk') == desk
+            assert item.get('task', {}).get('stage') == stage

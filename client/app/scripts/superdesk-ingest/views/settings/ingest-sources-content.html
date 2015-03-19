@@ -92,7 +92,12 @@
                                         </select>
                                     </div>
 
-                                    <div sd-content-expiry data-item="provider" data-preview="false" data-expiryfield="content_expiry"></div>
+                                    <div class="field">
+                                        <label for="routing" translate>Routing Scheme</label>
+                                        <select ng-model="provider.routing_scheme" ng-options="rs._id as rs.name for rs in routingScheme">
+                                            <option value=""></option>
+                                        </select>
+                                    </div>                                   
                             </tab>
                             <tab heading="Notification" class="TabContent">
                                 <div class="field field-horizontal">

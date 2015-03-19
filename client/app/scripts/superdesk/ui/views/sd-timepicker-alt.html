@@ -1,0 +1,23 @@
+<div>
+    <span class="input-small">{{hours|leadingZero}}:{{minutes|leadingZero}}</span>
+    <button class="btn btn-default" ng-click="open = !open"><i class="icon-time"></i></button>
+</div>
+
+<div class="timepicker-popup" ng-show="open" ng-keydown="keydown({e: $event})" tabindex="0">
+    <div class="timepicker-core">
+        <div class="select-area">
+            <div class="header" translate>Hours</div>
+            <ul>
+                <li ng-repeat="h in hoursRange" ng-click="$parent.hours = h" ng-class="{active: hours === h}">{{h | leadingZero}}</li>
+            </ul>
+        </div>
+        <div class="select-area">
+            <div class="header" translate>Minutes</div>
+            <ul>
+                <li ng-repeat="m in minutesRange" ng-click="$parent.minutes = m" ng-class="{active: minutes === m}">{{m | leadingZero}}</li>
+            </ul>
+        </div>
+        <button class="btn btn-info btn-small pull-right" ng-click="submit()" translate>Confirm</button>
+        <button class="btn btn-small pull-right" ng-click="open = false;" translate>Cancel</button>
+    </div>
+</div>

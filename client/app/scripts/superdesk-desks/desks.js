@@ -253,6 +253,7 @@
                 users: null,
                 stages: null,
                 deskLookup: {},
+                stageLookup: {},
                 userLookup: {},
                 deskMembers: {},
                 deskStages: {},
@@ -287,6 +288,9 @@
                     return api('stages').query({max_results: 500})
                     .then(function(result) {
                         self.stages = result;
+                        _.each(result._items, function(stage) {
+                            self.stageLookup[stage._id] = stage;
+                        });
                     });
                 },
                 generateDeskMembers: function() {
@@ -866,6 +870,50 @@
                             scope.message = gettext('There was a problem, members not saved.');
                         });
                     };
+                }
+            };
+        }])
+        .directive('sdDeskStageMacroPicker', ['desks', 'macros', function(desks, macros) {
+            return {
+                scope: {
+                    desk: '=',
+                    stage: '=',
+                    macro: '='
+                },
+                templateUrl: 'scripts/superdesk-desks/views/deskstagemacropicker.html',
+                link: function(scope, elem, attrs) {
+                    scope.desks = null;
+                    scope.deskStages = null;
+                    scope.deskMacros = null;
+
+                    scope.$watchGroup(['desk', 'stage'], function() {
+                        if (!scope.desks || !scope.deskStages) {
+                            desks.initialize()
+                            .then(function() {
+                                scope.desks = desks.desks._items;
+                                scope.deskStages = desks.deskStages;
+                            });
+                        } else if (scope.desk) {
+                            macros.getByDesk(desks.deskLookup[scope.desk].name).then(function(macros) {
+                                scope.deskMacros = macros;
+                            });
+
+                            if (_.findIndex(scope.deskStages[scope.desk], {_id: scope.stage}) === -1) {
+                                scope.stage = null;
+                            }
+                        }
+                    });
+                }
+            };
+        }])
+        .directive('sdDeskMacros', ['macros', function (macros) {
+            return {
+                link: function(scope) {
+                    if (scope.desk && scope.desk.edit) {
+                        macros.getByDesk(scope.desk.edit.name).then(function(macros) {
+                            scope.macros = macros;
+                        });
+                    }
                 }
             };
         }]);
