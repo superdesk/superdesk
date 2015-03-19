@@ -827,8 +827,13 @@
         };
     }
 
+<<<<<<< HEAD
     SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify', '$location', 'macros', '$rootScope'];
     function SendItem($q, superdesk, api, desks, notify, $location, macros, $rootScope) {
+=======
+    SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify', '$location', 'macros', '$timeout'];
+    function SendItem($q, superdesk, api, desks, notify, $location, macros, $timeout) {
+>>>>>>> [SD-1845] - UI: Add transformations to send-to panel in authoring
         return {
             scope: {
                 item: '=',
@@ -851,6 +856,7 @@
                 scope.task = null;
 
                 scope.beforeSend = scope._beforeSend || $q.when;
+                scope.macros = null;
 
                 scope.$watch('item', function() {
                     if (scope.item) {
@@ -912,6 +918,7 @@
                     return p;
                 };
 
+<<<<<<< HEAD
                 var sendAuthoring = function(deskId, stageId, macro) {
                     runMacro(scope.item, macro)
                     .then(function(item) {
@@ -995,6 +1002,44 @@
                     .then(function() {
                         scope.desks = desks.desks;
                     });
+=======
+                scope.transform = function transform(macro) {
+                    notify.success(gettext('Applying Transformation...'));
+                    scope.loading = true;
+                    scope.currentMacro = macro.label;
+                    macros.call(macro, scope.item).then(function(result) {
+                        scope.loading = false;
+                        notify.success(gettext('Transformation applied.'));
+                        return result;
+                    }, function(response) {
+                        notify.error(gettext('Error. Transformation not applied.'));
+                    });
+                };
+
+                scope.$watch('item', function() {
+                    fetchDesks();
+                });
+
+                function fetchMacros() {
+                    if (scope.desk != null) {
+                            macros.getByDesk(scope.desk.name).then(function(_macros) {
+                            scope.macros = _macros;
+                        });
+                    }
+                }
+
+                function fetchDesks() {
+                    return api.find('tasks', scope.item._id)
+                        .then(function(_task) {
+                            scope.task = _task;
+                        }).then(function() {
+                            return desks.initialize();
+                        }).then(function() {
+                            scope.desks = desks.desks;
+                            scope.desk = desks.getItemDesk(scope.item);
+                        }).then(fetchStages).then(fetchMacros);
+                }
+>>>>>>> [SD-1845] - UI: Add transformations to send-to panel in authoring
 
                     if (scope.mode === 'ingest') {
                         p = p.then(function() {
