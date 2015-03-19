@@ -874,6 +874,19 @@
                     });
                 };
 
+                scope.transform = function transform(macro) {
+                    notify.success(gettext('Applying Transformation...'));
+                    scope.loading = true;
+                    scope.currentMacro = macro.label;
+                    macros.call(macro, scope.item).then(function(result) {
+                        scope.loading = false;
+                        notify.success(gettext('Transformation applied.'));
+                        return result;
+                    }, function(response) {
+                        notify.error(gettext('Error. Transformation not applied.'));
+                    });
+                };
+
                 scope.$watch('item', function() {
                     fetchDesks();
                 });
