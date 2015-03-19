@@ -115,7 +115,7 @@ function Authoring() {
         return groups.all(by.css('[option="' + group.toUpperCase() + '"]')).click();
     };
     this.addMultiToGroup = function(group) {
-        return element(by.css('[class="icon-package-plus"]'))
+        return element.all(by.css('[class="icon-package-plus"]')).first()
             .waitReady()
             .then(function(elem) {
                 return elem.click();
