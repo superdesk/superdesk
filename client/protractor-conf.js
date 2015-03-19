@@ -3,6 +3,7 @@
 //var ScreenShotReporter = require('protractor-screenshot-reporter');
 
 exports.config = {
+    allScriptsTimeout: 30000,
     baseUrl: 'http://localhost:9090',
     params: {
         baseBackendUrl: 'http://localhost:5000/api/',
@@ -16,12 +17,14 @@ exports.config = {
             args: ['--no-sandbox']
         }
     },
+    restartBrowserBetweenTests: process.env.bamboo_working_directory || false, // any bamboo env var will do
     directConnect: true,
     framework: 'jasmine',
     jasmineNodeOpts: {
         showColors: true,
         isVerbose: true,
-        includeStackTrace: true
+        includeStackTrace: true,
+        defaultTimeoutInterval: 120000
     },
     /* global jasmine */
     onPrepare: function() {
