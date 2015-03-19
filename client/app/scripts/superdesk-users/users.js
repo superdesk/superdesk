@@ -448,8 +448,8 @@
                         .then(function(result) {
                             _.remove(scope.roles, role);
                         }, function(response) {
-                            if (response.status === 400) {
-                                notify.error(gettext('Role cannot be deleted. Still has assinged users.'));
+                            if (angular.isDefined(response.data._message)) {
+                                notify.error(gettext('Error: ' + response.data._message));
                             } else {
                                 notify.error(gettext('There is an error. Role cannot be deleted.'));
                             }
