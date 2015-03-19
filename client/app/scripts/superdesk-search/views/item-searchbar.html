@@ -27,54 +27,7 @@
             <div class="advanced" ng-show="advancedOpen" role="menu" ng-click="$event.stopPropagation()">
             	<button class="close" ng-click="focusOnSearch();"><i class="icon-close-small"></i></button>
         		<div class="content">
-        			<form>
-                        <fieldset class="span-auto" ng-if="context">
-                            <div class="field inline">
-                                <input type="checkbox" id="ingest-collection" ng-model="repo.ingest" ng-checked="repo.ingest" tabindex="4">
-                                <label for="ingest-collection" translate>Ingest</label>
-                            </div>
-                            <div class="field inline">
-                                <input type="checkbox" id="archive-collection" ng-model="repo.archive" ng-checked="repo.archive" tabindex="5">
-                                <label for="archive-collection" translate>Content</label>
-                            </div>     
-                        </fieldset>
-        				<fieldset>
-                            <div class="field">
-                                <label for="search-headline">Headline</label>
-                                <input type="text" id="search-headline" ng-model="meta.headline" tabindex="6">
-                            </div>
-                        </fieldset>
-                        <fieldset class="span-2">
-                            <div class="field">
-                                <label for="search-subject">Subject</label>
-                                <input type="text" id="search-subject" ng-model="meta.subject.name" tabindex="11">
-                            </div>
-        					<div class="field half">
-        						<label for="search-slugline">Keyword</label>
-        						<input type="text" id="search-slugline" ng-model="meta.slugline" tabindex="8">
-        					</div>
-                        </fieldset>
-                        <fieldset class="span-2">
-                            <div class="field">
-                                <label for="search-storyname">Story Name</label>
-                                <input type="text" id="search-storyname" ng-model="meta.unique_name" tabindex="9">
-                            </div>
-                            <div class="field">
-                                <label for="search-storytext">Story Text</label>
-                                <input type="text" id="search-storytext" ng-model="meta.body_html" tabindex="10">
-                            </div>
-                        </fieldset>
-                        <fieldset class="span-2">
-                            <div class="field" ng-if="repo.archive">
-                                <label for="search-creator">Creator</label>
-                                <input type="text" id="search-creator" ng-model="meta.original_creator" tabindex="12">
-                            </div>
-        				</fieldset>
-        			</form>
-                    <div class="actions">
-                        <button class="btn btn-info pull-right" ng-click="search()" tabindex="13" translate>Go</button>
-                        <button class="btn pull-right" ng-click="focusOnSearch();" tabindex="14" translate>Cancel</button>
-                    </div>
+        			<sd-item-search />
         		</div>
             </div>
         </div>

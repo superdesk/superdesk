@@ -272,7 +272,9 @@
                     scope.sTab = true;
                     scope.aggregations = {};
                     scope.selectedFacets = {};
-                    scope.keyword = null;
+                    scope.selectedParameters = [];
+                    scope.selectedKeywords = [];
+                    scope.parameters = null;
                     scope.privileges = privileges.privileges;
 
                     var initAggregations = function () {
@@ -301,10 +303,38 @@
                         'state':1
                     };
 
+                    var initSelectedParameters = function (parameters) {
+                        scope.selectedParameters = [];
+                        while (parameters.indexOf(':') >= 0) {
+                            var colonIndex = parameters.indexOf(':');
+                            var parameter = parameters.substring(parameters.lastIndexOf(' ', colonIndex), parameters.indexOf(')', colonIndex) + 1);
+                            scope.selectedParameters.push(parameter);
+                            parameters = parameters.replace(parameter, '');
+                        }
+
+                        return parameters;
+                    };
+
+                    var initSelectedKeywords = function (keywords) {
+                        scope.selectedKeywords = [];
+                        while (keywords.indexOf('(') >= 0) {
+                            var paranthesisIndex = keywords.indexOf('(');
+                            var keyword = keywords.substring(paranthesisIndex, keywords.indexOf(')', paranthesisIndex) + 1);
+                            scope.selectedKeywords.push(keyword);
+                            keywords = keywords.replace(keyword, '');
+                        }
+                    }
+
                     var initSelectedFacets = function () {
                         return desks.initialize().then(function(result) {
                             var search = $location.search();
-                            scope.keyword = search.q;
+                            
+                            scope.parameters = search.q;
+                            if (scope.parameters) {
+                                var keywords = initSelectedParameters(scope.parameters);
+                                initSelectedKeywords(keywords);                                
+                            }
+
                             _.forEach(search, function(type, key) {
                                 scope.selectedFacets[key] = [];
                                 if (key === 'desk') {
@@ -318,7 +348,7 @@
                                     });
                                 } else if (FacetKeys[key]) {
                                     scope.selectedFacets[key] = JSON.parse(type);
-                                }
+                                } 
                             });
                         });
                     };
@@ -328,10 +358,10 @@
                         initAggregations();
                         initSelectedFacets().then(function() {
                             var search = $location.search();
-                            if (search.q && scope.keyword !== search.q)
+                            if (search.q && scope.parameters !== search.q)
                             {
                                 scope.selectedFacets = {};
-                                scope.keyword = search.q;
+                                scope.parameters = search.q;
                             }
 
                             if (scope.items && scope.items._aggregations !== undefined) {
@@ -416,7 +446,7 @@
                         });
                     });
 
-                    var setSelectedFacets = function(type, key) {
+                    scope.setSelectedFilters = function(type, key) {
                         if (!scope.selectedFacets[type]) {
                             scope.selectedFacets[type] = [];
                         }
@@ -449,7 +479,7 @@
 
                     scope.setFilter = function(type, key) {
 
-                        setSelectedFacets(type, key);
+                        scope.setSelectedFilters(type, key);
 
                         if (!scope.isEmpty(type) && key) {
                             $location.search(type, JSON.stringify(scope.selectedFacets[type]));
@@ -500,6 +530,30 @@
 
                         delete scope.selectedFacets.date;
                     };
+
+                    scope.removeParameter = function(param) {
+                        _.remove(scope.selectedParameters, function(n) {
+                            return n === param;
+                        });
+
+                        var params = $location.search();
+                        if (params.q) {
+                            params.q = params.q.replace(param, '').trim();
+                            $location.search('q', params.q || null);
+                        }
+                    }
+
+                    scope.removeKeyword = function(keyword) {
+                        _.remove(scope.selectedKeywords, function(n) {
+                            return n === keyword;
+                        });
+
+                        var params = $location.search();
+                        if (params.q) {
+                            params.q = params.q.replace(keyword, '').trim();
+                            $location.search('q', params.q || null);
+                        }
+                    }
 
                     scope.isEmpty = function(type) {
                         return _.isEmpty(scope.aggregations[type]);
@@ -607,11 +661,11 @@
                         if (scope.within) {
                             var params = $location.search();
                             if (params.q) {
-                                scope.query = params.q + ' ' + scope.within;
+                                scope.query = params.q + ' (' + scope.within + ') ';
                             } else {
                                 scope.query = scope.within;
                             }
-                            $location.search('q', scope.query|| null);
+                            $location.search('q', scope.query || null);
                             scope.within = null;
                         }
                     };
@@ -891,6 +945,96 @@
                     function _closeSearchPopup() {
                         scope.flags.extended = false;
                     }
+                }
+            };
+        }])
+
+        .directive('sdItemSearch', ['$location', '$timeout', function($location, $timeout) {
+            return {
+                scope: {
+                    repo: '=', 
+                    context: '='
+                },
+                templateUrl: 'scripts/superdesk-search/views/item-search.html',
+                link: function(scope, elem) {
+
+                    var input = elem.find('#search-input');
+
+                    function init() {
+                        var params = $location.search();
+                        scope.query = params.q;
+                        scope.flags = false;
+                        scope.meta = {};
+
+                        if (params.repo) {
+                            scope.repo.archive = params.repo.indexOf('archive') >= 0;
+                            scope.repo.ingest = params.repo.indexOf('ingest') >= 0;
+                        }
+                    }
+
+                    init();
+
+                    scope.$on('$locationChangeSuccess', function() {
+                        if (scope.query !== $location.search().q) {
+                            init();
+                        }
+                    });
+
+                    function getActiveRepos() {
+                        var repos = [];
+                        angular.forEach(scope.repo, function(val, key) {
+                            if (val) {
+                                repos.push(key);
+                            }
+                        });
+
+                        return repos.length ? repos.join(',') : null;
+                    }
+
+                    function getFirstKey(data) {
+                        for (var prop in data) {
+                            if (data.hasOwnProperty(prop)) {
+                                return prop;
+                            }
+                        }
+                    }
+
+                    function getQuery() {
+                        var metas = [];
+                        angular.forEach(scope.meta, function(val, key) {
+                            if (key === '_all') {
+                                metas.push(val.join(' '));
+                            } else {
+                                if (val) {
+                                    if (typeof(val) === 'string'){
+                                        if (val) {
+                                            metas.push(key + ':(' + val + ')');
+                                        }
+                                    } else {
+                                        var subkey = getFirstKey(val);
+                                        if (val[subkey]) {
+                                            metas.push(key + '.' + subkey + ':(' + val[subkey] + ')');
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                        return metas.length ? scope.query + ' ' + metas.join(' ') : scope.query || null;
+                    }
+
+                    function updateParam() {
+                        $location.$$search = {};
+                        $location.search('q', getQuery() || null);
+                        $location.search('repo', getActiveRepos());
+                        scope.query = $location.search().q;
+                        scope.meta = {};
+                    }
+
+                    scope.search = function() {
+                        updateParam();
+                    };
+
+                   
                 }
             };
         }])
