@@ -7,6 +7,7 @@
 # For the full copyright and license information, please see the
 # AUTHORS and LICENSE files distributed with this source code, or
 # at https://www.sourcefabric.org/superdesk/license
+from superdesk.errors import SuperdeskApiError
 
 from superdesk.resource import Resource
 from bson.objectid import ObjectId
@@ -76,6 +77,31 @@ class DesksService(BaseService):
     def on_created(self, docs):
         for doc in docs:
             push_notification(self.notification_key, created=1, desk_id=str(doc.get('_id')))
+
+    def on_delete(self, desk):
+        """
+        Overriding to prevent deletion of a desk if the desk meets one of the below conditions:
+            1. The desk isn't assigned as a default desk to user(s)
+            2. The desk has no content
+            3. The desk is associated with routing rule(s)
+        """
+
+        as_default_desk = superdesk.get_resource_service('users').get(req=None, lookup={'desk': desk['_id']})
+        if as_default_desk and as_default_desk.count():
+            raise SuperdeskApiError.preconditionFailedError(
+                message='Cannot delete desk as it is assigned as default desk to user(s).')
+
+        items = superdesk.get_resource_service('archive').get(req=None, lookup={'task.desk': str(desk['_id'])})
+        if items and items.count():
+            raise SuperdeskApiError.preconditionFailedError(message='Cannot delete desk as it has article(s).')
+
+    def delete(self, lookup):
+        """
+        Overriding to delete stages before deleting a desk
+        """
+
+        superdesk.get_resource_service('stages').delete(lookup={'desk': lookup.get('_id')})
+        super().delete(lookup)
 
     def on_deleted(self, doc):
         push_notification(self.notification_key, deleted=1, desk_id=str(doc.get('_id')))
