@@ -826,7 +826,6 @@
             }
         };
     }
-
     SendItem.$inject = ['$q', 'superdesk', 'api', 'desks', 'notify', '$location', 'macros', '$rootScope'];
     function SendItem($q, superdesk, api, desks, notify, $location, macros, $rootScope) {
         return {
@@ -1020,6 +1019,7 @@
                     }
 
                     return p;
+
                 }
 
                 function fetchStages() {
