@@ -1,10 +1,11 @@
 define([
     'angular',
     'd3',
+    'moment',
     'superdesk-archive/controllers/baseList',
     './ingest-widget/ingest',
     './ingest-stats-widget/stats'
-], function(angular, d3, BaseListController) {
+], function(angular, d3, moment, BaseListController) {
     'use strict';
 
     var app = angular.module('superdesk.ingest', [
@@ -49,6 +50,24 @@ define([
         }
     });
 
+    var PROVIDER_DASHBOARD_DEFAULTS = {
+        show_log_messages: true,
+        show_ingest_count: true,
+        show_time: true,
+        log_messages: 'error',
+        show_status: true
+    };
+
+    function forcedExtend(dest, src) {
+        _.each(PROVIDER_DASHBOARD_DEFAULTS, function(value, key) {
+            if (_.has(src, key)) {
+                dest[key] = src[key];
+            } else {
+                dest[key] = PROVIDER_DASHBOARD_DEFAULTS[key];
+            }
+        });
+    }
+
     IngestProviderService.$inject = ['api', '$q', 'preferencesService'];
     function IngestProviderService(api, $q, preferencesService) {
 
@@ -56,7 +75,6 @@ define([
             providers: null,
             providersLookup: {},
             fetched: null,
-            dashboard_providers: [],
             fetchProviders: function() {
                 var self = this;
                 return api.ingestProviders.query().then(function(result) {
@@ -81,10 +99,8 @@ define([
             },
             fetchDashboardProviders: function() {
                 var deferred = $q.defer();
-                var self = this;
-
-                self.fetchProviders().then(function () {
-                    var ingest_providers = self.providers;
+                api.ingestProviders.query({max_results:500}).then(function (result) {
+                    var ingest_providers = result._items;
                     preferencesService.get('dashboard:ingest').then(function(user_ingest_providers) {
                         if (!_.isArray(user_ingest_providers)) {
                             user_ingest_providers = [];
@@ -95,11 +111,10 @@ define([
                                 return item._id === provider._id;
                             });
 
-                            provider.dashboard_enabled = user_provider? true: false;
-                            provider.log_messages = user_provider &&
-                                user_provider.log_messages? user_provider.log_messages: 'error';
+                            provider.dashboard_enabled = user_provider?true:false;
+                            forcedExtend(provider, user_provider?user_provider:PROVIDER_DASHBOARD_DEFAULTS);
                         });
-                        self.dashboard_providers = ingest_providers;
+
                         deferred.resolve(ingest_providers);
                     }, function (error) {
                         deferred.reject(error);
@@ -379,42 +394,6 @@ define([
             }
         };
     }
-
-    IngestUserDashboardDropDown.$inject = ['api', 'ingestSources', 'preferencesService', 'notify', 'gettext'];
-    function IngestUserDashboardDropDown (api, ingestSources, preferencesService, notify, gettext) {
-        return {
-            templateUrl: 'scripts/superdesk-ingest/views/dashboard/ingest-sources-list.html',
-            link: function (scope) {
-
-                scope.items = [];
-
-                function fetchItems() {
-                    ingestSources.fetchDashboardProviders().then(function() {
-                        scope.items = ingestSources.dashboard_providers;
-                    });
-                }
-
-                fetchItems();
-
-                scope.setUserPreferences = function() {
-                    var preferences = [];
-                    var update = {};
-
-                    _.forEach(_.filter(scope.items, {'dashboard_enabled': true}),
-                        function (item) { preferences.push(_.pick(item, ['_id', 'log_messages'])); });
-
-                    update['dashboard:ingest'] = preferences;
-                    preferencesService.update(update).then(function(result) {
-                        notify.success(gettext('Ingest Dashboard preferences successfully saved.'), 2000);
-                        fetchItems();
-                    }, function(error) {
-                        notify.error(gettext('Ingest Dashboard preferences could not be saved.'), 2000);
-                    });
-                };
-            }
-        };
-    }
-
 
     IngestRulesContent.$inject = ['api', 'gettext', 'notify', 'modal'];
     function IngestRulesContent(api, gettext, notify, modal) {
@@ -888,6 +867,150 @@ define([
         };
     }
 
+    IngestDashboardController.$inject = ['$scope', 'api', 'ingestSources', 'preferencesService', 'notify', 'gettext'];
+    function IngestDashboardController($scope, $api, ingestSources, preferencesService, notify, gettext) {
+        $scope.items = [];
+        $scope.dashboard_items = [];
+
+        $scope.fetchItems = function () {
+            ingestSources.fetchDashboardProviders().then(function(result) {
+                $scope.items = result;
+                $scope.dashboard_items =  _.filter(result, {'dashboard_enabled': true});
+            });
+        };
+
+        $scope.setUserPreferences = function(refresh) {
+            var preferences = [];
+            var update = {};
+
+            _.forEach(_.filter($scope.items, {'dashboard_enabled': true}),
+                function (item) { preferences.push(_.pick(item, _.union(['_id'], _.keys(PROVIDER_DASHBOARD_DEFAULTS))));});
+
+            update['dashboard:ingest'] = preferences;
+            preferencesService.update(update).then(function(result) {
+                if (refresh) {
+                    $scope.fetchItems();
+                }
+            }, function(error) {
+                notify.error(gettext('Ingest Dashboard preferences could not be saved.'), 2000);
+            });
+        };
+
+        $scope.fetchItems();
+    }
+
+    IngestUserDashboard.$inject = ['api'];
+    function IngestUserDashboard (api) {
+        return {
+            templateUrl: 'scripts/superdesk-ingest/views/dashboard/ingest-dashboard-widget.html',
+            scope: {
+                item: '=',
+                setUserPreferences: '&'
+            },
+            link: function (scope) {
+
+                function getCount() {
+                    var criteria = {
+                            source: {
+                                query: {
+                                    filtered: {
+                                        filter: {
+                                            and: [
+                                                {term: {ingest_provider: scope.item._id}},
+                                                {range: {versioncreated: {gte: 'now-24h'}}}
+                                            ]
+                                        }
+                                    }
+                                },
+                                size: 0,
+                                from: 0
+                            }
+                        };
+
+                    api.ingest.query(criteria).then(function (result) {
+                        scope.ingested_count = result._meta.total;
+                    });
+                }
+
+                function updateProvider() {
+                    api.ingestProviders.getById(scope.item._id).then(function (result) {
+                        angular.extend(scope.item, result);
+                    }, function (error) {
+                        if (error.status === 404) {
+                            scope.item.dashboard_enabled = false;
+                            scope.setUserPreferences(true);
+                        }
+                    });
+                }
+
+                function init() {
+                    scope.ingested_count = 0;
+                    getCount();
+                }
+
+                init();
+
+                scope.isIdle = function() {
+                    if (scope.item.last_item_update) {
+                        var last_item_update = moment(scope.item.last_item_update);
+                        if (scope.item.idle_time) {
+                            last_item_update.add(scope.item.idle_time.hours, 'h').add(scope.item.idle_time.minutes, 'm');
+                            if (moment() > last_item_update) {
+                                scope.idle_message = 'Channel has gone strangely quiet.';
+                                return true;
+                            }else {
+                                scope.idle_message = '';
+                                return false;
+                            }
+                        }
+                    }
+                    return false;
+                };
+
+                scope.$on('ingest:update', function (evt, extras) {
+                    if (extras.provider === scope.item._id) {
+                        getCount();
+                        updateProvider();
+                    }
+                });
+            }
+        };
+    }
+
+    IngestUserDashboardList.$inject = [];
+    function IngestUserDashboardList () {
+        return {
+            templateUrl: 'scripts/superdesk-ingest/views/dashboard/ingest-dashboard-widget-list.html',
+            scope: {
+                items: '=',
+                setUserPreferences: '&'
+            }
+        };
+    }
+
+    IngestUserDashboardDropDown.$inject = [];
+    function IngestUserDashboardDropDown () {
+        return {
+            templateUrl: 'scripts/superdesk-ingest/views/dashboard/ingest-sources-list.html',
+            scope: {
+                items: '=',
+                setUserPreferences: '&'
+            }
+        };
+    }
+
+    function ScheduleFilter() {
+        return function(input) {
+            var schedule = '';
+            if (_.isPlainObject(input)) {
+                schedule += (input.minutes && input.minutes > 0)? (input.minutes + (input.minutes > 1?' minutes':' minute')):'';
+                schedule += schedule.length > 0?' ':'';
+                schedule += (input.seconds && input.seconds > 0)? (input.seconds + (input.seconds > 1?' seconds':' second')):'';
+            }
+            return schedule;
+        };
+    }
+
     app
         .service('ingestSources', IngestProviderService)
         .factory('subjectService', SubjectService)
@@ -900,8 +1023,11 @@ define([
         .directive('sdIngestRoutingSchedule', IngestRoutingSchedule)
         .directive('sdPieChartDashboard', PieChartDashboardDirective)
         .directive('sdSortrules', SortRulesDirectives)
-        .directive('sdUserIngestSource', IngestUserDashboardDropDown);
+        .directive('sdUserIngestDashboardDropDown', IngestUserDashboardDropDown)
+        .directive('sdUserIngestDashboardList', IngestUserDashboardList)
+        .directive('sdUserIngestDashboard', IngestUserDashboard)        
         .filter('insert', InsertFilter)
+        .filter('scheduleFilter', ScheduleFilter);
 
 
     app.config(['superdeskProvider', function(superdesk) {

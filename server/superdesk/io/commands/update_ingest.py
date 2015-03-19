@@ -159,9 +159,7 @@ def update_provider(provider, rule_set=None, routing_scheme=None):
     updates the provider.
     """
     update = {
-        LAST_UPDATED: utcnow(),
-        # Providing the _etag as system updates to the documents shouldn't override _etag.
-        app.config['ETAG']: provider.get(app.config['ETAG'])
+        LAST_UPDATED: utcnow()
     }
 
     for items in providers[provider.get('type')].update(provider):
@@ -181,7 +179,7 @@ def update_provider(provider, rule_set=None, routing_scheme=None):
             last=provider[LAST_ITEM_UPDATE].replace(tzinfo=timezone.utc).astimezone(tz=None).strftime("%c"))
 
     logger.info('Provider {0} updated'.format(provider['_id']))
-    push_notification('ingest:update')
+    push_notification('ingest:update', provider=str(provider['_id']))
 
 
 def process_anpa_category(item, provider):
@@ -213,8 +211,11 @@ def process_iptc_codes(item, provider):
             return False
 
         for subject in item['subject']:
-            if 'qcode' in subject and len(subject['qcode']) == 8:
+            # removing subjects with only name field.
+            if 'name' in subject and 'qcode' not in subject:
+                item['subject'].remove(subject)
 
+            if 'qcode' in subject and len(subject['qcode']) == 8:
                 top_qcode = subject['qcode'][:2] + '000000'
                 if not iptc_already_exists(top_qcode):
                     item['subject'].append({'qcode': top_qcode, 'name': subject_codes[top_qcode]})

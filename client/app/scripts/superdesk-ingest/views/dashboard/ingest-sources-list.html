@@ -3,11 +3,13 @@
         <span translate>Add Ingest Sources</span>
     </div>
 </li>
+<li class="divider"></li>
 <li ng-repeat="item in items">
     <div>
         <span>{{item.name}}</span> <span class="pull-right" sd-switch ng-model="item.dashboard_enabled" ng-click="setUserPreferences()"></span>
     </div>        
 </li>
+<li class="divider"></li>
 <li>
     <div>
         <span translate><i class="icon-pencil"></i> Edit Ingest Sources</span>

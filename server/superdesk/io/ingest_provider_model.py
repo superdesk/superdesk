@@ -86,8 +86,8 @@ class IngestProviderResource(Resource):
     }
 
     item_methods = ['GET', 'PATCH']
-
     privileges = {'POST': 'ingest_providers', 'PATCH': 'ingest_providers'}
+    etag_ignore_fields = ['last_updated', 'last_item_update']
 
 
 class IngestProviderService(BaseService):
