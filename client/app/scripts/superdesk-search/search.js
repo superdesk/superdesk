@@ -665,7 +665,7 @@
                             if (params.q) {
                                 scope.query = params.q + ' (' + scope.within + ') ';
                             } else {
-                                scope.query = scope.within;
+                                scope.query = '(' + scope.within + ')';
                             }
                             $location.search('q', scope.query || null);
                             scope.within = null;
@@ -1021,7 +1021,18 @@
                                 }
                             }
                         });
-                        return metas.length ? scope.query + ' ' + metas.join(' ') : scope.query || null;
+
+                        if (metas.length) {
+                            if (scope.query) {
+                                return scope.query + ' ' + metas.join(' ')
+                            } else {
+                                return metas.join(' ')
+                            }
+                        } else {
+                            return scope.query || null;
+                        }
+
+                        //return metas.length ? scope.query + ' ' + metas.join(' ') : scope.query || null;
                     }
 
                     function updateParam() {
