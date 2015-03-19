@@ -2,6 +2,7 @@
 'use strict';
 
 var openUrl = require('./helpers/utils').open,
+    changeUrl = require('./helpers/utils').changeUrl,
     workspace = require('./helpers/pages').workspace,
     content = require('./helpers/pages').content;
 
@@ -14,7 +15,7 @@ describe('Fetch', function() {
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
 
         var body;
-        browser.get('/#/workspace/ingest').then(function() {
+        changeUrl('/#/workspace/ingest').then(function() {
             return workspace.switchToDesk('SPORTS DESK');
         }).then(function() {
             // select & fetch item
@@ -24,7 +25,7 @@ describe('Fetch', function() {
             return body.sendKeys('f');
         }).then(function() {
             // go to content and see it there
-            return browser.get('/#/workspace/content');
+            return changeUrl('/#/workspace/content');
         }).then(function() {
             return workspace.switchToDesk('SPORTS DESK');
         }).then(
@@ -36,14 +37,14 @@ describe('Fetch', function() {
     it('can fetch from ingest with menu', function() {
         workspace.switchToDesk('SPORTS DESK').then(content.setListView);
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
-        browser.get('/#/workspace/ingest').then(function() {
+        changeUrl('/#/workspace/ingest').then(function() {
             return workspace.switchToDesk('SPORTS DESK');
         }).then(
             content.setListView
         ).then(function() {
             return content.actionOnItem('Fetch', 0);
         }).then(function() {
-            return browser.get('/#/workspace/content');
+            return changeUrl('/#/workspace/content');
         }).then(function() {
             return workspace.switchToDesk('SPORTS DESK');
         }).then(
@@ -81,14 +82,14 @@ describe('Fetch', function() {
         workspace.switchToDesk('SPORTS DESK').then(content.setListView);
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
 
-        browser.get('/#/workspace/ingest').then(function() {
+        changeUrl('/#/workspace/ingest').then(function() {
             return workspace.switchToDesk('SPORTS DESK');
         }).then(
             content.setListView
         ).then(function() {
             return content.actionOnItem('Fetch', 0);
         }).then(function() {
-            return browser.get('/#/workspace/content');
+            return changeUrl('/#/workspace/content');
         }).then(function() {
             return workspace.switchToDesk('SPORTS DESK');
         }).then(

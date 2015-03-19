@@ -2,6 +2,7 @@
 
 exports.login = login;
 exports.open = openUrl;
+exports.changeUrl = changeUrl;
 exports.printLogs = printLogs;
 exports.waitForSuperdesk = waitForSuperdesk;
 
@@ -38,6 +39,19 @@ function openUrl(url) {
             },
             function(err) {
                 console.log('catched error from waitForSuperdesk in openUrl.');
+                return Q.defer().reject(err);
+            }
+    );
+}
+
+// open url
+function changeUrl(url) {
+    return browser.get(url).then(waitForSuperdesk).then(
+            function() {
+                return Q.defer().resolve();
+            },
+            function(err) {
+                console.log('catched error from waitForSuperdesk in changeUrl.');
                 return Q.defer().reject(err);
             }
     );
