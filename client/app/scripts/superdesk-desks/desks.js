@@ -45,12 +45,6 @@
             superdesk.intent('view', 'content');
         };
 
-        $scope.openItem = function(item) {
-            desks.setCurrentDeskId(item.task.desk);
-            desks.setCurrentStageId(item.task.stage);
-            superdesk.intent('read_only', 'content_article', item);
-        };
-
         $scope.$on('desks:refresh:stages', function(e, deskId) {
             desks.refreshStages().then(function() {
                 $scope.deskStages[deskId] = desks.deskStages[deskId];
@@ -59,15 +53,17 @@
 
     }
 
-    StageItemListDirective.$inject = ['search', 'api'];
-    function StageItemListDirective(search, api) {
+    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks'];
+    function StageItemListDirective(search, api, superdesk, desks) {
         return {
             templateUrl: 'scripts/superdesk-desks/views/stage-item-list.html',
             scope: {
                 stage: '=',
                 total: '=',
                 allowed: '=',
-                open: '&'
+                showEmpty: '=?',
+                selected: '=?',
+                action: '&'
             },
             link: function(scope, elem) {
 
@@ -85,6 +81,12 @@
                 }, function() {
                     scope.loading = false;
                 });
+
+                scope.open = function(item) {
+                    desks.setCurrentDeskId(item.task.desk);
+                    desks.setCurrentStageId(item.task.stage);
+                    superdesk.intent('read_only', 'content_article', item);
+                };
             }
         };
     }
@@ -133,8 +135,28 @@
         };
     }
 
+    AggregatehWidgetCtrl.$inject = ['$scope', 'desks'];
+    function AggregatehWidgetCtrl($scope, desks) {
+
+        desks.initialize()
+        .then(function() {
+            desks.fetchCurrentUserDesks().then(function (desk_list) {
+                $scope.desks = desk_list;
+            });
+            $scope.deskStages = desks.deskStages;
+        });
+
+        $scope.selected = null;
+
+        $scope.preview = function(item) {
+            $scope.selected = item;
+        };
+
+    }
+
     var app = angular.module('superdesk.desks', [
-        'superdesk.users'
+        'superdesk.users',
+        'superdesk.authoring.widgets'
     ]);
 
     var limits = {
@@ -171,6 +193,18 @@
                 }
             });
         }])
+        .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
+            authoringWidgetsProvider
+                .widget('aggregate', {
+                    icon: 'view',
+                    label: gettext('Aggregate'),
+                    template: 'scripts/superdesk-desks/views/aggregate-widget.html',
+                    side: 'left',
+                    extended: true,
+                    display: {authoring: true, packages: false}
+                });
+        }])
+        .controller('AggregatehWidgetCtrl', AggregatehWidgetCtrl)
         .factory('desks', ['$q', 'api', 'preferencesService', 'userList', 'notify', 'session',
             function($q, api, preferencesService, userList, notify, session) {
 
