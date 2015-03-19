@@ -11,8 +11,8 @@
  (function() {
     'use strict';
 
-    DeskListController.$inject = ['$scope', 'desks', 'superdesk', 'privileges', 'tasks'];
-    function DeskListController($scope, desks, superdesk, privileges, tasks) {
+    DeskListController.$inject = ['$scope', 'desks', 'superdesk', 'privileges', 'tasks', 'api'];
+    function DeskListController($scope, desks, superdesk, privileges, tasks, api) {
 
         var userDesks;
 
@@ -27,6 +27,10 @@
         });
 
         $scope.statuses = tasks.statuses;
+
+        api('roles').query().then(function(result) {
+            $scope.roles = result._items;
+        });
 
         $scope.privileges = privileges.privileges;
 
@@ -124,6 +128,29 @@
                     scope.loading = false;
                 });
 
+            }
+        };
+    }
+
+    UserRoleItemListDirective.$inject = ['desks'];
+    function UserRoleItemListDirective(desks) {
+        return {
+            templateUrl: 'scripts/superdesk-desks/views/user-role-items.html',
+            scope: {
+                role: '=',
+                desk: '=',
+                total: '='
+            },
+            link: function(scope, elem) {
+                scope.users = desks.deskMembers[scope.desk];
+            	scope.total = 0;
+            	scope.items = [];
+            	_.each(scope.users, function(user, index) {
+                    if (scope.role === user.role) {
+                        scope.items.push(user);
+                        scope.total = scope.total + 1;
+                    }
+                });
             }
         };
     }
@@ -432,6 +459,7 @@
         }])
         .directive('sdStageItems', StageItemListDirective)
         .directive('sdTaskStatusItems', TaskStatusItemsDirective)
+        .directive('sdUserRoleItems', UserRoleItemListDirective)
         .directive('sdDeskConfig', function() {
             return {
                 controller: DeskConfigController
