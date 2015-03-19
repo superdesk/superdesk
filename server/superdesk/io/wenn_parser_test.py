@@ -49,8 +49,8 @@ class WENNTestCase(unittest.TestCase):
         self.assertEqual(self.items[1].get('anpa-category')['qcode'], 'e')
 
     def test_subject(self):
-        self.assertEqual(self.items[0].get('subject')['qcode'], '01000000')
-        self.assertEqual(self.items[1].get('subject')['qcode'], '01000000')
+        self.assertEqual(self.items[0].get('subject')[0]['qcode'], '01000000')
+        self.assertEqual(self.items[1].get('subject')[0]['qcode'], '01000000')
 
     def test_firstcreated(self):
         self.assertEqual(self.items[0].get('firstcreated'), datetime.datetime(year=2015, month=1, day=30, hour=0,
