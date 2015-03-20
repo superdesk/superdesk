@@ -15,13 +15,13 @@ define(['lodash'], function(_) {
                 return $q.reject(reason);
             };
 
-            return item.upload || api.archiveMedia.getUrl()
+            return item.upload || api.archive.getUrl()
                 .then(function(url) {
                     item.upload = upload.start({
                         method: 'POST',
                         url: url,
                         data: {media: item.file},
-                        headers: api.archiveMedia.getHeaders()
+                        headers: api.archive.getHeaders()
                     })
                     .then(function(response) {
                         if (response.data._issues) {

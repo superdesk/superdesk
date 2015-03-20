@@ -153,12 +153,5 @@ define([
                     rel: 'archive'
                 }
             });
-            //TODO: handle archive_media removal
-            apiProvider.api('archiveMedia', {
-                type: 'http',
-                backend: {
-                    rel: 'archive_media'
-                }
-            });
         }]);
 });
