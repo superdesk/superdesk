@@ -153,11 +153,5 @@ define([
                     rel: 'archive'
                 }
             });
-            apiProvider.api('archiveMedia', {
-                type: 'http',
-                backend: {
-                    rel: 'archive_media'
-                }
-            });
         }]);
 });

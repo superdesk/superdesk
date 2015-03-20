@@ -54,6 +54,12 @@ def init_app(app):
 
 def push_notification(name, **kwargs):
     logger.info('pushing event {0} ({1})'.format(name, json.dumps(kwargs)))
+    print('pushing event {0} ({1})'.format(name, json.dumps(kwargs)))
+
+    if app.notification_client is None:
+        logger.info('Notification server is not initialized')
+        print('Notification server is not initialized')
+
     if app.notification_client is not None:
         try:
             app.notification_client.notify(event=name, extra=kwargs)

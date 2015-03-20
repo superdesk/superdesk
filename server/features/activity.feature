@@ -26,7 +26,7 @@ Feature: User Activity
     @auth
     Scenario: Image archive activity
         Given empty "archive"
-        When we upload a file "bike.jpg" to "archive_media"
+        When we upload a file "bike.jpg" to "archive"
      	
      	When we get "/activity/"
         Then we get existing resource

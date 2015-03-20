@@ -10,11 +10,6 @@ define(['./upload'], function(UploadController) {
             $provide.service('api', function($q) {
                 return {
                     archive: {
-                        update: function(dest, diff) {
-                            return $q.when({});
-                        }
-                    },
-                    archiveMedia: {
                         getUrl: function() {
                             return $q.when(UPLOAD_URL);
                         },
@@ -22,7 +17,7 @@ define(['./upload'], function(UploadController) {
                             return {};
                         },
                         update: function(dest, diff) {
-                            return $q.when({data: {}});
+                            return $q.when({});
                         }
                     }
                 };
@@ -58,7 +53,7 @@ define(['./upload'], function(UploadController) {
                 method: 'POST',
                 url: UPLOAD_URL,
                 data: {media: files[0]},
-                headers: api.archiveMedia.getHeaders()
+                headers: api.archive.getHeaders()
             });
 
             expect(scope.items.length).toBe(1);

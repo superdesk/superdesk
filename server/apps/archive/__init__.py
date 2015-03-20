@@ -14,10 +14,9 @@
 import logging
 
 from .archive import ArchiveResource, ArchiveService, ArchiveVersionsResource, AutoSaveResource, \
-    ArchiveVersionsService, ArchiveSaveService
+    ArchiveSaveService
 from .commands import ArchiveRemoveExpiredContent
 from .ingest import IngestResource, IngestService
-from .archive_media import ArchiveMediaResource, ArchiveMediaService, ArchiveMediaVersionsResource
 from .archive_ingest import ArchiveIngestResource, ArchiveIngestService
 from .item_comments import ItemCommentsResource, ItemCommentsSubResource, ItemCommentsService, ItemCommentsSubService
 from .user_content import UserContentResource, UserContentService
@@ -45,20 +44,12 @@ def init_app(app):
     IngestResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'archive_versions'
-    service = ArchiveVersionsService(endpoint_name, backend=superdesk.get_backend())
+    service = superdesk.Service(endpoint_name, backend=superdesk.get_backend())
     ArchiveVersionsResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'archive'
     service = ArchiveService(endpoint_name, backend=superdesk.get_backend())
     ArchiveResource(endpoint_name, app=app, service=service)
-
-    endpoint_name = 'archive_media'
-    service = ArchiveMediaService(endpoint_name, backend=superdesk.get_backend())
-    ArchiveMediaResource(endpoint_name, app=app, service=service)
-
-    endpoint_name = 'archive_media_versions'
-    service = ArchiveVersionsService(endpoint_name, backend=superdesk.get_backend())
-    ArchiveMediaVersionsResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'archive_ingest'
     service = ArchiveIngestService(endpoint_name, backend=superdesk.get_backend())
