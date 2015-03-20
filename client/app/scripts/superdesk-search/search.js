@@ -213,6 +213,84 @@
         };
     }
 
+    TagService.$inject = ['$location', 'gettext', 'desks'];
+    function TagService($location, gettext, desks) {
+        var tags = {}
+        tags.selectedFacets = {};
+        tags.selectedParameters = [];
+        tags.selectedKeywords = [];
+
+        var FacetKeys = {
+            'type': 1,
+            'category': 1,
+            'urgency': 1,
+            'source': 1,
+            'day': 1,
+            'week': 1,
+            'month': 1,
+            'desk': 1,
+            'stage':1,
+            'state':1
+        };
+
+        var initSelectedParameters = function (parameters) {
+            tags.selectedParameters = [];
+            while (parameters.indexOf(':') >= 0) {
+                var colonIndex = parameters.indexOf(':');
+                var parameter = parameters.substring(parameters.lastIndexOf(' ', colonIndex), parameters.indexOf(')', colonIndex) + 1);
+                tags.selectedParameters.push(parameter);
+                parameters = parameters.replace(parameter, '');
+            }
+
+            return parameters;
+        };
+
+        var initSelectedKeywords = function (keywords) {
+            tags.selectedKeywords = [];
+            while (keywords.indexOf('(') >= 0) {
+                var paranthesisIndex = keywords.indexOf('(');
+                var keyword = keywords.substring(paranthesisIndex, keywords.indexOf(')', paranthesisIndex) + 1);
+                tags.selectedKeywords.push(keyword);
+                keywords = keywords.replace(keyword, '');
+            }
+        }
+
+        var initSelectedFacets = function () {
+            return desks.initialize().then(function(result) {
+                var search = $location.search();
+                
+                var parameters = search.q;
+                if (parameters) {
+                    var keywords = initSelectedParameters(parameters);
+                    initSelectedKeywords(keywords);                                
+                }
+
+                _.forEach(search, function(type, key) {
+                    tags.selectedFacets[key] = [];
+                    if (key === 'desk') {
+                        tags.selectedFacets[key].push(desks.deskLookup[JSON.parse(type)[0]].name);
+                    } else if (key === 'stage') {
+                        var stageid = type;
+                        _.forEach(desks.deskStages[desks.activeDeskId], function(deskStage) {
+                            if (deskStage._id === JSON.parse(stageid)[0]) {
+                                tags.selectedFacets[key].push(deskStage.name);
+                            }
+                        });
+                    } else if (FacetKeys[key]) {
+                        tags.selectedFacets[key] = JSON.parse(type);
+                    } 
+                });
+
+                return tags;
+            });
+        };
+
+        return {
+            initSelectedFacets: initSelectedFacets,
+            tags: tags
+        }
+    }
+
     SearchController.$inject = ['$scope', '$location', 'api', 'search'];
     function SearchController($scope, $location, api, search) {
 
@@ -245,6 +323,7 @@
 
     angular.module('superdesk.search', ['superdesk.api', 'superdesk.activity', 'superdesk.desks'])
         .service('search', SearchService)
+        .service('tags', TagService)
         .filter('FacetLabels', function() {
             return function(input) {
                 if (input.toUpperCase() === 'URGENCY') {
@@ -258,7 +337,7 @@
         /**
          * Item filters sidebar
          */
-        .directive('sdSearchFacets', ['$location', 'desks', 'privileges',  function($location, desks, privileges) {
+        .directive('sdSearchFacets', ['$location', 'desks', 'privileges', 'tags',  function($location, desks, privileges, tags) {
             desks.initialize();
             return {
                 require: '^sdSearchContainer',
@@ -273,11 +352,10 @@
                     scope.flags = controller.flags;
                     scope.sTab = true;
                     scope.aggregations = {};
-                    scope.selectedFacets = {};
-                    scope.selectedParameters = [];
-                    scope.selectedKeywords = [];
+                    
                     scope.parameters = null;
                     scope.privileges = privileges.privileges;
+                    scope.tags = tags;
 
                     var initAggregations = function () {
                         scope.aggregations = {
@@ -292,114 +370,54 @@
                         };
                     };
 
-                    var FacetKeys = {
-                        'type': 1,
-                        'category': 1,
-                        'urgency': 1,
-                        'source': 1,
-                        'day': 1,
-                        'week': 1,
-                        'month': 1,
-                        'desk': 1,
-                        'stage':1,
-                        'state':1
-                    };
+                    
 
-                    var initSelectedParameters = function (parameters) {
-                        scope.selectedParameters = [];
-                        while (parameters.indexOf(':') >= 0) {
-                            var colonIndex = parameters.indexOf(':');
-                            var parameter = parameters.substring(parameters.lastIndexOf(' ', colonIndex), parameters.indexOf(')', colonIndex) + 1);
-                            scope.selectedParameters.push(parameter);
-                            parameters = parameters.replace(parameter, '');
-                        }
-
-                        return parameters;
-                    };
-
-                    var initSelectedKeywords = function (keywords) {
-                        scope.selectedKeywords = [];
-                        while (keywords.indexOf('(') >= 0) {
-                            var paranthesisIndex = keywords.indexOf('(');
-                            var keyword = keywords.substring(paranthesisIndex, keywords.indexOf(')', paranthesisIndex) + 1);
-                            scope.selectedKeywords.push(keyword);
-                            keywords = keywords.replace(keyword, '');
-                        }
-                    }
-
-                    var initSelectedFacets = function () {
-                        return desks.initialize().then(function(result) {
-                            var search = $location.search();
-                            
-                            scope.parameters = search.q;
-                            if (scope.parameters) {
-                                var keywords = initSelectedParameters(scope.parameters);
-                                initSelectedKeywords(keywords);                                
-                            }
-
-                            _.forEach(search, function(type, key) {
-                                scope.selectedFacets[key] = [];
-                                if (key === 'desk') {
-                                    scope.selectedFacets[key].push(desks.deskLookup[JSON.parse(type)[0]].name);
-                                } else if (key === 'stage') {
-                                    var stageid = type;
-                                    _.forEach(desks.deskStages[desks.getCurrentDeskId()], function(deskStage) {
-                                        if (deskStage._id === JSON.parse(stageid)[0]) {
-                                            scope.selectedFacets[key].push(deskStage.name);
-                                        }
-                                    });
-                                } else if (FacetKeys[key]) {
-                                    scope.selectedFacets[key] = JSON.parse(type);
-                                } 
-                            });
-                        });
-                    };
 
                     scope.$watch('items', function() {
 
                         initAggregations();
-                        initSelectedFacets().then(function() {
+                        tags.initSelectedFacets().then(function(currentTags) {
                             var search = $location.search();
                             if (search.q && scope.parameters !== search.q)
                             {
-                                scope.selectedFacets = {};
+                                currentTags.selectedFacets = {};
                                 scope.parameters = search.q;
                             }
 
                             if (scope.items && scope.items._aggregations !== undefined) {
 
                                 _.forEach(scope.items._aggregations.type.buckets, function(type) {
-                                    if (!scope.selectedFacets.type || scope.selectedFacets.type !== type.key) {
+                                    if (!currentTags.selectedFacets.type || currentTags.selectedFacets.type !== type.key) {
                                         scope.aggregations.type[type.key] = type.doc_count;
                                     }
                                 });
 
                                 _.forEach(scope.items._aggregations.category.buckets, function(cat) {
-                                    if ((!scope.selectedFacets.category || scope.selectedFacets.category !== cat.key) && cat.key !== '') {
+                                    if ((!currentTags.selectedFacets.category || currentTags.selectedFacets.category !== cat.key) && cat.key !== '') {
                                         scope.aggregations.category[cat.key] = cat.doc_count;
                                     }
                                 });
 
                                 _.forEach(scope.items._aggregations.urgency.buckets, function(urgency) {
-                                    if (!scope.selectedFacets.urgency || scope.selectedFacets.urgency !== urgency.key) {
+                                    if (!currentTags.selectedFacets.urgency || currentTags.selectedFacets.urgency !== urgency.key) {
                                         scope.aggregations.urgency[urgency.key] = urgency.doc_count;
                                     }
                                 });
 
                                 _.forEach(scope.items._aggregations.source.buckets, function(source) {
-                                    if (!scope.selectedFacets.source || scope.selectedFacets.source !== source.key) {
+                                    if (!currentTags.selectedFacets.source || currentTags.selectedFacets.source !== source.key) {
                                         scope.aggregations.source[source.key] = source.doc_count;
                                     }
                                 });
 
                                 _.forEach(scope.items._aggregations.state.buckets, function(state) {
-                                    if (!scope.selectedFacets.state || scope.selectedFacets.state !== state.key) {
+                                    if (!currentTags.selectedFacets.state || currentTags.selectedFacets.state !== state.key) {
                                         scope.aggregations.state[state.key] = state.doc_count;
                                     }
                                 });
 
                                 _.forEach(scope.items._aggregations.day.buckets, function(day) {
-                                    if (!scope.selectedFacets.date || scope.selectedFacets.date !== 'Last Day') {
+                                    if (!currentTags.selectedFacets.date || currentTags.selectedFacets.date !== 'Last Day') {
                                         if (day.doc_count > 0) {
                                             scope.aggregations.date['Last Day'] = day.doc_count;
                                         }
@@ -407,7 +425,7 @@
                                 });
 
                                 _.forEach(scope.items._aggregations.week.buckets, function(week) {
-                                    if (!scope.selectedFacets.date || scope.selectedFacets.date !== 'Last Week') {
+                                    if (!currentTags.selectedFacets.date || currentTags.selectedFacets.date !== 'Last Week') {
                                         if (week.doc_count > 0) {
                                             scope.aggregations.date['Last Week'] = week.doc_count;
                                         }
@@ -415,7 +433,7 @@
                                 });
 
                                 _.forEach(scope.items._aggregations.month.buckets, function(month) {
-                                    if (!scope.selectedFacets.date || scope.selectedFacets.date !== 'Last Month') {
+                                    if (!currentTags.selectedFacets.date || currentTags.selectedFacets.date !== 'Last Month') {
                                         if (month.doc_count > 0) {
                                             scope.aggregations.date['Last Month'] = month.doc_count;
                                         }
@@ -424,7 +442,7 @@
 
                                 if (!scope.desk) {
                                     _.forEach(scope.items._aggregations.desk.buckets, function(desk) {
-                                        if (!scope.selectedFacets.desk || scope.selectedFacets.desk !== desks.deskLookup[desk.key].name) {
+                                        if (!currentTags.selectedFacets.desk || currentTags.selectedFacets.desk !== desks.deskLookup[desk.key].name) {
                                             scope.aggregations.desk[desks.deskLookup[desk.key].name] = {
                                                 count: desk.doc_count,
                                                 id: desk.key
@@ -436,7 +454,7 @@
                                 if (scope.desk) {
                                     _.forEach(scope.items._aggregations.stage.buckets, function(stage) {
                                         _.forEach(desks.deskStages[scope.desk._id], function(deskStage) {
-                                            if (!scope.selectedFacets.stage || scope.selectedFacets.stage !== deskStage.name) {
+                                            if (!currentTags.selectedFacets.stage || currentTags.selectedFacets.stage !== deskStage.name) {
                                                 if (deskStage._id === stage.key) {
                                                     scope.aggregations.stage[deskStage.name] = {count: stage.doc_count, id: stage.key};
                                                 }
@@ -449,20 +467,20 @@
                     });
 
                     scope.setSelectedFilters = function(type, key) {
-                        if (!scope.selectedFacets[type]) {
-                            scope.selectedFacets[type] = [];
+                        if (!tags.tags.selectedFacets[type]) {
+                            tags.tags.selectedFacets[type] = [];
                         }
 
                         if (type === 'desk') {
-                            scope.selectedFacets[type].push(desks.deskLookup[key].name);
+                            tags.tags.selectedFacets[type].push(desks.deskLookup[key].name);
                         } else if (type === 'stage') {
                             _.forEach(desks.deskStages[desks.getCurrentDeskId()], function(deskStage) {
                                 if (deskStage._id === key) {
-                                    scope.selectedFacets[type].push(deskStage.name);
+                                    tags.tags.selectedFacets[type].push(deskStage.name);
                                 }
                             });
                         } else {
-                            scope.selectedFacets[type].push(key);
+                            tags.tags.selectedFacets[type].push(key);
                         }
                     };
 
@@ -484,7 +502,7 @@
                         scope.setSelectedFilters(type, key);
 
                         if (!scope.isEmpty(type) && key) {
-                            $location.search(type, JSON.stringify(scope.selectedFacets[type]));
+                            $location.search(type, JSON.stringify(tags.selectedFacets[type]));
                         } else {
                             $location.search(type, null);
                         }
@@ -566,7 +584,7 @@
                     };
 
                     scope.hasFilter = function(type, key) {
-                        return scope.selectedFacets[type] && scope.selectedFacets[type].indexOf(key) >= 0;
+                        return tags.tags.selectedFacets[type] && tags.tags.selectedFacets[type].indexOf(key) >= 0;
                     };
                 }
             };
@@ -575,7 +593,7 @@
         /**
          * Item list with sidebar preview
          */
-        .directive('sdSearchResults', ['$location', 'preferencesService', 'packages', function($location, preferencesService, packages) {
+        .directive('sdSearchResults', ['$location', 'preferencesService', 'packages', 'tags', function($location, preferencesService, packages, tags) {
             var update = {
                 'archive:view': {
                     'allowed': [
@@ -602,6 +620,9 @@
 
                     scope.flags = controller.flags;
                     scope.selected = scope.selected || {};
+                    tags.initSelectedFacets().then(function(currentTags) {
+                        scope.tags = currentTags;
+                    });
 
                     scope.preview = function preview(item) {
                         if (multiSelectable) {
