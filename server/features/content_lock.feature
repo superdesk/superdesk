@@ -126,7 +126,7 @@ Feature: Content Locking
 
 
     @auth
-    Scenario: Fail lock if item is locked in another session.
+    Scenario: Fail lock if item is locked in another session
         Given "archive"
         """
         [{"_id": "item-1", "guid": "item-1", "headline": "test"}]
@@ -149,7 +149,7 @@ Feature: Content Locking
 
 
     @auth
-    Scenario: Force unlock if item is locked in another session.
+    Scenario: Force unlock if item is locked in another session
         Given "archive"
         """
         [{"_id": "item-1", "guid": "item-1", "headline": "test"}]

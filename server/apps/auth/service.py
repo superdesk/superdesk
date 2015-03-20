@@ -9,7 +9,6 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 from superdesk import utils as utils, get_resource_service
-from superdesk.errors import UserInactiveError, UserDisabledError
 from superdesk.services import BaseService
 from flask import current_app as app
 
@@ -22,12 +21,6 @@ class AuthService(BaseService):
     def on_create(self, docs):
         for doc in docs:
             user = self.authenticate(doc)
-
-            if not user.get('is_enabled', False):
-                raise UserDisabledError()
-
-            if not user.get('is_active', False):
-                raise UserInactiveError()
 
             self.set_auth_default(doc, user['_id'])
 

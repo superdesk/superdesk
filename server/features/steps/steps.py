@@ -1278,7 +1278,8 @@ def then_we_get_activity(context):
 
 @given('we login as user "{username}" with password "{password}"')
 def when_we_login_as_user(context, username, password):
-    user = {'username': username, 'password': password, 'is_active': True, 'needs_activation': False}
+    user = {'username': username, 'password': password, 'is_active': True,
+            'is_enabled': True, 'needs_activation': False}
 
     if context.text:
         user.update(json.loads(context.text))
