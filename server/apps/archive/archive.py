@@ -34,6 +34,7 @@ from apps.item_autosave.components.item_autosave import ItemAutosave
 from apps.common.models.base_model import InvalidEtag
 from apps.legal_archive.components.legal_archive_proxy import LegalArchiveProxy
 from superdesk.etree import get_word_count
+from superdesk.notification import push_notification
 from copy import copy
 import superdesk
 import logging
@@ -85,10 +86,6 @@ class ArchiveVersionsResource(Resource):
     resource_methods = []
     internal_resource = True
     privileges = {'PATCH': 'archive'}
-
-
-class ArchiveVersionsService(BaseService):
-    pass
 
 
 class ArchiveResource(Resource):
@@ -150,7 +147,12 @@ class ArchiveService(BaseService):
                 self.mediaService.on_create([doc])
 
     def on_created(self, docs):
+        packages = [doc for doc in docs if doc['type'] == 'composite']
+        if packages:
+            self.packageService.on_created(packages)
+
         get_component(LegalArchiveProxy).create(docs)
+        user = get_user()
         for doc in docs:
             subject = get_subject(doc)
             if subject:
@@ -158,10 +160,7 @@ class ArchiveService(BaseService):
             else:
                 msg = 'added new {{ type }} item with empty header/title'
             add_activity(ACTIVITY_CREATE, msg, item=doc, type=doc['type'], subject=subject)
-
-        packages = [doc for doc in docs if doc['type'] == 'composite']
-        if packages:
-            self.packageService.on_created(packages)
+            push_notification('item:created', item=str(doc['_id']), user=str(user))
 
     def on_update(self, updates, original):
         is_update_allowed(original)
@@ -202,15 +201,17 @@ class ArchiveService(BaseService):
         get_component(ItemAutosave).clear(original['_id'])
         get_component(LegalArchiveProxy).update(original, updates)
 
+        if original['type'] == 'composite':
+            self.packageService.on_updated(updates, original)
+
+        user = get_user()
         if '_version' in updates:
             updated = copy(original)
             updated.update(updates)
             add_activity(ACTIVITY_UPDATE, 'created new version {{ version }} for item {{ type }} about "{{ subject }}"',
                          item=updated, version=updates['_version'], subject=get_subject(updates, original),
                          type=updated['type'])
-
-        if original['type'] == 'composite':
-            self.packageService.on_updated(updates, original)
+            push_notification('item:updated', item=str(original['_id']), user=str(user))
 
     def on_replace(self, document, original):
         remove_unwanted(document)
@@ -230,6 +231,8 @@ class ArchiveService(BaseService):
         get_component(ItemAutosave).clear(original['_id'])
         add_activity(ACTIVITY_UPDATE, 'replaced item {{ type }} about {{ subject }}', item=original,
                      type=original['type'], subject=get_subject(original))
+        user = get_user()
+        push_notification('item:replaced', item=str(original['_id']), user=str(user))
 
     def on_delete(self, doc):
         """Delete associated binary files."""
@@ -246,6 +249,8 @@ class ArchiveService(BaseService):
             self.packageService.on_deleted(doc)
         add_activity(ACTIVITY_DELETE, 'removed item {{ type }} about {{ subject }}', item=doc,
                      type=doc['type'], subject=get_subject(doc))
+        user = get_user()
+        push_notification('item:deleted', item=str(doc['_id']), user=str(user))
 
     def replace(self, id, document, original):
         return self.restore_version(id, document, original) or super().replace(id, document, original)

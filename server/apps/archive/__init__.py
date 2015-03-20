@@ -14,7 +14,7 @@
 import logging
 
 from .archive import ArchiveResource, ArchiveService, ArchiveVersionsResource, AutoSaveResource, \
-    ArchiveVersionsService, ArchiveSaveService
+    ArchiveSaveService
 from .commands import ArchiveRemoveExpiredContent
 from .ingest import IngestResource, IngestService
 from .archive_ingest import ArchiveIngestResource, ArchiveIngestService
@@ -44,7 +44,7 @@ def init_app(app):
     IngestResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'archive_versions'
-    service = ArchiveVersionsService(endpoint_name, backend=superdesk.get_backend())
+    service = superdesk.Service(endpoint_name, backend=superdesk.get_backend())
     ArchiveVersionsResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'archive'
