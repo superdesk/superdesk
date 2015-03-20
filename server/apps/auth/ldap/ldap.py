@@ -173,7 +173,7 @@ class ADAuthService(AuthService):
                                user_type=None if 'user_type' not in user_data else user_data['user_type'])
             user = user_data
         else:
-            if not user.get('is_enabled', False):
+            if 'is_enabled' in user and not user.get('is_enabled', False):
                 raise UserDisabledError()
 
             if not user.get('is_active', False):

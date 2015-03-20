@@ -144,7 +144,7 @@ class UsersService(BaseService):
 
     def on_created(self, docs):
         for user_doc in docs:
-            self.update_user_defaults(user_doc)
+            self.__update_user_defaults(user_doc)
             add_activity(ACTIVITY_CREATE, 'created user {{user}}',
                          user=user_doc.get('display_name', user_doc.get('username')))
 
@@ -214,12 +214,16 @@ class UsersService(BaseService):
 
     def on_fetched(self, document):
         for doc in document['_items']:
-            self.update_user_defaults(doc)
+            self.__update_user_defaults(doc)
 
-    def update_user_defaults(self, doc):
+    def on_fetched_item(self, doc):
+        self.__update_user_defaults(doc)
+
+    def __update_user_defaults(self, doc):
         """Set default fields for users"""
         doc.setdefault('display_name', get_display_name(doc))
         doc.pop('password', None)
+        doc.setdefault('is_enabled', doc.get('is_active'))
 
     def user_is_waiting_activation(self, doc):
         return doc.get('needs_activation', False)
@@ -328,7 +332,7 @@ class ADUsersService(UsersService):
             document['_readonly'] = ADUsersService.readonly_fields
 
     def on_fetched_item(self, doc):
-        super().update_user_defaults(doc)
+        super().on_fetched_item(doc)
         doc['_readonly'] = ADUsersService.readonly_fields
 
 
