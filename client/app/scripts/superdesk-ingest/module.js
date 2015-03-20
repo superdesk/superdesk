@@ -436,8 +436,12 @@ define([
                     scope.schemes = result._items;
                 });
 
-                function confirm() {
-                    return modal.confirm(gettext('Are you sure you want to delete scheme?'));
+                function confirm(context) {
+                    if (context === 'scheme') {
+                        return modal.confirm(gettext('Are you sure you want to delete this scheme?'));
+                    } else if (context === 'rule') {
+                        return modal.confirm(gettext('Are you sure you want to delete this scheme rule?'));
+                    }
                 }
 
                 scope.edit = function(scheme) {
@@ -473,7 +477,7 @@ define([
                 };
 
                 scope.remove = function(scheme) {
-                    confirm().then(function() {
+                    confirm('scheme').then(function() {
                         api('routing_schemes').remove(scheme)
                         .then(function(result) {
                             _.remove(scope.schemes, scheme);
@@ -488,10 +492,12 @@ define([
                 };
 
                 scope.removeRule = function(rule) {
-                    if (rule === scope.rule) {
-                        scope.rule = null;
-                    }
-                    _.remove(scope.editScheme.rules, rule);
+                    confirm('rule').then(function() {
+                        if (rule === scope.rule) {
+                            scope.rule = null;
+                        }
+                        _.remove(scope.editScheme.rules, rule);
+                    });
                 };
 
                 scope.addRule = function() {
