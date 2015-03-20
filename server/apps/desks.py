@@ -91,6 +91,14 @@ class DesksService(BaseService):
             raise SuperdeskApiError.preconditionFailedError(
                 message='Cannot delete desk as it is assigned as default desk to user(s).')
 
+        routing_rules_query = {'$or': [{'rules.actions.fetch.desk': desk['_id']},
+                                       {'rules.actions.publish.desk': desk['_id']}]
+                               }
+        routing_rules = superdesk.get_resource_service('routing_schemes').get(req=None, lookup=routing_rules_query)
+        if routing_rules and routing_rules.count():
+            raise SuperdeskApiError.preconditionFailedError(
+                message='Cannot delete desk as routing scheme(s) are associated with the desk')
+
         items = superdesk.get_resource_service('archive').get(req=None, lookup={'task.desk': str(desk['_id'])})
         if items and items.count():
             raise SuperdeskApiError.preconditionFailedError(message='Cannot delete desk as it has article(s).')
