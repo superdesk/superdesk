@@ -23,7 +23,7 @@ class DbAuthService(AuthService):
         if not user:
             raise CredentialsAuthError(credentials)
 
-        if not user.get('is_enabled', False):
+        if 'is_enabled' in user and not user.get('is_enabled', False):
             raise UserDisabledError()
 
         if not user.get('is_active', False):
