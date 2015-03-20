@@ -438,10 +438,10 @@ define([
 
                 function confirm(context) {
                     if (context === 'scheme') {
-                        return modal.confirm(gettext('Are you sure you want to delete scheme?'));
+                        return modal.confirm(gettext('Are you sure you want to delete this scheme?'));
                     } else if (context === 'rule') {
                         return modal.confirm(gettext('Are you sure you want to delete this scheme rule?'));
-                    };
+                    }
                 }
 
                 scope.edit = function(scheme) {
