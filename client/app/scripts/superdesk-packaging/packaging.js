@@ -545,7 +545,7 @@
             .activity('view.package', {
                 label: gettext('View item'),
                 priority: 2000,
-                icon: 'fullscreen',
+                icon: 'external',
                 controller: ['data', 'superdesk', function(data, superdesk) {
                     superdesk.intent('read_only', 'content_package', data.item);
                 }],
