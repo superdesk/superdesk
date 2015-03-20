@@ -37,7 +37,10 @@ module.exports = {
                 'styles/css/app.css',
                 'scripts/vendor.js',
                 'scripts/superdesk-core.js',
-                'scripts/superdesk.js'
+                'scripts/superdesk.js',
+                'scripts/vendor-docs.js',
+                'scripts/superdesk-docs-core.js',
+                'scripts/superdesk-docs-main.js'
             ]
         }]
     }
