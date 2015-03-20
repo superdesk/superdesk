@@ -256,3 +256,22 @@ Feature: User Resource
         """
         {"user": "#users._id#"}
         """
+
+    @auth
+    Scenario: Assign a default desk to user
+        Given "users"
+        """
+        [{"username": "foo", "email": "foo@bar.com", "is_active": true}]
+        """
+        And "desks"
+        """
+        [{"name": "Sports Desk", "members": [{"user": "#users._id#"}]}]
+        """
+        When we patch "/users/#users._id#"
+        """
+        {"desk": "#desks._id#"}
+        """
+        Then we get existing resource
+        """
+        {"username": "foo", "desk": "#desks._id#"}
+        """

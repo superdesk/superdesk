@@ -355,3 +355,21 @@ Feature: News Items Archive
         """
         {"_items": [{"state": "in_progress"}]}
         """
+
+    @auth
+    Scenario: Cannot delete desk when it has article(s)
+      Given empty "desks"
+      And empty "archive"
+      When we post to "/desks"
+      """
+      {"name": "Sports"}
+      """
+      And we post to "/archive"
+      """
+      [{"type": "text", "body_html": "<p>content</p>", "task": {"desk": "#desks._id#", "stage": "#desks.incoming_stage#"}}]
+      """
+      And we delete "/desks/#desks._id#"
+      Then we get error 412
+      """
+      {"_message": "Cannot delete desk as it has article(s)."}
+      """

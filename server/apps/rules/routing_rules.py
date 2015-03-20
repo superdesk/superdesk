@@ -140,7 +140,7 @@ class RoutingRuleSchemeService(BaseService):
         """
 
         if self.backend.find_one('ingest_providers', req=None, routing_scheme=doc['_id']):
-            raise SuperdeskApiError.forbiddenError('Routing Scheme is in use')
+            raise SuperdeskApiError.forbiddenError('Routing scheme is applied to channel(s). It cannot be deleted.')
 
     def apply_routing_scheme(self, ingest_item, provider, routing_scheme):
         """
