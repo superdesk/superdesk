@@ -9,10 +9,11 @@
 # at https://www.sourcefabric.org/superdesk/license
 
 import bcrypt
+from flask import g
+
 from apps.auth.service import AuthService
 from superdesk import get_resource_service
-from superdesk.errors import CredentialsAuthError
-from flask import g
+from superdesk.errors import CredentialsAuthError, UserDisabledError, UserInactiveError
 
 
 class DbAuthService(AuthService):
@@ -21,6 +22,12 @@ class DbAuthService(AuthService):
         user = get_resource_service('auth_users').find_one(req=None, username=credentials.get('username'))
         if not user:
             raise CredentialsAuthError(credentials)
+
+        if not user.get('is_enabled', False):
+            raise UserDisabledError()
+
+        if not user.get('is_active', False):
+            raise UserInactiveError()
 
         password = credentials.get('password').encode('UTF-8')
         hashed = user.get('password').encode('UTF-8')
