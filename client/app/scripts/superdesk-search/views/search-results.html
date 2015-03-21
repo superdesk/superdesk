@@ -19,28 +19,7 @@
         <div class="content" sd-updown data-items="items._items" data-select="preview(item)">
             <div class="loading-indicator" ng-show="loading" translate>loading</div>
 
-
-            <div class="selected-filters">
-            TATATA
-                <ul>
-                    <li ng-repeat="(type,keys) in tags.selectedFacets">
-                        <div ng-repeat="key in keys">
-                            <span>{{type| FacetLabels}}:</span>{{key}}<button ng-click="removeFilter(type, key)"><i class="icon-close-small icon-white"></i></button>
-                        </div>
-                    </li>
-                    <li ng-repeat="parameter in tags.selectedParameters">
-                        <div>
-                            <span>{{parameter}}</span><button ng-click="removeParameter(parameter)"><i class="icon-close-small icon-white"></i></button>
-                        </div>
-                    </li>
-                    <li ng-repeat="parameter in tags.selectedKeywords">
-                        <div>
-                            <span>{{parameter}}</span><button ng-click="removeKeyword(parameter)"><i class="icon-close-small icon-white"></i></button>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
+            <div sd-search-tags></div>
 
             <div sd-shadow>
                 <ul class="{{view}}-view list-view">

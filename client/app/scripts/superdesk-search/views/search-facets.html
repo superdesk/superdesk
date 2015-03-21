@@ -11,45 +11,11 @@
     </div>
     <div class="content" ng-if="sTab">
 
-        <div class="selected-filters">
-            <ul>
-                <li ng-repeat="(type,keys) in tags.tags.selectedFacets">
-                    <div ng-repeat="key in keys">
-                        <span>{{type| FacetLabels}}:</span>{{key}}<button ng-click="removeFilter(type, key)"><i class="icon-close-small icon-white"></i></button>
-                    </div>
-                </li>
-                <li ng-repeat="parameter in tags.tags.selectedParameters">
-                    <div>
-                        <span>{{parameter}}</span><button ng-click="removeParameter(parameter)"><i class="icon-close-small icon-white"></i></button>
-                    </div>
-                </li>
-                <li ng-repeat="parameter in tags.tags.selectedKeywords">
-                    <div>
-                        <span>{{parameter}}</span><button ng-click="removeKeyword(parameter)"><i class="icon-close-small icon-white"></i></button>
-                    </div>
-                </li>
-            </ul>
-        </div>
-
         <div sd-search-within></div>
-
-
-
-
-
-
 
         <div sd-toggle-box data-title="{{ 'Parameters' | translate }}" data-open="false">
             <div sd-item-search data-repo="repo" data-context="context" class="pull-left"></div>
         </div>
-
-
-
-
-
-
-
-
 
         <div sd-toggle-box data-title="{{ 'Filters' | translate }}" data-open="true">
             <div sd-toggle-box data-title="{{ 'Content types' | translate }}" ng-hide="isEmpty('type')" data-open="true">
