@@ -213,12 +213,13 @@
         };
     }
 
-    TagService.$inject = ['$location', 'gettext', 'desks'];
-    function TagService($location, gettext, desks) {
+    TagService.$inject = ['$location', 'desks'];
+    function TagService($location, desks) {
         var tags = {}
         tags.selectedFacets = {};
         tags.selectedParameters = [];
         tags.selectedKeywords = [];
+        tags.currentSearch = {};
 
         var FacetKeys = {
             'type': 1,
@@ -255,30 +256,61 @@
             }
         }
 
-        var initSelectedFacets = function () {
-            return desks.initialize().then(function(result) {
+        var removeFacet = function(type, key) {
+            if (key.indexOf('Last') >= 0) {
+                scope.removeDateFacet();
+            } else {
                 var search = $location.search();
+                if (search[type]) {
+                    var keys = JSON.parse(search[type]);
+                    keys.splice(keys.indexOf(key), 1);
+                    if (keys.length > 0)
+                    {
+                        $location.search(type, JSON.stringify(keys));
+                    } else {
+                        $location.search(type, null);
+                    }
+                }
+            }
+        };
+
+        var removeDateFacet = function() {
+            var search = $location.search();
+            if (search.after) {
+                $location.search('after', null);
+            }
+        };
+
+        var initSelectedFacets = function (search) {
+            return desks.initialize().then(function(result) {
+                tags.selectedFacets = {};
+                tags.selectedParameters = [];
+                tags.selectedKeywords = [];
+                tags.currentSearch = $location.search();
                 
-                var parameters = search.q;
+                var parameters = tags.currentSearch.q;
                 if (parameters) {
                     var keywords = initSelectedParameters(parameters);
-                    initSelectedKeywords(keywords);                                
-                }
+                    initSelectedKeywords(keywords);    
+                } 
 
-                _.forEach(search, function(type, key) {
-                    tags.selectedFacets[key] = [];
-                    if (key === 'desk') {
-                        tags.selectedFacets[key].push(desks.deskLookup[JSON.parse(type)[0]].name);
-                    } else if (key === 'stage') {
-                        var stageid = type;
-                        _.forEach(desks.deskStages[desks.activeDeskId], function(deskStage) {
-                            if (deskStage._id === JSON.parse(stageid)[0]) {
-                                tags.selectedFacets[key].push(deskStage.name);
-                            }
-                        });
-                    } else if (FacetKeys[key]) {
-                        tags.selectedFacets[key] = JSON.parse(type);
-                    } 
+                _.forEach(tags.currentSearch, function(type, key) {
+                    if (key !== 'q') {
+                        tags.selectedFacets[key] = [];
+
+                        if (key === 'desk') {
+                            tags.selectedFacets[key].push(desks.deskLookup[JSON.parse(type)[0]].name);
+                        } else if (key === 'stage') {
+                            var stageid = type;
+                            _.forEach(desks.deskStages[desks.activeDeskId], function(deskStage) {
+                                if (deskStage._id === JSON.parse(stageid)[0]) {
+                                    tags.selectedFacets[key].push(deskStage.name);
+                                }
+                            });
+                        } else if (FacetKeys[key]) {
+                            tags.selectedFacets[key] = JSON.parse(type);
+                        } 
+                        }
                 });
 
                 return tags;
@@ -287,7 +319,7 @@
 
         return {
             initSelectedFacets: initSelectedFacets,
-            tags: tags
+            removeFacet: removeFacet
         }
     }
 
@@ -352,10 +384,7 @@
                     scope.flags = controller.flags;
                     scope.sTab = true;
                     scope.aggregations = {};
-                    
-                    scope.parameters = null;
                     scope.privileges = privileges.privileges;
-                    scope.tags = tags;
 
                     var initAggregations = function () {
                         scope.aggregations = {
@@ -370,19 +399,13 @@
                         };
                     };
 
-                    
-
-
                     scope.$watch('items', function() {
 
                         initAggregations();
-                        tags.initSelectedFacets().then(function(currentTags) {
-                            var search = $location.search();
-                            if (search.q && scope.parameters !== search.q)
-                            {
-                                currentTags.selectedFacets = {};
-                                scope.parameters = search.q;
-                            }
+                        var search = $location.search();
+                        tags.initSelectedFacets(search).then(function(currentTags) {
+
+                            scope.tags = currentTags;
 
                             if (scope.items && scope.items._aggregations !== undefined) {
 
@@ -466,24 +489,6 @@
                         });
                     });
 
-                    scope.setSelectedFilters = function(type, key) {
-                        if (!tags.tags.selectedFacets[type]) {
-                            tags.tags.selectedFacets[type] = [];
-                        }
-
-                        if (type === 'desk') {
-                            tags.tags.selectedFacets[type].push(desks.deskLookup[key].name);
-                        } else if (type === 'stage') {
-                            _.forEach(desks.deskStages[desks.getCurrentDeskId()], function(deskStage) {
-                                if (deskStage._id === key) {
-                                    tags.tags.selectedFacets[type].push(deskStage.name);
-                                }
-                            });
-                        } else {
-                            tags.tags.selectedFacets[type].push(key);
-                        }
-                    };
-
                     scope.toggleFilter = function(type, key) {
                         if (scope.hasFilter(type, key)) {
                             scope.removeFilter(type, key);
@@ -494,15 +499,22 @@
                                 scope.setFilter(type, key);
                             }
                         }
+                    };
 
+                    scope.removeFilter = function(type, key) {
+                        tags.removeFacet(type, key);
                     };
 
                     scope.setFilter = function(type, key) {
-
-                        scope.setSelectedFilters(type, key);
-
                         if (!scope.isEmpty(type) && key) {
-                            $location.search(type, JSON.stringify(tags.selectedFacets[type]));
+                            var currentKeys = $location.search()[type];
+                            if (currentKeys) {
+                                currentKeys = JSON.parse(currentKeys);
+                                currentKeys.push(key);
+                                $location.search(type, JSON.stringify(currentKeys));
+                            } else {
+                                $location.search(type, JSON.stringify([key]));
+                            }
                         } else {
                             $location.search(type, null);
                         }
@@ -522,59 +534,6 @@
                         }
                     };
 
-                    scope.removeFilter = function(type, key) {
-                        if (key.indexOf('Last') >= 0) {
-                            scope.removeDateFilter(key);
-                        } else {
-                            var search = $location.search();
-                            if (search[type]) {
-                                var keys = JSON.parse(search[type]);
-                                keys.splice(keys.indexOf(key), 1);
-                                if (keys.length > 0)
-                                {
-                                    $location.search(type, JSON.stringify(keys));
-                                } else {
-                                    $location.search(type, null);
-                                }
-                            }
-                            delete scope.selectedFacets[type];
-                        }
-                    };
-
-                    scope.removeDateFilter = function(key) {
-
-                        var search = $location.search();
-                        if (search.after) {
-                            $location.search('after', null);
-                        }
-
-                        delete scope.selectedFacets.date;
-                    };
-
-                    scope.removeParameter = function(param) {
-                        _.remove(scope.selectedParameters, function(n) {
-                            return n === param;
-                        });
-
-                        var params = $location.search();
-                        if (params.q) {
-                            params.q = params.q.replace(param, '').trim();
-                            $location.search('q', params.q || null);
-                        }
-                    }
-
-                    scope.removeKeyword = function(keyword) {
-                        _.remove(scope.selectedKeywords, function(n) {
-                            return n === keyword;
-                        });
-
-                        var params = $location.search();
-                        if (params.q) {
-                            params.q = params.q.replace(keyword, '').trim();
-                            $location.search('q', params.q || null);
-                        }
-                    }
-
                     scope.isEmpty = function(type) {
                         return _.isEmpty(scope.aggregations[type]);
                     };
@@ -584,7 +543,37 @@
                     };
 
                     scope.hasFilter = function(type, key) {
-                        return tags.tags.selectedFacets[type] && tags.tags.selectedFacets[type].indexOf(key) >= 0;
+                        return scope.tags.selectedFacets[type] && scope.tags.selectedFacets[type].indexOf(key) >= 0;
+                    };
+                }
+            };
+        }])
+        
+        .directive('sdSearchTags', ['$location', '$route', 'tags', function($location, $route, tags) {
+            return {
+                scope: {},
+                templateUrl: 'scripts/superdesk-search/views/search-tags.html',
+                link: function(scope, elem) {
+
+                    var update = function() {
+                        var search = $location.search();
+                        tags.initSelectedFacets(search).then(function(currentTags) {
+                            scope.tags = currentTags;
+                        });                        
+                    }
+
+                    update();
+
+                    scope.removeFilter = function(type, key) {
+                        tags.removeFacet(type, key);
+                    };
+
+                    scope.removeParameter = function(param) {
+                        var params = $location.search();
+                        if (params.q) {
+                            params.q = params.q.replace(param, '').trim();
+                            $location.search('q', params.q || null);
+                        }
                     };
                 }
             };
@@ -620,9 +609,6 @@
 
                     scope.flags = controller.flags;
                     scope.selected = scope.selected || {};
-                    tags.initSelectedFacets().then(function(currentTags) {
-                        scope.tags = currentTags;
-                    });
 
                     scope.preview = function preview(item) {
                         if (multiSelectable) {
@@ -1057,10 +1043,9 @@
                     }
 
                     function updateParam() {
-                        $location.$$search = {};
+                        scope.query = $location.search().q;
                         $location.search('q', getQuery() || null);
                         $location.search('repo', getActiveRepos());
-                        scope.query = $location.search().q;
                         scope.meta = {};
                     }
 
