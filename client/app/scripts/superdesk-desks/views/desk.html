@@ -1,6 +1,6 @@
 <div class="desk-header">
 	<div class="desk-name pull-left">{{ desk.name }} 
-		<span class="view" ng-if="isMemberOf(desk)" ng-click="openDeskView(desk)" title="{{ 'Open desk content' | translate}}"><i class="icon-external"></i></span>
+		<span class="view" ng-if="isMemberOf(desk)" ng-click="openDeskView(desk, 'content')" title="{{ 'Open desk content' | translate}}"><i class="icon-external"></i></span>
 	</div>
 	<div class="desk-action pull-right dropdown" dropdown ng-if="privileges.desks">
 		<button class="dropdown-toggle" dropdown-toggle><i class="icon-dots"></i></button>
@@ -19,7 +19,8 @@
 		<div class="stage-content" sd-stage-items data-stage="stage._id" 
 			data-total="total"
 			data-allowed="isMemberOf(desk)"
-			data-open="openItem(item)">
+			data-show-empty="true"
+			data-selected="selected">
 		</div>
 	</div>
 

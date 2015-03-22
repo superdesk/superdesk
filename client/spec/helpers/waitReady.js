@@ -12,11 +12,9 @@
 
 var ElementFinder = $('').constructor;
 
-// Config
-var specTimeoutMs = 10000; // 10 seconds
-
 ElementFinder.prototype.waitReady = function(opt_optStr) {
     var self = this;
+    var specTimeoutMs = browser.allScriptsTimeout * 2;
     var driverWaitIterations = 0;
     var lastWebdriverError;
     function _throwError() {

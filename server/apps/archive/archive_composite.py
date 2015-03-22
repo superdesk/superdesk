@@ -113,11 +113,11 @@ class PackageService():
         assoc['guid'] = item.get('guid', item_id)
         assoc['type'] = item.get('type')
 
-    def get_associated_item(self, assoc):
+    def get_associated_item(self, assoc, throw_if_not_found=True):
         endpoint = assoc.get('location', 'archive')
         item_id = assoc[ITEM_REF]
         item = get_resource_service(endpoint).find_one(req=None, _id=item_id)
-        if not item:
+        if not item and throw_if_not_found:
             message = 'Invalid item reference: ' + assoc[ITEM_REF]
             logger.error(message)
             raise SuperdeskApiError.notFoundError(message=message)
@@ -128,7 +128,11 @@ class PackageService():
         if assoc.get(ID_REF):
             return
 
-        item, item_id, endpoint = self.get_associated_item(assoc)
+        item, item_id, endpoint = self.get_associated_item(assoc, not delete)
+        if not item and delete:
+            # just exit, no point on complaining
+            return
+
         two_way_links = [d for d in item.get(LINKED_IN_PACKAGES, []) if not d['package'] == package_id]
 
         if not delete:

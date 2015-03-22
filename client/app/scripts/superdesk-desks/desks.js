@@ -11,8 +11,8 @@
  (function() {
     'use strict';
 
-    DeskListController.$inject = ['$scope', 'desks', 'superdesk', 'privileges'];
-    function DeskListController($scope, desks, superdesk, privileges) {
+    DeskListController.$inject = ['$scope', 'desks', 'superdesk', 'privileges', 'tasks'];
+    function DeskListController($scope, desks, superdesk, privileges, tasks) {
 
         var userDesks;
 
@@ -25,6 +25,8 @@
                 userDesks = desk_list._items;
             });
         });
+
+        $scope.statuses = tasks.statuses;
 
         $scope.privileges = privileges.privileges;
 
@@ -40,15 +42,9 @@
             return _.find(userDesks, {_id: desk._id});
         };
 
-        $scope.openDeskView = function(desk) {
+        $scope.openDeskView = function(desk, target) {
             desks.setCurrentDesk(desk);
-            superdesk.intent('view', 'content');
-        };
-
-        $scope.openItem = function(item) {
-            desks.setCurrentDeskId(item.task.desk);
-            desks.setCurrentStageId(item.task.stage);
-            superdesk.intent('read_only', 'content_article', item);
+            superdesk.intent('view', target);
         };
 
         $scope.$on('desks:refresh:stages', function(e, deskId) {
@@ -59,15 +55,17 @@
 
     }
 
-    StageItemListDirective.$inject = ['search', 'api'];
-    function StageItemListDirective(search, api) {
+    StageItemListDirective.$inject = ['search', 'api', 'superdesk', 'desks'];
+    function StageItemListDirective(search, api, superdesk, desks) {
         return {
             templateUrl: 'scripts/superdesk-desks/views/stage-item-list.html',
             scope: {
                 stage: '=',
                 total: '=',
                 allowed: '=',
-                open: '&'
+                showEmpty: '=?',
+                selected: '=?',
+                action: '&'
             },
             link: function(scope, elem) {
 
@@ -85,9 +83,51 @@
                 }, function() {
                     scope.loading = false;
                 });
+
+                scope.open = function(item) {
+                    desks.setCurrentDeskId(item.task.desk);
+                    desks.setCurrentStageId(item.task.stage);
+                    superdesk.intent('read_only', 'content_article', item);
+                };
             }
         };
     }
+
+    TaskStatusItemsDirective.$inject = ['search', 'api', 'desks'];
+    function TaskStatusItemsDirective(search, api, desks) {
+        return {
+            templateUrl: 'scripts/superdesk-desks/views/task-status-items.html',
+            scope: {
+                status: '=',
+                desk: '=',
+                total: '='
+            },
+            link: function(scope, elem) {
+
+                scope.users = desks.userLookup;
+
+                var query = search.query({});
+                query.filter({and: [
+                    {term: {'task.status': scope.status}},
+                    {term: {'task.desk': scope.desk}}
+                ]});
+                query.size(10);
+                var criteria = {source: query.getCriteria()};
+
+                scope.loading = true;
+
+                api('archive').query(criteria).then(function(items) {
+                    scope.loading = false;
+                    scope.items = items._items;
+                    scope.total = items._meta.total;
+                }, function() {
+                    scope.loading = false;
+                });
+
+            }
+        };
+    }
+
     DeskSettingsController.$inject = ['$scope', 'desks'];
     function DeskSettingsController($scope, desks) {
         desks.initialize()
@@ -133,8 +173,28 @@
         };
     }
 
+    AggregatehWidgetCtrl.$inject = ['$scope', 'desks'];
+    function AggregatehWidgetCtrl($scope, desks) {
+
+        desks.initialize()
+        .then(function() {
+            desks.fetchCurrentUserDesks().then(function (desk_list) {
+                $scope.desks = desk_list;
+            });
+            $scope.deskStages = desks.deskStages;
+        });
+
+        $scope.selected = null;
+
+        $scope.preview = function(item) {
+            $scope.selected = item;
+        };
+
+    }
+
     var app = angular.module('superdesk.desks', [
-        'superdesk.users'
+        'superdesk.users',
+        'superdesk.authoring.widgets'
     ]);
 
     var limits = {
@@ -171,6 +231,18 @@
                 }
             });
         }])
+        .config(['authoringWidgetsProvider', function(authoringWidgetsProvider) {
+            authoringWidgetsProvider
+                .widget('aggregate', {
+                    icon: 'view',
+                    label: gettext('Aggregate'),
+                    template: 'scripts/superdesk-desks/views/aggregate-widget.html',
+                    side: 'left',
+                    extended: true,
+                    display: {authoring: true, packages: false}
+                });
+        }])
+        .controller('AggregatehWidgetCtrl', AggregatehWidgetCtrl)
         .factory('desks', ['$q', 'api', 'preferencesService', 'userList', 'notify', 'session',
             function($q, api, preferencesService, userList, notify, session) {
 
@@ -181,6 +253,7 @@
                 users: null,
                 stages: null,
                 deskLookup: {},
+                stageLookup: {},
                 userLookup: {},
                 deskMembers: {},
                 deskStages: {},
@@ -215,6 +288,9 @@
                     return api('stages').query({max_results: 500})
                     .then(function(result) {
                         self.stages = result;
+                        _.each(result._items, function(stage) {
+                            self.stageLookup[stage._id] = stage;
+                        });
                     });
                 },
                 generateDeskMembers: function() {
@@ -359,6 +435,7 @@
             return desksService;
         }])
         .directive('sdStageItems', StageItemListDirective)
+        .directive('sdTaskStatusItems', TaskStatusItemsDirective)
         .directive('sdDeskConfig', function() {
             return {
                 controller: DeskConfigController

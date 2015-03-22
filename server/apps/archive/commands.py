@@ -34,7 +34,7 @@ class ArchiveRemoveExpiredContent(superdesk.Command):
     def get_expired_items(self, now):
         query_filter = self.get_query_for_expired_items(now)
         req = ParsedRequest()
-        req.max_results = 100
+        req.max_results = 25
         req.args = {'filter': query_filter}
         return superdesk.get_resource_service('archive').get(req, None)
 

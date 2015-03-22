@@ -16,7 +16,8 @@
 			<div class="desk" ng-include="'scripts/superdesk-desks/views/desk.html'"></div>
 		</div>
 
-		<div class="desk-container" ng-if="view === 'tasks'">
+		<div class="desk-container" ng-if="view === 'tasks'" ng-repeat="desk in desks._items">
+			<div class="desk" ng-include="'scripts/superdesk-desks/views/desk-tasks.html'"></div>
 		</div>
 
 		<div class="desk-container" ng-if="view === 'users'">

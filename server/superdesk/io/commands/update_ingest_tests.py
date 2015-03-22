@@ -172,7 +172,7 @@ class UpdateIngestTest(TestCase):
             items[5]['versioncreated'] = utcnow() + timedelta(minutes=11)
 
             self.app.data.insert('ingest', items)
-            expiredItems = get_expired_items(str(provider['_id']), utcnow() - timedelta(minutes=2880))
+            expiredItems = get_expired_items(provider, utcnow() - timedelta(minutes=2880))
             self.assertEquals(3, expiredItems.count())
 
     def test_apply_rule_set(self):

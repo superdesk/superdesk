@@ -1,0 +1,12 @@
+<div ng-if="loading" class="loading"></div>
+
+<div ng-if="!loading && !items.length" class="no-items" translate>No items with this status</div>
+
+<ul ng-if="!loading && items.length" class="inline-content-items content-tasks" >
+	<li ng-repeat="item in items" class="item"
+		ng-click="action({item: item})" 
+		ng-class="{locked: item.lock_user, shifted: allowed, active: item._id === selected._id}">
+		<figure class="avatar small" title="{{users[item.task.user].display_name}}"><img sd-user-avatar data-src="users[item.task.user].picture_url"></figure>
+		<div class="text">{{item.slugline}}</div>
+	</li>
+</ul>

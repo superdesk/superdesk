@@ -84,7 +84,11 @@ class FTPService(IngestService):
                     if not parser:
                         raise IngestFtpError.ftpUnknownParserError(Exception('Parser not found'),
                                                                    provider, filename)
-                    items.append([parser.parse_message(xml, provider)])
+                    parsed = parser.parse_message(xml, provider)
+                    if isinstance(parsed, dict):
+                        parsed = [parsed]
+
+                    items.append(parsed)
             return items
         except IngestFtpError:
             raise

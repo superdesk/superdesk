@@ -291,7 +291,8 @@ function DeskStagesDirective() {
         controller: TasksController,
         templateUrl: 'scripts/superdesk-dashboard/workspace-tasks/views/workspace-tasks.html',
         topTemplateUrl: 'scripts/superdesk-dashboard/views/workspace-topnav.html',
-        beta: true
+        beta: true,
+        filters: [{action: 'view', type: 'task'}]
     });
 
     superdesk.activity('pick.task', {
