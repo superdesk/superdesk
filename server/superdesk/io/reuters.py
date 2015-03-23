@@ -131,7 +131,7 @@ class ReutersIngestService(IngestService):
             raise IngestApiError(error, self.provider)
 
         if response.status_code == 404:
-            LookupError('Not found %s' % payload)
+            raise LookupError('Not found %s' % payload)
 
         try:
             # workaround for httmock lib
