@@ -235,7 +235,7 @@ describe('itemListService', function() {
 
         $rootScope.$digest();
 
-        expect(params.source.query.filtered.filter.and).toContain({
+        expect(params.source.post_filter.and).toContain({
             terms: {type: ['text']}
         });
     }));
