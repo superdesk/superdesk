@@ -798,154 +798,54 @@
         /**
          * Item search component
          */
-        .directive('sdItemSearchbar', ['$location', '$timeout', function($location, $timeout) {
+        .directive('sdItemSearchbar', ['$location', '$document', function($location, $document) {
             return {
-                scope: {repo: '=', context: '='},
                 templateUrl: 'scripts/superdesk-search/views/item-searchbar.html',
                 link: function(scope, elem) {
                     var ENTER = 13;
-                    var ESC = 27;
 
+                    scope.focused = false;
                     var input = elem.find('#search-input');
-                    scope.advancedOpen = false;
-
-                    function init() {
-                        var params = $location.search();
-                        scope.query = params.q;
-                        scope.flags = false;
-                        scope.meta = {};
-
-                        if (params.repo) {
-                            scope.repo.archive = params.repo.indexOf('archive') >= 0;
-                            scope.repo.ingest = params.repo.indexOf('ingest') >= 0;
-                        }
-                    }
-
-                    init();
-
-                    scope.$on('$locationChangeSuccess', function() {
-                        if (scope.query !== $location.search().q) {
-                            init();
-                        }
-                    });
-
-                    function getActiveRepos() {
-                        var repos = [];
-                        angular.forEach(scope.repo, function(val, key) {
-                            if (val) {
-                                repos.push(key);
-                            }
-                        });
-
-                        return repos.length ? repos.join(',') : null;
-                    }
-
-                    function getFirstKey(data) {
-                        for (var prop in data) {
-                            if (data.hasOwnProperty(prop)) {
-                                return prop;
-                            }
-                        }
-                    }
-
-                    function getQuery() {
-                        var metas = [];
-                        angular.forEach(scope.meta, function(val, key) {
-                            if (key === '_all') {
-                                metas.push(val.join(' '));
-                            } else {
-                                if (val) {
-                                    if (typeof(val) === 'string'){
-                                        if (val) {
-                                            metas.push(key + ':(' + val + ')');
-                                        }
-                                    } else {
-                                        var subkey = getFirstKey(val);
-                                        if (val[subkey]) {
-                                            metas.push(key + '.' + subkey + ':(' + val[subkey] + ')');
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                        return metas.length ? metas.join(' ') : scope.query || null;
-                    }
-
-                    function updateParam() {
-                        $location.$$search = {};
-                        $location.search('q', getQuery() || null);
-                        $location.search('repo', getActiveRepos());
-                        scope.query = $location.search().q;
-                        scope.meta = {};
-                    }
-
-                    function parseFields() {
-                        scope.meta = {};
-                        if (scope.query) {
-                           angular.forEach(scope.query.split(' '), function(val) {
-                                if (val.indexOf(':') >= 0) {
-                                    var meta = val.split(':')[0];
-                                    var value = val.split(':')[1].replace('(', '').replace(')', '');
-
-                                    if (meta.indexOf('.') >= 0) {
-                                        var submeta = meta.split('.')[0];
-                                        var subvalue = meta.split('.')[1];
-                                        scope.meta[submeta] = {};
-                                        scope.meta[submeta][subvalue] = value;
-                                    } else {
-                                        scope.meta[meta] = value;
-                                    }
-                                } else {
-                                    if (!scope.meta._all) {
-                                        scope.meta._all = [];
-                                    }
-                                    scope.meta._all.push(val);
-                                }
-                            });
-                        }
-                    }
-
-                    scope.search = function() {
-                        updateParam();
-                        _closeSearchPopup();
-                    };
 
                     scope.searchOnEnter = function($event) {
                         if ($event.keyCode === ENTER) {
                             scope.search();
                             $event.stopPropagation();
                         }
-                        if ($event.keyCode === ESC) {
-                            _closeSearchPopup();
-                        }
                     };
 
-                    scope.focusOnSearch = function() {
-                        if (scope.advancedOpen) {
-                           scope.toggle();
-                        }
+                    scope.search = function() {
+                        scope.focused = false;
+                        input.blur();
+                        //to be implemented
+                    };
+
+                    scope.cancel = function() {
+                        scope.query = null;
                         input.focus();
+                        //to be implemented
                     };
 
-                    scope.toggle = function() {
-                        scope.advancedOpen = !scope.advancedOpen;
-                        if (scope.advancedOpen) {
-                            parseFields();
-                        }
-                    };
+                    //initial query
+                    var srch = $location.search();
+                    if (srch.q && srch.q !== '') {
+                        scope.query = srch.q;
+                    } else {
+                        scope.query = null;
+                    }
 
-                    scope.$on('key:s', function openSearch() {
+                    function closeOnClick() {
                         scope.$apply(function() {
-                            scope.flags = {extended: true};
-                            $timeout(function() { // call focus when input will be visible
-                                input.focus();
-                            }, 0, false);
+                            scope.focused = false;
                         });
+                    }
+
+                    $document.bind('click', closeOnClick);
+
+                    scope.$on('$destroy', function() {
+                        $document.unbind('click', closeOnClick);
                     });
 
-                    function _closeSearchPopup() {
-                        scope.flags.extended = false;
-                    }
                 }
             };
         }])
@@ -1066,7 +966,7 @@
         /**
          * Item sort component
          */
-        .directive('sdItemSortbar', ['$location', 'search', function sortBarDirective($location, search) {
+        .directive('sdItemSortbar', ['search', function sortBarDirective(search) {
             return {
                 scope: {},
                 templateUrl: 'scripts/superdesk-search/views/item-sortbar.html',
@@ -1075,12 +975,6 @@
 
                     function getActive() {
                         scope.active = search.getSort();
-                        var srch = $location.search();
-                        if (srch.q && srch.q !== '') {
-                            scope.queryString = srch.q;
-                        } else {
-                            scope.queryString = null;
-                        }
                     }
 
                     scope.sort = function sort(field) {
