@@ -15,6 +15,8 @@ from superdesk.io import allowed_providers
 from superdesk.activity import ACTIVITY_CREATE, ACTIVITY_EVENT, ACTIVITY_UPDATE, notify_and_add_activity
 from superdesk import get_resource_service
 from settings import INGEST_EXPIRY_MINUTES
+from superdesk.utc import utcnow
+from superdesk.notification import push_notification
 
 
 logger = logging.getLogger(__name__)
@@ -82,7 +84,9 @@ class IngestProviderResource(Resource):
                 'on_error': {'type': 'boolean', 'default': True}
             }
         },
-        'routing_scheme': Resource.rel('routing_schemes', nullable=True)
+        'routing_scheme': Resource.rel('routing_schemes', nullable=True),
+        'last_closed': {'type': 'datetime'},
+        'last_open': {'type': 'datetime'}
     }
 
     item_methods = ['GET', 'PATCH']
@@ -102,18 +106,27 @@ class IngestProviderService(BaseService):
         for doc in docs:
             if doc.get('content_expiry', 0) == 0:
                 doc['content_expiry'] = INGEST_EXPIRY_MINUTES
+                doc['last_open'] = doc['last_closed'] = utcnow()
 
     def on_created(self, docs):
         for doc in docs:
             notify_and_add_activity(ACTIVITY_CREATE, 'created Ingest Channel {{name}}', item=doc,
                                     user_list=self._get_administrators(),
                                     name=doc.get('name'))
-
+            push_notification('ingest:create', provider_id=str(doc.get('_id')))
         logger.info("Created Ingest Channel. Data:{}".format(docs))
+
 
     def on_update(self, updates, original):
         if updates.get('content_expiry') == 0:
             updates['content_expiry'] = INGEST_EXPIRY_MINUTES
+        if 'is_closed' in updates:
+            if original.get('is_closed') and not updates.get('is_closed'):
+                # opening the channel
+                updates['last_open'] = utcnow()
+            elif (not original.get('is_closed')) and updates.get('is_closed'):
+                # closing the channel
+                updates['last_closed'] = utcnow()
 
     def on_updated(self, updates, original):
 
@@ -143,4 +156,5 @@ class IngestProviderService(BaseService):
                                     name=updates.get('name', original.get('name')),
                                     status=status)
 
+        push_notification('ingest:update', provider_id=str(original.get('_id')))
         logger.info("Updated Ingest Channel. Data: {}".format(updates))
