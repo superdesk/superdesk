@@ -88,7 +88,14 @@ define([
         .filter('dateString', ['$filter', function($filter) {
             return function(input) {
                 if (input !== null) {
-                    return $filter('date')(input.format(), 'yyyy-MM-dd');
+                    return $filter('date')(input, 'dd.MM.yyyy');
+                }
+            };
+        }])
+        .filter('dateTimeString', ['$filter', function($filter) {
+            return function(input) {
+                if (input !== null) {
+                    return $filter('date')(input, 'dd.MM.yyyy HH.mm');
                 }
             };
         }]);
