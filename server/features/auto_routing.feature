@@ -89,7 +89,7 @@ Feature: Auto Routing
         }
         """
 
-    @auth @provider @test
+    @auth @provider
     Scenario: Package is routed automatically
         Given empty "desks"
         When we post to "/desks"

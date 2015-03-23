@@ -116,7 +116,6 @@ class IngestProviderService(BaseService):
             push_notification('ingest:create', provider_id=str(doc.get('_id')))
         logger.info("Created Ingest Channel. Data:{}".format(docs))
 
-
     def on_update(self, updates, original):
         if updates.get('content_expiry') == 0:
             updates['content_expiry'] = INGEST_EXPIRY_MINUTES
