@@ -940,7 +940,7 @@ define([
                     }, function (error) {
                         if (error.status === 404) {
                             scope.item.dashboard_enabled = false;
-                            scope.setUserPreferences(true);
+                            scope.setUserPreferences();
                         }
                     });
                 }
@@ -958,10 +958,8 @@ define([
                         if (scope.item.idle_time) {
                             last_item_update.add(scope.item.idle_time.hours, 'h').add(scope.item.idle_time.minutes, 'm');
                             if (moment() > last_item_update) {
-                                scope.idle_message = 'Channel has gone strangely quiet.';
                                 return true;
                             }else {
-                                scope.idle_message = '';
                                 return false;
                             }
                         }
