@@ -17,7 +17,6 @@ from .archive import ArchiveResource, ArchiveService, ArchiveVersionsResource, A
     ArchiveSaveService
 from .commands import ArchiveRemoveExpiredContent
 from .ingest import IngestResource, IngestService
-from .archive_ingest import ArchiveIngestResource, ArchiveIngestService
 from .item_comments import ItemCommentsResource, ItemCommentsSubResource, ItemCommentsService, ItemCommentsSubService
 from .user_content import UserContentResource, UserContentService
 from .archive_lock import ArchiveLockResource, ArchiveUnlockResource, ArchiveLockService, ArchiveUnlockService
@@ -50,10 +49,6 @@ def init_app(app):
     endpoint_name = 'archive'
     service = ArchiveService(endpoint_name, backend=superdesk.get_backend())
     ArchiveResource(endpoint_name, app=app, service=service)
-
-    endpoint_name = 'archive_ingest'
-    service = ArchiveIngestService(endpoint_name, backend=superdesk.get_backend())
-    ArchiveIngestResource(endpoint_name, app=app, service=service)
 
     endpoint_name = 'item_comments'
     service = ItemCommentsService(endpoint_name, backend=superdesk.get_backend())
@@ -109,7 +104,6 @@ def init_app(app):
     superdesk.privilege(name='unspike', label='Un Spike', description='User can un-spike content.')
     superdesk.privilege(name='unlock', label='Unlock content', description='User can unlock content.')
     superdesk.privilege(name='metadata_uniquename', label='Edit Unique Name', description='User can edit unique name.')
-    superdesk.privilege(name='ingest_move', label='Fetch Content To a Desk', description='Fetch Content to a Desk.')
     superdesk.privilege(name='saved_searches', label='Manage Saved Searches',
                         description='User can manage Saved Searches')
 
