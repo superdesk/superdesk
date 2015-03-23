@@ -27,12 +27,15 @@ class SuperdeskGridFSMediaStorage(GridFSMediaStorage):
         media_file = super().get(_id)
         if media_file and media_file.metadata:
             for k, v in media_file.metadata.items():
-                media_file.metadata[k] = json.loads(v)
+                try:
+                    media_file.metadata[k] = json.loads(v)
+                except ValueError:
+                    logger.exception('Failed to load metadata for file: %s with key: %s and value: %s', _id, k, v)
+
         return media_file
 
     def put(self, content, filename=None, content_type=None, metadata=None):
         _id = self.fs().put(content, content_type=content_type, filename=filename, metadata=metadata)
-        logger.debug('Saved  media file with id= %s' % _id)
         return _id
 
     def fs(self):
