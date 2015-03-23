@@ -329,14 +329,16 @@ def ingest_item(item, provider, rule_set=None, routing_scheme=None):
                 ingest_service.post([item])
             except HTTPException as e:
                 logger.error("Exception while persisting item in ingest collection", e)
-                ingest_service.put(item['guid'], item)
 
         if routing_scheme:
             superdesk.get_resource_service('routing_schemes')\
                 .apply_routing_scheme(ingest_service.find_one(_id=item['guid'], req=None), provider, routing_scheme)
     except Exception as ex:
-        superdesk.app.sentry.captureException()
         logger.exception(ex)
+        try:
+            superdesk.app.sentry.captureException()
+        except:
+            pass
         return False
     return True
 
