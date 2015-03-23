@@ -1,35 +1,21 @@
-<div class="item-searchbar" ng-class="{extended: flags.extended}">
-    <label for="search-input" class="trigger-popup" ng-click="flags.extended = !flags.extended" >
-        <i class="search-icon"></i>
-    </label>
-    <div class="separator-handler"></div>
+<div class="item-searchbar" ng-class="{focused: focused}" ng-click="$event.stopPropagation();">
 
-    <div class="popup advanced-searchbar">
-        <div class="content dropdown" dropdown on-toggle="toggle($event)">
-            <div class="search-handler">
-                <label for="search-input" class="button search-icon"></label>
-                <input id="search-input"
-                	type="text"
-                	placeholder="{{ 'Search'|translate }}"
-                	ng-keyup="searchOnEnter($event)"
-                	ng-model="query"
-                	tabindex="1">
-                <button ng-click="search()" class="button trigger" tabindex="3" translate>
-                    <i class="svg-icon-right"></i>
-                </button>
-            </div>
-            
-            <button class="dropdown-toggle" dropdown-toggle tabindex="2" ng-hide="advancedOpen">
-            	<i class="icon-chevron-down-thin icon-white"></i>
-                <span translate>Advanced</span>
-            </button>
+    <label for="search-input" class="button search-icon"></label>
 
-            <div class="advanced" ng-show="advancedOpen" role="menu" ng-click="$event.stopPropagation()">
-            	<button class="close" ng-click="focusOnSearch();"><i class="icon-close-small"></i></button>
-        		<div class="content">
-        			<sd-item-search />
-        		</div>
-            </div>
-        </div>
-    </div>
+    <input id="search-input"
+    	type="text"
+    	placeholder="{{ 'Search'|translate }}"
+    	ng-keyup="searchOnEnter($event)"
+    	ng-model="query"
+    	tabindex="1"
+        ng-focus="focused = true">
+
+    <button class="search-cancel" ng-click="cancel();" ng-if="query && focused">
+        <i class="icon-close-small icon-white"></i>
+    </button>
+
+    <button ng-click="search();" class="button trigger" ng-if="focused" tabindex="2">
+        <i class="svg-icon-right"></i>
+    </button>
+
 </div>
