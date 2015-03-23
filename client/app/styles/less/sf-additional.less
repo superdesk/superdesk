@@ -1448,12 +1448,18 @@ header .sortbar {
 			border-bottom: 1px solid #dcdcdc;
 			height: 1px;
 			top:9px;
-			left:20px;
+			left:0;
 			right: 0px;
 		}
 		.chevron {
-			.transition(all 0.2s ease);
-			.rotate(90deg);
+			padding: 2px;
+			background-color: @tabpane-background;
+			position: relative;
+			bottom: 2px;
+			i {
+				.transition(all 0.2s ease);
+				.rotate(90deg);
+			}
 		}
 		h6 {
 			background: @tabpane-background;
@@ -1462,10 +1468,10 @@ header .sortbar {
 			text-transform: uppercase;
 			color: #666;
 			position: relative;
-			display: 	inline-block;
+			display: inline-block;
 		}
 		&:hover {
-				cursor: pointer;
+			cursor: pointer;
 		}
 
 	}
@@ -1478,8 +1484,23 @@ header .sortbar {
 	}
 
 	&.hidden {
-		> header .chevron {
+		> header .chevron i {
 			.rotate(0);
+		}
+	}
+
+	&.pane {
+		> header {
+			text-align: center;	
+		}
+		.chevron i {
+			.rotate(-90deg);
+			
+		}
+		&.hidden {
+			> header .chevron i {
+				.rotate(90deg);
+			}
 		}
 	}
 

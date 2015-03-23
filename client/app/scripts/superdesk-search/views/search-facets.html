@@ -13,11 +13,11 @@
 
         <div sd-search-within></div>
 
-        <div sd-toggle-box data-title="{{ 'Parameters' | translate }}" data-open="false">
+        <div sd-toggle-box data-title="{{ 'Parameters' | translate }}" data-open="false" data-mode="pane">
             <div sd-item-search data-repo="repo" data-context="context" class="pull-left"></div>
         </div>
 
-        <div sd-toggle-box data-title="{{ 'Filters' | translate }}" data-open="true">
+        <div sd-toggle-box data-title="{{ 'Filters' | translate }}" data-open="true" data-mode="pane">
             <div sd-toggle-box data-title="{{ 'Content types' | translate }}" ng-hide="isEmpty('type')" data-open="true">
                 <ul class="filter-box">
                     <li ng-repeat="(key,value) in aggregations.type">
@@ -87,15 +87,14 @@
                 </ul>
             </div>
 
-            <div sd-toggle-box data-title="{{ 'Dates' | translate }}" ng-hide="isEmpty('date')" data-open="true">
+            <div sd-toggle-box data-title="{{ 'Dates' | translate }}" data-open="true">
                 <ul class="filter-box">
                     <li class="stage-label ng-scope" ng-class="{active: spike}" style="max-width:33.333333333333336%" ng-repeat="(key,value) in aggregations.date">
                         <!-- <button ng-click="setDateFilter(key)">{{key}} <i>{{ value }}</i></button> -->
                         <input type="checkbox" ng-checked="hasFilter('date',key)" ng-click="toggleFilter('date', key)">
                         <span>{{key | translate}} <i>{{ value }}</i></span>
                     </li>
-
-            <div sd-toggle-box data-title="{{ 'Dates' | translate }}" data-open="true">
+                </ul>
                 <ul class="date-filter">
                     <li sd-date-param data-location="beforefirstcreated">
                         <label for="created_before" translate>Created before</label>
