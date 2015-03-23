@@ -1150,16 +1150,15 @@ define([
                 icon: 'archive',
                 monitor: true,
                 controller: ['api', 'data', 'desks', function(api, data, desks) {
-                    api.archiveIngest.create({
-                        guid: data.item.guid,
-                        desk: desks.getCurrentDeskId()
-                    })
-                    .then(function(archiveItem) {
-                        data.item.task_id = archiveItem.task_id;
-                        data.item.archived = archiveItem._created;
-                    }, function(response) {
-                        data.item.error = response;
-                    })
+                    api
+                        .save('fetch', {}, {desk: desks.getCurrentDeskId()}, data.item)
+                        .then(
+                            function(archiveItem) {
+                                data.item.task_id = archiveItem.task_id;
+                                data.item.archived = archiveItem._created;
+                            }, function(response) {
+                                data.item.error = response;
+                            })
                     ['finally'](function() {
                         data.item.actioning.archive = false;
                     });
@@ -1167,16 +1166,16 @@ define([
                 filters: [
                     {action: 'list', type: 'ingest'}
                 ],
-                action: 'fetch_as_from_ingest',
+                privileges: {fetch: 1},
                 key: 'f'
             });
     }]);
 
     app.config(['apiProvider', function(apiProvider) {
-        apiProvider.api('archiveIngest', {
+        apiProvider.api('fetch', {
             type: 'http',
             backend: {
-                rel: 'archive_ingest'
+                rel: 'fetch'
             }
         });
         apiProvider.api('ingest', {

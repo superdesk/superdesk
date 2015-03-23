@@ -49,20 +49,30 @@ def send_to(doc, desk_id=None, stage_id=None):
     task.setdefault('desk', desk_id)
     task.setdefault('stage', stage_id)
 
+    calculate_expiry_from = None
+
     if desk_id and not stage_id:
         desk = superdesk.get_resource_service('desks').find_one(req=None, _id=desk_id)
         if not desk:
             raise SuperdeskApiError.notFoundError('Invalid desk identifier %s' % desk_id)
+
+        calculate_expiry_from = desk
+        task['desk'] = desk_id
         task['stage'] = desk.get('incoming_stage')
-    if task['stage']:
-        stage = get_resource_service('stages').find_one(req=None, _id=task['stage'])
+
+    if stage_id:
+        stage = get_resource_service('stages').find_one(req=None, _id=stage_id)
         if not stage:
-            raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % task['stage'])
+            raise SuperdeskApiError.notFoundError('Invalid stage identifier %s' % stage_id)
+
+        calculate_expiry_from = stage
+        task['desk'] = stage['desk']
+        task['stage'] = stage_id
         if stage.get('task_status'):
-            doc['task'] = doc.get('task', {})
-            doc['task']['status'] = stage['task_status']
+            task['status'] = stage['task_status']
+
     doc['task'] = task
-    doc['expiry'] = get_expiry(desk_id, stage_id)
+    doc['expiry'] = get_expiry(desk_or_stage_doc=calculate_expiry_from)
 
 
 class TaskResource(Resource):
@@ -197,6 +207,4 @@ class TasksService(BaseService):
     def assign_user(self, item_id, user):
         return self.patch(item_id, {'task': user})
 
-superdesk.privilege(name='tasks',
-                    label='Move Content to another desk',
-                    description='Move Content to another desk')
+superdesk.privilege(name='tasks', label='Tasks Management', description='Tasks Management')

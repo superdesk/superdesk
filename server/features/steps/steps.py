@@ -805,11 +805,6 @@ def check_rendition(context, rendition_name):
     assert rv['renditions'][rendition_name] != context.renditions[rendition_name], rv['renditions']
 
 
-@then('we get archive ingest result')
-def step_impl_then_get_archive_ingest_result(context):
-    assert_200(context.response)
-
-
 @then('we get "{key}"')
 def step_impl_then_get_key(context, key):
     assert_200(context.response)

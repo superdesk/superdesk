@@ -81,7 +81,6 @@ describe('Fetch', function() {
     it('can fetch from content with menu', function() {
         workspace.switchToDesk('SPORTS DESK').then(content.setListView);
         expect(element.all(by.repeater('items._items')).count()).toBe(2);
-
         changeUrl('/#/workspace/ingest').then(function() {
             return workspace.switchToDesk('SPORTS DESK');
         }).then(
@@ -96,8 +95,7 @@ describe('Fetch', function() {
             content.setListView
         );
         expect(element.all(by.repeater('items._items')).count()).toBe(3);
-
-        content.actionOnItem('Fetch', 0).then(function() {
+        content.actionOnItem('Duplicate', 0).then(function() {
             return workspace.switchToDesk('PERSONAL');
         }).then(function() {
             return workspace.switchToDesk('SPORTS DESK');

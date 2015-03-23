@@ -868,7 +868,6 @@
                 scope.selectStage = function(stage) {
                     scope.selectedStage = stage;
                 };
-
                 scope.selectMacro = function(macro) {
                     if (scope.selectedMacro === macro) {
                         scope.selectedMacro = null;
@@ -1105,5 +1104,13 @@
                     },
                     authoring: true
 	            });
+        }])
+        .config(['apiProvider', function(apiProvider) {
+            apiProvider.api('move', {
+                type: 'http',
+                backend: {
+                    rel: 'move'
+                }
+            });
         }]);
 })();

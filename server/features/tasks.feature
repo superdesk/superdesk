@@ -84,42 +84,6 @@ Feature: Tasks
         Then we get updated response
 
     @auth
-    Scenario: Existing archive item - update task-user asignment
-        Given empty "desks"
-        When we post to "users"
-        """
-        {"username": "foo", "email": "foo@bar.com"}
-        """
-        When we post to "desks"
-        """
-        {"name": "Sports Desk"}
-        """
-        When we post to "archive"
-	    """
-        [{"headline": "test"}]
-	    """
-        When we patch "/tasks/#archive._id#"
-	    """
-        {"slugline": "first task", "type": "text", "task": {"user": "#users._id#"}}
-	    """
-        Then we get updated response
-
-    @auth
-    Scenario: Fill stage automatically when assigning a task to a desk
-        Given empty "desks"
-        Given empty "tasks"
-        When we post to "desks"
-        """
-        {"name": "Sports Desk"}
-        """
-        When we post to "tasks"
-	    """
-        [{"slugline": "first task", "type": "text", "task": {"desk": "#desks._id#"}}]
-	    """
-        Then we get stage filled in to default_incoming
-
-
-    @auth
     Scenario: Update task-planning item assignment
         Given empty "planning"
         Given empty "tasks"
