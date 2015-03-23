@@ -299,7 +299,10 @@
                         tags.selectedFacets[key] = [];
 
                         if (key === 'desk') {
-                            tags.selectedFacets[key].push(desks.deskLookup[JSON.parse(type)[0]].name);
+                            var selectedDesks = JSON.parse(type);
+                            _.forEach(selectedDesks, function(selectedDesk) {
+                                tags.selectedFacets[key].push(desks.deskLookup[selectedDesk].name);
+                            });
                         } else if (key === 'stage') {
                             var stageid = type;
                             _.forEach(desks.deskStages[desks.activeDeskId], function(deskStage) {
@@ -527,6 +530,11 @@
                     };
 
                     scope.hasFilter = function(type, key) {
+                        if (type === 'desk') {
+                            return scope.tags.selectedFacets[type] &&
+                            scope.tags.selectedFacets[type].indexOf(desks.deskLookup[key].name) >= 0;
+                        }
+
                         return scope.tags.selectedFacets[type] && scope.tags.selectedFacets[type].indexOf(key) >= 0;
                     };
                 }
